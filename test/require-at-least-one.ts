@@ -1,3 +1,4 @@
+import {expectType} from 'tsd-check';
 import {RequireAtLeastOne} from '..';
 
 type SystemMessages = {
@@ -20,3 +21,6 @@ test([
 	// {},
 	// {default: 'hello'},
 ]);
+
+declare const atLeastOneWithoutKeys: RequireAtLeastOne<{a: number; b: number}>;
+expectType<{a: number; b?: number} | {a?: number; b: number}>(atLeastOneWithoutKeys);
