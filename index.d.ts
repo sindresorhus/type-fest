@@ -102,8 +102,8 @@ type SystemMessages = {
 const messages: RequireAtLeastOne<SystemMessages, 'macos' | 'linux' | 'windows'> = {macos: 'hey', default: 'hello'};
 ```
 */
-export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
-	Omit<T, Keys>
+export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
+	Omit<ObjectType, KeysType>
 	& {
-		[Key in Keys]-?: Required<Pick<T, Key>>
-	}[Keys];
+		[Key in KeysType]-?: Required<Pick<ObjectType, Key>>
+	}[KeysType];
