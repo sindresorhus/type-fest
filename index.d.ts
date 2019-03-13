@@ -109,7 +109,7 @@ Create a new type from an object type extracting just methods
 
 @example
 ```
-import {JustProps} from 'type-fest';
+import {JustMethods} from 'type-fest';
 
 interface Foo {
 	a: string;
