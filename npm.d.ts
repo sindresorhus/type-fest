@@ -204,7 +204,7 @@ export interface ScriptsDefinition {
 }
 
 /**
-Array of package names that is bundled when the package is publihed.
+Names of package dependencies that are bundled when the package is publihed.
 */
 export type BundledDependency = string[];
 
