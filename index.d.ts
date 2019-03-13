@@ -103,7 +103,7 @@ interface Foo {
 const foo: JustProps<Foo> = {a: 'a', b: 1};
 ```
 */
-export type JustProps<ObjectType> = Pick<ObjectType, ({ [Property in keyof ObjectType]: ObjectType[Property] extends (...args: unknown[]) => unknown ? never : Property })[keyof ObjectType]>;
+export type JustProps<ObjectType> = Pick<ObjectType, ({ [Property in keyof ObjectType]: ObjectType[Property] extends (...arguments: unknown[]) => unknown ? never : Property })[keyof ObjectType]>;
 
 /**
 Create a new type from an object type extracting just methods, not other properties.
