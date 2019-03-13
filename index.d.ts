@@ -1,3 +1,7 @@
+import * as Npm from './npm';
+
+export {Npm};
+
 // TODO: Add more examples
 
 // TODO: This can just be `export type Primitive = not object` when the `not` keyword is out.
@@ -84,3 +88,13 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 ```
 */
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
+
+/**
+This type is a workaround for the TypeScript issue https://github.com/Microsoft/TypeScript/issues/29729.
+
+It will be removed as soon as it's not needed any more.
+ */
+export type LiteralUnion<
+	LiteralType extends BaseType,
+	BaseType extends Primitive
+> = LiteralType | (BaseType & {_?: never});
