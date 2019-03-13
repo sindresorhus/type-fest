@@ -15,7 +15,7 @@ export type BugsLocation =
 	| string
 	| {
 		/**
-		The url to the package's issue tracker.
+		The URL to the package's issue tracker.
 		*/
 		url?: string;
 
@@ -32,7 +32,7 @@ export interface DirectoryLocations {
 	bin?: string;
 
 	/**
-	Location for markdown files.
+	Location for Markdown files.
 	*/
 	doc?: string;
 
@@ -209,7 +209,7 @@ Array of package names that is bundled when the package is publihed.
 export type BundledDependency = string[];
 
 /**
-Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.
+Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or Git URL.
 */
 export interface Dependency {
 	[packageName: string]: string;
@@ -237,12 +237,12 @@ export type PackageJson = {
 	keywords?: string[];
 
 	/**
-	The url to the package's homepage.
+	The URL to the package's homepage.
 	*/
 	homepage?: LiteralUnion<'.', string>;
 
 	/**
-	The url to the package's issue tracker and/or the email address to which issues should be reported.
+	The URL to the package's issue tracker and/or the email address to which issues should be reported.
 	*/
 	bugs?: BugsLocation;
 
