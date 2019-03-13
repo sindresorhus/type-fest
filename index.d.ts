@@ -72,7 +72,7 @@ Create a type that has mutually exclusive properties.
 
 @example
 ```
-import {XOR} from 'type-fest';
+import {MergeExclusive} from 'type-fest';
 
 interface ExclusiveVariation1 {
 	exclusive1: boolean;
@@ -82,7 +82,7 @@ interface ExclusiveVariation2 {
 	exclusive2: string;
 }
 
-type ExclusiveOptions = XOR<ExclusiveVariation1, ExclusiveVariation2>;
+type ExclusiveOptions = MergeExclusive<ExclusiveVariation1, ExclusiveVariation2>;
 
 let exclusiveOptions: ExclusiveOptions;
 
@@ -94,7 +94,7 @@ exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
 //=> Error
 ```
 */
-export type XOR<FirstType, SecondType> =
+export type MergeExclusive<FirstType, SecondType> =
 	(FirstType | SecondType) extends object ?
 		(Without<FirstType, SecondType> & SecondType) | (Without<SecondType, FirstType> & FirstType) :
 		FirstType | SecondType;
