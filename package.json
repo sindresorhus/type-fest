@@ -1,0 +1,47 @@
+{
+	"name": "type-fest",
+	"version": "0.0.0",
+	"description": "A collection of essential TypeScript types",
+	"license": "(MIT OR CC0-1.0)",
+	"repository": "sindresorhus/type-fest",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "sindresorhus.com"
+	},
+	"engines": {
+		"node": ">=6"
+	},
+	"scripts": {
+		"test": "xo && tsd-check"
+	},
+	"files": [
+		"index.d.ts"
+	],
+	"keywords": [
+		"typescript",
+		"ts",
+		"types",
+		"utility",
+		"util",
+		"utilities",
+		"omit",
+		"merge",
+		"json"
+	],
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^1.4.2",
+		"eslint-config-xo-typescript": "^0.8.0",
+		"tsd-check": "^0.3.0",
+		"xo": "^0.24.0"
+	},
+	"xo": {
+		"extends": "xo-typescript",
+		"extensions": [
+			"ts"
+		],
+		"rules": {
+			"import/no-unresolved": "off"
+		}
+	}
+}
