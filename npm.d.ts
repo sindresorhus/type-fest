@@ -293,7 +293,7 @@ export type PackageJson = {
 	types?: string;
 
 	/**
-	Location of the bundled TypeScript declaration file. Synonymous with `types`.
+	Location of the bundled TypeScript declaration file. Alias of `types`.
 	*/
 	typings?: string;
 
@@ -349,12 +349,12 @@ export type PackageJson = {
 	/**
 	Package names that are bundled when the package is published.
 	*/
-	bundleDependencies?: string[];
+	bundledDependencies?: string[];
 
 	/**
-	Synonym for `bundleDependencies`.
-	 */
-	bundledDependencies?: string[];
+	Alias of `bundledDependencies`.
+	*/
+	bundleDependencies?: string[];
 
 	resolutions?: Dependency;
 
