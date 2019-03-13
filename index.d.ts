@@ -87,6 +87,7 @@ export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstTy
 
 /**
 Create a new type from an object type extracting just properties, not methods.
+@see JustMethods for extract just methods
 
 @example
 ```
@@ -106,6 +107,7 @@ export type JustProps<ObjectType> = Pick<ObjectType, ({ [Property in keyof Objec
 
 /**
 Create a new type from an object type extracting just methods, not other properties.
+@see JustProps for extract just properties
 
 @example
 ```
