@@ -86,7 +86,7 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
 
 /**
-Create a new type from an object type extracting just props
+Create a new type from an object type extracting just properties, not methods.
 
 @example
 ```
