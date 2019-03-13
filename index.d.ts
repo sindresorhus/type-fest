@@ -1,6 +1,4 @@
-import * as Npm from './npm';
-
-export {Npm};
+export {PackageJson} from './source/npm';
 
 // TODO: Add more examples
 
@@ -90,9 +88,19 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
 
 /**
-This type is a workaround for the TypeScript issue https://github.com/Microsoft/TypeScript/issues/29729.
+Currently, when a union type of a primitive type is combined with literal types, TypeScript loses all information about the combined literals. Thus, when such a type is used in an IDE with autocompletion, no suggestions are made for the declared literals.
 
-It will be removed as soon as it's not needed any more.
+This type is a workaround for the TypeScript issue https://github.com/Microsoft/TypeScript/issues/29729. It will be removed as soon as it's not needed any more.
+
+@example
+```
+import {LiteralUnion} from 'type-fest';
+
+type Pet = LiteralUnion<'dog' | 'cat', string>;
+
+const pet: Pet = '';
+// Start typing in your TypeScript enabled IDE, you will get auto-completion for `dog` and `cat` literals.
+```
  */
 export type LiteralUnion<
 	LiteralType extends BaseType,

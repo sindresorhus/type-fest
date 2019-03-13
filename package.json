@@ -16,7 +16,8 @@
 		"test": "xo && tsd-check"
 	},
 	"files": [
-		"index.d.ts"
+		"index.d.ts",
+		"source"
 	],
 	"keywords": [
 		"typescript",
