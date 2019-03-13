@@ -44,7 +44,7 @@ export interface ObservableLike {
 }
 
 /**
-Create a new type from an object type with certain keys.
+Create a type from an object type that misses some keys.
 
 @example
 ```
@@ -63,6 +63,41 @@ I'm surprised this one is not built-in. Please open new issues on TypeScript abo
 See: https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-420919470
 */
 export type Omit<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectType, Exclude<keyof ObjectType, KeysType>>;
+
+// Helper type, not useful on its own
+type Without<FirstType, SecondType> = {[KeyType in Exclude<keyof FirstType, keyof SecondType>]?: never};
+
+/**
+Create a type that has mutually exclusive properties.
+
+@example
+```
+import {XOR} from 'type-fest';
+
+interface ExclusiveVariation1 {
+	exclusive1: boolean;
+}
+
+interface ExclusiveVariation2 {
+	exclusive2: string;
+}
+
+type ExclusiveOptions = XOR<ExclusiveVariation1, ExclusiveVariation2>;
+
+let exclusiveOptions: ExclusiveOptions;
+
+exclusiveOptions = {exclusive1: true};
+//=> Works
+exclusiveOptions = {exclusive2: 'hi'};
+//=> Works
+exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
+//=> Error
+```
+*/
+export type XOR<FirstType, SecondType> =
+	(FirstType | SecondType) extends object ?
+		(Without<FirstType, SecondType> & SecondType) | (Without<SecondType, FirstType> & FirstType) :
+		FirstType | SecondType;
 
 /**
 Merge two types into a new type. Keys of the second type overrides keys of the first type.
