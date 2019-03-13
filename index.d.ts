@@ -84,3 +84,41 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 ```
 */
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
+
+/**
+Create a new type from an object type extracting just props
+
+@example
+```
+import {JustProps} from 'type-fest';
+
+interface Foo {
+	a: string;
+	b: number;
+	c(): string;
+	d(x: string): string;
+}
+
+const foo: JustProps<Foo> = {a: 'a', b: 1};
+```
+*/
+export type JustProps<ObjectType> = Pick<ObjectType, ({ [Property in keyof ObjectType]: ObjectType[Property] extends (...args: unknown[]) => unknown ? never : Property })[keyof ObjectType]>;
+
+/**
+Create a new type from an object type extracting just methods
+
+@example
+```
+import {JustProps} from 'type-fest';
+
+interface Foo {
+	a: string;
+	b: number;
+	c(): string;
+	d(x: string): string;
+}
+
+const foo: JustMethods<Foo> = {c: () => 'c', d: (x: string) => x};
+```
+*/
+export type JustMethods<ObjectType> = Pick<ObjectType, ({ [Method in keyof ObjectType]: ObjectType[Method] extends (...args: unknown[]) => unknown ? Method : never })[keyof ObjectType]>;
