@@ -84,3 +84,7 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 ```
 */
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
+
+export type Readonly<T> = { readonly [Property in keyof T]: T[Property]; }
+
+export type Partial<T> = { [Property in keyof T]?: T[Property]; }
