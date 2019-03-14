@@ -2,23 +2,26 @@ import {expectType} from 'tsd-check';
 import {RequireAtLeastOne} from '..';
 
 type SystemMessages = {
+	default: string;
+
 	macos?: string;
 	linux?: string;
 	windows?: string;
-	default?: string;
+
+	optional?: string;
 };
 
 type ValidMessages = RequireAtLeastOne<SystemMessages, 'macos' | 'linux' | 'windows'>;
 const test = (_: ValidMessages[]): void => {};
 
 test([
-	{macos: 'hey'},
 	{macos: 'hey', default: 'hello'},
-	{linux: 'sup', windows: 'hi'},
+	{linux: 'sup', default: 'hello', optional: 'howdy'},
 	{macos: 'hey', linux: 'sup', windows: 'hi', default: 'hello'}
 
 	// Negative examples:
 	// {},
+	// {macos: 'hey'},
 	// {default: 'hello'},
 ]);
 

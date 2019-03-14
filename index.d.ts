@@ -103,7 +103,12 @@ const messages: RequireAtLeastOne<SystemMessages, 'macos' | 'linux' | 'windows'>
 ```
 */
 export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
-	Omit<ObjectType, KeysType>
-	& {
-		[Key in KeysType]-?: Required<Pick<ObjectType, Key>>
-	}[KeysType];
+	{
+		// For each Key in KeysType make a mapped type
+		[Key in KeysType]: (
+			// …by picking that Key's type and making it required
+			Required<Pick<ObjectType, Key>>
+		)
+	}[KeysType]
+	// …then, make intersection types by adding the remaining properties to each mapped type
+	& Omit<ObjectType, KeysType>;
