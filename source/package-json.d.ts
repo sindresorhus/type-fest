@@ -205,15 +205,37 @@ declare namespace PackageJson {
 	}
 
 	/**
-	Names of package dependencies that are bundled when the package is publihed.
-	*/
-	export type BundledDependency = string[];
-
-	/**
 	Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or Git URL.
 	*/
 	export interface Dependency {
 		[packageName: string]: string;
+	}
+
+	export interface NonStandardEntryPoints {
+		/**
+		An ECMAScript module ID that is the primary entry point to the program.
+		*/
+		module?: string;
+
+		/**
+		A module ID with untranspiled code that is the primary entry point to the program.
+		*/
+		esnext?:
+		| string
+		| {
+			main?: string;
+			browser?: string;
+			[moduleName: string]: string | undefined;
+		};
+
+		/**
+		A hint to JavaScript bundlers or component tools when packaging modules for client side use.
+		*/
+		browser?:
+		| string
+		| {
+			[moduleName: string]: string | false;
+		};
 	}
 
 	export interface TypeScriptConfiguration {
@@ -308,31 +330,6 @@ export type PackageJson = {
 	The module ID that is the primary entry point to the program.
 	*/
 	main?: string;
-
-	/**
-	An ECMAScript module ID that is the primary entry point to the program.
-	*/
-	module?: string;
-
-	/**
-	A module ID with untranspiled code that is the primary entry point to the program.
-	*/
-	esnext?:
-	| string
-	| {
-		main?: string;
-		browser?: string;
-		[moduleName: string]: string | undefined;
-	};
-
-	/**
-	A hint to JavaScript bundlers or component tools when packaging modules for client side use.
-	 */
-	browser?:
-	| string
-	| {
-		[moduleName: string]: string | false;
-	};
 
 	/**
 	The executable files that should be installed into the `PATH`.
@@ -486,6 +483,7 @@ export type PackageJson = {
 		[config: string]: unknown;
 	};
 } &
+PackageJson.NonStandardEntryPoints &
 PackageJson.TypeScriptConfiguration &
 PackageJson.YarnConfiguration &
 PackageJson.JSPMConfiguration & {

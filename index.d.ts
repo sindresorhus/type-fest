@@ -1,4 +1,4 @@
-export {PackageJson} from './source/npm';
+export {PackageJson} from './source/package-json';
 
 // TODO: Add more examples
 
