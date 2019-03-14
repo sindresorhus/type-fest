@@ -95,3 +95,12 @@ export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstTy
 export type Diff<T extends {}, V extends {}> = {
     [P in Exclude<keyof T, keyof V>]: T[P];
 };
+
+		  
+/**
+ * Returns a type modeling the result of spreading two objects together.
+ *
+ * Given objects with types T and V, returns an object that has a type that represents {...T, ...V}
+ * @example `const a: Spread<X, Y> = { ...x, ...y }`
+ */
+export type Spread<T extends {}, V extends {}> = Diff<T, V> & V;
