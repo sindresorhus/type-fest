@@ -79,7 +79,32 @@ export type Omit<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectTyp
 type Without<FirstType, SecondType> = {[KeyType in Exclude<keyof FirstType, keyof SecondType>]?: never};
 
 /**
+Merge two types into a new type. Keys of the second type overrides keys of the first type.
+
+@example
+```
+import {Merge} from 'type-fest';
+
+type Foo = {
+	a: number;
+	b: string;
+};
+
+type Bar = {
+	b: number;
+};
+
+const ab: Merge<Foo, Bar> = {a: 1, b: 2};
+```
+*/
+export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
+
+/**
 Create a type that has mutually exclusive properties.
+
+This type was inspired by [this comment](https://github.com/Microsoft/TypeScript/issues/14094#issuecomment-373782604).
+
+This type works with a helper type, called `Without`. `Without<FirstType, SecondType>` produces a type that has only keys from `FirstType` which are not present on `SecondType` and sets the value type for these keys to `never`. This helper type is then used in `MergeExclusive` to remove keys from either `FirstType` or `SecondType`.
 
 @example
 ```
@@ -109,24 +134,3 @@ export type MergeExclusive<FirstType, SecondType> =
 	(FirstType | SecondType) extends object ?
 		(Without<FirstType, SecondType> & SecondType) | (Without<SecondType, FirstType> & FirstType) :
 		FirstType | SecondType;
-
-/**
-Merge two types into a new type. Keys of the second type overrides keys of the first type.
-
-@example
-```
-import {Merge} from 'type-fest';
-
-type Foo = {
-	a: number;
-	b: string;
-};
-
-type Bar = {
-	b: number;
-};
-
-const ab: Merge<Foo, Bar> = {a: 1, b: 2};
-```
-*/
-export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
