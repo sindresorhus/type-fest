@@ -84,3 +84,14 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 ```
 */
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
+		  
+/**
+ * Diffs two objects.
+ *
+ * Given objects with types T and V, returns an object that has all the keys in T that do not also exist in V.
+ *
+ * @example `type Safe = Diff<AllProperties, UnsafeProperties>`
+ */
+export type Diff<T extends {}, V extends {}> = {
+    [P in Exclude<keyof T, keyof V>]: T[P];
+};
