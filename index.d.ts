@@ -4,7 +4,7 @@ export {PackageJson} from './source/package-json';
 
 // TODO: This can just be `export type Primitive = not object` when the `not` keyword is out.
 /**
-[Primitive value type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)
+Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 */
 export type Primitive =
 	| null
@@ -15,12 +15,12 @@ export type Primitive =
 	| symbol;
 
 /**
-[Class type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)
+Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 */
-export type Class<T = unknown> = new(...args: any[]) => T;
+export type Class<T = unknown> = new(...arguments: any[]) => T;
 
 /**
-[TypedArray type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)
+Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 */
 export type TypedArray =
 	| Int8Array
@@ -33,12 +33,23 @@ export type TypedArray =
 	| Float32Array
 	| Float64Array;
 
+/**
+Matches a JSON object.
+*/
 export type JSONObject = {[key: string]: JSONValue};
+
+/**
+Matches a JSON array.
+*/
 export interface JSONArray extends Array<JSONValue> {} // eslint-disable-line @typescript-eslint/no-empty-interface
+
+/**
+Matches any valid JSON value.
+*/
 export type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
 
 /**
-A value that is like an [Observable](https://github.com/tc39/proposal-observable)
+Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 */
 export interface ObservableLike {
 	subscribe(observer: (value: unknown) => void): void;
@@ -46,7 +57,7 @@ export interface ObservableLike {
 }
 
 /**
-Create a new type from an object type with certain keys.
+Create a type from an object type without certain keys.
 
 @example
 ```
