@@ -64,7 +64,7 @@ See the [types file](index.d.ts) for complete docs.
 
 - `Omit` - Create a type from an object type without certain keys.
 - `Merge` - Merge two types into a new type. Keys of the second type overrides keys of the first type.
-- `MergeExclusive` - Create a type that has mutually exclusive properties. This type was inspired by [this comment](https://github.com/Microsoft/TypeScript/issues/14094#issuecomment-373782604).
+- `MergeExclusive` - Create a type that has mutually exclusive properties.
 
 
 ## Declined types
