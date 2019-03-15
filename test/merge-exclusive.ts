@@ -24,5 +24,6 @@ expectType<{option?: string; exclusive1: boolean; exclusive2?: string}>(
 expectType<{option?: string; exclusive1?: string; exclusive2: number}>(
 	exclusiveVariation2
 );
+
 // TODO: Negative tests, waiting for https://github.com/SamVerschueren/tsd-check/issues/2
-// expectError<Options>({exclusive1: true, exclusive2: 1})
+// expectError<Options>({exclusive1: true, exclusive2: 1});
