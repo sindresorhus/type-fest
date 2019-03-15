@@ -103,16 +103,22 @@ Allows creating a union type by combining primitive types and literal types with
 
 Currently, when a union type of a primitive type is combined with literal types, TypeScript loses all information about the combined literals. Thus, when such type is used in an IDE with autocompletion, no suggestions are made for the declared literals.
 
-This type is a workaround for the TypeScript issue https://github.com/Microsoft/TypeScript/issues/29729. It will be removed as soon as it's not needed any more.
+This type is a workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729). It will be removed as soon as it's not needed anymore.
 
 @example
 ```
 import {LiteralUnion} from 'type-fest';
 
-type Pet = LiteralUnion<'dog' | 'cat', string>;
+type Pet = 'dog' | 'cat' | string;
 
 const pet: Pet = '';
-// Start typing in your TypeScript enabled IDE, you will get auto-completion for `dog` and `cat` literals.
+// Start typing in your TypeScript-enabled IDE, you **will not** get auto-completion for `dog` and `cat` literals.
+
+
+type Pet2 = LiteralUnion<'dog' | 'cat', string>;
+
+const pet: Pet2 = '';
+// You now **will** get auto-completion for `dog` and `cat` literals.
 ```
  */
 export type LiteralUnion<
