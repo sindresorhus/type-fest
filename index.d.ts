@@ -115,6 +115,7 @@ const pet: Pet = '';
 // Start typing in your TypeScript-enabled IDE.
 // You **will not** get auto-completion for `dog` and `cat` literals.
 
+// …
 
 type Pet2 = LiteralUnion<'dog' | 'cat', string>;
 
