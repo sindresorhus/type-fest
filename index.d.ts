@@ -112,13 +112,14 @@ import {LiteralUnion} from 'type-fest';
 type Pet = 'dog' | 'cat' | string;
 
 const pet: Pet = '';
-// Start typing in your TypeScript-enabled IDE, you **will not** get auto-completion for `dog` and `cat` literals.
+// Start typing in your TypeScript-enabled IDE.
+// You **will not** get auto-completion for `dog` and `cat` literals.
 
 
 type Pet2 = LiteralUnion<'dog' | 'cat', string>;
 
 const pet: Pet2 = '';
-// You now **will** get auto-completion for `dog` and `cat` literals.
+// You **will** get auto-completion for `dog` and `cat` literals.
 ```
  */
 export type LiteralUnion<
