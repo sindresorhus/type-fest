@@ -266,8 +266,8 @@ declare namespace PackageJson {
 }
 
 /**
- * Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types fields used by other popular projects, like TypeScript and [yarn](https://yarnpkg.com).
- */
+Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types for fields used by other popular projects, like TypeScript and Yarn.
+*/
 export type PackageJson = {
 	/**
 	The name of the package.
