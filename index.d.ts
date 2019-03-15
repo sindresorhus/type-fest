@@ -17,7 +17,7 @@ export type Primitive =
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 */
-export type Class<T = unknown> = new(...arguments: any[]) => T;
+export type Class<T = unknown> = new(...arguments_: any[]) => T;
 
 /**
 Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
@@ -72,8 +72,7 @@ type FooWithoutA = Omit<Foo, 'a'>;
 //=> {b: string};
 ```
 
-I'm surprised this one is not built-in. Please open new issues on TypeScript about making it built-in.
-See: https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-420919470
+I'm surprised this one is not built-in. It seems [other people agree](https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-420919470). Please open new issues on TypeScript about making it built-in.
 */
 export type Omit<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectType, Exclude<keyof ObjectType, KeysType>>;
 
@@ -109,13 +108,15 @@ This type is a workaround for [Microsoft/TypeScript#29729](https://github.com/Mi
 ```
 import {LiteralUnion} from 'type-fest';
 
+// Before
+
 type Pet = 'dog' | 'cat' | string;
 
 const pet: Pet = '';
 // Start typing in your TypeScript-enabled IDE.
 // You **will not** get auto-completion for `dog` and `cat` literals.
 
-// …
+// After
 
 type Pet2 = LiteralUnion<'dog' | 'cat', string>;
 
