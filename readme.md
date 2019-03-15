@@ -64,6 +64,11 @@ See the [types file](index.d.ts) for complete docs.
 
 - `Omit` - Create a type from an object type without certain keys.
 - `Merge` - Merge two types into a new type. Keys of the second type overrides keys of the first type.
+- `LiteralUnion` - Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
+
+### Miscellaneous
+
+- `PackageJson` - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file).
 
 
 ## Declined types
