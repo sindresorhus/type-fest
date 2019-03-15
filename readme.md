@@ -55,9 +55,9 @@ See the [types file](index.d.ts) for complete docs.
 - `Primitive` - Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 - `Class` - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - `TypedArray` - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
-- `JSONObject` - Matches a JSON object.
-- `JSONArray` - Matches a JSON array.
-- `JSONValue` - Matches any valid JSON value.
+- `JsonObject` - Matches a JSON object.
+- `JsonArray` - Matches a JSON array.
+- `JsonValue` - Matches any valid JSON value.
 - `ObservableLike` - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 
 ### Utilities
@@ -65,6 +65,11 @@ See the [types file](index.d.ts) for complete docs.
 - `Omit` - Create a type from an object type without certain keys.
 - `Merge` - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - `MergeExclusive` - Create a type that has mutually exclusive properties. This type was inspired by [this comment](https://github.com/Microsoft/TypeScript/issues/14094#issuecomment-373782604).
+- `LiteralUnion` - Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
+
+### Miscellaneous
+
+- `PackageJson` - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file).
 
 
 ## Declined types
