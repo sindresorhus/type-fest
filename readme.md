@@ -55,9 +55,9 @@ See the [types file](index.d.ts) for complete docs.
 - `Primitive` - Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 - `Class` - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - `TypedArray` - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
-- `JSONObject` - Matches a JSON object.
-- `JSONArray` - Matches a JSON array.
-- `JSONValue` - Matches any valid JSON value.
+- `JsonObject` - Matches a JSON object.
+- `JsonArray` - Matches a JSON array.
+- `JsonValue` - Matches any valid JSON value.
 - `ObservableLike` - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 
 ### Utilities

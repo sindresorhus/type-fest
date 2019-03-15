@@ -36,17 +36,17 @@ export type TypedArray =
 /**
 Matches a JSON object.
 */
-export type JSONObject = {[key: string]: JSONValue};
+export type JsonObject = {[key: string]: JsonValue};
 
 /**
 Matches a JSON array.
 */
-export interface JSONArray extends Array<JSONValue> {} // eslint-disable-line @typescript-eslint/no-empty-interface
+export interface JsonArray extends Array<JsonValue> {} // eslint-disable-line @typescript-eslint/no-empty-interface
 
 /**
 Matches any valid JSON value.
 */
-export type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
+export type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
 
 /**
 Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
