@@ -86,20 +86,23 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
 
 /*
-Create a type that requires at least one of the given keys.
+Create a type that requires at least one of the given properties. The remaining properties are kept as is.
 
 @example
 ```
 import {RequireAtLeastOne} from 'type-fest';
 
-type SystemMessages = {
-	macos?: string;
-	linux?: string;
-	windows?: string;
-	default?: string;
+type Responder = {
+	text?: () => string;
+	json?: () => string;
+
+	secure?: boolean;
 };
 
-const messages: RequireAtLeastOne<SystemMessages, 'macos' | 'linux' | 'windows'> = {macos: 'hey', default: 'hello'};
+const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
+	json: () => '{"message": "ok"}',
+	secure: true
+};
 ```
 */
 export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
