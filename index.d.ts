@@ -1,8 +1,10 @@
+export {PackageJson} from './source/package-json';
+
 // TODO: Add more examples
 
 // TODO: This can just be `export type Primitive = not object` when the `not` keyword is out.
 /**
-[Primitive value type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)
+Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 */
 export type Primitive =
 	| null
@@ -13,12 +15,12 @@ export type Primitive =
 	| symbol;
 
 /**
-[Class type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)
+Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 */
-export type Class<T = unknown> = new(...args: any[]) => T;
+export type Class<T = unknown> = new(...arguments_: any[]) => T;
 
 /**
-[TypedArray type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)
+Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 */
 export type TypedArray =
 	| Int8Array
@@ -31,12 +33,23 @@ export type TypedArray =
 	| Float32Array
 	| Float64Array;
 
-export type JSONObject = {[key: string]: JSONValue};
-export interface JSONArray extends Array<JSONValue> {} // eslint-disable-line @typescript-eslint/no-empty-interface
-export type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
+/**
+Matches a JSON object.
+*/
+export type JsonObject = {[key: string]: JsonValue};
 
 /**
-A value that is like an [Observable](https://github.com/tc39/proposal-observable)
+Matches a JSON array.
+*/
+export interface JsonArray extends Array<JsonValue> {} // eslint-disable-line @typescript-eslint/no-empty-interface
+
+/**
+Matches any valid JSON value.
+*/
+export type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
+
+/**
+Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 */
 export interface ObservableLike {
 	subscribe(observer: (value: unknown) => void): void;
@@ -44,7 +57,7 @@ export interface ObservableLike {
 }
 
 /**
-Create a new type from an object type with certain keys.
+Create a type from an object type without certain keys.
 
 @example
 ```
@@ -59,8 +72,7 @@ type FooWithoutA = Omit<Foo, 'a'>;
 //=> {b: string};
 ```
 
-I'm surprised this one is not built-in. Please open new issues on TypeScript about making it built-in.
-See: https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-420919470
+I'm surprised this one is not built-in. It seems [other people agree](https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-420919470). Please open new issues on TypeScript about making it built-in.
 */
 export type Omit<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectType, Exclude<keyof ObjectType, KeysType>>;
 
@@ -84,6 +96,38 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 ```
 */
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
+
+/**
+Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
+
+Currently, when a union type of a primitive type is combined with literal types, TypeScript loses all information about the combined literals. Thus, when such type is used in an IDE with autocompletion, no suggestions are made for the declared literals.
+
+This type is a workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729). It will be removed as soon as it's not needed anymore.
+
+@example
+```
+import {LiteralUnion} from 'type-fest';
+
+// Before
+
+type Pet = 'dog' | 'cat' | string;
+
+const pet: Pet = '';
+// Start typing in your TypeScript-enabled IDE.
+// You **will not** get auto-completion for `dog` and `cat` literals.
+
+// After
+
+type Pet2 = LiteralUnion<'dog' | 'cat', string>;
+
+const pet: Pet2 = '';
+// You **will** get auto-completion for `dog` and `cat` literals.
+```
+ */
+export type LiteralUnion<
+	LiteralType extends BaseType,
+	BaseType extends Primitive
+> = LiteralType | (BaseType & {_?: never});
 
 /*
 Create a type that requires at least one of the given properties. The remaining properties are kept as is.
