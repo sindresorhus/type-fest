@@ -1,4 +1,4 @@
-import {expectType} from 'tsd-check';
+import {expectType, expectError} from 'tsd-check';
 import {MergeExclusive} from '..';
 
 interface BaseOptions {
@@ -25,5 +25,4 @@ expectType<{option?: string; exclusive1?: string; exclusive2: number}>(
 	exclusiveVariation2
 );
 
-// TODO: Negative tests, waiting for https://github.com/SamVerschueren/tsd-check/issues/2
-// expectError<Options>({exclusive1: true, exclusive2: 1});
+expectError<Options>({exclusive1: true, exclusive2: 1});
