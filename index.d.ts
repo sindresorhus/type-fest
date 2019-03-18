@@ -76,9 +76,6 @@ I'm surprised this one is not built-in. It seems [other people agree](https://gi
 */
 export type Omit<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectType, Exclude<keyof ObjectType, KeysType>>;
 
-// Helper type, not useful on its own
-type Without<FirstType, SecondType> = {[KeyType in Exclude<keyof FirstType, keyof SecondType>]?: never};
-
 /**
 Merge two types into a new type. Keys of the second type overrides keys of the first type.
 
@@ -99,6 +96,9 @@ const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 ```
 */
 export type Merge<FirstType, SecondType> = Omit<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
+
+// Helper type. Not useful on its own.
+type Without<FirstType, SecondType> = {[KeyType in Exclude<keyof FirstType, keyof SecondType>]?: never};
 
 /**
 Create a type that has mutually exclusive properties.
