@@ -157,5 +157,5 @@ export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = ke
 			Required<Pick<ObjectType, Key>>
 		)
 	}[KeysType]
-	// …then, make intersection types by adding the remaining properties to each mapped type
+	// …then, make intersection types by adding the remaining properties to each mapped type.
 	& Omit<ObjectType, KeysType>;
