@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd-check';
+import {expectType} from 'tsd-check';
 import {MergeExclusive} from '..';
 
 interface BaseOptions {
