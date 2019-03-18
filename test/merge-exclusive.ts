@@ -25,4 +25,5 @@ expectType<{option?: string; exclusive1?: string; exclusive2: number}>(
 	exclusiveVariation2
 );
 
-expectError<Options>({exclusive1: true, exclusive2: 1});
+// TODO: Enable when https://github.com/SamVerschueren/tsd-check/pull/16 is fixed
+// expectError<Options>({exclusive1: true, exclusive2: 1});
