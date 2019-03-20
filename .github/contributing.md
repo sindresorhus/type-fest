@@ -3,9 +3,9 @@
 ## Submitting a new type
 
 - One type addition per pull request, unless they are connected.
-- Create a new file in the `test` directory and write at least one type test.
-	- The tool we use for testing doesn't currently support ["expect error"-kinda tests](https://github.com/SamVerschueren/tsd-check/issues/2), but it would be nice if you could include at least one negative test commented-out. [(Example)](https://github.com/sindresorhus/type-fest/pull/6/files#diff-6758bd513790b0134f1b07f6456260dbR28)
-	- You also need to add an import to the test file in the `index.test-d.ts` file.
+- Create a new file in the `test-d` directory and write at least one type test.
+	- See the other tests for inspiration.
+	- If it makes sense, also write a negative test using [`expectError()`](https://github.com/SamVerschueren/tsd#expecterrorfunction).
 - Don't use one-character type names like `T` and `U`. Use descriptive names. See the existing types for inspiration.
 - Write a good documentation comment that includes:
 	- Write a short and clear description of the type does.
