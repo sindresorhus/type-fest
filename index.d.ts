@@ -72,7 +72,7 @@ type FooWithoutA = Omit<Foo, 'a'>;
 //=> {b: string};
 ```
 
-I'm surprised this one is not built-in. It seems [other people agree](https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-420919470). Please open new issues on TypeScript about making it built-in.
+I'm surprised this one is not built-in. It seems [other people agree](https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-420919470). Please 👍 [this issue on TypeScript](https://github.com/Microsoft/TypeScript/issues/30455) about making it built-in.
 */
 export type Omit<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectType, Exclude<keyof ObjectType, KeysType>>;
 
