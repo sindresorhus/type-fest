@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectType, expectError} from 'tsd';
 import {RequireAtLeastOne} from '..';
 
 type SystemMessages = {
@@ -12,19 +12,15 @@ type SystemMessages = {
 };
 
 type ValidMessages = RequireAtLeastOne<SystemMessages, 'macos' | 'linux' | 'windows'>;
-const test = (_: ValidMessages[]): void => {};
+const test = (_: ValidMessages): void => {};
 
-test([
-	{macos: 'hey', default: 'hello'},
-	{linux: 'sup', default: 'hello', optional: 'howdy'},
-	{macos: 'hey', linux: 'sup', windows: 'hi', default: 'hello'}
+test({macos: 'hey', default: 'hello'});
+test({linux: 'sup', default: 'hello', optional: 'howdy'});
+test({macos: 'hey', linux: 'sup', windows: 'hi', default: 'hello'});
 
-	// TODO:
-	// Negative examples:
-	// {},
-	// {macos: 'hey'},
-	// {default: 'hello'}
-]);
+expectError(test({}));
+expectError(test({macos: 'hey'}));
+expectError(test({default: 'hello'}));
 
 declare const atLeastOneWithoutKeys: RequireAtLeastOne<{a: number; b: number}>;
 expectType<{a: number; b?: number} | {a?: number; b: number}>(atLeastOneWithoutKeys);
