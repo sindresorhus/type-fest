@@ -31,6 +31,7 @@
 		"json"
 	],
 	"devDependencies": {
+		"@sindresorhus/tsconfig": "^0.2.1",
 		"@typescript-eslint/eslint-plugin": "^1.4.2",
 		"eslint-config-xo-typescript": "^0.8.0",
 		"tsd": "^0.7.0",
