@@ -48,6 +48,12 @@ Matches any valid JSON value.
 */
 export type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
 
+declare global {
+	interface SymbolConstructor {
+		readonly observable: symbol;
+	}
+}
+
 /**
 Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 */
