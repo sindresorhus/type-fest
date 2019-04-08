@@ -219,11 +219,12 @@ const responder: RequireOnlyOne<Responder, 'text' | 'json'> = {
 };
 ```
 */
-export type RequireOnlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> = Pick<
-	ObjectType,
-	Exclude<keyof ObjectType, KeysType>
-> &
-{
-	[Key in KeysType]-?: Required<Pick<ObjectType, Key>> &
-	Partial<Record<Exclude<KeysType, Key>, undefined>>
-}[KeysType];
+export type RequireOnlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
+	Pick<
+		ObjectType,
+		Exclude<keyof ObjectType, KeysType>
+	> &
+	{
+		[Key in KeysType]-?: Required<Pick<ObjectType, Key>> &
+		Partial<Record<Exclude<KeysType, Key>, undefined>>
+	}[KeysType];
