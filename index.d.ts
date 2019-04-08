@@ -220,8 +220,14 @@ const responder: RequireOnlyOne<Responder, 'text' | 'json'> = {
 ```
 */
 export type RequireOnlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
-	Omit<ObjectType, KeysType> &
 	{
-		[Key in KeysType]: Required<Pick<ObjectType, Key>> &
-		Partial<Record<Exclude<KeysType, Key>, never>>
-	}[KeysType];
+		// For each Key in KeysType make a mapped type
+		[Key in KeysType]: (
+			// …by picking that Key's type and making it required
+			Required<Pick<ObjectType, Key>> &
+			// …and adding the other keys in KeysType as optional and of type `never`
+			Partial<Record<Exclude<KeysType, Key>, never>>
+		)
+	}[KeysType]
+	// …then, make intersection types by adding the remaining properties to each mapped type.
+	& Omit<ObjectType, KeysType>;
