@@ -41,7 +41,7 @@ export type JsonObject = {[key: string]: JsonValue};
 /**
 Matches a JSON array.
 */
-export interface JsonArray extends Array<JsonValue> {} // eslint-disable-line @typescript-eslint/no-empty-interface
+export interface JsonArray extends Array<JsonValue> {}
 
 /**
 Matches any valid JSON value.
