@@ -19,4 +19,4 @@ test([
 ]);
 
 declare const onlyOneWithoutKeys: RequireOnlyOne<{a: number; b: number}>;
-expectType<{a: number;} | {b: number}>(onlyOneWithoutKeys);
+expectType<{a: number} | {b: number}>(onlyOneWithoutKeys);

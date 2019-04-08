@@ -223,7 +223,7 @@ export type RequireOnlyOne<ObjectType, KeysType extends keyof ObjectType = keyof
 	ObjectType,
 	Exclude<keyof ObjectType, KeysType>
 > &
-	{
-		[Key in KeysType]-?: Required<Pick<ObjectType, Key>> &
-			Partial<Record<Exclude<KeysType, Key>, never>>
-	}[KeysType];
+{
+	[Key in KeysType]-?: Required<Pick<ObjectType, Key>> &
+	Partial<Record<Exclude<KeysType, Key>, never>>
+}[KeysType];
