@@ -198,3 +198,32 @@ export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = ke
 	}[KeysType]
 	// …then, make intersection types by adding the remaining properties to each mapped type.
 	& Omit<ObjectType, KeysType>;
+
+/*
+Create a type that requires at only one of the given properties. The remaining properties are kept as is.
+
+@example
+```
+import {RequireOnlyOne} from 'type-fest';
+
+type Responder = {
+	text: () => string;
+	json: () => string;
+
+	secure: boolean;
+};
+
+const responder: RequireOnlyOne<Responder, 'text' | 'json'> = {
+	json: () => '{"message": "ok"}',
+	secure: true
+};
+```
+*/
+export type RequireOnlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> = Pick<
+	ObjectType,
+	Exclude<keyof ObjectType, KeysType>
+> &
+	{
+		[Key in KeysType]-?: Required<Pick<ObjectType, Key>> &
+			Partial<Record<Exclude<KeysType, Key>, never>>
+	}[KeysType];
