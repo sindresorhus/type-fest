@@ -13,18 +13,23 @@ type SystemMessages = {
 
 type ValidMessages = RequireOnlyOne<SystemMessages, 'macos' | 'linux' | 'windows'>;
 const test = (_: ValidMessages): void => {};
-const system = Math.random() > 0.5 ? {macos: 'hey'} : {linux: 'sup'};
 
 test({macos: 'hey', default: 'hello'});
 test({linux: 'sup', default: 'hello'});
 test({windows: 'hi', default: 'hello'});
 test({windows: 'hi', default: 'hello', optional: 'howdy'});
+
+const system = Math.random() > 0.5 ? {macos: 'hey'} : {linux: 'sup'};
 test({default: 'hello', ...system});
 
 expectError(test({}));
 expectError(test({macos: 'hey'}));
 expectError(test({default: 'hello'}));
 expectError(test({macos: 'hey', linux: 'sup', default: 'hello'}));
+expectError(test({macos: 'hey', default: 'hello', unknown: 'hmmm'}));
+
+// const invalidSystem = Math.random() > 0.5 ? {default: 'hello', macos: 'hey', a: 1, b: 3} : {default: 'hello', linux: 'sup', b: 2};
+// expectError(test(invalidSystem));
 
 declare const onlyOneWithoutKeys: RequireOnlyOne<{a: number; b: number}>;
 expectType<{a: number} | {b: number}>(onlyOneWithoutKeys);
