@@ -19,6 +19,9 @@ test({linux: 'sup', default: 'hello'});
 test({windows: 'hi', default: 'hello'});
 test({windows: 'hi', default: 'hello', optional: 'howdy'});
 
+const system = {macos: 'hey'} || {linux: 'sup'};
+test({default: 'hello', ...system});
+
 expectError(test({}));
 expectError(test({macos: 'hey'}));
 expectError(test({default: 'hello'}));
