@@ -20,12 +20,12 @@ test({windows: 'hi', default: 'hello'});
 test({windows: 'hi', default: 'hello', optional: 'howdy'});
 
 const system = {macos: 'hey'} || {linux: 'sup'};
-test({default: 'hello', ...system});
 
 expectError(test({}));
 expectError(test({macos: 'hey'}));
 expectError(test({default: 'hello'}));
 expectError(test({macos: 'hey', linux: 'sup', default: 'hello'}));
+expectError(test({default: 'hello', ...system}));
 
 declare const onlyOneWithoutKeys: RequireOnlyOne<{a: number; b: number}>;
 expectType<{a: number} | {b: number}>(onlyOneWithoutKeys);
