@@ -28,8 +28,11 @@ expectError(test({default: 'hello'}));
 expectError(test({macos: 'hey', linux: 'sup', default: 'hello'}));
 expectError(test({macos: 'hey', default: 'hello', unknown: 'hmmm'}));
 
-// const invalidSystem = Math.random() > 0.5 ? {default: 'hello', macos: 'hey', a: 1, b: 3} : {default: 'hello', linux: 'sup', b: 2};
-// expectError(test(invalidSystem));
+// TODO: Should it eventually be possible to make this negative test pass?
+/*
+const invalidSystem = Math.random() > 0.5 ? {default: 'hello', macos: 'hey', a: 1, b: 3} : {default: 'hello', linux: 'sup', b: 2};
+expectError(test(invalidSystem));
+*/
 
 declare const onlyOneWithoutKeys: RequireOnlyOne<{a: number; b: number}>;
 expectType<{a: number} | {b: number}>(onlyOneWithoutKeys);
