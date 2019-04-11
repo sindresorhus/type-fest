@@ -1,4 +1,3 @@
-import {expectType} from 'tsd';
 import {Mutable} from '..';
 
 type Foo = {
@@ -7,5 +6,6 @@ type Foo = {
 };
 
 const ab: Mutable<Foo> = {a: 1, b: '2'};
-expectType<{a: number; b: string}>(ab);
-expectType<Mutable<Readonly<Foo>>>(ab);
+ab.a = 2;
+const ab2: Mutable<Readonly<Foo>> = ab;
+ab2.a = 2;
