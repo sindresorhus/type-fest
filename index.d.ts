@@ -204,3 +204,23 @@ export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = ke
 	}[KeysType]
 	// …then, make intersection types by adding the remaining properties to each mapped type.
 	& Omit<ObjectType, KeysType>;
+
+/*
+Converts a readonly object into a mutable object. Inverse of Readonly<T>.
+
+@example
+```
+import {Mutable} from 'type-fest';
+
+type Foo = {
+	readonly a: number;
+	readonly b: string;
+};
+
+const mutableFoo: Mutable<Foo> = {a: 1, b: '2'};
+mutableFoo.a = 3;
+```
+*/
+export type Mutable<ObjectType> = {
+	-readonly [KeyType in keyof ObjectType]: ObjectType[KeyType];
+}
