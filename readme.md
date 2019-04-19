@@ -63,6 +63,7 @@ See the [types file](index.d.ts) for complete docs.
 ### Utilities
 
 - `Omit` - Create a type from an object type without certain keys.
+- `Mutable` - Convert an object with `readonly` properties into a mutable object. Inverse of `Readonly<T>`.
 - `Merge` - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - `MergeExclusive` - Create a type that has mutually exclusive properties.
 - `RequireAtLeastOne` - Create a type that requires at least one of the given properties.
