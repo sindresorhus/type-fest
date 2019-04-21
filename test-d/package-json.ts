@@ -10,6 +10,7 @@ expectType<string[] | undefined>(packageJson.keywords);
 expectType<LiteralUnion<'.', string> | undefined>(packageJson.homepage);
 expectType<PackageJson.BugsLocation | undefined>(packageJson.bugs);
 expectType<string | undefined>(packageJson.license);
+// eslint-disable-next-line @typescript-eslint/array-type
 expectType<Array<{type?: string; url?: string}> | undefined>(packageJson.licenses);
 expectType<PackageJson.Person | undefined>(packageJson.author);
 expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
@@ -39,14 +40,14 @@ expectType<{[engineName: string]: string} | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectType<
 	| undefined
-	| Array<LiteralUnion<
+	| Array<LiteralUnion< // eslint-disable-line @typescript-eslint/array-type
 			'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 			string
 	>>
 >(packageJson.os);
 expectType<
 	| undefined
-	| Array<LiteralUnion<
+	| Array<LiteralUnion< // eslint-disable-line @typescript-eslint/array-type
 			'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
 			string
 	>>

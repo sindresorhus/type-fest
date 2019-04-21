@@ -307,6 +307,7 @@ export type PackageJson = {
 	/**
 	The licenses for the package.
 	*/
+	// eslint-disable-next-line @typescript-eslint/array-type
 	licenses?: Array<{
 		type?: string;
 		url?: string;
@@ -420,6 +421,7 @@ export type PackageJson = {
 	/**
 	Operating systems the module runs on.
 	*/
+	// eslint-disable-next-line @typescript-eslint/array-type
 	os?: Array<LiteralUnion<
 		| 'aix'
 		| 'darwin'
@@ -441,6 +443,7 @@ export type PackageJson = {
 	/**
 	CPU architectures the module runs on.
 	*/
+	// eslint-disable-next-line @typescript-eslint/array-type
 	cpu?: Array<LiteralUnion<
 		| 'arm'
 		| 'arm64'
