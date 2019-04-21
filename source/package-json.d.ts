@@ -307,10 +307,10 @@ export type PackageJson = {
 	/**
 	The licenses for the package.
 	*/
-	licenses?: {
+	licenses?: Array<{
 		type?: string;
 		url?: string;
-	}[];
+	}>;
 
 	author?: PackageJson.Person;
 
@@ -420,7 +420,7 @@ export type PackageJson = {
 	/**
 	Operating systems the module runs on.
 	*/
-	os?: LiteralUnion<
+	os?: Array<LiteralUnion<
 		| 'aix'
 		| 'darwin'
 		| 'freebsd'
@@ -436,12 +436,12 @@ export type PackageJson = {
 		| '!sunos'
 		| '!win32',
 		string
-	>[];
+	>>;
 
 	/**
 	CPU architectures the module runs on.
 	*/
-	cpu?: LiteralUnion<
+	cpu?: Array<LiteralUnion<
 		| 'arm'
 		| 'arm64'
 		| 'ia32'
@@ -465,7 +465,7 @@ export type PackageJson = {
 		| '!x32'
 		| '!x64',
 		string
-	>[];
+	>>;
 
 	/**
 	If set to `true`, a warning will be shown if package is installed locally. Useful if the package is primarily a command-line application that should be installed globally.

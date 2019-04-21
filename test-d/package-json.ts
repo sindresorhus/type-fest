@@ -10,7 +10,7 @@ expectType<string[] | undefined>(packageJson.keywords);
 expectType<LiteralUnion<'.', string> | undefined>(packageJson.homepage);
 expectType<PackageJson.BugsLocation | undefined>(packageJson.bugs);
 expectType<string | undefined>(packageJson.license);
-expectType<{type?: string; url?: string}[] | undefined>(packageJson.licenses);
+expectType<Array<{type?: string; url?: string}> | undefined>(packageJson.licenses);
 expectType<PackageJson.Person | undefined>(packageJson.author);
 expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
 expectType<PackageJson.Person[] | undefined>(packageJson.maintainers);
@@ -39,17 +39,17 @@ expectType<{[engineName: string]: string} | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectType<
 	| undefined
-	| LiteralUnion<
+	| Array<LiteralUnion<
 			'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 			string
-	>[]
+	>>
 >(packageJson.os);
 expectType<
 	| undefined
-	| LiteralUnion<
+	| Array<LiteralUnion<
 			'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
 			string
-	>[]
+	>>
 >(packageJson.cpu);
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
