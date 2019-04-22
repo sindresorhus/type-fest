@@ -114,6 +114,38 @@ There are many advanced types most users don't know about.
 	</details>
 
 - [`Required<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1408-L1413) - Make all properties in `T` required.
+
+	<details><summary>Example</summary>
+	<p>
+
+	```ts
+	interface FindPhotosQueryParams {
+		searchQuery?: string;
+		sort?: "relevance" | "rating" | "upload-date";
+		sortOrder?: "asc" | "desc";
+	}
+
+	const { searchQuery = "", sort = "relevance", sortOrder = "desc" } = parseQuery<FindPhotosQueryParams>(location.search);
+	findPhotos({ searchQuery, sort, sortOrder });
+
+	// Takes URL's search query and returns object.
+	function parseQuery<R extends object = object>(query: string): R {
+		const result = {};
+		new URLSearchParams(query).forEach((value, key) => {
+			result[key] = value;
+		});
+		return result as R;
+	}
+
+	// Sends GET request to API and returns Promise with found photos.
+	function findPhotos(data: Required<FindPhotosQueryParams>) {
+		return fetch("/api/find_videos", { body: JSON.stringify(data) });
+	}
+	```
+
+	</p>
+	</details>
+
 - [`Readonly<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1415-L1420) - Make all properties in `T` readonly.
 - [`Pick<T, K>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1422-L1427) - From `T`, pick a set of properties whose keys are in the union `K`.
 - [`Record<K, T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1429-L1434) - Construct a type with a set of properties `K` of type `T`.
