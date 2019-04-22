@@ -125,18 +125,18 @@ There are many advanced types most users don't know about.
 		sortOrder?: "asc" | "desc";
 	}
 
-	const { searchQuery = "", sort = "relevance", sortOrder = "desc" } = parseQuery<FindPhotosQueryParams>(location.search);
+	const { searchQuery = "", sort = "relevance", sortOrder = "desc" } = parseQuery(location.search) as FindPhotosQueryParams;
 	findPhotos({ searchQuery, sort, sortOrder });
 
 	// Takes URL's search query and returns object.
-	function parseQuery<R extends object = object>(query: string): R {
+	function parseQuery(query: string): object {
 		const result = {};
 
 		new URLSearchParams(query).forEach((value, key) => {
 			result[key] = value;
 		});
 
-		return result as R;
+		return result;
 	}
 
 	// Sends GET request to API and returns Promise with found photos.
