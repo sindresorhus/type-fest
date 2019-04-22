@@ -131,9 +131,11 @@ There are many advanced types most users don't know about.
 	// Takes URL's search query and returns object.
 	function parseQuery<R extends object = object>(query: string): R {
 		const result = {};
+
 		new URLSearchParams(query).forEach((value, key) => {
 			result[key] = value;
 		});
+
 		return result as R;
 	}
 
@@ -148,6 +150,36 @@ There are many advanced types most users don't know about.
 
 - [`Readonly<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1415-L1420) - Make all properties in `T` readonly.
 - [`Pick<T, K>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1422-L1427) - From `T`, pick a set of properties whose keys are in the union `K`.
+
+	<details><summary>Example</summary>
+	<p>
+
+	```ts
+	// Creates an object composed of the picked object properties.
+	function pick<T extends object, K extends keyof T>(source: T, keys: K[]): Pick<T, K> {
+		const result = {} as Partial<Pick<T, K>>;
+
+		keys.forEach((key) => {
+			result[key] = source[key];
+		})
+
+		return result as Pick<T, K>;
+	}
+
+	const todo = {
+		title: 'organize desk',
+		description: 'clear clutter',
+		completed: false
+	};
+
+	const previewTodo = pick(todo, ["title", "completed"]);
+	previewTodo.description; // Property 'description' does not exist on type 'Pick<{ title: string; description: string; completed: boolean; }, "title" | "completed">'.
+	```
+
+	</p>
+	</details>
+
+
 - [`Record<K, T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1429-L1434) - Construct a type with a set of properties `K` of type `T`.
 - [`Exclude<T, U>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1436-L1439) - Exclude from `T` those types that are assignable to `U`.
 - [`Extract<T, U>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1441-L1444) - Extract from `T` those types that are assignable to `U`.
