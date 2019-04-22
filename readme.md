@@ -187,6 +187,29 @@ There are many advanced types most users don't know about.
 - [`Parameters<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1451-L1454) - Obtain the parameters of a function type in a tuple.
 - [`ConstructorParameters<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1456-L1459) - Obtain the parameters of a constructor function type in a tuple.
 - [`ReturnType<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1461-L1464) – Obtain the return type of a function type.
+
+	<details><summary>Example</summary>
+	<p>
+
+	```ts
+	function map<F extends (currentValue: T, index?: number) => any, T>(array: T[], callback: F): ReturnType<F>[] {
+		const result = [];
+
+		for (let index = 0; index < array.length; index++) {
+			result.push(callback(array[index], index));
+		}
+
+		return result;
+	}
+
+	const users = [{ name: "Alice", age: 42 }, { name: "Bob", age: 37 }];
+
+	const userNames = map(users, (user) => user.name); // string[];
+	```
+
+	</p>
+	</details>
+
 - [`InstanceType<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1466-L1469) – Obtain the instance type of a constructor function type.
 
 You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/advanced-types.html#predefined-conditional-types).
