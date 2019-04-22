@@ -1,3 +1,5 @@
+import {Primitive} from './basic';
+
 /**
 Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
 
