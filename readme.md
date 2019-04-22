@@ -86,6 +86,33 @@ Click the type names for complete docs.
 There are many advanced types most users don't know about.
 
 - [`Partial<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1401-L1406) - Make all properties in `T` optional.
+
+	<details><summary>Example</summary>
+	<p>
+
+	```ts
+	interface Todo {
+		title: string;
+		description: string;
+	}
+
+	function updateTodo(todo: Todo, fieldsToUpdate: Partial<Todo>) {
+		return { ...todo, ...fieldsToUpdate };
+	}
+
+	const todo1 = {
+		title: 'organize desk',
+		description: 'clear clutter',
+	};
+
+	const todo2 = updateTodo(todo1, {
+		description: 'throw out trash',
+	});
+	```
+
+	</p>
+	</details>
+
 - [`Required<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1408-L1413) - Make all properties in `T` required.
 - [`Readonly<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1415-L1420) - Make all properties in `T` readonly.
 - [`Pick<T, K>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1422-L1427) - From `T`, pick a set of properties whose keys are in the union `K`.
