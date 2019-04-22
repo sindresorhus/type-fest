@@ -40,14 +40,14 @@ expectType<{[engineName: string]: string} | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectType<
 	| undefined
-	| Array<LiteralUnion< // eslint-disable-line @typescript-eslint/array-type
+	| Array<LiteralUnion<
 			'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 			string
 	>>
 >(packageJson.os);
 expectType<
 	| undefined
-	| Array<LiteralUnion< // eslint-disable-line @typescript-eslint/array-type
+	| Array<LiteralUnion<
 			'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
 			string
 	>>
