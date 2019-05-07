@@ -5,6 +5,8 @@ Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their properties/elem
 
 This is useful when a deeply nested structure needs to be exposed as completely immutable, for example, an imported JSON module or when receiving an API response that is passed around.
 
+Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/13923) if you want to have this type as a built-in in TypeScript.
+
 @example
 ```
 // data.json
