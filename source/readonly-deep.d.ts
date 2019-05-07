@@ -3,7 +3,7 @@ import {Primitive} from './basic';
 /**
 Convert `object`s, `Map`s, `Set`s, and `Array`s into immutable stuctures recursively. Converts all properties/contents into immutable structures recusively.
 
-This is useful when a deeply nested structure needs to be exposed as completely immutable, like for example an imported JSON module.
+This is useful when a deeply nested structure needs to be exposed as completely immutable, for example, an imported JSON module.
 
 @example
 ```
