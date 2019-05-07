@@ -78,6 +78,8 @@ Click the type names for complete docs.
 
 *If we decline a type addition, we will make sure to document the better solution here.*
 
+- [`Diff` and `Spread`](https://github.com/sindresorhus/type-fest/pull/7) - The PR author didn't provide any real-world use-cases and the PR went stale. If you think this type is useful, provide some real-world use-cases and we might reconsider.
+
 
 ## Tips
 
