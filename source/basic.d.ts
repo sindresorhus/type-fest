@@ -8,7 +8,8 @@ export type Primitive =
 	| string
 	| number
 	| boolean
-	| symbol;
+	| symbol
+	| bigint;
 
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
@@ -27,7 +28,9 @@ export type TypedArray =
 	| Int32Array
 	| Uint32Array
 	| Float32Array
-	| Float64Array;
+	| Float64Array
+	| BigInt64Array
+	| BigUint64Array;
 
 /**
 Matches a JSON object.

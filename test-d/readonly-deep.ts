@@ -18,7 +18,7 @@ const data = {
 	tuple: ['foo'] as ['foo'],
 	readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
 	readonlySet: new Set<string>() as ReadonlySet<string>,
-	readonlyArray: ['foo'] as ReadonlyArray<string>,
+	readonlyArray: ['foo'] as readonly string[],
 	readonlyTuple: ['foo'] as const
 };
 
