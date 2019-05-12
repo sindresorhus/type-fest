@@ -19,4 +19,4 @@ mutableFoo.a = 3;
 export type Mutable<ObjectType> = {
 	// For each `Key` in the keys of `ObjectType`, make a mapped type by removing the `readonly` modifier from the property.
 	-readonly [KeyType in keyof ObjectType]: ObjectType[KeyType];
-}
+};

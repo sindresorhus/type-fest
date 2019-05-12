@@ -32,9 +32,9 @@
 	],
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^0.3.0",
-		"@typescript-eslint/eslint-plugin": "^1.5.0",
-		"eslint-config-xo-typescript": "^0.10.0",
-		"tsd": "^0.7.2",
+		"@typescript-eslint/eslint-plugin": "^1.8.0",
+		"eslint-config-xo-typescript": "^0.11.0",
+		"tsd": "^0.7.3",
 		"xo": "^0.24.0"
 	},
 	"xo": {

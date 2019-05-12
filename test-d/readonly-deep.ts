@@ -26,7 +26,7 @@ const readonlyData: ReadonlyDeep<typeof data> = data;
 
 readonlyData.fn('foo');
 
-expectError((readonlyData.string = 'bar'));
+expectError(readonlyData.string = 'bar');
 expectType<{readonly foo: string}>(readonlyData.object);
 expectType<string>(readonlyData.string);
 expectType<number>(readonlyData.number);
