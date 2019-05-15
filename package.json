@@ -37,6 +37,9 @@
 		"tsd": "^0.7.3",
 		"xo": "^0.24.0"
 	},
+	"peerDependencies": {
+		"typescript": ">=3.2"
+	},
 	"xo": {
 		"extends": "xo-typescript",
 		"extensions": [
