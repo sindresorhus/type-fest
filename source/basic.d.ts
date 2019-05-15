@@ -1,3 +1,5 @@
+/// <reference lib="esnext"/>
+
 // TODO: This can just be `export type Primitive = not object` when the `not` keyword is out.
 /**
 Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
