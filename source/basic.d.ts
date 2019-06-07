@@ -13,6 +13,7 @@ export type Primitive =
 	| symbol
 	| bigint;
 
+// TODO: Remove the `= unknown` sometime  in the future when most users are on TS 3.5 as it's now the default
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 */
