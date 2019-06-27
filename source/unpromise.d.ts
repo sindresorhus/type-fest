@@ -7,4 +7,4 @@ type A = Promise<string>;
 type InnerType = Unpromise<A>; // string
 ```
 */
-export type Unpromise<T> = T extends Promise<infer Type> ? Type : T;
+export type Unpromise<MaybePromise> = MaybePromise extends Promise<infer Type> ? Type : MaybePromise;
