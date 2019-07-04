@@ -8,7 +8,7 @@ import {PartialDeep} from 'type-fest';
 interface Baz {
     qux: string;
     corge: {
-        waldo: Array<number>;
+        waldo: number[];
         fred: string;
     };
 }
