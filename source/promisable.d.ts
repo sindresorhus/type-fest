@@ -1,5 +1,5 @@
 /**
-Create a type for values that can either be a promise or it's return value.
+Create a type that represents either the value or the value wrapped in `PromiseLike`.
 
 Use-cases:
 - A function accepts a callback that may either return a value synchronously or may return a promised value.
