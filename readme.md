@@ -36,14 +36,14 @@ $ npm install type-fest
 ## Usage
 
 ```ts
-import {Omit} from 'type-fest';
+import {Except} from 'type-fest';
 
 type Foo = {
 	unicorn: string;
 	rainbow: boolean;
 };
 
-type FooWithoutRainbow = Omit<Foo, 'rainbow'>;
+type FooWithoutRainbow = Except<Foo, 'rainbow'>;
 //=> {unicorn: string}
 ```
 
@@ -64,7 +64,7 @@ Click the type names for complete docs.
 
 ### Utilities
 
-- [`Omit`](source/omit.d.ts) - Create a type from an object type without certain keys.
+- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type).
 - [`Mutable`](source/mutable.d.ts) - Convert an object with `readonly` properties into a mutable object. Inverse of `Readonly<T>`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive properties.

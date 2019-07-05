@@ -2,7 +2,7 @@
 export * from './source/basic';
 
 // Utilities
-export {Omit} from './source/omit';
+export {Except} from './source/except';
 export {Mutable} from './source/mutable';
 export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';

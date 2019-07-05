@@ -1,4 +1,4 @@
-import {Omit} from './omit';
+import {Except} from './except';
 
 /**
 Create a type that requires at least one of the given properties. The remaining properties are kept as is.
@@ -29,4 +29,4 @@ export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = ke
 		)
 	}[KeysType]
 	// …then, make intersection types by adding the remaining properties to each mapped type.
-	& Omit<ObjectType, KeysType>;
+	& Except<ObjectType, KeysType>;
