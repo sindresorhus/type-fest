@@ -1,28 +1,32 @@
 import {expectError, expectType} from 'tsd';
 import {PartialDeep} from '..';
 
-type Foo = {
-    baz: string;
-    bar: {
-        waldo: number[];
-        fred: string;
-        qux: {
-            corge: number;
-        };
-    };
+const foo = {
+    baz: 'fred',
+	bar: {
+        object: {key: 'value'},
+        string: 'waldo',
+        number: 1,
+        boolean: false,
+        symbol: Symbol('test'),
+        null: null,
+        undefined: undefined, // eslint-disable-line object-shorthand
+        map: new Map<string, string>(),
+        set: new Set<string>(),
+        array: ['foo']
+	}
 };
 
-type PartialDeepFoo = {
-    baz?: string;
-    bar?: {
-        waldo?: number[];
-        fred?: string;
-        qux?: {
-            corge?: number;
-        };
-    };
-};
+const partialDeepFoo: PartialDeep<typeof foo> = foo;
 
-const partialDeep: PartialDeep<Foo> = {bar: {fred: 'thump'}};
-expectType<PartialDeepFoo>(partialDeep);
-expectError(expectType<Partial<Foo>>(partialDeep));
+expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
+expectType<object | undefined>(partialDeepFoo.bar!.object);
+expectType<string | undefined>(partialDeepFoo.bar!.string);
+expectType<number | undefined>(partialDeepFoo.bar!.number);
+expectType<boolean | undefined>(partialDeepFoo.bar!.boolean);
+expectType<symbol | undefined>(partialDeepFoo.bar!.symbol);
+expectType<null | undefined>(partialDeepFoo.bar!.null);
+expectType<undefined>(partialDeepFoo.bar!.undefined);
+expectType<Map<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.map);
+expectType<Set<string | undefined> | undefined>(partialDeepFoo.bar!.set);
+expectType<string[] | undefined>(partialDeepFoo.bar!.array);
