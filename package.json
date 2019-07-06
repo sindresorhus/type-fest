@@ -28,7 +28,8 @@
 		"utilities",
 		"omit",
 		"merge",
-		"json"
+		"json",
+		"stringified"
 	],
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^0.4.0",
