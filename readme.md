@@ -36,14 +36,14 @@ $ npm install type-fest
 ## Usage
 
 ```ts
-import {Omit} from 'type-fest';
+import {Except} from 'type-fest';
 
 type Foo = {
 	unicorn: string;
 	rainbow: boolean;
 };
 
-type FooWithoutRainbow = Omit<Foo, 'rainbow'>;
+type FooWithoutRainbow = Except<Foo, 'rainbow'>;
 //=> {unicorn: string}
 ```
 
@@ -64,7 +64,7 @@ Click the type names for complete docs.
 
 ### Utilities
 
-- [`Omit`](source/omit.d.ts) - Create a type from an object type without certain keys.
+- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type).
 - [`Mutable`](source/mutable.d.ts) - Convert an object with `readonly` properties into a mutable object. Inverse of `Readonly<T>`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive properties.
@@ -72,6 +72,7 @@ Click the type names for complete docs.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of a `object`/`Map`/`Set`/`Array` type.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Stringified`](source/stringified.d.ts) - Create a stringified type of an object
+- [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
 
 ### Miscellaneous
 
