@@ -6,6 +6,7 @@ export {Except} from './source/except';
 export {Mutable} from './source/mutable';
 export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';
+export {Require} from './source/require';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
