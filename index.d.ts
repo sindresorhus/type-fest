@@ -10,6 +10,7 @@ export {Require} from './source/require';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
+export {Optionalize} from './source/optionalize';
 export {Promisable} from './source/promisable';
 
 // Miscellaneous
