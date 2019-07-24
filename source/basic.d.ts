@@ -70,4 +70,4 @@ export interface ObservableLike {
 Creates an opaque type, which hides it's internal details from the public, and can only be created by
 used explicitly.
  */
-type Opaque<V> = V & { readonly __opq__: unique symbol };
+type Opaque<Type> = Type & { readonly __opq__: unique symbol };
