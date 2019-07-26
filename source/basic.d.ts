@@ -69,5 +69,13 @@ export interface ObservableLike {
 /**
 Creates an opaque type, which hides it's internal details from the public, and can only be created by
 used explicitly.
+
+Read more about opaque types here, this link also includes an example that shows how they can be useful:
+  <https://codemix.com/opaque-types-in-javascript/>
+  
+There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similiar to how Flow
+does it. Unfortunately, nothing has (yet) moved forward:
+  <https://github.com/Microsoft/TypeScript/issues/15408>
+  <https://github.com/Microsoft/TypeScript/issues/15807>
  */
 type Opaque<Type> = Type & { readonly __opq__: unique symbol };
