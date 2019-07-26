@@ -77,5 +77,7 @@ There have been several discussions about adding this feature to TypeScript via 
 does it. Unfortunately, nothing has (yet) moved forward:
   <https://github.com/Microsoft/TypeScript/issues/15408>
   <https://github.com/Microsoft/TypeScript/issues/15807>
+  
+ Please note that the Type can be anything. It doesn't have to be an object.
  */
 type Opaque<Type> = Type & { readonly __opq__: unique symbol };
