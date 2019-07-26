@@ -1,8 +1,8 @@
 import {expectType, expectError} from 'tsd';
-import {Stringified} from '../index.d';
+import {Stringified} from '..';
 
-declare const stringified: Stringified<{ a: number; b: string }>;
-expectType<{ a: string; b: string }>(stringified);
+declare const stringified: Stringified<{a: number; b: string}>;
+expectType<{a: string; b: string}>(stringified);
 
 type Car = {
 	engine: string;
