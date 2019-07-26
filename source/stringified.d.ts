@@ -17,4 +17,4 @@ type StringifiedFoo = Stringified<Foo>;
 };
 ```
 */
-export type Stringified<ObjectType> = { [KeyType in keyof ObjectType]: string; };
+export type Stringified<ObjectType> = {[KeyType in keyof ObjectType]: string};
