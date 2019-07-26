@@ -72,12 +72,12 @@ used explicitly.
 
 Read more about opaque types here, this link also includes an example that shows how they can be useful:
   <https://codemix.com/opaque-types-in-javascript/>
-  
-There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similiar to how Flow
+
+There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similar to how Flow
 does it. Unfortunately, nothing has (yet) moved forward:
   <https://github.com/Microsoft/TypeScript/issues/15408>
   <https://github.com/Microsoft/TypeScript/issues/15807>
-  
+
  Please note that the Type can be anything. It doesn't have to be an object.
  */
 type Opaque<Type> = Type & { readonly __opq__: unique symbol };
