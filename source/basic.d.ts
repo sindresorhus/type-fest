@@ -67,17 +67,43 @@ export interface ObservableLike {
 }
 
 /**
-Creates an opaque type, which hides it's internal details from the public, and can only be created by
-used explicitly.
+Creates an opaque type, which hides its internal details from the public, and can only be created by being used explicitly.
 
 Read more about opaque types here, this link also includes an example that shows how they can be useful:
-  <https://codemix.com/opaque-types-in-javascript/>
+  [Codemix](https://codemix.com/opaque-types-in-javascript/)
 
-There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similar to how Flow
-does it. Unfortunately, nothing has (yet) moved forward:
-  <https://github.com/Microsoft/TypeScript/issues/15408>
-  <https://github.com/Microsoft/TypeScript/issues/15807>
+There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similar to how Flow does it. Unfortunately, nothing has (yet) moved forward:
+  1. [](https://github.com/Microsoft/TypeScript/issues/15408)
+  2. [](https://github.com/Microsoft/TypeScript/issues/15807)
 
- Please note that the Type can be anything. It doesn't have to be an object.
+Please note that the type (the `Type` parameter) can be anything. It doesn't have to be an object.
+
+@example
+```ts
+import {Opaque} from 'type-fest';
+
+type AccountNumber = Opaque<number>;
+type AccountBalance = Opaque<number>;
+
+function createAccountNumber (): AccountNumber {
+  return 2 as AccountNumber;
+}
+
+function getMoneyForAccount (accountNumber: AccountNumber): AccountBalance {
+  return 4 as AccountBalance;
+}
+
+// This will compile successfully:
+getMoneyForAccount(createAccountNumber());
+
+// But this won't, because it has to be explicitly passed as an AccountNumber.
+getMoneyForAccount(2);
+
+// You can use opaque values like they aren't opaque, too, like this:
+const accountNumber = createAccountNumber();
+
+// This will compile successfully:
+accountNumber + 2;
+```
  */
 type Opaque<Type> = Type & {readonly __opaque__: unique symbol};
