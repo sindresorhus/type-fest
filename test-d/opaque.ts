@@ -1,5 +1,5 @@
-import { Opaque } from '..';
-import { expectType } from 'tsd';
+import {expectType} from 'tsd';
+import {Opaque} from '..';
 
 // In here, we test opaque types. If you don't understand them, this code should help you understand the concepts behind using an opaque type.
 type Value = Opaque<number>;
