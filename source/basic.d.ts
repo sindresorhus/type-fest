@@ -80,4 +80,4 @@ does it. Unfortunately, nothing has (yet) moved forward:
 
  Please note that the Type can be anything. It doesn't have to be an object.
  */
-type Opaque<Type> = Type & { readonly __opq__: unique symbol };
+type Opaque<Type> = Type & {readonly __opaque__: unique symbol};
