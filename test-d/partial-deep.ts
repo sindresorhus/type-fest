@@ -2,18 +2,18 @@ import {expectError, expectType} from 'tsd';
 import {PartialDeep} from '..';
 
 const foo = {
-    baz: 'fred',
+	baz: 'fred',
 	bar: {
-        object: {key: 'value'},
-        string: 'waldo',
-        number: 1,
-        boolean: false,
-        symbol: Symbol('test'),
-        null: null,
-        undefined: undefined, // eslint-disable-line object-shorthand
-        map: new Map<string, string>(),
-        set: new Set<string>(),
-        array: ['foo']
+		object: {key: 'value'},
+		string: 'waldo',
+		number: 1,
+		boolean: false,
+		symbol: Symbol('test'),
+		null: null,
+		undefined: undefined, // eslint-disable-line object-shorthand
+		map: new Map<string, string>(),
+		set: new Set<string>(),
+		array: ['foo']
 	}
 };
 

@@ -9,30 +9,34 @@ Use cases:
 ```
 import {PartialDeep} from 'type-fest';
 
-interface Baz {
-    qux: string;
-    corge: {
-        waldo: number[];
-        fred: string;
-    };
+const settings: Settings = {
+	textEditor: {
+		fontSize: 14;
+		fontColor: '#000000';
+		fontWeight: 400;
+	}
+	autocomplete: false;
+	autosave: true;
+};
+
+const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
+	return {...settings, ...savedSettings};
 }
 
-function foo(bar: PartialDeep<Baz>) { }
-
-foo({ corge: { waldo: [ 1, 2 ] } });
+settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 */
 export type PartialDeep<T> = {
-    [KeyType in keyof T]?:
-        T[KeyType] extends Map<infer MapKeyType, infer MapValueType>
-        ? PartialMap<MapKeyType, MapValueType>
-        : T[KeyType] extends Set<infer SetType>
-        ? PartialSet<SetType>
-        : T[KeyType] extends Array<infer ArrayType>
-        ? Array<PartialDeep<ArrayType>>
-        : T[KeyType] extends ReadonlyArray<infer ReadonlyArrayType>
-        ? ReadonlyArray<PartialDeep<ReadonlyArrayType>>
-        : PartialDeep<T[KeyType]>;
+	[KeyType in keyof T]?:
+		T[KeyType] extends Map<infer MapKeyType, infer MapValueType>
+		? PartialMap<MapKeyType, MapValueType>
+		: T[KeyType] extends Set<infer SetType>
+		? PartialSet<SetType>
+		: T[KeyType] extends Array<infer ArrayType>
+		? Array<PartialDeep<ArrayType>>
+		: T[KeyType] extends ReadonlyArray<infer ReadonlyArrayType>
+		? ReadonlyArray<PartialDeep<ReadonlyArrayType>>
+		: PartialDeep<T[KeyType]>;
 };
 
 /**
