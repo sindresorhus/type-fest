@@ -86,7 +86,7 @@ type AccountNumber = Opaque<number>;
 type AccountBalance = Opaque<number>;
 
 function createAccountNumber(): AccountNumber {
-  return 2 as AccountNumber;
+	return 2 as AccountNumber;
 }
 
 function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
