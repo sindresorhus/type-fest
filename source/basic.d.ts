@@ -76,7 +76,7 @@ There have been several discussions about adding this feature to TypeScript via 
   1. [](https://github.com/Microsoft/TypeScript/issues/15408)
   2. [](https://github.com/Microsoft/TypeScript/issues/15807)
 
-Please note that the type (the `Type` parameter) can be anything. It doesn't have to be an object.
+Please note that the generic type parameter in the `OpaqueType` type can be anything. It doesn't have to be an object.
 
 @example
 ```ts
