@@ -79,7 +79,7 @@ There have been several discussions about adding this feature to TypeScript via 
 Please note that the generic type parameter in the `OpaqueType` type can be anything. It doesn't have to be an object.
 
 @example
-```ts
+```
 import {Opaque} from 'type-fest';
 
 type AccountNumber = Opaque<number>;
