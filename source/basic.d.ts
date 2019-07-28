@@ -89,7 +89,7 @@ function createAccountNumber(): AccountNumber {
   return 2 as AccountNumber;
 }
 
-function getMoneyForAccount (accountNumber: AccountNumber): AccountBalance {
+function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
   return 4 as AccountBalance;
 }
 
