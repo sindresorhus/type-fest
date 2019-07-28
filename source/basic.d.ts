@@ -85,7 +85,7 @@ import {Opaque} from 'type-fest';
 type AccountNumber = Opaque<number>;
 type AccountBalance = Opaque<number>;
 
-function createAccountNumber (): AccountNumber {
+function createAccountNumber(): AccountNumber {
   return 2 as AccountNumber;
 }
 
