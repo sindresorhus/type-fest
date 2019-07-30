@@ -2,7 +2,7 @@ import {expectType, expectError} from 'tsd';
 import {RequireOne} from '..';
 
 type SystemMessages = {
-    default: string;
+	default: string;
 
 	macos: string;
 	linux: string;
