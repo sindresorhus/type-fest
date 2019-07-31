@@ -1,5 +1,5 @@
 /**
-Create a type that requires only one of the given properties, but not more. The remaining properties are kept as is.
+Create a type that requires exactly one of the given properties, but not more. The remaining properties are kept as is.
 
 Use cases:
 - Creating interfaces for components that only need one of the properties to display properly.
