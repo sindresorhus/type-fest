@@ -61,7 +61,6 @@ Click the type names for complete docs.
 - [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
 - [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
 - [`ObservableLike`](source/basic.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
-- [`Opaque`](source/basic.d.ts) - Creates an [opaque type](https://codemix.com/opaque-types-in-javascript/).
 
 ### Utilities
 
@@ -73,6 +72,7 @@ Click the type names for complete docs.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of a `object`/`Map`/`Set`/`Array` type.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
+- [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
 
 ### Miscellaneous
 

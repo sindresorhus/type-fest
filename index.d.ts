@@ -10,6 +10,7 @@ export {RequireAtLeastOne} from './source/require-at-least-one';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
+export {Opaque} from './source/opaque';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
