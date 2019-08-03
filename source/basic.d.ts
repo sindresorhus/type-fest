@@ -69,14 +69,13 @@ export interface ObservableLike {
 /**
 Creates an opaque type, which hides its internal details from the public, and can only be created by being used explicitly.
 
-Read more about opaque types here, this link also includes an example that shows how they can be useful:
-  [Codemix](https://codemix.com/opaque-types-in-javascript/)
+The generic type parameter can be anything. It doesn't have to be an object.
+
+Read more about opaque types [here](https://codemix.com/opaque-types-in-javascript/).
 
 There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similar to how Flow does it. Unfortunately, nothing has (yet) moved forward:
-  1. [](https://github.com/Microsoft/TypeScript/issues/15408)
-  2. [](https://github.com/Microsoft/TypeScript/issues/15807)
-
-Please note that the generic type parameter in the `OpaqueType` type can be anything. It doesn't have to be an object.
+	1. [](https://github.com/Microsoft/TypeScript/issues/15408)
+	2. [](https://github.com/Microsoft/TypeScript/issues/15807)
 
 @example
 ```
@@ -99,7 +98,7 @@ getMoneyForAccount(createAccountNumber());
 // But this won't, because it has to be explicitly passed as an AccountNumber.
 getMoneyForAccount(2);
 
-// You can use opaque values like they aren't opaque, too, like this:
+// You can use opaque values like they aren't opaque too, like this:
 const accountNumber = createAccountNumber();
 
 // This will compile successfully:
