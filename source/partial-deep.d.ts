@@ -3,7 +3,7 @@ Create a type from another type with all properties and nested properties set to
 
 Use cases:
 - Merging a default settings/config object with another object, the second object would be a deep partial of the default object.
-- Mocking and testing complex entities, where populating an entire object with it's properties would be redundant in terms of the mock or test.
+- Mocking and testing complex entities, where populating an entire object with its properties would be redundant in terms of the mock or test.
 
 @example
 ```
