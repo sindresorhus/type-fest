@@ -1,5 +1,5 @@
 /**
-Create a type from another type with all properties set to optional and the nested properties of all properties set to optional.
+Create a type from another type with all properties and nested properties set to optional.
 
 Use cases:
 - Merging a default settings/config object with another object, the second object would be a deep partial of the default object.
