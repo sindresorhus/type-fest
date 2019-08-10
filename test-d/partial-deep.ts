@@ -4,6 +4,7 @@ import {PartialDeep} from '..';
 const foo = {
 	baz: 'fred',
 	bar: {
+		function: (_) => {},
 		object: {key: 'value'},
 		string: 'waldo',
 		number: 1,
@@ -13,13 +14,22 @@ const foo = {
 		undefined: undefined, // eslint-disable-line object-shorthand
 		map: new Map<string, string>(),
 		set: new Set<string>(),
-		array: ['foo']
+		array: ['foo'],
+		tuple: ['foo'] as ['foo'],
+		readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
+		readonlySet: new Set<string>() as ReadonlySet<string>,
+		readonlyArray: ['foo'] as readonly string[],
+		readonlyTuple: ['foo'] as const
 	}
 };
 
 const partialDeepFoo: PartialDeep<typeof foo> = foo;
 
+/**
+this negative test should pass
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
+ */
+expectType<Function | undefined>(partialDeepFoo.bar!.function);
 expectType<object | undefined>(partialDeepFoo.bar!.object);
 expectType<string | undefined>(partialDeepFoo.bar!.string);
 expectType<number | undefined>(partialDeepFoo.bar!.number);
@@ -30,3 +40,8 @@ expectType<undefined>(partialDeepFoo.bar!.undefined);
 expectType<Map<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.map);
 expectType<Set<string | undefined> | undefined>(partialDeepFoo.bar!.set);
 expectType<string[] | undefined>(partialDeepFoo.bar!.array);
+expectType<['foo'] | undefined>(partialDeepFoo.bar!.tuple);
+expectType<ReadonlyMap<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.readonlyMap);
+expectType<ReadonlySet<string | undefined> | undefined>(partialDeepFoo.bar!.readonlySet);
+expectType<readonly string[] | undefined>(partialDeepFoo.bar!.readonlyArray);
+expectType<readonly ['foo'] | undefined>(partialDeepFoo.bar!.readonlyTuple);

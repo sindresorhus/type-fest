@@ -26,25 +26,29 @@ const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 */
-export type PartialDeep<T> = {
-	[KeyType in keyof T]?:
-		T[KeyType] extends Map<infer MapKeyType, infer MapValueType>
-		? PartialMap<MapKeyType, MapValueType>
-		: T[KeyType] extends Set<infer SetType>
-		? PartialSet<SetType>
-		: T[KeyType] extends Array<infer ArrayType>
-		? Array<PartialDeep<ArrayType>>
-		: T[KeyType] extends ReadonlyArray<infer ReadonlyArrayType>
-		? ReadonlyArray<PartialDeep<ReadonlyArrayType>>
-		: PartialDeep<T[KeyType]>;
-};
+export type PartialDeep<T> = T extends Primitive | ((...arguments: any[]) => unknown)
+	? Partial<T>
+	: T extends PartialMap<infer KeyType, infer ValueType>
+	? PartialMapDeep<KeyType, ValueType>
+	: T extends PartialSet<infer ItemType>
+	? PartialSetDeep<ItemType>
+	: T extends object
+	? PartialObjectDeep<T>
+	: unknown;
 
 /**
-Same as `PartialDeep`, but accepts only `Map`s as inputs. Internal helper for `PartialDeep`.
+Same as `PartialDeep`, but accepts only `Map`s and  as inputs. Internal helper for `PartialDeep`.
 */
-interface PartialMap<KeyType, ValueType> extends Map<PartialDeep<KeyType>, PartialDeep<ValueType>> {}
+interface PartialMapDeep<KeyType, ValueType> extends Map<PartialDeep<KeyType>, PartialDeep<ValueType>> {}
 
 /**
 Same as `PartialDeep`, but accepts only `Set`s as inputs. Internal helper for `PartialDeep`.
 */
-interface PartialSet<T> extends Set<PartialDeep<T>> {}
+interface PartialSetDeep<T> extends Set<PartialDeep<T>> {}
+
+/**
+Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.
+*/
+type PartialObjectDeep<ObjectType extends object> = {
+	readonly [PropertyType in keyof ObjectType]: PartialDeep<ObjectType[PropertyType]>
+};
