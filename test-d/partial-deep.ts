@@ -1,10 +1,10 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import {PartialDeep} from '..';
 
 const foo = {
 	baz: 'fred',
 	bar: {
-		function: (_) => {},
+		function: (_: string): void => {},
 		object: {key: 'value'},
 		string: 'waldo',
 		number: 1,
@@ -26,10 +26,10 @@ const foo = {
 const partialDeepFoo: PartialDeep<typeof foo> = foo;
 
 /**
-this negative test should pass
+This negative test should pass:
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
  */
-expectType<Function | undefined>(partialDeepFoo.bar!.function);
+expectType<(_: string) => void | undefined>(partialDeepFoo.bar!.function);
 expectType<object | undefined>(partialDeepFoo.bar!.object);
 expectType<string | undefined>(partialDeepFoo.bar!.string);
 expectType<number | undefined>(partialDeepFoo.bar!.number);
