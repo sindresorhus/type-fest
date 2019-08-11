@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectType, expectError} from 'tsd';
 import {PartialDeep} from '..';
 
 const foo = {
@@ -25,11 +25,10 @@ const foo = {
 
 const partialDeepFoo: PartialDeep<typeof foo> = foo;
 
-/**
-This negative test should pass:
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
- */
-expectType<(_: string) => void | undefined>(partialDeepFoo.bar!.function);
+const partialDeepBar: PartialDeep<typeof foo.bar> = foo.bar;
+expectType<typeof partialDeepBar | undefined>(partialDeepFoo.bar);
+expectType<((_: string) => void) | undefined>(partialDeepFoo.bar!.function);
 expectType<object | undefined>(partialDeepFoo.bar!.object);
 expectType<string | undefined>(partialDeepFoo.bar!.string);
 expectType<number | undefined>(partialDeepFoo.bar!.number);
@@ -39,9 +38,9 @@ expectType<null | undefined>(partialDeepFoo.bar!.null);
 expectType<undefined>(partialDeepFoo.bar!.undefined);
 expectType<Map<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.map);
 expectType<Set<string | undefined> | undefined>(partialDeepFoo.bar!.set);
-expectType<string[] | undefined>(partialDeepFoo.bar!.array);
-expectType<['foo'] | undefined>(partialDeepFoo.bar!.tuple);
+expectType<Array<string | undefined> | undefined>(partialDeepFoo.bar!.array);
+expectType<['foo' | undefined] | undefined>(partialDeepFoo.bar!.tuple);
 expectType<ReadonlyMap<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.readonlyMap);
 expectType<ReadonlySet<string | undefined> | undefined>(partialDeepFoo.bar!.readonlySet);
-expectType<readonly string[] | undefined>(partialDeepFoo.bar!.readonlyArray);
-expectType<readonly ['foo'] | undefined>(partialDeepFoo.bar!.readonlyTuple);
+expectType<ReadonlyArray<string | undefined> | undefined>(partialDeepFoo.bar!.readonlyArray);
+expectType<readonly ['foo' | undefined] | undefined>(partialDeepFoo.bar!.readonlyTuple);
