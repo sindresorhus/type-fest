@@ -1,5 +1,5 @@
 /**
-Define one or more keys for a new type created from the original type that should now be required. The sister of `SetOptional` type.
+Create a type that requires the defined properties. The remaining properties are kept as is. The sister of `SetOptional` type.
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the properties are required.
 
