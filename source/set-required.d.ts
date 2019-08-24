@@ -1,8 +1,7 @@
 /**
 Allows you to define one or more keys for a type that should be required. The sister of `SetOptional` type. 
 
-Use-case: You want to define a single model where the only thing that changes is
-whether or not some of the properties are required
+Use-case: You want to define a single model where the only thing that changes is whether or not some of the properties are required
 
 @example
 ```
