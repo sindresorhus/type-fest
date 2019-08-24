@@ -5,7 +5,7 @@ Use-case: You want to define a single model where the only thing that changes is
 
 @example
 ```
-import {SetOptional} from 'type-fest';
+import {SetRequired} from 'type-fest';
 
 type Foo = {
   a?: number;
@@ -13,7 +13,7 @@ type Foo = {
   c?: boolean;
 }
 
-type SomeRequired = SetOptional<Foo, 'b' | 'c'>;
+type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 //  type SomeRequired = {
 //    a?: number;
 //    b: string; // was already required, still is
@@ -22,8 +22,26 @@ type SomeRequired = SetOptional<Foo, 'b' | 'c'>;
 ```
 */
 
-export type SetOptional<BaseType, Keys extends keyof BaseType = keyof BaseType> =
-Pick<BaseType, Exclude<keyof BaseType, Keys>> &
-Required<Pick<BaseType, Keys>> extends infer InferredType
+export type SetRequired<BaseType, Keys extends keyof BaseType = keyof BaseType> =
+
+// Pick from the base type just the keys that are not required
+Pick<
+  BaseType,
+  Exclude<keyof BaseType, Keys>
+>
+
+// Intersect that type with:
+&
+
+// Pick from the base type the keys that should be required and make them required
+Required<
+  Pick<
+    BaseType,
+    Keys
+  >
+> extends
+
+// If InferredType extends the previous then for each property use the inferred type property
+infer InferredType
   ? { [Property in keyof InferredType]: InferredType[Property] }
   : never;
