@@ -1,12 +1,12 @@
 /**
-The sister of `Optionalize` type. Allows you to define one or more keys for a type that should be required.
+The sister of `SetOptional` type. Allows you to define one or more keys for a type that should be required.
 
 Use-case: You want to define a single model where the only thing that changes is
 whether or not some of the properties are required
 
 @example
 ```
-import {Require} from 'type-fest';
+import {SetOptional} from 'type-fest';
 
 type Foo = {
   a?: number;
@@ -14,7 +14,7 @@ type Foo = {
   c?: boolean;
 }
 
-type SomeRequired = Require<Foo, 'b' | 'c'>;
+type SomeRequired = SetOptional<Foo, 'b' | 'c'>;
 // type SomeRequired = {
 //   a?: number;
 //   b: string; // was already required, still is
@@ -23,7 +23,7 @@ type SomeRequired = Require<Foo, 'b' | 'c'>;
 ```
 */
 
-export type Require<BaseType, Keys extends keyof BaseType = keyof BaseType> =
+export type SetOptional<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 Pick<BaseType, Exclude<keyof BaseType, Keys>> &
 Required<Pick<BaseType, Keys>> extends infer InferredType
   ? { [Property in keyof InferredType]: InferredType[Property] }
