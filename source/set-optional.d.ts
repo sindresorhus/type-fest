@@ -1,5 +1,5 @@
 /**
-The sister of `SetRequired` type. Allows you to define one or more keys for a type that should be optional.
+Allows you to define one or more keys for a type that should be optional. The sister of `SetRequired` type. 
 
 Use-case: You want to define a single model where the only thing that changes is
 whether or not some of the properties are optional
