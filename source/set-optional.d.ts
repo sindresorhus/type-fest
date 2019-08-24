@@ -14,11 +14,11 @@ type Foo = {
 }
 
 type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
-// type SomeOptional = {
-//   a: number;
-//   b?: string; // was already optional, still is
-//   c?: boolean; // is now optional
-// }
+//  type SomeOptional = {
+//    a: number;
+//    b?: string; // was already optional, still is
+//    c?: boolean; // is now optional
+//  }
 ```
 */
 

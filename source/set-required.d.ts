@@ -14,11 +14,11 @@ type Foo = {
 }
 
 type SomeRequired = SetOptional<Foo, 'b' | 'c'>;
-// type SomeRequired = {
-//   a?: number;
-//   b: string; // was already required, still is
-//   c: boolean; // is now required
-// }
+//  type SomeRequired = {
+//    a?: number;
+//    b: string; // was already required, still is
+//    c: boolean; // is now required
+//  }
 ```
 */
 
