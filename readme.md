@@ -96,40 +96,32 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/KYOwrgtgBAMg9gcxsAbsANlA3gKClAeQDMiAaPKAEWACMwFz8BRAJxbhcagDEBDAF17ocAXxw4AliH7AWRXgGNgUAHJwAJsADCcEEQkJsFXgAcTK3hGAAuKAGd+LKQgDcFEx363wEGrLf46IjIaOi28EioGG5iOArovHZ2qhrAAIJmAEJgEuiaLEb4Jk4oAsoKuvoIYCwCErq2apo6egZQALyF+FCm5pY2UABETelmg1xFnrYAzAAM8xNQQZGh4cFR6AB0xEQUIm4UFa0IABRHVbYACrws-BJCADwjLVUAfACUXfhEHFBnug4oABrYAATygcCIhBoACtgAp+JsQaC7P9ju9Prhut0joCwCZ1GUAGpCMDKTrnAwAbWRPWSyMhKWalQMAF0Dtj8BIoSd8YSZCT0GSOu1OmAQJp9CBgOpPkc7uBgBzOfwABYSOybSnVWp3XQ0sF04FgxnPFkIVkdKB84mkpUUfCxbEsYD8GogKBqjUBKBiWIAen9UGut3u6CeqReBlePXQQQA7skwMl+HAoMU4CgJJoISB0ODeOmbvwIVC1cAcIGmdpzVApDI5IpgJscNL49WMiZsrl8id3lrzScsD0zBYrLZBgAVOCUOCdwa+95uIA">
-            Playground
-        </a>
     </summary>
 
-    ```typescript
-    enum LogLevel {
-        Off,
-        Debug,
-        Error,
-        Fatal,
-    };
+    [Playground](https://typescript-play.js.org/?target=6#code/KYOwrgtgBAMg9gcxsAbsANlA3gKClAeQDMiAaPKAEWACMwFz8BRAJxbhcagDEBDAF17ocAXxw4AliH7AWRXgGNgUAHJwAJsADCcEEQkJsFXgAcTK3hGAAuKAGd+LKQgDcFEx363wEGrLf46IjIaOi28EioGG5iOArovHZ2qhrAAIJmAEJgEuiaLEb4Jk4oAsoKuvoIYCwCErq2apo6egZQALyF+FCm5pY2UABETelmg1xFnrYAzAAM8xNQQZGh4cFR6AB0xEQUIm4UFa0IABRHVbYACrws-BJCADwjLVUAfACUXfhEHFBnug4oABrYAATygcCIhBoACtgAp+JsQaC7P9ju9Prhut0joCwCZ1GUAGpCMDKTrnAwAbWRPWSyMhKWalQMAF0Dtj8BIoSd8YSZCT0GSOu1OmAQJp9CBgOpPkc7uBgBzOfwABYSOybSnVWp3XQ0sF04FgxnPFkIVkdKB84mkpUUfCxbEsYD8GogKBqjUBKBiWIAen9UGut3u6CeqReBlePXQQQA7skwMl+HAoMU4CgJJoISB0ODeOmbvwIVC1cAcIGmdpzVApDI5IpgJscNL49WMiZsrl8id3lrzScsD0zBYrLZBgAVOCUOCdwa+95uIA)
 
+    ```typescript
     interface NodeConfig {
         appName: string;
         port: number;
-        logLevel: LogLevel;
-    };
+    }
 
     class NodeAppBuilder {
         private configuration: NodeConfig = {
             appName: 'NodeApp',
             port: 3000,
-            logLevel: LogLevel.Off,
         };
 
         config(config: Partial<NodeConfig>) {
-            for (const key of Object.keys(config)) {
-                const updateValue = config[key as keyof NodeConfig];
+            type NodeConfigKey = keyof NodeConfig;
+
+            for (const key of Object.keys(config) as NodeConfigKey[]) {
+                const updateValue = config[key];
 
                 if (updateValue === undefined)
                     continue;
 
-                this.configuration[key as keyof NodeConfig] = updateValue;
+                this.configuration[key] = updateValue;
             }
 
             return this;
@@ -147,16 +139,13 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgMIHtyLAMXVAW2QG8AoZZCAuYAGwH4AuZAZzClAHMBuc5GYFDYA5OAQhNW7Lrwq04IsROZsOIHn3EsWcTsqlqNAX1KkYAVxAIwwTK3MAjAsDAYs1vIQAUMfAQAicGBwzABKEACO5oIQACYAPG7BHn4AfACUJHwA9NnIAMoQILHIYAAWKL6EyLFBcKXopRWs0ABu0KQmpCyOzq6Yybh+XmQUVDS0zABEEAAeAAIEAA60EAB0COgEUwA0fAJCYKLi0wBS6GUgu3zyiifIU-7oENcUWjp60wASwACEaOhzLQSgBPQGlCC0WjIcQw-AoOAOQFgNaoqaddK8Ui5ZAAFRBSwg+QQHCWYEoUCg+GYzm0XGQSyphKgYBByAA5O9dBB2d1ei4kthPAQRnxxnRpnNFit1pttnsKAc7hAzhcrgrkLcjkppk8XhjeEA">
-            Playground
-        </a>
     </summary>
+
+    [Playground](https://typescript-play.js.org/?target=6#code/AQ4SwOwFwUwJwGYEMDGNgGED21VQGJZwC2wA3gFCjXAzFJgA2A-AFzADOUckA5gNxUaIYjA4ckvGG07c+g6gF8KQkAgCuEFFDA5O6gEbEwUbLm2ESwABQIixACJIoSdgCUYAR3Vg4MACYAPGYuFvYAfACU5Ko0APRxwADKMBD+wFAAFuh2Vv7OSBlYGdmc8ABu8LHKsRyGxqY4oQT21pTCIHQMjOwA5DAAHgACxAAOjDAAdChYxL0ANLHUouKSMH0AEmAAhJhY6ozpAJ77GTCMjMCiV0ToSAb7UJPPC9WRgrEJwAAqR6MwSRQPFGUFocDgRHYxnEfGAowh-zgUCOwF6KwkUl6tXqJhCeEsxDaS1AXSYfUGI3GUxmc0WSneQA)
 
     ```typescript
     interface ContactForm {
         email?: string;
-        firstName?: string;
-        lastName?: string;
         message?: string;
     }
 
@@ -166,16 +155,12 @@ There are many advanced types most users don't know about.
 
     submitContactForm({
         email: 'ex@mple.com',
-        firstName: 'John',
-        lastName: 'Doe',
         message: 'Hi! Could you tell me more about...',
     });
 
     // TypeScript error: missing property 'message'
     submitContactForm({
         email: 'ex@mple.com',
-        firstName: 'John',
-        lastName: 'Doe',
     });
     ```
     </details>
@@ -184,10 +169,9 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/KYOwrgtgBAMg9gcxsAbsANlA3gKClAeQDMiAaPKAEWACMwFz8BRAJxbhcagDEBDAF17ocAXxw4AliH7AWRXgGNgsRAlkBhOCCISE2CiF4RgALigBnfiykIA3BXSoMZ+Eifp7YnAvS9z5lQQ1Fn18BS0dBDMAJWBeABMtdABPAB5XYM1tXQA+ewpwkEsWMAV+DgAKLChDY1IoRzRMERdVDQjdAEpQ-Ch+AAsJcwA6QsioAF5sGqNgesaMKBF7XsIaACtgMuGiFmBgAC9gCoGh0Y6ETpWl0XFCyygx3Vag9uy9Kera0ygAIgBZZIAZTAAAdZABBUGg37zdwvZBNYbUOh6ZZ3LQPdBtEJTEDAADugWCFSel3yAHoKVAACrJcFAhTWUH8KCsdgsMwKXggEBwVl+cy6EB9OBQPYJJLJYY4bGvFjnd7DBaYKauREYYbsjiU6kAdWUvD2UF4NEcoqgwHiElZZKgKCNElN5r8UAJylBjj8wBlZOV7kmgQ16C1bB1OCAA">
-            Playground
-        </a>
     </summary>
+
+    [Playground](https://typescript-play.js.org/?target=6#code/AQ4UwOwVwW2AZA9gc3mAbmANsA3gKFCOAHkAzMgGkOJABEwAjKZa2kAUQCcvEu32AMQCGAF2FYBIAL4BufDRABLCKLBcywgMZgEKZOoDCiCGSXI8i4hGEwwALmABnUVxXJ57YFgzZHSVF8sT1BpBSItLGEnJz1kAy5LLy0TM2RHACUwYQATEywATwAeAITjU3MAPnkrCJMXLigtUT4AClxgGztKbyDgaX99I1TzAEokr1BRAAslJwA6FIqLAF48TtswHp9MHDla9hJGACswZvmyLjAwAC8wVpm5xZHkUZDaMKIwqyWXYCW0oN4sNlsA1h0ug5gAByACyBQAggAHJHQ7ZBIFoXbzBjMCz7OoQP5YIaJNYQMAAdziCVaALGNSIAHomcAACoFJFgADKWjcSNEwG4vC4ji0wggEEQguiTnMEGALWAV1yAFp8gVgEjeFyuKICvMrCTgVxnst5jtsGC4ljsPNhXxGaAWcAAOq6YRXYDCRg+RWIcA5JSC+kWdCepQ+v3RYCU3RInzRMCGwlpC19NYBW1Ye08R1AA)
 
     ```typescript
     enum LogLevel {
@@ -211,11 +195,10 @@ There are many advanced types most users don't know about.
         }
     }
 
-    const config: LoggerConfig = { name: 'MySuperApp', level: LogLevel.Debug };
-
+    const config: LoggerConfig = { name: 'MyApp', level: LogLevel.Debug };
     const logger = new Logger(config);
 
-    // TypeScript Error: cannot assign to readonly.
+    // TypeScript Error: cannot assign to read-only property.
     logger.config.level = LogLevel.Error;
 
     // We are able to edit config variable as we please.
@@ -227,18 +210,20 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgIJTMBAbFBvAKGWUzFwC5kBnMKUAcwG4iSALAVwFsAjEOYbJRp0QTFggD24COCG0GzAL4ECYAJ4AHFOkw4IABSgQAbsAgB3ZAF5k+rAGsAPDqy4ANMgBEpXJ+QAfLzAOHj4BTwA+ZgIAehjkACUZABNoZDhkbGAaZAkYdIxXCCpkdioGXJBsNRJgMhQ4EGTkVKoEOg1MKQA6Ahh2EAQukGQjJugXPUMTM3MqAAoNI1MLKkpJ3GmV8wBtAF0ASkoACQAVAFkAGQBRXE4ZMGRCYkkQHLhCvRKbZIkELge3XaEDgkFuEHu4HmnmSwGMngOzGIMAkUGQ81eOSWMwsuXy2O2VAOTxYxDi6Q0WiayAJsxIEjYDU+uCoLGUxCMYHYUBGH10LKUKkxjz5RW+oxSE2ZBmWswWOxYeFq9UonlOmggAGV2sBOiR2GBUcA4NgAISeDzBLi8fiCLwxOBUKgQMBUGKu7oAKw09D8ykOzCAA">
-            Playground
-        </a>
     </summary>
 
+    [Playground](https://typescript-play.js.org/?target=6#code/AQ4SwOwFwUwJwGYEMDGNgEE5TCgNugN4BQoZwOUBAXMAM5RyQDmA3KeSFABYCuAtgCMISMHloMmENh04oA9tBjQJjFuzIBfYrOAB6PcADCcGElh1gEGAHcKATwAO6ebyjB5CTNlwFwSxFR0BX5HeToYABNgBDh5fm8cfBg6AHIKG3ldA2BHOOcfFNpUygJ0pAhokr4hETFUgDpswywkggAFUwA3MFtgAF5gQgowKhhVKTYKGuFRcXo1aVZgbTIoJ3RW3xhOmB6+wfbcAGsAHi3kgBpgEtGy4AAfG54BWfqAPnZm4AAlZUj4MAkMA8GAGB4vEgfMlLLw6CwPBA8PYRmMgZVgAC6CgmI4cIommQELwICh8RBgKZKvALh1ur0bHQABR5PYMui0Wk7em2ADaAF0AJS0AASABUALIAGQAogR+Mp3CROCAFBBwVC2ikBpj5CgBIqGjizLA5TAFdAmalImAuqlBRoVQh5HBgEy1eDWfs7J5cjzGYKhroVfpDEhHM4MV6GRR5NN0JrtnRg6BVirTFBeHAKYmYY6QNpdB73LmCJZBlSAXAubtvczeSmQMNSuMbmKNgBlHFgPEUNwusBIPAAQlS1xetTmxT0SDoESgdD0C4aACtHMwxytLrohawgA)
+
     ```typescript
-    interface Article {
+   interface Article {
         title: string;
         thumbnail: string;
         content: string;
     }
 
+    // Creates new type out of Article interface composed from Articles' two
+    // properties: 'title' and 'thumbnail'.
+    // ArticlePreview = { title: string; thumbnail: string; }
     type ArticlePreview = Pick<Article, 'title' | 'thumbnail'>;
 
     // Render a list of articles using only title and description.
@@ -260,32 +245,35 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/C4TwDgpgBAshC2AjCAnACgewM4Etg4wDssoBeKAIh0OFUIqgB9KATCANwgBsNIUHmFWgGMAFgFouEAIYsKAbgBQi6rRQAzacOhpUWIlADeiqFHU4UWYADlp8CAC4oVlNQDmS012lXb9py7unlAgMpYA8uoAogAefDgQhNpOhACuSKhKAL7KwkRWULR2TgBKEHkoLAA8cBno2HgExAA0ULqWRADaALoAfGRGJlCqdE49zUNsnDx8Y90Tpp1C5RJSshTdc4pZSooA9HtQ4akohTLwUKI+lxYQLFDSUIQQAO5Q9nUAdIpF8J8jKEInzAqSwogAFIYzBZfHZHJQAFIYUT0VreWH+SgAEQwEAorVC0gi0TiqASSXhAAYoFkAJS7A5QMoVe7qDAobQkEAYVKFDDDQiNaRcHAAL2gwq4UAw6kKomgYBQvFQoCgAGsICAsPtDgAVcAQADKwlcYGAUCiKCVKCcyzEkhkcigiuVKFVOBI8A9uEIbkUeWI5t+UXgZpApXK7OqtWQ9Vw+HyrTSXC4-XIxlMpgBhBSqRTC0zU24rtz+e28iAA">
-            Playground
-        </a>
     </summary>
 
-    ```typescript
-    type MemberPositions = 'intern' | 'developer' | 'tech-lead';
+    [Playground](https://typescript-play.js.org/?target=6#code/AQ4ejYAUHsGcCWAXBMB2dgwGbAKYC2ADgDYwCeeemCaWArgE7ADGMxAhmuQHQBQoYEnJE8wALKEARnkaxEKdMAC8wAOS0kstGuAAfdQBM8ANzxlRjXQbVaWACwC0JPB0NqA3HwGgIwAJJoWozYHCxixnAsjAhStADmwESMMJYo1Fi4HMCIaPEu+MRklHj8gpqyoeHAAKJFFFTAAN4+giDYCIxwSAByHAR4AFw5SDF5Xm2gJBzdfQPD3WPxE5PAlBxdAPLYNQAelgh4aOHDaPQEMowrIAC+3oJ+AMKMrlrAXFhSAFZ4LEhC9g4-0BmA4JBISXgiCkBQABpILrJ5MhUGhYcATGD6Bk4Hh-jNgABrPDkOBlXyQAAq9ngYmJpOAAHcEOCRjAXqwYODfoo6DhakUSph+Uh7GI4P0xER4Cj0OSQGwMP8tP1hgAlX7swwAHgRl2RvIANALSA08ABtAC6AD4VM1Wm0Kow0MMrYaHYJjGYLLJXZb3at1HYnC43Go-QHQDcvA6-JsmEJXARgCDgMYWAhjIYhDAU+YiMAAFIwex0ZmilMITCGF79TLAGRsAgJYAAZRwSEZGzEABFTOZUrJ5Yn+jwnWgeER6HB7AAKJrADpdXqS4ZqYultTG6azVfqHswPBbtauLY7fayQ7HIbAAAMwBuAEoYw9IBq2Ixs9h2eFMOQYPQObALQKJgggABeYhghCIpikkKRpOQRIknAsZUiIeCttECBEP8NSMCkjDDAARMGziuIYxHwYOjDCMBmDNnAuTxA6irdCOBB1Lh5Dqpqn66tISIykawBnOCtqqC0gbjqc9DgpGkxegOliyfJDrRkAA)
 
-    interface Person {
+    ```typescript
+        // Positions of employees in our company.
+    type MemberPosition = 'intern' | 'developer' | 'tech-lead';
+
+    // Interface describing properties of a single employee.
+    interface Employee {
         firstName: string;
         lastName: string;
         yearsOfExperience: number;
     }
 
-    const team: Record<MemberPositions, Person[]> = {
+    // Create an object that has all possible `MemberPosition` values set as keys.
+    // Those keys will store collection of Emplyees of the same position.
+    const team: Record<MemberPosition, Employee[]> = {
         intern: [],
         developer: [],
-        ['tech-lead']: [],
+        'tech-lead': [],
     };
 
-    // Our team has hired a new member.
+    // Our team has decided to help John with his dream of becoming Software Developer.
     team.intern.push({ firstName: 'John', lastName: 'Doe', yearsOfExperience: 0 });
 
     // Record forces you to initialize all of the property keys
     // TypeScript Error: "tech-lead" property is missing
-    const teamEmpty: Record<MemberPositions, null> = {
+    const teamEmpty: Record<MemberPosition, null> = {
         intern: null,
         developer: null,
     };
@@ -296,45 +284,30 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgMIHsQ2Ac2QbwChlkBbCMAC3QBMAuZAZzClBwG5jk5GBPEBAwBG6dABsIcEJxIBXKGIbNWIDlwCOs6LyUs2nAL6FCAegBUZ5AHEKyWSGCZk6GMgDyQgFYQEYACq8AA4QAOTIANYQvIzIVHBgyBAAHpAgNMh+cFA4FAHByGYmhGBBKADSUYxuMHkQADwe3r61ADQZWTn+pQB8yAC8BFwA2hW8yKARUS7uXj5dwQC6DI1ztSNRC4kpEGkxmdm5pcgA-MijyAwgEABu0IQGQ5G80yvNpQucphbupMAJVOhGChAlB0MEoGBgBAYnEEslUukAKJJBBiWQ0CC1ApFEr5Ny-eYQUaMBqzN7BNrI1HozE9frIAAKwAQ4TqXFehJaXCpaIxdSeLzJnLOlWqtVJTWFPJptW63UI3U+uJQAGU9KoMFhcMT6cSxaU6prsDg2so2IrkCYTMgQuQATQwgAfG3yMROm2abQhYzmMzESwAMVBpEmz1cRtwDAABraKNQHchnSEePwEO6Qq7056oLwQlH-VtqRiC3qagaIyamOqcN1o7H7enM4mbSmBHmCxI4Nc2MgY620-nscUjgA5TBqlQ4Cs6gbSvkC8OYY1tUviium6tyz6+6y2TBiMYgsHQSHQ2KUeLIGjoZAgdBw7ZpWJHM2qZAwYPP-IVofK5BjkAJzYH8BnxP5amJQ0l1wDdJ0VYwEEwZhb3HasGAAoCNWgvABnwbg+AEBgWC0ZADE4IA">
-            Playground
-        </a>
     </summary>
 
+    [Playground](https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgMrQG7QMIHsQzADmyA3gFDLIAOuUYAXMiAK4A2byAPsgM5hRQJHqwC2AI2gBucgF9y5MAE9qKAEoQAjiwj8AEnBAATNtGQBeZAAooWphu26wAGmS3e93bRC8IASgsAPmRDJRlyAHoI5ABRAA8ENhYjFFYOZGVVZBgoXFFkAAM0zh5+QRBhZhYJaAKAOkjogEkQZAQ4X2QAdwALCFbaemRgXmQtFjhOMFwq9K6ULuB0lk6U+HYwZAxJnQaYFhAEMGB8ZCIIMAAFOjAANR2IK0HGWISklIAedCgsKDwCYgAbQA5M9gQBdVzFQJ+JhiSRQMiUYYwayZCC4VHPCzmSzAspCYEBWxgFhQAZwKC+FpgJ43VwARgADH4ZFQSWSBjcZPJyPtDsdTvxKWBvr8rD1DCZoJ5HPopaYoK4EPhCEQmGKcKriLCtrhgEYkVQVT5Nr4fmZLLZtMBbFZgT0wGBqES6ghbHBIJqoBKFdBWQpjfh+DQbhY2tqiHVsbjLMVkAB+ZAAZiZaeQTHOVxu9ySjxNaujNwDVHNvzqbBGkBAdPoAfkQA)
+
     ```typescript
-    interface Config {
-        method: string;
-        async: boolean;
-        url: string;
-        query: string;
+    interface ServerConfig {
+      port: null | string | number;
     }
 
-    /** Get union of ObjectType' keys that extend TargetType */
-    type KeysOfType<ObjectType, TargetType> = {
-        [Key in keyof ObjectType]: ObjectType[Key] extends TargetType ? Key : never;
-    }[keyof ObjectType];
+    type RequestHandler = (req: Request, res: Response) => void;
 
+    // Exclude null type from `null | string | number`.
+    // In case when port is equal to null we will use default value.
+    function getPortValue(port: Exclude<ServerConfig['port'], null>): number {
+      if (typeof port === 'string') return parseInt(port, 10);
+      return port;
+    }
 
-    /** Omit those properties that extend ExcludeType */
-    type OmitTypeKeys<ObjectType, ExcludeType> = Pick<
-        ObjectType,
-        Exclude<keyof ObjectType, KeysOfType<ObjectType, ExcludeType>>
-    >;
+    function startServer(handler: RequestHandler, config: ServerConfig): void {
+      const server = require('http').createServer(handler);
 
-    type StringConfigKeys = KeysOfType<Config, string>; // 'method' | 'url' | 'query'
-
-    /**
-     * From keyof Config: `'method' | 'async' | 'url' | 'query'`
-     * exclude
-     * KeysOfType<Config, string>: `'method' | 'url' | 'async'`
-     * leaving `'async'`
-     */
-    type NonStringConfigKeys = Exclude<keyof Config, KeysOfType<Config, string>>;
-
-    /** Get only properties that do not extend type string from type Config */
-    type NonStringConfig = OmitTypeKeys<Config, string>;
-
-    const nonString: NonStringConfig = { async: true };
+      const port = config.port === null ? 3000 : getPortValue(config.port);
+      server.listen(port);
+    }
     ```
     </details>
 
@@ -342,42 +315,41 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgCoQiZBvAUM5EOAWwgC5kBnMKUAcwG59k47zCBXYgI2iYF9cuUJFiIUAQQAmHADZhkEAB6QQUymgxY8BAA5QA9jAiVKwAyArVaIRswDuBqAGsAokt3RgmJBRBdeKAEhAHoAKjDkADFDYmRnCABPDSNkAHluACsIBFREzwlkKAhiAwA3FDhZWXikjTAACzgFOGLkfRNMBQt0rJy8zwAhZDCQ3DB8ySkpYDBzIlkAaTqAHgzshDABiAkAGl6NrcnBgD5kAF5kdwRZDikIFeYExNT1nKOC3aek177N7cGuBOTFw4UiywgumQFlkiWQjQMlBQzxSMAO722hUazRYbRABgUHSR4GhWDeuWOIzGE08yAAIsAYDA1n8Pjt9uS2acLjhmABtZZw0DIaQzOYWKqCygsw6YjmsgEnAC6FE5mIFSSVuH4ILBaCgcBAlBgTji6EwyBEBhFMnkVNwMA4IE282QdEM9gAqroABSQTAUc0gfYcXRSZrsBlMlbSORgfZBk4ASgosbtOiKEDAHCgZNZADo4KZgHQQH6tCGwxGk8FcO6DF7fcxsIQSOwAEQAWQg7f2rHYAEYABzIfhfAgt-RGExmCwUdsASRAMFuPmgveQjhc7k8tDXFAADKPcDXcEA">
-            Playground
-        </a>
     </summary>
 
+    [Playground](https://typescript-play.js.org/?target=6#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXzSwEdkQBJYACgEoAueVZAWwCMQYBuAKDDwGcM8MgBF4AXngBlAJ6scESgHIRi6ty5ZUGdoihgEABXZ888AN5d48ANoiAuvUat23K6ihMQ9ATE0BzV3goPy8GZjZOLgBfLi4Aejj4AEEICBwAdz54MAALKFQQ+BxEeAAHY1NgKAwoIKy0grr4DByEUpgccpgMaXgAaxBerCzi+B9-ZulygDouFHRsU1z8kKMYE1RhaqgAHkt4AHkWACt4EAAPbVRgLLWNgBp9gGlBs8uQa6yAUUuYPQwdgNpKM7nh7mMML4CgA+R5WABqUAgpDeVxuhxO1he0jsXGh8EoOBO9COx3BQPo2PBADckaR6IjkSA6PBqTgsMBzPsicdrEC7OJWXSQNwYvFEgAVTS9JLXODpeDpKBZFg4GCoWa8VACIJykAKiQWKy2YQOAioYikCg0OEMDyhRSy4DyxS24KhAAMjyi6gS8AAwjh5OD0iBFHAkJoEOksC1mnkMJq8gUQKDNttKPlnfrwYp3J5XfBHXqoKpfYkAOI4ansTxaeDADmoRSCCBYAbxhC6TDx6rwYHIRX5bScjA4bLJwoDmDwDkfbA9JMrVMVdM1TN69LgkTgwgkchUahqIA)
+
     ```typescript
-    interface Teen {
-        name: string;
-        age: number;
+    declare function uniqueId(): number;
+    const ID = Symbol('ID');
+
+    interface Person {
+      [ID]: number;
+      name: string;
+      age: number;
     }
 
-    interface Adult extends Teen {
-        profession: string;
-        workExperience: number;
+    // Allows change of person data as long as the property key is of string type.
+    function changePersonData<
+      Obj extends Person,
+      Key extends Extract<keyof Person, string>,
+      Value extends Obj[Key]
+    > (obj: Obj, key: Key, value: Value): void {
+      obj[key] = value;
     }
 
-    /** From keys of ObjecTypeA remove all keys that are present on ObjecTypeB */
-    type AdditionalKeys<ObjectTypeA, ObjectTypeB> = Exclude<
-        keyof ObjectTypeA,
-        keyof ObjectTypeB
-    >;
-
-    /** Keep only those keys of ObjectTypeA that are not present on ObjecTypeB */
-    type Diff<ObjectTypeA, ObjectTypeB> = {
-        [Key in AdditionalKeys<ObjectTypeA, ObjectTypeB>]: ObjectTypeA[Key]
+    // Tiny Andrew was born.
+    const andrew = {
+      [ID]: uniqueId(),
+      name: 'Andrew',
+      age: 0,
     };
 
-    /** Transform Teen into Adult */
-    function growUp(teen: Teen, update: Diff<Adult, Teen>): Adult {
-        return Object.assign(teen, update);
-    }
+    // Cool, we're fine with that.
+    changePersonData(andrew, 'name', 'Andrea');
 
-    growUp(
-        { name: "Me", age: 18 },
-        { profession: "Influencer", workExperience: 0 }
-    );
+    // Goverment didn't like the fact that you wanted to change your identity.
+    changePersonData(andrew, ID, uniqueId());
     ```
     </details>
 
@@ -385,11 +357,10 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/C4TwDgpgBACg9gJ2AOQK4FsBGEFQLxQDOwCAlgHYDmUAPlORtrnQwDasDcAUFwPQBU-WAEMkUOADMowqAGNWwwoSgATCBIqlgpOOSjAAFsOBRSy1IQgr9cKJlSlW1mZYQA3HFH68u8xcoBlHA8EACEHJ08Aby4oKDBUTFZSWXjEFEYcAEIALihkXTR2YSSIAB54JDQsHAA+blj4xOTUsHSACkMzPKD3HHDHNQQAGjSkPMqMmoQASh7g-oihqBi4uNIpdraxPAI2VhmVxrX9AzMAOm2ppnwoAA4ABifuE4BfKAhWSyOTuK7CS7pao3AhXF5rV48E4ICDAVAIPT-cGQyG+XTEIgLMJLTx7CAAdygvRCA0iCHaMwarhJOIQjUBSHaACJHk8mYdeLwxtdcVAAOSsh58+lXdr7Dlcq7A3n3J4PEUdADMcspUE53OluAIUGVTx46oAKuAIAFZGQwCYAKIIBCILjUxaDHAMnla+iodjcIA">
-            Playground
-        </a>
     </summary>
     Works with <code>strictNullChecks</code> set to <code>true</code>. (Read more <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html">here</a>)
+
+    [Playground](https://typescript-play.js.org/?target=6#code/C4TwDgpgBACg9gJ2AOQK4FsBGEFQLxQDOwCAlgHYDmUAPlORtrnQwDasDcAUFwPQBU-WAEMkUOADMowqAGNWwwoSgATCBIqlgpOOSjAAFsOBRSy1IQgr9cKJlSlW1mZYQA3HFH68u8xcoBlHA8EACEHJ08Aby4oKDBUTFZSWXjEFEYcAEIALihkXTR2YSSIAB54JDQsHAA+blj4xOTUsHSACkMzPKD3HHDHNQQAGjSkPMqMmoQASh7g-oihqBi4uNIpdraxPAI2VhmVxrX9AzMAOm2ppnwoAA4ABifuE4BfKAhWSyOTuK7CS7pao3AhXF5rV48E4ICDAVAIPT-cGQyG+XTEIgLMJLTx7CAAdygvRCA0iCHaMwarhJOIQjUBSHaACJHk8mYdeLwxtdcVAAOSsh58+lXdr7Dlcq7A3n3J4PEUdADMcspUE53OluAIUGVTx46oAKuAIAFZGQwCYAKIIBCILjUxaDHAMnla+iodjcIA)
 
     ```typescript
     type PortNumber = string | number | null;
@@ -425,29 +396,27 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/PTAEHMBsHsCMENIBUAWBLAzqeA3ebJ5ZIBTUAMwCdoBbUAZgDoAWAKBFBQBcuAHDAFwgAJiRzFo4DIxpoAxtQzRyXRnNrAuAT14kMCtLy7B4AO1PQArqblpT4ALTbd+yoa4P6D5sADEzkgc5FBI5AGs7R3JoSgcoOEQudAxWdVMMLggYBGRk0ABeUAB3O2FoIoBuVnYAKhrQACFSims5LjRoU1AAA3JTbtAuaEGQ0DSuEgAPTOUshMhQOAArUMya4FZyVvbO0FhSpGgAcWzEAB4AMS6pidNhLAAKRmf4SikBbFMtAG0AXQBKAoAPk+WiBD1YoAopg+VwANJDQM9GK93qAAAqveA0EgTSgYS6mIGsf4fB6A-IggBKuMslFMSB0JEJIIA3ojKLT6dDGPs7g94jlUJg4UiXm8MP8qgBfarAOqgADCIXCoDQ5DGnQm0048CwvGoODQomEPTCJC03UYoHWm22HS6wVCYQAkuR0dReABRSaYLgYB5JTAfZarUXmrQfDJueykvbQaCkMygdlQzlcOldCNqrpBjAyuUKmkZ+lYbpcSiWEgDdVzHKLWArNq6ssAcnIuOCrYGBuguko2htGzSGTGKtd5AunZQPr9WEKfOEhxO8weTvCbo9fdnGQwooARB2uMF91LquuJ1PjzPfbvyRVQBwK1Wc6AaNBR7MkmRYNQihgSHxVggA">
-            Playground
-        </a>
     </summary>
 
+    [Playground](https://typescript-play.js.org/?target=6#code/GYVwdgxgLglg9mABAZwBYmMANgUwBQxgAOIUAXIgIZgCeA2gLoCUFAbnDACaIDeAUIkQB6IYgCypSlBxUATrMo1ECsJzgBbLEoipqAc0J7EMKMgDkiHLnU4wp46pwAPHMgB0fAL58+oSLARECEosLAA5ABUYG2QAHgAxJGdpVWREPDdMylk9ZApqemZEAF4APipacrw-CApEgBogkKwAYThwckQwEHUAIxxZJl4BYVEImiIZKF0oZRwiWVdbeygJmThgOYgcGFYcbhqApCJsyhtpWXcR1cnEePBoeDAABVPzgbTixFeFd8uEsClADcIxGiygIFkSEOT3SmTc2VydQeRx+ZxwF2QQ34gkEwDgsnSuFmMBKiAADEDjIhYk1Qm0OlSYABqZnYka4xA1DJZHJYkGc7yCbyeRA+CAIZCzNAYbA4CIAdxg2zJwVCkWirjwMswuEaACYmCCgA)
+
     ```typescript
-    /** Bind function `fn` to the context of global object */
-    function bindToGlobal<Fn extends (...args: any[]) => any>(
-      fn: Fn,
-      ...args: Parameters<Fn>
-    ): () => ReturnType<Fn> {
-      return fn.bind(globalThis, ...args);
+    function shuffle(input: any[]): void {
+      // Mutate array randomly changing its' elements indexes.
     }
 
-    /** Check if context has provided `key`. */
-    function checkIfPropExists(this: object, key: string): boolean {
-        return key in this;
+    function callNTimes<Fn extends (...args: any[]) => any> (func: Fn, callCount: number) {
+      // Type that represents type of received function parameters.
+      type FunctionParameters = Parameters<Fn>;
+
+      return function (...args: FunctionParameters) {
+        for (let i = 0; i < callCount; i++) {
+          func(...args);
+        }
+      }
     }
 
-    /** Returns `true` if global object has `'fetch'` property */
-    const checkIfFetchExists = bindToGlobal(checkIfPropExists, 'fetch');
-
-    checkIfFetchExists(); // true in most of the browsers
+    const shuffleTwice = callNTimes(shuffle, 2);
     ```
     </details>
 
@@ -455,40 +424,45 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/MYGwhgzhAECCBOAXAlqApgWQPYBM0mgG8AoaaYLAO0TWoC5oJF5lKBzAblOhURDQZMW7LtwqUhAV2CIs8ABTia9Rs1ZsAND2R8Bq4WwCURbmUQALZBAB0S2omgBeclWWIuZM5Zu9+T7boe0AC+xKHE4kzQAA7wWAAeAJ4AEmCUOPzw-iRkkczSiPKm0AAqYPBsaIgMiInRaFgAZnBIqPzYeCAaxeVsEAwAwlRSMnIACuVgALZVaPAQADy19U0tKOgd+AB83Z7QlGgA7mUVVQxpidzGOZ6RWPzWIFhs8gAGAJKUOshgIMgAXupoAASQgIdbtXD4ayUaZoYLWV6GIJkeBVSTwSj7I6lXpVeTWQm9CDI7ihYKiAD0lNKdTQAGVgCxog4AKLwOLwBis+L1GRoHDQADaQnUWlF7AAulo2FgHCK1FLiLEEik0hk5rZhvkZPJwW1MFCusKAORDCQ6xCE6wm6VrA2bECk4hoXlyBx5e3ofwHQ7QMZxJJ61obI1aFVJVLpTLO31e-jyABEJTpjOZDgAzNYACzWACs1sTWkTABk0OUsSn6mnkCzoAA5LCHACEidJ1OgAHVkCACE82AwPl8UL8AUD9aHOojiEA">
-            Playground
-        </a>
     </summary>
+
+    [Playground](https://typescript-play.js.org/?target=6#code/MYGwhgzhAECCBOAXAlqApgWQPYBM0mgG8AoaaFRENALmgkXmQDsBzAblOmCycTV4D8teo1YdO3JiICuwRFngAKClWENmLAJRFOZRAAtkEAHQq00ALzlklNBzIBfYk+KhIMAJJTEYJsDQAwmDA+mgAPAAq0GgAHnxMODCKTGgA7tCKxllg8CwQtL4AngDaALraFgB80EWa1SRkAA6MAG5gfNAB4FABPDJyCrQR9tDNyG0dwMGhtBhgjWEiGgA00F70vv4RhY3hEZXVVinpc42KmuJkkv3y8Bly8EPaDWTkhiZd7r3e8LK3llwGCMXGQWGhEOsfH5zJlsrl8p0+gw-goAAo5MAAW3BaHgEEilU0tEhmzQ212BJ0ry4SOg+kg+gBBiMximIGA0nAfAQLGk2N4EAAEgzYcYcnkLsRdDTvNEYkYUKwSdCme9WdM0MYwYhFPSIPpJdTkAAzDKxBUaZX+aAAQgsVmkCTQxuYaBw2ng4Ok8CYcotSu8pMur09iG9vuObxZnx6SN+AyUWTF8MN0CcZE4Ywm5jZHK5aB5fP4iCFIqT4oRRTKRLo6lYVNeAHpG50wOzOe1zHr9NLQ+HoABybsD4HOKXXRA1JCoKhBELmI5pNaB6Fz0KKBAodDYPAgSUTmqYsAALx4m5nC6nW9nGq14KtaEUA9gR9PvuNCjQ9BgACNvcwNBtAcLiAA)
 
     ```typescript
     class ArticleModel {
-        content: string;
-        title: string;
+      title: string;
+      content?: string;
 
-        constructor(content: string, title: string) {
-            this.content = content;
-            this.title = title;
-        }
+      constructor(title: string) {
+        this.title = title;
+      }
     }
 
-    const proxyHandler = {
-        construct(
-            Target: typeof ArticleModel,
-            args: ConstructorParameters<typeof ArticleModel>,
-            newTarget: any
-        ) {
-            console.log(`Initializing ${ArticleModel.name}.`);
-            return new Target(...args);
-        }
-    };
+    class InstanceCache<T extends (new (...args: any[]) => any)> {
+      private ClassConstructor: T;
+      private cache: Map<string, InstanceType<T>> = new Map();
 
-    // TypeScript Error: Expected [string, string], got [string]
-    proxyHandler.construct(ArticleModel, ['Construct...'], ArticleModel);
+      constructor (ctr: T) {
+        this.ClassConstructor = ctr;
+      }
 
-    export const Article = new Proxy(ArticleModel, proxyHandler);
+      getInstance (...args: ConstructorParameters<T>): InstanceType<T> {
+        const hash = this.calculateArgumentsHash(...args);
 
-    new Article('TypeScript 3.4.5...', 'Learn TypeScript Now!');
-    // Will log: `Initializing ArticleModel.`
+        const existingInstance = this.cache.get(hash);
+        if (existingInstance !== undefined) return existingInstance;
+
+        return new this.ClassConstructor(...args);
+      }
+
+      private calculateArgumentsHash(...args: any[]): string {
+        // Calculate hash
+        return 'hash';
+      }
+    }
+
+    const articleCache = new InstanceCache(ArticleModel);
+    const amazonArticle = articleCache.getInstance('Amazon forests burining!');
     ```
     </details>
 
@@ -496,10 +470,9 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/GYVwdgxgLglg9mABAWwIYAcCSUCmAnAHgChFEBRAGx2QBoTEAxcCRHAD1zABMBnRAChxVkALnLCAlIgC8APkSowATzqkASjiisOObnw1QQeMABUl6HASaRZRWfxi48Y7PlQAjKgUrVZNRBCoFBTuqBAA1mLWEBJiBgDaALqIAN70EAg8WmjoFlxxmkkyiEkA3ET0wHB4AhlgWazCiHDAiI74UmmkpDl5AHToIDwAFvyBwaERgpIS5aQAvhWkeJpGSL04XOWLRHUNPJoA8u4AVjjQYgDKmgRZeDBgAOby0ohgOADuiNdQ-LO7mWyGGOZwuiAAshgCGAQMh3Ph-HcHs9iu8vpD0H9ykQcq48PwDlAQecoP5+AA3MRIp5SOSIcl9B5cdiHYD8ABEDDgcHZElmiAA9AK3rD4XgkhVcU5+DlidAyfFwjgVPSgokxPEYXCEYhqY9ErT5F1ECtDMZEEqlIgAKSIABMMmkrwADIgAPyqiiIMTsw5cLjs7b8oW6qD3J4SoA">
-            Playground
-        </a>
     </summary>
+
+    [Playground](https://typescript-play.js.org/?target=6#code/MYGwhgzhAECSAmICmBlJAnAbgS2E6A3gFDTTwD2AcuQC4AW2AdgOYAUAlAFzSbnbyEAvkWFFQkGJSQB3GMVI1sNZNwg10TZgG4S0YOUY0kh1es07d+xmvQBXYDXLpWi5UlMaWAGj0GjJ6BtNdkJdBQYIADpXZGgAXmgYpB1ScOwoq38aeN9DYxoU6GFRKzVoJjUwRjwAYXJbPPRuAFkwAAcAHgAxBodsAx9GWwBbACMMAD4cxhloVraOCyYjdAAzMDxoOut1e0d0UNIZ6WhWSPOwdGYIbiqATwBtAF0uaHudUQB6ACpv6ABpJBINqJdAbADW0Do5BOw3u5R2VTwMHIq2gAANtjZ0bkbHsnFCwJh8ONjHp0EgwEZ4JFoN9PkRVr1FAZoMwkDRYIjqkgOrosepoEgAB7+eAwAV2BxOLy6ACCVxgIrFEoMeOl6AACpcwMMORgIB1JRMiBNWKVdhruJKfOdIpdrtwFddXlzKjyACp3Nq842HaDIbL6BrZBIVGhIpB1EMYSLsmjmtWW-YhAA+qegAAYLKQLQj3ZsEsdccmnGcLor2Dn8xGedHGpEIBzEzspfsfMHDNAANTQACMVaIljV5GQkRA5DYmIpVKQAgAJARO9le33BDXIyi0YuLW2nJFGLqkOvxFB0YPdBSaLZ0IwNzyPkO8-xkGgsLh8Al427a3hWAhXwwHA8EHT5PmgAB1bAQBAANJ24adKWpft72RaBUTgRBUCAj89HAM8xCTaBjggABRQx0DuHJv25P9dCkWRZVIAAiBjoFImpmjlFBgA0NpsjadByDacgIDAEAIAAQmYpjoGYgAZSBsmGPw6DtZiiFA8CoJguDmAQmoZ2QvtUKQLdoAYmBTwgdEiCAA)
 
     ```typescript
     /** Provide every element of iterable `iter` into the `callback` function and store results in an array. */
@@ -532,10 +505,9 @@ There are many advanced types most users don't know about.
     <details>
     <summary>
         Example
-        <a href="https://typescript-play.js.org/?target=6#code/MYGwhgzhAECSAmICmBlJAnAbgS2E6A3gFDTTwD2AcuQC4AW2AdgOYAUAlAFzSbnbyEAvkWFFQkGJSQB3GMVI1sNZNwg10TZgG4S0YOUY0kh1es07d+xmvQBXYDXLpWi5UlMaWAGj0GjJ6BtNdkJdBQYIADpXZGgAXmgYpB1ScOwoq38aeN9DYxoU6GFRKzVoJjUwRjwAYXJbPPRuAFkwAAcAHgAxBodsAx9GWwBbACMMAD4cxhloVraOCyYjdAAzMDxoOut1e0d0UNIZ6WhWSPOwdGYIbiqATwBtAF0uaHudUQB6ACpv6ABpJBINqJdAbADW0Do5BOw3u5R2VTwMHIq2gAANtjZ0bkbHsnFCwJh8ONjHp0EgwEZ4JFoN9PkRVr1FAZoMwkDRYIjqkgOrosepoEgAB7+eAwAV2BxOLy6ACCVxgIrFEoMeOl6AACpcwMMORgIB1JRMiBNWKVdhruJKfOdIpdrtwFddXlzKjyACp3Nq842HaDIbL6BrZBIVGhIpB1EMYSLsmjmtWW-YhAA+qegAAYLKQLQj3ZsEsdccmnGcLor2Dn8xGedHGpEIBzEzspfsfMHDNAANTQACMVaIljV5GQkRA5DYmIpVKQAgAJARO9le33BDXIyi0YuLW2nJFGLqkOvxFB0YPdBSaLZ0IwNzyPkO8-xkGgsLh8Al427a3hWAhXwwHA8EHT5PmgAB1bAQBAANJ24adKWpft72RaBUTgRBUCAj89HAM8xCTaBjggABRQx0DuHJv25P9dCkWRZVIAAiBjoFImpmjlFBgA0NpsjadByDacgIDAEAIAAQmYpjoGYgAZSBsmGPw6DtZiiFA8CoJguDmAQmoZ2QvtUKQLdoAYmBTwgdEiCAA">
-            Playground
-        </a>
     </summary>
+
+    [Playground](https://typescript-play.js.org/?target=6#code/MYGwhgzhAECSAmICmBlJAnAbgS2E6A3gFDTTwD2AcuQC4AW2AdgOYAUAlAFzSbnbyEAvkWFFQkGJSQB3GMVI1sNZNwg10TZgG4S0YOUY0kh1es07d+xmvQBXYDXLpWi5UlMaWAGj0GjJ6BtNdkJdBQYIADpXZGgAXmgYpB1ScOwoq38aeN9DYxoU6GFRKzVoJjUwRjwAYXJbPPRuAFkwAAcAHgAxBodsAx9GWwBbACMMAD4cxhloVraOCyYjdAAzMDxoOut1e0d0UNIZ6WhWSPOwdGYIbiqATwBtAF0uaHudUQB6ACpv6ABpJBINqJdAbADW0Do5BOw3u5R2VTwMHIq2gAANtjZ0bkbHsnFCwJh8ONjHp0EgwEZ4JFoN9PkRVr1FAZoMwkDRYIjqkgOrosepoEgAB7+eAwAV2BxOLy6ACCVxgIrFEoMeOl6AACpcwMMORgIB1JRMiBNWKVdhruJKfOdIpdrtwFddXlzKjyACp3Nq842HaDIbL6BrZBIVGhIpB1EMYSLsmjmtWW-YhAA+qegAAYLKQLQj3ZsEsdccmnGcLor2Dn8xGedHGpEIBzEzspfsfMHDNAANTQACMVaIljV5GQkRA5DYmIpVKQAgAJARO9le33BDXIyi0YuLW2nJFGLqkOvxFB0YPdBSaLZ0IwNzyPkO8-xkGgsLh8Al427a3hWAhXwwHA8EHT5PmgAB1bAQBAANJ24adKWpft72RaBUTgRBUCAj89HAM8xCTaBjggABRQx0DuHJv25P9dCkWRZVIAAiBjoFImpmjlFBgA0NpsjadByDacgIDAEAIAAQmYpjoGYgAZSBsmGPw6DtZiiFA8CoJguDmAQmoZ2QvtUKQLdoAYmBTwgdEiCAA)
 
     ```typescript
     class IdleService {
@@ -558,7 +530,7 @@ There are many advanced types most users don't know about.
         new(...args: any[]): any;
     }
 
-    /** Keep track how many instances of `Constr` constructor have been created. */
+    // Keep track how many instances of `Constr` constructor have been created.
     function getInstance<
         Constr extends Constructor,
         Args extends ConstructorParameters<Constr>
@@ -582,6 +554,34 @@ There are many advanced types most users don't know about.
     ```
     </details>
 
+- [`Omit<T, K>`](https://github.com/microsoft/TypeScript/blob/71af02f7459dc812e85ac31365bfe23daf14b4e4/src/lib/es5.d.ts#L1446) – Constructs a type by picking all properties from T and then removing K.
+    <details>
+    <summary>
+        Example
+    </summary>
+
+    [Playground](https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgIImAWzgG2QbwChlks4BzCAVShwC5kBnMKUcgbmKYAcIFgIjBs1YgOXMpSFMWbANoBdTiW5woFddwAW0kfKWEAvoUIB6U8gDCUCHEiNkICAHdkYAJ69kz4GC3JcPG4oAHteKDABBxCYNAxsPFBIWEQUCAAPJG4wZABySUFcgJAAEzMLXNV1ck0dIuCw6EjBADpy5AB1FAQ4EGQAV0YUP2AHDy8wEOQbUugmBLwtEIA3OcmQnEjuZBgQqE7gAGtgZAhwKHdkHFGwNvGUdDIcAGUliIBJEF3kAF5kAHlML4ADyPBIAGjyBUYRQAPnkqho4NoYQA+TiEGD9EAISIhPozErQMG4AASK2gn2+AApek9pCSXm8wFSQooAJQMUkAFQAsgAZACiOAgmDOOSIJAQ+OYyGl4DgoDmf2QJRCCH6YvALQQNjsEGFovF1NyJWAy1y7OUyHMyE+yRAuFImG4Iq1YDswHxbRINjA-SgfXlHqVUE4xiAA)
+
+    ```typescript
+    interface Animal {
+        imageUrl: string;
+        species: string;
+        images: string[];
+        paragraphs: string[];
+    }
+
+    // Creates new type with all properties of Animal interface except 'images' and
+    // 'paragraphs' properties.
+    // We can use this type to render small hover tooltip for Wiki entry list.
+    type AnimalShortInfo = Omit<Animal, 'images' | 'paragraphs'>;
+
+    function renderAnimalHoverInfo (animals: AnimalShortInfo[]): HTMLElement {
+        const container =  document.createElement('div');
+        // Internal implementation.
+        return container;
+    }
+    ```
+    </details>
 
 You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/advanced-types.html#predefined-conditional-types).
 
