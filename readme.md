@@ -118,3 +118,16 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 ## License
 
 (MIT OR CC0-1.0)
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-type-fest?utm_source=npm-type-fest&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
