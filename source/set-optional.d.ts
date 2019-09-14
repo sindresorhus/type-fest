@@ -23,7 +23,7 @@ type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
 */
 export type SetOptional<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 	// Pick just the keys that are not optional from the base type.
-	Pick<BaseType, Exclude<keyof BaseType, Keys>>	&
+	Pick<BaseType, Exclude<keyof BaseType, Keys>> &
 	// Pick the keys that should be optional from the base type and make them optional.
 	Partial<Pick<BaseType, Keys>> extends
 	// If `InferredType` extends the previous, then for each key, use the inferred type key.
