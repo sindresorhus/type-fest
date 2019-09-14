@@ -16,8 +16,8 @@ type Foo = {
 type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
 // type SomeOptional = {
 // 	a: number;
-// 	b?: string; // Was already optional and still is
-// 	c?: boolean; // Is now optional
+// 	b?: string; // Was already optional and still is.
+// 	c?: boolean; // Is now optional.
 // }
 ```
 */
