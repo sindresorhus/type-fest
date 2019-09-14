@@ -11,6 +11,8 @@ export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
 export {Opaque} from './source/opaque';
+export {SetOptional} from './source/set-optional';
+export {SetRequired} from './source/set-required';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';

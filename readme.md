@@ -73,6 +73,8 @@ Click the type names for complete docs.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
 - [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
+- [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
+- [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 
 ### Miscellaneous
 
