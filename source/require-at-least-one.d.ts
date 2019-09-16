@@ -1,7 +1,7 @@
 import {Except} from './except';
 
 /**
-Create a type that requires at least one of the given properties. The remaining properties are kept as is.
+Create a type that requires at least one of the given keys. The remaining keys are kept as is.
 
 @example
 ```
@@ -28,5 +28,5 @@ export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = ke
 			Required<Pick<ObjectType, Key>>
 		)
 	}[KeysType]
-	// …then, make intersection types by adding the remaining properties to each mapped type.
+	// …then, make intersection types by adding the remaining keys to each mapped type.
 	& Except<ObjectType, KeysType>;

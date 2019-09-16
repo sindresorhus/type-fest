@@ -5,7 +5,7 @@ Create a type from another type with all keys and nested keys set to optional.
 
 Use-cases:
 - Merging a default settings/config object with another object, the second object would be a deep partial of the default object.
-- Mocking and testing complex entities, where populating an entire object with its properties would be redundant in terms of the mock or test.
+- Mocking and testing complex entities, where populating an entire object with its keys would be redundant in terms of the mock or test.
 
 @example
 ```
@@ -68,5 +68,5 @@ interface PartialReadonlySetDeep<T> extends ReadonlySet<PartialDeep<T>> {}
 Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.
 */
 type PartialObjectDeep<ObjectType extends object> = {
-	[PropertyType in keyof ObjectType]: PartialDeep<ObjectType[PropertyType]> | undefined
+	[KeyType in keyof ObjectType]: PartialDeep<ObjectType[KeyType]> | undefined
 };

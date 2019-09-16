@@ -2,7 +2,7 @@
 type Without<FirstType, SecondType> = {[KeyType in Exclude<keyof FirstType, keyof SecondType>]?: never};
 
 /**
-Create a type that has mutually exclusive properties.
+Create a type that has mutually exclusive keys.
 
 This type was inspired by [this comment](https://github.com/Microsoft/TypeScript/issues/14094#issuecomment-373782604).
 

@@ -1,7 +1,7 @@
 import {Primitive} from './basic';
 
 /**
-Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their properties/elements into immutable structures recursively.
+Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
 
 This is useful when a deeply nested structure needs to be exposed as completely immutable, for example, an imported JSON module or when receiving an API response that is passed around.
 
@@ -55,5 +55,5 @@ interface ReadonlySetDeep<ItemType>
 Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper for `ReadonlyDeep`.
 */
 type ReadonlyObjectDeep<ObjectType extends object> = {
-	readonly [PropertyType in keyof ObjectType]: ReadonlyDeep<ObjectType[PropertyType]>
+	readonly [KeyType in keyof ObjectType]: ReadonlyDeep<ObjectType[KeyType]>
 };

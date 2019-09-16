@@ -28,5 +28,5 @@ export type SetOptional<BaseType, Keys extends keyof BaseType = keyof BaseType> 
 	Partial<Pick<BaseType, Keys>> extends
 	// If `InferredType` extends the previous, then for each key, use the inferred type key.
 	infer InferredType
-		? {[Property in keyof InferredType]: InferredType[Property]}
+		? {[KeyType in keyof InferredType]: InferredType[KeyType]}
 		: never;

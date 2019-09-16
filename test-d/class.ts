@@ -6,6 +6,7 @@ class Foo {
 		console.log(x, y);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	method(): void {}
 }
 
