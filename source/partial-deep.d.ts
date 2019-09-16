@@ -1,9 +1,9 @@
 import {Primitive} from './basic';
 
 /**
-Create a type from another type with all properties and nested properties set to optional.
+Create a type from another type with all keys and nested keys set to optional.
 
-Use cases:
+Use-cases:
 - Merging a default settings/config object with another object, the second object would be a deep partial of the default object.
 - Mocking and testing complex entities, where populating an entire object with its properties would be redundant in terms of the mock or test.
 
@@ -55,7 +55,7 @@ Same as `PartialDeep`, but accepts only `Set`s as inputs. Internal helper for `P
 interface PartialSetDeep<T> extends Set<PartialDeep<T>> {}
 
 /**
-Same as `PartialDeep`, but accepts only `ReadonlyMap`s and  as inputs. Internal helper for `PartialDeep`.
+Same as `PartialDeep`, but accepts only `ReadonlyMap`s as inputs. Internal helper for `PartialDeep`.
 */
 interface PartialReadonlyMapDeep<KeyType, ValueType> extends ReadonlyMap<PartialDeep<KeyType>, PartialDeep<ValueType>> {}
 
