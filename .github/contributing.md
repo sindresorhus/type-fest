@@ -10,7 +10,7 @@
 - Write a good documentation comment that includes:
 	- Write a short and clear description of the type does.
 	- Write about some real-world use-cases where it can be useful. (It can be hard sometimes for users to see where they would use something)
-	- Example code block
+	- Example code block with a realistic example.
 	- At the bottom, explain how the type works. Some types can be quite advanced and hard to understand. We can use this opportunity to teach users.
 	- If there has been any discussion somewhere about this type, include a link to it. For example, a discussion on the TypeScript issue tracker.
 - If you add any internal helper types, they should still be properly documented and tested.
