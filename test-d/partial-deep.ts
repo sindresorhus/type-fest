@@ -39,7 +39,7 @@ expectType<undefined>(partialDeepFoo.bar!.undefined);
 expectType<Map<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.map);
 expectType<Set<string | undefined> | undefined>(partialDeepFoo.bar!.set);
 expectType<Array<string | undefined> | undefined>(partialDeepFoo.bar!.array);
-expectType<[('foo')?] | undefined>(partialDeepFoo.bar!.tuple);
+expectType<['foo'?] | undefined>(partialDeepFoo.bar!.tuple);
 expectType<ReadonlyMap<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.readonlyMap);
 expectType<ReadonlySet<string | undefined> | undefined>(partialDeepFoo.bar!.readonlySet);
 expectType<ReadonlyArray<string | undefined> | undefined>(partialDeepFoo.bar!.readonlyArray);
