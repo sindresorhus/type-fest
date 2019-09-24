@@ -23,7 +23,7 @@ const foo = {
 	}
 };
 
-const partialDeepFoo: PartialDeep<typeof foo> = foo;
+let partialDeepFoo: PartialDeep<typeof foo> = foo;
 
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
 const partialDeepBar: PartialDeep<typeof foo.bar> = foo.bar;
@@ -44,3 +44,6 @@ expectType<ReadonlyMap<string | undefined, string | undefined> | undefined>(part
 expectType<ReadonlySet<string | undefined> | undefined>(partialDeepFoo.bar!.readonlySet);
 expectType<ReadonlyArray<string | undefined> | undefined>(partialDeepFoo.bar!.readonlyArray);
 expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
+// Check for compiling with omitting partial keys
+partialDeepFoo = {baz: 'fred'};
+partialDeepFoo = {bar: {string: 'waldo'}};
