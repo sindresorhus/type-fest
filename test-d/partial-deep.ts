@@ -23,7 +23,7 @@ const foo = {
 	}
 };
 
-const partialDeepFoo: PartialDeep<typeof foo> = foo;
+let partialDeepFoo: PartialDeep<typeof foo> = foo;
 
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
 const partialDeepBar: PartialDeep<typeof foo.bar> = foo.bar;
@@ -39,8 +39,11 @@ expectType<undefined>(partialDeepFoo.bar!.undefined);
 expectType<Map<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.map);
 expectType<Set<string | undefined> | undefined>(partialDeepFoo.bar!.set);
 expectType<Array<string | undefined> | undefined>(partialDeepFoo.bar!.array);
-expectType<['foo' | undefined] | undefined>(partialDeepFoo.bar!.tuple);
+expectType<['foo'?] | undefined>(partialDeepFoo.bar!.tuple);
 expectType<ReadonlyMap<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.readonlyMap);
 expectType<ReadonlySet<string | undefined> | undefined>(partialDeepFoo.bar!.readonlySet);
 expectType<ReadonlyArray<string | undefined> | undefined>(partialDeepFoo.bar!.readonlyArray);
-expectType<readonly ['foo' | undefined] | undefined>(partialDeepFoo.bar!.readonlyTuple);
+expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
+// Check for compiling with omitting partial keys
+partialDeepFoo = {baz: 'fred'};
+partialDeepFoo = {bar: {string: 'waldo'}};
