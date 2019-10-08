@@ -103,7 +103,7 @@ There are many advanced types most users don't know about.
 			Example
 	</summary>
 
-	[Playground](https://typescript-play.js.org/?target=6#code/KYOwrgtgBAMg9gcxsAbsANlA3gKClAeQDMiAaPKAEWACMwFz8BRAJxbhcagDEBDAF17ocAXxw4AliH7AWRXgGNgUAHJwAJsADCcEEQkJsFXgAcTK3hGAAuKAGd+LKQgDcFEx363wEGrLf46IjIaOi28EioGG5iOArovHZ2qhrAAIJmAEJgEuiaLEb4Jk4oAsoKuvoIYCwCErq2apo6egZQALyF+FCm5pY2UABETelmg1xFnrYAzAAM8xNQQZGh4cFR6AB0xEQUIm4UFa0IABRHVbYACrws-BJCADwjLVUAfACUXfhEHFBnug4oABrYAATygcCIhBoACtgAp+JsQaC7P9ju9Prhut0joCwCZ1GUAGpCMDKTrnAwAbWRPWSyMhKWalQMAF0Dtj8BIoSd8YSZCT0GSOu1OmAQJp9CBgOpPkc7uBgBzOfwABYSOybSnVWp3XQ0sF04FgxnPFkIVkdKB84mkpUUfCxbEsYD8GogKBqjUBKBiWIAen9UGut3u6CeqReBlePXQQQA7skwMl+HAoMU4CgJJoISB0ODeOmbvwIVC1cAcIGmdpzVApDI5IpgJscNL49WMiZsrl8id3lrzScsD0zBYrLZBgAVOCUOCdwa+95uIA)
+	[Playground](https://www.typescriptlang.org/play/#code/JYOwLgpgTgZghgYwgAgHIHsAmEDC6QzADmyA3gLABQyycADnanALYQBcyAzmFKEQNxUaddFDAcQAV2YAjaIMoBfKlQQAbOJ05osEAIIMAQpOBrsUMkOR1eANziRkCfISKSoD4Pg4ZseAsTIALyW1DS0DEysHADkvvoMMQA0VsKi4sgAzAAMuVaKClY2wPaOknSYDrguADwA0sgQAB6QIJjaANYQAJ7oMDp+LsQAfAAUXd0cdUnI9mo+uv6uANp1ALoAlKHhyGAAFsCcAHTOAW4eYF4gyxNrwbNwago0ypRWp66jH8QcAApwYmAjxq8SWIy2FDCNDA3ToKFBQyIdR69wmfQG1TOhShyBgomQX3w3GQE2Q6IA8jIAFYQBBgI4TTiEs5bTQYsFInrLTbbHZOIlgZDlSqQABqj0kKBC3yINx6a2xfOQwH6o2FVXFaklwSCIUkbQghBAEEwENSfNOlykEGefNe5uhB2O6sgS3GPRmLogmslG1tLxUOKgEDA7hAuydtteryAA)
 
 	```ts
 	interface NodeConfig {
@@ -117,6 +117,10 @@ There are many advanced types most users don't know about.
 					port: 3000
 			};
 
+			private updateConfig<Key extends keyof NodeConfig>(key: Key, value: NodeConfig[Key]) {
+					this.configuration[key] = value;
+			}
+
 			config(config: Partial<NodeConfig>) {
 					type NodeConfigKey = keyof NodeConfig;
 
@@ -127,7 +131,7 @@ There are many advanced types most users don't know about.
 									continue;
 							}
 
-							this.configuration[key] = updateValue;
+							this.updateConfig(key, updateValue);
 					}
 
 					return this;
