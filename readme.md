@@ -117,7 +117,7 @@ There are many advanced types most users don't know about.
 					port: 3000
 			};
 
-			private updateConf<Key extends keyof NodeConfig>(key: Key, value: NodeConfig[Key]) {
+			private updateConfig<Key extends keyof NodeConfig>(key: Key, value: NodeConfig[Key]) {
 					this.configuration[key] = value;
 			}
 
@@ -131,7 +131,7 @@ There are many advanced types most users don't know about.
 									continue;
 							}
 
-							this.updateConf(key, updateValue);
+							this.updateConfig(key, updateValue);
 					}
 
 					return this;
