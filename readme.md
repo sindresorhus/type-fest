@@ -117,9 +117,9 @@ There are many advanced types most users don't know about.
 					port: 3000
 			};
 
-            private updateConf<K extends keyof NodeConfig>(key: K, val: NodeConfig[K]) {
-					this.configuration[key] = val;
-            }
+			private updateConf<Key extends keyof NodeConfig>(key: Key, value: NodeConfig[Key]) {
+					this.configuration[key] = value;
+			}
 
 			config(config: Partial<NodeConfig>) {
 					type NodeConfigKey = keyof NodeConfig;
