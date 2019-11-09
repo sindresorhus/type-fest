@@ -236,6 +236,13 @@ declare namespace PackageJson {
 		| {
 			[moduleName: string]: string | false;
 		};
+
+		/**
+		Denote which files in your project are "pure" and therefore safe for Webpack to prune if unused.
+
+		[Read more.](https://webpack.js.org/guides/tree-shaking/)
+		*/
+		sideEffects?: boolean | string[];
 	}
 
 	export interface TypeScriptConfiguration {
@@ -403,6 +410,15 @@ export type PackageJson = {
 	peerDependencies?: PackageJson.Dependency;
 
 	/**
+	Indicate peer dependencies that are optional.
+	*/
+	peerDependenciesMeta?: {
+		[packageName: string]: {
+			optional: true;
+		};
+	};
+
+	/**
 	Package names that are bundled when the package is published.
 	*/
 	bundledDependencies?: string[];
@@ -487,10 +503,34 @@ export type PackageJson = {
 	private?: boolean;
 
 	/**
-	 * A set of config values that will be used at publish-time. It's especially handy to set the tag, registry or access, to ensure that a given package is not tagged with 'latest', published to the global public registry or that a scoped module is private by default.
-	 */
+	A set of config values that will be used at publish-time. It's especially handy to set the tag, registry or access, to ensure that a given package is not tagged with 'latest', published to the global public registry or that a scoped module is private by default.
+	*/
 	publishConfig?: {
 		[config: string]: unknown;
+	};
+
+	/**
+	Describes and notifies consumers of a package's monetary support information.
+
+	[Read more.](https://github.com/npm/rfcs/blob/latest/accepted/0017-add-funding-support.md)
+	*/
+	funding?: string | {
+		/**
+		The type of funding.
+		*/
+		type?: LiteralUnion<
+			| 'github'
+			| 'opencollective'
+			| 'patreon'
+			| 'individual'
+			| 'foundation'
+			| 'corporation',
+			string
+		>;
+		/**
+		The URL to the funding page.
+		*/
+		url: string;
 	};
 } &
 PackageJson.NonStandardEntryPoints &
