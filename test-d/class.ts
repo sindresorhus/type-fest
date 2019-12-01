@@ -2,6 +2,7 @@ import {expectError} from 'tsd';
 import {Class} from '..';
 
 class Foo {
+	// eslint-disable-next-line @typescript-eslint/no-untyped-public-signature
 	constructor(x: number, y: any) {
 		console.log(x, y);
 	}
