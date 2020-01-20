@@ -17,12 +17,12 @@ type AccountNumber = Opaque<number, 'AccountNumber'>;
 type AccountBalance = Opaque<number, 'AccountBalance'>;
 
 // The Token parameter allows the compiler to differentiate between types, whereas "unknown" will not. For example, consider the following structures:
-type ThingOnw = Opaque<string>;
+type ThingOne = Opaque<string>;
 type ThingTwo = Opaque<string>;
 
 // To the compiler, these types are allowed to be cast to each other as they have the same underlying type. They are both `string & { __opaque__: unknown }`.
 // To avoid this behaviour, you would instead pass the "Token" parameter, like so.
-type NewThingOnw = Opaque<string, 'ThingOne'>;
+type NewThingOne = Opaque<string, 'ThingOne'>;
 type NewThingTwo = Opaque<string, 'ThingTwo'>;
 
 // Now they're completely separate types, so the following will fail to compile.
