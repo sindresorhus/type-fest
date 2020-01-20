@@ -21,7 +21,7 @@ expectType<string | undefined>(packageJson.types);
 expectType<string | undefined>(packageJson.typings);
 expectType<string | string[] | undefined>(packageJson.man);
 expectType<PackageJson.DirectoryLocations | undefined>(packageJson.directories);
-expectType<{type: string; url: string} | string | undefined>(
+expectType<{type: string; url: string; directory?: string} | string | undefined>(
 	packageJson.repository
 );
 expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
