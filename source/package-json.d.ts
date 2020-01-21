@@ -27,6 +27,8 @@ declare namespace PackageJson {
 		};
 
 	export interface DirectoryLocations {
+		[directoryType: string]: unknown;
+
 		/**
 		Location for executable scripts. Sugar to generate entries in the `bin` property by walking the folder.
 		*/
@@ -56,8 +58,6 @@ declare namespace PackageJson {
 		Location for test files.
 		*/
 		test?: string;
-
-		[directoryType: string]: unknown;
 	}
 
 	export type Scripts = {
@@ -223,9 +223,9 @@ declare namespace PackageJson {
 		esnext?:
 		| string
 		| {
+			[moduleName: string]: string | undefined;
 			main?: string;
 			browser?: string;
-			[moduleName: string]: string | undefined;
 		};
 
 		/**

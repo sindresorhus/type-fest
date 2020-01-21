@@ -608,18 +608,15 @@ There are many advanced types most users don't know about.
 
 You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/advanced-types.html#predefined-conditional-types).
 
-
 ## Maintainers
 
 - [Sindre Sorhus](https://github.com/sindresorhus)
 - [Jarek Radosz](https://github.com/CvX)
 - [Dimitri Benin](https://github.com/BendingBender)
 
-
 ## License
 
 (MIT OR CC0-1.0)
-
 
 ---
 

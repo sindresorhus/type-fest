@@ -6,5 +6,5 @@ expectType<symbol>(Symbol.observable);
 
 const observable = (null as any) as ObservableLike;
 
-observable.subscribe(() => {});
+observable.subscribe(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
 observable.subscribe(value => expectType<unknown>(value));

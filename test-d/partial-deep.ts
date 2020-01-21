@@ -4,7 +4,7 @@ import {PartialDeep} from '..';
 const foo = {
 	baz: 'fred',
 	bar: {
-		function: (_: string): void => {},
+		function: (_: string): void => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 		object: {key: 'value'},
 		string: 'waldo',
 		number: 1,

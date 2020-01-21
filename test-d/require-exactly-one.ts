@@ -11,7 +11,7 @@ type SystemMessages = {
 };
 
 type ValidMessages = RequireExactlyOne<SystemMessages, 'macos' | 'linux'>;
-const test = (_: ValidMessages): void => {};
+const test = (_: ValidMessages): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 
 test({macos: 'hey', default: 'hello'});
 test({linux: 'sup', optional: 'howdy', default: 'hello'});

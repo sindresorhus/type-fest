@@ -58,9 +58,9 @@ expectType<string | undefined>(packageJson.module);
 expectType<
 	| string
 	| {
+		[moduleName: string]: string | undefined;
 		main?: string;
 		browser?: string;
-		[moduleName: string]: string | undefined;
 	}
 	| undefined
 >(packageJson.esnext);
