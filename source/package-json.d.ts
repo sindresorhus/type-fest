@@ -375,6 +375,13 @@ export type PackageJson = {
 	| {
 		type: string;
 		url: string;
+
+		/**
+		Relative path to package.json if it is placed in non-root directory (for example if it is part of a monorepo).
+
+		[Read more.](https://github.com/npm/rfcs/blob/latest/implemented/0010-monorepo-subdirectory-declaration.md)
+		*/
+		directory?: string;
 	};
 
 	/**
