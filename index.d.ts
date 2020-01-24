@@ -18,3 +18,4 @@ export {SetRequired} from './source/set-required';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
+export {TsConfigJson} from './source/tsconfig-json';
