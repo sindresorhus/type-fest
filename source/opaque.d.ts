@@ -54,6 +54,12 @@ const accountNumber = createAccountNumber();
 
 // This will not compile successfully.
 const newAccountNumber = accountNumber + 2;
+
+// As a side note, you can (and should) use recursive types for your opaque types to make them stronger and hopefully easier to type.
+type Person = {
+	id: Opaque<number, Person>;
+	name: string;
+};
 ```
 */
 export type Opaque<Type, Token = unknown> = Type & {readonly __opaque__: Token };
