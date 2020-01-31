@@ -13,4 +13,4 @@ expectType<unknown>(value.__opaque__);
 expectType<number>(value);
 
 // You cannot modify an opaque value.
-expectError<Value>(value + 2);
+expectError<Value>(value + 2); // eslint-disable-line @typescript-eslint/restrict-plus-operands
