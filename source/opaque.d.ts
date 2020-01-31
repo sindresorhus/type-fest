@@ -62,4 +62,4 @@ type Person = {
 };
 ```
 */
-export type Opaque<Type, Token = unknown> = Type & {readonly __opaque__: Token };
+export type Opaque<Type, Token = unknown> = Type & {readonly __opaque__: Token};
