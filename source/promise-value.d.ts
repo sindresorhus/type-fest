@@ -20,6 +20,5 @@ function getNumber(): number {
 }
 
 const number: PromiseValue<ReturnType<typeof getNumber>> = getNumber();
-
  */
 export type PromiseValue<PromiseType, Otherwise = PromiseType> = PromiseType extends Promise<infer Value> ? Value : Otherwise;
