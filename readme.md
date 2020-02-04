@@ -75,6 +75,9 @@ Click the type names for complete docs.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise` type.
+- [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract all keys from a shape where values extend the provided `Condition` type.
+- [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except select properties from a given shape when the values extend the provided `Condition` type.
+- [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except remove properties from a given shape only when the values extend the provided `Condition` type.
 
 ### Miscellaneous
 
