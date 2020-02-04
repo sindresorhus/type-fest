@@ -35,6 +35,7 @@ expectType<PackageJson.Dependency | undefined>(packageJson.peerDependencies);
 expectType<string[] | undefined>(packageJson.bundleDependencies);
 expectType<string[] | undefined>(packageJson.bundledDependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
+expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
 expectType<{[engineName: string]: string} | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectType<
