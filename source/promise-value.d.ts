@@ -4,21 +4,15 @@ If the type is not a `Promise`, the type itself is returned.
 
 @example
 import {PromiseValue} from './promise-value';
-import {asyncFunction} from 'api';
 
-let data: PromiseValue<ReturnType<typeof asyncFunction>>;
+type AsyncData = Promise<string>;
+let asyncData: PromiseValue<AsyncData> = Promise.resolve('ABC');
 
-async function setValue(): void {
-  data = await asyncFunction();
-}
+type Data = PromiseValue<AsyncData>;
+let data: Data = await asyncData;
 
-setValue();
-
-// Here's an example of using this with non-Promise types.
-function getNumber(): number {
- return 2;
-}
-
-const number: PromiseValue<ReturnType<typeof getNumber>> = getNumber();
+// Here's an example that shows how this type reacts to non-Promise types.
+type SyncData = PromiseValue<string>;
+let syncData: SyncData = getSyncData();
  */
 export type PromiseValue<PromiseType, Otherwise = PromiseType> = PromiseType extends Promise<infer Value> ? Value : Otherwise;
