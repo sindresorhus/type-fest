@@ -16,5 +16,5 @@ let data: Data = await asyncData;
 type SyncData = PromiseValue<string>;
 let syncData: SyncData = getSyncData();
 ```
- */
+*/
 export type PromiseValue<PromiseType, Otherwise = PromiseType> = PromiseType extends Promise<infer Value> ? Value : Otherwise;
