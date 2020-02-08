@@ -1,4 +1,4 @@
-import {PromiseValue} from 'type-fest';
+import {PromiseValue} from './promise-value';
 
 type AsyncFunction = (...args: unknown[]) => Promise<unknown>;
 
