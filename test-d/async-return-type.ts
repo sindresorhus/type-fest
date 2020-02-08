@@ -1,12 +1,12 @@
 import {expectType} from 'tsd';
 import {AsyncReturnType} from '..';
 
-function asyncFunction () {
+async function asyncFunction(): Promise<number> {
     return Promise.resolve(2);
 }
 
 type Value = AsyncReturnType<typeof asyncFunction>;
 
-asyncFunction().then(function (value) {
+asyncFunction().then(value => {
     expectType<Value>(value);
 });
