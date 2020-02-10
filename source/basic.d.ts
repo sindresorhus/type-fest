@@ -69,4 +69,4 @@ export interface ObservableLike {
 /**
 Matches a value in an array.
 */
-export type ValueOf<T, K extends keyof T = keyof T> = T[K];
+export type ValueOf<T, ValueType extends keyof T = keyof T> = T[ValueType];
