@@ -5,7 +5,6 @@
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
 	"funding": "https://github.com/sponsors/sindresorhus",
-	"types": "./index.d.ts",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
@@ -41,6 +40,7 @@
 		"typescript": "3.7.5",
 		"xo": "^0.25.3"
 	},
+	"types": "index.d.ts",
 	"xo": {
 		"extends": "xo-typescript",
 		"extensions": [
