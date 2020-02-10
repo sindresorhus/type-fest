@@ -276,7 +276,7 @@ declare namespace PackageJson {
 
 	/**
 	A workspace pattern points to a directory or group of directories which contain packages that should be included in the workspace installation process.
-	
+
 	The patterns are handled with [minimatch](https://github.com/isaacs/minimatch).
 
 	@example
