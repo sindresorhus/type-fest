@@ -58,6 +58,7 @@ Click the type names for complete docs.
 - [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
 - [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
 - [`ObservableLike`](source/basic.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
+- [`ValueOf`](source/basic.d.ts) - Matches a value in an array.
 
 ### Utilities
 

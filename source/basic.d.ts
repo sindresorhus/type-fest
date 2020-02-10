@@ -65,3 +65,8 @@ export interface ObservableLike {
 	subscribe(observer: (value: unknown) => void): void;
 	[Symbol.observable](): ObservableLike;
 }
+
+/**
+Matches a value in an array.
+*/
+export type ValueOf<T, K extends keyof T = keyof T> = T[K];
