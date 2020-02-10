@@ -1,4 +1,5 @@
-import {LiteralUnion} from '..';
+import {JsonObject, JsonValue} from './basic';
+import {LiteralUnion} from './literal-union';
 
 declare namespace PackageJson {
 	/**
@@ -27,7 +28,7 @@ declare namespace PackageJson {
 		};
 
 	export interface DirectoryLocations {
-		[directoryType: string]: unknown;
+		[directoryType: string]: JsonValue;
 
 		/**
 		Location for executable scripts. Sugar to generate entries in the `bin` property by walking the folder.
@@ -393,7 +394,7 @@ export type PackageJson = {
 	Is used to set configuration parameters used in package scripts that persist across upgrades.
 	*/
 	config?: {
-		[configKey: string]: unknown;
+		[configKey: string]: JsonValue;
 	};
 
 	/**
@@ -513,7 +514,7 @@ export type PackageJson = {
 	A set of config values that will be used at publish-time. It's especially handy to set the tag, registry or access, to ensure that a given package is not tagged with 'latest', published to the global public registry or that a scoped module is private by default.
 	*/
 	publishConfig?: {
-		[config: string]: unknown;
+		[config: string]: JsonValue;
 	};
 
 	/**
@@ -543,6 +544,4 @@ export type PackageJson = {
 PackageJson.NonStandardEntryPoints &
 PackageJson.TypeScriptConfiguration &
 PackageJson.YarnConfiguration &
-PackageJson.JSPMConfiguration & {
-	[key: string]: unknown;
-};
+PackageJson.JSPMConfiguration & JsonObject;

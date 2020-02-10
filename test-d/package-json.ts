@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {PackageJson, LiteralUnion} from '..';
+import {PackageJson, LiteralUnion, JsonObject, JsonValue} from '..';
 
 const packageJson: PackageJson = {};
 
@@ -25,7 +25,7 @@ expectType<{type: string; url: string; directory?: string} | string | undefined>
 	packageJson.repository
 );
 expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
-expectType<{[configKey: string]: unknown} | undefined>(packageJson.config);
+expectType<{[configKey: string]: JsonValue} | undefined>(packageJson.config);
 expectType<PackageJson.Dependency | undefined>(packageJson.dependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.devDependencies);
 expectType<PackageJson.Dependency | undefined>(
@@ -53,7 +53,7 @@ expectType<
 >(packageJson.cpu);
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
-expectType<{[config: string]: unknown} | undefined>(packageJson.publishConfig);
+expectType<{[config: string]: JsonValue} | undefined>(packageJson.publishConfig);
 expectType<string | undefined>(packageJson.module);
 expectType<
 	| string
@@ -65,4 +65,7 @@ expectType<
 	| undefined
 >(packageJson.esnext);
 expectType<PackageJson | undefined>(packageJson.jspm);
-expectType<unknown>(packageJson.foo);
+expectType<JsonValue>(packageJson.foo);
+
+const createPackageJson = (): PackageJson => packageJson;
+expectType<JsonObject>(createPackageJson());
