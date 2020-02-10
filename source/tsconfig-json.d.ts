@@ -1,3 +1,5 @@
+import {JsonObject} from './basic';
+
 declare namespace TsConfigJson {
 	namespace CompilerOptions {
 		export type JSX =
@@ -147,8 +149,7 @@ declare namespace TsConfigJson {
 			| 'webworker'
 			| 'webworker.importscripts';
 
-		export interface Plugin {
-			[key: string]: unknown;
+		export interface Plugin extends JsonObject{
 			/**
 			Plugin name.
 			*/
@@ -817,7 +818,7 @@ declare namespace TsConfigJson {
 	}
 }
 
-export interface TsConfigJson {
+export interface TsConfigJson extends JsonObject {
 	/**
 	Instructs the TypeScript compiler how to compile `.ts` files.
 	*/
