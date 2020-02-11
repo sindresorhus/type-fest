@@ -16,6 +16,7 @@ export {Opaque} from './source/opaque';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
 export {PromiseValue} from './source/promise-value';
+export {OneOrMore} from './source/one-or-more';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
