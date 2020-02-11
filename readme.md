@@ -75,6 +75,7 @@ Click the type names for complete docs.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise` type.
+- [`OneOrMore`](source/one-or-more.d.ts) - Either matches an array containing only `Value`, or `Value` itself, not in an array.
 
 ### Miscellaneous
 
