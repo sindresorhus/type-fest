@@ -19,10 +19,10 @@ interface Example {
 }
 
 declare const exampleConditionalExcept: ConditionalExcept<Example, string>;
-expectType<{ b?: string | number; c?: string; d: Record<string, unknown> }>(exampleConditionalExcept);
+expectType<{b?: string | number; c?: string; d: Record<string, unknown>}>(exampleConditionalExcept);
 
 declare const awesomeConditionalExcept: ConditionalExcept<Awesome, Primitive>;
-expectType<{ run: () => void }>(awesomeConditionalExcept);
+expectType<{run: () => void}>(awesomeConditionalExcept);
 
 declare const exampleConditionalExceptWithUndefined: ConditionalExcept<Example, string | undefined>;
-expectType<{ b?: string | number; d: Record<string, unknown> }>(exampleConditionalExceptWithUndefined);
+expectType<{b?: string | number; d: Record<string, unknown>}>(exampleConditionalExceptWithUndefined);
