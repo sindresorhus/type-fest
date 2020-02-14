@@ -75,7 +75,7 @@ Click the type names for complete docs.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise` type.
-- [`AsyncReturnType`](source/async-return-type.d.ts) - Unpack the return type of a function that returns a `Promise`.
+- [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
 
 ### Miscellaneous
 
