@@ -2,7 +2,7 @@ import {Except} from './except';
 import {ConditionalKeys} from './conditional-keys';
 
 /**
-Exclude the keys from any shape which matches the provided `Condition`.
+Exclude keys from a shape that matches the given `Condition`.
 
 This is useful when you want to create a new type with a specific set of keys from a shape. For example, you might want to exclude all the primitive properties from a class and form a new shape containing everything but the primitive properties.
 
@@ -19,10 +19,8 @@ class Awesome {
 }
 
 type ExceptPrimitivesFromAwesome = ConditionalExcept<Awesome, Primitive>;
-// => { run: () => void; }
+//=> {run: () => void}
 ```
-
-A simpler and more contrived example is below.
 
 @example
 ```
@@ -32,11 +30,11 @@ interface Example {
 	a: string;
 	b: string | number;
 	c: () => void;
-	d: {}
+	d: {};
 }
 
 type NonStringKeysOnly = ConditionalExcept<Example, string>;
-// => { b: string | number; c: () => void; d: {}; }
+//=> {b: string | number; c: () => void; d: {}}
 ```
 */
 export type ConditionalExcept<Base, Condition> = Except<
