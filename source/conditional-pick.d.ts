@@ -1,9 +1,9 @@
 import {ConditionalKeys} from './conditional-keys';
 
 /**
-Pick all keys from them shape which match the provided `Condition`.
+Pick keys from the shape that matches the given `Condition`.
 
-This is useful when you want to create a new type from a specific subset from an already created type. For example you might want to pick all the primitive properties from a class and form a new automatically derived type.
+This is useful when you want to create a new type from a specific subset of an existing type. For example, you might want to pick all the primitive properties from a class and form a new automatically derived type.
 
 @example
 ```
@@ -18,10 +18,8 @@ class Awesome {
 }
 
 type PickPrimitivesFromAwesome = ConditionalPick<Awesome, Primitive>;
-// => { name: string; successes: number; failures: bigint; }
+//=> {name: string; successes: number; failures: bigint}
 ```
-
-A simpler and more contrived example is below.
 
 @example
 ```
@@ -31,11 +29,11 @@ interface Example {
 	a: string;
 	b: string | number;
 	c: () => void;
-	d: {}
+	d: {};
 }
 
 type StringKeysOnly = ConditionalPick<Example, string>;
-// => { a: string; }
+//=> {a: string}
 ```
 */
 export type ConditionalPick<Base, Condition> = Pick<
