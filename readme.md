@@ -63,6 +63,7 @@ Click the type names for complete docs.
 
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type).
 - [`Mutable`](source/mutable.d.ts) - Convert an object with `readonly` keys into a mutable object. The inverse of `Readonly<T>`.
+- [`Optional`](source/optional.d.ts) - Makes a type optional. Allows a type to be `undefined`, but not `null`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
@@ -75,7 +76,6 @@ Click the type names for complete docs.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise` type.
-- [`Optional`](source/optional.d.ts) - Makes a type optional. Allows a type to be `undefined`, but not `null`.
 
 ### Miscellaneous
 
