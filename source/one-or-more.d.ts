@@ -13,5 +13,5 @@ const multipleIDs: OneOrMoreIDs = [1234, 2468];
 const oneID: OneOrMoreIDs = 1234;
 ```
 */
-export type OneOrMore<Value> = Value | ReadonlyArray<Value>;
+export type OneOrMore<Value> = Value | readonly Value[];
 /* eslint-enable @typescript-eslint/array-type */
