@@ -76,6 +76,9 @@ Click the type names for complete docs.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise`.
 - [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
+- [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
+- [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
+- [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 
 ### Miscellaneous
 
