@@ -11,11 +11,11 @@ type ID = number;
 type OneOrMoreIDs = OneOrMore<ID>;
 
 function runOnIDs (ids: OneOrMoreIDs) {
-    if (Array.isArray(ids)) {
-        ids.forEach(id => console.log(id));
-    } else {
-        console.log(ids);
-    }
+	if (Array.isArray(ids)) {
+		ids.forEach(id => console.log(id));
+	} else {
+		console.log(ids);
+	}
 }
 ```
 */
