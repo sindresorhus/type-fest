@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/array-type */
 /**
 Either matches an array containing only `Value`, or `Value` itself, not in an array.
 
@@ -14,4 +13,3 @@ const oneID: OneOrMoreIDs = 1234;
 ```
 */
 export type OneOrMore<Value> = Value | readonly Value[];
-/* eslint-enable @typescript-eslint/array-type */
