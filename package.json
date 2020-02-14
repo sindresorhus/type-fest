@@ -40,6 +40,7 @@
 		"typescript": "3.7.5",
 		"xo": "^0.25.3"
 	},
+	"types": "index.d.ts",
 	"xo": {
 		"extends": "xo-typescript",
 		"extensions": [
