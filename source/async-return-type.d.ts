@@ -19,5 +19,5 @@ async function doSomething(value: Value) {}
 
 asyncFunction().then(value => doSomething(value));
 ```
- */
+*/
 export type AsyncReturnType<Target extends AsyncFunction> = PromiseValue<ReturnType<Target>>;
