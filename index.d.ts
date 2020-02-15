@@ -17,6 +17,10 @@ export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
 export {PromiseValue} from './source/promise-value';
 export {ValueOf} from './source/value-of';
+export {AsyncReturnType} from './source/async-return-type';
+export {ConditionalExcept} from './source/conditional-except';
+export {ConditionalKeys} from './source/conditional-keys';
+export {ConditionalPick} from './source/conditional-pick';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
