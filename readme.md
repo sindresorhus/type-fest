@@ -58,7 +58,6 @@ Click the type names for complete docs.
 - [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
 - [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
 - [`ObservableLike`](source/basic.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
-- [`ValueOf`](source/basic.d.ts) - Matches a value in an array.
 
 ### Utilities
 
@@ -76,6 +75,7 @@ Click the type names for complete docs.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise` type.
+- [`ValueOf`](source/basic.d.ts) - Matches a value in an array.
 
 ### Miscellaneous
 
