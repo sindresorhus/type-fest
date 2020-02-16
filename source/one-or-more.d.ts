@@ -10,9 +10,11 @@ import {OneOrMore} from 'type-fest';
 type ID = number;
 type OneOrMoreIDs = OneOrMore<ID>;
 
-function runOnIDs (ids: OneOrMoreIDs) {
+function logIDs(ids: OneOrMoreIDs) {
 	if (Array.isArray(ids)) {
-		ids.forEach(id => console.log(id));
+		for (const id of ids) {
+			console.log(id);
+		}
 	} else {
 		console.log(ids);
 	}
