@@ -4,6 +4,7 @@ export * from './source/basic';
 // Utilities
 export {Except} from './source/except';
 export {Mutable} from './source/mutable';
+export {Optional} from './source/optional';
 export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
@@ -16,7 +17,6 @@ export {Opaque} from './source/opaque';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
 export {PromiseValue} from './source/promise-value';
-export {Optional} from './source/optional';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
