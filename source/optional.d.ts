@@ -1,5 +1,5 @@
 /**
-Makes a type optional. Allows a type to be `undefined`, but not `null`.
+Makes a type optional. Allows a type to be `undefined`, [but not `null`](https://github.com/sindresorhus/meta/issues/7).
 
 @example
 ```
