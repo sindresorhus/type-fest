@@ -5,7 +5,7 @@ Creates a union of all the values of the object's keys. Optionally, a key can be
 ```
 import {ValueOf} from 'type-fest';
 
-const value: ValueOf<{ a: 1; b: 2; c: 3 }> = 3;
+const value: ValueOf<{a: 1; b: 2; c: 3}> = 3;
 
 expectType<1 | 2 | 3>(value);
 ```
