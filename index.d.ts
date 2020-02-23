@@ -20,6 +20,7 @@ export {AsyncReturnType} from './source/async-return-type';
 export {ConditionalExcept} from './source/conditional-except';
 export {ConditionalKeys} from './source/conditional-keys';
 export {ConditionalPick} from './source/conditional-pick';
+export {UnionToIntersection} from './source/union-to-intersection';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
