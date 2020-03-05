@@ -20,17 +20,17 @@ A more applicable example which could make its way into your library code follow
 import {UnionToIntersection} from 'type-fest';
 
 class CommandOne {
-  commands: {
-    a1: () => undefined,
-    b1: () => undefined,
-  }
+	commands: {
+		a1: () => undefined,
+		b1: () => undefined,
+	}
 }
 
 class CommandTwo {
-  commands: {
-    a2: (argA: string) => undefined,
-    b2: (argB: string) => undefined,
-  }
+	commands: {
+		a2: (argA: string) => undefined,
+		b2: (argB: string) => undefined,
+	}
 }
 
 const union = [new CommandOne(), new CommandTwo()].map(instance => instance.commands);
@@ -42,17 +42,17 @@ type Intersection = UnionToIntersection<Union>;
 ```
 */
 export type UnionToIntersection<Union> = (
-  // `extends any` is always going to be the case and is used to convert the
-  // `Union` into a [distributive conditional
-  // type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
-  Union extends any
-    // The union type is used as the only argument to a function since the union
-    // of function arguments is an intersection.
-    ? (distributedUnion: Union) => void
-    // This won't happen.
-    : never
-    // Infer the `Intersection` type since TypeScript represents the positional
-    // arguments of unions of functions as an intersection of the union.
-  ) extends ((mergedIntersection: infer Intersection) => void)
-    ? Intersection
-    : never;
+	// `extends any` is always going to be the case and is used to convert the
+	// `Union` into a [distributive conditional
+	// type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
+	Union extends unknown
+		// The union type is used as the only argument to a function since the union
+		// of function arguments is an intersection.
+		? (distributedUnion: Union) => void
+		// This won't happen.
+		: never
+		// Infer the `Intersection` type since TypeScript represents the positional
+		// arguments of unions of functions as an intersection of the union.
+	) extends ((mergedIntersection: infer Intersection) => void)
+		? Intersection
+		: never;
