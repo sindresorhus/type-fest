@@ -1,23 +1,22 @@
 /**
-A helpful utility which maps a union type to an intersection type using [distributive conditional types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
+Convert a union type to an intersection type using [distributive conditional types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
 
-Inspired by a [stack overflow answer](https://stackoverflow.com/a/50375286/2172153).
+Inspired by [this Stack Overflow answer](https://stackoverflow.com/a/50375286/2172153).
 
 @example
-
-```ts
+```
 import {UnionToIntersection} from 'type-fest';
 
 type Union = {the(): void} | {great(arg: string): void} | {escape: boolean};
+
 type Intersection = UnionToIntersection<Union>;
 //=> {the(): void; great(arg: string): void; escape: boolean};
 ```
 
-A more applicable example which could make it's way into your library code follows.
+A more applicable example which could make its way into your library code follows.
 
 @example
-
-```ts
+```
 import {UnionToIntersection} from 'type-fest';
 
 class CommandOne {
@@ -34,7 +33,7 @@ class CommandTwo {
   }
 }
 
-const union = [new CommandOne(), new CommandTwo()].map(instance => instance.commands)
+const union = [new CommandOne(), new CommandTwo()].map(instance => instance.commands);
 type Union = typeof union;
 //=> {a1(): void; b1(): void} | {a2(argA: string): void; b2(argB: string): void}
 
