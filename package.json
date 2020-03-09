@@ -8,10 +8,10 @@
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
-		"url": "sindresorhus.com"
+		"url": "https://sindresorhus.com"
 	},
 	"engines": {
-		"node": ">=8"
+		"node": ">=10"
 	},
 	"scripts": {
 		"test": "xo && tsd"
@@ -33,21 +33,16 @@
 	],
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^0.7.0",
-		"@typescript-eslint/eslint-plugin": "2.17.0",
-		"@typescript-eslint/parser": "2.17.0",
-		"eslint-config-xo-typescript": "^0.24.1",
+		"@typescript-eslint/eslint-plugin": "^2.22.0",
+		"@typescript-eslint/parser": "^2.22.0",
+		"eslint-config-xo-typescript": "^0.26.0",
 		"tsd": "^0.7.3",
-		"typescript": "3.7.5",
-		"xo": "^0.25.3"
+		"typescript": "^3.8.3",
+		"xo": "^0.27.2"
 	},
 	"types": "index.d.ts",
 	"xo": {
-		"extends": "xo-typescript",
-		"extensions": [
-			"ts"
-		],
 		"rules": {
-			"import/no-unresolved": "off",
 			"@typescript-eslint/indent": "off"
 		}
 	}

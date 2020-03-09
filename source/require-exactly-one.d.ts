@@ -1,5 +1,4 @@
 // TODO: Remove this when we target TypeScript >=3.5.
-// eslint-disable-next-line @typescript-eslint/generic-type-naming
 type _Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
 
 /**
