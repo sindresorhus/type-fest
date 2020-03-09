@@ -79,6 +79,7 @@ Click the type names for complete docs.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
+- [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 
 ### Miscellaneous
 
