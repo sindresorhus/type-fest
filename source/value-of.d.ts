@@ -20,7 +20,7 @@ export function getData(name: string): ValueOf<typeof data> {
 	return data[name]
 }
 
-export function onlyBar(name: string): ValueOf<typeof data, 2> {
+export function onlyBar(name: string): ValueOf<typeof data, "bar"> {
 	return data[name]
 }
 
