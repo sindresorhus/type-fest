@@ -1,6 +1,8 @@
 /**
 Create a union of the object's values, and optionally specify which keys to get the values from.
 
+Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31438) if you want to have this type as a built-in in TypeScript.
+
 @example
 ```
 // data.json
