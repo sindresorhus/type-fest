@@ -1,5 +1,5 @@
 /**
-Creates a union of all the values of the object's keys. Optionally, a key can be supplied, which limits the keys to get the values for.
+Create a union of the object's values, and optionally specify which keys to get the values from.
 
 @example
 ```
