@@ -7,9 +7,9 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31438)
 ```
 // data.json
 {
-	"foo": 1,
-	"bar": 2,
-	"biz": 3
+	'foo': 1,
+	'bar': 2,
+	'biz': 3
 }
 
 // main.ts
@@ -17,23 +17,23 @@ import {ValueOf} from 'type-fest';
 import data = require('./data.json');
 
 export function getData(name: string): ValueOf<typeof data> {
-	return data[name]
+	return data[name];
 }
 
-export function onlyBar(name: string): ValueOf<typeof data, "bar"> {
-	return data[name]
+export function onlyBar(name: string): ValueOf<typeof data, 'bar'> {
+	return data[name];
 }
 
 // file.ts
-import {getData, onlyBar} from "./main"
+import {getData, onlyBar} from './main';
 
-getData("foo")
+getData('foo');
 //=> 1
 
-onlyBar("foo")
+onlyBar('foo');
 //=> TypeError ...
 
-onlyBar("bar")
+onlyBar('bar');
 //=> 2
 ```
 */
