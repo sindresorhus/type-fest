@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectType, expectAssignable} from 'tsd';
 import {PackageJson, LiteralUnion} from '..';
 
 const packageJson: PackageJson = {};
@@ -38,14 +38,14 @@ expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
 expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
 expectType<{[engineName: string]: string} | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
-expectType<
+expectAssignable<
 	| undefined
 	| Array<LiteralUnion<
 			'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 			string
 	>>
 >(packageJson.os);
-expectType<
+expectAssignable<
 	| undefined
 	| Array<LiteralUnion<
 			'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',

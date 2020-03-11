@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectError, expectAssignable} from 'tsd';
 import {MergeExclusive} from '..';
 
 interface BaseOptions {
@@ -18,10 +18,10 @@ type Options = MergeExclusive<ExclusiveVariation1, ExclusiveVariation2>;
 const exclusiveVariation1: Options = {exclusive1: true};
 const exclusiveVariation2: Options = {exclusive2: 1};
 
-expectType<{option?: string; exclusive1: boolean; exclusive2?: string}>(
+expectAssignable<{option?: string; exclusive1: boolean; exclusive2?: string}>(
 	exclusiveVariation1
 );
-expectType<{option?: string; exclusive1?: string; exclusive2: number}>(
+expectAssignable<{option?: string; exclusive1?: string; exclusive2: number}>(
 	exclusiveVariation2
 );
 

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectAssignable} from 'tsd';
 import {Merge} from '..';
 
 type Foo = {
@@ -11,4 +11,4 @@ type Bar = {
 };
 
 const ab: Merge<Foo, Bar> = {a: 1, b: 2};
-expectType<{a: number; b: number}>(ab);
+expectAssignable<{a: number; b: number}>(ab);
