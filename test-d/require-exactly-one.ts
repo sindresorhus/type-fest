@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectError, expectAssignable} from 'tsd';
 import {RequireExactlyOne} from '..';
 
 type SystemMessages = {
@@ -20,5 +20,5 @@ expectError(test({}));
 expectError(test({macos: 'hey', linux: 'sup', default: 'hello'}));
 
 declare const oneWithoutKeys: RequireExactlyOne<{a: number; b: number}>;
-expectType<{a: number} | {b: number}>(oneWithoutKeys);
-expectError(expectType<{a: number; b: number}>(oneWithoutKeys));
+expectAssignable<{a: number} | {b: number}>(oneWithoutKeys);
+expectError(expectAssignable<{a: number; b: number}>(oneWithoutKeys));
