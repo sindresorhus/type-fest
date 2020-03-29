@@ -21,6 +21,7 @@ export {ConditionalExcept} from './source/conditional-except';
 export {ConditionalKeys} from './source/conditional-keys';
 export {ConditionalPick} from './source/conditional-pick';
 export {UnionToIntersection} from './source/union-to-intersection';
+export {Stringified} from './source/stringified';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
