@@ -15,6 +15,7 @@ export {Promisable} from './source/promisable';
 export {Opaque} from './source/opaque';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
+export {ValueOf} from './source/value-of';
 export {PromiseValue} from './source/promise-value';
 export {AsyncReturnType} from './source/async-return-type';
 export {ConditionalExcept} from './source/conditional-except';
