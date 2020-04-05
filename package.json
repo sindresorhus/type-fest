@@ -33,12 +33,13 @@
 	],
 	"devDependencies": {
 		"tsd": "^0.11.0",
-		"xo": "^0.27.2"
+		"xo": "^0.28.2"
 	},
 	"types": "index.d.ts",
 	"xo": {
 		"rules": {
-			"@typescript-eslint/indent": "off"
+			"@typescript-eslint/indent": "off",
+			"func-call-spacing": "off"
 		}
 	}
 }
