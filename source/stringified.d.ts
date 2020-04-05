@@ -1,7 +1,7 @@
 /**
-Create a type with all of the inputed types keys transformed into strings.
+Create a type with all of the keys of the given type transformed into strings.
 
-Use case: changing an interfaces values to strings in order to use it as a form model.
+Use case: Changing interface values to strings in order to use them in a form model.
 
 @example
 ```
