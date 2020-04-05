@@ -80,6 +80,7 @@ Click the type names for complete docs.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
+- [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
 
 ### Miscellaneous
 
