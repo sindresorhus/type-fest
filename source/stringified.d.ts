@@ -1,5 +1,5 @@
 /**
-Create a type with all of the keys of the given type transformed into strings.
+Create a type with the keys of the given type changed to `string` type.
 
 Use-case: Changing interface values to strings in order to use them in a form model.
 
