@@ -1,6 +1,6 @@
 import {PromiseValue} from './promise-value';
 
-type AsyncFunction = (...args: unknown[]) => Promise<unknown>;
+type AsyncFunction = (...args: any[]) => Promise<unknown>;
 
 /**
 Unwrap the return type of a function that returns a `Promise`.
