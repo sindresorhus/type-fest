@@ -1,8 +1,8 @@
 import {expectType, expectError} from 'tsd';
 import {AsyncReturnType} from '..';
 
-async function asyncFunction(): Promise<number> {
-	return Promise.resolve(2);
+async function asyncFunction(base: number): Promise<number> {
+	return base * 3;
 }
 
 type Value = AsyncReturnType<typeof asyncFunction>;
