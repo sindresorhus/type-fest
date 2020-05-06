@@ -8,7 +8,7 @@
 	- If it makes sense, also write a negative test using [`expectError()`](https://github.com/SamVerschueren/tsd#expecterrorfunction).
 - Don't use one-character type names like `T` and `U`. Use descriptive names. See the existing types for inspiration.
 - Write a good documentation comment that includes:
-	- Write a short and clear description of the type does.
+	- Write a short and clear description of what the type does.
 	- Write about some real-world use-cases where it can be useful. (It can be hard sometimes for users to see where they would use something)
 	- Example code block with a realistic example.
 	- At the bottom, explain how the type works. Some types can be quite advanced and hard to understand. We can use this opportunity to teach users.
