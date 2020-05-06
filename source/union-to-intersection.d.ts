@@ -42,7 +42,7 @@ type Intersection = UnionToIntersection<Union>;
 ```
 */
 export type UnionToIntersection<Union> = (
-	// `extends any` is always going to be the case and is used to convert the
+	// `extends unknown` is always going to be the case and is used to convert the
 	// `Union` into a [distributive conditional
 	// type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
 	Union extends unknown
