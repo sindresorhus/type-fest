@@ -7,8 +7,8 @@ import {FixedLengthArray} from 'type-fest';
 
 type FencingTeam = FixedLengthArray<string, 3>;
 
-const guestFencingTeam = ['Josh', 'Michael', 'Robert'];
-const homeFencingTeam = ['George', 'John'];
+const guestFencingTeam: FencingTeam = ['Josh', 'Michael', 'Robert'];
+const homeFencingTeam: FencingTeam = ['George', 'John'];
 //=> error TS2322: Type string[] is not assignable to type 'FencingTeam'
 guestFencingTeam.push('Sam');
 //=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
