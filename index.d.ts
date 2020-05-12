@@ -23,6 +23,7 @@ export {ConditionalKeys} from './source/conditional-keys';
 export {ConditionalPick} from './source/conditional-pick';
 export {UnionToIntersection} from './source/union-to-intersection';
 export {Stringified} from './source/stringified';
+export {FixedLengthArray} from './source/fixed-length-array';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
