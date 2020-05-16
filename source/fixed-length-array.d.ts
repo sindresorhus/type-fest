@@ -16,12 +16,12 @@ guestFencingTeam.push('Sam');
 //=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
 ```
 */
-export type FixedLengthArray<T, Length extends number, ArrayPrototype = [T, ...T[]]> = Pick<
+export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<
 	ArrayPrototype,
 	Exclude<keyof ArrayPrototype, ArrayLengthMutationKeys>
 > & {
-	[index: number]: T;
-	[Symbol.iterator]: () => IterableIterator<T>;
+	[index: number]: Element;
+	[Symbol.iterator]: () => IterableIterator<Element>;
 	readonly length: Length;
 };
 
