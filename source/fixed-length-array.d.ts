@@ -20,7 +20,7 @@ export type FixedLengthArray<T, Length extends number, ArrayPrototype = [T, ...T
 	ArrayPrototype,
 	Exclude<keyof ArrayPrototype, ArrayLengthMutationKeys>
 > & {
-	[I: number]: T;
+	[index: number]: T;
 	[Symbol.iterator]: () => IterableIterator<T>;
 	readonly length: Length;
 };
