@@ -1,5 +1,5 @@
 /**
-Create a type that represents an array of provided types and of a provided fixed length. The arrays length and Array prototype mutations that manipulate its length are excluded in the resulting type.
+Create a type that represents an array of a provided type and of a provided fixed length. The arrays length and Array prototype mutations that manipulate its length are excluded in the resulting type.
 
 @example
 ```
