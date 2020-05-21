@@ -4,7 +4,7 @@ Methods to exclude.
 type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift';
 
 /**
-Create a type that represents an array of the given type and length. The arrays length and the `Array` prototype methods that manipulate its length are excluded in the resulting type.
+Create a type that represents an array of the given type and length. The array's length and the `Array` prototype methods that manipulate its length are excluded in the resulting type.
 
 Please participate in [this issue](https://github.com/microsoft/TypeScript/issues/26223) if you want to have a similiar type built into TypeScript.
 
