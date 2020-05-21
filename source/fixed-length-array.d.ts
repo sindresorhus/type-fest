@@ -1,12 +1,17 @@
 /**
-Create a type that represents an array of a provided type and of a provided fixed length. The arrays length and Array prototype mutations that manipulate its length are excluded in the resulting type.
+Methods to exclude.
+*/
+type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift';
 
-Please participate in [this issue](https://github.com/microsoft/TypeScript/issues/26223) if you want to have a similiar type built-in in TypeScript.
+/**
+Create a type that represents an array of the given type and length. The arrays length and the `Array` prototype methods that manipulate its length are excluded in the resulting type.
+
+Please participate in [this issue](https://github.com/microsoft/TypeScript/issues/26223) if you want to have a similiar type built into TypeScript.
 
 Use-cases:
-- Declaring fixed-length tuples or arrays with a large number of items
-- Creating a Range union (e.g. `0 | 1 | 2 | 3 | 4` from the keys of such a type) without having to resort to recursive types
-- Creating an array of coordinates with a static length, of for example 3 for a 3D vector
+- Declaring fixed-length tuples or arrays with a large number of items.
+- Creating a range union (for example, `0 | 1 | 2 | 3 | 4` from the keys of such a type) without having to resort to recursive types.
+- Creating an array of coordinates with a static length, for example, length of 3 for a 3D vector.
 
 @example
 ```
@@ -31,8 +36,3 @@ export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [E
 	[Symbol.iterator]: () => IterableIterator<Element>;
 	readonly length: Length;
 };
-
-/**
-Provides the Array object methods to exclude from a Fixed Length Array. Internal helper for Fixed Length Array.
-*/
-type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift';
