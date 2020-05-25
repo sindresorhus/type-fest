@@ -417,6 +417,8 @@ export type PackageJson = {
 
 	/**
 	Standard entry points of the package, with enhanced support for ECMAScript Modules.
+
+	[Read more.](https://nodejs.org/api/esm.html#esm_package_entry_points)
 	*/
 	exports?: PackageJson.Exports;
 
