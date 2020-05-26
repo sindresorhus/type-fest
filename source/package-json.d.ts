@@ -231,8 +231,8 @@ declare namespace PackageJson {
 	*/
 	export type Exports =
 	| string
-	| { [key in ExportCondition]: Exports }
-	| { [key: string]: Exports };
+	| {[key in ExportCondition]: Exports}
+	| {[key: string]: Exports};
 
 	export interface NonStandardEntryPoints {
 		/**
