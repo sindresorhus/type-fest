@@ -211,6 +211,29 @@ declare namespace PackageJson {
 		[packageName: string]: string;
 	}
 
+	/**
+	Conditions which provide a way to resolve a package entry point based on the environment.
+	*/
+	export type ExportCondition = LiteralUnion<
+		| 'import'
+		| 'require'
+		| 'node'
+		| 'deno'
+		| 'browser'
+		| 'electron'
+		| 'react-native'
+		| 'default',
+		string
+	>;
+
+	/**
+	Entry points of a module, optionally with conditions and subpath exports.
+	*/
+	export type Exports =
+	| string
+	| {[key in ExportCondition]: Exports}
+	| {[key: string]: Exports};
+
 	export interface NonStandardEntryPoints {
 		/**
 		An ECMAScript module ID that is the primary entry point to the program.
@@ -381,9 +404,23 @@ export type PackageJson = {
 	files?: string[];
 
 	/**
+	Resolution algorithm for importing ".js" files from the package's scope.
+
+	[Read more.](https://nodejs.org/api/esm.html#esm_package_json_type_field)
+	*/
+	type?: 'module' | 'commonjs';
+
+	/**
 	The module ID that is the primary entry point to the program.
 	*/
 	main?: string;
+
+	/**
+	Standard entry points of the package, with enhanced support for ECMAScript Modules.
+
+	[Read more.](https://nodejs.org/api/esm.html#esm_package_entry_points)
+	*/
+	exports?: PackageJson.Exports;
 
 	/**
 	The executable files that should be installed into the `PATH`.
