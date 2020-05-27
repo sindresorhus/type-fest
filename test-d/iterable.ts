@@ -1,8 +1,20 @@
-import {IterableElement, AsyncIterableElement} from "../source/iterable"
+import {IterableElement} from '../source/iterable';
 import {expectType} from 'tsd';
 
-declare const iterableElement: IterableElement<Iterable<string>>;
-expectType<string>(iterableElement);
+declare const iterableElement: IterableElement<ReturnType<typeof secretGenerator>>;
+expectType<1 | 'two'>(iterableElement);
 
-declare const asyncIterableElement: AsyncIterableElement<AsyncIterable<string>>;
-expectType<string>(asyncIterableElement);
+declare const iterableElementAsync: IterableElement<ReturnType<typeof secretGeneratorAsync>>;
+expectType<true | Date>(iterableElementAsync);
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function * secretGenerator() {
+    yield 1;
+    yield 'two';
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+async function * secretGeneratorAsync() {
+    yield true;
+    yield new Date();
+}
