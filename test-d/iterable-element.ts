@@ -9,12 +9,12 @@ expectType<true | Date>(iterableElementAsync);
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function * secretGenerator() {
-    yield 1;
-    yield 'two';
+	yield 1;
+	yield 'two';
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 async function * secretGeneratorAsync() {
-    yield true;
-    yield new Date();
+	yield true;
+	yield new Date();
 }

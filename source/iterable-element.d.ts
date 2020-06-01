@@ -30,8 +30,8 @@
  * ```
  */
 export type IterableElement<TargetIterable> =
-    TargetIterable extends Iterable<infer ElementType> ?
-    ElementType :
-    TargetIterable extends AsyncIterable<infer ElementType> ?
-    ElementType :
-    never;
+	TargetIterable extends Iterable<infer ElementType> ?
+	ElementType :
+	TargetIterable extends AsyncIterable<infer ElementType> ?
+	ElementType :
+	never;
