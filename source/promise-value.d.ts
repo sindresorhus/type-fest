@@ -15,6 +15,12 @@ let data: Data = await asyncData;
 // Here's an example that shows how this type reacts to non-Promise types.
 type SyncData = PromiseValue<string>;
 let syncData: SyncData = getSyncData();
+
+// Here's an example that shows how this type reacts to recursive Promise types.
+type RecursiveAsyncData = Promise<Promise<string> >;
+let recursiveAsyncData: PromiseValue<RecursiveAsyncData> = Promise.resolve(Promise.resolve('ABC'));
 ```
 */
-export type PromiseValue<PromiseType, Otherwise = PromiseType> = PromiseType extends Promise<infer Value> ? Value : Otherwise;
+export type PromiseValue<PromiseType, Otherwise = PromiseType> = PromiseType extends Promise<infer Value>
+  ? {0: PromiseValue<Value>; 1: Value}[PromiseType extends Promise<any>? 0 : 1]
+  : Otherwise;
