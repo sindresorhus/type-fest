@@ -22,11 +22,6 @@ type RecursiveAsyncData = Promise<Promise<string> >;
 let recursiveAsyncData: PromiseValue<RecursiveAsyncData> = Promise.resolve(Promise.resolve('ABC'));
 ```
 */
-export type PromiseValue<
-	PromiseType,
-	Otherwise = PromiseType
-> = PromiseType extends Promise<infer Value>
-	? { 0: PromiseValue<Value>; 1: Value }[PromiseType extends Promise<unknown>
-			? 0
-			: 1]
+export type PromiseValue<PromiseType, Otherwise = PromiseType> = PromiseType extends Promise<infer Value>
+	? { 0: PromiseValue<Value>; 1: Value }[PromiseType extends Promise<unknown> ? 0 : 1]
 	: Otherwise;
