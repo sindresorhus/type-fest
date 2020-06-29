@@ -21,7 +21,7 @@ async function * iAmGeneratorAsync() {
 type MeStringOrBoolean = IterableElement<ReturnType<typeof iAmGeneratorAsync>>
 ```
 
-An Array is also an Iterable! so we can do this:
+An `Array` is also an `Iterable`, so we can do this:
 @example
 ```
 type MeString = IterableElement<Array<string>>
