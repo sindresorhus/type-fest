@@ -15,7 +15,7 @@ Or, async iterators!
 @example
 ```
 async function * iAmGeneratorAsync() {
-	yield "hi";
+	yield 'hi';
 	yield true;
 }
 type MeStringOrBoolean = IterableElement<ReturnType<typeof iAmGeneratorAsync>>
