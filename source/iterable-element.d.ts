@@ -1,7 +1,11 @@
 /**
 Get the element type of an Iterable or AsyncIterable.
 
-Quite useful if combined with generators:
+This can be useful if you want to know get the type that is yielded in a generator function. Often
+the return type of those functions is not specified. `IterableElement` works with both `Iterable`s
+and `AsyncIterable`s so it can be use with synchronous and asynchronous generators.
+
+Here is an example of `IterableElement` in action with a generator function:
 @example
 ```
 function * iAmGenerator() {
@@ -11,7 +15,7 @@ function * iAmGenerator() {
 type MeNumber = IterableElement<ReturnType<typeof iAmGenerator>>
 ```
 
-Or, async iterators!
+And here is an example with an async generator:
 @example
 ```
 async function * iAmGeneratorAsync() {
@@ -21,7 +25,11 @@ async function * iAmGeneratorAsync() {
 type MeStringOrBoolean = IterableElement<ReturnType<typeof iAmGeneratorAsync>>
 ```
 
-An `Array` is also an `Iterable`, so we can do this:
+Many things in JavaScript and TypeScript are an `Iterable` or an `AsyncIterable`. `IterableElement` works
+on all types that implement those interfaces! So `IterableElement` can also be used for a `Set`, a `Map`,
+a `ReadableStream` or an `Array`.
+
+An example with a `string` array.
 @example
 ```
 type MeString = IterableElement<string[]>
