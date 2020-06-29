@@ -1,7 +1,7 @@
 /**
 Get the element type of an Iterable or AsyncIterable.
 
-Quite usefull if combined with generators:
+Quite useful if combined with generators:
 @example
 ```
 function * iAmGenerator() {
