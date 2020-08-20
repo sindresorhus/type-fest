@@ -83,6 +83,8 @@ Click the type names for complete docs.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
+- [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters of a given function type.
+- [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
 
 ### Miscellaneous
 
