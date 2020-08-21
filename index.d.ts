@@ -26,5 +26,5 @@ export {Stringified} from './source/stringified';
 export {FixedLengthArray} from './source/fixed-length-array';
 
 // Miscellaneous
-export {PackageJson, PackageJsonStrict} from './source/package-json';
+export {PackageJson} from './source/package-json';
 export {TsConfigJson} from './source/tsconfig-json';

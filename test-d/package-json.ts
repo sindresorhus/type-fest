@@ -1,8 +1,7 @@
 import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
-import {PackageJson, PackageJsonStrict, LiteralUnion} from '..';
+import {PackageJson, LiteralUnion} from '..';
 
 const packageJson: PackageJson = {};
-const packageJsonStrict: PackageJsonStrict = {};
 
 expectType<string | undefined>(packageJson.name);
 expectType<string | undefined>(packageJson.version);
@@ -67,7 +66,5 @@ expectType<
 	| undefined
 >(packageJson.esnext);
 expectType<PackageJson | undefined>(packageJson.jspm);
-expectType<unknown>(packageJson.foo);
 
-expectAssignable<PackageJsonStrict>(packageJson);
-expectNotAssignable<PackageJson>(packageJsonStrict);
+expectNotAssignable<{[config: string]: unknown}>(packageJson);

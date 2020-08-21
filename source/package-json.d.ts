@@ -336,297 +336,290 @@ declare namespace PackageJson {
 		JSPM configuration.
 		*/
 		jspm?: PackageJson;
-    }
+	}
 
-    /**
-    Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Containing standard npm properties.
-    */
-    export interface PackageJsonStandard {
-        /**
-        The name of the package.
-        */
-        name?: string;
+	/**
+	Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Containing standard npm properties.
+	*/
+	export interface PackageJsonStandard {
+		/**
+		The name of the package.
+		*/
+		name?: string;
 
-        /**
-        Package version, parseable by [`node-semver`](https://github.com/npm/node-semver).
-        */
-        version?: string;
+		/**
+		Package version, parseable by [`node-semver`](https://github.com/npm/node-semver).
+		*/
+		version?: string;
 
-        /**
-        Package description, listed in `npm search`.
-        */
-        description?: string;
+		/**
+		Package description, listed in `npm search`.
+		*/
+		description?: string;
 
-        /**
-        Keywords associated with package, listed in `npm search`.
-        */
-        keywords?: string[];
+		/**
+		Keywords associated with package, listed in `npm search`.
+		*/
+		keywords?: string[];
 
-        /**
-        The URL to the package's homepage.
-        */
-        homepage?: LiteralUnion<'.', string>;
+		/**
+		The URL to the package's homepage.
+		*/
+		homepage?: LiteralUnion<'.', string>;
 
-        /**
-        The URL to the package's issue tracker and/or the email address to which issues should be reported.
-        */
-        bugs?: BugsLocation;
+		/**
+		The URL to the package's issue tracker and/or the email address to which issues should be reported.
+		*/
+		bugs?: BugsLocation;
 
-        /**
-        The license for the package.
-        */
-        license?: string;
+		/**
+		The license for the package.
+		*/
+		license?: string;
 
-        /**
-        The licenses for the package.
-        */
-        licenses?: Array<{
-            type?: string;
-            url?: string;
-        }>;
+		/**
+		The licenses for the package.
+		*/
+		licenses?: Array<{
+			type?: string;
+			url?: string;
+		}>;
 
-        author?: Person;
+		author?: Person;
 
-        /**
-        A list of people who contributed to the package.
-        */
-        contributors?: Person[];
+		/**
+		A list of people who contributed to the package.
+		*/
+		contributors?: Person[];
 
-        /**
-        A list of people who maintain the package.
-        */
-        maintainers?: Person[];
+		/**
+		A list of people who maintain the package.
+		*/
+		maintainers?: Person[];
 
-        /**
-        The files included in the package.
-        */
-        files?: string[];
+		/**
+		The files included in the package.
+		*/
+		files?: string[];
 
-        /**
-        Resolution algorithm for importing ".js" files from the package's scope.
+		/**
+		Resolution algorithm for importing ".js" files from the package's scope.
 
-        [Read more.](https://nodejs.org/api/esm.html#esm_package_json_type_field)
-        */
-        type?: 'module' | 'commonjs';
+		[Read more.](https://nodejs.org/api/esm.html#esm_package_json_type_field)
+		*/
+		type?: 'module' | 'commonjs';
 
-        /**
-        The module ID that is the primary entry point to the program.
-        */
-        main?: string;
+		/**
+		The module ID that is the primary entry point to the program.
+		*/
+		main?: string;
 
-        /**
-        Standard entry points of the package, with enhanced support for ECMAScript Modules.
+		/**
+		Standard entry points of the package, with enhanced support for ECMAScript Modules.
 
-        [Read more.](https://nodejs.org/api/esm.html#esm_package_entry_points)
-        */
-        exports?: Exports;
+		[Read more.](https://nodejs.org/api/esm.html#esm_package_entry_points)
+		*/
+		exports?: Exports;
 
-        /**
-        The executable files that should be installed into the `PATH`.
-        */
-        bin?:
-        | string
-        | {
-            [binary: string]: string;
-        };
+		/**
+		The executable files that should be installed into the `PATH`.
+		*/
+		bin?:
+		| string
+		| {
+			[binary: string]: string;
+		};
 
-        /**
-        Filenames to put in place for the `man` program to find.
-        */
-        man?: string | string[];
+		/**
+		Filenames to put in place for the `man` program to find.
+		*/
+		man?: string | string[];
 
-        /**
-        Indicates the structure of the package.
-        */
-        directories?: DirectoryLocations;
+		/**
+		Indicates the structure of the package.
+		*/
+		directories?: DirectoryLocations;
 
-        /**
-        Location for the code repository.
-        */
-        repository?:
-        | string
-        | {
-            type: string;
-            url: string;
+		/**
+		Location for the code repository.
+		*/
+		repository?:
+		| string
+		| {
+			type: string;
+			url: string;
 
-            /**
-            Relative path to package.json if it is placed in non-root directory (for example if it is part of a monorepo).
+			/**
+			Relative path to package.json if it is placed in non-root directory (for example if it is part of a monorepo).
 
-            [Read more.](https://github.com/npm/rfcs/blob/latest/implemented/0010-monorepo-subdirectory-declaration.md)
-            */
-            directory?: string;
-        };
+			[Read more.](https://github.com/npm/rfcs/blob/latest/implemented/0010-monorepo-subdirectory-declaration.md)
+			*/
+			directory?: string;
+		};
 
-        /**
-        Script commands that are run at various times in the lifecycle of the package. The key is the lifecycle event, and the value is the command to run at that point.
-        */
-        scripts?: Scripts;
+		/**
+		Script commands that are run at various times in the lifecycle of the package. The key is the lifecycle event, and the value is the command to run at that point.
+		*/
+		scripts?: Scripts;
 
-        /**
-        Is used to set configuration parameters used in package scripts that persist across upgrades.
-        */
-        config?: {
-            [configKey: string]: unknown;
-        };
+		/**
+		Is used to set configuration parameters used in package scripts that persist across upgrades.
+		*/
+		config?: {
+			[configKey: string]: unknown;
+		};
 
-        /**
-        The dependencies of the package.
-        */
-        dependencies?: Dependency;
+		/**
+		The dependencies of the package.
+		*/
+		dependencies?: Dependency;
 
-        /**
-        Additional tooling dependencies that are not required for the package to work. Usually test, build, or documentation tooling.
-        */
-        devDependencies?: Dependency;
+		/**
+		Additional tooling dependencies that are not required for the package to work. Usually test, build, or documentation tooling.
+		*/
+		devDependencies?: Dependency;
 
-        /**
-        Dependencies that are skipped if they fail to install.
-        */
-        optionalDependencies?: Dependency;
+		/**
+		Dependencies that are skipped if they fail to install.
+		*/
+		optionalDependencies?: Dependency;
 
-        /**
-        Dependencies that will usually be required by the package user directly or via another dependency.
-        */
-        peerDependencies?: Dependency;
+		/**
+		Dependencies that will usually be required by the package user directly or via another dependency.
+		*/
+		peerDependencies?: Dependency;
 
-        /**
-        Indicate peer dependencies that are optional.
-        */
-        peerDependenciesMeta?: {
-            [packageName: string]: {
-                optional: true;
-            };
-        };
+		/**
+		Indicate peer dependencies that are optional.
+		*/
+		peerDependenciesMeta?: {
+			[packageName: string]: {
+				optional: true;
+			};
+		};
 
-        /**
-        Package names that are bundled when the package is published.
-        */
-        bundledDependencies?: string[];
+		/**
+		Package names that are bundled when the package is published.
+		*/
+		bundledDependencies?: string[];
 
-        /**
-        Alias of `bundledDependencies`.
-        */
-        bundleDependencies?: string[];
+		/**
+		Alias of `bundledDependencies`.
+		*/
+		bundleDependencies?: string[];
 
-        /**
-        Engines that this package runs on.
-        */
-        engines?: {
-            [EngineName in 'npm' | 'node' | string]: string;
-        };
+		/**
+		Engines that this package runs on.
+		*/
+		engines?: {
+			[EngineName in 'npm' | 'node' | string]: string;
+		};
 
-        /**
-        @deprecated
-        */
-        engineStrict?: boolean;
+		/**
+		@deprecated
+		*/
+		engineStrict?: boolean;
 
-        /**
-        Operating systems the module runs on.
-        */
-        os?: Array<LiteralUnion<
-            | 'aix'
-            | 'darwin'
-            | 'freebsd'
-            | 'linux'
-            | 'openbsd'
-            | 'sunos'
-            | 'win32'
-            | '!aix'
-            | '!darwin'
-            | '!freebsd'
-            | '!linux'
-            | '!openbsd'
-            | '!sunos'
-            | '!win32',
-            string
-        >>;
+		/**
+		Operating systems the module runs on.
+		*/
+		os?: Array<LiteralUnion<
+		| 'aix'
+		| 'darwin'
+		| 'freebsd'
+		| 'linux'
+		| 'openbsd'
+		| 'sunos'
+		| 'win32'
+		| '!aix'
+		| '!darwin'
+		| '!freebsd'
+		| '!linux'
+		| '!openbsd'
+		| '!sunos'
+		| '!win32',
+		string
+		>>;
 
-        /**
-        CPU architectures the module runs on.
-        */
-        cpu?: Array<LiteralUnion<
-            | 'arm'
-            | 'arm64'
-            | 'ia32'
-            | 'mips'
-            | 'mipsel'
-            | 'ppc'
-            | 'ppc64'
-            | 's390'
-            | 's390x'
-            | 'x32'
-            | 'x64'
-            | '!arm'
-            | '!arm64'
-            | '!ia32'
-            | '!mips'
-            | '!mipsel'
-            | '!ppc'
-            | '!ppc64'
-            | '!s390'
-            | '!s390x'
-            | '!x32'
-            | '!x64',
-            string
-        >>;
+		/**
+		CPU architectures the module runs on.
+		*/
+		cpu?: Array<LiteralUnion<
+		| 'arm'
+		| 'arm64'
+		| 'ia32'
+		| 'mips'
+		| 'mipsel'
+		| 'ppc'
+		| 'ppc64'
+		| 's390'
+		| 's390x'
+		| 'x32'
+		| 'x64'
+		| '!arm'
+		| '!arm64'
+		| '!ia32'
+		| '!mips'
+		| '!mipsel'
+		| '!ppc'
+		| '!ppc64'
+		| '!s390'
+		| '!s390x'
+		| '!x32'
+		| '!x64',
+		string
+		>>;
 
-        /**
-        If set to `true`, a warning will be shown if package is installed locally. Useful if the package is primarily a command-line application that should be installed globally.
+		/**
+		If set to `true`, a warning will be shown if package is installed locally. Useful if the package is primarily a command-line application that should be installed globally.
 
-        @deprecated
-        */
-        preferGlobal?: boolean;
+		@deprecated
+		*/
+		preferGlobal?: boolean;
 
-        /**
-        If set to `true`, then npm will refuse to publish it.
-        */
-        private?: boolean;
+		/**
+		If set to `true`, then npm will refuse to publish it.
+		*/
+		private?: boolean;
 
-        /**
-        A set of config values that will be used at publish-time. It's especially handy to set the tag, registry or access, to ensure that a given package is not tagged with 'latest', published to the global public registry or that a scoped module is private by default.
-        */
-        publishConfig?: {
-            [config: string]: unknown;
-        };
+		/**
+		A set of config values that will be used at publish-time. It's especially handy to set the tag, registry or access, to ensure that a given package is not tagged with 'latest', published to the global public registry or that a scoped module is private by default.
+		*/
+		publishConfig?: {
+			[config: string]: unknown;
+		};
 
-        /**
-        Describes and notifies consumers of a package's monetary support information.
+		/**
+		Describes and notifies consumers of a package's monetary support information.
 
-        [Read more.](https://github.com/npm/rfcs/blob/latest/accepted/0017-add-funding-support.md)
-        */
-        funding?: string | {
-            /**
-            The type of funding.
-            */
-            type?: LiteralUnion<
-                | 'github'
-                | 'opencollective'
-                | 'patreon'
-                | 'individual'
-                | 'foundation'
-                | 'corporation',
-                string
-            >;
-            /**
-            The URL to the funding page.
-            */
-            url: string;
-        };
-    }
+		[Read more.](https://github.com/npm/rfcs/blob/latest/accepted/0017-add-funding-support.md)
+		*/
+		funding?: string | {
+			/**
+			The type of funding.
+			*/
+			type?: LiteralUnion<
+			| 'github'
+			| 'opencollective'
+			| 'patreon'
+			| 'individual'
+			| 'foundation'
+			| 'corporation',
+			string
+			>;
+			/**
+			The URL to the funding page.
+			*/
+			url: string;
+		};
+	}
 }
 /**
-Strict Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types for fields used by other popular projects, like TypeScript and Yarn. Dose not allow unknown keys.
- */
-export type PackageJsonStrict =
+Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types for fields used by other popular projects, like TypeScript and Yarn.
+*/
+export type PackageJson =
 PackageJson.PackageJsonStandard &
 PackageJson.NonStandardEntryPoints &
 PackageJson.TypeScriptConfiguration &
 PackageJson.YarnConfiguration &
 PackageJson.JSPMConfiguration;
-
-/**
-Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types for fields used by other popular projects, like TypeScript and Yarn.
-*/
-export type PackageJson = PackageJsonStrict & {
-	[key: string]: unknown;
-};
