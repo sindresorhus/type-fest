@@ -5,7 +5,7 @@ import {SetReturnType} from './set-return-type';
 Create an async version of the given function type.
 
 @example
-```ts
+```
 import {Asyncify} from 'type-fest';
 
 function getFooSync(someArg: SomeType): Foo {
