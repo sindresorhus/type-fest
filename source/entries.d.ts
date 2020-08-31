@@ -1,6 +1,6 @@
 // `Map` Helpers
 type MapKey<BaseType> = BaseType extends Map<infer KeyType, unknown> ? KeyType : never;
-type MapValue<BaseType> = BaseType extends Map<unknown, infer KeyType> ? KeyType : never;
+type MapValue<BaseType> = BaseType extends Map<unknown, infer ValueType> ? ValueType : never;
 
 // `Entry` Helpers
 type ArrayEntry<BaseType extends readonly unknown[]> = [number, BaseType[number]];
@@ -9,10 +9,10 @@ type ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
 type SetEntry<BaseType> = BaseType extends Set<infer ItemType> ? [ItemType, ItemType] : never;
 
 /**
-Many collections have a `.entries()` method that will return an enumerable array of that structure's keys and values.  The `Entry` type will return the type of that collection's entry give the type itself.
+Many collections have a `.entries()` method that will return an enumerable array of that structure's keys and values. The `Entry` type will return the type of that collection's entry given the type itself.
 
 For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries|`Object`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries|`Map`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries|`Array`}, and {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/entries|`Set`}
-collections all have this method.  Note that since `WeakMap` and `WeakSet` do not have this method because they are not enumerable.
+collections all have this method. Note that since `WeakMap` and `WeakSet` do not have this method since their entries are not enumerable.
 
 @see `Entries` if you want to just access the type of the array of entries (which is the return of the `.entries()` method).
 
@@ -51,10 +51,10 @@ type ObjectEntries<BaseType> = Array<ObjectEntry<BaseType>>;
 type SetEntries<BaseType extends Set<unknown>> = Array<SetEntry<BaseType>>;
 
 /**
-Many collections have a `.entries()` method that will return an enumerable array of that structure's keys and values.  The `Entries` type will return the type of that collection's entries give the type itself.
+Many collections have a `.entries()` method that will return an enumerable array of that structure's keys and values. The `Entries` type will return the type of that collection's entries given the type itself.
 
 For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries|`Object`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries|`Map`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries|`Array`}, and {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/entries|`Set`}
-collections all have this method.  Note that since `WeakMap` and `WeakSet` do not have this method because they are not enumerable.
+collections all have this method. Note that since `WeakMap` and `WeakSet` do not have this method since their entries are not enumerable.
 
 @see `Entry` if you want to just access the type of a single entry.
 
