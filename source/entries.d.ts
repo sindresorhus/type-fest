@@ -1,8 +1,8 @@
-// `Map` Helpers
+// `Map` helpers
 type MapKey<BaseType> = BaseType extends Map<infer KeyType, unknown> ? KeyType : never;
 type MapValue<BaseType> = BaseType extends Map<unknown, infer ValueType> ? ValueType : never;
 
-// `Entry` Helpers
+// `Entry` helpers
 type ArrayEntry<BaseType extends readonly unknown[]> = [number, BaseType[number]];
 type MapEntry<BaseType> = [MapKey<BaseType>, MapValue<BaseType>];
 type ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
@@ -44,7 +44,7 @@ export type Entry<BaseType> =
   : BaseType extends object ? ObjectEntry<BaseType>
   : never;
 
-// `Entries` Helpers
+// `Entries` helpers
 type ArrayEntries<BaseType extends readonly unknown[]> = Array<ArrayEntry<BaseType>>;
 type MapEntries<BaseType> = Array<MapEntry<BaseType>>;
 type ObjectEntries<BaseType> = Array<ObjectEntry<BaseType>>;
