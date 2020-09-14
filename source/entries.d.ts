@@ -1,4 +1,4 @@
-import { ArrayEntry, MapEntry, ObjectEntry, SetEntry } from './entry';
+import {ArrayEntry, MapEntry, ObjectEntry, SetEntry} from './entry';
 
 type ArrayEntries<BaseType extends readonly unknown[]> = Array<ArrayEntry<BaseType>>;
 type MapEntries<BaseType> = Array<MapEntry<BaseType>>;
@@ -22,10 +22,10 @@ const manipulatesEntries = (examples: Entries<Example>) => {
 	return examples.map(example => [
 		// does some arbitrary processing on the key (with type information available)
 		example[0].toUpperCase(),
-		
+
 		// does some arbitrary processing on the value (with type information available)
 		example[1].toFixed(),
-	])
+	]);
 };
 
 const example: Example = { someKey: 1 };

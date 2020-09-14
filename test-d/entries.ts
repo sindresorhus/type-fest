@@ -1,5 +1,5 @@
-import { Entries} from '../source/entries';
-import { Entry } from '../source/entry';
+import {Entries} from '../source/entries';
+import {Entry} from '../source/entry';
 import {expectAssignable} from 'tsd';
 
 // Objects

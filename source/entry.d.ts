@@ -24,10 +24,10 @@ const manipulatesEntry = (example: Entry<Example>) => {
 	return [
 		// does some arbitrary processing on the key (with type information available)
 		example[0].toUpperCase(),
-		
+
 		// does some arbitrary processing on the value (with type information available)
 		example[1].toFixed(),
-	]
+	];
 };
 
 const example: Example = { someKey: 1 };
@@ -58,4 +58,4 @@ export type Entry<BaseType> =
   : BaseType extends Set<unknown> ? SetEntry<BaseType>
   : BaseType extends unknown[] ? ArrayEntry<BaseType>
   : BaseType extends object ? ObjectEntry<BaseType>
-  : never;
+	: never;
