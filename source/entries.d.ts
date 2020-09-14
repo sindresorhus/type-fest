@@ -19,7 +19,7 @@ collections all have this method. Note that since `WeakMap` and `WeakSet` do not
 @example
 ```
 // Objects
-const objectExample = { a: 1 };
+const objectExample = {a: 1};
 const objectEntry: Entry<typeof objectExample> = ['a', 1];
 
 // Maps
@@ -53,8 +53,7 @@ type SetEntries<BaseType extends Set<unknown>> = Array<SetEntry<BaseType>>;
 /**
 Many collections have a `.entries()` method that will return an enumerable array of that structure's keys and values. The `Entries` type will return the type of that collection's entries given the type itself.
 
-For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries|`Object`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries|`Map`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries|`Array`}, and {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/entries|`Set`}
-collections all have this method. Note that since `WeakMap` and `WeakSet` do not have this method since their entries are not enumerable.
+For example the `Object`, `Map`, `Array`, and `Set` collections all have this method. Note that since `WeakMap` and `WeakSet` do not have this method since their entries are not enumerable.
 
 @see `Entry` if you want to just access the type of a single entry.
 
@@ -78,8 +77,8 @@ const setEntries: Entries<typeof setExample> = [['a', 'a'], [1, 1]];
 ```
 */
 export type Entries<BaseType> =
-    BaseType extends Map<unknown, unknown> ? MapEntries<BaseType>
-  : BaseType extends Set<unknown> ? SetEntries<BaseType>
-  : BaseType extends unknown[] ? ArrayEntries<BaseType>
-  : BaseType extends object ? ObjectEntries<BaseType>
-  : never;
+		BaseType extends Map<unknown, unknown> ? MapEntries<BaseType>
+	: BaseType extends Set<unknown> ? SetEntries<BaseType>
+	: BaseType extends unknown[] ? ArrayEntries<BaseType>
+	: BaseType extends object ? ObjectEntries<BaseType>
+	: never;
