@@ -83,6 +83,7 @@ Click the type names for complete docs.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
+- [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
 
 ### Miscellaneous
 
