@@ -28,6 +28,6 @@ const pet: Pet2 = '';
 ```
  */
 export type LiteralUnion<
-	LiteralType extends BaseType,
+	LiteralType,
 	BaseType extends Primitive
 > = LiteralType | (BaseType & {_?: never});
