@@ -24,7 +24,7 @@ const manipulatesEntries = (examples: Entries<Example>) => {
 		example[0].toUpperCase(),
 
 		// does some arbitrary processing on the value (with type information available)
-		example[1].toFixed(),
+		example[1].toFixed()
 	]);
 };
 
