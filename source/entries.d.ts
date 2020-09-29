@@ -6,7 +6,7 @@ type ObjectEntries<BaseType> = Array<ObjectEntry<BaseType>>;
 type SetEntries<BaseType extends Set<unknown>> = Array<SetEntry<BaseType>>;
 
 /**
-Many collections have an `.entries()` method that will return an iterable of that structure's keys and values. The `Entries` type will return the type of that collection's entries given the type itself.
+Many collections have an `entries` method which returns an array of a given object's own enumerable string-keyed property [key, value] pairs. The `Entries` type will return the type of that collection's entries.
 
 For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries|`Object`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries|`Map`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries|`Array`}, and {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/entries|`Set`} collections all have this method. Note that `WeakMap` and `WeakSet` do not have this method since their entries are not enumerable.
 
