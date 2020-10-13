@@ -2,9 +2,10 @@ import {PromiseValue} from './promise-value';
 import {SetReturnType} from './set-return-type';
 
 /**
-Create an async version of the given function type, by boxing the return type in `Promise`, while keeping the same parameter types.
+Create an async version of the given function type, by boxing the return type in `Promise` while keeping the same parameter types.
 
-Use-case: you have two functions, one synchronous and one asynchronous, that do the same thing. Instead of having to duplicate the type specification, you can use `Asyncify` to reuse the synchronous type.
+Use-case: You have two functions, one synchronous and one asynchronous that do the same thing. Instead of having to duplicate the type definition, you can use `Asyncify` to reuse the synchronous type.
+
 @example
 ```
 import {Asyncify} from 'type-fest';
@@ -21,9 +22,9 @@ type AsyncifiedFooGetter = Asyncify<typeof getFooSync>;
 const getFooAsync: AsyncifiedFooGetter = (someArg) => {
 	// TypeScript now knows that `someArg` is `SomeType` automatically.
 	// It also knows that this function must return `Promise<Foo>`.
-	// If you have `@typescript-eslint/promise-function-async` linter rule enabled, it will even report that "Functions that return promises must be async."
+	// If you have `@typescript-eslint/promise-function-async` linter rule enabled, it will even report that "Functions that return promises must be async.".
 
-	// ...
+	// …
 }
 ```
 */
