@@ -14,7 +14,7 @@ import {SetReturnType} from 'type-fest';
 type MyFunction = (foo: SomeType, bar: unknown) => SomeOtherType;
 
 type MyWrappedFunction = SetReturnType<MyFunction, boolean>;
-// type MyWrappedFunction = (foo: SomeType, bar: unknown) => boolean;
+//=> type MyWrappedFunction = (foo: SomeType, bar: unknown) => boolean;
 ```
 */
 export type SetReturnType<Fn extends (...args: any[]) => any, TypeToReturn> =
@@ -24,6 +24,6 @@ export type SetReturnType<Fn extends (...args: any[]) => any, TypeToReturn> =
 		// We want to detect this situation just to display a friendlier type upon hovering on an IntelliSense-powered IDE.
 		IsUnknown<ThisArg> extends true ? (...args: Arguments) => TypeToReturn : (this: ThisArg, ...args: Arguments) => TypeToReturn
 	) : (
-		// This part should be unreachable, but we make it meaningful just in case...
+		// This part should be unreachable, but we make it meaningful just in case…
 		(...args: Parameters<Fn>) => TypeToReturn
 	);

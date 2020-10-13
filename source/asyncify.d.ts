@@ -8,13 +8,15 @@ Create an async version of the given function type.
 ```
 import {Asyncify} from 'type-fest';
 
+// Synchronous function.
 function getFooSync(someArg: SomeType): Foo {
-	// ...
+	// …
 }
 
 type AsyncifiedFooGetter = Asyncify<typeof getFooSync>;
-// type AsyncifiedFooGetter = (someArg: SomeType) => Promise<Foo>;
+//=> type AsyncifiedFooGetter = (someArg: SomeType) => Promise<Foo>;
 
+// Same as `getFooSync` but asynchronous.
 const getFooAsync: AsyncifiedFooGetter = (someArg) => {
 	// TypeScript now knows that `someArg` is `SomeType` automatically.
 	// It also knows that this function must return `Promise<Foo>`.

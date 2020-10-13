@@ -3,7 +3,7 @@ import {SetReturnType} from '..';
 
 declare const anything: unknown;
 
-// Without thisArg and without parameters
+// Without `thisArg` and without parameters
 declare const variation1: SetReturnType<() => void, number>;
 expectType<() => number>(variation1);
 variation1.call(anything);
