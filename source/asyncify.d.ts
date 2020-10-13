@@ -2,8 +2,9 @@ import {PromiseValue} from './promise-value';
 import {SetReturnType} from './set-return-type';
 
 /**
-Create an async version of the given function type.
+Create an async version of the given function type, by boxing the return type in `Promise`, while keeping the same parameter types.
 
+Use-case: you have two functions, one synchronous and one asynchronous, that do the same thing. Instead of having to duplicate the type specification, you can use `Asyncify` to reuse the synchronous type.
 @example
 ```
 import {Asyncify} from 'type-fest';

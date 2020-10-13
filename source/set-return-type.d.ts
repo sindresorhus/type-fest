@@ -3,18 +3,18 @@ type IsNever<T> = [T] extends [never] ? true : false;
 type IsUnknown<T> = IsNever<T> extends false ? T extends unknown ? unknown extends T ? IsAny<T> extends false ? true : false : false : false : false;
 
 /**
-Get a function type based on another, changing the return type to one of your choice.
+Create a function type by modifying the return type of the given function type.
 
-Use-case: You want to define a wrapped function that returns something different while receiving the same parameters.
+Use-case: You want to define a wrapped function that returns something different while receiving the same parameters. For example, you might want to wrap a function that can throw an error into one that will return `undefined` instead.
 
 @example
 ```
 import {SetReturnType} from 'type-fest';
 
-type MyFunction = (foo: SomeType, bar: unknown) => SomeOtherType;
+type MyFunctionThatCanThrow = (foo: SomeType, bar: unknown) => SomeOtherType;
 
-type MyWrappedFunction = SetReturnType<MyFunction, boolean>;
-//=> type MyWrappedFunction = (foo: SomeType, bar: unknown) => boolean;
+type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, SomeOtherType | undefined>;
+//=> type MyWrappedFunction = (foo: SomeType, bar: unknown) => SomeOtherType | undefined;
 ```
 */
 export type SetReturnType<Fn extends (...args: any[]) => any, TypeToReturn> =
