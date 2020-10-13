@@ -3,7 +3,7 @@ type IsNever<T> = [T] extends [never] ? true : false;
 type IsUnknown<T> = IsNever<T> extends false ? T extends unknown ? unknown extends T ? IsAny<T> extends false ? true : false : false : false : false;
 
 /**
-Create a function type by modifying the return type of the given function type.
+Create a function type with a return type of your choice and the same parameters as the given function type.
 
 Use-case: You want to define a wrapped function that returns something different while receiving the same parameters. For example, you might want to wrap a function that can throw an error into one that will return `undefined` instead.
 
