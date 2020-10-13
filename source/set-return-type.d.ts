@@ -18,9 +18,9 @@ type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, SomeOtherType | u
 ```
 */
 export type SetReturnType<Fn extends (...args: any[]) => any, TypeToReturn> =
-	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter
+	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
 	Fn extends (this: infer ThisArg, ...args: infer Arguments) => any ? (
-		// If a function did not specify the `this` fake parameter, it will be inferred to `unknown`
+		// If a function did not specify the `this` fake parameter, it will be inferred to `unknown`.
 		// We want to detect this situation just to display a friendlier type upon hovering on an IntelliSense-powered IDE.
 		IsUnknown<ThisArg> extends true ? (...args: Arguments) => TypeToReturn : (this: ThisArg, ...args: Arguments) => TypeToReturn
 	) : (
