@@ -27,6 +27,8 @@ export {FixedLengthArray} from './source/fixed-length-array';
 export {IterableElement} from './source/iterable-element';
 export {Entry} from './source/entry';
 export {Entries} from './source/entries';
+export {SetReturnType} from './source/set-return-type';
+export {Asyncify} from './source/asyncify';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';

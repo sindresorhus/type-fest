@@ -86,6 +86,8 @@ Click the type names for complete docs.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
 - [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
+- [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
+- [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
 
 ### Miscellaneous
 
