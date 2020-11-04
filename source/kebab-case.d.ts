@@ -1,26 +1,34 @@
-type SplitIncludingDelimitor<S extends string, D extends string> =
-    string extends S ? string[] :
-    S extends '' ? [] :
-    S extends `${infer T}${D}${infer U}` ?
-    ( S extends `${T}${infer Z}${U}` ? [T, Z, ...SplitIncludingDelimitor<U, D>] : never ) :
-    [S];
+type SplitIncludingDelimitor<Source extends string, Delimitor extends string> =
+    string extends Source ? string[] :
+    Source extends '' ? [] :
+    Source extends `${infer FirstPart}${Delimitor}${infer SecondPart}` ?
+    (
+		Source extends `${FirstPart}${infer UsedDelimitor}${SecondPart}`
+			? [FirstPart, UsedDelimitor, ...SplitIncludingDelimitor<SecondPart, Delimitor>]
+			: never
+	) :
+    [Source];
 
-type Join<S extends any[], D extends string> =
-    string[] extends S ? string :
-    S extends [`${infer T}`, ...infer U] ?
-    U[0] extends undefined ? T : `${T}${D}${Join<U, D>}` :
+type Join<Parts extends any[], Delimitor extends string> =
+    string[] extends Parts ? string :
+    Parts extends [`${infer FirstPart}`, ...infer RemainingParts] ? (
+		RemainingParts[0] extends undefined
+			? FirstPart
+			: `${FirstPart}${Delimitor}${Join<RemainingParts, Delimitor>}`
+	) :
     '';
 
 type UpperCaseChars = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
-type WordSeparators = "-"|"_"|" ";
+type WordSeparators = '-'|'_'|' ';
 
-type StringPartToKebabCase<K extends string, S extends string, L extends string> =
-    K extends S ? '-' :
-    K extends L ? `-${Lowercase<K>}` :
-    K;
-type StringArrayToKebabCase<K extends any[], S extends string, L extends string> =
-    K extends [`${infer T}`, ...infer U] ? `${StringPartToKebabCase<T, S, L>}${StringArrayToKebabCase<U, S, L>}` :
-		'';
+type StringPartToKebabCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseChars extends string> =
+    StringPart extends UsedWordSeparators ? '-' :
+    StringPart extends UsedUpperCaseChars ? `-${Lowercase<StringPart>}` :
+    StringPart;
+type StringArrayToKebabCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseChars extends string> =
+	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
+		? `${StringPartToKebabCase<FirstPart, UsedWordSeparators, UsedUpperCaseChars>}${StringArrayToKebabCase<RemainingParts, UsedWordSeparators, UsedUpperCaseChars>}`
+		: '';
 
 /**
 Converts a string literal that may use another casing than kebab casing to kebab casing
@@ -48,4 +56,6 @@ const rawCliOptions: KebabCasedProps<CliOptions> = {
 };
 ```
 */
-export type KebabCase<K> = K extends string ? StringArrayToKebabCase<SplitIncludingDelimitor<K, WordSeparators | UpperCaseChars>, WordSeparators, UpperCaseChars> : K;
+export type KebabCase<Value> = Value extends string
+	? StringArrayToKebabCase<SplitIncludingDelimitor<Value, WordSeparators | UpperCaseChars>, WordSeparators, UpperCaseChars>
+	: Value;
