@@ -1,0 +1,14 @@
+{
+	"extends": "@sindresorhus/tsconfig",
+	"include": [
+    "source/**/*.ts",
+    "test-d/**/*.ts"
+  ],
+	"compilerOptions": {
+		"noEmit": true,
+		"target": "es2018",
+		"lib": [
+			"es2018"
+		]
+	}
+}
