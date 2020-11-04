@@ -9,15 +9,6 @@ type SplitIncludingDelimitor<Source extends string, Delimitor extends string> =
 	) :
     [Source];
 
-type Join<Parts extends any[], Delimitor extends string> =
-    string[] extends Parts ? string :
-    Parts extends [`${infer FirstPart}`, ...infer RemainingParts] ? (
-		RemainingParts[0] extends undefined
-			? FirstPart
-			: `${FirstPart}${Delimitor}${Join<RemainingParts, Delimitor>}`
-	) :
-    '';
-
 type UpperCaseChars = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
 type WordSeparators = '-'|'_'|' ';
 
