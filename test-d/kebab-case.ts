@@ -18,17 +18,17 @@ expectType<'foobar'>(noKebabFromMono);
 
 // Verifying example
 type KebabCasedProps<T> = {
-    [K in keyof T as KebabCase<K>]: T[K]
+		[K in keyof T as KebabCase<K>]: T[K]
 };
 
 interface CliOptions {
 		dryRun: boolean;
 		includeFile: string;
-    foo: number;
+		foo: number;
 }
 
 expectAssignable<KebabCasedProps<CliOptions>>({
 		'dry-run': true,
 		'include-file': 'bar.js',
-    foo: 123
+		foo: 123
 });
