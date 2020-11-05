@@ -12,7 +12,6 @@ jobs:
       fail-fast: false
       matrix:
         node_version:
-          - 15
           - 14
           - 12
           - 10
@@ -25,4 +24,4 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
       - run: npm install
-      - run: npm run test
+      - run: npm test
