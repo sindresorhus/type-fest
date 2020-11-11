@@ -20,13 +20,14 @@ const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
 };
 ```
 */
-export type RequireAtLeastOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
-	{
-		// For each Key in KeysType make a mapped type
-		[Key in KeysType]: (
-			// …by picking that Key's type and making it required
-			Required<Pick<ObjectType, Key>>
-		)
-	}[KeysType]
-	// …then, make intersection types by adding the remaining keys to each mapped type.
-	& Except<ObjectType, KeysType>;
+export type RequireAtLeastOne<
+	ObjectType,
+	KeysType extends keyof ObjectType = keyof ObjectType
+> = {
+	// For each `Key` in `KeysType` make a mapped type:
+	[Key in KeysType]-?: Required<Pick<ObjectType, Key>> & // 1. Make `Key`'s type required
+		// 2. Make all other keys in `KeysType` optional
+		Partial<Pick<ObjectType, Exclude<KeysType, Key>>>;
+}[KeysType] &
+	// 3. Add the remaining keys not in `KeysType`
+	Except<ObjectType, KeysType>;
