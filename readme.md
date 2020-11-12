@@ -11,7 +11,7 @@
 <br>
 <br>
 
-[![Build Status](https://travis-ci.com/sindresorhus/type-fest.svg?branch=master)](https://travis-ci.com/sindresorhus/type-fest)
+[![Build Status](https://github.com/sindresorhus/type-fest/workflows/CI/badge.svg?branch=master)](https://github.com/sindresorhus/type-fest/actions?query=branch%3Amaster+workflow%3ACI)
 [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://giphy.com/gifs/illustration-rainbow-unicorn-26AHG5KGFxSkUWw1i)
 <!-- Commented out until they actually show anything
 [![npm dependents](https://badgen.net/npm/dependents/type-fest)](https://www.npmjs.com/package/type-fest?activeTab=dependents) [![npm downloads](https://badgen.net/npm/dt/type-fest)](https://www.npmjs.com/package/type-fest)
