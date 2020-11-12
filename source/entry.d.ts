@@ -1,10 +1,10 @@
 type MapKey<BaseType> = BaseType extends Map<infer KeyType, unknown> ? KeyType : never;
 type MapValue<BaseType> = BaseType extends Map<unknown, infer ValueType> ? ValueType : never;
 
-type ArrayEntry<BaseType extends readonly unknown[]> = [number, BaseType[number]];
-type MapEntry<BaseType> = [MapKey<BaseType>, MapValue<BaseType>];
-type ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
-type SetEntry<BaseType> = BaseType extends Set<infer ItemType> ? [ItemType, ItemType] : never;
+export type ArrayEntry<BaseType extends readonly unknown[]> = [number, BaseType[number]];
+export type MapEntry<BaseType> = [MapKey<BaseType>, MapValue<BaseType>];
+export type ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
+export type SetEntry<BaseType> = BaseType extends Set<infer ItemType> ? [ItemType, ItemType] : never;
 
 /**
 Many collections have an `entries` method which returns an array of a given object's own enumerable string-keyed property [key, value] pairs. The `Entry` type will return the type of that collection's entry.
