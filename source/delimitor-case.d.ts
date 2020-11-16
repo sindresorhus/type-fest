@@ -65,6 +65,6 @@ export type DelimitorCase<Value, Delimitor extends string> = Value extends strin
 	>
 	: Value;
 
-export type KebabCase<Value> = DelimitorCase<value, '-'>;
+export type KebabCase<Value> = DelimitorCase<Value, '-'>;
 
-export type SnakeCase<Value> = DelimitorCase<value, '_'>;
+export type SnakeCase<Value> = DelimitorCase<Value, '_'>;
