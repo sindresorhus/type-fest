@@ -200,16 +200,12 @@ declare namespace PackageJson {
 		Run with the `npm restart` command, after `restart`. Note: `npm restart` will run the `stop` and `start` scripts if no `restart` script is provided.
 		*/
 		postrestart?: string;
-	} & {
-		[scriptName: string]: string;
-	};
+	} & Record<string, string>;
 
 	/**
 	Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or Git URL.
 	*/
-	export interface Dependency {
-		[packageName: string]: string;
-	}
+	export type Dependency = Record<string, string>;
 
 	/**
 	Conditions which provide a way to resolve a package entry point based on the environment.
@@ -232,7 +228,7 @@ declare namespace PackageJson {
 	export type Exports =
 	| string
 	| {[key in ExportCondition]: Exports}
-	| {[key: string]: Exports};
+	| {[key: string]: Exports}; // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
 
 	export interface NonStandardEntryPoints {
 		/**
@@ -256,9 +252,7 @@ declare namespace PackageJson {
 		*/
 		browser?:
 		| string
-		| {
-			[moduleName: string]: string | false;
-		};
+		| Record<string, string | false>;
 
 		/**
 		Denote which files in your project are "pure" and therefore safe for Webpack to prune if unused.
@@ -426,9 +420,7 @@ declare namespace PackageJson {
 		*/
 		bin?:
 		| string
-		| {
-			[binary: string]: string;
-		};
+		| Record<string, string>;
 
 		/**
 		Filenames to put in place for the `man` program to find.
@@ -465,9 +457,7 @@ declare namespace PackageJson {
 		/**
 		Is used to set configuration parameters used in package scripts that persist across upgrades.
 		*/
-		config?: {
-			[configKey: string]: unknown;
-		};
+		config?: Record<string, unknown>;
 
 		/**
 		The dependencies of the package.
@@ -492,11 +482,7 @@ declare namespace PackageJson {
 		/**
 		Indicate peer dependencies that are optional.
 		*/
-		peerDependenciesMeta?: {
-			[packageName: string]: {
-				optional: true;
-			};
-		};
+		peerDependenciesMeta?: Record<string, {optional: true}>;
 
 		/**
 		Package names that are bundled when the package is published.
@@ -585,9 +571,7 @@ declare namespace PackageJson {
 		/**
 		A set of config values that will be used at publish-time. It's especially handy to set the tag, registry or access, to ensure that a given package is not tagged with 'latest', published to the global public registry or that a scoped module is private by default.
 		*/
-		publishConfig?: {
-			[config: string]: unknown;
-		};
+		publishConfig?: Record<string, unknown>;
 
 		/**
 		Describes and notifies consumers of a package's monetary support information.

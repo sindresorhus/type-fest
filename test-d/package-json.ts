@@ -16,7 +16,7 @@ expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
 expectType<PackageJson.Person[] | undefined>(packageJson.maintainers);
 expectType<string[] | undefined>(packageJson.files);
 expectType<string | undefined>(packageJson.main);
-expectType<string | {[binary: string]: string} | undefined>(packageJson.bin);
+expectType<string | Record<string, string> | undefined>(packageJson.bin);
 expectType<string | undefined>(packageJson.types);
 expectType<string | undefined>(packageJson.typings);
 expectType<string | string[] | undefined>(packageJson.man);
@@ -25,7 +25,7 @@ expectType<{type: string; url: string; directory?: string} | string | undefined>
 	packageJson.repository
 );
 expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
-expectType<{[configKey: string]: unknown} | undefined>(packageJson.config);
+expectType<Record<string, unknown> | undefined>(packageJson.config);
 expectType<PackageJson.Dependency | undefined>(packageJson.dependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.devDependencies);
 expectType<PackageJson.Dependency | undefined>(
@@ -36,7 +36,7 @@ expectType<string[] | undefined>(packageJson.bundleDependencies);
 expectType<string[] | undefined>(packageJson.bundledDependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
 expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
-expectType<{[engineName: string]: string} | undefined>(packageJson.engines);
+expectType<Record<string, string> | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
 	| undefined
@@ -54,7 +54,7 @@ expectAssignable<
 >(packageJson.cpu);
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
-expectType<{[config: string]: unknown} | undefined>(packageJson.publishConfig);
+expectType<Record<string, unknown> | undefined>(packageJson.publishConfig);
 expectType<string | undefined>(packageJson.module);
 expectType<
 	| string
@@ -67,4 +67,4 @@ expectType<
 >(packageJson.esnext);
 expectType<PackageJson | undefined>(packageJson.jspm);
 
-expectNotAssignable<{[config: string]: unknown}>(packageJson);
+expectNotAssignable<Record<string, unknown>>(packageJson);

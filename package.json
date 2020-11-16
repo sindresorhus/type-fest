@@ -33,13 +33,14 @@
 	],
 	"devDependencies": {
 		"tsd": "^0.13.1",
-		"xo": "^0.28.2"
+		"xo": "^0.35.0"
 	},
 	"types": "index.d.ts",
 	"xo": {
 		"rules": {
+			"@typescript-eslint/ban-types": "off",
 			"@typescript-eslint/indent": "off",
-			"func-call-spacing": "off"
+			"node/no-unsupported-features/es-builtins": "off"
 		}
 	}
 }
