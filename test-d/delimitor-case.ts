@@ -85,7 +85,7 @@ expectAssignable<AlternativeKebabCasedProps<CliOptions>>({
 });
 
 expectAssignable<SnakeCasedProps<CliOptions>>({
-	'dry_run': true,
-	'include_file': 'bar.js',
+	dry_run: true,
+	include_file: 'bar.js',
 	foo: 123
 });
