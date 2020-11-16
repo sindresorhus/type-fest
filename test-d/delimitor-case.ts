@@ -12,6 +12,8 @@ const splitFromCamel: SplitIncludingDelimitors<'fooBar', WordSeparators | UpperC
 expectType<['foo', 'B', 'ar']>(splitFromCamel);
 const splitFromComplexCamel: SplitIncludingDelimitors<'fooBarAbc123', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar', 'A', 'bc123'];
 expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
+const splitFromWordSeparators: SplitIncludingDelimitors<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
+expectType<['foo', '-', 'bar', '_', 'car', ' ', 'far']>(splitFromWordSeparators);
 
 // DelimitorCase
 const delimitorFromCamel: DelimitorCase<'fooBar', '#'> = 'foo#bar';
