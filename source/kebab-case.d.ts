@@ -1,21 +1,22 @@
 type SplitIncludingDelimitor<Source extends string, Delimitor extends string> =
-		string extends Source ? string[] :
-		Source extends '' ? [] :
-		Source extends `${infer FirstPart}${Delimitor}${infer SecondPart}` ?
-		(
+	string extends Source ? string[] :
+	Source extends '' ? [] :
+	Source extends `${infer FirstPart}${Delimitor}${infer SecondPart}` ?
+	(
 		Source extends `${FirstPart}${infer UsedDelimitor}${SecondPart}`
 			? [FirstPart, UsedDelimitor, ...SplitIncludingDelimitor<SecondPart, Delimitor>]
 			: never
 	) :
-		[Source];
+	[Source];
 
 type UpperCaseChars = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
 type WordSeparators = '-'|'_'|' ';
 
 type StringPartToKebabCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseChars extends string> =
-		StringPart extends UsedWordSeparators ? '-' :
-		StringPart extends UsedUpperCaseChars ? `-${Lowercase<StringPart>}` :
-		StringPart;
+	StringPart extends UsedWordSeparators ? '-' :
+	StringPart extends UsedUpperCaseChars ? `-${Lowercase<StringPart>}` :
+	StringPart;
+
 type StringArrayToKebabCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseChars extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
 		? `${StringPartToKebabCase<FirstPart, UsedWordSeparators, UsedUpperCaseChars>}${StringArrayToKebabCase<RemainingParts, UsedWordSeparators, UsedUpperCaseChars>}`
