@@ -1,12 +1,16 @@
-type UpperCaseChars = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
-type WordSeparators = '-'|'_'|' ';
+export type UpperCaseChars = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
+export type WordSeparators = '-'|'_'|' ';
 
-type SplitIncludingDelimitors<Source extends string, Delimitor extends string> =
+export type SplitIncludingDelimitors<Source extends string, Delimitor extends string> =
 	Source extends '' ? [] :
 	Source extends `${infer FirstPart}${Delimitor}${infer SecondPart}` ?
 	(
 		Source extends `${FirstPart}${infer UsedDelimitor}${SecondPart}`
-			? [FirstPart, UsedDelimitor, ...SplitIncludingDelimitors<SecondPart, Delimitor>]
+			? UsedDelimitor extends Delimitor
+				? Source extends `${infer FirstPart}${UsedDelimitor}${infer SecondPart}`
+					? [...SplitIncludingDelimitors<FirstPart, Delimitor>, UsedDelimitor, ...SplitIncludingDelimitors<SecondPart, Delimitor>]
+					: never
+				: never
 			: never
 	) :
 	[Source];

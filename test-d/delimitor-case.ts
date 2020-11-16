@@ -1,13 +1,24 @@
 import {
+	WordSeparators,
+	UpperCaseChars,
+	SplitIncludingDelimitors,
 	DelimitorCase,
 	KebabCase,
 	SnakeCase
 } from '../source/delimitor-case';
 import {expectType, expectAssignable} from 'tsd';
 
+const splitFromCamel: SplitIncludingDelimitors<'fooBar', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar'];
+expectType<['foo', 'B', 'ar']>(splitFromCamel);
+const splitFromComplexCamel: SplitIncludingDelimitors<'fooBarAbc123', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar', 'A', 'bc123'];
+expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
+
 // DelimitorCase
 const delimitorFromCamel: DelimitorCase<'fooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimitorFromCamel);
+
+const delimitorFromComplexCamel: DelimitorCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
+expectType<'foo#bar#abc123'>(delimitorFromComplexCamel);
 
 const delimitorFromKebab: DelimitorCase<'foo-bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimitorFromKebab);
