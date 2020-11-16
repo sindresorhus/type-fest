@@ -33,6 +33,7 @@
 	],
 	"devDependencies": {
 		"tsd": "^0.13.1",
+		"typescript": "^4.0.5",
 		"xo": "^0.28.2"
 	},
 	"types": "index.d.ts",
