@@ -1,38 +1,38 @@
 import {
 	WordSeparators,
 	UpperCaseChars,
-	SplitIncludingDelimitors,
-	DelimitorCase,
+	SplitIncludingDelimiters,
+	DelimiterCase,
 	KebabCase,
 	SnakeCase
 } from '../source/delimitor-case';
 import {expectType, expectAssignable} from 'tsd';
 
-const splitFromCamel: SplitIncludingDelimitors<'fooBar', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar'];
+const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar'];
 expectType<['foo', 'B', 'ar']>(splitFromCamel);
-const splitFromComplexCamel: SplitIncludingDelimitors<'fooBarAbc123', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar', 'A', 'bc123'];
+const splitFromComplexCamel: SplitIncludingDelimiters<'fooBarAbc123', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar', 'A', 'bc123'];
 expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
-const splitFromWordSeparators: SplitIncludingDelimitors<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
+const splitFromWordSeparators: SplitIncludingDelimiters<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
 expectType<['foo', '-', 'bar', '_', 'car', ' ', 'far']>(splitFromWordSeparators);
 
-// DelimitorCase
-const delimitorFromCamel: DelimitorCase<'fooBar', '#'> = 'foo#bar';
+// DelimiterCase
+const delimitorFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimitorFromCamel);
 
-const delimitorFromComplexCamel: DelimitorCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
+const delimitorFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimitorFromComplexCamel);
 
-const delimitorFromKebab: DelimitorCase<'foo-bar', '#'> = 'foo#bar';
+const delimitorFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimitorFromKebab);
 
-const delimitorFromSpace: DelimitorCase<'foo bar', '#'> = 'foo#bar';
+const delimitorFromSpace: DelimiterCase<'foo bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimitorFromSpace);
 
-const delimitorFromSnake: DelimitorCase<'foo_bar', '#'> = 'foo#bar';
+const delimitorFromSnake: DelimiterCase<'foo_bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimitorFromSnake);
 
-const noDelimitorFromMono: DelimitorCase<'foobar', '#'> = 'foobar';
-expectType<'foobar'>(noDelimitorFromMono);
+const noDelimiterFromMono: DelimiterCase<'foobar', '#'> = 'foobar';
+expectType<'foobar'>(noDelimiterFromMono);
 
 // KebabCase
 const kebabFromCamel: KebabCase<'fooBar'> = 'foo-bar';
@@ -68,7 +68,7 @@ expectType<'foobar'>(noSnakeFromMono);
 
 // Verifying example
 type KebabCasedProps<T> = {
-	[K in keyof T as DelimitorCase<K, '-'>]: T[K]
+	[K in keyof T as DelimiterCase<K, '-'>]: T[K]
 };
 
 type AlternativeKebabCasedProps<T> = {

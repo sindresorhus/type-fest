@@ -1,28 +1,28 @@
 export type UpperCaseChars = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
 export type WordSeparators = '-' | '_' | ' ';
 
-export type SplitIncludingDelimitors<Source extends string, Delimitor extends string> =
+export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> =
 	Source extends '' ? [] :
-	Source extends `${infer FirstPart}${Delimitor}${infer SecondPart}` ?
+	Source extends `${infer FirstPart}${Delimiter}${infer SecondPart}` ?
 	(
-		Source extends `${FirstPart}${infer UsedDelimitor}${SecondPart}`
-			? UsedDelimitor extends Delimitor
-				? Source extends `${infer FirstPart}${UsedDelimitor}${infer SecondPart}`
-					? [...SplitIncludingDelimitors<FirstPart, Delimitor>, UsedDelimitor, ...SplitIncludingDelimitors<SecondPart, Delimitor>]
+		Source extends `${FirstPart}${infer UsedDelimiter}${SecondPart}`
+			? UsedDelimiter extends Delimiter
+				? Source extends `${infer FirstPart}${UsedDelimiter}${infer SecondPart}`
+					? [...SplitIncludingDelimiters<FirstPart, Delimiter>, UsedDelimiter, ...SplitIncludingDelimiters<SecondPart, Delimiter>]
 					: never
 				: never
 			: never
 	) :
 	[Source];
 
-type StringPartToDelimitorCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseChars extends string, Delimitor extends string> =
-	StringPart extends UsedWordSeparators ? Delimitor :
-	StringPart extends UsedUpperCaseChars ? `${Delimitor}${Lowercase<StringPart>}` :
+type StringPartToDelimiterCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseChars extends string, Delimiter extends string> =
+	StringPart extends UsedWordSeparators ? Delimiter :
+	StringPart extends UsedUpperCaseChars ? `${Delimiter}${Lowercase<StringPart>}` :
 	StringPart;
 
-type StringArrayToDelimitorCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseChars extends string, Delimitor extends string> =
+type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseChars extends string, Delimiter extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? `${StringPartToDelimitorCase<FirstPart, UsedWordSeparators, UsedUpperCaseChars, Delimitor>}${StringArrayToDelimitorCase<RemainingParts, UsedWordSeparators, UsedUpperCaseChars, Delimitor>}`
+		? `${StringPartToDelimiterCase<FirstPart, UsedWordSeparators, UsedUpperCaseChars, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, UsedWordSeparators, UsedUpperCaseChars, Delimiter>}`
 		: '';
 
 /**
@@ -32,10 +32,10 @@ This can be useful when eg. converting a camel cased object property to eg. a ke
 
 @example
 ```
-import {DelimitorCase, KebabCase, SnakeCase} from 'type-fest';
+import {DelimiterCase, KebabCase, SnakeCase} from 'type-fest';
 
 type KebabCasedProps<T> = {
-	[K in keyof T as DelimitorCase<K, '-'>]: T[K]
+	[K in keyof T as DelimiterCase<K, '-'>]: T[K]
 };
 
 type AlternativeKebabCasedProps<T> = {
@@ -60,15 +60,15 @@ const rawCliOptions: KebabCasedProps<CliOptions> = {
 ```
 */
 
-export type DelimitorCase<Value, Delimitor extends string> = Value extends string
-	? StringArrayToDelimitorCase<
-		SplitIncludingDelimitors<Value, WordSeparators | UpperCaseChars>,
+export type DelimiterCase<Value, Delimiter extends string> = Value extends string
+	? StringArrayToDelimiterCase<
+		SplitIncludingDelimiters<Value, WordSeparators | UpperCaseChars>,
 		WordSeparators,
 		UpperCaseChars,
-		Delimitor
+		Delimiter
 	>
 	: Value;
 
-export type KebabCase<Value> = DelimitorCase<Value, '-'>;
+export type KebabCase<Value> = DelimiterCase<Value, '-'>;
 
-export type SnakeCase<Value> = DelimitorCase<Value, '_'>;
+export type SnakeCase<Value> = DelimiterCase<Value, '_'>;
