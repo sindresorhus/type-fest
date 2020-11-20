@@ -26,7 +26,7 @@ type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends 
 		: '';
 
 /**
-Converts a string literal that may use another casing than the desired delimitor based casing to the desired casing
+Converts a string literal that may use another casing than the desired delimiter based casing to the desired casing
 
 This can be useful when eg. converting a camel cased object property to eg. a kebab cased CSS class name or CLI option.
 
