@@ -26,35 +26,29 @@ type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends 
 		: '';
 
 /**
-Converts a string literal that may use another casing than the desired delimiter based casing to the desired casing
+Converts a string literal from any typical casing to one based on a custom delimiter
 
-This can be useful when eg. converting a camel cased object property to eg. a kebab cased CSS class name or CLI option.
+This can be useful when eg. converting a camel cased object property to an oddly cased one.
+
+Also see KebabCase and SnakeCase.
 
 @example
 ```
-import {DelimiterCase, KebabCase, SnakeCase} from 'type-fest';
+import {DelimiterCase} from 'type-fest';
 
-type KebabCasedProps<T> = {
-	[K in keyof T as DelimiterCase<K, '-'>]: T[K]
+type OddlyCasedProps<T> = {
+	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
 };
 
-type AlternativeKebabCasedProps<T> = {
-	[K in keyof T as KebabCase<K>]: T[K]
-};
-
-type SnakeCasedProps<T> = {
-	[K in keyof T as SnakeCase<K>]: T[K]
-};
-
-interface CliOptions {
+interface SomeOptions {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
 }
 
-const rawCliOptions: KebabCasedProps<CliOptions> = {
-	'dry-run': true,
-	'include-file': 'bar.js',
+const rawCliOptions: OddlyCasedProps<SomeOptions> = {
+	'dry#run': true,
+	'include#file': 'bar.js',
 	foo: 123
 };
 ```
@@ -68,7 +62,3 @@ export type DelimiterCase<Value, Delimiter extends string> = Value extends strin
 		Delimiter
 	>
 	: Value;
-
-export type KebabCase<Value> = DelimiterCase<Value, '-'>;
-
-export type SnakeCase<Value> = DelimiterCase<Value, '_'>;
