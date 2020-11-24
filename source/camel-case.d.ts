@@ -30,7 +30,7 @@ Separate from InnerCamelCaseStringArray<> to keep a clean API outwards to the re
 */
 type CamelCaseStringArray<Parts extends string[]> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? `${FirstPart}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`
+		? Uncapitalize<`${FirstPart}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`>
 		: never;
 
 /**

@@ -6,6 +6,9 @@ const prefixSplit: Split<'--very-prefixed', '-'> = ['', '', 'very', 'prefixed'];
 expectType<['', '', 'very', 'prefixed']>(prefixSplit);
 
 // CamelCase
+const camelFromPascal: CamelCase<'FooBar'> = 'fooBar';
+expectType<'fooBar'>(camelFromPascal);
+
 const camelFromKebab: CamelCase<'foo-bar'> = 'fooBar';
 expectType<'fooBar'>(camelFromKebab);
 
