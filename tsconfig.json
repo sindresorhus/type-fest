@@ -1,0 +1,9 @@
+{
+	"exclude": [
+		"test-d/**/*"
+	],
+	"extends": "@sindresorhus/tsconfig",
+	"compilerOptions": {
+		"noEmit": true
+	}
+}
