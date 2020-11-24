@@ -20,3 +20,23 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm test
+  types:
+    name: TypeScript ${{ matrix.typescript-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 14
+        typescript-version:
+          - '^4.1.0'
+          - '~4.0.0'
+          - '^3.0.0'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm install typescript@${{ matrix.typescript-version }}
+      - run: npx tsc
