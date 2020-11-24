@@ -1,4 +1,5 @@
 // Types that are compatible with all supported TypeScript versions
+// It's shared between all TypeScript version specific definitions
 
 // Basic
 export * from './source/basic';
