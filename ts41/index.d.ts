@@ -1,5 +1,5 @@
 // These are all the basic types that's compatible with all supported TypeScript versions
-export * from '.';
+export * from '../base';
 
 // These are special types that require at least TypeScript 4.1
 export {CamelCase} from '../source/camel-case';
