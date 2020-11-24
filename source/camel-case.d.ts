@@ -13,6 +13,10 @@ export type Split<S extends string, D extends string> =
 /**
 Step by step takes the first item in an array literal, formats it and adds it
 to a string literal, then recursively appending the remainder.
+
+Only to be used by CamelCaseStringArray<>
+
+@see CamelCaseStringArray
 */
 type InnerCamelCaseStringArray<Parts extends any[], PreviousPart> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
@@ -24,9 +28,11 @@ type InnerCamelCaseStringArray<Parts extends any[], PreviousPart> =
 		: '';
 
 /**
-Starts the concatenating the output of Split<>, an array literal of strings, into a camel cased string literal.
+Starts fusing the output of Split<>, an array literal of strings, into a camel cased string literal.
 
 Separate from InnerCamelCaseStringArray<> to keep a clean API outwards to the rest of the code
+
+@see Split
 */
 type CamelCaseStringArray<Parts extends string[]> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]

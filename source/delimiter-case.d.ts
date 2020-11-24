@@ -1,5 +1,9 @@
 import {UpperCaseCharacters, WordSeparators} from './utilities';
 
+/**
+Unlike a simpler split, this one includes the delimiter splitted on in the resulting
+array literal. This to enable splitting on, for example, upper case characters.
+*/
 export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> =
 	Source extends '' ? [] :
 	Source extends `${infer FirstPart}${Delimiter}${infer SecondPart}` ?
@@ -14,11 +18,23 @@ export type SplitIncludingDelimiters<Source extends string, Delimiter extends st
 	) :
 	[Source];
 
+/**
+Formats a specific part of the splitted string literal that StringArrayToDelimiterCase<> fuses together, ensuring desired casing
+
+@see StringArrayToDelimiterCase
+*/
 type StringPartToDelimiterCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	StringPart extends UsedWordSeparators ? Delimiter :
 	StringPart extends UsedUpperCaseCharacters ? `${Delimiter}${Lowercase<StringPart>}` :
 	StringPart;
 
+/**
+Takes the result of a splitted string literal and starts to recursively concatenate together it into the desired casing.
+
+Gets UsedWordSeparators and UsedUpperCaseCharacters as input to ensure it's fully encapsulated.
+
+@see SplitIncludingDelimiters
+*/
 type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
 		? `${StringPartToDelimiterCase<FirstPart, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
