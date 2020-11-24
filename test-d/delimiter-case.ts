@@ -23,6 +23,9 @@ expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
 const delimiterFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromKebab);
 
+const delimiterFromComplexKebab: DelimiterCase<'foo-bar-abc-123', '#'> = 'foo#bar#abc#123';
+expectType<'foo#bar#abc#123'>(delimiterFromComplexKebab);
+
 const delimiterFromSpace: DelimiterCase<'foo bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromSpace);
 
@@ -31,6 +34,9 @@ expectType<'foo#bar'>(delimiterFromSnake);
 
 const noDelimiterFromMono: DelimiterCase<'foobar', '#'> = 'foobar';
 expectType<'foobar'>(noDelimiterFromMono);
+
+const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'> = 'foo#bar#abc#xyz#bar#foo';
+expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
 
 // Verifying example
 type OddCasedProps<T> = {
