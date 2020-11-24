@@ -30,7 +30,8 @@ Convert a string literal to a custom string delimiter casing.
 
 This can be useful when, for example, converting a camel-cased object property to an oddly cased one.
 
-Also see KebabCase and SnakeCase.
+@see KebabCase
+@see SnakeCase
 
 @example
 ```
