@@ -1,3 +1,5 @@
+// Types that are compatible with all supported TypeScript versions
+
 // Basic
 export * from './source/basic';
 
@@ -10,11 +12,6 @@ export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
 export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
-export {CamelCase} from './source/camel-case';
-export {KebabCase} from './source/kebab-case';
-export {PascalCase} from './source/pascal-case';
-export {SnakeCase} from './source/snake-case';
-export {DelimiterCase} from './source/delimiter-case';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
 export {Opaque} from './source/opaque';
