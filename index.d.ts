@@ -12,6 +12,7 @@ export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {CamelCase} from './source/camel-case';
 export {KebabCase} from './source/kebab-case';
+export {PascalCase} from './source/pascal-case';
 export {SnakeCase} from './source/snake-case';
 export {DelimiterCase} from './source/delimiter-case';
 export {LiteralUnion} from './source/literal-union';
