@@ -9,6 +9,12 @@ This can be useful when, for example, converting a camel-cased object property t
 ```
 import {KebabCase} from 'type-fest';
 
+// Simple
+
+const someVariable: KebabCase<'fooBar'> = 'foo-bar';
+
+// Advanced
+
 type KebabCasedProps<T> = {
 	[K in keyof T as KebabCase<K>]: T[K]
 };

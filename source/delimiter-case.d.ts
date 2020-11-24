@@ -37,6 +37,12 @@ This can be useful when, for example, converting a camel-cased object property t
 ```
 import {DelimiterCase} from 'type-fest';
 
+// Simple
+
+const someVariable: DelimiterCase<'fooBar', '#'> = 'foo#bar';
+
+// Advanced
+
 type OddlyCasedProps<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
 };
