@@ -1,22 +1,22 @@
 import {WordSeparators} from './delimiter-case';
 
-type Split<S extends string, D extends string> =
-  string extends S ? string[] :
-  S extends '' ? [] :
-  S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] :
-  [S];
+export type Split<S extends string, D extends string> =
+	string extends S ? string[] :
+	S extends '' ? [] :
+	S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] :
+	[S];
 
 type InnerCamelCaseStringArray<Parts extends any[]> =
-  Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-    ? FirstPart extends undefined
-      ? ''
-      : `${Capitalize<FirstPart>}${InnerCamelCaseStringArray<RemainingParts>}`
-    : '';
+	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
+		? FirstPart extends undefined
+			? ''
+			: `${Capitalize<FirstPart>}${InnerCamelCaseStringArray<RemainingParts>}`
+		: '';
 
 type CamelCaseStringArray<Parts extends string[]> =
-  Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-    ? `${FirstPart}${InnerCamelCaseStringArray<RemainingParts>}`
-    : never;
+	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
+		? `${FirstPart}${InnerCamelCaseStringArray<RemainingParts>}`
+		: never;
 
 /**
 Converts a string literal from any typical non-camel-case casing to camel-case
