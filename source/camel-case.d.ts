@@ -1,4 +1,4 @@
-import {WordSeparators} from './delimiter-case';
+import {WordSeparators} from './utilities';
 
 /**
 Recursively splits a string literal into two parts on the first occurence
