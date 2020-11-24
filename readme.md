@@ -93,10 +93,10 @@ Click the type names for complete docs.
 
 *Note:* These require [TypeScript 4.1 or newer](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types).
 
-- [`CamelCase`](source/camel-case.d.ts) – Converts a typical casing to `camelCasing`.
-- [`KebabCase`](source/kebab-case.d.ts) – Converts a typical casing to `kebab-casing`.
-- [`SnakeCase`](source/snake-case.d.ts) – Converts a typical casing to `snake_casing`.
-- [`DelimiterCase`](source/delimiter-case.d.ts) – Converts a typical casing to a custom string delimiter casing.
+- [`CamelCase`](source/camel-case.d.ts) – Convert a typical casing to camel-case (`fooBar`).
+- [`KebabCase`](source/kebab-case.d.ts) – Convert a typical casing to kebab-case (`foo-bar`).
+- [`SnakeCase`](source/snake-case.d.ts) – Convert a typical casing to snake-case (`foo_bar`).
+- [`DelimiterCase`](source/delimiter-case.d.ts) – Convert a typical casing to a custom string delimiter casing.
 
 ### Miscellaneous
 
