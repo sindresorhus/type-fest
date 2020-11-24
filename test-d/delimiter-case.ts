@@ -1,14 +1,14 @@
 import {
 	WordSeparators,
-	UpperCaseChars,
+	UpperCaseCharacters,
 	SplitIncludingDelimiters,
 	DelimiterCase
 } from '../source/delimiter-case';
 import {expectType, expectAssignable} from 'tsd';
 
-const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar'];
+const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar'];
 expectType<['foo', 'B', 'ar']>(splitFromCamel);
-const splitFromComplexCamel: SplitIncludingDelimiters<'fooBarAbc123', WordSeparators | UpperCaseChars> = ['foo', 'B', 'ar', 'A', 'bc123'];
+const splitFromComplexCamel: SplitIncludingDelimiters<'fooBarAbc123', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar', 'A', 'bc123'];
 expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
 const splitFromWordSeparators: SplitIncludingDelimiters<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
 expectType<['foo', '-', 'bar', '_', 'car', ' ', 'far']>(splitFromWordSeparators);

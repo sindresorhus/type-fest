@@ -1,4 +1,4 @@
-export type UpperCaseChars = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
+export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'X' | 'Y' | 'Z';
 export type WordSeparators = '-' | '_' | ' ';
 
 export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> =
@@ -15,14 +15,14 @@ export type SplitIncludingDelimiters<Source extends string, Delimiter extends st
 	) :
 	[Source];
 
-type StringPartToDelimiterCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseChars extends string, Delimiter extends string> =
+type StringPartToDelimiterCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	StringPart extends UsedWordSeparators ? Delimiter :
-	StringPart extends UsedUpperCaseChars ? `${Delimiter}${Lowercase<StringPart>}` :
+	StringPart extends UsedUpperCaseCharacters ? `${Delimiter}${Lowercase<StringPart>}` :
 	StringPart;
 
-type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseChars extends string, Delimiter extends string> =
+type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? `${StringPartToDelimiterCase<FirstPart, UsedWordSeparators, UsedUpperCaseChars, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, UsedWordSeparators, UsedUpperCaseChars, Delimiter>}`
+		? `${StringPartToDelimiterCase<FirstPart, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
 		: '';
 
 /**
@@ -56,9 +56,9 @@ const rawCliOptions: OddlyCasedProps<SomeOptions> = {
 
 export type DelimiterCase<Value, Delimiter extends string> = Value extends string
 	? StringArrayToDelimiterCase<
-		SplitIncludingDelimiters<Value, WordSeparators | UpperCaseChars>,
+		SplitIncludingDelimiters<Value, WordSeparators | UpperCaseCharacters>,
 		WordSeparators,
-		UpperCaseChars,
+		UpperCaseCharacters,
 		Delimiter
 	>
 	: Value;
