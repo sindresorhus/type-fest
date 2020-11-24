@@ -1,9 +1,9 @@
 import {DelimiterCase} from './delimiter-case';
 
 /**
-Converts a string literal from any typical non-snake-case casing to a snake-case
+Convert a string literal from any typical non-snake-case casing to snake-case.
 
-This can be useful when eg. converting a camel cased object property to eg. a snake cased SQL column name.
+This can be useful when, for example, converting a camel-cased object property to a snake-cased SQL column name.
 
 @example
 ```
@@ -26,5 +26,4 @@ const dbResult: SnakeCasedProps<ModelProps> = {
 };
 ```
 */
-
 export type SnakeCase<Value> = DelimiterCase<Value, '_'>;
