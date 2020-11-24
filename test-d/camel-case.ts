@@ -1,11 +1,5 @@
-import {
-	Split,
-	CamelCase
-} from '../source/camel-case';
+import {CamelCase} from '../source/camel-case';
 import {expectType, expectAssignable} from 'tsd';
-
-const splitFromMixed: Split<'foo-bar_abc defXyz', '-' | '_' | ' '> = ['foo', 'bar', 'abc', 'defXyz'];
-expectType<['foo', 'bar', 'abc', 'defXyz']>(splitFromMixed);
 
 // CamelCase
 const camelFromKebab: CamelCase<'foo-bar'> = 'fooBar';
@@ -25,6 +19,15 @@ expectType<'foobar'>(noDelimiterFromMono);
 
 const camelFromMixed: CamelCase<'foo-bar_abc xyzBarFoo'> = 'fooBarAbcXyzBarFoo';
 expectType<'fooBarAbcXyzBarFoo'>(camelFromMixed);
+
+const camelFromVendorPrefixedCssProperty: CamelCase<'-webkit-animation'> = 'WebkitAnimation';
+expectType<'WebkitAnimation'>(camelFromVendorPrefixedCssProperty);
+
+const camelFromDoublePrefixedKebab: CamelCase<'--very-prefixed'> = 'VeryPrefixed';
+expectType<'VeryPrefixed'>(camelFromDoublePrefixedKebab);
+
+const camelFromRepeatedSeparators: CamelCase<'foo____bar'> = 'fooBar';
+expectType<'fooBar'>(camelFromRepeatedSeparators);
 
 // Verifying example
 type CamelCasedProps<T> = {

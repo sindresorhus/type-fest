@@ -38,6 +38,15 @@ expectType<'foobar'>(noDelimiterFromMono);
 const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'> = 'foo#bar#abc#xyz#bar#foo';
 expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
 
+const delimiterFromVendorPrefixedCssProperty: DelimiterCase<'-webkit-animation', '#'> = '#webkit#animation';
+expectType<'#webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
+
+const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'> = '##very#prefixed';
+expectType<'##very#prefixed'>(delimiterFromDoublePrefixedKebab);
+
+const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo####bar';
+expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
+
 // Verifying example
 type OddCasedProps<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
