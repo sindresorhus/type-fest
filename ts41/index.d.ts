@@ -2,8 +2,8 @@
 export * from '../base';
 
 // These are special types that require at least TypeScript 4.1
-export {CamelCase} from '../source/camel-case';
-export {KebabCase} from '../source/kebab-case';
-export {PascalCase} from '../source/pascal-case';
-export {SnakeCase} from '../source/snake-case';
-export {DelimiterCase} from '../source/delimiter-case';
+export {CamelCase} from './camel-case';
+export {KebabCase} from './kebab-case';
+export {PascalCase} from './pascal-case';
+export {SnakeCase} from './snake-case';
+export {DelimiterCase} from './delimiter-case';

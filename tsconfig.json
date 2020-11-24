@@ -1,6 +1,7 @@
 {
 	"exclude": [
-		"test-d/**/*"
+		"test-d/**/*",
+		"ts41/**/*"
 	],
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {

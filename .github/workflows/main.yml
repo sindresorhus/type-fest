@@ -31,7 +31,8 @@ jobs:
         typescript-version:
           - '^4.1.0'
           - '~4.0.0'
-          - '^3.0.0'
+          - '^3.9.0'
+          - '~3.4.0'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
