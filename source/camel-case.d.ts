@@ -21,9 +21,9 @@ type CamelCaseStringArray<Parts extends string[]> =
 		: never;
 
 /**
-Converts a string literal from any typical non-camel-case casing to camel-case
+Converts a string literal from any typical non-camel-case casing to camel-case.
 
-This can be useful when eg. converting some kebab cased CLI options or a snake cased database result
+This can be useful when, for example, converting some kebab-cased command-line flags or a snake-cased database result.
 
 @example
 ```
