@@ -26,7 +26,7 @@ type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends 
 		: '';
 
 /**
-Convert a string literal from any typical casing to one based on a custom delimiter.
+Convert a string literal to a custom string delimiter casing.
 
 This can be useful when, for example, converting a camel-cased object property to an oddly cased one.
 

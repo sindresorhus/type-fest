@@ -1,7 +1,7 @@
 import {DelimiterCase} from './delimiter-case';
 
 /**
-Convert a string literal from any typical non-kebab-case casing to kebab-case.
+Convert a string literal to kebab-case.
 
 This can be useful when, for example, converting a camel-cased object property to a kebab-cased CSS class name or a command-line flag.
 
