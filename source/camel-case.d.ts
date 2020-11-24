@@ -6,16 +6,18 @@ export type Split<S extends string, D extends string> =
 	S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] :
 	[S];
 
-type InnerCamelCaseStringArray<Parts extends any[]> =
+type InnerCamelCaseStringArray<Parts extends any[], PreviousPart> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
 		? FirstPart extends undefined
 			? ''
-			: `${Capitalize<FirstPart>}${InnerCamelCaseStringArray<RemainingParts>}`
+			: FirstPart extends ''
+					? InnerCamelCaseStringArray<RemainingParts, PreviousPart>
+					: `${PreviousPart extends '' ? FirstPart : Capitalize<FirstPart>}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`
 		: '';
 
 type CamelCaseStringArray<Parts extends string[]> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? `${FirstPart}${InnerCamelCaseStringArray<RemainingParts>}`
+		? `${FirstPart}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`
 		: never;
 
 /**
