@@ -10,6 +10,7 @@ export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
 export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
+export {CamelCase} from './source/camel-case';
 export {DelimiterCase} from './source/delimiter-case';
 export {KebabCase} from './source/kebab-case';
 export {SnakeCase} from './source/snake-case';
