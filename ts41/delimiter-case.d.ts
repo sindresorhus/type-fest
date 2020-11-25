@@ -1,8 +1,7 @@
 import {UpperCaseCharacters, WordSeparators} from './utilities';
 
 /**
-Unlike a simpler split, this one includes the delimiter splitted on in the resulting
-array literal. This to enable splitting on, for example, upper case characters.
+Unlike a simpler split, this one includes the delimiter splitted on in the resulting array literal. This is to enable splitting on, for example, upper-case characters.
 */
 export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> =
 	Source extends '' ? [] :
@@ -19,7 +18,7 @@ export type SplitIncludingDelimiters<Source extends string, Delimiter extends st
 	[Source];
 
 /**
-Formats a specific part of the splitted string literal that StringArrayToDelimiterCase<> fuses together, ensuring desired casing
+Format a specific part of the splitted string literal that `StringArrayToDelimiterCase<>` fuses together, ensuring desired casing.
 
 @see StringArrayToDelimiterCase
 */
@@ -29,9 +28,9 @@ type StringPartToDelimiterCase<StringPart extends string, UsedWordSeparators ext
 	StringPart;
 
 /**
-Takes the result of a splitted string literal and starts to recursively concatenate together it into the desired casing.
+Takes the result of a splitted string literal and recursively concatenates it together into the desired casing.
 
-Gets UsedWordSeparators and UsedUpperCaseCharacters as input to ensure it's fully encapsulated.
+It receives `UsedWordSeparators` and `UsedUpperCaseCharacters` as input to ensure it's fully encapsulated.
 
 @see SplitIncludingDelimiters
 */
