@@ -1,4 +1,4 @@
-// Ensure that TypeScript 4.1 methods are available.
+// Ensure that TypeScript 4.1 types are available.
 import {CamelCase} from '..';
 import {expectType} from 'tsd';
 
