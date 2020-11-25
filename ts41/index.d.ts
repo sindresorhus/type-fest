@@ -1,7 +1,7 @@
-// These are all the basic types that's compatible with all supported TypeScript versions
+// These are all the basic types that's compatible with all supported TypeScript versions.
 export * from '../base';
 
-// These are special types that require at least TypeScript 4.1
+// These are special types that require at least TypeScript 4.1.
 export {CamelCase} from './camel-case';
 export {KebabCase} from './kebab-case';
 export {PascalCase} from './pascal-case';
