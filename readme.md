@@ -639,6 +639,7 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 - [Sindre Sorhus](https://github.com/sindresorhus)
 - [Jarek Radosz](https://github.com/CvX)
 - [Dimitri Benin](https://github.com/BendingBender)
+- [Pelle Wessman](https://github.com/voxpelli)
 
 ## License
 
