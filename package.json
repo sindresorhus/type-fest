@@ -14,7 +14,8 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"test": "xo && tsd && tsc"
+		"//test": "xo && tsd && tsc",
+		"test": "xo && tsc"
 	},
 	"files": [
 		"index.d.ts",
