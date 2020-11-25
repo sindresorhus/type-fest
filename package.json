@@ -14,11 +14,14 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"test": "xo && tsd"
+		"//test": "xo && tsd && tsc",
+		"test": "xo && tsc"
 	},
 	"files": [
 		"index.d.ts",
-		"source"
+		"base.d.ts",
+		"source",
+		"ts41"
 	],
 	"keywords": [
 		"typescript",
@@ -32,10 +35,19 @@
 		"json"
 	],
 	"devDependencies": {
+		"@sindresorhus/tsconfig": "~0.7.0",
 		"tsd": "^0.13.1",
+		"typescript": "^4.1.2",
 		"xo": "^0.35.0"
 	},
-	"types": "index.d.ts",
+	"types": "./index.d.ts",
+	"typesVersions": {
+		">=4.1": {
+			"*": [
+				"ts41/*"
+			]
+		}
+	},
 	"xo": {
 		"rules": {
 			"@typescript-eslint/ban-types": "off",
