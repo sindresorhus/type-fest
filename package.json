@@ -18,7 +18,9 @@
 	},
 	"files": [
 		"index.d.ts",
-		"source"
+		"base.d.ts",
+		"source",
+		"ts41"
 	],
 	"keywords": [
 		"typescript",
