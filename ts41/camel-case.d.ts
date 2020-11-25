@@ -1,4 +1,4 @@
-import {WordSeparators} from './utilities';
+import {WordSeparators} from '../source/utilities';
 
 /**
 Recursively split a string literal into two parts on the first occurence of the given string, returning an array literal of all the separate parts.
