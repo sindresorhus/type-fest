@@ -1,7 +1,7 @@
 import {CamelCase} from './camel-case';
 
 /**
-Converts a string literal to pascal-case
+Converts a string literal to pascal-case.
 
 @example
 ```
