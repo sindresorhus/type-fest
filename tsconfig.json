@@ -1,10 +1,10 @@
 {
-	"exclude": [
-		"test-d/**/*",
-		"ts41/**/*"
-	],
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"noEmit": true
-	}
+	},
+	"exclude": [
+		"test-d/**/*",
+		"ts41/**/*"
+	]
 }
