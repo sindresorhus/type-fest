@@ -97,6 +97,7 @@ Click the type names for complete docs.
 - [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+- [`Get`](ts41/get.d.ts) - Gets a deeply-nested property from an object, like lodash's get method.
 
 ### Miscellaneous
 
