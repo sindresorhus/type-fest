@@ -93,11 +93,11 @@ Click the type names for complete docs.
 
 *Note:* These require [TypeScript 4.1 or newer](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types).
 
-- [`CamelCase`](source/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
-- [`KebabCase`](source/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
-- [`PascalCase`](source/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
-- [`SnakeCase`](source/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
-- [`DelimiterCase`](source/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+- [`CamelCase`](ts41/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
+- [`KebabCase`](ts41/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
+- [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
+- [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
+- [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
 
 ### Miscellaneous
 
