@@ -1,8 +1,7 @@
 import {WordSeparators} from './utilities';
 
 /**
-Recursively splits a string literal into two parts on the first occurence
-of a specified string, returning an array literal of all the separate parts
+Recursively split a string literal into two parts on the first occurence of the given string, returning an array literal of all the separate parts.
 */
 export type Split<S extends string, D extends string> =
 	string extends S ? string[] :
@@ -11,10 +10,9 @@ export type Split<S extends string, D extends string> =
 	[S];
 
 /**
-Step by step takes the first item in an array literal, formats it and adds it
-to a string literal, then recursively appending the remainder.
+Step by step takes the first item in an array literal, formats it and adds it to a string literal, and then recursively appends the remainder.
 
-Only to be used by CamelCaseStringArray<>
+Only to be used by `CamelCaseStringArray<>`.
 
 @see CamelCaseStringArray
 */
@@ -28,9 +26,9 @@ type InnerCamelCaseStringArray<Parts extends any[], PreviousPart> =
 		: '';
 
 /**
-Starts fusing the output of Split<>, an array literal of strings, into a camel cased string literal.
+Starts fusing the output of `Split<>`, an array literal of strings, into a camel-cased string literal.
 
-Separate from InnerCamelCaseStringArray<> to keep a clean API outwards to the rest of the code
+It's separate from `InnerCamelCaseStringArray<>` to keep a clean API outwards to the rest of the code.
 
 @see Split
 */
@@ -40,7 +38,7 @@ type CamelCaseStringArray<Parts extends string[]> =
 		: never;
 
 /**
-Converts a string literal to camel-case.
+Convert a string literal to camel-case.
 
 This can be useful when, for example, converting some kebab-cased command-line flags or a snake-cased database result.
 
