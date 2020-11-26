@@ -97,6 +97,8 @@ Click the type names for complete docs.
 - [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+- [`KeyPath`](ts41/key-path.d.ts) - Represents a dot path to a nested object property.
+- [`PathValue`](ts41/key-path.d.ts) - Targets a property from a nested object using a dot path.
 
 ### Miscellaneous
 
