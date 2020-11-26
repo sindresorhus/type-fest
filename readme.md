@@ -87,7 +87,7 @@ Click the type names for complete docs.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
-- [`TakeLast`](ts41/take-last.d.ts) - Extracts the type of the last element of an array.
+- [`TakeLast`](source/take-last.d.ts) - Extracts the type of the last element of an array.
 
 ### Template literal types
 
