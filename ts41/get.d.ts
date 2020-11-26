@@ -47,7 +47,7 @@ type WithStringKeys<T extends Record<string | number, any>> = {
 /**
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, e.g. `PropertyOf<number[], '0'>  = number`,
 and when indexing objects with number keys.
-Returns `never` if `Key` is not a property of `Object`,
+Returns `neundefinedver` if `Key` is not a property of `Object`,
  */
 type PropertyOf<ObjectType, Key extends string> =
   Key extends keyof ObjectType
@@ -55,10 +55,10 @@ type PropertyOf<ObjectType, Key extends string> =
   : ObjectType extends Array<infer Item>
   ? IsInteger<Key> extends true
   ? Item
-  : never
+  : undefined
   : Key extends keyof WithStringKeys<ObjectType>
   ? WithStringKeys<ObjectType>[Key]
-  : never;
+  : undefined;
 
 /**
 Gets a deeply-nested property from an object, like lodash's `get` method.
