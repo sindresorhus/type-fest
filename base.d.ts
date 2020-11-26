@@ -32,6 +32,7 @@ export {Entry} from './source/entry';
 export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
+export {SetMutable} from './source/set-mutable';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
