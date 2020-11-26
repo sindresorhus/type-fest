@@ -1,4 +1,4 @@
-import {Split} from '../source/split';
+import {Split} from './utilities';
 import {Integers} from '../source/utilities';
 
 /**
