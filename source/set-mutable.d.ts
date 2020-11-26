@@ -17,7 +17,7 @@ type Foo = {
 }
 
 type SomeMutable = SetMutable<Foo, 'b' | 'c'>;
-// type SomeRequired = {
+// type SomeMutable = {
 // 	readonly a: number;
 // 	b: string; // Was already mutable and still is.
 // 	c: boolean; // Is now mutable.
