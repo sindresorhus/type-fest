@@ -1,5 +1,5 @@
 import {expectError, expectType} from 'tsd';
-import {KeyPath, PathValue} from '..';
+import {KeyPath, PathValue} from '../ts41';
 
 const user = {
     firstName: 'Foo',

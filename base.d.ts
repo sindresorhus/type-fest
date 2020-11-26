@@ -32,7 +32,6 @@ export {Entry} from './source/entry';
 export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
-import {KeyPath, PathValue} from './source/key-path';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
