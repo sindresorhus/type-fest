@@ -8,3 +8,5 @@ export {PascalCase} from './pascal-case';
 export {SnakeCase} from './snake-case';
 export {DelimiterCase} from './delimiter-case';
 export {QueryResult} from './query-result';
+export {Split} from './split';
+export {Trim} from './trim';
