@@ -1,5 +1,5 @@
 import {CamelCase} from '../source/camel-case';
-import {Split} from '../source/split';
+import {Split} from './split';
 import {expectType, expectAssignable} from 'tsd';
 
 // Split
