@@ -18,15 +18,15 @@
  * get(user, 'projects.0.name');
  */
 export type PathValue<ObjectType, PathType extends KeyPath<ObjectType>> =
-  P extends `${infer KeyType}.${infer Rest}`
-  ? KeyType extends keyof ObjectType
-    ? Rest extends KeyPath<ObjectType[KeyType]>
-      ? PathValue<ObjectType[KeyType], Rest>
-      : never
-    : never
-  : PathType extends keyof ObjectType
-    ? ObjectType[PathType]
-    : never;
+    PathType extends `${infer KeyType}.${infer Rest}`
+        ? KeyType extends keyof ObjectType
+            ? Rest extends KeyPath<ObjectType[KeyType]>
+                ? PathValue<ObjectType[KeyType], Rest>
+                : never
+            : never
+    : PathType extends keyof ObjectType
+        ? ObjectType[PathType]
+        : never;
 
 /**
  * Represents a dot path to a nested object property.
@@ -48,9 +48,9 @@ export type PathValue<ObjectType, PathType extends KeyPath<ObjectType>> =
  * get(user, 'projects.0.name');
  */
 export type KeyPath<ObjectType> =
-  ImpliedPath<ObjectType> extends string | keyof ObjectType
-      ? ImpliedPath<ObjectType>
-      : keyof ObjectType;
+    ImpliedPath<ObjectType> extends string | keyof ObjectType
+        ? ImpliedPath<ObjectType>
+        : keyof ObjectType;
 
 type ImpliedPath<ObjectType> = ImpliedPathDeep<ObjectType, keyof ObjectType> | keyof ObjectType;
 
