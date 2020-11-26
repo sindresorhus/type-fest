@@ -1,5 +1,5 @@
 import {Get} from '../ts41/get';
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 
 interface ApiResponse {
   hits: {
@@ -16,11 +16,10 @@ interface ApiResponse {
   };
 }
 
-expectType<Get<ApiResponse, 'hits.hits[0]._source.name'>>([{given: ['Homer', 'J'], family: 'Simpson'}]);
-expectType<Get<ApiResponse, 'hits.hits.0._source.name'>>([{given: ['Homer', 'J'], family: 'Simpson'}]);
-expectType<Get<ApiResponse, 'hits.hits[12345]._source.name'>>([{given: ['Homer', 'J'], family: 'Simpson'}]);
+expectTypeOf<Get<ApiResponse, 'hits.hits[0]._source.name'>>().toEqualTypeOf<Array<{given: string[]; family: string}>>();
+expectTypeOf<Get<ApiResponse, 'hits.hits.0._source.name'>>().toEqualTypeOf<Array<{given: string[]; family: string}>>();
 
-expectType<Get<ApiResponse, 'hits.someNonsense.notTheRightPath'>>({} as never);
+expectTypeOf<Get<ApiResponse, 'hits.someNonsense.notTheRightPath'>>().toBeUndefined();
 
 interface WithTuples {
   foo: [
@@ -29,11 +28,11 @@ interface WithTuples {
   ];
 }
 
-expectType<Get<WithTuples, 'foo[0].bar'>>(123);
-expectType<Get<WithTuples, 'foo.0.bar'>>(123);
+expectTypeOf<Get<WithTuples, 'foo[0].bar'>>().toBeNumber();
+expectTypeOf<Get<WithTuples, 'foo.0.bar'>>().toBeNumber();
 
-expectType<Get<WithTuples, 'foo[1].bar'>>({} as never);
-expectType<Get<WithTuples, 'foo.1.bar'>>({} as never);
+expectTypeOf<Get<WithTuples, 'foo[1].bar'>>().toBeUndefined();
+expectTypeOf<Get<WithTuples, 'foo.1.bar'>>().toBeUndefined();
 
 interface WithNumberKeys {
   foo: {
@@ -43,8 +42,8 @@ interface WithNumberKeys {
   };
 }
 
-expectType<Get<WithNumberKeys, 'foo[1].bar'>>(123);
-expectType<Get<WithNumberKeys, 'foo.1.bar'>>(123);
+expectTypeOf<Get<WithNumberKeys, 'foo[1].bar'>>().toBeNumber();
+expectTypeOf<Get<WithNumberKeys, 'foo.1.bar'>>().toBeNumber();
 
-expectType<Get<WithNumberKeys, 'foo[2].bar'>>({} as never);
-expectType<Get<WithNumberKeys, 'foo.2.bar'>>({} as never);
+expectTypeOf<Get<WithNumberKeys, 'foo[2].bar'>>().toBeUndefined();
+expectTypeOf<Get<WithNumberKeys, 'foo.2.bar'>>().toBeUndefined();
