@@ -46,7 +46,7 @@ type WithStringKeys<T extends Record<string | number, any>> = {
 };
 
 /**
-Get a property of an object or array. Works when indexing arrays using number-literal-strings, e.g. `PropertyOf<number[], '0'>  = number`, and when indexing objects with number keys.
+Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
 
 Returns `neundefinedver` if `Key` is not a property of `Object`,
 */
