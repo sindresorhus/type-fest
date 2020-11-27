@@ -15,3 +15,4 @@ expectType<HTMLTableRowElement>(querySelector('table.main tr'));
 expectType<HTMLStyleElement>(querySelector('html style'));
 expectType<HTMLSourceElement>(querySelector('.main source'));
 expectType<HTMLScriptElement>(querySelector('head script[src="script-source"]'));
+expectType<Element>(querySelector('.class'));

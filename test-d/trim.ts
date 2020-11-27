@@ -7,3 +7,4 @@ expectType<'foo'>(trim(' foo'));
 expectType<'bar'>(trim('bar '));
 expectType<'baz'>(trim(' baz '));
 expectType<'waldo'>(trim('  waldo  '));
+expectType<'fr ed'>(trim(' fr ed '));
