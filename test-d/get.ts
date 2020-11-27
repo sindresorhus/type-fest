@@ -23,8 +23,12 @@ expectTypeOf<Get<ApiResponse, 'hits.someNonsense.notTheRightPath'>>().toBeUndefi
 
 interface WithTuples {
   foo: [
-    {bar: number},
-    {baz: boolean}
+    {
+			bar: number
+		},
+    {
+			baz: boolean
+		}
   ];
 }
 
