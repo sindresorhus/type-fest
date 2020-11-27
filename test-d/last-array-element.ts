@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
-import {TakeLast} from '..';
+import {LastArrayElement} from '..';
 
-declare function lastOf<V extends any[], L extends TakeLast<V>>(array: V): L;
+declare function lastOf<V extends any[], L extends LastArrayElement<V>>(array: V): L;
 const array = ['foo', 2];
 
 expectType<number>(lastOf(array));
