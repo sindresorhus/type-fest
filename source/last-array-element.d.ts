@@ -12,7 +12,7 @@ const array = ['foo', 2];
 typeof lastOf(array); // -> number;
 ```
 */
-export type LastArrayElement<V> =
+export type LastArrayElement<V extends unknown[]> =
 	V extends []
 		? never
 		: V extends [string]
