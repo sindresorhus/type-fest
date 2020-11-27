@@ -13,10 +13,8 @@ typeof lastOf(array); // -> number;
 ```
 */
 export type LastArrayElement<V extends unknown[]> =
-	V extends []
-		? never
-		: V extends [string]
-			? V[0]
-			: V extends [string, ...infer R]
-				? LastArrayElement<R>
-				: never;
+	V extends [infer X]
+		? X
+		: V extends [infer _, ...infer Tail]
+			? LastArrayElement<Tail>
+			: never;
