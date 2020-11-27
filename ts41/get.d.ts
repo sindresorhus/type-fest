@@ -32,12 +32,12 @@ Convert a type which may have number keys to one with string keys, making it pos
 
 @example
 ```
-type WithNumbers = {foo: string; 0: boolean}
-type WithStrings = WithStringKeys<WithNumbers>
+type WithNumbers = {foo: string; 0: boolean};
+type WithStrings = WithStringKeys<WithNumbers>;
 
-type WithNumbersKeys = keyof WithNumbers
+type WithNumbersKeys = keyof WithNumbers;
 //=> 'foo' | 0
-type WithStringsKeys = keyof WithStrings
+type WithStringsKeys = keyof WithStrings;
 //=> 'foo' | '0'
 ```
 */
