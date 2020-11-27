@@ -100,7 +100,7 @@ Click the type names for complete docs.
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
 - [`QueryResult`](ts41/query-result.d.ts) - Matches element types returned from a query.
 - [`Split`](ts41/split.d.ts) - Represents an array of strings split using a passed-in character or character set.
-- [`Trim`](ts41/trim.d.ts) - Removes spaces from the edges of a string.
+- [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
 
 ### Miscellaneous
 
