@@ -19,7 +19,8 @@ interface ApiResponse {
 expectTypeOf<Get<ApiResponse, 'hits.hits[0]._source.name'>>().toEqualTypeOf<Array<{given: string[]; family: string}>>();
 expectTypeOf<Get<ApiResponse, 'hits.hits.0._source.name'>>().toEqualTypeOf<Array<{given: string[]; family: string}>>();
 
-expectTypeOf<Get<ApiResponse, 'hits.someNonsense.notTheRightPath'>>().toBeUndefined();
+// TypeScript is structurally typed - it's _possible_ this value exists even though it's not on the parent interface, so the type is `unknown`.
+expectTypeOf<Get<ApiResponse, 'hits.someNonsense.notTheRightPath'>>().toBeUnknown();
 
 interface WithTuples {
   foo: [
@@ -35,8 +36,8 @@ interface WithTuples {
 expectTypeOf<Get<WithTuples, 'foo[0].bar'>>().toBeNumber();
 expectTypeOf<Get<WithTuples, 'foo.0.bar'>>().toBeNumber();
 
-expectTypeOf<Get<WithTuples, 'foo[1].bar'>>().toBeUndefined();
-expectTypeOf<Get<WithTuples, 'foo.1.bar'>>().toBeUndefined();
+expectTypeOf<Get<WithTuples, 'foo[1].bar'>>().toBeUnknown();
+expectTypeOf<Get<WithTuples, 'foo.1.bar'>>().toBeUnknown();
 
 interface WithNumberKeys {
   foo: {
@@ -49,5 +50,17 @@ interface WithNumberKeys {
 expectTypeOf<Get<WithNumberKeys, 'foo[1].bar'>>().toBeNumber();
 expectTypeOf<Get<WithNumberKeys, 'foo.1.bar'>>().toBeNumber();
 
-expectTypeOf<Get<WithNumberKeys, 'foo[2].bar'>>().toBeUndefined();
-expectTypeOf<Get<WithNumberKeys, 'foo.2.bar'>>().toBeUndefined();
+expectTypeOf<Get<WithNumberKeys, 'foo[2].bar'>>().toBeUnknown();
+expectTypeOf<Get<WithNumberKeys, 'foo.2.bar'>>().toBeUnknown();
+
+interface WithModifiers {
+  foo: ReadonlyArray<{
+    bar?: {
+      readonly baz: {
+        qux: number;
+      };
+    };
+  }>;
+}
+
+expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{ qux: number }>();

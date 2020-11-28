@@ -46,20 +46,19 @@ type WithStringKeys<T extends Record<string | number, any>> = {
 };
 
 /**
-Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
-
-Returns `neundefinedver` if `Key` is not a property of `Object`,
-*/
+Get a property of an object or array. Works when indexing arrays using number-literal-strings, e.g. `PropertyOf<number[], '0'>  = number`, and when indexing objects with number keys.
+Returns `unknown` if `Key` is not a property of `ObjectType`,
+ */
 type PropertyOf<ObjectType, Key extends string> =
   Key extends keyof ObjectType
   ? ObjectType[Key]
-  : ObjectType extends Array<infer Item>
+  : ObjectType extends ArrayLike<infer Item>
   ? IsInteger<Key> extends true
   ? Item
-  : undefined
+  : unknown
   : Key extends keyof WithStringKeys<ObjectType>
   ? WithStringKeys<ObjectType>[Key]
-  : undefined;
+  : unknown;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
@@ -69,7 +68,11 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 
 @example
 ```
-import {Get} from 'type-fest';
+import { Get } from 'type-fest';
+import * as lodash from 'lodash';
+
+const get = <ObjectType, Path extends string>(object: ObjectType, path: Path): Get<ObjectType, Path> =>
+  lodash.get(object, path);
 
 interface ApiResponse {
   hits: {
@@ -86,8 +89,8 @@ interface ApiResponse {
   }
 }
 
-type Name = Get<ApiResponse, 'hits.hits[0]._source.name'>;
-//=> Array<{given: string[]; family: string}>
+const getName = (apiResponse: ApiResponse) =>
+  get(apiResponse, 'hits.hits[0]._source.name'); // returns Array<{ given: string[]; family: string }>
 ```
 */
 export type Get<Object, Path extends string> = GetWithPath<Object, ToPath<Path>>;
