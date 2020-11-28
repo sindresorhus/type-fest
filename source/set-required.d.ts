@@ -23,7 +23,7 @@ type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 // }
 ```
 */
-export type SetRequired<BaseType, Keys extends keyof BaseType = keyof BaseType> =
+export type SetRequired<BaseType, Keys extends keyof BaseType> =
 	// Pick just the keys that are not required from the base type.
 	Except<BaseType, Keys> &
 	// Pick the keys that should be required from the base type and make them required.

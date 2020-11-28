@@ -3,17 +3,21 @@ Convert an object with `readonly` keys into a mutable object. Inverse of `Readon
 
 This can be used to [store and mutate options within a class](https://github.com/sindresorhus/pageres/blob/4a5d05fca19a5fbd2f53842cbf3eb7b1b63bddd2/source/index.ts#L72), [edit `readonly` objects within tests](https://stackoverflow.com/questions/50703834), and [construct a `readonly` object within a function](https://github.com/Microsoft/TypeScript/issues/24509).
 
+@see [SetMutable](source/set-mutable.d.ts)
+
 @example
 ```
 import {Mutable} from 'type-fest';
 
 type Foo = {
 	readonly a: number;
-	readonly b: string;
+	readonly b: readonly string[];
 };
 
-const mutableFoo: Mutable<Foo> = {a: 1, b: '2'};
+const mutableFoo: Mutable<Foo> = {a: 1, b: ['2']};
 mutableFoo.a = 3;
+mutableFoo.b[0] = '3'; // -> Results in TypeError – Index signature in type 'readonly string[]' only permits reading.ts(2542).
+mutableFoo.b = ['3'];
 ```
 */
 export type Mutable<ObjectType> = {
