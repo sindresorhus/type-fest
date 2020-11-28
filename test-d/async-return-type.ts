@@ -12,3 +12,7 @@ asyncFunction().then(value => {
 	expectType<Value>(value);
 	expectError<string>(value);
 });
+
+const testFunc = (s: string) => s;
+
+testFunc(123);
