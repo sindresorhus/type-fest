@@ -25,10 +25,10 @@ expectTypeOf<Get<ApiResponse, 'hits.someNonsense.notTheRightPath'>>().toBeUnknow
 interface WithTuples {
   foo: [
     {
-			bar: number
+			bar: number;
 		},
     {
-			baz: boolean
+			baz: boolean;
 		}
   ];
 }
@@ -53,6 +53,8 @@ expectTypeOf<Get<WithNumberKeys, 'foo.1.bar'>>().toBeNumber();
 expectTypeOf<Get<WithNumberKeys, 'foo[2].bar'>>().toBeUnknown();
 expectTypeOf<Get<WithNumberKeys, 'foo.2.bar'>>().toBeUnknown();
 
+// test readonly, ReadonlyArray, optional props, unions with null
+
 interface WithModifiers {
   foo: ReadonlyArray<{
     bar?: {
@@ -60,7 +62,13 @@ interface WithModifiers {
         qux: number;
       };
     };
+    abc: {
+      def: {
+        ghi: string;
+      };
+    } | null;
   }>;
 }
 
-expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{ qux: number }>();
+expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{ qux: number } | undefined>();
+expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi'>>().toEqualTypeOf<string | undefined>();

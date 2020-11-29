@@ -44,8 +44,6 @@ type ConsistsOnlyOf<S extends string, C extends string> =
   ? ConsistsOnlyOf<Tail, C>
   : false;
 
-  type tt = [ConsistsOnlyOf<'', 'ab'>]
-
 /**
 Convert a type which may have number keys to one with string keys, making it possible to index using strings retrieved from template types.
 
@@ -69,7 +67,7 @@ Get a property of an object or array. Works when indexing arrays using number-li
 Returns `unknown` if `Key` is not a property of `ObjectType`,
  */
 type PropertyOf<ObjectType, Key extends string> =
-  Object extends null | undefined
+  ObjectType extends null | undefined
   ? undefined
   : Key extends keyof ObjectType
   ? ObjectType[Key]
