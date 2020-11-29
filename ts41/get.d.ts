@@ -1,5 +1,5 @@
 import {Split} from './utilities';
-import {Integers} from '../source/utilities';
+import {StringDigit} from '../source/utilities';
 
 /**
 Like @see Get but receives an array of strings as a path parameter.
@@ -11,6 +11,15 @@ type GetWithPath<T, Keys extends readonly string[]> =
   ? GetWithPath<PropertyOf<T, Extract<Head, string>>, Extract<Tail, string[]>>
   : never;
 
+/**
+Splits a dot-prop style path into a tuple comprised of the properties in the path. Handles square-bracket notation.
+
+@example
+```
+ToPath<'foo.bar.baz'> // ['foo', 'bar', 'baz']
+ToPath<'foo[0].bar.baz'> // ['foo', '0', 'bar', 'baz']
+```
+*/
 type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
 
 type FixPathSquareBrackets<S extends string> =
@@ -18,6 +27,16 @@ type FixPathSquareBrackets<S extends string> =
   ? `${T}.${U}${FixPathSquareBrackets<V>}`
   : S;
 
+/**
+Returns true if S is made up out of C repeated 0 or more times
+
+@example
+```
+ConsistsOnlyOf<'aaa', 'a'> // true
+ConsistsOnlyOf<'aBa', 'a'> // false
+ConsistsOnlyOf<'', 'a'> // true
+```
+*/
 type ConsistsOnlyOf<S extends string, C extends string> =
   S extends ''
   ? true
@@ -25,7 +44,7 @@ type ConsistsOnlyOf<S extends string, C extends string> =
   ? ConsistsOnlyOf<Tail, C>
   : false;
 
-type IsInteger<S extends string> = ConsistsOnlyOf<S, Integers>;
+  type tt = [ConsistsOnlyOf<'', 'ab'>]
 
 /**
 Convert a type which may have number keys to one with string keys, making it possible to index using strings retrieved from template types.
@@ -50,10 +69,12 @@ Get a property of an object or array. Works when indexing arrays using number-li
 Returns `unknown` if `Key` is not a property of `ObjectType`,
  */
 type PropertyOf<ObjectType, Key extends string> =
-  Key extends keyof ObjectType
+  Object extends null | undefined
+  ? undefined
+  : Key extends keyof ObjectType
   ? ObjectType[Key]
   : ObjectType extends ArrayLike<infer Item>
-  ? IsInteger<Key> extends true
+  ? ConsistsOnlyOf<Key, StringDigit> extends true
   ? Item
   : unknown
   : Key extends keyof WithStringKeys<ObjectType>
