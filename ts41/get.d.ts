@@ -4,11 +4,11 @@ import {StringDigit} from '../source/utilities';
 /**
 Like @see Get but receives an array of strings as a path parameter.
 */
-type GetWithPath<T, Keys extends readonly string[]> =
+type GetWithPath<ObjectType, Keys extends readonly string[]> =
 	Keys extends []
-	? T
+	? ObjectType
 	: Keys extends [infer Head, ...infer Tail]
-	? GetWithPath<PropertyOf<T, Extract<Head, string>>, Extract<Tail, string[]>>
+	? GetWithPath<PropertyOf<ObjectType, Extract<Head, string>>, Extract<Tail, string[]>>
 	: never;
 
 /**
@@ -22,10 +22,13 @@ ToPath<'foo[0].bar.baz'> // ['foo', '0', 'bar', 'baz']
 */
 type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
 
-type FixPathSquareBrackets<S extends string> =
-	S extends `${infer T}[${infer U}]${infer V}`
-	? `${T}.${U}${FixPathSquareBrackets<V>}`
-	: S;
+/**
+Replaces square-bracketed dot notation with dots, e.g. `foo[0].bar` -> `foo.0.bar`
+*/
+type FixPathSquareBrackets<Path extends string> =
+	Path extends `${infer Head}[${infer Middle}]${infer Tail}`
+	? `${Head}.${Middle}${FixPathSquareBrackets<Tail>}`
+	: Path;
 
 /**
 Returns true if S is made up out of C repeated 0 or more times
@@ -37,12 +40,12 @@ ConsistsOnlyOf<'aBa', 'a'> // false
 ConsistsOnlyOf<'', 'a'> // true
 ```
 */
-type ConsistsOnlyOf<S extends string, C extends string> =
-	S extends ''
+type ConsistsOnlyOf<LongString extends string, Substring extends string> =
+	LongString extends ''
 	? true
-	: S extends `${C}${infer Tail}`
-	? ConsistsOnlyOf<Tail, C>
-	: false;
+	: LongString extends `${Substring}${infer Tail}`
+	? ConsistsOnlyOf<Tail, Substring>
+  : false;
 
 /**
 Convert a type which may have number keys to one with string keys, making it possible to index using strings retrieved from template types.
@@ -58,8 +61,8 @@ type WithStringsKeys = keyof WithStrings;
 //=> 'foo' | '0'
 ```
 */
-type WithStringKeys<T extends Record<string | number, any>> = {
-	[K in `${Extract<keyof T, string | number>}`]: T[K]
+type WithStringKeys<ObjectType extends Record<string | number, any>> = {
+	[Key in `${Extract<keyof ObjectType, string | number>}`]: ObjectType[Key]
 };
 
 /**
