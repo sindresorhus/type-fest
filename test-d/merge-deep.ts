@@ -2,10 +2,10 @@ import {expectType} from 'tsd';
 import {MergeDeep} from '..';
 
 type Foo = {
-    baz: {
+    baz: Array<{
         yowza: string;
         george: string;
-    }[];
+    }>;
 	waldo: string;
 	fred: {
 		['1']: number;
@@ -14,9 +14,9 @@ type Foo = {
 };
 
 type Bar = {
-    baz: {
+    baz: Array<{
         george: number;
-    }[];
+    }>;
 	waldo: number;
 	fred: {
 		['2']: number[];
@@ -24,4 +24,14 @@ type Bar = {
 };
 
 declare const foobar: MergeDeep<Foo, Bar>;
-expectType<{baz: {yowza: string; george: number}[]; waldo: number; fred: {['1']: number; ['2']: number[]}}>(foobar);
+expectType<{
+    baz: Array<{
+        yowza: string;
+        george: number;
+    }>;
+    waldo: number;
+    fred: {
+        ['1']: number;
+        ['2']: number[];
+    };
+}>(foobar);

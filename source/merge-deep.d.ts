@@ -43,7 +43,7 @@ export type MergeDeep<FirstType, SecondType> = {
 					? SecondType[KeyType] extends object
 						? FirstType[KeyType] extends Array<infer FirstArrayElement>
 							? SecondType[KeyType] extends Array<infer SecondArrayElement>
-								? MergeDeep<FirstArrayElement, SecondArrayElement>[]
+								? Array<MergeDeep<FirstArrayElement, SecondArrayElement>>
 								: SecondType<KeyType>
 							: MergeDeep<FirstType[KeyType], SecondType[KeyType]>
 						: SecondType[KeyType]
