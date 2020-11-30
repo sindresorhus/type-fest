@@ -32,7 +32,7 @@ const foobar: MergeDeep<Foo, Bar> = {
 		e: 4,
 	}
 };
-const intersectFooWithBar: Foo & Bar = {b: 2}; // -> Type 'number' is not assignable to type 'never'.
+const intersectFooWithBar: Foo & Bar = {b: 2}; // -> Error: Type 'number' is not assignable to type 'never'.
 ```
 */
 export type MergeDeep<FirstType, SecondType> = {
