@@ -1,6 +1,8 @@
 import {Get} from '../ts41/get';
 import {expectTypeOf} from 'expect-type';
 
+declare const get: <ObjectType, Path extends string>(object: ObjectType, path: Path) => Get<ObjectType, Path>;
+
 interface ApiResponse {
 	hits: {
 		hits: Array<{
@@ -16,11 +18,15 @@ interface ApiResponse {
 	};
 }
 
-expectTypeOf<Get<ApiResponse, 'hits.hits[0]._source.name'>>().toEqualTypeOf<Array<{given: string[]; family: string}>>();
-expectTypeOf<Get<ApiResponse, 'hits.hits.0._source.name'>>().toEqualTypeOf<Array<{given: string[]; family: string}>>();
+declare const apiResponse: ApiResponse;
+
+expectTypeOf(get(apiResponse, 'hits.hits[0]._source.name')).toEqualTypeOf<Array<{given: string[]; family: string}>>();
+expectTypeOf(get(apiResponse, 'hits.hits.0._source.name')).toEqualTypeOf<Array<{given: string[]; family: string}>>();
+
+expectTypeOf(get(apiResponse, 'hits.hits[0]._source.name[0].given[0]')).toBeString();
 
 // TypeScript is structurally typed - it's _possible_ this value exists even though it's not on the parent interface, so the type is `unknown`.
-expectTypeOf<Get<ApiResponse, 'hits.someNonsense.notTheRightPath'>>().toBeUnknown();
+expectTypeOf(get(apiResponse, 'hits.someNonsense.notTheRightPath')).toBeUnknown();
 
 // This interface uses a tuple type (as opposed to an array)
 interface WithTuples {
