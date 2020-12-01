@@ -6,7 +6,7 @@ Create a type that converts the given keys from `readonly` to mutable. The remai
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the keys are mutable.
 
-@see [Mutable](source/mutable.d.ts)
+@see [`Mutable`](source/mutable.d.ts)
 
 @example
 ```
