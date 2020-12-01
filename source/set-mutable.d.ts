@@ -31,7 +31,7 @@ export type SetMutable<BaseType, Keys extends keyof BaseType> =
 	Except<BaseType, Keys> &
 	// Pick the keys that should be mutable from the base type and make them mutable.
 	Mutable<Pick<BaseType, Keys>> extends
-	// If `InferredType` extends the previous, then for each key, use the inferred type key.
+	// Assigns the combined values to `InferredType` for easy reference
 	infer InferredType
 		? {[KeyType in keyof InferredType]: InferredType[KeyType]}
 		: never;
