@@ -16,7 +16,8 @@ type Foo = {
 
 const mutableFoo: Mutable<Foo> = {a: 1, b: ['2']};
 mutableFoo.a = 3;
-mutableFoo.b[0] = '3'; //=> Index signature in type 'readonly string[]' only permits reading.ts(2542).
+// Type of the property remains unaffected
+mutableFoo.b[0] = '3'; // -> Error: Index signature in type 'readonly string[]' only permits reading.ts(2542).
 mutableFoo.b = ['3'];
 ```
 */
