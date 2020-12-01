@@ -11,7 +11,7 @@ import {Mutable} from 'type-fest';
 
 type Foo = {
 	readonly a: number;
-	readonly b: readonly string[];
+	readonly b: readonly string[]; // To show that only the mutability status of the properties, not their values, are affected
 };
 
 const mutableFoo: Mutable<Foo> = {a: 1, b: ['2']};
