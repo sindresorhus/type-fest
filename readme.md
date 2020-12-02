@@ -61,7 +61,7 @@ Click the type names for complete docs.
 ### Utilities
 
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type).
-- [`Mutable`](source/mutable.d.ts) - Convert an object with `readonly` keys into a mutable object. The inverse of `Readonly<T>`.
+- [`Mutable`](source/mutable.d.ts) - Convert an object with `readonly` keys into a mutable object. The inverse of `Readonly<T>`. Alternatively create a type that converts the given keys from `readonly` to mutable.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
@@ -73,7 +73,6 @@ Click the type names for complete docs.
 - [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
-- [`SetMutable`](source/set-mutable.d.ts) - Create a type that converts the given keys from `readonly` to mutable.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
 - [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise`.
 - [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
