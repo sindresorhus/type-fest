@@ -1,5 +1,6 @@
 import {Except} from './except';
 import {Mutable} from './mutable';
+import {Simplify} from './simplify';
 
 /**
 Create a type that converts the given keys from `readonly` to mutable. The remaining keys are kept as is.
@@ -27,11 +28,9 @@ type SomeMutable = SetMutable<Foo, 'b' | 'c'>;
 ```
 */
 export type SetMutable<BaseType, Keys extends keyof BaseType> =
-	// Pick just the keys that are not mutable from the base type.
-	Except<BaseType, Keys> &
-	// Pick the keys that should be mutable from the base type and make them mutable.
-	Mutable<Pick<BaseType, Keys>> extends
-	// Assigns the combined values to `InferredType` for easy reference
-	infer InferredType
-		? {[KeyType in keyof InferredType]: InferredType[KeyType]}
-		: never;
+	Simplify<
+		// Pick just the keys that are not mutable from the base type.
+		Except<BaseType, Keys> &
+		// Pick the keys that should be mutable from the base type and make them mutable.
+		Mutable<Pick<BaseType, Keys>>
+	>;
