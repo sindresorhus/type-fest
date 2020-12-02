@@ -35,24 +35,24 @@ const foobar: MergeDeep<Foo, Bar> = {
 };
 
 const intersectFooWithBar: Foo & Bar = {b: 2};
-//=> Type 'number' is not assignable to type 'never'.
+// -> Type 'number' is not assignable to type 'never'.
 ```
 */
-export type MergeDeep<FirstType, SecondType> = {
-	[KeyType in keyof (FirstType & SecondType)]:
-		KeyType extends keyof SecondType
-			? KeyType extends keyof FirstType
-				? FirstType[KeyType] extends object
-					? SecondType[KeyType] extends object
-						? FirstType[KeyType] extends Array<infer FirstArrayElement>
-							? SecondType[KeyType] extends Array<infer SecondArrayElement>
-								? Array<MergeDeep<FirstArrayElement, SecondArrayElement>>
-								: SecondType<KeyType>
-							: MergeDeep<FirstType[KeyType], SecondType[KeyType]>
-						: SecondType[KeyType]
-					: SecondType[KeyType]
-				: SecondType[KeyType]
-			: KeyType extends keyof FirstType
-				? FirstType[KeyType]
-				: never
+export type MergeDeep<First, Second> = {
+	[KeyType in keyof (First & Second)]:
+		KeyType extends keyof Second
+		? KeyType extends keyof First
+			? Second[KeyType] extends Primitive | ((...arguments: any[]) => unknown)
+				? Second[KeyType]
+				: Second[KeyType] extends ReadonlyMap | ReadonlySet | Map | Set
+				? Second[KeyType]
+				: Second[KeyType] extends Array<infer SecondElementType>
+				? First[KeyType] extends Array<infer FirstlementType>
+					? Array<MergeDeep<FirstlementType, SecondElementType>>
+					: Second[KeyType]
+				: Second[KeyType] extends object
+				? MergeDeep<First[KeyType], Second[KeyType]>
+				: Second[KeyType]
+			: Second[KeyType]
+		: First[KeyType]
 };
