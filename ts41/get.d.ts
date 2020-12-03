@@ -16,14 +16,17 @@ Splits a dot-prop style path into a tuple comprised of the properties in the pat
 
 @example
 ```
-ToPath<'foo.bar.baz'> // ['foo', 'bar', 'baz']
-ToPath<'foo[0].bar.baz'> // ['foo', '0', 'bar', 'baz']
+ToPath<'foo.bar.baz'>
+//=> ['foo', 'bar', 'baz']
+
+ToPath<'foo[0].bar.baz'>
+//=> ['foo', '0', 'bar', 'baz']
 ```
 */
 type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
 
 /**
-Replaces square-bracketed dot notation with dots, e.g. `foo[0].bar` -> `foo.0.bar`
+Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.
 */
 type FixPathSquareBrackets<Path extends string> =
 	Path extends `${infer Head}[${infer Middle}]${infer Tail}`
@@ -31,13 +34,13 @@ type FixPathSquareBrackets<Path extends string> =
 	: Path;
 
 /**
-Returns true if S is made up out of C repeated 0 or more times
+Returns true if `S` is made up out of `C` repeated 0 or more times.
 
 @example
 ```
-ConsistsOnlyOf<'aaa', 'a'> // true
-ConsistsOnlyOf<'aBa', 'a'> // false
-ConsistsOnlyOf<'', 'a'> // true
+ConsistsOnlyOf<'aaa', 'a'> //=> true
+ConsistsOnlyOf<'aBa', 'a'> //=> false
+ConsistsOnlyOf<'', 'a'> //=> true
 ```
 */
 type ConsistsOnlyOf<LongString extends string, Substring extends string> =
@@ -66,9 +69,10 @@ type WithStringKeys<ObjectType extends Record<string | number, any>> = {
 };
 
 /**
-Get a property of an object or array. Works when indexing arrays using number-literal-strings, e.g. `PropertyOf<number[], '0'>	= number`, and when indexing objects with number keys.
-Returns `unknown` if `Key` is not a property of `ObjectType`,
- */
+Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
+
+Returns `unknown` if `Key` is not a property of `ObjectType`.
+*/
 type PropertyOf<ObjectType, Key extends string> =
 	ObjectType extends null | undefined
 	? undefined
@@ -90,7 +94,7 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 
 @example
 ```
-import { Get } from 'type-fest';
+import {Get} from 'type-fest';
 import * as lodash from 'lodash';
 
 const get = <ObjectType, Path extends string>(object: ObjectType, path: Path): Get<ObjectType, Path> =>
@@ -112,7 +116,8 @@ interface ApiResponse {
 }
 
 const getName = (apiResponse: ApiResponse) =>
-	get(apiResponse, 'hits.hits[0]._source.name'); // returns Array<{ given: string[]; family: string }>
+	get(apiResponse, 'hits.hits[0]._source.name');
+	//=> Array<{given: string[]; family: string}>
 ```
 */
 export type Get<Object, Path extends string> = GetWithPath<Object, ToPath<Path>>;
