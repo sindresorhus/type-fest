@@ -45,7 +45,6 @@ expectTypeOf<Get<WithTuples, 'foo.0.bar'>>().toBeNumber();
 
 expectTypeOf<Get<WithTuples, 'foo[1].baz'>>().toBeBoolean();
 expectTypeOf<Get<WithTuples, 'foo[1].bar'>>().toBeUnknown();
-expectTypeOf<Get<WithTuples, 'foo.1.bar'>>().toBeUnknown();
 
 interface WithNumberKeys {
 	foo: {

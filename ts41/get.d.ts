@@ -81,7 +81,10 @@ type PropertyOf<BaseType, Key extends string> =
 	? undefined
 	: Key extends keyof BaseType
 	? BaseType[Key]
-	: BaseType extends ArrayLike<infer Item>
+	: BaseType extends {
+		[n: number]: infer Item;
+		length: number; // Note - this is needed to avoid being too lax with records types using number keys like { 0: string; 1: boolean }
+	}
 	? (
 		ConsistsOnlyOf<Key, StringDigit> extends true
 		? Item
