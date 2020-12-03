@@ -4,11 +4,11 @@ import {StringDigit} from '../source/utilities';
 /**
 Like @see {@link Get} but receives an array of strings as a path parameter.
 */
-type GetWithPath<ObjectType, Keys extends readonly string[]> =
+type GetWithPath<BaseType, Keys extends readonly string[]> =
 	Keys extends []
-	? ObjectType
+	? BaseType
 	: Keys extends [infer Head, ...infer Tail]
-	? GetWithPath<PropertyOf<ObjectType, Extract<Head, string>>, Extract<Tail, string[]>>
+	? GetWithPath<PropertyOf<BaseType, Extract<Head, string>>, Extract<Tail, string[]>>
 	: never;
 
 /**
@@ -64,26 +64,26 @@ type WithStringsKeys = keyof WithStrings;
 //=> 'foo' | '0'
 ```
 */
-type WithStringKeys<ObjectType extends Record<string | number, any>> = {
-	[Key in `${Extract<keyof ObjectType, string | number>}`]: ObjectType[Key]
+type WithStringKeys<BaseType extends Record<string | number, any>> = {
+	[Key in `${Extract<keyof BaseType, string | number>}`]: BaseType[Key]
 };
 
 /**
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
 
-Returns `unknown` if `Key` is not a property of `ObjectType`.
+Returns `unknown` if `Key` is not a property of `BaseType`.
 */
-type PropertyOf<ObjectType, Key extends string> =
-	ObjectType extends null | undefined
+type PropertyOf<BaseType, Key extends string> =
+	BaseType extends null | undefined
 	? undefined
-	: Key extends keyof ObjectType
-	? ObjectType[Key]
-	: ObjectType extends ArrayLike<infer Item>
+	: Key extends keyof BaseType
+	? BaseType[Key]
+	: BaseType extends ArrayLike<infer Item>
 	? ConsistsOnlyOf<Key, StringDigit> extends true
 	? Item
 	: unknown
-	: Key extends keyof WithStringKeys<ObjectType>
-	? WithStringKeys<ObjectType>[Key]
+	: Key extends keyof WithStringKeys<BaseType>
+	? WithStringKeys<BaseType>[Key]
 	: unknown;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
@@ -97,7 +97,7 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 import {Get} from 'type-fest';
 import * as lodash from 'lodash';
 
-const get = <ObjectType, Path extends string>(object: ObjectType, path: Path): Get<ObjectType, Path> =>
+const get = <BaseType, Path extends string>(object: BaseType, path: Path): Get<BaseType, Path> =>
 	lodash.get(object, path);
 
 interface ApiResponse {
@@ -120,4 +120,4 @@ const getName = (apiResponse: ApiResponse) =>
 	//=> Array<{given: string[]; family: string}>
 ```
 */
-export type Get<Object, Path extends string> = GetWithPath<Object, ToPath<Path>>;
+export type Get<BaseType, Path extends string> = GetWithPath<BaseType, ToPath<Path>>;
