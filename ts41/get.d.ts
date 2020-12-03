@@ -34,11 +34,12 @@ type FixPathSquareBrackets<Path extends string> =
 	: Path;
 
 /**
-Returns true if `S` is made up out of `C` repeated 0 or more times.
+Returns true if `LongString` is made up out of `Substring` repeated 0 or more times.
 
 @example
 ```
 ConsistsOnlyOf<'aaa', 'a'> //=> true
+ConsistsOnlyOf<'ababab', 'ab'> //=> true
 ConsistsOnlyOf<'aBa', 'a'> //=> false
 ConsistsOnlyOf<'', 'a'> //=> true
 ```
