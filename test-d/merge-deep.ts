@@ -2,8 +2,8 @@ import {expectType, expectError, expectAssignable} from 'tsd';
 import {Merge, MergeDeep} from '..';
 
 const foo = {
-    baz: 'waldo',
-    waldo: {
+	baz: 'waldo',
+	waldo: {
 		function: undefined,
 		object: undefined,
 		string: undefined,
@@ -19,18 +19,18 @@ const foo = {
 		readonlyMap: new Map<number, number>() as ReadonlyMap<number, number>,
 		readonlySet: new Set<number>() as ReadonlySet<number>,
 		readonlyArray: [0] as readonly number[],
-        readonlyTuple: [0] as const,
-        mergedArrayType: [{key: 'value', number: 0}] as Array<{key: string; number?: number}>
-    }
+		readonlyTuple: [0] as const,
+		mergedArrayType: [{key: 'value', number: 0}] as Array<{key: string; number?: number}>
+	}
 };
 const bar = {
 	baz: 'fred',
 	waldo: {
 		function: (_: string): void => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 		object: {key: 'value'},
-        string: 'waldo',
-        partialString: 'waldo' as Partial<string>,
-        number: 1,
+		string: 'waldo',
+		partialString: 'waldo' as Partial<string>,
+		number: 1,
 		boolean: false,
 		symbol: Symbol('test'),
 		null: null,
@@ -42,8 +42,8 @@ const bar = {
 		readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
 		readonlySet: new Set<string>() as ReadonlySet<string>,
 		readonlyArray: ['foo'] as readonly string[],
-        readonlyTuple: ['foo'] as const,
-        mergedArrayType: [{key: 1, string: 'string'}]
+		readonlyTuple: ['foo'] as const,
+		mergedArrayType: [{key: 1, string: 'string'}]
 	}
 };
 

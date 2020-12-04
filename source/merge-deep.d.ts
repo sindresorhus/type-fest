@@ -11,27 +11,27 @@ Use-cases:
 import {MergeDeep} from 'type-fest';
 
 const defaultKeywords = {
-  if: function() { ... },
-  each: function() { ... },
-  partial: function() { ... }
+	if: function() { ... },
+	each: function() { ... },
+	partial: function() { ... }
 };
 type DefaultKeywords = typeof defaultKeywords;
 
 const customKeywords = {
-  partial: {
-    setupState: function() { ... },
-    render: true
-  },
-  debugger: function() { ... }
+	partial: {
+		setupState: function() { ... },
+		render: true
+	},
+	debugger: function() { ... }
 };
 type CustomKeywords = typeof customKeywords;
 
 const config: MergeDeep<DefaultKeywords, CustomKeywords> = {
-  if: function() { ... },
-  each: function() { ... },
-  partial: {
-    setupState: function() { ... },
-    render: false
+	if: function() { ... },
+	each: function() { ... },
+	partial: {
+		setupState: function() { ... },
+		render: false
   },
   debugger: function() { ... }
 };
