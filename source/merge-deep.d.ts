@@ -1,5 +1,6 @@
 /**
 Merge two types deeply into a new type. Keys of the second type overrides keys of the first type.
+Recursively merges own and inherited enumerable string keyed properties of source types into the destination type.
 
 Use-cases:
 - Where intersection types would result in a property having `never`. If two different types for the same property are used, intersection types assume its type is `never`. `MergeDeep` allows for safe intersection of two types and having the second passed in type have precedence, hence resulting in no unwanted `never` prop types.
@@ -9,33 +10,34 @@ Use-cases:
 ```
 import {MergeDeep} from 'type-fest';
 
-type Foo = {
-	a: number;
-	b: string;
-	c: {
-		d: number;
-		e: string;
-	}
+const defaultKeywords = {
+  if: function() { ... },
+  each: function() { ... },
+  partial: function() { ... }
+};
+type DefaultKeywords = typeof defaultKeywords;
+
+const customKeywords = {
+  partial: {
+    setupState: function() { ... },
+    render: true
+  },
+  debugger: function() { ... }
+};
+type CustomKeywords = typeof customKeywords;
+
+const config: MergeDeep<DefaultKeywords, CustomKeywords> = {
+  if: function() { ... },
+  each: function() { ... },
+  partial: {
+    setupState: function() { ... },
+    render: false
+  },
+  debugger: function() { ... }
 };
 
-type Bar = {
-	b: number;
-	c: {
-		e: number;
-	}
-};
-
-const foobar: MergeDeep<Foo, Bar> = {
-	a: 1,
-	b: 2,
-	c: {
-		d: 3,
-		e: 4,
-	}
-};
-
-const intersectFooWithBar: Foo & Bar = {b: 2};
-// -> Type 'number' is not assignable to type 'never'.
+const intersectedKeywords: DefaultKeywords & CustomKeywords = { partial: { render: true } };
+// -> Type 'boolean' is not assignable to type 'never'.
 ```
 */
 export type MergeDeep<First, Second> = {
