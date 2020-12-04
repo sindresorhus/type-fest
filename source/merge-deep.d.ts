@@ -42,23 +42,33 @@ const intersectedKeywords: DefaultKeywords & CustomKeywords = { partial: { rende
 // -> Type 'boolean' is not assignable to type 'never'.
 ```
 */
-export type MergeDeep<First, Second> = {
-	[KeyType in keyof (First & Second)]:
-		KeyType extends keyof Second
-		? KeyType extends keyof First
-			? Second[KeyType] extends Primitive | ((...arguments: any[]) => unknown)
-				? Second[KeyType]
-				: Second[KeyType] extends ReadonlyMap<any, any> | ReadonlySet<any> | Map<any, any> | Set<any>
-				? Second[KeyType]
-				: Second[KeyType] extends Array<infer SecondElementType>
-				? First[KeyType] extends Array<infer FirstlementType>
-					? Array<MergeDeep<FirstlementType, SecondElementType>>
+export type MergeDeep<First, Second> = Second extends Unmergeable
+	? Second
+	: {
+		[KeyType in keyof Second]:
+			KeyType extends keyof First
+				? Second[KeyType] extends Unmergeable
+					? Second[KeyType]
+					: Second[KeyType] extends object
+					? MergeDeep<First[KeyType], Second[KeyType]>
 					: Second[KeyType]
-				: Second[KeyType] extends object
-				? MergeDeep<First[KeyType], Second[KeyType]>
 				: Second[KeyType]
-			: Second[KeyType]
-		: KeyType extends keyof First
-		? First[KeyType]
-		: never;
-};
+	} & {
+		[KeyType in keyof First]:
+			KeyType extends keyof Second
+				? Second[KeyType] extends Unmergeable
+					? Second[KeyType]
+					: Second[KeyType] extends object
+					? MergeDeep<First[KeyType], Second[KeyType]>
+					: Second[KeyType]
+				: First[KeyType];
+	};
+
+/** Types that will cause the right-hand side of the merge operation to always win with no further recursion. */
+type Unmergeable =
+	| Primitive
+	| ((...arguments: any[]) => unknown)
+	| ReadonlyMap<any, any>
+	| ReadonlySet<any>
+	| Map<any, any>
+	| Set<any>;
