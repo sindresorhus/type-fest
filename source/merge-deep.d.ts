@@ -48,7 +48,7 @@ export type MergeDeep<First, Second> = {
 		? KeyType extends keyof First
 			? Second[KeyType] extends Primitive | ((...arguments: any[]) => unknown)
 				? Second[KeyType]
-				: Second[KeyType] extends ReadonlyMap | ReadonlySet | Map | Set
+				: Second[KeyType] extends ReadonlyMap<any, any> | ReadonlySet<any> | Map<any, any> | Set<any>
 				? Second[KeyType]
 				: Second[KeyType] extends Array<infer SecondElementType>
 				? First[KeyType] extends Array<infer FirstlementType>
@@ -58,5 +58,7 @@ export type MergeDeep<First, Second> = {
 				? MergeDeep<First[KeyType], Second[KeyType]>
 				: Second[KeyType]
 			: Second[KeyType]
-		: First[KeyType]
+		: KeyType extends keyof First
+		? First[KeyType]
+		: never;
 };
