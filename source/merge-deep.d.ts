@@ -1,3 +1,5 @@
+import {Primitive} from './basic';
+
 /**
 Merge two types deeply into a new type. Keys of the second type overrides keys of the first type.
 Recursively merges own and inherited enumerable string keyed properties of source types into the destination type.
