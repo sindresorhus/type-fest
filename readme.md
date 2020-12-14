@@ -632,11 +632,12 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-	- [`Uppercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into uppercase.
+- [`Uppercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into uppercase.
 	<details>
 	<summary>
 		Example
 	</summary>
+
 	```ts
 	type T = Uppercase<'hello'>;  // "HELLO"
 
@@ -652,11 +653,12 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-	- [`Lowercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into lowercase.
+- [`Lowercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into lowercase.
 	<details>
 	<summary>
 		Example
 	</summary>
+
 	```ts
 	type T = Lowercase<'HELLO'>;  // "hello"
 
@@ -672,11 +674,12 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-	- [`Capitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into uppercase.
+- [`Capitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into uppercase.
 	<details>
 	<summary>
 		Example
 	</summary>
+
 	```ts
 	type T = Capitalize<'hello'>;  // "Hello"
 
@@ -692,11 +695,12 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-	- [`Uncapitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into lowercase.
+- [`Uncapitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into lowercase.
 	<details>
 	<summary>
 		Example
 	</summary>
+
 	```ts
 	type T = Uncapitalize<'Hello'>;  // "hello"
 
