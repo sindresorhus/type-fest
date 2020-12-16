@@ -16,7 +16,7 @@ Merge two types deeply into a new type. Keys of the second type overrides keys o
 Recursively merges own and inherited enumerable string keyed properties of source types into the destination type.
 
 Use-cases:
-- Where intersection types would result in a property having `never`. If two different types for the same property are used, intersection types assume its type is `never`. `MergeDeep` allows for safe intersection of two types and having the second passed in type have precedence, hence resulting in no unwanted `never` prop types.
+- Where intersection types would result in a property having `never`. If two different types for the same property are used, intersection types assume its type is `never`. `MergeDeep` allows for safe intersection of two types and having the second passed in type take precedence, resulting in no unwanted `never` property types.
 - Merging complex, multi-level interfaces that share common properties across different levels.
 
 @example
