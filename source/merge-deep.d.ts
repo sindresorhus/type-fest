@@ -1,6 +1,17 @@
 import {Primitive} from './basic';
 
 /**
+Types that will cause the right-hand side of the merge operation to always win with no further recursion.
+*/
+type Unmergeable =
+	| Primitive
+	| ((...arguments: any[]) => unknown)
+	| ReadonlyMap<any, any>
+	| ReadonlySet<any>
+	| Map<any, any>
+	| Set<any>;
+
+/**
 Merge two types deeply into a new type. Keys of the second type overrides keys of the first type.
 Recursively merges own and inherited enumerable string keyed properties of source types into the destination type.
 
@@ -13,33 +24,34 @@ Use-cases:
 import {MergeDeep} from 'type-fest';
 
 const defaultKeywords = {
-	if: function() { ... },
-	each: function() { ... },
-	partial: function() { ... }
+	if: function() { … },
+	each: function() { … },
+	partial: function() { … }
 };
 type DefaultKeywords = typeof defaultKeywords;
 
 const customKeywords = {
 	partial: {
-		setupState: function() { ... },
+		setupState: function() { … },
 		render: true
 	},
-	debugger: function() { ... }
+	debugger: function() { … }
 };
 type CustomKeywords = typeof customKeywords;
 
 const config: MergeDeep<DefaultKeywords, CustomKeywords> = {
-	if: function() { ... },
-	each: function() { ... },
+	if: function() { … },
+	each: function() { … },
 	partial: {
-		setupState: function() { ... },
+		setupState: function() { … },
 		render: false
+	}
   },
-  debugger: function() { ... }
+  debugger: function() { … }
 };
 
-const intersectedKeywords: DefaultKeywords & CustomKeywords = { partial: { render: true } };
-// -> Type 'boolean' is not assignable to type 'never'.
+const intersectedKeywords: DefaultKeywords & CustomKeywords = {partial: {render: true}};
+//=> Type 'boolean' is not assignable to type 'never'.
 ```
 */
 export type MergeDeep<First, Second> = Second extends Unmergeable
@@ -63,12 +75,3 @@ export type MergeDeep<First, Second> = Second extends Unmergeable
 					: Second[KeyType]
 				: First[KeyType];
 	};
-
-/** Types that will cause the right-hand side of the merge operation to always win with no further recursion. */
-type Unmergeable =
-	| Primitive
-	| ((...arguments: any[]) => unknown)
-	| ReadonlyMap<any, any>
-	| ReadonlySet<any>
-	| Map<any, any>
-	| Set<any>;
