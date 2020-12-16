@@ -639,12 +639,12 @@ There are many advanced types most users don't know about.
 	</summary>
 
 	```ts
-	type T = Uppercase<'hello'>;  // "HELLO"
+	type T = Uppercase<'hello'>;  // 'HELLO'
 
-	type T2 = Uppercase<'foo' | 'bar'>;  // "FOO" | "BAR"
+	type T2 = Uppercase<'foo' | 'bar'>;  // 'FOO' | 'BAR'
 
 	type T3<S extends string> = Uppercase<`aB${S}`>;
-	type T4 = T30<'xYz'>;  // "ABXYZ"
+	type T4 = T30<'xYz'>;  // 'ABXYZ'
 
 	type T5 = Uppercase<string>;  // string
 	type T6 = Uppercase<any>;  // any
@@ -660,12 +660,12 @@ There are many advanced types most users don't know about.
 	</summary>
 
 	```ts
-	type T = Lowercase<'HELLO'>;  // "hello"
+	type T = Lowercase<'HELLO'>;  // 'hello'
 
-	type T2 = Lowercase<'FOO' | 'BAR'>;  // "foo" | "bar"
+	type T2 = Lowercase<'FOO' | 'BAR'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Lowercase<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // "abxyz"
+	type T4 = T32<'xYz'>;  // 'abxyz'
 
 	type T5 = Lowercase<string>;  // string
 	type T6 = Lowercase<any>;  // any
@@ -681,12 +681,12 @@ There are many advanced types most users don't know about.
 	</summary>
 
 	```ts
-	type T = Capitalize<'hello'>;  // "Hello"
+	type T = Capitalize<'hello'>;  // 'Hello'
 
-	type T2 = Capitalize<'foo' | 'bar'>;  // "Foo" | "Bar"
+	type T2 = Capitalize<'foo' | 'bar'>;  // 'Foo' | 'Bar'
 
 	type T3<S extends string> = Capitalize<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // "ABxYz"
+	type T4 = T32<'xYz'>;  // 'ABxYz'
 
 	type T5 = Capitalize<string>;  // string
 	type T6 = Capitalize<any>;  // any
@@ -702,12 +702,12 @@ There are many advanced types most users don't know about.
 	</summary>
 
 	```ts
-	type T = Uncapitalize<'Hello'>;  // "hello"
+	type T = Uncapitalize<'Hello'>;  // 'hello'
 
-	type T2 = Uncapitalize<'Foo' | 'Bar'>;  // "foo" | "bar"
+	type T2 = Uncapitalize<'Foo' | 'Bar'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Uncapitalize<`AB${S}`>;
-	type T4 = T30<'xYz'>;  // "aBxYz"
+	type T4 = T30<'xYz'>;  // 'aBxYz'
 
 	type T5 = Uncapitalize<string>;  // string
 	type T6 = Uncapitalize<any>;  // any
