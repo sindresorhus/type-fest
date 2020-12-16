@@ -1,7 +1,7 @@
 import {Primitive} from './basic';
 
 /**
-Types that will cause the right-hand side of the merge operation to always win with no further recursion.
+A type that will cause the right-hand side of the merge operation to always win with no further recursion.
 */
 type Unmergeable =
 	| Primitive
