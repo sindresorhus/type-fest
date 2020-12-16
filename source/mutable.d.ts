@@ -11,20 +11,20 @@ import {Mutable} from 'type-fest';
 
 type Foo = {
 	readonly a: number;
-    readonly b: readonly string[]; // To show that only the mutability status of the properties, not their values, are affected
-    readonly c: boolean;
+	readonly b: readonly string[]; // To show that only the mutability status of the properties, not their values, are affected.
+	readonly c: boolean;
 };
 
 const mutableFoo: Mutable<Foo> = {a: 1, b: ['2']};
 mutableFoo.a = 3;
-mutableFoo.b[0] = 'new value'; // -> Will still fail as the value of property "b" is still a readonly type
-mutableFoo.b = ['something']; // -> Will work as the "b" property itself is no longer readonly
+mutableFoo.b[0] = 'new value'; // Will still fail as the value of property "b" is still a readonly type.
+mutableFoo.b = ['something']; // Will work as the "b" property itself is no longer readonly.
 
 type SomeMutable = Mutable<Foo, 'b' | 'c'>;
 // type SomeMutable = {
 // 	readonly a: number;
-// 	b: readonly string[]; // Is now mutable, type of the property remains unaffected.
-// 	c: boolean; // Is now mutable.
+// 	b: readonly string[]; // It's now mutable. The type of the property remains unaffected.
+// 	c: boolean; // It's now mutable.
 // }
 ```
 */
