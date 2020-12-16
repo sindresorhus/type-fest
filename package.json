@@ -1,6 +1,6 @@
 {
 	"name": "type-fest",
-	"version": "0.20.1",
+	"version": "0.20.2",
 	"description": "A collection of essential TypeScript types",
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
@@ -14,8 +14,7 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"//test": "xo && tsd && tsc",
-		"test": "xo && tsc"
+		"test": "xo && tsd && tsc"
 	},
 	"files": [
 		"index.d.ts",
@@ -36,7 +35,7 @@
 	],
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "~0.7.0",
-		"tsd": "^0.13.1",
+		"tsd": "^0.14.0",
 		"typescript": "^4.1.2",
 		"xo": "^0.35.0"
 	},
