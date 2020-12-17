@@ -80,7 +80,7 @@ Click the type names for complete docs.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
-- [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert an explicit union type to a tuple.
+- [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a user defined union type to a tuple type. Order can not be guaranteed on computed union types.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
