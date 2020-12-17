@@ -9,15 +9,19 @@ type Unmergeable =
 	| ReadonlyMap<any, any>
 	| ReadonlySet<any>
 	| Map<any, any>
-	| Set<any>;
+    | Set<any>
+    | unknown;
 
 /**
-Merge two types deeply into a new type. Keys of the second type overrides keys of the first type.
+Merge two types deeply into a new type. Keys of the second type override keys of the first type.
 Recursively merges own and inherited enumerable string keyed properties of source types into the destination type.
+Primitives, functions, maps and sets are not recursed into.
 
 Use-cases:
 - Where intersection types would result in a property having `never`. If two different types for the same property are used, intersection types assume its type is `never`. `MergeDeep` allows for safe intersection of two types and having the second passed in type take precedence, resulting in no unwanted `never` property types.
 - Merging complex, multi-level interfaces that share common properties across different levels.
+
+@see `Merge` for the shallow version.
 
 @example
 ```
