@@ -3,7 +3,7 @@ import {UnionToIntersection} from './union-to-intersection';
 /**
 Convert an explicit union type to a tuple.
 
-The element order of the tuple and of the union will be the same. Because of that, you should not use this if the union is computed instead of manually declared, because the TypeScript compiler does not guarantee that the order of such union elements in that case.
+The element order of the tuple and of the union will be the same. Because of that, you should not use this if the union is computed instead of manually declared, because the TypeScript compiler does not guarantee the order of such union elements in that case.
 
 Inspired by [this issue in the TypeScript repo](https://github.com/microsoft/TypeScript/issues/13298).
 
