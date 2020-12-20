@@ -25,10 +25,10 @@ expectTypeOf(get(apiResponse, 'hits.hits.0._source.name')).toEqualTypeOf<Array<{
 
 expectTypeOf(get(apiResponse, 'hits.hits[0]._source.name[0].given[0]')).toBeString();
 
-// TypeScript is structurally typed - it's _possible_ this value exists even though it's not on the parent interface, so the type is `unknown`.
+// TypeScript is structurally typed. It's *possible* this value exists even though it's not on the parent interface, so the type is `unknown`.
 expectTypeOf(get(apiResponse, 'hits.someNonsense.notTheRightPath')).toBeUnknown();
 
-// This interface uses a tuple type (as opposed to an array)
+// This interface uses a tuple type (as opposed to an array).
 interface WithTuples {
 	foo: [
 		{
@@ -60,7 +60,7 @@ expectTypeOf<Get<WithNumberKeys, 'foo.1.bar'>>().toBeNumber();
 expectTypeOf<Get<WithNumberKeys, 'foo[2].bar'>>().toBeUnknown();
 expectTypeOf<Get<WithNumberKeys, 'foo.2.bar'>>().toBeUnknown();
 
-// Test readonly, ReadonlyArray, optional props, unions with null
+// Test `readonly`, `ReadonlyArray`, optional properties, and unions with null.
 
 interface WithModifiers {
 	foo: ReadonlyArray<{
@@ -77,5 +77,5 @@ interface WithModifiers {
 	}>;
 }
 
-expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{ qux: number } | undefined>();
+expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{qux: number} | undefined>();
 expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi'>>().toEqualTypeOf<string | undefined>();
