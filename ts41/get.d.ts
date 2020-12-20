@@ -73,8 +73,8 @@ type WithStringKeys<BaseType extends Record<string | number, any>> = {
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
 
 Note:
-- Returns `unknown` if `Key` is not a property of `BaseType`, since typescript uses structural typing, and it can't be guaranteed that extra properties unknown to the type system will exist at runtime.
-- Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like lodash, dot-prop etc.
+- Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
+- Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
 type PropertyOf<BaseType, Key extends string> =
 	BaseType extends null | undefined
@@ -83,7 +83,7 @@ type PropertyOf<BaseType, Key extends string> =
 	? BaseType[Key]
 	: BaseType extends {
 		[n: number]: infer Item;
-		length: number; // Note - this is needed to avoid being too lax with records types using number keys like { 0: string; 1: boolean }
+		length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
 	}
 	? (
 		ConsistsOnlyOf<Key, StringDigit> extends true
