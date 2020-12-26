@@ -2,8 +2,7 @@ import {Except} from './except';
 import {Simplify} from './simplify';
 
 /**
-Convert an object with `readonly` keys into a mutable object. Inverse of `Readonly<T>`.
-Alternatively create a type that converts the given keys from `readonly` to mutable. The remaining keys are kept as is.
+Create a type that strips `readonly` from all or some of an object's keys. Inverse of `Readonly<T>`.
 
 This can be used to [store and mutate options within a class](https://github.com/sindresorhus/pageres/blob/4a5d05fca19a5fbd2f53842cbf3eb7b1b63bddd2/source/index.ts#L72), [edit `readonly` objects within tests](https://stackoverflow.com/questions/50703834), [construct a `readonly` object within a function](https://github.com/Microsoft/TypeScript/issues/24509), or to define a single model where the only thing that changes is whether or not some of the keys are mutable.
 
