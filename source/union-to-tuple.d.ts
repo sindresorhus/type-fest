@@ -11,6 +11,8 @@ Use-case: You need to do validation but you don't have an enum, only an union ty
 
 @example
 ```
+import {UnionToTuple} from 'type-fest';
+
 type Union = 'A' | 'B';
 
 const tuple: UnionToTuple<Union> = ['A', 'B'];
@@ -18,12 +20,17 @@ const tuple: UnionToTuple<Union> = ['A', 'B'];
 
 @example
 ```
+import {UnionToTuple} from 'type-fest';
+
 // This type may come from a library that you are using.
 type ActionsInSomeLibrary = 'create' | 'read' | 'update' | 'delete' | 'aggregate';
 
 type AllowedActions = Exclude<ActionsInSomeLibrary, 'aggregate'>;
 
 const actions: UnionToTuple<AllowedActions> = ['create', 'read', 'update', 'delete'];
+
+// Represents an parameter of the API.
+const requestedAction = 'create';
 
 actions.includes(requestedAction) // Validate
 ```
