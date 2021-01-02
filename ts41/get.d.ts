@@ -2,7 +2,7 @@ import {Split} from './utilities';
 import {StringDigit} from '../source/utilities';
 
 /**
-Like @see {@link Get} but receives an array of strings as a path parameter.
+Like @see Get but receives an array of strings as a path parameter.
 */
 type GetWithPath<BaseType, Keys extends readonly string[]> =
 	Keys extends []
