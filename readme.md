@@ -6,15 +6,32 @@
 	<br>
 	<b>A collection of essential TypeScript types</b>
 	<br>
+	<br>
+	<br>
+	<br>
+	<div align="center">
+		<p>
+			<p>
+				<sup>
+					<a href="https://github.com/sponsors/sindresorhus">Sindre Sorhus' open source work is supported by the community</a>
+				</sup>
+			</p>
+			<sup>Special thanks to:</sup>
+			<br>
+			<br>
+			<a href="https://standardresume.co/tech">
+				<img src="https://sindresorhus.com/assets/thanks/standard-resume-logo.svg" width="180"/>
+			</a>
+		</p>
+	</div>
+	<br>
 	<hr>
 </div>
 <br>
 <br>
 
 [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://giphy.com/gifs/illustration-rainbow-unicorn-26AHG5KGFxSkUWw1i)
-<!-- Commented out until they actually show anything
 [![npm dependents](https://badgen.net/npm/dependents/type-fest)](https://www.npmjs.com/package/type-fest?activeTab=dependents) [![npm downloads](https://badgen.net/npm/dt/type-fest)](https://www.npmjs.com/package/type-fest)
--->
 
 Many of the types here should have been built-in. You can help by suggesting some of them to the [TypeScript project](https://github.com/Microsoft/TypeScript/blob/master/CONTRIBUTING.md).
 
