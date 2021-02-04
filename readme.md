@@ -110,11 +110,27 @@ Click the type names for complete docs.
 *Note:* These require [TypeScript 4.1 or newer](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types).
 
 - [`CamelCase`](ts41/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
+- [`CamelCasedProps`](ts41/camel-cased-props.d.ts) – Convert object props to camel-case  (`fooBar`).
+- [`CamelCasedPropsDeep`](ts41/camel-cased-props-deep.d.ts) – Convert object props to camel-case recursively  (`fooBar`).
+
 - [`KebabCase`](ts41/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
+- [`KebabCasedProps`](ts41/kebab-cased-props.d.ts) – Convert a object props to kebab-case recursively (`foo-bar`).
+- [`KebabCasedPropsDeep`](ts41/kebab-cased-props-deep.d.ts) – Convert object props to kebab-case (`foo-bar`).
+
 - [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
+- [`PascalCasedProps`](ts41/pascal-cased-props.d.ts) – Converts object props to pascal-case (`FooBar`)
+- [`PascalCasedPropsDeep`](ts41/pascal-cased-props-deep.d.ts) – Converts object props to pascal-case (`FooBar`)
+
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
+- [`SnakeCasedProps`](ts41/snake-cased-props-deep.d.ts) – Convert object props to snake-case (`foo_bar`).
+- [`SnakeCasedPropsDeep`](ts41/snake-cased-props-deep.d.ts) – Convert object props to snake-case recursively (`foo_bar`).
+
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+- [`DelimiterCasedProps`](ts41/delimiter-cased-props.d.ts) – Convert object props to a custom string delimiter casing.
+- [`DelimiterCasedPropsDeep`](ts41/delimiter-cased-props-deep.d.ts) – Convert object props to a custom string delimiter casing recursively.
+
 - [`Get`](ts41/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
+
 
 ### Miscellaneous
 
