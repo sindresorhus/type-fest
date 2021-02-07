@@ -1,4 +1,4 @@
-import {CamelCasedProperties} from '../ts41/camel-cased-props';
+import {CamelCasedProperties} from '../ts41/camel-cased-properties';
 import {expectType} from 'tsd';
 
 declare const foo: CamelCasedProperties<{

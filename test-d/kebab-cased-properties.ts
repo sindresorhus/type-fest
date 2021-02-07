@@ -1,4 +1,4 @@
-import {KebabCasedProperties} from '../ts41/kebab-cased-props';
+import {KebabCasedProperties} from '../ts41/kebab-cased-properties';
 import {expectType} from 'tsd';
 
 declare const foo: KebabCasedProperties<{ helloWorld: { fooBar: string } }>;

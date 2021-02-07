@@ -1,4 +1,4 @@
-import {SnakeCasedProperties} from '../ts41/snake-cased-props';
+import {SnakeCasedProperties} from '../ts41/snake-cased-properties';
 import {expectType} from 'tsd';
 
 declare const foo: SnakeCasedProperties<{ helloWorld: { fooBar: string } }>;

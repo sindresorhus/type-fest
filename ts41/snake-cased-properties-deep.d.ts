@@ -1,4 +1,4 @@
-import {DelimiterCasedPropertiesDeep} from './delimiter-cased-props-deep';
+import {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep';
 
 /**
 Convert object props to snake_case recursively.

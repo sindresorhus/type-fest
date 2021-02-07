@@ -1,4 +1,4 @@
-import {PascalCasedProperties} from '../ts41/pascal-cased-props';
+import {PascalCasedProperties} from '../ts41/pascal-cased-properties';
 import {expectType} from 'tsd';
 
 declare const foo: PascalCasedProperties<{ helloWorld: { fooBar: string } }>;

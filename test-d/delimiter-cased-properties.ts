@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {DelimiterCasedProperties} from '../ts41/delimiter-cased-props';
+import {DelimiterCasedProperties} from '../ts41/delimiter-cased-properties';
 
 declare const foo: DelimiterCasedProperties<{ helloWorld: { fooBar: string } }, '/'>;
 expectType<{ 'hello/world': { fooBar: string } }>(foo);

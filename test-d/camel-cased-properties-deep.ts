@@ -1,4 +1,4 @@
-import {CamelCasedPropertiesDeep} from '../ts41/camel-cased-props-deep';
+import {CamelCasedPropertiesDeep} from '../ts41/camel-cased-properties-deep';
 import {expectType} from 'tsd';
 
 declare const foo: CamelCasedPropertiesDeep<{

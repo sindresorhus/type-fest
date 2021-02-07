@@ -1,4 +1,4 @@
-import {DelimiterCasedProperties} from './delimiter-cased-props';
+import {DelimiterCasedProperties} from './delimiter-cased-properties';
 
 /**
 Convert object props to kebab-case but not recursively.
