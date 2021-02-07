@@ -38,4 +38,4 @@ const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 
 ```
 */
-export type KebabCasedPropertiesDeep<T> = DelimiterCasedPropertiesDeep<T, '-'>;
+export type KebabCasedPropertiesDeep<Value> = DelimiterCasedPropertiesDeep<Value, '-'>;

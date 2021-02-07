@@ -37,4 +37,4 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 };
 
 */
-export type SnakeCasedPropertiesDeep<T> = DelimiterCasedPropertiesDeep<T, '_'>;
+export type SnakeCasedPropertiesDeep<Value> = DelimiterCasedPropertiesDeep<Value, '_'>;

@@ -38,6 +38,6 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 
 ```
 */
-export type DelimiterCasedPropertiesDeep<T, D extends string> = T extends Array<infer U> ? Array<DelimiterCasedPropertiesDeep<U, D>> : {
-            [K in keyof T as DelimiterCase<K, D>]: DelimiterCasedPropertiesDeep<T[K], D>;
+export type DelimiterCasedPropertiesDeep<Value, Delimiter extends string> = Value extends Array<infer U> ? Array<DelimiterCasedPropertiesDeep<U, Delimiter>> : {
+            [K in keyof Value as DelimiterCase<K, Delimiter>]: DelimiterCasedPropertiesDeep<Value[K], Delimiter>;
       };

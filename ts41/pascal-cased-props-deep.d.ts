@@ -37,8 +37,8 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 };
 
 */
-export type PascalCasedPropertiesDeep<T> = T extends Array<infer U>
+export type PascalCasedPropertiesDeep<Value> = Value extends Array<infer U>
 	? Array<PascalCasedPropertiesDeep<U>>
 	: {
-			[K in keyof T as PascalCase<K>]: PascalCasedPropertiesDeep<T[K]>;
+			[K in keyof Value as PascalCase<K>]: PascalCasedPropertiesDeep<Value[K]>;
 	};
