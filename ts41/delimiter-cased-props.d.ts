@@ -1,4 +1,4 @@
-import { DelimiterCase } from "./delimiter-case";
+import {DelimiterCase} from './delimiter-case';
 
 /**
 Convert object props to delimiter-case but not recursively.

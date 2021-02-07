@@ -1,4 +1,4 @@
-import { PascalCase } from "./pascal-case";
+import {PascalCase} from './pascal-case';
 
 /**
 Convert object props to PascalCase but not recursively.

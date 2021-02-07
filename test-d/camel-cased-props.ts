@@ -10,12 +10,11 @@ declare const foo: CamelCasedProperties<{
 
 expectType<{ a: number; b: { C: string } }>(foo);
 
-declare const bar: CamelCasedProperties<{helloWorld: string}[]>;
-expectType<{helloWorld: string}[]>(bar);
+declare const bar: CamelCasedProperties<Array<{helloWorld: string}>>;
+expectType<Array<{helloWorld: string}>>(bar);
 
 declare const fooBar: CamelCasedProperties<() => {a: string}>;
 expectType<() => {a: string}>(fooBar);
-
 
 // Verify Example
 interface User {
