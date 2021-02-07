@@ -20,4 +20,4 @@ const result: SnakeCasedProperties<User> = {
 
 ```
 */
-export type SnakeCasedProperties<T> = DelimiterCasedProperties<T, '_'>;
+export type SnakeCasedProperties<Value> = DelimiterCasedProperties<Value, '_'>;

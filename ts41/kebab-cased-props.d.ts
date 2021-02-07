@@ -19,4 +19,4 @@ const result: KebabCasedProperties<User> = {
 };
 ```
 */
-export type KebabCasedProperties<T> = DelimiterCasedProperties<T, '-'>;
+export type KebabCasedProperties<Value> = DelimiterCasedProperties<Value, '-'>;

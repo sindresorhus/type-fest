@@ -21,8 +21,8 @@ const result: CamelCasedProperties<User> = {
 
 ```
 */
-export type CamelCasedProperties<T> = T extends Array<infer U>
-	? U[]
+export type CamelCasedProperties<Value> = Value extends Array<infer U>
+	? Value
 	: {
-			[K in keyof T as CamelCase<K>]: T[K];
+			[K in keyof Value as CamelCase<K>]: Value[K];
 	};

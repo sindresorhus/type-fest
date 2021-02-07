@@ -20,6 +20,6 @@ const result: PascalCasedProperties<User> = {
 
 ```
 */
-export type PascalCasedProperties<T> = T extends Array<infer U>
-	? U[]
-	: { [K in keyof T as PascalCase<K>]: T[K] };
+export type PascalCasedProperties<Value> = Value extends Array<infer U>
+	? Value
+	: { [K in keyof Value as PascalCase<K>]: Value[K] };
