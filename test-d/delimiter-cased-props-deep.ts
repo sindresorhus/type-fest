@@ -4,6 +4,9 @@ import {DelimiterCasedPropertiesDeep} from '../ts41/delimiter-cased-props-deep';
 declare const foo: DelimiterCasedPropertiesDeep<{helloWorld: {fooBar: string}}, '/'>;
 expectType<{'hello/world': {'foo/bar': string}}>(foo);
 
+declare const fooBar: DelimiterCasedPropertiesDeep<() => {a: string}, '/'>;
+expectType<() => {a: string}>(fooBar);
+
 // Verify Example
 interface User {
 	userId: number;
