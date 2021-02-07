@@ -22,16 +22,16 @@ interface UserWithFriends {
 const result: CamelCasedPropertiesDeep<UserWithFriends> = {
     userInfo: {
         userId: 1,
-        userName: "Tom",
+        userName: 'Tom',
     },
     userFriends: [
         {
             userId: 2,
-            userName: "Jerry",
+            userName: 'Jerry',
         },
         {
             userId: 3,
-            userName: "Spike",
+            userName: 'Spike',
         },
     ],
 };

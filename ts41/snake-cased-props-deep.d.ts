@@ -22,16 +22,16 @@ interface UserWithFriends {
 const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	user_info: {
 		user_id: 1,
-		user_name: "Tom",
+		user_name: 'Tom',
 	},
 	user_friends: [
 		{
 			user_id: 2,
-			user_name: "Jerry",
+			user_name: 'Jerry',
 		},
 		{
 			user_id: 3,
-			user_name: "Spike",
+			user_name: 'Spike',
 		},
 	],
 };

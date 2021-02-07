@@ -14,8 +14,8 @@ interface User {
 	userName: string;
 }
 const result: KebabCasedProperties<User> = {
-	"user-id": 1,
-	"user-name": "Tom",
+	'user-id': 1,
+	'user-name': 'Tom',
 };
 ```
 */

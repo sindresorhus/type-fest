@@ -15,7 +15,7 @@ interface User {
 }
 const result: SnakeCasedProperties<User> = {
 	user_id: 1,
-	user_name: "Tom",
+	user_name: 'Tom',
 };
 
 ```

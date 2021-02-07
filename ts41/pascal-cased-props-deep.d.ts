@@ -22,16 +22,16 @@ interface UserWithFriends {
 const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {
 		UserId: 1,
-		UserName: "Tom",
+		UserName: 'Tom',
 	},
 	UserFriends: [
 		{
 			UserId: 2,
-			UserName: "Jerry",
+			UserName: 'Jerry',
 		},
 		{
 			UserId: 3,
-			UserName: "Spike",
+			UserName: 'Spike',
 		},
 	],
 };

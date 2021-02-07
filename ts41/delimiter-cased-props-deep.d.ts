@@ -22,16 +22,16 @@ interface UserWithFriends {
 const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
     'user-info': {
         'user-id': 1,
-        'user-name': "Tom",
+        'user-name': 'Tom',
     },
     'user-friends': [
         {
             'user-id': 2,
-            'user-name': "Jerry",
+            'user-name': 'Jerry',
         },
         {
             'user-id': 3,
-            'user-name': "Spike",
+            'user-name': 'Spike',
         },
     ],
 };

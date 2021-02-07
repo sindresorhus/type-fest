@@ -15,7 +15,7 @@ interface User {
 }
 const result: PascalCasedProperties<User> = {
 	UserId: 1,
-	UserName: "Tom",
+	UserName: 'Tom',
 };
 
 ```

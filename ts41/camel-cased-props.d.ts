@@ -16,7 +16,7 @@ interface User {
 
 const result: CamelCasedProperties<User> = {
 	userId: 1,
-	userName: "Tom",
+	userName: 'Tom',
 };
 
 ```

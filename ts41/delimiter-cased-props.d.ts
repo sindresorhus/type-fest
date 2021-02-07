@@ -13,9 +13,9 @@ interface User {
 	userId: number;
 	userName: string;
 }
-const result: DelimiterCasedProperties<User, "-"> = {
-	"user-id": 1,
-	"user-name": "Tom",
+const result: DelimiterCasedProperties<User, '-'> = {
+	'user-id': 1,
+	'user-name': 'Tom',
 };
 ```
 */
