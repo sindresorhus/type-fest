@@ -23,7 +23,7 @@ interface RawOptions {
 	foo: number;
 }
 
-const dbResult: CamelCasedProps<ModelProps> = {
+const dbResult: CamelCasedProperties<ModelProps> = {
 	DryRun: true,
 	FullFamilyName: 'bar.js',
 	Foo: 123

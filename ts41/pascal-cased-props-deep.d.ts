@@ -6,7 +6,7 @@ Convert object props to PascalCase recursively.
 This can be useful when, for example, converting some API types from other style.
 
 @see PascalCase
-@see PascalCasedProps
+@see PascalCasedProperties
 @example
 ```
 interface User {
@@ -19,7 +19,7 @@ interface UserWithFriends {
 	userFriends: User[];
 }
 
-const result: PascalCasedPropsDeep<UserWithFriends> = {
+const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {
 		UserId: 1,
 		UserName: "Tom",
@@ -37,8 +37,8 @@ const result: PascalCasedPropsDeep<UserWithFriends> = {
 };
 
 */
-export type PascalCasedPropsDeep<T> = T extends Array<infer U>
-	? Array<PascalCasedPropsDeep<U>>
+export type PascalCasedPropertiesDeep<T> = T extends Array<infer U>
+	? Array<PascalCasedPropertiesDeep<U>>
 	: {
-			[K in keyof T as PascalCase<K>]: PascalCasedPropsDeep<T[K]>;
+			[K in keyof T as PascalCase<K>]: PascalCasedPropertiesDeep<T[K]>;
 	};

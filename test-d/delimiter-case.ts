@@ -44,7 +44,7 @@ const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo##
 expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
 
 // Verifying example
-type OddCasedProps<T> = {
+type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
 };
 
@@ -54,7 +54,7 @@ interface CliOptions {
 	foo: number;
 }
 
-expectAssignable<OddCasedProps<CliOptions>>({
+expectAssignable<OddCasedProperties<CliOptions>>({
 	'dry#run': true,
 	'include#file': 'bar.js',
 	foo: 123

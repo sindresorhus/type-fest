@@ -44,7 +44,7 @@ const someVariable: CamelCase<'foo-bar'> = 'fooBar';
 
 // Advanced
 
-type CamelCasedProps<T> = {
+type CamelCasedProperties<T> = {
 	[K in keyof T as CamelCase<K>]: T[K]
 };
 
@@ -54,7 +54,7 @@ interface RawOptions {
 	foo: number;
 }
 
-const dbResult: CamelCasedProps<ModelProps> = {
+const dbResult: CamelCasedProperties<ModelProps> = {
 	dryRun: true,
 	fullFamilyName: 'bar.js',
 	foo: 123

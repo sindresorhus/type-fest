@@ -1,7 +1,7 @@
-import {SnakeCasedProps} from '../ts41/snake-cased-props';
+import {SnakeCasedProperties} from '../ts41/snake-cased-props';
 import {expectType} from 'tsd';
 
-declare const foo: SnakeCasedProps<{ helloWorld: { fooBar: string } }>;
+declare const foo: SnakeCasedProperties<{ helloWorld: { fooBar: string } }>;
 expectType<{ hello_world: { fooBar: string } }>(foo);
 
 // Verify Example
@@ -9,8 +9,8 @@ interface User {
 	userId: number;
 	userName: string;
 }
-const result: SnakeCasedProps<User> = {
+const result: SnakeCasedProperties<User> = {
 	user_id: 1,
 	user_name: 'Tom'
 };
-expectType<SnakeCasedProps<User>>(result);
+expectType<SnakeCasedProperties<User>>(result);

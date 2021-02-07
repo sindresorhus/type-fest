@@ -5,7 +5,7 @@ Convert object props to camelCase recursively.
 
 This can be useful when, for example, converting some API types from other style.
 
-@see CamelCasedProps
+@see CamelCasedProperties
 @see CamelCase
 @example
 ```
@@ -19,7 +19,7 @@ interface UserWithFriends {
     UserFriends: User[];
 }
 
-const result: CamelCasedPropsDeep<UserWithFriends> = {
+const result: CamelCasedPropertiesDeep<UserWithFriends> = {
     userInfo: {
         userId: 1,
         userName: "Tom",
@@ -38,8 +38,8 @@ const result: CamelCasedPropsDeep<UserWithFriends> = {
 
 ```
 */
-export type CamelCasedPropsDeep<T> = T extends Array<infer U>
-	? Array<CamelCasedPropsDeep<U>>
+export type CamelCasedPropertiesDeep<T> = T extends Array<infer U>
+	? Array<CamelCasedPropertiesDeep<U>>
 	: {
-			[K in keyof T as CamelCase<K>]: CamelCasedPropsDeep<T[K]>;
+			[K in keyof T as CamelCase<K>]: CamelCasedPropertiesDeep<T[K]>;
 	};

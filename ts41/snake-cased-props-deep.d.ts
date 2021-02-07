@@ -1,4 +1,4 @@
-import {DelimiterCasedPropsDeep} from './delimiter-cased-props-deep';
+import {DelimiterCasedPropertiesDeep} from './delimiter-cased-props-deep';
 
 /**
 Convert object props to snake_case recursively.
@@ -6,7 +6,7 @@ Convert object props to snake_case recursively.
 This can be useful when, for example, converting some API types from other style.
 
 @see SnakeCase
-@see SnakeCasedProps
+@see SnakeCasedProperties
 @example
 ```
 interface User {
@@ -19,7 +19,7 @@ interface UserWithFriends {
 	userFriends: User[];
 }
 
-const result: SnakeCasedPropsDeep<UserWithFriends> = {
+const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	user_info: {
 		user_id: 1,
 		user_name: "Tom",
@@ -37,4 +37,4 @@ const result: SnakeCasedPropsDeep<UserWithFriends> = {
 };
 
 */
-export type SnakeCasedPropsDeep<T> = DelimiterCasedPropsDeep<T, '_'>;
+export type SnakeCasedPropertiesDeep<T> = DelimiterCasedPropertiesDeep<T, '_'>;

@@ -1,4 +1,4 @@
-import {DelimiterCasedProps} from './delimiter-cased-props';
+import {DelimiterCasedProperties} from './delimiter-cased-props';
 
 /**
 Convert object props to kebab-case but not recursively.
@@ -6,17 +6,17 @@ Convert object props to kebab-case but not recursively.
 This can be useful when, for example, converting some api type from other style.
 
 @see KebabCase
-@see KebabCasedPropsDeep
+@see KebabCasedPropertiesDeep
 @example
 ```
 interface User {
 	userId: number;
 	userName: string;
 }
-const result: KebabCasedProps<User> = {
+const result: KebabCasedProperties<User> = {
 	"user-id": 1,
 	"user-name": "Tom",
 };
 ```
 */
-export type KebabCasedProps<T> = DelimiterCasedProps<T, '-'>;
+export type KebabCasedProperties<T> = DelimiterCasedProperties<T, '-'>;

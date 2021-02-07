@@ -1,7 +1,7 @@
-import {PascalCasedPropsDeep} from '../ts41/pascal-cased-props-deep';
+import {PascalCasedPropertiesDeep} from '../ts41/pascal-cased-props-deep';
 import {expectType} from 'tsd';
 
-declare const foo: PascalCasedPropsDeep<{ helloWorld: { fooBar: string } }>;
+declare const foo: PascalCasedPropertiesDeep<{ helloWorld: { fooBar: string } }>;
 expectType<{ HelloWorld: { FooBar: string } }>(foo);
 
 // Verify Example
@@ -15,7 +15,7 @@ interface UserWithFriends {
 	userFriends: User[];
 }
 
-const result: PascalCasedPropsDeep<UserWithFriends> = {
+const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {
 		UserId: 1,
 		UserName: 'Tom'
@@ -31,4 +31,4 @@ const result: PascalCasedPropsDeep<UserWithFriends> = {
 		}
 	]
 };
-expectType<PascalCasedPropsDeep<UserWithFriends>>(result);
+expectType<PascalCasedPropertiesDeep<UserWithFriends>>(result);

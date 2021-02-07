@@ -6,7 +6,7 @@ Convert object props to delimiter-case recursively.
 This can be useful when, for example, converting some API types from other style.
 
 @see DelimiterCase
-@see DelimiterCasedProps
+@see DelimiterCasedProperties
 @example
 ```
 interface User {
@@ -19,7 +19,7 @@ interface UserWithFriends {
     userFriends: User[];
 }
 
-const result: DelimiterCasedPropsDeep<UserWithFriends, '-'> = {
+const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
     'user-info': {
         'user-id': 1,
         'user-name': "Tom",
@@ -38,6 +38,6 @@ const result: DelimiterCasedPropsDeep<UserWithFriends, '-'> = {
 
 ```
 */
-export type DelimiterCasedPropsDeep<T, D extends string> = T extends Array<infer U> ? Array<DelimiterCasedPropsDeep<U, D>> : {
-            [K in keyof T as DelimiterCase<K, D>]: DelimiterCasedPropsDeep<T[K], D>;
+export type DelimiterCasedPropertiesDeep<T, D extends string> = T extends Array<infer U> ? Array<DelimiterCasedPropertiesDeep<U, D>> : {
+            [K in keyof T as DelimiterCase<K, D>]: DelimiterCasedPropertiesDeep<T[K], D>;
       };

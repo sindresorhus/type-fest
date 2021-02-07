@@ -1,7 +1,7 @@
-import {CamelCasedPropsDeep} from '../ts41/camel-cased-props-deep';
+import {CamelCasedPropertiesDeep} from '../ts41/camel-cased-props-deep';
 import {expectType} from 'tsd';
 
-declare const foo: CamelCasedPropsDeep<{
+declare const foo: CamelCasedPropertiesDeep<{
 	A: { B: number; C: Array<{ D: string }> };
 }>;
 
@@ -18,7 +18,7 @@ interface UserWithFriends {
 	UserFriends: User[];
 }
 
-const result: CamelCasedPropsDeep<UserWithFriends> = {
+const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	userInfo: {
 		userId: 1,
 		userName: 'Tom'
@@ -34,4 +34,4 @@ const result: CamelCasedPropsDeep<UserWithFriends> = {
 		}
 	]
 };
-expectType<CamelCasedPropsDeep<UserWithFriends>>(result);
+expectType<CamelCasedPropertiesDeep<UserWithFriends>>(result);

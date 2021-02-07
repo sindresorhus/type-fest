@@ -15,7 +15,7 @@ const someVariable: SnakeCase<'fooBar'> = 'foo_bar';
 
 // Advanced
 
-type SnakeCasedProps<T> = {
+type SnakeCasedProperties<T> = {
 	[K in keyof T as SnakeCase<K>]: T[K]
 };
 
@@ -25,7 +25,7 @@ interface ModelProps {
 	foo: number;
 }
 
-const dbResult: SnakeCasedProps<ModelProps> = {
+const dbResult: SnakeCasedProperties<ModelProps> = {
 	'is_happy': true,
 	'full_family_name': 'Carla Smith',
 	foo: 123

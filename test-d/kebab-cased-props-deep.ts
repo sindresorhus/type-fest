@@ -1,7 +1,7 @@
-import {KebabCasedPropsDeep} from '../ts41/kebab-cased-props-deep';
+import {KebabCasedPropertiesDeep} from '../ts41/kebab-cased-props-deep';
 import {expectType} from 'tsd';
 
-declare const foo: KebabCasedPropsDeep<{helloWorld: {fooBar: string}}>;
+declare const foo: KebabCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
 expectType<{'hello-world': {'foo-bar': string}}>(foo);
 
 // Verify Example
@@ -15,7 +15,7 @@ interface UserWithFriends {
 	userFriends: User[];
 }
 
-const result: KebabCasedPropsDeep<UserWithFriends> = {
+const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 	'user-info': {
 		'user-id': 1,
 		'user-name': 'Tom'
@@ -31,4 +31,4 @@ const result: KebabCasedPropsDeep<UserWithFriends> = {
 		}
 	]
 };
-expectType<KebabCasedPropsDeep<UserWithFriends>>(result);
+expectType<KebabCasedPropertiesDeep<UserWithFriends>>(result);
