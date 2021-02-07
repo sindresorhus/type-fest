@@ -1,4 +1,4 @@
-import {PascalCase} from './pascal-case';
+import { PascalCase } from "./pascal-case";
 
 /**
 Convert object props to PascalCase but not recursively.
@@ -20,6 +20,8 @@ const result: PascalCasedProperties<User> = {
 
 ```
 */
-export type PascalCasedProperties<Value> = Value extends Array<infer U>
+export type PascalCasedProperties<Value> = Value extends Function
+	? Value
+	: Value extends Array<infer U>
 	? Value
 	: { [K in keyof Value as PascalCase<K>]: Value[K] };

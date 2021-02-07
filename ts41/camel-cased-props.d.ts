@@ -1,4 +1,4 @@
-import {CamelCase} from './camel-case';
+import { CamelCase } from "./camel-case";
 
 /**
 Convert object props to camelCase but not recursively.
@@ -21,8 +21,10 @@ const result: CamelCasedProperties<User> = {
 
 ```
 */
-export type CamelCasedProperties<Value> = Value extends Array<infer U>
+export type CamelCasedProperties<Value> = Value extends Function
+	? Value
+	: Value extends Array<infer U>
 	? Value
 	: {
 			[K in keyof Value as CamelCase<K>]: Value[K];
-	};
+	  };

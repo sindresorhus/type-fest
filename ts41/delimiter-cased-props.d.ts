@@ -1,4 +1,4 @@
-import {DelimiterCase} from './delimiter-case';
+import { DelimiterCase } from "./delimiter-case";
 
 /**
 Convert object props to delimiter-case but not recursively.
@@ -19,6 +19,11 @@ const result: DelimiterCasedProperties<User, '-'> = {
 };
 ```
 */
-export type DelimiterCasedProperties<Value, Delimiter extends string> = Value extends Array<infer U>
+export type DelimiterCasedProperties<
+	Value,
+	Delimiter extends string
+> = Value extends Function
+	? Value
+	: Value extends Array<infer U>
 	? Value
 	: { [K in keyof Value as DelimiterCase<K, Delimiter>]: Value[K] };
