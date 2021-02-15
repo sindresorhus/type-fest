@@ -3,7 +3,7 @@
 
 // Basic
 export * from './source/basic';
-export * from "./source/typed-array"
+export * from './source/typed-array';
 
 // Utilities
 export {Except} from './source/except';
