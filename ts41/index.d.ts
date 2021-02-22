@@ -7,3 +7,4 @@ export {KebabCase} from './kebab-case';
 export {PascalCase} from './pascal-case';
 export {SnakeCase} from './snake-case';
 export {DelimiterCase} from './delimiter-case';
+export {Get} from './get';
