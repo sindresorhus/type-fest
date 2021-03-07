@@ -1,13 +1,5 @@
 import {WordSeparators} from '../source/utilities';
-
-/**
-Recursively split a string literal into two parts on the first occurence of the given string, returning an array literal of all the separate parts.
-*/
-export type Split<S extends string, D extends string> =
-	string extends S ? string[] :
-	S extends '' ? [] :
-	S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] :
-	[S];
+import {Split} from './utilities';
 
 /**
 Step by step takes the first item in an array literal, formats it and adds it to a string literal, and then recursively appends the remainder.
