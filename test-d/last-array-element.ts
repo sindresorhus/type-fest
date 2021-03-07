@@ -6,4 +6,4 @@ const array: ['foo', 2, 'bar'] = ['foo', 2, 'bar'];
 const mixedArray: ['bar', 'foo', 2] = ['bar', 'foo', 2];
 
 expectType<'bar'>(lastOf(array));
-expectType<number>(lastOf(mixedArray));
+expectType<2>(lastOf(mixedArray));
