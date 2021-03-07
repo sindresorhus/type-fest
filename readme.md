@@ -98,7 +98,6 @@ Click the type names for complete docs.
 - [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
-- [`QueryResult`](ts41/query-result.d.ts) - Matches element types returned from an HTML element query selector.
 - [`Split`](ts41/split.d.ts) - Represents an array of strings split using a passed-in character or character set.
 - [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
 
@@ -117,6 +116,10 @@ Click the type names for complete docs.
 - [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
 
 ## Tips
+
+### Related
+
+- [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `querySelector` and `querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
 
 ### Built-in types
 
