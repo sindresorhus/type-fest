@@ -9,3 +9,4 @@ export {SnakeCase} from './snake-case';
 export {DelimiterCase} from './delimiter-case';
 export {Split} from './split';
 export {Trim} from './trim';
+export {Get} from './get';

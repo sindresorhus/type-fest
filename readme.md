@@ -6,15 +6,32 @@
 	<br>
 	<b>A collection of essential TypeScript types</b>
 	<br>
+	<br>
+	<br>
+	<br>
+	<div align="center">
+		<p>
+			<p>
+				<sup>
+					<a href="https://github.com/sponsors/sindresorhus">Sindre Sorhus' open source work is supported by the community</a>
+				</sup>
+			</p>
+			<sup>Special thanks to:</sup>
+			<br>
+			<br>
+			<a href="https://standardresume.co/tech">
+				<img src="https://sindresorhus.com/assets/thanks/standard-resume-logo.svg" width="180"/>
+			</a>
+		</p>
+	</div>
+	<br>
 	<hr>
 </div>
 <br>
 <br>
 
 [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://giphy.com/gifs/illustration-rainbow-unicorn-26AHG5KGFxSkUWw1i)
-<!-- Commented out until they actually show anything
 [![npm dependents](https://badgen.net/npm/dependents/type-fest)](https://www.npmjs.com/package/type-fest?activeTab=dependents) [![npm downloads](https://badgen.net/npm/dt/type-fest)](https://www.npmjs.com/package/type-fest)
--->
 
 Many of the types here should have been built-in. You can help by suggesting some of them to the [TypeScript project](https://github.com/Microsoft/TypeScript/blob/master/CONTRIBUTING.md).
 
@@ -52,7 +69,7 @@ Click the type names for complete docs.
 
 - [`Primitive`](source/basic.d.ts) - Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 - [`Class`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
-- [`TypedArray`](source/basic.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
+- [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 - [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
 - [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
 - [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
@@ -61,7 +78,7 @@ Click the type names for complete docs.
 ### Utilities
 
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type).
-- [`Mutable`](source/mutable.d.ts) - Convert an object with `readonly` keys into a mutable object. The inverse of `Readonly<T>`.
+- [`Mutable`](source/mutable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
@@ -100,6 +117,7 @@ Click the type names for complete docs.
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
 - [`Split`](ts41/split.d.ts) - Represents an array of strings split using a passed-in character or character set.
 - [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
+- [`Get`](ts41/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 
 ### Miscellaneous
 
@@ -636,6 +654,90 @@ There are many advanced types most users don't know about.
 			// Internal implementation.
 			return container;
 	}
+	```
+	</details>
+
+- [`Uppercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into uppercase.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	type T = Uppercase<'hello'>;  // 'HELLO'
+
+	type T2 = Uppercase<'foo' | 'bar'>;  // 'FOO' | 'BAR'
+
+	type T3<S extends string> = Uppercase<`aB${S}`>;
+	type T4 = T30<'xYz'>;  // 'ABXYZ'
+
+	type T5 = Uppercase<string>;  // string
+	type T6 = Uppercase<any>;  // any
+	type T7 = Uppercase<never>;  // never
+	type T8 = Uppercase<42>;  // Error, type 'number' does not satisfy the constraint 'string'
+	```
+	</details>
+
+- [`Lowercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into lowercase.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	type T = Lowercase<'HELLO'>;  // 'hello'
+
+	type T2 = Lowercase<'FOO' | 'BAR'>;  // 'foo' | 'bar'
+
+	type T3<S extends string> = Lowercase<`aB${S}`>;
+	type T4 = T32<'xYz'>;  // 'abxyz'
+
+	type T5 = Lowercase<string>;  // string
+	type T6 = Lowercase<any>;  // any
+	type T7 = Lowercase<never>;  // never
+	type T8 = Lowercase<42>;  // Error, type 'number' does not satisfy the constraint 'string'
+	```
+	</details>
+
+- [`Capitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into uppercase.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	type T = Capitalize<'hello'>;  // 'Hello'
+
+	type T2 = Capitalize<'foo' | 'bar'>;  // 'Foo' | 'Bar'
+
+	type T3<S extends string> = Capitalize<`aB${S}`>;
+	type T4 = T32<'xYz'>;  // 'ABxYz'
+
+	type T5 = Capitalize<string>;  // string
+	type T6 = Capitalize<any>;  // any
+	type T7 = Capitalize<never>;  // never
+	type T8 = Capitalize<42>;  // Error, type 'number' does not satisfy the constraint 'string'
+	```
+	</details>
+
+- [`Uncapitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into lowercase.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	type T = Uncapitalize<'Hello'>;  // 'hello'
+
+	type T2 = Uncapitalize<'Foo' | 'Bar'>;  // 'foo' | 'bar'
+
+	type T3<S extends string> = Uncapitalize<`AB${S}`>;
+	type T4 = T30<'xYz'>;  // 'aBxYz'
+
+	type T5 = Uncapitalize<string>;  // string
+	type T6 = Uncapitalize<any>;  // any
+	type T7 = Uncapitalize<never>;  // never
+	type T8 = Uncapitalize<42>;  // Error, type 'number' does not satisfy the constraint 'string'
 	```
 	</details>
 
