@@ -1,5 +1,5 @@
-import {expectType, expectError, expectAssignable} from 'tsd';
-import {Merge, MergeDeep} from '..';
+import {expectType, expectAssignable} from 'tsd';
+import {MergeDeep} from '..';
 
 const foo = {
 	baz: 'waldo',
@@ -48,7 +48,6 @@ const bar = {
 };
 
 const foobar: MergeDeep<typeof foo, typeof bar> = bar;
-expectError(expectType<Merge<typeof foo, typeof bar>>(foobar));
 expectType<((_: string) => void)>(foobar.waldo.function);
 expectAssignable<object>(foobar.waldo.object);
 expectType<string>(foobar.waldo.string);
@@ -66,4 +65,4 @@ expectAssignable<ReadonlyMap<string, string>>(foobar.waldo.readonlyMap);
 expectAssignable<ReadonlySet<string>>(foobar.waldo.readonlySet);
 expectType<readonly string[]>(foobar.waldo.readonlyArray);
 expectType<readonly ['foo']>(foobar.waldo.readonlyTuple);
-expectType<Array<{key: number; number?: number; string: string}>>(foobar.waldo.mergedArrayType);
+expectType<Array<{key: number; number?: number | undefined; string: string}>>(foobar.waldo.mergedArrayType);

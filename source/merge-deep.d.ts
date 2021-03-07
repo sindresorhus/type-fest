@@ -6,11 +6,26 @@ A type that will cause the right-hand side of the merge operation to always win 
 type Unmergeable =
 	| Primitive
 	| ((...arguments: any[]) => unknown)
-	| ReadonlyMap<any, any>
-	| ReadonlySet<any>
-	| Map<any, any>
-    | Set<any>
-    | unknown;
+	| ReadonlyMap<unknown, unknown>
+	| ReadonlySet<unknown>
+	| Map<unknown, unknown>
+	| Set<unknown>;
+
+/**
+Overwrite keys with a type of never to fix union type merge shortcomings.
+*/
+type OverwriteNevers<Merged, Original> = Merged extends Unmergeable
+	? Merged
+	: {
+		[KeyType in keyof Merged]:
+			KeyType extends keyof Original
+				? Merged[KeyType] extends never
+					? Original[KeyType]
+					: Merged[KeyType]
+				: Merged[KeyType] extends object
+					? OverwriteNevers<Merged[KeyType], Original[KeyType]>
+					: Merged[KeyType];
+	};
 
 /**
 Merge two types deeply into a new type. Keys of the second type override keys of the first type.
@@ -60,7 +75,7 @@ const intersectedKeywords: DefaultKeywords & CustomKeywords = {partial: {render:
 */
 export type MergeDeep<First, Second> = Second extends Unmergeable
 	? Second
-	: {
+	: OverwriteNevers<{
 		[KeyType in keyof Second]:
 			KeyType extends keyof First
 				? Second[KeyType] extends Unmergeable
@@ -78,4 +93,4 @@ export type MergeDeep<First, Second> = Second extends Unmergeable
 					? MergeDeep<First[KeyType], Second[KeyType]>
 					: Second[KeyType]
 				: First[KeyType];
-	};
+	}, Second>;
