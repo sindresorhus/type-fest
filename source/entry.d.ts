@@ -44,7 +44,7 @@ const arrayEntryNumber: Entry<typeof arrayExample> = [1, 1];
 
 // Maps
 const mapExample = new Map([['a', 1]]);
-const mapEntry: Entry<typeof map> = ['a', 1];
+const mapEntry: Entry<typeof mapExample> = ['a', 1];
 
 // Sets
 const setExample = new Set(['a', 1]);
