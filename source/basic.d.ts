@@ -1,4 +1,4 @@
-/// <reference lib="esnext"/>
+/// <reference lib="es2020.bigint"/>
 
 // TODO: This can just be `export type Primitive = not object` when the `not` keyword is out.
 /**
