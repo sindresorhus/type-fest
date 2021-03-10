@@ -115,7 +115,7 @@ Click the type names for complete docs.
 - [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
-- [`Split`](ts41/split.d.ts) - Represents an array of strings split using a passed-in character or character set.
+- [`Split`](ts41/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Get`](ts41/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 
@@ -137,7 +137,7 @@ Click the type names for complete docs.
 
 ### Related
 
-- [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `querySelector` and `querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
+- [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from a HTML element query selector.
 
 ### Built-in types
 
