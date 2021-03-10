@@ -1,7 +1,7 @@
 /**
-Represents an array of strings split using a passed-in character or character set.
+Represents an array of strings split using a given character or character set.
 
-Use case: defining the return type of the `String.prototype.split` method.
+Use-case: Defining the return type of a method like `String.prototype.split`.
 
 @example
 ```
