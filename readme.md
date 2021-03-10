@@ -137,7 +137,7 @@ Click the type names for complete docs.
 
 ### Related
 
-- [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from a HTML element query selector.
+- [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
 
 ### Built-in types
 
