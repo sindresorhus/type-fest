@@ -8,6 +8,9 @@ expectType<{a: {b: number; c: Array<{d: string}>}}>(foo);
 declare const fooBar: CamelCasedPropertiesDeep<() => {a: string}>;
 expectType<() => {a: string}>(fooBar);
 
+declare const bar : CamelCasedPropertiesDeep<Set<{fooBar: string}>>
+expectType<Set<{fooBar:string}>>(bar);
+
 // Verify Example
 interface User {
 	UserId: number;

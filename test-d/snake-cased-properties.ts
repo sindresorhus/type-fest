@@ -1,8 +1,8 @@
 import {SnakeCasedProperties} from '../ts41/snake-cased-properties';
 import {expectType} from 'tsd';
 
-declare const foo: SnakeCasedProperties<{ helloWorld: { fooBar: string } }>;
-expectType<{ hello_world: { fooBar: string } }>(foo);
+declare const foo: SnakeCasedProperties<{helloWorld: {fooBar: string}}>;
+expectType<{hello_world: {fooBar: string}}>(foo);
 
 // Verify Example
 interface User {

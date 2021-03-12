@@ -41,6 +41,7 @@ export type PascalCasedPropertiesDeep<Value> = Value extends Function
 	? Value
 	: Value extends Array<infer U>
 	? Array<PascalCasedPropertiesDeep<U>>
-	: {
+	: Value extends Set<infer U>
+	? Set<PascalCasedPropertiesDeep<U>> : {
 			[K in keyof Value as PascalCase<K>]: PascalCasedPropertiesDeep<Value[K]>;
 	};

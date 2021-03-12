@@ -44,7 +44,8 @@ export type DelimiterCasedPropertiesDeep<
 	? Value
 	: Value extends Array<infer U>
 	? Array<DelimiterCasedPropertiesDeep<U, Delimiter>>
-	: {
+	: Value extends Set<infer U>
+	? Set<DelimiterCasedPropertiesDeep<U, Delimiter>> : {
 			[K in keyof Value as DelimiterCase<
 				K,
 				Delimiter
