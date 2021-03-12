@@ -1,7 +1,7 @@
 import {DelimiterCase} from './delimiter-case';
 
 /**
-Convert object props to delimiter-case but not recursively.
+Convert object properties to delimiter case but not recursively.
 
 This can be useful when, for example, converting some api type from other style.
 
@@ -13,6 +13,7 @@ interface User {
 	userId: number;
 	userName: string;
 }
+
 const result: DelimiterCasedProperties<User, '-'> = {
 	'user-id': 1,
 	'user-name': 'Tom',

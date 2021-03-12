@@ -1,8 +1,8 @@
 import {PascalCasedPropertiesDeep} from '../ts41/pascal-cased-properties-deep';
 import {expectType} from 'tsd';
 
-declare const foo: PascalCasedPropertiesDeep<{ helloWorld: { fooBar: string } }>;
-expectType<{ HelloWorld: { FooBar: string } }>(foo);
+declare const foo: PascalCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
+expectType<{HelloWorld: {FooBar: string}}>(foo);
 
 declare const fooBar: PascalCasedPropertiesDeep<() => {a: string}>;
 expectType<() => {a: string}>(fooBar);

@@ -1,7 +1,7 @@
 import {DelimiterCasedProperties} from './delimiter-cased-properties';
 
 /**
-Convert object props to snake_case but not recursively.
+Convert object properties to snake case but not recursively.
 
 This can be useful when, for example, converting some api type from other style.
 
@@ -13,11 +13,11 @@ interface User {
 	userId: number;
 	userName: string;
 }
+
 const result: SnakeCasedProperties<User> = {
 	user_id: 1,
 	user_name: 'Tom',
 };
-
 ```
 */
 export type SnakeCasedProperties<Value> = DelimiterCasedProperties<Value, '_'>;

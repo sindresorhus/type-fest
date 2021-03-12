@@ -1,7 +1,7 @@
 import {PascalCase} from './pascal-case';
 
 /**
-Convert object props to PascalCase but not recursively.
+Convert object properties to pascal case but not recursively.
 
 This can be useful when, for example, converting some api type from other style.
 
@@ -13,11 +13,11 @@ interface User {
 	userId: number;
 	userName: string;
 }
+
 const result: PascalCasedProperties<User> = {
 	UserId: 1,
 	UserName: 'Tom',
 };
-
 ```
 */
 export type PascalCasedProperties<Value> = Value extends Function

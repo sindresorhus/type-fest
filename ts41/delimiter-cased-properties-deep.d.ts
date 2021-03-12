@@ -1,7 +1,7 @@
 import {DelimiterCase} from './delimiter-case';
 
 /**
-Convert object props to delimiter-case recursively.
+Convert object properties to delimiter case recursively.
 
 This can be useful when, for example, converting some API types from other style.
 
@@ -35,7 +35,6 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 		},
 	],
 };
-
 ```
 */
 export type DelimiterCasedPropertiesDeep<

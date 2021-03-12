@@ -1,7 +1,7 @@
 import {CamelCase} from './camel-case';
 
 /**
-Convert object props to camelCase recursively.
+Convert object properties to camel case recursively.
 
 This can be useful when, for example, converting some API types from other style.
 
@@ -35,7 +35,6 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
-
 ```
 */
 export type CamelCasedPropertiesDeep<Value> = Value extends Function

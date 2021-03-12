@@ -1,7 +1,7 @@
 import {PascalCase} from './pascal-case';
 
 /**
-Convert object props to PascalCase recursively.
+Convert object properties to pascal case recursively.
 
 This can be useful when, for example, converting some API types from other style.
 
@@ -35,7 +35,7 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
-
+```
 */
 export type PascalCasedPropertiesDeep<Value> = Value extends Function
 	? Value

@@ -1,11 +1,9 @@
 import {CamelCasedPropertiesDeep} from '../ts41/camel-cased-properties-deep';
 import {expectType} from 'tsd';
 
-declare const foo: CamelCasedPropertiesDeep<{
-	A: { B: number; C: Array<{ D: string }> };
-}>;
+declare const foo: CamelCasedPropertiesDeep<{A: {B: number; C: Array<{D: string}>};}>;
 
-expectType<{ a: { b: number; c: Array<{ d: string }> } }>(foo);
+expectType<{a: {b: number; c: Array<{d: string}>}}>(foo);
 
 declare const fooBar: CamelCasedPropertiesDeep<() => {a: string}>;
 expectType<() => {a: string}>(fooBar);
