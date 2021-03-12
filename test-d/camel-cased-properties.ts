@@ -1,9 +1,9 @@
 import {CamelCasedProperties} from '../ts41/camel-cased-properties';
 import {expectType} from 'tsd';
 
-declare const foo: CamelCasedProperties<{A: number; B: {C: string;};}>;
+declare const foo: CamelCasedProperties<{A: number; B: {C: string}}>;
 
-expectType<{a: number; b:{C: string}}>(foo);
+expectType<{a: number; b: {C: string}}>(foo);
 
 declare const bar: CamelCasedProperties<Array<{helloWorld: string}>>;
 expectType<Array<{helloWorld: string}>>(bar);

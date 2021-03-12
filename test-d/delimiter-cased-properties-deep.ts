@@ -7,8 +7,8 @@ expectType<{'hello/world': {'foo/bar': string}}>(foo);
 declare const fooBar: DelimiterCasedPropertiesDeep<() => {a: string}, '/'>;
 expectType<() => {a: string}>(fooBar);
 
-declare const bar : DelimiterCasedPropertiesDeep<Set<{fooBar: string}>, '-'>;
-expectType<Set<{'foo-bar'}>>(bar);
+declare const bar: DelimiterCasedPropertiesDeep<Set<{fooBar: string}>, '-'>;
+expectType<Set<{'foo-bar': string}>>(bar);
 
 // Verify Example
 interface User {

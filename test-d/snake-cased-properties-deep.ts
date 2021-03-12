@@ -4,8 +4,8 @@ import {expectType} from 'tsd';
 declare const foo: SnakeCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
 expectType<{hello_world: {foo_bar: string}}>(foo);
 
-declare const bar : SnakeCasedPropertiesDeep<Set<{fooBar: string}>>
-expectType<Set<{foo_bar:string}>>(bar);
+declare const bar: SnakeCasedPropertiesDeep<Set<{fooBar: string}>>;
+expectType<Set<{foo_bar: string}>>(bar);
 
 // Verify Example
 interface User {

@@ -7,8 +7,8 @@ expectType<{HelloWorld: {FooBar: string}}>(foo);
 declare const fooBar: PascalCasedPropertiesDeep<() => {a: string}>;
 expectType<() => {a: string}>(fooBar);
 
-declare const bar : PascalCasedPropertiesDeep<Set<{fooBar: string}>>
-expectType<Set<{FooBar:string}>>(bar);
+declare const bar: PascalCasedPropertiesDeep<Set<{fooBar: string}>>;
+expectType<Set<{FooBar: string}>>(bar);
 
 // Verify Example
 interface User {
