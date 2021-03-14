@@ -33,6 +33,7 @@ export {Entry} from './source/entry';
 export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
+export {Passthrough} from './source/passthrough';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
