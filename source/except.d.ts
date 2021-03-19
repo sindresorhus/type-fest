@@ -5,6 +5,8 @@ This type is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/
 
 Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/30825) if you want to have the stricter version as a built-in in TypeScript.
 
+Typescript prefers libraries to implement stricter versions of the build-in types ([microsoft/TypeScript#30825](https://github.com/microsoft/TypeScript/issues/30825#issuecomment-523668235)).
+
 @example
 ```
 import {Except} from 'type-fest';
