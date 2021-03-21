@@ -104,6 +104,7 @@ Click the type names for complete docs.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
+- [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
 
 ### Template literal types
 
@@ -114,6 +115,8 @@ Click the type names for complete docs.
 - [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+- [`Split`](ts41/split.d.ts) - Represents an array of strings split using a given character or character set.
+- [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Get`](ts41/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 
 ### Miscellaneous
@@ -131,6 +134,10 @@ Click the type names for complete docs.
 - [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
 
 ## Tips
+
+### Related
+
+- [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
 
 ### Built-in types
 
