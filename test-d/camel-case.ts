@@ -38,7 +38,7 @@ const camelFromRepeatedSeparators: CamelCase<'foo____bar'> = 'fooBar';
 expectType<'fooBar'>(camelFromRepeatedSeparators);
 
 // Verifying example
-type CamelCasedProps<T> = {
+type CamelCasedProperties<T> = {
 	[K in keyof T as CamelCase<K>]: T[K]
 };
 
@@ -48,7 +48,7 @@ interface RawOptions {
 	foo: number;
 }
 
-expectAssignable<CamelCasedProps<RawOptions>>({
+expectAssignable<CamelCasedProperties<RawOptions>>({
 	dryRun: true,
 	fullFamilyName: 'bar.js',
 	foo: 123
