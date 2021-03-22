@@ -7,6 +7,7 @@ This can be useful when, for example, converting some api type from other style.
 
 @see DelimiterCase
 @see DelimiterCasedPropertiesDeep
+
 @example
 ```
 interface User {
