@@ -3,7 +3,7 @@ import {CamelCase} from './camel-case';
 /**
 Convert object properties to camel case but not recursively.
 
-This can be useful when, for example, converting some api type from other style.
+This can be useful when, for example, converting some API types from a different style.
 
 @see CamelCasedPropertiesDeep
 @see CamelCase
