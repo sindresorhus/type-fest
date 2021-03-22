@@ -4,7 +4,7 @@ import {expectType} from 'tsd';
 declare const foo: KebabCasedProperties<{helloWorld: {fooBar: string}}>;
 expectType<{'hello-world': {fooBar: string}}>(foo);
 
-// Verify Example
+// Verify example
 interface User {
 	userId: number;
 	userName: string;
