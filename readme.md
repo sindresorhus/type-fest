@@ -111,10 +111,20 @@ Click the type names for complete docs.
 *Note:* These require [TypeScript 4.1 or newer](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types).
 
 - [`CamelCase`](ts41/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
+- [`CamelCasedProperties`](ts41/camel-cased-properties.d.ts) – Convert object properties to camel-case  (`fooBar`).
+- [`CamelCasedPropertiesDeep`](ts41/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively  (`fooBar`).
 - [`KebabCase`](ts41/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
+- [`KebabCasedProperties`](ts41/kebab-cased-properties.d.ts) – Convert a object properties to kebab-case recursively (`foo-bar`).
+- [`KebabCasedPropertiesDeep`](ts41/kebab-cased-properties-deep.d.ts) – Convert object properties to kebab-case (`foo-bar`).
 - [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
+- [`PascalCasedProperties`](ts41/pascal-cased-properties.d.ts) – Converts object properties to pascal-case (`FooBar`)
+- [`PascalCasedPropertiesDeep`](ts41/pascal-cased-properties-deep.d.ts) – Converts object properties to pascal-case (`FooBar`)
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
+- [`SnakeCasedProperties`](ts41/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case (`foo_bar`).
+- [`SnakeCasedPropertiesDeep`](ts41/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case recursively (`foo_bar`).
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+- [`DelimiterCasedProperties`](ts41/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
+- [`DelimiterCasedPropertiesDeep`](ts41/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
 - [`Split`](ts41/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Get`](ts41/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
