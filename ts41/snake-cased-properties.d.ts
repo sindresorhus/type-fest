@@ -3,10 +3,11 @@ import {DelimiterCasedProperties} from './delimiter-cased-properties';
 /**
 Convert object properties to snake case but not recursively.
 
-This can be useful when, for example, converting some api type from other style.
+This can be useful when, for example, converting some API types from a different style.
 
 @see SnakeCase
 @see SnakeCasedPropertiesDeep
+
 @example
 ```
 interface User {
