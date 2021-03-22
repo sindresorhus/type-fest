@@ -3,7 +3,7 @@ import {DelimiterCase} from './delimiter-case';
 /**
 Convert object properties to delimiter case but not recursively.
 
-This can be useful when, for example, converting some api type from other style.
+This can be useful when, for example, converting some API types from a different style.
 
 @see DelimiterCase
 @see DelimiterCasedPropertiesDeep
