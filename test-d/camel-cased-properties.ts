@@ -11,7 +11,7 @@ expectType<Array<{helloWorld: string}>>(bar);
 declare const fooBar: CamelCasedProperties<() => {a: string}>;
 expectType<() => {a: string}>(fooBar);
 
-// Verify Example
+// Verify example
 interface User {
 	UserId: number;
 	UserName: string;
