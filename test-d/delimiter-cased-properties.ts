@@ -10,7 +10,7 @@ expectType<Array<{helloWorld: string}>>(bar);
 declare const fooBar: DelimiterCasedProperties<() => {a: string}, '-'>;
 expectType<() => {a: string}>(fooBar);
 
-// Verify Example
+// Verify example
 interface User {
 	userId: number;
 	userName: string;
