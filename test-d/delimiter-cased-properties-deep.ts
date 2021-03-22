@@ -10,7 +10,7 @@ expectType<() => {a: string}>(fooBar);
 declare const bar: DelimiterCasedPropertiesDeep<Set<{fooBar: string}>, '-'>;
 expectType<Set<{'foo-bar': string}>>(bar);
 
-// Verify Example
+// Verify example
 interface User {
 	userId: number;
 	userName: string;
