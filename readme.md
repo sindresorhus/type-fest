@@ -105,7 +105,7 @@ Click the type names for complete docs.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
-- [`Passthrough`](source/passthrough.d.ts) - A passthrough type that allows some types to be used to extend an interface, which originally can't.
+- [`Passthrough`](source/passthrough.d.ts) - Wrap a type like `JSX.IntrinsicElements["a"]` so that it could be used to extend an interface.
 
 ### Template literal types
 
