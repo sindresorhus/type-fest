@@ -7,7 +7,7 @@ expectType<{'hello-world': {'foo-bar': string}}>(foo);
 declare const bar: KebabCasedPropertiesDeep<Set<{fooBar: string}>>;
 expectType<Set<{'foo-bar': string}>>(bar);
 
-// Verify Example
+// Verify example
 interface User {
 	userId: number;
 	userName: string;
