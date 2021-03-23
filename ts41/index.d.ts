@@ -10,3 +10,4 @@ export {DelimiterCase} from './delimiter-case';
 export {Split} from './split';
 export {Trim} from './trim';
 export {Get} from './get';
+export {LastArrayElement} from './last-array-element';

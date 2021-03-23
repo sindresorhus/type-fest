@@ -104,7 +104,6 @@ Click the type names for complete docs.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
-- [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
 
 ### Template literal types
 
@@ -128,6 +127,7 @@ Click the type names for complete docs.
 - [`Split`](ts41/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Get`](ts41/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
+- [`LastArrayElement`](ts41/last-array-element.d.ts) - Extracts the type of the last element of an array.
 
 ### Miscellaneous
 
