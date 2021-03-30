@@ -3,6 +3,8 @@ export * from '../base';
 
 // These are special types that require at least TypeScript 4.1.
 export {CamelCase} from './camel-case';
+export {CamelCasedProperties} from './camel-cased-properties';
+export {CamelCasedPropertiesDeep} from './camel-cased-properties-deep';
 export {KebabCase} from './kebab-case';
 export {PascalCase} from './pascal-case';
 export {SnakeCase} from './snake-case';
