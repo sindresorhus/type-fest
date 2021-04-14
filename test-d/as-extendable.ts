@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {Passthrough} from '..';
+import {AsExtendable} from '../ts41';
 
 namespace JSX {
 	export interface IntrinsicElements {
@@ -11,7 +11,7 @@ namespace JSX {
 	}
 }
 
-interface EnhancedAnchorProps extends Passthrough<JSX.IntrinsicElements['a']> {
+interface EnhancedAnchorProps extends AsExtendable<JSX.IntrinsicElements['a']> {
 	bar: number;
 }
 

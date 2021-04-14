@@ -104,7 +104,7 @@ Click the type names for complete docs.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
-- [`Passthrough`](source/passthrough.d.ts) - Wrap a type like `JSX.IntrinsicElements["a"]` so that it could be used to extend an interface.
+- [`AsExtendable`](source/as-extendable.d.ts) - Wrap a type like `JSX.IntrinsicElements["a"]` so that it could be used to extend an interface.
 
 ### Template literal types
 

@@ -15,4 +15,4 @@ interface EnhancedAnchorProps extends JSX.IntrinsicElements["a"] { ... }
 interface EnhancedAnchorProps extends Passthrough<JSX.IntrinsicElements["a"]> { ... }
 ```
 */
-export type Passthrough<Type> = Type;
+export type AsExtendable<Type> = Type;
