@@ -33,7 +33,6 @@ export {Entry} from './source/entry';
 export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
-export {LastArrayElement} from './source/last-array-element';
 export {Passthrough} from './source/passthrough';
 
 // Miscellaneous
