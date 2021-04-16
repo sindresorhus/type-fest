@@ -2,7 +2,7 @@ import {Except} from './except';
 import {Simplify} from './simplify';
 
 /**
-Create a type that makes the given keys non-nullable. The remaining keys are kept as is.
+Create a type removes nullish (optional, undefined and null) types from the given keys. The remaining keys are kept as is.
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the keys are required.
 
@@ -21,7 +21,7 @@ type Foo = {
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c' | 'd' | 'e'>;
 // type SomeNonNullable = {
 // 	a?: number;
-// 	b: string; // Was already non-null and still is.
+// 	b: string; // Was already not nullish and still is.
 // 	c: boolean; // Is now not optional.
 //  d: number; // Is now not null
 //	e: string; // Is now not undefined
