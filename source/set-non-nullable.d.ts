@@ -23,14 +23,14 @@ type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c' | 'd' | 'e'>;
 // 	a?: number;
 // 	b: string; // Was already not nullish and still is.
 // 	c: boolean; // Is now not optional.
-//  d: number; // Is now not null
-//	e: string; // Is now not undefined
+// 	d: number; // Is now not null.
+// 	e: string; // Is now not undefined.
 // }
 ```
 */
 export type SetNonNullable<BaseType, Keys extends keyof BaseType> = Simplify<
 	// Pick just the keys that are optional from the base type.
 	Except<BaseType, Keys> &
-		// For each 'Key' provided, make it not optional or nullable
-		{ [Key in Keys]-?: NonNullable<BaseType[Key]> }
+		// For each 'Key' provided, make it not optional or nullable.
+		{[Key in Keys]-?: NonNullable<BaseType[Key]>}
 >;
