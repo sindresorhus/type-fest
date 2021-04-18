@@ -21,7 +21,7 @@ declare const variation2: SetNonNullable<
 	{a?: number | null | undefined; b?: number | null | undefined},
 	'a'
 >;
-expectType<{ a: number; b?: number | null | undefined }>(variation2);
+expectType<{a: number; b?: number | null | undefined}>(variation2);
 
 // Fail if type changes even if optional is right.
 declare const variation3: SetNonNullable<
