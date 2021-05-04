@@ -1,4 +1,4 @@
-import {Primitive} from './basic';
+import {Primitive} from './primitive';
 
 /**
 Create a type from another type with all keys and nested keys set to optional.

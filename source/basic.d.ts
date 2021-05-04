@@ -1,18 +1,3 @@
-/// <reference lib="es2020.bigint"/>
-
-// TODO: This can just be `export type Primitive = not object` when the `not` keyword is out.
-/**
-Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
-*/
-export type Primitive =
-	| null
-	| undefined
-	| string
-	| number
-	| boolean
-	| symbol
-	| bigint;
-
 // TODO: Remove the `= unknown` sometime  in the future when most users are on TS 3.5 as it's now the default
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
@@ -30,22 +15,10 @@ export type JsonObject = {[Key in string]?: JsonValue};
 Matches a JSON array.
 */
 export interface JsonArray extends Array<JsonValue> {}
+// TODO: Make it this when targeting TypeScript 4.1:
+// export type JsonArray = JsonValue[];
 
 /**
 Matches any valid JSON value.
 */
 export type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
-
-declare global {
-	interface SymbolConstructor {
-		readonly observable: symbol;
-	}
-}
-
-/**
-Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
-*/
-export interface ObservableLike {
-	subscribe(observer: (value: unknown) => void): void;
-	[Symbol.observable](): ObservableLike;
-}

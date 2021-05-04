@@ -2,8 +2,10 @@
 // It's shared between all TypeScript version-specific definitions.
 
 // Basic
-export * from './source/basic';
+export * from './source/primitive';
 export * from './source/typed-array';
+export * from './source/basic';
+export * from './source/observable-like';
 
 // Utilities
 export {Except} from './source/except';

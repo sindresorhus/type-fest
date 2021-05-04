@@ -1,4 +1,4 @@
-import {Primitive} from './basic';
+import {Primitive} from './primitive';
 
 /**
 Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
