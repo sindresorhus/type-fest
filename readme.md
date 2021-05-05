@@ -22,6 +22,19 @@
 			<a href="https://standardresume.co/tech">
 				<img src="https://sindresorhus.com/assets/thanks/standard-resume-logo.svg" width="180"/>
 			</a>
+			<br>
+			<br>
+			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
+				</div>
+				<b>Your app, enterprise-ready.</b>
+				<div>
+					<sub>Start selling to enterprise customers with just a few lines of code.</sub>
+					<br>
+					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
+				</div>
+			</a>
 		</p>
 	</div>
 	<br>
