@@ -601,20 +601,25 @@ declare namespace PackageJson {
 
 	export interface PublishConfig {
 		/**
+		Additional, less common properties from the [npm docs on publishConfig](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#publishconfig)
+		*/
+		[additionalProp: string]: unknown;
+
+		/**
 		When publishing scoped packages, the access level defaults to restricted. If you want your scoped package to be publicly viewable (and installable) set `--access=public`. The only valid values for access are public and restricted. Unscoped packages always have an access level of public.
 		*/
 		access?: 'public' | 'restricted';
 
 		/**
 		The base URL of the npm registry.
-		
+
 		Default: `'https://registry.npmjs.org/'`
 		*/
 		registry?: string;
 
 		/**
 		The tag to publish the package under.
-		
+
 		Default: `'latest'`
 		*/
 		tag?: string;
@@ -629,5 +634,4 @@ PackageJson.PackageJsonStandard &
 PackageJson.NonStandardEntryPoints &
 PackageJson.TypeScriptConfiguration &
 PackageJson.YarnConfiguration &
-PackageJson.JSPMConfiguration &
-PackageJson.PublishConfig;
+PackageJson.JSPMConfiguration;
