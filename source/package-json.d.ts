@@ -571,7 +571,7 @@ declare namespace PackageJson {
 		/**
 		A set of config values that will be used at publish-time. It's especially handy to set the tag, registry or access, to ensure that a given package is not tagged with 'latest', published to the global public registry or that a scoped module is private by default.
 		*/
-		publishConfig?: Record<string, unknown>;
+		publishConfig?: PublishConfig;
 
 		/**
 		Describes and notifies consumers of a package's monetary support information.
@@ -598,6 +598,21 @@ declare namespace PackageJson {
 			url: string;
 		};
 	}
+
+	export interface PublishConfig {
+		/**
+		When publishing scoped packages, the access level defaults to restricted. If you want your scoped package to be publicly viewable (and installable) set --access=public. The only valid values for access are public and restricted. Unscoped packages always have an access level of public.
+		*/
+		access?: 'public' | 'restricted';
+		/**
+		The base URL of the npm registry. Defaults to "https://registry.npmjs.org/"
+		*/
+		registry?: string;
+		/**
+		The tag to publish the package under. Defaults to "latest"
+		*/
+		tag?: string;
+	}
 }
 
 /**
@@ -608,4 +623,5 @@ PackageJson.PackageJsonStandard &
 PackageJson.NonStandardEntryPoints &
 PackageJson.TypeScriptConfiguration &
 PackageJson.YarnConfiguration &
-PackageJson.JSPMConfiguration;
+PackageJson.JSPMConfiguration &
+PackageJson.PublishConfig;
