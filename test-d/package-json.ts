@@ -54,7 +54,7 @@ expectAssignable<
 >(packageJson.cpu);
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
-expectType<Record<string, unknown> | undefined>(packageJson.publishConfig);
+expectType<PackageJson.PublishConfig | undefined>(packageJson.publishConfig);
 expectType<string | undefined>(packageJson.module);
 expectType<
 	| string
