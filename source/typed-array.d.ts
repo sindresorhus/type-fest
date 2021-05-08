@@ -1,3 +1,5 @@
+/// <reference lib="es2020.bigint"/>
+
 /**
 Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 */
