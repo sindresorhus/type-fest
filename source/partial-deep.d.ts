@@ -30,6 +30,8 @@ settings = applySavedSettings({textEditor: {fontWeight: 500}});
 */
 export type PartialDeep<T> = T extends Primitive
 	? Partial<T>
+	: T extends Date
+	? T
 	: T extends Map<infer KeyType, infer ValueType>
 	? PartialMapDeep<KeyType, ValueType>
 	: T extends Set<infer ItemType>
