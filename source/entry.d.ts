@@ -51,6 +51,8 @@ const setExample = new Set(['a', 1]);
 const setEntryString: Entry<typeof setExample> = ['a', 'a'];
 const setEntryNumber: Entry<typeof setExample> = [1, 1];
 ```
+
+@category Utilities
 */
 export type Entry<BaseType> =
 	BaseType extends Map<unknown, unknown> ? MapEntry<BaseType>

@@ -37,6 +37,8 @@ An example with an array of strings:
 ```
 type MeString = IterableElement<string[]>
 ```
+
+@category Utilities
 */
 export type IterableElement<TargetIterable> =
 	TargetIterable extends Iterable<infer ElementType> ?

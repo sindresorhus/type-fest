@@ -127,5 +127,7 @@ const getName = (apiResponse: ApiResponse) =>
 	get(apiResponse, 'hits.hits[0]._source.name');
 	//=> Array<{given: string[]; family: string}>
 ```
+
+@category Template Literals
 */
 export type Get<BaseType, Path extends string> = GetWithPath<BaseType, ToPath<Path>>;

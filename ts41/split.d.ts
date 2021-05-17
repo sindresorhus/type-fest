@@ -15,6 +15,8 @@ let array: Item[];
 
 array = split(items, ',');
 ```
+
+@category Template Literals
 */
 export type Split<S extends string, D extends string> =
 	S extends `${infer T}${D}${infer U}`

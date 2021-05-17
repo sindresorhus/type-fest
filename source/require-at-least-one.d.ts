@@ -19,6 +19,8 @@ const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
 	secure: true
 };
 ```
+
+@category Utilities
 */
 export type RequireAtLeastOne<
 	ObjectType,

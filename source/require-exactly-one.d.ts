@@ -27,6 +27,8 @@ const responder: RequireExactlyOne<Responder, 'text' | 'json'> = {
 	secure: true
 };
 ```
+
+@category Utilities
 */
 export type RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
 	{[Key in KeysType]: (

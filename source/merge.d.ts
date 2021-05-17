@@ -21,5 +21,7 @@ type Bar = {
 
 const ab: Merge<Foo, Bar> = {a: 1, b: 2};
 ```
+
+@category Utilities
 */
 export type Merge<FirstType, SecondType> = Simplify<Merge_<FirstType, SecondType>>;

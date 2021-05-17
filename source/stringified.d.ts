@@ -17,5 +17,7 @@ const carForm: Stringified<Car> = {
 	speed: '101'
 };
 ```
+
+@category Utilities
 */
 export type Stringified<ObjectType> = {[KeyType in keyof ObjectType]: string};

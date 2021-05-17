@@ -28,6 +28,8 @@ import data from './main';
 data.foo.push('bar');
 //=> error TS2339: Property 'push' does not exist on type 'readonly string[]'
 ```
+
+@category Utilities
 */
 export type ReadonlyDeep<T> = T extends Primitive | ((...arguments: any[]) => unknown)
 	? T

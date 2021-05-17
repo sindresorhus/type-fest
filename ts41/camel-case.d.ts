@@ -60,5 +60,7 @@ const dbResult: CamelCasedProperties<ModelProps> = {
 	foo: 123
 };
 ```
+
+@category Template Literals
 */
 export type CamelCase<K> = K extends string ? CamelCaseStringArray<Split<K, WordSeparators>> : K;

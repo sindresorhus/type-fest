@@ -26,6 +26,8 @@ type Pet2 = LiteralUnion<'dog' | 'cat', string>;
 const pet: Pet2 = '';
 // You **will** get auto-completion for `dog` and `cat` literals.
 ```
+
+@category Utilities
  */
 export type LiteralUnion<
 	LiteralType,

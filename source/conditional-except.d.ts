@@ -36,6 +36,8 @@ interface Example {
 type NonStringKeysOnly = ConditionalExcept<Example, string>;
 //=> {b: string | number; c: () => void; d: {}}
 ```
+
+@category Utilities
 */
 export type ConditionalExcept<Base, Condition> = Except<
 	Base,

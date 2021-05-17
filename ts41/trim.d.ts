@@ -18,5 +18,7 @@ import {Trim} from 'type-fest';
 Trim<' foo '>
 //=> 'foo'
 ```
+
+@category Template Literals
 */
 export type Trim<V extends string> = TrimLeft<TrimRight<V>>;

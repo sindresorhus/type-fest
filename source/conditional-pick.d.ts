@@ -35,6 +35,8 @@ interface Example {
 type StringKeysOnly = ConditionalPick<Example, string>;
 //=> {a: string}
 ```
+
+@category Utilities
 */
 export type ConditionalPick<Base, Condition> = Pick<
 	Base,

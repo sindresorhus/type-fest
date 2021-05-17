@@ -23,6 +23,8 @@ type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
 // 	c?: boolean; // Is now optional.
 // }
 ```
+
+@category Utilities
 */
 export type SetOptional<BaseType, Keys extends keyof BaseType> =
 	Simplify<

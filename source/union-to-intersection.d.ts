@@ -40,6 +40,8 @@ type Union = typeof union;
 type Intersection = UnionToIntersection<Union>;
 //=> {a1(): void; b1(): void; a2(argA: string): void; b2(argB: string): void}
 ```
+
+@category Utilities
 */
 export type UnionToIntersection<Union> = (
 	// `extends unknown` is always going to be the case and is used to convert the

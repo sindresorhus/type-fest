@@ -20,6 +20,8 @@ const result: PascalCasedProperties<User> = {
 	UserName: 'Tom',
 };
 ```
+
+@category Template Literals
 */
 export type PascalCasedProperties<Value> = Value extends Function
 	? Value
