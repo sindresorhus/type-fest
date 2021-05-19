@@ -1,4 +1,9 @@
 /**
+ Internal unique symbol
+*/
+declare const internal: unique symbol;
+
+/**
 Create an opaque type, which hides its internal details from the public, and can only be created by being used explicitly.
 
 The generic type parameter can be anything. It doesn't have to be an object.
@@ -64,4 +69,4 @@ type Person = {
 
 @category Utilities
 */
-export type Opaque<Type, Token = unknown> = Type & {readonly __opaque__: Token};
+export type Opaque<Type, Token = unknown> = Type & {readonly [internal]: Token};
