@@ -1,6 +1,3 @@
-/**
- Internal unique symbol
-*/
 declare const internal: unique symbol;
 
 /**
