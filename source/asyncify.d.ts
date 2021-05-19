@@ -27,5 +27,7 @@ const getFooAsync: AsyncifiedFooGetter = (someArg) => {
 	// …
 }
 ```
+
+@category Utilities
 */
 export type Asyncify<Fn extends (...args: any[]) => any> = SetReturnType<Fn, Promise<PromiseValue<ReturnType<Fn>>>>;

@@ -16,6 +16,8 @@ type MyFunctionThatCanThrow = (foo: SomeType, bar: unknown) => SomeOtherType;
 type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, SomeOtherType | undefined>;
 //=> type MyWrappedFunction = (foo: SomeType, bar: unknown) => SomeOtherType | undefined;
 ```
+
+@category Utilities
 */
 export type SetReturnType<Fn extends (...args: any[]) => any, TypeToReturn> =
 	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.

@@ -27,6 +27,8 @@ const homeFencingTeam: FencingTeam = ['George', 'John'];
 guestFencingTeam.push('Sam');
 //=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
 ```
+
+@category Utilities
 */
 export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<
 	ArrayPrototype,

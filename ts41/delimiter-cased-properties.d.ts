@@ -20,6 +20,8 @@ const result: DelimiterCasedProperties<User, '-'> = {
 	'user-name': 'Tom',
 };
 ```
+
+@category Template Literals
 */
 export type DelimiterCasedProperties<
 	Value,

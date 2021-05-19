@@ -23,6 +23,8 @@ type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 // 	c: boolean; // Is now required.
 // }
 ```
+
+@category Utilities
 */
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
 	Simplify<

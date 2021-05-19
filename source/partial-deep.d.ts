@@ -27,6 +27,8 @@ const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
 
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
+
+@category Utilities
 */
 export type PartialDeep<T> = T extends Primitive
 	? Partial<T>

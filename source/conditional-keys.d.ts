@@ -25,6 +25,8 @@ To support partial types, make sure your `Condition` is a union of undefined (fo
 type StringKeysAndUndefined = ConditionalKeys<Example, string | undefined>;
 //=> 'a' | 'c'
 ```
+
+@category Utilities
 */
 export type ConditionalKeys<Base, Condition> = NonNullable<
 	// Wrap in `NonNullable` to strip away the `undefined` type from the produced union.

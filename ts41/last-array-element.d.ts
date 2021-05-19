@@ -14,6 +14,8 @@ const array = ['foo', 2];
 typeof lastOf(array);
 //=> number
 ```
+
+@category Template Literals
 */
 export type LastArrayElement<ValueType extends unknown[]> =
 	ValueType extends [infer ElementType]
