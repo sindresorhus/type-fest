@@ -14,6 +14,7 @@ export {PascalCasedPropertiesDeep} from './pascal-cased-properties-deep';
 export {SnakeCase} from './snake-case';
 export {SnakeCasedProperties} from './snake-cased-properties';
 export {SnakeCasedPropertiesDeep} from './snake-cased-properties-deep';
+export {ScreamingSnakeCase} from './screaming-snake-case';
 export {DelimiterCase} from './delimiter-case';
 export {DelimiterCasedProperties} from './delimiter-cased-properties';
 export {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep';
