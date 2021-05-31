@@ -1,4 +1,5 @@
-import {DelimiterCase, SplitIncludingDelimiters} from './delimiter-case';
+import {SplitIncludingDelimiters} from './delimiter-case';
+import {SnakeCase} from './snake-case';
 
 /**
 Checks if an array contains an item
@@ -55,5 +56,5 @@ const dbResult: ScreamingSnakeCasedProperties<ModelProps> = {
 export type ScreamingSnakeCase<Value> = Value extends string
 	? IsScreamingSnakeCase<Value> extends true
 		? Value
-		: Uppercase<DelimiterCase<Value, '_'>>
+		: Uppercase<SnakeCase<Value>>
 	: Value;
