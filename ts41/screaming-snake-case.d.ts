@@ -2,7 +2,7 @@ import {SplitIncludingDelimiters} from './delimiter-case';
 import {SnakeCase} from './snake-case';
 
 /**
-Checks if an array contains an item
+Returns a boolean on whether the given array contains a certain item
 */
 type Includes<Value extends any[], Item> = {
 	[P in keyof Value & number as Value[P]]: true;
