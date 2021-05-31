@@ -1,6 +1,4 @@
-import {
-	ScreamingSnakeCase
-} from '../ts41/screaming-snake-case';
+import {ScreamingSnakeCase} from '../ts41/screaming-snake-case';
 import {expectType} from 'tsd';
 
 const screamingSnakeFromCamel: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
