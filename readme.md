@@ -136,6 +136,7 @@ Click the type names for complete docs.
 - [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
 - [`SnakeCasedProperties`](ts41/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case (`foo_bar`).
 - [`SnakeCasedPropertiesDeep`](ts41/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case recursively (`foo_bar`).
+- [`ScreamingSnakeCase`](ts41/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
 - [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
 - [`DelimiterCasedProperties`](ts41/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
 - [`DelimiterCasedPropertiesDeep`](ts41/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
