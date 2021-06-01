@@ -2,7 +2,7 @@ import {SplitIncludingDelimiters} from './delimiter-case';
 import {SnakeCase} from './snake-case';
 
 /**
-Returns a boolean on whether the given array contains a certain item
+Returns a boolean on whether the given array contains a certain item.
 */
 type Includes<Value extends any[], Item> = {
 	[P in keyof Value & number as Value[P]]: true;
@@ -11,7 +11,7 @@ type Includes<Value extends any[], Item> = {
 	: false;
 
 /**
-Returns a boolean for whether the string is screaming snake case
+Returns a boolean for whether the string is screaming snake case.
 */
 type IsScreamingSnakeCase<Value extends string> = Value extends Uppercase<Value>
 	? Includes<SplitIncludingDelimiters<Lowercase<Value>, '_'>, '_'> extends true
