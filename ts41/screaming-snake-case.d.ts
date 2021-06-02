@@ -1,14 +1,6 @@
 import {SplitIncludingDelimiters} from './delimiter-case';
 import {SnakeCase} from './snake-case';
-
-/**
-Returns a boolean for whether the given array includes the given item.
-*/
-type Includes<Value extends any[], Item> = {
-	[P in keyof Value & number as Value[P]]: true;
-}[Item] extends true
-	? true
-	: false;
+import {Includes} from './includes';
 
 /**
 Returns a boolean for whether the string is screaming snake case.
