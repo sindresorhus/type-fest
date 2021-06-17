@@ -16,7 +16,7 @@ type Foo = {
 	readonly c: boolean;
 };
 
-const mutableFoo: Mutable<Foo> = {a: 1, b: ['2']};
+const mutableFoo: Mutable<Foo> = {a: 1, b: ['2'], c: true};
 mutableFoo.a = 3;
 mutableFoo.b[0] = 'new value'; // Will still fail as the value of property "b" is still a readonly type.
 mutableFoo.b = ['something']; // Will work as the "b" property itself is no longer readonly.
