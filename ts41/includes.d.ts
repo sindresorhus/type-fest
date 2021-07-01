@@ -7,7 +7,7 @@ This can be useful if another type wants to make a decision based on whether the
 ```
 import {Includes} from 'type-fest';
 
-type hasRed<arr extends any[]> = Includes<arr, 'red'>;
+type hasRed<array extends any[]> = Includes<array, 'red'>;
 ```
 
 @category Utilities
