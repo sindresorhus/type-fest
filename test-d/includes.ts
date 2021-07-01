@@ -8,14 +8,14 @@ const includesSingleItemArray: Includes<['colors'], 'colors'> = true;
 expectType<true>(includesSingleItemArray);
 
 const includesComplexMultiTypeArray: Includes<[
-  {
-    prop: 'value';
-    num: 5;
-    anotherArr: [1, '5', false];
-  },
-  true,
-  null,
-  'abcd'
+	{
+		prop: 'value';
+		num: 5;
+		anotherArr: [1, '5', false];
+	},
+	true,
+	null,
+	'abcd'
 ], 'abc'> = false;
 expectType<false>(includesComplexMultiTypeArray);
 
