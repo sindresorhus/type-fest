@@ -19,10 +19,10 @@ array = split(items, ',');
 @category Template Literals
 */
 export type Split<
-    S extends string,
-    Delimiter extends string = ""
-> = S extends `${infer Si}${Delimiter}${infer Sj}`
-    ? [Si, ...Split<Sj, Delimiter>]
-    : S extends Delimiter
-    ? []
-    : [S];
+	S extends string,
+	Delimiter extends string
+> = S extends `${infer Head}${Delimiter}${infer Tail}`
+	? [Head, ...Split<Tail, Delimiter>]
+	: S extends Delimiter
+	? []
+	: [S];
