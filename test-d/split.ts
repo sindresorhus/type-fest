@@ -8,23 +8,23 @@ declare function split<
 
 const items = 'foo,bar,baz,waldo';
 
-// General use
+// General use.
 expectType<['foo', 'bar', 'baz', 'waldo']>(split(items, ','));
 
-// Non-present character
+// Missing replacement character in original string.
 expectType<['foo,bar,baz,waldo']>(split(items, ' '));
 
-// Empty string split (every char)
+// Empty string split (every character).
 expectType<[
 	'f', 'o', 'o', ',', 'b', 'a', 'r', ',',
 	'b', 'a', 'z', ',', 'w', 'a', 'l', 'd', 'o'
 ]>(split(items, ''));
 
-// Split single-same-character
+// Split single same character.
 expectType<['', '']>(split(' ', ' '));
 
-// Split empty string by empty string
+// Split empty string by empty string.
 expectType<[]>(split('', ''));
 
-// Split empty string by any string
+// Split empty string by any string.
 expectType<['']>(split('', ' '));
