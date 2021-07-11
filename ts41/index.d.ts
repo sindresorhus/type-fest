@@ -20,5 +20,6 @@ export {DelimiterCasedProperties} from './delimiter-cased-properties';
 export {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep';
 export {Split} from './split';
 export {Trim} from './trim';
+export {Includes} from './includes';
 export {Get} from './get';
 export {LastArrayElement} from './last-array-element';
