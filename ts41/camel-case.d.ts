@@ -52,15 +52,21 @@ interface RawOptions {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;
+	BAR: string;
+	QUZ_QUX: number;
+	'OTHER-FIELD': boolean;
 }
 
 const dbResult: CamelCasedProperties<ModelProps> = {
 	dryRun: true,
 	fullFamilyName: 'bar.js',
-	foo: 123
+	foo: 123,
+	bar: 'foo',
+	quzQux: 6,
+	otherField: false
 };
 ```
 
 @category Template Literals
 */
-export type CamelCase<K> = K extends string ? K extends Uppercase<K> ? Lowercase<K> : CamelCaseStringArray<Split<K, WordSeparators>> : K;
+export type CamelCase<K> = K extends string ? K extends Uppercase<K> ? CamelCaseStringArray<Split<Lowercase<K>, WordSeparators>> : CamelCaseStringArray<Split<K, WordSeparators>> : K;
