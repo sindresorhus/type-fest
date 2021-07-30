@@ -35,6 +35,7 @@ export {Entry} from './source/entry';
 export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
+export {ExactMatch} from './source/exact-match';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';
