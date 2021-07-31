@@ -18,7 +18,7 @@ interface Bar extends Foo {
   c: number;
 }
 
-type TestOptions<FooLike> = ExactMatch<FooLike, Foo> extends true ? { foo?: FooLike } : { foo: FooLike }
+type TestOptions<FooLike> = ExactMatch<FooLike, Foo> extends true ? {foo?: FooLike} : {foo: FooLike}
 
 class Test<FooLike extends Foo = Foo> {
   private foo: FooLike = { a: 1, b: 'a' } as FooLike;
