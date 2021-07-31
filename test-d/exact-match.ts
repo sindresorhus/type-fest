@@ -26,7 +26,7 @@ expectType<false>(exampleTypeWithFewerKeys);
 declare const exampleTypeWithFewerKeysReverse: ExactMatch<Baz, Foo>;
 expectType<false>(exampleTypeWithFewerKeysReverse);
 
-declare const exampleTypeExactMatch: ExactMatch<Foo & { c: boolean }, Bar>;
+declare const exampleTypeExactMatch: ExactMatch<Foo & {c: boolean}, Bar>;
 expectType<true>(exampleTypeExactMatch);
 
 declare const exampleTypeExactMatchReverse: ExactMatch<Bar, Foo & { c: boolean }>;
