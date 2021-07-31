@@ -18,7 +18,11 @@ array = split(items, ',');
 
 @category Template Literals
 */
-export type Split<S extends string, D extends string> =
-	S extends `${infer T}${D}${infer U}`
-		? [T, ...Split<U, D>]
-		: [S];
+export type Split<
+	S extends string,
+	Delimiter extends string
+> = S extends `${infer Head}${Delimiter}${infer Tail}`
+	? [Head, ...Split<Tail, Delimiter>]
+	: S extends Delimiter
+	? []
+	: [S];

@@ -37,6 +37,18 @@ expectType<'veryPrefixed'>(camelFromDoublePrefixedKebab);
 const camelFromRepeatedSeparators: CamelCase<'foo____bar'> = 'fooBar';
 expectType<'fooBar'>(camelFromRepeatedSeparators);
 
+const camelFromUppercase: CamelCase<'FOO'> = 'foo';
+expectType<'foo'>(camelFromUppercase);
+
+const camelFromLowercase: CamelCase<'foo'> = 'foo';
+expectType<'foo'>(camelFromLowercase);
+
+const camelFromScreamingSnakeCase: CamelCase<'FOO_BAR'> = 'fooBar';
+expectType<'fooBar'>(camelFromScreamingSnakeCase);
+
+const camelFromScreamingKebabCase: CamelCase<'FOO-BAR'> = 'fooBar';
+expectType<'fooBar'>(camelFromScreamingKebabCase);
+
 // Verifying example
 type CamelCasedProperties<T> = {
 	[K in keyof T as CamelCase<K>]: T[K]
@@ -46,10 +58,16 @@ interface RawOptions {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;
+	BAR: string;
+	QUZ_QUX: number;
+	'OTHER-FIELD': boolean;
 }
 
 expectAssignable<CamelCasedProperties<RawOptions>>({
 	dryRun: true,
 	fullFamilyName: 'bar.js',
-	foo: 123
+	foo: 123,
+	bar: 'foo',
+	quzQux: 6,
+	otherField: false
 });
