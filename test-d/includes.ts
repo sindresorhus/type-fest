@@ -1,5 +1,5 @@
-import {Includes} from '..';
 import {expectType} from 'tsd';
+import {Includes} from '..';
 
 const includesEmptyArray: Includes<[], 'abc'> = false;
 expectType<false>(includesEmptyArray);
