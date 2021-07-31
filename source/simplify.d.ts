@@ -15,7 +15,7 @@ type SizeProps = {
 	height: number;
 };
 
-// In your editor, hovering over `Props` will show a flattened object with all the props.
+// In your editor, hovering over `Props` will show a flattened object with all the properties.
 type Props = Simplify<PositionProps & SizeProps>;
 ```
 
