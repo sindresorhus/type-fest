@@ -3,6 +3,8 @@ declare namespace TsConfigJson {
 		export type JSX =
 			| 'preserve'
 			| 'react'
+			| 'react-jsx'
+			| 'react-jsxdev'
 			| 'react-native';
 
 		export type Module =
@@ -41,6 +43,7 @@ declare namespace TsConfigJson {
 			| 'ES2018'
 			| 'ES2019'
 			| 'ES2020'
+			| 'ES2021'
 			| 'ESNext'
 			// Lowercase alternatives
 			| 'es3'
@@ -52,6 +55,7 @@ declare namespace TsConfigJson {
 			| 'es2018'
 			| 'es2019'
 			| 'es2020'
+			| 'es2021'
 			| 'esnext';
 
 		export type Lib =
@@ -89,6 +93,10 @@ declare namespace TsConfigJson {
 			| 'ES2020'
 			| 'ES2020.String'
 			| 'ES2020.Symbol.WellKnown'
+			| 'ES2021'
+			| 'ES2021.Promise'
+			| 'ES2021.String'
+			| 'ES2021.WeakRef'
 			| 'ESNext'
 			| 'ESNext.Array'
 			| 'ESNext.AsyncIterable'
@@ -135,6 +143,10 @@ declare namespace TsConfigJson {
 			| 'es2020'
 			| 'es2020.string'
 			| 'es2020.symbol.wellknown'
+			| 'es2021'
+			| 'es2021.promise'
+			| 'es2021.string'
+			| 'es2021.weakref'
 			| 'esnext'
 			| 'esnext.array'
 			| 'esnext.asynciterable'
@@ -237,7 +249,7 @@ declare namespace TsConfigJson {
 		inlineSources?: boolean;
 
 		/**
-		Specify JSX code generation: `'preserve'`, `'react'`, or `'react-native'`.
+		Specify what JSX code is generated.
 
 		@default 'preserve'
 		*/
