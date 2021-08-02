@@ -22,6 +22,12 @@ expectType<false>(includesComplexMultiTypeArray);
 const noExtendsProblem: Includes<[boolean], true> = false;
 expectType<false>(noExtendsProblem);
 
+const objectIncludes: Includes<[{}], { a: 1 }> = false;
+expectType<false>(objectIncludes);
+
+const objectIncludesPass: Includes<[{ a: 1 }], { a: 1 }> = true;
+expectType<true>(objectIncludesPass);
+
 // @ts-expect-error
 const noArgsIncludes: Includes<> = false;
 
