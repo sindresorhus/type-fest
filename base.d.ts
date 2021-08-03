@@ -36,7 +36,7 @@ export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
-export {IsJsonable} from './source/is-jsonable';
+export {Jsonify} from './source/jsonify';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';

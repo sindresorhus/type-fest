@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import {IsJsonable, JsonValue} from '..';
+import {Jsonify, JsonValue} from '..';
 
 interface A {
 	a: number;
@@ -29,8 +29,8 @@ interface W {
 	a?: () => any;
 }
 
-declare const a: IsJsonable<A>;
-declare const b: IsJsonable<B>;
+declare const a: Jsonify<A>;
+declare const b: Jsonify<B>;
 
 declare const v: V; // Not assignable to JsonValue because it is defined as interface
 
