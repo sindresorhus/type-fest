@@ -20,9 +20,7 @@ Matches a JSON array.
 
 @category Basic
 */
-export interface JsonArray extends Array<JsonValue> {}
-// TODO: Make it this when targeting TypeScript 4.1:
-// export type JsonArray = JsonValue[];
+export type JsonArray = JsonValue[];
 
 /**
 Matches any valid JSON value.
