@@ -120,6 +120,7 @@ Click the type names for complete docs.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
 - [`Simplify`](source/simplify.d.ts) - Flatten the type output to improve type hints shown in editors.
+- [`IsJsonable`](source/is-jsonable.d.ts) - Transforms type T into a type that can be structurally matched to [`JsonValue`](source/basic.d.ts) type alias
 
 ### Template literal types
 
