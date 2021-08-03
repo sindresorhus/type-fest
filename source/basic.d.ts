@@ -32,7 +32,7 @@ export type JsonPrimitive = string | number | boolean | null;
 /**
 Matches any valid JSON value.
 
-@remarks: Also see ./IsJsonable
+@remarks Also see ./Jsonify
 
 @category Basic
 */
