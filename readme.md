@@ -60,7 +60,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 $ npm install type-fest
 ```
 
-*Requires TypeScript >=3.4*
+*Requires TypeScript >=3.8*
 
 ## Usage
 
