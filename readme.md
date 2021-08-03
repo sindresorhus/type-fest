@@ -48,6 +48,10 @@
 [![npm downloads](https://badgen.net/npm/dt/type-fest)](https://www.npmjs.com/package/type-fest)
 [![Docs](https://paka.dev/badges/v0/cute.svg)](https://paka.dev/npm/type-fest)
 
+<hr/>
+
+[English](*./readme.md*)|[中文](*./readme_zh.md*)
+
 Many of the types here should have been built-in. You can help by suggesting some of them to the [TypeScript project](https://github.com/Microsoft/TypeScript/blob/master/CONTRIBUTING.md).
 
 Either add this package as a dependency or copy-paste the needed types. No credit required. 👌
@@ -182,34 +186,34 @@ There are many advanced types most users don't know about.
 			appName: string;
 			port: number;
 	}
-
+	
 	class NodeAppBuilder {
 			private configuration: NodeConfig = {
 					appName: 'NodeApp',
 					port: 3000
 			};
-
+	
 			private updateConfig<Key extends keyof NodeConfig>(key: Key, value: NodeConfig[Key]) {
 					this.configuration[key] = value;
 			}
-
+	
 			config(config: Partial<NodeConfig>) {
 					type NodeConfigKey = keyof NodeConfig;
-
+	
 					for (const key of Object.keys(config) as NodeConfigKey[]) {
 							const updateValue = config[key];
-
+	
 							if (updateValue === undefined) {
 									continue;
 							}
-
+	
 							this.updateConfig(key, updateValue);
 					}
-
+	
 					return this;
 			}
 	}
-
+	
 	// `Partial<NodeConfig>`` allows us to provide only a part of the
 	// NodeConfig interface.
 	new NodeAppBuilder().config({appName: 'ToDoApp'});
@@ -229,16 +233,16 @@ There are many advanced types most users don't know about.
 			email?: string;
 			message?: string;
 	}
-
+	
 	function submitContactForm(formData: Required<ContactForm>) {
 			// Send the form data to the server.
 	}
-
+	
 	submitContactForm({
 			email: 'ex@mple.com',
 			message: 'Hi! Could you tell me more about…',
 	});
-
+	
 	// TypeScript error: missing property 'message'
 	submitContactForm({
 			email: 'ex@mple.com',
@@ -261,31 +265,31 @@ There are many advanced types most users don't know about.
 			Error,
 			Fatal
 	};
-
+	
 	interface LoggerConfig {
 			name: string;
 			level: LogLevel;
 	}
-
+	
 	class Logger {
 			config: Readonly<LoggerConfig>;
-
+	
 			constructor({name, level}: LoggerConfig) {
 					this.config = {name, level};
 					Object.freeze(this.config);
 			}
 	}
-
+	
 	const config: LoggerConfig = {
 		name: 'MyApp',
 		level: LogLevel.Debug
 	};
-
+	
 	const logger = new Logger(config);
-
+	
 	// TypeScript Error: cannot assign to read-only property.
 	logger.config.level = LogLevel.Error;
-
+	
 	// We are able to edit config variable as we please.
 	config.level = LogLevel.Error;
 	```
@@ -305,23 +309,23 @@ There are many advanced types most users don't know about.
 			thumbnail: string;
 			content: string;
 	}
-
+	
 	// Creates new type out of the `Article` interface composed
 	// from the Articles' two properties: `title` and `thumbnail`.
 	// `ArticlePreview = {title: string; thumbnail: string}`
 	type ArticlePreview = Pick<Article, 'title' | 'thumbnail'>;
-
+	
 	// Render a list of articles using only title and description.
 	function renderArticlePreviews(previews: ArticlePreview[]): HTMLElement {
 			const articles = document.createElement('div');
-
+	
 			for (const preview of previews) {
 					// Append preview to the articles.
 			}
-
+	
 			return articles;
 	}
-
+	
 	const articles = renderArticlePreviews([
 			{
 				title: 'TypeScript tutorial!',
@@ -342,14 +346,14 @@ There are many advanced types most users don't know about.
 	```ts
 	// Positions of employees in our company.
 	type MemberPosition = 'intern' | 'developer' | 'tech-lead';
-
+	
 	// Interface describing properties of a single employee.
 	interface Employee {
 			firstName: string;
 			lastName: string;
 			yearsOfExperience: number;
 	}
-
+	
 	// Create an object that has all possible `MemberPosition` values set as keys.
 	// Those keys will store a collection of Employees of the same position.
 	const team: Record<MemberPosition, Employee[]> = {
@@ -357,14 +361,14 @@ There are many advanced types most users don't know about.
 			developer: [],
 			'tech-lead': [],
 	};
-
+	
 	// Our team has decided to help John with his dream of becoming Software Developer.
 	team.intern.push({
 		firstName: 'John',
 		lastName: 'Doe',
 		yearsOfExperience: 0
 	});
-
+	
 	// `Record` forces you to initialize all of the property keys.
 	// TypeScript Error: "tech-lead" property is missing
 	const teamEmpty: Record<MemberPosition, null> = {
@@ -386,22 +390,22 @@ There are many advanced types most users don't know about.
 	interface ServerConfig {
 		port: null | string | number;
 	}
-
+	
 	type RequestHandler = (request: Request, response: Response) => void;
-
+	
 	// Exclude `null` type from `null | string | number`.
 	// In case the port is equal to `null`, we will use default value.
 	function getPortValue(port: Exclude<ServerConfig['port'], null>): number {
 		if (typeof port === 'string') {
 			return parseInt(port, 10);
 		}
-
+	
 		return port;
 	}
-
+	
 	function startServer(handler: RequestHandler, config: ServerConfig): void {
 		const server = require('http').createServer(handler);
-
+	
 		const port = config.port === null ? 3000 : getPortValue(config.port);
 		server.listen(port);
 	}
@@ -418,15 +422,15 @@ There are many advanced types most users don't know about.
 
 	```ts
 	declare function uniqueId(): number;
-
+	
 	const ID = Symbol('ID');
-
+	
 	interface Person {
 		[ID]: number;
 		name: string;
 		age: number;
 	}
-
+	
 	// Allows changing the person data as long as the property key is of string type.
 	function changePersonData<
 		Obj extends Person,
@@ -435,17 +439,17 @@ There are many advanced types most users don't know about.
 	> (obj: Obj, key: Key, value: Value): void {
 		obj[key] = value;
 	}
-
+	
 	// Tiny Andrew was born.
 	const andrew = {
 		[ID]: uniqueId(),
 		name: 'Andrew',
 		age: 0,
 	};
-
+	
 	// Cool, we're fine with that.
 	changePersonData(andrew, 'name', 'Pony');
-
+	
 	// Goverment didn't like the fact that you wanted to change your identity.
 	changePersonData(andrew, ID, uniqueId());
 	```
@@ -462,29 +466,29 @@ There are many advanced types most users don't know about.
 
 	```ts
 	type PortNumber = string | number | null;
-
+	
 	/** Part of a class definition that is used to build a server */
 	class ServerBuilder {
 			portNumber!: NonNullable<PortNumber>;
-
+	
 			port(this: ServerBuilder, port: PortNumber): ServerBuilder {
 					if (port == null) {
 							this.portNumber = 8000;
 					} else {
 							this.portNumber = port;
 					}
-
+	
 					return this;
 			}
 	}
-
+	
 	const serverBuilder = new ServerBuilder();
-
+	
 	serverBuilder
 			.port('8000')   // portNumber = '8000'
 			.port(null)     // portNumber =  8000
 			.port(3000);    // portNumber =  3000
-
+	
 	// TypeScript error
 	serverBuilder.portNumber = null;
 	```
@@ -502,18 +506,18 @@ There are many advanced types most users don't know about.
 	function shuffle(input: any[]): void {
 		// Mutate array randomly changing its' elements indexes.
 	}
-
+	
 	function callNTimes<Fn extends (...args: any[]) => any> (func: Fn, callCount: number) {
 		// Type that represents the type of the received function parameters.
 		type FunctionParameters = Parameters<Fn>;
-
+	
 		return function (...args: FunctionParameters) {
 			for (let i = 0; i < callCount; i++) {
 				func(...args);
 			}
 		}
 	}
-
+	
 	const shuffleTwice = callNTimes(shuffle, 2);
 	```
 	</details>
@@ -530,37 +534,37 @@ There are many advanced types most users don't know about.
 	class ArticleModel {
 		title: string;
 		content?: string;
-
+	
 		constructor(title: string) {
 			this.title = title;
 		}
 	}
-
+	
 	class InstanceCache<T extends (new (...args: any[]) => any)> {
 		private ClassConstructor: T;
 		private cache: Map<string, InstanceType<T>> = new Map();
-
+	
 		constructor (ctr: T) {
 			this.ClassConstructor = ctr;
 		}
-
+	
 		getInstance (...args: ConstructorParameters<T>): InstanceType<T> {
 			const hash = this.calculateArgumentsHash(...args);
-
+	
 			const existingInstance = this.cache.get(hash);
 			if (existingInstance !== undefined) {
 				return existingInstance;
 			}
-
+	
 			return new this.ClassConstructor(...args);
 		}
-
+	
 		private calculateArgumentsHash(...args: any[]): string {
 			// Calculate hash.
 			return 'hash';
 		}
 	}
-
+	
 	const articleCache = new InstanceCache(ArticleModel);
 	const amazonArticle = articleCache.getInstance('Amazon forests burining!');
 	```
@@ -582,19 +586,19 @@ There are many advanced types most users don't know about.
 			Ret extends ReturnType<Func>
 	>(iter: Iterable<Elem>, callback: Func): Ret[] {
 			const mapped: Ret[] = [];
-
+	
 			for (const elem of iter) {
 					mapped.push(callback(elem));
 			}
-
+	
 			return mapped;
 	}
-
+	
 	const setObject: Set<string> = new Set();
 	const mapObject: Map<number, string> = new Map();
-
+	
 	mapIter(setObject, (value: string) => value.indexOf('Foo')); // number[]
-
+	
 	mapIter(mapObject, ([key, value]: [number, string]) => {
 			return key % 2 === 0 ? value : 'Odd';
 	}); // string[]
@@ -613,36 +617,36 @@ There are many advanced types most users don't know about.
 	class IdleService {
 			doNothing (): void {}
 	}
-
+	
 	class News {
 			title: string;
 			content: string;
-
+	
 			constructor(title: string, content: string) {
 					this.title = title;
 					this.content = content;
 			}
 	}
-
+	
 	const instanceCounter: Map<Function, number> = new Map();
-
+	
 	interface Constructor {
 			new(...args: any[]): any;
 	}
-
+	
 	// Keep track how many instances of `Constr` constructor have been created.
 	function getInstance<
 			Constr extends Constructor,
 			Args extends ConstructorParameters<Constr>
 	>(constructor: Constr, ...args: Args): InstanceType<Constr> {
 			let count = instanceCounter.get(constructor) || 0;
-
+	
 			const instance = new constructor(...args);
-
+	
 			instanceCounter.set(constructor, count + 1);
-
+	
 			console.log(`Created ${count + 1} instances of ${Constr.name} class`);
-
+	
 			return instance;
 	}
 
@@ -669,12 +673,12 @@ There are many advanced types most users don't know about.
 			images: string[];
 			paragraphs: string[];
 	}
-
+	
 	// Creates new type with all properties of the `Animal` interface
 	// except 'images' and 'paragraphs' properties. We can use this
 	// type to render small hover tooltip for a wiki entry list.
 	type AnimalShortInfo = Omit<Animal, 'images' | 'paragraphs'>;
-
+	
 	function renderAnimalHoverInfo (animals: AnimalShortInfo[]): HTMLElement {
 			const container =  document.createElement('div');
 			// Internal implementation.
@@ -691,12 +695,12 @@ There are many advanced types most users don't know about.
 
 	```ts
 	type T = Uppercase<'hello'>;  // 'HELLO'
-
+	
 	type T2 = Uppercase<'foo' | 'bar'>;  // 'FOO' | 'BAR'
-
+	
 	type T3<S extends string> = Uppercase<`aB${S}`>;
 	type T4 = T30<'xYz'>;  // 'ABXYZ'
-
+	
 	type T5 = Uppercase<string>;  // string
 	type T6 = Uppercase<any>;  // any
 	type T7 = Uppercase<never>;  // never
@@ -712,12 +716,12 @@ There are many advanced types most users don't know about.
 
 	```ts
 	type T = Lowercase<'HELLO'>;  // 'hello'
-
+	
 	type T2 = Lowercase<'FOO' | 'BAR'>;  // 'foo' | 'bar'
-
+	
 	type T3<S extends string> = Lowercase<`aB${S}`>;
 	type T4 = T32<'xYz'>;  // 'abxyz'
-
+	
 	type T5 = Lowercase<string>;  // string
 	type T6 = Lowercase<any>;  // any
 	type T7 = Lowercase<never>;  // never
@@ -733,12 +737,12 @@ There are many advanced types most users don't know about.
 
 	```ts
 	type T = Capitalize<'hello'>;  // 'Hello'
-
+	
 	type T2 = Capitalize<'foo' | 'bar'>;  // 'Foo' | 'Bar'
-
+	
 	type T3<S extends string> = Capitalize<`aB${S}`>;
 	type T4 = T32<'xYz'>;  // 'ABxYz'
-
+	
 	type T5 = Capitalize<string>;  // string
 	type T6 = Capitalize<any>;  // any
 	type T7 = Capitalize<never>;  // never
@@ -754,12 +758,12 @@ There are many advanced types most users don't know about.
 
 	```ts
 	type T = Uncapitalize<'Hello'>;  // 'hello'
-
+	
 	type T2 = Uncapitalize<'Foo' | 'Bar'>;  // 'foo' | 'bar'
-
+	
 	type T3<S extends string> = Uncapitalize<`AB${S}`>;
 	type T4 = T30<'xYz'>;  // 'aBxYz'
-
+	
 	type T5 = Uncapitalize<string>;  // string
 	type T6 = Uncapitalize<any>;  // any
 	type T7 = Uncapitalize<never>;  // never
