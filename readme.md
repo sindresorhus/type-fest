@@ -85,6 +85,7 @@ Click the type names for complete docs.
 - [`Primitive`](source/primitive.d.ts) - Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 - [`Class`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
+- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
 - [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
 - [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
 - [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
@@ -120,7 +121,7 @@ Click the type names for complete docs.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
 - [`Simplify`](source/simplify.d.ts) - Flatten the type output to improve type hints shown in editors.
-- [`IsJsonable`](source/is-jsonable.d.ts) - Transforms type T into a type that can be structurally matched to [`JsonValue`](source/basic.d.ts) type alias
+- [`Jsonify`](source/jsonify.d.ts) - Transforms a type to a type that is assignable to `JsonValue` type
 
 ### Template literal types
 
