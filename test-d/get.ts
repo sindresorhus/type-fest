@@ -46,6 +46,16 @@ expectTypeOf<Get<WithTuples, 'foo.0.bar'>>().toBeNumber();
 expectTypeOf<Get<WithTuples, 'foo[1].baz'>>().toBeBoolean();
 expectTypeOf<Get<WithTuples, 'foo[1].bar'>>().toBeUnknown();
 
+expectTypeOf<Get<WithTuples, 'foo[-1]'>>().toBeUnknown();
+expectTypeOf<Get<WithTuples, 'foo[999]'>>().toBeUnknown();
+
+type EmptyTuple = Parameters<() => {}>;
+
+expectTypeOf<Get<EmptyTuple, '-1'>>().toBeUnknown();
+expectTypeOf<Get<EmptyTuple, '0'>>().toBeUnknown();
+expectTypeOf<Get<EmptyTuple, '1'>>().toBeUnknown();
+expectTypeOf<Get<EmptyTuple, 'length'>>().toEqualTypeOf<0>();
+
 interface WithNumberKeys {
 	foo: {
 		1: {
