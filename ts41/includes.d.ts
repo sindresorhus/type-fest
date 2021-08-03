@@ -1,5 +1,5 @@
 /**
-Returns a boolean on whether two types are equal
+Returns a boolean for whether given two types are equal.
 
 @link https://github.com/microsoft/TypeScript/issues/27024#issuecomment-421529650
 */
