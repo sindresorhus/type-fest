@@ -1,6 +1,6 @@
 import {JsonPrimitive} from './basic';
 
-type NotJsonable = ((...args: any[]) => any) | undefined;
+type NotJsonable = ((...args: any[]) => unknown) | undefined;
 
 /**
 Transform a type to a type that is assignable to the `JsonValue` type.
