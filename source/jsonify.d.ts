@@ -1,6 +1,9 @@
 import {JsonPrimitive} from './basic';
+
+type NotJsonable = ((...args: any[]) => any) | undefined;
+
 /**
-Transform a type to a type that is assignable to the `JsonValue` type
+Transform a type to a type that is assignable to the `JsonValue` type.
 
 @remarks
 
@@ -10,11 +13,10 @@ Without intending to pick on @types/geojson, sometimes there are Json type defin
 
 Credit: Jsonify<T> comes from discussion in link below.
 
-@link: https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
+@link https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
 
 @category Utilities
 */
-type NotJsonable = ((...args: any[]) => any) | undefined;
 export type Jsonify<T> =
 	// Check if there are any non-jsonable types represented in the union
 	// Note: use of tuples in this first condition side-steps distributive conditional types
