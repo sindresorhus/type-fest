@@ -63,3 +63,16 @@ expectNotAssignable<JsonValue>(z);
 expectNotAssignable<JsonValue>(w);
 expectNotAssignable<JsonValue>(undefined);
 expectNotAssignable<JsonValue>(5 as number | undefined);
+
+interface Geometry {
+	type: 'Point' | 'Polygon';
+	coordinates: [number, number];
+}
+
+const point: Geometry = {
+	type: 'Point',
+	coordinates: [1, 1]
+};
+
+expectNotAssignable<JsonValue>(point);
+expectAssignable<Jsonify<Geometry>>(point);
