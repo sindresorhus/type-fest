@@ -39,29 +39,16 @@ Credit: Jsonify<T> comes from discussion in link below.
 
 @category Utilities
 */
-export type Jsonify<T> =
+type Jsonify<T> =
 	// Check if there are any non-jsonable types represented in the union
 	// Note: use of tuples in this first condition side-steps distributive conditional types
 	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
 	[Extract<T, NotJsonable>] extends [never]
-	// Non-jsonable type union was found empty
-	? T extends JsonPrimitive
-	// Primitive is acceptable
-	? T
-	// Otherwise check if array
-	: T extends Array<infer U>
-	// Arrays are special; just check array element type
-	? Array<Jsonify<U>>
-	// Otherwise check if object
-	: T extends object
-	// It's an object
-	? {
-		// Iterate over keys in object case
-		[P in keyof T]:
-		// Recursive call for children
-		Jsonify<T[P]>
-	}
-	// Otherwise any other non-object is not allowed
-	: never
-	// Otherwise non-jsonable type union was found not empty
-	: never;
+		? T extends JsonPrimitive
+			? T // Primitive is acceptable
+			: T extends Array<infer U>
+			? Array<Jsonify<U>> // It's an array: recursive call for its children
+			: T extends object
+			? { [P in keyof T]: Jsonify<T[P]> } // It's an object: recursive call for its children
+			: never // Otherwise any other non-object is removed
+		: never; // Otherwise non-jsonable type union was found not empty
