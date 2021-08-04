@@ -270,6 +270,11 @@ declare namespace PackageJson {
 		types?: string;
 
 		/**
+		Version selection map of TypeScript.
+		*/
+		typesVersions?: Record<string, Record<string, string[]>>;
+
+		/**
 		Location of the bundled TypeScript declaration file. Alias of `types`.
 		*/
 		typings?: string;
