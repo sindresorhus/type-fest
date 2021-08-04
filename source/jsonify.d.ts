@@ -1,6 +1,6 @@
 import {JsonPrimitive} from './basic';
 /**
-Transforms a type to a type that is assignable to `JsonValue` type
+Transform a type to a type that is assignable to `JsonValue` type
 
 @remarks
 
@@ -14,12 +14,12 @@ Credit: Jsonify<T> comes from discussion in link below.
 
 @category Utilities
 */
-type DefinitelyNotJsonable = ((...args: any[]) => any) | undefined;
+type NotJsonable = ((...args: any[]) => any) | undefined;
 export type Jsonify<T> =
 	// Check if there are any non-jsonable types represented in the union
 	// Note: use of tuples in this first condition side-steps distributive conditional types
 	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
-	[Extract<T, DefinitelyNotJsonable>] extends [never]
+	[Extract<T, NotJsonable>] extends [never]
 	// Non-jsonable type union was found empty
 	? T extends JsonPrimitive
 	// Primitive is acceptable
