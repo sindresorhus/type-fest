@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectError, expectType} from 'tsd';
 import {Includes} from '..';
 
 const includesEmptyArray: Includes<[], 'abc'> = false;
@@ -28,14 +28,12 @@ expectType<false>(objectIncludes);
 const objectIncludesPass: Includes<[{a: 1}], {a: 1}> = true;
 expectType<true>(objectIncludesPass);
 
-// @ts-expect-error
-const noArgsIncludes: Includes<> = false;
+declare const anything: any;
 
-// @ts-expect-error
-const oneArgIncludes: Includes<['my', 'array', 'has', 'stuff']> = false;
+expectError<Includes>(anything);
 
-// @ts-expect-error
-const nonArrayPassed: Includes<'why a string?', 5> = false;
+expectError<Includes<['my', 'array', 'has', 'stuff']>>(anything);
 
-// @ts-expect-error
-const objectPassed: Includes<{ key: 'value' }, 7> = false;
+expectError<Includes<'why a string?', 5>>(anything);
+
+expectError<Includes<{ key: 'value' }, 7>>(anything);
