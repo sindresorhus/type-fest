@@ -9,10 +9,32 @@ Transform a type to a type that is assignable to the `JsonValue` type.
 
 An interface cannot be structurally compared to `JsonValue` because an interface can be re-opened to add properties that may not be satisfy `JsonValue`.
 
-Without intending to pick on @types/geojson, sometimes there are Json type definitions like GeoJson's [`Point` interface(https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts#L86-L89 that) that are clearly Json and won't be extended.  If a method requires a `JsonValue` argument such as in `const someMethodOnJson = <T extends JsonValue>(data: T) => void`, and you pass a value of an interface type like `GeoJSON.Point`, then there will be a type error.  To solve this problem, you can assert the interface type is JSON like this `Jsonify<GeoJSON.Point>`.  `Jsonify<T>` is also useful for types that have nested interface types.
+Example:
+
+interface Geometry {
+	type: 'Point' | 'Polygon';
+	coordinates: [number, number];
+}
+
+const point: Geometry = {
+	type: 'Point',
+	coordinates: [1, 1]
+};
+
+const problemFn = (data: JsonValue) => {
+	// Does something with data
+};
+
+problemFn(point); // Error: type Geometry is not assignable to parameter of type JsonValue because it is an interface
+
+const fixedFn = <T>(data: Jsonify<T>) => {
+	// Does something with data
+};
+
+fixedFn(point); // Good: point is assignable. Jsonify<T> transforms Geometry into value assignable to JsonValue
+fixedFn(new Date()); // Error: As expected, Date is not assignable. Jsonify<T> cannot transforms Date into value assignable to JsonValue
 
 Credit: Jsonify<T> comes from discussion in link below.
-
 @link https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
 
 @category Utilities
@@ -39,7 +61,7 @@ export type Jsonify<T> =
 		// Recursive call for children
 		Jsonify<T[P]>
 	}
-	// Otherwise any other non-object no bueno
+	// Otherwise any other non-object is not allowed
 	: never
 	// Otherwise non-jsonable type union was found not empty
 	: never;
