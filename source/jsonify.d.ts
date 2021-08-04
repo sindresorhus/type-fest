@@ -1,6 +1,6 @@
 import {JsonPrimitive} from './basic';
 /**
-Transform a type to a type that is assignable to `JsonValue` type
+Transform a type to a type that is assignable to the `JsonValue` type
 
 @remarks
 
