@@ -819,7 +819,6 @@ declare namespace TsConfigJson {
 		*/
 		importHelpers?: boolean;
 
-
 		/**
 		Specify emit/checking behavior for imports that are only used for types.
 
