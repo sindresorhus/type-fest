@@ -9,7 +9,7 @@ Transform a type to a type that is assignable to the `JsonValue` type.
 
 An interface cannot be structurally compared to `JsonValue` because an interface can be re-opened to add properties that may not be satisfy `JsonValue`.
 
-Without intending to pick on @types/geojson, sometimes there are Json type definitions like GeoJson's [`Point` interface(https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts#L86-L89 that) that are clearly Json and won't be extended.  If a method requires a `JsonValue` argument as in `const someMethodOnJson = <T extends JsonValue>(data: T) => void`, and you pass a value of an interface type like `GeoJSON.Point`, then there will be a type error.  To solve this problem, you can assert the interface type is JSON like this `Jsonify<GeoJSON.Point>`.  `Jsonify<T>` also applies to types that have nested interface types too.
+Without intending to pick on @types/geojson, sometimes there are Json type definitions like GeoJson's [`Point` interface(https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts#L86-L89 that) that are clearly Json and won't be extended.  If a method requires a `JsonValue` argument such as in `const someMethodOnJson = <T extends JsonValue>(data: T) => void`, and you pass a value of an interface type like `GeoJSON.Point`, then there will be a type error.  To solve this problem, you can assert the interface type is JSON like this `Jsonify<GeoJSON.Point>`.  `Jsonify<T>` is also useful for types that have nested interface types.
 
 Credit: Jsonify<T> comes from discussion in link below.
 
