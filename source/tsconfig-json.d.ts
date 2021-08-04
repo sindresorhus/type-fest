@@ -186,6 +186,35 @@ declare namespace TsConfigJson {
 			*/
 			name?: string;
 		}
+
+		export type ImportsNotUsedAsValues =
+			| 'remove'
+			| 'preserve'
+			| 'error';
+
+		export type FallbackPolling =
+			| 'fixedPollingInterval'
+			| 'priorityPollingInterval'
+			| 'dynamicPriorityPolling'
+			| 'fixedInterval'
+			| 'priorityInterval'
+			| 'dynamicPriority'
+			| 'fixedChunkSize';
+
+		export type WatchDirectory =
+			| 'useFsEvents'
+			| 'fixedPollingInterval'
+			| 'dynamicPriorityPolling'
+			| 'fixedChunkSizePolling';
+
+		export type WatchFile =
+			| 'fixedPollingInterval'
+			| 'priorityPollingInterval'
+			| 'dynamicPriorityPolling'
+			| 'useFsEvents'
+			| 'useFsEventsOnParentDirectory'
+			| 'fixedChunkSizePolling';
+
 	}
 
 	export interface CompilerOptions {
@@ -225,6 +254,24 @@ declare namespace TsConfigJson {
 		diagnostics?: boolean;
 
 		/**
+		Reduce the number of projects loaded automatically by TypeScript.
+
+		Requires TypeScript version 4.0 or later.
+
+		@default false
+		*/
+		disableReferencedProjectLoad?: boolean;
+
+		/**
+		Enforces using indexed accessors for keys declared using an indexed type.
+
+		Requires TypeScript version 4.2 or later.
+
+		@default false
+		*/
+		noPropertyAccessFromIndexSignature?: boolean;
+
+		/**
 		Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files.
 
 		@default false
@@ -237,6 +284,15 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		emitDeclarationOnly?: boolean;
+
+		/**
+		Differentiate between undefined and not present when type checking.
+
+		Requires TypeScript version 4.4 or later.
+
+		@default false
+		*/
+		exactOptionalPropertyTypes?: boolean;
 
 		/**
 		Enable incremental compilation.
@@ -283,6 +339,33 @@ declare namespace TsConfigJson {
 		reactNamespace?: string;
 
 		/**
+		Specify the JSX factory function to use when targeting React JSX emit, e.g. `React.createElement` or `h`.
+
+		Requires TypeScript version 2.1 or later.
+
+		@default 'React.createElement'
+		*/
+		jsxFactory?: string;
+
+		/**
+		Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'.
+
+		Requires TypeScript version 4.0 or later.
+
+		@default 'React.Fragment'
+		*/
+		jsxFragmentFactory?: string;
+
+		/**
+		Specify module specifier used to import the JSX factory functions when using `jsx: react-jsx*`.
+
+		Requires TypeScript version 4.1 or later.
+
+		@default 'react'
+		*/
+		jsxImportSource?: string;
+
+		/**
 		Print names of files part of the compilation.
 
 		@default false
@@ -300,6 +383,13 @@ declare namespace TsConfigJson {
 		@default ['ES3', 'ES5'].includes(target) ? 'CommonJS' : 'ES6'
 		*/
 		module?: CompilerOptions.Module;
+
+		/**
+		Specifies module resolution strategy: 'node' (Node) or 'classic' (TypeScript pre 1.6).
+
+		@default ['AMD', 'System', 'ES6'].includes(module) ? 'classic' : 'node'
+		*/
+		moduleResolution?: 'classic' | 'node';
 
 		/**
 		Specifies the end of line sequence to be used when emitting files: 'crlf' (Windows) or 'lf' (Unix).
@@ -494,11 +584,45 @@ declare namespace TsConfigJson {
 		target?: CompilerOptions.Target;
 
 		/**
+		Default catch clause variables as `unknown` instead of `any`.
+
+		Requires TypeScript version 4.4 or later.
+
+		@default false
+		*/
+		useUnknownInCatchVariables?: boolean;
+
+		/**
 		Watch input files.
 
 		@default false
 		*/
 		watch?: boolean;
+
+		/**
+		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
+
+		Requires TypeScript version 3.8 or later.
+		*/
+		fallbackPolling?: CompilerOptions.FallbackPolling;
+
+		/**
+		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
+
+		Requires TypeScript version 3.8 or later.
+
+		@default 'useFsEvents'
+		*/
+		watchDirectory?: CompilerOptions.WatchDirectory;
+
+		/**
+		Specify the strategy for watching individual files
+
+		Requires TypeScript version 3.8 or later.
+
+		@default 'useFsEvents'
+		*/
+		watchFile?: CompilerOptions.WatchFile;
 
 		/**
 		Enables experimental support for ES7 decorators.
@@ -515,13 +639,6 @@ declare namespace TsConfigJson {
 		emitDecoratorMetadata?: boolean;
 
 		/**
-		Specifies module resolution strategy: 'node' (Node) or 'classic' (TypeScript pre 1.6).
-
-		@default ['AMD', 'System', 'ES6'].includes(module) ? 'classic' : 'node'
-		*/
-		moduleResolution?: 'classic' | 'node';
-
-		/**
 		Do not report errors on unused labels.
 
 		@default false
@@ -536,11 +653,27 @@ declare namespace TsConfigJson {
 		noImplicitReturns?: boolean;
 
 		/**
+		Add `undefined` to a type when accessed using an index.
+
+		Requires TypeScript version 4.1 or later.
+
+		@default false
+		*/
+		noUncheckedIndexedAccess?: boolean;
+
+		/**
 		Report errors for fallthrough cases in switch statement.
 
 		@default false
 		*/
 		noFallthroughCasesInSwitch?: boolean;
+
+		/**
+		Ensure overriding members in derived classes are marked with an override modifier.
+
+		@default false
+		*/
+		noImplicitOverride?: boolean;
 
 		/**
 		Do not report errors on unreachable code.
@@ -555,6 +688,15 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		forceConsistentCasingInFileNames?: boolean;
+
+		/**
+		Emit a v8 CPU profile of the compiler run for debugging.
+
+		Requires TypeScript version 3.7 or later.
+
+		@default 'profile.cpuprofile'
+		*/
+		generateCpuProfile?: string;
 
 		/**
 		Base directory to resolve non-relative module names.
@@ -677,14 +819,13 @@ declare namespace TsConfigJson {
 		*/
 		importHelpers?: boolean;
 
+
 		/**
-		Specify the JSX factory function to use when targeting React JSX emit, e.g. `React.createElement` or `h`.
+		Specify emit/checking behavior for imports that are only used for types.
 
-		Requires TypeScript version 2.1 or later.
-
-		@default 'React.createElement'
+		@default 'remove'
 		*/
-		jsxFactory?: string;
+		importsNotUsedAsValues?: CompilerOptions.ImportsNotUsedAsValues;
 
 		/**
 		Parse in strict mode and emit `'use strict'` for each source file.
@@ -798,6 +939,54 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		resolveJsonModule?: boolean;
+
+		/**
+		Have recompiles in '--incremental' and '--watch' assume that changes within a file will only affect files directly depending on it.
+
+		Requires TypeScript version 3.8 or later.
+
+		@default false
+		*/
+		assumeChangesOnlyAffectDirectDependencies?: boolean;
+
+		/**
+		Output more detailed compiler performance information after building.
+
+		@default false
+		*/
+		extendedDiagnostics?: boolean;
+
+		/**
+		Print names of files that are part of the compilation and then stop processing.
+
+		@default false
+		*/
+		listFilesOnly?: boolean;
+
+		/**
+		Disable preferring source files instead of declaration files when referencing composite projects.
+
+		@default true if composite, false otherwise
+		*/
+		disableSourceOfProjectReferenceRedirect?: boolean;
+
+		/**
+		Opt a project out of multi-project reference checking when editing.
+
+		Requires TypeScript version 3.8 or later.
+
+		@default false
+		*/
+		disableSolutionSearching?: boolean;
+
+		/**
+		Print names of files which TypeScript sees as a part of your project and the reason they are part of the compilation.
+
+		Requires TypeScript version 4.2 or later.
+
+		@default false
+		*/
+		explainFiles?: boolean;
 	}
 
 	/**
