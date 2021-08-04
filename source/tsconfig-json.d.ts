@@ -616,7 +616,7 @@ declare namespace TsConfigJson {
 		watchDirectory?: CompilerOptions.WatchDirectory;
 
 		/**
-		Specify the strategy for watching individual files
+		Specify the strategy for watching individual files.
 
 		Requires TypeScript version 3.8 or later.
 
