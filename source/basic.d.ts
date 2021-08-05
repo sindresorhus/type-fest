@@ -32,7 +32,7 @@ export type JsonPrimitive = string | number | boolean | null;
 /**
 Matches any valid JSON value.
 
-@see Also see ./Jsonify
+@see `Jsonify` if you need to transform a type to one that is assignable to `JsonValue`.
 
 @category Basic
 */
