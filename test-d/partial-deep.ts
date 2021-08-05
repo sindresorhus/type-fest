@@ -1,5 +1,5 @@
 import {expectType, expectError, expectAssignable} from 'tsd';
-import {PartialDeep} from '..';
+import {PartialDeep} from '../index';
 
 const foo = {
 	baz: 'fred',
@@ -19,8 +19,8 @@ const foo = {
 		readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
 		readonlySet: new Set<string>() as ReadonlySet<string>,
 		readonlyArray: ['foo'] as readonly string[],
-		readonlyTuple: ['foo'] as const
-	}
+		readonlyTuple: ['foo'] as const,
+	},
 };
 
 let partialDeepFoo: PartialDeep<typeof foo> = foo;

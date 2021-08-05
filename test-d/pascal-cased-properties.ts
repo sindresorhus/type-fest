@@ -1,5 +1,5 @@
-import {PascalCasedProperties} from '../ts41/pascal-cased-properties';
 import {expectType} from 'tsd';
+import {PascalCasedProperties} from '../index';
 
 declare const foo: PascalCasedProperties<{helloWorld: {fooBar: string}}>;
 expectType<{HelloWorld: {fooBar: string}}>(foo);
@@ -17,6 +17,6 @@ interface User {
 }
 const result: PascalCasedProperties<User> = {
 	UserId: 1,
-	UserName: 'Tom'
+	UserName: 'Tom',
 };
 expectType<PascalCasedProperties<User>>(result);

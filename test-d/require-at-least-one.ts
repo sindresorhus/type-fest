@@ -1,5 +1,5 @@
 import {expectError, expectAssignable} from 'tsd';
-import {RequireAtLeastOne} from '..';
+import {RequireAtLeastOne} from '../index';
 
 type SystemMessages = {
 	default: string;
@@ -32,10 +32,10 @@ declare const atLeastOneWithoutKeys: RequireAtLeastOne<{
 	b: number;
 }>;
 expectAssignable<{a: number; b?: number} | {a?: number; b: number}>(
-	atLeastOneWithoutKeys
+	atLeastOneWithoutKeys,
 );
 
 expectAssignable<MessageBoard<ValidMessages>>(
 	({macos = '', linux = '🐧', windows = '⊞'}) =>
-		`${linux} + ${windows} = ${macos}`
+		`${linux} + ${windows} = ${macos}`,
 );

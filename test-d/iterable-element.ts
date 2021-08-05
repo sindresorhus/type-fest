@@ -1,5 +1,5 @@
-import {IterableElement} from '../source/iterable-element';
 import {expectType} from 'tsd';
+import {IterableElement} from '../index';
 
 declare const iterableElement: IterableElement<ReturnType<typeof secretGenerator>>;
 expectType<1 | 'two'>(iterableElement);

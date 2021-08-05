@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {ConditionalKeys} from '..';
+import {ConditionalKeys} from '../index';
 
 interface Example {
 	a: string;

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {ConditionalExcept, Primitive} from '..';
+import {ConditionalExcept, Primitive} from '../index';
 
 class Awesome {
 	name!: string;

@@ -1,6 +1,3 @@
-// TODO: Remove this when we target TypeScript >=3.5.
-type _Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
-
 /**
 Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.
 
@@ -34,4 +31,4 @@ export type RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType = ke
 	{[Key in KeysType]: (
 		Required<Pick<ObjectType, Key>> &
 		Partial<Record<Exclude<KeysType, Key>, never>>
-	)}[KeysType] & _Omit<ObjectType, KeysType>;
+	)}[KeysType] & Omit<ObjectType, KeysType>;

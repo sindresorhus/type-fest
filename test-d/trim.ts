@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {Trim} from '../ts41';
+import {Trim} from '../index';
 
 declare function trim<S extends string>(value: S): Trim<S>;
 

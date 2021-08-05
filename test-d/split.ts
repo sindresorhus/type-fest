@@ -1,9 +1,9 @@
 import {expectType} from 'tsd';
-import {Split} from '../ts41';
+import {Split} from '../index';
 
 declare function split<
 	S extends string,
-	Delimiter extends string
+	Delimiter extends string,
 >(string: S, separator: Delimiter): Split<S, Delimiter>;
 
 const items = 'foo,bar,baz,waldo';
@@ -17,7 +17,7 @@ expectType<['foo,bar,baz,waldo']>(split(items, ' '));
 // Empty string split (every character).
 expectType<[
 	'f', 'o', 'o', ',', 'b', 'a', 'r', ',',
-	'b', 'a', 'z', ',', 'w', 'a', 'l', 'd', 'o'
+	'b', 'a', 'z', ',', 'w', 'a', 'l', 'd', 'o',
 ]>(split(items, ''));
 
 // Split single same character.

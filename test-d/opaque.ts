@@ -1,5 +1,5 @@
 import {expectAssignable, expectError} from 'tsd';
-import {Opaque} from '..';
+import {Opaque} from '../index';
 
 type Value = Opaque<number, 'Value'>;
 

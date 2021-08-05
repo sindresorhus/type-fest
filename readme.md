@@ -60,7 +60,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 $ npm install type-fest
 ```
 
-*Requires TypeScript >=3.8*
+*Requires TypeScript >=4.2*
 
 ## Usage
 
@@ -119,33 +119,31 @@ Click the type names for complete docs.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
-- [`Includes`](ts41/includes.ts) - Returns a boolean for whether the given array includes the given item.
+- [`Includes`](source/includes.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Simplify`](source/simplify.d.ts) - Flatten the type output to improve type hints shown in editors.
 
 ### Template literal types
 
-*Note:* These require [TypeScript 4.1 or newer](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types).
-
-- [`CamelCase`](ts41/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
-- [`CamelCasedProperties`](ts41/camel-cased-properties.d.ts) – Convert object properties to camel-case  (`fooBar`).
-- [`CamelCasedPropertiesDeep`](ts41/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively  (`fooBar`).
-- [`KebabCase`](ts41/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
-- [`KebabCasedProperties`](ts41/kebab-cased-properties.d.ts) – Convert a object properties to kebab-case recursively (`foo-bar`).
-- [`KebabCasedPropertiesDeep`](ts41/kebab-cased-properties-deep.d.ts) – Convert object properties to kebab-case (`foo-bar`).
-- [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
-- [`PascalCasedProperties`](ts41/pascal-cased-properties.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`PascalCasedPropertiesDeep`](ts41/pascal-cased-properties-deep.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
-- [`SnakeCasedProperties`](ts41/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case (`foo_bar`).
-- [`SnakeCasedPropertiesDeep`](ts41/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case recursively (`foo_bar`).
-- [`ScreamingSnakeCase`](ts41/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
-- [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
-- [`DelimiterCasedProperties`](ts41/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
-- [`DelimiterCasedPropertiesDeep`](ts41/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
-- [`Split`](ts41/split.d.ts) - Represents an array of strings split using a given character or character set.
-- [`Trim`](ts41/trim.d.ts) - Remove leading and trailing spaces from a string.
-- [`Get`](ts41/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
-- [`LastArrayElement`](ts41/last-array-element.d.ts) - Extracts the type of the last element of an array.
+- [`CamelCase`](source/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
+- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) – Convert object properties to camel-case  (`fooBar`).
+- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively  (`fooBar`).
+- [`KebabCase`](source/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
+- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) – Convert a object properties to kebab-case recursively (`foo-bar`).
+- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) – Convert object properties to kebab-case (`foo-bar`).
+- [`PascalCase`](source/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
+- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) – Converts object properties to pascal-case (`FooBar`)
+- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) – Converts object properties to pascal-case (`FooBar`)
+- [`SnakeCase`](source/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
+- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case (`foo_bar`).
+- [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case recursively (`foo_bar`).
+- [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
+- [`DelimiterCase`](source/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
+- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
+- [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+- [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
+- [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
+- [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
 
 ### Miscellaneous
 

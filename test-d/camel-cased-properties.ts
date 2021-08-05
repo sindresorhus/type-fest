@@ -1,5 +1,5 @@
-import {CamelCasedProperties} from '../ts41/camel-cased-properties';
 import {expectType} from 'tsd';
+import {CamelCasedProperties} from '../index';
 
 declare const foo: CamelCasedProperties<{A: number; B: {C: string}}>;
 
@@ -19,6 +19,6 @@ interface User {
 
 const result: CamelCasedProperties<User> = {
 	userId: 1,
-	userName: 'Tom'
+	userName: 'Tom',
 };
 expectType<CamelCasedProperties<User>>(result);

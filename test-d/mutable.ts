@@ -1,5 +1,5 @@
 import {expectType, expectError} from 'tsd';
-import {Mutable} from '..';
+import {Mutable} from '../index';
 
 type Foo = {
 	readonly a: number;

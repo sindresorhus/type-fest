@@ -1,6 +1,6 @@
-import {Entries} from '../source/entries';
-import {Entry} from '../source/entry';
 import {expectAssignable} from 'tsd';
+import {Entries} from '../index';
+import {Entry} from '../source/entry';
 
 // Objects
 const objectExample = {a: 1};
@@ -31,7 +31,7 @@ expectAssignable<[number, (string | number)]>(arrayEntryNumber);
 
 const arrayEntries: Entries<typeof arrayExample> = [
 	arrayEntryString,
-	arrayEntryNumber
+	arrayEntryNumber,
 ];
 expectAssignable<Array<[number, (string | number)]>>(arrayEntries);
 
@@ -46,6 +46,6 @@ expectAssignable<[(string | number), (string | number)]>(setEntryNumber);
 
 const setEntries: Entries<typeof setExample> = [
 	setEntryString,
-	setEntryNumber
+	setEntryNumber,
 ];
 expectAssignable<Array<[(string | number), (string | number)]>>(setEntries);

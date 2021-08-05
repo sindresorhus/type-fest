@@ -1,10 +1,9 @@
-// TODO: Remove the `= unknown` sometime  in the future when most users are on TS 3.5 as it's now the default
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 
 @category Basic
 */
-export type Class<T = unknown, Arguments extends any[] = any[]> = new(...arguments_: Arguments) => T;
+export type Class<T, Arguments extends any[] = any[]> = new(...arguments_: Arguments) => T;
 
 /**
 Matches a JSON object.
@@ -20,9 +19,7 @@ Matches a JSON array.
 
 @category Basic
 */
-export interface JsonArray extends Array<JsonValue> {}
-// TODO: Make it this when targeting TypeScript 4.1:
-// export type JsonArray = JsonValue[];
+export type JsonArray = JsonValue[];
 
 /**
 Matches any valid JSON value.

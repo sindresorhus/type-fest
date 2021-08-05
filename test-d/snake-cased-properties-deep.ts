@@ -1,5 +1,5 @@
-import {SnakeCasedPropertiesDeep} from '../ts41/snake-cased-properties-deep';
 import {expectType} from 'tsd';
+import {SnakeCasedPropertiesDeep} from '../index';
 
 declare const foo: SnakeCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
 expectType<{hello_world: {foo_bar: string}}>(foo);
@@ -21,17 +21,17 @@ interface UserWithFriends {
 const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	user_info: {
 		user_id: 1,
-		user_name: 'Tom'
+		user_name: 'Tom',
 	},
 	user_friends: [
 		{
 			user_id: 2,
-			user_name: 'Jerry'
+			user_name: 'Jerry',
 		},
 		{
 			user_id: 3,
-			user_name: 'Spike'
-		}
-	]
+			user_name: 'Spike',
+		},
+	],
 };
 expectType<SnakeCasedPropertiesDeep<UserWithFriends>>(result);

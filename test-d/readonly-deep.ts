@@ -1,9 +1,9 @@
 import {expectType, expectError} from 'tsd';
-import {ReadonlyDeep} from '../source/readonly-deep';
+import {ReadonlyDeep} from '../index';
 
 const data = {
 	object: {
-		foo: 'bar'
+		foo: 'bar',
 	},
 	fn: (_: string) => true,
 	string: 'foo',
@@ -19,7 +19,7 @@ const data = {
 	readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
 	readonlySet: new Set<string>() as ReadonlySet<string>,
 	readonlyArray: ['foo'] as readonly string[],
-	readonlyTuple: ['foo'] as const
+	readonlyTuple: ['foo'] as const,
 };
 
 const readonlyData: ReadonlyDeep<typeof data> = data;
