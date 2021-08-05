@@ -48,8 +48,8 @@ type Jsonify<T> =
 		? T extends JsonPrimitive
 			? T // Primitive is acceptable
 			: T extends Array<infer U>
-			? Array<Jsonify<U>> // It's an array: recursive call for its children
-			: T extends object
-			? { [P in keyof T]: Jsonify<T[P]> } // It's an object: recursive call for its children
-			: never // Otherwise any other non-object is removed
+				? Array<Jsonify<U>> // It's an array: recursive call for its children
+				: T extends object
+					? { [P in keyof T]: Jsonify<T[P]> } // It's an object: recursive call for its children
+					: never // Otherwise any other non-object is removed
 		: never; // Otherwise non-jsonable type union was found not empty
