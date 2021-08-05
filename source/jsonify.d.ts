@@ -9,8 +9,8 @@ Transform a type to a type that is assignable to the `JsonValue` type.
 
 An interface cannot be structurally compared to `JsonValue` because an interface can be re-opened to add properties that may not be satisfy `JsonValue`.
 
-Example:
-
+@example
+```
 interface Geometry {
 	type: 'Point' | 'Polygon';
 	coordinates: [number, number];
@@ -33,6 +33,7 @@ const fixedFn = <T>(data: Jsonify<T>) => {
 
 fixedFn(point); // Good: point is assignable. Jsonify<T> transforms Geometry into value assignable to JsonValue
 fixedFn(new Date()); // Error: As expected, Date is not assignable. Jsonify<T> cannot transforms Date into value assignable to JsonValue
+```
 
 Credit: Jsonify<T> comes from discussion in link below.
 @link https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
