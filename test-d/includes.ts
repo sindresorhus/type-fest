@@ -22,7 +22,7 @@ expectType<false>(includesComplexMultiTypeArray);
 const noExtendsProblem: Includes<[boolean], true> = false;
 expectType<false>(noExtendsProblem);
 
-const objectIncludes: Includes<[{}], { a: 1 }> = false;
+const objectIncludes: Includes<[{}], {a: 1}> = false;
 expectType<false>(objectIncludes);
 
 const objectIncludesPass: Includes<[{a: 1}], {a: 1}> = true;
@@ -36,4 +36,4 @@ expectError<Includes<['my', 'array', 'has', 'stuff']>>(anything);
 
 expectError<Includes<'why a string?', 5>>(anything);
 
-expectError<Includes<{ key: 'value' }, 7>>(anything);
+expectError<Includes<{key: 'value'}, 7>>(anything);
