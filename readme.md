@@ -86,6 +86,7 @@ Click the type names for complete docs.
 - [`Class`](source/basic.d.ts) - Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`Constructor`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
+- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
 - [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
 - [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
 - [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
@@ -122,6 +123,7 @@ Click the type names for complete docs.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
 - [`Includes`](source/includes.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Simplify`](source/simplify.d.ts) - Flatten the type output to improve type hints shown in editors.
+- [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
 
 ### Template literal types
 

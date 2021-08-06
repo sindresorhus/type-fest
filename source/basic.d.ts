@@ -29,8 +29,17 @@ Matches a JSON array.
 export type JsonArray = JsonValue[];
 
 /**
-Matches any valid JSON value.
+Matches any valid JSON primitive value.
 
 @category Basic
 */
-export type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
+export type JsonPrimitive = string | number | boolean | null;
+
+/**
+Matches any valid JSON value.
+
+@see `Jsonify` if you need to transform a type to one that is assignable to `JsonValue`.
+
+@category Basic
+*/
+export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
