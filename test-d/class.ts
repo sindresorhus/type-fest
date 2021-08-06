@@ -1,5 +1,5 @@
 import {expectError} from 'tsd';
-import {Class} from '../index';
+import {Constructor} from '../index';
 
 class Foo {
 	constructor(x: number, y: any) {
@@ -10,11 +10,11 @@ class Foo {
 	method(): void {}
 }
 
-function fn(Cls: Class<Foo>): Foo {
+function fn(Cls: Constructor<Foo>): Foo {
 	return new Cls(1, '', 123);
 }
 
-function fn2(Cls: Class<Foo, [number, number]>): Foo {
+function fn2(Cls: Constructor<Foo, [number, number]>): Foo {
 	expectError(new Cls(1, ''));
 	return new Cls(1, 2);
 }
