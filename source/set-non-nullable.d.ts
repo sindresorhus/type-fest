@@ -41,7 +41,7 @@ type Person {
 }
 
 function hasFirstName(person: Person) person is SetNonNullable<Person, "firstName"> {
-	return typeof person.firstName === "string";
+	return person.firstName != null;
 }
 ```
 
