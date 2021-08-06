@@ -24,7 +24,7 @@ const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
 */
 export type RequireAtLeastOne<
 	ObjectType,
-	KeysType extends keyof ObjectType = keyof ObjectType
+	KeysType extends keyof ObjectType = keyof ObjectType,
 > = {
 	// For each `Key` in `KeysType` make a mapped type:
 	[Key in KeysType]-?: Required<Pick<ObjectType, Key>> & // 1. Make `Key`'s type required

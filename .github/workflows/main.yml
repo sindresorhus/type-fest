@@ -10,12 +10,12 @@ jobs:
       fail-fast: false
       matrix:
         node-version:
+          - 16
           - 14
           - 12
-          - 10
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
@@ -28,13 +28,11 @@ jobs:
       matrix:
         typescript-version:
           - 'latest'
-          - '^4.1.0'
-          - '~4.0.0'
-          - '^3.9.0'
-          - '~3.4.0'
+          - '^4.3.0'
+          - '4.2.0'
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: 14
       - run: npm install

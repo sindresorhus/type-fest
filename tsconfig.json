@@ -4,7 +4,6 @@
 		"noEmit": true
 	},
 	"exclude": [
-		"test-d/**/*",
-		"ts41/**/*"
+		"test-d/**/*"
 	]
 }

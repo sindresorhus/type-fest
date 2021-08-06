@@ -1,5 +1,5 @@
-import {Split} from './utilities';
 import {StringDigit} from '../source/utilities';
+import {Split} from './split';
 
 /**
 Like the `Get` type but receives an array of strings as a path parameter.

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {DelimiterCasedPropertiesDeep} from '../ts41/delimiter-cased-properties-deep';
+import {DelimiterCasedPropertiesDeep} from '../index';
 
 declare const foo: DelimiterCasedPropertiesDeep<{helloWorld: {fooBar: string}}, '/'>;
 expectType<{'hello/world': {'foo/bar': string}}>(foo);
@@ -24,17 +24,17 @@ interface UserWithFriends {
 const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	'user-info': {
 		'user-id': 1,
-		'user-name': 'Tom'
+		'user-name': 'Tom',
 	},
 	'user-friends': [
 		{
 			'user-id': 2,
-			'user-name': 'Jerry'
+			'user-name': 'Jerry',
 		},
 		{
 			'user-id': 3,
-			'user-name': 'Spike'
-		}
-	]
+			'user-name': 'Spike',
+		},
+	],
 };
 expectType<DelimiterCasedPropertiesDeep<UserWithFriends, '-'>>(result);

@@ -1,5 +1,5 @@
 import {expectAssignable} from 'tsd';
-import {UnionToIntersection} from '..';
+import {UnionToIntersection} from '../index';
 
 declare const intersection1: UnionToIntersection<{a: string} | {b: number}>;
 expectAssignable<{a: string; b: number}>(intersection1);

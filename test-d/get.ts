@@ -1,5 +1,5 @@
-import {Get} from '../ts41/get';
 import {expectTypeOf} from 'expect-type';
+import {Get} from '../index';
 
 declare const get: <ObjectType, Path extends string>(object: ObjectType, path: Path) => Get<ObjectType, Path>;
 
@@ -36,7 +36,7 @@ interface WithTuples {
 		},
 		{
 			baz: boolean;
-		}
+		},
 	];
 }
 

@@ -1,7 +1,5 @@
-import {
-	KebabCase
-} from '../ts41/kebab-case';
 import {expectType} from 'tsd';
+import {KebabCase} from '../index';
 
 const kebabFromCamel: KebabCase<'fooBar'> = 'foo-bar';
 expectType<'foo-bar'>(kebabFromCamel);

@@ -1,6 +1,5 @@
-import {CamelCase} from '../ts41/camel-case';
-import {Split} from '../ts41/utilities';
 import {expectType, expectAssignable} from 'tsd';
+import {CamelCase, Split} from '../index';
 
 // Split
 const prefixSplit: Split<'--very-prefixed', '-'> = ['', '', 'very', 'prefixed'];
@@ -69,5 +68,5 @@ expectAssignable<CamelCasedProperties<RawOptions>>({
 	foo: 123,
 	bar: 'foo',
 	quzQux: 6,
-	otherField: false
+	otherField: false,
 });

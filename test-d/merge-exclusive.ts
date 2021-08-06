@@ -1,5 +1,5 @@
 import {expectError, expectAssignable} from 'tsd';
-import {MergeExclusive} from '..';
+import {MergeExclusive} from '../index';
 
 interface BaseOptions {
 	option?: string;
@@ -19,10 +19,10 @@ const exclusiveVariation1: Options = {exclusive1: true};
 const exclusiveVariation2: Options = {exclusive2: 1};
 
 expectAssignable<{option?: string; exclusive1: boolean; exclusive2?: string}>(
-	exclusiveVariation1
+	exclusiveVariation1,
 );
 expectAssignable<{option?: string; exclusive1?: string; exclusive2: number}>(
-	exclusiveVariation2
+	exclusiveVariation2,
 );
 
 expectError<Options>({exclusive1: true, exclusive2: 1});

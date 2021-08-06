@@ -1,10 +1,16 @@
-// TODO: Remove the `= unknown` sometime  in the future when most users are on TS 3.5 as it's now the default
+/**
+Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
+
+@category Basic
+*/
+export type Class<T, Arguments extends unknown[] = any[]> = Constructor<T, Arguments> & {prototype: T};
+
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 
 @category Basic
 */
-export type Class<T = unknown, Arguments extends any[] = any[]> = new(...arguments_: Arguments) => T;
+export type Constructor<T, Arguments extends unknown[] = any[]> = new(...arguments_: Arguments) => T;
 
 /**
 Matches a JSON object.

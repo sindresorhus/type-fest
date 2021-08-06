@@ -1,5 +1,5 @@
 import {expectType, expectError} from 'tsd';
-import {SetRequired} from '..';
+import {SetRequired} from '../index';
 
 // Update one required and one optional to required.
 declare const variation1: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;

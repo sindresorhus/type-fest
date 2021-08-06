@@ -1,6 +1,6 @@
-import {UpperCaseCharacters, WordSeparators} from '../source/utilities';
-import {SplitIncludingDelimiters, DelimiterCase} from '../ts41/delimiter-case';
 import {expectType, expectAssignable} from 'tsd';
+import {UpperCaseCharacters, WordSeparators} from '../source/utilities';
+import {SplitIncludingDelimiters, DelimiterCase} from '../source/delimiter-case';
 
 const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar'];
 expectType<['foo', 'B', 'ar']>(splitFromCamel);
@@ -57,5 +57,5 @@ interface CliOptions {
 expectAssignable<OddCasedProperties<CliOptions>>({
 	'dry#run': true,
 	'include#file': 'bar.js',
-	foo: 123
+	foo: 123,
 });

@@ -1,7 +1,5 @@
-import {
-	SnakeCase
-} from '../ts41/snake-case';
 import {expectType} from 'tsd';
+import {SnakeCase} from '../index';
 
 const snakeFromCamel: SnakeCase<'fooBar'> = 'foo_bar';
 expectType<'foo_bar'>(snakeFromCamel);

@@ -1,5 +1,5 @@
 import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
-import {PackageJson, LiteralUnion} from '..';
+import {PackageJson, LiteralUnion} from '../index';
 
 const packageJson: PackageJson = {};
 
@@ -22,14 +22,14 @@ expectType<string | undefined>(packageJson.typings);
 expectType<string | string[] | undefined>(packageJson.man);
 expectType<PackageJson.DirectoryLocations | undefined>(packageJson.directories);
 expectType<{type: string; url: string; directory?: string} | string | undefined>(
-	packageJson.repository
+	packageJson.repository,
 );
 expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
 expectType<Record<string, unknown> | undefined>(packageJson.config);
 expectType<PackageJson.Dependency | undefined>(packageJson.dependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.devDependencies);
 expectType<PackageJson.Dependency | undefined>(
-	packageJson.optionalDependencies
+	packageJson.optionalDependencies,
 );
 expectType<PackageJson.Dependency | undefined>(packageJson.peerDependencies);
 expectType<string[] | undefined>(packageJson.bundleDependencies);
