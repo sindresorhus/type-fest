@@ -71,7 +71,7 @@ interface Geometry {
 
 const point: Geometry = {
 	type: 'Point',
-	coordinates: [1, 1]
+	coordinates: [1, 1],
 };
 
 expectNotAssignable<JsonValue>(point);
