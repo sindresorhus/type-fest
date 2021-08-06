@@ -24,8 +24,8 @@ type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c' | 'd' | 'e'>;
 // 	a?: number;
 // 	b: string; // Was already not nullish and still is.
 // 	c: boolean; // Is now not optional.
-//  d: number; // Is now not null
-//	e: string; // Is now not undefined
+//  d: number; // Is now not null.
+//	e: string; // Is now not undefined.
 // }
 
 function hasRequiredKeys(foo: Foo): foo is SomeNonNullable;

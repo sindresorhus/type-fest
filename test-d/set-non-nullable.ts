@@ -1,7 +1,7 @@
 import {expectType, expectError} from 'tsd';
 import {SetNonNullable} from '..';
 
-// Update nullish fields to be non-null, leave one unchanged.
+// Update nullish fields to be non-null and leave one unchanged.
 declare const variation1: SetNonNullable<
 	{
 		a?: string;
@@ -16,7 +16,7 @@ expectType<{a?: string; b: string; c: string; d: string; e: string}>(
 	variation1,
 );
 
-// Remove optional, undefined and null, leave one unchanged.
+// Remove optional, undefined, and null. Leave one unchanged.
 declare const variation2: SetNonNullable<
 	{a?: number | null | undefined; b?: number | null | undefined},
 	'a'
