@@ -33,6 +33,7 @@ export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
+export {Jsonify} from './source/jsonify';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';
