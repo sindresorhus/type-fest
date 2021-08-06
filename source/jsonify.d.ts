@@ -50,6 +50,6 @@ type Jsonify<T> =
 			: T extends Array<infer U>
 				? Array<Jsonify<U>> // It's an array: recursive call for its children
 				: T extends object
-					? { [P in keyof T]: Jsonify<T[P]> } // It's an object: recursive call for its children
+					? {[P in keyof T]: Jsonify<T[P]>} // It's an object: recursive call for its children
 					: never // Otherwise any other non-object is removed
 		: never; // Otherwise non-jsonable type union was found not empty
