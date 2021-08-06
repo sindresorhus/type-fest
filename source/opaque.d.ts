@@ -1,3 +1,9 @@
+declare const tag: unique symbol;
+
+declare type Tagged<Token> = {
+	readonly [tag]: Token;
+};
+
 /**
 Create an opaque type, which hides its internal details from the public, and can only be created by being used explicitly.
 
@@ -6,6 +12,7 @@ The generic type parameter can be anything. It doesn't have to be an object.
 [Read more about opaque types.](https://codemix.com/opaque-types-in-javascript/)
 
 There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similar to how Flow does it. Unfortunately, nothing has (yet) moved forward:
+	- [Microsoft/TypeScript#202](https://github.com/microsoft/TypeScript/issues/202)
 	- [Microsoft/TypeScript#15408](https://github.com/Microsoft/TypeScript/issues/15408)
 	- [Microsoft/TypeScript#15807](https://github.com/Microsoft/TypeScript/issues/15807)
 
@@ -16,7 +23,7 @@ import {Opaque} from 'type-fest';
 type AccountNumber = Opaque<number, 'AccountNumber'>;
 type AccountBalance = Opaque<number, 'AccountBalance'>;
 
-// The Token parameter allows the compiler to differentiate between types, whereas "unknown" will not. For example, consider the following structures:
+// The `Token` parameter allows the compiler to differentiate between types, whereas "unknown" will not. For example, consider the following structures:
 type ThingOne = Opaque<string>;
 type ThingTwo = Opaque<string>;
 
@@ -64,4 +71,4 @@ type Person = {
 
 @category Utilities
 */
-export type Opaque<Type, Token = unknown> = Type & {readonly __opaque__: Token};
+export type Opaque<Type, Token = unknown> = Type & Tagged<Token>;
