@@ -50,5 +50,5 @@ export type SetNonNullable<BaseType, Keys extends keyof BaseType> = Simplify<
 	// Pick just the keys that are optional from the base type.
 	Except<BaseType, Keys> &
 		// For each 'Key' provided, make it not optional or nullable
-		{ [Key in Keys]-?: NonNullable<BaseType[Key]> }
+		{[Key in Keys]-?: NonNullable<BaseType[Key]>}
 >;
