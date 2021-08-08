@@ -9,7 +9,7 @@ Matches a value that is like an [Observable](https://github.com/tc39/proposal-ob
 
 @category Basic
 */
-export interface ObservableLike {
-	subscribe(observer: (value: unknown) => void): void;
-	[Symbol.observable](): ObservableLike;
+export interface ObservableLike<ValueType = unknown> {
+	subscribe(observer: (value: ValueType) => void): void;
+	[Symbol.observable](): ObservableLike<ValueType>;
 }
