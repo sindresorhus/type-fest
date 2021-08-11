@@ -124,6 +124,7 @@ Click the type names for complete docs.
 - [`Includes`](source/includes.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Simplify`](source/simplify.d.ts) - Flatten the type output to improve type hints shown in editors.
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`ExtendsOr, ExtendsAnd, ExtendsThenElse`](source/extends-or-and-then-else.d.ts) - `A extends B ? A : C`, `A extends B ? C : A,` `A extends B ? C : D` respectively. A small collection of short-circuit and other conditional shorthands (e.g. || and && type utilities).
 
 ### Template literal types
 

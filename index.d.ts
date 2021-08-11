@@ -34,6 +34,11 @@ export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
 export {Jsonify} from './source/jsonify';
+export {
+    ExtendsOr,
+    ExtendsAnd,
+    ExtendsThenElse,
+} from './source/extends-or-and-then-else';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';
