@@ -8,7 +8,7 @@ Only to be used by `CamelCaseStringArray<>`.
 
 @see CamelCaseStringArray
 */
-type InnerCamelCaseStringArray<Parts extends any[], PreviousPart> =
+type InnerCamelCaseStringArray<Parts extends readonly any[], PreviousPart> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
 		? FirstPart extends undefined
 			? ''
@@ -24,7 +24,7 @@ It's separate from `InnerCamelCaseStringArray<>` to keep a clean API outwards to
 
 @see Split
 */
-type CamelCaseStringArray<Parts extends string[]> =
+type CamelCaseStringArray<Parts extends readonly string[]> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
 		? Uncapitalize<`${FirstPart}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`>
 		: never;

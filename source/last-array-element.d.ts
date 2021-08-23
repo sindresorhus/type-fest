@@ -7,7 +7,7 @@ Use-case: Defining the return type of functions that extract the last element of
 ```
 import {LastArrayElement} from 'type-fest';
 
-declare function lastOf<V extends any[]>(array: V): LastArrayElement<V>;
+declare function lastOf<V extends readonly any[]>(array: V): LastArrayElement<V>;
 
 const array = ['foo', 2];
 
@@ -17,7 +17,7 @@ typeof lastOf(array);
 
 @category Template Literals
 */
-export type LastArrayElement<ValueType extends unknown[]> =
+export type LastArrayElement<ValueType extends readonly unknown[]> =
 	ValueType extends [infer ElementType]
 		? ElementType
 		: ValueType extends [infer _, ...infer Tail]

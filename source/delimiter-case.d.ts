@@ -36,7 +36,7 @@ It receives `UsedWordSeparators` and `UsedUpperCaseCharacters` as input to ensur
 
 @see SplitIncludingDelimiters
 */
-type StringArrayToDelimiterCase<Parts extends any[], UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
+type StringArrayToDelimiterCase<Parts extends readonly any[], UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
 		? `${StringPartToDelimiterCase<FirstPart, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
 		: '';
