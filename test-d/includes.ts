@@ -7,6 +7,10 @@ expectType<false>(includesEmptyArray);
 const includesSingleItemArray: Includes<['colors'], 'colors'> = true;
 expectType<true>(includesSingleItemArray);
 
+const readonlyArray = ['a', 'b', 'c'] as const;
+const includesReadonlyArray: Includes<typeof readonlyArray, 'a'> = true;
+expectType<true>(includesReadonlyArray);
+
 const includesComplexMultiTypeArray: Includes<[
 	{
 		prop: 'value';
