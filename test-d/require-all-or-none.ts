@@ -21,5 +21,4 @@ expectError(test({macos: 'hey', default: 'hello'}));
 expectError(test({linux: 'hey', default: 'hello'}));
 
 declare const oneWithoutKeys: RequireAllOrNone<{a: number; b: number}>;
-expectAssignable<{a: number} | {b: number}>(oneWithoutKeys);
-expectError(expectAssignable<{a: number; b: number}>(oneWithoutKeys));
+expectAssignable<{a: number; b: number}>(oneWithoutKeys);
