@@ -11,6 +11,7 @@ export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
+export {RequireAllOrNone} from './source/require-all-or-none';
 export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
