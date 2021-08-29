@@ -57,7 +57,7 @@ interface RawOptions {
 	'OTHER-FIELD': boolean;
 }
 
-const dbResult: CamelCasedProperties<ModelProps> = {
+const dbResult: CamelCasedProperties<RawOptions> = {
 	dryRun: true,
 	fullFamilyName: 'bar.js',
 	foo: 123,
