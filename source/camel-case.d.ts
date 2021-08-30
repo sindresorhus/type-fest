@@ -57,7 +57,7 @@ interface RawOptions {
 	'OTHER-FIELD': boolean;
 }
 
-const dbResult: CamelCasedProperties<ModelProps> = {
+const dbResult: CamelCasedProperties<RawOptions> = {
 	dryRun: true,
 	fullFamilyName: 'bar.js',
 	foo: 123,
@@ -69,4 +69,4 @@ const dbResult: CamelCasedProperties<ModelProps> = {
 
 @category Template Literals
 */
-export type CamelCase<K> = K extends string ? K extends Uppercase<K> ? CamelCaseStringArray<Split<Lowercase<K>, WordSeparators>> : CamelCaseStringArray<Split<K, WordSeparators>> : K;
+export type CamelCase<K> = K extends string ? CamelCaseStringArray<Split<K extends Uppercase<K> ? Lowercase<K> : K, WordSeparators>> : K;
