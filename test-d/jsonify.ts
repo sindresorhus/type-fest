@@ -84,7 +84,7 @@ expectAssignable<string>(dateToJSON);
 expectAssignable<JsonValue>(dateToJSON);
 
 // The following commented `= JSON.parse(JSON.stringify(x))` is an example of how `parsedStringifiedX` could be created.
-// * Note that this would be an unsafe assignment that needs because `JSON.parse()` returns type `any`.
+// * Note that this would be an unsafe assignment because `JSON.parse()` returns type `any`.
 //   But by inspection `JSON.stringify(x)` will use `x.a.toJSON()`. So the JSON.parse() result can be
 //   assigned to Jsonify<X> if the `@typescript-eslint/no-unsafe-assignment` eslint rule is ignored
 //   or an `as Jsonify<X>` is added.
