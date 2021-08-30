@@ -105,6 +105,7 @@ class NonJsonWithToJSON {
 const nonJsonWithToJSON = new NonJsonWithToJSON();
 expectNotAssignable<JsonValue>(nonJsonWithToJSON);
 expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
+expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
 
 class NonJsonWithInvalidToJSON {
 	public m: Map<string, number> = new Map([['a', 1], ['b', 2]]);
