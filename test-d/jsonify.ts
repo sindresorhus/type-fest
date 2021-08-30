@@ -76,3 +76,48 @@ const point: Geometry = {
 
 expectNotAssignable<JsonValue>(point);
 expectAssignable<Jsonify<Geometry>>(point);
+
+// The following const values are examples of values `v` that are not JSON, but are Jsonable using
+// `v.toJSON()` or `JSON.parse(JSON.stringify(v))`
+declare const dateToJSON: Jsonify<Date>;
+expectAssignable<string>(dateToJSON);
+expectAssignable<JsonValue>(dateToJSON);
+
+// The following commented `= JSON.parse(JSON.stringify(x))` is an example of how `parsedStringifiedX` could be created.
+// * Note that this would be an unsafe assignment that needs because `JSON.parse()` returns type `any`.
+//   But by inspection `JSON.stringify(x)` will use `x.a.toJSON()`. So the JSON.parse() result can be
+//   assigned to Jsonify<X> if the `@typescript-eslint/no-unsafe-assignment` eslint rule is ignored
+//   or an `as Jsonify<X>` is added.
+// * This test is not about how `parsedStringifiedX` is created, but about its type, so the `const` value is declared
+declare const parsedStringifiedX: Jsonify<X>; // = JSON.parse(JSON.stringify(x));
+expectAssignable<JsonValue>(parsedStringifiedX);
+expectAssignable<string>(parsedStringifiedX.a);
+
+class NonJsonWithToJSON {
+	public m: Map<string, number> = new Map([['a', 1], ['b', 2]]);
+
+	public toJSON(): {m: Array<[string, number]>} {
+		return {
+			m: [...this.m.entries()],
+		};
+	}
+}
+const nonJsonWithToJSON = new NonJsonWithToJSON();
+expectNotAssignable<JsonValue>(nonJsonWithToJSON);
+expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
+
+class NonJsonWithInvalidToJSON {
+	public m: Map<string, number> = new Map([['a', 1], ['b', 2]]);
+
+	// This is intentionally invalid toJSON()
+	// It is invalid because the result is not assignable to JsonValue
+	public toJSON(): {m: Map<string, number>} {
+		return {
+			m: this.m,
+		};
+	}
+}
+
+const nonJsonWithInvalidToJSON = new NonJsonWithInvalidToJSON();
+expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
+expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());

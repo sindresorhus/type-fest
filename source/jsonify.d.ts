@@ -1,4 +1,4 @@
-import {JsonPrimitive} from './basic';
+import {JsonPrimitive, JsonValue} from './basic';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined;
@@ -50,6 +50,10 @@ type Jsonify<T> =
 			: T extends Array<infer U>
 				? Array<Jsonify<U>> // It's an array: recursive call for its children
 				: T extends object
-					? {[P in keyof T]: Jsonify<T[P]>} // It's an object: recursive call for its children
+					? T extends {toJSON(): infer J}
+						? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
+							? J // Then T is Jsonable and its Jsonable value is J
+							: never // Not Jsonable because its toJSON() method does not return JsonValue
+						: {[P in keyof T]: Jsonify<T[P]>} // It's an object: recursive call for its children
 					: never // Otherwise any other non-object is removed
 		: never; // Otherwise non-JSONable type union was found not empty
