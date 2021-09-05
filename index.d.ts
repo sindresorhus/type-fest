@@ -52,6 +52,7 @@ export {ScreamingSnakeCase} from './source/screaming-snake-case';
 export {DelimiterCase} from './source/delimiter-case';
 export {DelimiterCasedProperties} from './source/delimiter-cased-properties';
 export {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep';
+export {Join} from './source/join';
 export {Split} from './source/split';
 export {Trim} from './source/trim';
 export {Includes} from './source/includes';
