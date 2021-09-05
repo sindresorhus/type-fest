@@ -3,6 +3,7 @@
 ## Submitting a new type
 
 - One type addition per pull request, unless they are connected.
+- Please help review the other open pull requests. If there are no open pull requests, provide some feedback on some of the open issues.
 - Create a new file in the `test-d` directory and write at least one type test.
 	- See the other tests for inspiration.
 	- If it makes sense, also write a negative test using [`expectError()`](https://github.com/SamVerschueren/tsd#expecterrorfunction).
