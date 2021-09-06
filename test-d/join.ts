@@ -3,7 +3,9 @@ import {Join} from '../index';
 
 // General use.
 const generalTest: Join<['foo', 'bar', 'baz'], '.'> = 'foo.bar.baz';
+const generalTestVariantWithNumbers: Join<['foo', 0, 'baz'], '.'> = 'foo.0.baz';
 expectType<'foo.bar.baz'>(generalTest);
+expectType<'foo.0.baz'>(generalTestVariantWithNumbers);
 expectError<'foo'>(generalTest);
 expectError<'foo.bar'>(generalTest);
 expectError<'foo.bar.ham'>(generalTest);
