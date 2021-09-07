@@ -7,13 +7,13 @@ Use-case: Defining key paths in a nested object. For example, for dot-notation f
 ```
 import {Join} from 'type-fest';
 
-// mixed (strings & numbers) items: 'foo.0.baz'
+// mixed (strings & numbers) items; result is: 'foo.0.baz'
 const path: Join<['foo', 0, 'baz'], '.'> = ['foo', 0, 'baz'].join('.');
 
-// only string items: 'foo.bar.baz'
+// only string items; result is: 'foo.bar.baz'
 const path: Join<['foo', 'bar', 'baz'], '.'> = ['foo', 'bar', 'baz'].join('.');
 
-// only number items: 1.2.3
+// only number items; result is: '1.2.3'
 const path: Join<[1, 2, 3], '.'> = [1, 2, 3].join('.');
 ```
 
