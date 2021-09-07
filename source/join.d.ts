@@ -1,5 +1,5 @@
 /**
-Join an array of strings and/or numbers using the given string as delimiter.
+Join an array of strings and/or numbers using the given string as a delimiter.
 
 Use-case: Defining key paths in a nested object. For example, for dot-notation fields in MongoDB queries.
 
@@ -7,7 +7,14 @@ Use-case: Defining key paths in a nested object. For example, for dot-notation f
 ```
 import {Join} from 'type-fest';
 
-const path: Join<['foo', '0', 'baz'], '.'> = ['foo', '0', 'baz'].join('.');
+// mixed (strings & numbers) items: 'foo.0.baz'
+const path: Join<['foo', 0, 'baz'], '.'> = ['foo', 0, 'baz'].join('.');
+
+// only string items: 'foo.bar.baz'
+const path: Join<['foo', 'bar', 'baz'], '.'> = ['foo', 'bar', 'baz'].join('.');
+
+// only number items: 1.2.3
+const path: Join<[1, 2, 3], '.'> = [1, 2, 3].join('.');
 ```
 
 @category Template Literals
