@@ -20,7 +20,7 @@ const path: Join<[1, 2, 3], '.'> = [1, 2, 3].join('.');
 @category Template Literals
 */
 export type Join<
-	Strings extends (string | number)[],
+	Strings extends Array<string | number>,
 	Delimiter extends string,
 > = Strings extends [] ? '' :
 	Strings extends [string | number] ? `${Strings[0]}` :
