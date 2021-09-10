@@ -1,3 +1,34 @@
+import {IsEqual} from './internal';
+
+/**
+Filter out keys from an object.
+
+Returns `never` if `Exclude` is strictly equal to `Key`.
+Returns `never` if `Key` extends `Exclude`.
+Returns `Key` otherwise.
+
+@example
+```
+type Filtered = Filter<'foo', 'foo'>;
+//=> never
+```
+
+@example
+```
+type Filtered = Filter<'bar', string>;
+//=> never
+```
+
+@example
+```
+type Filtered = Filter<'bar', 'foo'>;
+//=> 'bar'
+```
+
+@see {Except}
+*/
+type Filter<KeyType, ExcludeType> = IsEqual<KeyType, ExcludeType> extends true ? never : (KeyType extends ExcludeType ? never : KeyType);
+
 /**
 Create a type from an object type without certain keys.
 
@@ -21,4 +52,6 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 
 @category Utilities
 */
-export type Except<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectType, Exclude<keyof ObjectType, KeysType>>;
+export type Except<ObjectType, KeysType> = {
+	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
+};
