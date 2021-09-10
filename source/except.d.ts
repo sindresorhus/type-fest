@@ -1,6 +1,8 @@
-import {IsEqual} from './includes';
+import {IsEqual} from './internal';
 
 /**
+Used to filter keys out from an object.
+
 Returns `never` if `Exclude` is strictly equal to `Key`.
 Returns `never` if `Key` extends `Exclude`.
 Returns `Key` otherwise.
@@ -22,8 +24,9 @@ type Filtered = Filter<'bar', string>;
 type Filtered = Filter<'bar', 'foo'>;
 //=> 'bar'
 ```
-*/
 
+@see {Except}
+*/
 type Filter<Key, Exclude> = IsEqual<Key, Exclude> extends true ? never : (Key extends Exclude ? never : Key);
 
 /**
@@ -49,7 +52,6 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 
 @category Utilities
 */
-
 export type Except<ObjectType, KeysType> = {
 	[Key in keyof ObjectType as Filter<Key, KeysType>]: ObjectType[Key];
 };
