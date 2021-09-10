@@ -21,4 +21,12 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 
 @category Utilities
 */
-export type Except<ObjectType, KeysType extends keyof ObjectType> = Pick<ObjectType, Exclude<keyof ObjectType, KeysType>>;
+
+type EqualsTest<T> = <A>() => A extends T ? 1 : 0;
+type Equals<A1, A2> = EqualsTest<A2> extends EqualsTest<A1> ? 1 : 0;
+
+type Filter<K, I> = Equals<K, I> extends 1 ? never : (K extends I ? never : K);
+
+export type Except<T, I> = {
+	[K in keyof T as Filter<K, I>]: T[K];
+};
