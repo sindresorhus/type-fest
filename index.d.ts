@@ -59,6 +59,7 @@ export {Trim} from './source/trim';
 export {Includes} from './source/includes';
 export {Get} from './source/get';
 export {LastArrayElement} from './source/last-array-element';
+export {Url2Json} from './source/url2json';
 
 // Miscellaneous
 export {PackageJson} from './source/package-json';

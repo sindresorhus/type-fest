@@ -149,6 +149,7 @@ Click the type names for complete docs.
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
+- [`Url2Json`](source/url2json.d.ts) - Get query object from string.
 
 ### Miscellaneous
 
