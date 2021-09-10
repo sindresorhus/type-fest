@@ -27,7 +27,7 @@ type Filtered = Filter<'bar', 'foo'>;
 
 @see {Except}
 */
-type Filter<Key, Exclude> = IsEqual<Key, Exclude> extends true ? never : (Key extends Exclude ? never : Key);
+type Filter<KeyType, ExcludeType> = IsEqual<KeyType, ExcludeType> extends true ? never : (KeyType extends ExcludeType ? never : KeyType);
 
 /**
 Create a type from an object type without certain keys.
@@ -53,5 +53,5 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 @category Utilities
 */
 export type Except<ObjectType, KeysType> = {
-	[Key in keyof ObjectType as Filter<Key, KeysType>]: ObjectType[Key];
+	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
 };
