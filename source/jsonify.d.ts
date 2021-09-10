@@ -4,10 +4,11 @@ import {JsonPrimitive, JsonValue} from './basic';
 type NotJsonable = ((...args: any[]) => any) | undefined;
 
 /**
-Transform a type to one that is assignable to the `JsonValue` type. This includes:
+Transform a type to one that is assignable to the `JsonValue` type.
 
-1. Transforming JSON `interface` to a `type` that is assignable to `JsonValue`
-2. Transforming non JSON that is **Jsonable**, to a type that is assignable to JsonValue. Where **Jsonable** means the non JSON value implements `.toJSON()` method that returns a value that is assignable to `JsonValue`.
+This includes:
+1. Transforming JSON `interface` to a `type` that is assignable to `JsonValue`.
+2. Transforming non-JSON value that is *jsonable* to a type that is assignable to `JsonValue`, where *jsonable* means the non-JSON value implements the `.toJSON()` method that returns a value that is assignable to `JsonValue`.
 
 @remarks
 
@@ -39,15 +40,16 @@ fixedFn(point); // Good: point is assignable. Jsonify<T> transforms Geometry int
 fixedFn(new Date()); // Error: As expected, Date is not assignable. Jsonify<T> cannot transforms Date into value assignable to JsonValue
 ```
 
-Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed to a value assignable to `JsonValue`.
+Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed to a value assignable to `JsonValue`:
 
 @example
 ```
-const a = {
+const time = {
 	timeValue: new Date()
 };
-//Below, `Jsonify<typeof a>` is equivalent to `{timeValue: string}`
-const aJson = JSON.parse(JSON.stringify(a)) as Jsonify<typeof a>;
+
+// `Jsonify<typeof time>` is equivalent to `{timeValue: string}`
+const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 ```
 
 @link https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
