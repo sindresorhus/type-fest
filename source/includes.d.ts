@@ -21,6 +21,7 @@ import {Includes} from 'type-fest';
 type hasRed<array extends any[]> = Includes<array, 'red'>;
 ```
 
+@link https://stackoverflow.com/questions/68961864/how-does-the-equals-work-in-typescript/68963796#68963796
 @category Utilities
 */
 export type Includes<Value extends readonly any[], Item> =

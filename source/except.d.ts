@@ -1,3 +1,5 @@
+import {IsEqual} from './includes';
+
 /**
 Create a type from an object type without certain keys.
 
@@ -22,11 +24,8 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 @category Utilities
 */
 
-type EqualsTest<T> = <A>() => A extends T ? 1 : 0;
-type Equals<A1, A2> = EqualsTest<A2> extends EqualsTest<A1> ? 1 : 0;
+type Filter<A, B> = IsEqual<A, B> extends true ? never : (A extends B ? never : A);
 
-type Filter<K, I> = Equals<K, I> extends 1 ? never : (K extends I ? never : K);
-
-export type Except<T, I> = {
-	[K in keyof T as Filter<K, I>]: T[K];
+export type Except<ObjectType, KeysType> = {
+	[Key in keyof ObjectType as Filter<Key, KeysType>]: ObjectType[Key];
 };
