@@ -144,7 +144,7 @@ Click the type names for complete docs.
 - [`DelimiterCase`](source/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
 - [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
 - [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
-- [`Join`](source/join.d.ts) - Join an array of strings using the given string as delimiter.
+- [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.

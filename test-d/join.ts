@@ -2,11 +2,15 @@ import {expectError, expectType} from 'tsd';
 import {Join} from '../index';
 
 // General use.
-const generalTest: Join<['foo', 'bar', 'baz'], '.'> = 'foo.bar.baz';
-expectType<'foo.bar.baz'>(generalTest);
-expectError<'foo'>(generalTest);
-expectError<'foo.bar'>(generalTest);
-expectError<'foo.bar.ham'>(generalTest);
+const generalTestVariantMixed: Join<['foo', 0, 'baz'], '.'> = 'foo.0.baz';
+const generalTestVariantOnlyStrings: Join<['foo', 'bar', 'baz'], '.'> = 'foo.bar.baz';
+const generalTestVariantOnlyNumbers: Join<[1, 2, 3], '.'> = '1.2.3';
+expectType<'foo.0.baz'>(generalTestVariantMixed);
+expectType<'1.2.3'>(generalTestVariantOnlyNumbers);
+expectType<'foo.bar.baz'>(generalTestVariantOnlyStrings);
+expectError<'foo'>(generalTestVariantOnlyStrings);
+expectError<'foo.bar'>(generalTestVariantOnlyStrings);
+expectError<'foo.bar.ham'>(generalTestVariantOnlyStrings);
 
 // Empty string delimiter.
 const emptyDelimiter: Join<['foo', 'bar', 'baz'], ''> = 'foobarbaz';
