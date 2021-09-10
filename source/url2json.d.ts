@@ -39,5 +39,7 @@ type QueryParameters<String extends string> = Record<GetQueryString<String>, unk
  *        "a": 1,
  *        "b": 2
  *      }
+ * 
+ * @category Template Literals
  */
 export type Url2Json<String extends string> = Omit<GetValue<QueryParameters<String>, String>, ''>;
