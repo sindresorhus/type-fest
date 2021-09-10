@@ -1,7 +1,7 @@
 import {IsEqual} from './internal';
 
 /**
-Used to filter keys out from an object.
+Filter out keys from an object.
 
 Returns `never` if `Exclude` is strictly equal to `Key`.
 Returns `never` if `Key` extends `Exclude`.
