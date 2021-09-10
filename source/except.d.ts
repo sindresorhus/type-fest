@@ -1,6 +1,32 @@
 import {IsEqual} from './includes';
 
 /**
+Returns `never` if `Exclude` is strictly equal to `Key`.
+Returns `never` if `Key` extends `Exclude`.
+Returns `Key` otherwise.
+
+@example
+```
+type Filtered = Filter<'foo', 'foo'>;
+//=> never
+```
+
+@example
+```
+type Filtered = Filter<'bar', string>;
+//=> never
+```
+
+@example
+```
+type Filtered = Filter<'bar', 'foo'>;
+//=> 'bar'
+```
+*/
+
+type Filter<Key, Exclude> = IsEqual<Key, Exclude> extends true ? never : (Key extends Exclude ? never : Key);
+
+/**
 Create a type from an object type without certain keys.
 
 This type is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type). The `Omit` type does not restrict the omitted keys to be keys present on the given type, while `Except` does. The benefits of a stricter type are avoiding typos and allowing the compiler to pick up on rename refactors automatically.
@@ -23,8 +49,6 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 
 @category Utilities
 */
-
-type Filter<A, B> = IsEqual<A, B> extends true ? never : (A extends B ? never : A);
 
 export type Except<ObjectType, KeysType> = {
 	[Key in keyof ObjectType as Filter<Key, KeysType>]: ObjectType[Key];
