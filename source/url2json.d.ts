@@ -5,28 +5,28 @@ type GetQueryKeys<String extends string, Keys = ''> = String extends `${infer Ke
   ? String extends `${string}&${infer NextString}`
     ? GetQueryKeys<NextString, Keys | Key>
     : Keys | Key
-  : Keys
+  : Keys;
 
 /**
  * If has query string, get it
  */
-type GetQueryString<String extends string> = String extends `${string}?${infer QueryString}` ? GetQueryKeys<QueryString> : never
+type GetQueryString<String extends string> = String extends `${string}?${infer QueryString}` ? GetQueryKeys<QueryString> : never;
 
 /**
  * Get value according to key
  */
-type GetValue<Params, URL extends string> = {
-  [Key in keyof Params & string]: URL extends `${any}${'?' | '&'}${Key}=${infer NextString}`
+type GetValue<Parameters_, URL extends string> = {
+  [Key in keyof Parameters_ & string]: URL extends `${any}${'?' | '&'}${Key}=${infer NextString}`
     ? NextString extends `${infer Value}&${any}`
       ? Value
       : NextString
-    : Params[Key]
-}
+    : Parameters_[Key]
+};
 
 /**
  * Generate object based on key
  */
-type QueryParams<String extends string> = Record<GetQueryString<String>, unknown>
+type QueryParameters<String extends string> = Record<GetQueryString<String>, unknown>;
 
 /**
  * @example
@@ -40,4 +40,4 @@ type QueryParams<String extends string> = Record<GetQueryString<String>, unknown
  *        "b": 2
  *      }
  */
-export type Url2Json<String extends string> = Omit<GetValue<QueryParams<String>, String> ,''>
+export type Url2Json<String extends string> = Omit<GetValue<QueryParameters<String>, String>, ''>;
