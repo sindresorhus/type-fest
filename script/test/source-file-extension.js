@@ -2,23 +2,26 @@
 const fs = require('fs');
 const process = require('process');
 
-// eslint-disable-next-line node/prefer-promises/fs
-fs.readdir('source', (error, files) => {
-	if (error) {
+const checkSourceFilesExtension = async () => {
+	try {
+		const files = await fs.promises.readdir('source');
+
+		let hasWrongExtensionFile = false;
+		for (const file of files) {
+			if (!file.endsWith('.d.ts')) {
+				hasWrongExtensionFile = true;
+				console.error(`source/${file} extension should be \`.d.ts\`.`);
+			}
+		}
+
+		if (hasWrongExtensionFile) {
+			// eslint-disable-next-line unicorn/no-process-exit
+			process.exit(1);
+		}
+	} catch (error) {
 		console.error(error);
 		process.exitCode = 1;
 	}
+};
 
-	let hasWrongExtensionFile = false;
-	for (const file of files) {
-		if (!file.endsWith('.d.ts')) {
-			hasWrongExtensionFile = true;
-			console.error(`source/${file} extension should be \`.d.ts\`.`);
-		}
-	}
-
-	if (hasWrongExtensionFile) {
-		// eslint-disable-next-line unicorn/no-process-exit
-		process.exit(1);
-	}
-});
+checkSourceFilesExtension();
