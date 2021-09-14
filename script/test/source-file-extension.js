@@ -6,22 +6,18 @@ const process = require('process');
 fs.readdir('source', (error, files) => {
 	if (error) {
 		console.error(error);
-		// eslint-disable-next-line unicorn/no-process-exit
-		process.exit(1);
+		process.exitCode = 1;
 	}
 
-	const wrongExtensionFiles = [];
+	let hasWrongExtensionFile = false;
 	for (const file of files) {
-		if (!/\.d\.ts$/.test(file)) {
-			wrongExtensionFiles.push(file);
+		if (!file.endsWith('.d.ts')) {
+			hasWrongExtensionFile = true;
+			console.error(`source/${file} extension should be \`.d.ts\`.`);
 		}
 	}
 
-	if (wrongExtensionFiles) {
-		for (const file of wrongExtensionFiles) {
-			console.error(`source/${file} extension should be '.d.ts'.`);
-		}
-
+	if (hasWrongExtensionFile) {
 		// eslint-disable-next-line unicorn/no-process-exit
 		process.exit(1);
 	}
