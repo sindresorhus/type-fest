@@ -21,5 +21,7 @@ export type LastArrayElement<ValueType extends readonly unknown[]> =
 	ValueType extends [infer ElementType]
 		? ElementType
 		: ValueType extends [infer _, ...infer Tail]
-			? LastArrayElement<Tail>
-			: never;
+		? LastArrayElement<Tail>
+		: ValueType extends Array<infer ElementType>
+		? ElementType
+		: never;
