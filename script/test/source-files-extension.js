@@ -15,8 +15,7 @@ const checkSourceFilesExtension = async () => {
 		}
 
 		if (hasWrongExtensionFile) {
-			// eslint-disable-next-line unicorn/no-process-exit
-			process.exit(1);
+			process.exitCode = 1;
 		}
 	} catch (error) {
 		console.error(error);
