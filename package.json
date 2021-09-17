@@ -14,7 +14,7 @@
 		"node": ">=12.20"
 	},
 	"scripts": {
-		"test": "xo && tsd && tsc"
+		"test": "xo && tsd && tsc && node script/test/source-files-extension.js"
 	},
 	"files": [
 		"index.d.ts",
