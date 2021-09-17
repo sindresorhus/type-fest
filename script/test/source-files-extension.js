@@ -9,7 +9,7 @@ const checkSourceFilesExtension = async () => {
 		let hasIncorrectFileExtension = false;
 		for (const file of files) {
 			if (!file.endsWith('.d.ts')) {
-				hasWrongExtensionFile = true;
+				hasIncorrectFileExtension = true;
 				console.error(`source/${file} extension should be \`.d.ts\`.`);
 			}
 		}
