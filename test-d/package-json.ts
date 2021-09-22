@@ -16,7 +16,7 @@ expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
 expectType<PackageJson.Person[] | undefined>(packageJson.maintainers);
 expectType<string[] | undefined>(packageJson.files);
 expectType<string | undefined>(packageJson.main);
-expectType<string | Record<string, string> | undefined>(packageJson.bin);
+expectType<string | Partial<Record<string, string>> | undefined>(packageJson.bin);
 expectType<string | undefined>(packageJson.types);
 expectType<string | undefined>(packageJson.typings);
 expectType<string | string[] | undefined>(packageJson.man);
@@ -36,7 +36,7 @@ expectType<string[] | undefined>(packageJson.bundleDependencies);
 expectType<string[] | undefined>(packageJson.bundledDependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
 expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
-expectType<Record<string, string> | undefined>(packageJson.engines);
+expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
 	| undefined
@@ -66,5 +66,18 @@ expectType<
 	| undefined
 >(packageJson.esnext);
 expectType<PackageJson | undefined>(packageJson.jspm);
+
+// Undefined assigns
+expectAssignable<PackageJson.Dependency>({dep: undefined});
+expectAssignable<typeof packageJson['engines']>({engine: undefined});
+expectAssignable<typeof packageJson['scripts']>({unknownScript: undefined});
+expectAssignable<typeof packageJson['bin']>({bin: undefined});
+expectAssignable<typeof packageJson['typesVersions']>({
+	'>=4': {
+		'*': ['src'],
+		somethingElse: undefined,
+	},
+	'<4': undefined,
+});
 
 expectNotAssignable<Record<string, unknown>>(packageJson);
