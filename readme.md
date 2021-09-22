@@ -129,8 +129,8 @@ Click the type names for complete docs.
 ### Template literal types
 
 - [`CamelCase`](source/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
-- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) – Convert object properties to camel-case  (`fooBar`).
-- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively  (`fooBar`).
+- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) – Convert object properties to camel-case (`fooBar`).
+- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively (`fooBar`).
 - [`KebabCase`](source/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
 - [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) – Convert a object properties to kebab-case recursively (`foo-bar`).
 - [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) – Convert object properties to kebab-case (`foo-bar`).
@@ -680,7 +680,7 @@ There are many advanced types most users don't know about.
 	type AnimalShortInfo = Omit<Animal, 'images' | 'paragraphs'>;
 
 	function renderAnimalHoverInfo (animals: AnimalShortInfo[]): HTMLElement {
-			const container =  document.createElement('div');
+			const container = document.createElement('div');
 			// Internal implementation.
 			return container;
 	}

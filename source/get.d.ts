@@ -49,7 +49,7 @@ type ConsistsOnlyOf<LongString extends string, Substring extends string> =
 	? true
 	: LongString extends `${Substring}${infer Tail}`
 	? ConsistsOnlyOf<Tail, Substring>
-  : false;
+	: false;
 
 /**
 Convert a type which may have number keys to one with string keys, making it possible to index using strings retrieved from template types.

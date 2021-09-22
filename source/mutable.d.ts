@@ -35,6 +35,6 @@ export type Mutable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 	Simplify<
 		// Pick just the keys that are not mutable from the base type.
 		Except<BaseType, Keys> &
-        // Pick the keys that should be mutable from the base type and make them mutable by removing the `readonly` modifier from the key.
-        {-readonly [KeyType in keyof Pick<BaseType, Keys>]: Pick<BaseType, Keys>[KeyType]}
+		// Pick the keys that should be mutable from the base type and make them mutable by removing the `readonly` modifier from the key.
+		{-readonly [KeyType in keyof Pick<BaseType, Keys>]: Pick<BaseType, Keys>[KeyType]}
 	>;

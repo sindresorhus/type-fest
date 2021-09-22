@@ -12,8 +12,8 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31394)
 import {Promisable} from 'type-fest';
 
 async function logger(getLogEntry: () => Promisable<string>): Promise<void> {
-    const entry = await getLogEntry();
-    console.log(entry);
+	const entry = await getLogEntry();
+	console.log(entry);
 }
 
 logger(() => 'foo');
