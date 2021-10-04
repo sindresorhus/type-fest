@@ -1,3 +1,28 @@
+/**
+Create a type that represents a multidimensional array of the given type and dimension.
+
+Use-cases:
+- Declaring n-dimensional array easily and declaratively.
+- Creating n-dimensional array in functions.
+
+@example
+```
+import {MultidimensionalArray} from 'type-fest';
+
+function emptyMatrix<T extends number>(dimensions: T): MultiDimensionalArray<number, T> {
+  // Initialize the matrix in somehow
+  return [];
+}
+
+const matrix = emptyMatrix(3);
+
+matrix[0] = [];
+matrix[0][0] = [];
+matrix[0][0][0] = 42;
+```
+
+@category Utilities
+ */
 export type MultidimensionalArray<Element, Dimensions extends number> = number extends Dimensions
 	? Recursive<Element>
 	: EQ<Dimensions, 0> extends true
@@ -6,7 +31,8 @@ export type MultidimensionalArray<Element, Dimensions extends number> = number e
 
 type Recursive<T> = Array<Recursive<T>>;
 
-// The idea of the following comes from Ryan Dabler:
+// The MultidimensionalArray depends on the following types that come from a blogpost from Ryan Dabler where he explains
+// how we can implement simple arithmetic operations within types.
 // https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 type Length<T extends any[]> = T extends {length: infer L}
 	? L
