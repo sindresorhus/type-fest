@@ -21,7 +21,7 @@ type OnNext<ValueType> = (value: ValueType) => void;
 type OnError = (error: any) => void;
 type OnComplete = () => void;
 
-type ObserverObject<ValueType> = {
+type Observer<ValueType> = {
 	next: OnNext<ValueType>;
 	error?: OnError;
 	complete?: OnComplete;
@@ -35,7 +35,7 @@ Matches a value that is like an [Observable](https://github.com/tc39/proposal-ob
 @category Basic
 */
 export interface ObservableLike<ValueType = unknown> {
-	subscribe(observer: OnNext<ValueType>, onError?: OnError, onComplete?: OnComplete): Subscription;
-	subscribe(observer: ObserverObject<ValueType>): Subscription;
+	subscribe(onNext: OnNext<ValueType>, onError?: OnError, onComplete?: OnComplete): Subscription;
+	subscribe(observer: Observer<ValueType>): Subscription;
 	[Symbol.observable](): ObservableLike<ValueType>;
 }
