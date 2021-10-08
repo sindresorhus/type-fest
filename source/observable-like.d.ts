@@ -27,8 +27,16 @@ type Observer<ValueType> = {
 /**
 Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 
+@remarks
+The TC39 Observable proposal defines 2 forms of subscribe():
+1) three callback arguments: `subscribe(observer: OnNext<ValueType>, onError?: OnError, onComplete?: OnComplete): Unsubscribable;`
+2) a single `observer` argument: (as defined below)
+
+But `Observable` implementations have evolved to preferring case 2 and some implementations choose not to implement case 1. Therefore an `ObservableLike` can't be trusted to implement the first case.  (xstream and hand built observerables often do not implement case 1)
+
 @see https://github.com/tc39/proposal-observable#observable
 @see https://github.com/tc39/proposal-observable/blob/master/src/Observable.js#L246-L259
+@see https://benlesh.com/posts/learning-observable-by-building-observable/
 @category Basic
 */
 export interface ObservableLike<ValueType = unknown> {
