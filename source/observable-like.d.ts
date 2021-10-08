@@ -18,7 +18,7 @@ type OnNext<ValueType> = (value: ValueType) => void;
 type OnError = (error: any) => void;
 type OnComplete = () => void;
 
-type Observer<ValueType> = {
+export type Observer<ValueType> = {
 	next: OnNext<ValueType>;
 	error: OnError;
 	complete: OnComplete;
