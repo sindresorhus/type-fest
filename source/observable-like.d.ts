@@ -34,7 +34,6 @@ Matches a value that is like an [Observable](https://github.com/tc39/proposal-ob
 @category Basic
 */
 export interface ObservableLike<ValueType = unknown> {
-	subscribe(onNext: OnNext<ValueType>, onError?: OnError, onComplete?: OnComplete): Subscription;
 	subscribe(observer?: Partial<Observer<ValueType>>): Subscription;
 	[Symbol.observable](): ObservableLike<ValueType>;
 }
