@@ -34,10 +34,6 @@ const userEntities: NormalizedDictionary<Foo> = {
 
 const johnsId = '7dd4a16e-d5ee-454c-b1d0-71e23d9fa70b' as UUID;
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // @ts-expect-error
-const userJohn = userEntities[johnsId];
+const userJohn = userEntities[johnsId]; // eslint-disable-line @typescript-eslint/no-unused-vars
 /// expectType<Foo>(userJohn);
-/* eslint-enable @typescript-eslint/no-unsafe-assignment */
-/* eslint-enable @typescript-eslint/no-unused-vars */
