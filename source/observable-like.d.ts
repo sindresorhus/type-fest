@@ -1,8 +1,6 @@
-declare global {
-	interface SymbolConstructor {
-		readonly observable: symbol;
-	}
-}
+// Symbol.observable is not a well-known symbol (yet).
+// Using the de-facto ponyfill to ensure everyone is using the same symbol
+import 'symbol-observable'; // eslint-disable-line import/no-unassigned-import
 
 /**
 @remarks

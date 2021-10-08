@@ -48,5 +48,8 @@
 			"@typescript-eslint/no-redeclare": "off",
 			"@typescript-eslint/no-confusing-void-expression": "off"
 		}
+	},
+	"dependencies": {
+		"symbol-observable": "^4.0.0"
 	}
 }
