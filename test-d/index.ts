@@ -6,7 +6,9 @@ expectAssignable<symbol>(Symbol.observable);
 
 const observable = (null as any) as ObservableLike;
 
-observable.subscribe(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+const subscription = observable.subscribe(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+expectType<{closed?: boolean; unsubscribe(): void}>(subscription);
+
 observable.subscribe(value => {
  expectType<unknown>(value);
 });
