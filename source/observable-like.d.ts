@@ -13,7 +13,6 @@ As well, some guideance on making an `Observable` do not include `closed` proper
 @see https://github.com/benlesh/symbol-observable#making-an-object-observable
 */
 export type Subscription = {
-	closed?: boolean;
 	unsubscribe(): void;
 };
 
@@ -23,8 +22,8 @@ type OnComplete = () => void;
 
 type Observer<ValueType> = {
 	next: OnNext<ValueType>;
-	error?: OnError;
-	complete?: OnComplete;
+	error: OnError;
+	complete: OnComplete;
 };
 
 /**
@@ -36,6 +35,6 @@ Matches a value that is like an [Observable](https://github.com/tc39/proposal-ob
 */
 export interface ObservableLike<ValueType = unknown> {
 	subscribe(onNext: OnNext<ValueType>, onError?: OnError, onComplete?: OnComplete): Subscription;
-	subscribe(observer: Observer<ValueType>): Subscription;
+	subscribe(observer?: Partial<Observer<ValueType>>): Subscription;
 	[Symbol.observable](): ObservableLike<ValueType>;
 }
