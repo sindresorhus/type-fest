@@ -12,7 +12,7 @@ As well, some guideance on making an `Observable` do not include `closed` proper
 @see https://github.com/staltz/xstream/blob/6c22580c1d84d69773ee4b0905df44ad464955b3/src/index.ts#L79-L85
 @see https://github.com/benlesh/symbol-observable#making-an-object-observable
 */
-export type Subscription = {
+export type Unsubscribable = {
 	unsubscribe(): void;
 };
 
@@ -34,6 +34,6 @@ Matches a value that is like an [Observable](https://github.com/tc39/proposal-ob
 @category Basic
 */
 export interface ObservableLike<ValueType = unknown> {
-	subscribe(observer?: Partial<Observer<ValueType>>): Subscription;
+	subscribe(observer?: Partial<Observer<ValueType>>): Unsubscribable;
 	[Symbol.observable](): ObservableLike<ValueType>;
 }
