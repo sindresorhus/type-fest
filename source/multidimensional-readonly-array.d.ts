@@ -1,13 +1,15 @@
 import {IsEqual, Subtract} from './internal';
 
+type Recursive<T> = ReadonlyArray<Recursive<T>>;
+
 /**
 Creates a type that represents a multidimensional readonly array that of the given type and dimension.
 
 Use-cases:
 - Return a n-dimensional array from functions.
-- Declare a n-dimensional array by defining its dimensions rather than declaring `[]` repetitively
-- Infer the dimensions of a n-dimensional array automatically from function arguments
-- Avoid the need to know in advance the dimensions of a n-dimensional array allowing them to be dynamic
+- Declare a n-dimensional array by defining its dimensions rather than declaring `[]` repetitively.
+- Infer the dimensions of a n-dimensional array automatically from function arguments.
+- Avoid the need to know in advance the dimensions of a n-dimensional array allowing them to be dynamic.
 
 @example
 ```
@@ -41,5 +43,3 @@ export type MultidimensionalReadonlyArray<Element, Dimensions extends number> = 
 	: IsEqual<Dimensions, 0> extends true
 		? Element
 		: ReadonlyArray<MultidimensionalReadonlyArray<Element, Subtract<Dimensions, 1>>>;
-
-type Recursive<T> = ReadonlyArray<Recursive<T>>;
