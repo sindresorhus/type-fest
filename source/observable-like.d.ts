@@ -15,7 +15,7 @@ export type Unsubscribable = {
 };
 
 type OnNext<ValueType> = (value: ValueType) => void;
-type OnError = (error: any) => void;
+type OnError = (error: unknown) => void;
 type OnComplete = () => void;
 
 export type Observer<ValueType> = {
