@@ -54,6 +54,8 @@ Either add this package as a dependency or copy-paste the needed types. No credi
 
 PR welcome for additional commonly needed types and docs improvements. Read the [contributing guidelines](.github/contributing.md) first.
 
+**Help wanted with reviewing [proposals](https://github.com/sindresorhus/type-fest/issues) and [pull requests](https://github.com/sindresorhus/type-fest/pulls).**
+
 ## Install
 
 ```
