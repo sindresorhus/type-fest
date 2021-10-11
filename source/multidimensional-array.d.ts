@@ -19,7 +19,9 @@ function emptyMatrix<T extends number>(dimensions: T): MultidimensionalArray<unk
 	const matrix: unknown[] = [];
 
 	let subMatrix = matrix;
-	for (let i = 1; i < dimensions; ++i) {
+	for (let dimension = 1; dimension < dimensions; ++dimension) {
+		console.log(`Initializing dimension #${dimension}`);
+
 		subMatrix[0] = [];
 		subMatrix = subMatrix[0] as unknown[];
 	}

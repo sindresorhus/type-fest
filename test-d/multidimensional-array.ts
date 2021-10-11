@@ -5,7 +5,9 @@ function createArray<T extends number>(dimensions: T): MultidimensionalArray<unk
 	const root: unknown[] = [];
 
 	let array = root;
-	for (let i = 1; i < dimensions; ++i) {
+	for (let dimension = 1; dimension < dimensions; ++dimension) {
+		console.log(`Initializing dimension #${dimension}`);
+
 		array[0] = [];
 		array = array[0] as unknown[];
 	}
