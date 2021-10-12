@@ -24,7 +24,7 @@ Create a tuple type of the given length `<L>`.
 */
 type BuildTuple<L extends number, T extends readonly unknown[] = []> = T extends {readonly length: L}
 	? T
-	: BuildTuple<L, [...T, unknown]>;
+	: BuildTuple<L, [...T, T[any]]>;
 
 /**
 Create a tuple of length `A` and a tuple composed of two other tuples,
