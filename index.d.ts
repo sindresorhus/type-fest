@@ -28,6 +28,8 @@ export {ConditionalPick} from './source/conditional-pick';
 export {UnionToIntersection} from './source/union-to-intersection';
 export {Stringified} from './source/stringified';
 export {FixedLengthArray} from './source/fixed-length-array';
+export {MultidimensionalArray} from './source/multidimensional-array';
+export {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array';
 export {IterableElement} from './source/iterable-element';
 export {Entry} from './source/entry';
 export {Entries} from './source/entries';
