@@ -6,6 +6,8 @@ export * from './source/observable-like';
 
 // Utilities
 export {Except} from './source/except';
+export {ExcludeStrict} from './source/exclude-strict';
+export {ExtractStrict} from './source/extract-strict';
 export {Mutable} from './source/mutable';
 export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';
