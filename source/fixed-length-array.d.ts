@@ -1,10 +1,7 @@
-/**
-Methods to exclude.
-*/
-type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift';
+import {BuildTuple} from './internal';
 
 /**
-Create a type that represents an array of the given type and length. The array's length and the `Array` prototype methods that manipulate its length are excluded in the resulting type.
+Create a type that represents an array of the given type and length.
 
 Please participate in [this issue](https://github.com/microsoft/TypeScript/issues/26223) if you want to have a similiar type built into TypeScript.
 
@@ -30,11 +27,4 @@ guestFencingTeam.push('Sam');
 
 @category Utilities
 */
-export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<
-	ArrayPrototype,
-	Exclude<keyof ArrayPrototype, ArrayLengthMutationKeys>
-> & {
-	[index: number]: Element;
-	[Symbol.iterator]: () => IterableIterator<Element>;
-	readonly length: Length;
-};
+export type FixedLengthArray<Element, Length extends number> = BuildTuple<Length, Element>;
