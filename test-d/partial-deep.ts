@@ -4,7 +4,7 @@ import {PartialDeep} from '../index';
 const foo = {
 	baz: 'fred',
 	bar: {
-		function: (_: string): void => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+		function: (_: string): void => undefined,
 		object: {key: 'value'},
 		string: 'waldo',
 		number: 1,
@@ -47,3 +47,15 @@ expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
 // Check for compiling with omitting partial keys
 partialDeepFoo = {baz: 'fred'};
 partialDeepFoo = {bar: {string: 'waldo'}};
+
+// Check that recursive array evalution isn't infinite depth
+type Recurse =
+    | string
+    | number
+    | boolean
+    | null
+    | Record<string, Recurse[]>
+    | Recurse[];
+type RecurseObject = {value: Recurse};
+const recurseObject: RecurseObject = {value: null};
+expectAssignable<PartialDeep<RecurseObject>>(recurseObject);
