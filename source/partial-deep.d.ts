@@ -43,7 +43,11 @@ export type PartialDeep<T> = T extends Primitive
 	: T extends ((...arguments: any[]) => unknown)
 	? T | undefined
 	: T extends object
-	? PartialObjectDeep<T>
+	? T extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
+		? ItemType[] extends T // Test for arrays (non-tuples) specifically
+			? Array<PartialDeep<ItemType | undefined>> // Recreate relevant array type to prevent eager evaluation of circular reference
+			: PartialObjectDeep<T> // Tuples behave properly
+		: PartialObjectDeep<T>
 	: unknown;
 
 /**
