@@ -21,24 +21,24 @@ interface SomeInterface {
   baz: number | undefined;
 }
 
-type SomeType = {
+type SomeInterfaceAsTypeWrittenByHand = {
   foo: number;
   bar?: string;
   baz: number | undefined;
 };
 
-const literal = {foo: 123, bar: 'hello', baz: 456};
-const someType: SomeType = literal;
-const someInterface: SomeInterface = literal;
+const valueAsLiteral = {foo: 123, bar: 'hello', baz: 456};
+const valueAsSimplifiedInterface: Simplify<SomeInterface> = valueAsLiteral;
+const valueAsInterface: SomeInterface = valueAsLiteral;
 
-// Default behavior
-expectAssignable<Record<string, unknown>>(literal);
-expectAssignable<Record<string, unknown>>(someType);
-expectNotAssignable<Record<string, unknown>>(someInterface); // Index signature is missing in interface
+declare const a: Simplify<SomeInterface>;
+expectType<SomeInterfaceAsTypeWrittenByHand>(a);
 
-// Simplify to transform an interface into a type to aide with assignability.
-expectAssignable<Record<string, unknown>>(literal as Simplify<typeof literal>);
-expectAssignable<Record<string, unknown>>(someType as Simplify<SomeType>);
-expectType<SomeType>(someInterface as Simplify<SomeInterface>);
-expectAssignable<Record<string, unknown>>(someInterface as Simplify<SomeInterface>);
+// Interface is assignable to its Simplified type (created with Simplify, and by hand)
+expectType<Simplify<SomeInterface>>(valueAsInterface);
+expectType<SomeInterfaceAsTypeWrittenByHand>(valueAsInterface);
 
+// The following demonstrates one reason a type may be preferred over an interface is that it can be assigned to alternate types. In this example the interface cannot be because it is not sealed and elsewhere a non-string property could be added.
+expectAssignable<Record<string, unknown>>(valueAsLiteral);
+expectAssignable<Record<string, unknown>>(valueAsSimplifiedInterface);
+expectNotAssignable<Record<string, unknown>>(valueAsInterface); // Index signature is missing in interface
