@@ -10,11 +10,16 @@ expectNotAssignable<FixedToThreeStrings>(['a']);
 expectNotAssignable<FixedToThreeStrings>(['a', 'b']);
 expectNotAssignable<FixedToThreeStrings>(['a', 'b', 'c', 'd']);
 
-declare const a: FixedLengthArray<number, 2>;
+declare const a: FixedToThreeStrings;
 
-expectAssignable<typeof a.length>(2);
-expectNotAssignable<typeof a.length>(3);
+expectType<IterableIterator<string>>(a[Symbol.iterator]());
+expectType<string>(a[1]);
 
-expectType<2>(a.length);
-expectType<IterableIterator<number>>(a[Symbol.iterator]());
-expectType<number>(a[1]);
+// FixedLengthArray<string, 3> is a readonly array and cannot be assigned to array.
+// * it does not have .push() etc..
+expectNotAssignable<string[]>(a);
+
+// FixedLengthArray<string, number> is not a readonly array because Length is not finite number
+// * So it is assiable to string[]
+declare const b: FixedLengthArray<string, number>;
+expectAssignable<string[]>(b);

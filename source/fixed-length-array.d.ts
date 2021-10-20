@@ -1,4 +1,12 @@
-import {BuildTuple} from './internal';
+/**
+ * Creates a ReadonlyArray<Element> of length Length (aka a tuple)
+ * @private
+ * @see FixedLengthArray which is safer because it tests if `Length` is a specific finite number
+ */
+type BuildTupleHelper<Element, Length extends number, Rest extends Element[]> =
+	Rest['length'] extends Length ?
+		readonly [...Rest] : // Terminate with readonly array (aka tuple)
+		BuildTupleHelper<Element, Length, [Element, ...Rest]>;
 
 /**
 Create a type that represents an array of the given type and length.
@@ -27,4 +35,8 @@ guestFencingTeam.push('Sam');
 
 @category Utilities
 */
-export type FixedLengthArray<Element, Length extends number> = BuildTuple<Length, Element>;
+export type FixedLengthArray<Element, Length extends number> =
+	number extends Length ?
+		// Because `Length extends number` and `number extends Length`, then Length is not a specific finite number
+		Element[] : // It's not fixed length
+		BuildTupleHelper<Element, Length, []>; // Otherwise it is fixed length tuple
