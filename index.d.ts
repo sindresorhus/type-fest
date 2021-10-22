@@ -33,6 +33,7 @@ export {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-
 export {IterableElement} from './source/iterable-element';
 export {Entry} from './source/entry';
 export {Entries} from './source/entries';
+export {Paths} from './source/paths';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
