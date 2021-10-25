@@ -16,6 +16,9 @@ expectType<'foo#bar'>(delimiterFromCamel);
 const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
 
+const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
+expectType<'foo#bar'>(delimiterFromPascal);
+
 const delimiterFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromKebab);
 
