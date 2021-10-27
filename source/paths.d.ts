@@ -40,5 +40,6 @@ type UserPaths = Paths<User>;
 // | `friends.${number}`
 // | `friends.${number}.id`
 // | `friends.${number}.name`
- */
-export type Paths<TObject> = InternalPaths<TObject, ''>;
+```
+*/
+export type Paths<ObjectType> = InternalPaths<ObjectType, ''>;
