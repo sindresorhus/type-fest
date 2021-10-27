@@ -127,7 +127,7 @@ Click the type names for complete docs.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
-- [`Simplify`](source/simplify.d.ts) - Flatten the type output to improve type hints shown in editors.
+- [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
 
 ### Template literal types
