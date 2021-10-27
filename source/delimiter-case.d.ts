@@ -24,8 +24,9 @@ Format a specific part of the splitted string literal that `StringArrayToDelimit
 
 @see StringArrayToDelimiterCase
 */
-type StringPartToDelimiterCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
+type StringPartToDelimiterCase<StringPart extends string, Start extends boolean, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	StringPart extends UsedWordSeparators ? Delimiter :
+	Start extends true ? Lowercase<StringPart> :
 	StringPart extends UsedUpperCaseCharacters ? `${Delimiter}${Lowercase<StringPart>}` :
 	StringPart;
 
@@ -36,9 +37,9 @@ It receives `UsedWordSeparators` and `UsedUpperCaseCharacters` as input to ensur
 
 @see SplitIncludingDelimiters
 */
-type StringArrayToDelimiterCase<Parts extends readonly any[], UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
+type StringArrayToDelimiterCase<Parts extends readonly any[], Start extends boolean, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? `${StringPartToDelimiterCase<FirstPart, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
+		? `${StringPartToDelimiterCase<FirstPart, Start, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, false, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
 		: '';
 
 /**
@@ -81,6 +82,7 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 export type DelimiterCase<Value, Delimiter extends string> = Value extends string
 	? StringArrayToDelimiterCase<
 		SplitIncludingDelimiters<Value, WordSeparators | UpperCaseCharacters>,
+		true,
 		WordSeparators,
 		UpperCaseCharacters,
 		Delimiter
