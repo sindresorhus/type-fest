@@ -1,35 +1,34 @@
-import { UpperCaseCharacters, WordSeparators } from "./utilities";
+import { StringDigit, UpperCaseCharacters } from "./utilities";
 import { SplitIncludingDelimiters } from "./delimiter-case";
 import { CamelCase } from "./camel-case";
+import { Join } from "./join";
 
-type StringPartToTitleize<
-	StringPart extends string,
-	UsedWordSeparators extends string,
-	UsedUpperCaseCharacters extends string,
-	Delimiter extends string
-> = StringPart extends UsedWordSeparators
-	? Delimiter
-	: StringPart extends UsedUpperCaseCharacters
-	? `${Delimiter}${Uppercase<StringPart>}`
-	: StringPart;
-
-type StringArrayToTitleize<
-	Parts extends readonly any[],
-	UsedWordSeparators extends string,
-	UsedUpperCaseCharacters extends string,
-	Delimiter extends string
-> = Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-	? `${StringPartToTitleize<
-			FirstPart,
-			UsedWordSeparators,
-			UsedUpperCaseCharacters,
-			Delimiter
-	  >}${StringArrayToTitleize<
-			RemainingParts,
-			UsedWordSeparators,
-			UsedUpperCaseCharacters,
-			Delimiter
-	  >}`
+type TitleizeJoin<Parts extends readonly any[]> = Parts extends [
+	`${infer FirstPart}`,
+	`${infer SecondPart}`,
+	...infer Rest
+]
+	? FirstPart extends StringDigit
+		? `${Capitalize<FirstPart>}${Titleize<
+				Join<
+					[SecondPart, Rest extends string[] | number[] ? Join<Rest, ""> : ""],
+					""
+				>
+		  >}`
+		: `${Capitalize<FirstPart>} ${Titleize<
+				Join<
+					[SecondPart, Rest extends string[] | number[] ? Join<Rest, ""> : ""],
+					""
+				>
+		  >}`
+	: Parts extends [`${infer FirstPart}`, ...infer Rest]
+	? `${Capitalize<FirstPart>}${Rest extends string
+			? Rest
+			: TitleizeJoin<Rest>}`
+	: Parts extends [string | number]
+	? Parts extends [string]
+		? Capitalize<Parts[0]>
+		: `${Parts[0]}`
 	: "";
 
 /**
@@ -90,15 +89,5 @@ const columns = Object(apiObject).keys().map(key => ({ field: key, headerName: t
 @category Template Literals
 */
 export type Titleize<K> = K extends string
-	? Capitalize<
-			StringArrayToTitleize<
-				SplitIncludingDelimiters<
-					CamelCase<K>,
-					WordSeparators | UpperCaseCharacters
-				>,
-				WordSeparators,
-				UpperCaseCharacters,
-				" "
-			>
-	  >
+	? TitleizeJoin<SplitIncludingDelimiters<CamelCase<K>, UpperCaseCharacters | StringDigit>>
 	: K;

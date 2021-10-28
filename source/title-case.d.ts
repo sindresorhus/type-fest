@@ -1,35 +1,46 @@
-import { UpperCaseCharacters } from "./utilities";
+import { StringDigit, UpperCaseCharacters } from "./utilities";
 import { SplitIncludingDelimiters } from "./delimiter-case";
 import { CamelCase } from "./camel-case";
 import { Join } from "./join";
 
-type Conjunctions = "and" | "as" | "but" | "for" | "if" | "nor" | "or" | "so" | "yet";
-type Articles = "a" | "an" | "the";
-type ShortPrepositions = "as" | "at" | "by" | "for" | "in" | "of" | "off" | "on" | "per" | "to" | "up" | "via" | "is";
+export type Conjunctions = "and" | "as" | "but" | "for" | "if" | "nor" | "or" | "so" | "yet";
+export type Articles = "a" | "an" | "the";
+export type ShortPrepositions = "as" | "at" | "by" | "for" | "in" | "of" | "off" | "on" | "per" | "to" | "up" | "via" | "is" | "ok";
 
-type ApaIgnoreUpperCase = Conjunctions | Articles | ShortPrepositions;
+export type ApaIgnoreUpperCase = Conjunctions | Articles | ShortPrepositions;
 
-type ApaTitleCase<K> = K extends string
-	? Lowercase<K> extends ApaIgnoreUpperCase
+type ApaTitleCase<K, I extends ApaIgnoreUpperCase> = K extends string
+	? Lowercase<K> extends I
 		? Lowercase<K>
 		: Capitalize<K>
 	: K;
 
-type TitleCaseJoin<Parts extends readonly any[]> = Parts extends [
+type TitleCaseJoin<Parts extends readonly any[], I extends ApaIgnoreUpperCase> = Parts extends [
 	`${infer FirstPart}`,
 	`${infer SecondPart}`,
 	...infer Rest
 ]
-	? `${ApaTitleCase<FirstPart>} ${TitleCase<
-			Join<
-				[SecondPart, Rest extends string[] | number[] ? Join<Rest, ""> : ""],
-				""
-			>
-	  >}`
+	? FirstPart extends StringDigit
+		? `${ApaTitleCase<FirstPart, I>}${TitleCase<
+				Join<
+					[SecondPart, Rest extends string[] | number[] ? Join<Rest, ""> : ""],
+					""
+				>
+		  >}`
+		: `${ApaTitleCase<FirstPart, I>} ${TitleCase<
+				Join<
+					[SecondPart, Rest extends string[] | number[] ? Join<Rest, ""> : ""],
+					""
+				>
+		  >}`
 	: Parts extends [`${infer FirstPart}`, ...infer Rest]
-	? `${ApaTitleCase<FirstPart>}${Rest extends string
+	? `${ApaTitleCase<FirstPart, I>}${Rest extends string
 			? Rest
-			: TitleCaseJoin<Rest>}`
+			: TitleCaseJoin<Rest, I>}`
+	: Parts extends [string | number]
+	? Parts extends [string]
+		? Capitalize<Parts[0]>
+		: `${Parts[0]}`
 	: "";
 
 /**
@@ -75,6 +86,9 @@ const columns: CustomGridColDef[] = [
 
 @category Template Literals
 */
-export type TitleCase<K> = K extends string
-	? TitleCaseJoin<SplitIncludingDelimiters<CamelCase<K>, UpperCaseCharacters>>
+export type TitleCase<K, I extends ApaIgnoreUpperCase = ApaIgnoreUpperCase> = K extends string
+	? TitleCaseJoin<
+			SplitIncludingDelimiters<CamelCase<K>, UpperCaseCharacters | StringDigit>,
+			I
+	  >
 	: K;
