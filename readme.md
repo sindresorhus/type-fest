@@ -150,6 +150,8 @@ Click the type names for complete docs.
 - [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+- [`TitleCase`](source/title-case.d.ts) - Recursively convert string literal to APA title case (`This is an Example of Title Cased Format`).
+- [`Titleize`](source/titleize.d.ts) - Recursively convert string literal to "Titleized" format (`This Is An Example Of Titleized Format`).
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
