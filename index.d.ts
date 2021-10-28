@@ -57,6 +57,8 @@ export {DelimiterCasedProperties} from './source/delimiter-cased-properties';
 export {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep';
 export {Join} from './source/join';
 export {Split} from './source/split';
+export {TitleCase} from './source/title-case';
+export {Titleize} from './source/titleize';
 export {Trim} from './source/trim';
 export {Includes} from './source/includes';
 export {Get} from './source/get';
