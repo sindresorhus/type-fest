@@ -58,8 +58,8 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 
 ## Install
 
-```
-$ npm install type-fest
+```sh
+npm install type-fest
 ```
 
 *Requires TypeScript >=4.2*
@@ -167,6 +167,12 @@ Click the type names for complete docs.
 - [`Dictionary`](https://github.com/sindresorhus/type-fest/issues/33) - You only save a few characters (`Dictionary<number>` vs `Record<string, number>`) from [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type), which is more flexible and well-known. Also, you shouldn't use an object as a dictionary. We have `Map` in JavaScript now.
 - [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
 - [`Url2Json`](https://github.com/sindresorhus/type-fest/pull/262) - Inferring search parameters from a URL string is a cute idea, but not very useful in practice, since search parameters are usually dynamic and defined separately.
+
+## Alternative type names
+
+*If you know one of our types by a different name, add it here for discovery.*
+
+- `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
 
 ## Tips
 
