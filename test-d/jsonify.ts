@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import {Jsonify, JsonValue} from '..';
 
 interface A {
@@ -122,3 +122,15 @@ class NonJsonWithInvalidToJSON {
 const nonJsonWithInvalidToJSON = new NonJsonWithInvalidToJSON();
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
+
+// Special cases of Array with `undefined` member
+// `[undefined]` is not JSON because it contains non JSON value `undefined`
+// However `JSON.parse(JSON.stringify())` transforms array members of `undefined` to `null`
+expectNotAssignable<JsonValue>([undefined]);
+declare const parsedStringifiedArrayWithUndefined1: Jsonify<[undefined]>; // = JSON.parse(JSON.stringify([undefined]));
+expectType<null[]>(parsedStringifiedArrayWithUndefined1);
+expectAssignable<JsonValue>(parsedStringifiedArrayWithUndefined1);
+expectNotAssignable<JsonValue>([undefined, 1]);
+declare const parsedStringifiedArrayWithUndefined2: Jsonify<[undefined, number]>;
+expectType<Array<number | null>>(parsedStringifiedArrayWithUndefined2);
+expectAssignable<JsonValue>(parsedStringifiedArrayWithUndefined2);
