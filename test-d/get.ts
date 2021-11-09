@@ -89,3 +89,25 @@ interface WithModifiers {
 
 expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{qux: number} | undefined>();
 expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi'>>().toEqualTypeOf<string | undefined>();
+
+// Test strict version:
+
+expectTypeOf<Get<string[], '0', true>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<Record<string, number>, 'foo', true>>().toEqualTypeOf<number | undefined>();
+expectTypeOf<Get<Record<number, string>, '1', true>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<Record<'a' | 'b', number>, 'a', true>>().toEqualTypeOf<number>();
+expectTypeOf<Get<Record<1 | 2, string>, '1', true>>().toEqualTypeOf<string>();
+expectTypeOf<Get<{1: boolean}, '1', true>>().toBeBoolean();
+expectTypeOf<Get<[number, string], '0', true>>().toBeNumber();
+
+interface WithDictionary {
+	foo: Record<string, {
+		bar: number;
+	}>;
+	baz: Record<string, {
+		qux: Array<{x: boolean}>;
+	}>;
+}
+expectTypeOf<Get<WithDictionary, 'foo.whatever', true>>().toEqualTypeOf<{bar: number} | undefined>();
+expectTypeOf<Get<WithDictionary, 'foo.whatever.bar', true>>().toEqualTypeOf<number | undefined>();
+expectTypeOf<Get<WithDictionary, 'baz.whatever.qux[3].x', true>>().toEqualTypeOf<boolean | undefined>();
