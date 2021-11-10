@@ -32,6 +32,6 @@ the inferred tuple `U` and a tuple of length `B`, then extracts the length of tu
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
+export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), BuildTuple<B>]
 	? TupleLength<U>
 	: never;
