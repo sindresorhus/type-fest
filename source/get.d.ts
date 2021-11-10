@@ -16,7 +16,7 @@ type GetWithPath<BaseType, Keys extends readonly string[], Strict extends boolea
 	: never;
 
 /** If `Strict` is `true`, includes `undefined` in the returned type when accessing dictionary properties
- * 
+ *
  *  Known limitations:
 	- Returns `T | undefined` for required properties on object types with an index signature (f ex. `{ a: string; [key: string]: string }`)
 */
