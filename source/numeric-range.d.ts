@@ -26,7 +26,6 @@ A positive `number`/`bigint` (`(0, ∞)`).
 
 Use-case: Validating and documenting parameters.
 
-TODO: fix example
 @example
 ```
 declare function setQuantity<T extends number>(length: Positive<T>): void;
