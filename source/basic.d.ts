@@ -43,3 +43,10 @@ Matches any valid JSON value.
 @category Basic
 */
 export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+
+/**
+Matches a nullish value.
+
+@category Basic
+*/
+export type Nullish = null | undefined;
