@@ -40,7 +40,7 @@ declare function setQuantity<T extends number>(length: Positive<T>): void;
 export type Positive<T extends Numeric> = T extends Zero ? never : Negative<T> extends never ? T : never;
 
 /**
-An natural `number`/`bigint` (`[0, ∞)`).
+A natural `number`/`bigint` (`[0, ∞)`).
 
 Use-case: Validating and documenting parameters.
 
