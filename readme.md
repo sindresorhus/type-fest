@@ -132,7 +132,7 @@ Click the type names for complete docs.
 - [`Integer`](source/numeric-range.d.ts) - A `number` that is an integer.
 - [`Negative`](source/numeric-range.d.ts) - A negative `number`/`bigint` (`(-∞, 0)`).
 - [`Positive`](source/numeric-range.d.ts) - A positive `number`/`bigint` (`(0, ∞)`).
-- [`Natural`](source/numeric-range.d.ts) - A natural `number`/`bigint` (`[0, ∞)`).
+- [`Natural`](source/numeric-range.d.ts) - A natural `number`/`bigint` (`[0, ∞)`). Natural numbers are positive numbers or zero.
 
 ### Template literal types
 
