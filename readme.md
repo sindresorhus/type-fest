@@ -129,6 +129,10 @@ Click the type names for complete docs.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`Integer`](source/numeric-range.d.ts) - A `number` that is an integer.
+- [`Negative`](source/numeric-range.d.ts) - A negative `number`/`bigint` (`(-∞, 0)`).
+- [`Positive`](source/numeric-range.d.ts) - A positive `number`/`bigint` (`(0, ∞)`).
+- [`Natural`](source/numeric-range.d.ts) - A natural `number`/`bigint` (`[0, ∞)`).
 
 ### Template literal types
 
