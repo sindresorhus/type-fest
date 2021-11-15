@@ -45,6 +45,7 @@ export type Positive<T extends Numeric> = T extends Zero ? never : Negative<T> e
 
 /**
 A natural `number`/`bigint` (`[0, ∞)`).
+Natural numbers are positive numbers or zero.
 
 Use-case: Validating and documenting parameters.
 
