@@ -25,6 +25,9 @@ A negative `number`/`bigint` (`(-∞, 0)`).
 
 Use-case: Validating and documenting parameters.
 
+@see Positive
+@see Natural
+
 @category Utilities
 */
 export type Negative<T extends Numeric> = T extends Zero ? never : `${T}` extends `-${string}` ? T : never;
@@ -33,6 +36,9 @@ export type Negative<T extends Numeric> = T extends Zero ? never : `${T}` extend
 A positive `number`/`bigint` (`(0, ∞)`).
 
 Use-case: Validating and documenting parameters.
+
+@see Negative
+@see Natural
 
 @example
 ```
@@ -48,6 +54,9 @@ A natural `number`/`bigint` (`[0, ∞)`).
 Natural numbers are positive numbers or zero.
 
 Use-case: Validating and documenting parameters.
+
+@see Positive
+@see Negative
 
 @example
 ```
