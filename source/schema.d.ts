@@ -39,29 +39,29 @@ const userMaskSettings: UserMask = {
 
 @category Utilities
 */
-export type Schema<T, K> = T extends string
-	? K
-	: T extends Map<unknown, unknown>
-	? K
-	: T extends Set<unknown>
-	? K
-	: T extends ReadonlyMap<unknown, unknown>
-	? K
-	: T extends ReadonlySet<unknown>
-	? K
-  : T extends readonly unknown[]
-  ? K
-	: T extends unknown[]
-	? K
-	: T extends (...arguments: unknown[]) => unknown
-	? K
-  : T extends Date
-  ? K
-  : T extends Function
-  ? K
-	: T extends object
-	? SchemaObject<T, K>
-	: K;
+export type Schema<TObject, ValueType> = TObject extends string
+	? ValueType
+	: TObject extends Map<unknown, unknown>
+	? ValueType
+	: TObject extends Set<unknown>
+	? ValueType
+	: TObject extends ReadonlyMap<unknown, unknown>
+	? ValueType
+	: TObject extends ReadonlySet<unknown>
+	? ValueType
+  : TObject extends readonly unknown[]
+  ? ValueType
+	: TObject extends unknown[]
+	? ValueType
+	: TObject extends (...arguments: unknown[]) => unknown
+	? ValueType
+  : TObject extends Date
+  ? ValueType
+  : TObject extends Function
+  ? ValueType
+	: TObject extends object
+	? SchemaObject<TObject, ValueType>
+	: ValueType;
 
 /**
 Same as `Schema`, but accepts only `object`s as inputs. Internal helper for `Schema`.
