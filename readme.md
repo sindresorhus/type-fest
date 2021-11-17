@@ -129,6 +129,7 @@ Click the type names for complete docs.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`Schema`](source/schema.d.ts) - Deeply changes the values for all properties on a type to whatever specified. Useful for code e.g validation or configuration that relies on using the same structure of a type but the values are different.
 
 ### Template literal types
 
