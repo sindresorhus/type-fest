@@ -2,23 +2,23 @@ import {expectType, expectError} from 'tsd';
 import {Schema} from '../index';
 
 const foo = {
-	baz: 'fred',
-	bar: {
-		function: (_: string): void => undefined,
-		object: {key: 'value'},
-		string: 'waldo',
-		number: 1,
-		boolean: false,
-		symbol: Symbol('test'),
-		map: new Map<string, string>(),
-		set: new Set<string>(),
-		array: ['foo'],
-		tuple: ['foo'] as ['foo'],
-		readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
-		readonlySet: new Set<string>() as ReadonlySet<string>,
-		readonlyArray: ['foo'] as readonly string[],
-		readonlyTuple: ['foo'] as const,
-	},
+  baz: 'fred',
+  bar: {
+    function: (_: string): void => undefined,
+    object: {key: 'value'},
+    string: 'waldo',
+    number: 1,
+    boolean: false,
+    symbol: Symbol('test'),
+    map: new Map<string, string>(),
+    set: new Set<string>(),
+    array: ['foo'],
+    tuple: ['foo'] as ['foo'],
+    readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
+    readonlySet: new Set<string>() as ReadonlySet<string>,
+    readonlyArray: ['foo'] as readonly string[],
+    readonlyTuple: ['foo'] as const,
+  },
 };
 
 type FooOption = 'A' | 'B';
@@ -79,23 +79,23 @@ const createComplexOption = (type: ComplexOption['type']): ComplexOption => ({
 });
 
 const complexFoo: ComplexSchema = {
-	baz: createComplexOption('optional'),
-	bar: {
-		function: createComplexOption('required'),
-		object: createComplexOption('readonly'),
-		string: createComplexOption('readonly'),
-		number: createComplexOption('readonly'),
-		boolean: createComplexOption('readonly'),
-		symbol: createComplexOption('readonly'),
+  baz: createComplexOption('optional'),
+  bar: {
+    function: createComplexOption('required'),
+    object: createComplexOption('readonly'),
+    string: createComplexOption('readonly'),
+    number: createComplexOption('readonly'),
+    boolean: createComplexOption('readonly'),
+    symbol: createComplexOption('readonly'),
     map: createComplexOption('readonly'),
-		set: createComplexOption('readonly'),
-		array: createComplexOption('readonly'),
-		tuple: createComplexOption('readonly'),
-		readonlyMap: createComplexOption('readonly'),
-		readonlySet: createComplexOption('readonly'),
-		readonlyArray: createComplexOption('readonly'),
-		readonlyTuple: createComplexOption('readonly'),
-	},
+    set: createComplexOption('readonly'),
+    array: createComplexOption('readonly'),
+    tuple: createComplexOption('readonly'),
+    readonlyMap: createComplexOption('readonly'),
+    readonlySet: createComplexOption('readonly'),
+    readonlyArray: createComplexOption('readonly'),
+    readonlyTuple: createComplexOption('readonly'),
+  },
 };
 
 expectError<ComplexSchema>(foo);
