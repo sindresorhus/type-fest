@@ -1,30 +1,36 @@
 import {StringDigit} from '../source/utilities';
 import {Split} from './split';
 
+type GetOptions = {
+	strict?: boolean;
+};
+
 /**
 Like the `Get` type but receives an array of strings as a path parameter.
 */
-type GetWithPath<BaseType, Keys extends readonly string[], Strict extends boolean = false> =
+type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
 	Keys extends []
 	? BaseType
 	: Keys extends [infer Head, ...infer Tail]
 	? GetWithPath<
-		PropertyOf<BaseType, Extract<Head, string>, Strict>,
+		PropertyOf<BaseType, Extract<Head, string>, Options>,
 		Extract<Tail, string[]>,
-		Strict
+		Options
 	>
 	: never;
 
-/** If `Strict` is `true`, includes `undefined` in the returned type when accessing dictionary properties
+/** If `Options["strict"]` is `true`, includes `undefined` in the returned type when accessing dictionary properties
  *
  *  Known limitations:
 	- Returns `T | undefined` for required properties on object types with an index signature (f ex. `{ a: string; [key: string]: string }`)
 */
-type MaybeStrictProp<BaseType, Key extends keyof BaseType, Strict extends boolean> =
-	Strict extends false
-	? BaseType[Key]
-	: string extends keyof BaseType // If `string` is a subtype of `keyof O` then `O` is a `Record<string, any>`
-	? BaseType[Key] | undefined
+type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends GetOptions> =
+	Options['strict'] extends true
+	? Record<string, any> extends BaseType
+		? string extends keyof BaseType
+			? BaseType[Key] | undefined // Record<string, any>
+			: BaseType[Key] // Record<"a" | "b", any> (Records with a string union as keys have required properties)
+		: BaseType[Key]
 	: BaseType[Key];
 
 /**
@@ -92,11 +98,11 @@ Note:
 - Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
 - Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
-type PropertyOf<BaseType, Key extends string, Strict extends boolean> =
+type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 	BaseType extends null | undefined
 	? undefined
 	: Key extends keyof BaseType
-	? MaybeStrictProp<BaseType, Key, Strict>
+	? StrictPropertyOf<BaseType, Key, Options>
 	: BaseType extends [] | [unknown, ...unknown[]]
 	? unknown // It's a tuple, but `Key` did not extend `keyof BaseType`. So the index is out of bounds.
 	: BaseType extends {
@@ -105,13 +111,13 @@ type PropertyOf<BaseType, Key extends string, Strict extends boolean> =
 	}
 	? (
 		ConsistsOnlyOf<Key, StringDigit> extends true
-		? Strict extends true
+		? Options['strict'] extends true
 			? Item | undefined
 			: Item
 		: unknown
 	)
 	: Key extends keyof WithStringKeys<BaseType>
-	? MaybeStrictProp<WithStringKeys<BaseType>, Key, Strict>
+	? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
 	: unknown;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
@@ -154,5 +160,5 @@ Get<Record<string, string>, "foo", true> // => string | undefined
 
 @category Template Literals
 */
-export type Get<BaseType, Path extends string, Strict extends boolean = false> =
-	GetWithPath<BaseType, ToPath<Path>, Strict>;
+export type Get<BaseType, Path extends string, Options extends GetOptions = {}> =
+	GetWithPath<BaseType, ToPath<Path>, Options>;
