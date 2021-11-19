@@ -1,4 +1,6 @@
 /**
+@deprecated use Awaited instead
+
 Returns the type that is wrapped inside a `Promise` type.
 If the type is a nested Promise, it is unwrapped recursively until a non-Promise type is obtained.
 If the type is not a `Promise`, the type itself is returned.
