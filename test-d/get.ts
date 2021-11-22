@@ -90,6 +90,14 @@ interface WithModifiers {
 expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{qux: number} | undefined>();
 expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi'>>().toEqualTypeOf<string | undefined>();
 
+// Test bracket notation
+expectTypeOf<Get<number[], '[0]'>>().toBeNumber();
+// NOTE: This would fail if `[0][0]` was converted into `00`:
+expectTypeOf<Get<number[], '[0][0]'>>().toBeUnknown();
+expectTypeOf<Get<number[][][], '[0][0][0]'>>().toBeNumber();
+expectTypeOf<Get<number[][][], '[0][0][0][0]'>>().toBeUnknown();
+expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id'>>().toBeNumber();
+
 // Test strict version:
 
 type Strict = {strict: true};

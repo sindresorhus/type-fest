@@ -51,8 +51,12 @@ type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
 Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.
 */
 type FixPathSquareBrackets<Path extends string> =
-	Path extends `${infer Head}[${infer Middle}]${infer Tail}`
-	? `${Head}.${Middle}${FixPathSquareBrackets<Tail>}`
+	Path extends `[${infer Head}]${infer Tail}`
+	? Tail extends `[${string}`
+		? `${Head}.${FixPathSquareBrackets<Tail>}`
+		: `${Head}${FixPathSquareBrackets<Tail>}`
+	: Path extends `${infer Head}[${infer Middle}]${infer Tail}`
+	? `${Head}.${FixPathSquareBrackets<`[${Middle}]${Tail}`>}`
 	: Path;
 
 /**
