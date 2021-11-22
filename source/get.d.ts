@@ -19,18 +19,20 @@ type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOp
 	>
 	: never;
 
-/** If `Options["strict"]` is `true`, includes `undefined` in the returned type when accessing dictionary properties
+/** Adds `undefined` to `Type` if `strict` is enabled */
+type Strictify<Type, Options extends GetOptions> =
+	Options['strict'] extends true ? Type | undefined : Type;
+
+/** If `Options["strict"]` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`
  *
  *  Known limitations:
-	- Returns `T | undefined` for required properties on object types with an index signature (f ex. `{ a: string; [key: string]: string }`)
+	- Does not include `undefined` in the type on object types with an index signature (f ex. `{ a: string; [key: string]: string }`)
 */
 type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends GetOptions> =
-	Options['strict'] extends true
-	? Record<string, any> extends BaseType
-		? string extends keyof BaseType
-			? BaseType[Key] | undefined // Record<string, any>
-			: BaseType[Key] // Record<"a" | "b", any> (Records with a string union as keys have required properties)
-		: BaseType[Key]
+	Record<string, any> extends BaseType
+	? string extends keyof BaseType
+		? Strictify<BaseType[Key], Options> // Record<string, any>
+		: BaseType[Key] // Record<"a" | "b", any> (Records with a string union as keys have required properties)
 	: BaseType[Key];
 
 /**
@@ -115,9 +117,7 @@ type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 	}
 	? (
 		ConsistsOnlyOf<Key, StringDigit> extends true
-		? Options['strict'] extends true
-			? Item | undefined
-			: Item
+		? Strictify<Item, Options>
 		: unknown
 	)
 	: Key extends keyof WithStringKeys<BaseType>
@@ -158,8 +158,8 @@ const getName = (apiResponse: ApiResponse) =>
 	//=> Array<{given: string[]; family: string}>
 
 // Strict mode:
-Get<string[], "3", true> //=> string | undefined
-Get<Record<string, string>, "foo", true> // => string | undefined
+Get<string[], "3", { strict: true }> //=> string | undefined
+Get<Record<string, string>, "foo", { strict: true }> // => string | undefined
 ```
 
 @category Template Literals

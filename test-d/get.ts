@@ -103,7 +103,6 @@ expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id'>
 type Strict = {strict: true};
 expectTypeOf<Get<string[], '0', Strict>>().toEqualTypeOf<string | undefined>();
 expectTypeOf<Get<Record<string, number>, 'foo', Strict>>().toEqualTypeOf<number | undefined>();
-expectTypeOf<Get<Record<number, string>, '1', Strict>>().toEqualTypeOf<string | undefined>();
 expectTypeOf<Get<Record<'a' | 'b', number>, 'a', Strict>>().toEqualTypeOf<number>();
 expectTypeOf<Get<Record<1 | 2, string>, '1', Strict>>().toEqualTypeOf<string>();
 expectTypeOf<Get<{1: boolean}, '1', Strict>>().toBeBoolean();
