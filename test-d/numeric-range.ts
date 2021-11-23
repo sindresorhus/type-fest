@@ -10,7 +10,7 @@ declare const nonInteger: Integer<1.5>;
 declare const infinity: Integer<1e999 | -1e999>;
 
 expectType<1>(integer);
-expectType<1>(integerMixed);
+expectType<never>(integerMixed); // This may be undesired behavior
 expectType<never>(nonInteger);
 expectType<never>(infinity);
 
