@@ -1,18 +1,23 @@
 import {expectType} from 'tsd';
-import {Integer, Natural, Negative, NegativeInteger, Positive, PositiveInteger} from '../index';
+import {Finite, Integer, Natural, Negative, NegativeInfinity, NegativeInteger, Positive, PositiveInfinity, PositiveInteger} from '../index';
+
+// Finite
+declare const infinity: Finite<PositiveInfinity | NegativeInfinity>;
+declare const infinityMixed: Finite<1 | PositiveInfinity | NegativeInfinity>;
+
+expectType<never>(infinity);
+expectType<1 | PositiveInfinity | NegativeInfinity>(infinityMixed); // This may be undesired behavior
 
 // Integer
 declare const integer: Integer<1>;
 declare const integerMixed: Integer<1 | 1.5>;
 declare const nonInteger: Integer<1.5>;
-// See https://github.com/microsoft/TypeScript/issues/31752
-// eslint-disable-next-line @typescript-eslint/no-loss-of-precision
-declare const infinity: Integer<1e999 | -1e999>;
+declare const infinityInteger: Integer<PositiveInfinity | NegativeInfinity>;
 
 expectType<1>(integer);
 expectType<never>(integerMixed); // This may be undesired behavior
 expectType<never>(nonInteger);
-expectType<never>(infinity);
+expectType<never>(infinityInteger);
 
 // Negative
 declare const negative: Negative<-1 | -1n | 0 | 0n | 1 | 1n>;
