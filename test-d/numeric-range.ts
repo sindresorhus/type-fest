@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {Integer, Natural, Negative, Positive} from '../index';
+import {Integer, Natural, Negative, NegativeInteger, Positive, PositiveInteger} from '../index';
 
 // Integer
 declare const integer: Integer<1>;
@@ -19,10 +19,20 @@ declare const negative: Negative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
 expectType<-1 | -1n>(negative);
 
+// NegativeInteger
+declare const negativeInteger: NegativeInteger<-1 | 0 | 1>;
+
+expectType<-1>(negativeInteger);
+
 // Positive
 declare const positive: Positive<-1 | -1n | 0 | 0n | 1 | 1n>;
 
 expectType<1 | 1n>(positive);
+
+// PositiveInteger
+declare const positiveInteger: PositiveInteger<-1 | 0 | 1>;
+
+expectType<1>(positiveInteger);
 
 // Natural
 declare const natural: Natural<-1 | -1n | 0 | 0n | 1 | 1n>;

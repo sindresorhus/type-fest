@@ -37,7 +37,7 @@ export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
 export {Jsonify} from './source/jsonify';
-export {Integer, Natural, Negative, Positive} from './source/numeric-range';
+export {Integer, Natural, Negative, NegativeInteger, Positive, PositiveInteger} from './source/numeric-range';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';

@@ -36,6 +36,21 @@ Use-case: Validating and documenting parameters.
 export type Negative<T extends Numeric> = T extends Zero ? never : `${T}` extends `-${string}` ? T : never;
 
 /**
+A negative (`(∞, 0)`) `number` that is an integer.
+Equivalent to `Negative<Integer<T>>`.
+
+You can't pass a `bigint` as they are already guaranteed to be integers, instead use `Negative<T>`.
+
+Use-case: Validating and documenting parameters.
+
+@see Negative
+@see Integer
+
+@category Utilities
+*/
+export type NegativeInteger<T extends number> = Negative<Integer<T>>;
+
+/**
 A positive `number`/`bigint` (`(0, ∞)`).
 
 Use-case: Validating and documenting parameters.
@@ -53,6 +68,29 @@ declare function setQuantity<T extends number>(length: Positive<T>): void;
 @category Utilities
 */
 export type Positive<T extends Numeric> = T extends Zero ? never : Negative<T> extends never ? T : never;
+
+/**
+A positive (`(0, ∞)`) `number` that is an integer.
+Equivalent to `Positive<Integer<T>>`.
+
+You can't pass a `bigint` as they are already guaranteed to be integers, instead use `Positive<T>`.
+
+Use-case: Validating and documenting parameters.
+
+@see Positive
+@see Integer
+@see Natural
+
+@example
+```
+import {PositiveInteger} from 'type-fest';
+
+declare function setLength<T extends number>(length: PositiveInteger<T>): void;
+```
+
+@category Utilities
+*/
+export type PositiveInteger<T extends number> = Positive<Integer<T>>;
 
 /**
 A natural `number`/`bigint` (`[0, ∞)`).
