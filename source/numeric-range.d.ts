@@ -6,6 +6,7 @@ type Zero = 0 | 0n;
 
 /**
 A `number` that is an integer.
+You can't pass a `bigint` as they are already guaranteed to be integers.
 
 Use-case: Validating and documenting parameters.
 
