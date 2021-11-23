@@ -1,5 +1,9 @@
 type Infinities = 'Infinity' | '-Infinity';
 
+type Numeric = number | bigint;
+
+type Zero = 0 | 0n;
+
 /**
 A `number` that is an integer.
 
@@ -15,10 +19,6 @@ declare function setYear<T extends number>(length: Integer<T>): void;
 // `${bigint}` is a type that matches a valid bigint literal without the `n` (ex. 1, 0b1, 0o1, 0x1)
 // Because T is a number and not a string we can effectively use this to filter out any numbers containing decimal points
 export type Integer<T extends number> = `${T}` extends Infinities ? never : `${T}` extends `${bigint}` ? T : never;
-
-type Numeric = number | bigint;
-
-type Zero = 0 | 0n;
 
 /**
 A negative `number`/`bigint` (`(-∞, 0)`).
