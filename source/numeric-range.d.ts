@@ -11,6 +11,8 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
+import {Integer} from 'type-fest';
+
 declare function setYear<T extends number>(length: Integer<T>): void;
 ```
 
@@ -42,6 +44,8 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
+import {Positive} from 'type-fest';
+
 declare function setQuantity<T extends number>(length: Positive<T>): void;
 ```
 
@@ -60,6 +64,8 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
+import {Natural} from 'type-fest';
+
 declare function setLength<T extends number>(length: Natural<T>): void;
 ```
 
