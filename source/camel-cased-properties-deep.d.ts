@@ -1,4 +1,5 @@
 import {CamelCase} from './camel-case';
+import {StandartBuildInTypes} from './utilities';
 
 /**
 Convert object properties to camel case recursively.
@@ -40,8 +41,9 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 
 @category Template Literals
 */
-export type CamelCasedPropertiesDeep<Value> = Value extends Function
-	? Value
+export type CamelCasedPropertiesDeep<Value, Exclude = never>
+  = Value extends Exclude | StandartBuildInTypes
+  ? Value
 	: Value extends Array<infer U>
 	? Array<CamelCasedPropertiesDeep<U>>
 	: Value extends Set<infer U>
