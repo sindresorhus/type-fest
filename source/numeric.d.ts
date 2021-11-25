@@ -99,6 +99,7 @@ A non-negative `number`/`bigint` (`0 <= x < ∞`).
 
 Use-case: Validating and documenting parameters.
 
+@see NonNegativeInteger
 @see Negative
 
 @example
