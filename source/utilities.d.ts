@@ -3,7 +3,3 @@ export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' 
 export type WordSeparators = '-' | '_' | ' ';
 
 export type StringDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
-
-export type StandartBuildInTypes =
-  | Function
-  | Date;
