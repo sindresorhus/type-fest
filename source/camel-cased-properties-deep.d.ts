@@ -41,7 +41,7 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 @category Template Literals
 */
 export type CamelCasedPropertiesDeep<Value, Exclude = never>
-  = Value extends Exclude
+  = Value extends Exclude | Function
   ? Value
 	: Value extends Array<infer U>
 	? Array<CamelCasedPropertiesDeep<U>>
