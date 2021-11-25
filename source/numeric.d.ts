@@ -58,7 +58,6 @@ import {Integer} from 'type-fest';
 declare function setYear<T extends number>(length: Integer<T>): void;
 ```
 
-@see PositiveInteger
 @see NegativeInteger
 @see NonNegativeInteger
 
@@ -74,7 +73,6 @@ A negative `number`/`bigint` (`-∞ < x < 0`)
 Use-case: Validating and documenting parameters.
 
 @see NegativeInteger
-@see Positive
 @see NonNegative
 
 @category Utilities
@@ -97,54 +95,10 @@ Use-case: Validating and documenting parameters.
 export type NegativeInteger<T extends number> = Negative<Integer<T>>;
 
 /**
-A positive `number`/`bigint` (`0 < x < ∞`).
-
-Use-case: Validating and documenting parameters.
-
-@see PositiveInteger
-@see Negative
-@see NonNegative
-
-@example
-```
-import {Positive} from 'type-fest';
-
-declare function setQuantity<T extends number>(length: Positive<T>): void;
-```
-
-@category Utilities
-*/
-export type Positive<T extends Numeric> = T extends Zero ? never : Negative<T> extends never ? T : never;
-
-/**
-A positive (`0 < x < ∞`) `number` that is an integer.
-Equivalent to `Positive<Integer<T>>`.
-
-You can't pass a `bigint` as they are already guaranteed to be integers, instead use `Positive<T>`.
-
-Use-case: Validating and documenting parameters.
-
-@see Positive
-@see Integer
-@see NonNegativeInteger
-
-@example
-```
-import {PositiveInteger} from 'type-fest';
-
-declare function setLength<T extends number>(length: PositiveInteger<T>): void;
-```
-
-@category Utilities
-*/
-export type PositiveInteger<T extends number> = Positive<Integer<T>>;
-
-/**
 A non-negative `number`/`bigint` (`0 <= x < ∞`).
 
 Use-case: Validating and documenting parameters.
 
-@see Positive
 @see Negative
 
 @example
@@ -156,7 +110,7 @@ declare function setLength<T extends number>(length: NonNegative<T>): void;
 
 @category Utilities
 */
-export type NonNegative<T extends Numeric> = T extends Zero ? T : Positive<T>;
+export type NonNegative<T extends Numeric> = T extends Zero ? T : Negative<T> extends never ? T : never;
 
 /**
 A non-negative (`0 <= x < ∞`) `number` that is an integer.
@@ -168,7 +122,6 @@ Use-case: Validating and documenting parameters.
 
 @see NonNegative
 @see Integer
-@see PositiveInteger
 
 @example
 ```

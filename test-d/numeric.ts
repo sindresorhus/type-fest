@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {Finite, Integer, Negative, NegativeInfinity, NegativeInteger, NonNegative, NonNegativeInteger, Positive, PositiveInfinity, PositiveInteger} from '../index';
+import {Finite, Integer, Negative, NegativeInfinity, NegativeInteger, NonNegative, NonNegativeInteger, PositiveInfinity} from '../index';
 
 // Finite
 declare const infinity: Finite<PositiveInfinity | NegativeInfinity>;
@@ -28,16 +28,6 @@ expectType<-1 | -1n>(negative);
 declare const negativeInteger: NegativeInteger<-1 | 0 | 1>;
 
 expectType<-1>(negativeInteger);
-
-// Positive
-declare const positive: Positive<-1 | -1n | 0 | 0n | 1 | 1n>;
-
-expectType<1 | 1n>(positive);
-
-// PositiveInteger
-declare const positiveInteger: PositiveInteger<-1 | 0 | 1>;
-
-expectType<1>(positiveInteger);
 
 // NonNegative
 declare const nonNegative: NonNegative<-1 | -1n | 0 | 0n | 1 | 1n>;
