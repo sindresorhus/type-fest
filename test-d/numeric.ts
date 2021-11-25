@@ -1,12 +1,12 @@
 import {expectType} from 'tsd';
-import {Finite, Integer, Natural, Negative, NegativeInfinity, NegativeInteger, Positive, PositiveInfinity, PositiveInteger} from '../index';
+import {Finite, Integer, Negative, NegativeInfinity, NegativeInteger, NonNegative, NonNegativeInteger, Positive, PositiveInfinity, PositiveInteger} from '../index';
 
 // Finite
 declare const infinity: Finite<PositiveInfinity | NegativeInfinity>;
 declare const infinityMixed: Finite<1 | PositiveInfinity | NegativeInfinity>;
 
 expectType<never>(infinity);
-expectType<1 | PositiveInfinity | NegativeInfinity>(infinityMixed); // This may be undesired behavior
+expectType<1>(infinityMixed);
 
 // Integer
 declare const integer: Integer<1>;
@@ -39,7 +39,12 @@ declare const positiveInteger: PositiveInteger<-1 | 0 | 1>;
 
 expectType<1>(positiveInteger);
 
-// Natural
-declare const natural: Natural<-1 | -1n | 0 | 0n | 1 | 1n>;
+// NonNegative
+declare const nonNegative: NonNegative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
-expectType<0 | 0n | 1 | 1n>(natural);
+expectType<0 | 0n | 1 | 1n>(nonNegative);
+
+// NonNegativeInteger
+declare const nonNegativeInteger: NonNegativeInteger<-1 | 0 | 1>;
+
+expectType<0 | 1>(nonNegativeInteger);
