@@ -47,5 +47,5 @@ export type CamelCasedPropertiesDeep<Value, Exclude = never>
 	? Array<CamelCasedPropertiesDeep<U>>
 	: Value extends Set<infer U>
 	? Set<CamelCasedPropertiesDeep<U>> : {
-			[K in keyof Value as CamelCase<K>]: CamelCasedPropertiesDeep<Value[K]>;
+			[K in keyof Value as CamelCase<K>]: CamelCasedPropertiesDeep<Value[K], Exclude>;
 	};
