@@ -46,6 +46,7 @@ export {
 	Negative,
 	NonNegative,
 	NegativeInteger,
+	NegativeFloat,
 	NonNegativeInteger,
 } from './source/numeric';
 

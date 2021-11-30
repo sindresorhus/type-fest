@@ -114,6 +114,19 @@ Use-case: Validating and documenting parameters.
 export type NegativeInteger<T extends number> = Negative<Integer<T>>;
 
 /**
+A negative (`-∞ < x < 0`) `number` that is not an integer.
+Equivalent to `Negative<Float<T>>`.
+
+Use-case: Validating and documenting parameters.
+
+@see Negative
+@see Float
+
+@category Utilities
+*/
+export type NegativeFloat<T extends number> = Negative<Float<T>>;
+
+/**
 A non-negative `number`/`bigint` (`0 <= x < ∞`).
 
 Use-case: Validating and documenting parameters.
