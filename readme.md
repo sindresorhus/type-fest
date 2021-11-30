@@ -134,8 +134,8 @@ Click the type names for complete docs.
 - [`Integer`](source/numeric-range.d.ts) - A `number` that is an integer.
 - [`Negative`](source/numeric-range.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`)
 - [`NonNegative`](source/numeric-range.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
-- [`NegativeInteger](source/numeric-range.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
-- [`NonNegativeInteger](source/numeric-range.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
+- [`NegativeInteger`](source/numeric-range.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
+- [`NonNegativeInteger`](source/numeric-range.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
 
 ### Template literal types
 
@@ -174,6 +174,7 @@ Click the type names for complete docs.
 - [`Dictionary`](https://github.com/sindresorhus/type-fest/issues/33) - You only save a few characters (`Dictionary<number>` vs `Record<string, number>`) from [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type), which is more flexible and well-known. Also, you shouldn't use an object as a dictionary. We have `Map` in JavaScript now.
 - [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
 - [`Url2Json`](https://github.com/sindresorhus/type-fest/pull/262) - Inferring search parameters from a URL string is a cute idea, but not very useful in practice, since search parameters are usually dynamic and defined separately.
+- [`Nullish`](https://github.com/sindresorhus/type-fest/pull/318) - The type only saves a couple of characters, not everyone knows what “nullish” means, and I'm also trying to [get away from `null`](https://github.com/sindresorhus/meta/discussions/7).
 
 ## Alternative type names
 
