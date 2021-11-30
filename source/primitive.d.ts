@@ -1,7 +1,7 @@
 /**
 Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 
-@category Basic
+@category Types
 */
 export type Primitive =
 	| null

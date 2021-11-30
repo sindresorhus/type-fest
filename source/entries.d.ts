@@ -49,7 +49,10 @@ const setExample = new Set(['a', 1]);
 const setEntries: Entries<typeof setExample> = [['a', 'a'], [1, 1]];
 ```
 
-@category Utilities
+@category Objects
+@category Maps
+@category Sets
+@category Arrays
 */
 export type Entries<BaseType> =
 	BaseType extends Map<unknown, unknown> ? MapEntries<BaseType>

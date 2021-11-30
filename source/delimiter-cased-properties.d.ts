@@ -22,6 +22,7 @@ const result: DelimiterCasedProperties<User, '-'> = {
 ```
 
 @category Template Literals
+@category Objects
 */
 export type DelimiterCasedProperties<
 	Value,

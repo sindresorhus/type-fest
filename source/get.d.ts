@@ -131,5 +131,7 @@ const getName = (apiResponse: ApiResponse) =>
 ```
 
 @category Template Literals
+@category Objects
+@category Arrays
 */
 export type Get<BaseType, Path extends string> = GetWithPath<BaseType, ToPath<Path>>;

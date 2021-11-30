@@ -9,7 +9,7 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/32277)
 
 @see NegativeInfinity
 
-@category Basic
+@category Numeric
 */
 // See https://github.com/microsoft/TypeScript/issues/31752
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
@@ -22,7 +22,7 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/32277)
 
 @see PositiveInfinity
 
-@category Basic
+@category Numeric
 */
 // See https://github.com/microsoft/TypeScript/issues/31752
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
@@ -41,7 +41,7 @@ import {Finite} from 'type-fest';
 declare function setScore<T extends number>(length: Finite<T>): void;
 ```
 
-@category Utilities
+@category Numeric
 */
 export type Finite<T extends number> = T extends PositiveInfinity | NegativeInfinity ? never : T;
 
@@ -61,7 +61,7 @@ declare function setYear<T extends number>(length: Integer<T>): void;
 @see NegativeInteger
 @see NonNegativeInteger
 
-@category Utilities
+@category Numeric
 */
 // `${bigint}` is a type that matches a valid bigint literal without the `n` (ex. 1, 0b1, 0o1, 0x1)
 // Because T is a number and not a string we can effectively use this to filter out any numbers containing decimal points
@@ -75,7 +75,7 @@ Use-case: Validating and documenting parameters.
 @see NegativeInteger
 @see NonNegative
 
-@category Utilities
+@category Numeric
 */
 export type Negative<T extends Numeric> = T extends Zero ? never : `${T}` extends `-${string}` ? T : never;
 
@@ -90,7 +90,7 @@ Use-case: Validating and documenting parameters.
 @see Negative
 @see Integer
 
-@category Utilities
+@category Numeric
 */
 export type NegativeInteger<T extends number> = Negative<Integer<T>>;
 
@@ -109,7 +109,7 @@ import {NonNegative} from 'type-fest';
 declare function setLength<T extends number>(length: NonNegative<T>): void;
 ```
 
-@category Utilities
+@category Numeric
 */
 export type NonNegative<T extends Numeric> = T extends Zero ? T : Negative<T> extends never ? T : never;
 
@@ -131,6 +131,6 @@ import {NonNegativeInteger} from 'type-fest';
 declare function setLength<T extends number>(length: NonNegativeInteger<T>): void;
 ```
 
-@category Utilities
+@category Numeric
 */
 export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;

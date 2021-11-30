@@ -39,5 +39,6 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 ```
 
 @category Template Literals
+@category Objects
 */
 export type SnakeCasedPropertiesDeep<Value> = DelimiterCasedPropertiesDeep<Value, '_'>;

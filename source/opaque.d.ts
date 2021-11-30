@@ -69,6 +69,6 @@ type Person = {
 };
 ```
 
-@category Utilities
+@category Types
 */
 export type Opaque<Type, Token = unknown> = Type & Tagged<Token>;

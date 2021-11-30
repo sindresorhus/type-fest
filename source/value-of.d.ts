@@ -37,6 +37,6 @@ onlyBar('bar');
 //=> 2
 ```
 
-@category Utilities
+@category Objects
 */
 export type ValueOf<ObjectType, ValueType extends keyof ObjectType = keyof ObjectType> = ObjectType[ValueType];

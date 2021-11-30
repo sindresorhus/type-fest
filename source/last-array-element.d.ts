@@ -16,6 +16,7 @@ typeof lastOf(array);
 ```
 
 @category Template Literals
+@category Arrays
 */
 export type LastArrayElement<ValueType extends readonly unknown[]> =
 	ValueType extends readonly [infer ElementType]

@@ -32,7 +32,7 @@ exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
 //=> Error
 ```
 
-@category Utilities
+@category Objects
 */
 export type MergeExclusive<FirstType, SecondType> =
 	(FirstType | SecondType) extends object ?

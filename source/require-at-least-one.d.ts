@@ -20,7 +20,7 @@ const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
 };
 ```
 
-@category Utilities
+@category Objects
 */
 export type RequireAtLeastOne<
 	ObjectType,

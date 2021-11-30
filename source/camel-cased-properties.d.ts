@@ -22,6 +22,7 @@ const result: CamelCasedProperties<User> = {
 ```
 
 @category Template Literals
+@category Objects
 */
 export type CamelCasedProperties<Value> = Value extends Function
 	? Value
