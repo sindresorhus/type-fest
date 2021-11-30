@@ -128,14 +128,14 @@ Click the type names for complete docs.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
-- [`PositiveInfinity`](source/numeric-range.d.ts) - Matches the hidden `Infinity` type.
-- [`NegativeInfinity`](source/numeric-range.d.ts) - Matches the hidden `-Infinity` type.
-- [`Finite`](source/numeric-range.d.ts) - A finite `number`.
-- [`Integer`](source/numeric-range.d.ts) - A `number` that is an integer.
-- [`Negative`](source/numeric-range.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`)
-- [`NonNegative`](source/numeric-range.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
-- [`NegativeInteger`](source/numeric-range.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
-- [`NonNegativeInteger`](source/numeric-range.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
+- [`PositiveInfinity`](source/numeric.d.ts) - Matches the hidden `Infinity` type.
+- [`NegativeInfinity`](source/numeric.d.ts) - Matches the hidden `-Infinity` type.
+- [`Finite`](source/numeric.d.ts) - A finite `number`.
+- [`Integer`](source/numeric.d.ts) - A `number` that is an integer.
+- [`Negative`](source/numeric.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`)
+- [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
+- [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
+- [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
 
 ### Template literal types
 
