@@ -42,6 +42,7 @@ export {
 	NegativeInfinity,
 	Finite,
 	Integer,
+	Float,
 	Negative,
 	NonNegative,
 	NegativeInteger,
