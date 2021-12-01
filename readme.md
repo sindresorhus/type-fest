@@ -132,9 +132,11 @@ Click the type names for complete docs.
 - [`NegativeInfinity`](source/numeric.d.ts) - Matches the hidden `-Infinity` type.
 - [`Finite`](source/numeric.d.ts) - A finite `number`.
 - [`Integer`](source/numeric.d.ts) - A `number` that is an integer.
+- [`Float`](source/numeric.d.ts) - A `number` that is not an integer.
 - [`Negative`](source/numeric.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`)
 - [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
 - [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
+- [`NegativeFloat`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is not an integer.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
 
 ### Template literal types

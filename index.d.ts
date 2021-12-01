@@ -42,9 +42,11 @@ export {
 	NegativeInfinity,
 	Finite,
 	Integer,
+	Float,
 	Negative,
 	NonNegative,
 	NegativeInteger,
+	NegativeFloat,
 	NonNegativeInteger,
 } from './source/numeric';
 

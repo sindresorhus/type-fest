@@ -68,6 +68,25 @@ declare function setYear<T extends number>(length: Integer<T>): void;
 export type Integer<T extends number> = `${T}` extends `${bigint}` ? T : never;
 
 /**
+A `number` that is not an integer.
+You can't pass a `bigint` as they are already guaranteed to be integers.
+
+Use-case: Validating and documenting parameters.
+
+@example
+```
+import {Float} from 'type-fest';
+
+declare function setPercentage<T extends number>(length: Float<T>): void;
+```
+
+@see Integer
+
+@category Utilities
+*/
+export type Float<T extends number> = T extends Integer<T> ? never : T;
+
+/**
 A negative `number`/`bigint` (`-∞ < x < 0`)
 
 Use-case: Validating and documenting parameters.
@@ -93,6 +112,19 @@ Use-case: Validating and documenting parameters.
 @category Numeric
 */
 export type NegativeInteger<T extends number> = Negative<Integer<T>>;
+
+/**
+A negative (`-∞ < x < 0`) `number` that is not an integer.
+Equivalent to `Negative<Float<T>>`.
+
+Use-case: Validating and documenting parameters.
+
+@see Negative
+@see Float
+
+@category Utilities
+*/
+export type NegativeFloat<T extends number> = Negative<Float<T>>;
 
 /**
 A non-negative `number`/`bigint` (`0 <= x < ∞`).
