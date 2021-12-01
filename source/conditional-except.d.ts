@@ -37,7 +37,7 @@ type NonStringKeysOnly = ConditionalExcept<Example, string>;
 //=> {b: string | number; c: () => void; d: {}}
 ```
 
-@category Utilities
+@category Object
 */
 export type ConditionalExcept<Base, Condition> = Except<
 	Base,

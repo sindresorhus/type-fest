@@ -29,7 +29,10 @@ data.foo.push('bar');
 //=> error TS2339: Property 'push' does not exist on type 'readonly string[]'
 ```
 
-@category Utilities
+@category Object
+@category Array
+@category Set
+@category Map
 */
 export type ReadonlyDeep<T> = T extends Primitive | ((...arguments: any[]) => unknown)
 	? T

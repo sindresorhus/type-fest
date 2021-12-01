@@ -28,7 +28,10 @@ const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 
-@category Utilities
+@category Object
+@category Array
+@category Set
+@category Map
 */
 export type PartialDeep<T> = T extends Primitive
 	? Partial<T>

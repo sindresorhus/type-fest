@@ -30,7 +30,8 @@ const dbResult: CamelCasedProperties<ModelProps> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
 */
 export type PascalCase<Value> = CamelCase<Value> extends string
 	? Capitalize<CamelCase<Value>>

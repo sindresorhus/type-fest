@@ -1040,7 +1040,7 @@ declare namespace TsConfigJson {
 /**
 Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 3.7).
 
-@category Miscellaneous
+@category File
 */
 export interface TsConfigJson {
 	/**
