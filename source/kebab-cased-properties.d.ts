@@ -21,7 +21,7 @@ const result: KebabCasedProperties<User> = {
 };
 ```
 
-@category Template Literals
+@category Template literals
 @category Objects
 */
 export type KebabCasedProperties<Value> = DelimiterCasedProperties<Value, '-'>;

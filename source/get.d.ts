@@ -130,7 +130,7 @@ const getName = (apiResponse: ApiResponse) =>
 	//=> Array<{given: string[]; family: string}>
 ```
 
-@category Template Literals
+@category Template literals
 @category Objects
 @category Arrays
 */

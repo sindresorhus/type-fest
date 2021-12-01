@@ -15,7 +15,7 @@ typeof lastOf(array);
 //=> number
 ```
 
-@category Template Literals
+@category Template literals
 @category Arrays
 */
 export type LastArrayElement<ValueType extends readonly unknown[]> =

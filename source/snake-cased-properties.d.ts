@@ -21,7 +21,7 @@ const result: SnakeCasedProperties<User> = {
 };
 ```
 
-@category Template Literals
+@category Template literals
 @category Objects
 */
 export type SnakeCasedProperties<Value> = DelimiterCasedProperties<Value, '_'>;
