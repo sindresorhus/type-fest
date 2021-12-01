@@ -38,8 +38,8 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 };
 ```
 
-@category Template literals
-@category Objects
+@category Template literal
+@category Object
 */
 export type CamelCasedPropertiesDeep<Value> = Value extends Function
 	? Value

@@ -16,7 +16,7 @@ let array: Item[];
 array = split(items, ',');
 ```
 
-@category Template literals
+@category Template literal
 */
 export type Split<
 	S extends string,

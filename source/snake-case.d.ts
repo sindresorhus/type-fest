@@ -32,6 +32,6 @@ const dbResult: SnakeCasedProperties<ModelProps> = {
 };
 ```
 
-@category Template literals
+@category Template literal
 */
 export type SnakeCase<Value> = DelimiterCase<Value, '_'>;

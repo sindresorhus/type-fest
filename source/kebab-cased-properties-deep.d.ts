@@ -38,7 +38,7 @@ const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 };
 ```
 
-@category Template literals
-@category Objects
+@category Template literal
+@category Object
 */
 export type KebabCasedPropertiesDeep<Value> = DelimiterCasedPropertiesDeep<Value, '-'>;

@@ -19,6 +19,6 @@ Trim<' foo '>
 //=> 'foo'
 ```
 
-@category Template literals
+@category Template literal
 */
 export type Trim<V extends string> = TrimLeft<TrimRight<V>>;

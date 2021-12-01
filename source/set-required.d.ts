@@ -24,7 +24,7 @@ type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 // }
 ```
 
-@category Objects
+@category Object
 */
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
 	Simplify<

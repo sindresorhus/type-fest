@@ -52,10 +52,10 @@ const setEntryString: Entry<typeof setExample> = ['a', 'a'];
 const setEntryNumber: Entry<typeof setExample> = [1, 1];
 ```
 
-@category Objects
-@category Maps
-@category Arrays
-@category Sets
+@category Object
+@category Map
+@category Array
+@category Set
 */
 export type Entry<BaseType> =
 	BaseType extends Map<unknown, unknown> ? MapEntry<BaseType>

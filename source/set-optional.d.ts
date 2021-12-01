@@ -24,7 +24,7 @@ type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
 // }
 ```
 
-@category Objects
+@category Object
 */
 export type SetOptional<BaseType, Keys extends keyof BaseType> =
 	Simplify<

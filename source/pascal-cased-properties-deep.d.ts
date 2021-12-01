@@ -38,8 +38,8 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 };
 ```
 
-@category Template literals
-@category Objects
+@category Template literal
+@category Object
 */
 export type PascalCasedPropertiesDeep<Value> = Value extends Function
 	? Value

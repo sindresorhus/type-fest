@@ -32,6 +32,6 @@ const rawCliOptions: KebabCasedProperties<CliOptions> = {
 };
 ```
 
-@category Template literals
+@category Template literal
 */
 export type KebabCase<Value> = DelimiterCase<Value, '-'>;

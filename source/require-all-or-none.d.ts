@@ -27,7 +27,7 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 };
 ```
 
-@category Objects
+@category Object
 */
 export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = never> = (
 	| Required<Pick<ObjectType, KeysType>> // Require all of the given keys.
