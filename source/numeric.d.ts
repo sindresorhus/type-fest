@@ -82,9 +82,22 @@ declare function setPercentage<T extends number>(length: Float<T>): void;
 
 @see Integer
 
-@category Utilities
+@category Numeric
 */
 export type Float<T extends number> = T extends Integer<T> ? never : T;
+
+/**
+A negative (`-∞ < x < 0`) `number` that is not an integer.
+Equivalent to `Negative<Float<T>>`.
+
+Use-case: Validating and documenting parameters.
+
+@see Negative
+@see Float
+
+@category Numeric
+*/
+export type NegativeFloat<T extends number> = Negative<Float<T>>;
 
 /**
 A negative `number`/`bigint` (`-∞ < x < 0`)
@@ -112,19 +125,6 @@ Use-case: Validating and documenting parameters.
 @category Numeric
 */
 export type NegativeInteger<T extends number> = Negative<Integer<T>>;
-
-/**
-A negative (`-∞ < x < 0`) `number` that is not an integer.
-Equivalent to `Negative<Float<T>>`.
-
-Use-case: Validating and documenting parameters.
-
-@see Negative
-@see Float
-
-@category Utilities
-*/
-export type NegativeFloat<T extends number> = Negative<Float<T>>;
 
 /**
 A non-negative `number`/`bigint` (`0 <= x < ∞`).

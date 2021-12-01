@@ -43,10 +43,10 @@ export {
 	Finite,
 	Integer,
 	Float,
+	NegativeFloat,
 	Negative,
 	NonNegative,
 	NegativeInteger,
-	NegativeFloat,
 	NonNegativeInteger,
 } from './source/numeric';
 
