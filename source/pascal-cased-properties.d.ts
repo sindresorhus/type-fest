@@ -21,6 +21,7 @@ const result: PascalCasedProperties<User> = {
 };
 ```
 
+@category Change case
 @category Template literal
 @category Object
 */

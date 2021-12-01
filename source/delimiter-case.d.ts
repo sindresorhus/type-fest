@@ -79,6 +79,7 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 };
 ```
 
+@category Change case
 @category Template literal
 */
 export type DelimiterCase<Value, Delimiter extends string> = Value extends string

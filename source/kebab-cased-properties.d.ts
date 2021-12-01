@@ -21,6 +21,7 @@ const result: KebabCasedProperties<User> = {
 };
 ```
 
+@category Change case
 @category Template literal
 @category Object
 */

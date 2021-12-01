@@ -38,6 +38,7 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 };
 ```
 
+@category Change case
 @category Template literal
 @category Object
 */

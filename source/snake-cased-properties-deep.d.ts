@@ -38,6 +38,7 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 };
 ```
 
+@category Change case
 @category Template literal
 @category Object
 */

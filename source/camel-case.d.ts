@@ -67,6 +67,7 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 };
 ```
 
+@category Change case
 @category Template literal
 */
 export type CamelCase<K> = K extends string ? CamelCaseStringArray<Split<K extends Uppercase<K> ? Lowercase<K> : K, WordSeparators>> : K;
