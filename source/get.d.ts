@@ -130,6 +130,8 @@ const getName = (apiResponse: ApiResponse) =>
 	//=> Array<{given: string[]; family: string}>
 ```
 
-@category Template Literals
+@category Template literal
+@category Object
+@category Array
 */
 export type Get<BaseType, Path extends string> = GetWithPath<BaseType, ToPath<Path>>;

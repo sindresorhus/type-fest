@@ -50,7 +50,7 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 //=> {b: string};
 ```
 
-@category Utilities
+@category Object
 */
 export type Except<ObjectType, KeysType extends keyof ObjectType> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
