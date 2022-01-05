@@ -9,6 +9,7 @@ const foo = {
 		string: 'waldo',
 		number: 1,
 		boolean: false,
+		date: new Date(),
 		symbol: Symbol('test'),
 		null: null,
 		undefined: undefined, // eslint-disable-line object-shorthand
@@ -23,16 +24,17 @@ const foo = {
 	},
 };
 
-let partialDeepFoo: PartialDeep<typeof foo> = foo;
+let partialDeepFoo: PartialDeep<typeof foo, Date> = foo;
 
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
-const partialDeepBar: PartialDeep<typeof foo.bar> = foo.bar;
+const partialDeepBar: PartialDeep<typeof foo.bar, Date> = foo.bar;
 expectType<typeof partialDeepBar | undefined>(partialDeepFoo.bar);
 expectType<((_: string) => void) | undefined>(partialDeepFoo.bar!.function);
 expectAssignable<object | undefined>(partialDeepFoo.bar!.object);
 expectType<string | undefined>(partialDeepFoo.bar!.string);
 expectType<number | undefined>(partialDeepFoo.bar!.number);
 expectType<boolean | undefined>(partialDeepFoo.bar!.boolean);
+expectType<Date | undefined>(partialDeepFoo.bar!.date);
 expectType<symbol | undefined>(partialDeepFoo.bar!.symbol);
 expectType<null | undefined>(partialDeepFoo.bar!.null);
 expectType<undefined>(partialDeepFoo.bar!.undefined);
@@ -47,7 +49,7 @@ expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
 // Check for compiling with omitting partial keys
 partialDeepFoo = {baz: 'fred'};
 partialDeepFoo = {bar: {string: 'waldo'}};
-
+partialDeepFoo = {bar: {date: new Date()}};
 // Check that recursive array evalution isn't infinite depth
 type Recurse =
     | string
