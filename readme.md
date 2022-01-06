@@ -88,10 +88,6 @@ Click the type names for complete docs.
 - [`Class`](source/basic.d.ts) - Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`Constructor`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
-- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
-- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
-- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
-- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
 - [`ObservableLike`](source/observable-like.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 
 ### Utilities
@@ -121,8 +117,15 @@ Click the type names for complete docs.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
-- [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
+
+### JSON
+
+- [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
+- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
+- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
+- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
 
 ### Async
 

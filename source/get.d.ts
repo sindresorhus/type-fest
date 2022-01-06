@@ -165,9 +165,9 @@ Get<string[], '3', {strict: true}> //=> string | undefined
 Get<Record<string, string>, 'foo', {strict: true}> // => string | undefined
 ```
 
-@category Template literal
 @category Object
 @category Array
+@category Template literal
 */
 export type Get<BaseType, Path extends string, Options extends GetOptions = {}> =
 	GetWithPath<BaseType, ToPath<Path>, Options>;
