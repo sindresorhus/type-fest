@@ -19,20 +19,23 @@ type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOp
 	>
 	: never;
 
-/** Adds `undefined` to `Type` if `strict` is enabled */
+/**
+Adds `undefined` to `Type` if `strict` is enabled.
+*/
 type Strictify<Type, Options extends GetOptions> =
 	Options['strict'] extends true ? Type | undefined : Type;
 
-/** If `Options["strict"]` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`
- *
- *  Known limitations:
-	- Does not include `undefined` in the type on object types with an index signature (f ex. `{ a: string; [key: string]: string }`)
+/**
+If `Options['strict']` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`.
+
+Known limitations:
+- Does not include `undefined` in the type on object types with an index signature (for example, `{a: string; [key: string]: string}`).
 */
 type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends GetOptions> =
 	Record<string, any> extends BaseType
 	? string extends keyof BaseType
 		? Strictify<BaseType[Key], Options> // Record<string, any>
-		: BaseType[Key] // Record<"a" | "b", any> (Records with a string union as keys have required properties)
+		: BaseType[Key] // Record<'a' | 'b', any> (Records with a string union as keys have required properties)
 	: BaseType[Key];
 
 /**
