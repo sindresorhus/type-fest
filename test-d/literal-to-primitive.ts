@@ -5,8 +5,8 @@ import {LiteralToPrimitive} from '../index';
 declare const numberPrimitive: LiteralToPrimitive<123>;
 expectType<number>(numberPrimitive);
 
-const sym = Symbol('foo');
+const symbol = Symbol('foo');
 
 // Union
-declare const kitchenSink: LiteralToPrimitive<123 | 123n | 'hello' | true | undefined | typeof sym | null | {key: string}>;
+declare const kitchenSink: LiteralToPrimitive<123 | 123n | 'hello' | true | undefined | typeof symbol | null | {key: string}>;
 expectType<number | bigint | string | boolean | undefined | symbol | null>(kitchenSink);
