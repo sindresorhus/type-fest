@@ -33,55 +33,51 @@ settings = applySavedSettings({textEditor: {fontWeight: 500}});
 @category Set
 @category Map
 */
-export type PartialDeep<T, ExceptTypes = never> = T extends Primitive
-	? Partial<T>
-	: T extends ExceptTypes
+export type PartialDeep<T> = T extends BuiltIns
 	? T
 	: T extends Map<infer KeyType, infer ValueType>
-	? PartialMapDeep<KeyType, ValueType, ExceptTypes>
+	? PartialMapDeep<KeyType, ValueType>
 	: T extends Set<infer ItemType>
-	? PartialSetDeep<ItemType, ExceptTypes>
+	? PartialSetDeep<ItemType>
 	: T extends ReadonlyMap<infer KeyType, infer ValueType>
-	? PartialReadonlyMapDeep<KeyType, ValueType, ExceptTypes>
+	? PartialReadonlyMapDeep<KeyType, ValueType>
 	: T extends ReadonlySet<infer ItemType>
-	? PartialReadonlySetDeep<ItemType, ExceptTypes>
+	? PartialReadonlySetDeep<ItemType>
 	: T extends ((...arguments: any[]) => unknown)
 	? T | undefined
 	: T extends object
 	? T extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
 		? ItemType[] extends T // Test for arrays (non-tuples) specifically
-			? Array<PartialDeep<ItemType | undefined, ExceptTypes>> // Recreate relevant array type to prevent eager evaluation of circular reference
-			: PartialObjectDeep<T, ExceptTypes> // Tuples behave properly
-		: PartialObjectDeep<T, ExceptTypes>
+			? Array<PartialDeep<ItemType | undefined>> // Recreate relevant array type to prevent eager evaluation of circular reference
+			: PartialObjectDeep<T> // Tuples behave properly
+		: PartialObjectDeep<T>
 	: unknown;
+
+type BuiltIns = Primitive | Date | RegExp;
 
 /**
 Same as `PartialDeep`, but accepts only `Map`s and as inputs. Internal helper for `PartialDeep`.
 */
-interface PartialMapDeep<KeyType, ValueType, ExceptTypes> extends Map<PartialDeep<KeyType, ExceptTypes>, PartialDeep<ValueType, ExceptTypes>> {}
+interface PartialMapDeep<KeyType, ValueType> extends Map<PartialDeep<KeyType>, PartialDeep<ValueType>> {}
 
 /**
 Same as `PartialDeep`, but accepts only `Set`s as inputs. Internal helper for `PartialDeep`.
 */
-interface PartialSetDeep<T, ExceptTypes> extends Set<PartialDeep<T, ExceptTypes>> {}
+interface PartialSetDeep<T> extends Set<PartialDeep<T>> {}
 
 /**
 Same as `PartialDeep`, but accepts only `ReadonlyMap`s as inputs. Internal helper for `PartialDeep`.
 */
-interface PartialReadonlyMapDeep<KeyType, ValueType, ExceptTypes> extends ReadonlyMap<PartialDeep<KeyType, ExceptTypes>, PartialDeep<ValueType, ExceptTypes>> {}
+interface PartialReadonlyMapDeep<KeyType, ValueType> extends ReadonlyMap<PartialDeep<KeyType>, PartialDeep<ValueType>> {}
 
 /**
 Same as `PartialDeep`, but accepts only `ReadonlySet`s as inputs. Internal helper for `PartialDeep`.
 */
-interface PartialReadonlySetDeep<T, ExceptTypes> extends ReadonlySet<PartialDeep<T, ExceptTypes>> {}
+interface PartialReadonlySetDeep<T> extends ReadonlySet<PartialDeep<T>> {}
 
 /**
 Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.
 */
-type PartialObjectDeep<ObjectType extends object, ExceptTypes> = {
-	[KeyType in keyof ObjectType]?: PartialDeep<ObjectType[KeyType], ExceptTypes>
+type PartialObjectDeep<ObjectType extends object> = {
+	[KeyType in keyof ObjectType]?: PartialDeep<ObjectType[KeyType]>
 };
-
-type AddSymbolToPrimitive<T> = T extends
-  {[Symbol.toPrimitive]: infer V} ?
-  {[Symbol.toPrimitive]: V} : {};
