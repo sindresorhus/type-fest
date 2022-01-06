@@ -9,7 +9,7 @@ import {LiteralToPrimitive} from 'type-fest';
 
 // No overloads needed to get the correct return type
 function plus<T extends number | bigint | string>(x: T, y: T): LiteralToPrimitive<T> {
-    return x + (y as any);
+	return x + (y as any);
 }
 
 plus('a', 'b'); // string
