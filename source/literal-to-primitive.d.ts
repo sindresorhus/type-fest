@@ -7,8 +7,14 @@ Use-case: Working with generic types that may be literal types.
 ```
 import {LiteralToPrimitive} from 'type-fest';
 
-type T = 123 | 'hello' | {key: string};
-type U = LiteralToPrimitive<T>; // number | string
+// No overloads needed to get the correct return type
+function plus<T extends number | bigint | string>(x: T, y: T): LiteralToPrimitive<T> {
+    return x + (y as any);
+}
+
+plus('a', 'b'); // string
+plus(1, 2); // number
+plus(1n, 2n); // bigint
 ```
 
 @category Type
