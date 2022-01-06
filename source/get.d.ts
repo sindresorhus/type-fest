@@ -162,7 +162,7 @@ const getName = (apiResponse: ApiResponse) =>
 
 // Strict mode:
 Get<string[], '3', {strict: true}> //=> string | undefined
-Get<Record<string, string>, "foo", {strict: true}> // => string | undefined
+Get<Record<string, string>, 'foo', {strict: true}> // => string | undefined
 ```
 
 @category Template Literals
