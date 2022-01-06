@@ -1,15 +1,42 @@
 import {StringDigit} from '../source/utilities';
 import {Split} from './split';
 
+type GetOptions = {
+	strict?: boolean;
+};
+
 /**
 Like the `Get` type but receives an array of strings as a path parameter.
 */
-type GetWithPath<BaseType, Keys extends readonly string[]> =
+type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
 	Keys extends []
 	? BaseType
 	: Keys extends [infer Head, ...infer Tail]
-	? GetWithPath<PropertyOf<BaseType, Extract<Head, string>>, Extract<Tail, string[]>>
+	? GetWithPath<
+		PropertyOf<BaseType, Extract<Head, string>, Options>,
+		Extract<Tail, string[]>,
+		Options
+	>
 	: never;
+
+/**
+Adds `undefined` to `Type` if `strict` is enabled.
+*/
+type Strictify<Type, Options extends GetOptions> =
+	Options['strict'] extends true ? Type | undefined : Type;
+
+/**
+If `Options['strict']` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`.
+
+Known limitations:
+- Does not include `undefined` in the type on object types with an index signature (for example, `{a: string; [key: string]: string}`).
+*/
+type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends GetOptions> =
+	Record<string, any> extends BaseType
+	? string extends keyof BaseType
+		? Strictify<BaseType[Key], Options> // Record<string, any>
+		: BaseType[Key] // Record<'a' | 'b', any> (Records with a string union as keys have required properties)
+	: BaseType[Key];
 
 /**
 Splits a dot-prop style path into a tuple comprised of the properties in the path. Handles square-bracket notation.
@@ -29,8 +56,12 @@ type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
 Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.
 */
 type FixPathSquareBrackets<Path extends string> =
-	Path extends `${infer Head}[${infer Middle}]${infer Tail}`
-	? `${Head}.${Middle}${FixPathSquareBrackets<Tail>}`
+	Path extends `[${infer Head}]${infer Tail}`
+	? Tail extends `[${string}`
+		? `${Head}.${FixPathSquareBrackets<Tail>}`
+		: `${Head}${FixPathSquareBrackets<Tail>}`
+	: Path extends `${infer Head}[${infer Middle}]${infer Tail}`
+	? `${Head}.${FixPathSquareBrackets<`[${Middle}]${Tail}`>}`
 	: Path;
 
 /**
@@ -76,11 +107,11 @@ Note:
 - Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
 - Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
-type PropertyOf<BaseType, Key extends string> =
+type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 	BaseType extends null | undefined
 	? undefined
 	: Key extends keyof BaseType
-	? BaseType[Key]
+	? StrictPropertyOf<BaseType, Key, Options>
 	: BaseType extends [] | [unknown, ...unknown[]]
 	? unknown // It's a tuple, but `Key` did not extend `keyof BaseType`. So the index is out of bounds.
 	: BaseType extends {
@@ -89,11 +120,11 @@ type PropertyOf<BaseType, Key extends string> =
 	}
 	? (
 		ConsistsOnlyOf<Key, StringDigit> extends true
-		? Item
+		? Strictify<Item, Options>
 		: unknown
 	)
 	: Key extends keyof WithStringKeys<BaseType>
-	? WithStringKeys<BaseType>[Key]
+	? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
 	: unknown;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
@@ -128,10 +159,15 @@ interface ApiResponse {
 const getName = (apiResponse: ApiResponse) =>
 	get(apiResponse, 'hits.hits[0]._source.name');
 	//=> Array<{given: string[]; family: string}>
+
+// Strict mode:
+Get<string[], '3', {strict: true}> //=> string | undefined
+Get<Record<string, string>, 'foo', {strict: true}> // => string | undefined
 ```
 
 @category Template literal
 @category Object
 @category Array
 */
-export type Get<BaseType, Path extends string> = GetWithPath<BaseType, ToPath<Path>>;
+export type Get<BaseType, Path extends string, Options extends GetOptions = {}> =
+	GetWithPath<BaseType, ToPath<Path>, Options>;

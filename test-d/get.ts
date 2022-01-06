@@ -89,3 +89,34 @@ interface WithModifiers {
 
 expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{qux: number} | undefined>();
 expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi'>>().toEqualTypeOf<string | undefined>();
+
+// Test bracket notation
+expectTypeOf<Get<number[], '[0]'>>().toBeNumber();
+// NOTE: This would fail if `[0][0]` was converted into `00`:
+expectTypeOf<Get<number[], '[0][0]'>>().toBeUnknown();
+expectTypeOf<Get<number[][][], '[0][0][0]'>>().toBeNumber();
+expectTypeOf<Get<number[][][], '[0][0][0][0]'>>().toBeUnknown();
+expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id'>>().toBeNumber();
+
+// Test strict version:
+
+type Strict = {strict: true};
+expectTypeOf<Get<string[], '0', Strict>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<Record<string, number>, 'foo', Strict>>().toEqualTypeOf<number | undefined>();
+expectTypeOf<Get<Record<'a' | 'b', number>, 'a', Strict>>().toEqualTypeOf<number>();
+expectTypeOf<Get<Record<1 | 2, string>, '1', Strict>>().toEqualTypeOf<string>();
+expectTypeOf<Get<{1: boolean}, '1', Strict>>().toBeBoolean();
+expectTypeOf<Get<[number, string], '0', Strict>>().toBeNumber();
+expectTypeOf<Get<{[key: string]: string; a: string}, 'a', Strict>>().toBeString();
+
+interface WithDictionary {
+	foo: Record<string, {
+		bar: number;
+	}>;
+	baz: Record<string, {
+		qux: Array<{x: boolean}>;
+	}>;
+}
+expectTypeOf<Get<WithDictionary, 'foo.whatever', Strict>>().toEqualTypeOf<{bar: number} | undefined>();
+expectTypeOf<Get<WithDictionary, 'foo.whatever.bar', Strict>>().toEqualTypeOf<number | undefined>();
+expectTypeOf<Get<WithDictionary, 'baz.whatever.qux[3].x', Strict>>().toEqualTypeOf<boolean | undefined>();
