@@ -32,4 +32,4 @@ const pet: Pet2 = '';
 export type LiteralUnion<
 	LiteralType,
 	BaseType extends Primitive,
-> = LiteralType | (BaseType & {_?: never});
+> = LiteralType | (BaseType & Record<never, never>);
