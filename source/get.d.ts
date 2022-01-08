@@ -1,6 +1,6 @@
 import {StringDigit} from '../source/utilities';
 import {Split} from './split';
-import {StringKeyOf} from './string-key-of.js';
+import {StringKeyOf} from './string-key-of';
 
 type GetOptions = {
 	strict?: boolean;
