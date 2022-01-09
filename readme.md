@@ -162,22 +162,22 @@ Click the type names for complete docs.
 
 ### Change case
 
-- [`CamelCase`](source/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
-- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) – Convert object properties to camel-case (`fooBar`).
-- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively (`fooBar`).
-- [`KebabCase`](source/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
-- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) – Convert a object properties to kebab-case recursively (`foo-bar`).
-- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) – Convert object properties to kebab-case (`foo-bar`).
-- [`PascalCase`](source/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
-- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`SnakeCase`](source/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
-- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case (`foo_bar`).
-- [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case recursively (`foo_bar`).
+- [`CamelCase`](source/camel-case.d.ts) - Convert a string literal to camel-case (`fooBar`).
+- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert object properties to camel-case (`fooBar`).
+- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) - Convert object properties to camel-case recursively (`fooBar`).
+- [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case (`foo-bar`).
+- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert a object properties to kebab-case recursively (`foo-bar`).
+- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab-case (`foo-bar`).
+- [`PascalCase`](source/pascal-case.d.ts) - Converts a string literal to pascal-case (`FooBar`)
+- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case (`foo_bar`).
+- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case (`foo_bar`).
+- [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case recursively (`foo_bar`).
 - [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
-- [`DelimiterCase`](source/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
-- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
-- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
+- [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.
+- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) - Convert object properties to a custom string delimiter casing.
+- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) - Convert object properties to a custom string delimiter casing recursively.
 
 ### Miscellaneous
 
@@ -192,7 +192,7 @@ Click the type names for complete docs.
 - [`Dictionary`](https://github.com/sindresorhus/type-fest/issues/33) - You only save a few characters (`Dictionary<number>` vs `Record<string, number>`) from [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type), which is more flexible and well-known. Also, you shouldn't use an object as a dictionary. We have `Map` in JavaScript now.
 - [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
 - [`Url2Json`](https://github.com/sindresorhus/type-fest/pull/262) - Inferring search parameters from a URL string is a cute idea, but not very useful in practice, since search parameters are usually dynamic and defined separately.
-- [`Nullish`](https://github.com/sindresorhus/type-fest/pull/318) - The type only saves a couple of characters, not everyone knows what “nullish” means, and I'm also trying to [get away from `null`](https://github.com/sindresorhus/meta/discussions/7).
+- [`Nullish`](https://github.com/sindresorhus/type-fest/pull/318) - The type only saves a couple of characters, not everyone knows what "nullish" means, and I'm also trying to [get away from `null`](https://github.com/sindresorhus/meta/discussions/7).
 - [`TitleCase`](https://github.com/sindresorhus/type-fest/pull/303) - It's not solving a common need and is a better fit for a separate package.
 
 ## Alternative type names
@@ -608,7 +608,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`ReturnType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype) – Obtain the return type of a function type.
+- [`ReturnType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype) - Obtain the return type of a function type.
 	<details>
 	<summary>
 			Example
@@ -643,7 +643,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`InstanceType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype) – Obtain the instance type of a constructor function type.
+- [`InstanceType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype) - Obtain the instance type of a constructor function type.
 	<details>
 	<summary>
 			Example
@@ -696,7 +696,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Omit<T, K>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) – Constructs a type by picking all properties from T and then removing K.
+- [`Omit<T, K>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) - Constructs a type by picking all properties from T and then removing K.
 	<details>
 	<summary>
 			Example
