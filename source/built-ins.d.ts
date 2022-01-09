@@ -1,6 +1,6 @@
 import {Primitive} from './primitive';
 /**
-Matches any primite, date, or regexp value
+Matches any primitive, date, or regexp value
 
 @category Type
 */
