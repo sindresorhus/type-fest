@@ -28,7 +28,7 @@ const pet: Pet2 = '';
 ```
 
 @category Type
- */
+*/
 export type LiteralUnion<
 	LiteralType,
 	BaseType extends Primitive,
