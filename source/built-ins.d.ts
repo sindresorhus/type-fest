@@ -1,6 +1,6 @@
 import {Primitive} from './primitive';
 /**
-Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
+Matches any primite, date, or regexp value
 
 @category Type
 */
