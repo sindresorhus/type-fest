@@ -11,6 +11,8 @@ expectType<Set<{foo_bar: string}>>(bar);
 interface User {
 	userId: number;
 	userName: string;
+	date: Date;
+	regExp: RegExp;
 }
 
 interface UserWithFriends {
@@ -22,15 +24,21 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	user_info: {
 		user_id: 1,
 		user_name: 'Tom',
+		date: new Date(),
+		reg_exp: new RegExp(/.*/),
 	},
 	user_friends: [
 		{
 			user_id: 2,
 			user_name: 'Jerry',
+			date: new Date(),
+			reg_exp: new RegExp(/.*/),
 		},
 		{
 			user_id: 3,
 			user_name: 'Spike',
+			date: new Date(),
+			reg_exp: new RegExp(/.*/),
 		},
 	],
 };

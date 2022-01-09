@@ -15,6 +15,8 @@ expectType<Set<{fooBar: string}>>(bar);
 interface User {
 	UserId: number;
 	UserName: string;
+	Date: Date;
+	RegExp: RegExp;
 }
 
 interface UserWithFriends {
@@ -26,15 +28,21 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	userInfo: {
 		userId: 1,
 		userName: 'Tom',
+		date: new Date(),
+		regExp: new RegExp(/.*/),
 	},
 	userFriends: [
 		{
 			userId: 2,
 			userName: 'Jerry',
+			date: new Date(),
+			regExp: new RegExp(/.*/),
 		},
 		{
 			userId: 3,
 			userName: 'Spike',
+			date: new Date(),
+			regExp: new RegExp(/.*/),
 		},
 	],
 };

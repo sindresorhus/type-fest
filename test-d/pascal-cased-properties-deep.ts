@@ -14,6 +14,8 @@ expectType<Set<{FooBar: string}>>(bar);
 interface User {
 	userId: number;
 	userName: string;
+	date: Date;
+	regExp: RegExp;
 }
 
 interface UserWithFriends {
@@ -25,15 +27,21 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {
 		UserId: 1,
 		UserName: 'Tom',
+		Date: new Date(),
+		RegExp: new RegExp(/.*/),
 	},
 	UserFriends: [
 		{
 			UserId: 2,
 			UserName: 'Jerry',
+			Date: new Date(),
+			RegExp: new RegExp(/.*/),
 		},
 		{
 			UserId: 3,
 			UserName: 'Spike',
+			Date: new Date(),
+			RegExp: new RegExp(/.*/),
 		},
 	],
 };
