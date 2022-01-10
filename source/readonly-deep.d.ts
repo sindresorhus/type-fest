@@ -1,4 +1,4 @@
-import {BuiltIns} from './built-ins';
+import {BuiltIns} from './internal';
 
 /**
 Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.

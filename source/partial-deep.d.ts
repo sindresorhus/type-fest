@@ -1,4 +1,4 @@
-import {BuiltIns} from './built-ins';
+import {BuiltIns} from './internal';
 
 /**
 Create a type from another type with all keys and nested keys set to optional.
