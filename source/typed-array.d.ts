@@ -1,7 +1,7 @@
 /**
 Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 
-@category Basic
+@category Array
 */
 export type TypedArray =
 	| Int8Array

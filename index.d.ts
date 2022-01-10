@@ -38,6 +38,19 @@ export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
 export {Jsonify} from './source/jsonify';
+export {LiteralToPrimitive} from './source/literal-to-primitive';
+export {
+	PositiveInfinity,
+	NegativeInfinity,
+	Finite,
+	Integer,
+	Float,
+	NegativeFloat,
+	Negative,
+	NonNegative,
+	NegativeInteger,
+	NonNegativeInteger,
+} from './source/numeric';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';

@@ -12,7 +12,7 @@ import {Includes} from 'type-fest';
 type hasRed<array extends any[]> = Includes<array, 'red'>;
 ```
 
-@category Utilities
+@category Array
 */
 export type Includes<Value extends readonly any[], Item> =
 	IsEqual<Value[0], Item> extends true

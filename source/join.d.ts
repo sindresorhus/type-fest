@@ -17,7 +17,8 @@ const path: Join<['foo', 'bar', 'baz'], '.'> = ['foo', 'bar', 'baz'].join('.');
 const path: Join<[1, 2, 3], '.'> = [1, 2, 3].join('.');
 ```
 
-@category Template Literals
+@category Array
+@category Template literal
 */
 export type Join<
 	Strings extends Array<string | number>,
@@ -26,4 +27,4 @@ export type Join<
 	Strings extends [string | number] ? `${Strings[0]}` :
 	// @ts-expect-error `Rest` is inferred as `unknown` here: https://github.com/microsoft/TypeScript/issues/45281
 	Strings extends [string | number, ...infer Rest] ? `${Strings[0]}${Delimiter}${Join<Rest, Delimiter>}` :
-	string | number;
+	string;

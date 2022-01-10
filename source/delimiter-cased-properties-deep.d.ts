@@ -38,7 +38,9 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
+@category Object
 */
 export type DelimiterCasedPropertiesDeep<
 	Value,

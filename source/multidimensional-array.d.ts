@@ -34,7 +34,7 @@ const matrix = emptyMatrix(3);
 matrix[0][0][0] = 42;
 ```
 
-@category Utilities
+@category Array
 */
 export type MultidimensionalArray<Element, Dimensions extends number> = number extends Dimensions
 	? Recursive<Element>

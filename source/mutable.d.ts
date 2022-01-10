@@ -29,7 +29,7 @@ type SomeMutable = Mutable<Foo, 'b' | 'c'>;
 // }
 ```
 
-@category Utilities
+@category Object
 */
 export type Mutable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 	Simplify<

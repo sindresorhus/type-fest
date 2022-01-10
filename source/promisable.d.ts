@@ -18,8 +18,8 @@ async function logger(getLogEntry: () => Promisable<string>): Promise<void> {
 
 logger(() => 'foo');
 logger(() => Promise.resolve('bar'));
-
-@category Utilities
 ```
+
+@category Async
 */
 export type Promisable<T> = T | PromiseLike<T>;
