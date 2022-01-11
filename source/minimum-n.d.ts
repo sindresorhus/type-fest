@@ -1,5 +1,5 @@
 /**
-Create a type of one or more elements.
+Create an array type with one or more elements.
 
 @category Utilities
 */
@@ -21,7 +21,7 @@ type FixedLengthArray<Element, Length extends number> =
 	never;
 
 /**
-Create a type of N or more elements.
+Create a array type of N or more elements.
 
 @category Utilities
 */

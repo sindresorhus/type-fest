@@ -146,8 +146,8 @@ Click the type names for complete docs.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
-- [`NonEmpty`](source/minimum-n.d.ts) - Create a type of one or more elements.
-- [`MinimumN`](source/minimum-n.d.ts) - Create a type of N or more elements.
+- [`NonEmpty`](source/minimum-n.d.ts) - Create an array type with one or more elements.
+- [`MinimumN`](source/minimum-n.d.ts) - Create an array type with N or more elements.
 
 ### Numeric
 
