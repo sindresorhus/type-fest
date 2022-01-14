@@ -1,5 +1,5 @@
 /**
-Creates a type that mimics the structure of the specified type but replaces all the property values with a given type.
+Recursively replaces all the property values into a given value type for an object.
 
 Use-cases:
 - Form validation, specify on every field how it should be validated.
