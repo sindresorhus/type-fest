@@ -2,46 +2,48 @@ import {expectType, expectError} from 'tsd';
 import {Schema} from '../index';
 
 const foo = {
-  baz: 'fred',
-  bar: {
-    function: (_: string): void => undefined,
-    object: {key: 'value'},
-    string: 'waldo',
-    number: 1,
-    boolean: false,
-    symbol: Symbol('test'),
-    map: new Map<string, string>(),
-    set: new Set<string>(),
-    array: ['foo'],
-    tuple: ['foo'] as ['foo'],
-    readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
-    readonlySet: new Set<string>() as ReadonlySet<string>,
-    readonlyArray: ['foo'] as readonly string[],
-    readonlyTuple: ['foo'] as const,
-  },
+	baz: 'fred',
+	bar: {
+		function: (_: string): void => undefined,
+		object: {key: 'value'},
+		string: 'waldo',
+		number: 1,
+		boolean: false,
+		symbol: Symbol('test'),
+		map: new Map<string, string>(),
+		set: new Set<string>(),
+		array: ['foo'],
+		tuple: ['foo'] as ['foo'],
+		readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
+		readonlySet: new Set<string>() as ReadonlySet<string>,
+		readonlyArray: ['foo'] as readonly string[],
+		readonlyTuple: ['foo'] as const,
+		regExp: /.*/g,
+	},
 };
 
 type FooOption = 'A' | 'B';
 type FooSchema = Schema<typeof foo, FooOption>;
 
 const fooSchema: FooSchema = {
-  baz: 'A',
-  bar: {
-    function: 'A',
-    object: {key: 'A'},
-    string: 'A',
-    number: 'A',
-    boolean: 'A',
-    symbol: 'A',
-    map: 'A',
-    set: 'A',
-    array: 'A',
-    tuple: 'A',
-    readonlyMap: 'A',
-    readonlySet: 'A',
-    readonlyArray: 'A',
-    readonlyTuple: 'A',
-  },
+	baz: 'A',
+	bar: {
+		function: 'A',
+		object: {key: 'A'},
+		string: 'A',
+		number: 'A',
+		boolean: 'A',
+		symbol: 'A',
+		map: 'A',
+		set: 'A',
+		array: 'A',
+		tuple: 'A',
+		readonlyMap: 'A',
+		readonlySet: 'A',
+		readonlyArray: 'A',
+		readonlyTuple: 'A',
+		regExp: 'A',
+	},
 };
 
 expectError<FooSchema>(foo);
@@ -64,38 +66,40 @@ expectType<FooOption>(barSchema.readonlyMap);
 expectType<FooOption>(barSchema.readonlySet);
 expectType<FooOption>(barSchema.readonlyArray);
 expectType<FooOption>(barSchema.readonlyTuple);
+expectType<FooOption>(barSchema.regExp);
 
 interface ComplexOption {
-  type: 'readonly' | 'required' | 'optional';
-  validation(value: unknown): boolean;
+	type: 'readonly' | 'required' | 'optional';
+	validation(value: unknown): boolean;
 }
 type ComplexSchema = Schema<typeof foo, ComplexOption>;
 
 const createComplexOption = (type: ComplexOption['type']): ComplexOption => ({
-  type,
-  validation(value) {
-    return value !== undefined;
-  },
+	type,
+	validation(value) {
+		return value !== undefined;
+	},
 });
 
 const complexFoo: ComplexSchema = {
-  baz: createComplexOption('optional'),
-  bar: {
-    function: createComplexOption('required'),
-    object: createComplexOption('readonly'),
-    string: createComplexOption('readonly'),
-    number: createComplexOption('readonly'),
-    boolean: createComplexOption('readonly'),
-    symbol: createComplexOption('readonly'),
-    map: createComplexOption('readonly'),
-    set: createComplexOption('readonly'),
-    array: createComplexOption('readonly'),
-    tuple: createComplexOption('readonly'),
-    readonlyMap: createComplexOption('readonly'),
-    readonlySet: createComplexOption('readonly'),
-    readonlyArray: createComplexOption('readonly'),
-    readonlyTuple: createComplexOption('readonly'),
-  },
+	baz: createComplexOption('optional'),
+	bar: {
+		function: createComplexOption('required'),
+		object: createComplexOption('readonly'),
+		string: createComplexOption('readonly'),
+		number: createComplexOption('readonly'),
+		boolean: createComplexOption('readonly'),
+		symbol: createComplexOption('readonly'),
+		map: createComplexOption('readonly'),
+		set: createComplexOption('readonly'),
+		array: createComplexOption('readonly'),
+		tuple: createComplexOption('readonly'),
+		readonlyMap: createComplexOption('readonly'),
+		readonlySet: createComplexOption('readonly'),
+		readonlyArray: createComplexOption('readonly'),
+		readonlyTuple: createComplexOption('readonly'),
+		regExp: createComplexOption('readonly'),
+	},
 };
 
 expectError<ComplexSchema>(foo);
@@ -116,3 +120,4 @@ expectType<ComplexOption>(complexBarSchema.readonlyMap);
 expectType<ComplexOption>(complexBarSchema.readonlySet);
 expectType<ComplexOption>(complexBarSchema.readonlyArray);
 expectType<ComplexOption>(complexBarSchema.readonlyTuple);
+expectType<ComplexOption>(complexBarSchema.regExp);

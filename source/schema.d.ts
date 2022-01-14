@@ -59,6 +59,8 @@ export type Schema<ObjectType, ValueType> = ObjectType extends string
 	? ValueType
 	: ObjectType extends Function
 	? ValueType
+	: ObjectType extends RegExp
+	? ValueType
 	: ObjectType extends object
 	? SchemaObject<ObjectType, ValueType>
 	: ValueType;
