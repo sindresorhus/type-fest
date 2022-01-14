@@ -65,7 +65,7 @@ export type Schema<ObjectType, ValueType> = ObjectType extends string
 
 /**
 Same as `Schema`, but accepts only `object`s as inputs. Internal helper for `Schema`.
- */
+*/
 type SchemaObject<ObjectType extends object, K> = {
 	[KeyType in keyof ObjectType]: Schema<ObjectType[KeyType], K> | K;
 };
