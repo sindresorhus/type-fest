@@ -118,7 +118,7 @@ Click the type names for complete docs.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
-- [`Schema`](source/schema.d.ts) - Deeply changes the values for all properties on a type to whatever specified. Useful for code e.g validation or configuration that relies on using the same structure of a type but the values are different.
+- [`Schema`](source/schema.d.ts) - Recursively replaces all the property values into a given value type for an object.
 
 ### JSON
 
