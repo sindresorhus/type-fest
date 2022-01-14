@@ -28,10 +28,13 @@ const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 
-@category Utilities
+@category Object
+@category Array
+@category Set
+@category Map
 */
-export type PartialDeep<T> = T extends Primitive
-	? Partial<T>
+export type PartialDeep<T> = T extends BuiltIns
+	? T
 	: T extends Map<infer KeyType, infer ValueType>
 	? PartialMapDeep<KeyType, ValueType>
 	: T extends Set<infer ItemType>
@@ -49,6 +52,8 @@ export type PartialDeep<T> = T extends Primitive
 			: PartialObjectDeep<T> // Tuples behave properly
 		: PartialObjectDeep<T>
 	: unknown;
+
+type BuiltIns = Primitive | Date | RegExp;
 
 /**
 Same as `PartialDeep`, but accepts only `Map`s and as inputs. Internal helper for `PartialDeep`.

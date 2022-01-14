@@ -46,6 +46,9 @@ expectType<'##very#prefixed'>(delimiterFromDoublePrefixedKebab);
 const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo####bar';
 expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
 
+const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
+expectType<string>(delimiterFromString);
+
 // Verifying example
 type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]

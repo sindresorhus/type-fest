@@ -3,7 +3,7 @@ import {UpperCaseCharacters, WordSeparators} from '../source/utilities';
 /**
 Unlike a simpler split, this one includes the delimiter splitted on in the resulting array literal. This is to enable splitting on, for example, upper-case characters.
 
-@category Template Literals
+@category Template literal
 */
 export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> =
 	Source extends '' ? [] :
@@ -40,6 +40,8 @@ It receives `UsedWordSeparators` and `UsedUpperCaseCharacters` as input to ensur
 type StringArrayToDelimiterCase<Parts extends readonly any[], Start extends boolean, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
 		? `${StringPartToDelimiterCase<FirstPart, Start, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, false, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
+		: Parts extends [string]
+		? string
 		: '';
 
 /**
@@ -77,7 +79,8 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
 */
 export type DelimiterCase<Value, Delimiter extends string> = Value extends string
 	? StringArrayToDelimiterCase<

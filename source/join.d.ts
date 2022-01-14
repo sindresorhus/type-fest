@@ -17,7 +17,8 @@ const path: Join<['foo', 'bar', 'baz'], '.'> = ['foo', 'bar', 'baz'].join('.');
 const path: Join<[1, 2, 3], '.'> = [1, 2, 3].join('.');
 ```
 
-@category Template Literals
+@category Array
+@category Template literal
 */
 export type Join<
 	Strings extends Array<string | number>,

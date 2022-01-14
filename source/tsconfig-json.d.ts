@@ -15,6 +15,7 @@ declare namespace TsConfigJson {
 			| 'ES6'
 			| 'ES2015'
 			| 'ES2020'
+			| 'ES2022'
 			| 'ESNext'
 			| 'None'
 			// Lowercase alternatives
@@ -25,6 +26,7 @@ declare namespace TsConfigJson {
 			| 'es6'
 			| 'es2015'
 			| 'es2020'
+			| 'es2022'
 			| 'esnext'
 			| 'none';
 
@@ -1038,7 +1040,7 @@ declare namespace TsConfigJson {
 /**
 Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 3.7).
 
-@category Miscellaneous
+@category File
 */
 export interface TsConfigJson {
 	/**

@@ -88,10 +88,6 @@ Click the type names for complete docs.
 - [`Class`](source/basic.d.ts) - Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`Constructor`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
-- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
-- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
-- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
-- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
 - [`ObservableLike`](source/observable-like.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 
 ### Utilities
@@ -106,54 +102,83 @@ Click the type names for complete docs.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
-- [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
 - [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
-- [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise`.
-- [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
+- [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Convert a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) to the [primitive type](source/primitive.d.ts) it belongs to.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
-- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
-- [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
-- [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
 - [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
-- [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
-- [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
-- [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`Schema`](source/schema.d.ts) - Deeply changes the values for all properties on a type to whatever specified. Useful for code e.g validation or configuration that relies on using the same structure of a type but the values are different.
 
-### Template literal types
+### JSON
 
-- [`CamelCase`](source/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
-- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) – Convert object properties to camel-case (`fooBar`).
-- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively (`fooBar`).
-- [`KebabCase`](source/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
-- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) – Convert a object properties to kebab-case recursively (`foo-bar`).
-- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) – Convert object properties to kebab-case (`foo-bar`).
-- [`PascalCase`](source/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
-- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`SnakeCase`](source/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
-- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case (`foo_bar`).
-- [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case recursively (`foo_bar`).
-- [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
-- [`DelimiterCase`](source/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
-- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
-- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
-- [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
-- [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+- [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
+- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
+- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
+- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
+
+### Async
+
+- [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
+- [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
+- [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
+
+### String
+
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
-- [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
+- [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+
+### Array
+
+- [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
+- [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
+- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
+- [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
+- [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
+
+### Numeric
+
+- [`PositiveInfinity`](source/numeric.d.ts) - Matches the hidden `Infinity` type.
+- [`NegativeInfinity`](source/numeric.d.ts) - Matches the hidden `-Infinity` type.
+- [`Finite`](source/numeric.d.ts) - A finite `number`.
+- [`Integer`](source/numeric.d.ts) - A `number` that is an integer.
+- [`Float`](source/numeric.d.ts) - A `number` that is not an integer.
+- [`NegativeFloat`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is not an integer.
+- [`Negative`](source/numeric.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`)
+- [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
+- [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
+- [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
+
+### Change case
+
+- [`CamelCase`](source/camel-case.d.ts) - Convert a string literal to camel-case (`fooBar`).
+- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert object properties to camel-case (`fooBar`).
+- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) - Convert object properties to camel-case recursively (`fooBar`).
+- [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case (`foo-bar`).
+- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert a object properties to kebab-case recursively (`foo-bar`).
+- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab-case (`foo-bar`).
+- [`PascalCase`](source/pascal-case.d.ts) - Converts a string literal to pascal-case (`FooBar`)
+- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case (`foo_bar`).
+- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case (`foo_bar`).
+- [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case recursively (`foo_bar`).
+- [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
+- [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.
+- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) - Convert object properties to a custom string delimiter casing.
+- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) - Convert object properties to a custom string delimiter casing recursively.
 
 ### Miscellaneous
 
@@ -164,10 +189,12 @@ Click the type names for complete docs.
 
 *If we decline a type addition, we will make sure to document the better solution here.*
 
-- [`Diff` and `Spread`](https://github.com/sindresorhus/type-fest/pull/7) - The PR author didn't provide any real-world use-cases and the PR went stale. If you think this type is useful, provide some real-world use-cases and we might reconsider.
+- [`Diff` and `Spread`](https://github.com/sindresorhus/type-fest/pull/7) - The pull request author didn't provide any real-world use-cases and the PR went stale. If you think this type is useful, provide some real-world use-cases and we might reconsider.
 - [`Dictionary`](https://github.com/sindresorhus/type-fest/issues/33) - You only save a few characters (`Dictionary<number>` vs `Record<string, number>`) from [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type), which is more flexible and well-known. Also, you shouldn't use an object as a dictionary. We have `Map` in JavaScript now.
 - [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
 - [`Url2Json`](https://github.com/sindresorhus/type-fest/pull/262) - Inferring search parameters from a URL string is a cute idea, but not very useful in practice, since search parameters are usually dynamic and defined separately.
+- [`Nullish`](https://github.com/sindresorhus/type-fest/pull/318) - The type only saves a couple of characters, not everyone knows what "nullish" means, and I'm also trying to [get away from `null`](https://github.com/sindresorhus/meta/discussions/7).
+- [`TitleCase`](https://github.com/sindresorhus/type-fest/pull/303) - It's not solving a common need and is a better fit for a separate package.
 
 ## Alternative type names
 
@@ -582,7 +609,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`ReturnType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype) – Obtain the return type of a function type.
+- [`ReturnType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype) - Obtain the return type of a function type.
 	<details>
 	<summary>
 			Example
@@ -617,7 +644,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`InstanceType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype) – Obtain the instance type of a constructor function type.
+- [`InstanceType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype) - Obtain the instance type of a constructor function type.
 	<details>
 	<summary>
 			Example
@@ -670,7 +697,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Omit<T, K>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) – Constructs a type by picking all properties from T and then removing K.
+- [`Omit<T, K>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) - Constructs a type by picking all properties from T and then removing K.
 	<details>
 	<summary>
 			Example

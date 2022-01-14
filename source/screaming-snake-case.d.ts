@@ -23,7 +23,8 @@ import {ScreamingSnakeCase} from 'type-fest';
 const someVariable: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
 */
 export type ScreamingSnakeCase<Value> = Value extends string
 	? IsScreamingSnakeCase<Value> extends true

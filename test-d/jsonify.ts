@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import {Jsonify, JsonValue} from '..';
 
 interface A {
@@ -122,3 +122,30 @@ class NonJsonWithInvalidToJSON {
 const nonJsonWithInvalidToJSON = new NonJsonWithInvalidToJSON();
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
+
+// Test that optional type members are not discarded wholesale.
+interface OptionalPrimitive {
+	a?: string;
+}
+
+interface OptionalTypeUnion {
+	a?: string | (() => any);
+}
+
+interface OptionalFunction {
+	a?: () => any;
+}
+
+interface NonOptionalTypeUnion {
+	a: string | undefined;
+}
+
+declare const jsonifiedOptionalPrimitive: Jsonify<OptionalPrimitive>;
+declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
+declare const jsonifiedOptionalFunction: Jsonify<OptionalFunction>;
+declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
+
+expectType<{a?: string}>(jsonifiedOptionalPrimitive);
+expectType<{a?: never}>(jsonifiedOptionalTypeUnion);
+expectType<{a?: never}>(jsonifiedOptionalFunction);
+expectType<{a: never}>(jsonifiedNonOptionalTypeUnion);
