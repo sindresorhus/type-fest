@@ -1,7 +1,7 @@
 /**
-Get the string keys of the given type.
+Get keys of the given type as strings.
 
-Number keys are converted to strings, because object property key is coerced to a string.
+Number keys are converted to strings.
 
 Use-cases:
 - Get string keys from a type which may have number keys.
