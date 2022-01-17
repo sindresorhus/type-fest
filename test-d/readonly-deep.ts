@@ -10,6 +10,8 @@ const data = {
 	number: 1,
 	boolean: false,
 	symbol: Symbol('test'),
+	date: new Date(),
+	regExp: new RegExp(/.*/),
 	null: null,
 	undefined: undefined, // eslint-disable-line object-shorthand
 	map: new Map<string, string>(),
@@ -34,6 +36,8 @@ expectType<boolean>(readonlyData.boolean);
 expectType<symbol>(readonlyData.symbol);
 expectType<null>(readonlyData.null);
 expectType<undefined>(readonlyData.undefined);
+expectType<Date>(readonlyData.date);
+expectType<RegExp>(readonlyData.regExp);
 expectType<ReadonlyMap<string, string>>(readonlyData.map);
 expectType<ReadonlySet<string>>(readonlyData.set);
 expectType<readonly string[]>(readonlyData.array);

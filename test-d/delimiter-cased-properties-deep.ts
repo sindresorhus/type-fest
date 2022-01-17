@@ -14,6 +14,8 @@ expectType<Set<{'foo-bar': string}>>(bar);
 interface User {
 	userId: number;
 	userName: string;
+	date: Date;
+	regExp: RegExp;
 }
 
 interface UserWithFriends {
@@ -25,15 +27,21 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	'user-info': {
 		'user-id': 1,
 		'user-name': 'Tom',
+		date: new Date(),
+		'reg-exp': new RegExp(/.*/),
 	},
 	'user-friends': [
 		{
 			'user-id': 2,
 			'user-name': 'Jerry',
+			date: new Date(),
+			'reg-exp': new RegExp(/.*/),
 		},
 		{
 			'user-id': 3,
 			'user-name': 'Spike',
+			date: new Date(),
+			'reg-exp': new RegExp(/.*/),
 		},
 	],
 };

@@ -1,4 +1,4 @@
-import {Primitive} from './primitive';
+import {BuiltIns} from './internal';
 
 /**
 Create a type from another type with all keys and nested keys set to optional.
@@ -52,8 +52,6 @@ export type PartialDeep<T> = T extends BuiltIns
 			: PartialObjectDeep<T> // Tuples behave properly
 		: PartialObjectDeep<T>
 	: unknown;
-
-type BuiltIns = Primitive | Date | RegExp;
 
 /**
 Same as `PartialDeep`, but accepts only `Map`s and as inputs. Internal helper for `PartialDeep`.
