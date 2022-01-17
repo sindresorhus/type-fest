@@ -50,6 +50,7 @@ export {
 	NegativeInteger,
 	NonNegativeInteger,
 } from './source/numeric';
+export {StringKeyOf} from './source/string-key-of';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';

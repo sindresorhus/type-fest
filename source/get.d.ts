@@ -1,5 +1,6 @@
 import {StringDigit} from '../source/utilities';
 import {Split} from './split';
+import {StringKeyOf} from './string-key-of';
 
 type GetOptions = {
 	strict?: boolean;
@@ -97,7 +98,7 @@ type WithStringsKeys = keyof WithStrings;
 ```
 */
 type WithStringKeys<BaseType extends Record<string | number, any>> = {
-	[Key in `${Extract<keyof BaseType, string | number>}`]: BaseType[Key]
+	[Key in StringKeyOf<BaseType>]: BaseType[Key]
 };
 
 /**
