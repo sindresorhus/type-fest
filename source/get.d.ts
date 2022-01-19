@@ -138,7 +138,7 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 import {Get} from 'type-fest';
 import * as lodash from 'lodash';
 
-const get = <BaseType, Path extends string>(object: BaseType, path: Path): Get<BaseType, Path> =>
+const get = <BaseType, Path extends string | string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>
 	lodash.get(object, path);
 
 interface ApiResponse {
@@ -158,6 +158,11 @@ interface ApiResponse {
 
 const getName = (apiResponse: ApiResponse) =>
 	get(apiResponse, 'hits.hits[0]._source.name');
+	//=> Array<{given: string[]; family: string}>
+
+// Path also supports an array of strings
+const getNameWithPathArray = (apiResponse: ApiResponse) =>
+	get(apiResponse, ['hits','hits', '0', '_source', 'name']);
 	//=> Array<{given: string[]; family: string}>
 
 // Strict mode:
