@@ -1,5 +1,7 @@
 import {BuiltIns} from './internal';
 
+type IsAny<T> = 0 extends 1 & T ? true : false; // https://stackoverflow.com/a/49928360/3406963
+
 /**
 Create a type from another type with all keys and nested keys set to an arbitrary value.
 
@@ -33,9 +35,9 @@ const errors = validate(formValues);
 @category Set
 @category Map
 */
-export type TransformDeep<Base, Value> = Base extends
-	| BuiltIns
-	| ((...arguments: any[]) => unknown)
+export type TransformDeep<Base, Value> = IsAny<Base> extends true
+	? Value
+	: Base extends BuiltIns | ((...arguments: any[]) => unknown)
 	? Value
 	: Base extends Map<infer KeyType, infer ValueType>
 	? TransformMapDeep<KeyType, ValueType, Value>

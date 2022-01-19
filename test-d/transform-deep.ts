@@ -12,8 +12,8 @@ const data = {
 	symbol: Symbol('test'),
 	date: new Date(),
 	regExp: new RegExp(/.*/),
-	null: null as null, // eslint-disable-line @typescript-eslint/no-unnecessary-type-assertion
-	undefined: undefined as undefined, // eslint-disable-line @typescript-eslint/no-unnecessary-type-assertion
+	null: null,
+	undefined: undefined,
 	map: new Map<string, number>(),
 	set: new Set<{id: number; label: string}>(),
 	array: ['foo'],
