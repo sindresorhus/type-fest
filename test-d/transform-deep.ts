@@ -12,10 +12,10 @@ const data = {
 	symbol: Symbol('test'),
 	date: new Date(),
 	regExp: new RegExp(/.*/),
-	null: null as null,
-	undefined: undefined as undefined, // eslint-disable-line object-shorthand
+	null: null as null, // eslint-disable-line @typescript-eslint/no-unnecessary-type-assertion
+	undefined: undefined as undefined, // eslint-disable-line @typescript-eslint/no-unnecessary-type-assertion
 	map: new Map<string, number>(),
-	set: new Set<{id: number, label: string}>(),
+	set: new Set<{id: number; label: string}>(),
 	array: ['foo'],
 	tuple: ['foo'] as ['foo'],
 	readonlyMap: new Map<string, {foo: boolean}>() as ReadonlyMap<string, {foo: boolean}>,
@@ -38,7 +38,7 @@ const transformedData: TransformDeep<typeof data, string> = {
 	null: 'string',
 	undefined: 'string',
 	map: new Map<string, string>(),
-	set: new Set<{id: string, label: string}>(),
+	set: new Set<{id: string; label: string}>(),
 	array: ['string'],
 	tuple: ['string'],
 	readonlyMap: new Map<string, {foo: string}>(),
@@ -58,7 +58,7 @@ expectType<string>(transformedData.undefined);
 expectType<string>(transformedData.date);
 expectType<string>(transformedData.regExp);
 expectType<ReadonlyMap<string, string>>(transformedData.map);
-expectType<ReadonlySet<{id: string, label: string}>>(transformedData.set);
+expectType<ReadonlySet<{id: string; label: string}>>(transformedData.set);
 expectType<readonly string[]>(transformedData.array);
 expectType<readonly [string]>(transformedData.tuple);
 expectType<ReadonlyMap<string, {foo: string}>>(transformedData.readonlyMap);
