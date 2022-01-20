@@ -97,9 +97,9 @@ expectTypeOf<Get<number[], '[0][0]'>>().toBeUnknown();
 expectTypeOf<Get<number[][][], '[0][0][0]'>>().toBeNumber();
 expectTypeOf<Get<number[][][], '[0][0][0][0]'>>().toBeUnknown();
 expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id'>>().toBeNumber();
+expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, ['a', 'b', '0', '0', '0', 'id']>>().toBeNumber();
 
 // Test strict version:
-
 type Strict = {strict: true};
 expectTypeOf<Get<string[], '0', Strict>>().toEqualTypeOf<string | undefined>();
 expectTypeOf<Get<Record<string, number>, 'foo', Strict>>().toEqualTypeOf<number | undefined>();
@@ -120,3 +120,4 @@ interface WithDictionary {
 expectTypeOf<Get<WithDictionary, 'foo.whatever', Strict>>().toEqualTypeOf<{bar: number} | undefined>();
 expectTypeOf<Get<WithDictionary, 'foo.whatever.bar', Strict>>().toEqualTypeOf<number | undefined>();
 expectTypeOf<Get<WithDictionary, 'baz.whatever.qux[3].x', Strict>>().toEqualTypeOf<boolean | undefined>();
+expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x'], Strict>>().toEqualTypeOf<boolean | undefined>();
