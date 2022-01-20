@@ -1,23 +1,23 @@
 /**
-Removes any index signatures from a given object type, so that only explicitly defined properties remain.
+Remove any index signatures from the given object type, so that only explicitly defined properties remain.
 
 Use-cases:
 - Remove overly permissive signatures from third-party types.
 
 This type was taken from this [StackOverflow answer](https://stackoverflow.com/a/68261113/420747).
 
-It relies on the fact, that an empty object (`{}`) is assignable to an object with just an index signature, like `Record<string, unknown>`, but not to an object with explicitly defined keys, like `Record<'foo' | 'bar', unknown>`.
+It relies on the fact that an empty object (`{}`) is assignable to an object with just an index signature, like `Record<string, unknown>`, but not to an object with explicitly defined keys, like `Record<'foo' | 'bar', unknown>`.
 
 (The actual value type, `unknown`, is irrelevant and could be any type. Only the key type matters.)
 
 ```
-const indexed: Record<string, unknown> = {}; // Allowed.
+const indexed: Record<string, unknown> = {}; // Allowed
 
-const keyed: Record<'foo', unknown> = {}; // Error.
+const keyed: Record<'foo', unknown> = {}; // Error
 // => TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
 ```
 
-Instead of causing a type error like above you can also use a [conditional type](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html) to test whether a type is assignable to another:
+Instead of causing a type error like the above, you can also use a [conditional type](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html) to test whether a type is assignable to another:
 
 ```
 type Indexed = {} extends Record<string, unknown>
@@ -31,7 +31,7 @@ type Keyed = {} extends Record<'foo' | 'bar', unknown>
 // => "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`"
 ```
 
-Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration) you can then check for each `KeyType` of `ObjectType`...
+Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
 
 ```
 type RemoveIndexSignature<ObjectType> = {
