@@ -1,9 +1,4 @@
-declare const tag: unique symbol;
-
-declare type InvariantSignature<Type> = {
-	// Make invariant function signature.
-	readonly [tag]: (argument: Type) => Type;
-};
+import {Opaque} from './opaque';
 
 /**
 Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
@@ -74,4 +69,4 @@ keyOfInvariantFooBar(invariantOf(fooBarBaz)); // Error: Argument of type 'Invari
 
 @category Type
 */
-export type InvariantOf<Type> = Type & InvariantSignature<Type>;
+export type InvariantOf<Type> = Opaque<Type, (argument: Type) => Type>;
