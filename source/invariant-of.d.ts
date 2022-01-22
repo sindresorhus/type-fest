@@ -51,7 +51,7 @@ function keyOfFooBar(fooBar: FooBar) {
 }
 
 keyOfFooBar(fooBar) //=> (keyof FooBar)[]
-keyOfFooBar(fooBarBaz) // Allowed but, error at runtime
+keyOfFooBar(fooBarBaz) //=> (keyof FooBar)[] but, (keyof FooBarBaz)[] at runtime
 
 // In invariance
 
