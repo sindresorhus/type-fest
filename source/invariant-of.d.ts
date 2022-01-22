@@ -14,8 +14,13 @@ Use-case:
 
 @example
 ```
-class Animal { constructor(public name: string){} }
-class Cat extends Animal { meow() { } }
+class Animal {
+	constructor(public name: string){}
+}
+
+class Cat extends Animal {
+	meow() {}
+}
 
 let animalArray: Animal[] = [animal];
 let catArray: Cat[] = [cat];
