@@ -12,7 +12,7 @@ Like the `Get` type but receives an array of strings as a path parameter.
 type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
 	Keys extends []
 	? BaseType
-	: Keys extends [infer Head, ...infer Tail]
+	: Keys extends readonly [infer Head, ...infer Tail]
 	? GetWithPath<
 		PropertyOf<BaseType, Extract<Head, string>, Options>,
 		Extract<Tail, string[]>,
@@ -175,5 +175,5 @@ Get<Record<string, string>, 'foo', {strict: true}> // => string | undefined
 @category Array
 @category Template literal
 */
-export type Get<BaseType, Path extends string | string[], Options extends GetOptions = {}> =
+export type Get<BaseType, Path extends string | readonly string[], Options extends GetOptions = {}> =
 	GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
