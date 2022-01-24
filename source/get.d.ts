@@ -161,9 +161,9 @@ const getName = (apiResponse: ApiResponse) =>
 	get(apiResponse, 'hits.hits[0]._source.name');
 	//=> Array<{given: string[]; family: string}>
 
-// Path also supports an array of strings
+// Path also supports a readonly array of strings
 const getNameWithPathArray = (apiResponse: ApiResponse) =>
-	get(apiResponse, ['hits','hits', '0', '_source', 'name']);
+	get(apiResponse, ['hits','hits', '0', '_source', 'name'] as const);
 	//=> Array<{given: string[]; family: string}>
 
 // Strict mode:
