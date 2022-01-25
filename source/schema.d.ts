@@ -34,7 +34,6 @@ const userMaskSettings: UserMask = {
 	active: 'show',
 	passwordHash: 'hide',
 }
-
 ```
 
 @category Utilities
