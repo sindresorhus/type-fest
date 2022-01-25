@@ -36,7 +36,7 @@ const userMaskSettings: UserMask = {
 }
 ```
 
-@category Utilities
+@category Object
 */
 export type Schema<ObjectType, ValueType> = ObjectType extends string
 	? ValueType
