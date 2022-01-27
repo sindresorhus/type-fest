@@ -120,6 +120,7 @@ Click the type names for complete docs.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
+- [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 
 ### JSON
 
@@ -203,6 +204,7 @@ Click the type names for complete docs.
 *If you know one of our types by a different name, add it here for discovery.*
 
 - `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
+- `RecordDeep`- See [`Schema`](https://github.com/sindresorhus/type-fest/blob/main/source/schema.d.ts)
 
 ## Tips
 
