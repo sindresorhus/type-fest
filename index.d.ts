@@ -18,6 +18,7 @@ export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
 export {Opaque} from './source/opaque';
+export {InvariantOf} from './source/invariant-of';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
 export {ValueOf} from './source/value-of';
