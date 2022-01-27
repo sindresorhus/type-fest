@@ -2,9 +2,9 @@
 Recursively replaces all the property values into a given value type for an object.
 
 Use-cases:
-- Form validation, specify on every field how it should be validated.
-- Form settings, specify configuration for input field.
-- Provide types that allow specifying settings/behavior to types when e.g masking or parsing data.
+- Form validation: Define how each field should be validated.
+- Form settings: Define configuration for input fields.
+- Parsing: Define types that specify special behavior for specific fields.
 
 @example
 ```
