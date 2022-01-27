@@ -1,5 +1,5 @@
 /**
-Recursively replaces all the property values into a given value type for an object.
+Create a deep version of another object type where property values are recursively replaced into a given value type.
 
 Use-cases:
 - Form validation: Define how each field should be validated.
