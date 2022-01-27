@@ -12,7 +12,7 @@ Like the `Get` type but receives an array of strings as a path parameter.
 type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
 	Keys extends []
 	? BaseType
-	: Keys extends [infer Head, ...infer Tail]
+	: Keys extends readonly [infer Head, ...infer Tail]
 	? GetWithPath<
 		PropertyOf<BaseType, Extract<Head, string>, Options>,
 		Extract<Tail, string[]>,
@@ -139,7 +139,7 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 import {Get} from 'type-fest';
 import * as lodash from 'lodash';
 
-const get = <BaseType, Path extends string | string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>
+const get = <BaseType, Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>
 	lodash.get(object, path);
 
 interface ApiResponse {
@@ -161,9 +161,9 @@ const getName = (apiResponse: ApiResponse) =>
 	get(apiResponse, 'hits.hits[0]._source.name');
 	//=> Array<{given: string[]; family: string}>
 
-// Path also supports an array of strings
+// Path also supports a readonly array of strings
 const getNameWithPathArray = (apiResponse: ApiResponse) =>
-	get(apiResponse, ['hits','hits', '0', '_source', 'name']);
+	get(apiResponse, ['hits','hits', '0', '_source', 'name'] as const);
 	//=> Array<{given: string[]; family: string}>
 
 // Strict mode:
@@ -175,5 +175,5 @@ Get<Record<string, string>, 'foo', {strict: true}> // => string | undefined
 @category Array
 @category Template literal
 */
-export type Get<BaseType, Path extends string | string[], Options extends GetOptions = {}> =
+export type Get<BaseType, Path extends string | readonly string[], Options extends GetOptions = {}> =
 	GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
