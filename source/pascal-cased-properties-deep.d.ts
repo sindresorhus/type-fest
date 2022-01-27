@@ -42,7 +42,7 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 @category Template literal
 @category Object
 */
-export type PascalCasedPropertiesDeep<Value> = Value extends Function
+export type PascalCasedPropertiesDeep<Value> = Value extends Function | Date | RegExp
 	? Value
 	: Value extends Array<infer U>
 	? Array<PascalCasedPropertiesDeep<U>>

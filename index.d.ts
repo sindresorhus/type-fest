@@ -12,6 +12,7 @@ export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
 export {RequireAllOrNone} from './source/require-all-or-none';
+export {RemoveIndexSignature} from './source/remove-index-signature';
 export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
@@ -51,6 +52,7 @@ export {
 	NegativeInteger,
 	NonNegativeInteger,
 } from './source/numeric';
+export {StringKeyOf} from './source/string-key-of';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';

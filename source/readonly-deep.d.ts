@@ -1,4 +1,4 @@
-import {Primitive} from './primitive';
+import {BuiltIns} from './internal';
 
 /**
 Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
@@ -34,7 +34,7 @@ data.foo.push('bar');
 @category Set
 @category Map
 */
-export type ReadonlyDeep<T> = T extends Primitive | ((...arguments: any[]) => unknown)
+export type ReadonlyDeep<T> = T extends BuiltIns | ((...arguments: any[]) => unknown)
 	? T
 	: T extends ReadonlyMap<infer KeyType, infer ValueType>
 	? ReadonlyMapDeep<KeyType, ValueType>
