@@ -139,7 +139,7 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 import {Get} from 'type-fest';
 import * as lodash from 'lodash';
 
-const get = <BaseType, Path extends string | readonly string[]>>(object: BaseType, path: Path): Get<BaseType, Path> =>
+const get = <BaseType, Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>
 	lodash.get(object, path);
 
 interface ApiResponse {
