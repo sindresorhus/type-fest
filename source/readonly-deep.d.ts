@@ -34,8 +34,12 @@ data.foo.push('bar');
 @category Set
 @category Map
 */
-export type ReadonlyDeep<T> = T extends BuiltIns | ((...arguments: any[]) => unknown)
+export type ReadonlyDeep<T> = T extends BuiltIns
 	? T
+	: T extends (...arguments: any[]) => unknown
+	? {} extends ReadonlyObjectDeep<T>
+		? T
+		: ((...arguments: Parameters<T>) => ReturnType<T>) & ReadonlyObjectDeep<T>
 	: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
 	? ReadonlyMapDeep<KeyType, ValueType>
 	: T extends Readonly<ReadonlySet<infer ItemType>>

@@ -1,11 +1,26 @@
 import {expectType, expectError} from 'tsd';
 import {ReadonlyDeep} from '../index';
+import {ReadonlyObjectDeep} from '../source/readonly-deep';
+
+type Overloaded = {
+	(foo: number): string;
+	(foo: string, bar: number): number;
+};
+
+type Namespace = Overloaded & {
+	baz: boolean[];
+};
+
+const namespace = (() => 1) as unknown as Namespace;
+namespace.baz = [true];
 
 const data = {
 	object: {
 		foo: 'bar',
 	},
 	fn: (_: string) => true,
+	fnWithOverload: ((_: number) => 'foo') as Overloaded,
+	namespace,
 	string: 'foo',
 	number: 1,
 	boolean: false,
@@ -28,6 +43,9 @@ const readonlyData: ReadonlyDeep<typeof data> = data;
 
 readonlyData.fn('foo');
 
+readonlyData.fnWithOverload(1);
+readonlyData.fnWithOverload('', 1);
+
 expectError(readonlyData.string = 'bar');
 expectType<{readonly foo: string}>(readonlyData.object);
 expectType<string>(readonlyData.string);
@@ -46,3 +64,10 @@ expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.readonlyMap);
 expectType<Readonly<ReadonlySet<string>>>(readonlyData.readonlySet);
 expectType<readonly string[]>(readonlyData.readonlyArray);
 expectType<readonly ['foo']>(readonlyData.readonlyTuple);
+
+expectType<((foo: string, bar: number) => number) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
+expectType<number>(readonlyData.namespace('foo', 1));
+expectType<readonly boolean[]>(readonlyData.namespace.baz);
+
+// Currently on last call signature works.
+// expectType<string>(readonlyData.namespace(1));
