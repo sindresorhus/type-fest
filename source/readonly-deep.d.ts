@@ -39,6 +39,8 @@ export type ReadonlyDeep<T> = T extends BuiltIns
 	: T extends (...arguments: any[]) => unknown
 	? {} extends ReadonlyObjectDeep<T>
 		? T
+		: HasMultipleCallSignatures<T> extends true
+		? T // Limitation - can't be made readonly
 		: ((...arguments: Parameters<T>) => ReturnType<T>) & ReadonlyObjectDeep<T>
 	: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
 	? ReadonlyMapDeep<KeyType, ValueType>
@@ -66,3 +68,14 @@ Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper fo
 type ReadonlyObjectDeep<ObjectType extends object> = {
 	readonly [KeyType in keyof ObjectType]: ReadonlyDeep<ObjectType[KeyType]>
 };
+
+/**
+Test if the given function has multiple call signatures. Internal helper for `ReadonlyDeep`.
+Maybe wants to me exported as it's own until type.
+*/
+type HasMultipleCallSignatures<T extends (...arguments: any[]) => unknown> =
+	T extends {(...arguments: infer A): unknown; (...arguments: any[]): unknown}
+		? unknown[] extends A
+			? false
+			: true
+		: false;

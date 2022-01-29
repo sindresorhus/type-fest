@@ -7,11 +7,19 @@ type Overloaded = {
 	(foo: string, bar: number): number;
 };
 
-type Namespace = Overloaded & {
+type Namespace = {
+	(foo: number): string;
+	baz: boolean[];
+};
+
+type NamespaceWithOverload = Overloaded & {
 	baz: boolean[];
 };
 
 const namespace = (() => 1) as unknown as Namespace;
+namespace.baz = [true];
+
+const namespaceWithOverload = (() => 1) as unknown as NamespaceWithOverload;
 namespace.baz = [true];
 
 const data = {
@@ -21,6 +29,7 @@ const data = {
 	fn: (_: string) => true,
 	fnWithOverload: ((_: number) => 'foo') as Overloaded,
 	namespace,
+	namespaceWithOverload,
 	string: 'foo',
 	number: 1,
 	boolean: false,
@@ -65,9 +74,13 @@ expectType<Readonly<ReadonlySet<string>>>(readonlyData.readonlySet);
 expectType<readonly string[]>(readonlyData.readonlyArray);
 expectType<readonly ['foo']>(readonlyData.readonlyTuple);
 
-expectType<((foo: string, bar: number) => number) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
-expectType<number>(readonlyData.namespace('foo', 1));
+expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
+expectType<string>(readonlyData.namespace(1));
 expectType<readonly boolean[]>(readonlyData.namespace.baz);
 
-// Currently on last call signature works.
-// expectType<string>(readonlyData.namespace(1));
+// These currently aren't readonly due to TypeScript limitations.
+// @see https://github.com/microsoft/TypeScript/issues/29732
+expectType<NamespaceWithOverload>(readonlyData.namespaceWithOverload);
+expectType<string>(readonlyData.namespaceWithOverload(1));
+expectType<number>(readonlyData.namespaceWithOverload('foo', 1));
+expectType<boolean[]>(readonlyData.namespaceWithOverload.baz);
