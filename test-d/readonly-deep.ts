@@ -16,20 +16,14 @@ type NamespaceWithOverload = Overloaded & {
 	baz: boolean[];
 };
 
-const namespace = (() => 1) as unknown as Namespace;
-namespace.baz = [true];
-
-const namespaceWithOverload = (() => 1) as unknown as NamespaceWithOverload;
-namespace.baz = [true];
-
 const data = {
 	object: {
 		foo: 'bar',
 	},
 	fn: (_: string) => true,
 	fnWithOverload: ((_: number) => 'foo') as Overloaded,
-	namespace,
-	namespaceWithOverload,
+	namespace: {} as unknown as Namespace,
+	namespaceWithOverload: {} as unknown as NamespaceWithOverload,
 	string: 'foo',
 	number: 1,
 	boolean: false,
