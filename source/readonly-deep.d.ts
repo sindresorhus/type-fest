@@ -36,9 +36,9 @@ data.foo.push('bar');
 */
 export type ReadonlyDeep<T> = T extends BuiltIns | ((...arguments: any[]) => unknown)
 	? T
-	: T extends ReadonlyMap<infer KeyType, infer ValueType>
+	: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
 	? ReadonlyMapDeep<KeyType, ValueType>
-	: T extends ReadonlySet<infer ItemType>
+	: T extends Readonly<ReadonlySet<infer ItemType>>
 	? ReadonlySetDeep<ItemType>
 	: T extends object
 	? ReadonlyObjectDeep<T>
@@ -48,13 +48,13 @@ export type ReadonlyDeep<T> = T extends BuiltIns | ((...arguments: any[]) => unk
 Same as `ReadonlyDeep`, but accepts only `ReadonlyMap`s as inputs. Internal helper for `ReadonlyDeep`.
 */
 interface ReadonlyMapDeep<KeyType, ValueType>
-	extends ReadonlyMap<ReadonlyDeep<KeyType>, ReadonlyDeep<ValueType>> {}
+	extends Readonly<ReadonlyMap<ReadonlyDeep<KeyType>, ReadonlyDeep<ValueType>>> {}
 
 /**
 Same as `ReadonlyDeep`, but accepts only `ReadonlySet`s as inputs. Internal helper for `ReadonlyDeep`.
 */
 interface ReadonlySetDeep<ItemType>
-	extends ReadonlySet<ReadonlyDeep<ItemType>> {}
+	extends Readonly<ReadonlySet<ReadonlyDeep<ItemType>>> {}
 
 /**
 Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper for `ReadonlyDeep`.
