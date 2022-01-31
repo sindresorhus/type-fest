@@ -70,9 +70,11 @@ type ReadonlyObjectDeep<ObjectType extends object> = {
 };
 
 /**
-Test if the given function has multiple call signatures. Internal helper for `ReadonlyDeep`.
+Test if the given function has multiple call signatures.
+
 Needed to handle the case of a single call signature with properties.
-Multipile call signatures cannot currently be supported due to a TypeScript limitation.
+
+Multiple call signatures cannot currently be supported due to a TypeScript limitation.
 @see https://github.com/microsoft/TypeScript/issues/29732
 */
 type HasMultipleCallSignatures<T extends (...arguments: any[]) => unknown> =
