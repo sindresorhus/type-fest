@@ -40,7 +40,7 @@ export type ReadonlyDeep<T> = T extends BuiltIns
 	? {} extends ReadonlyObjectDeep<T>
 		? T
 		: HasMultipleCallSignatures<T> extends true
-		? T // Limitation - can't be made readonly
+		? T
 		: ((...arguments: Parameters<T>) => ReturnType<T>) & ReadonlyObjectDeep<T>
 	: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
 	? ReadonlyMapDeep<KeyType, ValueType>
@@ -71,7 +71,9 @@ type ReadonlyObjectDeep<ObjectType extends object> = {
 
 /**
 Test if the given function has multiple call signatures. Internal helper for `ReadonlyDeep`.
-Maybe wants to me exported as it's own until type.
+Needed to handle the case of a single call signature with properties.
+Multipile call signatures cannot currently be supported due to a TypeScript limitation.
+@see https://github.com/microsoft/TypeScript/issues/29732
 */
 type HasMultipleCallSignatures<T extends (...arguments: any[]) => unknown> =
 	T extends {(...arguments: infer A): unknown; (...arguments: any[]): unknown}
