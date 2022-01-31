@@ -34,8 +34,14 @@ data.foo.push('bar');
 @category Set
 @category Map
 */
-export type ReadonlyDeep<T> = T extends BuiltIns | ((...arguments: any[]) => unknown)
+export type ReadonlyDeep<T> = T extends BuiltIns
 	? T
+	: T extends (...arguments: any[]) => unknown
+	? {} extends ReadonlyObjectDeep<T>
+		? T
+		: HasMultipleCallSignatures<T> extends true
+		? T
+		: ((...arguments: Parameters<T>) => ReturnType<T>) & ReadonlyObjectDeep<T>
 	: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
 	? ReadonlyMapDeep<KeyType, ValueType>
 	: T extends Readonly<ReadonlySet<infer ItemType>>
@@ -62,3 +68,18 @@ Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper fo
 type ReadonlyObjectDeep<ObjectType extends object> = {
 	readonly [KeyType in keyof ObjectType]: ReadonlyDeep<ObjectType[KeyType]>
 };
+
+/**
+Test if the given function has multiple call signatures.
+
+Needed to handle the case of a single call signature with properties.
+
+Multiple call signatures cannot currently be supported due to a TypeScript limitation.
+@see https://github.com/microsoft/TypeScript/issues/29732
+*/
+type HasMultipleCallSignatures<T extends (...arguments: any[]) => unknown> =
+	T extends {(...arguments: infer A): unknown; (...arguments: any[]): unknown}
+		? unknown[] extends A
+			? false
+			: true
+		: false;
