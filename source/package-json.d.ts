@@ -214,6 +214,7 @@ declare namespace PackageJson {
 		| 'import'
 		| 'require'
 		| 'node'
+		| 'node-addons'
 		| 'deno'
 		| 'browser'
 		| 'electron'
