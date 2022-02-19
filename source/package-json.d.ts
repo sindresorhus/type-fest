@@ -232,6 +232,13 @@ declare namespace PackageJson {
 	| {[key in ExportCondition]: Exports}
 	| {[key: string]: Exports}; // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
 
+	/**
+	Import map entries of a module, optionally with conditions.
+	*/
+	export type Imports = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+		[key: string]: string | {[key in ExportCondition]: Exports};
+	};
+
 	export interface NonStandardEntryPoints {
 		/**
 		An ECMAScript module ID that is the primary entry point to the program.
@@ -416,11 +423,18 @@ declare namespace PackageJson {
 		main?: string;
 
 		/**
-		Standard entry points of the package, with enhanced support for ECMAScript Modules.
+		Subpath exports to define entry points of the package.
 
-		[Read more.](https://nodejs.org/api/esm.html#esm_package_entry_points)
+		[Read more.](https://nodejs.org/api/packages.html#subpath-exports)
 		*/
 		exports?: Exports;
+
+		/**
+		Subpath imports to define internal package import maps that only apply to import specifiers from within the package itself.
+
+		[Read more.](https://nodejs.org/api/packages.html#subpath-imports)
+		*/
+		imports?: Imports;
 
 		/**
 		The executable files that should be installed into the `PATH`.
