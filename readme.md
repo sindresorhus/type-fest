@@ -122,7 +122,7 @@ Click the type names for complete docs.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
-- [`NonNullableKeys`](source/non-nullable-keys.d.ts) - Extract the keys from a type where the value type of the key include `null`.
+- [`NonNullableKeys`](source/non-nullable-keys.d.ts) - Extract the keys from a type where the value type of the key do not include `null`.
 - [`NullableToOptional`](source/nullable-to-optional.d.ts) - Make the keys of a type where the value type of the key include `null` optional.
 
 ### JSON

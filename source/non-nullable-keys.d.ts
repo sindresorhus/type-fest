@@ -1,11 +1,11 @@
 /**
-Extract the keys from a type where the value type of the key include `null`.
+Extract the keys from a type where the value type of the key do not include `null`.
 
 Internally this is used for the `NullableToOptional` type.
 
 @example
 ```
-import {NullableKeys} from 'type-fest';
+import {NonNullableKeys} from 'type-fest';
 
 interface Example {
 	a: string;
@@ -14,8 +14,8 @@ interface Example {
 	d: {} | null;
 }
 
-type NullableKeys = ConditionalKeys<Example>;
-//=> 'c' | 'd'
+type Keys = NonNullableKeys<Example>;
+//=> 'a' | 'b'
 ```
 
 @category Object
