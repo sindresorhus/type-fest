@@ -1,8 +1,6 @@
 /**
 Extract the keys from a type where the value type of the key do not include `null`.
 
-Internally this is used for the `NullableToOptional` type.
-
 @example
 ```
 import {NonNullableKeys} from 'type-fest';

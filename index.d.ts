@@ -55,7 +55,6 @@ export {
 } from './source/numeric';
 export {StringKeyOf} from './source/string-key-of';
 export {NonNullableKeys} from './source/non-nullable-keys';
-export {NullableToOptional} from './source/nullable-to-optional';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';
