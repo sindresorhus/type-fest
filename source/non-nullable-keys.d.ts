@@ -10,6 +10,7 @@ interface Example {
 	b: string | number;
 	c: string | null;
 	d: {} | null;
+	e?: number;
 }
 
 type Keys = NonNullableKeys<Example>;
@@ -18,7 +19,12 @@ type Keys = NonNullableKeys<Example>;
 
 @category Object
 */
-export type NonNullableKeys<Base> = {
-	// Pick all keys where the value type of the key include `null`
-	[K in keyof Base]: null extends Base[K] ? never : K
-}[keyof Base];
+export type NonNullableKeys<Base> = NonNullable<
+	{
+		// Pick all keys where the value type of the key include `null`
+		[K in keyof Base]: null extends Base[K]
+			? never
+			// Pick all (optional) keys where the value type of the key include `undefined`
+			: (undefined extends Base[K] ? never : K)
+	}[keyof Base]
+>;

@@ -22,6 +22,12 @@ type ObjectOrNull = {
 	} | null;
 };
 
+type Optional = {
+	a: string;
+	b: null;
+	c?: number;
+};
+
 declare const MixedKeys: NonNullableKeys<Mixed>;
 expectType<'a' | 'b' | 'c'>(MixedKeys);
 
@@ -30,3 +36,6 @@ expectType<'a'>(StandaloneNullKeys);
 
 declare const ObjectOrNullKeys: NonNullableKeys<ObjectOrNull>;
 expectType<'a'>(ObjectOrNullKeys);
+
+declare const OptionalKeys: NonNullableKeys<Optional>;
+expectType<'a'>(OptionalKeys);
