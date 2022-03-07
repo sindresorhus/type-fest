@@ -42,3 +42,13 @@ export type Subtract<A extends number, B extends number> = BuildTuple<A> extends
 Matches any primitive, `Date`, or `RegExp` value.
 */
 export type BuiltIns = Primitive | Date | RegExp;
+
+/**
+Returns the accessible keys that also works for union type.
+
+The reason a simple `keyof Union` does not work is because `keyof` always
+returns the accessible keys of a type, in the case of a union that will
+only be the common keys.
+@link https://stackoverflow.com/a/49402091
+*/
+export type KeysOfUnion<T> = T extends T ? keyof T : never;
