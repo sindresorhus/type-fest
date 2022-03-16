@@ -199,7 +199,7 @@ Click the type names for complete docs.
 - [`Nullish`](https://github.com/sindresorhus/type-fest/pull/318) - The type only saves a couple of characters, not everyone knows what "nullish" means, and I'm also trying to [get away from `null`](https://github.com/sindresorhus/meta/discussions/7).
 - [`TitleCase`](https://github.com/sindresorhus/type-fest/pull/303) - It's not solving a common need and is a better fit for a separate package.
 - [`ExtendOr` and `ExtendAnd`](https://github.com/sindresorhus/type-fest/pull/247) - The benefits don't outweigh having to learn what they mean.
-- [`PackageJsonExtras`](https://github.com/sindresorhus/type-fest/issues/371) - There are too many possible configurations that can be put into `package.json`. If you'd like to extend `PackageJson` to support an additional configuration in your project, please see the *Extending existing types* section below.
+- [`PackageJsonExtras`](https://github.com/sindresorhus/type-fest/issues/371) - There are too many possible configurations that can be put into `package.json`. If you would like to extend `PackageJson` to support an additional configuration in your project, please see the *Extending existing types* section below.
 
 ## Alternative type names
 
