@@ -228,7 +228,6 @@ Click the type names for complete docs.
 	```
 	</details>
 
-
 ### Related
 
 - [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
