@@ -185,7 +185,7 @@ Click the type names for complete docs.
 
 ### Miscellaneous
 
-- [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file).
+- [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). It also includes support for [TypeScript Declaration Files](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html) and [Yarn Workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/).
 - [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 4.4).
 
 ## Declined types
@@ -199,6 +199,7 @@ Click the type names for complete docs.
 - [`Nullish`](https://github.com/sindresorhus/type-fest/pull/318) - The type only saves a couple of characters, not everyone knows what "nullish" means, and I'm also trying to [get away from `null`](https://github.com/sindresorhus/meta/discussions/7).
 - [`TitleCase`](https://github.com/sindresorhus/type-fest/pull/303) - It's not solving a common need and is a better fit for a separate package.
 - [`ExtendOr` and `ExtendAnd`](https://github.com/sindresorhus/type-fest/pull/247) - The benefits don't outweigh having to learn what they mean.
+- [`PackageJsonExtras`](https://github.com/sindresorhus/type-fest/issues/371) - There are too many possible configurations that can be put into `package.json`. If you would like to extend `PackageJson` to support an additional configuration in your project, please see the *Extending existing types* section below.
 
 ## Alternative type names
 
@@ -209,9 +210,28 @@ Click the type names for complete docs.
 
 ## Tips
 
+### Extending existing types
+
+- [`PackageJson`](source/package-json.d.ts) - There are a lot of tools that place extra configurations inside the `package.json` file. You can extend `PackageJson` to support these additional configurations.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBDAnmApnA3gBQIYGMDW2A5igFIDOEAdnNuXAEJ0o4HFmVUC+cAZlBBBwA5ElQBaXinIxhAbgCwAKFCRYCZGnQAZYFRgooPfoJHSANntmKlysWlaESFanAC8jZo-YuaAMgwLKwBhal5gIgB+AC44XX1DADpQqnCiLhsgA)
+
+	```ts
+	import type {PackageJson as BasePackageJson} from 'type-fest';
+	import type {Linter} from 'eslint';
+
+	type PackageJson = BasePackageJson & {eslintConfig?: Linter.Config};
+	```
+	</details>
+
 ### Related
 
 - [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
+- [`Linter.Config`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) - Definitions for the [ESLint configuration schema](https://eslint.org/docs/user-guide/configuring/language-options).
 
 ### Built-in types
 
