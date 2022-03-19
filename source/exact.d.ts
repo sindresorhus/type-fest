@@ -34,7 +34,6 @@ type OnlyAcceptName = {name: string};
 function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(args: T) {}
 
 const invalidInput = {name: 'name', id: 1};
-
 onlyAcceptNameImproved(invalidInput); // Compilation error
 ```
 
