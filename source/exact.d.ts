@@ -2,7 +2,7 @@ import {Primitive} from './primitive';
 import {KeysOfUnion} from './internal';
 
 /**
-Create a type from type A and B and changes keys exclusive to type B to `never`.
+Create a type which properties are restricted only to those explicitly declared.
 
 This is useful for function type-guarding to reject arguments with excess
 properties. Due to the nature of TypeScript, it does not complain if excess properties are
@@ -42,8 +42,8 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 export type Exact<ParameterType, InputType extends ParameterType> = ParameterType extends Primitive
 	? ParameterType
 	/*
-	 Take both the preferred type (ParameterType) and actual provided type (InputType) as input.
-	 Generate the list of keys that exist in the provided type but not in the defined type.
-	 Mark these excess keys as `never`
+   Create a type from type ParameterType and InputType and change keys exclusive to type InputType to `never`.
+	 - Generate the list of keys that exist in the InputType but not in the ParameterType.
+	 - Mark these excess keys as `never`
 	 */
 	: {[Key in keyof ParameterType]: Exact<ParameterType[Key], InputType[Key]>} & Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
