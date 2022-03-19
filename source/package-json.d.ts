@@ -227,6 +227,7 @@ declare namespace PackageJson {
 	Entry points of a module, optionally with conditions and subpath exports.
 	*/
 	export type Exports =
+	| null
 	| string
 	| string[]
 	| {[key in ExportCondition]: Exports}
