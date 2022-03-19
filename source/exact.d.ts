@@ -14,11 +14,11 @@ type OnlyAcceptName = {name: string};
 
 function onlyAcceptName(args: OnlyAcceptName) {}
 
-// TypeScript complains this because it's an object literal.
+// TypeScript complains excess fields when an object literal is provided.
 onlyAcceptName({name: 'name', id: 1});
 //=> `id` is excess
 
-// TypeScript does not complain because it's not an object literal.
+// TypeScript does not complain excess fields when the provided value is a variable (not an object literal).
 const invalidInput = {name: 'name', id: 1};
 onlyAcceptName(invalidInput); // No errors
 ```
@@ -37,15 +37,13 @@ const invalidInput = {name: 'name', id: 1};
 onlyAcceptNameImproved(invalidInput); // Compilation error
 ```
 
-The solution of `Exact` is
-- take both the preferred type and actual provided type as input.
-- generates the list of keys that exist in the provided type but not in the
- defined type.
-- mark these excess keys as `never`
-```
-
 @category Utilities
 */
 export type Exact<ParameterType, InputType extends ParameterType> = ParameterType extends Primitive
 	? ParameterType
+	/*
+	 Take both the preferred type (ParameterType) and actual provided type (InputType) as input.
+	 Generate the list of keys that exist in the provided type but not in the defined type.
+	 Mark these excess keys as `never`
+	 */
 	: {[Key in keyof ParameterType]: Exact<ParameterType[Key], InputType[Key]>} & Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
