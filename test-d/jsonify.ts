@@ -127,7 +127,7 @@ expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
 // `[undefined]` is not JSON because it contains non JSON value `undefined`
 // However `JSON.parse(JSON.stringify())` transforms array members of `undefined` to `null`
 expectNotAssignable<JsonValue>([undefined]);
-declare const parsedStringifiedArrayWithUndefined1: Jsonify<[undefined]>; // = JSON.parse(JSON.stringify([undefined]));
+declare const parsedStringifiedArrayWithUndefined1: Jsonify<undefined[]>; // = JSON.parse(JSON.stringify([undefined]));
 expectType<null[]>(parsedStringifiedArrayWithUndefined1);
 expectAssignable<JsonValue>(parsedStringifiedArrayWithUndefined1);
 expectNotAssignable<JsonValue>([undefined, 1]);
