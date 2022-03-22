@@ -38,12 +38,14 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
+@category Object
 */
 export type DelimiterCasedPropertiesDeep<
 	Value,
 	Delimiter extends string,
-> = Value extends Function
+> = Value extends Function | Date | RegExp
 	? Value
 	: Value extends Array<infer U>
 	? Array<DelimiterCasedPropertiesDeep<U, Delimiter>>

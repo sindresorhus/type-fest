@@ -61,7 +61,7 @@ const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 
 @link https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
 
-@category Utilities
+@category JSON
 */
 type Jsonify<T> =
 	// Check if there are any non-JSONable types represented in the union.
@@ -77,6 +77,6 @@ type Jsonify<T> =
 						? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
 							? J // Then T is Jsonable and its Jsonable value is J
 							: never // Not Jsonable because its toJSON() method does not return JsonValue
-						: {[P in keyof T]: Jsonify<T[P]>} // It's an object: recursive call for its children
+						: {[P in keyof T]: Jsonify<Required<T>[P]>} // It's an object: recursive call for its children
 					: never // Otherwise any other non-object is removed
 		: never; // Otherwise non-JSONable type union was found not empty

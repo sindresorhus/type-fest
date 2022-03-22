@@ -1,4 +1,4 @@
-import {Primitive} from './primitive';
+import {BuiltIns} from './internal';
 
 /**
 Create a type from another type with all keys and nested keys set to optional.
@@ -28,10 +28,13 @@ const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 
-@category Utilities
+@category Object
+@category Array
+@category Set
+@category Map
 */
-export type PartialDeep<T> = T extends Primitive
-	? Partial<T>
+export type PartialDeep<T> = T extends BuiltIns
+	? T
 	: T extends Map<infer KeyType, infer ValueType>
 	? PartialMapDeep<KeyType, ValueType>
 	: T extends Set<infer ItemType>

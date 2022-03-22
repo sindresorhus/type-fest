@@ -9,6 +9,8 @@ const foo = {
 		string: 'waldo',
 		number: 1,
 		boolean: false,
+		date: new Date(),
+		regexp: new RegExp(/.*/),
 		symbol: Symbol('test'),
 		null: null,
 		undefined: undefined, // eslint-disable-line object-shorthand
@@ -33,6 +35,8 @@ expectAssignable<object | undefined>(partialDeepFoo.bar!.object);
 expectType<string | undefined>(partialDeepFoo.bar!.string);
 expectType<number | undefined>(partialDeepFoo.bar!.number);
 expectType<boolean | undefined>(partialDeepFoo.bar!.boolean);
+expectType<Date | undefined>(partialDeepFoo.bar!.date);
+expectType<RegExp | undefined>(partialDeepFoo.bar!.regexp);
 expectType<symbol | undefined>(partialDeepFoo.bar!.symbol);
 expectType<null | undefined>(partialDeepFoo.bar!.null);
 expectType<undefined>(partialDeepFoo.bar!.undefined);
@@ -47,7 +51,7 @@ expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
 // Check for compiling with omitting partial keys
 partialDeepFoo = {baz: 'fred'};
 partialDeepFoo = {bar: {string: 'waldo'}};
-
+partialDeepFoo = {bar: {date: new Date()}};
 // Check that recursive array evalution isn't infinite depth
 type Recurse =
     | string

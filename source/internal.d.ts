@@ -1,3 +1,5 @@
+import {Primitive} from './primitive';
+
 /**
 Returns a boolean for whether the two given types are equal.
 
@@ -35,3 +37,8 @@ the inferred tuple `U` and a tuple of length `B`, then extracts the length of tu
 export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
 	? TupleLength<U>
 	: never;
+
+/**
+Matches any primitive, `Date`, or `RegExp` value.
+*/
+export type BuiltIns = Primitive | Date | RegExp;

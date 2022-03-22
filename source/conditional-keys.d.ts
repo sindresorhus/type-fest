@@ -26,7 +26,7 @@ type StringKeysAndUndefined = ConditionalKeys<Example, string | undefined>;
 //=> 'a' | 'c'
 ```
 
-@category Utilities
+@category Object
 */
 export type ConditionalKeys<Base, Condition> = NonNullable<
 	// Wrap in `NonNullable` to strip away the `undefined` type from the produced union.

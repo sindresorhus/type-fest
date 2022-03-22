@@ -12,11 +12,13 @@ export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
 export {RequireAllOrNone} from './source/require-all-or-none';
+export {RemoveIndexSignature} from './source/remove-index-signature';
 export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
 export {Opaque} from './source/opaque';
+export {InvariantOf} from './source/invariant-of';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
 export {ValueOf} from './source/value-of';
@@ -37,6 +39,21 @@ export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
 export {Jsonify} from './source/jsonify';
+export {Schema} from './source/schema';
+export {LiteralToPrimitive} from './source/literal-to-primitive';
+export {
+	PositiveInfinity,
+	NegativeInfinity,
+	Finite,
+	Integer,
+	Float,
+	NegativeFloat,
+	Negative,
+	NonNegative,
+	NegativeInteger,
+	NonNegativeInteger,
+} from './source/numeric';
+export {StringKeyOf} from './source/string-key-of';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';

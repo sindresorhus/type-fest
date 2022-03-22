@@ -36,7 +36,7 @@ type StringKeysOnly = ConditionalPick<Example, string>;
 //=> {a: string}
 ```
 
-@category Utilities
+@category Object
 */
 export type ConditionalPick<Base, Condition> = Pick<
 	Base,
