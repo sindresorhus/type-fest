@@ -28,6 +28,8 @@ guestFencingTeam.push('Sam');
 //=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
 ```
 
+@deprecated This type doesn't prevent you to access values outside the array length via index (see issue#284),
+            use ReadonlyTuple instead.
 @category Array
 */
 export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<

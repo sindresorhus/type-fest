@@ -54,6 +54,7 @@ export {
 	NonNegativeInteger,
 } from './source/numeric';
 export {StringKeyOf} from './source/string-key-of';
+export {ReadonlyTuple} from './source/readonly-tuple';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';
