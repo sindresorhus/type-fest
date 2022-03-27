@@ -965,7 +965,7 @@ declare namespace TsConfigJson {
 
 		@default 'UseFsEvents'
 		*/
-		watchFile?: WatchOptions.WatchFileKind;
+		watchFile?: WatchOptions.WatchFileKind | Lowercase<WatchOptions.WatchFileKind>;
 
 		/**
 		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
@@ -974,14 +974,14 @@ declare namespace TsConfigJson {
 
 		@default 'UseFsEvents'
 		*/
-		watchDirectory?: WatchOptions.WatchDirectoryKind;
+		watchDirectory?: WatchOptions.WatchDirectoryKind | Lowercase<WatchOptions.WatchDirectoryKind>;
 
 		/**
 		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
 
 		Requires TypeScript version 3.8 or later.
 		*/
-		fallbackPolling?: WatchOptions.PollingWatchKind;
+		fallbackPolling?: WatchOptions.PollingWatchKind | Lowercase<WatchOptions.PollingWatchKind>;
 
 		/**
 		Enable synchronous updates on directory watchers for platforms that don't support recursive watching natively.
