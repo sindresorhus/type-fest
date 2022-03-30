@@ -1,8 +1,9 @@
 /**
- * Creates a readonly tuple of <Element> and length 'Length'
- * @private
- * @see ReadonlyTuple which is safer because it tests if `Length` is a specific finite number
- */
+Creates a readonly tuple of `Element` and with the length of `Length`.
+
+@private
+@see `ReadonlyTuple` which is safer because it tests if `Length` is a specific finite number.
+*/
 type BuildTupleHelper<Element, Length extends number, Rest extends Element[]> =
 	Rest['length'] extends Length ?
 		readonly [...Rest] : // Terminate with readonly array (aka tuple)
@@ -32,9 +33,9 @@ guestFencingTeam.push('Sam');
 ```
 
 @category Utilities
- */
+*/
 export type ReadonlyTuple<Element, Length extends number> =
 	number extends Length
-		// Because `Length extends number` and `number extends Length`, then Length is not a specific finite number
-		? readonly Element[] // It's not fixed length
-		: BuildTupleHelper<Element, Length, []>; // Otherwise it is fixed length tuple
+		// Because `Length extends number` and `number extends Length`, then `Length` is not a specific finite number.
+		? readonly Element[] // It's not fixed length.
+		: BuildTupleHelper<Element, Length, []>; // Otherwise it is a fixed length tuple.
