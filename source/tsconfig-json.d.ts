@@ -193,6 +193,30 @@ declare namespace TsConfigJson {
 			| 'remove'
 			| 'preserve'
 			| 'error';
+
+		export type FallbackPolling =
+			| 'fixedPollingInterval'
+			| 'priorityPollingInterval'
+			| 'dynamicPriorityPolling'
+			| 'fixedInterval'
+			| 'priorityInterval'
+			| 'dynamicPriority'
+			| 'fixedChunkSize';
+
+		export type WatchDirectory =
+			| 'useFsEvents'
+			| 'fixedPollingInterval'
+			| 'dynamicPriorityPolling'
+			| 'fixedChunkSizePolling';
+
+		export type WatchFile =
+			| 'fixedPollingInterval'
+			| 'priorityPollingInterval'
+			| 'dynamicPriorityPolling'
+			| 'useFsEvents'
+			| 'useFsEventsOnParentDirectory'
+			| 'fixedChunkSizePolling';
+
 	}
 
 	export interface CompilerOptions {
@@ -569,6 +593,43 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		useUnknownInCatchVariables?: boolean;
+
+		/**
+		Watch input files.
+
+		@default false
+		@deprecated Use watchOptions instead.
+		*/
+		watch?: boolean;
+
+		/**
+		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
+
+		Requires TypeScript version 3.8 or later.
+
+		@deprecated Use watchOptions.fallbackPolling instead.
+		*/
+		fallbackPolling?: CompilerOptions.FallbackPolling;
+
+		/**
+		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
+
+		Requires TypeScript version 3.8 or later.
+
+		@default 'useFsEvents'
+		@deprecated Use watchOptions.watchDirectory instead.
+		*/
+		watchDirectory?: CompilerOptions.WatchDirectory;
+
+		/**
+		Specify the strategy for watching individual files.
+
+		Requires TypeScript version 3.8 or later.
+
+		@default 'useFsEvents'
+		@deprecated Use watchOptions.watchFile instead.
+		*/
+		watchFile?: CompilerOptions.WatchFile;
 
 		/**
 		Enables experimental support for ES7 decorators.
