@@ -97,9 +97,14 @@ type WithStringsKeys = keyof WithStrings;
 //=> 'foo' | '0'
 ```
 */
-type WithStringKeys<BaseType extends Record<string | number, any>> = {
-	[Key in StringKeyOf<BaseType>]: BaseType[Key]
+type WithStringKeys<BaseType> = {
+	[Key in StringKeyOf<BaseType>]: UncheckedIndex<BaseType, Key>
 };
+
+/**
+Perform a `T[U]` operation if `T` supports indexing.
+*/
+type UncheckedIndex<T, U extends string | number> = [T] extends [Record<string | number, any>] ? T[U] : never;
 
 /**
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
