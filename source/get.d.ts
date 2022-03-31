@@ -102,7 +102,7 @@ type WithStringKeys<BaseType> = {
 };
 
 /**
-Perform a `T[U]` operation if `T` supports indexing
+Perform a `T[U]` operation if `T` supports indexing.
 */
 type UncheckedIndex<T, U extends string | number> = [T] extends [Record<string | number, any>] ? T[U] : never;
 
