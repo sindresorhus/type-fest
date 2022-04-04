@@ -19,12 +19,7 @@ type Keys = NonNullableKeys<Example>;
 
 @category Object
 */
-export type NonNullableKeys<Base> = NonNullable<
-	{
-		// Pick all keys where the value type of the key include `null`
-		[K in keyof Base]: null extends Base[K]
-			? never
-			// Pick all (optional) keys where the value type of the key include `undefined`
-			: (undefined extends Base[K] ? never : K)
-	}[keyof Base]
->;
+export type NonNullableKeys<Base> = keyof {
+  // Pick all keys where the value type of the key include `null`
+  [K in keyof Base as null extends Base[K] ? never : K]: Base[K]
+};
