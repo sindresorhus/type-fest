@@ -141,6 +141,7 @@ Click the type names for complete docs.
 
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+- [`Replace`](source/replace.d.ts) - Returns a new string with some or all matches of a string replaced by a replacement.
 
 ### Array
 
