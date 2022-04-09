@@ -1,5 +1,5 @@
-import {Except} from './except';
-import {ConditionalKeys} from './conditional-keys';
+import type {Except} from './except';
+import type {ConditionalKeys} from './conditional-keys';
 
 /**
 Exclude keys from a shape that matches the given `Condition`.
@@ -8,7 +8,7 @@ This is useful when you want to create a new type with a specific set of keys fr
 
 @example
 ```
-import {Primitive, ConditionalExcept} from 'type-fest';
+import type {Primitive, ConditionalExcept} from 'type-fest';
 
 class Awesome {
 	name: string;
@@ -24,7 +24,7 @@ type ExceptPrimitivesFromAwesome = ConditionalExcept<Awesome, Primitive>;
 
 @example
 ```
-import {ConditionalExcept} from 'type-fest';
+import type {ConditionalExcept} from 'type-fest';
 
 interface Example {
 	a: string;

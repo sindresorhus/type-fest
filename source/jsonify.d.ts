@@ -1,4 +1,4 @@
-import {JsonPrimitive, JsonValue} from './basic';
+import type {JsonPrimitive, JsonValue} from './basic';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined;
@@ -23,6 +23,8 @@ An interface cannot be structurally compared to `JsonValue` because an interface
 
 @example
 ```
+import type {Jsonify} from 'type-fest';
+
 interface Geometry {
 	type: 'Point' | 'Polygon';
 	coordinates: [number, number];
@@ -51,6 +53,8 @@ Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed
 
 @example
 ```
+import type {Jsonify} from 'type-fest';
+
 const time = {
 	timeValue: new Date()
 };

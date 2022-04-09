@@ -1,4 +1,4 @@
-import {BuiltIns} from './internal';
+import type {BuiltIns} from './internal';
 
 /**
 Create a type from another type with all keys and nested keys set to optional.
@@ -9,7 +9,7 @@ Use-cases:
 
 @example
 ```
-import {PartialDeep} from 'type-fest';
+import type {PartialDeep} from 'type-fest';
 
 const settings: Settings = {
 	textEditor: {

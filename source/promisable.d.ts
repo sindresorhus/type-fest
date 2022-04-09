@@ -9,7 +9,7 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31394)
 
 @example
 ```
-import {Promisable} from 'type-fest';
+import type {Promisable} from 'type-fest';
 
 async function logger(getLogEntry: () => Promisable<string>): Promise<void> {
 	const entry = await getLogEntry();

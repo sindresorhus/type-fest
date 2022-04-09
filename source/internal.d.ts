@@ -1,4 +1,4 @@
-import {Primitive} from './primitive';
+import type {Primitive} from './primitive';
 
 /**
 Returns a boolean for whether the two given types are equal.

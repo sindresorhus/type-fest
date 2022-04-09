@@ -9,7 +9,7 @@ The caveat with `RequireExactlyOne` is that TypeScript doesn't always know at co
 
 @example
 ```
-import {RequireExactlyOne} from 'type-fest';
+import type {RequireExactlyOne} from 'type-fest';
 
 type Responder = {
 	text: () => string;

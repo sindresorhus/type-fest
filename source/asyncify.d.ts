@@ -1,5 +1,5 @@
-import {PromiseValue} from './promise-value';
-import {SetReturnType} from './set-return-type';
+import type {PromiseValue} from './promise-value';
+import type {SetReturnType} from './set-return-type';
 
 /**
 Create an async version of the given function type, by boxing the return type in `Promise` while keeping the same parameter types.
@@ -8,7 +8,7 @@ Use-case: You have two functions, one synchronous and one asynchronous that do t
 
 @example
 ```
-import {Asyncify} from 'type-fest';
+import type {Asyncify} from 'type-fest';
 
 // Synchronous function.
 function getFooSync(someArg: SomeType): Foo {

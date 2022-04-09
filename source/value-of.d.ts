@@ -13,7 +13,7 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31438)
 }
 
 // main.ts
-import {ValueOf} from 'type-fest';
+import type {ValueOf} from 'type-fest';
 import data = require('./data.json');
 
 export function getData(name: string): ValueOf<typeof data> {

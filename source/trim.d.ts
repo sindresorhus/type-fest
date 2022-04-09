@@ -13,7 +13,7 @@ Remove leading and trailing spaces from a string.
 
 @example
 ```
-import {Trim} from 'type-fest';
+import type {Trim} from 'type-fest';
 
 Trim<' foo '>
 //=> 'foo'

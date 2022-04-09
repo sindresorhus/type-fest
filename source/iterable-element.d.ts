@@ -9,6 +9,8 @@ Here is an example of `IterableElement` in action with a generator function:
 
 @example
 ```
+import type {IterableElement} from 'type-fest';
+
 function * iAmGenerator() {
 	yield 1;
 	yield 2;
@@ -21,6 +23,8 @@ And here is an example with an async generator:
 
 @example
 ```
+import type {IterableElement} from 'type-fest';
+
 async function * iAmGeneratorAsync() {
 	yield 'hi';
 	yield true;
@@ -35,6 +39,8 @@ An example with an array of strings:
 
 @example
 ```
+import type {IterableElement} from 'type-fest';
+
 type MeString = IterableElement<string[]>
 ```
 

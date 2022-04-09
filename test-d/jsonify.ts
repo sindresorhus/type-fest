@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import {Jsonify, JsonValue} from '..';
+import type {Jsonify, JsonValue} from '..';
 
 interface A {
 	a: number;

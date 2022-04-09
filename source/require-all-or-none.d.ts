@@ -8,7 +8,7 @@ The caveat with `RequireAllOrNone` is that TypeScript doesn't always know at com
 
 @example
 ```
-import {RequireAllOrNone} from 'type-fest';
+import type {RequireAllOrNone} from 'type-fest';
 
 type Responder = {
 	text?: () => string;

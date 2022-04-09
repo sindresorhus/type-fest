@@ -1,4 +1,4 @@
-import {ArrayEntry, MapEntry, ObjectEntry, SetEntry} from './entry';
+import type {ArrayEntry, MapEntry, ObjectEntry, SetEntry} from './entry';
 
 type ArrayEntries<BaseType extends readonly unknown[]> = Array<ArrayEntry<BaseType>>;
 type MapEntries<BaseType> = Array<MapEntry<BaseType>>;
@@ -14,7 +14,7 @@ For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 
 @example
 ```
-import {Entries} from 'type-fest';
+import type {Entries} from 'type-fest';
 
 interface Example {
 	someKey: number;

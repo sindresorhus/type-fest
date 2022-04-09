@@ -1,5 +1,5 @@
-import {WordSeparators} from '../source/utilities';
-import {Split} from './split';
+import type {WordSeparators} from '../source/utilities';
+import type {Split} from './split';
 
 /**
 Step by step takes the first item in an array literal, formats it and adds it to a string literal, and then recursively appends the remainder.
@@ -36,7 +36,7 @@ This can be useful when, for example, converting some kebab-cased command-line f
 
 @example
 ```
-import {CamelCase} from 'type-fest';
+import type {CamelCase} from 'type-fest';
 
 // Simple
 

@@ -1,6 +1,6 @@
-import {StringDigit} from '../source/utilities';
-import {Split} from './split';
-import {StringKeyOf} from './string-key-of';
+import type {StringDigit} from '../source/utilities';
+import type {Split} from './split';
+import type {StringKeyOf} from './string-key-of';
 
 type GetOptions = {
 	strict?: boolean;
@@ -141,7 +141,7 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 
 @example
 ```
-import {Get} from 'type-fest';
+import type {Get} from 'type-fest';
 import * as lodash from 'lodash';
 
 const get = <BaseType, Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>

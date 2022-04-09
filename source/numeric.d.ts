@@ -36,7 +36,7 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
-import {Finite} from 'type-fest';
+import type {Finite} from 'type-fest';
 
 declare function setScore<T extends number>(length: Finite<T>): void;
 ```
@@ -53,7 +53,7 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
-import {Integer} from 'type-fest';
+import type {Integer} from 'type-fest';
 
 declare function setYear<T extends number>(length: Integer<T>): void;
 ```
@@ -75,7 +75,7 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
-import {Float} from 'type-fest';
+import type {Float} from 'type-fest';
 
 declare function setPercentage<T extends number>(length: Float<T>): void;
 ```
@@ -136,7 +136,7 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
-import {NonNegative} from 'type-fest';
+import type {NonNegative} from 'type-fest';
 
 declare function setLength<T extends number>(length: NonNegative<T>): void;
 ```
@@ -158,7 +158,7 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
-import {NonNegativeInteger} from 'type-fest';
+import type {NonNegativeInteger} from 'type-fest';
 
 declare function setLength<T extends number>(length: NonNegativeInteger<T>): void;
 ```

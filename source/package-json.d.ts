@@ -1,4 +1,4 @@
-import {LiteralUnion} from './literal-union';
+import type {LiteralUnion} from './literal-union';
 
 declare namespace PackageJson {
 	/**

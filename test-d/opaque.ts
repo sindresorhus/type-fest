@@ -1,5 +1,5 @@
 import {expectAssignable, expectError} from 'tsd';
-import {Opaque} from '../index';
+import type {Opaque} from '../index';
 
 type Value = Opaque<number, 'Value'>;
 
@@ -28,6 +28,7 @@ type NormalizedDictionary<T> = Record<UUID, T>;
 type Foo = {bar: string};
 
 const userEntities: NormalizedDictionary<Foo> = {
+	// @ts-expect-error
 	'7dd4a16e-d5ee-454c-b1d0-71e23d9fa70b': {bar: 'John'},
 	'6ce31270-31eb-4a72-a9bf-43192d4ab436': {bar: 'Doe'},
 };

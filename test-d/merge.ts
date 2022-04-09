@@ -1,5 +1,5 @@
 import {expectAssignable} from 'tsd';
-import {Merge} from '../index';
+import type {Merge} from '../index';
 
 type Foo = {
 	a: number;

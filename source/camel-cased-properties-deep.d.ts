@@ -1,4 +1,4 @@
-import {CamelCase} from './camel-case';
+import type {CamelCase} from './camel-case';
 
 /**
 Convert object properties to camel case recursively.
@@ -10,6 +10,8 @@ This can be useful when, for example, converting some API types from a different
 
 @example
 ```
+import type {CamelCasedPropertiesDeep} from 'type-fest';
+
 interface User {
 	UserId: number;
 	UserName: string;

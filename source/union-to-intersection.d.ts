@@ -5,7 +5,7 @@ Inspired by [this Stack Overflow answer](https://stackoverflow.com/a/50375286/21
 
 @example
 ```
-import {UnionToIntersection} from 'type-fest';
+import type {UnionToIntersection} from 'type-fest';
 
 type Union = {the(): void} | {great(arg: string): void} | {escape: boolean};
 
@@ -17,7 +17,7 @@ A more applicable example which could make its way into your library code follow
 
 @example
 ```
-import {UnionToIntersection} from 'type-fest';
+import type {UnionToIntersection} from 'type-fest';
 
 class CommandOne {
 	commands: {

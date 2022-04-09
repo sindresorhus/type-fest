@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {LastArrayElement} from '../index';
+import type {LastArrayElement} from '../index';
 
 declare function lastOf<V extends readonly unknown[]>(array: V): LastArrayElement<V>;
 const array: ['foo', 2, 'bar'] = ['foo', 2, 'bar'];

@@ -1,4 +1,4 @@
-import {BuiltIns} from './internal';
+import type {BuiltIns} from './internal';
 
 /**
 Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
@@ -15,7 +15,7 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/13923)
 }
 
 // main.ts
-import {ReadonlyDeep} from 'type-fest';
+import type {ReadonlyDeep} from 'type-fest';
 import dataJson = require('./data.json');
 
 const data: ReadonlyDeep<typeof dataJson> = dataJson;

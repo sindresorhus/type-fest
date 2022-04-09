@@ -7,7 +7,7 @@ If the type is not a `Promise`, the type itself is returned.
 
 @example
 ```
-import {PromiseValue} from 'type-fest';
+import type {PromiseValue} from 'type-fest';
 
 type AsyncData = Promise<string>;
 let asyncData: PromiseValue<AsyncData> = Promise.resolve('ABC');

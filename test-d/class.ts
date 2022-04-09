@@ -1,5 +1,5 @@
 import {expectError} from 'tsd';
-import {Constructor} from '../index';
+import type {Constructor} from '../index';
 
 class Foo {
 	constructor(x: number, y: any) {

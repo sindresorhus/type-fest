@@ -1,4 +1,4 @@
-import {ConditionalKeys} from './conditional-keys';
+import type {ConditionalKeys} from './conditional-keys';
 
 /**
 Pick keys from the shape that matches the given `Condition`.
@@ -7,7 +7,7 @@ This is useful when you want to create a new type from a specific subset of an e
 
 @example
 ```
-import {Primitive, ConditionalPick} from 'type-fest';
+import type {Primitive, ConditionalPick} from 'type-fest';
 
 class Awesome {
 	name: string;
@@ -23,7 +23,7 @@ type PickPrimitivesFromAwesome = ConditionalPick<Awesome, Primitive>;
 
 @example
 ```
-import {ConditionalPick} from 'type-fest';
+import type {ConditionalPick} from 'type-fest';
 
 interface Example {
 	a: string;

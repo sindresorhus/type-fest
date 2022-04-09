@@ -9,7 +9,7 @@ Use-cases:
 
 @example
 ```
-import {StringKeyOf} from 'type-fest';
+import type {StringKeyOf} from 'type-fest';
 
 type Foo = {
 	1: number,

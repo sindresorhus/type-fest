@@ -1,5 +1,5 @@
-import {Except} from './except';
-import {Simplify} from './simplify';
+import type {Except} from './except';
+import type {Simplify} from './simplify';
 
 type Merge_<FirstType, SecondType> = Except<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
 
@@ -8,7 +8,7 @@ Merge two types into a new type. Keys of the second type overrides keys of the f
 
 @example
 ```
-import {Merge} from 'type-fest';
+import type {Merge} from 'type-fest';
 
 type Foo = {
 	a: number;

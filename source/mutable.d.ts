@@ -1,5 +1,5 @@
-import {Except} from './except';
-import {Simplify} from './simplify';
+import type {Except} from './except';
+import type {Simplify} from './simplify';
 
 /**
 Create a type that strips `readonly` from all or some of an object's keys. Inverse of `Readonly<T>`.
@@ -8,7 +8,7 @@ This can be used to [store and mutate options within a class](https://github.com
 
 @example
 ```
-import {Mutable} from 'type-fest';
+import type {Mutable} from 'type-fest';
 
 type Foo = {
 	readonly a: number;

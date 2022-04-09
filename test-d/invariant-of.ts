@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import {InvariantOf} from '../index';
+import type {InvariantOf} from '../index';
 
 type FooBar = InvariantOf<{
 	foo: number;

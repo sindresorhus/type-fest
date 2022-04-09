@@ -1,11 +1,11 @@
-import {CamelCase} from './camel-case';
+import type {CamelCase} from './camel-case';
 
 /**
 Converts a string literal to pascal-case.
 
 @example
 ```
-import {PascalCase} from 'type-fest';
+import type {PascalCase} from 'type-fest';
 
 // Simple
 

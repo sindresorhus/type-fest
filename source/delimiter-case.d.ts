@@ -1,4 +1,4 @@
-import {UpperCaseCharacters, WordSeparators} from '../source/utilities';
+import type {UpperCaseCharacters, WordSeparators} from '../source/utilities';
 
 /**
 Unlike a simpler split, this one includes the delimiter splitted on in the resulting array literal. This is to enable splitting on, for example, upper-case characters.
@@ -54,7 +54,7 @@ This can be useful when, for example, converting a camel-cased object property t
 
 @example
 ```
-import {DelimiterCase} from 'type-fest';
+import type {DelimiterCase} from 'type-fest';
 
 // Simple
 

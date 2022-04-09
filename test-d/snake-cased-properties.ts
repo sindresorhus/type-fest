@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {SnakeCasedProperties} from '../index';
+import type {SnakeCasedProperties} from '../index';
 
 declare const foo: SnakeCasedProperties<{helloWorld: {fooBar: string}}>;
 expectType<{hello_world: {fooBar: string}}>(foo);
