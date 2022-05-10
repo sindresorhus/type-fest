@@ -9,6 +9,7 @@
 	<br>
 	<br>
 	<br>
+	<hr>
 	<div align="center">
 		<p>
 			<p>
@@ -24,6 +25,7 @@
 			</a>
 			<br>
 			<br>
+			<br>
 			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
@@ -33,6 +35,72 @@
 					<sub>Start selling to enterprise customers with just a few lines of code.</sub>
 					<br>
 					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
+				</div>
+			</a>
+			<br>
+			<br>
+			<br>
+			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-light-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-light.svg" width="200" alt="neverinstall">
+				</div>
+				<br>
+				<b>All your favourite IDE's now available on the cloud</b>
+				<div>
+					<sub>
+					Neverinstall gives you an uninterrupted development experience and improved accessibility,
+					<br>
+					allowing you to code faster, better and on-the-go on your favourite IDEs like
+					<br>
+					Android Studio, VS Code, Jupyter and PyCharm using your browser.
+					</sub>
+				</div>
+			</a>
+			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-dark-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-dark.svg" width="200" alt="neverinstall">
+				</div>
+				<br>
+				<b>All your favourite IDE's now available on the cloud</b>
+				<div>
+					<sub>
+					Neverinstall gives you an uninterrupted development experience and improved accessibility,
+					<br>
+					allowing you to code faster, better and on-the-go on your favourite IDEs like
+					<br>
+					Android Studio, VS Code, Jupyter and PyCharm using your browser.
+					</sub>
+				</div>
+			</a>
+			<br>
+			<br>
+			<br>
+			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-light-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-light.svg" width="200" alt="Anvil">
+				</div>
+				<br>
+				<b>Paperwork that makes the data work.</b>
+				<div>
+					<sub>
+					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
+					<br>
+					The easiest way to build paperwork automation into your product.
+					</sub>
+				</div>
+			</a>
+			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-dark-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-dark.svg" width="200" alt="Anvil">
+				</div>
+				<br>
+				<b>Paperwork that makes the data work.</b>
+				<div>
+					<sub>
+					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
+					<br>
+					The easiest way to build paperwork automation into your product.
+					</sub>
 				</div>
 			</a>
 		</p>
