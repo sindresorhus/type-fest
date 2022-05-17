@@ -161,7 +161,7 @@ Click the type names for complete docs.
 ### Utilities
 
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
-- [`Mutable`](source/mutable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
+- [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`. Formerly named `Mutable`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.

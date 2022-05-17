@@ -7,6 +7,7 @@ export * from './source/observable-like';
 // Utilities
 export {Except} from './source/except';
 export {Mutable} from './source/mutable';
+export {Writable} from './source/writable';
 export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
