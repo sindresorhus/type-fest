@@ -150,7 +150,7 @@ Click the type names for complete docs.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
-- [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a readonly tuple of the given type and length.
+- [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 
 ### Numeric
 
