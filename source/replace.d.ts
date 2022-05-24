@@ -3,13 +3,12 @@ type ReplaceOptions = {
 };
 
 /**
-Returns a new string with some or all matches
-of a string replaced by a replacement.
+Represents a string with some or all matches replaced by a replacement.
 
 Use-case:
-	- snake-case-path to dotted.path.notation
-	- Date/Time format "01-08-2042" -> "01/08/2042"
-	- Manipulation of type properties e.g. removal of prefixes
+- `snake-case-path` to `dotted.path.notation`
+- Changing date/time format: `01-08-2042` → `01/08/2042`
+- Manipulation of type properties, for example, removal of prefixes
 
 @example
 ```
@@ -33,14 +32,24 @@ declare function replaceAll<
 	input: Input,
 	search: Search,
 	replacement: Replacement
-): Replace<Input, Search, Replacement, { all: true }>;
+): Replace<Input, Search, Replacement, {all: true}>;
 
-replace("hello ?", "?", "🦄"); // => "hello 🦄"
-replace("hello ??", "?", "❓"); // => "hello ❓?"
+// The return type is the exact string literal, not just `string`.
 
-replaceAll("10:42:00", ":", "-");     // => "10-42-00"
-replaceAll("__userName__", "__", ""); // => "userName"
-replaceAll("My Cool Title", " ", ""); // => "MyCoolTitle"
+replace('hello ?', '?', '🦄');
+//=> 'hello 🦄'
+
+replace('hello ??', '?', '❓');
+//=> 'hello ❓?'
+
+replaceAll('10:42:00', ':', '-');
+//=> '10-42-00'
+
+replaceAll('__userName__', '__', '');
+//=> 'userName'
+
+replaceAll('My Cool Title', ' ', '');
+//=> 'MyCoolTitle'
 ```
 
 @category String
