@@ -6,6 +6,8 @@ Create a type that does not allow extra properties, meaning it only allows prope
 
 This is useful for function type-guarding to reject arguments with excess properties. Due to the nature of TypeScript, it does not complain if excess properties are provided unless the provided value is an object literal.
 
+*Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/12936) if you want to have this type as a built-in in TypeScript.*
+
 @example
 ```
 type OnlyAcceptName = {name: string};
@@ -34,6 +36,8 @@ function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(args: T) {}
 const invalidInput = {name: 'name', id: 1};
 onlyAcceptNameImproved(invalidInput); // Compilation error
 ```
+
+[Read more](https://stackoverflow.com/questions/49580725/is-it-possible-to-restrict-typescript-object-to-contain-only-properties-defined)
 
 @category Utilities
 */
