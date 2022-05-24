@@ -13,6 +13,8 @@ Use-cases:
 - Creating a range union (for example, `0 | 1 | 2 | 3 | 4` from the keys of such a type) without having to resort to recursive types.
 - Creating an array of coordinates with a static length, for example, length of 3 for a 3D vector.
 
+Note: This type does not prevent out-of-bounds access. Prefer `ReadonlyTuple` unless you need mutability.
+
 @example
 ```
 import {FixedLengthArray} from 'type-fest';
@@ -28,9 +30,8 @@ guestFencingTeam.push('Sam');
 //=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
 ```
 
-@deprecated This type doesn't prevent you to access values outside the array length via index (see issue#284),
-            use ReadonlyTuple instead.
 @category Array
+@see ReadonlyTuple
 */
 export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<
 	ArrayPrototype,
