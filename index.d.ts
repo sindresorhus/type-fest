@@ -78,6 +78,7 @@ export {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-
 export {Join} from './source/join';
 export {Split} from './source/split';
 export {Trim} from './source/trim';
+export {Replace} from './source/replace';
 export {Includes} from './source/includes';
 export {Get} from './source/get';
 export {LastArrayElement} from './source/last-array-element';
