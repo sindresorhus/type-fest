@@ -1,4 +1,4 @@
-import {DelimiterCasedProperties} from './delimiter-cased-properties';
+import type {DelimiterCasedProperties} from './delimiter-cased-properties';
 
 /**
 Convert object properties to kebab case but not recursively.
@@ -10,6 +10,8 @@ This can be useful when, for example, converting some API types from a different
 
 @example
 ```
+import type {KebabCasedProperties} from 'type-fest';
+
 interface User {
 	userId: number;
 	userName: string;
@@ -21,6 +23,8 @@ const result: KebabCasedProperties<User> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
+@category Object
 */
 export type KebabCasedProperties<Value> = DelimiterCasedProperties<Value, '-'>;

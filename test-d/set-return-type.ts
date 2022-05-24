@@ -1,5 +1,5 @@
 import {expectType, expectError} from 'tsd';
-import {SetReturnType} from '../index';
+import type {SetReturnType} from '../index';
 
 declare const anything: unknown;
 

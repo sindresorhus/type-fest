@@ -15,7 +15,7 @@ Use-cases:
 
 @example
 ```
-import {FixedLengthArray} from 'type-fest';
+import type {FixedLengthArray} from 'type-fest';
 
 type FencingTeam = FixedLengthArray<string, 3>;
 
@@ -28,7 +28,7 @@ guestFencingTeam.push('Sam');
 //=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
 ```
 
-@category Utilities
+@category Array
 */
 export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<
 	ArrayPrototype,

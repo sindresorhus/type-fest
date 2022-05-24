@@ -15,7 +15,7 @@ For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 
 @example
 ```
-import {Entry} from 'type-fest';
+import type {Entry} from 'type-fest';
 
 interface Example {
 	someKey: number;
@@ -52,7 +52,10 @@ const setEntryString: Entry<typeof setExample> = ['a', 'a'];
 const setEntryNumber: Entry<typeof setExample> = [1, 1];
 ```
 
-@category Utilities
+@category Object
+@category Map
+@category Array
+@category Set
 */
 export type Entry<BaseType> =
 	BaseType extends Map<unknown, unknown> ? MapEntry<BaseType>

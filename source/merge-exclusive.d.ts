@@ -10,7 +10,7 @@ This type works with a helper type, called `Without`. `Without<FirstType, Second
 
 @example
 ```
-import {MergeExclusive} from 'type-fest';
+import type {MergeExclusive} from 'type-fest';
 
 interface ExclusiveVariation1 {
 	exclusive1: boolean;
@@ -32,7 +32,7 @@ exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
 //=> Error
 ```
 
-@category Utilities
+@category Object
 */
 export type MergeExclusive<FirstType, SecondType> =
 	(FirstType | SecondType) extends object ?

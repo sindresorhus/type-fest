@@ -1,5 +1,5 @@
 import {expectError, expectAssignable} from 'tsd';
-import {MergeExclusive} from '../index';
+import type {MergeExclusive} from '../index';
 
 interface BaseOptions {
 	option?: string;

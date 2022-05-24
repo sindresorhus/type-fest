@@ -1,9 +1,9 @@
-import {UpperCaseCharacters, WordSeparators} from '../source/utilities';
+import type {UpperCaseCharacters, WordSeparators} from '../source/utilities';
 
 /**
 Unlike a simpler split, this one includes the delimiter splitted on in the resulting array literal. This is to enable splitting on, for example, upper-case characters.
 
-@category Template Literals
+@category Template literal
 */
 export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> =
 	Source extends '' ? [] :
@@ -24,8 +24,9 @@ Format a specific part of the splitted string literal that `StringArrayToDelimit
 
 @see StringArrayToDelimiterCase
 */
-type StringPartToDelimiterCase<StringPart extends string, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
+type StringPartToDelimiterCase<StringPart extends string, Start extends boolean, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	StringPart extends UsedWordSeparators ? Delimiter :
+	Start extends true ? Lowercase<StringPart> :
 	StringPart extends UsedUpperCaseCharacters ? `${Delimiter}${Lowercase<StringPart>}` :
 	StringPart;
 
@@ -36,9 +37,11 @@ It receives `UsedWordSeparators` and `UsedUpperCaseCharacters` as input to ensur
 
 @see SplitIncludingDelimiters
 */
-type StringArrayToDelimiterCase<Parts extends readonly any[], UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
+type StringArrayToDelimiterCase<Parts extends readonly any[], Start extends boolean, UsedWordSeparators extends string, UsedUpperCaseCharacters extends string, Delimiter extends string> =
 	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? `${StringPartToDelimiterCase<FirstPart, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
+		? `${StringPartToDelimiterCase<FirstPart, Start, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}${StringArrayToDelimiterCase<RemainingParts, false, UsedWordSeparators, UsedUpperCaseCharacters, Delimiter>}`
+		: Parts extends [string]
+		? string
 		: '';
 
 /**
@@ -51,7 +54,7 @@ This can be useful when, for example, converting a camel-cased object property t
 
 @example
 ```
-import {DelimiterCase} from 'type-fest';
+import type {DelimiterCase} from 'type-fest';
 
 // Simple
 
@@ -76,11 +79,13 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
 */
 export type DelimiterCase<Value, Delimiter extends string> = Value extends string
 	? StringArrayToDelimiterCase<
 		SplitIncludingDelimiters<Value, WordSeparators | UpperCaseCharacters>,
+		true,
 		WordSeparators,
 		UpperCaseCharacters,
 		Delimiter

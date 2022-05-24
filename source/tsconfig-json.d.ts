@@ -15,6 +15,7 @@ declare namespace TsConfigJson {
 			| 'ES6'
 			| 'ES2015'
 			| 'ES2020'
+			| 'ES2022'
 			| 'ESNext'
 			| 'None'
 			// Lowercase alternatives
@@ -25,6 +26,7 @@ declare namespace TsConfigJson {
 			| 'es6'
 			| 'es2015'
 			| 'es2020'
+			| 'es2022'
 			| 'esnext'
 			| 'none';
 
@@ -596,6 +598,7 @@ declare namespace TsConfigJson {
 		Watch input files.
 
 		@default false
+		@deprecated Use watchOptions instead.
 		*/
 		watch?: boolean;
 
@@ -603,6 +606,8 @@ declare namespace TsConfigJson {
 		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
 
 		Requires TypeScript version 3.8 or later.
+
+		@deprecated Use watchOptions.fallbackPolling instead.
 		*/
 		fallbackPolling?: CompilerOptions.FallbackPolling;
 
@@ -612,6 +617,7 @@ declare namespace TsConfigJson {
 		Requires TypeScript version 3.8 or later.
 
 		@default 'useFsEvents'
+		@deprecated Use watchOptions.watchDirectory instead.
 		*/
 		watchDirectory?: CompilerOptions.WatchDirectory;
 
@@ -621,6 +627,7 @@ declare namespace TsConfigJson {
 		Requires TypeScript version 3.8 or later.
 
 		@default 'useFsEvents'
+		@deprecated Use watchOptions.watchFile instead.
 		*/
 		watchFile?: CompilerOptions.WatchFile;
 
@@ -988,6 +995,71 @@ declare namespace TsConfigJson {
 		explainFiles?: boolean;
 	}
 
+	namespace WatchOptions {
+		export type WatchFileKind =
+			| 'FixedPollingInterval'
+			| 'PriorityPollingInterval'
+			| 'DynamicPriorityPolling'
+			| 'FixedChunkSizePolling'
+			| 'UseFsEvents'
+			| 'UseFsEventsOnParentDirectory';
+
+		export type WatchDirectoryKind =
+			| 'UseFsEvents'
+			| 'FixedPollingInterval'
+			| 'DynamicPriorityPolling'
+			| 'FixedChunkSizePolling';
+
+		export type PollingWatchKind =
+			| 'FixedInterval'
+			| 'PriorityInterval'
+			| 'DynamicPriority'
+			| 'FixedChunkSize';
+	}
+
+	export interface WatchOptions {
+
+		/**
+		Specify the strategy for watching individual files.
+
+		Requires TypeScript version 3.8 or later.
+
+		@default 'UseFsEvents'
+		*/
+		watchFile?: WatchOptions.WatchFileKind | Lowercase<WatchOptions.WatchFileKind>;
+
+		/**
+		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
+
+		Requires TypeScript version 3.8 or later.
+
+		@default 'UseFsEvents'
+		*/
+		watchDirectory?: WatchOptions.WatchDirectoryKind | Lowercase<WatchOptions.WatchDirectoryKind>;
+
+		/**
+		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
+
+		Requires TypeScript version 3.8 or later.
+		*/
+		fallbackPolling?: WatchOptions.PollingWatchKind | Lowercase<WatchOptions.PollingWatchKind>;
+
+		/**
+		Enable synchronous updates on directory watchers for platforms that don't support recursive watching natively.
+		*/
+		synchronousWatchDirectory?: boolean;
+
+		/**
+		Specifies a list of directories to exclude from watch
+		*/
+		excludeDirectories?: string[];
+
+		/**
+		Specifies a list of files to exclude from watch
+		*/
+		excludeFiles?: string[];
+	}
+
 	/**
 	Auto type (.d.ts) acquisition options for this project.
 
@@ -1038,13 +1110,18 @@ declare namespace TsConfigJson {
 /**
 Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 3.7).
 
-@category Miscellaneous
+@category File
 */
 export interface TsConfigJson {
 	/**
 	Instructs the TypeScript compiler how to compile `.ts` files.
 	*/
 	compilerOptions?: TsConfigJson.CompilerOptions;
+
+	/**
+	Instructs the TypeScript compiler how to watch files.
+	*/
+	watchOptions?: TsConfigJson.WatchOptions;
 
 	/**
 	Auto type (.d.ts) acquisition options for this project.

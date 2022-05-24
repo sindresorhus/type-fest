@@ -1,4 +1,4 @@
-import {PascalCase} from './pascal-case';
+import type {PascalCase} from './pascal-case';
 
 /**
 Convert object properties to pascal case recursively.
@@ -10,6 +10,8 @@ This can be useful when, for example, converting some API types from a different
 
 @example
 ```
+import type {PascalCasedPropertiesDeep} from 'type-fest';
+
 interface User {
 	userId: number;
 	userName: string;
@@ -38,9 +40,11 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
+@category Object
 */
-export type PascalCasedPropertiesDeep<Value> = Value extends Function
+export type PascalCasedPropertiesDeep<Value> = Value extends Function | Date | RegExp
 	? Value
 	: Value extends Array<infer U>
 	? Array<PascalCasedPropertiesDeep<U>>

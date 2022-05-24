@@ -5,7 +5,7 @@ Use-case: Defining the return type of a method like `String.prototype.split`.
 
 @example
 ```
-import {Split} from 'type-fest';
+import type {Split} from 'type-fest';
 
 declare function split<S extends string, D extends string>(string: S, separator: D): Split<S, D>;
 
@@ -16,7 +16,8 @@ let array: Item[];
 array = split(items, ',');
 ```
 
-@category Template Literals
+@category String
+@category Template literal
 */
 export type Split<
 	S extends string,

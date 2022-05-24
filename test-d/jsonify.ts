@@ -1,5 +1,5 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
-import {Jsonify, JsonValue} from '..';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import type {Jsonify, JsonValue} from '..';
 
 interface A {
 	a: number;
@@ -122,3 +122,42 @@ class NonJsonWithInvalidToJSON {
 const nonJsonWithInvalidToJSON = new NonJsonWithInvalidToJSON();
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
+
+// Special cases of Array with `undefined` member
+// `[undefined]` is not JSON because it contains non JSON value `undefined`
+// However `JSON.parse(JSON.stringify())` transforms array members of `undefined` to `null`
+expectNotAssignable<JsonValue>([undefined]);
+declare const parsedStringifiedArrayWithUndefined1: Jsonify<undefined[]>; // = JSON.parse(JSON.stringify([undefined]));
+expectType<null[]>(parsedStringifiedArrayWithUndefined1);
+expectAssignable<JsonValue>(parsedStringifiedArrayWithUndefined1);
+expectNotAssignable<JsonValue>([undefined, 1]);
+declare const parsedStringifiedArrayWithUndefined2: Jsonify<[undefined, number]>;
+expectType<Array<number | null>>(parsedStringifiedArrayWithUndefined2);
+expectAssignable<JsonValue>(parsedStringifiedArrayWithUndefined2);
+
+// Test that optional type members are not discarded wholesale.
+interface OptionalPrimitive {
+	a?: string;
+}
+
+interface OptionalTypeUnion {
+	a?: string | (() => any);
+}
+
+interface OptionalFunction {
+	a?: () => any;
+}
+
+interface NonOptionalTypeUnion {
+	a: string | undefined;
+}
+
+declare const jsonifiedOptionalPrimitive: Jsonify<OptionalPrimitive>;
+declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
+declare const jsonifiedOptionalFunction: Jsonify<OptionalFunction>;
+declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
+
+expectType<{a?: string}>(jsonifiedOptionalPrimitive);
+expectType<{a?: never}>(jsonifiedOptionalTypeUnion);
+expectType<{a?: never}>(jsonifiedOptionalFunction);
+expectType<{a: never}>(jsonifiedNonOptionalTypeUnion);

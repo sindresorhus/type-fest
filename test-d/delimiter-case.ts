@@ -1,6 +1,6 @@
 import {expectType, expectAssignable} from 'tsd';
-import {UpperCaseCharacters, WordSeparators} from '../source/utilities';
-import {SplitIncludingDelimiters, DelimiterCase} from '../source/delimiter-case';
+import type {UpperCaseCharacters, WordSeparators} from '../source/utilities';
+import type {SplitIncludingDelimiters, DelimiterCase} from '../source/delimiter-case';
 
 const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar'];
 expectType<['foo', 'B', 'ar']>(splitFromCamel);
@@ -15,6 +15,9 @@ expectType<'foo#bar'>(delimiterFromCamel);
 
 const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
+
+const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
+expectType<'foo#bar'>(delimiterFromPascal);
 
 const delimiterFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromKebab);
@@ -42,6 +45,9 @@ expectType<'##very#prefixed'>(delimiterFromDoublePrefixedKebab);
 
 const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo####bar';
 expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
+
+const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
+expectType<string>(delimiterFromString);
 
 // Verifying example
 type OddCasedProperties<T> = {

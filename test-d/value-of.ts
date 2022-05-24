@@ -1,5 +1,5 @@
 import {expectType, expectError, expectAssignable} from 'tsd';
-import {ValueOf} from '../index';
+import type {ValueOf} from '../index';
 
 const value: ValueOf<{a: 1; b: 2; c: 3}> = 3;
 const valueRestricted: ValueOf<{a: 1; b: 2; c: 3}, 'a'> = 1;

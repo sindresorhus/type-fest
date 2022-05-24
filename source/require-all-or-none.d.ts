@@ -8,7 +8,7 @@ The caveat with `RequireAllOrNone` is that TypeScript doesn't always know at com
 
 @example
 ```
-import {RequireAllOrNone} from 'type-fest';
+import type {RequireAllOrNone} from 'type-fest';
 
 type Responder = {
 	text?: () => string;
@@ -27,7 +27,7 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 };
 ```
 
-@category Utilities
+@category Object
 */
 export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = never> = (
 	| Required<Pick<ObjectType, KeysType>> // Require all of the given keys.

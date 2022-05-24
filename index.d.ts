@@ -7,16 +7,19 @@ export * from './source/observable-like';
 // Utilities
 export {Except} from './source/except';
 export {Mutable} from './source/mutable';
+export {Writable} from './source/writable';
 export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
 export {RequireAllOrNone} from './source/require-all-or-none';
+export {RemoveIndexSignature} from './source/remove-index-signature';
 export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
 export {Opaque} from './source/opaque';
+export {InvariantOf} from './source/invariant-of';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
 export {ValueOf} from './source/value-of';
@@ -28,6 +31,8 @@ export {ConditionalPick} from './source/conditional-pick';
 export {UnionToIntersection} from './source/union-to-intersection';
 export {Stringified} from './source/stringified';
 export {FixedLengthArray} from './source/fixed-length-array';
+export {MultidimensionalArray} from './source/multidimensional-array';
+export {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array';
 export {IterableElement} from './source/iterable-element';
 export {Entry} from './source/entry';
 export {Entries} from './source/entries';
@@ -35,6 +40,21 @@ export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
 export {Simplify} from './source/simplify';
 export {Jsonify} from './source/jsonify';
+export {Schema} from './source/schema';
+export {LiteralToPrimitive} from './source/literal-to-primitive';
+export {
+	PositiveInfinity,
+	NegativeInfinity,
+	Finite,
+	Integer,
+	Float,
+	NegativeFloat,
+	Negative,
+	NonNegative,
+	NegativeInteger,
+	NonNegativeInteger,
+} from './source/numeric';
+export {StringKeyOf} from './source/string-key-of';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';

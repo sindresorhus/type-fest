@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import {FixedLengthArray} from '../index';
+import type {FixedLengthArray} from '../index';
 
 type FixedToThreeStrings = FixedLengthArray<string, 3>;
 

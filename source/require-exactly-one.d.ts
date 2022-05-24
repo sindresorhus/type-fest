@@ -9,7 +9,7 @@ The caveat with `RequireExactlyOne` is that TypeScript doesn't always know at co
 
 @example
 ```
-import {RequireExactlyOne} from 'type-fest';
+import type {RequireExactlyOne} from 'type-fest';
 
 type Responder = {
 	text: () => string;
@@ -25,7 +25,7 @@ const responder: RequireExactlyOne<Responder, 'text' | 'json'> = {
 };
 ```
 
-@category Utilities
+@category Object
 */
 export type RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
 	{[Key in KeysType]: (

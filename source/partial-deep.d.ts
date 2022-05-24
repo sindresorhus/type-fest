@@ -1,4 +1,4 @@
-import {Primitive} from './primitive';
+import type {BuiltIns} from './internal';
 
 /**
 Create a type from another type with all keys and nested keys set to optional.
@@ -9,7 +9,7 @@ Use-cases:
 
 @example
 ```
-import {PartialDeep} from 'type-fest';
+import type {PartialDeep} from 'type-fest';
 
 const settings: Settings = {
 	textEditor: {
@@ -28,10 +28,13 @@ const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 
-@category Utilities
+@category Object
+@category Array
+@category Set
+@category Map
 */
-export type PartialDeep<T> = T extends Primitive
-	? Partial<T>
+export type PartialDeep<T> = T extends BuiltIns
+	? T
 	: T extends Map<infer KeyType, infer ValueType>
 	? PartialMapDeep<KeyType, ValueType>
 	: T extends Set<infer ItemType>
@@ -43,11 +46,15 @@ export type PartialDeep<T> = T extends Primitive
 	: T extends ((...arguments: any[]) => unknown)
 	? T | undefined
 	: T extends object
-	? PartialObjectDeep<T>
+	? T extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
+		? ItemType[] extends T // Test for arrays (non-tuples) specifically
+			? Array<PartialDeep<ItemType | undefined>> // Recreate relevant array type to prevent eager evaluation of circular reference
+			: PartialObjectDeep<T> // Tuples behave properly
+		: PartialObjectDeep<T>
 	: unknown;
 
 /**
-Same as `PartialDeep`, but accepts only `Map`s and  as inputs. Internal helper for `PartialDeep`.
+Same as `PartialDeep`, but accepts only `Map`s and as inputs. Internal helper for `PartialDeep`.
 */
 interface PartialMapDeep<KeyType, ValueType> extends Map<PartialDeep<KeyType>, PartialDeep<ValueType>> {}
 

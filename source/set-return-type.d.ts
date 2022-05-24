@@ -9,7 +9,7 @@ Use-case: You want to define a wrapped function that returns something different
 
 @example
 ```
-import {SetReturnType} from 'type-fest';
+import type {SetReturnType} from 'type-fest';
 
 type MyFunctionThatCanThrow = (foo: SomeType, bar: unknown) => SomeOtherType;
 
@@ -17,7 +17,7 @@ type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, SomeOtherType | u
 //=> type MyWrappedFunction = (foo: SomeType, bar: unknown) => SomeOtherType | undefined;
 ```
 
-@category Utilities
+@category Function
 */
 export type SetReturnType<Fn extends (...args: any[]) => any, TypeToReturn> =
 	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.

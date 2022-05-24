@@ -1,4 +1,4 @@
-import {DelimiterCase} from './delimiter-case';
+import type {DelimiterCase} from './delimiter-case';
 
 /**
 Convert a string literal to snake-case.
@@ -7,7 +7,7 @@ This can be useful when, for example, converting a camel-cased object property t
 
 @example
 ```
-import {SnakeCase} from 'type-fest';
+import type {SnakeCase} from 'type-fest';
 
 // Simple
 
@@ -32,6 +32,7 @@ const dbResult: SnakeCasedProperties<ModelProps> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
 */
 export type SnakeCase<Value> = DelimiterCase<Value, '_'>;

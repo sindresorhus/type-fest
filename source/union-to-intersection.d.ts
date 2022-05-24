@@ -5,7 +5,7 @@ Inspired by [this Stack Overflow answer](https://stackoverflow.com/a/50375286/21
 
 @example
 ```
-import {UnionToIntersection} from 'type-fest';
+import type {UnionToIntersection} from 'type-fest';
 
 type Union = {the(): void} | {great(arg: string): void} | {escape: boolean};
 
@@ -17,7 +17,7 @@ A more applicable example which could make its way into your library code follow
 
 @example
 ```
-import {UnionToIntersection} from 'type-fest';
+import type {UnionToIntersection} from 'type-fest';
 
 class CommandOne {
 	commands: {
@@ -41,7 +41,7 @@ type Intersection = UnionToIntersection<Union>;
 //=> {a1(): void; b1(): void; a2(argA: string): void; b2(argB: string): void}
 ```
 
-@category Utilities
+@category Type
 */
 export type UnionToIntersection<Union> = (
 	// `extends unknown` is always going to be the case and is used to convert the

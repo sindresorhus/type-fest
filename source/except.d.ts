@@ -1,4 +1,4 @@
-import {IsEqual} from './internal';
+import type {IsEqual} from './internal';
 
 /**
 Filter out keys from an object.
@@ -38,7 +38,7 @@ This type was proposed to the TypeScript team, which declined it, saying they pr
 
 @example
 ```
-import {Except} from 'type-fest';
+import type {Except} from 'type-fest';
 
 type Foo = {
 	a: number;
@@ -50,7 +50,7 @@ type FooWithoutA = Except<Foo, 'a' | 'c'>;
 //=> {b: string};
 ```
 
-@category Utilities
+@category Object
 */
 export type Except<ObjectType, KeysType extends keyof ObjectType> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];

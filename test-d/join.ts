@@ -1,5 +1,5 @@
 import {expectError, expectType} from 'tsd';
-import {Join} from '../index';
+import type {Join} from '../index';
 
 // General use.
 const generalTestVariantMixed: Join<['foo', 0, 'baz'], '.'> = 'foo.0.baz';

@@ -1,6 +1,6 @@
 import {expectAssignable} from 'tsd';
-import {Entries} from '../index';
-import {Entry} from '../source/entry';
+import type {Entries} from '../index';
+import type {Entry} from '../source/entry';
 
 // Objects
 const objectExample = {a: 1};

@@ -5,7 +5,7 @@ Use-case: Changing interface values to strings in order to use them in a form mo
 
 @example
 ```
-import {Stringified} from 'type-fest';
+import type {Stringified} from 'type-fest';
 
 type Car {
 	model: string;
@@ -18,6 +18,6 @@ const carForm: Stringified<Car> = {
 };
 ```
 
-@category Utilities
+@category Object
 */
 export type Stringified<ObjectType> = {[KeyType in keyof ObjectType]: string};

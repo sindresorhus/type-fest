@@ -1,4 +1,4 @@
-import {DelimiterCase} from './delimiter-case';
+import type {DelimiterCase} from './delimiter-case';
 
 /**
 Convert object properties to delimiter case but not recursively.
@@ -10,6 +10,8 @@ This can be useful when, for example, converting some API types from a different
 
 @example
 ```
+import type {DelimiterCasedProperties} from 'type-fest';
+
 interface User {
 	userId: number;
 	userName: string;
@@ -21,7 +23,9 @@ const result: DelimiterCasedProperties<User, '-'> = {
 };
 ```
 
-@category Template Literals
+@category Change case
+@category Template literal
+@category Object
 */
 export type DelimiterCasedProperties<
 	Value,

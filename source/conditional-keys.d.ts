@@ -5,7 +5,7 @@ Internally this is used for the `ConditionalPick` and `ConditionalExcept` types.
 
 @example
 ```
-import {ConditionalKeys} from 'type-fest';
+import type {ConditionalKeys} from 'type-fest';
 
 interface Example {
 	a: string;
@@ -22,11 +22,13 @@ To support partial types, make sure your `Condition` is a union of undefined (fo
 
 @example
 ```
+import type {ConditionalKeys} from 'type-fest';
+
 type StringKeysAndUndefined = ConditionalKeys<Example, string | undefined>;
 //=> 'a' | 'c'
 ```
 
-@category Utilities
+@category Object
 */
 export type ConditionalKeys<Base, Condition> = NonNullable<
 	// Wrap in `NonNullable` to strip away the `undefined` type from the produced union.

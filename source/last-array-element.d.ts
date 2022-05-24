@@ -5,7 +5,7 @@ Use-case: Defining the return type of functions that extract the last element of
 
 @example
 ```
-import {LastArrayElement} from 'type-fest';
+import type {LastArrayElement} from 'type-fest';
 
 declare function lastOf<V extends readonly any[]>(array: V): LastArrayElement<V>;
 
@@ -15,7 +15,8 @@ typeof lastOf(array);
 //=> number
 ```
 
-@category Template Literals
+@category Array
+@category Template literal
 */
 export type LastArrayElement<ValueType extends readonly unknown[]> =
 	ValueType extends readonly [infer ElementType]

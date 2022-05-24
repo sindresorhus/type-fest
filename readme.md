@@ -9,6 +9,7 @@
 	<br>
 	<br>
 	<br>
+	<hr>
 	<div align="center">
 		<p>
 			<p>
@@ -24,6 +25,7 @@
 			</a>
 			<br>
 			<br>
+			<br>
 			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
@@ -33,6 +35,72 @@
 					<sub>Start selling to enterprise customers with just a few lines of code.</sub>
 					<br>
 					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
+				</div>
+			</a>
+			<br>
+			<br>
+			<br>
+			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-light-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-light.svg" width="200" alt="neverinstall">
+				</div>
+				<br>
+				<b>All your favourite IDE's now available on the cloud</b>
+				<div>
+					<sub>
+					Neverinstall gives you an uninterrupted development experience and improved accessibility,
+					<br>
+					allowing you to code faster, better and on-the-go on your favourite IDEs like
+					<br>
+					Android Studio, VS Code, Jupyter and PyCharm using your browser.
+					</sub>
+				</div>
+			</a>
+			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-dark-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-dark.svg" width="200" alt="neverinstall">
+				</div>
+				<br>
+				<b>All your favourite IDE's now available on the cloud</b>
+				<div>
+					<sub>
+					Neverinstall gives you an uninterrupted development experience and improved accessibility,
+					<br>
+					allowing you to code faster, better and on-the-go on your favourite IDEs like
+					<br>
+					Android Studio, VS Code, Jupyter and PyCharm using your browser.
+					</sub>
+				</div>
+			</a>
+			<br>
+			<br>
+			<br>
+			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-light-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-light.svg" width="200" alt="Anvil">
+				</div>
+				<br>
+				<b>Paperwork that makes the data work.</b>
+				<div>
+					<sub>
+					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
+					<br>
+					The easiest way to build paperwork automation into your product.
+					</sub>
+				</div>
+			</a>
+			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-dark-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-dark.svg" width="200" alt="Anvil">
+				</div>
+				<br>
+				<b>Paperwork that makes the data work.</b>
+				<div>
+					<sub>
+					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
+					<br>
+					The easiest way to build paperwork automation into your product.
+					</sub>
 				</div>
 			</a>
 		</p>
@@ -48,16 +116,18 @@
 [![npm downloads](https://badgen.net/npm/dt/type-fest)](https://www.npmjs.com/package/type-fest)
 [![Docs](https://paka.dev/badges/v0/cute.svg)](https://paka.dev/npm/type-fest)
 
-Many of the types here should have been built-in. You can help by suggesting some of them to the [TypeScript project](https://github.com/Microsoft/TypeScript/blob/master/CONTRIBUTING.md).
+Many of the types here should have been built-in. You can help by suggesting some of them to the [TypeScript project](https://github.com/Microsoft/TypeScript/blob/main/CONTRIBUTING.md).
 
 Either add this package as a dependency or copy-paste the needed types. No credit required. 👌
 
 PR welcome for additional commonly needed types and docs improvements. Read the [contributing guidelines](.github/contributing.md) first.
 
+**Help wanted with reviewing [proposals](https://github.com/sindresorhus/type-fest/issues) and [pull requests](https://github.com/sindresorhus/type-fest/pulls).**
+
 ## Install
 
-```
-$ npm install type-fest
+```sh
+npm install type-fest
 ```
 
 *Requires TypeScript >=4.2*
@@ -65,7 +135,7 @@ $ npm install type-fest
 ## Usage
 
 ```ts
-import {Except} from 'type-fest';
+import type {Except} from 'type-fest';
 
 type Foo = {
 	unicorn: string;
@@ -86,94 +156,156 @@ Click the type names for complete docs.
 - [`Class`](source/basic.d.ts) - Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`Constructor`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
-- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
-- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
-- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
-- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
 - [`ObservableLike`](source/observable-like.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 
 ### Utilities
 
-- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type).
-- [`Mutable`](source/mutable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
+- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
+- [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`. Formerly named `Mutable`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
-- [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1401-L1406) if you only need one level deep.
-- [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1415-L1420) if you only need one level deep.
+- [`RemoveIndexSignature`](source/remove-index-signature.d.ts) - Create a type that only has explicitly defined properties, absent of any index signatures.
+- [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
+- [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
-- [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
 - [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
+- [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
-- [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise`.
-- [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
+- [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Convert a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) to the [primitive type](source/primitive.d.ts) it belongs to.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
-- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
 - [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
-- [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
-- [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
-- [`Simplify`](source/simplify.d.ts) - Flatten the type output to improve type hints shown in editors.
-- [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
-
-### Template literal types
-
-- [`CamelCase`](source/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
-- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) – Convert object properties to camel-case  (`fooBar`).
-- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) – Convert object properties to camel-case recursively  (`fooBar`).
-- [`KebabCase`](source/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
-- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) – Convert a object properties to kebab-case recursively (`foo-bar`).
-- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) – Convert object properties to kebab-case (`foo-bar`).
-- [`PascalCase`](source/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
-- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) – Converts object properties to pascal-case (`FooBar`)
-- [`SnakeCase`](source/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
-- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case (`foo_bar`).
-- [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) – Convert object properties to snake-case recursively (`foo_bar`).
-- [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
-- [`DelimiterCase`](source/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
-- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) – Convert object properties to a custom string delimiter casing.
-- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) – Convert object properties to a custom string delimiter casing recursively.
-- [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
-- [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
-- [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
+- [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
+- [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
+- [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
+
+### JSON
+
+- [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
+- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
+- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
+- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
+
+### Async
+
+- [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
+- [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
+- [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
+
+### String
+
+- [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
+- [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+
+### Array
+
+- [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
+- [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
+- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
+- [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
+- [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
+
+### Numeric
+
+- [`PositiveInfinity`](source/numeric.d.ts) - Matches the hidden `Infinity` type.
+- [`NegativeInfinity`](source/numeric.d.ts) - Matches the hidden `-Infinity` type.
+- [`Finite`](source/numeric.d.ts) - A finite `number`.
+- [`Integer`](source/numeric.d.ts) - A `number` that is an integer.
+- [`Float`](source/numeric.d.ts) - A `number` that is not an integer.
+- [`NegativeFloat`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is not an integer.
+- [`Negative`](source/numeric.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`)
+- [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
+- [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
+- [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
+
+### Change case
+
+- [`CamelCase`](source/camel-case.d.ts) - Convert a string literal to camel-case (`fooBar`).
+- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert object properties to camel-case (`fooBar`).
+- [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) - Convert object properties to camel-case recursively (`fooBar`).
+- [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case (`foo-bar`).
+- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert a object properties to kebab-case recursively (`foo-bar`).
+- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab-case (`foo-bar`).
+- [`PascalCase`](source/pascal-case.d.ts) - Converts a string literal to pascal-case (`FooBar`)
+- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case (`foo_bar`).
+- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case (`foo_bar`).
+- [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case recursively (`foo_bar`).
+- [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
+- [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.
+- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) - Convert object properties to a custom string delimiter casing.
+- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) - Convert object properties to a custom string delimiter casing recursively.
 
 ### Miscellaneous
 
-- [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file).
+- [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). It also includes support for [TypeScript Declaration Files](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html) and [Yarn Workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/).
 - [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 4.4).
 
 ## Declined types
 
 *If we decline a type addition, we will make sure to document the better solution here.*
 
-- [`Diff` and `Spread`](https://github.com/sindresorhus/type-fest/pull/7) - The PR author didn't provide any real-world use-cases and the PR went stale. If you think this type is useful, provide some real-world use-cases and we might reconsider.
-- [`Dictionary`](https://github.com/sindresorhus/type-fest/issues/33) - You only save a few characters (`Dictionary<number>` vs `Record<string, number>`) from [`Record`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1429-L1434), which is more flexible and well-known. Also, you shouldn't use an object as a dictionary. We have `Map` in JavaScript now.
+- [`Diff` and `Spread`](https://github.com/sindresorhus/type-fest/pull/7) - The pull request author didn't provide any real-world use-cases and the PR went stale. If you think this type is useful, provide some real-world use-cases and we might reconsider.
+- [`Dictionary`](https://github.com/sindresorhus/type-fest/issues/33) - You only save a few characters (`Dictionary<number>` vs `Record<string, number>`) from [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type), which is more flexible and well-known. Also, you shouldn't use an object as a dictionary. We have `Map` in JavaScript now.
 - [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
+- [`Url2Json`](https://github.com/sindresorhus/type-fest/pull/262) - Inferring search parameters from a URL string is a cute idea, but not very useful in practice, since search parameters are usually dynamic and defined separately.
+- [`Nullish`](https://github.com/sindresorhus/type-fest/pull/318) - The type only saves a couple of characters, not everyone knows what "nullish" means, and I'm also trying to [get away from `null`](https://github.com/sindresorhus/meta/discussions/7).
+- [`TitleCase`](https://github.com/sindresorhus/type-fest/pull/303) - It's not solving a common need and is a better fit for a separate package.
+- [`ExtendOr` and `ExtendAnd`](https://github.com/sindresorhus/type-fest/pull/247) - The benefits don't outweigh having to learn what they mean.
+- [`PackageJsonExtras`](https://github.com/sindresorhus/type-fest/issues/371) - There are too many possible configurations that can be put into `package.json`. If you would like to extend `PackageJson` to support an additional configuration in your project, please see the *Extending existing types* section below.
+
+## Alternative type names
+
+*If you know one of our types by a different name, add it here for discovery.*
+
+- `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
+- `RecordDeep`- See [`Schema`](https://github.com/sindresorhus/type-fest/blob/main/source/schema.d.ts)
 
 ## Tips
+
+### Extending existing types
+
+- [`PackageJson`](source/package-json.d.ts) - There are a lot of tools that place extra configurations inside the `package.json` file. You can extend `PackageJson` to support these additional configurations.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBDAnmApnA3gBQIYGMDW2A5igFIDOEAdnNuXAEJ0o4HFmVUC+cAZlBBBwA5ElQBaXinIxhAbgCwAKFCRYCZGnQAZYFRgooPfoJHSANntmKlysWlaESFanAC8jZo-YuaAMgwLKwBhal5gIgB+AC44XX1DADpQqnCiLhsgA)
+
+	```ts
+	import type {PackageJson as BasePackageJson} from 'type-fest';
+	import type {Linter} from 'eslint';
+
+	type PackageJson = BasePackageJson & {eslintConfig?: Linter.Config};
+	```
+	</details>
 
 ### Related
 
 - [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
+- [`Linter.Config`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) - Definitions for the [ESLint configuration schema](https://eslint.org/docs/user-guide/configuring/language-options).
 
 ### Built-in types
 
 There are many advanced types most users don't know about.
 
-- [`Partial<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1401-L1406) - Make all properties in `T` optional.
+- [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) - Make all properties in `T` optional.
 	<details>
 	<summary>
 			Example
@@ -220,7 +352,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Required<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1408-L1413) - Make all properties in `T` required.
+- [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) - Make all properties in `T` required.
 	<details>
 	<summary>
 			Example
@@ -250,7 +382,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Readonly<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1415-L1420) - Make all properties in `T` readonly.
+- [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) - Make all properties in `T` readonly.
 	<details>
 	<summary>
 			Example
@@ -295,7 +427,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Pick<T, K>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1422-L1427) - From `T`, pick a set of properties whose keys are in the union `K`.
+- [`Pick<T, K>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) - From `T`, pick a set of properties whose keys are in the union `K`.
 	<details>
 	<summary>
 			Example
@@ -335,7 +467,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Record<K, T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1429-L1434) - Construct a type with a set of properties `K` of type `T`.
+- [`Record<K, T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type) - Construct a type with a set of properties `K` of type `T`.
 	<details>
 	<summary>
 			Example
@@ -378,7 +510,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Exclude<T, U>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1436-L1439) - Exclude from `T` those types that are assignable to `U`.
+- [`Exclude<T, U>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#excludetype-excludedunion) - Exclude from `T` those types that are assignable to `U`.
 	<details>
 	<summary>
 			Example
@@ -412,7 +544,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Extract<T, U>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1441-L1444) - Extract from `T` those types that are assignable to `U`.
+- [`Extract<T, U>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union) - Extract from `T` those types that are assignable to `U`.
 	<details>
 	<summary>
 			Example
@@ -455,12 +587,12 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`NonNullable<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1446-L1449) - Exclude `null` and `undefined` from `T`.
+- [`NonNullable<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#nonnullabletype) - Exclude `null` and `undefined` from `T`.
 	<details>
 	<summary>
 			Example
 	</summary>
-	Works with <code>strictNullChecks</code> set to <code>true</code>. (Read more <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html">here</a>)
+	Works with <a href="https://www.typescriptlang.org/tsconfig#strictNullChecks"><code>strictNullChecks</code></a> set to <code>true</code>.
 
 	[Playground](https://typescript-play.js.org/?target=6#code/C4TwDgpgBACg9gJ2AOQK4FsBGEFQLxQDOwCAlgHYDmUAPlORtrnQwDasDcAUFwPQBU-WAEMkUOADMowqAGNWwwoSgATCBIqlgpOOSjAAFsOBRSy1IQgr9cKJlSlW1mZYQA3HFH68u8xcoBlHA8EACEHJ08Aby4oKDBUTFZSWXjEFEYcAEIALihkXTR2YSSIAB54JDQsHAA+blj4xOTUsHSACkMzPKD3HHDHNQQAGjSkPMqMmoQASh7g-oihqBi4uNIpdraxPAI2VhmVxrX9AzMAOm2ppnwoAA4ABifuE4BfKAhWSyOTuK7CS7pao3AhXF5rV48E4ICDAVAIPT-cGQyG+XTEIgLMJLTx7CAAdygvRCA0iCHaMwarhJOIQjUBSHaACJHk8mYdeLwxtdcVAAOSsh58+lXdr7Dlcq7A3n3J4PEUdADMcspUE53OluAIUGVTx46oAKuAIAFZGQwCYAKIIBCILjUxaDHAMnla+iodjcIA)
 
@@ -494,7 +626,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Parameters<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1451-L1454) - Obtain the parameters of a function type in a tuple.
+- [`Parameters<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype) - Obtain the parameters of a function type in a tuple.
 	<details>
 	<summary>
 			Example
@@ -522,7 +654,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`ConstructorParameters<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1456-L1459) - Obtain the parameters of a constructor function type in a tuple.
+- [`ConstructorParameters<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#constructorparameterstype) - Obtain the parameters of a constructor function type in a tuple.
 	<details>
 	<summary>
 			Example
@@ -570,7 +702,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`ReturnType<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1461-L1464) – Obtain the return type of a function type.
+- [`ReturnType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype) - Obtain the return type of a function type.
 	<details>
 	<summary>
 			Example
@@ -605,7 +737,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`InstanceType<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1466-L1469) – Obtain the instance type of a constructor function type.
+- [`InstanceType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype) - Obtain the instance type of a constructor function type.
 	<details>
 	<summary>
 			Example
@@ -658,7 +790,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Omit<T, K>`](https://github.com/microsoft/TypeScript/blob/71af02f7459dc812e85ac31365bfe23daf14b4e4/src/lib/es5.d.ts#L1446) – Constructs a type by picking all properties from T and then removing K.
+- [`Omit<T, K>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) - Constructs a type by picking all properties from T and then removing K.
 	<details>
 	<summary>
 			Example
@@ -680,14 +812,14 @@ There are many advanced types most users don't know about.
 	type AnimalShortInfo = Omit<Animal, 'images' | 'paragraphs'>;
 
 	function renderAnimalHoverInfo (animals: AnimalShortInfo[]): HTMLElement {
-			const container =  document.createElement('div');
+			const container = document.createElement('div');
 			// Internal implementation.
 			return container;
 	}
 	```
 	</details>
 
-- [`Uppercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into uppercase.
+- [`Uppercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#uppercasestringtype) - Transforms every character in a string into uppercase.
 	<details>
 	<summary>
 		Example
@@ -708,7 +840,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Lowercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms every character in a string into lowercase.
+- [`Lowercase<S extends string>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#lowercasestringtype) - Transforms every character in a string into lowercase.
 	<details>
 	<summary>
 		Example
@@ -729,7 +861,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Capitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into uppercase.
+- [`Capitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#capitalizestringtype) - Transforms the first character in a string into uppercase.
 	<details>
 	<summary>
 		Example
@@ -750,7 +882,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-- [`Uncapitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#template-literal-types) - Transforms the first character in a string into lowercase.
+- [`Uncapitalize<S extends string>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#uncapitalizestringtype) - Transforms the first character in a string into lowercase.
 	<details>
 	<summary>
 		Example
@@ -771,7 +903,7 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
-You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/advanced-types.html#predefined-conditional-types).
+You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/utility-types.html).
 
 ## Maintainers
 
@@ -782,7 +914,7 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 
 ## License
 
-(MIT OR CC0-1.0)
+SPDX-License-Identifier: (MIT OR CC0-1.0)
 
 ---
 

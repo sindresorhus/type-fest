@@ -9,17 +9,17 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31394)
 
 @example
 ```
-import {Promisable} from 'type-fest';
+import type {Promisable} from 'type-fest';
 
 async function logger(getLogEntry: () => Promisable<string>): Promise<void> {
-    const entry = await getLogEntry();
-    console.log(entry);
+	const entry = await getLogEntry();
+	console.log(entry);
 }
 
 logger(() => 'foo');
 logger(() => Promise.resolve('bar'));
-
-@category Utilities
 ```
+
+@category Async
 */
 export type Promisable<T> = T | PromiseLike<T>;

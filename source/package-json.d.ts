@@ -1,4 +1,4 @@
-import {LiteralUnion} from './literal-union';
+import type {LiteralUnion} from './literal-union';
 
 declare namespace PackageJson {
 	/**
@@ -214,6 +214,7 @@ declare namespace PackageJson {
 		| 'import'
 		| 'require'
 		| 'node'
+		| 'node-addons'
 		| 'deno'
 		| 'browser'
 		| 'electron'
@@ -226,10 +227,18 @@ declare namespace PackageJson {
 	Entry points of a module, optionally with conditions and subpath exports.
 	*/
 	export type Exports =
+	| null
 	| string
 	| string[]
 	| {[key in ExportCondition]: Exports}
 	| {[key: string]: Exports}; // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+
+	/**
+	Import map entries of a module, optionally with conditions.
+	*/
+	export type Imports = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+		[key: string]: string | {[key in ExportCondition]: Exports};
+	};
 
 	export interface NonStandardEntryPoints {
 		/**
@@ -415,11 +424,18 @@ declare namespace PackageJson {
 		main?: string;
 
 		/**
-		Standard entry points of the package, with enhanced support for ECMAScript Modules.
+		Subpath exports to define entry points of the package.
 
-		[Read more.](https://nodejs.org/api/esm.html#esm_package_entry_points)
+		[Read more.](https://nodejs.org/api/packages.html#subpath-exports)
 		*/
 		exports?: Exports;
+
+		/**
+		Subpath imports to define internal package import maps that only apply to import specifiers from within the package itself.
+
+		[Read more.](https://nodejs.org/api/packages.html#subpath-imports)
+		*/
+		imports?: Imports;
 
 		/**
 		The executable files that should be installed into the `PATH`.
@@ -635,7 +651,7 @@ declare namespace PackageJson {
 /**
 Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types for fields used by other popular projects, like TypeScript and Yarn.
 
-@category Miscellaneous
+@category File
 */
 export type PackageJson =
 PackageJson.PackageJsonStandard &

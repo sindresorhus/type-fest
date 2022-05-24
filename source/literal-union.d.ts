@@ -1,4 +1,4 @@
-import {Primitive} from './primitive';
+import type {Primitive} from './primitive';
 
 /**
 Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
@@ -9,7 +9,7 @@ This type is a workaround for [Microsoft/TypeScript#29729](https://github.com/Mi
 
 @example
 ```
-import {LiteralUnion} from 'type-fest';
+import type {LiteralUnion} from 'type-fest';
 
 // Before
 
@@ -27,9 +27,9 @@ const pet: Pet2 = '';
 // You **will** get auto-completion for `dog` and `cat` literals.
 ```
 
-@category Utilities
- */
+@category Type
+*/
 export type LiteralUnion<
 	LiteralType,
 	BaseType extends Primitive,
-> = LiteralType | (BaseType & {_?: never});
+> = LiteralType | (BaseType & Record<never, never>);
