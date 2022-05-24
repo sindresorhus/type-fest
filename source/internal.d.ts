@@ -44,9 +44,9 @@ Matches any primitive, `Date`, or `RegExp` value.
 export type BuiltIns = Primitive | Date | RegExp;
 
 /**
-Gets keys from a type (similar to keyof but this one also works for union types.)
+Gets keys from a type. Similar to `keyof` but this one also works for union types.
 
-The reason a simple `keyof Union` does not work is because `keyof` always returns the accessible keys of a type. In the case of a union that will only be the common keys.
+The reason a simple `keyof Union` does not work is because `keyof` always returns the accessible keys of a type. In the case of a union, that will only be the common keys.
 
 @link https://stackoverflow.com/a/49402091
 */
