@@ -1,4 +1,4 @@
-import {LiteralUnion} from './literal-union';
+import type {LiteralUnion} from './literal-union';
 
 declare namespace PackageJson {
 	/**
@@ -200,12 +200,12 @@ declare namespace PackageJson {
 		Run with the `npm restart` command, after `restart`. Note: `npm restart` will run the `stop` and `start` scripts if no `restart` script is provided.
 		*/
 		postrestart?: string;
-	} & Record<string, string>;
+	} & Partial<Record<string, string>>;
 
 	/**
 	Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or Git URL.
 	*/
-	export type Dependency = Record<string, string>;
+	export type Dependency = Partial<Record<string, string>>;
 
 	/**
 	Conditions which provide a way to resolve a package entry point based on the environment.
@@ -262,7 +262,7 @@ declare namespace PackageJson {
 		*/
 		browser?:
 		| string
-		| Record<string, string | false>;
+		| Partial<Record<string, string | false>>;
 
 		/**
 		Denote which files in your project are "pure" and therefore safe for Webpack to prune if unused.
@@ -281,7 +281,7 @@ declare namespace PackageJson {
 		/**
 		Version selection map of TypeScript.
 		*/
-		typesVersions?: Record<string, Record<string, string[]>>;
+		typesVersions?: Partial<Record<string, Partial<Record<string, string[]>>>>;
 
 		/**
 		Location of the bundled TypeScript declaration file. Alias of `types`.
@@ -442,7 +442,7 @@ declare namespace PackageJson {
 		*/
 		bin?:
 		| string
-		| Record<string, string>;
+		| Partial<Record<string, string>>;
 
 		/**
 		Filenames to put in place for the `man` program to find.
@@ -504,7 +504,7 @@ declare namespace PackageJson {
 		/**
 		Indicate peer dependencies that are optional.
 		*/
-		peerDependenciesMeta?: Record<string, {optional: true}>;
+		peerDependenciesMeta?: Partial<Record<string, {optional: true}>>;
 
 		/**
 		Package names that are bundled when the package is published.
@@ -520,7 +520,7 @@ declare namespace PackageJson {
 		Engines that this package runs on.
 		*/
 		engines?: {
-			[EngineName in 'npm' | 'node' | string]: string;
+			[EngineName in 'npm' | 'node' | string]?: string;
 		};
 
 		/**

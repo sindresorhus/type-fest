@@ -1,6 +1,6 @@
-import {SplitIncludingDelimiters} from './delimiter-case';
-import {SnakeCase} from './snake-case';
-import {Includes} from './includes';
+import type {SplitIncludingDelimiters} from './delimiter-case';
+import type {SnakeCase} from './snake-case';
+import type {Includes} from './includes';
 
 /**
 Returns a boolean for whether the string is screaming snake case.
@@ -18,7 +18,7 @@ This can be useful when, for example, converting a camel-cased object property t
 
 @example
 ```
-import {ScreamingSnakeCase} from 'type-fest';
+import type {ScreamingSnakeCase} from 'type-fest';
 
 const someVariable: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
 ```

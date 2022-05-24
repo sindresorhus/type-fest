@@ -1,6 +1,6 @@
-import {StringDigit} from '../source/utilities';
-import {Split} from './split';
-import {StringKeyOf} from './string-key-of';
+import type {StringDigit} from '../source/utilities';
+import type {Split} from './split';
+import type {StringKeyOf} from './string-key-of';
 
 type GetOptions = {
 	strict?: boolean;
@@ -97,9 +97,14 @@ type WithStringsKeys = keyof WithStrings;
 //=> 'foo' | '0'
 ```
 */
-type WithStringKeys<BaseType extends Record<string | number, any>> = {
-	[Key in StringKeyOf<BaseType>]: BaseType[Key]
+type WithStringKeys<BaseType> = {
+	[Key in StringKeyOf<BaseType>]: UncheckedIndex<BaseType, Key>
 };
+
+/**
+Perform a `T[U]` operation if `T` supports indexing.
+*/
+type UncheckedIndex<T, U extends string | number> = [T] extends [Record<string | number, any>] ? T[U] : never;
 
 /**
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
@@ -136,7 +141,7 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 
 @example
 ```
-import {Get} from 'type-fest';
+import type {Get} from 'type-fest';
 import * as lodash from 'lodash';
 
 const get = <BaseType, Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>

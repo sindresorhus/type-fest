@@ -7,10 +7,10 @@ If the type is not a `Promise`, the type itself is returned.
 
 @example
 ```
-import {PromiseValue} from 'type-fest';
+import type {PromiseValue} from 'type-fest';
 
 type AsyncData = Promise<string>;
-let asyncData: PromiseValue<AsyncData> = Promise.resolve('ABC');
+let asyncData: AsyncData = Promise.resolve('ABC');
 
 type Data = PromiseValue<AsyncData>;
 let data: Data = await asyncData;
@@ -20,8 +20,8 @@ type SyncData = PromiseValue<string>;
 let syncData: SyncData = getSyncData();
 
 // Here's an example that shows how this type reacts to recursive Promise types.
-type RecursiveAsyncData = Promise<Promise<string> >;
-let recursiveAsyncData: PromiseValue<RecursiveAsyncData> = Promise.resolve(Promise.resolve('ABC'));
+type RecursiveAsyncData = Promise<Promise<string>>;
+let recursiveAsyncData: PromiseValue<RecursiveAsyncData> = await Promise.resolve(Promise.resolve('ABC'));
 ```
 
 @category Async

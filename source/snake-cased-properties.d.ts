@@ -1,4 +1,4 @@
-import {DelimiterCasedProperties} from './delimiter-cased-properties';
+import type {DelimiterCasedProperties} from './delimiter-cased-properties';
 
 /**
 Convert object properties to snake case but not recursively.
@@ -10,6 +10,8 @@ This can be useful when, for example, converting some API types from a different
 
 @example
 ```
+import type {SnakeCasedProperties} from 'type-fest';
+
 interface User {
 	userId: number;
 	userName: string;

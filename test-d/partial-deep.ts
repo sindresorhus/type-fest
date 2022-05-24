@@ -1,5 +1,5 @@
 import {expectType, expectError, expectAssignable} from 'tsd';
-import {PartialDeep} from '../index';
+import type {PartialDeep} from '../index';
 
 const foo = {
 	baz: 'fred',

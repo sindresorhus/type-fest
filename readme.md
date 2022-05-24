@@ -9,6 +9,7 @@
 	<br>
 	<br>
 	<br>
+	<hr>
 	<div align="center">
 		<p>
 			<p>
@@ -24,6 +25,7 @@
 			</a>
 			<br>
 			<br>
+			<br>
 			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
@@ -33,6 +35,72 @@
 					<sub>Start selling to enterprise customers with just a few lines of code.</sub>
 					<br>
 					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
+				</div>
+			</a>
+			<br>
+			<br>
+			<br>
+			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-light-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-light.svg" width="200" alt="neverinstall">
+				</div>
+				<br>
+				<b>All your favourite IDE's now available on the cloud</b>
+				<div>
+					<sub>
+					Neverinstall gives you an uninterrupted development experience and improved accessibility,
+					<br>
+					allowing you to code faster, better and on-the-go on your favourite IDEs like
+					<br>
+					Android Studio, VS Code, Jupyter and PyCharm using your browser.
+					</sub>
+				</div>
+			</a>
+			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-dark-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-dark.svg" width="200" alt="neverinstall">
+				</div>
+				<br>
+				<b>All your favourite IDE's now available on the cloud</b>
+				<div>
+					<sub>
+					Neverinstall gives you an uninterrupted development experience and improved accessibility,
+					<br>
+					allowing you to code faster, better and on-the-go on your favourite IDEs like
+					<br>
+					Android Studio, VS Code, Jupyter and PyCharm using your browser.
+					</sub>
+				</div>
+			</a>
+			<br>
+			<br>
+			<br>
+			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-light-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-light.svg" width="200" alt="Anvil">
+				</div>
+				<br>
+				<b>Paperwork that makes the data work.</b>
+				<div>
+					<sub>
+					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
+					<br>
+					The easiest way to build paperwork automation into your product.
+					</sub>
+				</div>
+			</a>
+			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-dark-mode-only">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-dark.svg" width="200" alt="Anvil">
+				</div>
+				<br>
+				<b>Paperwork that makes the data work.</b>
+				<div>
+					<sub>
+					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
+					<br>
+					The easiest way to build paperwork automation into your product.
+					</sub>
 				</div>
 			</a>
 		</p>
@@ -67,7 +135,7 @@ npm install type-fest
 ## Usage
 
 ```ts
-import {Except} from 'type-fest';
+import type {Except} from 'type-fest';
 
 type Foo = {
 	unicorn: string;
@@ -93,7 +161,7 @@ Click the type names for complete docs.
 ### Utilities
 
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
-- [`Mutable`](source/mutable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
+- [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`. Formerly named `Mutable`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
@@ -122,6 +190,7 @@ Click the type names for complete docs.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
+- [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
 
 ### JSON
 

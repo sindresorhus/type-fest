@@ -1,4 +1,4 @@
-import {IsEqual, Subtract} from './internal';
+import type {IsEqual, Subtract} from './internal';
 
 type Recursive<T> = Array<Recursive<T>>;
 
@@ -13,7 +13,7 @@ Use-cases:
 
 @example
 ```
-import {MultidimensionalArray} from 'type-fest';
+import type {MultidimensionalArray} from 'type-fest';
 
 function emptyMatrix<T extends number>(dimensions: T): MultidimensionalArray<unknown, T> {
 	const matrix: unknown[] = [];

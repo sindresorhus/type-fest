@@ -1,5 +1,5 @@
 import {expectAssignable} from 'tsd';
-import {PromiseValue} from '../index';
+import type {PromiseValue} from '../index';
 
 type NumberPromise = Promise<number>;
 type NestedPromise = Promise<NumberPromise>;

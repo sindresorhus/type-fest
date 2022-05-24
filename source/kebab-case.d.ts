@@ -1,4 +1,4 @@
-import {DelimiterCase} from './delimiter-case';
+import type {DelimiterCase} from './delimiter-case';
 
 /**
 Convert a string literal to kebab-case.
@@ -7,7 +7,7 @@ This can be useful when, for example, converting a camel-cased object property t
 
 @example
 ```
-import {KebabCase} from 'type-fest';
+import type {KebabCase} from 'type-fest';
 
 // Simple
 

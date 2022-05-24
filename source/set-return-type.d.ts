@@ -9,7 +9,7 @@ Use-case: You want to define a wrapped function that returns something different
 
 @example
 ```
-import {SetReturnType} from 'type-fest';
+import type {SetReturnType} from 'type-fest';
 
 type MyFunctionThatCanThrow = (foo: SomeType, bar: unknown) => SomeOtherType;
 

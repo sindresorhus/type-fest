@@ -1,4 +1,4 @@
-import {PascalCase} from './pascal-case';
+import type {PascalCase} from './pascal-case';
 
 /**
 Convert object properties to pascal case but not recursively.
@@ -10,6 +10,8 @@ This can be useful when, for example, converting some API types from a different
 
 @example
 ```
+import type {PascalCasedProperties} from 'type-fest';
+
 interface User {
 	userId: number;
 	userName: string;

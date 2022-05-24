@@ -1,5 +1,5 @@
 import {expectType, expectError} from 'tsd';
-import {Stringified} from '../index';
+import type {Stringified} from '../index';
 
 declare const stringified: Stringified<{a: number; b: string}>;
 expectType<{a: string; b: string}>(stringified);

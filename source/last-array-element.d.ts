@@ -5,7 +5,7 @@ Use-case: Defining the return type of functions that extract the last element of
 
 @example
 ```
-import {LastArrayElement} from 'type-fest';
+import type {LastArrayElement} from 'type-fest';
 
 declare function lastOf<V extends readonly any[]>(array: V): LastArrayElement<V>;
 

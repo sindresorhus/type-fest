@@ -1,5 +1,5 @@
 import {expectType, expectError} from 'tsd';
-import {AsyncReturnType} from '../index';
+import type {AsyncReturnType} from '../index';
 
 async function asyncFunction(): Promise<number> {
 	return Promise.resolve(2);

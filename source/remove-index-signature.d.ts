@@ -34,15 +34,19 @@ type Keyed = {} extends Record<'foo' | 'bar', unknown>
 Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
 
 ```
+import type {RemoveIndexSignature} from 'type-fest';
+
 type RemoveIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType // Map each key of `ObjectType`...
-  ]: ObjectType[KeyType]; // ...to its original value, i.e. `RemoveIndexSignature<Foo> == Foo`.
+	]: ObjectType[KeyType]; // ...to its original value, i.e. `RemoveIndexSignature<Foo> == Foo`.
 };
 ```
 
 ...whether an empty object (`{}`) would be assignable to an object with that `KeyType` (`Record<KeyType, unknown>`)...
 
 ```
+import type {RemoveIndexSignature} from 'type-fest';
+
 type RemoveIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
 		// Is `{}` assignable to `Record<KeyType, unknown>`?
@@ -56,6 +60,8 @@ type RemoveIndexSignature<ObjectType> = {
 If `{}` is assignable, it means that `KeyType` is an index signature and we want to remove it. If it is not assignable, `KeyType` is a "real" key and we want to keep it.
 
 ```
+import type {RemoveIndexSignature} from 'type-fest';
+
 type RemoveIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
 		as {} extends Record<KeyType, unknown>
@@ -67,7 +73,7 @@ type RemoveIndexSignature<ObjectType> = {
 
 @example
 ```
-import {RemoveIndexSignature} from 'type-fest';
+import type {RemoveIndexSignature} from 'type-fest';
 
 interface Example {
 	// These index signatures will be removed.

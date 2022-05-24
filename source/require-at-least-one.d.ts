@@ -1,11 +1,11 @@
-import {Except} from './except';
+import type {Except} from './except';
 
 /**
 Create a type that requires at least one of the given keys. The remaining keys are kept as is.
 
 @example
 ```
-import {RequireAtLeastOne} from 'type-fest';
+import type {RequireAtLeastOne} from 'type-fest';
 
 type Responder = {
 	text?: () => string;

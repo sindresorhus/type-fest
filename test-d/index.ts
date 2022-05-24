@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import {ObservableLike} from '../index';
+import type {ObservableLike} from '../index';
 
 // eslint-disable-next-line no-use-extend-native/no-use-extend-native
 expectAssignable<symbol>(Symbol.observable);

@@ -5,7 +5,7 @@ Use-case: Defining key paths in a nested object. For example, for dot-notation f
 
 @example
 ```
-import {Join} from 'type-fest';
+import type {Join} from 'type-fest';
 
 // Mixed (strings & numbers) items; result is: 'foo.0.baz'
 const path: Join<['foo', 0, 'baz'], '.'> = ['foo', 0, 'baz'].join('.');

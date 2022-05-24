@@ -1,4 +1,4 @@
-import {Opaque} from './opaque';
+import type {Opaque} from './opaque';
 
 /**
 Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
@@ -9,6 +9,8 @@ Use-case:
 
 @example
 ```
+import type {InvariantOf} from 'type-fest';
+
 class Animal {
 	constructor(public name: string){}
 }
@@ -32,6 +34,8 @@ invariantAnimalArray = invariantCatArray; // Error: Type 'InvariantOf<Cat>[]' is
 
 @example
 ```
+import type {InvariantOf} from 'type-fest';
+
 // In covariance (default)
 
 interface FooBar {

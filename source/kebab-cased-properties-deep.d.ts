@@ -1,4 +1,4 @@
-import {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep';
+import type {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep';
 
 /**
 Convert object properties to kebab case recursively.
@@ -10,6 +10,8 @@ This can be useful when, for example, converting some API types from a different
 
 @example
 ```
+import type [KebabCasedPropertiesDeep] from 'type-fest';
+
 interface User {
 	userId: number;
 	userName: string;

@@ -18,7 +18,7 @@ There have been several discussions about adding this feature to TypeScript via 
 
 @example
 ```
-import {Opaque} from 'type-fest';
+import type {Opaque} from 'type-fest';
 
 type AccountNumber = Opaque<number, 'AccountNumber'>;
 type AccountBalance = Opaque<number, 'AccountBalance'>;

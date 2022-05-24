@@ -1,7 +1,14 @@
-import {JsonPrimitive, JsonValue} from './basic';
+import type {JsonPrimitive, JsonValue} from './basic';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined;
+
+// Note: Handles special case where Arrays with `undefined` are transformed to `'null'` by `JSON.stringify()`
+// Only use with array members
+type JsonifyArrayMember<T> =
+	T extends undefined ?
+		null | Exclude<T, undefined> :
+		Jsonify<T>;
 
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
@@ -16,6 +23,8 @@ An interface cannot be structurally compared to `JsonValue` because an interface
 
 @example
 ```
+import type {Jsonify} from 'type-fest';
+
 interface Geometry {
 	type: 'Point' | 'Polygon';
 	coordinates: [number, number];
@@ -44,6 +53,8 @@ Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed
 
 @example
 ```
+import type {Jsonify} from 'type-fest';
+
 const time = {
 	timeValue: new Date()
 };
@@ -64,7 +75,7 @@ type Jsonify<T> =
 		? T extends JsonPrimitive
 			? T // Primitive is acceptable
 			: T extends Array<infer U>
-				? Array<Jsonify<U>> // It's an array: recursive call for its children
+				? Array<JsonifyArrayMember<U>> // It's an array: recursive call for its children
 				: T extends object
 					? T extends {toJSON(): infer J}
 						? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?

@@ -1,4 +1,4 @@
-import {IsEqual} from './internal';
+import type {IsEqual} from './internal';
 
 /**
 Returns a boolean for whether the given array includes the given item.
@@ -7,7 +7,7 @@ This can be useful if another type wants to make a decision based on whether the
 
 @example
 ```
-import {Includes} from 'type-fest';
+import type {Includes} from 'type-fest';
 
 type hasRed<array extends any[]> = Includes<array, 'red'>;
 ```

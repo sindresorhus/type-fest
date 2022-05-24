@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {RemoveIndexSignature} from '../index';
+import type {RemoveIndexSignature} from '../index';
 
 interface ExampleInterface {
 	// These index signatures will be removed.

@@ -1,5 +1,5 @@
-import {Except} from './except';
-import {Simplify} from './simplify';
+import type {Except} from './except';
+import type {Simplify} from './simplify';
 
 /**
 Create a type that makes the given keys optional. The remaining keys are kept as is. The sister of the `SetRequired` type.
@@ -8,7 +8,7 @@ Use-case: You want to define a single model where the only thing that changes is
 
 @example
 ```
-import {SetOptional} from 'type-fest';
+import type {SetOptional} from 'type-fest';
 
 type Foo = {
 	a: number;

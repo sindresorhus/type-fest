@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import {Simplify} from '../index';
+import type {Simplify} from '../index';
 
 type PositionProps = {
 	top: number;

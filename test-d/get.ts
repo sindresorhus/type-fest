@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'expect-type';
-import {Get} from '../index';
+import type {Get} from '../index';
 
 declare const get: <ObjectType, Path extends string | readonly string[]>(object: ObjectType, path: Path) => Get<ObjectType, Path>;
 
