@@ -713,7 +713,7 @@ declare namespace TsConfigJson {
 		/**
 		Specify path mapping to be computed relative to baseUrl option.
 		*/
-		paths?: Record<string, string[]>;
+		paths?: Partial<Record<string, string[]>>;
 
 		/**
 		List of TypeScript language server plugins to load.
