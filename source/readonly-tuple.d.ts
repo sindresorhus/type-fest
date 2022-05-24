@@ -1,5 +1,5 @@
 /**
-Creates a readonly tuple of `Element` and with the length of `Length`.
+Creates a read-only tuple of type `Element` and with the length of `Length`.
 
 @private
 @see `ReadonlyTuple` which is safer because it tests if `Length` is a specific finite number.
@@ -10,7 +10,7 @@ type BuildTupleHelper<Element, Length extends number, Rest extends Element[]> =
 		BuildTupleHelper<Element, Length, [Element, ...Rest]>;
 
 /**
-Create a type that represents a tuple of the given type and length.
+Create a type that represents a read-only tuple of the given type and length.
 
 Use-cases:
 - Declaring fixed-length tuples with a large number of items.
