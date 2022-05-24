@@ -1,12 +1,10 @@
-import {Primitive} from './primitive';
-import {KeysOfUnion} from './internal';
+import type {Primitive} from './primitive';
+import type {KeysOfUnion} from './internal';
 
 /**
-Create a type which properties are restricted only to those explicitly declared.
+Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
 
-This is useful for function type-guarding to reject arguments with excess
-properties. Due to the nature of TypeScript, it does not complain if excess properties are
-provided unless the provided value is an object literal.
+This is useful for function type-guarding to reject arguments with excess properties. Due to the nature of TypeScript, it does not complain if excess properties are provided unless the provided value is an object literal.
 
 @example
 ```
@@ -14,11 +12,11 @@ type OnlyAcceptName = {name: string};
 
 function onlyAcceptName(args: OnlyAcceptName) {}
 
-// TypeScript complains excess fields when an object literal is provided.
+// TypeScript complains about excess properties when an object literal is provided.
 onlyAcceptName({name: 'name', id: 1});
 //=> `id` is excess
 
-// TypeScript does not complain excess fields when the provided value is a variable (not an object literal).
+// TypeScript does not complain about excess properties when the provided value is a variable (not an object literal).
 const invalidInput = {name: 'name', id: 1};
 onlyAcceptName(invalidInput); // No errors
 ```
@@ -42,8 +40,8 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 export type Exact<ParameterType, InputType extends ParameterType> = ParameterType extends Primitive
 	? ParameterType
 	/*
-   Create a type from type ParameterType and InputType and change keys exclusive to type InputType to `never`.
-	 - Generate the list of keys that exist in the InputType but not in the ParameterType.
-	 - Mark these excess keys as `never`
-	 */
+	Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
+	- Generate a list of keys that exists in `InputType` but not in `ParameterType`.
+	- Mark these excess keys as `never`.
+	*/
 	: {[Key in keyof ParameterType]: Exact<ParameterType[Key], InputType[Key]>} & Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
