@@ -1,6 +1,6 @@
 {
 	"name": "type-fest",
-	"version": "2.12.2",
+	"version": "2.13.0",
 	"description": "A collection of essential TypeScript types",
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
