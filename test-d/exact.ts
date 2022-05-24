@@ -1,4 +1,4 @@
-import {Exact} from '../index';
+import type {Exact} from '../index';
 
 { // Spec - string type
 	type Type = string;
