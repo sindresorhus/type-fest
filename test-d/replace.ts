@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {Replace} from '../index';
+import type {Replace} from '../index';
 
 declare function replace<
 	Input extends string,
