@@ -2,25 +2,25 @@ import {expectTypeOf} from 'expect-type';
 import {RequiredDeep} from '../index';
 
 interface Foo {
-	baz?: string;
+	baz?: string | undefined;
 	bar?: {
-		function?: (...args: any[]) => void;
-		object?: {key?: 'value'};
-		string?: string;
-		number?: number;
-		boolean?: false;
-		date?: Date;
-		regexp?: RegExp;
-		symbol?: Symbol;
-		null?: null;
+		function?: ((...args: any[]) => void) | undefined;
+		object?: {key?: 'value'} | undefined;
+		string?: string | undefined;
+		number?: number | undefined;
+		boolean?: false | undefined;
+		date?: Date | undefined;
+		regexp?: RegExp | undefined;
+		symbol?: Symbol | undefined;
+		null?: null | undefined;
 		undefined?: undefined;
-		map?: Map<string, string>;
-		set?: Set<string>;
-		array?: string[];
+		map?: Map<string | undefined, string | undefined>;
+		set?: Set<string | undefined>;
+		array?: (string | undefined)[];
 		tuple?: ['foo'];
-		readonlyMap?: ReadonlyMap<string, string>;
-		readonlySet?: ReadonlySet<string>;
-		readonlyArray?: readonly string[];
+		readonlyMap?: ReadonlyMap<string | undefined, string | undefined>;
+		readonlySet?: ReadonlySet<string | undefined>;
+		readonlyArray?: readonly (string | undefined)[];
 		readonlyTuple?: readonly ['foo'];
 	};
 }
