@@ -2,7 +2,7 @@ import {BuiltIns} from './internal';
 
 type ExcludeUndefined<T> = Exclude<T, undefined>;
 
-export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>> = T extends BuiltIns
+export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>> = E extends BuiltIns
 	? E
 	: E extends Map<infer KeyType, infer ValueType>
 		? Map<RequiredDeep<KeyType>, RequiredDeep<ValueType>>

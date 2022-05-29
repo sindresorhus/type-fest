@@ -2,6 +2,7 @@ import {expectTypeOf} from 'expect-type';
 import {RequiredDeep} from '../index';
 
 interface Foo {
+	baz?: string;
 	bar?: {
 		function?: (...args: any[]) => void;
 		object?: {key?: 'value'};
@@ -25,6 +26,7 @@ interface Foo {
 }
 
 interface FooRequired {
+	baz: string;
 	bar: {
 		function: (...args: any[]) => void;
 		object: {key: 'value'};
@@ -35,6 +37,7 @@ interface FooRequired {
 		regexp: RegExp;
 		symbol: Symbol;
 		null: null;
+		undefined: never;
 		map: Map<string, string>;
 		set: Set<string>;
 		array: string[];
@@ -49,6 +52,7 @@ interface FooRequired {
 type FooBar = Exclude<Foo['bar'], undefined>;
 type FooRequiredBar = FooRequired['bar'];
 
+expectTypeOf<RequiredDeep<Foo>>().toEqualTypeOf<FooRequired>();
 expectTypeOf<RequiredDeep<FooBar['function']>>().toEqualTypeOf<FooRequiredBar['function']>();
 expectTypeOf<RequiredDeep<FooBar['object']>>().toEqualTypeOf<FooRequiredBar['object']>();
 expectTypeOf<RequiredDeep<FooBar['string']>>().toEqualTypeOf<FooRequiredBar['string']>();
