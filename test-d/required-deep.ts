@@ -17,11 +17,11 @@ interface Foo {
 		map?: Map<string | undefined, string | undefined>;
 		set?: Set<string | undefined>;
 		array?: (string | undefined)[];
-		tuple?: ['foo'];
+		tuple?: ['foo' | undefined] | undefined;
 		readonlyMap?: ReadonlyMap<string | undefined, string | undefined>;
 		readonlySet?: ReadonlySet<string | undefined>;
 		readonlyArray?: readonly (string | undefined)[];
-		readonlyTuple?: readonly ['foo'];
+		readonlyTuple?: readonly ['foo' | undefined] | undefined;
 	};
 }
 
