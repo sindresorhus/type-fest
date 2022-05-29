@@ -4,7 +4,7 @@ import {RequiredDeep} from '../index';
 interface Foo {
 	bar?: {
 		function?: (...args: any[]) => void;
-		object?: {key: 'value'};
+		object?: {key?: 'value'};
 		string?: string;
 		number?: number;
 		boolean?: false;
@@ -24,8 +24,30 @@ interface Foo {
 	};
 }
 
-type FooBar = Foo['bar'];
-type FooRequiredBar = Foo['bar'];
+interface FooRequired {
+	bar: {
+		function: (...args: any[]) => void;
+		object: {key: 'value'};
+		string: string;
+		number: number;
+		boolean: false;
+		date: Date;
+		regexp: RegExp;
+		symbol: Symbol;
+		null: null;
+		map: Map<string, string>;
+		set: Set<string>;
+		array: string[];
+		tuple: ['foo'];
+		readonlyMap: ReadonlyMap<string, string>;
+		readonlySet: ReadonlySet<string>;
+		readonlyArray: readonly string[];
+		readonlyTuple: readonly ['foo'];
+	};
+}
+
+type FooBar = Exclude<Foo['bar'], undefined>;
+type FooRequiredBar = FooRequired['bar'];
 
 expectTypeOf<RequiredDeep<FooBar['function']>>().toEqualTypeOf<FooRequiredBar['function']>();
 expectTypeOf<RequiredDeep<FooBar['object']>>().toEqualTypeOf<FooRequiredBar['object']>();
@@ -42,4 +64,5 @@ expectTypeOf<RequiredDeep<FooBar['readonlyMap']>>().toEqualTypeOf<FooRequiredBar
 expectTypeOf<RequiredDeep<FooBar['readonlySet']>>().toEqualTypeOf<FooRequiredBar['readonlySet']>();
 expectTypeOf<RequiredDeep<FooBar['readonlyArray']>>().toEqualTypeOf<FooRequiredBar['readonlyArray']>();
 expectTypeOf<RequiredDeep<FooBar['readonlyTuple']>>().toEqualTypeOf<FooRequiredBar['readonlyTuple']>();
-expectTypeOf<RequiredDeep<FooBar['undefined']>>().toEqualTypeOf<never>();
+expectTypeOf<RequiredDeep<FooBar['undefined']>>().toBeNever();
+expectTypeOf<RequiredDeep<FooBar['null']>>().toEqualTypeOf<FooRequiredBar['null']>();
