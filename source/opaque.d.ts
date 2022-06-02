@@ -72,3 +72,5 @@ type Person = {
 @category Type
 */
 export type Opaque<Type, Token = unknown> = Type & Tagged<Token>;
+
+export type DeOpaque<Type> = Omit<Type, keyof Tagged<unknown>>;
