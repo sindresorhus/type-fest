@@ -57,6 +57,8 @@ export {
 export {StringKeyOf} from './source/string-key-of';
 export {Exact} from './source/exact';
 export {ReadonlyTuple} from './source/readonly-tuple';
+export {OptionalKeysOf, HasOptionalKeys} from './source/optional-keys';
+export {RequiredKeysOf, HasRequiredKeys} from './source/required-keys';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';
