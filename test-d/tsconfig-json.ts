@@ -1,4 +1,4 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectType} from 'tsd';
 import type {TsConfigJson} from '../index';
 
 const tsConfig: TsConfigJson = {};
@@ -11,6 +11,3 @@ expectType<string[] | undefined>(tsConfig.files);
 expectType<string[] | undefined>(tsConfig.include);
 expectType<TsConfigJson.References[] | undefined>(tsConfig.references);
 expectType<TsConfigJson.TypeAcquisition | undefined>(tsConfig.typeAcquisition);
-
-// Undefined assigns
-expectAssignable<NonNullable<typeof tsConfig['compilerOptions']>['paths']>({path: undefined});
