@@ -74,7 +74,7 @@ type Person = {
 export type Opaque<Type, Token = unknown> = Type & Tagged<Token>;
 
 /**
-Remove readonly [tag] from an Opaque type, essentially reverting it back to a generic (i.e. non-Opaque) type.
+Revert an Opaque type back to its original type by removing the readonly [tag].
 
 Why is this necessary?
 
