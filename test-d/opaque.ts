@@ -1,5 +1,5 @@
-import {expectAssignable, expectError} from 'tsd';
-import type {Opaque} from '../index';
+import {expectAssignable, expectError, expectNotType} from 'tsd';
+import type {Opaque, UnwrapOpaque} from '../index';
 
 type Value = Opaque<number, 'Value'>;
 
@@ -38,3 +38,11 @@ const johnsId = '7dd4a16e-d5ee-454c-b1d0-71e23d9fa70b' as UUID;
 // @ts-expect-error
 const userJohn = userEntities[johnsId]; // eslint-disable-line @typescript-eslint/no-unused-vars
 /// expectType<Foo>(userJohn);
+
+// Remove tag from opaque value.
+// Note: This will simply return number as type.
+type PlainValue = UnwrapOpaque<Value>;
+expectAssignable<PlainValue>(123);
+
+const plainValue: PlainValue = 123 as PlainValue;
+expectNotType<Value>(plainValue);

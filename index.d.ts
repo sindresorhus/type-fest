@@ -18,7 +18,7 @@ export {PartialDeep} from './source/partial-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
-export {Opaque} from './source/opaque';
+export {Opaque, UnwrapOpaque} from './source/opaque';
 export {InvariantOf} from './source/invariant-of';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';

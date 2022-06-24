@@ -72,3 +72,36 @@ type Person = {
 @category Type
 */
 export type Opaque<Type, Token = unknown> = Type & Tagged<Token>;
+
+/**
+Revert an opaque type back to its original type by removing the readonly `[tag]`.
+
+Why is this necessary?
+
+1. Use an `Opaque` type as object keys
+2. Prevent TS4058 error: "Return type of exported function has or is using name X from external module Y but cannot be named"
+
+@example
+```
+import type {Opaque, UnwrapOpaque} from 'type-fest';
+
+type AccountType = Opaque<'SAVINGS' | 'CHECKING', 'AccountType'>;
+
+const moneyByAccountType: Record<UnwrapOpaque<AccountType>, number> = {
+	SAVINGS: 99,
+	CHECKING: 0.1
+};
+
+// Without UnwrapOpaque, the following expression would throw a type error.
+const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
+
+// Attempting to pass an non-Opaque type to UnwrapOpaque will raise a type error.
+type WontWork = UnwrapOpaque<string>;
+```
+
+@category Type
+*/
+export type UnwrapOpaque<OpaqueType extends Tagged<unknown>> =
+	OpaqueType extends Opaque<infer Type, OpaqueType[typeof tag]>
+		? Type
+		: OpaqueType;
