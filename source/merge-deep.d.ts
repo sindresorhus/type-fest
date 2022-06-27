@@ -101,7 +101,7 @@ when `strict` option is set to `true` (default).
 type Foo = {foo: string; bar: {id: string; label: string}};
 type Bar = {foo: number; bar: {id: number; nop: undefined}};
 
-Type FooBar = MergeDeep<Foo, Bar>;
+type FooBar = MergeDeep<Foo, Bar>;
 
 // {
 // 	foo: number;
@@ -111,7 +111,7 @@ Type FooBar = MergeDeep<Foo, Bar>;
 // 	}
 // }
 
-Type FooBarLazy = MergeDeep<Foo, Bar, {strict:false}>;
+type FooBarLazy = MergeDeep<Foo, Bar, {strict:false}>;
 
 // {
 // 	foo: number;
