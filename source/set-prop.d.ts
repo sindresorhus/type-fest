@@ -27,16 +27,16 @@ type SetPropDeep<Path extends string[], Value> = PathHead<Path> extends never
 type SetPropArray<Path extends string[], Value> = Unwrap<Record<PathHead<Path>, SetPropDeep<PathTail<Path>, Value>>>;
 
 /**
-Set the property at the given path to the given value.
+Set a deeply-nested property to an object using a key path, like Lodash's `.set()` function.
 
 @example
 ```
-import { setProperty } from "dot-prop";
+import set from "lodash/set";
 
 const data = {name: 'nyan', items: {life: 24}};
 
-setProperty(data, 'items.life', '42');
-setProperty(data, 'items.levels', [1, '2', true]);
+set(data, 'items.life', '42');
+set(data, 'items.levels', [1, '2', true]);
 
 export const newData = data as unknown as CreateLevels;
 ```
