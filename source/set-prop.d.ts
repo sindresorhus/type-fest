@@ -36,7 +36,10 @@ import set from "lodash/set";
 const data = {name: 'nyan', items: {life: 24}};
 
 set(data, 'items.life', '42');
-set(data, 'items.levels', [1, '2', true]);
+set(data, 'items.levels', [1, 2, 3]);
+
+type SetLifeString = SetProp<typeof data, 'items.life', '42'>;
+type CreateLevels = SetProp<SetLifeString, 'items.levels', number[]>;
 
 export const newData = data as unknown as CreateLevels;
 ```
