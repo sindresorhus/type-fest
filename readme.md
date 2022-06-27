@@ -190,6 +190,7 @@ Click the type names for complete docs.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
+- [`SetProp`](source/set-prop.d.ts) - Set a deeply-nested property to an object using a key path, like [Lodash's `.set()`](https://lodash.com/docs/latest#set) function.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
