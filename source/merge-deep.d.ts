@@ -15,7 +15,9 @@ type MergeValue<Destination, Source, Key, Options> =
         ? MergeDeep<Destination[Key], Source[Key], Options>
         : Source[Key]
       : Destination[Key]
-    : Source[Key];
+    : Key extends keyof Source
+      ? Source[Key]
+      : never;
 
 type Keyof<Destination, Source> = keyof Destination | keyof Source;
 
