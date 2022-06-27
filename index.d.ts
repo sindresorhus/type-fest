@@ -82,6 +82,7 @@ export {Trim} from './source/trim';
 export {Replace} from './source/replace';
 export {Includes} from './source/includes';
 export {Get} from './source/get';
+export {SetProp} from './source/set-prop';
 export {LastArrayElement} from './source/last-array-element';
 
 // Miscellaneous
