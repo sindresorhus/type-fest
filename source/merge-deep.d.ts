@@ -14,8 +14,8 @@ type MergeValue<Destination, Source, Key, Options> =
       ? Destination[Key] extends UnknownRecord
         ? MergeDeep<Destination[Key], Source[Key], Options>
         : Source[Key]
-      : never
-    : never;
+      : Destination[Key]
+    : Source[Key];
 
 type Keyof<Destination, Source> = keyof Destination | keyof Source;
 
@@ -91,7 +91,7 @@ type ArrayMerge<
     ];
 
 /**
-Merge two types recursively into a new type.
+MergE two types recursively into a new type.
 
 Properties set to `undefined` value are skipped
 when `strict` option is set to `true` (default).

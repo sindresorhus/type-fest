@@ -118,3 +118,17 @@ type Bar14 = {'a': [string, {'c': number}, {'e': number; d: string}]};
 type FooBar14 = MergeDeep<Foo14, Bar14>;
 
 expectAssignable<FooBar14>({a: ['42', {b: 2, c: 3}, {d: '4', e: 5}]});
+
+type Foo15 = {name: 'nyan'; level1: {plop: 42}};
+type Bar15 = {level1: {level2: {level3: 42}}};
+
+type FooBar15 = MergeDeep<Foo15, Bar15>;
+
+expectAssignable<FooBar15>({name: 'nyan', level1: {plop: 42, level2: {level3: 42}}});
+
+type Foo16 = {level1: {level2: {level3: 42}}};
+type Bar16 = {name: 'nyan'; level1: {plop: 42}};
+
+type FooBar16 = MergeDeep<Foo16, Bar16>;
+
+expectAssignable<FooBar16>({name: 'nyan', level1: {plop: 42, level2: {level3: 42}}});
