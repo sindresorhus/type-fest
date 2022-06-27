@@ -91,7 +91,7 @@ type ArrayMerge<
     ];
 
 /**
-MergE two types recursively into a new type.
+Merge two types recursively into a new type.
 
 Properties set to `undefined` value are skipped
 when `strict` option is set to `true` (default).
