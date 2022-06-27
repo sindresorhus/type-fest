@@ -111,3 +111,10 @@ expectAssignable<FooBar12>({foo: 42, bar: true});
 type FooBar13 = MergeDeep<Foo12, Bar12, {strict: false}>;
 
 expectAssignable<FooBar13>({foo: 42, bar: true, baz: undefined});
+
+type Foo14 = {'a': [number, {'b': number}, {'d': number}]};
+type Bar14 = {'a': [string, {'c': number}, {'e': number; d: string}]};
+
+type FooBar14 = MergeDeep<Foo14, Bar14>;
+
+expectAssignable<FooBar14>({a: ['42', {b: 2, c: 3}, {d: '4', e: 5}]});
