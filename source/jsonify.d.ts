@@ -1,4 +1,5 @@
 import type {JsonPrimitive, JsonValue} from './basic';
+import {Finite, NegativeInfinity, PositiveInfinity} from './numeric';
 import {TypedArray} from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
@@ -66,7 +67,8 @@ type Jsonify<T> =
 	// Note: The use of tuples in this first condition side-steps distributive conditional types
 	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
 	[Extract<T, NotJsonable | BigInt>] extends [never]
-		? T extends JsonPrimitive
+		? T extends PositiveInfinity | NegativeInfinity ? null
+		: T extends JsonPrimitive
 			? T // Primitive is acceptable
 			: T extends Number ? number
 			: T extends String ? string

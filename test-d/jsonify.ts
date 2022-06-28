@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {Jsonify, JsonValue} from '..';
+import type {Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
 
 interface A {
 	a: number;
@@ -203,17 +203,13 @@ declare const setJson: Jsonify<typeof set>;
 expectType<{}>(setJson);
 
 // Positive and negative Infinity, NaN and null are turned into null
-// declare const positiveInf: PositiveInfinity
-// expectNotAssignable<JsonValue>(positiveInf)
-// declare const positiveInfJson: Jsonify<typeof positiveInf>
-// expectType<null>(positiveInfJson)
-// declare const negativeInf: NegativeInfinity
-// expectNotAssignable<JsonValue>(negativeInf)
-// declare const negativeInfJson: Jsonify<typeof negativeInf>
-// expectType<null>(negativeInfJson)
 // NOTE: NaN is not detectable in TypeScript, so it is not tested; see https://github.com/sindresorhus/type-fest/issues/406
-// declare const nan: NaN
-// expectNotAssignable<JsonValue>(nan)
+declare const positiveInfinity: PositiveInfinity;
+declare const positiveInfJson: Jsonify<typeof positiveInfinity>;
+expectType<null>(positiveInfJson);
+declare const negativeInf: NegativeInfinity;
+declare const negativeInfJson: Jsonify<typeof negativeInf>;
+expectType<null>(negativeInfJson);
 
 // Test that optional type members are not discarded wholesale.
 interface OptionalPrimitive {
