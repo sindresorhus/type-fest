@@ -212,20 +212,14 @@ interface OptionalTypeUnion {
 	a?: string | (() => any);
 }
 
-interface OptionalFunction {
-	a?: () => any;
-}
-
 interface NonOptionalTypeUnion {
 	a: string | undefined;
 }
 
 declare const jsonifiedOptionalPrimitive: Jsonify<OptionalPrimitive>;
 declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
-declare const jsonifiedOptionalFunction: Jsonify<OptionalFunction>;
 declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
 
 expectType<{a?: string}>(jsonifiedOptionalPrimitive);
 expectType<{a?: never}>(jsonifiedOptionalTypeUnion);
-expectType<{a?: never}>(jsonifiedOptionalFunction);
 expectType<{a: never}>(jsonifiedNonOptionalTypeUnion);
