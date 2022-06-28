@@ -124,71 +124,71 @@ expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
 
 // Not jsonable types; these types behave differently when used as plain values, as members of arrays and as values of objects
-declare const undef: undefined
-expectNotAssignable<JsonValue>(undef);
+declare const undefined: undefined;
+expectNotAssignable<JsonValue>(undefined);
 
 declare const fn: (_: any) => void;
 expectNotAssignable<JsonValue>(fn);
 
-declare const sym: symbol
-expectNotAssignable<JsonValue>(sym);
+declare const symbol: symbol;
+expectNotAssignable<JsonValue>(symbol);
 
 // Plain values fail JSON.stringify()
-declare const plainUndef: Jsonify<typeof undef>
-expectType<never>(plainUndef)
+declare const plainUndefined: Jsonify<typeof undefined>;
+expectType<never>(plainUndefined);
 
-declare const plainFn: Jsonify<typeof fn>
-expectType<never>(plainFn)
+declare const plainFn: Jsonify<typeof fn>;
+expectType<never>(plainFn);
 
-declare const plainSym: Jsonify<typeof sym>
-expectType<never>(plainSym)
+declare const plainSymbol: Jsonify<typeof symbol>;
+expectType<never>(plainSymbol);
 
 // Array members become null
-declare const arrayMemberUndef: Jsonify<typeof undef[]>
-expectType<null[]>(arrayMemberUndef)
+declare const arrayMemberUndefined: Jsonify<Array<typeof undefined>>;
+expectType<null[]>(arrayMemberUndefined);
 
-declare const arrayMemberFn: Jsonify<typeof fn[]>
-expectType<null[]>(arrayMemberFn)
+declare const arrayMemberFn: Jsonify<Array<typeof fn>>;
+expectType<null[]>(arrayMemberFn);
 
-declare const arrayMemberSym: Jsonify<typeof sym[]>
-expectType<null[]>(arrayMemberSym)
+declare const arrayMemberSymbol: Jsonify<Array<typeof symbol>>;
+expectType<null[]>(arrayMemberSymbol);
 
 // When used in object values, these keys are filtered
-declare const objectValueUndef: Jsonify<{ keep: string, undef: typeof undef }>
-expectType<{ keep: string }>(objectValueUndef)
+declare const objectValueUndefined: Jsonify<{keep: string; undefined: typeof undefined}>;
+expectType<{keep: string}>(objectValueUndefined);
 
-declare const objectValueFn: Jsonify<{ keep: string, fn: typeof fn }>
-expectType<{ keep: string }>(objectValueFn)
+declare const objectValueFn: Jsonify<{keep: string; fn: typeof fn}>;
+expectType<{keep: string}>(objectValueFn);
 
-declare const objectValueSym: Jsonify<{ keep: string, sym: typeof sym }>
-expectType<{ keep: string }>(objectValueSym)
+declare const objectValueSymbol: Jsonify<{keep: string; symbol: typeof symbol}>;
+expectType<{keep: string}>(objectValueSymbol);
 
-// symbol keys are filtered
-declare const objectKeySym: Jsonify<{ [key: typeof sym]: number, keep: string }>
-expectType<{ keep: string }>(objectKeySym)
+// Symbol keys are filtered
+declare const objectKeySymbol: Jsonify<{[key: typeof symbol]: number; keep: string}>;
+expectType<{keep: string}>(objectKeySymbol);
 
 // Number, String and Boolean values are turned into primitive counterparts
-declare const num: Number
-expectNotAssignable<JsonValue>(num)
+declare const number: Number;
+expectNotAssignable<JsonValue>(number);
 
-declare const str: String
-expectNotAssignable<JsonValue>(str)
+declare const string: String;
+expectNotAssignable<JsonValue>(string);
 
-declare const bool: Boolean
-expectNotAssignable<JsonValue>(bool)
+declare const boolean: Boolean;
+expectNotAssignable<JsonValue>(boolean);
 
-declare const numJson: Jsonify<typeof num>
-expectType<number>(numJson)
+declare const numberJson: Jsonify<typeof number>;
+expectType<number>(numberJson);
 
-declare const strJson: Jsonify<typeof str>
-expectType<string>(strJson)
+declare const stringJson: Jsonify<typeof string>;
+expectType<string>(stringJson);
 
-declare const boolJson: Jsonify<typeof bool>
-expectType<boolean>(boolJson)
+declare const booleanJson: Jsonify<typeof boolean>;
+expectType<boolean>(booleanJson);
 
 // BigInt fails JSON.stringify
-declare const bigInt: Jsonify<BigInt>
-expectType<never>(bigInt)
+declare const bigInt: Jsonify<BigInt>;
+expectType<never>(bigInt);
 
 // Positive and negative Infinity, NaN and null are turned into null
 // declare const positiveInf: PositiveInfinity
