@@ -190,6 +190,18 @@ expectType<boolean>(booleanJson);
 declare const bigInt: Jsonify<BigInt>;
 expectType<never>(bigInt);
 
+declare const int8Array: Int8Array;
+declare const int8ArrayJson: Jsonify<typeof int8Array>
+expectType<{[key: string]: number}>(int8ArrayJson);
+
+declare const map: Map<string, number>
+declare const mapJson: Jsonify<typeof map>
+expectType<{}>(mapJson);
+
+declare const set: Set<string>
+declare const setJson: Jsonify<typeof set>
+expectType<{}>(setJson);
+
 // Positive and negative Infinity, NaN and null are turned into null
 // declare const positiveInf: PositiveInfinity
 // expectNotAssignable<JsonValue>(positiveInf)

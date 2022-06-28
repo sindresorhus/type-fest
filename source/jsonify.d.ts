@@ -1,4 +1,5 @@
 import type {JsonPrimitive, JsonValue} from './basic';
+import { TypedArray } from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
@@ -70,6 +71,8 @@ type Jsonify<T> =
 			: T extends Number ? number
 			: T extends String ? string
 			: T extends Boolean ? boolean
+			: T extends Map<any, any> | Set<any> ? {}
+			: T extends TypedArray ? {[key: string]: number}
 			: T extends Array<infer U>
 				? Array<Jsonify<U extends NotJsonable ? null : U>> // It's an array: recursive call for its children
 				: T extends object
