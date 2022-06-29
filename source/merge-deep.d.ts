@@ -1,4 +1,11 @@
-interface MergeDeepOptions {
+/**
+MergeDeep options.
+
+@param strict Properties set to `undefined` value are skipped when set to `true` (default).
+
+@see MergeDeep
+*/
+export interface MergeDeepOptions {
   strict?: boolean;
 }
 
