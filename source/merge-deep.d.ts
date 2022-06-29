@@ -11,6 +11,12 @@ export interface MergeDeepOptions {
 
 type UnknownRecord = Record<string, unknown>;
 
+/**
+`Unwrap` is like `Simplify` it flatten the type output to improve type hints shown in editors.
+Unfortunately Simplify does not support the case where the type cannot be flattened.
+
+@see Simplify
+*/
 type Unwrap<Type> = Type extends UnknownRecord
   ? {[Key in keyof Type]: Type[Key]}
   : Type;
