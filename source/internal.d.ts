@@ -51,3 +51,17 @@ The reason a simple `keyof Union` does not work is because `keyof` always return
 @link https://stackoverflow.com/a/49402091
 */
 export type KeysOfUnion<T> = T extends T ? keyof T : never;
+
+/**
+Extracts the type of the first element of an array.
+*/
+export type ArrayHead<TArray> = TArray extends readonly [infer THead, ...unknown[]]
+  ? THead
+  : never;
+
+/**
+Extracts the type of an array minus the first element.
+*/
+export type ArrayTail<TArray> = TArray extends readonly [unknown, ...infer TTail]
+  ? TTail
+  : [];

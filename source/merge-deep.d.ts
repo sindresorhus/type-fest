@@ -1,4 +1,5 @@
 import {ConditionalExcept} from './conditional-except';
+import {ArrayHead, ArrayTail} from './internal';
 
 /**
 MergeDeep options.
@@ -70,14 +71,6 @@ type MergeDeepStrict<Destination, Source, Options> = ConditionalExcept<
   MergeDeepLazy<Destination, Source, Options>,
   undefined
 >;
-
-type ArrayHead<TArray> = TArray extends readonly [infer THead, ...unknown[]]
-  ? THead
-  : never;
-
-type ArrayTail<TArray> = TArray extends readonly [unknown, ...infer TTail]
-  ? TTail
-  : [];
 
 type UnknownArray = readonly unknown[];
 
