@@ -1,3 +1,5 @@
+import {ConditionalExcept} from './conditional-except';
+
 /**
 MergeDeep options.
 
@@ -58,19 +60,13 @@ type GetValue<
   ? Destination[Key]
   : never;
 
-type ExtractType<TType, TUnion> = {
-  [Key in keyof TType]-?: TUnion extends TType[Key] ? Key : never;
-}[keyof TType];
-
-type OmitType<TType, TUnion> = Omit<TType, ExtractType<TType, TUnion>>;
-
 type MergeDeepLazy<Destination, Source, Options> = {
   [Key in Keyof<Destination, Source>]: Unwrap<
     GetValue<Destination, Source, Key, Options>
   >;
 };
 
-type MergeDeepStrict<Destination, Source, Options> = OmitType<
+type MergeDeepStrict<Destination, Source, Options> = ConditionalExcept<
   MergeDeepLazy<Destination, Source, Options>,
   undefined
 >;
