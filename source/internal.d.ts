@@ -55,7 +55,7 @@ export type KeysOfUnion<T> = T extends T ? keyof T : never;
 /**
 Extracts the type of the first element of an array.
 */
-export type ArrayHead<TArray> = TArray extends readonly [infer THead, ...unknown[]]
+export type FirstArrayElement<TArray> = TArray extends readonly [infer THead, ...unknown[]]
   ? THead
   : never;
 

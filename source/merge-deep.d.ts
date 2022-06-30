@@ -1,5 +1,5 @@
 import {ConditionalExcept} from './conditional-except';
-import {ArrayHead, ArrayTail} from './internal';
+import {FirstArrayElement, ArrayTail} from './internal';
 
 /**
 MergeDeep options.
@@ -113,7 +113,7 @@ type ArrayMergeDeep<
 	: Source extends []
 	? Destination
 	: [
-			ArrayMergeDeepValue<ArrayHead<Destination>, ArrayHead<Source>, Options>,
+			ArrayMergeDeepValue<FirstArrayElement <Destination>, FirstArrayElement <Source>, Options>,
 			...ArrayMergeDeep<ArrayTail<Destination>, ArrayTail<Source>>,
     ];
 
