@@ -34,6 +34,8 @@ You can't pass a `bigint` as they are already guaranteed to be finite.
 
 Use-case: Validating and documenting parameters.
 
+Note: This can't detect `NaN`, please upvote [this issue](https://github.com/microsoft/TypeScript/issues/28682) if you want to have this type as a built-in in TypeScript.
+
 @example
 ```
 import type {Finite} from 'type-fest';

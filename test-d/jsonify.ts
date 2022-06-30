@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {Jsonify, JsonValue} from '..';
+import type {Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
 
 interface A {
 	a: number;
@@ -123,17 +123,93 @@ const nonJsonWithInvalidToJSON = new NonJsonWithInvalidToJSON();
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
 
-// Special cases of Array with `undefined` member
-// `[undefined]` is not JSON because it contains non JSON value `undefined`
-// However `JSON.parse(JSON.stringify())` transforms array members of `undefined` to `null`
-expectNotAssignable<JsonValue>([undefined]);
-declare const parsedStringifiedArrayWithUndefined1: Jsonify<undefined[]>; // = JSON.parse(JSON.stringify([undefined]));
-expectType<null[]>(parsedStringifiedArrayWithUndefined1);
-expectAssignable<JsonValue>(parsedStringifiedArrayWithUndefined1);
-expectNotAssignable<JsonValue>([undefined, 1]);
-declare const parsedStringifiedArrayWithUndefined2: Jsonify<[undefined, number]>;
-expectType<Array<number | null>>(parsedStringifiedArrayWithUndefined2);
-expectAssignable<JsonValue>(parsedStringifiedArrayWithUndefined2);
+// Not jsonable types; these types behave differently when used as plain values, as members of arrays and as values of objects
+declare const undefined: undefined;
+expectNotAssignable<JsonValue>(undefined);
+
+declare const fn: (_: any) => void;
+expectNotAssignable<JsonValue>(fn);
+
+declare const symbol: symbol;
+expectNotAssignable<JsonValue>(symbol);
+
+// Plain values fail JSON.stringify()
+declare const plainUndefined: Jsonify<typeof undefined>;
+expectType<never>(plainUndefined);
+
+declare const plainFn: Jsonify<typeof fn>;
+expectType<never>(plainFn);
+
+declare const plainSymbol: Jsonify<typeof symbol>;
+expectType<never>(plainSymbol);
+
+// Array members become null
+declare const arrayMemberUndefined: Jsonify<Array<typeof undefined>>;
+expectType<null[]>(arrayMemberUndefined);
+
+declare const arrayMemberFn: Jsonify<Array<typeof fn>>;
+expectType<null[]>(arrayMemberFn);
+
+declare const arrayMemberSymbol: Jsonify<Array<typeof symbol>>;
+expectType<null[]>(arrayMemberSymbol);
+
+// When used in object values, these keys are filtered
+declare const objectValueUndefined: Jsonify<{keep: string; undefined: typeof undefined}>;
+expectType<{keep: string}>(objectValueUndefined);
+
+declare const objectValueFn: Jsonify<{keep: string; fn: typeof fn}>;
+expectType<{keep: string}>(objectValueFn);
+
+declare const objectValueSymbol: Jsonify<{keep: string; symbol: typeof symbol}>;
+expectType<{keep: string}>(objectValueSymbol);
+
+// Symbol keys are filtered
+declare const objectKeySymbol: Jsonify<{[key: typeof symbol]: number; keep: string}>;
+expectType<{keep: string}>(objectKeySymbol);
+
+// Number, String and Boolean values are turned into primitive counterparts
+declare const number: Number;
+expectNotAssignable<JsonValue>(number);
+
+declare const string: String;
+expectNotAssignable<JsonValue>(string);
+
+declare const boolean: Boolean;
+expectNotAssignable<JsonValue>(boolean);
+
+declare const numberJson: Jsonify<typeof number>;
+expectType<number>(numberJson);
+
+declare const stringJson: Jsonify<typeof string>;
+expectType<string>(stringJson);
+
+declare const booleanJson: Jsonify<typeof boolean>;
+expectType<boolean>(booleanJson);
+
+// BigInt fails JSON.stringify
+declare const bigInt: Jsonify<BigInt>;
+expectType<never>(bigInt);
+
+declare const int8Array: Int8Array;
+declare const int8ArrayJson: Jsonify<typeof int8Array>;
+expectType<Record<string, number>>(int8ArrayJson);
+
+declare const map: Map<string, number>;
+declare const mapJson: Jsonify<typeof map>;
+expectType<{}>(mapJson);
+
+declare const set: Set<string>;
+declare const setJson: Jsonify<typeof set>;
+expectType<{}>(setJson);
+
+// Positive and negative Infinity, NaN and null are turned into null
+// NOTE: NaN is not detectable in TypeScript, so it is not tested; see https://github.com/sindresorhus/type-fest/issues/406
+declare const positiveInfinity: PositiveInfinity;
+declare const positiveInfJson: Jsonify<typeof positiveInfinity>;
+expectType<null>(positiveInfJson);
+declare const negativeInf: NegativeInfinity;
+declare const negativeInfJson: Jsonify<typeof negativeInf>;
+expectType<null>(negativeInfJson);
 
 // Test that optional type members are not discarded wholesale.
 interface OptionalPrimitive {
@@ -144,20 +220,14 @@ interface OptionalTypeUnion {
 	a?: string | (() => any);
 }
 
-interface OptionalFunction {
-	a?: () => any;
-}
-
 interface NonOptionalTypeUnion {
 	a: string | undefined;
 }
 
 declare const jsonifiedOptionalPrimitive: Jsonify<OptionalPrimitive>;
 declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
-declare const jsonifiedOptionalFunction: Jsonify<OptionalFunction>;
 declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
 
 expectType<{a?: string}>(jsonifiedOptionalPrimitive);
 expectType<{a?: never}>(jsonifiedOptionalTypeUnion);
-expectType<{a?: never}>(jsonifiedOptionalFunction);
 expectType<{a: never}>(jsonifiedNonOptionalTypeUnion);
