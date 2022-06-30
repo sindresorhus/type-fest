@@ -187,7 +187,7 @@ declare const booleanJson: Jsonify<typeof boolean>;
 expectType<boolean>(booleanJson);
 
 // BigInt fails JSON.stringify
-declare const bigInt: Jsonify<BigInt>;
+declare const bigInt: Jsonify<bigint>;
 expectType<never>(bigInt);
 
 declare const int8Array: Int8Array;
