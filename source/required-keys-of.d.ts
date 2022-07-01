@@ -10,10 +10,10 @@ import type {RequiredKeysOf} from 'type-fest';
 declare function createValidation<Entity extends object, Key extends RequiredKeysOf<Entity> = RequiredKeysOf<Entity>>(field: Key, validator: (value: Entity[Key]) => boolean): ValidatorFn;
 
 interface User {
-  name: string;
-  surname: string;
+	name: string;
+	surname: string;
 
-  luckyNumber?: number;
+	luckyNumber?: number;
 }
 
 const validator1 = createValidation<User>('name', value => value.length < 25);

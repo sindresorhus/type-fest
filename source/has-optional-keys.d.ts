@@ -10,9 +10,9 @@ This is useful when you want to create an API whose behaviour depends on the pre
 import type {HasOptionalKeys, OptionalKeysOf} from 'type-fest';
 
 type UpdateService<Entity extends object> = {
-  removeField: HasOptionalKeys<Entity> extends true
-    ? (field: OptionalKeysOf<Entity>) => Promise<void>
-    : never
+	removeField: HasOptionalKeys<Entity> extends true
+		? (field: OptionalKeysOf<Entity>) => Promise<void>
+		: never
 }
 ```
 
