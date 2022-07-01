@@ -191,10 +191,10 @@ Click the type names for complete docs.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
-- [`OptionalKeysOf`](source/optional-keys.d.ts) - Extract all optional keys from the given type.
-- [`HasOptionalKeys`](source/optional-keys.d.ts) - Create a `true`/`false` type depending on the presence or absence of optional fields.
-- [`RequiredKeysOf`](source/required-keys.d.ts) - Extract all required keys from the given type.
-- [`HasRequiredKeys`](source/required-keys.d.ts) - Create a `true`/`false` type depending on the presence or absence of required fields.
+- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
+- [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on the presence or absence of optional fields.
+- [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
+- [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on the presence or absence of required fields.
 
 ### JSON
 
