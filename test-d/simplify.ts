@@ -42,3 +42,25 @@ expectType<SomeInterfaceAsTypeWrittenByHand>(valueAsInterface);
 expectAssignable<Record<string, unknown>>(valueAsLiteral);
 expectAssignable<Record<string, unknown>>(valueAsSimplifiedInterface);
 expectNotAssignable<Record<string, unknown>>(valueAsInterface); // Index signature is missing in interface
+
+// Should return the original type if it is not simplifiable, like a function.
+type SomeFunction = (type: string) => string;
+expectType<Simplify<SomeFunction>>((type: string) => type);
+
+// Sould simplify to public interface (what it is currently doing)? Return the Class type? Or something else?
+class SomeClass {
+  id: string;
+
+  private readonly code: number;
+
+  constructor() {
+    this.id = 'some-class';
+    this.code = 42;
+  }
+
+  someMethod() {
+    return this.code;
+  }
+}
+
+expectType<Simplify<SomeClass>>({id: 'prout', someMethod: () => 42});
