@@ -47,7 +47,6 @@ expectNotAssignable<Record<string, unknown>>(valueAsInterface); // Index signatu
 type SomeFunction = (type: string) => string;
 expectType<Simplify<SomeFunction>>((type: string) => type);
 
-// Sould simplify to public interface (what it is currently doing)? Return the Class type? Or something else?
 class SomeClass {
   id: string;
 
