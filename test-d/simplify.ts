@@ -64,3 +64,17 @@ class SomeClass {
 }
 
 expectType<Simplify<SomeClass>>(new SomeClass());
+
+// Test deep option
+// This is mostly visual, move the mouse over "expectAssignable" to see the result.
+type PositionAndSize = PositionProps & SizeProps;
+
+interface Node {
+  parent: PositionAndSize;
+  child: {parent: PositionAndSize};
+}
+
+const node = {parent: flattenProps, child: {parent: flattenProps}};
+
+expectAssignable<Simplify<Node>>(node);
+expectAssignable<Simplify<Node, {deep: true}>>(node);

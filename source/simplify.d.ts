@@ -1,7 +1,23 @@
 import {Class, Constructor} from './basic';
 
+/**
+Simplify options.
+
+@param deep - Do the simplification recursively (default: false).
+
+@see Simplify
+*/
+export interface SimplifyOptions {
+	deep?: boolean;
+}
+
 // Flatten a type without worrying about the result.
-type Flatten<AnyType> = {[KeyType in keyof AnyType]: AnyType[KeyType]};
+type Flatten<
+	AnyType,
+	Options extends SimplifyOptions = {},
+> = Options['deep'] extends true
+	? {[KeyType in keyof AnyType]: Simplify<AnyType[KeyType], Options>}
+	: {[KeyType in keyof AnyType]: AnyType[KeyType]};
 
 /**
 Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
@@ -60,4 +76,9 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 
 @category Object
 */
-export type Simplify<AnyType> = Flatten<AnyType> extends AnyType ? Flatten<AnyType> : AnyType;
+export type Simplify<
+	AnyType,
+	Options extends SimplifyOptions = {},
+> = Flatten<AnyType> extends AnyType
+	? Flatten<AnyType, Options>
+	: AnyType;
