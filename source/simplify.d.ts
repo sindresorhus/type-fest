@@ -1,3 +1,8 @@
+import {Class, Constructor} from './basic';
+
+// Flatten a type without worrying about the result.
+type Flatten<AnyType> = {[KeyType in keyof AnyType]: AnyType[KeyType]};
+
 /**
 Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 
@@ -55,4 +60,4 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 
 @category Object
 */
-export type Simplify<T> = T extends Function ? T : {[KeyType in keyof T]: T[KeyType]};
+export type Simplify<AnyType> = Flatten<AnyType> extends AnyType ? Flatten<AnyType> : AnyType;

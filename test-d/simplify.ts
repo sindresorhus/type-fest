@@ -63,4 +63,4 @@ class SomeClass {
   }
 }
 
-expectType<Simplify<SomeClass>>({id: 'prout', someMethod: () => 42});
+expectType<Simplify<SomeClass>>(new SomeClass());
