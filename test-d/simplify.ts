@@ -16,15 +16,15 @@ const flattenProps = {top: 120, left: 240, width: 480, height: 600};
 expectType<Simplify<PositionProps & SizeProps>>(flattenProps);
 
 interface SomeInterface {
-  foo: number;
-  bar?: string;
-  baz: number | undefined;
+	foo: number;
+	bar?: string;
+	baz: number | undefined;
 }
 
 type SomeInterfaceAsTypeWrittenByHand = {
-  foo: number;
-  bar?: string;
-  baz: number | undefined;
+	foo: number;
+	bar?: string;
+	baz: number | undefined;
 };
 
 const valueAsLiteral = {foo: 123, bar: 'hello', baz: 456};
@@ -48,18 +48,18 @@ type SomeFunction = (type: string) => string;
 expectType<Simplify<SomeFunction>>((type: string) => type);
 
 class SomeClass {
-  id: string;
+	id: string;
 
-  private readonly code: number;
+	private readonly code: number;
 
-  constructor() {
-    this.id = 'some-class';
-    this.code = 42;
-  }
+	constructor() {
+		this.id = 'some-class';
+		this.code = 42;
+	}
 
-  someMethod() {
-    return this.code;
-  }
+	someMethod() {
+		return this.code;
+	}
 }
 
 expectType<Simplify<SomeClass>>(new SomeClass());
@@ -69,11 +69,18 @@ expectType<Simplify<SomeClass>>(new SomeClass());
 type PositionAndSize = PositionProps & SizeProps;
 
 interface Node {
-  parent: PositionAndSize;
-  child: {parent: PositionAndSize};
+	parent: PositionAndSize;
+	child: {
+		parent: PositionAndSize;
+	}
 }
 
-const node = {parent: flattenProps, child: {parent: flattenProps}};
+const node = {
+	parent: flattenProps,
+	child: {
+		parent: flattenProps,
+	},
+};
 
 expectAssignable<Simplify<Node>>(node);
 expectAssignable<Simplify<Node, {deep: true}>>(node);
