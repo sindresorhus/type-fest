@@ -3,7 +3,7 @@ import {OptionalKeysOf} from './optional-keys-of';
 /**
 Creates a type that represents `true` or `false` depending on whether the given type has any optional fields.
 
-This is useful when you want to create an API whose behaviour depends on the presence or absence of optional fields.
+This is useful when you want to create an API whose behavior depends on the presence or absence of optional fields.
 
 @example
 ```
