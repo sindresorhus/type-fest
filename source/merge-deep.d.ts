@@ -21,10 +21,53 @@ type isOneArray<Destination, Source> = isOneExtend<AnyArray, Destination, Source
 type isBothArray<Destination, Source> = isBothExtend<AnyArray, Destination, Source>;
 type isBothRecord<Destination, Source> = isBothExtend<AnyRecord, Destination, Source>;
 
-// Merge logics
+/** Returns the union of the keys of both types. */
+type Keyof<Destination, Source> = keyof Destination | keyof Source;
 
-type MergeRecord<Destination, Source> = {d: Destination; s: Source};
+/** Merge two arrays... */
 type MergeArray<Destination, Source> = [Destination, Source];
+
+/**
+Walk through the union of the keys of the two objects and test in which object the properties are defined.
+
+- If the source does not contain the key, the value of the destination is returned.
+- If the source contains the key and the destination does not contain the key, the value of the source is returned.
+- If the source and destination contain the key, the two values are merged if possible, otherwise it is the value of the source that is returned.
+*/
+type MergeRecord<Destination, Source, Options> = {
+	[Key in Keyof<Destination, Source>]:
+    Key extends keyof Source
+    // Source found, check for destination
+    ? Key extends keyof Destination
+    // Both source and destination exists
+    ? MergeDeepOrReturn<Source[Key], Destination[Key], Source[Key], Options>
+    // Only the source exists
+    : Source[Key]
+    // No source, take the destination (this test is useless, but make TS happy, It can never be never)
+    : Key extends keyof Destination ? Destination[Key] : never;
+};
+
+/** Try to merge two types recursively into a new type or return the default value. */
+export type MergeDeepOrReturn<
+  DefaultValue,
+  Destination,
+  Source,
+  Options extends MergeDeepOptions,
+> = Options['recurseIntoArrays'] extends true
+  // Branch: recurseIntoArrays = true
+  ? isBothArray<Destination, Source> extends true
+    ? MergeArray<Destination, Source>
+    : isOneArray<Destination, Source> extends true
+    ? DefaultValue // Only one array is forbidden
+    : isBothRecord<Destination, Source> extends true
+    ? MergeRecord<Destination, Source, Options>
+    : DefaultValue // The two base types are not identical
+  // Branch: recurseIntoArrays = false
+  : isOneArray<Destination, Source> extends true
+  ? DefaultValue // Array are forbidden
+  : isBothRecord<Destination, Source> extends true
+  ? MergeRecord<Destination, Source, Options>
+  : DefaultValue; // The two base types are not identical
 
 // Public types
 
@@ -80,18 +123,4 @@ export type MergeDeep<
   Destination,
   Source,
   Options extends MergeDeepOptions = {},
-> = Options['recurseIntoArrays'] extends true
-  // Branch: recurseIntoArrays = true
-  ? isBothArray<Destination, Source> extends true
-    ? MergeArray<Destination, Source>
-    : isOneArray<Destination, Source> extends true
-    ? never // Only one array is forbidden
-    : isBothRecord<Destination, Source> extends true
-    ? MergeRecord<Destination, Source>
-    : never // The two base types are not identical
-  // Branch: recurseIntoArrays = false
-  : isOneArray<Destination, Source> extends true
-  ? never // Array are forbidden
-  : isBothRecord<Destination, Source> extends true
-  ? MergeRecord<Destination, Source>
-  : never; // The two base types are not identical
+> = MergeDeepOrReturn<never, Destination, Source, Options>;

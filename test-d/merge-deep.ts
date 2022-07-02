@@ -50,3 +50,19 @@ declare const sign16: MergeDeep<[], 42, {recurseIntoArrays: true}>; // Never
 
 expectType<never>(sign15);
 expectType<never>(sign16);
+
+// Test flat plain object
+
+const src1 = {life: 42, name: 'nyan', a: undefined};
+const dest1 = {life: '24', fly: true, b: undefined};
+const merge1 = {...dest1, ...src1};
+
+expectType<MergeDeep<typeof dest1, typeof src1>>(merge1);
+
+// Test deep plain object
+
+const src2 = {a: 'a', b: src1, c: {d: src1}};
+const dest2 = {a: 'z', b: dest1, c: {d: dest1}};
+const merge2 = {a: 'a', b: merge1, c: {d: merge1}};
+
+expectType<MergeDeep<typeof dest2, typeof src2>>(merge2);
