@@ -32,6 +32,12 @@ expectType<false>(objectIncludes);
 const objectIncludesPass: Includes<[{a: 1}], {a: 1}> = true;
 expectType<true>(objectIncludesPass);
 
+const nullIncludesUndefined: Includes<[null], undefined> = false;
+expectType<false>(nullIncludesUndefined);
+
+const nullIncludesNullPass: Includes<[null], null> = true;
+expectType<true>(nullIncludesNullPass);
+
 declare const anything: any;
 
 expectError<Includes>(anything);
