@@ -1,5 +1,5 @@
 /**
-Pick all required keys from the given base type.
+Extract all required keys from the given type.
 
 This is useful when you want to create a new type that contains different type values for the required keys only or use the list of keys for validation purposes, etc...
 
@@ -21,7 +21,7 @@ const validator2 = createValidation<User>('surname', value => value.length < 25)
 ```
 
 @category Utilities
- */
+*/
 export type RequiredKeysOf<BaseType extends object> = Exclude<{
 	[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]>
 		? Key
