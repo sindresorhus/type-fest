@@ -1,5 +1,5 @@
 /**
-Pick all optional keys from the given base type.
+Extract all optional keys from the given type.
 
 This is useful when you want to create a new type that contains different type values for the optional keys only.
 
@@ -30,7 +30,7 @@ const update2: UpdateOperation<User> = {
 ```
 
 @category Utilities
- */
+*/
 export type OptionalKeysOf<BaseType extends object> = Exclude<{
 	[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]>
 		? never
