@@ -1,8 +1,4 @@
-import {Class, Constructor} from './basic';
-
 /**
-Simplify options.
-
 @see Simplify
 */
 export interface SimplifyOptions {
