@@ -38,7 +38,7 @@ export {Entry} from './source/entry';
 export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
-export {Simplify} from './source/simplify';
+export {Simplify, SimplifyOptions} from './source/simplify';
 export {Jsonify} from './source/jsonify';
 export {Schema} from './source/schema';
 export {LiteralToPrimitive} from './source/literal-to-primitive';
