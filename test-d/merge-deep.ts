@@ -66,3 +66,20 @@ const dest2 = {a: 'z', b: dest1, c: {d: dest1}};
 const merge2 = {a: 'a', b: merge1, c: {d: merge1}};
 
 expectType<MergeDeep<typeof dest2, typeof src2>>(merge2);
+
+// Undefied properties must be preserved
+
+const src3 = {a: 'a', c: undefined, e: 42, f: undefined};
+const dest3 = {b: 'b', d: undefined, e: undefined, f: 42};
+
+const merge3 = {a: 'a', b: 'b', c: undefined, d: undefined, e: 42, f: undefined};
+declare const prout3: MergeDeep<typeof dest3, typeof src3>;
+
+expectType<typeof merge3>(prout3);
+
+// Undefied properties must be skipped
+
+const merge4 = {a: 'a', b: 'b', e: 42};
+declare const prout4: MergeDeep<typeof dest3, typeof src3, {stripUndefinedValues: true}>;
+
+expectType<typeof merge4>(prout4);

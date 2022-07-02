@@ -1,4 +1,13 @@
+import {ConditionalExcept} from './conditional-except';
 import {AnyArray, AnyRecord} from './internal';
+
+/**
+Replace by `Simplify` once the folowing PR is merged
+@link https://github.com/sindresorhus/type-fest/pull/414
+*/
+type Unwrap<Type> = Type extends AnyRecord
+	? {[Key in keyof Type]: Type[Key]}
+	: Type;
 
 // Private types
 
@@ -34,7 +43,7 @@ Walk through the union of the keys of the two objects and test in which object t
 - If the source contains the key and the destination does not contain the key, the value of the source is returned.
 - If the source and destination contain the key, the two values are merged if possible, otherwise it is the value of the source that is returned.
 */
-type MergeRecord<Destination, Source, Options> = {
+type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
 	[Key in Keyof<Destination, Source>]:
     Key extends keyof Source
     // Source found, check for destination
@@ -46,6 +55,12 @@ type MergeRecord<Destination, Source, Options> = {
     // No source, take the destination (this test is useless, but make TS happy, It can never be never)
     : Key extends keyof Destination ? Destination[Key] : never;
 };
+
+/** Wrapper around `DoMergeRecord` which defines whether or not to keep undefined values. */
+type MergeRecord<Destination, Source, Options extends MergeDeepOptions> = Unwrap<
+  Options['stripUndefinedValues'] extends true
+    ? ConditionalExcept<DoMergeRecord<Destination, Source, Options>, undefined>
+    : DoMergeRecord<Destination, Source, Options>>;
 
 /** Try to merge two types recursively into a new type or return the default value. */
 export type MergeDeepOrReturn<
@@ -101,6 +116,13 @@ export interface MergeDeepOptions {
 	```
   */
 	recurseIntoArrays?: boolean;
+
+  /**
+  Should strip undefined values from the resulting type.
+
+  @default false
+  */
+  stripUndefinedValues?: boolean;
 }
 
 /**
