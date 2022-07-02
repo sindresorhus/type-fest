@@ -1,4 +1,3 @@
-import { IsEqual } from "./internal";
 import { MergeExclusive } from "./merge-exclusive";
 
 type ReplaceOptions = MergeExclusive<{all: boolean}, {recursive: boolean}>;
