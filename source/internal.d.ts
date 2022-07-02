@@ -65,3 +65,13 @@ Extracts the type of an array minus the first element.
 export type ArrayTail<TArray> = TArray extends readonly [unknown, ...infer TTail]
   ? TTail
   : [];
+
+/**
+Matches any Array.
+*/
+export type AnyArray = unknown[] | readonly unknown[];
+
+/**
+Matches any Record.
+*/
+export type AnyRecord = Record<PropertyKey, unknown>;

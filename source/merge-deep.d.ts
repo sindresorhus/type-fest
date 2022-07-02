@@ -1,181 +1,97 @@
-import {ConditionalExcept} from './conditional-except';
-import {FirstArrayElement, ArrayTail} from './internal';
+import {AnyArray, AnyRecord} from './internal';
+
+// Private types
+
+/** Test if one of the two types extends the base type. */
+type isOneExtend<BaseType, FirstType, SecondType> = FirstType extends BaseType
+  ? true
+  : SecondType extends BaseType
+  ? true
+  : false;
+
+/** Test if both types extends the base type. */
+type isBothExtend<BaseType, FirstType, SecondType> = FirstType extends BaseType
+  ? SecondType extends BaseType
+  ? true
+  : false
+  : false;
+
+// Some helpers for readability
+type isOneArray<Destination, Source> = isOneExtend<AnyArray, Destination, Source>;
+type isBothArray<Destination, Source> = isBothExtend<AnyArray, Destination, Source>;
+type isBothRecord<Destination, Source> = isBothExtend<AnyRecord, Destination, Source>;
+
+// Merge logics
+
+type MergeRecord<Destination, Source> = {d: Destination; s: Source};
+type MergeArray<Destination, Source> = [Destination, Source];
+
+// Public types
 
 /**
 MergeDeep options.
 
-@param strict - Properties set to `undefined` value are skipped when set to `true` (default).
-
 @see MergeDeep
 */
 export interface MergeDeepOptions {
-	strict?: boolean;
+  /**
+	Should recurse into arrays.
+
+  - When set to `false` arrays are not supported as input and all properties that contain arrays will be replaced from source to destination.
+  - When set to `true` all arrays are concatenated recursively.
+
+  @default false
+
+  @example
+  ```
+  type Merged = MergeDeep<[], []>;
+  // never
+
+  type Merged = MergeDeep<[], [], {recurseIntoArrays: true}>;
+  // []
+
+  type Merged = MergeDeep<{items: [1,2,3]}, {items: [4,5,6]}>;
+  // {items: [4,5,6]}
+
+  type Merged = MergeDeep<{items: [1,2,3]}, {items: [4,5,6]}, {recurseIntoArrays: true}>;
+  // {items: [1,2,3,4,5,6]}
+	```
+  */
+	recurseIntoArrays?: boolean;
 }
 
 /**
-Represents an unknown record.
-*/
-type UnknownRecord = Record<string, unknown>;
-
-/**
-`Unwrap` is like `Simplify` it flatten the type output to improve type hints shown in editors.
-Unfortunately Simplify does not support the case where the type cannot be flattened.
-
-@see Simplify
-*/
-type Unwrap<Type> = Type extends UnknownRecord
-	? {[Key in keyof Type]: Type[Key]}
-	: Type;
-
-/**
-Determines the value to be returned according to the type of the `Source` and `Destination`.
-
-If both are records, returns the result of the merge.
-Otherwise returns the `Source` if present or the `Destination` if nothing matches.
-*/
-type MergeDeepRecord<Destination, Source, Key, Options> =
-	Key extends keyof Destination
-		? Key extends keyof Source
-			? Destination[Key] extends UnknownRecord
-				? MergeDeep<Destination[Key], Source[Key], Options>
-				: Source[Key]
-			: Destination[Key]
-		: Key extends keyof Source
-		? Source[Key]
-		: never;
-
-/**
-Determines the value to be returned according to the type of the `Source` and `Destination`.
-
-If both are array, returns the result of the merge, otherwise returns the `Source`.
-*/
-type MergeDeepArray<Destination, Source, Options> =
-	Destination extends UnknownArray
-		? Source extends UnknownArray
-			? ArrayMergeDeep<Destination, Source, Options>
-			: Source
-		: Source;
-
-/**
-Returns the union of the keys of both types.
-*/
-type Keyof<Destination, Source> = keyof Destination | keyof Source;
-
-/**
-Determines the value to be returned according to the type of the `Source` and `Destination`.
-
-If both are mergeable types, returns the result of the merge.
-Otherwise returns the `Source` if present or the `Destination` if nothing matches.
-*/
-type MergeDeepValue<
-	Destination,
-	Source,
-	Key extends Keyof<Destination, Source>,
-	Options,
-> = Key extends keyof Source
-	? Source[Key] extends UnknownRecord
-		? MergeDeepRecord<Destination, Source, Key, Options>
-		: Source[Key] extends UnknownArray
-		? Key extends keyof Destination
-			? MergeDeepArray<Destination[Key], Source[Key], Options>
-			: Source[Key]
-		: Source[Key]
-	: Key extends keyof Destination
-	? Destination[Key]
-	: never;
-
-/**
-Represents an unknown array.
-*/
-type UnknownArray = readonly unknown[];
-
-/**
-Determines the value to be returned according to the type of the `Source` and `Destination`.
-
-If both are mergeable records, returns the result of the merge, otherwise returns the `Source`.
-*/
-type ArrayMergeDeepValue<Destination, Source, Options> =
-	Destination extends UnknownRecord
-		? Source extends UnknownRecord
-			? Unwrap<MergeDeep<Destination, Source, Options>>
-			: Source
-		: Source;
-
-/**
-Merge two array recursively into a new array.
-*/
-type ArrayMergeDeep<
-	Destination extends UnknownArray,
-	Source extends UnknownArray,
-	Options extends MergeDeepOptions = {strict: true},
-> = Destination extends []
-	? Source
-	: Source extends []
-	? Destination
-	: [
-			ArrayMergeDeepValue<FirstArrayElement <Destination>, FirstArrayElement <Source>, Options>,
-			...ArrayMergeDeep<ArrayTail<Destination>, ArrayTail<Source>>,
-    ];
-
-/**
 Merge two types recursively into a new type.
 
-Properties set to `undefined` value are **preserved**.
-*/
-type MergeDeepLazy<Destination, Source, Options> = {
-	[Key in Keyof<Destination, Source>]: Unwrap<
-		MergeDeepValue<Destination, Source, Key, Options>
-	>;
-};
+By default arrays are not supported, you have to explicitly enable it with the `recurseIntoArrays` option if you want it.
 
-/**
-Merge two types recursively into a new type.
-
-Properties set to `undefined` value are **skipped**.
-*/
-type MergeDeepStrict<Destination, Source, Options> = ConditionalExcept<
-	MergeDeepLazy<Destination, Source, Options>,
-	undefined
->;
-
-/**
-Merge two types recursively into a new type.
-
-Properties set to `undefined` value are skipped when `strict` option is set to `true` (default).
+@see MergeDeepOptions
 
 @example
 ```
-type Foo = {foo: string; bar: {id: string; label: string}};
-type Bar = {foo: number; bar: {id: number; nop: undefined}};
-
-type FooBar = MergeDeep<Foo, Bar>;
-
-// {
-// 	foo: number;
-// 	bar: {
-// 		id: number;
-// 		label: string;
-// 	}
-// }
-
-type FooBarLazy = MergeDeep<Foo, Bar, {strict:false}>;
-
-// {
-// 	foo: number;
-// 	bar: {
-// 		id: number;
-// 		label: string;
-//		nop: undefined;
-// 	}
-// }
+MergeDeep<[], []>; // never
+MergeDeep<[], [], {recurseIntoArrays: true}>; // []
 ```
 
 @category Object
+@category Array
 */
 export type MergeDeep<
-	Destination,
-	Source,
-	Options extends MergeDeepOptions = {strict: true},
-> = Options['strict'] extends true
-	? MergeDeepStrict<Destination, Source, Options>
-	: MergeDeepLazy<Destination, Source, Options>;
+  Destination,
+  Source,
+  Options extends MergeDeepOptions = {},
+> = Options['recurseIntoArrays'] extends true
+  // Branch: recurseIntoArrays = true
+  ? isBothArray<Destination, Source> extends true
+    ? MergeArray<Destination, Source>
+    : isOneArray<Destination, Source> extends true
+    ? never // Only one array is forbidden
+    : isBothRecord<Destination, Source> extends true
+    ? MergeRecord<Destination, Source>
+    : never // The two base types are not identical
+  // Branch: recurseIntoArrays = false
+  : isOneArray<Destination, Source> extends true
+  ? never // Array are forbidden
+  : isBothRecord<Destination, Source> extends true
+  ? MergeRecord<Destination, Source>
+  : never; // The two base types are not identical
