@@ -1,9 +1,9 @@
 import {RequiredKeysOf} from './required-keys-of';
 
 /**
-Creates a type that represents `true` or `false` depending on the presence or absence of required fields.
+Creates a type that represents `true` or `false` depending on whether the given type has any required fields.
 
-This is useful when you want to create an API whose behaviour depends on the presence or absence of required fields.
+This is useful when you want to create an API whose behavior depends on the presence or absence of required fields.
 
 @example
 ```
@@ -13,8 +13,8 @@ type GeneratorOptions<Template extends object> = {
 	prop1: number;
 	prop2: string;
 } & (HasRequiredKeys<Template> extends true
-	? { template: Template; }
-	: { template?: Template; });
+	? {template: Template}
+	: {template?: Template});
 
 interface Template1 {
 	optionalSubParam?: string;
@@ -55,5 +55,5 @@ const optD: Options2 = {
 ```
 
 @category Utilities
- */
+*/
 export type HasRequiredKeys<BaseType extends object> = RequiredKeysOf<BaseType> extends never ? false : true;
