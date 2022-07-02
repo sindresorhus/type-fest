@@ -3,11 +3,14 @@ import {Class, Constructor} from './basic';
 /**
 Simplify options.
 
-@param deep - Do the simplification recursively (default: false).
-
 @see Simplify
 */
 export interface SimplifyOptions {
+	/**
+	Do the simplification recursively.
+
+	@default false
+	*/
 	deep?: boolean;
 }
 
