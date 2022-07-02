@@ -1,6 +1,9 @@
-import { MergeExclusive } from "./merge-exclusive";
+import {MergeExclusive} from './merge-exclusive';
 
-type ReplaceOptions = MergeExclusive<{all: boolean}, {recursive: boolean}>;
+type ReplaceOptions = MergeExclusive<
+	MergeExclusive<{all: boolean}, {recursive: boolean}>,
+	{}
+>;
 
 /**
 Represents a string with some or all matches replaced by a replacement.
@@ -77,9 +80,9 @@ export type Replace<
 	Replacement extends string,
 	Options extends ReplaceOptions = {},
 > = Input extends `${infer Head}${Search}${infer Tail}`
-	? Options["recursive"] extends true
+	? Options['recursive'] extends true
 		? Replace<`${Head}${Replacement}${Tail}`, Search, Replacement, Options>
-		: Options["all"] extends true
+		: Options['all'] extends true
 		? `${Head}${Replacement}${Replace<Tail, Search, Replacement, Options>}`
 		: `${Head}${Replacement}${Tail}`
 	: Input;
