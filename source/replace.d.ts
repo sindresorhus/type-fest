@@ -1,5 +1,3 @@
-import {MergeExclusive} from './merge-exclusive';
-
 type ReplaceOptions = {
 	all?: boolean;
 };
