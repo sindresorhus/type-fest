@@ -33,8 +33,23 @@ type isBothRecord<Destination, Source> = isBothExtend<AnyRecord, Destination, So
 /** Returns the union of the keys of both types. */
 type Keyof<Destination, Source> = keyof Destination | keyof Source;
 
-/** Merge two arrays... */
-type MergeArray<Destination, Source> = [Destination, Source];
+/** Concat two array. */
+type ConcatArray<Destination, Source> = Destination extends AnyArray
+  ? Source extends AnyArray
+    ? Array<Destination[number] | Source[number]>
+    : never
+  : never;
+
+/** Merge two arrays. */
+type MergeArray<Destination, Source, Options extends MergeDeepOptions> =
+  Destination extends []
+  ? Source // Destination is an empty array, return the source
+  : Source extends []
+  ? Destination // Source is an empty array, return the destination
+  : Options['recurseIntoArrays'] extends true
+  ? ConcatArray<Destination, Source> // Concat the two array
+  // Return the source
+  : Source;
 
 /**
 Walk through the union of the keys of the two objects and test in which object the properties are defined.
@@ -71,7 +86,7 @@ export type MergeDeepOrReturn<
 > = Options['recurseIntoArrays'] extends true
   // Branch: recurseIntoArrays = true
   ? isBothArray<Destination, Source> extends true
-    ? MergeArray<Destination, Source>
+    ? MergeArray<Destination, Source, Options>
     : isOneArray<Destination, Source> extends true
     ? DefaultValue // Only one array is forbidden
     : isBothRecord<Destination, Source> extends true

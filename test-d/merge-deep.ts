@@ -1,4 +1,4 @@
-import {expectNotType, expectType} from 'tsd';
+import {expectAssignable, expectNotType, expectType} from 'tsd';
 import {MergeDeep} from '../index';
 
 // Test MergeDeep inputs
@@ -73,13 +73,106 @@ const src3 = {a: 'a', c: undefined, e: 42, f: undefined};
 const dest3 = {b: 'b', d: undefined, e: undefined, f: 42};
 
 const merge3 = {a: 'a', b: 'b', c: undefined, d: undefined, e: 42, f: undefined};
-declare const prout3: MergeDeep<typeof dest3, typeof src3>;
+declare const type3: MergeDeep<typeof dest3, typeof src3>;
 
-expectType<typeof merge3>(prout3);
+expectType<typeof merge3>(type3);
 
 // Undefied properties must be skipped
 
 const merge4 = {a: 'a', b: 'b', e: 42};
-declare const prout4: MergeDeep<typeof dest3, typeof src3, {stripUndefinedValues: true}>;
+declare const type4: MergeDeep<typeof dest3, typeof src3, {stripUndefinedValues: true}>;
 
-expectType<typeof merge4>(prout4);
+expectType<typeof merge4>(type4);
+
+// Should replace arrays
+
+const src5 = {a: 'a', items: ['4', '5', '6']};
+const dest5 = {b: 'b', items: [1, 2, 3]};
+
+const merge5 = {a: 'a', b: 'b', items: ['4', '5', '6']};
+declare const prout5: MergeDeep<typeof dest5, typeof src5>;
+
+expectType<typeof merge5>(prout5);
+
+// Should concat arrays
+
+const merge6 = {a: 'a', b: 'b', items: [1, 2, 3, '4', '5', '6']};
+declare const prout6: MergeDeep<typeof dest5, typeof src5, {recurseIntoArrays: true}>;
+
+expectType<typeof merge6>(prout6);
+
+// Test deep object with arrays ans undefined values
+
+type Foo1 = {
+	l0: string;
+	a: string;
+	b: {
+		skipped: undefined;
+		l1: string;
+		x: string;
+		y: {
+			l2: string;
+			u: string;
+			v: string;
+      items: string[];
+		};
+	};
+	q: Date;
+};
+
+type Bar1 = {
+	new: number;
+	a: number;
+	b: {
+		x: number;
+		y: {
+			u: number;
+			v: number;
+			skipped: undefined;
+      items: number[];
+		};
+	};
+	q: {life: 42};
+	skipped: undefined;
+};
+
+expectAssignable<MergeDeep<Foo1, Bar1>>({
+	l0: 'string',
+	a: 42,
+	b: {
+    skipped: undefined,
+    l1: 'string',
+		x: 42,
+		y: {
+			l2: 'string',
+			u: 42,
+			v: 42,
+			skipped: undefined,
+      items: [1, 2, 3],
+		},
+	},
+	q: {
+		life: 42,
+	},
+  skipped: undefined,
+	new: 42,
+});
+
+expectAssignable<MergeDeep<Foo1, Bar1, {stripUndefinedValues: true; recurseIntoArrays: true}>>({
+	l0: 'string',
+	a: 42,
+	b: {
+		l1: 'string',
+		x: 42,
+		y: {
+			l2: 'string',
+			u: 42,
+			v: 42,
+      items: [1, 2, 3, 'a', 'b', 'c'],
+		},
+	},
+	q: {
+		life: 42,
+	},
+	new: 42,
+});
