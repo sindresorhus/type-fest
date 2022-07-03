@@ -21,20 +21,8 @@ declare function replaceAll<
 	replacement: Replacement
 ): Replace<Input, Search, Replacement, {all: true}>;
 
-declare function replaceRecursively<
-	Input extends string,
-	Search extends string,
-	Replacement extends string,
->(
-	input: Input,
-	search: Search,
-	replacement: Replacement
-): Replace<Input, Search, Replacement, {recursive: true}>;
-
 expectType<'hello 🦄'>(replace('hello ?', '?', '🦄'));
 expectType<'hello ❓?'>(replace('hello ??', '?', '❓'));
 expectType<'10-42-00'>(replaceAll('10:42:00', ':', '-'));
 expectType<'userName'>(replaceAll('__userName__', '__', ''));
 expectType<'MyCoolTitle'>(replaceAll('My Cool Title', ' ', ''));
-expectType<'fobarfobar'>(replaceAll('foobarfoobar', 'ob', 'b'));
-expectType<'fbarfbar'>(replaceRecursively('foobarfoobar', 'ob', 'b'));

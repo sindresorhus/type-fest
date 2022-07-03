@@ -1,9 +1,8 @@
 import {MergeExclusive} from './merge-exclusive';
 
-type ReplaceOptions = MergeExclusive<
-	MergeExclusive<{all: boolean}, {recursive: boolean}>,
-	{}
->;
+type ReplaceOptions = {
+	all?: boolean;
+};
 
 /**
 Represents a string with some or all matches replaced by a replacement.
@@ -37,16 +36,6 @@ declare function replaceAll<
 	replacement: Replacement
 ): Replace<Input, Search, Replacement, {all: true}>;
 
-declare function replaceRecursively<
-	Input extends string,
-	Search extends string,
-	Replacement extends string
->(
-	input: Input,
-	search: Search,
-	replacement: Replacement
-): Replace<Input, Search, Replacement, {recursive: true}>;
-
 // The return type is the exact string literal, not just `string`.
 
 replace('hello ?', '?', '🦄');
@@ -63,12 +52,6 @@ replaceAll('__userName__', '__', '');
 
 replaceAll('My Cool Title', ' ', '');
 //=> 'MyCoolTitle'
-
-replaceAll('foobarfoobar', 'ob', 'b');
-//=> 'fobarfobar'
-
-replaceRecursively('foobarfoobar', 'ob', 'b');
-//=> 'fbarfbar'
 ```
 
 @category String
@@ -80,9 +63,7 @@ export type Replace<
 	Replacement extends string,
 	Options extends ReplaceOptions = {},
 > = Input extends `${infer Head}${Search}${infer Tail}`
-	? Options['recursive'] extends true
-		? Replace<`${Head}${Replacement}${Tail}`, Search, Replacement, Options>
-		: Options['all'] extends true
+	? Options['all'] extends true
 		? `${Head}${Replacement}${Replace<Tail, Search, Replacement, Options>}`
 		: `${Head}${Replacement}${Tail}`
 	: Input;
