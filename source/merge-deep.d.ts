@@ -1,15 +1,6 @@
 import {ConditionalExcept} from './conditional-except';
 import {AnyArray, AnyRecord} from './internal';
-
-/**
-Replace by `Simplify` once the folowing PR is merged
-@link https://github.com/sindresorhus/type-fest/pull/414
-*/
-type Unwrap<Type> = Type extends AnyRecord
-	? {[Key in keyof Type]: Type[Key]}
-	: Type;
-
-// Private types
+import {Simplify} from './simplify';
 
 /** Test if one of the two types extends the base type. */
 type isOneExtend<BaseType, FirstType, SecondType> = FirstType extends BaseType
@@ -72,7 +63,7 @@ type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
 };
 
 /** Wrapper around `DoMergeRecord` which defines whether or not to keep undefined values. */
-type MergeRecord<Destination, Source, Options extends MergeDeepOptions> = Unwrap<
+type MergeRecord<Destination, Source, Options extends MergeDeepOptions> = Simplify<
   Options['stripUndefinedValues'] extends true
     ? ConditionalExcept<DoMergeRecord<Destination, Source, Options>, undefined>
     : DoMergeRecord<Destination, Source, Options>>;
@@ -98,8 +89,6 @@ export type MergeDeepOrReturn<
   : isBothRecord<Destination, Source> extends true
   ? MergeRecord<Destination, Source, Options>
   : DefaultValue; // The two base types are not identical
-
-// Public types
 
 /**
 MergeDeep options.
