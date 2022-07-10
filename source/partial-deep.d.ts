@@ -4,7 +4,7 @@ import type {BuiltIns} from './internal';
 The options for `PartialDeep`.
 @property recurseIntoArrays Whether to affect the individual elements of an array or tuple. (Default: true)
 */
-interface PartialDeepOptions {
+export interface PartialDeepOptions {
 	recurseIntoArrays?: boolean;
 }
 
