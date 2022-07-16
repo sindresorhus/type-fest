@@ -839,7 +839,7 @@ There are many advanced types most users don't know about.
 	type T2 = Uppercase<'foo' | 'bar'>;  // 'FOO' | 'BAR'
 
 	type T3<S extends string> = Uppercase<`aB${S}`>;
-	type T4 = T30<'xYz'>;  // 'ABXYZ'
+	type T4 = T3<'xYz'>;  // 'ABXYZ'
 
 	type T5 = Uppercase<string>;  // string
 	type T6 = Uppercase<any>;  // any
