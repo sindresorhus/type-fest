@@ -881,7 +881,7 @@ There are many advanced types most users don't know about.
 	type T2 = Capitalize<'foo' | 'bar'>;  // 'Foo' | 'Bar'
 
 	type T3<S extends string> = Capitalize<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // 'ABxYz'
+	type T4 = T3<'xYz'>;  // 'ABxYz'
 
 	type T5 = Capitalize<string>;  // string
 	type T6 = Capitalize<any>;  // any
