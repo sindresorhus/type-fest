@@ -902,7 +902,7 @@ There are many advanced types most users don't know about.
 	type T2 = Uncapitalize<'Foo' | 'Bar'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Uncapitalize<`AB${S}`>;
-	type T4 = T30<'xYz'>;  // 'aBxYz'
+	type T4 = T3<'xYz'>;  // 'aBxYz'
 
 	type T5 = Uncapitalize<string>;  // string
 	type T6 = Uncapitalize<any>;  // any
