@@ -860,7 +860,7 @@ There are many advanced types most users don't know about.
 	type T2 = Lowercase<'FOO' | 'BAR'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Lowercase<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // 'abxyz'
+	type T4 = T3<'xYz'>;  // 'abxyz'
 
 	type T5 = Lowercase<string>;  // string
 	type T6 = Lowercase<any>;  // any
