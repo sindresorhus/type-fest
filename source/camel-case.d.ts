@@ -1,4 +1,4 @@
-import type {WordSeparators} from '../source/utilities';
+import type {WordSeparators} from '../source/internal';
 import type {Split} from './split';
 
 /**
