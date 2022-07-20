@@ -2,15 +2,15 @@ import {expectType} from 'tsd';
 import type {PartialOnUndefinedDeep} from '../index';
 
 declare const foo: PartialOnUndefinedDeep<{
-  func: (() => void) | undefined;
-  obj: {objKey: 1} | undefined;
-  objDeep: {
-    subObj: string | undefined;
+  function: (() => void) | undefined;
+  object: {objectKey: 1} | undefined;
+  objectDeep: {
+    subObject: string | undefined;
   };
-  str: string | undefined;
+  string: string | undefined;
   union: 'test1' | 'test2' | undefined;
   number: number | undefined;
-  bool: boolean | undefined;
+  boolean: boolean | undefined;
   date: Date | undefined;
   regexp: RegExp | undefined;
   symbol: Symbol | undefined;
@@ -24,15 +24,15 @@ declare const foo: PartialOnUndefinedDeep<{
 }>;
 
 expectType<{
-  func?: typeof foo['func'];
-  obj?: typeof foo['obj'];
-  objDeep: {
-    subObj?: typeof foo['objDeep']['subObj'];
+  function?: typeof foo['function'];
+  object?: typeof foo['object'];
+  objectDeep: {
+    subObject?: typeof foo['objectDeep']['subObject'];
   };
-  str?: typeof foo['str'];
+  string?: typeof foo['string'];
   union?: typeof foo['union'];
   number?: typeof foo['number'];
-  bool?: typeof foo['bool'];
+  boolean?: typeof foo['boolean'];
   date?: typeof foo['date'];
   regexp?: typeof foo['regexp'];
   symbol?: typeof foo['symbol'];
