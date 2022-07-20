@@ -6,7 +6,7 @@ import type {BuiltIns} from './internal';
 export interface PartialDeepOptions {
 	/**
 	Whether to affect the individual elements of arrays and tuples.
-	
+
 	@default true
 	*/
 	recurseIntoArrays?: boolean;
