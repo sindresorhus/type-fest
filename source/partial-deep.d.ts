@@ -9,7 +9,7 @@ export interface PartialDeepOptions {
 
 	@default true
 	*/
-	recurseIntoArrays?: boolean;
+	readonly recurseIntoArrays?: boolean;
 }
 
 /**
