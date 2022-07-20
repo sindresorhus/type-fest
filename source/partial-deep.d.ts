@@ -1,10 +1,14 @@
 import type {BuiltIns} from './internal';
 
 /**
-The options for `PartialDeep`.
-@property recurseIntoArrays - Whether to affect the individual elements of arrays and tuples. (Default: true)
+@see PartialDeep
 */
 export interface PartialDeepOptions {
+	/**
+	Whether to affect the individual elements of arrays and tuples.
+	
+	@default true
+	*/
 	recurseIntoArrays?: boolean;
 }
 
@@ -37,6 +41,7 @@ settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 
 By default, this also affects array and tuple types:
+
 ```
 import type {PartialDeep} from 'type-fest';
 
@@ -48,7 +53,8 @@ const partialSettings: PartialDeep<Settings> = {
 	languages: [undefined]
 };
 ```
-If this is undesirable, you may pass `{recurseIntoArrays: false}` as the second type argument.
+
+If this is undesirable, you can pass `{recurseIntoArrays: false}` as the second type argument.
 
 @category Object
 @category Array
