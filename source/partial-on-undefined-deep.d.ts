@@ -22,11 +22,11 @@ interface Settings {
 };
 
 const testSettings: PartialOnUndefinedDeep<Settings> = {
-	optionA: "foo",
-	// 👉 optionB is now optional and can be omited
+	optionA: 'foo',
+	// 👉 optionB is now optional and can be omitted
 	subOption: {
 		subOptionA: true,
-		// 👉 subOptionB is now optional aswell and can be omited
+		// 👉 subOptionB is now optional as well and can be omitted
 	},
 };
 ```
