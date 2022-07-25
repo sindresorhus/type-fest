@@ -2,7 +2,9 @@ import type {BuiltIns} from './internal';
 import type {Merge} from './merge';
 
 /**
-Create a type from another type with all keys and nested keys accepting undefined type set to optional.
+Create a deep version of another type where all keys accepting `undefined` type are set to optional.
+
+This utility type is recursive, transforming at any level deep, and recurses into arrays too.
 
 Use-cases:
 - Make all properties of a type that can be undefined optional to not have to specify keys with undefined value
