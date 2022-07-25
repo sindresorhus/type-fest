@@ -11,6 +11,7 @@ https://github.com/sindresorhus/type-fest/issues/399
 @example
 ```
 import type {PartialOnUndefinedDeep} from 'type-fest';
+
 interface Settings {
 	optionA: string;
 	optionB: number | undefined;
@@ -19,6 +20,7 @@ interface Settings {
 		subOptionB: boolean | undefined;
 	}
 };
+
 const testSettings: PartialOnUndefinedDeep<Settings> = {
 	optionA: "foo",
 	// 👉 optionB is now optional and can be omited
