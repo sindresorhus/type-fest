@@ -40,8 +40,8 @@ export type PartialOnUndefinedDeep<T> = T extends Record<any, any> | undefined
 	: T;
 
 /**
- * Utility type to get the value type by key and recursively call `PartialOnUndefinedDeep` to transform sub-objects.
- */
+Utility type to get the value type by key and recursively call `PartialOnUndefinedDeep` to transform sub-objects.
+*/
 type PartialOnUndefinedDeepValue<T> = T extends BuiltIns | ((...arguments: any[]) => unknown)
 	? T
 	: T extends Record<any, any> | undefined
