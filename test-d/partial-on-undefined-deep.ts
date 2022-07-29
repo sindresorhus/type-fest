@@ -1,7 +1,7 @@
-import {expectType} from 'tsd';
+import {expectAssignable} from 'tsd';
 import type {PartialOnUndefinedDeep} from '../index';
 
-declare const foo: PartialOnUndefinedDeep<{
+type TestingType = {
 	function: (() => void) | undefined;
 	object: {objectKey: 1} | undefined;
 	objectDeep: {
@@ -13,34 +13,66 @@ declare const foo: PartialOnUndefinedDeep<{
 	boolean: boolean | undefined;
 	date: Date | undefined;
 	regexp: RegExp | undefined;
-	symbol: Symbol | undefined;
+	symbol: symbol | undefined;
 	null: null | undefined;
 	record: Record<string, any> | undefined;
 	map: Map<string, string> | undefined;
 	set: Set<string> | undefined;
-	array: any[] | undefined;
-	tuple: ['test1'] | undefined;
-	readonly: readonly string[] | undefined;
-}>;
+	array1: any[] | undefined;
+	array2: Array<{propertyA: string; propertyB: number | undefined}> | undefined;
+	readonly1: readonly any[] | undefined;
+	readonly2: ReadonlyArray<{propertyA: string; propertyB: number | undefined}> | undefined;
+	tuple: ['test1', {propertyA: string; propertyB: number | undefined}] | undefined;
+};
 
-expectType<{
-	function?: typeof foo['function'];
-	object?: typeof foo['object'];
+// Default behavior, without recursion into arrays/tuples
+declare const foo: PartialOnUndefinedDeep<TestingType>;
+expectAssignable<{
+	function?: TestingType['function'];
+	object?: TestingType['object'];
 	objectDeep: {
-		subObject?: typeof foo['objectDeep']['subObject'];
+		subObject?: TestingType['objectDeep']['subObject'];
 	};
-	string?: typeof foo['string'];
-	union?: typeof foo['union'];
-	number?: typeof foo['number'];
-	boolean?: typeof foo['boolean'];
-	date?: typeof foo['date'];
-	regexp?: typeof foo['regexp'];
-	symbol?: typeof foo['symbol'];
-	null?: typeof foo['null'];
-	record?: typeof foo['record'];
-	map?: typeof foo['map'];
-	set?: typeof foo['set'];
-	array?: typeof foo['array'];
-	tuple?: typeof foo['tuple'];
-	readonly?: typeof foo['readonly'];
+	string?: TestingType['string'];
+	union?: TestingType['union'];
+	number?: TestingType['number'];
+	boolean?: TestingType['boolean'];
+	date?: TestingType['date'];
+	regexp?: TestingType['regexp'];
+	symbol?: TestingType['symbol'];
+	null?: TestingType['null'];
+	record?: TestingType['record'];
+	map?: TestingType['map'];
+	set?: TestingType['set'];
+	array1?: TestingType['array1'];
+	array2?: TestingType['array2'];
+	readonly1?: TestingType['readonly1'];
+	readonly2?: TestingType['readonly2'];
+	tuple?: TestingType['tuple'];
 }>(foo);
+
+// With recursion into arrays/tuples activated
+declare const bar: PartialOnUndefinedDeep<TestingType, {recurseIntoArrays: true}>;
+expectAssignable<{
+	function?: TestingType['function'];
+	object?: TestingType['object'];
+	objectDeep: {
+		subObject?: TestingType['objectDeep']['subObject'];
+	};
+	string?: TestingType['string'];
+	union?: TestingType['union'];
+	number?: TestingType['number'];
+	boolean?: TestingType['boolean'];
+	date?: TestingType['date'];
+	regexp?: TestingType['regexp'];
+	symbol?: TestingType['symbol'];
+	null?: TestingType['null'];
+	record?: TestingType['record'];
+	map?: TestingType['map'];
+	set?: TestingType['set'];
+	array1?: TestingType['array1'];
+	array2?: Array<{propertyA: string; propertyB?: number | undefined}> | undefined;
+	readonly1?: TestingType['readonly1'];
+	readonly2?: ReadonlyArray<{propertyA: string; propertyB?: number | undefined}> | undefined;
+	tuple?: ['test1', {propertyA: string; propertyB?: number | undefined}] | undefined;
+}>(bar);
