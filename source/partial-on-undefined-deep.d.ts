@@ -6,7 +6,7 @@ import type {Merge} from './merge';
 */
 export interface PartialOnUndefinedDeepOptions {
 	/**
-	Whether to affect the individual elements of arrays and tuples
+	Whether to affect the individual elements of arrays and tuples.
 
 	@default false
 	*/
