@@ -15,6 +15,7 @@ export {RequireExactlyOne} from './source/require-exactly-one';
 export {RequireAllOrNone} from './source/require-all-or-none';
 export {RemoveIndexSignature} from './source/remove-index-signature';
 export {PartialDeep, PartialDeepOptions} from './source/partial-deep';
+export {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
