@@ -17,7 +17,7 @@ export interface PartialOnUndefinedDeepOptions {
 Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 
 This utility type is recursive, transforming at any level deep.
-By default, this type does not affects array and tuple types unless you explicitly pass `{recurseIntoArrays: true}` as the second type argument.
+By default, this type does not affects items type of arrays and tuples unless you explicitly pass `{recurseIntoArrays: true}` as the second type argument.
 
 Use-cases:
 - Make all properties of a type that can be undefined optional to not have to specify keys with undefined value
