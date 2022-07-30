@@ -30,7 +30,7 @@ type Bar = {
 
 const foo = {a: 1, b: '2'};
 const bar = {c: false};
-const foobar = {...foo, ...bar};
+const fooBar = {...foo, ...bar};
 
 type FooBar = Spread<Foo, Bar>;
 // type FooBar = {
@@ -39,10 +39,11 @@ type FooBar = Spread<Foo, Bar>;
 // 	c: boolean;
 // }
 
-const baz = (arg: FooBar) => {
-  // do something
+const baz = (argument: FooBar) => {
+	// Do something
 }
-baz(foobar);
+
+baz(fooBar);
 ```
 
 @category Object
