@@ -21,6 +21,7 @@ export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
 export {Opaque, UnwrapOpaque} from './source/opaque';
 export {InvariantOf} from './source/invariant-of';
+export {SetNonNullable} from './source/set-non-nullable';
 export {SetOptional} from './source/set-optional';
 export {SetRequired} from './source/set-required';
 export {ValueOf} from './source/value-of';
