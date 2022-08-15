@@ -114,7 +114,7 @@ type Foo1 = {
 			l2: string;
 			u: string;
 			v: string;
-      items: string[];
+			items: string[];
 		};
 	};
 	q: Date;
@@ -129,7 +129,7 @@ type Bar1 = {
 			u: number;
 			v: number;
 			skipped: undefined;
-      items: number[];
+			items: number[];
 		};
 	};
 	q: {life: 42};
@@ -140,21 +140,21 @@ expectAssignable<MergeDeep<Foo1, Bar1>>({
 	l0: 'string',
 	a: 42,
 	b: {
-    skipped: undefined,
-    l1: 'string',
+		skipped: undefined,
+		l1: 'string',
 		x: 42,
 		y: {
 			l2: 'string',
 			u: 42,
 			v: 42,
 			skipped: undefined,
-      items: [1, 2, 3],
+			items: [1, 2, 3],
 		},
 	},
 	q: {
 		life: 42,
 	},
-  skipped: undefined,
+	skipped: undefined,
 	new: 42,
 });
 
@@ -168,7 +168,7 @@ expectAssignable<MergeDeep<Foo1, Bar1, {stripUndefinedValues: true; recurseIntoA
 			l2: 'string',
 			u: 42,
 			v: 42,
-      items: [1, 2, 3, 'a', 'b', 'c'],
+			items: [1, 2, 3, 'a', 'b', 'c'],
 		},
 	},
 	q: {
