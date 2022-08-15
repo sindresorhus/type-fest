@@ -26,3 +26,4 @@ expectType<'hello ❓?'>(replace('hello ??', '?', '❓'));
 expectType<'10-42-00'>(replaceAll('10:42:00', ':', '-'));
 expectType<'userName'>(replaceAll('__userName__', '__', ''));
 expectType<'MyCoolTitle'>(replaceAll('My Cool Title', ' ', ''));
+expectType<'fobarfobar'>(replaceAll('foobarfoobar', 'ob', 'b'));

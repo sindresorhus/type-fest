@@ -62,6 +62,6 @@ export type Replace<
 	Options extends ReplaceOptions = {},
 > = Input extends `${infer Head}${Search}${infer Tail}`
 	? Options['all'] extends true
-		? Replace<`${Head}${Replacement}${Tail}`, Search, Replacement, Options>
+		? `${Head}${Replacement}${Replace<Tail, Search, Replacement, Options>}`
 		: `${Head}${Replacement}${Tail}`
 	: Input;

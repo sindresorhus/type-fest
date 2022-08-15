@@ -14,7 +14,8 @@ export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
 export {RequireAllOrNone} from './source/require-all-or-none';
 export {RemoveIndexSignature} from './source/remove-index-signature';
-export {PartialDeep} from './source/partial-deep';
+export {PartialDeep, PartialDeepOptions} from './source/partial-deep';
+export {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export {ReadonlyDeep} from './source/readonly-deep';
 export {LiteralUnion} from './source/literal-union';
 export {Promisable} from './source/promisable';
@@ -57,6 +58,11 @@ export {
 export {StringKeyOf} from './source/string-key-of';
 export {Exact} from './source/exact';
 export {ReadonlyTuple} from './source/readonly-tuple';
+export {OptionalKeysOf} from './source/optional-keys-of';
+export {HasOptionalKeys} from './source/has-optional-keys';
+export {RequiredKeysOf} from './source/required-keys-of';
+export {HasRequiredKeys} from './source/has-required-keys';
+export {Spread} from './source/spread';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';

@@ -40,41 +40,6 @@
 			<br>
 			<br>
 			<br>
-			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-light-mode-only">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-light.svg" width="200" alt="neverinstall">
-				</div>
-				<br>
-				<b>All your favourite IDE's now available on the cloud</b>
-				<div>
-					<sub>
-					Neverinstall gives you an uninterrupted development experience and improved accessibility,
-					<br>
-					allowing you to code faster, better and on-the-go on your favourite IDEs like
-					<br>
-					Android Studio, VS Code, Jupyter and PyCharm using your browser.
-					</sub>
-				</div>
-			</a>
-			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-dark-mode-only">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-dark.svg" width="200" alt="neverinstall">
-				</div>
-				<br>
-				<b>All your favourite IDE's now available on the cloud</b>
-				<div>
-					<sub>
-					Neverinstall gives you an uninterrupted development experience and improved accessibility,
-					<br>
-					allowing you to code faster, better and on-the-go on your favourite IDEs like
-					<br>
-					Android Studio, VS Code, Jupyter and PyCharm using your browser.
-					</sub>
-				</div>
-			</a>
-			<br>
-			<br>
-			<br>
 			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-light-mode-only">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-light.svg" width="200" alt="Anvil">
@@ -169,6 +134,7 @@ Click the type names for complete docs.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
 - [`RemoveIndexSignature`](source/remove-index-signature.d.ts) - Create a type that only has explicitly defined properties, absent of any index signatures.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
+- [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
@@ -192,6 +158,11 @@ Click the type names for complete docs.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
+- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
+- [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
+- [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
+- [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
+- [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects using the spread operator.
 
 ### JSON
 
@@ -835,7 +806,7 @@ There are many advanced types most users don't know about.
 	type T2 = Uppercase<'foo' | 'bar'>;  // 'FOO' | 'BAR'
 
 	type T3<S extends string> = Uppercase<`aB${S}`>;
-	type T4 = T30<'xYz'>;  // 'ABXYZ'
+	type T4 = T3<'xYz'>;  // 'ABXYZ'
 
 	type T5 = Uppercase<string>;  // string
 	type T6 = Uppercase<any>;  // any
@@ -856,7 +827,7 @@ There are many advanced types most users don't know about.
 	type T2 = Lowercase<'FOO' | 'BAR'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Lowercase<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // 'abxyz'
+	type T4 = T3<'xYz'>;  // 'abxyz'
 
 	type T5 = Lowercase<string>;  // string
 	type T6 = Lowercase<any>;  // any
@@ -877,7 +848,7 @@ There are many advanced types most users don't know about.
 	type T2 = Capitalize<'foo' | 'bar'>;  // 'Foo' | 'Bar'
 
 	type T3<S extends string> = Capitalize<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // 'ABxYz'
+	type T4 = T3<'xYz'>;  // 'ABxYz'
 
 	type T5 = Capitalize<string>;  // string
 	type T6 = Capitalize<any>;  // any
@@ -898,7 +869,7 @@ There are many advanced types most users don't know about.
 	type T2 = Uncapitalize<'Foo' | 'Bar'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Uncapitalize<`AB${S}`>;
-	type T4 = T30<'xYz'>;  // 'aBxYz'
+	type T4 = T3<'xYz'>;  // 'aBxYz'
 
 	type T5 = Uncapitalize<string>;  // string
 	type T6 = Uncapitalize<any>;  // any
