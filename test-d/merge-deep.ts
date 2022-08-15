@@ -7,7 +7,7 @@ declare const signature1: MergeDeep<{}, {}>; // {}
 declare const signature2: MergeDeep<[], []>; // Never
 
 expectNotType<never>(signature1);
-expectType<never>(signature2);
+expectNotType<never>(signature2);
 
 declare const signature3: MergeDeep<{}, []>; // Never
 declare const signature4: MergeDeep<[], {}>; // Never

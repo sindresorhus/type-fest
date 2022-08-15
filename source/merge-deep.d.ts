@@ -74,21 +74,13 @@ export type MergeDeepOrReturn<
   Destination,
   Source,
   Options extends MergeDeepOptions,
-> = Options['recurseIntoArrays'] extends true
-  // Branch: recurseIntoArrays = true
-  ? isBothArray<Destination, Source> extends true
+> = isBothArray<Destination, Source> extends true
     ? MergeArray<Destination, Source, Options>
     : isOneArray<Destination, Source> extends true
     ? DefaultValue // Only one array is forbidden
     : isBothRecord<Destination, Source> extends true
     ? MergeRecord<Destination, Source, Options>
-    : DefaultValue // The two base types are not identical
-  // Branch: recurseIntoArrays = false
-  : isOneArray<Destination, Source> extends true
-  ? DefaultValue // Array are forbidden
-  : isBothRecord<Destination, Source> extends true
-  ? MergeRecord<Destination, Source, Options>
-  : DefaultValue; // The two base types are not identical
+    : DefaultValue; // The two base types are not identical
 
 /**
 MergeDeep options.
@@ -131,8 +123,6 @@ export interface MergeDeepOptions {
 
 /**
 Merge two types recursively into a new type.
-
-By default arrays are not supported, you have to explicitly enable it with the `recurseIntoArrays` option if you want it.
 
 @see MergeDeepOptions
 
