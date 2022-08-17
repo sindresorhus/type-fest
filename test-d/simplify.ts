@@ -47,22 +47,23 @@ expectNotAssignable<Record<string, unknown>>(valueAsInterface); // Index signatu
 type SomeFunction = (type: string) => string;
 expectType<Simplify<SomeFunction>>((type: string) => type);
 
-class SomeClass {
-	id: string;
+// Currently, this case is no longer supported.
+// class SomeClass {
+// 	id: string;
 
-	private readonly code: number;
+// 	private readonly code: number;
 
-	constructor() {
-		this.id = 'some-class';
-		this.code = 42;
-	}
+// 	constructor() {
+// 		this.id = 'some-class';
+// 		this.code = 42;
+// 	}
 
-	someMethod() {
-		return this.code;
-	}
-}
+// 	someMethod() {
+// 		return this.code;
+// 	}
+// }
 
-expectType<Simplify<SomeClass>>(new SomeClass());
+// expectType<Simplify<SomeClass>>(new SomeClass());
 
 // Test deep option
 // This is mostly visual, move the mouse over "expectAssignable" to see the result.
