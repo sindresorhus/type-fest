@@ -78,5 +78,4 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 export type Simplify<
 	AnyType,
 	Options extends SimplifyOptions = {},
-	Flattened = Flatten<AnyType, Options>,
-> = Flattened extends AnyType ? Flattened : AnyType;
+> = AnyType extends Function ? AnyType : Flatten<AnyType, Options>;
