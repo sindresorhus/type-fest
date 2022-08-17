@@ -21,7 +21,7 @@ type SpreadTupleOrArray<
 type Spreadable = object | TupleOrArray;
 
 /**
-Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread operator.
+Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 
 @example
 ```
