@@ -2,7 +2,7 @@ import type {Except} from './except';
 import type {RequiredKeysOf} from './required-keys-of';
 import type {Simplify} from './simplify';
 
-type Spread_<FirstType extends object, SecondType extends object> = {
+type SpreadObject<FirstType extends object, SecondType extends object> = {
 	[Key in keyof FirstType]: Key extends keyof SecondType
 		? FirstType[Key] | Required<SecondType>[Key]
 		: FirstType[Key];
@@ -11,8 +11,17 @@ type Spread_<FirstType extends object, SecondType extends object> = {
 	RequiredKeysOf<SecondType> | Exclude<keyof SecondType, keyof FirstType>
 >;
 
+type TupleOrArray = readonly [...unknown[]];
+
+type SpreadTupleOrArray<
+	FirstType extends TupleOrArray,
+	SecondType extends TupleOrArray,
+> = Array<FirstType[number] | SecondType[number]>;
+
+type Spreadable = object | TupleOrArray;
+
 /**
-Mimic the type inferred by TypeScript when merging two objects using the spread operator.
+Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 
 @example
 ```
@@ -46,9 +55,31 @@ const baz = (argument: FooBar) => {
 baz(fooBar);
 ```
 
+@example
+```
+import type {Spread} from 'type-fest';
+
+const foo = [1, 2, 3];
+const bar = ['4', '5', '6'];
+
+const fooBar = [...foo, ...bar];
+type FooBar = Spread<typeof foo, typeof bar>;
+// FooBar = (string | number)[]
+
+const baz = (argument: FooBar) => {
+	// Do something
+};
+
+baz(fooBar);
+```
+
 @category Object
 */
 export type Spread<
-    FirstType extends object,
-    SecondType extends object,
-> = Simplify<Spread_<FirstType, SecondType>>;
+    FirstType extends Spreadable,
+    SecondType extends Spreadable,
+> = FirstType extends TupleOrArray
+	? SecondType extends TupleOrArray
+		? SpreadTupleOrArray<FirstType, SecondType>
+		: Simplify<SpreadObject<FirstType, SecondType>>
+	: Simplify<SpreadObject<FirstType, SecondType>>;

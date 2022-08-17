@@ -162,7 +162,7 @@ Click the type names for complete docs.
 - [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
-- [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects using the spread operator.
+- [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 
 ### JSON
 
