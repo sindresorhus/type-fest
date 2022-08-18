@@ -67,25 +67,24 @@ type Jsonify<T> =
 	// Note: The use of tuples in this first condition side-steps distributive conditional types
 	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
 	[Extract<T, NotJsonable | bigint>] extends [never]
-		? T extends PositiveInfinity | NegativeInfinity ? null
-		: T extends JsonPrimitive
-			? T // Primitive is acceptable
-			: T extends Number ? number
-			: T extends String ? string
-			: T extends Boolean ? boolean
-			: T extends Map<any, any> | Set<any> ? {}
-			: T extends TypedArray ? Record<string, number>
-			: T extends Array<infer U>
-				? Array<Jsonify<U extends NotJsonable ? null : U>> // It's an array: recursive call for its children
-				: T extends object
-					? T extends {toJSON(): infer J}
-						? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
-							? J // Then T is Jsonable and its Jsonable value is J
-							: never // Not Jsonable because its toJSON() method does not return JsonValue
-						: {[P in keyof T as P extends symbol
-							? never
-							: T[P] extends NotJsonable
-							? never
-							: P]: Jsonify<Required<T>[P]>} // It's an object: recursive call for its children
-					: never // Otherwise any other non-object is removed
+		? T extends PositiveInfinity | NegativeInfinity	? null
+			: T extends JsonPrimitive ? T // Primitive is acceptable
+			: T extends object
+				// Any object with toJSON is special case
+				? T extends {toJSON(): infer J} ? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
+					? J // Then T is Jsonable and its Jsonable value is J
+					: never // Not Jsonable because its toJSON() method does not return JsonValue
+				// Instanced primitives are objects
+				: T extends Number ? number
+				: T extends String ? string
+				: T extends Boolean ? boolean
+				: T extends Map<any, any> | Set<any> ? {}
+				: T extends TypedArray ? Record<string, number>
+				: T extends any[]
+					? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
+				: {[P in keyof T as P extends symbol ? never
+					: T[P] extends NotJsonable ? never
+					: P
+				]: Jsonify<Required<T>[P]>} // Recursive call for its children
+			: never // Otherwise any other non-object is removed
 		: never; // Otherwise non-JSONable type union was found not empty
