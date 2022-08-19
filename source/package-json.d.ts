@@ -231,7 +231,7 @@ declare namespace PackageJson {
 	export type Exports =
 	| null
 	| string
-	| (string | ExportConditions)[]
+	| Array<string | ExportConditions>
 	| ExportConditions
 	| {[path: string]: Exports}; // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
 
