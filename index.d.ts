@@ -9,6 +9,7 @@ export {Except} from './source/except';
 export {Mutable} from './source/mutable';
 export {Writable} from './source/writable';
 export {Merge} from './source/merge';
+export {MergeDeep, MergeDeepMode, MergeDeepOptions} from './source/merge-deep';
 export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';
@@ -45,16 +46,16 @@ export {Jsonify} from './source/jsonify';
 export {Schema} from './source/schema';
 export {LiteralToPrimitive} from './source/literal-to-primitive';
 export {
-	PositiveInfinity,
-	NegativeInfinity,
-	Finite,
-	Integer,
-	Float,
-	NegativeFloat,
-	Negative,
-	NonNegative,
-	NegativeInteger,
-	NonNegativeInteger,
+  PositiveInfinity,
+  NegativeInfinity,
+  Finite,
+  Integer,
+  Float,
+  NegativeFloat,
+  Negative,
+  NonNegative,
+  NegativeInteger,
+  NonNegativeInteger,
 } from './source/numeric';
 export {StringKeyOf} from './source/string-key-of';
 export {Exact} from './source/exact';
