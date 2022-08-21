@@ -1,36 +1,50 @@
 import {Merge} from './merge';
+import {Spread} from './spread';
 import {Simplify} from './simplify';
 import {ConditionalExcept} from './conditional-except';
 
 type UnknownRecord = Record<PropertyKey, unknown>;
 type UnknownArrayOrTuple = readonly [...unknown[]];
 
-export type MergeDeepMode = 'replace' | 'union' | 'merge-or-replace' | 'merge-or-union';
+export type MergeDeepArrayMode = 'spread' | 'replace' | 'union';
+export type MergeDeepRecordMode = 'merge-or-replace' | 'merge-or-union' | 'replace' | 'union';
 
 export interface MergeDeepOptions {
   stripUndefinedValues?: boolean;
-  recordMergeMode?: MergeDeepMode;
-  arrayMergeMode?: MergeDeepMode;
+  arrayMergeMode?: MergeDeepArrayMode;
+  recordMergeMode?: MergeDeepRecordMode;
 }
 
 interface MergeDeepDefaultOptions extends MergeDeepOptions {
   stripUndefinedValues: false;
   recordMergeMode: 'merge-or-replace';
-  arrayMergeMode: 'replace';
+  arrayMergeMode: 'spread';
 }
+
+type MergeDeepArray<
+  Destination extends UnknownArrayOrTuple,
+  Source extends UnknownArrayOrTuple,
+  Options extends MergeDeepOptions,
+> = Options['arrayMergeMode'] extends 'spread'
+  ? Spread<Destination, Source>
+  : Options['arrayMergeMode'] extends 'union'
+  ? Destination | Source
+  : // Assume arrayMergeMode = 'replace'
+    Source;
 
 type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
   [Key in keyof Destination | keyof Source]: Key extends keyof Source
     ? // Source found, check for destination
       Key extends keyof Destination
       ? // Both source and destination exists
-        Options['recordMergeMode'] extends 'union'
-        ? Destination[Key] | Source[Key]
-        : Options['recordMergeMode'] extends 'merge-or-replace'
+        Options['recordMergeMode'] extends 'merge-or-replace'
         ? MergeDeepOrReturn<Source[Key], Destination[Key], Source[Key], Options>
         : Options['recordMergeMode'] extends 'merge-or-union'
         ? MergeDeepOrReturn<Destination[Key] | Source[Key], Destination[Key], Source[Key], Options>
-        : Source[Key] // 'replace'
+        : Options['recordMergeMode'] extends 'union'
+        ? Destination[Key] | Source[Key]
+        : // Assume recordMergeMode = 'replace'
+          Source[Key]
       : // Only the source exists
         Source[Key]
     : // No source, take the destination
@@ -49,7 +63,7 @@ type MergeDeepRecord<
 
 type MergeDeepOrReturn<DefaultValue, Destination, Source, Options> = Destination extends UnknownArrayOrTuple
   ? Source extends UnknownArrayOrTuple
-    ? [] // MergeDeepArray<Destination, Source, Merge<MergeDeepDefaultOptions, Options>>
+    ? Simplify<MergeDeepArray<Destination, Source, Merge<MergeDeepDefaultOptions, Options>>>
     : DefaultValue
   : Destination extends UnknownRecord
   ? Source extends UnknownRecord
