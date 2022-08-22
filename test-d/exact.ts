@@ -1,5 +1,4 @@
 import type {Exact} from '../index';
-import { ArrayElement } from "../source/exact";
 
 { // Spec - string type
 	type Type = string;
