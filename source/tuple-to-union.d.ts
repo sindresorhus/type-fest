@@ -8,6 +8,7 @@ This can be useful when you have a fixed set of allowed values and want a type d
 import type {TupleToUnion} from 'type-fest';
 
 const destinations = ['a', 'b', 'c'] as const;
+
 type Destination = TupleToUnion<typeof destinations>;
 //=> 'a' | 'b' | 'c'
 
@@ -18,9 +19,10 @@ function verifyDestination(destination: unknown): destination is Destination {
 type RequestBody = {
 	deliverTo: Destination;
 };
-function verifyReqBody(body: unknown): body is RequestBody {
-	const deliverTo = (body as any).deliverTo
-	return typeof body === 'object' && body !== null && verifyDestination(deliverTo)
+
+function verifyRequestBody(body: unknown): body is RequestBody {
+	const deliverTo = (body as any).deliverTo;
+	return typeof body === 'object' && body !== null && verifyDestination(deliverTo);
 }
 ```
 
