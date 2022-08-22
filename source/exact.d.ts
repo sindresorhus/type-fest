@@ -2,13 +2,16 @@ import type {KeysOfUnion} from './internal';
 
 /**
 Extract the element of an array that also works for array union.
-Return `never` if T is not an array.
+
+Returns `never` if T is not an array.
+
 It creates a type-safe way to access the element type of `unknown` type.
 */
 type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
 
 /**
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
+
 It creates a type-safe way to access the member type of `unknown` type.
 */
 type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
@@ -62,7 +65,7 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 @category Utilities
 */
 export type Exact<ParameterType, InputType> =
-	// Converting union of array to array of union. i.e. A[] & B[] => (A & B)[]
+	// Convert union of array to array of union: A[] & B[] => (A & B)[]
 	ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 	// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 	: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
