@@ -26,6 +26,26 @@ function verifyRequestBody(body: unknown): body is RequestBody {
 }
 ```
 
+Alternatively, you may use `typeof destinations[number]`. If `destinations` is a tuple, there is no difference. However if `destinations` is a string, the resulting type will the union of the characters in the string. Other types of `destinations` may result in a compile error. In comparison, TupleToUnion will return `never` if a tuple is not provided.
+
+@example
+```
+const destinations = ['a', 'b', 'c'] as const;
+
+type Destination = typeof destinations[number];
+//=> 'a' | 'b' | 'c'
+
+const erroringType = new Set(['a', 'b', 'c']);
+
+type ErroringType = typeof erroringType[number];
+//=> Type 'Set<string>' has no matching index signature for type 'number'. ts(2537)
+
+const numberBool: { [n: number]: boolean } = { 1: true };
+
+type NumberBool = typeof numberBool[number];
+//=> boolean
+```
+
 @category Array
 */
 export type TupleToUnion<ArrayType> = ArrayType extends readonly [infer Head, ...(infer Rest)] ? Head | TupleToUnion<Rest> : never;
