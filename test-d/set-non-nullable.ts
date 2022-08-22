@@ -9,7 +9,7 @@ expectType<{a: number; b: string; c: boolean}>(variation1);
 declare const variation2: SetNonNullable<{a: number; b: string | null | undefined}, 'b'>;
 expectType<{a: number; b: string}>(variation2);
 
-// Update an optional key
+// Update an optional key.
 declare const variation3: SetNonNullable<{a: number; b?: string | undefined}, 'b'>;
 expectType<{a: number; b?: string}>(variation3);
 
