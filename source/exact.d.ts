@@ -1,5 +1,28 @@
-import type {Primitive} from './primitive';
 import type {KeysOfUnion} from './internal';
+
+/**
+Extract the element of an array that also works for array union.
+
+Returns `never` if T is not an array.
+
+It creates a type-safe way to access the element type of `unknown` type.
+*/
+type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
+
+/**
+Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
+
+It creates a type-safe way to access the member type of `unknown` type.
+*/
+type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
+
+/**
+Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
+- Generate a list of keys that exists in `InputType` but not in `ParameterType`.
+- Mark these excess keys as `never`.
+*/
+type ExactObject<ParameterType, InputType> = {[Key in keyof ParameterType]: Exact<ParameterType[Key], ObjectValue<InputType, Key>>}
+	& Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
 
 /**
 Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
@@ -41,11 +64,10 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 
 @category Utilities
 */
-export type Exact<ParameterType, InputType extends ParameterType> = ParameterType extends Primitive
-	? ParameterType
-	/*
-	Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
-	- Generate a list of keys that exists in `InputType` but not in `ParameterType`.
-	- Mark these excess keys as `never`.
-	*/
-	: {[Key in keyof ParameterType]: Exact<ParameterType[Key], InputType[Key]>} & Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
+export type Exact<ParameterType, InputType> =
+	// Convert union of array to array of union: A[] & B[] => (A & B)[]
+	ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
+	// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
+	: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
+	: ParameterType extends object ? ExactObject<ParameterType, InputType>
+	: ParameterType;
