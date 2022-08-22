@@ -5,7 +5,7 @@ Extract the element of an array that also works for array union.
 Return `never` if T is not an array.
 It creates a type-safe way to access the element type of `unknown` type.
 */
-type ArrayElement<T> = T extends readonly unknown[]? T[0] : never;
+type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
 
 /**
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
