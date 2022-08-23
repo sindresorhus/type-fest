@@ -1,24 +1,4 @@
 /**
-@see Simplify
-*/
-export interface SimplifyOptions {
-	/**
-	Do the simplification recursively.
-
-	@default false
-	*/
-	deep?: boolean;
-}
-
-// Flatten a type without worrying about the result.
-type Flatten<
-	AnyType,
-	Options extends SimplifyOptions = {},
-> = Options['deep'] extends true
-	? {[KeyType in keyof AnyType]: Simplify<AnyType[KeyType], Options>}
-	: {[KeyType in keyof AnyType]: AnyType[KeyType]};
-
-/**
 Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 
 @example
@@ -75,9 +55,4 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 
 @category Object
 */
-export type Simplify<
-	AnyType,
-	Options extends SimplifyOptions = {},
-> = Flatten<AnyType> extends AnyType
-	? Flatten<AnyType, Options>
-	: AnyType;
+export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]};

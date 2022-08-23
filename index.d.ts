@@ -40,21 +40,21 @@ export {Entry} from './source/entry';
 export {Entries} from './source/entries';
 export {SetReturnType} from './source/set-return-type';
 export {Asyncify} from './source/asyncify';
-export {Simplify, SimplifyOptions} from './source/simplify';
+export {Simplify} from './source/simplify';
 export {Jsonify} from './source/jsonify';
 export {Schema} from './source/schema';
 export {LiteralToPrimitive} from './source/literal-to-primitive';
 export {
-	PositiveInfinity,
-	NegativeInfinity,
-	Finite,
-	Integer,
-	Float,
-	NegativeFloat,
-	Negative,
-	NonNegative,
-	NegativeInteger,
-	NonNegativeInteger,
+  PositiveInfinity,
+  NegativeInfinity,
+  Finite,
+  Integer,
+  Float,
+  NegativeFloat,
+  Negative,
+  NonNegative,
+  NegativeInteger,
+  NonNegativeInteger,
 } from './source/numeric';
 export {StringKeyOf} from './source/string-key-of';
 export {Exact} from './source/exact';
