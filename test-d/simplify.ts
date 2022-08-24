@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectAssignable, expectError, expectNotAssignable, expectType} from 'tsd';
 import type {Simplify} from '../index';
 
 type PositionProps = {
@@ -44,6 +44,13 @@ expectAssignable<Record<string, unknown>>(valueAsSimplifiedInterface);
 expectNotAssignable<Record<string, unknown>>(valueAsInterface); // Index signature is missing in interface
 
 // The following tests should be fixed once we have determined the cause of the bug reported in https://github.com/sindresorhus/type-fest/issues/436
+
+type SomeFunction = (type: string) => string;
+type SimplifiedFunction = Simplify<SomeFunction>; // Return '{}' expected 'SomeFunction'
+
+declare const someFunction: SimplifiedFunction;
+
+expectError<SomeFunction>(someFunction);
 
 // // Should return the original type if it is not simplifiable, like a function.
 // type SomeFunction = (type: string) => string;
