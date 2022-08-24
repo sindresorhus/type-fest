@@ -7,7 +7,7 @@ This type is **experimental** and was introduced as a result of this {@link http
 @experimental
 @category Object
 */
-export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = any> = Type extends ExcludeType
+export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
 	? Type
 	: Type extends IncludeType
 	? {[TypeKey in keyof Type]: Type[TypeKey]}
@@ -24,7 +24,7 @@ See {@link ConditionalSimplify} for usages and examples.
 @experimental
 @category Object
 */
-export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = any> = Type extends ExcludeType
+export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
 	? Type
 	: Type extends IncludeType
 	? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
