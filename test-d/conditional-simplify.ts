@@ -79,4 +79,3 @@ expectType<ExcludeFunctionAndSize1>(movableNode);
 // Same as above but using `IncludeType` parameter (mainly visual, mouse over the statement)
 type ExcludeFunctionAndSize2 = ConditionalSimplifyDeep<MovableCollection, Function, MovableCollection | Position>;
 expectType<ExcludeFunctionAndSize2>(movableNode);
-
