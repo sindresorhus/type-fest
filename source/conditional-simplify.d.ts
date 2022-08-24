@@ -5,6 +5,7 @@ This type is **experimental** and was introduced as a result of this {@link http
 
 @internal
 @experimental
+@see Simplify
 @category Object
 */
 export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
