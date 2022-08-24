@@ -13,7 +13,7 @@ const size = {width: 480, height: 600};
 const positionAndSize = {...position, ...size};
 expectType<PositionAndSizeSimplified>(positionAndSize);
 
-// Exclude function type to be simplified
+// Exclude function type to be simplified.
 type SomeFunction = (type: string) => string;
 type SimplifiedFunctionFail = ConditionalSimplify<SomeFunction>; // Return '{}'
 type SimplifiedFunctionPass = ConditionalSimplify<SomeFunction, Function>; // Return '(type: string) => string'
@@ -36,7 +36,7 @@ type SomeNodeSimplified = ConditionalSimplifyDeep<SomeNode>;
 const someNode = {parent: positionAndSize, childs: [{parent: positionAndSize}, {parent: positionAndSize}]};
 expectType<SomeNodeSimplified>(someNode);
 
-// Should simplify interface deeply excluding Function type
+// Should simplify interface deeply excluding Function type.
 interface MovablePosition extends Position {
   move(position: Position): Position;
 }
@@ -72,10 +72,10 @@ const movableNode = {
 
 expectType<MovableNodeSimplifiedPass>(movableNode);
 
-// Should exclude `Function` and `Size` type (mainly visual, mouse over the statement)
+// Should exclude `Function` and `Size` type (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize1 = ConditionalSimplifyDeep<MovableCollection, Function | Size>;
 expectType<ExcludeFunctionAndSize1>(movableNode);
 
-// Same as above but using `IncludeType` parameter (mainly visual, mouse over the statement)
+// Same as above but using `IncludeType` parameter (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize2 = ConditionalSimplifyDeep<MovableCollection, Function, MovableCollection | Position>;
 expectType<ExcludeFunctionAndSize2>(movableNode);
