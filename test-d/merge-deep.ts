@@ -3,9 +3,9 @@ import type {MergeDeep, MergeDeepOptions} from '../index';
 
 // Helper
 declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
-  destination: Destination,
-  source: Source,
-  options?: Options,
+	destination: Destination,
+	source: Source,
+	options?: Options,
 ): MergeDeep<Destination, Source, Options>;
 
 // ----------------------------------------------------------------------------
@@ -23,72 +23,72 @@ expectType<never>(mergeDeep([], 'life'));
 
 // Fixtures
 type Foo = {
-  life: number;
-  a: {
-    b: string;
-    c: boolean;
-  };
-  items: string[];
+	life: number;
+	a: {
+		b: string;
+		c: boolean;
+	};
+	items: string[];
 };
 
 interface Bar {
-  name: string;
-  a: {
-    b: number;
-  };
-  items: number[];
+	name: string;
+	a: {
+		b: number;
+	};
+	items: number[];
 }
 
 const foo: Foo = {life: 42, items: ['life'], a: {b: 'b', c: true}};
 const bar: Bar = {name: 'nyan', items: [4, 2], a: {b: 1}};
 
 interface FooBarReplace {
-  life: number;
-  name: string;
-  items: number[];
-  a: {b: number};
+	life: number;
+	name: string;
+	items: number[];
+	a: {b: number};
 }
 
 interface FooBarUnion {
-  life: number;
-  name: string;
-  items: string[] | number[];
-  a: {b: string; c: boolean} | {b: number};
+	life: number;
+	name: string;
+	items: string[] | number[];
+	a: {b: string; c: boolean} | {b: number};
 }
 
 interface FooBarMergeOrUnion {
-  life: number;
-  name: string;
-  items: Array<string | number>;
-  a: {b: string | number; c: boolean};
+	life: number;
+	name: string;
+	items: Array<string | number>;
+	a: {b: string | number; c: boolean};
 }
 
 interface FooBarMergeOrReplace {
-  life: number;
-  name: string;
-  items: Array<string | number>;
-  a: {b: number; c: boolean};
+	life: number;
+	name: string;
+	items: Array<string | number>;
+	a: {b: number; c: boolean};
 }
 
 interface FooBarArrayReplace {
-  life: number;
-  a: {b: number; c: boolean};
-  name: string;
-  items: number[];
+	life: number;
+	a: {b: number; c: boolean};
+	name: string;
+	items: number[];
 }
 
 interface FooBarArraySpread {
-  life: number;
-  a: {b: number; c: boolean};
-  name: string;
-  items: Array<string | number>;
+	life: number;
+	a: {b: number; c: boolean};
+	name: string;
+	items: Array<string | number>;
 }
 
 interface FooBarArrayUnion {
-  life: number;
-  a: {b: number; c: boolean};
-  name: string;
-  items: string[] | number[];
+	life: number;
+	a: {b: number; c: boolean};
+	name: string;
+	items: string[] | number[];
 }
 
 // ----------------------------------------------------------------------------
@@ -155,13 +155,13 @@ expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMe
 
 // Tuple/Array
 expectType<[string, string, string, ...string[]]>(
-  mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-replace'}),
+	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-replace'}),
 );
 expectType<[string, string, string, ...string[]]>(
-  mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-union'}),
+	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-union'}),
 );
 expectType<[string, string, string, ...string[]]>(
-  mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-spread'}),
+	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-spread'}),
 );
 
 // Test array merge with object items
