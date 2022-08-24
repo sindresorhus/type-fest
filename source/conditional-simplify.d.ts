@@ -8,10 +8,10 @@ This type is **experimental** and was introduced as a result of this {@link http
 @category Object
 */
 export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = any> = Type extends ExcludeType
-  ? Type
-  : Type extends IncludeType
-  ? {[TypeKey in keyof Type]: Type[TypeKey]}
-  : Type;
+	? Type
+	: Type extends IncludeType
+	? {[TypeKey in keyof Type]: Type[TypeKey]}
+	: Type;
 
 /**
 Recursively simplifies a type while including and/or excluding certain types from being simplified.
@@ -25,7 +25,7 @@ See {@link ConditionalSimplify} for usages and examples.
 @category Object
 */
 export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = any> = Type extends ExcludeType
-? Type
-: Type extends IncludeType
-? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
-: Type;
+	? Type
+	: Type extends IncludeType
+	? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
+	: Type;
