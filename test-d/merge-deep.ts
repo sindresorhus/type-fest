@@ -116,44 +116,34 @@ const stringArray = ['a', 'b'];
 const numberTuple = [1, 2, 3] as const;
 const stringTuple = ['a', 'b'] as const;
 
-// Array/Array
+// Array <= Array
 expectType<string[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'replace'}));
 expectType<string[] | number[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'union'}));
 expectType<Array<string | number>>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'spread'}));
-
-// Tuple/Tuple
-expectType<readonly ['a', 'b']>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'replace'}));
-expectType<readonly [1, 2, 3] | readonly ['a', 'b']>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'union'}));
-expectType<Array<1 | 2 | 3 | 'a' | 'b'>>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'spread'}));
-
-// Array/Tuple
-expectType<readonly ['a', 'b']>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'replace'}));
-expectType<number[] | readonly ['a', 'b']>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'union'}));
-expectType<Array<number | 'a' | 'b'>>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'spread'}));
-
-// Tuple/Array
-expectType<string[]>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'replace'}));
-expectType<string[] | readonly [1, 2, 3]>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'union'}));
-expectType<Array<string | 1 | 2 | 3>>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'spread'}));
-
-// ----------------------------------------------------------------------------
-
-// Array/Array
 expectType<string[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'merge-or-replace'}));
 expectType<string[] | number[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'merge-or-union'}));
 expectType<Array<string | number>>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'merge-or-spread'}));
 
-// Tuple/Tuple
+// Tuple <= Tuple
+expectType<readonly ['a', 'b']>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'replace'}));
+expectType<readonly [1, 2, 3] | readonly ['a', 'b']>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'union'}));
+expectType<Array<1 | 2 | 3 | 'a' | 'b'>>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'spread'}));
 expectType<['a', 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-replace'}));
 expectType<[1 | 'a', 2 | 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-union'}));
 expectType<['a', 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-spread'}));
 
-// Array/Tuple
+// Array <= Tuple
+expectType<readonly ['a', 'b']>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'replace'}));
+expectType<number[] | readonly ['a', 'b']>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'union'}));
+expectType<Array<number | 'a' | 'b'>>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'spread'}));
 expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-replace'}));
 expectType<[number | 'a', number | 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-union'}));
 expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-spread'}));
 
-// Tuple/Array
+// Tuple <= Array
+expectType<string[]>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'replace'}));
+expectType<string[] | readonly [1, 2, 3]>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'union'}));
+expectType<Array<string | 1 | 2 | 3>>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'spread'}));
 expectType<[string, string, string, ...string[]]>(
 	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-replace'}),
 );
@@ -164,16 +154,15 @@ expectType<[string, string, string, ...string[]]>(
 	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-spread'}),
 );
 
-// Test array merge with object items
+// Test merge with object items
 expectType<Bar[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'replace'}));
 expectType<Foo[] | Bar[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'union'}));
 expectType<Array<Foo | Bar>>(mergeDeep([foo], [bar], {arrayMergeMode: 'spread'}));
 
-// Test deep array merge with object items
+// Test deep merge with object items
 expectType<FooBarArrayReplace[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'merge-or-replace'}));
 expectType<FooBarArrayUnion[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'merge-or-union'}));
 expectType<FooBarArraySpread[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'merge-or-spread'}));
-
 expectType<FooBarArrayReplace[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-replace'}));
 expectType<FooBarArrayUnion[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-union'}));
 expectType<FooBarArraySpread[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-spread'}));
