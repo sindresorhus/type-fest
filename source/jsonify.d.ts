@@ -62,7 +62,7 @@ const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 
 @category JSON
 */
-type Jsonify<T> =
+export type Jsonify<T> =
 	// Check if there are any non-JSONable types represented in the union.
 	// Note: The use of tuples in this first condition side-steps distributive conditional types
 	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
