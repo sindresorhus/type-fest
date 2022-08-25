@@ -1,7 +1,7 @@
 import {Merge} from './merge';
 import {Spread} from './spread';
-import {Simplify} from './simplify';
 import {ConditionalExcept} from './conditional-except';
+import {ConditionalSimplify, ConditionalSimplifyDeep} from './conditional-simplify';
 
 // ----------------------------------------------------------------------------
 
@@ -185,11 +185,11 @@ type MergeDeepRecord<
 
 type MergeDeepOrReturn<DefaultValue, Destination, Source, Options> = Destination extends UnknownArrayOrTuple
 	? Source extends UnknownArrayOrTuple
-		? Simplify<MergeDeepArray<Destination, Source, Merge<MergeDeepDefaultOptions, Options>>>
+		? ConditionalSimplify<MergeDeepArray<Destination, Source, Merge<MergeDeepDefaultOptions, Options>>, Function>
 		: DefaultValue
 	: Destination extends UnknownRecord
 	? Source extends UnknownRecord
-		? Simplify<MergeDeepRecord<Destination, Source, Merge<MergeDeepDefaultOptions, Options>>>
+		? ConditionalSimplify<MergeDeepRecord<Destination, Source, Merge<MergeDeepDefaultOptions, Options>>, Function>
 		: DefaultValue
 	: DefaultValue;
 
@@ -197,7 +197,7 @@ type MergeDeepOrReturn<DefaultValue, Destination, Source, Options> = Destination
 
 export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepOrReturn<
 	never,
-	Simplify<Destination, {deep: true}>,
-	Simplify<Source, {deep: true}>,
+	ConditionalSimplifyDeep<Destination, Function>,
+	ConditionalSimplifyDeep<Source, Function>,
 	Merge<MergeDeepDefaultOptions, Options>
 >;
