@@ -313,26 +313,73 @@ import type {MergeDeep} from 'type-fest';
 type ArrayUnion = MergeDeep<string[], number[], {arrayMergeMode: 'union'}>; // => string[] | number[]
 type ArraySpread = MergeDeep<string[], number[], {arrayMergeMode: 'spread'}>; // => (string | number)[]
 type ArrayReplace = MergeDeep<string[], number[], {arrayMergeMode: 'replace'}>; // => number[]
+type ArrayMergeUnion = MergeDeep<string[], number[], {arrayMergeMode: 'merge-or-union'}>; // => string[] | number[]
+type ArrayMergeSpread = MergeDeep<string[], number[], {arrayMergeMode: 'merge-or-spread'}>; // => (string | number)[]
+type ArrayMergeReplace = MergeDeep<string[], number[], {arrayMergeMode: 'merge-or-replace'}>; // => number[]
 
 // Merge two tuples
-type TupleUnion = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'union'}>; // => [1, 2, 3] | ["a", "b"]
-type TupleSpread = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (1 | 2 | 3 | "a" | "b")[]
-type TupleReplace = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ["a", "b"]
+type TupleUnion = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'union'}>; // => [1, 2, 3] | ['a', 'b']
+type TupleSpread = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (1 | 2 | 3 | 'a' | 'b')[]
+type TupleReplace = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
+type TupleMergeUnion = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'merge-or-union'}>; // => [1 | 'a', 2 | 'b', 3]
+type TupleMergeSpread = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'merge-or-spread'}>; // => ['a', 'b', 3]
+type TupleMergeReplace = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'merge-or-replace'}>; // => ['a', 'b', 3]
 
 // Merge an array into a tuple
 type TupleArrayUnion = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'union'}>; // => string[] | [1, 2, 3]
 type TupleArraySpread = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'spread'}>; // => (string | 1 | 2 | 3)[]
 type TupleArrayReplace = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'replace'}>; // => string[]
+type TupleArrayMergeUnion = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'merge-or-union'}>; // => [string | 1, string | 2, string | 3, ...string[]]
+type TupleArrayMergeSpread = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'merge-or-spread'}>; // => [string, string, string, ...string[]]
+type TupleArrayMergeReplace = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'merge-or-replace'}>; // => [string, string, string, ...string[]]
 
 // Merge a tuple into an array
-type ArrayTupleUnion = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'union'}>; // => number[] | ["a", "b"]
-type ArrayTupleSpread = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (number | "b" | "a")[]
-type ArrayTupleReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ["a", "b"]
+type ArrayTupleUnion = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'union'}>; // => number[] | ['a', 'b']
+type ArrayTupleSpread = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (number | 'b' | 'a')[]
+type ArrayTupleReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
+type ArrayTupleMergeUnion = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'merge-or-union'}>; // => [number | 'a', number | 'b', ...number[]]
+type ArrayTupleMergeSpread = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'merge-or-spread'}>; // => ['a', 'b', ...number[]]
+type ArrayTupleMergeReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'merge-or-replace'}>; // => ['a', 'b', ...number[]]
 ```
 
 @example
 ```
 import type {MergeDeep} from 'type-fest';
+
+type Position = {top: number;left: number};
+type Size = {width: number;height: number};
+
+// Merge two arrays
+type ArrayUnion = MergeDeep<Position[], Size[], {arrayMergeMode: 'union'}>; // => Position[] | Size[]
+type ArraySpread = MergeDeep<Position[], Size[], {arrayMergeMode: 'spread'}>; // => (Position | Size)[]
+type ArrayReplace = MergeDeep<Position[], Size[], {arrayMergeMode: 'replace'}>; // => Size[]
+type ArrayUnion = MergeDeep<Position[], Size[], {arrayMergeMode: 'merge-or-union'}>; // => Array<Position & Size>
+type ArraySpread = MergeDeep<Position[], Size[], {arrayMergeMode: 'merge-or-spread'}>; // => Array<Position & Size>
+type ArrayReplace = MergeDeep<Position[], Size[], {arrayMergeMode: 'merge-or-replace'}>; // => Array<Position & Size>
+
+// Merge two tuples
+type FirstTuple = [Position, 42, true];
+type SecondTuple = [Size, 'life'];
+
+type ThirdTupleUnion = MergeDeep<FirstTuple, SecondTuple, {arrayMergeMode: 'union'}>; // => FirstTuple | SecondTuple;
+type ThirdTupleSpread = MergeDeep<FirstTuple, SecondTuple, {arrayMergeMode: 'spread'}>; // => Array<true | 'life' | Position | Size | 42>;
+type ThirdTupleReplace = MergeDeep<FirstTuple, SecondTuple, {arrayMergeMode: 'replace'}>; // => [Size, 'life'];
+type ThirdTupleMergeUnion = MergeDeep<FirstTuple, SecondTuple, {arrayMergeMode: 'merge-or-union'}>; // => [Position & Size, 'life' | 42, true];
+type ThirdTupleMergeSpread = MergeDeep<FirstTuple, SecondTuple, {arrayMergeMode: 'merge-or-spread'}>; // => [Position & Size, 'life', true];
+type ThirdTupleMergeReplace = MergeDeep<FirstTuple, SecondTuple, {arrayMergeMode: 'merge-or-replace'}>; // => [Position & Size, 'life', true];
+```
+
+@example
+```
+import type {MergeDeep, MergeDeepOptions} from 'type-fest';
+
+function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
+	destination: Destination,
+	source: Source,
+	options?: Options,
+): MergeDeep<Destination, Source, Options> {
+	// Make your implementation ...
+}
 ```
 
 @category Array
