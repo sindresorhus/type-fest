@@ -8,8 +8,6 @@ declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions
 	options?: Options,
 ): MergeDeep<Destination, Source, Options>;
 
-// ----------------------------------------------------------------------------
-
 // Signatures
 expectType<{}>(mergeDeep({}, {}));
 expectType<never[]>(mergeDeep([], []));
@@ -18,8 +16,6 @@ expectType<never>(mergeDeep({}, []));
 expectType<never>(mergeDeep([], {}));
 expectType<never>(mergeDeep(null, {}));
 expectType<never>(mergeDeep([], 'life'));
-
-// ----------------------------------------------------------------------------
 
 // Fixtures
 type Foo = {
@@ -91,8 +87,6 @@ interface FooBarArrayUnion {
 	items: string[] | number[];
 }
 
-// ----------------------------------------------------------------------------
-
 // Basic test
 expectType<FooBarMergeOrReplace>(mergeDeep(foo, bar));
 
@@ -106,8 +100,6 @@ expectType<FooBarMergeOrReplace>(mergeDeep(foo, bar, {recordMergeMode: 'merge-or
 expectType<FooBarArrayReplace>(mergeDeep(foo, bar, {arrayMergeMode: 'replace'}));
 expectType<FooBarArraySpread>(mergeDeep(foo, bar, {arrayMergeMode: 'spread'}));
 expectType<FooBarArrayUnion>(mergeDeep(foo, bar, {arrayMergeMode: 'union'}));
-
-// ----------------------------------------------------------------------------
 
 // Test arrays and tuples
 const numberArray = [1, 2, 3];
