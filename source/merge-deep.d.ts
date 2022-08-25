@@ -248,6 +248,8 @@ Merge two objects or two arrays/tuples recursively into a new type.
 
 @see MergeDeepOptions
 
+@experimental This type is marked as experimental because it depends on {@link ConditionalSimplify} which itself is experimental.
+
 @example
 ```
 import type {MergeDeep} from 'type-fest';
