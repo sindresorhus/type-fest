@@ -235,5 +235,41 @@ declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
 declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
 
 expectType<{a?: string}>(jsonifiedOptionalPrimitive);
-expectType<{a?: never}>(jsonifiedOptionalTypeUnion);
-expectType<{a: never}>(jsonifiedNonOptionalTypeUnion);
+expectType<{}>(jsonifiedOptionalTypeUnion);
+expectType<{a?: string}>(jsonifiedNonOptionalTypeUnion);
+
+// Test for 'Jsonify support for optional object keys, unserializable object values' #424
+// See https://github.com/sindresorhus/type-fest/issues/424
+type AppData = {
+	// Should be kept
+	requiredString: string;
+	requiredUnion: number | boolean;
+
+	// Should be kept and set to optional
+	optionalString?: string;
+	optionalUnion?: number | string;
+	optionalStringUndefined: string | undefined;
+	optionalUnionUndefined: number | string | undefined;
+
+	// Should be omitted
+	requiredFunction: () => any;
+	optionalFunction?: () => any;
+	requiredFunctionUnion: string | (() => any);
+	optionalFunctionUnion?: string | (() => any);
+	optionalFunctionUndefined: (() => any) | undefined;
+	optionalFunctionUnionUndefined: string | (() => any) | undefined;
+};
+
+type ExpectedAppDataJson = {
+	requiredString: string;
+	requiredUnion: number | boolean;
+
+	optionalString?: string;
+	optionalUnion?: string | number;
+	optionalStringUndefined?: string;
+	optionalUnionUndefined?: string | number;
+};
+
+declare const response: Jsonify<AppData>;
+
+expectType<ExpectedAppDataJson>(response);
