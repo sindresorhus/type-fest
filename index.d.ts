@@ -64,6 +64,7 @@ export {HasOptionalKeys} from './source/has-optional-keys';
 export {RequiredKeysOf} from './source/required-keys-of';
 export {HasRequiredKeys} from './source/has-required-keys';
 export {Spread} from './source/spread';
+export {TupleToUnion} from './source/tuple-to-union';
 
 // Template literal types
 export {CamelCase} from './source/camel-case';
