@@ -8,6 +8,8 @@ const splitFromComplexCamel: SplitIncludingDelimiters<'fooBarAbc123', WordSepara
 expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
 const splitFromWordSeparators: SplitIncludingDelimiters<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
 expectType<['foo', '-', 'bar', '_', 'car', ' ', 'far']>(splitFromWordSeparators);
+const splitFromScreamingSnakeCase: SplitIncludingDelimiters<'FOO_BAR', WordSeparators | UpperCaseCharacters> = ['foo', '_', 'bar'];
+expectType<['foo', '_', 'bar']>(splitFromScreamingSnakeCase);
 
 // DelimiterCase
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
@@ -48,6 +50,9 @@ expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
 
 const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
 expectType<string>(delimiterFromString);
+
+const delimiterFromScreamingSnake: DelimiterCase<'FOO_BAR', '#'> = 'foo#bar';
+expectType<'foo#bar'>(delimiterFromScreamingSnake);
 
 // Verifying example
 type OddCasedProperties<T> = {
