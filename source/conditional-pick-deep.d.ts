@@ -40,6 +40,21 @@ Pick keys recursively from the shape that matches the given condition.
 ```
 import type {ConditionalPickDeep} from 'type-fest';
 
+interface Example {
+	a: string;
+	b: string | boolean;
+	c: {
+		d: string;
+		e: {
+			f?: string;
+			g?: boolean;
+			h: string | boolean;
+			i: boolean | bigint;
+		};
+		j: boolean;
+	};
+}
+
 type StringPick = ConditionalPickDeep<Example, string>;
 //=> {a: string; c: {d: string}}
 
@@ -61,7 +76,9 @@ type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 // 	b: string | boolean;
 // 	c: {
 // 		d: string;
-// 		e: {h: string | boolean};
+// 		e: {
+// 			h: string | boolean
+// 		};
 // 		j: boolean;
 // 	};
 // }
