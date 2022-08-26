@@ -16,6 +16,7 @@ expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
 expectType<PackageJson.Person[] | undefined>(packageJson.maintainers);
 expectType<string[] | undefined>(packageJson.files);
 expectType<string | undefined>(packageJson.main);
+expectType<string | undefined>(packageJson.packageManager);
 expectType<string | Partial<Record<string, string>> | undefined>(packageJson.bin);
 expectType<string | undefined>(packageJson.types);
 expectType<string | undefined>(packageJson.typings);

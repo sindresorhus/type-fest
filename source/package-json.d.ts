@@ -623,6 +623,16 @@ declare namespace PackageJson {
 		};
 	}
 
+	/**
+	Type for [`package.json` file used by the Node.js runtime](https://nodejs.org/api/packages.html#nodejs-packagejson-field-definitions).
+	 */
+	export interface NodeJsStandard {
+		/**
+		Package manager is expected to be used when working on the current project.
+		*/
+		packageManager?: string;
+	}
+
 	export interface PublishConfig {
 		/**
 		Additional, less common properties from the [npm docs on `publishConfig`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#publishconfig).
@@ -656,6 +666,7 @@ Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-j
 @category File
 */
 export type PackageJson =
+PackageJson.NodeJsStandard &
 PackageJson.PackageJsonStandard &
 PackageJson.NonStandardEntryPoints &
 PackageJson.TypeScriptConfiguration &
