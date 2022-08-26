@@ -1,6 +1,6 @@
 import type {JsonPrimitive, JsonValue} from './basic';
-import {Finite, NegativeInfinity, PositiveInfinity} from './numeric';
-import {TypedArray} from './typed-array';
+import type {Finite, NegativeInfinity, PositiveInfinity} from './numeric';
+import type {TypedArray} from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
