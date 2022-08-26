@@ -28,9 +28,9 @@ Returns a `boolean` whether the type is strictly equal to `{}`.
 ```
 import type {IsEmptyObject} from 'type-fest';
 
-type Pass = IsEmptyObject<{}>; // => true
-type Fail = IsEmptyObject<[]>; // => false
-type Fail = IsEmptyObject<null>; // => false
+type Pass = IsEmptyObject<{}>; //=> true
+type Fail = IsEmptyObject<[]>; //=> false
+type Fail = IsEmptyObject<null>; //=> false
 ```
 
 @see EmptyObject
