@@ -24,7 +24,7 @@ ConditionalPickDeep options.
 */
 export interface ConditionalPickDeepOptions {
 	/**
-	Define the condition assertion mode.
+	The condition assertion mode.
 
 	@default 'extends'
 	*/
@@ -32,7 +32,7 @@ export interface ConditionalPickDeepOptions {
 }
 
 /**
-Pick keys recursively from the shape that matches the given `Condition`.
+Pick keys recursively from the shape that matches the given condition.
 
 @see ConditionalPick
 
@@ -41,22 +41,22 @@ Pick keys recursively from the shape that matches the given `Condition`.
 import type {ConditionalPickDeep} from 'type-fest';
 
 type StringPick = ConditionalPickDeep<Example, string>;
-// => {a: string; c: {d: string}}
+//=> {a: string; c: {d: string}}
 
 type StringPickOptional = ConditionalPickDeep<Example, string | undefined>;
-// => {a: string; c: {d: string; e: {f?: string}}}
+//=> {a: string; c: {d: string; e: {f?: string}}}
 
 type StringPickOptionalOnly = ConditionalPickDeep<Example, string | undefined, {condition: 'equality'}>;
-// => {c: {e: {f?: string}}}
+//=> {c: {e: {f?: string}}}
 
 type BooleanPick = ConditionalPickDeep<Example, boolean | undefined>;
-// => {c: {e: {g?: boolean}; j: boolean}}
+//=> {c: {e: {g?: boolean}; j: boolean}}
 
 type NumberPick = ConditionalPickDeep<Example, number>;
-// => {}
+//=> {}
 
 type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
-// => {
+//=> {
 // 	a: string;
 // 	b: string | boolean;
 // 	c: {
@@ -67,7 +67,7 @@ type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 // }
 
 type StringOrBooleanPickOnly = ConditionalPickDeep<Example, string | boolean, {condition: 'equality'}>;
-// => {b: string | boolean; c: {e: {h: string | boolean}}}
+//=> {b: string | boolean; c: {e: {h: string | boolean}}}
 ```
 
 @category Object
