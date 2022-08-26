@@ -30,6 +30,7 @@ export {AsyncReturnType} from './source/async-return-type';
 export {ConditionalExcept} from './source/conditional-except';
 export {ConditionalKeys} from './source/conditional-keys';
 export {ConditionalPick} from './source/conditional-pick';
+export {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
 export {UnionToIntersection} from './source/union-to-intersection';
 export {Stringified} from './source/stringified';
 export {FixedLengthArray} from './source/fixed-length-array';

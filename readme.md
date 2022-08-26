@@ -146,6 +146,7 @@ Click the type names for complete docs.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
+- [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Like `ConditionalPick` except that it selects the properties deeply.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Convert a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) to the [primitive type](source/primitive.d.ts) it belongs to.
