@@ -1,9 +1,31 @@
 import type {JsonPrimitive, JsonValue} from './basic';
+import type {Merge} from './merge';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
+
+// Returns never if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
+type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
+	? never
+	: Type[Key] extends symbol
+	? never
+	: [(...args: any[]) => any] extends [Type[Key]]
+	? never
+	: Key;
+
+// Returns never if the key or property is not jsonable or optional otherwise return the key.
+type RequiredKeyFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
+	? never
+	: BaseKeyFilter<Type, Key>;
+
+// Returns never if the key or property is not jsonable or required otherwise return the key.
+type OptionalKeyFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
+	? Type[Key] extends undefined
+		? never
+		: BaseKeyFilter<Type, Key>
+	: never;
 
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
@@ -82,9 +104,9 @@ export type Jsonify<T> =
 				: T extends TypedArray ? Record<string, number>
 				: T extends any[]
 					? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
-				: {[P in keyof T as P extends symbol ? never
-					: T[P] extends NotJsonable ? never
-					: P
-				]: Jsonify<Required<T>[P]>} // Recursive call for its children
-			: never // Otherwise any other non-object is removed
-		: never; // Otherwise non-JSONable type union was found not empty
+				: Merge<
+					{[Key in keyof T as RequiredKeyFilter<T, Key>]: Jsonify<T[Key]>},
+					{[Key in keyof T as OptionalKeyFilter<T, Key>]?: Jsonify<Exclude<T[Key], undefined>>}
+				> // Recursive call for its children
+				: never // Otherwise any other non-object is removed
+			: never; // Otherwise non-JSONable type union was found not empty
