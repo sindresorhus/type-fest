@@ -7,6 +7,7 @@ expectAssignable<{}>(foo);
 expectAssignable<{}>(foo = {});
 
 expectError(foo = []);
+expectError(foo = {x: 1});
 expectError(foo = 42);
 expectError(foo = null);
 expectError(foo.bar = 42);
