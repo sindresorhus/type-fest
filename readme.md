@@ -125,7 +125,7 @@ Click the type names for complete docs.
 
 ### Utilities
 
-- [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty object. In other words, this type accepts `{}` only.
+- [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty object `{}`.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`. Formerly named `Mutable`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
