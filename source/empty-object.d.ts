@@ -1,28 +1,35 @@
 declare const emptyObjectSymbol: unique symbol;
 
 /**
-Represents a strictly empty object. In other words, this type accepts `{}` only.
+Represents a strictly empty plain object. In other words, this type will only accept the `{}` value.
+
+When you annotate something as `{}` it can be anything except `null` and `undefined`. This means that you can't use `{}` to represent an empty plain object ([read more](https://stackoverflow.com/questions/47339869/typescript-empty-object-and-any-difference/52193484#52193484)).
 
 @example
 ```
 import type {EmptyObject} from 'type-fest';
 
-let foo: EmptyObject = {};
+// The following illustrates the problem with `{}`.
+const foo1: {} = {}; // Pass
+const foo2: {} = []; // Pass
+const foo3: {} = 42; // Pass
+const foo4: {} = {a: 1}; // Pass
 
-foo = {}; // Pass
-
-foo = []; // Error
-foo = 42; // Error
-foo = null; // Error
-foo.bar = {}; // Error
+// With `EmptyObject` only the first case is valid.
+const bar1: EmptyObject = {}; // Pass
+const bar2: EmptyObject = 42; // Fail
+const bar3: EmptyObject = []; // Fail
+const bar4: EmptyObject = {a: 1}; // Fail
 ```
+
+Unfortunately `Record<string, never>`, `Record<keyof any, never>` and `Record<never, never>` do not work, see {@link https://github.com/sindresorhus/type-fest/issues/395 #395}.
 
 @category Object
 */
 export type EmptyObject = {[emptyObjectSymbol]?: never};
 
 /**
-Returns a `boolean` whether the type is strictly equal to `{}`.
+Returns a `boolean` whether the type is strictly equal to an empty plain object. In other words, this utility will only match the `{}` value.
 
 @example
 ```

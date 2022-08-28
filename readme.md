@@ -125,7 +125,8 @@ Click the type names for complete docs.
 
 ### Utilities
 
-- [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty object `{}`.
+- [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty plain object. In other words, this type will only accept the `{}` value.
+- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` whether the type is strictly equal to an empty plain object. In other words, this utility will only match the `{}` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`. Formerly named `Mutable`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
@@ -151,7 +152,6 @@ Click the type names for complete docs.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Convert a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) to the [primitive type](source/primitive.d.ts) it belongs to.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
-- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` whether the type is strictly equal to `{}`.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
 - [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
