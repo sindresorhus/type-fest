@@ -9,7 +9,7 @@ export {Except} from './source/except';
 export {Mutable} from './source/mutable';
 export {Writable} from './source/writable';
 export {Merge} from './source/merge';
-export {MergeDeep, MergeDeepArrayMode, MergeDeepRecordMode, MergeDeepOptions} from './source/merge-deep';
+export {MergeDeep, MergeDeepOptions} from './source/merge-deep';
 export {MergeExclusive} from './source/merge-exclusive';
 export {RequireAtLeastOne} from './source/require-at-least-one';
 export {RequireExactlyOne} from './source/require-exactly-one';

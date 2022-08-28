@@ -190,19 +190,11 @@ type MergeDeepOrReturn<DefaultValue, Destination, Source, Options> = Destination
 		: DefaultValue
 	: DefaultValue;
 
-/**
-Merge mode for object properties.
+// Merge mode for object properties.
+type MergeDeepRecordMode = 'merge-or-replace' | 'merge-or-union' | 'replace' | 'union';
 
-@see MergeDeepOptions.recordMergeMode
-*/
-export type MergeDeepRecordMode = 'merge-or-replace' | 'merge-or-union' | 'replace' | 'union';
-
-/**
-Merge mode for array/tuple items.
-
-@see MergeDeepOptions.arrayMergeMode
-*/
-export type MergeDeepArrayMode = MergeDeepRecordMode | 'merge-or-spread' | 'spread' | 'merge';
+// Merge mode for array/tuple elements.
+type MergeDeepArrayMode = MergeDeepRecordMode | 'merge-or-spread' | 'spread' | 'merge';
 
 /**
 MergeDeep options.
