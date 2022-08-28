@@ -3,7 +3,7 @@ declare const emptyObjectSymbol: unique symbol;
 /**
 Represents a strictly empty plain object. In other words, this type will only accept the `{}` value.
 
-When you annotate something as `{}` it can be anything except `null` and `undefined`. This means that you can't use `{}` to represent an empty plain object ([read more](https://stackoverflow.com/questions/47339869/typescript-empty-object-and-any-difference/52193484#52193484)).
+When you annotate something as the type `{}`, it can be anything except `null` and `undefined`. This means that you cannot use `{}` to represent an empty plain object ([read more](https://stackoverflow.com/questions/47339869/typescript-empty-object-and-any-difference/52193484#52193484)).
 
 @example
 ```
@@ -22,7 +22,7 @@ const bar3: EmptyObject = []; // Fail
 const bar4: EmptyObject = {a: 1}; // Fail
 ```
 
-Unfortunately `Record<string, never>`, `Record<keyof any, never>` and `Record<never, never>` do not work, see {@link https://github.com/sindresorhus/type-fest/issues/395 #395}.
+Unfortunately, `Record<string, never>`, `Record<keyof any, never>` and `Record<never, never>` do not work. See {@link https://github.com/sindresorhus/type-fest/issues/395 #395}.
 
 @category Object
 */
