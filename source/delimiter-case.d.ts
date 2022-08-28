@@ -1,11 +1,10 @@
 import type {UpperCaseCharacters, WordSeparators} from '../source/internal';
 
-/**
-Unlike a simpler split, this one includes the delimiter splitted on in the resulting array literal. This is to enable splitting on, for example, upper-case characters.
+// Transforms a string that is fully uppercase into a fully lowercase version. Needed to add support for SCREMAING_SNAKE_CASE, see https://github.com/sindresorhus/type-fest/issues/385
+type UpperCaseToLowerCase<T extends string> = T extends Uppercase<T> ? Lowercase<T> : T;
 
-@category Template literal
-*/
-export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> =
+// This implemntation does not supports SCREMAING_SNAKE_CASE, it used internaly by `SplitIncludingDelimiters`.
+type SplitIncludingDelimiters_<Source extends string, Delimiter extends string> =
 	Source extends '' ? [] :
 	Source extends `${infer FirstPart}${Delimiter}${infer SecondPart}` ?
 	(
@@ -18,6 +17,13 @@ export type SplitIncludingDelimiters<Source extends string, Delimiter extends st
 			: never
 	) :
 	[Source];
+
+/**
+Unlike a simpler split, this one includes the delimiter splitted on in the resulting array literal. This is to enable splitting on, for example, upper-case characters.
+
+@category Template literal
+*/
+export type SplitIncludingDelimiters<Source extends string, Delimiter extends string> = SplitIncludingDelimiters_<UpperCaseToLowerCase<Source>, Delimiter>;
 
 /**
 Format a specific part of the splitted string literal that `StringArrayToDelimiterCase<>` fuses together, ensuring desired casing.
