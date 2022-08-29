@@ -7,7 +7,6 @@ export * from './source/observable-like';
 // Utilities
 export {EmptyObject, IsEmptyObject} from './source/empty-object';
 export {Except} from './source/except';
-export {Mutable} from './source/mutable';
 export {Writable} from './source/writable';
 export {Merge} from './source/merge';
 export {MergeExclusive} from './source/merge-exclusive';
