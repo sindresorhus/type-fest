@@ -355,7 +355,7 @@ type Position = {
 type Size = {width: number;height: number};
 
 // Merge two arrays
-type ArrayUnion = MergeDeep<Position[], Size[], {arrayMergeMode: 'union'}>; // => Position[] | Size[]
+type ArrayUnion = MergeDeep<Position[], Size[], {arrayMergeMode: 'union'}>; //=> Position[] | Size[]
 type ArraySpread = MergeDeep<Position[], Size[], {arrayMergeMode: 'spread'}>; // => (Position | Size)[]
 type ArrayReplace = MergeDeep<Position[], Size[], {arrayMergeMode: 'replace'}>; // => Size[]
 type ArrayUnion = MergeDeep<Position[], Size[], {arrayMergeMode: 'merge-or-union'}>; // => Array<Position & Size>
