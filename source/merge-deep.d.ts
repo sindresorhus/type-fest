@@ -227,7 +227,7 @@ export interface MergeDeepOptions {
 	recordMergeMode?: MergeDeepRecordMode;
 
 	/**
-	Merge mode for array/tuple items.
+	Merge mode for array/tuple elements.
 
 	See {@link MergeDeep} for usages and examples.
 
