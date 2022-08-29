@@ -348,7 +348,10 @@ type ArrayTupleMergeReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: '
 ```
 import type {MergeDeep} from 'type-fest';
 
-type Position = {top: number;left: number};
+type Position = {
+	top: number;
+	left: number
+};
 type Size = {width: number;height: number};
 
 // Merge two arrays
