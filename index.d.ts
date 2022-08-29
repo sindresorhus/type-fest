@@ -47,16 +47,16 @@ export {Jsonify} from './source/jsonify';
 export {Schema} from './source/schema';
 export {LiteralToPrimitive} from './source/literal-to-primitive';
 export {
-  PositiveInfinity,
-  NegativeInfinity,
-  Finite,
-  Integer,
-  Float,
-  NegativeFloat,
-  Negative,
-  NonNegative,
-  NegativeInteger,
-  NonNegativeInteger,
+	PositiveInfinity,
+	NegativeInfinity,
+	Finite,
+	Integer,
+	Float,
+	NegativeFloat,
+	Negative,
+	NonNegative,
+	NegativeInteger,
+	NonNegativeInteger,
 } from './source/numeric';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
