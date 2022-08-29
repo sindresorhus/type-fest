@@ -5,56 +5,58 @@ export * from './source/basic';
 export * from './source/observable-like';
 
 // Utilities
-export type {EmptyObject, IsEmptyObject} from './source/empty-object';
-export type {Except} from './source/except';
-export type {Writable} from './source/writable';
-export type {Merge} from './source/merge';
-export type {MergeExclusive} from './source/merge-exclusive';
-export type {RequireAtLeastOne} from './source/require-at-least-one';
-export type {RequireExactlyOne} from './source/require-exactly-one';
-export type {RequireAllOrNone} from './source/require-all-or-none';
-export type {RemoveIndexSignature} from './source/remove-index-signature';
-export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
-export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
-export type {ReadonlyDeep} from './source/readonly-deep';
-export type {LiteralUnion} from './source/literal-union';
-export type {Promisable} from './source/promisable';
-export type {Opaque, UnwrapOpaque} from './source/opaque';
-export type {InvariantOf} from './source/invariant-of';
-export type {SetOptional} from './source/set-optional';
-export type {SetRequired} from './source/set-required';
-export type {SetNonNullable} from './source/set-non-nullable';
-export type {ValueOf} from './source/value-of';
-export type {AsyncReturnType} from './source/async-return-type';
-export type {ConditionalExcept} from './source/conditional-except';
-export type {ConditionalKeys} from './source/conditional-keys';
-export type {ConditionalPick} from './source/conditional-pick';
-export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
-export type {UnionToIntersection} from './source/union-to-intersection';
-export type {Stringified} from './source/stringified';
-export type {FixedLengthArray} from './source/fixed-length-array';
-export type {MultidimensionalArray} from './source/multidimensional-array';
-export type {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array';
-export type {IterableElement} from './source/iterable-element';
-export type {Entry} from './source/entry';
-export type {Entries} from './source/entries';
-export type {SetReturnType} from './source/set-return-type';
-export type {Asyncify} from './source/asyncify';
-export type {Simplify} from './source/simplify';
-export type {Jsonify} from './source/jsonify';
-export type {Schema} from './source/schema';
-export type {LiteralToPrimitive} from './source/literal-to-primitive';
-export type {
-	PositiveInfinity,
-	NegativeInfinity,
-	Finite,
-	Integer,
-	Float,
-	NegativeFloat,
-	Negative,
-	NonNegative,
-	NegativeInteger,
-	NonNegativeInteger,
+export {Except} from './source/except';
+export {Mutable} from './source/mutable';
+export {Writable} from './source/writable';
+export {Merge} from './source/merge';
+export {MergeDeep, MergeDeepMode, MergeDeepOptions} from './source/merge-deep';
+export {MergeExclusive} from './source/merge-exclusive';
+export {RequireAtLeastOne} from './source/require-at-least-one';
+export {RequireExactlyOne} from './source/require-exactly-one';
+export {RequireAllOrNone} from './source/require-all-or-none';
+export {RemoveIndexSignature} from './source/remove-index-signature';
+export {PartialDeep, PartialDeepOptions} from './source/partial-deep';
+export {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
+export {ReadonlyDeep} from './source/readonly-deep';
+export {LiteralUnion} from './source/literal-union';
+export {Promisable} from './source/promisable';
+export {Opaque, UnwrapOpaque} from './source/opaque';
+export {InvariantOf} from './source/invariant-of';
+export {SetOptional} from './source/set-optional';
+export {SetRequired} from './source/set-required';
+export {SetNonNullable} from './source/set-non-nullable';
+export {ValueOf} from './source/value-of';
+export {PromiseValue} from './source/promise-value';
+export {AsyncReturnType} from './source/async-return-type';
+export {ConditionalExcept} from './source/conditional-except';
+export {ConditionalKeys} from './source/conditional-keys';
+export {ConditionalPick} from './source/conditional-pick';
+export {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
+export {UnionToIntersection} from './source/union-to-intersection';
+export {Stringified} from './source/stringified';
+export {FixedLengthArray} from './source/fixed-length-array';
+export {MultidimensionalArray} from './source/multidimensional-array';
+export {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array';
+export {IterableElement} from './source/iterable-element';
+export {Entry} from './source/entry';
+export {Entries} from './source/entries';
+export {SetReturnType} from './source/set-return-type';
+export {Asyncify} from './source/asyncify';
+export {Simplify} from './source/simplify';
+export {Jsonify} from './source/jsonify';
+export {Schema} from './source/schema';
+export {LiteralToPrimitive} from './source/literal-to-primitive';
+export {
+  PositiveInfinity,
+  NegativeInfinity,
+  Finite,
+  Integer,
+  Float,
+  NegativeFloat,
+  Negative,
+  NonNegative,
+  NegativeInteger,
+  NonNegativeInteger,
 } from './source/numeric';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
