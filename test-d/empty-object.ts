@@ -19,3 +19,12 @@ expectType<IsEmptyObject<typeof foo>>(true);
 expectType<IsEmptyObject<[]>>(false);
 expectType<IsEmptyObject<null>>(false);
 expectType<IsEmptyObject<() => void>>(false);
+
+type Union = EmptyObject | {id: number};
+
+const bar: Union = {};
+expectError(bar.id);
+
+const baz: Union = {id: 42};
+expectType<{id: number}>(baz);
+
