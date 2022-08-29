@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
 import type {ConditionalPickDeep} from '../index';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | boolean;
 	c: {
@@ -14,7 +14,7 @@ interface Example {
 		};
 		j: boolean;
 	};
-}
+};
 
 declare const stringPick: ConditionalPickDeep<Example, string>;
 expectType<{a: string; c: {d: string}}>(stringPick);

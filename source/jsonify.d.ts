@@ -10,10 +10,10 @@ type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
 type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
 	: Type[Key] extends symbol
-	? never
-	: [(...args: any[]) => any] extends [Type[Key]]
-	? never
-	: Key;
+		? never
+		: [(...args: any[]) => any] extends [Type[Key]]
+			? never
+			: Key;
 
 // Returns never if the key or property is not jsonable or optional otherwise return the key.
 type RequiredKeyFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
@@ -91,22 +91,22 @@ export type Jsonify<T> =
 	[Extract<T, NotJsonable | bigint>] extends [never]
 		? T extends PositiveInfinity | NegativeInfinity	? null
 			: T extends JsonPrimitive ? T // Primitive is acceptable
-			: T extends object
+				: T extends object
 				// Any object with toJSON is special case
-				? T extends {toJSON(): infer J} ? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
-					? J // Then T is Jsonable and its Jsonable value is J
-					: never // Not Jsonable because its toJSON() method does not return JsonValue
-				// Instanced primitives are objects
-				: T extends Number ? number
-				: T extends String ? string
-				: T extends Boolean ? boolean
-				: T extends Map<any, any> | Set<any> ? {}
-				: T extends TypedArray ? Record<string, number>
-				: T extends any[]
-					? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
-				: Merge<
-					{[Key in keyof T as RequiredKeyFilter<T, Key>]: Jsonify<T[Key]>},
-					{[Key in keyof T as OptionalKeyFilter<T, Key>]?: Jsonify<Exclude<T[Key], undefined>>}
-				> // Recursive call for its children
-				: never // Otherwise any other non-object is removed
-			: never; // Otherwise non-JSONable type union was found not empty
+					? T extends {toJSON(): infer J} ? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
+						? J // Then T is Jsonable and its Jsonable value is J
+						: never // Not Jsonable because its toJSON() method does not return JsonValue
+					// Instanced primitives are objects
+						: T extends Number ? number
+							: T extends String ? string
+								: T extends Boolean ? boolean
+									: T extends Map<any, any> | Set<any> ? {}
+										: T extends TypedArray ? Record<string, number>
+											: T extends any[]
+												? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
+												: Merge<
+												{[Key in keyof T as RequiredKeyFilter<T, Key>]: Jsonify<T[Key]>},
+												{[Key in keyof T as OptionalKeyFilter<T, Key>]?: Jsonify<Exclude<T[Key], undefined>>}
+												> // Recursive call for its children
+					: never // Otherwise any other non-object is removed
+		: never; // Otherwise non-JSONable type union was found not empty

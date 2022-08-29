@@ -25,10 +25,10 @@ expectError<SomeFunction>(simplifiedFunctionFail);
 expectType<SomeFunction>(simplifiedFunctionPass);
 
 // Should simplify interface deeply.
-interface SomeNode {
-  parent: PositionAndSizeIntersection;
-  childs: Array<{parent: PositionAndSizeIntersection}>;
-}
+type SomeNode = {
+	parent: PositionAndSizeIntersection;
+	childs: Array<{parent: PositionAndSizeIntersection}>;
+};
 
 // In your editor, hovering over `SomeNodeSimplified` will show a simplified object with all the properties.
 type SomeNodeSimplified = ConditionalSimplifyDeep<SomeNode>;
@@ -37,15 +37,17 @@ const someNode = {parent: positionAndSize, childs: [{parent: positionAndSize}, {
 expectType<SomeNodeSimplified>(someNode);
 
 // Should simplify interface deeply excluding Function type.
+// TODO: Convert this to a `type`.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface MovablePosition extends Position {
-  move(position: Position): Position;
+	move(position: Position): Position;
 }
 
-interface MovableCollection {
+type MovableCollection = {
 	position: MovablePosition;
 	top: {position: MovablePosition; size: Size};
 	left: {position: MovablePosition; size: Size};
-}
+};
 
 type MovableNodeSimplifiedFail = ConditionalSimplifyDeep<MovableCollection>;
 type MovableNodeSimplifiedPass = ConditionalSimplifyDeep<MovableCollection, Function>;

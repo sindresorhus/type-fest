@@ -1,4 +1,5 @@
 declare global {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- It has to be an `interface` so that it can be merged.
 	interface SymbolConstructor {
 		readonly observable: symbol;
 	}
@@ -56,7 +57,7 @@ But `Observable` implementations have evolved to preferring case 2 and some impl
 
 @category Observable
 */
-export interface ObservableLike<ValueType = unknown> {
+export type ObservableLike<ValueType = unknown> = {
 	subscribe(observer?: Partial<Observer<ValueType>>): Unsubscribable;
 	[Symbol.observable](): ObservableLike<ValueType>;
-}
+};

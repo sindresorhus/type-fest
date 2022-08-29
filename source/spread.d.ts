@@ -7,8 +7,8 @@ type SpreadObject<FirstType extends object, SecondType extends object> = {
 		? FirstType[Key] | Required<SecondType>[Key]
 		: FirstType[Key];
 } & Pick<
-	SecondType,
-	RequiredKeysOf<SecondType> | Exclude<keyof SecondType, keyof FirstType>
+SecondType,
+RequiredKeysOf<SecondType> | Exclude<keyof SecondType, keyof FirstType>
 >;
 
 type TupleOrArray = readonly [...unknown[]];
@@ -76,8 +76,8 @@ baz(fooBar);
 @category Object
 */
 export type Spread<
-    FirstType extends Spreadable,
-    SecondType extends Spreadable,
+	FirstType extends Spreadable,
+	SecondType extends Spreadable,
 > = FirstType extends TupleOrArray
 	? SecondType extends TupleOrArray
 		? SpreadTupleOrArray<FirstType, SecondType>

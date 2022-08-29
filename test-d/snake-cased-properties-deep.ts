@@ -8,17 +8,17 @@ declare const bar: SnakeCasedPropertiesDeep<Set<{fooBar: string}>>;
 expectType<Set<{foo_bar: string}>>(bar);
 
 // Verify example
-interface User {
+type User = {
 	userId: number;
 	userName: string;
 	date: Date;
 	regExp: RegExp;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	user_info: {

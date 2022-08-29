@@ -11,8 +11,8 @@ This type is **experimental** and was introduced as a result of this {@link http
 export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
 	? Type
 	: Type extends IncludeType
-	? {[TypeKey in keyof Type]: Type[TypeKey]}
-	: Type;
+		? {[TypeKey in keyof Type]: Type[TypeKey]}
+		: Type;
 
 /**
 Recursively simplifies a type while including and/or excluding certain types from being simplified.
@@ -28,5 +28,5 @@ See {@link ConditionalSimplify} for usages and examples.
 export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
 	? Type
 	: Type extends IncludeType
-	? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
-	: Type;
+		? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
+		: Type;

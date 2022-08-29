@@ -3,7 +3,7 @@ import type {Get} from '../index';
 
 declare const get: <ObjectType, Path extends string | readonly string[]>(object: ObjectType, path: Path) => Get<ObjectType, Path>;
 
-interface ApiResponse {
+type ApiResponse = {
 	hits: {
 		hits: Array<{
 			_id: string;
@@ -16,7 +16,7 @@ interface ApiResponse {
 			};
 		}>;
 	};
-}
+};
 
 declare const apiResponse: ApiResponse;
 
@@ -28,14 +28,14 @@ expectTypeOf(get(apiResponse, 'hits.hits[0]._source.name[0].given[0]')).toBeStri
 // TypeScript is structurally typed. It's *possible* this value exists even though it's not on the parent interface, so the type is `unknown`.
 expectTypeOf(get(apiResponse, 'hits.someNonsense.notTheRightPath')).toBeUnknown();
 
-interface WithDictionary {
+type WithDictionary = {
 	foo: Record<string, {
 		bar: number;
 	}>;
 	baz: Record<string, {
 		qux: Array<{x: boolean}>;
 	}>;
-}
+};
 
 declare const withDictionary: WithDictionary;
 
@@ -47,7 +47,7 @@ declare const someKey: string;
 expectTypeOf(get(withDictionary, ['foo', someKey, 'bar'] as const)).toBeNumber();
 
 // This interface uses a tuple type (as opposed to an array).
-interface WithTuples {
+type WithTuples = {
 	foo: [
 		{
 			bar: number;
@@ -56,7 +56,7 @@ interface WithTuples {
 			baz: boolean;
 		},
 	];
-}
+};
 
 expectTypeOf<Get<WithTuples, 'foo[0].bar'>>().toBeNumber();
 expectTypeOf<Get<WithTuples, 'foo.0.bar'>>().toBeNumber();
@@ -74,13 +74,13 @@ expectTypeOf<Get<EmptyTuple, '0'>>().toBeUnknown();
 expectTypeOf<Get<EmptyTuple, '1'>>().toBeUnknown();
 expectTypeOf<Get<EmptyTuple, 'length'>>().toEqualTypeOf<0>();
 
-interface WithNumberKeys {
+type WithNumberKeys = {
 	foo: {
 		1: {
 			bar: number;
 		};
 	};
-}
+};
 
 expectTypeOf<Get<WithNumberKeys, 'foo[1].bar'>>().toBeNumber();
 expectTypeOf<Get<WithNumberKeys, 'foo.1.bar'>>().toBeNumber();
@@ -90,7 +90,7 @@ expectTypeOf<Get<WithNumberKeys, 'foo.2.bar'>>().toBeUnknown();
 
 // Test `readonly`, `ReadonlyArray`, optional properties, and unions with null.
 
-interface WithModifiers {
+type WithModifiers = {
 	foo: ReadonlyArray<{
 		bar?: {
 			readonly baz: {
@@ -103,7 +103,7 @@ interface WithModifiers {
 			};
 		} | null;
 	}>;
-}
+};
 
 expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{qux: number} | undefined>();
 expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi'>>().toEqualTypeOf<string | undefined>();

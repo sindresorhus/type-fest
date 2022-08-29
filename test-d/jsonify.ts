@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+// TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
 
@@ -64,6 +66,7 @@ expectNotAssignable<JsonValue>(w);
 expectNotAssignable<JsonValue>(undefined);
 expectNotAssignable<JsonValue>(5 as number | undefined);
 
+// TODO: Convert this to a `type`.
 interface Geometry {
 	type: 'Point' | 'Polygon';
 	coordinates: [number, number];
@@ -94,7 +97,7 @@ expectAssignable<JsonValue>(parsedStringifiedX);
 expectAssignable<string>(parsedStringifiedX.a);
 
 class NonJsonWithToJSON {
-	public fixture: Map<string, number> = new Map([['a', 1], ['b', 2]]);
+	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
 
 	public toJSON(): {fixture: Array<[string, number]>} {
 		return {
@@ -108,7 +111,7 @@ expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
 expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
 
 class NonJsonWithInvalidToJSON {
-	public fixture: Map<string, number> = new Map([['a', 1], ['b', 2]]);
+	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
 
 	// This is intentionally invalid `.toJSON()`.
 	// It is invalid because the result is not assignable to `JsonValue`.
@@ -218,17 +221,17 @@ declare const negativeInfJson: Jsonify<typeof negativeInf>;
 expectType<null>(negativeInfJson);
 
 // Test that optional type members are not discarded wholesale.
-interface OptionalPrimitive {
+type OptionalPrimitive = {
 	a?: string;
-}
+};
 
-interface OptionalTypeUnion {
+type OptionalTypeUnion = {
 	a?: string | (() => any);
-}
+};
 
-interface NonOptionalTypeUnion {
+type NonOptionalTypeUnion = {
 	a: string | undefined;
-}
+};
 
 declare const jsonifiedOptionalPrimitive: Jsonify<OptionalPrimitive>;
 declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;

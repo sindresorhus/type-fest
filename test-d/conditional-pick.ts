@@ -11,12 +11,12 @@ class Awesome {
 	}
 }
 
-interface Example {
+type Example = {
 	a: string;
 	b?: string | number;
 	c?: string;
 	d: Record<string, unknown>;
-}
+};
 
 declare const exampleConditionalPick: ConditionalPick<Example, string>;
 expectType< {a: string}>(exampleConditionalPick);

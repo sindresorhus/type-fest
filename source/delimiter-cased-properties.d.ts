@@ -33,5 +33,5 @@ export type DelimiterCasedProperties<
 > = Value extends Function
 	? Value
 	: Value extends Array<infer U>
-	? Value
-	: {[K in keyof Value as DelimiterCase<K, Delimiter>]: Value[K]};
+		? Value
+		: {[K in keyof Value as DelimiterCase<K, Delimiter>]: Value[K]};

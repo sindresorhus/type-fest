@@ -11,17 +11,17 @@ declare const bar: PascalCasedPropertiesDeep<Set<{fooBar: string}>>;
 expectType<Set<{FooBar: string}>>(bar);
 
 // Verify example
-interface User {
+type User = {
 	userId: number;
 	userName: string;
 	date: Date;
 	regExp: RegExp;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {

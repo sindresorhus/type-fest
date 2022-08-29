@@ -14,8 +14,8 @@ type SystemMessages = {
 type MessageBoard<M> = (messages: M) => string;
 
 type ValidMessages = RequireAtLeastOne<
-	SystemMessages,
-	'macos' | 'linux' | 'windows'
+SystemMessages,
+'macos' | 'linux' | 'windows'
 >;
 const test = (_: ValidMessages): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 

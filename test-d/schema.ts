@@ -68,10 +68,10 @@ expectType<FooOption>(barSchema.readonlyArray);
 expectType<FooOption>(barSchema.readonlyTuple);
 expectType<FooOption>(barSchema.regExp);
 
-interface ComplexOption {
+type ComplexOption = {
 	type: 'readonly' | 'required' | 'optional';
 	validation(value: unknown): boolean;
-}
+};
 type ComplexSchema = Schema<typeof foo, ComplexOption>;
 
 const createComplexOption = (type: ComplexOption['type']): ComplexOption => ({

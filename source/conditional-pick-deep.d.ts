@@ -14,22 +14,22 @@ Assert the condition according to the {@link ConditionalPickDeepOptions.conditio
 type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions> = Options['condition'] extends 'equality'
 	? IsEqual<Type, Condition>
 	: Type extends Condition
-	? true
-	: false;
+		? true
+		: false;
 
 /**
 ConditionalPickDeep options.
 
 @see ConditionalPickDeep
 */
-export interface ConditionalPickDeepOptions {
+export type ConditionalPickDeepOptions = {
 	/**
 	The condition assertion mode.
 
 	@default 'extends'
 	*/
 	condition?: 'extends' | 'equality';
-}
+};
 
 /**
 Pick keys recursively from the shape that matches the given condition.
@@ -97,6 +97,6 @@ export type ConditionalPickDeep<
 	[Key in keyof Type]: AssertCondition<Type[Key], Condition, Options> extends true
 		? Type[Key]
 		: Type[Key] extends object
-		? ConditionalPickDeep<Type[Key], Condition, Options>
-		: ConditionalPickDeepSymbol;
+			? ConditionalPickDeep<Type[Key], Condition, Options>
+			: ConditionalPickDeepSymbol;
 }, (ConditionalPickDeepSymbol | undefined) | Record<PropertyKey, never>>>;

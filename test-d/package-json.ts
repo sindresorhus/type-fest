@@ -40,31 +40,31 @@ expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.works
 expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
-	| undefined
-	| Array<LiteralUnion<
-			'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
-			string
-	>>
+| undefined
+| Array<LiteralUnion<
+'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
+string
+>>
 >(packageJson.os);
 expectAssignable<
-	| undefined
-	| Array<LiteralUnion<
-			'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
-			string
-	>>
+| undefined
+| Array<LiteralUnion<
+'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
+string
+>>
 >(packageJson.cpu);
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
 expectType<PackageJson.PublishConfig | undefined>(packageJson.publishConfig);
 expectType<string | undefined>(packageJson.module);
 expectType<
-	| string
-	| {
-		[moduleName: string]: string | undefined;
-		main?: string;
-		browser?: string;
-	}
-	| undefined
+| string
+| {
+	[moduleName: string]: string | undefined;
+	main?: string;
+	browser?: string;
+}
+| undefined
 >(packageJson.esnext);
 expectType<PackageJson | undefined>(packageJson.jspm);
 

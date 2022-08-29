@@ -41,28 +41,28 @@ const userMaskSettings: UserMask = {
 export type Schema<ObjectType, ValueType> = ObjectType extends string
 	? ValueType
 	: ObjectType extends Map<unknown, unknown>
-	? ValueType
-	: ObjectType extends Set<unknown>
-	? ValueType
-	: ObjectType extends ReadonlyMap<unknown, unknown>
-	? ValueType
-	: ObjectType extends ReadonlySet<unknown>
-	? ValueType
-	: ObjectType extends readonly unknown[]
-	? ValueType
-	: ObjectType extends unknown[]
-	? ValueType
-	: ObjectType extends (...arguments: unknown[]) => unknown
-	? ValueType
-	: ObjectType extends Date
-	? ValueType
-	: ObjectType extends Function
-	? ValueType
-	: ObjectType extends RegExp
-	? ValueType
-	: ObjectType extends object
-	? SchemaObject<ObjectType, ValueType>
-	: ValueType;
+		? ValueType
+		: ObjectType extends Set<unknown>
+			? ValueType
+			: ObjectType extends ReadonlyMap<unknown, unknown>
+				? ValueType
+				: ObjectType extends ReadonlySet<unknown>
+					? ValueType
+					: ObjectType extends readonly unknown[]
+						? ValueType
+						: ObjectType extends unknown[]
+							? ValueType
+							: ObjectType extends (...arguments: unknown[]) => unknown
+								? ValueType
+								: ObjectType extends Date
+									? ValueType
+									: ObjectType extends Function
+										? ValueType
+										: ObjectType extends RegExp
+											? ValueType
+											: ObjectType extends object
+												? SchemaObject<ObjectType, ValueType>
+												: ValueType;
 
 /**
 Same as `Schema`, but accepts only `object`s as inputs. Internal helper for `Schema`.

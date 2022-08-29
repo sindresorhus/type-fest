@@ -11,10 +11,10 @@ declare const fooBar: DelimiterCasedProperties<() => {a: string}, '-'>;
 expectType<() => {a: string}>(fooBar);
 
 // Verify example
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 const result: DelimiterCasedProperties<User, '-'> = {
 	'user-id': 1,
 	'user-name': 'Tom',

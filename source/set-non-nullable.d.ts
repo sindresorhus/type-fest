@@ -28,8 +28,8 @@ type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
 */
 export type SetNonNullable<BaseType, Keys extends keyof BaseType> =
 	Simplify<
-		// Pick just the keys that are readonly from the base type.
-		Except<BaseType, Keys> &
-		// Pick the keys that should be non-nullable from the base type and make them non-nullable.
-		{[Key in Keys]: NonNullable<BaseType[Key]>}
+	// Pick just the keys that are readonly from the base type.
+	Except<BaseType, Keys> &
+	// Pick the keys that should be non-nullable from the base type and make them non-nullable.
+	{[Key in Keys]: NonNullable<BaseType[Key]>}
 	>;

@@ -15,6 +15,7 @@ type SizeProps = {
 const flattenProps = {top: 120, left: 240, width: 480, height: 600};
 expectType<Simplify<PositionProps & SizeProps>>(flattenProps);
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface SomeInterface {
 	foo: number;
 	bar?: string;

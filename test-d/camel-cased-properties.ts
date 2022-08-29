@@ -12,10 +12,10 @@ declare const fooBar: CamelCasedProperties<() => {a: string}>;
 expectType<() => {a: string}>(fooBar);
 
 // Verify example
-interface User {
+type User = {
 	UserId: number;
 	UserName: string;
-}
+};
 
 const result: CamelCasedProperties<User> = {
 	userId: 1,

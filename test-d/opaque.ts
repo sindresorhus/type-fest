@@ -10,14 +10,14 @@ const value: Value = 2 as Value;
 expectAssignable<number>(value);
 
 // You cannot modify an opaque value.
-expectError<Value>(value + 2); // eslint-disable-line @typescript-eslint/restrict-plus-operands
+expectError<Value>(value + 2);
 
 type WithoutToken = Opaque<number>;
 expectAssignable<WithoutToken>(2 as WithoutToken);
 
 // @ts-expect-error
 type Person = {
-	id: Opaque<number, Person>; // eslint-disable-line @typescript-eslint/no-unused-vars
+	id: Opaque<number, Person>;
 	name: string;
 };
 
@@ -36,7 +36,7 @@ const userEntities: NormalizedDictionary<Foo> = {
 const johnsId = '7dd4a16e-d5ee-454c-b1d0-71e23d9fa70b' as UUID;
 
 // @ts-expect-error
-const userJohn = userEntities[johnsId]; // eslint-disable-line @typescript-eslint/no-unused-vars
+const userJohn = userEntities[johnsId];
 /// expectType<Foo>(userJohn);
 
 // Remove tag from opaque value.

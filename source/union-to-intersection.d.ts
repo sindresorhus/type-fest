@@ -55,6 +55,6 @@ export type UnionToIntersection<Union> = (
 		: never
 		// Infer the `Intersection` type since TypeScript represents the positional
 		// arguments of unions of functions as an intersection of the union.
-	) extends ((mergedIntersection: infer Intersection) => void)
-		? Intersection
-		: never;
+) extends ((mergedIntersection: infer Intersection) => void)
+	? Intersection
+	: never;
