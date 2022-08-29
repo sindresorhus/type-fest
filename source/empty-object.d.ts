@@ -1,7 +1,7 @@
 declare const emptyObjectSymbol: unique symbol;
 
 /**
-Represents a strictly empty plain object. In other words, this type will only accept the `{}` value.
+Represents a strictly empty plain object, the `{}` value.
 
 When you annotate something as the type `{}`, it can be anything except `null` and `undefined`. This means that you cannot use `{}` to represent an empty plain object ([read more](https://stackoverflow.com/questions/47339869/typescript-empty-object-and-any-difference/52193484#52193484)).
 
@@ -29,7 +29,7 @@ Unfortunately, `Record<string, never>`, `Record<keyof any, never>` and `Record<n
 export type EmptyObject = {[emptyObjectSymbol]?: never};
 
 /**
-Returns a `boolean` whether the type is strictly equal to an empty plain object. In other words, this utility will only match the `{}` value.
+Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
 
 @example
 ```
