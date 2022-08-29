@@ -2,54 +2,27 @@ import {Merge} from './merge';
 import {Spread} from './spread';
 import {ConditionalExcept} from './conditional-except';
 import {ConditionalSimplify, ConditionalSimplifyDeep} from './conditional-simplify';
+import {
+	ArrayTail,
+	FirstArrayElement,
+	IsBothExtends,
+	NonEmptyTuple,
+	UnknownArrayOrTuple,
+	UnknownRecord,
+} from './internal';
 
-// ----------------------------------------------------------------------------
-
-type UnknownRecord = Record<PropertyKey, unknown>;
-type UnknownArrayOrTuple = readonly [...unknown[]];
-type NonEmptyTuple = readonly [unknown, ...unknown[]];
-
-// ----------------------------------------------------------------------------
-
-export type MergeDeepRecordMode = 'merge-or-replace' | 'merge-or-union' | 'replace' | 'union';
-export type MergeDeepArrayMode = MergeDeepRecordMode | 'merge-or-spread' | 'spread' | 'merge';
-
-export interface MergeDeepOptions {
-	stripUndefinedValues?: boolean;
-	arrayMergeMode?: MergeDeepArrayMode;
-	recordMergeMode?: MergeDeepRecordMode;
-}
-
-interface MergeDeepDefaultOptions extends MergeDeepOptions {
-	stripUndefinedValues: false;
-	recordMergeMode: 'merge-or-replace';
-	arrayMergeMode: 'spread';
-}
-
-// ----------------------------------------------------------------------------
-
-type IsBothExtends<BaseType, FirstType, SecondType> = FirstType extends BaseType
-	? SecondType extends BaseType
-		? true
-		: false
-	: false;
-
+/**
+Returns a boolean for whether the source and destination can be merged.
+*/
 type isMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Destination, Source> extends true
 	? true
 	: IsBothExtends<UnknownRecord, UnknownRecord, Source> extends true
 	? true
 	: false;
 
-// ----------------------------------------------------------------------------
-
-type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray extends readonly [infer THead, ...unknown[]]
-	? THead
-	: never;
-
-type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer TTail] ? TTail : [];
-
-// ----------------------------------------------------------------------------
-
+/**
+Merge two array/tuple value or return the source. It looks like `MergeDeepOrReturn`, but the trick is that it avoids inferring the default value twice.
+*/
 type MergeArrayValue<Destination, Source, Options extends MergeDeepOptions> = MergeDeepOrReturn<
 	Source,
 	Destination,
@@ -57,31 +30,9 @@ type MergeArrayValue<Destination, Source, Options extends MergeDeepOptions> = Me
 	Options
 >;
 
-type MergeTupleAndArrayType<
-	Tuple extends UnknownArrayOrTuple,
-	ArrayType,
-	Options extends MergeDeepOptions,
-> = Tuple extends []
-	? Tuple
-	: [
-			MergeArrayValue<FirstArrayElement<Tuple>, ArrayType, Options>,
-			...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
-		];
-
-type MergeArrayAndTupleType<
-	Tuple extends UnknownArrayOrTuple,
-	ArrayType,
-	Options extends MergeDeepOptions,
-> = Tuple extends []
-	? Tuple
-	: [
-			MergeArrayValue<ArrayType, FirstArrayElement<Tuple>, Options>,
-			...MergeArrayAndTupleType<ArrayTail<Tuple>, ArrayType, Options>,
-		];
-
-// ----------------------------------------------------------------------------
-
-// Tuple <= Tuple
+/**
+Merge two tuples recursively.
+*/
 type MergeDeepTuple<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
@@ -95,21 +46,55 @@ type MergeDeepTuple<
 			...MergeDeepTuple<ArrayTail<Destination>, ArrayTail<Source>, Options>,
 		];
 
-// Tuple <= Array
+/**
+Merge an array type with a tuple recursively.
+*/
+type MergeTupleAndArrayType<
+	Tuple extends UnknownArrayOrTuple,
+	ArrayType,
+	Options extends MergeDeepOptions,
+> = Tuple extends []
+	? Tuple
+	: [
+			MergeArrayValue<FirstArrayElement<Tuple>, ArrayType, Options>,
+			...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
+		];
+
+/**
+Merge an array with a tuple recursively.
+*/
 type MergeDeepTupleAndArray<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepOptions,
 > = [...MergeTupleAndArrayType<Source, Destination[number], Options>, ...Array<Destination[number]>];
 
-// Array <= Tuple
+/**
+Merge a tuple with a array type recursively.
+*/
+type MergeArrayAndTupleType<
+	Tuple extends UnknownArrayOrTuple,
+	ArrayType,
+	Options extends MergeDeepOptions,
+> = Tuple extends []
+	? Tuple
+	: [
+			MergeArrayValue<ArrayType, FirstArrayElement<Tuple>, Options>,
+			...MergeArrayAndTupleType<ArrayTail<Tuple>, ArrayType, Options>,
+		];
+
+/**
+Merge a tuple with a array recursively.
+*/
 type MergeDeepArrayAndTuple<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepOptions,
 > = [...MergeArrayAndTupleType<Source, Destination[number], Options>, ...Array<Destination[number]>];
 
-// Array <= Array
+/**
+Merge two arrays recursively.
+*/
 type MergeDeepArrayAndArray<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
@@ -123,8 +108,9 @@ type MergeDeepArrayAndArray<
 	: // Assume arrayMergeMode = 'merge-or-replace'
 		Array<MergeDeepOrReturn<Source[number], Destination[number], Source[number], Options>>;
 
-// ----------------------------------------------------------------------------
-
+/**
+Utility that selects the merge mode according to the provided types. For example, if it is an array to a tuple or vice versa.
+*/
 type DoMergeDeepArray<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
@@ -137,6 +123,9 @@ type DoMergeDeepArray<
 	? MergeDeepArrayAndTuple<Destination, Source, Options>
 	: MergeDeepArrayAndArray<Destination, Source, Options>;
 
+/**
+Wrapper around {@link DoMergeDeepArray} which selects the merge mode to be applied according to the {@link MergeDeepOptions.arrayMergeMode|arrayMergeMode} option.
+*/
 type MergeDeepArray<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
@@ -150,8 +139,12 @@ type MergeDeepArray<
 	: // Assume arrayMergeMode = 'merge-or-XXX'
 		DoMergeDeepArray<Destination, Source, Options>;
 
-// ----------------------------------------------------------------------------
-
+/**
+Walk through the union of the keys of the two objects and test in which object the properties are defined.
+- If the source does not contain the key, the value of the destination is returned.
+- If the source contains the key and the destination does not contain the key, the value of the source is returned.
+- If both contain the key, try to merge according to the mode defined in {@link MergeDeepOptions.recordMergeMode|recordMergeMode} option or return the source if unable to merge.
+*/
 type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
 	[Key in keyof Destination | keyof Source]: Key extends keyof Source
 		? // Source found, check for destination
@@ -173,6 +166,9 @@ type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
 		: never; // (this test is useless, but make TS happy, It can never be never)
 };
 
+/**
+Wrapper around {@link DoMergeRecord} which defines whether or not to strip `undefined` values.
+*/
 type MergeDeepRecord<
 	Destination,
 	Source,
@@ -181,8 +177,9 @@ type MergeDeepRecord<
 	? ConditionalExcept<DoMergeRecord<Destination, Source, Options>, undefined>
 	: DoMergeRecord<Destination, Source, Options>;
 
-// ----------------------------------------------------------------------------
-
+/**
+Try to merge two objects or two arrays/tuples recursively into a new type or return the default value.
+*/
 type MergeDeepOrReturn<DefaultValue, Destination, Source, Options> = Destination extends UnknownArrayOrTuple
 	? Source extends UnknownArrayOrTuple
 		? ConditionalSimplify<MergeDeepArray<Destination, Source, Merge<MergeDeepDefaultOptions, Options>>, Function>
@@ -193,8 +190,68 @@ type MergeDeepOrReturn<DefaultValue, Destination, Source, Options> = Destination
 		: DefaultValue
 	: DefaultValue;
 
-// ----------------------------------------------------------------------------
+/**
+Merge mode for object properties.
 
+@see MergeDeepOptions.recordMergeMode
+*/
+export type MergeDeepRecordMode = 'merge-or-replace' | 'merge-or-union' | 'replace' | 'union';
+
+/**
+Merge mode for array/tuple items.
+
+@see MergeDeepOptions.arrayMergeMode
+*/
+export type MergeDeepArrayMode = MergeDeepRecordMode | 'merge-or-spread' | 'spread' | 'merge';
+
+/**
+MergeDeep options.
+
+@see MergeDeep
+*/
+export interface MergeDeepOptions {
+	/**
+	Should strip `undefined` values from the resulting type.
+
+	@default false
+	*/
+	stripUndefinedValues?: boolean;
+
+	/**
+	Merge mode for object properties.
+
+	See {@link MergeDeep} for usages and examples.
+
+	@default 'merge-or-replace'
+	*/
+	recordMergeMode?: MergeDeepRecordMode;
+
+	/**
+	Merge mode for array/tuple items.
+
+	See {@link MergeDeep} for usages and examples.
+
+	@default 'spread'
+	*/
+	arrayMergeMode?: MergeDeepArrayMode;
+}
+
+// Default options that will be merged with user provided options.
+interface MergeDeepDefaultOptions extends MergeDeepOptions {
+	stripUndefinedValues: false;
+	recordMergeMode: 'merge-or-replace';
+	arrayMergeMode: 'spread';
+}
+
+/**
+Merge two objects or two arrays/tuples recursively into a new type.
+
+@see MergeDeepOptions
+
+@category Array
+@category Object
+@category Utilities
+*/
 export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepOrReturn<
 	never,
 	ConditionalSimplifyDeep<Destination, Function>,
