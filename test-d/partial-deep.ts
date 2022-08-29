@@ -25,10 +25,10 @@ const foo = {
 	},
 };
 
-let partialDeepFoo: PartialDeep<typeof foo> = foo;
+let partialDeepFoo: PartialDeep<typeof foo, {recurseIntoArrays: true}> = foo;
 
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
-const partialDeepBar: PartialDeep<typeof foo.bar> = foo.bar;
+const partialDeepBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: true}> = foo.bar;
 expectType<typeof partialDeepBar | undefined>(partialDeepFoo.bar);
 expectType<((_: string) => void) | undefined>(partialDeepFoo.bar!.function);
 expectAssignable<object | undefined>(partialDeepFoo.bar!.object);
@@ -54,20 +54,20 @@ partialDeepFoo = {bar: {string: 'waldo'}};
 partialDeepFoo = {bar: {date: new Date()}};
 // Check that recursive array evalution isn't infinite depth
 type Recurse =
-    | string
-    | number
-    | boolean
-    | null
-    | Record<string, Recurse[]>
-    | Recurse[];
+	| string
+	| number
+	| boolean
+	| null
+	| Record<string, Recurse[]>
+	| Recurse[];
 type RecurseObject = {value: Recurse};
 const recurseObject: RecurseObject = {value: null};
 expectAssignable<PartialDeep<RecurseObject>>(recurseObject);
 
-// Check that recurseIntoArrays: true is the default
+// Check that `{recurseIntoArrays: false}` is the default
+const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo> = foo;
+// Check that `{recurseIntoArrays: true}` behaves as intended
 expectType<PartialDeep<typeof foo, {recurseIntoArrays: true}>>(partialDeepFoo);
-// Check that recurseIntoArrays: false behaves as expected
-const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: false}> = foo;
 // These are mostly the same checks as before, but the array/tuple types are different.
 expectError(expectType<Partial<typeof foo>>(partialDeepNoRecurseIntoArraysFoo));
 const partialDeepNoRecurseIntoArraysBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: false}> = foo.bar;

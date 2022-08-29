@@ -7,7 +7,7 @@ export type PartialDeepOptions = {
 	/**
 	Whether to affect the individual elements of arrays and tuples.
 
-	@default true
+	@default false
 	*/
 	readonly recurseIntoArrays?: boolean;
 };
@@ -40,7 +40,7 @@ const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 
-By default, this also affects array and tuple types:
+By default, this does not affect elements in array and tuple types. You can change this by passing `{recurseIntoArrays: true}` as the second type argument:
 
 ```
 import type {PartialDeep} from 'type-fest';
@@ -49,12 +49,10 @@ interface Settings {
 	languages: string[];
 }
 
-const partialSettings: PartialDeep<Settings> = {
+const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true}> = {
 	languages: [undefined]
 };
 ```
-
-If this is undesirable, you can pass `{recurseIntoArrays: false}` as the second type argument.
 
 @category Object
 @category Array
@@ -75,13 +73,13 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> = T extends 
 						? T | undefined
 						: T extends object
 							? T extends ReadonlyArray<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
-								? Options['recurseIntoArrays'] extends false // If they opt out of array testing, just use the original type
-									? T
-									: ItemType[] extends T // Test for arrays (non-tuples) specifically
+								? Options['recurseIntoArrays'] extends true
+									? ItemType[] extends T // Test for arrays (non-tuples) specifically
 										? readonly ItemType[] extends T // Differentiate readonly and mutable arrays
 											? ReadonlyArray<PartialDeep<ItemType | undefined, Options>>
 											: Array<PartialDeep<ItemType | undefined, Options>>
 										: PartialObjectDeep<T, Options> // Tuples behave properly
+									: T // If they don't opt into array testing, just use the original type
 								: PartialObjectDeep<T, Options>
 							: unknown;
 
