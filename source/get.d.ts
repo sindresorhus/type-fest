@@ -3,6 +3,13 @@ import type {Split} from './split';
 import type {StringKeyOf} from './string-key-of';
 
 type GetOptions = {
+	/**
+	Include `undefined` in the return type when accessing properties.
+
+	Setting this to `false` is not recommended.
+
+	@default true
+	*/
 	strict?: boolean;
 };
 
@@ -24,7 +31,7 @@ type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOp
 Adds `undefined` to `Type` if `strict` is enabled.
 */
 type Strictify<Type, Options extends GetOptions> =
-	Options['strict'] extends true ? Type | undefined : Type;
+	Options['strict'] extends false ? Type : (Type | undefined);
 
 /**
 If `Options['strict']` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`.
@@ -164,16 +171,16 @@ interface ApiResponse {
 
 const getName = (apiResponse: ApiResponse) =>
 	get(apiResponse, 'hits.hits[0]._source.name');
-	//=> Array<{given: string[]; family: string}>
+	//=> Array<{given: string[]; family: string}> | undefined
 
 // Path also supports a readonly array of strings
 const getNameWithPathArray = (apiResponse: ApiResponse) =>
 	get(apiResponse, ['hits','hits', '0', '_source', 'name'] as const);
-	//=> Array<{given: string[]; family: string}>
+	//=> Array<{given: string[]; family: string}> | undefined
 
-// Strict mode:
-Get<string[], '3', {strict: true}> //=> string | undefined
-Get<Record<string, string>, 'foo', {strict: true}> // => string | undefined
+// Non-strict mode:
+Get<string[], '3', {strict: false}> //=> string
+Get<Record<string, string>, 'foo', {strict: true}> // => string
 ```
 
 @category Object

@@ -1,7 +1,9 @@
 import {expectTypeOf} from 'expect-type';
 import type {Get} from '../index';
 
-declare const get: <ObjectType, Path extends string | readonly string[]>(object: ObjectType, path: Path) => Get<ObjectType, Path>;
+type NonStrict = {strict: false};
+
+declare const get: <ObjectType, Path extends string | readonly string[]>(object: ObjectType, path: Path) => Get<ObjectType, Path, NonStrict>;
 
 type ApiResponse = {
 	hits: {
@@ -58,21 +60,21 @@ type WithTuples = {
 	];
 };
 
-expectTypeOf<Get<WithTuples, 'foo[0].bar'>>().toBeNumber();
-expectTypeOf<Get<WithTuples, 'foo.0.bar'>>().toBeNumber();
+expectTypeOf<Get<WithTuples, 'foo[0].bar', NonStrict>>().toBeNumber();
+expectTypeOf<Get<WithTuples, 'foo.0.bar', NonStrict>>().toBeNumber();
 
-expectTypeOf<Get<WithTuples, 'foo[1].baz'>>().toBeBoolean();
-expectTypeOf<Get<WithTuples, 'foo[1].bar'>>().toBeUnknown();
+expectTypeOf<Get<WithTuples, 'foo[1].baz', NonStrict>>().toBeBoolean();
+expectTypeOf<Get<WithTuples, 'foo[1].bar', NonStrict>>().toBeUnknown();
 
-expectTypeOf<Get<WithTuples, 'foo[-1]'>>().toBeUnknown();
-expectTypeOf<Get<WithTuples, 'foo[999]'>>().toBeUnknown();
+expectTypeOf<Get<WithTuples, 'foo[-1]', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<WithTuples, 'foo[999]', NonStrict>>().toBeUnknown();
 
 type EmptyTuple = Parameters<() => {}>;
 
-expectTypeOf<Get<EmptyTuple, '-1'>>().toBeUnknown();
-expectTypeOf<Get<EmptyTuple, '0'>>().toBeUnknown();
-expectTypeOf<Get<EmptyTuple, '1'>>().toBeUnknown();
-expectTypeOf<Get<EmptyTuple, 'length'>>().toEqualTypeOf<0>();
+expectTypeOf<Get<EmptyTuple, '-1', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<EmptyTuple, '0', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<EmptyTuple, '1', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<EmptyTuple, 'length', NonStrict>>().toEqualTypeOf<0>();
 
 type WithNumberKeys = {
 	foo: {
@@ -82,11 +84,11 @@ type WithNumberKeys = {
 	};
 };
 
-expectTypeOf<Get<WithNumberKeys, 'foo[1].bar'>>().toBeNumber();
-expectTypeOf<Get<WithNumberKeys, 'foo.1.bar'>>().toBeNumber();
+expectTypeOf<Get<WithNumberKeys, 'foo[1].bar', NonStrict>>().toBeNumber();
+expectTypeOf<Get<WithNumberKeys, 'foo.1.bar', NonStrict>>().toBeNumber();
 
-expectTypeOf<Get<WithNumberKeys, 'foo[2].bar'>>().toBeUnknown();
-expectTypeOf<Get<WithNumberKeys, 'foo.2.bar'>>().toBeUnknown();
+expectTypeOf<Get<WithNumberKeys, 'foo[2].bar', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<WithNumberKeys, 'foo.2.bar', NonStrict>>().toBeUnknown();
 
 // Test `readonly`, `ReadonlyArray`, optional properties, and unions with null.
 
@@ -105,29 +107,28 @@ type WithModifiers = {
 	}>;
 };
 
-expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz'>>().toEqualTypeOf<{qux: number} | undefined>();
-expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz', NonStrict>>().toEqualTypeOf<{qux: number} | undefined>();
+expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi', NonStrict>>().toEqualTypeOf<string | undefined>();
 
 // Test bracket notation
-expectTypeOf<Get<number[], '[0]'>>().toBeNumber();
+expectTypeOf<Get<number[], '[0]', NonStrict>>().toBeNumber();
 // NOTE: This would fail if `[0][0]` was converted into `00`:
-expectTypeOf<Get<number[], '[0][0]'>>().toBeUnknown();
-expectTypeOf<Get<number[][][], '[0][0][0]'>>().toBeNumber();
-expectTypeOf<Get<number[][][], '[0][0][0][0]'>>().toBeUnknown();
-expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id'>>().toBeNumber();
-expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, ['a', 'b', '0', '0', '0', 'id']>>().toBeNumber();
+expectTypeOf<Get<number[], '[0][0]', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<number[][][], '[0][0][0]', NonStrict>>().toBeNumber();
+expectTypeOf<Get<number[][][], '[0][0][0][0]', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id', NonStrict>>().toBeNumber();
+expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, ['a', 'b', '0', '0', '0', 'id'], NonStrict>>().toBeNumber();
 
 // Test strict version:
-type Strict = {strict: true};
-expectTypeOf<Get<string[], '0', Strict>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<Record<string, number>, 'foo', Strict>>().toEqualTypeOf<number | undefined>();
-expectTypeOf<Get<Record<'a' | 'b', number>, 'a', Strict>>().toEqualTypeOf<number>();
-expectTypeOf<Get<Record<1 | 2, string>, '1', Strict>>().toEqualTypeOf<string>();
-expectTypeOf<Get<{1: boolean}, '1', Strict>>().toBeBoolean();
-expectTypeOf<Get<[number, string], '0', Strict>>().toBeNumber();
-expectTypeOf<Get<{[key: string]: string; a: string}, 'a', Strict>>().toBeString();
+expectTypeOf<Get<string[], '0'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<Record<string, number>, 'foo'>>().toEqualTypeOf<number | undefined>();
+expectTypeOf<Get<Record<'a' | 'b', number>, 'a'>>().toEqualTypeOf<number>();
+expectTypeOf<Get<Record<1 | 2, string>, '1'>>().toEqualTypeOf<string>();
+expectTypeOf<Get<{1: boolean}, '1'>>().toBeBoolean();
+expectTypeOf<Get<[number, string], '0'>>().toBeNumber();
+expectTypeOf<Get<{[key: string]: string; a: string}, 'a'>>().toBeString();
 
-expectTypeOf<Get<WithDictionary, 'foo.whatever', Strict>>().toEqualTypeOf<{bar: number} | undefined>();
-expectTypeOf<Get<WithDictionary, 'foo.whatever.bar', Strict>>().toEqualTypeOf<number | undefined>();
-expectTypeOf<Get<WithDictionary, 'baz.whatever.qux[3].x', Strict>>().toEqualTypeOf<boolean | undefined>();
-expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x'], Strict>>().toEqualTypeOf<boolean | undefined>();
+expectTypeOf<Get<WithDictionary, 'foo.whatever'>>().toEqualTypeOf<{bar: number} | undefined>();
+expectTypeOf<Get<WithDictionary, 'foo.whatever.bar'>>().toEqualTypeOf<number | undefined>();
+expectTypeOf<Get<WithDictionary, 'baz.whatever.qux[3].x'>>().toEqualTypeOf<boolean | undefined>();
+expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x']>>().toEqualTypeOf<boolean | undefined>();
