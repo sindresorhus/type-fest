@@ -158,3 +158,19 @@ expectType<FooBarArraySpread[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'merge-
 expectType<FooBarArrayReplace[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-replace'}));
 expectType<FooBarArrayUnion[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-union'}));
 expectType<FooBarArraySpread[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-spread'}));
+
+// Test `stripUndefinedValues` option.
+const fooUndefined = {a: undefined, b: {c: undefined, d: {e: undefined}}};
+const barUndefined = {f: undefined, g: {h: undefined, i: 42, j: undefined}};
+const bazUndefined = {f: undefined, g: {h: {i: 42, j: undefined}}};
+
+expectType<{
+	a: undefined;
+	b: {c: undefined; d: {e: undefined}};
+	f: undefined;
+	g: {h: undefined; i: number; j: undefined};
+}>(mergeDeep(fooUndefined, barUndefined));
+
+expectType<{b: {d: {}}; g: {i: number}}>(mergeDeep(fooUndefined, barUndefined, {stripUndefinedValues: true}));
+expectType<{b: {d: {}}; g: {i: number}}>(mergeDeep(barUndefined, fooUndefined, {stripUndefinedValues: true}));
+expectType<{g: {h: {i: number}; i: number}}>(mergeDeep(barUndefined, bazUndefined, {stripUndefinedValues: true}));
