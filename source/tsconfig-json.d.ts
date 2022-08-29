@@ -17,6 +17,8 @@ declare namespace TsConfigJson {
 			| 'ES2020'
 			| 'ES2022'
 			| 'ESNext'
+			| 'Node16'
+			| 'NodeNext'
 			| 'None'
 			// Lowercase alternatives
 			| 'commonjs'
@@ -28,6 +30,8 @@ declare namespace TsConfigJson {
 			| 'es2020'
 			| 'es2022'
 			| 'esnext'
+			| 'node16'
+			| 'nodenext'
 			| 'none';
 
 		export type NewLine =
