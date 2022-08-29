@@ -27,4 +27,3 @@ expectError(bar.id);
 
 const baz: Union = {id: 42};
 expectType<{id: number}>(baz);
-
