@@ -225,6 +225,8 @@ export interface MergeDeepOptions {
 	- `replace`: Just replace the destination value by the source value.
 	- `union`: Just union the destination value and the source value.
 
+	See merge {@link MergeDeep} for usages and examples.
+
 	@default 'merge-or-replace'
 	*/
 	recordMergeMode?: MergeDeepRecordMode;
@@ -239,6 +241,8 @@ export interface MergeDeepOptions {
 	- `replace`: Just replace the destination value by the source value.
 	- `spread`: Just spread the destination value and the source value.
 	- `union`: Just union the destination value and the source value.
+
+	See merge {@link MergeDeep} for usages and examples.
 
 	@default 'spread'
 	*/
