@@ -21,14 +21,14 @@ type isMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Desti
 	: false;
 
 /**
-Merge two array/tuple value or return the source. It looks like `MergeDeepOrReturn`, but the trick is that it avoids inferring the default value twice.
+Merge two array/tuple value or return the source.
 */
-type MergeArrayValue<Destination, Source, Options extends MergeDeepOptions> = MergeDeepOrReturn<
-	Source,
-	Destination,
-	Source,
-	Options
->;
+type MergeArrayValue<Destination, Source, Options extends MergeDeepOptions> = isMergeable<Destination, Source> extends true
+	? MergeDeep<Destination, Source, Options>
+	: Options['arrayMergeMode'] extends 'merge-or-union'
+	? Destination | Source
+	: // Assume arrayMergeMode = 'merge-or-replace'
+		Source;
 
 /**
 Merge two tuples recursively.
@@ -247,6 +247,93 @@ interface MergeDeepDefaultOptions extends MergeDeepOptions {
 Merge two objects or two arrays/tuples recursively into a new type.
 
 @see MergeDeepOptions
+
+@example
+```
+import type {MergeDeep} from 'type-fest';
+
+type Foo = {
+	life: number;
+	items: string[];
+	a: {b: string; c: boolean};
+};
+
+interface Bar {
+	name: string;
+	items: number[];
+	a: {b: number};
+}
+
+type FooBar = MergeDeep<Foo, Bar>;
+// FooBar = {
+// 	life: number;
+// 	name: string;
+// 	items: (string | number)[];
+// 	a: {b: number; c: boolean};
+// };
+
+type FooBarUnion = MergeDeep<Foo, Bar, {recordMergeMode: 'union'}>;
+// FooBarUnion = {
+// 	name: string;
+// 	life: number;
+// 	items: string[] | number[];
+// 	a: {b: string; c: boolean} | {b: number};
+// };
+
+type FooBarReplace = MergeDeep<Foo, Bar, {recordMergeMode: 'replace'}>;
+// FooBarReplace = {
+// 	name: string;
+// 	life: number;
+// 	items: number[];
+// 	a: {b: number};
+// };
+
+type FooBarMergeUnion = MergeDeep<Foo, Bar, {recordMergeMode: 'merge-or-union'}>;
+// FooBarMergeUnion = {
+// 	name: string;
+// 	life: number;
+// 	items: (string | number)[];
+// 	a: {b: string | number; c: boolean};
+// };
+
+type FooBarMergeReplace = MergeDeep<Foo, Bar, {recordMergeMode: 'merge-or-replace'}>;
+// FooBarMergeReplace = {
+// 	name: string;
+// 	life: number;
+// 	items: (string | number)[];
+// 	a: {b: number; c: boolean};
+// };
+```
+
+@example
+```
+import type {MergeDeep} from 'type-fest';
+
+// Merge two arrays
+type ArrayUnion = MergeDeep<string[], number[], {arrayMergeMode: 'union'}>; // => string[] | number[]
+type ArraySpread = MergeDeep<string[], number[], {arrayMergeMode: 'spread'}>; // => (string | number)[]
+type ArrayReplace = MergeDeep<string[], number[], {arrayMergeMode: 'replace'}>; // => number[]
+
+// Merge two tuples
+type TupleUnion = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'union'}>; // => [1, 2, 3] | ["a", "b"]
+type TupleSpread = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (1 | 2 | 3 | "a" | "b")[]
+type TupleReplace = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ["a", "b"]
+
+// Merge an array into a tuple
+type TupleArrayUnion = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'union'}>; // => string[] | [1, 2, 3]
+type TupleArraySpread = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'spread'}>; // => (string | 1 | 2 | 3)[]
+type TupleArrayReplace = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'replace'}>; // => string[]
+
+// Merge a tuple into an array
+type ArrayTupleUnion = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'union'}>; // => number[] | ["a", "b"]
+type ArrayTupleSpread = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (number | "b" | "a")[]
+type ArrayTupleReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ["a", "b"]
+```
+
+@example
+```
+import type {MergeDeep} from 'type-fest';
+```
 
 @category Array
 @category Object

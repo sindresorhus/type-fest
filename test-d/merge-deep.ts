@@ -145,19 +145,19 @@ expectType<Array<string | number>>(mergeDeep(numberArray, stringArray, {arrayMer
 
 // Tuple/Tuple
 expectType<['a', 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-replace'}));
-expectType<['a', 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-union'}));
+expectType<[1 | 'a', 2 | 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-union'}));
 expectType<['a', 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-spread'}));
 
 // Array/Tuple
 expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-replace'}));
-expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-union'}));
+expectType<[number | 'a', number | 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-union'}));
 expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-spread'}));
 
 // Tuple/Array
 expectType<[string, string, string, ...string[]]>(
 	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-replace'}),
 );
-expectType<[string, string, string, ...string[]]>(
+expectType<[string | 1, string | 2, string | 3, ...string[]]>(
 	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-union'}),
 );
 expectType<[string, string, string, ...string[]]>(
