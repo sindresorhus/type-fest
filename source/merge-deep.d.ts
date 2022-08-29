@@ -14,7 +14,7 @@ import {
 /**
 Returns a boolean for whether the source and destination can be merged.
 */
-type isMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Destination, Source> extends true
+type IsMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Destination, Source> extends true
 	? true
 	: IsBothExtends<UnknownRecord, UnknownRecord, Source> extends true
 	? true
@@ -23,7 +23,7 @@ type isMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Desti
 /**
 Merge two array/tuple value or return the source.
 */
-type MergeArrayValue<Destination, Source, Options extends MergeDeepOptions> = isMergeable<Destination, Source> extends true
+type MergeArrayValue<Destination, Source, Options extends MergeDeepOptions> = IsMergeable<Destination, Source> extends true
 	? MergeDeep<Destination, Source, Options>
 	: Options['arrayMergeMode'] extends 'merge-or-union'
 	? Destination | Source
@@ -102,7 +102,7 @@ type MergeDeepArrayAndArray<
 > = Options['arrayMergeMode'] extends 'merge-or-spread'
 	? Array<MergeDeepOrReturn<[...Destination, ...Source][number], Destination[number], Source[number], Options>>
 	: Options['arrayMergeMode'] extends 'merge-or-union'
-	? isMergeable<Destination[number], Source[number]> extends true
+	? IsMergeable<Destination[number], Source[number]> extends true
 		? Array<MergeDeep<Destination[number], Source[number], Options>>
 		: Destination | Source
 	: // Assume arrayMergeMode = 'merge-or-replace'
