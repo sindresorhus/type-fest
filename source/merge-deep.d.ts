@@ -194,7 +194,7 @@ type MergeDeepOrReturn<DefaultValue, Destination, Source, Options> = Destination
 type MergeDeepRecordMode = 'merge-or-replace' | 'merge-or-union' | 'replace' | 'union';
 
 // Merge mode for array/tuple elements.
-type MergeDeepArrayMode = MergeDeepRecordMode | 'merge-or-spread' | 'spread' | 'merge';
+type MergeDeepArrayMode = MergeDeepRecordMode | 'merge-or-spread' | 'spread';
 
 /**
 MergeDeep options.
