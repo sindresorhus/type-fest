@@ -167,6 +167,13 @@ type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
 };
 
 /**
+Strips `undefined` values on first and second levels.
+*/
+type StripUndefinedValues<Type> = ConditionalExcept<{
+	[Key in keyof Type ]: Type[Key] extends UnknownRecord ? ConditionalSimplify<StripUndefinedValues<Type[Key]>> : Type[Key];
+}, undefined>;
+
+/**
 Wrapper around {@link DoMergeRecord} which defines whether or not to strip `undefined` values.
 */
 type MergeDeepRecord<
@@ -174,7 +181,7 @@ type MergeDeepRecord<
 	Source,
 	Options extends MergeDeepOptions,
 > = Options['stripUndefinedValues'] extends true
-	? ConditionalExcept<DoMergeRecord<Destination, Source, Options>, undefined>
+	? StripUndefinedValues<DoMergeRecord<Destination, Source, Options>>
 	: DoMergeRecord<Destination, Source, Options>;
 
 /**
