@@ -9,6 +9,7 @@ export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {Except} from './source/except';
 export type {Writable} from './source/writable';
 export type {Merge} from './source/merge';
+export type {MergeDeep, MergeDeepOptions} from './source/merge-deep';
 export type {MergeExclusive} from './source/merge-exclusive';
 export type {RequireAtLeastOne} from './source/require-at-least-one';
 export type {RequireExactlyOne} from './source/require-exactly-one';

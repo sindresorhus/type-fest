@@ -57,3 +57,39 @@ export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' 
 export type WordSeparators = '-' | '_' | ' ';
 
 export type StringDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+
+/**
+Matches any unknown record.
+*/
+export type UnknownRecord = Record<PropertyKey, unknown>;
+
+/**
+Matches any unknown array or tuple.
+*/
+export type UnknownArrayOrTuple = readonly [...unknown[]];
+
+/**
+Matches any non empty tuple.
+*/
+export type NonEmptyTuple = readonly [unknown, ...unknown[]];
+
+/**
+Returns a boolean for whether the two given types extends the base type.
+*/
+export type IsBothExtends<BaseType, FirstType, SecondType> = FirstType extends BaseType
+	? SecondType extends BaseType
+		? true
+		: false
+	: false;
+
+/**
+Extracts the type of the first element of an array or tuple.
+*/
+export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray extends readonly [infer THead, ...unknown[]]
+	? THead
+	: never;
+
+/**
+Extracts the type of an array or tuple minus the first element.
+*/
+export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer TTail] ? TTail : [];
