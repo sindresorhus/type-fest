@@ -1,5 +1,5 @@
 /**
-Omit any index signatures from the given object type leaving any explicitly defined properties.
+Omit any index signatures from the given object type, leaving only explicitly defined properties.
 
 This is the counterpart of `PickIndexSignature`.
 
