@@ -16,7 +16,6 @@ export type {RequireAllOrNone} from './source/require-all-or-none';
 export type {
 	OmitIndexSignature,
 	/**
-	Alias to support versions prior to 3.
 	@deprecated Renamed to {@link OmitIndexSignature}.
 	*/
 	OmitIndexSignature as RemoveIndexSignature,
