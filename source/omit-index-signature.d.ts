@@ -105,11 +105,3 @@ export type OmitIndexSignature<ObjectType> = {
 		? never
 		: KeyType]: ObjectType[KeyType];
 };
-
-export type {
-	/**
-	Alias to support versions prior to 3.
-	@deprecated Use {@link OmitIndexSignature} instead.
-	*/
-	OmitIndexSignature as RemoveIndexSignature,
-};
