@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {RemoveIndexSignature} from '../index';
+import type {OmitIndexSignature} from '../index';
 
 type ExampleInterface = {
 	// These index signatures will be removed.
@@ -24,13 +24,13 @@ type MappedType<ObjectType> = {
 	};
 };
 
-declare const exampleInterfaceKnownKeys: RemoveIndexSignature<ExampleInterface>;
+declare const exampleInterfaceKnownKeys: OmitIndexSignature<ExampleInterface>;
 expectType<{
 	foo: 'bar';
 	qux?: 'baz';
 }>(exampleInterfaceKnownKeys);
 
-declare const exampleMappedTypeKnownKeys: RemoveIndexSignature<
+declare const exampleMappedTypeKnownKeys: OmitIndexSignature<
 MappedType<ExampleInterface>
 >;
 expectType<{

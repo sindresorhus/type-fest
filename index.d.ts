@@ -13,7 +13,14 @@ export type {MergeExclusive} from './source/merge-exclusive';
 export type {RequireAtLeastOne} from './source/require-at-least-one';
 export type {RequireExactlyOne} from './source/require-exactly-one';
 export type {RequireAllOrNone} from './source/require-all-or-none';
-export type {RemoveIndexSignature} from './source/remove-index-signature';
+export type {
+	OmitIndexSignature,
+	/**
+	@deprecated Renamed to {@link OmitIndexSignature}.
+	*/
+	OmitIndexSignature as RemoveIndexSignature,
+} from './source/omit-index-signature';
+export type {PickIndexSignature} from './source/pick-index-signature';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
