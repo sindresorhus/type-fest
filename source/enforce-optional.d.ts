@@ -15,7 +15,7 @@ type OptionalFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
 	: never;
 
 /**
-Enforce optional keys by adding the `?` operator for keys that have a union with `undefined`.
+Enforce optional keys (by adding the `?` operator) for keys that have a union with `undefined`.
 
 @example
 ```
