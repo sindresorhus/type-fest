@@ -68,6 +68,20 @@
 					</sub>
 				</div>
 			</a>
+			<br>
+			<br>
+			<a href="https://sizzy.co?ref=sindre">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/sizzy-logo.png" width="240" alt="Sizzy">
+				</div>
+				<div>
+					<sub>
+					<b>Before Sizzy:</b> web development is stressing you out, responsive design is hard, you have an overwhelming amount of opened tabs & apps.
+					<br>
+					<b>After Sizzy:</b> all the tools you need in one place, responsive design is a breeze, no more context switching.
+					</sub>
+				</div>
+			</a>
 		</p>
 	</div>
 	<br>
@@ -256,6 +270,7 @@ Click the type names for complete docs.
 
 - `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
 - `RecordDeep`- See [`Schema`](https://github.com/sindresorhus/type-fest/blob/main/source/schema.d.ts)
+- `Mutable`- See [`Writable`](https://github.com/sindresorhus/type-fest/blob/main/source/writable.d.ts)
 
 ## Tips
 
