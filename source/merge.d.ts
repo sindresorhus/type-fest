@@ -1,6 +1,6 @@
 import type {OmitIndexSignature} from './omit-index-signature';
 import type {PickIndexSignature} from './pick-index-signature';
-import type {Simplify} from './simplify';
+import type {EnforceOptional} from './enforce-optional';
 
 /**
 Merge two types into a new type. Keys of the second type overrides keys of the first type.
@@ -36,10 +36,10 @@ export type FooBar = Merge<Foo, Bar>;
 
 @category Object
 */
-export type Merge<Destination, Source> = Simplify<{
-	[Key in keyof OmitIndexSignature<Destination & Source>]: Key extends keyof Source
+export type Merge<Destination, Source> = EnforceOptional<{
+	[Key in keyof OmitIndexSignature<Destination> | keyof OmitIndexSignature<Source>]: Key extends keyof Source
 		? Source[Key]
 		: Key extends keyof Destination
 			? Destination[Key]
 			: never;
-} & PickIndexSignature<Destination & Source>>;
+} & PickIndexSignature<Destination> & PickIndexSignature<Source>>;

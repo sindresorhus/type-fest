@@ -1,4 +1,4 @@
-import {expectAssignable, expectError} from 'tsd';
+import {expectError, expectType} from 'tsd';
 import type {Merge} from '../index';
 
 type Foo = {
@@ -11,7 +11,7 @@ type Bar = {
 };
 
 const ab: Merge<Foo, Bar> = {a: 1, b: 2};
-expectAssignable<{a: number; b: number}>(ab);
+expectType<{a: number; b: number}>(ab);
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface FooInterface {
@@ -39,7 +39,7 @@ const fooBar: FooBar = {
 	baz: true,
 };
 
-expectAssignable<{
+expectType<{
 	[x: string]: unknown;
 	[x: number]: number;
 	[x: symbol]: boolean;
@@ -56,3 +56,51 @@ expectError(setFooBar({
 	bar: new Date(),
 	baz: true,
 }));
+
+// Checks that a property can be replaced by another property that is not of the same type. This issue was encountered in `MergeDeep' with the default options.
+type FooDefaultOptions = {
+	stripUndefinedValues: false;
+};
+
+type FooOptions = Merge<FooDefaultOptions, {stripUndefinedValues: true}>;
+
+expectType<FooOptions>({stripUndefinedValues: true});
+
+// Test that optional keys are enforced.
+type FooWithOptionaKeys = {
+	[x: string]: unknown;
+	[x: number]: unknown;
+	a: string;
+	b?: string;
+	c: undefined;
+	d: string;
+	e: number | undefined;
+};
+
+type BarWithOptionaKeys = {
+	[x: number]: number;
+	[x: symbol]: boolean;
+	a?: string;
+	b: string;
+	d?: string;
+	f: number | undefined;
+	g: undefined;
+};
+
+type FooBarWithOptionalKeys = Merge<FooWithOptionaKeys, BarWithOptionaKeys>;
+
+declare const fooBarWithOptionalKeys: FooBarWithOptionalKeys;
+
+// Note that `c` and `g` is not marked as optional and this is deliberate, as this is the behaviour expected by the older version of Merge. This may change in a later version.
+expectType<{
+	[x: number]: number;
+	[x: symbol]: boolean;
+	[x: string]: unknown;
+	b: string;
+	c: undefined;
+	a?: string;
+	d?: string;
+	e?: number;
+	f?: number;
+	g: undefined;
+}>(fooBarWithOptionalKeys);
