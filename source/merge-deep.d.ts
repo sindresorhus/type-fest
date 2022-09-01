@@ -1,6 +1,8 @@
 import type {Merge} from './merge';
 import type {Spread} from './spread';
 import type {ConditionalExcept} from './conditional-except';
+import type {OmitIndexSignature} from './omit-index-signature';
+import type {PickIndexSignature} from './pick-index-signature';
 import type {ConditionalSimplify, ConditionalSimplifyDeep} from './conditional-simplify';
 import type {
 	ArrayTail,
@@ -146,7 +148,7 @@ Walk through the union of the keys of the two objects and test in which object t
 - If both contain the key, try to merge according to the mode defined in {@link MergeDeepOptions.recordMergeMode|recordMergeMode} option or return the source if unable to merge.
 */
 type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
-	[Key in keyof Destination | keyof Source]: Key extends keyof Source
+	[Key in keyof OmitIndexSignature<Destination> | keyof OmitIndexSignature<Source>]: Key extends keyof Source
 		? // Source found, check for destination
 		Key extends keyof Destination
 			? // Both source and destination exists
@@ -164,7 +166,7 @@ type DoMergeRecord<Destination, Source, Options extends MergeDeepOptions> = {
 		Key extends keyof Destination
 			? Destination[Key]
 			: never; // (this test is useless, but make TS happy, It can never be never)
-};
+} & PickIndexSignature<Destination> & PickIndexSignature<Source>;
 
 /**
 Strips `undefined` values on first and second levels.

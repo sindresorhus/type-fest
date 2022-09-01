@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectAssignable, expectError, expectType} from 'tsd';
 import type {MergeDeep, MergeDeepOptions} from '../index';
 
 // Helper
@@ -174,3 +174,47 @@ expectType<{
 expectType<{b: {d: {}}; g: {i: number}}>(mergeDeep(fooUndefined, barUndefined, {stripUndefinedValues: true}));
 expectType<{b: {d: {}}; g: {i: number}}>(mergeDeep(barUndefined, fooUndefined, {stripUndefinedValues: true}));
 expectType<{g: {h: {i: number}; i: number}}>(mergeDeep(barUndefined, bazUndefined, {stripUndefinedValues: true}));
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface FooInterface {
+	[x: string]: unknown;
+	[x: number]: unknown;
+	foo: string;
+	bar: symbol;
+}
+
+type BarType = {
+	[x: number]: number;
+	[x: symbol]: boolean;
+	bar: Date;
+	baz: boolean;
+};
+
+type FooBar = MergeDeep<FooInterface, BarType>;
+
+const fooBar: FooBar = {
+	'foo-string': 'foo',
+	42: 24,
+	[Symbol(42)]: true,
+	foo: 'foo',
+	bar: new Date(),
+	baz: true,
+};
+
+expectAssignable<{
+	[x: string]: unknown;
+	[x: number]: number;
+	[x: symbol]: boolean;
+	foo: string;
+	bar: Date;
+	baz: boolean;
+}>(fooBar);
+
+declare function setFooBar(fooBar: FooBar): void;
+
+expectError(setFooBar({
+	[Symbol(42)]: 'life',
+	foo: 'foo',
+	bar: new Date(),
+	baz: true,
+}));
