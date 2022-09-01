@@ -1,7 +1,6 @@
-import type {Except} from './except';
+import type {OmitIndexSignature} from './omit-index-signature';
+import type {PickIndexSignature} from './pick-index-signature';
 import type {Simplify} from './simplify';
-
-type Merge_<FirstType, SecondType> = Except<FirstType, Extract<keyof FirstType, keyof SecondType>> & SecondType;
 
 /**
 Merge two types into a new type. Keys of the second type overrides keys of the first type.
@@ -10,18 +9,37 @@ Merge two types into a new type. Keys of the second type overrides keys of the f
 ```
 import type {Merge} from 'type-fest';
 
-type Foo = {
-	a: number;
-	b: string;
-};
+interface Foo {
+	[x: string]: unknown;
+	[x: number]: unknown;
+	foo: string;
+	bar: symbol;
+}
 
 type Bar = {
-	b: number;
+	[x: number]: number;
+	[x: symbol]: unknown;
+	bar: Date;
+	baz: boolean;
 };
 
-const ab: Merge<Foo, Bar> = {a: 1, b: 2};
+export type FooBar = Merge<Foo, Bar>;
+// => {
+// 	[x: string]: unknown;
+// 	[x: number]: number;
+// 	[x: symbol]: unknown;
+// 	foo: string;
+// 	bar: Date;
+// 	baz: boolean;
+// }
 ```
 
 @category Object
 */
-export type Merge<FirstType, SecondType> = Simplify<Merge_<FirstType, SecondType>>;
+export type Merge<Destination, Source> = Simplify<{
+	[Key in keyof OmitIndexSignature<Destination & Source>]: Key extends keyof Source
+		? Source[Key]
+		: Key extends keyof Destination
+			? Destination[Key]
+			: never;
+} & PickIndexSignature<Destination & Source>>;
