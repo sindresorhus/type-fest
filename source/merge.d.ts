@@ -37,9 +37,9 @@ export type FooBar = Merge<Foo, Bar>;
 @category Object
 */
 export type Merge<Destination, Source> = Simplify<{
-	[Key in keyof OmitIndexSignature<Destination & Source>]: Key extends keyof Source
+	[Key in keyof OmitIndexSignature<Destination> | keyof OmitIndexSignature<Source>]: Key extends keyof Source
 		? Source[Key]
 		: Key extends keyof Destination
 			? Destination[Key]
 			: never;
-} & PickIndexSignature<Destination & Source>>;
+} & PickIndexSignature<Destination> & PickIndexSignature<Source>>;

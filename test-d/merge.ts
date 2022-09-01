@@ -56,3 +56,12 @@ expectError(setFooBar({
 	bar: new Date(),
 	baz: true,
 }));
+
+// Checks that a property can be replaced by another property that is not of the same type. This issue was encountered in `MergeDeep' with the default options.
+type FooDefaultOptions = {
+	stripUndefinedValues: false;
+};
+
+type FooOptions = Merge<FooDefaultOptions, {stripUndefinedValues: true}>;
+
+expectAssignable<FooOptions>({stripUndefinedValues: true});
