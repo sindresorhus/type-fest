@@ -70,7 +70,7 @@
 			</a>
 			<br>
 			<br>
-			<a href="https://sizzy.co?ref=sindre">
+			<a href="https://sizzy.co/?utm_campaign=github_repo&utm_source=github&utm_medium=referral&utm_content=type-fest&utm_term=sindre">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/sizzy-logo.png" width="240" alt="Sizzy">
 				</div>
