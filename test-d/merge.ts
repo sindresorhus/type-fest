@@ -104,3 +104,33 @@ expectType<{
 	f?: number;
 	g: undefined;
 }>(fooBarWithOptionalKeys);
+
+// Checks that an indexed key type can be overwritten.
+type FooWithIndexSignature = {
+	[x: string]: unknown;
+	[x: number]: boolean;
+	[x: symbol]: number;
+	foo: boolean;
+	fooBar: boolean;
+};
+
+type BarWithIndexSignatureOverwrite = {
+	[x: string]: number | string | boolean;
+	[x: number]: number | string;
+	[x: symbol]: symbol;
+	bar: string;
+	fooBar: string;
+};
+
+type FooBarWithIndexSignature = Merge<FooWithIndexSignature, BarWithIndexSignatureOverwrite>;
+
+declare const fooBarWithIndexSignature: FooBarWithIndexSignature;
+
+expectType<{
+	[x: string]: string | number | boolean;
+	[x: number]: string | number;
+	[x: symbol]: symbol;
+	foo: boolean;
+	bar: string;
+	fooBar: string;
+}>(fooBarWithIndexSignature);
