@@ -1,220 +1,129 @@
-import {expectAssignable, expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {MergeDeep, MergeDeepOptions} from '../index';
+// Import type {ConditionalSimplifyDeep} from '../source/conditional-simplify';
 
-// Helper
-declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
-	destination: Destination,
-	source: Source,
-	options?: Options,
-): MergeDeep<Destination, Source, Options>;
+// --------------------------------------------------------------------------------------------------------------------
 
-// Signatures
+// Test helper.
+declare function mergeDeep<
+	Destination,
+	Source,
+	Options extends MergeDeepOptions = {},
+>(destination: Destination, source: Source, options?: Options): MergeDeep<Destination, Source, Options>;
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Test valid signatures for objects.
 expectType<{}>(mergeDeep({}, {}));
-expectType<never[]>(mergeDeep([], []));
+expectType<{}>(mergeDeep({} as const, {}));
+expectType<{}>(mergeDeep({}, {} as const));
+expectType<{}>(mergeDeep({} as const, {} as const));
 
+// Test valid signatures for arrays/tuples.
+expectType<never[]>(mergeDeep([], []));
+expectType<never[]>(mergeDeep([] as const, []));
+expectType<never[]>(mergeDeep([], [] as const));
+expectType<never[]>(mergeDeep([] as const, [] as const));
+
+// Test invalid signatures.
 expectType<never>(mergeDeep({}, []));
 expectType<never>(mergeDeep([], {}));
 expectType<never>(mergeDeep(null, {}));
 expectType<never>(mergeDeep([], 'life'));
+expectType<never>(mergeDeep([], new Set()));
+expectType<never>(mergeDeep(new Set(), new Set()));
+expectType<never>(mergeDeep(undefined, undefined));
 
-// Fixtures
-type Foo = {
-	life: number;
-	a: {
-		b: string;
-		c: boolean;
-	};
-	items: string[];
-};
+// Should merge simple objects
+expectType<{a: string; b: number}>(mergeDeep({a: 'life'}, {b: 42}));
+expectType<{a: 'life'; b: number}>(mergeDeep({a: 'life'} as const, {b: 42}));
+expectType<{a: string; b: 42}>(mergeDeep({a: 'life'}, {b: 42} as const));
+expectType<{a: 'life'; b: 42}>(mergeDeep({a: 'life'} as const, {b: 42} as const));
 
-type Bar = {
-	name: string;
-	a: {
-		b: number;
-	};
-	items: number[];
-};
+// Should spread simple arrays/tuples (default mode)
+expectType<Array<string | number>>(mergeDeep(['life'], [42]));
+expectType<Array<'life' | number>>(mergeDeep(['life'] as const, [42]));
+expectType<Array<string | 42>>(mergeDeep(['life'], [42] as const));
+expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const));
 
-const foo: Foo = {life: 42, items: ['life'], a: {b: 'b', c: true}};
-const bar: Bar = {name: 'nyan', items: [4, 2], a: {b: 1}};
+expectType<Array<string | number>>(mergeDeep(['life'], [42], {arrayMergeMode: 'spread'}));
+expectType<Array<'life' | number>>(mergeDeep(['life'] as const, [42], {arrayMergeMode: 'spread'}));
+expectType<Array<string | 42>>(mergeDeep(['life'], [42] as const, {arrayMergeMode: 'spread'}));
+expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const, {arrayMergeMode: 'spread'}));
 
-type FooBarReplace = {
-	life: number;
-	name: string;
-	items: number[];
-	a: {b: number};
-};
+// Should replace simple arrays/tuples
+expectType<number[]>(mergeDeep(['life'], [42], {arrayMergeMode: 'replace'}));
+expectType<number[]>(mergeDeep(['life'] as const, [42], {arrayMergeMode: 'replace'}));
+expectType<readonly [42]>(mergeDeep(['life'], [42] as const, {arrayMergeMode: 'replace'}));
+expectType<readonly [42]>(mergeDeep(['life'] as const, [42] as const, {arrayMergeMode: 'replace'}));
 
-type FooBarUnion = {
-	life: number;
-	name: string;
-	items: string[] | number[];
-	a: {b: string; c: boolean} | {b: number};
-};
+// Should union simple arrays/tuples
+expectType<string[] | number[]>(mergeDeep(['life'], [42], {arrayMergeMode: 'union'}));
+expectType<readonly ['life'] | number[]>(mergeDeep(['life'] as const, [42], {arrayMergeMode: 'union'}));
+expectType<string[] | readonly [42]>(mergeDeep(['life'], [42] as const, {arrayMergeMode: 'union'}));
+expectType<readonly ['life'] | readonly [42]>(mergeDeep(['life'] as const, [42] as const, {arrayMergeMode: 'union'}));
 
-type FooBarMergeOrUnion = {
-	life: number;
-	name: string;
+// Sould merge simple types
+type Foo = {foo: string; fooBar: unknown; items: string[]};
+type Bar = {bar: number; fooBar: boolean; items: number[]};
+
+declare const fooBar: MergeDeep<Foo, Bar>;
+expectType<{foo: string; bar: number; fooBar: boolean; items: Array<string | number>}>(fooBar);
+
+declare const fooBarSpread: MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
+expectType<{foo: string; bar: number; fooBar: boolean; items: Array<string | number>}>(fooBarSpread);
+
+declare const fooBarReplace: MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
+expectType<{foo: string; bar: number; fooBar: boolean; items: number[]}>(fooBarReplace);
+
+declare const fooBarUnion: MergeDeep<Foo, Bar, {arrayMergeMode: 'union'}>;
+expectType<{foo: string; bar: number; fooBar: boolean; items: string[] | number[]}>(fooBarUnion);
+
+// Sould merge simple types with index signatures
+type FooWithIndexSignature = {[x: string]: unknown; foo: string; fooBar: string; items: string[]};
+type BarWithIndexSignature = {[x: symbol]: unknown; bar: number; fooBar: number; items: number[]};
+
+declare const fooBarWithIndexSignature: MergeDeep<FooWithIndexSignature, BarWithIndexSignature>;
+expectType<{
+	[x: string]: unknown;
+	[x: symbol]: unknown;
+	foo: string;
+	fooBar: number;
 	items: Array<string | number>;
-	a: {b: string | number; c: boolean};
-};
+	bar: number;
+}>(fooBarWithIndexSignature);
 
-type FooBarMergeOrReplace = {
-	life: number;
-	name: string;
-	items: Array<string | number>;
-	a: {b: number; c: boolean};
-};
+// Sould merge simple types deep
+type FooDeep = {foo: Foo; fooBar: Foo; items: {foo: Foo[]; fooBar: Foo}};
+type BarDeep = {bar: Bar; fooBar: Bar; items: {bar: Bar[]; fooBar: Bar}};
 
-type FooBarArrayReplace = {
-	life: number;
-	a: {b: number; c: boolean};
-	name: string;
-	items: number[];
-};
-
-type FooBarArraySpread = {
-	life: number;
-	a: {b: number; c: boolean};
-	name: string;
-	items: Array<string | number>;
-};
-
-type FooBarArrayUnion = {
-	life: number;
-	a: {b: number; c: boolean};
-	name: string;
-	items: string[] | number[];
-};
-
-// Basic test
-expectType<FooBarMergeOrReplace>(mergeDeep(foo, bar));
-
-// Test `recordMergeMode`
-expectType<FooBarUnion>(mergeDeep(foo, bar, {recordMergeMode: 'union'}));
-expectType<FooBarReplace>(mergeDeep(foo, bar, {recordMergeMode: 'replace'}));
-expectType<FooBarMergeOrUnion>(mergeDeep(foo, bar, {recordMergeMode: 'merge-or-union'}));
-expectType<FooBarMergeOrReplace>(mergeDeep(foo, bar, {recordMergeMode: 'merge-or-replace'}));
-
-// Test `arrayMergeMode`
-expectType<FooBarArrayReplace>(mergeDeep(foo, bar, {arrayMergeMode: 'replace'}));
-expectType<FooBarArraySpread>(mergeDeep(foo, bar, {arrayMergeMode: 'spread'}));
-expectType<FooBarArrayUnion>(mergeDeep(foo, bar, {arrayMergeMode: 'union'}));
-
-// Test arrays and tuples
-const numberArray = [1, 2, 3];
-const stringArray = ['a', 'b'];
-
-const numberTuple = [1, 2, 3] as const;
-const stringTuple = ['a', 'b'] as const;
-
-// Array <= Array
-expectType<string[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'replace'}));
-expectType<string[] | number[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'union'}));
-expectType<Array<string | number>>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'spread'}));
-expectType<string[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'merge-or-replace'}));
-expectType<string[] | number[]>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'merge-or-union'}));
-expectType<Array<string | number>>(mergeDeep(numberArray, stringArray, {arrayMergeMode: 'merge-or-spread'}));
-
-// Tuple <= Tuple
-expectType<readonly ['a', 'b']>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'replace'}));
-expectType<readonly [1, 2, 3] | readonly ['a', 'b']>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'union'}));
-expectType<Array<1 | 2 | 3 | 'a' | 'b'>>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'spread'}));
-expectType<['a', 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-replace'}));
-expectType<[1 | 'a', 2 | 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-union'}));
-expectType<['a', 'b', 3]>(mergeDeep(numberTuple, stringTuple, {arrayMergeMode: 'merge-or-spread'}));
-
-// Array <= Tuple
-expectType<readonly ['a', 'b']>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'replace'}));
-expectType<number[] | readonly ['a', 'b']>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'union'}));
-expectType<Array<number | 'a' | 'b'>>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'spread'}));
-expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-replace'}));
-expectType<[number | 'a', number | 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-union'}));
-expectType<['a', 'b', ...number[]]>(mergeDeep(numberArray, stringTuple, {arrayMergeMode: 'merge-or-spread'}));
-
-// Tuple <= Array
-expectType<string[]>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'replace'}));
-expectType<string[] | readonly [1, 2, 3]>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'union'}));
-expectType<Array<string | 1 | 2 | 3>>(mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'spread'}));
-expectType<[string, string, string, ...string[]]>(
-	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-replace'}),
-);
-expectType<[string | 1, string | 2, string | 3, ...string[]]>(
-	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-union'}),
-);
-expectType<[string, string, string, ...string[]]>(
-	mergeDeep(numberTuple, stringArray, {arrayMergeMode: 'merge-or-spread'}),
-);
-
-// Test merge with object items
-expectType<Bar[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'replace'}));
-expectType<Foo[] | Bar[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'union'}));
-expectType<Array<Foo | Bar>>(mergeDeep([foo], [bar], {arrayMergeMode: 'spread'}));
-
-// Test deep merge with object items
-expectType<FooBarArrayReplace[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'merge-or-replace'}));
-expectType<FooBarArrayUnion[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'merge-or-union'}));
-expectType<FooBarArraySpread[]>(mergeDeep([foo], [bar], {arrayMergeMode: 'merge-or-spread'}));
-expectType<FooBarArrayReplace[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-replace'}));
-expectType<FooBarArrayUnion[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-union'}));
-expectType<FooBarArraySpread[][]>(mergeDeep([[foo], [foo]], [[bar], [bar]], {arrayMergeMode: 'merge-or-spread'}));
-
-// Test `stripUndefinedValues` option.
-const fooUndefined = {a: undefined, b: {c: undefined, d: {e: undefined}}};
-const barUndefined = {f: undefined, g: {h: undefined, i: 42, j: undefined}};
-const bazUndefined = {f: undefined, g: {h: {i: 42, j: undefined}}};
+declare const fooBarDeep: MergeDeep<FooDeep, BarDeep>;
 
 expectType<{
-	a: undefined;
-	b: {c: undefined; d: {e: undefined}};
-	f: undefined;
-	g: {h: undefined; i: number; j: undefined};
-}>(mergeDeep(fooUndefined, barUndefined));
-
-expectType<{b: {d: {}}; g: {i: number}}>(mergeDeep(fooUndefined, barUndefined, {stripUndefinedValues: true}));
-expectType<{b: {d: {}}; g: {i: number}}>(mergeDeep(barUndefined, fooUndefined, {stripUndefinedValues: true}));
-expectType<{g: {h: {i: number}; i: number}}>(mergeDeep(barUndefined, bazUndefined, {stripUndefinedValues: true}));
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-interface FooInterface {
-	[x: string]: unknown;
-	[x: number]: unknown;
-	foo: string;
-	bar: symbol;
-}
-
-type BarType = {
-	[x: number]: number;
-	[x: symbol]: boolean;
-	bar: Date;
-	baz: boolean;
-};
-
-type FooBar = MergeDeep<FooInterface, BarType>;
-
-const fooBar: FooBar = {
-	'foo-string': 'foo',
-	42: 24,
-	[Symbol(42)]: true,
-	foo: 'foo',
-	bar: new Date(),
-	baz: true,
-};
-
-expectAssignable<{
-	[x: string]: unknown;
-	[x: number]: number;
-	[x: symbol]: boolean;
-	foo: string;
-	bar: Date;
-	baz: boolean;
-}>(fooBar);
-
-declare function setFooBar(fooBar: FooBar): void;
-
-expectError(setFooBar({
-	[Symbol(42)]: 'life',
-	foo: 'foo',
-	bar: new Date(),
-	baz: true,
-}));
+	foo: {
+		foo: string;
+		fooBar: unknown;
+		items: string[];
+	};
+	bar: {
+		bar: number;
+		fooBar: boolean;
+		items: number[];
+	};
+	fooBar: {
+		foo: string;
+		bar: number;
+		fooBar: boolean;
+		items: Array<string | number>;
+	};
+	items: {
+		foo: Foo[];
+		bar: Bar[];
+		fooBar: {
+			foo: string;
+			bar: number;
+			fooBar: boolean;
+			items: Array<string | number>;
+		};
+	};
+}>(fooBarDeep);
