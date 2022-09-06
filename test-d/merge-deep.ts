@@ -60,6 +60,12 @@ expectType<readonly ['life'] | number[]>(mergeDeep(['life'] as const, [42], {arr
 expectType<string[] | readonly [42]>(mergeDeep(['life'], [42] as const, {arrayMergeMode: 'union'}));
 expectType<readonly ['life'] | readonly [42]>(mergeDeep(['life'] as const, [42] as const, {arrayMergeMode: 'union'}));
 
+// Should merge tuples with union
+expectType<Array<number | string | boolean>>(mergeDeep(['life', true], [42], {arrayMergeMode: 'spread'}));
+expectType<number[] | Array<string | boolean>>(mergeDeep(['life', true], [42], {arrayMergeMode: 'union'}));
+expectType<Array<number | string | boolean>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'spread'}));
+expectType<string[] | Array<number | boolean>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'union'}));
+
 // Sould merge simple types
 type Foo = {foo: string; fooBar: unknown; items: string[]};
 type Bar = {bar: number; fooBar: boolean; items: number[]};
@@ -155,3 +161,64 @@ expectType<{
 		items: Array<string | number>;
 	};
 }>(fooBarWithOptional);
+
+// Should merge arrays with object entries
+type FooArray = Foo[];
+type BarArray = Bar[];
+
+declare const fooBarArray: MergeDeep<FooArray, BarArray>;
+expectType<Array<Foo | Bar>>(fooBarArray);
+
+declare const fooBarArraySpread: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'spread'}>;
+expectType<Array<Foo | Bar>>(fooBarArraySpread);
+
+declare const fooBarArrayReplace: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'replace'}>;
+expectType<BarArray>(fooBarArrayReplace);
+
+declare const fooBarArrayUnion: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'union'}>;
+expectType<FooArray | BarArray>(fooBarArrayUnion);
+
+declare const fooBarArraySpreadRecursive: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<{
+	foo: string;
+	bar: number;
+	fooBar: boolean;
+	items: Array<string | number>;
+}>>(fooBarArraySpreadRecursive);
+
+declare const fooBarArrayReplaceRecursive: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<Array<{
+	foo: string;
+	bar: number;
+	fooBar: boolean;
+	items: number[];
+}>>(fooBarArrayReplaceRecursive);
+
+declare const fooBarArrayUnionRecursive: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
+expectType<Array<{
+	foo: string;
+	bar: number;
+	fooBar: boolean;
+	items: string[] | number[];
+}>>(fooBarArrayUnionRecursive);
+
+declare const fooBarArraySpreadRecursiveFallback: MergeDeep<FooArray, string[], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<string | Foo>>(fooBarArraySpreadRecursiveFallback);
+
+declare const fooBarArrayReplaceRecursiveFallback: MergeDeep<FooArray, string[], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<string[]>(fooBarArrayReplaceRecursiveFallback);
+
+declare const fooBarArrayUnionRecursiveFallback: MergeDeep<FooArray, string[], {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
+expectType<FooArray | string[]>(fooBarArrayUnionRecursiveFallback);
+
+declare const fooBarArrayDeepUnionRecursive: MergeDeep<FooArray[][], BarArray[][], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<Array<Array<{
+	foo: string;
+	bar: number;
+	fooBar: boolean;
+	items: Array<string | number>;
+}>>>>(fooBarArrayDeepUnionRecursive);
+
+declare const fooBarArrayDeepUnionRecursiveFallback: MergeDeep<FooArray[], BarArray[][], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<Array<Foo | BarArray>>>(fooBarArrayDeepUnionRecursiveFallback);
+
