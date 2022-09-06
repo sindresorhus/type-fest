@@ -33,6 +33,8 @@ expectType<never>(mergeDeep([], 'life'));
 expectType<never>(mergeDeep([], new Set()));
 expectType<never>(mergeDeep(new Set(), new Set()));
 expectType<never>(mergeDeep(undefined, undefined));
+expectType<never>(mergeDeep({}, undefined));
+expectType<never>(mergeDeep(undefined, {}));
 
 // Should merge simple objects
 expectType<{a: string; b: number}>(mergeDeep({a: 'life'}, {b: 42}));

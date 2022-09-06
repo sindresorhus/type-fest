@@ -57,15 +57,17 @@ type MergeDeepOrReturn<
 	Destination,
 	Source,
 	Options extends MergeDeepOptions,
-> = Destination extends UnknownRecord | undefined
-	? Source extends UnknownRecord | undefined
-		? MergeRecord<Destination, Source, Options>
-		: DefaultType
-	: Destination extends UnknownArrayOrTuple | undefined
-		? Source extends UnknownArrayOrTuple | undefined
-			? MergeArray<Destination, Source, Options>
+> = [undefined] extends [Destination | Source]
+	? DefaultType
+	: Destination extends UnknownRecord | undefined
+		? Source extends UnknownRecord | undefined
+			? MergeRecord<Destination, Source, Options>
 			: DefaultType
-		: DefaultType;
+		: Destination extends UnknownArrayOrTuple | undefined
+			? Source extends UnknownArrayOrTuple | undefined
+				? MergeArray<Destination, Source, Options>
+				: DefaultType
+			: DefaultType;
 
 // --------------------------------------------------------------------------------------------------------------------
 
