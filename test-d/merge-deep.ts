@@ -1,8 +1,5 @@
 import {expectType} from 'tsd';
 import type {MergeDeep, MergeDeepOptions} from '../index';
-// Import type {ConditionalSimplifyDeep} from '../source/conditional-simplify';
-
-// --------------------------------------------------------------------------------------------------------------------
 
 // Test helper.
 declare function mergeDeep<
@@ -10,8 +7,6 @@ declare function mergeDeep<
 	Source,
 	Options extends MergeDeepOptions = {},
 >(destination: Destination, source: Source, options?: Options): MergeDeep<Destination, Source, Options>;
-
-// --------------------------------------------------------------------------------------------------------------------
 
 // Test valid signatures for objects.
 expectType<{}>(mergeDeep({}, {}));
@@ -81,26 +76,11 @@ expectType<{foo: string; bar: number; fooBar: boolean; items: number[]}>(fooBarR
 declare const fooBarUnion: MergeDeep<Foo, Bar, {arrayMergeMode: 'union'}>;
 expectType<{foo: string; bar: number; fooBar: boolean; items: string[] | number[]}>(fooBarUnion);
 
-// Sould merge simple types with index signatures
-type FooWithIndexSignature = {[x: string]: unknown; foo: string; fooBar: string; items: string[]};
-type BarWithIndexSignature = {[x: symbol]: unknown; bar: number; fooBar: number; items: number[]};
-
-declare const fooBarWithIndexSignature: MergeDeep<FooWithIndexSignature, BarWithIndexSignature>;
-expectType<{
-	[x: string]: unknown;
-	[x: symbol]: unknown;
-	foo: string;
-	fooBar: number;
-	items: Array<string | number>;
-	bar: number;
-}>(fooBarWithIndexSignature);
-
-// Sould merge simple types deep
+// Sould merge types deep
 type FooDeep = {foo: Foo; fooBar: Foo; items: {foo: Foo[]; fooBar: Foo}};
 type BarDeep = {bar: Bar; fooBar: Bar; items: {bar: Bar[]; fooBar: Bar}};
 
 declare const fooBarDeep: MergeDeep<FooDeep, BarDeep>;
-
 expectType<{
 	foo: {
 		foo: string;
@@ -129,3 +109,49 @@ expectType<{
 		};
 	};
 }>(fooBarDeep);
+
+// Sould merge types with index signatures deep
+type FooWithIndexSignature = {[x: number]: number; foo: string; items: string[]};
+type BarWithIndexSignature = {[x: symbol]: symbol; bar: number; items: number[]};
+type FooWithIndexSignatureDeep = {[x: number]: number; foo: string; fooBar: FooWithIndexSignature; items: string[]};
+type BarWithIndexSignatureDeep = {[x: symbol]: symbol; bar: number; fooBar: BarWithIndexSignature; items: number[]};
+
+declare const fooBarWithIndexSignature: MergeDeep<FooWithIndexSignatureDeep, BarWithIndexSignatureDeep>;
+expectType<{
+	[x: number]: number;
+	[x: symbol]: symbol;
+	foo: string;
+	bar: number;
+	fooBar: {
+		[x: number]: number;
+		[x: symbol]: symbol;
+		foo: string;
+		bar: number;
+		items: Array<string | number>;
+	};
+	items: Array<string | number>;
+}>(fooBarWithIndexSignature);
+
+// Sould merge types with optional properties deep
+type FooWithOptional = {foo: string; fooOptional?: string; fooBar: Foo; fooBarOptional: Foo | undefined};
+type BarWithOptional = {bar: number; barOptional?: number; fooBar: Bar; fooBarOptional: Bar | undefined};
+
+declare const fooBarWithOptional: MergeDeep<FooWithOptional, BarWithOptional>;
+expectType<{
+	foo: string;
+	bar: number;
+	fooOptional?: string;
+	barOptional?: number;
+	fooBar: {
+		foo: string;
+		bar: number;
+		fooBar: boolean;
+		items: Array<string | number>;
+	};
+	fooBarOptional?: {
+		foo: string;
+		bar: number;
+		fooBar: boolean;
+		items: Array<string | number>;
+	};
+}>(fooBarWithOptional);
