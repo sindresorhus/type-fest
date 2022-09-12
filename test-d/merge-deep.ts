@@ -222,3 +222,19 @@ expectType<Array<Array<Array<{
 declare const fooBarArrayDeepUnionRecursiveFallback: MergeDeep<FooArray[], BarArray[][], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
 expectType<Array<Array<Foo | BarArray>>>(fooBarArrayDeepUnionRecursiveFallback);
 
+// Should merge tuples with object entries
+type FooTuple = [Foo, [Foo[], 42], 'foo'];
+type BarTuple = [Bar, [Bar[], 'a', 'b'], 'bar', true];
+
+type FooBarSpread = typeof fooBarSpread;
+type FooBarReplace = typeof fooBarReplace;
+type FooBarUnion = typeof fooBarUnion;
+
+declare const fooBarTupleSpread: MergeDeep<FooTuple, BarTuple, {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[FooBarSpread, [FooBarSpread[], 'a', 'b'], 'bar', true]>(fooBarTupleSpread);
+
+declare const fooBarTupleReplace: MergeDeep<FooTuple, BarTuple, {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[FooBarReplace, [FooBarReplace[], 'a', 'b'], 'bar', true]>(fooBarTupleReplace);
+
+declare const fooBarTupleUnion: MergeDeep<FooTuple, BarTuple, {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
+expectType<[FooBarUnion, [FooBarUnion[], 42 | 'a', 'b'], 'foo' | 'bar', true]>(fooBarTupleUnion);

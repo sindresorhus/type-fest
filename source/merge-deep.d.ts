@@ -1,9 +1,19 @@
-import type {IsBothExtends, NonEmptyTuple, UnknownArrayOrTuple, UnknownRecord} from './internal';
 import type {ConditionalSimplifyDeep} from './conditional-simplify';
 import type {OmitIndexSignature} from './omit-index-signature';
 import type {PickIndexSignature} from './pick-index-signature';
 import type {EnforceOptional} from './enforce-optional';
 import type {Merge} from './merge';
+import type {
+	ArrayTail,
+	FirstArrayElement,
+	IsBothExtends,
+	NonEmptyTuple,
+	UnknownArrayOrTuple,
+	UnknownRecord,
+} from './internal';
+
+// Internal shortcut
+type SimplifyDeep<Type> = ConditionalSimplifyDeep<Type, Function | Iterable<unknown>, object>;
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -64,7 +74,35 @@ type MergeDeepArrayRecursive<
 			: DoMergeArrayOrTuple<Destination, Source, Options>
 		: DoMergeArrayOrTuple<Destination, Source, Options>;
 
-type MergeDeepTupleRecursive<Destination, Source, Options> = [Destination, Source, Options];
+type IsMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Destination, Source> extends true
+	? true
+	: IsBothExtends<UnknownRecord, UnknownRecord, Source> extends true
+		? true
+		: false;
+
+type MergeDeepArrayOrTupleValues<
+	Destination,
+	Source,
+	Options extends MergeDeepOptions,
+> = IsMergeable<Destination, Source> extends true
+	? MergeDeepOrReturn<never, Destination, Source, Options>
+	: Options['arrayMergeMode'] extends 'union'
+		? Destination | Source
+		: Source; // 'replace'
+
+type MergeDeepTupleRecursive<
+	Destination extends UnknownArrayOrTuple,
+	Source extends UnknownArrayOrTuple,
+	Options extends MergeDeepOptions,
+> = Destination extends []
+	? Source
+	: Source extends []
+		? Destination
+		: [
+			MergeDeepArrayOrTupleValues<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>,
+			...MergeDeepTupleRecursive<ArrayTail<Destination>, ArrayTail<Source>, Options>,
+		];
+
 type MergeDeepTupleAndArrayRecursive<Destination, Source, Options> = [Destination, Source, Options];
 type MergeDeepArrayAndTupleRecursive<Destination, Source, Options> = [Destination, Source, Options];
 
@@ -95,7 +133,7 @@ type MergeDeepOrReturn<
 	Destination,
 	Source,
 	Options extends MergeDeepOptions,
-> = [undefined] extends [Destination | Source]
+> = SimplifyDeep<[undefined] extends [Destination | Source]
 	? DefaultType
 	: Destination extends UnknownRecord
 		? Source extends UnknownRecord
@@ -105,7 +143,7 @@ type MergeDeepOrReturn<
 			? Source extends UnknownArrayOrTuple
 				? MergeDeepArrayOrTuple<Destination, Source, Options>
 				: DefaultType
-			: DefaultType;
+			: DefaultType>;
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -119,8 +157,10 @@ type MergeDeepDefaultOptions = {
 	recurseIntoArrays: false;
 };
 
-type SimplifyDeep<Type> = ConditionalSimplifyDeep<Type, Function | Iterable<unknown>, object>;
-
-export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = SimplifyDeep<
-MergeDeepOrReturn<never, SimplifyDeep<Destination>, SimplifyDeep<Source>, Merge<MergeDeepDefaultOptions, Options>>
+export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepOrReturn<
+never,
+SimplifyDeep<Destination>,
+SimplifyDeep<Source>,
+Merge<MergeDeepDefaultOptions, Options>
 >;
+
