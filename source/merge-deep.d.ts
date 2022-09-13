@@ -5,7 +5,6 @@ import type {EnforceOptional} from './enforce-optional';
 import type {Merge} from './merge';
 import type {
 	ArrayTail,
-	FirstArrayElement,
 	IsBothExtends,
 	NonEmptyTuple,
 	UnknownArrayOrTuple,
@@ -84,11 +83,19 @@ type MergeDeepArrayOrTupleValues<
 	Destination,
 	Source,
 	Options extends MergeDeepOptions,
-> = IsMergeable<Destination, Source> extends true
-	? MergeDeepOrReturn<never, Destination, Source, Options>
-	: Options['arrayMergeMode'] extends 'union'
-		? Destination | Source
-		: Source; // 'replace'
+> = Source extends []
+	? Destination
+	: Destination extends []
+		? Source
+		: IsMergeable<Destination, Source> extends true
+			? MergeDeepOrReturn<never, Destination, Source, Options>
+			: Options['arrayMergeMode'] extends 'union'
+				? Destination | Source
+				: Source; // 'replace'
+
+type FirstArrayElementOrArrayType<TArray extends UnknownArrayOrTuple> = TArray extends readonly [infer THead, ...unknown[]]
+	? THead
+	: TArray[number];
 
 type MergeDeepTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
@@ -99,21 +106,55 @@ type MergeDeepTupleRecursive<
 	: Source extends []
 		? Destination
 		: [
-			MergeDeepArrayOrTupleValues<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>,
+			MergeDeepArrayOrTupleValues<FirstArrayElementOrArrayType<Destination>, FirstArrayElementOrArrayType<Source>, Options>,
 			...MergeDeepTupleRecursive<ArrayTail<Destination>, ArrayTail<Source>, Options>,
 		];
 
-type MergeDeepTupleAndArrayRecursive<Destination, Source, Options> = [Destination, Source, Options];
-type MergeDeepArrayAndTupleRecursive<Destination, Source, Options> = [Destination, Source, Options];
+// --------------------------------------------------------------------------------------------------------------------
+
+type ArrayToTuple<Type extends UnknownArrayOrTuple> = [Type[number], ...Array<Type[number]>];
+
+type InferRestType<Type extends UnknownArrayOrTuple> = number extends Type['length']
+	? ArrayTail<Type> extends [] ? Type : InferRestType<ArrayTail<Type>>
+	: [];
+
+type MergeDeepTupleAndArrayRecursive<
+	Destination extends UnknownArrayOrTuple,
+	Source extends UnknownArrayOrTuple,
+	Options extends MergeDeepOptions,
+> = [
+	...MergeDeepTupleRecursive<Destination, ArrayToTuple<Source>, Options>,
+	...MergeDeepArrayOrTupleValues<InferRestType<Destination>, InferRestType<Source>, Options>,
+];
+
+type MergeDeepArrayAndTupleRecursive<
+	Destination extends UnknownArrayOrTuple,
+	Source extends UnknownArrayOrTuple,
+	Options extends MergeDeepOptions,
+> = [
+	...MergeDeepTupleRecursive<ArrayToTuple<Destination>, Source, Options>,
+	...MergeDeepArrayOrTupleValues<InferRestType<Destination>, InferRestType<Source>, Options>,
+];
+
+type MergeDeepTupleAndTupleRecursive<
+	Destination extends UnknownArrayOrTuple,
+	Source extends UnknownArrayOrTuple,
+	Options extends MergeDeepOptions,
+> = [
+	...MergeDeepTupleRecursive<Destination, Source, Options>,
+	...MergeDeepArrayOrTupleValues<InferRestType<Destination>, InferRestType<Source>, Options>,
+];
+
+// --------------------------------------------------------------------------------------------------------------------
 
 type MergeDeepArrayOrTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepOptions,
 > = IsBothExtends<NonEmptyTuple, Destination, Source> extends true
-	? MergeDeepTupleRecursive<Destination, Source, Options>
+	? MergeDeepTupleAndTupleRecursive<Destination, Source, Options>
 	: Destination extends NonEmptyTuple
-		? MergeDeepTupleAndArrayRecursive<Source, Destination, Options>
+		? MergeDeepTupleAndArrayRecursive<Destination, Source, Options>
 		: Source extends NonEmptyTuple
 			? MergeDeepArrayAndTupleRecursive<Destination, Source, Options>
 			: MergeDeepArrayRecursive<Destination, Source, Options>;
@@ -163,4 +204,3 @@ SimplifyDeep<Destination>,
 SimplifyDeep<Source>,
 Merge<MergeDeepDefaultOptions, Options>
 >;
-
