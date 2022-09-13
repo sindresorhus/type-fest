@@ -76,7 +76,7 @@ type MergeDeepArrayRecursive<
 
 type IsMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Destination, Source> extends true
 	? true
-	: IsBothExtends<UnknownRecord, UnknownRecord, Source> extends true
+	: IsBothExtends<UnknownRecord, Destination, Source> extends true
 		? true
 		: false;
 
