@@ -5,6 +5,7 @@ import type {EnforceOptional} from './enforce-optional';
 import type {Merge} from './merge';
 import type {
 	ArrayTail,
+	FirstArrayElement,
 	IsBothExtends,
 	NonEmptyTuple,
 	UnknownArrayOrTuple,
@@ -58,16 +59,46 @@ type MergeDeepRecord<
 & Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
 /**
-Returns a boolean for whether the source and destination can be merged.
+Pick the rest type.
+
+@example
+```
+type Rest1 = PickRestType<[]>; // => []
+type Rest2 = PickRestType<[string]>; // => []
+type Rest3 = PickRestType<[...number[]]>; // => number[]
+type Rest4 = PickRestType<[string, ...number[]]>; // => number[]
+type Rest5 = PickRestType<string[]>; // => string[]
+```
 */
-type IsMergeable<Destination, Source> = IsBothExtends<UnknownArrayOrTuple, Destination, Source> extends true
-	? true
-	: IsBothExtends<UnknownRecord, Destination, Source> extends true
-		? true
-		: false;
+type PickRestType<Type extends UnknownArrayOrTuple> = number extends Type['length']
+	? ArrayTail<Type> extends [] ? Type : PickRestType<ArrayTail<Type>>
+	: [];
 
 /**
-Try to merge two array/tuple elements.
+Omit the rest type.
+
+@example
+```
+type Tuple1 = OmitRestType<[]>; // => []
+type Tuple2 = OmitRestType<[string]>; // => [string]
+type Tuple3 = OmitRestType<[...number[]]>; // => []
+type Tuple4 = OmitRestType<[string, ...number[]]>; // => [string]
+type Tuple5 = OmitRestType<[string, boolean[], ...number[]]>; // => [string, boolean[]]
+type Tuple6 = OmitRestType<string[]>; // => []
+```
+*/
+type OmitRestType<Type extends UnknownArrayOrTuple, Result extends UnknownArrayOrTuple = []> = number extends Type['length']
+	? ArrayTail<Type> extends [] ? Result : OmitRestType<ArrayTail<Type>, [...Result, FirstArrayElement<Type>]>
+	: Type;
+
+// Utility to avoid picking two times the type.
+type TypeNumberOrType<Type extends UnknownArrayOrTuple> = Type[number] extends never ? Type : Type[number];
+
+// Pick the rest type (array) and try to get the intrinsic type or return the provided type.
+type PickRestTypeFlat<Type extends UnknownArrayOrTuple> = TypeNumberOrType<PickRestType<Type>>;
+
+/**
+Try to merge two array/tuple elements or return the source element if the end of the destination is reached or vis-versa.
 */
 type MergeDeepArrayOrTupleElements<
 	Destination,
@@ -80,74 +111,87 @@ type MergeDeepArrayOrTupleElements<
 		: MergeDeepOrReturn<Source, Destination, Source, Options>;
 
 /**
-Returns the first tuple element type or the array type.
+Merge two tuples recursively.
 */
-type FirstArrayElementOrArrayType<TArray extends UnknownArrayOrTuple> = TArray extends readonly [infer THead, ...unknown[]]
-	? THead
-	: TArray[number];
-
-/**
-Merge two tuple elements recursively.
-*/
-type MergeDeepTupleRecursive<
+type DoMergeDeepTupleAndTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
+	DestinationRestType,
+	SourceRestType,
 	Options extends MergeDeepOptions,
 > = Destination extends []
-	? Source
+	? Source extends []
+		? []
+		: MergeArrayTypeAndTuple<DestinationRestType, Source, Options>
 	: Source extends []
-		? Destination
+		? MergeTupleAndArrayType<Destination, SourceRestType, Options>
 		: [
-			MergeDeepArrayOrTupleElements<FirstArrayElementOrArrayType<Destination>, FirstArrayElementOrArrayType<Source>, Options>,
-			...MergeDeepTupleRecursive<ArrayTail<Destination>, ArrayTail<Source>, Options>,
+			MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>,
+			...DoMergeDeepTupleAndTupleRecursive<ArrayTail<Destination>, ArrayTail<Source>, DestinationRestType, SourceRestType, Options>,
 		];
 
 /**
-Transform an array into a variadic length tuple.
-*/
-type ArrayToTuple<Type extends UnknownArrayOrTuple> = [Type[number], ...Array<Type[number]>];
-
-/**
-Infer the type of the last element of the tuple even if it has a variable length.
-*/
-type InferRestType<Type extends UnknownArrayOrTuple> = number extends Type['length']
-	? ArrayTail<Type> extends [] ? Type : InferRestType<ArrayTail<Type>>
-	: [];
-
-/**
-Merge two tuples recursively.
+Merge two tuples recursively taking into account a possible rest type.
 */
 type MergeDeepTupleAndTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepOptions,
 > = [
-	...MergeDeepTupleRecursive<Destination, Source, Options>,
-	...MergeDeepArrayOrTupleElements<InferRestType<Destination>, InferRestType<Source>, Options>,
+	...DoMergeDeepTupleAndTupleRecursive<OmitRestType<Destination>, OmitRestType<Source>, PickRestTypeFlat<Destination>, PickRestTypeFlat<Source>, Options>,
+	...MergeDeepArrayOrTupleElements<PickRestType<Destination>, PickRestType<Source>, Options>,
 ];
 
 /**
-Merge an array into a tuple recursively.
+Merge an array type with a tuple recursively.
+*/
+type MergeTupleAndArrayType<
+	Tuple extends UnknownArrayOrTuple,
+	ArrayType,
+	Options extends MergeDeepOptions,
+> = Tuple extends []
+	? Tuple
+	: [
+		MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>,
+		...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
+	];
+
+/**
+Merge an array into a tuple recursively taking into account a possible rest type.
 */
 type MergeDeepTupleAndArrayRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepOptions,
 > = [
-	...MergeDeepTupleRecursive<Destination, ArrayToTuple<Source>, Options>,
-	...MergeDeepArrayOrTupleElements<InferRestType<Destination>, InferRestType<Source>, Options>,
+	...MergeTupleAndArrayType<OmitRestType<Destination>, Source[number], Options>,
+	...MergeDeepArrayOrTupleElements<PickRestType<Destination>, PickRestType<Source>, Options>,
 ];
 
 /**
-Merge a tuple into an array recursively.
+Merge a tuple with an array type recursively.
+*/
+type MergeArrayTypeAndTuple<
+	ArrayType,
+	Tuple extends UnknownArrayOrTuple,
+	Options extends MergeDeepOptions,
+> = Tuple extends []
+	? Tuple
+	: [
+		MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>,
+		...MergeArrayTypeAndTuple<ArrayType, ArrayTail<Tuple>, Options>,
+	];
+
+/**
+Merge a tuple into an array recursively taking into account a possible rest type.
 */
 type MergeDeepArrayAndTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepOptions,
 > = [
-	...MergeDeepTupleRecursive<ArrayToTuple<Destination>, Source, Options>,
-	...MergeDeepArrayOrTupleElements<InferRestType<Destination>, InferRestType<Source>, Options>,
+	...MergeArrayTypeAndTuple<Destination[number], OmitRestType<Source>, Options>,
+	...MergeDeepArrayOrTupleElements<PickRestType<Destination>, PickRestType<Source>, Options>,
 ];
 
 /**
