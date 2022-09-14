@@ -274,9 +274,116 @@ type MergeDeepDefaultOptions = {
 /**
 Merge two objects or two arrays/tuples recursively into a new type.
 
-@see {@link MergeDeepOptions}
+- Properties that only exist in one object are copied into the new object.
+- Properties that exist in both objects are replaced by the one of the source.
+- By default, arrays and tuples are spread. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
+- By default, individual elements are not affected. See {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option to change this behaviour.
+
+@example
+```
+import type {MergeDeep} from 'type-fest';
+
+type Foo = {
+	life: number;
+	items: string[];
+	a: {b: string; c: boolean; d: number[]};
+};
+
+interface Bar {
+	name: string;
+	items: number[];
+	a: {b: number; d: boolean[]};
+}
+
+type FooBar = MergeDeep<Foo, Bar>;
+// {
+// 	life: number;
+// 	name: string;
+// 	items: (string | number)[];
+// 	a: {b: number; c: boolean; d: (number | boolean)[]};
+// }
+
+type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'union'}>;
+// {
+// 	life: number;
+// 	name: string;
+// 	items: string[] | number[];
+// 	a: {b: number; c: boolean; d: number[] | boolean[]};
+// }
+
+type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
+// {
+// 	life: number;
+// 	name: string;
+// 	items: number[];
+// 	a: {b: number; c: boolean; d: boolean[]};
+// }
+```
+
+@example
+```
+import type {MergeDeep} from 'type-fest';
+
+// Merge two arrays
+type ArrayUnion = MergeDeep<string[], number[], {arrayMergeMode: 'union'}>; // => string[] | number[]
+type ArraySpread = MergeDeep<string[], number[], {arrayMergeMode: 'spread'}>; // => (string | number)[]
+type ArrayReplace = MergeDeep<string[], number[], {arrayMergeMode: 'replace'}>; // => number[]
+
+// Merge two tuples
+type TupleUnion = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'union'}>; // => [1, 2, 3] | ['a', 'b']
+type TupleSpread = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (1 | 2 | 3 | 'a' | 'b')[]
+type TupleReplace = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
+
+// Merge an array into a tuple
+type TupleArrayUnion = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'union'}>; // => string[] | [1, 2, 3]
+type TupleArraySpread = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'spread'}>; // => (string | 1 | 2 | 3)[]
+type TupleArrayReplace = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'replace'}>; // => string[]
+
+// Merge a tuple into an array
+type ArrayTupleUnion = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'union'}>; // => number[] | ['a', 'b']
+type ArrayTupleSpread = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (number | 'b' | 'a')[]
+type ArrayTupleReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
+```
+
+@example
+```
+import type {MergeDeep, MergeDeepOptions} from 'type-fest';
+
+type Foo = {foo: 'foo'; fooBar: string[]};
+type Bar = {bar: 'bar'; fooBar: number[]};
+
+type FooBar = MergeDeep<Foo, Bar>;
+// { foo: "foo"; bar: "bar"; fooBar: (string | number)[]}
+
+type FooBarArray = MergeDeep<Foo[], Bar[]>;
+// (Foo | Bar)[]
+
+type FooBarArrayDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true}>;
+// FooBar[]
+
+type FooBarTupleDeep = MergeDeep<[Foo, true, 42], [Bar, 'life'], {recurseIntoArrays: true}>;
+// [FooBar, 'life', 42]
+
+type FooBarTupleWithArrayDeep = MergeDeep<[Foo[], true], [Bar[], 'life', 42], {recurseIntoArrays: true}>;
+// [FooBar[], 'life', 42]
+```
+
+@example
+```
+import type {MergeDeep, MergeDeepOptions} from 'type-fest';
+
+function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
+	destination: Destination,
+	source: Source,
+	options?: Options,
+): MergeDeep<Destination, Source, Options> {
+	// Make your implementation ...
+}
+```
 
 @experimental This type is marked as experimental because it depends on {@link ConditionalSimplifyDeep} which itself is experimental.
+
+@see {@link MergeDeepOptions}
 
 @category Array
 @category Object
