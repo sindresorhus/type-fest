@@ -237,7 +237,7 @@ declare const fooBarTupleReplace: MergeDeep<FooTuple, BarTuple, {arrayMergeMode:
 expectType<[FooBarReplace, [FooBarReplace[], 'a', 'b'], 'bar', true]>(fooBarTupleReplace);
 
 declare const fooBarTupleUnion: MergeDeep<FooTuple, BarTuple, {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
-expectType<[FooBarUnion, [FooBarUnion[], 42 | 'a', 'b'], 'foo' | 'bar', true]>(fooBarTupleUnion);
+expectType<[FooBarUnion, [FooBarUnion[], 'a', 'b'], 'bar', true]>(fooBarTupleUnion);
 
 // Should merge array into tuple with object entries
 type FooNumberTuple = [Foo[], number[]];
@@ -273,7 +273,7 @@ declare const arrayIntoTupleWithVariadicReplace: MergeDeep<[number, ...Foo[]], B
 expectType<[Bar, FooBarReplace, ...FooBarReplace[]]>(arrayIntoTupleWithVariadicReplace);
 
 declare const arrayIntoTupleWithVariadicUnion: MergeDeep<[number, ...Foo[]], Bar[], {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
-expectType<[number | Bar, FooBarUnion, ...FooBarUnion[]]>(arrayIntoTupleWithVariadicUnion);
+expectType<[Bar, FooBarUnion, ...FooBarUnion[]]>(arrayIntoTupleWithVariadicUnion);
 
 // Should merge tuple into array with object entries and variadic length
 declare const tupleIntoArrayWithVariadicSpread: MergeDeep<Foo[], [number, ...Bar[]], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
@@ -283,7 +283,7 @@ declare const tupleIntoArrayWithVariadicReplace: MergeDeep<Foo[], [number, ...Ba
 expectType<[number, FooBarReplace, ...FooBarReplace[]]>(tupleIntoArrayWithVariadicReplace);
 
 declare const tupleIntoArrayWithVariadicUnion: MergeDeep<Foo[], [number, ...Bar[]], {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
-expectType<[number | Foo, FooBarUnion, ...FooBarUnion[]]>(tupleIntoArrayWithVariadicUnion);
+expectType<[number, FooBarUnion, ...FooBarUnion[]]>(tupleIntoArrayWithVariadicUnion);
 
 // Should merge tuple into tuple with object entries and variadic length
 declare const tupleIntoTupleWithVariadicSpread: MergeDeep<[number, ...Foo[]], [Bar, ...Bar[]], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
@@ -299,7 +299,7 @@ declare const tupleIntoTupleWithVariadicReplaceReversed: MergeDeep<[Foo, ...Foo[
 expectType<[number, FooBarReplace, ...FooBarReplace[]]>(tupleIntoTupleWithVariadicReplaceReversed);
 
 declare const tupleIntoTupleWithVariadicUnion: MergeDeep<[number, ...Foo[]], [Bar, ...Bar[]], {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
-expectType<[number | Bar, FooBarUnion, ...FooBarUnion[]]>(tupleIntoTupleWithVariadicUnion);
+expectType<[Bar, FooBarUnion, ...FooBarUnion[]]>(tupleIntoTupleWithVariadicUnion);
 
 declare const tupleIntoTupleWithVariadicUnionReversed: MergeDeep<[Foo, ...Foo[]], [number, ...Bar[]], {arrayMergeMode: 'union'; recurseIntoArrays: true}>;
-expectType<[number | Foo, FooBarUnion, ...FooBarUnion[]]>(tupleIntoTupleWithVariadicUnionReversed);
+expectType<[number, FooBarUnion, ...FooBarUnion[]]>(tupleIntoTupleWithVariadicUnionReversed);

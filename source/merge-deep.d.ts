@@ -77,11 +77,7 @@ type MergeDeepArrayOrTupleElements<
 	? Destination
 	: Destination extends []
 		? Source
-		: IsMergeable<Destination, Source> extends true
-			? MergeDeepOrReturn<never, Destination, Source, Options>
-			: Options['arrayMergeMode'] extends 'union'
-				? Destination | Source
-				: Source; // 'replace'
+		: MergeDeepOrReturn<Source, Destination, Source, Options>;
 
 /**
 Returns the first tuple element type or the array type.
