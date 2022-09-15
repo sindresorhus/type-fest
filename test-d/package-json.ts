@@ -26,7 +26,7 @@ expectType<{type: string; url: string; directory?: string} | string | undefined>
 	packageJson.repository,
 );
 expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
-expectType<Record<string, unknown> | undefined>(packageJson.config);
+expectType<JsonObject | undefined>(packageJson.config);
 expectType<PackageJson.Dependency | undefined>(packageJson.dependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.devDependencies);
 expectType<PackageJson.Dependency | undefined>(
@@ -95,3 +95,16 @@ expectAssignable<JsonObject>({});
 expectAssignable<JsonObject>({bugs: 42});
 expectAssignable<JsonObject>({bugs: [42]});
 expectAssignable<JsonObject>({bugs: {life: 42}});
+
+// `PackageJson` should be a valid `JsonObject`.
+// See https://github.com/sindresorhus/type-fest/issues/79
+type UnknownRecord = Record<string, unknown>;
+
+const unknownRecord: UnknownRecord = {};
+const jsonObject: JsonObject = {};
+
+expectAssignable<UnknownRecord>(packageJson);
+expectNotAssignable<PackageJson>(unknownRecord);
+
+expectAssignable<PackageJson>(jsonObject);
+expectAssignable<JsonObject>(packageJson);

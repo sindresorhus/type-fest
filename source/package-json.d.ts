@@ -1,4 +1,5 @@
 import type {LiteralUnion} from './literal-union';
+import type {JsonObject, JsonValue} from './basic';
 
 declare namespace PackageJson {
 	/**
@@ -27,7 +28,7 @@ declare namespace PackageJson {
 		};
 
 	export type DirectoryLocations = {
-		[directoryType: string]: unknown;
+		[directoryType: string]: JsonValue | undefined;
 
 		/**
 		Location for executable scripts. Sugar to generate entries in the `bin` property by walking the folder.
@@ -483,7 +484,7 @@ declare namespace PackageJson {
 		/**
 		Is used to set configuration parameters used in package scripts that persist across upgrades.
 		*/
-		config?: Record<string, unknown>;
+		config?: JsonObject;
 
 		/**
 		The dependencies of the package.
@@ -648,7 +649,7 @@ declare namespace PackageJson {
 		/**
 		Additional, less common properties from the [npm docs on `publishConfig`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#publishconfig).
 		*/
-		[additionalProperties: string]: unknown;
+		[additionalProperties: string]: JsonValue | undefined;
 
 		/**
 		When publishing scoped packages, the access level defaults to restricted. If you want your scoped package to be publicly viewable (and installable) set `--access=public`. The only valid values for access are public and restricted. Unscoped packages always have an access level of public.
@@ -677,6 +678,7 @@ Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-j
 @category File
 */
 export type PackageJson =
+JsonObject &
 PackageJson.NodeJsStandard &
 PackageJson.PackageJsonStandard &
 PackageJson.NonStandardEntryPoints &
