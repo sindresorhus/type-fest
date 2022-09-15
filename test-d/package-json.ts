@@ -1,5 +1,5 @@
-import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
-import type {PackageJson, LiteralUnion} from '../index';
+import {expectType, expectAssignable, expectNotAssignable, expectError} from 'tsd';
+import type {PackageJson, LiteralUnion, JsonObject} from '../index';
 
 const packageJson: PackageJson = {};
 
@@ -81,4 +81,17 @@ expectAssignable<typeof packageJson['typesVersions']>({
 	'<4': undefined,
 });
 
-expectNotAssignable<Record<string, unknown>>(packageJson);
+// Must reject an object that contains properties with `undefined` values.
+// See https://github.com/sindresorhus/type-fest/issues/272
+declare function setConfig(config: JsonObject): void;
+
+expectError(setConfig({bugs: undefined}));
+expectError(setConfig({bugs: {life: undefined}}));
+
+expectNotAssignable<JsonObject>({bugs: undefined});
+expectNotAssignable<JsonObject>({bugs: {life: undefined}});
+
+expectAssignable<JsonObject>({});
+expectAssignable<JsonObject>({bugs: 42});
+expectAssignable<JsonObject>({bugs: [42]});
+expectAssignable<JsonObject>({bugs: {life: 42}});
