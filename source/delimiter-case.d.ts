@@ -88,7 +88,7 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 @category Change case
 @category Template literal
 */
-export type DelimiterCase<Value, Delimiter extends string> = Value extends string
+export type DelimiterCase<Value, Delimiter extends string> = string extends Value ? Value : Value extends string
 	? StringArrayToDelimiterCase<
 	SplitIncludingDelimiters<Value, WordSeparators | UpperCaseCharacters>,
 	true,
