@@ -48,9 +48,8 @@ expectType<'##very#prefixed'>(delimiterFromDoublePrefixedKebab);
 const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo####bar';
 expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
 
-// TODO: Fails after TS 4.8.
-// const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
-// expectType<string>(delimiterFromString);
+const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
+expectType<string>(delimiterFromString);
 
 const delimiterFromScreamingSnake: DelimiterCase<'FOO_BAR', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromScreamingSnake);
