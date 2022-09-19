@@ -308,7 +308,7 @@ export type MergeDeepOptions = {
 
 	- Elements that only exist in one array are copied into the new array.
 	- Elements that exist in both arrays are merged if possible or replaced by the one of the source if not.
-	- By default, arrays and tuples are spread. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
+	- By default, top-level arrays and tuples are spread. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
 
 	@default false
 	*/
@@ -316,19 +316,44 @@ export type MergeDeepOptions = {
 };
 
 /**
-Default options that will be merged with user provided options.
+Merge record default options with user provided options.
 */
-type MergeDeepDefaultOptions = {
+type MergeDeepRecordOptions<Options extends MergeDeepOptions> = Merge<{
+	arrayMergeMode: 'replace';
+	recurseIntoArrays: false;
+}, Options>;
+
+/**
+Merge array default options with user provided options.
+*/
+type MergeDeepArrayOrTupleOptions<Options extends MergeDeepOptions> = Merge<{
 	arrayMergeMode: 'spread';
 	recurseIntoArrays: false;
-};
+}, Options>;
+
+/**
+This utility selects the correct entry point with the corresponding default options. This avoids re-merging the options at each iteration.
+*/
+type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = SimplifyDeep<
+[undefined] extends [Destination | Source]
+	? never
+	: Destination extends UnknownRecord
+		? Source extends UnknownRecord
+			? MergeDeepRecord<Destination, Source, MergeDeepRecordOptions<Options>>
+			: never
+		: Destination extends UnknownArrayOrTuple
+			? Source extends UnknownArrayOrTuple
+				? MergeDeepArrayOrTuple<Destination, Source, MergeDeepArrayOrTupleOptions<Options>>
+				: never
+			: never
+>;
 
 /**
 Merge two objects or two arrays/tuples recursively into a new type.
 
 - Properties that only exist in one object are copied into the new object.
 - Properties that exist in both objects are merged if possible or replaced by the one of the source if not.
-- By default, arrays and tuples are spread. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
+- By default, top-level arrays and tuples are spread. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
 - By default, individual array elements are not affected. See {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option to change this behaviour.
 
 @example
@@ -429,9 +454,8 @@ function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 @category Object
 @category Utilities
 */
-export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepOrReturn<
-never,
+export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepWithDefaultOptions<
 SimplifyDeep<Destination>,
 SimplifyDeep<Source>,
-Merge<MergeDeepDefaultOptions, Options>
+Options
 >;
