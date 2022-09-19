@@ -197,7 +197,7 @@ type MergeDeepArrayAndTupleRecursive<
 /**
 Merge mode for array/tuple elements.
 */
-type ArrayMergeMode = 'spread' | 'union' | 'replace';
+type ArrayMergeMode = 'spread' | 'replace';
 
 /**
 Merge two arrays/tuples according to the chosen {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option.
@@ -208,9 +208,7 @@ type DoMergeArrayOrTuple<
 	Options extends MergeDeepOptions,
 > = Options['arrayMergeMode'] extends 'spread'
 	? Array<Exclude<Destination, undefined>[number] | Exclude<Source, undefined>[number]>
-	: Options['arrayMergeMode'] extends 'union'
-		? Destination | Source
-		: Source; // 'replace'
+	: Source; // 'replace'
 
 /**
 Merge two arrays recursively.
@@ -296,7 +294,6 @@ export type MergeDeepOptions = {
 	When we walk through the properties of the objects and the same key is found and both are array or tuple, a merge mode must be chosen:
 	- `spread`: Spreads the destination and the source values. This is the default mode.
 	- `replace`: Replaces the destination value by the source value.
-	- `union`: Unions the destination and source values.
 
 	See {@link MergeDeep} for usages and examples.
 
@@ -358,14 +355,6 @@ type FooBar = MergeDeep<Foo, Bar>;
 // 	a: {b: number; c: boolean; d: (number | boolean)[]};
 // }
 
-type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'union'}>;
-// {
-// 	life: number;
-// 	name: string;
-// 	items: string[] | number[];
-// 	a: {b: number; c: boolean; d: number[] | boolean[]};
-// }
-
 type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
 // {
 // 	life: number;
@@ -380,22 +369,18 @@ type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
 import type {MergeDeep} from 'type-fest';
 
 // Merge two arrays
-type ArrayUnion = MergeDeep<string[], number[], {arrayMergeMode: 'union'}>; // => string[] | number[]
 type ArraySpread = MergeDeep<string[], number[], {arrayMergeMode: 'spread'}>; // => (string | number)[]
 type ArrayReplace = MergeDeep<string[], number[], {arrayMergeMode: 'replace'}>; // => number[]
 
 // Merge two tuples
-type TupleUnion = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'union'}>; // => [1, 2, 3] | ['a', 'b']
 type TupleSpread = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (1 | 2 | 3 | 'a' | 'b')[]
 type TupleReplace = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
 
 // Merge an array into a tuple
-type TupleArrayUnion = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'union'}>; // => string[] | [1, 2, 3]
 type TupleArraySpread = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'spread'}>; // => (string | 1 | 2 | 3)[]
 type TupleArrayReplace = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'replace'}>; // => string[]
 
 // Merge a tuple into an array
-type ArrayTupleUnion = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'union'}>; // => number[] | ['a', 'b']
 type ArrayTupleSpread = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (number | 'b' | 'a')[]
 type ArrayTupleReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
 ```
