@@ -10,6 +10,7 @@
 		"email": "sindresorhus@gmail.com",
 		"url": "https://sindresorhus.com"
 	},
+	"types": "./index.d.ts",
 	"engines": {
 		"node": ">=14.16"
 	},
@@ -34,12 +35,11 @@
 	],
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "~0.7.0",
-		"expect-type": "^0.13.0",
-		"tsd": "^0.23.0",
-		"typescript": "^4.8.2",
+		"expect-type": "^0.14.2",
+		"tsd": "^0.24.1",
+		"typescript": "^4.8.3",
 		"xo": "^0.52.2"
 	},
-	"types": "./index.d.ts",
 	"xo": {
 		"rules": {
 			"@typescript-eslint/ban-ts-comment": "off",
