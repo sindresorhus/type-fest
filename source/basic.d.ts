@@ -19,7 +19,7 @@ This type can be useful to enforce some input to be JSON-compatible or as a supe
 
 @category JSON
 */
-export type JsonObject = {[Key in string]?: JsonValue};
+export type JsonObject = {[Key in string]: JsonValue} & {[Key in string]?: JsonValue | undefined};
 
 /**
 Matches a JSON array.
