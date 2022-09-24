@@ -10,7 +10,6 @@ import type {RequireAtLeastOne} from 'type-fest';
 type Responder = {
 	text?: () => string;
 	json?: () => string;
-
 	secure?: boolean;
 };
 
