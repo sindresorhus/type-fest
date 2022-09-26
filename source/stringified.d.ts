@@ -7,7 +7,7 @@ Use-case: Changing interface values to strings in order to use them in a form mo
 ```
 import type {Stringified} from 'type-fest';
 
-type Car {
+type Car = {
 	model: string;
 	speed: number;
 }
