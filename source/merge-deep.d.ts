@@ -32,7 +32,7 @@ type MergeDeepRecordProperty<
 Walk through the union of the keys of the two objects and test in which object the properties are defined.
 - If the source does not contain the key, the value of the destination is returned.
 - If the source contains the key and the destination does not contain the key, the value of the source is returned.
-- If both contain the key, try to merge according to the chosen {@link MergeDeepInternalOptions options} or return the source if unable to merge.
+- If both contain the key, try to merge according to the chosen {@link MergeDeepOptions options} or return the source if unable to merge.
 */
 type DoMergeDeepRecord<
 	Destination extends UnknownRecord,
@@ -207,7 +207,7 @@ type ShouldSpread<Options extends MergeDeepInternalOptions> = Options['spreadTop
 	: true;
 
 /**
-Merge two arrays/tuples according to the chosen {@link MergeDeepInternalOptions.arrayMergeMode arrayMergeMode} option.
+Merge two arrays/tuples according to the chosen {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option.
 */
 type DoMergeArrayOrTuple<
 	Destination extends UnknownArrayOrTuple,
@@ -259,7 +259,7 @@ type MergeDeepArrayOrTupleRecursive<
 			: MergeDeepArrayRecursive<Destination, Source, Options>;
 
 /**
-Merge two array/tuple according to {@link MergeDeepInternalOptions.recurseIntoArrays recurseIntoArrays} option.
+Merge two array/tuple according to {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option.
 */
 type MergeDeepArrayOrTuple<
 	Destination extends UnknownArrayOrTuple,
@@ -315,7 +315,7 @@ export type MergeDeepOptions = {
 
 	- Elements that only exist in one array are copied into the new array.
 	- Elements that exist in both arrays are merged if possible or replaced by the one of the source if not.
-	- By default, top-level arrays and tuples are spread. See {@link MergeDeepInternalOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
+	- By default, top-level arrays and tuples are spread. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
 
 	@default false
 	*/
@@ -359,8 +359,8 @@ Merge two objects or two arrays/tuples recursively into a new type.
 - Properties that only exist in one object are copied into the new object.
 - Properties that exist in both objects are merged if possible or replaced by the one of the source if not.
 - Top-level arrays and tuples are always spread.
-- By default, inner arrays and tuples are replaced. See {@link MergeDeepInternalOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
-- By default, individual array/tuple elements are not affected. See {@link MergeDeepInternalOptions.recurseIntoArrays recurseIntoArrays} option to change this behaviour.
+- By default, inner arrays and tuples are replaced. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
+- By default, individual array/tuple elements are not affected. See {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option to change this behaviour.
 
 @example
 ```
@@ -456,13 +456,13 @@ function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 
 @experimental This type is marked as experimental because it depends on {@link ConditionalSimplifyDeep} which itself is experimental.
 
-@see {@link MergeDeepInternalOptions}
+@see {@link MergeDeepOptions}
 
 @category Array
 @category Object
 @category Utilities
 */
-export type MergeDeep<Destination, Source, Options extends MergeDeepInternalOptions = {}> = MergeDeepWithDefaultOptions<
+export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepWithDefaultOptions<
 SimplifyDeep<Destination>,
 SimplifyDeep<Source>,
 Options
