@@ -200,13 +200,20 @@ Merge mode for array/tuple elements.
 type ArrayMergeMode = 'spread' | 'replace';
 
 /**
+Test if it sould spread top-level arrays.
+*/
+type ShouldSpread<Options extends MergeDeepOptions> = Options['spreadTopLevelArrays'] extends false
+	? Options['arrayMergeMode'] extends 'spread' ? true : false
+	: true;
+
+/**
 Merge two arrays/tuples according to the chosen {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option.
 */
 type DoMergeArrayOrTuple<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepOptions,
-> = Options['arrayMergeMode'] extends 'spread'
+> = ShouldSpread<Options> extends true
 	? Array<Exclude<Destination, undefined>[number] | Exclude<Source, undefined>[number]>
 	: Source; // 'replace'
 
@@ -278,7 +285,7 @@ type MergeDeepOrReturn<
 			: DefaultType
 		: Destination extends UnknownArrayOrTuple
 			? Source extends UnknownArrayOrTuple
-				? MergeDeepArrayOrTuple<Destination, Source, Options>
+				? MergeDeepArrayOrTuple<Destination, Source, Merge<Options, {spreadTopLevelArrays: false}>>
 				: DefaultType
 			: DefaultType>;
 
@@ -313,6 +320,13 @@ export type MergeDeepOptions = {
 	@default false
 	*/
 	recurseIntoArrays?: boolean;
+
+	/**
+	Should spread top-level arrays.
+
+	@default true
+	*/
+	spreadTopLevelArrays?: boolean;
 };
 
 /**
@@ -321,6 +335,7 @@ Merge record default options with user provided options.
 type MergeDeepRecordOptions<Options extends MergeDeepOptions> = Merge<{
 	arrayMergeMode: 'replace';
 	recurseIntoArrays: false;
+	spreadTopLevelArrays: true;
 }, Options>;
 
 /**
@@ -329,6 +344,7 @@ Merge array default options with user provided options.
 type MergeDeepArrayOrTupleOptions<Options extends MergeDeepOptions> = Merge<{
 	arrayMergeMode: 'spread';
 	recurseIntoArrays: false;
+	spreadTopLevelArrays: true;
 }, Options>;
 
 /**
