@@ -330,19 +330,10 @@ export type MergeDeepOptions = {
 };
 
 /**
-Merge record default options with user provided options.
+Merge default options with user provided options.
 */
-type MergeDeepRecordOptions<Options extends MergeDeepOptions> = Merge<{
+type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 	arrayMergeMode: 'replace';
-	recurseIntoArrays: false;
-	spreadTopLevelArrays: true;
-}, Options>;
-
-/**
-Merge array default options with user provided options.
-*/
-type MergeDeepArrayOrTupleOptions<Options extends MergeDeepOptions> = Merge<{
-	arrayMergeMode: 'spread';
 	recurseIntoArrays: false;
 	spreadTopLevelArrays: true;
 }, Options>;
@@ -355,11 +346,11 @@ type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepO
 	? never
 	: Destination extends UnknownRecord
 		? Source extends UnknownRecord
-			? MergeDeepRecord<Destination, Source, MergeDeepRecordOptions<Options>>
+			? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
 			: never
 		: Destination extends UnknownArrayOrTuple
 			? Source extends UnknownArrayOrTuple
-				? MergeDeepArrayOrTuple<Destination, Source, MergeDeepArrayOrTupleOptions<Options>>
+				? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
 				: never
 			: never
 >;
