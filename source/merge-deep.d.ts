@@ -360,8 +360,9 @@ Merge two objects or two arrays/tuples recursively into a new type.
 
 - Properties that only exist in one object are copied into the new object.
 - Properties that exist in both objects are merged if possible or replaced by the one of the source if not.
-- By default, top-level arrays and tuples are spread. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
-- By default, individual array elements are not affected. See {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option to change this behaviour.
+- By default, top-level arrays and tuples are spread. See {@link MergeDeepOptions.spreadTopLevelArrays spreadTopLevelArrays} option to change this behaviour.
+- By default, inner arrays and tuples are replaced. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
+- By default, individual array/tuple elements are not affected. See {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option to change this behaviour.
 
 @example
 ```
@@ -383,16 +384,16 @@ type FooBar = MergeDeep<Foo, Bar>;
 // {
 // 	life: number;
 // 	name: string;
-// 	items: (string | number)[];
-// 	a: {b: number; c: boolean; d: (number | boolean)[]};
+// 	items: number[];
+// 	a: {b: number; c: boolean; d: boolean[]};
 // }
 
-type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
+type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
 // {
 // 	life: number;
 // 	name: string;
-// 	items: number[];
-// 	a: {b: number; c: boolean; d: boolean[]};
+// 	items: (string | number)[];
+// 	a: {b: number; c: boolean; d: (number | boolean)[]};
 // }
 ```
 
@@ -401,20 +402,21 @@ type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
 import type {MergeDeep} from 'type-fest';
 
 // Merge two arrays
-type ArraySpread = MergeDeep<string[], number[], {arrayMergeMode: 'spread'}>; // => (string | number)[]
-type ArrayReplace = MergeDeep<string[], number[], {arrayMergeMode: 'replace'}>; // => number[]
+type ArrayMerge = MergeDeep<string[], number[]>; // => (string | number)[]
 
 // Merge two tuples
-type TupleSpread = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (1 | 2 | 3 | 'a' | 'b')[]
-type TupleReplace = MergeDeep<[1, 2, 3], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
+type TupleMerge = MergeDeep<[1, 2, 3], ['a', 'b']>; // => (1 | 2 | 3 | 'a' | 'b')[]
 
 // Merge an array into a tuple
-type TupleArraySpread = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'spread'}>; // => (string | 1 | 2 | 3)[]
-type TupleArrayReplace = MergeDeep<[1, 2, 3], string[], {arrayMergeMode: 'replace'}>; // => string[]
+type TupleArrayMerge = MergeDeep<[1, 2, 3], string[]>; // => (string | 1 | 2 | 3)[]
 
 // Merge a tuple into an array
-type ArrayTupleSpread = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'spread'}>; // => (number | 'b' | 'a')[]
-type ArrayTupleReplace = MergeDeep<number[], ['a', 'b'], {arrayMergeMode: 'replace'}>; // => ['a', 'b']
+type ArrayTupleMerge = MergeDeep<number[], ['a', 'b']>; // => (number | 'b' | 'a')[]
+
+// Note that `arrayMergeMode` does nothing on top-level arrays/tuples since `spreadTopLevelArrays` is not set to `false`.
+type ArraySpread = MergeDeep<string[], number[], {arrayMergeMode: 'spread'}>; // => (string | number)[]
+type ArraySpread = MergeDeep<string[], number[], {arrayMergeMode: 'replace'}>; // => (string | number)[]
+type ArrayReplace = MergeDeep<string[], number[], {arrayMergeMode: 'replace'; spreadTopLevelArrays: false}>; // => number[]
 ```
 
 @example
@@ -425,6 +427,9 @@ type Foo = {foo: 'foo'; fooBar: string[]};
 type Bar = {bar: 'bar'; fooBar: number[]};
 
 type FooBar = MergeDeep<Foo, Bar>;
+// { foo: "foo"; bar: "bar"; fooBar: number[]}
+
+type FooBarSpread = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
 // { foo: "foo"; bar: "bar"; fooBar: (string | number)[]}
 
 type FooBarArray = MergeDeep<Foo[], Bar[]>;
@@ -432,6 +437,9 @@ type FooBarArray = MergeDeep<Foo[], Bar[]>;
 
 type FooBarArrayDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true}>;
 // FooBar[]
+
+type FooBarArraySpreadDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+// FooBarSpread[]
 
 type FooBarTupleDeep = MergeDeep<[Foo, true, 42], [Bar, 'life'], {recurseIntoArrays: true}>;
 // [FooBar, 'life', 42]
