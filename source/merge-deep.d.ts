@@ -304,6 +304,8 @@ export type MergeDeepOptions = {
 
 	See {@link MergeDeep} for usages and examples.
 
+	Note: Top-level arrays and tuples are always spread.
+
 	@default 'spread'
 	*/
 	arrayMergeMode?: ArrayMergeMode;
