@@ -67,6 +67,8 @@ expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.readonlyMap);
 expectType<Readonly<ReadonlySet<string>>>(readonlyData.readonlySet);
 expectType<readonly string[]>(readonlyData.readonlyArray);
 expectType<readonly ['foo']>(readonlyData.readonlyTuple);
+expectError(readonlyData.readonlyArray.every = () => true);
+expectError(readonlyData.readonlyTuple.every = () => true);
 
 expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
 expectType<string>(readonlyData.namespace(1));
