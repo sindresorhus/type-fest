@@ -61,18 +61,18 @@ expectType<Date>(readonlyData.date);
 expectType<RegExp>(readonlyData.regExp);
 expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.map);
 expectType<Readonly<ReadonlySet<string>>>(readonlyData.set);
-expectType<readonly string[]>(readonlyData.array);
-expectType<readonly ['foo']>(readonlyData.tuple);
+expectType<ReadonlyObjectDeep<string[]>>(readonlyData.array);
+expectType<ReadonlyObjectDeep<['foo']>>(readonlyData.tuple);
 expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.readonlyMap);
 expectType<Readonly<ReadonlySet<string>>>(readonlyData.readonlySet);
-expectType<readonly string[]>(readonlyData.readonlyArray);
-expectType<readonly ['foo']>(readonlyData.readonlyTuple);
+expectType<ReadonlyObjectDeep<readonly string[]>>(readonlyData.readonlyArray);
+expectType<ReadonlyObjectDeep<readonly ['foo']>>(readonlyData.readonlyTuple);
 expectError(readonlyData.readonlyArray.every = () => true);
 expectError(readonlyData.readonlyTuple.every = () => true);
 
 expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
 expectType<string>(readonlyData.namespace(1));
-expectType<readonly boolean[]>(readonlyData.namespace.baz);
+expectType<ReadonlyObjectDeep<boolean[]>>(readonlyData.namespace.baz);
 
 // These currently aren't readonly due to TypeScript limitations.
 // @see https://github.com/microsoft/TypeScript/issues/29732

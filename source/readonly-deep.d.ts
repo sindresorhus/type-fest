@@ -63,9 +63,11 @@ type ReadonlySetDeep<ItemType> = {} & Readonly<ReadonlySet<ReadonlyDeep<ItemType
 /**
 Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper for `ReadonlyDeep`.
 */
-type ReadonlyObjectDeep<ObjectType extends object> = {
-	readonly [KeyType in keyof ObjectType]: ReadonlyDeep<ObjectType[KeyType]>
-};
+type ReadonlyObjectDeep<ObjectType extends object> =
+	ObjectType extends readonly unknown[]
+		// Only apply the array fix to arrays to prevent potential issues.
+		? {readonly [KeyType in keyof (ObjectType & {})]: ReadonlyDeep<ObjectType[KeyType]>;}
+		: {readonly [KeyType in keyof ObjectType]: ReadonlyDeep<ObjectType[KeyType]>;};
 
 /**
 Test if the given function has multiple call signatures.
