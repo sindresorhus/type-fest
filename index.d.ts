@@ -97,6 +97,7 @@ export type {Trim} from './source/trim';
 export type {Replace} from './source/replace';
 export type {Includes} from './source/includes';
 export type {Get} from './source/get';
+export type {SetProp} from './source/set-prop';
 export type {LastArrayElement} from './source/last-array-element';
 
 // Miscellaneous

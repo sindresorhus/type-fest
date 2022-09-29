@@ -1,5 +1,5 @@
 import {expectAssignable} from 'tsd';
-import {SetProp} from '../index';
+import type {SetProp} from '../index';
 
 type Source = {name: 'nyan'; level1: {plop: 42}};
 
