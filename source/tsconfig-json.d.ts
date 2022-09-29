@@ -17,6 +17,8 @@ declare namespace TsConfigJson {
 			| 'ES2020'
 			| 'ES2022'
 			| 'ESNext'
+			| 'Node16'
+			| 'NodeNext'
 			| 'None'
 			// Lowercase alternatives
 			| 'commonjs'
@@ -28,6 +30,8 @@ declare namespace TsConfigJson {
 			| 'es2020'
 			| 'es2022'
 			| 'esnext'
+			| 'node16'
+			| 'nodenext'
 			| 'none';
 
 		export type NewLine =
@@ -181,13 +185,13 @@ declare namespace TsConfigJson {
 			| 'webworker.importscripts'
 			| 'webworker.iterable';
 
-		export interface Plugin {
+		export type Plugin = {
 			[key: string]: unknown;
 			/**
 			Plugin name.
 			*/
 			name?: string;
-		}
+		};
 
 		export type ImportsNotUsedAsValues =
 			| 'remove'
@@ -219,7 +223,7 @@ declare namespace TsConfigJson {
 
 	}
 
-	export interface CompilerOptions {
+	export type CompilerOptions = {
 		/**
 		The character set of the input files.
 
@@ -993,7 +997,7 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		explainFiles?: boolean;
-	}
+	};
 
 	namespace WatchOptions {
 		export type WatchFileKind =
@@ -1017,7 +1021,7 @@ declare namespace TsConfigJson {
 			| 'FixedChunkSize';
 	}
 
-	export interface WatchOptions {
+	export type WatchOptions = {
 
 		/**
 		Specify the strategy for watching individual files.
@@ -1058,14 +1062,14 @@ declare namespace TsConfigJson {
 		Specifies a list of files to exclude from watch
 		*/
 		excludeFiles?: string[];
-	}
+	};
 
 	/**
 	Auto type (.d.ts) acquisition options for this project.
 
 	Requires TypeScript version 2.1 or later.
 	*/
-	export interface TypeAcquisition {
+	export type TypeAcquisition = {
 		/**
 		Enable auto type acquisition.
 		*/
@@ -1080,9 +1084,9 @@ declare namespace TsConfigJson {
 		Specifies a list of type declarations to be excluded from auto type acquisition. For example, `['jquery', 'lodash']`.
 		*/
 		exclude?: string[];
-	}
+	};
 
-	export interface References {
+	export type References = {
 		/**
 		A normalized path on disk.
 		*/
@@ -1104,7 +1108,7 @@ declare namespace TsConfigJson {
 		True if it is intended that this reference form a circularity.
 		*/
 		circular?: boolean;
-	}
+	};
 }
 
 /**
@@ -1112,7 +1116,7 @@ Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs
 
 @category File
 */
-export interface TsConfigJson {
+export type TsConfigJson = {
 	/**
 	Instructs the TypeScript compiler how to compile `.ts` files.
 	*/
@@ -1169,4 +1173,4 @@ export interface TsConfigJson {
 	Requires TypeScript version 3.0 or later.
 	*/
 	references?: TsConfigJson.References[];
-}
+};

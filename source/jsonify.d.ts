@@ -1,14 +1,31 @@
 import type {JsonPrimitive, JsonValue} from './basic';
+import type {Merge} from './merge';
+import type {NegativeInfinity, PositiveInfinity} from './numeric';
+import type {TypedArray} from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
-type NotJsonable = ((...args: any[]) => any) | undefined;
+type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
 
-// Note: Handles special case where Arrays with `undefined` are transformed to `'null'` by `JSON.stringify()`
-// Only use with array members
-type JsonifyArrayMember<T> =
-	T extends undefined ?
-		null | Exclude<T, undefined> :
-		Jsonify<T>;
+// Returns never if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
+type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
+	? never
+	: Type[Key] extends symbol
+		? never
+		: [(...args: any[]) => any] extends [Type[Key]]
+			? never
+			: Key;
+
+// Returns never if the key or property is not jsonable or optional otherwise return the key.
+type RequiredKeyFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
+	? never
+	: BaseKeyFilter<Type, Key>;
+
+// Returns never if the key or property is not jsonable or required otherwise return the key.
+type OptionalKeyFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
+	? Type[Key] extends undefined
+		? never
+		: BaseKeyFilter<Type, Key>
+	: never;
 
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
@@ -67,20 +84,29 @@ const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 
 @category JSON
 */
-type Jsonify<T> =
+export type Jsonify<T> =
 	// Check if there are any non-JSONable types represented in the union.
 	// Note: The use of tuples in this first condition side-steps distributive conditional types
 	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
-	[Extract<T, NotJsonable>] extends [never]
-		? T extends JsonPrimitive
-			? T // Primitive is acceptable
-			: T extends Array<infer U>
-				? Array<JsonifyArrayMember<U>> // It's an array: recursive call for its children
+	[Extract<T, NotJsonable | bigint>] extends [never]
+		? T extends PositiveInfinity | NegativeInfinity	? null
+			: T extends JsonPrimitive ? T // Primitive is acceptable
 				: T extends object
-					? T extends {toJSON(): infer J}
-						? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
-							? J // Then T is Jsonable and its Jsonable value is J
-							: never // Not Jsonable because its toJSON() method does not return JsonValue
-						: {[P in keyof T]: Jsonify<Required<T>[P]>} // It's an object: recursive call for its children
+				// Any object with toJSON is special case
+					? T extends {toJSON(): infer J} ? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
+						? J // Then T is Jsonable and its Jsonable value is J
+						: never // Not Jsonable because its toJSON() method does not return JsonValue
+					// Instanced primitives are objects
+						: T extends Number ? number
+							: T extends String ? string
+								: T extends Boolean ? boolean
+									: T extends Map<any, any> | Set<any> ? {}
+										: T extends TypedArray ? Record<string, number>
+											: T extends any[]
+												? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
+												: Merge<
+												{[Key in keyof T as RequiredKeyFilter<T, Key>]: Jsonify<T[Key]>},
+												{[Key in keyof T as OptionalKeyFilter<T, Key>]?: Jsonify<Exclude<T[Key], undefined>>}
+												> // Recursive call for its children
 					: never // Otherwise any other non-object is removed
 		: never; // Otherwise non-JSONable type union was found not empty

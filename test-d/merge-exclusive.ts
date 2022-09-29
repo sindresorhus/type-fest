@@ -1,17 +1,17 @@
 import {expectError, expectAssignable} from 'tsd';
 import type {MergeExclusive} from '../index';
 
-interface BaseOptions {
+type BaseOptions = {
 	option?: string;
-}
+};
 
-interface ExclusiveVariation1 extends BaseOptions {
+type ExclusiveVariation1 = {
 	exclusive1: boolean;
-}
+} & BaseOptions;
 
-interface ExclusiveVariation2 extends BaseOptions {
+type ExclusiveVariation2 = {
 	exclusive2: number;
-}
+} & BaseOptions;
 
 type Options = MergeExclusive<ExclusiveVariation1, ExclusiveVariation2>;
 

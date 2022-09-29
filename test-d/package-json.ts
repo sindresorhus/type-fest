@@ -1,5 +1,5 @@
-import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
-import type {PackageJson, LiteralUnion} from '../index';
+import {expectType, expectAssignable, expectNotAssignable, expectError} from 'tsd';
+import type {PackageJson, LiteralUnion, JsonObject} from '../index';
 
 const packageJson: PackageJson = {};
 
@@ -16,6 +16,7 @@ expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
 expectType<PackageJson.Person[] | undefined>(packageJson.maintainers);
 expectType<string[] | undefined>(packageJson.files);
 expectType<string | undefined>(packageJson.main);
+expectType<string | undefined>(packageJson.packageManager);
 expectType<string | Partial<Record<string, string>> | undefined>(packageJson.bin);
 expectType<string | undefined>(packageJson.types);
 expectType<string | undefined>(packageJson.typings);
@@ -25,7 +26,7 @@ expectType<{type: string; url: string; directory?: string} | string | undefined>
 	packageJson.repository,
 );
 expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
-expectType<Record<string, unknown> | undefined>(packageJson.config);
+expectType<JsonObject | undefined>(packageJson.config);
 expectType<PackageJson.Dependency | undefined>(packageJson.dependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.devDependencies);
 expectType<PackageJson.Dependency | undefined>(
@@ -39,31 +40,31 @@ expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.works
 expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
-	| undefined
-	| Array<LiteralUnion<
-			'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
-			string
-	>>
+| undefined
+| Array<LiteralUnion<
+'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
+string
+>>
 >(packageJson.os);
 expectAssignable<
-	| undefined
-	| Array<LiteralUnion<
-			'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
-			string
-	>>
+| undefined
+| Array<LiteralUnion<
+'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
+string
+>>
 >(packageJson.cpu);
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
 expectType<PackageJson.PublishConfig | undefined>(packageJson.publishConfig);
 expectType<string | undefined>(packageJson.module);
 expectType<
-	| string
-	| {
-		[moduleName: string]: string | undefined;
-		main?: string;
-		browser?: string;
-	}
-	| undefined
+| string
+| {
+	[moduleName: string]: string | undefined;
+	main?: string;
+	browser?: string;
+}
+| undefined
 >(packageJson.esnext);
 expectType<PackageJson | undefined>(packageJson.jspm);
 
@@ -80,4 +81,30 @@ expectAssignable<typeof packageJson['typesVersions']>({
 	'<4': undefined,
 });
 
-expectNotAssignable<Record<string, unknown>>(packageJson);
+// Must reject an object that contains properties with `undefined` values.
+// See https://github.com/sindresorhus/type-fest/issues/272
+declare function setConfig(config: JsonObject): void;
+
+expectError(setConfig({bugs: undefined}));
+expectError(setConfig({bugs: {life: undefined}}));
+
+expectNotAssignable<JsonObject>({bugs: undefined});
+expectNotAssignable<JsonObject>({bugs: {life: undefined}});
+
+expectAssignable<JsonObject>({});
+expectAssignable<JsonObject>({bugs: 42});
+expectAssignable<JsonObject>({bugs: [42]});
+expectAssignable<JsonObject>({bugs: {life: 42}});
+
+// `PackageJson` should be a valid `JsonObject`.
+// See https://github.com/sindresorhus/type-fest/issues/79
+type UnknownRecord = Record<string, unknown>;
+
+const unknownRecord: UnknownRecord = {};
+const jsonObject: JsonObject = {};
+
+expectAssignable<UnknownRecord>(packageJson);
+expectNotAssignable<PackageJson>(unknownRecord);
+
+expectAssignable<PackageJson>(jsonObject);
+expectAssignable<JsonObject>(packageJson);

@@ -47,8 +47,8 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 export type PascalCasedPropertiesDeep<Value> = Value extends Function | Date | RegExp
 	? Value
 	: Value extends Array<infer U>
-	? Array<PascalCasedPropertiesDeep<U>>
-	: Value extends Set<infer U>
-	? Set<PascalCasedPropertiesDeep<U>> : {
-			[K in keyof Value as PascalCase<K>]: PascalCasedPropertiesDeep<Value[K]>;
-	};
+		? Array<PascalCasedPropertiesDeep<U>>
+		: Value extends Set<infer U>
+			? Set<PascalCasedPropertiesDeep<U>> : {
+				[K in keyof Value as PascalCase<K>]: PascalCasedPropertiesDeep<Value[K]>;
+			};

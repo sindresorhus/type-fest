@@ -40,6 +40,6 @@ type NonStringKeysOnly = ConditionalExcept<Example, string>;
 @category Object
 */
 export type ConditionalExcept<Base, Condition> = Except<
-	Base,
-	ConditionalKeys<Base, Condition>
+Base,
+ConditionalKeys<Base, Condition>
 >;

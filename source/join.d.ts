@@ -26,5 +26,5 @@ export type Join<
 > = Strings extends [] ? '' :
 	Strings extends [string | number] ? `${Strings[0]}` :
 	// @ts-expect-error `Rest` is inferred as `unknown` here: https://github.com/microsoft/TypeScript/issues/45281
-	Strings extends [string | number, ...infer Rest] ? `${Strings[0]}${Delimiter}${Join<Rest, Delimiter>}` :
-	string;
+		Strings extends [string | number, ...infer Rest] ? `${Strings[0]}${Delimiter}${Join<Rest, Delimiter>}` :
+			string;

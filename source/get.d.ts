@@ -1,8 +1,15 @@
-import type {StringDigit} from '../source/utilities';
+import type {StringDigit} from '../source/internal';
 import type {Split} from './split';
 import type {StringKeyOf} from './string-key-of';
 
 type GetOptions = {
+	/**
+	Include `undefined` in the return type when accessing properties.
+
+	Setting this to `false` is not recommended.
+
+	@default true
+	*/
 	strict?: boolean;
 };
 
@@ -11,20 +18,20 @@ Like the `Get` type but receives an array of strings as a path parameter.
 */
 type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
 	Keys extends []
-	? BaseType
-	: Keys extends readonly [infer Head, ...infer Tail]
-	? GetWithPath<
-		PropertyOf<BaseType, Extract<Head, string>, Options>,
-		Extract<Tail, string[]>,
-		Options
-	>
-	: never;
+		? BaseType
+		: Keys extends readonly [infer Head, ...infer Tail]
+			? GetWithPath<
+			PropertyOf<BaseType, Extract<Head, string>, Options>,
+			Extract<Tail, string[]>,
+			Options
+			>
+			: never;
 
 /**
 Adds `undefined` to `Type` if `strict` is enabled.
 */
 type Strictify<Type, Options extends GetOptions> =
-	Options['strict'] extends true ? Type | undefined : Type;
+	Options['strict'] extends false ? Type : (Type | undefined);
 
 /**
 If `Options['strict']` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`.
@@ -34,10 +41,10 @@ Known limitations:
 */
 type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends GetOptions> =
 	Record<string, any> extends BaseType
-	? string extends keyof BaseType
-		? Strictify<BaseType[Key], Options> // Record<string, any>
-		: BaseType[Key] // Record<'a' | 'b', any> (Records with a string union as keys have required properties)
-	: BaseType[Key];
+		? string extends keyof BaseType
+			? Strictify<BaseType[Key], Options> // Record<string, any>
+			: BaseType[Key] // Record<'a' | 'b', any> (Records with a string union as keys have required properties)
+		: BaseType[Key];
 
 /**
 Splits a dot-prop style path into a tuple comprised of the properties in the path. Handles square-bracket notation.
@@ -58,12 +65,12 @@ Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `
 */
 type FixPathSquareBrackets<Path extends string> =
 	Path extends `[${infer Head}]${infer Tail}`
-	? Tail extends `[${string}`
-		? `${Head}.${FixPathSquareBrackets<Tail>}`
-		: `${Head}${FixPathSquareBrackets<Tail>}`
-	: Path extends `${infer Head}[${infer Middle}]${infer Tail}`
-	? `${Head}.${FixPathSquareBrackets<`[${Middle}]${Tail}`>}`
-	: Path;
+		? Tail extends `[${string}`
+			? `${Head}.${FixPathSquareBrackets<Tail>}`
+			: `${Head}${FixPathSquareBrackets<Tail>}`
+		: Path extends `${infer Head}[${infer Middle}]${infer Tail}`
+			? `${Head}.${FixPathSquareBrackets<`[${Middle}]${Tail}`>}`
+			: Path;
 
 /**
 Returns true if `LongString` is made up out of `Substring` repeated 0 or more times.
@@ -78,10 +85,10 @@ ConsistsOnlyOf<'', 'a'> //=> true
 */
 type ConsistsOnlyOf<LongString extends string, Substring extends string> =
 	LongString extends ''
-	? true
-	: LongString extends `${Substring}${infer Tail}`
-	? ConsistsOnlyOf<Tail, Substring>
-	: false;
+		? true
+		: LongString extends `${Substring}${infer Tail}`
+			? ConsistsOnlyOf<Tail, Substring>
+			: false;
 
 /**
 Convert a type which may have number keys to one with string keys, making it possible to index using strings retrieved from template types.
@@ -115,23 +122,23 @@ Note:
 */
 type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 	BaseType extends null | undefined
-	? undefined
-	: Key extends keyof BaseType
-	? StrictPropertyOf<BaseType, Key, Options>
-	: BaseType extends [] | [unknown, ...unknown[]]
-	? unknown // It's a tuple, but `Key` did not extend `keyof BaseType`. So the index is out of bounds.
-	: BaseType extends {
-		[n: number]: infer Item;
-		length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
-	}
-	? (
-		ConsistsOnlyOf<Key, StringDigit> extends true
-		? Strictify<Item, Options>
-		: unknown
-	)
-	: Key extends keyof WithStringKeys<BaseType>
-	? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
-	: unknown;
+		? undefined
+		: Key extends keyof BaseType
+			? StrictPropertyOf<BaseType, Key, Options>
+			: BaseType extends [] | [unknown, ...unknown[]]
+				? unknown // It's a tuple, but `Key` did not extend `keyof BaseType`. So the index is out of bounds.
+				: BaseType extends {
+					[n: number]: infer Item;
+					length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
+				}
+					? (
+						ConsistsOnlyOf<Key, StringDigit> extends true
+							? Strictify<Item, Options>
+							: unknown
+					)
+					: Key extends keyof WithStringKeys<BaseType>
+						? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
+						: unknown;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
@@ -164,16 +171,16 @@ interface ApiResponse {
 
 const getName = (apiResponse: ApiResponse) =>
 	get(apiResponse, 'hits.hits[0]._source.name');
-	//=> Array<{given: string[]; family: string}>
+	//=> Array<{given: string[]; family: string}> | undefined
 
 // Path also supports a readonly array of strings
 const getNameWithPathArray = (apiResponse: ApiResponse) =>
 	get(apiResponse, ['hits','hits', '0', '_source', 'name'] as const);
-	//=> Array<{given: string[]; family: string}>
+	//=> Array<{given: string[]; family: string}> | undefined
 
-// Strict mode:
-Get<string[], '3', {strict: true}> //=> string | undefined
-Get<Record<string, string>, 'foo', {strict: true}> // => string | undefined
+// Non-strict mode:
+Get<string[], '3', {strict: false}> //=> string
+Get<Record<string, string>, 'foo', {strict: true}> // => string
 ```
 
 @category Object

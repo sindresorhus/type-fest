@@ -1,12 +1,12 @@
 import {expectType} from 'tsd';
 import type {ConditionalKeys} from '../index';
 
-interface Example {
+type Example = {
 	a: string;
 	b?: string | number;
 	c?: string;
 	d: Record<string, unknown>;
-}
+};
 
 declare const exampleConditionalKeys: ConditionalKeys<Example, string>;
 expectType<'a'>(exampleConditionalKeys);

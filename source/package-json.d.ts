@@ -1,4 +1,5 @@
 import type {LiteralUnion} from './literal-union';
+import type {JsonObject, JsonValue} from './basic';
 
 declare namespace PackageJson {
 	/**
@@ -26,8 +27,8 @@ declare namespace PackageJson {
 			email?: string;
 		};
 
-	export interface DirectoryLocations {
-		[directoryType: string]: unknown;
+	export type DirectoryLocations = {
+		[directoryType: string]: JsonValue | undefined;
 
 		/**
 		Location for executable scripts. Sugar to generate entries in the `bin` property by walking the folder.
@@ -58,7 +59,7 @@ declare namespace PackageJson {
 		Location for test files.
 		*/
 		test?: string;
-	}
+	};
 
 	export type Scripts = {
 		/**
@@ -211,17 +212,19 @@ declare namespace PackageJson {
 	Conditions which provide a way to resolve a package entry point based on the environment.
 	*/
 	export type ExportCondition = LiteralUnion<
-		| 'import'
-		| 'require'
-		| 'node'
-		| 'node-addons'
-		| 'deno'
-		| 'browser'
-		| 'electron'
-		| 'react-native'
-		| 'default',
-		string
+	| 'import'
+	| 'require'
+	| 'node'
+	| 'node-addons'
+	| 'deno'
+	| 'browser'
+	| 'electron'
+	| 'react-native'
+	| 'default',
+	string
 	>;
+
+	type ExportConditions = {[condition in ExportCondition]: Exports};
 
 	/**
 	Entry points of a module, optionally with conditions and subpath exports.
@@ -229,9 +232,9 @@ declare namespace PackageJson {
 	export type Exports =
 	| null
 	| string
-	| string[]
-	| {[key in ExportCondition]: Exports}
-	| {[key: string]: Exports}; // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+	| Array<string | ExportConditions>
+	| ExportConditions
+	| {[path: string]: Exports};
 
 	/**
 	Import map entries of a module, optionally with conditions.
@@ -240,6 +243,7 @@ declare namespace PackageJson {
 		[key: string]: string | {[key in ExportCondition]: Exports};
 	};
 
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	export interface NonStandardEntryPoints {
 		/**
 		An ECMAScript module ID that is the primary entry point to the program.
@@ -272,7 +276,7 @@ declare namespace PackageJson {
 		sideEffects?: boolean | string[];
 	}
 
-	export interface TypeScriptConfiguration {
+	export type TypeScriptConfiguration = {
 		/**
 		Location of the bundled TypeScript declaration file.
 		*/
@@ -287,12 +291,12 @@ declare namespace PackageJson {
 		Location of the bundled TypeScript declaration file. Alias of `types`.
 		*/
 		typings?: string;
-	}
+	};
 
 	/**
 	An alternative configuration for Yarn workspaces.
 	*/
-	export interface WorkspaceConfig {
+	export type WorkspaceConfig = {
 		/**
 		An array of workspace pattern strings which contain the workspace packages.
 		*/
@@ -304,7 +308,7 @@ declare namespace PackageJson {
 		[Read more](https://classic.yarnpkg.com/blog/2018/02/15/nohoist/)
 		*/
 		nohoist?: WorkspacePattern[];
-	}
+	};
 
 	/**
 	A workspace pattern points to a directory or group of directories which contain packages that should be included in the workspace installation process.
@@ -317,7 +321,7 @@ declare namespace PackageJson {
 	*/
 	type WorkspacePattern = string;
 
-	export interface YarnConfiguration {
+	export type YarnConfiguration = {
 		/**
 		Used to configure [Yarn workspaces](https://classic.yarnpkg.com/docs/workspaces/).
 
@@ -338,18 +342,19 @@ declare namespace PackageJson {
 		Selective version resolutions. Allows the definition of custom package versions inside dependencies without manual edits in the `yarn.lock` file.
 		*/
 		resolutions?: Dependency;
-	}
+	};
 
-	export interface JSPMConfiguration {
+	export type JSPMConfiguration = {
 		/**
 		JSPM configuration.
 		*/
 		jspm?: PackageJson;
-	}
+	};
 
 	/**
 	Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Containing standard npm properties.
 	*/
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	export interface PackageJsonStandard {
 		/**
 		The name of the package.
@@ -479,7 +484,7 @@ declare namespace PackageJson {
 		/**
 		Is used to set configuration parameters used in package scripts that persist across upgrades.
 		*/
-		config?: Record<string, unknown>;
+		config?: JsonObject;
 
 		/**
 		The dependencies of the package.
@@ -520,7 +525,7 @@ declare namespace PackageJson {
 		Engines that this package runs on.
 		*/
 		engines?: {
-			[EngineName in 'npm' | 'node' | string]?: string;
+			[EngineName in 'npm' | 'node' | string]?: string; // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
 		};
 
 		/**
@@ -621,11 +626,30 @@ declare namespace PackageJson {
 		};
 	}
 
-	export interface PublishConfig {
+	/**
+	Type for [`package.json` file used by the Node.js runtime](https://nodejs.org/api/packages.html#nodejs-packagejson-field-definitions).
+	*/
+	export type NodeJsStandard = {
+		/**
+		Defines which package manager is expected to be used when working on the current project. It can set to any of the [supported package managers](https://nodejs.org/api/corepack.html#supported-package-managers), and will ensure that your teams use the exact same package manager versions without having to install anything else than Node.js.
+
+		__This field is currently experimental and needs to be opted-in; check the [Corepack](https://nodejs.org/api/corepack.html) page for details about the procedure.__
+
+		@example
+		```json
+		{
+			"packageManager": "<package manager name>@<version>"
+		}
+		```
+		*/
+		packageManager?: string;
+	};
+
+	export type PublishConfig = {
 		/**
 		Additional, less common properties from the [npm docs on `publishConfig`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#publishconfig).
 		*/
-		[additionalProperties: string]: unknown;
+		[additionalProperties: string]: JsonValue | undefined;
 
 		/**
 		When publishing scoped packages, the access level defaults to restricted. If you want your scoped package to be publicly viewable (and installable) set `--access=public`. The only valid values for access are public and restricted. Unscoped packages always have an access level of public.
@@ -645,7 +669,7 @@ declare namespace PackageJson {
 		Default: `'latest'`
 		*/
 		tag?: string;
-	}
+	};
 }
 
 /**
@@ -654,6 +678,8 @@ Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-j
 @category File
 */
 export type PackageJson =
+JsonObject &
+PackageJson.NodeJsStandard &
 PackageJson.PackageJsonStandard &
 PackageJson.NonStandardEntryPoints &
 PackageJson.TypeScriptConfiguration &

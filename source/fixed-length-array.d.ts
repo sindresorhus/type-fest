@@ -34,8 +34,8 @@ guestFencingTeam.push('Sam');
 @see ReadonlyTuple
 */
 export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<
-	ArrayPrototype,
-	Exclude<keyof ArrayPrototype, ArrayLengthMutationKeys>
+ArrayPrototype,
+Exclude<keyof ArrayPrototype, ArrayLengthMutationKeys>
 > & {
 	[index: number]: Element;
 	[Symbol.iterator]: () => IterableIterator<Element>;

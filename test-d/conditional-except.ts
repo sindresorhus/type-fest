@@ -11,12 +11,12 @@ class Awesome {
 	}
 }
 
-interface Example {
+type Example = {
 	a: string;
 	b?: string | number;
 	c?: string;
 	d: Record<string, unknown>;
-}
+};
 
 declare const exampleConditionalExcept: ConditionalExcept<Example, string>;
 expectType<{b?: string | number; c?: string; d: Record<string, unknown>}>(exampleConditionalExcept);

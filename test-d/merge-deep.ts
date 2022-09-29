@@ -1,134 +1,258 @@
-import {expectAssignable} from 'tsd';
-import {MergeDeep} from '../index';
+import {expectType} from 'tsd';
+import type {MergeDeep, MergeDeepOptions} from '../index';
 
-type Foo1 = {foo: string};
-type Bar1 = {foo: number};
+// Test helper.
+declare function mergeDeep<
+	Destination,
+	Source,
+	Options extends MergeDeepOptions = {},
+>(destination: Destination, source: Source, options?: Options): MergeDeep<Destination, Source, Options>;
 
-expectAssignable<MergeDeep<Foo1, Bar1>>({foo: 42});
+// Test valid signatures for objects.
+expectType<{}>(mergeDeep({}, {}));
+expectType<{}>(mergeDeep({} as const, {}));
+expectType<{}>(mergeDeep({}, {} as const));
+expectType<{}>(mergeDeep({} as const, {} as const));
 
-type Foo2 = {foo: string; life: string};
-type Bar2 = {foo: number};
+// Test valid signatures for arrays/tuples.
+expectType<never[]>(mergeDeep([], []));
+expectType<never[]>(mergeDeep([] as const, []));
+expectType<never[]>(mergeDeep([], [] as const));
+expectType<never[]>(mergeDeep([] as const, [] as const));
 
-expectAssignable<MergeDeep<Foo2, Bar2>>({foo: 42, life: '42'});
+// Test invalid signatures.
+expectType<never>(mergeDeep({}, []));
+expectType<never>(mergeDeep([], {}));
+expectType<never>(mergeDeep(null, {}));
+expectType<never>(mergeDeep([], 'life'));
+expectType<never>(mergeDeep([], new Set()));
+expectType<never>(mergeDeep(new Set(), new Set()));
+expectType<never>(mergeDeep(undefined, undefined));
+expectType<never>(mergeDeep({}, undefined));
+expectType<never>(mergeDeep(undefined, {}));
 
-type Foo3 = {foo: string};
-type Bar3 = {foo: number; life: number};
+// Should merge simple objects
+expectType<{a: string; b: number}>(mergeDeep({a: 'life'}, {b: 42}));
+expectType<{a: 'life'; b: number}>(mergeDeep({a: 'life'} as const, {b: 42}));
+expectType<{a: string; b: 42}>(mergeDeep({a: 'life'}, {b: 42} as const));
+expectType<{a: 'life'; b: 42}>(mergeDeep({a: 'life'} as const, {b: 42} as const));
 
-expectAssignable<MergeDeep<Foo3, Bar3>>({foo: 42, life: 42});
+// Should spread simple arrays/tuples (default mode)
+expectType<Array<string | number>>(mergeDeep(['life'], [42]));
+expectType<Array<'life' | number>>(mergeDeep(['life'] as const, [42]));
+expectType<Array<string | 42>>(mergeDeep(['life'], [42] as const));
+expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const));
 
-type Foo4 = {foo: string; bar: undefined};
-type Bar4 = {foo: number};
+expectType<Array<string | number>>(mergeDeep(['life'], [42], {arrayMergeMode: 'spread'}));
+expectType<Array<'life' | number>>(mergeDeep(['life'] as const, [42], {arrayMergeMode: 'spread'}));
+expectType<Array<string | 42>>(mergeDeep(['life'], [42] as const, {arrayMergeMode: 'spread'}));
+expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const, {arrayMergeMode: 'spread'}));
 
-expectAssignable<MergeDeep<Foo4, Bar4>>({foo: 42});
+// Should replace simple arrays/tuples
+expectType<Array<string | number>>(mergeDeep(['life'], [42], {arrayMergeMode: 'replace'}));
+expectType<Array<'life' | number>>(mergeDeep(['life'] as const, [42], {arrayMergeMode: 'replace'}));
+expectType<Array<string | 42>>(mergeDeep(['life'], [42] as const, {arrayMergeMode: 'replace'}));
+expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const, {arrayMergeMode: 'replace'}));
 
-type Foo5 = {foo: string};
-type Bar5 = {foo: number; bar: undefined};
+// Should merge tuples with union
+expectType<Array<number | string | boolean>>(mergeDeep(['life', true], [42], {arrayMergeMode: 'spread'}));
+expectType<Array<number | string | boolean>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'spread'}));
 
-expectAssignable<MergeDeep<Foo5, Bar5>>({foo: 42});
+// Sould merge simple types
+type Foo = {foo: string; fooBar: unknown; items: string[]};
+type Bar = {bar: number; fooBar: boolean; items: number[]};
 
-type Foo6 = {foo: string; bar: {id: string}};
-type Bar6 = {foo: number; bar: {id: number}};
+declare const fooBar: MergeDeep<Foo, Bar>;
+expectType<{foo: string; bar: number; fooBar: boolean; items: number[]}>(fooBar);
 
-expectAssignable<MergeDeep<Foo6, Bar6>>({foo: 42, bar: {id: 42}});
+declare const fooBarSpread: MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
+expectType<{foo: string; bar: number; fooBar: boolean; items: Array<string | number>}>(fooBarSpread);
 
-type Foo7 = {foo: string; bar: {id: string; label: string}};
-type Bar7 = {foo: number; bar: {id: number}};
+declare const fooBarReplace: MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
+expectType<{foo: string; bar: number; fooBar: boolean; items: number[]}>(fooBarReplace);
 
-expectAssignable<MergeDeep<Foo7, Bar7>>({foo: 42, bar: {id: 42, label: 'life'}});
+// Sould merge types deep
+type FooDeep = {foo: Foo; fooBar: Foo; items: {foo: Foo[]; fooBar: Foo}};
+type BarDeep = {bar: Bar; fooBar: Bar; items: {bar: Bar[]; fooBar: Bar}};
 
-type Foo8 = {foo: string; bar: {id: string}};
-type Bar8 = {foo: number; bar: {id: number; label: string}};
-
-expectAssignable<MergeDeep<Foo8, Bar8>>({foo: 42, bar: {id: 42, label: 'life'}});
-
-type Foo9 = {foo: string; bar: {id: string; label: string}};
-type Bar9 = {foo: number; bar: {id: number; label: undefined}};
-
-expectAssignable<MergeDeep<Foo9, Bar9>>({foo: 42, bar: {id: 42}});
-expectAssignable<MergeDeep<Foo9, Bar9, {strict: false}>>({foo: 42, bar: {id: 42, label: undefined}});
-
-type Foo10 = {foo: string; bar: {id: string; data: {x: number}}};
-type Bar10 = {foo: number; bar: {id: number; data: {y: number}}};
-
-expectAssignable<MergeDeep<Foo10, Bar10>>({foo: 42, bar: {id: 42, data: {x: 1, y: 2}}});
-
-type Foo11 = {
-	l0: string;
-	a: string;
-	b: {
-		skipped: undefined;
-		l1: string;
-		x: string;
-		y: {
-			l2: string;
-			u: string;
-			v: string;
+declare const fooBarDeep: MergeDeep<FooDeep, BarDeep>;
+expectType<{
+	foo: {
+		foo: string;
+		fooBar: unknown;
+		items: string[];
+	};
+	bar: {
+		bar: number;
+		fooBar: boolean;
+		items: number[];
+	};
+	fooBar: {
+		foo: string;
+		bar: number;
+		fooBar: boolean;
+		items: number[];
+	};
+	items: {
+		foo: Foo[];
+		bar: Bar[];
+		fooBar: {
+			foo: string;
+			bar: number;
+			fooBar: boolean;
+			items: number[];
 		};
 	};
-	q: Date;
-};
+}>(fooBarDeep);
 
-type Bar11 = {
-	new: number;
-	a: number;
-	b: {
-		x: number;
-		y: {
-			u: number;
-			v: number;
-			skipped: undefined;
-		};
+// Sould merge types with index signatures deep
+type FooWithIndexSignature = {[x: number]: number; foo: string; items: string[]};
+type BarWithIndexSignature = {[x: symbol]: symbol; bar: number; items: number[]};
+type FooWithIndexSignatureDeep = {[x: number]: number; foo: string; fooBar: FooWithIndexSignature; items: string[]};
+type BarWithIndexSignatureDeep = {[x: symbol]: symbol; bar: number; fooBar: BarWithIndexSignature; items: number[]};
+
+declare const fooBarWithIndexSignature: MergeDeep<FooWithIndexSignatureDeep, BarWithIndexSignatureDeep>;
+expectType<{
+	[x: number]: number;
+	[x: symbol]: symbol;
+	foo: string;
+	bar: number;
+	fooBar: {
+		[x: number]: number;
+		[x: symbol]: symbol;
+		foo: string;
+		bar: number;
+		items: number[];
 	};
-	q: {life: 42};
-	skipped: undefined;
-};
+	items: number[];
+}>(fooBarWithIndexSignature);
 
-expectAssignable<MergeDeep<Foo11, Bar11>>({
-	l0: 'string',
-	a: 42,
-	b: {
-		l1: 'string',
-		x: 42,
-		y: {
-			l2: 'string',
-			u: 42,
-			v: 42,
-		},
-	},
-	q: {
-		life: 42,
-	},
-	new: 42,
-});
+// Sould merge types with optional properties deep
+type FooWithOptional = {foo: string; fooOptional?: string; fooBar: Foo; fooBarOptional: Foo | undefined};
+type BarWithOptional = {bar: number; barOptional?: number; fooBar: Bar; fooBarOptional: Bar | undefined};
 
-type Foo12 = {foo: false; bar: undefined; baz: boolean};
-type Bar12 = {foo: number; bar: true; baz: undefined};
+declare const fooBarWithOptional: MergeDeep<FooWithOptional, BarWithOptional>;
+expectType<{
+	foo: string;
+	bar: number;
+	fooOptional?: string;
+	barOptional?: number;
+	fooBar: {
+		foo: string;
+		bar: number;
+		fooBar: boolean;
+		items: number[];
+	};
+	fooBarOptional?: {
+		foo: string;
+		bar: number;
+		fooBar: boolean;
+		items: number[];
+	};
+}>(fooBarWithOptional);
 
-type FooBar12 = MergeDeep<Foo12, Bar12>;
+// Should merge arrays with object entries
+type FooArray = Foo[];
+type BarArray = Bar[];
 
-expectAssignable<FooBar12>({foo: 42, bar: true});
+declare const fooBarArray: MergeDeep<FooArray, BarArray>;
+expectType<Array<Foo | Bar>>(fooBarArray);
 
-type FooBar13 = MergeDeep<Foo12, Bar12, {strict: false}>;
+declare const fooBarArraySpread: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'spread'}>;
+expectType<Array<Foo | Bar>>(fooBarArraySpread);
 
-expectAssignable<FooBar13>({foo: 42, bar: true, baz: undefined});
+declare const fooBarArrayReplace: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'replace'}>;
+expectType<Array<Foo | Bar>>(fooBarArrayReplace);
 
-type Foo14 = {'a': [number, {'b': number}, {'d': number}]};
-type Bar14 = {'a': [string, {'c': number}, {'e': number; d: string}]};
+declare const fooBarArraySpreadRecursive: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<{
+	foo: string;
+	bar: number;
+	fooBar: boolean;
+	items: Array<string | number>;
+}>>(fooBarArraySpreadRecursive);
 
-type FooBar14 = MergeDeep<Foo14, Bar14>;
+declare const fooBarArrayReplaceRecursive: MergeDeep<FooArray, BarArray, {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<Array<{
+	foo: string;
+	bar: number;
+	fooBar: boolean;
+	items: number[];
+}>>(fooBarArrayReplaceRecursive);
 
-expectAssignable<FooBar14>({a: ['42', {b: 2, c: 3}, {d: '4', e: 5}]});
+declare const fooBarArraySpreadRecursiveFallback: MergeDeep<FooArray, string[], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<string | Foo>>(fooBarArraySpreadRecursiveFallback);
 
-type Foo15 = {name: 'nyan'; level1: {plop: 42}};
-type Bar15 = {level1: {level2: {level3: 42}}};
+declare const fooBarArrayReplaceRecursiveFallback: MergeDeep<FooArray, string[], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<Array<string | Foo>>(fooBarArrayReplaceRecursiveFallback);
 
-type FooBar15 = MergeDeep<Foo15, Bar15>;
+declare const fooBarArrayDeepUnionRecursive: MergeDeep<FooArray[][], BarArray[][], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<Array<Array<{
+	foo: string;
+	bar: number;
+	fooBar: boolean;
+	items: Array<string | number>;
+}>>>>(fooBarArrayDeepUnionRecursive);
 
-expectAssignable<FooBar15>({name: 'nyan', level1: {plop: 42, level2: {level3: 42}}});
+declare const fooBarArrayDeepUnionRecursiveFallback: MergeDeep<FooArray[], BarArray[][], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<Array<Array<Foo | BarArray>>>(fooBarArrayDeepUnionRecursiveFallback);
 
-type Foo16 = {level1: {level2: {level3: 42}}};
-type Bar16 = {name: 'nyan'; level1: {plop: 42}};
+// Should merge tuples with object entries
+type FooTuple = [Foo, [Foo[], 42], 'foo'];
+type BarTuple = [Bar, [Bar[], 'a', 'b'], 'bar', true];
 
-type FooBar16 = MergeDeep<Foo16, Bar16>;
+type FooBarSpread = typeof fooBarSpread;
+type FooBarReplace = typeof fooBarReplace;
 
-expectAssignable<FooBar16>({name: 'nyan', level1: {plop: 42, level2: {level3: 42}}});
+declare const fooBarTupleSpread: MergeDeep<FooTuple, BarTuple, {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[FooBarSpread, [FooBarSpread[], 'a', 'b'], 'bar', true]>(fooBarTupleSpread);
+
+declare const fooBarTupleReplace: MergeDeep<FooTuple, BarTuple, {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[FooBarReplace, [FooBarReplace[], 'a', 'b'], 'bar', true]>(fooBarTupleReplace);
+
+// Should merge array into tuple with object entries
+type FooNumberTuple = [Foo[], number[]];
+type BarArray2D = Bar[][];
+
+declare const fooNumberTupleBarArray2DSpread: MergeDeep<FooNumberTuple, BarArray2D, {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[FooBarSpread[], Array<number | Bar>, ...BarArray2D]>(fooNumberTupleBarArray2DSpread);
+
+declare const fooNumberTupleBarArray2DReplace: MergeDeep<FooNumberTuple, BarArray2D, {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[FooBarReplace[], Bar[], ...BarArray2D]>(fooNumberTupleBarArray2DReplace);
+
+// Should merge tuple into array with object entries
+type FooArray2D = Foo[][];
+type BarNumberTuple = [Bar[], number[]];
+
+declare const fooArray2DBarNumberTupleSpread: MergeDeep<FooArray2D, BarNumberTuple, {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[FooBarSpread[], Array<Foo | number>, ...FooArray2D]>(fooArray2DBarNumberTupleSpread);
+
+declare const fooArray2DBarNumberTupleReplace: MergeDeep<FooArray2D, BarNumberTuple, {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[FooBarReplace[], number[], ...FooArray2D]>(fooArray2DBarNumberTupleReplace);
+
+// Should merge array into tuple with object entries and variadic length
+declare const arrayIntoTupleWithVariadicSpread: MergeDeep<[number, Foo, ...Foo[]], Bar[], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[Bar, FooBarSpread, ...FooBarSpread[]]>(arrayIntoTupleWithVariadicSpread);
+
+declare const arrayIntoTupleWithVariadicReplace: MergeDeep<[number, Foo, ...Foo[]], Bar[], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[Bar, FooBarReplace, ...FooBarReplace[]]>(arrayIntoTupleWithVariadicReplace);
+
+// Should merge tuple into array with object entries and variadic length
+declare const tupleIntoArrayWithVariadicSpread: MergeDeep<Foo[], [number, Bar, ...Bar[]], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[number, FooBarSpread, ...FooBarSpread[]]>(tupleIntoArrayWithVariadicSpread);
+
+declare const tupleIntoArrayWithVariadicReplace: MergeDeep<Foo[], [number, Bar, ...Bar[]], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[number, FooBarReplace, ...FooBarReplace[]]>(tupleIntoArrayWithVariadicReplace);
+
+// Should merge tuple into tuple with object entries and variadic length
+declare const tupleIntoTupleWithVariadicSpread: MergeDeep<[number, ...Foo[]], [Bar, Bar, ...Bar[]], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[Bar, FooBarSpread, ...FooBarSpread[]]>(tupleIntoTupleWithVariadicSpread);
+
+declare const tupleIntoTupleWithVariadicSpreadReversed: MergeDeep<[Foo, ...Foo[]], [number, Bar, ...Bar[]], {arrayMergeMode: 'spread'; recurseIntoArrays: true}>;
+expectType<[number, FooBarSpread, ...FooBarSpread[]]>(tupleIntoTupleWithVariadicSpreadReversed);
+
+declare const tupleIntoTupleWithVariadicReplace: MergeDeep<[number, ...Foo[]], [Bar, Bar, ...Bar[]], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[Bar, FooBarReplace, ...FooBarReplace[]]>(tupleIntoTupleWithVariadicReplace);
+
+declare const tupleIntoTupleWithVariadicReplaceReversed: MergeDeep<[Foo, ...Foo[]], [number, Bar, ...Bar[]], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
+expectType<[number, FooBarReplace, ...FooBarReplace[]]>(tupleIntoTupleWithVariadicReplaceReversed);

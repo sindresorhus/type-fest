@@ -1,4 +1,4 @@
-import type {WordSeparators} from '../source/utilities';
+import type {WordSeparators} from '../source/internal';
 import type {Split} from './split';
 
 /**
@@ -13,8 +13,8 @@ type InnerCamelCaseStringArray<Parts extends readonly any[], PreviousPart> =
 		? FirstPart extends undefined
 			? ''
 			: FirstPart extends ''
-					? InnerCamelCaseStringArray<RemainingParts, PreviousPart>
-					: `${PreviousPart extends '' ? FirstPart : Capitalize<FirstPart>}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`
+				? InnerCamelCaseStringArray<RemainingParts, PreviousPart>
+				: `${PreviousPart extends '' ? FirstPart : Capitalize<FirstPart>}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`
 		: '';
 
 /**

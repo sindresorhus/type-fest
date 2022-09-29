@@ -1,5 +1,3 @@
-import type {PromiseValue} from './promise-value';
-
 type AsyncFunction = (...args: any[]) => Promise<unknown>;
 
 /**
@@ -22,4 +20,4 @@ asyncFunction().then(value => doSomething(value));
 
 @category Async
 */
-export type AsyncReturnType<Target extends AsyncFunction> = PromiseValue<ReturnType<Target>>;
+export type AsyncReturnType<Target extends AsyncFunction> = Awaited<ReturnType<Target>>;

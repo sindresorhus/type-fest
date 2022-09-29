@@ -1,4 +1,3 @@
-import type {PromiseValue} from './promise-value';
 import type {SetReturnType} from './set-return-type';
 
 /**
@@ -30,4 +29,4 @@ const getFooAsync: AsyncifiedFooGetter = (someArg) => {
 
 @category Async
 */
-export type Asyncify<Fn extends (...args: any[]) => any> = SetReturnType<Fn, Promise<PromiseValue<ReturnType<Fn>>>>;
+export type Asyncify<Fn extends (...args: any[]) => any> = SetReturnType<Fn, Promise<Awaited<ReturnType<Fn>>>>;

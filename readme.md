@@ -40,41 +40,6 @@
 			<br>
 			<br>
 			<br>
-			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-light-mode-only">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-light.svg" width="200" alt="neverinstall">
-				</div>
-				<br>
-				<b>All your favourite IDE's now available on the cloud</b>
-				<div>
-					<sub>
-					Neverinstall gives you an uninterrupted development experience and improved accessibility,
-					<br>
-					allowing you to code faster, better and on-the-go on your favourite IDEs like
-					<br>
-					Android Studio, VS Code, Jupyter and PyCharm using your browser.
-					</sub>
-				</div>
-			</a>
-			<a href="https://neverinstall.com/spaces/devtools?utm_source=github&utm_medium=sponsor&utm_campaign=sindre#gh-dark-mode-only">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/neverinstall-logo-dark.svg" width="200" alt="neverinstall">
-				</div>
-				<br>
-				<b>All your favourite IDE's now available on the cloud</b>
-				<div>
-					<sub>
-					Neverinstall gives you an uninterrupted development experience and improved accessibility,
-					<br>
-					allowing you to code faster, better and on-the-go on your favourite IDEs like
-					<br>
-					Android Studio, VS Code, Jupyter and PyCharm using your browser.
-					</sub>
-				</div>
-			</a>
-			<br>
-			<br>
-			<br>
 			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-light-mode-only">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-light.svg" width="200" alt="Anvil">
@@ -100,6 +65,20 @@
 					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
 					<br>
 					The easiest way to build paperwork automation into your product.
+					</sub>
+				</div>
+			</a>
+			<br>
+			<br>
+			<a href="https://sizzy.co/?utm_campaign=github_repo&utm_source=github&utm_medium=referral&utm_content=type-fest&utm_term=sindre">
+				<div>
+					<img src="https://sindresorhus.com/assets/thanks/sizzy-logo.png" width="240" alt="Sizzy">
+				</div>
+				<div>
+					<sub>
+					<b>Before Sizzy:</b> web development is stressing you out, responsive design is hard, you have an overwhelming amount of opened tabs & apps.
+					<br>
+					<b>After Sizzy:</b> all the tools you need in one place, responsive design is a breeze, no more context switching.
 					</sub>
 				</div>
 			</a>
@@ -130,7 +109,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 npm install type-fest
 ```
 
-*Requires TypeScript >=4.2*
+*Requires TypeScript >=4.7*
 
 ## Usage
 
@@ -160,16 +139,20 @@ Click the type names for complete docs.
 
 ### Utilities
 
+- [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty plain object, the `{}` value.
+- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
-- [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`. Formerly named `Mutable`.
+- [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
-- [`MergeDeep`](source/merge-deep.d.ts) - Merge two types `recursively` into a new type.
+- [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
-- [`RemoveIndexSignature`](source/remove-index-signature.d.ts) - Create a type that only has explicitly defined properties, absent of any index signatures.
+- [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
+- [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
+- [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
@@ -177,9 +160,11 @@ Click the type names for complete docs.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
+- [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
+- [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Like `ConditionalPick` except that it selects the properties deeply.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Convert a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) to the [primitive type](source/primitive.d.ts) it belongs to.
@@ -194,6 +179,11 @@ Click the type names for complete docs.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
+- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
+- [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
+- [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
+- [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
+- [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 
 ### JSON
 
@@ -224,6 +214,7 @@ Click the type names for complete docs.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
+- [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple into a union type of its elements.
 
 ### Numeric
 
@@ -260,7 +251,7 @@ Click the type names for complete docs.
 ### Miscellaneous
 
 - [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). It also includes support for [TypeScript Declaration Files](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html) and [Yarn Workspaces](https://classic.yarnpkg.com/lang/en/docs/workspaces/).
-- [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 4.4).
+- [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html).
 
 ## Declined types
 
@@ -281,6 +272,7 @@ Click the type names for complete docs.
 
 - `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
 - `RecordDeep`- See [`Schema`](https://github.com/sindresorhus/type-fest/blob/main/source/schema.d.ts)
+- `Mutable`- See [`Writable`](https://github.com/sindresorhus/type-fest/blob/main/source/writable.d.ts)
 
 ## Tips
 
@@ -837,7 +829,7 @@ There are many advanced types most users don't know about.
 	type T2 = Uppercase<'foo' | 'bar'>;  // 'FOO' | 'BAR'
 
 	type T3<S extends string> = Uppercase<`aB${S}`>;
-	type T4 = T30<'xYz'>;  // 'ABXYZ'
+	type T4 = T3<'xYz'>;  // 'ABXYZ'
 
 	type T5 = Uppercase<string>;  // string
 	type T6 = Uppercase<any>;  // any
@@ -858,7 +850,7 @@ There are many advanced types most users don't know about.
 	type T2 = Lowercase<'FOO' | 'BAR'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Lowercase<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // 'abxyz'
+	type T4 = T3<'xYz'>;  // 'abxyz'
 
 	type T5 = Lowercase<string>;  // string
 	type T6 = Lowercase<any>;  // any
@@ -879,7 +871,7 @@ There are many advanced types most users don't know about.
 	type T2 = Capitalize<'foo' | 'bar'>;  // 'Foo' | 'Bar'
 
 	type T3<S extends string> = Capitalize<`aB${S}`>;
-	type T4 = T32<'xYz'>;  // 'ABxYz'
+	type T4 = T3<'xYz'>;  // 'ABxYz'
 
 	type T5 = Capitalize<string>;  // string
 	type T6 = Capitalize<any>;  // any
@@ -900,7 +892,7 @@ There are many advanced types most users don't know about.
 	type T2 = Uncapitalize<'Foo' | 'Bar'>;  // 'foo' | 'bar'
 
 	type T3<S extends string> = Uncapitalize<`AB${S}`>;
-	type T4 = T30<'xYz'>;  // 'aBxYz'
+	type T4 = T3<'xYz'>;  // 'aBxYz'
 
 	type T5 = Uncapitalize<string>;  // string
 	type T6 = Uncapitalize<any>;  // any
@@ -917,19 +909,8 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 - [Jarek Radosz](https://github.com/CvX)
 - [Dimitri Benin](https://github.com/BendingBender)
 - [Pelle Wessman](https://github.com/voxpelli)
+- [Sébastien Mischler](https://github.com/skarab42)
 
 ## License
 
 SPDX-License-Identifier: (MIT OR CC0-1.0)
-
----
-
-<div align="center">
-	<b>
-		<a href="https://tidelift.com/subscription/pkg/npm-type-fest?utm_source=npm-type-fest&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
-	</b>
-	<br>
-	<sub>
-		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
-	</sub>
-</div>

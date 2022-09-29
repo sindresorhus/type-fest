@@ -12,17 +12,17 @@ declare const bar: CamelCasedPropertiesDeep<Set<{fooBar: string}>>;
 expectType<Set<{fooBar: string}>>(bar);
 
 // Verify example
-interface User {
+type User = {
 	UserId: number;
 	UserName: string;
 	Date: Date;
 	RegExp: RegExp;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	UserInfo: User;
 	UserFriends: User[];
-}
+};
 
 const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	userInfo: {

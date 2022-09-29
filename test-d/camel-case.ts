@@ -53,14 +53,14 @@ type CamelCasedProperties<T> = {
 	[K in keyof T as CamelCase<K>]: T[K]
 };
 
-interface RawOptions {
+type RawOptions = {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;
 	BAR: string;
 	QUZ_QUX: number;
 	'OTHER-FIELD': boolean;
-}
+};
 
 expectAssignable<CamelCasedProperties<RawOptions>>({
 	dryRun: true,

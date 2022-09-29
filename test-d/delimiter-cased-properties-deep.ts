@@ -11,17 +11,17 @@ declare const bar: DelimiterCasedPropertiesDeep<Set<{fooBar: string}>, '-'>;
 expectType<Set<{'foo-bar': string}>>(bar);
 
 // Verify example
-interface User {
+type User = {
 	userId: number;
 	userName: string;
 	date: Date;
 	regExp: RegExp;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	'user-info': {

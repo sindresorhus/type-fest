@@ -25,10 +25,10 @@ const foo = {
 	},
 };
 
-let partialDeepFoo: PartialDeep<typeof foo> = foo;
+let partialDeepFoo: PartialDeep<typeof foo, {recurseIntoArrays: true}> = foo;
 
 expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
-const partialDeepBar: PartialDeep<typeof foo.bar> = foo.bar;
+const partialDeepBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: true}> = foo.bar;
 expectType<typeof partialDeepBar | undefined>(partialDeepFoo.bar);
 expectType<((_: string) => void) | undefined>(partialDeepFoo.bar!.function);
 expectAssignable<object | undefined>(partialDeepFoo.bar!.object);
@@ -54,12 +54,39 @@ partialDeepFoo = {bar: {string: 'waldo'}};
 partialDeepFoo = {bar: {date: new Date()}};
 // Check that recursive array evalution isn't infinite depth
 type Recurse =
-    | string
-    | number
-    | boolean
-    | null
-    | Record<string, Recurse[]>
-    | Recurse[];
+	| string
+	| number
+	| boolean
+	| null
+	| Record<string, Recurse[]>
+	| Recurse[];
 type RecurseObject = {value: Recurse};
 const recurseObject: RecurseObject = {value: null};
 expectAssignable<PartialDeep<RecurseObject>>(recurseObject);
+
+// Check that `{recurseIntoArrays: false}` is the default
+const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo> = foo;
+// Check that `{recurseIntoArrays: true}` behaves as intended
+expectType<PartialDeep<typeof foo, {recurseIntoArrays: true}>>(partialDeepFoo);
+// These are mostly the same checks as before, but the array/tuple types are different.
+expectError(expectType<Partial<typeof foo>>(partialDeepNoRecurseIntoArraysFoo));
+const partialDeepNoRecurseIntoArraysBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: false}> = foo.bar;
+expectType<typeof partialDeepNoRecurseIntoArraysBar | undefined>(partialDeepNoRecurseIntoArraysFoo.bar);
+expectType<((_: string) => void) | undefined>(partialDeepNoRecurseIntoArraysBar.function);
+expectAssignable<object | undefined>(partialDeepNoRecurseIntoArraysBar.object);
+expectType<string | undefined>(partialDeepNoRecurseIntoArraysBar.string);
+expectType<number | undefined>(partialDeepNoRecurseIntoArraysBar.number);
+expectType<boolean | undefined>(partialDeepNoRecurseIntoArraysBar.boolean);
+expectType<Date | undefined>(partialDeepNoRecurseIntoArraysBar.date);
+expectType<RegExp | undefined>(partialDeepNoRecurseIntoArraysBar.regexp);
+expectType<symbol | undefined>(partialDeepNoRecurseIntoArraysBar.symbol);
+expectType<null | undefined>(partialDeepNoRecurseIntoArraysBar.null);
+expectType<undefined>(partialDeepNoRecurseIntoArraysBar.undefined);
+expectAssignable<Map<string | undefined, string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.map);
+expectAssignable<Set<string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.set);
+expectType<string[] | undefined>(partialDeepNoRecurseIntoArraysBar.array);
+expectType<['foo'] | undefined>(partialDeepNoRecurseIntoArraysBar.tuple);
+expectAssignable<ReadonlyMap<string | undefined, string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyMap);
+expectAssignable<ReadonlySet<string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.readonlySet);
+expectType<readonly string[] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyArray);
+expectType<readonly ['foo'] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyTuple);

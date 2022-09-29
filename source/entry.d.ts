@@ -60,6 +60,6 @@ const setEntryNumber: Entry<typeof setExample> = [1, 1];
 export type Entry<BaseType> =
 	BaseType extends Map<unknown, unknown> ? MapEntry<BaseType>
 		: BaseType extends Set<unknown> ? SetEntry<BaseType>
-		: BaseType extends readonly unknown[] ? ArrayEntry<BaseType>
-		: BaseType extends object ? ObjectEntry<BaseType>
-		: never;
+			: BaseType extends readonly unknown[] ? ArrayEntry<BaseType>
+				: BaseType extends object ? ObjectEntry<BaseType>
+					: never;

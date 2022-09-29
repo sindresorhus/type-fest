@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {UpperCaseCharacters, WordSeparators} from '../source/utilities';
+import type {UpperCaseCharacters, WordSeparators} from '../source/internal';
 import type {SplitIncludingDelimiters, DelimiterCase} from '../source/delimiter-case';
 
 const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar'];
@@ -8,6 +8,8 @@ const splitFromComplexCamel: SplitIncludingDelimiters<'fooBarAbc123', WordSepara
 expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
 const splitFromWordSeparators: SplitIncludingDelimiters<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
 expectType<['foo', '-', 'bar', '_', 'car', ' ', 'far']>(splitFromWordSeparators);
+const splitFromScreamingSnakeCase: SplitIncludingDelimiters<'FOO_BAR', WordSeparators | UpperCaseCharacters> = ['foo', '_', 'bar'];
+expectType<['foo', '_', 'bar']>(splitFromScreamingSnakeCase);
 
 // DelimiterCase
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
@@ -49,16 +51,19 @@ expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
 const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
 expectType<string>(delimiterFromString);
 
+const delimiterFromScreamingSnake: DelimiterCase<'FOO_BAR', '#'> = 'foo#bar';
+expectType<'foo#bar'>(delimiterFromScreamingSnake);
+
 // Verifying example
 type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
 };
 
-interface CliOptions {
+type CliOptions = {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
-}
+};
 
 expectAssignable<OddCasedProperties<CliOptions>>({
 	'dry#run': true,

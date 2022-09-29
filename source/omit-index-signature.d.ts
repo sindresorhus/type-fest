@@ -1,5 +1,7 @@
 /**
-Remove any index signatures from the given object type, so that only explicitly defined properties remain.
+Omit any index signatures from the given object type, leaving only explicitly defined properties.
+
+This is the counterpart of `PickIndexSignature`.
 
 Use-cases:
 - Remove overly permissive signatures from third-party types.
@@ -34,20 +36,20 @@ type Keyed = {} extends Record<'foo' | 'bar', unknown>
 Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
 
 ```
-import type {RemoveIndexSignature} from 'type-fest';
+import type {OmitIndexSignature} from 'type-fest';
 
-type RemoveIndexSignature<ObjectType> = {
+type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType // Map each key of `ObjectType`...
-	]: ObjectType[KeyType]; // ...to its original value, i.e. `RemoveIndexSignature<Foo> == Foo`.
+	]: ObjectType[KeyType]; // ...to its original value, i.e. `OmitIndexSignature<Foo> == Foo`.
 };
 ```
 
 ...whether an empty object (`{}`) would be assignable to an object with that `KeyType` (`Record<KeyType, unknown>`)...
 
 ```
-import type {RemoveIndexSignature} from 'type-fest';
+import type {OmitIndexSignature} from 'type-fest';
 
-type RemoveIndexSignature<ObjectType> = {
+type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
 		// Is `{}` assignable to `Record<KeyType, unknown>`?
 		as {} extends Record<KeyType, unknown>
@@ -60,9 +62,9 @@ type RemoveIndexSignature<ObjectType> = {
 If `{}` is assignable, it means that `KeyType` is an index signature and we want to remove it. If it is not assignable, `KeyType` is a "real" key and we want to keep it.
 
 ```
-import type {RemoveIndexSignature} from 'type-fest';
+import type {OmitIndexSignature} from 'type-fest';
 
-type RemoveIndexSignature<ObjectType> = {
+type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
 		as {} extends Record<KeyType, unknown>
 			? never // => Remove this `KeyType`.
@@ -73,7 +75,7 @@ type RemoveIndexSignature<ObjectType> = {
 
 @example
 ```
-import type {RemoveIndexSignature} from 'type-fest';
+import type {OmitIndexSignature} from 'type-fest';
 
 interface Example {
 	// These index signatures will be removed.
@@ -91,13 +93,14 @@ interface Example {
 	qux?: 'baz';
 }
 
-type ExampleWithoutIndexSignatures = RemoveIndexSignature<Example>;
+type ExampleWithoutIndexSignatures = OmitIndexSignature<Example>;
 // => { foo: 'bar'; qux?: 'baz' | undefined; }
 ```
 
+@see PickIndexSignature
 @category Object
 */
-export type RemoveIndexSignature<ObjectType> = {
+export type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown>
 		? never
 		: KeyType]: ObjectType[KeyType];
