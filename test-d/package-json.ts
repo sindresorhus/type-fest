@@ -53,6 +53,8 @@ expectAssignable<
 string
 >>
 >(packageJson.cpu);
+expectAssignable<PackageJson.Imports>({'#unicorn': 'unicorn'});
+expectNotAssignable<PackageJson.Imports>({unicorn: 'unicorn'});
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
 expectType<PackageJson.PublishConfig | undefined>(packageJson.publishConfig);
