@@ -2,6 +2,7 @@ import type {JsonPrimitive, JsonValue} from './basic';
 import type {Merge} from './merge';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
+import type {EmptyObject} from './empty-object';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
@@ -95,14 +96,14 @@ export type Jsonify<T> =
 				// Any object with toJSON is special case
 					? T extends {toJSON(): infer J} ? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
 						? J // Then T is Jsonable and its Jsonable value is J
-						: never // Not Jsonable because its toJSON() method does not return JsonValue
+						: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
 					// Instanced primitives are objects
 						: T extends Number ? number
 							: T extends String ? string
 								: T extends Boolean ? boolean
-									: T extends Map<any, any> | Set<any> ? {}
+									: T extends Map<any, any> | Set<any> ? EmptyObject
 										: T extends TypedArray ? Record<string, number>
-											: T extends any[]
+											: T extends any[] | Record<string, any>
 												? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
 												: Merge<
 												{[Key in keyof T as RequiredKeyFilter<T, Key>]: Jsonify<T[Key]>},

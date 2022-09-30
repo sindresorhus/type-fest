@@ -110,6 +110,32 @@ expectNotAssignable<JsonValue>(nonJsonWithToJSON);
 expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
 expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
 
+class NonJsonWithToJSONWrapper {
+	toJSON(): { a: NonJsonWithToJSON } {
+		return { a: new NonJsonWithToJSON() };
+	}
+}
+
+function recursivelyUnpack<T extends Record<string, any>>(obj: T): Jsonify<T> {
+	for (const key in obj) {
+		const value: any = obj[key];
+		if (typeof value !== "object") continue;
+		const json = value?.toJSON?.();
+		if (json === undefined) continue;
+		obj[key] = recursivelyUnpack(json);
+	}
+
+	return obj as unknown as Jsonify<T>
+}
+
+const nonJsonWithToJSONWrapper = new NonJsonWithToJSONWrapper();
+expectNotAssignable<JsonValue>(nonJsonWithToJSONWrapper);
+expectNotAssignable<JsonValue>(nonJsonWithToJSONWrapper.toJSON());
+// This recursive unpacking is necessary for the next test to be valid.
+// You see, JSON.stringify would *also* recursively unpack every nested toJSON().
+const unpacked = recursivelyUnpack(nonJsonWithToJSONWrapper.toJSON());
+expectAssignable<Jsonify<NonJsonWithToJSONWrapper>>(unpacked);
+
 class NonJsonWithInvalidToJSON {
 	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
 
@@ -125,6 +151,18 @@ class NonJsonWithInvalidToJSON {
 const nonJsonWithInvalidToJSON = new NonJsonWithInvalidToJSON();
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
 expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
+
+class NonJsonWithInvalidToJSONWrapper {
+	toJSON(): { a: NonJsonWithInvalidToJSON } {
+		return { a: new NonJsonWithInvalidToJSON() };
+	}
+}
+
+const nonJsonWithInvalidToJSONWrapper = new NonJsonWithInvalidToJSONWrapper();
+expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSONWrapper);
+expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSONWrapper.toJSON());
+const unpacked2 = recursivelyUnpack(nonJsonWithInvalidToJSONWrapper.toJSON());
+expectAssignable<Jsonify<NonJsonWithInvalidToJSONWrapper>>(unpacked2);
 
 // Not jsonable types; these types behave differently when used as plain values, as members of arrays and as values of objects
 declare const undefined: undefined;
