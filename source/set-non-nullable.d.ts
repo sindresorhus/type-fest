@@ -26,7 +26,7 @@ type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
 
 @category Object
 */
-export type SetNonNullable<BaseType, Keys extends keyof BaseType> =
+export type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 	Simplify<
 	// Pick just the keys that are readonly from the base type.
 	Except<BaseType, Keys> &
