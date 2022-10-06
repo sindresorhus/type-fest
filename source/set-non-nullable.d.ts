@@ -13,7 +13,7 @@ import type {SetNonNullable} from 'type-fest';
 type Foo = {
 	a: number | null;
 	b: string | undefined;
-	d?: boolean | null;
+	c?: boolean | null;
 }
 
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
