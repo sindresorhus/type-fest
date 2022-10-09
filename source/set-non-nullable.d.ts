@@ -2,7 +2,9 @@ import type {Except} from './except';
 import type {Simplify} from './simplify';
 
 /**
-Create a type that makes the given keys non-nullable, where the remaining keys are kept as is. If no keys are given, all keys will be made non-nullable.
+Create a type that makes the given keys non-nullable, where the remaining keys are kept as is.
+
+If no keys are given, all keys will be made non-nullable.
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some or all of the keys are non-nullable.
 
