@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectNotAssignable, expectType} from 'tsd';
 import type {SetNonNullable} from '../index';
 
 // Update one possibly undefined key and one possibly null key to non-nullable.
@@ -15,4 +15,4 @@ expectType<{a: number; b?: string}>(variation3);
 
 // Fail if type changes even if non-nullable is right.
 declare const variation4: SetNonNullable<{a: number; b: string | undefined}, 'b'>;
-expectError<{a: string; b: string}>(variation4);
+expectNotAssignable<{a: string; b: string}>(variation4);

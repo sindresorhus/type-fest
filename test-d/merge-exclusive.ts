@@ -1,4 +1,4 @@
-import {expectError, expectAssignable} from 'tsd';
+import {expectNotAssignable, expectAssignable} from 'tsd';
 import type {MergeExclusive} from '../index';
 
 type BaseOptions = {
@@ -25,4 +25,4 @@ expectAssignable<{option?: string; exclusive1?: string; exclusive2: number}>(
 	exclusiveVariation2,
 );
 
-expectError<Options>({exclusive1: true, exclusive2: 1});
+expectNotAssignable<Options>({exclusive1: true, exclusive2: 1});

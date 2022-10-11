@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectNotAssignable, expectType} from 'tsd';
 import type {Writable} from '../index';
 
 type Foo = {
@@ -25,4 +25,4 @@ expectType<{a: number; b: string; c: boolean}>(variation3);
 
 // Check if type changes raise an error even if readonly and writable are applied correctly.
 declare const variation4: Writable<{readonly a: number; b: string; readonly c: boolean}, 'b' | 'c'>;
-expectError<{readonly a: boolean; b: string; c: boolean}>(variation4);
+expectNotAssignable<{readonly a: boolean; b: string; c: boolean}>(variation4);

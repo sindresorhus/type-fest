@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectNotAssignable, expectType} from 'tsd';
 import type {Stringified} from '../index';
 
 declare const stringified: Stringified<{a: number; b: string}>;
@@ -8,5 +8,5 @@ type Car = {
 	model: string;
 	speed: number;
 };
-expectError<Stringified<Car>>({model: 'Foo', speed: 101});
+expectNotAssignable<Stringified<Car>>({model: 'Foo', speed: 101});
 expectType<Stringified<Car>>({model: 'Foo', speed: '101'});

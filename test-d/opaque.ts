@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectNotType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectNotType} from 'tsd';
 import type {Opaque, UnwrapOpaque} from '../index';
 
 type Value = Opaque<number, 'Value'>;
@@ -10,7 +10,7 @@ const value: Value = 2 as Value;
 expectAssignable<number>(value);
 
 // You cannot modify an opaque value.
-expectError<Value>(value + 2);
+expectNotAssignable<Value>(value + 2);
 
 type WithoutToken = Opaque<number>;
 expectAssignable<WithoutToken>(2 as WithoutToken);

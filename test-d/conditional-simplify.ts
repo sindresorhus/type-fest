@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectNotAssignable, expectType} from 'tsd';
 import type {ConditionalSimplify, ConditionalSimplifyDeep} from '../source/conditional-simplify';
 
 type Position = {top: number; left: number};
@@ -21,7 +21,7 @@ type SimplifiedFunctionPass = ConditionalSimplify<SomeFunction, Function>; // Re
 declare const simplifiedFunctionFail: SimplifiedFunctionFail;
 declare const simplifiedFunctionPass: SimplifiedFunctionPass;
 
-expectError<SomeFunction>(simplifiedFunctionFail);
+expectNotAssignable<SomeFunction>(simplifiedFunctionFail);
 expectType<SomeFunction>(simplifiedFunctionPass);
 
 // Should simplify interface deeply.
@@ -55,7 +55,7 @@ type MovableNodeSimplifiedPass = ConditionalSimplifyDeep<MovableCollection, Func
 declare const movableNodeSimplifiedFail: MovableNodeSimplifiedFail;
 declare const movableNodeSimplifiedPass: MovableNodeSimplifiedPass;
 
-expectError<MovableCollection>(movableNodeSimplifiedFail);
+expectNotAssignable<MovableCollection>(movableNodeSimplifiedFail);
 expectType<MovableCollection>(movableNodeSimplifiedPass);
 
 const movablePosition = {
