@@ -1,9 +1,9 @@
 import type {UpperCaseCharacters, WordSeparators} from '../source/internal';
 
-// Transforms a string that is fully uppercase into a fully lowercase version. Needed to add support for SCREMAING_SNAKE_CASE, see https://github.com/sindresorhus/type-fest/issues/385
+// Transforms a string that is fully uppercase into a fully lowercase version. Needed to add support for SCREAMING_SNAKE_CASE, see https://github.com/sindresorhus/type-fest/issues/385
 type UpperCaseToLowerCase<T extends string> = T extends Uppercase<T> ? Lowercase<T> : T;
 
-// This implemntation does not supports SCREMAING_SNAKE_CASE, it used internaly by `SplitIncludingDelimiters`.
+// This implementation does not support SCREAMING_SNAKE_CASE, it is used internally by `SplitIncludingDelimiters`.
 type SplitIncludingDelimiters_<Source extends string, Delimiter extends string> =
 	Source extends '' ? [] :
 		Source extends `${infer FirstPart}${Delimiter}${infer SecondPart}` ?

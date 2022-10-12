@@ -52,7 +52,7 @@ expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
 partialDeepFoo = {baz: 'fred'};
 partialDeepFoo = {bar: {string: 'waldo'}};
 partialDeepFoo = {bar: {date: new Date()}};
-// Check that recursive array evalution isn't infinite depth
+// Check that recursive array evaluation isn't infinite depth
 type Recurse =
 	| string
 	| number

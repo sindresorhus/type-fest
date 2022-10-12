@@ -8,7 +8,7 @@ declare global {
 /**
 @remarks
 The TC39 observable proposal defines a `closed` property, but some implementations (such as xstream) do not as of 10/08/2021.
-As well, some guideance on making an `Observable` do not include `closed` propery.
+As well, some guidance on making an `Observable` to not include `closed` property.
 @see https://github.com/tc39/proposal-observable/blob/master/src/Observable.js#L129-L130
 @see https://github.com/staltz/xstream/blob/6c22580c1d84d69773ee4b0905df44ad464955b3/src/index.ts#L79-L85
 @see https://github.com/benlesh/symbol-observable#making-an-object-observable
