@@ -13,7 +13,7 @@ import type {
 } from './internal';
 
 /**
-Deeply smplifies an object excluding iterables and functions. Used internally to improve the UX and accept both interfaces and type aliases as inputs.
+Deeply simplifies an object excluding iterables and functions. Used internally to improve the UX and accept both interfaces and type aliases as inputs.
 */
 type SimplifyDeep<Type> = ConditionalSimplifyDeep<Type, Function | Iterable<unknown>, object>;
 
@@ -200,7 +200,7 @@ Merge mode for array/tuple elements.
 type ArrayMergeMode = 'spread' | 'replace';
 
 /**
-Test if it sould spread top-level arrays.
+Test if it should spread top-level arrays.
 */
 type ShouldSpread<Options extends MergeDeepInternalOptions> = Options['spreadTopLevelArrays'] extends false
 	? Options['arrayMergeMode'] extends 'spread' ? true : false

@@ -58,7 +58,7 @@ expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const, {arra
 expectType<Array<number | string | boolean>>(mergeDeep(['life', true], [42], {arrayMergeMode: 'spread'}));
 expectType<Array<number | string | boolean>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'spread'}));
 
-// Sould merge simple types
+// Should merge simple types
 type Foo = {foo: string; fooBar: unknown; items: string[]};
 type Bar = {bar: number; fooBar: boolean; items: number[]};
 
@@ -71,7 +71,7 @@ expectType<{foo: string; bar: number; fooBar: boolean; items: Array<string | num
 declare const fooBarReplace: MergeDeep<Foo, Bar, {arrayMergeMode: 'replace'}>;
 expectType<{foo: string; bar: number; fooBar: boolean; items: number[]}>(fooBarReplace);
 
-// Sould merge types deep
+// Should merge types deep
 type FooDeep = {foo: Foo; fooBar: Foo; items: {foo: Foo[]; fooBar: Foo}};
 type BarDeep = {bar: Bar; fooBar: Bar; items: {bar: Bar[]; fooBar: Bar}};
 
@@ -105,7 +105,7 @@ expectType<{
 	};
 }>(fooBarDeep);
 
-// Sould merge types with index signatures deep
+// Should merge types with index signatures deep
 type FooWithIndexSignature = {[x: number]: number; foo: string; items: string[]};
 type BarWithIndexSignature = {[x: symbol]: symbol; bar: number; items: number[]};
 type FooWithIndexSignatureDeep = {[x: number]: number; foo: string; fooBar: FooWithIndexSignature; items: string[]};
@@ -127,7 +127,7 @@ expectType<{
 	items: number[];
 }>(fooBarWithIndexSignature);
 
-// Sould merge types with optional properties deep
+// Should merge types with optional properties deep
 type FooWithOptional = {foo: string; fooOptional?: string; fooBar: Foo; fooBarOptional: Foo | undefined};
 type BarWithOptional = {bar: number; barOptional?: number; fooBar: Bar; fooBarOptional: Bar | undefined};
 
