@@ -2,6 +2,7 @@ name: TypeScript Canary
 
 on:
   schedule:
+    # Randomly generated weekly time: Every Thursday at 21.15
     - cron: '15 21 * * 4'
 
 jobs:
