@@ -1,0 +1,23 @@
+name: TypeScript Canary
+on:
+  schedule:
+    # Every Thursday at 21.15
+    - cron: '15 21 * * 4'
+jobs:
+  types:
+    name: TypeScript ${{ matrix.typescript-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        typescript-version:
+          - next
+          - latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - run: npm install
+      - run: npm install typescript@${{ matrix.typescript-version }}
+      - run: npx tsc
