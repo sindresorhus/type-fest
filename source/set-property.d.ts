@@ -29,6 +29,17 @@ export type SplitDottedPath<
 				: [...SplitDottedPath<Tail, `${CurrentIndex}${Char}`, false>]
 	: [InferIndexType<CurrentIndex, IsNumberIndex>];
 
+export type ArrayOrRecordFromPath<
+	Tuple extends Index[],
+	Value,
+> = Tuple extends [infer FirstKey extends Index, ...infer RestKeys extends Index[]]
+	? FirstKey extends number
+		? FirstKey extends 0
+			? Array<ArrayOrRecordFromPath<RestKeys, Value>>
+			: Array<ArrayOrRecordFromPath<RestKeys, Value> | undefined>
+		: {[Key in FirstKey]: ArrayOrRecordFromPath<RestKeys, Value>}
+	: Value;
+
 export type SetProperty<
 	Destination extends object,
 	Path extends string,
