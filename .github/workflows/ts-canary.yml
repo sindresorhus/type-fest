@@ -1,10 +1,8 @@
 name: TypeScript Canary
-
 on:
   schedule:
-    # Randomly generated weekly time: Every Thursday at 21.15
+    # Every Thursday at 21.15
     - cron: '15 21 * * 4'
-
 jobs:
   types:
     name: TypeScript ${{ matrix.typescript-version }}
@@ -13,8 +11,8 @@ jobs:
       fail-fast: false
       matrix:
         typescript-version:
-          - 'next'
-          - 'latest'
+          - next
+          - latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
