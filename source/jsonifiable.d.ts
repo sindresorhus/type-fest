@@ -1,7 +1,6 @@
 import type {JsonPrimitive, JsonValue} from './basic';
 
-type JsonifiablePrimitive = JsonPrimitive | {toJSON: () => JsonValue};
-type JsonifiableObject = {[Key in string]?: Jsonifiable};
+type JsonifiableObject = {[Key in string]?: Jsonifiable} | {toJSON: () => JsonValue};
 type JsonifiableArray = Jsonifiable[];
 
 /**
@@ -30,4 +29,4 @@ JSON.stringify(good); // {"number": 3, "date": "2022-10-17T22:22:35.920Z"}
 
 @category JSON
 */
-export type Jsonifiable = JsonifiablePrimitive | JsonifiableObject | JsonifiableArray;
+export type Jsonifiable = JsonPrimitive | JsonifiableObject | JsonifiableArray;
