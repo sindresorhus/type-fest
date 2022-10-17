@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectNotAssignable, expectType} from 'tsd';
 import type {Schema} from '../index';
 
 const foo = {
@@ -46,9 +46,9 @@ const fooSchema: FooSchema = {
 	},
 };
 
-expectError<FooSchema>(foo);
-expectError<FooSchema>({key: 'value'});
-expectError<FooSchema>(new Date());
+expectNotAssignable<FooSchema>(foo);
+expectNotAssignable<FooSchema>({key: 'value'});
+expectNotAssignable<FooSchema>(new Date());
 expectType<FooOption>(fooSchema.baz);
 
 const barSchema = fooSchema.bar as Schema<typeof foo['bar'], FooOption>;
@@ -102,7 +102,7 @@ const complexFoo: ComplexSchema = {
 	},
 };
 
-expectError<ComplexSchema>(foo);
+expectNotAssignable<ComplexSchema>(foo);
 expectType<ComplexOption>(complexFoo.baz);
 
 const complexBarSchema = complexFoo.bar as Schema<typeof foo['bar'], ComplexOption>;

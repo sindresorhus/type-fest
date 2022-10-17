@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectNotAssignable, expectType} from 'tsd';
 import type {SetRequired} from '../index';
 
 // Update one required and one optional to required.
@@ -15,4 +15,4 @@ expectType<{a: number; b: string; c: boolean}>(variation3);
 
 // Fail if type changes even if optional is right.
 declare const variation4: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
-expectError<{a?: boolean; b: string; c: boolean}>(variation4);
+expectNotAssignable<{a?: boolean; b: string; c: boolean}>(variation4);

@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectNotAssignable, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {Simplify} from '../index';
 
 type PositionProps = {
@@ -51,7 +51,7 @@ type SimplifiedFunction = Simplify<SomeFunction>; // Return '{}' expected 'SomeF
 
 declare const someFunction: SimplifiedFunction;
 
-expectError<SomeFunction>(someFunction);
+expectNotAssignable<SomeFunction>(someFunction);
 
 // // Should return the original type if it is not simplifiable, like a function.
 // type SomeFunction = (type: string) => string;
