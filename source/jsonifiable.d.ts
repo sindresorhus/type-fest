@@ -1,6 +1,6 @@
-import type {JsonPrimitive} from './basic';
+import type {JsonPrimitive, JsonValue} from './basic';
 
-type JsonifiablePrimitive = JsonPrimitive | {toJSON: () => Jsonifiable};
+type JsonifiablePrimitive = JsonPrimitive | {toJSON: () => JsonValue};
 type JsonifiableObject = {[Key in string]: Jsonifiable};
 type JsonifiableArray = Jsonifiable[];
 

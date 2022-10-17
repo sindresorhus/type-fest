@@ -12,4 +12,4 @@ expectNotAssignable<Jsonifiable>(undefined);
 expectNotAssignable<Jsonifiable>(new Map());
 expectNotAssignable<Jsonifiable>({a: new Map()});
 expectNotAssignable<Jsonifiable>([new Map()]);
-expectNotAssignable<Jsonifiable>({a: undefined});
+expectNotAssignable<Jsonifiable>({toJSON: () => new Date()});
