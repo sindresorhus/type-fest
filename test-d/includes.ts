@@ -40,16 +40,16 @@ expectType<true>(nullIncludesNullPass);
 
 declare const anything: any;
 
-// Verify incorrect usages of Includes produces an error.
+// Verify that incorrect usage of `Includes` produces an error.
 
-// Missing all generic params.
+// Missing all generic parameters.
 expectError<Includes>(anything);
 
-// Missing Item generic param
+// Missing `Item` generic parameter.
 expectError<Includes<['my', 'array', 'has', 'stuff']>>(anything);
 
-// Value generic param is a string not an array.
+// Value generic parameter is a string not an array.
 expectError<Includes<'why a string?', 5>>(anything);
 
-// Value generic param is an object not an array.
+// Value generic parameter is an object not an array.
 expectError<Includes<{key: 'value'}, 7>>(anything);
