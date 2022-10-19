@@ -128,3 +128,9 @@ expectType<readonly ['zero', Value]>(setProperty(readonlyStringTuple, '[1]', val
 expectType<readonly ['zero', 'one', Value]>(setProperty(readonlyStringTuple, '[2]', value));
 expectType<readonly ['zero', 'one', null, Value]>(setProperty(readonlyStringTuple, '[3]', value));
 expectType<readonly ['zero', 'one', null, null, Value]>(setProperty(readonlyStringTuple, '[4]', value));
+
+// Test escaped path
+expectType<{foo: string; dot: {dot: {dot: number}}}>(setProperty({foo: 'foo'}, 'dot.dot.dot', value));
+expectType<{foo: string; 'dot.dot': {'dot': number}}>(setProperty({foo: 'foo'}, 'dot\\.dot.dot', value));
+expectType<{foo: string; dot: {'dot.dot': number}}>(setProperty({foo: 'foo'}, 'dot.dot\\.dot', value));
+expectType<{foo: string; 'dot.dot.dot': number}>(setProperty({foo: 'foo'}, 'dot\\.dot\\.dot', value));
