@@ -15,7 +15,7 @@ expectNotAssignable<Value>(value + 2);
 type WithoutToken = Opaque<number>;
 expectAssignable<WithoutToken>(2 as WithoutToken);
 
-// Verify Opaque's Token can be the parent type itself.
+// Verify that the Opaque's token can be the parent type itself.
 type Person = {
 	id: Opaque<number, Person>;
 	name: string;
