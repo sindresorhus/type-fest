@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
+import type {EmptyObject, Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
 
 interface A {
 	a: number;
@@ -205,11 +205,21 @@ expectType<Record<string, number>>(int8ArrayJson);
 
 declare const map: Map<string, number>;
 declare const mapJson: Jsonify<typeof map>;
-expectType<{}>(mapJson);
+expectType<EmptyObject>(mapJson);
+expectAssignable<Jsonify<typeof map>>({});
+
+// Regression test for https://github.com/sindresorhus/type-fest/issues/466
+expectNotAssignable<Jsonify<typeof map>>(42);
+expectNotAssignable<Jsonify<typeof map>>({foo: 42});
 
 declare const set: Set<string>;
 declare const setJson: Jsonify<typeof set>;
-expectType<{}>(setJson);
+expectType<EmptyObject>(setJson);
+expectAssignable<Jsonify<typeof set>>({});
+
+// Regression test for https://github.com/sindresorhus/type-fest/issues/466
+expectNotAssignable<Jsonify<typeof set>>(42);
+expectNotAssignable<Jsonify<typeof set>>({foo: 42});
 
 // Positive and negative Infinity, NaN and null are turned into null
 // NOTE: NaN is not detectable in TypeScript, so it is not tested; see https://github.com/sindresorhus/type-fest/issues/406
