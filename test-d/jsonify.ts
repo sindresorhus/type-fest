@@ -105,10 +105,36 @@ class NonJsonWithToJSON {
 		};
 	}
 }
+
 const nonJsonWithToJSON = new NonJsonWithToJSON();
 expectNotAssignable<JsonValue>(nonJsonWithToJSON);
 expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
 expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
+
+class NonJsonWithToJSONWrapper {
+	public inner: NonJsonWithToJSON = nonJsonWithToJSON;
+	public override = 42;
+
+	public toJSON() {
+		const stringOverride = 'override';
+
+		return {
+			override: stringOverride,
+			inner: this.inner,
+			innerDeep: {inner: this.inner},
+		};
+	}
+}
+
+expectNotAssignable<JsonValue>(new NonJsonWithToJSONWrapper());
+
+type InnerFixture = {fixture: Array<[string, number]>};
+
+expectType<{
+	override: string;
+	inner: InnerFixture;
+	innerDeep: {inner: InnerFixture};
+}>({} as Jsonify<NonJsonWithToJSONWrapper>);
 
 class NonJsonWithInvalidToJSON {
 	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
