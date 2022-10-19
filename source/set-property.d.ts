@@ -1,4 +1,4 @@
-import type {FirstArrayElement, UnknownArrayOrTuple} from './internal';
+import type {ArrayTail, FirstArrayElement, UnknownArrayOrTuple} from './internal';
 import type {ConditionalSimplifyDeep} from './conditional-simplify';
 import type {MergeDeep} from './merge-deep';
 
@@ -66,6 +66,19 @@ type GetTypeAtIndex<
 	| SetPropertyFromPath<NextIndexType<RestIndex>, RestIndex, Value>,
 ][number];
 
+// Returns the fill value for tuples. If the value is out of bounds returns `null` otherwise returns the value.
+type FillValue<Value> = [Value] extends [never] ? null : Value;
+
+type SetTupleIndex<
+	Destination extends UnknownArrayOrTuple,
+	CurrentIndex extends Index,
+	RestIndex extends Index[],
+	Value,
+	Result extends UnknownArrayOrTuple = [],
+> = Result['length'] extends CurrentIndex
+	? [...Result, SetPropertyFromPath<NextIndexType<RestIndex>, RestIndex, Value>, ...ArrayTail<Destination>]
+	: SetTupleIndex<ArrayTail<Destination>, CurrentIndex, RestIndex, Value, [...Result, FillValue<FirstArrayElement<Destination>>]>;
+
 type SetOrCreateArrayOrTupleAtIndex<
 	Destination extends UnknownArrayOrTuple,
 	TargetIndex extends Index,
@@ -73,8 +86,12 @@ type SetOrCreateArrayOrTupleAtIndex<
 	Value,
 > = TargetIndex extends number
 	? Destination extends unknown[]
-		? Array<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
-		: ReadonlyArray<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
+		? number extends Destination['length']
+			? Array<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
+			: SetTupleIndex<Destination, TargetIndex, PathRest, Value>
+		: number extends Destination['length']
+			? ReadonlyArray<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
+			: readonly [...SetTupleIndex<Destination, TargetIndex, PathRest, Value>]
 	: never; // Cannot use string index;
 
 type CreateObjectAtIndex<
