@@ -72,7 +72,9 @@ type SetOrCreateArrayOrTupleAtIndex<
 	PathRest extends Index[],
 	Value,
 > = TargetIndex extends number
-	? Array<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
+	? Destination extends unknown[]
+		? Array<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
+		: ReadonlyArray<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
 	: never; // Cannot use string index;
 
 type CreateObjectAtIndex<

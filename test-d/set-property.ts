@@ -11,7 +11,7 @@ declare function setProperty<
 type Value = number;
 declare const value: Value;
 
-// Property does not exist
+// Property does not exists
 expectType<{foo: Value}>(setProperty({}, 'foo', value));
 expectType<{foo: {bar: Value}}>(setProperty({foo: 'foo'}, 'foo.bar', value));
 expectType<{foo: string; bar: Value}>(setProperty({foo: 'foo'}, 'bar', value));
@@ -38,7 +38,7 @@ expectType<{foo: {0: Value; bar: string}}>(setProperty({foo: {0: 'zero', bar: 'b
 // Cannot use string index on array/tuple
 expectType<never>(setProperty([], '0', value));
 
-// Element does not exist
+// Element does not exists
 declare const emptyArray: never[];
 
 expectType<Value[]>(setProperty(emptyArray, '[0]', value));
@@ -64,7 +64,7 @@ expectType<{foo: Value[][]}>(setProperty({foo: 'foo'}, 'foo[0][0]', value));
 expectType<{foo: Array<Value | null>}>(setProperty({foo: 'foo'}, 'foo[1]', value));
 expectType<{foo: Array<Value[] | null>}>(setProperty({foo: 'foo'}, 'foo[1][0]', value));
 
-// Element exist
+// Element possibly exists
 declare const stringArray: string[];
 
 expectType<Array<string | Value>>(setProperty(stringArray, '[0]', value));
@@ -84,3 +84,10 @@ expectType<{foo: Array<string | number>}>(setProperty({foo: stringArray}, 'foo[0
 expectType<{foo: Array<string | number[]>}>(setProperty({foo: stringArray}, 'foo[0][0]', value));
 expectType<{foo: Array<string | number | null>}>(setProperty({foo: stringArray}, 'foo[1]', value));
 expectType<{foo: Array<string | number[] | null>}>(setProperty({foo: stringArray}, 'foo[1][0]', value));
+
+// Should work on readonly array
+declare const readonlyStringArray: readonly string[];
+
+expectType<ReadonlyArray<string | Value>>(setProperty(readonlyStringArray, '[0]', value));
+expectType<ReadonlyArray<string | {foo: number}>>(setProperty(readonlyStringArray, '[0].foo', value));
+expectType<{foo: ReadonlyArray<string | number>}>(setProperty({foo: readonlyStringArray}, 'foo[0]', value));
