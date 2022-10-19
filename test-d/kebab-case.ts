@@ -1,17 +1,17 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {KebabCase} from '../index';
 
 const kebabFromCamel: KebabCase<'fooBar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromCamel);
+expectTypeOf(kebabFromCamel).toEqualTypeOf<'foo-bar'>();
 
 const kebabFromKebab: KebabCase<'foo-bar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromKebab);
+expectTypeOf(kebabFromKebab).toEqualTypeOf<'foo-bar'>();
 
 const kebabFromSpace: KebabCase<'foo bar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromSpace);
+expectTypeOf(kebabFromSpace).toEqualTypeOf<'foo-bar'>();
 
 const kebabFromSnake: KebabCase<'foo_bar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromSnake);
+expectTypeOf(kebabFromSnake).toEqualTypeOf<'foo-bar'>();
 
 const noKebabFromMono: KebabCase<'foobar'> = 'foobar';
-expectType<'foobar'>(noKebabFromMono);
+expectTypeOf(noKebabFromMono).toEqualTypeOf<'foobar'>();

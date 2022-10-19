@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ConditionalExcept, Primitive} from '../index';
 
 class Awesome {
@@ -19,10 +19,10 @@ type Example = {
 };
 
 declare const exampleConditionalExcept: ConditionalExcept<Example, string>;
-expectType<{b?: string | number; c?: string; d: Record<string, unknown>}>(exampleConditionalExcept);
+expectTypeOf(exampleConditionalExcept).toEqualTypeOf<{b?: string | number; c?: string; d: Record<string, unknown>}>();
 
 declare const awesomeConditionalExcept: ConditionalExcept<Awesome, Primitive>;
-expectType<{run: () => void}>(awesomeConditionalExcept);
+expectTypeOf(awesomeConditionalExcept).toEqualTypeOf<{run: () => void}>();
 
 declare const exampleConditionalExceptWithUndefined: ConditionalExcept<Example, string | undefined>;
-expectType<{b?: string | number; d: Record<string, unknown>}>(exampleConditionalExceptWithUndefined);
+expectTypeOf(exampleConditionalExceptWithUndefined).toEqualTypeOf<{b?: string | number; d: Record<string, unknown>}>();

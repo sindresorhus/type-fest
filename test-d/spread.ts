@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Spread} from '../index';
 
 type Foo = {
@@ -41,7 +41,7 @@ const bar: Bar = {
 
 const foobar = {...foo, ...bar};
 
-expectType<FooBar>(foobar);
+expectTypeOf(foobar).toEqualTypeOf<FooBar>();
 
 const arrayFoo = [1, 2, 3];
 const arrayBar = [4, 5, 6];
@@ -49,16 +49,16 @@ const arrayBar = [4, 5, 6];
 const arrayFooBar = [...arrayFoo, ...arrayBar]; //=> number[]
 type ArrayFooBar = Spread<typeof arrayFoo, typeof arrayBar>;
 
-expectType<ArrayFooBar>(arrayFooBar);
-expectType<number[]>(arrayFooBar);
+expectTypeOf(arrayFooBar).toEqualTypeOf<ArrayFooBar>();
+expectTypeOf(arrayFooBar).toEqualTypeOf<number[]>();
 
 const stringArray = ['4', '5', '6'];
 
 const mixedArrayFooBar = [...arrayFoo, ...stringArray]; //=> (string | number)[]
 type MixedArrayFooBar = Spread<typeof arrayFoo, typeof stringArray>;
 
-expectType<MixedArrayFooBar>(mixedArrayFooBar);
-expectType<Array<string | number>>(mixedArrayFooBar);
+expectTypeOf(mixedArrayFooBar).toEqualTypeOf<MixedArrayFooBar>();
+expectTypeOf(mixedArrayFooBar).toEqualTypeOf<Array<string | number>>();
 
 const tupleFoo: [1, 2, 3] = [1, 2, 3];
 const tupleBar: [4, 5, 6] = [4, 5, 6];
@@ -66,17 +66,17 @@ const tupleBar: [4, 5, 6] = [4, 5, 6];
 const tupleFooBar = [...tupleFoo, ...tupleBar]; //=> (1 | 2 | 3 | 4 | 5 | 6)[]
 type TupleFooBar = Spread<typeof tupleFoo, typeof tupleBar>;
 
-expectType<TupleFooBar>(tupleFooBar);
-expectType<Array<1 | 2 | 3 | 4 | 5 | 6>>(tupleFooBar);
+expectTypeOf(tupleFooBar).toEqualTypeOf<TupleFooBar>();
+expectTypeOf(tupleFooBar).toEqualTypeOf<Array<1 | 2 | 3 | 4 | 5 | 6>>();
 
 const arrayTupleFooBar = [...arrayFoo, ...tupleBar]; //=> number[]
 type ArrayTupleFooBar = Spread<typeof arrayFoo, typeof tupleBar>;
 
-expectType<ArrayTupleFooBar>(arrayTupleFooBar);
-expectType<number[]>(arrayTupleFooBar);
+expectTypeOf(arrayTupleFooBar).toEqualTypeOf<ArrayTupleFooBar>();
+expectTypeOf(arrayTupleFooBar).toEqualTypeOf<number[]>();
 
 const tupleArrayFooBar = [...tupleFoo, ...arrayBar]; //=> number[]
 type TupleArrayFooBar = Spread<typeof tupleFoo, typeof arrayBar>;
 
-expectType<TupleArrayFooBar>(tupleArrayFooBar);
-expectType<number[]>(tupleArrayFooBar);
+expectTypeOf(tupleArrayFooBar).toEqualTypeOf<TupleArrayFooBar>();
+expectTypeOf(tupleArrayFooBar).toEqualTypeOf<number[]>();

@@ -1,11 +1,11 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {FixedLengthArray} from '../index';
 
 type FixedToThreeStrings = FixedLengthArray<string, 3>;
 
-expectAssignable<FixedToThreeStrings>(['a', 'b', 'c']);
+expectTypeOf<['a', 'b', 'c']>().toMatchTypeOf<FixedToThreeStrings>();
 
-expectNotAssignable<FixedToThreeStrings>(['a', 'b', 123]);
-expectNotAssignable<FixedToThreeStrings>(['a']);
-expectNotAssignable<FixedToThreeStrings>(['a', 'b']);
-expectNotAssignable<FixedToThreeStrings>(['a', 'b', 'c', 'd']);
+expectTypeOf<['a', 'b', 123]>().not.toMatchTypeOf<FixedToThreeStrings>();
+expectTypeOf<['a']>().not.toMatchTypeOf<FixedToThreeStrings>();
+expectTypeOf<['a', 'b']>().not.toMatchTypeOf<FixedToThreeStrings>();
+expectTypeOf<['a', 'b', 'c', 'd']>().not.toMatchTypeOf<FixedToThreeStrings>();

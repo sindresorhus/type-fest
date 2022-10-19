@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {
 	Finite,
 	Float,
@@ -16,8 +16,8 @@ import type {
 declare const infinity: Finite<PositiveInfinity | NegativeInfinity>;
 declare const infinityMixed: Finite<1 | PositiveInfinity | NegativeInfinity>;
 
-expectType<never>(infinity);
-expectType<1>(infinityMixed);
+expectTypeOf(infinity).toEqualTypeOf<never>();
+expectTypeOf(infinityMixed).toEqualTypeOf<1>();
 
 // Integer
 declare const integer: Integer<1>;
@@ -25,10 +25,10 @@ declare const integerMixed: Integer<1 | 1.5>;
 declare const nonInteger: Integer<1.5>;
 declare const infinityInteger: Integer<PositiveInfinity | NegativeInfinity>;
 
-expectType<1>(integer);
-expectType<never>(integerMixed); // This may be undesired behavior
-expectType<never>(nonInteger);
-expectType<never>(infinityInteger);
+expectTypeOf(integer).toEqualTypeOf<1>();
+expectTypeOf(integerMixed).toEqualTypeOf<never>(); // This may be undesired behavior
+expectTypeOf(nonInteger).toEqualTypeOf<never>();
+expectTypeOf(infinityInteger).toEqualTypeOf<never>();
 
 // Float
 declare const float: Float<1.5>;
@@ -36,32 +36,32 @@ declare const floatMixed: Float<1 | 1.5>;
 declare const nonFloat: Float<1>;
 declare const infinityFloat: Float<PositiveInfinity | NegativeInfinity>;
 
-expectType<1.5>(float);
-expectType<1.5>(floatMixed);
-expectType<never>(nonFloat);
-expectType<PositiveInfinity | NegativeInfinity>(infinityFloat); // According to Number.isInteger
+expectTypeOf(float).toEqualTypeOf<1.5>();
+expectTypeOf(floatMixed).toEqualTypeOf<1.5>();
+expectTypeOf(nonFloat).toEqualTypeOf<never>();
+expectTypeOf(infinityFloat).toEqualTypeOf<PositiveInfinity | NegativeInfinity>(); // According to Number.isInteger
 
 // Negative
 declare const negative: Negative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
-expectType<-1 | -1n>(negative);
+expectTypeOf(negative).toEqualTypeOf<-1 | -1n>();
 
 // NegativeInteger
 declare const negativeInteger: NegativeInteger<-1 | 0 | 1>;
 
-expectType<-1>(negativeInteger);
+expectTypeOf(negativeInteger).toEqualTypeOf<-1>();
 
 // NegativeFloat
 declare const negativeFloat: NegativeFloat<-1.5 | -1 | 0 | 1 | 1.5>;
 
-expectType<-1.5>(negativeFloat);
+expectTypeOf(negativeFloat).toEqualTypeOf<-1.5>();
 
 // NonNegative
 declare const nonNegative: NonNegative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
-expectType<0 | 0n | 1 | 1n>(nonNegative);
+expectTypeOf(nonNegative).toEqualTypeOf<0 | 0n | 1 | 1n>();
 
 // NonNegativeInteger
 declare const nonNegativeInteger: NonNegativeInteger<-1 | 0 | 1>;
 
-expectType<0 | 1>(nonNegativeInteger);
+expectTypeOf(nonNegativeInteger).toEqualTypeOf<0 | 1>();

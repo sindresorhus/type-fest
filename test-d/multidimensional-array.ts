@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {MultidimensionalArray} from '../index';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalArray<unknown, T> {
@@ -24,7 +24,7 @@ a[0][0][0] = 42;
 
 type RecursiveArray<T> = Array<RecursiveArray<T>>;
 
-expectType<number[][][]>(a);
-expectType<RecursiveArray<boolean>>(b);
-expectType<unknown[][]>(c);
-expectType<unknown[][][][][][][]>(d);
+expectTypeOf(a).toEqualTypeOf<number[][][]>();
+expectTypeOf(b).toEqualTypeOf<RecursiveArray<boolean>>();
+expectTypeOf(c).toEqualTypeOf<unknown[][]>();
+expectTypeOf(d).toEqualTypeOf<unknown[][][][][][][]>();

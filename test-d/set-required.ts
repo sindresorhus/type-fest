@@ -1,18 +1,18 @@
-import {expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {SetRequired} from '../index';
 
 // Update one required and one optional to required.
 declare const variation1: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
-expectType<{a?: number; b: string; c: boolean}>(variation1);
+expectTypeOf(variation1).toEqualTypeOf<{a?: number; b: string; c: boolean}>();
 
 // Update two optional to required.
 declare const variation2: SetRequired<{a?: number; b?: string; c?: boolean}, 'a' | 'b'>;
-expectType<{a: number; b: string; c?: boolean}>(variation2);
+expectTypeOf(variation2).toEqualTypeOf<{a: number; b: string; c?: boolean}>();
 
 // Three required remain required.
 declare const variation3: SetRequired<{a: number; b: string; c: boolean}, 'a' | 'b' | 'c'>;
-expectType<{a: number; b: string; c: boolean}>(variation3);
+expectTypeOf(variation3).toEqualTypeOf<{a: number; b: string; c: boolean}>();
 
 // Fail if type changes even if optional is right.
 declare const variation4: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
-expectNotAssignable<{a?: boolean; b: string; c: boolean}>(variation4);
+expectTypeOf(variation4).not.toMatchTypeOf<{a?: boolean; b: string; c: boolean}>();

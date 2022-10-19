@@ -1,26 +1,26 @@
-import {expectAssignable, expectNotType, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {TupleToUnion} from '../index';
 
 const options = ['a', 'b', 'c'] as const;
 type Options = TupleToUnion<typeof options>;
 
 const a: Options = 'a';
-expectAssignable<Options>(a);
-expectType<'a'>(a);
-expectNotType<'b'>(a);
-expectNotType<'c'>(a);
+expectTypeOf(a).toMatchTypeOf<Options>();
+expectTypeOf(a).toEqualTypeOf<'a'>();
+expectTypeOf(a).not.toEqualTypeOf<'b'>();
+expectTypeOf(a).not.toEqualTypeOf<'c'>();
 
 const b: Options = 'b';
-expectAssignable<Options>(b);
-expectNotType<'a'>(b);
-expectType<'b'>(b);
-expectNotType<'c'>(b);
+expectTypeOf(b).toMatchTypeOf<Options>();
+expectTypeOf(b).not.toEqualTypeOf<'a'>();
+expectTypeOf(b).toEqualTypeOf<'b'>();
+expectTypeOf(b).not.toEqualTypeOf<'c'>();
 
 const c: Options = 'c';
-expectAssignable<Options>(c);
-expectNotType<'a'>(c);
-expectNotType<'b'>(c);
-expectType<'c'>(c);
+expectTypeOf(c).toMatchTypeOf<Options>();
+expectTypeOf(c).not.toEqualTypeOf<'a'>();
+expectTypeOf(c).not.toEqualTypeOf<'b'>();
+expectTypeOf(c).toEqualTypeOf<'c'>();
 
 declare const notAnArray: TupleToUnion<[]>;
-expectType<never>(notAnArray);
+expectTypeOf(notAnArray).toEqualTypeOf<never>();

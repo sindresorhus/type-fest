@@ -1,29 +1,37 @@
-import {expectAssignable, expectError, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {EmptyObject, IsEmptyObject} from '../index';
 
 declare let foo: EmptyObject;
 
-expectAssignable<{}>(foo);
-expectAssignable<{}>(foo = {});
+expectTypeOf(foo).toMatchTypeOf<{}>();
+expectTypeOf(foo = {}).toMatchTypeOf<{}>();
 
-expectError(foo = []);
-expectError(foo = {x: 1});
-expectError(foo = 42);
-expectError(foo = null);
-expectError(foo.bar = 42);
-expectError(foo.bar = {});
+// @ts-expect-error
+foo = [];
+// @ts-expect-error
+foo = {x: 1};
+// @ts-expect-error
+foo = 42;
+// @ts-expect-error
+foo = null;
+// @ts-expect-error
+foo.bar = 42;
+// @ts-expect-error
+foo.bar = {};
 
-expectType<IsEmptyObject<{}>>(true);
-expectType<IsEmptyObject<typeof foo>>(true);
+expectTypeOf<true>().toEqualTypeOf<IsEmptyObject<{}>>();
+expectTypeOf<true>().toEqualTypeOf<IsEmptyObject<typeof foo>>();
 
-expectType<IsEmptyObject<[]>>(false);
-expectType<IsEmptyObject<null>>(false);
-expectType<IsEmptyObject<() => void>>(false);
+expectTypeOf<false>().toEqualTypeOf<IsEmptyObject<[]>>();
+expectTypeOf<false>().toEqualTypeOf<IsEmptyObject<null>>();
+expectTypeOf<false>().toEqualTypeOf<IsEmptyObject<() => void>>();
 
 type Union = EmptyObject | {id: number};
 
 const bar: Union = {};
-expectError(bar.id);
+// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+bar.id;
 
 const baz: Union = {id: 42};
-expectType<{id: number}>(baz);
+expectTypeOf(baz).toEqualTypeOf<{id: number}>();

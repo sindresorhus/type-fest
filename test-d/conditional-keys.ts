@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ConditionalKeys} from '../index';
 
 type Example = {
@@ -9,7 +9,7 @@ type Example = {
 };
 
 declare const exampleConditionalKeys: ConditionalKeys<Example, string>;
-expectType<'a'>(exampleConditionalKeys);
+expectTypeOf(exampleConditionalKeys).toEqualTypeOf<'a'>();
 
 declare const exampleConditionalKeysWithUndefined: ConditionalKeys<Example, string | undefined>;
-expectType<'a' | 'c'>(exampleConditionalKeysWithUndefined);
+expectTypeOf(exampleConditionalKeysWithUndefined).toEqualTypeOf<'a' | 'c'>();

@@ -1,14 +1,14 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {DelimiterCasedProperties} from '../index';
 
 declare const foo: DelimiterCasedProperties<{helloWorld: {fooBar: string}}, '/'>;
-expectType<{'hello/world': {fooBar: string}}>(foo);
+expectTypeOf(foo).toEqualTypeOf<{'hello/world': {fooBar: string}}>();
 
 declare const bar: DelimiterCasedProperties<Array<{helloWorld: string}>, '-'>;
-expectType<Array<{helloWorld: string}>>(bar);
+expectTypeOf(bar).toEqualTypeOf<Array<{helloWorld: string}>>();
 
 declare const fooBar: DelimiterCasedProperties<() => {a: string}, '-'>;
-expectType<() => {a: string}>(fooBar);
+expectTypeOf(fooBar).toEqualTypeOf<() => {a: string}>();
 
 // Verify example
 type User = {
@@ -19,4 +19,4 @@ const result: DelimiterCasedProperties<User, '-'> = {
 	'user-id': 1,
 	'user-name': 'Tom',
 };
-expectType<DelimiterCasedProperties<User, '-'>>(result);
+expectTypeOf(result).toEqualTypeOf<DelimiterCasedProperties<User, '-'>>();

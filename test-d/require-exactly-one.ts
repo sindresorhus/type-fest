@@ -1,4 +1,4 @@
-import {expectError, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {RequireExactlyOne} from '../index';
 
 type SystemMessages = {
@@ -16,9 +16,11 @@ const test = (_: ValidMessages): void => {}; // eslint-disable-line @typescript-
 test({macos: 'hey', default: 'hello'});
 test({linux: 'sup', optional: 'howdy', default: 'hello'});
 
-expectError(test({}));
-expectError(test({macos: 'hey', linux: 'sup', default: 'hello'}));
+// @ts-expect-error
+test({});
+// @ts-expect-error
+test({macos: 'hey', linux: 'sup', default: 'hello'});
 
 declare const oneWithoutKeys: RequireExactlyOne<{a: number; b: number}>;
-expectAssignable<{a: number} | {b: number}>(oneWithoutKeys);
-expectError(expectAssignable<{a: number; b: number}>(oneWithoutKeys));
+expectTypeOf(oneWithoutKeys).toMatchTypeOf<{a: number} | {b: number}>();
+expectTypeOf(oneWithoutKeys).not.toMatchTypeOf<{a: number; b: number}>();

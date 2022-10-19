@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Split} from '../index';
 
 declare function split<
@@ -9,22 +9,22 @@ declare function split<
 const items = 'foo,bar,baz,waldo';
 
 // General use.
-expectType<['foo', 'bar', 'baz', 'waldo']>(split(items, ','));
+expectTypeOf(split(items, ',')).toEqualTypeOf<['foo', 'bar', 'baz', 'waldo']>();
 
 // Missing replacement character in original string.
-expectType<['foo,bar,baz,waldo']>(split(items, ' '));
+expectTypeOf(split(items, ' ')).toEqualTypeOf<['foo,bar,baz,waldo']>();
 
 // Empty string split (every character).
-expectType<[
+expectTypeOf(split(items, '')).toEqualTypeOf<[
 	'f', 'o', 'o', ',', 'b', 'a', 'r', ',',
 	'b', 'a', 'z', ',', 'w', 'a', 'l', 'd', 'o',
-]>(split(items, ''));
+]>();
 
 // Split single same character.
-expectType<['', '']>(split(' ', ' '));
+expectTypeOf(split(' ', ' ')).toEqualTypeOf<['', '']>();
 
 // Split empty string by empty string.
-expectType<[]>(split('', ''));
+expectTypeOf(split('', '')).toEqualTypeOf<[]>();
 
 // Split empty string by any string.
-expectType<['']>(split('', ' '));
+expectTypeOf(split('', ' ')).toEqualTypeOf<['']>();

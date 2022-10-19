@@ -1,4 +1,4 @@
-import {expectType, expectError, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {PartialDeep} from '../index';
 
 const foo = {
@@ -27,27 +27,27 @@ const foo = {
 
 let partialDeepFoo: PartialDeep<typeof foo, {recurseIntoArrays: true}> = foo;
 
-expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
+expectTypeOf(partialDeepFoo).not.toEqualTypeOf<Partial<typeof foo>>();
 const partialDeepBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: true}> = foo.bar;
-expectType<typeof partialDeepBar | undefined>(partialDeepFoo.bar);
-expectType<((_: string) => void) | undefined>(partialDeepFoo.bar!.function);
-expectAssignable<object | undefined>(partialDeepFoo.bar!.object);
-expectType<string | undefined>(partialDeepFoo.bar!.string);
-expectType<number | undefined>(partialDeepFoo.bar!.number);
-expectType<boolean | undefined>(partialDeepFoo.bar!.boolean);
-expectType<Date | undefined>(partialDeepFoo.bar!.date);
-expectType<RegExp | undefined>(partialDeepFoo.bar!.regexp);
-expectType<symbol | undefined>(partialDeepFoo.bar!.symbol);
-expectType<null | undefined>(partialDeepFoo.bar!.null);
-expectType<undefined>(partialDeepFoo.bar!.undefined);
-expectAssignable<Map<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.map);
-expectAssignable<Set<string | undefined> | undefined>(partialDeepFoo.bar!.set);
-expectType<Array<string | undefined> | undefined>(partialDeepFoo.bar!.array);
-expectType<['foo'?] | undefined>(partialDeepFoo.bar!.tuple);
-expectAssignable<ReadonlyMap<string | undefined, string | undefined> | undefined>(partialDeepFoo.bar!.readonlyMap);
-expectAssignable<ReadonlySet<string | undefined> | undefined>(partialDeepFoo.bar!.readonlySet);
-expectType<ReadonlyArray<string | undefined> | undefined>(partialDeepFoo.bar!.readonlyArray);
-expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
+expectTypeOf(partialDeepFoo.bar).toEqualTypeOf<typeof partialDeepBar | undefined>();
+expectTypeOf(partialDeepFoo.bar!.function).toEqualTypeOf<((_: string) => void) | undefined>();
+expectTypeOf(partialDeepFoo.bar!.object).toMatchTypeOf<object | undefined>();
+expectTypeOf(partialDeepFoo.bar!.string).toEqualTypeOf<string | undefined>();
+expectTypeOf(partialDeepFoo.bar!.number).toEqualTypeOf<number | undefined>();
+expectTypeOf(partialDeepFoo.bar!.boolean).toEqualTypeOf<boolean | undefined>();
+expectTypeOf(partialDeepFoo.bar!.date).toEqualTypeOf<Date | undefined>();
+expectTypeOf(partialDeepFoo.bar!.regexp).toEqualTypeOf<RegExp | undefined>();
+expectTypeOf(partialDeepFoo.bar!.symbol).toEqualTypeOf<symbol | undefined>();
+expectTypeOf(partialDeepFoo.bar!.null).toEqualTypeOf<null | undefined>();
+expectTypeOf(partialDeepFoo.bar!.undefined).toEqualTypeOf<undefined>();
+expectTypeOf(partialDeepFoo.bar!.map).toMatchTypeOf<Map<string | undefined, string | undefined> | undefined>();
+expectTypeOf(partialDeepFoo.bar!.set).toMatchTypeOf<Set<string | undefined> | undefined>();
+expectTypeOf(partialDeepFoo.bar!.array).toEqualTypeOf<Array<string | undefined> | undefined>();
+expectTypeOf(partialDeepFoo.bar!.tuple).toEqualTypeOf<['foo'?] | undefined>();
+expectTypeOf(partialDeepFoo.bar!.readonlyMap).toMatchTypeOf<ReadonlyMap<string | undefined, string | undefined> | undefined>();
+expectTypeOf(partialDeepFoo.bar!.readonlySet).toMatchTypeOf<ReadonlySet<string | undefined> | undefined>();
+expectTypeOf(partialDeepFoo.bar!.readonlyArray).toEqualTypeOf<ReadonlyArray<string | undefined> | undefined>();
+expectTypeOf(partialDeepFoo.bar!.readonlyTuple).toEqualTypeOf<readonly ['foo'?] | undefined>();
 // Check for compiling with omitting partial keys
 partialDeepFoo = {baz: 'fred'};
 partialDeepFoo = {bar: {string: 'waldo'}};
@@ -62,31 +62,31 @@ type Recurse =
 	| Recurse[];
 type RecurseObject = {value: Recurse};
 const recurseObject: RecurseObject = {value: null};
-expectAssignable<PartialDeep<RecurseObject>>(recurseObject);
+expectTypeOf(recurseObject).toMatchTypeOf<PartialDeep<RecurseObject>>();
 
 // Check that `{recurseIntoArrays: false}` is the default
 const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo> = foo;
 // Check that `{recurseIntoArrays: true}` behaves as intended
-expectType<PartialDeep<typeof foo, {recurseIntoArrays: true}>>(partialDeepFoo);
+expectTypeOf(partialDeepFoo).toEqualTypeOf<PartialDeep<typeof foo, {recurseIntoArrays: true}>>();
 // These are mostly the same checks as before, but the array/tuple types are different.
-expectError(expectType<Partial<typeof foo>>(partialDeepNoRecurseIntoArraysFoo));
+expectTypeOf(partialDeepNoRecurseIntoArraysFoo).not.toEqualTypeOf<Partial<typeof foo>>();
 const partialDeepNoRecurseIntoArraysBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: false}> = foo.bar;
-expectType<typeof partialDeepNoRecurseIntoArraysBar | undefined>(partialDeepNoRecurseIntoArraysFoo.bar);
-expectType<((_: string) => void) | undefined>(partialDeepNoRecurseIntoArraysBar.function);
-expectAssignable<object | undefined>(partialDeepNoRecurseIntoArraysBar.object);
-expectType<string | undefined>(partialDeepNoRecurseIntoArraysBar.string);
-expectType<number | undefined>(partialDeepNoRecurseIntoArraysBar.number);
-expectType<boolean | undefined>(partialDeepNoRecurseIntoArraysBar.boolean);
-expectType<Date | undefined>(partialDeepNoRecurseIntoArraysBar.date);
-expectType<RegExp | undefined>(partialDeepNoRecurseIntoArraysBar.regexp);
-expectType<symbol | undefined>(partialDeepNoRecurseIntoArraysBar.symbol);
-expectType<null | undefined>(partialDeepNoRecurseIntoArraysBar.null);
-expectType<undefined>(partialDeepNoRecurseIntoArraysBar.undefined);
-expectAssignable<Map<string | undefined, string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.map);
-expectAssignable<Set<string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.set);
-expectType<string[] | undefined>(partialDeepNoRecurseIntoArraysBar.array);
-expectType<['foo'] | undefined>(partialDeepNoRecurseIntoArraysBar.tuple);
-expectAssignable<ReadonlyMap<string | undefined, string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyMap);
-expectAssignable<ReadonlySet<string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.readonlySet);
-expectType<readonly string[] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyArray);
-expectType<readonly ['foo'] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyTuple);
+expectTypeOf(partialDeepNoRecurseIntoArraysFoo.bar).toEqualTypeOf<typeof partialDeepNoRecurseIntoArraysBar | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.function).toEqualTypeOf<((_: string) => void) | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.object).toMatchTypeOf<object | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.string).toEqualTypeOf<string | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.number).toEqualTypeOf<number | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.boolean).toEqualTypeOf<boolean | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.date).toEqualTypeOf<Date | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.regexp).toEqualTypeOf<RegExp | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.symbol).toEqualTypeOf<symbol | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.null).toEqualTypeOf<null | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.undefined).toEqualTypeOf<undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.map).toMatchTypeOf<Map<string | undefined, string | undefined> | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.set).toMatchTypeOf<Set<string | undefined> | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.array).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.tuple).toEqualTypeOf<['foo'] | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.readonlyMap).toMatchTypeOf<ReadonlyMap<string | undefined, string | undefined> | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.readonlySet).toMatchTypeOf<ReadonlySet<string | undefined> | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.readonlyArray).toEqualTypeOf<readonly string[] | undefined>();
+expectTypeOf(partialDeepNoRecurseIntoArraysBar.readonlyTuple).toEqualTypeOf<readonly ['foo'] | undefined>();

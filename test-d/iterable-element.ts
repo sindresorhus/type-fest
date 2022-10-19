@@ -1,11 +1,9 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {IterableElement} from '../index';
 
-declare const iterableElement: IterableElement<ReturnType<typeof secretGenerator>>;
-expectType<1 | 'two'>(iterableElement);
+expectTypeOf<IterableElement<ReturnType<typeof secretGenerator>>>().toEqualTypeOf<1 | 'two'>();
 
-declare const iterableElementAsync: IterableElement<ReturnType<typeof secretGeneratorAsync>>;
-expectType<true | Date>(iterableElementAsync);
+expectTypeOf<IterableElement<ReturnType<typeof secretGeneratorAsync>>>().toEqualTypeOf<true | Date>();
 
 function * secretGenerator() {
 	yield 1;

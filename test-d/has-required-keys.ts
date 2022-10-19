@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {HasRequiredKeys} from '../index';
 
 type TestType1 = {
@@ -24,6 +24,6 @@ declare const test1: HasRequiredKeys1;
 declare const test2: HasRequiredKeys2;
 declare const test3: HasRequiredKeys3;
 
-expectType<true>(test1);
-expectType<false>(test2);
-expectType<true>(test3);
+expectTypeOf(test1).toEqualTypeOf<true>();
+expectTypeOf(test2).toEqualTypeOf<false>();
+expectTypeOf(test3).toEqualTypeOf<true>();

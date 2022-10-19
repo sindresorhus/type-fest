@@ -1,19 +1,19 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ObservableLike} from '../index';
 
 // eslint-disable-next-line no-use-extend-native/no-use-extend-native
-expectAssignable<symbol>(Symbol.observable);
+expectTypeOf(Symbol.observable).toMatchTypeOf<symbol>();
 
 const observable = (null as any) as ObservableLike;
 
 const subscription = observable.subscribe({
 	next() {}, // eslint-disable-line @typescript-eslint/no-empty-function
 });
-expectType<{unsubscribe(): void}>(subscription);
+expectTypeOf(subscription).toEqualTypeOf<{unsubscribe(): void}>();
 
 observable.subscribe({
 	next(value) {
-		expectType<unknown>(value);
+		expectTypeOf(value).toEqualTypeOf<unknown>();
 	},
 });
 
@@ -24,6 +24,6 @@ observable2.subscribe({
 });
 observable2.subscribe({
 	next(value) {
-		expectType<string>(value);
+		expectTypeOf(value).toEqualTypeOf<string>();
 	},
 });

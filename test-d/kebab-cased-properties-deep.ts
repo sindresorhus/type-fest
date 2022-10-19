@@ -1,11 +1,11 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {KebabCasedPropertiesDeep} from '../index';
 
 declare const foo: KebabCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
-expectType<{'hello-world': {'foo-bar': string}}>(foo);
+expectTypeOf(foo).toEqualTypeOf<{'hello-world': {'foo-bar': string}}>();
 
 declare const bar: KebabCasedPropertiesDeep<Set<{fooBar: string}>>;
-expectType<Set<{'foo-bar': string}>>(bar);
+expectTypeOf(bar).toEqualTypeOf<Set<{'foo-bar': string}>>();
 
 // Verify example
 type User = {
@@ -42,4 +42,4 @@ const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
-expectType<KebabCasedPropertiesDeep<UserWithFriends>>(result);
+expectTypeOf(result).toEqualTypeOf<KebabCasedPropertiesDeep<UserWithFriends>>();

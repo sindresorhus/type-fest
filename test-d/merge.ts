@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Merge} from '../index';
 
 type Foo = {
@@ -11,7 +11,7 @@ type Bar = {
 };
 
 const ab: Merge<Foo, Bar> = {a: 1, b: 2};
-expectType<{a: number; b: number}>(ab);
+expectTypeOf(ab).toEqualTypeOf<{a: number; b: number}>();
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface FooInterface {
@@ -39,23 +39,24 @@ const fooBar: FooBar = {
 	baz: true,
 };
 
-expectType<{
+expectTypeOf(fooBar).toEqualTypeOf<{
 	[x: string]: unknown;
 	[x: number]: number;
 	[x: symbol]: boolean;
 	foo: string;
 	bar: Date;
 	baz: boolean;
-}>(fooBar);
+}>();
 
 declare function setFooBar(fooBar: FooBar): void;
 
-expectError(setFooBar({
+// @ts-expect-error
+setFooBar({
 	[Symbol(42)]: 'life',
 	foo: 'foo',
 	bar: new Date(),
 	baz: true,
-}));
+});
 
 // Checks that a property can be replaced by another property that is not of the same type. This issue was encountered in `MergeDeep' with the default options.
 type FooDefaultOptions = {
@@ -64,7 +65,7 @@ type FooDefaultOptions = {
 
 type FooOptions = Merge<FooDefaultOptions, {stripUndefinedValues: true}>;
 
-expectType<FooOptions>({stripUndefinedValues: true});
+expectTypeOf<{stripUndefinedValues: true}>().toEqualTypeOf<FooOptions>();
 
 // Test that optional keys are enforced.
 type FooWithOptionaKeys = {
@@ -92,7 +93,7 @@ type FooBarWithOptionalKeys = Merge<FooWithOptionaKeys, BarWithOptionaKeys>;
 declare const fooBarWithOptionalKeys: FooBarWithOptionalKeys;
 
 // Note that `c` and `g` is not marked as optional and this is deliberate, as this is the behaviour expected by the older version of Merge. This may change in a later version.
-expectType<{
+expectTypeOf(fooBarWithOptionalKeys).toEqualTypeOf<{
 	[x: number]: number;
 	[x: symbol]: boolean;
 	[x: string]: unknown;
@@ -103,7 +104,7 @@ expectType<{
 	e?: number;
 	f?: number;
 	g: undefined;
-}>(fooBarWithOptionalKeys);
+}>();
 
 // Checks that an indexed key type can be overwritten.
 type FooWithIndexSignature = {
@@ -126,11 +127,11 @@ type FooBarWithIndexSignature = Merge<FooWithIndexSignature, BarWithIndexSignatu
 
 declare const fooBarWithIndexSignature: FooBarWithIndexSignature;
 
-expectType<{
+expectTypeOf(fooBarWithIndexSignature).toEqualTypeOf<{
 	[x: string]: string | number | boolean;
 	[x: number]: string | number;
 	[x: symbol]: symbol;
 	foo: boolean;
 	bar: string;
 	fooBar: string;
-}>(fooBarWithIndexSignature);
+}>();

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ConditionalPick, Primitive} from '../index';
 
 class Awesome {
@@ -19,10 +19,10 @@ type Example = {
 };
 
 declare const exampleConditionalPick: ConditionalPick<Example, string>;
-expectType< {a: string}>(exampleConditionalPick);
+expectTypeOf(exampleConditionalPick).toEqualTypeOf< {a: string}>();
 
 declare const awesomeConditionalPick: ConditionalPick<Awesome, Primitive>;
-expectType<{name: string; successes: number; failures: bigint}>(awesomeConditionalPick);
+expectTypeOf(awesomeConditionalPick).toEqualTypeOf<{name: string; successes: number; failures: bigint}>();
 
 declare const exampleConditionalPickWithUndefined: ConditionalPick<Example, string | undefined>;
-expectType<{a: string; c?: string}>(exampleConditionalPickWithUndefined);
+expectTypeOf(exampleConditionalPickWithUndefined).toEqualTypeOf<{a: string; c?: string}>();

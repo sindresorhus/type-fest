@@ -1,4 +1,4 @@
-import {expectError, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {RequireAtLeastOne} from '../index';
 
 type SystemMessages = {
@@ -23,19 +23,22 @@ test({macos: 'hey', default: 'hello'});
 test({linux: 'sup', default: 'hello', optional: 'howdy'});
 test({macos: 'hey', linux: 'sup', windows: 'hi', default: 'hello'});
 
-expectError(test({}));
-expectError(test({macos: 'hey'}));
-expectError(test({default: 'hello'}));
+// @ts-expect-error
+test({});
+// @ts-expect-error
+test({macos: 'hey'});
+// @ts-expect-error
+test({default: 'hello'});
 
 declare const atLeastOneWithoutKeys: RequireAtLeastOne<{
 	a: number;
 	b: number;
 }>;
-expectAssignable<{a: number; b?: number} | {a?: number; b: number}>(
+expectTypeOf(
 	atLeastOneWithoutKeys,
-);
+).toMatchTypeOf<{a: number; b?: number} | {a?: number; b: number}>();
 
-expectAssignable<MessageBoard<ValidMessages>>(
+expectTypeOf(
 	({macos = '', linux = '🐧', windows = '⊞'}) =>
 		`${linux} + ${windows} = ${macos}`,
-);
+).toMatchTypeOf<MessageBoard<ValidMessages>>();

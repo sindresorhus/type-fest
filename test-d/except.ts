@@ -1,8 +1,8 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Except} from '../index';
 
 declare const except: Except<{a: number; b: string}, 'b'>;
-expectType<{a: number}>(except);
+expectTypeOf(except).toEqualTypeOf<{a: number}>();
 
 // Generic properties
 type Example = {
@@ -12,6 +12,6 @@ type Example = {
 };
 
 const test: Except<Example, 'bar'> = {foo: 123, bar: 'asdf'};
-expectType<number>(test.foo);
+expectTypeOf(test.foo).toEqualTypeOf<number>();
 // eslint-disable-next-line @typescript-eslint/dot-notation
-expectType<unknown>(test['bar']);
+expectTypeOf(test['bar']).toEqualTypeOf<unknown>();

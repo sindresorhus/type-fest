@@ -1,58 +1,58 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {UpperCaseCharacters, WordSeparators} from '../source/internal';
 import type {SplitIncludingDelimiters, DelimiterCase} from '../source/delimiter-case';
 
 const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar'];
-expectType<['foo', 'B', 'ar']>(splitFromCamel);
+expectTypeOf(splitFromCamel).toEqualTypeOf<['foo', 'B', 'ar']>();
 const splitFromComplexCamel: SplitIncludingDelimiters<'fooBarAbc123', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar', 'A', 'bc123'];
-expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
+expectTypeOf(splitFromComplexCamel).toEqualTypeOf<['foo', 'B', 'ar', 'A', 'bc123']>();
 const splitFromWordSeparators: SplitIncludingDelimiters<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
-expectType<['foo', '-', 'bar', '_', 'car', ' ', 'far']>(splitFromWordSeparators);
+expectTypeOf(splitFromWordSeparators).toEqualTypeOf<['foo', '-', 'bar', '_', 'car', ' ', 'far']>();
 const splitFromScreamingSnakeCase: SplitIncludingDelimiters<'FOO_BAR', WordSeparators | UpperCaseCharacters> = ['foo', '_', 'bar'];
-expectType<['foo', '_', 'bar']>(splitFromScreamingSnakeCase);
+expectTypeOf(splitFromScreamingSnakeCase).toEqualTypeOf<['foo', '_', 'bar']>();
 
 // DelimiterCase
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromCamel);
+expectTypeOf(delimiterFromCamel).toEqualTypeOf<'foo#bar'>();
 
 const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
-expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
+expectTypeOf(delimiterFromComplexCamel).toEqualTypeOf<'foo#bar#abc123'>();
 
 const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromPascal);
+expectTypeOf(delimiterFromPascal).toEqualTypeOf<'foo#bar'>();
 
 const delimiterFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromKebab);
+expectTypeOf(delimiterFromKebab).toEqualTypeOf<'foo#bar'>();
 
 const delimiterFromComplexKebab: DelimiterCase<'foo-bar-abc-123', '#'> = 'foo#bar#abc#123';
-expectType<'foo#bar#abc#123'>(delimiterFromComplexKebab);
+expectTypeOf(delimiterFromComplexKebab).toEqualTypeOf<'foo#bar#abc#123'>();
 
 const delimiterFromSpace: DelimiterCase<'foo bar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromSpace);
+expectTypeOf(delimiterFromSpace).toEqualTypeOf<'foo#bar'>();
 
 const delimiterFromSnake: DelimiterCase<'foo_bar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromSnake);
+expectTypeOf(delimiterFromSnake).toEqualTypeOf<'foo#bar'>();
 
 const noDelimiterFromMono: DelimiterCase<'foobar', '#'> = 'foobar';
-expectType<'foobar'>(noDelimiterFromMono);
+expectTypeOf(noDelimiterFromMono).toEqualTypeOf<'foobar'>();
 
 const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'> = 'foo#bar#abc#xyz#bar#foo';
-expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
+expectTypeOf(delimiterFromMixed).toEqualTypeOf<'foo#bar#abc#xyz#bar#foo'>();
 
 const delimiterFromVendorPrefixedCssProperty: DelimiterCase<'-webkit-animation', '#'> = '#webkit#animation';
-expectType<'#webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
+expectTypeOf(delimiterFromVendorPrefixedCssProperty).toEqualTypeOf<'#webkit#animation'>();
 
 const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'> = '##very#prefixed';
-expectType<'##very#prefixed'>(delimiterFromDoublePrefixedKebab);
+expectTypeOf(delimiterFromDoublePrefixedKebab).toEqualTypeOf<'##very#prefixed'>();
 
 const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo####bar';
-expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
+expectTypeOf(delimiterFromRepeatedSeparators).toEqualTypeOf<'foo####bar'>();
 
 const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
-expectType<string>(delimiterFromString);
+expectTypeOf(delimiterFromString).toEqualTypeOf<string>();
 
 const delimiterFromScreamingSnake: DelimiterCase<'FOO_BAR', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromScreamingSnake);
+expectTypeOf(delimiterFromScreamingSnake).toEqualTypeOf<'foo#bar'>();
 
 // Verifying example
 type OddCasedProperties<T> = {
@@ -65,8 +65,8 @@ type CliOptions = {
 	foo: number;
 };
 
-expectAssignable<OddCasedProperties<CliOptions>>({
+expectTypeOf({
 	'dry#run': true,
 	'include#file': 'bar.js',
 	foo: 123,
-});
+}).toMatchTypeOf<OddCasedProperties<CliOptions>>();

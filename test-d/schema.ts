@@ -1,4 +1,4 @@
-import {expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Schema} from '../index';
 
 const foo = {
@@ -46,27 +46,27 @@ const fooSchema: FooSchema = {
 	},
 };
 
-expectNotAssignable<FooSchema>(foo);
-expectNotAssignable<FooSchema>({key: 'value'});
-expectNotAssignable<FooSchema>(new Date());
-expectType<FooOption>(fooSchema.baz);
+expectTypeOf(foo).not.toMatchTypeOf<FooSchema>();
+expectTypeOf<{key: 'value'}>().not.toMatchTypeOf<FooSchema>();
+expectTypeOf(new Date()).not.toMatchTypeOf<FooSchema>();
+expectTypeOf(fooSchema.baz).toEqualTypeOf<FooOption>();
 
 const barSchema = fooSchema.bar as Schema<typeof foo['bar'], FooOption>;
-expectType<FooOption>(barSchema.function);
-expectType<FooOption | {key: FooOption}>(barSchema.object);
-expectType<FooOption>(barSchema.string);
-expectType<FooOption>(barSchema.number);
-expectType<FooOption>(barSchema.boolean);
-expectType<FooOption>(barSchema.symbol);
-expectType<FooOption>(barSchema.map);
-expectType<FooOption>(barSchema.set);
-expectType<FooOption>(barSchema.array);
-expectType<FooOption>(barSchema.tuple);
-expectType<FooOption>(barSchema.readonlyMap);
-expectType<FooOption>(barSchema.readonlySet);
-expectType<FooOption>(barSchema.readonlyArray);
-expectType<FooOption>(barSchema.readonlyTuple);
-expectType<FooOption>(barSchema.regExp);
+expectTypeOf(barSchema.function).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.object).toEqualTypeOf<FooOption | {key: FooOption}>();
+expectTypeOf(barSchema.string).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.number).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.boolean).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.symbol).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.map).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.set).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.array).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.tuple).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.readonlyMap).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.readonlySet).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.readonlyArray).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.readonlyTuple).toEqualTypeOf<FooOption>();
+expectTypeOf(barSchema.regExp).toEqualTypeOf<FooOption>();
 
 type ComplexOption = {
 	type: 'readonly' | 'required' | 'optional';
@@ -102,22 +102,22 @@ const complexFoo: ComplexSchema = {
 	},
 };
 
-expectNotAssignable<ComplexSchema>(foo);
-expectType<ComplexOption>(complexFoo.baz);
+expectTypeOf(foo).not.toMatchTypeOf<ComplexSchema>();
+expectTypeOf(complexFoo.baz).toEqualTypeOf<ComplexOption>();
 
 const complexBarSchema = complexFoo.bar as Schema<typeof foo['bar'], ComplexOption>;
-expectType<ComplexOption>(complexBarSchema.function);
-expectType<ComplexOption | {key: ComplexOption}>(complexBarSchema.object);
-expectType<ComplexOption>(complexBarSchema.string);
-expectType<ComplexOption>(complexBarSchema.number);
-expectType<ComplexOption>(complexBarSchema.boolean);
-expectType<ComplexOption>(complexBarSchema.symbol);
-expectType<ComplexOption>(complexBarSchema.map);
-expectType<ComplexOption>(complexBarSchema.set);
-expectType<ComplexOption>(complexBarSchema.array);
-expectType<ComplexOption>(complexBarSchema.tuple);
-expectType<ComplexOption>(complexBarSchema.readonlyMap);
-expectType<ComplexOption>(complexBarSchema.readonlySet);
-expectType<ComplexOption>(complexBarSchema.readonlyArray);
-expectType<ComplexOption>(complexBarSchema.readonlyTuple);
-expectType<ComplexOption>(complexBarSchema.regExp);
+expectTypeOf(complexBarSchema.function).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.object).toEqualTypeOf<ComplexOption | {key: ComplexOption}>();
+expectTypeOf(complexBarSchema.string).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.number).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.boolean).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.symbol).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.map).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.set).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.array).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.tuple).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.readonlyMap).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.readonlySet).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.readonlyArray).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.readonlyTuple).toEqualTypeOf<ComplexOption>();
+expectTypeOf(complexBarSchema.regExp).toEqualTypeOf<ComplexOption>();

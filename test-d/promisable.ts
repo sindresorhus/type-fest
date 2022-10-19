@@ -1,5 +1,5 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Promisable} from '../index';
 
 declare const promisable: Promisable<string>;
-expectType<PromiseLike<string> | string>(promisable);
+expectTypeOf(promisable).toEqualTypeOf<PromiseLike<string> | string>();

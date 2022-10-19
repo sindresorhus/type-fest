@@ -1,11 +1,11 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {PascalCase} from '../index';
 
 const pascalFromCamel: PascalCase<'fooBar'> = 'FooBar';
-expectType<'FooBar'>(pascalFromCamel);
+expectTypeOf(pascalFromCamel).toEqualTypeOf<'FooBar'>();
 
 const pascalFromKebab: PascalCase<'foo-bar'> = 'FooBar';
-expectType<'FooBar'>(pascalFromKebab);
+expectTypeOf(pascalFromKebab).toEqualTypeOf<'FooBar'>();
 
 const pascalFromComplexKebab: PascalCase<'foo-bar-abc-123'> = 'FooBarAbc123';
-expectType<'FooBarAbc123'>(pascalFromComplexKebab);
+expectTypeOf(pascalFromComplexKebab).toEqualTypeOf<'FooBarAbc123'>();

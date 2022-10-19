@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {RequiredKeysOf} from '../index';
 
 type TestType1 = {
@@ -24,6 +24,6 @@ declare const test1: RequiredKeysOf1;
 declare const test2: RequiredKeysOf2;
 declare const test3: RequiredKeysOf3;
 
-expectType<'a'>(test1);
-expectType<never>(test2);
-expectType<'a' | 'b'>(test3);
+expectTypeOf(test1).toEqualTypeOf<'a'>();
+expectTypeOf(test2).toEqualTypeOf<never>();
+expectTypeOf(test3).toEqualTypeOf<'a' | 'b'>();

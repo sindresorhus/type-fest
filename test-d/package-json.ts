@@ -1,63 +1,63 @@
-import {expectType, expectAssignable, expectNotAssignable, expectError} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {PackageJson, LiteralUnion, JsonObject} from '../index';
 
 const packageJson: PackageJson = {};
 
-expectType<string | undefined>(packageJson.name);
-expectType<string | undefined>(packageJson.version);
-expectType<string | undefined>(packageJson.description);
-expectType<string[] | undefined>(packageJson.keywords);
-expectType<LiteralUnion<'.', string> | undefined>(packageJson.homepage);
-expectType<PackageJson.BugsLocation | undefined>(packageJson.bugs);
-expectType<string | undefined>(packageJson.license);
-expectType<Array<{type?: string; url?: string}> | undefined>(packageJson.licenses);
-expectType<PackageJson.Person | undefined>(packageJson.author);
-expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
-expectType<PackageJson.Person[] | undefined>(packageJson.maintainers);
-expectType<string[] | undefined>(packageJson.files);
-expectType<string | undefined>(packageJson.main);
-expectType<string | undefined>(packageJson.packageManager);
-expectType<string | Partial<Record<string, string>> | undefined>(packageJson.bin);
-expectType<string | undefined>(packageJson.types);
-expectType<string | undefined>(packageJson.typings);
-expectType<string | string[] | undefined>(packageJson.man);
-expectType<PackageJson.DirectoryLocations | undefined>(packageJson.directories);
-expectType<{type: string; url: string; directory?: string} | string | undefined>(
+expectTypeOf(packageJson.name).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.version).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.description).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.keywords).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(packageJson.homepage).toEqualTypeOf<LiteralUnion<'.', string> | undefined>();
+expectTypeOf(packageJson.bugs).toEqualTypeOf<PackageJson.BugsLocation | undefined>();
+expectTypeOf(packageJson.license).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.licenses).toEqualTypeOf<Array<{type?: string; url?: string}> | undefined>();
+expectTypeOf(packageJson.author).toEqualTypeOf<PackageJson.Person | undefined>();
+expectTypeOf(packageJson.contributors).toEqualTypeOf<PackageJson.Person[] | undefined>();
+expectTypeOf(packageJson.maintainers).toEqualTypeOf<PackageJson.Person[] | undefined>();
+expectTypeOf(packageJson.files).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(packageJson.main).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.packageManager).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.bin).toEqualTypeOf<string | Partial<Record<string, string>> | undefined>();
+expectTypeOf(packageJson.types).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.typings).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.man).toEqualTypeOf<string | string[] | undefined>();
+expectTypeOf(packageJson.directories).toEqualTypeOf<PackageJson.DirectoryLocations | undefined>();
+expectTypeOf(
 	packageJson.repository,
-);
-expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
-expectType<JsonObject | undefined>(packageJson.config);
-expectType<PackageJson.Dependency | undefined>(packageJson.dependencies);
-expectType<PackageJson.Dependency | undefined>(packageJson.devDependencies);
-expectType<PackageJson.Dependency | undefined>(
+).toEqualTypeOf<{type: string; url: string; directory?: string} | string | undefined>();
+expectTypeOf(packageJson.scripts).toEqualTypeOf<PackageJson.Scripts | undefined>();
+expectTypeOf(packageJson.config).toEqualTypeOf<JsonObject | undefined>();
+expectTypeOf(packageJson.dependencies).toEqualTypeOf<PackageJson.Dependency | undefined>();
+expectTypeOf(packageJson.devDependencies).toEqualTypeOf<PackageJson.Dependency | undefined>();
+expectTypeOf(
 	packageJson.optionalDependencies,
-);
-expectType<PackageJson.Dependency | undefined>(packageJson.peerDependencies);
-expectType<string[] | undefined>(packageJson.bundleDependencies);
-expectType<string[] | undefined>(packageJson.bundledDependencies);
-expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
-expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
-expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
-expectType<boolean | undefined>(packageJson.engineStrict);
-expectAssignable<
+).toEqualTypeOf<PackageJson.Dependency | undefined>();
+expectTypeOf(packageJson.peerDependencies).toEqualTypeOf<PackageJson.Dependency | undefined>();
+expectTypeOf(packageJson.bundleDependencies).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(packageJson.bundledDependencies).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(packageJson.resolutions).toEqualTypeOf<PackageJson.Dependency | undefined>();
+expectTypeOf(packageJson.workspaces).toEqualTypeOf<PackageJson.WorkspaceConfig | string[] | undefined>();
+expectTypeOf(packageJson.engines).toEqualTypeOf<Partial<Record<string, string>> | undefined>();
+expectTypeOf(packageJson.engineStrict).toEqualTypeOf<boolean | undefined>();
+expectTypeOf(packageJson.os).toMatchTypeOf<
 | undefined
 | Array<LiteralUnion<
 'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 string
 >>
->(packageJson.os);
-expectAssignable<
+>();
+expectTypeOf(packageJson.cpu).toMatchTypeOf<
 | undefined
 | Array<LiteralUnion<
 'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
 string
 >>
->(packageJson.cpu);
-expectType<boolean | undefined>(packageJson.preferGlobal);
-expectType<boolean | undefined>(packageJson.private);
-expectType<PackageJson.PublishConfig | undefined>(packageJson.publishConfig);
-expectType<string | undefined>(packageJson.module);
-expectType<
+>();
+expectTypeOf(packageJson.preferGlobal).toEqualTypeOf<boolean | undefined>();
+expectTypeOf(packageJson.private).toEqualTypeOf<boolean | undefined>();
+expectTypeOf(packageJson.publishConfig).toEqualTypeOf<PackageJson.PublishConfig | undefined>();
+expectTypeOf(packageJson.module).toEqualTypeOf<string | undefined>();
+expectTypeOf(packageJson.esnext).toEqualTypeOf<
 | string
 | {
 	[moduleName: string]: string | undefined;
@@ -65,36 +65,38 @@ expectType<
 	browser?: string;
 }
 | undefined
->(packageJson.esnext);
-expectType<PackageJson | undefined>(packageJson.jspm);
+>();
+expectTypeOf(packageJson.jspm).toEqualTypeOf<PackageJson | undefined>();
 
 // Undefined assigns
-expectAssignable<PackageJson.Dependency>({dep: undefined});
-expectAssignable<typeof packageJson['engines']>({engine: undefined});
-expectAssignable<typeof packageJson['scripts']>({unknownScript: undefined});
-expectAssignable<typeof packageJson['bin']>({bin: undefined});
-expectAssignable<typeof packageJson['typesVersions']>({
+expectTypeOf<{dep: undefined}>().toMatchTypeOf<PackageJson.Dependency>();
+expectTypeOf<{engine: undefined}>().toMatchTypeOf<typeof packageJson['engines']>();
+expectTypeOf<{unknownScript: undefined}>().toMatchTypeOf<typeof packageJson['scripts']>();
+expectTypeOf<{bin: undefined}>().toMatchTypeOf<typeof packageJson['bin']>();
+expectTypeOf({
 	'>=4': {
 		'*': ['src'],
 		somethingElse: undefined,
 	},
 	'<4': undefined,
-});
+}).toMatchTypeOf<typeof packageJson['typesVersions']>();
 
 // Must reject an object that contains properties with `undefined` values.
 // See https://github.com/sindresorhus/type-fest/issues/272
 declare function setConfig(config: JsonObject): void;
 
-expectError(setConfig({bugs: undefined}));
-expectError(setConfig({bugs: {life: undefined}}));
+// @ts-expect-error
+setConfig({bugs: undefined});
+// @ts-expect-error
+setConfig({bugs: {life: undefined}});
 
-expectNotAssignable<JsonObject>({bugs: undefined});
-expectNotAssignable<JsonObject>({bugs: {life: undefined}});
+expectTypeOf<{bugs: undefined}>().not.toMatchTypeOf<JsonObject>();
+expectTypeOf<{bugs: {life: undefined}}>().not.toMatchTypeOf<JsonObject>();
 
-expectAssignable<JsonObject>({});
-expectAssignable<JsonObject>({bugs: 42});
-expectAssignable<JsonObject>({bugs: [42]});
-expectAssignable<JsonObject>({bugs: {life: 42}});
+expectTypeOf<{}>().toMatchTypeOf<JsonObject>();
+expectTypeOf<{bugs: 42}>().toMatchTypeOf<JsonObject>();
+expectTypeOf<{bugs: [42]}>().toMatchTypeOf<JsonObject>();
+expectTypeOf<{bugs: {life: 42}}>().toMatchTypeOf<JsonObject>();
 
 // `PackageJson` should be a valid `JsonObject`.
 // See https://github.com/sindresorhus/type-fest/issues/79
@@ -103,8 +105,8 @@ type UnknownRecord = Record<string, unknown>;
 const unknownRecord: UnknownRecord = {};
 const jsonObject: JsonObject = {};
 
-expectAssignable<UnknownRecord>(packageJson);
-expectNotAssignable<PackageJson>(unknownRecord);
+expectTypeOf(packageJson).toMatchTypeOf<UnknownRecord>();
+expectTypeOf(unknownRecord).not.toMatchTypeOf<PackageJson>();
 
-expectAssignable<PackageJson>(jsonObject);
-expectAssignable<JsonObject>(packageJson);
+expectTypeOf(jsonObject).toMatchTypeOf<PackageJson>();
+expectTypeOf(packageJson).toMatchTypeOf<JsonObject>();

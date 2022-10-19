@@ -1,15 +1,15 @@
-import {expectError, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Includes} from '../index';
 
 const includesEmptyArray: Includes<[], 'abc'> = false;
-expectType<false>(includesEmptyArray);
+expectTypeOf(includesEmptyArray).toEqualTypeOf<false>();
 
 const includesSingleItemArray: Includes<['colors'], 'colors'> = true;
-expectType<true>(includesSingleItemArray);
+expectTypeOf(includesSingleItemArray).toEqualTypeOf<true>();
 
 const readonlyArray = ['a', 'b', 'c'] as const;
 const includesReadonlyArray: Includes<typeof readonlyArray, 'a'> = true;
-expectType<true>(includesReadonlyArray);
+expectTypeOf(includesReadonlyArray).toEqualTypeOf<true>();
 
 const includesComplexMultiTypeArray: Includes<[
 	{
@@ -21,35 +21,33 @@ const includesComplexMultiTypeArray: Includes<[
 	null,
 	'abcd',
 ], 'abc'> = false;
-expectType<false>(includesComplexMultiTypeArray);
+expectTypeOf(includesComplexMultiTypeArray).toEqualTypeOf<false>();
 
 const noExtendsProblem: Includes<[boolean], true> = false;
-expectType<false>(noExtendsProblem);
+expectTypeOf(noExtendsProblem).toEqualTypeOf<false>();
 
 const objectIncludes: Includes<[{}], {a: 1}> = false;
-expectType<false>(objectIncludes);
+expectTypeOf(objectIncludes).toEqualTypeOf<false>();
 
 const objectIncludesPass: Includes<[{a: 1}], {a: 1}> = true;
-expectType<true>(objectIncludesPass);
+expectTypeOf(objectIncludesPass).toEqualTypeOf<true>();
 
 const nullIncludesUndefined: Includes<[null], undefined> = false;
-expectType<false>(nullIncludesUndefined);
+expectTypeOf(nullIncludesUndefined).toEqualTypeOf<false>();
 
 const nullIncludesNullPass: Includes<[null], null> = true;
-expectType<true>(nullIncludesNullPass);
-
-declare const anything: any;
+expectTypeOf(nullIncludesNullPass).toEqualTypeOf<true>();
 
 // Verify that incorrect usage of `Includes` produces an error.
 
-// Missing all generic parameters.
-expectError<Includes>(anything);
+// @ts-expect-error
+declare const missingAllParameters: Includes;
 
-// Missing `Item` generic parameter.
-expectError<Includes<['my', 'array', 'has', 'stuff']>>(anything);
+// @ts-expect-error
+declare const missingItem: Includes<['my', 'array', 'has', 'stuff']>;
 
-// Value generic parameter is a string not an array.
-expectError<Includes<'why a string?', 5>>(anything);
+// @ts-expect-error
+declare const badValueTypeSring: Includes<'why a string?', 5>;
 
-// Value generic parameter is an object not an array.
-expectError<Includes<{key: 'value'}, 7>>(anything);
+// @ts-expect-error
+declare const badValueTypeObject: Includes<{key: 'value'}, 7>;

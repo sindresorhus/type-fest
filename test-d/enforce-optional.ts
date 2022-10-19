@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {EnforceOptional} from '../source/enforce-optional';
 
 type Foo = {
@@ -12,9 +12,9 @@ type EnforcedOptionalFoo = EnforceOptional<Foo>;
 
 declare const enforcedOptionalFoo: EnforcedOptionalFoo;
 
-expectType<{
+expectTypeOf(enforcedOptionalFoo).toEqualTypeOf<{
 	a: string;
 	b?: string;
 	c: undefined;
 	d?: number;
-}>(enforcedOptionalFoo);
+}>();

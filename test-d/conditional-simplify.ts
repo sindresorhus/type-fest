@@ -1,4 +1,4 @@
-import {expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ConditionalSimplify, ConditionalSimplifyDeep} from '../source/conditional-simplify';
 
 type Position = {top: number; left: number};
@@ -11,7 +11,7 @@ type PositionAndSizeSimplified = ConditionalSimplify<PositionAndSizeIntersection
 const position = {top: 120, left: 240};
 const size = {width: 480, height: 600};
 const positionAndSize = {...position, ...size};
-expectType<PositionAndSizeSimplified>(positionAndSize);
+expectTypeOf(positionAndSize).toEqualTypeOf<PositionAndSizeSimplified>();
 
 // Exclude function type to be simplified.
 type SomeFunction = (type: string) => string;
@@ -21,8 +21,8 @@ type SimplifiedFunctionPass = ConditionalSimplify<SomeFunction, Function>; // Re
 declare const simplifiedFunctionFail: SimplifiedFunctionFail;
 declare const simplifiedFunctionPass: SimplifiedFunctionPass;
 
-expectNotAssignable<SomeFunction>(simplifiedFunctionFail);
-expectType<SomeFunction>(simplifiedFunctionPass);
+expectTypeOf(simplifiedFunctionFail).not.toMatchTypeOf<SomeFunction>();
+expectTypeOf(simplifiedFunctionPass).toEqualTypeOf<SomeFunction>();
 
 // Should simplify interface deeply.
 type SomeNode = {
@@ -34,7 +34,7 @@ type SomeNode = {
 type SomeNodeSimplified = ConditionalSimplifyDeep<SomeNode>;
 
 const someNode = {parent: positionAndSize, childs: [{parent: positionAndSize}, {parent: positionAndSize}]};
-expectType<SomeNodeSimplified>(someNode);
+expectTypeOf(someNode).toEqualTypeOf<SomeNodeSimplified>();
 
 // Should simplify interface deeply excluding Function type.
 // TODO: Convert this to a `type`.
@@ -55,8 +55,8 @@ type MovableNodeSimplifiedPass = ConditionalSimplifyDeep<MovableCollection, Func
 declare const movableNodeSimplifiedFail: MovableNodeSimplifiedFail;
 declare const movableNodeSimplifiedPass: MovableNodeSimplifiedPass;
 
-expectNotAssignable<MovableCollection>(movableNodeSimplifiedFail);
-expectType<MovableCollection>(movableNodeSimplifiedPass);
+expectTypeOf(movableNodeSimplifiedFail).not.toMatchTypeOf<MovableCollection>();
+expectTypeOf(movableNodeSimplifiedPass).toEqualTypeOf<MovableCollection>();
 
 const movablePosition = {
 	top: 42,
@@ -72,12 +72,12 @@ const movableNode = {
 	left: {position: movablePosition, size},
 };
 
-expectType<MovableNodeSimplifiedPass>(movableNode);
+expectTypeOf(movableNode).toEqualTypeOf<MovableNodeSimplifiedPass>();
 
 // Should exclude `Function` and `Size` type (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize1 = ConditionalSimplifyDeep<MovableCollection, Function | Size>;
-expectType<ExcludeFunctionAndSize1>(movableNode);
+expectTypeOf(movableNode).toEqualTypeOf<ExcludeFunctionAndSize1>();
 
 // Same as above but using `IncludeType` parameter (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize2 = ConditionalSimplifyDeep<MovableCollection, Function, MovableCollection | Position>;
-expectType<ExcludeFunctionAndSize2>(movableNode);
+expectTypeOf(movableNode).toEqualTypeOf<ExcludeFunctionAndSize2>();

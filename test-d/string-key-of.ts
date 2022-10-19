@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {StringKeyOf} from '../index';
 
 declare const foo: StringKeyOf<{
@@ -6,4 +6,4 @@ declare const foo: StringKeyOf<{
 	stringKey: string;
 }>;
 
-expectType<'1' | 'stringKey'>(foo);
+expectTypeOf(foo).toEqualTypeOf<'1' | 'stringKey'>();

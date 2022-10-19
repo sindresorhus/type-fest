@@ -1,13 +1,13 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {TsConfigJson} from '../index';
 
 const tsConfig: TsConfigJson = {};
 
-expectType<boolean | undefined>(tsConfig.compileOnSave);
-expectType<TsConfigJson.CompilerOptions | undefined>(tsConfig.compilerOptions);
-expectType<string[] | undefined>(tsConfig.exclude);
-expectType<string | undefined>(tsConfig.extends);
-expectType<string[] | undefined>(tsConfig.files);
-expectType<string[] | undefined>(tsConfig.include);
-expectType<TsConfigJson.References[] | undefined>(tsConfig.references);
-expectType<TsConfigJson.TypeAcquisition | undefined>(tsConfig.typeAcquisition);
+expectTypeOf(tsConfig.compileOnSave).toEqualTypeOf<boolean | undefined>();
+expectTypeOf(tsConfig.compilerOptions).toEqualTypeOf<TsConfigJson.CompilerOptions | undefined>();
+expectTypeOf(tsConfig.exclude).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(tsConfig.extends).toEqualTypeOf<string | undefined>();
+expectTypeOf(tsConfig.files).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(tsConfig.include).toEqualTypeOf<string[] | undefined>();
+expectTypeOf(tsConfig.references).toEqualTypeOf<TsConfigJson.References[] | undefined>();
+expectTypeOf(tsConfig.typeAcquisition).toEqualTypeOf<TsConfigJson.TypeAcquisition | undefined>();

@@ -1,14 +1,14 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {DelimiterCasedPropertiesDeep} from '../index';
 
 declare const foo: DelimiterCasedPropertiesDeep<{helloWorld: {fooBar: string}}, '/'>;
-expectType<{'hello/world': {'foo/bar': string}}>(foo);
+expectTypeOf(foo).toEqualTypeOf<{'hello/world': {'foo/bar': string}}>();
 
 declare const fooBar: DelimiterCasedPropertiesDeep<() => {a: string}, '/'>;
-expectType<() => {a: string}>(fooBar);
+expectTypeOf(fooBar).toEqualTypeOf<() => {a: string}>();
 
 declare const bar: DelimiterCasedPropertiesDeep<Set<{fooBar: string}>, '-'>;
-expectType<Set<{'foo-bar': string}>>(bar);
+expectTypeOf(bar).toEqualTypeOf<Set<{'foo-bar': string}>>();
 
 // Verify example
 type User = {
@@ -45,4 +45,4 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 		},
 	],
 };
-expectType<DelimiterCasedPropertiesDeep<UserWithFriends, '-'>>(result);
+expectTypeOf(result).toEqualTypeOf<DelimiterCasedPropertiesDeep<UserWithFriends, '-'>>();

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {MultidimensionalReadonlyArray} from '../index';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalReadonlyArray<string, T> {
@@ -27,8 +27,8 @@ const answer = c[0][0]; // '42'
 
 type RecursiveArray<T> = ReadonlyArray<RecursiveArray<T>>;
 
-expectType<string>(answer);
+expectTypeOf(answer).toEqualTypeOf<string>();
 
-expectType<ReadonlyArray<ReadonlyArray<readonly number[]>>>(a);
-expectType<RecursiveArray<boolean>>(b);
-expectType<ReadonlyArray<readonly string[]>>(c);
+expectTypeOf(a).toEqualTypeOf<ReadonlyArray<ReadonlyArray<readonly number[]>>>();
+expectTypeOf(b).toEqualTypeOf<RecursiveArray<boolean>>();
+expectTypeOf(c).toEqualTypeOf<ReadonlyArray<readonly string[]>>();

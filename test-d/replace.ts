@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Replace} from '../index';
 
 declare function replace<
@@ -21,9 +21,9 @@ declare function replaceAll<
 	replacement: Replacement
 ): Replace<Input, Search, Replacement, {all: true}>;
 
-expectType<'hello 🦄'>(replace('hello ?', '?', '🦄'));
-expectType<'hello ❓?'>(replace('hello ??', '?', '❓'));
-expectType<'10-42-00'>(replaceAll('10:42:00', ':', '-'));
-expectType<'userName'>(replaceAll('__userName__', '__', ''));
-expectType<'MyCoolTitle'>(replaceAll('My Cool Title', ' ', ''));
-expectType<'fobarfobar'>(replaceAll('foobarfoobar', 'ob', 'b'));
+expectTypeOf(replace('hello ?', '?', '🦄')).toEqualTypeOf<'hello 🦄'>();
+expectTypeOf(replace('hello ??', '?', '❓')).toEqualTypeOf<'hello ❓?'>();
+expectTypeOf(replaceAll('10:42:00', ':', '-')).toEqualTypeOf<'10-42-00'>();
+expectTypeOf(replaceAll('__userName__', '__', '')).toEqualTypeOf<'userName'>();
+expectTypeOf(replaceAll('My Cool Title', ' ', '')).toEqualTypeOf<'MyCoolTitle'>();
+expectTypeOf(replaceAll('foobarfoobar', 'ob', 'b')).toEqualTypeOf<'fobarfobar'>();

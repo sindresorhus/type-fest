@@ -1,4 +1,4 @@
-import {expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Entries} from '../index';
 import type {Entry} from '../source/entry';
 
@@ -6,46 +6,46 @@ import type {Entry} from '../source/entry';
 const objectExample = {a: 1};
 
 const objectEntry: Entry<typeof objectExample> = ['a', 1];
-expectAssignable<[string, number]>(objectEntry);
+expectTypeOf(objectEntry).toMatchTypeOf<[string, number]>();
 
 const objectEntries: Entries<typeof objectExample> = [objectEntry];
-expectAssignable<Array<[string, number]>>(objectEntries);
+expectTypeOf(objectEntries).toMatchTypeOf<Array<[string, number]>>();
 
 // Maps
 const mapExample = new Map([['a', 1]]);
 
 const mapEntry: Entry<typeof mapExample> = ['a', 1];
-expectAssignable<[string, number]>(mapEntry);
+expectTypeOf(mapEntry).toMatchTypeOf<[string, number]>();
 
 const mapEntries: Entries<typeof mapExample> = [mapEntry];
-expectAssignable<Array<[string, number]>>(mapEntries);
+expectTypeOf(mapEntries).toMatchTypeOf<Array<[string, number]>>();
 
 // Arrays
 const arrayExample = ['a', 1];
 
 const arrayEntryString: Entry<typeof arrayExample> = [0, 'a'];
-expectAssignable<[number, (string | number)]>(arrayEntryString);
+expectTypeOf(arrayEntryString).toMatchTypeOf<[number, (string | number)]>();
 
 const arrayEntryNumber: Entry<typeof arrayExample> = [1, 1];
-expectAssignable<[number, (string | number)]>(arrayEntryNumber);
+expectTypeOf(arrayEntryNumber).toMatchTypeOf<[number, (string | number)]>();
 
 const arrayEntries: Entries<typeof arrayExample> = [
 	arrayEntryString,
 	arrayEntryNumber,
 ];
-expectAssignable<Array<[number, (string | number)]>>(arrayEntries);
+expectTypeOf(arrayEntries).toMatchTypeOf<Array<[number, (string | number)]>>();
 
 // Sets
 const setExample = new Set(['a', 1]);
 
 const setEntryString: Entry<typeof setExample> = ['a', 'a'];
-expectAssignable<[(string | number), (string | number)]>(setEntryString);
+expectTypeOf(setEntryString).toMatchTypeOf<[(string | number), (string | number)]>();
 
 const setEntryNumber: Entry<typeof setExample> = [1, 1];
-expectAssignable<[(string | number), (string | number)]>(setEntryNumber);
+expectTypeOf(setEntryNumber).toMatchTypeOf<[(string | number), (string | number)]>();
 
 const setEntries: Entries<typeof setExample> = [
 	setEntryString,
 	setEntryNumber,
 ];
-expectAssignable<Array<[(string | number), (string | number)]>>(setEntries);
+expectTypeOf(setEntries).toMatchTypeOf<Array<[(string | number), (string | number)]>>();

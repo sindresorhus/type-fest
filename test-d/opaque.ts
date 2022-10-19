@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectNotType, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Opaque, UnwrapOpaque} from '../index';
 
 type Value = Opaque<number, 'Value'>;
@@ -7,13 +7,13 @@ type Value = Opaque<number, 'Value'>;
 const value: Value = 2 as Value;
 
 // The underlying type of the value is still a number.
-expectAssignable<number>(value);
+expectTypeOf(value).toMatchTypeOf<number>();
 
 // You cannot modify an opaque value.
-expectNotAssignable<Value>(value + 2);
+expectTypeOf(value + 2).not.toMatchTypeOf<Value>();
 
 type WithoutToken = Opaque<number>;
-expectAssignable<WithoutToken>(2 as WithoutToken);
+expectTypeOf(2 as WithoutToken).toMatchTypeOf<WithoutToken>();
 
 // Verify that the Opaque's token can be the parent type itself.
 type Person = {
@@ -24,7 +24,7 @@ const person = {
 	id: 42 as Opaque<number, Person>,
 	name: 'Arthur',
 };
-expectType<Person>(person);
+expectTypeOf(person).toEqualTypeOf<Person>();
 
 // Failing test for https://github.com/sindresorhus/type-fest/issues/108
 // Use `Opaque` value as `Record` index type.
@@ -40,12 +40,12 @@ const userEntities: NormalizedDictionary<Foo> = {
 const johnsId = '7dd4a16e-d5ee-454c-b1d0-71e23d9fa70b' as UUID;
 
 const userJohn = userEntities[johnsId];
-expectType<Foo>(userJohn);
+expectTypeOf(userJohn).toEqualTypeOf<Foo>();
 
 // Remove tag from opaque value.
 // Note: This will simply return number as type.
 type PlainValue = UnwrapOpaque<Value>;
-expectAssignable<PlainValue>(123);
+expectTypeOf<123>().toMatchTypeOf<PlainValue>();
 
 const plainValue: PlainValue = 123 as PlainValue;
-expectNotType<Value>(plainValue);
+expectTypeOf(plainValue).not.toEqualTypeOf<Value>();

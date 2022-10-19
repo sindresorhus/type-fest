@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ConditionalPickDeep} from '../index';
 
 type Example = {
@@ -17,22 +17,22 @@ type Example = {
 };
 
 declare const stringPick: ConditionalPickDeep<Example, string>;
-expectType<{a: string; c: {d: string}}>(stringPick);
+expectTypeOf(stringPick).toEqualTypeOf<{a: string; c: {d: string}}>();
 
 declare const stringPickOptional: ConditionalPickDeep<Example, string | undefined>;
-expectType<{a: string; c: {d: string; e: {f?: string}}}>(stringPickOptional);
+expectTypeOf(stringPickOptional).toEqualTypeOf<{a: string; c: {d: string; e: {f?: string}}}>();
 
 declare const stringPickOptionalOnly: ConditionalPickDeep<Example, string | undefined, {condition: 'equality'}>;
-expectType<{c: {e: {f?: string}}}>(stringPickOptionalOnly);
+expectTypeOf(stringPickOptionalOnly).toEqualTypeOf<{c: {e: {f?: string}}}>();
 
 declare const booleanPick: ConditionalPickDeep<Example, boolean | undefined>;
-expectType<{c: {e: {g?: boolean}; j: boolean}}>(booleanPick);
+expectTypeOf(booleanPick).toEqualTypeOf<{c: {e: {g?: boolean}; j: boolean}}>();
 
 declare const numberPick: ConditionalPickDeep<Example, number>;
-expectType<{}>(numberPick);
+expectTypeOf(numberPick).toEqualTypeOf<{}>();
 
 declare const stringOrBooleanPick: ConditionalPickDeep<Example, string | boolean>;
-expectType<{
+expectTypeOf(stringOrBooleanPick).toEqualTypeOf<{
 	a: string;
 	b: string | boolean;
 	c: {
@@ -40,7 +40,7 @@ expectType<{
 		e: {h: string | boolean};
 		j: boolean;
 	};
-}>(stringOrBooleanPick);
+}>();
 
 declare const stringOrBooleanPickOnly: ConditionalPickDeep<Example, string | boolean, {condition: 'equality'}>;
-expectType<{b: string | boolean; c: {e: {h: string | boolean}}}>(stringOrBooleanPickOnly);
+expectTypeOf(stringOrBooleanPickOnly).toEqualTypeOf<{b: string | boolean; c: {e: {h: string | boolean}}}>();

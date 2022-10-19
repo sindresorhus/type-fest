@@ -1,4 +1,4 @@
-import {expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Writable} from '../index';
 
 type Foo = {
@@ -13,16 +13,16 @@ ab2.a = 2;
 
 // Update one writable and one readonly to writable, leaving one property unaffected.
 declare const variation1: Writable<{readonly a: number; b: string; readonly c: boolean}, 'b' | 'c'>;
-expectType<{readonly a: number; b: string; c: boolean}>(variation1);
+expectTypeOf(variation1).toEqualTypeOf<{readonly a: number; b: string; c: boolean}>();
 
 // Update two readonly to writable, leaving one property unaffected.
 declare const variation2: Writable<{readonly a: number; readonly b: string; readonly c: boolean}, 'a' | 'b'>;
-expectType<{a: number; b: string; readonly c: boolean}>(variation2);
+expectTypeOf(variation2).toEqualTypeOf<{a: number; b: string; readonly c: boolean}>();
 
 // Three writable remain writable.
 declare const variation3: Writable<{a: number; b: string; c: boolean}, 'a' | 'b' | 'c'>;
-expectType<{a: number; b: string; c: boolean}>(variation3);
+expectTypeOf(variation3).toEqualTypeOf<{a: number; b: string; c: boolean}>();
 
 // Check if type changes raise an error even if readonly and writable are applied correctly.
 declare const variation4: Writable<{readonly a: number; b: string; readonly c: boolean}, 'b' | 'c'>;
-expectNotAssignable<{readonly a: boolean; b: string; c: boolean}>(variation4);
+expectTypeOf(variation4).not.toMatchTypeOf<{readonly a: boolean; b: string; c: boolean}>();

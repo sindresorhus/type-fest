@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {Simplify} from '../index';
 
 type PositionProps = {
@@ -13,7 +13,7 @@ type SizeProps = {
 
 // Flatten the type output to improve type hints shown in editors.
 const flattenProps = {top: 120, left: 240, width: 480, height: 600};
-expectType<Simplify<PositionProps & SizeProps>>(flattenProps);
+expectTypeOf(flattenProps).toEqualTypeOf<Simplify<PositionProps & SizeProps>>();
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface SomeInterface {
@@ -33,16 +33,16 @@ const valueAsSimplifiedInterface: Simplify<SomeInterface> = valueAsLiteral;
 const valueAsInterface: SomeInterface = valueAsLiteral;
 
 declare const a: Simplify<SomeInterface>;
-expectType<SomeInterfaceAsTypeWrittenByHand>(a);
+expectTypeOf(a).toEqualTypeOf<SomeInterfaceAsTypeWrittenByHand>();
 
 // Interface is assignable to its Simplified type (created with Simplify, and by hand)
-expectType<Simplify<SomeInterface>>(valueAsInterface);
-expectType<SomeInterfaceAsTypeWrittenByHand>(valueAsInterface);
+expectTypeOf(valueAsInterface).toEqualTypeOf<Simplify<SomeInterface>>();
+expectTypeOf(valueAsInterface).toEqualTypeOf<SomeInterfaceAsTypeWrittenByHand>();
 
 // The following demonstrates one reason a type may be preferred over an interface is that it can be assigned to alternate types. In this example the interface cannot be because it is not sealed and elsewhere a non-string property could be added.
-expectAssignable<Record<string, unknown>>(valueAsLiteral);
-expectAssignable<Record<string, unknown>>(valueAsSimplifiedInterface);
-expectNotAssignable<Record<string, unknown>>(valueAsInterface); // Index signature is missing in interface
+expectTypeOf(valueAsLiteral).toMatchTypeOf<Record<string, unknown>>();
+expectTypeOf(valueAsSimplifiedInterface).toMatchTypeOf<Record<string, unknown>>();
+expectTypeOf(valueAsInterface).not.toMatchTypeOf<Record<string, unknown>>(); // Index signature is missing in interface
 
 // The following tests should be fixed once we have determined the cause of the bug reported in https://github.com/sindresorhus/type-fest/issues/436
 
@@ -51,11 +51,11 @@ type SimplifiedFunction = Simplify<SomeFunction>; // Return '{}' expected 'SomeF
 
 declare const someFunction: SimplifiedFunction;
 
-expectNotAssignable<SomeFunction>(someFunction);
+expectTypeOf(someFunction).not.toMatchTypeOf<SomeFunction>();
 
 // // Should return the original type if it is not simplifiable, like a function.
 // type SomeFunction = (type: string) => string;
-// expectType<Simplify<SomeFunction>>((type: string) => type);
+// expectTypeOf((type: string) => type).toEqualTypeOf<Simplify<SomeFunction>>();
 
 // class SomeClass {
 // 	id: string;
@@ -72,4 +72,4 @@ expectNotAssignable<SomeFunction>(someFunction);
 // 	}
 // }
 
-// expectType<Simplify<SomeClass>>(new SomeClass());
+// expectTypeOf(new SomeClass()).toEqualTypeOf<Simplify<SomeClass>>();

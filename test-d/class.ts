@@ -1,4 +1,3 @@
-import {expectError} from 'tsd';
 import type {Constructor} from '../index';
 
 class Foo {
@@ -15,7 +14,9 @@ function fn(Cls: Constructor<Foo>): Foo {
 }
 
 function fn2(Cls: Constructor<Foo, [number, number]>): Foo {
-	expectError(new Cls(1, ''));
+	// @ts-expect-error
+	// eslint-disable-next-line no-new
+	new Cls(1, '');
 	return new Cls(1, 2);
 }
 

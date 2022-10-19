@@ -1,52 +1,52 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {CamelCase, Split} from '../index';
 
 // Split
 const prefixSplit: Split<'--very-prefixed', '-'> = ['', '', 'very', 'prefixed'];
-expectType<['', '', 'very', 'prefixed']>(prefixSplit);
+expectTypeOf(prefixSplit).toEqualTypeOf<['', '', 'very', 'prefixed']>();
 
 // CamelCase
 const camelFromPascal: CamelCase<'FooBar'> = 'fooBar';
-expectType<'fooBar'>(camelFromPascal);
+expectTypeOf(camelFromPascal).toEqualTypeOf<'fooBar'>();
 
 const camelFromKebab: CamelCase<'foo-bar'> = 'fooBar';
-expectType<'fooBar'>(camelFromKebab);
+expectTypeOf(camelFromKebab).toEqualTypeOf<'fooBar'>();
 
 const camelFromComplexKebab: CamelCase<'foo-bar-abc-123'> = 'fooBarAbc123';
-expectType<'fooBarAbc123'>(camelFromComplexKebab);
+expectTypeOf(camelFromComplexKebab).toEqualTypeOf<'fooBarAbc123'>();
 
 const camelFromSpace: CamelCase<'foo bar'> = 'fooBar';
-expectType<'fooBar'>(camelFromSpace);
+expectTypeOf(camelFromSpace).toEqualTypeOf<'fooBar'>();
 
 const camelFromSnake: CamelCase<'foo_bar'> = 'fooBar';
-expectType<'fooBar'>(camelFromSnake);
+expectTypeOf(camelFromSnake).toEqualTypeOf<'fooBar'>();
 
 const noDelimiterFromMono: CamelCase<'foobar'> = 'foobar';
-expectType<'foobar'>(noDelimiterFromMono);
+expectTypeOf(noDelimiterFromMono).toEqualTypeOf<'foobar'>();
 
 const camelFromMixed: CamelCase<'foo-bar_abc xyzBarFoo'> = 'fooBarAbcXyzBarFoo';
-expectType<'fooBarAbcXyzBarFoo'>(camelFromMixed);
+expectTypeOf(camelFromMixed).toEqualTypeOf<'fooBarAbcXyzBarFoo'>();
 
 const camelFromVendorPrefixedCssProperty: CamelCase<'-webkit-animation'> = 'webkitAnimation';
-expectType<'webkitAnimation'>(camelFromVendorPrefixedCssProperty);
+expectTypeOf(camelFromVendorPrefixedCssProperty).toEqualTypeOf<'webkitAnimation'>();
 
 const camelFromDoublePrefixedKebab: CamelCase<'--very-prefixed'> = 'veryPrefixed';
-expectType<'veryPrefixed'>(camelFromDoublePrefixedKebab);
+expectTypeOf(camelFromDoublePrefixedKebab).toEqualTypeOf<'veryPrefixed'>();
 
 const camelFromRepeatedSeparators: CamelCase<'foo____bar'> = 'fooBar';
-expectType<'fooBar'>(camelFromRepeatedSeparators);
+expectTypeOf(camelFromRepeatedSeparators).toEqualTypeOf<'fooBar'>();
 
 const camelFromUppercase: CamelCase<'FOO'> = 'foo';
-expectType<'foo'>(camelFromUppercase);
+expectTypeOf(camelFromUppercase).toEqualTypeOf<'foo'>();
 
 const camelFromLowercase: CamelCase<'foo'> = 'foo';
-expectType<'foo'>(camelFromLowercase);
+expectTypeOf(camelFromLowercase).toEqualTypeOf<'foo'>();
 
 const camelFromScreamingSnakeCase: CamelCase<'FOO_BAR'> = 'fooBar';
-expectType<'fooBar'>(camelFromScreamingSnakeCase);
+expectTypeOf(camelFromScreamingSnakeCase).toEqualTypeOf<'fooBar'>();
 
 const camelFromScreamingKebabCase: CamelCase<'FOO-BAR'> = 'fooBar';
-expectType<'fooBar'>(camelFromScreamingKebabCase);
+expectTypeOf(camelFromScreamingKebabCase).toEqualTypeOf<'fooBar'>();
 
 // Verifying example
 type CamelCasedProperties<T> = {
@@ -62,11 +62,11 @@ type RawOptions = {
 	'OTHER-FIELD': boolean;
 };
 
-expectAssignable<CamelCasedProperties<RawOptions>>({
+expectTypeOf({
 	dryRun: true,
 	fullFamilyName: 'bar.js',
 	foo: 123,
 	bar: 'foo',
 	quzQux: 6,
 	otherField: false,
-});
+}).toMatchTypeOf<CamelCasedProperties<RawOptions>>();

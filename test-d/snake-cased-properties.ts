@@ -1,8 +1,8 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {SnakeCasedProperties} from '../index';
 
 declare const foo: SnakeCasedProperties<{helloWorld: {fooBar: string}}>;
-expectType<{hello_world: {fooBar: string}}>(foo);
+expectTypeOf(foo).toEqualTypeOf<{hello_world: {fooBar: string}}>();
 
 // Verify example
 type User = {
@@ -13,4 +13,4 @@ const result: SnakeCasedProperties<User> = {
 	user_id: 1,
 	user_name: 'Tom',
 };
-expectType<SnakeCasedProperties<User>>(result);
+expectTypeOf(result).toEqualTypeOf<SnakeCasedProperties<User>>();

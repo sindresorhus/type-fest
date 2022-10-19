@@ -1,14 +1,14 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {PascalCasedProperties} from '../index';
 
 declare const foo: PascalCasedProperties<{helloWorld: {fooBar: string}}>;
-expectType<{HelloWorld: {fooBar: string}}>(foo);
+expectTypeOf(foo).toEqualTypeOf<{HelloWorld: {fooBar: string}}>();
 
 declare const bar: PascalCasedProperties<Array<{helloWorld: string}>>;
-expectType<Array<{helloWorld: string}>>(bar);
+expectTypeOf(bar).toEqualTypeOf<Array<{helloWorld: string}>>();
 
 declare const fooBar: PascalCasedProperties<() => {a: string}>;
-expectType<() => {a: string}>(fooBar);
+expectTypeOf(fooBar).toEqualTypeOf<() => {a: string}>();
 
 // Verify example
 type User = {
@@ -19,4 +19,4 @@ const result: PascalCasedProperties<User> = {
 	UserId: 1,
 	UserName: 'Tom',
 };
-expectType<PascalCasedProperties<User>>(result);
+expectTypeOf(result).toEqualTypeOf<PascalCasedProperties<User>>();

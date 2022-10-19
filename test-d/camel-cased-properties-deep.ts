@@ -1,15 +1,15 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {CamelCasedPropertiesDeep} from '../index';
 
 declare const foo: CamelCasedPropertiesDeep<{A: {B: number; C: Array<{D: string}>}}>;
 
-expectType<{a: {b: number; c: Array<{d: string}>}}>(foo);
+expectTypeOf(foo).toEqualTypeOf<{a: {b: number; c: Array<{d: string}>}}>();
 
 declare const fooBar: CamelCasedPropertiesDeep<() => {a: string}>;
-expectType<() => {a: string}>(fooBar);
+expectTypeOf(fooBar).toEqualTypeOf<() => {a: string}>();
 
 declare const bar: CamelCasedPropertiesDeep<Set<{fooBar: string}>>;
-expectType<Set<{fooBar: string}>>(bar);
+expectTypeOf(bar).toEqualTypeOf<Set<{fooBar: string}>>();
 
 // Verify example
 type User = {
@@ -46,4 +46,4 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
-expectType<CamelCasedPropertiesDeep<UserWithFriends>>(result);
+expectTypeOf(result).toEqualTypeOf<CamelCasedPropertiesDeep<UserWithFriends>>();

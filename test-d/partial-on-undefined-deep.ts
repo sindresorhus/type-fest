@@ -1,4 +1,4 @@
-import {expectAssignable} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {PartialOnUndefinedDeep} from '../index';
 
 type TestingType = {
@@ -27,7 +27,7 @@ type TestingType = {
 
 // Default behavior, without recursion into arrays/tuples
 declare const foo: PartialOnUndefinedDeep<TestingType>;
-expectAssignable<{
+expectTypeOf(foo).toMatchTypeOf<{
 	function?: TestingType['function'];
 	object?: TestingType['object'];
 	objectDeep: {
@@ -49,11 +49,11 @@ expectAssignable<{
 	readonly1?: TestingType['readonly1'];
 	readonly2?: TestingType['readonly2'];
 	tuple?: TestingType['tuple'];
-}>(foo);
+}>();
 
 // With recursion into arrays/tuples activated
 declare const bar: PartialOnUndefinedDeep<TestingType, {recurseIntoArrays: true}>;
-expectAssignable<{
+expectTypeOf(bar).toMatchTypeOf<{
 	function?: TestingType['function'];
 	object?: TestingType['object'];
 	objectDeep: {
@@ -75,4 +75,4 @@ expectAssignable<{
 	readonly1?: TestingType['readonly1'];
 	readonly2?: ReadonlyArray<{propertyA: string; propertyB?: number | undefined}> | undefined;
 	tuple?: ['test1', {propertyA: string; propertyB?: number | undefined}] | undefined;
-}>(bar);
+}>();

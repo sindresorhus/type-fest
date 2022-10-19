@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ReadonlyDeep} from '../index';
 import type {ReadonlyObjectDeep} from '../source/readonly-deep';
 
@@ -49,32 +49,33 @@ readonlyData.fn('foo');
 readonlyData.fnWithOverload(1);
 readonlyData.fnWithOverload('', 1);
 
-expectError(readonlyData.string = 'bar');
-expectType<{readonly foo: string}>(readonlyData.object);
-expectType<string>(readonlyData.string);
-expectType<number>(readonlyData.number);
-expectType<boolean>(readonlyData.boolean);
-expectType<symbol>(readonlyData.symbol);
-expectType<null>(readonlyData.null);
-expectType<undefined>(readonlyData.undefined);
-expectType<Date>(readonlyData.date);
-expectType<RegExp>(readonlyData.regExp);
-expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.map);
-expectType<Readonly<ReadonlySet<string>>>(readonlyData.set);
-expectType<readonly string[]>(readonlyData.array);
-expectType<readonly ['foo']>(readonlyData.tuple);
-expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.readonlyMap);
-expectType<Readonly<ReadonlySet<string>>>(readonlyData.readonlySet);
-expectType<readonly string[]>(readonlyData.readonlyArray);
-expectType<readonly ['foo']>(readonlyData.readonlyTuple);
+// @ts-expect-error
+readonlyData.string = 'bar';
+expectTypeOf(readonlyData.object).toEqualTypeOf<{readonly foo: string}>();
+expectTypeOf(readonlyData.string).toEqualTypeOf<string>();
+expectTypeOf(readonlyData.number).toEqualTypeOf<number>();
+expectTypeOf(readonlyData.boolean).toEqualTypeOf<boolean>();
+expectTypeOf(readonlyData.symbol).toEqualTypeOf<symbol>();
+expectTypeOf(readonlyData.null).toEqualTypeOf<null>();
+expectTypeOf(readonlyData.undefined).toEqualTypeOf<undefined>();
+expectTypeOf(readonlyData.date).toEqualTypeOf<Date>();
+expectTypeOf(readonlyData.regExp).toEqualTypeOf<RegExp>();
+expectTypeOf(readonlyData.map).toEqualTypeOf<Readonly<ReadonlyMap<string, string>>>();
+expectTypeOf(readonlyData.set).toEqualTypeOf<Readonly<ReadonlySet<string>>>();
+expectTypeOf(readonlyData.array).toEqualTypeOf<readonly string[]>();
+expectTypeOf(readonlyData.tuple).toEqualTypeOf<readonly ['foo']>();
+expectTypeOf(readonlyData.readonlyMap).toEqualTypeOf<Readonly<ReadonlyMap<string, string>>>();
+expectTypeOf(readonlyData.readonlySet).toEqualTypeOf<Readonly<ReadonlySet<string>>>();
+expectTypeOf(readonlyData.readonlyArray).toEqualTypeOf<readonly string[]>();
+expectTypeOf(readonlyData.readonlyTuple).toEqualTypeOf<readonly ['foo']>();
 
-expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
-expectType<string>(readonlyData.namespace(1));
-expectType<readonly boolean[]>(readonlyData.namespace.baz);
+expectTypeOf(readonlyData.namespace).toEqualTypeOf<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>();
+expectTypeOf(readonlyData.namespace(1)).toEqualTypeOf<string>();
+expectTypeOf(readonlyData.namespace.baz).toEqualTypeOf<readonly boolean[]>();
 
 // These currently aren't readonly due to TypeScript limitations.
 // @see https://github.com/microsoft/TypeScript/issues/29732
-expectType<NamespaceWithOverload>(readonlyData.namespaceWithOverload);
-expectType<string>(readonlyData.namespaceWithOverload(1));
-expectType<number>(readonlyData.namespaceWithOverload('foo', 1));
-expectType<boolean[]>(readonlyData.namespaceWithOverload.baz);
+expectTypeOf(readonlyData.namespaceWithOverload).toEqualTypeOf<NamespaceWithOverload>();
+expectTypeOf(readonlyData.namespaceWithOverload(1)).toEqualTypeOf<string>();
+expectTypeOf(readonlyData.namespaceWithOverload('foo', 1)).toEqualTypeOf<number>();
+expectTypeOf(readonlyData.namespaceWithOverload.baz).toEqualTypeOf<boolean[]>();

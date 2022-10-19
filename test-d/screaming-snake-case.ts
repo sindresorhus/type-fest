@@ -1,23 +1,23 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ScreamingSnakeCase} from '../index';
 
 const screamingSnakeFromCamel: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(screamingSnakeFromCamel);
+expectTypeOf(screamingSnakeFromCamel).toEqualTypeOf<'FOO_BAR'>();
 
 const screamingSnakeFromKebab: ScreamingSnakeCase<'foo-bar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(screamingSnakeFromKebab);
+expectTypeOf(screamingSnakeFromKebab).toEqualTypeOf<'FOO_BAR'>();
 
 const screamingSnakeFromSpace: ScreamingSnakeCase<'foo bar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(screamingSnakeFromSpace);
+expectTypeOf(screamingSnakeFromSpace).toEqualTypeOf<'FOO_BAR'>();
 
 const screamingSnakeFromSnake: ScreamingSnakeCase<'foo_bar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(screamingSnakeFromSnake);
+expectTypeOf(screamingSnakeFromSnake).toEqualTypeOf<'FOO_BAR'>();
 
 const screamingSnakeFromScreamingSnake: ScreamingSnakeCase<'FOO_BAR'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(screamingSnakeFromScreamingSnake);
+expectTypeOf(screamingSnakeFromScreamingSnake).toEqualTypeOf<'FOO_BAR'>();
 
 const noScreamingSnakeFromMono: ScreamingSnakeCase<'foobar'> = 'FOOBAR';
-expectType<'FOOBAR'>(noScreamingSnakeFromMono);
+expectTypeOf(noScreamingSnakeFromMono).toEqualTypeOf<'FOOBAR'>();
 
 const nonStringFromNonString: ScreamingSnakeCase<[]> = [];
-expectType<[]>(nonStringFromNonString);
+expectTypeOf(nonStringFromNonString).toEqualTypeOf<[]>();

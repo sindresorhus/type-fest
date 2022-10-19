@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {OmitIndexSignature} from '../index';
 
 type ExampleInterface = {
@@ -25,15 +25,15 @@ type MappedType<ObjectType> = {
 };
 
 declare const exampleInterfaceKnownKeys: OmitIndexSignature<ExampleInterface>;
-expectType<{
+expectTypeOf(exampleInterfaceKnownKeys).toEqualTypeOf<{
 	foo: 'bar';
 	qux?: 'baz';
-}>(exampleInterfaceKnownKeys);
+}>();
 
 declare const exampleMappedTypeKnownKeys: OmitIndexSignature<
 MappedType<ExampleInterface>
 >;
-expectType<{
+expectTypeOf(exampleMappedTypeKnownKeys).toEqualTypeOf<{
 	foo: {key: 'foo'; value: 'bar'};
 	qux?: {key: 'qux'; value: 'baz'};
-}>(exampleMappedTypeKnownKeys);
+}>();

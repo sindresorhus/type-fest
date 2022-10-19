@@ -1,20 +1,20 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {SnakeCase} from '../index';
 
 const snakeFromCamel: SnakeCase<'fooBar'> = 'foo_bar';
-expectType<'foo_bar'>(snakeFromCamel);
+expectTypeOf(snakeFromCamel).toEqualTypeOf<'foo_bar'>();
 
 const snakeFromPascal: SnakeCase<'FooBar'> = 'foo_bar';
-expectType<'foo_bar'>(snakeFromPascal);
+expectTypeOf(snakeFromPascal).toEqualTypeOf<'foo_bar'>();
 
 const snakeFromKebab: SnakeCase<'foo-bar'> = 'foo_bar';
-expectType<'foo_bar'>(snakeFromKebab);
+expectTypeOf(snakeFromKebab).toEqualTypeOf<'foo_bar'>();
 
 const snakeFromSpace: SnakeCase<'foo bar'> = 'foo_bar';
-expectType<'foo_bar'>(snakeFromSpace);
+expectTypeOf(snakeFromSpace).toEqualTypeOf<'foo_bar'>();
 
 const snakeFromSnake: SnakeCase<'foo_bar'> = 'foo_bar';
-expectType<'foo_bar'>(snakeFromSnake);
+expectTypeOf(snakeFromSnake).toEqualTypeOf<'foo_bar'>();
 
 const noSnakeFromMono: SnakeCase<'foobar'> = 'foobar';
-expectType<'foobar'>(noSnakeFromMono);
+expectTypeOf(noSnakeFromMono).toEqualTypeOf<'foobar'>();

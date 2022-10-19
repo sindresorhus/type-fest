@@ -1,12 +1,12 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'expect-type';
 import type {ValueOf} from '../index';
 
 const value: ValueOf<{a: 1; b: 2; c: 3}> = 3;
 const valueRestricted: ValueOf<{a: 1; b: 2; c: 3}, 'a'> = 1;
 
-expectAssignable<1 | 2 | 3>(value);
-expectNotAssignable<4>(value);
+expectTypeOf(value).toMatchTypeOf<1 | 2 | 3>();
+expectTypeOf(value).not.toMatchTypeOf<4>();
 
-expectType<1>(valueRestricted);
-expectNotAssignable<2>(valueRestricted);
-expectNotAssignable<4>(valueRestricted);
+expectTypeOf(valueRestricted).toEqualTypeOf<1>();
+expectTypeOf(valueRestricted).not.toMatchTypeOf<2>();
+expectTypeOf(valueRestricted).not.toMatchTypeOf<4>();
