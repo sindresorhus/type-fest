@@ -1,4 +1,5 @@
 import type {JsonPrimitive, JsonValue} from './basic';
+import type {EmptyObject} from './empty-object';
 import type {Merge} from './merge';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
@@ -100,7 +101,7 @@ export type Jsonify<T> =
 						: T extends Number ? number
 							: T extends String ? string
 								: T extends Boolean ? boolean
-									: T extends Map<any, any> | Set<any> ? {}
+									: T extends Map<any, any> | Set<any> ? EmptyObject
 										: T extends TypedArray ? Record<string, number>
 											: T extends any[]
 												? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
