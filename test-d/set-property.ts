@@ -1,60 +1,86 @@
 import {expectType} from 'tsd';
 import type {SetProperty} from '../source/set-property';
 
+// Test helper
 declare function setProperty<
 	Destination extends object,
 	Path extends string,
 	Value,
->(destination: Destination, path: Path, value: Value): SetProperty<Destination, Path, Value>;
+>(destination: Destination, path: Path, value: Value): SetProperty<Destination, Path, typeof value>;
 
-// Should create property
-const objectData = {id: 'test'};
+type Value = number;
+declare const value: Value;
 
-const numberValue = 42;
-type NumberValue = typeof numberValue;
+// Property does not exist
+expectType<{foo: Value}>(setProperty({}, 'foo', value));
+expectType<{foo: {bar: Value}}>(setProperty({foo: 'foo'}, 'foo.bar', value));
+expectType<{foo: string; bar: Value}>(setProperty({foo: 'foo'}, 'bar', value));
+expectType<{foo: {bar: Value}; biz: string}>(setProperty({foo: 'foo', biz: 'biz'}, 'foo.bar', value));
+expectType<{foo: string; bar: {baz: string; biz: Value}}>(setProperty({foo: 'foo', bar: {baz: 'baz'}}, 'bar.biz', value));
 
-expectType<{id: string; '': NumberValue}>(setProperty(objectData, '', numberValue));
-expectType<{id: string; ' ': NumberValue}>(setProperty(objectData, ' ', numberValue));
-expectType<{id: string; '  ': NumberValue}>(setProperty(objectData, '  ', numberValue));
+expectType<{0: Value}>(setProperty({}, '0', value));
+expectType<{0: Value}>(setProperty({}, '[0]', value));
+expectType<{foo: {0: Value}}>(setProperty({foo: 'foo'}, 'foo.0', value));
+expectType<{foo: {0: Value; bar: string}}>(setProperty({foo: {bar: 'bar'}}, 'foo[0]', value));
 
-expectType<{id: string; life: NumberValue}>(setProperty(objectData, 'life', numberValue));
-expectType<{id: string; life: {0: NumberValue}}>(setProperty(objectData, 'life.0', numberValue));
-expectType<{id: string; life: {0: NumberValue}}>(setProperty(objectData, 'life[0]', numberValue));
-expectType<{id: string; life: {is: NumberValue}}>(setProperty(objectData, 'life.is', numberValue));
-expectType<{id: string; life: {is: {42: NumberValue}}}>(setProperty(objectData, 'life.is.42', numberValue));
-expectType<{id: string; life: {is: {42: NumberValue}}}>(setProperty(objectData, 'life.is[42]', numberValue));
+// Property exist
+expectType<{foo: Value}>(setProperty({foo: 'foo'}, 'foo', value));
+expectType<{foo: {bar: Value}}>(setProperty({foo: {bar: 'bar'}}, 'foo.bar', value));
+expectType<{foo: string; bar: Value}>(setProperty({foo: 'foo', bar: 'bar'}, 'bar', value));
+expectType<{foo: string; bar: {baz: Value}}>(setProperty({foo: 'foo', bar: {baz: 'baz'}}, 'bar.baz', value));
+expectType<{foo: string; bar: {baz: string; biz: Value}}>(setProperty({foo: 'foo', bar: {baz: 'baz', biz: 'biz'}}, 'bar.biz', value));
 
-expectType<{id: string; dot: {dot: {dot: NumberValue}}}>(setProperty(objectData, 'dot.dot.dot', numberValue));
-expectType<{id: string; 'dot.dot': {'dot': NumberValue}}>(setProperty(objectData, 'dot\\.dot.dot', numberValue));
-expectType<{id: string; dot: {'dot.dot': NumberValue}}>(setProperty(objectData, 'dot.dot\\.dot', numberValue));
-expectType<{id: string; 'dot.dot.dot': NumberValue}>(setProperty(objectData, 'dot\\.dot\\.dot', numberValue));
+expectType<{0: Value}>(setProperty({0: 'zero'}, '0', value));
+expectType<{0: Value}>(setProperty({0: 'zero'}, '[0]', value));
+expectType<{foo: {0: Value}}>(setProperty({foo: {0: 'zero'}}, 'foo.0', value));
+expectType<{foo: {0: Value; bar: string}}>(setProperty({foo: {0: 'zero', bar: 'bar'}}, 'foo[0]', value));
 
-expectType<{id: string; 0: NumberValue}>(setProperty(objectData, '0', numberValue));
-expectType<{id: string; 1: NumberValue}>(setProperty(objectData, '1', numberValue));
-expectType<{id: string; 0: NumberValue}>(setProperty(objectData, '[0]', numberValue));
-expectType<{id: string; 1: NumberValue}>(setProperty(objectData, '[1]', numberValue));
-expectType<{id: string; 0: {1: NumberValue}}>(setProperty(objectData, '0[1]', numberValue));
-expectType<{id: string; 1: {0: NumberValue}}>(setProperty(objectData, '[1].0', numberValue));
-expectType<{id: string; 0: {1: NumberValue}}>(setProperty(objectData, '[0][1]', numberValue));
-expectType<{id: string; 1: {0: NumberValue}}>(setProperty(objectData, '[1][0]', numberValue));
+// Cannot use string index on array/tuple
+expectType<never>(setProperty([], '0', value));
 
-// Const test1 = setProperty({}, '0', value);
-// const test2 = setProperty({}, '1', value);
-// const test3 = setProperty({}, '[0]', value);
-// const test4 = setProperty({}, '[1]', value);
-// const test5 = setProperty({0: 'zero', 1: 'one'}, '0', value);
-// const test6 = setProperty({0: 'zero', 1: 'one'}, '1', value);
-// const test7 = setProperty({0: 'zero', 1: 'one'}, '[0]', value); // {"0":42,"1":"one"}
-// const test8 = setProperty({0: 'zero', 1: 'one'}, '[1]', value); // {"0":"zero","1":42}
+// Element does not exist
+declare const emptyArray: never[];
 
-// const test9 = setProperty([], '0', value); // Error: Cannot use string index
-// const test10 = setProperty([], '1', value); // Error: Cannot use string index
-// const test11 = setProperty([], '[0]', value); // [42]
-// const test12 = setProperty([], '[1]', value); // [null,42]
-// const test13 = setProperty(['zero', 'one'], '0', value); // Error: Cannot use string index
-// const test14 = setProperty(['zero', 'one'], '1', value); // Error: Cannot use string index
-// const test15 = setProperty(['zero', 'one'], '[0]', value); // [42,"one"]
-// const test16 = setProperty(['zero', 'one'], '[1]', value); // ["zero",42]
+expectType<Value[]>(setProperty(emptyArray, '[0]', value));
+expectType<Value[][]>(setProperty(emptyArray, '[0][0]', value));
+expectType<Array<Value | null>>(setProperty(emptyArray, '[1]', value));
+expectType<Array<Value[] | null>>(setProperty(emptyArray, '[1][0]', value));
+expectType<Array<Array<Value | null>>>(setProperty(emptyArray, '[0][1]', value));
+expectType<Array<Array<Value | null> | null>>(setProperty(emptyArray, '[1][1]', value));
 
-// const test = setProperty({a: 'a', 1: {b: 'b'}}, '1.2\\.3.4', value);
-// const test = setProperty({a: 'a', 1: {b: 'b', c: 'c'}}, '1.b.4.5', value);
+expectType<Array<{foo: Value}>>(setProperty(emptyArray, '[0].foo', value));
+expectType<Array<{foo: Value} | null>>(setProperty(emptyArray, '[1].foo', value));
+expectType<Array<Array<{foo: Value}>>>(setProperty(emptyArray, '[0][0].foo', value));
+expectType<Array<Array<{foo: Value} | null>>>(setProperty(emptyArray, '[0][1].foo', value));
+expectType<Array<Array<{1: Value} | null>>>(setProperty(emptyArray, '[0][1].1', value));
+
+expectType<{foo: Value[]}>(setProperty({foo: emptyArray}, 'foo[0]', value));
+expectType<{foo: Value[][]}>(setProperty({foo: emptyArray}, 'foo[0][0]', value));
+expectType<{foo: Array<Value | null>}>(setProperty({foo: emptyArray}, 'foo[1]', value));
+expectType<{foo: Array<Value[] | null>}>(setProperty({foo: emptyArray}, 'foo[1][0]', value));
+
+expectType<{foo: Value[]}>(setProperty({foo: 'foo'}, 'foo[0]', value));
+expectType<{foo: Value[][]}>(setProperty({foo: 'foo'}, 'foo[0][0]', value));
+expectType<{foo: Array<Value | null>}>(setProperty({foo: 'foo'}, 'foo[1]', value));
+expectType<{foo: Array<Value[] | null>}>(setProperty({foo: 'foo'}, 'foo[1][0]', value));
+
+// Element exist
+declare const stringArray: string[];
+
+expectType<Array<string | Value>>(setProperty(stringArray, '[0]', value));
+expectType<Array<string | Value[]>>(setProperty(stringArray, '[0][0]', value));
+expectType<Array<string | Value | null>>(setProperty(stringArray, '[1]', value));
+expectType<Array<string | Value[] | null>>(setProperty(stringArray, '[1][0]', value));
+expectType<Array<string | Array<Value | null>>>(setProperty(stringArray, '[0][1]', value));
+expectType<Array<string | Array<Value | null> | null>>(setProperty(stringArray, '[1][1]', value));
+
+expectType<Array<string | {foo: number}>>(setProperty(stringArray, '[0].foo', value));
+expectType<Array<string | {foo: number} | null>>(setProperty(stringArray, '[1].foo', value));
+expectType<Array<string | Array<{foo: number}>>>(setProperty(stringArray, '[0][0].foo', value));
+expectType<Array<string | Array<{foo: number} | null>>>(setProperty(stringArray, '[0][1].foo', value));
+expectType<Array<string | Array<{1: number} | null>>>(setProperty(stringArray, '[0][1].1', value));
+
+expectType<{foo: Array<string | number>}>(setProperty({foo: stringArray}, 'foo[0]', value));
+expectType<{foo: Array<string | number[]>}>(setProperty({foo: stringArray}, 'foo[0][0]', value));
+expectType<{foo: Array<string | number | null>}>(setProperty({foo: stringArray}, 'foo[1]', value));
+expectType<{foo: Array<string | number[] | null>}>(setProperty({foo: stringArray}, 'foo[1][0]', value));

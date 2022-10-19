@@ -1,18 +1,36 @@
+import type {FirstArrayElement, UnknownArrayOrTuple} from './internal';
+import type {ConditionalSimplifyDeep} from './conditional-simplify';
 import type {MergeDeep} from './merge-deep';
 
+// Path index type shortcut
 type Index = string | number;
 
-type UnknownArray = readonly [...unknown[]];
-
+// Used by `SplitDottedPath` to infer the type of index based on the format of the path.
 type InferIndexType<
 	IndexType extends Index,
-	IsNumberIndex extends boolean = false,
-> = IsNumberIndex extends true
+	ShouldBeNumberIndex extends boolean = false,
+> = ShouldBeNumberIndex extends true
 	? IndexType extends `${infer NumberKey extends number}`
 		? NumberKey
 		: never
 	: IndexType;
 
+/**
+Split a dotted path into a tuple of indexes.
+
+- Numerical indexes are preserved when specified between `[]`.
+- Indexes that contain dots can be escaped with the `\\` sequence.
+
+@exemple
+```
+type Path2 = SplitDottedPath<'root'>; // ['root']
+type Path3 = SplitDottedPath<'root.child'>; // ['root', 'child']
+type Path4 = SplitDottedPath<'root.child.0'>; // ['root', 'child', '0']
+type Path5 = SplitDottedPath<'root.child[0]'>; // ['root', 'child', 0]
+type Path6 = SplitDottedPath<'root.child[0].1'>; // ['root', 'child', 0, '1']
+type Path7 = SplitDottedPath<'root.dot\\.dot.child'>; // ['root', 'dot.dot', 'child']
+```
+*/
 type SplitDottedPath<
 	Path extends string,
 	CurrentIndex extends Index = '',
@@ -33,42 +51,85 @@ type SplitDottedPath<
 				: [...SplitDottedPath<Tail, `${CurrentIndex}${Char}`, false>]
 	: [InferIndexType<CurrentIndex, IsNumberIndex>];
 
-type SetArrayIndex<
-	Destination extends UnknownArray,
+type NextIndexType<RestIndex extends Index[]> = FirstArrayElement<RestIndex> extends number ? never[] : {};
+
+type SetPropertyFromNextIndex<PathRest extends Index[], Value> = SetPropertyFromPath<NextIndexType<PathRest>, PathRest, Value>;
+
+type GetTypeAtIndex<
+	Destination extends UnknownArrayOrTuple,
 	CurrentIndex extends Index,
 	RestIndex extends Index[],
 	Value,
-> = ['SetArrayIndex', Destination, CurrentIndex, RestIndex, Value];
+> = [
+	Destination[number]
+	| (CurrentIndex extends 0 ? Destination[number] : null)
+	| SetPropertyFromPath<NextIndexType<RestIndex>, RestIndex, Value>,
+][number];
 
-type SetObjectIndex<
+type SetOrCreateArrayOrTupleAtIndex<
+	Destination extends UnknownArrayOrTuple,
+	TargetIndex extends Index,
+	PathRest extends Index[],
+	Value,
+> = TargetIndex extends number
+	? Array<GetTypeAtIndex<Destination, TargetIndex, PathRest, Value>>
+	: never; // Cannot use string index;
+
+type CreateObjectAtIndex<
 	Destination extends object,
-	CurrentIndex extends Index,
-	RestIndex extends Index[],
+	TargetIndex extends Index,
+	PathRest extends Index[],
 	Value,
-> = `${CurrentIndex}` extends `${Exclude<keyof Destination, symbol>}`
-	? {
-		[Key in keyof Destination]: `${Exclude<Key, symbol>}` extends `${CurrentIndex}`
-			? Destination[Key] extends object
-				? MergeDeep<Destination[Key], SetPropertyFromPath<{}, RestIndex, Value>>
-				: SetPropertyFromPath<Destination[Key], RestIndex, Value>
-			: Destination[Key]
-	}
-	: MergeDeep<Destination, {[Key in CurrentIndex]: SetPropertyFromPath<{}, RestIndex, Value>}>;
+> = MergeDeep<Destination, {[Key in TargetIndex]: SetPropertyFromNextIndex<PathRest, Value>}>;
 
+type SetObjectAtIndex<
+	Destination extends object,
+	TargetIndex extends Index,
+	PathRest extends Index[],
+	Value,
+> = {
+	[Key in keyof Destination]: `${Exclude<Key, symbol>}` extends `${TargetIndex}`
+		? PathRest extends []
+			? Value
+			: Destination[Key] extends object
+				? SetPropertyFromPath<Destination[Key], PathRest, Value>
+				: SetPropertyFromNextIndex<PathRest, Value>
+		: Destination[Key];
+};
+
+type SetOrCreateObjectAtIndex<
+	Destination extends object,
+	TargetIndex extends Index,
+	PathRest extends Index[],
+	Value,
+> = `${TargetIndex}` extends `${Exclude<keyof Destination, symbol>}`
+	? SetObjectAtIndex<Destination, TargetIndex, PathRest, Value>
+	: CreateObjectAtIndex<Destination, TargetIndex, PathRest, Value>;
+
+// Set a deeply-nested property to an object using a tuple of indexes making the difference between arrays/tuples and other object types.
 type SetPropertyFromPath<
 	Destination,
 	Path extends Index[],
 	Value,
-> = Path extends [infer FirstIndex extends Index, ...infer RestIndex extends Index[]]
-	? Destination extends UnknownArray
-		? SetArrayIndex<Destination, FirstIndex, RestIndex, Value>
+> = Path extends [infer FirstIndex extends Index, ...infer PathRest extends Index[]]
+	? Destination extends UnknownArrayOrTuple
+		? SetOrCreateArrayOrTupleAtIndex<Destination, FirstIndex, PathRest, Value>
 		: Destination extends object
-			? SetObjectIndex<Destination, FirstIndex, RestIndex, Value>
+			? SetOrCreateObjectAtIndex<Destination, FirstIndex, PathRest, Value>
 			: Value
 	: Value;
 
+/**
+Set a deeply-nested property to an object using a dotted path string or a tuple of indexes.
+
+@exemple
+```
+```
+
+@category Object
+*/
 export type SetProperty<
 	Destination extends object,
-	DottedPath extends string,
+	Path extends string | Index[],
 	Value,
-> = SetPropertyFromPath<Destination, SplitDottedPath<DottedPath>, Value>;
+> = ConditionalSimplifyDeep<SetPropertyFromPath<Destination, Path extends string ? SplitDottedPath<Path> : Path, Value>, Function>;
