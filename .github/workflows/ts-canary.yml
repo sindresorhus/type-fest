@@ -3,6 +3,7 @@ on:
   schedule:
     # Every Thursday at 21.15
     - cron: '15 21 * * 4'
+  workflow_dispatch:
 jobs:
   types:
     name: TypeScript ${{ matrix.typescript-version }}
