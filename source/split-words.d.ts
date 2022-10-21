@@ -13,6 +13,20 @@ type RemoveLastChar<Sentence extends string, Char extends string> = Sentence ext
 /**
 Split a string (almost) like Lodash's `_.words()` function.
 
+- Split on each word that begins with a capital letter.
+- Split on each {@link WordSeparators}.
+- Split on numeric sequence.
+
+@example
+```
+type Words0 = SplitWords<'helloWorld'>; // ['hello', 'World']
+type Words1 = SplitWords<'helloWORLD'>; // ['hello', 'WORLD']
+type Words2 = SplitWords<'hello-world'>; // ['hello', 'world']
+type Words3 = SplitWords<'--hello the_world'>; // ['hello', 'the', 'world']
+type Words4 = SplitWords<'lifeIs42'>; // ['life', 'Is', '42']
+```
+
+@internal
 @category Change case
 @category Template literal
 */

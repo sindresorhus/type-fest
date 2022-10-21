@@ -1,10 +1,23 @@
 import type {SplitWords} from './split-words';
 
+/**
+CamelCase options.
+
+@see {@link CamelCase}
+*/
 export type CamelCaseOptions = {
-	preserveConsecutiveUppercase: boolean;
+	/**
+	Whether to preserved consecutive uppercase letter.
+
+	@default true
+	*/
+	preserveConsecutiveUppercase?: boolean;
 };
 
-type CamelCaseArray<
+/**
+Convert an array of words to camel-case.
+*/
+type CamelCaseFromArray<
 	Words extends string[],
 	Options extends CamelCaseOptions,
 	OutputString extends string = '',
@@ -13,14 +26,16 @@ type CamelCaseArray<
 	...infer RemainingWords extends string[],
 ]
 	? Options['preserveConsecutiveUppercase'] extends true
-		? `${Capitalize<FirstWord>}${CamelCaseArray<RemainingWords, Options>}`
-		: `${Capitalize<Lowercase<FirstWord>>}${CamelCaseArray<RemainingWords, Options>}`
+		? `${Capitalize<FirstWord>}${CamelCaseFromArray<RemainingWords, Options>}`
+		: `${Capitalize<Lowercase<FirstWord>>}${CamelCaseFromArray<RemainingWords, Options>}`
 	: OutputString;
 
 /**
 Convert a string literal to camel-case.
 
 This can be useful when, for example, converting some kebab-cased command-line flags or a snake-cased database result.
+
+By default, consecutive uppercase letter are preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
 
 @example
 ```
@@ -59,5 +74,5 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 @category Template literal
 */
 export type CamelCase<Type, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Type extends string
-	? Uncapitalize<CamelCaseArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
+	? Uncapitalize<CamelCaseFromArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
 	: Type;
