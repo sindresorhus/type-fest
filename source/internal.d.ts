@@ -93,3 +93,18 @@ export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray exten
 Extracts the type of an array or tuple minus the first element.
 */
 export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer TTail] ? TTail : [];
+
+/**
+Returns a boolean for whether the string is lowercased.
+*/
+export type IsLowerCase<T extends string> = T extends Lowercase<T> ? true : false;
+
+/**
+Returns a boolean for whether the string is uppercased.
+*/
+export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
+
+/**
+Returns a boolean for whether the string is numeric.
+*/
+export type IsNumeric<T extends string> = T extends `${number}` ? true : false;

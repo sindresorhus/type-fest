@@ -1,8 +1,4 @@
-import type {WordSeparators} from './internal';
-
-type IsLowerCase<T extends string> = T extends Lowercase<T> ? true : false;
-type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
-type IsNumeric<T extends string> = T extends `${number}` ? true : false;
+import type {IsLowerCase, IsNumeric, IsUpperCase, WordSeparators} from './internal';
 
 type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
 
