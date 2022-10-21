@@ -1,9 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {CamelCase, Split} from '../index';
-
-// Split
-const prefixSplit: Split<'--very-prefixed', '-'> = ['', '', 'very', 'prefixed'];
-expectType<['', '', 'very', 'prefixed']>(prefixSplit);
+import type {CamelCase} from '../index';
 
 // CamelCase
 const camelFromPascal: CamelCase<'FooBar'> = 'fooBar';
