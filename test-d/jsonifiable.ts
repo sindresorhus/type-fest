@@ -8,6 +8,8 @@ expectAssignable<Jsonifiable>(new Date());
 expectAssignable<Jsonifiable>({a: new Date()});
 expectAssignable<Jsonifiable>([new Date()]);
 expectAssignable<Jsonifiable>({a: undefined});
+expectAssignable<Jsonifiable>([1, 2, 3] as const);
+expectAssignable<Jsonifiable>({a: new Date()} as const);
 
 expectNotAssignable<Jsonifiable>(undefined);
 expectNotAssignable<Jsonifiable>(new Map());

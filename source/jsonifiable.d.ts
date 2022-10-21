@@ -1,7 +1,7 @@
 import type {JsonPrimitive, JsonValue} from './basic';
 
 type JsonifiableObject = {[Key in string]?: Jsonifiable} | {toJSON: () => JsonValue};
-type JsonifiableArray = Jsonifiable[];
+type JsonifiableArray = readonly Jsonifiable[];
 
 /**
 Matches a value that can be losslessly converted to JSON.
