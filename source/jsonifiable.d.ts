@@ -17,14 +17,18 @@ import type {Jsonifiable} from 'type-fest';
 const error: Jsonifiable = {
     map: new Map([["a", 1]]),
 };
-JSON.stringify(error); // {"map": {}}
+
+JSON.stringify(error);
+//=> {"map": {}}
 
 const good: Jsonifiable = {
     number: 3,
     date: new Date(),
     missing: undefined,
 }
-JSON.stringify(good); // {"number": 3, "date": "2022-10-17T22:22:35.920Z"}
+
+JSON.stringify(good);
+//=> {"number": 3, "date": "2022-10-17T22:22:35.920Z"}
 ```
 
 @category JSON
