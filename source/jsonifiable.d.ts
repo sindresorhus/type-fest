@@ -6,7 +6,7 @@ type JsonifiableArray = Jsonifiable[];
 /**
 Matches a value that can be losslessly converted to JSON.
 
-`undefined` is allowed in object fields (ex: `{a?: number}`) as a special case even though `JSON.stringify({a: undefined})` is `{}`.
+`undefined` is allowed in object fields (ex: `{a?: number}`) as a special case even though `JSON.stringify({a: undefined})` is `{}` because it makes this class more widely useful and checking for undefined-but-present values is likely an anti-pattern.
 
 @example
 ```
