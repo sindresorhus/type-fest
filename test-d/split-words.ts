@@ -79,3 +79,13 @@ expectType<SplitWords<'Hello--world--'>>(['Hello', 'world']);
 expectType<SplitWords<'hello__world___'>>(['hello', 'world']);
 expectType<SplitWords<'___ hello -__  _world'>>(['hello', 'world']);
 expectType<SplitWords<'__HelloWorld-HELLOWorld helloWORLD'>>(['Hello', 'World', 'HELLO', 'World', 'hello', 'WORLD']);
+
+expectType<SplitWords<'item0'>>(['item', '0']);
+expectType<SplitWords<'item01'>>(['item', '01']);
+expectType<SplitWords<'item10'>>(['item', '10']);
+expectType<SplitWords<'item010'>>(['item', '010']);
+expectType<SplitWords<'0item0'>>(['0', 'item', '0']);
+expectType<SplitWords<'01item01'>>(['01', 'item', '01']);
+expectType<SplitWords<'10item10'>>(['10', 'item', '10']);
+expectType<SplitWords<'010item010'>>(['010', 'item', '010']);
+expectType<SplitWords<'item0_item_1 item -2'>>(['item', '0', 'item', '1', 'item', '2']);
