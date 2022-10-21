@@ -1,11 +1,21 @@
 import type {SplitWords} from './split-words';
 
-type CamelCaseArray<Words extends string[], Output extends string = ''> = Words extends [
+export type CamelCaseOptions = {
+	preserveConsecutiveUppercase: boolean;
+};
+
+type CamelCaseArray<
+	Words extends string[],
+	Options extends CamelCaseOptions,
+	OutputString extends string = '',
+> = Words extends [
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? `${Capitalize<FirstWord>}${CamelCaseArray<RemainingWords>}`
-	: Output;
+	? Options['preserveConsecutiveUppercase'] extends true
+		? `${Capitalize<FirstWord>}${CamelCaseArray<RemainingWords, Options>}`
+		: `${Capitalize<Lowercase<FirstWord>>}${CamelCaseArray<RemainingWords, Options>}`
+	: OutputString;
 
 /**
 Convert a string literal to camel-case.
@@ -48,6 +58,6 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 @category Change case
 @category Template literal
 */
-export type CamelCase<Type> = Type extends string
-	? Uncapitalize<CamelCaseArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>>>
+export type CamelCase<Type, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Type extends string
+	? Uncapitalize<CamelCaseArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
 	: Type;

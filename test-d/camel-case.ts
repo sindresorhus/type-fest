@@ -70,3 +70,12 @@ expectAssignable<CamelCasedProperties<RawOptions>>({
 	quzQux: 6,
 	otherField: false,
 });
+
+expectType<CamelCase<'fooBAR'>>('fooBAR');
+expectType<CamelCase<'fooBAR', {preserveConsecutiveUppercase: false}>>('fooBar');
+
+expectType<CamelCase<'fooBARBiz'>>('fooBARBiz');
+expectType<CamelCase<'fooBARBiz', {preserveConsecutiveUppercase: false}>>('fooBarBiz');
+
+expectType<CamelCase<'foo BAR-Biz_BUZZ'>>('fooBARBizBUZZ');
+expectType<CamelCase<'foo BAR-Biz_BUZZ', {preserveConsecutiveUppercase: false}>>('fooBarBizBuzz');
