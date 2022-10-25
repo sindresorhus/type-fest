@@ -1,13 +1,17 @@
 /**
-Returns a boolean indicating if `T` is any.
+Returns a boolean indicating if the given type is any.
 
-This type is usefull when used inside other types.
+This type is useful when used inside other types.
 
 @example
 ```ts
 import type {IsAny} from 'type-fest';
 
-function execute<T>(data: T, should_print: IsAny<T>) {}
+function execute<T>(data: T, should_print: IsAny<T>) {
+  if(should_print) {
+    console.log(data);
+  }
+}
 
 ```
 

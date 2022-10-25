@@ -1,5 +1,7 @@
 /**
-Given three types `A`, `B` and `C` returns `B` if `A` is any, `C` otherwise.
+Used to create a ternary operator above the `any` type.
+
+Returns `Then` if `Cond` is `any`, `Else` otherwise.
 
 @example
 ```ts
