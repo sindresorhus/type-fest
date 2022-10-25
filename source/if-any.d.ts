@@ -1,5 +1,5 @@
 /**
-Used to create a ternary operator above the `any` type.
+Used to create a ternary operator type above the `any` type.
 
 Returns `Then` if `Cond` is `any`, `Else` otherwise.
 
@@ -7,7 +7,29 @@ Returns `Then` if `Cond` is `any`, `Else` otherwise.
 ```ts
 import type {IfAny} from 'type-fest';
 
-let a: IfAny<any, number, string> = 1;
+type WithAnyValues = {
+  a: any;
+  b: number;
+  c: string;
+  d: any;
+}
+
+type WithoutAnyValues = { [K in keyof WithAnyValues]: IfAny<WithAnyValues[K], number, WithAnyValues[K]>}
+
+let my_object: WithoutAnyValues = {
+  a: 1,
+  b: 2,
+  c: "hello",
+  d: 3,
+}
+
+// typeof my_object;
+// {
+//   a: number;
+//   b: number;
+//   c: string;
+//   d: number;
+// }
 ```
 
 @category Utilities

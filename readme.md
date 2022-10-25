@@ -183,7 +183,7 @@ Click the type names for complete docs.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
-- [`IfAny](source/if-any.d.ts) - Given three types `A`, `B` and `C` returns `B` if `A` is `any`, `C` otherwise.
+- [`IfAny](source/if-any.d.ts) - Create a ternay operator type checking if the given type is `any`.
 - [`IsAny](source/is-any.d.ts) - Create a `true`/`false` type depending if the given type is `any`.
 
 ### JSON
