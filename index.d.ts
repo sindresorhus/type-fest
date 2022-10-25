@@ -102,3 +102,6 @@ export type {LastArrayElement} from './source/last-array-element';
 // Miscellaneous
 export type {PackageJson} from './source/package-json';
 export type {TsConfigJson} from './source/tsconfig-json';
+
+export type {IfAny} from './source/if-any';
+export type {IsAny} from './source/is-any';
