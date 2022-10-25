@@ -73,6 +73,8 @@ export type {RequiredKeysOf} from './source/required-keys-of';
 export type {HasRequiredKeys} from './source/has-required-keys';
 export type {Spread} from './source/spread';
 export type {TupleToUnion} from './source/tuple-to-union';
+export type {IfAny} from './source/if-any';
+export type {IsAny} from './source/is-any';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
@@ -102,6 +104,3 @@ export type {LastArrayElement} from './source/last-array-element';
 // Miscellaneous
 export type {PackageJson} from './source/package-json';
 export type {TsConfigJson} from './source/tsconfig-json';
-
-export type {IfAny} from './source/if-any';
-export type {IsAny} from './source/is-any';
