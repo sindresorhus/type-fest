@@ -29,7 +29,6 @@ const userMaskSettings: UserMask = {
 		firstname: 'show',
 		lastname: 'mask',
 	},
-	phoneNumbers: 'mask',
 	created: 'show',
 	active: 'show',
 	passwordHash: 'hide',
