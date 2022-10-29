@@ -8,4 +8,3 @@ expectNotAssignable<IsAny<any>>(false);
 expectAssignable<IsAny<any>>(true);
 
 expectNotAssignable<IsAny<number>>(true);
-

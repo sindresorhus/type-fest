@@ -8,4 +8,3 @@ expectNotAssignable<IfAny<any, number, string>>('hello');
 expectAssignable<IfAny<any, string, number>>('world');
 
 expectNotAssignable<IfAny<any, string, number>>(2);
-

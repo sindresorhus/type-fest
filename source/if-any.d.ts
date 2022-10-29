@@ -1,5 +1,5 @@
 /**
-Used to create a ternary operator type above the `any` type.
+Create a ternary operator type checking if the given type if `any`.
 
 Returns `Then` if `Cond` is `any`, `Else` otherwise.
 
@@ -19,7 +19,7 @@ type WithoutAnyValues = { [K in keyof WithAnyValues]: IfAny<WithAnyValues[K], nu
 let my_object: WithoutAnyValues = {
   a: 1,
   b: 2,
-  c: "hello",
+  c: 'hello',
   d: 3,
 }
 

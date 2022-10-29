@@ -7,10 +7,10 @@ This type is useful when used inside other types.
 ```ts
 import type {IsAny} from 'type-fest';
 
-function execute<T>(data: T, should_print: IsAny<T>) {
-  if(should_print) {
-    console.log(data);
-  }
+function execute<T>(data: T, shouldPrint: IsAny<T>) {
+	if(shouldPrint) {
+		console.log(data);
+	}
 }
 
 ```
