@@ -1,4 +1,4 @@
-import type {CamelCase} from './camel-case';
+import type {CamelCase, CamelCaseOptions} from './camel-case';
 
 /**
 Convert object properties to camel case recursively.
@@ -44,11 +44,11 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 @category Template literal
 @category Object
 */
-export type CamelCasedPropertiesDeep<Value> = Value extends Function
+export type CamelCasedPropertiesDeep<Value, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Value extends Function
 	? Value
 	: Value extends Array<infer U>
-		? Array<CamelCasedPropertiesDeep<U>>
+		? Array<CamelCasedPropertiesDeep<U, Options>>
 		: Value extends Set<infer U>
-			? Set<CamelCasedPropertiesDeep<U>> : {
-				[K in keyof Value as CamelCase<K>]: CamelCasedPropertiesDeep<Value[K]>;
+			? Set<CamelCasedPropertiesDeep<U, Options>> : {
+				[K in keyof Value as CamelCase<K, Options>]: CamelCasedPropertiesDeep<Value[K], Options>;
 			};

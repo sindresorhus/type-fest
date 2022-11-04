@@ -1,38 +1,41 @@
-import type {WordSeparators} from '../source/internal';
-import type {Split} from './split';
+import type {SplitWords} from './split-words';
 
 /**
-Step by step takes the first item in an array literal, formats it and adds it to a string literal, and then recursively appends the remainder.
+CamelCase options.
 
-Only to be used by `CamelCaseStringArray<>`.
-
-@see CamelCaseStringArray
+@see {@link CamelCase}
 */
-type InnerCamelCaseStringArray<Parts extends readonly any[], PreviousPart> =
-	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? FirstPart extends undefined
-			? ''
-			: FirstPart extends ''
-				? InnerCamelCaseStringArray<RemainingParts, PreviousPart>
-				: `${PreviousPart extends '' ? FirstPart : Capitalize<FirstPart>}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`
-		: '';
+export type CamelCaseOptions = {
+	/**
+	Whether to preserved consecutive uppercase letter.
+
+	@default true
+	*/
+	preserveConsecutiveUppercase?: boolean;
+};
 
 /**
-Starts fusing the output of `Split<>`, an array literal of strings, into a camel-cased string literal.
-
-It's separate from `InnerCamelCaseStringArray<>` to keep a clean API outwards to the rest of the code.
-
-@see Split
+Convert an array of words to camel-case.
 */
-type CamelCaseStringArray<Parts extends readonly string[]> =
-	Parts extends [`${infer FirstPart}`, ...infer RemainingParts]
-		? Uncapitalize<`${FirstPart}${InnerCamelCaseStringArray<RemainingParts, FirstPart>}`>
-		: never;
+type CamelCaseFromArray<
+	Words extends string[],
+	Options extends CamelCaseOptions,
+	OutputString extends string = '',
+> = Words extends [
+	infer FirstWord extends string,
+	...infer RemainingWords extends string[],
+]
+	? Options['preserveConsecutiveUppercase'] extends true
+		? `${Capitalize<FirstWord>}${CamelCaseFromArray<RemainingWords, Options>}`
+		: `${Capitalize<Lowercase<FirstWord>>}${CamelCaseFromArray<RemainingWords, Options>}`
+	: OutputString;
 
 /**
 Convert a string literal to camel-case.
 
 This can be useful when, for example, converting some kebab-cased command-line flags or a snake-cased database result.
+
+By default, consecutive uppercase letter are preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
 
 @example
 ```
@@ -70,4 +73,6 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 @category Change case
 @category Template literal
 */
-export type CamelCase<K> = K extends string ? CamelCaseStringArray<Split<K extends Uppercase<K> ? Lowercase<K> : K, WordSeparators>> : K;
+export type CamelCase<Type, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Type extends string
+	? Uncapitalize<CamelCaseFromArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
+	: Type;
