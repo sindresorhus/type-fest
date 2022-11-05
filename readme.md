@@ -187,6 +187,7 @@ Click the type names for complete docs.
 ### JSON
 
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
+- [`Jsonifiable`](source/jsonifiable.d.ts) - Matches a value that can be losslessly converted to JSON.
 - [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
 - [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
 - [`JsonArray`](source/basic.d.ts) - Matches a JSON array.

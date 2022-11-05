@@ -50,6 +50,7 @@ export type {SetReturnType} from './source/set-return-type';
 export type {Asyncify} from './source/asyncify';
 export type {Simplify} from './source/simplify';
 export type {Jsonify} from './source/jsonify';
+export type {Jsonifiable} from './source/jsonifiable';
 export type {Schema} from './source/schema';
 export type {LiteralToPrimitive} from './source/literal-to-primitive';
 export type {
