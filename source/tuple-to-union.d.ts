@@ -1,5 +1,5 @@
 /**
-Convert a tuple into a union type of its elements.
+Convert a tuple/array into a union type of its elements.
 
 This can be useful when you have a fixed set of allowed values and want a type defining only the allowed values, but do not want to repeat yourself.
 
