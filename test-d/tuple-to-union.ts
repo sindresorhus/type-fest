@@ -24,3 +24,12 @@ expectType<'c'>(c);
 
 declare const notAnArray: TupleToUnion<[]>;
 expectType<never>(notAnArray);
+
+declare const worksWithArrays: TupleToUnion<Array<string | number>>;
+expectType<string | number>(worksWithArrays);
+
+declare const resolvesToNeverForNonArrays: TupleToUnion<string | number>;
+expectType<never>(resolvesToNeverForNonArrays);
+
+declare const infiniteRestArgs: TupleToUnion<[string, ...number[]]>;
+expectType<string | number>(infiniteRestArgs);
