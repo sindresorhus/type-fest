@@ -11,9 +11,9 @@
 export type IndexOf<
 	Tuple extends any[] | readonly any[],
 	Accumulator extends any[] = [],
-> = LengthOf<Accumulator> extends Tuple['length']
+> = LengthOf<Accumulator> extends LengthOf<Tuple>
 	? Accumulator
-	: IndexOf<Tuple, [...Accumulator, Accumulator['length']]>;
+	: IndexOf<Tuple, [...Accumulator, LengthOf<Accumulator>]>;
 
 /**
  * Returns the length property of the input array; tuples will return the number of items in the tuple.
