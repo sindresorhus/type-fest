@@ -1,7 +1,7 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import type {IndexOf} from '../index';
+import type {Indices} from '../index';
 
-type FruitIndices = IndexOf<['apple', 'banana', 'plum']>;
+type FruitIndices = Indices<['apple', 'banana', 'plum']>;
 
 expectAssignable<FruitIndices>([0, 1, 2]);
 
