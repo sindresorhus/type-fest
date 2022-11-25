@@ -215,7 +215,6 @@ Click the type names for complete docs.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
-- [`IndexOf`](source/index-of.d.ts) - Generate a tuple of an array's indices (`[0, 1, 2...]`). Useful for creating an index union (`0 | 1 | 2 | ...`)
 
 ### Numeric
 
