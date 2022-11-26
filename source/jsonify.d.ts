@@ -1,6 +1,5 @@
 import type {JsonPrimitive, JsonValue} from './basic';
 import type {EmptyObject} from './empty-object';
-import type {Merge} from './merge';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {Simplify} from './simplify';
 import type {TypedArray} from './typed-array';
@@ -14,6 +13,20 @@ type IsAny<T> = 0 extends 1 & T ? true : false;
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
 
+/** JSON serialize [tuples](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) */
+type JsonifyTuple<T extends [unknown, ...unknown[]]> = {
+	[k in keyof T]: T[k] extends NotJsonable ? null : Jsonify<T[k]>;
+};
+
+type FilterJsonableKeys<T extends object> = {
+	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
+}[keyof T];
+
+/** JSON serialize objects (not including arrays) and classes */
+type JsonifyObject<T extends object> = {
+	[k in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[k]>;
+};
+
 // Returns never if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
 type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
@@ -23,25 +36,53 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 			? never
 			: Key;
 
-// Returns keys that are jsonable, have jsonable properties, and are required.
-type RequiredKeysFilter<Type, Key extends keyof Type> = {
-	[Key in keyof Type]: IsAny<Type[Key]> extends true
-		? Key
-		: undefined extends Type[Key]
+/**
+ * Returns the required keys.
+ */
+type FilterDefinedKeys<TObject extends object> = Exclude<
+{
+	[TKey in keyof TObject]: IsAny<TObject[TKey]> extends true
+		? TKey
+		: undefined extends TObject[TKey]
 			? never
-			: BaseKeyFilter<Type, Key>;
-}[keyof Type];
-
-// Returns keys that are jsonable, have jsonable properties, and are optional.
-type OptionalKeysFilter<Type, Key extends keyof Type> = {
-	[Key in keyof Type]: IsAny<Type[Key]> extends true
-		? never
-		: undefined extends Type[Key]
-			? Type[Key] extends undefined
+			: TObject[TKey] extends undefined
 				? never
-				: BaseKeyFilter<Type, Key>
+				: BaseKeyFilter<TObject, TKey>;
+}[keyof TObject],
+undefined
+>;
+
+/**
+ * Returns the optional keys.
+ */
+type FilterOptionalKeys<TObject extends object> = Exclude<
+{
+	[TKey in keyof TObject]: IsAny<TObject[TKey]> extends true
+		? never
+		: undefined extends TObject[TKey]
+			? TObject[TKey] extends undefined
+				? never
+				: BaseKeyFilter<TObject, TKey>
 			: never;
-}[keyof Type];
+}[keyof TObject],
+undefined
+>;
+
+/*
+ * For an object T, if it has any properties that are a union with `undefined`,
+ * make those into optional properties instead.
+ *
+ * Example: { a: string | undefined} --> { a?: string}
+ */
+type UndefinedToOptional<T extends object> = Simplify<
+{
+	// Property is not a union with `undefined`, keep as-is
+	[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
+} & {
+	// Property _is_ a union with `defined`. Set as optional (via `?`) and remove `undefined` from the union
+	[k in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[k], undefined>;
+}
+>;
 
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
@@ -102,42 +143,34 @@ const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 */
 export type Jsonify<T> = IsAny<T> extends true
 	? any
-	: // Check if there are any non-JSONable types represented in the union.
-	// Note: The use of tuples in this first condition side-steps distributive conditional types
-	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
-	[Extract<T, NotJsonable | bigint>] extends [never]
-		? T extends PositiveInfinity | NegativeInfinity
-			? null
-			: T extends JsonPrimitive
-				? T // Primitive is acceptable
-				: T extends object
-					? // Any object with toJSON is special case
-					T extends {toJSON(): infer J}
-						? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
-							? J // Then T is Jsonable and its Jsonable value is J
-							: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
-						: // Instanced primitives are objects
-						T extends Number
-							? number
-							: T extends String
-								? string
-								: T extends Boolean
-									? boolean
-									: T extends Map<any, any> | Set<any>
-										? EmptyObject
-										: T extends TypedArray
-											? Record<string, number>
-											: T extends any[]
-												? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
-												: Simplify<
-												{
-													[Key in keyof Pick<T, RequiredKeysFilter<T, Key>>]: Jsonify<T[Key]>;
-												} & {
-													[Key in keyof Pick<T, OptionalKeysFilter<T, Key>>]?: Jsonify<
-													Exclude<T[Key], undefined>
-													>;
-												}
-												>
-					: // Recursive call for its children
-					never // Otherwise any other non-object is removed
-		: never; // Otherwise non-JSONable type union was found not empty
+	: T extends PositiveInfinity | NegativeInfinity
+		? null
+		: T extends JsonPrimitive
+			? T
+			: // Instanced primitives are objects
+			T extends Number
+				? number
+				: T extends String
+					? string
+					: T extends Boolean
+						? boolean
+						: T extends Map<any, any> | Set<any>
+							? EmptyObject
+							: T extends TypedArray
+								? Record<string, number>
+								: T extends NotJsonable
+									? never // Non-JSONable type union was found not empty
+									: // Any object with toJSON is special case
+									T extends {toJSON(): infer J}
+										? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
+											? J // Then T is Jsonable and its Jsonable value is J
+											: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
+										: T extends []
+											? []
+											: T extends [unknown, ...unknown[]]
+												? JsonifyTuple<T>
+												: T extends ReadonlyArray<infer U>
+													? Array<U extends NotJsonable ? null : Jsonify<U>>
+													: T extends object
+														? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
+														: never; // Otherwise any other non-object is removed
