@@ -1,5 +1,5 @@
 import type {Opaque} from './opaque';
-import type {IsEqual} from './internal';
+import type {IsEqual} from './is-equal';
 import type {ConditionalExcept} from './conditional-except';
 import type {ConditionalSimplifyDeep} from './conditional-simplify';
 

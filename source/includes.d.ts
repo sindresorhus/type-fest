@@ -1,4 +1,4 @@
-import type {IsEqual} from './internal';
+import type {IsEqual} from './is-equal';
 
 /**
 Returns a boolean for whether the given array includes the given item.

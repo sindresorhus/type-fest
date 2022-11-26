@@ -74,6 +74,7 @@ export type {RequiredKeysOf} from './source/required-keys-of';
 export type {HasRequiredKeys} from './source/has-required-keys';
 export type {Spread} from './source/spread';
 export type {TupleToUnion} from './source/tuple-to-union';
+export type {IsEqual} from './source/is-equal';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
