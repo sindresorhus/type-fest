@@ -2,6 +2,7 @@ import type {JsonPrimitive, JsonValue} from './basic';
 import type {EmptyObject} from './empty-object';
 import type {Merge} from './merge';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
+import type {Simplify} from './simplify';
 import type {TypedArray} from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
@@ -16,11 +17,20 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 			? never
 			: Key;
 
-// Returns never if the key or property is not jsonable or optional otherwise return the key.
+// Returns keys that are jsonable, have jsonable properties, and are required.
 type RequiredKeysFilter<Type, Key extends keyof Type> = {
 	[Key in keyof Type]: undefined extends Type[Key]
 		? never
 		: BaseKeyFilter<Type, Key>;
+}[keyof Type];
+
+// Returns keys that are jsonable, have jsonable properties, and are optional.
+type OptionalKeysFilter<Type, Key extends keyof Type> = {
+	[Key in keyof Type]: undefined extends Type[Key]
+		? Type[Key] extends undefined
+			? never
+			: BaseKeyFilter<Type, Key>
+		: never;
 }[keyof Type];
 
 /**
@@ -108,13 +118,17 @@ export type Jsonify<T> =
 											? Record<string, number>
 											: T extends any[]
 												? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
-												: {
-													[Key in keyof Pick<T, RequiredKeysFilter<T, Key>>]: Jsonify<T[Key]>;
+												: Simplify<
+												{
+													[Key in keyof Pick<T, RequiredKeysFilter<T, Key>>]: Jsonify<
+													T[Key]
+													>;
 												} & {
-													[Key in keyof Omit<T, RequiredKeysFilter<T, Key>>]?: Jsonify<
+													[Key in keyof Pick<T, OptionalKeysFilter<T, Key>>]?: Jsonify<
 													Exclude<T[Key], undefined>
 													>;
 												}
+												>
 					: // Recursive call for its children
 					never // Otherwise any other non-object is removed
 		: never; // Otherwise non-JSONable type union was found not empty
