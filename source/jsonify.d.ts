@@ -15,7 +15,7 @@ type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
 
 /** JSON serialize [tuples](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) */
 type JsonifyTuple<T extends [unknown, ...unknown[]]> = {
-	[k in keyof T]: T[k] extends NotJsonable ? null : Jsonify<T[k]>;
+	[Key in keyof T]: T[Key] extends NotJsonable ? null : Jsonify<T[Key]>;
 };
 
 type FilterJsonableKeys<T extends object> = {
@@ -24,7 +24,7 @@ type FilterJsonableKeys<T extends object> = {
 
 /** JSON serialize objects (not including arrays) and classes */
 type JsonifyObject<T extends object> = {
-	[k in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[k]>;
+	[Key in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[Key]>;
 };
 
 // Returns never if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
@@ -80,7 +80,7 @@ type UndefinedToOptional<T extends object> = Simplify<
 	[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
 } & {
 	// Property _is_ a union with `defined`. Set as optional (via `?`) and remove `undefined` from the union
-	[k in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[k], undefined>;
+	[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
 }
 >;
 
