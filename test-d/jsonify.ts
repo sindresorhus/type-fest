@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {
-	EmptyObject,
-	Jsonify,
-	JsonValue,
-	NegativeInfinity,
-	PositiveInfinity,
-} from '..';
+import type {EmptyObject, Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
 
 interface A {
 	a: number;
@@ -103,10 +97,7 @@ expectAssignable<JsonValue>(parsedStringifiedX);
 expectAssignable<string>(parsedStringifiedX.a);
 
 class NonJsonWithToJSON {
-	public fixture = new Map<string, number>([
-		['a', 1],
-		['b', 2],
-	]);
+	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
 
 	public toJSON(): {fixture: Array<[string, number]>} {
 		return {
@@ -146,10 +137,7 @@ expectType<{
 }>({} as Jsonify<NonJsonWithToJSONWrapper>);
 
 class NonJsonWithInvalidToJSON {
-	public fixture = new Map<string, number>([
-		['a', 1],
-		['b', 2],
-	]);
+	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
 
 	// This is intentionally invalid `.toJSON()`.
 	// It is invalid because the result is not assignable to `JsonValue`.
@@ -195,26 +183,17 @@ declare const arrayMemberSymbol: Jsonify<Array<typeof symbol>>;
 expectType<null[]>(arrayMemberSymbol);
 
 // When used in object values, these keys are filtered
-declare const objectValueUndefined: Jsonify<{
-	keep: string;
-	undefined: typeof undefined;
-}>;
+declare const objectValueUndefined: Jsonify<{keep: string; undefined: typeof undefined}>;
 expectType<{keep: string}>(objectValueUndefined);
 
 declare const objectValueFn: Jsonify<{keep: string; fn: typeof fn}>;
 expectType<{keep: string}>(objectValueFn);
 
-declare const objectValueSymbol: Jsonify<{
-	keep: string;
-	symbol: typeof symbol;
-}>;
+declare const objectValueSymbol: Jsonify<{keep: string; symbol: typeof symbol}>;
 expectType<{keep: string}>(objectValueSymbol);
 
 // Symbol keys are filtered
-declare const objectKeySymbol: Jsonify<{
-	[key: typeof symbol]: number;
-	keep: string;
-}>;
+declare const objectKeySymbol: Jsonify<{[key: typeof symbol]: number; keep: string}>;
 expectType<{keep: string}>(objectKeySymbol);
 
 // Number, String and Boolean values are turned into primitive counterparts
