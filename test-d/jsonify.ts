@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
-import { expectAssignable, expectNotAssignable, expectType } from "tsd";
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {
 	EmptyObject,
 	Jsonify,
 	JsonValue,
 	NegativeInfinity,
 	PositiveInfinity,
-} from "..";
+} from '..';
 
 interface A {
 	a: number;
@@ -51,19 +51,19 @@ declare const w: W; // Not assignable to JsonValue because a function is not val
 expectAssignable<JsonValue>(null);
 expectAssignable<JsonValue>(false);
 expectAssignable<JsonValue>(0);
-expectAssignable<JsonValue>("");
+expectAssignable<JsonValue>('');
 expectAssignable<JsonValue>([]);
 expectAssignable<JsonValue>({});
 expectAssignable<JsonValue>([0]);
-expectAssignable<JsonValue>({ a: 0 });
+expectAssignable<JsonValue>({a: 0});
 expectAssignable<JsonValue>(a);
 expectAssignable<JsonValue>(b);
-expectAssignable<JsonValue>({ a: { b: true, c: {} }, d: [{}, 2, "hi"] });
-expectAssignable<JsonValue>([{}, { a: "hi" }, null, 3]);
+expectAssignable<JsonValue>({a: {b: true, c: {}}, d: [{}, 2, 'hi']});
+expectAssignable<JsonValue>([{}, {a: 'hi'}, null, 3]);
 
 expectNotAssignable<JsonValue>(new Date());
 expectNotAssignable<JsonValue>([new Date()]);
-expectNotAssignable<JsonValue>({ a: new Date() });
+expectNotAssignable<JsonValue>({a: new Date()});
 expectNotAssignable<JsonValue>(v);
 expectNotAssignable<JsonValue>(x);
 expectNotAssignable<JsonValue>(y);
@@ -74,12 +74,12 @@ expectNotAssignable<JsonValue>(5 as number | undefined);
 
 // TODO: Convert this to a `type`.
 interface Geometry {
-	type: "Point" | "Polygon";
+	type: 'Point' | 'Polygon';
 	coordinates: [number, number];
 }
 
 const point: Geometry = {
-	type: "Point",
+	type: 'Point',
 	coordinates: [1, 1],
 };
 
@@ -104,11 +104,11 @@ expectAssignable<string>(parsedStringifiedX.a);
 
 class NonJsonWithToJSON {
 	public fixture = new Map<string, number>([
-		["a", 1],
-		["b", 2],
+		['a', 1],
+		['b', 2],
 	]);
 
-	public toJSON(): { fixture: Array<[string, number]> } {
+	public toJSON(): {fixture: Array<[string, number]>} {
 		return {
 			fixture: [...this.fixture.entries()],
 		};
@@ -125,35 +125,35 @@ class NonJsonWithToJSONWrapper {
 	public override = 42;
 
 	public toJSON() {
-		const stringOverride = "override";
+		const stringOverride = 'override';
 
 		return {
 			override: stringOverride,
 			inner: this.inner,
-			innerDeep: { inner: this.inner },
+			innerDeep: {inner: this.inner},
 		};
 	}
 }
 
 expectNotAssignable<JsonValue>(new NonJsonWithToJSONWrapper());
 
-type InnerFixture = { fixture: Array<[string, number]> };
+type InnerFixture = {fixture: Array<[string, number]>};
 
 expectType<{
 	override: string;
 	inner: InnerFixture;
-	innerDeep: { inner: InnerFixture };
+	innerDeep: {inner: InnerFixture};
 }>({} as Jsonify<NonJsonWithToJSONWrapper>);
 
 class NonJsonWithInvalidToJSON {
 	public fixture = new Map<string, number>([
-		["a", 1],
-		["b", 2],
+		['a', 1],
+		['b', 2],
 	]);
 
 	// This is intentionally invalid `.toJSON()`.
 	// It is invalid because the result is not assignable to `JsonValue`.
-	public toJSON(): { fixture: Map<string, number> } {
+	public toJSON(): {fixture: Map<string, number>} {
 		return {
 			fixture: this.fixture,
 		};
@@ -199,23 +199,23 @@ declare const objectValueUndefined: Jsonify<{
 	keep: string;
 	undefined: typeof undefined;
 }>;
-expectType<{ keep: string }>(objectValueUndefined);
+expectType<{keep: string}>(objectValueUndefined);
 
-declare const objectValueFn: Jsonify<{ keep: string; fn: typeof fn }>;
-expectType<{ keep: string }>(objectValueFn);
+declare const objectValueFn: Jsonify<{keep: string; fn: typeof fn}>;
+expectType<{keep: string}>(objectValueFn);
 
 declare const objectValueSymbol: Jsonify<{
 	keep: string;
 	symbol: typeof symbol;
 }>;
-expectType<{ keep: string }>(objectValueSymbol);
+expectType<{keep: string}>(objectValueSymbol);
 
 // Symbol keys are filtered
 declare const objectKeySymbol: Jsonify<{
 	[key: typeof symbol]: number;
 	keep: string;
 }>;
-expectType<{ keep: string }>(objectKeySymbol);
+expectType<{keep: string}>(objectKeySymbol);
 
 // Number, String and Boolean values are turned into primitive counterparts
 declare const number: Number;
@@ -257,7 +257,7 @@ expectAssignable<Jsonify<typeof map>>({});
 
 // Regression test for https://github.com/sindresorhus/type-fest/issues/466
 expectNotAssignable<Jsonify<typeof map>>(42);
-expectNotAssignable<Jsonify<typeof map>>({ foo: 42 });
+expectNotAssignable<Jsonify<typeof map>>({foo: 42});
 
 declare const set: Set<string>;
 declare const setJson: Jsonify<typeof set>;
@@ -266,7 +266,7 @@ expectAssignable<Jsonify<typeof set>>({});
 
 // Regression test for https://github.com/sindresorhus/type-fest/issues/466
 expectNotAssignable<Jsonify<typeof set>>(42);
-expectNotAssignable<Jsonify<typeof set>>({ foo: 42 });
+expectNotAssignable<Jsonify<typeof set>>({foo: 42});
 
 // Positive and negative Infinity, NaN and null are turned into null
 // NOTE: NaN is not detectable in TypeScript, so it is not tested; see https://github.com/sindresorhus/type-fest/issues/406
@@ -294,9 +294,9 @@ declare const jsonifiedOptionalPrimitive: Jsonify<OptionalPrimitive>;
 declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
 declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
 
-expectType<{ a?: string }>(jsonifiedOptionalPrimitive);
+expectType<{a?: string}>(jsonifiedOptionalPrimitive);
 expectType<{}>(jsonifiedOptionalTypeUnion);
-expectType<{ a?: string }>(jsonifiedNonOptionalTypeUnion);
+expectType<{a?: string}>(jsonifiedNonOptionalTypeUnion);
 
 // Test for 'Jsonify support for optional object keys, unserializable object values' #424
 // See https://github.com/sindresorhus/type-fest/issues/424
@@ -339,9 +339,7 @@ expectType<any>({} as Jsonify<any>);
 declare const objectWithAnyProperty: Jsonify<{
 	a: any;
 }>;
-expectType<{ a: any }>(objectWithAnyProperty);
+expectType<{a: any}>(objectWithAnyProperty);
 
-declare const objectWithAnyProperties: Jsonify<{
-	[key: string]: any;
-}>;
-expectType<{ [key: string]: any }>(objectWithAnyProperties);
+declare const objectWithAnyProperties: Jsonify<Record<string, any>>;
+expectType<Record<string, any>>(objectWithAnyProperties);
