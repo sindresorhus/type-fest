@@ -17,16 +17,11 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 			: Key;
 
 // Returns never if the key or property is not jsonable or optional otherwise return the key.
-type RequiredKeyFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
-	? never
-	: BaseKeyFilter<Type, Key>;
-
-// Returns never if the key or property is not jsonable or required otherwise return the key.
-type OptionalKeyFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
-	? Type[Key] extends undefined
+type RequiredKeysFilter<Type, Key extends keyof Type> = {
+	[Key in keyof Type]: undefined extends Type[Key]
 		? never
-		: BaseKeyFilter<Type, Key>
-	: never;
+		: BaseKeyFilter<Type, Key>;
+}[keyof Type];
 
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
@@ -90,24 +85,36 @@ export type Jsonify<T> =
 	// Note: The use of tuples in this first condition side-steps distributive conditional types
 	// (see https://github.com/microsoft/TypeScript/issues/29368#issuecomment-453529532)
 	[Extract<T, NotJsonable | bigint>] extends [never]
-		? T extends PositiveInfinity | NegativeInfinity	? null
-			: T extends JsonPrimitive ? T // Primitive is acceptable
+		? T extends PositiveInfinity | NegativeInfinity
+			? null
+			: T extends JsonPrimitive
+				? T // Primitive is acceptable
 				: T extends object
-				// Any object with toJSON is special case
-					? T extends {toJSON(): infer J} ? (() => J) extends (() => JsonValue) // Is J assignable to JsonValue?
-						? J // Then T is Jsonable and its Jsonable value is J
-						: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
-					// Instanced primitives are objects
-						: T extends Number ? number
-							: T extends String ? string
-								: T extends Boolean ? boolean
-									: T extends Map<any, any> | Set<any> ? EmptyObject
-										: T extends TypedArray ? Record<string, number>
+					? // Any object with toJSON is special case
+					T extends {toJSON(): infer J}
+						? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
+							? J // Then T is Jsonable and its Jsonable value is J
+							: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
+						: // Instanced primitives are objects
+						T extends Number
+							? number
+							: T extends String
+								? string
+								: T extends Boolean
+									? boolean
+									: T extends Map<any, any> | Set<any>
+										? EmptyObject
+										: T extends TypedArray
+											? Record<string, number>
 											: T extends any[]
 												? {[I in keyof T]: T[I] extends NotJsonable ? null : Jsonify<T[I]>}
-												: Merge<
-												{[Key in keyof T as RequiredKeyFilter<T, Key>]: Jsonify<T[Key]>},
-												{[Key in keyof T as OptionalKeyFilter<T, Key>]?: Jsonify<Exclude<T[Key], undefined>>}
-												> // Recursive call for its children
-					: never // Otherwise any other non-object is removed
+												: {
+													[Key in keyof Pick<T, RequiredKeysFilter<T, Key>>]: Jsonify<T[Key]>;
+												} & {
+													[Key in keyof Omit<T, RequiredKeysFilter<T, Key>>]?: Jsonify<
+													Exclude<T[Key], undefined>
+													>;
+												}
+					: // Recursive call for its children
+					never // Otherwise any other non-object is removed
 		: never; // Otherwise non-JSONable type union was found not empty
