@@ -1,19 +1,13 @@
 import type {JsonPrimitive, JsonValue} from './basic';
 import type {EmptyObject} from './empty-object';
+import type {IsAny} from './internal';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {Simplify} from './simplify';
 import type {TypedArray} from './typed-array';
 
-/*
- * `any` is the only type that can let you equate `0` with `1`
- * See https://stackoverflow.com/a/49928360/1490091
- */
-type IsAny<T> = 0 extends 1 & T ? true : false;
-
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
 
-/** JSON serialize [tuples](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) */
 type JsonifyTuple<T extends [unknown, ...unknown[]]> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? null : Jsonify<T[Key]>;
 };
@@ -22,7 +16,6 @@ type FilterJsonableKeys<T extends object> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
 }[keyof T];
 
-/** JSON serialize objects (not including arrays) and classes */
 type JsonifyObject<T extends object> = {
 	[Key in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[Key]>;
 };
@@ -39,40 +32,52 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 /**
  * Returns the required keys.
  */
-type FilterDefinedKeys<TObject extends object> = Exclude<
+type FilterDefinedKeys<T extends object> = Exclude<
 {
-	[Key in keyof TObject]: IsAny<TObject[Key]> extends true
+	[Key in keyof T]: IsAny<T[Key]> extends true
 		? Key
-		: undefined extends TObject[Key]
+		: undefined extends T[Key]
 			? never
-			: TObject[Key] extends undefined
+			: T[Key] extends undefined
 				? never
-				: BaseKeyFilter<TObject, Key>;
-}[keyof TObject],
+				: BaseKeyFilter<T, Key>;
+}[keyof T],
 undefined
 >;
 
 /**
- * Returns the optional keys.
- */
-type FilterOptionalKeys<TObject extends object> = Exclude<
+Returns the optional keys.
+*/
+type FilterOptionalKeys<T extends object> = Exclude<
 {
-	[Key in keyof TObject]: IsAny<TObject[Key]> extends true
+	[Key in keyof T]: IsAny<T[Key]> extends true
 		? never
-		: undefined extends TObject[Key]
-			? TObject[Key] extends undefined
+		: undefined extends T[Key]
+			? T[Key] extends undefined
 				? never
-				: BaseKeyFilter<TObject, Key>
+				: BaseKeyFilter<T, Key>
 			: never;
-}[keyof TObject],
+}[keyof T],
 undefined
 >;
 
-/*
- * For an object T, if it has any properties that are a union with `undefined`,
- * make those into optional properties instead.
- *
- * Example: { a: string | undefined} --> { a?: string}
+/**
+For an object T, if it has any properties that are a union with `undefined`,
+make those into optional properties instead.
+
+@example
+```
+type User = {
+	firstName: string;
+	lastName: string | undefined;
+}
+
+type OptionalizedUser = UndefinedToOptional<User>
+// => {
+// 	firstName: string;
+// 	lastName?: string;
+// }
+```
  */
 type UndefinedToOptional<T extends object> = Simplify<
 {
