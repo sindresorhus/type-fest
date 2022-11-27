@@ -22,10 +22,8 @@ declare const variation5: SetNonNullable<{a: number; b: string | undefined; c: b
 expectType<{a: number; b: string; c: boolean}>(variation5);
 
 // Does not throw type error in type predicate contexts.
-type Variation6Config = { a: boolean | null; b: boolean | null };
+type Variation6Config = {a: boolean | null; b: boolean | null};
 const variant6Fn = <TProp extends keyof Variation6Config>(
-  config: Variation6Config,
-  prop: TProp
-): config is SetNonNullable<Variation6Config, TProp> => {
-  return Boolean(config[prop]);
-};
+		config: Variation6Config,
+		prop: TProp,
+): config is SetNonNullable<Variation6Config, TProp> => Boolean(config[prop]);
