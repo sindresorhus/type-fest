@@ -41,13 +41,13 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
  */
 type FilterDefinedKeys<TObject extends object> = Exclude<
 {
-	[TKey in keyof TObject]: IsAny<TObject[TKey]> extends true
-		? TKey
-		: undefined extends TObject[TKey]
+	[Key in keyof TObject]: IsAny<TObject[Key]> extends true
+		? Key
+		: undefined extends TObject[Key]
 			? never
-			: TObject[TKey] extends undefined
+			: TObject[Key] extends undefined
 				? never
-				: BaseKeyFilter<TObject, TKey>;
+				: BaseKeyFilter<TObject, Key>;
 }[keyof TObject],
 undefined
 >;
@@ -57,12 +57,12 @@ undefined
  */
 type FilterOptionalKeys<TObject extends object> = Exclude<
 {
-	[TKey in keyof TObject]: IsAny<TObject[TKey]> extends true
+	[Key in keyof TObject]: IsAny<TObject[Key]> extends true
 		? never
-		: undefined extends TObject[TKey]
-			? TObject[TKey] extends undefined
+		: undefined extends TObject[Key]
+			? TObject[Key] extends undefined
 				? never
-				: BaseKeyFilter<TObject, TKey>
+				: BaseKeyFilter<TObject, Key>
 			: never;
 }[keyof TObject],
 undefined
