@@ -31,7 +31,7 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 
 /**
 Returns the required keys.
- */
+*/
 type FilterDefinedKeys<T extends object> = Exclude<
 {
 	[Key in keyof T]: IsAny<T[Key]> extends true
@@ -78,7 +78,7 @@ type OptionalizedUser = UndefinedToOptional<User>
 // 	lastName?: string;
 // }
 ```
- */
+*/
 type UndefinedToOptional<T extends object> = Simplify<
 {
 	// Property is not a union with `undefined`, keep as-is
