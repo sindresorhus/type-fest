@@ -30,7 +30,7 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 			: Key;
 
 /**
- * Returns the required keys.
+Returns the required keys.
  */
 type FilterDefinedKeys<T extends object> = Exclude<
 {
