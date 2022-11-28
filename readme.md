@@ -68,20 +68,6 @@
 					</sub>
 				</div>
 			</a>
-			<br>
-			<br>
-			<a href="https://sizzy.co/?utm_campaign=github_repo&utm_source=github&utm_medium=referral&utm_content=type-fest&utm_term=sindre">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/sizzy-logo.png" width="240" alt="Sizzy">
-				</div>
-				<div>
-					<sub>
-					<b>Before Sizzy:</b> web development is stressing you out, responsive design is hard, you have an overwhelming amount of opened tabs & apps.
-					<br>
-					<b>After Sizzy:</b> all the tools you need in one place, responsive design is a breeze, no more context switching.
-					</sub>
-				</div>
-			</a>
 		</p>
 	</div>
 	<br>
