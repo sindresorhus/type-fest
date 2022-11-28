@@ -1,4 +1,5 @@
 import type {Primitive} from './primitive';
+import type {Simplify} from './simplify';
 
 /**
 Returns a boolean for whether the two given types are equal.
@@ -115,3 +116,30 @@ Returns a boolean for whether the the type is `any`.
 @link https://stackoverflow.com/a/49928360/1490091
 */
 export type IsAny<T> = 0 extends 1 & T ? true : false;
+
+/**
+For an object T, if it has any properties that are a union with `undefined`, make those into optional properties instead.
+
+@example
+```
+type User = {
+	firstName: string;
+	lastName: string | undefined;
+};
+
+type OptionalizedUser = UndefinedToOptional<User>;
+//=> {
+// 	firstName: string;
+// 	lastName?: string;
+// }
+```
+*/
+export type UndefinedToOptional<T extends object> = Simplify<
+{
+	// Property is not a union with `undefined`, keep it as-is.
+	[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
+} & {
+	// Property _is_ a union with defined value. Set as optional (via `?`) and remove `undefined` from the union.
+	[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
+}
+>;
