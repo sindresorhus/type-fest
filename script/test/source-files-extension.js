@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/prefer-module */
-const fs = require('fs');
-const process = require('process');
+const fs = require('node:fs');
+const process = require('node:process');
 
 const checkSourceFilesExtension = async () => {
 	try {
@@ -23,4 +23,5 @@ const checkSourceFilesExtension = async () => {
 	}
 };
 
+// eslint-disable-next-line unicorn/prefer-top-level-await
 checkSourceFilesExtension();

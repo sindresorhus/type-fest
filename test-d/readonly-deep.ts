@@ -29,7 +29,7 @@ const data = {
 	boolean: false,
 	symbol: Symbol('test'),
 	date: new Date(),
-	regExp: new RegExp(/.*/),
+	regExp: /.*/,
 	null: null,
 	undefined: undefined, // eslint-disable-line object-shorthand
 	map: new Map<string, string>(),

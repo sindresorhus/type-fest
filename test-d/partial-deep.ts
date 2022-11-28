@@ -10,7 +10,7 @@ const foo = {
 		number: 1,
 		boolean: false,
 		date: new Date(),
-		regexp: new RegExp(/.*/),
+		regexp: /.*/,
 		symbol: Symbol('test'),
 		null: null,
 		undefined: undefined, // eslint-disable-line object-shorthand
