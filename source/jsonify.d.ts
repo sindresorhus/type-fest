@@ -17,13 +17,13 @@ type FilterJsonableKeys<T extends object> = {
 }[keyof T];
 
 /**
-JSON serialize objects (not including arrays) and classes
+JSON serialize objects (not including arrays) and classes.
 */
 type JsonifyObject<T extends object> = {
 	[Key in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[Key]>;
 };
 
-// Returns never if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
+// Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
 type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
 	: Type[Key] extends symbol
@@ -65,8 +65,7 @@ undefined
 >;
 
 /**
-For an object T, if it has any properties that are a union with `undefined`,
-make those into optional properties instead.
+For an object T, if it has any properties that are a union with `undefined`, make those into optional properties instead.
 
 @example
 ```
