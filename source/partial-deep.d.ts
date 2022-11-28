@@ -12,7 +12,7 @@ export type PartialDeepOptions = {
 	readonly recurseIntoArrays?: boolean;
 	
 	  
-  	/**
+	/**
 	Whether to affect the return type of functions.
 
 	@default false
