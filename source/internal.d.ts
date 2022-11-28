@@ -143,3 +143,44 @@ export type UndefinedToOptional<T extends object> = Simplify<
 	[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
 }
 >;
+
+// Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
+type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
+	? never
+	: Type[Key] extends symbol
+		? never
+		: [(...args: any[]) => any] extends [Type[Key]]
+			? never
+			: Key;
+
+/**
+Returns the required keys.
+*/
+type FilterDefinedKeys<T extends object> = Exclude<
+{
+	[Key in keyof T]: IsAny<T[Key]> extends true
+		? Key
+		: undefined extends T[Key]
+			? never
+			: T[Key] extends undefined
+				? never
+				: BaseKeyFilter<T, Key>;
+}[keyof T],
+undefined
+>;
+
+/**
+Returns the optional keys.
+*/
+type FilterOptionalKeys<T extends object> = Exclude<
+{
+	[Key in keyof T]: IsAny<T[Key]> extends true
+		? never
+		: undefined extends T[Key]
+			? T[Key] extends undefined
+				? never
+				: BaseKeyFilter<T, Key>
+			: never;
+}[keyof T],
+undefined
+>;
