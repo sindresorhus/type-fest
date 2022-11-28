@@ -10,6 +10,14 @@ export type PartialDeepOptions = {
 	@default false
 	*/
 	readonly recurseIntoArrays?: boolean;
+	
+	  
+  	/**
+	Whether to affect the return type of functions.
+
+	@default false
+	*/
+	readonly recurseIntoFunctions?: boolean;
 };
 
 /**
@@ -70,7 +78,10 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> = T extends 
 				: T extends ReadonlySet<infer ItemType>
 					? PartialReadonlySetDeep<ItemType, Options>
 					: T extends ((...arguments: any[]) => unknown)
-						? T | undefined
+						? (Options['recurseIntoFunctions'] extends true
+							? (...arguments: Parameters<T>) => PartialDeep<ReturnType<T>, Options>
+							: T
+						) | undefined
 						: T extends object
 							? T extends ReadonlyArray<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
 								? Options['recurseIntoArrays'] extends true
