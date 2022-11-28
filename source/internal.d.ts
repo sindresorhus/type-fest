@@ -110,7 +110,7 @@ Returns a boolean for whether the string is numeric.
 export type IsNumeric<T extends string> = T extends `${number}` ? true : false;
 
 /**
-Returns a boolean for whether the the type is any.
+Returns a boolean for whether the the type is `any`.
 
 @link https://stackoverflow.com/a/49928360/1490091
 */
