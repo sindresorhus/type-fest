@@ -2,7 +2,6 @@ import type {JsonPrimitive, JsonValue} from './basic';
 import type {EmptyObject} from './empty-object';
 import type {IsAny, UndefinedToOptional} from './internal';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
-import type {Simplify} from './simplify';
 import type {TypedArray} from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
