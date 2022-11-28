@@ -1,6 +1,6 @@
 import type {JsonPrimitive, JsonValue} from './basic';
 import type {EmptyObject} from './empty-object';
-import type {IsAny} from './internal';
+import type {IsAny, UndefinedToOptional} from './internal';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {Simplify} from './simplify';
 import type {TypedArray} from './typed-array';
@@ -62,33 +62,6 @@ type FilterOptionalKeys<T extends object> = Exclude<
 			: never;
 }[keyof T],
 undefined
->;
-
-/**
-For an object T, if it has any properties that are a union with `undefined`, make those into optional properties instead.
-
-@example
-```
-type User = {
-	firstName: string;
-	lastName: string | undefined;
-}
-
-type OptionalizedUser = UndefinedToOptional<User>
-// => {
-// 	firstName: string;
-// 	lastName?: string;
-// }
-```
-*/
-type UndefinedToOptional<T extends object> = Simplify<
-{
-	// Property is not a union with `undefined`, keep as-is
-	[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
-} & {
-	// Property _is_ a union with `defined`. Set as optional (via `?`) and remove `undefined` from the union
-	[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
-}
 >;
 
 /**
