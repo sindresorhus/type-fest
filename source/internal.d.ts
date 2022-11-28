@@ -114,4 +114,4 @@ Returns a boolean for whether the the type is `any`.
 
 @link https://stackoverflow.com/a/49928360/1490091
 */
-type IsAny<T> = 0 extends 1 & T ? true : false;
+export type IsAny<T> = 0 extends 1 & T ? true : false;
