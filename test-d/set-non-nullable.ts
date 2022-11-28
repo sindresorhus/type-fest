@@ -17,7 +17,7 @@ expectType<{a: number; b?: string}>(variation3);
 declare const variation4: SetNonNullable<{a: number; b: string | undefined}, 'b'>;
 expectNotAssignable<{a: string; b: string}>(variation4);
 
-// Update all keys if `Keys` Generic is not passed.
+// Update all keys if `Keys` generic is not passed.
 declare const variation5: SetNonNullable<{a: number; b: string | undefined; c: boolean | null}>;
 expectType<{a: number; b: string; c: boolean}>(variation5);
 
@@ -27,3 +27,4 @@ const variant6Fn = <TProp extends keyof Variation6Config>(
 	config: Variation6Config,
 	prop: TProp,
 ): config is SetNonNullable<Variation6Config, TProp> => Boolean(config[prop]);
+expectNotAssignable<never>(variant6Fn); // Just to prevent unused error.
