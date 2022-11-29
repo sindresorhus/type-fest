@@ -1,5 +1,5 @@
 /**
-Generates a tuple based on the length of the input array and fills each index with the index number.
+Create a tuple type of an array's indices.
 
 @example
 ```
