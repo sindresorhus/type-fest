@@ -312,3 +312,13 @@ type ExpectedAppDataJson = {
 declare const response: Jsonify<AppData>;
 
 expectType<ExpectedAppDataJson>(response);
+
+expectType<any>({} as Jsonify<any>);
+
+declare const objectWithAnyProperty: Jsonify<{
+	a: any;
+}>;
+expectType<{a: any}>(objectWithAnyProperty);
+
+declare const objectWithAnyProperties: Jsonify<Record<string, any>>;
+expectType<Record<string, any>>(objectWithAnyProperties);

@@ -1,4 +1,5 @@
 import type {Primitive} from './primitive';
+import type {Simplify} from './simplify';
 
 /**
 Returns a boolean for whether the two given types are equal.
@@ -108,3 +109,78 @@ export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : fals
 Returns a boolean for whether the string is numeric.
 */
 export type IsNumeric<T extends string> = T extends `${number}` ? true : false;
+
+/**
+Returns a boolean for whether the the type is `any`.
+
+@link https://stackoverflow.com/a/49928360/1490091
+*/
+export type IsAny<T> = 0 extends 1 & T ? true : false;
+
+/**
+For an object T, if it has any properties that are a union with `undefined`, make those into optional properties instead.
+
+@example
+```
+type User = {
+	firstName: string;
+	lastName: string | undefined;
+};
+
+type OptionalizedUser = UndefinedToOptional<User>;
+//=> {
+// 	firstName: string;
+// 	lastName?: string;
+// }
+```
+*/
+export type UndefinedToOptional<T extends object> = Simplify<
+{
+	// Property is not a union with `undefined`, keep it as-is.
+	[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
+} & {
+	// Property _is_ a union with defined value. Set as optional (via `?`) and remove `undefined` from the union.
+	[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
+}
+>;
+
+// Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
+type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
+	? never
+	: Type[Key] extends symbol
+		? never
+		: [(...args: any[]) => any] extends [Type[Key]]
+			? never
+			: Key;
+
+/**
+Returns the required keys.
+*/
+type FilterDefinedKeys<T extends object> = Exclude<
+{
+	[Key in keyof T]: IsAny<T[Key]> extends true
+		? Key
+		: undefined extends T[Key]
+			? never
+			: T[Key] extends undefined
+				? never
+				: BaseKeyFilter<T, Key>;
+}[keyof T],
+undefined
+>;
+
+/**
+Returns the optional keys.
+*/
+type FilterOptionalKeys<T extends object> = Exclude<
+{
+	[Key in keyof T]: IsAny<T[Key]> extends true
+		? never
+		: undefined extends T[Key]
+			? T[Key] extends undefined
+				? never
+				: BaseKeyFilter<T, Key>
+			: never;
+}[keyof T],
+undefined
+>;
