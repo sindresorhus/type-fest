@@ -35,7 +35,7 @@ An interface cannot be structurally compared to `JsonValue` because an interface
 
 @example
 ```
-import type {Jsonify} from 'type-fest';
+import type {Jsonify, JsonValue} from 'type-fest';
 
 interface Geometry {
 	type: 'Point' | 'Polygon';
