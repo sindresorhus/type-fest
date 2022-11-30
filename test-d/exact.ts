@@ -1,4 +1,4 @@
-import type {Exact} from '../index';
+import type {Exact, Opaque} from '../index';
 
 { // Spec - string type
 	type Type = string;
@@ -333,4 +333,39 @@ import type {Exact} from '../index';
 		// @ts-expect-error
 		fn(input);
 	}
+}
+
+// Spec - special test case for Opaque type
+// @see https://github.com/sindresorhus/type-fest/issues/508
+{
+	type SpecialName = Opaque<string, 'special name'>;
+
+	type OnlyAcceptName = {
+		name: SpecialName;
+	};
+
+	const onlyAcceptNameImproved = <T extends Exact<OnlyAcceptName, T>>(args: T) => args;
+
+	onlyAcceptNameImproved({
+		// Error: Type 'SpecialName' is not assignable to type 'never'
+		name: 'name' as SpecialName,
+	});
+}
+
+{
+	// Spec - special test case for Opaque type
+	// @see https://github.com/sindresorhus/type-fest/issues/508
+	// Test for number Opaque type
+	type SpecialName = Opaque<number, 'special name'>;
+
+	type OnlyAcceptName = {
+		name: SpecialName;
+	};
+
+	const fn = <T extends Exact<OnlyAcceptName, T>>(args: T) => args;
+
+	fn({
+		// Error: Type 'SpecialName' is not assignable to type 'never'
+		name: 1 as SpecialName,
+	});
 }
