@@ -1,4 +1,4 @@
-type AsyncFunction = (...args: any[]) => Promise<unknown>;
+type AsyncFunction = (...arguments_: any[]) => Promise<unknown>;
 
 /**
 Unwrap the return type of a function that returns a `Promise`.

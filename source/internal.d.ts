@@ -96,6 +96,22 @@ Extracts the type of an array or tuple minus the first element.
 export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer TTail] ? TTail : [];
 
 /**
+Extract the element of an array that also works for array union.
+
+Returns `never` if T is not an array.
+
+It creates a type-safe way to access the element type of `unknown` type.
+*/
+export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
+
+/**
+Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
+
+It creates a type-safe way to access the member type of `unknown` type.
+*/
+export type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
+
+/**
 Returns a boolean for whether the string is lowercased.
 */
 export type IsLowerCase<T extends string> = T extends Lowercase<T> ? true : false;
@@ -116,6 +132,16 @@ Returns a boolean for whether the the type is `any`.
 @link https://stackoverflow.com/a/49928360/1490091
 */
 export type IsAny<T> = 0 extends 1 & T ? true : false;
+
+/**
+Returns a boolean for whether the the type is `never`.
+*/
+export type IsNever<T> = [T] extends [never] ? true : false;
+
+/**
+Returns a boolean for whether the the type is `unknown`.
+*/
+export type IsUnknown<T> = IsNever<T> extends false ? T extends unknown ? unknown extends T ? IsAny<T> extends false ? true : false : false : false : false;
 
 /**
 For an object T, if it has any properties that are a union with `undefined`, make those into optional properties instead.
@@ -149,7 +175,7 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
 	: Type[Key] extends symbol
 		? never
-		: [(...args: any[]) => any] extends [Type[Key]]
+		: [(...arguments_: any[]) => any] extends [Type[Key]]
 			? never
 			: Key;
 

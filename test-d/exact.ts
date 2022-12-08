@@ -2,7 +2,7 @@ import type {Exact} from '../index';
 
 { // Spec - string type
 	type Type = string;
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept string
 		const input = '';
@@ -24,7 +24,7 @@ import type {Exact} from '../index';
 
 { // Spec - array
 	type Type = Array<{code: string; name?: string}>;
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept array with required property only
 		const input = [{code: ''}];
@@ -57,7 +57,7 @@ import type {Exact} from '../index';
 
 { // Spec - readonly array
 	type Type = ReadonlyArray<{code: string; name?: string}>;
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept array with required property only
 		const input = [{code: ''}];
@@ -89,7 +89,7 @@ import type {Exact} from '../index';
 
 { // Spec - object
 	type Type = {code: string; name?: string};
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept object with required property only
 		const input = {code: ''};
@@ -116,7 +116,7 @@ import type {Exact} from '../index';
 
 { // Spec - union - only object
 	type Type = {code: string} | {name: string};
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept type a
 		const input = {code: ''};
@@ -137,7 +137,7 @@ import type {Exact} from '../index';
 
 { // Spec - union - mixture object/primitive
 	type Type = {code: string} | string;
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept type a
 		const input = {code: ''};
@@ -164,7 +164,7 @@ import type {Exact} from '../index';
 			name?: string;
 		};
 	};
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept input with required property only
 		const input = {body: {code: ''}};
@@ -184,7 +184,7 @@ import type {Exact} from '../index';
 
 { // Spec - union of array
 	type Type = Array<{x: string}> & Array<{z: number}>;
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept valid input
 		const input = [{
@@ -232,7 +232,7 @@ import type {Exact} from '../index';
 
 { // Spec - union of readonly array + non readonly array
 	type Type = ReadonlyArray<{x: string}> & Array<{z: number}>;
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept valid input
 		const input = [{
@@ -280,7 +280,7 @@ import type {Exact} from '../index';
 
 { // Spec - union of array with nested fields
 	type Type = Array<{x: string}> & Array<{z: number; d: {e: string; f: boolean}}>;
-	const fn = <T extends Exact<Type, T>>(args: T) => args;
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept valid input
 		const input = [{

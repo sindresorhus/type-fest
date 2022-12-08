@@ -1,7 +1,4 @@
-import type {IsAny} from './internal';
-
-type IsNever<T> = [T] extends [never] ? true : false;
-type IsUnknown<T> = IsNever<T> extends false ? T extends unknown ? unknown extends T ? IsAny<T> extends false ? true : false : false : false : false;
+import type {IsUnknown} from './internal';
 
 /**
 Create a function type with a return type of your choice and the same parameters as the given function type.
@@ -20,13 +17,13 @@ type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, SomeOtherType | u
 
 @category Function
 */
-export type SetReturnType<Fn extends (...args: any[]) => any, TypeToReturn> =
+export type SetReturnType<Fn extends (...arguments_: any[]) => any, TypeToReturn> =
 	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
-	Fn extends (this: infer ThisArg, ...args: infer Arguments) => any ? (
+	Fn extends (this: infer ThisArg, ...arguments_: infer Arguments) => any ? (
 		// If a function did not specify the `this` fake parameter, it will be inferred to `unknown`.
 		// We want to detect this situation just to display a friendlier type upon hovering on an IntelliSense-powered IDE.
-		IsUnknown<ThisArg> extends true ? (...args: Arguments) => TypeToReturn : (this: ThisArg, ...args: Arguments) => TypeToReturn
+		IsUnknown<ThisArg> extends true ? (...arguments_: Arguments) => TypeToReturn : (this: ThisArg, ...arguments_: Arguments) => TypeToReturn
 	) : (
 		// This part should be unreachable, but we make it meaningful just in case…
-		(...args: Parameters<Fn>) => TypeToReturn
+		(...arguments_: Parameters<Fn>) => TypeToReturn
 	);

@@ -5,7 +5,7 @@ import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
-type NotJsonable = ((...args: any[]) => any) | undefined | symbol;
+type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
 type JsonifyTuple<T extends [unknown, ...unknown[]]> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? null : Jsonify<T[Key]>;

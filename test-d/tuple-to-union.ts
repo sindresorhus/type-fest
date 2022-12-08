@@ -31,5 +31,5 @@ expectType<string | number>(worksWithArrays);
 declare const resolvesToNeverForNonArrays: TupleToUnion<string | number>;
 expectType<never>(resolvesToNeverForNonArrays);
 
-declare const infiniteRestArgs: TupleToUnion<[string, ...number[]]>;
-expectType<string | number>(infiniteRestArgs);
+declare const infiniteRestArguments: TupleToUnion<[string, ...number[]]>;
+expectType<string | number>(infiniteRestArguments);

@@ -1,20 +1,4 @@
-import type {KeysOfUnion} from './internal';
-
-/**
-Extract the element of an array that also works for array union.
-
-Returns `never` if T is not an array.
-
-It creates a type-safe way to access the element type of `unknown` type.
-*/
-type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
-
-/**
-Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
-
-It creates a type-safe way to access the member type of `unknown` type.
-*/
-type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
+import type {KeysOfUnion, ArrayElement, ObjectValue} from './internal';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -35,7 +19,7 @@ This is useful for function type-guarding to reject arguments with excess proper
 ```
 type OnlyAcceptName = {name: string};
 
-function onlyAcceptName(args: OnlyAcceptName) {}
+function onlyAcceptName(arguments_: OnlyAcceptName) {}
 
 // TypeScript complains about excess properties when an object literal is provided.
 onlyAcceptName({name: 'name', id: 1});
@@ -54,7 +38,7 @@ import {Exact} from 'type-fest';
 
 type OnlyAcceptName = {name: string};
 
-function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(args: T) {}
+function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(arguments_: T) {}
 
 const invalidInput = {name: 'name', id: 1};
 onlyAcceptNameImproved(invalidInput); // Compilation error
