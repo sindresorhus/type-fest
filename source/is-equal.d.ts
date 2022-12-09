@@ -6,13 +6,19 @@ Returns a boolean for whether the two given types are equal.
 
 @example
 ```
-type ExpectTrue = IsEqual<1, 1>
+import type {IsEqual} from 'type-fest';
+
+// `IsEqual` compares 1 and 1, then gets true as a result.
+type ExpectTrue = IsEqual<1, 1>;
 //=> true
 ```
 
 @example
 ```
-type ExpectFalse = IsEqual<2, 1>
+import type {IsEqual} from 'type-fest';
+
+// `IsEqual` compares 2 and 1, then gets false as a result.
+type ExpectFalse = IsEqual<2, 1>;
 //=> false
 ```
 
@@ -20,6 +26,8 @@ type ExpectFalse = IsEqual<2, 1>
 ```
 import type {IsEqual} from 'type-fest';
 
+// `Includes` Returns a boolean for whether the given array includes the given item.
+// `IsEqual` compares the given array of 0th and the given item, then return true if they are equal.
 type Includes<Value extends readonly any[], Item> =
 	Value extends readonly [Value[0], ...infer rest]
 		? IsEqual<Value[0], Item> extends true
