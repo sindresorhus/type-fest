@@ -28,20 +28,20 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 		UserId: 1,
 		UserName: 'Tom',
 		Date: new Date(),
-		RegExp: new RegExp(/.*/),
+		RegExp: /.*/,
 	},
 	UserFriends: [
 		{
 			UserId: 2,
 			UserName: 'Jerry',
 			Date: new Date(),
-			RegExp: new RegExp(/.*/),
+			RegExp: /.*/,
 		},
 		{
 			UserId: 3,
 			UserName: 'Spike',
 			Date: new Date(),
-			RegExp: new RegExp(/.*/),
+			RegExp: /.*/,
 		},
 	],
 };

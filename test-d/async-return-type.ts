@@ -7,8 +7,6 @@ async function asyncFunction(): Promise<number> {
 
 type Value = AsyncReturnType<typeof asyncFunction>;
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-asyncFunction().then(value => {
-	expectType<Value>(value);
-	expectNotAssignable<string>(value);
-});
+const value = await asyncFunction();
+expectType<Value>(value);
+expectNotAssignable<string>(value);

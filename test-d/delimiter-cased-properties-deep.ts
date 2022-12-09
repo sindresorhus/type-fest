@@ -28,20 +28,20 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 		'user-id': 1,
 		'user-name': 'Tom',
 		date: new Date(),
-		'reg-exp': new RegExp(/.*/),
+		'reg-exp': /.*/,
 	},
 	'user-friends': [
 		{
 			'user-id': 2,
 			'user-name': 'Jerry',
 			date: new Date(),
-			'reg-exp': new RegExp(/.*/),
+			'reg-exp': /.*/,
 		},
 		{
 			'user-id': 3,
 			'user-name': 'Spike',
 			date: new Date(),
-			'reg-exp': new RegExp(/.*/),
+			'reg-exp': /.*/,
 		},
 	],
 };
