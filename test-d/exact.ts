@@ -344,17 +344,18 @@ import type {Exact, Opaque} from '../index';
 		name: SpecialName;
 	};
 
-	const onlyAcceptNameImproved = <T extends Exact<OnlyAcceptName, T>>(args: T) => args;
+	const onlyAcceptNameImproved = <T extends Exact<OnlyAcceptName, T>>(arguments_: T) => arguments_;
 
 	onlyAcceptNameImproved({
+		// The error before the workaround:
 		// Error: Type 'SpecialName' is not assignable to type 'never'
 		name: 'name' as SpecialName,
 	});
 }
 
+// Spec - special test case for Opaque type
+// @see https://github.com/sindresorhus/type-fest/issues/508
 {
-	// Spec - special test case for Opaque type
-	// @see https://github.com/sindresorhus/type-fest/issues/508
 	// Test for number Opaque type
 	type SpecialName = Opaque<number, 'special name'>;
 
@@ -362,9 +363,10 @@ import type {Exact, Opaque} from '../index';
 		name: SpecialName;
 	};
 
-	const fn = <T extends Exact<OnlyAcceptName, T>>(args: T) => args;
+	const fn = <T extends Exact<OnlyAcceptName, T>>(arguments_: T) => arguments_;
 
 	fn({
+		// The error before the workaround:
 		// Error: Type 'SpecialName' is not assignable to type 'never'
 		name: 1 as SpecialName,
 	});
