@@ -54,7 +54,7 @@ export type Exact<ParameterType, InputType> =
 	ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 	// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 		: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-			// For Opaque type, internal details are hidden from public, let's leave it as is.
+			// For Opaque types, internal details are hidden from public, so let's leave it as is.
 			: ParameterType extends Opaque<infer OpaqueType, infer OpaqueToken> ? ParameterType
 				: ParameterType extends object ? ExactObject<ParameterType, InputType>
 					: ParameterType;
