@@ -25,20 +25,20 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 		user_id: 1,
 		user_name: 'Tom',
 		date: new Date(),
-		reg_exp: new RegExp(/.*/),
+		reg_exp: /.*/,
 	},
 	user_friends: [
 		{
 			user_id: 2,
 			user_name: 'Jerry',
 			date: new Date(),
-			reg_exp: new RegExp(/.*/),
+			reg_exp: /.*/,
 		},
 		{
 			user_id: 3,
 			user_name: 'Spike',
 			date: new Date(),
-			reg_exp: new RegExp(/.*/),
+			reg_exp: /.*/,
 		},
 	],
 };

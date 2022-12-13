@@ -102,5 +102,6 @@ export type {Get} from './source/get';
 export type {LastArrayElement} from './source/last-array-element';
 
 // Miscellaneous
+export type {GlobalThis} from './source/global-this';
 export type {PackageJson} from './source/package-json';
 export type {TsConfigJson} from './source/tsconfig-json';

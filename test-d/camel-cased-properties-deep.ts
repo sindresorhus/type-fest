@@ -37,20 +37,20 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 		userId: 1,
 		userName: 'Tom',
 		date: new Date(),
-		regExp: new RegExp(/.*/),
+		regExp: /.*/,
 	},
 	userFriends: [
 		{
 			userId: 2,
 			userName: 'Jerry',
 			date: new Date(),
-			regExp: new RegExp(/.*/),
+			regExp: /.*/,
 		},
 		{
 			userId: 3,
 			userName: 'Spike',
 			date: new Date(),
-			regExp: new RegExp(/.*/),
+			regExp: /.*/,
 		},
 	],
 };

@@ -1,6 +1,3 @@
-import type {Except} from './except';
-import type {Simplify} from './simplify';
-
 /**
 Create a type that makes the given keys non-nullable, where the remaining keys are kept as is.
 
@@ -35,10 +32,8 @@ type AllNonNullable = SetNonNullable<Foo>;
 
 @category Object
 */
-export type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
-	Simplify<
-	// Pick just the keys that are readonly from the base type.
-	Except<BaseType, Keys> &
-	// Pick the keys that should be non-nullable from the base type and make them non-nullable.
-	{[Key in Keys]: NonNullable<BaseType[Key]>}
-	>;
+export type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
+	[Key in keyof BaseType]: Key extends Keys
+		? NonNullable<BaseType[Key]>
+		: BaseType[Key];
+};
