@@ -1,4 +1,5 @@
 import type {KeysOfUnion, ArrayElement, ObjectValue} from './internal';
+import type {Opaque} from './opaque';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -53,5 +54,7 @@ export type Exact<ParameterType, InputType> =
 	ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 	// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 		: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-			: ParameterType extends object ? ExactObject<ParameterType, InputType>
-				: ParameterType;
+			// For Opaque types, internal details are hidden from public, so let's leave it as is.
+			: ParameterType extends Opaque<infer OpaqueType, infer OpaqueToken> ? ParameterType
+				: ParameterType extends object ? ExactObject<ParameterType, InputType>
+					: ParameterType;
