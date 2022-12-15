@@ -410,7 +410,7 @@ declare namespace TsConfigJson {
 
 		@default ['AMD', 'System', 'ES6'].includes(module) ? 'classic' : 'node'
 		*/
-		moduleResolution?: ModuleResolution;
+		moduleResolution?: CompilerOptions.ModuleResolution;
 
 		/**
 		Specifies the end of line sequence to be used when emitting files: 'crlf' (Windows) or 'lf' (Unix).
@@ -1036,7 +1036,7 @@ declare namespace TsConfigJson {
 
 		@default 'auto'
 		*/
-		moduleDetection?: ModuleDetection;
+		moduleDetection?: CompilerOptions.ModuleDetection;
 	};
 
 	namespace WatchOptions {
