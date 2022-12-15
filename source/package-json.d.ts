@@ -294,7 +294,7 @@ declare namespace PackageJson {
 	};
 
 	/**
-	An alternative configuration for Yarn workspaces.
+	An alternative configuration for workspaces.
 	*/
 	export type WorkspaceConfig = {
 		/**
@@ -305,7 +305,8 @@ declare namespace PackageJson {
 		/**
 		Designed to solve the problem of packages which break when their `node_modules` are moved to the root workspace directory - a process known as hoisting. For these packages, both within your workspace, and also some that have been installed via `node_modules`, it is important to have a mechanism for preventing the default Yarn workspace behavior. By adding workspace pattern strings here, Yarn will resume non-workspace behavior for any package which matches the defined patterns.
 
-		[Read more](https://classic.yarnpkg.com/blog/2018/02/15/nohoist/)
+		[Supported](https://classic.yarnpkg.com/blog/2018/02/15/nohoist/) by Yarn.
+		[Not supported](https://github.com/npm/rfcs/issues/287) by npm.
 		*/
 		nohoist?: WorkspacePattern[];
 	};
@@ -322,15 +323,6 @@ declare namespace PackageJson {
 	type WorkspacePattern = string;
 
 	export type YarnConfiguration = {
-		/**
-		Used to configure [Yarn workspaces](https://classic.yarnpkg.com/docs/workspaces/).
-
-		Workspaces allow you to manage multiple packages within the same repository in such a way that you only need to run `yarn install` once to install all of them in a single pass.
-
-		Please note that the top-level `private` property of `package.json` **must** be set to `true` in order to use workspaces.
-		*/
-		workspaces?: WorkspacePattern[] | WorkspaceConfig;
-
 		/**
 		If your package only allows one version of a given dependency, and you’d like to enforce the same behavior as `yarn install --flat` on the command-line, set this to `true`.
 
@@ -624,6 +616,15 @@ declare namespace PackageJson {
 			*/
 			url: string;
 		};
+
+		/**
+		Used to configure [npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces) / [Yarn workspaces](https://classic.yarnpkg.com/docs/workspaces/).
+
+		Workspaces allow you to manage multiple packages within the same repository in such a way that you only need to run your install command once in order to install all of them in a single pass.
+
+		Please note that the top-level `private` property of `package.json` **must** be set to `true` in order to use workspaces.
+		*/
+		workspaces?: WorkspacePattern[] | WorkspaceConfig;
 	}
 
 	/**
