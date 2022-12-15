@@ -1027,7 +1027,7 @@ declare namespace TsConfigJson {
 
 		Requires TypeScript version 4.5 or later.
 		*/
-		moduleSuffixes?: string[]
+		moduleSuffixes?: string[];
 
 		/**
 		Control what method is used to detect module-format JS files.
