@@ -75,3 +75,6 @@ expectType<CamelCase<'fooBARBiz', {preserveConsecutiveUppercase: false}>>('fooBa
 
 expectType<CamelCase<'foo BAR-Biz_BUZZ'>>('fooBARBizBUZZ');
 expectType<CamelCase<'foo BAR-Biz_BUZZ', {preserveConsecutiveUppercase: false}>>('fooBarBizBuzz');
+
+expectType<CamelCase<string>>('string' as string);
+expectType<CamelCase<string, {preserveConsecutiveUppercase: false}>>('string' as string);
