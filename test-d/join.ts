@@ -21,3 +21,14 @@ expectNotAssignable<'foo.bar.baz'>(emptyDelimiter);
 const emptyInput: Join<[], '.'> = '';
 expectType<''>(emptyInput);
 expectNotAssignable<'foo'>(emptyInput);
+
+// Typeof of const tuple
+const tuple = ['foo', 'bar', 'baz'] as const;
+const joinedTuple: Join<typeof tuple, ','> = 'foo,bar,baz';
+expectType<'foo,bar,baz'>(joinedTuple);
+
+// Typeof of string[]
+const stringArray = ['foo', 'bar', 'baz'];
+const joinedStringArray: Join<typeof stringArray, ','> = '';
+expectType<string>(joinedStringArray);
+expectNotAssignable<'foo,bar,baz'>(joinedStringArray);
