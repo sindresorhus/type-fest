@@ -11,8 +11,8 @@ Use-cases:
 ```
 import type {IsEqual} from 'type-fest';
 
-// `Includes` Returns a boolean for whether the given array includes the given item.
-// `IsEqual` compares the given array of 0th and the given item, then return true if they are equal.
+// This type returns a boolean for whether the given array includes the given item.
+// `IsEqual` is used to compare the given array at position 0 and the given item and then return true if they are equal.
 type Includes<Value extends readonly any[], Item> =
 	Value extends readonly [Value[0], ...infer rest]
 		? IsEqual<Value[0], Item> extends true
