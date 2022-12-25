@@ -1,4 +1,4 @@
-import type {IsEqual} from './internal';
+import type {IsEqual} from './is-equal';
 
 /**
 Filter out keys from an object.
