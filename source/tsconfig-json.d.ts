@@ -262,8 +262,6 @@ declare namespace TsConfigJson {
 
 		/**
 		Specify output directory for generated declaration files.
-
-		Requires TypeScript version 2.0 or later.
 		*/
 		declarationDir?: string;
 
@@ -277,16 +275,12 @@ declare namespace TsConfigJson {
 		/**
 		Reduce the number of projects loaded automatically by TypeScript.
 
-		Requires TypeScript version 4.0 or later.
-
 		@default false
 		*/
 		disableReferencedProjectLoad?: boolean;
 
 		/**
 		Enforces using indexed accessors for keys declared using an indexed type.
-
-		Requires TypeScript version 4.2 or later.
 
 		@default false
 		*/
@@ -308,8 +302,6 @@ declare namespace TsConfigJson {
 
 		/**
 		Differentiate between undefined and not present when type checking.
-
-		Requires TypeScript version 4.4 or later.
 
 		@default false
 		*/
@@ -362,8 +354,6 @@ declare namespace TsConfigJson {
 		/**
 		Specify the JSX factory function to use when targeting React JSX emit, e.g. `React.createElement` or `h`.
 
-		Requires TypeScript version 2.1 or later.
-
 		@default 'React.createElement'
 		*/
 		jsxFactory?: string;
@@ -371,16 +361,12 @@ declare namespace TsConfigJson {
 		/**
 		Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'.
 
-		Requires TypeScript version 4.0 or later.
-
 		@default 'React.Fragment'
 		*/
 		jsxFragmentFactory?: string;
 
 		/**
 		Specify module specifier used to import the JSX factory functions when using `jsx: react-jsx*`.
-
-		Requires TypeScript version 4.1 or later.
 
 		@default 'react'
 		*/
@@ -457,16 +443,12 @@ declare namespace TsConfigJson {
 		/**
 		Report errors on unused locals.
 
-		Requires TypeScript version 2.0 or later.
-
 		@default false
 		*/
 		noUnusedLocals?: boolean;
 
 		/**
 		Report errors on unused parameters.
-
-		Requires TypeScript version 2.0 or later.
 
 		@default false
 		*/
@@ -500,8 +482,6 @@ declare namespace TsConfigJson {
 
 		/**
 		Skip type checking of declaration files.
-
-		Requires TypeScript version 2.0 or later.
 
 		@default false
 		*/
@@ -607,8 +587,6 @@ declare namespace TsConfigJson {
 		/**
 		Default catch clause variables as `unknown` instead of `any`.
 
-		Requires TypeScript version 4.4 or later.
-
 		@default false
 		*/
 		useUnknownInCatchVariables?: boolean;
@@ -624,16 +602,12 @@ declare namespace TsConfigJson {
 		/**
 		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
 
-		Requires TypeScript version 3.8 or later.
-
 		@deprecated Use watchOptions.fallbackPolling instead.
 		*/
 		fallbackPolling?: CompilerOptions.FallbackPolling;
 
 		/**
 		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
-
-		Requires TypeScript version 3.8 or later.
 
 		@default 'useFsEvents'
 		@deprecated Use watchOptions.watchDirectory instead.
@@ -642,8 +616,6 @@ declare namespace TsConfigJson {
 
 		/**
 		Specify the strategy for watching individual files.
-
-		Requires TypeScript version 3.8 or later.
 
 		@default 'useFsEvents'
 		@deprecated Use watchOptions.watchFile instead.
@@ -681,8 +653,6 @@ declare namespace TsConfigJson {
 		/**
 		Add `undefined` to a type when accessed using an index.
 
-		Requires TypeScript version 4.1 or later.
-
 		@default false
 		*/
 		noUncheckedIndexedAccess?: boolean;
@@ -718,8 +688,6 @@ declare namespace TsConfigJson {
 		/**
 		Emit a v8 CPU profile of the compiler run for debugging.
 
-		Requires TypeScript version 3.7 or later.
-
 		@default 'profile.cpuprofile'
 		*/
 		generateCpuProfile?: string;
@@ -736,8 +704,6 @@ declare namespace TsConfigJson {
 
 		/**
 		List of TypeScript language server plugins to load.
-
-		Requires TypeScript version 2.3 or later.
 		*/
 		plugins?: CompilerOptions.Plugin[];
 
@@ -748,15 +714,11 @@ declare namespace TsConfigJson {
 
 		/**
 		Specify list of directories for type definition files to be included.
-
-		Requires TypeScript version 2.0 or later.
 		*/
 		typeRoots?: string[];
 
 		/**
 		Type declaration files to be included in compilation.
-
-		Requires TypeScript version 2.0 or later.
 		*/
 		types?: string[];
 
@@ -798,8 +760,6 @@ declare namespace TsConfigJson {
 		/**
 		Enable to list all emitted files.
 
-		Requires TypeScript version 2.0 or later.
-
 		@default false
 		*/
 		listEmittedFiles?: boolean;
@@ -807,23 +767,17 @@ declare namespace TsConfigJson {
 		/**
 		Disable size limit for JavaScript project.
 
-		Requires TypeScript version 2.0 or later.
-
 		@default false
 		*/
 		disableSizeLimit?: boolean;
 
 		/**
 		List of library files to be included in the compilation.
-
-		Requires TypeScript version 2.0 or later.
 		*/
 		lib?: CompilerOptions.Lib[];
 
 		/**
 		Enable strict null checks.
-
-		Requires TypeScript version 2.0 or later.
 
 		@default false
 		*/
@@ -839,8 +793,6 @@ declare namespace TsConfigJson {
 		/**
 		Import emit helpers (e.g. `__extends`, `__rest`, etc..) from tslib.
 
-		Requires TypeScript version 2.1 or later.
-
 		@default false
 		*/
 		importHelpers?: boolean;
@@ -855,16 +807,12 @@ declare namespace TsConfigJson {
 		/**
 		Parse in strict mode and emit `'use strict'` for each source file.
 
-		Requires TypeScript version 2.1 or later.
-
 		@default false
 		*/
 		alwaysStrict?: boolean;
 
 		/**
 		Enable all strict type checking options.
-
-		Requires TypeScript version 2.3 or later.
 
 		@default false
 		*/
@@ -880,16 +828,12 @@ declare namespace TsConfigJson {
 		/**
 		Provide full support for iterables in `for-of`, spread, and destructuring when targeting `ES5` or `ES3`.
 
-		Requires TypeScript version 2.3 or later.
-
 		@default false
 		*/
 		downlevelIteration?: boolean;
 
 		/**
 		Report errors in `.js` files.
-
-		Requires TypeScript version 2.3 or later.
 
 		@default false
 		*/
@@ -898,8 +842,6 @@ declare namespace TsConfigJson {
 		/**
 		Disable bivariant parameter checking for function types.
 
-		Requires TypeScript version 2.6 or later.
-
 		@default false
 		*/
 		strictFunctionTypes?: boolean;
@@ -907,16 +849,12 @@ declare namespace TsConfigJson {
 		/**
 		Ensure non-undefined class properties are initialized in the constructor.
 
-		Requires TypeScript version 2.7 or later.
-
 		@default false
 		*/
 		strictPropertyInitialization?: boolean;
 
 		/**
 		Emit `__importStar` and `__importDefault` helpers for runtime Babel ecosystem compatibility and enable `--allowSyntheticDefaultImports` for typesystem compatibility.
-
-		Requires TypeScript version 2.7 or later.
 
 		@default false
 		*/
@@ -932,16 +870,12 @@ declare namespace TsConfigJson {
 		/**
 		Resolve `keyof` to string valued property names only (no numbers or symbols).
 
-		Requires TypeScript version 2.9 or later.
-
 		@default false
 		*/
 		keyofStringsOnly?: boolean;
 
 		/**
 		Emit ECMAScript standard class fields.
-
-		Requires TypeScript version 3.7 or later.
 
 		@default false
 		*/
@@ -950,8 +884,6 @@ declare namespace TsConfigJson {
 		/**
 		Generates a sourcemap for each corresponding `.d.ts` file.
 
-		Requires TypeScript version 2.9 or later.
-
 		@default false
 		*/
 		declarationMap?: boolean;
@@ -959,16 +891,12 @@ declare namespace TsConfigJson {
 		/**
 		Include modules imported with `.json` extension.
 
-		Requires TypeScript version 2.9 or later.
-
 		@default false
 		*/
 		resolveJsonModule?: boolean;
 
 		/**
 		Have recompiles in '--incremental' and '--watch' assume that changes within a file will only affect files directly depending on it.
-
-		Requires TypeScript version 3.8 or later.
 
 		@default false
 		*/
@@ -998,16 +926,12 @@ declare namespace TsConfigJson {
 		/**
 		Opt a project out of multi-project reference checking when editing.
 
-		Requires TypeScript version 3.8 or later.
-
 		@default false
 		*/
 		disableSolutionSearching?: boolean;
 
 		/**
 		Print names of files which TypeScript sees as a part of your project and the reason they are part of the compilation.
-
-		Requires TypeScript version 4.2 or later.
 
 		@default false
 		*/
@@ -1016,23 +940,17 @@ declare namespace TsConfigJson {
 		/**
 		Preserve unused imported values in the JavaScript output that would otherwise be removed.
 
-		Requires TypeScript version 4.7 or later.
-
 		@default true
 		*/
 		preserveValueImports?: boolean;
 
 		/**
 		List of file name suffixes to search when resolving a module.
-
-		Requires TypeScript version 4.5 or later.
 		*/
 		moduleSuffixes?: string[];
 
 		/**
 		Control what method is used to detect module-format JS files.
-
-		Requires TypeScript version 4.7 or later.
 
 		@default 'auto'
 		*/
@@ -1066,8 +984,6 @@ declare namespace TsConfigJson {
 		/**
 		Specify the strategy for watching individual files.
 
-		Requires TypeScript version 3.8 or later.
-
 		@default 'UseFsEvents'
 		*/
 		watchFile?: WatchOptions.WatchFileKind | Lowercase<WatchOptions.WatchFileKind>;
@@ -1075,16 +991,12 @@ declare namespace TsConfigJson {
 		/**
 		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
 
-		Requires TypeScript version 3.8 or later.
-
 		@default 'UseFsEvents'
 		*/
 		watchDirectory?: WatchOptions.WatchDirectoryKind | Lowercase<WatchOptions.WatchDirectoryKind>;
 
 		/**
 		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
-
-		Requires TypeScript version 3.8 or later.
 		*/
 		fallbackPolling?: WatchOptions.PollingWatchKind | Lowercase<WatchOptions.PollingWatchKind>;
 
@@ -1106,8 +1018,6 @@ declare namespace TsConfigJson {
 
 	/**
 	Auto type (.d.ts) acquisition options for this project.
-
-	Requires TypeScript version 2.1 or later.
 	*/
 	export type TypeAcquisition = {
 		/**
@@ -1169,8 +1079,6 @@ export type TsConfigJson = {
 
 	/**
 	Auto type (.d.ts) acquisition options for this project.
-
-	Requires TypeScript version 2.1 or later.
 	*/
 	typeAcquisition?: TsConfigJson.TypeAcquisition;
 
@@ -1181,8 +1089,6 @@ export type TsConfigJson = {
 
 	/**
 	Path to base configuration file to inherit from.
-
-	Requires TypeScript version 2.1 or later.
 	*/
 	extends?: string;
 
@@ -1202,15 +1108,11 @@ export type TsConfigJson = {
 	Specifies a list of glob patterns that match files to be included in compilation.
 
 	If no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`.
-
-	Requires TypeScript version 2.0 or later.
 	*/
 	include?: string[];
 
 	/**
 	Referenced projects.
-
-	Requires TypeScript version 3.0 or later.
 	*/
 	references?: TsConfigJson.References[];
 };
