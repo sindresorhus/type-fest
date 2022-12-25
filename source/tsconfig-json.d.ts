@@ -221,6 +221,21 @@ declare namespace TsConfigJson {
 			| 'useFsEventsOnParentDirectory'
 			| 'fixedChunkSizePolling';
 
+		export type ModuleResolution =
+			| 'classic'
+			| 'node'
+			| 'node16'
+			| 'nodenext'
+			// Pascal-cased alternatives
+			| 'Classic'
+			| 'Node'
+			| 'Node16'
+			| 'NodeNext';
+
+		export type ModuleDetection =
+			| 'auto'
+			| 'legacy'
+			| 'force';
 	}
 
 	export type CompilerOptions = {
@@ -395,7 +410,7 @@ declare namespace TsConfigJson {
 
 		@default ['AMD', 'System', 'ES6'].includes(module) ? 'classic' : 'node'
 		*/
-		moduleResolution?: 'classic' | 'node';
+		moduleResolution?: CompilerOptions.ModuleResolution;
 
 		/**
 		Specifies the end of line sequence to be used when emitting files: 'crlf' (Windows) or 'lf' (Unix).
@@ -997,6 +1012,31 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		explainFiles?: boolean;
+
+		/**
+		Preserve unused imported values in the JavaScript output that would otherwise be removed.
+
+		Requires TypeScript version 4.7 or later.
+
+		@default true
+		*/
+		preserveValueImports?: boolean;
+
+		/**
+		List of file name suffixes to search when resolving a module.
+
+		Requires TypeScript version 4.5 or later.
+		*/
+		moduleSuffixes?: string[];
+
+		/**
+		Control what method is used to detect module-format JS files.
+
+		Requires TypeScript version 4.7 or later.
+
+		@default 'auto'
+		*/
+		moduleDetection?: CompilerOptions.ModuleDetection;
 	};
 
 	namespace WatchOptions {
