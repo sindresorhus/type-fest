@@ -74,5 +74,7 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 @category Template literal
 */
 export type CamelCase<Type, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Type extends string
-	? Uncapitalize<CamelCaseFromArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
+	? string extends Type
+		? Type
+		: Uncapitalize<CamelCaseFromArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
 	: Type;
