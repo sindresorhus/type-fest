@@ -52,6 +52,7 @@ declare namespace TsConfigJson {
 			| 'ES2019'
 			| 'ES2020'
 			| 'ES2021'
+			| 'ES2022'
 			| 'ESNext'
 			// Lowercase alternatives
 			| 'es3'
@@ -64,6 +65,7 @@ declare namespace TsConfigJson {
 			| 'es2019'
 			| 'es2020'
 			| 'es2021'
+			| 'es2022'
 			| 'esnext';
 
 		export type Lib =
