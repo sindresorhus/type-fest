@@ -47,6 +47,8 @@ export type WordSeparators = '-' | '_' | ' ';
 
 export type StringDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
+type Whitespace = ' ' | '\t' | '\n' | '\r' | '\f' | '\v';
+
 /**
 Matches any unknown record.
 */
@@ -110,9 +112,22 @@ Returns a boolean for whether the string is uppercased.
 export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
 
 /**
+Returns a string with surr
+*/
+type IsWhitespace<T extends string> = T extends Whitespace
+	? true
+	: T extends `${Whitespace}${infer Rest}`
+		? IsWhitespace<Rest>
+		: false;
+
+/**
 Returns a boolean for whether the string is numeric.
 */
-export type IsNumeric<T extends string> = T extends `${number}` ? true : false;
+export type IsNumeric<T extends string> = T extends `${number}`
+	? IsWhitespace<T> extends true
+		? false
+		: true
+	: false;
 
 /**
 Returns a boolean for whether the the type is `any`.
