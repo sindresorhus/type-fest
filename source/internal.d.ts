@@ -112,7 +112,7 @@ Returns a boolean for whether the string is uppercased.
 export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
 
 /**
-Returns a string with surr
+Returns a boolean for whether a string is whitespace.
 */
 type IsWhitespace<T extends string> = T extends Whitespace
 	? true
