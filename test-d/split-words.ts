@@ -80,6 +80,7 @@ expectType<SplitWords<'hello__world___'>>(['hello', 'world']);
 expectType<SplitWords<'___ hello -__  _world'>>(['hello', 'world']);
 expectType<SplitWords<'__HelloWorld-HELLOWorld helloWORLD'>>(['Hello', 'World', 'HELLO', 'World', 'hello', 'WORLD']);
 expectType<SplitWords<'hello WORLD lowercase'>>(['hello', 'WORLD', 'lowercase']);
+expectType<SplitWords<'hello WORLD-lowercase'>>(['hello', 'WORLD', 'lowercase']);
 expectType<SplitWords<'hello WORLD Uppercase'>>(['hello', 'WORLD', 'Uppercase']);
 
 expectType<SplitWords<'item0'>>(['item', '0']);
