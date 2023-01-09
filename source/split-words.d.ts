@@ -33,7 +33,7 @@ export type SplitWords<
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
 	? FirstCharacter extends WordSeparators
 		// Skip word separator
-		? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, LastCharacter>]
+		? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters>]
 		: LastCharacter extends ''
 			// Fist char of word
 			? SplitWords<RemainingCharacters, FirstCharacter, FirstCharacter>
