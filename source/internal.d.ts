@@ -47,7 +47,33 @@ export type WordSeparators = '-' | '_' | ' ';
 
 export type StringDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
-type Whitespace = ' ' | '\t' | '\n' | '\r' | '\f' | '\v';
+export type Whitespace =
+  | '\u0009' // '\t'
+  | '\u000A' // '\n'
+  | '\u000B' // '\v'
+  | '\u000C' // '\f'
+  | '\u000D' // '\r'
+  | '\u0020' // ' '
+  | '\u0085'
+  | '\u00A0'
+  | '\u1680'
+  | '\u2000'
+  | '\u2001'
+  | '\u2002'
+  | '\u2003'
+  | '\u2004'
+  | '\u2005'
+  | '\u2006'
+  | '\u2007'
+  | '\u2008'
+  | '\u2009'
+  | '\u200A'
+  | '\u2028'
+  | '\u2029'
+  | '\u202F'
+  | '\u205F'
+  | '\u3000'
+  | '\uFEFF';
 
 /**
 Matches any unknown record.
@@ -114,7 +140,7 @@ export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : fals
 /**
 Returns a boolean for whether a string is whitespace.
 */
-type IsWhitespace<T extends string> = T extends Whitespace
+export type IsWhitespace<T extends string> = T extends Whitespace
 	? true
 	: T extends `${Whitespace}${infer Rest}`
 		? IsWhitespace<Rest>
