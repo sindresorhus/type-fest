@@ -1,5 +1,6 @@
 import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
+import type {Trim} from './trim';
 
 /**
 Infer the length of the given array `<T>`.
@@ -148,11 +149,13 @@ export type IsWhitespace<T extends string> = T extends Whitespace
 
 /**
 Returns a boolean for whether the string is numeric.
+
+This type is a workaround for [Microsoft/TypeScript#46109](https://github.com/microsoft/TypeScript/issues/46109#issuecomment-930307987).
 */
 export type IsNumeric<T extends string> = T extends `${number}`
-	? IsWhitespace<T> extends true
-		? false
-		: true
+	? Trim<T> extends T
+		? true
+		: false
 	: false;
 
 /**
