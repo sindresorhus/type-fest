@@ -18,4 +18,3 @@ expectType<IsNumeric<'1.23e-4'>>(true);
 expectType<IsNumeric<' '>>(false);
 expectType<IsNumeric<'\n'>>(false);
 expectType<IsNumeric<'\u0009'>>(false);
-
