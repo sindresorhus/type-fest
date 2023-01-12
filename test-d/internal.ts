@@ -4,7 +4,7 @@ import type {IsWhitespace, IsNumeric} from '../source/internal';
 expectType<IsWhitespace<''>>(false);
 expectType<IsWhitespace<' '>>(true);
 expectType<IsWhitespace<'\n'>>(true);
-expectType<IsWhitespace<'\u0009'>>(true);
+expectType<IsWhitespace<'\u{9}'>>(true);
 
 expectType<IsNumeric<''>>(false);
 expectType<IsNumeric<'0'>>(true);
@@ -17,4 +17,4 @@ expectType<IsNumeric<'1.23e4'>>(true);
 expectType<IsNumeric<'1.23e-4'>>(true);
 expectType<IsNumeric<' '>>(false);
 expectType<IsNumeric<'\n'>>(false);
-expectType<IsNumeric<'\u0009'>>(false);
+expectType<IsNumeric<'\u{9}'>>(false);
