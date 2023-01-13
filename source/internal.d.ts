@@ -1,5 +1,6 @@
 import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
+import type {Trim} from './trim';
 
 /**
 Infer the length of the given array `<T>`.
@@ -46,6 +47,34 @@ export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' 
 export type WordSeparators = '-' | '_' | ' ';
 
 export type StringDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+
+export type Whitespace =
+	| '\u{9}' // '\t'
+	| '\u{A}' // '\n'
+	| '\u{B}' // '\v'
+	| '\u{C}' // '\f'
+	| '\u{D}' // '\r'
+	| '\u{20}' // ' '
+	| '\u{85}'
+	| '\u{A0}'
+	| '\u{1680}'
+	| '\u{2000}'
+	| '\u{2001}'
+	| '\u{2002}'
+	| '\u{2003}'
+	| '\u{2004}'
+	| '\u{2005}'
+	| '\u{2006}'
+	| '\u{2007}'
+	| '\u{2008}'
+	| '\u{2009}'
+	| '\u{200A}'
+	| '\u{2028}'
+	| '\u{2029}'
+	| '\u{202F}'
+	| '\u{205F}'
+	| '\u{3000}'
+	| '\u{FEFF}';
 
 /**
 Matches any unknown record.
@@ -110,9 +139,24 @@ Returns a boolean for whether the string is uppercased.
 export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
 
 /**
-Returns a boolean for whether the string is numeric.
+Returns a boolean for whether a string is whitespace.
 */
-export type IsNumeric<T extends string> = T extends `${number}` ? true : false;
+export type IsWhitespace<T extends string> = T extends Whitespace
+	? true
+	: T extends `${Whitespace}${infer Rest}`
+		? IsWhitespace<Rest>
+		: false;
+
+/**
+Returns a boolean for whether the string is numeric.
+
+This type is a workaround for [Microsoft/TypeScript#46109](https://github.com/microsoft/TypeScript/issues/46109#issuecomment-930307987).
+*/
+export type IsNumeric<T extends string> = T extends `${number}`
+	? Trim<T> extends T
+		? true
+		: false
+	: false;
 
 /**
 Returns a boolean for whether the the type is `any`.
