@@ -30,6 +30,9 @@ expectType<'foo#bar#abc#123'>(delimiterFromComplexKebab);
 const delimiterFromSpace: DelimiterCase<'foo bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromSpace);
 
+const delimiterFromTab: DelimiterCase<'foo\tbar', '#'> = 'foo#bar';
+expectType<'foo#bar'>(delimiterFromTab);
+
 const delimiterFromSnake: DelimiterCase<'foo_bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromSnake);
 
