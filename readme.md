@@ -170,6 +170,7 @@ Click the type names for complete docs.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
+- [`IsUnion`](source/is-union.d.ts) - Detects whether a given type is a union of types.
 
 ### JSON
 
