@@ -75,6 +75,7 @@ expectType<SplitWords<'   hello  world'>>(['hello', 'world']);
 expectType<SplitWords<'---Hello--world'>>(['Hello', 'world']);
 expectType<SplitWords<'___hello__world'>>(['hello', 'world']);
 expectType<SplitWords<'hello  world   '>>(['hello', 'world']);
+expectType<SplitWords<'hello\tworld'>>(['hello', 'world']);
 expectType<SplitWords<'Hello--world--'>>(['Hello', 'world']);
 expectType<SplitWords<'hello__world___'>>(['hello', 'world']);
 expectType<SplitWords<'___ hello -__  _world'>>(['hello', 'world']);
