@@ -1,5 +1,6 @@
 import type {KeysOfUnion, ArrayElement, ObjectValue} from './internal';
 import type {Opaque} from './opaque';
+import type {IsEqual} from './is-equal';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -50,11 +51,12 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 @category Utilities
 */
 export type Exact<ParameterType, InputType> =
-	// Convert union of array to array of union: A[] & B[] => (A & B)[]
-	ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-	// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
-		: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-			// For Opaque types, internal details are hidden from public, so let's leave it as is.
-			: ParameterType extends Opaque<infer OpaqueType, infer OpaqueToken> ? ParameterType
-				: ParameterType extends object ? ExactObject<ParameterType, InputType>
-					: ParameterType;
+	IsEqual<ParameterType, InputType> extends true ? ParameterType
+		// Convert union of array to array of union: A[] & B[] => (A & B)[]
+		: ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
+			// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
+			: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
+				// For Opaque types, internal details are hidden from public, so let's leave it as is.
+				: ParameterType extends Opaque<infer OpaqueType, infer OpaqueToken> ? ParameterType
+					: ParameterType extends object ? ExactObject<ParameterType, InputType>
+						: ParameterType;
