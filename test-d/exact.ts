@@ -114,6 +114,24 @@ import type {Exact, Opaque} from '../index';
 	}
 }
 
+{ // Spec - object with optional outer object @see https://github.com/sindresorhus/type-fest/pull/546#issuecomment-1385620838
+	type Type = {
+		outer?: {
+			inner: {
+				field: string;
+			};
+		};
+	};
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+	fn({
+		outer: {
+			inner: {
+				field: 'foo',
+			},
+		},
+	});
+}
+
 { // Spec - union - only object
 	type Type = {code: string} | {name: string};
 	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
