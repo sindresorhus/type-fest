@@ -114,6 +114,24 @@ import type {Exact, Opaque} from '../index';
 	}
 }
 
+{ // Spec - object with optional outer object @see https://github.com/sindresorhus/type-fest/pull/546#issuecomment-1385620838
+	type Type = {
+		outer?: {
+			inner: {
+				field: string;
+			};
+		};
+	};
+	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+	fn({
+		outer: {
+			inner: {
+				field: 'foo',
+			},
+		},
+	});
+}
+
 { // Spec - union - only object
 	type Type = {code: string} | {name: string};
 	const fn = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
@@ -369,5 +387,55 @@ import type {Exact, Opaque} from '../index';
 		// The error before the workaround:
 		// Error: Type 'SpecialName' is not assignable to type 'never'
 		name: 1 as SpecialName,
+	});
+}
+
+// Spec - special test case for deep optional union
+// https://github.com/sindresorhus/type-fest/issues/545
+{
+	type ParameterType = {
+		outer?: {
+			inner?: {
+				union: 'foo' | 'bar';
+			};
+		};
+	};
+
+	const fn = <InputT extends Exact<ParameterType, InputT>>(arguments_: InputT) => arguments_;
+
+	// Test input with declared type
+	type Input = {
+		outer?: {
+			inner?: {
+				union: 'foo' | 'bar';
+			};
+		};
+	};
+	const varWithDeclaredType: Input = {
+		outer: {
+			inner: {
+				union: 'foo',
+			},
+		},
+	};
+	fn(varWithDeclaredType);
+
+	// Test input without declared type
+	const varWithoutDeclaredType = {
+		outer: {
+			inner: {
+				union: 'foo' as const,
+			},
+		},
+	};
+	fn(varWithoutDeclaredType);
+
+	// Test input with plain object
+	fn({
+		outer: {
+			inner: {
+				union: 'foo',
+			},
+		},
 	});
 }
