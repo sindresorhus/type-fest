@@ -2,7 +2,7 @@ import type {BuiltIns, HasMultipleCallSignatures} from './internal';
 import type {Writable} from './writable.js';
 
 /**
-Convert `object`s, `ReadonlyMap`s, `ReadonlySet`s, and `ReadonlyArray`s and all of their keys/elements into mutable structures recursively. Inverse of `ReadonlyDeep<T>`.
+Convert `object`s, `ReadonlyMap`s, `ReadonlySet`s, and `ReadonlyArray`s and all of their keys/elements into mutable structures recursively. The inverse of `ReadonlyDeep<T>`.
 
 This can be used to [store and mutate options within a class](https://github.com/sindresorhus/pageres/blob/4a5d05fca19a5fbd2f53842cbf3eb7b1b63bddd2/source/index.ts#L72), [edit `readonly` objects within tests](https://stackoverflow.com/questions/50703834), [construct a `readonly` object within a function](https://github.com/Microsoft/TypeScript/issues/24509), or to define a single model where the only thing that changes is whether or not some of the keys are writable.
 

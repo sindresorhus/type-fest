@@ -76,7 +76,7 @@ expectType<((foo: number) => string) & WritableObjectDeep<Namespace>>(writableDa
 expectType<string>(writableData.namespace(1));
 expectType<boolean[]>(writableData.namespace.baz);
 
-// These currently aren't readonly due to TypeScript limitations.
+// These currently aren't writable due to TypeScript limitations.
 // @see https://github.com/microsoft/TypeScript/issues/29732
 expectType<NamespaceWithOverload>(writableData.namespaceWithOverload);
 expectType<string>(writableData.namespaceWithOverload(1));
