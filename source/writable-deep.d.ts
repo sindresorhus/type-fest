@@ -22,6 +22,8 @@ writableDeepFoo.b[0] = 'new value';
 writableDeepFoo.b = ['something'];
 ```
 
+Note that types containing overloaded functions are not made deeply writable due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
+
 @see Writable
 @category Object
 @category Array
