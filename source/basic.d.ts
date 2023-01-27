@@ -26,7 +26,7 @@ Matches a JSON array.
 
 @category JSON
 */
-export type JsonArray = JsonValue[];
+export type JsonArray = JsonValue[] | readonly JsonValue[];
 
 /**
 Matches any valid JSON primitive value.
