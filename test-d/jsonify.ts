@@ -47,6 +47,7 @@ expectAssignable<JsonValue>(false);
 expectAssignable<JsonValue>(0);
 expectAssignable<JsonValue>('');
 expectAssignable<JsonValue>([]);
+expectAssignable<JsonValue>([] as const);
 expectAssignable<JsonValue>({});
 expectAssignable<JsonValue>([0]);
 expectAssignable<JsonValue>({a: 0});
