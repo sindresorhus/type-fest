@@ -240,7 +240,7 @@ declare namespace PackageJson {
 	Import map entries of a module, optionally with conditions.
 	*/
 	export type Imports = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
-		[key: `#${string}`]: string | {[key in ExportCondition]: Exports};
+		[key: `#${string}`]: string | {[key in ExportCondition]?: Exports};
 	};
 
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions

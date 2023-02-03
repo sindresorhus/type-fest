@@ -54,6 +54,12 @@ string
 >>
 >(packageJson.cpu);
 expectAssignable<PackageJson.Imports>({'#unicorn': 'unicorn'});
+expectAssignable<PackageJson.Imports>({
+	'#unicorn': {
+		import: {browser: 'unicorn', node: 'pony'},
+		default: 'horse',
+	},
+});
 expectNotAssignable<PackageJson.Imports>({unicorn: 'unicorn'});
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
