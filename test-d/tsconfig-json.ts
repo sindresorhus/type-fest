@@ -12,4 +12,3 @@ expectType<string[] | undefined>(tsConfig.include);
 expectType<TsConfigJson.References[] | undefined>(tsConfig.references);
 expectType<TsConfigJson.TypeAcquisition | undefined>(tsConfig.typeAcquisition);
 expectAssignable<Jsonifiable>(tsConfig);
-
