@@ -188,11 +188,10 @@ declare namespace TsConfigJson {
 			| 'webworker.iterable';
 
 		export type Plugin = {
-			[key: string]: unknown;
 			/**
 			Plugin name.
 			*/
-			name?: string;
+			name: string;
 		};
 
 		export type ImportsNotUsedAsValues =

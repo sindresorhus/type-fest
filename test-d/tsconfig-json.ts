@@ -1,5 +1,5 @@
-import {expectType} from 'tsd';
-import type {TsConfigJson} from '../index';
+import {expectType, expectAssignable} from 'tsd';
+import type {Jsonifiable, TsConfigJson} from '../index';
 
 const tsConfig: TsConfigJson = {};
 
@@ -11,3 +11,4 @@ expectType<string[] | undefined>(tsConfig.files);
 expectType<string[] | undefined>(tsConfig.include);
 expectType<TsConfigJson.References[] | undefined>(tsConfig.references);
 expectType<TsConfigJson.TypeAcquisition | undefined>(tsConfig.typeAcquisition);
+expectAssignable<Jsonifiable>(tsConfig);
