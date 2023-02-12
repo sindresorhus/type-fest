@@ -1,5 +1,5 @@
 import {expectType, expectError} from 'tsd';
-import type {Writable, WritableDeep} from '../index';
+import type {ReadonlyDeep, Writable, WritableDeep} from '../index';
 import type {WritableObjectDeep} from '../source/writable-deep';
 
 type Overloaded = {
@@ -82,3 +82,15 @@ expectType<NamespaceWithOverload>(writableData.namespaceWithOverload);
 expectType<string>(writableData.namespaceWithOverload(1));
 expectType<number>(writableData.namespaceWithOverload('foo', 1));
 expectType<readonly boolean[]>(writableData.namespaceWithOverload.baz);
+
+// Test that WritableDeep is the inverse of ReadonlyDeep
+const fullyWritableData = {
+	array: ['a', 'b'],
+	map: new Map<string, number>(),
+	set: new Set<string>(),
+	object: {
+		date: new Date(),
+		boolean: true,
+	},
+};
+expectType<WritableDeep<ReadonlyDeep<typeof fullyWritableData>>>(fullyWritableData);
