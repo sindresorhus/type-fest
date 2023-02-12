@@ -83,7 +83,7 @@ expectType<string>(writableData.namespaceWithOverload(1));
 expectType<number>(writableData.namespaceWithOverload('foo', 1));
 expectType<readonly boolean[]>(writableData.namespaceWithOverload.baz);
 
-// Test that WritableDeep is the inverse of ReadonlyDeep
+// Test that WritableDeep is the inverse of ReadonlyDeep.
 const fullyWritableData = {
 	array: ['a', 'b'],
 	map: new Map<string, number>(),
