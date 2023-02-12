@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectType, expectError, expectAssignable} from 'tsd';
 import type {ReadonlyDeep, Writable, WritableDeep} from '../index';
 import type {WritableObjectDeep} from '../source/writable-deep';
 
@@ -93,4 +93,4 @@ const fullyWritableData = {
 		boolean: true,
 	},
 };
-expectType<WritableDeep<ReadonlyDeep<typeof fullyWritableData>>>(fullyWritableData);
+expectAssignable<WritableDeep<ReadonlyDeep<typeof fullyWritableData>>>(fullyWritableData);
