@@ -1,4 +1,4 @@
-import type {BuiltIns} from './internal';
+import type {BuiltIns, HasMultipleCallSignatures} from './internal';
 
 /**
 Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
@@ -28,6 +28,8 @@ import data from './main';
 data.foo.push('bar');
 //=> error TS2339: Property 'push' does not exist on type 'readonly string[]'
 ```
+
+Note that types containing overloaded functions are not made deeply readonly due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 
 @category Object
 @category Array
@@ -66,18 +68,3 @@ Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper fo
 type ReadonlyObjectDeep<ObjectType extends object> = {
 	readonly [KeyType in keyof ObjectType]: ReadonlyDeep<ObjectType[KeyType]>
 };
-
-/**
-Test if the given function has multiple call signatures.
-
-Needed to handle the case of a single call signature with properties.
-
-Multiple call signatures cannot currently be supported due to a TypeScript limitation.
-@see https://github.com/microsoft/TypeScript/issues/29732
-*/
-type HasMultipleCallSignatures<T extends (...arguments: any[]) => unknown> =
-	T extends {(...arguments: infer A): unknown; (...arguments: any[]): unknown}
-		? unknown[] extends A
-			? false
-			: true
-		: false;
