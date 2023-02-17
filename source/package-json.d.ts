@@ -224,7 +224,10 @@ declare namespace PackageJson {
 	string
 	>;
 
-	type ExportConditions = {[condition in ExportCondition]: Exports};
+	/**
+	A mapping of conditions and the paths to which they resolve.
+	*/
+	type ExportConditions = {[condition in ExportCondition]?: Exports};
 
 	/**
 	Entry points of a module, optionally with conditions and subpath exports.
@@ -233,14 +236,13 @@ declare namespace PackageJson {
 	| null
 	| string
 	| Array<string | ExportConditions>
-	| ExportConditions
-	| {[path: string]: Exports};
+	| ExportConditions;
 
 	/**
-	Import map entries of a module, optionally with conditions.
+	Import map entries of a module, optionally with conditions and subpath imports.
 	*/
 	export type Imports = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
-		[key: `#${string}`]: string | {[key in ExportCondition]?: Exports};
+		[key: `#${string}`]: Exports;
 	};
 
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions

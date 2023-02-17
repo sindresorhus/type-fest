@@ -57,7 +57,17 @@ expectAssignable<PackageJson.Imports>({'#unicorn': 'unicorn'});
 expectAssignable<PackageJson.Imports>({
 	'#unicorn': {
 		import: {browser: 'unicorn', node: 'pony'},
+		require: ['./fallback-1', './fallback-2', {default: './fallback-3', browser: null}],
+		custom: null,
 		default: 'horse',
+	},
+});
+expectAssignable<PackageJson.Exports>({
+	'./unicorn': {
+		import: {browser: './unicorn.js', node: './pony.js'},
+		require: ['./fallback-1', './fallback-2', {default: './fallback-3', browser: null}],
+		custom: null,
+		default: './horse.js',
 	},
 });
 expectNotAssignable<PackageJson.Imports>({unicorn: 'unicorn'});
