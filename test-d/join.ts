@@ -22,12 +22,13 @@ const emptyInput: Join<[], '.'> = '';
 expectType<''>(emptyInput);
 expectNotAssignable<'foo'>(emptyInput);
 
-// Single input.
-const singleInput: Join<['test'], '.'> = 'test';
+// Single input with string[].
+const singleStringArray = ['test'];
+const singleInput: Join<typeof singleStringArray, '.'> = 'test';
 expectType<string>(singleInput);
 expectNotAssignable<'test'>(singleInput);
 
-// Single input.
+// Single input with const tuple.
 const singleTuple = ['test'] as const;
 const singleTupleJoined: Join<typeof singleTuple, '.'> = 'test';
 expectType<'test'>(singleTupleJoined);
