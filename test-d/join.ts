@@ -22,12 +22,24 @@ const emptyInput: Join<[], '.'> = '';
 expectType<''>(emptyInput);
 expectNotAssignable<'foo'>(emptyInput);
 
-// Typeof of const tuple
+// Single input with string[].
+const singleStringArray = ['test'];
+const singleInput: Join<typeof singleStringArray, '.'> = 'test';
+expectType<string>(singleInput);
+expectNotAssignable<'test'>(singleInput);
+
+// Single input with const tuple.
+const singleTuple = ['test'] as const;
+const singleTupleJoined: Join<typeof singleTuple, '.'> = 'test';
+expectType<'test'>(singleTupleJoined);
+expectNotAssignable<'test.'>(singleTupleJoined);
+
+// Typeof of const tuple.
 const tuple = ['foo', 'bar', 'baz'] as const;
 const joinedTuple: Join<typeof tuple, ','> = 'foo,bar,baz';
 expectType<'foo,bar,baz'>(joinedTuple);
 
-// Typeof of string[]
+// Typeof of string[].
 const stringArray = ['foo', 'bar', 'baz'];
 const joinedStringArray: Join<typeof stringArray, ','> = '';
 expectType<string>(joinedStringArray);

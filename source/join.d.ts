@@ -21,15 +21,15 @@ const path: Join<[1, 2, 3], '.'> = [1, 2, 3].join('.');
 @category Template literal
 */
 export type Join<
-	Strings extends Readonly<Array<string | number>>,
+	Strings extends ReadonlyArray<string | number>,
 	Delimiter extends string,
 > = Strings extends []
 	? ''
-	: Strings extends [string | number]
+	: Strings extends readonly [string | number]
 		? `${Strings[0]}`
 		: Strings extends readonly [
 			string | number,
-			...infer Rest extends Array<string | number>,
+			...infer Rest extends ReadonlyArray<string | number>,
 		]
 			? `${Strings[0]}${Delimiter}${Join<Rest, Delimiter>}`
 			: string;
