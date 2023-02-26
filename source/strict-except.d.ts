@@ -1,4 +1,4 @@
-import type { Except } from "./except";
+import type {Except} from './except';
 
 /**
 Filter out keys from an object - in stricter way.
@@ -7,7 +7,7 @@ It overcomes the fact that typescript errors on excess properties when defining 
 @see https://github.com/sindresorhus/type-fest/issues/556
 @example
 ```
-import { Except } from "type-fest";
+import { Except } from 'type-fest';
 
 type Foo = {
     a: number;
@@ -23,12 +23,12 @@ const foo: Foo = {
     c: true
 }
 
-const fooWithoutA: FooWithoutA = foo; // not error: 
+const fooWithoutA: FooWithoutA = foo; // not error:
 ```
 
 @example
 ```
-import { StrictExcept } from "type-fest";
+import { StrictExcept } from 'type-fest';
 
 type Foo = {
     a: number;
@@ -44,9 +44,8 @@ const foo: Foo = {
     c: true
 }
 
-const fooWithoutA: FooWithoutA = foo; // error: 
+const fooWithoutA: FooWithoutA = foo; // error:
 ```
 
 */
-type StrictExcept<T, K extends keyof T> = Except<T, K> &
-	Partial<Record<K, never>>;
+type StrictExcept<T, K extends keyof T> = Except<T, K> & Partial<Record<K, never>>;
