@@ -47,7 +47,7 @@ This type is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/
 
 This type was proposed to the TypeScript team, which declined it, saying they prefer that libraries implement stricter versions of the built-in types ([microsoft/TypeScript#30825](https://github.com/microsoft/TypeScript/issues/30825#issuecomment-523668235)).
 
-The LaxExcept refers to the standard Except method that permits the assignment of an object with additional properties to an object of a different type.
+The NonStrictExcept refers to the standard Except method that permits the assignment of an object with additional properties to an object of a different type.
 @see https://github.com/sindresorhus/type-fest/issues/556
 
 @category Object
@@ -69,7 +69,7 @@ The StrictExcept method resolves the problem that arises when an object with add
 type StrictExcept<ObjectType, KeysType extends keyof ObjectType> = NonStrictExcept<ObjectType, KeysType> & Partial<Record<KeysType, never>>;
 
 /**
-The Except type is the exported type, which determines the appropriate method to use (LaxExcept or StrictExcept) based on the options provided as the third argument (which is set to true by default).
+The Except type is the exported type, which determines the appropriate method to use (NonStrictExcept or StrictExcept) based on the options provided as the third argument (which is set to true by default).
 x
 @example
 ```
