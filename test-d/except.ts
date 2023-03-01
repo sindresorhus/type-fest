@@ -11,7 +11,7 @@ type Example = {
 	bar: string;
 };
 
-const test: Except<Example, 'bar'> = {foo: 123, bar: 'asdf'};
+const test: Except<Example, 'bar', {strict: false}> = {foo: 123, bar: 'asdf'};
 expectType<number>(test.foo);
 // eslint-disable-next-line @typescript-eslint/dot-notation
 expectType<unknown>(test['bar']);

@@ -33,9 +33,7 @@ IsEqual<KeyType, ExcludeType> extends true ? never :
 
 type ExceptOptions = {
 	/**
-	Setting this to `false` is not recommended.
-
-	@default true
+	@default false
 	*/
 	strict?: boolean;
 };
@@ -58,7 +56,7 @@ type NonStrictExcept<ObjectType, KeysType extends keyof ObjectType> = {
 
 /**
 Create a type from an object type without certain keys - in stricter way.
-When the "strict" option in ExceptOptions is true (by default) StrictExcept will be used.
+When the "strict" option in ExceptOptions is true, StrictExcept will be used.
 
 The StrictExcept method resolves the problem that arises when an object with additional properties is assigned to an object of a different type.
 @see https://github.com/sindresorhus/type-fest/issues/556
@@ -69,19 +67,19 @@ The StrictExcept method resolves the problem that arises when an object with add
 type StrictExcept<ObjectType, KeysType extends keyof ObjectType> = NonStrictExcept<ObjectType, KeysType> & Partial<Record<KeysType, never>>;
 
 /**
-The Except type is the exported type, which determines the appropriate method to use (NonStrictExcept or StrictExcept) based on the options provided as the third argument (which is set to true by default).
-x
+The Except type is the exported type, which determines the appropriate method to use (NonStrictExcept or StrictExcept) based on the options provided as the third argument (which is set to false by default).
+
 @example
 ```
 import {Except} from 'type-fest';
 
 type Foo = {
-	a: number;
-	b: string;
-	c: boolean;
+  a: number;
+  b: string;
+  c: boolean;
 };
 
-type FooWithoutA = Except<Foo, 'a', {strict: false}>;
+type FooWithoutA = Except<Foo, 'a', {strict: false}>; // False by default
 
 const foo: Foo = {
   a: 1,
@@ -102,7 +100,7 @@ type Foo = {
   c: boolean;
 };
 
-type FooWithoutA = Except<Foo, 'a', {strict: true}>; // true by default
+type FooWithoutA = Except<Foo, 'a', {strict: true}>;
 
 const foo: Foo = {
   a: 1,
@@ -113,5 +111,5 @@ const foo: Foo = {
 const fooWithoutA: FooWithoutA = foo; // Error
 //=> StrictExcept<Foo, 'a'>;
  */
-export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {strict: true}> =
-Options['strict'] extends true ? StrictExcept<ObjectType, KeysType> : NonStrictExcept<ObjectType, KeysType>;
+export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {strict: false}> =
+Options['strict'] extends false ? NonStrictExcept<ObjectType, KeysType> : StrictExcept<ObjectType, KeysType>;
