@@ -101,6 +101,7 @@ export type {Replace} from './source/replace';
 export type {Includes} from './source/includes';
 export type {Get} from './source/get';
 export type {LastArrayElement} from './source/last-array-element';
+export type {IsStringLiteral} from './source/is-string-literal';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this';
