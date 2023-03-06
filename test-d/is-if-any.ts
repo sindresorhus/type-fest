@@ -24,4 +24,3 @@ expectType<IfAny<string, 'T', 'F'>>('F');
 expectError<IsAny>(anything);
 // TODO: commented temporarily due to SamVerschueren/tsd#173
 // expectError<IfAny>(anything);
-
