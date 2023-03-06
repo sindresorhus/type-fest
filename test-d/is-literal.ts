@@ -19,8 +19,6 @@ declare const _number: number;
 declare const _bigint: bigint;
 declare const _boolean: boolean;
 declare const _symbol: symbol;
-declare const _null: null;
-declare const _undefined: undefined;
 
 // Literals should be true
 expectType<IsLiteral<typeof stringLiteral>>(true);
@@ -37,6 +35,8 @@ expectType<IsLiteral<typeof _boolean>>(false);
 expectType<IsLiteral<typeof _symbol>>(false);
 expectType<IsLiteral<any>>(false);
 expectType<IsLiteral<never>>(false);
+expectType<IsLiteral<null>>(false);
+expectType<IsLiteral<undefined>>(false);
 
 expectType<IsStringLiteral<typeof stringLiteral>>(true);
 expectType<IsStringLiteral<typeof _string>>(false);
