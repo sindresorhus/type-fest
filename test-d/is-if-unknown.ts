@@ -24,4 +24,3 @@ expectType<IfUnknown<string, 'T', 'F'>>('F');
 expectError<IsUnknown>(_unknown);
 // TODO: commented temporarily due to SamVerschueren/tsd#173
 // expectError<IfUnknown>(_unknown);
-
