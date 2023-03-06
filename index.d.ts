@@ -82,8 +82,6 @@ export type {
 	IsNumericLiteral,
 	IsBooleanLiteral,
 	IsSymbolLiteral,
-	IsUndefinedLiteral,
-	IsNullLiteral,
 } from './source/is-literal';
 
 // Template literal types

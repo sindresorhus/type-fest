@@ -43,17 +43,11 @@ export type IsBooleanLiteral<T> = (
 
 export type IsSymbolLiteral<T> = LiteralCheck<T, symbol>;
 
-export type IsNullLiteral<T> = StringifiedLiteralCheck<T, null>;
-
-export type IsUndefinedLiteral<T> = StringifiedLiteralCheck<T, undefined>;
-
 type IsLiteralTuple<T> = [
 	IsStringLiteral<T>,
 	IsNumericLiteral<T>,
 	IsBooleanLiteral<T>,
 	IsSymbolLiteral<T>,
-	IsNullLiteral<T>,
-	IsUndefinedLiteral<T>,
 ];
 
 export type IsLiteral<T extends Primitive> = Includes<IsLiteralTuple<T>, true>;
