@@ -1,5 +1,5 @@
 import {expectError, expectType} from 'tsd';
-import type {IsNever, IfNever} from '../index';
+import type {IsNever} from '../index';
 
 declare const _never: never;
 declare const something = 'something';
@@ -14,12 +14,5 @@ expectType<IsNever<unknown>>(false);
 expectType<IsNever<null>>(false);
 expectType<IsNever<undefined>>(false);
 
-// `IfNever` should return `true`/`false` if only `T` is specified
-expectType<IfNever<never>>(true);
-expectType<IfNever<never, 'T', 'F'>>('T');
-expectType<IfNever<string>>(false);
-expectType<IfNever<string, 'T', 'F'>>('F');
-
 // Missing generic parameter
 expectError<IsNever>(_never);
-expectError<IfNever>(_never);

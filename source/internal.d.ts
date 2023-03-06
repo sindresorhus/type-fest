@@ -1,7 +1,7 @@
 import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
-import type {IsAny} from './is-if-any';
+import type {IsAny} from './is-any';
 
 /**
 Infer the length of the given array `<T>`.

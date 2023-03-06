@@ -1,5 +1,5 @@
 import {expectError, expectType} from 'tsd';
-import type {IsUnknown, IfUnknown} from '../index';
+import type {IsUnknown} from '../index';
 
 declare const _unknown: unknown;
 declare const something = 'something';
@@ -14,12 +14,5 @@ expectType<IsUnknown<never>>(false);
 expectType<IsUnknown<null>>(false);
 expectType<IsUnknown<undefined>>(false);
 
-// `IfUnknown` should return `true`/`false` if only `T` is specified
-expectType<IfUnknown<unknown>>(true);
-expectType<IfUnknown<unknown, 'T', 'F'>>('T');
-expectType<IfUnknown<string>>(false);
-expectType<IfUnknown<string, 'T', 'F'>>('F');
-
 // Missing generic parameter
 expectError<IsUnknown>(_unknown);
-expectError<IfUnknown>(_unknown);

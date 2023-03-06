@@ -3,7 +3,7 @@ import type {EmptyObject} from './empty-object';
 import type {UndefinedToOptional} from './internal';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
-import type {IsAny} from './is-if-any';
+import type {IsAny} from './is-any';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;

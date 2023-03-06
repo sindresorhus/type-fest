@@ -171,12 +171,12 @@ Click the type names for complete docs.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
-- [`IsAny`](source/is-if-any.d.ts) - Returns a boolean for whether the given type is `any`.
-- [`IfAny`](source/is-if-any.d.ts) - An `If`/`Else` like type that resolves whether the given type is `any`.
-- [`IsNever`](source/is-if-never.d.ts) - Returns a boolean for whether the given type is `never`.
-- [`IfNever`](source/is-if-never.d.ts) - An `If`/`Else` like type that resolves whether the given type is `never`.
-- [`IsUnknown`](source/is-if-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
-- [`IfUnknown`](source/is-if-unknown.d.ts) - An `If`/`Else` like type that resolves whether the given type is `unknown`.
+- [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`.
+- [`IfAny`](source/if-any.d.ts) - An `If`/`Else` like type that resolves whether the given type is `any`.
+- [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`.
+- [`IfNever`](source/if-never.d.ts) - An `If`/`Else` like type that resolves whether the given type is `never`.
+- [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
+- [`IfUnknown`](source/if-unknown.d.ts) - An `If`/`Else` like type that resolves whether the given type is `unknown`.
 
 ### JSON
 
