@@ -16,7 +16,7 @@ expectType<IsAny<undefined>>(false);
 
 // `IfAny` should return `true`/`false` if only `T` is specified
 expectType<IfAny<any>>(true);
-expectType<IfAny<any, true, false>>(true);
+expectType<IfAny<any, 'T', 'F'>>('T');
 expectType<IfAny<string>>(false);
 expectType<IfAny<string, 'T', 'F'>>('F');
 
