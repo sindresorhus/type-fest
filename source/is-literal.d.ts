@@ -13,16 +13,6 @@ type LiteralCheck<T, LiteralType extends Primitive> = (
 			: false
 );
 
-type StringifiedLiteralCheck<T, LiteralType extends null | undefined> = (
-	[T] extends [never] // Must be wider than `never`
-		? false
-		: T extends LiteralType // Safe stringify
-			? `${T}` extends `${LiteralType}` // Must be narrower than `${LiteralType}`
-				? true
-				: false
-			: false
-);
-
 export type IsStringLiteral<T> = LiteralCheck<T, string>;
 
 export type IsNumericLiteral<T> = Includes<[LiteralCheck<T, number>, LiteralCheck<T, bigint>], true>;
