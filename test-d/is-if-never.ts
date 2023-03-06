@@ -22,5 +22,4 @@ expectType<IfNever<string, 'T', 'F'>>('F');
 
 // Missing generic parameter
 expectError<IsNever>(_never);
-// TODO: commented temporarily due to SamVerschueren/tsd#173
-// expectError<IfNever>(_never);
+expectError<IfNever>(_never);

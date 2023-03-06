@@ -22,5 +22,4 @@ expectType<IfAny<string, 'T', 'F'>>('F');
 
 // Missing generic parameter
 expectError<IsAny>(anything);
-// TODO: commented temporarily due to SamVerschueren/tsd#173
-// expectError<IfAny>(anything);
+expectError<IfAny>(anything);

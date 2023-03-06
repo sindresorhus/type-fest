@@ -22,5 +22,4 @@ expectType<IfUnknown<string, 'T', 'F'>>('F');
 
 // Missing generic parameter
 expectError<IsUnknown>(_unknown);
-// TODO: commented temporarily due to SamVerschueren/tsd#173
-// expectError<IfUnknown>(_unknown);
+expectError<IfUnknown>(_unknown);
