@@ -1,4 +1,5 @@
 import type {Primitive} from './primitive';
+import type {Numeric} from './numeric';
 import type {IsNever, IsNotFalse} from './internal';
 
 /** @link https://stackoverflow.com/a/52806744/10292952 */
@@ -14,14 +15,15 @@ type LiteralCheck<T, LiteralType extends Primitive> = (
 
 type LiteralChecks<T, LiteralUnionType> = (
 	// Conditional type to force union distribution
-	LiteralUnionType extends Primitive
-		? IsNotFalse<LiteralCheck<T, LiteralUnionType>>
-		: false
+	IsNotFalse<LiteralUnionType extends Primitive
+		? LiteralCheck<T, LiteralUnionType>
+		: never
+	>
 );
 
 export type IsStringLiteral<T> = LiteralCheck<T, string>;
 
-export type IsNumericLiteral<T> = IsNotFalse<LiteralCheck<T, number> | LiteralCheck<T, bigint>>;
+export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
 
 export type IsBooleanLiteral<T> = LiteralCheck<T, boolean>;
 
