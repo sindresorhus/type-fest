@@ -1,37 +1,29 @@
 import type {Primitive} from './primitive';
-import type {Numeric} from './numeric';
-import type {IsNotFalse} from './internal';
+import type {IsNever, IsNotFalse} from './internal';
 
 /** @link https://stackoverflow.com/a/52806744/10292952 */
 type LiteralCheck<T, LiteralType extends Primitive> = (
-	[T] extends [never] // Must be wider than `never`
-		? false
-		: T extends LiteralType // Must be narrower than `LiteralType`
-			? LiteralType extends T // Cannot be wider than `LiteralType`
+	IsNever<T> extends false // Must be wider than `never`
+		? [T] extends [LiteralType] // Must be narrower than `LiteralType`
+			? [LiteralType] extends [T] // Cannot be wider than `LiteralType`
 				? false
 				: true
 			: false
+		: false
 );
 
-type LiteralChecks<T, Union> = Union extends Primitive ? IsNotFalse<LiteralCheck<T, Union>> : false;
+type LiteralChecks<T, LiteralUnionType> = (
+	// Conditional type to force union distribution
+	LiteralUnionType extends Primitive
+		? IsNotFalse<LiteralCheck<T, LiteralUnionType>>
+		: false
+);
 
 export type IsStringLiteral<T> = LiteralCheck<T, string>;
 
-export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
+export type IsNumericLiteral<T> = IsNotFalse<LiteralCheck<T, number> | LiteralCheck<T, bigint>>;
 
-export type IsBooleanLiteral<T> = (
-	[T] extends [never] // Must be wider than `never`
-		? false
-		: [T] extends [true]
-			? boolean extends T // Must be narrower than `boolean`
-				? false
-				: true
-			: [T] extends [false]
-				? boolean extends T // Must be narrower than `boolean`
-					? false
-					: true
-				: false
-);
+export type IsBooleanLiteral<T> = LiteralCheck<T, boolean>;
 
 export type IsSymbolLiteral<T> = LiteralCheck<T, symbol>;
 
