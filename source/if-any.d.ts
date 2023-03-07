@@ -11,9 +11,18 @@ Useful for disallowing `any`s to be passed to a function or used in a type utili
 ```
 import type {IfAny} from 'type-fest';
 
-function get<O extends IfAny<O, never, Record<string, number>>, K extends keyof O = keyof O>(obj: O, key: K) {
+const typedObject = {a: 1, b: 2} as const;
+const anyObject: any = {a: 1, b: 2};
+
+function get<O extends IfAny<O, {}, Record<string, number>>, K extends keyof O = keyof O>(obj: O, key: K) {
 	return obj[key];
 }
+
+const typedA = get(typedObject, 'a');
+//=> 1
+
+const anyA = get(anyObject, 'a');
+//=> any
 ```
 
 @category Utilities

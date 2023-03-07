@@ -9,19 +9,18 @@ Useful for disallowing `any`s to be passed to a function or used in a type utili
 ```
 import type {IsAny} from 'type-fest';
 
-type Must<T> = (
-	IsAny<T> extends false
-		? IsNever<T> extends false
-			? IsUnknown<T> extends false
-				? IsUndefined<T> extends false
-					? IsNull<T> extends false
-						? T
-						: never
-					: never
-				: never
-			: never
-		: never
-);
+const typedObject = {a: 1, b: 2} as const;
+const anyObject: any = {a: 1, b: 2};
+
+function get<O extends (IsAny<O> extends true ? {} : Record<string, number>), K extends keyof O = keyof O>(obj: O, key: K) {
+	return obj[key];
+}
+
+const typedA = get(typedObject, 'a');
+//=> 1
+
+const anyA = get(anyObject, 'a');
+//=> any
 ```
 
 @category Utilities
