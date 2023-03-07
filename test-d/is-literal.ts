@@ -9,7 +9,7 @@ import type {
 
 const stringLiteral = '';
 const numberLiteral = 1;
-// @ts-expect-error (suppress BigInt literal tsd warning)
+// @ts-expect-error: suppress BigInt literal tsd warning
 const bigintLiteral = 1n;
 const booleanLiteral = true;
 const symbolLiteral = Symbol('');
