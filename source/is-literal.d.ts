@@ -24,10 +24,20 @@ type LiteralChecks<T, LiteralUnionType> = (
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
+Useful for constraining strings to be a string literal, or for providing strongly-typed string manipulation functions.
+
 @example
 ```
 import type {IsStringLiteral} from 'type-fest';
 
+type CapitalizedString<T extends string> = IsStringLiteral<T> extends true ? Capitalize<T> : string;
+
+function capitalize<T extends Readonly<string>>(input: T): CapitalizedString<T> {
+	return (input.slice(0, 1).toUpperCase() + input.slice(1)) as CapitalizedString<T>;
+}
+
+const output = capitalize('hello, world!');
+//=> 'Hello, world!'
 ```
 
 @category Utilities
