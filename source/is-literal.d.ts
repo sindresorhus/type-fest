@@ -24,7 +24,7 @@ type LiteralChecks<T, LiteralUnionType> = (
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
-Useful for constraining strings to be a string literal, or for providing strongly-typed string manipulation functions.
+Useful for constraining strings to be a string literal, or for providing strongly-typed string manipulation functions, as well as constructing parsers and ASTs.
 
 @example
 ```
@@ -48,6 +48,8 @@ export type IsStringLiteral<T> = LiteralCheck<T, string>;
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
+Useful for constructing parsers and ASTs.
+
 @example
 ```
 import type {IsNumericLiteral} from 'type-fest';
@@ -60,6 +62,8 @@ export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
 
 /**
 Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+
+Useful for constructing parsers and ASTs.
 
 @example
 ```
@@ -74,9 +78,11 @@ export type IsBooleanLiteral<T> = LiteralCheck<T, boolean>;
 /**
 Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
+Useful for constructing parsers and ASTs.
+
 @example
 ```
-import type {IsLiteral} from 'type-fest';
+import type {IsSymbolLiteral} from 'type-fest';
 
 ```
 
