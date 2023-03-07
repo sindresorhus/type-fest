@@ -27,16 +27,18 @@ expectType<IsLiteral<typeof bigintLiteral>>(true);
 expectType<IsLiteral<typeof booleanLiteral>>(true);
 expectType<IsLiteral<typeof symbolLiteral>>(true);
 
-// Primitives and others should be false
+// Primitives should be false
 expectType<IsLiteral<typeof _string>>(false);
 expectType<IsLiteral<typeof _number>>(false);
 expectType<IsLiteral<typeof _bigint>>(false);
 expectType<IsLiteral<typeof _boolean>>(false);
 expectType<IsLiteral<typeof _symbol>>(false);
-expectType<IsLiteral<any>>(false);
-expectType<IsLiteral<never>>(false);
+
+// Null, undefined, and non-primitives should fail all literal checks
 expectType<IsLiteral<null>>(false);
 expectType<IsLiteral<undefined>>(false);
+expectType<IsLiteral<any>>(false);
+expectType<IsLiteral<never>>(false);
 
 expectType<IsStringLiteral<typeof stringLiteral>>(true);
 expectType<IsStringLiteral<typeof _string>>(false);
