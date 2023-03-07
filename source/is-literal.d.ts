@@ -32,6 +32,7 @@ import type {IsStringLiteral} from 'type-fest';
 
 type CapitalizedString<T extends string> = IsStringLiteral<T> extends true ? Capitalize<T> : string;
 
+// https://github.com/yankeeinlondon/native-dash/blob/master/src/capitalize.ts
 function capitalize<T extends Readonly<string>>(input: T): CapitalizedString<T> {
 	return (input.slice(0, 1).toUpperCase() + input.slice(1)) as CapitalizedString<T>;
 }
