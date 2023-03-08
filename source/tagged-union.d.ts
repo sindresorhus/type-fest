@@ -1,5 +1,5 @@
 /**
-Utility type to create a tagged union with given tag
+Create a union of types that share a common discriminant property.
 
 Use-case: A shorter way to declare tagged unions with multiple members.
 
@@ -7,28 +7,38 @@ Use-case: A shorter way to declare tagged unions with multiple members.
 ```
 import type {TaggedUnion} from 'type-fest';
 
-type EventMessage = TaggedUnion<
-  'tag',
-  {
-    NavigationStateChanged: {
-      state: 'AllowBack' | 'AllowClose'
-      navigation?: string
-    }
-    OpenExternalUrl: {
-      url: string
-    }
-    ButtonVisibilityToggled: {
-      visible: boolean
-    }
-    WebshopPurchaseButtonPressed: { price: string }
-  }
->
+type Tagged<Fields extends Record<string, unknown> = TaggedUnion<'type', Fields>
 
-// Example usage
-const message: EventMessage = {
-  tag: 'NavigationStateChanged',
-  state: 'AllowClose',
-};
+// The TaggedUnion utility reduces the amount of boilerplate needed to create a tagged union with multiple members, making the code more concise.
+type EventMessage = Tagged<{
+	OpenExternalUrl: {
+		url: string;
+		id: number;
+		language: string;
+	};
+	ToggleBackButtonVisibility: {
+		visible: boolean;
+	};
+	PurchaseButtonPressed: {
+		price: number;
+		time: Date;
+	};
+	NavigationStateChanged: {
+		navigation?: string;
+	};
+}>;
+
+// Here is the same type created without this utility.
+type EventMessage =
+	| {
+		type: 'OpenExternalUrl';
+		url: string;
+		id: number;
+		language: string;
+	}
+	| {type: 'ToggleBackButtonVisibility'; visible: boolean}
+	| {type: 'PurchaseButtonPressed'; price: number; time: Date}
+	| {type: 'NavigationStateChanged'; navigation?: string};
 ```
 
 @category Utilities
