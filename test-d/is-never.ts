@@ -13,6 +13,7 @@ expectType<IsNever<any>>(false);
 expectType<IsNever<unknown>>(false);
 expectType<IsNever<null>>(false);
 expectType<IsNever<undefined>>(false);
+expectType<IsNever<void>>(false);
 
 // Missing generic parameter
 expectError<IsNever>(_never);

@@ -13,6 +13,7 @@ expectType<IsAny<never>>(false);
 expectType<IsAny<unknown>>(false);
 expectType<IsAny<null>>(false);
 expectType<IsAny<undefined>>(false);
+expectType<IsAny<void>>(false);
 
 // Missing generic parameter
 expectError<IsAny>(anything);
