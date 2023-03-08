@@ -104,6 +104,27 @@ Returns a boolean for whether the given type is a [literal type](https://www.typ
 ```
 import type {IsLiteral} from 'type-fest';
 
+// https://github.com/inocan-group/inferred-types/blob/master/src/types/string-literals/StripLeading.ts
+export type StripLeading<A, B> =
+	A extends string
+		? B extends string
+			? IsLiteral<A> extends true
+				? string extends B ? never : A extends `${B & string}${infer After}` ? After : A
+				: string
+			: A
+		: A;
+
+function stripLeading<Input extends string, Strip extends string>(input: Input, strip: Strip) {
+	return input.replace(`^${strip}`, '') as StripLeading<Input, Strip>;
+}
+
+stripLeading('abc123', 'abc');
+//=> '123'
+
+const str = 'abc123' as string;
+
+stripLeading(str, 'abc');
+//=> string
 ```
 
 @category Utilities
