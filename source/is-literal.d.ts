@@ -90,6 +90,36 @@ Useful for type utilities, such as when constructing parsers and ASTs.
 ```
 import type {IsNumericLiteral} from 'type-fest';
 
+// https://github.com/inocan-group/inferred-types/blob/master/src/types/boolean-logic/EndsWith.ts
+type EndsWith<TValue, TEndsWith extends string> =
+	TValue extends string
+		? IsStringLiteral<TEndsWith> extends true
+			? IsStringLiteral<TValue> extends true
+				? TValue extends `${string}${TEndsWith}`
+					? true
+					: false
+				: boolean
+			: boolean
+		: TValue extends number
+			? IsNumericLiteral<TValue> extends true
+				? EndsWith<`${TValue}`, TEndsWith>
+				: false
+			: false;
+
+function endsWith<Input extends string | number, End extends string>(input: Input, end: End) {
+	return `${input}`.endsWith(end) as EndsWith<Input, End>;
+}
+
+endsWith('abc', 'c');
+//=> true
+
+endsWith(123456, '456');
+//=> true
+
+const end = '123' as string;
+
+endsWith('abc123', end);
+//=> boolean
 ```
 
 @category Utilities
