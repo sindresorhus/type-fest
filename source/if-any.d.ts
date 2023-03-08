@@ -5,7 +5,7 @@ If the given type `T` is `any`, the returned type is `TypeIfAny`. Otherwise, the
 
 @link https://stackoverflow.com/a/49928360/1490091
 
-Useful for disallowing `any`s to be passed to a function or used in a type utility.
+Useful in type utilities, such as disallowing `any`s to be passed to a function.
 
 @example
 ```

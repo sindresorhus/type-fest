@@ -3,7 +3,7 @@ Returns a boolean for whether the given type is `any`.
 
 @link https://stackoverflow.com/a/49928360/1490091
 
-Useful for disallowing `any`s to be passed to a function or used in a type utility.
+Useful in type utilities, such as disallowing `any`s to be passed to a function.
 
 @example
 ```
