@@ -84,7 +84,9 @@ export type IsStringLiteral<T> = LiteralCheck<T, string>;
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
-Useful for type utilities, such as when constructing parsers and ASTs.
+Useful for:
+	- providing strongly-typed functions when given literal arguments
+	- type utilities, such as when constructing parsers and ASTs
 
 @example
 ```
