@@ -24,7 +24,10 @@ type LiteralChecks<T, LiteralUnionType> = (
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
-Useful for constraining strings to be a string literal, or for providing strongly-typed string manipulation functions, as well as constructing parsers and ASTs.
+Useful for:
+	- providing strongly-typed string manipulation functions
+	- constraining strings to be a string literal
+	- type utilities, such as when constructing parsers and ASTs
 
 @example
 ```
