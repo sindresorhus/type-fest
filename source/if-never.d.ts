@@ -20,6 +20,7 @@ type And<A, B> =
 			: false
 		: false;
 
+// https://github.com/andnp/SimplyTyped/blob/master/src/types/strings.ts
 type AreStringsEqual<A extends string, B extends string> =
 	And<
 		IfNever<Exclude<A, B>>,
