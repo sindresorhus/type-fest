@@ -2,7 +2,23 @@ import type {Primitive} from './primitive';
 import type {Numeric} from './numeric';
 import type {IsNever, IsNotFalse} from './internal';
 
-/** @link https://stackoverflow.com/a/52806744/10292952 */
+/**
+Returns a boolean for whether the given type `T` is the specified `LiteralType`.
+
+@link https://stackoverflow.com/a/52806744/10292952
+
+@example
+```
+LiteralCheck<1, number>
+//=> true
+
+LiteralCheck<number, number>
+//=> false
+
+LiteralCheck<1, string>
+//=> false
+```
+*/
 type LiteralCheck<T, LiteralType extends Primitive> = (
 	IsNever<T> extends false // Must be wider than `never`
 		? [T] extends [LiteralType] // Must be narrower than `LiteralType`
@@ -13,8 +29,25 @@ type LiteralCheck<T, LiteralType extends Primitive> = (
 		: false
 );
 
+/**
+Returns a boolean for whether the given type `T` is one of the specified literal types in `LiteralUnionType`.
+
+@example
+```
+LiteralChecks<1, Numeric>
+//=> true
+
+LiteralChecks<1n, Numeric>
+//=> true
+
+LiteralChecks<bigint, Numeric>
+//=> false
+```
+*/
 type LiteralChecks<T, LiteralUnionType> = (
-	// Conditional type to force union distribution
+	// Conditional type to force union distribution.
+	// If `T` is none of the literal types in the union `LiteralUnionType`, then `LiteralCheck<T, LiteralType>` will evaluate to `false` for the whole union.
+	// If `T` is one of the literal types in the union, it will evaluate to `boolean` (i.e. `true | false`)
 	IsNotFalse<LiteralUnionType extends Primitive
 		? LiteralCheck<T, LiteralUnionType>
 		: never
