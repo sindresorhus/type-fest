@@ -1,5 +1,4 @@
-/** Returns a boolean for whether the given type is `null`. */
-type IsNull<T> = [T] extends [null] ? true : false;
+import type {IsNull} from './internal';
 
 /**
 Returns a boolean for whether the given type is `unknown`.

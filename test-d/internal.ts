@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsWhitespace, IsNumeric} from '../source/internal';
+import type {IsWhitespace, IsNumeric, IsNull} from '../source/internal';
 
 expectType<IsWhitespace<''>>(false);
 expectType<IsWhitespace<' '>>(true);
@@ -27,3 +27,12 @@ expectType<IsNumeric<' 1.2'>>(false);
 expectType<IsNumeric<'1 2'>>(false);
 expectType<IsNumeric<'1_200'>>(false);
 expectType<IsNumeric<' 1 '>>(false);
+
+// https://www.typescriptlang.org/docs/handbook/type-compatibility.html
+expectType<IsNull<null>>(true);
+expectType<IsNull<any>>(true);
+expectType<IsNull<never>>(true);
+expectType<IsNull<undefined>>(false); // Depends on `strictNullChecks`
+expectType<IsNull<unknown>>(false);
+expectType<IsNull<void>>(false);
+expectType<IsNull<{}>>(false);
