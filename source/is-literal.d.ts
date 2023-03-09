@@ -170,12 +170,31 @@ export type IsBooleanLiteral<T> = LiteralCheck<T, boolean>;
 /**
 Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
-Useful for type utilities, such as when constructing parsers and ASTs.
+Useful for:
+	- providing strongly-typed functions when given literal arguments
+	- type utilities, such as when constructing parsers and ASTs
 
 @example
 ```
 import type {IsSymbolLiteral} from 'type-fest';
 
+type Get<Obj extends Record<symbol, number>, Key extends keyof Obj> =
+	IsSymbolLiteral<Key> extends true
+		? Obj[Key]
+		: number;
+
+function get<Obj extends Record<symbol, number>, Key extends keyof Obj>(o: Obj, key: Key) {
+	return o[key] as Get<Obj, Key>;
+}
+
+const symbolLiteral = Symbol('literal');
+const symbolValue: symbol = Symbol('value');
+
+get({[symbolLiteral]: 1} as const, symbolLiteral);
+//=> 1
+
+get({[symbolValue]: 1} as const, symbolValue);
+//=> number
 ```
 
 @category Utilities
