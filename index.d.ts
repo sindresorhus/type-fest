@@ -76,6 +76,13 @@ export type {HasRequiredKeys} from './source/has-required-keys';
 export type {Spread} from './source/spread';
 export type {TupleToUnion} from './source/tuple-to-union';
 export type {IsEqual} from './source/is-equal';
+export type {
+	IsLiteral,
+	IsStringLiteral,
+	IsNumericLiteral,
+	IsBooleanLiteral,
+	IsSymbolLiteral,
+} from './source/is-literal';
 export type {IsAny} from './source/is-any';
 export type {IfAny} from './source/if-any';
 export type {IsNever} from './source/is-never';

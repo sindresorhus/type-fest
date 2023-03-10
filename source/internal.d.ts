@@ -243,6 +243,11 @@ export type HasMultipleCallSignatures<T extends (...arguments: any[]) => unknown
 		: false;
 
 /**
+Returns a boolean for whether the given `boolean` is not `false`.
+*/
+export type IsNotFalse<T extends boolean> = [T] extends [false] ? false : true;
+
+/**
 Returns a boolean for whether the given type is `null`.
 */
 export type IsNull<T> = [T] extends [null] ? true : false;
