@@ -78,6 +78,7 @@ const output = capitalize('hello, world!');
 ```
 
 @category Utilities
+@category Type Guard
 */
 export type IsStringLiteral<T> = LiteralCheck<T, string>;
 
@@ -125,6 +126,7 @@ endsWith('abc123', end);
 ```
 
 @category Utilities
+@category Type Guard
 */
 export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
 
@@ -164,6 +166,7 @@ const eitherId = getId({asString: runtimeBoolean});
 ```
 
 @category Utilities
+@category Type Guard
 */
 export type IsBooleanLiteral<T> = LiteralCheck<T, boolean>;
 
@@ -198,6 +201,7 @@ get({[symbolValue]: 1} as const, symbolValue);
 ```
 
 @category Utilities
+@category Type Guard
 */
 export type IsSymbolLiteral<T> = LiteralCheck<T, symbol>;
 
@@ -243,5 +247,6 @@ stripLeading(str, 'abc');
 ```
 
 @category Utilities
+@category Type Guard
 */
 export type IsLiteral<T extends Primitive> = IsNotFalse<IsLiteralUnion<T>>;
