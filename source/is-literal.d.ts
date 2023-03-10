@@ -1,6 +1,7 @@
 import type {Primitive} from './primitive';
 import type {Numeric} from './numeric';
-import type {IsNever, IsNotFalse} from './internal';
+import type {IsNotFalse} from './internal';
+import type {IsNever} from './is-never';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.
