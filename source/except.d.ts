@@ -63,7 +63,6 @@ The StrictExcept method resolves the problem that arises when an object with add
 
 @category Object
 */
-
 type StrictExcept<ObjectType, KeysType extends keyof ObjectType> = NonStrictExcept<ObjectType, KeysType> & Partial<Record<KeysType, never>>;
 
 /**
