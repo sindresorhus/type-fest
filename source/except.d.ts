@@ -74,17 +74,17 @@ The Except type is the exported type, which determines the appropriate method to
 import {Except} from 'type-fest';
 
 type Foo = {
-  a: number;
-  b: string;
-  c: boolean;
+	a: number;
+	b: string;
+	c: boolean;
 };
 
 type FooWithoutA = Except<Foo, 'a', {strict: false}>; // False by default
 
 const foo: Foo = {
-  a: 1,
-  b: 'b',
-  c: true,
+	a: 1,
+	b: 'b',
+	c: true,
 };
 
 const fooWithoutA: FooWithoutA = foo; // No error
@@ -95,21 +95,21 @@ const fooWithoutA: FooWithoutA = foo; // No error
 import {Except} from 'type-fest';
 
 type Foo = {
-  a: number;
-  b: string;
-  c: boolean;
+	a: number;
+	b: string;
+	c: boolean;
 };
 
 type FooWithoutA = Except<Foo, 'a', {strict: true}>;
 
 const foo: Foo = {
-  a: 1,
-  b: 'b',
-  c: true,
+	a: 1,
+	b: 'b',
+	c: true,
 };
 
 const fooWithoutA: FooWithoutA = foo; // Error
 //=> StrictExcept<Foo, 'a'>;
- */
+*/
 export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {strict: false}> =
 Options['strict'] extends false ? NonStrictExcept<ObjectType, KeysType> : StrictExcept<ObjectType, KeysType>;
