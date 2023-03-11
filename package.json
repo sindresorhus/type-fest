@@ -49,5 +49,10 @@
 			"@typescript-eslint/no-redeclare": "off",
 			"@typescript-eslint/no-confusing-void-expression": "off"
 		}
+	},
+	"tsd": {
+		"compilerOptions": {
+			"noUnusedLocals": false
+		}
 	}
 }
