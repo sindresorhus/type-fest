@@ -20,7 +20,7 @@ Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/class
 export type AbstractClass<T, Arguments extends unknown[] = any[]> = AbstractConstructor<T, Arguments> & {prototype: T};
 
 /**
-Matches an [`abstract class constructor`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#abstract-construct-signatures).
+Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#abstract-construct-signatures) constructor.
 
 @category Class
 */
