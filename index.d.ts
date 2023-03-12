@@ -83,6 +83,10 @@ export type {
 	IsBooleanLiteral,
 	IsSymbolLiteral,
 } from './source/is-literal';
+export type {RecordValuesOf} from './source/record-values-of';
+export type {NonRecordKeysOf} from './source/non-record-keys-of';
+export type {CascadeOptional} from './source/cascade-optional';
+export type {DeepFlattenRecord} from './source/deep-flatten-record';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';

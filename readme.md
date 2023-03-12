@@ -178,6 +178,10 @@ Click the type names for complete docs.
 - [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+- [`CascadeOptional`](source/cascade-optional.d.ts) - Creates a type that applies `Partial` to all fields of all optional keys that are Records.
+- [`NonRecordKeysOf`](source/non-record-keys-of.d.ts) - Get all keys from the given type that are not Records.
+- [`RecordValuesOf`](source/record-values-of.d.ts) - Get all values from the given type that are Records.
+- [`DeepFlattenRecord`](source/deep-flatten-record.d.ts) - Create a type that flattens all nested Records into a single level.
 
 ### JSON
 
