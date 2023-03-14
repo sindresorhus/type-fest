@@ -178,6 +178,7 @@ Click the type names for complete docs.
 - [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+- [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 
 ### JSON
 
