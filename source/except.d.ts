@@ -37,13 +37,13 @@ type ExceptOptions = {
 
 	@default false
 	*/
-	strict?: boolean;
+	requireExactProps?: boolean;
 };
 
 /**
 Create a type from an object type without certain keys.
 
-Use option `strict: true` to disallow assigning additional properties to this type.
+Use option `requireExactProps: true` to disallow assigning additional properties to this type. Notice that any omitted properties in the resulting type will be present as `undefined`.
 
 This type is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type). The `Omit` type does not restrict the omitted keys to be keys present on the given type, while `Except` does. The benefits of a stricter type are avoiding typos and allowing the compiler to pick up on rename refactors automatically.
 
@@ -64,7 +64,7 @@ type FooWithoutA = Except<Foo, 'a'>;
 const fooWithoutA: FooWithoutA = {a: 1, b: '2'};
 //=> errors: 'a' does not exist in type '{ b: string; }'
 
-type FooWithoutB = Except<Foo, 'b', {strict: true}>;
+type FooWithoutB = Except<Foo, 'b', {requireExactProps: true}>;
 //=> {a: number} & Partial<Record<"b", never>>
 
 const fooWithoutB: FooWithoutB = {a: 1, b: '2'};
@@ -73,8 +73,8 @@ const fooWithoutB: FooWithoutB = {a: 1, b: '2'};
 
 @category Object
 */
-export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {strict: false}> = {
+export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {requireExactProps: false}> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
-} & (Options['strict'] extends true
+} & (Options['requireExactProps'] extends true
 	? Partial<Record<KeysType, never>>
 	: {});
