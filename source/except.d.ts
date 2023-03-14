@@ -41,9 +41,7 @@ type ExceptOptions = {
 };
 
 /**
-Create a type from an object type without certain keys.
-
-Use option `requireExactProps: true` to disallow assigning additional properties to this type. Notice that any omitted properties in the resulting type will be present as `undefined`.
+Create a type from an object type without certain keys. Use option `requireExactProps: true` to disallow assigning additional properties to this type. Note that any omitted properties in the resulting type will be present in suggestions as `undefined`.
 
 This type is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type). The `Omit` type does not restrict the omitted keys to be keys present on the given type, while `Except` does. The benefits of a stricter type are avoiding typos and allowing the compiler to pick up on rename refactors automatically.
 
