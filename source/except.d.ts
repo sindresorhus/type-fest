@@ -32,7 +32,9 @@ type Filter<KeyType, ExcludeType> = IsEqual<KeyType, ExcludeType> extends true ?
 type ExceptOptions = {
 	/**
 	Disallow assigning non-specified properties.
+
 	Setting this to `false` is not recommended. Included for backwards-compatability.
+
 	@default false
 	*/
 	strict?: boolean;
