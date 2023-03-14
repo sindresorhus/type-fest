@@ -43,6 +43,7 @@ endIfEqual('abc', '123');
 //=> void
 ```
 
+@category Type Guard
 @category Utilities
 */
 export type IsNever<T> = [T] extends [never] ? true : false;

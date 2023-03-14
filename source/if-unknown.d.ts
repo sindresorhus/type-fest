@@ -40,6 +40,7 @@ store.execute((state, payload) => ({value: state.value + payload}), someExternal
 //=> Errors: `action` is `(state: TState) => TState`
 ```
 
+@category Type Guard
 @category Utilities
 */
 export type IfUnknown<T, TypeIfUnknown = true, TypeIfNotUnknown = false> = (

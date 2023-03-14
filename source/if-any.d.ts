@@ -25,6 +25,7 @@ const anyA = get(anyObject, 'a');
 //=> any
 ```
 
+@category Type Guard
 @category Utilities
 */
 export type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = (

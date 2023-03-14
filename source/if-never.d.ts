@@ -45,6 +45,7 @@ endIfEqual('abc', '123');
 //=> void
 ```
 
+@category Type Guard
 @category Utilities
 */
 export type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = (
