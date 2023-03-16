@@ -227,16 +227,20 @@ declare namespace TsConfigJson {
 			| 'node'
 			| 'node16'
 			| 'nodenext'
+			| 'bundler'
 			// Pascal-cased alternatives
 			| 'Classic'
 			| 'Node'
 			| 'Node16'
-			| 'NodeNext';
+			| 'NodeNext'
+			| 'Bundler';
 
 		export type ModuleDetection =
 			| 'auto'
 			| 'legacy'
 			| 'force';
+
+		export type IgnoreDeprecations = '5.0';
 	}
 
 	export type CompilerOptions = {
@@ -802,6 +806,7 @@ declare namespace TsConfigJson {
 		Specify emit/checking behavior for imports that are only used for types.
 
 		@default 'remove'
+		@deprecated Use `verbatimModuleSyntax` instead.
 		*/
 		importsNotUsedAsValues?: CompilerOptions.ImportsNotUsedAsValues;
 
@@ -942,6 +947,7 @@ declare namespace TsConfigJson {
 		Preserve unused imported values in the JavaScript output that would otherwise be removed.
 
 		@default true
+		@deprecated Use `verbatimModuleSyntax` instead.
 		*/
 		preserveValueImports?: boolean;
 
@@ -956,6 +962,51 @@ declare namespace TsConfigJson {
 		@default 'auto'
 		*/
 		moduleDetection?: CompilerOptions.ModuleDetection;
+
+		/**
+		Allows TypeScript files to import each other with a TypeScript-specific extension like .ts, .mts, or .tsx.
+
+		@default false
+		*/
+		allowImportingTsExtensions?: boolean;
+
+		/**
+		Forces TypeScript to consult the exports field of package.json files if it ever reads from a package in node_modules.
+
+		@default false
+		*/
+		resolvePackageJsonExports?: boolean;
+
+		/**
+		Forces TypeScript to consult the imports field of package.json files when performing a lookup that starts with # from a file whose ancestor directory contains a package.json.
+
+		@default false
+		*/
+		resolvePackageJsonImports?: boolean;
+
+		/**
+		Suppress errors for file formats that TypeScript does not understand.
+
+		@default false
+		*/
+		allowArbitraryExtensions?: boolean;
+
+		/**
+		List of additional conditions that should succeed when TypeScript resolves from package.json.
+		*/
+		customConditions?: string[];
+
+		/**
+		Anything that uses the type modifier is dropped entirely.
+
+		@default false
+		*/
+		verbatimModuleSyntax?: boolean;
+
+		/**
+		Suppress deprecation warnings
+		 */
+		ignoreDeprecations?: CompilerOptions.IgnoreDeprecations;
 	};
 
 	namespace WatchOptions {
@@ -1091,7 +1142,7 @@ export type TsConfigJson = {
 	/**
 	Path to base configuration file to inherit from.
 	*/
-	extends?: string;
+	extends?: string | string[];
 
 	/**
 	If no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`. When a `files` property is specified, only those files and those specified by `include` are included.
