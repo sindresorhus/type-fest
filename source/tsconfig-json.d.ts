@@ -1005,7 +1005,7 @@ declare namespace TsConfigJson {
 
 		/**
 		Suppress deprecation warnings
-		 */
+		*/
 		ignoreDeprecations?: CompilerOptions.IgnoreDeprecations;
 	};
 
