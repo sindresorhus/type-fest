@@ -198,8 +198,8 @@ type ShouldBeTrue = IsAny<any> extends true ? true : false;
 type ShouldBeFalse = IfAny<'not any'>;
 //=> false
 
-type ShouldBeNever = IfAny<'not any', 'not never', never>;
-//=> never
+type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
+//=> 'never'
 ```
 
 - [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).

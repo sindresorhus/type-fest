@@ -1,28 +1,24 @@
 import type {IsAny} from './is-any';
 
 /**
+An `If`/`Else`-like type that resolves depending on whether the given type is `any`.
+
 If the given type `T` is `any`, the returned type is `TypeIfAny`. Otherwise, the return type is `TypeIfNotAny`. If only `T` is specified, `TypeIfAny` will be `true` and `TypeIfNotAny` will be false.
 
-@link https://stackoverflow.com/a/49928360/1490091
-
-Useful in type utilities, such as disallowing `any`s to be passed to a function.
+@see IsAny
 
 @example
 ```
-import type {IfAny} from 'type-fest';
+import type {IsAny, IfAny} from 'type-fest';
 
-const typedObject = {a: 1, b: 2} as const;
-const anyObject: any = {a: 1, b: 2};
+type ShouldBeTrue = IsAny<any> extends true ? true : false;
+//=> true
 
-function get<O extends IfAny<O, {}, Record<string, number>>, K extends keyof O = keyof O>(obj: O, key: K) {
-	return obj[key];
-}
+type ShouldBeFalse = IfAny<'not any'>;
+//=> false
 
-const typedA = get(typedObject, 'a');
-//=> 1
-
-const anyA = get(anyObject, 'a');
-//=> any
+type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
+//=> 'never'
 ```
 
 @category Type Guard
