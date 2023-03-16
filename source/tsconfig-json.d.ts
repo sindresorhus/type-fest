@@ -248,6 +248,7 @@ declare namespace TsConfigJson {
 		The character set of the input files.
 
 		@default 'utf8'
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		charset?: string;
 
@@ -406,7 +407,7 @@ declare namespace TsConfigJson {
 		/**
 		Specifies the end of line sequence to be used when emitting files: 'crlf' (Windows) or 'lf' (Unix).
 
-		Default: Platform specific
+		@default 'LF'
 		*/
 		newLine?: CompilerOptions.NewLine;
 
@@ -477,6 +478,7 @@ declare namespace TsConfigJson {
 		Disable strict checking of generic signatures in function types.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		noStrictGenericChecks?: boolean;
 
@@ -567,6 +569,7 @@ declare namespace TsConfigJson {
 		Suppress excess property checks for object literals.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		suppressExcessPropertyErrors?: boolean;
 
@@ -574,6 +577,7 @@ declare namespace TsConfigJson {
 		Suppress noImplicitAny errors for indexing objects lacking index signatures.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		suppressImplicitAnyIndexErrors?: boolean;
 
@@ -686,7 +690,7 @@ declare namespace TsConfigJson {
 		/**
 		Disallow inconsistently-cased references to the same file.
 
-		@default false
+		@default true
 		*/
 		forceConsistentCasingInFileNames?: boolean;
 
@@ -759,6 +763,7 @@ declare namespace TsConfigJson {
 		Do not emit `'use strict'` directives in module output.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		noImplicitUseStrict?: boolean;
 
@@ -877,6 +882,7 @@ declare namespace TsConfigJson {
 		Resolve `keyof` to string valued property names only (no numbers or symbols).
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		keyofStringsOnly?: boolean;
 
@@ -1103,6 +1109,7 @@ declare namespace TsConfigJson {
 		True if the output of this reference should be prepended to the output of this project.
 
 		Only valid for `--outFile` compilations.
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		prepend?: boolean;
 
