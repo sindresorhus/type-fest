@@ -225,12 +225,14 @@ declare namespace TsConfigJson {
 		export type ModuleResolution =
 			| 'classic'
 			| 'node'
+			| 'node10'
 			| 'node16'
 			| 'nodenext'
 			| 'bundler'
 			// Pascal-cased alternatives
 			| 'Classic'
 			| 'Node'
+			| 'Node10'
 			| 'Node16'
 			| 'NodeNext'
 			| 'Bundler';
