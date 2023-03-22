@@ -129,8 +129,7 @@ Click the type names for complete docs.
 
 - [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty plain object, the `{}` value.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
-- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. Use option `requireExactProps: true` to disallow assigning additional properties to this type. (Note that that any omitted properties in the resulting type will be present in suggestions as `undefined`.)
-This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
+- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
