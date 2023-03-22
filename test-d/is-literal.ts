@@ -9,8 +9,8 @@ import type {
 
 const stringLiteral = '';
 const numberLiteral = 1;
-// @ts-expect-error: suppress BigInt literal tsd warning
-const bigintLiteral = 1n;
+// Note: tsd warns on direct literal usage so we cast to the literal type
+const bigintLiteral = BigInt(1) as 1n;
 const booleanLiteral = true;
 const symbolLiteral = Symbol('');
 
