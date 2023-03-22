@@ -225,18 +225,24 @@ declare namespace TsConfigJson {
 		export type ModuleResolution =
 			| 'classic'
 			| 'node'
+			| 'node10'
 			| 'node16'
 			| 'nodenext'
+			| 'bundler'
 			// Pascal-cased alternatives
 			| 'Classic'
 			| 'Node'
+			| 'Node10'
 			| 'Node16'
-			| 'NodeNext';
+			| 'NodeNext'
+			| 'Bundler';
 
 		export type ModuleDetection =
 			| 'auto'
 			| 'legacy'
 			| 'force';
+
+		export type IgnoreDeprecations = '5.0';
 	}
 
 	export type CompilerOptions = {
@@ -244,6 +250,7 @@ declare namespace TsConfigJson {
 		The character set of the input files.
 
 		@default 'utf8'
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		charset?: string;
 
@@ -402,7 +409,7 @@ declare namespace TsConfigJson {
 		/**
 		Specifies the end of line sequence to be used when emitting files: 'crlf' (Windows) or 'lf' (Unix).
 
-		Default: Platform specific
+		@default 'LF'
 		*/
 		newLine?: CompilerOptions.NewLine;
 
@@ -473,6 +480,7 @@ declare namespace TsConfigJson {
 		Disable strict checking of generic signatures in function types.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		noStrictGenericChecks?: boolean;
 
@@ -563,6 +571,7 @@ declare namespace TsConfigJson {
 		Suppress excess property checks for object literals.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		suppressExcessPropertyErrors?: boolean;
 
@@ -570,6 +579,7 @@ declare namespace TsConfigJson {
 		Suppress noImplicitAny errors for indexing objects lacking index signatures.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		suppressImplicitAnyIndexErrors?: boolean;
 
@@ -682,7 +692,7 @@ declare namespace TsConfigJson {
 		/**
 		Disallow inconsistently-cased references to the same file.
 
-		@default false
+		@default true
 		*/
 		forceConsistentCasingInFileNames?: boolean;
 
@@ -755,6 +765,7 @@ declare namespace TsConfigJson {
 		Do not emit `'use strict'` directives in module output.
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		noImplicitUseStrict?: boolean;
 
@@ -802,6 +813,7 @@ declare namespace TsConfigJson {
 		Specify emit/checking behavior for imports that are only used for types.
 
 		@default 'remove'
+		@deprecated Use `verbatimModuleSyntax` instead.
 		*/
 		importsNotUsedAsValues?: CompilerOptions.ImportsNotUsedAsValues;
 
@@ -872,6 +884,7 @@ declare namespace TsConfigJson {
 		Resolve `keyof` to string valued property names only (no numbers or symbols).
 
 		@default false
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		keyofStringsOnly?: boolean;
 
@@ -942,6 +955,7 @@ declare namespace TsConfigJson {
 		Preserve unused imported values in the JavaScript output that would otherwise be removed.
 
 		@default true
+		@deprecated Use `verbatimModuleSyntax` instead.
 		*/
 		preserveValueImports?: boolean;
 
@@ -956,6 +970,51 @@ declare namespace TsConfigJson {
 		@default 'auto'
 		*/
 		moduleDetection?: CompilerOptions.ModuleDetection;
+
+		/**
+		Allows TypeScript files to import each other with a TypeScript-specific extension like .ts, .mts, or .tsx.
+
+		@default false
+		*/
+		allowImportingTsExtensions?: boolean;
+
+		/**
+		Forces TypeScript to consult the exports field of package.json files if it ever reads from a package in node_modules.
+
+		@default false
+		*/
+		resolvePackageJsonExports?: boolean;
+
+		/**
+		Forces TypeScript to consult the imports field of package.json files when performing a lookup that starts with # from a file whose ancestor directory contains a package.json.
+
+		@default false
+		*/
+		resolvePackageJsonImports?: boolean;
+
+		/**
+		Suppress errors for file formats that TypeScript does not understand.
+
+		@default false
+		*/
+		allowArbitraryExtensions?: boolean;
+
+		/**
+		List of additional conditions that should succeed when TypeScript resolves from package.json.
+		*/
+		customConditions?: string[];
+
+		/**
+		Anything that uses the type modifier is dropped entirely.
+
+		@default false
+		*/
+		verbatimModuleSyntax?: boolean;
+
+		/**
+		Suppress deprecation warnings
+		*/
+		ignoreDeprecations?: CompilerOptions.IgnoreDeprecations;
 	};
 
 	namespace WatchOptions {
@@ -1052,6 +1111,7 @@ declare namespace TsConfigJson {
 		True if the output of this reference should be prepended to the output of this project.
 
 		Only valid for `--outFile` compilations.
+		@deprecated This option will be removed in TypeScript 5.5.
 		*/
 		prepend?: boolean;
 
@@ -1091,7 +1151,7 @@ export type TsConfigJson = {
 	/**
 	Path to base configuration file to inherit from.
 	*/
-	extends?: string;
+	extends?: string | string[];
 
 	/**
 	If no `files` or `include` property is present in a `tsconfig.json`, the compiler defaults to including all files in the containing directory and subdirectories except those specified by `exclude`. When a `files` property is specified, only those files and those specified by `include` are included.
