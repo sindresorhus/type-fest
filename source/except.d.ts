@@ -35,8 +35,6 @@ type ExceptOptions = {
 
 	Note that any omitted properties in the resulting type will be present in autocomplete as `undefined`.
 
-	Setting this to `false` is not recommended.
-
 	@default false
 	*/
 	requireExactProps?: boolean;
