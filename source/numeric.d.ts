@@ -1,4 +1,4 @@
-type Numeric = number | bigint;
+export type Numeric = number | bigint;
 
 type Zero = 0 | 0n;
 
