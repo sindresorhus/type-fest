@@ -207,9 +207,9 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
-- [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`. (Alternate: `IfAny`.)
-- [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`. (Alternate: `IfNever`.)
-- [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Alternate: `IfUnknown`.)
+- [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`. (Conditional version: [`IfAny`](source/if-any.d.ts).)
+- [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`. (Conditional version: [`IfNever`](source/if-never.d.ts).)
+- [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Conditional version: [`IfUnknown`](source/if-unknown.d.ts).)
 
 ### JSON
 
