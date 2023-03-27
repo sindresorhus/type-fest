@@ -7,16 +7,13 @@ An if-else-like type that resolves depending on whether the given type is `any`.
 
 @example
 ```
-import type {IsAny, IfAny} from 'type-fest';
+import type {IfAny} from 'type-fest';
 
-type ShouldBeTrue = IsAny<any> extends true ? true : false;
+type ShouldBeTrue = IfAny<any>;
 //=> true
 
-type ShouldBeFalse = IfAny<'not any'>;
-//=> false
-
-type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
-//=> 'never'
+type ShouldBeBar = IfAny<'not any', 'foo', 'bar'>;
+//=> 'bar'
 ```
 
 @category Type Guard
