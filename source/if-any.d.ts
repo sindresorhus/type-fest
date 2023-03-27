@@ -1,11 +1,9 @@
 import type {IsAny} from './is-any';
 
 /**
-An `If`/`Else`-like type that resolves depending on whether the given type is `any`.
+An if-else-like type that resolves depending on whether the given type is `any`.
 
-If the given type `T` is `any`, the returned type is `TypeIfAny`. Otherwise, the return type is `TypeIfNotAny`. If only `T` is specified, `TypeIfAny` will be `true` and `TypeIfNotAny` will be false.
-
-@see IsAny
+@see {@link IsAny}
 
 @example
 ```
