@@ -1,4 +1,4 @@
-import {expectAssignable, expectError} from 'tsd';
+import {expectError} from 'tsd';
 import type {AbstractConstructor, AbstractClass} from '../index';
 
 abstract class Foo {
@@ -31,10 +31,10 @@ function assertWithBar() {
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		barMethod() {}
 	}
-	expectAssignable(functionRecevingAbsClass<Bar>(withBar(Bar)));
-	expectAssignable(functionRecevingAbsClass<Bar>(CorrectConcreteExtendedBar));
+	functionRecevingAbsClass<Bar>(withBar(Bar));
+	functionRecevingAbsClass<Bar>(CorrectConcreteExtendedBar);
 }
 
-expectAssignable(functionRecevingAbsClass(Foo));
+functionRecevingAbsClass(Foo);
 expectError(functionRecevingAbsClass<Bar>(Foo));
 assertWithBar();
