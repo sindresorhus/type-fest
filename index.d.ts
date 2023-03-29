@@ -55,6 +55,7 @@ export type {Jsonify} from './source/jsonify';
 export type {Jsonifiable} from './source/jsonifiable';
 export type {Schema} from './source/schema';
 export type {LiteralToPrimitive} from './source/literal-to-primitive';
+export type {LiteralToPrimitiveDeep} from './source/literal-to-primitive-deep';
 export type {
 	PositiveInfinity,
 	NegativeInfinity,
