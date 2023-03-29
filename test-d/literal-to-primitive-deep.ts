@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
-import type {LiteralToPrimitiveDeep} from '../index';
+import type {IsEqual, LiteralToPrimitiveDeep} from '../index';
 
-declare const subject: {
+type LiteralObject = {
 	a: string;
 	b: number;
 	c: boolean;
@@ -24,7 +24,7 @@ declare const subject: {
 	};
 };
 
-type Expected = {
+type PrimitiveObject = {
 	a: string;
 	b: number;
 	c: boolean;
@@ -46,4 +46,9 @@ type Expected = {
 		};
 	};
 };
-expectType<Expected>(subject);
+
+const typeEqual: IsEqual<
+LiteralToPrimitiveDeep<LiteralObject>,
+PrimitiveObject
+> = true;
+expectType<true>(typeEqual);
