@@ -2,14 +2,10 @@ import type {OmitIndexSignature} from './omit-index-signature';
 import type {PickIndexSignature} from './pick-index-signature';
 import type {EnforceOptional} from './enforce-optional';
 
-// Merges two objects without worrying about index signatures or optional keys.
+// Merges two objects without worrying about index signatures.
 type SimpleMerge<Destination, Source> = {
-	[Key in keyof Destination | keyof Source]: Key extends keyof Source
-		? Source[Key]
-		: Key extends keyof Destination
-			? Destination[Key]
-			: never;
-};
+	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
+} & Source;
 
 /**
 Merge two types into a new type. Keys of the second type overrides keys of the first type.
