@@ -134,3 +134,17 @@ expectType<{
 	bar: string;
 	fooBar: string;
 }>(fooBarWithIndexSignature);
+
+declare const destinationWithAny: Merge<{foo?: any}, {bar: true}>;
+
+expectType<{
+	foo?: any;
+	bar: true;
+}>(destinationWithAny);
+
+declare const sourceWithAny: Merge<{foo: true}, {bar?: any}>;
+
+expectType<{
+	foo: true;
+	bar?: any;
+}>(sourceWithAny);
