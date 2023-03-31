@@ -911,4 +911,5 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 - [Sébastien Mischler](https://github.com/skarab42)
 
 ## License
+
 SPDX-License-Identifier: (MIT OR CC0-1.0)
