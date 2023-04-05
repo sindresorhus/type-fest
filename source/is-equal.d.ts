@@ -21,6 +21,7 @@ type Includes<Value extends readonly any[], Item> =
 		: false;
 ```
 
+@category Type Guard
 @category Utilities
 */
 export type IsEqual<A, B> =

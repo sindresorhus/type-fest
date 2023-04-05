@@ -1,6 +1,7 @@
 import type {Primitive} from './primitive';
 import type {Numeric} from './numeric';
-import type {IsNever, IsNotFalse} from './internal';
+import type {IsNotFalse} from './internal';
+import type {IsNever} from './is-never';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.
@@ -77,8 +78,8 @@ const output = capitalize('hello, world!');
 //=> 'Hello, world!'
 ```
 
-@category Utilities
 @category Type Guard
+@category Utilities
 */
 export type IsStringLiteral<T> = LiteralCheck<T, string>;
 
@@ -125,8 +126,8 @@ endsWith('abc123', end);
 //=> boolean
 ```
 
-@category Utilities
 @category Type Guard
+@category Utilities
 */
 export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
 
@@ -165,8 +166,8 @@ const eitherId = getId({asString: runtimeBoolean});
 //=> number | string
 ```
 
-@category Utilities
 @category Type Guard
+@category Utilities
 */
 export type IsBooleanLiteral<T> = LiteralCheck<T, boolean>;
 
@@ -200,8 +201,8 @@ get({[symbolValue]: 1} as const, symbolValue);
 //=> number
 ```
 
-@category Utilities
 @category Type Guard
+@category Utilities
 */
 export type IsSymbolLiteral<T> = LiteralCheck<T, symbol>;
 
@@ -246,7 +247,7 @@ stripLeading(str, 'abc');
 //=> string
 ```
 
-@category Utilities
 @category Type Guard
+@category Utilities
 */
 export type IsLiteral<T extends Primitive> = IsNotFalse<IsLiteralUnion<T>>;
