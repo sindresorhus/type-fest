@@ -121,3 +121,4 @@ export type {LastArrayElement} from './source/last-array-element';
 export type {GlobalThis} from './source/global-this';
 export type {PackageJson} from './source/package-json';
 export type {TsConfigJson} from './source/tsconfig-json';
+export type {MixinClass} from './source/mixin-class';

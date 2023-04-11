@@ -281,6 +281,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`GlobalThis`](source/global-this.d.ts) - Declare locally scoped properties on `globalThis`.
 - [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). It also includes support for [TypeScript Declaration Files](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html).
 - [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html).
+- [`MixinClass`](source/mixin-class.d.ts) - Declaring mixin class types, which can be useful for [decorated classes](https://www.typescriptlang.org/docs/handbook/mixins.html#decorators-and-mixins-4881).
 
 ## Declined types
 
