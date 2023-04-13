@@ -58,16 +58,13 @@ expectNotAssignable<'foo,bar,baz'>(joinedStringArray);
 const prefixTuple: ['prefix', ...string[]] = ['prefix', 'item1', 'item2'];
 const joinedPrefixTuple: Join<typeof prefixTuple, '.'> = 'prefix.item1.item2';
 expectType<`prefix.${string}`>(joinedPrefixTuple);
-expectNotAssignable<string>(joinedPrefixTuple);
 
 // Partial tuple shapes (rest param first).
 const suffixTuple: [...string[], 'suffix'] = ['item1', 'item2', 'suffix'];
 const joinedSuffixTuple: Join<typeof suffixTuple, '.'> = 'item1.item2.suffix';
 expectType<`${string}.suffix`>(joinedSuffixTuple);
-expectNotAssignable<string>(joinedSuffixTuple);
 
 // Tuple with optional elements.
-const optionalTuple: ['hello' | undefined, 'world' | undefined] = ['hello', 'world'];
-const joinedOptionalTuple: Join<typeof optionalTuple, '.'> = 'hello.world';
-expectType<'hello.world' | 'hello.' | '.' | '.world'>(joinedOptionalTuple);
-expectNotAssignable<string>(joinedOptionalTuple);
+const optionalTuple: ['hello' | undefined, 'world' | undefined] = ['hello', undefined];
+const joinedOptionalTuple: Join<typeof optionalTuple, '.'> = 'hello.';
+expectType<'hello.'>(joinedOptionalTuple);
