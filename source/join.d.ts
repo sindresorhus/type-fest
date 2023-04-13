@@ -54,15 +54,15 @@ export type Join<
 > = Items extends []
 	? ''
 	: Items extends readonly [JoinableItem?]
-	? `${NullishCoalesce<Items[0], ''>}`
-	: Items extends readonly [
+		? `${NullishCoalesce<Items[0], ''>}`
+		: Items extends readonly [
 			infer First extends JoinableItem,
 			...infer Tail extends readonly JoinableItem[],
-	  ]
-	? `${NullishCoalesce<First, ''>}${Delimiter}${Join<Tail, Delimiter>}`
-	: Items extends readonly [
-			...infer Head extends readonly JoinableItem[],
-			infer Last extends JoinableItem,
-	  ]
-	? `${Join<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}`
-	: string;
+		]
+			? `${NullishCoalesce<First, ''>}${Delimiter}${Join<Tail, Delimiter>}`
+			: Items extends readonly [
+				...infer Head extends readonly JoinableItem[],
+				infer Last extends JoinableItem,
+			]
+				? `${Join<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}`
+				: string;
