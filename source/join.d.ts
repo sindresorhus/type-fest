@@ -40,6 +40,9 @@ const path: Join<['prefix', ...string[]], '.'> = ['prefix'].join('.');
 
 // Partial tuple shapes (rest param first); result is: `${string}.suffix`
 const path: Join<[...string[], 'suffix'], '.'> = ['suffix'].join('.');
+
+// Tuples items with nullish unions; result is '.' | 'hello.' | '.world' | 'hello.world'
+const path: Join<['hello' | undefined, 'world' | null], '.'> = ['hello', 'world'].join('.');
 ```
 
 @category Array
