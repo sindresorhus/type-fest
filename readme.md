@@ -175,6 +175,7 @@ Click the type names for complete docs.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
+- [`Destructurable`](source/destructurable.d.ts) - Convert a union type of objects to a destructurable type.
 
 ### Type Guard
 

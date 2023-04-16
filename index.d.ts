@@ -8,6 +8,7 @@ export * from './source/observable-like';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
+export type {Destructurable} from './source/destructurable';
 export type {Writable} from './source/writable';
 export type {WritableDeep} from './source/writable-deep';
 export type {Merge} from './source/merge';
