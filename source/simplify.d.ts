@@ -55,4 +55,8 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 
 @category Object
 */
-export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
+export type Simplify<T> = {
+	[KeyType in keyof T]: T[KeyType] extends Record<string | number | symbol, unknown>
+		? Simplify<T[KeyType]>
+		: T[KeyType]
+} & {};
