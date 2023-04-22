@@ -6,8 +6,8 @@ type Foo = {
 	b: string;
 };
 
-const aMod: OverrideProperties<Foo, {b: number}> = {a: 1, b: 2};
-expectType<{a: number; b: number}>(aMod);
+const fixture: OverrideProperties<Foo, {b: number}> = {a: 1, b: 2};
+expectType<{a: number; b: number}>(fixture);
 
 expectError(() => {
     type Bar = OverrideProperties<Foo, {c: number}>;
