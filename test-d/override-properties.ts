@@ -12,4 +12,3 @@ expectType<{a: number; b: number}>(aMod);
 expectError(() => {
     type Bar = OverrideProperties<Foo, {c: number}>;
 });
-
