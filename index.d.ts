@@ -72,6 +72,7 @@ export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
 export type {ReadonlyTuple} from './source/readonly-tuple';
 export type {OptionalKeysOf} from './source/optional-keys-of';
+export type {OverrideProperties} from './source/override-properties';
 export type {HasOptionalKeys} from './source/has-optional-keys';
 export type {RequiredKeysOf} from './source/required-keys-of';
 export type {HasRequiredKeys} from './source/has-required-keys';
