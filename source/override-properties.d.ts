@@ -3,7 +3,7 @@ import type {Merge} from './merge';
 /**
 Override existing property types in TOriginal with the types in TOverride.
 
-This is useful when you want to override existing properties with a different type and make sure that these properties really exist in TOriginal.
+This is useful when you want to override existing properties with a different type and make sure that these properties really exist in the original.
 
 @example
 ```
