@@ -33,7 +33,7 @@ const path: Join<[1n, 2n, 3n], '.'> = [1n, 2n, 3n].join('.');
 const path: Join<[true, false, true], '.'> = [true, false, true].join('.');
 
 // Contains nullish items; result is: 'foo..baz..xyz'
-const path: Join<['foo', undefined, 'baz', null, 'xyz'], '.'> = ['foo', undefined, null, 'baz', undefined, 'xyz'].join('.');
+const path: Join<['foo', undefined, 'baz', null, 'xyz'], '.'> = ['foo', undefined, 'baz', null, 'xyz'].join('.');
 
 // Partial tuple shapes (rest param last); result is: `prefix.${string}`
 const path: Join<['prefix', ...string[]], '.'> = ['prefix'].join('.');
