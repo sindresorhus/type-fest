@@ -25,5 +25,5 @@ type Fizz = OverrideProperties<Foo, {b: number; c: number}>
 */
 export type OverrideProperties<
 	TOriginal,
-	TOverride extends {[K in keyof TOverride]: K extends keyof TOriginal ? TOverride[K] : never},
+	TOverride extends {[Key in keyof TOverride]: Key extends keyof TOriginal ? TOverride[Key] : never},
 > = Merge<TOriginal, TOverride>;
