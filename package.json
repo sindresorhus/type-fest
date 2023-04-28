@@ -41,7 +41,7 @@
 		"xo": "^0.53.1"
 	},
 	"peerDependencies": {
-		"typescript": "^4.7.0 || ^5.0.0"
+		"typescript": ">=4.7.0"
 	},
 	"xo": {
 		"rules": {
