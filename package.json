@@ -40,6 +40,9 @@
 		"typescript": "^5.0.2",
 		"xo": "^0.53.1"
 	},
+	"peerDependencies": {
+		"typescript": ">=4.7.0"
+	},
 	"xo": {
 		"rules": {
 			"@typescript-eslint/ban-ts-comment": "off",
