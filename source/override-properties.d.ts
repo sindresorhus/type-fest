@@ -15,12 +15,15 @@ type Bar = OverrideProperties<Foo, {b: number}>
 //=> {a: string, b: number}
 
 type Baz = OverrideProperties<Foo, {c: number}>
-// error TS2559: Type '{c: number}' has no properties in common with type 'Partial{a: unknown; b: unknown}>'.
+// Error, type '{ c: number; }' does not satisfy the constraint '{ c: never; }'
+
+type Fizz = OverrideProperties<Foo, {b: number; c: number}>
+// Error, type '{ b: number; c: number; }' does not satisfy the constraint '{ b: number; c: never; }'
 ```
 
 @category Object
 */
 export type OverrideProperties<
 	TOriginal,
-	TOverride extends Partial<{[key in keyof TOriginal]: unknown}>,
+	TOverride extends {[Key in keyof TOverride]: Key extends keyof TOriginal ? TOverride[Key] : never},
 > = Merge<TOriginal, TOverride>;

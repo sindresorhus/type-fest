@@ -12,3 +12,7 @@ expectType<{a: number; b: number}>(fixture);
 expectError(() => {
     type Bar = OverrideProperties<Foo, {c: number}>;
 });
+
+expectError(() => {
+    type Bar = OverrideProperties<Foo, {b: number; c: number}>;
+});
