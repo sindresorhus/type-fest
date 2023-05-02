@@ -28,7 +28,6 @@ type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 */
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
 	Simplify<
-	// Pick all the keys that from the base type.
 	BaseType &
 	// Pick the keys that should be required from the base type and make them required.
 	Required<Pick<BaseType, Keys>>
