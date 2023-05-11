@@ -36,9 +36,9 @@
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "~0.7.0",
 		"expect-type": "^0.15.0",
-		"tsd": "^0.28.0",
-		"typescript": "^5.0.2",
-		"xo": "^0.53.1"
+		"tsd": "^0.28.1",
+		"typescript": "^5.0.4",
+		"xo": "^0.54.2"
 	},
 	"peerDependencies": {
 		"typescript": ">=4.7.0"
@@ -50,7 +50,8 @@
 			"@typescript-eslint/naming-convention": "off",
 			"import/extensions": "off",
 			"@typescript-eslint/no-redeclare": "off",
-			"@typescript-eslint/no-confusing-void-expression": "off"
+			"@typescript-eslint/no-confusing-void-expression": "off",
+			"@typescript-eslint/no-unsafe-argument": "off"
 		}
 	},
 	"tsd": {
