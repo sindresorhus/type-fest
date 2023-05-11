@@ -47,7 +47,7 @@ export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>>
 				? ReadonlyMap<RequiredDeep<KeyType>, RequiredDeep<ValueType>>
 				: E extends ReadonlySet<infer ItemType>
 					? ReadonlySet<RequiredDeep<ItemType>>
-					: E extends (...args: any[]) => unknown
+					: E extends (...arguments_: any[]) => unknown
 						? E
 						: E extends object
 							? E extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
