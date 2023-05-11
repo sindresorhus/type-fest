@@ -239,7 +239,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Converts object properties to pascal-case (`FooBar`)
 - [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Converts object properties to pascal-case (`FooBar`)
 - [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case (`foo_bar`).
-- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case (`foo_bar`).
+- [`SnakeCasedProperties`](source/snake-cased-properties.d.ts) - Convert object properties to snake-case (`foo_bar`).
 - [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case recursively (`foo_bar`).
 - [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
 - [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.
