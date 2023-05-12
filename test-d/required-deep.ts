@@ -1,7 +1,7 @@
 import {expectTypeOf} from 'expect-type';
 import {RequiredDeep} from '../index';
 
-interface Foo {
+type Foo = {
 	baz?: string | undefined;
 	bar?: {
 		function?: ((...args: any[]) => void) | undefined;
@@ -25,10 +25,11 @@ interface Foo {
 		readonlyTuple?: readonly ['foo' | undefined] | undefined;
 		weakMap?: WeakMap<{ key: string | undefined }, string | undefined>;
 		weakSet?: WeakSet<{ key: string | undefined }>;
+		promise?: Promise<string | undefined>;
 	};
 }
 
-interface FooRequired {
+type FooRequired = {
 	baz: string;
 	bar: {
 		function: (...args: any[]) => void;
@@ -52,6 +53,7 @@ interface FooRequired {
 		readonlyTuple: readonly ['foo'];
 		weakMap: WeakMap<{ key: string }, string>
 		weakSet: WeakSet<{ key: string }>
+		promise: Promise<string>;
 	};
 }
 
@@ -77,6 +79,6 @@ expectTypeOf<RequiredDeep<FooBar['readonlyArray']>>().toEqualTypeOf<FooRequiredB
 expectTypeOf<RequiredDeep<FooBar['readonlyTuple']>>().toEqualTypeOf<FooRequiredBar['readonlyTuple']>();
 expectTypeOf<RequiredDeep<FooBar['weakMap']>>().toEqualTypeOf<FooRequiredBar['weakMap']>();
 expectTypeOf<RequiredDeep<FooBar['weakSet']>>().toEqualTypeOf<FooRequiredBar['weakSet']>();
-expectTypeOf<RequiredDeep<FooBar['readonlySet']>>().toEqualTypeOf<FooRequiredBar['readonlySet']>();
+expectTypeOf<RequiredDeep<FooBar['promise']>>().toEqualTypeOf<FooRequiredBar['promise']>();
 expectTypeOf<RequiredDeep<FooBar['undefined']>>().toBeNever();
 expectTypeOf<RequiredDeep<FooBar['null']>>().toEqualTypeOf<FooRequiredBar['null']>();
