@@ -27,7 +27,7 @@ type Foo = {
 		weakSet?: WeakSet<{key: string | undefined}>;
 		promise?: Promise<string | undefined>;
 	};
-}
+};
 
 type FooRequired = {
 	baz: string;
