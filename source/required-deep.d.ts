@@ -32,10 +32,10 @@ type RequiredSettings = RequiredDeep<Settings>;
 ```
 
  @category Utilities
- @category Object 
- @category Array 
- @category Set 
- @category Map 
+ @category Object
+ @category Array
+ @category Set
+ @category Map
  */
 export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>> = E extends BuiltIns
 	? E
