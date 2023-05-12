@@ -1,6 +1,6 @@
+import {expectType} from 'tsd';
 import {expectTypeOf} from 'expect-type';
 import type {RequiredDeep} from '../index';
-import { expectType } from 'tsd';
 
 type Foo = {
 	baz?: string | undefined;
@@ -10,7 +10,7 @@ type Foo = {
 		functionWithOverload?: {
 			(arg: number): string;
 			(arg1: string, arg2: number): number;
-		} 
+		};
 		namespace?: {
 			(arg: number): string;
 			key: string | undefined;
@@ -51,7 +51,7 @@ type FooRequired = {
 		functionWithOverload: {
 			(arg: number): string;
 			(arg1: string, arg2: number): number;
-		} 
+		};
 		namespace: {
 			(arg: number): string;
 			key: string;
