@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'expect-type';
-import {RequiredDeep} from '../index';
+import type {RequiredDeep} from '../index';
 
 type Foo = {
 	baz?: string | undefined;
@@ -51,8 +51,8 @@ type FooRequired = {
 		readonlySet: ReadonlySet<string>;
 		readonlyArray: readonly string[];
 		readonlyTuple: readonly ['foo'];
-		weakMap: WeakMap<{ key: string }, string>;
-		weakSet: WeakSet<{ key: string }>;
+		weakMap: WeakMap<{key: string}, string>;
+		weakSet: WeakSet<{key: string}>;
 		promise: Promise<string>;
 	};
 };
