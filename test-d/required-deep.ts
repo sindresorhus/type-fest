@@ -23,6 +23,8 @@ interface Foo {
 		readonlySet?: ReadonlySet<string | undefined>;
 		readonlyArray?: ReadonlyArray<string | undefined>;
 		readonlyTuple?: readonly ['foo' | undefined] | undefined;
+		weakMap?: WeakMap<{ key: string | undefined }, string | undefined>;
+		weakSet?: WeakSet<{ key: string | undefined }>;
 	};
 }
 
@@ -48,6 +50,8 @@ interface FooRequired {
 		readonlySet: ReadonlySet<string>;
 		readonlyArray: readonly string[];
 		readonlyTuple: readonly ['foo'];
+		weakMap: WeakMap<{ key: string }, string>
+		weakSet: WeakSet<{ key: string }>
 	};
 }
 
@@ -71,5 +75,8 @@ expectTypeOf<RequiredDeep<FooBar['readonlyMap']>>().toEqualTypeOf<FooRequiredBar
 expectTypeOf<RequiredDeep<FooBar['readonlySet']>>().toEqualTypeOf<FooRequiredBar['readonlySet']>();
 expectTypeOf<RequiredDeep<FooBar['readonlyArray']>>().toEqualTypeOf<FooRequiredBar['readonlyArray']>();
 expectTypeOf<RequiredDeep<FooBar['readonlyTuple']>>().toEqualTypeOf<FooRequiredBar['readonlyTuple']>();
+expectTypeOf<RequiredDeep<FooBar['weakMap']>>().toEqualTypeOf<FooRequiredBar['weakMap']>();
+expectTypeOf<RequiredDeep<FooBar['weakSet']>>().toEqualTypeOf<FooRequiredBar['weakSet']>();
+expectTypeOf<RequiredDeep<FooBar['readonlySet']>>().toEqualTypeOf<FooRequiredBar['readonlySet']>();
 expectTypeOf<RequiredDeep<FooBar['undefined']>>().toBeNever();
 expectTypeOf<RequiredDeep<FooBar['null']>>().toEqualTypeOf<FooRequiredBar['null']>();

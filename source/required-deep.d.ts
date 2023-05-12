@@ -47,15 +47,19 @@ export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>>
 				? ReadonlyMap<RequiredDeep<KeyType>, RequiredDeep<ValueType>>
 				: E extends ReadonlySet<infer ItemType>
 					? ReadonlySet<RequiredDeep<ItemType>>
-					: E extends (...args: any[]) => unknown
-						? E
-						: E extends object
-							? E extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
-								? ItemType[] extends E // Test for arrays (non-tuples) specifically
-									? Array<RequiredDeep<ItemType>> // Recreate relevant array type to prevent eager evaluation of circular reference
-									: RequiredObjectDeep<E> // Tuples behave properly
-								: RequiredObjectDeep<E>
-							: unknown;
+					: E extends WeakMap<infer KeyType, infer ValueType>
+						? WeakMap<RequiredDeep<KeyType>, RequiredDeep<ValueType>>
+						: E extends WeakSet<infer ItemType>
+							? WeakSet<RequiredDeep<ItemType>>
+							: E extends (...args: any[]) => unknown
+								? E
+								: E extends object
+									? E extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
+										? ItemType[] extends E // Test for arrays (non-tuples) specifically
+											? Array<RequiredDeep<ItemType>> // Recreate relevant array type to prevent eager evaluation of circular reference
+											: RequiredObjectDeep<E> // Tuples behave properly
+										: RequiredObjectDeep<E>
+									: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {
 	[KeyType in keyof ObjectType]-?: RequiredDeep<ObjectType[KeyType]>
