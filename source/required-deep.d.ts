@@ -20,15 +20,15 @@ type Settings = {
 };
 
 type RequiredSettings = RequiredDeep<Settings>;
-Result: {
-	textEditor: {
-		fontSize: number;
-		fontColor: string;
-		fontWeight: number;
-	}
-	autocomplete: boolean;
-	autosave: boolean;
-}
+// 	type RequiredSettings = {
+//		textEditor: {
+//			fontSize: number;
+//			fontColor: string;
+//			fontWeight: number;
+//		}
+//		autocomplete: boolean;
+//		autosave: boolean;
+//	}
 ```
 
  @category Utilities
