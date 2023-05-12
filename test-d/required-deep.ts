@@ -1,11 +1,25 @@
 import {expectTypeOf} from 'expect-type';
 import type {RequiredDeep} from '../index';
+import { expectType } from 'tsd';
 
 type Foo = {
 	baz?: string | undefined;
 	bar?: {
 		function?: ((...args: any[]) => void) | undefined;
 		functionFixedArity?: ((arg1: unknown, arg2: unknown) => void);
+		functionWithOverload?: {
+			(arg: number): string;
+			(arg1: string, arg2: number): number;
+		} 
+		namespace?: {
+			(arg: number): string;
+			key: string | undefined;
+		};
+		namespaceWithOverload: {
+			(arg: number): string;
+			(arg1: string, arg2: number): number;
+			key: string | undefined;
+		};
 		object?: {key?: 'value'} | undefined;
 		string?: string | undefined;
 		number?: number | undefined;
@@ -34,6 +48,19 @@ type FooRequired = {
 	bar: {
 		function: (...args: any[]) => void;
 		functionFixedArity: (arg1: unknown, arg2: unknown) => void;
+		functionWithOverload: {
+			(arg: number): string;
+			(arg1: string, arg2: number): number;
+		} 
+		namespace: {
+			(arg: number): string;
+			key: string;
+		};
+		namespaceWithOverload: {
+			(arg: number): string;
+			(arg1: string, arg2: number): number;
+			key: string;
+		};
 		object: {key: 'value'};
 		string: string;
 		number: number;
@@ -80,5 +107,14 @@ expectTypeOf<RequiredDeep<FooBar['readonlyTuple']>>().toEqualTypeOf<FooRequiredB
 expectTypeOf<RequiredDeep<FooBar['weakMap']>>().toEqualTypeOf<FooRequiredBar['weakMap']>();
 expectTypeOf<RequiredDeep<FooBar['weakSet']>>().toEqualTypeOf<FooRequiredBar['weakSet']>();
 expectTypeOf<RequiredDeep<FooBar['promise']>>().toEqualTypeOf<FooRequiredBar['promise']>();
+expectTypeOf<RequiredDeep<FooBar['namespace']>>().toEqualTypeOf<FooRequiredBar['namespace']>();
 expectTypeOf<RequiredDeep<FooBar['undefined']>>().toBeNever();
 expectTypeOf<RequiredDeep<FooBar['null']>>().toEqualTypeOf<FooRequiredBar['null']>();
+
+// These currently need to be left alone due to TypeScript limitations.
+// @see https://github.com/microsoft/TypeScript/issues/29732
+expectType<string>(({} as unknown as RequiredDeep<FooBar['functionWithOverload']>)(0));
+expectType<number>(({} as unknown as RequiredDeep<FooBar['functionWithOverload']>)('foo', 0));
+expectType<string>(({} as unknown as RequiredDeep<FooBar['namespaceWithOverload']>)(0));
+expectType<number>(({} as unknown as RequiredDeep<FooBar['namespaceWithOverload']>)('foo', 0));
+

@@ -35,6 +35,8 @@ type RequiredSettings = RequiredDeep<Settings>;
 //	}
 ```
 
+Note that types containing overloaded functions are not made deeply required due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
+
  @category Utilities
  @category Object
  @category Array
@@ -58,7 +60,11 @@ export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>>
 							: E extends Promise<infer ValueType>
 								? Promise<RequiredDeep<ValueType>>
 								: E extends (...args: any[]) => unknown
-									? E
+									? {} extends RequiredObjectDeep<E>
+										? E
+										: HasMultipleCallSignatures<E> extends true
+											? E 
+											: ((...arguments: Parameters<E>) => ReturnType<E>) & RequiredObjectDeep<E>
 									: E extends object
 										? E extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
 											? ItemType[] extends E // Test for arrays (non-tuples) specifically
@@ -70,3 +76,18 @@ export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>>
 type RequiredObjectDeep<ObjectType extends object> = {
 	[KeyType in keyof ObjectType]-?: RequiredDeep<ObjectType[KeyType]>
 };
+
+/**
+Test if the given function has multiple call signatures.
+
+Needed to handle the case of a single call signature with properties.
+
+Multiple call signatures cannot currently be supported due to a TypeScript limitation.
+@see https://github.com/microsoft/TypeScript/issues/29732
+*/
+type HasMultipleCallSignatures<T extends (...arguments: any[]) => unknown> =
+	T extends {(...arguments: infer A): unknown; (...arguments: any[]): unknown}
+		? unknown[] extends A
+			? false
+			: true
+		: false;
