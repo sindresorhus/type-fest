@@ -5,6 +5,10 @@ type ExcludeUndefined<T> = Exclude<T, undefined>;
 /**
 Create a type from another type with all keys and nested keys set to required.
 
+Use-cases:
+ - Creating optional configuration interfaces where the underlying implementation still requires all options to be fully specified
+ - Modeling the resultant type after a deep merge with a set of defaults
+
 @example
 ```
 import type {RequiredDeep} from 'type-fest';
