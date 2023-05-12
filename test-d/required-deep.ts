@@ -5,7 +5,7 @@ type Foo = {
 	baz?: string | undefined;
 	bar?: {
 		function?: ((...args: any[]) => void) | undefined;
-        functionFixedArity?: ((arg1: unknown, arg2: unknown) => void);
+		functionFixedArity?: ((arg1: unknown, arg2: unknown) => void);
 		object?: {key?: 'value'} | undefined;
 		string?: string | undefined;
 		number?: number | undefined;
@@ -23,8 +23,8 @@ type Foo = {
 		readonlySet?: ReadonlySet<string | undefined>;
 		readonlyArray?: ReadonlyArray<string | undefined>;
 		readonlyTuple?: readonly ['foo' | undefined] | undefined;
-		weakMap?: WeakMap<{ key: string | undefined }, string | undefined>;
-		weakSet?: WeakSet<{ key: string | undefined }>;
+		weakMap?: WeakMap<{key: string | undefined}, string | undefined>;
+		weakSet?: WeakSet<{key: string | undefined}>;
 		promise?: Promise<string | undefined>;
 	};
 }
@@ -51,11 +51,11 @@ type FooRequired = {
 		readonlySet: ReadonlySet<string>;
 		readonlyArray: readonly string[];
 		readonlyTuple: readonly ['foo'];
-		weakMap: WeakMap<{ key: string }, string>
-		weakSet: WeakSet<{ key: string }>
+		weakMap: WeakMap<{ key: string }, string>;
+		weakSet: WeakSet<{ key: string }>;
 		promise: Promise<string>;
 	};
-}
+};
 
 type FooBar = Exclude<Foo['bar'], undefined>;
 type FooRequiredBar = FooRequired['bar'];

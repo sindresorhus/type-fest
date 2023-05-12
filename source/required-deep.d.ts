@@ -1,4 +1,4 @@
-import {BuiltIns} from './internal';
+import type {BuiltIns} from './internal';
 
 type ExcludeUndefined<T> = Exclude<T, undefined>;
 
