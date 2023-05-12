@@ -63,7 +63,7 @@ export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>>
 									? {} extends RequiredObjectDeep<E>
 										? E
 										: HasMultipleCallSignatures<E> extends true
-											? E 
+											? E
 											: ((...arguments: Parameters<E>) => ReturnType<E>) & RequiredObjectDeep<E>
 									: E extends object
 										? E extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
