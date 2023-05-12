@@ -33,7 +33,7 @@ type FooRequired = {
 	baz: string;
 	bar: {
 		function: (...args: any[]) => void;
-        functionFixedArity: (arg1: unknown, arg2: unknown) => void;
+		functionFixedArity: (arg1: unknown, arg2: unknown) => void;
 		object: {key: 'value'};
 		string: string;
 		number: number;
