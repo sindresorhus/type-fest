@@ -117,4 +117,3 @@ expectType<string>(({} as unknown as RequiredDeep<FooBar['functionWithOverload']
 expectType<number>(({} as unknown as RequiredDeep<FooBar['functionWithOverload']>)('foo', 0));
 expectType<string>(({} as unknown as RequiredDeep<FooBar['namespaceWithOverload']>)(0));
 expectType<number>(({} as unknown as RequiredDeep<FooBar['namespaceWithOverload']>)('foo', 0));
-
