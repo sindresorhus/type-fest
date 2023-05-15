@@ -6,8 +6,8 @@ type ExcludeUndefined<T> = Exclude<T, undefined>;
 Create a type from another type with all keys and nested keys set to required.
 
 Use-cases:
- - Creating optional configuration interfaces where the underlying implementation still requires all options to be fully specified
- - Modeling the resultant type after a deep merge with a set of defaults
+- Creating optional configuration interfaces where the underlying implementation still requires all options to be fully specified.
+- Modeling the resulting type after a deep merge with a set of defaults.
 
 @example
 ```
@@ -24,25 +24,25 @@ type Settings = {
 };
 
 type RequiredSettings = RequiredDeep<Settings>;
-// 	type RequiredSettings = {
-//		textEditor: {
-//			fontSize: number;
-//			fontColor: string;
-//			fontWeight: number;
-//		}
-//		autocomplete: boolean;
-//		autosave: boolean;
-//	}
+// type RequiredSettings = {
+// 	textEditor: {
+// 		fontSize: number;
+// 		fontColor: string;
+// 		fontWeight: number;
+// 	}
+// 	autocomplete: boolean;
+// 	autosave: boolean;
+// }
 ```
 
 Note that types containing overloaded functions are not made deeply required due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 
- @category Utilities
- @category Object
- @category Array
- @category Set
- @category Map
- */
+@category Utilities
+@category Object
+@category Array
+@category Set
+@category Map
+*/
 export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>> = E extends BuiltIns
 	? E
 	: E extends Map<infer KeyType, infer ValueType>
