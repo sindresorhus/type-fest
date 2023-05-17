@@ -1,3 +1,5 @@
+import type {IsEqual} from './is-equal';
+
 /**
 Extract all readonly keys from the given type.
 
@@ -5,7 +7,7 @@ This is useful when you want to create a new type that contains readonly keys on
 
 @example
 ```
-import type {ReadonlyKeysOf, Except} from 'type-fest';
+import type {ReadonlyKeysOf} from 'type-fest';
 
 interface User {
 	name: string;
@@ -22,16 +24,6 @@ const update1: UpdateResponse<User> = {
 
 @category Utilities
 */
-// https://github.com/Microsoft/TypeScript/issues/27024#issuecomment-421529650
-type IfEquals<X, Y, A, B> =
-	(<T>() => T extends X ? 1 : 2) extends
-	(<T>() => T extends Y ? 1 : 2) ? A : B;
-
 export type ReadonlyKeysOf<T> = NonNullable<{
-	[P in keyof T]: IfEquals<
-	{[Q in P]: T[P]},
-	{readonly [Q in P]: T[P]},
-	P,
-	never
-	>
+	[P in keyof T]: IsEqual<{[Q in P]: T[P]}, {readonly [Q in P]: T[P]}> extends true ? P : never
 }[keyof T]>;
