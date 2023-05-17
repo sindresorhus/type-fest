@@ -12,11 +12,14 @@ type Success = {
 	type: 'success';
 	value: number;
 };
+
 type Failure = {
 	type: 'failure';
 	error: Error;
 };
+
 type Result = Destructurable<Success | Failure>;
+
 function divide(x: number, y: number): Result {
 	return y === 0
 		? {type: 'success', value: x / y}
@@ -27,10 +30,10 @@ function divide(x: number, y: number): Result {
 const {type, value, error} = divide(4, 2);
 
 // Narrowing also works.
-if (type === "success") {
-  value - 1; // value is a number
+if (type === 'success') {
+	value - 1; // `value` is a number
 } else {
-  error.message;
+	error.message;
 }
 ```
 
