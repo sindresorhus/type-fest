@@ -77,6 +77,8 @@ export type {OverrideProperties} from './source/override-properties';
 export type {HasOptionalKeys} from './source/has-optional-keys';
 export type {RequiredKeysOf} from './source/required-keys-of';
 export type {HasRequiredKeys} from './source/has-required-keys';
+export type {ReadonlyKeysOf} from './source/readonly-keys-of';
+export type {WritableKeysOf} from './source/writable-keys-of';
 export type {Spread} from './source/spread';
 export type {TupleToUnion} from './source/tuple-to-union';
 export type {IsEqual} from './source/is-equal';
