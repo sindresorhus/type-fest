@@ -27,4 +27,4 @@ const update2: UpdateRequest<User> = {}; // that's a bug!
 */
 export type NonEmptyObject<T> = {
 	[K in keyof T]-?: Pick<Required<T>, K>
-}[keyof T]
+}[keyof T];
