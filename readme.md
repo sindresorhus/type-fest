@@ -119,6 +119,7 @@ Click the type names for complete docs.
 - [`UnwrapOpaque`](source/opaque.d.ts) - Revert an [opaque type](https://codemix.com/opaque-types-in-javascript/) back to its original type.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
+- [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
 - [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
