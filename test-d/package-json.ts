@@ -70,6 +70,9 @@ expectAssignable<PackageJson.Exports>({
 		default: './horse.js',
 	},
 });
+expectNotAssignable<PackageJson.Exports>({
+	'./unicorn': undefined,
+});
 expectNotAssignable<PackageJson.Imports>({unicorn: 'unicorn'});
 expectType<boolean | undefined>(packageJson.preferGlobal);
 expectType<boolean | undefined>(packageJson.private);
