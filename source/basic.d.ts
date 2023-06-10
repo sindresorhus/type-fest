@@ -3,7 +3,7 @@ Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 @category Class
 */
-export type Class<T, Arguments extends unknown[] = any[]> = Constructor<T, Arguments> & {prototype: T};
+export type Class<T, Arguments extends unknown[] = any[]> = {prototype: T; new(...args: Arguments): T};
 
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
