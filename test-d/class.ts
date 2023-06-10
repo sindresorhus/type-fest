@@ -22,6 +22,7 @@ function fn2(Cls: Constructor<Foo, [number, number]>): Foo {
 fn(Foo);
 fn2(Foo);
 
+// Prototype test
 type PositionProps = {
 	top: number;
 	left: number;
@@ -38,3 +39,4 @@ expectAssignable<Class<PositionProps>>(Position);
 expectAssignable<Constructor<PositionProps>>(Position);
 expectType<IsAny<typeof Bar['prototype']>>(false);
 expectType<PositionProps>(Position.prototype);
+// /Prototype test
