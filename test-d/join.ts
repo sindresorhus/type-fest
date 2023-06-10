@@ -5,9 +5,18 @@ import type {Join} from '../index';
 const generalTestVariantMixed: Join<['foo', 0, 'baz'], '.'> = 'foo.0.baz';
 const generalTestVariantOnlyStrings: Join<['foo', 'bar', 'baz'], '.'> = 'foo.bar.baz';
 const generalTestVariantOnlyNumbers: Join<[1, 2, 3], '.'> = '1.2.3';
+const generalTestVariantOnlyBigints: Join<[1n, 2n, 3n], '.'> = '1.2.3';
+const generalTestVariantOnlyBooleans: Join<[true, false, true], '.'> = 'true.false.true';
+const generalTestVariantOnlyNullish: Join<[undefined, null, undefined], '.'> = '..';
+const generalTestVariantNullish: Join<['foo', undefined, 'baz', null, 'xyz'], '.'> = 'foo..baz..xyz';
 expectType<'foo.0.baz'>(generalTestVariantMixed);
-expectType<'1.2.3'>(generalTestVariantOnlyNumbers);
 expectType<'foo.bar.baz'>(generalTestVariantOnlyStrings);
+expectType<'1.2.3'>(generalTestVariantOnlyNumbers);
+expectType<'1.2.3'>(generalTestVariantOnlyBigints);
+expectType<'true.false.true'>(generalTestVariantOnlyBooleans);
+expectType<'..'>(generalTestVariantOnlyNullish);
+expectType<'foo..baz..xyz'>(generalTestVariantNullish);
+
 expectNotAssignable<'foo'>(generalTestVariantOnlyStrings);
 expectNotAssignable<'foo.bar'>(generalTestVariantOnlyStrings);
 expectNotAssignable<'foo.bar.ham'>(generalTestVariantOnlyStrings);
@@ -44,3 +53,18 @@ const stringArray = ['foo', 'bar', 'baz'];
 const joinedStringArray: Join<typeof stringArray, ','> = '';
 expectType<string>(joinedStringArray);
 expectNotAssignable<'foo,bar,baz'>(joinedStringArray);
+
+// Partial tuple shapes (rest param last).
+const prefixTuple: ['prefix', ...string[]] = ['prefix', 'item1', 'item2'];
+const joinedPrefixTuple: Join<typeof prefixTuple, '.'> = 'prefix.item1.item2';
+expectType<`prefix.${string}`>(joinedPrefixTuple);
+
+// Partial tuple shapes (rest param first).
+const suffixTuple: [...string[], 'suffix'] = ['item1', 'item2', 'suffix'];
+const joinedSuffixTuple: Join<typeof suffixTuple, '.'> = 'item1.item2.suffix';
+expectType<`${string}.suffix`>(joinedSuffixTuple);
+
+// Tuple with optional elements.
+const optionalTuple: ['hello' | undefined, 'world' | undefined] = ['hello', undefined];
+const joinedOptionalTuple: Join<typeof optionalTuple, '.'> = 'hello.';
+expectType<'hello.'>(joinedOptionalTuple);

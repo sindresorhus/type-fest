@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version:
-          - 19
+          - 20
           - 18
           - 16
           - 14
@@ -28,14 +28,15 @@ jobs:
       fail-fast: false
       matrix:
         typescript-version:
-          - 'latest'
-          - '~4.8.0'
-          - '~4.7.0'
+          - "latest"
+          - "~4.9.0"
+          - "~4.8.0"
+          - "~4.7.0"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }}
       - run: npx tsc

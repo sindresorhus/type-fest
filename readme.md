@@ -37,37 +37,6 @@
 					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
 				</div>
 			</a>
-			<br>
-			<br>
-			<br>
-			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-light-mode-only">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-light.svg" width="200" alt="Anvil">
-				</div>
-				<br>
-				<b>Paperwork that makes the data work.</b>
-				<div>
-					<sub>
-					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
-					<br>
-					The easiest way to build paperwork automation into your product.
-					</sub>
-				</div>
-			</a>
-			<a href="https://www.useanvil.com/?utm_source=sindresorhus#gh-dark-mode-only">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/anvil-logo-dark.svg" width="200" alt="Anvil">
-				</div>
-				<br>
-				<b>Paperwork that makes the data work.</b>
-				<div>
-					<sub>
-					Easy APIs for paperwork. PDF generation, e-signature and embeddable no-code webforms.
-					<br>
-					The easiest way to build paperwork automation into your product.
-					</sub>
-				</div>
-			</a>
 		</p>
 	</div>
 	<br>
@@ -135,9 +104,11 @@ Click the type names for complete docs.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
+- [`OverrideProperties`](source/override-properties.d.ts) - Override only existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
+- [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
@@ -172,6 +143,8 @@ Click the type names for complete docs.
 - [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
+- [`ReadonlyKeysOf`](source/readonly-keys-of.d.ts) - Extract all writable (non-readonly) keys from the given type.
+- [`WritableKeysOf`](source/writable-keys-of.d.ts) - Extract all readonly keys from the given type.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
@@ -269,7 +242,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Converts object properties to pascal-case (`FooBar`)
 - [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Converts object properties to pascal-case (`FooBar`)
 - [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case (`foo_bar`).
-- [`SnakeCasedProperties`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case (`foo_bar`).
+- [`SnakeCasedProperties`](source/snake-cased-properties.d.ts) - Convert object properties to snake-case (`foo_bar`).
 - [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case recursively (`foo_bar`).
 - [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case (`FOO_BAR`).
 - [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.

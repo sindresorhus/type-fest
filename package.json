@@ -1,6 +1,6 @@
 {
 	"name": "type-fest",
-	"version": "3.8.0",
+	"version": "3.11.1",
 	"description": "A collection of essential TypeScript types",
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
@@ -36,9 +36,9 @@
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "~0.7.0",
 		"expect-type": "^0.15.0",
-		"tsd": "^0.28.0",
-		"typescript": "^5.0.2",
-		"xo": "^0.53.1"
+		"tsd": "^0.28.1",
+		"typescript": "^5.0.4",
+		"xo": "^0.54.2"
 	},
 	"xo": {
 		"rules": {
@@ -47,7 +47,8 @@
 			"@typescript-eslint/naming-convention": "off",
 			"import/extensions": "off",
 			"@typescript-eslint/no-redeclare": "off",
-			"@typescript-eslint/no-confusing-void-expression": "off"
+			"@typescript-eslint/no-confusing-void-expression": "off",
+			"@typescript-eslint/no-unsafe-argument": "off"
 		}
 	},
 	"tsd": {
