@@ -33,6 +33,7 @@ export type {Promisable} from './source/promisable';
 export type {Opaque, UnwrapOpaque} from './source/opaque';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
+export type {SetReadonly} from './source/set-readonly';
 export type {SetRequired} from './source/set-required';
 export type {SetNonNullable} from './source/set-non-nullable';
 export type {ValueOf} from './source/value-of';
