@@ -3,7 +3,10 @@ Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 @category Class
 */
-export type Class<T, Arguments extends unknown[] = any[]> = {prototype: T; new(...arguments_: Arguments): T};
+export type Class<T, Arguments extends unknown[] = any[]> = {
+	prototype: T;
+	new(...arguments_: Arguments): T;
+};
 
 /**
 Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
@@ -16,8 +19,17 @@ export type Constructor<T, Arguments extends unknown[] = any[]> = new(...argumen
 Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/classes.html#abstract-classes).
 
 @category Class
+
+@privateRemarks
+The usual "export type = " won't work, because TypeScript throws:
+'abstract' modifier cannot appear on a type member.(1070)
+
+So if we really want this, it has to be an interface.
 */
-export type AbstractClass<T, Arguments extends unknown[] = any[]> = AbstractConstructor<T, Arguments> & {prototype: T};
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export interface AbstractClass<T, Arguments extends unknown[] = any[]> extends AbstractConstructor<T, Arguments> {
+	prototype: T;
+}
 
 /**
 Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#abstract-construct-signatures) constructor.

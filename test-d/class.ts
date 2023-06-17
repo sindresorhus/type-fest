@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectType} from 'tsd';
+import {expectAssignable, expectError, expectNotAssignable, expectType} from 'tsd';
 import type {Class, Constructor, IsAny} from '../index';
 
 class Foo {
@@ -29,14 +29,28 @@ type PositionProps = {
 };
 
 class Position {
-	top = 0;
-	left = 0;
+	public top: number;
+
+	public left: number;
+
+	constructor(parameterTop: number, parameterLeft: number) {
+		this.top = parameterTop;
+		this.left = parameterLeft;
+	}
 }
 
 declare const Bar: Class<PositionProps>;
 
 expectAssignable<Class<PositionProps>>(Position);
-expectAssignable<Constructor<PositionProps>>(Position);
+
+expectNotAssignable<Class<PositionProps, [number]>>(Position);
+
+expectAssignable<Class<PositionProps, [number, number]>>(Position);
+expectAssignable<Constructor<PositionProps, [number, number]>>(Position);
+
 expectType<IsAny<typeof Bar['prototype']>>(false);
 expectType<PositionProps>(Position.prototype);
 // /Prototype test
+
+expectError(new Position(17));
+expectAssignable<PositionProps>(new Position(17, 34));
