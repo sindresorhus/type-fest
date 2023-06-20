@@ -10,7 +10,7 @@ type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
 type JsonifyTuple<T extends unknown[]> = T extends [infer F, ... infer R]
 	? [Jsonify<F>, ...JsonifyTuple<R>]
-	: []
+	: [];
 
 type FilterJsonableKeys<T extends object> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
