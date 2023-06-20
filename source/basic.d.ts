@@ -21,10 +21,7 @@ Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/class
 @category Class
 
 @privateRemarks
-The usual "export type = " won't work, because TypeScript throws:
-'abstract' modifier cannot appear on a type member.(1070)
-
-So if we really want this, it has to be an interface.
+We cannot use a `type` here because TypeScript throws: 'abstract' modifier cannot appear on a type member. (1070)
 */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface AbstractClass<T, Arguments extends unknown[] = any[]> extends AbstractConstructor<T, Arguments> {
