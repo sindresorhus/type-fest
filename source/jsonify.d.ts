@@ -9,7 +9,7 @@ import type {IsAny} from './is-any';
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
 type JsonifyTuple<T extends unknown[]> = T extends [infer F, ... infer R]
-	? [Jsonify<F>, ...JsonifyTuple<R>]
+	? [Jsonify<F>, ...Jsonify<R>]
 	: [];
 
 type FilterJsonableKeys<T extends object> = {
