@@ -116,7 +116,7 @@ export type Jsonify<T> = IsAny<T> extends true
 										: T extends []
 											? []
 											: T extends [unknown, ...unknown[]]
-												? JsonifyTuple<T>
+												? JsonifyList<T>
 												: T extends ReadonlyArray<infer U>
 													? Array<U extends NotJsonable ? null : Jsonify<U>>
 													: T extends object
