@@ -8,9 +8,18 @@ import type {IsAny} from './is-any';
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
-type JsonifyTuple<T extends unknown[]> = T extends [infer F, ... infer R]
-	? [Jsonify<F>, ...Jsonify<R>]
-	: [];
+type FilterNonNever<T extends unknown[]> = T extends [infer F, ...infer R]
+	? IsNever<F> extends true
+		? FilterNonNever<R>
+		: [F, ...FilterNonNever<R>]
+	: IsNever<T[number]> extends true
+		? []
+		: T;
+
+// Handles tuples and arrays
+type JsonifyList<T extends unknown[]> = T extends [infer F, ...infer R]
+	? FilterNonNever<[Jsonify<F>, ...JsonifyList<R>]>
+	: Array<Jsonify<T[number]>>;
 
 type FilterJsonableKeys<T extends object> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
