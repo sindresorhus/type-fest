@@ -5,6 +5,7 @@ export * from './source/basic';
 export * from './source/observable-like';
 
 // Utilities
+export type {DeepUndefinedToNull} from './source/deep-undefined-to-null';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
