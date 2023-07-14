@@ -19,6 +19,10 @@ typeof lastOf(array);
 @category Template literal
 */
 export type LastArrayElement<Elements extends readonly unknown[]>
-	= number extends Elements["length"] ? Elements extends readonly (infer Element)[] ? Element : never
-	: Elements extends readonly [...any, infer Target] ? Target
-	: never;
+		= number extends Elements['length']
+			? Elements extends ReadonlyArray<infer Element>
+				? Element
+				: never
+			: Elements extends readonly [...any, infer Target]
+				? Target
+				: never;
