@@ -96,6 +96,7 @@ Click the type names for complete docs.
 
 ### Utilities
 
+- [`DeepUndefinedToNull`](source/deep-undefined-to-null.d.ts) - Type function that accepts a record, recursively removes all optional property modifiers, and in those properties' values replaces `undefined` with `null`.
 - [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty plain object, the `{}` value.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
