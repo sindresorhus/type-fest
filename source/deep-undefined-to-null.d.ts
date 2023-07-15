@@ -55,12 +55,12 @@ type DeepReplace<
 	Replace,
 > = Type extends Type
 	? Type extends Find
-	? Replace
-	: Type extends Any.record
-	? { [Key in keyof Type]: DeepReplace<Type[Key], Find, Replace> }
-	: Type extends Any.array
-	? { [Ix in keyof Type]: DeepReplace<Type[Ix], Find, Replace> }
-	: Type
+		? Replace
+		: Type extends Any.record
+			? {[Key in keyof Type]: DeepReplace<Type[Key], Find, Replace>}
+			: Type extends Any.array
+				? {[Ix in keyof Type]: DeepReplace<Type[Ix], Find, Replace>}
+				: Type
 	: never;
 
 type ReplaceUnionMember<
@@ -69,8 +69,8 @@ type ReplaceUnionMember<
 	Replace,
 > = Union extends Union
 	? Union extends Find
-	? Replace
-	: Union
+		? Replace
+		: Union
 	: never;
 
 /** @internal */
@@ -88,35 +88,35 @@ type DeepUndefinedToPlaceholder<
 	 * Does this member of the union extend `undefined`? Replace it in
 	 * the union it belongs to as `Placeholder`
 	 */
-	? Type extends undefined
-	? Placeholder
-	/**
-		 * Is `Type` a record?
-	 */
-	: Type extends Record<symbol, any>
-	? {
-		/**
-		 * Make the properties of `Type` required
-		 */
-		[Key in keyof Type]-?:
-		/**
-		 * Traverse each value recursively
-		 */
-		DeepUndefinedToPlaceholder<
+		? Type extends undefined
+			? Placeholder
 			/**
-			 * Is `Key` optional in `Type`?
+		 	 * Is `Type` a record?
 			 */
-			{} extends Pick<Type, Key>
-			/**
-			 * ...if yes, replace `undefined` with `null` in `Type[Key]` union
-			 */
-			? ReplaceUnionMember<Type[Key], undefined, Replace>
-			/**
-			 * ...otherwise just use `Type[Key]` when recursing
-			 */
-			: Type[Key]
-			, Replace
-		>
-	}
-	: Type
-	: never;
+			: Type extends Record<symbol, any>
+				? {
+					/**
+					 * Make the properties of `Type` required
+					 */
+					[Key in keyof Type]-?:
+					/**
+					 * Traverse each value recursively
+					 */
+					DeepUndefinedToPlaceholder<
+					/**
+					 * Is `Key` optional in `Type`?
+					 */
+					{} extends Pick<Type, Key>
+						/**
+						 * ...if yes, replace `undefined` with `null` in `Type[Key]` union
+						 */
+						? ReplaceUnionMember<Type[Key], undefined, Replace>
+						/**
+						 * ...otherwise just use `Type[Key]` when recursing
+						 */
+						: Type[Key]
+					, Replace
+					>
+				}
+				: Type
+		: never;
