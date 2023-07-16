@@ -505,7 +505,7 @@ declare namespace PackageJson {
 		Engines that this package runs on.
 		*/
 		engines?: {
-			[EngineName in 'npm' | 'node' | string]?: string; // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
+			[EngineName in 'npm' | 'node' | string]?: string;
 		};
 
 		/**
