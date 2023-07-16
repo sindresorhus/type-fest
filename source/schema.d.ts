@@ -51,7 +51,7 @@ export type Schema<ObjectType, ValueType> = ObjectType extends string
 						? ValueType
 						: ObjectType extends unknown[]
 							? ValueType
-							: ObjectType extends (...arguments: unknown[]) => unknown
+							: ObjectType extends (...arguments_: unknown[]) => unknown
 								? ValueType
 								: ObjectType extends Date
 									? ValueType
