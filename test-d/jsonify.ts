@@ -222,6 +222,9 @@ expectType<[string, string]>(tupleJson);
 declare const tupleRestJson: Jsonify<[string, ...Date[]]>;
 expectType<[string, ...string[]]>(tupleRestJson);
 
+declare const tupleStringJson: Jsonify<string[] & ['some value']>;
+expectType<['some value']>(tupleStringJson);
+
 // BigInt fails JSON.stringify
 declare const bigInt: Jsonify<bigint>;
 expectType<never>(bigInt);
