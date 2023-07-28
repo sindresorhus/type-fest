@@ -1,3 +1,10 @@
+import type {RequireNone} from './internal';
+
+/**
+Requires all of the keys in the given object.
+*/
+type RequireAll<ObjectType, KeysType extends keyof ObjectType> = Required<Pick<ObjectType, KeysType>>;
+
 /**
 Create a type that requires all of the given keys or none of the given keys. The remaining keys are kept as is.
 
@@ -30,7 +37,6 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 @category Object
 */
 export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = never> = (
-	| Required<Pick<ObjectType, KeysType>> // Require all of the given keys.
-	| Partial<Record<KeysType, never>> // Require none of the given keys.
-) &
-Omit<ObjectType, KeysType>; // The rest of the keys.
+	| RequireAll<ObjectType, KeysType>
+	| RequireNone<KeysType>
+) & Omit<ObjectType, KeysType>; // The rest of the keys.
