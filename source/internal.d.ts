@@ -252,9 +252,7 @@ Returns a boolean for whether the given type is `null`.
 */
 export type IsNull<T> = [T] extends [null] ? true : false;
 
-type ObjectKey = string | number | symbol;
-
 /**
 Disallows any of the given keys.
 */
-export type RequireNone<KeysType extends ObjectKey> = Partial<Record<KeysType, never>>;
+export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
