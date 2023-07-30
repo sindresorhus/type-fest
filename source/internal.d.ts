@@ -251,3 +251,8 @@ export type IsNotFalse<T extends boolean> = [T] extends [false] ? false : true;
 Returns a boolean for whether the given type is `null`.
 */
 export type IsNull<T> = [T] extends [null] ? true : false;
+
+/**
+Disallows any of the given keys.
+*/
+export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
