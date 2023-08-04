@@ -1,5 +1,5 @@
 import {expectType, expectAssignable, expectNotAssignable, expectError} from 'tsd';
-import type {PackageJson, LiteralUnion, JsonObject} from '../index';
+import type {PackageJson, LiteralUnion, JsonObject, UnknownRecord} from '../index';
 
 const packageJson: PackageJson = {};
 
@@ -119,7 +119,6 @@ expectAssignable<JsonObject>({bugs: {life: 42}});
 
 // `PackageJson` should be a valid `JsonObject`.
 // See https://github.com/sindresorhus/type-fest/issues/79
-type UnknownRecord = Record<string, unknown>;
 
 const unknownRecord: UnknownRecord = {};
 const jsonObject: JsonObject = {};
