@@ -2,6 +2,7 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
+export type {UnknownRecord} from './unknown-record';
 
 /**
 Infer the length of the given array `<T>`.
@@ -76,11 +77,6 @@ export type Whitespace =
 	| '\u{FEFF}';
 
 export type WordSeparators = '-' | '_' | Whitespace;
-
-/**
-Matches any unknown record.
-*/
-export type UnknownRecord = Record<PropertyKey, unknown>;
 
 /**
 Matches any unknown array or tuple.
