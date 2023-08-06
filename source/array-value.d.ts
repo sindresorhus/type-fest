@@ -15,10 +15,10 @@ import type {IterableElement} from './iterable-element';
  * @example
  * ```ts
  * const foo: Array<(string | boolean)> = [];
- * type ValueFoo = ArrayValue<typeof foo>;
+ * type ValueFoo = ArrayValue<typeof foo>; // => string | boolean
  *
- * type Bar = Array<`index-${number}`>;
- * type ValueBar = ArrayValue< Bar>;
+ * type Bar = {dataPoint: number, timestamp: number}[];
+ * type ValueBar = ArrayValue< Bar>; // => {dataPoint: number, timestamp: number}
  *```
  *
  */
