@@ -1,7 +1,7 @@
 /**
 Represents an object with unknown value. You probably want this instead of {}.
 
-Use case: You have an object that you don't know its keys or values.
+Use case: You have an object whose keys and values are unknown to you.
 
 @example
 ```

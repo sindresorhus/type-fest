@@ -3,6 +3,7 @@ import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 
+// TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
 
 /**
