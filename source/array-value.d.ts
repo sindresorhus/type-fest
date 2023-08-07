@@ -1,6 +1,7 @@
 import type {IterableElement} from './iterable-element';
 /**
  * Get a union of all the possible array/tuple values, with improved readability.
+ * This type is useful when you want to extract all the possible element types of an array.
  *
  * It is advised that one uses other, built in language methods where applicable, e.g:
  * ```ts
