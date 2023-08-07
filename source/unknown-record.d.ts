@@ -1,7 +1,7 @@
 /**
 Matches any unknown record.
 
-Use case: You have an object that you don't know its keys or values.
+Use case: You have an object whose keys and values are unknown to you.
 
 @example
 ```
