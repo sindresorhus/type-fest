@@ -59,12 +59,12 @@ export type RequiredDeep<T, E extends ExcludeUndefined<T> = ExcludeUndefined<T>>
 							? WeakSet<RequiredDeep<ItemType>>
 							: E extends Promise<infer ValueType>
 								? Promise<RequiredDeep<ValueType>>
-								: E extends (...args: any[]) => unknown
+								: E extends (...arguments_: any[]) => unknown
 									? {} extends RequiredObjectDeep<E>
 										? E
 										: HasMultipleCallSignatures<E> extends true
 											? E
-											: ((...arguments: Parameters<E>) => ReturnType<E>) & RequiredObjectDeep<E>
+											: ((...arguments_: Parameters<E>) => ReturnType<E>) & RequiredObjectDeep<E>
 									: E extends object
 										? E extends Array<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
 											? ItemType[] extends E // Test for arrays (non-tuples) specifically

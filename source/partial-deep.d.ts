@@ -69,7 +69,7 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> = T extends 
 				? PartialReadonlyMapDeep<KeyType, ValueType, Options>
 				: T extends ReadonlySet<infer ItemType>
 					? PartialReadonlySetDeep<ItemType, Options>
-					: T extends ((...arguments: any[]) => unknown)
+					: T extends ((...arguments_: any[]) => unknown)
 						? T | undefined
 						: T extends object
 							? T extends ReadonlyArray<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156

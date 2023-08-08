@@ -38,12 +38,12 @@ Note that types containing overloaded functions are not made deeply readonly due
 */
 export type ReadonlyDeep<T> = T extends BuiltIns
 	? T
-	: T extends (...arguments: any[]) => unknown
+	: T extends (...arguments_: any[]) => unknown
 		? {} extends ReadonlyObjectDeep<T>
 			? T
 			: HasMultipleCallSignatures<T> extends true
 				? T
-				: ((...arguments: Parameters<T>) => ReturnType<T>) & ReadonlyObjectDeep<T>
+				: ((...arguments_: Parameters<T>) => ReturnType<T>) & ReadonlyObjectDeep<T>
 		: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
 			? ReadonlyMapDeep<KeyType, ValueType>
 			: T extends Readonly<ReadonlySet<infer ItemType>>
