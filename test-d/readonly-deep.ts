@@ -1,6 +1,7 @@
-import {expectType, expectError} from 'tsd';
-import type {ReadonlyDeep} from '../index';
-import type {ReadonlyObjectDeep} from '../source/readonly-deep';
+import {expectType, expectError, expectAssignable} from 'tsd';
+import type {Opaque, tag} from '../source/opaque';
+import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep';
+import type {JsonValue} from '../source/basic';
 
 type Overloaded = {
 	(foo: number): string;
@@ -15,6 +16,17 @@ type Namespace = {
 type NamespaceWithOverload = Overloaded & {
 	baz: boolean[];
 };
+
+type OpaqueObjectData = {a: number[]} | {b: string};
+type OpaqueObject = Opaque<OpaqueObjectData, {token: unknown}>;
+
+type ReadonlyJsonValue =
+  | {readonly [k: string]: ReadonlyJsonValue}
+  | readonly ReadonlyJsonValue[]
+  | number
+  | string
+  | boolean
+  | null;
 
 const data = {
 	object: {
@@ -35,15 +47,20 @@ const data = {
 	map: new Map<string, string>(),
 	set: new Set<string>(),
 	array: ['foo'],
-	tuple: ['foo'] as ['foo'],
+	emptyTuple: [] as [],
+	singleItemTuple: ['foo'] as ['foo'],
+	multiItemTuple: [{a: ''}, {b: 4}, {c: ''}] as [{a: string}, {b: number}, {c: string}],
+	trailingSpreadTuple: ['foo', 1] as [string, ...number[]],
+	leadingSpreadTuple: ['foo', 1] as [...string[], number],
 	readonlyMap: new Map<string, string>() as ReadonlyMap<string, string>,
 	readonlySet: new Set<string>() as ReadonlySet<string>,
 	readonlyArray: ['foo'] as readonly string[],
 	readonlyTuple: ['foo'] as const,
+	json: [{x: true}] as JsonValue,
+	opaqueObj: {a: [3]} as OpaqueObject, // eslint-disable-line @typescript-eslint/consistent-type-assertions
 };
 
 const readonlyData: ReadonlyDeep<typeof data> = data;
-
 readonlyData.fn('foo');
 
 readonlyData.fnWithOverload(1);
@@ -62,11 +79,17 @@ expectType<RegExp>(readonlyData.regExp);
 expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.map);
 expectType<Readonly<ReadonlySet<string>>>(readonlyData.set);
 expectType<readonly string[]>(readonlyData.array);
-expectType<readonly ['foo']>(readonlyData.tuple);
+expectType<readonly []>(readonlyData.emptyTuple);
+expectType<readonly ['foo']>(readonlyData.singleItemTuple);
+expectType<readonly [string, ...number[]]>(readonlyData.trailingSpreadTuple);
+expectType<readonly [...string[], number]>(readonlyData.leadingSpreadTuple);
+expectType<readonly [{readonly a: string}, {readonly b: number}, {readonly c: string}]>(readonlyData.multiItemTuple);
 expectType<Readonly<ReadonlyMap<string, string>>>(readonlyData.readonlyMap);
 expectType<Readonly<ReadonlySet<string>>>(readonlyData.readonlySet);
 expectType<readonly string[]>(readonlyData.readonlyArray);
 expectType<readonly ['foo']>(readonlyData.readonlyTuple);
+expectAssignable<ReadonlyJsonValue>(readonlyData.json);
+expectAssignable<Opaque<ReadonlyDeep<OpaqueObjectData>, ReadonlyDeep<OpaqueObject[typeof tag]>>>(readonlyData.opaqueObj);
 
 expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
 expectType<string>(readonlyData.namespace(1));
