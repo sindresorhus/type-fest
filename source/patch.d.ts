@@ -35,11 +35,7 @@ type TypeWithCustomReplacement = Patch<TypeWithOptionalProps, "yolo">;
 export type Patch<
 	Type,
 	Replacement = undefined,
-> = ReplaceDeep<
-	UndefinedToPlaceholderDeep<Type, Replacement>,
-	Placeholder,
-	undefined
->;
+> = ReplaceDeep<UndefinedToPlaceholderDeep<Type, Replacement>, Placeholder, undefined>;
 
 declare namespace Any {
 	export type record = Record<symbol, any>;
@@ -59,10 +55,10 @@ type ReplaceDeep<
 	Find,
 	Replace,
 > = Type extends Find ? Replace
-	: Type extends Record<symbol, any> ? { [Key in keyof Type]: ReplaceDeep<Type[Key], Find, Replace> }
-	: Type extends readonly any[] ? { [Ix in keyof Type]: ReplaceDeep<Type[Ix], Find, Replace> }
-	: Type
-	;
+	: Type extends Record<symbol, any> ? {[Key in keyof Type]: ReplaceDeep<Type[Key], Find, Replace>}
+		: Type extends readonly any[] ? {[Ix in keyof Type]: ReplaceDeep<Type[Ix], Find, Replace>}
+			: Type
+			;
 
 /** @internal */
 type UndefinedToPlaceholderDeep<
@@ -71,23 +67,23 @@ type UndefinedToPlaceholderDeep<
 >
 	= Type extends undefined ? Placeholder
 	// Is `Type` a record?
-	: Type extends Record<symbol, any>
-	? {
-		// Make the properties of `Type` required
-		[Key in keyof Type]-?:
-		// Visit each value recursively
-		UndefinedToPlaceholderDeep<
-			// Is `Key` optional in `Type`?
-			{} extends Pick<Type, Key>
-			// ...if yes, replace `undefined` with `null` in `Type[Key]` union
-			? ReplaceUnionMember<Type[Key], undefined, Replacement>
-			// ...otherwise just use `Type[Key]` when recursing
-			: Type[Key],
-			Replacement
-		>
-	}
-	: Type
-	;
+		: Type extends Record<symbol, any>
+			? {
+				// Make the properties of `Type` required
+				[Key in keyof Type]-?:
+				// Visit each value recursively
+				UndefinedToPlaceholderDeep<
+				// Is `Key` optional in `Type`?
+				{} extends Pick<Type, Key>
+				// ...if yes, replace `undefined` with `null` in `Type[Key]` union
+					? ReplaceUnionMember<Type[Key], undefined, Replacement>
+				// ...otherwise just use `Type[Key]` when recursing
+					: Type[Key],
+				Replacement
+				>
+			}
+			: Type
+			;
 
 /** @internal */
 type ReplaceUnionMember<Union, Find, Replace> = Union extends Find ? Replace : Union;

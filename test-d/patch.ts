@@ -1,16 +1,16 @@
-import { expectType } from 'tsd';
-import type { Patch } from '../index';
+import {expectType} from 'tsd';
+import type {Patch} from '../index';
 
-type In1 = { a: string; b?: boolean };
-type Out1 = { a: string; b: boolean | undefined };
+type In1 = {a: string; b?: boolean};
+type Out1 = {a: string; b: boolean | undefined};
 
-type In2 = { a?: string; b?: boolean };
-type Out2 = { a: string | null; b: boolean | null };
+type In2 = {a?: string; b?: boolean};
+type Out2 = {a: string | null; b: boolean | null};
 
-type In3 = { a: string; b: boolean };
-type Out3 = { a: string; b: boolean };
+type In3 = {a: string; b: boolean};
+type Out3 = {a: string; b: boolean};
 
-type In4 = { a: undefined };
+type In4 = {a: undefined};
 type Out4 = In4;
 
 type In5 = {
@@ -55,12 +55,12 @@ type Out5 = {
 			q: 13 | undefined;
 		} | undefined;
 	};
-}
+};
 
 type In6 = {
 	a?:
 	| 1
-	| { b: 2; c?: 3; d: undefined | readonly undefined[] | { e?: { a?: 1 } | { a?: 2 } } };
+	| {b: 2; c?: 3; d: undefined | readonly undefined[] | {e?: {a?: 1} | {a?: 2}}};
 };
 
 type Out6 = {
@@ -75,15 +75,11 @@ type Out6 = {
 			} | undefined;
 		} | undefined;
 	} | undefined;
-}
-
-type In7 = {
-	a?: 1;
 };
 
-type Out7 = {
-	a: | 0 | 1;
-};
+type In7 = {a?: 1};
+
+type Out7 = {a: | 0 | 1};
 
 declare const test1: Patch<In1>;
 declare const test2: Patch<In2, null>;
