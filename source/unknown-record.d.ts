@@ -1,5 +1,5 @@
 /**
-Represents an object with unknown value. You probably want this instead of {}.
+Represents an object with `unknown` value. You probably want this instead of `{}`.
 
 Use case: You have an object whose keys and values are unknown to you.
 
