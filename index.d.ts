@@ -5,7 +5,6 @@ export * from './source/basic';
 export * from './source/observable-like';
 
 // Utilities
-export type {DeepUndefinedToNull} from './source/deep-undefined-to-null';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
@@ -14,6 +13,7 @@ export type {WritableDeep} from './source/writable-deep';
 export type {Merge} from './source/merge';
 export type {MergeDeep, MergeDeepOptions} from './source/merge-deep';
 export type {MergeExclusive} from './source/merge-exclusive';
+export type {Patch} from './source/patch';
 export type {RequireAtLeastOne} from './source/require-at-least-one';
 export type {RequireExactlyOne} from './source/require-exactly-one';
 export type {RequireAllOrNone} from './source/require-all-or-none';
