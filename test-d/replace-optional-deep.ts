@@ -1,16 +1,16 @@
-import {expectType} from 'tsd';
-import type {Patch} from '../index';
+import { expectType } from 'tsd';
+import type { ReplaceOptionalDeep } from '../index';
 
-type In1 = {a: string; b?: boolean};
-type Out1 = {a: string; b: boolean | undefined};
+type In1 = { a: string; b?: boolean };
+type Out1 = { a: string; b: boolean | undefined };
 
-type In2 = {a?: string; b?: boolean};
-type Out2 = {a: string | null; b: boolean | null};
+type In2 = { a?: string; b?: boolean };
+type Out2 = { a: string | null; b: boolean | null };
 
-type In3 = {a: string; b: boolean};
-type Out3 = {a: string; b: boolean};
+type In3 = { a: string; b: boolean };
+type Out3 = { a: string; b: boolean };
 
-type In4 = {a: undefined};
+type In4 = { a: undefined };
 type Out4 = In4;
 
 type In5 = {
@@ -60,7 +60,7 @@ type Out5 = {
 type In6 = {
 	a?:
 	| 1
-	| {b: 2; c?: 3; d: undefined | readonly undefined[] | {e?: {a?: 1} | {a?: 2}}};
+	| { b: 2; c?: 3; d: undefined | readonly undefined[] | { e?: { a?: 1 } | { a?: 2 } } };
 };
 
 type Out6 = {
@@ -77,17 +77,17 @@ type Out6 = {
 	} | undefined;
 };
 
-type In7 = {a?: 1};
+type In7 = { a?: 1 };
 
-type Out7 = {a: | 0 | 1};
+type Out7 = { a: | 0 | 1 };
 
-declare const test1: Patch<In1>;
-declare const test2: Patch<In2, null>;
-declare const test3: Patch<In3>;
-declare const test4: Patch<In4>;
-declare const test5: Patch<In5>;
-declare const test6: Patch<In6>;
-declare const test7: Patch<In7, 0>;
+declare const test1: ReplaceOptionalDeep<In1>;
+declare const test2: ReplaceOptionalDeep<In2, null>;
+declare const test3: ReplaceOptionalDeep<In3>;
+declare const test4: ReplaceOptionalDeep<In4>;
+declare const test5: ReplaceOptionalDeep<In5>;
+declare const test6: ReplaceOptionalDeep<In6>;
+declare const test7: ReplaceOptionalDeep<In7, 0>;
 
 expectType<Out1>(test1);
 expectType<Out2>(test2);
