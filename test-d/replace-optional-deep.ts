@@ -1,16 +1,16 @@
-import { expectType } from 'tsd';
-import type { ReplaceOptionalDeep } from '../index';
+import {expectType} from 'tsd';
+import type {ReplaceOptionalDeep} from '../index';
 
-type In1 = { a: string; b?: boolean };
-type Out1 = { a: string; b: undefined | boolean };
+type In1 = {a: string; b?: boolean};
+type Out1 = {a: string; b: undefined | boolean};
 
-type In2 = { a?: string; b?: boolean };
-type Out2 = { a: null | string; b: null | boolean };
+type In2 = {a?: string; b?: boolean};
+type Out2 = {a: null | string; b: null | boolean};
 
-type In3 = { a: string; b: boolean };
-type Out3 = { a: string; b: boolean };
+type In3 = {a: string; b: boolean};
+type Out3 = {a: string; b: boolean};
 
-type In4 = { a: undefined };
+type In4 = {a: undefined};
 type Out4 = In4;
 
 type In5 = {
@@ -46,8 +46,8 @@ type Out5 = {
 	h: {
 		i: 7;
 		j: undefined | 7;
-		k: 
-		| undefined 
+		k:
+		| undefined
 		| {
 			l: undefined | 8;
 			m: 9;
@@ -62,43 +62,44 @@ type Out5 = {
 type In6 = {
 	a?:
 	| 1
-	| { 
-		b: 2; 
-		c?: 3; 
-		d: 
-		| undefined 
-		| readonly undefined[] 
-		| { e?: 
-			| { a?: 1 } 
-			| { a?: 2 } 
-		} 
-	};
-};
-
-type Out6 = {
-	a: 
-	| undefined
-	| 1 
 	| {
 		b: 2;
-		c: 
+		c?: 3;
+		d:
 		| undefined
-		| 3;
-		d: 
-		| undefined 
-		| readonly undefined[] 
+		| readonly undefined[]
 		| {
-			e:
-			| undefined
-			| { a: undefined | 1; } 
-			| { a: undefined | 2; };
+			e?:
+			| {a?: 1}
+			| {a?: 2};
 		};
 	};
 };
 
-type In7 = { a?: 1 };
+type Out6 = {
+	a:
+	| undefined
+	| 1
+	| {
+		b: 2;
+		c:
+		| undefined
+		| 3;
+		d:
+		| undefined
+		| readonly undefined[]
+		| {
+			e:
+			| undefined
+			| {a: undefined | 1}
+			| {a: undefined | 2};
+		};
+	};
+};
 
-type Out7 = { a: 0 | 1 };
+type In7 = {a?: 1};
+
+type Out7 = {a: 0 | 1};
 
 declare const test1: ReplaceOptionalDeep<In1>;
 declare const test2: ReplaceOptionalDeep<In2, null>;
