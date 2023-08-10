@@ -55,7 +55,7 @@ export type PartialOnUndefinedDeep<T, Options extends PartialOnUndefinedDeepOpti
 /**
 Utility type to get the value type by key and recursively call `PartialOnUndefinedDeep` to transform sub-objects.
 */
-type PartialOnUndefinedDeepValue<T, Options extends PartialOnUndefinedDeepOptions> = T extends BuiltIns | ((...arguments: any[]) => unknown)
+type PartialOnUndefinedDeepValue<T, Options extends PartialOnUndefinedDeepOptions> = T extends BuiltIns | ((...arguments_: any[]) => unknown)
 	? T
 	: T extends ReadonlyArray<infer U> // Test if type is array or tuple
 		? Options['recurseIntoArrays'] extends true // Check if option is activated

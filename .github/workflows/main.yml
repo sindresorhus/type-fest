@@ -13,7 +13,6 @@ jobs:
           - 20
           - 18
           - 16
-          - 14
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -29,9 +28,7 @@ jobs:
       matrix:
         typescript-version:
           - "latest"
-          - "~4.9.0"
-          - "~4.8.0"
-          - "~4.7.0"
+          - "~5.1.0"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
