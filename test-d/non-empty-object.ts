@@ -24,7 +24,7 @@ declare const test3: NonEmptyObject<TestType3>;
 declare const test4: NonEmptyObject<TestType4>;
 
 expectType<TestType1>(test1);
-// undefined is only added to the optional types if "exactOptionalPropertyTypes" is not set to true
+// The undefined type is only added to the optional types if "exactOptionalPropertyTypes" is not set to true
 expectType<{a: string; b?: boolean | undefined} | {a?: string | undefined; b: boolean}>(test2);
 expectType<TestType3>(test3);
 expectNever(test4);
