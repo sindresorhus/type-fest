@@ -1,3 +1,6 @@
+import {HasRequiredKeys} from './has-required-keys';
+import {RequireAtLeastOne} from './require-at-least-one';
+
 /**
 Represents an object with at least 1 non-optional key.
 
@@ -13,7 +16,7 @@ type User = {
 	id: number;
 };
 
-type UpdateRequest<Entity extends object> = NonEmptyObject<Entity>;
+type UpdateRequest<Entity extends object> = NonEmptyObject<Partial<Entity>>;
 
 const update1: UpdateRequest<User> = {
 	name: 'Alice',
@@ -28,6 +31,4 @@ const update2: UpdateRequest<User> = {};
 
 @category Object
 */
-export type NonEmptyObject<T> = {
-	[K in keyof T]-?: Pick<Required<T>, K>
-}[keyof T];
+export type NonEmptyObject<T extends object> = HasRequiredKeys<T> extends true ? T : RequireAtLeastOne<T, keyof T>;

@@ -25,5 +25,5 @@ declare const test4: NonEmptyObject<TestType4>;
 
 expectType<TestType1>(test1);
 expectType<{a: string; b?: boolean} | {a?: string; b: boolean}>(test2);
-expectType<TestType3 | {a?: string; b: boolean}>(test3);
+expectType<TestType3>(test3);
 expectNever(test4);
