@@ -1,5 +1,5 @@
-import {expectType, expectNever} from 'tsd';
-import type {NonEmptyObject} from '../index';
+import {expectNever, expectType} from 'tsd';
+import type {NonEmptyObject, RequireAtLeastOne} from '../index';
 
 type TestType1 = {
 	a: string;
@@ -24,7 +24,6 @@ declare const test3: NonEmptyObject<TestType3>;
 declare const test4: NonEmptyObject<TestType4>;
 
 expectType<TestType1>(test1);
-// The undefined type is only added to the optional types if "exactOptionalPropertyTypes" is not set to true
-expectType<{a: string; b?: boolean | undefined} | {a?: string | undefined; b: boolean}>(test2);
+expectType<RequireAtLeastOne<TestType2>>(test2);
 expectType<TestType3>(test3);
 expectNever(test4);
