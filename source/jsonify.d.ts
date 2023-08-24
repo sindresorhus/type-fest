@@ -7,7 +7,7 @@ import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
 
 type HasAnyProperty<T extends object> = {
-    [K in keyof T]: IsAny<T[K]> extends true ? K : never;
+	[K in keyof T]: IsAny<T[K]> extends true ? K : never;
 }[keyof T] extends never ? false : true;
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
