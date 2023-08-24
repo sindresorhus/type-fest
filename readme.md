@@ -601,7 +601,7 @@ There are many advanced types most users don't know about.
 	// Cool, we're fine with that.
 	changePersonData(andrew, 'name', 'Pony');
 
-	// Goverment didn't like the fact that you wanted to change your identity.
+	// Government didn't like the fact that you wanted to change your identity.
 	changePersonData(andrew, ID, uniqueId());
 	```
 	</details>
@@ -717,7 +717,7 @@ There are many advanced types most users don't know about.
 	}
 
 	const articleCache = new InstanceCache(ArticleModel);
-	const amazonArticle = articleCache.getInstance('Amazon forests burining!');
+	const amazonArticle = articleCache.getInstance('Amazon forests burning!');
 	```
 	</details>
 
