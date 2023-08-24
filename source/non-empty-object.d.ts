@@ -25,9 +25,10 @@ const update1: UpdateRequest<User> = {
 
 // At least 1 key is required, therefore this will report a 2322 error:
 // Type '{}' is not assignable to type 'UpdateRequest<User>'
-// you can use "IsEmptyObject" to check if a object is empty
 const update2: UpdateRequest<User> = {};
 ```
+
+@see you can use "IsEmptyObject" to check if a object is empty
 
 @category Object
 */
