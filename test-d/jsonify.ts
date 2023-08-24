@@ -327,6 +327,9 @@ expectType<{a: any}>(objectWithAnyProperty);
 declare const objectWithAnyProperties: Jsonify<Record<string, any>>;
 expectType<Record<string, any>>(objectWithAnyProperties);
 
+declare const objectWithObjectWithAnyProperties: Jsonify<{payload: Record<string, any>}>;
+expectType<{payload: Record<string, any>}>(objectWithObjectWithAnyProperties);
+
 /// #629
 // declare const readonlyTuple: Jsonify<readonly [1, 2, 3]>;
 // expectType<readonly [1, 2, 3]>(readonlyTuple);
