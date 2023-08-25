@@ -26,7 +26,7 @@ export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './sour
 export type {ReadonlyDeep} from './source/readonly-deep';
 export type {LiteralUnion} from './source/literal-union';
 export type {Promisable} from './source/promisable';
-export type {Opaque, UnwrapOpaque} from './source/opaque';
+export type {Opaque, UnwrapOpaque, Tagged, UnwrapTagged} from './source/opaque';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';
