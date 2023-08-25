@@ -28,7 +28,7 @@ const update1: UpdateRequest<User> = {
 const update2: UpdateRequest<User> = {};
 ```
 
-@see you can use "IsEmptyObject" to check if a object is empty
+@see Use `IsEmptyObject` to check whether an object is empty.
 
 @category Object
 */
