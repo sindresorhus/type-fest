@@ -129,8 +129,10 @@ Click the type names for complete docs.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
-- [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
-- [`UnwrapOpaque`](source/opaque.d.ts) - Revert an [opaque type](https://codemix.com/opaque-types-in-javascript/) back to its original type.
+- [`Tagged`](source/opaque.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) if needed.
+- [`UnwrapTagged`](source/opaque.d.ts) - Get the untagged portion of a tagged type created with `Tagged`.
+- [`Opaque`](source/opaque.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d). This implementation only supports a single tag.
+- [`UnwrapOpaque`](source/opaque.d.ts) - Get the untagged portion of a tagged type created with `Opaque` or `Tagged`.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly.
