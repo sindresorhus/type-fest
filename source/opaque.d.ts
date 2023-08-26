@@ -127,9 +127,9 @@ A type returned by `Tagged` can be passed to `Tagged` again, to create a type wi
 [Read more about tagged types.](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d)
 
 There have been several discussions about adding similar features to TypeScript. Unfortunately, nothing has (yet) moved forward:
-  - [Microsoft/TypeScript#202](https://github.com/microsoft/TypeScript/issues/202)
-  - [Microsoft/TypeScript#4895](https://github.com/microsoft/TypeScript/issues/4895)
-  - [Microsoft/TypeScript#33290](https://github.com/microsoft/TypeScript/pull/33290)
+	- [Microsoft/TypeScript#202](https://github.com/microsoft/TypeScript/issues/202)
+	- [Microsoft/TypeScript#4895](https://github.com/microsoft/TypeScript/issues/4895)
+	- [Microsoft/TypeScript#33290](https://github.com/microsoft/TypeScript/pull/33290)
 
 @example
 ```
@@ -140,11 +140,11 @@ type AccountBalance = Tagged<number, 'AccountBalance'>;
 
 function createAccountNumber(): AccountNumber {
 	// As you can see, casting from a `number` (the underlying type being tagged) is allowed.
-  return 2 as AccountNumber;
+	return 2 as AccountNumber;
 }
 
 function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
-  return 4 as AccountBalance;
+	return 4 as AccountBalance;
 }
 
 // This will compile successfully.

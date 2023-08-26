@@ -37,8 +37,8 @@
 		"@sindresorhus/tsconfig": "~0.7.0",
 		"expect-type": "^0.15.0",
 		"tsd": "^0.28.1",
-		"typescript": "^5.0.4",
-		"xo": "^0.55.0"
+		"typescript": "^5.2.2",
+		"xo": "^0.56.0"
 	},
 	"xo": {
 		"rules": {
