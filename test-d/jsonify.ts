@@ -222,7 +222,7 @@ expectType<[string, string]>(tupleJson);
 declare const tupleRestJson: Jsonify<[string, ...Date[]]>;
 expectType<[string, ...string[]]>(tupleRestJson);
 
-declare const mixTupleJson: Jsonify<['1', typeof fn, 2]>;
+declare const mixTupleJson: Jsonify<['1', (_: any) => void, 2]>;
 expectType<['1', null, 2]>(mixTupleJson);
 
 declare const tupleStringJson: Jsonify<string[] & ['some value']>;
@@ -330,6 +330,6 @@ expectType<{a: any}>(objectWithAnyProperty);
 declare const objectWithAnyProperties: Jsonify<Record<string, any>>;
 expectType<Record<string, any>>(objectWithAnyProperties);
 
-/// #629
+// Regression test for https://github.com/sindresorhus/type-fest/issues/629
 declare const readonlyTuple: Jsonify<readonly [1, 2, 3]>;
 expectType<[1, 2, 3]>(readonlyTuple);
