@@ -1,6 +1,6 @@
 declare const tag: unique symbol;
 
-declare type TagContainer<Token> = {
+export type TagContainer<Token> = {
 	readonly [tag]: Token;
 };
 
