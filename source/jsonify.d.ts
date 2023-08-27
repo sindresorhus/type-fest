@@ -6,7 +6,6 @@ import type {IsNever} from './is-never';
 import type {IsUnknown} from './is-unknown';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
-import type {Writable} from './writable';
 import type {WritableDeep} from './writable-deep';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
