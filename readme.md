@@ -291,10 +291,11 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 
 *If you know one of our types by a different name, add it here for discovery.*
 
+- `Prettify`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
+- `Expand`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
 - `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
 - `RecordDeep`- See [`Schema`](https://github.com/sindresorhus/type-fest/blob/main/source/schema.d.ts)
 - `Mutable`- See [`Writable`](https://github.com/sindresorhus/type-fest/blob/main/source/writable.d.ts)
-- `Prettify`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
 - `RequireOnlyOne` - See [`RequireExactlyOne`](https://github.com/sindresorhus/type-fest/blob/main/source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](https://github.com/sindresorhus/type-fest/blob/main/source/require-one-or-none.d.ts)
 
