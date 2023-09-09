@@ -1,10 +1,11 @@
 import {expectType, expectError} from 'tsd';
 import type {EnumObject} from '../index';
 
-declare const foo: EnumObject<'id' | 'value'>;
-expectType<{ id: 'id', value: 'value'}>(foo);
+// Object
+const foo: EnumObject<'id' | 'value'> = { id: 'id', value: 'value'};
+expectType<EnumObject<'id' | 'value'>>(foo);
 
-// Verify example
+// type example
 type User = {
 	userId: number;
 	userName: string;
