@@ -7,6 +7,7 @@ export * from './source/observable-like';
 // Utilities
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {NonEmptyObject} from './source/non-empty-object';
+export type {EnumObject} from './source/enum-object';
 export type {UnknownRecord} from './source/unknown-record';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
