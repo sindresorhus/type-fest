@@ -189,7 +189,7 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
 	: Type[Key] extends symbol
 		? never
-		: [(...arguments_: any[]) => any] extends [Type[Key]]
+		: ((...arguments_: any[]) => any) extends [Type[Key]]
 			? never
 			: Key;
 
