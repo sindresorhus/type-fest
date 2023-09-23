@@ -112,6 +112,21 @@ expectNotAssignable<JsonValue>(nonJsonWithToJSON);
 expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
 expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
 
+class NonJsonExtendPrimitiveWithToJSON extends Number {
+	public fixture = BigInt('42');
+
+	public toJSON(): {fixture: string} {
+		return {
+			fixture: '42n',
+		};
+	}
+}
+
+const nonJsonExtendPrimitiveWithToJSON = new NonJsonExtendPrimitiveWithToJSON();
+expectNotAssignable<JsonValue>(nonJsonExtendPrimitiveWithToJSON);
+expectAssignable<JsonValue>(nonJsonExtendPrimitiveWithToJSON.toJSON());
+expectAssignable<Jsonify<NonJsonExtendPrimitiveWithToJSON>>(nonJsonExtendPrimitiveWithToJSON.toJSON());
+
 class NonJsonWithToJSONWrapper {
 	public inner: NonJsonWithToJSON = nonJsonWithToJSON;
 	public override = 42;
