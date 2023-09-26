@@ -327,7 +327,7 @@ expectType<{a: any}>(objectWithAnyProperty);
 declare const objectWithAnyProperties: Jsonify<Record<string, any>>;
 expectType<Record<string, any>>(objectWithAnyProperties);
 
-// Test for Jsonify support for nested objects with _only_ a name property #657
+// Test for `Jsonify` support for nested objects with _only_ a name property.
 // See https://github.com/sindresorhus/type-fest/issues/657
 declare const nestedObjectWithNameProperty: {
 	first: {
