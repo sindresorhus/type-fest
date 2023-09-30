@@ -1,6 +1,6 @@
 import type {Primitive} from './primitive';
 import type {Numeric} from './numeric';
-import type {IsNotFalse} from './internal';
+import type {IsNotFalse, IsPrimitive} from './internal';
 import type {IsNever} from './is-never';
 
 /**
@@ -250,4 +250,7 @@ stripLeading(str, 'abc');
 @category Type Guard
 @category Utilities
 */
-export type IsLiteral<T extends Primitive> = IsNotFalse<IsLiteralUnion<T>>;
+export type IsLiteral<T> =
+	IsPrimitive<T> extends true
+		? IsNotFalse<IsLiteralUnion<T>>
+		: false;
