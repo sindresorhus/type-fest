@@ -264,6 +264,7 @@ export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType,
 
 /**
 Returns a boolean for whether the given type is primitive value or primitive type.
+
 @example
 ```
 IsPrimitive<'string'>
