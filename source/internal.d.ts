@@ -261,3 +261,19 @@ export type IsNull<T> = [T] extends [null] ? true : false;
 Disallows any of the given keys.
 */
 export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
+
+/**
+Returns a boolean for whether the given type is primitive value or primitive type.
+@example
+```
+IsPrimitive<'string'>
+//=> true
+
+IsPrimitive<string>
+//=> true
+
+IsPrimitive<Object>
+//=> false
+```
+*/
+export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
