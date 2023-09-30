@@ -6,6 +6,7 @@ export * from './source/observable-like';
 
 // Utilities
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
+export type {NonEmptyObject} from './source/non-empty-object';
 export type {UnknownRecord} from './source/unknown-record';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
@@ -26,7 +27,7 @@ export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './sour
 export type {ReadonlyDeep} from './source/readonly-deep';
 export type {LiteralUnion} from './source/literal-union';
 export type {Promisable} from './source/promisable';
-export type {Opaque, UnwrapOpaque} from './source/opaque';
+export type {Opaque, UnwrapOpaque, Tagged, UnwrapTagged} from './source/opaque';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';

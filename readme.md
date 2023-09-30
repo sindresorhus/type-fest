@@ -77,6 +77,8 @@ npm install type-fest
 
 *Requires TypeScript >=5.1*
 
+*Works best with [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
+
 ## Usage
 
 ```ts
@@ -109,6 +111,7 @@ Click the type names for complete docs.
 
 - [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty plain object, the `{}` value.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
+- [`NonEmptyObject`](source/non-empty-object.d.ts) - Represents an object with at least 1 non-optional key.
 - [`UnknownRecord`](source/unknown-record.d.ts) - Represents an object with `unknown` value. You probably want this instead of `{}`.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
@@ -128,8 +131,10 @@ Click the type names for complete docs.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
-- [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
-- [`UnwrapOpaque`](source/opaque.d.ts) - Revert an [opaque type](https://codemix.com/opaque-types-in-javascript/) back to its original type.
+- [`Tagged`](source/opaque.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) if needed.
+- [`UnwrapTagged`](source/opaque.d.ts) - Get the untagged portion of a tagged type created with `Tagged`.
+- [`Opaque`](source/opaque.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d). This implementation only supports a single tag.
+- [`UnwrapOpaque`](source/opaque.d.ts) - Get the untagged portion of a tagged type created with `Opaque` or `Tagged`.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly.
@@ -288,10 +293,11 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 
 *If you know one of our types by a different name, add it here for discovery.*
 
+- `Prettify`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
+- `Expand`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
 - `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
 - `RecordDeep`- See [`Schema`](https://github.com/sindresorhus/type-fest/blob/main/source/schema.d.ts)
 - `Mutable`- See [`Writable`](https://github.com/sindresorhus/type-fest/blob/main/source/writable.d.ts)
-- `Prettify`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
 - `RequireOnlyOne` - See [`RequireExactlyOne`](https://github.com/sindresorhus/type-fest/blob/main/source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](https://github.com/sindresorhus/type-fest/blob/main/source/require-one-or-none.d.ts)
 
@@ -601,7 +607,7 @@ There are many advanced types most users don't know about.
 	// Cool, we're fine with that.
 	changePersonData(andrew, 'name', 'Pony');
 
-	// Goverment didn't like the fact that you wanted to change your identity.
+	// Government didn't like the fact that you wanted to change your identity.
 	changePersonData(andrew, ID, uniqueId());
 	```
 	</details>
@@ -717,7 +723,7 @@ There are many advanced types most users don't know about.
 	}
 
 	const articleCache = new InstanceCache(ArticleModel);
-	const amazonArticle = articleCache.getInstance('Amazon forests burining!');
+	const amazonArticle = articleCache.getInstance('Amazon forests burning!');
 	```
 	</details>
 
