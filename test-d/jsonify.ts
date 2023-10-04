@@ -348,3 +348,6 @@ expectType<typeof nestedObjectWithNameProperty>(
 // Regression test for https://github.com/sindresorhus/type-fest/issues/629
 declare const readonlyTuple: Jsonify<readonly [1, 2, 3]>;
 expectType<[1, 2, 3]>(readonlyTuple);
+
+declare const objectWithNullOrObjectWithAnyProperties: Jsonify<{schema: Record<string, any> | null}>;
+expectType<Record<string, any> | null>(objectWithNullOrObjectWithAnyProperties.schema);
