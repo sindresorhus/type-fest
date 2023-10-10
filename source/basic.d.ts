@@ -4,7 +4,7 @@ Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 @category Class
 */
 export type Class<T, Arguments extends unknown[] = any[]> = {
-	prototype: T;
+	prototype: Pick<T, keyof T>;
 	new(...arguments_: Arguments): T;
 };
 
@@ -25,7 +25,7 @@ We cannot use a `type` here because TypeScript throws: 'abstract' modifier canno
 */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface AbstractClass<T, Arguments extends unknown[] = any[]> extends AbstractConstructor<T, Arguments> {
-	prototype: T;
+	prototype: Pick<T, keyof T>;
 }
 
 /**
