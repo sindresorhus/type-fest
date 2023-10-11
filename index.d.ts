@@ -39,6 +39,7 @@ export type {ConditionalExcept} from './source/conditional-except';
 export type {ConditionalKeys} from './source/conditional-keys';
 export type {ConditionalPick} from './source/conditional-pick';
 export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
+export type {PickFromPossiblyUndefined} from './source/pick-from-possibly-undefined';
 export type {UnionToIntersection} from './source/union-to-intersection';
 export type {Stringified} from './source/stringified';
 export type {FixedLengthArray} from './source/fixed-length-array';

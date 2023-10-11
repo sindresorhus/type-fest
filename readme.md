@@ -144,6 +144,7 @@ Click the type names for complete docs.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
 - [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Like `ConditionalPick` except that it selects the properties deeply.
+- [`PickFromPossiblyUndefined`](source/pick-from-possibly-undefined.d.ts) - `Pick` properties from type that may be undefined.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Convert a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) to the [primitive type](source/primitive.d.ts) it belongs to.
