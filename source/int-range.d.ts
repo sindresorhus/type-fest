@@ -1,10 +1,4 @@
-import {type IsNever} from './is-never';
 import type {BuildTuple, Subtract} from './internal';
-
-/**
-Return the result of `A >= B`
-*/
-type EqualOrMoreThan<A extends number, B extends number> = IsNever<Subtract<A, B>> extends true ? false : true;
 
 /**
 Create a union of numbers from `Start` (inclusive) to `End` (exclusive). Can skip numbers using `Step`.
@@ -33,7 +27,13 @@ type PrivateIntRange<
 	Step extends number,
 	Gap extends number = Subtract<Step, 1>, // The gap between each number, gap = step - 1
 	List extends unknown[] = BuildTuple<Start, never>, // The final `List` is [...StartLengthTuple, ...[number, ...GapLengthTuple], ...[number, ...GapLengthTuple], ... ...], So can initialize the `List` with [...StartLengthTuple]
-> = EqualOrMoreThan<List['length'], End> extends true
-	? Exclude<List[number], never> // All unused elements are `never`, so exclude them
-	: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...BuildTuple<Gap, never>]>;
-
+	EndLengthTuple extends unknown[] = BuildTuple<End>,
+> = Gap extends 0 ?
+	// Handle the case that without `Step`
+	List['length'] extends End // The result of "List[length] === End"
+		? Exclude<List[number], never> // All unused elements are `never`, so exclude them
+		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'] ]>
+	// Handle the case that with `Step`
+	: List extends [...(infer U), ...EndLengthTuple] // The result of "List[length] >= End", because the `...BuildTuple<Gap, never>` maybe make `List` too long.
+		? Exclude<List[number], never>
+		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...BuildTuple<Gap, never>]>;
