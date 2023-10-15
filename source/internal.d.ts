@@ -37,15 +37,6 @@ Matches any primitive, `Date`, or `RegExp` value.
 */
 export type BuiltIns = Primitive | Date | RegExp;
 
-/**
-Gets keys from a type. Similar to `keyof` but this one also works for union types.
-
-The reason a simple `keyof Union` does not work is because `keyof` always returns the accessible keys of a type. In the case of a union, that will only be the common keys.
-
-@link https://stackoverflow.com/a/49402091
-*/
-export type KeysOfUnion<T> = T extends T ? keyof T : never;
-
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
 export type StringDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
