@@ -5,6 +5,7 @@ export * from './source/basic';
 export * from './source/observable-like';
 
 // Utilities
+export type {AllKeys} from './source/all-keys';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {NonEmptyObject} from './source/non-empty-object';
 export type {UnknownRecord} from './source/unknown-record';
