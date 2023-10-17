@@ -1,7 +1,7 @@
 /**
-Returns a union of all the keys of a given type, including those that are only present in some of the union members.
+Create a union of all keys from a given type, even those exclusive to specific union members.
 
-This is similar to the native `keyof` keyword, however while `keyof` only returns the keys that are present in **ALL** union members, `KeysOfUnion` returns the keys that are present in **ANY** union member.
+Unlike the native `keyof` keyword, which returns keys present in **all** union members, this type returns keys from **any** member.
 
 @link https://stackoverflow.com/a/49402091
 
@@ -10,25 +10,27 @@ This is similar to the native `keyof` keyword, however while `keyof` only return
 import type {KeysOfUnion} from 'type-fest';
 
 type A = {
-  common: string;
-  a: number;
+	common: string;
+	a: number;
 };
 
 type B = {
-  common: string;
-  b: string;
+	common: string;
+	b: string;
 };
 
 type C = {
-  common: string;
-  c: boolean;
+	common: string;
+	c: boolean;
 };
 
 type Union = A | B | C;
 
-type CommonKeys = keyof Union; //=> 'common'
+type CommonKeys = keyof Union;
+//=> 'common'
 
-type AllKeys = KeysOfUnion<Union>; //=> 'common' | 'a' | 'b' | 'c'
+type AllKeys = KeysOfUnion<Union>;
+//=> 'common' | 'a' | 'b' | 'c'
 ```
 
 @category Object
