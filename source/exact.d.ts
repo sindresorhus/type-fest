@@ -1,6 +1,7 @@
-import type {KeysOfUnion, ArrayElement, ObjectValue} from './internal';
+import type {ArrayElement, ObjectValue} from './internal';
 import type {Opaque, TagContainer} from './opaque';
 import type {IsEqual} from './is-equal';
+import type {KeysOfUnion} from './keys-of-union';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
