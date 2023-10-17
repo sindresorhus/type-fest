@@ -14,13 +14,15 @@ Infer the length of the given array `<T>`.
 type TupleLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
 
 /**
-Create a tuple type of the given length `<L>`.
+Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
+
+If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type BuildTuple<L extends number, T extends readonly unknown[] = []> = T extends {readonly length: L}
+export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
 	? T
-	: BuildTuple<L, [...T, unknown]>;
+	: BuildTuple<L, Fill, [...T, Fill]>;
 
 /**
 Create a tuple of length `A` and a tuple composed of two other tuples,
