@@ -1,18 +1,29 @@
 import type {BuildTuple, Subtract} from './internal';
 
 /**
-Create a union of numbers from `Start` (inclusive) to `End` (exclusive). Can skip numbers using `Step`.
+Create a union of numbers from `Start` (inclusive) to `End` (exclusive).
 
-Use-case: Easier to create union types of consecutive numbers.
+Can skip numbers using `Step`, defaulting to `1`. for example, `IntRange<0, 10, 2>` will create a union of `0 | 2 | 4 | 6 | 8`.
+
+Note: `Start` or `End` must smaller than `1000`
+
+Use-case:
+	1. This can be used to define a set of valid input/output values. for example:
+		```
+			type Age = IntRange<0, 120>;
+			type FontSize = IntRange<10, 20>;
+			type EvenNumber = IntRange<0, 11, 2>; // 0 | 2 | 4 | 6 | 8 | 10
+		```
+	2. This can be used to define random numbers in a range. for example, `type RandomNumber = IntRange<0, 100>;`
 
 @example
 ```
 import type {IntRange} from 'type-fest';
 
-// create union type `0 | 1 | ... | 9`
+// Create union type `0 | 1 | ... | 9`
 type ZeroToNine = IntRange<0, 10>;
 
-// create union type `100 | 200 | 300 | ... | 900`
+// Create union type `100 | 200 | 300 | ... | 900`
 type Hundreds = IntRange<100, 901, 100>;
 ```
 */
