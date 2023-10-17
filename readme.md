@@ -77,6 +77,8 @@ npm install type-fest
 
 *Requires TypeScript >=5.1*
 
+*Works best with [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
+
 ## Usage
 
 ```ts

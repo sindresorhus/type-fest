@@ -189,9 +189,16 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
 	: Type[Key] extends symbol
 		? never
-		: [(...arguments_: any[]) => any] extends [Type[Key]]
-			? never
-			: Key;
+		/*
+		To prevent a problem where an object with only a `name` property is incorrectly treated as assignable to a function, we first check if the property is a record.
+		This check is necessary, because without it, if we don't verify whether the property is a record, an object with a type of `{name: any}` would return `never` due to its potential assignability to a function.
+		See: https://github.com/sindresorhus/type-fest/issues/657
+		*/
+		: Type[Key] extends Record<string, unknown>
+			? Key
+			: [(...arguments_: any[]) => any] extends [Type[Key]]
+				? never
+				: Key;
 
 /**
 Returns the required keys.
@@ -254,3 +261,20 @@ export type IsNull<T> = [T] extends [null] ? true : false;
 Disallows any of the given keys.
 */
 export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
+
+/**
+Returns a boolean for whether the given type is primitive value or primitive type.
+
+@example
+```
+IsPrimitive<'string'>
+//=> true
+
+IsPrimitive<string>
+//=> true
+
+IsPrimitive<Object>
+//=> false
+```
+*/
+export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
