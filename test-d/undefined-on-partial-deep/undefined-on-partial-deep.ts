@@ -1,6 +1,6 @@
 /**
- * @note This file is used `tsc` but not `tsd` for testing, so just could test assignable.
- */
+@note This file is used for testing by `tsc` but not `tsd`, so we can just test assignable.
+*/
 import {expectAssignable} from 'tsd';
 import type {UndefinedOnPartialDeep} from '../../source/undefined-on-partial-deep';
 
@@ -78,4 +78,3 @@ expectAssignable<ReadonlyType>({readonly: undefined});
 // eslint-disable-next-line @typescript-eslint/array-type
 type ReadonlyArrayTest = UndefinedOnPartialDeep<{readonly?: ReadonlyArray<string>}>;
 expectAssignable<ReadonlyArrayTest>({readonly: undefined});
-
