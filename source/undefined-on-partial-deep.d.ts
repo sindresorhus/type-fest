@@ -2,12 +2,12 @@ import type {BuiltIns} from './internal';
 import type {Merge} from './merge';
 
 /**
-Create a deep version of another type where all optional keys accept `undefined` type when exactOptionalPropertyTypes enabled.
+Create a deep version of another type where all optional keys are set to also accept `undefined`.
 
-Note: When tsconfig `exactOptionalPropertyTypes` disabled, you don`t need this type, because `UndefinedOnPartialDeep<T>` will be the same as `T` when exactOptionalPropertyTypes is false.
+Note: This is only needed when the [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) TSConfig setting is enabled.
 
 Use-cases:
-- When tsconfig `exactOptionalPropertyTypes` enabled, object `{a: undefined}` is not assignable to type `{a?: number}`, you can use `UndefinedOnPartialDeep<{a?: number}>` to make it assignable.
+- When `exactOptionalPropertyTypes` is enabled, an object like `{a: undefined}` is not assignable to the type `{a?: number}`. You can use `UndefinedOnPartialDeep<{a?: number}>` to make it assignable.
 
 @example
 ```
@@ -23,25 +23,24 @@ interface Settings {
 };
 
 const testSettingsA: Settings = {
-  optionA: 'foo',
-  optionB: undefined, // TS error if exactOptionalPropertyTypes is true
-  subOption: {
-    subOptionA: true,
-    subOptionB: undefined, // TS error if exactOptionalPropertyTypes is true
-  },
+	optionA: 'foo',
+	optionB: undefined, // TypeScript error if `exactOptionalPropertyTypes` is true.
+	subOption: {
+		subOptionA: true,
+		subOptionB: undefined, // TypeScript error if `exactOptionalPropertyTypes` is true
+	},
 };
 
 const testSettingsB: UndefinedOnPartialDeep<Settings> = {
-  optionA: 'foo',
-  optionB: undefined, // 👉 optionB can be set to undefined now
-  subOption: {
-    subOptionA: true,
-    subOptionB: undefined, // 👉 subOptionB can be set to undefined now
-  },
+	optionA: 'foo',
+	optionB: undefined, // 👉 `optionB` can be set to undefined now.
+	subOption: {
+		subOptionA: true,
+		subOptionB: undefined, // 👉 `subOptionB` can be set to undefined now.
+	},
 };
 ```
-**/
-
+*/
 export type UndefinedOnPartialDeep<T> =
 	// Handle built-in type and function
 	T extends BuiltIns | Function
