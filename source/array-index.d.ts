@@ -7,7 +7,7 @@ Use-case: Deal with valid keys for a const array.
 ```
 import type {ArrayIndex} from 'type-fest';
 
-const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ] as const;
+const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
 type WeekDay = ArrayIndex<typeof weekDays>;
 
