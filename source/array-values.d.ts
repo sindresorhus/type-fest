@@ -1,4 +1,5 @@
 import type {IterableElement} from './iterable-element';
+
 /**
 Provides all values for a constant array or tuple.
 
