@@ -16,4 +16,4 @@ type values = ArrayValues<['a', 'b', 'c']>;
 
 @category Array
 */
-export type ArrayValues<Element extends readonly unknown[]> = IterableElement<Element>;
+export type ArrayValues<T extends readonly unknown[]> = T[number];
