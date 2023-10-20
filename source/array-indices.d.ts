@@ -5,11 +5,12 @@ Use-case: This type is useful when working with constant arrays or tuples and yo
 
 @example
 ```
-import type {ArrayIndices} from 'type-fest';
+import type {ArrayIndices, ArrayValues} from 'type-fest';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
 type WeekDay = ArrayIndices<typeof weekDays>;
+type WeekDayName = ArrayValues<typeof weekDays>;
 
 const getWeekDayName = (day: WeekDay): WeekDayName => weekDays[day];
 ```
