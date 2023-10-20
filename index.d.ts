@@ -98,6 +98,7 @@ export type {IsNever} from './source/is-never';
 export type {IfNever} from './source/if-never';
 export type {IsUnknown} from './source/is-unknown';
 export type {IfUnknown} from './source/if-unknown';
+export type {SetFieldType} from './source/set-field-type';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
