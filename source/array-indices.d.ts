@@ -9,11 +9,13 @@ import type {ArrayIndices, ArrayValues} from 'type-fest';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
-type WeekDay = ArrayIndices<typeof weekDays>;
-type WeekDayName = ArrayValues<typeof weekDays>;
+type Weekday = ArrayIndices<typeof weekdays>;
+type WeekdayName = ArrayValues<typeof weekdays>;
 
-const getWeekDayName = (day: WeekDay): WeekDayName => weekDays[day];
+const getWeekdayName = (day: Weekday): WeekdayName => weekdays[day];
 ```
+
+@see {@link ArrayValues}
 
 @category Array
 */
