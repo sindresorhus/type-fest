@@ -172,6 +172,7 @@ Click the type names for complete docs.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
+- [`ArrayIndex`](source/array-index.d.ts) - Extract keys of an array.
 
 ### Type Guard
 
