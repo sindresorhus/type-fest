@@ -9,10 +9,10 @@ import type {ArrayValues, ArrayIndices} from 'type-fest';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
-type WeekDayName = ArrayValues<typeof weekdays>;
-type WeekDay = ArrayIndices<typeof weekdays>;
+type WeekdayName = ArrayValues<typeof weekdays>;
+type Weekday = ArrayIndices<typeof weekdays>;
 
-const getWeekDayName = (day: WeekDay): WeekDayName => weekdays[day];
+const getWeekdayName = (day: Weekday): WeekdayName => weekdays[day];
 
 ```
 
