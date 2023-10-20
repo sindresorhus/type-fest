@@ -1,7 +1,7 @@
 /**
 Provides valid indices for a constant array or tuple.
 
-Use-case: Deal with valid keys for a const array.
+Use-case: This type is useful when working with constant arrays or tuples and you want to enforce type-safety for accessing elements by their indices.
 
 @example
 ```
