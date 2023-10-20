@@ -1,5 +1,5 @@
 /**
-Extract the keys of an array or tuple.
+Provides valid indices for a constant array or tuple.
 
 Use-case: Deal with valid keys for a const array.
 
