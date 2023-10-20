@@ -5,16 +5,16 @@ Use-case: This type is useful when working with constant arrays or tuples and yo
 
 @example
 ```
-import type {ArrayIndex} from 'type-fest';
+import type {ArrayIndices} from 'type-fest';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
-type WeekDay = ArrayIndex<typeof weekDays>;
+type WeekDay = ArrayIndices<typeof weekDays>;
 
 const getWeekDayName = (day: WeekDay): WeekDayName => weekDays[day];
 ```
 
 @category Array
 */
-export type ArrayIndex<Element extends readonly unknown[]> =
+export type ArrayIndices<Element extends readonly unknown[]> =
 	Exclude<Partial<Element>['length'], Element['length']>;
