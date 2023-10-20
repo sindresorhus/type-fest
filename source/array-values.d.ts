@@ -1,5 +1,3 @@
-import type {IterableElement} from './iterable-element';
-
 /**
 Provides all values for a constant array or tuple.
 
@@ -7,12 +5,18 @@ Use-case: This type is useful when working with constant arrays or tuples and yo
 
 @example
 ```
-import type {ArrayValues} from 'type-fest';
+import type {ArrayValues, ArrayIndices} from 'type-fest';
 
-type values = ArrayValues<['a', 'b', 'c']>;
-//=> 'a' | 'b' | 'c'
+const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
+
+type WeekDayName = ArrayValues<typeof weekdays>;
+type WeekDay = ArrayIndices<typeof weekdays>;
+
+const getWeekDayName = (day: WeekDay): WeekDayName => weekdays[day];
 
 ```
+
+@see {@link ArrayIndices}
 
 @category Array
 */
