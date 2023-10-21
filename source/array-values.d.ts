@@ -13,7 +13,6 @@ type WeekdayName = ArrayValues<typeof weekdays>;
 type Weekday = ArrayIndices<typeof weekdays>;
 
 const getWeekdayName = (day: Weekday): WeekdayName => weekdays[day];
-
 ```
 
 @see {@link ArrayIndices}
