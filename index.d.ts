@@ -50,6 +50,7 @@ export type {IterableElement} from './source/iterable-element';
 export type {Entry} from './source/entry';
 export type {Entries} from './source/entries';
 export type {SetReturnType} from './source/set-return-type';
+export type {SetParameterType} from './source/set-parameter-type';
 export type {Asyncify} from './source/asyncify';
 export type {Simplify} from './source/simplify';
 export type {Jsonify} from './source/jsonify';
