@@ -16,16 +16,18 @@ type MergeObjectToTuple<Tuple extends unknown[], Record_ extends Record<number, 
 /**
 Create a function that replaces some parameters with the given parameters.
 
-The parameters that not be specified will keep them as-is.
+The parameters that are not specified will be kept as-is.
 
 Note:
 - This type will ignore the given function's generic type.
-- If change the parameter type that return type depends on, the return type will not change.
-	example:
+- If you change the parameter type that return type depends on, the return type will not change:
 	```
-	const fn = (a: number) => a //=> fn: (a: number) => number;
-	// Change type of `a` to `string`, but return type is still `number`
-	type Fn = SetParameterType<typeof fn, {0: string}> //=> (a: string) => number;
+	const fn = (a: number) => a;
+	//=> fn: (a: number) => number;
+	
+ 	// We change type of `a` to `string`, but return type is still `number`.
+	type Fn = SetParameterType<typeof fn, {0: string}>;
+ 	//=> (a: string) => number;
 	```
 
 Use-case:
