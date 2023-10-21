@@ -30,8 +30,8 @@ Note:
 
 Use-case:
 - Define a wrapped function that receives something different while returning the same type.
-- Mocking and Testing.
-- Overload function type, see example.
+- Mocking and testing.
+- Overload function type. (See example)
 
 @example
 ```
@@ -39,15 +39,16 @@ import type {SetParametersType} from 'type-fest';
 
 type HandleMessage = (data: Data, message: string) => void;
 
-type HandleOk = SetParametersType<HandleMessage, {0: SuccessData, 1: 'ok'}>
+type HandleOk = SetParametersType<HandleMessage, {0: SuccessData, 1: 'ok'}>;
 //=> type HandleOk = (data: SuccessData, message: 'ok') => void;
-type HandleError = SetParametersType<HandleMessage, [data: ErrorData, message: 'error']> // anther way to define
+
+// Another way to define the parameters to replace.
+type HandleError = SetParametersType<HandleMessage, [data: ErrorData, message: 'error']>;
 //=> type HandleError = (data: ErrorData, message: 'error') => void;
 
-// Could change single parameter type
-type HandleWarn = SetParametersType<HandleMessage, {1: 'warn'}>
+// Could change single parameter type.
+type HandleWarn = SetParametersType<HandleMessage, {1: 'warn'}>;
 //=> type HandleWarn = (data: Data, message: 'warn') => void;
-
 ```
 
 @category Function
