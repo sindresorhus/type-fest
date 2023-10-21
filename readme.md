@@ -154,6 +154,7 @@ Click the type names for complete docs.
 - [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
+- [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
@@ -172,8 +173,8 @@ Click the type names for complete docs.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
+- [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
-
 
 ### Type Guard
 
