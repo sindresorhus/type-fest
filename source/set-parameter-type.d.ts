@@ -24,7 +24,7 @@ Note:
 	```
 	const fn = (a: number) => a;
 	//=> fn: (a: number) => number;
-	
+
  	// We change type of `a` to `string`, but return type is still `number`.
 	type Fn = SetParameterType<typeof fn, {0: string}>;
  	//=> (a: string) => number;
@@ -55,9 +55,9 @@ type HandleWarn = SetParametersType<HandleMessage, {1: 'warn'}>;
 
 @category Function
 */
-export type SetParameterType<Fn extends (...arguments_: any[]) => any, P extends Record<number, unknown>> =
+export type SetParameterType<Fn extends (...arguments_: any[]) => unknown, P extends Record<number, unknown>> =
 	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
-	Fn extends (this: infer ThisArg, ...arguments_: infer Arguments) => any
+	Fn extends (this: infer ThisArg, ...arguments_: infer Arguments) => unknown
 		? (
 			// If a function did not specify the `this` fake parameter, it will be inferred to `unknown`.
 			// We want to detect this situation just to display a friendlier type upon hovering on an IntelliSense-powered IDE.

@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
 import {type SetParameterType} from '../index';
 
-function fn(_a: number, _b: string, _c: Object, ..._args: boolean[]) {
+function fn(_a: number, _b: string, _c: Object, ..._arguments: boolean[]) {
 	return null;
 }
 
