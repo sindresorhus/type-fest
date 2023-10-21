@@ -37,19 +37,19 @@ Use-case:
 
 @example
 ```
-import type {SetParametersType} from 'type-fest';
+import type {SetParameterType} from 'type-fest';
 
 type HandleMessage = (data: Data, message: string) => void;
 
-type HandleOk = SetParametersType<HandleMessage, {0: SuccessData, 1: 'ok'}>;
+type HandleOk = SetParameterType<HandleMessage, {0: SuccessData, 1: 'ok'}>;
 //=> type HandleOk = (data: SuccessData, message: 'ok') => void;
 
 // Another way to define the parameters to replace.
-type HandleError = SetParametersType<HandleMessage, [data: ErrorData, message: 'error']>;
+type HandleError = SetParameterType<HandleMessage, [data: ErrorData, message: 'error']>;
 //=> type HandleError = (data: ErrorData, message: 'error') => void;
 
 // Could change single parameter type.
-type HandleWarn = SetParametersType<HandleMessage, {1: 'warn'}>;
+type HandleWarn = SetParameterType<HandleMessage, {1: 'warn'}>;
 //=> type HandleWarn = (data: Data, message: 'warn') => void;
 ```
 
