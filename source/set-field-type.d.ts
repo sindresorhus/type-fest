@@ -10,9 +10,20 @@ Use-case: You want to change the type of one or more fields of a model.
 ```
 import type {SetFieldType} from 'type-fest';
 
-type MyModel = { id: number; createdAt: Date; updatedAt: Date; enabled: boolean }
-type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>
-//=> MyModelApi { id: number; createdAt: string; updatedAt: string; enabled: boolean }
+type MyModel = {
+	id: number;
+	createdAt: Date;
+	updatedAt: Date;
+};
+
+type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
+/*
+{
+	id: number;
+ 	createdAt: string;
+  	updatedAt: string;
+}
+*/
 ```
 
 @category Object
