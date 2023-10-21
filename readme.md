@@ -174,6 +174,7 @@ Click the type names for complete docs.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
+- [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 
 ### Type Guard
 
