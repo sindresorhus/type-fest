@@ -2,7 +2,7 @@ import type {Except} from './except';
 import type {Simplify} from './simplify';
 
 /**
-Same as `WritableDeep`, but accepts only `Array`s as inputs. Internal helper for `WritableDeep`.
+Create a writable version of the given array type.
 */
 type WritableArray<ArrayType extends readonly unknown[]> =
 	ArrayType extends readonly [] ? []
