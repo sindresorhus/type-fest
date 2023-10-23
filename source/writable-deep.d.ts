@@ -38,23 +38,31 @@ export type WritableDeep<T> = T extends BuiltIns
 			: HasMultipleCallSignatures<T> extends true
 				? T
 				: ((...arguments_: Parameters<T>) => ReturnType<T>) & WritableObjectDeep<T>
-		: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
-			? WritableMapDeep<KeyType, ValueType>
-			: T extends Readonly<ReadonlySet<infer ItemType>>
-				? WritableSetDeep<ItemType>
-				: T extends object
-					? WritableObjectDeep<T>
-					: unknown;
+		: T extends ReadonlyMap<unknown, unknown>
+			? WritableMapDeep<T>
+			: T extends ReadonlySet<unknown>
+				? WritableSetDeep<T>
+				: T extends readonly unknown[]
+					? WritableArrayDeep<T>
+					: T extends object
+						? WritableObjectDeep<T>
+						: unknown;
 
 /**
 Same as `WritableDeep`, but accepts only `Map`s as inputs. Internal helper for `WritableDeep`.
 */
-type WritableMapDeep<KeyType, ValueType> = {} & Writable<Map<WritableDeep<KeyType>, WritableDeep<ValueType>>>;
+type WritableMapDeep<MapType extends ReadonlyMap<unknown, unknown>> =
+	MapType extends ReadonlyMap<infer KeyType, infer ValueType>
+		? Map<WritableDeep<KeyType>, WritableDeep<ValueType>>
+		: MapType; // Should not heppen
 
 /**
 Same as `WritableDeep`, but accepts only `Set`s as inputs. Internal helper for `WritableDeep`.
 */
-type WritableSetDeep<ItemType> = {} & Writable<Set<WritableDeep<ItemType>>>;
+type WritableSetDeep<SetType extends ReadonlySet<unknown>> =
+	SetType extends ReadonlySet<infer ItemType>
+		? Set<WritableDeep<ItemType>>
+		: SetType; // Should not heppen
 
 /**
 Same as `WritableDeep`, but accepts only `object`s as inputs. Internal helper for `WritableDeep`.
@@ -62,3 +70,15 @@ Same as `WritableDeep`, but accepts only `object`s as inputs. Internal helper fo
 type WritableObjectDeep<ObjectType extends object> = {
 	-readonly [KeyType in keyof ObjectType]: WritableDeep<ObjectType[KeyType]>
 };
+
+/**
+Same as `WritableDeep`, but accepts only `Array`s as inputs. Internal helper for `WritableDeep`.
+*/
+type WritableArrayDeep<ArrayType extends readonly unknown[]> =
+	ArrayType extends readonly [] ? []
+		: ArrayType extends readonly [...infer U, infer V] ? [...WritableArrayDeep<U>, WritableDeep<V>]
+			: ArrayType extends readonly [infer U, ...infer V] ? [WritableDeep<U>, ...WritableArrayDeep<V>]
+				: ArrayType extends ReadonlyArray<infer U> ? Array<WritableDeep<U>>
+					: ArrayType extends Array<infer U> ? Array<WritableDeep<U>>
+						: ArrayType;
+
