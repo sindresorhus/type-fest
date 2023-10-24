@@ -24,3 +24,30 @@ expectTypeOf(bankAccounts).toMatchTypeOf({
 	bankAccount: '123456789',
 	ibanBankAccount: '123456789',
 });
+
+// Test what happens if type to pick from won't be undefined
+
+type AdminAccount = {
+	id: number;
+	roleId: number;
+	firstName: string;
+	lastName: string;
+	permissions: string[];
+};
+
+type UserAccount = PickFromPossiblyUndefined<AdminAccount, 'id' | 'firstName' | 'lastName'>;
+
+const userAccount: UserAccount = {
+	id: 1234,
+	firstName: 'Foo',
+	lastName: 'Bar',
+};
+
+expectAssignable<UserAccount>(userAccount);
+expectType<string>(userAccount.firstName);
+expectType<string>(userAccount.lastName);
+expectTypeOf(userAccount).toMatchTypeOf({
+	id: 1234,
+	firstName: 'Foo',
+	lastName: 'Bar',
+});
