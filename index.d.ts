@@ -50,6 +50,7 @@ export type {IterableElement} from './source/iterable-element';
 export type {Entry} from './source/entry';
 export type {Entries} from './source/entries';
 export type {SetReturnType} from './source/set-return-type';
+export type {SetParameterType} from './source/set-parameter-type';
 export type {Asyncify} from './source/asyncify';
 export type {Simplify} from './source/simplify';
 export type {Jsonify} from './source/jsonify';
@@ -98,6 +99,8 @@ export type {IsNever} from './source/is-never';
 export type {IfNever} from './source/if-never';
 export type {IsUnknown} from './source/is-unknown';
 export type {IfUnknown} from './source/if-unknown';
+export type {ArrayIndices} from './source/array-indices';
+export type {ArrayValues} from './source/array-values';
 export type {SetFieldType} from './source/set-field-type';
 
 // Template literal types
