@@ -4,7 +4,9 @@ import type {Simplify} from './simplify';
 /**
 Create a type that changes the type of the given keys.
 
-Use-case: You want to change the type of one or more fields of a model.
+Use-cases:
+- Creating variations of a base model.
+- Fixing incorrect external types.
 
 @example
 ```
