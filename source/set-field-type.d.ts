@@ -2,7 +2,7 @@ import type {Except} from './except';
 import type {Simplify} from './simplify';
 
 /**
-Create a type that changes the given keys types.
+Create a type that changes the type of the given keys.
 
 Use-case: You want to change the type of one or more fields of a model.
 
