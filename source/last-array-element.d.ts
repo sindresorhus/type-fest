@@ -13,16 +13,26 @@ const array = ['foo', 2];
 
 typeof lastOf(array);
 //=> number
+
+const array = ['foo', 2] as const;
+
+typeof lastOf(array);
+//=> 2
 ```
 
 @category Array
 @category Template literal
 */
-export type LastArrayElement<Elements extends readonly unknown[]>
-		= number extends Elements['length']
-			? Elements extends ReadonlyArray<infer Element>
-				? Element
-				: never
-			: Elements extends readonly [...any, infer Target]
-				? Target
-				: never;
+export type LastArrayElement<Elements extends readonly unknown[], ElementBeforeTailingSpreadElement = never> =
+	// If the last element of an array is a spread element, the `LastArrayElement` result should be `'the type of the element before the spread element' | 'the type of the spread element'`.
+	Elements extends readonly []
+		? ElementBeforeTailingSpreadElement
+		: Elements extends readonly [...infer U, infer V]
+			? V
+			: Elements extends readonly [infer U, ...infer V]
+				// If we return `V[number] | U` directly, it would be wrong for `[[string, boolean, object, ...number[]]`.
+				// So we need to recurse type `V` and carry over the type of the element before the spread element.
+				? LastArrayElement<V, U>
+				: Elements extends ReadonlyArray<infer U>
+					? U | ElementBeforeTailingSpreadElement
+					: never;
