@@ -941,6 +941,7 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 ## Maintainers
 
 - [Sindre Sorhus](https://github.com/sindresorhus)
+- [Haozheng Li](https://github.com/Emiyaaaaa)
 - [Jarek Radosz](https://github.com/CvX)
 - [Dimitri Benin](https://github.com/BendingBender)
 - [Pelle Wessman](https://github.com/voxpelli)

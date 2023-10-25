@@ -28,10 +28,15 @@ type ReadonlyJsonValue =
   | boolean
   | null;
 
+class ClassA {
+	foo = 1;
+}
+
 const data = {
 	object: {
 		foo: 'bar',
 	},
+	constructor: ClassA,
 	fn: (_: string) => true,
 	fnWithOverload: ((_: number) => 'foo') as Overloaded,
 	namespace: {} as unknown as Namespace,
@@ -65,6 +70,10 @@ readonlyData.fn('foo');
 
 readonlyData.fnWithOverload(1);
 readonlyData.fnWithOverload('', 1);
+
+expectType<typeof ClassA>(readonlyData.constructor);
+const instance = new readonlyData.constructor();
+instance.foo = 2; // Constructor is not made readonly
 
 expectError(readonlyData.string = 'bar');
 expectType<{readonly foo: string}>(readonlyData.object);
