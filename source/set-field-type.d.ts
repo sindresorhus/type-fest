@@ -23,8 +23,8 @@ type MyModel = {
 type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
 // {
 // 	id: number;
-//  	createdAt: string;
-//   	updatedAt: string;
+// 	createdAt: string;
+// 	updatedAt: string;
 // }
 ```
 
