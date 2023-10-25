@@ -2,7 +2,7 @@ import type {Except} from './except';
 import type {Simplify} from './simplify';
 
 /**
-Create a type that changes the given keys types.
+Create a type that changes the type of the given keys.
 
 Use-cases:
 - Creating variations of a base model.
@@ -21,12 +21,11 @@ type MyModel = {
 };
 
 type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
-/*
-{
-	id: number;
- 	createdAt: string;
-  	updatedAt: string;
-}
+// {
+// 	id: number;
+//  	createdAt: string;
+//   	updatedAt: string;
+// }
 ```
 
 @category Object
