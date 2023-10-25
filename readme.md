@@ -175,6 +175,7 @@ Click the type names for complete docs.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
+- [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 
 ### Type Guard
 
