@@ -8,6 +8,8 @@ Use-cases:
 - Creating variations of a base model.
 - Fixing incorrect external types.
 
+@see `Merge` if you need to change multiple properties to different types.
+
 @example
 ```
 import type {SetFieldType} from 'type-fest';
@@ -25,7 +27,6 @@ type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
  	createdAt: string;
   	updatedAt: string;
 }
-*/
 ```
 
 @category Object
