@@ -16,7 +16,7 @@ Create a type that strips `readonly` from the given type. Inverse of `Readonly<T
 
 The 2nd argument will be ignored if the input type is not an object.
 
-Note: this type can make readonly `Set` and `Map` writable, this behavior is different from `Readonly<T>` for current Typescript version (5.2.2). see https://github.com/microsoft/TypeScript/issues/29655
+Note: This type can make readonly `Set` and `Map` writable. This behavior is different from `Readonly<T>` (as of TypeScript 5.2.2). See: https://github.com/microsoft/TypeScript/issues/29655
 
 This can be used to [store and mutate options within a class](https://github.com/sindresorhus/pageres/blob/4a5d05fca19a5fbd2f53842cbf3eb7b1b63bddd2/source/index.ts#L72), [edit `readonly` objects within tests](https://stackoverflow.com/questions/50703834), [construct a `readonly` object within a function](https://github.com/Microsoft/TypeScript/issues/24509), or to define a single model where the only thing that changes is whether or not some of the keys are writable.
 
@@ -42,7 +42,7 @@ type SomeWritable = Writable<Foo, 'b' | 'c'>;
 // 	c: boolean; // It's now writable.
 // }
 
-// Also support array
+// Also supports array
 const readonlyArray: readonly number[] = [1, 2, 3];
 readonlyArray.push(4); // Will fail as the array itself is readonly.
 const writableArray: Writable<typeof readonlyArray> = readonlyArray as Writable<typeof readonlyArray>;
@@ -56,10 +56,10 @@ BaseType extends ReadonlyMap<infer KeyType, infer ValueType>
 	? Map<KeyType, ValueType>
 	: BaseType extends ReadonlySet<infer ItemType>
 		? Set<ItemType>
-		:	BaseType extends readonly unknown[]
-		// Handle array
+		: BaseType extends readonly unknown[]
+			// Handle array
 			? WritableArray<BaseType>
-		// Handle object
+			// Handle object
 			: Simplify<
 			// Pick just the keys that are not writable from the base type.
 			Except<BaseType, Keys> &
