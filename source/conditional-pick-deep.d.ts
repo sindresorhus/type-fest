@@ -1,6 +1,8 @@
 import type {IsEqual} from './is-equal';
 import type {ConditionalExcept} from './conditional-except';
 import type {ConditionalSimplifyDeep} from './conditional-simplify';
+import type {UnknownRecord} from './unknown-record';
+import type {EmptyObject} from './empty-object';
 
 /**
 Used to mark properties that should be excluded.
@@ -95,7 +97,7 @@ export type ConditionalPickDeep<
 > = ConditionalSimplifyDeep<ConditionalExcept<{
 	[Key in keyof Type]: AssertCondition<Type[Key], Condition, Options> extends true
 		? Type[Key]
-		: Type[Key] extends object
+		: Type[Key] extends UnknownRecord
 			? ConditionalPickDeep<Type[Key], Condition, Options>
 			: typeof conditionalPickDeepSymbol;
-}, (typeof conditionalPickDeepSymbol | undefined) | Record<PropertyKey, never>>>;
+}, (typeof conditionalPickDeepSymbol | undefined) | EmptyObject>, never, UnknownRecord>;
