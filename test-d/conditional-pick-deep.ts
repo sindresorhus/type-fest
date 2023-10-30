@@ -17,10 +17,10 @@ type Example = {
 	instanceA: ClassA;
 	ClassA: typeof ClassA;
 	function: (...args: string[]) => string;
-	strbool: string | boolean;
-	obj: {
+	stringOrBoolean: string | boolean;
+	object: {
 		string: string;
-		subObj: {
+		subObject: {
 			optional?: string;
 			string: string;
 		};
@@ -31,9 +31,9 @@ declare const stringPick: ConditionalPickDeep<Example, string>;
 expectType<{
 	literal: 'foo';
 	string: string;
-	obj: {
+	object: {
 		string: string;
-		subObj: {
+		subObject: {
 			string: string;
 		};
 	};
@@ -42,9 +42,9 @@ expectType<{
 declare const stringEqualityPick: ConditionalPickDeep<Example, string, {condition: 'equality'}>;
 expectType<{
 	string: string;
-	obj: {
+	object: {
 		string: string;
-		subObj: {
+		subObject: {
 			string: string;
 		};
 	};
@@ -54,9 +54,9 @@ declare const stringPickOptional: ConditionalPickDeep<Example, string | undefine
 expectType<{
 	literal: 'foo';
 	string: string;
-	obj: {
+	object: {
 		string: string;
-		subObj: {
+		subObject: {
 			optional?: string | undefined;
 			string: string;
 		};
@@ -64,7 +64,7 @@ expectType<{
 }>(stringPickOptional);
 
 declare const stringPickOptionalOnly: ConditionalPickDeep<Example, string | undefined, {condition: 'equality'}>;
-expectType<{obj: {subObj: {optional?: string | undefined}}}>(stringPickOptionalOnly);
+expectType<{object: {subObject: {optional?: string | undefined}}}>(stringPickOptionalOnly);
 
 declare const booleanPick: ConditionalPickDeep<Example, boolean | undefined>;
 expectType<{optional?: boolean | undefined}>(booleanPick);
@@ -76,17 +76,17 @@ declare const stringOrBooleanPick: ConditionalPickDeep<Example, string | boolean
 expectType<{
 	literal: 'foo';
 	string: string;
-	strbool: string | boolean;
-	obj: {
+	stringOrBoolean: string | boolean;
+	object: {
 		string: string;
-		subObj: {
+		subObject: {
 			string: string;
 		};
 	};
 }>(stringOrBooleanPick);
 
 declare const stringOrBooleanPickOnly: ConditionalPickDeep<Example, string | boolean, {condition: 'equality'}>;
-expectType<{strbool: string | boolean}>(stringOrBooleanPickOnly);
+expectType<{stringOrBoolean: string | boolean}>(stringOrBooleanPickOnly);
 
 declare const arrayPick: ConditionalPickDeep<Example, string[]>;
 expectType<{array: string[]; tuples: ['foo', 'bar']}>(arrayPick);
