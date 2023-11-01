@@ -25,6 +25,16 @@ export type BuildTuple<L extends number, Fill = unknown, T extends readonly unkn
 	: BuildTuple<L, Fill, [...T, Fill]>;
 
 /**
+Create a object type with the given key `<Key>` and value `<Value>`.
+
+If `Optional` is `true`, the value will be optional. default is `false`.
+*/
+export type BuildObject<Key extends PropertyKey, Value, Optional extends boolean = false> =
+	Optional extends true
+		? {[_ in Key]?: Value}
+		: {[_ in Key]: Value};
+
+/**
 Create a tuple of length `A` and a tuple composed of two other tuples,
 the inferred tuple `U` and a tuple of length `B`, then extracts the length of tuple `U`.
 

@@ -125,6 +125,7 @@ Click the type names for complete docs.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more, or none of the given keys.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
+- [`PickDeep`](source/pick-deep.d.ts) - Pick subsets of properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
