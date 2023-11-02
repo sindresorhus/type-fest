@@ -1,18 +1,27 @@
 /**
-It allows to `Pick` properties from a type that may be undefined
+`Pick` properties from type that may be undefined.
 
 @example:
 ```
-type User = {
-    id: number;
-    name: string;
-    email: string;
+import { PickFromPossiblyUndefined } from 'type-fest';
+
+type BillingDetails = {
+ taxId: string;
+ companyName: string;
+ address: string;
+ bankAccount: string;
+ ibanBankAccount: string;
 } | undefined;
 
-type UserWithId = PickFromPossiblyUndefined<User, 'id' | 'name'>;
-```
+type CompanyBankAccounts = PickFromPossiblyUndefined<BillingDetails, 'bankAccount' | 'ibanBankAccount'>;
 
-// Results in: UserWithId = { id: number, name: string }
+const bankAccounts: CompanyBankAccounts = {
+ bankAccount: '123456789',
+ ibanBankAccount: '123456789',
+};
+
+await proceedPayment(bankAccounts);
+```
 
 @category Object
  **/
