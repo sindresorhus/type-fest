@@ -10,6 +10,7 @@ const foo = {
 	bar: {
 		function: (_: string): void => undefined,
 		classConstructor: ClassA,
+		html: document.createElement('div'),
 		object: {key: 'value'},
 		string: 'waldo',
 		number: 1,
@@ -58,6 +59,8 @@ expectAssignable<ReadonlyMap<string | undefined, string | undefined> | undefined
 expectAssignable<ReadonlySet<string | undefined> | undefined>(partialDeepFoo.bar!.readonlySet);
 expectType<ReadonlyArray<string | undefined> | undefined>(partialDeepFoo.bar!.readonlyArray);
 expectType<readonly ['foo'?] | undefined>(partialDeepFoo.bar!.readonlyTuple);
+// Test for https://github.com/sindresorhus/type-fest/issues/651
+expectType<HTMLDivElement | undefined>(partialDeepFoo.bar!.html);
 // Check for compiling with omitting partial keys
 partialDeepFoo = {baz: 'fred'};
 partialDeepFoo = {bar: {string: 'waldo'}};
