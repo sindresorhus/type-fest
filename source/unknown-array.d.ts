@@ -11,8 +11,10 @@ type IsArray<T> = T extends UnknownArray ? true : false;
 
 type A = IsArray<['foo']>;
 //=> true
+
 type B = IsArray<readonly number[]>;
 //=> true
+
 type C = IsArray<string>;
 //=> false
 ```
