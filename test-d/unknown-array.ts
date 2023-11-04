@@ -22,6 +22,8 @@ type IsArray<T> = T extends UnknownArray ? true : false;
 
 declare const string: IsArray<string>;
 expectType<false>(string);
+declare const array: IsArray<[]>;
+expectType<true>(array);
 declare const tuple: IsArray<['foo']>;
 expectType<true>(tuple);
 declare const readonlyArray: IsArray<readonly number[]>;
