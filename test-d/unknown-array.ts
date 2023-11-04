@@ -17,3 +17,16 @@ expectNotAssignable({});
 expectNotAssignable({0: 1});
 expectNotAssignable(1);
 expectNotAssignable(Date);
+
+type IsArray<T> = T extends UnknownArray ? true : false;
+
+declare const string: IsArray<string>;
+expectType<false>(string);
+declare const tuple: IsArray<['foo']>;
+expectType<true>(tuple);
+declare const readonlyArray: IsArray<readonly number[]>;
+expectType<true>(readonlyArray);
+declare const leadingSpread: IsArray<readonly [number, ...string[]]>;
+expectType<true>(leadingSpread);
+declare const trailingSpread: IsArray<readonly [...string[], number]>;
+expectType<true>(trailingSpread);
