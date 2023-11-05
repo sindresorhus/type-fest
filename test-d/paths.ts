@@ -4,6 +4,20 @@ import type {Paths} from '../index';
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);
 
+type DeepObject = {
+	a: {
+		b: {
+			c: {
+				d: string;
+			};
+		};
+		b2: number[];
+		b3: boolean;
+	};
+};
+declare const deepObject: Paths<DeepObject>;
+expectType<'a' | 'a.b' | 'a.b2' | 'a.b3' | 'a.b.c' | 'a.b.c.d' | `a.b2.${number}`>(deepObject);
+
 declare const emptyObject: Paths<{}>;
 expectType<''>(emptyObject);
 
@@ -21,9 +35,6 @@ expectType<'foo'>(date);
 
 declare const mixed: Paths<{foo: boolean} | {bar: string}>;
 expectType<'foo' | 'bar'>(mixed);
-
-declare const deepObject: Paths<{foo: {bar: string}}>;
-expectType<'foo' | 'foo.bar'>(deepObject);
 
 declare const list: Paths<Array<{foo: string}>>;
 expectType<`${number}` | `${number}.foo`>(list);
