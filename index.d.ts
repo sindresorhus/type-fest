@@ -103,6 +103,7 @@ export type {IfUnknown} from './source/if-unknown';
 export type {ArrayIndices} from './source/array-indices';
 export type {ArrayValues} from './source/array-values';
 export type {SetFieldType} from './source/set-field-type';
+export type {Paths} from './source/paths';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
