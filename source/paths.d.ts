@@ -7,7 +7,7 @@ import type {UnknownRecord} from './unknown-record';
 type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
-Return the part of the given array with fixed index
+Return the part of the given array with a fixed index.
 
 @example
 ```
@@ -24,7 +24,7 @@ type FilterFixedIndexArray<T extends UnknownArray, Result extends UnknownArray =
 		: T;
 
 /**
-Return the part of the given array with not fixed index
+Return the part of the given array with a non-fixed index.
 
 @example
 ```
@@ -39,7 +39,9 @@ T extends readonly [...FilterFixedIndexArray<T>, ...infer U]
 	: [];
 
 /**
-Generate a union of all possible paths to properties in the given object. Also works with arrays.
+Generate a union of all possible paths to properties in the given object.
+
+It also works with arrays.
 
 Use-case: You want a type-safe way to access deeply nested properties in an object.
 
@@ -49,8 +51,8 @@ import type {Paths} from 'type-fest';
 
 type Project = {
 	filename: string;
-	filelist1: string[];
-	filelist2: [{filename: string}];
+	listA: string[];
+	listB: [{filename: string}];
 	folder: {
 		subfolder: {
 			filename: string;
@@ -59,7 +61,7 @@ type Project = {
 };
 
 type ProjectPaths = Paths<Project>;
-//=> "filename" | "filelist" | "filelist2" | "folder" | `filelist1.${number}` | "filelist2.0" | "filelist2.0.filename" | "folder.subfolder" | "folder.subfolder.filename"
+//=> 'filename' | 'listA' | 'listB' | 'folder' | `listA.${number}` | 'listB.0' | 'listB.0.filename' | 'folder.subfolder' | 'folder.subfolder.filename'
 
 declare function open<Path extends ProjectPaths>(path: Path): void;
 
@@ -69,19 +71,20 @@ open('folder.subfolder.filename'); // Pass
 open('foo'); // TypeError
 
 // Also works with arrays
-open('filelist1.1'); // Pass
-open('filelist2.0'); // Pass
-open('filelist2.1'); // TypeError. Because filelist2 only has one element
+open('listA.1'); // Pass
+open('listB.0'); // Pass
+open('listB.1'); // TypeError. Because listB only has one element.
 ```
 
 @category Object
+@category Array
 */
 export type Paths<T extends UnknownRecord | UnknownArray> =
 	IsAny<T> extends true
 		? never
 		: T extends UnknownArray
 			? number extends T['length']
-				// Need handle the fixed index part of array and not fixed index part of array separately
+				// We need to handle the fixed and non-fixed index part of the array separately.
 				? InternalPaths<FilterFixedIndexArray<T>>
 				| InternalPaths<Array<FilterNotFixedIndexArray<T>[number]>>
 				: InternalPaths<T>
@@ -92,11 +95,11 @@ export type InternalPaths<_T extends UnknownRecord | UnknownArray, T = Required<
 		? never
 		: {
 			[Key in keyof T]:
-			Key extends string | number // Limit `Key` to string or number
+			Key extends string | number // Limit `Key` to string or number.
 				? T[Key] extends UnknownRecord | UnknownArray
 					? (
 						IsNever<Paths<T[Key]>> extends false
-						// If `Key` is number, return `Key | `${Key}``. Because both `array[0]` and `array['0']` are work.
+							// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` do not work.
 							? Key | ToString<Key> | `${Key}.${Paths<T[Key]>}`
 							: Key | ToString<Key>
 					)
