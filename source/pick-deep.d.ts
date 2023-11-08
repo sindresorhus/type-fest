@@ -9,9 +9,8 @@ import type {UnknownRecord} from './unknown-record.d';
 Pick properties from a deeply-nested object.
 
 It supports recursing into arrays.
-`PickDeep<[{a: string; b: number}], '0.a'> //=> [{a: string}]`
 
-Use-case: You can use the type to filter the parts of a complex object that you focus on.
+Use-case: Distill complex objects down to the components you need to target.
 
 @example
 ```
@@ -36,40 +35,40 @@ type Configuration = {
 };
 
 type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
-//=> type NameConfig = {
-//	 		userConfig: {
-//	 			name: string;
-//	 };
+// type NameConfig = {
+// 	userConfig: {
+// 	name: string;
+// };
 
 // Supports optional properties
 type User = PickDeep<PartialDeep<Configuration>, 'userConfig.name' | 'userConfig.age'>;
-//=> type User = {
-// 			userConfig?: {
-// 				name?: string;
-// 				age?: number;
-// 			};
-//		};
+// type User = {
+// 	userConfig?: {
+// 		name?: string;
+// 		age?: number;
+// 	};
+// };
 
 // Supports array
 type AddressConfig = PickDeep<Configuration, `userConfig.address.0`>;
-//=> type AddressConfig = {
-//     userConfig: {
-//         address: [{
-//             city1: string;
-//             street1: string;
-//         }];
-//     };
+// type AddressConfig = {
+// 	userConfig: {
+// 		address: [{
+// 			city1: string;
+// 			street1: string;
+// 		}];
+// 	};
 // }
 
 // Supports recurse into array
 type Street = PickDeep<Configuration, `userConfig.address.1.street2`>;
-//=> type AddressConfig = {
-//     userConfig: {
-//         address: [
-//						unknown,
-// 						{ street2: string }
-//         ];
-//     };
+// type AddressConfig = {
+// 	userConfig: {
+// 		address: [
+// 			unknown,
+// 			{street2: string}
+// 		];
+// 	};
 // }
 ```
 
