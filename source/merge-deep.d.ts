@@ -9,8 +9,8 @@ import type {
 	IsBothExtends,
 	NonEmptyTuple,
 	UnknownArrayOrTuple,
-	UnknownRecord,
 } from './internal';
+import type {UnknownRecord} from './unknown-record';
 
 /**
 Deeply simplifies an object excluding iterables and functions. Used internally to improve the UX and accept both interfaces and type aliases as inputs.

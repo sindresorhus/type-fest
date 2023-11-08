@@ -1,0 +1,7 @@
+{
+	"extends": "../../tsconfig",
+	"compilerOptions": {
+		"exactOptionalPropertyTypes": true,
+	},
+	"exclude": []
+}

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectError, expectType} from 'tsd';
 import type {MergeDeep, MergeDeepOptions} from '../index';
 
 // Test helper.
@@ -57,6 +57,20 @@ expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const, {arra
 // Should merge tuples with union
 expectType<Array<number | string | boolean>>(mergeDeep(['life', true], [42], {arrayMergeMode: 'spread'}));
 expectType<Array<number | string | boolean>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'spread'}));
+
+// Should not deep merge classes
+class ClassA {
+	public foo = 1;
+	public bar = 'bar';
+}
+class ClassB {
+	public foo = 'foo';
+}
+const mergedClass = mergeDeep({ClassConstructor: ClassA}, {ClassConstructor: ClassB});
+const instance = new mergedClass.ClassConstructor();
+expectType<{ClassConstructor: typeof ClassB}>(mergedClass);
+expectType<ClassB>(instance);
+expectError<string>(instance.bar);
 
 // Should merge simple types
 type Foo = {foo: string; fooBar: unknown; items: string[]};

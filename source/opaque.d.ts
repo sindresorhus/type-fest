@@ -1,17 +1,25 @@
 declare const tag: unique symbol;
 
-declare type Tagged<Token> = {
+export type TagContainer<Token> = {
 	readonly [tag]: Token;
 };
 
+type MultiTagContainer<Token extends PropertyKey> = {
+	readonly [tag]: {[K in Token]: void};
+};
+
 /**
-Create an opaque type, which hides its internal details from the public, and can only be created by being used explicitly.
+Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for runtime values that would otherwise have the same type. (See examples.)
 
-The generic type parameter can be anything. It doesn't have to be an object.
+The generic type parameters can be anything.
 
-[Read more about opaque types.](https://codemix.com/opaque-types-in-javascript/)
+Note that `Opaque` is somewhat of a misnomer here, in that, unlike [some alternative implementations](https://github.com/microsoft/TypeScript/issues/4895#issuecomment-425132582), the original, untagged type is not actually hidden. (E.g., functions that accept the untagged type can still be called with the "opaque" version -- but not vice-versa.)
 
-There have been several discussions about adding this feature to TypeScript via the `opaque type` operator, similar to how Flow does it. Unfortunately, nothing has (yet) moved forward:
+Also note that this implementation is limited to a single tag. If you want to allow multiple tags, use `Tagged` instead.
+
+[Read more about tagged types.](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d)
+
+There have been several discussions about adding similar features to TypeScript. Unfortunately, nothing has (yet) moved forward:
 	- [Microsoft/TypeScript#202](https://github.com/microsoft/TypeScript/issues/202)
 	- [Microsoft/TypeScript#15408](https://github.com/Microsoft/TypeScript/issues/15408)
 	- [Microsoft/TypeScript#15807](https://github.com/Microsoft/TypeScript/issues/15807)
@@ -59,7 +67,7 @@ getMoneyForAccount(2);
 // You can use opaque values like they aren't opaque too.
 const accountNumber = createAccountNumber();
 
-// This will not compile successfully.
+// This will compile successfully.
 const newAccountNumber = accountNumber + 2;
 
 // As a side note, you can (and should) use recursive types for your opaque types to make them stronger and hopefully easier to type.
@@ -71,10 +79,10 @@ type Person = {
 
 @category Type
 */
-export type Opaque<Type, Token = unknown> = Type & Tagged<Token>;
+export type Opaque<Type, Token = unknown> = Type & TagContainer<Token>;
 
 /**
-Revert an opaque type back to its original type by removing the readonly `[tag]`.
+Revert an opaque or tagged type back to its original type by removing the readonly `[tag]`.
 
 Why is this necessary?
 
@@ -97,11 +105,101 @@ const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does n
 
 // Attempting to pass an non-Opaque type to UnwrapOpaque will raise a type error.
 type WontWork = UnwrapOpaque<string>;
+
+// Using a Tagged type will work too.
+type WillWork = UnwrapOpaque<Tagged<number, 'AccountNumber'>>; // number
 ```
 
 @category Type
 */
-export type UnwrapOpaque<OpaqueType extends Tagged<unknown>> =
-	OpaqueType extends Opaque<infer Type, OpaqueType[typeof tag]>
-		? Type
-		: OpaqueType;
+export type UnwrapOpaque<OpaqueType extends TagContainer<unknown>> =
+	OpaqueType extends MultiTagContainer<string | number | symbol>
+		? RemoveAllTags<OpaqueType>
+		: OpaqueType extends Opaque<infer Type, OpaqueType[typeof tag]>
+			? Type
+			: OpaqueType;
+
+/**
+Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for runtime values that would otherwise have the same type. (See examples.)
+
+A type returned by `Tagged` can be passed to `Tagged` again, to create a type with multiple tags.
+
+[Read more about tagged types.](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d)
+
+There have been several discussions about adding similar features to TypeScript. Unfortunately, nothing has (yet) moved forward:
+	- [Microsoft/TypeScript#202](https://github.com/microsoft/TypeScript/issues/202)
+	- [Microsoft/TypeScript#4895](https://github.com/microsoft/TypeScript/issues/4895)
+	- [Microsoft/TypeScript#33290](https://github.com/microsoft/TypeScript/pull/33290)
+
+@example
+```
+import type {Tagged} from 'type-fest';
+
+type AccountNumber = Tagged<number, 'AccountNumber'>;
+type AccountBalance = Tagged<number, 'AccountBalance'>;
+
+function createAccountNumber(): AccountNumber {
+	// As you can see, casting from a `number` (the underlying type being tagged) is allowed.
+	return 2 as AccountNumber;
+}
+
+function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
+	return 4 as AccountBalance;
+}
+
+// This will compile successfully.
+getMoneyForAccount(createAccountNumber());
+
+// But this won't, because it has to be explicitly passed as an `AccountNumber` type!
+getMoneyForAccount(2);
+
+// You can use opaque values like they aren't opaque too.
+const accountNumber = createAccountNumber();
+
+// This will compile successfully.
+const newAccountNumber = accountNumber + 2;
+```
+
+@category Type
+*/
+export type Tagged<Type, Tag extends PropertyKey> = Type & MultiTagContainer<Tag>;
+
+/**
+Revert a tagged type back to its original type by removing the readonly `[tag]`.
+
+Why is this necessary?
+
+1. Use a `Tagged` type as object keys
+2. Prevent TS4058 error: "Return type of exported function has or is using name X from external module Y but cannot be named"
+
+@example
+```
+import type {Tagged, UnwrapTagged} from 'type-fest';
+
+type AccountType = Tagged<'SAVINGS' | 'CHECKING', 'AccountType'>;
+
+const moneyByAccountType: Record<UnwrapTagged<AccountType>, number> = {
+	SAVINGS: 99,
+	CHECKING: 0.1
+};
+
+// Without UnwrapTagged, the following expression would throw a type error.
+const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
+
+// Attempting to pass an non-Tagged type to UnwrapTagged will raise a type error.
+type WontWork = UnwrapTagged<string>;
+```
+
+@category Type
+*/
+export type UnwrapTagged<TaggedType extends MultiTagContainer<PropertyKey>> =
+RemoveAllTags<TaggedType>;
+
+type RemoveAllTags<T> = T extends MultiTagContainer<infer ExistingTags>
+	? {
+		[ThisTag in ExistingTags]:
+		T extends Tagged<infer Type, ThisTag>
+			? RemoveAllTags<Type>
+			: never
+	}[ExistingTags]
+	: T;

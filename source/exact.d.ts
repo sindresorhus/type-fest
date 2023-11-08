@@ -1,6 +1,7 @@
-import type {KeysOfUnion, ArrayElement, ObjectValue} from './internal';
-import type {Opaque} from './opaque';
+import type {ArrayElement, ObjectValue} from './internal';
+import type {Opaque, TagContainer} from './opaque';
 import type {IsEqual} from './is-equal';
+import type {KeysOfUnion} from './keys-of-union';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -56,7 +57,7 @@ export type Exact<ParameterType, InputType> =
 		: ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 			// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 			: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-				// For Opaque types, internal details are hidden from public, so let's leave it as is.
-				: ParameterType extends Opaque<infer OpaqueType, infer OpaqueToken> ? ParameterType
+				// Leave tagged types as-is. We could try to make the untagged part Exact, and just leave the tag as-is, but that seems to create instanitation excessively deep errors.
+				: ParameterType extends TagContainer<unknown> ? ParameterType
 					: ParameterType extends object ? ExactObject<ParameterType, InputType>
 						: ParameterType;

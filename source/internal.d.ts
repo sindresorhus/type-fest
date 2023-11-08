@@ -3,6 +3,9 @@ import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 
+// TODO: Remove for v5.
+export type {UnknownRecord} from './unknown-record';
+
 /**
 Infer the length of the given array `<T>`.
 
@@ -11,13 +14,15 @@ Infer the length of the given array `<T>`.
 type TupleLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
 
 /**
-Create a tuple type of the given length `<L>`.
+Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
+
+If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type BuildTuple<L extends number, T extends readonly unknown[] = []> = T extends {readonly length: L}
+export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
 	? T
-	: BuildTuple<L, [...T, unknown]>;
+	: BuildTuple<L, Fill, [...T, Fill]>;
 
 /**
 Create a tuple of length `A` and a tuple composed of two other tuples,
@@ -33,15 +38,6 @@ export type Subtract<A extends number, B extends number> = BuildTuple<A> extends
 Matches any primitive, `Date`, or `RegExp` value.
 */
 export type BuiltIns = Primitive | Date | RegExp;
-
-/**
-Gets keys from a type. Similar to `keyof` but this one also works for union types.
-
-The reason a simple `keyof Union` does not work is because `keyof` always returns the accessible keys of a type. In the case of a union, that will only be the common keys.
-
-@link https://stackoverflow.com/a/49402091
-*/
-export type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
@@ -76,11 +72,6 @@ export type Whitespace =
 	| '\u{FEFF}';
 
 export type WordSeparators = '-' | '_' | Whitespace;
-
-/**
-Matches any unknown record.
-*/
-export type UnknownRecord = Record<PropertyKey, unknown>;
 
 /**
 Matches any unknown array or tuple.
@@ -191,9 +182,16 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
 	: Type[Key] extends symbol
 		? never
-		: [(...arguments_: any[]) => any] extends [Type[Key]]
-			? never
-			: Key;
+		/*
+		To prevent a problem where an object with only a `name` property is incorrectly treated as assignable to a function, we first check if the property is a record.
+		This check is necessary, because without it, if we don't verify whether the property is a record, an object with a type of `{name: any}` would return `never` due to its potential assignability to a function.
+		See: https://github.com/sindresorhus/type-fest/issues/657
+		*/
+		: Type[Key] extends Record<string, unknown>
+			? Key
+			: [(...arguments_: any[]) => any] extends [Type[Key]]
+				? never
+				: Key;
 
 /**
 Returns the required keys.
@@ -256,3 +254,20 @@ export type IsNull<T> = [T] extends [null] ? true : false;
 Disallows any of the given keys.
 */
 export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
+
+/**
+Returns a boolean for whether the given type is primitive value or primitive type.
+
+@example
+```
+IsPrimitive<'string'>
+//=> true
+
+IsPrimitive<string>
+//=> true
+
+IsPrimitive<Object>
+//=> false
+```
+*/
+export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;

@@ -5,7 +5,11 @@ export * from './source/basic';
 export * from './source/observable-like';
 
 // Utilities
+export type {KeysOfUnion} from './source/keys-of-union';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
+export type {NonEmptyObject} from './source/non-empty-object';
+export type {UnknownRecord} from './source/unknown-record';
+export type {UnknownArray} from './source/unknown-array';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
 export type {Writable} from './source/writable';
@@ -23,10 +27,11 @@ export type {PickIndexSignature} from './source/pick-index-signature';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
 export type {RequiredDeep} from './source/required-deep';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
+export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
 export type {LiteralUnion} from './source/literal-union';
 export type {Promisable} from './source/promisable';
-export type {Opaque, UnwrapOpaque} from './source/opaque';
+export type {Opaque, UnwrapOpaque, Tagged, UnwrapTagged} from './source/opaque';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';
@@ -47,6 +52,7 @@ export type {IterableElement} from './source/iterable-element';
 export type {Entry} from './source/entry';
 export type {Entries} from './source/entries';
 export type {SetReturnType} from './source/set-return-type';
+export type {SetParameterType} from './source/set-parameter-type';
 export type {Asyncify} from './source/asyncify';
 export type {Simplify} from './source/simplify';
 export type {Jsonify} from './source/jsonify';
@@ -80,6 +86,7 @@ export type {WritableKeysOf} from './source/writable-keys-of';
 export type {HasWritableKeys} from './source/has-writable-keys';
 export type {Spread} from './source/spread';
 export type {TupleToUnion} from './source/tuple-to-union';
+export type {IntRange} from './source/int-range';
 export type {IsEqual} from './source/is-equal';
 export type {
 	IsLiteral,
@@ -94,6 +101,10 @@ export type {IsNever} from './source/is-never';
 export type {IfNever} from './source/if-never';
 export type {IsUnknown} from './source/is-unknown';
 export type {IfUnknown} from './source/if-unknown';
+export type {ArrayIndices} from './source/array-indices';
+export type {ArrayValues} from './source/array-values';
+export type {SetFieldType} from './source/set-field-type';
+export type {Paths} from './source/paths';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
