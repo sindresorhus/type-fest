@@ -52,7 +52,7 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends Unkno
 /**
 Return a string representation of the given string or number.
 
-Note: This type is not the return type of `toString()` function.
+Note: This type is not the return type of the `.toString()` function.
 */
 export type ToString<T> = T extends string | number ? `${T}` : never;
 
