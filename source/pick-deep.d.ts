@@ -37,7 +37,8 @@ type Configuration = {
 type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
 // type NameConfig = {
 // 	userConfig: {
-// 	name: string;
+// 		name: string;
+// 	}
 // };
 
 // Supports optional properties
@@ -50,7 +51,7 @@ type User = PickDeep<PartialDeep<Configuration>, 'userConfig.name' | 'userConfig
 // };
 
 // Supports array
-type AddressConfig = PickDeep<Configuration, `userConfig.address.0`>;
+type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
 // type AddressConfig = {
 // 	userConfig: {
 // 		address: [{
@@ -61,8 +62,8 @@ type AddressConfig = PickDeep<Configuration, `userConfig.address.0`>;
 // }
 
 // Supports recurse into array
-type Street = PickDeep<Configuration, `userConfig.address.1.street2`>;
-// type AddressConfig = {
+type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
+// type Street = {
 // 	userConfig: {
 // 		address: [
 // 			unknown,
