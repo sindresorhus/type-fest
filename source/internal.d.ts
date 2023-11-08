@@ -26,9 +26,9 @@ export type BuildTuple<L extends number, Fill = unknown, T extends readonly unkn
 	: BuildTuple<L, Fill, [...T, Fill]>;
 
 /**
-Create a object type with the given key `<Key>` and value `<Value>`.
+Create an object type with the given key `<Key>` and value `<Value>`.
 
-It will copy the prefix and optional status of the same key from the given object `CopiedFrom` into result.
+It will copy the prefix and optional status of the same key from the given object `CopiedFrom` into the result.
 
 @example
 ```
