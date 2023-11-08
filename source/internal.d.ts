@@ -2,6 +2,7 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
+import type {UnknownRecord} from './unknown-record';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -23,6 +24,37 @@ If `<Fill>` is not provided, it will default to `unknown`.
 export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
 	? T
 	: BuildTuple<L, Fill, [...T, Fill]>;
+
+/**
+Create an object type with the given key `<Key>` and value `<Value>`.
+
+It will copy the prefix and optional status of the same key from the given object `CopiedFrom` into the result.
+
+@example
+```
+type A = BuildObject<'a', string>;
+//=> {a: string}
+
+// Copy `readonly` and `?` from the key `a` of `{readonly a?: any}`
+type B = BuildObject<'a', string, {readonly a?: any}>;
+//=> {readonly a?: string}
+```
+*/
+export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends UnknownRecord = {}> =
+	Key extends keyof CopiedFrom
+		? Pick<{[_ in keyof CopiedFrom]: Value}, Key>
+		: Key extends `${infer NumberKey extends number}`
+			? NumberKey extends keyof CopiedFrom
+				? Pick<{[_ in keyof CopiedFrom]: Value}, NumberKey>
+				: {[_ in Key]: Value}
+			: {[_ in Key]: Value};
+
+/**
+Return a string representation of the given string or number.
+
+Note: This type is not the return type of the `.toString()` function.
+*/
+export type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
 Create a tuple of length `A` and a tuple composed of two other tuples,

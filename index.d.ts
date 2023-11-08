@@ -25,6 +25,7 @@ export type {OmitIndexSignature} from './source/omit-index-signature';
 export type {PickIndexSignature} from './source/pick-index-signature';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
 export type {RequiredDeep} from './source/required-deep';
+export type {PickDeep} from './source/pick-deep';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
