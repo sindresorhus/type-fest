@@ -6,10 +6,10 @@ import type {UnknownArray} from './unknown-array';
 import type {UnknownRecord} from './unknown-record.d';
 
 /**
-Pick subsets of properties from a deeply-nested object.
+Pick properties from a deeply-nested object.
 
-Support recurse into array.
-(e.g. `PickDeep<[{a: string; b: number}], '0.a'> //=> [{a: string}]`)
+It supports recursing into arrays.
+`PickDeep<[{a: string; b: number}], '0.a'> //=> [{a: string}]`
 
 Use-case: You can use the type to filter the parts of a complex object that you focus on.
 
@@ -74,6 +74,7 @@ type Street = PickDeep<Configuration, `userConfig.address.1.street2`>;
 ```
 
 @category Object
+@category Array
 */
 export type PickDeep<T extends UnknownRecord | UnknownArray, PathUnion extends Paths<T>> =
 	T extends UnknownRecord
@@ -88,7 +89,7 @@ export type PickDeep<T extends UnknownRecord | UnknownArray, PathUnion extends P
 			: never;
 
 /**
-Pick a object/array from the given object/array by one path.
+Pick an object/array from the given object/array by one path.
 */
 type InternalPickDeep<
 	T extends UnknownRecord | UnknownArray,
@@ -99,7 +100,7 @@ type InternalPickDeep<
 			: never;
 
 /**
-Pick a object from the given object by one path.
+Pick an object from the given object by one path.
 */
 type PickDeepObject<RecordType extends UnknownRecord, P extends string | number> =
 	P extends `${infer RecordKeyInPath}.${infer SubPath}`
@@ -109,10 +110,10 @@ type PickDeepObject<RecordType extends UnknownRecord, P extends string | number>
 			: never;
 
 /**
-Pick a array from the given array by one path.
+Pick an array from the given array by one path.
 */
 type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
-	// Handle path that are `${number}.${string}`
+	// Handle paths that are `${number}.${string}`
 	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
 		// When `ArrayIndex` is equal to `number`
 		? number extends ArrayIndex
@@ -127,7 +128,7 @@ type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
 				: ArrayType extends readonly unknown[]
 					? readonly [...BuildTuple<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
 					: never
-		// When path is equal to `number`
+		// When the path is equal to `number`
 		: P extends `${infer ArrayIndex extends number}`
 			// When `ArrayIndex` is `number`
 			? number extends ArrayIndex
