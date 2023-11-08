@@ -99,7 +99,7 @@ export type InternalPaths<_T extends UnknownRecord | UnknownArray, T = Required<
 				? T[Key] extends UnknownRecord | UnknownArray
 					? (
 						IsNever<Paths<T[Key]>> extends false
-							// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` do not work.
+							// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
 							? Key | ToString<Key> | `${Key}.${Paths<T[Key]>}`
 							: Key | ToString<Key>
 					)
