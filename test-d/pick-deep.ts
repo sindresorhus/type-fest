@@ -110,5 +110,3 @@ expectType<{1: {0: number}}>(numberTest2);
 
 declare const numberTest3: PickDeep<Testing, '2.0'>;
 expectType<{2?: {0: number}}>(numberTest3);
-
-type A = PickDeep<[{a: string; b: number}], '0.a'>;
