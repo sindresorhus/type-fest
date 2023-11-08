@@ -1,33 +1,15 @@
-import type {BuildObject} from './internal';
+import type {BuildObject, BuildTuple, ToString} from './internal';
+import type {Paths} from './paths';
 import type {Simplify} from './simplify.d';
 import type {UnionToIntersection} from './union-to-intersection.d';
+import type {UnknownArray} from './unknown-array';
 import type {UnknownRecord} from './unknown-record.d';
-
-type ToString<T> = T extends string | number ? `${T}` : '';
-
-/**
-Generate a union of all the possible paths in a deeply nested object.
-*/
-export type Paths<T extends UnknownRecord, RecordType extends UnknownRecord = Required<T>> =
-{
-	[Key in keyof RecordType]: RecordType[Key] extends UnknownRecord
-		? Key extends string | number // Handle TS Error: Type instantiation is excessively deep and possibly infinite.
-			? ToString<Key> | `${ToString<Key>}.${Paths<RecordType[Key]>}`
-			: ToString<Key>
-		: ToString<Key>
-}[keyof RecordType];
-
-/**
-Returns a boolean for whether the given key is optional of the given object.
-*/
-type IsOptional<
-	T extends UnknownRecord,
-	Key extends keyof RecordType,
-	RecordType = Pick<T, Key>> =
-RecordType extends {[K in keyof RecordType]-?: RecordType[K]} ? false : true;
 
 /**
 Pick subsets of properties from a deeply-nested object.
+
+Support recurse into array.
+(e.g. `PickDeep<[{a: string; b: number}], '0.a'> //=> [{a: string}]`)
 
 Use-case: You can use the type to filter the parts of a complex object that you focus on.
 
@@ -36,44 +18,124 @@ Use-case: You can use the type to filter the parts of a complex object that you 
 import type {PickDeep, PartialDeep} from 'type-fest';
 
 type Configuration = {
-  userConfig: {
-    name: string;
-    age: number;
-    address: {
-      street: string;
-      city: string;
-    };
-  };
-  appConfig: {
-    theme: string;
-    locale: string;
-  };
-  otherConfig: any;
+	userConfig: {
+		name: string;
+		age: number;
+		address: [
+			{
+				city1: string;
+				street1: string;
+			},
+			{
+				city2: string;
+				street2: string;
+			}
+		]
+	};
+	otherConfig: any;
 };
 
-type Address = PickDeep<Configuration, 'userConfig.address'>;
-//=> type AddressConfig = { userConfig: { address: { street: string; city: string; }; }; }
+type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
+//=> type NameConfig = {
+//	 		userConfig: {
+//	 			name: string;
+//	 };
 
-// Also supports optional properties
+// Supports optional properties
 type User = PickDeep<PartialDeep<Configuration>, 'userConfig.name' | 'userConfig.age'>;
-//=> type User = { userConfig?: { name?: string; age?: number; }; }
+//=> type User = {
+// 			userConfig?: {
+// 				name?: string;
+// 				age?: number;
+// 			};
+//		};
+
+// Supports array
+type AddressConfig = PickDeep<Configuration, `userConfig.address.0`>;
+//=> type AddressConfig = {
+//     userConfig: {
+//         address: [{
+//             city1: string;
+//             street1: string;
+//         }];
+//     };
+// }
+
+// Supports recurse into array
+type Street = PickDeep<Configuration, `userConfig.address.1.street2`>;
+//=> type AddressConfig = {
+//     userConfig: {
+//         address: [
+//						unknown,
+// 						{ street2: string }
+//         ];
+//     };
+// }
 ```
 
-@see https://github.com/argentlabs/argent-x/blob/0cb22f7bb5b0045d8f0aebb22ee245bd59f5db8c/packages/extension/src/shared/types/deepPick.ts#L27
 @category Object
 */
-export type PickDeep<
-	RecordType extends UnknownRecord,
-	_PathUnion extends Paths<RecordType>, // UnChecked paths, not used here
-	PathUnion extends string = Extract<Paths<RecordType>, _PathUnion>, // Checked paths, extracted from unChecked paths
+export type PickDeep<T extends UnknownRecord | UnknownArray, PathUnion extends Paths<T>> =
+	T extends UnknownRecord
+		? Simplify<UnionToIntersection<{
+			[P in PathUnion]: InternalPickDeep<T, P>;
+		}[PathUnion]>>
+		: T extends UnknownArray
+			? UnionToIntersection<{
+				[P in PathUnion]: InternalPickDeep<T, P>;
+			}[PathUnion]
+			>
+			: never;
+
+/**
+Pick a object/array from the given object/array by one path.
+*/
+type InternalPickDeep<
+	T extends UnknownRecord | UnknownArray,
+	Path extends string | number, // Checked paths, extracted from unchecked paths
 > =
-Simplify<UnionToIntersection<
-{
-	[P in PathUnion]:
+	T extends UnknownArray ? PickDeepArray<T, Path>
+		: T extends UnknownRecord ? Simplify<PickDeepObject<T, Path>>
+			: never;
+
+/**
+Pick a object from the given object by one path.
+*/
+type PickDeepObject<RecordType extends UnknownRecord, P extends string | number> =
 	P extends `${infer RecordKeyInPath}.${infer SubPath}`
-		? BuildObject<RecordKeyInPath, PickDeep<NonNullable<RecordType[RecordKeyInPath]>, never, SubPath>, IsOptional<RecordType, RecordKeyInPath>>
-		: P extends keyof RecordType | `${ToString<keyof RecordType>}` // Handle number keys
-			? BuildObject<P, RecordType[P], IsOptional<RecordType, P>>
-			: never; // Should never happen
-}[PathUnion]
->>;
+		? BuildObject<RecordKeyInPath, InternalPickDeep<NonNullable<RecordType[RecordKeyInPath]>, SubPath>, RecordType>
+		: P extends keyof RecordType | ToString<keyof RecordType> // Handle number keys
+			? BuildObject<P, RecordType[P], RecordType>
+			: never;
+
+/**
+Pick a array from the given array by one path.
+*/
+type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
+	// Handle path that are `${number}.${string}`
+	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
+		// When `ArrayIndex` is equal to `number`
+		? number extends ArrayIndex
+			? ArrayType extends unknown[]
+				? Array<InternalPickDeep<NonNullable<ArrayType[number]>, SubPath>>
+				: ArrayType extends readonly unknown[]
+					? ReadonlyArray<InternalPickDeep<NonNullable<ArrayType[number]>, SubPath>>
+					: never
+			// When `ArrayIndex` is a number literal
+			: ArrayType extends unknown[]
+				? [...BuildTuple<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
+				: ArrayType extends readonly unknown[]
+					? readonly [...BuildTuple<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
+					: never
+		// When path is equal to `number`
+		: P extends `${infer ArrayIndex extends number}`
+			// When `ArrayIndex` is `number`
+			? number extends ArrayIndex
+				? ArrayType
+				// When `ArrayIndex` is a number literal
+				: ArrayType extends unknown[]
+					? [...BuildTuple<ArrayIndex>, ArrayType[ArrayIndex]]
+					: ArrayType extends readonly unknown[]
+						? readonly [...BuildTuple<ArrayIndex>, ArrayType[ArrayIndex]]
+						: never
+			: never;
