@@ -1,4 +1,4 @@
-import type {BuiltIns, UnknownRecord} from './internal';
+import type {BuiltIns} from './internal';
 
 /**
 @see PartialDeep
@@ -69,9 +69,8 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> = T extends 
 				? PartialReadonlyMapDeep<KeyType, ValueType, Options>
 				: T extends ReadonlySet<infer ItemType>
 					? PartialReadonlySetDeep<ItemType, Options>
-					: T extends UnknownRecord
-						? PartialObjectDeep<T, Options>
-						: T extends ReadonlyArray<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
+					: T extends object
+						? T extends ReadonlyArray<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
 							? Options['recurseIntoArrays'] extends true
 								? ItemType[] extends T // Test for arrays (non-tuples) specifically
 									? readonly ItemType[] extends T // Differentiate readonly and mutable arrays
@@ -79,7 +78,8 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> = T extends 
 										: Array<PartialDeep<ItemType | undefined, Options>>
 									: PartialObjectDeep<T, Options> // Tuples behave properly
 								: T // If they don't opt into array testing, just use the original type
-							: T;
+							: PartialObjectDeep<T, Options>
+						: unknown;
 
 /**
 Same as `PartialDeep`, but accepts only `Map`s and as inputs. Internal helper for `PartialDeep`.
