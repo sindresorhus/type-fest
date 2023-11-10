@@ -46,3 +46,27 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	],
 };
 expectType<DelimiterCasedPropertiesDeep<UserWithFriends, '-'>>(result);
+
+// Test object key properties
+declare const key: DelimiterCasedPropertiesDeep<{readonly userId?: number}, '-'>;
+expectType<{readonly 'user-id'?: number}>(key);
+
+/** Test Array */
+// Test for tuple
+declare const tuple: DelimiterCasedPropertiesDeep<['userId', 'userName'], '-'>;
+expectType<['user-id', 'user-name']>(tuple);
+// Test for readonly
+declare const readonlyTuple: DelimiterCasedPropertiesDeep<readonly ['userId', 'userName'], '-'>;
+expectType<readonly ['user-id', 'user-name']>(readonlyTuple);
+// Test for array
+declare const array: DelimiterCasedPropertiesDeep<Array<'userId'>, '-'>;
+expectType<Array<'user-id'>>(array);
+// Test for readonly array
+declare const readonlyArray: DelimiterCasedPropertiesDeep<ReadonlyArray<'userId'>, '-'>;
+expectType<ReadonlyArray<'user-id'>>(readonlyArray);
+// Test for tailing spread array
+declare const tailingSpreadArray: DelimiterCasedPropertiesDeep<['userId', 'userName', ...Array<'userAge'>], '-'>;
+expectType<['user-id', 'user-name', ...Array<'user-age'>]>(tailingSpreadArray);
+// Test for leading spread array
+declare const leadingSpreadArray: DelimiterCasedPropertiesDeep<[...Array<'userId'>, 'userName', 'userAge'], '-'>;
+expectType<[...Array<'user-id'>, 'user-name', 'user-age']>(leadingSpreadArray);
