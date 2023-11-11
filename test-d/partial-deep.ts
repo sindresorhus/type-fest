@@ -10,6 +10,7 @@ const foo = {
 	bar: {
 		function: (_: string): void => undefined,
 		classConstructor: ClassA,
+		element: document.createElement('div'),
 		object: {key: 'value'},
 		string: 'waldo',
 		number: 1,
@@ -41,6 +42,7 @@ const instance = new partialDeepFoo.bar!.classConstructor!();
 instance.foo = 2;
 const b = partialDeepFoo.bar!.constructor;
 expectType<((_: string) => void) | undefined>(partialDeepFoo.bar!.function);
+expectType<HTMLDivElement | undefined>(partialDeepFoo.bar!.element);
 expectAssignable<object | undefined>(partialDeepFoo.bar!.object);
 expectType<string | undefined>(partialDeepFoo.bar!.string);
 expectType<number | undefined>(partialDeepFoo.bar!.number);
@@ -100,3 +102,14 @@ expectAssignable<ReadonlyMap<string | undefined, string | undefined> | undefined
 expectAssignable<ReadonlySet<string | undefined> | undefined>(partialDeepNoRecurseIntoArraysBar.readonlySet);
 expectType<readonly string[] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyArray);
 expectType<readonly ['foo'] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyTuple);
+
+// Test for interface
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface InterfaceType {
+	string: string;
+	object: {
+		number: number;
+	};
+}
+declare const interfaceType: PartialDeep<InterfaceType>;
+expectType<{string?: string; object?: {number?: number}}>(interfaceType);
