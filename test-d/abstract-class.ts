@@ -68,15 +68,13 @@ abstract class AbstractBuilding<T = unknown> {
 	}
 }
 
-class Building<T> extends AbstractBuilding<T> {}
-
 type Census = {
 	count: number;
 };
 
-class House<OwnerCount extends Census = Census> extends Building<OwnerCount> {}
+class House<OwnerCount extends Census = Census> extends AbstractBuilding<OwnerCount> {}
 
-class CityBlock<BuildingType extends Building<Census>> {
+class CityBlock<BuildingType extends AbstractBuilding<Census>> {
 	residence: BuildingType;
 
 	constructor(HousingType: AbstractClass<BuildingType, [Census]>) {
