@@ -16,7 +16,14 @@ type DeepObject = {
 	};
 };
 declare const deepObject: Paths<DeepObject>;
-expectType<'a' | 'a.b' | 'a.b2' | 'a.b3' | 'a.b.c' | 'a.b.c.d' | `a.b2.${number}`>(deepObject);
+type DeepPath = 'a' | 'a.b' | 'a.b2' | 'a.b3' | 'a.b.c' | 'a.b.c.d' | `a.b2.${number}`;
+expectType<DeepPath>(deepObject);
+
+// Test for interface
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface InterfaceType extends DeepObject {}
+declare const interfaceType: Paths<InterfaceType>;
+expectType<DeepPath>(interfaceType);
 
 declare const emptyObject: Paths<{}>;
 expectType<never>(emptyObject);

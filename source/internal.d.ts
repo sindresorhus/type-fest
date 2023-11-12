@@ -71,6 +71,11 @@ Matches any primitive, `Date`, `RegExp`, `Element` value.
 */
 export type BuiltIns = Primitive | Date | RegExp | Element;
 
+/**
+Matches non-recursive types.
+*/
+export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
+
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
 export type StringDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
