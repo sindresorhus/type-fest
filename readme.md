@@ -113,8 +113,9 @@ Click the type names for complete docs.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`NonEmptyObject`](source/non-empty-object.d.ts) - Represents an object with at least 1 non-optional key.
 - [`UnknownRecord`](source/unknown-record.d.ts) - Represents an object with `unknown` value. You probably want this instead of `{}`.
+- [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
-- [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from all or some of an object's keys. The inverse of `Readonly<T>`.
+- [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
@@ -125,10 +126,12 @@ Click the type names for complete docs.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more, or none of the given keys.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
+- [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
+- [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Tagged`](source/opaque.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) if needed.
@@ -153,12 +156,14 @@ Click the type names for complete docs.
 - [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
+- [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
 - [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
+- [`KeysOfUnion`](source/keys-of-union.d.ts) - Create a union of all keys from a given type, even those exclusive to specific union members.
 - [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
@@ -169,6 +174,11 @@ Click the type names for complete docs.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
+- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
+- [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
+- [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
+- [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
+- [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 
 ### Type Guard
 
@@ -293,13 +303,14 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 
 *If you know one of our types by a different name, add it here for discovery.*
 
-- `Prettify`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
-- `Expand`- See [`Simplify`](https://github.com/sindresorhus/type-fest/blob/main/source/simplify.d.ts)
-- `PartialBy` - See [`SetOptional`](https://github.com/sindresorhus/type-fest/blob/main/source/set-optional.d.ts)
-- `RecordDeep`- See [`Schema`](https://github.com/sindresorhus/type-fest/blob/main/source/schema.d.ts)
-- `Mutable`- See [`Writable`](https://github.com/sindresorhus/type-fest/blob/main/source/writable.d.ts)
-- `RequireOnlyOne` - See [`RequireExactlyOne`](https://github.com/sindresorhus/type-fest/blob/main/source/require-exactly-one.d.ts)
-- `AtMostOne` - See [`RequireOneOrNone`](https://github.com/sindresorhus/type-fest/blob/main/source/require-one-or-none.d.ts)
+- `Prettify`- See [`Simplify`](source/simplify.d.ts)
+- `Expand`- See [`Simplify`](source/simplify.d.ts)
+- `PartialBy` - See [`SetOptional`](source/set-optional.d.ts)
+- `RecordDeep`- See [`Schema`](source/schema.d.ts)
+- `Mutable`- See [`Writable`](source/writable.d.ts)
+- `RequireOnlyOne` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
+- `AtMostOne` - See [`RequireOneOrNone`](source/require-one-or-none.d.ts)
+- `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
 
 ## Tips
 
@@ -933,6 +944,7 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 ## Maintainers
 
 - [Sindre Sorhus](https://github.com/sindresorhus)
+- [Haozheng Li](https://github.com/Emiyaaaaa)
 - [Jarek Radosz](https://github.com/CvX)
 - [Dimitri Benin](https://github.com/BendingBender)
 - [Pelle Wessman](https://github.com/voxpelli)

@@ -2,6 +2,7 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
+import type {UnknownRecord} from './unknown-record';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -14,13 +15,46 @@ Infer the length of the given array `<T>`.
 type TupleLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
 
 /**
-Create a tuple type of the given length `<L>`.
+Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
+
+If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type BuildTuple<L extends number, T extends readonly unknown[] = []> = T extends {readonly length: L}
+export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
 	? T
-	: BuildTuple<L, [...T, unknown]>;
+	: BuildTuple<L, Fill, [...T, Fill]>;
+
+/**
+Create an object type with the given key `<Key>` and value `<Value>`.
+
+It will copy the prefix and optional status of the same key from the given object `CopiedFrom` into the result.
+
+@example
+```
+type A = BuildObject<'a', string>;
+//=> {a: string}
+
+// Copy `readonly` and `?` from the key `a` of `{readonly a?: any}`
+type B = BuildObject<'a', string, {readonly a?: any}>;
+//=> {readonly a?: string}
+```
+*/
+export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends UnknownRecord = {}> =
+	Key extends keyof CopiedFrom
+		? Pick<{[_ in keyof CopiedFrom]: Value}, Key>
+		: Key extends `${infer NumberKey extends number}`
+			? NumberKey extends keyof CopiedFrom
+				? Pick<{[_ in keyof CopiedFrom]: Value}, NumberKey>
+				: {[_ in Key]: Value}
+			: {[_ in Key]: Value};
+
+/**
+Return a string representation of the given string or number.
+
+Note: This type is not the return type of the `.toString()` function.
+*/
+export type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
 Create a tuple of length `A` and a tuple composed of two other tuples,
@@ -33,18 +67,9 @@ export type Subtract<A extends number, B extends number> = BuildTuple<A> extends
 	: never;
 
 /**
-Matches any primitive, `Date`, or `RegExp` value.
+Matches any primitive, `Date`, `RegExp`, `Element` value.
 */
-export type BuiltIns = Primitive | Date | RegExp;
-
-/**
-Gets keys from a type. Similar to `keyof` but this one also works for union types.
-
-The reason a simple `keyof Union` does not work is because `keyof` always returns the accessible keys of a type. In the case of a union, that will only be the common keys.
-
-@link https://stackoverflow.com/a/49402091
-*/
-export type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type BuiltIns = Primitive | Date | RegExp | Element;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
