@@ -3,7 +3,6 @@ import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
-import type {UnknownRecord} from './unknown-record';
 
 /**
 Return the part of the given array with a fixed index.
