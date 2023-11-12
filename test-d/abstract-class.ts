@@ -72,7 +72,7 @@ type Census = {
 	count: number;
 };
 
-class House<OwnerCount extends Census = Census> extends AbstractBuilding<OwnerCount> {}
+abstract class House<OwnerCount extends Census = Census> extends AbstractBuilding<OwnerCount> {}
 
 class CityBlock<BuildingType extends AbstractBuilding<Census>> {
 	residence: BuildingType;
