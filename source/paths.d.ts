@@ -1,9 +1,8 @@
-import type {ToString} from './internal';
+import type {NonRecursiveType, ToString} from './internal';
 import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
-import type {UnknownRecord} from './unknown-record';
 
 /**
 Return the part of the given array with a fixed index.
@@ -78,30 +77,35 @@ open('listB.1'); // TypeError. Because listB only has one element.
 @category Object
 @category Array
 */
-export type Paths<T extends UnknownRecord | UnknownArray> =
-	IsAny<T> extends true
+export type Paths<T> =
+	T extends NonRecursiveType
 		? never
-		: T extends UnknownArray
-			? number extends T['length']
-				// We need to handle the fixed and non-fixed index part of the array separately.
-				? InternalPaths<FilterFixedIndexArray<T>>
-				| InternalPaths<Array<FilterNotFixedIndexArray<T>[number]>>
-				: InternalPaths<T>
-			: InternalPaths<T>;
+		: IsAny<T> extends true
+			? never
+			: T extends UnknownArray
+				? number extends T['length']
+					// We need to handle the fixed and non-fixed index part of the array separately.
+					? InternalPaths<FilterFixedIndexArray<T>>
+					| InternalPaths<Array<FilterNotFixedIndexArray<T>[number]>>
+					: InternalPaths<T>
+				: T extends object
+					? InternalPaths<T>
+					: never;
 
-export type InternalPaths<_T extends UnknownRecord | UnknownArray, T = Required<_T>> =
+export type InternalPaths<_T, T = Required<_T>> =
 	T extends EmptyObject | readonly []
 		? never
 		: {
 			[Key in keyof T]:
 			Key extends string | number // Limit `Key` to string or number.
-				? T[Key] extends UnknownRecord | UnknownArray
-					? (
-						IsNever<Paths<T[Key]>> extends false
-							// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
-							? Key | ToString<Key> | `${Key}.${Paths<T[Key]>}`
-							: Key | ToString<Key>
-					)
-					: Key | ToString<Key>
+				// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
+				?
+				| Key
+				| ToString<Key>
+				| (
+					IsNever<Paths<T[Key]>> extends false
+						? `${Key}.${Paths<T[Key]>}`
+						: never
+				)
 				: never
 		}[keyof T & (T extends UnknownArray ? number : unknown)];
