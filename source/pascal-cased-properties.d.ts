@@ -1,3 +1,4 @@
+import type {CamelCaseOptions} from './camel-case';
 import type {PascalCase} from './pascal-case';
 
 /**
