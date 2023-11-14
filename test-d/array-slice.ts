@@ -1,0 +1,20 @@
+import {expectType} from 'tsd';
+import type {ArraySlice} from '../source/array-slice';
+
+expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);
+expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);
+expectType<ArraySlice<[0, 1, 2, 3], 1>>([1, 2, 3]);
+expectType<ArraySlice<[0, 1, 2, 3], 1, 2>>([1]);
+expectType<ArraySlice<[0, 1, 2, 3], 1, -1>>([1, 2]);
+expectType<ArraySlice<[0, 1, 2, 3], -1, -1>>([]);
+expectType<ArraySlice<[0, 1, 2, 3], -2, -1>>([2]);
+expectType<ArraySlice<[0, 1, 2, 3], -100>>([0, 1, 2, 3]);
+expectType<ArraySlice<[0, 1, 2, 3], -100, 4>>([0, 1, 2, 3]);
+expectType<ArraySlice<[0, 1, 2, 3], -100, 3>>([0, 1, 2]);
+expectType<ArraySlice<[0, 1, 2, 3], -100, -1>>([0, 1, 2]);
+expectType<ArraySlice<[0, 1, 2, 3], 2, 1>>([]);
+expectType<ArraySlice<[0, 1, 2, 3], -10, 1>>([0]);
+expectType<ArraySlice<[0, 1, 2, 3], 0, -3>>([0]);
+expectType<ArraySlice<[0, 1, 2, 3], 0, -4>>([]);
+expectType<ArraySlice<[], -10, 1>>([]);
+expectType<ArraySlice<[]>>([]);

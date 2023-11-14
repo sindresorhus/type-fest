@@ -114,6 +114,15 @@ Use-case: Validating and documenting parameters.
 export type Negative<T extends Numeric> = T extends Zero ? never : `${T}` extends `-${string}` ? T : never;
 
 /**
+Returns a boolean for whether the given number `T` is a negative number.
+
+@see Negative
+
+@category Numeric
+ */
+export type IsNegative<T extends Numeric> = T extends Negative<T> ? true : false;
+
+/**
 A negative (`-∞ < x < 0`) `number` that is an integer.
 Equivalent to `Negative<Integer<T>>`.
 
