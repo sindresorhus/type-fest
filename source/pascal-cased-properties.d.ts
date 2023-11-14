@@ -27,8 +27,8 @@ const result: PascalCasedProperties<User> = {
 @category Template literal
 @category Object
 */
-export type PascalCasedProperties<Value> = Value extends Function
+export type PascalCasedProperties<Value, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Value extends Function
 	? Value
 	: Value extends Array<infer U>
 		? Value
-		: {[K in keyof Value as PascalCase<K>]: Value[K]};
+		: {[K in keyof Value as PascalCase<K, Options>]: Value[K]};
