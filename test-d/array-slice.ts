@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ArraySlice} from '../index';
+import type {ArraySlice} from '../source/array-slice';
 
 expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);
 expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);

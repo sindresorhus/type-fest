@@ -113,7 +113,6 @@ Click the type names for complete docs.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`NonEmptyObject`](source/non-empty-object.d.ts) - Represents an object with at least 1 non-optional key.
 - [`UnknownRecord`](source/unknown-record.d.ts) - Represents an object with `unknown` value. You probably want this instead of `{}`.
-- [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
@@ -126,8 +125,6 @@ Click the type names for complete docs.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more, or none of the given keys.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
-- [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
-- [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object. Use [`Omit<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
@@ -178,10 +175,7 @@ Click the type names for complete docs.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
-- [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
-- [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
-- [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 
 ### Type Guard
 
@@ -239,13 +233,12 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
-- [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 
 ### Array
 
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
-- [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.
+- [`ArraySlice`](source/array-slice.d.ts) - Returns a copy of a section of an array, just like `Array.slice` in js.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
@@ -265,13 +258,6 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
 - [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
-- [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number.
-- [`GreaterThan`](source/greater-than.d.ts) - Returns a boolean for whether a given number is greater than another number.
-- [`GreaterThanOrEqual`](source/greater-than-or-equal.d.ts) - Returns a boolean for whether a given number is greater than or equal to another number.
-- [`LessThan`](source/less-than.d.ts) - Returns a boolean for whether a given number is less than another number.
-- [`LessThanOrEqual`](source/less-than-or-equal.d.ts) - Returns a boolean for whether a given number is less than or equal to another number.
-- [`Sum`](source/sum.d.ts) - Returns the sum of two numbers.
-- [`Subtract`](source/subtract.d.ts) - Returns the difference between two numbers.
 
 ### Change case
 
@@ -323,7 +309,6 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `RequireOnlyOne` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](source/require-one-or-none.d.ts)
 - `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
-- `Branded` - See [`Opaque`](source/opaque.d.ts)
 
 ## Tips
 

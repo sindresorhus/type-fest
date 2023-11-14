@@ -2,14 +2,9 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
-import type {NegativeInfinity, PositiveInfinity} from './numeric';
-import type {GreaterThan} from './greater-than';
-import type {LessThan} from './less-than';
-import type {IsLiteral} from './is-literal';
-import type {UnknownRecord} from './unknown-record';
-import type {IsNever} from './is-never';
-import type {UnknownArray} from './unknown-array';
 import type {IsEqual} from './is-equal';
+import type {IsNegative, NegativeInfinity, PositiveInfinity} from './numeric';
+import type {StringToNumber, StartsWith, StringLength} from './string';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -19,34 +14,7 @@ Infer the length of the given array `<T>`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
-
-/**
-Infer the length of the given tuple `<T>`.
-
-Returns `never` if the given type is an non-fixed-length array like `Array<string>`.
-
-@example
-```
-type Tuple = TupleLength<[string, number, boolean]>;
-//=> 3
-
-type Array = TupleLength<string[]>;
-//=> never
-
-// Supports union types.
-type Union = TupleLength<[] | [1, 2, 3] | Array<number>>;
-//=> 1 | 3
-```
-*/
-export type TupleLength<T extends UnknownArray> =
-	// `extends unknown` is used to convert `T` (if `T` is a union type) to
-	// a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
-	T extends unknown
-		? number extends T['length']
-			? never // Return never if the given type is an non-flexed-length array like `Array<string>`
-			: T['length']
-		: never; // Should never happen
+type TupleLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
 
 /**
 Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
@@ -55,162 +23,24 @@ If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T['length'] extends L
+export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
 	? T
 	: BuildTuple<L, Fill, [...T, Fill]>;
 
 /**
-Create an object type with the given key `<Key>` and value `<Value>`.
+Create a tuple of length `A` and a tuple composed of two other tuples,
+the inferred tuple `U` and a tuple of length `B`, then extracts the length of tuple `U`.
 
-It will copy the prefix and optional status of the same key from the given object `CopiedFrom` into the result.
-
-@example
-```
-type A = BuildObject<'a', string>;
-//=> {a: string}
-
-// Copy `readonly` and `?` from the key `a` of `{readonly a?: any}`
-type B = BuildObject<'a', string, {readonly a?: any}>;
-//=> {readonly a?: string}
-```
+@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
-	Key extends keyof CopiedFrom
-		? Pick<{[_ in keyof CopiedFrom]: Value}, Key>
-		: Key extends `${infer NumberKey extends number}`
-			? NumberKey extends keyof CopiedFrom
-				? Pick<{[_ in keyof CopiedFrom]: Value}, NumberKey>
-				: {[_ in Key]: Value}
-			: {[_ in Key]: Value};
+export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
+	? TupleLength<U>
+	: never;
 
 /**
-Return a string representation of the given string or number.
-
-Note: This type is not the return type of the `.toString()` function.
+Matches any primitive, `Date`, or `RegExp` value.
 */
-export type ToString<T> = T extends string | number ? `${T}` : never;
-
-/**
-Matches any primitive, `void`, `Date`, or `RegExp` value.
-*/
-export type BuiltIns = Primitive | void | Date | RegExp;
-
-/**
-Matches non-recursive types.
-*/
-export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
-
-/**
-Returns a boolean for whether the given type is a plain key-value object.
-*/
-export type IsPlainObject<T> =
-	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
-		? false
-		: T extends object
-			? true
-			: false;
-
-/**
-Converts a numeric string to a number.
-
-@example
-```
-type PositiveInt = StringToNumber<'1234'>;
-//=> 1234
-
-type NegativeInt = StringToNumber<'-1234'>;
-//=> -1234
-
-type PositiveFloat = StringToNumber<'1234.56'>;
-//=> 1234.56
-
-type NegativeFloat = StringToNumber<'-1234.56'>;
-//=> -1234.56
-
-type PositiveInfinity = StringToNumber<'Infinity'>;
-//=> Infinity
-
-type NegativeInfinity = StringToNumber<'-Infinity'>;
-//=> -Infinity
-```
-
-@category String
-@category Numeric
-@category Template literal
-*/
-export type StringToNumber<S extends string> = S extends `${infer N extends number}`
-	? N
-	: S extends 'Infinity'
-		? PositiveInfinity
-		: S extends '-Infinity'
-			? NegativeInfinity
-			: never;
-
-/**
-Returns a boolean for whether the given string `S` starts with the given string `SearchString`.
-
-@example
-```
-StartsWith<'abcde', 'abc'>;
-//=> true
-
-StartsWith<'abcde', 'bc'>;
-//=> false
-
-StartsWith<string, 'bc'>;
-//=> never
-
-StartsWith<'abcde', string>;
-//=> never
-```
-
-@category String
-@category Template literal
-*/
-export type StartsWith<S extends string, SearchString extends string> = string extends S | SearchString
-	? never
-	: S extends `${SearchString}${infer T}`
-		? true
-		: false;
-
-/**
-Returns the length of the given string.
-
-@example
-```
-StringLength<'abcde'>;
-//=> 5
-
-StringLength<string>;
-//=> never
-```
-
-@category String
-@category Template literal
-*/
-export type StringLength<S extends string> = string extends S
-	? never
-	: StringToArray<S>['length'];
-
-/**
-Returns an array of the characters of the string.
-
-@example
-```
-StringToArray<'abcde'>;
-//=> ['a', 'b', 'c', 'd', 'e']
-
-StringToArray<string>;
-//=> never
-```
-
-@category String
-*/
-export type StringToArray<S extends string, Result extends string[] = []> = string extends S
-	? never
-	: S extends `${infer F}${infer R}`
-		? StringToArray<R, [...Result, F]>
-		: Result;
+export type BuiltIns = Primitive | Date | RegExp;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
@@ -291,16 +121,7 @@ Extract the object field type if T is an object and K is a key of T, return `nev
 
 It creates a type-safe way to access the member type of `unknown` type.
 */
-export type ObjectValue<T, K> =
-	K extends keyof T
-		? T[K]
-		: ToString<K> extends keyof T
-			? T[ToString<K>]
-			: K extends `${infer NumberK extends number}`
-				? NumberK extends keyof T
-					? T[NumberK]
-					: never
-				: never;
+export type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
 
 /**
 Returns a boolean for whether the string is lowercased.
@@ -459,10 +280,10 @@ Returns a boolean for whether A and B are both true.
 
 @example
 ```
-And<true, true>;
+And<true, true>
 //=> true
 
-And<true, false>;
+And<true, false>
 //=> false
 ```
 */
@@ -470,17 +291,17 @@ export type And<A extends boolean, B extends boolean> = [A, B][number] extends t
 	? true
 	: true extends [IsEqual<A, false>, IsEqual<B, false>][number]
 		? false
-		: never;
+		: boolean;
 
 /**
 Returns a boolean for either A or B is true.
 
 @example
 ```
-Or<true, false>;
+Or<true, false>
 //=> true
 
-Or<false, false>;
+Or<false, false>
 //=> false
 ```
 */
@@ -488,17 +309,17 @@ export type Or<A extends boolean, B extends boolean> = [A, B][number] extends fa
 	? false
 	: true extends [IsEqual<A, true>, IsEqual<B, true>][number]
 		? true
-		: never;
+		: boolean;
 
 /**
 Returns a boolean for whether A is false.
 
 @example
 ```
-Not<true>;
+Not<true>
 //=> false
 
-Not<false>;
+Not<false>
 //=> true
 ```
 */
@@ -506,80 +327,291 @@ export type Not<A extends boolean> = A extends true
 	? false
 	: A extends false
 		? true
-		: never;
+		: boolean;
 
 /**
-Returns the maximum value from a tuple of integers.
+Returns the maximum element in an array.
 
 Note:
-- Float numbers are not supported.
+- float number is not supported.
 
 @example
 ```
-ArrayMax<[1, 2, 5, 3]>;
+Max<[1, 2, 5, 3]>
 //=> 5
 
-ArrayMax<[1, 2, 5, 3, 99, -1]>;
+Max<[1, 2, 5, 3, 99, -1]>
 //=> 99
 ```
 */
-export type ArrayMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
-	? never :
-	A extends [infer F extends number, ...infer R extends number[]]
-		? GreaterThan<F, Result> extends true
-			? ArrayMax<R, F>
-			: ArrayMax<R, Result>
-		: Result;
+export type Max<A extends number[], Result extends number = NegativeInfinity> = A extends [infer F extends number, ...infer R extends number[]]
+	? Gt<F, Result> extends true
+		? Max<R, F>
+		: Max<R, Result>
+	: Result;
 
 /**
-Returns the minimum value from a tuple of integers.
-
-Note:
-- Float numbers are not supported.
+Returns the minimal element in an array.
 
 @example
 ```
-ArrayMin<[1, 2, 5, 3]>;
+Min<[1, 2, 5, 3]>
 //=> 1
 
-ArrayMin<[1, 2, 5, 3, -5]>;
+Min<[1, 2, 5, 3, -5]>
 //=> -5
 ```
 */
-export type ArrayMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
-	? never
-	: A extends [infer F extends number, ...infer R extends number[]]
-		? LessThan<F, Result> extends true
-			? ArrayMin<R, F>
-			: ArrayMin<R, Result>
-		: Result;
+export type Min<A extends number[], Result extends number = PositiveInfinity> = A extends [infer F extends number, ...infer R extends number[]]
+	? Lt<F & number, Result> extends true
+		? Min<R, F>
+		: Min<R, Result>
+	: Result;
+
+/**
+Calculate the result of `A + B`
+
+Note:
+- A and B can only be small integers.
+- if the result is negative, you can only get `number`.
+
+@example
+```
+Add<111, 222>
+//=> 333
+
+Add<-111, 222>
+//=> 111
+
+Add<111, -222>
+//=> number
+
+Add<PositiveInfinity, -9999>
+//=> PositiveInfinity
+
+Add<PositiveInfinity, NegativeInfinity>
+//=> number
+```
+*/
+// TODO: Support big integer and negative number.
+export type Add<A extends number, B extends number> = [
+	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+] extends infer R extends [boolean, boolean, boolean, boolean]
+	? Or<
+	And<IsEqual<R[0], true>, IsEqual<R[3], false>>,
+	And<IsEqual<R[2], true>, IsEqual<R[1], false>>
+	> extends true
+		? PositiveInfinity
+		: Or<
+		And<IsEqual<R[1], true>, IsEqual<R[2], false>>,
+		And<IsEqual<R[3], true>, IsEqual<R[0], false>>
+		> extends true
+			? NegativeInfinity
+			: true extends R[number]
+				? number
+				: ([IsNegative<A>, IsNegative<B>] extends infer R
+					? [false, false] extends R
+						? [...NewArray<A>, ...NewArray<B>]['length']
+						: [true, true] extends R
+							? number
+							: Max<[Abs<A>, Abs<B>]> extends infer Max_
+								? Min<[Abs<A>, Abs<B>]> extends infer Min_ extends number
+									? Max_ extends A | B
+										? Sub<Max_, Min_>
+										: number
+									: never
+								: never
+					: never) & number
+	: never;
+
+/**
+Calculate the result of `A - B`.
+
+Note:
+- A and B can only be small integers.
+- if the result is negative, you can only get `number`.
+
+@example
+```
+Sub<333, 222>
+//=> 111
+
+Sub<111, -222>
+//=> 333
+
+Sub<-111, 222>
+//=> number
+
+Sub<PositiveInfinity, 9999>
+//=> PositiveInfinity
+
+Sub<PositiveInfinity, PositiveInfinity>
+//=> number
+```
+ */
+// TODO: Support big integer and negative number.
+export type Sub<A extends number, B extends number> = [
+	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+] extends infer R extends [boolean, boolean, boolean, boolean]
+	? Or<
+	And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
+	And<IsEqual<R[3], true>, IsEqual<R[1], false>>
+	> extends true
+		? PositiveInfinity
+		: Or<
+		And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
+		And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+		> extends true
+			? NegativeInfinity
+			: true extends R[number]
+				? number
+				: [IsNegative<A>, IsNegative<B>] extends infer R
+					? [false, false] extends R
+						? NewArray<A> extends infer R
+							? R extends [...NewArray<B>, ...infer R]
+								? R['length']
+								: number
+							: never
+						: Lt<A, B> extends true
+							? number
+							: [false, true] extends R
+								? Add<A, Abs<B>>
+								: Sub<Abs<B>, Abs<A>>
+					: never
+	: never;
+
+/**
+Returns an array of the specified length filled with the specified value(which default to null).
+
+@example
+```
+NewArray<3>
+//=> [null, null, null]
+
+NewArray<4, 0>
+//=> [0, 0, 0, 0]
+```
+*/
+export type NewArray<N extends number, Fill = null, Result extends any[] = []> = IsNegative<N> extends true
+	? []
+	: Result['length'] extends N
+		? Result
+		: NewArray<N, Fill, [Fill, ...Result]>;
 
 /**
 Returns the absolute value of a given value.
 
 @example
 ```
-NumberAbsolute<-1>;
+Abs<-1>
 //=> 1
 
-NumberAbsolute<1>;
+Abs<1>
 //=> 1
 
-NumberAbsolute<NegativeInfinity>
+Abs<NegativeInfinity>
 //=> PositiveInfinity
 ```
 */
-export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
+export type Abs<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
 /**
-Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both numeric strings and have the same length.
+Returns a boolean for whether A > B.
 
 @example
 ```
-SameLengthPositiveNumericStringGt<'50', '10'>;
+Gt<1, -5>
 //=> true
 
-SameLengthPositiveNumericStringGt<'10', '10'>;
+Gt<1, 1>
+//=> false
+
+Gt<1, 5>
+//=> false
+```
+*/
+// TODO: Support large integer.
+export type Gt<A extends number, B extends number> = number extends A | B
+	? boolean
+	: [IsNegative<A>, IsNegative<B>] extends infer R extends [boolean, boolean]
+		? [true, false] extends R
+			? false
+			: [false, true] extends R
+				? true
+				: [false, false] extends R
+					? PositiveNumericStringGt<`${A}`, `${B}`>
+					: PositiveNumericStringGt<`${Abs<B>}`, `${Abs<A>}`>
+		: never;
+
+/**
+Returns a boolean for whether A >= B.
+
+@example
+```
+Gte<1, -5>
+//=> true
+
+Gte<1, 1>
+//=> true
+
+Gte<1, 5>
+//=> false
+```
+*/
+export type Gte<A extends number, B extends number> = number extends A | B
+	? boolean
+	: A extends B ? true : Gt<A, B>;
+
+/**
+Returns a boolean for whether A < B.
+
+@example
+```
+Lt<1, -5>
+//=> false
+
+Lt<1, 1>
+//=> false
+
+Lt<1, 5>
+//=> true
+```
+*/
+
+export type Lt<A extends number, B extends number> = number extends A | B
+	? boolean
+	: Gte<A, B> extends true ? false : true;
+
+/**
+Returns a boolean for whether A <= B.
+
+@example
+```
+Lte<1, -5>
+//=> false
+
+Lte<1, 1>
+//=> true
+
+Lte<1, 5>
+//=> true
+```
+*/
+export type Lte<A extends number, B extends number> = number extends A | B
+	? boolean
+	: Gt<A, B> extends true ? false : true;
+
+/**
+Returns a boolean for whether A > B(A and B are both numeric string and have the same length).
+
+@example
+```
+SameLengthPositiveNumericStringGt<'50', '10'>
+//=> true
+
+SameLengthPositiveNumericStringGt<'10', '10'>
 //=> false
 ```
 */
@@ -587,236 +619,53 @@ type SameLengthPositiveNumericStringGt<A extends string, B extends string> = A e
 	? B extends `${infer FirstB}${infer RestB}`
 		? FirstA extends FirstB
 			? SameLengthPositiveNumericStringGt<RestA, RestB>
-			: PositiveNumericCharacterGt<FirstA, FirstB>
+			: PositiveNumericCharGt<FirstA, FirstB>
 		: never
 	: false;
 
 type NumericString = '0123456789';
 
 /**
-Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are both positive numeric strings.
+Returns a boolean for whether A > B(A and B are both positive numeric string).
 
 @example
 ```
-PositiveNumericStringGt<'500', '1'>;
+PositiveNumericStringGt<'500', '1'>
 //=> true
 
-PositiveNumericStringGt<'1', '1'>;
+PositiveNumericStringGt<'1', '1'>
 //=> false
 
-PositiveNumericStringGt<'1', '500'>;
+PositiveNumericStringGt<'1', '500'>
 //=> false
 ```
 */
-export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
+type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false
-	: [BuildTuple<StringLength<A>, 0>, BuildTuple<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
-		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]
-			? 0 extends Remain['length']
+	: [NewArray<StringLength<A>>, NewArray<StringLength<B>>] extends infer R extends [unknown[], unknown[]]
+		? R[0] extends [...R[1], ...infer Remain]
+			? [] extends Remain
 				? SameLengthPositiveNumericStringGt<A, B>
 				: true
 			: false
 		: never;
 
 /**
-Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both positive numeric characters.
+Returns a boolean for whether A > B(A and B are both positive numeric char).
 
 @example
 ```
-PositiveNumericCharacterGt<'5', '1'>;
+PositiveNumericCharGt<'5', '1'>
 //=> true
 
-PositiveNumericCharacterGt<'1', '1'>;
+PositiveNumericCharGt<'1', '1'>
 //=> false
 ```
 */
-type PositiveNumericCharacterGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
+type PositiveNumericCharGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
 	? NumericString extends `${infer HeadB}${B}${infer TailB}`
 		? HeadA extends `${HeadB}${infer _}${infer __}`
 			? true
 			: false
 		: never
 	: never;
-
-/**
-Utility type to retrieve only literal keys from type.
-*/
-export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
-
-/**
-Returns the static, fixed-length portion of the given array, excluding variable-length parts.
-
-@example
-```
-type A = [string, number, boolean, ...string[]];
-type B = StaticPartOfArray<A>;
-//=> [string, number, boolean]
-```
-*/
-export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
-	T extends unknown
-		? number extends T['length'] ?
-			T extends readonly [infer U, ...infer V]
-				? StaticPartOfArray<V, [...Result, U]>
-				: Result
-			: T
-		: never; // Should never happen
-
-/**
-Returns the variable, non-fixed-length portion of the given array, excluding static-length parts.
-
-@example
-```
-type A = [string, number, boolean, ...string[]];
-type B = VariablePartOfArray<A>;
-//=> string[]
-```
-*/
-export type VariablePartOfArray<T extends UnknownArray> =
-	T extends unknown
-		? T extends readonly [...StaticPartOfArray<T>, ...infer U]
-			? U
-			: []
-		: never; // Should never happen
-
-/**
-Returns the minimum number in the given union of numbers.
-
-Note: Just supports numbers from 0 to 999.
-
-@example
-```
-type A = UnionMin<3 | 1 | 2>;
-//=> 1
-```
-*/
-export type UnionMin<N extends number> = InternalUnionMin<N>;
-
-/**
-The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.
-*/
-type InternalUnionMin<N extends number, T extends UnknownArray = []> =
-	T['length'] extends N
-		? T['length']
-		: InternalUnionMin<N, [...T, unknown]>;
-
-/**
-Returns the maximum number in the given union of numbers.
-
-Note: Just supports numbers from 0 to 999.
-
-@example
-```
-type A = UnionMax<1 | 3 | 2>;
-//=> 3
-```
-*/
-export type UnionMax<N extends number> = InternalUnionMax<N>;
-
-/**
-The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
-*/
-type InternalUnionMax<N extends number, T extends UnknownArray = []> =
-	IsNever<N> extends true
-		? T['length']
-		:	T['length'] extends N
-			? InternalUnionMax<Exclude<N, T['length']>, T>
-			: InternalUnionMax<N, [...T, unknown]>;
-
-/**
-Returns a boolean for whether the given type is a union type.
-
-@example
-```
-type A = IsUnion<string | number>;
-//=> true
-
-type B = IsUnion<string>;
-//=> false
-```
-*/
-export type IsUnion<T> = InternalIsUnion<T>;
-
-/**
-The actual implementation of `IsUnion`.
-*/
-type InternalIsUnion<T, U = T> =
-(
-	// @link https://ghaiklor.github.io/type-challenges-solutions/en/medium-isunion.html
-	IsNever<T> extends true
-		? false
-		: T extends any
-			? [U] extends [T]
-				? false
-				: true
-			: never
-) extends infer Result
-	// In some cases `Result` will return `false | true` which is `boolean`,
-	// that means `T` has at least two types and it's a union type,
-	// so we will return `true` instead of `boolean`.
-	? boolean extends Result ? true
-		: Result
-	: never; // Should never happen
-
-/**
-Set the given array to readonly if `IsReadonly` is `true`, otherwise set the given array to normal, then return the result.
-
-@example
-```
-type ReadonlyArray = readonly string[];
-type NormalArray = string[];
-
-type ReadonlyResult = SetArrayAccess<NormalArray, true>;
-//=> readonly string[]
-
-type NormalResult = SetArrayAccess<ReadonlyArray, false>;
-//=> string[]
-```
-*/
-export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
-T extends readonly [...infer U] ?
-	IsReadonly extends true
-		? readonly [...U]
-		: [...U]
-	: T;
-
-/**
-Returns whether the given array `T` is readonly.
-*/
-export type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
-
-/**
-Get the exact version of the given `Key` in the given object `T`.
-
-Use-case: You known that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
-
-@example
-```
-type Object = {
-	0: number;
-	'1': string;
-};
-
-type Key1 = ExactKey<Object, '0'>;
-//=> 0
-type Key2 = ExactKey<Object, 0>;
-//=> 0
-
-type Key3 = ExactKey<Object, '1'>;
-//=> '1'
-type Key4 = ExactKey<Object, 1>;
-//=> '1'
-```
-
-@category Object
-*/
-export type ExactKey<T extends object, Key extends PropertyKey> =
-Key extends keyof T
-	? Key
-	: ToString<Key> extends keyof T
-		? ToString<Key>
-		: Key extends `${infer NumberKey extends number}`
-			? NumberKey extends keyof T
-				? NumberKey
-				: never
-			: never;

@@ -9,7 +9,6 @@ export type {KeysOfUnion} from './source/keys-of-union';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {NonEmptyObject} from './source/non-empty-object';
 export type {UnknownRecord} from './source/unknown-record';
-export type {UnknownArray} from './source/unknown-array';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
 export type {Writable} from './source/writable';
@@ -25,14 +24,12 @@ export type {OmitIndexSignature} from './source/omit-index-signature';
 export type {PickIndexSignature} from './source/pick-index-signature';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
 export type {RequiredDeep} from './source/required-deep';
-export type {PickDeep} from './source/pick-deep';
-export type {OmitDeep} from './source/omit-deep';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
 export type {LiteralUnion} from './source/literal-union';
 export type {Promisable} from './source/promisable';
-export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/opaque';
+export type {Opaque, UnwrapOpaque, Tagged, UnwrapTagged} from './source/opaque';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';
@@ -46,7 +43,6 @@ export type {ConditionalPick} from './source/conditional-pick';
 export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
 export type {UnionToIntersection} from './source/union-to-intersection';
 export type {Stringified} from './source/stringified';
-export type {StringSlice} from './source/string-slice';
 export type {FixedLengthArray} from './source/fixed-length-array';
 export type {MultidimensionalArray} from './source/multidimensional-array';
 export type {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array';
@@ -73,14 +69,7 @@ export type {
 	NonNegative,
 	NegativeInteger,
 	NonNegativeInteger,
-	IsNegative,
 } from './source/numeric';
-export type {GreaterThan} from './source/greater-than';
-export type {GreaterThanOrEqual} from './source/greater-than-or-equal';
-export type {LessThan} from './source/less-than';
-export type {LessThanOrEqual} from './source/less-than-or-equal';
-export type {Sum} from './source/sum';
-export type {Subtract} from './source/subtract';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
 export type {ReadonlyTuple} from './source/readonly-tuple';
@@ -113,10 +102,7 @@ export type {IfUnknown} from './source/if-unknown';
 export type {ArrayIndices} from './source/array-indices';
 export type {ArrayValues} from './source/array-values';
 export type {ArraySlice} from './source/array-slice';
-export type {ArraySplice} from './source/array-splice';
 export type {SetFieldType} from './source/set-field-type';
-export type {Paths} from './source/paths';
-export type {SharedUnionFieldsDeep} from './source/shared-union-fields-deep';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
