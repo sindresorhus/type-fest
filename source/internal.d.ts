@@ -155,7 +155,16 @@ Extract the object field type if T is an object and K is a key of T, return `nev
 
 It creates a type-safe way to access the member type of `unknown` type.
 */
-export type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
+export type ObjectValue<T, K> =
+	K extends keyof T
+		? T[K]
+		: ToString<K> extends keyof T
+			? T[ToString<K>]
+			: K extends `${infer NumberK extends number}`
+				? NumberK extends keyof T
+					? T[NumberK]
+					: never
+				: never;
 
 /**
 Returns a boolean for whether the string is lowercased.
