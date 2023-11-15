@@ -1,9 +1,9 @@
-import type {BuildObject, BuildTuple, ToString} from './internal';
+import type {BuildObject, BuildTuple, NonRecursiveType, ObjectValue} from './internal';
+import type {IsNever} from './is-never';
 import type {Paths} from './paths';
 import type {Simplify} from './simplify.d';
 import type {UnionToIntersection} from './union-to-intersection.d';
 import type {UnknownArray} from './unknown-array';
-import type {UnknownRecord} from './unknown-record.d';
 
 /**
 Pick properties from a deeply-nested object.
@@ -76,37 +76,44 @@ type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
 @category Object
 @category Array
 */
-export type PickDeep<T extends UnknownRecord | UnknownArray, PathUnion extends Paths<T>> =
-	T extends UnknownRecord
-		? Simplify<UnionToIntersection<{
-			[P in PathUnion]: InternalPickDeep<T, P>;
-		}[PathUnion]>>
+export type PickDeep<T, PathUnion extends Paths<T>> =
+	T extends NonRecursiveType
+		? never
 		: T extends UnknownArray
 			? UnionToIntersection<{
 				[P in PathUnion]: InternalPickDeep<T, P>;
 			}[PathUnion]
 			>
-			: never;
+			: T extends object
+				? Simplify<UnionToIntersection<{
+					[P in PathUnion]: InternalPickDeep<T, P>;
+				}[PathUnion]>>
+				: never;
 
 /**
 Pick an object/array from the given object/array by one path.
 */
-type InternalPickDeep<
-	T extends UnknownRecord | UnknownArray,
-	Path extends string | number, // Checked paths, extracted from unchecked paths
-> =
-	T extends UnknownArray ? PickDeepArray<T, Path>
-		: T extends UnknownRecord ? Simplify<PickDeepObject<T, Path>>
-			: never;
+type InternalPickDeep<T, Path extends string | number> =
+	T extends NonRecursiveType
+		? never
+		: T extends UnknownArray ? PickDeepArray<T, Path>
+			: T extends object ? Simplify<PickDeepObject<T, Path>>
+				: never;
 
 /**
 Pick an object from the given object by one path.
 */
-type PickDeepObject<RecordType extends UnknownRecord, P extends string | number> =
+type PickDeepObject<RecordType extends object, P extends string | number> =
 	P extends `${infer RecordKeyInPath}.${infer SubPath}`
-		? BuildObject<RecordKeyInPath, InternalPickDeep<NonNullable<RecordType[RecordKeyInPath]>, SubPath>, RecordType>
-		: P extends keyof RecordType | ToString<keyof RecordType> // Handle number keys
-			? BuildObject<P, RecordType[P], RecordType>
+		? ObjectValue<RecordType, RecordKeyInPath> extends infer ObjectV
+			? IsNever<ObjectV> extends false
+				? BuildObject<RecordKeyInPath, InternalPickDeep<NonNullable<ObjectV>, SubPath>, RecordType>
+				: never
+			: never
+		: ObjectValue<RecordType, P> extends infer ObjectV
+			? IsNever<ObjectV> extends false
+				? BuildObject<P, ObjectV, RecordType>
+				: never
 			: never;
 
 /**

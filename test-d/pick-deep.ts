@@ -40,13 +40,29 @@ type DeepType = {
 		deep: {
 			deeper: {
 				value: string;
+				value1: number;
 			};
 		};
 	};
 	foo: string;
 };
+type DepthType = {nested: {deep: {deeper: {value: string}}}};
+
 declare const deep: PickDeep<DeepType, 'nested.deep.deeper.value'>;
-expectType<{nested: {deep: {deeper: {value: string}}}}>(deep);
+expectType<DepthType>(deep);
+
+// Test interface
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface DeepInterface extends DeepType {
+	bar: {
+		number: number;
+		string: string;
+	};
+}
+declare const deepInterface: PickDeep<DeepInterface, 'nested.deep.deeper.value'>;
+expectType<DepthType>(deepInterface);
+declare const deepInterface2: PickDeep<DeepInterface, 'bar.number'>;
+expectType<{bar: {number: number}}>(deepInterface2);
 
 type GenericType<T> = {
 	genericKey: T;
