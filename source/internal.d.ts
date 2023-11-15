@@ -40,7 +40,7 @@ type B = BuildObject<'a', string, {readonly a?: any}>;
 //=> {readonly a?: string}
 ```
 */
-export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends UnknownRecord = {}> =
+export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
 	Key extends keyof CopiedFrom
 		? Pick<{[_ in keyof CopiedFrom]: Value}, Key>
 		: Key extends `${infer NumberKey extends number}`
