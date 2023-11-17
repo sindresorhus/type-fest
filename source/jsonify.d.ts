@@ -14,7 +14,7 @@ type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 type NeverToNull<T> = IsNever<T> extends true ? null : T;
 
 // Handles tuples and arrays
-type JsonifyList<T extends unknown[]> = T extends []
+type JsonifyList<T extends readonly unknown[]> = T extends []
 	? []
 	: T extends [infer F, ...infer R]
 		? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
