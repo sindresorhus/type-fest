@@ -6,7 +6,7 @@ import type {IsNever} from './is-never';
 import type {IsUnknown} from './is-unknown';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
-import type {WritableDeep} from './writable-deep';
+import type {UnknownArray} from './unknown-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
@@ -14,9 +14,9 @@ type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 type NeverToNull<T> = IsNever<T> extends true ? null : T;
 
 // Handles tuples and arrays
-type JsonifyList<T extends readonly unknown[]> = T extends []
+type JsonifyList<T extends UnknownArray> = T extends readonly []
 	? []
-	: T extends [infer F, ...infer R]
+	: T extends readonly [infer F, ...infer R]
 		? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
 		: IsUnknown<T[number]> extends true
 			? []
@@ -114,12 +114,8 @@ export type Jsonify<T> = IsAny<T> extends true
 									? Record<string, number>
 									: T extends NotJsonable
 										? never // Non-JSONable type union was found not empty
-										: T extends []
-											? []
-											: T extends unknown[]
-												? JsonifyList<T>
-												: T extends readonly unknown[]
-													? JsonifyList<WritableDeep<T>>
-													: T extends object
-														? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
-														: never; // Otherwise any other non-object is removed
+										: T extends UnknownArray
+											? JsonifyList<T>
+											: T extends object
+												? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
+												: never; // Otherwise any other non-object is removed
