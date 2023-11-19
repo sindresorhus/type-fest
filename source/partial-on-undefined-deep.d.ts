@@ -1,3 +1,4 @@
+import type {IfUnknown} from './if-unknown';
 import type {BuiltIns} from './internal';
 import type {Merge} from './merge';
 
@@ -47,7 +48,7 @@ const testSettings: PartialOnUndefinedDeep<Settings> = {
 @category Object
 */
 export type PartialOnUndefinedDeep<T, Options extends PartialOnUndefinedDeepOptions = {}> = T extends Record<any, any> | undefined
-	? {[KeyType in keyof T as undefined extends T[KeyType] ? KeyType : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
+	? {[KeyType in keyof T as undefined extends T[KeyType] ? IfUnknown<T[KeyType], never, KeyType> : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
 		? Merge<{[KeyType in keyof T as KeyType extends keyof U ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>}, U> // Join all remaining keys not treated in U
 		: never // Should not happen
 	: T;
