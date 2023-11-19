@@ -23,7 +23,7 @@ type TestingType = {
 	readonly1: readonly any[] | undefined;
 	readonly2: ReadonlyArray<{propertyA: string; propertyB: number | undefined}> | undefined;
 	tuple: ['test1', {propertyA: string; propertyB: number | undefined}] | undefined;
-	indexTypeUnknown: {propertyA: string; propertyB: number | undefined; [k: string]: unknown};
+	indexTypeUnknown: {[k: string]: unknown; propertyA: string; propertyB: number | undefined};
 };
 
 // Default behavior, without recursion into arrays/tuples
@@ -50,7 +50,7 @@ expectAssignable<{
 	readonly1?: TestingType['readonly1'];
 	readonly2?: TestingType['readonly2'];
 	tuple?: TestingType['tuple'];
-	indexTypeUnknown: Partial<Pick<TestingType['indexTypeUnknown'], "propertyB">> & Omit<TestingType['indexTypeUnknown'], "propertyB">;
+	indexTypeUnknown: Partial<Pick<TestingType['indexTypeUnknown'], 'propertyB'>> & Omit<TestingType['indexTypeUnknown'], 'propertyB'>;
 }>(foo);
 
 // With recursion into arrays/tuples activated
@@ -77,5 +77,5 @@ expectAssignable<{
 	readonly1?: TestingType['readonly1'];
 	readonly2?: ReadonlyArray<{propertyA: string; propertyB?: number | undefined}> | undefined;
 	tuple?: ['test1', {propertyA: string; propertyB?: number | undefined}] | undefined;
-	indexTypeUnknown: Partial<Pick<TestingType['indexTypeUnknown'], "propertyB">> & Omit<TestingType['indexTypeUnknown'], "propertyB">;
+	indexTypeUnknown: Partial<Pick<TestingType['indexTypeUnknown'], 'propertyB'>> & Omit<TestingType['indexTypeUnknown'], 'propertyB'>;
 }>(bar);
