@@ -23,6 +23,7 @@ type TestingType = {
 	readonly1: readonly any[] | undefined;
 	readonly2: ReadonlyArray<{propertyA: string; propertyB: number | undefined}> | undefined;
 	tuple: ['test1', {propertyA: string; propertyB: number | undefined}] | undefined;
+	indexType: {[k: string]: string | undefined; propertyA: string; propertyB: string | undefined};
 	indexTypeUnknown: {[k: string]: unknown; propertyA: string; propertyB: number | undefined};
 };
 
@@ -50,6 +51,7 @@ expectAssignable<{
 	readonly1?: TestingType['readonly1'];
 	readonly2?: TestingType['readonly2'];
 	tuple?: TestingType['tuple'];
+	indexType: Partial<Pick<TestingType['indexType'], 'propertyB'>> & Omit<TestingType['indexType'], 'propertyB'>;
 	indexTypeUnknown: Partial<Pick<TestingType['indexTypeUnknown'], 'propertyB'>> & Omit<TestingType['indexTypeUnknown'], 'propertyB'>;
 }>(foo);
 
@@ -77,5 +79,6 @@ expectAssignable<{
 	readonly1?: TestingType['readonly1'];
 	readonly2?: ReadonlyArray<{propertyA: string; propertyB?: number | undefined}> | undefined;
 	tuple?: ['test1', {propertyA: string; propertyB?: number | undefined}] | undefined;
+	indexType: Partial<Pick<TestingType['indexType'], 'propertyB'>> & Omit<TestingType['indexType'], 'propertyB'>;
 	indexTypeUnknown: Partial<Pick<TestingType['indexTypeUnknown'], 'propertyB'>> & Omit<TestingType['indexTypeUnknown'], 'propertyB'>;
 }>(bar);
