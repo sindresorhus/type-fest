@@ -71,6 +71,6 @@ type PartialOnUndefinedDeepValue<T, Options extends PartialOnUndefinedDeepOption
 			: unknown;
 
 /**
-Utility type to retrieve only literal keys from type 
+Utility type to retrieve only literal keys from type.
 */
 type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
