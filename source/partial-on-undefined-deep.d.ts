@@ -49,7 +49,7 @@ const testSettings: PartialOnUndefinedDeep<Settings> = {
 */
 export type PartialOnUndefinedDeep<T, Options extends PartialOnUndefinedDeepOptions = {}> = T extends Record<any, any> | undefined
 	? {[KeyType in keyof T as undefined extends T[KeyType] ? IfUnknown<T[KeyType], never, KeyType> : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
-		? Merge<{[KeyType in keyof T as KeyType extends keyof U ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>}, U> // Join all remaining keys not treated in U
+		? Merge<{[KeyType in keyof T as KeyType extends LiteralKeyOf<U> ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>}, U> // Join all remaining keys not treated in U
 		: never // Should not happen
 	: T;
 
@@ -69,3 +69,8 @@ type PartialOnUndefinedDeepValue<T, Options extends PartialOnUndefinedDeepOption
 		: T extends Record<any, any> | undefined
 			? PartialOnUndefinedDeep<T, Options>
 			: unknown;
+
+/**
+Utility type to retrieve only literal keys from type 
+*/
+type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
