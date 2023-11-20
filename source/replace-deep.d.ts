@@ -49,42 +49,30 @@ interface Duplicate extends Settings.ReplaceFn {
 
 interface StringFromNumber extends Settings.ReplaceFn {
 	output
-	: this["input"] extends
-	| infer x extends number
-	? `${x}`
-	: this["input"]
-	;
+	: this["input"] extends number ? `${this["input"]}` : this["input"]
+}
+
+interface NumberFromString extends Settings.ReplaceFn {
+	output
+	: this["input"] extends `${infer x extends number}` ? x : this["input"]
 }
 
 namespace __Spec__ {
 	type spec<t extends true> = t
 	type equals<t, u> = [t, u] extends [u, t] ? true : false
 
-
-	type _5 = ReplaceDeep<{ a: { b: { c: 1, d: 2, e: { d: 3 | 4 }, f: 5 } } }, [number, symbol]>
-	type _7 = ReplaceDeep<{ a: { b: { c: 1, d: 2, e: { d: 3 | 4 }, f: 5 } } }, [number, Duplicate]>
-	type _8 = { a: { b: { c: [1, 1]; d: [2, 2]; e: { d: [3, 3] | [4, 4]; }; f: [5, 5]; }; }; }
 	type __ReplaceDeep__ = [
-
 		spec<equals<
 			ReplaceDeep<{ a: { b: { c: 1, d: 2, e: { d: 3 | 4 }, f: 5 } } }, [number, Duplicate]>,
 			{ a: { b: { c: [1, 1]; d: [2, 2]; e: { d: [3, 3] | [4, 4]; }; f: [5, 5]; }; }; },
 		>>,
-
 		spec<equals<
 			ReplaceDeep<{ a: { b: { c: 1, d: 2, e: { d: 3 | 4 }, f: 5 } } }, [number, StringFromNumber]>,
-			{
-				a: {
-					b: {
-						c: "1";
-						d: "2";
-						e: {
-							d: "3" | "4";
-						};
-						f: "5";
-					};
-				}
-			}
+			{ a: { b: { c: "1"; d: "2"; e: { d: "3" | "4"; }; f: "5"; }; } }
+		>>,
+		spec<equals<
+			ReplaceDeep<{ a: { b: { c: "1", d: "2", e: { d: "3" | "4" }, f: "5" } } }, [string, NumberFromString]>,
+			{ a: { b: { c: 1; d: 2; e: { d: 3 | 4; }; f: 5; }; }; }
 		>>,
 	]
 }

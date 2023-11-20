@@ -109,7 +109,7 @@ expectType<typeof T_06.output>(patch(T_06.input, T_06.config))
 expectType<ReturnType<typeof patch<typeof T_06.input, typeof T_06.config>>>(T_06.output)
 
 declare namespace T_07 {
-	const input: { abc?: { def?: { ghi: 1 | undefined } } },
+	const input: { abc?: { def?: { ghi: 1 | undefined } } }
 	const config: Patch.Example.CustomReplaceFn
 	const output: { abc: Maybe<{ def: Maybe<{ ghi: 1 | undefined }> }> }
 }
@@ -118,7 +118,7 @@ expectType<typeof T_07.output>(patch(T_07.input, T_07.config))
 expectType<ReturnType<typeof patch<typeof T_07.input, typeof T_07.config>>>(T_07.output)
 
 declare namespace T_08 {
-	const input: { abc: [1, [2?, 3?, [4, [[5, 6, 7?]]]?]] },
+	const input: { abc: [1, [2?, 3?, [4, [[5, 6, 7?]]]?]] }
 	const config: Patch.Settings.CreateConfig<undefined, -1>
 	const output: { abc: [1, [2 | undefined, 3 | undefined, [4, [[5, 6, 7 | undefined]]] | undefined]] }
 }
@@ -129,7 +129,7 @@ expectType<ReturnType<typeof patch<typeof T_08.input, typeof T_08.config>>>(T_08
 declare namespace T_09 {
 	const input:
 		| []
-		| { abc: [1, [2?, 3?, [4, [[5, 6, 7?]]]?]] },
+		| { abc: [1, [2?, 3?, [4, [[5, 6, 7?]]]?]] }
 	const config: { maxDepth: -1 }
 	const output: | []
 		| { abc: [1, [2 | undefined, 3 | undefined, [4, [[5, 6, 7 | undefined]]] | undefined]] }
@@ -167,7 +167,7 @@ expectType<ReturnType<typeof patch<typeof T_11.input, typeof T_11.config>>>(T_11
 declare namespace T_12 {
 	const input:
 		| { def?: 1 }
-		| { abc?: [1, [2?, 3?, [4, [[5, 6, 7?]]]?]] },
+		| { abc?: [1, [2?, 3?, [4, [[5, 6, 7?]]]?]] }
 	const config: { replaceWith: Patch.Example.Maybe, maxDepth: -1 }
 	const output:
 		| { def: Maybe<1> }
