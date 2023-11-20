@@ -1,7 +1,6 @@
 import { type Settings } from "./patch"
 
-export { type Patch } from "./patch"
-
+export * as Patch from "./patch"
 export type Patch<
 	TreeRoot,
 	UserConfig extends
