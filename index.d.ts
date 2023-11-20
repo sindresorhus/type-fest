@@ -21,6 +21,7 @@ export type {RequireOneOrNone} from './source/require-one-or-none';
 export type {OmitIndexSignature} from './source/omit-index-signature';
 export type {PickIndexSignature} from './source/pick-index-signature';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
+export type {Patch} from './source/patch'
 export type {RequiredDeep} from './source/required-deep';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
