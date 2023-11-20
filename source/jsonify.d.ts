@@ -3,24 +3,24 @@ import type {EmptyObject} from './empty-object';
 import type {UndefinedToOptional} from './internal';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
+import type {IsUnknown} from './is-unknown';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
+import type {UnknownArray} from './unknown-array';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
-type FilterNonNever<T extends unknown[]> = T extends [infer F, ...infer R]
-	? IsNever<F> extends true
-		? FilterNonNever<R>
-		: [F, ...FilterNonNever<R>]
-	: IsNever<T[number]> extends true
-		? []
-		: T;
+type NeverToNull<T> = IsNever<T> extends true ? null : T;
 
 // Handles tuples and arrays
-type JsonifyList<T extends unknown[]> = T extends [infer F, ...infer R]
-	? FilterNonNever<[Jsonify<F>, ...JsonifyList<R>]>
-	: Array<Jsonify<T[number]>>;
+type JsonifyList<T extends UnknownArray> = T extends readonly []
+	? []
+	: T extends readonly [infer F, ...infer R]
+		? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
+		: IsUnknown<T[number]> extends true
+			? []
+			: Array<T[number] extends NotJsonable ? null : Jsonify<T[number]>>;
 
 type FilterJsonableKeys<T extends object> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
@@ -96,30 +96,26 @@ export type Jsonify<T> = IsAny<T> extends true
 		? null
 		: T extends JsonPrimitive
 			? T
-			: // Instanced primitives are objects
-			T extends Number
-				? number
-				: T extends String
-					? string
-					: T extends Boolean
-						? boolean
-						: T extends Map<any, any> | Set<any>
-							? EmptyObject
-							: T extends TypedArray
-								? Record<string, number>
-								: T extends NotJsonable
-									? never // Non-JSONable type union was found not empty
-									: // Any object with toJSON is special case
-									T extends {toJSON(): infer J}
-										? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
-											? J // Then T is Jsonable and its Jsonable value is J
-											: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
-										: T extends []
-											? []
-											: T extends [unknown, ...unknown[]]
-												? JsonifyList<T>
-												: T extends ReadonlyArray<infer U>
-													? Array<U extends NotJsonable ? null : Jsonify<U>>
-													: T extends object
-														? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
-														: never; // Otherwise any other non-object is removed
+			: // Any object with toJSON is special case
+			T extends {toJSON(): infer J}
+				? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
+					? J // Then T is Jsonable and its Jsonable value is J
+					: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
+				: // Instanced primitives are objects
+				T extends Number
+					? number
+					: T extends String
+						? string
+						: T extends Boolean
+							? boolean
+							: T extends Map<any, any> | Set<any>
+								? EmptyObject
+								: T extends TypedArray
+									? Record<string, number>
+									: T extends NotJsonable
+										? never // Non-JSONable type union was found not empty
+										: T extends UnknownArray
+											? JsonifyList<T>
+											: T extends object
+												? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
+												: never; // Otherwise any other non-object is removed

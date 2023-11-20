@@ -1,3 +1,4 @@
+import {expectError} from 'tsd';
 import type {Exact, Opaque} from '../index';
 
 { // Spec - string type
@@ -353,7 +354,7 @@ import type {Exact, Opaque} from '../index';
 	}
 }
 
-// Spec - special test case for Opaque type
+// Spec - special test case for Opaque types
 // @see https://github.com/sindresorhus/type-fest/issues/508
 {
 	type SpecialName = Opaque<string, 'special name'>;
@@ -388,6 +389,16 @@ import type {Exact, Opaque} from '../index';
 		// Error: Type 'SpecialName' is not assignable to type 'never'
 		name: 1 as SpecialName,
 	});
+}
+
+// Spec - test the above for tagged types too.
+{
+	type TaggedNumber = Opaque<number, 'tag'>;
+
+	const fn = <T extends Exact<{a: TaggedNumber}, T>>(arguments_: T) => arguments_;
+
+	fn({a: 1 as TaggedNumber});
+	expectError(fn({a: 1 as TaggedNumber, b: true}));
 }
 
 // Spec - special test case for deep optional union

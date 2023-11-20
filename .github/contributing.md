@@ -11,6 +11,7 @@
 	- If it makes sense, also write a negative test using [`expectNotAssignable()`](https://github.com/SamVerschueren/tsd#expectnotassignabletexpression-any) or, to test other diagnostics, [`expectError()`](https://github.com/SamVerschueren/tsd#expecterrort--anyexpression-t).
 - Don't use one-character type names like `T` and `U`. Use descriptive names. See the existing types for inspiration.
 - Follow the existing code style, even in documentation code examples.
+	- Don't prefix each line in documentation comments with `*`.
 - Write a good documentation comment that includes:
 	- Write a short and clear description of what the type does.
 		- The first line should match the description in the readme.

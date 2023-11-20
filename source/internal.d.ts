@@ -2,6 +2,10 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
+import type {UnknownRecord} from './unknown-record';
+
+// TODO: Remove for v5.
+export type {UnknownRecord} from './unknown-record';
 
 /**
 Infer the length of the given array `<T>`.
@@ -11,13 +15,46 @@ Infer the length of the given array `<T>`.
 type TupleLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
 
 /**
-Create a tuple type of the given length `<L>`.
+Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
+
+If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type BuildTuple<L extends number, T extends readonly unknown[] = []> = T extends {readonly length: L}
+export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
 	? T
-	: BuildTuple<L, [...T, unknown]>;
+	: BuildTuple<L, Fill, [...T, Fill]>;
+
+/**
+Create an object type with the given key `<Key>` and value `<Value>`.
+
+It will copy the prefix and optional status of the same key from the given object `CopiedFrom` into the result.
+
+@example
+```
+type A = BuildObject<'a', string>;
+//=> {a: string}
+
+// Copy `readonly` and `?` from the key `a` of `{readonly a?: any}`
+type B = BuildObject<'a', string, {readonly a?: any}>;
+//=> {readonly a?: string}
+```
+*/
+export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
+	Key extends keyof CopiedFrom
+		? Pick<{[_ in keyof CopiedFrom]: Value}, Key>
+		: Key extends `${infer NumberKey extends number}`
+			? NumberKey extends keyof CopiedFrom
+				? Pick<{[_ in keyof CopiedFrom]: Value}, NumberKey>
+				: {[_ in Key]: Value}
+			: {[_ in Key]: Value};
+
+/**
+Return a string representation of the given string or number.
+
+Note: This type is not the return type of the `.toString()` function.
+*/
+export type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
 Create a tuple of length `A` and a tuple composed of two other tuples,
@@ -35,13 +72,9 @@ Matches any primitive, `Date`, or `RegExp` value.
 export type BuiltIns = Primitive | Date | RegExp;
 
 /**
-Gets keys from a type. Similar to `keyof` but this one also works for union types.
-
-The reason a simple `keyof Union` does not work is because `keyof` always returns the accessible keys of a type. In the case of a union, that will only be the common keys.
-
-@link https://stackoverflow.com/a/49402091
+Matches non-recursive types.
 */
-export type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
@@ -76,11 +109,6 @@ export type Whitespace =
 	| '\u{FEFF}';
 
 export type WordSeparators = '-' | '_' | Whitespace;
-
-/**
-Matches any unknown record.
-*/
-export type UnknownRecord = Record<PropertyKey, unknown>;
 
 /**
 Matches any unknown array or tuple.
@@ -127,7 +155,16 @@ Extract the object field type if T is an object and K is a key of T, return `nev
 
 It creates a type-safe way to access the member type of `unknown` type.
 */
-export type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
+export type ObjectValue<T, K> =
+	K extends keyof T
+		? T[K]
+		: ToString<K> extends keyof T
+			? T[ToString<K>]
+			: K extends `${infer NumberK extends number}`
+				? NumberK extends keyof T
+					? T[NumberK]
+					: never
+				: never;
 
 /**
 Returns a boolean for whether the string is lowercased.
@@ -191,9 +228,16 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	? never
 	: Type[Key] extends symbol
 		? never
-		: [(...arguments_: any[]) => any] extends [Type[Key]]
-			? never
-			: Key;
+		/*
+		To prevent a problem where an object with only a `name` property is incorrectly treated as assignable to a function, we first check if the property is a record.
+		This check is necessary, because without it, if we don't verify whether the property is a record, an object with a type of `{name: any}` would return `never` due to its potential assignability to a function.
+		See: https://github.com/sindresorhus/type-fest/issues/657
+		*/
+		: Type[Key] extends Record<string, unknown>
+			? Key
+			: [(...arguments_: any[]) => any] extends [Type[Key]]
+				? never
+				: Key;
 
 /**
 Returns the required keys.
@@ -256,3 +300,20 @@ export type IsNull<T> = [T] extends [null] ? true : false;
 Disallows any of the given keys.
 */
 export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
+
+/**
+Returns a boolean for whether the given type is primitive value or primitive type.
+
+@example
+```
+IsPrimitive<'string'>
+//=> true
+
+IsPrimitive<string>
+//=> true
+
+IsPrimitive<Object>
+//=> false
+```
+*/
+export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;

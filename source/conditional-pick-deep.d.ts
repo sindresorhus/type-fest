@@ -1,12 +1,13 @@
-import type {Opaque} from './opaque';
 import type {IsEqual} from './is-equal';
 import type {ConditionalExcept} from './conditional-except';
 import type {ConditionalSimplifyDeep} from './conditional-simplify';
+import type {UnknownRecord} from './unknown-record';
+import type {EmptyObject} from './empty-object';
 
 /**
 Used to mark properties that should be excluded.
 */
-type ConditionalPickDeepSymbol = Opaque<symbol, 'conditional-pick-deep-symbol'>;
+declare const conditionalPickDeepSymbol: unique symbol;
 
 /**
 Assert the condition according to the {@link ConditionalPickDeepOptions.condition|condition} option.
@@ -96,7 +97,7 @@ export type ConditionalPickDeep<
 > = ConditionalSimplifyDeep<ConditionalExcept<{
 	[Key in keyof Type]: AssertCondition<Type[Key], Condition, Options> extends true
 		? Type[Key]
-		: Type[Key] extends object
+		: Type[Key] extends UnknownRecord
 			? ConditionalPickDeep<Type[Key], Condition, Options>
-			: ConditionalPickDeepSymbol;
-}, (ConditionalPickDeepSymbol | undefined) | Record<PropertyKey, never>>>;
+			: typeof conditionalPickDeepSymbol;
+}, (typeof conditionalPickDeepSymbol | undefined) | EmptyObject>, never, UnknownRecord>;

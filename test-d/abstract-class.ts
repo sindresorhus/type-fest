@@ -1,5 +1,5 @@
-import {expectError, expectAssignable, expectNotAssignable} from 'tsd';
-import type {AbstractConstructor, AbstractClass} from '../index';
+import {expectError, expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import type {AbstractConstructor, AbstractClass, IsAny} from '../index';
 
 abstract class Foo {
 	constructor(x: number) {
@@ -59,3 +59,31 @@ expectNotAssignable<{fooMethod(): void}>(Bar.prototype);
 expectError(new CorrectConcreteExtendedBar(12));
 expectAssignable<{barMethod(): void}>(new CorrectConcreteExtendedBar(12, 15));
 // /Prototype test
+
+// Prototype test with type parameter
+abstract class AbstractBuilding<T = unknown> {
+	owners: T;
+	constructor(buildingOwners: T) {
+		this.owners = buildingOwners;
+	}
+}
+
+type Census = {
+	count: number;
+};
+
+abstract class House<OwnerCount extends Census = Census> extends AbstractBuilding<OwnerCount> {}
+
+class CityBlock<BuildingType extends AbstractBuilding<Census>> {
+	residence: BuildingType;
+
+	constructor(HousingType: AbstractClass<BuildingType, [Census]>) {
+		class Building extends HousingType {}
+		this.residence = new Building({count: 2});
+	}
+}
+
+const Family = (new CityBlock(House)).residence.owners;
+expectType<IsAny<typeof Family>>(false);
+expectAssignable<number>(Family.count);
+// /Prototype test with type parameter
