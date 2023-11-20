@@ -57,6 +57,14 @@ interface NumberFromString extends Settings.ReplaceFn {
 	: this["input"] extends `${infer x extends number}` ? x : this["input"]
 }
 
+interface Identity extends Settings.ReplaceFn {
+	output: this["input"]
+}
+
+interface Box extends Settings.ReplaceFn {
+	output: [this["input"]]
+}
+
 namespace __Spec__ {
 	type spec<t extends true> = t
 	type equals<t, u> = [t, u] extends [u, t] ? true : false
@@ -72,6 +80,14 @@ namespace __Spec__ {
 		>>,
 		spec<equals<
 			ReplaceDeep<{ a: { b: { c: "1", d: "2", e: { d: "3" | "4" }, f: "5" } } }, [string, NumberFromString]>,
+			{ a: { b: { c: 1; d: 2; e: { d: 3 | 4; }; f: 5; }; }; }
+		>>,
+		spec<equals<
+			ReplaceDeep<{ a: { b: { c: ["1"], d: ["2"], e: { d: ["3" | "4", "5" | "6"] }, f: "7" } } }, [readonly string[], Identity]>,
+			{ a: { b: { c: ["1"], d: ["2"], e: { d: ["3" | "4", "5" | "6"] }, f: "7" } } }
+		>>,
+		spec<equals<
+			ReplaceDeep<{ a: { b: { c: ["1"], d: ["2"], e: { d: ["3" | "4", "5" | "6"] }, f: "7" } } }, [readonly string[], Box]>,
 			{ a: { b: { c: 1; d: 2; e: { d: 3 | 4; }; f: 5; }; }; }
 		>>,
 	]
