@@ -125,7 +125,7 @@ type ApplyPatch<
 	replaceWith
 >
 	= Local.STOP extends tree
-	? replaceWith extends Settings.ReplaceFn
+	? [replaceWith] extends [Settings.ReplaceFn]
 	? Local.call<replaceWith, ApplyPatch<Exclude<tree, Local.STOP>, replaceWith>>
 	: replaceWith | ApplyPatch<Exclude<tree, Local.STOP>, replaceWith>
 	: tree extends object ? { [ix in keyof tree]: ApplyPatch<tree[ix], replaceWith> }
