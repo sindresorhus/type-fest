@@ -190,3 +190,33 @@ declare namespace T_13 {
 
 expectType<typeof T_13.output>(patch(T_13.input, T_13.config))
 expectType<ReturnType<typeof patch<typeof T_13.input, typeof T_13.config>>>(T_13.output)
+
+declare namespace T_14 {
+	const input: typeof arrange.input
+	const config: { replaceWith: { NEW?: 1 }, maxDepth: -1 }
+	const output: {
+		a: { b: 1; };
+		f:
+		| { NEW?: 1 | undefined; }
+		| { g: 2; };
+		j: {
+			k:
+			| 3
+			| { NEW?: 1 | undefined; };
+		};
+		m:
+		| {
+			NEW?:
+			| 1
+			| undefined;
+		}
+		| {
+			n:
+			| 4
+			| { NEW?: 1 | undefined; };
+		};
+	}
+}
+
+expectType(patch(T_14.input, T_14.config))
+expectType<ReturnType<typeof patch<typeof T_14.input, typeof T_14.config>>>(T_14.output)
