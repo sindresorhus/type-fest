@@ -53,20 +53,30 @@ expectType<{readonly 'user-id'?: number}>(key);
 
 /** Test Array */
 // Test for tuple
-declare const tuple: DelimiterCasedPropertiesDeep<['userId', 'userName'], '-'>;
-expectType<['user-id', 'user-name']>(tuple);
-// Test for readonly
-declare const readonlyTuple: DelimiterCasedPropertiesDeep<readonly ['userId', 'userName'], '-'>;
-expectType<readonly ['user-id', 'user-name']>(readonlyTuple);
+declare const tuple: DelimiterCasedPropertiesDeep<[User], '-'>;
+expectType<[{'user-id': number;'user-name': string;date: Date;'reg-exp': RegExp}]>(tuple);
+declare const tuple2: DelimiterCasedPropertiesDeep<['UserId', 'UserAge', string], '-'>;
+expectType<['UserId', 'UserAge', string]>(tuple2);
+// Test for readonly tuple
+declare const readonlyTuple: DelimiterCasedPropertiesDeep<readonly [{userId: string}, {userName: number}], '-'>;
+expectType<readonly [{'user-id': string}, {'user-name': number}]>(readonlyTuple);
 // Test for array
-declare const array: DelimiterCasedPropertiesDeep<Array<'userId'>, '-'>;
-expectType<Array<'user-id'>>(array);
+declare const array: DelimiterCasedPropertiesDeep<User[], '-'>;
+expectType<Array<{'user-id': number;'user-name': string;date: Date;'reg-exp': RegExp}>>(array);
 // Test for readonly array
-declare const readonlyArray: DelimiterCasedPropertiesDeep<ReadonlyArray<'userId'>, '-'>;
-expectType<ReadonlyArray<'user-id'>>(readonlyArray);
+declare const readonlyArray: DelimiterCasedPropertiesDeep<ReadonlyArray<{userId: string}>, '-'>;
+expectType<ReadonlyArray<{'user-id': string}>>(readonlyArray);
 // Test for tailing spread array
-declare const tailingSpreadArray: DelimiterCasedPropertiesDeep<['userId', 'userName', ...Array<'userAge'>], '-'>;
-expectType<['user-id', 'user-name', ...Array<'user-age'>]>(tailingSpreadArray);
+declare const tailingSpreadArray: DelimiterCasedPropertiesDeep<[{userId: string}, {userName: number}, ...Array<{userAge: number}>], '-'>;
+expectType<[{'user-id': string}, {'user-name': number}, ...Array<{'user-age': number}>]>(tailingSpreadArray);
 // Test for leading spread array
-declare const leadingSpreadArray: DelimiterCasedPropertiesDeep<[...Array<'userId'>, 'userName', 'userAge'], '-'>;
-expectType<[...Array<'user-id'>, 'user-name', 'user-age']>(leadingSpreadArray);
+declare const leadingSpreadArray: DelimiterCasedPropertiesDeep<[...Array<{userId: string}>, {userName: number}, {userAge: number}], '-'>;
+expectType<[...Array<{'user-id': string}>, {'user-name': number}, {'user-age': number}]>(leadingSpreadArray);
+// Test for enum
+enum UserType {
+	AdminUser = 'adminUser',
+	NormalUser = 'normalUser',
+}
+declare const enumTest: DelimiterCasedPropertiesDeep<{userType: UserType}, '-'>;
+expectType<{['user-type']: UserType}>(enumTest);
+enumTest['user-type'] = UserType.AdminUser;
