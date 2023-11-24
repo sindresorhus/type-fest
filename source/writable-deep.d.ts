@@ -1,5 +1,4 @@
 import type {BuiltIns, HasMultipleCallSignatures} from './internal';
-import type {Writable} from './writable.js';
 
 /**
 Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
