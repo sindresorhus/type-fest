@@ -51,7 +51,7 @@ const path: Join<['hello' | undefined, 'world' | null], '.'> = ['hello', 'world'
 export type Join<
 	Items extends readonly JoinableItem[],
 	Delimiter extends string,
-> = Items extends []
+> = Items extends readonly []
 	? ''
 	: Items extends readonly [JoinableItem?]
 		? `${NullishCoalesce<Items[0], ''>}`

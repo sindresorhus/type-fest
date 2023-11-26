@@ -14,8 +14,8 @@ jobs:
           - 18
           - 16
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
@@ -31,8 +31,8 @@ jobs:
           - "~5.2.0"
           - "~5.1.0"
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
       - run: npm install

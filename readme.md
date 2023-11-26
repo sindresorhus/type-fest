@@ -113,6 +113,7 @@ Click the type names for complete docs.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`NonEmptyObject`](source/non-empty-object.d.ts) - Represents an object with at least 1 non-optional key.
 - [`UnknownRecord`](source/unknown-record.d.ts) - Represents an object with `unknown` value. You probably want this instead of `{}`.
+- [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
@@ -125,6 +126,7 @@ Click the type names for complete docs.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more, or none of the given keys.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
+- [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
@@ -176,6 +178,7 @@ Click the type names for complete docs.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
+- [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 
 ### Type Guard
 

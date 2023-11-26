@@ -48,6 +48,11 @@ const tuple = ['foo', 'bar', 'baz'] as const;
 const joinedTuple: Join<typeof tuple, ','> = 'foo,bar,baz';
 expectType<'foo,bar,baz'>(joinedTuple);
 
+// Typeof of const empty tuple.
+const emptyTuple = [] as const;
+const joinedEmptyTuple: Join<typeof emptyTuple, ','> = '';
+expectType<''>(joinedEmptyTuple);
+
 // Typeof of string[].
 const stringArray = ['foo', 'bar', 'baz'];
 const joinedStringArray: Join<typeof stringArray, ','> = '';

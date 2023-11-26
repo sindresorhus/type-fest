@@ -4,7 +4,8 @@ import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 import type {IsEqual} from './is-equal';
 import type {IsNegative, NegativeInfinity, PositiveInfinity} from './numeric';
-import type {StringToNumber, StartsWith, StringLength} from './string';
+import type {StringToNumber, StringLength} from './string';
+import type {UnknownRecord} from './unknown-record';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -28,6 +29,37 @@ export type BuildTuple<L extends number, Fill = unknown, T extends readonly unkn
 	: BuildTuple<L, Fill, [...T, Fill]>;
 
 /**
+Create an object type with the given key `<Key>` and value `<Value>`.
+
+It will copy the prefix and optional status of the same key from the given object `CopiedFrom` into the result.
+
+@example
+```
+type A = BuildObject<'a', string>;
+//=> {a: string}
+
+// Copy `readonly` and `?` from the key `a` of `{readonly a?: any}`
+type B = BuildObject<'a', string, {readonly a?: any}>;
+//=> {readonly a?: string}
+```
+*/
+export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
+	Key extends keyof CopiedFrom
+		? Pick<{[_ in keyof CopiedFrom]: Value}, Key>
+		: Key extends `${infer NumberKey extends number}`
+			? NumberKey extends keyof CopiedFrom
+				? Pick<{[_ in keyof CopiedFrom]: Value}, NumberKey>
+				: {[_ in Key]: Value}
+			: {[_ in Key]: Value};
+
+/**
+Return a string representation of the given string or number.
+
+Note: This type is not the return type of the `.toString()` function.
+*/
+export type ToString<T> = T extends string | number ? `${T}` : never;
+
+/**
 Create a tuple of length `A` and a tuple composed of two other tuples,
 the inferred tuple `U` and a tuple of length `B`, then extracts the length of tuple `U`.
 
@@ -41,6 +73,11 @@ export type Subtract<A extends number, B extends number> = BuildTuple<A> extends
 Matches any primitive, `Date`, or `RegExp` value.
 */
 export type BuiltIns = Primitive | Date | RegExp;
+
+/**
+Matches non-recursive types.
+*/
+export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
@@ -121,7 +158,16 @@ Extract the object field type if T is an object and K is a key of T, return `nev
 
 It creates a type-safe way to access the member type of `unknown` type.
 */
-export type ObjectValue<T, K> = K extends keyof T ? T[K] : never;
+export type ObjectValue<T, K> =
+	K extends keyof T
+		? T[K]
+		: ToString<K> extends keyof T
+			? T[ToString<K>]
+			: K extends `${infer NumberK extends number}`
+				? NumberK extends keyof T
+					? T[NumberK]
+					: never
+				: never;
 
 /**
 Returns a boolean for whether the string is lowercased.

@@ -9,6 +9,7 @@ export type {KeysOfUnion} from './source/keys-of-union';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {NonEmptyObject} from './source/non-empty-object';
 export type {UnknownRecord} from './source/unknown-record';
+export type {UnknownArray} from './source/unknown-array';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
 export type {Writable} from './source/writable';
@@ -24,6 +25,7 @@ export type {OmitIndexSignature} from './source/omit-index-signature';
 export type {PickIndexSignature} from './source/pick-index-signature';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
 export type {RequiredDeep} from './source/required-deep';
+export type {PickDeep} from './source/pick-deep';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
@@ -104,6 +106,7 @@ export type {ArrayIndices} from './source/array-indices';
 export type {ArrayValues} from './source/array-values';
 export type {ArraySlice} from './source/array-slice';
 export type {SetFieldType} from './source/set-field-type';
+export type {Paths} from './source/paths';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
