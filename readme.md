@@ -233,6 +233,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
+- [`StringSlice`](source/string.d.ts) - Returns a section of a string, just like `String.slice` in js.
 
 ### Array
 

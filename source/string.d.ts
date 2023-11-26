@@ -1,4 +1,6 @@
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
+import {type Join} from './join';
+import {type ArraySlice} from './array-slice';
 
 /**
 Converts a numeric string to a number.
@@ -87,3 +89,33 @@ export type StringToArray<S extends string, Result extends string[] = []> = stri
 	: S extends `${infer F}${infer R}`
 		? StringToArray<R, [...Result, F]>
 		: Result;
+
+/**
+Returns a section of a string, just like `String.slice` in js.
+
+@see {ArraySlice}
+
+@example
+```
+StringSlice<'abcde', 0, 2>
+//=> 'ab'
+
+StringSlice<'abcde', 1>
+//=> 'bcde'
+
+StringSlice<'abcde', 0, -1>
+//=> 'abcd'
+
+StringSlice<'abcde', -2, -1>
+//=> 'd'
+```
+
+@category String
+ */
+export type StringSlice<
+	S extends string,
+	Start extends number = 0,
+	End extends number = StringToArray<S>['length'],
+> = string extends S
+	? string[]
+	: Join<ArraySlice<StringToArray<S>, Start, End>, ''>;
