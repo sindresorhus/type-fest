@@ -1,5 +1,5 @@
 import type {IfUnknown} from './if-unknown';
-import type {BuiltIns} from './internal';
+import type {BuiltIns, LiteralKeyOf} from './internal';
 import type {IsLiteral} from './is-literal';
 import type {Merge} from './merge';
 
@@ -70,8 +70,3 @@ type PartialOnUndefinedDeepValue<T, Options extends PartialOnUndefinedDeepOption
 		: T extends Record<any, any> | undefined
 			? PartialOnUndefinedDeep<T, Options>
 			: unknown;
-
-/**
-Utility type to retrieve only literal keys from type.
-*/
-type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};

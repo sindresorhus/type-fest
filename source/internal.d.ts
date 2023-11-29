@@ -317,3 +317,8 @@ IsPrimitive<Object>
 ```
 */
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
+
+/**
+Utility type to retrieve only literal keys from type.
+*/
+export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
