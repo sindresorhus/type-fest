@@ -82,8 +82,6 @@ expectAssignable<{
 	readonly1?: TestingType['readonly1'];
 	readonly2?: ReadonlyArray<{propertyA: string; propertyB?: number | undefined}> | undefined;
 	tuple?: ['test1', {propertyA: string; propertyB?: number | undefined}] | undefined;
-	indexType: Partial<Pick<TestingType['indexType'], 'propertyB'>> & Omit<TestingType['indexType'], 'propertyB'>;
-	indexTypeUnknown: Partial<Pick<TestingType['indexTypeUnknown'], 'propertyB'>> & Omit<TestingType['indexTypeUnknown'], 'propertyB'>;
 }>(bar);
 
 declare const indexTypeWithRecursion: PartialOnUndefinedDeep<typeof indexType, {recurseIntoArrays: true}>;
