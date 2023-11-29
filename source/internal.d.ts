@@ -2,6 +2,7 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
+import type {IsLiteral} from './is-literal';
 import type {UnknownRecord} from './unknown-record';
 
 // TODO: Remove for v5.

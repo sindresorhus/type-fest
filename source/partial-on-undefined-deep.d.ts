@@ -1,6 +1,5 @@
 import type {IfUnknown} from './if-unknown';
 import type {BuiltIns, LiteralKeyOf} from './internal';
-import type {IsLiteral} from './is-literal';
 import type {Merge} from './merge';
 
 /**
