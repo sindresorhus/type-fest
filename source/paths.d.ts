@@ -78,7 +78,7 @@ open('listB.1'); // TypeError. Because listB only has one element.
 @category Array
 */
 export type Paths<T> =
-	T extends NonRecursiveType
+	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 		? never
 		: IsAny<T> extends true
 			? never

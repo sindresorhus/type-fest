@@ -67,6 +67,24 @@ expectType<'a'>(record);
 declare const record2: Paths<Record<1, unknown>>;
 expectType<1 | '1'>(record2);
 
+declare const map: Paths<{foo?: {bar?: Map<string, number>}}>;
+expectType<'foo' | 'foo.bar'>(map);
+
+declare const map2: Paths<Map<string, number>>;
+expectType<never>(map2);
+
+declare const readonlyMap: Paths<{foo?: {bar?: ReadonlyMap<string, number>}}>;
+expectType<'foo' | 'foo.bar'>(readonlyMap);
+
+declare const set: Paths<{foo?: {bar?: Set<string>}}>;
+expectType<'foo' | 'foo.bar'>(set);
+
+declare const set2: Paths<Set<string>>;
+expectType<never>(set2);
+
+declare const readonlySet: Paths<{foo?: {bar?: ReadonlySet<string>}}>;
+expectType<'foo' | 'foo.bar'>(readonlySet);
+
 // Test for unknown length array
 declare const trailingSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>]>;
 expectType<number | `${number}` | '0.a' | `${number}.b`>(trailingSpreadTuple);
