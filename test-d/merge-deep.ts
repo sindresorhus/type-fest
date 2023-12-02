@@ -33,9 +33,9 @@ expectType<never>(mergeDeep(undefined, {}));
 
 // Should merge simple objects
 expectType<{a: string; b: number}>(mergeDeep({a: 'life'}, {b: 42}));
-expectType<{a: 'life'; b: number}>(mergeDeep({a: 'life'} as const, {b: 42}));
-expectType<{a: string; b: 42}>(mergeDeep({a: 'life'}, {b: 42} as const));
-expectType<{a: 'life'; b: 42}>(mergeDeep({a: 'life'} as const, {b: 42} as const));
+expectType<{readonly a: 'life'; b: number}>(mergeDeep({a: 'life'} as const, {b: 42}));
+expectType<{a: string; readonly b: 42}>(mergeDeep({a: 'life'}, {b: 42} as const));
+expectType<{readonly a: 'life'; readonly b: 42}>(mergeDeep({a: 'life'} as const, {b: 42} as const));
 
 // Should spread simple arrays/tuples (default mode)
 expectType<Array<string | number>>(mergeDeep(['life'], [42]));
@@ -157,13 +157,33 @@ expectType<{
 		fooBar: boolean;
 		items: number[];
 	};
-	fooBarOptional?: {
+	fooBarOptional: {
 		foo: string;
 		bar: number;
 		fooBar: boolean;
 		items: number[];
-	};
+	} | undefined;
 }>(fooBarWithOptional);
+
+// Test for optional
+type FooOptional = {
+	string?: string;
+	any?: any;
+	never?: never;
+};
+type BarOptional = {
+	number?: number;
+};
+type MergedFooBar = {
+	string?: string;
+	any?: any;
+	never?: never;
+	number?: number;
+};
+declare const mergedFooBar: MergeDeep<FooOptional, BarOptional>;
+expectType<MergedFooBar>(mergedFooBar);
+declare const mergedBarFoo: MergeDeep<FooOptional, BarOptional>;
+expectType<MergedFooBar>(mergedBarFoo);
 
 // Should merge arrays with object entries
 type FooArray = Foo[];
