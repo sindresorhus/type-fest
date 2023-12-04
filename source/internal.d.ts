@@ -3,6 +3,7 @@ import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 import type {UnknownRecord} from './unknown-record';
+import type {UnknownArray} from './unknown-array';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -75,6 +76,16 @@ export type BuiltIns = Primitive | Date | RegExp;
 Matches non-recursive types.
 */
 export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
+
+/**
+Returns a boolean for whether the given type is a plain key-value object.
+*/
+export type IsPlainObject<T> =
+	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+		? false
+		: T extends object
+			? true
+			: false;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
