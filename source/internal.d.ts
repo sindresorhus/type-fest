@@ -78,9 +78,9 @@ Matches non-recursive types.
 export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
 
 /**
-Returns a boolean for whether the given type is a normal key-value object.
+Returns a boolean for whether the given type is a plain key-value object.
 */
-export type IsRecordObject<T> =
+export type IsPlainObject<T> =
 	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 		? false
 		: T extends object
