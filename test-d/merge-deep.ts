@@ -185,6 +185,23 @@ expectType<MergedFooBar>(mergedFooBar);
 declare const mergedBarFoo: MergeDeep<FooOptional, BarOptional>;
 expectType<MergedFooBar>(mergedBarFoo);
 
+// Test for readonly
+type ReadonlyFoo = {
+	readonly string: string;
+	readonly number: number;
+	boolean: boolean;
+};
+type ReadonlyBar = {
+	number: number;
+	readonly boolean: boolean;
+};
+declare const readonlyTest: MergeDeep<ReadonlyFoo, ReadonlyBar>;
+expectType<{
+	readonly string: string;
+	number: number;
+	readonly boolean: boolean;
+}>(readonlyTest);
+
 // Should merge arrays with object entries
 type FooArray = Foo[];
 type BarArray = Bar[];
