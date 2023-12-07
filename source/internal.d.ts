@@ -68,9 +68,9 @@ export type Subtract<A extends number, B extends number> = BuildTuple<A> extends
 	: never;
 
 /**
-Matches any primitive, `Date`, or `RegExp` value.
+Matches any primitive, `void`, `Date`, or `RegExp` value.
 */
-export type BuiltIns = Primitive | Date | RegExp;
+export type BuiltIns = Primitive | void | Date | RegExp;
 
 /**
 Matches non-recursive types.
