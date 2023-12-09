@@ -6,6 +6,7 @@ import type {IsEqual} from './is-equal';
 import type {IsNegative, NegativeInfinity, PositiveInfinity} from './numeric';
 import type {StringToNumber, StringLength} from './string';
 import type {UnknownRecord} from './unknown-record';
+import type {UnknownArray} from './unknown-array';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -70,14 +71,24 @@ export type Subtract<A extends number, B extends number> = BuildTuple<A> extends
 	: never;
 
 /**
-Matches any primitive, `Date`, or `RegExp` value.
+Matches any primitive, `void`, `Date`, or `RegExp` value.
 */
-export type BuiltIns = Primitive | Date | RegExp;
+export type BuiltIns = Primitive | void | Date | RegExp;
 
 /**
 Matches non-recursive types.
 */
 export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
+
+/**
+Returns a boolean for whether the given type is a plain key-value object.
+*/
+export type IsPlainObject<T> =
+	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+		? false
+		: T extends object
+			? true
+			: false;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
