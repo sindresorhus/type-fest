@@ -3,8 +3,7 @@ import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 import type {IsEqual} from './is-equal';
-import type {IsNegative, NegativeInfinity, PositiveInfinity} from './numeric';
-import type {StringToNumber, StringLength} from './string';
+import type {IsNegative, NegativeInfinity, PositiveInfinity, Subtract} from './numeric';
 import type {UnknownRecord} from './unknown-record';
 import type {UnknownArray} from './unknown-array';
 
@@ -25,7 +24,7 @@ If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
+export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T['length'] extends L
 	? T
 	: BuildTuple<L, Fill, [...T, Fill]>;
 
@@ -61,16 +60,6 @@ Note: This type is not the return type of the `.toString()` function.
 export type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
-Create a tuple of length `A` and a tuple composed of two other tuples,
-the inferred tuple `U` and a tuple of length `B`, then extracts the length of tuple `U`.
-
-@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
-*/
-export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
-	? TupleLength<U>
-	: never;
-
-/**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
 */
 export type BuiltIns = Primitive | void | Date | RegExp;
@@ -89,6 +78,94 @@ export type IsPlainObject<T> =
 		: T extends object
 			? true
 			: false;
+
+/**
+Converts a numeric string to a number.
+
+@example
+```
+type PositiveInt = StringToNumber<'1234'>; // => 1234;
+type NegativeInt = StringToNumber<'-1234'>; // => -1234;
+type PositiveFloat = StringToNumber<'1234.56'>; // => 1234.56;
+type NegativeFloat = StringToNumber<'-1234.56'>; // => -1234.56;
+type PositiveInfinity = StringToNumber<'Infinity'>; // => Infinity
+type NegativeInfinity = StringToNumber<'-Infinity'>; // => -Infinity
+```
+
+@category String
+@category Template literal
+*/
+export type StringToNumber<S extends string> = S extends `${infer N extends number}`
+	? N
+	: S extends 'Infinity'
+		? PositiveInfinity
+		: S extends '-Infinity'
+			? NegativeInfinity
+			: never;
+
+/**
+Returns a boolean for whether the string `S` starts with `SearchString`
+
+@example
+```
+StartsWith<'abcde', 'abc'>
+//=> true
+
+StartsWith<'abcde', 'bc'>
+//=> false
+
+StartsWith<string, 'bc'>
+//=> boolean
+
+StartsWith<'abcde', string>
+//=> boolean
+```
+
+@category String
+@category Template literal
+*/
+export type StartsWith<S extends string, SearchString extends string> = string extends S | SearchString
+	? boolean
+	: S extends `${SearchString}${infer T}`
+		? true
+		: false;
+
+/**
+Returns the length of the given string.
+
+@example
+```
+StringLength<'abcde'>
+//=> 5
+
+StringLength<string>
+//=> number
+```
+
+@category String
+@category Template literal
+*/
+export type StringLength<S extends string> = StringToArray<S>['length'];
+
+/**
+Returns an array of the characters of the string.
+
+@example
+```
+StringToArray<'abcde'>
+//=> ['a', 'b', 'c', 'd', 'e']
+
+StringToArray<string>
+//=> string[]
+```
+
+@category String
+*/
+export type StringToArray<S extends string, Result extends string[] = []> = string extends S
+	? string[]
+	: S extends `${infer F}${infer R}`
+		? StringToArray<R, [...Result, F]>
+		: Result;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
@@ -387,192 +464,60 @@ export type Not<A extends boolean> = A extends true
 		: boolean;
 
 /**
-Returns the maximum element in an array.
+Returns the maximum value from a tuple of integers.
 
 Note:
 - float number is not supported.
 
 @example
 ```
-Max<[1, 2, 5, 3]>
+ArrayMax<[1, 2, 5, 3]>;
 //=> 5
 
-Max<[1, 2, 5, 3, 99, -1]>
+ArrayMax<[1, 2, 5, 3, 99, -1]>
 //=> 99
 ```
 */
-export type Max<A extends number[], Result extends number = NegativeInfinity> = A extends [infer F extends number, ...infer R extends number[]]
+export type ArrayMax<A extends number[], Result extends number = NegativeInfinity> = A extends [infer F extends number, ...infer R extends number[]]
 	? Gt<F, Result> extends true
-		? Max<R, F>
-		: Max<R, Result>
+		? ArrayMax<R, F>
+		: ArrayMax<R, Result>
 	: Result;
 
 /**
-Returns the minimal element in an array.
+Returns the minimal value from a tuple of integers.
 
 @example
 ```
-Min<[1, 2, 5, 3]>
+ArrayMin<[1, 2, 5, 3]>
 //=> 1
 
-Min<[1, 2, 5, 3, -5]>
+ArrayMin<[1, 2, 5, 3, -5]>
 //=> -5
 ```
 */
-export type Min<A extends number[], Result extends number = PositiveInfinity> = A extends [infer F extends number, ...infer R extends number[]]
-	? Lt<F & number, Result> extends true
-		? Min<R, F>
-		: Min<R, Result>
+export type ArrayMin<A extends number[], Result extends number = PositiveInfinity> = A extends [infer F extends number, ...infer R extends number[]]
+	? Lt<F, Result> extends true
+		? ArrayMin<R, F>
+		: ArrayMin<R, Result>
 	: Result;
-
-/**
-Calculate the result of `A + B`
-
-Note:
-- A and B can only be small integers.
-- if the result is negative, you can only get `number`.
-
-@example
-```
-Add<111, 222>
-//=> 333
-
-Add<-111, 222>
-//=> 111
-
-Add<111, -222>
-//=> number
-
-Add<PositiveInfinity, -9999>
-//=> PositiveInfinity
-
-Add<PositiveInfinity, NegativeInfinity>
-//=> number
-```
-*/
-// TODO: Support big integer and negative number.
-export type Add<A extends number, B extends number> = [
-	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-] extends infer R extends [boolean, boolean, boolean, boolean]
-	? Or<
-	And<IsEqual<R[0], true>, IsEqual<R[3], false>>,
-	And<IsEqual<R[2], true>, IsEqual<R[1], false>>
-	> extends true
-		? PositiveInfinity
-		: Or<
-		And<IsEqual<R[1], true>, IsEqual<R[2], false>>,
-		And<IsEqual<R[3], true>, IsEqual<R[0], false>>
-		> extends true
-			? NegativeInfinity
-			: true extends R[number]
-				? number
-				: ([IsNegative<A>, IsNegative<B>] extends infer R
-					? [false, false] extends R
-						? [...NewArray<A>, ...NewArray<B>]['length']
-						: [true, true] extends R
-							? number
-							: Max<[Abs<A>, Abs<B>]> extends infer Max_
-								? Min<[Abs<A>, Abs<B>]> extends infer Min_ extends number
-									? Max_ extends A | B
-										? Sub<Max_, Min_>
-										: number
-									: never
-								: never
-					: never) & number
-	: never;
-
-/**
-Calculate the result of `A - B`.
-
-Note:
-- A and B can only be small integers.
-- if the result is negative, you can only get `number`.
-
-@example
-```
-Sub<333, 222>
-//=> 111
-
-Sub<111, -222>
-//=> 333
-
-Sub<-111, 222>
-//=> number
-
-Sub<PositiveInfinity, 9999>
-//=> PositiveInfinity
-
-Sub<PositiveInfinity, PositiveInfinity>
-//=> number
-```
- */
-// TODO: Support big integer and negative number.
-export type Sub<A extends number, B extends number> = [
-	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-] extends infer R extends [boolean, boolean, boolean, boolean]
-	? Or<
-	And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
-	And<IsEqual<R[3], true>, IsEqual<R[1], false>>
-	> extends true
-		? PositiveInfinity
-		: Or<
-		And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
-		And<IsEqual<R[2], true>, IsEqual<R[0], false>>
-		> extends true
-			? NegativeInfinity
-			: true extends R[number]
-				? number
-				: [IsNegative<A>, IsNegative<B>] extends infer R
-					? [false, false] extends R
-						? NewArray<A> extends infer R
-							? R extends [...NewArray<B>, ...infer R]
-								? R['length']
-								: number
-							: never
-						: Lt<A, B> extends true
-							? number
-							: [false, true] extends R
-								? Add<A, Abs<B>>
-								: Sub<Abs<B>, Abs<A>>
-					: never
-	: never;
-
-/**
-Returns an array of the specified length filled with the specified value(which default to null).
-
-@example
-```
-NewArray<3>
-//=> [null, null, null]
-
-NewArray<4, 0>
-//=> [0, 0, 0, 0]
-```
-*/
-export type NewArray<N extends number, Fill = null, Result extends any[] = []> = IsNegative<N> extends true
-	? []
-	: Result['length'] extends N
-		? Result
-		: NewArray<N, Fill, [Fill, ...Result]>;
 
 /**
 Returns the absolute value of a given value.
 
 @example
 ```
-Abs<-1>
+NumberAbsolute<-1>
 //=> 1
 
-Abs<1>
+NumberAbsolute<1>
 //=> 1
 
-Abs<NegativeInfinity>
+NumberAbsolute<NegativeInfinity>
 //=> PositiveInfinity
 ```
 */
-export type Abs<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
+export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
 /**
 Returns a boolean for whether A > B.
@@ -592,14 +537,31 @@ Gt<1, 5>
 // TODO: Support large integer.
 export type Gt<A extends number, B extends number> = number extends A | B
 	? boolean
-	: [IsNegative<A>, IsNegative<B>] extends infer R extends [boolean, boolean]
-		? [true, false] extends R
-			? false
-			: [false, true] extends R
-				? true
-				: [false, false] extends R
-					? PositiveNumericStringGt<`${A}`, `${B}`>
-					: PositiveNumericStringGt<`${Abs<B>}`, `${Abs<A>}`>
+	: [
+		IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+		IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+	] extends infer R extends [boolean, boolean, boolean, boolean]
+		? Or<
+		And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
+		And<IsEqual<R[3], true>, IsEqual<R[1], false>>
+		> extends true
+			? true
+			: Or<
+			And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
+			And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+			> extends true
+				? false
+				: true extends R[number]
+					? false
+					: [IsNegative<A>, IsNegative<B>] extends infer R extends [boolean, boolean]
+						? [true, false] extends R
+							? false
+							: [false, true] extends R
+								? true
+								: [false, false] extends R
+									? PositiveNumericStringGt<`${A}`, `${B}`>
+									: PositiveNumericStringGt<`${NumberAbsolute<B>}`, `${NumberAbsolute<A>}`>
+						: never
 		: never;
 
 /**
@@ -699,9 +661,9 @@ PositiveNumericStringGt<'1', '500'>
 */
 type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false
-	: [NewArray<StringLength<A>>, NewArray<StringLength<B>>] extends infer R extends [unknown[], unknown[]]
-		? R[0] extends [...R[1], ...infer Remain]
-			? [] extends Remain
+	: [BuildTuple<StringLength<A>, 0>, BuildTuple<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
+		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]
+			? 0 extends Remain['length']
 				? SameLengthPositiveNumericStringGt<A, B>
 				: true
 			: false

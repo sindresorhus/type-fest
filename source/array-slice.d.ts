@@ -1,14 +1,14 @@
-import type {IsNegative} from './numeric';
-import type {Add, Lt, Lte, Max} from './internal';
+import type {IsNegative, Add} from './numeric';
+import type {Lt, Lte, ArrayMax} from './internal';
 
 /**
-Returns a copy of a section of an array, just like `Array.slice` in js.
+Returns an array slice of a given range(with negative index support), just like `Array.slice` in js.
 
 @example
 ```
 import type {ArraySlice} from 'type-fest';
 
-type T0 = ArraySlice<[0, 1, 2, 3, 4]>; 					//=> [0, 1, 2, 3, 4]
+type T0 = ArraySlice<[0, 1, 2, 3, 4]>;          //=> [0, 1, 2, 3, 4]
 type T1 = ArraySlice<[0, 1, 2, 3, 4], 0, -1>; 	//=> [0, 1, 2, 3]
 type T2 = ArraySlice<[0, 1, 2, 3, 4], 1, -2>; 	//=> [1, 2]
 type T3 = ArraySlice<[0, 1, 2, 3, 4], -2, 4>; 	//=> [3]
@@ -24,7 +24,7 @@ function arraySlice<
 }
 
 const slice = arraySlice([1, '2', { a: 3 }, [4, 5]], 0, -1);
-typeof slice; //=> [1, "2", { readonly a: 3; }]
+typeof slice; //=> [1, '2', { readonly a: 3; }]
 slice[2].a; //=> 3
 
 // @ts-expect-error -- TS2493: Tuple type '[1, "2", { readonly a: 3; }]' of length '3' has no element at index '3'.
@@ -44,7 +44,7 @@ type ArraySliceHelper<Array_ extends readonly unknown[],
 	TraversedElement extends Array<Array_[number]> = [],
 	Result extends Array<Array_[number]> = [],
 	ArrayLength extends number = Array_['length'],
-	PositiveS extends number = IsNegative<Start> extends true ? Max<[Add<ArrayLength, Start>, 0]> : Start,
+	PositiveS extends number = IsNegative<Start> extends true ? ArrayMax<[Add<ArrayLength, Start>, 0]> : Start,
 	PositiveE extends number = IsNegative<End> extends true ? Add<ArrayLength, End> : End,
 > = true extends [IsNegative<PositiveS>, Lte<PositiveE, PositiveS>][number]
 	? []
