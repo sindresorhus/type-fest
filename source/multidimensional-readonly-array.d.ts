@@ -1,4 +1,4 @@
-import type {Subtract} from './subtract';
+import type {Subtract} from './numeric';
 import type {IsEqual} from './is-equal';
 
 type Recursive<T> = ReadonlyArray<Recursive<T>>;

@@ -1,3 +1,6 @@
+import type{NumberAbsolute, BuildTuple, Lt, And, Or, ArrayMax, ArrayMin} from './internal';
+import type {IsEqual} from './is-equal';
+
 export type Numeric = number | bigint;
 
 type Zero = 0 | 0n;
@@ -179,18 +182,113 @@ declare function setLength<T extends number>(length: NonNegativeInteger<T>): voi
 export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 
 /**
-Returns a boolean for whether the given number is a negative number.
-
-@see Negative
-
+Return the result of `A + B`
+Note:
+- A and B can only be small integers.
+- if the result is negative, you can only get `number`.
 @example
 ```
-import type {IsNegative} from 'type-fest';
-
-type ShouldBeFalse = IsNegative<1>;
-type ShouldBeTrue = IsNegative<-1>;
+Add<111, 222>
+//=> 333
+Add<-111, 222>
+//=> 111
+Add<111, -222>
+//=> number
+Add<PositiveInfinity, -9999>
+//=> PositiveInfinity
+Add<PositiveInfinity, NegativeInfinity>
+//=> number
 ```
 
 @category Numeric
 */
-export type IsNegative<T extends Numeric> = T extends Negative<T> ? true : false;
+// TODO: Support big integer and negative number.
+export type Add<A extends number, B extends number> = [
+	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+] extends infer R extends [boolean, boolean, boolean, boolean]
+	? Or<
+	And<IsEqual<R[0], true>, IsEqual<R[3], false>>,
+	And<IsEqual<R[2], true>, IsEqual<R[1], false>>
+	> extends true
+		? PositiveInfinity
+		: Or<
+		And<IsEqual<R[1], true>, IsEqual<R[2], false>>,
+		And<IsEqual<R[3], true>, IsEqual<R[0], false>>
+		> extends true
+			? NegativeInfinity
+			: true extends R[number]
+				? number
+				: ([IsNegative<A>, IsNegative<B>] extends infer R
+					? [false, false] extends R
+						? [...BuildTuple<A>, ...BuildTuple<B>]['length']
+						: [true, true] extends R
+							? number
+							: ArrayMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
+								? ArrayMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
+									? Max_ extends A | B
+										? Subtract<Max_, Min_>
+										: number
+									: never
+								: never
+					: never) & number
+	: never;
+
+/**
+Return the result of `A - B`.
+
+Note:
+- A and B can only be small integers.
+- if the result is negative, you can only get `number`.
+
+@example
+```
+Subtract<333, 222>
+//=> 111
+
+Subtract<111, -222>
+//=> 333
+
+Subtract<-111, 222>
+//=> number
+
+Subtract<PositiveInfinity, 9999>
+//=> PositiveInfinity
+
+Subtract<PositiveInfinity, PositiveInfinity>
+//=> number
+```
+
+@category Numeric
+ */
+// TODO: Support big integer and negative number.
+export type Subtract<A extends number, B extends number> = [
+	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+] extends infer R extends [boolean, boolean, boolean, boolean]
+	? Or<
+	And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
+	And<IsEqual<R[3], true>, IsEqual<R[1], false>>
+	> extends true
+		? PositiveInfinity
+		: Or<
+		And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
+		And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+		> extends true
+			? NegativeInfinity
+			: true extends R[number]
+				? number
+				: [IsNegative<A>, IsNegative<B>] extends infer R
+					? [false, false] extends R
+						? BuildTuple<A> extends infer R
+							? R extends [...BuildTuple<B>, ...infer R]
+								? R['length']
+								: number
+							: never
+						: Lt<A, B> extends true
+							? number
+							: [false, true] extends R
+								? Add<A, NumberAbsolute<B>>
+								: Subtract<NumberAbsolute<B>, NumberAbsolute<A>>
+					: never
+	: never;

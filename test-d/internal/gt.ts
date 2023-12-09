@@ -4,6 +4,7 @@ import type {NegativeInfinity, PositiveInfinity} from '../../source/numeric';
 
 expectType<Gt<1, 2>>(false);
 expectType<Gt<2, 1>>(true);
+expectType<Gt<10, 2>>(true);
 expectType<Gt<10, -2>>(true);
 expectType<Gt<2, 2>>(false);
 expectType<Gt<-2, -2>>(false);

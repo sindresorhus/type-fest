@@ -70,6 +70,9 @@ export type {
 	NonNegative,
 	NegativeInteger,
 	NonNegativeInteger,
+	IsNegative,
+	Add,
+	Subtract,
 } from './source/numeric';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
