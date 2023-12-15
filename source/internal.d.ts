@@ -3,6 +3,7 @@ import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 import type {UnknownRecord} from './unknown-record';
+import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
 
 // TODO: Remove for v5.
@@ -13,7 +14,34 @@ Infer the length of the given array `<T>`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type TupleLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
+type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
+
+/**
+Infer the length of the given tuple `<T>`.
+
+Returns `never` if the given type is an non-fixed-length array like `Array<string>`.
+
+@example
+```
+type Tuple = TupleLength<[string, number, boolean]>;
+//=> 3
+
+type Array = TupleLength<string[]>;
+//=> never
+
+// Supports union types.
+type Union = TupleLength<[] | [1, 2, 3] | Array<number>>;
+//=> 1 | 3
+```
+*/
+export type TupleLength<T extends UnknownArray> =
+	// `extends unknown` is used to convert `T` (if `T` is a union type) to
+	// a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
+	T extends unknown
+		? number extends T['length']
+			? never // Return never if the given type is an non-flexed-length array like `Array<string>`
+			: T['length']
+		: never; // Should never happen
 
 /**
 Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
@@ -64,7 +92,7 @@ the inferred tuple `U` and a tuple of length `B`, then extracts the length of tu
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
 export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
-	? TupleLength<U>
+	? ArrayLength<U>
 	: never;
 
 /**
@@ -328,3 +356,73 @@ IsPrimitive<Object>
 ```
 */
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
+
+/**
+Returns the fixed-indexed part of the given array.
+
+@example
+```
+type A = [string, number, boolean, ...string[]];
+type B = FixedPartOfArray<A>;
+//=> [string, number, boolean]
+```
+*/
+export type FixedPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
+	T extends unknown
+		? number extends T['length'] ?
+			T extends readonly [infer U, ...infer V]
+				? FixedPartOfArray<V, [...Result, U]>
+				: Result
+			: T
+		: never; // Should never happen
+
+/**
+Returns the non-fixed-indexed part of the given array.
+
+@example
+```
+type A = [string, number, boolean, ...string[]];
+type B = NonFixedPartOfArray<A>;
+//=> string[]
+```
+*/
+export type NonFixedPartOfArray<T extends UnknownArray> =
+	T extends unknown
+		? T extends readonly [...FixedPartOfArray<T>, ...infer U]
+			? U
+			: []
+		: never; // Should never happen
+
+/**
+Returns the minimum number of the given union numbers.
+
+Note: Just supports numbers from 0 to 999.
+
+@example
+```
+type A = MinNumbers<3 | 1 | 2>
+//=> 1
+```
+*/
+export type MinNumbers<N extends Number, T extends UnknownArray = []> =
+	T['length'] extends N
+		? T['length']
+		: MinNumbers<N, [...T, unknown]>;
+
+/**
+Returns the maximum number of the given union numbers.
+
+Note: Just supports numbers from 0 to 999.
+
+@example
+```
+type A = MaxNumbers<1 | 3 | 2>
+//=> 3
+```
+*/
+export type MaxNumbers<N extends Number, T extends UnknownArray = []> =
+IsNever<N> extends true
+	? T['length']
+	:	T['length'] extends N
+		? MaxNumbers<Exclude<N, T['length']>, T>
+		: MaxNumbers<N, [...T, unknown]>;
