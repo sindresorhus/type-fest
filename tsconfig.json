@@ -6,7 +6,8 @@
 		"lib": [
 			"ES2020",
 			"DOM"
-		]
+		],
+		"skipLibCheck": false, // Ensures .d.ts files are checked: https://github.com/sindresorhus/tsconfig/issues/15
 	},
 	"exclude": [
 		"test-d/**/*"
