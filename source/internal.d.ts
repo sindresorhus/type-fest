@@ -93,6 +93,7 @@ type NegativeInfinity = StringToNumber<'-Infinity'>; // => -Infinity
 ```
 
 @category String
+@category Numeric
 @category Template literal
 */
 export type StringToNumber<S extends string> = S extends `${infer N extends number}`
@@ -104,7 +105,7 @@ export type StringToNumber<S extends string> = S extends `${infer N extends numb
 			: never;
 
 /**
-Returns a boolean for whether the string `S` starts with `SearchString`
+Returns a boolean for whether the given string `S` starts with the given string `SearchString`
 
 @example
 ```
@@ -534,7 +535,6 @@ Gt<1, 5>
 //=> false
 ```
 */
-// TODO: Support large integer.
 export type Gt<A extends number, B extends number> = number extends A | B
 	? boolean
 	: [

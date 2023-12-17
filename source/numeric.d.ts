@@ -184,7 +184,7 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 /**
 Return the result of `A + B`
 Note:
-- A and B can only be small integers.
+- A and B can only be small integers(A < 1000, B < 1000).
 - if the result is negative, you can only get `number`.
 @example
 ```
@@ -238,7 +238,7 @@ export type Add<A extends number, B extends number> = [
 Return the result of `A - B`.
 
 Note:
-- A and B can only be small integers.
+- A and B can only be small integers(A < 1000, B < 1000).
 - if the result is negative, you can only get `number`.
 
 @example
