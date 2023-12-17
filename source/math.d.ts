@@ -1,4 +1,4 @@
-import type {NumberAbsolute, BuildTuple, And, Or, ArrayMax, ArrayMin, PositiveNumericStringGt} from './internal';
+import type{NumberAbsolute, BuildTuple, Lt, And, Or, ArrayMax, ArrayMin} from './internal';
 import type {IsEqual} from './is-equal';
 
 export type Numeric = number | bigint;
@@ -184,7 +184,7 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 /**
 Return the result of `A + B`
 Note:
-- A or B can only support `-999` ~ `999`.
+- A and B can only be small integers(A < 1000, B < 1000).
 - if the result is negative, you can only get `number`.
 @example
 ```
@@ -238,7 +238,7 @@ export type Add<A extends number, B extends number> = [
 Return the result of `A - B`.
 
 Note:
-- A or B can only support `-999` ~ `999`.
+- A and B can only be small integers(A < 1000, B < 1000).
 - if the result is negative, you can only get `number`.
 
 @example
@@ -292,105 +292,3 @@ export type Subtract<A extends number, B extends number> = [
 								: Subtract<NumberAbsolute<B>, NumberAbsolute<A>>
 					: never
 	: never;
-
-/**
-Returns a boolean for whether A > B.
-
-@example
-```
-Gt<1, -5>
-//=> true
-
-Gt<1, 1>
-//=> false
-
-Gt<1, 5>
-//=> false
-```
-*/
-export type Gt<A extends number, B extends number> = number extends A | B
-	? boolean
-	: [
-		IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-		IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-	] extends infer R extends [boolean, boolean, boolean, boolean]
-		? Or<
-		And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
-		And<IsEqual<R[3], true>, IsEqual<R[1], false>>
-		> extends true
-			? true
-			: Or<
-			And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
-			And<IsEqual<R[2], true>, IsEqual<R[0], false>>
-			> extends true
-				? false
-				: true extends R[number]
-					? false
-					: [IsNegative<A>, IsNegative<B>] extends infer R extends [boolean, boolean]
-						? [true, false] extends R
-							? false
-							: [false, true] extends R
-								? true
-								: [false, false] extends R
-									? PositiveNumericStringGt<`${A}`, `${B}`>
-									: PositiveNumericStringGt<`${NumberAbsolute<B>}`, `${NumberAbsolute<A>}`>
-						: never
-		: never;
-
-/**
-Returns a boolean for whether A >= B.
-
-@example
-```
-Gte<1, -5>
-//=> true
-
-Gte<1, 1>
-//=> true
-
-Gte<1, 5>
-//=> false
-```
-*/
-export type Gte<A extends number, B extends number> = number extends A | B
-	? boolean
-	: A extends B ? true : Gt<A, B>;
-
-/**
-Returns a boolean for whether A < B.
-
-@example
-```
-Lt<1, -5>
-//=> false
-
-Lt<1, 1>
-//=> false
-
-Lt<1, 5>
-//=> true
-```
-*/
-
-export type Lt<A extends number, B extends number> = number extends A | B
-	? boolean
-	: Gte<A, B> extends true ? false : true;
-
-/**
-Returns a boolean for whether A <= B.
-
-@example
-```
-Lte<1, -5>
-//=> false
-
-Lte<1, 1>
-//=> true
-
-Lte<1, 5>
-//=> true
-```
-*/
-export type Lte<A extends number, B extends number> = number extends A | B
-	? boolean
-	: Gt<A, B> extends true ? false : true;
