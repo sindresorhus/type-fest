@@ -6,5 +6,5 @@ expectType<Or<true, false>>(true);
 expectType<Or<false, true>>(true);
 expectType<Or<false, false>>(false);
 expectType<Or<true, boolean>>(true);
-expectType<Or<false, boolean>>(Boolean());
-expectType<Or<boolean, boolean>>(Boolean());
+expectType<Or<false, boolean>>(null!);
+expectType<Or<boolean, boolean>>(null!);

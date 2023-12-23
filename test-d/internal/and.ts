@@ -5,6 +5,6 @@ expectType<And<true, true>>(true);
 expectType<And<true, false>>(false);
 expectType<And<false, true>>(false);
 expectType<And<false, false>>(false);
-expectType<And<true, boolean>>(Boolean());
+expectType<And<true, boolean>>(null!);
 expectType<And<false, boolean>>(false);
-expectType<And<boolean, boolean>>(Boolean());
+expectType<And<boolean, boolean>>(null!);
