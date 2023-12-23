@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"noEmit": true,
 		"skipLibCheck": false,
+		"strictNullChecks": true,
 		"target": "ES2019", // Node.js 12
 		"lib": [
 			"ES2020",

@@ -9,6 +9,7 @@ expectType<Lt<10, -2>>(false);
 expectType<Lt<2, 2>>(false);
 expectType<Lt<-2, -2>>(false);
 expectType<Lt<-2, -3>>(false);
+expectType<Lt<-2, number>>(null!);
 expectType<Lt<PositiveInfinity, -999>>(false);
 expectType<Lt<PositiveInfinity, 999>>(false);
 expectType<Lt<999, PositiveInfinity>>(true);
