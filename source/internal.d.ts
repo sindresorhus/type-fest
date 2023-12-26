@@ -382,11 +382,11 @@ Returns the non-fixed-indexed part of the given array.
 @example
 ```
 type A = [string, number, boolean, ...string[]];
-type B = NonStaticPartOfArray<A>;
+type B = NonFixedPartOfArray<A>;
 //=> string[]
 ```
 */
-export type NonStaticPartOfArray<T extends UnknownArray> =
+export type NonFixedPartOfArray<T extends UnknownArray> =
 	T extends unknown
 		? T extends readonly [...StaticPartOfArray<T>, ...infer U]
 			? U
