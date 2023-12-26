@@ -358,20 +358,20 @@ IsPrimitive<Object>
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
 /**
-Returns the fixed-indexed part of the given array.
+Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example
 ```
 type A = [string, number, boolean, ...string[]];
-type B = FixedPartOfArray<A>;
+type B = StaticPartOfArray<A>;
 //=> [string, number, boolean]
 ```
 */
-export type FixedPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
+export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends unknown
 		? number extends T['length'] ?
 			T extends readonly [infer U, ...infer V]
-				? FixedPartOfArray<V, [...Result, U]>
+				? StaticPartOfArray<V, [...Result, U]>
 				: Result
 			: T
 		: never; // Should never happen
@@ -382,47 +382,57 @@ Returns the non-fixed-indexed part of the given array.
 @example
 ```
 type A = [string, number, boolean, ...string[]];
-type B = NonFixedPartOfArray<A>;
+type B = NonStaticPartOfArray<A>;
 //=> string[]
 ```
 */
-export type NonFixedPartOfArray<T extends UnknownArray> =
+export type NonStaticPartOfArray<T extends UnknownArray> =
 	T extends unknown
-		? T extends readonly [...FixedPartOfArray<T>, ...infer U]
+		? T extends readonly [...StaticPartOfArray<T>, ...infer U]
 			? U
 			: []
 		: never; // Should never happen
 
 /**
-Returns the minimum number of the given union numbers.
+Returns the minimum number in the given union of numbers.
 
 Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type A = MinNumbers<3 | 1 | 2>
+type A = UnionMin<3 | 1 | 2>
 //=> 1
 ```
 */
-export type MinNumbers<N extends Number, T extends UnknownArray = []> =
-	T['length'] extends N
-		? T['length']
-		: MinNumbers<N, [...T, unknown]>;
+export type UnionMin<N extends Number> = InternalUnionMin<N>;
 
 /**
-Returns the maximum number of the given union numbers.
+The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.
+*/
+type InternalUnionMin<N extends Number, T extends UnknownArray = []> =
+	T['length'] extends N
+		? T['length']
+		: InternalUnionMin<N, [...T, unknown]>;
+
+/**
+Returns the maximum number in the given union of numbers.
 
 Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type A = MaxNumbers<1 | 3 | 2>
+type A = UnionMax<1 | 3 | 2>
 //=> 3
 ```
 */
-export type MaxNumbers<N extends Number, T extends UnknownArray = []> =
-IsNever<N> extends true
-	? T['length']
-	:	T['length'] extends N
-		? MaxNumbers<Exclude<N, T['length']>, T>
-		: MaxNumbers<N, [...T, unknown]>;
+export type UnionMax<N extends Number> = InternalUnionMax<N>;
+
+/**
+The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
+*/
+type InternalUnionMax<N extends Number, T extends UnknownArray = []> =
+	IsNever<N> extends true
+		? T['length']
+		:	T['length'] extends N
+			? InternalUnionMax<Exclude<N, T['length']>, T>
+			: InternalUnionMax<N, [...T, unknown]>;

@@ -1,4 +1,4 @@
-import type {NonRecursiveType, MinNumbers, MaxNumbers, TupleLength, FixedPartOfArray, NonFixedPartOfArray} from './internal';
+import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, NonStaticPartOfArray} from './internal';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
 
@@ -27,7 +27,7 @@ type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
 /**
 Returns whether the given array `T` is readonly.
 */
-type ArrayIsReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
+type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
 
 /**
 SharedUnionFieldsDeep options.
@@ -118,7 +118,7 @@ export type SharedUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOp
 		? Union
 		: [Union] extends [UnknownArray]
 			? Options['recurseIntoArrays'] extends true
-				? SetArrayAccess<SharedArrayUnionFieldsDeep<Union, Options>, ArrayIsReadonly<Union>>
+				? SetArrayAccess<SharedArrayUnionFieldsDeep<Union, Options>, IsArrayReadonly<Union>>
 				: Union
 			: [Union] extends [object]
 				? SharedObjectUnionFieldsDeep<Union, Options>
@@ -146,7 +146,7 @@ type SharedArrayUnionFieldsDeep<Union extends UnknownArray, Options extends Shar
 	// Restore the readonly modifier of the array.
 	SetArrayAccess<
 	InternalSharedArrayUnionFieldsDeep<Union, Options>,
-	ArrayIsReadonly<Union>
+	IsArrayReadonly<Union>
 	>;
 
 /**
@@ -164,15 +164,15 @@ type InternalSharedArrayUnionFieldsDeep<
 		// we should build a tuple that is [the_fixed_parts_of_union, ...the_rest_of_union[]].
 		// For example: `InternalSharedArrayUnionFieldsDeep<Array<string> | [number, ...string[]]>`
 		// => `[string | number, ...string[]]`.
-		? ResultTuple['length'] extends MaxNumbers<FixedPartOfArray<Union>['length']>
+		? ResultTuple['length'] extends UnionMax<StaticPartOfArray<Union>['length']>
 			? [
 				// The fixed-length part of the tuple.
 				...ResultTuple,
 				// The rest of the union.
 				// Due to `ResultTuple` is the maximum possible fixed-length part of the tuple,
-				// so we can use `FixedPartOfArray` to get the rest of the union.
+				// so we can use `StaticPartOfArray` to get the rest of the union.
 				...Array<
-				SharedUnionFieldsDeep<NonFixedPartOfArray<Union>[number], Options>
+				SharedUnionFieldsDeep<NonStaticPartOfArray<Union>[number], Options>
 				>,
 			]
 			// Build the fixed-length tuple recursively.
@@ -186,7 +186,7 @@ type InternalSharedArrayUnionFieldsDeep<
 		// item in the result tuple is exist in the union tuple.
 		// For example: `InternalSharedArrayUnionFieldsDeep<Array<string> | [number, string]>`
 		// => `[string | number, string]`.
-		: ResultTuple['length'] extends MinNumbers<TupleLength<Union>>
+		: ResultTuple['length'] extends UnionMin<TupleLength<Union>>
 			? ResultTuple
 			// As above, build tuple recursively.
 			: InternalSharedArrayUnionFieldsDeep<

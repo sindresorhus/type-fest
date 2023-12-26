@@ -1,4 +1,4 @@
-import type {FixedPartOfArray, NonFixedPartOfArray, NonRecursiveType, ToString} from './internal';
+import type {StaticPartOfArray, NonStaticPartOfArray, NonRecursiveType, ToString} from './internal';
 import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
@@ -53,8 +53,8 @@ export type Paths<T> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<FixedPartOfArray<T>>
-					| InternalPaths<Array<NonFixedPartOfArray<T>[number]>>
+					? InternalPaths<StaticPartOfArray<T>>
+					| InternalPaths<Array<NonStaticPartOfArray<T>[number]>>
 					: InternalPaths<T>
 				: T extends object
 					? InternalPaths<T>
