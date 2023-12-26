@@ -400,16 +400,16 @@ Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type A = UnionMin<3 | 1 | 2>
+type A = UnionMin<3 | 1 | 2>;
 //=> 1
 ```
 */
-export type UnionMin<N extends Number> = InternalUnionMin<N>;
+export type UnionMin<N extends number> = InternalUnionMin<N>;
 
 /**
 The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.
 */
-type InternalUnionMin<N extends Number, T extends UnknownArray = []> =
+type InternalUnionMin<N extends number, T extends UnknownArray = []> =
 	T['length'] extends N
 		? T['length']
 		: InternalUnionMin<N, [...T, unknown]>;
@@ -421,16 +421,16 @@ Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type A = UnionMax<1 | 3 | 2>
+type A = UnionMax<1 | 3 | 2>;
 //=> 3
 ```
 */
-export type UnionMax<N extends Number> = InternalUnionMax<N>;
+export type UnionMax<N extends number> = InternalUnionMax<N>;
 
 /**
 The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
 */
-type InternalUnionMax<N extends Number, T extends UnknownArray = []> =
+type InternalUnionMax<N extends number, T extends UnknownArray = []> =
 	IsNever<N> extends true
 		? T['length']
 		:	T['length'] extends N
