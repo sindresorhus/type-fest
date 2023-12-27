@@ -38,22 +38,21 @@ export type SharedUnionFieldsDeepOptions = {
 	/**
 	Whether to affect the individual elements of arrays and tuples.
 
-	If this option is set to `true` and all of the value in union are arrays or tuples,
-	we will build a minimum possible length array that each element in the array is exist in the union array.
+	If this option is set to `true` and all of the value in union are arrays or tuples, we will build a minimum possible length array that each element in the array is exist in the union array.
 
 	@default false
-  */
+ 	*/
 	recurseIntoArrays?: boolean;
 };
 
 /**
-Create a deep version of anther object that has the shared fields of the given union object type.
+Create a type with shared fields from a union of object types, deeply traversing nested structures.
 
-uses the {@link SharedUnionFieldsDeepOptions `Options`} to specify the behavior of the array.
+Use the {@link SharedUnionFieldsDeepOptions `Options`} to specify the behavior for arrays.
 
 Use-cases:
 - You want a safe object type that each key is exist in the union object.
-- You want focus on the common fields of the union type and don't want to care about the other fields.
+- You want to focus on the common fields of the union type and don't want to have to care about the other fields.
 
 @example
 ```
