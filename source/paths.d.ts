@@ -1,40 +1,8 @@
-import type {NonRecursiveType, ToString} from './internal';
+import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString} from './internal';
 import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
-
-/**
-Return the part of the given array with a fixed index.
-
-@example
-```
-type A = [string, number, boolean, ...string[]];
-type B = FilterFixedIndexArray<A>;
-//=> [string, number, boolean]
-```
-*/
-type FilterFixedIndexArray<T extends UnknownArray, Result extends UnknownArray = []> =
-	number extends T['length'] ?
-		T extends readonly [infer U, ...infer V]
-			? FilterFixedIndexArray<V, [...Result, U]>
-			: Result
-		: T;
-
-/**
-Return the part of the given array with a non-fixed index.
-
-@example
-```
-type A = [string, number, boolean, ...string[]];
-type B = FilterNotFixedIndexArray<A>;
-//=> string[]
-```
-*/
-type FilterNotFixedIndexArray<T extends UnknownArray> =
-T extends readonly [...FilterFixedIndexArray<T>, ...infer U]
-	? U
-	: [];
 
 /**
 Generate a union of all possible paths to properties in the given object.
@@ -85,8 +53,8 @@ export type Paths<T> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<FilterFixedIndexArray<T>>
-					| InternalPaths<Array<FilterNotFixedIndexArray<T>[number]>>
+					? InternalPaths<StaticPartOfArray<T>>
+					| InternalPaths<Array<VariablePartOfArray<T>[number]>>
 					: InternalPaths<T>
 				: T extends object
 					? InternalPaths<T>
