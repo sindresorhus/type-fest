@@ -36,9 +36,7 @@ SharedUnionFieldsDeep options.
 */
 export type SharedUnionFieldsDeepOptions = {
 	/**
-	Whether to affect the individual elements of arrays and tuples.
-
-	If this option is set to `true` and all of the value in union are arrays or tuples, we will build a minimum possible length array that each element in the array is exist in the union array.
+	When set to true, this option impacts each element within arrays or tuples. If all union values are arrays or tuples, it constructs an array of the shortest possible length, ensuring every element exists in the union array.
 
 	@default false
  	*/
@@ -51,7 +49,7 @@ Create a type with shared fields from a union of object types, deeply traversing
 Use the {@link SharedUnionFieldsDeepOptions `Options`} to specify the behavior for arrays.
 
 Use-cases:
-- You want a safe object type that each key is exist in the union object.
+- You want a safe object type where each key exists in the union object.
 - You want to focus on the common fields of the union type and don't want to have to care about the other fields.
 
 @example
@@ -156,7 +154,7 @@ type InternalSharedArrayUnionFieldsDeep<
 	Options extends SharedUnionFieldsDeepOptions,
 	ResultTuple extends UnknownArray = [],
 > =
-	// We should build a minimum possible length tuple that each element in the tuple is exist in the union tuple.
+	// We should build a minimum possible length tuple where each element in the tuple exists in the union tuple.
 	IsNever<TupleLength<Union>> extends true
 		// Rule 1: If all the arrays in the union have non-fixed lengths,
 		// like `Array<string> | [number, ...string[]]`
@@ -182,7 +180,7 @@ type InternalSharedArrayUnionFieldsDeep<
 		// Rule 2: If at least one of the arrays in the union have fixed lengths,
 		// like `Array<string> | [number, string]`,
 		// we should build a tuple of the smallest possible length to ensure any
-		// item in the result tuple is exist in the union tuple.
+		// item in the result tuple exists in the union tuple.
 		// For example: `InternalSharedArrayUnionFieldsDeep<Array<string> | [number, string]>`
 		// => `[string | number, string]`.
 		: ResultTuple['length'] extends UnionMin<TupleLength<Union>>
