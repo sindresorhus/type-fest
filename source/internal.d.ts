@@ -377,16 +377,16 @@ export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArra
 		: never; // Should never happen
 
 /**
-Returns the non-fixed-indexed part of the given array.
+Returns the variable, non-fixed-length portion of the given array, excluding static-length parts.
 
 @example
 ```
 type A = [string, number, boolean, ...string[]];
-type B = NonFixedPartOfArray<A>;
+type B = VariablePartOfArray<A>;
 //=> string[]
 ```
 */
-export type NonFixedPartOfArray<T extends UnknownArray> =
+export type VariablePartOfArray<T extends UnknownArray> =
 	T extends unknown
 		? T extends readonly [...StaticPartOfArray<T>, ...infer U]
 			? U

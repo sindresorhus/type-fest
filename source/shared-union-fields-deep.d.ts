@@ -1,4 +1,4 @@
-import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, NonFixedPartOfArray} from './internal';
+import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray} from './internal';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
 
@@ -172,7 +172,7 @@ type InternalSharedArrayUnionFieldsDeep<
 				// Due to `ResultTuple` is the maximum possible fixed-length part of the tuple,
 				// so we can use `StaticPartOfArray` to get the rest of the union.
 				...Array<
-				SharedUnionFieldsDeep<NonFixedPartOfArray<Union>[number], Options>
+				SharedUnionFieldsDeep<VariablePartOfArray<Union>[number], Options>
 				>,
 			]
 			// Build the fixed-length tuple recursively.
