@@ -1,4 +1,5 @@
-import type {IsNegative, Add, Lt, Lte} from './math';
+import type {Add, Lt, Lte} from './math';
+import type {IsNegative} from './numeric';
 import type {And} from './internal';
 import type {IsEqual} from './is-equal';
 

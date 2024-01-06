@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import type {NumberAbsolute} from '../../source/internal';
-import {type NegativeInfinity, type PositiveInfinity} from '../../source/math';
+import type {NegativeInfinity, PositiveInfinity} from '../../source/numeric';
 
 expectType<NumberAbsolute<3>>(3);
 expectType<NumberAbsolute<-3>>(3);

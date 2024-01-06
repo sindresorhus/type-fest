@@ -4,7 +4,7 @@ import type {UndefinedToOptional} from './internal';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
 import type {IsUnknown} from './is-unknown';
-import type {NegativeInfinity, PositiveInfinity} from './math';
+import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {TypedArray} from './typed-array';
 import type {UnknownArray} from './unknown-array';
 

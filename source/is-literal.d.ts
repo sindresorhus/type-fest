@@ -1,5 +1,5 @@
 import type {Primitive} from './primitive';
-import type {Numeric} from './math';
+import type {Numeric} from './numeric';
 import type {IsNotFalse, IsPrimitive} from './internal';
 import type {IsNever} from './is-never';
 

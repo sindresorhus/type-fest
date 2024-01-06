@@ -73,9 +73,8 @@ export type {
 	NegativeInteger,
 	NonNegativeInteger,
 	IsNegative,
-	Add,
-	Subtract,
-} from './source/math';
+} from './source/numeric';
+export type {Add, Subtract} from './source/math';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
 export type {ReadonlyTuple} from './source/readonly-tuple';
