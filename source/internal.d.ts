@@ -131,6 +131,7 @@ type NegativeInfinity = StringToNumber<'-Infinity'>; // => -Infinity
 ```
 
 @category String
+@category Numeric
 @category Template literal
 */
 export type StringToNumber<S extends string> = S extends `${infer N extends number}`
@@ -142,7 +143,7 @@ export type StringToNumber<S extends string> = S extends `${infer N extends numb
 			: never;
 
 /**
-Returns a boolean for whether the string `S` starts with `SearchString`
+Returns a boolean for whether the given string `S` starts with the given string `SearchString`
 
 @example
 ```
@@ -153,17 +154,17 @@ StartsWith<'abcde', 'bc'>
 //=> false
 
 StartsWith<string, 'bc'>
-//=> boolean
+//=> never
 
 StartsWith<'abcde', string>
-//=> boolean
+//=> never
 ```
 
 @category String
 @category Template literal
 */
 export type StartsWith<S extends string, SearchString extends string> = string extends S | SearchString
-	? boolean
+	? never
 	: S extends `${SearchString}${infer T}`
 		? true
 		: false;
@@ -177,13 +178,15 @@ StringLength<'abcde'>
 //=> 5
 
 StringLength<string>
-//=> number
+//=> never
 ```
 
 @category String
 @category Template literal
 */
-export type StringLength<S extends string> = StringToArray<S>['length'];
+export type StringLength<S extends string> = string extends S
+	? never
+	: StringToArray<S>['length'];
 
 /**
 Returns an array of the characters of the string.
@@ -194,13 +197,13 @@ StringToArray<'abcde'>
 //=> ['a', 'b', 'c', 'd', 'e']
 
 StringToArray<string>
-//=> string[]
+//=> never
 ```
 
 @category String
 */
 export type StringToArray<S extends string, Result extends string[] = []> = string extends S
-	? string[]
+	? never
 	: S extends `${infer F}${infer R}`
 		? StringToArray<R, [...Result, F]>
 		: Result;
@@ -463,7 +466,7 @@ export type And<A extends boolean, B extends boolean> = [A, B][number] extends t
 	? true
 	: true extends [IsEqual<A, false>, IsEqual<B, false>][number]
 		? false
-		: boolean;
+		: never;
 
 /**
 Returns a boolean for either A or B is true.
@@ -481,7 +484,7 @@ export type Or<A extends boolean, B extends boolean> = [A, B][number] extends fa
 	? false
 	: true extends [IsEqual<A, true>, IsEqual<B, true>][number]
 		? true
-		: boolean;
+		: never;
 
 /**
 Returns a boolean for whether A is false.
@@ -499,7 +502,7 @@ export type Not<A extends boolean> = A extends true
 	? false
 	: A extends false
 		? true
-		: boolean;
+		: never;
 
 /**
 Returns the maximum value from a tuple of integers.
@@ -516,11 +519,13 @@ ArrayMax<[1, 2, 5, 3, 99, -1]>
 //=> 99
 ```
 */
-export type ArrayMax<A extends number[], Result extends number = NegativeInfinity> = A extends [infer F extends number, ...infer R extends number[]]
-	? Gt<F, Result> extends true
-		? ArrayMax<R, F>
-		: ArrayMax<R, Result>
-	: Result;
+export type ArrayMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
+	? never :
+	A extends [infer F extends number, ...infer R extends number[]]
+		? Gt<F, Result> extends true
+			? ArrayMax<R, F>
+			: ArrayMax<R, Result>
+		: Result;
 
 /**
 Returns the minimal value from a tuple of integers.
@@ -534,11 +539,13 @@ ArrayMin<[1, 2, 5, 3, -5]>
 //=> -5
 ```
 */
-export type ArrayMin<A extends number[], Result extends number = PositiveInfinity> = A extends [infer F extends number, ...infer R extends number[]]
-	? Lt<F, Result> extends true
-		? ArrayMin<R, F>
-		: ArrayMin<R, Result>
-	: Result;
+export type ArrayMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
+	? never
+	: A extends [infer F extends number, ...infer R extends number[]]
+		? Lt<F, Result> extends true
+			? ArrayMin<R, F>
+			: ArrayMin<R, Result>
+		: Result;
 
 /**
 Returns the absolute value of a given value.

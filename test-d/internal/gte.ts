@@ -8,6 +8,7 @@ expectType<Gte<10, -2>>(true);
 expectType<Gte<2, 2>>(true);
 expectType<Gte<-2, -2>>(true);
 expectType<Gte<-2, -3>>(true);
+expectType<Gte<-2, number>>(null!);
 
 expectType<Gte<PositiveInfinity, -999>>(true);
 expectType<Gte<PositiveInfinity, 999>>(true);

@@ -1,5 +1,5 @@
 import type {IsNegative, Add, Lt, Lte} from './math';
-import type {ArrayMax} from './internal';
+import type {IsEqual} from './is-equal';
 
 /**
 Returns an array slice of a given range(with negative index support), just like `Array.slice` in js.
@@ -44,7 +44,13 @@ type ArraySliceHelper<Array_ extends readonly unknown[],
 	TraversedElement extends Array<Array_[number]> = [],
 	Result extends Array<Array_[number]> = [],
 	ArrayLength extends number = Array_['length'],
-	PositiveS extends number = IsNegative<Start> extends true ? ArrayMax<[Add<ArrayLength, Start>, 0]> : Start,
+	PositiveS extends number = IsNegative<Start> extends true
+		? Add<ArrayLength, Start> extends infer AddResult extends number
+			? number extends AddResult // (ArrayLength + Start) < 0
+				? 0
+				: AddResult
+			: never
+		: Start,
 	PositiveE extends number = IsNegative<End> extends true ? Add<ArrayLength, End> : End,
 > = true extends [IsNegative<PositiveS>, Lte<PositiveE, PositiveS>][number]
 	? []
@@ -56,7 +62,10 @@ type ArraySliceByPositiveIndex<Array_ extends readonly unknown[],
 	TraversedElement extends Array<Array_[number]> = [],
 	Result extends Array<Array_[number]> = [],
 > = Array_ extends readonly [infer H, ...infer Rest]
-	? [Lte<Start, TraversedElement['length']>, Lt<TraversedElement['length'], End>][number] extends true
+	? And<
+	IsEqual<Lte<Start, TraversedElement['length']>, true>,
+	IsEqual<Lt<TraversedElement['length'], End>, true>
+	> extends true
 		? ArraySliceByPositiveIndex<Rest, Start, End, [...TraversedElement, H], [...Result, H]>
 		: ArraySliceByPositiveIndex<Rest, Start, End, [...TraversedElement, H], Result>
 	: Result;

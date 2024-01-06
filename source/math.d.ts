@@ -185,6 +185,7 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 Return the result of `A + B`
 Note:
 - A or B can only support `-999` ~ `999`.
+- A and B can only be small integers(A < 1000, B < 1000).
 - if the result is negative, you can only get `number`.
 @example
 ```

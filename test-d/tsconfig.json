@@ -1,0 +1,7 @@
+{
+	"extends": "../tsconfig",
+	"exclude": [],
+	"compilerOptions": {
+		"strictNullChecks": true
+	}
+}
