@@ -10,8 +10,6 @@ import type {
 	NonNegative,
 	NonNegativeInteger,
 	PositiveInfinity,
-	Add,
-	Subtract,
 } from '../index';
 
 // Finite
@@ -67,31 +65,3 @@ expectType<0 | 0n | 1 | 1n>(nonNegative);
 declare const nonNegativeInteger: NonNegativeInteger<-1 | 0 | 1>;
 
 expectType<0 | 1>(nonNegativeInteger);
-
-// Add
-expectType<Add<1, 2>>(3);
-expectType<Add<10, -2>>(8);
-expectType<Add<2, -2>>(0);
-
-expectType<Add<-1, -2>>(null! as number); // Note: you can only get `number` for now
-
-expectType<Add<PositiveInfinity, -999>>(null! as PositiveInfinity);
-expectType<Add<-999, PositiveInfinity>>(null! as PositiveInfinity);
-expectType<Add<NegativeInfinity, 999>>(null! as NegativeInfinity);
-expectType<Add<999, NegativeInfinity>>(null! as NegativeInfinity);
-expectType<Add<NegativeInfinity, PositiveInfinity>>(null! as number);
-
-// Subtract
-expectType<Subtract<10, -2>>(12);
-expectType<Subtract<2, 2>>(0);
-expectType<Subtract<-1, -3>>(2);
-
-expectType<Subtract<1, 2>>(null! as number); // Note: you can only get `number` for now
-
-expectType<Subtract<PositiveInfinity, 999>>(null! as PositiveInfinity);
-expectType<Subtract<-999, PositiveInfinity>>(null! as NegativeInfinity);
-expectType<Subtract<NegativeInfinity, 999>>(null! as NegativeInfinity);
-expectType<Subtract<999, NegativeInfinity>>(null! as PositiveInfinity);
-expectType<Subtract<NegativeInfinity, PositiveInfinity>>(null! as NegativeInfinity);
-expectType<Subtract<NegativeInfinity, NegativeInfinity>>(null! as number);
-expectType<Subtract<PositiveInfinity, PositiveInfinity>>(null! as number);
