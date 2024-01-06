@@ -3,7 +3,7 @@ import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 import type {IsEqual} from './is-equal';
-import type {IsNegative, NegativeInfinity, PositiveInfinity} from './numeric';
+import type {IsNegative, NegativeInfinity, PositiveInfinity, Gt, Lt} from './math';
 import type {UnknownRecord} from './unknown-record';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
@@ -558,109 +558,6 @@ NumberAbsolute<NegativeInfinity>
 export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
 /**
-Returns a boolean for whether A > B.
-
-@example
-```
-Gt<1, -5>
-//=> true
-
-Gt<1, 1>
-//=> false
-
-Gt<1, 5>
-//=> false
-```
-*/
-// TODO: Support large integer.
-export type Gt<A extends number, B extends number> = number extends A | B
-	? boolean
-	: [
-		IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-		IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-	] extends infer R extends [boolean, boolean, boolean, boolean]
-		? Or<
-		And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
-		And<IsEqual<R[3], true>, IsEqual<R[1], false>>
-		> extends true
-			? true
-			: Or<
-			And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
-			And<IsEqual<R[2], true>, IsEqual<R[0], false>>
-			> extends true
-				? false
-				: true extends R[number]
-					? false
-					: [IsNegative<A>, IsNegative<B>] extends infer R extends [boolean, boolean]
-						? [true, false] extends R
-							? false
-							: [false, true] extends R
-								? true
-								: [false, false] extends R
-									? PositiveNumericStringGt<`${A}`, `${B}`>
-									: PositiveNumericStringGt<`${NumberAbsolute<B>}`, `${NumberAbsolute<A>}`>
-						: never
-		: never;
-
-/**
-Returns a boolean for whether A >= B.
-
-@example
-```
-Gte<1, -5>
-//=> true
-
-Gte<1, 1>
-//=> true
-
-Gte<1, 5>
-//=> false
-```
-*/
-export type Gte<A extends number, B extends number> = number extends A | B
-	? boolean
-	: A extends B ? true : Gt<A, B>;
-
-/**
-Returns a boolean for whether A < B.
-
-@example
-```
-Lt<1, -5>
-//=> false
-
-Lt<1, 1>
-//=> false
-
-Lt<1, 5>
-//=> true
-```
-*/
-
-export type Lt<A extends number, B extends number> = number extends A | B
-	? boolean
-	: Gte<A, B> extends true ? false : true;
-
-/**
-Returns a boolean for whether A <= B.
-
-@example
-```
-Lte<1, -5>
-//=> false
-
-Lte<1, 1>
-//=> true
-
-Lte<1, 5>
-//=> true
-```
-*/
-export type Lte<A extends number, B extends number> = number extends A | B
-	? boolean
-	: Gt<A, B> extends true ? false : true;
-
-/**
 Returns a boolean for whether A > B(A and B are both numeric string and have the same length).
 
 @example
@@ -697,7 +594,7 @@ PositiveNumericStringGt<'1', '500'>
 //=> false
 ```
 */
-type PositiveNumericStringGt<A extends string, B extends string> = A extends B
+export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false
 	: [BuildTuple<StringLength<A>, 0>, BuildTuple<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
 		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]

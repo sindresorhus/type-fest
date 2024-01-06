@@ -1,4 +1,3 @@
-import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {Join} from './join';
 import type {ArraySlice} from './array-slice';
 import type {StringToArray} from './internal';

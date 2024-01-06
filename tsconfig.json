@@ -2,7 +2,6 @@
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"noEmit": true,
-		"skipLibCheck": false,
 		"target": "ES2019", // Node.js 12
 		"lib": [
 			"ES2020",

@@ -1,5 +1,5 @@
-import type {IsNegative, Add} from './numeric';
-import type {Lt, Lte, ArrayMax} from './internal';
+import type {IsNegative, Add, Lt, Lte} from './math';
+import type {ArrayMax} from './internal';
 
 /**
 Returns an array slice of a given range(with negative index support), just like `Array.slice` in js.
