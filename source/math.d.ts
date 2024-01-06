@@ -310,7 +310,7 @@ Gt<1, 5>
 ```
 */
 export type Gt<A extends number, B extends number> = number extends A | B
-	? boolean
+	? never
 	: [
 		IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
 		IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
@@ -354,7 +354,7 @@ Gte<1, 5>
 ```
 */
 export type Gte<A extends number, B extends number> = number extends A | B
-	? boolean
+	? never
 	: A extends B ? true : Gt<A, B>;
 
 /**
@@ -374,7 +374,7 @@ Lt<1, 5>
 */
 
 export type Lt<A extends number, B extends number> = number extends A | B
-	? boolean
+	? never
 	: Gte<A, B> extends true ? false : true;
 
 /**
@@ -393,5 +393,5 @@ Lte<1, 5>
 ```
 */
 export type Lte<A extends number, B extends number> = number extends A | B
-	? boolean
+	? never
 	: Gt<A, B> extends true ? false : true;
