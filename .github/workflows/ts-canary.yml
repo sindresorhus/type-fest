@@ -21,4 +21,6 @@ jobs:
           node-version: lts/*
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }}
+      - name: show installed typescript version
+        run: npm list typescript --depth=0
       - run: npx tsc

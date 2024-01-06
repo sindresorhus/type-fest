@@ -110,6 +110,7 @@ export type {ArrayValues} from './source/array-values';
 export type {ArraySlice} from './source/array-slice';
 export type {SetFieldType} from './source/set-field-type';
 export type {Paths} from './source/paths';
+export type {SharedUnionFieldsDeep} from './source/shared-union-fields-deep';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';

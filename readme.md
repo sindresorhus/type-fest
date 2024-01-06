@@ -179,6 +179,7 @@ Click the type names for complete docs.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
+- [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 
 ### Type Guard
 
