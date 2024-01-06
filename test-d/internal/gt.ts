@@ -1,6 +1,5 @@
 import {expectType} from 'tsd';
-import type {Gt} from '../../source/internal';
-import type {NegativeInfinity, PositiveInfinity} from '../../source/numeric';
+import type {NegativeInfinity, PositiveInfinity, Gt} from '../../source/math';
 
 expectType<Gt<1, 2>>(false);
 expectType<Gt<2, 1>>(true);

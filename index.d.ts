@@ -43,7 +43,7 @@ export type {ConditionalPick} from './source/conditional-pick';
 export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
 export type {UnionToIntersection} from './source/union-to-intersection';
 export type {Stringified} from './source/stringified';
-export type {StringSlice} from './source/string';
+export type {StringSlice} from './source/string-slice';
 export type {FixedLengthArray} from './source/fixed-length-array';
 export type {MultidimensionalArray} from './source/multidimensional-array';
 export type {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array';
@@ -73,7 +73,7 @@ export type {
 	IsNegative,
 	Add,
 	Subtract,
-} from './source/numeric';
+} from './source/math';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
 export type {ReadonlyTuple} from './source/readonly-tuple';

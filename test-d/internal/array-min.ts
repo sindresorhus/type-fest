@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import type {ArrayMin} from '../../source/internal';
-import type {NegativeInfinity, PositiveInfinity} from '../../source/numeric';
+import type {NegativeInfinity, PositiveInfinity} from '../../source/math';
 
 expectType<ArrayMin<[1, 2, 5, 3, 7, -9, -5, 0]>>(-9);
 expectType<ArrayMin<[1, 2, 5, 3, 7, -9, -5, 0, PositiveInfinity, NegativeInfinity]>>(null! as NegativeInfinity);
