@@ -89,16 +89,6 @@ Note: This type is not the return type of the `.toString()` function.
 export type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
-Create a tuple of length `A` and a tuple composed of two other tuples,
-the inferred tuple `U` and a tuple of length `B`, then extracts the length of tuple `U`.
-
-@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
-*/
-export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
-	? ArrayLength<U>
-	: never;
-
-/**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
 */
 export type BuiltIns = Primitive | void | Date | RegExp;
