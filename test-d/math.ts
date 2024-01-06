@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
-import type {NegativeInfinity, PositiveInfinity, Gt, Gte, Lt, Lte, Add, Subtract} from '../source/math';
+import type {Gt, Gte, Lt, Lte, Add, Subtract} from '../source/math';
+import type {NegativeInfinity, PositiveInfinity} from '../source/numeric';
 
 declare const never: never;
 

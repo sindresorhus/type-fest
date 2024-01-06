@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import type {ArrayMin} from '../../source/internal';
-import type {NegativeInfinity, PositiveInfinity} from '../../source/math';
+import type {NegativeInfinity, PositiveInfinity} from '../../source/numeric';
 
 declare const never: never;
 
