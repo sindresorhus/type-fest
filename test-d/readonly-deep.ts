@@ -110,3 +110,15 @@ expectType<NamespaceWithOverload>(readonlyData.namespaceWithOverload);
 expectType<string>(readonlyData.namespaceWithOverload(1));
 expectType<number>(readonlyData.namespaceWithOverload('foo', 1));
 expectType<boolean[]>(readonlyData.namespaceWithOverload.baz);
+
+// Test void
+type VoidType = {
+	foo: void;
+	bar: string | void;
+};
+type VoidTypeExpected = {
+	readonly foo: void;
+	readonly bar: string | void;
+};
+declare const voidType: ReadonlyDeep<VoidType>;
+expectType<VoidTypeExpected>(voidType);

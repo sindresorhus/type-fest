@@ -3,6 +3,7 @@ import type {ConditionalExcept} from './conditional-except';
 import type {ConditionalSimplifyDeep} from './conditional-simplify';
 import type {UnknownRecord} from './unknown-record';
 import type {EmptyObject} from './empty-object';
+import type {IsPlainObject} from './internal';
 
 /**
 Used to mark properties that should be excluded.
@@ -97,7 +98,7 @@ export type ConditionalPickDeep<
 > = ConditionalSimplifyDeep<ConditionalExcept<{
 	[Key in keyof Type]: AssertCondition<Type[Key], Condition, Options> extends true
 		? Type[Key]
-		: Type[Key] extends UnknownRecord
+		: IsPlainObject<Type[Key]> extends true
 			? ConditionalPickDeep<Type[Key], Condition, Options>
 			: typeof conditionalPickDeepSymbol;
 }, (typeof conditionalPickDeepSymbol | undefined) | EmptyObject>, never, UnknownRecord>;
