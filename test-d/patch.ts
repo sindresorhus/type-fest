@@ -193,30 +193,32 @@ expectType<ReturnType<typeof patch<typeof T_13.input, typeof T_13.config>>>(T_13
 
 declare namespace T_14 {
 	const input: typeof arrange.input
-	const config: { replaceWith: { NEW?: 1 }, maxDepth: -1 }
+	const config: { replaceWith: { NEW?: "NEW" }, maxDepth: -1 }
 	const output: {
 		a: { b: 1; };
 		f:
-		| { NEW?: 1 | undefined; }
+		| { NEW?: "NEW"; }
 		| { g: 2; };
 		j: {
 			k:
 			| 3
-			| { NEW?: 1 | undefined; };
+			| { NEW?: "NEW"; };
 		};
 		m:
 		| {
 			NEW?:
-			| 1
+			| "NEW"
 			| undefined;
 		}
 		| {
 			n:
 			| 4
-			| { NEW?: 1 | undefined; };
+			| { NEW?: "NEW"; };
 		};
 	}
 }
+
+declare const TEST: ReturnType<typeof patch<typeof T_14.input, typeof T_14.config>>
 
 expectType(patch(T_14.input, T_14.config))
 expectType<ReturnType<typeof patch<typeof T_14.input, typeof T_14.config>>>(T_14.output)
