@@ -179,5 +179,3 @@ type ApplyPatch<
 	: tree extends object ? { [ix in keyof tree]: ApplyPatch<tree[ix], replaceWith> }
 	: tree
 	;
-
-type _3 = Local.Run<Example.MaybeFn, 3>
