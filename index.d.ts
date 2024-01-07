@@ -99,6 +99,7 @@ export type {IsAny} from './source/is-any';
 export type {IfAny} from './source/if-any';
 export type {IsNever} from './source/is-never';
 export type {IfNever} from './source/if-never';
+export type {IfEqual} from './source/if-equal';
 export type {IsUnknown} from './source/is-unknown';
 export type {IfUnknown} from './source/if-unknown';
 export type {ArrayIndices} from './source/array-indices';
