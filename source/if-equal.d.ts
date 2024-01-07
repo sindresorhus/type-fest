@@ -1,4 +1,4 @@
-import type { IsEqual } from './is-equal';
+import type {IsEqual} from './is-equal';
 
 /**
  * An if-else-like type that resolves depending on whether the two given types are equal.
@@ -7,7 +7,7 @@ import type { IsEqual } from './is-equal';
  *
  * @example
  * ```
- * import type { IfEqual } from 'type-fest';
+ * import type {IfEqual} from 'type-fest';
  *
  * type Result1 = IfEqual<string, string, 'Equal', 'NotEqual'>;
  * //=> 'Equal'
