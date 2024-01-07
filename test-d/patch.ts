@@ -1,7 +1,7 @@
 import { expectType } from 'tsd';
 import type { Patch } from '../index';
 
-declare const patch: <T, UserConfig extends Patch.Settings.Config = never>(
+declare const patch: <T, UserConfig extends Patch.Config.Options = never>(
 	treeRoot: T,
 	userConfig?: UserConfig
 ) =>
@@ -12,7 +12,7 @@ type Maybe<T> = Patch.Example.Maybe_<T>
 declare namespace arrange {
 	const customSymbol: unique symbol
 	const input: { a: { b: 1 }, f?: { g: 2 }, j: { k?: 3 }, m?: { n?: 4 } };
-	const defaultConfig: Patch.Settings.Defaults
+	const defaultConfig: Patch.Config.default
 	const customReplaceFnConfig: Patch.Example.CustomReplaceFn
 	const unknown: unknown
 	const never: never
@@ -91,7 +91,7 @@ expectType<typeof T_04.output>(patch(T_04.input, T_04.config))
 expectType<ReturnType<typeof patch<typeof T_04.input, typeof T_04.config>>>(T_04.output)
 
 declare namespace T_05 {
-	const config: Patch.Settings.CreateConfig<null, 2>
+	const config: Patch.Config.new<null, 2>
 	const input: typeof arrange.input
 	const output: { a: { b: 1; }; f: { g: 2; } | null; j: { k: 3 | null; }; m: { n: 4 | null; } | null; }
 }
@@ -100,7 +100,7 @@ expectType<typeof T_05.output>(patch(T_05.input, T_05.config))
 expectType<ReturnType<typeof patch<typeof T_05.input, typeof T_05.config>>>(T_05.output)
 
 declare namespace T_06 {
-	const config: Patch.Settings.CreateConfig<null, 2>
+	const config: Patch.Config.new<null, 2>
 	const input: { abc?: { def?: { ghi?: { jkl: 1 | undefined } } } }
 	const output: { abc: { def: { ghi?: { jkl: 1 | undefined } } | null } | null }
 }
@@ -119,7 +119,7 @@ expectType<ReturnType<typeof patch<typeof T_07.input, typeof T_07.config>>>(T_07
 
 declare namespace T_08 {
 	const input: { abc: [1, [2?, 3?, [4, [[5, 6, 7?]]]?]] }
-	const config: Patch.Settings.CreateConfig<undefined, -1>
+	const config: Patch.Config.new<undefined, -1>
 	const output: { abc: [1, [2 | undefined, 3 | undefined, [4, [[5, 6, 7 | undefined]]] | undefined]] }
 }
 

@@ -1,19 +1,19 @@
 export {
 	type Patch,
-	type Settings,
+	type Config,
 	type Example
 }
 
 /** @internal */
-namespace Local {
+declare namespace Local {
 	/** @internal */
-	export type STOP = typeof STOP
+	export type PLACEHOLDER = typeof PLACEHOLDER
 	/** @internal */
-	export declare const STOP: unique symbol
+	export const PLACEHOLDER: unique symbol
 	/** @internal */
 	export type URI = typeof URI
 	/** @internal */
-	export declare const URI: unique symbol
+	export const URI: unique symbol
 	/** @internal */
 	export interface ReplaceFn {
 		[URI]: never
@@ -21,11 +21,11 @@ namespace Local {
 		output: unknown
 	}
 	/** @internal */
-	export type call<Fn extends ReplaceFn, Arg>
+	export type Run<Fn extends ReplaceFn, Arg>
 		= (Fn & { input: Arg })["output"]
 
 	/** @internal */
-	export type spread<L, R>
+	export type Spread<L, R>
 		= { [K in keyof L]-?: K extends keyof R ? {} extends R[K] ? Exclude<R[K], undefined> : R[K] : L[K] }
 
 	/** TODO: Do you actually need this one? */
@@ -34,19 +34,25 @@ namespace Local {
 		= ([U] extends [infer V] ? V : never) extends
 		| infer V ? V extends V ? [U] extends [V] ? false : true : never : never
 		;
-
 }
 
-namespace Settings {
-	export type ReplaceFn<Fn extends Local.ReplaceFn = Local.ReplaceFn> = Fn
-	export type Config<t extends Partial<CreateConfig> = Partial<CreateConfig>> = t
+declare namespace Config {
+	export type ReplaceFn<fn extends Local.ReplaceFn = Local.ReplaceFn> = fn
 
-	export interface CreateConfig<replaceWith = unknown, maxDepth extends number = number> {
+	export { Options as options }
+	export type Options<t extends Partial<Config.new> = Partial<Config.new>> = t
+
+	export { Define as new }
+	interface Define<
+		replaceWith = unknown,
+		maxDepth extends number = number
+	> {
 		replaceWith: replaceWith
 		maxDepth: maxDepth
 	}
 
-	export type Defaults = CreateConfig<undefined, 1>
+	export { Default as default }
+	type Default = Config.new<undefined, 1>
 }
 
 declare namespace Example {
@@ -54,11 +60,11 @@ declare namespace Example {
 	interface Nothing { tag: "Nothing" }
 	interface Just<T> { tag: "Just"; value: T }
 
-	interface Maybe extends Settings.ReplaceFn {
+	interface Maybe extends Config.ReplaceFn {
 		output: Nothing | Just<this["input"]>
 	}
 
-	type CustomReplaceFn = Settings.CreateConfig<Example.Maybe, -1>
+	type CustomReplaceFn = Config.new<Example.Maybe, -1>
 }
 
 /**
@@ -84,50 +90,49 @@ declare namespace Example {
  *  >
  */
 type Patch<
-	treeRoot,
-	userConfig extends
-	| Settings.Config
-	= Settings.Defaults
+	TreeRoot,
+	UserConfig extends
+	| Config.options
+	= Config.default
 >
-	= unknown extends treeRoot ? unknown
-
-	: Local.spread<Settings.Defaults, userConfig> extends
-	| Settings.Config<infer config>
-	? Local.isUnion<treeRoot> extends true ?
-	(treeRoot extends treeRoot ? Patch<treeRoot, userConfig> : never)
+	= unknown extends TreeRoot ? unknown
+	: Local.Spread<Config.default, UserConfig> extends
+	| Config.options<infer config>
+	? Local.isUnion<TreeRoot> extends true ?
+	(TreeRoot extends TreeRoot ? Patch<TreeRoot, UserConfig> : never)
 
 	: ApplyPatch<
-		Plug<[], config["maxDepth"], treeRoot>,
+		Plug<[], config["maxDepth"] & {}, TreeRoot>,
 		config["replaceWith"]
 	>
 	: never
 	;
 
 type Plug<
-	current extends void[],
-	max extends number,
-	tree
-> = current["length"] extends max ? tree
-	: tree extends object
-	? { [ix in keyof tree]
+	Depth extends void[],
+	MaxDepth extends number,
+	Tree
+> = Depth["length"] extends MaxDepth ? Tree
+	: Tree extends object
+	? { [ix in keyof Tree]
 		-?:
-		Plug<[...current, void], max, (
-			{} extends Pick<tree, ix>
-			? (Local.STOP | Exclude<tree[ix], undefined>)
-			: tree[ix]
+		Plug<[...Depth, void], MaxDepth, (
+			{} extends Pick<Tree, ix>
+			? (Local.PLACEHOLDER | Exclude<Tree[ix], undefined>)
+			: Tree[ix]
 		)>
 	}
-	: tree
+	: Tree
 	;
 
 type ApplyPatch<
 	tree,
 	replaceWith
 >
-	= Local.STOP extends tree
-	? [replaceWith] extends [Settings.ReplaceFn]
-	? Local.call<replaceWith, ApplyPatch<Exclude<tree, Local.STOP>, replaceWith>>
-	: replaceWith | ApplyPatch<Exclude<tree, Local.STOP>, replaceWith>
+	= Local.PLACEHOLDER extends tree
+	? [replaceWith] extends [Config.ReplaceFn]
+	? Local.Run<replaceWith, ApplyPatch<Exclude<tree, Local.PLACEHOLDER>, replaceWith>>
+	: replaceWith | ApplyPatch<Exclude<tree, Local.PLACEHOLDER>, replaceWith>
 	: tree extends object ? { [ix in keyof tree]: ApplyPatch<tree[ix], replaceWith> }
 	: tree
 	;

@@ -25,7 +25,7 @@ export type {RequireOneOrNone} from './source/require-one-or-none';
 export type {OmitIndexSignature} from './source/omit-index-signature';
 export type {PickIndexSignature} from './source/pick-index-signature';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
-export type {Patch} from './source/patch'
+export type {Patch} from './source/patch';
 export type {RequiredDeep} from './source/required-deep';
 export type {PickDeep} from './source/pick-deep';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
@@ -130,7 +130,7 @@ export type {Join} from './source/join';
 export type {Split} from './source/split';
 export type {Trim} from './source/trim';
 export type {Replace} from './source/replace';
-export type {ReplaceDeep} from './source/replace-deep'
+export type {ReplaceDeep} from './source/replace-deep';
 export type {Includes} from './source/includes';
 export type {Get} from './source/get';
 export type {LastArrayElement} from './source/last-array-element';

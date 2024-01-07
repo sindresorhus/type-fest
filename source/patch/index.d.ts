@@ -1,9 +1,10 @@
-import { type Settings } from "./patch"
+import {type Config} from './patch'
+import * as P from './patch'
 
-export * as Patch from "./patch"
+export * as Patch from './patch'
 export type Patch<
 	TreeRoot,
 	UserConfig extends
-	| Settings.Config
-	= Settings.Defaults
-> = import("./patch").Patch<TreeRoot, UserConfig>;
+	| Config.options
+	= Config.default
+> = P.Patch<TreeRoot, UserConfig>;
