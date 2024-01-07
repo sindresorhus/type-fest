@@ -27,13 +27,6 @@ declare namespace Local {
 	/** @internal */
 	export type Spread<L, R>
 		= { [K in keyof L]-?: K extends keyof R ? {} extends R[K] ? Exclude<R[K], undefined> : R[K] : L[K] }
-
-	/** TODO: Do you actually need this one? */
-	/** @internal */
-	export type isUnion<U>
-		= ([U] extends [infer V] ? V : never) extends
-		| infer V ? V extends V ? [U] extends [V] ? false : true : never : never
-		;
 }
 
 declare namespace Config {
@@ -97,14 +90,13 @@ type Patch<
 >
 	= unknown extends TreeRoot ? unknown
 	: Local.Spread<Config.default, UserConfig> extends
-	| Config.options<infer config>
-	? Local.isUnion<TreeRoot> extends true ?
-	(TreeRoot extends TreeRoot ? Patch<TreeRoot, UserConfig> : never)
-
-	: ApplyPatch<
-		Plug<[], config["maxDepth"] & {}, TreeRoot>,
-		config["replaceWith"]
-	>
+	| Config.options<infer config> ?
+	(
+		ApplyPatch<
+			Plug<[], config["maxDepth"] & {}, TreeRoot>,
+			config["replaceWith"]
+		>
+	)
 	: never
 	;
 
