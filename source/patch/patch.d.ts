@@ -30,34 +30,33 @@ declare namespace Local {
 }
 
 declare namespace Config {
-	export type ReplaceFn<fn extends Local.ReplaceFn = Local.ReplaceFn> = fn
+	export {
+		Options as options,
+		New as new,
+		Default as default,
+		ReplaceFn,
+	}
 
-	export { Options as options }
-	export type Options<t extends Partial<Config.new> = Partial<Config.new>> = t
-
-	export { Define as new }
-	interface Define<
+	type ReplaceFn<fn extends Local.ReplaceFn = Local.ReplaceFn> = fn
+	type Options<t extends Partial<Config.new> = Partial<Config.new>> = t
+	type Default = Config.new<undefined, 1>
+	interface New<
 		replaceWith = unknown,
 		maxDepth extends number = number
 	> {
 		replaceWith: replaceWith
 		maxDepth: maxDepth
 	}
-
-	export { Default as default }
-	type Default = Config.new<undefined, 1>
 }
 
 declare namespace Example {
-	type Maybe_<T> = Nothing | Just<T>
+	type ExampleConfig = Config.new<Example.MaybeFn, -1>
+	type Maybe<T> = Nothing | Just<T>
 	interface Nothing { tag: "Nothing" }
 	interface Just<T> { tag: "Just"; value: T }
-
-	interface Maybe extends Config.ReplaceFn {
-		output: Nothing | Just<this["input"]>
+	interface MaybeFn extends Config.ReplaceFn {
+		output: Maybe<this["input"]>
 	}
-
-	type CustomReplaceFn = Config.new<Example.Maybe, -1>
 }
 
 /**
@@ -66,20 +65,72 @@ declare namespace Example {
  * @example
  *  import type { Patch } from "typefest"
  *
- *
- *  type Input = { a: { b: 1 }, f?: { g: 2 }, j: { k?: 3 }, m?: { n?: 4 } }
- *  type Actual = Patch<input, { maxDepth: -1, replaceWith:  }>
- *
  *  type Equals<T, U> = [T, U] extends [U, T] ? "✅" : "🚫"
- *  type Output = Equals<
- *    // ^? type Output = "✅"
- *    Actual,
+ *
+ *  // Imported to demo the `replaceWith` option (see example #3)
+ *  import Maybe = Patch.Example.Maybe
+ *  import MaybeFn = Patch.Example.MaybeFn
+ *
+ *  //////
+ *  // EXAMPLE #1:
+ *  type DemoShallowPatch = Equals<
+ *    // ^? type DemoShallowPatch = "✅"
+ *    Patch<{
+ *      a: { b: 1 }
+ *      f?: { g: 2 }
+ *      j: { k?: 3 }
+ *      m?: { n?: 4 }
+ *    }>,
  *    {
- *      a: { b: 1 },
- *      f: Maybe<{ g: 2 }>,
- *      j: { k: Maybe<3> },
- *      m: Maybe<{ n: Maybe<4> }>,
+ *      a: { b: 1 }
+ *      f: { g: 2 } | undefined
+ *      j: { k?: 3 }
+ *      m: { n?: 4 } | undefined
  *    }
+ *  >
+ *
+ *  //////
+ *  // EXAMPLE #2:
+ *  type DemoDeepPatch = Equals<
+ *    // ^? type DemoDeepPatch = "✅"
+ *    Patch<
+ *    	{
+ *    	  a: { b: 1 }
+ *    	  f?: { g: 2 }
+ *    	  j: { k?: 3 }
+ *    	  m?: { n?: 4 }
+ *    	},
+ *    	{ maxDepth: never, replaceWith: null }
+ *    >,
+ *    {
+ *      a: { b: 1 }
+ *      f: { g: 2 } | null
+ *      j: { k: 3 | null }
+ *      m: { n: 4 | null } | null
+ *    }
+ *  >
+ *
+ *  //////
+ *  // EXAMPLE #3:
+ *  type DemoPatchWithCustomReplace = Equals<
+ *    // ^? type DemoPatchWithCustomReplace = "✅"
+ *    Patch<
+ *      {
+ *        a: { b: 1 }
+ *        f?: { g: 2 }
+ *        j: { k?: 3 }
+ *        m?: { n?: 4 }
+ *      },
+ *      { maxDepth: -1, replaceWith: MaybeFn }
+ *    >,
+ *    (
+ *      {
+ *        a: { b: 1 }
+ *        f: Maybe<{ g: 2 }>
+ *        j: { k: Maybe<3> }
+ *        m: Maybe<{ n: Maybe<4> }>
+ *      }
+ *    )
  *  >
  */
 type Patch<
@@ -129,3 +180,4 @@ type ApplyPatch<
 	: tree
 	;
 
+type _3 = Local.Run<Example.MaybeFn, 3>
