@@ -122,7 +122,7 @@ Click the type names for complete docs.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`OverrideProperties`](source/override-properties.d.ts) - Override only existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
 - [`Patch`](source/patch/index.d.ts) - Type constructor that "patches" optional properties. Users can specify which type to use as a replacement; defaults to `undefined`. Depth is configurable; defaults to shallow.
-- [`ReplaceDeep`](source/replace-deep.d.ts) - Type constructor that recursively replaces an arbitrary type inside a larger type.
+- [`ReplaceDeep`](source/replace-deep.d.ts) - Type constructor that recursively replaces an arbitrary type inside a larger one.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.

@@ -17,7 +17,6 @@ export type {WritableDeep} from './source/writable-deep';
 export type {Merge} from './source/merge';
 export type {MergeDeep, MergeDeepOptions} from './source/merge-deep';
 export type {MergeExclusive} from './source/merge-exclusive';
-export type {ReplaceOptionalDeep} from './source/replace-optional-deep';
 export type {RequireAtLeastOne} from './source/require-at-least-one';
 export type {RequireExactlyOne} from './source/require-exactly-one';
 export type {RequireAllOrNone} from './source/require-all-or-none';
