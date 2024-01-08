@@ -217,6 +217,13 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`. (Conditional version: [`IfNever`](source/if-never.d.ts).)
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Conditional version: [`IfUnknown`](source/if-unknown.d.ts).)
 
+Currently, `IfType` guards are available for the following checks:
+
+-   [`IfAny`](source/if-any.d.ts) - Determines if a type is `any`, and returns `TypeIfAny` if true, otherwise `TypeIfNotAny`.
+-   [`IfNever`](source/if-never.d.ts) - Checks if a type is `never`, and returns `TypeIfNever` if true, otherwise `TypeIfNotNever`.
+-   [`IfUnknown`](source/if-unknown.d.ts) - Evaluates whether a type is `unknown`, and returns `TypeIfUnknown` if true, otherwise `TypeIfNotUnknown`.
+-   [`IfEqual`](source/if-equal.d.ts) - Compares two types for strict equality, returning `TypeIfEqual` if they are equal, or `TypeIfNotEqual` if not.
+
 ### JSON
 
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
