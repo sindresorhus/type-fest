@@ -22,6 +22,7 @@ type TestingType = {
 	array2: Array<{propertyA: string; propertyB: number | undefined}> | undefined;
 	readonly1: readonly any[] | undefined;
 	readonly2: ReadonlyArray<{propertyA: string; propertyB: number | undefined}> | undefined;
+	readonly readonlyProperty: string | undefined;
 	tuple: ['test1', {propertyA: string; propertyB: number | undefined}] | undefined;
 };
 declare const indexType: {[k: string]: string | undefined; propertyA: string; propertyB: string | undefined};
@@ -50,6 +51,7 @@ expectAssignable<{
 	array2?: TestingType['array2'];
 	readonly1?: TestingType['readonly1'];
 	readonly2?: TestingType['readonly2'];
+	readonly readonlyProperty?: TestingType['readonlyProperty'];
 	tuple?: TestingType['tuple'];
 }>(foo);
 
@@ -81,6 +83,7 @@ expectAssignable<{
 	array2?: Array<{propertyA: string; propertyB?: number | undefined}> | undefined;
 	readonly1?: TestingType['readonly1'];
 	readonly2?: ReadonlyArray<{propertyA: string; propertyB?: number | undefined}> | undefined;
+	readonly readonlyProperty?: TestingType['readonlyProperty'];
 	tuple?: ['test1', {propertyA: string; propertyB?: number | undefined}] | undefined;
 }>(bar);
 
