@@ -123,3 +123,8 @@ expectType<{tuple: [number | boolean, ...Array<string | boolean>]}>(nonFixedLeng
 
 declare const nonFixedLengthTuple2: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, ...string[]]} | {tuple: [number, string, ...boolean[]]}>;
 expectType<{tuple: [number, string, ...Array<string | boolean>]}>(nonFixedLengthTuple2);
+
+// Test for same type
+type TestingType2 = TestingType & {foo: any};
+declare const same: SharedUnionFieldsDeepRecurseIntoArrays<TestingType | TestingType2>;
+expectType<TestingType>(same);
