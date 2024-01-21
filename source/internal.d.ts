@@ -471,4 +471,3 @@ type InternalIsUnion<T, U = T> =
 	? boolean extends Result ? true
 		: Result
 	: never; // Should never happen
-
