@@ -17,7 +17,7 @@ type GetOptions = {
 Like the `Get` type but receives an array of strings as a path parameter.
 */
 type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
-	Keys extends []
+	Keys extends readonly []
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
 			? GetWithPath<

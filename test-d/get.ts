@@ -136,3 +136,7 @@ expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x']>>().toEqua
 // Test array index out of bounds
 expectTypeOf<Get<{a: []}, 'a[0]'>>().toEqualTypeOf<unknown>();
 expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<unknown>();
+
+// Test empty path array
+expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, []>>();
+expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>();
