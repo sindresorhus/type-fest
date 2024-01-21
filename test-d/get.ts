@@ -132,3 +132,7 @@ expectTypeOf<Get<WithDictionary, 'foo.whatever'>>().toEqualTypeOf<{bar: number} 
 expectTypeOf<Get<WithDictionary, 'foo.whatever.bar'>>().toEqualTypeOf<number | undefined>();
 expectTypeOf<Get<WithDictionary, 'baz.whatever.qux[3].x'>>().toEqualTypeOf<boolean | undefined>();
 expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x']>>().toEqualTypeOf<boolean | undefined>();
+
+// Test array index out of bounds
+expectTypeOf<Get<{a: []}, 'a[0]'>>().toEqualTypeOf<unknown>();
+expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<unknown>();
