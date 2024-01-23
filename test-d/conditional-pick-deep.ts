@@ -12,6 +12,7 @@ interface InterfaceA {
 
 type Example = {
 	optional?: boolean;
+	optionalWithUndefined?: boolean | undefined;
 	literal: 'foo';
 	string: string;
 	map: Map<string, string>;
@@ -73,17 +74,17 @@ expectType<{
 	object: {
 		string: string;
 		subObject: {
-			optional?: string | undefined;
+			optional?: string;
 			string: string;
 		};
 	};
 }>(stringPickOptional);
 
 declare const stringPickOptionalOnly: ConditionalPickDeep<Example, string | undefined, {condition: 'equality'}>;
-expectType<{object: {subObject: {optional?: string | undefined}}}>(stringPickOptionalOnly);
+expectType<{object: {subObject: {optional?: string}}}>(stringPickOptionalOnly);
 
 declare const booleanPick: ConditionalPickDeep<Example, boolean | undefined>;
-expectType<{optional?: boolean | undefined}>(booleanPick);
+expectType<{optional?: boolean; optionalWithUndefined?: boolean | undefined}>(booleanPick);
 
 declare const numberPick: ConditionalPickDeep<Example, number>;
 expectType<{number: 1; interface: {a: number}}>(numberPick);
