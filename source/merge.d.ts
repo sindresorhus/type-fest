@@ -1,6 +1,6 @@
 import type {OmitIndexSignature} from './omit-index-signature';
 import type {PickIndexSignature} from './pick-index-signature';
-import type {Simplify} from './simplify';
+import type {EnforceOptional} from './enforce-optional';
 
 // Merges two objects without worrying about index signatures.
 type SimpleMerge<Destination, Source> = {
@@ -41,8 +41,6 @@ export type FooBar = Merge<Foo, Bar>;
 
 @category Object
 */
-export type Merge<Destination, Source> =
-Simplify<
+export type Merge<Destination, Source> = EnforceOptional<
 SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
-& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
->;
+& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>>;
