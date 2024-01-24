@@ -10,6 +10,7 @@ import type {
 	UnknownArrayOrTuple,
 } from './internal';
 import type {UnknownRecord} from './unknown-record';
+import type {EnforceOptional} from './enforce-optional';
 
 /**
 Deeply simplifies an object excluding iterables and functions. Used internally to improve the UX and accept both interfaces and type aliases as inputs.
@@ -289,7 +290,7 @@ type MergeDeepOrReturn<
 			: DefaultType
 		: Destination extends UnknownArrayOrTuple
 			? Source extends UnknownArrayOrTuple
-				? MergeDeepArrayOrTuple<Destination, Source, Merge<Options, {spreadTopLevelArrays: false}>>
+				? MergeDeepArrayOrTuple<Destination, Source, EnforceOptional<Merge<Options, {spreadTopLevelArrays: false}>>>
 				: DefaultType
 			: DefaultType>;
 
