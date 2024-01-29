@@ -64,6 +64,11 @@ type MergeDeepRecord<
 & Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
 /**
+The maximal depth to use when looking for rest types in {@link PickRestType}
+*/
+type PickRestTypeMaxDepth = 50;
+
+/**
 Pick the rest type.
 
 @example
@@ -75,8 +80,12 @@ type Rest4 = PickRestType<[string, ...number[]]>; // => number[]
 type Rest5 = PickRestType<string[]>; // => string[]
 ```
 */
-type PickRestType<Type extends UnknownArrayOrTuple> = number extends Type['length']
-	? ArrayTail<Type> extends [] ? Type : PickRestType<ArrayTail<Type>>
+type PickRestType<Type extends UnknownArrayOrTuple, DepthTracker extends Array<true> = []> = number extends Type['length']
+	? (
+		PickRestTypeMaxDepth extends DepthTracker['length']
+			? unknown[]
+			: ArrayTail<Type> extends [] ? Type : PickRestType<ArrayTail<Type>, [true, ...DepthTracker]>
+	)
 	: [];
 
 /**
