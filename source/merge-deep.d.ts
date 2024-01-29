@@ -64,7 +64,7 @@ type MergeDeepRecord<
 & Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
 /**
-The maximal depth to use when looking for rest types in {@link PickRestType}
+The maximal depth to use when looking for rest types in {@link PickRestType}. 50 is arbitrary selected through manual testing. 100 was too much.
 */
 type PickRestTypeMaxDepth = 50;
 
