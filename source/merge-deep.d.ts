@@ -63,8 +63,8 @@ type MergeDeepRecord<
 > = DoMergeDeepRecord<OmitIndexSignature<Destination>, OmitIndexSignature<Source>, Options>
 & Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
-// Utility to avoid computing ArrayTail twice.
-type PickRestType___<Tail extends UnknownArrayOrTuple, Type> = Tail extends [] ? Type : PickRestType<Tail>;
+// Helper to avoid computing ArrayTail twice.
+type PickRestTypeHelper<Tail extends UnknownArrayOrTuple, Type> = Tail extends [] ? Type : PickRestType<Tail>;
 
 /**
 Pick the rest type.
@@ -79,11 +79,17 @@ type Rest5 = PickRestType<string[]>; // => string[]
 ```
 */
 type PickRestType<Type extends UnknownArrayOrTuple> = number extends Type['length']
-	? PickRestType___<ArrayTail<Type>, Type>
+	? PickRestTypeHelper<ArrayTail<Type>, Type>
 	: [];
 
-// Utility to avoid computing ArrayTail twice.
-type OmitRestType___<Tail extends UnknownArrayOrTuple, Type extends UnknownArrayOrTuple, Result extends UnknownArrayOrTuple = []> = Tail extends [] ? Result : OmitRestType<Tail, [...Result, FirstArrayElement<Type>]>;
+// Helper to avoid computing ArrayTail twice.
+type OmitRestTypeHelper<
+    Tail extends UnknownArrayOrTuple,
+	Type extends UnknownArrayOrTuple,
+	Result extends UnknownArrayOrTuple = []
+> = Tail extends []
+    ? Result
+	: OmitRestType<Tail, [...Result, FirstArrayElement<Type>]>;
 
 /**
 Omit the rest type.
@@ -99,7 +105,7 @@ type Tuple6 = OmitRestType<string[]>; // => []
 ```
 */
 type OmitRestType<Type extends UnknownArrayOrTuple, Result extends UnknownArrayOrTuple = []> = number extends Type['length']
-	? OmitRestType___<ArrayTail<Type>, Type, Result>
+	? OmitRestTypeHelper<ArrayTail<Type>, Type, Result>
 	: Type;
 
 // Utility to avoid picking two times the type.
