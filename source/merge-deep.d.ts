@@ -84,11 +84,11 @@ type PickRestType<Type extends UnknownArrayOrTuple> = number extends Type['lengt
 
 // Helper to avoid computing ArrayTail twice.
 type OmitRestTypeHelper<
-    Tail extends UnknownArrayOrTuple,
+	Tail extends UnknownArrayOrTuple,
 	Type extends UnknownArrayOrTuple,
-	Result extends UnknownArrayOrTuple = []
+	Result extends UnknownArrayOrTuple = [],
 > = Tail extends []
-    ? Result
+	? Result
 	: OmitRestType<Tail, [...Result, FirstArrayElement<Type>]>;
 
 /**
