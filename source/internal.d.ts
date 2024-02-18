@@ -5,6 +5,7 @@ import type {IsAny} from './is-any';
 import type {UnknownRecord} from './unknown-record';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
+import type {IsEqual} from './is-equal';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -471,3 +472,105 @@ type InternalIsUnion<T, U = T> =
 	? boolean extends Result ? true
 		: Result
 	: never; // Should never happen
+
+/**
+Set the given array to readonly if `IsReadonly` is `true`, otherwise set the given array to normal, then return the result.
+
+@example
+```
+type ReadonlyArray = readonly string[];
+type NormalArray = string[];
+
+type ReadonlyResult = SetArrayAccess<NormalArray, true>;
+//=> readonly string[]
+
+type NormalResult = SetArrayAccess<ReadonlyArray, false>;
+//=> string[]
+```
+*/
+export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
+T extends readonly [...infer U] ?
+	IsReadonly extends true
+		? readonly [...U]
+		: [...U]
+	: T;
+
+/**
+Returns whether the given array `T` is readonly.
+*/
+export type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
+
+/**
+Returns the result of `A >= B`
+
+@example
+```
+type A = GTE<15, 10>;
+//=> true
+
+type B = GTE<10, 15>;
+//=> false
+
+type C = GTE<10, 10>;
+//=> true
+```
+*/
+export type GTE<A extends number, B extends number> =
+	BuildTuple<A> extends [...infer _, ...BuildTuple<B>]
+		? true
+		: false;
+
+/**
+Returns the result of `A > B`
+
+@example
+```
+type A = GT<15, 10>;
+//=> true
+
+type B = GT<10, 15>;
+//=> false
+*/
+export type GT<A extends number, B extends number> =
+	IsEqual<A, B> extends true
+		? false
+		: GTE<A, B>;
+
+/**
+Get the exact version of the given `Key` in the given object `T`
+
+Use-case:
+	You known that a number key (e.g. 10) in an object, But you don't know how it
+	is defined in the object, as a string or as a number (e.g. 10 or '10'). You can
+	use this type to get the exact version of the key. see example.
+
+@example
+```
+type Object = {
+	0: number;
+	'1': string;
+};
+
+type Value = ExactKey<Object, '0'>;
+//=> 0
+type Value2 = ExactKey<Object, 0>;
+//=> 0
+
+type Value3 = ExactKey<Object, '1'>;
+//=> '1'
+type Value4 = ExactKey<Object, 1>;
+//=> '1'
+```
+
+@category Object
+*/
+export type ExactKey<T extends object, Key extends PropertyKey> =
+Key extends keyof T
+	? Key
+	: ToString<Key> extends keyof T
+		? ToString<Key>
+		: Key extends `${infer NumberKey extends number}`
+			? NumberKey extends keyof T
+				? NumberKey
+				: never
+			: never;
