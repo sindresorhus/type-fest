@@ -19,6 +19,9 @@ expectType<{fooBAR: number; baz: {fooBAR: number; bARFoo: string}}>(baz);
 declare const biz: CamelCasedPropertiesDeep<bazBizDeep, {preserveConsecutiveUppercase: false}>;
 expectType<{fooBar: number; baz: {fooBar: number; barFoo: string}}>(biz);
 
+declare const tuple: CamelCasedPropertiesDeep<{tuple: [number, string, {D: string}]}>;
+expectType<{tuple: [number, string, {d: string}]}>(tuple);
+
 // Verify example
 type User = {
 	UserId: number;
