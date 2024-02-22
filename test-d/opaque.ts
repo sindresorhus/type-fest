@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectNotType, expectType} from 'tsd';
-import type {Opaque, UnwrapOpaque, Tagged, UnwrapTagged} from '../index';
+import type {Opaque, UnwrapOpaque, Tagged, UnwrapTagged, SnakeCasedPropertiesDeep} from '../index';
 
 type Value = Opaque<number, 'Value'>;
 
@@ -112,3 +112,8 @@ const unwrapped2 = 123 as PlainValueUnwrapTagged;
 
 expectType<number>(unwrapped1);
 expectType<number>(unwrapped2);
+
+// Test for issue https://github.com/sindresorhus/type-fest/issues/643
+type IdType = Opaque<number, 'test'>;
+type TestSnakeObject = SnakeCasedPropertiesDeep<{testId: IdType}>;
+expectType<TestSnakeObject>({test_id: 2 as IdType});

@@ -4,6 +4,8 @@ import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 import type {IsLiteral} from './is-literal';
 import type {UnknownRecord} from './unknown-record';
+import type {IsNever} from './is-never';
+import type {UnknownArray} from './unknown-array';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
@@ -13,7 +15,34 @@ Infer the length of the given array `<T>`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type TupleLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
+type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
+
+/**
+Infer the length of the given tuple `<T>`.
+
+Returns `never` if the given type is an non-fixed-length array like `Array<string>`.
+
+@example
+```
+type Tuple = TupleLength<[string, number, boolean]>;
+//=> 3
+
+type Array = TupleLength<string[]>;
+//=> never
+
+// Supports union types.
+type Union = TupleLength<[] | [1, 2, 3] | Array<number>>;
+//=> 1 | 3
+```
+*/
+export type TupleLength<T extends UnknownArray> =
+	// `extends unknown` is used to convert `T` (if `T` is a union type) to
+	// a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
+	T extends unknown
+		? number extends T['length']
+			? never // Return never if the given type is an non-flexed-length array like `Array<string>`
+			: T['length']
+		: never; // Should never happen
 
 /**
 Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
@@ -64,18 +93,28 @@ the inferred tuple `U` and a tuple of length `B`, then extracts the length of tu
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
 export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
-	? TupleLength<U>
+	? ArrayLength<U>
 	: never;
 
 /**
-Matches any primitive, `Date`, or `RegExp` value.
+Matches any primitive, `void`, `Date`, or `RegExp` value.
 */
-export type BuiltIns = Primitive | Date | RegExp;
+export type BuiltIns = Primitive | void | Date | RegExp;
 
 /**
 Matches non-recursive types.
 */
 export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
+
+/**
+Returns a boolean for whether the given type is a plain key-value object.
+*/
+export type IsPlainObject<T> =
+	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+		? false
+		: T extends object
+			? true
+			: false;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
@@ -323,3 +362,118 @@ export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 Utility type to retrieve only literal keys from type.
 */
 export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
+
+/**
+Returns the static, fixed-length portion of the given array, excluding variable-length parts.
+
+@example
+```
+type A = [string, number, boolean, ...string[]];
+type B = StaticPartOfArray<A>;
+//=> [string, number, boolean]
+```
+*/
+export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
+	T extends unknown
+		? number extends T['length'] ?
+			T extends readonly [infer U, ...infer V]
+				? StaticPartOfArray<V, [...Result, U]>
+				: Result
+			: T
+		: never; // Should never happen
+
+/**
+Returns the variable, non-fixed-length portion of the given array, excluding static-length parts.
+
+@example
+```
+type A = [string, number, boolean, ...string[]];
+type B = VariablePartOfArray<A>;
+//=> string[]
+```
+*/
+export type VariablePartOfArray<T extends UnknownArray> =
+	T extends unknown
+		? T extends readonly [...StaticPartOfArray<T>, ...infer U]
+			? U
+			: []
+		: never; // Should never happen
+
+/**
+Returns the minimum number in the given union of numbers.
+
+Note: Just supports numbers from 0 to 999.
+
+@example
+```
+type A = UnionMin<3 | 1 | 2>;
+//=> 1
+```
+*/
+export type UnionMin<N extends number> = InternalUnionMin<N>;
+
+/**
+The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.
+*/
+type InternalUnionMin<N extends number, T extends UnknownArray = []> =
+	T['length'] extends N
+		? T['length']
+		: InternalUnionMin<N, [...T, unknown]>;
+
+/**
+Returns the maximum number in the given union of numbers.
+
+Note: Just supports numbers from 0 to 999.
+
+@example
+```
+type A = UnionMax<1 | 3 | 2>;
+//=> 3
+```
+*/
+export type UnionMax<N extends number> = InternalUnionMax<N>;
+
+/**
+The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
+*/
+type InternalUnionMax<N extends number, T extends UnknownArray = []> =
+	IsNever<N> extends true
+		? T['length']
+		:	T['length'] extends N
+			? InternalUnionMax<Exclude<N, T['length']>, T>
+			: InternalUnionMax<N, [...T, unknown]>;
+
+/**
+Returns a boolean for whether the given type is a union type.
+
+@example
+```
+type A = IsUnion<string | number>;
+//=> true
+
+type B = IsUnion<string>;
+//=> false
+```
+*/
+export type IsUnion<T> = InternalIsUnion<T>;
+
+/**
+The actual implementation of `IsUnion`.
+*/
+type InternalIsUnion<T, U = T> =
+(
+	// @link https://ghaiklor.github.io/type-challenges-solutions/en/medium-isunion.html
+	IsNever<T> extends true
+		? false
+		: T extends any
+			? [U] extends [T]
+				? false
+				: true
+			: never
+) extends infer Result
+	// In some cases `Result` will return `false | true` which is `boolean`,
+	// that means `T` has at least two types and it's a union type,
+	// so we will return `true` instead of `boolean`.
+	? boolean extends Result ? true
+		: Result
+	: never; // Should never happen

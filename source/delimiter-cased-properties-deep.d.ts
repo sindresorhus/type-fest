@@ -1,4 +1,5 @@
 import type {DelimiterCase} from './delimiter-case';
+import type {NonRecursiveType} from './internal';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -48,19 +49,17 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 export type DelimiterCasedPropertiesDeep<
 	Value,
 	Delimiter extends string,
-> = Value extends Function | Date | RegExp
+> = Value extends NonRecursiveType
 	? Value
-	: Value extends string
-		? DelimiterCase<Value, Delimiter>
-		: Value extends UnknownArray
-			? DelimiterCasedPropertiesArrayDeep<Value, Delimiter>
-			: Value extends Set<infer U>
-				? Set<DelimiterCasedPropertiesDeep<U, Delimiter>> : {
-					[K in keyof Value as DelimiterCase<
-					K,
-					Delimiter
-					>]: DelimiterCasedPropertiesDeep<Value[K], Delimiter>;
-				};
+	: Value extends UnknownArray
+		? DelimiterCasedPropertiesArrayDeep<Value, Delimiter>
+		: Value extends Set<infer U>
+			? Set<DelimiterCasedPropertiesDeep<U, Delimiter>> : {
+				[K in keyof Value as DelimiterCase<
+				K,
+				Delimiter
+				>]: DelimiterCasedPropertiesDeep<Value[K], Delimiter>;
+			};
 
 type DelimiterCasedPropertiesArrayDeep<Value extends UnknownArray, Delimiter extends string> =
 	Value extends []

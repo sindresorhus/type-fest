@@ -100,8 +100,8 @@ expectType<{
 	c: undefined;
 	a?: string;
 	d?: string;
-	e?: number;
-	f?: number;
+	e: number | undefined;
+	f: number | undefined;
 	g: undefined;
 }>(fooBarWithOptionalKeys);
 
@@ -148,3 +148,19 @@ expectType<{
 	foo: true;
 	bar?: any;
 }>(sourceWithAny);
+
+// Test for issue https://github.com/sindresorhus/type-fest/issues/601
+type Baz = {
+	t1?: number;
+	t2?: number;
+	t3?: number;
+	t4?: number;
+};
+declare const baz: Merge<Pick<Baz, 't2' | 't4'>, {
+	list: string[];
+}>;
+expectType<{
+	t2?: number;
+	t4?: number;
+	list: string[];
+}>(baz);
