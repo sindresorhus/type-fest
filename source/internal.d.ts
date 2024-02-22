@@ -2,6 +2,7 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
+import type {IsLiteral} from './is-literal';
 import type {UnknownRecord} from './unknown-record';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
@@ -356,6 +357,11 @@ IsPrimitive<Object>
 ```
 */
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
+
+/**
+Utility type to retrieve only literal keys from type.
+*/
+export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
 
 /**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
