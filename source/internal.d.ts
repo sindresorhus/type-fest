@@ -11,7 +11,7 @@ import type {UnknownArray} from './unknown-array';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
-// export Subtract type in internal.d.ts for backwards-compatible
+// Export Subtract type in internal.d.ts for backwards-compatible
 export type {Subtract} from './math';
 
 /**
