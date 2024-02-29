@@ -4,7 +4,7 @@ import type {And} from './internal';
 import type {IsEqual} from './is-equal';
 
 /**
-Returns an array slice of a given range(with negative index support), just like `Array.slice` in js.
+Returns an array slice of a given range, just like `Array#slice`.
 
 @example
 ```

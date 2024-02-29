@@ -3,11 +3,13 @@ import type {IsEqual} from './is-equal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 
 /**
-Return the result of `A + B`
+Returns the sum of the two input numbers.
+
 Note:
 - A or B can only support `-999` ~ `999`.
-- A and B can only be small integers(A < 1000, B < 1000).
+- A and B can only be small integers(less than 1000).
 - if the result is negative, you can only get `number`.
+
 @example
 ```
 Add<111, 222>
@@ -57,7 +59,7 @@ export type Add<A extends number, B extends number> = [
 	: never;
 
 /**
-Return the result of `A - B`.
+Returns the difference between two input numbers.
 
 Note:
 - A or B can only support `-999` ~ `999`.
@@ -82,7 +84,7 @@ Subtract<PositiveInfinity, PositiveInfinity>
 ```
 
 @category Numeric
- */
+*/
 // TODO: Support big integer and negative number.
 export type Subtract<A extends number, B extends number> = [
 	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
