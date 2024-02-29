@@ -9,6 +9,8 @@ Returns a string slice of a given range, just like `String#slice`.
 
 @example
 ```
+import type {StringSlice} from 'type-fest';
+
 StringSlice<'abcde', 0, 2>
 //=> 'ab'
 

@@ -12,6 +12,8 @@ Note:
 
 @example
 ```
+import type {Add} from 'type-fest';
+
 Add<111, 222>
 //=> 333
 Add<-111, 222>
@@ -67,6 +69,8 @@ Note:
 
 @example
 ```
+import type {Subtract} from 'type-fest';
+
 Subtract<333, 222>
 //=> 111
 
