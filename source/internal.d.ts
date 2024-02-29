@@ -141,16 +141,16 @@ Returns a boolean for whether the given string `S` starts with the given string 
 
 @example
 ```
-StartsWith<'abcde', 'abc'>
+StartsWith<'abcde', 'abc'>;
 //=> true
 
-StartsWith<'abcde', 'bc'>
+StartsWith<'abcde', 'bc'>;
 //=> false
 
-StartsWith<string, 'bc'>
+StartsWith<string, 'bc'>;
 //=> never
 
-StartsWith<'abcde', string>
+StartsWith<'abcde', string>;
 //=> never
 ```
 
@@ -168,10 +168,10 @@ Returns the length of the given string.
 
 @example
 ```
-StringLength<'abcde'>
+StringLength<'abcde'>;
 //=> 5
 
-StringLength<string>
+StringLength<string>;
 //=> never
 ```
 
@@ -187,10 +187,10 @@ Returns an array of the characters of the string.
 
 @example
 ```
-StringToArray<'abcde'>
+StringToArray<'abcde'>;
 //=> ['a', 'b', 'c', 'd', 'e']
 
-StringToArray<string>
+StringToArray<string>;
 //=> never
 ```
 
@@ -445,15 +445,14 @@ IsPrimitive<Object>
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
 /**
-<<<<<<< HEAD
 Returns a boolean for whether A and B are both true.
 
 @example
 ```
-And<true, true>
+And<true, true>;
 //=> true
 
-And<true, false>
+And<true, false>;
 //=> false
 ```
 */
@@ -468,10 +467,10 @@ Returns a boolean for either A or B is true.
 
 @example
 ```
-Or<true, false>
+Or<true, false>;
 //=> true
 
-Or<false, false>
+Or<false, false>;
 //=> false
 ```
 */
@@ -486,10 +485,10 @@ Returns a boolean for whether A is false.
 
 @example
 ```
-Not<true>
+Not<true>;
 //=> false
 
-Not<false>
+Not<false>;
 //=> true
 ```
 */
@@ -510,7 +509,7 @@ Note:
 ArrayMax<[1, 2, 5, 3]>;
 //=> 5
 
-ArrayMax<[1, 2, 5, 3, 99, -1]>
+ArrayMax<[1, 2, 5, 3, 99, -1]>;
 //=> 99
 ```
 */
@@ -527,10 +526,10 @@ Returns the minimal value from a tuple of integers.
 
 @example
 ```
-ArrayMin<[1, 2, 5, 3]>
+ArrayMin<[1, 2, 5, 3]>;
 //=> 1
 
-ArrayMin<[1, 2, 5, 3, -5]>
+ArrayMin<[1, 2, 5, 3, -5]>;
 //=> -5
 ```
 */
@@ -547,10 +546,10 @@ Returns the absolute value of a given value.
 
 @example
 ```
-NumberAbsolute<-1>
+NumberAbsolute<-1>;
 //=> 1
 
-NumberAbsolute<1>
+NumberAbsolute<1>;
 //=> 1
 
 NumberAbsolute<NegativeInfinity>
@@ -564,10 +563,10 @@ Returns a boolean for whether A > B(A and B are both numeric string and have the
 
 @example
 ```
-SameLengthPositiveNumericStringGt<'50', '10'>
+SameLengthPositiveNumericStringGt<'50', '10'>;
 //=> true
 
-SameLengthPositiveNumericStringGt<'10', '10'>
+SameLengthPositiveNumericStringGt<'10', '10'>;
 //=> false
 ```
 */
@@ -586,13 +585,13 @@ Returns a boolean for whether A is greater than B(A and B are both positive nume
 
 @example
 ```
-PositiveNumericStringGt<'500', '1'>
+PositiveNumericStringGt<'500', '1'>;
 //=> true
 
-PositiveNumericStringGt<'1', '1'>
+PositiveNumericStringGt<'1', '1'>;
 //=> false
 
-PositiveNumericStringGt<'1', '500'>
+PositiveNumericStringGt<'1', '500'>;
 //=> false
 ```
 */
@@ -611,10 +610,10 @@ Returns a boolean for whether A is greater than B(A and B are both positive nume
 
 @example
 ```
-PositiveNumericCharGt<'5', '1'>
+PositiveNumericCharGt<'5', '1'>;
 //=> true
 
-PositiveNumericCharGt<'1', '1'>
+PositiveNumericCharGt<'1', '1'>;
 //=> false
 ```
 */
