@@ -626,13 +626,11 @@ type PositiveNumericCharGt<A extends string, B extends string> = NumericString e
 		: never
 	: never;
 /**
-=======
 Utility type to retrieve only literal keys from type.
 */
 export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
 
 /**
->>>>>>> 3ef12b0bdc7c29321daa304abf7a70ed49b9aa7d
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example
