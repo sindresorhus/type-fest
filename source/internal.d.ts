@@ -12,6 +12,8 @@ import type {UnknownArray} from './unknown-array';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
+// export Subtract type in internal.d.ts for backwards-compatible
+export type {Subtract} from './math';
 
 /**
 Infer the length of the given array `<T>`.
@@ -580,7 +582,7 @@ type SameLengthPositiveNumericStringGt<A extends string, B extends string> = A e
 type NumericString = '0123456789';
 
 /**
-Returns a boolean for whether A > B(A and B are both positive numeric string).
+Returns a boolean for whether A is greater than B(A and B are both positive numeric string).
 
 @example
 ```
@@ -605,7 +607,7 @@ export type PositiveNumericStringGt<A extends string, B extends string> = A exte
 		: never;
 
 /**
-Returns a boolean for whether A > B(A and B are both positive numeric char).
+Returns a boolean for whether A is greater than B(A and B are both positive numeric char).
 
 @example
 ```

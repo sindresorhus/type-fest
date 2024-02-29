@@ -3,7 +3,7 @@ import type {ArraySlice} from './array-slice';
 import type {StringToArray} from './internal';
 
 /**
-Returns a string slice of a given range(with negative index support), just like `String.slice` in js.
+Returns a string slice of a given range, just like `String#slice`.
 
 @see {ArraySlice}
 
@@ -23,7 +23,7 @@ StringSlice<'abcde', -2, -1>
 ```
 
 @category String
- */
+*/
 export type StringSlice<
 	S extends string,
 	Start extends number = 0,
