@@ -1,4 +1,4 @@
-import {expectAssignable} from 'tsd';
+import {expectAssignable, expectType} from 'tsd';
 import type {PartialOnUndefinedDeep} from '../index';
 
 type TestingType = {
@@ -22,8 +22,11 @@ type TestingType = {
 	array2: Array<{propertyA: string; propertyB: number | undefined}> | undefined;
 	readonly1: readonly any[] | undefined;
 	readonly2: ReadonlyArray<{propertyA: string; propertyB: number | undefined}> | undefined;
+	readonly readonlyProperty: string | undefined;
 	tuple: ['test1', {propertyA: string; propertyB: number | undefined}] | undefined;
 };
+declare const indexType: {[k: string]: string | undefined; propertyA: string; propertyB: string | undefined};
+declare const indexTypeUnknown: {[k: string]: unknown; propertyA: string; propertyB: number | undefined};
 
 // Default behavior, without recursion into arrays/tuples
 declare const foo: PartialOnUndefinedDeep<TestingType>;
@@ -48,8 +51,14 @@ expectAssignable<{
 	array2?: TestingType['array2'];
 	readonly1?: TestingType['readonly1'];
 	readonly2?: TestingType['readonly2'];
+	readonly readonlyProperty?: TestingType['readonlyProperty'];
 	tuple?: TestingType['tuple'];
 }>(foo);
+
+declare const indexTypeWithoutRecursion: PartialOnUndefinedDeep<typeof indexType>;
+declare const indexTypeUnknownWithoutRecursion: PartialOnUndefinedDeep<typeof indexTypeUnknown>;
+expectType<{[k: string]: string | undefined; propertyA: string; propertyB?: string | undefined}>(indexTypeWithoutRecursion);
+expectType<{[k: string]: unknown; propertyA: string; propertyB?: number | undefined}>(indexTypeUnknownWithoutRecursion);
 
 // With recursion into arrays/tuples activated
 declare const bar: PartialOnUndefinedDeep<TestingType, {recurseIntoArrays: true}>;
@@ -74,5 +83,11 @@ expectAssignable<{
 	array2?: Array<{propertyA: string; propertyB?: number | undefined}> | undefined;
 	readonly1?: TestingType['readonly1'];
 	readonly2?: ReadonlyArray<{propertyA: string; propertyB?: number | undefined}> | undefined;
+	readonly readonlyProperty?: TestingType['readonlyProperty'];
 	tuple?: ['test1', {propertyA: string; propertyB?: number | undefined}] | undefined;
 }>(bar);
+
+declare const indexTypeWithRecursion: PartialOnUndefinedDeep<typeof indexType, {recurseIntoArrays: true}>;
+declare const indexTypeUnknownWithRecursion: PartialOnUndefinedDeep<typeof indexTypeUnknown, {recurseIntoArrays: true}>;
+expectType<{[k: string]: string | undefined; propertyA: string; propertyB?: string | undefined}>(indexTypeWithRecursion);
+expectType<{[k: string]: unknown; propertyA: string; propertyB?: number | undefined}>(indexTypeUnknownWithRecursion);

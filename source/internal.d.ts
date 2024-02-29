@@ -5,6 +5,7 @@ import type {IsAny} from './is-any';
 import type {IsEqual} from './is-equal';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
 import type {Gt, Lt} from './math';
+import type {IsLiteral} from './is-literal';
 import type {UnknownRecord} from './unknown-record';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
@@ -442,6 +443,7 @@ IsPrimitive<Object>
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
 /**
+<<<<<<< HEAD
 Returns a boolean for whether A and B are both true.
 
 @example
@@ -622,6 +624,13 @@ type PositiveNumericCharGt<A extends string, B extends string> = NumericString e
 		: never
 	: never;
 /**
+=======
+Utility type to retrieve only literal keys from type.
+*/
+export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
+
+/**
+>>>>>>> 3ef12b0bdc7c29321daa304abf7a70ed49b9aa7d
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example
@@ -700,3 +709,38 @@ type InternalUnionMax<N extends number, T extends UnknownArray = []> =
 		:	T['length'] extends N
 			? InternalUnionMax<Exclude<N, T['length']>, T>
 			: InternalUnionMax<N, [...T, unknown]>;
+
+/**
+Returns a boolean for whether the given type is a union type.
+
+@example
+```
+type A = IsUnion<string | number>;
+//=> true
+
+type B = IsUnion<string>;
+//=> false
+```
+*/
+export type IsUnion<T> = InternalIsUnion<T>;
+
+/**
+The actual implementation of `IsUnion`.
+*/
+type InternalIsUnion<T, U = T> =
+(
+	// @link https://ghaiklor.github.io/type-challenges-solutions/en/medium-isunion.html
+	IsNever<T> extends true
+		? false
+		: T extends any
+			? [U] extends [T]
+				? false
+				: true
+			: never
+) extends infer Result
+	// In some cases `Result` will return `false | true` which is `boolean`,
+	// that means `T` has at least two types and it's a union type,
+	// so we will return `true` instead of `boolean`.
+	? boolean extends Result ? true
+		: Result
+	: never; // Should never happen

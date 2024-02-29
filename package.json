@@ -1,6 +1,6 @@
 {
 	"name": "type-fest",
-	"version": "4.9.0",
+	"version": "4.10.3",
 	"description": "A collection of essential TypeScript types",
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
@@ -16,8 +16,7 @@
 		"node": ">=16"
 	},
 	"scripts": {
-		"test": "xo && tsd && tsc && npm run test:undefined-on-partial-deep && node script/test/source-files-extension.js",
-		"test:undefined-on-partial-deep": "cd test-d/undefined-on-partial-deep && tsc --project tsconfig.json"
+		"test": "xo && tsd && tsc && node script/test/source-files-extension.js"
 	},
 	"files": [
 		"index.d.ts",

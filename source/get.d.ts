@@ -17,7 +17,7 @@ type GetOptions = {
 Like the `Get` type but receives an array of strings as a path parameter.
 */
 type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
-	Keys extends []
+	Keys extends readonly []
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
 			? GetWithPath<
@@ -125,7 +125,7 @@ type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 		? undefined
 		: Key extends keyof BaseType
 			? StrictPropertyOf<BaseType, Key, Options>
-			: BaseType extends [] | [unknown, ...unknown[]]
+			: BaseType extends readonly [] | readonly [unknown, ...unknown[]]
 				? unknown // It's a tuple, but `Key` did not extend `keyof BaseType`. So the index is out of bounds.
 				: BaseType extends {
 					[n: number]: infer Item;
