@@ -14,15 +14,15 @@ Note:
 ```
 import type {Add} from 'type-fest';
 
-Add<111, 222>
+Add<111, 222>;
 //=> 333
-Add<-111, 222>
+Add<-111, 222>;
 //=> 111
-Add<111, -222>
+Add<111, -222>;
 //=> number
-Add<PositiveInfinity, -9999>
+Add<PositiveInfinity, -9999>;
 //=> PositiveInfinity
-Add<PositiveInfinity, NegativeInfinity>
+Add<PositiveInfinity, NegativeInfinity>;
 //=> number
 ```
 
@@ -71,19 +71,19 @@ Note:
 ```
 import type {Subtract} from 'type-fest';
 
-Subtract<333, 222>
+Subtract<333, 222>;
 //=> 111
 
-Subtract<111, -222>
+Subtract<111, -222>;
 //=> 333
 
-Subtract<-111, 222>
+Subtract<-111, 222>;
 //=> number
 
-Subtract<PositiveInfinity, 9999>
+Subtract<PositiveInfinity, 9999>;
 //=> PositiveInfinity
 
-Subtract<PositiveInfinity, PositiveInfinity>
+Subtract<PositiveInfinity, PositiveInfinity>;
 //=> number
 ```
 
@@ -126,13 +126,13 @@ Returns a boolean for whether A > B.
 
 @example
 ```
-Gt<1, -5>
+Gt<1, -5>;
 //=> true
 
-Gt<1, 1>
+Gt<1, 1>;
 //=> false
 
-Gt<1, 5>
+Gt<1, 5>;
 //=> false
 ```
 */
@@ -170,13 +170,13 @@ Returns a boolean for whether A >= B.
 
 @example
 ```
-Gte<1, -5>
+Gte<1, -5>;
 //=> true
 
-Gte<1, 1>
+Gte<1, 1>;
 //=> true
 
-Gte<1, 5>
+Gte<1, 5>;
 //=> false
 ```
 */
@@ -189,13 +189,13 @@ Returns a boolean for whether A < B.
 
 @example
 ```
-Lt<1, -5>
+Lt<1, -5>;
 //=> false
 
-Lt<1, 1>
+Lt<1, 1>;
 //=> false
 
-Lt<1, 5>
+Lt<1, 5>;
 //=> true
 ```
 */
@@ -209,13 +209,13 @@ Returns a boolean for whether A <= B.
 
 @example
 ```
-Lte<1, -5>
+Lte<1, -5>;
 //=> false
 
-Lte<1, 1>
+Lte<1, 1>;
 //=> true
 
-Lte<1, 5>
+Lte<1, 5>;
 //=> true
 ```
 */
