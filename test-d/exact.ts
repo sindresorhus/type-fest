@@ -1,5 +1,5 @@
 import {expectError} from 'tsd';
-import type {Exact, Opaque} from '../index';
+import type {Exact, Tagged} from '../index';
 
 { // Spec - string type
 	type Type = string;
@@ -354,10 +354,10 @@ import type {Exact, Opaque} from '../index';
 	}
 }
 
-// Spec - special test case for Opaque types
+// Spec - special test case for Tagged types
 // @see https://github.com/sindresorhus/type-fest/issues/508
 {
-	type SpecialName = Opaque<string, 'special name'>;
+	type SpecialName = Tagged<string, 'special name'>;
 
 	type OnlyAcceptName = {
 		name: SpecialName;
@@ -372,11 +372,11 @@ import type {Exact, Opaque} from '../index';
 	});
 }
 
-// Spec - special test case for Opaque type
+// Spec - special test case for Tagged type
 // @see https://github.com/sindresorhus/type-fest/issues/508
 {
-	// Test for number Opaque type
-	type SpecialName = Opaque<number, 'special name'>;
+	// Test for number Tagged type
+	type SpecialName = Tagged<number, 'special name'>;
 
 	type OnlyAcceptName = {
 		name: SpecialName;
@@ -393,7 +393,7 @@ import type {Exact, Opaque} from '../index';
 
 // Spec - test the above for tagged types too.
 {
-	type TaggedNumber = Opaque<number, 'tag'>;
+	type TaggedNumber = Tagged<number, 'tag'>;
 
 	const fn = <T extends Exact<{a: TaggedNumber}, T>>(arguments_: T) => arguments_;
 
