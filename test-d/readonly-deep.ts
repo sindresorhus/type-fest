@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {Opaque, tag} from '../source/opaque';
+import type {Tagged, tag} from '../source/tagged';
 import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep';
 import type {JsonValue} from '../source/basic';
 
@@ -17,8 +17,8 @@ type NamespaceWithOverload = Overloaded & {
 	baz: boolean[];
 };
 
-type OpaqueObjectData = {a: number[]} | {b: string};
-type OpaqueObject = Opaque<OpaqueObjectData, {token: unknown}>;
+type TaggedObjectData = {a: number[]} | {b: string};
+type TaggedObject = Tagged<TaggedObjectData, 'token', unknown>;
 
 type ReadonlyJsonValue =
   | {readonly [k: string]: ReadonlyJsonValue}
@@ -62,7 +62,7 @@ const data = {
 	readonlyArray: ['foo'] as readonly string[],
 	readonlyTuple: ['foo'] as const,
 	json: [{x: true}] as JsonValue,
-	opaqueObj: {a: [3]} as OpaqueObject, // eslint-disable-line @typescript-eslint/consistent-type-assertions
+	opaqueObj: {a: [3]} as TaggedObject, // eslint-disable-line @typescript-eslint/consistent-type-assertions
 };
 
 const readonlyData: ReadonlyDeep<typeof data> = data;
@@ -99,7 +99,7 @@ expectType<Readonly<ReadonlySet<string>>>(readonlyData.readonlySet);
 expectType<readonly string[]>(readonlyData.readonlyArray);
 expectType<readonly ['foo']>(readonlyData.readonlyTuple);
 expectAssignable<ReadonlyJsonValue>(readonlyData.json);
-expectAssignable<Opaque<ReadonlyDeep<OpaqueObjectData>, ReadonlyDeep<OpaqueObject[typeof tag]>>>(readonlyData.opaqueObj);
+expectAssignable<ReadonlyDeep<TaggedObjectData> & ReadonlyDeep<{[tag]: TaggedObject[typeof tag]}>>(readonlyData.opaqueObj);
 
 expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
 expectType<string>(readonlyData.namespace(1));

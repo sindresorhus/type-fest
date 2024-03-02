@@ -1,5 +1,3 @@
-import type {Opaque} from './opaque';
-
 declare const invariantBrand: unique symbol;
 
 /**

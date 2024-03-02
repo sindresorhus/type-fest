@@ -36,7 +36,7 @@ export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
 export type {LiteralUnion} from './source/literal-union';
 export type {Promisable} from './source/promisable';
-export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/opaque';
+export type {Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';

@@ -1,5 +1,5 @@
 import type {ArrayElement, ObjectValue} from './internal';
-import type {Opaque, TagContainer} from './opaque';
+import type {TagContainer} from './tagged';
 import type {IsEqual} from './is-equal';
 import type {KeysOfUnion} from './keys-of-union';
 

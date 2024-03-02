@@ -1,7 +1,7 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {JsonValue, Opaque, ReadonlyDeep, WritableDeep} from '../index';
+import type {JsonValue, Tagged, ReadonlyDeep, WritableDeep} from '../index';
 import type {WritableObjectDeep} from '../source/writable-deep';
-import {type tag} from '../source/opaque';
+import {type tag} from '../source/tagged';
 
 type Overloaded = {
 	(foo: number): string;
@@ -17,8 +17,8 @@ type NamespaceWithOverload = Overloaded & {
 	readonly baz: readonly boolean[];
 };
 
-type OpaqueObjectData = {readonly a: number[]} | {readonly b: string};
-type OpaqueObject = Opaque<OpaqueObjectData, {readonly token: unknown}>;
+type TaggedObjectData = {readonly a: number[]} | {readonly b: string};
+type TaggedObject = Tagged<TaggedObjectData, 'token', unknown>;
 
 type ReadonlyJsonValue =
   | {readonly [k: string]: ReadonlyJsonValue}
@@ -58,7 +58,7 @@ const data = {
 	readonlyArray: ['foo'] as readonly string[],
 	readonlyTuple: ['foo'] as const,
 	json: [{x: true}] as JsonValue,
-	opaqueObj: {a: [3]} as OpaqueObject, // eslint-disable-line @typescript-eslint/consistent-type-assertions
+	opaqueObj: {a: [3]} as TaggedObject, // eslint-disable-line @typescript-eslint/consistent-type-assertions
 };
 
 const readonlyData: ReadonlyDeep<typeof data> = data;
@@ -97,7 +97,7 @@ expectType<Set<string>>(writableData.readonlySet);
 expectType<string[]>(writableData.readonlyArray);
 expectType<['foo']>(writableData.readonlyTuple);
 expectAssignable<ReadonlyJsonValue>(writableData.json);
-expectAssignable<Opaque<WritableDeep<OpaqueObjectData>, WritableDeep<OpaqueObject[typeof tag]>>>(writableData.opaqueObj);
+expectAssignable<WritableDeep<TaggedObjectData> & WritableDeep<{[tag]: TaggedObject[typeof tag]}>>(writableData.opaqueObj);
 
 expectType<((foo: number) => string) & WritableObjectDeep<Namespace>>(writableData.namespace);
 expectType<string>(writableData.namespace(1));
