@@ -1,5 +1,5 @@
-import {expectAssignable, expectNotAssignable, expectNotType, expectType} from 'tsd';
-import type {Opaque, UnwrapOpaque, Tagged, UnwrapTagged, SnakeCasedPropertiesDeep} from '../index';
+import {expectAssignable, expectError, expectNotAssignable, expectNotType, expectType} from 'tsd';
+import type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged, InvariantOf,	SnakeCasedPropertiesDeep} from '../index';
 
 type Value = Opaque<number, 'Value'>;
 
@@ -112,6 +112,34 @@ const unwrapped2 = 123 as PlainValueUnwrapTagged;
 
 expectType<number>(unwrapped1);
 expectType<number>(unwrapped2);
+
+// UnwrapTagged/UnwrapOpaque should work on types with multiple tags.
+const unwrapped3 = '' as UnwrapTagged<NormalizedAbsolutePath>;
+const unwrapped4 = '' as UnwrapOpaque<NormalizedAbsolutePath>;
+expectType<string>(unwrapped3);
+expectType<string>(unwrapped4);
+
+// Tags have no metadata by default
+expectType<never>(undefined as unknown as GetTagMetadata<UrlString, 'URL'>);
+
+// Metadata can be accurately recovered
+type JsonOf<T> = Tagged<string, 'JSON', T>;
+expectType<number>(JSON.parse('43') as GetTagMetadata<JsonOf<number>, 'JSON'>);
+
+// It's a type error to try to get the metadata for a tag that doesn't exist on a type.
+expectError('' as GetTagMetadata<UrlString, 'NonExistentTag'>);
+
+// Tagged types should be covariant in their metadata type
+expectAssignable<JsonOf<number>>('' as JsonOf<42>);
+expectAssignable<JsonOf<number>>('' as JsonOf<number>);
+expectNotAssignable<JsonOf<number>>('' as JsonOf<number | string>);
+
+// InvariantOf should work with tag metadata.
+expectNotAssignable<JsonOf<InvariantOf<number>>>('' as JsonOf<string | number>);
+expectNotAssignable<JsonOf<InvariantOf<number>>>('' as JsonOf<42>);
+expectAssignable<JsonOf<InvariantOf<number>>>(
+	'' as JsonOf<InvariantOf<number>>,
+);
 
 // Test for issue https://github.com/sindresorhus/type-fest/issues/643
 type IdType = Opaque<number, 'test'>;
