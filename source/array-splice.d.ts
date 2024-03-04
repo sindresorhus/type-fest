@@ -59,7 +59,7 @@ type SplitArrayByIndex<T extends UnknownArray, SplitIndex extends number> =
 			: SplitFixedArrayByIndex<T, SplitIndex>;
 
 /**
-Generates a new array type by removing `DeleteCount` items and/or adding `Items` at `Start` from the given array `T`.
+Creates a new array type by adding or removing elements at a specified index range in the original array.
 
 Use-case: Replace or insert items in an array type.
 
