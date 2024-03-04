@@ -1,33 +1,6 @@
-import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray, IsUnion} from './internal';
+import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray, IsUnion, IsArrayReadonly, SetArrayAccess} from './internal';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
-
-/**
-Set the given array to readonly if `IsReadonly` is `true`, otherwise set the given array to normal, then return the result.
-
-@example
-```
-type ReadonlyArray = readonly string[];
-type NormalArray = string[];
-
-type ReadonlyResult = SetArrayAccess<NormalArray, true>;
-//=> readonly string[]
-
-type NormalResult = SetArrayAccess<ReadonlyArray, false>;
-//=> string[]
-```
-*/
-type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
-	T extends readonly [...infer U] ?
-		IsReadonly extends true
-			? readonly [...U]
-			: [...U]
-		: T;
-
-/**
-Returns whether the given array `T` is readonly.
-*/
-type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
 
 /**
 SharedUnionFieldsDeep options.

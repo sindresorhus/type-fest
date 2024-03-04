@@ -127,6 +127,7 @@ Click the type names for complete docs.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more, or none of the given keys.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
 - [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
+- [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object. Use [`Omit<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
@@ -177,6 +178,7 @@ Click the type names for complete docs.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
+- [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
