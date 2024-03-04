@@ -11,9 +11,11 @@ Omit properties from a deeply-nested object.
 
 It supports recursing into arrays.
 
-It supports omit item from an array. It will replace the item with `unknown` at specified index.
+It supports removing specific items from an array, replacing each removed item with unknown at the specified index.
 
 Use-case: Remove unneeded parts of complex objects.
+
+Use [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
 
 @example
 ```
