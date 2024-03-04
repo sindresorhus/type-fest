@@ -9,59 +9,58 @@ import type {UnknownArray} from './unknown-array';
 /**
 Omit properties from a deeply-nested object.
 
-It supports recursing into arrays. If the leaf item in path is a index, we will set that item to 'unknown'.
+It supports recursing into arrays.
+
+It supports omit item from an array. It will replace the item with `unknown` at specified index.
 
 Use-case: Remove unneeded parts of complex objects.
 
 @example
 ```
-import type {OmitDeep, PartialDeep} from 'type-fest';
+import type {OmitDeep} from 'type-fest';
 
-type Configuration = {
-	userConfig: {
+type Info = {
+	userInfo: {
 		name: string;
-		age: number;
-		address: [
-			{
-				city1: string;
-				street1: string;
-			},
-			{
-				city2: string;
-				street2: string;
-			}
-		];
+		uselessInfo: {
+			foo: string;
+		};
 	};
-	otherConfig: any;
 };
 
-type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
-// type NameConfig = {
-// 	userConfig: {
+type UsefulInfo = OmitDeep<Info, 'userInfo.uselessInfo'>;
+// type UsefulInfo = {
+// 	userInfo: {
 // 		name: string;
 // 	};
-// };
 
 // Supports array
-type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
-// type AddressConfig = {
-// 	userConfig: {
-// 		address: [{
-// 			city1: string;
-// 			street1: string;
-// 		}];
-// 	};
-// };
+type A = OmitDeep<[1, 'foo', 2], 1>;
+// type A = [1, unknown, 2];
 
-// Supports recurse into array
-type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
-// type Street = {
-// 	userConfig: {
-// 		address: [
-// 			unknown,
-// 			{street2: string}
-// 		];
-// 	};
+// Supports recursing into array
+
+type Info1 = {
+	address: [
+		{
+			street: string
+		},
+		{
+			street2: string,
+			foo: string
+		};
+	];
+}
+type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
+// type AddressInfo = {
+// 	address: [
+// 		{
+// 			street: string;
+// 		},
+// 		{
+// 			street2: string;
+// 		};
+// 	];
 // };
 ```
 
@@ -109,27 +108,27 @@ P extends `${infer RecordKeyInPath}.${infer SubPath}`
 /**
 Omit one path from from the given array.
 
-we will delete the item at the given index.
+It replaces the item to `unknown` at the given index.
 
 @example
 ```
-type A = OmitDeepArray<[10, 20, 30, 40], 2>;
-//=> type A = [10, 20, 40];
+type A = OmitDeepArrayWithOnePath<[10, 20, 30, 40], 2>;
+//=> type A = [10, 20, unknown, 40];
 ```
 */
 type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string | number> =
 	// Handle paths that are `${number}.${string}`
 	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
-		// When `ArrayIndex` is equal to `number`
+		// If `ArrayIndex` is equal to `number`
 		? number extends ArrayIndex
 			? Array<OmitDeepWithOnePath<NonNullable<ArrayType[number]>, SubPath>>
-			// When `ArrayIndex` is a number literal
+			// If `ArrayIndex` is a number literal
 			: ArraySplice<ArrayType, ArrayIndex, 1, [OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>]>
-		// When the path is equal to `number`
+		// If the path is equal to `number`
 		: P extends `${infer ArrayIndex extends number}`
-			// When `ArrayIndex` is `number`
+			// If `ArrayIndex` is `number`
 			? number extends ArrayIndex
 				? []
-				// When `ArrayIndex` is a number literal
-				: ArraySplice<ArrayType, ArrayIndex, 1>
+				// If `ArrayIndex` is a number literal
+				: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
 			: never;

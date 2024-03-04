@@ -26,10 +26,16 @@ SplitIndex extends 0
 	: GTE<StaticPartOfArray<T>['length'], SplitIndex> extends true
 		? [
 			SplitFixedArrayByIndex<StaticPartOfArray<T>, SplitIndex>[0],
-			[...SplitFixedArrayByIndex<StaticPartOfArray<T>, SplitIndex>[1], ...VariablePartOfArray<T>],
+			[
+				...SplitFixedArrayByIndex<StaticPartOfArray<T>, SplitIndex>[1],
+				...VariablePartOfArray<T>,
+			],
 		]
 		: [
-			[...StaticPartOfArray<T>,	...(T2 extends UnknownArray ? T2 : [])],
+			[
+				...StaticPartOfArray<T>,
+				...(T2 extends UnknownArray ? T2 : []),
+			],
 			VariablePartOfArray<T>,
 		];
 
@@ -57,22 +63,24 @@ Generates a new array type by removing `DeleteCount` items and/or adding `Items`
 
 Use-case: Replace or insert items in an array type.
 
-like [`Array.prototype.splice`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) but for types.
+Like [`Array#splice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) but for types.
 
 @example
 ```
-type SomeMonths0 = ['Jan', 'April', 'June'];
+type SomeMonths0 = ['January', 'April', 'June'];
 type Mouths0 = ArraySplice<SomeMonths0, 1, 0, ['Feb', 'March']>;
-//=> type Mouths0 = ['Jan', 'Feb', 'March', 'April', 'June'];
+//=> type Mouths0 = ['January', 'Feb', 'March', 'April', 'June'];
 
-type SomeMonths1 = ['Jan', 'April', 'June'];
+type SomeMonths1 = ['January', 'April', 'June'];
 type Mouths1 = ArraySplice<SomeMonths1, 1, 1>;
-//=> type Mouths1 = ['Jan', 'June'];
+//=> type Mouths1 = ['January', 'June'];
 
-type SomeMonths2 = ['Jan', 'Foo', 'April'];
+type SomeMonths2 = ['January', 'Foo', 'April'];
 type Mouths2 = ArraySplice<SomeMonths2, 1, 1, ['Feb', 'March']>;
-//=> type Mouths2 = ['Jan', 'Feb', 'March', 'April'];
+//=> type Mouths2 = ['January', 'Feb', 'March', 'April'];
 ```
+
+@category Array
 */
 export type ArraySplice<
 	T extends UnknownArray,

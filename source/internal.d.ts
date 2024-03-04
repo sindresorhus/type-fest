@@ -501,7 +501,7 @@ Returns whether the given array `T` is readonly.
 export type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
 
 /**
-Returns the result of `A >= B`
+Returns the result of `A >= B`.
 
 @example
 ```
@@ -537,12 +537,9 @@ export type GT<A extends number, B extends number> =
 		: GTE<A, B>;
 
 /**
-Get the exact version of the given `Key` in the given object `T`
+Get the exact version of the given `Key` in the given object `T`.
 
-Use-case:
-	You known that a number key (e.g. 10) in an object, But you don't know how it
-	is defined in the object, as a string or as a number (e.g. 10 or '10'). You can
-	use this type to get the exact version of the key. see example.
+Use-case: You known that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
 
 @example
 ```
@@ -551,14 +548,14 @@ type Object = {
 	'1': string;
 };
 
-type Value = ExactKey<Object, '0'>;
+type Key1 = ExactKey<Object, '0'>;
 //=> 0
-type Value2 = ExactKey<Object, 0>;
+type Key2 = ExactKey<Object, 0>;
 //=> 0
 
-type Value3 = ExactKey<Object, '1'>;
+type Key3 = ExactKey<Object, '1'>;
 //=> '1'
-type Value4 = ExactKey<Object, 1>;
+type Key4 = ExactKey<Object, 1>;
 //=> '1'
 ```
 
