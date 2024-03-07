@@ -7,8 +7,8 @@ Returns the sum of the two input numbers.
 
 Note:
 - A or B can only support `-999` ~ `999`.
-- A and B can only be small integers(less than 1000).
-- if the result is negative, you can only get `number`.
+- A and B can only be small integers, less than 1000.
+- If the result is negative, you can only get `number`.
 
 @example
 ```
@@ -16,12 +16,16 @@ import type {Add} from 'type-fest';
 
 Add<111, 222>;
 //=> 333
+
 Add<-111, 222>;
 //=> 111
+
 Add<111, -222>;
 //=> number
+
 Add<PositiveInfinity, -9999>;
 //=> PositiveInfinity
+
 Add<PositiveInfinity, NegativeInfinity>;
 //=> number
 ```
@@ -65,7 +69,7 @@ Returns the difference between two input numbers.
 
 Note:
 - A or B can only support `-999` ~ `999`.
-- if the result is negative, you can only get `number`.
+- If the result is negative, you can only get `number`.
 
 @example
 ```
@@ -121,8 +125,9 @@ export type Subtract<A extends number, B extends number> = [
 					: never
 	: never;
 
+// TODO: Export this publicly.
 /**
-Returns a boolean for whether A > B.
+Returns a boolean for whether A is greater than B.
 
 @example
 ```
@@ -165,8 +170,9 @@ export type Gt<A extends number, B extends number> = number extends A | B
 						: never
 		: never;
 
+// TODO: Export this publicly.
 /**
-Returns a boolean for whether A >= B.
+Returns a boolean for whether A is greater than or equal to B.
 
 @example
 ```
@@ -184,8 +190,9 @@ export type Gte<A extends number, B extends number> = number extends A | B
 	? never
 	: A extends B ? true : Gt<A, B>;
 
+// TODO: Export this publicly.
 /**
-Returns a boolean for whether A < B.
+Returns a boolean for whether A is less than B.
 
 @example
 ```
@@ -199,13 +206,13 @@ Lt<1, 5>;
 //=> true
 ```
 */
-
 export type Lt<A extends number, B extends number> = number extends A | B
 	? never
 	: Gte<A, B> extends true ? false : true;
 
+// TODO: Export this publicly.
 /**
-Returns a boolean for whether A <= B.
+Returns a boolean for whether A is less than or equal to B.
 
 @example
 ```
