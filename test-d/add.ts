@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Add} from '../source/add';
+import type {Add} from '../index';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric';
 
 expectType<Add<1, 2>>(3);
