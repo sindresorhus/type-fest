@@ -1,4 +1,6 @@
-import type {BuildTuple, Subtract, StaticPartOfArray, VariablePartOfArray, GTE} from './internal';
+import type {BuildTuple, StaticPartOfArray, VariablePartOfArray} from './internal';
+import type {GreaterThanOrEqual} from './greater-than-or-equal';
+import type {Subtract} from './subtract';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -23,7 +25,7 @@ type SplitVariableArrayByIndex<T extends UnknownArray,
 > =
 SplitIndex extends 0
 	? [[], T]
-	: GTE<StaticPartOfArray<T>['length'], SplitIndex> extends true
+	: GreaterThanOrEqual<StaticPartOfArray<T>['length'], SplitIndex> extends true
 		? [
 			SplitFixedArrayByIndex<StaticPartOfArray<T>, SplitIndex>[0],
 			[

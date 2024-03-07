@@ -1,5 +1,5 @@
 import type {BuildTuple} from './internal';
-import type {Subtract} from './math';
+import type {Subtract} from './subtract';
 
 /**
 Generate a union of numbers.

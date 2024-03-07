@@ -3,7 +3,8 @@ import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
-import type {Gt, Lt} from './math';
+import type {GreaterThan} from './greater-than';
+import type {LessThan} from './less-than';
 import type {IsLiteral} from './is-literal';
 import type {UnknownRecord} from './unknown-record';
 import type {IsNever} from './is-never';
@@ -12,8 +13,6 @@ import type {IsEqual} from './is-equal';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
-// Export Subtract type in internal.d.ts for backwards-compatible
-export type {Subtract} from './math';
 
 /**
 Infer the length of the given array `<T>`.
@@ -527,7 +526,7 @@ ArrayMax<[1, 2, 5, 3, 99, -1]>;
 export type ArrayMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
 	? never :
 	A extends [infer F extends number, ...infer R extends number[]]
-		? Gt<F, Result> extends true
+		? GreaterThan<F, Result> extends true
 			? ArrayMax<R, F>
 			: ArrayMax<R, Result>
 		: Result;
@@ -550,7 +549,7 @@ ArrayMin<[1, 2, 5, 3, -5]>;
 export type ArrayMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
 	? never
 	: A extends [infer F extends number, ...infer R extends number[]]
-		? Lt<F, Result> extends true
+		? LessThan<F, Result> extends true
 			? ArrayMin<R, F>
 			: ArrayMin<R, Result>
 		: Result;
@@ -588,7 +587,7 @@ type SameLengthPositiveNumericStringGt<A extends string, B extends string> = A e
 	? B extends `${infer FirstB}${infer RestB}`
 		? FirstA extends FirstB
 			? SameLengthPositiveNumericStringGt<RestA, RestB>
-			: PositiveNumericCharGt<FirstA, FirstB>
+			: PositiveNumericCharacterGt<FirstA, FirstB>
 		: never
 	: false;
 
@@ -624,14 +623,14 @@ Returns a boolean for whether `A` represents a number greater than `B`, where `A
 
 @example
 ```
-PositiveNumericCharGt<'5', '1'>;
+PositiveNumericCharacterGt<'5', '1'>;
 //=> true
 
-PositiveNumericCharGt<'1', '1'>;
+PositiveNumericCharacterGt<'1', '1'>;
 //=> false
 ```
 */
-type PositiveNumericCharGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
+type PositiveNumericCharacterGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
 	? NumericString extends `${infer HeadB}${B}${infer TailB}`
 		? HeadA extends `${HeadB}${infer _}${infer __}`
 			? true
@@ -785,42 +784,6 @@ T extends readonly [...infer U] ?
 Returns whether the given array `T` is readonly.
 */
 export type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
-
-/**
-Returns the result of `A >= B`.
-
-@example
-```
-type A = GTE<15, 10>;
-//=> true
-
-type B = GTE<10, 15>;
-//=> false
-
-type C = GTE<10, 10>;
-//=> true
-```
-*/
-export type GTE<A extends number, B extends number> =
-	BuildTuple<A> extends [...infer _, ...BuildTuple<B>]
-		? true
-		: false;
-
-/**
-Returns the result of `A > B`
-
-@example
-```
-type A = GT<15, 10>;
-//=> true
-
-type B = GT<10, 15>;
-//=> false
-*/
-export type GT<A extends number, B extends number> =
-	IsEqual<A, B> extends true
-		? false
-		: GTE<A, B>;
 
 /**
 Get the exact version of the given `Key` in the given object `T`.
