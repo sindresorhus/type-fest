@@ -32,4 +32,6 @@ export type StringSlice<
 	End extends number = StringToArray<S>['length'],
 > = string extends S
 	? string[]
-	: Join<ArraySlice<StringToArray<S>, Start, End>, ''>;
+	: ArraySlice<StringToArray<S>, Start, End> extends infer R extends readonly string[]
+		? Join<R, ''>
+		: never;
