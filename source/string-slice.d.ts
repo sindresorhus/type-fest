@@ -3,7 +3,7 @@ import type {ArraySlice} from './array-slice';
 import type {StringToArray} from './internal';
 
 /**
-Returns a string slice of a given range, just like `String#slice`.
+Returns a string slice of a given range, just like `String#slice()`.
 
 @see {ArraySlice}
 
