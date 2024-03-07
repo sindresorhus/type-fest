@@ -116,12 +116,23 @@ Converts a numeric string to a number.
 
 @example
 ```
-type PositiveInt = StringToNumber<'1234'>; // => 1234;
-type NegativeInt = StringToNumber<'-1234'>; // => -1234;
-type PositiveFloat = StringToNumber<'1234.56'>; // => 1234.56;
-type NegativeFloat = StringToNumber<'-1234.56'>; // => -1234.56;
-type PositiveInfinity = StringToNumber<'Infinity'>; // => Infinity
-type NegativeInfinity = StringToNumber<'-Infinity'>; // => -Infinity
+type PositiveInt = StringToNumber<'1234'>;
+//=> 1234
+
+type NegativeInt = StringToNumber<'-1234'>;
+//=> -1234
+
+type PositiveFloat = StringToNumber<'1234.56'>;
+//=> 1234.56
+
+type NegativeFloat = StringToNumber<'-1234.56'>;
+//=> -1234.56
+
+type PositiveInfinity = StringToNumber<'Infinity'>;
+//=> Infinity
+
+type NegativeInfinity = StringToNumber<'-Infinity'>;
+//=> -Infinity
 ```
 
 @category String
@@ -137,7 +148,7 @@ export type StringToNumber<S extends string> = S extends `${infer N extends numb
 			: never;
 
 /**
-Returns a boolean for whether the given string `S` starts with the given string `SearchString`
+Returns a boolean for whether the given string `S` starts with the given string `SearchString`.
 
 @example
 ```
@@ -502,7 +513,7 @@ export type Not<A extends boolean> = A extends true
 Returns the maximum value from a tuple of integers.
 
 Note:
-- float number is not supported.
+- Float numbers are not supported.
 
 @example
 ```
@@ -522,7 +533,10 @@ export type ArrayMax<A extends number[], Result extends number = NegativeInfinit
 		: Result;
 
 /**
-Returns the minimal value from a tuple of integers.
+Returns the minimum value from a tuple of integers.
+
+Note:
+- Float numbers are not supported.
 
 @example
 ```
@@ -559,7 +573,7 @@ NumberAbsolute<NegativeInfinity>
 export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
 /**
-Returns a boolean for whether A > B(A and B are both numeric string and have the same length).
+Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both numeric strings and have the same length.
 
 @example
 ```
@@ -581,7 +595,7 @@ type SameLengthPositiveNumericStringGt<A extends string, B extends string> = A e
 type NumericString = '0123456789';
 
 /**
-Returns a boolean for whether A is greater than B(A and B are both positive numeric string).
+Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are both positive numeric strings.
 
 @example
 ```
@@ -606,7 +620,7 @@ export type PositiveNumericStringGt<A extends string, B extends string> = A exte
 		: never;
 
 /**
-Returns a boolean for whether A is greater than B(A and B are both positive numeric char).
+Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both positive numeric characters.
 
 @example
 ```
@@ -624,6 +638,7 @@ type PositiveNumericCharGt<A extends string, B extends string> = NumericString e
 			: false
 		: never
 	: never;
+
 /**
 Utility type to retrieve only literal keys from type.
 */
