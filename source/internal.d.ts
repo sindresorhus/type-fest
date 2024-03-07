@@ -2,18 +2,17 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
-import type {IsEqual} from './is-equal';
 import type {NegativeInfinity, PositiveInfinity} from './numeric';
-import type {Gt, Lt} from './math';
+import type {GreaterThan} from './greater-than';
+import type {LessThan} from './less-than';
 import type {IsLiteral} from './is-literal';
 import type {UnknownRecord} from './unknown-record';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
+import type {IsEqual} from './is-equal';
 
 // TODO: Remove for v5.
 export type {UnknownRecord} from './unknown-record';
-// Export Subtract type in internal.d.ts for backwards-compatible
-export type {Subtract} from './math';
 
 /**
 Infer the length of the given array `<T>`.
@@ -527,7 +526,7 @@ ArrayMax<[1, 2, 5, 3, 99, -1]>;
 export type ArrayMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
 	? never :
 	A extends [infer F extends number, ...infer R extends number[]]
-		? Gt<F, Result> extends true
+		? GreaterThan<F, Result> extends true
 			? ArrayMax<R, F>
 			: ArrayMax<R, Result>
 		: Result;
@@ -550,7 +549,7 @@ ArrayMin<[1, 2, 5, 3, -5]>;
 export type ArrayMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
 	? never
 	: A extends [infer F extends number, ...infer R extends number[]]
-		? Lt<F, Result> extends true
+		? LessThan<F, Result> extends true
 			? ArrayMin<R, F>
 			: ArrayMin<R, Result>
 		: Result;
@@ -588,7 +587,7 @@ type SameLengthPositiveNumericStringGt<A extends string, B extends string> = A e
 	? B extends `${infer FirstB}${infer RestB}`
 		? FirstA extends FirstB
 			? SameLengthPositiveNumericStringGt<RestA, RestB>
-			: PositiveNumericCharGt<FirstA, FirstB>
+			: PositiveNumericCharacterGt<FirstA, FirstB>
 		: never
 	: false;
 
@@ -624,14 +623,14 @@ Returns a boolean for whether `A` represents a number greater than `B`, where `A
 
 @example
 ```
-PositiveNumericCharGt<'5', '1'>;
+PositiveNumericCharacterGt<'5', '1'>;
 //=> true
 
-PositiveNumericCharGt<'1', '1'>;
+PositiveNumericCharacterGt<'1', '1'>;
 //=> false
 ```
 */
-type PositiveNumericCharGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
+type PositiveNumericCharacterGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
 	? NumericString extends `${infer HeadB}${B}${infer TailB}`
 		? HeadA extends `${HeadB}${infer _}${infer __}`
 			? true
@@ -758,3 +757,66 @@ type InternalIsUnion<T, U = T> =
 	? boolean extends Result ? true
 		: Result
 	: never; // Should never happen
+
+/**
+Set the given array to readonly if `IsReadonly` is `true`, otherwise set the given array to normal, then return the result.
+
+@example
+```
+type ReadonlyArray = readonly string[];
+type NormalArray = string[];
+
+type ReadonlyResult = SetArrayAccess<NormalArray, true>;
+//=> readonly string[]
+
+type NormalResult = SetArrayAccess<ReadonlyArray, false>;
+//=> string[]
+```
+*/
+export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
+T extends readonly [...infer U] ?
+	IsReadonly extends true
+		? readonly [...U]
+		: [...U]
+	: T;
+
+/**
+Returns whether the given array `T` is readonly.
+*/
+export type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
+
+/**
+Get the exact version of the given `Key` in the given object `T`.
+
+Use-case: You known that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
+
+@example
+```
+type Object = {
+	0: number;
+	'1': string;
+};
+
+type Key1 = ExactKey<Object, '0'>;
+//=> 0
+type Key2 = ExactKey<Object, 0>;
+//=> 0
+
+type Key3 = ExactKey<Object, '1'>;
+//=> '1'
+type Key4 = ExactKey<Object, 1>;
+//=> '1'
+```
+
+@category Object
+*/
+export type ExactKey<T extends object, Key extends PropertyKey> =
+Key extends keyof T
+	? Key
+	: ToString<Key> extends keyof T
+		? ToString<Key>
+		: Key extends `${infer NumberKey extends number}`
+			? NumberKey extends keyof T
+				? NumberKey
+				: never
+			: never;

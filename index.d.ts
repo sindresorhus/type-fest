@@ -72,7 +72,12 @@ export type {
 	NonNegativeInteger,
 	IsNegative,
 } from './source/numeric';
-export type {Add, Subtract} from './source/math';
+export type {GreaterThan} from './source/greater-than';
+export type {GreaterThanOrEqual} from './source/greater-than-or-equal';
+export type {LessThan} from './source/less-than';
+export type {LessThanOrEqual} from './source/less-than-or-equal';
+export type {Add} from './source/add';
+export type {Subtract} from './source/subtract';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
 export type {ReadonlyTuple} from './source/readonly-tuple';

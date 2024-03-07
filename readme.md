@@ -260,8 +260,12 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
 - [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number.
-- [`Add`](source/math.d.ts) - Returns the sum of the two input numbers.
-- [`Subtract`](source/math.d.ts) - Returns the difference between two input numbers.
+- [`GreaterThan`](source/greater-than.d.ts) - Returns a boolean for whether A is greater than B.
+- [`GreaterThanOrEqual`](source/greater-than-or-equal.d.ts) - Returns a boolean for whether A is greater than or equal to B.
+- [`LessThan`](source/less-than.d.ts) - Returns a boolean for whether A is less than B.
+- [`LessThanOrEqual`](source/less-than-or-equal.d.ts) - Returns a boolean for whether A is less than or equal to B.
+- [`Add`](source/add.d.ts) - Returns the sum of the two input numbers.
+- [`Subtract`](source/subtract.d.ts) - Returns the difference between two input numbers.
 
 ### Change case
 

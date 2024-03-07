@@ -1,4 +1,6 @@
-import type {Add, Lt, Lte} from './math';
+import type {Add} from './add';
+import type {LessThan} from './less-than';
+import type {LessThanOrEqual} from './less-than-or-equal';
 import type {IsNegative} from './numeric';
 import type {And} from './internal';
 import type {IsEqual} from './is-equal';
@@ -71,7 +73,7 @@ type ArraySliceHelper<
 			: never
 		: Start,
 	PositiveE extends number = IsNegative<End> extends true ? Add<ArrayLength, End> : End,
-> = true extends [IsNegative<PositiveS>, Lte<PositiveE, PositiveS>][number]
+> = true extends [IsNegative<PositiveS>, LessThanOrEqual<PositiveE, PositiveS>][number]
 	? []
 	: ArraySliceByPositiveIndex<Array_, PositiveS, PositiveE>;
 
@@ -83,8 +85,8 @@ type ArraySliceByPositiveIndex<
 	Result extends Array<Array_[number]> = [],
 > = Array_ extends readonly [infer H, ...infer Rest]
 	? And<
-	IsEqual<Lte<Start, TraversedElement['length']>, true>,
-	IsEqual<Lt<TraversedElement['length'], End>, true>
+	IsEqual<LessThanOrEqual<Start, TraversedElement['length']>, true>,
+	IsEqual<LessThan<TraversedElement['length'], End>, true>
 	> extends true
 		? ArraySliceByPositiveIndex<Rest, Start, End, [...TraversedElement, H], [...Result, H]>
 		: ArraySliceByPositiveIndex<Rest, Start, End, [...TraversedElement, H], Result>

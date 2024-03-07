@@ -2,10 +2,10 @@ import type {NumberAbsolute, BuildTuple, And, Or} from './internal';
 import type {IsEqual} from './is-equal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {LessThan} from './less-than';
-import type {Sum} from './sum';
+import type {Add} from './add';
 
 /**
-Returns the difference between two numbers.
+Returns the difference between two input numbers.
 
 Note:
 - A or B can only support `-999` ~ `999`.
@@ -60,7 +60,7 @@ export type Subtract<A extends number, B extends number> = [
 						: LessThan<A, B> extends true
 							? number
 							: [false, true] extends R
-								? Sum<A, NumberAbsolute<B>>
+								? Add<A, NumberAbsolute<B>>
 								: Subtract<NumberAbsolute<B>, NumberAbsolute<A>>
 					: never
 	: never;

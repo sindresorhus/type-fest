@@ -1,4 +1,4 @@
-import type {Subtract} from './math';
+import type {Subtract} from './subtract';
 import type {IsEqual} from './is-equal';
 
 type Recursive<T> = Array<Recursive<T>>;

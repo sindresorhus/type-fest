@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {GreaterThan} from '../index';
+import type {GreaterThan} from '../source/greater-than';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric';
 
 declare const never: never;

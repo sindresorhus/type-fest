@@ -1,7 +1,7 @@
 import type {GreaterThan} from './greater-than';
 
 /**
- Returns a boolean for whether a given number is less than or equal to another number.
+Returns a boolean for whether A is less than or equal to B.
 
 @example
 ```
