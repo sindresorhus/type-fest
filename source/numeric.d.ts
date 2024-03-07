@@ -171,6 +171,7 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 
 /**
 Returns a boolean for whether the given number is a negative number.
+
 @see Negative
 
 @example
