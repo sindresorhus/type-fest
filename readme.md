@@ -239,11 +239,13 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
+- [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 
 ### Array
 
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
+- [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
@@ -263,6 +265,13 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
 - [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
+- [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number.
+- [`GreaterThan`](source/greater-than.d.ts) - Returns a boolean for whether a given number is greater than another number.
+- [`GreaterThanOrEqual`](source/greater-than-or-equal.d.ts) - Returns a boolean for whether a given number is greater than or equal to another number.
+- [`LessThan`](source/less-than.d.ts) - Returns a boolean for whether a given number is less than another number.
+- [`LessThanOrEqual`](source/less-than-or-equal.d.ts) - Returns a boolean for whether a given number is less than or equal to another number.
+- [`Sum`](source/sum.d.ts) - Returns the sum of two numbers.
+- [`Subtract`](source/subtract.d.ts) - Returns the difference between two numbers.
 
 ### Change case
 

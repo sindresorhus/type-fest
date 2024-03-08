@@ -168,3 +168,20 @@ declare function setLength<T extends number>(length: NonNegativeInteger<T>): voi
 @category Numeric
 */
 export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
+
+/**
+Returns a boolean for whether the given number is a negative number.
+
+@see Negative
+
+@example
+```
+import type {IsNegative} from 'type-fest';
+
+type ShouldBeFalse = IsNegative<1>;
+type ShouldBeTrue = IsNegative<-1>;
+```
+
+@category Numeric
+*/
+export type IsNegative<T extends Numeric> = T extends Negative<T> ? true : false;

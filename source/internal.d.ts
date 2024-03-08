@@ -2,6 +2,9 @@ import type {Primitive} from './primitive';
 import type {Simplify} from './simplify';
 import type {Trim} from './trim';
 import type {IsAny} from './is-any';
+import type {NegativeInfinity, PositiveInfinity} from './numeric';
+import type {GreaterThan} from './greater-than';
+import type {LessThan} from './less-than';
 import type {IsLiteral} from './is-literal';
 import type {UnknownRecord} from './unknown-record';
 import type {IsNever} from './is-never';
@@ -52,7 +55,7 @@ If `<Fill>` is not provided, it will default to `unknown`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T extends {readonly length: L}
+export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = T['length'] extends L
 	? T
 	: BuildTuple<L, Fill, [...T, Fill]>;
 
@@ -88,16 +91,6 @@ Note: This type is not the return type of the `.toString()` function.
 export type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
-Create a tuple of length `A` and a tuple composed of two other tuples,
-the inferred tuple `U` and a tuple of length `B`, then extracts the length of tuple `U`.
-
-@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
-*/
-export type Subtract<A extends number, B extends number> = BuildTuple<A> extends [...(infer U), ...BuildTuple<B>]
-	? ArrayLength<U>
-	: never;
-
-/**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
 */
 export type BuiltIns = Primitive | void | Date | RegExp;
@@ -116,6 +109,108 @@ export type IsPlainObject<T> =
 		: T extends object
 			? true
 			: false;
+
+/**
+Converts a numeric string to a number.
+
+@example
+```
+type PositiveInt = StringToNumber<'1234'>;
+//=> 1234
+
+type NegativeInt = StringToNumber<'-1234'>;
+//=> -1234
+
+type PositiveFloat = StringToNumber<'1234.56'>;
+//=> 1234.56
+
+type NegativeFloat = StringToNumber<'-1234.56'>;
+//=> -1234.56
+
+type PositiveInfinity = StringToNumber<'Infinity'>;
+//=> Infinity
+
+type NegativeInfinity = StringToNumber<'-Infinity'>;
+//=> -Infinity
+```
+
+@category String
+@category Numeric
+@category Template literal
+*/
+export type StringToNumber<S extends string> = S extends `${infer N extends number}`
+	? N
+	: S extends 'Infinity'
+		? PositiveInfinity
+		: S extends '-Infinity'
+			? NegativeInfinity
+			: never;
+
+/**
+Returns a boolean for whether the given string `S` starts with the given string `SearchString`.
+
+@example
+```
+StartsWith<'abcde', 'abc'>;
+//=> true
+
+StartsWith<'abcde', 'bc'>;
+//=> false
+
+StartsWith<string, 'bc'>;
+//=> never
+
+StartsWith<'abcde', string>;
+//=> never
+```
+
+@category String
+@category Template literal
+*/
+export type StartsWith<S extends string, SearchString extends string> = string extends S | SearchString
+	? never
+	: S extends `${SearchString}${infer T}`
+		? true
+		: false;
+
+/**
+Returns the length of the given string.
+
+@example
+```
+StringLength<'abcde'>;
+//=> 5
+
+StringLength<string>;
+//=> never
+```
+
+@category String
+@category Template literal
+*/
+export type StringLength<S extends string> = string extends S
+	? never
+	: StringToArray<S>['length'];
+
+/**
+Returns an array of the characters of the string.
+
+@example
+```
+StringToArray<'abcde'>;
+//=> ['a', 'b', 'c', 'd', 'e']
+
+StringToArray<string>;
+//=> never
+```
+
+@category String
+*/
+export type StringToArray<S extends string, Result extends string[] = []> = string extends S
+	? never
+	: S extends `${infer F}${infer R}`
+		? StringToArray<R, [...Result, F]>
+		: Result;
 
 export type UpperCaseCharacters = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
 
@@ -360,6 +455,190 @@ IsPrimitive<Object>
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
 /**
+Returns a boolean for whether A and B are both true.
+
+@example
+```
+And<true, true>;
+//=> true
+
+And<true, false>;
+//=> false
+```
+*/
+export type And<A extends boolean, B extends boolean> = [A, B][number] extends true
+	? true
+	: true extends [IsEqual<A, false>, IsEqual<B, false>][number]
+		? false
+		: never;
+
+/**
+Returns a boolean for either A or B is true.
+
+@example
+```
+Or<true, false>;
+//=> true
+
+Or<false, false>;
+//=> false
+```
+*/
+export type Or<A extends boolean, B extends boolean> = [A, B][number] extends false
+	? false
+	: true extends [IsEqual<A, true>, IsEqual<B, true>][number]
+		? true
+		: never;
+
+/**
+Returns a boolean for whether A is false.
+
+@example
+```
+Not<true>;
+//=> false
+
+Not<false>;
+//=> true
+```
+*/
+export type Not<A extends boolean> = A extends true
+	? false
+	: A extends false
+		? true
+		: never;
+
+/**
+Returns the maximum value from a tuple of integers.
+
+Note:
+- Float numbers are not supported.
+
+@example
+```
+ArrayMax<[1, 2, 5, 3]>;
+//=> 5
+
+ArrayMax<[1, 2, 5, 3, 99, -1]>;
+//=> 99
+```
+*/
+export type ArrayMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
+	? never :
+	A extends [infer F extends number, ...infer R extends number[]]
+		? GreaterThan<F, Result> extends true
+			? ArrayMax<R, F>
+			: ArrayMax<R, Result>
+		: Result;
+
+/**
+Returns the minimum value from a tuple of integers.
+
+Note:
+- Float numbers are not supported.
+
+@example
+```
+ArrayMin<[1, 2, 5, 3]>;
+//=> 1
+
+ArrayMin<[1, 2, 5, 3, -5]>;
+//=> -5
+```
+*/
+export type ArrayMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
+	? never
+	: A extends [infer F extends number, ...infer R extends number[]]
+		? LessThan<F, Result> extends true
+			? ArrayMin<R, F>
+			: ArrayMin<R, Result>
+		: Result;
+
+/**
+Returns the absolute value of a given value.
+
+@example
+```
+NumberAbsolute<-1>;
+//=> 1
+
+NumberAbsolute<1>;
+//=> 1
+
+NumberAbsolute<NegativeInfinity>
+//=> PositiveInfinity
+```
+*/
+export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
+
+/**
+Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both numeric strings and have the same length.
+
+@example
+```
+SameLengthPositiveNumericStringGt<'50', '10'>;
+//=> true
+
+SameLengthPositiveNumericStringGt<'10', '10'>;
+//=> false
+```
+*/
+type SameLengthPositiveNumericStringGt<A extends string, B extends string> = A extends `${infer FirstA}${infer RestA}`
+	? B extends `${infer FirstB}${infer RestB}`
+		? FirstA extends FirstB
+			? SameLengthPositiveNumericStringGt<RestA, RestB>
+			: PositiveNumericCharacterGt<FirstA, FirstB>
+		: never
+	: false;
+
+type NumericString = '0123456789';
+
+/**
+Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are both positive numeric strings.
+
+@example
+```
+PositiveNumericStringGt<'500', '1'>;
+//=> true
+
+PositiveNumericStringGt<'1', '1'>;
+//=> false
+
+PositiveNumericStringGt<'1', '500'>;
+//=> false
+```
+*/
+export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
+	? false
+	: [BuildTuple<StringLength<A>, 0>, BuildTuple<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
+		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]
+			? 0 extends Remain['length']
+				? SameLengthPositiveNumericStringGt<A, B>
+				: true
+			: false
+		: never;
+
+/**
+Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both positive numeric characters.
+
+@example
+```
+PositiveNumericCharacterGt<'5', '1'>;
+//=> true
+
+PositiveNumericCharacterGt<'1', '1'>;
+//=> false
+```
+*/
+type PositiveNumericCharacterGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
+	? NumericString extends `${infer HeadB}${B}${infer TailB}`
+		? HeadA extends `${HeadB}${infer _}${infer __}`
+			? true
+			: false
+		: never
+	: never;
+
+/**
 Utility type to retrieve only literal keys from type.
 */
 export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
@@ -505,42 +784,6 @@ T extends readonly [...infer U] ?
 Returns whether the given array `T` is readonly.
 */
 export type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
-
-/**
-Returns the result of `A >= B`.
-
-@example
-```
-type A = GTE<15, 10>;
-//=> true
-
-type B = GTE<10, 15>;
-//=> false
-
-type C = GTE<10, 10>;
-//=> true
-```
-*/
-export type GTE<A extends number, B extends number> =
-	BuildTuple<A> extends [...infer _, ...BuildTuple<B>]
-		? true
-		: false;
-
-/**
-Returns the result of `A > B`
-
-@example
-```
-type A = GT<15, 10>;
-//=> true
-
-type B = GT<10, 15>;
-//=> false
-*/
-export type GT<A extends number, B extends number> =
-	IsEqual<A, B> extends true
-		? false
-		: GTE<A, B>;
 
 /**
 Get the exact version of the given `Key` in the given object `T`.

@@ -46,6 +46,7 @@ export type {ConditionalPick} from './source/conditional-pick';
 export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
 export type {UnionToIntersection} from './source/union-to-intersection';
 export type {Stringified} from './source/stringified';
+export type {StringSlice} from './source/string-slice';
 export type {FixedLengthArray} from './source/fixed-length-array';
 export type {MultidimensionalArray} from './source/multidimensional-array';
 export type {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array';
@@ -72,7 +73,14 @@ export type {
 	NonNegative,
 	NegativeInteger,
 	NonNegativeInteger,
+	IsNegative,
 } from './source/numeric';
+export type {GreaterThan} from './source/greater-than';
+export type {GreaterThanOrEqual} from './source/greater-than-or-equal';
+export type {LessThan} from './source/less-than';
+export type {LessThanOrEqual} from './source/less-than-or-equal';
+export type {Sum} from './source/sum';
+export type {Subtract} from './source/subtract';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
 export type {ReadonlyTuple} from './source/readonly-tuple';
@@ -104,6 +112,7 @@ export type {IsUnknown} from './source/is-unknown';
 export type {IfUnknown} from './source/if-unknown';
 export type {ArrayIndices} from './source/array-indices';
 export type {ArrayValues} from './source/array-values';
+export type {ArraySlice} from './source/array-slice';
 export type {ArraySplice} from './source/array-splice';
 export type {SetFieldType} from './source/set-field-type';
 export type {Paths} from './source/paths';
