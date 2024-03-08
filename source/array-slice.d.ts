@@ -1,4 +1,4 @@
-import type {Add} from './add';
+import type {Sum} from './sum';
 import type {LessThan} from './less-than';
 import type {LessThanOrEqual} from './less-than-or-equal';
 import type {IsNegative} from './numeric';
@@ -66,13 +66,13 @@ type ArraySliceHelper<
 	Result extends Array<Array_[number]> = [],
 	ArrayLength extends number = Array_['length'],
 	PositiveS extends number = IsNegative<Start> extends true
-		? Add<ArrayLength, Start> extends infer AddResult extends number
+		? Sum<ArrayLength, Start> extends infer AddResult extends number
 			? number extends AddResult // (ArrayLength + Start) < 0
 				? 0
 				: AddResult
 			: never
 		: Start,
-	PositiveE extends number = IsNegative<End> extends true ? Add<ArrayLength, End> : End,
+	PositiveE extends number = IsNegative<End> extends true ? Sum<ArrayLength, End> : End,
 > = true extends [IsNegative<PositiveS>, LessThanOrEqual<PositiveE, PositiveS>][number]
 	? []
 	: ArraySliceByPositiveIndex<Array_, PositiveS, PositiveE>;
