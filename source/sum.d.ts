@@ -4,7 +4,7 @@ import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {Subtract} from './subtract';
 
 /**
-Returns the sum of the two input numbers.
+Returns the sum of two numbers.
 
 Note:
 - A or B can only support `-999` ~ `999`.
@@ -13,28 +13,28 @@ Note:
 
 @example
 ```
-import type {Add} from 'type-fest';
+import type {Sum} from 'type-fest';
 
-Add<111, 222>;
+Sum<111, 222>;
 //=> 333
 
-Add<-111, 222>;
+Sum<-111, 222>;
 //=> 111
 
-Add<111, -222>;
+Sum<111, -222>;
 //=> number
 
-Add<PositiveInfinity, -9999>;
+Sum<PositiveInfinity, -9999>;
 //=> PositiveInfinity
 
-Add<PositiveInfinity, NegativeInfinity>;
+Sum<PositiveInfinity, NegativeInfinity>;
 //=> number
 ```
 
 @category Numeric
 */
 // TODO: Support big integer and negative number.
-export type Add<A extends number, B extends number> = [
+export type Sum<A extends number, B extends number> = [
 	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
 	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
 ] extends infer R extends [boolean, boolean, boolean, boolean]

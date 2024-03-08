@@ -79,7 +79,7 @@ export type {GreaterThan} from './source/greater-than';
 export type {GreaterThanOrEqual} from './source/greater-than-or-equal';
 export type {LessThan} from './source/less-than';
 export type {LessThanOrEqual} from './source/less-than-or-equal';
-export type {Add} from './source/add';
+export type {Sum} from './source/sum';
 export type {Subtract} from './source/subtract';
 export type {StringKeyOf} from './source/string-key-of';
 export type {Exact} from './source/exact';
