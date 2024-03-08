@@ -5,7 +5,7 @@ Omits keys from a type, distributing the operation over a union.
 
 TypeScript's `Omit` doesn't distribute over unions, which causes the following situation:
 
-```ts
+```
 type A = {
 	discriminant: 'A';
 	foo: string;
@@ -20,23 +20,25 @@ type B = {
 
 type Union = A | B;
 
-type OmittedUnion = Omit<Union, 'foo'>; //==> { discriminant: 'A' | 'B' }
+type OmittedUnion = Omit<Union, 'foo'>;
+//=> {discriminant: 'A' | 'B'}
 
 const omittedUnion: OmittedUnion = createOmittedUnion();
 
-if(omittedUnion.discriminant === 'A') {
+if (omittedUnion.discriminant === 'A') {
 	// We would like to narrow `omittedUnion`'s type
 	// to `A` here, but we can't because `Omit`
 	// doesn't distribute over unions.
 
-	omittedUnion.a; //==> Error, `a` is not a property of `{ discriminant: 'A' | 'B' }`
+	omittedUnion.a;
+ 	//=> Error: `a` is not a property of `{discriminant: 'A' | 'B'}`
 }
 ```
 
 While `Except` solves this problem, it restricts the keys you can omit to the ones that are present in **ALL** union members, where `DistributedOmit` allows you to omit keys that are present in **ANY** union member.
 
 @example
-```ts
+```
 type A = {
 	discriminant: 'A';
 	foo: string;
@@ -65,10 +67,15 @@ type OmittedUnion = DistributedOmit<Union, 'foo' | 'bar'>;
 
 const omittedUnion: OmittedUnion = createOmittedUnion();
 
-if(omittedUnion.discriminant === 'A') {
-	omittedUnion.a; //==> OK
-	omittedUnion.foo; //==> Error, `foo` is not a property of `{ discriminant: 'A'; a: string; }`
-	omittedUnion.bar; //==> Error, `bar` is not a property of `{ discriminant: 'A'; a: string; }`
+if (omittedUnion.discriminant === 'A') {
+	omittedUnion.a;
+ 	//=> OK
+
+	omittedUnion.foo;
+ 	//=> Error: `foo` is not a property of `{discriminant: 'A'; a: string}`
+
+	omittedUnion.bar;
+ 	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
 }
 ```
 
