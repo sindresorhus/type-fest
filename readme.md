@@ -323,6 +323,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `RequireOnlyOne` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](source/require-one-or-none.d.ts)
 - `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
+- `Branded` - See [`Opaque`](source/opaque.d.ts)
 
 ## Tips
 
