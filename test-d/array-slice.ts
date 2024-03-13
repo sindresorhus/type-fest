@@ -18,3 +18,11 @@ expectType<ArraySlice<[0, 1, 2, 3], 0, -3>>([0]);
 expectType<ArraySlice<[0, 1, 2, 3], 0, -4>>([]);
 expectType<ArraySlice<[], -10, 1>>([]);
 expectType<ArraySlice<[]>>([]);
+
+expectType<ArraySlice<[1, 2, 3, ...string[]], 0, 3>>([1, 2, 3]);
+expectType<ArraySlice<[1, 2, 3, ...string[]], 1, 5>>([2, 3, null! as string, null! as string]);
+expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 1, 5>>([2, 3, null! as (string | 4 | 5), null! as (string | 4 | 5)]);
+expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 0>>([1, 2, 3, ...(null! as string[]), 4, 5]);
+expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 1>>([2, 3, ...(null! as string[]), 4, 5]);
+expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 3>>([...(null! as string[]), 4, 5]);
+expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 10>>([...(null! as string[]), 4, 5]);
