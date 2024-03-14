@@ -13,3 +13,8 @@ expectType<Sum<-999, PositiveInfinity>>(null! as PositiveInfinity);
 expectType<Sum<NegativeInfinity, 999>>(null! as NegativeInfinity);
 expectType<Sum<999, NegativeInfinity>>(null! as NegativeInfinity);
 expectType<Sum<NegativeInfinity, PositiveInfinity>>(null! as number);
+
+expectType<Sum<number, 1>>(null! as number);
+expectType<Sum<1, number>>(null! as number);
+expectType<Sum<number, number>>(null! as number);
+expectType<Sum<number, PositiveInfinity>>(null! as number);

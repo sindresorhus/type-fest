@@ -1,9 +1,11 @@
 import type {Sum} from './sum';
-import type {LessThan} from './less-than';
 import type {LessThanOrEqual} from './less-than-or-equal';
+import type {GreaterThanOrEqual} from './greater-than-or-equal';
+import type {GreaterThan} from './greater-than';
 import type {IsNegative} from './numeric';
-import type {And} from './internal';
+import type {And, Not, ArrayMin} from './internal';
 import type {IsEqual} from './is-equal';
+import type {ArraySplice} from './array-splice';
 
 /**
 Returns an array slice of a given range, just like `Array#slice()`.
@@ -54,9 +56,26 @@ slice[3];
 */
 export type ArraySlice<
 	Array_ extends readonly unknown[],
-	Start extends number = 0,
-	End extends number = Array_['length'],
-> = ArraySliceHelper<Array_, Start, End>;
+	Start extends number = never,
+	End extends number = never,
+> = And<IsEqual<Start, never>, IsEqual<End, never>> extends true
+	? Array_
+	: number extends Array_['length']
+		? VariableLengthArraySliceHelper<Array_, Start, End>
+		: ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? Array_['length'] : End>;
+
+type VariableLengthArraySliceHelper<
+	Array_ extends readonly unknown[],
+	Start extends number,
+	End extends number,
+> = And<Not<IsNegative<Start>>, IsEqual<End, never>> extends true
+	? ArraySplice<Array_, 0, Start>
+	: And<
+	And<Not<IsNegative<Start>>, Not<IsNegative<End>>>,
+	IsEqual<GreaterThan<End, Start>, true>
+	> extends true
+		? ArraySliceByPositiveIndex<Array_, Start, End>
+		: [];
 
 type ArraySliceHelper<
 	Array_ extends readonly unknown[],
@@ -73,21 +92,15 @@ type ArraySliceHelper<
 			: never
 		: Start,
 	PositiveE extends number = IsNegative<End> extends true ? Sum<ArrayLength, End> : End,
-> = true extends [IsNegative<PositiveS>, LessThanOrEqual<PositiveE, PositiveS>][number]
+> = true extends [IsNegative<PositiveS>, LessThanOrEqual<PositiveE, PositiveS>, GreaterThanOrEqual<PositiveS, ArrayLength>][number]
 	? []
-	: ArraySliceByPositiveIndex<Array_, PositiveS, PositiveE>;
+	: ArraySliceByPositiveIndex<Array_, ArrayMin<[PositiveS, ArrayLength]>, ArrayMin<[PositiveE, ArrayLength]>>;
 
 type ArraySliceByPositiveIndex<
 	Array_ extends readonly unknown[],
 	Start extends number,
 	End extends number,
-	TraversedElement extends Array<Array_[number]> = [],
 	Result extends Array<Array_[number]> = [],
-> = Array_ extends readonly [infer H, ...infer Rest]
-	? And<
-	IsEqual<LessThanOrEqual<Start, TraversedElement['length']>, true>,
-	IsEqual<LessThan<TraversedElement['length'], End>, true>
-	> extends true
-		? ArraySliceByPositiveIndex<Rest, Start, End, [...TraversedElement, H], [...Result, H]>
-		: ArraySliceByPositiveIndex<Rest, Start, End, [...TraversedElement, H], Result>
-	: Result;
+> = Start extends End
+	? Result
+	: ArraySliceByPositiveIndex<Array_, Sum<Start, 1>, End, [...Result, Array_[Start]]>;

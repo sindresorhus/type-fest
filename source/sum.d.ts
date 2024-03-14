@@ -34,33 +34,35 @@ Sum<PositiveInfinity, NegativeInfinity>;
 @category Numeric
 */
 // TODO: Support big integer and negative number.
-export type Sum<A extends number, B extends number> = [
-	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-] extends infer R extends [boolean, boolean, boolean, boolean]
-	? Or<
-	And<IsEqual<R[0], true>, IsEqual<R[3], false>>,
-	And<IsEqual<R[2], true>, IsEqual<R[1], false>>
-	> extends true
-		? PositiveInfinity
-		: Or<
-		And<IsEqual<R[1], true>, IsEqual<R[2], false>>,
-		And<IsEqual<R[3], true>, IsEqual<R[0], false>>
+export type Sum<A extends number, B extends number> = number extends A | B
+	? number
+	: [
+		IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+		IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+	] extends infer R extends [boolean, boolean, boolean, boolean]
+		? Or<
+		And<IsEqual<R[0], true>, IsEqual<R[3], false>>,
+		And<IsEqual<R[2], true>, IsEqual<R[1], false>>
 		> extends true
-			? NegativeInfinity
-			: true extends R[number]
-				? number
-				: ([IsNegative<A>, IsNegative<B>] extends infer R
-					? [false, false] extends R
-						? [...BuildTuple<A>, ...BuildTuple<B>]['length']
-						: [true, true] extends R
-							? number
-							: ArrayMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
-								? ArrayMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
-									? Max_ extends A | B
-										? Subtract<Max_, Min_>
-										: number
+			? PositiveInfinity
+			: Or<
+			And<IsEqual<R[1], true>, IsEqual<R[2], false>>,
+			And<IsEqual<R[3], true>, IsEqual<R[0], false>>
+			> extends true
+				? NegativeInfinity
+				: true extends R[number]
+					? number
+					: ([IsNegative<A>, IsNegative<B>] extends infer R
+						? [false, false] extends R
+							? [...BuildTuple<A>, ...BuildTuple<B>]['length']
+							: [true, true] extends R
+								? number
+								: ArrayMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
+									? ArrayMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
+										? Max_ extends A | B
+											? Subtract<Max_, Min_>
+											: number
+										: never
 									: never
-								: never
-					: never) & number
-	: never;
+						: never) & number
+		: never;
