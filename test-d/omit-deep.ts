@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OmitDeep} from '../index';
+import type {OmitDeep, Simplify} from '../index';
 
 declare class ClassA {
 	a: string;
@@ -36,6 +36,18 @@ expectType<Omit<Testing, 'object'>>(normal);
 
 declare const normal2: OmitDeep<Testing, 'object.string'>;
 expectType<{object: Omit<BaseType, 'string'>}>(normal2);
+
+declare const omitNotExistProperty: OmitDeep<Testing, 'not_in_Testing'>;
+expectType<Testing>(omitNotExistProperty);
+
+declare const omitNotExistProperties: OmitDeep<Testing, 'not_in_Testing' | 'not_in_Testing2'>;
+expectType<Testing>(omitNotExistProperties);
+
+declare const omitNotExistProperty2: OmitDeep<Testing, 'object.not_in_object'>;
+expectType<Testing>(omitNotExistProperty2);
+
+declare const omitNotExistArrayProperty2: OmitDeep<[1, 2, 3], 'not_in_array'>;
+expectType<[1, 2, 3]>(omitNotExistArrayProperty2);
 
 declare const number: OmitDeep<Testing, 'object.number'>;
 expectType<{object: Omit<BaseType, 'number'>}>(number);

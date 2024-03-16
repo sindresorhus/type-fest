@@ -1,6 +1,8 @@
 import type {ArraySplice} from './array-splice';
 import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToString} from './internal';
 import type {IsEqual} from './is-equal';
+import type {IsNever} from './is-never';
+import type {LiteralUnion} from './literal-union';
 import type {SimplifyDeep} from './merge-deep';
 import type {Paths} from './paths';
 import type {SharedUnionFieldsDeep} from './shared-union-fields-deep';
@@ -69,7 +71,7 @@ type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
 @category Object
 @category Array
 */
-export type OmitDeep<T, PathUnion extends Paths<T>> =
+export type OmitDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
 	SimplifyDeep<
 	SharedUnionFieldsDeep<
 	{[P in PathUnion]: OmitDeepWithOnePath<T, P>}[PathUnion]
@@ -102,9 +104,11 @@ P extends `${infer RecordKeyInPath}.${infer SubPath}`
 			: ObjectT[Key]
 	}
 	: ExactKey<ObjectT, P> extends infer Key
-		? Key extends PropertyKey
-			? Omit<ObjectT, Key>
-			: ObjectT
+		? IsNever<Key> extends true
+			? ObjectT
+			: Key extends PropertyKey
+				? Omit<ObjectT, Key>
+				: ObjectT
 		: ObjectT;
 
 /**
@@ -133,4 +137,4 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 				? []
 				// If `ArrayIndex` is a number literal
 				: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
-			: never;
+			: ArrayType;
