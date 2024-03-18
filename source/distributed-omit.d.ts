@@ -3,7 +3,9 @@ import type {KeysOfUnion} from './keys-of-union';
 /**
 Omits keys from a type, distributing the operation over a union.
 
-TypeScript's `Omit` doesn't distribute over unions, which causes the following situation:
+TypeScript's `Omit` doesn't distribute over unions, leading to the erasure of unique properties from union members when omitting keys. This creates a type that only retains properties common to all union members, making it impossible to access member-specific properties after the Omit. Essentially, using `Omit` on a union type merges the types into a less specific one, hindering type narrowing and property access based on discriminants. This type solves that.
+
+Example:
 
 ```
 type A = {
