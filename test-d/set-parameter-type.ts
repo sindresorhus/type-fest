@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {type SetParameterType} from '../index';
+import type {SetParameterType} from '../index';
 
 function fn(_a: number, _b: string, _c: Object, ..._arguments: boolean[]) {
 	return null;
@@ -27,9 +27,13 @@ expectType<(a: string, b: boolean, c: Object, ...args: boolean[]) => null>(test3
 test3('1', true, {}, true);
 
 // Test `...args` parameter
-declare const test4: SetParameterType<typeof fn, {3: string}>;
-expectType<(a: number, b: string, c: Object, ...args: string[]) => null>(test4);
-test4(1, '1', {}, '1');
+declare const testargs: SetParameterType<typeof fn, {3: string}>;
+expectType<(a: number, b: string, c: Object, ...args: string[]) => null>(testargs);
+testargs(1, '1', {}, '1');
+
+declare const testargs2: SetParameterType<typeof fn, [string, number, number, ...boolean[]]>;
+expectType<(a: string, b: number, c: number, ...args: boolean[]) => null>(testargs2);
+testargs2('1', 1, 1, true);
 
 // Test arrow function
 declare const test5: SetParameterType<typeof arrowFunction, {0: string}>;
