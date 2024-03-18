@@ -37,4 +37,4 @@ jobs:
           node-version: 18
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }}
-      - run: npx tsc
+      - run: npx test
