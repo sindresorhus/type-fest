@@ -34,33 +34,35 @@ Subtract<PositiveInfinity, PositiveInfinity>;
 @category Numeric
 */
 // TODO: Support big integer and negative number.
-export type Subtract<A extends number, B extends number> = [
-	IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-	IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-] extends infer R extends [boolean, boolean, boolean, boolean]
-	? Or<
-	And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
-	And<IsEqual<R[3], true>, IsEqual<R[1], false>>
-	> extends true
-		? PositiveInfinity
-		: Or<
-		And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
-		And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+export type Subtract<A extends number, B extends number> = number extends A | B
+	? number
+	: [
+		IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+		IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+	] extends infer R extends [boolean, boolean, boolean, boolean]
+		? Or<
+		And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
+		And<IsEqual<R[3], true>, IsEqual<R[1], false>>
 		> extends true
-			? NegativeInfinity
-			: true extends R[number]
-				? number
-				: [IsNegative<A>, IsNegative<B>] extends infer R
-					? [false, false] extends R
-						? BuildTuple<A> extends infer R
-							? R extends [...BuildTuple<B>, ...infer R]
-								? R['length']
-								: number
-							: never
-						: LessThan<A, B> extends true
-							? number
-							: [false, true] extends R
-								? Sum<A, NumberAbsolute<B>>
-								: Subtract<NumberAbsolute<B>, NumberAbsolute<A>>
-					: never
-	: never;
+			? PositiveInfinity
+			: Or<
+			And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
+			And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+			> extends true
+				? NegativeInfinity
+				: true extends R[number]
+					? number
+					: [IsNegative<A>, IsNegative<B>] extends infer R
+						? [false, false] extends R
+							? BuildTuple<A> extends infer R
+								? R extends [...BuildTuple<B>, ...infer R]
+									? R['length']
+									: number
+								: never
+							: LessThan<A, B> extends true
+								? number
+								: [false, true] extends R
+									? Sum<A, NumberAbsolute<B>>
+									: Subtract<NumberAbsolute<B>, NumberAbsolute<A>>
+						: never
+		: never;
