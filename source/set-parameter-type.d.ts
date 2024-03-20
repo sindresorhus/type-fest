@@ -34,7 +34,7 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 			: {
 				[K in keyof TArray]:
 				number extends K
-					?	VariablePartOfArray<TArray>[number]
+					? VariablePartOfArray<TArray>[number]
 					: K extends keyof TObject ? TObject[K] : TArray[K]
 			}
 		: TObject extends object
