@@ -38,7 +38,7 @@ Note that types containing overloaded functions are not made deeply readonly due
 */
 export type ReadonlyDeep<T> = T extends BuiltIns
 	? T
-	: T extends new (...args: any[]) => unknown
+	: T extends new (...arguments_: any[]) => unknown
 		? T // Skip class constructors
 		: T extends (...arguments_: any[]) => unknown
 			? {} extends ReadonlyObjectDeep<T>

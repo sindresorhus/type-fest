@@ -1,14 +1,14 @@
 import {expectType} from 'tsd';
 import type {GlobalThis} from '../index';
 
-type ExtraProps = GlobalThis & {
+type ExtraProperties = GlobalThis & {
 	readonly GLOBAL_TOKEN: string;
 };
 
 // Verify `globalThis` can be cast to a type which extends `GlobalThis`.
-expectType<string>((globalThis as ExtraProps).GLOBAL_TOKEN);
+expectType<string>((globalThis as ExtraProperties).GLOBAL_TOKEN);
 
 // Verify that object literals cannot be cast to a type which extends `GlobalThis`.
-declare function consumeExtraProps(extraProps: ExtraProps): void;
+declare function consumeExtraProperties(extraProperties: ExtraProperties): void;
 // @ts-expect-error
-consumeExtraProps(({something: 'value'}) as ExtraProps);
+consumeExtraProperties(({something: 'value'}) as ExtraProperties);

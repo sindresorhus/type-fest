@@ -1,19 +1,19 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {Simplify} from '../index';
 
-type PositionProps = {
+type PositionProperties = {
 	top: number;
 	left: number;
 };
 
-type SizeProps = {
+type SizeProperties = {
 	width: number;
 	height: number;
 };
 
 // Flatten the type output to improve type hints shown in editors.
-const flattenProps = {top: 120, left: 240, width: 480, height: 600};
-expectType<Simplify<PositionProps & SizeProps>>(flattenProps);
+const flattenProperties = {top: 120, left: 240, width: 480, height: 600};
+expectType<Simplify<PositionProperties & SizeProperties>>(flattenProperties);
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface SomeInterface {

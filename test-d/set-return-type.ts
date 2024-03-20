@@ -14,15 +14,15 @@ expectType<(foo: string, bar: boolean) => void>(variation2);
 variation2.call(anything, 'foo', true);
 
 // With `thisArg` and without parameters.
-function fn1(this: Date): void {} // eslint-disable-line @typescript-eslint/no-empty-function
-declare const variation3: SetReturnType<typeof fn1, string[]>;
+function function1(this: Date): void {} // eslint-disable-line @typescript-eslint/no-empty-function
+declare const variation3: SetReturnType<typeof function1, string[]>;
 expectType<(this: Date) => string[]>(variation3);
 variation3.call(new Date());
 expectError(variation3.call('not-a-date'));
 
 // With `thisArg` and with parameters.
-declare function fn2(this: Date, foo: any, bar: Array<[number]>): any;
-declare const variation4: SetReturnType<typeof fn2, never>;
+declare function function2(this: Date, foo: any, bar: Array<[number]>): any;
+declare const variation4: SetReturnType<typeof function2, never>;
 expectType<(this: Date, foo: any, bar: Array<[number]>) => never>(variation4);
 variation4.call(new Date(), anything, [[4], [7]]);
 expectError(variation4.call('not-a-date', anything, [[4], [7]]));

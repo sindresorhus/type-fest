@@ -40,7 +40,7 @@
 		"expect-type": "^0.15.0",
 		"tsd": "^0.28.1",
 		"typescript": "^5.2.2",
-		"xo": "^0.56.0"
+		"xo": "^0.58.0"
 	},
 	"xo": {
 		"rules": {
@@ -50,7 +50,11 @@
 			"import/extensions": "off",
 			"@typescript-eslint/no-redeclare": "off",
 			"@typescript-eslint/no-confusing-void-expression": "off",
-			"@typescript-eslint/no-unsafe-argument": "off"
+			"@typescript-eslint/no-unsafe-argument": "off",
+			"object-curly-newline": ["error", {
+				"multiline": true,
+				"consistent": true
+			}]
 		}
 	},
 	"tsd": {

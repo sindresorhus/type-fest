@@ -10,20 +10,20 @@ class Foo {
 	method(): void {}
 }
 
-function fn(Cls: Constructor<Foo>): Foo {
+function function_(Cls: Constructor<Foo>): Foo {
 	return new Cls(1, '', 123);
 }
 
-function fn2(Cls: Constructor<Foo, [number, number]>): Foo {
+function function2(Cls: Constructor<Foo, [number, number]>): Foo {
 	expectError(new Cls(1, ''));
 	return new Cls(1, 2);
 }
 
-fn(Foo);
-fn2(Foo);
+function_(Foo);
+function2(Foo);
 
 // Prototype test
-type PositionProps = {
+type PositionProperties = {
 	top: number;
 	left: number;
 };
@@ -39,21 +39,21 @@ class Position {
 	}
 }
 
-declare const Bar: Class<PositionProps>;
+declare const Bar: Class<PositionProperties>;
 
-expectAssignable<Class<PositionProps>>(Position);
+expectAssignable<Class<PositionProperties>>(Position);
 
-expectNotAssignable<Class<PositionProps, [number]>>(Position);
+expectNotAssignable<Class<PositionProperties, [number]>>(Position);
 
-expectAssignable<Class<PositionProps, [number, number]>>(Position);
-expectAssignable<Constructor<PositionProps, [number, number]>>(Position);
+expectAssignable<Class<PositionProperties, [number, number]>>(Position);
+expectAssignable<Constructor<PositionProperties, [number, number]>>(Position);
 
 expectType<IsAny<typeof Bar['prototype']>>(false);
-expectType<PositionProps>(Position.prototype);
+expectType<PositionProperties>(Position.prototype);
 // /Prototype test
 
 expectError(new Position(17));
-expectAssignable<PositionProps>(new Position(17, 34));
+expectAssignable<PositionProperties>(new Position(17, 34));
 
 // Prototype test with type parameter
 class Building<T = unknown> {

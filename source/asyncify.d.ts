@@ -29,4 +29,4 @@ const getFooAsync: AsyncifiedFooGetter = (someArg) => {
 
 @category Async
 */
-export type Asyncify<Fn extends (...arguments_: any[]) => any> = SetReturnType<Fn, Promise<Awaited<ReturnType<Fn>>>>;
+export type Asyncify<Function_ extends (...arguments_: any[]) => any> = SetReturnType<Function_, Promise<Awaited<ReturnType<Function_>>>>;

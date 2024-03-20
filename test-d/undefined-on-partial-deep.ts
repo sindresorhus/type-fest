@@ -26,7 +26,7 @@ type MixedType = UndefinedOnPartialDeep<{
 	symbol?: symbol;
 	date?: Date;
 	regExp?: RegExp;
-	func?: (args0: string, args1: number) => boolean;
+	func?: (arguments0: string, arguments1: number) => boolean;
 }>;
 expectAssignable<MixedType>({
 	required: '',

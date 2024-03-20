@@ -5,19 +5,19 @@ import type {RequiredDeep} from '../index';
 type Foo = {
 	baz?: string | undefined;
 	bar?: {
-		function?: ((...args: any[]) => void) | undefined;
-		functionFixedArity?: ((arg1: unknown, arg2: unknown) => void);
+		function?: ((...arguments_: any[]) => void) | undefined;
+		functionFixedArity?: ((argument1: unknown, argument2: unknown) => void);
 		functionWithOverload?: {
-			(arg: number): string;
-			(arg1: string, arg2: number): number;
+			(argument: number): string;
+			(argument1: string, argument2: number): number;
 		};
 		namespace?: {
-			(arg: number): string;
+			(argument: number): string;
 			key: string | undefined;
 		};
 		namespaceWithOverload: {
-			(arg: number): string;
-			(arg1: string, arg2: number): number;
+			(argument: number): string;
+			(argument1: string, argument2: number): number;
 			key: string | undefined;
 		};
 		object?: {key?: 'value'} | undefined;
@@ -46,19 +46,19 @@ type Foo = {
 type FooRequired = {
 	baz: string;
 	bar: {
-		function: (...args: any[]) => void;
-		functionFixedArity: (arg1: unknown, arg2: unknown) => void;
+		function: (...arguments_: any[]) => void;
+		functionFixedArity: (argument1: unknown, argument2: unknown) => void;
 		functionWithOverload: {
-			(arg: number): string;
-			(arg1: string, arg2: number): number;
+			(argument: number): string;
+			(argument1: string, argument2: number): number;
 		};
 		namespace: {
-			(arg: number): string;
+			(argument: number): string;
 			key: string;
 		};
 		namespaceWithOverload: {
-			(arg: number): string;
-			(arg1: string, arg2: number): number;
+			(argument: number): string;
+			(argument1: string, argument2: number): number;
 			key: string;
 		};
 		object: {key: 'value'};
