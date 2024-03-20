@@ -16,8 +16,12 @@
 		"node": ">=16"
 	},
 	"scripts": {
-		"test": "xo && tsd && tsc && npm run test:set-parameter-type && node script/test/source-files-extension.js",
-		"test:set-parameter-type": "tsc --noEmit test-d/set-parameter-type"
+		"test:set-parameter-type": "tsc --noEmit test-d/set-parameter-type",
+		"test:source-files-extension": "node script/test/source-files-extension.js",
+		"test:tsc": "tsc",
+		"test:tsd": "tsd",
+		"test:xo": "xo",
+		"test": "run-p test:*"
 	},
 	"files": [
 		"index.d.ts",
@@ -38,6 +42,7 @@
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "~0.7.0",
 		"expect-type": "^0.15.0",
+		"npm-run-all2": "^6.1.2",
 		"tsd": "^0.28.1",
 		"typescript": "^5.2.2",
 		"xo": "^0.58.0"
