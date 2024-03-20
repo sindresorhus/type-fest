@@ -1,5 +1,5 @@
 import type {IsUnknown} from './is-unknown';
-import type {StaticPartOfArray} from './internal';
+import type {StaticPartOfArray, VariablePartOfArray} from './internal';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -32,7 +32,10 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 		? number extends TObject['length']
 			? TObject
 			: {
-				[K in keyof TArray]: K extends keyof TObject ? TObject[K] : TArray[K]
+				[K in keyof TArray]:
+				number extends K
+					? VariablePartOfArray<TArray>[number]
+					: K extends keyof TObject ? TObject[K] : TArray[K]
 			}
 		: TObject extends object
 			// If `TObject` is a object witch key is number like `{0: string, 1: number}`

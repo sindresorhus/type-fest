@@ -16,7 +16,8 @@
 		"node": ">=16"
 	},
 	"scripts": {
-		"test": "xo && tsd && tsc && node script/test/source-files-extension.js"
+		"test": "xo && tsd && tsc && npm run test:set-parameter-type && node script/test/source-files-extension.js",
+		"test:set-parameter-type": "tsc --noEmit test-d/set-parameter-type"
 	},
 	"files": [
 		"index.d.ts",

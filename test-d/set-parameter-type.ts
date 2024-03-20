@@ -22,9 +22,9 @@ expectType<(a: string, b: string, c: boolean, ...args: boolean[]) => null>(test2
 test2('1', '2', true, true);
 
 // Test another define way
-declare const test3: SetParameterType<typeof fn, [a: string, b: boolean]>;
-expectType<(a: string, b: boolean, c: Object, ...args: boolean[]) => null>(test3);
-test3('1', true, {}, true);
+declare const test3: SetParameterType<typeof fn, [a: 'a', b: 'b']>;
+expectType<(a: 'a', b: 'b', c: Object, ...args: boolean[]) => null>(test3);
+test3('a', 'b', {}, true);
 
 // Test `...args` parameter
 declare const testargs: SetParameterType<typeof fn, {3: string}>;
