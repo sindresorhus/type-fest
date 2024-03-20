@@ -98,7 +98,7 @@ export type BuiltIns = Primitive | void | Date | RegExp;
 /**
 Matches non-recursive types.
 */
-export type NonRecursiveType = BuiltIns | Function | (new (...args: any[]) => unknown);
+export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown);
 
 /**
 Returns a boolean for whether the given type is a plain key-value object.

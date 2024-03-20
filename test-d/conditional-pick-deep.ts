@@ -24,7 +24,7 @@ type Example = {
 	interface: InterfaceA;
 	instanceA: ClassA;
 	ClassA: typeof ClassA;
-	function: (...args: string[]) => string;
+	function: (...arguments_: string[]) => string;
 	stringOrBoolean: string | boolean;
 	object: {
 		string: string;
@@ -126,8 +126,8 @@ expectType<{instanceA: ClassA}>(instancePick);
 declare const classPick: ConditionalPickDeep<Example, typeof ClassA>;
 expectType<{ClassA: typeof ClassA}>(classPick);
 
-declare const functionPick: ConditionalPickDeep<Example, (...args: string[]) => string>;
-expectType<{function: (...args: string[]) => string}>(functionPick);
+declare const functionPick: ConditionalPickDeep<Example, (...arguments_: string[]) => string>;
+expectType<{function: (...arguments_: string[]) => string}>(functionPick);
 
 declare const mapPick: ConditionalPickDeep<Example, Map<string, string>>;
 expectType<{map: Map<string, string>}>(mapPick);

@@ -68,6 +68,7 @@ declare namespace TsConfigJson {
 			| 'es2022'
 			| 'esnext';
 
+		// eslint-disable-next-line unicorn/prevent-abbreviations
 		export type Lib =
 			| 'ES5'
 			| 'ES6'

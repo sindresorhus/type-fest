@@ -172,8 +172,8 @@ expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
 declare const undefined: undefined;
 expectNotAssignable<JsonValue>(undefined);
 
-declare const fn: (_: any) => void;
-expectNotAssignable<JsonValue>(fn);
+declare const function_: (_: any) => void;
+expectNotAssignable<JsonValue>(function_);
 
 declare const symbol: symbol;
 expectNotAssignable<JsonValue>(symbol);
@@ -182,8 +182,8 @@ expectNotAssignable<JsonValue>(symbol);
 declare const plainUndefined: Jsonify<typeof undefined>;
 expectType<never>(plainUndefined);
 
-declare const plainFn: Jsonify<typeof fn>;
-expectType<never>(plainFn);
+declare const plainFunction: Jsonify<typeof function_>;
+expectType<never>(plainFunction);
 
 declare const plainSymbol: Jsonify<typeof symbol>;
 expectType<never>(plainSymbol);
@@ -192,8 +192,8 @@ expectType<never>(plainSymbol);
 declare const arrayMemberUndefined: Jsonify<Array<typeof undefined>>;
 expectType<null[]>(arrayMemberUndefined);
 
-declare const arrayMemberFn: Jsonify<Array<typeof fn>>;
-expectType<null[]>(arrayMemberFn);
+declare const arrayMemberFunction: Jsonify<Array<typeof function_>>;
+expectType<null[]>(arrayMemberFunction);
 
 declare const arrayMemberSymbol: Jsonify<Array<typeof symbol>>;
 expectType<null[]>(arrayMemberSymbol);
@@ -202,8 +202,8 @@ expectType<null[]>(arrayMemberSymbol);
 declare const objectValueUndefined: Jsonify<{keep: string; undefined: typeof undefined}>;
 expectType<{keep: string}>(objectValueUndefined);
 
-declare const objectValueFn: Jsonify<{keep: string; fn: typeof fn}>;
-expectType<{keep: string}>(objectValueFn);
+declare const objectValueFunction: Jsonify<{keep: string; fn: typeof function_}>;
+expectType<{keep: string}>(objectValueFunction);
 
 declare const objectValueSymbol: Jsonify<{keep: string; symbol: typeof symbol}>;
 expectType<{keep: string}>(objectValueSymbol);

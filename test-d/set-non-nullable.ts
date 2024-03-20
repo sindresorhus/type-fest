@@ -23,8 +23,8 @@ expectType<{a: number; b: string; c: boolean}>(variation5);
 
 // Does not throw type error in type predicate contexts.
 type Variation6Config = {a: boolean | null; b: boolean | null};
-const variant6Fn = <TProp extends keyof Variation6Config>(
+const variant6Function = <TProperty extends keyof Variation6Config>(
 	config: Variation6Config,
-	prop: TProp,
-): config is SetNonNullable<Variation6Config, TProp> => Boolean(config[prop]);
-expectNotAssignable<never>(variant6Fn); // Just to prevent unused error.
+	property: TProperty,
+): config is SetNonNullable<Variation6Config, TProperty> => Boolean(config[property]);
+expectNotAssignable<never>(variant6Function); // Just to prevent unused error.

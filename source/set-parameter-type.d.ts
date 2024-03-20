@@ -104,14 +104,14 @@ type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
 
 @category Function
 */
-export type SetParameterType<Fn extends (...arguments_: any[]) => unknown, P extends Record<number, unknown>> =
+export type SetParameterType<Function_ extends (...arguments_: any[]) => unknown, P extends Record<number, unknown>> =
 	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
-	Fn extends (this: infer ThisArg, ...arguments_: infer Arguments) => unknown
+	Function_ extends (this: infer ThisArgument, ...arguments_: infer Arguments) => unknown
 		? (
 			// If a function did not specify the `this` fake parameter, it will be inferred to `unknown`.
 			// We want to detect this situation just to display a friendlier type upon hovering on an IntelliSense-powered IDE.
-			IsUnknown<ThisArg> extends true
-				? (...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Fn>
-				: (this: ThisArg, ...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Fn>
+			IsUnknown<ThisArgument> extends true
+				? (...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
+				: (this: ThisArgument, ...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
 		)
-		: Fn;	// This part should be unreachable
+		: Function_;	// This part should be unreachable
