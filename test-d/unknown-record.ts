@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectType} from 'tsd';
+import {expectAssignable, expectType} from 'tsd';
 import type {UnknownRecord} from '../index';
 
 declare let foo: UnknownRecord;
@@ -8,9 +8,12 @@ expectAssignable<UnknownRecord>(foo = {});
 expectAssignable<UnknownRecord>(foo = {bar: 'baz'});
 expectAssignable<UnknownRecord>(foo = {bar: {baz: 'hello'}});
 
-expectError(foo = []);
-expectError(foo = 42);
-expectError(foo = null);
+// @ts-expect-error
+foo = [];
+// @ts-expect-error
+foo = 42;
+// @ts-expect-error
+foo = null;
 
 expectType<unknown>(foo.bar);
 // eslint-disable-next-line @typescript-eslint/dot-notation

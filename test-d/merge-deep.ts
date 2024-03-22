@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {MergeDeep, MergeDeepOptions} from '../index';
 
 // Test helper.
@@ -70,7 +70,8 @@ const mergedClass = mergeDeep({ClassConstructor: ClassA}, {ClassConstructor: Cla
 const instance = new mergedClass.ClassConstructor();
 expectType<{ClassConstructor: typeof ClassB}>(mergedClass);
 expectType<ClassB>(instance);
-expectError<string>(instance.bar);
+// @ts-expect-error
+const _a: unknown = instance.bar;
 
 // Should merge simple types
 type Foo = {foo: string; fooBar: unknown; items: string[]};

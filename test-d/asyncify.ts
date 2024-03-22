@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectType} from 'tsd';
 import type {Asyncify} from '../index';
 
 declare function getFooSync(name: string): RegExp;
@@ -16,4 +16,7 @@ expectType<typeof getFooAsync1>(getFooAsync2);
 declare const getFooWithThisArgumentAsync1: Asyncify<typeof getFooWithThisArgumentSync>;
 const callResult = getFooWithThisArgumentAsync1.call(new Date(), 'foo');
 expectType<Promise<RegExp>>(callResult);
-expectError(getFooWithThisArgumentAsync1.call('not-date', 'foo'));
+
+// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
+getFooWithThisArgumentAsync1.call('not-date', 'foo');
