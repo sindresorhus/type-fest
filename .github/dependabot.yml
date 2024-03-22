@@ -6,7 +6,8 @@ updates:
       interval: 'weekly'
     groups:
       github-actions:
-        patterns: '*'
+        patterns:
+          - '*'
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
