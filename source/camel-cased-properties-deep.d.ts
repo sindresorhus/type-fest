@@ -46,9 +46,24 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 */
 export type CamelCasedPropertiesDeep<Value, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Value extends Function
 	? Value
-	: Value extends Array<infer U>
-		? Array<CamelCasedPropertiesDeep<U, Options>>
-		: Value extends Set<infer U>
-			? Set<CamelCasedPropertiesDeep<U, Options>> : {
-				[K in keyof Value as CamelCase<K, Options>]: CamelCasedPropertiesDeep<Value[K], Options>;
-			};
+	: Value extends []
+		? []
+	// Tailing spread array
+		:	Value extends [infer U, ...infer V]
+			? [CamelCasedPropertiesDeep<U>, ...CamelCasedPropertiesDeep<V>]
+			: Value extends readonly [infer U, ...infer V]
+				? readonly [CamelCasedPropertiesDeep<U>, ...CamelCasedPropertiesDeep<V>]
+			// Leading spread array
+				: Value extends readonly [...infer U, infer V]
+					? [...CamelCasedPropertiesDeep<U>, CamelCasedPropertiesDeep<V>]
+					: Value extends readonly [...infer U, infer V]
+						? readonly [...CamelCasedPropertiesDeep<U>, CamelCasedPropertiesDeep<V>]
+					// Array
+						: Value extends Array<infer U>
+							? Array<CamelCasedPropertiesDeep<U>>
+							: Value extends ReadonlyArray<infer U>
+								? ReadonlyArray<CamelCasedPropertiesDeep<U>>
+								: Value extends Set<infer U>
+									? Set<CamelCasedPropertiesDeep<U, Options>> : {
+										[K in keyof Value as CamelCase<K, Options>]: CamelCasedPropertiesDeep<Value[K], Options>;
+									};
