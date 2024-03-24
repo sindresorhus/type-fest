@@ -11,15 +11,15 @@ Example:
 type A = {
 	discriminant: 'A';
 	foo: {
-    bar: string;
-  };
+		bar: string;
+	};
 };
 
 type B = {
 	discriminant: 'B';
 	foo: {
-    baz: string;
-  };
+		baz: string;
+	};
 };
 
 type Union = A | B;
@@ -35,7 +35,7 @@ if (pickedUnion.discriminant === 'A') {
 	// doesn't distribute over unions.
 
 	pickedUnion.foo.bar;
-  //=> Error: Property 'bar' does not exist on type '{ bar: string; } | { baz: string; }'.
+	//=> Error: Property 'bar' does not exist on type '{ bar: string; } | { baz: string; }'.
 }
 ```
 
@@ -44,17 +44,17 @@ if (pickedUnion.discriminant === 'A') {
 type A = {
 	discriminant: 'A';
 	foo: {
-    bar: string;
-  };
-  extraneous: boolean;
+		bar: string;
+	};
+	extraneous: boolean;
 };
 
 type B = {
 	discriminant: 'B';
 	foo: {
-    baz: string;
-  };
-  extraneous: boolean;
+		baz: string;
+	};
+	extraneous: boolean;
 };
 
 // Notice that `foo.bar` exists in `A` but not in `B`.
@@ -70,10 +70,10 @@ if (pickedUnion.discriminant === 'A') {
  	//=> OK
 
 	pickedUnion.extraneous;
- 	//=> Error: Property 'extraneous' does not exist on type 'Pick<A, "discriminant" | "foo">'.
+	//=> Error: Property 'extraneous' does not exist on type 'Pick<A, "discriminant" | "foo">'.
 
 	pickedUnion.foo.baz;
- 	//=> Error: bar` is not a property of `{discriminant: 'A'; a: string}`.
+	//=> Error: bar` is not a property of `{discriminant: 'A'; a: string}`.
 }
 ```
 
