@@ -1,4 +1,4 @@
-import {expectType, expectError, expectAssignable} from 'tsd';
+import {expectType, expectAssignable} from 'tsd';
 import type {Opaque, tag} from '../source/opaque';
 import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep';
 import type {JsonValue} from '../source/basic';
@@ -75,7 +75,8 @@ expectType<typeof ClassA>(readonlyData.constructor);
 const instance = new readonlyData.constructor();
 instance.foo = 2; // Constructor is not made readonly
 
-expectError(readonlyData.string = 'bar');
+// @ts-expect-error
+readonlyData.string = 'bar';
 expectType<{readonly foo: string}>(readonlyData.object);
 expectType<string>(readonlyData.string);
 expectType<number>(readonlyData.number);

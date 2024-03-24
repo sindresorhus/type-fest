@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {IsAny} from '../index';
 
 declare const anything: any;
@@ -16,4 +16,5 @@ expectType<IsAny<undefined>>(false);
 expectType<IsAny<void>>(false);
 
 // Missing generic parameter
-expectError<IsAny>(anything);
+// @ts-expect-error
+type A = IsAny;

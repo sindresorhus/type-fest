@@ -1,4 +1,4 @@
-import {expectError, expectAssignable} from 'tsd';
+import {expectAssignable} from 'tsd';
 import type {RequireAtLeastOne} from '../index';
 
 type SystemMessages = {
@@ -23,9 +23,12 @@ test({macos: 'hey', default: 'hello'});
 test({linux: 'sup', default: 'hello', optional: 'howdy'});
 test({macos: 'hey', linux: 'sup', windows: 'hi', default: 'hello'});
 
-expectError(test({}));
-expectError(test({macos: 'hey'}));
-expectError(test({default: 'hello'}));
+// @ts-expect-error
+test({});
+// @ts-expect-error
+test({macos: 'hey'});
+// @ts-expect-error
+test({default: 'hello'});
 
 declare const atLeastOneWithoutKeys: RequireAtLeastOne<{
 	a: number;

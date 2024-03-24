@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectNotAssignable, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {Class, Constructor, IsAny} from '../index';
 
 class Foo {
@@ -15,7 +15,8 @@ function function_(Cls: Constructor<Foo>): Foo {
 }
 
 function function2(Cls: Constructor<Foo, [number, number]>): Foo {
-	expectError(new Cls(1, ''));
+	// @ts-expect-error
+	const _ = new Cls(1, '');
 	return new Cls(1, 2);
 }
 
@@ -52,7 +53,8 @@ expectType<IsAny<typeof Bar['prototype']>>(false);
 expectType<PositionProperties>(Position.prototype);
 // /Prototype test
 
-expectError(new Position(17));
+// @ts-expect-error
+const _a = new Position(17);
 expectAssignable<PositionProperties>(new Position(17, 34));
 
 // Prototype test with type parameter

@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {Includes} from '../index';
 
 const includesEmptyArray: Includes<[], 'abc'> = false;
@@ -38,18 +38,20 @@ expectType<false>(nullIncludesUndefined);
 const nullIncludesNullPass: Includes<[null], null> = true;
 expectType<true>(nullIncludesNullPass);
 
-declare const anything: any;
-
 // Verify that incorrect usage of `Includes` produces an error.
 
 // Missing all generic parameters.
-expectError<Includes>(anything);
+// @ts-expect-error
+type A0 = Includes;
 
 // Missing `Item` generic parameter.
-expectError<Includes<['my', 'array', 'has', 'stuff']>>(anything);
+// @ts-expect-error
+type A1 = Includes<['my', 'array', 'has', 'stuff']>;
 
 // Value generic parameter is a string not an array.
-expectError<Includes<'why a string?', 5>>(anything);
+// @ts-expect-error
+type A2 = Includes<'why a string?', 5>;
 
 // Value generic parameter is an object not an array.
-expectError<Includes<{key: 'value'}, 7>>(anything);
+// @ts-expect-error
+type A3 = Includes<{key: 'value'}, 7>;

@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {IsNever} from '../index';
 
 declare const _never: never;
@@ -16,4 +16,5 @@ expectType<IsNever<undefined>>(false);
 expectType<IsNever<void>>(false);
 
 // Missing generic parameter
-expectError<IsNever>(_never);
+// @ts-expect-error
+type A = IsNever;

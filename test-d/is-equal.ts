@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {IsEqual} from '../index';
 
 const notEqualNumberAndString: IsEqual<number, string> = false;
@@ -19,10 +19,10 @@ expectType<false>(notEqualAnyAndNever);
 const notEqualArrayOfAnyAndArrayOfNever: IsEqual<[any], [never]> = false;
 expectType<false>(notEqualArrayOfAnyAndArrayOfNever);
 
-declare const anything: any;
-
 // Missing all generic parameters.
-expectError<IsEqual>(anything);
+// @ts-expect-error
+type A = IsEqual;
 
 // Missing `Y` generic parameter.
-expectError<IsEqual<number>>(anything);
+// @ts-expect-error
+type B = IsEqual<number>;

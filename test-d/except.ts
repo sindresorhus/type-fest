@@ -1,9 +1,10 @@
-import {expectType, expectError} from 'tsd';
+import {expectType} from 'tsd';
 import type {Except} from '../index';
 
 declare const except: Except<{a: number; b: string}, 'b'>;
 expectType<{a: number}>(except);
-expectError(except.b);
+// @ts-expect-error
+const _a: unknown = except.b;
 
 const nonStrict = {
 	a: 1,
@@ -14,9 +15,8 @@ const nonStrictAssignment: typeof except = nonStrict; // No error
 
 declare const strictExcept: Except<{a: number; b: string}, 'b', {requireExactProps: true}>;
 
-expectError(() => {
-	const strictAssignment: typeof strictExcept = nonStrict;
-});
+// @ts-expect-error
+const strictAssignment: typeof strictExcept = nonStrict;
 
 // Generic properties
 type Example = {

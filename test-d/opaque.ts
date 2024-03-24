@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectNotAssignable, expectNotType, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectNotType, expectType} from 'tsd';
 import type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged, InvariantOf,	SnakeCasedPropertiesDeep} from '../index';
 
 type Value = Opaque<number, 'Value'>;
@@ -127,7 +127,8 @@ type JsonOf<T> = Tagged<string, 'JSON', T>;
 expectType<number>(JSON.parse('43') as GetTagMetadata<JsonOf<number>, 'JSON'>);
 
 // It's a type error to try to get the metadata for a tag that doesn't exist on a type.
-expectError('' as GetTagMetadata<UrlString, 'NonExistentTag'>);
+// @ts-expect-error
+const _a = '' as GetTagMetadata<UrlString, 'NonExistentTag'>;
 
 // Tagged types should be covariant in their metadata type
 expectAssignable<JsonOf<number>>('' as JsonOf<42>);

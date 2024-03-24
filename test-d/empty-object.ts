@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectType} from 'tsd';
+import {expectAssignable, expectType} from 'tsd';
 import type {EmptyObject, IsEmptyObject} from '../index';
 
 declare let foo: EmptyObject;
@@ -6,12 +6,18 @@ declare let foo: EmptyObject;
 expectAssignable<{}>(foo);
 expectAssignable<{}>(foo = {});
 
-expectError(foo = []);
-expectError(foo = {x: 1});
-expectError(foo = 42);
-expectError(foo = null);
-expectError(foo.bar = 42);
-expectError(foo.bar = {});
+// @ts-expect-error
+foo = [];
+// @ts-expect-error
+foo = {x: 1};
+// @ts-expect-error
+foo = 42;
+// @ts-expect-error
+foo = null;
+// @ts-expect-error
+foo.bar = 42;
+// @ts-expect-error
+foo.bar = {};
 
 expectType<IsEmptyObject<{}>>(true);
 expectType<IsEmptyObject<typeof foo>>(true);
@@ -23,7 +29,8 @@ expectType<IsEmptyObject<() => void>>(false);
 type Union = EmptyObject | {id: number};
 
 const bar: Union = {};
-expectError(bar.id);
+// @ts-expect-error
+const _a: unknown = bar.id;
 
 const baz: Union = {id: 42};
 expectType<{id: number}>(baz);
