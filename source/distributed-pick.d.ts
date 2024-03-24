@@ -25,7 +25,7 @@ type B = {
 type Union = A | B;
 
 type PickedUnion = Pick<Union, 'discriminant' | 'foo'>;
-//=> {discriminant: 'A' | 'B', foo: { bar: string } | { baz: string }}
+//=> {discriminant: 'A' | 'B', foo: {bar: string} | {baz: string}}
 
 const pickedUnion: PickedUnion = createPickedUnion();
 
@@ -35,7 +35,7 @@ if (pickedUnion.discriminant === 'A') {
 	// doesn't distribute over unions.
 
 	pickedUnion.foo.bar;
-	//=> Error: Property 'bar' does not exist on type '{ bar: string; } | { baz: string; }'.
+	//=> Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
 }
 ```
 
@@ -70,10 +70,10 @@ if (pickedUnion.discriminant === 'A') {
  	//=> OK
 
 	pickedUnion.extraneous;
-	//=> Error: Property 'extraneous' does not exist on type 'Pick<A, "discriminant" | "foo">'.
+	//=> Error: Property `extraneous` does not exist on type `Pick<A, 'discriminant' | 'foo'>`.
 
 	pickedUnion.foo.baz;
-	//=> Error: bar` is not a property of `{discriminant: 'A'; a: string}`.
+	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
 }
 ```
 
