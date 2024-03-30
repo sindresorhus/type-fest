@@ -10,9 +10,19 @@ import type {SingleKey} from 'type-fest';
 
 const processOperation = <T>(operation: SingleKey<T>) => {};
 
-processOperation({ operation: { name: 'add' } });
+processOperation({
+	operation: {
+ 		name: 'add'
+   	}
+ });
 
-processOperation({ operation: { name: 'add' }, 'values': [1, 2] }); // Compliation error
+processOperation({
+	operation: {
+ 		name: 'add'
+   	},
+ 	'values': [1, 2]
+});
+// Compilation error
 ```
 
 @category Object
