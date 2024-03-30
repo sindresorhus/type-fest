@@ -40,7 +40,6 @@
 		"generics"
 	],
 	"devDependencies": {
-		"@sindresorhus/tsconfig": "~0.7.0",
 		"expect-type": "^0.15.0",
 		"npm-run-all2": "^6.1.2",
 		"tsd": "^0.31.0",

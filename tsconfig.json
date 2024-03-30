@@ -1,14 +1,30 @@
 {
-	"extends": "@sindresorhus/tsconfig",
+	/// "extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"noEmit": true,
-		"target": "ES2019", // Node.js 12
+		"target": "ES2021", // Node.js 16
 		"lib": [
-			"ES2020",
+			"ES2021",
 			"DOM"
 		],
 		"exactOptionalPropertyTypes": true,
 		"skipLibCheck": false, // Ensures .d.ts files are checked: https://github.com/sindresorhus/tsconfig/issues/15
+
+		// Compatibility
+		"module": "commonjs",
+		"moduleResolution": "node",
+
+		// TODO: Use the reusable tsconfig again when targeting ESM.
+		// From https://github.com/sindresorhus/tsconfig/blob/main/tsconfig.json
+		"strict": true,
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		// "noUncheckedIndexedAccess": true, // TODO: Enable.
+		"noPropertyAccessFromIndexSignature": true,
+		"useDefineForClassFields": true,
 	},
 	"exclude": [
 		"test-d/**/*"
