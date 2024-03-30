@@ -12,15 +12,15 @@ const processOperation = <T>(operation: SingleKey<T>) => {};
 
 processOperation({
 	operation: {
- 		name: 'add'
-   	}
- });
+		name: 'add'
+	}
+});
 
 processOperation({
 	operation: {
- 		name: 'add'
-   	},
- 	'values': [1, 2]
+		name: 'add'
+	},
+	values: [1, 2]
 });
 // Compilation error
 ```
