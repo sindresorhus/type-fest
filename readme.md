@@ -124,7 +124,7 @@ Click the type names for complete docs.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more, or none of the given keys.
-- [`SingleKey`](source/single-key.d.ts) - Create a type that only accepts an object with a single key.
+- [`SingleKeyObject`](source/single-key-object.d.ts) - Create a type that only accepts an object with a single key.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
 - [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 - [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object. Use [`Omit<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
