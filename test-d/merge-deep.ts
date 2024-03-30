@@ -56,7 +56,7 @@ expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const, {arra
 
 // Should merge tuples with union
 expectType<Array<number | string | boolean>>(mergeDeep(['life', true], [42], {arrayMergeMode: 'spread'}));
-expectType<Array<number | string | boolean>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'spread'}));
+expectType<Array<number | string | true>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'spread'}));
 
 // Should not deep merge classes
 class ClassA {
