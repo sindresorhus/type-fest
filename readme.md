@@ -75,6 +75,13 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 npm install type-fest
 ```
 
+<p>Or, for projects that do not export these or dependent types, install as a dev only dependency with: </p>
+
+```sh
+npm install type-fest --save-dev
+```
+
+
 *Requires TypeScript >=5.1*
 
 *Works best with [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
