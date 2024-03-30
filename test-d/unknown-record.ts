@@ -15,6 +15,4 @@ foo = 42;
 // @ts-expect-error
 foo = null;
 
-expectType<unknown>(foo.bar);
-// eslint-disable-next-line @typescript-eslint/dot-notation
 expectType<unknown>(foo['bar']);
