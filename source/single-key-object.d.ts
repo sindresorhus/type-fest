@@ -11,14 +11,14 @@ import type {SingleKeyObject} from 'type-fest';
 const someFunction = <T>(parameter: SingleKeyObject<T>) => {};
 
 someFunction({
-	value: 'some value'
+	value: true
 });
 
 someFunction({
-	value: 'some value',
-	otherKey: 'some other value'
+	value: true,
+	otherKey: true
 });
-// Error: Argument of type '{ value: string; otherKey: string; }' is not assignable to parameter of type 'never'.ts(2345)
+// Error: Argument of type '{value: boolean; otherKey: boolean}' is not assignable to parameter of type 'never'.ts(2345)
 ```
 
 @category Object
