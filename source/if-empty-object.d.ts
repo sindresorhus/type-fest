@@ -12,14 +12,13 @@ import type {IfEmptyObject} from 'type-fest';
 type ShouldBeTrue = IfEmptyObject<{}>;
 //=> true
 
-type ShouldBeBar = IfEmptyObject<{ key: any }, 'foo', 'bar'>;
+type ShouldBeBar = IfEmptyObject<{key: any}, 'foo', 'bar'>;
 //=> 'bar'
 ```
 
 @category Type Guard
 @category Utilities
 */
-
 export type IfEmptyObject<
 	T,
 	TypeIfEmptyObject = true,
