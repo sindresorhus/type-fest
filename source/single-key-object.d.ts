@@ -10,9 +10,14 @@ import type {SingleKeyObject} from 'type-fest';
 
 const someFunction = <T>(parameter: SingleKeyObject<T>) => {};
 
-someFunction({ value: 'some value' });
+someFunction({
+	value: 'some value'
+});
 
-someFunction({ value: 'some value', otherKey: 'some other value' });
+someFunction({
+	value: 'some value',
+	otherKey: 'some other value'
+});
 // Error: Argument of type '{ value: string; otherKey: string; }' is not assignable to parameter of type 'never'.ts(2345)
 ```
 
