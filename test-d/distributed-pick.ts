@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectType} from 'tsd';
 import type {DistributedPick} from '../index';
 
 // When passing a non-union type, and
@@ -36,9 +36,8 @@ type Example2 = {
 	b: string;
 };
 
-expectError(() => {
-	type Actual4 = DistributedPick<Example2, 'c'>;
-});
+// @ts-expect-error
+type Actual4 = DistributedPick<Example2, 'c'>;
 
 // When passing a union type, and
 // picking keys that are present in some union members.
@@ -72,6 +71,8 @@ declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
 	expectType<{discriminant: 'A'; a: number}>(pickedUnion);
-	expectError(pickedUnion.foo);
-	expectError(pickedUnion.bar);
+	// @ts-expect-error
+	const _foo = pickedUnion.foo; // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+	// @ts-expect-error
+	const _bar = pickedUnion.bar; // eslint-disable-line @typescript-eslint/no-unsafe-assignment
 }

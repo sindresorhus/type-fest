@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectType} from 'tsd';
 import type {DistributedOmit, Except} from '../index';
 
 // When passing a non-union type, and
@@ -36,9 +36,8 @@ type Example2 = {
 	b: string;
 };
 
-expectError(() => {
-	type Actual4 = DistributedOmit<Example2, 'c'>;
-});
+// @ts-expect-error
+type Actual4 = DistributedOmit<Example2, 'c'>;
 
 // When passing a union type, and
 // omitting keys that are present in some union members.
@@ -72,6 +71,8 @@ declare const omittedUnion: OmittedUnion;
 
 if (omittedUnion.discriminant === 'A') {
 	expectType<{discriminant: 'A'; a: number}>(omittedUnion);
-	expectError(omittedUnion.foo);
-	expectError(omittedUnion.bar);
+	// @ts-expect-error
+	const _a: unknown = omittedUnion.foo;
+	// @ts-expect-error
+	const _b: unknown = omittedUnion.bar;
 }

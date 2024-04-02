@@ -1,4 +1,4 @@
-import {expectType, expectError} from 'tsd';
+import {expectType} from 'tsd';
 import type {SetReturnType} from '../index';
 
 declare const anything: unknown;
@@ -18,14 +18,16 @@ function function1(this: Date): void {} // eslint-disable-line @typescript-eslin
 declare const variation3: SetReturnType<typeof function1, string[]>;
 expectType<(this: Date) => string[]>(variation3);
 variation3.call(new Date());
-expectError(variation3.call('not-a-date'));
+// @ts-expect-error
+variation3.call('not-a-date');
 
 // With `thisArg` and with parameters.
 declare function function2(this: Date, foo: any, bar: Array<[number]>): any;
 declare const variation4: SetReturnType<typeof function2, never>;
 expectType<(this: Date, foo: any, bar: Array<[number]>) => never>(variation4);
 variation4.call(new Date(), anything, [[4], [7]]);
-expectError(variation4.call('not-a-date', anything, [[4], [7]]));
+// @ts-expect-error
+variation4.call('not-a-date', anything, [[4], [7]]);
 
 // Sanity check to the fact that omitting `this: unknown` from the argument list has no effect other than in readability.
 declare function withExplicitThis(this: unknown, foo: string): number;

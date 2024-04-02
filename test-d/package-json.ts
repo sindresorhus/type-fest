@@ -1,4 +1,4 @@
-import {expectType, expectAssignable, expectNotAssignable, expectError} from 'tsd';
+import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
 import type {PackageJson, LiteralUnion, JsonObject} from '../index';
 
 const packageJson: PackageJson = {};
@@ -106,8 +106,10 @@ expectAssignable<typeof packageJson['typesVersions']>({
 // See https://github.com/sindresorhus/type-fest/issues/272
 declare function setConfig(config: JsonObject): void;
 
-expectError(setConfig({bugs: undefined}));
-expectError(setConfig({bugs: {life: undefined}}));
+// @ts-expect-error
+setConfig({bugs: undefined});
+// @ts-expect-error
+setConfig({bugs: {life: undefined}});
 
 expectNotAssignable<JsonObject>({bugs: undefined});
 expectNotAssignable<JsonObject>({bugs: {life: undefined}});

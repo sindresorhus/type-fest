@@ -1,4 +1,4 @@
-import {expectError, expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {AbstractConstructor, AbstractClass, IsAny} from '../index';
 
 abstract class Foo {
@@ -47,7 +47,8 @@ function assertWithBar() {
 }
 
 functionReceivingAbsClass(Foo);
-expectError(functionReceivingAbsClass<Bar>(Foo));
+// @ts-expect-error
+functionReceivingAbsClass<Bar>(Foo);
 assertWithBar();
 
 expectAssignable<AbstractConstructor<{barMethod(): void}, []>>(Bar);
@@ -56,7 +57,8 @@ expectAssignable<AbstractClass<{barMethod(): void}, []>>(Bar);
 // Prototype test
 expectAssignable<{barMethod(): void}>(Bar.prototype);
 expectNotAssignable<{fooMethod(): void}>(Bar.prototype);
-expectError(new CorrectConcreteExtendedBar(12));
+// @ts-expect-error
+const _a = new CorrectConcreteExtendedBar(12);
 expectAssignable<{barMethod(): void}>(new CorrectConcreteExtendedBar(12, 15));
 // /Prototype test
 

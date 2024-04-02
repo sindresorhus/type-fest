@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectNotAssignable, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {UnknownArray} from '../index';
 
 declare const foo: readonly [];
