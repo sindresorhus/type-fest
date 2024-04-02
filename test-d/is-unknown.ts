@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {IsUnknown} from '../index';
 
 declare const _unknown: unknown;
@@ -16,4 +16,5 @@ expectType<IsUnknown<undefined>>(false);
 expectType<IsUnknown<void>>(false);
 
 // Missing generic parameter
-expectError<IsUnknown>(_unknown);
+// @ts-expect-error
+type A = IsUnknown;

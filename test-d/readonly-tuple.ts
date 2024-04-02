@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectNotAssignable} from 'tsd';
 import type {ReadonlyTuple} from '../index';
 
 type TupleOfThreeStrings = ReadonlyTuple<string, 3>;
@@ -12,5 +12,7 @@ expectNotAssignable<TupleOfThreeStrings>(['a', 'b', 'c', 'd']);
 
 declare const test: TupleOfThreeStrings;
 
-expectError(test.push);
-expectError(test[2] = 'a');
+// @ts-expect-error
+const _a: unknown = test.push;
+// @ts-expect-error
+test[2] = 'a';

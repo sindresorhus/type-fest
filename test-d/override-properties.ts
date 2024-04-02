@@ -1,4 +1,4 @@
-import {expectError, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {OverrideProperties} from '../source/override-properties';
 
 type Foo = {
@@ -9,10 +9,8 @@ type Foo = {
 const fixture: OverrideProperties<Foo, {b: number}> = {a: 1, b: 2};
 expectType<{a: number; b: number}>(fixture);
 
-expectError(() => {
-    type Bar = OverrideProperties<Foo, {c: number}>;
-});
+// @ts-expect-error
+type Bar = OverrideProperties<Foo, {c: number}>;
 
-expectError(() => {
-    type Bar = OverrideProperties<Foo, {b: number; c: number}>;
-});
+// @ts-expect-error
+type Bar = OverrideProperties<Foo, {b: number; c: number}>;

@@ -2,6 +2,7 @@
 	/// "extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"noEmit": true,
+		"noUnusedLocals": false, // Allow unused variables in test-d/*.ts files
 		"target": "ES2021", // Node.js 16
 		"lib": [
 			"ES2021",
@@ -19,7 +20,6 @@
 		"strict": true,
 		"noImplicitReturns": true,
 		"noImplicitOverride": true,
-		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 		// "noUncheckedIndexedAccess": true, // TODO: Enable.
@@ -27,6 +27,8 @@
 		"useDefineForClassFields": true,
 	},
 	"exclude": [
-		"test-d/**/*"
+		// Ignore `ConditionalKeys` and `WriteableDeep` error temporarily, remove when #831 and #833 are fixed.
+		"test-d/conditional-keys.ts",
+		"test-d/writable-deep.ts",
 	]
 }

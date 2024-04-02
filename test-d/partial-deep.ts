@@ -1,4 +1,4 @@
-import {expectType, expectError, expectAssignable} from 'tsd';
+import {expectType, expectAssignable} from 'tsd';
 import type {PartialDeep} from '../index';
 
 class ClassA {
@@ -32,7 +32,8 @@ const foo = {
 
 let partialDeepFoo: PartialDeep<typeof foo, {recurseIntoArrays: true}> = foo;
 
-expectError(expectType<Partial<typeof foo>>(partialDeepFoo));
+// @ts-expect-error
+expectType<Partial<typeof foo>>(partialDeepFoo);
 const partialDeepBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: true}> = foo.bar;
 expectType<typeof partialDeepBar | undefined>(partialDeepFoo.bar);
 // Check for constructor
@@ -79,7 +80,8 @@ const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo> = foo;
 // Check that `{recurseIntoArrays: true}` behaves as intended
 expectType<PartialDeep<typeof foo, {recurseIntoArrays: true}>>(partialDeepFoo);
 // These are mostly the same checks as before, but the array/tuple types are different.
-expectError(expectType<Partial<typeof foo>>(partialDeepNoRecurseIntoArraysFoo));
+// @ts-expect-error
+expectType<Partial<typeof foo>>(partialDeepNoRecurseIntoArraysFoo);
 const partialDeepNoRecurseIntoArraysBar: PartialDeep<typeof foo.bar, {recurseIntoArrays: false}> = foo.bar;
 expectType<typeof partialDeepNoRecurseIntoArraysBar | undefined>(partialDeepNoRecurseIntoArraysFoo.bar);
 expectType<((_: string) => void) | undefined>(partialDeepNoRecurseIntoArraysBar.function);

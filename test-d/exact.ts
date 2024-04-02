@@ -1,4 +1,3 @@
-import {expectError} from 'tsd';
 import type {Exact, Opaque} from '../index';
 
 { // Spec - string type
@@ -398,7 +397,8 @@ import type {Exact, Opaque} from '../index';
 	const function_ = <T extends Exact<{a: TaggedNumber}, T>>(arguments_: T) => arguments_;
 
 	function_({a: 1 as TaggedNumber});
-	expectError(function_({a: 1 as TaggedNumber, b: true}));
+	// @ts-expect-error
+	function_({a: 1 as TaggedNumber, b: true});
 }
 
 // Spec - special test case for deep optional union

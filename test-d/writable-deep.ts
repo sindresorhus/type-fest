@@ -1,4 +1,4 @@
-import {expectType, expectError, expectAssignable} from 'tsd';
+import {expectType, expectAssignable} from 'tsd';
 import type {JsonValue, Opaque, ReadonlyDeep, WritableDeep} from '../index';
 import type {WritableObjectDeep} from '../source/writable-deep';
 import {type tag} from '../source/opaque';
@@ -64,7 +64,8 @@ const data = {
 const readonlyData: ReadonlyDeep<typeof data> = data;
 
 let writableData: WritableDeep<typeof readonlyData>;
-expectError(writableData = readonlyData);
+// @ts-expect-error
+writableData = readonlyData; // eslint-disable-line prefer-const
 
 writableData.fn('foo');
 
