@@ -25,9 +25,5 @@
 		// "noUncheckedIndexedAccess": true, // TODO: Enable.
 		"noPropertyAccessFromIndexSignature": true,
 		"useDefineForClassFields": true,
-	},
-	"exclude": [
-		// Ignore `WriteableDeep` error temporarily, remove when #833 are fixed.
-		"test-d/writable-deep.ts",
-	]
+	}
 }
