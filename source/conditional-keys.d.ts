@@ -30,11 +30,10 @@ type StringKeysAndUndefined = ConditionalKeys<Example, string | undefined>;
 
 @category Object
 */
-export type ConditionalKeys<Base, Condition> = NonNullable<
-// Wrap in `NonNullable` to strip away the `undefined` type from the produced union.
+export type ConditionalKeys<Base, Condition> =
 {
 	// Map through all the keys of the given base type.
-	[Key in keyof Base]:
+	[Key in keyof Base]-?:
 	// Pick only keys with types extending the given `Condition` type.
 	Base[Key] extends Condition
 	// Retain this key since the condition passes.
@@ -43,5 +42,4 @@ export type ConditionalKeys<Base, Condition> = NonNullable<
 		: never;
 
 	// Convert the produced object into a union type of the keys which passed the conditional test.
-}[keyof Base]
->;
+}[keyof Base];
