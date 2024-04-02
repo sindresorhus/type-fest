@@ -131,7 +131,10 @@ const readonlyNamespace = {} as ReadonlyDeep<{
 	(foo: number): string;
 	baz: boolean[];
 }>;
-expectType<{
+expectType<((foo: number) => string) & {
+	readonly baz: readonly boolean[];
+}>(readonlyNamespace);
+expectAssignable<{
 	(foo: number): string;
 	readonly baz: readonly boolean[];
 }>(readonlyNamespace);
