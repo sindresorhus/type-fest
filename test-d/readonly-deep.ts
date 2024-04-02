@@ -2,7 +2,6 @@ import {expectType, expectAssignable} from 'tsd';
 import type {Opaque, tag} from '../source/opaque';
 import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep';
 import type {JsonValue} from '../source/basic';
-import { Simplify } from '../source/simplify';
 
 type Overloaded = {
 	(foo: number): string;
@@ -127,6 +126,7 @@ expectType<VoidTypeExpected>(voidType);
 
 // Standalone tests
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const readonlyNamespace = {} as ReadonlyDeep<{
 	(foo: number): string;
 	baz: boolean[];
