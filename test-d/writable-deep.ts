@@ -121,3 +121,18 @@ const fullyWritableData = {
 	},
 };
 expectAssignable<WritableDeep<ReadonlyDeep<typeof fullyWritableData>>>(fullyWritableData);
+
+// Standalone tests
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const writableNamespace = {} as WritableDeep<{
+	(foo: number): string;
+	readonly baz: readonly boolean[];
+}>;
+expectType<((foo: number) => string) & {
+	baz: boolean[];
+}>(writableNamespace);
+expectAssignable<{
+	(foo: number): string;
+	baz: boolean[];
+}>(writableNamespace);

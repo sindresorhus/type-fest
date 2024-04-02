@@ -123,3 +123,18 @@ type VoidTypeExpected = {
 };
 declare const voidType: ReadonlyDeep<VoidType>;
 expectType<VoidTypeExpected>(voidType);
+
+// Standalone tests
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const readonlyNamespace = {} as ReadonlyDeep<{
+	(foo: number): string;
+	baz: boolean[];
+}>;
+expectType<((foo: number) => string) & {
+	readonly baz: readonly boolean[];
+}>(readonlyNamespace);
+expectAssignable<{
+	(foo: number): string;
+	readonly baz: readonly boolean[];
+}>(readonlyNamespace);
