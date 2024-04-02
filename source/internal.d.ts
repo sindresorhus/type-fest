@@ -418,7 +418,9 @@ Multiple call signatures cannot currently be supported due to a TypeScript limit
 export type HasMultipleCallSignatures<T extends (...arguments_: any[]) => unknown> =
 	T extends {(...arguments_: infer A): unknown; (...arguments_: infer B): unknown}
 		? B extends A
-			? false
+			? A extends B
+				? false
+				: true
 			: true
 		: false;
 
