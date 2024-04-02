@@ -27,8 +27,7 @@
 		"useDefineForClassFields": true,
 	},
 	"exclude": [
-		// Ignore `ConditionalKeys` and `WriteableDeep` error temporarily, remove when #831 and #833 are fixed.
-		"test-d/conditional-keys.ts",
+		// Ignore `WriteableDeep` error temporarily, remove when #833 are fixed.
 		"test-d/writable-deep.ts",
 	]
 }
