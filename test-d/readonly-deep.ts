@@ -2,6 +2,7 @@ import {expectType, expectAssignable} from 'tsd';
 import type {Opaque, tag} from '../source/opaque';
 import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep';
 import type {JsonValue} from '../source/basic';
+import { Simplify } from '../source/simplify';
 
 type Overloaded = {
 	(foo: number): string;
@@ -123,3 +124,14 @@ type VoidTypeExpected = {
 };
 declare const voidType: ReadonlyDeep<VoidType>;
 expectType<VoidTypeExpected>(voidType);
+
+// Standalone tests
+
+const readonlyNamespace = {} as ReadonlyDeep<{
+	(foo: number): string;
+	baz: boolean[];
+}>;
+expectType<{
+	(foo: number): string;
+	readonly baz: readonly boolean[];
+}>(readonlyNamespace);
