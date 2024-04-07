@@ -21,6 +21,7 @@ expectType<1>(infinityMixed);
 
 // Integer
 declare const integer: Integer<1>;
+declare const integerWithDecimal: Integer<1.0>; // eslint-disable-line unicorn/no-zero-fractions
 declare const numberType: Integer<number>;
 declare const integerMixed: Integer<1 | 1.5 | -1>;
 declare const bigInteger: Integer<1e+100>;
@@ -31,6 +32,7 @@ declare const nonInteger: Integer<1.5>;
 declare const infinityInteger: Integer<PositiveInfinity | NegativeInfinity>;
 
 expectType<1>(integer);
+expectType<1>(integerWithDecimal);
 expectType<never>(numberType);
 expectType<1 | -1>(integerMixed);
 expectType<1e+100>(bigInteger);

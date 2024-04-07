@@ -5,7 +5,16 @@ type Zero = 0 | 0n;
 /**
 Returns the given number if it is a float, like `1.5` or `-1.5`.
 */
-type IsFloat<T extends number> = `${T}` extends `${number}.${number}` | `-${number}.${number}` ? true : false;
+type IsFloat<T extends number> =
+	`${T}` extends `${number}.${infer Decimal extends number}`
+		? Decimal extends Zero
+			? false
+			: true
+		: `${T}` extends `-${number}.${infer Decimal extends number}`
+			? Decimal extends Zero
+				? false
+				: true
+			: false;
 
 /**
 Returns the given number if it is an integer, like `-5`, `1` or `100`.
@@ -15,6 +24,7 @@ Like [`Number#IsInteger()`](https://developer.mozilla.org/en-US/docs/Web/JavaScr
 @example
 ```ts
 type Integer = IsInteger<1>; // true
+type IntegerWithDecimal = IsInteger<1.0>; // true
 type NegativeInteger = IsInteger<-1>; // true
 type Float = IsInteger<1.5>; // false
 
@@ -27,8 +37,9 @@ type HexadecimalInteger: IsInteger<0x10>; // true
 type IsInteger<T extends number> =
 number extends T ? false
 	: T extends PositiveInfinity | NegativeInfinity ? false
-		: IsFloat<T> extends true ? false
-			: T;
+		: IsFloat<T> extends true
+			? false
+			: true;
 
 /**
 Matches the hidden `Infinity` type.
