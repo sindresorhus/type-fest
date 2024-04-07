@@ -18,16 +18,23 @@ Returns the given number if it is an integer, like `-5`, `1` or `100`.
 Like [`Number#IsInteger()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/IsInteger) but for types.
 
 @example
-```ts
-type Integer = IsInteger<1>; // true
-type IntegerWithDecimal = IsInteger<1.0>; // true
-type NegativeInteger = IsInteger<-1>; // true
-type Float = IsInteger<1.5>; // false
+```
+type Integer = IsInteger<1>;
+//=> true
+type IntegerWithDecimal = IsInteger<1.0>;
+//=> true
+type NegativeInteger = IsInteger<-1>;
+//=> true
+type Float = IsInteger<1.5>;
+//=> false
 
-// supported non-decimal numbers
-type OctalInteger: IsInteger<0o10>; // true
-type BinaryInteger: IsInteger<0b10>; // true
-type HexadecimalInteger: IsInteger<0x10>; // true
+//=> supported non-decimal numbers
+type OctalInteger: IsInteger<0o10>;
+//=> true
+type BinaryInteger: IsInteger<0b10>;
+//=> true
+type HexadecimalInteger: IsInteger<0x10>;
+//=> true
 ```
 */
 type IsInteger<T extends number> =
@@ -87,6 +94,26 @@ A `number` that is an integer.
 You can't pass a `bigint` as they are already guaranteed to be integers.
 
 Use-case: Validating and documenting parameters.
+
+@example
+```
+type Integer = Integer<1>;
+//=> 1
+type IntegerWithDecimal = Integer<1.0>;
+//=> 1
+type NegativeInteger = Integer<-1>;
+//=> -1
+type Float = Integer<1.5>;
+//=> never
+
+//=> supported non-decimal numbers
+type OctalInteger: Integer<0o10>;
+//=> 0o10
+type BinaryInteger: Integer<0b10>;
+//=> 0b10
+type HexadecimalInteger: Integer<0x10>;
+//=> 0x10
+```
 
 @example
 ```
