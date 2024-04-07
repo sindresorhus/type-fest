@@ -21,25 +21,35 @@ expectType<1>(infinityMixed);
 
 // Integer
 declare const integer: Integer<1>;
-declare const integerMixed: Integer<1 | 1.5>;
+declare const numberType: Integer<number>;
+declare const integerMixed: Integer<1 | 1.5 | -1>;
+declare const bigInteger: Integer<1e+100>;
+declare const octalInteger: Integer<0o10>;
+declare const binaryInteger: Integer<0b10>;
+declare const hexadecimalInteger: Integer<0x10>;
 declare const nonInteger: Integer<1.5>;
 declare const infinityInteger: Integer<PositiveInfinity | NegativeInfinity>;
 
 expectType<1>(integer);
-expectType<never>(integerMixed); // This may be undesired behavior
+expectType<never>(numberType);
+expectType<1 | -1>(integerMixed);
+expectType<1e+100>(bigInteger);
+expectType<0o10>(octalInteger);
+expectType<0b10>(binaryInteger);
+expectType<0x10>(hexadecimalInteger);
 expectType<never>(nonInteger);
 expectType<never>(infinityInteger);
 
 // Float
 declare const float: Float<1.5>;
-declare const floatMixed: Float<1 | 1.5>;
+declare const floatMixed: Float<1 | 1.5 | -1.5>;
 declare const nonFloat: Float<1>;
 declare const infinityFloat: Float<PositiveInfinity | NegativeInfinity>;
 
 expectType<1.5>(float);
-expectType<1.5>(floatMixed);
+expectType<1.5 | -1.5>(floatMixed);
 expectType<never>(nonFloat);
-expectType<PositiveInfinity | NegativeInfinity>(infinityFloat); // According to Number.isInteger
+expectType<never>(infinityFloat);
 
 // Negative
 declare const negative: Negative<-1 | -1n | 0 | 0n | 1 | 1n>;

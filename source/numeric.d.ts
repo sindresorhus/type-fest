@@ -3,6 +3,34 @@ export type Numeric = number | bigint;
 type Zero = 0 | 0n;
 
 /**
+Returns the given number if it is a float, like `1.5` or `-1.5`.
+*/
+type IsFloat<T extends number> = `${T}` extends `${number}.${number}` | `-${number}.${number}` ? true : false;
+
+/**
+Returns the given number if it is an integer, like `-5`, `1` or `100`.
+
+Like [`Number#IsInteger()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/IsInteger) but for types.
+
+@example
+```ts
+type Integer = IsInteger<1>; // true
+type NegativeInteger = IsInteger<-1>; // true
+type Float = IsInteger<1.5>; // false
+
+// supported non-decimal numbers
+type OctalInteger: IsInteger<0o10>; // true
+type BinaryInteger: IsInteger<0b10>; // true
+type HexadecimalInteger: IsInteger<0x10>; // true
+```
+*/
+type IsInteger<T extends number> =
+number extends T ? false
+	: T extends PositiveInfinity | NegativeInfinity ? false
+		: IsFloat<T> extends true ? false
+			: T;
+
+/**
 Matches the hidden `Infinity` type.
 
 Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/32277) if you want to have this type as a built-in in TypeScript.
@@ -67,7 +95,10 @@ declare function setYear<T extends number>(length: Integer<T>): void;
 */
 // `${bigint}` is a type that matches a valid bigint literal without the `n` (ex. 1, 0b1, 0o1, 0x1)
 // Because T is a number and not a string we can effectively use this to filter out any numbers containing decimal points
-export type Integer<T extends number> = `${T}` extends `${bigint}` ? T : never;
+export type Integer<T extends number> =
+	T extends unknown // To distributive type
+		? IsInteger<T> extends true ? T : never
+		: never; // Never happens
 
 /**
 A `number` that is not an integer.
@@ -86,7 +117,10 @@ declare function setPercentage<T extends number>(length: Float<T>): void;
 
 @category Numeric
 */
-export type Float<T extends number> = T extends Integer<T> ? never : T;
+export type Float<T extends number> =
+T extends unknown // To distributive type
+	? IsFloat<T> extends true ? T : never
+	: never; // Never happens
 
 /**
 A negative (`-∞ < x < 0`) `number` that is not an integer.
