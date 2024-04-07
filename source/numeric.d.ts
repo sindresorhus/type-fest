@@ -1,3 +1,5 @@
+import type {Not} from './internal';
+
 export type Numeric = number | bigint;
 
 type Zero = 0 | 0n;
@@ -6,11 +8,11 @@ type Zero = 0 | 0n;
 Returns the given number if it is a float, like `1.5` or `-1.5`.
 */
 type IsFloat<T extends number> =
-	`${T}` extends `${infer _Sign extends '' | '-'}${number}.${infer Decimal extends number}`
-		? Decimal extends Zero
-			? false
-			: true
-		: false;
+`${T}` extends `${infer _Sign extends '' | '-'}${number}.${infer Decimal extends number}`
+	? Decimal extends Zero
+		? false
+		: true
+	: false;
 
 /**
 Returns the given number if it is an integer, like `-5`, `1` or `100`.
@@ -38,11 +40,11 @@ type HexadecimalInteger: IsInteger<0x10>;
 ```
 */
 type IsInteger<T extends number> =
-number extends T ? false
-	: T extends PositiveInfinity | NegativeInfinity ? false
-		: IsFloat<T> extends true
-			? false
-			: true;
+number extends T
+	? false
+	: T extends PositiveInfinity | NegativeInfinity
+		? false
+		: Not<IsFloat<T>>;
 
 /**
 Matches the hidden `Infinity` type.
