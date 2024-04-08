@@ -23,18 +23,24 @@ Like [`Number#IsInteger()`](https://developer.mozilla.org/en-US/docs/Web/JavaScr
 ```
 type Integer = IsInteger<1>;
 //=> true
+
 type IntegerWithDecimal = IsInteger<1.0>;
 //=> true
+
 type NegativeInteger = IsInteger<-1>;
 //=> true
+
 type Float = IsInteger<1.5>;
 //=> false
 
-//=> supported non-decimal numbers
+// Supports non-decimal numbers
+
 type OctalInteger: IsInteger<0o10>;
 //=> true
+
 type BinaryInteger: IsInteger<0b10>;
 //=> true
+
 type HexadecimalInteger: IsInteger<0x10>;
 //=> true
 ```
@@ -101,18 +107,24 @@ Use-case: Validating and documenting parameters.
 ```
 type Integer = Integer<1>;
 //=> 1
+
 type IntegerWithDecimal = Integer<1.0>;
 //=> 1
+
 type NegativeInteger = Integer<-1>;
 //=> -1
+
 type Float = Integer<1.5>;
 //=> never
 
-//=> supported non-decimal numbers
+// Supports non-decimal numbers
+
 type OctalInteger: Integer<0o10>;
 //=> 0o10
+
 type BinaryInteger: Integer<0b10>;
 //=> 0b10
+
 type HexadecimalInteger: Integer<0x10>;
 //=> 0x10
 ```
