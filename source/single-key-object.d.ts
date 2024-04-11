@@ -1,4 +1,4 @@
-import type {IfEmptyObject} from '../index';
+import type {IfEmptyObject} from './if-empty-object';
 import type {IsUnion} from './internal';
 
 /**
