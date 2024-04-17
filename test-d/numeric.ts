@@ -30,6 +30,8 @@ declare const binaryInteger: Integer<0b10>;
 declare const hexadecimalInteger: Integer<0x10>;
 declare const nonInteger: Integer<1.5>;
 declare const infinityInteger: Integer<PositiveInfinity | NegativeInfinity>;
+const infinityValue = Number.POSITIVE_INFINITY;
+declare const infinityInteger2: Integer<typeof infinityValue>;
 
 expectType<1>(integer);
 expectType<1>(integerWithDecimal);
@@ -41,6 +43,7 @@ expectType<0b10>(binaryInteger);
 expectType<0x10>(hexadecimalInteger);
 expectType<never>(nonInteger);
 expectType<never>(infinityInteger);
+expectType<never>(infinityInteger2);
 
 // Float
 declare const float: Float<1.5>;

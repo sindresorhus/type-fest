@@ -1,50 +1,9 @@
-import type {Not} from './internal';
+import type {IsFloat} from './is-float';
+import type {IsInteger} from './is-integer';
 
 export type Numeric = number | bigint;
 
 type Zero = 0 | 0n;
-
-/**
-Returns the given number if it is a float, like `1.5` or `-1.5`.
-*/
-type IsFloat<T extends number> =
-`${T}` extends `${infer _Sign extends '' | '-'}${number}.${infer Decimal extends number}`
-	? Decimal extends Zero
-		? false
-		: true
-	: false;
-
-/**
-Returns the given number if it is an integer, like `-5`, `1` or `100`.
-
-Like [`Number#IsInteger()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/IsInteger) but for types.
-
-@example
-```
-type Integer = IsInteger<1>;
-//=> true
-type IntegerWithDecimal = IsInteger<1.0>;
-//=> true
-type NegativeInteger = IsInteger<-1>;
-//=> true
-type Float = IsInteger<1.5>;
-//=> false
-
-//=> supported non-decimal numbers
-type OctalInteger: IsInteger<0o10>;
-//=> true
-type BinaryInteger: IsInteger<0b10>;
-//=> true
-type HexadecimalInteger: IsInteger<0x10>;
-//=> true
-```
-*/
-type IsInteger<T extends number> =
-number extends T
-	? false
-	: T extends PositiveInfinity | NegativeInfinity
-		? false
-		: Not<IsFloat<T>>;
 
 /**
 Matches the hidden `Infinity` type.
@@ -93,7 +52,6 @@ export type Finite<T extends number> = T extends PositiveInfinity | NegativeInfi
 
 /**
 A `number` that is an integer.
-You can't pass a `bigint` as they are already guaranteed to be integers.
 
 Use-case: Validating and documenting parameters.
 
@@ -131,14 +89,13 @@ declare function setYear<T extends number>(length: Integer<T>): void;
 */
 // `${bigint}` is a type that matches a valid bigint literal without the `n` (ex. 1, 0b1, 0o1, 0x1)
 // Because T is a number and not a string we can effectively use this to filter out any numbers containing decimal points
-export type Integer<T extends number> =
+export type Integer<T> =
 	T extends unknown // To distributive type
 		? IsInteger<T> extends true ? T : never
 		: never; // Never happens
 
 /**
 A `number` that is not an integer.
-You can't pass a `bigint` as they are already guaranteed to be integers.
 
 Use-case: Validating and documenting parameters.
 
@@ -153,7 +110,7 @@ declare function setPercentage<T extends number>(length: Float<T>): void;
 
 @category Numeric
 */
-export type Float<T extends number> =
+export type Float<T> =
 T extends unknown // To distributive type
 	? IsFloat<T> extends true ? T : never
 	: never; // Never happens
