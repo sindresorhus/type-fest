@@ -76,6 +76,7 @@ type Person = {
 ```
 
 @category Type
+@deprecated Use {@link Tagged} instead
 */
 export type Opaque<Type, Token = unknown> = Type & TagContainer<Token>;
 
@@ -109,6 +110,7 @@ type WillWork = UnwrapOpaque<Tagged<number, 'AccountNumber'>>; // number
 ```
 
 @category Type
+@deprecated Use {@link UnwrapTagged} instead
 */
 export type UnwrapOpaque<OpaqueType extends TagContainer<unknown>> =
 	OpaqueType extends Tag<PropertyKey, any>
