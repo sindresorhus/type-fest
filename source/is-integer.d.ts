@@ -24,7 +24,8 @@ type NegativeInteger = IsInteger<-1>;
 type Float = IsInteger<1.5>;
 //=> false
 
-// Supported non-decimal numbers
+// Supports non-decimal numbers
+
 type OctalInteger: IsInteger<0o10>;
 //=> true
 
