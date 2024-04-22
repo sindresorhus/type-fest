@@ -15,4 +15,3 @@ expectType<true>({} as IsInteger<0x10>);
 expectType<true>({} as IsInteger<1e+100>);
 expectType<false>({} as IsInteger<PositiveInfinity>);
 expectType<false>({} as IsInteger<typeof Number.POSITIVE_INFINITY>);
-
