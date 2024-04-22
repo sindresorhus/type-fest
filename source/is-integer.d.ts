@@ -14,18 +14,23 @@ Use-case:
 ```
 type Integer = IsInteger<1>;
 //=> true
+
 type IntegerWithDecimal = IsInteger<1.0>;
 //=> true
+
 type NegativeInteger = IsInteger<-1>;
 //=> true
+
 type Float = IsInteger<1.5>;
 //=> false
 
-//=> supported non-decimal numbers
+// Supported non-decimal numbers
 type OctalInteger: IsInteger<0o10>;
 //=> true
+
 type BinaryInteger: IsInteger<0b10>;
 //=> true
+
 type HexadecimalInteger: IsInteger<0x10>;
 //=> true
 ```

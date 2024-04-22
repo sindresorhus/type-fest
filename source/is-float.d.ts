@@ -12,10 +12,13 @@ Use-case:
 ```
 type Float = IsFloat<1.5>;
 //=> true
+
 type IntegerWithDecimal = IsInteger<1.0>;
 //=> false
+
 type NegativeFloat = IsInteger<-1.5>;
 //=> true
+
 type Infinity_ = IsInteger<Infinity>;
 //=> false
 ```
