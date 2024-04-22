@@ -105,6 +105,8 @@ A `number` that is not an integer.
 
 Use-case: Validating and documenting parameters.
 
+It does not accept `Infinity`.
+
 @example
 ```
 import type {Float} from 'type-fest';
