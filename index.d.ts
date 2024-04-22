@@ -98,6 +98,8 @@ export type {HasReadonlyKeys} from './source/has-readonly-keys';
 export type {WritableKeysOf} from './source/writable-keys-of';
 export type {HasWritableKeys} from './source/has-writable-keys';
 export type {Spread} from './source/spread';
+export type {IsInteger} from './source/is-integer';
+export type {IsFloat} from './source/is-float';
 export type {TupleToUnion} from './source/tuple-to-union';
 export type {IntRange} from './source/int-range';
 export type {IsEqual} from './source/is-equal';

@@ -1,3 +1,6 @@
+import type {IsFloat} from './is-float';
+import type {IsInteger} from './is-integer';
+
 export type Numeric = number | bigint;
 
 type Zero = 0 | 0n;
@@ -49,9 +52,34 @@ export type Finite<T extends number> = T extends PositiveInfinity | NegativeInfi
 
 /**
 A `number` that is an integer.
-You can't pass a `bigint` as they are already guaranteed to be integers.
 
 Use-case: Validating and documenting parameters.
+
+@example
+```
+type Integer = Integer<1>;
+//=> 1
+
+type IntegerWithDecimal = Integer<1.0>;
+//=> 1
+
+type NegativeInteger = Integer<-1>;
+//=> -1
+
+type Float = Integer<1.5>;
+//=> never
+
+// Supports non-decimal numbers
+
+type OctalInteger: Integer<0o10>;
+//=> 0o10
+
+type BinaryInteger: Integer<0b10>;
+//=> 0b10
+
+type HexadecimalInteger: Integer<0x10>;
+//=> 0x10
+```
 
 @example
 ```
@@ -67,13 +95,17 @@ declare function setYear<T extends number>(length: Integer<T>): void;
 */
 // `${bigint}` is a type that matches a valid bigint literal without the `n` (ex. 1, 0b1, 0o1, 0x1)
 // Because T is a number and not a string we can effectively use this to filter out any numbers containing decimal points
-export type Integer<T extends number> = `${T}` extends `${bigint}` ? T : never;
+export type Integer<T> =
+	T extends unknown // To distributive type
+		? IsInteger<T> extends true ? T : never
+		: never; // Never happens
 
 /**
 A `number` that is not an integer.
-You can't pass a `bigint` as they are already guaranteed to be integers.
 
 Use-case: Validating and documenting parameters.
+
+It does not accept `Infinity`.
 
 @example
 ```
@@ -86,7 +118,10 @@ declare function setPercentage<T extends number>(length: Float<T>): void;
 
 @category Numeric
 */
-export type Float<T extends number> = T extends Integer<T> ? never : T;
+export type Float<T> =
+T extends unknown // To distributive type
+	? IsFloat<T> extends true ? T : never
+	: never; // Never happens
 
 /**
 A negative (`-∞ < x < 0`) `number` that is not an integer.
