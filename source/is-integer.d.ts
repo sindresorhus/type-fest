@@ -3,7 +3,7 @@ import type {IsFloat} from './is-float';
 import type {PositiveInfinity, NegativeInfinity} from './numeric';
 
 /**
-Returns a boolean for whether the given number is a float, like `-5`, `1` or `100`.
+Returns a boolean for whether the given number is a integer, like `-5`, `1.0` or `100`.
 
 Like [`Number#IsInteger()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/IsInteger) but for types.
 
