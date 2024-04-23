@@ -1,4 +1,4 @@
-import type {IsNull} from './internal';
+import type {IsNull} from './is-null';
 
 /**
 Returns a boolean for whether the given type is `unknown`.

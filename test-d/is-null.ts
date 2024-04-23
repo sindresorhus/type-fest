@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsNull} from '../../source/internal';
+import type {IsNull} from '../source/is-null';
 
 // https://www.typescriptlang.org/docs/handbook/type-compatibility.html
 expectType<IsNull<null>>(true);
