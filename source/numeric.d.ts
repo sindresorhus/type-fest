@@ -3,7 +3,7 @@ import type {IsInteger} from './is-integer';
 
 export type Numeric = number | bigint;
 
-type Zero = 0 | 0n;
+export type Zero = 0 | 0n;
 
 /**
 Matches the hidden `Infinity` type.
