@@ -87,6 +87,8 @@ type FooRequired = {
 type FooBar = Exclude<Foo['bar'], undefined>;
 type FooRequiredBar = FooRequired['bar'];
 
+// TODO: Fix this case: https://github.com/mmkal/expect-type/issues/34
+// @ts-expect-error
 expectTypeOf<RequiredDeep<Foo>>().toEqualTypeOf<FooRequired>();
 expectTypeOf<RequiredDeep<FooBar['function']>>().toEqualTypeOf<FooRequiredBar['function']>();
 expectTypeOf<RequiredDeep<FooBar['functionFixedArity']>>().toEqualTypeOf<FooRequiredBar['functionFixedArity']>();
@@ -107,7 +109,11 @@ expectTypeOf<RequiredDeep<FooBar['readonlyTuple']>>().toEqualTypeOf<FooRequiredB
 expectTypeOf<RequiredDeep<FooBar['weakMap']>>().toEqualTypeOf<FooRequiredBar['weakMap']>();
 expectTypeOf<RequiredDeep<FooBar['weakSet']>>().toEqualTypeOf<FooRequiredBar['weakSet']>();
 expectTypeOf<RequiredDeep<FooBar['promise']>>().toEqualTypeOf<FooRequiredBar['promise']>();
+
+// TODO: Fix this case: https://github.com/mmkal/expect-type/issues/34
+// @ts-expect-error
 expectTypeOf<RequiredDeep<FooBar['namespace']>>().toEqualTypeOf<FooRequiredBar['namespace']>();
+
 expectTypeOf<RequiredDeep<FooBar['undefined']>>().toBeNever();
 expectTypeOf<RequiredDeep<FooBar['null']>>().toEqualTypeOf<FooRequiredBar['null']>();
 

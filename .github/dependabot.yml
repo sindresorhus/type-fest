@@ -11,7 +11,7 @@ updates:
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
     versioning-strategy: 'increase-if-necessary'
     groups:
       development-dependencies:
