@@ -3,8 +3,9 @@ import type {LessThanOrEqual} from './less-than-or-equal';
 import type {GreaterThanOrEqual} from './greater-than-or-equal';
 import type {GreaterThan} from './greater-than';
 import type {IsNegative} from './numeric';
-import type {And, Not, ArrayMin} from './internal';
+import type {Not, ArrayMin} from './internal';
 import type {IsEqual} from './is-equal';
+import type {And} from './and';
 import type {ArraySplice} from './array-splice';
 
 /**

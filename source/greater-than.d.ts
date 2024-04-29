@@ -1,6 +1,7 @@
-import type {NumberAbsolute, And, Or, PositiveNumericStringGt} from './internal';
+import type {NumberAbsolute, Or, PositiveNumericStringGt} from './internal';
 import type {IsEqual} from './is-equal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
+import type {And} from './and';
 
 /**
 Returns a boolean for whether a given number is greater than another number.

@@ -1,8 +1,9 @@
-import type {NumberAbsolute, BuildTuple, And, Or} from './internal';
+import type {NumberAbsolute, BuildTuple, Or} from './internal';
 import type {IsEqual} from './is-equal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {LessThan} from './less-than';
 import type {Sum} from './sum';
+import type {And} from './and';
 
 /**
 Returns the difference between two numbers.

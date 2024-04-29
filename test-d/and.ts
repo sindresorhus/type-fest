@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {And} from '../../source/internal';
+import type {And} from '../source/and';
 
 declare const never: never;
 

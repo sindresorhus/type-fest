@@ -9,14 +9,7 @@ Useful in type utilities, such as checking if something does not occur.
 
 @example
 ```
-import type {IsNever} from 'type-fest';
-
-type And<A, B> =
-	A extends true
-		? B extends true
-			? true
-			: false
-		: false;
+import type {IsNever, And} from 'type-fest';
 
 // https://github.com/andnp/SimplyTyped/blob/master/src/types/strings.ts
 type AreStringsEqual<A extends string, B extends string> =

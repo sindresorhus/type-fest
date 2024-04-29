@@ -452,24 +452,6 @@ IsPrimitive<Object>
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
 /**
-Returns a boolean for whether A and B are both true.
-
-@example
-```
-And<true, true>;
-//=> true
-
-And<true, false>;
-//=> false
-```
-*/
-export type And<A extends boolean, B extends boolean> = [A, B][number] extends true
-	? true
-	: true extends [IsEqual<A, false>, IsEqual<B, false>][number]
-		? false
-		: never;
-
-/**
 Returns a boolean for either A or B is true.
 
 @example

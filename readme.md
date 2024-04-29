@@ -198,6 +198,7 @@ Click the type names for complete docs.
 - [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 - [`DistributedOmit`](source/distributed-omit.d.ts) - Omits keys from a type, distributing the operation over a union.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
+- [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 
 ### Type Guard
 
