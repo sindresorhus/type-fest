@@ -96,5 +96,8 @@
 		"compilerOptions": {
 			"noUnusedLocals": false
 		}
+	},
+	"dependencies": {
+		"tagged-tag": "^0.1.0"
 	}
 }
