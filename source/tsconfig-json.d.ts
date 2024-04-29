@@ -19,6 +19,7 @@ declare namespace TsConfigJson {
 			| 'ESNext'
 			| 'Node16'
 			| 'NodeNext'
+			| 'Preserve'
 			| 'None'
 			// Lowercase alternatives
 			| 'commonjs'
@@ -32,6 +33,7 @@ declare namespace TsConfigJson {
 			| 'esnext'
 			| 'node16'
 			| 'nodenext'
+			| 'preserve'
 			| 'none';
 
 		export type NewLine =
