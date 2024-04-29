@@ -199,6 +199,7 @@ Click the type names for complete docs.
 - [`DistributedOmit`](source/distributed-omit.d.ts) - Omits keys from a type, distributing the operation over a union.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
+- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
 
 ### Type Guard
 

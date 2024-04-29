@@ -15,6 +15,8 @@ And<true, true>;
 And<true, false>;
 //=> false
 ```
+
+@see {@link Or}
 */
 export type And<A extends boolean, B extends boolean> = [A, B][number] extends true
 	? true

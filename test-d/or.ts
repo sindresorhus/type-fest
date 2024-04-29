@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Or} from '../../source/internal';
+import type {Or} from '../source/or';
 
 declare const never: never;
 

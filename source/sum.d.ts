@@ -1,8 +1,9 @@
-import type {NumberAbsolute, BuildTuple, Or, ArrayMax, ArrayMin} from './internal';
+import type {NumberAbsolute, BuildTuple, ArrayMax, ArrayMin} from './internal';
 import type {IsEqual} from './is-equal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {Subtract} from './subtract';
 import type {And} from './and';
+import type {Or} from './or';
 
 /**
 Returns the sum of two numbers.
