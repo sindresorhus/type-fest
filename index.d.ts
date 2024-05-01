@@ -123,6 +123,8 @@ export type {ArraySplice} from './source/array-splice';
 export type {SetFieldType} from './source/set-field-type';
 export type {Paths} from './source/paths';
 export type {SharedUnionFieldsDeep} from './source/shared-union-fields-deep';
+export type {And} from './source/and';
+export type {Or} from './source/or';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
