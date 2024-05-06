@@ -61,6 +61,8 @@ export type DelimiterCasedPropertiesDeep<
 				>]: DelimiterCasedPropertiesDeep<Value[K], Delimiter>;
 			};
 
+// This is a copy of CamelCasedPropertiesArrayDeep (see: camel-cased-properties-deep.d.ts).
+// These types should be kept in sync.
 type DelimiterCasedPropertiesArrayDeep<Value extends UnknownArray, Delimiter extends string> =
 	Value extends []
 		? []
