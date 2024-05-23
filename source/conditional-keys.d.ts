@@ -39,7 +39,7 @@ export type ConditionalKeys<Base, Condition> =
 		// Retain this key since the condition passes
 		?
 			// If the condition extends never, only include the key if the value for that key is also never
-			Condition extends never
+			[Condition] extends [never]
 				? Base[Key] extends never
 					? Key
 					: never
