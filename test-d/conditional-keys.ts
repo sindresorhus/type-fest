@@ -6,6 +6,7 @@ type Example = {
 	b?: string | number;
 	c?: string;
 	d: Record<string, unknown>;
+	e: never;
 };
 
 declare const exampleConditionalKeys: ConditionalKeys<Example, string>;
