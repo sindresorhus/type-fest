@@ -14,3 +14,6 @@ expectType<'a'>(exampleConditionalKeys);
 
 declare const exampleConditionalKeysWithUndefined: ConditionalKeys<Example, string | undefined>;
 expectType<'a' | 'c'>(exampleConditionalKeysWithUndefined);
+
+declare const exampleConditionalKeysTargetingNever: ConditionalKeys<Example, never>;
+expectType<'e'>(exampleConditionalKeysTargetingNever);
