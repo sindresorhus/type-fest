@@ -1,3 +1,5 @@
+import type {IfNever} from './if-never';
+
 /**
 Extract the keys from a type where the value type of the key extends the given `Condition`.
 
@@ -34,18 +36,11 @@ export type ConditionalKeys<Base, Condition> =
 {
 	// Map through all the keys of the given base type.
 	[Key in keyof Base]-?:
-	// Pick only keys with types extending the given `Condition` type.
-	Base[Key] extends Condition
-		// Retain this key since the condition passes
-		?
-			// If the condition extends never, only include the key if the value for that key is also never
-			[Condition] extends [never]
-				? Base[Key] extends never
-					? Key
-					: never
-				// Otherwise, only include the key if the value is not never (since never extends every other type)
-				: Base[Key] extends never ? never : Key
-		// Discard this key since the condition fails.
-		: never;
+		// Pick only keys with types extending the given `Condition` type.
+		Base[Key] extends Condition
+			// If the value for the key extends never, only include it if `Condition` also extends never
+			? IfNever<Base[Key], IfNever<Condition, Key, never>, Key>
+			// Discard this key since the condition fails.
+			: never;
 	// Convert the produced object into a union type of the keys which passed the conditional test.
 }[keyof Base];
