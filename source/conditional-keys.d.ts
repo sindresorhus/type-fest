@@ -37,7 +37,7 @@ export type ConditionalKeys<Base, Condition> =
 	// Pick only keys with types extending the given `Condition` type.
 	Base[Key] extends Condition
 	// Retain this key since the condition passes.
-		? Key
+		? (Base[Key] extends never ? never : Key)
 	// Discard this key since the condition fails.
 		: never;
 
