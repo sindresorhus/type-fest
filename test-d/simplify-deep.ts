@@ -29,4 +29,3 @@ declare const flattenProperties: {
 	};
 };
 expectType<SimplifyDeep<Properties1 & Properties2>>(flattenProperties);
-
