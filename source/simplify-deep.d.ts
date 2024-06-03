@@ -46,7 +46,6 @@ type SimplifyDeepProperties = SimplifyDeep<Properties1 & Properties2>;
 ```
 
 @see Simplify
-@see ConditionalSimplifyDeep
 @category Object
 */
 export type SimplifyDeep<Type> = ConditionalSimplifyDeep<Type, Function | Iterable<unknown>, object>;
