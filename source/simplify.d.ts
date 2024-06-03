@@ -52,7 +52,8 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 ```
 
 @link https://github.com/microsoft/TypeScript/issues/15300
-
+@see SimplifyDeep
+@see ConditionalSimplify
 @category Object
 */
 export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
