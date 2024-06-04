@@ -34,14 +34,14 @@ type SimplifyDeepProperties = SimplifyDeep<Properties1 & Properties2>;
 // But if wrapped in SimplifyDeep, hovering over `Props` will show a flattened object with all the properties:
 //
 // SimplifyDeepProperties = {
-//   height: number;
-//   width: number;
-//   position: {
-//     top: number;
-//     bottom: number;
-//     left: number;
-//     right: number;
-//   };
+// 	height: number;
+// 	width: number;
+// 	position: {
+// 		top: number;
+// 		bottom: number;
+// 		left: number;
+// 		right: number;
+// 	};
 // };
 ```
 
