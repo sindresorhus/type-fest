@@ -11,11 +11,7 @@ import type {
 } from './internal';
 import type {UnknownRecord} from './unknown-record';
 import type {EnforceOptional} from './enforce-optional';
-
-/**
-Deeply simplifies an object excluding iterables and functions. Used internally to improve the UX and accept both interfaces and type aliases as inputs.
-*/
-export type SimplifyDeep<Type> = ConditionalSimplifyDeep<Type, Function | Iterable<unknown>, object>;
+import type {SimplifyDeep} from './simplify-deep';
 
 /**
 Try to merge two record properties or return the source property value, preserving `undefined` properties values in both cases.

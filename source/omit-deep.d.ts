@@ -3,9 +3,9 @@ import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToStri
 import type {IsEqual} from './is-equal';
 import type {IsNever} from './is-never';
 import type {LiteralUnion} from './literal-union';
-import type {SimplifyDeep} from './merge-deep';
 import type {Paths} from './paths';
 import type {SharedUnionFieldsDeep} from './shared-union-fields-deep';
+import type {SimplifyDeep} from './simplify-deep';
 import type {UnknownArray} from './unknown-array';
 
 /**

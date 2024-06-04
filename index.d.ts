@@ -61,6 +61,7 @@ export type {SetReturnType} from './source/set-return-type';
 export type {SetParameterType} from './source/set-parameter-type';
 export type {Asyncify} from './source/asyncify';
 export type {Simplify} from './source/simplify';
+export type {SimplifyDeep} from './source/simplify-deep';
 export type {Jsonify} from './source/jsonify';
 export type {Jsonifiable} from './source/jsonifiable';
 export type {Schema} from './source/schema';
