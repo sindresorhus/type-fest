@@ -1,4 +1,5 @@
 import type {ConditionalSimplifyDeep} from './conditional-simplify';
+import type {NonRecursiveType} from './internal';
 
 /**
 Deeply simplifies an object type.
@@ -48,4 +49,4 @@ type SimplifyDeepProperties = SimplifyDeep<Properties1 & Properties2>;
 @see Simplify
 @category Object
 */
-export type SimplifyDeep<Type> = ConditionalSimplifyDeep<Type, Function | Iterable<unknown>, object>;
+export type SimplifyDeep<Type> = ConditionalSimplifyDeep<Type, NonRecursiveType | Set<unknown> | Map<unknown, unknown>, object>;

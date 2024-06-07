@@ -27,6 +27,7 @@ expectType<never>(mergeDeep(null, {}));
 expectType<never>(mergeDeep([], 'life'));
 expectType<never>(mergeDeep([], new Set()));
 expectType<never>(mergeDeep(new Set(), new Set()));
+expectType<never>(mergeDeep(new Map(), new Map()));
 expectType<never>(mergeDeep(undefined, undefined));
 expectType<never>(mergeDeep({}, undefined));
 expectType<never>(mergeDeep(undefined, {}));
