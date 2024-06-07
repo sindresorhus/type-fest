@@ -5,6 +5,7 @@ import type {
 	IsNumericLiteral,
 	IsBooleanLiteral,
 	IsSymbolLiteral,
+	Tagged,
 } from '../index';
 
 const stringLiteral = '';
@@ -65,3 +66,8 @@ type A2 = IsNumericLiteral;
 type A3 = IsBooleanLiteral;
 // @ts-expect-error
 type A4 = IsSymbolLiteral;
+
+// Tagged types should be false
+expectType<IsStringLiteral<Tagged<string, 'Tag'>>>(false);
+expectType<IsNumericLiteral<Tagged<number, 'Tag'>>>(false);
+expectType<IsBooleanLiteral<Tagged<boolean, 'Tag'>>>(false);
