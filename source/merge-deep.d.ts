@@ -12,6 +12,9 @@ import type {
 import type {UnknownRecord} from './unknown-record';
 import type {EnforceOptional} from './enforce-optional';
 import type {SimplifyDeep} from './simplify-deep';
+import type {UnknownArray} from './unknown-array';
+
+type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;
 
 /**
 Try to merge two record properties or return the source property value, preserving `undefined` properties values in both cases.
@@ -247,7 +250,7 @@ type MergeDeepArrayRecursive<
 		: DoMergeArrayOrTuple<Destination, Source, Options>
 	: Destination[number] extends UnknownRecord
 		? Source[number] extends UnknownRecord
-			? Array<SimplifyDeep<MergeDeepRecord<Destination[number], Source[number], Options>>>
+			? Array<SimplifyDeepExcludeArray<MergeDeepRecord<Destination[number], Source[number], Options>>>
 			: DoMergeArrayOrTuple<Destination, Source, Options>
 		: DoMergeArrayOrTuple<Destination, Source, Options>;
 
@@ -290,7 +293,7 @@ type MergeDeepOrReturn<
 	Destination,
 	Source,
 	Options extends MergeDeepInternalOptions,
-> = SimplifyDeep<[undefined] extends [Destination | Source]
+> = SimplifyDeepExcludeArray<[undefined] extends [Destination | Source]
 	? DefaultType
 	: Destination extends UnknownRecord
 		? Source extends UnknownRecord
@@ -353,7 +356,7 @@ type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 /**
 This utility selects the correct entry point with the corresponding default options. This avoids re-merging the options at each iteration.
 */
-type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = SimplifyDeep<
+type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = SimplifyDeepExcludeArray<
 [undefined] extends [Destination | Source]
 	? never
 	: Destination extends UnknownRecord
@@ -477,7 +480,7 @@ function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 @category Utilities
 */
 export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepWithDefaultOptions<
-SimplifyDeep<Destination>,
-SimplifyDeep<Source>,
+SimplifyDeepExcludeArray<Destination>,
+SimplifyDeepExcludeArray<Source>,
 Options
 >;

@@ -28,6 +28,7 @@ declare const flattenProperties: {
 		right: number;
 	};
 };
+
 expectType<SimplifyDeep<Properties1 & Properties2>>(flattenProperties);
 
 // Array

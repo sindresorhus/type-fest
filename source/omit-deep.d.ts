@@ -75,8 +75,8 @@ export type OmitDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
 	SimplifyDeep<
 	SharedUnionFieldsDeep<
 	{[P in PathUnion]: OmitDeepWithOnePath<T, P>}[PathUnion]
-	>
-	>;
+	>,
+	UnknownArray>;
 
 /**
 Omit one path from the given object/array.
