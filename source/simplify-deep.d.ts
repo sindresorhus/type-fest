@@ -51,11 +51,12 @@ type SimplifyDeepProperties = SimplifyDeep<Properties1 & Properties2>;
 // 	};
 // };
 ```
+
 @example
 ```
 import type {SimplifyDeep} from 'type-fest';
 
-// a complex type that don't want/need to simplify
+// A complex type that you don't want or need to simplify
 type ComplexType = {
 	a: string;
 	b: 'b';
@@ -73,7 +74,7 @@ type PositionY = {
 	bottom: number;
 };
 
-// you want to simplify all other types
+// You want to simplify all other types
 type Properties1 = {
 	height: number;
 	position: PositionY;
