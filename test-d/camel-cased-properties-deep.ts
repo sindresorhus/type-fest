@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {CamelCasedPropertiesDeep} from '../index';
+import type {CamelCasedPropertiesDeep, Tagged} from '../index';
 
 declare const foo: CamelCasedPropertiesDeep<{A: {B: number; C: Array<{D: string}>}}>;
 
@@ -23,11 +23,14 @@ declare const tuple: CamelCasedPropertiesDeep<{tuple: [number, string, {D: strin
 expectType<{tuple: [number, string, {d: string}]}>(tuple);
 
 // Verify example
+type UserRole = Tagged<string, "Role">
+
 type User = {
 	UserId: number;
 	UserName: string;
 	Date: Date;
 	RegExp: RegExp;
+	Role: UserRole;
 };
 
 type UserWithFriends = {
@@ -35,12 +38,15 @@ type UserWithFriends = {
 	UserFriends: User[];
 };
 
+const role = 'someRole' as UserRole;
+
 const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	userInfo: {
 		userId: 1,
 		userName: 'Tom',
 		date: new Date(),
 		regExp: /.*/,
+		role,
 	},
 	userFriends: [
 		{
@@ -48,12 +54,14 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 			userName: 'Jerry',
 			date: new Date(),
 			regExp: /.*/,
+			role,
 		},
 		{
 			userId: 3,
 			userName: 'Spike',
 			date: new Date(),
 			regExp: /.*/,
+			role,
 		},
 	],
 };
