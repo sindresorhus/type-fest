@@ -23,7 +23,7 @@ declare const tuple: CamelCasedPropertiesDeep<{tuple: [number, string, {D: strin
 expectType<{tuple: [number, string, {d: string}]}>(tuple);
 
 // Verify example
-type UserRole = Tagged<string, "Role">
+type UserRole = Tagged<string, 'Role'>;
 
 type User = {
 	UserId: number;
