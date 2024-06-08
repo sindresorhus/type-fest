@@ -1,5 +1,5 @@
 import type {CamelCase, CamelCaseOptions} from './camel-case';
-import { NonRecursiveType } from './internal';
+import type { NonRecursiveType } from './internal';
 import type {UnknownArray} from './unknown-array';
 
 /**
