@@ -64,7 +64,7 @@ type Paths_<T, Depth extends number = 0> =
 					? InternalPaths<T, Depth>
 					: never;
 
-export type InternalPaths<_T, Depth extends number = 0, T = Required<_T> > =
+export type InternalPaths<_T, Depth extends number = 0, T = Required<_T>> =
 	T extends EmptyObject | readonly []
 		? never
 		: {
