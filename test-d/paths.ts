@@ -1,5 +1,5 @@
-import {expectType} from 'tsd';
-import type {Paths} from '../index';
+import {expectAssignable, expectType} from 'tsd';
+import type {Paths, PickDeep} from '../index';
 
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);
@@ -98,3 +98,13 @@ expectType<number | `${number}` | `${number}.b` | `${number}.a`>(leadingSpreadTu
 
 declare const leadingSpreadTuple1: Paths<[...Array<{a: string}>, {b: number}, {c: number}]>;
 expectType<number | `${number}` | `${number}.b` | `${number}.c` | `${number}.a`>(leadingSpreadTuple1);
+
+// Circularly references
+type MyEntity = {
+	myOtherEntity?: MyOtherEntity;
+};
+type MyOtherEntity = {
+	myEntity?: MyEntity;
+};
+type MyEntityPaths = Paths<MyEntity>;
+expectAssignable<string>({} as MyEntityPaths);
