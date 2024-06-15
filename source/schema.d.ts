@@ -47,25 +47,25 @@ export type Schema<ObjectType, ValueType> = ObjectType extends string
 				? ValueType
 				: ObjectType extends ReadonlySet<unknown>
 					? ValueType
-					: ObjectType extends readonly unknown[]
-						? ValueType
-						: ObjectType extends unknown[]
+					: ObjectType extends Array<infer U>
+						? Array<Schema<U, ValueType>>
+						: ObjectType extends (...arguments_: unknown[]) => unknown
 							? ValueType
-							: ObjectType extends (...arguments_: unknown[]) => unknown
+							: ObjectType extends Date
 								? ValueType
-								: ObjectType extends Date
+								: ObjectType extends Function
 									? ValueType
-									: ObjectType extends Function
+									: ObjectType extends RegExp
 										? ValueType
-										: ObjectType extends RegExp
-											? ValueType
-											: ObjectType extends object
-												? SchemaObject<ObjectType, ValueType>
-												: ValueType;
+										: ObjectType extends object
+											? SchemaObject<ObjectType, ValueType>
+											: ValueType;
 
 /**
 Same as `Schema`, but accepts only `object`s as inputs. Internal helper for `Schema`.
 */
 type SchemaObject<ObjectType extends object, K> = {
-	[KeyType in keyof ObjectType]: Schema<ObjectType[KeyType], K> | K;
+	[KeyType in keyof ObjectType]: ObjectType[KeyType] extends readonly unknown[] | unknown[]
+		? Schema<ObjectType[KeyType], K>
+		: Schema<ObjectType[KeyType], K> | K;
 };
