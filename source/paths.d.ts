@@ -3,6 +3,8 @@ import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
+import type {Sum} from './sum';
+import type {LessThan} from './less-than';
 
 /**
 Generate a union of all possible paths to properties in the given object.
@@ -45,7 +47,9 @@ open('listB.1'); // TypeError. Because listB only has one element.
 @category Object
 @category Array
 */
-export type Paths<T> =
+export type Paths<T> = Paths_<T>;
+
+type Paths_<T, Depth extends number = 0> =
 	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 		? never
 		: IsAny<T> extends true
@@ -53,14 +57,14 @@ export type Paths<T> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>>
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>>
-					: InternalPaths<T>
+					? InternalPaths<StaticPartOfArray<T>, Depth>
+					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Depth>
+					: InternalPaths<T, Depth>
 				: T extends object
-					? InternalPaths<T>
+					? InternalPaths<T, Depth>
 					: never;
 
-export type InternalPaths<_T, T = Required<_T>> =
+export type InternalPaths<_T, Depth extends number = 0, T = Required<_T>> =
 	T extends EmptyObject | readonly []
 		? never
 		: {
@@ -71,8 +75,10 @@ export type InternalPaths<_T, T = Required<_T>> =
 				| Key
 				| ToString<Key>
 				| (
-					IsNever<Paths<T[Key]>> extends false
-						? `${Key}.${Paths<T[Key]>}`
+					LessThan<Depth, 15> extends true // Limit the depth to prevent infinite recursion
+						? IsNever<Paths_<T[Key], Sum<Depth, 1>>> extends false
+							? `${Key}.${Paths_<T[Key], Sum<Depth, 1>>}`
+							: never
 						: never
 				)
 				: never
