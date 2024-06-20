@@ -274,6 +274,10 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 
+### Set
+
+- [`SetKeys`](source/set-keys.d.ts) - Infer the type of keys from a strongly typed `Set` or `ReadonlySet`
+
 ### Numeric
 
 - [`PositiveInfinity`](source/numeric.d.ts) - Matches the hidden `Infinity` type.
