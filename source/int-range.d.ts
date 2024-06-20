@@ -8,7 +8,7 @@ The numbers are created from the given `Start` (inclusive) parameter to the give
 
 You skip over numbers using the `Step` parameter (defaults to `1`). For example, `IntRange<0, 10, 2>` will create a union of `0 | 2 | 4 | 6 | 8`.
 
-Note: `Start` or `End` must smaller than `1000`.
+Note: `Start` or `End` must be non-negative and smaller than `1000`.
 
 Use-cases:
 1. This can be used to define a set of valid input/output values. for example:
