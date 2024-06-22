@@ -167,7 +167,7 @@ Click the type names for complete docs.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Convert a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) to the [primitive type](source/primitive.d.ts) it belongs to.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
-- [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
+- [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, function generator, `Array`, `Set`, `Map`, `stream.Readable`, etc.
 - [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
@@ -274,10 +274,6 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 
-### Set
-
-- [`SetKeys`](source/set-keys.d.ts) - Infer the type of keys from a strongly typed `Set` or `ReadonlySet`
-
 ### Numeric
 
 - [`PositiveInfinity`](source/numeric.d.ts) - Matches the hidden `Infinity` type.
@@ -352,6 +348,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
 - `Branded` - See [`Tagged`](source/opaque.d.ts)
 - `Opaque` - See [`Tagged`](source/opaque.d.ts)
+- `SetEntry` / `SetElement` / `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 
 ## Tips
 
