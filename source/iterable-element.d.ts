@@ -1,5 +1,5 @@
 /**
-Get the element type of an `Iterable`/`AsyncIterable`. For example, function generator, `Array`, `Set`, `Map`, `stream.Readable`, etc.
+Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
 
 This can be useful, for example, if you want to get the type that is yielded in a generator function. Often the return type of those functions are not specified.
 
