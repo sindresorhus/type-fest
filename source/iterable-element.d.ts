@@ -1,5 +1,5 @@
 /**
-Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
+Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
 
 This can be useful, for example, if you want to get the type that is yielded in a generator function. Often the return type of those functions are not specified.
 
@@ -33,7 +33,7 @@ async function * iAmGeneratorAsync() {
 type MeStringOrBoolean = IterableElement<ReturnType<typeof iAmGeneratorAsync>>
 ```
 
-Many types in JavaScript/TypeScript are iterables. This type works on all types that implement those interfaces. For example, `Array`, `Set`, `Map`, `stream.Readable`, etc.
+Many types in JavaScript/TypeScript are iterables. This type works on all types that implement those interfaces.
 
 An example with an array of strings:
 
@@ -42,6 +42,16 @@ An example with an array of strings:
 import type {IterableElement} from 'type-fest';
 
 type MeString = IterableElement<string[]>
+```
+
+@example
+```
+import type {IterableElement} from 'type-fest';
+
+const fruits = new Set(['🍎', '🍌', '🍉'] as const);
+
+type Fruit = IterableElement<typeof fruits>;
+//=> '🍎' | '🍌' | '🍉'
 ```
 
 @category Iterable
