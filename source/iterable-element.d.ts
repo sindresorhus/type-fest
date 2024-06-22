@@ -47,9 +47,11 @@ type MeString = IterableElement<string[]>
 @example
 ```
 import type {IterableElement} from 'type-fest';
+
 const fruits = new Set(['🍎', '🍌', '🍉'] as const);
 
-type Fruit = IterableElement<typeof fruits>; // '🍎' | '🍌' | '🍉'
+type Fruit = IterableElement<typeof fruits>;
+//=> '🍎' | '🍌' | '🍉'
 ```
 
 @category Iterable
