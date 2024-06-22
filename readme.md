@@ -348,7 +348,9 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
 - `Branded` - See [`Tagged`](source/opaque.d.ts)
 - `Opaque` - See [`Tagged`](source/opaque.d.ts)
-- `SetEntry` / `SetElement` / `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
+- `SetElement` - See [`IterableElement`](source/iterable-element.d.ts)
+- `SetEntry` - See [`IterableElement`](source/iterable-element.d.ts)
+- `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 
 ## Tips
 
