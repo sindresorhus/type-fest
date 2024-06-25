@@ -45,7 +45,7 @@ type StructuredCloneableData =
 
 type StructuredCloneableCollection =
 	| readonly StructuredCloneable[]
-	| {readonly [k: string]: StructuredCloneable; readonly [k: number]: StructuredCloneable}
+	| {readonly [key: string]: StructuredCloneable; readonly [key: number]: StructuredCloneable}
 	| ReadonlyMap<StructuredCloneable, StructuredCloneable>
 	| ReadonlySet<StructuredCloneable>;
 
@@ -73,16 +73,17 @@ structuredClone(error);
 //=> {custom: {}}
 
 const good: StructuredCloneable = {
-    num: 3,
+    number: 3,
     date: new Date(),
     map: new Map<string, number>(),
 }
-good.map.set("key", 1)
+
+good.map.set('key', 1);
 
 structuredClone(good);
-//=> {num: 3, date: Date(2022-10-17 22:22:35.920), map: Map {"key" -> 1}}
+//=> {number: 3, date: Date(2022-10-17 22:22:35.920), map: Map {'key' -> 1}}
 ```
 
 @category Structured clone
- */
+*/
 export type StructuredCloneable = StructuredCloneablePrimitive | StructuredCloneableData | StructuredCloneableCollection;
