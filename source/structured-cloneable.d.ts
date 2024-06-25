@@ -17,7 +17,31 @@ type StructuredCloneableData =
 	| Date
 	| Error
 	| RegExp
-	| TypedArray;
+	| TypedArray
+	| Blob
+	| File;
+// DOM exclusive types
+//	| AudioData
+//	| CropTarget
+//	| CryptoKey
+//	| DOMException
+//	| DOMMatrix
+//	| DOMMatrixReadOnly
+//	| DOMPoint
+//	| DOMPointReadOnly
+//	| DOMQuad
+//	| DOMRect
+//	| DOMRectReadOnly
+//	| FileList
+//	| FileSystemDirectoryHandle
+//	| FileSystemFileHandle
+//	| FileSystemHandle
+//	| GPUCompilationInfo
+//	| GPUCompilationMessage
+//	| ImageBitmap
+//	| ImageData
+//	| RTCCertificate
+//	| VideoFrame
 
 type StructuredCloneableCollection =
 	| readonly StructuredCloneable[]
@@ -28,13 +52,11 @@ type StructuredCloneableCollection =
 /**
 Matches a value that can be losslessly cloned using `structuredClone`.
 
-Can be used to type values that you expect to pass to `structuredClone`.
-
 Note:
 - Custom error types will be cloned as the base `Error` type
-- This type doesn't include the web-specific cloneable types (e.g. `Blob` and `DOMRect`)
+- This type doesn't include types exclusive to the TypeScript DOM library (e.g. `DOMRect` and `VideoFrame`)
 
-@see `StructuredCloneableWeb` for a version that includes the web-specific types
+@see https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
 
 @example
 ```

@@ -252,7 +252,6 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 ### Structured clone
 
 - [`StructuredCloneable`](source/structured-cloneable.d.ts) - Matches a value that can be losslessly cloned using `structuredClone`.
-- [`StructuredCloneableWeb`](source/structured-cloneable-web.d.ts) - Matches a value that can be losslessly cloned using `structuredClone` (includes web types like `Blob` and `DOMRect`).
 
 ### Async
 

@@ -23,6 +23,33 @@ Source: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structu
 
 ## Error types
 For Error types, the error name must be one of: Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError (or will be set to "Error").
+
+## Web/API types
+ - Blob
+ - File
+
+## DOM exclusive types (not included)
+ - AudioData
+ - CropTarget
+ - CryptoKey
+ - DOMException: browsers must serialize the properties name and message. Other attributes may also be serialized/cloned.
+ - DOMMatrix
+ - DOMMatrixReadOnly
+ - DOMPoint
+ - DOMPointReadOnly
+ - DOMQuad
+ - DOMRect
+ - DOMRectReadOnly
+ - FileList
+ - FileSystemDirectoryHandle
+ - FileSystemFileHandle
+ - FileSystemHandle
+ - GPUCompilationInfo
+ - GPUCompilationMessage
+ - ImageBitmap
+ - ImageData
+ - RTCCertificate
+ - VideoFrame
 */
 
 // Date, Boolean, Number, String
@@ -87,6 +114,11 @@ expectAssignable<StructuredCloneable>({x: {y: 10}});
 expectAssignable<StructuredCloneable>({x: 10} as const);
 class CustomType {}
 expectNotAssignable<StructuredCloneable>(new CustomType());
+class CustomTypeWithProperties {
+	foo = 'wow';
+	bar = 1;
+}
+expectNotAssignable<StructuredCloneable>(new CustomTypeWithProperties());
 
 // Array
 expectAssignable<StructuredCloneable>([]);
@@ -104,3 +136,9 @@ expectAssignable<StructuredCloneable>(new Map<Date, Map<string, number>>());
 expectAssignable<StructuredCloneable>(new Set<number>());
 expectAssignable<StructuredCloneable>(new Set<string[]>());
 expectAssignable<StructuredCloneable>(new Set<Set<string>>());
+
+// Web/API types
+declare const blob: Blob;
+expectAssignable<StructuredCloneable>(blob);
+declare const file: File;
+expectAssignable<StructuredCloneable>(file);
