@@ -6,7 +6,6 @@
 		"target": "ES2021", // Node.js 16
 		"lib": [
 			"ES2021",
-			"DOM"
 		],
 		"exactOptionalPropertyTypes": true,
 		"skipLibCheck": false, // Ensures .d.ts files are checked: https://github.com/sindresorhus/tsconfig/issues/15

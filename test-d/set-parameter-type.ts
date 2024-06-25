@@ -5,7 +5,7 @@ function function_(_a: number, _b: string, _c: Object, ..._arguments: boolean[])
 	return null;
 }
 
-function functionWithThis(this: Window, _a: number) {
+function functionWithThis(this: Global, _a: number) {
 	return null;
 }
 
@@ -41,5 +41,5 @@ expectType<(a: string) => null>(test5);
 
 // Test the function that has `this` parameter
 declare const testThis: SetParameterType<typeof functionWithThis, {0: string}>;
-expectType<(this: Window, a: string) => null>(testThis);
-testThis.call(window, '1');
+expectType<(this: Global, a: string) => null>(testThis);
+testThis.call(global, '1');
