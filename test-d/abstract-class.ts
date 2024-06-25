@@ -1,6 +1,7 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {AbstractConstructor, AbstractClass, IsAny} from '../index';
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Foo {
 	constructor(x: number) {
 		void (x);
@@ -9,6 +10,7 @@ abstract class Foo {
 	abstract fooMethod(): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 abstract class Bar {
 	abstract barMethod(): void;
 }
