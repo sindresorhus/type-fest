@@ -192,6 +192,9 @@ expectType<never>(plainSymbol);
 declare const arrayMemberUndefined: Jsonify<Array<typeof undefined>>;
 expectType<null[]>(arrayMemberUndefined);
 
+declare const arrayMemberUnionWithUndefined: Jsonify<Array<typeof undefined | typeof number>>;
+expectType<Array<null | number>>(arrayMemberUnionWithUndefined);
+
 declare const arrayMemberFunction: Jsonify<Array<typeof function_>>;
 expectType<null[]>(arrayMemberFunction);
 
