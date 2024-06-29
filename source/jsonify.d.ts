@@ -13,6 +13,7 @@ type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
 type NeverToNull<T> = IsNever<T> extends true ? null : T;
 type UndefinedToNull<T> = T extends undefined ? null : T;
+
 // Handles tuples and arrays
 type JsonifyList<T extends UnknownArray> = T extends readonly []
 	? []
