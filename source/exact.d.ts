@@ -1,7 +1,7 @@
 import type {ArrayElement, ObjectValue} from './internal';
-import type {Opaque, TagContainer} from './opaque';
 import type {IsEqual} from './is-equal';
 import type {KeysOfUnion} from './keys-of-union';
+import type {JsonObject} from './basic';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -57,7 +57,6 @@ export type Exact<ParameterType, InputType> =
 		: ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 			// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 			: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-				// Leave tagged types as-is. We could try to make the untagged part Exact, and just leave the tag as-is, but that seems to create instanitation excessively deep errors.
-				: ParameterType extends TagContainer<unknown> ? ParameterType
-					: ParameterType extends object ? ExactObject<ParameterType, InputType>
-						: ParameterType;
+				// Only apply Exact for pure object types. For types from a class, leave it unchanged to TypeScript to handle.
+				: ParameterType extends JsonObject ? ExactObject<ParameterType, InputType>
+					: ParameterType;
