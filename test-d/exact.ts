@@ -450,3 +450,20 @@ import type {Exact, Opaque} from '../index';
 		},
 	});
 }
+
+// Spec - special test case for Date type + union
+// @see https://github.com/sindresorhus/type-fest/issues/896
+{
+	type A = {
+		a: string;
+		b?: Date | null;
+	};
+
+	const function_ = <T extends Exact<A, T>>(arguments_: T) => arguments_;
+
+	function_({a: 'a'});
+	function_({a: 'a', b: new Date()});
+	function_({a: 'a', b: new Date() as Date | null});
+	// @ts-expect-error
+	function_({a: 'a', b: 1});
+}
