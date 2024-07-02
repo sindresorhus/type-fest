@@ -12,6 +12,7 @@ import type {UnknownArray} from './unknown-array';
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
 type NeverToNull<T> = IsNever<T> extends true ? null : T;
+type UndefinedToNull<T> = T extends undefined ? null : T;
 
 // Handles tuples and arrays
 type JsonifyList<T extends UnknownArray> = T extends readonly []
@@ -20,7 +21,7 @@ type JsonifyList<T extends UnknownArray> = T extends readonly []
 		? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
 		: IsUnknown<T[number]> extends true
 			? []
-			: Array<T[number] extends NotJsonable ? null : Jsonify<T[number]>>;
+			: Array<T[number] extends NotJsonable ? null : Jsonify<UndefinedToNull<T[number]>>>;
 
 type FilterJsonableKeys<T extends object> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
