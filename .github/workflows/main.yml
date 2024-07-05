@@ -4,7 +4,7 @@ on:
     branches:
       - main
     tags:
-      - '*'
+      - "*"
   pull_request:
     branches:
       - main
@@ -43,6 +43,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm install
+      - run: npm install --production
       - run: npm install typescript@${{ matrix.typescript-version }}
       - run: npx tsc

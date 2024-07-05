@@ -2,7 +2,7 @@ name: TypeScript Canary
 on:
   schedule:
     # Every Thursday at 21.15
-    - cron: '15 21 * * 4'
+    - cron: "15 21 * * 4"
   workflow_dispatch:
 jobs:
   types:
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - run: npm install
+      - run: npm install --production
       - run: npm install typescript@${{ matrix.typescript-version }}
       - name: show installed typescript version
         run: npm list typescript --depth=0
