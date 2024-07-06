@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Not} from '../../source/internal';
+import type {Not} from '../../../source/internal';
 
 expectType<Not<true>>(false);
 expectType<Not<false>>(true);
