@@ -347,7 +347,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `PartialBy` - See [`SetOptional`](source/set-optional.d.ts)
 - `RecordDeep`- See [`Schema`](source/schema.d.ts)
 - `Mutable`- See [`Writable`](source/writable.d.ts)
-- `RequireOnlyOne` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
+- `RequireOnlyOne`, `OneOf` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](source/require-one-or-none.d.ts)
 - `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
 - `Branded` - See [`Tagged`](source/opaque.d.ts)
