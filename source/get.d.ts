@@ -1,4 +1,4 @@
-import type {StringDigit} from '../source/internal';
+import type {StringDigit} from './internal';
 import type {Split} from './split';
 import type {StringKeyOf} from './string-key-of';
 
