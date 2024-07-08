@@ -1,4 +1,5 @@
 import type {TypedArray} from './typed-array';
+import type {FindGlobalType} from './find-global-type';
 
 type StructuredCloneablePrimitive =
 	| string
@@ -17,32 +18,34 @@ type StructuredCloneableData =
 	| Date
 	| Error
 	| RegExp
-	| TypedArray;
-// Requires DOM or @types/node
-//	| Blob
-//	| File
-// DOM exclusive types
-//	| AudioData
-//	| CropTarget
-//	| CryptoKey
-//	| DOMException
-//	| DOMMatrix
-//	| DOMMatrixReadOnly
-//	| DOMPoint
-//	| DOMPointReadOnly
-//	| DOMQuad
-//	| DOMRect
-//	| DOMRectReadOnly
-//	| FileList
-//	| FileSystemDirectoryHandle
-//	| FileSystemFileHandle
-//	| FileSystemHandle
-//	| GPUCompilationInfo
-//	| GPUCompilationMessage
-//	| ImageBitmap
-//	| ImageData
-//	| RTCCertificate
-//	| VideoFrame
+	| TypedArray
+	| FindGlobalType<
+	// DOM or Node types
+	| 'Blob'
+	| 'File'
+	// DOM exclusive types
+	| 'AudioData'
+	| 'CropTarget'
+	| 'CryptoKey'
+	| 'DOMException'
+	| 'DOMMatrix'
+	| 'DOMMatrixReadOnly'
+	| 'DOMPoint'
+	| 'DOMPointReadOnly'
+	| 'DOMQuad'
+	| 'DOMRect'
+	| 'DOMRectReadOnly'
+	| 'FileList'
+	| 'FileSystemDirectoryHandle'
+	| 'FileSystemFileHandle'
+	| 'FileSystemHandle'
+	| 'GPUCompilationInfo'
+	| 'GPUCompilationMessage'
+	| 'ImageBitmap'
+	| 'ImageData'
+	| 'RTCCertificate'
+	| 'VideoFrame'
+	>;
 
 type StructuredCloneableCollection =
 	| readonly StructuredCloneable[]
@@ -55,7 +58,6 @@ Matches a value that can be losslessly cloned using `structuredClone`.
 
 Note:
 - Custom error types will be cloned as the base `Error` type
-- This type doesn't include types exclusive to the TypeScript DOM library (e.g. `DOMRect` and `VideoFrame`)
 
 @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
 
