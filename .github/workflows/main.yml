@@ -43,6 +43,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm install --production
+      - run: npm install
+      - run: npm install @types/node@12.0.0
       - run: npm install typescript@${{ matrix.typescript-version }}
       - run: npx tsc
