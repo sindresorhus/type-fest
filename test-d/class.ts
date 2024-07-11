@@ -2,9 +2,8 @@ import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {Class, Constructor, IsAny} from '../index';
 
 class Foo {
-	constructor(x: number, y: any) {
-		console.log(x, y);
-	}
+	// eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
+	constructor(_x: number, _y: any) {}
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	method(): void {}

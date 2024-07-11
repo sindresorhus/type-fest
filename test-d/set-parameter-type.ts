@@ -5,6 +5,8 @@ function function_(_a: number, _b: string, _c: Object, ..._arguments: boolean[])
 	return null;
 }
 
+// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+// @ts-ignore Global requires @types/node
 function functionWithThis(this: Global, _a: number) {
 	return null;
 }
@@ -41,5 +43,9 @@ expectType<(a: string) => null>(test5);
 
 // Test the function that has `this` parameter
 declare const testThis: SetParameterType<typeof functionWithThis, {0: string}>;
+// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+// @ts-ignore Global requires @types/node
 expectType<(this: Global, a: string) => null>(testThis);
+// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+// @ts-ignore global requires @types/node
 testThis.call(global, '1');

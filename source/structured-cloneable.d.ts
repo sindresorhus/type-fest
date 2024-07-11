@@ -17,9 +17,10 @@ type StructuredCloneableData =
 	| Date
 	| Error
 	| RegExp
-	| TypedArray
-	| Blob
-	| File;
+	| TypedArray;
+// Requires DOM or @types/node
+//	| Blob
+//	| File
 // DOM exclusive types
 //	| AudioData
 //	| CropTarget
