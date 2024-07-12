@@ -36,7 +36,7 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 
 @category Object
 */
-export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = never> = (
+export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> = (
 	| RequireAll<ObjectType, KeysType>
 	| RequireNone<KeysType>
 ) & Omit<ObjectType, KeysType>; // The rest of the keys.

@@ -1,4 +1,3 @@
-import {expectAssignable} from 'tsd';
 import type {RequireExactlyOne} from '../index';
 
 type SystemMessages = {
@@ -11,7 +10,7 @@ type SystemMessages = {
 };
 
 type ValidMessages = RequireExactlyOne<SystemMessages, 'macos' | 'linux'>;
-const test = (_: ValidMessages): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+declare const test: (_: ValidMessages) => void;
 
 test({macos: 'hey', default: 'hello'});
 test({linux: 'sup', optional: 'howdy', default: 'hello'});
@@ -21,7 +20,12 @@ test({});
 // @ts-expect-error
 test({macos: 'hey', linux: 'sup', default: 'hello'});
 
-declare const oneWithoutKeys: RequireExactlyOne<{a: number; b: number}>;
-expectAssignable<{a: number} | {b: number}>(oneWithoutKeys);
+declare const testWithoutKeys: (_: RequireExactlyOne<{a: number; b: number}>) => void;
+
+testWithoutKeys({a: 1});
+testWithoutKeys({b: 2});
+
 // @ts-expect-error
-expectAssignable<{a: number; b: number}>(oneWithoutKeys);
+testWithoutKeys({});
+// @ts-expect-error
+testWithoutKeys({a: 1, b: 2});

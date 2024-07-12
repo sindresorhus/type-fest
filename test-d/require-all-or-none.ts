@@ -1,4 +1,3 @@
-import {expectAssignable} from 'tsd';
 import type {RequireAllOrNone} from '../index';
 
 type SystemMessages = {
@@ -11,7 +10,7 @@ type SystemMessages = {
 };
 
 type ValidMessages = RequireAllOrNone<SystemMessages, 'macos' | 'linux'>;
-const test = (_: ValidMessages): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+declare const test: (_: ValidMessages) => void;
 
 test({default: 'hello'});
 test({macos: 'yo', linux: 'sup', optional: 'howdy', default: 'hello'});
@@ -23,5 +22,12 @@ test({macos: 'hey', default: 'hello'});
 // @ts-expect-error
 test({linux: 'hey', default: 'hello'});
 
-declare const oneWithoutKeys: RequireAllOrNone<{a: number; b: number}>;
-expectAssignable<{a: number; b: number}>(oneWithoutKeys);
+declare const testWithoutKeys: (_: RequireAllOrNone<{a: number; b: number}>) => void;
+
+testWithoutKeys({});
+testWithoutKeys({a: 1, b: 2});
+
+// @ts-expect-error
+testWithoutKeys({a: 1});
+// @ts-expect-error
+testWithoutKeys({b: 2});
