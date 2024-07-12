@@ -48,4 +48,5 @@ declare const testThis: SetParameterType<typeof functionWithThis, {0: string}>;
 expectType<(this: Global, a: string) => null>(testThis);
 // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
 // @ts-ignore global requires @types/node
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 testThis.call(global, '1');
