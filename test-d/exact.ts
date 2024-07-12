@@ -210,9 +210,9 @@ import type {Exact, Opaque} from '../index';
 	};
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
-	{ // It should allow input with excess property
+	{ // It should allow input with an excess property
 		const input = {body: {code: '', name: '', excessProperty: 1}};
-		// Expects error because the excess is not string
+		// Expects error because the excess property is not string
 		// @ts-expect-error
 		function_(input);
 	}
