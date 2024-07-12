@@ -6,8 +6,6 @@ function createArray<T extends number>(dimensions: T): MultidimensionalReadonlyA
 
 	let array = root;
 	for (let dimension = 1; dimension < dimensions; ++dimension) {
-		console.log(`Initializing dimension #${dimension}`);
-
 		array[0] = [];
 		if (dimension < dimensions - 1) {
 			array = array[0] as unknown[];
