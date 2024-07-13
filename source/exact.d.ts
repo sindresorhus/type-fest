@@ -1,7 +1,8 @@
 import type {ArrayElement, ObjectValue} from './internal';
 import type {IsEqual} from './is-equal';
 import type {KeysOfUnion} from './keys-of-union';
-import type {JsonObject} from './basic';
+import type {IsUnknown} from './is-unknown';
+import type {Primitive} from './primitive';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -52,11 +53,15 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 @category Utilities
 */
 export type Exact<ParameterType, InputType> =
-	IsEqual<ParameterType, InputType> extends true ? ParameterType
-		// Convert union of array to array of union: A[] & B[] => (A & B)[]
-		: ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-			// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
-			: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-				// Only apply Exact for pure object types. For types from a class, leave it unchanged to TypeScript to handle.
-				: ParameterType extends JsonObject ? ExactObject<ParameterType, InputType>
-					: ParameterType;
+	// If the parameter is a primitive, return it as is immediately to avoid it being converted to a complex type
+	ParameterType extends Primitive ? ParameterType
+		// If the parameter is an unknown, return it as is immediately to avoid it being converted to a complex type
+		: IsUnknown<ParameterType> extends true ? unknown
+			// If the parameter is a Function, return it as is because this type is not capable of handling function, leave it to TypeScript
+			: ParameterType extends Function ? ParameterType
+				: IsEqual<ParameterType, InputType> extends true ? ParameterType
+					// Convert union of array to array of union: A[] & B[] => (A & B)[]
+					: ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
+						// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
+						: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
+							: ExactObject<ParameterType, InputType>;
