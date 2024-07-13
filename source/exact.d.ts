@@ -1,8 +1,8 @@
 import type {ArrayElement, ObjectValue} from './internal';
 import type {IsEqual} from './is-equal';
 import type {KeysOfUnion} from './keys-of-union';
-import type {JsonPrimitive} from './basic';
 import type {IsUnknown} from './is-unknown';
+import type {Primitive} from './primitive';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -54,7 +54,7 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 */
 export type Exact<ParameterType, InputType> =
 	// If the parameter is a primitive, return it as is immediately to avoid it being converted to a complex type
-	ParameterType extends JsonPrimitive ? ParameterType
+	ParameterType extends Primitive ? ParameterType
 		// If the parameter is an unknown, return it as is immediately to avoid it being converted to a complex type
 		: IsUnknown<ParameterType> extends true ? unknown
 			// If the parameter is a Function, return it as is because this type is not capable of handling function, leave it to TypeScript

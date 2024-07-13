@@ -22,6 +22,28 @@ import type {Exact, Opaque} from '../index';
 	}
 }
 
+{ // Spec - bigint type
+	type Type = bigint;
+	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+
+	{ // It should accept bigint
+		const input = BigInt(9_007_199_254_740_991);
+		function_(input);
+	}
+
+	{ // It should reject number
+		const input = 1;
+		// @ts-expect-error
+		function_(input);
+	}
+
+	{ // It should reject unknown
+		const input = {} as unknown;
+		// @ts-expect-error
+		function_(input);
+	}
+}
+
 { // Spec - array
 	type Type = Array<{code: string; name?: string}>;
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
