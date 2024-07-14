@@ -7,10 +7,10 @@ Extracts the type of an array or tuple minus the first element.
 ```
 import type {ArrayTail} from 'type-fest';
 
-declare const curry: <TArguments extends unknown[], TReturn>(
-	fn: (...args: TArguments) => TReturn,
-	...args: ArrayTail<TArguments>
-) => (...args: ArrayTail<TArguments>) => TReturn;
+declare const curry: <Arguments extends unknown[], Return>(
+	function_: (...arguments_: Arguments) => Return,
+	...arguments_: ArrayTail<Arguments>
+) => (...arguments_: ArrayTail<Arguments>) => Return;
 
 const add = (a: number, b: number) => a + b;
 
@@ -22,4 +22,4 @@ add3(4);
 
 @category Array
 */
-export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer TTail] ? TTail : [];
+export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer Tail] ? Tail : [];
