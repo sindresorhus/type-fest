@@ -6,9 +6,9 @@ import type {
 	ArrayTail,
 	FirstArrayElement,
 	IsBothExtends,
-	NonEmptyTuple,
 	UnknownArrayOrTuple,
 } from './internal';
+import type {NonEmptyTuple} from './non-empty-tuple';
 import type {UnknownRecord} from './unknown-record';
 import type {EnforceOptional} from './enforce-optional';
 import type {SimplifyDeep} from './simplify-deep';

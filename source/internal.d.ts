@@ -252,11 +252,6 @@ Matches any unknown array or tuple.
 export type UnknownArrayOrTuple = readonly [...unknown[]];
 
 /**
-Matches any non empty tuple.
-*/
-export type NonEmptyTuple = readonly [unknown, ...unknown[]];
-
-/**
 Returns a boolean for whether the two given types extends the base type.
 */
 export type IsBothExtends<BaseType, FirstType, SecondType> = FirstType extends BaseType
