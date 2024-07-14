@@ -11,13 +11,8 @@ type SystemMessages = {
 	optional?: string;
 };
 
-type MessageBoard<M> = (messages: M) => string;
-
-type ValidMessages = RequireAtLeastOne<
-SystemMessages,
-'macos' | 'linux' | 'windows'
->;
-const test = (_: ValidMessages): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+type ValidMessages = RequireAtLeastOne<SystemMessages, 'macos' | 'linux' | 'windows'>;
+declare const test: (_: ValidMessages) => void;
 
 test({macos: 'hey', default: 'hello'});
 test({linux: 'sup', default: 'hello', optional: 'howdy'});
@@ -30,13 +25,16 @@ test({macos: 'hey'});
 // @ts-expect-error
 test({default: 'hello'});
 
-declare const atLeastOneWithoutKeys: RequireAtLeastOne<{
-	a: number;
-	b: number;
-}>;
-expectAssignable<{a: number; b?: number} | {a?: number; b: number}>(
-	atLeastOneWithoutKeys,
-);
+declare const testWithoutKeys: (_: RequireAtLeastOne<{a: number; b: number}>) => void;
+
+testWithoutKeys({a: 1});
+testWithoutKeys({b: 2});
+testWithoutKeys({a: 1, b: 2});
+
+// @ts-expect-error
+testWithoutKeys({});
+
+type MessageBoard<M> = (messages: M) => string;
 
 expectAssignable<MessageBoard<ValidMessages>>(
 	({macos = '', linux = '🐧', windows = '⊞'}) =>

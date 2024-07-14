@@ -22,6 +22,28 @@ import type {Exact, Opaque} from '../index';
 	}
 }
 
+{ // Spec - bigint type
+	type Type = bigint;
+	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+
+	{ // It should accept bigint
+		const input = BigInt(9_007_199_254_740_991);
+		function_(input);
+	}
+
+	{ // It should reject number
+		const input = 1;
+		// @ts-expect-error
+		function_(input);
+	}
+
+	{ // It should reject unknown
+		const input = {} as unknown;
+		// @ts-expect-error
+		function_(input);
+	}
+}
+
 { // Spec - array
 	type Type = Array<{code: string; name?: string}>;
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
@@ -195,7 +217,25 @@ import type {Exact, Opaque} from '../index';
 	}
 
 	{ // It should allow input with excess property
-		const input = {body: {code: '', name: '', excessProperty: ''}};
+		const input = {body: {code: '', name: '', excessProperty: 1}};
+		function_(input);
+	}
+}
+
+{ // Spec - check index signature type
+	type Type = {
+		body: {
+			[k: string]: string;
+			code: string;
+			name?: string;
+		};
+	};
+	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+
+	{ // It should allow input with an excess property
+		const input = {body: {code: '', name: '', excessProperty: 1}};
+		// Expects error because the excess property is not string
+		// @ts-expect-error
 		function_(input);
 	}
 }
@@ -466,4 +506,34 @@ import type {Exact, Opaque} from '../index';
 	function_({a: 'a', b: new Date() as Date | null});
 	// @ts-expect-error
 	function_({a: 'a', b: 1});
+}
+
+// Spec - special test case for Date type
+// @see https://github.com/sindresorhus/type-fest/issues/909
+{
+	type UserType = {
+		id: string;
+		name: string;
+		createdAt: Date;
+		email?: string;
+	};
+
+	const function_ = <T extends Exact<UserType, T>>(arguments_: T) => arguments_;
+
+	function_({
+		id: 'asd',
+		name: 'John',
+		createdAt: new Date(),
+	});
+
+	const withExcessSurname = {
+		id: 'asd',
+		name: 'John',
+		createdAt: new Date(),
+		surname: 'Doe',
+	};
+
+	// Expects error due to surname is an excess field
+	// @ts-expect-error
+	function_(withExcessSurname);
 }
