@@ -5,9 +5,9 @@ import type {Merge} from './merge';
 import type {
 	FirstArrayElement,
 	IsBothExtends,
-	NonEmptyTuple,
 	UnknownArrayOrTuple,
 } from './internal';
+import type {NonEmptyTuple} from './non-empty-tuple';
 import type {ArrayTail} from './array-tail';
 import type {UnknownRecord} from './unknown-record';
 import type {EnforceOptional} from './enforce-optional';

@@ -130,6 +130,7 @@ export type {IsNull} from './source/is-null';
 export type {IfNull} from './source/if-null';
 export type {And} from './source/and';
 export type {Or} from './source/or';
+export type {NonEmptyTuple} from './source/non-empty-tuple';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
