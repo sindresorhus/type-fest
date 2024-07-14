@@ -278,15 +278,6 @@ Extracts the type of an array or tuple minus the first element.
 export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer TTail] ? TTail : [];
 
 /**
-Extract the element of an array that also works for array union.
-
-Returns `never` if T is not an array.
-
-It creates a type-safe way to access the element type of `unknown` type.
-*/
-export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
-
-/**
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
 
 It creates a type-safe way to access the member type of `unknown` type.

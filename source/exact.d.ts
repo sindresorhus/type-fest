@@ -1,4 +1,5 @@
-import type {ArrayElement, ObjectValue} from './internal';
+import type {ObjectValue} from './internal';
+import type {ArrayElement} from './array-element';
 import type {IsEqual} from './is-equal';
 import type {KeysOfUnion} from './keys-of-union';
 import type {IsUnknown} from './is-unknown';
