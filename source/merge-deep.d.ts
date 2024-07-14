@@ -3,12 +3,12 @@ import type {OmitIndexSignature} from './omit-index-signature';
 import type {PickIndexSignature} from './pick-index-signature';
 import type {Merge} from './merge';
 import type {
-	ArrayTail,
 	FirstArrayElement,
 	IsBothExtends,
-	NonEmptyTuple,
 	UnknownArrayOrTuple,
 } from './internal';
+import type {NonEmptyTuple} from './non-empty-tuple';
+import type {ArrayTail} from './array-tail';
 import type {UnknownRecord} from './unknown-record';
 import type {EnforceOptional} from './enforce-optional';
 import type {SimplifyDeep} from './simplify-deep';

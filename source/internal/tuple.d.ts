@@ -42,11 +42,6 @@ export type BuildTuple<L extends number, Fill = unknown, T extends readonly unkn
 	: BuildTuple<L, Fill, [...T, Fill]>;
 
 /**
-Matches any non empty tuple.
-*/
-export type NonEmptyTuple = readonly [unknown, ...unknown[]];
-
-/**
 Returns the maximum value from a tuple of integers.
 
 Note:
