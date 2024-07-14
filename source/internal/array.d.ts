@@ -11,6 +11,7 @@ type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: inf
 Matches any unknown array or tuple.
 */
 export type UnknownArrayOrTuple = readonly [...unknown[]];
+// TODO: should unknown-array be updated?
 
 /**
 Extracts the type of the first element of an array or tuple.
