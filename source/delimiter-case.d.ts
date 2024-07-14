@@ -1,4 +1,4 @@
-import type {UpperCaseCharacters, WordSeparators} from '../source/internal';
+import type {UpperCaseCharacters, WordSeparators} from './internal';
 
 // Transforms a string that is fully uppercase into a fully lowercase version. Needed to add support for SCREAMING_SNAKE_CASE, see https://github.com/sindresorhus/type-fest/issues/385
 type UpperCaseToLowerCase<T extends string> = T extends Uppercase<T> ? Lowercase<T> : T;

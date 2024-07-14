@@ -1,4 +1,4 @@
-import type {NumberAbsolute, BuildTuple, ArrayMax, ArrayMin} from './internal';
+import type {NumberAbsolute, BuildTuple, TupleMax, TupleMin} from './internal';
 import type {IsEqual} from './is-equal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {Subtract} from './subtract';
@@ -59,8 +59,8 @@ export type Sum<A extends number, B extends number> = number extends A | B
 							? [...BuildTuple<A>, ...BuildTuple<B>]['length']
 							: [true, true] extends R
 								? number
-								: ArrayMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
-									? ArrayMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
+								: TupleMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
+									? TupleMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
 										? Max_ extends A | B
 											? Subtract<Max_, Min_>
 											: number

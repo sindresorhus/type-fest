@@ -3,7 +3,7 @@ import type {LessThanOrEqual} from './less-than-or-equal';
 import type {GreaterThanOrEqual} from './greater-than-or-equal';
 import type {GreaterThan} from './greater-than';
 import type {IsNegative} from './numeric';
-import type {Not, ArrayMin} from './internal';
+import type {Not, TupleMin} from './internal';
 import type {IsEqual} from './is-equal';
 import type {And} from './and';
 import type {ArraySplice} from './array-splice';
@@ -95,7 +95,7 @@ type ArraySliceHelper<
 	PositiveE extends number = IsNegative<End> extends true ? Sum<ArrayLength, End> : End,
 > = true extends [IsNegative<PositiveS>, LessThanOrEqual<PositiveE, PositiveS>, GreaterThanOrEqual<PositiveS, ArrayLength>][number]
 	? []
-	: ArraySliceByPositiveIndex<Array_, ArrayMin<[PositiveS, ArrayLength]>, ArrayMin<[PositiveE, ArrayLength]>>;
+	: ArraySliceByPositiveIndex<Array_, TupleMin<[PositiveS, ArrayLength]>, TupleMin<[PositiveE, ArrayLength]>>;
 
 type ArraySliceByPositiveIndex<
 	Array_ extends readonly unknown[],

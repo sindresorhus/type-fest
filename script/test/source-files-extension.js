@@ -4,10 +4,14 @@ const process = require('node:process');
 
 const checkSourceFilesExtension = async () => {
 	try {
-		const files = await fs.promises.readdir('source');
+		const files = await fs.promises.readdir('source', {recursive: true});
 
 		let hasIncorrectFileExtension = false;
 		for (const file of files) {
+			if (!file.includes('.')) {
+				continue;
+			}
+
 			if (!file.endsWith('.d.ts')) {
 				hasIncorrectFileExtension = true;
 				console.error(`source/${file} extension should be \`.d.ts\`.`);

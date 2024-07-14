@@ -1,4 +1,3 @@
-import type {Except} from './except';
 import type {RequiredKeysOf} from './required-keys-of';
 import type {Simplify} from './simplify';
 
