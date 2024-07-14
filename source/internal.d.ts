@@ -268,11 +268,6 @@ export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray exten
 	: never;
 
 /**
-Extracts the type of an array or tuple minus the first element.
-*/
-export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer TTail] ? TTail : [];
-
-/**
 Extract the element of an array that also works for array union.
 
 Returns `never` if T is not an array.
