@@ -131,7 +131,7 @@ export type {IfNull} from './source/if-null';
 export type {And} from './source/and';
 export type {Or} from './source/or';
 export type {NonEmptyTuple} from './source/non-empty-tuple';
-export type {FindGlobalType} from './source/find-global-type';
+export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';

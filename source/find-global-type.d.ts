@@ -1,32 +1,51 @@
 /**
-Tries to find one or more types from their globally-defined constructors.
+Tries to find the type of a global with the given name.
 
-Use-case: Conditionally referencing DOM types only when the DOM library present.
-
-*Note:* Globally-defined has a narrow definition in this case due to peculiarities with the behavior of `globalThis`.
-Merely declaring a class in a `declare global` block won't work, instead you must declare its constructor as a `var`
-(not `let`/`const`) inside the `declare global` block. This typically is done using a combination of interface +
-constructor style, rather than the es6 class syntax.
+*Limitations:* Due to peculiarities with the behavior of `globalThis`, "globally defined" only includes `var`
+declarations in `declare global` blocks, not `let` or `const` declarations.
 
 @example
 ```
 import type {FindGlobalType} from 'type-fest';
+
+declare global {
+	const foo: number; // let and const don't work
+	var bar: string;   // var works
+}
+
+type FooType = FindGlobalType<'foo'>     //=> never (let/const don't work)
+type BarType = FindGlobalType<'bar'>     //=> string
+type OtherType = FindGlobalType<'other'> //=> never (no global named 'other')
+```
+
+@category Utilities
+*/
+export type FindGlobalType<Name extends string> = typeof globalThis extends Record<Name, infer T> ? T : never;
+
+/**
+Tries to find one or more types from their globally-defined constructors.
+
+Use-case: Conditionally referencing DOM types only when the DOM library present.
+
+*Limitations:* Due to peculiarities with the behavior of `globalThis`, "globally defined" has a narrow definition in
+this case. Declaring an ES6 class in a `declare global` block won't work, instead you must declare its type using an
+interface and declare its constructor as a `var` (*not* `let`/`const`) inside the `declare global` block.
+
+@example
+```
+import type {FindGlobalInstanceType} from 'type-fest';
 
 class Point {
 	constructor(public x: number, public y: number) {
 	}
 }
 
-type PointLike = Point | FindGlobalType<'DOMPoint'>;
-
-function doSomething(point: PointLike): number {
-	// ...
-}
+type PointLike = Point | FindGlobalInstanceType<'DOMPoint'>;
 ```
 
 @example
 ```
-import type {FindGlobalType} from 'type-fest';
+import type {FindGlobalInstanceType} from 'type-fest';
 
 declare global {
 	// ES6 class syntax won't add the key to `globalThis`
@@ -34,19 +53,16 @@ declare global {
 
 	// interface + constructor style works
 	interface Bar {}
-	interface BarConstructor {
-		new (): Bar;
-	}
-	var Bar: BarConstructor; // not let or const
+	var Bar: new () => Bar; // not let or const
 }
 
-type FindFoo = FindGlobalType<'Foo'>; // doesn't work
-type FindBar = FindGlobalType<'Bar'>; // works
+type FindFoo = FindGlobalInstanceType<'Foo'>; // doesn't work
+type FindBar = FindGlobalInstanceType<'Bar'>; // works
 ```
 
 @category Utilities
 */
-export type FindGlobalType<Name extends string> =
+export type FindGlobalInstanceType<Name extends string> =
 	Name extends string
-		? typeof globalThis extends Record<Name, new (...arguments: any[]) => infer T> ? T : never
+		? typeof globalThis extends Record<Name, abstract new (...arguments: any[]) => infer T> ? T : never
 		: never;

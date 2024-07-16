@@ -203,7 +203,8 @@ Click the type names for complete docs.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
-- [`FindGlobalType`](source/find-global-type.d.ts) - Tries to find one or more types from their globally-defined constructors.
+- [`FindGlobalType`](source/find-global-type.d.ts) - Tries to find the type of a global with the given name. (See doc comment for limitations)
+- [`FindGlobalInstanceType`](source/find-global-type.d.ts) - Tries to find one or more types from their globally-defined constructors. (See doc comment for limitations)
 
 ### Type Guard
 

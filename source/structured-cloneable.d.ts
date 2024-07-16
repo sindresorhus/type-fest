@@ -1,5 +1,5 @@
 import type {TypedArray} from './typed-array';
-import type {FindGlobalType} from './find-global-type';
+import type {FindGlobalInstanceType} from './find-global-type';
 
 type StructuredCloneablePrimitive =
 	| string
@@ -19,7 +19,7 @@ type StructuredCloneableData =
 	| Error
 	| RegExp
 	| TypedArray
-	| FindGlobalType<
+	| FindGlobalInstanceType<
 	// DOM or Node types
 	| 'Blob'
 	| 'File'
