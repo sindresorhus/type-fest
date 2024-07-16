@@ -1,7 +1,7 @@
 /**
 Tries to find the type of a global with the given name.
 
-*Limitations:* Due to peculiarities with the behavior of `globalThis`, "globally defined" only includes `var`
+Limitations: Due to peculiarities with the behavior of `globalThis`, "globally defined" only includes `var`
 declarations in `declare global` blocks, not `let` or `const` declarations.
 
 @example
@@ -28,7 +28,7 @@ Tries to find one or more types from their globally-defined constructors.
 Use-case: Conditionally referencing DOM types only when the DOM library present.
 
 *Limitations:* Due to peculiarities with the behavior of `globalThis`, "globally defined" has a narrow definition in
-this case. Declaring an ES6 class in a `declare global` block won't work, instead you must declare its type using an
+this case. Declaring a class in a `declare global` block won't work, instead you must declare its type using an
 interface and declare its constructor as a `var` (*not* `let`/`const`) inside the `declare global` block.
 
 @example
@@ -36,8 +36,7 @@ interface and declare its constructor as a `var` (*not* `let`/`const`) inside th
 import type {FindGlobalInstanceType} from 'type-fest';
 
 class Point {
-	constructor(public x: number, public y: number) {
-	}
+	constructor(public x: number, public y: number) {}
 }
 
 type PointLike = Point | FindGlobalInstanceType<'DOMPoint'>;
@@ -48,16 +47,16 @@ type PointLike = Point | FindGlobalInstanceType<'DOMPoint'>;
 import type {FindGlobalInstanceType} from 'type-fest';
 
 declare global {
-	// ES6 class syntax won't add the key to `globalThis`
+	// Class syntax won't add the key to `globalThis`
 	class Foo {}
 
 	// interface + constructor style works
 	interface Bar {}
-	var Bar: new () => Bar; // not let or const
+	var Bar: new () => Bar; // Not let or const
 }
 
-type FindFoo = FindGlobalInstanceType<'Foo'>; // doesn't work
-type FindBar = FindGlobalInstanceType<'Bar'>; // works
+type FindFoo = FindGlobalInstanceType<'Foo'>; // Doesn't work
+type FindBar = FindGlobalInstanceType<'Bar'>; // Works
 ```
 
 @category Utilities
