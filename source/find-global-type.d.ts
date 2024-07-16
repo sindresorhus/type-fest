@@ -1,8 +1,7 @@
 /**
 Tries to find the type of a global with the given name.
 
-Limitations: Due to peculiarities with the behavior of `globalThis`, "globally defined" only includes `var`
-declarations in `declare global` blocks, not `let` or `const` declarations.
+Limitations: Due to peculiarities with the behavior of `globalThis`, "globally defined" only includes `var` declarations in `declare global` blocks, not `let` or `const` declarations.
 
 @example
 ```
@@ -27,9 +26,7 @@ Tries to find one or more types from their globally-defined constructors.
 
 Use-case: Conditionally referencing DOM types only when the DOM library present.
 
-*Limitations:* Due to peculiarities with the behavior of `globalThis`, "globally defined" has a narrow definition in
-this case. Declaring a class in a `declare global` block won't work, instead you must declare its type using an
-interface and declare its constructor as a `var` (*not* `let`/`const`) inside the `declare global` block.
+*Limitations:* Due to peculiarities with the behavior of `globalThis`, "globally defined" has a narrow definition in this case. Declaring a class in a `declare global` block won't work, instead you must declare its type using an interface and declare its constructor as a `var` (*not* `let`/`const`) inside the `declare global` block.
 
 @example
 ```
