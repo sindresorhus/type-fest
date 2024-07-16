@@ -72,4 +72,3 @@ declare const foundInstanceGlobalConstructorConstStyle: FindGlobalInstanceType<'
 expectType<never>(foundInstanceGlobalConstructorConstStyle);
 declare const foundInstanceGlobalNonConstructorFunction: FindGlobalInstanceType<'nonConstructorFunction'>;
 expectType<never>(foundInstanceGlobalNonConstructorFunction);
-
