@@ -21,7 +21,7 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 /**
 Returns the required keys.
 */
-type FilterDefinedKeys<T extends object> = Exclude<
+export type FilterDefinedKeys<T extends object> = Exclude<
 {
 	[Key in keyof T]: IsAny<T[Key]> extends true
 		? Key
@@ -37,7 +37,7 @@ undefined
 /**
 Returns the optional keys.
 */
-type FilterOptionalKeys<T extends object> = Exclude<
+export type FilterOptionalKeys<T extends object> = Exclude<
 {
 	[Key in keyof T]: IsAny<T[Key]> extends true
 		? never
