@@ -11,6 +11,8 @@ Generate a union of all possible paths to properties in the given object.
 
 It also works with arrays.
 
+The delimiter defaults to `.` but can be customized.
+
 Use-case: You want a type-safe way to access deeply nested properties in an object.
 
 @example
