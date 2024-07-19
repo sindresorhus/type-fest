@@ -108,3 +108,8 @@ type MyOtherEntity = {
 };
 type MyEntityPaths = Paths<MyEntity>;
 expectAssignable<string>({} as MyEntityPaths);
+
+// Custom delimiter
+declare const deepObjectWithCustomDelimiter: Paths<DeepObject, ','>;
+type DeepPathWithCustomDelimiter = 'a' | 'a,b' | 'a,b2' | 'a,b3' | 'a,b,c' | 'a,b,c,d' | `a,b2,${number}`;
+expectType<DeepPathWithCustomDelimiter>(deepObjectWithCustomDelimiter);

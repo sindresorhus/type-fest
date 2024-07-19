@@ -47,9 +47,9 @@ open('listB.1'); // TypeError. Because listB only has one element.
 @category Object
 @category Array
 */
-export type Paths<T> = Paths_<T>;
+export type Paths<T, Delimiter extends string = '.'> = Paths_<T, Delimiter>;
 
-type Paths_<T, Depth extends number = 0> =
+type Paths_<T, Delimiter extends string = '.', Depth extends number = 0> =
 	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 		? never
 		: IsAny<T> extends true
@@ -57,14 +57,14 @@ type Paths_<T, Depth extends number = 0> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Depth>
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Depth>
-					: InternalPaths<T, Depth>
+					? InternalPaths<StaticPartOfArray<T>, Delimiter, Depth>
+					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Delimiter, Depth>
+					: InternalPaths<T, Delimiter, Depth>
 				: T extends object
-					? InternalPaths<T, Depth>
+					? InternalPaths<T, Delimiter, Depth>
 					: never;
 
-export type InternalPaths<_T, Depth extends number = 0, T = Required<_T>> =
+export type InternalPaths<_T, Delimiter extends string = '.', Depth extends number = 0, T = Required<_T>> =
 	T extends EmptyObject | readonly []
 		? never
 		: {
@@ -76,8 +76,8 @@ export type InternalPaths<_T, Depth extends number = 0, T = Required<_T>> =
 				| ToString<Key>
 				| (
 					LessThan<Depth, 15> extends true // Limit the depth to prevent infinite recursion
-						? IsNever<Paths_<T[Key], Sum<Depth, 1>>> extends false
-							? `${Key}.${Paths_<T[Key], Sum<Depth, 1>>}`
+						? IsNever<Paths_<T[Key], Delimiter, Sum<Depth, 1>>> extends false
+							? `${Key}${Delimiter}${Paths_<T[Key], Delimiter, Sum<Depth, 1>>}`
 							: never
 						: never
 				)
