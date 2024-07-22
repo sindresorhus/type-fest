@@ -3,8 +3,22 @@ import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
-import type {Sum} from './sum';
-import type {LessThan} from './less-than';
+import type {Subtract} from './subtract';
+import type {GreaterThan} from './greater-than';
+
+/**
+Paths options.
+
+@see {@link Paths}
+*/
+export type PathsOptions = {
+	/**
+	The maximum depth to recurse when searching for paths.
+
+	@default 10
+	*/
+	maxRecursionDepth?: number;
+};
 
 /**
 Generate a union of all possible paths to properties in the given object.
@@ -47,9 +61,7 @@ open('listB.1'); // TypeError. Because listB only has one element.
 @category Object
 @category Array
 */
-export type Paths<T> = Paths_<T>;
-
-type Paths_<T, Depth extends number = 0> =
+export type Paths<T, Options extends PathsOptions = {}> =
 	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 		? never
 		: IsAny<T> extends true
@@ -57,29 +69,33 @@ type Paths_<T, Depth extends number = 0> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Depth>
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Depth>
-					: InternalPaths<T, Depth>
+					? InternalPaths<StaticPartOfArray<T>, Options>
+					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
+					: InternalPaths<T, Options>
 				: T extends object
-					? InternalPaths<T, Depth>
+					? InternalPaths<T, Options>
 					: never;
 
-export type InternalPaths<_T, Depth extends number = 0, T = Required<_T>> =
-	T extends EmptyObject | readonly []
-		? never
-		: {
-			[Key in keyof T]:
-			Key extends string | number // Limit `Key` to string or number.
-				// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
-				?
-				| Key
-				| ToString<Key>
-				| (
-					LessThan<Depth, 15> extends true // Limit the depth to prevent infinite recursion
-						? IsNever<Paths_<T[Key], Sum<Depth, 1>>> extends false
-							? `${Key}.${Paths_<T[Key], Sum<Depth, 1>>}`
-							: never
+type InternalPaths<T, Options extends PathsOptions = {}> =
+	(Options['maxRecursionDepth'] extends number ? Options['maxRecursionDepth'] : 10) extends infer MaxDepth extends number
+		? Required<T> extends infer T
+			? T extends EmptyObject | readonly []
+				? never
+				: {
+					[Key in keyof T]:
+					Key extends string | number // Limit `Key` to string or number.
+						// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
+						?
+						| Key
+						| ToString<Key>
+						| (
+							GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
+								? IsNever<Paths<T[Key], {maxRecursionDepth: Subtract<MaxDepth, 1>}>> extends false
+									? `${Key}.${Paths<T[Key], {maxRecursionDepth: Subtract<MaxDepth, 1>}>}`
+									: never
+								: never
+						)
 						: never
-				)
-				: never
-		}[keyof T & (T extends UnknownArray ? number : unknown)];
+				}[keyof T & (T extends UnknownArray ? number : unknown)]
+			: never
+		: never;

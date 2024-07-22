@@ -1,5 +1,5 @@
 import {expectAssignable, expectType} from 'tsd';
-import type {Paths, PickDeep} from '../index';
+import type {Paths} from '../index';
 
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);
@@ -108,3 +108,13 @@ type MyOtherEntity = {
 };
 type MyEntityPaths = Paths<MyEntity>;
 expectAssignable<string>({} as MyEntityPaths);
+
+// By default, the recursion limit should be reasonably long
+type RecursiveFoo = {foo: RecursiveFoo};
+expectAssignable<Paths<RecursiveFoo>>('foo.foo.foo.foo.foo.foo.foo.foo');
+
+declare const recursion0: Paths<RecursiveFoo, {maxRecursionDepth: 0}>;
+expectType<'foo'>(recursion0);
+
+declare const recursion1: Paths<RecursiveFoo, {maxRecursionDepth: 1}>;
+expectType<'foo' | 'foo.foo'>(recursion1);
