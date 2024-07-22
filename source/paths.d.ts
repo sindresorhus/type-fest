@@ -13,7 +13,7 @@ Paths options.
 */
 export type PathsOptions = {
 	/**
-	Maximum recursions before stopping to search deeper paths.
+	The maximum depth to recurse when searching for paths.
 
 	@default 10
 	*/
