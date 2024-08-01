@@ -20,7 +20,7 @@ NumberAbsolute<NegativeInfinity>
 export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
 /**
-Return a type if it is a number or a number string
+Return a type if it is a number or a number string.
 
 @example
 ```
@@ -34,8 +34,10 @@ type C = IsNumberLike<'a'>;
 //=> false
 */
 export type IsNumberLike<N> =
-	N extends number ? true
-		:	N extends `${number}` ? true
+	N extends number
+		? true
+		: N extends `${number}`
+			? true
 			: false;
 
 /**
