@@ -1,22 +1,17 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {UpperCaseCharacters, WordSeparators} from '../source/internal';
-import type {SplitIncludingDelimiters, DelimiterCase} from '../source/delimiter-case';
-
-const splitFromCamel: SplitIncludingDelimiters<'fooBar', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar'];
-expectType<['foo', 'B', 'ar']>(splitFromCamel);
-const splitFromComplexCamel: SplitIncludingDelimiters<'fooBarAbc123', WordSeparators | UpperCaseCharacters> = ['foo', 'B', 'ar', 'A', 'bc123'];
-expectType<['foo', 'B', 'ar', 'A', 'bc123']>(splitFromComplexCamel);
-const splitFromWordSeparators: SplitIncludingDelimiters<'foo-bar_car far', WordSeparators> = ['foo', '-', 'bar', '_', 'car', ' ', 'far'];
-expectType<['foo', '-', 'bar', '_', 'car', ' ', 'far']>(splitFromWordSeparators);
-const splitFromScreamingSnakeCase: SplitIncludingDelimiters<'FOO_BAR', WordSeparators | UpperCaseCharacters> = ['foo', '_', 'bar'];
-expectType<['foo', '_', 'bar']>(splitFromScreamingSnakeCase);
+import type {DelimiterCase} from '../source/delimiter-case';
 
 // DelimiterCase
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromCamel);
 
+// TODO: customize with a parameter
 const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
+
+// TODO: customize with a parameter
+const delimiterFromComplexCamel2: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc#123';
+expectType<'foo#bar#abc#123'>(delimiterFromComplexCamel);
 
 const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromPascal);
@@ -42,14 +37,14 @@ expectType<'foobar'>(noDelimiterFromMono);
 const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'> = 'foo#bar#abc#xyz#bar#foo';
 expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
 
-const delimiterFromVendorPrefixedCssProperty: DelimiterCase<'-webkit-animation', '#'> = '#webkit#animation';
-expectType<'#webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
+const delimiterFromVendorPrefixedCssProperty: DelimiterCase<'-webkit-animation', '#'> = 'webkit#animation';
+expectType<'webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
 
-const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'> = '##very#prefixed';
-expectType<'##very#prefixed'>(delimiterFromDoublePrefixedKebab);
+const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'> = 'very#prefixed';
+expectType<'very#prefixed'>(delimiterFromDoublePrefixedKebab);
 
-const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo####bar';
-expectType<'foo####bar'>(delimiterFromRepeatedSeparators);
+const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> = 'foo#bar';
+expectType<'foo#bar'>(delimiterFromRepeatedSeparators);
 
 const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
 expectType<string>(delimiterFromString);
