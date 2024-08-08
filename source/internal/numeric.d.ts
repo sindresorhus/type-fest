@@ -22,23 +22,29 @@ export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPo
 /**
 Return a type if it is a number or a number string.
 
+supports floating-point as a string.
+
 @example
 ```
 type A = IsNumberLike<'1'>;
 //=> true
 
-type B = IsNumberLike<1>;
+type B = IsNumberLike<'-1.1'>;
 //=> true
 
-type C = IsNumberLike<'a'>;
+type C = IsNumberLike<1>;
+//=> true
+
+type D = IsNumberLike<'a'>;
 //=> false
 */
 export type IsNumberLike<N> =
-	N extends number
-		? true
-		: N extends `${number}`
+	N extends number ? true
+		:	N extends `${number}`
 			? true
-			: false;
+			: N extends `${number}.${number}`
+				? true
+				: false;
 
 /**
 Returns the minimum number in the given union of numbers.

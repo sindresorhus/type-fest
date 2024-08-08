@@ -123,26 +123,26 @@ expectType<'foo' | 'foo.foo'>(recursion1);
 type Object1 = {
 	arr: [{a: string}];
 };
-expectType<Paths<Object1, {style: 'a[0].b'}>>({} as 'arr' | 'arr[0]' | 'arr[0].a');
+expectType<Paths<Object1, {bracketNotation: true}>>({} as 'arr' | 'arr[0]' | 'arr[0].a');
 
 type Object2 = {
 	arr: Array<{a: string}>;
 	arr1: string[];
 };
-expectType<Paths<Object2, {style: 'a[0].b'}>>({} as 'arr' | 'arr1' | `arr[${number}]` | `arr[${number}].a` | `arr1[${number}]`);
+expectType<Paths<Object2, {bracketNotation: true}>>({} as 'arr' | 'arr1' | `arr[${number}]` | `arr[${number}].a` | `arr1[${number}]`);
 
 type Object3 = {
 	1: 'foo';
 	'2': 'bar';
 };
-expectType<Paths<Object3, {style: 'a[0].b'}>>({} as '[1]' | '[2]');
+expectType<Paths<Object3, {bracketNotation: true}>>({} as '[1]' | '[2]');
 
 type deepArray = {
 	arr: Array<Array<Array<{a: string}>>>;
 };
-expectType<Paths<deepArray, {style: 'a[0].b'}>>({} as 'arr' | `arr[${number}]` | `arr[${number}][${number}]` | `arr[${number}][${number}][${number}]` | `arr[${number}][${number}][${number}].a`);
+expectType<Paths<deepArray, {bracketNotation: true}>>({} as 'arr' | `arr[${number}]` | `arr[${number}][${number}]` | `arr[${number}][${number}][${number}]` | `arr[${number}][${number}][${number}].a`);
 
 type RecursionArray = RecursionArray[];
-type RecursionArrayPaths = Paths<RecursionArray, {style: 'a[0].b'; maxRecursionDepth: 3}>;
+type RecursionArrayPaths = Paths<RecursionArray, {bracketNotation: true; maxRecursionDepth: 3}>;
 expectAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}]`);
 expectNotAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}][${number}]`);

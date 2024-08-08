@@ -20,16 +20,42 @@ export type PathsOptions = {
 	maxRecursionDepth?: number;
 
 	/**
-	Style of the path.
+	Use bracket notation for array indices or number key of object.
 
-  @default 'a.0.b'
+	@default false
+
+	@example
+	```
+	type ArrayExample = {
+		array: ['foo'];
+	};
+
+	type A = Paths<ArrayExample, {bracketNotation: false}>;
+	//=> 'array' | 'array.0'
+
+	type B = Paths<ArrayExample, {bracketNotation: true}>;
+	//=> 'array' | 'array[0]'
+	```
+
+	@example
+	```
+	type NumberKeyExample = {
+		1: ['foo'];
+	};
+
+	type A = Paths<NumberKeyExample, {bracketNotation: false}>;
+	//=> 1 | '1' | '1.0'
+
+	type B = Paths<NumberKeyExample, {bracketNotation: true}>;
+	//=> '[1]' | '[1][0]'
+	```
 	*/
-	style?: 'a[0].b' | 'a.0.b';
+	bracketNotation?: boolean;
 };
 
 type DefaultPathsOptions = {
 	maxRecursionDepth: 10;
-	style: 'a.0.b';
+	bracketNotation: false;
 };
 
 /**
@@ -76,8 +102,8 @@ open('listB.1'); // TypeError. Because listB only has one element.
 export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
 	// Set default maxRecursionDepth to 10
 	maxRecursionDepth: Options['maxRecursionDepth'] extends number ? Options['maxRecursionDepth'] : DefaultPathsOptions['maxRecursionDepth'];
-	// Set default style to 'arr.0.b'
-	style: Options['style'] extends string ? Options['style'] : DefaultPathsOptions['style'];
+	// Set default bracketNotation to false
+	bracketNotation: Options['bracketNotation'] extends boolean ? Options['bracketNotation'] : DefaultPathsOptions['bracketNotation'];
 }>;
 
 type _Paths<T, Options extends Required<PathsOptions>> =
@@ -104,13 +130,13 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 					[Key in keyof T]:
 					Key extends string | number // Limit `Key` to string or number.
 						? (
-							Options['style'] extends 'a[0].b'
+							Options['bracketNotation'] extends true
 								? IsNumberLike<Key> extends true
 									? `[${Key}]`
 									: (Key | ToString<Key>)
 								: never
 								|
-								Options['style'] extends 'a.0.b'
+								Options['bracketNotation'] extends false
 								// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
 									? (Key | ToString<Key>)
 									: never
@@ -121,16 +147,16 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 							| (
 								// Recursively generate paths for the current key
 								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
-									? _Paths<T[Key], {style: Options['style']; maxRecursionDepth: Subtract<MaxDepth, 1>}> extends infer SubPath
+									? _Paths<T[Key], {bracketNotation: Options['bracketNotation']; maxRecursionDepth: Subtract<MaxDepth, 1>}> extends infer SubPath
 										? SubPath extends string | number
 											? (
-												Options['style'] extends 'a[0].b'
-													? SubPath extends `[${number}]` | `[${number}]${string}`
+												Options['bracketNotation'] extends true
+													? SubPath extends `[${any}]` | `[${any}]${string}`
 														? `${TranformedKey}${SubPath}` // If next node is number key like `[3]`, no need to add `.` before it.
 														: `${TranformedKey}.${SubPath}`
 													: never
 											) | (
-												Options['style'] extends 'a.0.b'
+												Options['bracketNotation'] extends false
 													? `${TranformedKey}.${SubPath}`
 													: never
 											)
