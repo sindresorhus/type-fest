@@ -4,7 +4,6 @@ import type {IsAny} from './is-any';
 import type {UnknownArray} from './unknown-array';
 import type {Subtract} from './subtract';
 import type {GreaterThan} from './greater-than';
-import {type Sum} from './sum';
 
 /**
 Paths options.
