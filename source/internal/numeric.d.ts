@@ -20,7 +20,7 @@ NumberAbsolute<NegativeInfinity>
 export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
 /**
-Return a type if it is a number or a number string.
+Check whether the given type is a number or a number string.
 
 Supports floating-point as a string.
 
