@@ -22,7 +22,7 @@ export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPo
 /**
 Return a type if it is a number or a number string.
 
-supports floating-point as a string.
+Supports floating-point as a string.
 
 @example
 ```
