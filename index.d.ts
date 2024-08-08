@@ -9,6 +9,7 @@ export type {KeysOfUnion} from './source/keys-of-union';
 export type {DistributedOmit} from './source/distributed-omit';
 export type {DistributedPick} from './source/distributed-pick';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
+export type {EmptyArray, IsEmptyArray} from './source/empty-array';
 export type {IfEmptyObject} from './source/if-empty-object';
 export type {NonEmptyObject} from './source/non-empty-object';
 export type {UnknownRecord} from './source/unknown-record';
