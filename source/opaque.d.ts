@@ -1,4 +1,4 @@
-declare const tag: unique symbol;
+import type tag from 'tagged-tag';
 
 export type TagContainer<Token> = {
 	readonly [tag]: Token;
@@ -250,3 +250,5 @@ type RemoveAllTags<T> = T extends Tag<PropertyKey, any>
 			: never
 	}[keyof T[typeof tag]]
 	: T;
+
+export {type default as tag} from 'tagged-tag';
