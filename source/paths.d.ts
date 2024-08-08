@@ -19,7 +19,7 @@ export type PathsOptions = {
 	maxRecursionDepth?: number;
 
 	/**
-	Use bracket notation for array indices or number key of object.
+	Use bracket notation for array indices and numeric object keys.
 
 	@default false
 
