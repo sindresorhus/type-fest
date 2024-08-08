@@ -109,7 +109,6 @@ type WithModifiers = {
 
 expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz', NonStrict>>().toEqualTypeOf<{qux: number} | undefined>();
 expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi', NonStrict>>().toEqualTypeOf<string | undefined>();
-
 // Test bracket notation
 expectTypeOf<Get<number[], '[0]', NonStrict>>().toBeNumber();
 // NOTE: This would fail if `[0][0]` was converted into `00`:
