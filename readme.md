@@ -409,10 +409,14 @@ There are many advanced types most users don't know about.
   	async fetchUser(userId: number): Promise<User> {
   		// Fetch the user data from the database.
   		// The actual implementation might look like this:
-  		// const response = await fetch("/api/user/${userId});
+  		// const response = await fetch('/api/user/${userId}');
   		// const data = response.json();
   		// return data;
-  		return { id: 1, name: "John Doe", age: 30 };
+  		return {
+  			id: 1,
+  			name: 'John Doe',
+  			age: 30
+  		};
   	}
   }
 
@@ -424,7 +428,7 @@ There are many advanced types most users don't know about.
   		// After fetching user data, you can perform various actions such as updating the user interface,
   		// caching the data for future use, or making additional API requests as needed.
   	} catch (error) {
-  		// error handling
+  		// Error handling
   	}
   }
 
