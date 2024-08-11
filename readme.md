@@ -420,7 +420,7 @@ There are many advanced types most users don't know about.
   	}
   }
 
-  type FetchedUser = Awaited<ReturnType<UserApiService["fetchUser"]>>;
+  type FetchedUser = Awaited<ReturnType<UserApiService['fetchUser']>>;
 
   async function handleUserData(apiService: UserApiService, userId: number) {
   	try {
