@@ -1,5 +1,5 @@
 import type {StringDigit, ToString} from './internal';
-import type {LiteralUnion} from './literal-union';
+import type {LiteralStringUnion} from './literal-union';
 import type {Paths} from './paths';
 import type {Split} from './split';
 import type {StringKeyOf} from './string-key-of';
@@ -193,8 +193,6 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
-	| LiteralUnion<ToString<
-	Paths<BaseType, {bracketNotation: false}> | Paths<BaseType, {bracketNotation: true}>>
-	, string>,
+	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false}> | Paths<BaseType, {bracketNotation: true}>>>,
 	Options extends GetOptions = {}> =
 		GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
