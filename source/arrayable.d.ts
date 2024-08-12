@@ -9,7 +9,8 @@ import type {Arrayable} from 'type-fest';
 
 function bundle(input: string, output: Arrayable<string>) {
 	const outputList = Array.isArray(output) ? output : [output];
-	// ...
+
+	// …
 
 	for (const output of outputList) {
 	  console.log(`write to: ${output}`);
