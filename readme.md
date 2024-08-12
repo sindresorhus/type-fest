@@ -157,6 +157,7 @@ Click the type names for complete docs.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
+- [`SetRequiredDeep`](source/set-required-deep.d.ts) - Like `SetRequired` except it selects the keys deeply.
 - [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
