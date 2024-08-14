@@ -155,6 +155,7 @@ export type {Join} from './source/join';
 export type {Split} from './source/split';
 export type {Trim} from './source/trim';
 export type {Replace} from './source/replace';
+export type {StringRepeat} from './source/string-repeat';
 export type {Includes} from './source/includes';
 export type {Get} from './source/get';
 export type {LastArrayElement} from './source/last-array-element';

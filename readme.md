@@ -269,6 +269,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
+- [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
 
 ### Array
 
