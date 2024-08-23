@@ -139,6 +139,8 @@ type RemoveAllTags<T> = T extends Tag<PropertyKey, any>
 	: T;
 
 /**
+Note: The `Opaque` type is deprecated in favor of `Tagged`.
+
 Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for runtime values that would otherwise have the same type. (See examples.)
 
 The generic type parameters can be anything.
@@ -213,6 +215,8 @@ type Person = {
 export type Opaque<Type, Token = unknown> = Type & TagContainer<Token>;
 
 /**
+Note: The `UnwrapOpaque` type is deprecated in favor of `UnwrapTagged`.
+
 Revert an opaque or tagged type back to its original type by removing the readonly `[tag]`.
 
 Why is this necessary?
