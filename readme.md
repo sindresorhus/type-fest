@@ -283,7 +283,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
-- [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into a unsorted tuple/array type of its elements.
+- [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unsorted tuple/array type of its elements.
 
 ### Numeric
 
