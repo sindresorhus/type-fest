@@ -16,7 +16,7 @@ UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
 	: never;
 
 /**
-Convert a union type into an unsorted tuple/array type of its elements.
+Convert a union type into an unordered tuple type of its elements.
 
 This can be useful when you have objects with a finite set of keys and want a type defining only the allowed keys, but do not want to repeat yourself.
 
