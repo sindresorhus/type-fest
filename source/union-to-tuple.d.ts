@@ -42,7 +42,7 @@ const pets = {
 type Pet = keyof typeof pets;
 //=> 'dog' | 'cat' | 'snake'
 
-const petList = Object.keys(pets) as UnionToUnsortedTuple<Pet>;
+const petList = Object.keys(pets) as UnionToTuple<Pet>;
 //=> ['dog', 'cat', 'snake']
 ```
 
