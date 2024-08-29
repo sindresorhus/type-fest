@@ -392,6 +392,53 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 
 There are many advanced types most users don't know about.
 
+
+- [`Awaited<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype) - Extract the type of a value that a `Promise` resolves to.
+  <details>
+  <summary>
+  	Example
+  </summary>
+
+  [Playground](https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgKoGdrIN4FgBQyyAkMACYBcyIArgLYBG0A3AUcSHHRFemFKADmrQiTiCe1ekygiiAXwJtkCADZx06NJigBBAA7AAytABuwJDmXENATxAJkMCGAQALDNAAUNHQElKKUZoAEoqAAUoAHs6YEwAHk8oAD4rUWJiAHpM5AAxF3dkMDcUXywyODA4J2i6IpLkCqqGDQgAOmssnIAVBsQwGjhVZGA6fVUIbnBK4CiQZFjBNzBkVSiogGtV4A2UYriKTuyVOb5kKAh0fVOUAF5kOAB3OGAV51c3LwAiTLhDTLKUEyABJsICAvIQnISF0TiAzk1qvcLlcbm0AFboOZeKFHHIXAZQeaI6EZAk0Ik4EaBACMABpqFxJF8AFJRNzzAAiUQgXwZ4kkAGYAAzIeSkxSiSXKMC2fQofIfCBkJLIe66Z6vZXxABKLgpIG6cogiR0BmMZgsEAA2l93u4kl8ALrJZIiZR2BxOGgOMCzeZuOAgMgTJKcypwLx-C1QcxIKhJc0mWNWhngwK0YJQEJpdj8Wy5mEIU4rQFURXuZWq+5PF4raPJuPte0eHQ+fxkXHpWG6GCQKBOApuITIQGNCMM2xRGgqIPIeWwKJQOqmOACadafr+rToGiFDSj-RNEfFUo6EbgaDwJB0vGz9wnhqImpRb2Es8QBlLhZwDYjuBkGQrz+kMyC6OEfjnBAACONCXGAm5aCAEDKsqHTpPIs4fMgXjQNE2aFhkxx4d+gbBqoQjWJKChKKIxbwqWZqGI2VpqtQECPNo0BJpaSA4tCZEhhAYYRu23HMbxn7IDSUJAA)
+
+  ```ts
+  interface User {
+  	id: number;
+  	name: string;
+  	age: number;
+  }
+
+  class UserApiService {
+  	async fetchUser(userId: number): Promise<User> {
+  		// Fetch the user data from the database.
+  		// The actual implementation might look like this:
+  		// const response = await fetch('/api/user/${userId}');
+  		// const data = response.json();
+  		// return data;
+  		return {
+  			id: 1,
+  			name: 'John Doe',
+  			age: 30
+  		};
+  	}
+  }
+
+  type FetchedUser = Awaited<ReturnType<UserApiService['fetchUser']>>;
+
+  async function handleUserData(apiService: UserApiService, userId: number) {
+  	try {
+  		const user: FetchedUser = await apiService.fetchUser(userId);
+  		// After fetching user data, you can perform various actions such as updating the user interface,
+  		// caching the data for future use, or making additional API requests as needed.
+  	} catch (error) {
+  		// Error handling
+  	}
+  }
+
+  const userApiService = new UserApiService();
+  handleUserData(userApiService, 1);
+  ```
+
 - [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) - Make all properties in `T` optional.
 	<details>
 	<summary>
