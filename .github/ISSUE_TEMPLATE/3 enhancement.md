@@ -1,5 +1,5 @@
 ---
 name: ♻️ Propose change or improvement to existing types
-about: __________________
+about: '​‌‍﻿⁠ ' # Magic whitespace to hide this required field
 labels: 'enhancement'
 ---
