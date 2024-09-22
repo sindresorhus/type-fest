@@ -1,4 +1,6 @@
-import type {StringDigit} from './internal';
+import type {StringDigit, ToString} from './internal';
+import type {LiteralStringUnion} from './literal-union';
+import type {Paths} from './paths';
 import type {Split} from './split';
 import type {StringKeyOf} from './string-key-of';
 
@@ -16,7 +18,7 @@ type GetOptions = {
 /**
 Like the `Get` type but receives an array of strings as a path parameter.
 */
-type GetWithPath<BaseType, Keys extends readonly string[], Options extends GetOptions = {}> =
+type GetWithPath<BaseType, Keys, Options extends GetOptions = {}> =
 	Keys extends readonly []
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
@@ -187,5 +189,10 @@ Get<Record<string, string>, 'foo', {strict: true}> // => string
 @category Array
 @category Template literal
 */
-export type Get<BaseType, Path extends string | readonly string[], Options extends GetOptions = {}> =
-	GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
+export type Get<
+	BaseType,
+	Path extends
+	| readonly string[]
+	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false}> | Paths<BaseType, {bracketNotation: true}>>>,
+	Options extends GetOptions = {}> =
+		GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
