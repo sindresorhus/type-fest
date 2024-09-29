@@ -82,6 +82,7 @@ export type {
 	NonNegativeInteger,
 	IsNegative,
 } from './source/numeric';
+export type {IfNegative} from './source/if-negative';
 export type {GreaterThan} from './source/greater-than';
 export type {GreaterThanOrEqual} from './source/greater-than-or-equal';
 export type {LessThan} from './source/less-than';
@@ -102,11 +103,14 @@ export type {WritableKeysOf} from './source/writable-keys-of';
 export type {HasWritableKeys} from './source/has-writable-keys';
 export type {Spread} from './source/spread';
 export type {IsInteger} from './source/is-integer';
+export type {IfInteger} from './source/if-integer';
 export type {IsFloat} from './source/is-float';
+export type {IfFloat} from './source/if-float';
 export type {TupleToUnion} from './source/tuple-to-union';
 export type {UnionToTuple} from './source/union-to-tuple';
 export type {IntRange} from './source/int-range';
 export type {IsEqual} from './source/is-equal';
+export type {IfEqual} from './source/if-equal';
 export type {
 	IsLiteral,
 	IsStringLiteral,
@@ -114,6 +118,13 @@ export type {
 	IsBooleanLiteral,
 	IsSymbolLiteral,
 } from './source/is-literal';
+export type {
+	IfLiteral,
+	IfStringLiteral,
+	IfNumericLiteral,
+	IfBooleanLiteral,
+	IfSymbolLiteral,
+} from './source/if-literal';
 export type {IsAny} from './source/is-any';
 export type {IfAny} from './source/if-any';
 export type {IsNever} from './source/is-never';
