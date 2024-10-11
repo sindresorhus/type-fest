@@ -37,7 +37,7 @@ const userMaskSettings: UserMask = {
 
 @category Object
 */
-export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> = ObjectType extends string
+export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {recurseIntoArrays: true}> = ObjectType extends string
 	? ValueType
 	: ObjectType extends Map<unknown, unknown>
 		? ValueType

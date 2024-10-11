@@ -24,7 +24,7 @@ const foo = {
 };
 
 type FooOption = 'A' | 'B';
-type FooSchema = Schema<typeof foo, FooOption>;
+type FooSchema = Schema<typeof foo, FooOption, {recurseIntoArrays: false}>;
 
 const fooSchema: FooSchema = {
 	baz: 'A',
@@ -37,7 +37,7 @@ const fooSchema: FooSchema = {
 		symbol: 'A',
 		map: 'A',
 		set: 'A',
-		array: 'A',
+		array: ['A'],
 		tuple: ['A'],
 		objectArray: [{key: 'A'}],
 		readonlyMap: 'A',
