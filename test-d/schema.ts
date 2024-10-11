@@ -37,7 +37,7 @@ const fooSchema: FooSchema = {
 		symbol: 'A',
 		map: 'A',
 		set: 'A',
-		array: ['A'],
+		array: 'A',
 		tuple: ['A'],
 		objectArray: [{key: 'A'}],
 		readonlyMap: 'A',

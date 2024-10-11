@@ -37,7 +37,7 @@ const userMaskSettings: UserMask = {
 
 @category Object
 */
-export type Schema<ObjectType, ValueType> = ObjectType extends string
+export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> = ObjectType extends string
 	? ValueType
 	: ObjectType extends Map<unknown, unknown>
 		? ValueType
@@ -48,7 +48,9 @@ export type Schema<ObjectType, ValueType> = ObjectType extends string
 				: ObjectType extends ReadonlySet<unknown>
 					? ValueType
 					: ObjectType extends Array<infer U>
-						? Array<Schema<U, ValueType>>
+						? Options['recurseIntoArrays'] extends true
+							? Array<Schema<U, ValueType>>
+							: ValueType
 						: ObjectType extends (...arguments_: unknown[]) => unknown
 							? ValueType
 							: ObjectType extends Date
@@ -68,4 +70,14 @@ type SchemaObject<ObjectType extends object, K> = {
 	[KeyType in keyof ObjectType]: ObjectType[KeyType] extends readonly unknown[] | unknown[]
 		? Schema<ObjectType[KeyType], K>
 		: Schema<ObjectType[KeyType], K> | K;
+};
+
+/**
+@see Schema
+*/
+export type SchemaOptions = {
+	/**
+	@default true
+	*/
+	readonly recurseIntoArrays?: boolean;
 };
