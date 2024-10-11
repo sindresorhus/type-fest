@@ -67,7 +67,6 @@ export type {Jsonify} from './source/jsonify';
 export type {Jsonifiable} from './source/jsonifiable';
 export type {StructuredCloneable} from './source/structured-cloneable';
 export type {Schema} from './source/schema';
-export type {SchemaLoose} from './source/schema-loose';
 export type {LiteralToPrimitive} from './source/literal-to-primitive';
 export type {LiteralToPrimitiveDeep} from './source/literal-to-primitive-deep';
 export type {
