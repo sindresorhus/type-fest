@@ -88,7 +88,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 ## Install
 
 ```sh
-npm install type-fest
+npm install type-fest -D
 ```
 
 *Requires TypeScript >=5.1*
