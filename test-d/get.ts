@@ -139,3 +139,13 @@ expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<unknown>();
 // Test empty path array
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, []>>();
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>();
+
+// eslint-disable-next-line no-lone-blocks
+{
+	type Foo = {
+		array: string[];
+	};
+
+	type FooPaths = `array.${number}`;
+	expectTypeOf<Get<Foo, FooPaths>>().toEqualTypeOf<string | undefined>();
+}
