@@ -148,4 +148,7 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 
 	type FooPaths = `array.${number}`;
 	expectTypeOf<Get<Foo, FooPaths>>().toEqualTypeOf<string | undefined>();
+
+	type FooPaths2 = 'array.1';
+	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
 }
