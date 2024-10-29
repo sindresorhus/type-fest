@@ -37,30 +37,9 @@ const userMaskSettings: UserMask = {
 }
 ```
 
-By default, this affects elements in array and tuple types. You can change this by passing `{recurseIntoArrays: false}` as the third type argument:
-- If `recurseIntoArrays` is set to `true` (default), array elements will be recursively processed as well.
-- If `recurseIntoArrays` is set to `false`, arrays will not be recursively processed, and the entire array will be replaced with the given value type.
-
-@example
-```
-type UserMask = Schema<User, 'mask' | 'hide' | 'show', {recurseIntoArrays: false}>;
-
-const userMaskSettings: UserMask = {
-	id: 'show',
-	name: {
-		firstname: 'show',
-		lastname: 'mask',
-	},
-	created: 'show',
-	active: 'show',
-	passwordHash: 'hide',
-	attributes: 'hide'
-}
-```
-
 @category Object
 */
-export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {recurseIntoArrays: true}> = ObjectType extends string
+export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> = ObjectType extends string
 	? ValueType
 	: ObjectType extends Map<unknown, unknown>
 		? ValueType
@@ -108,6 +87,27 @@ type SchemaObject<
 */
 export type SchemaOptions = {
 	/**
+	By default, this affects elements in array and tuple types. You can change this by passing `{recurseIntoArrays: false}` as the third type argument:
+	- If `recurseIntoArrays` is set to `true` (default), array elements will be recursively processed as well.
+	- If `recurseIntoArrays` is set to `false`, arrays will not be recursively processed, and the entire array will be replaced with the given value type.
+
+	@example
+	```
+	type UserMask = Schema<User, 'mask' | 'hide' | 'show', {recurseIntoArrays: false}>;
+
+	const userMaskSettings: UserMask = {
+		id: 'show',
+		name: {
+			firstname: 'show',
+			lastname: 'mask',
+		},
+		created: 'show',
+		active: 'show',
+		passwordHash: 'hide',
+		attributes: 'hide'
+	}
+	```
+
 	@default true
 	*/
 	readonly recurseIntoArrays?: boolean;
