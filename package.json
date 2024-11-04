@@ -24,7 +24,9 @@
 	},
 	"files": [
 		"index.d.ts",
-		"source"
+		"source",
+		"license-mit",
+		"license-cc0"
 	],
 	"keywords": [
 		"typescript",
