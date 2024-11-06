@@ -188,7 +188,7 @@ Click the type names for complete docs.
 - [`WritableKeysOf`](source/writable-keys-of.d.ts) - Extract all writable (non-readonly) keys from the given type.
 - [`HasWritableKeys`](source/has-writable-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any writable fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
-- [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
+- [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal. (Conditional version: [`IfEqual`](source/if-equal.d.ts))
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
@@ -233,11 +233,11 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 //=> 'never'
 ```
 
-- [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
-- [`IsStringLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
-- [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
-- [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
-- [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+- [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types). (Conditional version: [`IfLiteral`](source/if-literal.d.ts))
+- [`IsStringLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types). (Conditional version: [`IfStringLiteral`](source/if-literal.d.ts))
+- [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types). (Conditional version: [`IfNumericLiteral`](source/if-literal.d.ts))
+- [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types). (Conditional version: [`IfBooleanLiteral`](source/if-literal.d.ts))
+- [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types). (Conditional version: [`IfSymbolLiteral`](source/if-literal.d.ts))
 - [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`. (Conditional version: [`IfAny`](source/if-any.d.ts))
 - [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`. (Conditional version: [`IfNever`](source/if-never.d.ts))
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Conditional version: [`IfUnknown`](source/if-unknown.d.ts))
@@ -297,9 +297,9 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
 - [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
-- [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number.
-- [`IsFloat`](source/is-float.d.ts) - Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
-- [`IsInteger`](source/is-integer.d.ts) - Returns a boolean for whether the given number is a integer, like `-5`, `1.0` or `100`.
+- [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number. (Conditional version: [`IfNegative`](source/if-negative.d.ts))
+- [`IsFloat`](source/is-float.d.ts) - Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`. (Conditional version: [`IfFloat`](source/if-float.d.ts))
+- [`IsInteger`](source/is-integer.d.ts) - Returns a boolean for whether the given number is a integer, like `-5`, `1.0` or `100`. (Conditional version: [`IfInteger`](source/if-integer.d.ts))
 - [`GreaterThan`](source/greater-than.d.ts) - Returns a boolean for whether a given number is greater than another number.
 - [`GreaterThanOrEqual`](source/greater-than-or-equal.d.ts) - Returns a boolean for whether a given number is greater than or equal to another number.
 - [`LessThan`](source/less-than.d.ts) - Returns a boolean for whether a given number is less than another number.
