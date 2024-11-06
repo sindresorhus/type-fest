@@ -128,6 +128,7 @@ Click the type names for complete docs.
 - [`EmptyObject`](source/empty-object.d.ts) - Represents a strictly empty plain object, the `{}` value.
 - [`NonEmptyObject`](source/non-empty-object.d.ts) - Represents an object with at least 1 non-optional key.
 - [`UnknownRecord`](source/unknown-record.d.ts) - Represents an object with `unknown` value. You probably want this instead of `{}`.
+- [`EmptyArray`](source/empty-array.d.ts) - Represents a strictly empty array, the `[]` value.
 - [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
@@ -242,6 +243,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`. (Conditional version: [`IfNever`](source/if-never.d.ts))
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Conditional version: [`IfUnknown`](source/if-unknown.d.ts))
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value. (Conditional version: [`IfEmptyObject`](source/if-empty-object.d.ts))
+- [`IsEmptyArray`](source/empty-array.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty array, the `[]` value.
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`. (Conditional version: [`IfNull`](source/if-null.d.ts))
 
 ### JSON
