@@ -73,5 +73,8 @@ expectType<'FOO2_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
 const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: ScreamingSnakeCase<'foO2bar', {splitOnNumber: false}> = 'FO_O2BAR';
 expectType<'FO_O2BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);
 
+const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase3: ScreamingSnakeCase<'FOO22Bar', {splitOnNumber: false}> = 'FOO22_BAR';
+expectType<'FOO22_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase3);
+
 const nonStringFromNonString: ScreamingSnakeCase<[]> = [];
 expectType<[]>(nonStringFromNonString);

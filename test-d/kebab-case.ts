@@ -72,3 +72,6 @@ expectType<'foo2-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
 
 const kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: KebabCase<'foO2bar', {splitOnNumber: false}> = 'fo-o2bar';
 expectType<'fo-o2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);
+
+const kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase3: KebabCase<'FOO22Bar', {splitOnNumber: false}> = 'foo22-bar';
+expectType<'foo22-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase3);
