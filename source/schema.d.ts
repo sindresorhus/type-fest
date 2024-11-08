@@ -50,9 +50,9 @@ export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> = 
 				: ObjectType extends ReadonlySet<unknown>
 					? ValueType
 					: ObjectType extends Array<infer U>
-						? Options['recurseIntoArrays'] extends true
-							? Array<Schema<U, ValueType>>
-							: ValueType
+						? Options['recurseIntoArrays'] extends false
+							? ValueType
+							: Array<Schema<U, ValueType>>
 						: ObjectType extends (...arguments_: unknown[]) => unknown
 							? ValueType
 							: ObjectType extends Date
@@ -76,9 +76,9 @@ type SchemaObject<
 	[KeyType in keyof ObjectType]: ObjectType[KeyType] extends
 	| readonly unknown[]
 	| unknown[]
-		? Options['recurseIntoArrays'] extends true
-			? Schema<ObjectType[KeyType], K, Options>
-			: K
+		? Options['recurseIntoArrays'] extends false
+			? K
+			: Schema<ObjectType[KeyType], K, Options>
 		: Schema<ObjectType[KeyType], K, Options> | K;
 };
 
