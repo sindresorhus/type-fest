@@ -72,3 +72,6 @@ expectType<'foo2_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
 
 const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: SnakeCase<'foO2bar', {splitOnNumber: false}> = 'fo_o2bar';
 expectType<'fo_o2bar'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);
+
+const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase3: SnakeCase<'FOO22Bar', {splitOnNumber: false}> = 'foo22_bar';
+expectType<'foo22_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase3);

@@ -87,6 +87,9 @@ expectType<'foo2#bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
 const delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: DelimiterCase<'foO2bar', '#', {splitOnNumber: false}> = 'fo#o2bar';
 expectType<'fo#o2bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);
 
+const delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase3: DelimiterCase<'FOO22Bar', '#', {splitOnNumber: false}> = 'foo22#bar';
+expectType<'foo22#bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase3);
+
 // Verifying example
 type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
