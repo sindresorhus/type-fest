@@ -5,13 +5,18 @@ import type {DelimiterCase} from '../source/delimiter-case';
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromCamel);
 
-// TODO: customize with a parameter
-const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
+const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#', {splitOnNumber: false}> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
 
-// TODO: customize with a parameter
-const delimiterFromComplexCamel2: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc#123';
-expectType<'foo#bar#abc#123'>(delimiterFromComplexCamel);
+const delimiterFromComplexCamelSplitOnNumber: DelimiterCase<
+'fooBarAbc123',
+'#',
+{splitOnNumber: true}
+> = 'foo#bar#abc#123';
+expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumber);
+
+const delimiterFromComplexCamelSplitOnNumberDefault: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc#123';
+expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumberDefault);
 
 const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromPascal);

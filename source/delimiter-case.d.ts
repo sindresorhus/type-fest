@@ -1,5 +1,4 @@
-import {SplitWords} from "./split-words";
-
+import type {SplitWords} from './split-words';
 
 /**
 Convert an array of words to delimiter case starting with a delimiter with input capitalization.
@@ -7,11 +6,11 @@ Convert an array of words to delimiter case starting with a delimiter with input
 type DelimiterCaseFromArray<
 	Words extends string[],
 	Delimiter extends string,
-	OutputString extends string = ''
+	OutputString extends string = '',
 > = Words extends [
-		infer FirstWord extends string,
-		...infer RemainingWords extends string[]
-	]
+	infer FirstWord extends string,
+	...infer RemainingWords extends string[],
+]
 	? `${Delimiter}${FirstWord}${DelimiterCaseFromArray<RemainingWords, Delimiter>}`
 	: OutputString;
 
@@ -55,8 +54,8 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 @category Change case
 @category Template literal
  */
-export type DelimiterCase<Value, Delimiter extends string> = Value extends string
+export type DelimiterCase<Value, Delimiter extends string, Options extends {splitOnNumber: boolean} = {splitOnNumber: true}> = Value extends string
 	? string extends Value
 		? Value
-		: Lowercase<RemoveFirstLetter<DelimiterCaseFromArray<SplitWords<Value extends Uppercase<Value> ? Lowercase<Value> : Value>, Delimiter>>>
+		: Lowercase<RemoveFirstLetter<DelimiterCaseFromArray<SplitWords<Value extends Uppercase<Value> ? Lowercase<Value> : Value, Options>, Delimiter>>>
 	: Value;
