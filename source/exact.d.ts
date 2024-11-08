@@ -53,13 +53,14 @@ onlyAcceptNameImproved(invalidInput); // Compilation error
 @category Utilities
 */
 export type Exact<ParameterType, InputType> =
-	// If the parameter is a primitive, return it as is immediately to avoid it being converted to a complex type
-	ParameterType extends Primitive ? ParameterType
-		// If the parameter is an unknown, return it as is immediately to avoid it being converted to a complex type
-		: IsUnknown<ParameterType> extends true ? unknown
-			// If the parameter is a Function, return it as is because this type is not capable of handling function, leave it to TypeScript
-			: ParameterType extends Function ? ParameterType
-				: IsEqual<ParameterType, InputType> extends true ? ParameterType
+	// Before distributing, check if the two types are equal and if so, return the parameter type immediately
+	IsEqual<ParameterType, InputType> extends true ? ParameterType
+		// If the parameter is a primitive, return it as is immediately to avoid it being converted to a complex type
+		: ParameterType extends Primitive ? ParameterType
+			// If the parameter is an unknown, return it as is immediately to avoid it being converted to a complex type
+			: IsUnknown<ParameterType> extends true ? unknown
+				// If the parameter is a Function, return it as is because this type is not capable of handling function, leave it to TypeScript
+				: ParameterType extends Function ? ParameterType
 					// Convert union of array to array of union: A[] & B[] => (A & B)[]
 					: ParameterType extends unknown[] ? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 						// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.

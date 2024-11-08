@@ -1,0 +1,20 @@
+name: 🐛 Report bug
+description: '​‌‍﻿⁠ ' # Magic whitespace to hide this required field
+labels: bug
+
+body:
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: Bug description
+
+  - type: input
+    id: repro
+    validations:
+      required: true
+    attributes:
+      label: Repro
+      description: |
+        Open [this playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBDAnmApnA3gUQB4GMVgwC+cAZlBCHAORKoC0pKAzjNQNwCwAUD3WgDEIEOAF4MPAJABXAHbBc0WQC44rKMFkBzLt0lQAhpoBGEAO6rTEADYoDs3UV19kaAHIQASkdmmzYuBx8QgAeIQgAGhpDE3NqAD5dOGS4AHpUuAA9AH4eIA), write a piece of code that fails your expectations, click "Share", and paste the URL here

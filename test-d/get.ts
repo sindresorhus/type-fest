@@ -109,7 +109,6 @@ type WithModifiers = {
 
 expectTypeOf<Get<WithModifiers, 'foo[0].bar.baz', NonStrict>>().toEqualTypeOf<{qux: number} | undefined>();
 expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi', NonStrict>>().toEqualTypeOf<string | undefined>();
-
 // Test bracket notation
 expectTypeOf<Get<number[], '[0]', NonStrict>>().toBeNumber();
 // NOTE: This would fail if `[0][0]` was converted into `00`:
@@ -140,3 +139,16 @@ expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<unknown>();
 // Test empty path array
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, []>>();
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>();
+
+// eslint-disable-next-line no-lone-blocks
+{
+	type Foo = {
+		array: string[];
+	};
+
+	type FooPaths = `array.${number}`;
+	expectTypeOf<Get<Foo, FooPaths>>().toEqualTypeOf<string | undefined>();
+
+	type FooPaths2 = 'array.1';
+	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
+}

@@ -537,3 +537,19 @@ import type {Exact, Opaque} from '../index';
 	// @ts-expect-error
 	function_(withExcessSurname);
 }
+
+// Spec - recursive type with union
+// @see https://github.com/sindresorhus/type-fest/issues/948
+{
+	type A = {
+		a: Expected;
+	};
+	type B = {
+		b: string;
+	};
+	type Expected = A | B;
+
+	const function_ = <T extends Exact<Expected, T>>(arguments_: T) => arguments_;
+
+	function_({} as Expected);
+}

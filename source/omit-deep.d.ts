@@ -37,6 +37,25 @@ type UsefulInfo = OmitDeep<Info, 'userInfo.uselessInfo'>;
 // 	userInfo: {
 // 		name: string;
 // 	};
+// };
+
+// Supports removing multiple paths
+type Info1 = {
+	userInfo: {
+		name: string;
+		uselessField: string;
+		uselessInfo: {
+			foo: string;
+		};
+	};
+};
+
+type UsefulInfo1 = OmitDeep<Info1, 'userInfo.uselessInfo' | 'userInfo.uselessField'>;
+// type UsefulInfo1 = {
+// 	userInfo: {
+// 		name: string;
+// 	};
+// };
 
 // Supports array
 type A = OmitDeep<[1, 'foo', 2], 1>;

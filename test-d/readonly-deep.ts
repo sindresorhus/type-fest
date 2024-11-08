@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {Opaque, tag} from '../source/opaque';
+import type {Opaque, tag} from '../source/tagged';
 import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep';
 import type {JsonValue} from '../source/basic';
 

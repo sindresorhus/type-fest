@@ -16,9 +16,9 @@ jobs:
       fail-fast: false
       matrix:
         node-version:
+          - 22
           - 20
           - 18
-          - 16
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,6 +34,7 @@ jobs:
       matrix:
         typescript-version:
           - "latest"
+          - "~5.5.0"
           - "~5.4.0"
           - "~5.3.0"
           - "~5.2.0"
