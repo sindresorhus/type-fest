@@ -15,8 +15,14 @@ const delimiterFromComplexCamelSplitOnNumber: DelimiterCase<
 > = 'foo#bar#abc#123';
 expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumber);
 
-const delimiterFromComplexCamelSplitOnNumberDefault: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc#123';
-expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumberDefault);
+const delimiterFromComplexCamelNoSplitOnNumber: DelimiterCase<'fooBarAbc123', '#', {splitOnNumber: false}> = 'foo#bar#abc123';
+expectType<'foo#bar#abc123'>(delimiterFromComplexCamelNoSplitOnNumber);
+
+const delimiterNumberInTheMiddle: DelimiterCase<'p2pNetwork', '#'> = 'p#2#p#network';
+expectType<'p#2#p#network'>(delimiterNumberInTheMiddle);
+
+const delimiterNumberInTheMiddleNoSplitOnNumber: DelimiterCase<'p2pNetwork', '#', {splitOnNumber: false}> = 'p2p#network';
+expectType<'p2p#network'>(delimiterNumberInTheMiddleNoSplitOnNumber);
 
 const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromPascal);

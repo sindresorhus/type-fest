@@ -40,8 +40,8 @@ type Words3 = Words<'--hello the_world'>;
 type Words4 = Words<'lifeIs42'>;
 //=> ['life', 'Is', '42']
 
-type Words5 = Words<'lifeIs42', { splitOnNumber: false }>;
-//=> ['life', 'Is42']
+type Words5 = Words<'p2pNetwork', {splitOnNumber: false}>;
+//=> ['p2p', 'Network']
 ```
 
 @category Change case
