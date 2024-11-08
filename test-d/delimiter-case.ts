@@ -9,13 +9,13 @@ const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#a
 expectType<'foo#bar#abc#123'>(delimiterFromComplexCamel);
 
 const delimiterFromComplexCamelSplitOnNumber: DelimiterCase<
-	'fooBarAbc123',
-	'#',
-	{splitOnNumber: true}
+'fooBarAbc123',
+'#',
+{splitOnNumber: true}
 > = 'foo#bar#abc#123';
 expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumber);
 
-const delimiterFromComplexCamelNoSplitOnNumber: DelimiterCase<'fooBarAbc123', '#', { splitOnNumber: false }> = 'foo#bar#abc123';
+const delimiterFromComplexCamelNoSplitOnNumber: DelimiterCase<'fooBarAbc123', '#', {splitOnNumber: false}> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamelNoSplitOnNumber);
 
 const delimiterNumberInTheMiddle: DelimiterCase<'p2pNetwork', '#'> = 'p#2#p#network';

@@ -42,14 +42,14 @@ export type SplitWords<
 			// Case change: non-numeric to numeric
 			: [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
 				// Split on number: push word
-				? Options["splitOnNumber"] extends true
+				? Options['splitOnNumber'] extends true
 					? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
 					// No split on number: concat word
 					: SplitWords<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 				// Case change: numeric to non-numeric
 				: [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
 					// Split on number: push word
-					? Options["splitOnNumber"] extends true
+					? Options['splitOnNumber'] extends true
 						? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
 						// No split on number: concat word
 						: SplitWords<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
