@@ -51,3 +51,24 @@ expectType<'foo_bar'>(snakeFromScreamingKebabCase);
 
 const snakeFromMixed2: SnakeCase<'parseHTML'> = 'parse_html';
 expectType<'parse_html'>(snakeFromMixed2);
+
+const snakeFromMixed3: SnakeCase<'parseHTMLItem'> = 'parse_html_item';
+expectType<'parse_html_item'>(snakeFromMixed3);
+
+const snakeFromNumberInTheMiddleSplitOnNumber: SnakeCase<'foo2bar'> = 'foo_2_bar';
+expectType<'foo_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumber);
+
+const snakeFromNumberInTheMiddleSplitOnNumberEdgeCase: SnakeCase<'foO2Bar'> = 'fo_o_2_bar';
+expectType<'fo_o_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumberEdgeCase);
+
+const snakeFromNumberInTheMiddleSplitOnNumberEdgeCase2: SnakeCase<'foO2bar'> = 'fo_o_2_bar';
+expectType<'fo_o_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumberEdgeCase2);
+
+const snakeFromNumberInTheMiddleNoSplitOnNumber: SnakeCase<'foo2bar', {splitOnNumber: false}> = 'foo2bar';
+expectType<'foo2bar'>(snakeFromNumberInTheMiddleNoSplitOnNumber);
+
+const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase: SnakeCase<'foo2Bar', {splitOnNumber: false}> = 'foo2_bar';
+expectType<'foo2_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
+
+const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: SnakeCase<'foO2bar', {splitOnNumber: false}> = 'fo_o2bar';
+expectType<'fo_o2bar'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);

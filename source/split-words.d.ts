@@ -6,6 +6,7 @@ type RemoveLastCharacter<Sentence extends string, Character extends string> = Se
 	? SkipEmptyWord<LeftSide>
 	: never;
 
+export type SplitWordsOptions = {splitOnNumber: boolean};
 /**
 Split a string (almost) like Lodash's `_.words()` function.
 
@@ -29,7 +30,7 @@ type Words5 = SplitWords<'p2pNetwork', { splitOnNumber: false }>; // ['p2p', 'Ne
 */
 export type SplitWords<
 	Sentence extends string,
-	Options extends {splitOnNumber: boolean} = {splitOnNumber: true},
+	Options extends SplitWordsOptions = {splitOnNumber: true},
 	LastCharacter extends string = '',
 	CurrentWord extends string = '',
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
