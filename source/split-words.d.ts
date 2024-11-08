@@ -20,7 +20,7 @@ type Words1 = SplitWords<'helloWORLD'>; // ['hello', 'WORLD']
 type Words2 = SplitWords<'hello-world'>; // ['hello', 'world']
 type Words3 = SplitWords<'--hello the_world'>; // ['hello', 'the', 'world']
 type Words4 = SplitWords<'lifeIs42'>; // ['life', 'Is', '42']
-type Words5 = SplitWords<'lifeIs42', { splitOnNumber: false }>; // ['life', 'Is42']
+type Words5 = SplitWords<'p2pNetwork', { splitOnNumber: false }>; // ['p2p', 'Network']
 ```
 
 @internal
