@@ -20,6 +20,7 @@ type Words1 = SplitWords<'helloWORLD'>; // ['hello', 'WORLD']
 type Words2 = SplitWords<'hello-world'>; // ['hello', 'world']
 type Words3 = SplitWords<'--hello the_world'>; // ['hello', 'the', 'world']
 type Words4 = SplitWords<'lifeIs42'>; // ['life', 'Is', '42']
+type Words5 = SplitWords<'lifeIs42', { splitOnNumber: false }>; // ['life', 'Is42']
 ```
 
 @internal
@@ -28,6 +29,7 @@ type Words4 = SplitWords<'lifeIs42'>; // ['life', 'Is', '42']
 */
 export type SplitWords<
 	Sentence extends string,
+	Options extends {splitOnNumber: boolean} = {splitOnNumber: true},
 	LastCharacter extends string = '',
 	CurrentWord extends string = '',
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
@@ -36,22 +38,30 @@ export type SplitWords<
 		? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters>]
 		: LastCharacter extends ''
 			// Fist char of word
-			? SplitWords<RemainingCharacters, FirstCharacter, FirstCharacter>
-			// Case change: non-numeric to numeric, push word
+			? SplitWords<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
+			// Case change: non-numeric to numeric
 			: [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
-				? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, FirstCharacter, FirstCharacter>]
-				// Case change: numeric to non-numeric, push word
+				// Split on number: push word
+				? Options["splitOnNumber"] extends true
+					? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+					// No split on number: concat word
+					: SplitWords<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+				// Case change: numeric to non-numeric
 				: [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
-					? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, FirstCharacter, FirstCharacter>]
+					// Split on number: push word
+					? Options["splitOnNumber"] extends true
+						? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+						// No split on number: concat word
+						: SplitWords<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 					// No case change: concat word
 					: [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
-						? SplitWords<RemainingCharacters, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
-					// Case change: lower to upper, push word
+						? SplitWords<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+						// Case change: lower to upper, push word
 						: [true, true] extends [IsLowerCase<LastCharacter>, IsUpperCase<FirstCharacter>]
-							? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, FirstCharacter, FirstCharacter>]
-						// Case change: upper to lower, brings back the last character, push word
+							? [...SkipEmptyWord<CurrentWord>, ...SplitWords<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+							// Case change: upper to lower, brings back the last character, push word
 							: [true, true] extends [IsUpperCase<LastCharacter>, IsLowerCase<FirstCharacter>]
-								? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...SplitWords<RemainingCharacters, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
-							// No case change: concat word
-								: SplitWords<RemainingCharacters, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+								? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...SplitWords<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
+								// No case change: concat word
+								: SplitWords<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 	: [...SkipEmptyWord<CurrentWord>];

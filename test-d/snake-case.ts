@@ -48,3 +48,6 @@ expectType<'foo_bar'>(snakeFromScreamingSnakeCase);
 
 const snakeFromScreamingKebabCase: SnakeCase<'FOO-BAR'> = 'foo_bar';
 expectType<'foo_bar'>(snakeFromScreamingKebabCase);
+
+const snakeFromMixed2: SnakeCase<'parseHTML'> = 'parse_html';
+expectType<'parse_html'>(snakeFromMixed2);
