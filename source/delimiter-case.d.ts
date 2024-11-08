@@ -1,4 +1,4 @@
-import type {SplitWords} from './split-words';
+import type {SplitWords, SplitWordsOptions} from './split-words';
 
 /**
 Convert an array of words to delimiter case starting with a delimiter with input capitalization.
@@ -31,6 +31,7 @@ import type {DelimiterCase} from 'type-fest';
 // Simple
 
 const someVariable: DelimiterCase<'fooBar', '#'> = 'foo#bar';
+const someVariableNoSplitOnNumber: DelimiterCase<'p2pNetwork', '#', {splitOnNumber: false}> = 'p2p#network';
 
 // Advanced
 
@@ -54,7 +55,7 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 @category Change case
 @category Template literal
  */
-export type DelimiterCase<Value, Delimiter extends string, Options extends {splitOnNumber: boolean} = {splitOnNumber: true}> = Value extends string
+export type DelimiterCase<Value, Delimiter extends string, Options extends SplitWordsOptions = {splitOnNumber: true}> = Value extends string
 	? string extends Value
 		? Value
 		: Lowercase<RemoveFirstLetter<DelimiterCaseFromArray<SplitWords<Value extends Uppercase<Value> ? Lowercase<Value> : Value, Options>, Delimiter>>>

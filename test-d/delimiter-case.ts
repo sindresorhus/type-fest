@@ -63,6 +63,30 @@ expectType<string>(delimiterFromString);
 const delimiterFromScreamingSnake: DelimiterCase<'FOO_BAR', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromScreamingSnake);
 
+const delimiterFromMixed2: DelimiterCase<'parseHTML', '#'> = 'parse#html';
+expectType<'parse#html'>(delimiterFromMixed2);
+
+const delimiterFromMixed3: DelimiterCase<'parseHTMLItem', '#'> = 'parse#html#item';
+expectType<'parse#html#item'>(delimiterFromMixed3);
+
+const delimiterFromNumberInTheMiddleSplitOnNumber: DelimiterCase<'foo2bar', '#'> = 'foo#2#bar';
+expectType<'foo#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumber);
+
+const delimiterFromNumberInTheMiddleSplitOnNumberEdgeCase: DelimiterCase<'foO2Bar', '#'> = 'fo#o#2#bar';
+expectType<'fo#o#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumberEdgeCase);
+
+const delimiterFromNumberInTheMiddleSplitOnNumberEdgeCase2: DelimiterCase<'foO2bar', '#'> = 'fo#o#2#bar';
+expectType<'fo#o#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumberEdgeCase2);
+
+const delimiterFromNumberInTheMiddleNoSplitOnNumber: DelimiterCase<'foo2bar', '#', {splitOnNumber: false}> = 'foo2bar';
+expectType<'foo2bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumber);
+
+const delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase: DelimiterCase<'foo2Bar', '#', {splitOnNumber: false}> = 'foo2#bar';
+expectType<'foo2#bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
+
+const delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: DelimiterCase<'foO2bar', '#', {splitOnNumber: false}> = 'fo#o2bar';
+expectType<'fo#o2bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);
+
 // Verifying example
 type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
