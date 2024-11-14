@@ -433,10 +433,10 @@ declare namespace TsConfigJson {
 		newLine?: CompilerOptions.NewLine;
 
 		/**
-  		 * Disable full type checking (only critical parse and emit errors will be reported).
-     		 *
-     		 * @default false
-     		 */
+		Disable full type checking (only critical parse and emit errors will be reported).
+
+		@default false
+		*/
 		noCheck?: boolean;
 
 		/**
