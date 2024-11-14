@@ -50,7 +50,7 @@ export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> = 
 				: ObjectType extends ReadonlySet<unknown>
 					? ValueType
 					: ObjectType extends Array<infer U>
-						? Options['recurseIntoArrays'] extends false
+						? Options['recurseIntoArrays'] extends false | undefined
 							? ValueType
 							: Array<Schema<U, ValueType>>
 						: ObjectType extends (...arguments_: unknown[]) => unknown
@@ -76,7 +76,7 @@ type SchemaObject<
 	[KeyType in keyof ObjectType]: ObjectType[KeyType] extends
 	| readonly unknown[]
 	| unknown[]
-		? Options['recurseIntoArrays'] extends false
+		? Options['recurseIntoArrays'] extends false | undefined
 			? K
 			: Schema<ObjectType[KeyType], K, Options>
 		: Schema<ObjectType[KeyType], K, Options> | K;
@@ -110,5 +110,5 @@ export type SchemaOptions = {
 
 	@default true
 	*/
-	readonly recurseIntoArrays?: boolean;
+	readonly recurseIntoArrays?: boolean | undefined;
 };
