@@ -15,11 +15,22 @@ Split a string (almost) like Lodash's `_.words()` function.
 
 @example
 ```
-type Words0 = SplitWords<'helloWorld'>; // ['hello', 'World']
-type Words1 = SplitWords<'helloWORLD'>; // ['hello', 'WORLD']
-type Words2 = SplitWords<'hello-world'>; // ['hello', 'world']
-type Words3 = SplitWords<'--hello the_world'>; // ['hello', 'the', 'world']
-type Words4 = SplitWords<'lifeIs42'>; // ['life', 'Is', '42']
+import type {Words} from 'type-fest';
+
+type Words0 = Words<'helloWorld'>;
+//=> ['hello', 'World']
+
+type Words1 = Words<'helloWORLD'>;
+//=> ['hello', 'WORLD']
+
+type Words2 = Words<'hello-world'>;
+//=> ['hello', 'world']
+
+type Words3 = Words<'--hello the_world'>;
+//=> ['hello', 'the', 'world']
+
+type Words4 = Words<'lifeIs42'>;
+//=> ['life', 'Is', '42']
 ```
 
 @category Change case
