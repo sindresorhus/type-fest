@@ -83,7 +83,15 @@ function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 export type SharedUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOptions = {recurseIntoArrays: false}> =
 // If `Union` is not a union type, return `Union` directly.
 IsUnion<Union> extends false
-	? Union
+	? Union extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+		? Union
+		: Union extends UnknownArray
+			? Options['recurseIntoArrays'] extends true
+				? SetArrayAccess<SharedArrayUnionFieldsDeep<Union, Options>, IsArrayReadonly<Union>>
+				: Union
+			: Union extends object
+				? SharedObjectUnionFieldsDeep<Union, Options>
+				: Union
 	// `Union extends` will convert `Union`
 	// to a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
 	// But this is not what we want, so we need to wrap `Union` with `[]` to prevent it.
