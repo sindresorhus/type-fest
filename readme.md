@@ -1051,4 +1051,4 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 
 ## License
 
-SPDX-License-Identifier: (MIT OR CC0-1.0)
+SPDX-License-Identifier: ([MIT](license-mit) OR [CC0-1.0](license-cc0))
