@@ -154,6 +154,7 @@ export type {DelimiterCasedProperties} from './source/delimiter-cased-properties
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep';
 export type {Join} from './source/join';
 export type {Split} from './source/split';
+export type {Words} from './source/words';
 export type {Trim} from './source/trim';
 export type {Replace} from './source/replace';
 export type {StringRepeat} from './source/string-repeat';
