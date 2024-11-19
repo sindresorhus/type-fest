@@ -128,7 +128,7 @@ expectType<readonly [ComplexOption]>(complexBarSchema.readonlyTuple);
 expectType<ComplexOption>(complexBarSchema.regExp);
 
 // With Options and `recurseIntoArrays` set to `false`
-type FooSchemaWithOptionsNoRecurse = Schema<typeof foo, FooOption, {recurseIntoArrays: false}>;
+type FooSchemaWithOptionsNoRecurse = Schema<typeof foo, FooOption, {recurseIntoArrays: false | undefined}>;
 
 const fooSchemaWithOptionsNoRecurse: FooSchemaWithOptionsNoRecurse = {
 	baz: 'A',
@@ -157,7 +157,7 @@ expectNotAssignable<FooSchemaWithOptionsNoRecurse>({key: 'value'});
 expectNotAssignable<FooSchemaWithOptionsNoRecurse>(new Date());
 expectType<FooOption>(fooSchemaWithOptionsNoRecurse.baz);
 
-const barSchemaWithOptionsNoRecurse = fooSchemaWithOptionsNoRecurse.bar as Schema<typeof foo['bar'], FooOption, {recurseIntoArrays: false}>;
+const barSchemaWithOptionsNoRecurse = fooSchemaWithOptionsNoRecurse.bar as Schema<typeof foo['bar'], FooOption, {recurseIntoArrays: false | undefined}>;
 expectType<FooOption>(barSchemaWithOptionsNoRecurse.function);
 expectType<FooOption | {key: FooOption}>(barSchemaWithOptionsNoRecurse.object);
 expectType<FooOption>(barSchemaWithOptionsNoRecurse.string);
@@ -183,7 +183,7 @@ expectNotAssignable<FooSchemaWithOptionsRecurse>({key: 'value'});
 expectNotAssignable<FooSchemaWithOptionsRecurse>(new Date());
 expectType<FooOption>(fooSchema.baz);
 
-const barSchemaWithOptionsRecurse = fooSchema.bar as Schema<typeof foo['bar'], FooOption>;
+const barSchemaWithOptionsRecurse = fooSchema.bar as Schema<typeof foo['bar'], FooOption, {recurseIntoArrays: true}>;
 expectType<FooOption>(barSchemaWithOptionsRecurse.function);
 expectType<FooOption | {key: FooOption}>(barSchemaWithOptionsRecurse.object);
 expectType<FooOption>(barSchemaWithOptionsRecurse.string);
