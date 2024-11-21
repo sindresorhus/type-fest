@@ -20,12 +20,6 @@
 			<sup>Special thanks to:</sup>
 			<br>
 			<br>
-			<a href="https://standardresume.co/tech">
-				<img src="https://sindresorhus.com/assets/thanks/standard-resume-logo.svg" width="180"/>
-			</a>
-			<br>
-			<br>
-			<br>
 			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
@@ -37,7 +31,6 @@
 					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
 				</div>
 			</a>
-			<br>
 			<br>
 			<br>
 			<a href="https://transloadit.com?utm_source=sindresorhus&utm_medium=referral&utm_campaign=sponsorship&utm_content=type-fest">
@@ -65,6 +58,15 @@
 			</a>
 			<br>
 			<br>
+			<a href="https://nitric.io/?utm_campaign=github_repo&utm_medium=referral&utm_content=sindresorhus&utm_source=github">
+				<div>
+					<img width="230" src="https://sindresorhus.com/assets/thanks/nitric-logo.svg" alt="nitric logo">
+				</div>
+				<b>Effortless backends with infrastructure from code</b>
+				<div>
+					<sup>An open-source framework that supports any programming language, cloud provider, or deployment automation tool.</sup>
+				</div>
+			</a>
 		</p>
 	</div>
 	<br>
