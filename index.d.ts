@@ -106,6 +106,7 @@ export type {IsFloat} from './source/is-float';
 export type {TupleToUnion} from './source/tuple-to-union';
 export type {UnionToTuple} from './source/union-to-tuple';
 export type {IntRange} from './source/int-range';
+export type {IntClosedRange} from './source/int-closed-range';
 export type {IsEqual} from './source/is-equal';
 export type {
 	IsLiteral,
