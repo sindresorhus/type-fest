@@ -29,6 +29,8 @@ type ZeroToNine = IntRange<0, 10>;
 // Create union type `100 | 200 | 300 | ... | 900`
 type Hundreds = IntRange<100, 901, 100>;
 ```
+
+@see IntClosedRange
 */
 export type IntRange<Start extends number, End extends number, Step extends number = 1> = PrivateIntRange<Start, End, Step>;
 
