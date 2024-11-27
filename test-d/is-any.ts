@@ -19,7 +19,7 @@ expectType<IsAny<void>>(false);
 // @ts-expect-error
 type A = IsAny;
 
-// Verify that are no circular reference issues   
+// Verify that are no circular reference issues
 // https://github.com/sindresorhus/type-fest/issues/846
 type OnlyAny<T extends IsAny<T> extends true ? any : never> = T;
 type B = OnlyAny<any>;
