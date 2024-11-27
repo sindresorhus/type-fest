@@ -22,6 +22,6 @@ type A = IsAny;
 // Verify that are no circular reference issues   
 // https://github.com/sindresorhus/type-fest/issues/846
 type OnlyAny<T extends IsAny<T> extends true ? any : never> = T;
-type B = OnlyAny<any>
+type B = OnlyAny<any>;
 // @ts-expect-error
-type C = OnlyAny<string>
+type C = OnlyAny<string>;
