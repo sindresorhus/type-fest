@@ -201,6 +201,7 @@ Click the type names for complete docs.
 - [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
+- [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
 - [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 - [`DistributedOmit`](source/distributed-omit.d.ts) - Omits keys from a type, distributing the operation over a union.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.

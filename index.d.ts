@@ -128,6 +128,7 @@ export type {ArraySplice} from './source/array-splice';
 export type {ArrayTail} from './source/array-tail';
 export type {SetFieldType} from './source/set-field-type';
 export type {Paths} from './source/paths';
+export type {SharedUnionFields} from './source/shared-union-fields';
 export type {SharedUnionFieldsDeep} from './source/shared-union-fields-deep';
 export type {IsNull} from './source/is-null';
 export type {IfNull} from './source/if-null';
