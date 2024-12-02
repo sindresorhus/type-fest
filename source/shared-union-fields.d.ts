@@ -28,13 +28,13 @@ type Dog = {
 function displayPetInfo(petInfo: Cat | Dog) {
 	// typeof petInfo =>
 	// {
-	//     name: string;
-	//     type: 'cat';
-	//     catType: string; // Needn't care about this field, because it's not a common pet info field.
+	// 	name: string;
+	// 	type: 'cat';
+	// 	catType: string; // Needn't care about this field, because it's not a common pet info field.
 	// } | {
-	//     name: string;
-	//     type: 'dog';
-	//     dogType: string; // Needn't care about this field, because it's not a common pet info field.
+	// 	name: string;
+	// 	type: 'dog';
+	// 	dogType: string; // Needn't care about this field, because it's not a common pet info field.
 	// }
 
 	// petInfo type is complex and have some needless fields
@@ -46,8 +46,8 @@ function displayPetInfo(petInfo: Cat | Dog) {
 function displayPetInfo(petInfo: SharedUnionFields<Cat | Dog>) {
 	// typeof petInfo =>
 	// {
-	//     name: string;
-	//     type: 'cat' | 'dog';
+	// 	name: string;
+	// 	type: 'cat' | 'dog';
 	// }
 
 	// petInfo type is simple and clear
