@@ -7,20 +7,6 @@ import type {UnionToTuple} from './union-to-tuple';
 import type {UnknownArray} from './unknown-array';
 
 /**
-AllUnionFields options.
-
-@see {@link AllUnionFields}
-*/
-export type AllUnionFieldsOptions = {
-	/**
-	When set to true, we assume no properties other than what is declared on each object in the union exist.
-
-	@default false
- 	*/
-	exact?: boolean;
-};
-
-/**
 Create a type with all fields from a union of object types.
 
 Use-cases:
@@ -66,8 +52,8 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 	// {
 	// 	name: string;
 	// 	type: 'cat' | 'dog';
-	//  catType?: unknown;
-	//  dogType?: unknown;
+	//  catType?: string;
+	//  dogType?: string;
 	// }
 
 	console.log('name: ', petInfo.name);
@@ -83,10 +69,7 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 @category Object
 @category Union
 */
-export type AllUnionFields<
-	Union,
-	Options extends AllUnionFieldsOptions = {exact: false},
-> =
+export type AllUnionFields<Union> =
 	// If `Union` is not a union type, return `Union` directly.
 	IsUnion<Union> extends false
 		? Union
@@ -103,30 +86,27 @@ export type AllUnionFields<
 			: [Union] extends [object]
 				? Simplify<
 				SharedUnionFields<Union> &
-				NonSharedUnionFields<UnionToTuple<Union>, keyof Union, Options>
+				NonSharedUnionFields<UnionToTuple<Union>, keyof Union>
 				>
 				: Union;
 
 type NonSharedUnionFields<
 	Tuple,
 	SharedKeys,
-	Options extends AllUnionFieldsOptions,
 > = NonSharedUnionFieldsHelper<
 Tuple,
 Exclude<KeysOfEach<Tuple>, ReadonlyKeysOfEach<Tuple> | SharedKeys>,
-Exclude<ReadonlyKeysOfEach<Tuple>, SharedKeys>,
-Options
+Exclude<ReadonlyKeysOfEach<Tuple>, SharedKeys>
 >;
 
 type NonSharedUnionFieldsHelper<
 	Tuple,
 	NonReadonlyKeys extends PropertyKey,
 	ReadonlyKeys extends PropertyKey,
-	Options extends AllUnionFieldsOptions,
 > = {
-	[Key in NonReadonlyKeys]?: ValueOfEach<Tuple, Key, Options>;
+	[Key in NonReadonlyKeys]?: ValueOfEach<Tuple, Key>;
 } & {
-	readonly [Key in ReadonlyKeys]?: ValueOfEach<Tuple, Key, Options>;
+	readonly [Key in ReadonlyKeys]?: ValueOfEach<Tuple, Key>;
 };
 
 type KeysOfEach<Tuple> = TupleToUnion<{
@@ -140,11 +120,8 @@ type ReadonlyKeysOfEach<Tuple> = TupleToUnion<{
 type ValueOfEach<
 	Tuple,
 	Key,
-	Options extends AllUnionFieldsOptions,
-> = Options['exact'] extends true
-	? TupleToUnion<{
-		[Index in keyof Tuple]: Key extends keyof Tuple[Index]
-			? Tuple[Index][Key]
-			: never;
-	}>
-	: unknown;
+> = TupleToUnion<{
+	[Index in keyof Tuple]: Key extends keyof Tuple[Index]
+		? Tuple[Index][Key]
+		: never;
+}>;
