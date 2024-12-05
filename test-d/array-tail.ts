@@ -24,3 +24,7 @@ expectType<[undefined, 3]>(getArrayTail([1, undefined, 3] as const));
 // Complex mixed case
 type ComplexArray = [string, boolean, number?, string?];
 expectType<[boolean, number?, string?]>(getArrayTail(['test', false] as ComplexArray));
+
+// All optional elements
+expectType<['b'?]>([] as ArrayTail<['a'?, 'b'?]>);
+
