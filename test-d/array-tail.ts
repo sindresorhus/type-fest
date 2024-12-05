@@ -28,3 +28,5 @@ expectType<[boolean, number?, string?]>(getArrayTail(['test', false] as ComplexA
 // All optional elements
 expectType<['b'?]>([] as ArrayTail<['a'?, 'b'?]>);
 
+// Union of tuples
+expectType<[] | ['b']>([] as ArrayTail<[] | ['a', 'b']>);
