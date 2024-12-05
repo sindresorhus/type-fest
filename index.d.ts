@@ -42,6 +42,7 @@ export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';
 export type {SetRequired} from './source/set-required';
+export type {SetRequiredDeep} from './source/set-required-deep';
 export type {SetNonNullable} from './source/set-non-nullable';
 export type {ValueOf} from './source/value-of';
 export type {AsyncReturnType} from './source/async-return-type';
