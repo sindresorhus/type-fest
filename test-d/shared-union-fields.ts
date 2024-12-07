@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {SharedUnionFields} from '../index';
+import {type NonRecursiveType} from '../source/internal';
 
 type TestingType = {
 	function: (() => void);
@@ -82,3 +83,7 @@ expectType<{union: 'test1' | 'test2' | {a: number}}>(union);
 
 declare const unionWithOptional: SharedUnionFields<{a?: string; foo: number} | {a: string; bar: string}>;
 expectType<{a?: string}>(unionWithOptional);
+
+expectType<Set<string> | Map<string, string>>({} as Set<string> | Map<string, string>);
+expectType<string[] | Set<string>>({} as string[] | Set<string>);
+expectType<NonRecursiveType>({} as NonRecursiveType);
