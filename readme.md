@@ -194,7 +194,6 @@ Click the type names for complete docs.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers (includes the start and excludes the end).
 - [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
-- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
