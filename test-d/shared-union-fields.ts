@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import type {SharedUnionFields} from '../index';
-import {type NonRecursiveType} from '../source/internal';
+import type {NonRecursiveType} from '../source/internal';
 
 type TestingType = {
 	function: (() => void);
