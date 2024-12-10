@@ -1,5 +1,6 @@
 import type {NonRecursiveType, IsUnion} from './internal';
 import type {IsNever} from './is-never';
+import type {Simplify} from './simplify';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -62,22 +63,13 @@ function displayPetInfo(petInfo: SharedUnionFields<Cat | Dog>) {
 @category Object
 @category Union
 */
-export type SharedUnionFields<Union> =
-// If `Union` is not a union type, return `Union` directly.
-IsUnion<Union> extends false
-	? Union
-	// `Union extends` will convert `Union`
-	// to a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
-	// But this is not what we want, so we need to wrap `Union` with `[]` to prevent it.
-	: [Union] extends [NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray]
-		? Union
-		: [Union] extends [object]
-			// `keyof Union` can extract the same key in union type, if there is no same key, return never.
-			? keyof Union extends infer Keys
-				? IsNever<Keys> extends false
-					? {
-						[Key in keyof Union]: Union[Key]
-					}
-					: {}
-				: Union
-			: Union;
+type SharedUnionFields<Union> =
+Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
+	? Exclude<Union, SkippedMembers> extends infer RelevantMembers
+		?
+		| SkippedMembers
+		| (IsNever<RelevantMembers> extends true
+			? never
+			: Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
+		: never
+	: never;
