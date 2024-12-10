@@ -23,4 +23,4 @@ bundle('src/index.js', ['dist/index.cjs', 'dist/index.mjs']);
 
 @category Array
 */
-export type Arrayable<T> = T | readonly T[];
+export type Arrayable<T> = T | T[];
