@@ -34,5 +34,5 @@ class LocalStorage {
 export type ArrayTailDeep<TArray extends UnknownArrayOrTuple, Deep extends number = 1, Counter extends unknown[] = []> = Counter['length'] extends Deep
 	? TArray
 	: TArray['length'] extends 0
-		? TArray
+		? []
 		: ArrayTailDeep<ArrayTail<TArray>, Deep, [unknown, ...Counter]>;
