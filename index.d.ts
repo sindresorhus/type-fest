@@ -126,6 +126,7 @@ export type {ArrayValues} from './source/array-values';
 export type {ArraySlice} from './source/array-slice';
 export type {ArraySplice} from './source/array-splice';
 export type {ArrayTail} from './source/array-tail';
+export type {ArrayTailDeep} from './source/array-tail-deep';
 export type {SetFieldType} from './source/set-field-type';
 export type {Paths} from './source/paths';
 export type {SharedUnionFields} from './source/shared-union-fields';
