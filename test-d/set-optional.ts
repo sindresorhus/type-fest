@@ -21,10 +21,14 @@ expectNotAssignable<{a: boolean; b?: string; c?: boolean}>(variation4);
 declare const variation5: SetOptional<{readonly a: number; readonly b?: string; c: boolean}, 'b' | 'c'>;
 expectType<{readonly a: number; readonly b?: string; c?: boolean}>(variation5);
 
+// Works with unions.
+declare const variation6: SetOptional<{readonly a: number; b: number; c: boolean} | {a: string; readonly b: string; d: boolean}, 'a' | 'b'>;
+expectType<{readonly a?: number; b?: number; c: boolean} | {a?: string; readonly b?: string; d: boolean}>(variation6);
+
 // Marks all keys as optional, if `Keys` is `any`.
-declare const variation6: SetOptional<{a: number; b: string; c: boolean}, any>;
-expectType<{a?: number; b?: string; c?: boolean}>(variation6);
+declare const variation7: SetOptional<{readonly a: number; b: string; c: boolean}, any>;
+expectType<{readonly a?: number; b?: string; c?: boolean}>(variation7);
 
 // Does nothing, if `Keys` is `never`.
-declare const variation7: SetOptional<{a?: number; readonly b?: string; readonly c: boolean}, never>;
-expectType<{a?: number; readonly b?: string; readonly c: boolean}>(variation7);
+declare const variation8: SetOptional<{a?: number; readonly b?: string; readonly c: boolean}, never>;
+expectType<{a?: number; readonly b?: string; readonly c: boolean}>(variation8);
