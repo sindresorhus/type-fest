@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import {type AllUnionFields, type Simplify} from '../index';
+import type {AllUnionFields, Simplify} from '../index';
 
 type TestingType = {
 	function: () => void;
