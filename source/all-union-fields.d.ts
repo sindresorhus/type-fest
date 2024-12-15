@@ -1,9 +1,8 @@
-import type {IsUnion, NonRecursiveType} from './internal';
-import type {ReadonlyKeysOf} from './readonly-keys-of';
+import type {NonRecursiveType} from './internal';
+import type {IsEqual} from './is-equal';
+import type {KeysOfUnion} from './keys-of-union';
 import type {SharedUnionFields} from './shared-union-fields';
 import type {Simplify} from './simplify';
-import type {TupleToUnion} from './tuple-to-union';
-import type {UnionToTuple} from './union-to-tuple';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -69,59 +68,19 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 @category Object
 @category Union
 */
-export type AllUnionFields<Union> =
-	// If `Union` is not a union type, return `Union` directly.
-	IsUnion<Union> extends false
-		? Union
-		: // `Union extends` will convert `Union`
-	// to a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
-	// But this is not what we want, so we need to wrap `Union` with `[]` to prevent it.
-		[Union] extends [
-			| NonRecursiveType
-			| ReadonlyMap<unknown, unknown>
-			| ReadonlySet<unknown>
-			| UnknownArray,
-		]
-			? Union
-			: [Union] extends [object]
-				? Simplify<
-				SharedUnionFields<Union> &
-				NonSharedUnionFields<UnionToTuple<Union>, keyof Union>
-				>
-				: Union;
+export type AllUnionFields<Union> = [Union] extends [NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray]
+	? Union
+	: Simplify<
+	SharedUnionFields<Union> &
+	{
+		readonly [P in ReadonlyKeysOfUnion<Union>]?: ValueOfUnion<Union, P>;
+	} & {
+		[P in Exclude<KeysOfUnion<Union>, ReadonlyKeysOfUnion<Union> | keyof Union>]?: ValueOfUnion<Union, P>;
+	}
+	>;
 
-type NonSharedUnionFields<
-	Tuple,
-	SharedKeys,
-> = NonSharedUnionFieldsHelper<
-Tuple,
-Exclude<KeysOfEach<Tuple>, ReadonlyKeysOfEach<Tuple> | SharedKeys>,
-Exclude<ReadonlyKeysOfEach<Tuple>, SharedKeys>
->;
+type ValueOfUnion<Union, Key> = Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
 
-type NonSharedUnionFieldsHelper<
-	Tuple,
-	NonReadonlyKeys extends PropertyKey,
-	ReadonlyKeys extends PropertyKey,
-> = {
-	[Key in NonReadonlyKeys]?: ValueOfEach<Tuple, Key>;
-} & {
-	readonly [Key in ReadonlyKeys]?: ValueOfEach<Tuple, Key>;
-};
-
-type KeysOfEach<Tuple> = TupleToUnion<{
-	[Index in keyof Tuple]: keyof Tuple[Index];
-}>;
-
-type ReadonlyKeysOfEach<Tuple> = TupleToUnion<{
-	[Index in keyof Tuple]: ReadonlyKeysOf<Tuple[Index]>;
-}>;
-
-type ValueOfEach<
-	Tuple,
-	Key,
-> = TupleToUnion<{
-	[Index in keyof Tuple]: Key extends keyof Tuple[Index]
-		? Tuple[Index][Key]
-		: never;
-}>;
+type ReadonlyKeysOfUnion<T> = T extends unknown ? keyof {
+	[P in keyof T as IsEqual<{[Q in P]: T[P]}, {readonly [Q in P]: T[P]}> extends true ? P : never]: never
+} : never;
