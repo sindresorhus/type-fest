@@ -33,6 +33,6 @@ export type SetReadonly<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown
 		? Simplify<
 		Except<BaseType, Keys> &
-		Readonly<Pick<BaseType, Keys>>
+		Readonly<Except<BaseType, Exclude<keyof BaseType, Keys>>>
 		>
 		: never;
