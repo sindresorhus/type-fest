@@ -31,5 +31,5 @@ export type SetOptional<BaseType, Keys extends keyof BaseType> =
 	// Pick just the keys that are readonly from the base type.
 	Except<BaseType, Keys> &
 	// Pick the keys that should be mutable from the base type and make them mutable.
-	Partial<Pick<BaseType, Keys>>
+	Partial<Except<BaseType, Exclude<keyof BaseType, Keys>>>
 	>;
