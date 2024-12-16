@@ -16,3 +16,19 @@ expectType<{readonly a: number; readonly b?: string; readonly c: boolean}>(varia
 // Fail if type changes even if readonly is right.
 declare const variation4: SetReadonly<{a: number; readonly b: string; c: boolean}, 'b' | 'c'>;
 expectNotAssignable<{a: boolean; readonly b: string; readonly c: boolean}>(variation4);
+
+// Preserves optional modifier.
+declare const variation5: SetReadonly<{a?: number; readonly b?: string; c?: boolean}, 'b' | 'c'>;
+expectType<{a?: number; readonly b?: string; readonly c?: boolean}>(variation5);
+
+// Works with unions.
+declare const variation6: SetReadonly<{a?: number; b: number; c: boolean} | {a: string; b?: string; d: boolean}, 'a' | 'b'>;
+expectType<{readonly a?: number; readonly b: number; c: boolean} | {readonly a: string; readonly b?: string; d: boolean}>(variation6);
+
+// Marks all keys as readonly, if `Keys` is `any`.
+declare const variation7: SetReadonly<{a?: number; b: string; c: boolean}, any>;
+expectType<{readonly a?: number; readonly b: string; readonly c: boolean}>(variation7);
+
+// Does nothing, if `Keys` is `never`.
+declare const variation8: SetReadonly<{a: number; readonly b: string; readonly c: boolean}, never>;
+expectType<{a: number; readonly b: string; readonly c: boolean}>(variation8);
