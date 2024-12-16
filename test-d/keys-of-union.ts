@@ -35,3 +35,25 @@ type Expected2 = 'common' | 'a' | 'b' | 'c';
 declare const actual2: KeysOfUnion<Example2>;
 
 expectType<Expected2>(actual2);
+
+// With property modifiers
+declare const actual3: KeysOfUnion<{a?: string; readonly b: number} | {a: number; b: string}>;
+expectType<'a' | 'b'>(actual3);
+
+// KeysOfUnion<T> should NOT be assignable to keyof T
+type Assignability1<T, _K extends keyof T> = unknown;
+// @ts-expect-error
+type Test1<T> = Assignability1<T, KeysOfUnion<T>>;
+
+// Keyof T should be assignable to KeysOfUnion<T>
+type Assignability2<T, _K extends KeysOfUnion<T>> = unknown;
+type Test2<T> = Assignability2<T, keyof T>;
+
+// KeysOfUnion<T> should be assignable to PropertyKey
+type Assignability3<_T, _K extends PropertyKey> = unknown;
+type Test3<T> = Assignability3<T, KeysOfUnion<T>>;
+
+// PropertyKey should NOT be assignable to KeysOfUnion<T>
+type Assignability4<T, _K extends KeysOfUnion<T>> = unknown;
+// @ts-expect-error
+type Test4<T> = Assignability4<T, PropertyKey>;
