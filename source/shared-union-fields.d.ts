@@ -63,7 +63,7 @@ function displayPetInfo(petInfo: SharedUnionFields<Cat | Dog>) {
 @category Object
 @category Union
 */
-type SharedUnionFields<Union> =
+export type SharedUnionFields<Union> =
 Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
 	? Exclude<Union, SkippedMembers> extends infer RelevantMembers
 		?
