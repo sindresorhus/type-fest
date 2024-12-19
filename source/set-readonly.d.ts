@@ -1,5 +1,5 @@
-import type {DistributedPick} from './distributed-pick';
 import type {Except} from './except';
+import type {HomomorphicPick} from './internal';
 import type {KeysOfUnion} from './keys-of-union';
 import type {Simplify} from './simplify';
 
@@ -35,6 +35,6 @@ export type SetReadonly<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown
 		? Simplify<
 		Except<BaseType, Keys> &
-		Readonly<DistributedPick<BaseType, Keys & KeysOfUnion<BaseType>>>
+		Readonly<HomomorphicPick<BaseType, Keys & KeysOfUnion<BaseType>>>
 		>
 		: never;
