@@ -76,3 +76,18 @@ if (pickedUnion.discriminant === 'A') {
 	// @ts-expect-error
 	const _bar = pickedUnion.bar; // eslint-disable-line @typescript-eslint/no-unsafe-assignment
 }
+
+// Preserves property modifiers
+declare const test1: DistributedPick<{readonly 'a': 1; 'b'?: 2; readonly 'c'?: 3}, 'a' | 'b' | 'c'>;
+expectType<{readonly 'a': 1; 'b'?: 2; readonly 'c'?: 3}>(test1);
+
+declare const test2: DistributedPick<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}, 'a' | 'b' | 'c'>;
+expectType<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>(test2);
+
+// Picks all keys when second type argument is any
+declare const test3: DistributedPick<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}, any>;
+expectType<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>(test3);
+
+// Works with index signatures
+declare const test4: DistributedPick<{[k: string]: unknown; a?: 1; b: '2'}, 'a' | 'b'>;
+expectType<{a?: 1; b: '2'}>(test4);
