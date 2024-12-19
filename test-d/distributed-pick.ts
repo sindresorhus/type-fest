@@ -84,10 +84,10 @@ expectType<{readonly 'a': 1; 'b'?: 2; readonly 'c'?: 3}>(test1);
 declare const test2: DistributedPick<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}, 'a' | 'b' | 'c'>;
 expectType<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>(test2);
 
-// Picks all keys when second type argument is any
+// Picks all keys, if `KeyType` is `any`
 declare const test3: DistributedPick<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}, any>;
 expectType<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>(test3);
 
 // Works with index signatures
-declare const test4: DistributedPick<{[k: string]: unknown; a?: 1; b: '2'}, 'a' | 'b'>;
-expectType<{a?: 1; b: '2'}>(test4);
+declare const test4: DistributedPick<{[k: string]: unknown; a?: number; b: string}, 'a' | 'b'>;
+expectType<{a?: number; b: string}>(test4);

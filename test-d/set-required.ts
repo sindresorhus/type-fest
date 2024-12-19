@@ -36,3 +36,7 @@ expectType<{readonly a: number; b: string; c: boolean}>(variation8);
 // Does nothing, if `Keys` is `never`.
 declare const variation9: SetRequired<{a?: number; readonly b?: string; readonly c: boolean}, never>;
 expectType<{a?: number; readonly b?: string; readonly c: boolean}>(variation9);
+
+// Works with index signatures
+declare const variation10: SetRequired<{[k: string]: unknown; a?: number; b: string}, 'a' | 'b'>;
+expectType<{[k: string]: unknown; a: number; b: string}>(variation10);
