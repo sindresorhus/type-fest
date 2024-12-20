@@ -367,6 +367,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `SetElement` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetEntry` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
+- `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 
 ## Tips
 
