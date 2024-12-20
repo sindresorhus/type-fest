@@ -1,4 +1,6 @@
 import type {Except} from './except';
+import type {HomomorphicPick} from './internal';
+import type {KeysOfUnion} from './keys-of-union';
 import type {Simplify} from './simplify';
 
 /**
@@ -35,6 +37,6 @@ export type SetRequired<BaseType, Keys extends keyof BaseType> =
 		// Pick just the keys that are optional from the base type.
 		Except<BaseType, Keys> &
 		// Pick the keys that should be required from the base type and make them required.
-		Required<Except<BaseType, Exclude<keyof BaseType, Keys>>>
+		Required<HomomorphicPick<BaseType, Keys & KeysOfUnion<BaseType>>>
 		>
 		: never;
