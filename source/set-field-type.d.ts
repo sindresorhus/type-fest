@@ -25,16 +25,24 @@ Use-cases:
 import type {SetFieldType} from 'type-fest';
 
 type MyModel = {
-	id: number;
-	createdAt: Date;
-	updatedAt: Date;
+	readonly id: number;
+	readonly createdAt: Date;
+	updatedAt?: Date;
 };
 
 type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
 // {
-// 	id: number;
-// 	createdAt: string;
-// 	updatedAt: string;
+// 	readonly id: number;
+// 	readonly createdAt: string;
+// 	updatedAt?: string;
+// }
+
+// `preservePropertyModifiers` option can be set to `false` if you want to remove property modifiers for properties being updated
+type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string, {preservePropertyModifiers: false}>;
+// {
+// 	readonly id: number;
+// 	createdAt: string; // no longer readonly
+// 	updatedAt: string; // no longer optional
 // }
 ```
 
