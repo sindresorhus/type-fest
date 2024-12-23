@@ -10,6 +10,13 @@ export type PartialDeepOptions = {
 	@default false
 	*/
 	readonly recurseIntoArrays?: boolean;
+
+	/**
+	Whether to authorize undefined values in arrays and tuples.
+
+	@default true
+	*/
+	readonly allowUndefinedInArrays?: boolean;
 };
 
 /**
@@ -54,6 +61,21 @@ const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true}> = {
 };
 ```
 
+You can prevent undefined values in recurse arrays and tuples by passing `{recurseIntoArrays: true; allowUndefinedInArrays: false}` as the second type argument:
+
+```
+import type {PartialDeep} from 'type-fest';
+
+interface Settings {
+	languages: string[];
+}
+
+const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInArrays: false}> = {
+	languages: [undefined] 	// Error
+	languages: []			// OK
+};
+```
+
 @category Object
 @category Array
 @category Set
@@ -74,8 +96,8 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> = T extends 
 							? Options['recurseIntoArrays'] extends true
 								? ItemType[] extends T // Test for arrays (non-tuples) specifically
 									? readonly ItemType[] extends T // Differentiate readonly and mutable arrays
-										? ReadonlyArray<PartialDeep<ItemType | undefined, Options>>
-										: Array<PartialDeep<ItemType | undefined, Options>>
+										? ReadonlyArray<PartialDeep<Options['allowUndefinedInArrays'] extends false ? ItemType : ItemType | undefined, Options>>
+										: Array<PartialDeep<Options['allowUndefinedInArrays'] extends false ? ItemType : ItemType | undefined, Options>>
 									: PartialObjectDeep<T, Options> // Tuples behave properly
 								: T // If they don't opt into array testing, just use the original type
 							: PartialObjectDeep<T, Options>
