@@ -92,15 +92,15 @@ Works similar to the built-in `Pick` utility type, except for the following diff
 @example
 ```
 type ImageUpload = {
-  url: string;
-  size: number;
-  thumbnailUrl: string;
+	url: string;
+ 	size: number;
+  	thumbnailUrl: string;
 };
 
 type VideoUpload = {
-  url: string;
-  duration: number;
-  encodingFormat: string;
+	url: string;
+	duration: number;
+	encodingFormat: string;
 };
 
 // Distributes over union types and allows picking keys from any member of the union type
