@@ -93,8 +93,8 @@ Works similar to the built-in `Pick` utility type, except for the following diff
 ```
 type ImageUpload = {
 	url: string;
- 	size: number;
-  	thumbnailUrl: string;
+	size: number;
+	thumbnailUrl: string;
 };
 
 type VideoUpload = {
