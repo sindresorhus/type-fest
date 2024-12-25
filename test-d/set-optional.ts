@@ -32,3 +32,7 @@ expectType<{readonly a?: number; b?: string; c?: boolean}>(variation7);
 // Does nothing, if `Keys` is `never`.
 declare const variation8: SetOptional<{a?: number; readonly b?: string; readonly c: boolean}, never>;
 expectType<{a?: number; readonly b?: string; readonly c: boolean}>(variation8);
+
+// Works with index signatures
+declare const variation9: SetOptional<{[k: string]: unknown; a: number; b?: string}, 'a' | 'b'>;
+expectType<{[k: string]: unknown; a?: number; b?: string}>(variation9);

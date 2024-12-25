@@ -1,4 +1,6 @@
 import type {Except} from './except';
+import type {HomomorphicPick} from './internal';
+import type {KeysOfUnion} from './keys-of-union';
 import type {Simplify} from './simplify';
 
 /**
@@ -33,6 +35,6 @@ export type SetReadonly<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown
 		? Simplify<
 		Except<BaseType, Keys> &
-		Readonly<Except<BaseType, Exclude<keyof BaseType, Keys>>>
+		Readonly<HomomorphicPick<BaseType, Keys & KeysOfUnion<BaseType>>>
 		>
 		: never;
