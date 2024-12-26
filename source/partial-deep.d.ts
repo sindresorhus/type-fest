@@ -12,7 +12,7 @@ export type PartialDeepOptions = {
 	readonly recurseIntoArrays?: boolean;
 
 	/**
-	Whether to authorize undefined values in arrays and tuples.
+	Whether to authorize undefined values in arrays.
 
 	@default true
 	*/
