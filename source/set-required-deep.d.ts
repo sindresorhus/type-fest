@@ -1,5 +1,6 @@
 import type {NonRecursiveType} from './internal';
 import type {Paths} from './paths';
+import type {PickDeep} from './pick-deep';
 import type {SimplifyDeep} from './simplify-deep';
 
 /**
@@ -35,7 +36,7 @@ export type SetRequiredDeep<
 	BaseType,
 	KeyPaths extends Paths<BaseType>,
 > = BaseType extends NonRecursiveType
-	? never
+	? BaseType
 	: SimplifyDeep<
 	BaseType extends Array<infer _>
 		? Array<
@@ -46,27 +47,57 @@ export type SetRequiredDeep<
 			: never
 		>
 		>
-		: Omit<BaseType, RootRequiredKeys<BaseType, KeyPaths>> &
+		: Omit<BaseType, RootKeys<BaseType, KeyPaths> | NonRootKeys<BaseType, KeyPaths>> &
 		Required<
 		Pick<
 		BaseType,
-		Extract<KeyPaths, RootRequiredKeys<BaseType, KeyPaths>>
+		RootKeys<BaseType, KeyPaths>
 		>
-		> & Partial<{
-			[K in RootRequiredKeys<
+		> & {
+			[K in keyof Pick<
 			BaseType,
-			Exclude<KeyPaths, RootRequiredKeys<BaseType, KeyPaths>>
+			NonRootKeys<
+			BaseType,
+			KeyPaths
+			>
 			>]: SetRequiredDeep<
 			NonNullable<BaseType[K]>,
-			KeyPaths extends `${K}.${infer Rest extends Paths<NonNullable<BaseType[K]>>}`
-				? Rest
-				: never
-			>;
-		}>
+			Rest<BaseType, KeyPaths, K>
+			>
+
+		}
 	>;
 
-// Extract the BaseType root keys from the KeyPaths
-type RootRequiredKeys<BaseType, KeyPaths extends Paths<BaseType>> = Extract<
-keyof BaseType,
-KeyPaths extends `${infer Root}.${string}` ? Root : KeyPaths
+// Converts string paths to actual BaseType keys
+type ExtractKeys<
+	BaseType,
+	KeyPaths extends Paths<BaseType>,
+> = KeyPaths extends never
+	? never
+	: Extract<keyof BaseType, keyof PickDeep<BaseType, KeyPaths>>;
+
+type RootKeys<BaseType, KeyPaths extends Paths<BaseType>> = ExtractKeys<
+BaseType,
+KeyPaths extends `${string}.${string}` ? never : KeyPaths
 >;
+type NonRootKeys<BaseType, KeyPaths extends Paths<BaseType>> = ExtractKeys<
+BaseType,
+KeyPaths extends `${string}.${string}` ? KeyPaths : never
+>;
+
+type KeyToString<K> = K extends
+| string
+| number
+| bigint
+| boolean
+| null
+| undefined
+	? `${K}`
+	: never;
+type Rest<
+	BaseType,
+	KeyPaths extends Paths<BaseType>,
+	Keys extends keyof BaseType,
+> = KeyPaths extends `${KeyToString<Keys>}.${infer R extends Paths<NonNullable<BaseType[Keys]>>}`
+	? R
+	: never;

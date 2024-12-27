@@ -36,3 +36,20 @@ expectType<{a?: Array<{b: number; c?: string}>}>(variation8);
 // Can set both root and nested keys to required
 declare const variation9: SetRequiredDeep<{a?: number; b?: {c?: string}}, 'b' | 'b.c'>;
 expectType<{a?: number; b: {c: string}}>(variation9);
+
+// Preserves required root keys
+declare const variation10: SetRequiredDeep<{a: 1; b: {c?: 1}}, 'b.c'>;
+expectType<{a: 1; b: {c: 1}}>(variation10);
+
+// Preserves union in root keys
+declare const variation11: SetRequiredDeep<{a: 1; b: {c?: 1} | number}, 'b.c'>;
+expectType<{a: 1; b: {c: 1} | number}>(variation11);
+
+// Preserves readonly in root keys
+declare const variation12: SetRequiredDeep<{a: 1; readonly b: {c?: 1}}, 'b.c'>;
+expectType<{a: 1; readonly b: {c: 1}}>(variation12);
+
+// Works with number keys
+declare const variation13: SetRequiredDeep<{0: 1; 1: {2?: string}}, '1.2'>;
+expectType<{0: 1; 1: {2: string}}>(variation13);
+
