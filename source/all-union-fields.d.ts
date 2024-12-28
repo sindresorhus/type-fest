@@ -1,5 +1,4 @@
-import type {NonRecursiveType} from './internal';
-import type {IsEqual} from './is-equal';
+import type {NonRecursiveType, ReadonlyKeysOfUnion, ValueOfUnion} from './internal';
 import type {KeysOfUnion} from './keys-of-union';
 import type {SharedUnionFields} from './shared-union-fields';
 import type {Simplify} from './simplify';
@@ -78,9 +77,3 @@ export type AllUnionFields<Union> = [Union] extends [NonRecursiveType | Readonly
 		[P in Exclude<KeysOfUnion<Union>, ReadonlyKeysOfUnion<Union> | keyof Union>]?: ValueOfUnion<Union, P>;
 	}
 	>;
-
-type ValueOfUnion<Union, Key> = Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
-
-type ReadonlyKeysOfUnion<T> = T extends unknown ? keyof {
-	[P in keyof T as IsEqual<{[Q in P]: T[P]}, {readonly [Q in P]: T[P]}> extends true ? P : never]: never
-} : never;
