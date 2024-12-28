@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {AllUnionFields, Simplify} from '../index';
+import type {NonRecursiveType} from '../source/internal';
 
 type TestingType = {
 	function: () => void;
@@ -167,3 +168,17 @@ expectType<{
 	readonly b?: string | number;
 	readonly c?: number;
 }>(mixedKeywords2);
+
+// Non-recursive types
+expectType<Set<string> | Map<string, string>>({} as AllUnionFields<Set<string> | Map<string, string>>);
+expectType<string[] | Set<string>>({} as AllUnionFields<string[] | Set<string>>);
+expectType<NonRecursiveType>({} as AllUnionFields<NonRecursiveType>);
+
+// Mix of non-recursive and recursive types
+expectType<{a: string | number; b?: true} | undefined>({} as AllUnionFields<{a: string} | {a: number; b: true} | undefined>);
+expectType<RegExp | {test: string}>({} as AllUnionFields<RegExp | {test: string}>);
+expectType<RegExp | null | {test: string | number; foo?: any}>({} as AllUnionFields<RegExp | null | {test: string} | {test: number; foo: any}>);
+
+// Boundary types
+expectType<any>({} as AllUnionFields<any>);
+expectType<never>({} as AllUnionFields<never>);
