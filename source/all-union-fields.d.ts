@@ -67,13 +67,20 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 @category Object
 @category Union
 */
-export type AllUnionFields<Union> = [Union] extends [NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray]
-	? Union
-	: Simplify<
-	SharedUnionFields<Union> &
-	{
-		readonly [P in ReadonlyKeysOfUnion<Union>]?: ValueOfUnion<Union, P>;
-	} & {
-		[P in Exclude<KeysOfUnion<Union>, ReadonlyKeysOfUnion<Union> | keyof Union>]?: ValueOfUnion<Union, P>;
-	}
-	>;
+export type AllUnionFields<Union> =
+Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
+	? Exclude<Union, SkippedMembers> extends infer RelevantMembers
+		?
+		| SkippedMembers
+		| Simplify<
+		SharedUnionFields<RelevantMembers> &
+		{
+			readonly [P in ReadonlyKeysOfUnion<RelevantMembers>]?: ValueOfUnion<RelevantMembers, P>;
+		} & {
+			[
+			P in Exclude<KeysOfUnion<RelevantMembers>, ReadonlyKeysOfUnion<RelevantMembers> | keyof RelevantMembers>
+			]?: ValueOfUnion<RelevantMembers, P>;
+		}
+		>
+		: never
+	: never;
