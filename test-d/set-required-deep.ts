@@ -52,3 +52,11 @@ expectType<{a: 1; readonly b: {c: 1}}>(variation12);
 // Works with number keys
 declare const variation13: SetRequiredDeep<{0: 1; 1: {2?: string}}, '1.2'>;
 expectType<{0: 1; 1: {2: string}}>(variation13);
+
+// Multiple keys
+declare const variation14: SetRequiredDeep<{a?: 1; b?: {c?: 2}; d?: {e?: {f?: 2}; g?: 3}}, 'a' | 'b' | 'b.c' | 'd.e.f' | 'd.g'>;
+expectType<{a: 1; b: {c: 2}; d?: {e?: {f: 2}; g: 3}}>(variation14);
+
+// Index signatures
+declare const variation15: SetRequiredDeep<{[x: string]: any; a?: number; b?: {c?: number}}, 'a' | 'b.c'>;
+expectType<{[x: string]: any; a: number; b?: {c: number}}>(variation15);
