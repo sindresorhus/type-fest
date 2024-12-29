@@ -48,13 +48,13 @@ type Dog = {
 function displayPetInfo(petInfo: (Cat | Dog)['info']) {
 	// typeof petInfo =>
 	// {
-	//     name: string;
-	//     type: 'cat';
-	//     catType: string; // Needn't care about this field, because it's not a common pet info field.
+	// 	name: string;
+	// 	type: 'cat';
+	// 	catType: string; // Needn't care about this field, because it's not a common pet info field.
 	// } | {
-	//     name: string;
-	//     type: 'dog';
-	//     dogType: string; // Needn't care about this field, because it's not a common pet info field.
+	// 	name: string;
+	// 	type: 'dog';
+	// 	dogType: string; // Needn't care about this field, because it's not a common pet info field.
 	// }
 
 	// petInfo type is complex and have some needless fields
@@ -66,8 +66,8 @@ function displayPetInfo(petInfo: (Cat | Dog)['info']) {
 function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 	// typeof petInfo =>
 	// {
-	//     name: string;
-	//     type: 'cat' | 'dog';
+	// 	name: string;
+	// 	type: 'cat' | 'dog';
 	// }
 
 	// petInfo type is simple and clear
@@ -77,17 +77,16 @@ function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 }
 ```
 
+@see SharedUnionFields
+
 @category Object
 @category Union
 */
 export type SharedUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOptions = {recurseIntoArrays: false}> =
-// If `Union` is not a union type, return `Union` directly.
-IsUnion<Union> extends false
-	? Union
 	// `Union extends` will convert `Union`
 	// to a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
 	// But this is not what we want, so we need to wrap `Union` with `[]` to prevent it.
-	: [Union] extends [NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>]
+	[Union] extends [NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>]
 		? Union
 		: [Union] extends [UnknownArray]
 			? Options['recurseIntoArrays'] extends true
@@ -101,13 +100,18 @@ IsUnion<Union> extends false
 Same as `SharedUnionFieldsDeep`, but accepts only `object`s and as inputs. Internal helper for `SharedUnionFieldsDeep`.
 */
 type SharedObjectUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOptions> =
+	// `keyof Union` can extract the same key in union type, if there is no same key, return never.
 	keyof Union extends infer Keys
 		? IsNever<Keys> extends false
 			? {
 				[Key in keyof Union]:
 				Union[Key] extends NonRecursiveType
 					? Union[Key]
-					: SharedUnionFieldsDeep<Union[Key], Options>
+					// Remove `undefined` from the union to support optional
+					// fields, then recover `undefined` if union was already undefined.
+					: SharedUnionFieldsDeep<Exclude<Union[Key], undefined>, Options> | (
+						undefined extends Required<Union>[Key] ? undefined : never
+					)
 			}
 			: {}
 		: Union;

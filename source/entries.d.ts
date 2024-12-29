@@ -42,7 +42,7 @@ const arrayEntries: Entries<typeof arrayExample> = [[0, 'a'], [1, 1]];
 
 // Maps
 const mapExample = new Map([['a', 1]]);
-const mapEntries: Entries<typeof map> = [['a', 1]];
+const mapEntries: Entries<typeof mapExample> = [['a', 1]];
 
 // Sets
 const setExample = new Set(['a', 1]);

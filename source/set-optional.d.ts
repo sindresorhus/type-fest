@@ -1,4 +1,6 @@
 import type {Except} from './except';
+import type {HomomorphicPick} from './internal';
+import type {KeysOfUnion} from './keys-of-union';
 import type {Simplify} from './simplify';
 
 /**
@@ -27,9 +29,11 @@ type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
 @category Object
 */
 export type SetOptional<BaseType, Keys extends keyof BaseType> =
-	Simplify<
-	// Pick just the keys that are readonly from the base type.
-	Except<BaseType, Keys> &
-	// Pick the keys that should be mutable from the base type and make them mutable.
-	Partial<Pick<BaseType, Keys>>
-	>;
+	BaseType extends unknown // To distribute `BaseType` when it's a union type.
+		? Simplify<
+		// Pick just the keys that are readonly from the base type.
+		Except<BaseType, Keys> &
+		// Pick the keys that should be mutable from the base type and make them mutable.
+		Partial<HomomorphicPick<BaseType, Keys & KeysOfUnion<BaseType>>>
+		>
+		: never;

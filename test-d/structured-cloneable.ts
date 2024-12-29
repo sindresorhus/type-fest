@@ -138,11 +138,11 @@ expectAssignable<StructuredCloneable>(new Set<string[]>());
 expectAssignable<StructuredCloneable>(new Set<Set<string>>());
 
 // Web/API types
-// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+
 // @ts-ignore Requires dom or @types/node@>=20
 declare const blob: Blob;
 expectAssignable<StructuredCloneable>(blob);
-// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+
 // @ts-ignore Requires dom or @types/node@>=20
-declare const file: File;
+declare const file: File; // eslint-disable-line n/no-unsupported-features/node-builtins
 expectAssignable<StructuredCloneable>(file);

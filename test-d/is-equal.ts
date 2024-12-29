@@ -26,3 +26,10 @@ type A = IsEqual;
 // Missing `Y` generic parameter.
 // @ts-expect-error
 type B = IsEqual<number>;
+
+// Test for issue https://github.com/sindresorhus/type-fest/issues/537
+type UnionType = IsEqual<{a: 1} & {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<UnionType>(true);
+
+type IntersectionType = IsEqual<{a: 1} | {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<IntersectionType>(true);

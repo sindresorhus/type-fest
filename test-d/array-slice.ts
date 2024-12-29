@@ -2,6 +2,8 @@ import {expectType} from 'tsd';
 import type {ArraySlice} from '../index';
 
 expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);
+expectType<ArraySlice<[0, 1, 2] | [0, 1, 2, 3], 0>>({} as [0, 1, 2] | [0, 1, 2, 3]);
+expectType<ArraySlice<[0, 1, 2] | [3, 2, 1, 0], 0, 2>>({} as [0, 1] | [3, 2]);
 expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);
 expectType<ArraySlice<[0, 1, 2, 3], 1>>([1, 2, 3]);
 expectType<ArraySlice<[0, 1, 2, 3], 1, 2>>([1]);

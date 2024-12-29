@@ -37,7 +37,7 @@ export type {ReadonlyDeep} from './source/readonly-deep';
 export type {LiteralUnion} from './source/literal-union';
 export type {Promisable} from './source/promisable';
 export type {Arrayable} from './source/arrayable';
-export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/opaque';
+export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';
@@ -67,7 +67,7 @@ export type {SimplifyDeep} from './source/simplify-deep';
 export type {Jsonify} from './source/jsonify';
 export type {Jsonifiable} from './source/jsonifiable';
 export type {StructuredCloneable} from './source/structured-cloneable';
-export type {Schema} from './source/schema';
+export type {Schema, SchemaOptions} from './source/schema';
 export type {LiteralToPrimitive} from './source/literal-to-primitive';
 export type {LiteralToPrimitiveDeep} from './source/literal-to-primitive-deep';
 export type {
@@ -105,7 +105,9 @@ export type {Spread} from './source/spread';
 export type {IsInteger} from './source/is-integer';
 export type {IsFloat} from './source/is-float';
 export type {TupleToUnion} from './source/tuple-to-union';
+export type {UnionToTuple} from './source/union-to-tuple';
 export type {IntRange} from './source/int-range';
+export type {IntClosedRange} from './source/int-closed-range';
 export type {IsEqual} from './source/is-equal';
 export type {
 	IsLiteral,
@@ -127,6 +129,7 @@ export type {ArraySplice} from './source/array-splice';
 export type {ArrayTail} from './source/array-tail';
 export type {SetFieldType} from './source/set-field-type';
 export type {Paths} from './source/paths';
+export type {SharedUnionFields} from './source/shared-union-fields';
 export type {SharedUnionFieldsDeep} from './source/shared-union-fields-deep';
 export type {IsNull} from './source/is-null';
 export type {IfNull} from './source/if-null';
@@ -154,8 +157,10 @@ export type {DelimiterCasedProperties} from './source/delimiter-cased-properties
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep';
 export type {Join} from './source/join';
 export type {Split} from './source/split';
+export type {Words} from './source/words';
 export type {Trim} from './source/trim';
 export type {Replace} from './source/replace';
+export type {StringRepeat} from './source/string-repeat';
 export type {Includes} from './source/includes';
 export type {Get} from './source/get';
 export type {LastArrayElement} from './source/last-array-element';

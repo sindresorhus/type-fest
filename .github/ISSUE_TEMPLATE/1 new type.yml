@@ -1,0 +1,25 @@
+name: 💡 Suggest new type
+description: '​‌‍﻿⁠ ' # Magic whitespace to hide this required field
+labels: 'type addition'
+
+body:
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: Type description + examples
+
+  - type: textarea
+    id: type
+    attributes:
+      label: Type source
+      description: If you already have the type source, enter it here as a starting point for a the discussion
+
+  - id: requirements
+    type: checkboxes
+    attributes:
+      label: Search existing types and issues first
+      options:
+        - label: I tried my best to look for it
+          required: true

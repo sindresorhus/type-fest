@@ -55,6 +55,8 @@ declare namespace TsConfigJson {
 			| 'ES2020'
 			| 'ES2021'
 			| 'ES2022'
+			| 'ES2023'
+			| 'ES2024'
 			| 'ESNext'
 			// Lowercase alternatives
 			| 'es3'
@@ -68,6 +70,8 @@ declare namespace TsConfigJson {
 			| 'es2020'
 			| 'es2021'
 			| 'es2022'
+			| 'es2023'
+			| 'es2024'
 			| 'esnext';
 
 		// eslint-disable-next-line unicorn/prevent-abbreviations
@@ -88,6 +92,8 @@ declare namespace TsConfigJson {
 			| 'ES2016'
 			| 'ES2016.Array.Include'
 			| 'ES2017'
+			| 'ES2017.ArrayBuffer'
+			| 'ES2017.Date'
 			| 'ES2017.Intl'
 			| 'ES2017.Object'
 			| 'ES2017.SharedMemory'
@@ -112,6 +118,7 @@ declare namespace TsConfigJson {
 			| 'ES2020.SharedMemory'
 			| 'ES2020.Intl'
 			| 'ES2021'
+			| 'ES2021.Intl'
 			| 'ES2021.Promise'
 			| 'ES2021.String'
 			| 'ES2021.WeakRef'
@@ -120,14 +127,29 @@ declare namespace TsConfigJson {
 			| 'ES2022.Error'
 			| 'ES2022.Intl'
 			| 'ES2022.Object'
-			| 'ES2022.SharedMemory'
-			| 'ES2022.String'
 			| 'ES2022.RegExp'
+			| 'ES2022.String'
+			| 'ES2023'
+			| 'ES2023.Array'
+			| 'ES2023.Collection'
+			| 'ES2023.Intl'
+			| 'ES2024'
+			| 'ES2024.ArrayBuffer'
+			| 'ES2024.Collection'
+			| 'ES2024.Object'
+			| 'ES2024.Promise'
+			| 'ES2024.Regexp'
+			| 'ES2024.SharedMemory'
+			| 'ES2024.String'
 			| 'ESNext'
 			| 'ESNext.Array'
 			| 'ESNext.AsyncIterable'
 			| 'ESNext.BigInt'
+			| 'ESNext.Collection'
+			| 'ESNext.Decorators'
+			| 'ESNext.Disposable'
 			| 'ESNext.Intl'
+			| 'ESNext.Iterator'
 			| 'ESNext.Promise'
 			| 'ESNext.String'
 			| 'ESNext.Symbol'
@@ -136,6 +158,7 @@ declare namespace TsConfigJson {
 			| 'DOM.Iterable'
 			| 'ScriptHost'
 			| 'WebWorker'
+			| 'WebWorker.AsyncIterable'
 			| 'WebWorker.ImportScripts'
 			| 'WebWorker.Iterable'
 			// Lowercase alternatives
@@ -155,6 +178,8 @@ declare namespace TsConfigJson {
 			| 'es2016'
 			| 'es2016.array.include'
 			| 'es2017'
+			| 'es2017.arraybuffer'
+			| 'es2017.date'
 			| 'es2017.intl'
 			| 'es2017.object'
 			| 'es2017.sharedmemory'
@@ -179,6 +204,7 @@ declare namespace TsConfigJson {
 			| 'es2020.sharedmemory'
 			| 'es2020.intl'
 			| 'es2021'
+			| 'es2021.intl'
 			| 'es2021.promise'
 			| 'es2021.string'
 			| 'es2021.weakref'
@@ -187,14 +213,29 @@ declare namespace TsConfigJson {
 			| 'es2022.error'
 			| 'es2022.intl'
 			| 'es2022.object'
-			| 'es2022.sharedmemory'
-			| 'es2022.string'
 			| 'es2022.regexp'
+			| 'es2022.string'
+			| 'es2023'
+			| 'es2023.array'
+			| 'es2023.collection'
+			| 'es2023.intl'
+			| 'es2024'
+			| 'es2024.arraybuffer'
+			| 'es2024.collection'
+			| 'es2024.object'
+			| 'es2024.promise'
+			| 'es2024.regexp'
+			| 'es2024.sharedmemory'
+			| 'es2024.string'
 			| 'esnext'
 			| 'esnext.array'
 			| 'esnext.asynciterable'
 			| 'esnext.bigint'
+			| 'esnext.collection'
+			| 'esnext.decorators'
+			| 'esnext.disposable'
 			| 'esnext.intl'
+			| 'esnext.iterator'
 			| 'esnext.promise'
 			| 'esnext.string'
 			| 'esnext.symbol'
@@ -203,6 +244,7 @@ declare namespace TsConfigJson {
 			| 'dom.iterable'
 			| 'scripthost'
 			| 'webworker'
+			| 'webworker.asynciterable'
 			| 'webworker.importscripts'
 			| 'webworker.iterable';
 
@@ -433,6 +475,13 @@ declare namespace TsConfigJson {
 		newLine?: CompilerOptions.NewLine;
 
 		/**
+		Disable full type checking (only critical parse and emit errors will be reported).
+
+		@default false
+		*/
+		noCheck?: boolean;
+
+		/**
 		Do not emit output.
 
 		@default false
@@ -575,6 +624,13 @@ declare namespace TsConfigJson {
 		isolatedModules?: boolean;
 
 		/**
+		Require sufficient annotation on exports so other tools can trivially generate declaration files.
+
+		@default false
+		*/
+		isolatedDeclarations?: boolean;
+
+		/**
 		Generates corresponding '.map' file.
 
 		@default false
@@ -688,6 +744,13 @@ declare namespace TsConfigJson {
 		noUncheckedIndexedAccess?: boolean;
 
 		/**
+		Report error if failed to find a source file for a side effect import.
+
+		@default false
+		*/
+		noUncheckedSideEffectImports?: boolean;
+
+		/**
 		Report errors for fallthrough cases in switch statement.
 
 		@default false
@@ -721,6 +784,11 @@ declare namespace TsConfigJson {
 		@default 'profile.cpuprofile'
 		*/
 		generateCpuProfile?: string;
+
+		/**
+		Generates an event trace and a list of types.
+		*/
+		generateTrace?: boolean;
 
 		/**
 		Base directory to resolve non-relative module names.
@@ -870,6 +938,13 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		checkJs?: boolean;
+
+		/**
+		Built-in iterators are instantiated with a `TReturn` type of undefined instead of `any`.
+
+		@default false
+		*/
+		strictBuiltinIteratorReturn?: boolean;
 
 		/**
 		Disable bivariant parameter checking for function types.
@@ -1113,6 +1188,11 @@ declare namespace TsConfigJson {
 		Specifies a list of type declarations to be excluded from auto type acquisition. For example, `['jquery', 'lodash']`.
 		*/
 		exclude?: string[];
+
+		/**
+		Disable infering what types should be added based on filenames in a project.
+		*/
+		disableFilenameBasedTypeAcquisition?: boolean;
 	};
 
 	export type References = {

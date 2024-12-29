@@ -1,4 +1,4 @@
-import type {SplitWords} from './split-words';
+import type {Words} from './words';
 
 /**
 CamelCase options.
@@ -76,5 +76,5 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 export type CamelCase<Type, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Type extends string
 	? string extends Type
 		? Type
-		: Uncapitalize<CamelCaseFromArray<SplitWords<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
+		: Uncapitalize<CamelCaseFromArray<Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
 	: Type;

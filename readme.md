@@ -20,12 +20,6 @@
 			<sup>Special thanks to:</sup>
 			<br>
 			<br>
-			<a href="https://standardresume.co/tech">
-				<img src="https://sindresorhus.com/assets/thanks/standard-resume-logo.svg" width="180"/>
-			</a>
-			<br>
-			<br>
-			<br>
 			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
 				<div>
 					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
@@ -37,7 +31,6 @@
 					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
 				</div>
 			</a>
-			<br>
 			<br>
 			<br>
 			<a href="https://transloadit.com?utm_source=sindresorhus&utm_medium=referral&utm_campaign=sponsorship&utm_content=type-fest">
@@ -65,6 +58,15 @@
 			</a>
 			<br>
 			<br>
+			<a href="https://nitric.io/?utm_campaign=github_repo&utm_medium=referral&utm_content=sindresorhus&utm_source=github">
+				<div>
+					<img width="230" src="https://sindresorhus.com/assets/thanks/nitric-logo.svg" alt="nitric logo">
+				</div>
+				<b>Effortless backends with infrastructure from code</b>
+				<div>
+					<sup>An open-source framework that supports any programming language, cloud provider, or deployment automation tool.</sup>
+				</div>
+			</a>
 		</p>
 	</div>
 	<br>
@@ -151,8 +153,8 @@ Click the type names for complete docs.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
-- [`Tagged`](source/opaque.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf). (This replaces the previous [`Opaque`](source/opaque.d.ts) type, which is now deprecated.)
-- [`UnwrapTagged`](source/opaque.d.ts) - Get the untagged portion of a tagged type created with `Tagged`. (This replaces the previous [`UnwrapOpaque`](source/opaque.d.ts) type, which is now deprecated.)
+- [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf). (This replaces the previous [`Opaque`](source/tagged.d.ts) type, which is now deprecated.)
+- [`UnwrapTagged`](source/tagged.d.ts) - Get the untagged portion of a tagged type created with `Tagged`. (This replaces the previous [`UnwrapOpaque`](source/tagged.d.ts) type, which is now deprecated.)
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
 - [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly.
@@ -191,13 +193,15 @@ Click the type names for complete docs.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
-- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
+- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers (includes the start and excludes the end).
+- [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
 - [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
+- [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
 - [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 - [`DistributedOmit`](source/distributed-omit.d.ts) - Omits keys from a type, distributing the operation over a union.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
@@ -268,8 +272,10 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+- [`Words`](source/words.d.ts) - Represents an array of strings split using a heuristic for detecting words.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
+- [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
 
 ### Array
 
@@ -283,6 +289,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
+- [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
 
 ### Numeric
 
@@ -356,11 +363,12 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `RequireOnlyOne`, `OneOf` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](source/require-one-or-none.d.ts)
 - `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
-- `Branded` - See [`Tagged`](source/opaque.d.ts)
-- `Opaque` - See [`Tagged`](source/opaque.d.ts)
+- `Branded` - See [`Tagged`](source/tagged.d.ts)
+- `Opaque` - See [`Tagged`](source/tagged.d.ts)
 - `SetElement` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetEntry` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
+- `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 
 ## Tips
 
@@ -390,6 +398,53 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 ### Built-in types
 
 There are many advanced types most users don't know about.
+
+
+- [`Awaited<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype) - Extract the type of a value that a `Promise` resolves to.
+  <details>
+  <summary>
+  	Example
+  </summary>
+
+  [Playground](https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgKoGdrIN4FgBQyyAkMACYBcyIArgLYBG0A3AUcSHHRFemFKADmrQiTiCe1ekygiiAXwJtkCADZx06NJigBBAA7AAytABuwJDmXENATxAJkMCGAQALDNAAUNHQElKKUZoAEoqAAUoAHs6YEwAHk8oAD4rUWJiAHpM5AAxF3dkMDcUXywyODA4J2i6IpLkCqqGDQgAOmssnIAVBsQwGjhVZGA6fVUIbnBK4CiQZFjBNzBkVSiogGtV4A2UYriKTuyVOb5kKAh0fVOUAF5kOAB3OGAV51c3LwAiTLhDTLKUEyABJsICAvIQnISF0TiAzk1qvcLlcbm0AFboOZeKFHHIXAZQeaI6EZAk0Ik4EaBACMABpqFxJF8AFJRNzzAAiUQgXwZ4kkAGYAAzIeSkxSiSXKMC2fQofIfCBkJLIe66Z6vZXxABKLgpIG6cogiR0BmMZgsEAA2l93u4kl8ALrJZIiZR2BxOGgOMCzeZuOAgMgTJKcypwLx-C1QcxIKhJc0mWNWhngwK0YJQEJpdj8Wy5mEIU4rQFURXuZWq+5PF4raPJuPte0eHQ+fxkXHpWG6GCQKBOApuITIQGNCMM2xRGgqIPIeWwKJQOqmOACadafr+rToGiFDSj-RNEfFUo6EbgaDwJB0vGz9wnhqImpRb2Es8QBlLhZwDYjuBkGQrz+kMyC6OEfjnBAACONCXGAm5aCAEDKsqHTpPIs4fMgXjQNE2aFhkxx4d+gbBqoQjWJKChKKIxbwqWZqGI2VpqtQECPNo0BJpaSA4tCZEhhAYYRu23HMbxn7IDSUJAA)
+
+  ```ts
+  interface User {
+  	id: number;
+  	name: string;
+  	age: number;
+  }
+
+  class UserApiService {
+  	async fetchUser(userId: number): Promise<User> {
+  		// Fetch the user data from the database.
+  		// The actual implementation might look like this:
+  		// const response = await fetch('/api/user/${userId}');
+  		// const data = response.json();
+  		// return data;
+  		return {
+  			id: 1,
+  			name: 'John Doe',
+  			age: 30
+  		};
+  	}
+  }
+
+  type FetchedUser = Awaited<ReturnType<UserApiService['fetchUser']>>;
+
+  async function handleUserData(apiService: UserApiService, userId: number) {
+  	try {
+  		const user: FetchedUser = await apiService.fetchUser(userId);
+  		// After fetching user data, you can perform various actions such as updating the user interface,
+  		// caching the data for future use, or making additional API requests as needed.
+  	} catch (error) {
+  		// Error handling
+  	}
+  }
+
+  const userApiService = new UserApiService();
+  handleUserData(userApiService, 1);
+  ```
 
 - [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) - Make all properties in `T` optional.
 	<details>
@@ -995,11 +1050,15 @@ You can find some examples in the [TypeScript docs](https://www.typescriptlang.o
 
 - [Sindre Sorhus](https://github.com/sindresorhus)
 - [Haozheng Li](https://github.com/Emiyaaaaa)
+- [Som Shekhar Mukherjee](https://github.com/som-sm)
 - [Jarek Radosz](https://github.com/CvX)
 - [Dimitri Benin](https://github.com/BendingBender)
 - [Pelle Wessman](https://github.com/voxpelli)
 - [Sébastien Mischler](https://github.com/skarab42)
 
 ## License
+
+- [MIT](license-mit)
+- [CC0-1.0](license-cc0)
 
 SPDX-License-Identifier: (MIT OR CC0-1.0)
