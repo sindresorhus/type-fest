@@ -6,7 +6,7 @@ import type {SimplifyDeep} from './simplify-deep';
 /**
 Create a type that makes the given keys required. You can specify deeply nested key paths. The remaining keys are kept as is.
 
-Use-case: You want to define as required only a some nested keys inside a model.
+Use-case: Selectively make nested properties required in complex types like models.
 
 @example
 ```
