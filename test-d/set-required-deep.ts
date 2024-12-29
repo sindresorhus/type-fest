@@ -52,4 +52,3 @@ expectType<{a: 1; readonly b: {c: 1}}>(variation12);
 // Works with number keys
 declare const variation13: SetRequiredDeep<{0: 1; 1: {2?: string}}, '1.2'>;
 expectType<{0: 1; 1: {2: string}}>(variation13);
-
