@@ -80,12 +80,12 @@ const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo> = foo;
 // Check that `{recurseIntoArrays: true}` behaves as intended
 expectType<PartialDeep<typeof foo, {recurseIntoArrays: true}>>(partialDeepFoo);
 
-// Check that `{allowUndefinedInArrays: true}` is the default
-const partialDeepAllowUndefinedInArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: true}> = foo;
-expectType<Array<string | undefined> | undefined>(partialDeepAllowUndefinedInArraysFoo.bar!.array);
-// Check that `{allowUndefinedInArrays: false}` behaves as intended
-const partialDeepDoNotAllowUndefinedInArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: true; allowUndefinedInArrays: false}> = foo;
-expectType<string[] | undefined>(partialDeepDoNotAllowUndefinedInArraysFoo.bar!.array);
+// Check that `{allowUndefinedInNonTupleArrays: true}` is the default
+const partialDeepAllowUndefinedInNonTupleArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: true}> = foo;
+expectType<Array<string | undefined> | undefined>(partialDeepAllowUndefinedInNonTupleArraysFoo.bar!.array);
+// Check that `{allowUndefinedInNonTupleArrays: false}` behaves as intended
+const partialDeepDoNotAllowUndefinedInNonTupleArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}> = foo;
+expectType<string[] | undefined>(partialDeepDoNotAllowUndefinedInNonTupleArraysFoo.bar!.array);
 
 // These are mostly the same checks as before, but the array/tuple types are different.
 // @ts-expect-error

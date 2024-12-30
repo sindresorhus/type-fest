@@ -12,11 +12,11 @@ export type PartialDeepOptions = {
 	readonly recurseIntoArrays?: boolean;
 
 	/**
-	Whether to authorize undefined values in arrays.
+    Allows undefined values in non-tuple arrays. When set to `true`, elements of non-tuple arrays can be `undefined`. When set to `false`, only explicitly defined elements are allowed in non-tuple arrays, ensuring stricter type checking. Defaults to `true` if not specified.
 
-	@default true
+    @default true
 	*/
-	readonly allowUndefinedInArrays?: boolean;
+	readonly allowUndefinedInNonTupleArrays?: boolean;
 };
 
 /**
@@ -60,8 +60,7 @@ const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true}> = {
 	languages: [undefined]
 };
 ```
-
-You can prevent undefined values in recurse arrays and tuples by passing `{recurseIntoArrays: true; allowUndefinedInArrays: false}` as the second type argument:
+You can prevent undefined values in non tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
 
 ```
 import type {PartialDeep} from 'type-fest';
@@ -70,9 +69,9 @@ interface Settings {
 	languages: string[];
 }
 
-const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInArrays: false}> = {
+const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}> = {
 	languages: [undefined] 	// Error
-	languages: []			// OK
+	languages: []		// OK
 };
 ```
 
@@ -96,8 +95,8 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> = T extends 
 							? Options['recurseIntoArrays'] extends true
 								? ItemType[] extends T // Test for arrays (non-tuples) specifically
 									? readonly ItemType[] extends T // Differentiate readonly and mutable arrays
-										? ReadonlyArray<PartialDeep<Options['allowUndefinedInArrays'] extends false ? ItemType : ItemType | undefined, Options>>
-										: Array<PartialDeep<Options['allowUndefinedInArrays'] extends false ? ItemType : ItemType | undefined, Options>>
+										? ReadonlyArray<PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
+										: Array<PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
 									: PartialObjectDeep<T, Options> // Tuples behave properly
 								: T // If they don't opt into array testing, just use the original type
 							: PartialObjectDeep<T, Options>
