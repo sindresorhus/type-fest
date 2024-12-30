@@ -2,6 +2,9 @@ import type {IfAny} from './if-any';
 import type {IfNever} from './if-never';
 import type {UnknownArray} from './unknown-array';
 
+/**
+@see {@link IsTuple}
+*/
 type IsTupleOptions = {
 	/**
 	Consider only fixed length arrays as tuples.
@@ -9,11 +12,11 @@ type IsTupleOptions = {
 	- When set to `true`, arrays with rest elements (e.g., `[1, ...number[]]`) are _not_ considered as tuples.
 	- When set to `false` (default), arrays with at least one non-rest element (e.g., `[1, ...number[]]`) are considered as tuples.
 
- 	@default false
+	@default false
 
 	@example
 	```ts
- 	import type {IsTuple} from 'type-fest';
+	import type {IsTuple} from 'type-fest';
 
 	type Example1 = IsTuple<[number, ...number[]], {includeFixedLengthTuplesOnly: false}>;
 	//=> true
@@ -52,6 +55,8 @@ type RestItemsAllowed = IsTuple<[1, 2, ...number[]]>;
 type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]], {includeFixedLengthTuplesOnly: true}>;
 //=> false
 ```
+
+@see {@link IsTupleOptions}
 
 @category Type Guard
 @category Utilities
