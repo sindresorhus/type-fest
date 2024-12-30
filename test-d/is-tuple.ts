@@ -39,6 +39,18 @@ expectType<IsTuple<[1?, 2?] | [] | [1, 2, ...number[]]>>(true);
 expectType<IsTuple<[1?, 2?] | [] | [1, 2, ...number[]], {fixedLengthOnly: true}>>({} as boolean);
 expectType<IsTuple<number[] | string[]>>(false);
 expectType<IsTuple<[1, 2] | string[]>>({} as boolean);
+expectType<IsTuple<[string] | [number] | number[]>>({} as boolean);
+expectType<IsTuple<[string, ...number[]] | [number?, string?]>>(true);
+expectType<IsTuple<[] | [number] | readonly [string]>>(true);
+
+// Labeled tuples
+expectType<IsTuple<[x: string, y: number]>>(true);
+expectType<IsTuple<[first: string, ...rest: number[]]>>(true);
+expectType<IsTuple<readonly [name: string, age?: number]>>(true);
+
+// Mixed optional/required elements
+expectType<IsTuple<[string, number?]>>(true);
+expectType<IsTuple<readonly [string, number?, ...boolean[]]>>(true);
 
 // Setting `fixedLengthOnly` to `boolean` falls back to it's default value of `false`
 expectType<IsTuple<[1, 2, ...number[]], {fixedLengthOnly: boolean}>>(true);
