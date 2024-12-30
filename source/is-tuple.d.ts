@@ -9,16 +9,18 @@ type IsTupleOptions = {
 	- When set to `true`, arrays with rest elements (e.g., `[1, ...number[]]`) are _not_ considered as tuples.
 	- When set to `false` (default), arrays with at least one non-rest element (e.g., `[1, ...number[]]`) are considered as tuples.
 
+ 	@default false
+
 	@example
 	```ts
+ 	import type {IsTuple} from 'type-fest';
+
 	type Example1 = IsTuple<[number, ...number[]], {includeFixedLengthTuplesOnly: false}>;
 	//=> true
 
 	type Example2 = IsTuple<[number, ...number[]], {includeFixedLengthTuplesOnly: true}>;
 	//=> false
 	```
-
-	@default false
 	*/
 	includeFixedLengthTuplesOnly?: boolean;
 };
@@ -33,20 +35,22 @@ Note: `IsTuple` returns `boolean` when instantiated with a union of tuple and no
 
 @example
 ```ts
+import type {IsTuple} from 'type-fest';
+
 type Tuple = IsTuple<[1, 2, 3]>;
-// => true
+//=> true
 
 type NotTuple = IsTuple<number[]>;
-// => false
+//=> false
 
 type TupleWithOptionalItems = IsTuple<[1?, 2?]>;
-// => true
+//=> true
 
 type RestItemsAllowed = IsTuple<[1, 2, ...number[]]>;
-// => true
+//=> true
 
 type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]], {includeFixedLengthTuplesOnly: true}>;
-// => false
+//=> false
 ```
 
 @category Type Guard
