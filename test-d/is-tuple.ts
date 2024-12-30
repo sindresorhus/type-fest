@@ -9,6 +9,7 @@ expectType<IsTuple<[number, string, ...number[]]>>(true);
 expectType<IsTuple<[number?]>>(true);
 expectType<IsTuple<[number?, string?]>>(true);
 expectType<IsTuple<[number?, string?, ...number[]]>>(true);
+expectType<IsTuple<[...number[], string, number]>>(true);
 expectType<IsTuple<[never]>>(true);
 
 // Readonly tuples
@@ -16,6 +17,7 @@ expectType<IsTuple<readonly []>>(true);
 expectType<IsTuple<readonly [number]>>(true);
 expectType<IsTuple<readonly [number, string, ...number[]]>>(true);
 expectType<IsTuple<readonly [number?, string?, ...number[]]>>(true);
+expectType<IsTuple<readonly [...number[], string, number]>>(true);
 expectType<IsTuple<readonly [number?]>>(true);
 expectType<IsTuple<readonly [never]>>(true);
 
@@ -25,6 +27,8 @@ expectType<IsTuple<readonly number[]>>(false);
 expectType<IsTuple<[...number[]]>>(false);
 expectType<IsTuple<[number, string, ...number[]], {fixedLengthOnly: true}>>(false);
 expectType<IsTuple<readonly [number?, string?, ...number[]], {fixedLengthOnly: true}>>(false);
+expectType<IsTuple<[...number[], string, number], {fixedLengthOnly: true}>>(false);
+expectType<IsTuple<readonly [...number[], string, number], {fixedLengthOnly: true}>>(false);
 expectType<IsTuple<never[]>>(false);
 expectType<IsTuple<any[]>>(false);
 

@@ -70,7 +70,9 @@ export type IsTuple<
 		? number extends TArray['length']
 			? Options['fixedLengthOnly'] extends true
 				? false
-				: IfNever<keyof TArray & `${number}`, false, true>
+				: IfNever<keyof TArray & `${number}`,
+				TArray extends readonly [...any, any] ? true : false, // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
+				true>
 			: true
 		: false
 	>>;
