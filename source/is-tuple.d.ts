@@ -18,14 +18,14 @@ export type IsTupleOptions = {
 	```ts
 	import type {IsTuple} from 'type-fest';
 
-	type Example1 = IsTuple<[number, ...number[]], {includeFixedLengthTuplesOnly: false}>;
+	type Example1 = IsTuple<[number, ...number[]], {fixedLengthOnly: false}>;
 	//=> true
 
-	type Example2 = IsTuple<[number, ...number[]], {includeFixedLengthTuplesOnly: true}>;
+	type Example2 = IsTuple<[number, ...number[]], {fixedLengthOnly: true}>;
 	//=> false
 	```
 	*/
-	includeFixedLengthTuplesOnly?: boolean;
+	fixedLengthOnly?: boolean;
 };
 
 /**
@@ -52,7 +52,7 @@ type TupleWithOptionalItems = IsTuple<[1?, 2?]>;
 type RestItemsAllowed = IsTuple<[1, 2, ...number[]]>;
 //=> true
 
-type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]], {includeFixedLengthTuplesOnly: true}>;
+type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]], {fixedLengthOnly: true}>;
 //=> false
 ```
 
@@ -63,12 +63,12 @@ type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]], {includeFixedLengthTuple
 */
 export type IsTuple<
 	TArray extends UnknownArray,
-	Options extends IsTupleOptions = {includeFixedLengthTuplesOnly: false},
+	Options extends IsTupleOptions = {fixedLengthOnly: false},
 > =
 	IfAny<TArray, boolean, IfNever<TArray, false,
 	TArray extends unknown // For distributing `TArray`
 		? number extends TArray['length']
-			? Options['includeFixedLengthTuplesOnly'] extends true
+			? Options['fixedLengthOnly'] extends true
 				? false
 				: IfNever<keyof TArray & `${number}`, false, true>
 			: true
