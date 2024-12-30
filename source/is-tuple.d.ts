@@ -29,6 +29,8 @@ Returns a boolean for whether the given array is a tuple.
 Use-case:
 - If you want to make a conditional branch based on the result of whether an array is a tuple or not.
 
+Note: `IsTuple` returns `boolean` when instantiated with a union of tuple and non-tuple (e.g., `IsTuple<[1, 2] | number[]>`).
+
 @example
 ```ts
 type Tuple = IsTuple<[1, 2, 3]>;
