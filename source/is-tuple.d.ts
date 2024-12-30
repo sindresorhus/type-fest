@@ -5,7 +5,7 @@ import type {UnknownArray} from './unknown-array';
 /**
 @see {@link IsTuple}
 */
-type IsTupleOptions = {
+export type IsTupleOptions = {
 	/**
 	Consider only fixed length arrays as tuples.
 
