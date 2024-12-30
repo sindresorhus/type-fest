@@ -1,6 +1,7 @@
 import type {NonRecursiveType, StringToNumber} from './internal';
 import type {Paths} from './paths';
 import type {SimplifyDeep} from './simplify-deep';
+import type {UnknownArray} from './unknown-array';
 
 /**
 Create a type that makes the given keys required. You can specify deeply nested key paths. The remaining keys are kept as is.
@@ -35,9 +36,10 @@ export type SetRequiredDeep<BaseType, KeyPaths extends Paths<BaseType>> =
 BaseType extends NonRecursiveType
 	? BaseType
 	: SimplifyDeep<(
-		{[K in keyof BaseType as K extends (KeyPaths | StringToNumber<KeyPaths & string>) ? K : never]-?: BaseType[K]} extends infer RequiredPart
-			? {} extends RequiredPart ? unknown : RequiredPart
-			: never) & {
+		BaseType extends UnknownArray
+			? {}
+			: {[K in keyof BaseType as K extends (KeyPaths | StringToNumber<KeyPaths & string>) ? K : never]-?: BaseType[K]}
+	) & {
 		[K in keyof BaseType]: Extract<KeyPaths, `${K & (string | number)}.${string}`> extends never
 			? BaseType[K]
 			: SetRequiredDeep<BaseType[K], KeyPaths extends `${K & (string | number)}.${infer Rest extends Paths<BaseType[K]>}` ? Rest : never>
