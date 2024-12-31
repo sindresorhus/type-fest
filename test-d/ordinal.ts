@@ -125,7 +125,7 @@ expectNotAssignable<Ordinal<1.5>>("1.5th");
 expectNotAssignable<Ordinal<-10>>("-10th");
 expectNotAssignable<Ordinal<-100>>("-100th");
 
-// Decimal numbers (already testing 1.5, but could add more)
+// Decimal numbers
 expectNotAssignable<Ordinal<0.5>>("0.5th");
 expectNotAssignable<Ordinal<2.75>>("2.75th");
 
