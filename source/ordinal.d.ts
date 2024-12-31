@@ -1,5 +1,5 @@
 /**
-  Convert a number to its ordinal representation.
+  Create a type that converts a number literal type to its ordinal string representation.
   @example
   ```
   import type {Ordinal} from 'type-fest';
