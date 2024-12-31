@@ -1,5 +1,5 @@
-import { expectNotAssignable, expectType } from 'tsd';
-import { Ordinal } from '../source/ordinal';
+import {expectNotAssignable, expectType} from 'tsd';
+import type {Ordinal} from '../source/ordinal';
 
 // Basic numbers
 expectType<'1st'>('1st' as Ordinal<1>);
