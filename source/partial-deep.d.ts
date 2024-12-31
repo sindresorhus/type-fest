@@ -12,22 +12,22 @@ export type PartialDeepOptions = {
 	readonly recurseIntoArrays?: boolean;
 
 	/**
-    Allows undefined values in non-tuple arrays. When set to `true`, elements of non-tuple arrays can be `undefined`. When set to `false`, only explicitly defined elements are allowed in non-tuple arrays, ensuring stricter type checking. Defaults to `true` if not specified.
+	Allows undefined values in non-tuple arrays. When set to `true`, elements of non-tuple arrays can be `undefined`. When set to `false`, only explicitly defined elements are allowed in non-tuple arrays, ensuring stricter type checking. Defaults to `true` if not specified.
 
-    @default true
-    @example
-    You can prevent undefined values in non tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
+	@default true
+	@example
+	You can prevent undefined values in non tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
 
-```
-interface Settings {
-	languages: string[];
-}
+	```
+	interface Settings {
+		languages: string[];
+	}
 
-const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}> = {
-	languages: [undefined] 	// Error
-	languages: []		// OK
-};
-```
+	const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}> = {
+		languages: [undefined]	// Error
+		languages: []		// OK
+	};
+	```
 	*/
 	readonly allowUndefinedInNonTupleArrays?: boolean;
 };
