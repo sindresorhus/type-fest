@@ -34,7 +34,7 @@ export type Ordinal<N extends number> = `${N}` extends
 	: `${N}${OrdinalSuffix<N>}`;
 
 /**
- * Determines the correct ordinal suffix for a number.
+  Determines the correct ordinal suffix for a number.
  */
 type OrdinalSuffix<N extends number> = `${N}` extends
 	| `${string}11`
