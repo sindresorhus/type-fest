@@ -122,6 +122,7 @@ export type {IsNever} from './source/is-never';
 export type {IfNever} from './source/if-never';
 export type {IsUnknown} from './source/is-unknown';
 export type {IfUnknown} from './source/if-unknown';
+export type {IsTuple} from './source/is-tuple';
 export type {ArrayIndices} from './source/array-indices';
 export type {ArrayValues} from './source/array-values';
 export type {ArraySlice} from './source/array-slice';

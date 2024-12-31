@@ -248,6 +248,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Conditional version: [`IfUnknown`](source/if-unknown.d.ts))
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value. (Conditional version: [`IfEmptyObject`](source/if-empty-object.d.ts))
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`. (Conditional version: [`IfNull`](source/if-null.d.ts))
+- [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
 
 ### JSON
 
