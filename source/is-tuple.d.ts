@@ -9,20 +9,20 @@ export type IsTupleOptions = {
 	/**
 	Consider only fixed length arrays as tuples.
 
-	- When set to `true`, arrays with rest elements (e.g., `[1, ...number[]]`) are _not_ considered as tuples.
-	- When set to `false` (default), arrays with at least one non-rest element (e.g., `[1, ...number[]]`) are considered as tuples.
+	- When set to `true` (default), arrays with rest elements (e.g., `[1, ...number[]]`) are _not_ considered as tuples.
+	- When set to `false`, arrays with at least one non-rest element (e.g., `[1, ...number[]]`) are considered as tuples.
 
-	@default false
+	@default true
 
 	@example
 	```ts
 	import type {IsTuple} from 'type-fest';
 
-	type Example1 = IsTuple<[number, ...number[]], {fixedLengthOnly: false}>;
-	//=> true
-
-	type Example2 = IsTuple<[number, ...number[]], {fixedLengthOnly: true}>;
+	type Example1 = IsTuple<[number, ...number[]], {fixedLengthOnly: true}>;
 	//=> false
+
+	type Example2 = IsTuple<[number, ...number[]], {fixedLengthOnly: false}>;
+	//=> true
 	```
 	*/
 	fixedLengthOnly?: boolean;
@@ -49,11 +49,11 @@ type NotTuple = IsTuple<number[]>;
 type TupleWithOptionalItems = IsTuple<[1?, 2?]>;
 //=> true
 
-type RestItemsAllowed = IsTuple<[1, 2, ...number[]]>;
-//=> true
-
-type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]], {fixedLengthOnly: true}>;
+type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]]>;
 //=> false
+
+type RestItemsAllowed = IsTuple<[1, 2, ...number[]], {fixedLengthOnly: false}>;
+//=> true
 ```
 
 @see {@link IsTupleOptions}
@@ -63,16 +63,16 @@ type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]], {fixedLengthOnly: true}>
 */
 export type IsTuple<
 	TArray extends UnknownArray,
-	Options extends IsTupleOptions = {fixedLengthOnly: false},
+	Options extends IsTupleOptions = {fixedLengthOnly: true},
 > =
 	IfAny<TArray, boolean, IfNever<TArray, false,
 	TArray extends unknown // For distributing `TArray`
 		? number extends TArray['length']
-			? Options['fixedLengthOnly'] extends true
-				? false
-				: IfNever<keyof TArray & `${number}`,
+			? Options['fixedLengthOnly'] extends false
+				? IfNever<keyof TArray & `${number}`,
 				TArray extends readonly [...any, any] ? true : false, // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
 				true>
+				: false
 			: true
 		: false
 	>>;
