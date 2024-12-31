@@ -14,9 +14,9 @@
  * ```
  *
  * This type is useful when:
- * - Formatting numbers for display in text (e.g., "You finished 1st!")
- * - Creating human-readable labels (e.g., "21st century")
- * - Generating ordinal dates (e.g., "March 3rd")
+ * - Formatting numbers for display in text (e.g., 'You finished 1st!')
+ * - Creating human-readable labels (e.g., '21st century')
+ * - Generating ordinal dates (e.g., 'March 3rd')
  *
  * The type follows English ordinal number rules:
  * - Numbers ending in 1 get 'st' (except 11)
@@ -40,11 +40,11 @@ type OrdinalSuffix<N extends number> = `${N}` extends
 	| `${string}11`
 	| `${string}12`
 	| `${string}13`
-	? "th"
+	? 'th'
 	: `${N}` extends `${string}1`
-		? "st"
+		? 'st'
 		: `${N}` extends `${string}2`
-			? "nd"
+			? 'nd'
 			: `${N}` extends `${string}3`
-				? "rd"
-				: "th";
+				? 'rd'
+				: 'th';
