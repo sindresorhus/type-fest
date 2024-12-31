@@ -1,7 +1,7 @@
 import type {BuiltIns} from './internal';
 
 /**
-@see PartialDeep
+@see {@link PartialDeep}
 */
 export type PartialDeepOptions = {
 	/**
@@ -73,6 +73,8 @@ const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true}> = {
 	languages: [undefined]
 };
 ```
+
+@see {@link PartialDeepOptions}
 
 @category Object
 @category Array
