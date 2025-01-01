@@ -1,3 +1,4 @@
+import type {IfAny} from '../if-any';
 import type {IfNever} from '../if-never';
 import type {UnknownArray} from '../unknown-array';
 
@@ -92,3 +93,35 @@ T extends readonly [...infer U] ?
 Returns whether the given array `T` is readonly.
 */
 export type IsArrayReadonly<T extends UnknownArray> = IfNever<T, false, T extends unknown[] ? false : true>;
+
+/**
+An if-else-like type that resolves depending on whether the given array is readonly.
+
+@see {@link IsArrayReadonly}
+
+@example
+```
+type ShouldBeTrue = IfArrayReadonly<readonly unknown[]>;
+//=> true
+
+type ShouldBeBar = IfArrayReadonly<unknown[], 'foo', 'bar'>;
+//=> 'bar'
+
+type ReadonlyPreservingArrayTail<TArray extends readonly unknown[]> =
+	ArrayTail<TArray> extends infer Tail
+		? IfArrayReadonly<TArray, Readonly<Tail>, Tail>
+		: never;
+
+type ReadonlyTail = ReadonlyPreservingArrayTail<readonly [string, number, number]>;
+//=> readonly [number, number]
+
+type NonReadonlyTail = ReadonlyPreservingArrayTail<[string, number, number]>;
+//=> [number, number]
+```
+*/
+export type IfArrayReadonly<T extends UnknownArray, TypeIfArrayReadonly = true, TypeIfNotArrayReadonly = false> =
+	IfNever<T, TypeIfNotArrayReadonly,
+	IfAny<T, TypeIfArrayReadonly | TypeIfNotArrayReadonly,
+	T extends unknown // For distributing `T` when it's a union
+		? IsArrayReadonly<T> extends true ? TypeIfArrayReadonly : TypeIfNotArrayReadonly
+		: never>>;
