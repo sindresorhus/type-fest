@@ -1,3 +1,4 @@
+import type {IfNever} from '../if-never';
 import type {UnknownArray} from '../unknown-array';
 
 /**
@@ -90,4 +91,4 @@ T extends readonly [...infer U] ?
 /**
 Returns whether the given array `T` is readonly.
 */
-export type IsArrayReadonly<T extends UnknownArray> = T extends unknown[] ? false : true;
+export type IsArrayReadonly<T extends UnknownArray> = IfNever<T, false, T extends unknown[] ? false : true>;
