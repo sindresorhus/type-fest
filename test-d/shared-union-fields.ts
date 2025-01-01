@@ -85,9 +85,9 @@ declare const unionWithOptional: SharedUnionFields<{a?: string; foo: number} | {
 expectType<{a?: string}>(unionWithOptional);
 
 // Non-recursive types
-expectType<Set<string> | Map<string, string>>({} as Set<string> | Map<string, string>);
-expectType<string[] | Set<string>>({} as string[] | Set<string>);
-expectType<NonRecursiveType>({} as NonRecursiveType);
+expectType<Set<string> | Map<string, string>>({} as SharedUnionFields<Set<string> | Map<string, string>>);
+expectType<string[] | Set<string>>({} as SharedUnionFields<string[] | Set<string>>);
+expectType<NonRecursiveType>({} as SharedUnionFields<NonRecursiveType>);
 
 // Mix of non-recursive and recursive types
 expectType<{a: string | number} | undefined>({} as SharedUnionFields<{a: string} | {a: number; b: true} | undefined>);
