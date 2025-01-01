@@ -22,14 +22,14 @@ export type PartialDeepOptions = {
 	You can prevent `undefined` values in non tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
 
 	```
-	interface Settings {
+	type Settings = {
 		languages: string[];
-	}
-
-	const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}> = {
-		languages: [undefined]	// Error
-		languages: []		// OK
 	};
+
+	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}>;
+
+	partialSettings.languages = [undefined]; // Error
+	partialSettings.languages = []; // Ok
 	```
 	*/
 	readonly allowUndefinedInNonTupleArrays?: boolean;
