@@ -100,12 +100,6 @@ An if-else-like type that resolves depending on whether the given array is reado
 
 @example
 ```
-type ShouldBeTrue = IfArrayReadonly<readonly unknown[]>;
-//=> true
-
-type ShouldBeBar = IfArrayReadonly<unknown[], 'foo', 'bar'>;
-//=> 'bar'
-
 import type {ArrayTail} from 'type-fest';
 
 type ReadonlyPreservingArrayTail<TArray extends readonly unknown[]> =
@@ -118,6 +112,12 @@ type ReadonlyTail = ReadonlyPreservingArrayTail<readonly [string, number, boolea
 
 type NonReadonlyTail = ReadonlyPreservingArrayTail<[string, number, boolean]>;
 //=> [number, boolean]
+
+type ShouldBeTrue = IfArrayReadonly<readonly unknown[]>;
+//=> true
+
+type ShouldBeBar = IfArrayReadonly<unknown[], 'foo', 'bar'>;
+//=> 'bar'
 ```
 */
 export type IfArrayReadonly<T extends UnknownArray, TypeIfArrayReadonly = true, TypeIfNotArrayReadonly = false> =
