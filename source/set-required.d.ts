@@ -51,7 +51,9 @@ type SetArrayRequired<
 	Counter extends any[] = [],
 	Accumulator extends UnknownArray = [],
 > = TArray extends unknown // For distributing `TArray` when it's a union
-	? keyof TArray & `${number}` extends never // Exit if there are no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+	? keyof TArray & `${number}` extends never
+		// Exit if `TArray` is empty (e.g., []), or
+		// `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
 		? [...Accumulator, ...TArray]
 		: TArray extends readonly [(infer First)?, ...infer Rest]
 			? '0' extends OptionalKeysOf<TArray> // If the first element of `TArray` is optional
