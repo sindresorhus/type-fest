@@ -107,16 +107,18 @@ type ShouldBeTrue = IfArrayReadonly<readonly unknown[]>;
 type ShouldBeBar = IfArrayReadonly<unknown[], 'foo', 'bar'>;
 //=> 'bar'
 
+import type {ArrayTail} from 'type-fest';
+
 type ReadonlyPreservingArrayTail<TArray extends readonly unknown[]> =
 	ArrayTail<TArray> extends infer Tail
 		? IfArrayReadonly<TArray, Readonly<Tail>, Tail>
 		: never;
 
-type ReadonlyTail = ReadonlyPreservingArrayTail<readonly [string, number, number]>;
-//=> readonly [number, number]
+type ReadonlyTail = ReadonlyPreservingArrayTail<readonly [string, number, boolean]>;
+//=> readonly [number, boolean]
 
-type NonReadonlyTail = ReadonlyPreservingArrayTail<[string, number, number]>;
-//=> [number, number]
+type NonReadonlyTail = ReadonlyPreservingArrayTail<[string, number, boolean]>;
+//=> [number, boolean]
 ```
 */
 export type IfArrayReadonly<T extends UnknownArray, TypeIfArrayReadonly = true, TypeIfNotArrayReadonly = false> =
