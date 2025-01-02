@@ -12,9 +12,9 @@ Paths options.
 */
 export type PathsOptions = {
 	/**
-	The maximum depth to recurse when searching for paths.
+	The maximum depth to recurse when searching for paths. Range: 0 ~ 10.
 
-	@default 10
+	@default 5
 	*/
 	maxRecursionDepth?: number;
 
@@ -53,7 +53,7 @@ export type PathsOptions = {
 };
 
 type DefaultPathsOptions = {
-	maxRecursionDepth: 10;
+	maxRecursionDepth: 5;
 	bracketNotation: false;
 };
 
