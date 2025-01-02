@@ -1,4 +1,3 @@
-import type {IfAny} from '../if-any';
 import type {IfNever} from '../if-never';
 import type {UnknownArray} from '../unknown-array';
 
@@ -122,8 +121,6 @@ type NonReadonlyTail = ReadonlyPreservingArrayTail<[string, number, boolean]>;
 ```
 */
 export type IfArrayReadonly<T extends UnknownArray, TypeIfArrayReadonly = true, TypeIfNotArrayReadonly = false> =
-	IfNever<T, TypeIfNotArrayReadonly,
-	IfAny<T, TypeIfArrayReadonly | TypeIfNotArrayReadonly,
-	T extends unknown // For distributing `T` when it's a union
-		? IsArrayReadonly<T> extends true ? TypeIfArrayReadonly : TypeIfNotArrayReadonly
-		: never>>;
+	IsArrayReadonly<T> extends infer Result
+		? Result extends true ? TypeIfArrayReadonly : TypeIfNotArrayReadonly
+		: never; // Should never happen
