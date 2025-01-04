@@ -26,6 +26,10 @@ type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 // 	b: string; // Was already required and still is.
 // 	c: boolean; // Is now required.
 // }
+
+// Set specific indices in an array to be required.
+type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
+//=> [number, number, number?]
 ```
 
 @category Object
