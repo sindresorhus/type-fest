@@ -18,10 +18,13 @@ export type PartialDeepOptions = {
 	- When set to `false`, only explicitly defined elements are allowed in non-tuple arrays, ensuring stricter type checking.
 
 	@default true
+
 	@example
-	You can prevent `undefined` values in non tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
+	You can prevent `undefined` values in non-tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
 
 	```
+	import type {PartialDeep} from 'type-fest';
+
 	type Settings = {
 		languages: string[];
 	};
@@ -48,12 +51,12 @@ import type {PartialDeep} from 'type-fest';
 
 const settings: Settings = {
 	textEditor: {
-		fontSize: 14;
-		fontColor: '#000000';
-		fontWeight: 400;
-	}
-	autocomplete: false;
-	autosave: true;
+		fontSize: 14,
+		fontColor: '#000000',
+		fontWeight: 400
+	},
+	autocomplete: false,
+	autosave: true
 };
 
 const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
@@ -68,7 +71,7 @@ By default, this does not affect elements in array and tuple types. You can chan
 ```
 import type {PartialDeep} from 'type-fest';
 
-interface Settings {
+type Settings = {
 	languages: string[];
 }
 
