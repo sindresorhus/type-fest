@@ -205,6 +205,6 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
-	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false}> | Paths<BaseType, {bracketNotation: true}>>>,
+	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
 	Options extends GetOptions = {}> =
 		GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
