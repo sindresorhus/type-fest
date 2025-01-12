@@ -20,3 +20,8 @@ expectType<Subtract<number, 2>>(null! as number);
 expectType<Subtract<2, number>>(null! as number);
 expectType<Subtract<number, number>>(null! as number);
 expectType<Subtract<number, PositiveInfinity>>(null! as number);
+
+// Union
+expectType<Subtract<10, 1 | 2>>({} as 9 | 8);
+expectType<Subtract<10 | 5, 1>>({} as 9 | 4);
+expectType<Subtract<10 | 5, 1 | 2>>({} as 9 | 8 | 4 | 3);
