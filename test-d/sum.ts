@@ -18,3 +18,8 @@ expectType<Sum<number, 1>>(null! as number);
 expectType<Sum<1, number>>(null! as number);
 expectType<Sum<number, number>>(null! as number);
 expectType<Sum<number, PositiveInfinity>>(null! as number);
+
+// Union
+expectType<Sum<1, 2 | 3>>({} as 3 | 4);
+expectType<Sum<1 | 2, 3>>({} as 4 | 5);
+expectType<Sum<1 | 2 | 3, 4 | 5>>({} as 5 | 6 | 7 | 8);
