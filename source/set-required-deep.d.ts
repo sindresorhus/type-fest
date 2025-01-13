@@ -32,6 +32,10 @@ type SomeRequiredDeep = SetRequiredDeep<Foo, 'a' | `c.${number}.d`>;
 // 		d: number // Is now required
 // 	}[]
 // }
+
+// Set specific indices in an array to be required.
+type ArrayExample = SetRequiredDeep<{a: [number?, number?, number?]}, 'a.0' | 'a.1'>;
+//=> {a: [number, number, number?]}
 ```
 
 @category Object
