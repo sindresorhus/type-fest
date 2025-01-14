@@ -1,4 +1,4 @@
-import type {IsAny} from 'expect-type';
+import type {IsAny} from './is-any';
 import type {NonRecursiveType, StringToNumber} from './internal';
 import type {Paths} from './paths';
 import type {SetRequired} from './set-required';
