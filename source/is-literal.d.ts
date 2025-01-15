@@ -83,7 +83,7 @@ const output = capitalize('hello, world!');
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<T> = LiteralCheck<T, string>;
+export type IsStringLiteral<T> = T extends string ? {} extends Record<T, never> ? false : true : false;
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
