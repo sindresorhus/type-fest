@@ -6,7 +6,7 @@ type ReplaceOptions = {
 Represents a string with some or all matches replaced by a replacement.
 
 Use-case:
-- `snake-case-path` to `dotted.path.notation`
+- `kebab-case-path` to `dotted.path.notation`
 - Changing date/time format: `01-08-2042` → `01/08/2042`
 - Manipulation of type properties, for example, removal of prefixes
 
