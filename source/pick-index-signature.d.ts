@@ -21,7 +21,7 @@ type Example = {
 	[x: `embedded-${number}`]: string;
 
 	// These explicitly defined keys will be removed.
-	['snake-case-key']: string;
+	['kebab-case-key']: string;
 	[symbolKey]: string;
 	foo: 'bar';
 	qux?: 'baz';

@@ -15,7 +15,7 @@ type Foo = {
 };
 
 type Bar = {
-	['snake-case-key']: string;
+	['kebab-case-key']: string;
 	[symbolKey]: string;
 	foo: 'bar';
 	qux?: 'baz';
