@@ -88,7 +88,7 @@ type PostPayload = Omit<UserData, 'email'>;
 // In situations like this, `Except` works better.
 // It simply removes the `email` key while preserving all the other keys.
 type PostPayload = Except<UserData, 'email'>;
-//=> type PostPayload = { [x: string]: string; name: string; role: "admin" | "user"; }
+//=> type PostPayload = { [x: string]: string; name: string; role: 'admin' | 'user'; }
 ```
 
 @category Object
