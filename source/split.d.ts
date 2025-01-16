@@ -22,8 +22,14 @@ array = split(items, ',');
 export type Split<
 	S extends string,
 	Delimiter extends string,
+> = SplitHelper<S, Delimiter>;
+
+type SplitHelper<
+	S extends string,
+	Delimiter extends string,
+	Accumulator extends string[] = [],
 > = S extends `${infer Head}${Delimiter}${infer Tail}`
-	? [Head, ...Split<Tail, Delimiter>]
-	: S extends Delimiter
-		? []
-		: [S];
+	? SplitHelper<Tail, Delimiter, [...Accumulator, Head]>
+	: Delimiter extends ''
+		? Accumulator
+		: [...Accumulator, S];
