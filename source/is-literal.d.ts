@@ -65,6 +65,8 @@ Useful for:
 	- constraining strings to be a string literal
 	- type utilities, such as when constructing parsers and ASTs
 
+The implementation of this type is inspired by the trick mentioned in this [StackOverflow answer](https://stackoverflow.com/a/68261113/420747).
+
 @example
 ```
 import type {IsStringLiteral} from 'type-fest';
