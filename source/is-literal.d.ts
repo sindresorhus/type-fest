@@ -85,7 +85,13 @@ const output = capitalize('hello, world!');
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<T> = T extends string ? {} extends Record<T, never> ? false : true : false;
+export type IsStringLiteral<T> = T extends string
+	// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
+	// and since `{}` extends index signatures, the result becomes `false`.
+	? {} extends Record<T, never>
+		? false
+		: true
+	: false;
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
