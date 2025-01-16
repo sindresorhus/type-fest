@@ -82,6 +82,34 @@ const output = capitalize('hello, world!');
 //=> 'Hello, world!'
 ```
 
+@example
+```
+// String types with infinite set of possible values return `false`.
+
+import type {IsStringLiteral} from 'type-fest';
+
+type AllUppercaseStrings = IsStringLiteral<Uppercase<string>>;
+//=> false
+
+type StringsStartingWithOn = IsStringLiteral<`on${string}`>;
+//=> false
+
+// This behaviour is particularly useful in string manipulation utilities, as infinite string types often require separate handling.
+
+type Length<S extends string, Counter extends never[] = []> =
+	IsStringLiteral<S> extends false
+		? number // return `number` for infinite string types
+		: S extends `${string}${infer Tail}`
+			? Length<Tail, [...Counter, never]>
+			: Counter['length'];
+
+type L1 = Length<Lowercase<string>>;
+//=> number
+
+type L2 = Length<`${number}`>;
+//=> number
+```
+
 @category Type Guard
 @category Utilities
 */
