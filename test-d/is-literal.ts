@@ -79,6 +79,10 @@ expectType<IsStringLiteral<Uppercase<string> | 'abc'>>({} as boolean);
 expectType<IsStringLiteral<Lowercase<string> | 'Abc'>>({} as boolean);
 expectType<IsStringLiteral<null | '1' | '2' | '3'>>({} as boolean);
 
+// Boundary types
+expectType<IsStringLiteral<any>>(false);
+expectType<IsStringLiteral<never>>(false);
+
 expectType<IsNumericLiteral<typeof numberLiteral>>(true);
 expectType<IsNumericLiteral<typeof bigintLiteral>>(true);
 expectType<IsNumericLiteral<typeof _number>>(false);

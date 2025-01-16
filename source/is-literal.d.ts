@@ -2,6 +2,7 @@ import type {Primitive} from './primitive';
 import type {Numeric} from './numeric';
 import type {IsNotFalse, IsPrimitive} from './internal';
 import type {IsNever} from './is-never';
+import type {IfNever} from './if-never';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.
@@ -113,13 +114,14 @@ type L2 = Length<`${number}`>;
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<T> = T extends string
-	// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
-	// and since `{}` extends index signatures, the result becomes `false`.
+export type IsStringLiteral<T> = IfNever<T, false,
+// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
+// and since `{}` extends index signatures, the result becomes `false`.
+T extends string
 	? {} extends Record<T, never>
 		? false
 		: true
-	: false;
+	: false>;
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
