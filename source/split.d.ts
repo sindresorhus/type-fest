@@ -24,7 +24,7 @@ export type Split<
 	Delimiter extends string,
 > = SplitHelper<S, Delimiter>;
 
-export type SplitHelper<
+type SplitHelper<
 	S extends string,
 	Delimiter extends string,
 	Accumulator extends string[] = [],
