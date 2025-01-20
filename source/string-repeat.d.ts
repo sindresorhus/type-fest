@@ -1,5 +1,5 @@
+import type {IsNumericLiteral} from './is-literal';
 import type {IsNegative} from './numeric';
-import type {Subtract} from './subtract';
 
 /**
 Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
@@ -28,16 +28,20 @@ stringRepeat('=', 3);
 export type StringRepeat<
 	Input extends string,
 	Count extends number,
-> = number extends Count
-	? Input extends ''
-		? ''
-		: string
-	: IsNegative<Count> extends true
+> = StringRepeatHelper<Input, Count>;
+
+type StringRepeatHelper<
+	Input extends string,
+	Count extends number,
+	Counter extends never[] = [],
+	Accumulator extends string = '',
+> =
+	IsNegative<Count> extends true
 		? never
-		: Count extends 0
+		: Input extends ''
 			? ''
-			: string extends Input
-				? string
-				: StringRepeat<Input, Subtract<Count, 1>> extends infer R extends string
-					? `${Input}${R}`
-					: never;
+			: Count extends Counter['length']
+				? Accumulator
+				: IsNumericLiteral<Count> extends false
+					? string
+					: StringRepeatHelper<Input, Count, [...Counter, never], `${Accumulator}${Input}`>;
