@@ -43,7 +43,7 @@ export type SetRequired<BaseType, Keys extends keyof BaseType> =
 		// Pick just the keys that are optional from the base type.
 		Except<BaseType, Keys> &
 		// Pick the keys that should be required from the base type and make them required.
-		Required<HomomorphicPick<BaseType, Keys & KeysOfUnion<BaseType>>>
+		Required<HomomorphicPick<BaseType, Keys>>
 		>;
 
 /**
