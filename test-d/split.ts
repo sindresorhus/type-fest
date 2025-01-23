@@ -43,6 +43,24 @@ expectType<
 	)
 );
 
+// Split non-literal string by literal string.
+expectType<string[]>(split(null! as string, "foobar"))
+
+// Split non-literal string by non-literal string.
+expectType<string[]>(split(null! as string, null! as string))
+
+// Split literal string by non-literal string.
+expectType<
+	| ['ABCDEF']
+	| ['', '']
+	| ['', 'F'] | ['A', '']
+	| ['', 'EF'] | ['A', 'F'] | ['AB', '']
+	| ['', 'DEF'] | ['A', 'EF'] | ['AB', 'F'] | ['ABC', '']
+	| ['', 'CDEF'] | ['A', 'DEF'] | ['AB', 'EF'] | ['ABC', 'F'] | ['ABCD', '']
+	| ['', 'BCDEF'] | ['A', 'CDEF'] | ['AB', 'DEF'] | ['ABC', 'EF'] | ['ABCD', 'F'] | ['ABCDE', '']
+	| ['A', 'B', 'C', 'D', 'E', 'F']
+>(split("ABCDEF", null! as string))
+
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 const fiftyZeroes = '00000000000000000000000000000000000000000000000000';
 expectType<BuildTuple<50, '0'>>(split(fiftyZeroes, ''));
