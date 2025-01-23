@@ -26,10 +26,12 @@ export type Split<
 
 type SplitHelper<
 	S extends string,
-	Delimiter extends string,
+	_Delimiter extends string,
 	Accumulator extends string[] = [],
-> = S extends `${infer Head}${Delimiter}${infer Tail}`
-	? SplitHelper<Tail, Delimiter, [...Accumulator, Head]>
-	: Delimiter extends ''
-		? Accumulator
-		: [...Accumulator, S];
+> = _Delimiter extends infer Delimiter extends string
+	? S extends `${infer Head}${Delimiter}${infer Tail}`
+		? SplitHelper<Tail, Delimiter, [...Accumulator, Head]>
+		: Delimiter extends ''
+			? Accumulator
+			: [...Accumulator, S]
+	: never;

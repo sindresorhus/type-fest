@@ -30,6 +30,19 @@ expectType<[]>(split('', ''));
 // Split empty string by any string.
 expectType<['']>(split('', ' '));
 
+// String union split.
+expectType<
+	| ['A', 'B.CD.E', 'FG.HI', 'J.K', 'L']
+	| ['A,B', 'CD', 'E,FG', 'HI,J', 'K,L']
+	| ['L', 'K.J', 'IH.GF', 'E.DC.B', 'A']
+	| ['L,K', 'J,IH', 'GF,E', 'DC', 'B,A']
+>(
+	split(
+		'A,B.CD.E,FG.HI,J.K,L' as 'A,B.CD.E,FG.HI,J.K,L' | 'L,K.J,IH.GF,E.DC.B,A',
+		',' as ',' | '.'
+	)
+);
+
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 const fiftyZeroes = '00000000000000000000000000000000000000000000000000';
 expectType<BuildTuple<50, '0'>>(split(fiftyZeroes, ''));
