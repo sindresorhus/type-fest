@@ -1,7 +1,5 @@
 import type {NegativeInfinity, PositiveInfinity} from '../numeric';
 import type {Trim} from '../trim';
-import type {StringSlice} from '../string-slice';
-import type {ArrayTail} from '../array-tail';
 import type {Whitespace} from './characters';
 import type {BuildTuple} from './tuple';
 
@@ -210,50 +208,3 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 			: false
 		: never
 	: never;
-
-/**
-Returns an array made by picking up a total of `SliceLength` substrings of `Str` whose length is `SliceLength`.
-
-Parameters `SliceLength` and `SliceCount` should be passed as a tuple with the number in length instead of the number itself.
-In addition, the sum of them should equal to the length of `Str` plus 1.
-
-@example
-```
-StringSliceSequence<'ABCDEF', [unknown, unknown, unknown], [unknown, unknown, unknown, unknown]>;
-//=> ['ABC', 'BCD', 'CDE', 'DEF']
-```
- */
-type StringSliceSequence<
-	SourceString extends string,
-	SliceLength extends unknown[],
-	SliceCount extends unknown[],
-	Accumulator extends unknown[] = [],
-> = Accumulator['length'] extends SliceCount['length']
-	? Accumulator
-	: StringSliceSequence<SourceString, SliceLength, SliceCount, [...Accumulator, StringSlice<SourceString, Accumulator['length'], [...Accumulator, ...SliceLength]['length']>]>;
-
-type SubstringsHelper<
-	SourceString extends string,
-	SourceStringLength extends number = StringLength<SourceString>,
-	CurrentSliceCount extends unknown[] = [unknown],
-	CurrentSliceLength extends unknown[] = BuildTuple<SourceStringLength>,
-> = CurrentSliceLength extends [] ? [''] : [
-	...StringSliceSequence<SourceString, CurrentSliceLength, CurrentSliceCount>,
-	...SubstringsHelper<SourceString, SourceStringLength, [...CurrentSliceCount, unknown], ArrayTail<CurrentSliceLength>>,
-];
-
-/**
-Returns an array of all substrings of `Str`
-
-@example
-```
-Substrings<'ABCDEF'>;
-//=> ['ABCDEF', 'ABCDE', 'BCDEF', 'ABCD', 'BCDE', 'CDEF', 'ABC', 'BCD', 'CDE', 'DEF', 'AB', 'BC', 'CD', 'DE', 'EF', 'A', 'B', 'C', 'D', 'E', 'F', '']
-```
-@category String
- */
-export type Substrings<SourceString extends string> = string extends SourceString
-	? string[]
-	: SourceString extends infer SouceString_ extends string
-		? SubstringsHelper<SouceString_>
-		: never;
