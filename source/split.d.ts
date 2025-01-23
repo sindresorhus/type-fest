@@ -24,18 +24,18 @@ array = split(items, ',');
 export type Split<
 	S extends string,
 	Delimiter extends string,
-> = IsStringLiteral<S | Delimiter> extends true
-	? SplitHelper<S, Delimiter>
-	: string[];
+> = SplitHelper<S, Delimiter>;
 
 type SplitHelper<
 	S extends string,
 	_Delimiter extends string,
 	Accumulator extends string[] = [],
-> = _Delimiter extends infer Delimiter extends string
-	? S extends `${infer Head}${Delimiter}${infer Tail}`
-		? SplitHelper<Tail, Delimiter, [...Accumulator, Head]>
-		: Delimiter extends ''
-			? Accumulator
-			: [...Accumulator, S]
-	: never;
+> = IsStringLiteral<S | _Delimiter> extends true
+	? _Delimiter extends infer Delimiter extends string
+		? S extends `${infer Head}${Delimiter}${infer Tail}`
+			? SplitHelper<Tail, Delimiter, [...Accumulator, Head]>
+			: Delimiter extends ''
+				? Accumulator
+				: [...Accumulator, S]
+		: never
+	: string[];
