@@ -1,9 +1,9 @@
 import type {NegativeInfinity, PositiveInfinity} from '../numeric';
 import type {Trim} from '../trim';
+import type {StringSlice} from '../string-slice';
+import type {ArrayTail} from '../array-tail';
 import type {Whitespace} from './characters';
 import type {BuildTuple} from './tuple';
-import type {StringSlice} from '../string-slice'
-import type {ArrayTail} from '../array-tail';
 
 /**
 Return a string representation of the given string or number.
@@ -224,23 +224,23 @@ StringSliceSequence<'ABCDEF', [unknown, unknown, unknown], [unknown, unknown, un
 ```
  */
 type StringSliceSequence<
-	Str extends string,
+	SourceString extends string,
 	SliceLength extends unknown[],
 	SliceCount extends unknown[],
-	Acc extends unknown[] = [],
-> = Acc['length'] extends SliceCount['length']
-	? Acc
-	: StringSliceSequence<Str, SliceLength, SliceCount, [...Acc, StringSlice<Str, Acc['length'], [...Acc, ...SliceLength]['length']>]>
+	Accumulator extends unknown[] = [],
+> = Accumulator['length'] extends SliceCount['length']
+	? Accumulator
+	: StringSliceSequence<SourceString, SliceLength, SliceCount, [...Accumulator, StringSlice<SourceString, Accumulator['length'], [...Accumulator, ...SliceLength]['length']>]>;
 
 type SubstringsHelper<
-	Str extends string,
-	StrLength extends number = StringLength<Str>,
+	SourceString extends string,
+	SourceStringLength extends number = StringLength<SourceString>,
 	CurrentSliceCount extends unknown[] = [unknown],
-	CurrentSliceLength extends unknown[] = BuildTuple<StrLength>,
+	CurrentSliceLength extends unknown[] = BuildTuple<SourceStringLength>,
 > = CurrentSliceLength extends [] ? [''] : [
-	...StringSliceSequence<Str, CurrentSliceLength, CurrentSliceCount>,
-	...SubstringsHelper<Str, StrLength, [...CurrentSliceCount, unknown], ArrayTail<CurrentSliceLength>>,
-]
+	...StringSliceSequence<SourceString, CurrentSliceLength, CurrentSliceCount>,
+	...SubstringsHelper<SourceString, SourceStringLength, [...CurrentSliceCount, unknown], ArrayTail<CurrentSliceLength>>,
+];
 
 /**
 Returns an array of all substrings of `Str`
@@ -252,8 +252,8 @@ Substrings<'ABCDEF'>;
 ```
 @category String
  */
-export type Substrings<Str extends string> = string extends Str
+export type Substrings<SourceString extends string> = string extends SourceString
 	? string[]
-	: Str extends infer Str_ extends string
-		? SubstringsHelper<Str_>
-		: never
+	: SourceString extends infer SouceString_ extends string
+		? SubstringsHelper<SouceString_>
+		: never;

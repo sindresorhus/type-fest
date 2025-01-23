@@ -1,6 +1,7 @@
 import {expectType} from 'tsd';
 import type {Substrings} from '../../source/internal';
 
+/* eslint-disable array-element-newline */
 expectType<Substrings<'ABCDEF'>>([
 	'ABCDEF',
 	'ABCDE', 'BCDEF',
@@ -9,6 +10,7 @@ expectType<Substrings<'ABCDEF'>>([
 	'AB', 'BC', 'CD', 'DE', 'EF',
 	'A', 'B', 'C', 'D', 'E', 'F',
 	'',
-])
-expectType<Substrings<''>>([''])
-expectType<Substrings<string>>(null! as string[])
+]);
+/* eslint-enable array-element-newline */
+expectType<Substrings<''>>(['']);
+expectType<Substrings<string>>(null! as string[]);

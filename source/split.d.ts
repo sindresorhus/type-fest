@@ -1,5 +1,5 @@
-import {ArrayValues} from './array-values';
-import {Substrings} from './internal';
+import type {ArrayValues} from './array-values';
+import type {Substrings} from './internal';
 /**
 Represents an array of strings split using a given character or character set.
 
@@ -29,7 +29,6 @@ export type Split<
 	: string extends Delimiter
 		? [S] | SplitHelper<S, ArrayValues<Substrings<S>>>
 		: SplitHelper<S, Delimiter>;
-
 
 type SplitHelper<
 	S extends string,
