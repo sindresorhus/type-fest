@@ -45,21 +45,15 @@ expectType<
 
 // Split non-literal string by literal string.
 expectType<string[]>(split(null! as string, 'foobar'));
+expectType<string[]>(split(null! as Uppercase<string>, 'foobar'));
 
 // Split non-literal string by non-literal string.
 expectType<string[]>(split(null! as string, null! as string));
+expectType<string[]>(split(null! as `pre${string}`, null! as `${number}`));
 
 // Split literal string by non-literal string.
-expectType<
-| ['ABCDEF']
-| ['', '']
-| ['', 'F'] | ['A', '']
-| ['', 'EF'] | ['A', 'F'] | ['AB', '']
-| ['', 'DEF'] | ['A', 'EF'] | ['AB', 'F'] | ['ABC', '']
-| ['', 'CDEF'] | ['A', 'DEF'] | ['AB', 'EF'] | ['ABC', 'F'] | ['ABCD', '']
-| ['', 'BCDEF'] | ['A', 'CDEF'] | ['AB', 'DEF'] | ['ABC', 'EF'] | ['ABCD', 'F'] | ['ABCDE', '']
-| ['A', 'B', 'C', 'D', 'E', 'F']
->(split('ABCDEF', null! as string));
+expectType<string[]>(split('ABCDEF', null! as string));
+expectType<string[]>(split('ABCDEF', null! as Capitalize<string>));
 
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 const fiftyZeroes = '00000000000000000000000000000000000000000000000000';

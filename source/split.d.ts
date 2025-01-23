@@ -1,5 +1,5 @@
-import type {ArrayValues} from './array-values';
-import type {Substrings} from './internal';
+import type {IsStringLiteral} from './is-literal';
+
 /**
 Represents an array of strings split using a given character or character set.
 
@@ -24,11 +24,9 @@ array = split(items, ',');
 export type Split<
 	S extends string,
 	Delimiter extends string,
-> = string extends S
-	? string[]
-	: string extends Delimiter
-		? [S] | SplitHelper<S, ArrayValues<Substrings<S>>>
-		: SplitHelper<S, Delimiter>;
+> = IsStringLiteral<S | Delimiter> extends true
+	? SplitHelper<S, Delimiter>
+	: string[];
 
 type SplitHelper<
 	S extends string,
