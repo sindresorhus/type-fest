@@ -2,6 +2,8 @@ import type {NegativeInfinity, PositiveInfinity} from '../numeric';
 import type {Trim} from '../trim';
 import type {Whitespace} from './characters';
 import type {BuildTuple} from './tuple';
+import type {StringSlice} from '../string-slice'
+import type {ArrayTail} from '../array-tail';
 
 /**
 Return a string representation of the given string or number.
@@ -208,3 +210,50 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 			: false
 		: never
 	: never;
+
+/**
+Returns an array made by picking up a total of `SliceLength` substrings of `Str` whose length is `SliceLength`.
+
+Parameters `SliceLength` and `SliceCount` should be passed as a tuple with the number in length instead of the number itself.
+In addition, the sum of them should equal to the length of `Str` plus 1.
+
+@example
+```
+StringSliceSequence<'ABCDEF', [unknown, unknown, unknown], [unknown, unknown, unknown, unknown]>;
+//=> ['ABC', 'BCD', 'CDE', 'DEF']
+```
+ */
+type StringSliceSequence<
+	Str extends string,
+	SliceLength extends unknown[],
+	SliceCount extends unknown[],
+	Acc extends unknown[] = [],
+> = Acc['length'] extends SliceCount['length']
+	? Acc
+	: StringSliceSequence<Str, SliceLength, SliceCount, [...Acc, StringSlice<Str, Acc['length'], [...Acc, ...SliceLength]['length']>]>
+
+type SubstringsHelper<
+	Str extends string,
+	StrLength extends number = StringLength<Str>,
+	CurrentSliceCount extends unknown[] = [unknown],
+	CurrentSliceLength extends unknown[] = BuildTuple<StrLength>,
+> = CurrentSliceLength extends [] ? [''] : [
+	...StringSliceSequence<Str, CurrentSliceLength, CurrentSliceCount>,
+	...SubstringsHelper<Str, StrLength, [...CurrentSliceCount, unknown], ArrayTail<CurrentSliceLength>>,
+]
+
+/**
+Returns an array of all substrings of `Str`
+
+@example
+```
+Substrings<'ABCDEF'>;
+//=> ['ABCDEF', 'ABCDE', 'BCDEF', 'ABCD', 'BCDE', 'CDEF', 'ABC', 'BCD', 'CDE', 'DEF', 'AB', 'BC', 'CD', 'DE', 'EF', 'A', 'B', 'C', 'D', 'E', 'F', '']
+```
+@category String
+ */
+export type Substrings<Str extends string> = string extends Str
+	? string[]
+	: Str extends infer Str_ extends string
+		? SubstringsHelper<Str_>
+		: never
