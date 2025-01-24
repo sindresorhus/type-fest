@@ -35,27 +35,27 @@ export type Split<
 	S extends string,
 	Delimiter extends string,
 	Options extends {strictLiteralChecks: boolean} = {strictLiteralChecks: false},
-> = IsBooleanLiteral<Options['strictLiteralChecks']> extends true
-	? SplitHelper<S, Delimiter, Options>
-	: never;
+> = SplitHelper<S, Delimiter, Options>;
 
 type SplitHelper<
 	S extends string,
 	_Delimiter extends string,
 	Options extends {strictLiteralChecks: boolean},
 	Accumulator extends string[] = [],
-> = (
-	Options['strictLiteralChecks'] extends true
-		? IsStringLiteral<S>
-		: IsAssignableToTemplateLiteral<S>
-) extends true
-	? IsStringLiteral<_Delimiter> extends true
-		? _Delimiter extends infer Delimiter extends string
-			? S extends `${infer Head}${Delimiter}${infer Tail}`
-				? SplitHelper<Tail, Delimiter, Options, [...Accumulator, Head]>
-				: Delimiter extends ''
-					? Accumulator
-					: [...Accumulator, S]
-			: never
+> = IsBooleanLiteral<Options['strictLiteralChecks']> extends true
+	? (
+		Options['strictLiteralChecks'] extends true
+			? IsStringLiteral<S>
+			: IsAssignableToTemplateLiteral<S>
+	) extends true
+		? IsStringLiteral<_Delimiter> extends true
+			? _Delimiter extends infer Delimiter extends string
+				? S extends `${infer Head}${Delimiter}${infer Tail}`
+					? SplitHelper<Tail, Delimiter, Options, [...Accumulator, Head]>
+					: Delimiter extends ''
+						? Accumulator
+						: [...Accumulator, S]
+				: never
+			: string[]
 		: string[]
-	: string[];
+	: never;
