@@ -5,7 +5,7 @@ import type {BuildTuple} from '../source/internal';
 declare function split<
 	S extends string,
 	Delimiter extends string,
-	Options extends {strictLiteralChecks: boolean},
+	Options extends {strictLiteralChecks: boolean} = {strictLiteralChecks: false},
 >(string: S, separator: Delimiter, options?: Options): Split<S, Delimiter, Options>;
 
 const items = 'foo,bar,baz,waldo';
