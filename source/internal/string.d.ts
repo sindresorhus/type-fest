@@ -237,4 +237,4 @@ IsAssignableToTemplateLiteral<Capitalize<string>>;
 @category String
 @category Template literal
 */
-type IsAssignableToTemplateLiteral<S extends string> = S extends `${infer _}` ? true : false;
+export type IsAssignableToTemplateLiteral<S extends string> = S extends `${infer _}` ? true : false;
