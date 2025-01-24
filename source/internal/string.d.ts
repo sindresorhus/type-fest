@@ -210,7 +210,7 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 	: never;
 
 /**
-Returns a boolean for whether `S` is a template literal type.
+Returns a boolean for whether `S` is assignable to template literal types.
 
 @example
 ```
