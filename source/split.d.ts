@@ -39,7 +39,7 @@ export type Split<
 
 type SplitHelper<
 	S extends string,
-	_Delimiter extends string,
+	Delimiter extends string,
 	Options extends {strictLiteralChecks: boolean},
 	Accumulator extends string[] = [],
 > = IsBooleanLiteral<Options['strictLiteralChecks']> extends true
@@ -48,8 +48,8 @@ type SplitHelper<
 			? IsStringLiteral<S>
 			: IsAssignableToTemplateLiteral<S>
 	) extends true
-		? IsStringLiteral<_Delimiter> extends true
-			? _Delimiter extends infer Delimiter extends string
+		? IsStringLiteral<Delimiter> extends true
+			? Delimiter extends Delimiter
 				? S extends `${infer Head}${Delimiter}${infer Tail}`
 					? SplitHelper<Tail, Delimiter, Options, [...Accumulator, Head]>
 					: Delimiter extends ''
