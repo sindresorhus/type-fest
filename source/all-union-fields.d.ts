@@ -50,8 +50,8 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 	// {
 	// 	name: string;
 	// 	type: 'cat' | 'dog';
-	//  catType?: string;
-	//  dogType?: string;
+	// 	catType?: string;
+	// 	dogType?: string;
 	// }
 
 	console.log('name: ', petInfo.name);
