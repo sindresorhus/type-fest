@@ -1,5 +1,6 @@
 import type {Simplify} from '../simplify';
 import type {UnknownArray} from '../unknown-array';
+import type {IsEqual} from '../is-equal';
 import type {KeysOfUnion} from '../keys-of-union';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys';
 import type {NonRecursiveType} from './type';
@@ -122,3 +123,39 @@ type IndexSignature = HomomorphicPick<{[k: string]: unknown}, number>;
 export type HomomorphicPick<T, Keys extends KeysOfUnion<T>> = {
 	[P in keyof T as Extract<P, Keys>]: T[P]
 };
+
+/**
+Extract all possible values for a given key from a union of object types.
+
+@example
+```
+type Statuses = ValueOfUnion<{ id: 1, status: "open" } | { id: 2, status: "closed" }, "status">;
+//=> "open" | "closed"
+```
+*/
+export type ValueOfUnion<Union, Key extends KeysOfUnion<Union>> =
+	Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
+
+/**
+Extract all readonly keys from a union of object types.
+
+@example
+```
+type User = {
+		readonly id: string;
+		name: string;
+};
+
+type Post = {
+		readonly id: string;
+		readonly author: string;
+		body: string;
+};
+
+type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
+//=> "id" | "author"
+```
+*/
+export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
+	[Key in keyof Union as IsEqual<{[K in Key]: Union[Key]}, {readonly [K in Key]: Union[Key]}> extends true ? Key : never]: never
+} : never;
