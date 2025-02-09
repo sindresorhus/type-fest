@@ -69,7 +69,15 @@
 				"error",
 				"prefer-top-level"
 			]
-		}
+		},
+		"overrides": [
+			{
+				"files": "source/*.d.ts",
+				"rules": {
+					"no-restricted-imports": ["error", "tsd", "expect-type"]
+				}
+			}
+		]
 	},
 	"tsd": {
 		"compilerOptions": {
