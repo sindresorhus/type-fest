@@ -1,4 +1,3 @@
-import type {UnionToTuple} from 'expect-type';
 import type {ArraySplice} from './array-splice';
 import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToString} from './internal';
 import type {IsEqual} from './is-equal';
@@ -6,6 +5,7 @@ import type {IsNever} from './is-never';
 import type {LiteralUnion} from './literal-union';
 import type {Paths} from './paths';
 import type {SimplifyDeep} from './simplify-deep';
+import type {UnionToTuple} from './union-to-tuple';
 import type {UnknownArray} from './unknown-array';
 
 /**
