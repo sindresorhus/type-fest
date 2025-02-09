@@ -89,7 +89,7 @@ export type PathsOptions = {
 	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
 	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
 	```
-	 */
+	*/
 	leavesOnly?: boolean;
 };
 
