@@ -147,6 +147,8 @@ type RecursionArrayPaths = Paths<RecursionArray, {bracketNotation: true; maxRecu
 expectAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}]`);
 expectNotAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}][${number}]`);
 
+// -- leavesOnly option --
+
 declare const leaves: Paths<{a: {b: string; c?: Date; d: (x: string) => number; e: Map<string, string>; f?: {g?: Set<string>}}; h: boolean}, {leavesOnly: true}>;
 expectType<'a.b' | 'a.c' | 'a.d' | 'a.e' | 'a.f.g' | 'h'>(leaves);
 
