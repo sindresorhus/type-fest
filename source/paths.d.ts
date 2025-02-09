@@ -50,11 +50,53 @@ export type PathsOptions = {
 	```
 	*/
 	bracketNotation?: boolean;
+
+	/**
+	Only include leaf paths in the output.
+
+	@default false
+
+	@example
+	```
+	type Post = {
+		id: number;
+		author: {
+			id: number;
+			name: {
+				first: string;
+				last: string;
+			};
+		};
+	};
+
+	type AllPaths = Paths<Post, {leavesOnly: false}>;
+	//=> 'id' | 'author' | 'author.id' | 'author.name' | 'author.name.first' | 'author.name.last'
+
+	type LeafPaths = Paths<Post, {leavesOnly: true}>;
+	//=> 'id' | 'author.id' | 'author.name.first' | 'author.name.last'
+	```
+
+	@example
+	```
+	type ArrayExample = {
+		array: Array<{foo: string}>;
+		tuple: [string, {bar: string}];
+	};
+
+	type AllPaths = Paths<ArrayExample, {leavesOnly: false}>;
+	//=> 'array' | `array.${number}` | `array.${number}.foo` | 'tuple' | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
+
+	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
+	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
+	```
+	*/
+	leavesOnly?: boolean;
 };
 
 type DefaultPathsOptions = {
 	maxRecursionDepth: 10;
 	bracketNotation: false;
+	leavesOnly: false;
 };
 
 /**
@@ -103,6 +145,8 @@ export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
 	maxRecursionDepth: Options['maxRecursionDepth'] extends number ? Options['maxRecursionDepth'] : DefaultPathsOptions['maxRecursionDepth'];
 	// Set default bracketNotation to false
 	bracketNotation: Options['bracketNotation'] extends boolean ? Options['bracketNotation'] : DefaultPathsOptions['bracketNotation'];
+	// Set default leavesOnly to false
+	leavesOnly: Options['leavesOnly'] extends boolean ? Options['leavesOnly'] : DefaultPathsOptions['leavesOnly'];
 }>;
 
 type _Paths<T, Options extends Required<PathsOptions>> =
@@ -142,11 +186,17 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 						) extends infer TranformedKey extends string | number ?
 						// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
 						// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
-							| TranformedKey
+							| (Options['leavesOnly'] extends true
+								? MaxDepth extends 0
+									? TranformedKey
+									: T[Key] extends EmptyObject | readonly [] | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+										? TranformedKey
+										: never
+								: TranformedKey)
 							| (
 								// Recursively generate paths for the current key
 								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
-									? _Paths<T[Key], {bracketNotation: Options['bracketNotation']; maxRecursionDepth: Subtract<MaxDepth, 1>}> extends infer SubPath
+									? _Paths<T[Key], {bracketNotation: Options['bracketNotation']; maxRecursionDepth: Subtract<MaxDepth, 1>; leavesOnly: Options['leavesOnly']}> extends infer SubPath
 										? SubPath extends string | number
 											? (
 												Options['bracketNotation'] extends true

@@ -146,3 +146,86 @@ type RecursionArray = RecursionArray[];
 type RecursionArrayPaths = Paths<RecursionArray, {bracketNotation: true; maxRecursionDepth: 3}>;
 expectAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}]`);
 expectNotAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}][${number}]`);
+
+// -- leavesOnly option --
+
+declare const leaves: Paths<{a: {b: string; c?: Date; d: (x: string) => number; e: Map<string, string>; f?: {g?: Set<string>}}; h: boolean}, {leavesOnly: true}>;
+expectType<'a.b' | 'a.c' | 'a.d' | 'a.e' | 'a.f.g' | 'h'>(leaves);
+
+declare const unionLeaves: Paths<{a: {b?: number}} | {a: string; b?: {c: string}}, {leavesOnly: true}>;
+expectType<'a.b' | 'a' | 'b.c'>(unionLeaves);
+
+declare const emptyObjectLeaves: Paths<{a: {}}, {leavesOnly: true}>;
+expectType<'a'>(emptyObjectLeaves);
+
+declare const emptyArrayLeaves: Paths<{a: []}, {leavesOnly: true}>;
+expectType<'a'>(emptyArrayLeaves);
+
+declare const readonlyEmptyArrayLeaves: Paths<{a: readonly []}, {leavesOnly: true}>;
+expectType<'a'>(readonlyEmptyArrayLeaves);
+
+declare const arrayLeaves: Paths<string[], {leavesOnly: true}>;
+expectType<number | `${number}`>(arrayLeaves);
+
+declare const tupleLeaves: Paths<[string, number?], {leavesOnly: true}>;
+expectType<'0' | '1'>(tupleLeaves);
+
+declare const objectArrayLeaves: Paths<Array<{a: number}>, {leavesOnly: true}>;
+expectType<`${number}.a`>(objectArrayLeaves);
+
+declare const objectTupleLeaves: Paths<readonly [{a?: number}?], {leavesOnly: true}>;
+expectType<'0.a'>(objectTupleLeaves);
+
+declare const deepArrayLeaves: Paths<{a?: {b: readonly string[]}; c: boolean[]}, {leavesOnly: true}>;
+expectType<`a.b.${number}` | `c.${number}`>(deepArrayLeaves);
+
+declare const deepTupleLeaves: Paths<{a: {b: [string, number]}}, {leavesOnly: true}>;
+expectType<'a.b.0' | 'a.b.1'>(deepTupleLeaves);
+
+declare const deepObjectArrayLeaves: Paths<{a: {b: ReadonlyArray<{readonly c?: number; d: string}>}}, {leavesOnly: true}>;
+expectType<`a.b.${number}.c` | `a.b.${number}.d`>(deepObjectArrayLeaves);
+
+declare const deepObjectTupleLeaves: Paths<{a: {readonly b: [{readonly c: string}, {d?: number}]}}, {leavesOnly: true}>;
+expectType<'a.b.0.c' | 'a.b.1.d'>(deepObjectTupleLeaves);
+
+declare const nestedArrayLeaves: Paths<{a?: Array<Array<Array<{b: string}>>>}, {leavesOnly: true}>;
+expectType<`a.${number}.${number}.${number}.b`>(nestedArrayLeaves);
+
+declare const nestedTupleLeaves: Paths<{a: [[[{b: string}]]?]}, {leavesOnly: true}>;
+expectType<'a.0.0.0.b'>(nestedTupleLeaves);
+
+declare const trailingSpreadLeaves: Paths<[{a: string}, ...Array<{b: number}>], {leavesOnly: true}>;
+expectType<'0.a' | `${number}.b`>(trailingSpreadLeaves);
+
+declare const trailingSpreadLeaves1: Paths<[{a: string}, {b: number}, ...Array<{c?: number}>], {leavesOnly: true}>;
+expectType<'0.a' | '1.b' | `${number}.c`>(trailingSpreadLeaves1);
+
+declare const leadingSpreadLeaves: Paths<[...Array<{a?: string}>, {readonly b: number}], {leavesOnly: true}>;
+expectType<`${number}.a` | `${number}.b`>(leadingSpreadLeaves);
+
+declare const leadingSpreadLeaves1: Paths<[...Array<{a?: string}>, {readonly b: number}, {c: number}], {leavesOnly: true}>;
+expectType<`${number}.a` | `${number}.b` | `${number}.c`>(leadingSpreadLeaves1);
+
+declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true}>;
+expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveLeaves);
+
+declare const recursiveWithDepthLeaves: Paths<RecursiveFoo, {maxRecursionDepth: 0; leavesOnly: true}>;
+expectType<'foo'>(recursiveWithDepthLeaves);
+
+declare const recursiveWithDepthLeaves1: Paths<RecursiveFoo, {maxRecursionDepth: 1; leavesOnly: true}>;
+expectType<'foo.foo'>(recursiveWithDepthLeaves1);
+
+declare const recursiveArrayLeaves: Paths<RecursionArray, {bracketNotation: true; maxRecursionDepth: 2; leavesOnly: true}>;
+expectType<`[${number}][${number}][${number}]`>(recursiveArrayLeaves);
+
+declare const bracketArrayLeaves: Paths<{a: Array<{b: string; c?: string}>}, {bracketNotation: true; leavesOnly: true}>;
+expectType<`a[${number}].b` | `a[${number}].c`>(bracketArrayLeaves);
+
+declare const bracketTupleLeaves: Paths<{a: [{b?: string}, {c: string}]}, {bracketNotation: true; leavesOnly: true}>;
+expectType<'a[0].b' | 'a[1].c'>(bracketTupleLeaves);
+
+declare const bracketNumericLeaves: Paths<{a: {1: string; 2: number}}, {bracketNotation: true; leavesOnly: true}>;
+expectType<'a[1]' | 'a[2]'>(bracketNumericLeaves);
+
+declare const bracketNestedArrayLeaves: Paths<{a: Array<Array<Array<{b: string}>>>}, {bracketNotation: true; leavesOnly: true}>;
+expectType<`a[${number}][${number}][${number}].b`>(bracketNestedArrayLeaves);
