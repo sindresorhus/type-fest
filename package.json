@@ -72,7 +72,7 @@
 		},
 		"overrides": [
 			{
-				"files": "source/*.d.ts",
+				"files": "**/*.d.ts",
 				"rules": {
 					"no-restricted-imports": [
 						"error",
