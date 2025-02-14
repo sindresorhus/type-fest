@@ -93,7 +93,7 @@ export type PathsOptions = {
 	leavesOnly?: boolean;
 
 	/**
-	Only include paths at the specified depth. By default all paths up to `maxRecursionDepth` are included.
+	Only include paths at the specified depth. By default all paths up to {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} are included.
 
 	Note: Depth starts at `0` for root properties.
 
