@@ -120,6 +120,9 @@ export type PathsOptions = {
 
 	type DepthTwo = Paths<Post, {depth: 2}>;
 	//=> 'author.name.first' | 'author.name.last'
+
+	type LeavesAtDepthOne = Paths<Post, {leavesOnly: true; depth: 1}>;
+	//=> 'author.id'
 	```
 	*/
 	depth?: number;
