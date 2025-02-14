@@ -209,11 +209,11 @@ expectType<`${number}.a` | `${number}.b` | `${number}.c`>(leadingSpreadLeaves1);
 declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true}>;
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveLeaves);
 
-declare const recursiveWithDepthLeaves: Paths<RecursiveFoo, {maxRecursionDepth: 0; leavesOnly: true}>;
-expectType<'foo'>(recursiveWithDepthLeaves);
+declare const recursiveWithMaxLeaves: Paths<RecursiveFoo, {maxRecursionDepth: 0; leavesOnly: true}>;
+expectType<'foo'>(recursiveWithMaxLeaves);
 
-declare const recursiveWithDepthLeaves1: Paths<RecursiveFoo, {maxRecursionDepth: 1; leavesOnly: true}>;
-expectType<'foo.foo'>(recursiveWithDepthLeaves1);
+declare const recursiveWithMaxLeaves1: Paths<RecursiveFoo, {maxRecursionDepth: 1; leavesOnly: true}>;
+expectType<'foo.foo'>(recursiveWithMaxLeaves1);
 
 declare const recursiveArrayLeaves: Paths<RecursionArray, {bracketNotation: true; maxRecursionDepth: 2; leavesOnly: true}>;
 expectType<`[${number}][${number}][${number}]`>(recursiveArrayLeaves);
