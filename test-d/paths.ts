@@ -229,3 +229,155 @@ expectType<'a[1]' | 'a[2]'>(bracketNumericLeaves);
 
 declare const bracketNestedArrayLeaves: Paths<{a: Array<Array<Array<{b: string}>>>}, {bracketNotation: true; leavesOnly: true}>;
 expectType<`a[${number}][${number}][${number}].b`>(bracketNestedArrayLeaves);
+
+// -- depth option --
+declare const zeroDepth: Paths<DeepObject, {depth: 0}>;
+expectType<'a'>(zeroDepth);
+
+declare const oneDepth: Paths<DeepObject, {depth: 1}>;
+expectType<'a.b' | 'a.b2' | 'a.b3'>(oneDepth);
+
+declare const twoDepth: Paths<DeepObject, {depth: 2}>;
+expectType<'a.b.c' | `a.b2.${number}`>(twoDepth);
+
+declare const threeDepth: Paths<DeepObject, {depth: 3}>;
+expectType<'a.b.c.d'>(threeDepth);
+
+declare const unionDepth: Paths<{a: {readonly b?: string}} | {x: {y?: {z: number}}}, {depth: 1}>;
+expectType<'a.b' | 'x.y'>(unionDepth);
+
+declare const unionDepth2: Paths<{a?: {b: string; readonly c: {d?: string}}} | {readonly x?: {y: string}}, {depth: 2}>;
+expectType<'a.c.d'>(unionDepth2);
+
+declare const unionDepth3: Paths<DeepObject, {depth: 0 | 3}>;
+expectType<'a' | 'a.b.c.d'>(unionDepth3);
+
+declare const unionDepth4: Paths<{a?: {b: string; readonly c: {d?: [string, number]}}} | {readonly x?: {y: string}}, {depth: 1 | 3}>;
+expectType<'a.b' | 'a.c' | 'x.y' | 'a.c.d.0' | 'a.c.d.1'>(unionDepth4);
+
+declare const unionDepth5: Paths<{a: {b?: string}} | {x: {y?: {z: number}}}, {depth: 0 | 2}>;
+expectType<'a' | 'x' | 'x.y.z'>(unionDepth5);
+
+declare const unreachableDepth: Paths<DeepObject, {depth: 4}>;
+expectType<never>(unreachableDepth);
+
+declare const unreachableDepth2: Paths<{a: {}}, {depth: 1}>;
+expectType<never>(unreachableDepth2);
+
+declare const unreachableDepth3: Paths<{a: readonly []}, {depth: 1}>;
+expectType<never>(unreachableDepth3);
+
+declare const unreachableAndReachableDepth: Paths<{a: {b: string}}, {depth: 1 | 2}>;
+expectType<'a.b'>(unreachableAndReachableDepth);
+
+declare const maxLessThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 3}>;
+expectType<never>(maxLessThanDepth);
+
+declare const maxLessThanDepth2: Paths<RecursiveFoo, {depth: 12}>; // Default `maxRecursionDepth` is 10
+expectType<never>(maxLessThanDepth2);
+
+declare const maxSimilarToDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 2}>;
+expectType<'a.b.c' | `a.b2.${number}`>(maxSimilarToDepth);
+
+declare const maxSimilarToDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 0; depth: 0}>;
+expectType<'foo'>(maxSimilarToDepth2);
+
+declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10}>; // Default `maxRecursionDepth` is 10
+expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(maxSimilarToDepth3);
+
+declare const maxMoreThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 1}>;
+expectType<'a.b' | 'a.b2' | 'a.b3'>(maxMoreThanDepth);
+
+declare const maxMoreThanDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 6; depth: 3}>;
+expectType<'foo.foo.foo.foo'>(maxMoreThanDepth2);
+
+declare const maxMoreAndLessThanDepth: Paths<RecursionArray, {maxRecursionDepth: 2; depth: 1 | 3}>;
+expectType<`${number}.${number}`>(maxMoreAndLessThanDepth);
+
+declare const maxLessAndSimilarThanDepth: Paths<RecursionArray, {maxRecursionDepth: 1; depth: 0 | 1}>;
+expectType<number | `${number}` | `${number}.${number}`>(maxLessAndSimilarThanDepth);
+
+declare const maxSimilarAndMoreThanDepth: Paths<RecursionArray, {maxRecursionDepth: 2; depth: 2 | 3}>;
+expectType<`${number}.${number}.${number}`>(maxSimilarAndMoreThanDepth);
+
+declare const noLeavesAtDepth: Paths<DeepObject, {leavesOnly: true; depth: 0}>;
+expectType<never>(noLeavesAtDepth);
+
+declare const onlyLeavesAtDepth: Paths<DeepObject, {leavesOnly: true; depth: 1}>;
+expectType<'a.b3'>(onlyLeavesAtDepth);
+
+declare const onlyLeavesAtDepth2: Paths<DeepObject, {leavesOnly: true; depth: 2}>;
+expectType<`a.b2.${number}`>(onlyLeavesAtDepth2);
+
+declare const deepArrayDepth: Paths<{a?: {b: readonly string[]}; c: boolean[]}, {depth: 0 | 2}>;
+expectType<'a' | 'c' | `a.b.${number}`>(deepArrayDepth);
+
+declare const deepTupleDepth: Paths<{a: {b: [string, number]}}, {depth: 2}>;
+expectType<'a.b.0' | 'a.b.1'>(deepTupleDepth);
+
+declare const deepObjectArrayDepth: Paths<{a: {b: ReadonlyArray<{readonly c?: number; d: string}>}}, {depth: 1 | 3}>;
+expectType<'a.b' | `a.b.${number}.c` | `a.b.${number}.d`>(deepObjectArrayDepth);
+
+declare const deepObjectTupleDepth: Paths<{a: {readonly b: [{readonly c: string}, {d?: [number]}]}}, {leavesOnly: true; depth: 3}>;
+expectType<'a.b.0.c'>(deepObjectTupleDepth);
+
+declare const nestedArrayDepth: Paths<{a?: Array<Array<Array<{b: string}>>>}, {depth: 1 | 2 | 3}>;
+expectType<`a.${number}` | `a.${number}.${number}` | `a.${number}.${number}.${number}`>(nestedArrayDepth);
+
+declare const nestedTupleDepth: Paths<{a: [[[{b: string}]]?]}, {depth: 0 | 4}>;
+expectType<'a' | 'a.0.0.0.b'>(nestedTupleDepth);
+
+declare const recursiveDepth: Paths<RecursiveFoo, {depth: 4}>;
+expectType<'foo.foo.foo.foo.foo'>(recursiveDepth);
+
+declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8}>;
+expectType<'foo.foo' | 'foo.foo.foo.foo' | 'foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth2);
+
+// For recursive types, leaves are at `maxRecursionDepth`
+declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5}>;
+expectType<never>(recursiveDepth3);
+
+declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10}>; // No leaves at depth `5`
+expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth4);
+
+declare const recursiveDepth6: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 6; depth: 5}>; // Leaves are at depth `6`
+expectType<never>(recursiveDepth6);
+
+declare const maxLeavesAndDepth: Paths<DeepObject, {leavesOnly: true; maxRecursionDepth: 2; depth: 2}>; // All depth `2` paths are leaves
+expectType<'a.b.c' | `a.b2.${number}`>(maxLeavesAndDepth);
+
+declare const maxLeavesAndDepth2: Paths<DeepObject, {leavesOnly: true; maxRecursionDepth: 2; depth: 0 | 1 | 2}>;
+expectType<'a.b3' | 'a.b.c' | `a.b2.${number}`>(maxLeavesAndDepth2);
+
+declare const recursiveBracketDepth: Paths<RecursionArray, {bracketNotation: true; depth: 3}>;
+expectType<`[${number}][${number}][${number}][${number}]`>(recursiveBracketDepth);
+
+declare const recursiveBracketDepth2: Paths<RecursionArray, {bracketNotation: true; leavesOnly: true; depth: 3}>; // Leaves are at depth `10`
+expectType<never>(recursiveBracketDepth2);
+
+declare const bracketArrayDepth: Paths<{a: Array<{b: string; c?: string}>}, {bracketNotation: true; depth: 1 | 2}>;
+expectType<`a[${number}]` | `a[${number}].b` | `a[${number}].c`>(bracketArrayDepth);
+
+declare const bracketTupleDepth: Paths<{a: [{b?: string}, {c: string}]}, {bracketNotation: true; leavesOnly: true; depth: 0 | 2}>;
+expectType<'a[0].b' | 'a[1].c'>(bracketTupleDepth);
+
+declare const bracketNumericDepth: Paths<{a: {1: string; 2: number}}, {bracketNotation: true; depth: 1}>;
+expectType<'a[1]' | 'a[2]'>(bracketNumericDepth);
+
+declare const bracketNestedArrayDepth: Paths<{a: Array<Array<Array<{b: string}>>>}, {bracketNotation: true; depth: 2 | 4}>;
+expectType<`a[${number}][${number}]` | `a[${number}][${number}][${number}].b`>(bracketNestedArrayDepth);
+
+declare const trailingSpreadDepth: Paths<[{a: string}, ...Array<{b: number}>], {depth: 1}>;
+expectType<'0.a' | `${number}.b`>(trailingSpreadDepth);
+
+declare const leadingSpreadDepth: Paths<[...Array<{a?: string}>, {readonly b: number}], {depth: 0 | 1}>;
+expectType<number | `${number}` | `${number}.b` | `${number}.a`>(leadingSpreadDepth);
+
+declare const negativeDepth: Paths<DeepObject, {depth: -1}>;
+expectType<never>(negativeDepth);
+
+declare const neverDepth: Paths<DeepObject, {depth: never}>;
+expectType<never>(neverDepth);
+
+declare const anyDepth: Paths<DeepObject, {depth: any}>;
+expectType<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d'>(anyDepth);
