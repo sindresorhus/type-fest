@@ -91,12 +91,48 @@ export type PathsOptions = {
 	```
 	*/
 	leavesOnly?: boolean;
+
+	/**
+	Only include paths at the specified depth. By default all paths up to {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} are included.
+
+	Note: Depth starts at `0` for root properties.
+
+	@default number
+
+	@example
+	```
+	type Post = {
+		id: number;
+		author: {
+			id: number;
+			name: {
+				first: string;
+				last: string;
+			};
+		};
+	};
+
+	type DepthZero = Paths<Post, {depth: 0}>;
+	//=> 'id' | 'author'
+
+	type DepthOne = Paths<Post, {depth: 1}>;
+	//=> 'author.id' | 'author.name'
+
+	type DepthTwo = Paths<Post, {depth: 2}>;
+	//=> 'author.name.first' | 'author.name.last'
+
+	type LeavesAtDepthOne = Paths<Post, {leavesOnly: true; depth: 1}>;
+	//=> 'author.id'
+	```
+	*/
+	depth?: number;
 };
 
 type DefaultPathsOptions = {
 	maxRecursionDepth: 10;
 	bracketNotation: false;
 	leavesOnly: false;
+	depth: number;
 };
 
 /**
@@ -147,6 +183,8 @@ export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
 	bracketNotation: Options['bracketNotation'] extends boolean ? Options['bracketNotation'] : DefaultPathsOptions['bracketNotation'];
 	// Set default leavesOnly to false
 	leavesOnly: Options['leavesOnly'] extends boolean ? Options['leavesOnly'] : DefaultPathsOptions['leavesOnly'];
+	// Set default depth to number
+	depth: Options['depth'] extends number ? Options['depth'] : DefaultPathsOptions['depth'];
 }>;
 
 type _Paths<T, Options extends Required<PathsOptions>> =
@@ -186,17 +224,36 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 						) extends infer TranformedKey extends string | number ?
 						// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
 						// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
-							| (Options['leavesOnly'] extends true
+							| ((Options['leavesOnly'] extends true
 								? MaxDepth extends 0
 									? TranformedKey
 									: T[Key] extends EmptyObject | readonly [] | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 										? TranformedKey
 										: never
-								: TranformedKey)
+								: TranformedKey
+							) extends infer _TransformedKey
+								// If `depth` is provided, the condition becomes truthy only when it reaches `0`.
+								// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
+								? 0 extends Options['depth']
+									? _TransformedKey
+									: never
+								: never)
 							| (
 								// Recursively generate paths for the current key
 								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
-									? _Paths<T[Key], {bracketNotation: Options['bracketNotation']; maxRecursionDepth: Subtract<MaxDepth, 1>; leavesOnly: Options['leavesOnly']}> extends infer SubPath
+									? _Paths<T[Key],
+									{
+										bracketNotation: Options['bracketNotation'];
+										maxRecursionDepth: Subtract<MaxDepth, 1>;
+										leavesOnly: Options['leavesOnly'];
+										depth: Options['depth'] extends infer Depth extends number // For distributing `Options['depth']`
+											? Depth extends 0 // Don't subtract further if `Depth` has reached `0`
+												? never
+												: ToString<Depth> extends `-${number}` // Don't subtract if `Depth` is -ve
+													? never
+													: Subtract<Options['depth'], 1> // If `Subtract` supported -ve numbers, then `depth` could have simply been `Subtract<Options['depth'], 1>`
+											: never; // Should never happen
+									}> extends infer SubPath
 										? SubPath extends string | number
 											? (
 												Options['bracketNotation'] extends true
