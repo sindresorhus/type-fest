@@ -5,7 +5,7 @@ import type {IfAny} from './if-any';
 /**
 Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
 
-Note: Tuple labels are lost in the transformation process ([read more](https://stackoverflow.com/a/70398429/11719314)). For e.g., `TupleToObject<[x: number, y: number]>` produces `{0: number; 1: number}`, and not `{x: number; y: number}`.
+Note: Tuple labels are [lost in the transformation process](https://stackoverflow.com/a/70398429/11719314). For example, `TupleToObject<[x: number, y: number]>` produces `{0: number; 1: number}`, and not `{x: number; y: number}`.
 
 @example
 ```
