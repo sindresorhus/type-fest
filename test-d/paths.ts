@@ -376,6 +376,12 @@ expectType<number | `${number}` | `${number}.b` | `${number}.a`>(leadingSpreadDe
 declare const negativeDepth: Paths<DeepObject, {depth: -1}>;
 expectType<never>(negativeDepth);
 
+declare const positiveAndNegativeDepth: Paths<DeepObject, {depth: 1 | -1}>;
+expectType<'a.b' | 'a.b2' | 'a.b3'>(positiveAndNegativeDepth);
+
+declare const zeroPositiveAndNegativeDepth: Paths<DeepObject, {depth: 0 | 2 | -4}>;
+expectType<'a' | 'a.b.c' | `a.b2.${number}`>(zeroPositiveAndNegativeDepth);
+
 declare const neverDepth: Paths<DeepObject, {depth: never}>;
 expectType<never>(neverDepth);
 
