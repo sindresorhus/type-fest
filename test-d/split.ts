@@ -5,7 +5,8 @@ import type {BuildTuple} from '../source/internal';
 declare function split<
 	S extends string,
 	Delimiter extends string,
->(string: S, separator: Delimiter): Split<S, Delimiter>;
+	Options extends {strictLiteralChecks: boolean} = {strictLiteralChecks: false},
+>(string: S, separator: Delimiter, options?: Options): Split<S, Delimiter, Options>;
 
 const items = 'foo,bar,baz,waldo';
 
@@ -29,6 +30,38 @@ expectType<[]>(split('', ''));
 
 // Split empty string by any string.
 expectType<['']>(split('', ' '));
+
+// String union split.
+expectType<
+| ['A', 'B.CD.E', 'FG.HI', 'J.K', 'L']
+| ['A,B', 'CD', 'E,FG', 'HI,J', 'K,L']
+| ['L', 'K.J', 'IH.GF', 'E.DC.B', 'A']
+| ['L,K', 'J,IH', 'GF,E', 'DC', 'B,A']
+>(
+	split(
+		'A,B.CD.E,FG.HI,J.K,L' as 'A,B.CD.E,FG.HI,J.K,L' | 'L,K.J,IH.GF,E.DC.B,A',
+		',' as ',' | '.',
+	),
+);
+
+// Split non-literal string by literal string.
+expectType<string[]>(split(null! as string, 'foobar'));
+expectType<string[]>(split(null! as Uppercase<string>, 'foobar'));
+expectType<string[]>(split(null! as `${string}`, 'foobar'));
+
+// Split template literal string by literal string.
+expectType<['path', 'to', string, 'index.ts']>(split(null! as `path/to/${string}/index.ts`, '/'));
+expectType<['path', 'to', `${string}@${number}`, 'index.ts']>(split(null! as `path/to/${string}@${number}/index.ts`, '/'));
+expectType<string[]>(split(null! as `path/to/${string}/index.ts`, '/', {strictLiteralChecks: true}));
+expectType<['path', 'to', string, 'index.ts']>(split(null! as `path/to/${string}/index.ts`, '/', {strictLiteralChecks: false}));
+
+// Split non-literal string by non-literal string.
+expectType<string[]>(split(null! as string, null! as string));
+expectType<string[]>(split(null! as Capitalize<string>, null! as string));
+
+// Split literal string by non-literal string.
+expectType<string[]>(split('ABCDEF', null! as string));
+expectType<string[]>(split('ABCDEF', null! as Capitalize<string>));
 
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 const fiftyZeroes = '00000000000000000000000000000000000000000000000000';

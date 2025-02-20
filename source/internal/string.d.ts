@@ -208,3 +208,33 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 			: false
 		: never
 	: never;
+
+/**
+Returns a boolean for whether `S` is assignable to template literal types.
+
+@example
+```
+IsAssignableToTemplateLiteral<'foobar'>;
+//=> true
+
+IsAssignableToTemplateLiteral<`pre${string}`>;
+//=> true
+
+IsAssignableToTemplateLiteral<`@${number}`>;
+//=> true
+
+IsAssignableToTemplateLiteral<string>;
+//=> false
+
+IsAssignableToTemplateLiteral<`${string}`>;
+//=> false
+
+IsAssignableToTemplateLiteral<Capitalize<string>>;
+//=> false
+
+```
+
+@category String
+@category Template literal
+*/
+export type IsAssignableToTemplateLiteral<S extends string> = S extends `${infer _}` ? true : false;
