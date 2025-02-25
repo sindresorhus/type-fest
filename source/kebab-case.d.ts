@@ -13,7 +13,7 @@ import type {KebabCase} from 'type-fest';
 // Simple
 
 const someVariable: KebabCase<'fooBar'> = 'foo-bar';
-const someVariableNoSplitOnNumber: KebabCase<'p2pNetwork', {splitOnNumber: false}> = 'p2p-network';
+const someVariableNoSplitOnNumbers: KebabCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p-network';
 
 // Advanced
 
@@ -37,4 +37,7 @@ const rawCliOptions: KebabCasedProperties<CliOptions> = {
 @category Change case
 @category Template literal
 */
-export type KebabCase<Value, Options extends SplitWordsOptions = {splitOnNumber: true}> = DelimiterCase<Value, '-', Options>;
+export type KebabCase<
+	Value,
+	Options extends SplitWordsOptions = {splitOnNumbers: true},
+> = DelimiterCase<Value, '-', Options>;

@@ -22,16 +22,20 @@ expectType<'FOOBAR'>(noSnakeFromMono);
 const snakeFromCamelPascal: ScreamingSnakeCase<'FooBar'> = 'FOO_BAR';
 expectType<'FOO_BAR'>(snakeFromCamelPascal);
 
-const snakeFromComplexKebab: ScreamingSnakeCase<'foo-bar-abc-123'> = 'FOO_BAR_ABC_123';
+const snakeFromComplexKebab: ScreamingSnakeCase<'foo-bar-abc-123'>
+	= 'FOO_BAR_ABC_123';
 expectType<'FOO_BAR_ABC_123'>(snakeFromComplexKebab);
 
-const snakeFromMixed: ScreamingSnakeCase<'foo-bar_abc xyzBarFoo'> = 'FOO_BAR_ABC_XYZ_BAR_FOO';
+const snakeFromMixed: ScreamingSnakeCase<'foo-bar_abc xyzBarFoo'>
+	= 'FOO_BAR_ABC_XYZ_BAR_FOO';
 expectType<'FOO_BAR_ABC_XYZ_BAR_FOO'>(snakeFromMixed);
 
-const snakeFromVendorPrefixedCssProperty: ScreamingSnakeCase<'-webkit-animation'> = 'WEBKIT_ANIMATION';
+const snakeFromVendorPrefixedCssProperty: ScreamingSnakeCase<'-webkit-animation'>
+	= 'WEBKIT_ANIMATION';
 expectType<'WEBKIT_ANIMATION'>(snakeFromVendorPrefixedCssProperty);
 
-const snakeFromDoublePrefixedKebab: ScreamingSnakeCase<'--very-prefixed'> = 'VERY_PREFIXED';
+const snakeFromDoublePrefixedKebab: ScreamingSnakeCase<'--very-prefixed'>
+	= 'VERY_PREFIXED';
 expectType<'VERY_PREFIXED'>(snakeFromDoublePrefixedKebab);
 
 const snakeFromRepeatedSeparators: ScreamingSnakeCase<'foo____bar'> = 'FOO_BAR';
@@ -55,26 +59,41 @@ expectType<'PARSE_HTML'>(snakeFromMixed2);
 const snakeFromMixed3: ScreamingSnakeCase<'parseHTMLItem'> = 'PARSE_HTML_ITEM';
 expectType<'PARSE_HTML_ITEM'>(snakeFromMixed3);
 
-const snakeFromNumberInTheMiddleSplitOnNumber: ScreamingSnakeCase<'foo2bar'> = 'FOO_2_BAR';
-expectType<'FOO_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumber);
+const snakeFromNumberInTheMiddleSplitOnNumbers: ScreamingSnakeCase<'foo2bar'>
+	= 'FOO_2_BAR';
+expectType<'FOO_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumbers);
 
-const snakeFromNumberInTheMiddleSplitOnNumberEdgeCase: ScreamingSnakeCase<'foO2Bar'> = 'FO_O_2_BAR';
-expectType<'FO_O_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumberEdgeCase);
+const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase: ScreamingSnakeCase<'foO2Bar'>
+	= 'FO_O_2_BAR';
+expectType<'FO_O_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase);
 
-const snakeFromNumberInTheMiddleSplitOnNumberEdgeCase2: ScreamingSnakeCase<'foO2bar'> = 'FO_O_2_BAR';
-expectType<'FO_O_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumberEdgeCase2);
+const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2: ScreamingSnakeCase<'foO2bar'>
+	= 'FO_O_2_BAR';
+expectType<'FO_O_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumber: ScreamingSnakeCase<'foo2bar', {splitOnNumber: false}> = 'FOO2BAR';
-expectType<'FOO2BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumber);
+const snakeFromNumberInTheMiddleNoSplitOnNumbers: ScreamingSnakeCase<
+'foo2bar',
+{splitOnNumbers: false}
+> = 'FOO2BAR';
+expectType<'FOO2BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbers);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase: ScreamingSnakeCase<'foo2Bar', {splitOnNumber: false}> = 'FOO2_BAR';
-expectType<'FOO2_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
+const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: ScreamingSnakeCase<
+'foo2Bar',
+{splitOnNumbers: false}
+> = 'FOO2_BAR';
+expectType<'FOO2_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: ScreamingSnakeCase<'foO2bar', {splitOnNumber: false}> = 'FO_O2BAR';
-expectType<'FO_O2BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);
+const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: ScreamingSnakeCase<
+'foO2bar',
+{splitOnNumbers: false}
+> = 'FO_O2BAR';
+expectType<'FO_O2BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase3: ScreamingSnakeCase<'FOO22Bar', {splitOnNumber: false}> = 'FOO22_BAR';
-expectType<'FOO22_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumberEdgeCase3);
+const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: ScreamingSnakeCase<
+'FOO22Bar',
+{splitOnNumbers: false}
+> = 'FOO22_BAR';
+expectType<'FOO22_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
 
 const nonStringFromNonString: ScreamingSnakeCase<[]> = [];
 expectType<[]>(nonStringFromNonString);

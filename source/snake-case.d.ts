@@ -13,7 +13,7 @@ import type {SnakeCase} from 'type-fest';
 // Simple
 
 const someVariable: SnakeCase<'fooBar'> = 'foo_bar';
-const someVariableNoSplitOnNumber: SnakeCase<'p2pNetwork', {splitOnNumber: false}> = 'p2p_network';
+const someVariableNoSplitOnNumbers: SnakeCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p_network';
 
 // Advanced
 
@@ -37,4 +37,7 @@ const dbResult: SnakeCasedProperties<ModelProps> = {
 @category Change case
 @category Template literal
 */
-export type SnakeCase<Value, Options extends SplitWordsOptions = {splitOnNumber: true}> = DelimiterCase<Value, '_', Options>;
+export type SnakeCase<
+	Value,
+	Options extends SplitWordsOptions = {splitOnNumbers: true},
+> = DelimiterCase<Value, '_', Options>;

@@ -14,7 +14,15 @@ type RemoveLastCharacter<
 	? SkipEmptyWord<LeftSide>
 	: never;
 
-export type SplitWordsOptions = {splitOnNumber: boolean};
+export type WordsOptions = {
+	/**
+		 * Split on numeric sequence.
+		 *
+		 * @default true
+		 */
+	splitOnNumbers?: boolean;
+};
+	type DefaultOptions = {splitOnNumbers: true};
 
 /**
 Split a string (almost) like Lodash's `_.words()` function.
@@ -42,35 +50,38 @@ type Words3 = Words<'--hello the_world'>;
 type Words4 = Words<'lifeIs42'>;
 //=> ['life', 'Is', '42']
 
-type Words5 = Words<'p2pNetwork', {splitOnNumber: false}>;
+type Words5 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 //=> ['p2p', 'Network']
 ```
 
 @category Change case
 @category Template literal
 */
-export type Words<
+export type Words<Sentence extends string, Options extends WordsOptions = {}> = WordsImplementation<Sentence,
+{splitOnNumbers: Options['splitOnNumbers'] extends boolean ? Options['splitOnNumbers'] : DefaultOptions['splitOnNumbers']}>;
+
+type WordsImplementation<
 	Sentence extends string,
-	Options extends SplitWordsOptions = {splitOnNumber: true},
+	Options extends Required<WordsOptions>,
 	LastCharacter extends string = '',
 	CurrentWord extends string = '',
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
 	? FirstCharacter extends WordSeparators
 		? // Skip word separator
-		[...SkipEmptyWord<CurrentWord>, ...Words<RemainingCharacters>]
+		[...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options>]
 		: LastCharacter extends ''
 			? // Fist char of word
-			Words<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
+			WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
 			: // Case change: non-numeric to numeric
 			[false, true] extends [
 				IsNumeric<LastCharacter>,
 				IsNumeric<FirstCharacter>,
 			]
 				? // Split on number: push word
-				Options['splitOnNumber'] extends true
+				Options['splitOnNumbers'] extends true
 					? [
 						...SkipEmptyWord<CurrentWord>,
-						...Words<
+						...WordsImplementation<
 						RemainingCharacters,
 						Options,
 						FirstCharacter,
@@ -78,7 +89,7 @@ export type Words<
 						>,
 					]
 					: // No split on number: concat word
-					Words<
+					WordsImplementation<
 					RemainingCharacters,
 					Options,
 					FirstCharacter,
@@ -90,10 +101,10 @@ export type Words<
 					IsNumeric<FirstCharacter>,
 				]
 					? // Split on number: push word
-					Options['splitOnNumber'] extends true
+					Options['splitOnNumbers'] extends true
 						? [
 							...SkipEmptyWord<CurrentWord>,
-							...Words<
+							...WordsImplementation<
 							RemainingCharacters,
 							Options,
 							FirstCharacter,
@@ -101,7 +112,7 @@ export type Words<
 							>,
 						]
 						: // No split on number: concat word
-						Words<
+						WordsImplementation<
 						RemainingCharacters,
 						Options,
 						FirstCharacter,
@@ -112,7 +123,7 @@ export type Words<
 						IsNumeric<LastCharacter>,
 						IsNumeric<FirstCharacter>,
 					]
-						? Words<
+						? WordsImplementation<
 						RemainingCharacters,
 						Options,
 						FirstCharacter,
@@ -125,7 +136,7 @@ export type Words<
 						]
 							? [
 								...SkipEmptyWord<CurrentWord>,
-								...Words<
+								...WordsImplementation<
 								RemainingCharacters,
 								Options,
 								FirstCharacter,
@@ -139,7 +150,7 @@ export type Words<
 							]
 								? [
 									...RemoveLastCharacter<CurrentWord, LastCharacter>,
-									...Words<
+									...WordsImplementation<
 									RemainingCharacters,
 									Options,
 									FirstCharacter,
@@ -147,7 +158,7 @@ export type Words<
 									>,
 								]
 								: // No case change: concat word
-								Words<
+								WordsImplementation<
 								RemainingCharacters,
 								Options,
 								FirstCharacter,

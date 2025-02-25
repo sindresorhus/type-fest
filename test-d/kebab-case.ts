@@ -25,13 +25,16 @@ expectType<'foo-bar'>(kebabFromCamelPascal);
 const kebabFromComplexKebab: KebabCase<'foo-bar-abc-123'> = 'foo-bar-abc-123';
 expectType<'foo-bar-abc-123'>(kebabFromComplexKebab);
 
-const kebabFromMixed: KebabCase<'foo-bar_abc xyzBarFoo'> = 'foo-bar-abc-xyz-bar-foo';
+const kebabFromMixed: KebabCase<'foo-bar_abc xyzBarFoo'>
+	= 'foo-bar-abc-xyz-bar-foo';
 expectType<'foo-bar-abc-xyz-bar-foo'>(kebabFromMixed);
 
-const kebabFromVendorPrefixedCssProperty: KebabCase<'-webkit-animation'> = 'webkit-animation';
+const kebabFromVendorPrefixedCssProperty: KebabCase<'-webkit-animation'>
+	= 'webkit-animation';
 expectType<'webkit-animation'>(kebabFromVendorPrefixedCssProperty);
 
-const kebabFromDoublePrefixedKebab: KebabCase<'--very-prefixed'> = 'very-prefixed';
+const kebabFromDoublePrefixedKebab: KebabCase<'--very-prefixed'>
+	= 'very-prefixed';
 expectType<'very-prefixed'>(kebabFromDoublePrefixedKebab);
 
 const kebabFromRepeatedSeparators: KebabCase<'foo____bar'> = 'foo-bar';
@@ -55,23 +58,38 @@ expectType<'parse-html'>(kebabFromMixed2);
 const kebabFromMixed3: KebabCase<'parseHTMLItem'> = 'parse-html-item';
 expectType<'parse-html-item'>(kebabFromMixed3);
 
-const kebabFromNumberInTheMiddleSplitOnNumber: KebabCase<'foo2bar'> = 'foo-2-bar';
-expectType<'foo-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumber);
+const kebabFromNumberInTheMiddleSplitOnNumbers: KebabCase<'foo2bar'>
+	= 'foo-2-bar';
+expectType<'foo-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbers);
 
-const kebabFromNumberInTheMiddleSplitOnNumberEdgeCase: KebabCase<'foO2Bar'> = 'fo-o-2-bar';
-expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumberEdgeCase);
+const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase: KebabCase<'foO2Bar'>
+	= 'fo-o-2-bar';
+expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase);
 
-const kebabFromNumberInTheMiddleSplitOnNumberEdgeCase2: KebabCase<'foO2bar'> = 'fo-o-2-bar';
-expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumberEdgeCase2);
+const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2: KebabCase<'foO2bar'>
+	= 'fo-o-2-bar';
+expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumber: KebabCase<'foo2bar', {splitOnNumber: false}> = 'foo2bar';
-expectType<'foo2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumber);
+const kebabFromNumberInTheMiddleNoSplitOnNumbers: KebabCase<
+'foo2bar',
+{splitOnNumbers: false}
+> = 'foo2bar';
+expectType<'foo2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbers);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase: KebabCase<'foo2Bar', {splitOnNumber: false}> = 'foo2-bar';
-expectType<'foo2-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase);
+const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: KebabCase<
+'foo2Bar',
+{splitOnNumbers: false}
+> = 'foo2-bar';
+expectType<'foo2-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase2: KebabCase<'foO2bar', {splitOnNumber: false}> = 'fo-o2bar';
-expectType<'fo-o2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase2);
+const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: KebabCase<
+'foO2bar',
+{splitOnNumbers: false}
+> = 'fo-o2bar';
+expectType<'fo-o2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase3: KebabCase<'FOO22Bar', {splitOnNumber: false}> = 'foo22-bar';
-expectType<'foo22-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumberEdgeCase3);
+const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: KebabCase<
+'FOO22Bar',
+{splitOnNumbers: false}
+> = 'foo22-bar';
+expectType<'foo22-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);

@@ -14,7 +14,9 @@ type DelimiterCaseFromArray<
 	? `${Delimiter}${FirstWord}${DelimiterCaseFromArray<RemainingWords, Delimiter>}`
 	: OutputString;
 
-type RemoveFirstLetter<S extends string> = S extends `${infer _}${infer Rest}` ? Rest : '';
+type RemoveFirstLetter<S extends string> = S extends `${infer _}${infer Rest}`
+	? Rest
+	: '';
 
 /**
 Convert a string literal to a custom string delimiter casing.
@@ -31,7 +33,7 @@ import type {DelimiterCase} from 'type-fest';
 // Simple
 
 const someVariable: DelimiterCase<'fooBar', '#'> = 'foo#bar';
-const someVariableNoSplitOnNumber: DelimiterCase<'p2pNetwork', '#', {splitOnNumber: false}> = 'p2p#network';
+const someVariableNoSplitOnNumbers: DelimiterCase<'p2pNetwork', '#', {splitOnNumbers: false}> = 'p2p#network';
 
 // Advanced
 
@@ -55,8 +57,16 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 @category Change case
 @category Template literal
  */
-export type DelimiterCase<Value, Delimiter extends string, Options extends SplitWordsOptions = {splitOnNumber: true}> = Value extends string
+export type DelimiterCase<
+	Value,
+	Delimiter extends string,
+	Options extends SplitWordsOptions = {},
+> = Value extends string
 	? string extends Value
 		? Value
-		: Lowercase<RemoveFirstLetter<DelimiterCaseFromArray<SplitWords<Value, Options>, Delimiter>>>
+		: Lowercase<
+		RemoveFirstLetter<
+		DelimiterCaseFromArray<SplitWords<Value, Options>, Delimiter>
+		>
+		>
 	: Value;

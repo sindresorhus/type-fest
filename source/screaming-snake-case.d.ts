@@ -11,13 +11,14 @@ This can be useful when, for example, converting a camel-cased object property t
 import type {ScreamingSnakeCase} from 'type-fest';
 
 const someVariable: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
-const someVariableNoSplitOnNumber: ScreamingSnakeCase<'p2pNetwork', {splitOnNumber: false}> = 'P2P_NETWORK';
+const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNumbers: false}> = 'P2P_NETWORK';
 
 ```
 
 @category Change case
 @category Template literal
  */
-export type ScreamingSnakeCase<Value, Options extends SplitWordsOptions = {splitOnNumber: true}> = Value extends string
-	? Uppercase<SnakeCase<Value, Options>>
-	: Value;
+export type ScreamingSnakeCase<
+	Value,
+	Options extends SplitWordsOptions = {splitOnNumbers: true},
+> = Value extends string ? Uppercase<SnakeCase<Value, Options>> : Value;
