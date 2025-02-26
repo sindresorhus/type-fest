@@ -1,4 +1,5 @@
-import type {SplitWords, SplitWordsOptions} from './split-words';
+import { IsStringLiteral } from './is-literal';
+import type {Words, WordsOptions} from './words';
 
 /**
 Convert an array of words to delimiter case starting with a delimiter with input capitalization.
@@ -60,13 +61,13 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 export type DelimiterCase<
 	Value,
 	Delimiter extends string,
-	Options extends SplitWordsOptions = {},
+	Options extends WordsOptions = {},
 > = Value extends string
-	? string extends Value
+	? IsStringLiteral<Value> extends false
 		? Value
 		: Lowercase<
 		RemoveFirstLetter<
-		DelimiterCaseFromArray<SplitWords<Value, Options>, Delimiter>
+		DelimiterCaseFromArray<Words<Value, Options>, Delimiter>
 		>
 		>
 	: Value;

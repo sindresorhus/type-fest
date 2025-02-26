@@ -143,6 +143,8 @@ expectType<'foo#bar' | 'foo$bar'>(unionDelimiter);
 const unionValueAndDelimiter: DelimiterCase<'fooBar' | 'barBaz', '#' | '$'> = 'foo#bar';
 expectType<'foo#bar' | 'bar#baz' | 'foo$bar' | 'bar$baz'>(unionValueAndDelimiter);
 
+const stringPart: DelimiterCase<`foo${string}`, '#'> = 'fooSomeString';
+expectType<`foo${string}`>(stringPart);
 
 // Verifying example
 type OddCasedProperties<T> = {
