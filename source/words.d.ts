@@ -14,11 +14,25 @@ type RemoveLastCharacter<
 	? SkipEmptyWord<LeftSide>
 	: never;
 
+/**
+Words options.
+
+@see {@link Words}
+*/
 export type WordsOptions = {
 	/**
 	Split on numeric sequence.
 
 	@default true
+
+	@example
+	```
+	type Example1 = Words<'p2pNetwork', {splitOnNumbers: true}>;
+	//=> ["p", "2", "p", "Network"]
+
+	type Example2 = Words<'p2pNetwork', {splitOnNumbers: false}>;
+	//=> ["p2p", "Network"]
+	```
 	*/
 	splitOnNumbers?: boolean;
 };
