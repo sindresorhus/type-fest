@@ -1,5 +1,5 @@
 import type {SnakeCase} from './snake-case';
-import type {SplitWordsOptions} from './split-words';
+import type {WordsOptions} from './words';
 
 /**
 Convert a string literal to screaming-snake-case.
@@ -20,5 +20,5 @@ const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNum
  */
 export type ScreamingSnakeCase<
 	Value,
-	Options extends SplitWordsOptions = {splitOnNumbers: true},
+	Options extends WordsOptions = {},
 > = Value extends string ? Uppercase<SnakeCase<Value, Options>> : Value;

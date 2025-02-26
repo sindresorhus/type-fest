@@ -1,5 +1,5 @@
 import type {DelimiterCase} from './delimiter-case';
-import type {SplitWordsOptions} from './split-words';
+import type {WordsOptions} from './words';
 
 /**
 Convert a string literal to snake-case.
@@ -39,5 +39,5 @@ const dbResult: SnakeCasedProperties<ModelProps> = {
 */
 export type SnakeCase<
 	Value,
-	Options extends SplitWordsOptions = {splitOnNumbers: true},
+	Options extends WordsOptions = {},
 > = DelimiterCase<Value, '_', Options>;
