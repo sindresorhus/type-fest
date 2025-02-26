@@ -134,13 +134,13 @@ expectType<'foo22#bar'>(
 	delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3,
 );
 
-const unionValue: DelimiterCase<'fooBar' | 'barBaz', '#'> = 'foo#bar';
+declare const unionValue: DelimiterCase<'fooBar' | 'barBaz', '#'>;
 expectType<'foo#bar' | 'bar#baz'>(unionValue);
 
-const unionDelimiter: DelimiterCase<'fooBar', '#' | '$'> = 'foo#bar';
+declare const unionDelimiter: DelimiterCase<'fooBar', '#' | '$'>;
 expectType<'foo#bar' | 'foo$bar'>(unionDelimiter);
 
-const unionValueAndDelimiter: DelimiterCase<'fooBar' | 'barBaz', '#' | '$'> = 'foo#bar';
+declare const unionValueAndDelimiter: DelimiterCase<'fooBar' | 'barBaz', '#' | '$'>;
 expectType<'foo#bar' | 'bar#baz' | 'foo$bar' | 'bar$baz'>(unionValueAndDelimiter);
 
 const stringPart: DelimiterCase<`foo${string}`, '#'> = 'fooSomeString';

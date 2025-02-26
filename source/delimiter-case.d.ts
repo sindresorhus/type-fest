@@ -1,4 +1,4 @@
-import { IsStringLiteral } from './is-literal';
+import type {IsStringLiteral} from './is-literal';
 import type {Words, WordsOptions} from './words';
 
 /**
