@@ -16,13 +16,16 @@ type RemoveLastCharacter<
 
 export type WordsOptions = {
 	/**
-		 * Split on numeric sequence.
-		 *
-		 * @default true
-		 */
+	Split on numeric sequence.
+
+	@default true
+	*/
 	splitOnNumbers?: boolean;
 };
-	type DefaultOptions = {splitOnNumbers: true};
+
+type DefaultOptions = {
+	splitOnNumbers: true;
+};
 
 /**
 Split a string (almost) like Lodash's `_.words()` function.
@@ -57,8 +60,9 @@ type Words5 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 @category Change case
 @category Template literal
 */
-export type Words<Sentence extends string, Options extends WordsOptions = {}> = WordsImplementation<Sentence,
-{splitOnNumbers: Options['splitOnNumbers'] extends boolean ? Options['splitOnNumbers'] : DefaultOptions['splitOnNumbers']}>;
+export type Words<Sentence extends string, Options extends WordsOptions = {}> = WordsImplementation<Sentence, {
+	splitOnNumbers: Options['splitOnNumbers'] extends boolean ? Options['splitOnNumbers'] : DefaultOptions['splitOnNumbers'];
+}>;
 
 type WordsImplementation<
 	Sentence extends string,
