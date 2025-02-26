@@ -11,7 +11,7 @@ type DelimiterCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? `${Delimiter}${FirstWord}${DelimiterCaseFromArray<RemainingWords, Delimiter>}`
+	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${Delimiter}${FirstWord}`>
 	: OutputString;
 
 type RemoveFirstLetter<S extends string> = S extends `${infer _}${infer Rest}`

@@ -134,6 +134,16 @@ expectType<'foo22#bar'>(
 	delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3,
 );
 
+const unionValue: DelimiterCase<'fooBar' | 'barBaz', '#'> = 'foo#bar';
+expectType<'foo#bar' | 'bar#baz'>(unionValue);
+
+const unionDelimiter: DelimiterCase<'fooBar', '#' | '$'> = 'foo#bar';
+expectType<'foo#bar' | 'foo$bar'>(unionDelimiter);
+
+const unionValueAndDelimiter: DelimiterCase<'fooBar' | 'barBaz', '#' | '$'> = 'foo#bar';
+expectType<'foo#bar' | 'bar#baz' | 'foo$bar' | 'bar$baz'>(unionValueAndDelimiter);
+
+
 // Verifying example
 type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K];
