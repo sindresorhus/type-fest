@@ -109,7 +109,7 @@ ReverseSign<PositiveInfinity>
 //=> NegativeInfinity
 ```
 */
-type ReverseSign<N extends number> =
+export type ReverseSign<N extends number> =
 	// Handle edge cases
 	N extends 0 ? 0 : N extends PositiveInfinity ? NegativeInfinity : N extends NegativeInfinity ? PositiveInfinity :
 	// Handle negative numbers
