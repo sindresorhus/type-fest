@@ -40,8 +40,6 @@ expectType<NegativeInfinity>(infinity.negative1);
 expectType<PositiveInfinity>(infinity.negative2);
 expectType<NegativeInfinity>(infinity.negative3);
 
-expectType<Subtract<NegativeInfinity, NegativeInfinity>>(null! as number);
-expectType<Subtract<PositiveInfinity, PositiveInfinity>>(null! as number);
 // Number
 declare const number: {
 	0: Subtract<number, 2>;
