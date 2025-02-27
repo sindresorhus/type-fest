@@ -60,8 +60,16 @@ export type Replace<
 	Search extends string,
 	Replacement extends string,
 	Options extends ReplaceOptions = {},
+> = _Replace<Input, Search, Replacement, Options>;
+
+type _Replace<
+	Input extends string,
+	Search extends string,
+	Replacement extends string,
+	Options extends ReplaceOptions,
+	Accumulator extends string = '',
 > = Input extends `${infer Head}${Search}${infer Tail}`
 	? Options['all'] extends true
-		? `${Head}${Replacement}${Replace<Tail, Search, Replacement, Options>}`
+		? _Replace<Tail, Search, Replacement, Options, `${Accumulator}${Head}${Replacement}`>
 		: `${Head}${Replacement}${Tail}`
-	: Input;
+	: `${Accumulator}${Input}`;
