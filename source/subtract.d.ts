@@ -40,12 +40,12 @@ Subtract<PositiveInfinity, PositiveInfinity>;
 export type Subtract<A extends number, B extends number> =
 	// Handle cases when A or B is the actual "number" type
 	Or<IsEqual<A, number>, IsEqual<B, number>> extends true ? number
-		// Handle cases when A and B is +/- infinity
-		: A extends B & PositiveInfinity ? number : A extends B & NegativeInfinity ? number
-			// Handle cases when A or B is + infinity
-			: A extends PositiveInfinity ? PositiveInfinity : B extends PositiveInfinity ? NegativeInfinity
-				// Handle cases when A or B is - infinity
-				: A extends NegativeInfinity ? NegativeInfinity : B extends NegativeInfinity ? PositiveInfinity
+		// Handle cases when A and B are both +/- infinity
+		: A extends B & (PositiveInfinity | NegativeInfinity) ? number
+			// Handle cases when A is - infinity
+			: A extends NegativeInfinity ? NegativeInfinity
+				// Handle cases when A is + infinity or B is - infinity
+				: Or<IsEqual<A, PositiveInfinity>, IsEqual<B, NegativeInfinity>> extends true ? PositiveInfinity
 					// Handle case when numbers are equal to each other
 					: A extends B ? 0
 						// Handle cases when A or B is 0
