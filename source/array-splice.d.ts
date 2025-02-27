@@ -21,7 +21,9 @@ The implementation of `SplitArrayByIndex` for variable length arrays.
 type SplitVariableArrayByIndex<T extends UnknownArray,
 	SplitIndex extends number,
 	T1 = Subtract<SplitIndex, StaticPartOfArray<T>['length']>,
-	T2 = T1 extends number ? BuildTuple<T1, VariablePartOfArray<T>[number]> : [],
+	T2 = T1 extends number
+		? BuildTuple<GreaterThanOrEqual<T1, 0> extends true ? T1 : number, VariablePartOfArray<T>[number]>
+		: [],
 > =
 SplitIndex extends 0
 	? [[], T]
