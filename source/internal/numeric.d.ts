@@ -96,20 +96,20 @@ Returns the number with reversed sign.
 
 @example
 ```
-NegateNumber<-1>;
+ReverseSign<-1>;
 //=> 1
 
-NegateNumber<1>;
+ReverseSign<1>;
 //=> -1
 
-NegateNumber<NegativeInfinity>
+ReverseSign<NegativeInfinity>
 //=> PositiveInfinity
 
-NegateNumber<PositiveInfinity>
+ReverseSign<PositiveInfinity>
 //=> NegativeInfinity
 ```
 */
-type NegateNumber<N extends number> =
+type ReverseSign<N extends number> =
 	// Handle edge cases
 	N extends 0 ? 0 : N extends PositiveInfinity ? NegativeInfinity : N extends NegativeInfinity ? PositiveInfinity :
 	// Handle negative numbers
