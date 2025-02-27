@@ -1,7 +1,6 @@
 import type {NumberAbsolute, BuildTuple, ReverseSign} from './internal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {LessThan} from './less-than';
-import type {Sum} from './sum';
 
 /**
 Returns the difference between two numbers.
@@ -40,8 +39,8 @@ export type Subtract<A extends number, B extends number> =
 	number extends A | B ? number
 		// Handle cases when A and B are both +/- infinity
 		: A extends B & (PositiveInfinity | NegativeInfinity) ? number
-			// Handle cases when A is - infinity
-			: A extends NegativeInfinity ? NegativeInfinity
+			// Handle cases when A is - infinity or B is + infinity
+			: A extends NegativeInfinity ? NegativeInfinity : B extends PositiveInfinity ? NegativeInfinity
 				// Handle cases when A is + infinity or B is - infinity
 				: A extends PositiveInfinity ? PositiveInfinity : B extends NegativeInfinity ? PositiveInfinity
 					// Handle case when numbers are equal to each other
@@ -51,7 +50,7 @@ export type Subtract<A extends number, B extends number> =
 							// Handle remaining regular cases
 							: SubtractPostChecks<A, B>;
 
-// When we get here, A and B are not equal and neither are the "number" type, +/- infinity or 0
+// When we get here, A and B are not equal and neither of them are 0, +/- infinity or the "number" type
 type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNegative<A>, IsNegative<B>]> =
 	AreNegative extends [false, false]
 		? LessThan<A, B> extends true
@@ -62,10 +61,9 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 				? R['length']
 				: never
 		: AreNegative extends [true, true]
-			// When both numbers are negative we can reverse the subtraction result of the absolute values
+			// When both numbers are negative we subtract the absolute values and then reverse the sign
 			? ReverseSign<SubtractPostChecks<NumberAbsolute<A>, NumberAbsolute<B>>>
-			: AreNegative extends [false, true]
-				// When B is negative we can use the sum of absolute values
-				? Sum<A, NumberAbsolute<B>>
-				// When A is negative we can reverse the sum of absolute values
-				: ReverseSign<Sum<NumberAbsolute<A>, B>>;
+			// When the signs are different we can add the absolute values and then reverse the sign if A < B
+			: [...BuildTuple<NumberAbsolute<A>>, ...BuildTuple<NumberAbsolute<B>>] extends infer R extends unknown[]
+				? LessThan<A, B> extends true ? ReverseSign<R['length']> : R['length']
+				: never;
