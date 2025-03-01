@@ -50,25 +50,34 @@ export type Subtract<A extends number, B extends number> =
 							// Handle remaining regular cases
 							: SubtractPostChecks<A, B>;
 
-// When we get here, A and B are not equal and neither of them are 0, +/- infinity or the "number" type
-type SubtractPostChecks<A extends number, B extends number, Depth extends number = 20, AreNegative = [IsNegative<A>, IsNegative<B>]> =
-	// Depth & DepthCounter are used to prevent infinite recursion (issue on TS < 5.4.0)
-	Depth extends never
-		? never
-		: AreNegative extends [false, false]
-			? LessThan<A, B> extends true
-			// When A < B we can reverse the result of B - A
-				? ReverseSign<SubtractPostChecks<B, A, DepthCounter[Depth]>>
-			// Both numbers are positive and A > B - this is where we always want to end up and do the actual subtraction
-				: BuildTuple<A> extends [...BuildTuple<B>, ...infer R]
-					? R['length']
-					: never
-			: AreNegative extends [true, true]
-				// When both numbers are negative we subtract the absolute values and then reverse the sign
-				? ReverseSign<SubtractPostChecks<NumberAbsolute<A>, NumberAbsolute<B>, DepthCounter[Depth]>>
-				// When the signs are different we can add the absolute values and then reverse the sign if A < B
-				: [...BuildTuple<NumberAbsolute<A>>, ...BuildTuple<NumberAbsolute<B>>] extends infer R extends unknown[]
-					? LessThan<A, B> extends true ? ReverseSign<R['length']> : R['length']
-					: never;
+/**
+Subtracts two numbers A and B, such that they are not equal and neither of them are 0, +/- infinity or the `number` type
+*/
+type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNegative<A>, IsNegative<B>]> =
+	AreNegative extends [false, false]
+		? SubtractPositives<A, B>
+		: AreNegative extends [true, true]
+		// When both numbers are negative we subtract the absolute values and then reverse the sign
+			? ReverseSign<SubtractPositives<NumberAbsolute<A>, NumberAbsolute<B>>>
+		// When the signs are different we can add the absolute values and then reverse the sign if A < B
+			: [...BuildTuple<NumberAbsolute<A>>, ...BuildTuple<NumberAbsolute<B>>] extends infer R extends unknown[]
+				? LessThan<A, B> extends true ? ReverseSign<R['length']> : R['length']
+				: never;
 
-type DepthCounter = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...Array<0>];
+/**
+Subtracts two positive numbers.
+*/
+type SubtractPositives<A extends number, B extends number> =
+	LessThan<A, B> extends true
+	// When A < B we can reverse the result of B - A
+		? ReverseSign<SubtractIfAGreaterThanB<B, A>>
+		: SubtractIfAGreaterThanB<A, B>;
+
+/**
+Subtracts two positive numbers A and B such that A > B.
+*/
+type SubtractIfAGreaterThanB<A extends number, B extends number> =
+	// This is where we always want to end up and do the actual subtraction
+	BuildTuple<A> extends [...BuildTuple<B>, ...infer R]
+		? R['length']
+		: never;
