@@ -57,9 +57,9 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 	AreNegative extends [false, false]
 		? SubtractPositives<A, B>
 		: AreNegative extends [true, true]
-		// When both numbers are negative we subtract the absolute values and then reverse the sign
+			// When both numbers are negative we subtract the absolute values and then reverse the sign
 			? ReverseSign<SubtractPositives<NumberAbsolute<A>, NumberAbsolute<B>>>
-		// When the signs are different we can add the absolute values and then reverse the sign if A < B
+			// When the signs are different we can add the absolute values and then reverse the sign if A < B
 			: [...BuildTuple<NumberAbsolute<A>>, ...BuildTuple<NumberAbsolute<B>>] extends infer R extends unknown[]
 				? LessThan<A, B> extends true ? ReverseSign<R['length']> : R['length']
 				: never;
@@ -69,7 +69,7 @@ Subtracts two positive numbers.
 */
 type SubtractPositives<A extends number, B extends number> =
 	LessThan<A, B> extends true
-	// When A < B we can reverse the result of B - A
+		// When A < B we can reverse the result of B - A
 		? ReverseSign<SubtractIfAGreaterThanB<B, A>>
 		: SubtractIfAGreaterThanB<A, B>;
 
