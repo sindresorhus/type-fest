@@ -12,6 +12,7 @@ export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {IfEmptyObject} from './source/if-empty-object';
 export type {NonEmptyObject} from './source/non-empty-object';
 export type {UnknownRecord} from './source/unknown-record';
+export type {EmptyArray, IsEmptyArray} from './source/empty-array';
 export type {UnknownArray} from './source/unknown-array';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
