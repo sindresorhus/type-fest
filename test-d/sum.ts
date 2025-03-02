@@ -28,8 +28,10 @@ expectType<-1998>({} as Sum<-999, -999>);
 // Infinity
 expectType<PositiveInfinity>({} as Sum<PositiveInfinity, -999>);
 expectType<PositiveInfinity>({} as Sum<-999, PositiveInfinity>);
+expectType<PositiveInfinity>({} as Sum<PositiveInfinity, PositiveInfinity>);
 expectType<NegativeInfinity>({} as Sum<NegativeInfinity, 999>);
 expectType<NegativeInfinity>({} as Sum<999, NegativeInfinity>);
+expectType<NegativeInfinity>({} as Sum<NegativeInfinity, NegativeInfinity>);
 
 // Number
 expectType<number>({} as Sum<number, 1>);
