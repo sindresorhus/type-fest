@@ -44,4 +44,4 @@ expectType<number>({} as Sum<PositiveInfinity, NegativeInfinity>);
 expectType<3 | 4>({} as Sum<1, 2 | 3>);
 expectType<4 | 5>({} as Sum<1 | 2, 3>);
 expectType<5 | 6 | 7 | 8>({} as Sum<1 | 2 | 3, 4 | 5>);
-expectType<2 | -3 | 6 | -1 | -6 | 3 | 4 | 8>({} as Sum<1 | -2 | 3, 1 | -4 | 5>);
+expectType<2 | 4 | 5 | 7 | 9 | -2 | -4 | -7>({} as Sum<1 | -2 | 3, 4 | -5 | 6>);
