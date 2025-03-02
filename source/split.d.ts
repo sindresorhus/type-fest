@@ -10,7 +10,7 @@ Split options.
 */
 type SplitOptions = {
 	/**
-	When enabled, instantiations with non-literal string types (e.g., `string`, `Uppercase<string>`, `on${string}`) simply return back `string[]` without performing any splitting.
+	When enabled, instantiations with non-literal string types (e.g., `string`, `Uppercase<string>`, `on${string}`) simply return back `string[]` without performing any splitting, as the exact structure cannot be statically determined.
 
 	Note: In the future, this option might be enabled by default, so if you currently rely on this being disabled, you should consider explicitly enabling it.
 
