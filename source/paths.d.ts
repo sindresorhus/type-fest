@@ -246,13 +246,7 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 										bracketNotation: Options['bracketNotation'];
 										maxRecursionDepth: Subtract<MaxDepth, 1>;
 										leavesOnly: Options['leavesOnly'];
-										depth: Options['depth'] extends infer Depth extends number // For distributing `Options['depth']`
-											? Depth extends 0 // Don't subtract further if `Depth` has reached `0`
-												? never
-												: ToString<Depth> extends `-${number}` // Don't subtract if `Depth` is -ve
-													? never
-													: Subtract<Options['depth'], 1> // If `Subtract` supported -ve numbers, then `depth` could have simply been `Subtract<Options['depth'], 1>`
-											: never; // Should never happen
+										depth: Subtract<Options['depth'], 1>;
 									}> extends infer SubPath
 										? SubPath extends string | number
 											? (
