@@ -6,7 +6,7 @@ expectType<3>({} as Sum<1, 2>);
 expectType<8>({} as Sum<10, -2>);
 expectType<0>({} as Sum<2, -2>);
 
-expectType<number>({} as Sum<-1, -2>); // Note: you can only get `number` for now
+expectType<-3>({} as Sum<-1, -2>);
 
 expectType<PositiveInfinity>({} as Sum<PositiveInfinity, -999>);
 expectType<PositiveInfinity>({} as Sum<-999, PositiveInfinity>);

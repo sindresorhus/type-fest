@@ -1,4 +1,4 @@
-import type {NumberAbsolute, BuildTuple, TupleMax, TupleMin} from './internal';
+import type {NumberAbsolute, BuildTuple, TupleMax, ReverseSign} from './internal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {Subtract} from './subtract';
 
@@ -44,8 +44,8 @@ export type Sum<A extends number, B extends number> =
 				: A extends PositiveInfinity ? B extends NegativeInfinity ? number : PositiveInfinity
 					// Handle cases when B is +/- infinity (we know A is not +/- infinity at this point)
 					: B extends PositiveInfinity | NegativeInfinity ? B
-						// Handle cases when A or B is 0
-						: A extends 0 ? B : B extends 0 ? A
+						// Handle cases when A or B is 0 or numbers have different signs
+						: A extends 0 ? B : B extends 0 ? A : A extends ReverseSign<B> ? 0
 							// Handle remaining regular cases
 							: SumPostChecks<A, B>;
 
@@ -53,14 +53,27 @@ export type Sum<A extends number, B extends number> =
 Adds two numbers A and B, such that they are not equal and neither of them are 0, +/- infinity or the `number` type
 */
 type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative<A>, IsNegative<B>]> =
-	[false, false] extends AreNegative
-		? [...BuildTuple<A>, ...BuildTuple<B>]['length']
-		: [true, true] extends AreNegative
-			? number
-			: TupleMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
-				? TupleMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
+	AreNegative extends [false, false]
+		? SumPositives<A, B>
+		: AreNegative extends [true, true]
+			// When both numbers are negative we add the absolute values and then reverse the sign
+			? ReverseSign<SumPositives<NumberAbsolute<A>, NumberAbsolute<B>>>
+			// When the signs are different we can subtract the absolute values, remove the sign
+			// and then reverse the sign if larger absolute value is negative
+			: NumberAbsolute<Subtract<NumberAbsolute<A>, NumberAbsolute<B>>> extends infer Result extends number
+				? TupleMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_ extends number
 					? Max_ extends A | B
-						? Subtract<Max_, Min_>
-						: number
+						// The larger absolute value is positive, so the result is positive
+						? Result
+						// The larger absolute value is negative, so the result is negative
+						: ReverseSign<Result>
 					: never
 				: never;
+
+/**
+Adds two positive numbers.
+*/
+type SumPositives<A extends number, B extends number> =
+	[...BuildTuple<A>, ...BuildTuple<B>]['length'] extends infer Result extends number
+		? Result
+		: never;
