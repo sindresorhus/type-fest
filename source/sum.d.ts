@@ -36,11 +36,11 @@ export type Sum<A extends number, B extends number> =
 	number extends A | B ? number
 		// Handle cases when A and B are both +/- infinity
 		: A extends B & (PositiveInfinity | NegativeInfinity) ? A // A or B could be used here as they are equal
-			// Handle cases when A is - infinity
-			: A extends NegativeInfinity ? B extends PositiveInfinity ? number : NegativeInfinity
-				// Handle cases when A is + infinity
-				: A extends PositiveInfinity ? B extends NegativeInfinity ? number : PositiveInfinity
-					// Handle cases when B is +/- infinity (we know A is not +/- infinity at this point)
+			// Handle cases when A and B are opposite infinities
+			: A | B extends PositiveInfinity | NegativeInfinity ? number
+				// Handle cases when A is +/- infinity
+				: A extends PositiveInfinity | NegativeInfinity ? A
+					// Handle cases when B is +/- infinity
 					: B extends PositiveInfinity | NegativeInfinity ? B
 						// Handle cases when A or B is 0 or it's the same number with different signs
 						: A extends 0 ? B : B extends 0 ? A : A extends ReverseSign<B> ? 0
