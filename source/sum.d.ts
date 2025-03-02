@@ -1,9 +1,6 @@
 import type {NumberAbsolute, BuildTuple, TupleMax, TupleMin} from './internal';
-import type {IsEqual} from './is-equal';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
 import type {Subtract} from './subtract';
-import type {And} from './and';
-import type {Or} from './or';
 
 /**
 Returns the sum of two numbers.
@@ -36,35 +33,34 @@ Sum<PositiveInfinity, NegativeInfinity>;
 @category Numeric
 */
 // TODO: Support big integer and negative number.
-export type Sum<A extends number, B extends number> = number extends A | B
-	? number
-	: [
-		IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-		IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-	] extends infer R extends [boolean, boolean, boolean, boolean]
-		? Or<
-		And<IsEqual<R[0], true>, IsEqual<R[3], false>>,
-		And<IsEqual<R[2], true>, IsEqual<R[1], false>>
-		> extends true
-			? PositiveInfinity
-			: Or<
-			And<IsEqual<R[1], true>, IsEqual<R[2], false>>,
-			And<IsEqual<R[3], true>, IsEqual<R[0], false>>
-			> extends true
-				? NegativeInfinity
-				: true extends R[number]
-					? number
-					: ([IsNegative<A>, IsNegative<B>] extends infer R
-						? [false, false] extends R
-							? [...BuildTuple<A>, ...BuildTuple<B>]['length']
-							: [true, true] extends R
-								? number
-								: TupleMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
-									? TupleMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
-										? Max_ extends A | B
-											? Subtract<Max_, Min_>
-											: number
-										: never
-									: never
-						: never) & number
-		: never;
+export type Sum<A extends number, B extends number> =
+	// Handle cases when A or B is the actual "number" type
+	number extends A | B ? number
+		// Handle cases when A and B are both +/- infinity
+		: A extends B & (PositiveInfinity | NegativeInfinity) ? A // A or B could be used here as they are equal
+			// Handle cases when A is - infinity
+			: A extends NegativeInfinity ? B extends PositiveInfinity ? number : NegativeInfinity
+				// Handle cases when A is + infinity
+				: A extends PositiveInfinity ? B extends NegativeInfinity ? number : PositiveInfinity
+					// Handle cases when B is +/- infinity (we know A is not +/- infinity at this point)
+					: B extends PositiveInfinity | NegativeInfinity ? B
+						// Handle cases when A or B is 0
+						: A extends 0 ? B : B extends 0 ? A
+							// Handle remaining regular cases
+							: SumPostChecks<A, B>;
+
+/**
+Adds two numbers A and B, such that they are not equal and neither of them are 0, +/- infinity or the `number` type
+*/
+type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative<A>, IsNegative<B>]> =
+	[false, false] extends AreNegative
+		? [...BuildTuple<A>, ...BuildTuple<B>]['length']
+		: [true, true] extends AreNegative
+			? number
+			: TupleMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_
+				? TupleMin<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Min_ extends number
+					? Max_ extends A | B
+						? Subtract<Max_, Min_>
+						: number
+					: never
+				: never;
