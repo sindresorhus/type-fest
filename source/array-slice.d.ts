@@ -91,7 +91,7 @@ type ArraySliceHelper<
 		? Sum<ArrayLength, Start> extends infer AddResult extends number
 			? number extends AddResult // (ArrayLength + Start) < 0
 				? 0
-				: AddResult
+				: GreaterThan<AddResult, 0> extends true ? AddResult : 0
 			: never
 		: Start,
 	PositiveE extends number = IsNegative<End> extends true ? Sum<ArrayLength, End> : End,
