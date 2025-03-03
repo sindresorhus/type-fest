@@ -75,14 +75,9 @@ type CamelCasedPropertiesArrayDeep<Value extends UnknownArray> =
 				: // Leading spread array
 				Value extends readonly [...infer U, infer V]
 					? [...CamelCasedPropertiesDeep<U>, CamelCasedPropertiesDeep<V>]
-					: Value extends readonly [...infer U, infer V]
-						? readonly [
-							...CamelCasedPropertiesDeep<U>,
-							CamelCasedPropertiesDeep<V>,
-						]
-						: // Array
-						Value extends Array<infer U>
-							? Array<CamelCasedPropertiesDeep<U>>
-							: Value extends ReadonlyArray<infer U>
-								? ReadonlyArray<CamelCasedPropertiesDeep<U>>
-								: never;
+					: // Array
+					Value extends Array<infer U>
+						? Array<CamelCasedPropertiesDeep<U>>
+						: Value extends ReadonlyArray<infer U>
+							? ReadonlyArray<CamelCasedPropertiesDeep<U>>
+							: never;
