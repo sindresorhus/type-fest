@@ -81,4 +81,3 @@ type CamelCasedPropertiesArrayDeep<Value extends UnknownArray> =
 						: Value extends ReadonlyArray<infer U>
 							? ReadonlyArray<CamelCasedPropertiesDeep<U>>
 							: never;
-							
