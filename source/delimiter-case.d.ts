@@ -61,7 +61,7 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 export type DelimiterCase<
 	Value,
 	Delimiter extends string,
-	Options extends WordsOptions = {},
+	Options extends WordsOptions = {splitOnNumbers: false},
 > = Value extends string
 	? IsStringLiteral<Value> extends false
 		? Value

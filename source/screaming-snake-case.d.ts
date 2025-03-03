@@ -20,5 +20,5 @@ const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNum
  */
 export type ScreamingSnakeCase<
 	Value,
-	Options extends WordsOptions = {},
+	Options extends WordsOptions = {splitOnNumbers: false},
 > = Value extends string ? Uppercase<SnakeCase<Value, Options>> : Value;
