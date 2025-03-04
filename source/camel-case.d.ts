@@ -44,6 +44,7 @@ import type {CamelCase} from 'type-fest';
 // Simple
 
 const someVariable: CamelCase<'foo-bar'> = 'fooBar';
+const preserveConsecutiveUppercase: CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'fooBARBaz';
 
 // Advanced
 

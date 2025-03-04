@@ -11,13 +11,13 @@ expectType<() => {a: string}>(fooBar);
 declare const bar: CamelCasedPropertiesDeep<Set<{fooBar: string}>>;
 expectType<Set<{fooBar: string}>>(bar);
 
-type bazBizDeep = {fooBAR: number; baz: {fooBAR: number; BARFoo: string}};
+type bazBizDeep = {fooBAR: number; baz: {fooBAR: Array<{BARFoo: string}>}};
 
 declare const baz: CamelCasedPropertiesDeep<bazBizDeep>;
-expectType<{fooBAR: number; baz: {fooBAR: number; bARFoo: string}}>(baz);
+expectType<{fooBAR: number; baz: {fooBAR: Array<{bARFoo: string}>}}>(baz);
 
 declare const biz: CamelCasedPropertiesDeep<bazBizDeep, {preserveConsecutiveUppercase: false}>;
-expectType<{fooBar: number; baz: {fooBar: number; barFoo: string}}>(biz);
+expectType<{fooBar: number; baz: {fooBar: Array<{barFoo: string}>}}>(biz);
 
 declare const tuple: CamelCasedPropertiesDeep<{tuple: [number, string, {D: string}]}>;
 expectType<{tuple: [number, string, {d: string}]}>(tuple);
