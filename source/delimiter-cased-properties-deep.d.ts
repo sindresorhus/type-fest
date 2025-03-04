@@ -74,11 +74,9 @@ type DelimiterCasedPropertiesArrayDeep<Value extends UnknownArray, Delimiter ext
 				// Leading spread array
 				: Value extends readonly [...infer U, infer V]
 					? [...DelimiterCasedPropertiesDeep<U, Delimiter>, DelimiterCasedPropertiesDeep<V, Delimiter>]
-					: Value extends readonly [...infer U, infer V]
-						? readonly [...DelimiterCasedPropertiesDeep<U, Delimiter>, DelimiterCasedPropertiesDeep<V, Delimiter>]
-						// Array
-						: Value extends Array<infer U>
-							? Array<DelimiterCasedPropertiesDeep<U, Delimiter>>
-							: Value extends ReadonlyArray<infer U>
-								? ReadonlyArray<DelimiterCasedPropertiesDeep<U, Delimiter>>
-								: never;
+					// Array
+					: Value extends Array<infer U>
+						? Array<DelimiterCasedPropertiesDeep<U, Delimiter>>
+						: Value extends ReadonlyArray<infer U>
+							? ReadonlyArray<DelimiterCasedPropertiesDeep<U, Delimiter>>
+							: never;
