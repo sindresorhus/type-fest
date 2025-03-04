@@ -39,5 +39,5 @@ const rawCliOptions: KebabCasedProperties<CliOptions> = {
 */
 export type KebabCase<
 	Value,
-	Options extends WordsOptions = {},
+	Options extends WordsOptions = {splitOnNumbers: false},
 > = DelimiterCase<Value, '-', Options>;

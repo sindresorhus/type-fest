@@ -58,38 +58,26 @@ expectType<'parse_html'>(snakeFromMixed2);
 const snakeFromMixed3: SnakeCase<'parseHTMLItem'> = 'parse_html_item';
 expectType<'parse_html_item'>(snakeFromMixed3);
 
-const snakeFromNumberInTheMiddleSplitOnNumbers: SnakeCase<'foo2bar'>
+const snakeFromNumberInTheMiddleSplitOnNumbers: SnakeCase<'foo2bar', {splitOnNumbers: true}>
 	= 'foo_2_bar';
 expectType<'foo_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumbers);
 
-const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase: SnakeCase<'foO2Bar'>
+const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase: SnakeCase<'foO2Bar', {splitOnNumbers: true}>
 	= 'fo_o_2_bar';
 expectType<'fo_o_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase);
 
-const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2: SnakeCase<'foO2bar'>
+const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2: SnakeCase<'foO2bar', {splitOnNumbers: true}>
 	= 'fo_o_2_bar';
 expectType<'fo_o_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumbers: SnakeCase<
-'foo2bar',
-{splitOnNumbers: false}
-> = 'foo2bar';
+const snakeFromNumberInTheMiddleNoSplitOnNumbers: SnakeCase<'foo2bar'> = 'foo2bar';
 expectType<'foo2bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbers);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: SnakeCase<
-'foo2Bar',
-{splitOnNumbers: false}
-> = 'foo2_bar';
+const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: SnakeCase<'foo2Bar'> = 'foo2_bar';
 expectType<'foo2_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: SnakeCase<
-'foO2bar',
-{splitOnNumbers: false}
-> = 'fo_o2bar';
+const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: SnakeCase<'foO2bar'> = 'fo_o2bar';
 expectType<'fo_o2bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 
-const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: SnakeCase<
-'FOO22Bar',
-{splitOnNumbers: false}
-> = 'foo22_bar';
+const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: SnakeCase<'FOO22Bar'> = 'foo22_bar';
 expectType<'foo22_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);

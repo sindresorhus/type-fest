@@ -5,7 +5,7 @@ import type {DelimiterCase} from '../source/delimiter-case';
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromCamel);
 
-const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#', {splitOnNumbers: false}> = 'foo#bar#abc123';
+const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
 
 const delimiterFromComplexCamelSplitOnNumbers: DelimiterCase<
@@ -15,22 +15,13 @@ const delimiterFromComplexCamelSplitOnNumbers: DelimiterCase<
 > = 'foo#bar#abc#123';
 expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumbers);
 
-const delimiterFromComplexCamelNoSplitOnNumbers: DelimiterCase<
-'fooBarAbc123',
-'#',
-{splitOnNumbers: false}
-> = 'foo#bar#abc123';
+const delimiterFromComplexCamelNoSplitOnNumbers: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamelNoSplitOnNumbers);
 
-const delimiterNumberInTheMiddle: DelimiterCase<'p2pNetwork', '#'>
-	= 'p#2#p#network';
+const delimiterNumberInTheMiddle: DelimiterCase<'p2pNetwork', '#', {splitOnNumbers: true}> = 'p#2#p#network';
 expectType<'p#2#p#network'>(delimiterNumberInTheMiddle);
 
-const delimiterNumberInTheMiddleNoSplitOnNumbers: DelimiterCase<
-'p2pNetwork',
-'#',
-{splitOnNumbers: false}
-> = 'p2p#network';
+const delimiterNumberInTheMiddleNoSplitOnNumbers: DelimiterCase<'p2pNetwork', '#'> = 'p2p#network';
 expectType<'p2p#network'>(delimiterNumberInTheMiddleNoSplitOnNumbers);
 
 const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
@@ -86,50 +77,25 @@ const delimiterFromMixed3: DelimiterCase<'parseHTMLItem', '#'>
 	= 'parse#html#item';
 expectType<'parse#html#item'>(delimiterFromMixed3);
 
-const delimiterFromNumberInTheMiddleSplitOnNumbers: DelimiterCase<
-'foo2bar',
-'#'
-> = 'foo#2#bar';
+const delimiterFromNumberInTheMiddleSplitOnNumbers: DelimiterCase<'foo2bar', '#', {splitOnNumbers: true}> = 'foo#2#bar';
 expectType<'foo#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumbers);
 
-const delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase: DelimiterCase<
-'foO2Bar',
-'#'
-> = 'fo#o#2#bar';
+const delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase: DelimiterCase<'foO2Bar', '#', {splitOnNumbers: true}> = 'fo#o#2#bar';
 expectType<'fo#o#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase);
 
-const delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase2: DelimiterCase<
-'foO2bar',
-'#'
-> = 'fo#o#2#bar';
+const delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase2: DelimiterCase<'foO2bar', '#', {splitOnNumbers: true}> = 'fo#o#2#bar';
 expectType<'fo#o#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
 
-const delimiterFromNumberInTheMiddleNoSplitOnNumbers: DelimiterCase<
-'foo2bar',
-'#',
-{splitOnNumbers: false}
-> = 'foo2bar';
+const delimiterFromNumberInTheMiddleNoSplitOnNumbers: DelimiterCase<'foo2bar', '#'> = 'foo2bar';
 expectType<'foo2bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumbers);
 
-const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: DelimiterCase<
-'foo2Bar',
-'#',
-{splitOnNumbers: false}
-> = 'foo2#bar';
+const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: DelimiterCase<'foo2Bar', '#'> = 'foo2#bar';
 expectType<'foo2#bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
 
-const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: DelimiterCase<
-'foO2bar',
-'#',
-{splitOnNumbers: false}
-> = 'fo#o2bar';
+const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: DelimiterCase<'foO2bar', '#'> = 'fo#o2bar';
 expectType<'fo#o2bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 
-const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: DelimiterCase<
-'FOO22Bar',
-'#',
-{splitOnNumbers: false}
-> = 'foo22#bar';
+const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: DelimiterCase<'FOO22Bar', '#'> = 'foo22#bar';
 expectType<'foo22#bar'>(
 	delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3,
 );

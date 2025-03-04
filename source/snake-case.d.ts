@@ -39,5 +39,5 @@ const dbResult: SnakeCasedProperties<ModelProps> = {
 */
 export type SnakeCase<
 	Value,
-	Options extends WordsOptions = {},
+	Options extends WordsOptions = {splitOnNumbers: false},
 > = DelimiterCase<Value, '_', Options>;

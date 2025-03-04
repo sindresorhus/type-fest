@@ -58,38 +58,23 @@ expectType<'parse-html'>(kebabFromMixed2);
 const kebabFromMixed3: KebabCase<'parseHTMLItem'> = 'parse-html-item';
 expectType<'parse-html-item'>(kebabFromMixed3);
 
-const kebabFromNumberInTheMiddleSplitOnNumbers: KebabCase<'foo2bar'>
-	= 'foo-2-bar';
+const kebabFromNumberInTheMiddleSplitOnNumbers: KebabCase<'foo2bar', {splitOnNumbers: true}> = 'foo-2-bar';
 expectType<'foo-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbers);
 
-const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase: KebabCase<'foO2Bar'>
-	= 'fo-o-2-bar';
+const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase: KebabCase<'foO2Bar', {splitOnNumbers: true}> = 'fo-o-2-bar';
 expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase);
 
-const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2: KebabCase<'foO2bar'>
-	= 'fo-o-2-bar';
+const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2: KebabCase<'foO2bar', {splitOnNumbers: true}> = 'fo-o-2-bar';
 expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumbers: KebabCase<
-'foo2bar',
-{splitOnNumbers: false}
-> = 'foo2bar';
+const kebabFromNumberInTheMiddleNoSplitOnNumbers: KebabCase<'foo2bar'> = 'foo2bar';
 expectType<'foo2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbers);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: KebabCase<
-'foo2Bar',
-{splitOnNumbers: false}
-> = 'foo2-bar';
+const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: KebabCase<'foo2Bar'> = 'foo2-bar';
 expectType<'foo2-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: KebabCase<
-'foO2bar',
-{splitOnNumbers: false}
-> = 'fo-o2bar';
+const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: KebabCase<'foO2bar'> = 'fo-o2bar';
 expectType<'fo-o2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 
-const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: KebabCase<
-'FOO22Bar',
-{splitOnNumbers: false}
-> = 'foo22-bar';
+const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: KebabCase<'FOO22Bar'> = 'foo22-bar';
 expectType<'foo22-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
