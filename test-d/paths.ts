@@ -111,7 +111,7 @@ expectAssignable<string>({} as MyEntityPaths);
 
 // By default, the recursion limit should be reasonably long
 type RecursiveFoo = {foo: RecursiveFoo};
-expectAssignable<Paths<RecursiveFoo>>('foo.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 10}>>('foo.foo.foo.foo.foo.foo.foo.foo');
 
 declare const recursion0: Paths<RecursiveFoo, {maxRecursionDepth: 0}>;
 expectType<'foo'>(recursion0);
