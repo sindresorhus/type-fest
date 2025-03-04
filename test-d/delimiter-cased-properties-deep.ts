@@ -10,6 +10,9 @@ expectType<() => {a: string}>(fooBar);
 declare const bar: DelimiterCasedPropertiesDeep<Set<{fooBar: string}>, '-'>;
 expectType<Set<{'foo-bar': string}>>(bar);
 
+declare const withOptions: DelimiterCasedPropertiesDeep<Set<{helloWorld: {p2p: Array<{addressLine1: string}>}}>, '.', {splitOnNumbers: true}>;
+expectType<Set<{'hello.world': {'p.2.p': Array<{'address.line.1': string}>}}>>(withOptions);
+
 // Verify example
 type User = {
 	userId: number;

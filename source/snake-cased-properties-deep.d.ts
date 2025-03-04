@@ -1,4 +1,5 @@
 import type {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep';
+import type {WordsOptions} from './words';
 
 /**
 Convert object properties to snake case recursively.
@@ -38,10 +39,21 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
+
+const splitOnNumbers: SnakeCasedPropertiesDeep<{ line1: { line2: [{ line3: string }] }}, {splitOnNumbers: true}> = {
+	line_1: {
+		line_2: [{
+			line_3: 'string',
+		}],
+	},
+};
 ```
 
 @category Change case
 @category Template literal
 @category Object
 */
-export type SnakeCasedPropertiesDeep<Value> = DelimiterCasedPropertiesDeep<Value, '_'>;
+export type SnakeCasedPropertiesDeep<
+	Value,
+	Options extends WordsOptions = {splitOnNumbers: false},
+> = DelimiterCasedPropertiesDeep<Value, '_', Options>;

@@ -13,7 +13,8 @@ import type {SnakeCase} from 'type-fest';
 // Simple
 
 const someVariable: SnakeCase<'fooBar'> = 'foo_bar';
-const someVariableNoSplitOnNumbers: SnakeCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p_network';
+const noSplitOnNumbers: SnakeCase<'p2pNetwork'> = 'p2p_network';
+const splitOnNumbers: SnakeCase<'p2pNetwork', {splitOnNumbers: true}> = 'p_2_p_network';
 
 // Advanced
 

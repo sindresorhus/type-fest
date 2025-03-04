@@ -1,11 +1,13 @@
 import {expectType} from 'tsd';
 import type {KebabCasedPropertiesDeep} from '../index';
 
-declare const foo: KebabCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
-expectType<{'hello-world': {'foo-bar': string}}>(foo);
+type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
 
-declare const bar: KebabCasedPropertiesDeep<Set<{fooBar: string}>>;
-expectType<Set<{'foo-bar': string}>>(bar);
+declare const foo: KebabCasedPropertiesDeep<FooBar>;
+expectType<{'hello-world': {p2p: Array<{'address-line1': string}>}}>(foo);
+
+declare const bar: KebabCasedPropertiesDeep<FooBar, {splitOnNumbers: true}>;
+expectType<{'hello-world': {'p-2-p': Array<{'address-line-1': string}>}}>(bar);
 
 // Verify example
 type User = {

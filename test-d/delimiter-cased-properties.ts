@@ -10,6 +10,9 @@ expectType<Array<{helloWorld: string}>>(bar);
 declare const fooBar: DelimiterCasedProperties<() => {a: string}, '-'>;
 expectType<() => {a: string}>(fooBar);
 
+declare const withOptions: DelimiterCasedProperties<{helloWorld1: {fooBar: string}}, '.', {splitOnNumbers: true}>;
+expectType<{'hello.world.1': {fooBar: string}}>(withOptions);
+
 // Verify example
 type User = {
 	userId: number;
