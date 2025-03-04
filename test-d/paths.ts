@@ -119,6 +119,29 @@ expectType<'foo'>(recursion0);
 declare const recursion1: Paths<RecursiveFoo, {maxRecursionDepth: 1}>;
 expectType<'foo' | 'foo.foo'>(recursion1);
 
+// Circular depth
+type CircularFoo = {foo: CircularFoo; a: {b: {c: {d: {e: {f: {g: string}}}}}}; internal: {parent: CircularFoo}};
+
+// Default circular limit should be respected
+type CircularFooDefault = Paths<CircularFoo>;
+expectAssignable<CircularFooDefault>('foo.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<CircularFooDefault>('foo.foo.foo.a.b.c.d.e');
+expectAssignable<CircularFooDefault>('foo.foo.a.b.c.d.e.f.g');
+expectAssignable<CircularFooDefault>('foo.a.b.c.d.e.f.g');
+expectAssignable<CircularFooDefault>('foo.foo.a.b.c');
+expectAssignable<CircularFooDefault>('internal.parent.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<CircularFooDefault>('internal.parent.foo.a.b.c');
+expectAssignable<CircularFooDefault>('internal.parent.a.b.c');
+
+type KeysAtLevel0 = 'foo' | 'a' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'internal' | 'internal.parent' | 'a.b.c.d.e' | 'a.b.c.d.e.f' | 'a.b.c.d.e.f.g';
+expectType<KeysAtLevel0>({} as Paths<CircularFoo, {maxCircularDepth: 0}>);
+
+type KeysAtLevel1 = KeysAtLevel0 | `foo.${KeysAtLevel0}` | `internal.parent.${KeysAtLevel0}`;
+expectType<KeysAtLevel1>({} as Paths<CircularFoo, {maxCircularDepth: 1}>);
+
+type KeysAtLevel2 = KeysAtLevel1 | `foo.${KeysAtLevel1}` | `internal.parent.${KeysAtLevel1}`;
+expectType<KeysAtLevel2>({} as Paths<CircularFoo, {maxCircularDepth: 2}>);
+
 // Test a[0].b style
 type Object1 = {
 	arr: [{a: string}];
