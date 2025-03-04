@@ -31,13 +31,13 @@ export type PathsOptions = {
 	};
 
 	type Circular0 = Paths<DeepWithCircular, {maxCircularDepth: 0}>;
-	// => "a" | "foo" | "a.b" | "a.b.c" | "a.b.c.d" | "a.b.c.d.e" | "foo.circular"
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular'
 
 	type Circular1 = Paths<DeepWithCircular, {maxCircularDepth: 1}>;
-	// => "a" | "foo" | "a.b" | "a.b.c" | "a.b.c.d" | "a.b.c.d.e" | "foo.circular" | "foo.circular.a" | "foo.circular.foo" | "foo.circular.a.b" | "foo.circular.a.b.c" | "foo.circular.a.b.c.d" | "foo.circular.a.b.c.d.e" | "foo.circular.foo.circular"
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.foo' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.a.b.c.d.e' | 'foo.circular.foo.circular'
 
 	type Circular2 = Paths<DeepWithCircular, {maxCircularDepth: 2}>;
-	// => "a" | "foo" | "a.b" | "a.b.c" | "a.b.c.d" | "a.b.c.d.e" | "foo.circular" | "foo.circular.a" | "foo.circular.foo" | "foo.circular.a.b" | "foo.circular.a.b.c" | "foo.circular.a.b.c.d" | ... 8 more ... | "foo.circular.foo.circular.foo.circular"
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.foo' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | ... 8 more ... | 'foo.circular.foo.circular.foo.circular'
 	```
 	*/
 	maxCircularDepth?: number;

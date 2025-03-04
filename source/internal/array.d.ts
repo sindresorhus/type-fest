@@ -126,7 +126,7 @@ export type IfArrayReadonly<T extends UnknownArray, TypeIfArrayReadonly = true, 
 		: never; // Should never happen
 
 /**
-Returns elements from the provided List that are equal to the provided SearchType.
+Returns elements from the List that are equal to the SearchType.
 
 @example
 ```
@@ -139,12 +139,12 @@ type D = FilterArrayIncludes<StaticList, 1>;
 //=> [1, 1]
 
 // Note: Variable part in the array will discard all subsequent elements.
-type VariableStaticList = [string, 1, 'Hello', number, 2, ...string[], 1, boolean, 4, 'bye'];
-type E = FilterArrayIncludes<VariableStaticList, number>;
+type VariableList = [string, 1, 'Hello', number, 2, ...string[], 1, boolean, 4, 'bye'];
+type E = FilterArrayIncludes<VariableList, number>;
 //=> [1, number, 2]
-type F = FilterArrayIncludes<VariableStaticList, string>;
+type F = FilterArrayIncludes<VariableList, string>;
 //=> [string, "Hello"]
-type G = FilterArrayIncludes<VariableStaticList, 1>;
+type G = FilterArrayIncludes<VariableList, 1>;
 //=> [1]
 ```
 @category Array
@@ -152,15 +152,15 @@ type G = FilterArrayIncludes<VariableStaticList, 1>;
 export type FilterArrayIncludes<List extends unknown[], SearchType> = List extends []
 	? []
 	: StaticPartOfArray<List> extends [infer Head, ...infer Tail]
-		? FilterArrayIncludes<Tail, SearchType> extends infer InnerReturn extends unknown[]
+		? FilterArrayIncludes<Tail, SearchType> extends infer Return extends unknown[]
 			? Head extends SearchType
-				? [Head, ...InnerReturn]
-				: InnerReturn
+				? [Head, ...Return]
+				: Return
 			: never
 		: never;
 
 /**
-Returns count of how many elements in the provided List are equal to the provided SearchType.
+Returns count of how many elements in the List are equal to the SearchType.
 
 @uses
 ```
@@ -178,12 +178,12 @@ type D = CountInArray<StaticList, 1>;
 //=> 2
 
 // Note: Variable part in the array will discard all subsequent elements.
-type VariableStaticList = [string, 1, 'Hello', number, 2, ...string[], 1, boolean, 4, 'bye'];
-type E = CountInArray<VariableStaticList, number>;
+type VariableList = [string, 1, 'Hello', number, 2, ...string[], 1, boolean, 4, 'bye'];
+type E = CountInArray<VariableList, number>;
 //=> 3
-type F = CountInArray<VariableStaticList, string>;
+type F = CountInArray<VariableList, string>;
 //=> 2
-type G = CountInArray<VariableStaticList, 1>;
+type G = CountInArray<VariableList, 1>;
 //=> 1
 ```
 @category Array
