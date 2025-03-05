@@ -82,3 +82,21 @@ expectType<'FOO22_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
 
 const nonStringFromNonString: ScreamingSnakeCase<[]> = [];
 expectType<[]>(nonStringFromNonString);
+
+declare const withPunctuation: ScreamingSnakeCase<'onDialog:close'>;
+expectType<'ON_DIALOG:CLOSE'>(withPunctuation);
+
+declare const withPunctuation2: ScreamingSnakeCase<'foo-bar>>baz'>;
+expectType<'FOO_BAR>>BAZ'>(withPunctuation2);
+
+declare const withPunctuation3: ScreamingSnakeCase<'card::after'>;
+expectType<'CARD::AFTER'>(withPunctuation3);
+
+declare const withPunctuation4: ScreamingSnakeCase<'div.card::after'>;
+expectType<'DIV.CARD::AFTER'>(withPunctuation4);
+
+declare const withPunctuationAndNumber: ScreamingSnakeCase<'foo-bar::01'>;
+expectType<'FOO_BAR::01'>(withPunctuationAndNumber);
+
+declare const withPunctuationAndNumber2: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
+expectType<'FOO_BAR::_01'>(withPunctuationAndNumber2);
