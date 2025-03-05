@@ -151,6 +151,10 @@ expectType<LimitStringDepth<KeysAtLevel3, '.', DefaultPathsOptions['maxRecursion
 // We can also test that it in fact doesn't go deeper
 expectNotAssignable<Paths<CircularFoo, {maxCircularDepth: 3}>>({} as KeysAtLevel3);
 
+// Ensure non-circular recurring structure works and is not flagged as circular
+type ObjectWithRecurringStructure = {foo: string; bar: {foo: string; bar: {}}};
+expectType<'foo' | 'bar' | 'bar.foo' | 'bar.bar'>({} as Paths<ObjectWithRecurringStructure, {maxCircularDepth: 0}>);
+
 // Test a[0].b style
 type Object1 = {
 	arr: [{a: string}];

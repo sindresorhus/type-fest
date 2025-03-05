@@ -1,4 +1,5 @@
 import type {IfNever} from '../if-never';
+import type {IsEqual} from '../is-equal';
 import type {UnknownArray} from '../unknown-array';
 
 /**
@@ -153,7 +154,7 @@ export type FilterArrayIncludes<List extends unknown[], SearchType> = List exten
 	? []
 	: StaticPartOfArray<List> extends [infer Head, ...infer Tail]
 		? FilterArrayIncludes<Tail, SearchType> extends infer Return extends unknown[]
-			? Head extends SearchType
+			? IsEqual<Head, SearchType> extends true
 				? [Head, ...Return]
 				: Return
 			: never
