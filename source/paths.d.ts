@@ -1,4 +1,4 @@
-import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike} from './internal';
+import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions} from './internal';
 import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {UnknownArray} from './unknown-array';
@@ -176,16 +176,7 @@ open('listB.1'); // TypeError. Because listB only has one element.
 @category Object
 @category Array
 */
-export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
-	// Set default maxRecursionDepth to 10
-	maxRecursionDepth: Options['maxRecursionDepth'] extends number ? Options['maxRecursionDepth'] : DefaultPathsOptions['maxRecursionDepth'];
-	// Set default bracketNotation to false
-	bracketNotation: Options['bracketNotation'] extends boolean ? Options['bracketNotation'] : DefaultPathsOptions['bracketNotation'];
-	// Set default leavesOnly to false
-	leavesOnly: Options['leavesOnly'] extends boolean ? Options['leavesOnly'] : DefaultPathsOptions['leavesOnly'];
-	// Set default depth to number
-	depth: Options['depth'] extends number ? Options['depth'] : DefaultPathsOptions['depth'];
-}>;
+export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
 
 type _Paths<T, Options extends Required<PathsOptions>> =
 	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>

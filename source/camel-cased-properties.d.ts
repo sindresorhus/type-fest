@@ -1,4 +1,5 @@
-import type {CamelCase, CamelCaseOptions} from './camel-case';
+import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case';
+import type {ApplyDefaultOptions} from './internal';
 
 /**
 Convert object properties to camel case but not recursively.
@@ -27,10 +28,12 @@ const result: CamelCasedProperties<User> = {
 @category Template literal
 @category Object
 */
-export type CamelCasedProperties<Value, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Value extends Function
+export type CamelCasedProperties<Value, Options extends CamelCaseOptions = {}> = Value extends Function
 	? Value
 	: Value extends Array<infer U>
 		? Value
 		: {
-			[K in keyof Value as CamelCase<K, Options>]: Value[K];
+			[K in keyof Value as
+			CamelCase<K, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>
+			]: Value[K];
 		};

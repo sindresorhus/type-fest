@@ -1,5 +1,11 @@
+import type {ApplyDefaultOptions} from './internal';
+
 type ReplaceOptions = {
 	all?: boolean;
+};
+
+type DefaultReplaceOptions = {
+	all: false;
 };
 
 /**
@@ -60,13 +66,13 @@ export type Replace<
 	Search extends string,
 	Replacement extends string,
 	Options extends ReplaceOptions = {},
-> = _Replace<Input, Search, Replacement, Options>;
+> = _Replace<Input, Search, Replacement, ApplyDefaultOptions<ReplaceOptions, DefaultReplaceOptions, Options>>;
 
 type _Replace<
 	Input extends string,
 	Search extends string,
 	Replacement extends string,
-	Options extends ReplaceOptions,
+	Options extends Required<ReplaceOptions>,
 	Accumulator extends string = '',
 > = Search extends string // For distributing `Search`
 	? Replacement extends string // For distributing `Replacement`

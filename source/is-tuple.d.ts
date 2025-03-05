@@ -1,5 +1,6 @@
 import type {IfAny} from './if-any';
 import type {IfNever} from './if-never';
+import type {ApplyDefaultOptions} from './internal';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -26,6 +27,10 @@ export type IsTupleOptions = {
 	```
 	*/
 	fixedLengthOnly?: boolean;
+};
+
+type DefaultIsTupleOptions = {
+	fixedLengthOnly: true;
 };
 
 /**
@@ -63,7 +68,13 @@ type RestItemsAllowed = IsTuple<[1, 2, ...number[]], {fixedLengthOnly: false}>;
 */
 export type IsTuple<
 	TArray extends UnknownArray,
-	Options extends IsTupleOptions = {fixedLengthOnly: true},
+	Options extends IsTupleOptions = {},
+> =
+	_IsTuple<TArray, ApplyDefaultOptions<IsTupleOptions, DefaultIsTupleOptions, Options>>;
+
+type _IsTuple<
+	TArray extends UnknownArray,
+	Options extends Required<IsTupleOptions>,
 > =
 	IfAny<TArray, boolean, IfNever<TArray, false,
 	TArray extends unknown // For distributing `TArray`
