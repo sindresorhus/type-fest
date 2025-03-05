@@ -1,4 +1,5 @@
 import type {
+	ApplyDefaultOptions,
 	IsLowerCase,
 	IsNumeric,
 	IsUpperCase,
@@ -37,7 +38,7 @@ export type WordsOptions = {
 	splitOnNumbers?: boolean;
 };
 
-type DefaultOptions = {
+export type DefaultWordsOptions = {
 	splitOnNumbers: true;
 };
 
@@ -74,9 +75,8 @@ type Words5 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 @category Change case
 @category Template literal
 */
-export type Words<Sentence extends string, Options extends WordsOptions = {}> = WordsImplementation<Sentence, {
-	splitOnNumbers: Options['splitOnNumbers'] extends boolean ? Options['splitOnNumbers'] : DefaultOptions['splitOnNumbers'];
-}>;
+export type Words<Sentence extends string, Options extends WordsOptions = {}> =
+	WordsImplementation<Sentence, ApplyDefaultOptions<WordsOptions, DefaultWordsOptions, Options>>;
 
 type WordsImplementation<
 	Sentence extends string,
