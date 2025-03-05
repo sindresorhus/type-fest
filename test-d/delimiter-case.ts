@@ -112,6 +112,24 @@ expectType<'foo#bar' | 'bar#baz' | 'foo$bar' | 'bar$baz'>(unionValueAndDelimiter
 const stringPart: DelimiterCase<`foo${string}`, '#'> = 'fooSomeString';
 expectType<`foo${string}`>(stringPart);
 
+declare const withPunctuation: DelimiterCase<'onDialog:close', '#'>;
+expectType<'on#dialog:close'>(withPunctuation);
+
+declare const withPunctuation2: DelimiterCase<'foo-bar>>baz', '#'>;
+expectType<'foo#bar>>baz'>(withPunctuation2);
+
+declare const withPunctuation3: DelimiterCase<'card::after', '#'>;
+expectType<'card::after'>(withPunctuation3);
+
+declare const withPunctuation4: DelimiterCase<'div.card::after', '#'>;
+expectType<'div.card::after'>(withPunctuation4);
+
+declare const withPunctuationAndNumber: DelimiterCase<'foo-bar::01', '#'>;
+expectType<'foo#bar::01'>(withPunctuationAndNumber);
+
+declare const withPunctuationAndNumber2: DelimiterCase<'foo-bar::01', '#', {splitOnNumbers: true}>;
+expectType<'foo#bar::#01'>(withPunctuationAndNumber2);
+
 // Verifying example
 type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K];

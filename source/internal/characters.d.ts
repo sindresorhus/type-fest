@@ -31,3 +31,8 @@ export type Whitespace =
 	| '\u{FEFF}';
 
 export type WordSeparators = '-' | '_' | Whitespace;
+
+export type Punctuations =
+  | '!' | '"' | '#' | '$' | '%' | '&' | '\'' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/'
+  | ':' | ';' | '<' | '=' | '>' | '?' | '@' | '[' | '\\' | ']' | '^' | '_' | '`'
+  | '{' | '|' | '}' | '~';

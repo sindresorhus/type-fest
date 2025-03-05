@@ -78,3 +78,21 @@ expectType<'fo-o2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 
 const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: KebabCase<'FOO22Bar'> = 'foo22-bar';
 expectType<'foo22-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
+
+declare const withPunctuation: KebabCase<'onDialog:close'>;
+expectType<'on-dialog:close'>(withPunctuation);
+
+declare const withPunctuation2: KebabCase<'foo-bar>>baz'>;
+expectType<'foo-bar>>baz'>(withPunctuation2);
+
+declare const withPunctuation3: KebabCase<'card::after'>;
+expectType<'card::after'>(withPunctuation3);
+
+declare const withPunctuation4: KebabCase<'div.card::after'>;
+expectType<'div.card::after'>(withPunctuation4);
+
+declare const withPunctuationAndNumber: KebabCase<'foo-bar::01'>;
+expectType<'foo-bar::01'>(withPunctuationAndNumber);
+
+declare const withPunctuationAndNumber2: KebabCase<'foo-bar::01', {splitOnNumbers: true}>;
+expectType<'foo-bar::-01'>(withPunctuationAndNumber2);

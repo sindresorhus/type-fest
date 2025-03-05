@@ -1,3 +1,4 @@
+import type {Punctuations, StartsWith} from './internal';
 import type {IsStringLiteral} from './is-literal';
 import type {Words, WordsOptions} from './words';
 
@@ -12,7 +13,9 @@ type DelimiterCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${Delimiter}${FirstWord}`>
+	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${
+		StartsWith<FirstWord, Punctuations> extends true ? '' : Delimiter
+	}${FirstWord}`>
 	: OutputString;
 
 type RemoveFirstLetter<S extends string> = S extends `${infer _}${infer Rest}`
