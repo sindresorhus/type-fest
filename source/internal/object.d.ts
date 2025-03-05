@@ -2,6 +2,8 @@ import type {Simplify} from '../simplify';
 import type {UnknownArray} from '../unknown-array';
 import type {IsEqual} from '../is-equal';
 import type {KeysOfUnion} from '../keys-of-union';
+import type {RequiredKeysOf} from '../required-keys-of';
+import type {Merge} from '../merge';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys';
 import type {NonRecursiveType} from './type';
 import type {ToString} from './string';
@@ -159,3 +161,15 @@ type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
 export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 	[Key in keyof Union as IsEqual<{[K in Key]: Union[Key]}, {readonly [K in Key]: Union[Key]}> extends true ? Key : never]: never
 } : never;
+
+/**
+Merge user specified options with default options.
+*/
+export type ApplyDefaultOptions<
+	Options extends object,
+	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
+	SpecifiedOptions extends Options,
+> =
+	Simplify<Merge<Defaults, {
+		[Key in keyof SpecifiedOptions as undefined extends SpecifiedOptions[Key] ? never : Key]: SpecifiedOptions[Key]
+	}> & Required<Options>>;
