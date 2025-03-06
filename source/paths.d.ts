@@ -226,7 +226,8 @@ type _Paths<T, Options extends Required<PathsOptions>, Seen extends unknown[] = 
 					? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
 						? InternalPaths<StaticPartOfArray<T>, Options, Seen>
-						| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options, Seen>
+						// For the variable part of the array we need to include the full array as Seen to prevent circular recursion.
+						| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options, [...Seen, T]>
 						: InternalPaths<T, Options, Seen>
 					: T extends object
 						? InternalPaths<T, Options, Seen>

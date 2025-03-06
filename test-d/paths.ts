@@ -155,6 +155,22 @@ expectNotAssignable<Paths<CircularFoo, {maxCircularDepth: 3}>>({} as KeysAtLevel
 type ObjectWithRecurringStructure = {foo: string; bar: {foo: string; bar: {}}};
 expectType<'foo' | 'bar' | 'bar.foo' | 'bar.bar'>({} as Paths<ObjectWithRecurringStructure, {maxCircularDepth: 0}>);
 
+// Arrays
+type StaticLengthArray = [number, 3, StaticLengthArray, false];
+expectType<'0' | '1' | '2' | '3'>({} as Paths<StaticLengthArray, {maxCircularDepth: 0}>);
+expectType<'0' | '1' | '2' | '3' | '2.0' | '2.1' | '2.2' | '2.3'>({} as Paths<StaticLengthArray, {maxCircularDepth: 1}>);
+expectType<'0' | '1' | '2' | '3' | '2.0' | '2.1' | '2.2' | '2.3' | '2.2.0' | '2.2.1' | '2.2.2' | '2.2.3'>({} as Paths<StaticLengthArray, {maxCircularDepth: 2}>);
+
+type VariableLengthArray = [1, ...VariableLengthArray[], string];
+expectType<number | `${number}`>({} as Paths<VariableLengthArray, {maxCircularDepth: 0}>);
+expectType<number | `${number}` | `${number}.${number}`>({} as Paths<VariableLengthArray, {maxCircularDepth: 1}>);
+expectType<number | `${number}` | `${number}.${number}` | `${number}.${number}.${number}`>({} as Paths<VariableLengthArray, {maxCircularDepth: 2}>);
+
+type VariableLengthArray2 = [boolean, ...number[], VariableLengthArray2, string];
+expectType<number | `${number}`>({} as Paths<VariableLengthArray2, {maxCircularDepth: 0}>);
+expectType<number | `${number}` | `${number}.${number}`>({} as Paths<VariableLengthArray2, {maxCircularDepth: 1}>);
+expectType<number | `${number}` | `${number}.${number}` | `${number}.${number}.${number}`>({} as Paths<VariableLengthArray2, {maxCircularDepth: 2}>);
+
 // Test a[0].b style
 type Object1 = {
 	arr: [{a: string}];
