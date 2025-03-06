@@ -1,4 +1,4 @@
-import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike} from './internal';
+import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, CountInArray} from './internal';
 import type {EmptyObject} from './empty-object';
 import type {IsAny} from './is-any';
 import type {UnknownArray} from './unknown-array';
@@ -17,6 +17,32 @@ export type PathsOptions = {
 	@default 10
 	*/
 	maxRecursionDepth?: number;
+
+	/**
+	The maximum depth to recurse circular objects when searching for paths.
+
+	Note: `maxCircularDepth: 0` will fully disable recursion into circular references.
+
+	@default 10
+
+	@example
+	```
+	type DeepWithCircular = {
+		a: {b: {c: {d: {e: string}}}};
+		foo: {circular: DeepWithCircular};
+	};
+
+	type Circular0 = Paths<DeepWithCircular, {maxCircularDepth: 0}>;
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular'
+
+	type Circular1 = Paths<DeepWithCircular, {maxCircularDepth: 1}>;
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.foo' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.a.b.c.d.e' | 'foo.circular.foo.circular'
+
+	type Circular2 = Paths<DeepWithCircular, {maxCircularDepth: 2}>;
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.foo' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | ... 8 more ... | 'foo.circular.foo.circular.foo.circular'
+	```
+	*/
+	maxCircularDepth?: number;
 
 	/**
 	Use bracket notation for array indices and numeric object keys.
@@ -128,8 +154,9 @@ export type PathsOptions = {
 	depth?: number;
 };
 
-type DefaultPathsOptions = {
+export type DefaultPathsOptions = {
 	maxRecursionDepth: 10;
+	maxCircularDepth: 10;
 	bracketNotation: false;
 	leavesOnly: false;
 	depth: number;
@@ -179,6 +206,8 @@ open('listB.1'); // TypeError. Because listB only has one element.
 export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
 	// Set default maxRecursionDepth to 10
 	maxRecursionDepth: Options['maxRecursionDepth'] extends number ? Options['maxRecursionDepth'] : DefaultPathsOptions['maxRecursionDepth'];
+	// Set default maxCircularDepth to 10
+	maxCircularDepth: Options['maxCircularDepth'] extends number ? Options['maxCircularDepth'] : DefaultPathsOptions['maxCircularDepth'];
 	// Set default bracketNotation to false
 	bracketNotation: Options['bracketNotation'] extends boolean ? Options['bracketNotation'] : DefaultPathsOptions['bracketNotation'];
 	// Set default leavesOnly to false
@@ -187,22 +216,25 @@ export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
 	depth: Options['depth'] extends number ? Options['depth'] : DefaultPathsOptions['depth'];
 }>;
 
-type _Paths<T, Options extends Required<PathsOptions>> =
+type _Paths<T, Options extends Required<PathsOptions>, Seen extends unknown[] = []> =
 	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 		? never
 		: IsAny<T> extends true
 			? never
-			: T extends UnknownArray
-				? number extends T['length']
+			: GreaterThan<CountInArray<Seen, T>, Options['maxCircularDepth']> extends false
+				? T extends UnknownArray
+					? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Options>
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
-					: InternalPaths<T, Options>
-				: T extends object
-					? InternalPaths<T, Options>
-					: never;
+						? InternalPaths<StaticPartOfArray<T>, Options, Seen>
+						// For the variable part of the array we need to include the full array as Seen to prevent circular recursion.
+						| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options, [...Seen, T]>
+						: InternalPaths<T, Options, Seen>
+					: T extends object
+						? InternalPaths<T, Options, Seen>
+						: never
+				: never;
 
-type InternalPaths<T, Options extends Required<PathsOptions>> =
+type InternalPaths<T, Options extends Required<PathsOptions>, Seen extends unknown[]> =
 	Options['maxRecursionDepth'] extends infer MaxDepth extends number
 		? Required<T> extends infer T
 			? T extends EmptyObject | readonly []
@@ -245,9 +277,10 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 									{
 										bracketNotation: Options['bracketNotation'];
 										maxRecursionDepth: Subtract<MaxDepth, 1>;
+										maxCircularDepth: Options['maxCircularDepth'];
 										leavesOnly: Options['leavesOnly'];
 										depth: Subtract<Options['depth'], 1>;
-									}> extends infer SubPath
+									}, [...Seen, T]> extends infer SubPath
 										? SubPath extends string | number
 											? (
 												Options['bracketNotation'] extends true

@@ -1,5 +1,6 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {Paths} from '../index';
+import type {DefaultPathsOptions, Paths} from '../source/paths';
+import type {LimitStringDepth} from '../source/internal';
 
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);
@@ -118,6 +119,57 @@ expectType<'foo'>(recursion0);
 
 declare const recursion1: Paths<RecursiveFoo, {maxRecursionDepth: 1}>;
 expectType<'foo' | 'foo.foo'>(recursion1);
+
+// Circular depth
+type CircularFoo = {foo: CircularFoo; a: {b: {c: {d: {e: {f: {g: string}}}}}}; internal: {parent: CircularFoo}};
+
+// Default circular limit should be respected
+type CircularFooDefault = Paths<CircularFoo>;
+expectAssignable<CircularFooDefault>('foo.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<CircularFooDefault>('foo.foo.foo.a.b.c.d.e');
+expectAssignable<CircularFooDefault>('foo.foo.a.b.c.d.e.f.g');
+expectAssignable<CircularFooDefault>('foo.a.b.c.d.e.f.g');
+expectAssignable<CircularFooDefault>('foo.foo.a.b.c');
+expectAssignable<CircularFooDefault>('internal.parent.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<CircularFooDefault>('internal.parent.foo.a.b.c');
+expectAssignable<CircularFooDefault>('internal.parent.a.b.c');
+
+type GetKeysAtNextLevel<PreviousLevelKeys extends string> = PreviousLevelKeys | `foo.${PreviousLevelKeys}` | `internal.parent.${PreviousLevelKeys}`;
+
+type KeysAtLevel0 = 'foo' | 'a' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'internal' | 'internal.parent' | 'a.b.c.d.e' | 'a.b.c.d.e.f' | 'a.b.c.d.e.f.g';
+expectType<KeysAtLevel0>({} as Paths<CircularFoo, {maxCircularDepth: 0}>);
+
+type KeysAtLevel1 = GetKeysAtNextLevel<KeysAtLevel0>;
+expectType<KeysAtLevel1>({} as Paths<CircularFoo, {maxCircularDepth: 1}>);
+
+type KeysAtLevel2 = GetKeysAtNextLevel<KeysAtLevel1>;
+expectType<KeysAtLevel2>({} as Paths<CircularFoo, {maxCircularDepth: 2}>);
+
+// Level 3 will hit the max recursion depth, so we have to limit the expected keys to that depth for testing
+type KeysAtLevel3 = GetKeysAtNextLevel<KeysAtLevel2>;
+expectType<LimitStringDepth<KeysAtLevel3, '.', DefaultPathsOptions['maxRecursionDepth']>>({} as Paths<CircularFoo, {maxCircularDepth: 3}>);
+// We can also test that it in fact doesn't go deeper
+expectNotAssignable<Paths<CircularFoo, {maxCircularDepth: 3}>>({} as KeysAtLevel3);
+
+// Ensure non-circular recurring structure works and is not flagged as circular
+type ObjectWithRecurringStructure = {foo: string; bar: {foo: string; bar: {}}};
+expectType<'foo' | 'bar' | 'bar.foo' | 'bar.bar'>({} as Paths<ObjectWithRecurringStructure, {maxCircularDepth: 0}>);
+
+// Arrays
+type StaticLengthArray = [number, 3, StaticLengthArray, false];
+expectType<'0' | '1' | '2' | '3'>({} as Paths<StaticLengthArray, {maxCircularDepth: 0}>);
+expectType<'0' | '1' | '2' | '3' | '2.0' | '2.1' | '2.2' | '2.3'>({} as Paths<StaticLengthArray, {maxCircularDepth: 1}>);
+expectType<'0' | '1' | '2' | '3' | '2.0' | '2.1' | '2.2' | '2.3' | '2.2.0' | '2.2.1' | '2.2.2' | '2.2.3'>({} as Paths<StaticLengthArray, {maxCircularDepth: 2}>);
+
+type VariableLengthArray = [1, ...VariableLengthArray[], string];
+expectType<number | `${number}`>({} as Paths<VariableLengthArray, {maxCircularDepth: 0}>);
+expectType<number | `${number}` | `${number}.${number}`>({} as Paths<VariableLengthArray, {maxCircularDepth: 1}>);
+expectType<number | `${number}` | `${number}.${number}` | `${number}.${number}.${number}`>({} as Paths<VariableLengthArray, {maxCircularDepth: 2}>);
+
+type VariableLengthArray2 = [boolean, ...number[], VariableLengthArray2, string];
+expectType<number | `${number}`>({} as Paths<VariableLengthArray2, {maxCircularDepth: 0}>);
+expectType<number | `${number}` | `${number}.${number}`>({} as Paths<VariableLengthArray2, {maxCircularDepth: 1}>);
+expectType<number | `${number}` | `${number}.${number}` | `${number}.${number}.${number}`>({} as Paths<VariableLengthArray2, {maxCircularDepth: 2}>);
 
 // Test a[0].b style
 type Object1 = {
