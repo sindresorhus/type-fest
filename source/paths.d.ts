@@ -21,6 +21,8 @@ export type PathsOptions = {
 	/**
 	The maximum depth to recurse circular objects when searching for paths.
 
+	Note: `maxCircularDepth: 0` will fully disable recursion into circular references.
+
 	@default 10
 
 	@example
