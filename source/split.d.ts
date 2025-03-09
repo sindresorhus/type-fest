@@ -1,5 +1,5 @@
 import type {And} from './and';
-import type {Not} from './internal';
+import type {ApplyDefaultOptions, Not} from './internal';
 import type {IsStringLiteral} from './is-literal';
 import type {Or} from './or';
 
@@ -65,9 +65,8 @@ export type Split<
 	S extends string,
 	Delimiter extends string,
 	Options extends SplitOptions = {},
-> = SplitHelper<S, Delimiter, {
-	strictLiteralChecks: Options['strictLiteralChecks'] extends boolean ? Options['strictLiteralChecks'] : DefaultSplitOptions['strictLiteralChecks'];
-}>;
+> =
+	SplitHelper<S, Delimiter, ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>>;
 
 type SplitHelper<
 	S extends string,

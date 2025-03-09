@@ -1,5 +1,5 @@
-import type {CamelCase, CamelCaseOptions} from './camel-case';
-import type {NonRecursiveType} from './internal';
+import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case';
+import type {ApplyDefaultOptions, NonRecursiveType} from './internal';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -48,15 +48,20 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 */
 export type CamelCasedPropertiesDeep<
 	Value,
-	Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true},
+	Options extends CamelCaseOptions = {},
+> = _CamelCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>;
+
+type _CamelCasedPropertiesDeep<
+	Value,
+	Options extends Required<CamelCaseOptions>,
 > = Value extends NonRecursiveType
 	? Value
 	: Value extends UnknownArray
 		? CamelCasedPropertiesArrayDeep<Value>
 		: Value extends Set<infer U>
-			? Set<CamelCasedPropertiesDeep<U, Options>>
+			? Set<_CamelCasedPropertiesDeep<U, Options>>
 			: {
-				[K in keyof Value as CamelCase<K, Options>]: CamelCasedPropertiesDeep<
+				[K in keyof Value as CamelCase<K, Options>]: _CamelCasedPropertiesDeep<
 				Value[K],
 				Options
 				>;

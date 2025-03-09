@@ -1,4 +1,5 @@
-import type {DelimiterCase} from './delimiter-case';
+import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case';
+import type {ApplyDefaultOptions} from './internal';
 import type {WordsOptions} from './words';
 
 /**
@@ -39,5 +40,5 @@ const dbResult: SnakeCasedProperties<ModelProps> = {
 */
 export type SnakeCase<
 	Value,
-	Options extends WordsOptions = {splitOnNumbers: false},
-> = DelimiterCase<Value, '_', Options>;
+	Options extends WordsOptions = {},
+> = DelimiterCase<Value, '_', ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;

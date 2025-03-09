@@ -1,3 +1,4 @@
+import type {ApplyDefaultOptions} from './internal';
 import type {IsEqual} from './is-equal';
 
 /**
@@ -38,6 +39,10 @@ type ExceptOptions = {
 	@default false
 	*/
 	requireExactProps?: boolean;
+};
+
+type DefaultExceptOptions = {
+	requireExactProps: false;
 };
 
 /**
@@ -93,7 +98,10 @@ type PostPayload = Except<UserData, 'email'>;
 
 @category Object
 */
-export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {requireExactProps: false}> = {
+export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {}> =
+	_Except<ObjectType, KeysType, ApplyDefaultOptions<ExceptOptions, DefaultExceptOptions, Options>>;
+
+type _Except<ObjectType, KeysType extends keyof ObjectType, Options extends Required<ExceptOptions>> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
 } & (Options['requireExactProps'] extends true
 	? Partial<Record<KeysType, never>>

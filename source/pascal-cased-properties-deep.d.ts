@@ -1,4 +1,5 @@
-import type {CamelCaseOptions} from './camel-case';
+import type {CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case';
+import type {ApplyDefaultOptions} from './internal';
 import type {PascalCase} from './pascal-case';
 
 /**
@@ -45,11 +46,14 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 @category Template literal
 @category Object
 */
-export type PascalCasedPropertiesDeep<Value, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Value extends Function | Date | RegExp
+export type PascalCasedPropertiesDeep<Value, Options extends CamelCaseOptions = {}> =
+	_PascalCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>;
+
+type _PascalCasedPropertiesDeep<Value, Options extends Required<CamelCaseOptions>> = Value extends Function | Date | RegExp
 	? Value
 	: Value extends Array<infer U>
-		? Array<PascalCasedPropertiesDeep<U, Options>>
+		? Array<_PascalCasedPropertiesDeep<U, Options>>
 		: Value extends Set<infer U>
-			? Set<PascalCasedPropertiesDeep<U, Options>> : {
-				[K in keyof Value as PascalCase<K, Options>]: PascalCasedPropertiesDeep<Value[K], Options>;
+			? Set<_PascalCasedPropertiesDeep<U, Options>> : {
+				[K in keyof Value as PascalCase<K, Options>]: _PascalCasedPropertiesDeep<Value[K], Options>;
 			};
