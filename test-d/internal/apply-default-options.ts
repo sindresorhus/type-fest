@@ -39,6 +39,12 @@ expectType<DefaultPathsOptions>(undefinedsGetOverwritten);
 declare const optionalOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {maxRecursionDepth?: 5; bracketNotation?: true}>;
 expectType<DefaultPathsOptions>(optionalOptionsGetOverwritten);
 
+declare const neverAsOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, never>;
+expectType<DefaultPathsOptions>(neverAsOptionsGetOverwritten);
+
+declare const anyAsOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, any>;
+expectType<DefaultPathsOptions>(anyAsOptionsGetOverwritten);
+
 // @ts-expect-error - `Defaults` should be compatible with `Options`
 declare const defaultsShouldBeCompatible: ApplyDefaultOptions<{fixedLengthOnly?: boolean}, {fixedLengthOnly: 'no'}, {}>;
 

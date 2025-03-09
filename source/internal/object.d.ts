@@ -4,6 +4,8 @@ import type {IsEqual} from '../is-equal';
 import type {KeysOfUnion} from '../keys-of-union';
 import type {RequiredKeysOf} from '../required-keys-of';
 import type {Merge} from '../merge';
+import type {IfAny} from '../if-any';
+import type {IfNever} from '../if-never';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys';
 import type {NonRecursiveType} from './type';
 import type {ToString} from './string';
@@ -170,6 +172,9 @@ export type ApplyDefaultOptions<
 	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
 	SpecifiedOptions extends Options,
 > =
+	IfAny<SpecifiedOptions, Defaults,
+	IfNever<SpecifiedOptions, Defaults,
 	Simplify<Merge<Defaults, {
 		[Key in keyof SpecifiedOptions as undefined extends SpecifiedOptions[Key] ? never : Key]: SpecifiedOptions[Key]
-	}> & Required<Options>>;
+	}> & Required<Options>>
+	>>;
