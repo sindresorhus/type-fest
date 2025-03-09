@@ -165,7 +165,56 @@ export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 } : never;
 
 /**
-Merge user specified options with default options.
+Merges user specified options with default options.
+
+@example
+```
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
+type SpecifiedOptions = {leavesOnly: true};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//=> {maxRecursionDepth: 10; leavesOnly: true}
+```
+
+@example
+```
+// Complains if default values are not provided for optional options
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10};
+type SpecifiedOptions = {};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                              ~~~~~~~~~~~~~~~~~~~
+// Property 'leavesOnly' is missing in type 'DefaultPathsOptions' but required in type '{ maxRecursionDepth: number; leavesOnly: boolean; }'.
+```
+
+@example
+```
+// Complains if an option's default type does not conform to the expected type
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: 'no'};
+type SpecifiedOptions = {};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                              ~~~~~~~~~~~~~~~~~~~
+// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
+```
+
+@example
+```
+// Complains if an option's specified type does not conform to the expected type
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
+type SpecifiedOptions = {leavesOnly: 'yes'};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                                                   ~~~~~~~~~~~~~~~~
+// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
+```
 */
 export type ApplyDefaultOptions<
 	Options extends object,
