@@ -36,6 +36,13 @@ expectType<{fixedLengthOnly: false; strict: true}>(requiredOptions);
 declare const undefinedsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {maxRecursionDepth: undefined}>; // Possible when `exactOptionalPropertyTypes` is disabled
 expectType<DefaultPathsOptions>(undefinedsGetOverwritten);
 
+// Caveat: User specified `undefined` for optional properties with explicit undefined also gets overwritten
+declare const undefinedsGetOverwritten2: ApplyDefaultOptions<{recurseIntoArrays?: boolean | undefined}, {recurseIntoArrays: true}, {recurseIntoArrays: undefined}>;
+expectType<{recurseIntoArrays: true}>(undefinedsGetOverwritten2);
+
+declare const undefinedAsValidValue: ApplyDefaultOptions<{recurseIntoArrays: boolean | undefined}, {}, {recurseIntoArrays: undefined}>;
+expectType<{recurseIntoArrays: undefined}>(undefinedAsValidValue);
+
 declare const optionalOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {maxRecursionDepth?: 5; bracketNotation?: true}>;
 expectType<DefaultPathsOptions>(optionalOptionsGetOverwritten);
 

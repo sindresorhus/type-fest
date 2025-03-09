@@ -6,6 +6,7 @@ import type {RequiredKeysOf} from '../required-keys-of';
 import type {Merge} from '../merge';
 import type {IfAny} from '../if-any';
 import type {IfNever} from '../if-never';
+import type {OptionalKeysOf} from '../optional-keys-of';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys';
 import type {NonRecursiveType} from './type';
 import type {ToString} from './string';
@@ -224,6 +225,8 @@ export type ApplyDefaultOptions<
 	IfAny<SpecifiedOptions, Defaults,
 	IfNever<SpecifiedOptions, Defaults,
 	Simplify<Merge<Defaults, {
-		[Key in keyof SpecifiedOptions as undefined extends SpecifiedOptions[Key] ? never : Key]: SpecifiedOptions[Key]
+		[Key in keyof SpecifiedOptions
+		as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
+		]: SpecifiedOptions[Key]
 	}> & Required<Options>>
 	>>;
