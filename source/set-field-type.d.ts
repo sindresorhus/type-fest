@@ -1,3 +1,4 @@
+import type {ApplyDefaultOptions} from './internal';
 import type {Simplify} from './simplify';
 
 type SetFieldTypeOptions = {
@@ -9,6 +10,10 @@ type SetFieldTypeOptions = {
 	@default true
 	*/
 	preservePropertyModifiers?: boolean;
+};
+
+type DefaultSetFieldTypeOptions = {
+	preservePropertyModifiers: true;
 };
 
 /**
@@ -48,7 +53,10 @@ type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string, {pres
 
 @category Object
 */
-export type SetFieldType<BaseType, Keys extends keyof BaseType, NewType, Options extends SetFieldTypeOptions = {preservePropertyModifiers: true}> =
+export type SetFieldType<BaseType, Keys extends keyof BaseType, NewType, Options extends SetFieldTypeOptions = {}> =
+	_SetFieldType<BaseType, Keys, NewType, ApplyDefaultOptions<SetFieldTypeOptions, DefaultSetFieldTypeOptions, Options>>;
+
+type _SetFieldType<BaseType, Keys extends keyof BaseType, NewType, Options extends Required<SetFieldTypeOptions>> =
 	Simplify<{
 		[P in keyof BaseType]: P extends Keys ? NewType : BaseType[P];
 	} & (

@@ -1,3 +1,5 @@
+import type {DefaultDelimiterCaseOptions} from './delimiter-case';
+import type {ApplyDefaultOptions} from './internal';
 import type {SnakeCase} from './snake-case';
 import type {WordsOptions} from './words';
 
@@ -20,5 +22,7 @@ const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNum
  */
 export type ScreamingSnakeCase<
 	Value,
-	Options extends WordsOptions = {splitOnNumbers: false},
-> = Value extends string ? Uppercase<SnakeCase<Value, Options>> : Value;
+	Options extends WordsOptions = {},
+> = Value extends string
+	? Uppercase<SnakeCase<Value, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>>
+	: Value;
