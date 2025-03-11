@@ -228,5 +228,5 @@ export type ApplyDefaultOptions<
 		[Key in keyof SpecifiedOptions
 		as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
 		]: SpecifiedOptions[Key]
-	}> & Required<Options>>
+	}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
 	>>;
