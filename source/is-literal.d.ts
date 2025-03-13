@@ -2,6 +2,7 @@ import type {Primitive} from './primitive';
 import type {Numeric} from './numeric';
 import type {IsNotFalse, IsPrimitive} from './internal';
 import type {IsNever} from './is-never';
+import type {IfNever} from './if-never';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.
@@ -65,6 +66,8 @@ Useful for:
 	- constraining strings to be a string literal
 	- type utilities, such as when constructing parsers and ASTs
 
+The implementation of this type is inspired by the trick mentioned in this [StackOverflow answer](https://stackoverflow.com/a/68261113/420747).
+
 @example
 ```
 import type {IsStringLiteral} from 'type-fest';
@@ -80,10 +83,45 @@ const output = capitalize('hello, world!');
 //=> 'Hello, world!'
 ```
 
+@example
+```
+// String types with infinite set of possible values return `false`.
+
+import type {IsStringLiteral} from 'type-fest';
+
+type AllUppercaseStrings = IsStringLiteral<Uppercase<string>>;
+//=> false
+
+type StringsStartingWithOn = IsStringLiteral<`on${string}`>;
+//=> false
+
+// This behaviour is particularly useful in string manipulation utilities, as infinite string types often require separate handling.
+
+type Length<S extends string, Counter extends never[] = []> =
+	IsStringLiteral<S> extends false
+		? number // return `number` for infinite string types
+		: S extends `${string}${infer Tail}`
+			? Length<Tail, [...Counter, never]>
+			: Counter['length'];
+
+type L1 = Length<Lowercase<string>>;
+//=> number
+
+type L2 = Length<`${number}`>;
+//=> number
+```
+
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<T> = LiteralCheck<T, string>;
+export type IsStringLiteral<T> = IfNever<T, false,
+// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
+// and since `{}` extends index signatures, the result becomes `false`.
+T extends string
+	? {} extends Record<T, never>
+		? false
+		: true
+	: false>;
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).

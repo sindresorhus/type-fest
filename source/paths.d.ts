@@ -50,11 +50,89 @@ export type PathsOptions = {
 	```
 	*/
 	bracketNotation?: boolean;
+
+	/**
+	Only include leaf paths in the output.
+
+	@default false
+
+	@example
+	```
+	type Post = {
+		id: number;
+		author: {
+			id: number;
+			name: {
+				first: string;
+				last: string;
+			};
+		};
+	};
+
+	type AllPaths = Paths<Post, {leavesOnly: false}>;
+	//=> 'id' | 'author' | 'author.id' | 'author.name' | 'author.name.first' | 'author.name.last'
+
+	type LeafPaths = Paths<Post, {leavesOnly: true}>;
+	//=> 'id' | 'author.id' | 'author.name.first' | 'author.name.last'
+	```
+
+	@example
+	```
+	type ArrayExample = {
+		array: Array<{foo: string}>;
+		tuple: [string, {bar: string}];
+	};
+
+	type AllPaths = Paths<ArrayExample, {leavesOnly: false}>;
+	//=> 'array' | `array.${number}` | `array.${number}.foo` | 'tuple' | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
+
+	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
+	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
+	```
+	*/
+	leavesOnly?: boolean;
+
+	/**
+	Only include paths at the specified depth. By default all paths up to {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} are included.
+
+	Note: Depth starts at `0` for root properties.
+
+	@default number
+
+	@example
+	```
+	type Post = {
+		id: number;
+		author: {
+			id: number;
+			name: {
+				first: string;
+				last: string;
+			};
+		};
+	};
+
+	type DepthZero = Paths<Post, {depth: 0}>;
+	//=> 'id' | 'author'
+
+	type DepthOne = Paths<Post, {depth: 1}>;
+	//=> 'author.id' | 'author.name'
+
+	type DepthTwo = Paths<Post, {depth: 2}>;
+	//=> 'author.name.first' | 'author.name.last'
+
+	type LeavesAtDepthOne = Paths<Post, {leavesOnly: true; depth: 1}>;
+	//=> 'author.id'
+	```
+	*/
+	depth?: number;
 };
 
 type DefaultPathsOptions = {
 	maxRecursionDepth: 10;
 	bracketNotation: false;
+	leavesOnly: false;
+	depth: number;
 };
 
 /**
@@ -103,6 +181,10 @@ export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
 	maxRecursionDepth: Options['maxRecursionDepth'] extends number ? Options['maxRecursionDepth'] : DefaultPathsOptions['maxRecursionDepth'];
 	// Set default bracketNotation to false
 	bracketNotation: Options['bracketNotation'] extends boolean ? Options['bracketNotation'] : DefaultPathsOptions['bracketNotation'];
+	// Set default leavesOnly to false
+	leavesOnly: Options['leavesOnly'] extends boolean ? Options['leavesOnly'] : DefaultPathsOptions['leavesOnly'];
+	// Set default depth to number
+	depth: Options['depth'] extends number ? Options['depth'] : DefaultPathsOptions['depth'];
 }>;
 
 type _Paths<T, Options extends Required<PathsOptions>> =
@@ -142,11 +224,30 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 						) extends infer TranformedKey extends string | number ?
 						// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
 						// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
-							| TranformedKey
+							| ((Options['leavesOnly'] extends true
+								? MaxDepth extends 0
+									? TranformedKey
+									: T[Key] extends EmptyObject | readonly [] | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+										? TranformedKey
+										: never
+								: TranformedKey
+							) extends infer _TransformedKey
+								// If `depth` is provided, the condition becomes truthy only when it reaches `0`.
+								// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
+								? 0 extends Options['depth']
+									? _TransformedKey
+									: never
+								: never)
 							| (
 								// Recursively generate paths for the current key
 								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
-									? _Paths<T[Key], {bracketNotation: Options['bracketNotation']; maxRecursionDepth: Subtract<MaxDepth, 1>}> extends infer SubPath
+									? _Paths<T[Key],
+									{
+										bracketNotation: Options['bracketNotation'];
+										maxRecursionDepth: Subtract<MaxDepth, 1>;
+										leavesOnly: Options['leavesOnly'];
+										depth: Subtract<Options['depth'], 1>;
+									}> extends infer SubPath
 										? SubPath extends string | number
 											? (
 												Options['bracketNotation'] extends true

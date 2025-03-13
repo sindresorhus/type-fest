@@ -16,9 +16,9 @@ jobs:
       fail-fast: false
       matrix:
         node-version:
+          - 22
           - 20
           - 18
-          - 16
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,6 +34,10 @@ jobs:
       matrix:
         typescript-version:
           - "latest"
+          - "~5.8.0"
+          - "~5.7.0"
+          - "~5.6.0"
+          - "~5.5.0"
           - "~5.4.0"
           - "~5.3.0"
           - "~5.2.0"
@@ -46,3 +50,13 @@ jobs:
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }}
       - run: npx tsc
+  test-export:
+    name: Test Module Export
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install rollup rollup-plugin-dts
+      - run: npx rollup index.d.ts -p rollup-plugin-dts -d temp

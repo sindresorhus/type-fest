@@ -22,4 +22,8 @@ add3(4);
 
 @category Array
 */
-export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown, ...infer Tail] ? Tail : [];
+export type ArrayTail<TArray extends UnknownArrayOrTuple> = TArray extends readonly [unknown?, ...infer Tail]
+	? keyof TArray & `${number}` extends never
+		? []
+		: Tail
+	: [];

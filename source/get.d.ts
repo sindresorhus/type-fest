@@ -127,8 +127,20 @@ type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 		? undefined
 		: Key extends keyof BaseType
 			? StrictPropertyOf<BaseType, Key, Options>
-			: BaseType extends readonly [] | readonly [unknown, ...unknown[]]
-				? unknown // It's a tuple, but `Key` did not extend `keyof BaseType`. So the index is out of bounds.
+			// Handle arrays and tuples
+			: BaseType extends readonly unknown[]
+				? Key extends `${number}`
+					// For arrays with unknown length (regular arrays)
+					? number extends BaseType['length']
+						? Strictify<BaseType[number], Options>
+						// For tuples: check if the index is valid
+						: Key extends keyof BaseType
+							? Strictify<BaseType[Key & keyof BaseType], Options>
+							// Out-of-bounds access for tuples
+							: unknown
+					// Non-numeric string key for arrays/tuples
+					: unknown
+				// Handle array-like objects
 				: BaseType extends {
 					[n: number]: infer Item;
 					length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
@@ -193,6 +205,6 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
-	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false}> | Paths<BaseType, {bracketNotation: true}>>>,
+	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
 	Options extends GetOptions = {}> =
 		GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;

@@ -128,3 +128,18 @@ expectType<{tuple: [number, string, ...Array<string | boolean>]}>(nonFixedLength
 type TestingType2 = TestingType & {foo: any};
 declare const same: SharedUnionFieldsDeepRecurseIntoArrays<TestingType | TestingType2>;
 expectType<TestingType>(same);
+
+// Test for propagation with non union root object
+declare const nonUnionRootType: SharedUnionFieldsDeep<{union: {number: number; boolean: boolean} | {number: number}}>;
+expectType<{union: {number: number}}>(nonUnionRootType);
+
+declare const unionWithUndefined: SharedUnionFieldsDeep<{
+	a?: {a: string; foo: number} | {a: string; bar: string} | undefined;
+	b?: {a: string; foo: number} | {a: string; bar: string};
+	c: {a: string; foo: number} | {a: string; bar: string} | undefined;
+}>;
+expectType<{
+	a?: {a: string} | undefined;
+	b?: {a: string};
+	c: {a: string} | undefined;
+}>(unionWithUndefined);

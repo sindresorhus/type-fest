@@ -13,7 +13,7 @@ function bundle(input: string, output: Arrayable<string>) {
 	// …
 
 	for (const output of outputList) {
-	  console.log(`write to: ${output}`);
+		console.log(`write to: ${output}`);
 	}
 }
 
@@ -23,4 +23,7 @@ bundle('src/index.js', ['dist/index.cjs', 'dist/index.mjs']);
 
 @category Array
 */
-export type Arrayable<T> = T | readonly T[];
+export type Arrayable<T> =
+T
+// TODO: Use `readonly T[]` when this issue is resolved: https://github.com/microsoft/TypeScript/issues/17002
+| T[];

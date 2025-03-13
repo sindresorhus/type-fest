@@ -1,4 +1,5 @@
 import type {DelimiterCase} from './delimiter-case';
+import type {WordsOptions} from './words';
 
 /**
 Convert a string literal to kebab-case.
@@ -12,6 +13,7 @@ import type {KebabCase} from 'type-fest';
 // Simple
 
 const someVariable: KebabCase<'fooBar'> = 'foo-bar';
+const someVariableNoSplitOnNumbers: KebabCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p-network';
 
 // Advanced
 
@@ -35,4 +37,7 @@ const rawCliOptions: KebabCasedProperties<CliOptions> = {
 @category Change case
 @category Template literal
 */
-export type KebabCase<Value> = DelimiterCase<Value, '-'>;
+export type KebabCase<
+	Value,
+	Options extends WordsOptions = {splitOnNumbers: false},
+> = DelimiterCase<Value, '-', Options>;

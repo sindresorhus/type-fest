@@ -1,3 +1,7 @@
+// Can eventually be replaced with the built-in once this library supports
+// TS5.4+ only. Tracked in https://github.com/sindresorhus/type-fest/issues/848
+type NoInfer<T> = T extends infer U ? U : never;
+
 /**
 Returns a boolean for whether the given type is `any`.
 
@@ -26,4 +30,4 @@ const anyA = get(anyObject, 'a');
 @category Type Guard
 @category Utilities
 */
-export type IsAny<T> = 0 extends 1 & T ? true : false;
+export type IsAny<T> = 0 extends 1 & NoInfer<T> ? true : false;

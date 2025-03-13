@@ -59,11 +59,13 @@ export type ArraySlice<
 	Array_ extends readonly unknown[],
 	Start extends number = never,
 	End extends number = never,
-> = And<IsEqual<Start, never>, IsEqual<End, never>> extends true
-	? Array_
-	: number extends Array_['length']
-		? VariableLengthArraySliceHelper<Array_, Start, End>
-		: ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? Array_['length'] : End>;
+> = Array_ extends unknown // To distributive type
+	? And<IsEqual<Start, never>, IsEqual<End, never>> extends true
+		? Array_
+		: number extends Array_['length']
+			? VariableLengthArraySliceHelper<Array_, Start, End>
+			: ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? Array_['length'] : End>
+	: never; // Never happens
 
 type VariableLengthArraySliceHelper<
 	Array_ extends readonly unknown[],
@@ -89,7 +91,7 @@ type ArraySliceHelper<
 		? Sum<ArrayLength, Start> extends infer AddResult extends number
 			? number extends AddResult // (ArrayLength + Start) < 0
 				? 0
-				: AddResult
+				: GreaterThan<AddResult, 0> extends true ? AddResult : 0
 			: never
 		: Start,
 	PositiveE extends number = IsNegative<End> extends true ? Sum<ArrayLength, End> : End,

@@ -4,8 +4,8 @@ import type {IsEqual} from './is-equal';
 import type {IsNever} from './is-never';
 import type {LiteralUnion} from './literal-union';
 import type {Paths} from './paths';
-import type {SharedUnionFieldsDeep} from './shared-union-fields-deep';
 import type {SimplifyDeep} from './simplify-deep';
+import type {UnionToTuple} from './union-to-tuple';
 import type {UnknownArray} from './unknown-array';
 
 /**
@@ -92,10 +92,18 @@ type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
 */
 export type OmitDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
 	SimplifyDeep<
-	SharedUnionFieldsDeep<
-	{[P in PathUnion]: OmitDeepWithOnePath<T, P>}[PathUnion]
-	>,
+	OmitDeepHelper<T, UnionToTuple<PathUnion>>,
 	UnknownArray>;
+
+/**
+Internal helper for {@link OmitDeep}.
+
+Recursively transforms `T` by applying {@link OmitDeepWithOnePath} for each path in `PathTuple`.
+*/
+type OmitDeepHelper<T, PathTuple extends UnknownArray> =
+	PathTuple extends [infer Path, ...infer RestPaths]
+		? OmitDeepHelper<OmitDeepWithOnePath<T, Path & (string | number)>, RestPaths>
+		: T;
 
 /**
 Omit one path from the given object/array.
