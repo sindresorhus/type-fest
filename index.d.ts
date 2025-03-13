@@ -31,22 +31,13 @@ export type {PartialDeep, PartialDeepOptions} from './source/partial-deep';
 export type {RequiredDeep} from './source/required-deep';
 export type {PickDeep} from './source/pick-deep';
 export type {OmitDeep} from './source/omit-deep';
-export type {
-	PartialOnUndefinedDeep,
-	PartialOnUndefinedDeepOptions,
-} from './source/partial-on-undefined-deep';
+export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep';
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep';
 export type {ReadonlyDeep} from './source/readonly-deep';
 export type {LiteralUnion} from './source/literal-union';
 export type {Promisable} from './source/promisable';
 export type {Arrayable} from './source/arrayable';
-export type {
-	Opaque,
-	UnwrapOpaque,
-	Tagged,
-	GetTagMetadata,
-	UnwrapTagged,
-} from './source/tagged';
+export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged';
 export type {InvariantOf} from './source/invariant-of';
 export type {SetOptional} from './source/set-optional';
 export type {SetReadonly} from './source/set-readonly';
@@ -58,10 +49,7 @@ export type {AsyncReturnType} from './source/async-return-type';
 export type {ConditionalExcept} from './source/conditional-except';
 export type {ConditionalKeys} from './source/conditional-keys';
 export type {ConditionalPick} from './source/conditional-pick';
-export type {
-	ConditionalPickDeep,
-	ConditionalPickDeepOptions,
-} from './source/conditional-pick-deep';
+export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep';
 export type {UnionToIntersection} from './source/union-to-intersection';
 export type {Stringified} from './source/stringified';
 export type {StringSlice} from './source/string-slice';
@@ -162,10 +150,7 @@ export type {IfNull} from './source/if-null';
 export type {And} from './source/and';
 export type {Or} from './source/or';
 export type {NonEmptyTuple} from './source/non-empty-tuple';
-export type {
-	FindGlobalInstanceType,
-	FindGlobalType,
-} from './source/find-global-type';
+export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case';
