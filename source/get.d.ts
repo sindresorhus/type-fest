@@ -1,4 +1,4 @@
-import type {StringDigit, ToString} from './internal';
+import type {ApplyDefaultOptions, StringDigit, ToString} from './internal';
 import type {LiteralStringUnion} from './literal-union';
 import type {Paths} from './paths';
 import type {Split} from './split';
@@ -15,10 +15,14 @@ type GetOptions = {
 	strict?: boolean;
 };
 
+type DefaultGetOptions = {
+	strict: true;
+};
+
 /**
 Like the `Get` type but receives an array of strings as a path parameter.
 */
-type GetWithPath<BaseType, Keys, Options extends GetOptions = {}> =
+type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 	Keys extends readonly []
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
@@ -32,7 +36,7 @@ type GetWithPath<BaseType, Keys, Options extends GetOptions = {}> =
 /**
 Adds `undefined` to `Type` if `strict` is enabled.
 */
-type Strictify<Type, Options extends GetOptions> =
+type Strictify<Type, Options extends Required<GetOptions>> =
 	Options['strict'] extends false ? Type : (Type | undefined);
 
 /**
@@ -41,7 +45,7 @@ If `Options['strict']` is `true`, includes `undefined` in the returned type when
 Known limitations:
 - Does not include `undefined` in the type on object types with an index signature (for example, `{a: string; [key: string]: string}`).
 */
-type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends GetOptions> =
+type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends Required<GetOptions>> =
 	Record<string, any> extends BaseType
 		? string extends keyof BaseType
 			? Strictify<BaseType[Key], Options> // Record<string, any>
@@ -122,7 +126,7 @@ Note:
 - Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
 - Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
-type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
+type PropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	BaseType extends null | undefined
 		? undefined
 		: Key extends keyof BaseType
@@ -206,5 +210,10 @@ export type Get<
 	Path extends
 	| readonly string[]
 	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
-	Options extends GetOptions = {}> =
-		GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
+	Options extends GetOptions = {},
+> =
+	GetWithPath<
+	BaseType,
+	Path extends string ? ToPath<Path> : Path,
+	ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
+	>;
