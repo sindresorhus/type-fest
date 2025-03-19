@@ -79,20 +79,20 @@ type _CamelCasedPropertiesDeep<
 // These types should be kept in sync.
 type CamelCasedPropertiesArrayDeep<
 	Value extends UnknownArray,
-	Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true},
+	Options extends Required<CamelCaseOptions>,
 > = Value extends []
 	? []
 	// Tailing spread array
 	: Value extends [infer U, ...infer V]
-		? [CamelCasedPropertiesDeep<U, Options>, ...CamelCasedPropertiesDeep<V, Options>]
+		? [_CamelCasedPropertiesDeep<U, Options>, ..._CamelCasedPropertiesDeep<V, Options>]
 		: Value extends readonly [infer U, ...infer V]
-			? readonly [CamelCasedPropertiesDeep<U, Options>, ...CamelCasedPropertiesDeep<V, Options>]
+			? readonly [_CamelCasedPropertiesDeep<U, Options>, ..._CamelCasedPropertiesDeep<V, Options>]
 			: // Leading spread array
 			Value extends readonly [...infer U, infer V]
-				? [...CamelCasedPropertiesDeep<U, Options>, CamelCasedPropertiesDeep<V, Options>]
+				? [..._CamelCasedPropertiesDeep<U, Options>, _CamelCasedPropertiesDeep<V, Options>]
 				: // Array
 				Value extends Array<infer U>
-					? Array<CamelCasedPropertiesDeep<U, Options>>
+					? Array<_CamelCasedPropertiesDeep<U, Options>>
 					: Value extends ReadonlyArray<infer U>
-						? ReadonlyArray<CamelCasedPropertiesDeep<U, Options>>
+						? ReadonlyArray<_CamelCasedPropertiesDeep<U, Options>>
 						: never;
