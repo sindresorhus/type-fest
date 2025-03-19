@@ -1,6 +1,9 @@
-import type {AsciiPunctuation, StartsWith} from './internal';
+import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal';
 import type {IsStringLiteral} from './is-literal';
-import type {Words, WordsOptions} from './words';
+import type {Merge} from './merge';
+import type {DefaultWordsOptions, Words, WordsOptions} from './words';
+
+export type DefaultDelimiterCaseOptions = Merge<DefaultWordsOptions, {splitOnNumbers: false}>;
 
 /**
 Convert an array of words to delimiter case starting with a delimiter with input capitalization.
@@ -64,13 +67,12 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 export type DelimiterCase<
 	Value,
 	Delimiter extends string,
-	Options extends WordsOptions = {splitOnNumbers: false},
+	Options extends WordsOptions = {},
 > = Value extends string
 	? IsStringLiteral<Value> extends false
 		? Value
-		: Lowercase<
-		RemoveFirstLetter<
-		DelimiterCaseFromArray<Words<Value, Options>, Delimiter>
-		>
-		>
+		: Lowercase<RemoveFirstLetter<DelimiterCaseFromArray<
+		Words<Value, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>,
+		Delimiter
+		>>>
 	: Value;

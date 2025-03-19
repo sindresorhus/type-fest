@@ -1,3 +1,4 @@
+import type {ApplyDefaultOptions} from './internal';
 import type {Words} from './words';
 
 /**
@@ -14,12 +15,16 @@ export type CamelCaseOptions = {
 	preserveConsecutiveUppercase?: boolean;
 };
 
+export type DefaultCamelCaseOptions = {
+	preserveConsecutiveUppercase: true;
+};
+
 /**
 Convert an array of words to camel-case.
 */
 type CamelCaseFromArray<
 	Words extends string[],
-	Options extends CamelCaseOptions,
+	Options extends Required<CamelCaseOptions>,
 	OutputString extends string = '',
 > = Words extends [
 	infer FirstWord extends string,
@@ -44,6 +49,7 @@ import type {CamelCase} from 'type-fest';
 // Simple
 
 const someVariable: CamelCase<'foo-bar'> = 'fooBar';
+const preserveConsecutiveUppercase: CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'fooBARBaz';
 
 // Advanced
 
@@ -73,8 +79,11 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 @category Change case
 @category Template literal
 */
-export type CamelCase<Type, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Type extends string
+export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
 	? string extends Type
 		? Type
-		: Uncapitalize<CamelCaseFromArray<Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>, Options>>
+		: Uncapitalize<CamelCaseFromArray<
+		Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>,
+		ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>
+		>>
 	: Type;

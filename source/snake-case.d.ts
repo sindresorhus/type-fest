@@ -1,4 +1,5 @@
-import type {DelimiterCase} from './delimiter-case';
+import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case';
+import type {ApplyDefaultOptions} from './internal';
 import type {WordsOptions} from './words';
 
 /**
@@ -13,7 +14,8 @@ import type {SnakeCase} from 'type-fest';
 // Simple
 
 const someVariable: SnakeCase<'fooBar'> = 'foo_bar';
-const someVariableNoSplitOnNumbers: SnakeCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p_network';
+const noSplitOnNumbers: SnakeCase<'p2pNetwork'> = 'p2p_network';
+const splitOnNumbers: SnakeCase<'p2pNetwork', {splitOnNumbers: true}> = 'p_2_p_network';
 
 // Advanced
 
@@ -39,5 +41,5 @@ const dbResult: SnakeCasedProperties<ModelProps> = {
 */
 export type SnakeCase<
 	Value,
-	Options extends WordsOptions = {splitOnNumbers: false},
-> = DelimiterCase<Value, '_', Options>;
+	Options extends WordsOptions = {},
+> = DelimiterCase<Value, '_', ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;

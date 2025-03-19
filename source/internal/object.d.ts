@@ -2,6 +2,11 @@ import type {Simplify} from '../simplify';
 import type {UnknownArray} from '../unknown-array';
 import type {IsEqual} from '../is-equal';
 import type {KeysOfUnion} from '../keys-of-union';
+import type {RequiredKeysOf} from '../required-keys-of';
+import type {Merge} from '../merge';
+import type {IfAny} from '../if-any';
+import type {IfNever} from '../if-never';
+import type {OptionalKeysOf} from '../optional-keys-of';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys';
 import type {NonRecursiveType} from './type';
 import type {ToString} from './string';
@@ -159,3 +164,69 @@ type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
 export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 	[Key in keyof Union as IsEqual<{[K in Key]: Union[Key]}, {readonly [K in Key]: Union[Key]}> extends true ? Key : never]: never
 } : never;
+
+/**
+Merges user specified options with default options.
+
+@example
+```
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
+type SpecifiedOptions = {leavesOnly: true};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//=> {maxRecursionDepth: 10; leavesOnly: true}
+```
+
+@example
+```
+// Complains if default values are not provided for optional options
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10};
+type SpecifiedOptions = {};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                              ~~~~~~~~~~~~~~~~~~~
+// Property 'leavesOnly' is missing in type 'DefaultPathsOptions' but required in type '{ maxRecursionDepth: number; leavesOnly: boolean; }'.
+```
+
+@example
+```
+// Complains if an option's default type does not conform to the expected type
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: 'no'};
+type SpecifiedOptions = {};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                              ~~~~~~~~~~~~~~~~~~~
+// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
+```
+
+@example
+```
+// Complains if an option's specified type does not conform to the expected type
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
+type SpecifiedOptions = {leavesOnly: 'yes'};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                                                   ~~~~~~~~~~~~~~~~
+// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
+```
+*/
+export type ApplyDefaultOptions<
+	Options extends object,
+	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
+	SpecifiedOptions extends Options,
+> =
+	IfAny<SpecifiedOptions, Defaults,
+	IfNever<SpecifiedOptions, Defaults,
+	Simplify<Merge<Defaults, {
+		[Key in keyof SpecifiedOptions
+		as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
+		]: SpecifiedOptions[Key]
+	}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
+	>>;

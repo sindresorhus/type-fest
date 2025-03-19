@@ -44,8 +44,8 @@
 		"expect-type": "^1.1.0",
 		"npm-run-all2": "^7.0.1",
 		"tsd": "^0.31.2",
-		"typescript": "~5.7.2",
-		"xo": "^0.59.3"
+		"typescript": "~5.8.2",
+		"xo": "^0.60.0"
 	},
 	"xo": {
 		"rules": {
