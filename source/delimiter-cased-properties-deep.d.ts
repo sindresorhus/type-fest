@@ -92,7 +92,7 @@ type DelimiterCasedPropertiesArrayDeep<
 		: Value extends readonly [infer U, ...infer V]
 			? readonly [_DelimiterCasedPropertiesDeep<U, Delimiter, Options>, ..._DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
 			// Leading spread array
-			: Value extends readonly [...infer U, infer V]
+			: Value extends [...infer U, infer V]
 				? [..._DelimiterCasedPropertiesDeep<U, Delimiter, Options>, _DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
 				: Value extends readonly [...infer U, infer V]
 					? readonly [..._DelimiterCasedPropertiesDeep<U, Delimiter, Options>, _DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
