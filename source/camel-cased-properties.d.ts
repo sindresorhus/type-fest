@@ -23,7 +23,7 @@ const result: CamelCasedProperties<User> = {
 	userName: 'Tom',
 };
 
-const preserveConsecutiveUppercase: CamelCasedProperties<{ fooBAR: string }, {preserveConsecutiveUppercase: false}> = {
+const preserveConsecutiveUppercase: CamelCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: false}> = {
 	fooBar: 'string',
 };
 ```
