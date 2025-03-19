@@ -42,11 +42,13 @@ const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 
-const splitOnNumbers: KebabCasedPropertiesDeep<{ line1: { line2: [{ line3: string }] }}, {splitOnNumbers: true}> = {
+const splitOnNumbers: KebabCasedPropertiesDeep<{line1: { line2: [{ line3: string }] }}, {splitOnNumbers: true}> = {
 	'line-1': {
-		'line-2': [{
-			'line-3': 'string',
-		}],
+		'line-2': [
+			{
+				'line-3': 'string',
+			},
+		],
 	},
 };
 ```
