@@ -41,7 +41,7 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 
-const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{ fooBAR: { fooBARBiz: [{ fooBARBaz: string }] }}, {preserveConsecutiveUppercase: false}> = {
+const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: { fooBARBiz: [{ fooBARBaz: string }] }}, {preserveConsecutiveUppercase: false}> = {
 	fooBar: {
 		fooBarBiz: [{
 			fooBarBaz: 'string',
@@ -82,7 +82,7 @@ type CamelCasedPropertiesArrayDeep<
 	Options extends Required<CamelCaseOptions>,
 > = Value extends []
 	? []
-	// Tailing spread array
+	// Trailing spread array
 	: Value extends [infer U, ...infer V]
 		? [_CamelCasedPropertiesDeep<U, Options>, ..._CamelCasedPropertiesDeep<V, Options>]
 		: Value extends readonly [infer U, ...infer V]
