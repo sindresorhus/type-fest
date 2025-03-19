@@ -42,11 +42,13 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 
-const splitOnNumbers: SnakeCasedPropertiesDeep<{ line1: { line2: [{ line3: string }] }}, {splitOnNumbers: true}> = {
+const splitOnNumbers: SnakeCasedPropertiesDeep<{line1: { line2: [{ line3: string }] }}, {splitOnNumbers: true}> = {
 	line_1: {
-		line_2: [{
-			line_3: 'string',
-		}],
+		line_2: [
+			{
+				line_3: 'string',
+			},
+		],
 	},
 };
 ```
