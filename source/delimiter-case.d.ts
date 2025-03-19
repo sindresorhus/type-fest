@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions} from './internal';
+import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal';
 import type {IsStringLiteral} from './is-literal';
 import type {Merge} from './merge';
 import type {DefaultWordsOptions, Words, WordsOptions} from './words';
@@ -16,7 +16,9 @@ type DelimiterCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${Delimiter}${FirstWord}`>
+	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${
+		StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
+	}${FirstWord}`>
 	: OutputString;
 
 type RemoveFirstLetter<S extends string> = S extends `${infer _}${infer Rest}`
