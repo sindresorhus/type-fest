@@ -22,6 +22,10 @@ const result: CamelCasedProperties<User> = {
 	userId: 1,
 	userName: 'Tom',
 };
+
+const preserveConsecutiveUppercase: CamelCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: false}> = {
+	fooBar: 'string',
+};
 ```
 
 @category Change case
