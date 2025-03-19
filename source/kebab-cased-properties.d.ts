@@ -25,7 +25,7 @@ const result: KebabCasedProperties<User> = {
 	'user-name': 'Tom',
 };
 
-const splitOnNumbers: KebabCasedProperties<{ line1: string }, {splitOnNumbers: true}> = {
+const splitOnNumbers: KebabCasedProperties<{line1: string}, {splitOnNumbers: true}> = {
 	'line-1': 'string',
 };
 ```
