@@ -24,7 +24,7 @@ const result: DelimiterCasedProperties<User, '-'> = {
 	'user-name': 'Tom',
 };
 
-const splitOnNumbers: DelimiterCasedProperties<{ line1: string }, '-', {splitOnNumbers: true}> = {
+const splitOnNumbers: DelimiterCasedProperties<{line1: string}, '-', {splitOnNumbers: true}> = {
 	'line-1': 'string',
 };
 ```
