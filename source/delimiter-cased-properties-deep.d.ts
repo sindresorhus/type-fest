@@ -1,5 +1,5 @@
-import type {DelimiterCase} from './delimiter-case';
-import type {NonRecursiveType} from './internal';
+import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case';
+import type {ApplyDefaultOptions, NonRecursiveType} from './internal';
 import type {UnknownArray} from './unknown-array';
 import type {WordsOptions} from './words';
 
@@ -58,18 +58,24 @@ const splitOnNumbers: DelimiterCasedPropertiesDeep<{ line1: { line2: [{ line3: s
 export type DelimiterCasedPropertiesDeep<
 	Value,
 	Delimiter extends string,
-	Options extends WordsOptions = {splitOnNumbers: false},
+	Options extends WordsOptions = {},
+> = _DelimiterCasedPropertiesDeep<Value, Delimiter, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;
+
+type _DelimiterCasedPropertiesDeep<
+	Value,
+	Delimiter extends string,
+	Options extends Required<WordsOptions>,
 > = Value extends NonRecursiveType
 	? Value
 	: Value extends UnknownArray
 		? DelimiterCasedPropertiesArrayDeep<Value, Delimiter, Options>
 		: Value extends Set<infer U>
-			? Set<DelimiterCasedPropertiesDeep<U, Delimiter, Options>> : {
+			? Set<_DelimiterCasedPropertiesDeep<U, Delimiter, Options>> : {
 				[K in keyof Value as DelimiterCase<
 				K,
 				Delimiter,
 				Options
-				>]: DelimiterCasedPropertiesDeep<Value[K], Delimiter, Options>;
+				>]: _DelimiterCasedPropertiesDeep<Value[K], Delimiter, Options>;
 			};
 
 // This is a copy of CamelCasedPropertiesArrayDeep (see: camel-cased-properties-deep.d.ts).
@@ -77,22 +83,22 @@ export type DelimiterCasedPropertiesDeep<
 type DelimiterCasedPropertiesArrayDeep<
 	Value extends UnknownArray,
 	Delimiter extends string,
-	Options extends WordsOptions = {splitOnNumbers: false},
+	Options extends Required<WordsOptions>,
 > = Value extends []
 	? []
 	// Tailing spread array
 	:	Value extends [infer U, ...infer V]
-		? [DelimiterCasedPropertiesDeep<U, Delimiter, Options>, ...DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
+		? [_DelimiterCasedPropertiesDeep<U, Delimiter, Options>, ..._DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
 		: Value extends readonly [infer U, ...infer V]
-			? readonly [DelimiterCasedPropertiesDeep<U, Delimiter, Options>, ...DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
+			? readonly [_DelimiterCasedPropertiesDeep<U, Delimiter, Options>, ..._DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
 			// Leading spread array
 			: Value extends readonly [...infer U, infer V]
-				? [...DelimiterCasedPropertiesDeep<U, Delimiter, Options>, DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
+				? [..._DelimiterCasedPropertiesDeep<U, Delimiter, Options>, _DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
 				: Value extends readonly [...infer U, infer V]
-					? readonly [...DelimiterCasedPropertiesDeep<U, Delimiter, Options>, DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
+					? readonly [..._DelimiterCasedPropertiesDeep<U, Delimiter, Options>, _DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
 					// Array
 					: Value extends Array<infer U>
-						? Array<DelimiterCasedPropertiesDeep<U, Delimiter, Options>>
+						? Array<_DelimiterCasedPropertiesDeep<U, Delimiter, Options>>
 						: Value extends ReadonlyArray<infer U>
-							? ReadonlyArray<DelimiterCasedPropertiesDeep<U, Delimiter, Options>>
+							? ReadonlyArray<_DelimiterCasedPropertiesDeep<U, Delimiter, Options>>
 							: never;

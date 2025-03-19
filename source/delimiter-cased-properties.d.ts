@@ -1,4 +1,5 @@
-import type {DelimiterCase} from './delimiter-case';
+import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case';
+import type {ApplyDefaultOptions} from './internal';
 import type {WordsOptions} from './words';
 
 /**
@@ -35,9 +36,11 @@ const splitOnNumbers: DelimiterCasedProperties<{ line1: string }, '-', {splitOnN
 export type DelimiterCasedProperties<
 	Value,
 	Delimiter extends string,
-	Options extends WordsOptions = {splitOnNumbers: false},
+	Options extends WordsOptions = {},
 > = Value extends Function
 	? Value
 	: Value extends Array<infer U>
 		? Value
-		: {[K in keyof Value as DelimiterCase<K, Delimiter, Options>]: Value[K]};
+		: {[K in keyof Value as
+			DelimiterCase<K, Delimiter, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>
+			]: Value[K]};

@@ -1,4 +1,6 @@
+import type {DefaultDelimiterCaseOptions} from './delimiter-case';
 import type {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep';
+import type {ApplyDefaultOptions} from './internal';
 import type {WordsOptions} from './words';
 
 /**
@@ -55,5 +57,5 @@ const splitOnNumbers: KebabCasedPropertiesDeep<{ line1: { line2: [{ line3: strin
 */
 export type KebabCasedPropertiesDeep<
 	Value,
-	Options extends WordsOptions = {splitOnNumbers: false},
-> = DelimiterCasedPropertiesDeep<Value, '-', Options>;
+	Options extends WordsOptions = {},
+> = DelimiterCasedPropertiesDeep<Value, '-', ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;

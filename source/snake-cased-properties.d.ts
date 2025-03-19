@@ -1,4 +1,6 @@
+import type {DefaultDelimiterCaseOptions} from './delimiter-case';
 import type {DelimiterCasedProperties} from './delimiter-cased-properties';
+import type {ApplyDefaultOptions} from './internal';
 import type {WordsOptions} from './words';
 
 /**
@@ -34,5 +36,5 @@ const splitOnNumbers: SnakeCasedProperties<{ line1: string }, {splitOnNumbers: t
 */
 export type SnakeCasedProperties<
 	Value,
-	Options extends WordsOptions = {splitOnNumbers: false},
-> = DelimiterCasedProperties<Value, '_', Options>;
+	Options extends WordsOptions = {},
+> = DelimiterCasedProperties<Value, '_', ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;
