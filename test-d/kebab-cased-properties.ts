@@ -1,8 +1,13 @@
 import {expectType} from 'tsd';
 import type {KebabCasedProperties} from '../index';
 
-declare const foo: KebabCasedProperties<{helloWorld: {fooBar: string}}>;
-expectType<{'hello-world': {fooBar: string}}>(foo);
+type Foobar = {helloWorld1: {fooBar: string}};
+
+declare const foo: KebabCasedProperties<Foobar>;
+expectType<{'hello-world1': {fooBar: string}}>(foo);
+
+declare const bar: KebabCasedProperties<Foobar, {splitOnNumbers: true}>;
+expectType<{'hello-world-1': {fooBar: string}}>(bar);
 
 // Verify example
 type User = {
