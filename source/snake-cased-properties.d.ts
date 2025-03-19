@@ -25,7 +25,7 @@ const result: SnakeCasedProperties<User> = {
 	user_name: 'Tom',
 };
 
-const splitOnNumbers: SnakeCasedProperties<{ line1: string }, {splitOnNumbers: true}> = {
+const splitOnNumbers: SnakeCasedProperties<{line1: string}, {splitOnNumbers: true}> = {
 	'line_1': 'string',
 };
 ```
