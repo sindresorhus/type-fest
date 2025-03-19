@@ -42,11 +42,13 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	],
 };
 
-const splitOnNumbers: DelimiterCasedPropertiesDeep<{ line1: { line2: [{ line3: string }] }}, '-', {splitOnNumbers: true}> = {
+const splitOnNumbers: DelimiterCasedPropertiesDeep<{line1: { line2: [{ line3: string }] }}, '-', {splitOnNumbers: true}> = {
 	'line-1': {
-		'line-2': [{
-			'line-3': 'string',
-		}],
+		'line-2': [
+			{
+				'line-3': 'string',
+			},
+		],
 	},
 };
 ```
@@ -86,7 +88,7 @@ type DelimiterCasedPropertiesArrayDeep<
 	Options extends Required<WordsOptions>,
 > = Value extends []
 	? []
-	// Tailing spread array
+	// Trailing spread array
 	:	Value extends [infer U, ...infer V]
 		? [_DelimiterCasedPropertiesDeep<U, Delimiter, Options>, ..._DelimiterCasedPropertiesDeep<V, Delimiter, Options>]
 		: Value extends readonly [infer U, ...infer V]
