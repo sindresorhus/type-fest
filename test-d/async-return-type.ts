@@ -12,14 +12,8 @@ asyncFunction().then(value => { // eslint-disable-line unicorn/prefer-top-level-
 	expectNotAssignable<string>(value);
 });
 
-
-
 function asyncPromiseLike(): PromiseLike<number> {
-	return {
-		then(onfulfilled) {
-			return Promise.resolve(2).then(onfulfilled);
-		}
-	};
+	return Promise.resolve(2);
 }
 
 type ValuePromiseLike = AsyncReturnType<typeof asyncPromiseLike>;
