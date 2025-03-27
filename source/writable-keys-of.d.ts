@@ -1,4 +1,5 @@
 import type {IsEqual} from './is-equal';
+import type {KeysOfUnion} from './keys-of-union';
 
 /**
 Extract all writable keys from the given type.
@@ -25,6 +26,6 @@ const update1: UpdateRequest<User> = {
 
 @category Utilities
 */
-export type WritableKeysOf<T> = keyof {
+export type WritableKeysOf<T> = KeysOfUnion<{
 	[P in keyof T as IsEqual<{[Q in P]: T[P]}, {readonly [Q in P]: T[P]}> extends false ? P : never]: never
-};
+}>;
