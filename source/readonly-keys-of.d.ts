@@ -1,4 +1,3 @@
-import type {KeysOfUnion} from './keys-of-union';
 import type {WritableKeysOf} from './writable-keys-of';
 
 /**
@@ -25,4 +24,7 @@ const update1: UpdateResponse<User> = {
 
 @category Utilities
 */
-export type ReadonlyKeysOf<T> = Exclude<KeysOfUnion<T>, WritableKeysOf<T>>;
+export type ReadonlyKeysOf<T> =
+	T extends unknown // For distributing `T`
+		? Exclude<keyof T, WritableKeysOf<T>>
+		: never; // Should never happen

@@ -33,6 +33,7 @@ expectType<'c'>({} as WritableKeysOf<{readonly a?: string; readonly b: number; c
 
 // Unions
 expectType<'b' | 'c'>({} as WritableKeysOf<{readonly a: string; b: number} | {c?: string; readonly d?: number}>);
+expectType<'a' | 'b'>({} as WritableKeysOf<{readonly a: string; readonly b: number} | {a: string; b: number}>);
 
 // TODO: Uncomment when targeting TypeScript 5.3 or later.
 // Arrays

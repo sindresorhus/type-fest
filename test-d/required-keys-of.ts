@@ -27,3 +27,15 @@ declare const test3: RequiredKeysOf3;
 expectType<'a'>(test1);
 expectType<never>(test2);
 expectType<'a' | 'b'>(test3);
+
+expectType<'a' | 'c'>({} as RequiredKeysOf<{readonly a: string; readonly b?: number; c: boolean; d?: string}>);
+
+// Unions
+expectType<'b' | 'c'>({} as RequiredKeysOf<{a?: string; b: number} | {readonly c: string; readonly d?: number}>);
+expectType<'a' | 'b'>({} as RequiredKeysOf<{a?: string; b?: number} | {a: string; b: number}>);
+
+// Arrays
+expectType<keyof []>({} as RequiredKeysOf<[]>);
+expectType<keyof readonly [string, number, boolean]>({} as RequiredKeysOf<readonly [string, number, boolean]>);
+expectType<Exclude<keyof [string, number?, boolean?], '1' | '2'>>({} as RequiredKeysOf<[string, number?, boolean?]>);
+expectType<Exclude<keyof [string, number, boolean?], '2'>>({} as RequiredKeysOf<[string?] | readonly [string, number?] | [string, number, boolean?]>);

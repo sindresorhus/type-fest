@@ -1,3 +1,5 @@
+import type {KeysOfUnion} from './keys-of-union';
+
 /**
 Extract all optional keys from the given type.
 
@@ -31,8 +33,6 @@ const update2: UpdateOperation<User> = {
 
 @category Utilities
 */
-export type OptionalKeysOf<BaseType extends object> = Exclude<{
-	[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]>
-		? never
-		: Key
-}[keyof BaseType], undefined>;
+export type OptionalKeysOf<BaseType extends object> = KeysOfUnion<{
+	[Key in keyof BaseType as BaseType extends Record<Key, BaseType[Key]> ? never : Key]: never
+}>;
