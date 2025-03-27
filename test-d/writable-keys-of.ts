@@ -27,3 +27,6 @@ declare const test3: WritableKeysOf3;
 expectType<'b'>(test1);
 expectType<'a' | 'b'>(test2);
 expectType<never>(test3);
+
+expectType<'a' | 'c'>({} as WritableKeysOf<{a?: string; readonly b: number; c: boolean}>);
+expectType<'c'>({} as WritableKeysOf<{readonly a?: string; readonly b: number; c: boolean}>);
