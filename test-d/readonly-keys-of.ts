@@ -34,6 +34,7 @@ expectType<'c'>({} as ReadonlyKeysOf<{a?: string; b: number; readonly c: boolean
 // Unions
 expectType<'b' | 'c'>({} as ReadonlyKeysOf<{a: string; readonly b: number} | {readonly c?: string; d?: number}>);
 
+// TODO: Uncomment when targeting TypeScript 5.3 or later.
 // Arrays
 // expectType<never>({} as Extract<ReadonlyKeysOf<[string, number, boolean]>, number | `${number}`>);
 // expectType<number | '0' | '1' | '2'>({} as Extract<ReadonlyKeysOf<readonly [string, number, boolean]>, number | `${number}`>);
