@@ -34,6 +34,7 @@ expectType<'c'>({} as WritableKeysOf<{readonly a?: string; readonly b: number; c
 // Unions
 expectType<'b' | 'c'>({} as WritableKeysOf<{readonly a: string; b: number} | {c?: string; readonly d?: number}>);
 
+// TODO: Uncomment when targeting TypeScript 5.3 or later.
 // Arrays
 // expectType<number | '0' | '1' | '2'>({} as Extract<WritableKeysOf<[string, number, boolean]>, number | `${number}`>);
 // expectType<never>({} as Extract<WritableKeysOf<readonly [string, number, boolean]>, number | `${number}`>);
