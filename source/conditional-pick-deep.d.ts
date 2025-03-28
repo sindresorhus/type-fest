@@ -1,6 +1,6 @@
 import type {IsEqual} from './is-equal';
 import type {ConditionalExcept} from './conditional-except';
-import type {ConditionalSimplifyDeep} from './conditional-simplify';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep';
 import type {UnknownRecord} from './unknown-record';
 import type {EmptyObject} from './empty-object';
 import type {ApplyDefaultOptions, IsPlainObject} from './internal';

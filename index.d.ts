@@ -167,6 +167,8 @@ export type {StringRepeat} from './source/string-repeat';
 export type {Includes} from './source/includes';
 export type {Get} from './source/get';
 export type {LastArrayElement} from './source/last-array-element';
+export type {ConditionalSimplify} from './source/conditional-simplify';
+export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this';
