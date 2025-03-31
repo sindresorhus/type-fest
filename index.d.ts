@@ -11,6 +11,7 @@ export type {DistributedPick} from './source/distributed-pick';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object';
 export type {IfEmptyObject} from './source/if-empty-object';
 export type {NonEmptyObject} from './source/non-empty-object';
+export type {NonEmptyString} from './source/non-empty-string';
 export type {UnknownRecord} from './source/unknown-record';
 export type {UnknownArray} from './source/unknown-array';
 export type {Except} from './source/except';
