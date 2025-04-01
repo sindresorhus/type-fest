@@ -93,9 +93,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 npm install type-fest
 ```
 
-*Requires TypeScript >=5.1*
-
-*Works best with [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
+*Requires TypeScript >=5.1 and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
 
 ## Usage
 
