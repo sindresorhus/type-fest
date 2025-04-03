@@ -1,5 +1,6 @@
 /**
 Recursively simplifies a type while including and/or excluding certain types from being simplified.
+
 @example
 ```ts
 import type {ConditionalSimplifyDeep} from 'type-fest';
