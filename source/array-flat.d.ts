@@ -13,10 +13,10 @@ import type {UnknownArray} from './unknown-array';
  * //=> type FlatArr0 = [number, string, number, string, number, string];
  * ```
  */
-type BuildRepeatedArray<T extends UnknownArray, N extends number, R extends unknown[] = []> =
+type BuildRepeatedArray<T extends UnknownArray, N extends number, R extends unknown[] = [], CopyT extends UnknownArray = T> =
 	N extends 0
 		? R
-		: BuildRepeatedArray<T, Subtract<N, 1>, [...T, ...R]>;
+		: BuildRepeatedArray<T, Subtract<N, 1>, [...R, ...CopyT]>;
 
 type ArrayFlatOptions = {
 	/**
@@ -77,20 +77,24 @@ T extends UnknownArray
 		: Depth extends 0
 			? [...Result, ...T]
 			: number extends T['length']
+				// Handle non-fixed length arrays
 				? [
 					...Result,
 					...(
 						T[number] extends UnknownArray
-							? BuildRepeatedArray<InternalArrayFlat<
+							? InternalArrayFlat<
 							number extends T[number]['length'] ? T[number] : Partial<T[number]>,
 							Subtract<Depth, 1>,
 							Options
-							>,
-							Options['repeat']
-							>
+							> extends infer Item
+								? Item extends UnknownArray
+									? BuildRepeatedArray<Item, Options['repeat']>
+									: never // Never happens, just for fixed ts error TS2589: Type instantiation is excessively deep and possibly infinite.
+								: never // Never happens, just for fixed ts error TS2589: Type instantiation is excessively deep and possibly infinite.
 							: T
 					),
 				]
+				// Handle fixed length arrays
 				: T extends readonly [infer ArrayItem, ...infer Last]
 					?	ArrayItem extends UnknownArray
 						? InternalArrayFlat<Last, Depth, Options, [...Result, ...InternalArrayFlat<ArrayItem, Subtract<Depth, 1>, Options>]>
