@@ -43,8 +43,8 @@
 	"devDependencies": {
 		"expect-type": "^1.1.0",
 		"npm-run-all2": "^7.0.1",
-		"tsd": "^0.31.2",
-		"typescript": "~5.8.2",
+		"tsd": "^0.32.0",
+		"typescript": "~5.8.3",
 		"xo": "^0.60.0"
 	},
 	"xo": {
