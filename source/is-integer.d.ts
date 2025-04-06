@@ -10,6 +10,8 @@ Use-case:
 
 @example
 ```
+import type {IsInteger, PositiveInfinity} from "type-fest";
+
 type A = IsInteger<1>;
 //=> true
 

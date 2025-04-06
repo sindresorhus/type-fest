@@ -8,13 +8,15 @@ Use-case:
 
 @example
 ```
+import type {IsFloat, PositiveInfinity} from "type-fest";
+
 type A = IsFloat<1.5>;
 //=> true
 
 type B = IsFloat<-1.5>;
 //=> true
 
-type C = IsFloat<1e-7;
+type C = IsFloat<1e-7>;
 //=> true
 
 type D = IsFloat<1.0>;
@@ -23,7 +25,7 @@ type D = IsFloat<1.0>;
 type E = IsFloat<PositiveInfinity>;
 //=> false
 
-type F = IsFloat<1.23+21>;
+type F = IsFloat<1.23e+21>;
 //=> false
 ```
 
