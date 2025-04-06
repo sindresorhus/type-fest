@@ -3,6 +3,11 @@ import type {IsFloat, PositiveInfinity} from '../index';
 
 declare const x: unknown;
 
+expectType<true>(x as IsFloat<1.5>);
+expectType<true>(x as IsFloat<999_999_999_999_999.9>);
+expectType<true>(x as IsFloat<0.000_000_1>);
+expectType<true>(x as IsFloat<-1e-7>);
+
 expectType<false>(x as IsFloat<0>);
 expectType<false>(x as IsFloat<1>);
 expectType<false>(x as IsFloat<1.0>); // eslint-disable-line unicorn/no-zero-fractions
@@ -18,8 +23,3 @@ expectType<false>(x as IsFloat<1.23e+21>);
 expectType<false>(x as IsFloat<-1.23e+21>);
 expectType<false>(x as IsFloat<'1.23'>);
 expectType<false>(x as IsFloat<PositiveInfinity>);
-
-expectType<true>(x as IsFloat<1.5>);
-expectType<true>(x as IsFloat<999_999_999_999_999.9>);
-expectType<true>(x as IsFloat<0.000_000_1>);
-expectType<true>(x as IsFloat<-1e-7>);
