@@ -25,10 +25,10 @@ type D = IsInteger<1.23+21>;
 type E = IsInteger<1.5>;
 //=> false
 
-type F = IsInteger<PositiveInfinity>
+type F = IsInteger<PositiveInfinity>;
 //=> false
 
-type G = IsInteger<1e-7>
+type G = IsInteger<1e-7>;
 //=> false
 ```
 
