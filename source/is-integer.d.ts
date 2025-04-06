@@ -3,7 +3,7 @@ import type {IsFloat} from './is-float';
 import type {PositiveInfinity, NegativeInfinity} from './numeric';
 
 /**
-Returns a boolean for whether the given number is an integer, like `-5`, `1.0` or `100`.
+Returns a boolean for whether the given number is an integer, like `-5`, `1.0`, or `100`.
 
 Use-case:
 - If you want to make a conditional branch based on the result of whether a number is an integer or not.
