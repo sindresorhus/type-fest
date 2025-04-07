@@ -3,38 +3,48 @@ import type {IsFloat} from './is-float';
 import type {PositiveInfinity, NegativeInfinity} from './numeric';
 
 /**
-Returns a boolean for whether the given number is a integer, like `-5`, `1.0` or `100`.
-
-Like [`Number#IsInteger()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/IsInteger) but for types.
+Returns a boolean for whether the given number is an integer, like `-5`, `1.0`, or `100`.
 
 Use-case:
-- If you want to make a conditional branch based on the result of whether a number is a intrger or not.
+- If you want to make a conditional branch based on the result of whether a number is an integer or not.
 
 @example
 ```
-type Integer = IsInteger<1>;
+import type {IsInteger, PositiveInfinity} from "type-fest";
+
+type A = IsInteger<1>;
 //=> true
 
-type IntegerWithDecimal = IsInteger<1.0>;
+type B = IsInteger<1.0>;
 //=> true
 
-type NegativeInteger = IsInteger<-1>;
+type C = IsInteger<-1>;
 //=> true
 
-type Float = IsInteger<1.5>;
+type D = IsInteger<0b10>;
+//=> true
+
+type E = IsInteger<0o10>;
+//=> true
+
+type F = IsInteger<0x10>;
+//=> true
+
+type G = IsInteger<1.23+21>;
+//=> true
+
+type H = IsInteger<1.5>;
 //=> false
 
-// Supports non-decimal numbers
+type I = IsInteger<PositiveInfinity>;
+//=> false
 
-type OctalInteger: IsInteger<0o10>;
-//=> true
-
-type BinaryInteger: IsInteger<0b10>;
-//=> true
-
-type HexadecimalInteger: IsInteger<0x10>;
-//=> true
+type J = IsInteger<1e-7>;
+//=> false
 ```
+
+@category Type Guard
+@category Numeric
 */
 export type IsInteger<T> =
 T extends bigint
