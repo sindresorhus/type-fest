@@ -1,4 +1,4 @@
-import type {ConditionalSimplifyDeep} from './conditional-simplify';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep';
 import type {OmitIndexSignature} from './omit-index-signature';
 import type {PickIndexSignature} from './pick-index-signature';
 import type {Merge} from './merge';
