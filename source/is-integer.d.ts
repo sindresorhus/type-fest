@@ -21,16 +21,25 @@ type B = IsInteger<1.0>;
 type C = IsInteger<-1>;
 //=> true
 
-type D = IsInteger<1.23+21>;
+type D = IsInteger<0b10>;
 //=> true
 
-type E = IsInteger<1.5>;
+type E = IsInteger<0o10>;
+//=> true
+
+type F = IsInteger<0x10>;
+//=> true
+
+type G = IsInteger<1.23+21>;
+//=> true
+
+type H = IsInteger<1.5>;
 //=> false
 
-type F = IsInteger<PositiveInfinity>;
+type I = IsInteger<PositiveInfinity>;
 //=> false
 
-type G = IsInteger<1e-7>;
+type J = IsInteger<1e-7>;
 //=> false
 ```
 
