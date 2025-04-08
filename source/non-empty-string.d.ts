@@ -1,6 +1,8 @@
 /**
 Matches any non-empty string.
+
 This is useful when you need a string that is not empty, for example as a function parameter.
+
 @example
 ```
 import type {NonEmptyString} from 'type-fest';
