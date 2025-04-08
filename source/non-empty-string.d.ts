@@ -16,3 +16,4 @@ foo('');
 @category String
 */
 export type NonEmptyString<T extends string> = T extends '' ? never : T;
+
