@@ -12,6 +12,7 @@ foo('a');
 foo('');
 //=> Error: Argument of type '""' is not assignable to parameter of type 'never'.
 ```
+
 @category String
 */
 export type NonEmptyString<T extends string> = T extends '' ? never : T;
