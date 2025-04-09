@@ -1,30 +1,25 @@
-import {expectNever, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {NonEmptyString} from '../index';
 
-declare const a: NonEmptyString<'a'>;
-expectType<'a'>(a);
+expectType<never>({} as NonEmptyString<''>);
 
-declare const b: NonEmptyString<'b' | 'c'>;
-expectType<'b' | 'c'>(b);
+expectType<'a'>({} as NonEmptyString<'a'>);
 
-expectType<'a'>({} as NonEmptyString<'' | 'a'>);
-expectType<string>({} as NonEmptyString<string>);
-expectType<Uppercase<string>>({} as NonEmptyString<Uppercase<string>>);
+expectType<never>({} as NonEmptyString<string>);
+expectType<never>({} as NonEmptyString<Uppercase<string>>);
 expectType<`on${string}`>({} as NonEmptyString<`on${string}`>);
 
-// Tests that string types from mapped types work correctly
-type StringMap = {[K in 'a' | 'b']: string};
-type StringMapValues = StringMap[keyof StringMap];
-expectType<string>({} as NonEmptyString<StringMapValues>);
+expectType<'a' | 'b'>({} as NonEmptyString<'a' | 'b'>);
+expectType<'a' | `${number}.${number}`>({} as NonEmptyString<'a' | `${number}.${number}`>);
+expectType<never>({} as NonEmptyString<'' | 'a'>);
+expectType<never>({} as NonEmptyString<'a' | Uppercase<string>>);
+expectType<never>({} as NonEmptyString<'' | `on${string}`>);
 
-// Tests handling of conditional types that resolve to empty string or string
-type MaybeEmpty<T> = T extends number ? '' : string;
-expectType<never>({} as NonEmptyString<MaybeEmpty<number>>);
-expectType<string>({} as NonEmptyString<MaybeEmpty<boolean>>);
+// `NonEmptyString<S>` should be assignable to `string`
+type Assignability1<_S extends string> = unknown;
+type Test1<S extends string> = Assignability1<NonEmptyString<S>>;
 
-// Tests distribution over unions in conditional types
-type UnionResult<T> = T extends string ? T | '' : never;
-expectType<string>({} as NonEmptyString<UnionResult<string>>);
-
-declare const empty: NonEmptyString<''>;
-expectNever(empty);
+// `string` should NOT be assignable to `NonEmptyString<S>`
+type Assignability2<_S extends string, _SS extends NonEmptyString<_S>> = unknown;
+// @ts-expect-error
+type Test2<S extends string> = Assignability2<S, S>;
