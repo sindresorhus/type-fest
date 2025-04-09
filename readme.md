@@ -371,6 +371,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
+- `DeepNonNullable`/`NonNullableDeep` - See [`SetNonNullable`](set-non-nullable.d.ts)
 
 ## Tips
 
