@@ -14,7 +14,7 @@ export type {NonEmptyObject} from './source/non-empty-object';
 export type {UnknownRecord} from './source/unknown-record';
 export type {UnknownArray} from './source/unknown-array';
 export type {UnknownSet} from './source/unknown-set';
- export type {UnknownMap} from './source/unknown-map';
+export type {UnknownMap} from './source/unknown-map';
 export type {Except} from './source/except';
 export type {TaggedUnion} from './source/tagged-union';
 export type {Writable} from './source/writable';
