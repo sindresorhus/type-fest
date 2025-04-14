@@ -3,7 +3,7 @@ import type {UnknownMap} from '../index';
 
 declare const foo: ReadonlyMap<string, number>;
 declare const bar: {
-readonly map: ReadonlyMap<number, string>;
+	readonly map: ReadonlyMap<number, string>;
 };
 
 expectAssignable<UnknownMap>(foo);
