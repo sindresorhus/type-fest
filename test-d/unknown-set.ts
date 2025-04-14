@@ -3,7 +3,7 @@ import type {UnknownSet} from '../index';
 
 declare const foo: ReadonlySet<string>;
 declare const bar: {
-readonly set: ReadonlySet<number>;
+	readonly set: ReadonlySet<number>;
 };
 
 expectAssignable<UnknownSet>(foo);
