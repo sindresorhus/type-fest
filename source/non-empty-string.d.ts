@@ -4,7 +4,7 @@ Matches any non-empty string.
 This is useful when you need a string that is not empty, for example, as a function parameter.
 
 NOTE:
-- This returns `never` not just when instantiated with empty string, but also when empty string is a subtype of the instantiated type, like `string` or `Uppercase<string>`.
+- This returns `never` not just when instantiated with an empty string, but also when an empty string is a subtype of the instantiated type, like `string` or `Uppercase<string>`.
 
 @example
 ```
