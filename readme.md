@@ -131,8 +131,8 @@ Click the type names for complete docs.
 - [`NonEmptyObject`](source/non-empty-object.d.ts) - Represents an object with at least 1 non-optional key.
 - [`UnknownRecord`](source/unknown-record.d.ts) - Represents an object with `unknown` value. You probably want this instead of `{}`.
 - [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
-- [`UnknownMap`](source/unknown-map.d.ts) - Represents a map with `unknown` keys and values.
-- [`UnknownSet`](source/unknown-set.d.ts) - Represents a set with `unknown` values.
+- [`UnknownMap`](source/unknown-map.d.ts) - Represents a map with `unknown` key and value.
+- [`UnknownSet`](source/unknown-set.d.ts) - Represents a set with `unknown` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
