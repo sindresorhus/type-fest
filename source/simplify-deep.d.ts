@@ -1,4 +1,4 @@
-import type {ConditionalSimplifyDeep} from './conditional-simplify';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep';
 import type {NonRecursiveType} from './internal';
 
 /**
