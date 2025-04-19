@@ -67,6 +67,48 @@ export type VariablePartOfArray<T extends UnknownArray> =
 		: never; // Should never happen
 
 /**
+Returns if the given array is a leading spread array.
+*/
+export type IsLeadingSpreadArray<T extends UnknownArray> =
+	T extends [...infer U, infer V] ? true : false;
+
+/**
+Returns if the given array is a trailing spread array.
+*/
+export type IsTrailingSpreadArray<T extends UnknownArray> =
+	T extends [infer U, ...infer V] ? true : false;
+
+/**
+Returns the static, fixed-length portion of the given leading spread array.
+
+@example
+```
+type A = [...string[], number, boolean];
+type B = StaticPartOfLeadingSpreadArray<A>;
+//=> [number, boolean]
+```
+*/
+type StaticPartOfLeadingSpreadArray<T extends UnknownArray, Result extends UnknownArray = []> =
+	T extends [...infer U, infer V]
+		? StaticPartOfLeadingSpreadArray<U, [V, ...Result]>
+		: Result;
+
+/**
+Returns the variable, non-fixed-length portion of the given leading spread array.
+
+@example
+```
+type A = [...string[], number, boolean];
+type B = VariablePartOfLeadingSpreadArray<A>;
+//=> string[]
+```
+*/
+export type VariablePartOfLeadingSpreadArray<T extends UnknownArray> =
+	T extends [...infer U, ...StaticPartOfLeadingSpreadArray<T>]
+		? U
+		: never;
+
+/**
 Set the given array to readonly if `IsReadonly` is `true`, otherwise set the given array to normal, then return the result.
 
 @example
