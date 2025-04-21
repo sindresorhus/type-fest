@@ -1,4 +1,5 @@
-import type {RequireExactlyOne} from '../index';
+import {expectAssignable, expectNotAssignable} from 'tsd';
+import type {RequireExactlyOne, Simplify} from '../index';
 
 type SystemMessages = {
 	default: string;
@@ -29,3 +30,59 @@ testWithoutKeys({b: 2});
 testWithoutKeys({});
 // @ts-expect-error
 testWithoutKeys({a: 1, b: 2});
+
+function narrowingTest(foo: Simplify<RequireExactlyOne<{a: string; b: string}>>): string { // `Simplify` just makes it easier to visualize the narrowing
+	if (typeof foo.a === 'string') {
+		expectAssignable<string>(foo.a);
+		expectNotAssignable<string>(foo.b);
+
+		return foo.a;
+	}
+
+	expectAssignable<string>(foo.b);
+	expectNotAssignable<string>(foo.a);
+
+	return foo.b;
+}
+
+function narrowingTest2(foo: Simplify<RequireExactlyOne<{a: string; b: string; c: string}>>): string { // `Simplify` just makes it easier to visualize the narrowing
+	if (typeof foo.a === 'string') {
+		expectAssignable<string>(foo.a);
+		expectNotAssignable<string>(foo.b);
+		expectNotAssignable<string>(foo.c);
+
+		return foo.a;
+	}
+
+	if (typeof foo.b === 'string') {
+		expectAssignable<string>(foo.b);
+		expectNotAssignable<string>(foo.a);
+		expectNotAssignable<string>(foo.c);
+
+		return foo.b;
+	}
+
+	expectAssignable<string>(foo.c);
+	expectNotAssignable<string>(foo.a);
+	expectNotAssignable<string>(foo.b);
+
+	return foo.c;
+}
+
+function narrowingTest3(foo: Simplify<RequireExactlyOne<{a: string; b: string; c: string}, 'a' | 'b'>>): string { // `Simplify` just makes it easier to visualize the narrowing
+	if (typeof foo.a === 'string') {
+		expectAssignable<string>(foo.c);
+
+		expectAssignable<string>(foo.a);
+		expectNotAssignable<string>(foo.b);
+
+		return foo.a;
+	}
+
+	expectAssignable<string>(foo.c);
+
+	expectAssignable<string>(foo.b);
+	expectNotAssignable<string>(foo.a);
+
+	return foo.b;
+}
