@@ -68,12 +68,11 @@ type _CamelCasedPropertiesDeep<
 		? CamelCasedPropertiesArrayDeep<Value, Options>
 		: Value extends Set<infer U>
 			? Set<_CamelCasedPropertiesDeep<U, Options>>
-			: {
-				[K in keyof Value as CamelCase<K, Options>]: _CamelCasedPropertiesDeep<
-				Value[K],
-				Options
-				>;
-			};
+			: Value extends object
+				? {
+					[K in keyof Value as CamelCase<K, Options>]: _CamelCasedPropertiesDeep<Value[K], Options>;
+				}
+				: Value;
 
 // This is a copy of DelimiterCasedPropertiesArrayDeep (see: delimiter-cased-properties-deep.d.ts).
 // These types should be kept in sync.
