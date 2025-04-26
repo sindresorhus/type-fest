@@ -45,3 +45,9 @@ const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 expectType<KebabCasedPropertiesDeep<UserWithFriends>>(result);
+
+expectType<{'foo-bar': unknown}>({} as KebabCasedPropertiesDeep<{foo_bar: unknown}>);
+expectType<{'foo-bar': {'bar-baz': unknown}; biz: unknown}>({} as KebabCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>);
+
+expectType<{'foo-bar': any}>({} as KebabCasedPropertiesDeep<{foo_bar: any}>);
+expectType<{'foo-bar': {'bar-baz': any}; biz: any}>({} as KebabCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);
