@@ -1,3 +1,4 @@
+import type {IsAny} from '../is-any';
 import type {IsNever} from '../is-never';
 import type {Primitive} from '../primitive';
 
@@ -111,3 +112,28 @@ type InternalIsUnion<T, U = T> =
 	? boolean extends Result ? true
 		: Result
 	: never; // Should never happen
+
+/**
+An if-else-like type that resolves depending on whether the given type is `any` or `never`.
+
+@example
+```
+// When `T` is a NOT `any` or `never` (like `string`) => Returns `IfNotAnyOrNever` branch
+type A = IfNotAnyOrNever<string, 'VALID', 'IS_ANY', 'IS_NEVER'>;
+//=> 'VALID'
+
+// When `T` is `any` => Returns `IfAny` branch
+type B = IfNotAnyOrNever<any, 'VALID', 'IS_ANY', 'IS_NEVER'>;
+//=> 'IS_ANY'
+
+// When `T` is `never` => Returns `IfNever` branch
+type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
+//=> 'IS_NEVER'
+```
+*/
+export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
+	IsAny<T> extends true
+		? IfAny
+		: IsNever<T> extends true
+			? IfNever
+			: IfNotAnyOrNever;
