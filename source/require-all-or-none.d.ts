@@ -1,4 +1,6 @@
-import type {RequireNone} from './internal';
+import type {IfAny} from './if-any';
+import type {IfNever} from './if-never';
+import type {IfNotAnyOrNever, RequireNone} from './internal';
 
 /**
 Requires all of the keys in the given object.
@@ -36,7 +38,14 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 
 @category Object
 */
-export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> = (
+export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
+	IfNotAnyOrNever<ObjectType,
+	IfNever<KeysType,
+	ObjectType,
+	_RequireAllOrNone<ObjectType, IfAny<KeysType, keyof ObjectType, KeysType>>
+	>>;
+
+type _RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType> = (
 	| RequireAll<ObjectType, KeysType>
 	| RequireNone<KeysType>
 ) & Omit<ObjectType, KeysType>; // The rest of the keys.

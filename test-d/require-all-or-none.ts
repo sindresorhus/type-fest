@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {RequireAllOrNone, Simplify} from '../index';
 
 type SystemMessages = {
@@ -80,3 +80,25 @@ function narrowingTest3(foo: Simplify<RequireAllOrNone<{a: string; b: string; c:
 
 	return '';
 }
+
+expectType<{a: number; b: string} | {a?: never; b?: never}>({} as Simplify<RequireAllOrNone<{a: number; b: string}>>); // `Simplify` is required for the assertion to pass
+expectType<{a: number; b: string} | {a?: never; b?: never}>({} as Simplify<RequireAllOrNone<{a: number; b: string}, any>>); // `Simplify` is required for the assertion to pass
+expectType<{a: number; b: string; c: boolean} | {a?: never; b?: never; c?: never}>(
+	{} as Simplify<RequireAllOrNone<{a: number; b: string; c: boolean}>>, // `Simplify` is required for the assertion to pass
+);
+expectType<{a: number; b: string; c: boolean} | {a?: never; b?: never; c?: never}>(
+	{} as Simplify<RequireAllOrNone<{a: number; b: string; c: boolean}, any>>, // `Simplify` is required for the assertion to pass
+);
+
+expectType<{}>({} as RequireAllOrNone<{}>);
+expectType<{a: string; b: number}>({} as RequireAllOrNone<{a: string; b: number}, never>);
+
+expectType<any>({} as RequireAllOrNone<any>);
+expectType<any>({} as RequireAllOrNone<any, 'foo'>);
+expectType<any>({} as RequireAllOrNone<any, any>);
+expectType<any>({} as RequireAllOrNone<any, never>);
+
+expectType<never>({} as RequireAllOrNone<never>);
+expectType<never>({} as RequireAllOrNone<never, 'foo'>);
+expectType<never>({} as RequireAllOrNone<never, any>);
+expectType<never>({} as RequireAllOrNone<never, never>);

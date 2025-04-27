@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {RequireExactlyOne, Simplify} from '../index';
 
 type SystemMessages = {
@@ -86,3 +86,25 @@ function narrowingTest3(foo: Simplify<RequireExactlyOne<{a: string; b: string; c
 
 	return foo.b;
 }
+
+expectType<{a: number; b?: never} | {a?: never; b: string}>({} as Simplify<RequireExactlyOne<{a: number; b: string}>>); // `Simplify` is required for the assertion to pass
+expectType<{a: number; b?: never} | {a?: never; b: string}>({} as Simplify<RequireExactlyOne<{a: number; b: string}, any>>); // `Simplify` is required for the assertion to pass
+expectType<{a: number; b?: never; c?: never} | {a?: never; b: string; c?: never} | {a?: never; b?: never; c: boolean}>(
+	{} as Simplify<RequireExactlyOne<{a: number; b: string; c: boolean}>>, // `Simplify` is required for the assertion to pass
+);
+expectType<{a: number; b?: never; c?: never} | {a?: never; b: string; c?: never} | {a?: never; b?: never; c: boolean}>(
+	{} as Simplify<RequireExactlyOne<{a: number; b: string; c: boolean}, any>>, // `Simplify` is required for the assertion to pass
+);
+
+expectType<never>({} as RequireExactlyOne<{}>);
+expectType<never>({} as RequireExactlyOne<{a: string; b: number}, never>);
+
+expectType<any>({} as RequireExactlyOne<any>);
+expectType<any>({} as RequireExactlyOne<any, 'foo'>);
+expectType<any>({} as RequireExactlyOne<any, any>);
+expectType<any>({} as RequireExactlyOne<any, never>);
+
+expectType<never>({} as RequireExactlyOne<never>);
+expectType<never>({} as RequireExactlyOne<never, 'foo'>);
+expectType<never>({} as RequireExactlyOne<never, any>);
+expectType<never>({} as RequireExactlyOne<never, never>);
