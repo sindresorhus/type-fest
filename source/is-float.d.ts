@@ -1,5 +1,3 @@
-import type {Zero} from './numeric';
-
 /**
 Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
 

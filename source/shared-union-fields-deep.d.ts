@@ -1,4 +1,4 @@
-import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray, IsUnion, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal';
+import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal';
 import type {IsNever} from './is-never';
 import type {UnknownArray} from './unknown-array';
 
