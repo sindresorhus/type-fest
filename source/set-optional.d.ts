@@ -1,6 +1,5 @@
 import type {Except} from './except';
 import type {HomomorphicPick} from './internal';
-import type {KeysOfUnion} from './keys-of-union';
 import type {Simplify} from './simplify';
 
 /**

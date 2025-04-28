@@ -1,4 +1,4 @@
-import {expectAssignable, expectError, expectType} from 'tsd';
+import {expectAssignable, expectType} from 'tsd';
 import type {UnionToTuple} from '../index';
 
 type Options = UnionToTuple<'a' | 'b' | 'c'>;

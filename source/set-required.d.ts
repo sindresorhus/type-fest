@@ -1,6 +1,5 @@
 import type {Except} from './except';
 import type {HomomorphicPick, IfArrayReadonly} from './internal';
-import type {KeysOfUnion} from './keys-of-union';
 import type {OptionalKeysOf} from './optional-keys-of';
 import type {Simplify} from './simplify';
 import type {UnknownArray} from './unknown-array';
