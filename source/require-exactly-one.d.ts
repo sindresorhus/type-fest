@@ -1,3 +1,7 @@
+import type {IfAny} from './if-any';
+import type {IfNever} from './if-never';
+import type {IfNotAnyOrNever} from './internal';
+
 /**
 Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.
 
@@ -28,6 +32,13 @@ const responder: RequireExactlyOne<Responder, 'text' | 'json'> = {
 @category Object
 */
 export type RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
+	IfNotAnyOrNever<ObjectType,
+	IfNever<KeysType,
+	never,
+	_RequireExactlyOne<ObjectType, IfAny<KeysType, keyof ObjectType, KeysType>>
+	>>;
+
+type _RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType> =
 	{[Key in KeysType]: (
 		Required<Pick<ObjectType, Key>> &
 		Partial<Record<Exclude<KeysType, Key>, never>>

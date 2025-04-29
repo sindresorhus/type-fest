@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {RequireOneOrNone, Simplify} from '../index';
 
 type OneAtMost = RequireOneOrNone<Record<'foo' | 'bar' | 'baz', true>>;
@@ -104,3 +104,29 @@ function narrowingTest3(foo: Simplify<RequireOneOrNone<{a: string; b: string; c:
 
 	return '';
 }
+
+expectType<{a: number; b?: never} | {a?: never; b: string} | {a?: never; b?: never}>(
+	{} as Simplify<RequireOneOrNone<{a: number; b: string}>>, // `Simplify` is required for the assertion to pass
+);
+expectType<{a: number; b?: never} | {a?: never; b: string} | {a?: never; b?: never}>(
+	{} as Simplify<RequireOneOrNone<{a: number; b: string}, any>>, // `Simplify` is required for the assertion to pass
+);
+expectType<{a: number; b?: never; c?: never} | {a?: never; b: string; c?: never} | {a?: never; b?: never; c: boolean} | {a?: never; b?: never; c?: never}>(
+	{} as Simplify<RequireOneOrNone<{a: number; b: string; c: boolean}>>, // `Simplify` is required for the assertion to pass
+);
+expectType<{a: number; b?: never; c?: never} | {a?: never; b: string; c?: never} | {a?: never; b?: never; c: boolean} | {a?: never; b?: never; c?: never}>(
+	{} as Simplify<RequireOneOrNone<{a: number; b: string; c: boolean}, any>>, // `Simplify` is required for the assertion to pass
+);
+
+expectType<{}>({} as RequireOneOrNone<{}>);
+expectType<{a: string; b: number}>({} as RequireOneOrNone<{a: string; b: number}, never>);
+
+expectType<any>({} as RequireOneOrNone<any>);
+expectType<any>({} as RequireOneOrNone<any, 'foo'>);
+expectType<any>({} as RequireOneOrNone<any, any>);
+expectType<any>({} as RequireOneOrNone<any, never>);
+
+expectType<never>({} as RequireOneOrNone<never>);
+expectType<never>({} as RequireOneOrNone<never, 'foo'>);
+expectType<never>({} as RequireOneOrNone<never, any>);
+expectType<never>({} as RequireOneOrNone<never, never>);
