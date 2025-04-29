@@ -19,4 +19,8 @@ LessThan<1, 5>;
 */
 export type LessThan<A extends number, B extends number> = number extends A | B
 	? never
-	: GreaterThanOrEqual<A, B> extends true ? false : true;
+	: GreaterThanOrEqual<A, B> extends infer Result
+		? Result extends true
+			? false
+			: true
+		: never; // Should never happen
