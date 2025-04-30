@@ -3,6 +3,11 @@ import type {ArrayFlat, PositiveInfinity} from '../index';
 
 type DeepArrayFlat<T> = ArrayFlat<[[[[[[T]]]]]], 10>;
 
+expectAssignable<ArrayFlat<[1, number[], string[], true]>>([1, 2, 3, 'a', 'b', true]);
+expectAssignable<ArrayFlat<[1, number[], true, string[]]>>([1, 2, 3, 'a', 'b', true]);
+// TODO: fix this
+// expectAssignable<ArrayFlat<[string[], [...boolean[], string]]>>(['a', true, 'b', 'c']);
+
 // Basic flattening tests
 expectType<ArrayFlat<[]>>([]);
 expectType<ArrayFlat<[1, 2, 3]>>([1, 2, 3]);
