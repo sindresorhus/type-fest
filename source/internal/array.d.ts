@@ -31,6 +31,36 @@ It creates a type-safe way to access the element type of `unknown` type.
 export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
 
 /**
+ Returns the required part of the given array.
+
+ @example
+ ```
+ type A = [string, number, boolean?];
+ type B = RequiredPartOfArray<A>;
+ //=> [string, number]
+ ```
+ */
+export type RequiredPartOfArray<T extends UnknownArray> =
+	T extends readonly [infer U, ...infer V]
+		? [U, ...RequiredPartOfArray<V>]
+		: [];
+
+/**
+ Returns the optional part of the given array.
+
+ @example
+ ```
+ type A = [string, number, boolean?];
+ type B = OptionalPartOfArray<A>;
+ //=> [boolean?]
+ ```
+ */
+export type OptionalPartOfArray<T extends UnknownArray> =
+	T extends readonly [...RequiredPartOfArray<T>, ...infer U]
+		? U
+		: [];
+
+/**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example
@@ -65,6 +95,46 @@ export type VariablePartOfArray<T extends UnknownArray> =
 			? U
 			: []
 		: never; // Should never happen
+
+/**
+Returns if the given array is a leading spread array.
+*/
+export type IsLeadingSpreadArray<T extends UnknownArray> =
+	T extends [...infer U, infer V] ? true : false;
+
+/**
+Returns if the given array is a trailing spread array.
+*/
+export type IsTrailingSpreadArray<T extends UnknownArray> =
+	T extends [infer U, ...infer V] ? true : false;
+
+/**
+Returns the static, fixed-length portion of the given leading spread array.
+@example
+```
+type A = [...string[], number, boolean];
+type B = StaticPartOfLeadingSpreadArray<A>;
+//=> [number, boolean]
+```
+*/
+type StaticPartOfLeadingSpreadArray<T extends UnknownArray, Result extends UnknownArray = []> =
+	T extends [...infer U, infer V]
+		? StaticPartOfLeadingSpreadArray<U, [V, ...Result]>
+		: Result;
+
+/**
+Returns the variable, non-fixed-length portion of the given leading spread array.
+@example
+```
+type A = [...string[], number, boolean];
+type B = VariablePartOfLeadingSpreadArray<A>;
+//=> string[]
+```
+*/
+export type VariablePartOfLeadingSpreadArray<T extends UnknownArray> =
+	T extends [...infer U, ...StaticPartOfLeadingSpreadArray<T>]
+		? U
+		: never;
 
 /**
 Set the given array to readonly if `IsReadonly` is `true`, otherwise set the given array to normal, then return the result.

@@ -111,3 +111,8 @@ type InternalIsUnion<T, U = T> =
 	? boolean extends Result ? true
 		: Result
 	: never; // Should never happen
+
+/**
+Return the value of exactOptionalPropertyTypes option in tsconfig
+*/
+export type ExactOptionalPropertyTypesEnable = [(string | undefined)?] extends [string?] ? false : true;

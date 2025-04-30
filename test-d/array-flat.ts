@@ -1,5 +1,7 @@
-import {expectAssignable, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {ArrayFlat, PositiveInfinity} from '../index';
+
+type DeepArrayFlat<T> = ArrayFlat<[[[[[[T]]]]]], 10>;
 
 // Basic flattening tests
 expectType<ArrayFlat<[]>>([]);
@@ -26,20 +28,56 @@ expectType<ArrayFlat<Arr, PositiveInfinity>>([0, 1, 2, 3, 4, 5]);
 expectType<ArrayFlat<[1, [2, [3, [4]]]], PositiveInfinity>>([1, 2, 3, 4]);
 expectType<ArrayFlat<[[[[[1]]]]], PositiveInfinity>>([1]);
 
+expectAssignable<ArrayFlat<[boolean, [string, number?], boolean]>>(
+	[true, 'a', false],
+);
+expectAssignable<ArrayFlat<[boolean, [string, number?], boolean]>>(
+	[true, 'a', 1, false],
+);
+
 // Test with different element types
 expectType<ArrayFlat<[string, [number, boolean]]>>([null! as string, null! as number, null! as boolean]);
+expectType<DeepArrayFlat<[string, [number, boolean]]>>([null! as string, null! as number, null! as boolean]);
+
 expectType<ArrayFlat<[{a: number}, [{b: string}]]>>([null! as {a: number}, null! as {b: string}]);
+expectType<DeepArrayFlat<[{a: number}, [{b: string}]]>>([null! as {a: number}, null! as {b: string}]);
 
 // Test with union types
-expectType<ArrayFlat<[1, 2] | [[3, 4]]>>([1, 2] as [1, 2] | [3, 4]);
-expectType<ArrayFlat<[1, [2]] | [[3], 4]>>([1, 2] as [1, 2] | [3, 4]);
+expectType<ArrayFlat<[1, 2] | [[3, 4]]>>(null! as [1, 2] | [3, 4]);
+expectType<DeepArrayFlat<[1, 2] | [[3, 4]]>>(null! as [1, 2] | [3, 4]);
 
-expectType<ArrayFlat<[...Array<[number, string]>]>>(null! as [number?, string?, number?, string?, number?, string?, number?, string?, number?, string?, number?, string?, number?, string?, number?, string?, number?, string?, number?, string?]);
-expectType<ArrayFlat<[1, [2, ...Array<3>], 4]>>([1, 2, ...(null! as Array<3>), 4]);
+expectType<ArrayFlat<[1, [2]] | [[3], 4]>>(null! as [1, 2] | [3, 4]);
+expectType<DeepArrayFlat<[1, [2]] | [[3], 4]>>(null! as [1, 2] | [3, 4]);
+
+expectAssignable<ArrayFlat<[...Array<[number, string?]>]>>([1, 3, 5]);
+expectAssignable<DeepArrayFlat<[...Array<[number, string?]>]>>([1, 3, 5]);
+
+expectType<ArrayFlat<[1, [2, ...Array<3>], 4]>>(null! as [1, 2, ...Array<3>, 4]);
+expectType<DeepArrayFlat<[1, [2, ...Array<3>], 4]>>(null! as [1, 2, ...Array<3>, 4]);
 
 // Test with mixed arrays and tuples
-expectType<ArrayFlat<[1, number[], 3]>>([1, ...(null! as number[]), 3]);
-expectType<ArrayFlat<[string, [number, ...boolean[]]]>>([null! as string, null! as number, ...(null! as boolean[])]);
+expectType<ArrayFlat<['1', number[], '3']>>(null! as ['1', ...number[], '3']);
+expectType<DeepArrayFlat<['1', number[], '3']>>(null! as ['1', ...number[], '3']);
+expectAssignable<ArrayFlat<[...number[], string[]]>>([1, 2, 3, 'a', 'b', 'c']);
+expectAssignable<DeepArrayFlat<[...number[], string[]]>>([1, 2, 3, 'a', 'b', 'c']);
+type MutiSpreadArray = [number, Array<'a'>, Array<'b'>, boolean];
+expectAssignable<ArrayFlat<MutiSpreadArray>>([1, 'a', 'b', true]);
+expectAssignable<DeepArrayFlat<MutiSpreadArray>>([1, 'a', 'b', true]);
+expectAssignable<ArrayFlat<MutiSpreadArray>>([1, 'a', 'a', 'a', 'b', true]);
+expectAssignable<DeepArrayFlat<MutiSpreadArray>>([1, 'a', 'a', 'a', 'b', true]);
+
+type SpreadArray = ArrayFlat<[1, ...Array<[2, 3?]>, 4]>;
+expectAssignable<SpreadArray>([1, 2, 3, 4]);
+expectAssignable<SpreadArray>([1, 2, 2, 4]);
+expectAssignable<SpreadArray>([1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4]);
+expectAssignable<SpreadArray>([1, 2, 3, 2, 4]);
+
+type SpreadArray2 = ArrayFlat<['start', ...Array<[2, 3, 4?]>, 'end']>;
+expectAssignable<SpreadArray2>(['start', 2, 3, 4, 'end']);
+expectAssignable<SpreadArray2>(['start', 2, 3, 4, 2, 3, 4, 'end']);
+expectAssignable<SpreadArray2>(['start', 2, 3, 4, 2, 3, 4, 2, 3, 4, 'end']);
+expectAssignable<SpreadArray2>(['start', 2, 3, 2, 3, 2, 3, 'end']);
+expectAssignable<SpreadArray2>(['start', 2, 3, 2, 3, 4, 'end']);
 
 // Test with deeply nested structures
 expectType<ArrayFlat<[1, [2, [3, [4, [5]]]]], 3>>([1, 2, 3, 4, [5]]);
@@ -71,6 +109,9 @@ expectAssignable<ArrayFlat<MixedGenericAndTuple>>([1, 'a', 2, 'b']);
 // Test for array with optional elements in nested structure
 type NestedOptional = [number, Array<[string?, number?]>];
 expectAssignable<ArrayFlat<NestedOptional, 2>>([1, 'a', 2, 'b', 3]);
+expectType<ArrayFlat<[boolean, [string, number?], boolean]>>(
+	null! as [boolean, string, boolean] | [boolean, string, number | undefined, boolean],
+);
 
 // Test for arrays with rest elements in nested structure
 type NestedRest = [string, Array<[...number[]]>];
