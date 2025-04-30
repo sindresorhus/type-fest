@@ -5,8 +5,7 @@ type DeepArrayFlat<T> = ArrayFlat<[[[[[[T]]]]]], 10>;
 
 expectAssignable<ArrayFlat<[1, number[], string[], true]>>([1, 2, 3, 'a', 'b', true]);
 expectAssignable<ArrayFlat<[1, number[], true, string[]]>>([1, 2, 3, 'a', 'b', true]);
-// TODO: fix this
-// expectAssignable<ArrayFlat<[string[], [...boolean[], string]]>>(['a', true, 'b', 'c']);
+expectAssignable<ArrayFlat<[string[], [...boolean[], string]]>>(['a', true, true, false, 'b']);
 
 // Basic flattening tests
 expectType<ArrayFlat<[]>>([]);

@@ -191,7 +191,7 @@ T extends [infer _Item, ...infer Last]
 					? [
 						...(
 							hasSpreadArray extends true
-								? BuildRepeatedUnionArray<Item, RepeatNumber> extends infer Result extends UnknownArray
+								? BuildRepeatedUnionArray<Item, RepeatNumber, Not<hasSpreadArray>> extends infer Result extends UnknownArray
 									? [...Result]
 									: never // Never happens, just for fixed ts error TS2589: Type instantiation is excessively deep and possibly infinite.
 								: Array<Item[number]>
@@ -247,7 +247,7 @@ RepeatNumber extends 0
 				...R,
 				...(
 					ExactOptionalPropertyTypesEnable extends true
-						? [...RequiredPart, ...([Exclude<OptionalPart[number], undefined>] | [])]
+						? [...RequiredPart, ...(IsZero<ArrayLength<OptionalPart>> extends true ? [] : [Exclude<OptionalPart[number], undefined>] | [])]
 						: T
 				),
 			]
