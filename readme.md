@@ -33,16 +33,6 @@
 			</a>
 			<br>
 			<br>
-			<a href="https://transloadit.com?utm_source=sindresorhus&utm_medium=referral&utm_campaign=sponsorship&utm_content=type-fest">
-				<picture>
-					<source width="350" media="(prefers-color-scheme: dark)" srcset="https://sindresorhus.com/assets/thanks/transloadit-logo-dark.svg">
-					<source width="350" media="(prefers-color-scheme: light)" srcset="https://sindresorhus.com/assets/thanks/transloadit-logo.svg">
-					<img width="350" src="https://sindresorhus.com/assets/thanks/transloadit-logo.svg" alt="Transloadit logo">
-				</picture>
-			</a>
-			<br>
-			<br>
-			<br>
 			<a href="https://logto.io/?ref=sindre">
 				<div>
 					<picture>
@@ -93,9 +83,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 npm install type-fest
 ```
 
-*Requires TypeScript >=5.1*
-
-*Works best with [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
+*Requires TypeScript >=5.1 and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
 
 ## Usage
 
@@ -131,6 +119,8 @@ Click the type names for complete docs.
 - [`NonEmptyObject`](source/non-empty-object.d.ts) - Represents an object with at least 1 non-optional key.
 - [`UnknownRecord`](source/unknown-record.d.ts) - Represents an object with `unknown` value. You probably want this instead of `{}`.
 - [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
+- [`UnknownMap`](source/unknown-map.d.ts) - Represents a map with `unknown` key and value.
+- [`UnknownSet`](source/unknown-set.d.ts) - Represents a set with `unknown` value.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
@@ -209,6 +199,7 @@ Click the type names for complete docs.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
+- [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
 - [`FindGlobalType`](source/find-global-type.d.ts) - Tries to find the type of a global with the given name.
 - [`FindGlobalInstanceType`](source/find-global-type.d.ts) - Tries to find one or more types from their globally-defined constructors.
 

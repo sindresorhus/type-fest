@@ -66,3 +66,9 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 expectType<CamelCasedPropertiesDeep<UserWithFriends>>(result);
+
+expectType<{fooBar: unknown}>({} as CamelCasedPropertiesDeep<{foo_bar: unknown}>);
+expectType<{fooBar: {barBaz: unknown}; biz: unknown}>({} as CamelCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>);
+
+expectType<{fooBar: any}>({} as CamelCasedPropertiesDeep<{foo_bar: any}>);
+expectType<{fooBar: {barBaz: any}; biz: any}>({} as CamelCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);

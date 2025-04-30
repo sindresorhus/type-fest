@@ -1,4 +1,4 @@
-import type {IsEqual} from './is-equal';
+import type {WritableKeysOf} from './writable-keys-of';
 
 /**
 Extract all readonly keys from the given type.
@@ -24,6 +24,7 @@ const update1: UpdateResponse<User> = {
 
 @category Utilities
 */
-export type ReadonlyKeysOf<T> = NonNullable<{
-	[P in keyof T]: IsEqual<{[Q in P]: T[P]}, {readonly [Q in P]: T[P]}> extends true ? P : never
-}[keyof T]>;
+export type ReadonlyKeysOf<T> =
+	T extends unknown // For distributing `T`
+		? Exclude<keyof T, WritableKeysOf<T>>
+		: never; // Should never happen

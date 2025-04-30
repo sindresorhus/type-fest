@@ -1,3 +1,5 @@
+import type {OptionalKeysOf} from './optional-keys-of';
+
 /**
 Extract all required keys from the given type.
 
@@ -22,8 +24,7 @@ const validator2 = createValidation<User>('surname', value => value.length < 25)
 
 @category Utilities
 */
-export type RequiredKeysOf<BaseType extends object> = Exclude<{
-	[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]>
-		? Key
-		: never
-}[keyof BaseType], undefined>;
+export type RequiredKeysOf<BaseType extends object> =
+	BaseType extends unknown // For distributing `BaseType`
+		? Exclude<keyof BaseType, OptionalKeysOf<BaseType>>
+		: never; // Should never happen
