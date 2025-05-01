@@ -80,7 +80,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 ## Install
 
 ```sh
-npm install type-fest
+npm install -D type-fest
 ```
 
 *Requires TypeScript >=5.1 and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
