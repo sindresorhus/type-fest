@@ -175,3 +175,6 @@ export type {LastArrayElement} from './source/last-array-element';
 export type {GlobalThis} from './source/global-this';
 export type {PackageJson} from './source/package-json';
 export type {TsConfigJson} from './source/tsconfig-json';
+
+// Improved Built-in
+export type {ExtractStrict} from './source/extract-strict';

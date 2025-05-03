@@ -332,6 +332,10 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). It also includes support for [TypeScript Declaration Files](https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html).
 - [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html).
 
+### Improved Built-in
+
+- [`ExtractStrict`](source/extract-strict.d.ts) - Like `Extract<Type, Union>`, but all members of `Union` are restricted to be subsets of some member of `Type`.
+
 ## Declined types
 
 *If we decline a type addition, we will make sure to document the better solution here.*
