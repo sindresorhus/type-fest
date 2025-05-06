@@ -28,7 +28,7 @@ type SomeRequiredDeep = SetRequiredDeep<Foo, 'a' | `c.${number}.d`>;
 // type SomeRequiredDeep = {
 // 	a: number; // Is now required
 // 	b?: string;
-// 	c: {
+// 	c?: {
 // 		d: number // Is now required
 // 	}[]
 // }
