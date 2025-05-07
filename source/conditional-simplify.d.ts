@@ -1,31 +1,43 @@
 /**
 Simplifies a type while including and/or excluding certain types from being simplified.
+
 Useful to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+
 @example
 ```ts
 import type {ConditionalSimplify} from 'type-fest';
+
 type TypeA = {
 	a: string
-}
+};
+
 type TypeB = {
 	b: string
-}
-type TypeAB = TypeA & TypeB
+};
+
+type TypeAB = TypeA & TypeB;
 //=> {a: string} & {b: string}
-type SimplifyTypeAB = ConditionalSimplify<TypeAB, never, object>
+
+type SimplifyTypeAB = ConditionalSimplify<TypeAB, never, object>;
 //=> {a: string, b: string}
 ```
+
 @example
 ```ts
 import type {ConditionalSimplify} from 'type-fest';
+
 type Simplify<T> = ConditionalSimplify<T, Set<unknown> | Map<unknown, unknown> | unknown[], object>;
+
 type A = Simplify<Set<number> & Set<string>>;
 //=> Set<number> & Set<string>
+
 type B = Simplify<Map<number, number> & Map<string, string>>;
 //=> Map<number, number> & Map<string, string>
+
 type C = Simplify<{ a: number } & { b: string }>;
 //=> {a: number, b: string}
 ```
+
 @see ConditionalSimplifyDeep
 @category Object
 */
