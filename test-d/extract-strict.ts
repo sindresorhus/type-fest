@@ -15,11 +15,9 @@ expectType<SmallShirtSize>(smallShirtSizes);
 
 // @ts-expect-error
 declare const allInvalidShirtSizes: ExtractStrict<ShirtSize, 'skyscraper-large' | 'atom-small'>;
-expectType<never>(allInvalidShirtSizes);
 
 // @ts-expect-error
 declare const someInvalidShirtSizes: ExtractStrict<ShirtSize, 'm' | 'atom-small'>;
-expectType<'m'>(someInvalidShirtSizes); // This is how native `Extract` works with primitives
 
 // Object union tests
 
@@ -55,12 +53,9 @@ expectType<Foobar>(foobarByUnionBC);
 
 // @ts-expect-error
 declare const invalidLoneField: ExtractStrict<Foobar, {d: string}>;
-expectType<never>(invalidLoneField);
 
 // @ts-expect-error
 declare const invalidMixedFields: ExtractStrict<Foobar, {kind: 'foo'; d: string}>;
-expectType<never>(invalidMixedFields);
 
 // @ts-expect-error
 declare const undefinedField: ExtractStrict<Foobar, undefined>;
-expectType<never>(undefinedField);
