@@ -34,6 +34,36 @@ It creates a type-safe way to access the element type of `unknown` type.
 export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
 
 /**
+Returns the required part of the given array.
+
+@example
+```
+type A = [string, number, boolean?];
+type B = RequiredPartOfArray<A>;
+//=> [string, number]
+```
+*/
+export type RequiredPartOfArray<T extends UnknownArray> =
+	T extends readonly [infer U, ...infer V]
+		? [U, ...RequiredPartOfArray<V>]
+		: [];
+
+/**
+Returns the optional part of the given array.
+
+@example
+```
+type A = [string, number, boolean?];
+type B = OptionalPartOfArray<A>;
+//=> [boolean?]
+```
+*/
+export type OptionalPartOfArray<T extends UnknownArray> =
+	T extends readonly [...RequiredPartOfArray<T>, ...infer U]
+		? U
+		: [];
+
+/**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example

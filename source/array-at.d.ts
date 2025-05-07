@@ -1,5 +1,6 @@
+import type {ArraySlice} from './array-slice';
 import type {GreaterThanOrEqual} from './greater-than-or-equal';
-import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray} from './internal';
+import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfArray, OptionalPartOfArray} from './internal';
 import type {IsNegative} from './numeric';
 import type {Sum} from './sum';
 import type {UnknownArray} from './unknown-array';
@@ -32,19 +33,39 @@ IsNegative<N> extends false
 	: Sum<T['length'], N> extends infer Index extends number
 		? IsNegative<Index> extends true
 			? undefined
-			: T[Index]
+			: [RequiredPartOfArray<T>, OptionalPartOfArray<T>] extends [infer RequiredPart extends UnknownArray, infer OptionalPart extends UnknownArray]
+				? RequiredPart[Index] | ([N] extends [-1] ? OptionalPart[number] : never)
+				: never // Never happens
 		: never; // Never happens
 
 // Internal `ArrayAt` type for non-fixed-length array.
 type NonFixedLengthArrayAt<T extends UnknownArray, N extends number> =
+// Handle leading spread array like `[...string[], number, boolean]`
 IsLeadingSpreadArray<T> extends true
 	? [VariablePartOfLeadingSpreadArray<T>, StaticPartOfLeadingSpreadArray<T>] extends [infer VariablePart extends UnknownArray, infer StaticPart extends UnknownArray]
-		? FixedLengthArrayAt<StaticPart, N> | VariablePart[number]
+		? IsNegative<N> extends false
+			? FixedLengthArrayAt<StaticPart, N> | VariablePart[number]
+			: Sum<StaticPart['length'], N> extends infer Index extends number
+				? IsNegative<Index> extends true
+					? VariablePart[number] | undefined
+					: StaticPart[Index]
+				: never
 		: never // Never happens
+	// Handle trailing spread array like `[number, boolean, ...string[]]`
 	: IsTrailingSpreadArray<T> extends true
 		? [StaticPartOfArray<T>, VariablePartOfArray<T>] extends [infer StaticPart extends UnknownArray, infer VariablePart extends UnknownArray]
-			? GreaterThanOrEqual<N, StaticPart['length']> extends true
-				? VariablePart[number] | undefined
-				: FixedLengthArrayAt<StaticPart, N>
+		// Handle positive index
+			? IsNegative<N> extends false
+				? GreaterThanOrEqual<N, StaticPart['length']> extends true
+					? VariablePart[number] | undefined
+					: FixedLengthArrayAt<StaticPart, N>
+					// Handle negative index
+				: Sum<RequiredPartOfArray<StaticPart>['length'], N> extends infer SliceLength extends number
+					? IsNegative<SliceLength> extends true
+						? T[number] | undefined
+						: T extends [...ArraySlice<StaticPart, 0, Sum<RequiredPartOfArray<StaticPart>['length'], N>>, ...infer Last]
+							? Last[number]
+							: never
+					: never // Never happens
 			: never // Never happens
 		: T[number];
