@@ -1,5 +1,3 @@
-import type {Exact} from './exact';
-
 /**
 Extract members of a union type `Type` based on the
 fields in the given union type `Union`, where each
@@ -46,11 +44,10 @@ type InvalidUnionForType = ExtractStrict<Foobar, {d: string}>;
 */
 export type ExtractStrict<
 	Type,
-	/**
-	 * Only allow keys that are in some union member
-	 * of `Type`. Thus, each union member of `Union`
-	 * is only allowed to be a subset of some union
-	 * member of `Type`.
-	 */
-	Union extends Partial<Exact<Type, Union>>,
+	Union extends [Union] extends [
+		// Ensure every member of `Union` extracts something from `Type`
+		Union extends unknown ? (Extract<Type, Union> extends never ? never : Union) : never,
+	]
+		? unknown
+		: never,
 > = Extract<Type, Union>;
