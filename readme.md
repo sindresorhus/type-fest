@@ -334,7 +334,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 
 ### Improved Built-in
 
-- [`ExtractStrict`](source/extract-strict.d.ts) - Like `Extract<Type, Union>`, but all members of `Union` are restricted to be subsets of some member of `Type`.
+- [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of `Extract<T, U>` that ensures every member of `U` can successfully extract something from `T`.
 
 ## Declined types
 

@@ -1,53 +1,45 @@
 /**
-Extract members of a union type `Type` based on the
-fields in the given union type `Union`, where each
-union member of `Union` is only allowed to be a subset
-of some union member of `Type`.
+A stricter version of {@link Extract<T, U>} that ensures every member of `U` can successfully extract something from `T`.
 
-Constraint: ∀ U ∈ Union, U ⊆ T, where T ∈ Type
+For example, `StrictExtract<string | number | boolean, number | bigint>` will error because `bigint` cannot extract anything from `string | number | boolean`.
 
 @example
 ```
-type Foo = {
-	kind: 'foo';
-	a: string;
-	b: string;
-};
+// Valid Examples
 
-type Bar = {
-	kind: 'bar';
-	a: string;
-	b: number;
-	c: boolean;
-};
+type Example1 = ExtractStrict<{status: 'success'; data: string[]} | {status: 'error'; error: string}, {status: 'success'}>;
+//=> {status: 'success'; data: string[]}
 
-type Foobar = Foo | Bar;
+type Example2 = ExtractStrict<'xs' | 's' | 'm' | 'l' | 'xl', 'xs' | 's'>;
+//=> 'xs' | 's'
 
-type FoobarByA = ExtractStrict<Foobar, {a: string}>;
-// => Foobar
-
-type OnlyFooByKind = ExtractStrict<Foobar, {kind: 'foo'}>;
-// => Foo
-
-type OnlyFooByB = ExtractStrict<Foobar, {b: string}>;
-// => Foo
-
-type OnlyBarByC = ExtractStrict<Foobar, {c: boolean}>;
-// => Bar
-
-type InvalidUnionForType = ExtractStrict<Foobar, {d: string}>;
-// => Error:
-//	  Types of property 'd' are incompatible.
-//	  Type 'string' is not assignable to type 'never'.
+type Example3 = ExtractStrict<{x: number; y: number} | [number, number], unknown[]>;
+//=> [number, number]
 ```
+
+@example
+```
+// Invalid Examples
+
+// `'xxl'` cannot extract anything from `'xs' | 's' | 'm' | 'l' | 'xl'`
+type Example1 = ExtractStrict<'xs' | 's' | 'm' | 'l' | 'xl', 'xl' | 'xxl'>;
+//                                                           ~~~~~~~~~~~~
+// Error: Type "'xl' | 'xxl'" does not satisfy the constraint 'never'.
+
+// `unknown[]` cannot extract anything from `{x: number; y: number} | {x: string; y: string}`
+type Example2 = ExtractStrict<{x: number; y: number} | {x: string; y: string}, unknown[]>;
+//                                                                             ~~~~~~~~~
+// Error: Type 'unknown[]' does not satisfy the constraint 'never'.
+```
+
 @category Improved Builtin
 */
 export type ExtractStrict<
-	Type,
-	Union extends [Union] extends [
-		// Ensure every member of `Union` extracts something from `Type`
-		Union extends unknown ? (Extract<Type, Union> extends never ? never : Union) : never,
+	T,
+	U extends [U] extends [
+		// Ensure every member of `U` extracts something from `T`
+		U extends unknown ? (Extract<T, U> extends never ? never : U) : never,
 	]
 		? unknown
 		: never,
-> = Extract<Type, Union>;
+> = Extract<T, U>;
