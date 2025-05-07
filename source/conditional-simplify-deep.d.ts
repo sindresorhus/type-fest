@@ -17,6 +17,7 @@ type TypeB = {
 type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, never, object>;
 //=> {foo: {a: string, b: string}}
 ```
+
 @example
 ```ts
 import type {ConditionalSimplifyDeep} from 'type-fest';
@@ -53,6 +54,7 @@ type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, SomeComplexType
 //	}
 // }
 ```
+
 @see SimplifyDeep
 @category Object
 */
