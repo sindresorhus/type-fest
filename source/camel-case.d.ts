@@ -10,13 +10,13 @@ export type CamelCaseOptions = {
 	/**
 	Whether to preserved consecutive uppercase letter.
 
-	@default true
+	@default false
 	*/
 	preserveConsecutiveUppercase?: boolean;
 };
 
 export type DefaultCamelCaseOptions = {
-	preserveConsecutiveUppercase: true;
+	preserveConsecutiveUppercase: false;
 };
 
 /**
