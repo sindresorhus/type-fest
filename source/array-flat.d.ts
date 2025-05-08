@@ -13,8 +13,8 @@ Return true if the number is 0
 type IsZero<T extends number> = [T] extends [0] ? true : false;
 
 /**
- * Options for the `ArrayFlat` type.
- */
+Options for the `ArrayFlat` type.
+*/
 type ArrayFlatOptions = {
 	/**
 	 * The number of times to repeat the array items when flattening an non-fixed length array.
@@ -81,7 +81,7 @@ T extends UnknownArray
 	? Or<IsZero<ArrayLength<T>>, IsZero<Depth>> extends true
 		? [...Result, ...T]
 		: number extends T['length']
-		// Handle non-fixed length arrays
+			// Handle non-fixed length arrays
 			? InternalNonFixedLengthArrayFlat<T, Depth, Options, Result>
 			// Handle fixed length arrays
 			: InternalFixedLengthArrayFlat<T, Depth, Options, Result>
@@ -186,7 +186,7 @@ T extends [infer _Item, ...infer Last]
 			? [...DoRepeatArrayItem<Last, RepeatNumber>]
 			: Item extends unknown
 				? Item['length'] extends 1
-				// If the item is a single element array, we can build [...Array<Item[number]>], but if already has spread
+				// If the item is a single element array, we can build [...Array<Item[number]>], but if it already has spread
 				// array before, we should build [...Array<'SomeSpreadArrayBefore'>, Item[number], Item[number], Item[number], ...]
 					? [
 						...(
@@ -198,8 +198,8 @@ T extends [infer _Item, ...infer Last]
 						)
 						, ...DoRepeatArrayItem<Last, RepeatNumber, true>,
 					]
-				// If the item is not a single element array, we only can build by repeating the item, like:
-				// ArrayFlat<Array<[1, 2]>> => [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, ...]
+					// If the item is not a single element array, we can only build by repeating the item, like:
+					// ArrayFlat<Array<[1, 2]>> => [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, ...]
 					: [
 						...(
 							BuildRepeatedUnionArray<Item, RepeatNumber, Not<hasSpreadArray>> extends infer Result extends UnknownArray
