@@ -4,7 +4,7 @@ Simplifies a type while including and/or excluding certain types from being simp
 Useful to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 
 @example
-```ts
+```
 import type {ConditionalSimplify} from 'type-fest';
 
 type TypeA = {
@@ -23,7 +23,7 @@ type SimplifyTypeAB = ConditionalSimplify<TypeAB, never, object>;
 ```
 
 @example
-```ts
+```
 import type {ConditionalSimplify} from 'type-fest';
 
 type Simplify<T> = ConditionalSimplify<T, Set<unknown> | Map<unknown, unknown> | unknown[], object>;
@@ -34,7 +34,7 @@ type A = Simplify<Set<number> & Set<string>>;
 type B = Simplify<Map<number, number> & Map<string, string>>;
 //=> Map<number, number> & Map<string, string>
 
-type C = Simplify<{ a: number } & { b: string }>;
+type C = Simplify<{a: number} & {b: string}>;
 //=> {a: number, b: string}
 ```
 
