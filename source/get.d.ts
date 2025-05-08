@@ -64,7 +64,7 @@ ToPath<'foo[0].bar.baz'>
 //=> ['foo', '0', 'bar', 'baz']
 ```
 */
-type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
+type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.', {strictLiteralChecks: false}>;
 
 /**
 Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.
