@@ -32,7 +32,7 @@ type Example2 = ExtractStrict<{x: number; y: number} | {x: string; y: string}, u
 // Error: Type 'unknown[]' does not satisfy the constraint 'never'.
 ```
 
-@category Improved Builtin
+@category Improved Built-in
 */
 export type ExtractStrict<
 	T,
