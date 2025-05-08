@@ -1,4 +1,4 @@
-import type {IsNull} from './is-null';
+import type {IsNull} from './is-null.d.ts';
 
 /**
 Returns a boolean for whether the given type is `unknown`.

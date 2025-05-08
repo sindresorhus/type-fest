@@ -1,6 +1,6 @@
-import type {IsUnknown} from './is-unknown';
-import type {StaticPartOfArray, VariablePartOfArray} from './internal';
-import type {UnknownArray} from './unknown-array';
+import type {IsUnknown} from './is-unknown.d.ts';
+import type {StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create an array that replaces the given `TArray`'s elements with the given `TObject`'s values at the given indices.

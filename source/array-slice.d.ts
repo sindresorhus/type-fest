@@ -1,12 +1,12 @@
-import type {Sum} from './sum';
-import type {LessThanOrEqual} from './less-than-or-equal';
-import type {GreaterThanOrEqual} from './greater-than-or-equal';
-import type {GreaterThan} from './greater-than';
-import type {IsNegative} from './numeric';
-import type {Not, TupleMin} from './internal';
-import type {IsEqual} from './is-equal';
-import type {And} from './and';
-import type {ArraySplice} from './array-splice';
+import type {Sum} from './sum.d.ts';
+import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
+import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
+import type {GreaterThan} from './greater-than.d.ts';
+import type {IsNegative} from './numeric.d.ts';
+import type {Not, TupleMin} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {And} from './and.d.ts';
+import type {ArraySplice} from './array-splice.d.ts';
 
 /**
 Returns an array slice of a given range, just like `Array#slice()`.

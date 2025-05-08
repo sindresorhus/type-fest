@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {Class, Constructor, IsAny} from '../index';
+import type {Class, Constructor, IsAny} from '../index.d.ts';
 
 class Foo {
 	// eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function

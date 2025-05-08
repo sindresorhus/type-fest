@@ -1,4 +1,4 @@
-import type {Merge} from './merge';
+import type {Merge} from './merge.d.ts';
 
 /**
 Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.

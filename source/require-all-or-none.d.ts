@@ -1,6 +1,6 @@
-import type {IfAny} from './if-any';
-import type {IfNever} from './if-never';
-import type {IfNotAnyOrNever, RequireNone} from './internal';
+import type {IfAny} from './if-any.d.ts';
+import type {IfNever} from './if-never.d.ts';
+import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
 
 /**
 Requires all of the keys in the given object.

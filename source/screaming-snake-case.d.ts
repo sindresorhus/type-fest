@@ -1,7 +1,7 @@
-import type {DefaultDelimiterCaseOptions} from './delimiter-case';
-import type {ApplyDefaultOptions} from './internal';
-import type {SnakeCase} from './snake-case';
-import type {WordsOptions} from './words';
+import type {DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {SnakeCase} from './snake-case.d.ts';
+import type {WordsOptions} from './words.d.ts';
 
 /**
 Convert a string literal to screaming-snake-case.

@@ -1,4 +1,4 @@
-import type {IsUnknown} from './is-unknown';
+import type {IsUnknown} from './is-unknown.d.ts';
 
 /**
 An if-else-like type that resolves depending on whether the given type is `unknown`.

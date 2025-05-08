@@ -1,6 +1,6 @@
-import type {Not} from './internal';
-import type {IsFloat} from './is-float';
-import type {PositiveInfinity, NegativeInfinity} from './numeric';
+import type {Not} from './internal/index.d.ts';
+import type {IsFloat} from './is-float.d.ts';
+import type {PositiveInfinity, NegativeInfinity} from './numeric.d.ts';
 
 /**
 Returns a boolean for whether the given number is an integer, like `-5`, `1.0`, or `100`.

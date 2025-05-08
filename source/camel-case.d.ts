@@ -1,5 +1,5 @@
-import type {ApplyDefaultOptions} from './internal';
-import type {Words} from './words';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {Words} from './words.d.ts';
 
 /**
 CamelCase options.

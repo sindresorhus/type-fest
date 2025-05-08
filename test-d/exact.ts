@@ -1,4 +1,4 @@
-import type {Exact, Opaque} from '../index';
+import type {Exact, Opaque} from '../index.d.ts';
 
 { // Spec - string type
 	type Type = string;

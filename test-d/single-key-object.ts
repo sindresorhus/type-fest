@@ -1,5 +1,5 @@
 import {expectNever, expectAssignable} from 'tsd';
-import type {SingleKeyObject} from '../index';
+import type {SingleKeyObject} from '../index.d.ts';
 
 const test = <T>(_: SingleKeyObject<T>): void => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 

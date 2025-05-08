@@ -1,5 +1,5 @@
-import type {Except} from './except';
-import type {Simplify} from './simplify';
+import type {Except} from './except.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 /**
 Create a writable version of the given array type.

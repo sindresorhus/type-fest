@@ -1,4 +1,4 @@
-import type {ReadonlyKeysOf} from './readonly-keys-of';
+import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 
 /**
 Creates a type that represents `true` or `false` depending on whether the given type has any readonly fields.

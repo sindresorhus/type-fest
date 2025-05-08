@@ -1,5 +1,5 @@
-import type {HasRequiredKeys} from './has-required-keys';
-import type {RequireAtLeastOne} from './require-at-least-one';
+import type {HasRequiredKeys} from './has-required-keys.d.ts';
+import type {RequireAtLeastOne} from './require-at-least-one.d.ts';
 
 /**
 Represents an object with at least 1 non-optional key.

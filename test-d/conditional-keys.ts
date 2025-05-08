@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ConditionalKeys} from '../index';
+import type {ConditionalKeys} from '../index.d.ts';
 
 type Example = {
 	a: string;

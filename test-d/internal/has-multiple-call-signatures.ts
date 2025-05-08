@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {HasMultipleCallSignatures} from '../../source/internal';
+import type {HasMultipleCallSignatures} from '../../source/internal/index.d.ts';
 
 type Overloaded = {
 	(foo: number): string;

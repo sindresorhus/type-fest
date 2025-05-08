@@ -1,4 +1,4 @@
-import type {UnionToIntersection} from './union-to-intersection';
+import type {UnionToIntersection} from './union-to-intersection.d.ts';
 
 /**
 Create a union of all keys from a given type, even those exclusive to specific union members.

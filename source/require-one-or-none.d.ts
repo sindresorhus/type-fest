@@ -1,7 +1,7 @@
-import type {RequireExactlyOne} from './require-exactly-one';
-import type {IfNotAnyOrNever, RequireNone} from './internal';
-import type {IfNever} from './if-never';
-import type {IfAny} from './if-any';
+import type {RequireExactlyOne} from './require-exactly-one.d.ts';
+import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
+import type {IfNever} from './if-never.d.ts';
+import type {IfAny} from './if-any.d.ts';
 
 /**
 Create a type that requires exactly one of the given keys and disallows more, or none of the given keys. The remaining keys are kept as is.

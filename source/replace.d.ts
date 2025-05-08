@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions} from './internal';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
 type ReplaceOptions = {
 	all?: boolean;

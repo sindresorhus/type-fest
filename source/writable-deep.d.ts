@@ -1,4 +1,4 @@
-import type {BuiltIns, HasMultipleCallSignatures} from './internal';
+import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 
 /**
 Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.

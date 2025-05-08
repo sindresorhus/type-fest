@@ -1,6 +1,6 @@
-import type {IsAny} from '../is-any';
-import type {IsNever} from '../is-never';
-import type {Primitive} from '../primitive';
+import type {IsAny} from '../is-any.d.ts';
+import type {IsNever} from '../is-never.d.ts';
+import type {Primitive} from '../primitive.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.

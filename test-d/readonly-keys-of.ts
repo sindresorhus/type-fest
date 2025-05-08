@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ReadonlyKeysOf, UnknownRecord} from '../index';
+import type {ReadonlyKeysOf, UnknownRecord} from '../index.d.ts';
 
 type TestType1 = {
 	a: string;
@@ -35,12 +35,11 @@ expectType<'c'>({} as ReadonlyKeysOf<{a?: string; b: number; readonly c: boolean
 expectType<'b' | 'c'>({} as ReadonlyKeysOf<{a: string; readonly b: number} | {readonly c?: string; d?: number}>);
 expectType<'a' | 'b'>({} as ReadonlyKeysOf<{a: string; b: number} | {readonly a: string; readonly b: number}>);
 
-// TODO: Uncomment when targeting TypeScript 5.3 or later.
 // Arrays
-// expectType<never>({} as Extract<ReadonlyKeysOf<[string, number, boolean]>, number | `${number}`>);
-// expectType<number | '0' | '1' | '2'>({} as Extract<ReadonlyKeysOf<readonly [string, number, boolean]>, number | `${number}`>);
-// expectType<never>({} as Extract<ReadonlyKeysOf<string[]>, number | `${number}`>);
-// expectType<number>({} as Extract<ReadonlyKeysOf<readonly string[]>, number | `${number}`>);
+expectType<never>({} as Extract<ReadonlyKeysOf<[string, number, boolean]>, number | `${number}`>);
+expectType<number | '0' | '1' | '2'>({} as Extract<ReadonlyKeysOf<readonly [string, number, boolean]>, number | `${number}`>);
+expectType<never>({} as Extract<ReadonlyKeysOf<string[]>, number | `${number}`>);
+expectType<number>({} as Extract<ReadonlyKeysOf<readonly string[]>, number | `${number}`>);
 
 // `ReadonlyKeysOf<T>` should be assignable to `keyof T`
 type Assignability1<T, _K extends keyof T> = unknown;

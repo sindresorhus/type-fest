@@ -1,7 +1,7 @@
-import type {DefaultDelimiterCaseOptions} from './delimiter-case';
-import type {DelimiterCasedProperties} from './delimiter-cased-properties';
-import type {ApplyDefaultOptions} from './internal';
-import type {WordsOptions} from './words';
+import type {DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
+import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {WordsOptions} from './words.d.ts';
 
 /**
 Convert object properties to snake case but not recursively.

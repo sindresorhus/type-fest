@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ExtractStrict} from '../source/extract-strict';
+import type {ExtractStrict} from '../source/extract-strict.d.ts';
 
 // Primitive union tests
 

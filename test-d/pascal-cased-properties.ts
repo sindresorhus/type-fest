@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {PascalCasedProperties} from '../index';
+import type {PascalCasedProperties} from '../index.d.ts';
 
 declare const foo: PascalCasedProperties<{helloWorld: {fooBar: string}}>;
 expectType<{HelloWorld: {fooBar: string}}>(foo);

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IfNever} from '../index';
+import type {IfNever} from '../index.d.ts';
 
 // `IfNever` should return `true`/`false` if only `T` is specified
 expectType<IfNever<never>>(true);

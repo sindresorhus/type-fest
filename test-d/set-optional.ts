@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {SetOptional} from '../index';
+import type {SetOptional} from '../index.d.ts';
 
 // Update one required and one optional to optional.
 declare const variation1: SetOptional<{a: number; b?: string; c: boolean}, 'b' | 'c'>;

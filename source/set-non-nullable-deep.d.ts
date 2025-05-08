@@ -1,9 +1,9 @@
-import type {NonRecursiveType, StringToNumber} from './internal';
-import type {Paths} from './paths';
-import type {SetNonNullable} from './set-non-nullable';
-import type {Simplify} from './simplify';
-import type {UnionToTuple} from './union-to-tuple';
-import type {UnknownArray} from './unknown-array';
+import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {SetNonNullable} from './set-non-nullable.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnionToTuple} from './union-to-tuple.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {HasWritableKeys} from '../index';
+import type {HasWritableKeys} from '../index.d.ts';
 
 type TestType1 = {
 	a: string;

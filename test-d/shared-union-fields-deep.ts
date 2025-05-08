@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SharedUnionFieldsDeep} from '../index';
+import type {SharedUnionFieldsDeep} from '../index.d.ts';
 
 type TestingType = {
 	function: (() => void);

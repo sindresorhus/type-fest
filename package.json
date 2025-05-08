@@ -10,10 +10,14 @@
 		"email": "sindresorhus@gmail.com",
 		"url": "https://sindresorhus.com"
 	},
+	"type": "module",
+	"exports": {
+		"types": "./index.d.ts"
+	},
 	"types": "./index.d.ts",
 	"sideEffects": false,
 	"engines": {
-		"node": ">=16"
+		"node": ">=20"
 	},
 	"scripts": {
 		"test:source-files-extension": "node script/test/source-files-extension.js",
@@ -41,8 +45,9 @@
 		"generics"
 	],
 	"devDependencies": {
-		"expect-type": "^1.1.0",
-		"npm-run-all2": "^7.0.1",
+		"@sindresorhus/tsconfig": "^7.0.0",
+		"expect-type": "^1.2.1",
+		"npm-run-all2": "^8.0.1",
 		"tsd": "^0.32.0",
 		"typescript": "~5.8.3",
 		"xo": "^0.60.0"
@@ -53,7 +58,6 @@
 			"@typescript-eslint/ban-ts-comment": "off",
 			"@typescript-eslint/ban-types": "off",
 			"@typescript-eslint/naming-convention": "off",
-			"import/extensions": "off",
 			"@typescript-eslint/no-redeclare": "off",
 			"@typescript-eslint/no-confusing-void-expression": "off",
 			"@typescript-eslint/no-unsafe-argument": "off",

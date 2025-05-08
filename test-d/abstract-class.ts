@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {AbstractConstructor, AbstractClass, IsAny} from '../index';
+import type {AbstractConstructor, AbstractClass, IsAny} from '../index.d.ts';
 
 abstract class Foo {
 	constructor(x: number) {

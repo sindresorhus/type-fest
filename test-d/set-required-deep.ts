@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SetRequiredDeep} from '../index';
+import type {SetRequiredDeep} from '../index.d.ts';
 
 // Set nested key to required
 declare const variation1: SetRequiredDeep<{a?: number; b?: {c?: string}}, 'b.c'>;

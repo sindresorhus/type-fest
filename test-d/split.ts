@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
-import type {Split, StringRepeat} from '../index';
-import type {BuildTuple} from '../source/internal';
+import type {Split, StringRepeat} from '../index.d.ts';
+import type {BuildTuple} from '../source/internal/index.d.ts';
 
 declare function split<
 	S extends string,

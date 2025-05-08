@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {RequireExactlyOne, Simplify} from '../index';
+import type {RequireExactlyOne, Simplify} from '../index.d.ts';
 
 type SystemMessages = {
 	default: string;

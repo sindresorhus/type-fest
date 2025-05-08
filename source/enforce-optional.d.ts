@@ -1,4 +1,4 @@
-import type {Simplify} from './simplify';
+import type {Simplify} from './simplify.d.ts';
 
 // Returns `never` if the key is optional otherwise return the key type.
 type RequiredFilter<Type, Key extends keyof Type> = undefined extends Type[Key]

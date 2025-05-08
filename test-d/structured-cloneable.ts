@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import type {StructuredCloneable} from '..';
+import type {StructuredCloneable} from '../index.d.ts';
 
 /*
 Source: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
@@ -144,5 +144,5 @@ declare const blob: Blob;
 expectAssignable<StructuredCloneable>(blob);
 
 // @ts-ignore Requires dom or @types/node@>=20
-declare const file: File; // eslint-disable-line n/no-unsupported-features/node-builtins
+declare const file: File;
 expectAssignable<StructuredCloneable>(file);

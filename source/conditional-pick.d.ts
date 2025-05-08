@@ -1,4 +1,4 @@
-import type {ConditionalKeys} from './conditional-keys';
+import type {ConditionalKeys} from './conditional-keys.d.ts';
 
 /**
 Pick keys from the shape that matches the given `Condition`.

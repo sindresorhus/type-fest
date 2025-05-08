@@ -1,5 +1,5 @@
-import type {TypedArray} from './typed-array';
-import type {FindGlobalInstanceType} from './find-global-type';
+import type {TypedArray} from './typed-array.d.ts';
+import type {FindGlobalInstanceType} from './find-global-type.d.ts';
 
 type StructuredCloneablePrimitive =
 	| string

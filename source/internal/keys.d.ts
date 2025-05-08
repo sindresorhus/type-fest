@@ -1,6 +1,6 @@
-import type {IsAny} from '../is-any';
-import type {IsLiteral} from '../is-literal';
-import type {ToString} from './string';
+import type {IsAny} from '../is-any.d.ts';
+import type {IsLiteral} from '../is-literal.d.ts';
+import type {ToString} from './string.d.ts';
 
 // Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
 type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol

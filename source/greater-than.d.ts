@@ -1,8 +1,8 @@
-import type {NumberAbsolute, PositiveNumericStringGt} from './internal';
-import type {IsEqual} from './is-equal';
-import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
-import type {And} from './and';
-import type {Or} from './or';
+import type {NumberAbsolute, PositiveNumericStringGt} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
+import type {And} from './and.d.ts';
+import type {Or} from './or.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than another number.

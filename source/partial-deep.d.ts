@@ -1,5 +1,5 @@
-import type {ApplyDefaultOptions, BuiltIns} from './internal';
-import type {IsNever} from './is-never';
+import type {ApplyDefaultOptions, BuiltIns} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 @see {@link PartialDeep}

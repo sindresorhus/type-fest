@@ -1,5 +1,5 @@
-import type {RequiredKeysOf} from './required-keys-of';
-import type {Simplify} from './simplify';
+import type {RequiredKeysOf} from './required-keys-of.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 type SpreadObject<FirstType extends object, SecondType extends object> = {
 	[Key in keyof FirstType]: Key extends keyof SecondType
