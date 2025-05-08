@@ -2,7 +2,7 @@
 Recursively simplifies a type while including and/or excluding certain types from being simplified.
 
 @example
-```ts
+```
 import type {ConditionalSimplifyDeep} from 'type-fest';
 
 type TypeA = {
@@ -22,21 +22,21 @@ type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, never, object>;
 ```
 
 @example
-```ts
+```
 import type {ConditionalSimplifyDeep} from 'type-fest';
 
 type SomeComplexType1 = {
 	a1: string
 	b1: number
 	c1: boolean
-	...
+	// …
 };
 
 type SomeComplexType2 = {
 	a2: string
 	b2: number
 	c2: boolean
-	...
+	// …
 };
 
 type TypeA = {
