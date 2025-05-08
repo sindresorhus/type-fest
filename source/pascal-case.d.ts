@@ -11,10 +11,11 @@ import type {PascalCase} from 'type-fest';
 // Simple
 
 const someVariable: PascalCase<'foo-bar'> = 'FooBar';
+const preserveConsecutiveUppercase: PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'FooBARBaz';
 
 // Advanced
 
-type PascalCaseProps<T> = {
+type PascalCasedProperties<T> = {
 	[K in keyof T as PascalCase<K>]: T[K]
 };
 
@@ -22,12 +23,18 @@ interface RawOptions {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;
-}
+	BAR: string;
+	QUZ_QUX: number;
+	'OTHER-FIELD': boolean;
+};
 
-const dbResult: CamelCasedProperties<ModelProps> = {
+const dbResult: PascalCasedProperties<RawOptions> = {
 	DryRun: true,
 	FullFamilyName: 'bar.js',
-	Foo: 123
+	Foo: 123,
+	Bar: 'foo',
+	QuzQux: 6,
+	OtherField: false,
 };
 ```
 

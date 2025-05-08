@@ -23,6 +23,10 @@ const result: PascalCasedProperties<User> = {
 	UserId: 1,
 	UserName: 'Tom',
 };
+
+const preserveConsecutiveUppercase: PascalCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: true}> = {
+	FooBAR: 'string',
+};
 ```
 
 @category Change case
