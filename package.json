@@ -12,7 +12,12 @@
 	},
 	"type": "module",
 	"exports": {
-		"types": "./index.d.ts"
+		".": {
+			"types": "./index.d.ts"
+		},
+		"./globals": {
+			"types": "./source/globals/index.d.ts"
+		}
 	},
 	"types": "./index.d.ts",
 	"sideEffects": false,
