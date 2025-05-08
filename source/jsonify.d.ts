@@ -1,12 +1,12 @@
-import type {JsonPrimitive, JsonValue} from './basic';
-import type {EmptyObject} from './empty-object';
-import type {UndefinedToOptional} from './internal';
-import type {IsAny} from './is-any';
-import type {IsNever} from './is-never';
-import type {IsUnknown} from './is-unknown';
-import type {NegativeInfinity, PositiveInfinity} from './numeric';
-import type {TypedArray} from './typed-array';
-import type {UnknownArray} from './unknown-array';
+import type {JsonPrimitive, JsonValue} from './basic.d.ts';
+import type {EmptyObject} from './empty-object.d.ts';
+import type {UndefinedToOptional} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {IsUnknown} from './is-unknown.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
+import type {TypedArray} from './typed-array.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;

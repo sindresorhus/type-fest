@@ -1,4 +1,4 @@
-import type {BuiltIns, HasMultipleCallSignatures} from './internal';
+import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 
 type ExcludeUndefined<T> = Exclude<T, undefined>;
 

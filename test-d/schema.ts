@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {Schema} from '../index';
+import type {Schema} from '../index.d.ts';
 
 const foo = {
 	baz: 'fred',

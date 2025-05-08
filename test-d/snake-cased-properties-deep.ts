@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SnakeCasedPropertiesDeep} from '../index';
+import type {SnakeCasedPropertiesDeep} from '../index.d.ts';
 
 type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
 
@@ -45,3 +45,9 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 expectType<SnakeCasedPropertiesDeep<UserWithFriends>>(result);
+
+expectType<{foo_bar: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: unknown}>);
+expectType<{foo_bar: {bar_baz: unknown}; biz: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: unknown}>);
+
+expectType<{foo_bar: any}>({} as SnakeCasedPropertiesDeep<{fooBar: any}>);
+expectType<{foo_bar: {bar_baz: any}; biz: any}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>);

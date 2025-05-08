@@ -1,5 +1,5 @@
-import type {ApplyDefaultOptions, IfArrayReadonly} from './internal';
-import type {UnknownArray} from './unknown-array';
+import type {ApplyDefaultOptions, IfArrayReadonly} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 @see {@link ArrayTail}

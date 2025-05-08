@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {IntClosedRange} from '../source/int-closed-range';
+import type {IntClosedRange} from '../source/int-closed-range.d.ts';
 
 declare const test: IntClosedRange<0, 5>;
 expectType<0 | 1 | 2 | 3 | 4 | 5>(test);

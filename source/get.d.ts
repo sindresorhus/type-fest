@@ -1,8 +1,8 @@
-import type {ApplyDefaultOptions, StringDigit, ToString} from './internal';
-import type {LiteralStringUnion} from './literal-union';
-import type {Paths} from './paths';
-import type {Split} from './split';
-import type {StringKeyOf} from './string-key-of';
+import type {ApplyDefaultOptions, StringDigit, ToString} from './internal/index.d.ts';
+import type {LiteralStringUnion} from './literal-union.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {Split} from './split.d.ts';
+import type {StringKeyOf} from './string-key-of.d.ts';
 
 type GetOptions = {
 	/**

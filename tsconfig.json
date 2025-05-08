@@ -1,29 +1,16 @@
 {
-	/// "extends": "@sindresorhus/tsconfig",
+	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"noEmit": true,
 		"noUnusedLocals": false, // Allow unused variables in test-d/*.ts files
-		"target": "ES2021", // Node.js 16
+		"module": "node18",
+		"target": "ES2023", // Node.js 20
 		"lib": [
-			"ES2021",
+			"ES2023",
 		],
 		"types": [], // Ensures no @types/ are unintentionally included
 		"exactOptionalPropertyTypes": true,
-		"skipLibCheck": false, // Ensures .d.ts files are checked: https://github.com/sindresorhus/tsconfig/issues/15
-
-		// Compatibility
-		"module": "commonjs",
-		"moduleResolution": "node",
-
-		// TODO: Use the reusable tsconfig again when targeting ESM.
-		// From https://github.com/sindresorhus/tsconfig/blob/main/tsconfig.json
-		"strict": true,
-		"noImplicitReturns": true,
-		"noImplicitOverride": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		// "noUncheckedIndexedAccess": true, // TODO: Enable.
-		"noPropertyAccessFromIndexSignature": true,
-		"useDefineForClassFields": true,
+		// "skipLibCheck": false, // Ensures .d.ts files are checked: https://github.com/sindresorhus/tsconfig/issues/15
+		"skipLibCheck": true, // We cannot have this to false for now as it checks invalid stuff in our dependency tree too.
 	}
 }

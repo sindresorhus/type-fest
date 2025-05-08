@@ -1,6 +1,6 @@
-import type {IsUnknown} from './is-unknown';
-import type {StaticPartOfArray, VariablePartOfArray} from './internal';
-import type {UnknownArray} from './unknown-array';
+import type {IsUnknown} from './is-unknown.d.ts';
+import type {StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create an array that replaces the given `TArray`'s elements with the given `TObject`'s values at the given indices.
@@ -78,7 +78,7 @@ Use-case:
 ```
 import type {SetParameterType} from 'type-fest';
 
-type HandleMessage = (data: Data, message: string, ...arguments: any[]) => void;
+type HandleMessage = (data: Data, message: string, ...arguments_: any[]) => void;
 
 type HandleOk = SetParameterType<HandleMessage, {0: SuccessData, 1: 'ok'}>;
 //=> type HandleOk = (data: SuccessData, message: 'ok') => void;
@@ -94,12 +94,12 @@ type HandleWarn = SetParameterType<HandleMessage, {1: 'warn'}>;
 // Change rest parameter type.
 
 // Way 1: Input full parameter type.
-type HandleLog = SetParameterType<HandleMessage, [data: Data, message: 'log', ...arguments: string[]]>;
-//=> type HandleLog = (data: Data, message: 'log', ...arguments: string[]) => void;
+type HandleLog = SetParameterType<HandleMessage, [data: Data, message: 'log', ...arguments_: string[]]>;
+//=> type HandleLog = (data: Data, message: 'log', ...arguments_: string[]) => void;
 
 // Way 2: Input rest parameter type by Object index.
 type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
-//=> type HandleLog2 = (data: Data, message: string, ...arguments: string[]) => void;
+//=> type HandleLog2 = (data: Data, message: string, ...arguments_: string[]) => void;
 ```
 
 @category Function

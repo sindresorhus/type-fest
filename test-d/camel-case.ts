@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {CamelCase} from '../index';
+import type {CamelCase} from '../index.d.ts';
 
 // CamelCase
 const camelFromPascal: CamelCase<'FooBar'> = 'fooBar';

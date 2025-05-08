@@ -1,7 +1,7 @@
-import type {IfAny} from './if-any';
-import type {IfNever} from './if-never';
-import type {ApplyDefaultOptions} from './internal';
-import type {UnknownArray} from './unknown-array';
+import type {IfAny} from './if-any.d.ts';
+import type {IfNever} from './if-never.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 @see {@link IsTuple}

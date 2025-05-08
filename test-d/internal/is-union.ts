@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsUnion} from '../../source/internal';
+import type {IsUnion} from '../../source/internal/index.d.ts';
 
 expectType<IsUnion<1>>(false);
 expectType<IsUnion<true>>(false);

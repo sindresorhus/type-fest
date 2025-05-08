@@ -1,6 +1,6 @@
-import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray, IsUnion, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal';
-import type {IsNever} from './is-never';
-import type {UnknownArray} from './unknown-array';
+import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 SharedUnionFieldsDeep options.

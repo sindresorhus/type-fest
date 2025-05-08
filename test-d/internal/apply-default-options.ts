@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ApplyDefaultOptions} from '../../source/internal';
+import type {ApplyDefaultOptions} from '../../source/internal/index.d.ts';
 
 type PathsOptions = {
 	maxRecursionDepth?: number;

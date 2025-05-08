@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ConditionalPickDeep} from '../index';
+import type {ConditionalPickDeep} from '../index.d.ts';
 
 declare class ClassA {
 	public a: string;

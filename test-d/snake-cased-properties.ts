@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SnakeCasedProperties} from '../index';
+import type {SnakeCasedProperties} from '../index.d.ts';
 
 type Foobar = {helloWorld1: {fooBar: string}};
 

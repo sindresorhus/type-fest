@@ -1,4 +1,4 @@
-import type {KeysOfUnion} from './keys-of-union';
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 
 /**
 Omits keys from a type, distributing the operation over a union.

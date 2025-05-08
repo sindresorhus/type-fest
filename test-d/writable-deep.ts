@@ -1,7 +1,7 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {JsonValue, Opaque, ReadonlyDeep, WritableDeep} from '../index';
-import type {WritableObjectDeep} from '../source/writable-deep';
-import type {tag} from '../source/tagged';
+import type {JsonValue, Opaque, ReadonlyDeep, WritableDeep} from '../index.d.ts';
+import type {WritableObjectDeep} from '../source/writable-deep.d.ts';
+import type {tag} from '../source/tagged.d.ts';
 
 type Overloaded = {
 	(foo: number): string;

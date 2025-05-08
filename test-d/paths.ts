@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {Paths} from '../index';
+import type {Paths} from '../index.d.ts';
 
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);

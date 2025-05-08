@@ -1,6 +1,5 @@
-/* eslint-disable unicorn/prefer-module */
-const fs = require('node:fs');
-const process = require('node:process');
+import fs from 'node:fs';
+import process from 'node:process';
 
 const checkSourceFilesExtension = async () => {
 	try {

@@ -1,6 +1,6 @@
-import type {CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case';
-import type {ApplyDefaultOptions} from './internal';
-import type {PascalCase} from './pascal-case';
+import type {CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {PascalCase} from './pascal-case.d.ts';
 
 /**
 Convert object properties to pascal case recursively.
@@ -54,6 +54,9 @@ type _PascalCasedPropertiesDeep<Value, Options extends Required<CamelCaseOptions
 	: Value extends Array<infer U>
 		? Array<_PascalCasedPropertiesDeep<U, Options>>
 		: Value extends Set<infer U>
-			? Set<_PascalCasedPropertiesDeep<U, Options>> : {
-				[K in keyof Value as PascalCase<K, Options>]: _PascalCasedPropertiesDeep<Value[K], Options>;
-			};
+			? Set<_PascalCasedPropertiesDeep<U, Options>>
+			: Value extends object
+				? {
+					[K in keyof Value as PascalCase<K, Options>]: _PascalCasedPropertiesDeep<Value[K], Options>;
+				}
+				: Value;

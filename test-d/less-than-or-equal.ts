@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
-import type {LessThanOrEqual} from '../index';
-import type {NegativeInfinity, PositiveInfinity} from '../source/numeric';
+import type {LessThanOrEqual} from '../index.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 declare const never: never;
 

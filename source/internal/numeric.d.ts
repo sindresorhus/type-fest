@@ -1,7 +1,7 @@
-import type {IsNever} from '../is-never';
-import type {NegativeInfinity, PositiveInfinity} from '../numeric';
-import type {UnknownArray} from '../unknown-array';
-import type {StringToNumber} from './string';
+import type {IsNever} from '../is-never.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
+import type {StringToNumber} from './string.d.ts';
 
 /**
 Returns the absolute value of a given value.

@@ -1,5 +1,5 @@
-import type {IsNumericLiteral} from './is-literal';
-import type {IsNegative} from './numeric';
+import type {IsNumericLiteral} from './is-literal.d.ts';
+import type {IsNegative} from './numeric.d.ts';
 
 /**
 Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.

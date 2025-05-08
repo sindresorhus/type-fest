@@ -1,9 +1,9 @@
-import type {IsEqual} from './is-equal';
-import type {ConditionalExcept} from './conditional-except';
-import type {ConditionalSimplifyDeep} from './conditional-simplify-deep';
-import type {UnknownRecord} from './unknown-record';
-import type {EmptyObject} from './empty-object';
-import type {ApplyDefaultOptions, IsPlainObject} from './internal';
+import type {IsEqual} from './is-equal.d.ts';
+import type {ConditionalExcept} from './conditional-except.d.ts';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
+import type {UnknownRecord} from './unknown-record.d.ts';
+import type {EmptyObject} from './empty-object.d.ts';
+import type {ApplyDefaultOptions, IsPlainObject} from './internal/index.d.ts';
 
 /**
 Used to mark properties that should be excluded.

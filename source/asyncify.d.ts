@@ -1,4 +1,4 @@
-import type {SetReturnType} from './set-return-type';
+import type {SetReturnType} from './set-return-type.d.ts';
 
 /**
 Create an async version of the given function type, by boxing the return type in `Promise` while keeping the same parameter types.

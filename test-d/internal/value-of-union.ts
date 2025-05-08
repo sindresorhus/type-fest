@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ValueOfUnion} from '../../source/internal';
+import type {ValueOfUnion} from '../../source/internal/index.d.ts';
 
 // Works with objects
 declare const test1: ValueOfUnion<{a: 1; b: 2} | {a: 3; c: 4}, 'a'>;

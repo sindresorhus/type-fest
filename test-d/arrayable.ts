@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Arrayable} from '../index';
+import type {Arrayable} from '../index.d.ts';
 
 declare const unknown: unknown;
 

@@ -1,4 +1,4 @@
-import type {GreaterThan} from './greater-than';
+import type {GreaterThan} from './greater-than.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than or equal to another number.

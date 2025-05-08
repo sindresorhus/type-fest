@@ -1,9 +1,8 @@
-import type {Except} from './except';
-import type {HomomorphicPick, IfArrayReadonly} from './internal';
-import type {KeysOfUnion} from './keys-of-union';
-import type {OptionalKeysOf} from './optional-keys-of';
-import type {Simplify} from './simplify';
-import type {UnknownArray} from './unknown-array';
+import type {Except} from './except.d.ts';
+import type {HomomorphicPick, IfArrayReadonly} from './internal/index.d.ts';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type that makes the given keys required. The remaining keys are kept as is. The sister of the `SetOptional` type.

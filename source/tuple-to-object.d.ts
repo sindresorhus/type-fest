@@ -1,6 +1,6 @@
-import type {IsTuple} from './is-tuple';
-import type {UnknownArray} from './unknown-array';
-import type {IfAny} from './if-any';
+import type {IsTuple} from './is-tuple.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+import type {IfAny} from './if-any.d.ts';
 
 /**
 Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.

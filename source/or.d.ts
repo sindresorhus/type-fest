@@ -1,4 +1,4 @@
-import type {IsEqual} from './is-equal';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Returns a boolean for whether either of two given types are true.

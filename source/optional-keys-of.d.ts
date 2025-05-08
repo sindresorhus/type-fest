@@ -1,5 +1,3 @@
-import type {KeysOfUnion} from './keys-of-union';
-
 /**
 Extract all optional keys from the given type.
 
@@ -33,6 +31,9 @@ const update2: UpdateOperation<User> = {
 
 @category Utilities
 */
-export type OptionalKeysOf<BaseType extends object> = KeysOfUnion<{
-	[Key in keyof BaseType as BaseType extends Record<Key, BaseType[Key]> ? never : Key]: never
-}>;
+export type OptionalKeysOf<BaseType extends object> =
+	BaseType extends unknown // For distributing `BaseType`
+		? (keyof {
+			[Key in keyof BaseType as BaseType extends Record<Key, BaseType[Key]> ? never : Key]: never
+		}) & (keyof BaseType) // Intersect with `keyof BaseType` to ensure result of `OptionalKeysOf<BaseType>` is always assignable to `keyof BaseType`
+		: never; // Should never happen

@@ -1,4 +1,4 @@
-import type {IsEqual} from './is-equal';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Returns a boolean for whether the given array includes the given item.

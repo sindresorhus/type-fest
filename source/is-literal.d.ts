@@ -1,8 +1,8 @@
-import type {Primitive} from './primitive';
-import type {Numeric} from './numeric';
-import type {IsNotFalse, IsPrimitive} from './internal';
-import type {IsNever} from './is-never';
-import type {IfNever} from './if-never';
+import type {Primitive} from './primitive.d.ts';
+import type {Numeric} from './numeric.d.ts';
+import type {IsNotFalse, IsPrimitive} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {IfNever} from './if-never.d.ts';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.

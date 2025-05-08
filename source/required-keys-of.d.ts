@@ -1,4 +1,4 @@
-import type {OptionalKeysOf} from './optional-keys-of';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 
 /**
 Extract all required keys from the given type.

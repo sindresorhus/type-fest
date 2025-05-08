@@ -6,7 +6,7 @@ import type {
 	IsBooleanLiteral,
 	IsSymbolLiteral,
 	Tagged,
-} from '../index';
+} from '../index.d.ts';
 
 const stringLiteral = '';
 const numberLiteral = 1;

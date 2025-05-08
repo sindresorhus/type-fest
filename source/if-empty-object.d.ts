@@ -1,4 +1,4 @@
-import type {IsEmptyObject} from './empty-object';
+import type {IsEmptyObject} from './empty-object.d.ts';
 
 /**
 An if-else-like type that resolves depending on whether the given type is `{}`.

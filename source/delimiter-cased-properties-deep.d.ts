@@ -1,7 +1,7 @@
-import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case';
-import type {ApplyDefaultOptions, NonRecursiveType} from './internal';
-import type {UnknownArray} from './unknown-array';
-import type {WordsOptions} from './words';
+import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
+import type {ApplyDefaultOptions, NonRecursiveType} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+import type {WordsOptions} from './words.d.ts';
 
 /**
 Convert object properties to delimiter case recursively.
@@ -72,13 +72,13 @@ type _DelimiterCasedPropertiesDeep<
 	: Value extends UnknownArray
 		? DelimiterCasedPropertiesArrayDeep<Value, Delimiter, Options>
 		: Value extends Set<infer U>
-			? Set<_DelimiterCasedPropertiesDeep<U, Delimiter, Options>> : {
-				[K in keyof Value as DelimiterCase<
-				K,
-				Delimiter,
-				Options
-				>]: _DelimiterCasedPropertiesDeep<Value[K], Delimiter, Options>;
-			};
+			? Set<_DelimiterCasedPropertiesDeep<U, Delimiter, Options>>
+			: Value extends object
+				? {
+					[K in keyof Value as DelimiterCase<K, Delimiter, Options>]:
+					_DelimiterCasedPropertiesDeep<Value[K], Delimiter, Options>
+				}
+				: Value;
 
 // This is a copy of CamelCasedPropertiesArrayDeep (see: camel-cased-properties-deep.d.ts).
 // These types should be kept in sync.

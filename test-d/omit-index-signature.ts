@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OmitIndexSignature} from '../index';
+import type {OmitIndexSignature} from '../index.d.ts';
 
 type ExampleInterface = {
 	// These index signatures will be removed.

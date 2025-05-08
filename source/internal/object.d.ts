@@ -1,15 +1,15 @@
-import type {Simplify} from '../simplify';
-import type {UnknownArray} from '../unknown-array';
-import type {IsEqual} from '../is-equal';
-import type {KeysOfUnion} from '../keys-of-union';
-import type {RequiredKeysOf} from '../required-keys-of';
-import type {Merge} from '../merge';
-import type {IfAny} from '../if-any';
-import type {IfNever} from '../if-never';
-import type {OptionalKeysOf} from '../optional-keys-of';
-import type {FilterDefinedKeys, FilterOptionalKeys} from './keys';
-import type {NonRecursiveType} from './type';
-import type {ToString} from './string';
+import type {Simplify} from '../simplify.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
+import type {IsEqual} from '../is-equal.d.ts';
+import type {KeysOfUnion} from '../keys-of-union.d.ts';
+import type {RequiredKeysOf} from '../required-keys-of.d.ts';
+import type {Merge} from '../merge.d.ts';
+import type {IfAny} from '../if-any.d.ts';
+import type {IfNever} from '../if-never.d.ts';
+import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
+import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
+import type {NonRecursiveType} from './type.d.ts';
+import type {ToString} from './string.d.ts';
 
 /**
 Create an object type with the given key `<Key>` and value `<Value>`.
@@ -226,7 +226,11 @@ export type ApplyDefaultOptions<
 	IfNever<SpecifiedOptions, Defaults,
 	Simplify<Merge<Defaults, {
 		[Key in keyof SpecifiedOptions
-		as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
+		as Key extends OptionalKeysOf<Options>
+			? Extract<SpecifiedOptions[Key], undefined> extends never
+				? Key
+				: never
+			: Key
 		]: SpecifiedOptions[Key]
 	}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
 	>>;

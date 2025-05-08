@@ -1,5 +1,5 @@
-import type {IfNever} from '../if-never';
-import type {UnknownArray} from '../unknown-array';
+import type {IfNever} from '../if-never.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**
 Infer the length of the given array `<T>`.

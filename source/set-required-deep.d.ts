@@ -1,11 +1,11 @@
-import type {IsAny} from './is-any';
-import type {NonRecursiveType, StringToNumber} from './internal';
-import type {Paths} from './paths';
-import type {SetRequired} from './set-required';
-import type {SimplifyDeep} from './simplify-deep';
-import type {UnionToTuple} from './union-to-tuple';
-import type {RequiredDeep} from './required-deep';
-import type {UnknownArray} from './unknown-array';
+import type {IsAny} from './is-any.d.ts';
+import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {SetRequired} from './set-required.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {UnionToTuple} from './union-to-tuple.d.ts';
+import type {RequiredDeep} from './required-deep.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type that makes the given keys required. You can specify deeply nested key paths. The remaining keys are kept as is.
@@ -25,12 +25,12 @@ type Foo = {
 }
 
 type SomeRequiredDeep = SetRequiredDeep<Foo, 'a' | `c.${number}.d`>;
-// type SomeRequiredDeep = {
+//=> {
 // 	a: number; // Is now required
 // 	b?: string;
-// 	c: {
-// 		d: number // Is now required
-// 	}[]
+// 	c?: {
+// 		d: number; // Is now required
+// 	}[];
 // }
 
 // Set specific indices in an array to be required.

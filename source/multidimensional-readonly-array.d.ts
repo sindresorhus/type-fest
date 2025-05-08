@@ -1,5 +1,5 @@
-import type {Subtract} from './subtract';
-import type {IsEqual} from './is-equal';
+import type {Subtract} from './subtract.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 type Recursive<T> = ReadonlyArray<Recursive<T>>;
 

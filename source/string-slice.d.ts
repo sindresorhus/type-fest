@@ -1,6 +1,6 @@
-import type {Join} from './join';
-import type {ArraySlice} from './array-slice';
-import type {StringToArray} from './internal';
+import type {Join} from './join.d.ts';
+import type {ArraySlice} from './array-slice.d.ts';
+import type {StringToArray} from './internal/index.d.ts';
 
 /**
 Returns a string slice of a given range, just like `String#slice()`.

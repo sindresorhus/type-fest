@@ -1,5 +1,5 @@
-import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case';
-import type {ApplyDefaultOptions} from './internal';
+import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
 /**
 Convert object properties to camel case but not recursively.

@@ -1,5 +1,5 @@
-import type {LiteralUnion} from './literal-union';
-import type {JsonObject, JsonValue} from './basic';
+import type {LiteralUnion} from './literal-union.d.ts';
+import type {JsonObject, JsonValue} from './basic.d.ts';
 
 declare namespace PackageJson {
 	/**

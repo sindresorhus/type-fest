@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IfArrayReadonly} from '../../source/internal';
+import type {IfArrayReadonly} from '../../source/internal/index.d.ts';
 
 // Non-readonly arrays
 expectType<IfArrayReadonly<[]>>(false);

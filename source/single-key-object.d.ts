@@ -1,5 +1,5 @@
-import type {IfEmptyObject} from './if-empty-object';
-import type {IsUnion} from './internal';
+import type {IfEmptyObject} from './if-empty-object.d.ts';
+import type {IsUnion} from './internal/index.d.ts';
 
 /**
 Create a type that only accepts an object with a single key.

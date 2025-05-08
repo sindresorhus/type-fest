@@ -1,4 +1,4 @@
-import type {BuiltIns, HasMultipleCallSignatures} from './internal';
+import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 
 /**
 Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
@@ -23,7 +23,7 @@ const data: ReadonlyDeep<typeof dataJson> = dataJson;
 export default data;
 
 // test.ts
-import data from './main';
+import data from './main.d.ts';
 
 data.foo.push('bar');
 //=> error TS2339: Property 'push' does not exist on type 'readonly string[]'

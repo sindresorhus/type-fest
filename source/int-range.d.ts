@@ -1,5 +1,5 @@
-import type {BuildTuple} from './internal';
-import type {Subtract} from './subtract';
+import type {BuildTuple} from './internal/index.d.ts';
+import type {Subtract} from './subtract.d.ts';
 
 /**
 Generate a union of numbers.

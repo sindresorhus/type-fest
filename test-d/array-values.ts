@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType, expectAssignable} from 'tsd';
-import type {ArrayValues} from '../index';
+import type {ArrayValues} from '../index.d.ts';
 
 const values = ['a', 'b', 'c'] as const;
 type Values = ArrayValues<typeof values>;

@@ -1,6 +1,6 @@
-import type {NumberAbsolute, BuildTuple, TupleMax, ReverseSign} from './internal';
-import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
-import type {Subtract} from './subtract';
+import type {NumberAbsolute, BuildTuple, TupleMax, ReverseSign} from './internal/index.d.ts';
+import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
+import type {Subtract} from './subtract.d.ts';
 
 /**
 Returns the sum of two numbers.

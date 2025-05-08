@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {AsyncReturnType} from '../index';
+import type {AsyncReturnType} from '../index.d.ts';
 
 async function asyncFunction(): Promise<number> {
 	return 2;

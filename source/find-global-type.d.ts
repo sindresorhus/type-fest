@@ -60,5 +60,5 @@ type FindBar = FindGlobalInstanceType<'Bar'>; // Works
 */
 export type FindGlobalInstanceType<Name extends string> =
 	Name extends string
-		? typeof globalThis extends Record<Name, abstract new (...arguments: any[]) => infer T> ? T : never
+		? typeof globalThis extends Record<Name, abstract new (...arguments_: any[]) => infer T> ? T : never
 		: never;
