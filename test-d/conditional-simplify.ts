@@ -3,6 +3,7 @@ import type {ConditionalSimplify} from '../index';
 
 type Position = {top: number; left: number};
 type Size = {width: number; height: number};
+
 // In your editor, hovering over `PositionAndSizeSimplified` will show a simplified object with all the properties.
 type PositionAndSizeIntersection = Position & Size;
 type PositionAndSizeSimplified = ConditionalSimplify<PositionAndSizeIntersection>;
