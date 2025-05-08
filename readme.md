@@ -206,6 +206,8 @@ Click the type names for complete docs.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
 - [`FindGlobalType`](source/find-global-type.d.ts) - Tries to find the type of a global with the given name.
 - [`FindGlobalInstanceType`](source/find-global-type.d.ts) - Tries to find one or more types from their globally-defined constructors.
+- [`ConditionalSimplify`](source/conditional-simplify.d.ts) - Simplifies a type while including and/or excluding certain types from being simplified.
+- [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 
 ### Type Guard
 
