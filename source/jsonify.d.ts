@@ -9,13 +9,13 @@ import type {TypedArray} from './typed-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
-type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
+export type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
 
-type NeverToNull<T> = IsNever<T> extends true ? null : T;
-type UndefinedToNull<T> = T extends undefined ? null : T;
+export type NeverToNull<T> = IsNever<T> extends true ? null : T;
+export type UndefinedToNull<T> = T extends undefined ? null : T;
 
 // Handles tuples and arrays
-type JsonifyList<T extends UnknownArray> = T extends readonly []
+export type JsonifyList<T extends UnknownArray> = T extends readonly []
 	? []
 	: T extends readonly [infer F, ...infer R]
 		? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
@@ -23,14 +23,14 @@ type JsonifyList<T extends UnknownArray> = T extends readonly []
 			? []
 			: Array<T[number] extends NotJsonable ? null : Jsonify<UndefinedToNull<T[number]>>>;
 
-type FilterJsonableKeys<T extends object> = {
+export type FilterJsonableKeys<T extends object> = {
 	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
 }[keyof T];
 
 /**
 JSON serialize objects (not including arrays) and classes.
 */
-type JsonifyObject<T extends object> = {
+export type JsonifyObject<T extends object> = {
 	[Key in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[Key]>;
 };
 
