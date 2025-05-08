@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {ConditionalSimplifyDeep} from '../index';
+import type {ConditionalSimplifyDeep} from '../index.d.ts';
 
 type Position = {top: number; left: number};
 type Size = {width: number; height: number};
