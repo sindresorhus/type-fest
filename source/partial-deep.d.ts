@@ -76,13 +76,15 @@ By default, this does not affect elements in array and tuple types. You can chan
 ```
 import type {PartialDeep} from 'type-fest';
 
-type Settings = {
-	languages: string[];
-}
-
-const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true}> = {
-	languages: [undefined]
+type Shape = {
+	dimensions: [number, number];
 };
+
+const partialShape: PartialDeep<Shape, {recurseIntoArrays: true}> = {
+	dimensions: [], // Ok
+};
+
+partialShape.dimensions = [15]; // Ok
 ```
 
 @see {@link PartialDeepOptions}
