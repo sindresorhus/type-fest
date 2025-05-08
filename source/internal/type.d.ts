@@ -137,3 +137,8 @@ export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 		: IsNever<T> extends true
 			? IfNever
 			: IfNotAnyOrNever;
+
+/**
+Return the value of exactOptionalPropertyTypes option in tsconfig
+*/
+export type ExactOptionalPropertyTypesEnable = [(string | undefined)?] extends [string?] ? false : true;
