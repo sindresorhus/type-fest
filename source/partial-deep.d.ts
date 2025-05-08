@@ -18,10 +18,10 @@ export type PartialDeepOptions = {
 	- When set to `true`, elements of non-tuple arrays can be `undefined`.
 	- When set to `false`, only explicitly defined elements are allowed in non-tuple arrays, ensuring stricter type checking.
 
-	@default true
+	@default false
 
 	@example
-	You can prevent `undefined` values in non-tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
+	You can allow `undefined` values in non-tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}` as the second type argument:
 
 	```
 	import type {PartialDeep} from 'type-fest';
@@ -30,10 +30,9 @@ export type PartialDeepOptions = {
 		languages: string[];
 	};
 
-	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}>;
+	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>;
 
-	partialSettings.languages = [undefined]; // Error
-	partialSettings.languages = []; // Ok
+	partialSettings.languages = [undefined]; // Ok
 	```
 	*/
 	readonly allowUndefinedInNonTupleArrays?: boolean;
@@ -41,7 +40,7 @@ export type PartialDeepOptions = {
 
 type DefaultPartialDeepOptions = {
 	recurseIntoArrays: false;
-	allowUndefinedInNonTupleArrays: true;
+	allowUndefinedInNonTupleArrays: false;
 };
 
 /**
