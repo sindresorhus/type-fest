@@ -1,5 +1,4 @@
 import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
-import type {ConditionalSimplifyDeep} from './conditional-simplify.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Merge} from './merge.d.ts';
