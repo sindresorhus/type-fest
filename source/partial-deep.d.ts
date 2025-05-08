@@ -32,7 +32,7 @@ export type PartialDeepOptions = {
 
 	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>;
 
-	partialSettings.languages = [undefined]; // Ok
+	partialSettings.languages = [undefined]; // OK
 	```
 	*/
 	readonly allowUndefinedInNonTupleArrays?: boolean;
@@ -81,10 +81,10 @@ type Shape = {
 };
 
 const partialShape: PartialDeep<Shape, {recurseIntoArrays: true}> = {
-	dimensions: [], // Ok
+	dimensions: [], // OK
 };
 
-partialShape.dimensions = [15]; // Ok
+partialShape.dimensions = [15]; // OK
 ```
 
 @see {@link PartialDeepOptions}
