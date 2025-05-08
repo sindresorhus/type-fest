@@ -171,8 +171,8 @@ export type {StringRepeat} from './source/string-repeat.d.ts';
 export type {Includes} from './source/includes.d.ts';
 export type {Get} from './source/get.d.ts';
 export type {LastArrayElement} from './source/last-array-element.d.ts';
-export type {ConditionalSimplify} from './source/conditional-simplify';
-export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep';
+export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
+export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
