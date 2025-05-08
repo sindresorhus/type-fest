@@ -67,15 +67,15 @@ expectAssignable<CamelCasedProperties<RawOptions>>({
 	otherField: false,
 });
 
-expectType<CamelCase<'fooBAR'>>('fooBAR');
-expectType<CamelCase<'fooBAR', {preserveConsecutiveUppercase: false}>>('fooBar');
+expectType<CamelCase<'fooBAR'>>('fooBar');
+expectType<CamelCase<'fooBAR', {preserveConsecutiveUppercase: true}>>('fooBAR');
 
-expectType<CamelCase<'fooBARBiz'>>('fooBARBiz');
-expectType<CamelCase<'fooBARBiz', {preserveConsecutiveUppercase: false}>>('fooBarBiz');
+expectType<CamelCase<'fooBARBiz'>>('fooBarBiz');
+expectType<CamelCase<'fooBARBiz', {preserveConsecutiveUppercase: true}>>('fooBARBiz');
 
-expectType<CamelCase<'foo BAR-Biz_BUZZ'>>('fooBARBizBUZZ');
+expectType<CamelCase<'foo BAR-Biz_BUZZ', {preserveConsecutiveUppercase: true}>>('fooBARBizBUZZ');
 expectType<CamelCase<'foo BAR-Biz_BUZZ', {preserveConsecutiveUppercase: false}>>('fooBarBizBuzz');
-expectType<CamelCase<'foo\tBAR-Biz_BUZZ', {preserveConsecutiveUppercase: false}>>('fooBarBizBuzz');
+expectType<CamelCase<'foo\tBAR-Biz_BUZZ'>>('fooBarBizBuzz');
 
+expectType<CamelCase<string, {preserveConsecutiveUppercase: true}>>('string' as string);
 expectType<CamelCase<string>>('string' as string);
-expectType<CamelCase<string, {preserveConsecutiveUppercase: false}>>('string' as string);

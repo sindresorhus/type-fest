@@ -41,10 +41,10 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 
-const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: { fooBARBiz: [{ fooBARBaz: string }] }}, {preserveConsecutiveUppercase: false}> = {
-	fooBar: {
-		fooBarBiz: [{
-			fooBarBaz: 'string',
+const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: {fooBARBiz: [{fooBARBaz: string}]}}, {preserveConsecutiveUppercase: true}> = {
+	fooBAR: {
+		fooBARBiz: [{
+			fooBARBaz: 'string',
 		}],
 	},
 };
