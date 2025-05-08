@@ -8,7 +8,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 declare const RepeatSymbol: unique symbol;
 
 /**
-Return true if the number is 0
+Return true if the number is 0.
 */
 type IsZero<T extends number> = [T] extends [0] ? true : false;
 
@@ -17,7 +17,7 @@ Options for the `ArrayFlat` type.
 */
 type ArrayFlatOptions = {
 	/**
-	 * The number of times to repeat the array items when flattening an non-fixed length array.
+	 * The number of times to repeat the array items when flattening a non-fixed length array.
 	 *
 	 * @example
 	 * ```
