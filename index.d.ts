@@ -179,3 +179,4 @@ export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 
 // Improved built-in
 export type {ExtractStrict} from './source/extract-strict.d.ts';
+export type {ExcludeStrict} from './source/exclude-strict.d.ts';
