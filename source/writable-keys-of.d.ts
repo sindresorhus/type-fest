@@ -25,7 +25,7 @@ const update1: UpdateRequest<User> = {
 
 @category Utilities
 */
-export type WritableKeysOf<T> =
+export type WritableKeysOf<T extends object> =
 	T extends unknown // For distributing `T`
 		? (keyof {
 			[P in keyof T as IsEqual<{[Q in P]: T[P]}, {readonly [Q in P]: T[P]}> extends false ? P : never]: never

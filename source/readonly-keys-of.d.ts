@@ -24,7 +24,7 @@ const update1: UpdateResponse<User> = {
 
 @category Utilities
 */
-export type ReadonlyKeysOf<T> =
+export type ReadonlyKeysOf<T extends object> =
 	T extends unknown // For distributing `T`
 		? Exclude<keyof T, WritableKeysOf<T>>
 		: never; // Should never happen

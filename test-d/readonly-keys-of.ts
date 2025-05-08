@@ -85,3 +85,6 @@ type Test9<T extends object> = Assignability9<T, keyof T>;
 type Assignability10<T extends UnknownRecord, _K extends ReadonlyKeysOf<T>> = unknown;
 // @ts-expect-error
 type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
+
+// @ts-expect-error
+type AllowsOnlyObjects = ReadonlyKeysOf<string>;
