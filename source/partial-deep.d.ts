@@ -32,7 +32,7 @@ export type PartialDeepOptions = {
 
 	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>;
 
-	partialSettings.languages = [undefined]; // Ok
+	partialSettings.languages = [undefined]; // OK
 	```
 	*/
 	readonly allowUndefinedInNonTupleArrays?: boolean;
@@ -54,19 +54,19 @@ Use-cases:
 ```
 import type {PartialDeep} from 'type-fest';
 
-const settings: Settings = {
+let settings = {
 	textEditor: {
 		fontSize: 14,
 		fontColor: '#000000',
-		fontWeight: 400
+		fontWeight: 400,
 	},
 	autocomplete: false,
-	autosave: true
+	autosave: true,
 };
 
-const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
-	return {...settings, ...savedSettings};
-}
+const applySavedSettings = (savedSettings: PartialDeep<typeof settings>) => (
+	{...settings, ...savedSettings, textEditor: {...settings.textEditor, ...savedSettings.textEditor}}
+);
 
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
@@ -76,13 +76,15 @@ By default, this does not affect elements in array and tuple types. You can chan
 ```
 import type {PartialDeep} from 'type-fest';
 
-type Settings = {
-	languages: string[];
-}
-
-const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true}> = {
-	languages: [undefined]
+type Shape = {
+	dimensions: [number, number];
 };
+
+const partialShape: PartialDeep<Shape, {recurseIntoArrays: true}> = {
+	dimensions: [], // OK
+};
+
+partialShape.dimensions = [15]; // OK
 ```
 
 @see {@link PartialDeepOptions}
