@@ -54,19 +54,19 @@ Use-cases:
 ```
 import type {PartialDeep} from 'type-fest';
 
-const settings: Settings = {
+let settings = {
 	textEditor: {
 		fontSize: 14,
 		fontColor: '#000000',
-		fontWeight: 400
+		fontWeight: 400,
 	},
 	autocomplete: false,
-	autosave: true
+	autosave: true,
 };
 
-const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
-	return {...settings, ...savedSettings};
-}
+const applySavedSettings = (savedSettings: PartialDeep<typeof settings>) => (
+	{...settings, ...savedSettings, textEditor: {...settings.textEditor, ...savedSettings.textEditor}}
+);
 
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
