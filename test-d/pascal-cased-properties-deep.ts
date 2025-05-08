@@ -52,3 +52,11 @@ expectType<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>({} as PascalCasedPrope
 
 expectType<{'FooBar': any}>({} as PascalCasedPropertiesDeep<{foo_bar: any}>);
 expectType<{'FooBar': {'BarBaz': any}; Biz: any}>({} as PascalCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);
+
+type bazBizDeep = {fooBAR: number; baz: {fooBAR: Array<{BARFoo: string}>}};
+
+declare const baz: PascalCasedPropertiesDeep<bazBizDeep, {preserveConsecutiveUppercase: true}>;
+expectType<{FooBAR: number; Baz: {FooBAR: Array<{BARFoo: string}>}}>(baz);
+
+declare const biz: PascalCasedPropertiesDeep<bazBizDeep>;
+expectType<{FooBar: number; Baz: {FooBar: Array<{BarFoo: string}>}}>(biz);
