@@ -1,7 +1,3 @@
-// Can eventually be replaced with the built-in once this library supports
-// TS5.4+ only. Tracked in https://github.com/sindresorhus/type-fest/issues/848
-type NoInfer<T> = T extends infer U ? U : never;
-
 /**
 Returns a boolean for whether the given type is `any`.
 

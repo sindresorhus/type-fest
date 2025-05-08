@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Merge} from '../index';
+import type {Merge} from '../index.d.ts';
 
 type Foo = {
 	a: number;

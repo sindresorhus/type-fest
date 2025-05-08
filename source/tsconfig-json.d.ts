@@ -18,6 +18,7 @@ declare namespace TsConfigJson {
 			| 'ES2022'
 			| 'ESNext'
 			| 'Node16'
+			| 'Node18'
 			| 'NodeNext'
 			| 'Preserve'
 			| 'None'
@@ -32,6 +33,7 @@ declare namespace TsConfigJson {
 			| 'es2022'
 			| 'esnext'
 			| 'node16'
+			| 'node18'
 			| 'nodenext'
 			| 'preserve'
 			| 'none';
@@ -1109,6 +1111,20 @@ declare namespace TsConfigJson {
 		Suppress deprecation warnings
 		*/
 		ignoreDeprecations?: CompilerOptions.IgnoreDeprecations;
+
+		/**
+		Do not allow runtime constructs that are not part of ECMAScript.
+
+		@default false
+		*/
+		erasableSyntaxOnly?: boolean;
+
+		/**
+		Enable lib replacement.
+
+		@default true
+		*/
+		libReplacement?: boolean;
 	};
 
 	namespace WatchOptions {
@@ -1160,12 +1176,12 @@ declare namespace TsConfigJson {
 		synchronousWatchDirectory?: boolean;
 
 		/**
-		Specifies a list of directories to exclude from watch
+		Specifies a list of directories to exclude from watch.
 		*/
 		excludeDirectories?: string[];
 
 		/**
-		Specifies a list of files to exclude from watch
+		Specifies a list of files to exclude from watch.
 		*/
 		excludeFiles?: string[];
 	};

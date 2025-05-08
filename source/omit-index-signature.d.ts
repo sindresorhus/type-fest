@@ -61,18 +61,6 @@ type OmitIndexSignature<ObjectType> = {
 
 If `{}` is assignable, it means that `KeyType` is an index signature and we want to remove it. If it is not assignable, `KeyType` is a "real" key and we want to keep it.
 
-```
-import type {OmitIndexSignature} from 'type-fest';
-
-type OmitIndexSignature<ObjectType> = {
-	[KeyType in keyof ObjectType
-		as {} extends Record<KeyType, unknown>
-			? never // => Remove this `KeyType`.
-			: KeyType // => Keep this `KeyType` as it is.
-	]: ObjectType[KeyType];
-};
-```
-
 @example
 ```
 import type {OmitIndexSignature} from 'type-fest';

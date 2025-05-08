@@ -1,9 +1,9 @@
-import type {BuildObject, BuildTuple, NonRecursiveType, ObjectValue} from './internal';
-import type {IsNever} from './is-never';
-import type {Paths} from './paths';
-import type {Simplify} from './simplify.d';
-import type {UnionToIntersection} from './union-to-intersection.d';
-import type {UnknownArray} from './unknown-array';
+import type {BuildObject, BuildTuple, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {Simplify} from './simplify.d.d.ts';
+import type {UnionToIntersection} from './union-to-intersection.d.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Pick properties from a deeply-nested object.

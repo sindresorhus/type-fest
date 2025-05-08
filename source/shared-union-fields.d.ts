@@ -1,7 +1,7 @@
-import type {NonRecursiveType, IsUnion} from './internal';
-import type {IsNever} from './is-never';
-import type {Simplify} from './simplify';
-import type {UnknownArray} from './unknown-array';
+import type {NonRecursiveType, IsUnion} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type with shared fields from a union of object types.
@@ -59,6 +59,7 @@ function displayPetInfo(petInfo: SharedUnionFields<Cat | Dog>) {
 ```
 
 @see SharedUnionFieldsDeep
+@see AllUnionFields
 
 @category Object
 @category Union

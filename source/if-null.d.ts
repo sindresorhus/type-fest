@@ -1,4 +1,4 @@
-import type {IsNull} from './is-null';
+import type {IsNull} from './is-null.d.ts';
 
 /**
 An if-else-like type that resolves depending on whether the given type is `null`.

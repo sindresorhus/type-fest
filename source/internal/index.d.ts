@@ -1,8 +1,8 @@
-export type * from './array';
-export type * from './characters';
-export type * from './keys';
-export type * from './numeric';
-export type * from './object';
-export type * from './string';
-export type * from './tuple';
-export type * from './type';
+export type * from './array.d.ts';
+export type * from './characters.d.ts';
+export type * from './keys.d.ts';
+export type * from './numeric.d.ts';
+export type * from './object.d.ts';
+export type * from './string.d.ts';
+export type * from './tuple.d.ts';
+export type * from './type.d.ts';

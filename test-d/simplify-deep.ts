@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SimplifyDeep} from '../index';
+import type {SimplifyDeep} from '../index.d.ts';
 
 type Properties1 = {
 	height: number;

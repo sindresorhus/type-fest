@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {DistributedPick} from '../index';
+import type {DistributedPick} from '../index.d.ts';
 
 // When passing a non-union type, and
 // picking keys that are present in the type.

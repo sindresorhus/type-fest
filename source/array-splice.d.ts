@@ -1,7 +1,7 @@
-import type {BuildTuple, StaticPartOfArray, VariablePartOfArray} from './internal';
-import type {GreaterThanOrEqual} from './greater-than-or-equal';
-import type {Subtract} from './subtract';
-import type {UnknownArray} from './unknown-array';
+import type {BuildTuple, StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
+import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
+import type {Subtract} from './subtract.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 The implementation of `SplitArrayByIndex` for fixed length arrays.
@@ -21,7 +21,9 @@ The implementation of `SplitArrayByIndex` for variable length arrays.
 type SplitVariableArrayByIndex<T extends UnknownArray,
 	SplitIndex extends number,
 	T1 = Subtract<SplitIndex, StaticPartOfArray<T>['length']>,
-	T2 = T1 extends number ? BuildTuple<T1, VariablePartOfArray<T>[number]> : [],
+	T2 = T1 extends number
+		? BuildTuple<GreaterThanOrEqual<T1, 0> extends true ? T1 : number, VariablePartOfArray<T>[number]>
+		: [],
 > =
 SplitIndex extends 0
 	? [[], T]

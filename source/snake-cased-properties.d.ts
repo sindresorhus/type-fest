@@ -1,4 +1,7 @@
-import type {DelimiterCasedProperties} from './delimiter-cased-properties';
+import type {DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
+import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {WordsOptions} from './words.d.ts';
 
 /**
 Convert object properties to snake case but not recursively.
@@ -21,10 +24,17 @@ const result: SnakeCasedProperties<User> = {
 	user_id: 1,
 	user_name: 'Tom',
 };
+
+const splitOnNumbers: SnakeCasedProperties<{line1: string}, {splitOnNumbers: true}> = {
+	'line_1': 'string',
+};
 ```
 
 @category Change case
 @category Template literal
 @category Object
 */
-export type SnakeCasedProperties<Value> = DelimiterCasedProperties<Value, '_'>;
+export type SnakeCasedProperties<
+	Value,
+	Options extends WordsOptions = {},
+> = DelimiterCasedProperties<Value, '_', ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;

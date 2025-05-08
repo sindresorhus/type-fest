@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {DelimiterCasedProperties} from '../index';
+import type {DelimiterCasedProperties} from '../index.d.ts';
 
 declare const foo: DelimiterCasedProperties<{helloWorld: {fooBar: string}}, '/'>;
 expectType<{'hello/world': {fooBar: string}}>(foo);
@@ -9,6 +9,9 @@ expectType<Array<{helloWorld: string}>>(bar);
 
 declare const fooBar: DelimiterCasedProperties<() => {a: string}, '-'>;
 expectType<() => {a: string}>(fooBar);
+
+declare const withOptions: DelimiterCasedProperties<{helloWorld1: {fooBar: string}}, '.', {splitOnNumbers: true}>;
+expectType<{'hello.world.1': {fooBar: string}}>(withOptions);
 
 // Verify example
 type User = {

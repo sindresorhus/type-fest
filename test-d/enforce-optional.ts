@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {EnforceOptional} from '../source/enforce-optional';
+import type {EnforceOptional} from '../source/enforce-optional.d.ts';
 
 type Foo = {
 	a: string;

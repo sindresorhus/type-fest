@@ -1,6 +1,7 @@
-import type {IsNever} from '../is-never';
-import type {UnknownArray} from '../unknown-array';
-import type {StringToNumber} from './string';
+import type {IsNever} from '../is-never.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
+import type {StringToNumber} from './string.d.ts';
 
 /**
 Returns the absolute value of a given value.
@@ -89,3 +90,29 @@ type InternalUnionMax<N extends number, T extends UnknownArray = []> =
 		:	T['length'] extends N
 			? InternalUnionMax<Exclude<N, T['length']>, T>
 			: InternalUnionMax<N, [...T, unknown]>;
+
+/**
+Returns the number with reversed sign.
+
+@example
+```
+ReverseSign<-1>;
+//=> 1
+
+ReverseSign<1>;
+//=> -1
+
+ReverseSign<NegativeInfinity>
+//=> PositiveInfinity
+
+ReverseSign<PositiveInfinity>
+//=> NegativeInfinity
+```
+*/
+export type ReverseSign<N extends number> =
+	// Handle edge cases
+	N extends 0 ? 0 : N extends PositiveInfinity ? NegativeInfinity : N extends NegativeInfinity ? PositiveInfinity :
+	// Handle negative numbers
+	`${N}` extends `-${infer P extends number}` ? P
+		// Handle positive numbers
+		: `-${N}` extends `${infer R extends number}` ? R : never;

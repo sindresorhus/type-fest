@@ -1,7 +1,11 @@
-import type {NonRecursiveType, StringToNumber} from './internal';
-import type {Paths} from './paths';
-import type {SimplifyDeep} from './simplify-deep';
-import type {UnknownArray} from './unknown-array';
+import type {IsAny} from './is-any.d.ts';
+import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {SetRequired} from './set-required.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {UnionToTuple} from './union-to-tuple.d.ts';
+import type {RequiredDeep} from './required-deep.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type that makes the given keys required. You can specify deeply nested key paths. The remaining keys are kept as is.
@@ -21,26 +25,44 @@ type Foo = {
 }
 
 type SomeRequiredDeep = SetRequiredDeep<Foo, 'a' | `c.${number}.d`>;
-// type SomeRequiredDeep = {
+//=> {
 // 	a: number; // Is now required
 // 	b?: string;
-// 	c: {
-// 		d: number // Is now required
-// 	}[]
+// 	c?: {
+// 		d: number; // Is now required
+// 	}[];
 // }
+
+// Set specific indices in an array to be required.
+type ArrayExample = SetRequiredDeep<{a: [number?, number?, number?]}, 'a.0' | 'a.1'>;
+//=> {a: [number, number, number?]}
 ```
 
 @category Object
 */
-export type SetRequiredDeep<BaseType, KeyPaths extends Paths<BaseType>> =
-BaseType extends NonRecursiveType
+export type SetRequiredDeep<BaseType, KeyPaths extends Paths<BaseType>> = IsAny<KeyPaths> extends true
+	? SimplifyDeep<RequiredDeep<BaseType>>
+	: SetRequiredDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
+
+/**
+Internal helper for {@link SetRequiredDeep}.
+
+Recursively transforms the `BaseType` by applying {@link SetRequiredDeepSinglePath} for each path in `KeyPathsTuple`.
+*/
+type SetRequiredDeepHelper<BaseType, KeyPathsTuple extends UnknownArray> =
+	KeyPathsTuple extends [infer KeyPath, ...infer RestPaths]
+		? SetRequiredDeepHelper<SetRequiredDeepSinglePath<BaseType, KeyPath>, RestPaths>
+		: BaseType;
+
+/**
+Makes a single path required in `BaseType`.
+*/
+type SetRequiredDeepSinglePath<BaseType, KeyPath> = BaseType extends NonRecursiveType
 	? BaseType
-	: SimplifyDeep<(
-		BaseType extends UnknownArray
-			? {}
-			: {[K in keyof BaseType as K extends (KeyPaths | StringToNumber<KeyPaths & string>) ? K : never]-?: BaseType[K]}
-	) & {
-		[K in keyof BaseType]: Extract<KeyPaths, `${K & (string | number)}.${string}`> extends never
-			? BaseType[K]
-			: SetRequiredDeep<BaseType[K], KeyPaths extends `${K & (string | number)}.${infer Rest extends Paths<BaseType[K]>}` ? Rest : never>
-	}>;
+	: KeyPath extends `${infer Property}.${infer RestPath}`
+		? {
+			[Key in keyof BaseType]: Property extends `${Key & (string | number)}`
+				? SetRequiredDeepSinglePath<BaseType[Key], RestPath>
+				: BaseType[Key];
+		}
+		: SetRequired<BaseType, (KeyPath | StringToNumber<KeyPath & string>) & keyof BaseType>;

@@ -1,4 +1,4 @@
-import type {BuiltIns} from './internal';
+import type {BuiltIns} from './internal/index.d.ts';
 
 /**
 Create a deep version of another type where all optional keys are set to also accept `undefined`.

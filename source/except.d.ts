@@ -1,4 +1,5 @@
-import type {IsEqual} from './is-equal';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Filter out keys from an object.
@@ -40,6 +41,10 @@ type ExceptOptions = {
 	requireExactProps?: boolean;
 };
 
+type DefaultExceptOptions = {
+	requireExactProps: false;
+};
+
 /**
 Create a type from an object type without certain keys.
 
@@ -69,11 +74,34 @@ type FooWithoutB = Except<Foo, 'b', {requireExactProps: true}>;
 
 const fooWithoutB: FooWithoutB = {a: 1, b: '2'};
 //=> errors at 'b': Type 'string' is not assignable to type 'undefined'.
+
+// The `Omit` utility type doesn't work when omitting specific keys from objects containing index signatures.
+
+// Consider the following example:
+
+type UserData = {
+	[metadata: string]: string;
+	email: string;
+	name: string;
+	role: 'admin' | 'user';
+};
+
+// `Omit` clearly doesn't behave as expected in this case:
+type PostPayload = Omit<UserData, 'email'>;
+//=> type PostPayload = { [x: string]: string; [x: number]: string; }
+
+// In situations like this, `Except` works better.
+// It simply removes the `email` key while preserving all the other keys.
+type PostPayload = Except<UserData, 'email'>;
+//=> type PostPayload = { [x: string]: string; name: string; role: 'admin' | 'user'; }
 ```
 
 @category Object
 */
-export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {requireExactProps: false}> = {
+export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {}> =
+	_Except<ObjectType, KeysType, ApplyDefaultOptions<ExceptOptions, DefaultExceptOptions, Options>>;
+
+type _Except<ObjectType, KeysType extends keyof ObjectType, Options extends Required<ExceptOptions>> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
 } & (Options['requireExactProps'] extends true
 	? Partial<Record<KeysType, never>>

@@ -1,6 +1,6 @@
 /* eslint-disable no-var, unicorn/prevent-abbreviations */
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {FindGlobalInstanceType, FindGlobalType} from '..';
+import {expectType} from 'tsd';
+import type {FindGlobalInstanceType, FindGlobalType} from '../index.d.ts';
 
 declare class NonGlobalES6Class {}
 declare var nonGlobalVar: number;

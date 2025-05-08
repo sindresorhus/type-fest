@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ArrayTail} from '../index';
+import type {ArrayTail, UnknownArray} from '../index.d.ts';
 
 declare const getArrayTail: <T extends readonly unknown[]>(array: T) => ArrayTail<T>;
 
@@ -30,3 +30,19 @@ expectType<['b'?]>([] as ArrayTail<['a'?, 'b'?]>);
 
 // Union of tuples
 expectType<[] | ['b']>([] as ArrayTail<[] | ['a', 'b']>);
+expectType<['y'?] | ['b', ...string[]] | []>([] as ArrayTail<readonly ['x'?, 'y'?] | ['a', 'b', ...string[]] | readonly string[]>);
+
+// `preserveReadonly` option
+type ReadonlyPreservingArrayTail<Type extends UnknownArray> = ArrayTail<Type, {preserveReadonly: true}>;
+
+expectType<[]>({} as ReadonlyPreservingArrayTail<[]>);
+expectType<readonly []>({} as ReadonlyPreservingArrayTail<readonly []>);
+expectType<[number?, ...string[]]>({} as ReadonlyPreservingArrayTail<[string?, number?, ...string[]]>);
+expectType<readonly [number?, ...string[]]>({} as ReadonlyPreservingArrayTail<readonly [string?, number?, ...string[]]>);
+
+expectType<[number] | readonly [boolean, string?]>({} as ReadonlyPreservingArrayTail<[string, number] | readonly [number, boolean, string?]>);
+expectType<readonly [number] | readonly []>({} as ReadonlyPreservingArrayTail<readonly [string, number] | readonly string[]>);
+expectType<[number?] | [boolean, string?] | []>({} as ReadonlyPreservingArrayTail<[string?, number?] | [number, boolean, string?] | [...string[], number]>);
+
+expectType<[]>({} as ReadonlyPreservingArrayTail<string[]>);
+expectType<readonly []>({} as ReadonlyPreservingArrayTail<readonly string[]>);

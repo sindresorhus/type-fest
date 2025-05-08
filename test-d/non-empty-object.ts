@@ -1,5 +1,5 @@
 import {expectNever, expectType} from 'tsd';
-import type {NonEmptyObject, RequireAtLeastOne} from '../index';
+import type {NonEmptyObject, RequireAtLeastOne} from '../index.d.ts';
 
 type TestType1 = {
 	a: string;

@@ -25,7 +25,7 @@ export function onlyBar(name: string): ValueOf<typeof data, 'bar'> {
 }
 
 // file.ts
-import {getData, onlyBar} from './main';
+import {getData, onlyBar} from './main.d.ts';
 
 getData('foo');
 //=> 1

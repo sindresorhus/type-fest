@@ -1,5 +1,5 @@
-import type {IsFloat} from './is-float';
-import type {IsInteger} from './is-integer';
+import type {IsFloat} from './is-float.d.ts';
+import type {IsInteger} from './is-integer.d.ts';
 
 export type Numeric = number | bigint;
 

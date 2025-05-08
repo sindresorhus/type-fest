@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {SetReadonly} from '../index';
+import type {SetReadonly} from '../index.d.ts';
 
 // Update one readonly and one non readonly to readonly.
 declare const variation1: SetReadonly<{a: number; readonly b: string; c: boolean}, 'b' | 'c'>;

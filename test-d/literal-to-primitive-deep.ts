@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual, LiteralToPrimitiveDeep} from '../index';
+import type {IsEqual, LiteralToPrimitiveDeep} from '../index.d.ts';
 
 type LiteralObject = {
 	a: string;

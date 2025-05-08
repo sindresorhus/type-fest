@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {DelimiterCasedPropertiesDeep} from '../index';
+import type {DelimiterCasedPropertiesDeep} from '../index.d.ts';
 
 declare const foo: DelimiterCasedPropertiesDeep<{helloWorld: {fooBar: string}}, '/'>;
 expectType<{'hello/world': {'foo/bar': string}}>(foo);
@@ -9,6 +9,9 @@ expectType<() => {a: string}>(fooBar);
 
 declare const bar: DelimiterCasedPropertiesDeep<Set<{fooBar: string}>, '-'>;
 expectType<Set<{'foo-bar': string}>>(bar);
+
+declare const withOptions: DelimiterCasedPropertiesDeep<Set<{helloWorld: {p2p: Array<{addressLine1: string}>}}>, '.', {splitOnNumbers: true}>;
+expectType<Set<{'hello.world': {'p.2.p': Array<{'address.line.1': string}>}}>>(withOptions);
 
 // Verify example
 type User = {
@@ -80,3 +83,9 @@ enum UserType {
 declare const enumTest: DelimiterCasedPropertiesDeep<{userType: UserType}, '-'>;
 expectType<{['user-type']: UserType}>(enumTest);
 enumTest['user-type'] = UserType.AdminUser;
+
+expectType<{'foo-bar': unknown}>({} as DelimiterCasedPropertiesDeep<{fooBar: unknown}, '-'>);
+expectType<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>({} as DelimiterCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: unknown}, '_'>);
+
+expectType<{'foo-bar': any}>({} as DelimiterCasedPropertiesDeep<{fooBar: any}, '-'>);
+expectType<{'foo_bar': {'bar_baz': any}; biz: any}>({} as DelimiterCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}, '_'>);

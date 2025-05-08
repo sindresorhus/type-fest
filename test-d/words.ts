@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Words} from '../source/words';
+import type {Words} from '../source/words.d.ts';
 
 expectType<Words<''>>([]);
 expectType<Words<'a'>>(['a']);

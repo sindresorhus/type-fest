@@ -1,7 +1,7 @@
-import type {NegativeInfinity, PositiveInfinity} from '../numeric';
-import type {Trim} from '../trim';
-import type {Whitespace} from './characters';
-import type {BuildTuple} from './tuple';
+import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
+import type {Trim} from '../trim.d.ts';
+import type {Whitespace} from './characters.d.ts';
+import type {BuildTuple} from './tuple.d.ts';
 
 /**
 Return a string representation of the given string or number.

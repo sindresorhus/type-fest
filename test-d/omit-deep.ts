@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OmitDeep} from '../index';
+import type {OmitDeep} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -135,3 +135,9 @@ expectType<{array: [
 
 declare const tuple: OmitDeep<{array: BaseType['tuples']}, 'array.0'>;
 expectType<{array: [unknown, 'bar']}>(tuple);
+
+declare const arrayWithMultiplePaths: OmitDeep<{array: Array<{a: string; b: number; c: string}>}, `array.${number}.a` | `array.${number}.b`>;
+expectType<{array: Array<{c: string}>}>(arrayWithMultiplePaths);
+
+declare const tupleWithMultiplePaths: OmitDeep<{tuple: [{a: string; b: number; c: string}]}, 'tuple.0.a' | 'tuple.0.b'>;
+expectType<{tuple: [{c: string}]}>(tupleWithMultiplePaths);

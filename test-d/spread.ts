@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Spread} from '../index';
+import type {Spread} from '../index.d.ts';
 
 type Foo = {
 	a: 'a1';
