@@ -1,5 +1,5 @@
-import type {LiteralToPrimitive} from './literal-to-primitive';
-import type {OmitIndexSignature} from './omit-index-signature';
+import type {LiteralToPrimitive} from './literal-to-primitive.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 
 /**
 Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.

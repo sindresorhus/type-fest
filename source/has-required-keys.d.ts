@@ -1,4 +1,4 @@
-import type {RequiredKeysOf} from './required-keys-of';
+import type {RequiredKeysOf} from './required-keys-of.d.ts';
 
 /**
 Creates a type that represents `true` or `false` depending on whether the given type has any required fields.

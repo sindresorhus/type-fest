@@ -1,4 +1,4 @@
-import type {WritableKeysOf} from './writable-keys-of';
+import type {WritableKeysOf} from './writable-keys-of.d.ts';
 
 /**
 Extract all readonly keys from the given type.

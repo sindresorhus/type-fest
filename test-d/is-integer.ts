@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsInteger, PositiveInfinity} from '../index';
+import type {IsInteger, PositiveInfinity} from '../index.d.ts';
 
 declare const x: unknown;
 

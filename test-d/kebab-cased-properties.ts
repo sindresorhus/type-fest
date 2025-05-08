@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {KebabCasedProperties} from '../index';
+import type {KebabCasedProperties} from '../index.d.ts';
 
 type Foobar = {helloWorld1: {fooBar: string}};
 

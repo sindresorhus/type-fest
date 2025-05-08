@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {TupleToObject} from '../source/tuple-to-object';
+import type {TupleToObject} from '../source/tuple-to-object.d.ts';
 
 // Tuples
 expectType<TupleToObject<[]>>({} as {});

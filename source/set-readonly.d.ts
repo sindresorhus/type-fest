@@ -1,6 +1,6 @@
-import type {Except} from './except';
-import type {HomomorphicPick} from './internal';
-import type {Simplify} from './simplify';
+import type {Except} from './except.d.ts';
+import type {HomomorphicPick} from './internal/index.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 /**
 Create a type that makes the given keys readonly. The remaining keys are kept as is.

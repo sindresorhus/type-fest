@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OmitDeep} from '../index';
+import type {OmitDeep} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;

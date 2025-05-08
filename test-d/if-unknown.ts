@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IfUnknown} from '../index';
+import type {IfUnknown} from '../index.d.ts';
 
 // `IfUnknown` should return `true`/`false` if only `T` is specified
 expectType<IfUnknown<unknown>>(true);

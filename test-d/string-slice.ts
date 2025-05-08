@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {StringSlice} from '../index';
+import type {StringSlice} from '../index.d.ts';
 
 expectType<StringSlice<'abcde'>>('abcde');
 expectType<StringSlice<'abcde'>>('abcde');

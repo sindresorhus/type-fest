@@ -1,4 +1,4 @@
-import type {IfNever} from './if-never';
+import type {IfNever} from './if-never.d.ts';
 
 /**
 Extract the keys from a type where the value type of the key extends the given `Condition`.

@@ -1,4 +1,4 @@
-import type {OptionalKeysOf} from './optional-keys-of';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 
 /**
 Creates a type that represents `true` or `false` depending on whether the given type has any optional fields.

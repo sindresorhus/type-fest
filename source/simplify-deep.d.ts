@@ -1,5 +1,5 @@
-import type {ConditionalSimplifyDeep} from './conditional-simplify';
-import type {NonRecursiveType} from './internal';
+import type {ConditionalSimplifyDeep} from './conditional-simplify.d.ts';
+import type {NonRecursiveType} from './internal/index.d.ts';
 
 /**
 Deeply simplifies an object type.

@@ -1,6 +1,6 @@
-import type {IfAny} from './if-any';
-import type {IfNever} from './if-never';
-import type {IfNotAnyOrNever} from './internal';
+import type {IfAny} from './if-any.d.ts';
+import type {IfNever} from './if-never.d.ts';
+import type {IfNotAnyOrNever} from './internal/index.d.ts';
 
 /**
 Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.

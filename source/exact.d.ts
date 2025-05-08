@@ -1,8 +1,8 @@
-import type {ArrayElement, ObjectValue} from './internal';
-import type {IsEqual} from './is-equal';
-import type {KeysOfUnion} from './keys-of-union';
-import type {IsUnknown} from './is-unknown';
-import type {Primitive} from './primitive';
+import type {ArrayElement, ObjectValue} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {IsUnknown} from './is-unknown.d.ts';
+import type {Primitive} from './primitive.d.ts';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.

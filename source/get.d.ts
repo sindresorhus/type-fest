@@ -1,8 +1,8 @@
-import type {ApplyDefaultOptions, StringDigit, ToString} from './internal';
-import type {LiteralStringUnion} from './literal-union';
-import type {Paths} from './paths';
-import type {Split} from './split';
-import type {StringKeyOf} from './string-key-of';
+import type {ApplyDefaultOptions, StringDigit, ToString} from './internal/index.d.ts';
+import type {LiteralStringUnion} from './literal-union.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {Split} from './split.d.ts';
+import type {StringKeyOf} from './string-key-of.d.ts';
 
 type GetOptions = {
 	/**
@@ -64,7 +64,7 @@ ToPath<'foo[0].bar.baz'>
 //=> ['foo', '0', 'bar', 'baz']
 ```
 */
-type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
+type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.', {strictLiteralChecks: false}>;
 
 /**
 Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.

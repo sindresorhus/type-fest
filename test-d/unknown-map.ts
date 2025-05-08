@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import type {UnknownMap} from '../index';
+import type {UnknownMap} from '../index.d.ts';
 
 declare const foo: ReadonlyMap<string, number>;
 declare const bar: {

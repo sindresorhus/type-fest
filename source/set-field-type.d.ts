@@ -1,5 +1,5 @@
-import type {ApplyDefaultOptions} from './internal';
-import type {Simplify} from './simplify';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 type SetFieldTypeOptions = {
 	/**

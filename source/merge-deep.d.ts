@@ -1,18 +1,18 @@
-import type {ConditionalSimplifyDeep} from './conditional-simplify';
-import type {OmitIndexSignature} from './omit-index-signature';
-import type {PickIndexSignature} from './pick-index-signature';
-import type {Merge} from './merge';
+import type {ConditionalSimplifyDeep} from './conditional-simplify.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {PickIndexSignature} from './pick-index-signature.d.ts';
+import type {Merge} from './merge.d.ts';
 import type {
 	FirstArrayElement,
 	IsBothExtends,
 	UnknownArrayOrTuple,
-} from './internal';
-import type {NonEmptyTuple} from './non-empty-tuple';
-import type {ArrayTail} from './array-tail';
-import type {UnknownRecord} from './unknown-record';
-import type {EnforceOptional} from './enforce-optional';
-import type {SimplifyDeep} from './simplify-deep';
-import type {UnknownArray} from './unknown-array';
+} from './internal/index.d.ts';
+import type {NonEmptyTuple} from './non-empty-tuple.d.ts';
+import type {ArrayTail} from './array-tail.d.ts';
+import type {UnknownRecord} from './unknown-record.d.ts';
+import type {EnforceOptional} from './enforce-optional.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;
 

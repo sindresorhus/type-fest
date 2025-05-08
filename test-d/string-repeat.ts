@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {StringRepeat} from '../index';
+import type {StringRepeat} from '../index.d.ts';
 
 declare const unknown: unknown;
 

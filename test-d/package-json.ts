@@ -1,5 +1,5 @@
 import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
-import type {PackageJson, LiteralUnion, JsonObject} from '../index';
+import type {PackageJson, LiteralUnion, JsonObject} from '../index.d.ts';
 
 const packageJson: PackageJson = {};
 

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OptionalKeysOf, UnknownRecord} from '../index';
+import type {OptionalKeysOf, UnknownRecord} from '../index.d.ts';
 
 type TestType1 = {
 	a: string;

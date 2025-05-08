@@ -1,7 +1,7 @@
-import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal';
-import type {IsStringLiteral} from './is-literal';
-import type {Merge} from './merge';
-import type {DefaultWordsOptions, Words, WordsOptions} from './words';
+import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
+import type {IsStringLiteral} from './is-literal.d.ts';
+import type {Merge} from './merge.d.ts';
+import type {DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 
 export type DefaultDelimiterCaseOptions = Merge<DefaultWordsOptions, {splitOnNumbers: false}>;
 

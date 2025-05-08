@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import {expectTypeOf} from 'expect-type';
-import type {OverrideProperties} from '../source/override-properties';
+import type {OverrideProperties} from '../source/override-properties.d.ts';
 
 type Foo = {
 	a: number;

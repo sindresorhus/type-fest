@@ -1,6 +1,6 @@
-import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case';
-import type {ApplyDefaultOptions} from './internal';
-import type {WordsOptions} from './words';
+import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {WordsOptions} from './words.d.ts';
 
 /**
 Convert a string literal to kebab-case.

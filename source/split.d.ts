@@ -1,7 +1,7 @@
-import type {And} from './and';
-import type {ApplyDefaultOptions, Not} from './internal';
-import type {IsStringLiteral} from './is-literal';
-import type {Or} from './or';
+import type {And} from './and.d.ts';
+import type {ApplyDefaultOptions, Not} from './internal/index.d.ts';
+import type {IsStringLiteral} from './is-literal.d.ts';
+import type {Or} from './or.d.ts';
 
 /**
 Split options.
@@ -12,9 +12,7 @@ type SplitOptions = {
 	/**
 	When enabled, instantiations with non-literal string types (e.g., `string`, `Uppercase<string>`, `on${string}`) simply return back `string[]` without performing any splitting, as the exact structure cannot be statically determined.
 
-	Note: In the future, this option might be enabled by default, so if you currently rely on this being disabled, you should consider explicitly enabling it.
-
-	@default false
+	@default true
 
 	@example
 	```ts
@@ -35,7 +33,7 @@ type SplitOptions = {
 };
 
 type DefaultSplitOptions = {
-	strictLiteralChecks: false;
+	strictLiteralChecks: true;
 };
 
 /**

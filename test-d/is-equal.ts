@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual} from '../index';
+import type {IsEqual} from '../index.d.ts';
 
 const notEqualNumberAndString: IsEqual<number, string> = false;
 expectType<false>(notEqualNumberAndString);

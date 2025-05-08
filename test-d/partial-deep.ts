@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {PartialDeep, Simplify} from '../index';
+import type {PartialDeep, Simplify} from '../index.d.ts';
 
 class ClassA {
 	foo = 1;

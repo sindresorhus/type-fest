@@ -1,4 +1,4 @@
-import type {Primitive} from './primitive';
+import type {Primitive} from './primitive.d.ts';
 
 export type LiteralStringUnion<T> = LiteralUnion<T, string>;
 

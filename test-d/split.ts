@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
-import type {Split, StringRepeat} from '../index';
-import type {BuildTuple} from '../source/internal';
+import type {Split, StringRepeat} from '../index.d.ts';
+import type {BuildTuple} from '../source/internal/index.d.ts';
 
 declare function split<
 	S extends string,
@@ -38,14 +38,14 @@ expectType<['a', 'b', 'c'] | ['a,b,c'] | ['x', 'y', 'z'] | ['x:y:z']>({} as Spli
 // -- strictLiteralChecks: false --
 // NOTE: The behaviour covered in the test below is not acurate because the `a.b.${string}` type might hold a value like `a.b.c.d`,
 // which, when split by `.`, would result in `['a', 'b', 'c', 'd']`, which wouldn't conform to the output type of `['a', 'b', string]`.
-expectType<['a', 'b', string]>(split('a.b.c.d' as `a.b.${string}`, '.'));
+expectType<['a', 'b', string]>({} as Split<`a.b.${string}`, '.', {strictLiteralChecks: false}>);
 
 // -- strictLiteralChecks: true --
-expectType<string[]>({} as Split<string, '', {strictLiteralChecks: true}>);
-expectType<string[]>({} as Split<Uppercase<string>, '-', {strictLiteralChecks: true}>);
-expectType<string[]>({} as Split<`on${string}`, 'n', {strictLiteralChecks: true}>);
-expectType<string[]>({} as Split<'a,b,c', string, {strictLiteralChecks: true}>);
-expectType<string[]>({} as Split<'a,b,c', Lowercase<string>, {strictLiteralChecks: true}>);
+expectType<string[]>({} as Split<string, ''>);
+expectType<string[]>({} as Split<Uppercase<string>, '-'>);
+expectType<string[]>({} as Split<`on${string}`, 'n'>);
+expectType<string[]>({} as Split<'a,b,c', string>);
+expectType<string[]>({} as Split<'a,b,c', Lowercase<string>>);
 expectType<string[]>({} as Split<'a,b,c', `,${string}`, {strictLiteralChecks: true}>);
 expectType<string[]>({} as Split<`on${string}`, Lowercase<string>, {strictLiteralChecks: true}>);
 

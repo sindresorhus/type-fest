@@ -1,6 +1,6 @@
-import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case';
-import type {ApplyDefaultOptions, NonRecursiveType} from './internal';
-import type {UnknownArray} from './unknown-array';
+import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {ApplyDefaultOptions, NonRecursiveType} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Convert object properties to camel case recursively.

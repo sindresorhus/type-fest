@@ -1,9 +1,9 @@
-import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions} from './internal';
-import type {EmptyObject} from './empty-object';
-import type {IsAny} from './is-any';
-import type {UnknownArray} from './unknown-array';
-import type {Subtract} from './subtract';
-import type {GreaterThan} from './greater-than';
+import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {EmptyObject} from './empty-object.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+import type {Subtract} from './subtract.d.ts';
+import type {GreaterThan} from './greater-than.d.ts';
 
 /**
 Paths options.

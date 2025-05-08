@@ -1,12 +1,12 @@
-import type {ArraySplice} from './array-splice';
-import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToString} from './internal';
-import type {IsEqual} from './is-equal';
-import type {IsNever} from './is-never';
-import type {LiteralUnion} from './literal-union';
-import type {Paths} from './paths';
-import type {SimplifyDeep} from './simplify-deep';
-import type {UnionToTuple} from './union-to-tuple';
-import type {UnknownArray} from './unknown-array';
+import type {ArraySplice} from './array-splice.d.ts';
+import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToString} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {UnionToTuple} from './union-to-tuple.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Omit properties from a deeply-nested object.

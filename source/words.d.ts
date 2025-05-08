@@ -4,7 +4,7 @@ import type {
 	IsNumeric,
 	IsUpperCase,
 	WordSeparators,
-} from './internal';
+} from './internal/index.d.ts';
 
 type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
 

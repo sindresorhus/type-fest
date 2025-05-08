@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import {expectTypeOf} from 'expect-type';
-import type {RequiredDeep} from '../index';
+import type {RequiredDeep} from '../index.d.ts';
 
 type Foo = {
 	baz?: string | undefined;

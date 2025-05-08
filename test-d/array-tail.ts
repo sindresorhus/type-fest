@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ArrayTail, UnknownArray} from '../index';
+import type {ArrayTail, UnknownArray} from '../index.d.ts';
 
 declare const getArrayTail: <T extends readonly unknown[]>(array: T) => ArrayTail<T>;
 

@@ -1,4 +1,4 @@
-import type {IsEqual} from './is-equal';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Extract all writable keys from the given type.

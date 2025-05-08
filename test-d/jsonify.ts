@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {EmptyObject, Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
+import type {EmptyObject, Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
 interface A {
 	a: number;

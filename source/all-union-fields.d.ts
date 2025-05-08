@@ -1,8 +1,8 @@
-import type {NonRecursiveType, ReadonlyKeysOfUnion, ValueOfUnion} from './internal';
-import type {KeysOfUnion} from './keys-of-union';
-import type {SharedUnionFields} from './shared-union-fields';
-import type {Simplify} from './simplify';
-import type {UnknownArray} from './unknown-array';
+import type {NonRecursiveType, ReadonlyKeysOfUnion, ValueOfUnion} from './internal/index.d.ts';
+import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {SharedUnionFields} from './shared-union-fields.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type with all fields from a union of object types.

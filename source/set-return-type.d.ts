@@ -1,4 +1,4 @@
-import type {IsUnknown} from './is-unknown';
+import type {IsUnknown} from './is-unknown.d.ts';
 
 /**
 Create a function type with a return type of your choice and the same parameters as the given function type.

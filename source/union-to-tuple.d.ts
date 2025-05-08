@@ -1,5 +1,5 @@
-import type {IsNever} from './is-never';
-import type {UnionToIntersection} from './union-to-intersection';
+import type {IsNever} from './is-never.d.ts';
+import type {UnionToIntersection} from './union-to-intersection.d.ts';
 
 /**
 Returns the last element of a union type.

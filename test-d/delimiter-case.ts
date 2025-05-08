@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {DelimiterCase} from '../source/delimiter-case';
+import type {DelimiterCase} from '../source/delimiter-case.d.ts';
 
 // DelimiterCase
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';

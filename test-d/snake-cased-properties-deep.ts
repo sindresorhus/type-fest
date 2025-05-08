@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SnakeCasedPropertiesDeep} from '../index';
+import type {SnakeCasedPropertiesDeep} from '../index.d.ts';
 
 type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
 

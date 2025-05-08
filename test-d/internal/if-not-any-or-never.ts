@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IfNotAnyOrNever} from '../../source/internal';
+import type {IfNotAnyOrNever} from '../../source/internal/index.d.ts';
 
 expectType<any>({} as IfNotAnyOrNever<any, string>);
 expectType<never>({} as IfNotAnyOrNever<never, string>);

@@ -1,5 +1,5 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {ArrayFlat, PositiveInfinity} from '../index';
+import {expectAssignable, expectType} from 'tsd';
+import type {ArrayFlat, PositiveInfinity} from '../index.d.ts';
 
 type DeepArrayFlat<T> = ArrayFlat<[[[[[[T]]]]]], 10>;
 

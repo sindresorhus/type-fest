@@ -1,6 +1,6 @@
 // TODO: Test equality
 import {expectAssignable} from 'tsd';
-import type {UndefinedOnPartialDeep} from '../source/undefined-on-partial-deep';
+import type {UndefinedOnPartialDeep} from '../source/undefined-on-partial-deep.d.ts';
 
 type TestType1 = UndefinedOnPartialDeep<{required: string; optional?: string; optional2?: number; optional3?: string}>;
 expectAssignable<TestType1>({required: '', optional: undefined, optional2: 1});

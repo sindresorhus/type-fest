@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SetParameterType} from '../index';
+import type {SetParameterType} from '../index.d.ts';
 
 function function_(_a: number, _b: string, _c: Object, ..._arguments: boolean[]) {
 	return null;

@@ -1,5 +1,5 @@
-import type {IntRange} from './int-range';
-import type {Sum} from './sum';
+import type {IntRange} from './int-range.d.ts';
+import type {Sum} from './sum.d.ts';
 
 /**
 Generate a union of numbers.

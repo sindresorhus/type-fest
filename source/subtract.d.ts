@@ -1,6 +1,6 @@
-import type {NumberAbsolute, BuildTuple, ReverseSign} from './internal';
-import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
-import type {LessThan} from './less-than';
+import type {NumberAbsolute, BuildTuple, ReverseSign} from './internal/index.d.ts';
+import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
+import type {LessThan} from './less-than.d.ts';
 
 /**
 Returns the difference between two numbers.

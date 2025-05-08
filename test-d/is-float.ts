@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsFloat, PositiveInfinity} from '../index';
+import type {IsFloat, PositiveInfinity} from '../index.d.ts';
 
 declare const x: unknown;
 

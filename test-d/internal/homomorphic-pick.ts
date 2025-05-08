@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {HomomorphicPick} from '../../source/internal';
+import type {HomomorphicPick} from '../../source/internal/index.d.ts';
 
 // Picks specified keys
 declare const test1: HomomorphicPick<{a: 1; b: 2; c: 3}, 'a' | 'b'>;

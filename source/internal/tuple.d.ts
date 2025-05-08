@@ -1,7 +1,7 @@
-import type {GreaterThan} from '../greater-than';
-import type {LessThan} from '../less-than';
-import type {NegativeInfinity, PositiveInfinity} from '../numeric';
-import type {UnknownArray} from '../unknown-array';
+import type {GreaterThan} from '../greater-than.d.ts';
+import type {LessThan} from '../less-than.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**
 Infer the length of the given tuple `<T>`.

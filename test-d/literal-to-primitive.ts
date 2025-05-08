@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {LiteralToPrimitive} from '../index';
+import type {LiteralToPrimitive} from '../index.d.ts';
 
 // Simple usage
 declare const numberPrimitive: LiteralToPrimitive<123>;

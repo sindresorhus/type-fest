@@ -1,9 +1,9 @@
-import type {And} from './and';
-import type {ArrayLength, ExactOptionalPropertyTypesEnable, IsLeadingSpreadArray, IsTrailingSpreadArray, Not, OptionalPartOfArray, RequiredPartOfArray, StaticPartOfArray, StaticPartOfLeadingSpreadArray, VariablePartOfArray, VariablePartOfLeadingSpreadArray} from './internal';
-import type {IsEqual} from './is-equal';
-import type {Or} from './or';
-import type {Subtract} from './subtract';
-import type {UnknownArray} from './unknown-array';
+import type {And} from './and.d.ts';
+import type {ArrayLength, ExactOptionalPropertyTypesEnable, IsLeadingSpreadArray, IsTrailingSpreadArray, Not, OptionalPartOfArray, RequiredPartOfArray, StaticPartOfArray, StaticPartOfLeadingSpreadArray, VariablePartOfArray, VariablePartOfLeadingSpreadArray} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {Or} from './or.d.ts';
+import type {Subtract} from './subtract.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 declare const RepeatSymbol: unique symbol;
 

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {StringKeyOf} from '../index';
+import type {StringKeyOf} from '../index.d.ts';
 
 declare const foo: StringKeyOf<{
 	1: number;

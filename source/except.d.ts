@@ -1,5 +1,5 @@
-import type {ApplyDefaultOptions} from './internal';
-import type {IsEqual} from './is-equal';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Filter out keys from an object.
