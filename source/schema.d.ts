@@ -1,4 +1,43 @@
 /**
+@see {@link Schema}
+*/
+export type SchemaOptions = {
+	/**
+	By default, this affects elements in array and tuple types. You can change this by passing `{recurseIntoArrays: false}` as the third type argument:
+	- If `recurseIntoArrays` is set to `true` (default), array elements will be recursively processed as well.
+	- If `recurseIntoArrays` is set to `false`, arrays will not be recursively processed, and the entire array will be replaced with the given value type.
+
+	@example
+	```
+	import type {Schema} from 'type-fest';
+
+	type Form = {
+		id: number;
+		personal: {
+			name: string;
+			email: string;
+		};
+		skills: string[];
+	};
+
+	type FormFieldVisibility = Schema<Form, boolean, {recurseIntoArrays: false}>;
+
+	const formFieldVisibility: FormFieldVisibility = {
+		id: true,
+		personal: {
+			name: true,
+			email: false,
+		},
+		skills: false,
+	};
+	```
+
+	@default true
+	*/
+	readonly recurseIntoArrays?: boolean | undefined;
+};
+
+/**
 Create a deep version of another object type where property values are recursively replaced into a given value type.
 
 Use-cases:
@@ -82,43 +121,4 @@ type SchemaObject<
 			? K
 			: Schema<ObjectType[KeyType], K, Options>
 		: Schema<ObjectType[KeyType], K, Options> | K;
-};
-
-/**
-@see {@link Schema}
-*/
-export type SchemaOptions = {
-	/**
-	By default, this affects elements in array and tuple types. You can change this by passing `{recurseIntoArrays: false}` as the third type argument:
-	- If `recurseIntoArrays` is set to `true` (default), array elements will be recursively processed as well.
-	- If `recurseIntoArrays` is set to `false`, arrays will not be recursively processed, and the entire array will be replaced with the given value type.
-
-	@example
-	```
-	import type {Schema} from 'type-fest';
-
-	type Form = {
-		id: number;
-		personal: {
-			name: string;
-			email: string;
-		};
-		skills: string[];
-	};
-
-	type FormFieldVisibility = Schema<Form, boolean, {recurseIntoArrays: false}>;
-
-	const formFieldVisibility: FormFieldVisibility = {
-		id: true,
-		personal: {
-			name: true,
-			email: false,
-		},
-		skills: false,
-	};
-	```
-
-	@default true
-	*/
-	readonly recurseIntoArrays?: boolean | undefined;
 };
