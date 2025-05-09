@@ -11,25 +11,22 @@ export type SchemaOptions = {
 	```
 	import type {Schema} from 'type-fest';
 
-	type Form = {
-		id: number;
-		personal: {
-			name: string;
-			email: string;
-		};
-		skills: string[];
+	type Participants = {
+		attendees: string[];
+		speakers: string[];
 	};
 
-	type FormFieldVisibility = Schema<Form, boolean, {recurseIntoArrays: false}>;
+	type ParticipantsWithMetadata = Schema<Participants, {id: number; name: string}, {recurseIntoArrays: true}>;
+	//=> {
+	// 	attendees: Array<{id: number; name: string}>;
+	// 	speakers: Array<{id: number; name: string}>;
+	// };
 
-	const formFieldVisibility: FormFieldVisibility = {
-		id: true,
-		personal: {
-			name: true,
-			email: false,
-		},
-		skills: false,
-	};
+	type ParticipantsCount = Schema<Participants, number, {recurseIntoArrays: false}>;
+	//=> {
+	// 	attendees: number;
+	// 	speakers: number;
+	// };
 	```
 
 	@default true
