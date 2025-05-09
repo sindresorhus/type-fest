@@ -37,6 +37,8 @@ const userMaskSettings: UserMask = {
 }
 ```
 
+@see {@link SchemaOptions}
+
 @category Object
 */
 export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> = ObjectType extends string
@@ -83,7 +85,7 @@ type SchemaObject<
 };
 
 /**
-@see Schema
+@see {@link Schema}
 */
 export type SchemaOptions = {
 	/**
