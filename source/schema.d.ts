@@ -33,7 +33,7 @@ export type SchemaOptions = {
 
 	@default true
 	*/
-	readonly recurseIntoArrays?: boolean;
+	recurseIntoArrays?: boolean;
 };
 
 type DefaultSchemaOptions = {
