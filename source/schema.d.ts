@@ -34,7 +34,7 @@ export type SchemaOptions = {
 
 	@default true
 	*/
-	readonly recurseIntoArrays?: boolean | undefined;
+	readonly recurseIntoArrays?: boolean;
 };
 
 /**
