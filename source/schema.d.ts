@@ -93,19 +93,27 @@ export type SchemaOptions = {
 
 	@example
 	```
-	type UserMask = Schema<User, 'mask' | 'hide' | 'show', {recurseIntoArrays: false}>;
+	import type {Schema} from 'type-fest';
 
-	const userMaskSettings: UserMask = {
-		id: 'show',
-		name: {
-			firstname: 'show',
-			lastname: 'mask',
+	type Form = {
+		id: number;
+		personal: {
+			name: string;
+			email: string;
+		};
+		skills: string[];
+	};
+
+	type FormFieldVisibility = Schema<Form, boolean, {recurseIntoArrays: false}>;
+
+	const formFieldVisibility: FormFieldVisibility = {
+		id: true,
+		personal: {
+			name: true,
+			email: false,
 		},
-		created: 'show',
-		active: 'show',
-		passwordHash: 'hide',
-		attributes: 'hide'
-	}
+		skills: false,
+	};
 	```
 
 	@default true
