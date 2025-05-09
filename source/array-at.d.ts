@@ -1,9 +1,9 @@
-import type {ArraySlice} from './array-slice';
-import type {GreaterThanOrEqual} from './greater-than-or-equal';
-import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfArray, OptionalPartOfArray} from './internal';
-import type {IsNegative} from './numeric';
-import type {Sum} from './sum';
-import type {UnknownArray} from './unknown-array';
+import type {ArraySlice} from './array-slice.d.ts';
+import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
+import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfArray, OptionalPartOfArray} from './internal/index.d.ts';
+import type {IsNegative} from './numeric.d.ts';
+import type {Sum} from './sum.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Returns the element at the given index of the given array.

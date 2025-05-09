@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ArrayAt} from '../index';
+import type {ArrayAt} from '../index.d.ts';
 
 type StaticArray = [number, boolean];
 type StaticArray2 = [number, boolean?];
