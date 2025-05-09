@@ -1,3 +1,5 @@
+import type {ApplyDefaultOptions} from './internal/object.js';
+
 /**
 @see {@link Schema}
 */
@@ -32,6 +34,10 @@ export type SchemaOptions = {
 	@default true
 	*/
 	readonly recurseIntoArrays?: boolean;
+};
+
+type DefaultSchemaOptions = {
+	recurseIntoArrays: true;
 };
 
 /**
@@ -77,7 +83,10 @@ const userMaskSettings: UserMask = {
 
 @category Object
 */
-export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> = ObjectType extends string
+export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> =
+	_Schema<ObjectType, ValueType, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>;
+
+type _Schema<ObjectType, ValueType, Options extends Required<SchemaOptions>> = ObjectType extends string
 	? ValueType
 	: ObjectType extends Map<unknown, unknown>
 		? ValueType
@@ -109,7 +118,7 @@ Same as `Schema`, but accepts only `object`s as inputs. Internal helper for `Sch
 type SchemaObject<
 	ObjectType extends object,
 	K,
-	Options extends SchemaOptions,
+	Options extends Required<SchemaOptions>,
 > = {
 	[KeyType in keyof ObjectType]: ObjectType[KeyType] extends
 	| readonly unknown[]
