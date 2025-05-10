@@ -1,4 +1,8 @@
 import type {ApplyDefaultOptions} from './internal/object.js';
+import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.js';
+import type {OptionalKeysOf} from './optional-keys-of.js';
+import type {Simplify} from './simplify.js';
+import type {UnknownArray} from './unknown-array.js';
 
 /**
 @see {@link Schema}
@@ -83,48 +87,28 @@ const userMaskSettings: UserMask = {
 
 @category Object
 */
-export type Schema<ObjectType, ValueType, Options extends SchemaOptions = {}> =
-	_Schema<ObjectType, ValueType, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>;
+export type Schema<Type, Value, Options extends SchemaOptions = {}> =
+	IfNotAnyOrNever<Type,
+	_Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>,
+	Value, Value>;
 
-type _Schema<ObjectType, ValueType, Options extends Required<SchemaOptions>> = ObjectType extends string
-	? ValueType
-	: ObjectType extends Map<unknown, unknown>
-		? ValueType
-		: ObjectType extends Set<unknown>
-			? ValueType
-			: ObjectType extends ReadonlyMap<unknown, unknown>
-				? ValueType
-				: ObjectType extends ReadonlySet<unknown>
-					? ValueType
-					: ObjectType extends Array<infer U>
-						? Options['recurseIntoArrays'] extends false
-							? ValueType
-							: Array<Schema<U, ValueType>>
-						: ObjectType extends (...arguments_: unknown[]) => unknown
-							? ValueType
-							: ObjectType extends Date
-								? ValueType
-								: ObjectType extends Function
-									? ValueType
-									: ObjectType extends RegExp
-										? ValueType
-										: ObjectType extends object
-											? SchemaObject<ObjectType, ValueType, Options>
-											: ValueType;
+type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
+	Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+		? Value
+		: Type extends UnknownArray
+			? Options['recurseIntoArrays'] extends false
+				? Value
+				: SchemaHelper<Type, Value, Options>
+			: SchemaHelper<Type, Value, Options>;
 
 /**
-Same as `Schema`, but accepts only `object`s as inputs. Internal helper for `Schema`.
+Internal helper for {@link _Schema}.
+
+Recursively transforms the value of each property in objects and arrays.
 */
-type SchemaObject<
-	ObjectType extends object,
-	K,
-	Options extends Required<SchemaOptions>,
-> = {
-	[KeyType in keyof ObjectType]: ObjectType[KeyType] extends
-	| readonly unknown[]
-	| unknown[]
-		? Options['recurseIntoArrays'] extends false
-			? K
-			: Schema<ObjectType[KeyType], K, Options>
-		: Schema<ObjectType[KeyType], K, Options> | K;
-};
+type SchemaHelper<Type, Value, Options extends Required<SchemaOptions>> = Simplify<{
+	[Key in keyof Type]: _Schema<
+	Key extends OptionalKeysOf<Type & object> ? Exclude<Type[Key], undefined> : Type[Key], // Remove `| undefined` when accessing optional properties
+	Value,
+	Options>
+}>;
