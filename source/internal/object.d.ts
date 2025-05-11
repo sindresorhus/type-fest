@@ -226,11 +226,7 @@ export type ApplyDefaultOptions<
 	IfNever<SpecifiedOptions, Defaults,
 	Simplify<Merge<Defaults, {
 		[Key in keyof SpecifiedOptions
-		as Key extends OptionalKeysOf<Options>
-			? Extract<SpecifiedOptions[Key], undefined> extends never
-				? Key
-				: never
-			: Key
+		as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
 		]: SpecifiedOptions[Key]
 	}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
 	>>;
