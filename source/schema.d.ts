@@ -56,7 +56,7 @@ Use-cases:
 ```
 import type {Schema} from 'type-fest';
 
-interface User {
+type User = {
 	id: string;
 	name: {
 		firstname: string;
@@ -65,8 +65,8 @@ interface User {
 	created: Date;
 	active: boolean;
 	passwordHash: string;
-	attributes: ['Foo', 'Bar']
-}
+	location: [lat: number, lon: number];
+};
 
 type UserMask = Schema<User, 'mask' | 'hide' | 'show'>;
 
@@ -79,8 +79,8 @@ const userMaskSettings: UserMask = {
 	created: 'show',
 	active: 'show',
 	passwordHash: 'hide',
-	attributes: ['mask', 'show']
-}
+	location: ['hide', 'hide'],
+};
 ```
 
 @see {@link SchemaOptions}
