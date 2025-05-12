@@ -1,5 +1,6 @@
-import type {NonRecursiveType, IsUnion} from './internal/index.d.ts';
+import type {NonRecursiveType} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {IsUnion} from './is-union.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 

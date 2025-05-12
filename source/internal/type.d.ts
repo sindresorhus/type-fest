@@ -80,41 +80,6 @@ export type Not<A extends boolean> = A extends true
 		: never;
 
 /**
-Returns a boolean for whether the given type is a union type.
-
-@example
-```
-type A = IsUnion<string | number>;
-//=> true
-
-type B = IsUnion<string>;
-//=> false
-```
-*/
-export type IsUnion<T> = InternalIsUnion<T>;
-
-/**
-The actual implementation of `IsUnion`.
-*/
-type InternalIsUnion<T, U = T> =
-(
-	// @link https://ghaiklor.github.io/type-challenges-solutions/en/medium-isunion.html
-	IsNever<T> extends true
-		? false
-		: T extends any
-			? [U] extends [T]
-				? false
-				: true
-			: never
-) extends infer Result
-	// In some cases `Result` will return `false | true` which is `boolean`,
-	// that means `T` has at least two types and it's a union type,
-	// so we will return `true` instead of `boolean`.
-	? boolean extends Result ? true
-		: Result
-	: never; // Should never happen
-
-/**
 An if-else-like type that resolves depending on whether the given type is `any` or `never`.
 
 @example
