@@ -65,7 +65,7 @@ type User = {
 	created: Date;
 	active: boolean;
 	passwordHash: string;
-	location: [lat: number, lon: number];
+	location: [latitude: number, longitude: number];
 };
 
 type UserMask = Schema<User, 'mask' | 'hide' | 'show'>;
