@@ -11,7 +11,7 @@ Note:
 - Returns the else branch if the given type is `never`. For example, `If<never, 'Y', 'N'>` will return `'N'`.
 
 @example
-```ts
+```
 import {If} from 'type-fest';
 
 type A = If<true, 'yes', 'no'>;
@@ -31,8 +31,8 @@ type E = If<never, 'yes', 'no'>;
 ```
 
 @example
-```ts
-import {If, IsAny} from 'type-fest';
+```
+import {If, IsAny, IsNever} from 'type-fest';
 
 type A = If<IsAny<unknown>, 'is any', 'not any'>;
 //=> 'not any'
@@ -42,7 +42,7 @@ type B = If<IsNever<never>, 'is never', 'not never'>;
 ```
 
 @example
-```ts
+```
 import {If, IsEqual} from 'type-fest';
 
 type IfEqual<T, U, IfBranch, ElseBranch> = If<IsEqual<T, U>, IfBranch, ElseBranch>;
