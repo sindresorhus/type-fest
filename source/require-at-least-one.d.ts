@@ -1,7 +1,8 @@
 import type {Except} from './except.d.ts';
-import type {IfAny} from './if-any.d.ts';
-import type {IfNever} from './if-never.d.ts';
+import type {If} from './if.js';
 import type {IfNotAnyOrNever} from './internal/index.d.ts';
+import type {IsAny} from './is-any.js';
+import type {IsNever} from './is-never.js';
 
 /**
 Create a type that requires at least one of the given keys. The remaining keys are kept as is.
@@ -29,9 +30,9 @@ export type RequireAtLeastOne<
 	KeysType extends keyof ObjectType = keyof ObjectType,
 > =
 	IfNotAnyOrNever<ObjectType,
-	IfNever<KeysType,
+	If<IsNever<KeysType>,
 	never,
-	_RequireAtLeastOne<ObjectType, IfAny<KeysType, keyof ObjectType, KeysType>>
+	_RequireAtLeastOne<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
 	>>;
 
 type _RequireAtLeastOne<

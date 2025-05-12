@@ -1,7 +1,8 @@
 import type {RequireExactlyOne} from './require-exactly-one.d.ts';
 import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
-import type {IfNever} from './if-never.d.ts';
-import type {IfAny} from './if-any.d.ts';
+import type {If} from './if.js';
+import type {IsAny} from './is-any.js';
+import type {IsNever} from './is-never.js';
 
 /**
 Create a type that requires exactly one of the given keys and disallows more, or none of the given keys. The remaining keys are kept as is.
@@ -35,9 +36,9 @@ const responder3: Responder = {
 */
 export type RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
 	IfNotAnyOrNever<ObjectType,
-	IfNever<KeysType,
+	If<IsNever<KeysType>,
 	ObjectType,
-	_RequireOneOrNone<ObjectType, IfAny<KeysType, keyof ObjectType, KeysType>>
+	_RequireOneOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
 	>>;
 
 type _RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType> = (

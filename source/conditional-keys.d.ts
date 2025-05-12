@@ -1,4 +1,5 @@
-import type {IfNever} from './if-never.d.ts';
+import type {If} from './if.js';
+import type {IsNever} from './is-never.js';
 
 /**
 Extract the keys from a type where the value type of the key extends the given `Condition`.
@@ -40,7 +41,7 @@ export type ConditionalKeys<Base, Condition> =
 	Base[Key] extends Condition
 	// Retain this key
 	// If the value for the key extends never, only include it if `Condition` also extends never
-		? IfNever<Base[Key], IfNever<Condition, Key, never>, Key>
+		? If<IsNever<Base[Key]>, If<IsNever<Condition>, Key, never>, Key>
 	// Discard this key since the condition fails.
 		: never;
 	// Convert the produced object into a union type of the keys which passed the conditional test.

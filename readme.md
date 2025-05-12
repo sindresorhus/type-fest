@@ -211,41 +211,17 @@ Click the type names for complete docs.
 
 ### Type Guard
 
-#### `IsType` vs. `IfType`
-
-For every `IsT` type (e.g. `IsAny`), there is an associated `IfT` type that can help simplify conditional types. While the `IsT` types return a `boolean`, the `IfT` types act like an `If`/`Else` - they resolve to the given `TypeIfT` or `TypeIfNotT` depending on whether `IsX` is `true` or not. By default, `IfT` returns a `boolean`:
-
-```ts
-type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = (
-	IsAny<T> extends true ? TypeIfAny : TypeIfNotAny
-);
-```
-
-#### Usage
-
-```ts
-import type {IsAny, IfAny} from 'type-fest';
-
-type ShouldBeTrue = IsAny<any> extends true ? true : false;
-//=> true
-
-type ShouldBeFalse = IfAny<'not any'>;
-//=> false
-
-type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
-//=> 'never'
-```
-
+- [`If`](source/if.d.ts) - An if-else-like type that resolves depending on whether the given `boolean` type is `true` or `false`.
 - [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsStringLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
-- [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`. (Conditional version: [`IfAny`](source/if-any.d.ts))
-- [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`. (Conditional version: [`IfNever`](source/if-never.d.ts))
-- [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Conditional version: [`IfUnknown`](source/if-unknown.d.ts))
-- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value. (Conditional version: [`IfEmptyObject`](source/if-empty-object.d.ts))
-- [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`. (Conditional version: [`IfNull`](source/if-null.d.ts))
+- [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`.
+- [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`.
+- [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
+- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
+- [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
 - [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
 
 ### JSON
@@ -375,6 +351,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
+- `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 
 ## Tips
 
