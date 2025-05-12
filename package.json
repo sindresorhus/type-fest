@@ -49,6 +49,9 @@
 		"json",
 		"generics"
 	],
+	"dependencies": {
+		"tagged-tag": "^0.1.0"
+	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^7.0.0",
 		"expect-type": "^1.2.1",
