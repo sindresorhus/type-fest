@@ -57,9 +57,9 @@ type B = IfEqual<string, number, 'equal', 'not equal'>;
 @category Type Guard
 @category Utilities
 */
-export type If<T extends boolean, True, False> =
-	IsNever<T> extends true
-		? False
-		: T extends true
-			? True
-			: False;
+export type If<Type extends boolean, IfBranch, ElseBranch> =
+	IsNever<Type> extends true
+		? ElseBranch
+		: Type extends true
+			? IfBranch
+			: ElseBranch;
