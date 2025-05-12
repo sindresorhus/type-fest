@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions, IfArrayReadonly} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, If, IsArrayReadonly} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -63,7 +63,7 @@ export type ArrayTail<TArray extends UnknownArray, Options extends ArrayTailOpti
 		? TArray extends UnknownArray // For distributing `TArray`
 			? _ArrayTail<TArray> extends infer Result
 				? ResolvedOptions['preserveReadonly'] extends true
-					? IfArrayReadonly<TArray, Readonly<Result>, Result>
+					? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
 					: Result
 				: never // Should never happen
 			: never // Should never happen
