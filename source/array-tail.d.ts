@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions, If, IsArrayReadonly} from './internal/index.d.ts';
+import type {If} from './if.js';
+import type {ApplyDefaultOptions, IsArrayReadonly} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**

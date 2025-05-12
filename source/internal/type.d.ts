@@ -137,10 +137,3 @@ export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 		: IsNever<T> extends true
 			? IfNever
 			: IfNotAnyOrNever;
-
-export type If<T extends boolean, True, False> =
-	IsNever<T> extends true
-		? False
-		: T extends true
-			? True
-			: False;

@@ -143,6 +143,7 @@ export type {And} from './source/and.d.ts';
 export type {Or} from './source/or.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
 export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type.d.ts';
+export type {If} from './source/if.d.ts';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case.d.ts';

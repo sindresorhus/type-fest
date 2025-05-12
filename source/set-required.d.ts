@@ -1,5 +1,6 @@
 import type {Except} from './except.d.ts';
-import type {HomomorphicPick, If, IsArrayReadonly} from './internal/index.d.ts';
+import type {If} from './if.js';
+import type {HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
