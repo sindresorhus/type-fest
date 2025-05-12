@@ -2,6 +2,7 @@
 export type * from './source/primitive.d.ts';
 export type * from './source/typed-array.d.ts';
 export type * from './source/basic.d.ts';
+export type * from './source/json-value.d.ts';
 
 // Utilities
 export type {KeysOfUnion} from './source/keys-of-union.d.ts';
