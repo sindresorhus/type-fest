@@ -1,3 +1,4 @@
+import type {If} from '../if.js';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
@@ -132,8 +133,4 @@ type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 ```
 */
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
-	IsAny<T> extends true
-		? IfAny
-		: IsNever<T> extends true
-			? IfNever
-			: IfNotAnyOrNever;
+	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
