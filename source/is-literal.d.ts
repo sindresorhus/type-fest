@@ -2,7 +2,7 @@ import type {Primitive} from './primitive.d.ts';
 import type {Numeric} from './numeric.d.ts';
 import type {IsNotFalse, IsPrimitive} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {IfNever} from './if-never.d.ts';
+import type {If} from './if.js';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.
@@ -114,7 +114,7 @@ type L2 = Length<`${number}`>;
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<T> = IfNever<T, false,
+export type IsStringLiteral<T> = If<IsNever<T>, false,
 // If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
 // and since `{}` extends index signatures, the result becomes `false`.
 T extends string

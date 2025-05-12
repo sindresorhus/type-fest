@@ -1,4 +1,5 @@
-import type {IfNever} from '../if-never.d.ts';
+import type {If} from '../if.js';
+import type {IsNever} from '../is-never.js';
 import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**
@@ -91,4 +92,4 @@ T extends readonly [...infer U] ?
 /**
 Returns whether the given array `T` is readonly.
 */
-export type IsArrayReadonly<T extends UnknownArray> = IfNever<T, false, T extends unknown[] ? false : true>;
+export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
