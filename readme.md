@@ -223,6 +223,7 @@ Click the type names for complete docs.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
 - [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
+- [`IsUnion`](source/is-union.d.ts) - Returns a boolean for whether the given type is a union.
 
 ### JSON
 
