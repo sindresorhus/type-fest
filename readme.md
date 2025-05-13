@@ -118,7 +118,7 @@ Click the type names for complete docs.
 - [`LowercaseLetter`](source/characters.d.ts) - Matches any lowercase letter in the basic Latin alphabet (a-z).
 - [`UppercaseLetter`](source/characters.d.ts) - Matches any uppercase letter in the basic Latin alphabet (A-Z).
 - [`DigitCharacter`](source/characters.d.ts) - Matches any digit as a string ('0'-'9').
-- [`Alphanumeric`](source/characters.d.ts) - Matches any letter (lowercase or uppercase) or digit in the basic Latin alphabet.
+- [`Alphanumeric`](source/characters.d.ts) - Matches any lowercase letter (a-z), uppercase letter (A-Z), or digit ('0'-'9') in the basic Latin alphabet.
 
 ### Utilities
 
