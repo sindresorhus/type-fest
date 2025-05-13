@@ -5,8 +5,9 @@ Matches any uppercase letter in the basic Latin alphabet (A-Z).
 ```
 import type {UppercaseLetter} from 'type-fest';
 
-const a: UppercaseLetter = 'A'; // Valid
-const b: UppercaseLetter = 'a'; // Invalid
+const a: UppercaseLetter = 'A';  // Valid
+const b: UppercaseLetter = 'a';  // Invalid
+const c: UppercaseLetter = 'AB'; // Invalid
 ```
 
 @category Type
@@ -44,7 +45,7 @@ const b: DigitCharacter = 0;   // Invalid
 export type DigitCharacter = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
 /**
-Matches any letter (lowercase or uppercase) or digit ('0'-'9') in the basic Latin alphabet.
+Matches any lowercase letter (a-z), uppercase letter (A-Z), or digit ('0'-'9') in the basic Latin alphabet.
 
 @example
 ```
