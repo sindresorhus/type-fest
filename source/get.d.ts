@@ -1,8 +1,9 @@
-import type {ApplyDefaultOptions, StringDigit, ToString} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, ToString} from './internal/index.d.ts';
 import type {LiteralStringUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
 import type {StringKeyOf} from './string-key-of.d.ts';
+import type {DigitCharacter} from './characters.d.ts';
 
 type GetOptions = {
 	/**
@@ -150,7 +151,7 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 					length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
 				}
 					? (
-						ConsistsOnlyOf<Key, StringDigit> extends true
+						ConsistsOnlyOf<Key, DigitCharacter> extends true
 							? Strictify<Item, Options>
 							: unknown
 					)
