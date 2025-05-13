@@ -115,6 +115,10 @@ Click the type names for complete docs.
 - [`AbstractConstructor`](source/basic.d.ts) - Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#abstract-construct-signatures) constructor.
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 - [`ObservableLike`](source/globals/observable-like.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
+- [`LowercaseLetter`](source/characters.d.ts) - Matches any lowercase letter in the basic Latin alphabet (a-z).
+- [`UppercaseLetter`](source/characters.d.ts) - Matches any uppercase letter in the basic Latin alphabet (A-Z).
+- [`DigitCharacter`](source/characters.d.ts) - Matches any digit as a string ('0'-'9').
+- [`Alphanumeric`](source/characters.d.ts) - Matches any letter (lowercase or uppercase) or digit in the basic Latin alphabet.
 
 ### Utilities
 
