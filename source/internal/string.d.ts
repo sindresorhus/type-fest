@@ -113,16 +113,6 @@ export type StringLength<S extends string> = string extends S
 	: StringToArray<S>['length'];
 
 /**
-Returns a boolean for whether the string is lowercased.
-*/
-export type IsLowerCase<T extends string> = T extends Lowercase<T> ? true : false;
-
-/**
-Returns a boolean for whether the string is uppercased.
-*/
-export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
-
-/**
 Returns a boolean for whether a string is whitespace.
 */
 export type IsWhitespace<T extends string> = T extends Whitespace
