@@ -17,20 +17,22 @@ Options for the `ArrayFlat` type.
 */
 type ArrayFlatOptions = {
 	/**
-	 * The number of times to repeat the array items when flattening a non-fixed length array.
-	 *
-	 * @example
-	 * ```
-	 * type FlatArr0 = ArrayFlat<Array<number, string>, 1, { maxRepeat: 3 }>;
-	 * //=> type FlatArr0 =
-	 * []
-	 * | [number, string]
-	 * | [number, string, number, string]
-	 * | [number, string, number, string, number, string];
-	 * ```
-	 *
-	 * @default 5
-	 */
+	The number of times to repeat the array items when flattening a non-fixed length array.
+
+	@default 5
+
+	@example
+	```
+	import type {ArrayFlat} from 'type-fest';
+
+	type FlatArr0 = ArrayFlat<Array<number, string>, 1, { maxRepeat: 3 }>;
+	//=> type FlatArr0 =
+	[]
+	| [number, string]
+	| [number, string, number, string]
+	| [number, string, number, string, number, string];
+	```
+	*/
 	maxRepeat: number;
 };
 
@@ -41,7 +43,7 @@ type DefaultArrayFlatOptions = {
 /**
 Creates a new array type by flattening an array to a specified depth.
 
-Use-case: Flatten an array type to a specified depth.
+Use-case: You can handle data nested at any level within arrays without worrying about the nesting structure
 
 Like [`Array#flat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat) but for types.
 
@@ -177,8 +179,8 @@ type InternalInnerFixedLengthArrayFlat<
 	: [];
 
 /**
- * Replaces items with the RepeatSymbol flag to the true result.
- */
+Replaces items with the RepeatSymbol flag to the true result.
+*/
 type DoRepeatArrayItem<T, RepeatNumber extends number, hasSpreadArray extends boolean = false> =
 T extends [infer _Item, ...infer Last]
 	? [_Item] extends [{[RepeatSymbol]: infer Item extends UnknownArray}]
@@ -213,22 +215,22 @@ T extends [infer _Item, ...infer Last]
 	: T;
 
 /**
- * Builds a union that lists all the possible combinations of the given array items and repeat times.
- *
- * @example
- * ```
- * type A = BuildRepeatedUnionArray<[number, string?], 2, true>;
- * //=> type A =
- * []
- * | number[]
- * | [number]
- * | [number, string]
- * | [number, number]
- * | [number, string, number]
- * | [number, number, string]
- * | [number, string, number, string]
- * ```
- */
+Builds a union that lists all the possible combinations of the given array items and repeat times.
+
+@example
+```
+type A = BuildRepeatedUnionArray<[number, string?], 2, true>;
+//=> type A =
+[]
+| number[]
+| [number]
+| [number, string]
+| [number, number]
+| [number, string, number]
+| [number, number, string]
+| [number, string, number, string]
+```
+*/
 type BuildRepeatedUnionArray<T extends UnknownArray, RepeatNumber extends number, CanSpread extends boolean = false, R extends unknown[] = []> =
 RepeatNumber extends 0
 	? R
