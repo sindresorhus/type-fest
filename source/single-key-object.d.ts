@@ -1,5 +1,6 @@
-import type {IfEmptyObject} from './if-empty-object.d.ts';
-import type {IsUnion} from './internal/index.d.ts';
+import type {IsEmptyObject} from './empty-object.js';
+import type {If} from './if.js';
+import type {IsUnion} from './is-union.d.ts';
 
 /**
 Create a type that only accepts an object with a single key.
@@ -26,4 +27,4 @@ someFunction({
 export type SingleKeyObject<ObjectType> =
 	IsUnion<keyof ObjectType> extends true
 		? never
-		: IfEmptyObject<ObjectType, never, ObjectType>;
+		: If<IsEmptyObject<ObjectType>, never, ObjectType>;

@@ -111,7 +111,7 @@ expectAssignable<string>({} as MyEntityPaths);
 
 // By default, the recursion limit should be reasonably long
 type RecursiveFoo = {foo: RecursiveFoo};
-expectAssignable<Paths<RecursiveFoo>>('foo.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 10}>>('foo.foo.foo.foo.foo.foo.foo.foo');
 
 declare const recursion0: Paths<RecursiveFoo, {maxRecursionDepth: 0}>;
 expectType<'foo'>(recursion0);
@@ -206,7 +206,7 @@ expectType<`${number}.a` | `${number}.b`>(leadingSpreadLeaves);
 declare const leadingSpreadLeaves1: Paths<[...Array<{a?: string}>, {readonly b: number}, {c: number}], {leavesOnly: true}>;
 expectType<`${number}.a` | `${number}.b` | `${number}.c`>(leadingSpreadLeaves1);
 
-declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true}>;
+declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 10}>;
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveLeaves);
 
 declare const recursiveWithMaxLeaves: Paths<RecursiveFoo, {maxRecursionDepth: 0; leavesOnly: true}>;
@@ -282,7 +282,7 @@ expectType<'a.b.c' | `a.b2.${number}`>(maxSimilarToDepth);
 declare const maxSimilarToDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 0; depth: 0}>;
 expectType<'foo'>(maxSimilarToDepth2);
 
-declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10}>; // Default `maxRecursionDepth` is 10
+declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10; maxRecursionDepth: 10}>; // Default `maxRecursionDepth` is 10
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(maxSimilarToDepth3);
 
 declare const maxMoreThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 1}>;
@@ -330,14 +330,14 @@ expectType<'a' | 'a.0.0.0.b'>(nestedTupleDepth);
 declare const recursiveDepth: Paths<RecursiveFoo, {depth: 4}>;
 expectType<'foo.foo.foo.foo.foo'>(recursiveDepth);
 
-declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8}>;
+declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8; maxRecursionDepth: 10}>;
 expectType<'foo.foo' | 'foo.foo.foo.foo' | 'foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth2);
 
 // For recursive types, leaves are at `maxRecursionDepth`
-declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5}>;
+declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10}>;
 expectType<never>(recursiveDepth3);
 
-declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10}>; // No leaves at depth `5`
+declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10; maxRecursionDepth: 10}>; // No leaves at depth `5`
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth4);
 
 declare const recursiveDepth6: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 6; depth: 5}>; // Leaves are at depth `6`

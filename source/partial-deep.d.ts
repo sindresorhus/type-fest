@@ -18,10 +18,10 @@ export type PartialDeepOptions = {
 	- When set to `true`, elements of non-tuple arrays can be `undefined`.
 	- When set to `false`, only explicitly defined elements are allowed in non-tuple arrays, ensuring stricter type checking.
 
-	@default true
+	@default false
 
 	@example
-	You can prevent `undefined` values in non-tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}` as the second type argument:
+	You can allow `undefined` values in non-tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}` as the second type argument:
 
 	```
 	import type {PartialDeep} from 'type-fest';
@@ -30,10 +30,9 @@ export type PartialDeepOptions = {
 		languages: string[];
 	};
 
-	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: false}>;
+	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>;
 
-	partialSettings.languages = [undefined]; // Error
-	partialSettings.languages = []; // Ok
+	partialSettings.languages = [undefined]; // OK
 	```
 	*/
 	readonly allowUndefinedInNonTupleArrays?: boolean;
@@ -41,7 +40,7 @@ export type PartialDeepOptions = {
 
 type DefaultPartialDeepOptions = {
 	recurseIntoArrays: false;
-	allowUndefinedInNonTupleArrays: true;
+	allowUndefinedInNonTupleArrays: false;
 };
 
 /**
@@ -55,19 +54,19 @@ Use-cases:
 ```
 import type {PartialDeep} from 'type-fest';
 
-const settings: Settings = {
+let settings = {
 	textEditor: {
 		fontSize: 14,
 		fontColor: '#000000',
-		fontWeight: 400
+		fontWeight: 400,
 	},
 	autocomplete: false,
-	autosave: true
+	autosave: true,
 };
 
-const applySavedSettings = (savedSettings: PartialDeep<Settings>) => {
-	return {...settings, ...savedSettings};
-}
+const applySavedSettings = (savedSettings: PartialDeep<typeof settings>) => (
+	{...settings, ...savedSettings, textEditor: {...settings.textEditor, ...savedSettings.textEditor}}
+);
 
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
@@ -77,13 +76,15 @@ By default, this does not affect elements in array and tuple types. You can chan
 ```
 import type {PartialDeep} from 'type-fest';
 
-type Settings = {
-	languages: string[];
-}
-
-const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true}> = {
-	languages: [undefined]
+type Shape = {
+	dimensions: [number, number];
 };
+
+const partialShape: PartialDeep<Shape, {recurseIntoArrays: true}> = {
+	dimensions: [], // OK
+};
+
+partialShape.dimensions = [15]; // OK
 ```
 
 @see {@link PartialDeepOptions}

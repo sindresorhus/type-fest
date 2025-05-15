@@ -1,6 +1,6 @@
 import type {IsEqual} from './is-equal.d.ts';
 import type {ConditionalExcept} from './conditional-except.d.ts';
-import type {ConditionalSimplifyDeep} from './conditional-simplify.d.ts';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
 import type {EmptyObject} from './empty-object.d.ts';
 import type {ApplyDefaultOptions, IsPlainObject} from './internal/index.d.ts';

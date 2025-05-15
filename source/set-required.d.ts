@@ -1,5 +1,6 @@
 import type {Except} from './except.d.ts';
-import type {HomomorphicPick, IfArrayReadonly} from './internal/index.d.ts';
+import type {If} from './if.js';
+import type {HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -36,7 +37,7 @@ type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
 	BaseType extends UnknownArray
 		? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
-			? IfArrayReadonly<BaseType, Readonly<ResultantArray>, ResultantArray>
+			? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
 			: never
 		: Simplify<
 		// Pick just the keys that are optional from the base type.

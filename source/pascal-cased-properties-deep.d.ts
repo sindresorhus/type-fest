@@ -40,6 +40,14 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
+
+const preserveConsecutiveUppercase: PascalCasedPropertiesDeep<{fooBAR: {fooBARBiz: [{fooBARBaz: string}]}}, {preserveConsecutiveUppercase: true}> = {
+	FooBAR: {
+		FooBARBiz: [{
+			FooBARBaz: 'string',
+		}],
+	},
+};
 ```
 
 @category Change case

@@ -1,32 +1,48 @@
 /**
-Simplifies a type while including and/or excluding certain types from being simplified. Useful to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+Simplifies a type while including and/or excluding certain types from being simplified.
 
-This type is **experimental** and was introduced as a result of this {@link https://github.com/sindresorhus/type-fest/issues/436 issue}. It should be used with caution.
+Useful to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 
-@internal
-@experimental
-@see Simplify
+@example
+```
+import type {ConditionalSimplify} from 'type-fest';
+
+type TypeA = {
+	a: string
+};
+
+type TypeB = {
+	b: string
+};
+
+type TypeAB = TypeA & TypeB;
+//=> {a: string} & {b: string}
+
+type SimplifyTypeAB = ConditionalSimplify<TypeAB, never, object>;
+//=> {a: string, b: string}
+```
+
+@example
+```
+import type {ConditionalSimplify} from 'type-fest';
+
+type Simplify<T> = ConditionalSimplify<T, Set<unknown> | Map<unknown, unknown> | unknown[], object>;
+
+type A = Simplify<Set<number> & Set<string>>;
+//=> Set<number> & Set<string>
+
+type B = Simplify<Map<number, number> & Map<string, string>>;
+//=> Map<number, number> & Map<string, string>
+
+type C = Simplify<{a: number} & {b: string}>;
+//=> {a: number, b: string}
+```
+
+@see ConditionalSimplifyDeep
 @category Object
 */
 export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
 	? Type
 	: Type extends IncludeType
 		? {[TypeKey in keyof Type]: Type[TypeKey]}
-		: Type;
-
-/**
-Recursively simplifies a type while including and/or excluding certain types from being simplified.
-
-This type is **experimental** and was introduced as a result of this {@link https://github.com/sindresorhus/type-fest/issues/436 issue}. It should be used with caution.
-
-See {@link ConditionalSimplify} for usages and examples.
-
-@internal
-@experimental
-@category Object
-*/
-export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
-	? Type
-	: Type extends IncludeType
-		? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
 		: Type;

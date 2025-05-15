@@ -2,7 +2,8 @@
 export type * from './source/primitive.d.ts';
 export type * from './source/typed-array.d.ts';
 export type * from './source/basic.d.ts';
-export type * from './source/observable-like.d.ts';
+export type * from './source/json-value.d.ts';
+export type * from './source/characters.d.ts';
 
 // Utilities
 export type {KeysOfUnion} from './source/keys-of-union.d.ts';
@@ -145,6 +146,8 @@ export type {And} from './source/and.d.ts';
 export type {Or} from './source/or.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
 export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type.d.ts';
+export type {If} from './source/if.d.ts';
+export type {IsUnion} from './source/is-union.d.ts';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case.d.ts';
@@ -172,6 +175,8 @@ export type {StringRepeat} from './source/string-repeat.d.ts';
 export type {Includes} from './source/includes.d.ts';
 export type {Get} from './source/get.d.ts';
 export type {LastArrayElement} from './source/last-array-element.d.ts';
+export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
+export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
