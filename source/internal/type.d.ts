@@ -98,7 +98,7 @@ type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 ```
 */
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
-If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
+	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
 
 /**
 Return the value of exactOptionalPropertyTypes option in tsconfig
