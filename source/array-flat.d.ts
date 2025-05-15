@@ -135,16 +135,16 @@ T extends UnknownArray
 		: T extends readonly [infer ArrayItem, ...infer Last]
 			?	[ArrayItem] extends [UnknownArray]
 				? number extends ArrayLength<ArrayItem>
-					? InternalNonFixedLengthArrayFlat<ArrayItem, Depth> extends infer Item extends UnknownArray
-						? InternalFixedLengthArrayFlat<Last, Depth, [...Result, ...Item]>
-						: never // Never happens, just for fixed ts error TS2589: Type instantiation is excessively deep and possibly infinite.
-					: [RequiredPartOfArray<ArrayItem>, OptionalPartOfArray<ArrayItem>] extends [infer RequiredPart, infer OptionalPart]
-						? InternalArrayFlat<
-						Last,
-						Depth,
-						[...Result, ...InternalArrayFlat<RequiredPart, Subtract<Depth, 1>>, ...(InternalArrayFlat<OptionalPart, Subtract<Depth, 1>> | [])]
-						>
-						: never // Never happens
+					? InternalFixedLengthArrayFlat<Last, Depth, [...Result, ...InternalNonFixedLengthArrayFlat<ArrayItem, Depth>]>
+					: InternalArrayFlat<
+					Last,
+					Depth,
+					[
+						...Result,
+						...InternalArrayFlat<RequiredPartOfArray<ArrayItem>, Subtract<Depth, 1>>,
+						...(InternalArrayFlat<OptionalPartOfArray<ArrayItem>, Subtract<Depth, 1>> | []),
+					]
+					>
 				: InternalInnerFixedLengthArrayFlat<Last, Depth, [...Result, ArrayItem]>
 			: [...Result, ...T]
 	: [];
@@ -158,9 +158,7 @@ type InternalInnerFixedLengthArrayFlat<
 [T] extends [UnknownArray]
 	? Or<IsZero<ArrayLength<T>>, IsZero<Depth>> extends true
 		? [...Result, ...T]
-		: [RequiredPartOfArray<T>, OptionalPartOfArray<T>] extends [infer RequiredPart, infer OptionalPart]
-			? [...Result, ...InternalArrayFlat<RequiredPart, Depth>, ...(InternalArrayFlat<OptionalPart, Depth> | [])]
-			: never // Never happens
+		: [...Result, ...InternalArrayFlat<RequiredPartOfArray<T>, Depth>, ...(InternalArrayFlat< OptionalPartOfArray<T>, Depth> | [])]
 	: [];
 
 /**
@@ -210,31 +208,36 @@ type A = BuildRepeatedUnionArray<[number, string?], 2, true>;
 | [number, string, number, string]
 ```
 */
-type BuildRepeatedUnionArray<T extends UnknownArray, RepeatNumber extends number, CanSpread extends boolean = false, R extends unknown[] = []> =
+type BuildRepeatedUnionArray<
+	T extends UnknownArray,
+	RepeatNumber extends number,
+	CanSpread extends boolean = false,
+	R extends unknown[] = [],
+	RequiredPart extends UnknownArray = RequiredPartOfArray<T>,
+	OptionalPart extends UnknownArray = OptionalPartOfArray<T>,
+> =
 RepeatNumber extends 0
 	? R
-	: [RequiredPartOfArray<T>, OptionalPartOfArray<T>] extends [infer RequiredPart extends UnknownArray, infer OptionalPart extends UnknownArray]
-		? ExactOptionalPropertyTypesEnable extends true
-			? R
-			| RequiredPart
-			| (And<IsEqual<RequiredPart['length'], 1>, CanSpread> extends true
-				? Array<RequiredPart[number]>
-				: never)
-			| BuildRepeatedUnionArray<
-			T,
-			Subtract<RepeatNumber, 1>,
-			CanSpread,
-			[
-				...R,
-				...(
-					ExactOptionalPropertyTypesEnable extends true
-						? [
-							...RequiredPart,
-							...(IsZero<ArrayLength<OptionalPart>> extends true ? [] : [Exclude<OptionalPart[number], undefined>] | []),
-						]
-						: T
-				),
-			]
-			>
-			: never
+	: ExactOptionalPropertyTypesEnable extends true
+		? R
+		| RequiredPart
+		| (And<IsEqual<RequiredPart['length'], 1>, CanSpread> extends true
+			? Array<RequiredPart[number]>
+			: never)
+		| BuildRepeatedUnionArray<
+		T,
+		Subtract<RepeatNumber, 1>,
+		CanSpread,
+		[
+			...R,
+			...(
+				ExactOptionalPropertyTypesEnable extends true
+					? [
+						...RequiredPart,
+						...(IsZero<ArrayLength<OptionalPart>> extends true ? [] : [Exclude<OptionalPart[number], undefined>] | []),
+					]
+					: T
+			),
+		]
+		>
 		: never;
