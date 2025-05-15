@@ -15,4 +15,14 @@ IsLowercase<string>;
 //=> boolean
 ```
 */
-export type IsLowercase<T extends string> = T extends Lowercase<T> ? true : false;
+export type IsLowercase<T extends string> = [T] extends [string]
+	? string extends T
+		? boolean
+		: T extends T
+			? T extends `${infer F}${infer R}`
+				? F extends Lowercase<F>
+					? IsLowercase<R>
+					: false
+				: true
+			: boolean
+	: never;

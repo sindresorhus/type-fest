@@ -15,4 +15,14 @@ IsUppercase<string>;
 //=> boolean
 ```
 */
-export type IsUppercase<T extends string> = T extends Uppercase<T> ? true : false;
+export type IsUppercase<T extends string> = [T] extends [string]
+	? string extends T
+		? boolean
+		: T extends T
+			? T extends `${infer F}${infer R}`
+				? F extends Uppercase<F>
+					? IsUppercase<R>
+					: false
+				: true
+			: boolean
+	: never;
