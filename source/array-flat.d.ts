@@ -173,7 +173,7 @@ type InternalInnerFixedLengthArrayFlat<
 Replaces items with the RepeatSymbol flag to the true result.
 */
 type DoRepeatArrayItem<T, RepeatNumber extends number, hasSpreadArray extends boolean = false> =
-T extends [infer _Item, ...infer Last]
+T extends readonly [infer _Item, ...infer Last]
 	? [_Item] extends [{[RepeatSymbol]: infer Item extends UnknownArray}]
 		? IsZero<Item['length']> extends true
 			? DoRepeatArrayItem<Last, RepeatNumber>

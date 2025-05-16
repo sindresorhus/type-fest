@@ -32,6 +32,61 @@ It creates a type-safe way to access the element type of `unknown` type.
 export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
 
 /**
+Returns if the given array is a leading spread array.
+
+@example
+```
+type A = [...string[], number, boolean];
+type B = IsLeadingSpreadArray<A>;
+//=> true
+```
+*/
+export type IsLeadingSpreadArray<T extends UnknownArray> =
+number extends ArrayLength<T>
+	? T extends readonly [infer K, ...infer U, infer V]
+		? false
+		: T extends readonly [...infer U, infer V]
+			? true
+			: false
+	: false;
+
+/**
+Returns if the given array is a trailing spread array.
+
+@example
+```
+type A = [1, ...string[]];
+type B = IsTrailingSpreadArray<A>;
+//=> true
+```
+*/
+export type IsTrailingSpreadArray<T extends UnknownArray> =
+number extends ArrayLength<T>
+	? T extends readonly [infer K, ...infer U, infer V]
+		? false
+		: T extends readonly [infer U, ...infer V]
+			? true
+			: false
+	: false;
+
+/**
+Returns if the given array is a middle spread array.
+
+@example
+```
+type A = [1, ...string[], 3];
+type B = IsMiddleSpreadArray<A>;
+//=> true
+```
+*/
+export type IsMiddleSpreadArray<T extends UnknownArray> =
+number extends ArrayLength<T>
+	? T extends readonly [infer K, ...infer U, infer V]
+		? true
+		: false
+	: false;
+
+/**
  Returns the required part of the given array.
 
  @example
@@ -98,40 +153,6 @@ export type VariablePartOfArray<T extends UnknownArray> =
 		: never; // Should never happen
 
 /**
-Returns if the given array is a leading spread array.
-*/
-export type IsLeadingSpreadArray<T extends UnknownArray> =
-number extends ArrayLength<T>
-	? T extends [infer K, ...infer U, infer V]
-		? false
-		: T extends [...infer U, infer V]
-			? true
-			: false
-	: false;
-
-/**
-Returns if the given array is a trailing spread array.
-*/
-export type IsTrailingSpreadArray<T extends UnknownArray> =
-number extends ArrayLength<T>
-	? T extends [infer K, ...infer U, infer V]
-		? false
-		: T extends [infer U, ...infer V]
-			? true
-			: false
-	: false;
-
-/**
-Returns if the given array is a middle spread array.
-*/
-export type IsMiddleSpreadArray<T extends UnknownArray> =
-number extends ArrayLength<T>
-	? T extends [infer K, ...infer U, infer V]
-		? true
-		: false
-	: false;
-
-/**
 Returns the static, fixed-length portion of the given leading spread array.
 @example
 ```
@@ -140,8 +161,8 @@ type B = StaticPartOfLeadingSpreadArray<A>;
 //=> [number, boolean]
 ```
 */
-type StaticPartOfLeadingSpreadArray<T extends UnknownArray, Result extends UnknownArray = []> =
-	T extends [...infer U, infer V]
+export type StaticPartOfLeadingSpreadArray<T extends UnknownArray, Result extends UnknownArray = []> =
+	T extends readonly [...infer U, infer V]
 		? StaticPartOfLeadingSpreadArray<U, [V, ...Result]>
 		: Result;
 
@@ -155,7 +176,7 @@ type B = VariablePartOfLeadingSpreadArray<A>;
 ```
 */
 export type VariablePartOfLeadingSpreadArray<T extends UnknownArray> =
-	T extends [...infer U, ...StaticPartOfLeadingSpreadArray<T>]
+	T extends readonly [...infer U, ...StaticPartOfLeadingSpreadArray<T>]
 		? U
 		: never;
 
@@ -168,7 +189,7 @@ export type TrailingStaticPartOfMiddleSpreadArray<T extends UnknownArray> = Stat
 Returns the leading variable, non-fixed-length portion of the given middle spread array.
 */
 export type LeadingStaticPartOfMiddleSpreadArray<T extends UnknownArray, Result extends UnknownArray = []> =
-	T extends [infer U, ...infer V]
+	T extends readonly [infer U, ...infer V]
 		? LeadingStaticPartOfMiddleSpreadArray<V, [...Result, U]>
 		: Result;
 
@@ -180,7 +201,7 @@ export type VariablePartOfMiddleSpreadArray<
 	LeadingStaticPart extends UnknownArray = LeadingStaticPartOfMiddleSpreadArray<T>,
 	TrailingStaticPart extends UnknownArray = TrailingStaticPartOfMiddleSpreadArray<T>,
 > =
-	T extends [...LeadingStaticPart, ...infer U, ...TrailingStaticPart]
+	T extends readonly [...LeadingStaticPart, ...infer U, ...TrailingStaticPart]
 		? U
 		: never;
 
