@@ -2,6 +2,8 @@ import {expectType} from 'tsd';
 import type {IsTrailingSpreadArray} from '../../source/internal/array.js';
 
 expectType<IsTrailingSpreadArray<[1, 2, 3]>>(false);
+expectType<IsTrailingSpreadArray<readonly [1, 2, 3]>>(false);
+expectType<IsTrailingSpreadArray<[1, 2, 3?]>>(false);
 expectType<IsTrailingSpreadArray<[number, number]>>(false);
 expectType<IsTrailingSpreadArray<[1, ...string[], 3]>>(false);
 expectType<IsTrailingSpreadArray<[...string[], 1]>>(false);

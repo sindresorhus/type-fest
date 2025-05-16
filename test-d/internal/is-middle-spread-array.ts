@@ -2,6 +2,8 @@ import {expectType} from 'tsd';
 import type {IsMiddleSpreadArray} from '../../source/internal/array.js';
 
 expectType<IsMiddleSpreadArray<[1, 2, 3]>>(false);
+expectType<IsMiddleSpreadArray<readonly [1, 2, 3]>>(false);
+expectType<IsMiddleSpreadArray<[1, 2, 3?]>>(false);
 expectType<IsMiddleSpreadArray<[number, number]>>(false);
 expectType<IsMiddleSpreadArray<[...string[], 1]>>(false);
 expectType<IsMiddleSpreadArray<[...string[], string]>>(false);
