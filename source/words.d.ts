@@ -1,10 +1,10 @@
 import type {
 	ApplyDefaultOptions,
-	IsLowerCase,
 	IsNumeric,
-	IsUpperCase,
 	WordSeparators,
 } from './internal/index.d.ts';
+import type {IsLowercase} from './is-lowercase.d.ts';
+import type {IsUppercase} from './is-uppercase.d.ts';
 
 type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
 
@@ -108,10 +108,10 @@ type WordsImplementation<
 					: [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
 						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 					// Case change: lower to upper, push word
-						: [true, true] extends [IsLowerCase<LastCharacter>, IsUpperCase<FirstCharacter>]
+						: [true, true] extends [IsLowercase<LastCharacter>, IsUppercase<FirstCharacter>]
 							? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
 						// Case change: upper to lower, brings back the last character, push word
-							: [true, true] extends [IsUpperCase<LastCharacter>, IsLowerCase<FirstCharacter>]
+							: [true, true] extends [IsUppercase<LastCharacter>, IsLowercase<FirstCharacter>]
 								? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
 							// No case change: concat word
 								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>

@@ -93,3 +93,31 @@ T extends readonly [...infer U] ?
 Returns whether the given array `T` is readonly.
 */
 export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
+
+/**
+Returns a boolean for whether every element in an array type extends another type.
+
+Note: This type is not designed to be used with non-tuple arrays (like `number[]`), tuples with optional elements (like `[1?, 2?, 3?]`), or tuples that contain a rest element (like `[1, 2, ...number[]]`).
+
+@example
+```
+import type {Every} from 'type-fest';
+
+type A = Every<[1, 2, 3], number>;
+//=> true
+
+type B = Every<[1, 2, '3'], number>;
+//=> false
+
+type C = Every<[number, number | string], number>;
+//=> boolean
+
+type D = Every<[true, boolean, true], true>;
+//=> boolean
+```
+*/
+export type Every<TArray extends UnknownArray, Type> = TArray extends readonly [infer First, ...infer Rest]
+	? First extends Type
+		? Every<Rest, Type>
+		: false
+	: true;
