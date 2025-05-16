@@ -1,3 +1,5 @@
+import type {Every} from './internal/array.js';
+
 /**
 Returns a boolean for whether the given string literal is uppercase.
 
@@ -15,14 +17,14 @@ IsUppercase<string>;
 //=> boolean
 ```
 */
-export type IsUppercase<T extends string> = [T] extends [string]
-	? string extends T
-		? boolean
-		: T extends T
-			? T extends `${infer F}${infer R}`
-				? F extends Uppercase<F>
-					? IsUppercase<R>
-					: false
-				: true
-			: boolean
-	: never;
+export type IsUppercase<S extends string> = Every<_IsUppercase<S>, true>;
+
+type _IsUppercase<S extends string, Accumulator extends boolean[] = []> = S extends `${infer First}${infer Rest}`
+	? _IsUppercase<Rest, [...Accumulator, IsUppercaseHelper<First>]>
+	: [...Accumulator, IsUppercaseHelper<S>];
+
+type IsUppercaseHelper<S extends string> = S extends Uppercase<string>
+	? true
+	: S extends Lowercase<string> | Uncapitalize<string> | `${string}${Lowercase<string>}${string}`
+		? false
+		: boolean;
