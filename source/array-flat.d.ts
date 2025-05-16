@@ -1,5 +1,5 @@
 import type {And} from './and.d.ts';
-import type {ArrayLength, ExactOptionalPropertyTypesEnable, IsLeadingSpreadArray, IsTrailingSpreadArray, Not, OptionalPartOfArray, RequiredPartOfArray, StaticPartOfArray, StaticPartOfLeadingSpreadArray, VariablePartOfArray, VariablePartOfLeadingSpreadArray} from './internal/index.d.ts';
+import type {ArrayLength, ExactOptionalPropertyTypesEnable, IsLeadingSpreadArray, IsMiddleSpreadArray, IsTrailingSpreadArray, LeadingStaticPartOfMiddleSpreadArray, Not, OptionalPartOfStaticArray, RequiredPartOfStaticArray, StaticPartOfArray, StaticPartOfLeadingSpreadArray, TrailingStaticPartOfMiddleSpreadArray, VariablePartOfArray, VariablePartOfLeadingSpreadArray, VariablePartOfMiddleSpreadArray} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {Or} from './or.d.ts';
 import type {Subtract} from './subtract.d.ts';
@@ -111,16 +111,24 @@ T extends UnknownArray
 					...InternalNonFixedLengthArrayFlat<VariablePartOfLeadingSpreadArray<T>, Depth>,
 					...InternalFixedLengthArrayFlat<StaticPartOfLeadingSpreadArray<T>, Depth>,
 				]
-				// Handle non-spread and non-fixed-length array
-				: [
-					T[number] extends UnknownArray
-						? InternalArrayFlat<T[number], Subtract<Depth, 1>, Result>
-						: [T[number]],
-				] extends [infer Item extends UnknownArray]
-					? Item extends [{[RepeatSymbol]: unknown}]
-						? Item
-						: [{[RepeatSymbol]: Item}]
-					: never // Never happens
+				// Handle middle spread array
+				: IsMiddleSpreadArray<T> extends true
+					? [
+						...Result,
+						...InternalFixedLengthArrayFlat<LeadingStaticPartOfMiddleSpreadArray<T>, Depth>,
+						...InternalNonFixedLengthArrayFlat<VariablePartOfMiddleSpreadArray<T>, Depth>,
+						...InternalFixedLengthArrayFlat<TrailingStaticPartOfMiddleSpreadArray<T>, Depth>,
+					]
+					// Handle non-spread and non-fixed-length array
+					: [
+						T[number] extends UnknownArray
+							? InternalArrayFlat<T[number], Subtract<Depth, 1>, Result>
+							: [T[number]],
+					] extends [infer Item extends UnknownArray]
+						? Item extends [{[RepeatSymbol]: unknown}]
+							? Item
+							: [{[RepeatSymbol]: Item}]
+						: never // Never happens
 	: T;
 
 // Handle fixed length arrays
@@ -141,8 +149,8 @@ T extends UnknownArray
 					Depth,
 					[
 						...Result,
-						...InternalArrayFlat<RequiredPartOfArray<ArrayItem>, Subtract<Depth, 1>>,
-						...(InternalArrayFlat<OptionalPartOfArray<ArrayItem>, Subtract<Depth, 1>> | []),
+						...InternalArrayFlat<RequiredPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>>,
+						...(InternalArrayFlat<OptionalPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>> | []),
 					]
 					>
 				: InternalInnerFixedLengthArrayFlat<Last, Depth, [...Result, ArrayItem]>
@@ -158,7 +166,7 @@ type InternalInnerFixedLengthArrayFlat<
 [T] extends [UnknownArray]
 	? Or<IsZero<ArrayLength<T>>, IsZero<Depth>> extends true
 		? [...Result, ...T]
-		: [...Result, ...InternalArrayFlat<RequiredPartOfArray<T>, Depth>, ...(InternalArrayFlat< OptionalPartOfArray<T>, Depth> | [])]
+		: [...Result, ...InternalArrayFlat<RequiredPartOfStaticArray<T>, Depth>, ...(InternalArrayFlat< OptionalPartOfStaticArray<T>, Depth> | [])]
 	: [];
 
 /**
@@ -213,8 +221,8 @@ type BuildRepeatedUnionArray<
 	RepeatNumber extends number,
 	CanSpread extends boolean = false,
 	R extends unknown[] = [],
-	RequiredPart extends UnknownArray = RequiredPartOfArray<T>,
-	OptionalPart extends UnknownArray = OptionalPartOfArray<T>,
+	RequiredPart extends UnknownArray = RequiredPartOfStaticArray<T>,
+	OptionalPart extends UnknownArray = OptionalPartOfStaticArray<T>,
 > =
 RepeatNumber extends 0
 	? R
