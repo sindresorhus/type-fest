@@ -20,34 +20,6 @@
 			<sup>Special thanks to:</sup>
 			<br>
 			<br>
-			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
-				</div>
-				<b>Your app, enterprise-ready.</b>
-				<div>
-					<sub>Start selling to enterprise customers with just a few lines of code.</sub>
-					<br>
-					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
-				</div>
-			</a>
-			<br>
-			<br>
-			<a href="https://logto.io/?ref=sindre">
-				<div>
-					<picture>
-						<source width="200" media="(prefers-color-scheme: dark)" srcset="https://sindresorhus.com/assets/thanks/logto-logo-dark.svg?x">
-						<source width="200" media="(prefers-color-scheme: light)" srcset="https://sindresorhus.com/assets/thanks/logto-logo-light.svg?x">
-						<img width="200" src="https://sindresorhus.com/assets/thanks/logto-logo-light.svg?x" alt="Logto logo">
-					</picture>
-				</div>
-				<b>The better identity infrastructure for developers</b>
-				<div>
-					<sup>Logto is an open-source Auth0 alternative designed for every app.</sup>
-				</div>
-			</a>
-			<br>
-			<br>
 			<a href="https://nitric.io/?utm_campaign=github_repo&utm_medium=referral&utm_content=sindresorhus&utm_source=github">
 				<div>
 					<img width="230" src="https://sindresorhus.com/assets/thanks/nitric-logo.svg" alt="nitric logo">
