@@ -39,6 +39,7 @@ export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './sour
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep.d.ts';
 export type {ReadonlyDeep} from './source/readonly-deep.d.ts';
 export type {LiteralUnion} from './source/literal-union.d.ts';
+export type {LoosenUnion} from './source/loosen-union.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';
 export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged.d.ts';
