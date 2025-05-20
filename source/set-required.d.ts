@@ -35,6 +35,12 @@ type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 @category Object
 */
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
+	(BaseType extends (...arguments_: never) => any
+		? (...arguments_: Parameters<BaseType>) => ReturnType<BaseType>
+		: unknown)
+	& _SetRequired<BaseType, Keys>;
+
+type _SetRequired<BaseType, Keys extends keyof BaseType> =
 	BaseType extends UnknownArray
 		? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
 			? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
