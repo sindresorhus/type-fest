@@ -6,6 +6,7 @@ import type {
 	IsBooleanLiteral,
 	IsSymbolLiteral,
 	Tagged,
+	LiteralUnion,
 } from '../index.d.ts';
 
 const stringLiteral = '';
@@ -78,6 +79,14 @@ expectType<IsStringLiteral<Lowercase<'xyz'> | Capitalize<'abc'>>>(true);
 expectType<IsStringLiteral<Uppercase<string> | 'abc'>>({} as boolean);
 expectType<IsStringLiteral<Lowercase<string> | 'Abc'>>({} as boolean);
 expectType<IsStringLiteral<null | '1' | '2' | '3'>>({} as boolean);
+expectType<IsStringLiteral<1 | 2 | '3'>>({} as boolean);
+expectType<IsStringLiteral<'foo' | 'bar' | number>>({} as boolean);
+
+// Types other than string return `false`
+expectType<IsStringLiteral<bigint>>(false);
+expectType<IsStringLiteral<1 | 2 | 3>>(false);
+expectType<IsStringLiteral<object>>(false);
+expectType<IsStringLiteral<false | undefined | null>>(false);
 
 // Boundary types
 expectType<IsStringLiteral<any>>(false);
@@ -106,7 +115,18 @@ type A3 = IsBooleanLiteral;
 // @ts-expect-error
 type A4 = IsSymbolLiteral;
 
-// Tagged types should be false
+// Tagged types
 expectType<IsStringLiteral<Tagged<string, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<Uppercase<string>, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<number, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'>>>(true);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar' | `on${string}`, 'Tag'>>>({} as boolean);
+expectType<IsStringLiteral<Tagged<'1st' | '2nd' | '3rd' | number, 'Tag'>>>({} as boolean);
+
+expectType<IsStringLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<'foo', 'Tag'> | Tagged<'bar', 'Tag'>>>(true);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>({} as boolean);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>({} as boolean);
+
 expectType<IsNumericLiteral<Tagged<number, 'Tag'>>>(false);
 expectType<IsBooleanLiteral<Tagged<boolean, 'Tag'>>>(false);
