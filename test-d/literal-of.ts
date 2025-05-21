@@ -1,13 +1,13 @@
 import {expectType} from 'tsd';
-import type {LoosenUnion, LiteralUnion, IsEqual, Tagged} from '../index.d.ts';
+import type {LiteralOf, LiteralUnion, IsEqual, Tagged} from '../index.js';
 
 // For Strings:
 
 type Events = LiteralUnion<'hover' | 'click' | `click-${number}`, string>;
 //   ^?
-type EventsLiteralNonStrict = LoosenUnion<Events>;
+type EventsLiteralStrict = LiteralOf<Events>;
 //   ^?
-type EventsLiteralStrict = LoosenUnion<Events, true>;
+type EventsLiteralNonStrict = LiteralOf<Events, false>;
 //   ^?
 
 expectType<IsEqual<'hover' | 'click' | `click-${number}`, EventsLiteralNonStrict>>(true);
@@ -20,7 +20,7 @@ expectType<IsEqual<'hover' | 'click', EventsLiteralNonStrict>>(false);
 
 type Nums = LiteralUnion<0 | 1 | 2, number>;
 //   ^?
-type NumsLiteral = LoosenUnion<Nums>;
+type NumsLiteral = LiteralOf<Nums>;
 //   ^?
 
 expectType<IsEqual<0 | 1 | 2, NumsLiteral>>(true);
@@ -36,7 +36,7 @@ type Symbol2 = typeof symbol2;
 
 type Symbols = LiteralUnion<Symbol1 | Symbol2, symbol>;
 //   ^?
-type SymbolsLiteral = LoosenUnion<Symbols>;
+type SymbolsLiteral = LiteralOf<Symbols>;
 //   ^?
 
 expectType<IsEqual<Symbol1 | Symbol2, SymbolsLiteral>>(true);
@@ -46,7 +46,7 @@ expectType<IsEqual<Symbol1 | Symbol2, Symbols>>(false);
 
 type Big = LiteralUnion<1n | 2n, bigint>;
 //   ^?
-type BigLiteral = LoosenUnion<Big>;
+type BigLiteral = LiteralOf<Big>;
 //   ^?
 
 expectType<IsEqual<1n | 2n, BigLiteral>>(true);
@@ -59,12 +59,12 @@ type AnimalsStrict = Exclude<Animals, `${string}Dog`>;
 
 type TaggedUnion = LiteralUnion<Animals, string>;
 //   ^?
-type TaggedLiteral = LoosenUnion<TaggedUnion>;
+type TaggedStrict = LiteralOf<TaggedUnion>;
 //   ^?
-type TaggedStrict = LoosenUnion<TaggedUnion, true>;
+type TaggedNonStrict = LiteralOf<TaggedUnion, false>;
 //   ^?
 
-expectType<IsEqual<Animals, TaggedLiteral>>(true);
+expectType<IsEqual<Animals, TaggedNonStrict>>(true);
 expectType<IsEqual<AnimalsStrict, TaggedStrict>>(true);
 
 expectType<IsEqual<Animals, TaggedUnion>>(false);
