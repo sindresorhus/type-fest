@@ -1,13 +1,13 @@
 import {expectType} from 'tsd';
-import type {LiteralOf, LiteralUnion, IsEqual, Tagged} from '../index.js';
+import type {ExtractLiterals, LiteralUnion, IsEqual, Tagged} from '../index.js';
 
 // For Strings:
 
-type Events = LiteralUnion<'hover' | 'click' | `click-${number}`, string>;
+type Events = 'hover' | 'click' | `click-${number}` | (string & {});
 //   ^?
-type EventsLiteralStrict = LiteralOf<Events>;
+type EventsLiteralStrict = ExtractLiterals<Events>;
 //   ^?
-type EventsLiteralNonStrict = LiteralOf<Events, false>;
+type EventsLiteralNonStrict = ExtractLiterals<Events, {strict: false}>;
 //   ^?
 
 expectType<IsEqual<'hover' | 'click' | `click-${number}`, EventsLiteralNonStrict>>(true);
@@ -20,7 +20,7 @@ expectType<IsEqual<'hover' | 'click', EventsLiteralNonStrict>>(false);
 
 type Nums = LiteralUnion<0 | 1 | 2, number>;
 //   ^?
-type NumsLiteral = LiteralOf<Nums>;
+type NumsLiteral = ExtractLiterals<Nums>;
 //   ^?
 
 expectType<IsEqual<0 | 1 | 2, NumsLiteral>>(true);
@@ -36,7 +36,7 @@ type Symbol2 = typeof symbol2;
 
 type Symbols = LiteralUnion<Symbol1 | Symbol2, symbol>;
 //   ^?
-type SymbolsLiteral = LiteralOf<Symbols>;
+type SymbolsLiteral = ExtractLiterals<Symbols>;
 //   ^?
 
 expectType<IsEqual<Symbol1 | Symbol2, SymbolsLiteral>>(true);
@@ -46,7 +46,7 @@ expectType<IsEqual<Symbol1 | Symbol2, Symbols>>(false);
 
 type Big = LiteralUnion<1n | 2n, bigint>;
 //   ^?
-type BigLiteral = LiteralOf<Big>;
+type BigLiteral = ExtractLiterals<Big>;
 //   ^?
 
 expectType<IsEqual<1n | 2n, BigLiteral>>(true);
@@ -59,9 +59,9 @@ type AnimalsStrict = Exclude<Animals, `${string}Dog`>;
 
 type TaggedUnion = LiteralUnion<Animals, string>;
 //   ^?
-type TaggedStrict = LiteralOf<TaggedUnion>;
+type TaggedStrict = ExtractLiterals<TaggedUnion>;
 //   ^?
-type TaggedNonStrict = LiteralOf<TaggedUnion, false>;
+type TaggedNonStrict = ExtractLiterals<TaggedUnion, {strict: false}>;
 //   ^?
 
 expectType<IsEqual<Animals, TaggedNonStrict>>(true);
@@ -69,3 +69,20 @@ expectType<IsEqual<AnimalsStrict, TaggedStrict>>(true);
 
 expectType<IsEqual<Animals, TaggedUnion>>(false);
 expectType<IsEqual<AnimalsStrict, TaggedUnion>>(false);
+
+type _LiteralUnion = 'dog' | 'cat' | `${string}Dog`;
+type _Alimals = Tagged<_LiteralUnion, 'alimals'>;
+type _AlimalsStrict = Exclude<_Alimals, `${string}Dog`>;
+
+type _TaggedUnion = LiteralUnion<_Alimals, string>;
+//   ^?
+type _TaggedStrict = ExtractLiterals<_TaggedUnion>;
+//   ^?
+type _TaggedNonStrict = ExtractLiterals<_TaggedUnion, {strict: false}>;
+//   ^?
+
+expectType<IsEqual<_Alimals, _TaggedNonStrict>>(true);
+expectType<IsEqual<_AlimalsStrict, _TaggedStrict>>(true);
+
+expectType<IsEqual<_Alimals, _TaggedUnion>>(false);
+expectType<IsEqual<_AlimalsStrict, _TaggedUnion>>(false);
