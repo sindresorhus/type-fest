@@ -122,6 +122,7 @@ Click the type names for complete docs.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
+- [`ExtractLiterals`](source/literal-of.d.ts) - Creates a union of the literal members from a given union type, removing wide primitive or infinite types, and optionally specify the Strictness.
 - [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf). (This replaces the previous [`Opaque`](source/tagged.d.ts) type, which is now deprecated.)
 - [`UnwrapTagged`](source/tagged.d.ts) - Get the untagged portion of a tagged type created with `Tagged`. (This replaces the previous [`UnwrapOpaque`](source/tagged.d.ts) type, which is now deprecated.)
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
@@ -189,10 +190,15 @@ Click the type names for complete docs.
 
 - [`If`](source/if.d.ts) - An if-else-like type that resolves depending on whether the given `boolean` type is `true` or `false`.
 - [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+- [`IsPrimitive`](source/is-primitive.d.ts) - Returns a boolean for whether the given type is strictly a [primitive type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#the-primitives-string-number-and-boolean).
 - [`IsStringLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+- [`IsStringPrimitive`](source/is-primitive.d.ts) - Returns a boolean for whether the given type is strictly a `string` [primitive type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#the-primitives-string-number-and-boolean).
+- [`IsNumericPrimitive`](source/is-primitive.d.ts) - Returns a boolean for whether the given type is strictly a `number` or `bigint` [primitive type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#the-primitives-string-number-and-boolean).
+- [`IsBooleanPrimitive`](source/is-primitive.d.ts) - Returns a boolean for whether the given type is strictly a `true` or `false` [primitive type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#the-primitives-string-number-and-boolean).
+- [`IsSymbolPrimitive`](source/is-primitive.d.ts) - Returns a boolean for whether the given type is strictly a `symbol` [primitive type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#the-primitives-string-number-and-boolean).
 - [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`.
 - [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`.
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.

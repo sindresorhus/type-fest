@@ -1,8 +1,10 @@
-import type {Primitive} from './primitive.d.ts';
-import type {Numeric} from './numeric.d.ts';
-import type {CollapseLiterals, IfNotAnyOrNever, IsNotFalse, IsPrimitive} from './internal/index.d.ts';
-import type {IsNever} from './is-never.d.ts';
+import type {Extends, IsNotFalse, Not} from './internal/type.d.ts';
+import type {CollapseLiterals} from './internal/object.d.ts';
 import type {TagContainer, UnwrapTagged} from './tagged.js';
+import type {Primitive} from './primitive.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {Numeric} from './numeric.d.ts';
+import type {And} from './and.js';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.
@@ -24,11 +26,10 @@ LiteralCheck<1, string>
 type LiteralCheck<T, LiteralType extends Primitive> = (
 	IsNever<T> extends false // Must be wider than `never`
 		? [T] extends [LiteralType & infer U] // Remove any branding
-			? [U] extends [LiteralType] // Must be narrower than `LiteralType`
-				? [LiteralType] extends [U] // Cannot be wider than `LiteralType`
-					? false
-					: true
-				: false
+			? And<
+			Extends<U, LiteralType>, // Must be narrower than `LiteralType`
+			Not<Extends<LiteralType, U>> // Cannot be wider than `LiteralType`
+			>
 			: false
 		: false
 );
@@ -52,7 +53,8 @@ type LiteralChecks<T, LiteralUnionType> = (
 	// Conditional type to force union distribution.
 	// If `T` is none of the literal types in the union `LiteralUnionType`, then `LiteralCheck<T, LiteralType>` will evaluate to `false` for the whole union.
 	// If `T` is one of the literal types in the union, it will evaluate to `boolean` (i.e. `true | false`)
-	IsNotFalse<LiteralUnionType extends Primitive
+	IsNotFalse<
+	LiteralUnionType extends Primitive
 		? LiteralCheck<T, LiteralUnionType>
 		: never
 	>
@@ -111,21 +113,23 @@ type L2 = Length<`${number}`>;
 //=> number
 ```
 
+@see IsStringPrimitive
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<S> = IfNotAnyOrNever<S,
-_IsStringLiteral<CollapseLiterals<S extends TagContainer<any> ? UnwrapTagged<S> : S>>,
-false, false>;
-
-export type _IsStringLiteral<S> =
-// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
-// and since `{}` extends index signatures, the result becomes `false`.
-S extends string
-	? {} extends Record<S, never>
-		? false
-		: true
+export type IsStringLiteral<T> = IsNever<T> extends false
+	? _IsStringLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>>
 	: false;
+
+export type _IsStringLiteral<S> = (
+	// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
+	// and since `{}` extends index signatures, the result becomes `false`.
+	S extends string
+		? {} extends Record<S, never>
+			? false
+			: true
+		: false
+);
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -170,10 +174,13 @@ endsWith('abc123', end);
 //=> boolean
 ```
 
+@see IsNumericPrimitive
 @category Type Guard
 @category Utilities
 */
-export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
+export type IsNumericLiteral<T> = T extends Numeric
+	? LiteralChecks<T, Numeric>
+	: false;
 
 /**
 Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -210,6 +217,7 @@ const eitherId = getId({asString: runtimeBoolean});
 //=> number | string
 ```
 
+@see IsBooleanPrimitive
 @category Type Guard
 @category Utilities
 */
@@ -245,6 +253,7 @@ get({[symbolValue]: 1} as const, symbolValue);
 //=> number
 ```
 
+@see IsSymbolPrimitive
 @category Type Guard
 @category Utilities
 */
@@ -291,10 +300,12 @@ stripLeading(str, 'abc');
 //=> string
 ```
 
+@see IsPrimitive
 @category Type Guard
 @category Utilities
 */
-export type IsLiteral<T> =
-	IsPrimitive<T> extends true
+export type IsLiteral<T> = (
+	Extends<T, Primitive> extends true
 		? IsNotFalse<IsLiteralUnion<T>>
-		: false;
+		: false
+);
