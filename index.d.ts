@@ -39,7 +39,7 @@ export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './sour
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep.d.ts';
 export type {ReadonlyDeep} from './source/readonly-deep.d.ts';
 export type {LiteralUnion} from './source/literal-union.d.ts';
-export type {LiteralOf} from './source/literal-of.d.ts';
+export type {ExtractLiterals} from './source/extract-literals.js';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';
 export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged.d.ts';
@@ -117,12 +117,19 @@ export type {IntRange} from './source/int-range.d.ts';
 export type {IntClosedRange} from './source/int-closed-range.d.ts';
 export type {IsEqual} from './source/is-equal.d.ts';
 export type {
-	IsLiteral,
+    IsLiteral,
 	IsStringLiteral,
 	IsNumericLiteral,
 	IsBooleanLiteral,
 	IsSymbolLiteral,
 } from './source/is-literal.d.ts';
+export type {
+    IsPrimitive, 
+    IsStringPrimitive,
+    IsNumericPrimitive,
+    IsBooleanPrimitive,
+    IsSymbolPrimitive, 
+} from './source/is-primitive.d.ts';
 export type {IsAny} from './source/is-any.d.ts';
 export type {IfAny} from './source/if-any.d.ts';
 export type {IsNever} from './source/is-never.d.ts';
