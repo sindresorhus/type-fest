@@ -231,3 +231,36 @@ export type ApplyDefaultOptions<
 		]: SpecifiedOptions[Key]
 	}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
 	>>;
+
+/**
+Collapses literal types in a union into their corresponding primitive types, when possible. For example, `CollapseLiterals<'foo' | 'bar' | (string & {})>` returns `string`.
+
+Note: This doesn't collapse literals within tagged types. For example, `CollapseLiterals<Tagged<'foo' | (string & {}), 'Tag'>>` returns `("foo" & Tag<"Tag", never>) | (string & Tag<"Tag", never>)` and not `string & Tag<"Tag", never>`.
+
+Use-case: For collapsing unions created using {@link LiteralUnion}.
+
+@example
+```
+import type {LiteralUnion} from 'type-fest';
+
+type A = CollapseLiterals<'foo' | 'bar' | (string & {})>;
+//=> string
+
+type B = CollapseLiterals<LiteralUnion<1 | 2 | 3, number>>;
+//=> number
+
+type C = CollapseLiterals<LiteralUnion<'onClick' | 'onChange', `on${string}`>>;
+//=> `on${string}`
+
+type D = CollapseLiterals<'click' | 'change' | (`on${string}` & {})>;
+//=> 'click' | 'change' | `on${string}`
+
+type E = CollapseLiterals<LiteralUnion<'foo' | 'bar', string> | null | undefined>;
+//=> string | null | undefined
+```
+*/
+export type CollapseLiterals<T> = {} extends T
+	? T
+	: T extends infer U & {}
+		? U
+		: T;

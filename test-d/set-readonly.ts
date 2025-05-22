@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {SetReadonly} from '../index.d.ts';
+import type {SetReadonly, Simplify} from '../index.d.ts';
 
 // Update one readonly and one non readonly to readonly.
 declare const variation1: SetReadonly<{a: number; readonly b: string; c: boolean}, 'b' | 'c'>;
@@ -36,3 +36,16 @@ expectType<{a: number; readonly b: string; readonly c: boolean}>(variation8);
 // Works with index signatures
 declare const variation9: SetReadonly<{[k: string]: unknown; a: number; readonly b: string}, 'a' | 'b'>;
 expectType<{[k: string]: unknown; readonly a: number; readonly b: string}>(variation9);
+
+// Works with functions containing properties
+declare const variation10: SetReadonly<{(a1: string, a2: number): boolean; p1: string; readonly p2?: number}, 'p1'>;
+expectType<boolean>(variation10('foo', 1));
+expectType<{readonly p1: string; readonly p2?: number}>({} as Simplify<typeof variation10>); // Simplify removes the call signature from `typeof variation10`
+
+declare const variation11: SetReadonly<{(a1: boolean, ...a2: string[]): number; p1: string; p2?: number; p3: boolean}, 'p1' | 'p2'>;
+expectType<number>(variation11(true, 'foo', 'bar', 'baz'));
+expectType<{readonly p1: string; readonly p2?: number; p3: boolean}>({} as Simplify<typeof variation11>);
+
+// Functions without properties are returned as is
+declare const variation12: SetReadonly<(a: string) => number, never>;
+expectType<number>(variation12('foo'));

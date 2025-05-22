@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {SetRequired} from '../index.d.ts';
+import type {SetRequired, Simplify} from '../index.d.ts';
 
 // Update one required and one optional to required.
 declare const variation1: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
@@ -40,6 +40,19 @@ expectType<{a?: number; readonly b?: string; readonly c: boolean}>(variation9);
 // Works with index signatures
 declare const variation10: SetRequired<{[k: string]: unknown; a?: number; b: string}, 'a' | 'b'>;
 expectType<{[k: string]: unknown; a: number; b: string}>(variation10);
+
+// Works with functions containing properties
+declare const variation11: SetRequired<{(a1: string, a2: number): boolean; p1?: string; readonly p2: number}, 'p1'>;
+expectType<boolean>(variation11('foo', 1));
+expectType<{p1: string; readonly p2: number}>({} as Simplify<typeof variation11>);
+
+declare const variation12: SetRequired<{(a1: boolean, ...a2: string[]): number; p1?: string; readonly p2?: number; p3?: boolean}, 'p1' | 'p2'>;
+expectType<number>(variation12(true, 'foo', 'bar', 'baz'));
+expectType<{p1: string; readonly p2: number; p3?: boolean}>({} as Simplify<typeof variation12>);
+
+// Functions without properties are returned as is
+declare const variation13: SetRequired<(a: string) => number, never>;
+expectType<number>(variation13('foo'));
 
 // =================
 // Works with arrays

@@ -1,8 +1,10 @@
-import type {Extends, IsNotFalse, Not} from './internal/type.d.ts';
+import type {CollapseLiterals, Extends, IsNotFalse, Not} from './internal/type.d.ts';
+import type {TagContainer, UnwrapTagged} from './tagged.js';
 import type {Primitive} from './primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Numeric} from './numeric.d.ts';
 import type {And} from './and.js';
+
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.
@@ -115,17 +117,18 @@ type L2 = Length<`${number}`>;
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<T> = (
-	// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
-	// and since `{}` extends index signatures, the result becomes `false`.
-	IsNever<T> extends false
-		? T extends string
-			? {} extends Record<T, never>
-				? false
-				: true
-			: false
-		: false
-);
+export type IsStringLiteral<T> = IsNever<T> extends false
+	? _IsStringLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>>
+	: false;
+
+export type _IsStringLiteral<S> =
+// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
+// and since `{}` extends index signatures, the result becomes `false`.
+S extends string
+	? {} extends Record<S, never>
+		? false
+		: true
+	: false;
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).

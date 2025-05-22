@@ -7,6 +7,7 @@ import type {
 	IsBooleanLiteral,
 	IsSymbolLiteral,
 	Tagged,
+	LiteralUnion,
 } from '../index.d.ts';
 import type {Numeric} from '../source/numeric.js';
 
@@ -80,7 +81,21 @@ expectType<IsStringLiteral<Lowercase<string> | stringLiteral>>(boolean);
 expectType<IsNumericLiteral<numericLiteral | stringLiteral>>(boolean);
 expectType<IsStringLiteral<stringLiteral | numberLiteral>>(boolean);
 
+// Strings with union of literals and non-literals return `boolean`
+expectType<IsStringLiteral<Uppercase<string> | 'abc'>>(boolean);
+expectType<IsStringLiteral<Lowercase<string> | 'Abc'>>(boolean);
+expectType<IsStringLiteral<null | '1' | '2' | '3'>>(boolean);
+expectType<IsStringLiteral<1 | 2 | '3'>>(boolean);
+expectType<IsStringLiteral<'foo' | 'bar' | number>>(boolean);
+
+// Types other than string return `false`
+expectType<IsStringLiteral<bigint>>(false);
+expectType<IsStringLiteral<1 | 2 | 3>>(false);
+expectType<IsStringLiteral<object>>(false);
+expectType<IsStringLiteral<false | undefined | null>>(false);
+
 // Boundary types
+expectType<IsStringLiteral<{}>>(false);
 expectType<IsStringLiteral<any>>(false);
 expectType<IsStringLiteral<never>>(false);
 
@@ -110,9 +125,29 @@ type A3 = IsBooleanLiteral;
 // @ts-expect-error
 type A4 = IsSymbolLiteral;
 
-// Tagged types should be false
+// Tagged types
 expectType<IsStringLiteral<Tagged<string, 'Tag'>>>(false);
 expectType<IsSymbolLiteral<Tagged<symbol, 'Tag'>>>(false);
 expectType<IsNumericLiteral<Tagged<number, 'Tag'>>>(false);
-expectType<IsBooleanLiteral<Tagged<bigint, 'Tag'>>>(false);
+expectType<IsNumericLiteral<Tagged<bigint, 'Tag'>>>(false);
 expectType<IsBooleanLiteral<Tagged<boolean, 'Tag'>>>(false);
+
+expectType<IsStringLiteral<Tagged<Uppercase<string>, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<number, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'>>>(true);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar' | `on${string}`, 'Tag'>>>({} as boolean);
+expectType<IsStringLiteral<Tagged<'1st' | '2nd' | '3rd' | number, 'Tag'>>>({} as boolean);
+
+expectType<IsStringLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<'foo', 'Tag'> | Tagged<'bar', 'Tag'>>>(true);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>({} as boolean);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>({} as boolean);
+
+// Uncollapsed unions (e.g., `'foo' | 'bar' | (string & {})`)
+expectType<IsStringLiteral<'foo' | 'bar' | (string & {})>>(false);
+expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', string>>>(false);
+expectType<IsStringLiteral<LiteralUnion<'onClick' | 'onMouseDown', `on${string}`>>>(false);
+expectType<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 'onMouseDown', `on${string}`>>>({} as boolean);
+expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', number>>>({} as boolean);
+expectType<IsStringLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>(false);
+expectType<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${string}`>, 'Tag'>>>({} as boolean);
