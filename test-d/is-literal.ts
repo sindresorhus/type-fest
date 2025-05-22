@@ -135,19 +135,19 @@ expectType<IsBooleanLiteral<Tagged<boolean, 'Tag'>>>(false);
 expectType<IsStringLiteral<Tagged<Uppercase<string>, 'Tag'>>>(false);
 expectType<IsStringLiteral<Tagged<number, 'Tag'>>>(false);
 expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'>>>(true);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar' | `on${string}`, 'Tag'>>>({} as boolean);
-expectType<IsStringLiteral<Tagged<'1st' | '2nd' | '3rd' | number, 'Tag'>>>({} as boolean);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar' | `on${string}`, 'Tag'>>>(boolean);
+expectType<IsStringLiteral<Tagged<'1st' | '2nd' | '3rd' | number, 'Tag'>>>(boolean);
 
 expectType<IsStringLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
 expectType<IsStringLiteral<Tagged<'foo', 'Tag'> | Tagged<'bar', 'Tag'>>>(true);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>({} as boolean);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>({} as boolean);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>(boolean);
+expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>(boolean);
 
 // Uncollapsed unions (e.g., `'foo' | 'bar' | (string & {})`)
 expectType<IsStringLiteral<'foo' | 'bar' | (string & {})>>(false);
 expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', string>>>(false);
 expectType<IsStringLiteral<LiteralUnion<'onClick' | 'onMouseDown', `on${string}`>>>(false);
-expectType<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 'onMouseDown', `on${string}`>>>({} as boolean);
-expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', number>>>({} as boolean);
+expectType<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 'onMouseDown', `on${string}`>>>(boolean);
+expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', number>>>(boolean);
 expectType<IsStringLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${string}`>, 'Tag'>>>({} as boolean);
+expectType<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${string}`>, 'Tag'>>>(boolean);

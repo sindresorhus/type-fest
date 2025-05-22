@@ -104,11 +104,9 @@ type ex = IsNumericPrimitive<1>
 @category Type Guard
 @category Utilities
 */
-export type IsNumericPrimitive<T> = (
-	T extends Numeric
-		? PrimitiveChecks<T, Numeric>
-		: false
-);
+export type IsNumericPrimitive<T> = T extends Numeric
+	? PrimitiveChecks<T, Numeric>
+	: false;
 
 /**
 Returns a boolean for whether the given type is strictly a `boolean` [primitive type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#the-primitives-string-number-and-boolean).

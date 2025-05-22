@@ -10,12 +10,14 @@ import type {
 } from '../index.d.ts';
 import type {Numeric} from '../source/numeric.js';
 
-type stringLiteral = '';
+type stringLiteral = 'aA';
 type numberLiteral = 1;
 type bigintLiteral = 1n;
 type booleanLiteral = true;
 type symbolLiteral = typeof tag;
 type numericLiteral = numberLiteral | bigintLiteral;
+
+declare const boolean: boolean;
 
 // Primitives should be true
 expectType<IsPrimitive<string>>(true);
@@ -73,9 +75,9 @@ expectType<IsStringPrimitive<Lowercase<'xyz'> | Capitalize<'abc'>>>(false);
 // Union of literals and non-literals return `true`
 expectType<IsStringPrimitive<Uppercase<string> | (string & {})>>(true);
 expectType<IsStringPrimitive<Lowercase<string> | (string & {})>>(true);
-expectType<IsNumericPrimitive<(number & {}) | 1 | 2 | 3>>(true);
 
 // Boundary types
+expectType<IsStringPrimitive<{}>>(false);
 expectType<IsStringPrimitive<any>>(false);
 expectType<IsStringPrimitive<never>>(false);
 

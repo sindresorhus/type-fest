@@ -117,18 +117,18 @@ export type {IntRange} from './source/int-range.d.ts';
 export type {IntClosedRange} from './source/int-closed-range.d.ts';
 export type {IsEqual} from './source/is-equal.d.ts';
 export type {
-    IsLiteral,
+	IsLiteral,
 	IsStringLiteral,
 	IsNumericLiteral,
 	IsBooleanLiteral,
 	IsSymbolLiteral,
 } from './source/is-literal.d.ts';
 export type {
-    IsPrimitive, 
-    IsStringPrimitive,
-    IsNumericPrimitive,
-    IsBooleanPrimitive,
-    IsSymbolPrimitive, 
+	IsPrimitive,
+	IsStringPrimitive,
+	IsNumericPrimitive,
+	IsBooleanPrimitive,
+	IsSymbolPrimitive,
 } from './source/is-primitive.d.ts';
 export type {IsAny} from './source/is-any.d.ts';
 export type {IfAny} from './source/if-any.d.ts';
