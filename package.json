@@ -25,7 +25,7 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"ts-node": "node --experimental-transform-types --disable-warning=ExperimentalWarning",
+		"ts-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning",
 		"test:source-files-extension": "npm run ts-node -- script/test/source-files-extension.ts",
 		"test:import-files-extension": "npm run ts-node -- script/test/import-files-extension.ts",
 		"test:tsc": "tsc",
