@@ -12,5 +12,8 @@
 		"exactOptionalPropertyTypes": true,
 		// "skipLibCheck": false, // Ensures .d.ts files are checked: https://github.com/sindresorhus/tsconfig/issues/15
 		"skipLibCheck": true, // We cannot have this to false for now as it checks invalid stuff in our dependency tree too.
-	}
+	},
+	"exclude": [
+		"script"
+	]
 }

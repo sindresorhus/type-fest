@@ -1,0 +1,20 @@
+{
+	"extends": "@sindresorhus/tsconfig",
+	"compilerOptions": {
+		"noEmit": true,
+		"allowJs": true,
+		"noUnusedLocals": false, // Allow unused variables in test-d/*.ts files
+		"module": "node18",
+		"target": "ES2023", // Node.js 20
+		"lib": [
+			"ES2023",
+		],
+		"types": [
+			"node", // Needed when working with node modules on script/test
+		],
+		"exactOptionalPropertyTypes": true,
+		"allowImportingTsExtensions": true,
+		"erasableSyntaxOnly": false, // Ensures .ts files only have valid JS syntax for node types striping
+		"skipLibCheck": true,
+	},
+}
