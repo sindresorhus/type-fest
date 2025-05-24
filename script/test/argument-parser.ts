@@ -1,8 +1,8 @@
-import { parseArgs, type ParseArgsOptionsConfig } from 'node:util'
-import type { Simplify } from '../../index.d.ts'
+import { parseArgs, type ParseArgsOptionsConfig } from 'node:util';
+import type { Simplify } from '../../index.d.ts';
 
 declare global {
-	const args: Simplify<Required<typeof values>>
+	const args: Simplify<Required<typeof values>>;
 }
 
 const options = {
@@ -31,11 +31,11 @@ const options = {
 		default: false,
 	},
 
-} as const satisfies ParseArgsOptionsConfig
+} as const satisfies ParseArgsOptionsConfig;
 
-const { values, positionals } = parseArgs({ options, allowPositionals: true })
+const { values, positionals } = parseArgs({ options, allowPositionals: true });
 
-values.dir ??= positionals.length ? positionals[0]! : 'source' // Mandatory: take first arg
+values.dir ??= positionals.length ? positionals[0]! : 'source'; // Mandatory: take first arg
 
 // @ts-ignore
-globalThis.args = values
+globalThis.args = values;

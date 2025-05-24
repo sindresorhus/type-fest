@@ -1,61 +1,61 @@
-import { colors, echo, read } from './utils.ts'
-import { basename, extname } from 'node:path'
-import { rename } from 'node:fs/promises'
-import './argument-parser.ts'
+import { colors, echo, read } from './utils.ts';
+import { basename, extname } from 'node:path';
+import { rename } from 'node:fs/promises';
+import './argument-parser.ts';
 
-const filename = basename(import.meta.url)
+const filename = basename(import.meta.url);
 
 checkSourceFilesExtension(args)
 	.then(fixSourceFilesExtension)
-	.catch(e => echo.error(e).exit(1))
+	.catch(e => echo.error(e).exit(1));
 
 async function checkSourceFilesExtension({ dir, fix }: typeof args) {
 
-	let issues = 0
-	const dirents = await read(dir)
+	let issues = 0;
+	const dirents = await read(dir);
 
 	const fileList: FileList = (
 		dirents
 			.filter(dirent => dirent.isFile() && !dirent.name.endsWith('.d.ts'))
 			.map(file => {
-				issues++
+				issues++;
 
-				const ext = extname(file.name)
+				const ext = extname(file.name);
 				if (!fix) echo
 					.error(`Extension should be ${colors(92, '.d.ts')} -> ${colors(93, file.path
-						.replace(ext, colors(91, ext, 93)))}`)
+						.replace(ext, colors(91, ext, 93)))}`);
 
 				return [
 					file.path,
 					file.path.replace(ext, '.d.ts')
-				]
+				];
 			})
-	)
+	);
 
-	echo()
+	echo();
 
 	if (!issues) echo
 		.info(`✅ All Source files from '${dir}' are ${colors(92, '.d.ts')}\n`)
-		.exit(0)
+		.exit(0);
 
 	if (!fix) echo
 		.error(`❌ ${issues} Issues, To fix try: ${filename} --fix\n`)
-		.exit(1)
+		.exit(1);
 
-	return fileList
+	return fileList;
 }
 
 async function fixSourceFilesExtension(fileList?: FileList) {
 	if (!fileList) return echo
-		.warn(`Files list is empty, An error maybe accured!`)
-		.exit(2)
+		.warn('Files list is empty, An error maybe accured!')
+		.exit(2);
 
 	fileList.forEach(file => {
-		echo.info(`Renaming ${colors(91, file[0])} -> ${colors(92, file[1])}`)
+		echo.info(`Renaming ${colors(91, file[0])} -> ${colors(92, file[1])}`);
 
 		rename(...file)
-			.catch(() => echo.error(`Failed to rename ${file[0]}`))
-	})
+			.catch(() => echo.error(`Failed to rename ${file[0]}`));
+	});
 }
 
 type FileList = [oldPath: string, newPath: string][]
