@@ -1,8 +1,8 @@
-import type {ApplyDefaultOptions} from './internal/object.js';
-import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.js';
-import type {OptionalKeysOf} from './optional-keys-of.js';
-import type {Simplify} from './simplify.js';
-import type {UnknownArray} from './unknown-array.js';
+import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 @see {@link Schema}

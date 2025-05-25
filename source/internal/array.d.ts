@@ -1,5 +1,5 @@
-import type {If} from '../if.js';
-import type {IsNever} from '../is-never.js';
+import type {If} from '../if.d.ts';
+import type {IsNever} from '../is-never.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**

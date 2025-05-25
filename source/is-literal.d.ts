@@ -2,7 +2,7 @@ import type {Primitive} from './primitive.d.ts';
 import type {Numeric} from './numeric.d.ts';
 import type {CollapseLiterals, IfNotAnyOrNever, IsNotFalse, IsPrimitive} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {TagContainer, UnwrapTagged} from './tagged.js';
+import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
 
 /**
 Returns a boolean for whether the given type `T` is the specified `LiteralType`.

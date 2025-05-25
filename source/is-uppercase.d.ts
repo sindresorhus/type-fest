@@ -1,4 +1,4 @@
-import type {Every} from './internal/array.js';
+import type {Every} from './internal/array.d.ts';
 
 /**
 Returns a boolean for whether the given string literal is uppercase.

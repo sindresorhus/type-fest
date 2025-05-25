@@ -1,6 +1,6 @@
-import type {If} from './if.js';
+import type {If} from './if.d.ts';
 import type {ApplyDefaultOptions, BuiltIns, LiteralKeyOf} from './internal/index.d.ts';
-import type {IsUnknown} from './is-unknown.js';
+import type {IsUnknown} from './is-unknown.d.ts';
 import type {Merge} from './merge.d.ts';
 
 /**

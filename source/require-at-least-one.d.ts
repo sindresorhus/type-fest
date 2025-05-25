@@ -1,8 +1,8 @@
 import type {Except} from './except.d.ts';
-import type {If} from './if.js';
+import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever} from './internal/index.d.ts';
-import type {IsAny} from './is-any.js';
-import type {IsNever} from './is-never.js';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Create a type that requires at least one of the given keys. The remaining keys are kept as is.

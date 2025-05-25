@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Every} from '../../source/internal/array.js';
+import type {Every} from '../../source/internal/array.d.ts';
 
 expectType<Every<[], number>>(true);
 expectType<Every<[1, 2, 3], number>>(true);
