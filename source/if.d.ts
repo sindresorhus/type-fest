@@ -1,4 +1,4 @@
-import type {IsNever} from './is-never.js';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 An if-else-like type that resolves depending on whether the given `boolean` type is `true` or `false`.

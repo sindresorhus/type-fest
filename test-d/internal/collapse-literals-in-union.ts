@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {CollapseLiterals} from '../../source/internal/object.js';
+import type {CollapseLiterals} from '../../source/internal/object.d.ts';
 
 declare const sym1: unique symbol;
 declare const sym2: unique symbol;

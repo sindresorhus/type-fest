@@ -84,12 +84,35 @@
 		},
 		"overrides": [
 			{
-				"files": "**/*.d.ts",
+				"files": "source/**/*.d.ts",
 				"rules": {
 					"no-restricted-imports": [
 						"error",
-						"tsd",
-						"expect-type"
+						{
+							"paths": ["tsd", "expect-type"],
+							"patterns": [
+								{
+									"group": ["*.js", "*.ts", "!*.d.ts"],
+									"message": "Use `.d.ts` extension."
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"files": "test-d/**/*.ts",
+				"rules": {
+					"no-restricted-imports": [
+						"error",
+						{
+							"patterns": [
+								{
+									"group": ["*.js", "*.ts", "!*.d.ts"],
+									"message": "Use `.d.ts` extension."
+								}
+							]
+						}
 					]
 				}
 			}

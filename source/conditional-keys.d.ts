@@ -1,5 +1,5 @@
-import type {If} from './if.js';
-import type {IsNever} from './is-never.js';
+import type {If} from './if.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Extract the keys from a type where the value type of the key extends the given `Condition`.

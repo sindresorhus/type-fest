@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ExcludeStrict} from '../source/exclude-strict.js';
+import type {ExcludeStrict} from '../source/exclude-strict.d.ts';
 
 // Primitive union tests
 
