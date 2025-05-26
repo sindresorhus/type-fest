@@ -72,7 +72,7 @@ type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative
 /**
 Adds two positive numbers.
 */
-type SumPositives<A extends number, B extends number> =
+export type SumPositives<A extends number, B extends number> =
 	[...BuildTuple<A>, ...BuildTuple<B>]['length'] extends infer Result extends number
 		? Result
 		: never;

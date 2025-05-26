@@ -67,7 +67,7 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 /**
 Subtracts two positive numbers.
 */
-type SubtractPositives<A extends number, B extends number> =
+export type SubtractPositives<A extends number, B extends number> =
 	LessThan<A, B> extends true
 		// When A < B we can reverse the result of B - A
 		? ReverseSign<SubtractIfAGreaterThanB<B, A>>
