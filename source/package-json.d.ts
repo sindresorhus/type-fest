@@ -531,7 +531,7 @@ declare namespace PackageJson {
 		| '!openbsd'
 		| '!sunos'
 		| '!win32',
-		string
+			string
 		>>;
 
 		/**
@@ -560,7 +560,7 @@ declare namespace PackageJson {
 		| '!s390x'
 		| '!x32'
 		| '!x64',
-		string
+			string
 		>>;
 
 		/**
@@ -596,7 +596,7 @@ declare namespace PackageJson {
 			| 'individual'
 			| 'foundation'
 			| 'corporation',
-			string
+				string
 			>;
 
 			/**

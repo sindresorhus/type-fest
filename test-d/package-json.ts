@@ -43,14 +43,14 @@ expectAssignable<
 | undefined
 | Array<LiteralUnion<
 'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
-string
+	string
 >>
 >(packageJson.os);
 expectAssignable<
 | undefined
 | Array<LiteralUnion<
 'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
-string
+	string
 >>
 >(packageJson.cpu);
 expectAssignable<PackageJson.Imports>({'#unicorn': 'unicorn'});

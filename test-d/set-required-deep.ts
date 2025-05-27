@@ -89,7 +89,7 @@ declare const variation23: SetRequiredDeep<{a?: number; b?: {c?: number} | {d?: 
 expectType<{a?: number; b?: {c: number} | {d: number}}>(variation23);
 
 declare const variation24: SetRequiredDeep<
-{a?: number; b?: {readonly c?: {1?: number}} | {d?: {1?: number}}}, 'a' | `b.${'c' | 'd'}.1`
+	{a?: number; b?: {readonly c?: {1?: number}} | {d?: {1?: number}}}, 'a' | `b.${'c' | 'd'}.1`
 >;
 expectType<{a: number; b?: {readonly c?: {1: number}} | {d?: {1: number}}}>(variation24);
 

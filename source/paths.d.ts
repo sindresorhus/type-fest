@@ -209,7 +209,7 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 								: never
 								|
 								Options['bracketNotation'] extends false
-								// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
+							// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
 									? (Key | ToString<Key>)
 									: never
 						) extends infer TranformedKey extends string | number ?
@@ -233,12 +233,12 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 								// Recursively generate paths for the current key
 								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
 									? _Paths<T[Key],
-									{
-										bracketNotation: Options['bracketNotation'];
-										maxRecursionDepth: Subtract<MaxDepth, 1>;
-										leavesOnly: Options['leavesOnly'];
-										depth: Subtract<Options['depth'], 1>;
-									}> extends infer SubPath
+										{
+											bracketNotation: Options['bracketNotation'];
+											maxRecursionDepth: Subtract<MaxDepth, 1>;
+											leavesOnly: Options['leavesOnly'];
+											depth: Subtract<Options['depth'], 1>;
+										}> extends infer SubPath
 										? SubPath extends string | number
 											? (
 												Options['bracketNotation'] extends true

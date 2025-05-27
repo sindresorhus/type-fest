@@ -109,7 +109,7 @@ type SimplifyDeepProperties = SimplifyDeep<Properties1 & Properties2, ComplexTyp
 */
 export type SimplifyDeep<Type, ExcludeType = never> =
 	ConditionalSimplifyDeep<
-	Type,
+		Type,
 	ExcludeType | NonRecursiveType | Set<unknown> | Map<unknown, unknown>,
 	object
 	>;

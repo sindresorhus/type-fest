@@ -5,10 +5,10 @@ import type {NonRecursiveType} from '../source/internal/index.d.ts';
 type TestingType = {
 	function: () => void;
 	record: Record<
-	string,
-	{
-		propertyA: string;
-	}
+		string,
+		{
+			propertyA: string;
+		}
 	>;
 	object: {
 		subObject: {

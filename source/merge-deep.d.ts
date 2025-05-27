@@ -357,17 +357,17 @@ type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 This utility selects the correct entry point with the corresponding default options. This avoids re-merging the options at each iteration.
 */
 type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = SimplifyDeepExcludeArray<
-[undefined] extends [Destination | Source]
-	? never
-	: Destination extends UnknownRecord
-		? Source extends UnknownRecord
-			? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
-			: never
-		: Destination extends UnknownArrayOrTuple
-			? Source extends UnknownArrayOrTuple
-				? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
+	[undefined] extends [Destination | Source]
+		? never
+		: Destination extends UnknownRecord
+			? Source extends UnknownRecord
+				? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
 				: never
-			: never
+			: Destination extends UnknownArrayOrTuple
+				? Source extends UnknownArrayOrTuple
+					? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
+					: never
+				: never
 >;
 
 /**
@@ -480,7 +480,7 @@ function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 @category Utilities
 */
 export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepWithDefaultOptions<
-SimplifyDeepExcludeArray<Destination>,
-SimplifyDeepExcludeArray<Source>,
-Options
+	SimplifyDeepExcludeArray<Destination>,
+	SimplifyDeepExcludeArray<Source>,
+	Options
 >;

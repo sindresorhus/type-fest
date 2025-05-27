@@ -224,13 +224,13 @@ export type ApplyDefaultOptions<
 	SpecifiedOptions extends Options,
 > =
 	If<IsAny<SpecifiedOptions>, Defaults,
-	If<IsNever<SpecifiedOptions>, Defaults,
-	Simplify<Merge<Defaults, {
-		[Key in keyof SpecifiedOptions
-		as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
-		]: SpecifiedOptions[Key]
-	}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
-	>>;
+		If<IsNever<SpecifiedOptions>, Defaults,
+			Simplify<Merge<Defaults, {
+				[Key in keyof SpecifiedOptions
+				as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
+				]: SpecifiedOptions[Key]
+			}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
+		>>;
 
 /**
 Collapses literal types in a union into their corresponding primitive types, when possible. For example, `CollapseLiterals<'foo' | 'bar' | (string & {})>` returns `string`.
