@@ -186,8 +186,7 @@ type _Paths<T, Options extends Required<PathsOptions>> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-				? InternalPaths<StaticPartOfArray<T>, Options>
-				| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
+					? InternalPaths<StaticPartOfArray<T>, Options> | InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
 					: InternalPaths<T, Options>
 				: T extends object
 					? InternalPaths<T, Options>
