@@ -24,6 +24,6 @@ bundle('src/index.js', ['dist/index.cjs', 'dist/index.mjs']);
 @category Array
 */
 export type Arrayable<T> =
-T
+	T
 // TODO: Use `readonly T[]` when this issue is resolved: https://github.com/microsoft/TypeScript/issues/17002
-| T[];
+	| T[];

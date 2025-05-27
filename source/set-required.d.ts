@@ -47,9 +47,9 @@ type _SetRequired<BaseType, Keys extends keyof BaseType> =
 			: never
 		: Simplify<
 		// Pick just the keys that are optional from the base type.
-		Except<BaseType, Keys> &
+			Except<BaseType, Keys> &
 		// Pick the keys that should be required from the base type and make them required.
-		Required<HomomorphicPick<BaseType, Keys>>
+			Required<HomomorphicPick<BaseType, Keys>>
 		>;
 
 /**

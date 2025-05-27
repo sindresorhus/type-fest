@@ -34,10 +34,10 @@ const responder: RequireExactlyOne<Responder, 'text' | 'json'> = {
 */
 export type RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
 	IfNotAnyOrNever<ObjectType,
-	If<IsNever<KeysType>,
-	never,
-	_RequireExactlyOne<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
-	>>;
+		If<IsNever<KeysType>,
+			never,
+			_RequireExactlyOne<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
+		>>;
 
 type _RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType> =
 	{[Key in KeysType]: (

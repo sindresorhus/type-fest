@@ -36,10 +36,10 @@ const responder3: Responder = {
 */
 export type RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
 	IfNotAnyOrNever<ObjectType,
-	If<IsNever<KeysType>,
-	ObjectType,
-	_RequireOneOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
-	>>;
+		If<IsNever<KeysType>,
+			ObjectType,
+			_RequireOneOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
+		>>;
 
 type _RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType> = (
 	| RequireExactlyOne<ObjectType, KeysType>

@@ -31,7 +31,7 @@ expectType<{
 }>(exampleInterfaceKnownKeys);
 
 declare const exampleMappedTypeKnownKeys: OmitIndexSignature<
-MappedType<ExampleInterface>
+	MappedType<ExampleInterface>
 >;
 expectType<{
 	foo: {key: 'foo'; value: 'bar'};

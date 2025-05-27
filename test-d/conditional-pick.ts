@@ -19,7 +19,7 @@ type Example = {
 };
 
 declare const exampleConditionalPick: ConditionalPick<Example, string>;
-expectType< {a: string}>(exampleConditionalPick);
+expectType<{a: string}>(exampleConditionalPick);
 
 declare const awesomeConditionalPick: ConditionalPick<Awesome, Primitive>;
 expectType<{name: string; successes: number; failures: bigint}>(awesomeConditionalPick);
