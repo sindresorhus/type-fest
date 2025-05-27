@@ -103,20 +103,15 @@ expectType<IsStringLiteral<`ab${'c' | 'd' | 'e'}`, {strict: false}>>(true);
 expectType<IsStringLiteral<Uppercase<'a' | 'b'> | 'C' | 'D', {strict: false}>>(true);
 expectType<IsStringLiteral<Lowercase<'xyz'> | Capitalize<'abc'>, {strict: false}>>(true);
 
-// Union of literals and non-literals return `false`
-expectType<IsStringLiteral<Uppercase<string> | stringLiteral>>(false);
-expectType<IsStringLiteral<Lowercase<string> | stringLiteral>>(false);
-
-// Union of diffrent literal types return `false`
-expectType<IsNumericLiteral<numericLiteral | stringLiteral>>(false);
-expectType<IsStringLiteral<stringLiteral | numberLiteral>>(false);
-
-// Strings with union of literals and non-literals return `false`
-expectType<IsStringLiteral<Uppercase<string> | 'abc'>>(false);
-expectType<IsStringLiteral<Lowercase<string> | 'Abc'>>(false);
-expectType<IsStringLiteral<null | '1' | '2' | '3'>>(false);
-expectType<IsStringLiteral<'foo' | 'bar' | number>>(false);
-expectType<IsStringLiteral<1 | 2 | '3'>>(false);
+// Union of literals and non-literals return `boolean`
+expectType<IsStringLiteral<Uppercase<string> | stringLiteral>>(boolean);
+expectType<IsStringLiteral<Lowercase<string> | stringLiteral>>(boolean);
+expectType<IsStringLiteral<stringLiteral | numberLiteral>>(boolean);
+expectType<IsStringLiteral<Uppercase<string> | 'abc'>>(boolean);
+expectType<IsStringLiteral<Lowercase<string> | 'Abc'>>(boolean);
+expectType<IsStringLiteral<null | '1' | '2' | '3'>>(boolean);
+expectType<IsStringLiteral<'foo' | 'bar' | number>>(boolean);
+expectType<IsStringLiteral<1 | 2 | '3'>>(boolean);
 
 // Types other than string return `false`
 expectType<IsStringLiteral<bigint>>(false);

@@ -135,22 +135,20 @@ type L2 = Length<`${number}`>;
 export type IsStringLiteral<T, Options extends IsLiteralOptions = {}> = (
 	ApplyDefaultOptions<IsLiteralOptions, DefaultIsLiteralOptions, Options> extends infer ResolvedOptions extends Required<IsLiteralOptions>
 		? IsNever<T> extends false
-			? CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T> extends infer Type
-				? ResolvedOptions['strict'] extends true
-					? IsTrue<_IsStringLiteral<Type>>
-					: LiteralCheck<Type, string>
-				: never
+			? _IsStringLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>, ResolvedOptions>
 			: false
 		: never
 );
 
-type _IsStringLiteral<S> = (
+type _IsStringLiteral<S, Options extends Required<IsLiteralOptions>> = (
 	// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
 	// and since `{}` extends index signatures, the result becomes `false`.
 	S extends string
-		? {} extends Record<S, never>
-			? false
-			: true
+		? Options['strict'] extends false
+			? LiteralChecks<S, string>
+			: {} extends Record<S, never>
+				? false
+				: true
 		: false
 );
 
