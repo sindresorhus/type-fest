@@ -79,7 +79,6 @@
 				"@stylistic/quote-props": "off",
 				"@stylistic/function-paren-newline": "off",
 				"@stylistic/object-curly-newline": "off",
-				"@stylistic/type-generic-spacing": "off",
 				"n/file-extension-in-import": "off",
 				"object-curly-newline": [
 					"error",
