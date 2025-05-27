@@ -211,7 +211,7 @@ declare namespace PackageJson {
 	/**
 	A mapping of conditions and the paths to which they resolve.
 	*/
-	type ExportConditions = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+	type ExportConditions = {
 		[condition: string]: Exports;
 	};
 
@@ -227,7 +227,7 @@ declare namespace PackageJson {
 	/**
 	Import map entries of a module, optionally with conditions and subpath imports.
 	*/
-	export type Imports = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+	export type Imports = {
 		[key: `#${string}`]: Exports;
 	};
 

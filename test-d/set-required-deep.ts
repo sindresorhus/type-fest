@@ -176,7 +176,7 @@ expectType<{a?: Array<[string, number?]>}>({} as SetRequiredDeep<{a?: Array<[str
 expectType<{a?: Array<{b: number}>}>({} as SetRequiredDeep<{a?: Array<{b?: number}>}, `a.${number}.b`>);
 expectType<{readonly a?: [{readonly b: number}]}>({} as SetRequiredDeep<{readonly a?: [{readonly b?: number}]}, 'a.0.b'>);
 expectType<{readonly a: [{readonly b: number}, {c?: string}]}>(
-	{} as SetRequiredDeep<{readonly a?: [{readonly b?: number}, {c?: string}?]}, 'a' | 'a.0.b' | 'a.1' >,
+	{} as SetRequiredDeep<{readonly a?: [{readonly b?: number}, {c?: string}?]}, 'a' | 'a.0.b' | 'a.1'>,
 );
 
 // Set only specified keys inside array to required
