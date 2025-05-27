@@ -11,6 +11,11 @@ import type {And} from './and.d.ts';
 @see {@link IsLiteral}
 */
 type IsLiteralOptions = {
+	/**
+	Whether to match only finite literal types.
+
+	@default true
+	*/
 	strict?: boolean;
 };
 
@@ -77,6 +82,8 @@ type LiteralChecks<T, LiteralUnionType> = (
 
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+
+By default, it's Strict only matching finite literals, See {@link IsLiteralOptions.strict strict} option to change this behaviour.
 
 Useful for:
 	- providing strongly-typed string manipulation functions
@@ -293,6 +300,8 @@ type IsLiteralUnion<T, O extends IsLiteralOptions> =
 
 /**
 Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+
+By default, it's Strict only matching finite literals, See {@link IsLiteralOptions.strict strict} option to change this behaviour.
 
 Useful for:
 	- providing strongly-typed functions when given literal arguments
