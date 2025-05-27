@@ -205,10 +205,8 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 								? IsNumberLike<Key> extends true
 									? `[${Key}]`
 									: (Key | ToString<Key>)
-									: never
-								|
-										Options['bracketNotation'] extends false
-							// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
+								: Options['bracketNotation'] extends false
+								// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
 									? (Key | ToString<Key>)
 									: never
 						) extends infer TranformedKey extends string | number ?
