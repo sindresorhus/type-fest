@@ -219,10 +219,10 @@ declare namespace PackageJson {
 	Entry points of a module, optionally with conditions and subpath exports.
 	*/
 	export type Exports =
-	| null
-	| string
-	| Array<string | ExportConditions>
-	| ExportConditions;
+		| null
+		| string
+		| Array<string | ExportConditions>
+		| ExportConditions;
 
 	/**
 	Import map entries of a module, optionally with conditions and subpath imports.
@@ -242,19 +242,19 @@ declare namespace PackageJson {
 		A module ID with untranspiled code that is the primary entry point to the program.
 		*/
 		esnext?:
-		| string
-		| {
-			[moduleName: string]: string | undefined;
-			main?: string;
-			browser?: string;
-		};
+			| string
+			| {
+				[moduleName: string]: string | undefined;
+				main?: string;
+				browser?: string;
+			};
 
 		/**
 		A hint to JavaScript bundlers or component tools when packaging modules for client side use.
 		*/
 		browser?:
-		| string
-		| Partial<Record<string, string | false>>;
+			| string
+			| Partial<Record<string, string | false>>;
 
 		/**
 		Denote which files in your project are "pure" and therefore safe for Webpack to prune if unused.
@@ -426,8 +426,8 @@ declare namespace PackageJson {
 		The executable files that should be installed into the `PATH`.
 		*/
 		bin?:
-		| string
-		| Partial<Record<string, string>>;
+			| string
+			| Partial<Record<string, string>>;
 
 		/**
 		Filenames to put in place for the `man` program to find.
@@ -443,18 +443,18 @@ declare namespace PackageJson {
 		Location for the code repository.
 		*/
 		repository?:
-		| string
-		| {
-			type: string;
-			url: string;
+			| string
+			| {
+				type: string;
+				url: string;
 
-			/**
+				/**
 			Relative path to package.json if it is placed in non-root directory (for example if it is part of a monorepo).
 
 			[Read more.](https://github.com/npm/rfcs/blob/latest/implemented/0010-monorepo-subdirectory-declaration.md)
 			*/
-			directory?: string;
-		};
+				directory?: string;
+			};
 
 		/**
 		Script commands that are run at various times in the lifecycle of the package. The key is the lifecycle event, and the value is the command to run at that point.
@@ -517,20 +517,20 @@ declare namespace PackageJson {
 		Operating systems the module runs on.
 		*/
 		os?: Array<LiteralUnion<
-		| 'aix'
-		| 'darwin'
-		| 'freebsd'
-		| 'linux'
-		| 'openbsd'
-		| 'sunos'
-		| 'win32'
-		| '!aix'
-		| '!darwin'
-		| '!freebsd'
-		| '!linux'
-		| '!openbsd'
-		| '!sunos'
-		| '!win32',
+			| 'aix'
+			| 'darwin'
+			| 'freebsd'
+			| 'linux'
+			| 'openbsd'
+			| 'sunos'
+			| 'win32'
+			| '!aix'
+			| '!darwin'
+			| '!freebsd'
+			| '!linux'
+			| '!openbsd'
+			| '!sunos'
+			| '!win32',
 			string
 		>>;
 
@@ -538,28 +538,28 @@ declare namespace PackageJson {
 		CPU architectures the module runs on.
 		*/
 		cpu?: Array<LiteralUnion<
-		| 'arm'
-		| 'arm64'
-		| 'ia32'
-		| 'mips'
-		| 'mipsel'
-		| 'ppc'
-		| 'ppc64'
-		| 's390'
-		| 's390x'
-		| 'x32'
-		| 'x64'
-		| '!arm'
-		| '!arm64'
-		| '!ia32'
-		| '!mips'
-		| '!mipsel'
-		| '!ppc'
-		| '!ppc64'
-		| '!s390'
-		| '!s390x'
-		| '!x32'
-		| '!x64',
+			| 'arm'
+			| 'arm64'
+			| 'ia32'
+			| 'mips'
+			| 'mipsel'
+			| 'ppc'
+			| 'ppc64'
+			| 's390'
+			| 's390x'
+			| 'x32'
+			| 'x64'
+			| '!arm'
+			| '!arm64'
+			| '!ia32'
+			| '!mips'
+			| '!mipsel'
+			| '!ppc'
+			| '!ppc64'
+			| '!s390'
+			| '!s390x'
+			| '!x32'
+			| '!x64',
 			string
 		>>;
 
@@ -590,12 +590,12 @@ declare namespace PackageJson {
 			The type of funding.
 			*/
 			type?: LiteralUnion<
-			| 'github'
-			| 'opencollective'
-			| 'patreon'
-			| 'individual'
-			| 'foundation'
-			| 'corporation',
+				| 'github'
+				| 'opencollective'
+				| 'patreon'
+				| 'individual'
+				| 'foundation'
+				| 'corporation',
 				string
 			>;
 
@@ -667,10 +667,10 @@ Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-j
 @category File
 */
 export type PackageJson =
-JsonObject &
-PackageJson.NodeJsStandard &
-PackageJson.PackageJsonStandard &
-PackageJson.NonStandardEntryPoints &
-PackageJson.TypeScriptConfiguration &
-PackageJson.YarnConfiguration &
-PackageJson.JSPMConfiguration;
+	JsonObject &
+	PackageJson.NodeJsStandard &
+	PackageJson.PackageJsonStandard &
+	PackageJson.NonStandardEntryPoints &
+	PackageJson.TypeScriptConfiguration &
+	PackageJson.YarnConfiguration &
+	PackageJson.JSPMConfiguration;

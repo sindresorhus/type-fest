@@ -186,8 +186,8 @@ type _Paths<T, Options extends Required<PathsOptions>> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Options>
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
+				? InternalPaths<StaticPartOfArray<T>, Options>
+				| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
 					: InternalPaths<T, Options>
 				: T extends object
 					? InternalPaths<T, Options>
@@ -206,9 +206,9 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 								? IsNumberLike<Key> extends true
 									? `[${Key}]`
 									: (Key | ToString<Key>)
-								: never
+									: never
 								|
-								Options['bracketNotation'] extends false
+										Options['bracketNotation'] extends false
 							// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
 									? (Key | ToString<Key>)
 									: never

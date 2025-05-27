@@ -77,7 +77,6 @@
 				"@typescript-eslint/no-wrapper-object-types": "off",
 				"@typescript-eslint/consistent-indexed-object-style": "off",
 				"@stylistic/quote-props": "off",
-				"@stylistic/indent-binary-ops": "off",
 				"@stylistic/function-paren-newline": "off",
 				"@stylistic/object-curly-newline": "off",
 				"@stylistic/type-generic-spacing": "off",

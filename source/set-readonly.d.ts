@@ -36,7 +36,7 @@ export type SetReadonly<BaseType, Keys extends keyof BaseType> =
 export type _SetReadonly<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown // To distribute `BaseType` when it's a union type.
 		? Simplify<
-		Except<BaseType, Keys> &
-		Readonly<HomomorphicPick<BaseType, Keys>>
+			Except<BaseType, Keys> &
+			Readonly<HomomorphicPick<BaseType, Keys>>
 		>
 		: never;
