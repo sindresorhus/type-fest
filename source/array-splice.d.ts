@@ -55,7 +55,7 @@ type B = SplitArrayByIndex<[1, 2, 3, 4], 0>;
 // type B = [[], [1, 2, 3, 4]];
 ```
 */
-type SplitArrayByIndex<T extends UnknownArray, SplitIndex extends number> =
+export type SplitArrayByIndex<T extends UnknownArray, SplitIndex extends number> =
 	SplitIndex extends 0
 		? [[], T]
 		: number extends T['length']
