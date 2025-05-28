@@ -1,7 +1,7 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
 import type {TaggedUnion} from '../index.d.ts';
 
-type Union = TaggedUnion<'tag', {str: {a: string} ; num: {b: number}}>;
+type Union = TaggedUnion<'tag', {str: {a: string}; num: {b: number}}>;
 
 const first = {
 	tag: 'str' as const,

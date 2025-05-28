@@ -28,9 +28,9 @@ type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
 			? GetWithPath<
-			PropertyOf<BaseType, Extract<Head, string>, Options>,
-			Extract<Tail, string[]>,
-			Options
+				PropertyOf<BaseType, Extract<Head, string>, Options>,
+				Extract<Tail, string[]>,
+				Options
 			>
 			: never;
 
@@ -214,7 +214,7 @@ export type Get<
 	Options extends GetOptions = {},
 > =
 	GetWithPath<
-	BaseType,
-	Path extends string ? ToPath<Path> : Path,
-	ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
+		BaseType,
+		Path extends string ? ToPath<Path> : Path,
+		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;

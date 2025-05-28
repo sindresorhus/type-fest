@@ -148,5 +148,5 @@ type PartialObjectDeep<ObjectType extends object, Options extends Required<Parti
 	(ObjectType extends (...arguments_: any) => unknown
 		? (...arguments_: Parameters<ObjectType>) => ReturnType<ObjectType>
 		: {}) & ({
-		[KeyType in keyof ObjectType]?: _PartialDeep<ObjectType[KeyType], Options>
-	});
+			[KeyType in keyof ObjectType]?: _PartialDeep<ObjectType[KeyType], Options>
+		});

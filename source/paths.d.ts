@@ -186,8 +186,7 @@ type _Paths<T, Options extends Required<PathsOptions>> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Options>
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
+					? InternalPaths<StaticPartOfArray<T>, Options> | InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
 					: InternalPaths<T, Options>
 				: T extends object
 					? InternalPaths<T, Options>
@@ -206,9 +205,7 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 								? IsNumberLike<Key> extends true
 									? `[${Key}]`
 									: (Key | ToString<Key>)
-								: never
-								|
-								Options['bracketNotation'] extends false
+								: Options['bracketNotation'] extends false
 								// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
 									? (Key | ToString<Key>)
 									: never
@@ -233,12 +230,12 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 								// Recursively generate paths for the current key
 								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
 									? _Paths<T[Key],
-									{
-										bracketNotation: Options['bracketNotation'];
-										maxRecursionDepth: Subtract<MaxDepth, 1>;
-										leavesOnly: Options['leavesOnly'];
-										depth: Subtract<Options['depth'], 1>;
-									}> extends infer SubPath
+										{
+											bracketNotation: Options['bracketNotation'];
+											maxRecursionDepth: Subtract<MaxDepth, 1>;
+											leavesOnly: Options['leavesOnly'];
+											depth: Subtract<Options['depth'], 1>;
+										}> extends infer SubPath
 										? SubPath extends string | number
 											? (
 												Options['bracketNotation'] extends true

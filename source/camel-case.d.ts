@@ -83,7 +83,7 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 	? string extends Type
 		? Type
 		: Uncapitalize<CamelCaseFromArray<
-		Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>,
-		ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>
+			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>,
+			ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>
 		>>
 	: Type;

@@ -80,13 +80,13 @@ type OptionalizedUser = UndefinedToOptional<User>;
 ```
 */
 export type UndefinedToOptional<T extends object> = Simplify<
-{
+	{
 	// Property is not a union with `undefined`, keep it as-is.
-	[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
-} & {
+		[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
+	} & {
 	// Property _is_ a union with defined value. Set as optional (via `?`) and remove `undefined` from the union.
-	[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
-}
+		[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
+	}
 >;
 
 /**
@@ -224,13 +224,12 @@ export type ApplyDefaultOptions<
 	SpecifiedOptions extends Options,
 > =
 	If<IsAny<SpecifiedOptions>, Defaults,
-	If<IsNever<SpecifiedOptions>, Defaults,
-	Simplify<Merge<Defaults, {
-		[Key in keyof SpecifiedOptions
-		as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
-		]: SpecifiedOptions[Key]
-	}> & Required<Options>> // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
-	>>;
+		If<IsNever<SpecifiedOptions>, Defaults,
+			Simplify<Merge<Defaults, {
+				[Key in keyof SpecifiedOptions
+				as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
+				]: SpecifiedOptions[Key]
+			}> & Required<Options>>>>; // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
 
 /**
 Collapses literal types in a union into their corresponding primitive types, when possible. For example, `CollapseLiterals<'foo' | 'bar' | (string & {})>` returns `string`.
