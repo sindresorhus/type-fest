@@ -27,7 +27,7 @@ Or<false, booelan>;
 
 @see And, OrAll
 */
-export type Or<A extends boolean, B extends boolean> = OrAll<[A, B]>
+export type Or<A extends boolean, B extends boolean> = OrAll<[A, B]>;
 
 /**
 Returns a boolean for whether either of All given types are true.
@@ -62,4 +62,4 @@ export type OrAll<T extends boolean[]> = (
 				? true
 				: never
 		: never
-)
+);

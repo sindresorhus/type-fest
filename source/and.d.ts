@@ -1,5 +1,5 @@
 import type {IsTrue} from './internal/type.d.ts';
-import type {Includes} from'./includes.d.ts';
+import type {Includes} from './includes.d.ts';
 import type {IsAny} from './is-any.d.ts';
 
 /**
@@ -27,7 +27,7 @@ And<false, boolean>;
 
 @see Or, AndAll
 */
-export type And<A extends boolean, B extends boolean> = AndAll<[A, B]>
+export type And<A extends boolean, B extends boolean> = AndAll<[A, B]>;
 
 /**
 Returns a boolean for whether All given types are true.
@@ -62,4 +62,4 @@ export type AndAll<T extends boolean[]> = (
 				? false
 				: never
 		: never
-) 
+);

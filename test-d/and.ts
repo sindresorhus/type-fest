@@ -1,5 +1,5 @@
-import { expectType } from 'tsd';
-import type { And, AndAll } from '../source/and.d.ts';
+import {expectType} from 'tsd';
+import type {And, AndAll} from '../source/and.d.ts';
 
 declare const never: never;
 
@@ -21,33 +21,33 @@ expectType<And<true, never>>(true);
 expectType<And<never, never>>(never);
 
 // AndAll
-expectType<AndAll<[true, true, true]>>(true)
-expectType<AndAll<[false, true, true,]>>(false)
-expectType<AndAll<[false, false, true,]>>(false)
-expectType<AndAll<[false, false, false,]>>(false)
-expectType<AndAll<[true, false, false,]>>(false)
-expectType<AndAll<[true, true, false,]>>(false)
+expectType<AndAll<[true, true, true]>>(true);
+expectType<AndAll<[false, true, true]>>(false);
+expectType<AndAll<[false, false, true]>>(false);
+expectType<AndAll<[false, false, false]>>(false);
+expectType<AndAll<[true, false, false]>>(false);
+expectType<AndAll<[true, true, false]>>(false);
 
 // @ts-expect-error
-expectType<And<>>({} as any)
-expectType<AndAll<[]>>(never)
-expectType<And<never, any>>(never)
-expectType<And<any, any>>(never)
+expectType<And>({} as any);
+expectType<AndAll<[]>>(never);
+expectType<And<never, any>>(never);
+expectType<And<any, any>>(never);
 
 // Single value
-expectType<AndAll<[true]>>(true)
-expectType<AndAll<[false]>>(false)
-expectType<AndAll<[boolean]>>(never)
-expectType<AndAll<[never]>>(never)
-expectType<AndAll<[any]>>(never)
+expectType<AndAll<[true]>>(true);
+expectType<AndAll<[false]>>(false);
+expectType<AndAll<[boolean]>>(never);
+expectType<AndAll<[never]>>(never);
+expectType<AndAll<[any]>>(never);
 
 // Test if boolean is position dependent
-expectType<AndAll<[boolean, true, true, true]>>(never)
-expectType<AndAll<[true, boolean, true, true]>>(never)
-expectType<AndAll<[true, true, boolean, true]>>(never)
-expectType<AndAll<[true, true, true, boolean]>>(never)
+expectType<AndAll<[boolean, true, true, true]>>(never);
+expectType<AndAll<[true, boolean, true, true]>>(never);
+expectType<AndAll<[true, true, boolean, true]>>(never);
+expectType<AndAll<[true, true, true, boolean]>>(never);
 
-expectType<AndAll<[boolean, false, false, false]>>(false)
-expectType<AndAll<[false, boolean, false, false]>>(false)
-expectType<AndAll<[false, false, boolean, false]>>(false)
-expectType<AndAll<[false, false, false, boolean]>>(false)
+expectType<AndAll<[boolean, false, false, false]>>(false);
+expectType<AndAll<[false, boolean, false, false]>>(false);
+expectType<AndAll<[false, false, boolean, false]>>(false);
+expectType<AndAll<[false, false, false, boolean]>>(false);

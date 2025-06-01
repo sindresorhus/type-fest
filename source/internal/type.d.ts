@@ -121,4 +121,4 @@ export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 /**
 Determines if a type is either `never` or `any`.
 */
-export type IsAnyOrNever<T> = Or<IsAny<T>, IsNever<T>>
+export type IsAnyOrNever<T> = Or<IsAny<T>, IsNever<T>>;
