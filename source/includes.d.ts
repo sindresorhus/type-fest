@@ -1,5 +1,4 @@
-import type { UnknownArray } from './unknown-array.d.ts';
-import type {Extends, Not} from './internal/type.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 import type {IndexOf} from './index-of.d.ts';
 
 /**
@@ -16,5 +15,5 @@ type hasRed<array extends any[]> = Includes<array, 'red'>;
 
 @category Array
 */
-export type Includes<Array_ extends UnknownArray, Item, FromIndex extends number = 0> = 
-	Not<Extends<IndexOf<Array_, Item, FromIndex>, -1>>
+export type Includes<Array_ extends UnknownArray, Item, FromIndex extends number = 0> =
+	IndexOf<Array_, Item, FromIndex> extends -1 ? false : true;
