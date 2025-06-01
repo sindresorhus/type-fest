@@ -72,7 +72,7 @@ export type DelimiterCase<
 	? IsStringLiteral<Value> extends false
 		? Value
 		: Lowercase<RemoveFirstLetter<DelimiterCaseFromArray<
-		Words<Value, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>,
-		Delimiter
+			Words<Value, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>,
+			Delimiter
 		>>>
 	: Value;

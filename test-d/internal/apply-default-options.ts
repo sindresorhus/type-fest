@@ -25,7 +25,7 @@ declare const someOptionsSpecified2: ApplyDefaultOptions<PathsOptions, DefaultPa
 expectType<{maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: number}>(someOptionsSpecified2);
 
 declare const allOptionsSpecified: ApplyDefaultOptions<
-PathsOptions, DefaultPathsOptions, {maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: 1}
+	PathsOptions, DefaultPathsOptions, {maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: 1}
 >;
 expectType<{maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: 1}>(allOptionsSpecified);
 

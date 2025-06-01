@@ -89,8 +89,8 @@ const userMaskSettings: UserMask = {
 */
 export type Schema<Type, Value, Options extends SchemaOptions = {}> =
 	IfNotAnyOrNever<Type,
-	_Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>,
-	Value, Value>;
+		_Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>,
+		Value, Value>;
 
 type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
 	Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
@@ -108,7 +108,7 @@ Recursively transforms the value of each property in objects and arrays.
 */
 type SchemaHelper<Type, Value, Options extends Required<SchemaOptions>> = Simplify<{
 	[Key in keyof Type]: _Schema<
-	Key extends OptionalKeysOf<Type & object> ? Exclude<Type[Key], undefined> : Type[Key], // Remove `| undefined` when accessing optional properties
-	Value,
-	Options>
+		Key extends OptionalKeysOf<Type & object> ? Exclude<Type[Key], undefined> : Type[Key], // Remove `| undefined` when accessing optional properties
+		Value,
+		Options>
 }>;
