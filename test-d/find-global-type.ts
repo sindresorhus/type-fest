@@ -1,4 +1,4 @@
-/* eslint-disable no-var, unicorn/prevent-abbreviations */
+/* eslint-disable no-var */
 import {expectType} from 'tsd';
 import type {FindGlobalInstanceType, FindGlobalType} from '../index.d.ts';
 
