@@ -44,9 +44,8 @@ type LiteralCheck<T, LiteralType extends Primitive> = (
 	IsNever<T> extends false // Must be wider than `never`
 		? [T] extends [LiteralType & infer U] // Remove any branding
 			? And<
-			Extends<U, LiteralType>, // Must be narrower than `LiteralType`
-			Not<Extends<LiteralType, U>> // Cannot be wider than `LiteralType`
-			>
+				Extends<U, LiteralType>, // Must be narrower than `LiteralType`
+				Not<Extends<LiteralType, U>>> // Cannot be wider than `LiteralType`
 			: false
 		: false
 );
@@ -74,9 +73,9 @@ type LiteralChecks<T, LiteralUnionType> = (
 	// If `T` is none of the literal types in the union `LiteralUnionType`, then `LiteralCheck<T, LiteralType>` will evaluate to `false` for the whole union.
 	// If `T` is one of the literal types in the union, it will evaluate to `boolean` (i.e. `true | false`)
 	IsNotFalse<
-	LiteralUnionType extends Primitive
-		? LiteralCheck<T, LiteralUnionType>
-		: never
+		LiteralUnionType extends Primitive
+			? LiteralCheck<T, LiteralUnionType>
+			: never
 	>
 );
 
@@ -207,11 +206,11 @@ endsWith('abc123', end);
 @category Utilities
 */
 export type IsNumericLiteral<T> = IsTrue<
-T extends number
-	? T extends bigint
-		? LiteralCheck<T, Numeric>
-		: LiteralCheck<T, number>
-	: LiteralCheck<T, bigint>
+	T extends number
+		? T extends bigint
+			? LiteralCheck<T, Numeric>
+			: LiteralCheck<T, number>
+		: LiteralCheck<T, bigint>
 >;
 
 /**
