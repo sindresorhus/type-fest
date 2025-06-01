@@ -21,12 +21,12 @@ type OpaqueObjectData = {a: number[]} | {b: string};
 type OpaqueObject = Opaque<OpaqueObjectData, {token: unknown}>;
 
 type ReadonlyJsonValue =
-  | {readonly [k: string]: ReadonlyJsonValue}
-  | readonly ReadonlyJsonValue[]
-  | number
-  | string
-  | boolean
-  | null;
+	| {readonly [k: string]: ReadonlyJsonValue}
+	| readonly ReadonlyJsonValue[]
+	| number
+	| string
+	| boolean
+	| null;
 
 class ClassA {
 	foo = 1;
