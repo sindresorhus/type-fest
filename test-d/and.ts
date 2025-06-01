@@ -29,11 +29,17 @@ expectType<AndAll<[true, false, false,]>>(false)
 expectType<AndAll<[true, true, false,]>>(false)
 
 // @ts-expect-error
-expectType<And<>>(never)
+expectType<And<>>({} as any)
 expectType<AndAll<[]>>(never)
-expectType<And<never, never>>(never)
 expectType<And<never, any>>(never)
 expectType<And<any, any>>(never)
+
+// Single value
+expectType<AndAll<[true]>>(true)
+expectType<AndAll<[false]>>(false)
+expectType<AndAll<[boolean]>>(never)
+expectType<AndAll<[never]>>(never)
+expectType<AndAll<[any]>>(never)
 
 // Test if boolean is position dependent
 expectType<AndAll<[boolean, true, true, true]>>(never)

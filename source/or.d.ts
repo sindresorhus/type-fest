@@ -15,6 +15,7 @@ Or<true, false>;
 //=> true
 
 Or<false, false>;
+//=> false
 
 Or<true, boolean>;
 //=> true

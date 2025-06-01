@@ -22,18 +22,24 @@ expectType<Or<never, never>>(never);
 
 // OrAll
 expectType<OrAll<[true, true, true]>>(true)
-expectType<OrAll<[false, true, true,]>>(true)
-expectType<OrAll<[false, false, true,]>>(true)
-expectType<OrAll<[false, false, false,]>>(false)
-expectType<OrAll<[true, false, false,]>>(true)
-expectType<OrAll<[true, true, false,]>>(true)
+expectType<OrAll<[false, true, true]>>(true)
+expectType<OrAll<[false, false, true]>>(true)
+expectType<OrAll<[false, false, false]>>(false)
+expectType<OrAll<[true, false, false]>>(true)
+expectType<OrAll<[true, true, false]>>(true)
 
 // @ts-expect-error
-expectType<Or<>>(never)
+expectType<Or<>>({} as any)
 expectType<OrAll<[]>>(never)
-expectType<Or<never, never>>(never)
 expectType<Or<never, any>>(never)
 expectType<Or<any, any>>(never)
+
+// Single value
+expectType<OrAll<[true]>>(true)
+expectType<OrAll<[false]>>(false)
+expectType<OrAll<[boolean]>>(never)
+expectType<OrAll<[never]>>(never)
+expectType<OrAll<[any]>>(never)
 
 // Test if boolean is position dependent
 expectType<OrAll<[boolean, true, true, true]>>(true)

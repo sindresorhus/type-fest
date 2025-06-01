@@ -50,17 +50,17 @@ export type HasMultipleCallSignatures<T extends (...arguments_: any[]) => unknow
 /**
 Returns a boolean for whether the given `boolean` Union containe's `false`.
 */
-export type IsNotFalse<T> = Not<IsFalse<T>>;
+export type IsNotFalse<T extends boolean> = Not<IsFalse<T>>;
 
 /**
 Returns a boolean for whether the given `boolean` Union members are all `true`.
 */
-export type IsTrue<T> = Extends<T, true>;
+export type IsTrue<T extends boolean> = Extends<T, true>;
 
 /**
 Returns a boolean for whether the given `boolean` Union members are all `false`.
 */
-export type IsFalse<T> = Extends<T, false>;
+export type IsFalse<T extends boolean> = Extends<T, false>;
 
 /**
 Returns a boolean for whether the given type is primitive value or primitive type.
@@ -77,8 +77,7 @@ IsPrimitive<Object>
 //=> false
 ```
 */
-export type IsPrimitive<T> = Extends<T,Primitive>;
-//TODO: Push `IsPrimitive` Branch
+export type IsPrimitive<T> = Extends<T, Primitive>;
 
 /**
 Returns a boolean for whether A is false.
