@@ -1,7 +1,7 @@
 /**
 Simplifies a type while including and/or excluding certain types from being simplified.
 
-Useful to improve type hints shown in editors. And also to transform an `interface` into a `type` to aide with assignability.
+Useful to improve type hints shown in editors. And also to transform an `interface` into a `type` to aid with assignability.
 
 @example
 ```
