@@ -58,7 +58,7 @@ type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, SomeComplexType
 //	foo: {
 // 		a: string,
 // 		b: string,
-// 		complexType: SomeComplexType1 | SomeComplexType2
+// 		complexType: SomeComplexType1 & SomeComplexType2
 //	}
 // }
 ```

@@ -16,7 +16,7 @@ type TypeB = {
 };
 
 type TypeAB = TypeA & TypeB;
-//=> {a: string} & {b: string}
+//=> TypeA & TypeB
 
 type SimplifyTypeAB = ConditionalSimplify<TypeAB, never, object>;
 //=> {a: string, b: string}
