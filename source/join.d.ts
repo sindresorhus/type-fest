@@ -50,7 +50,7 @@ const path: Join<['hello' | undefined, 'world' | null], '.'> = ['hello', 'world'
 */
 export type Join<
 	Items extends readonly JoinableItem[],
-	Delimiter extends string,
+	Delimiter extends string = ',',
 > = Items extends readonly []
 	? ''
 	: Items extends readonly [JoinableItem?]
