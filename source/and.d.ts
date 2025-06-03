@@ -1,4 +1,5 @@
-import type {IsEqual} from './is-equal.d.ts';
+import type {If} from './if.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Returns a boolean for whether two given types are both true.
@@ -18,8 +19,11 @@ And<true, false>;
 
 @see {@link Or}
 */
-export type And<A extends boolean, B extends boolean> = [A, B][number] extends true
-	? true
-	: true extends [IsEqual<A, false>, IsEqual<B, false>][number]
-		? false
-		: never;
+export type And<A extends boolean, B extends boolean> =
+	_And<If<IsNever<A>, false, A>, If<IsNever<B>, false, B>>; // `never` is treated as `false`
+
+export type _And<A extends boolean, B extends boolean> = A extends true
+	? B extends true
+		? true
+		: false
+	: false;
