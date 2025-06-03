@@ -1,6 +1,6 @@
 import type {UnknownArray} from './unknown-array.d.ts';
 
-export type ArrayReverse<Array_ extends UnknownArray> =
-	Array_ extends [...infer Head, infer Tail]
-		? [Tail, ...ArrayReverse<Head>]
+export type Reverse<Array_ extends UnknownArray> =
+	Array_ extends readonly [...infer Head, infer Tail]
+		? [Tail, ...Reverse<Head>]
 		: [];
