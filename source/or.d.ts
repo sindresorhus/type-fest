@@ -10,10 +10,66 @@ Use-case: Constructing complex conditional types where multiple conditions must 
 ```
 import type {Or} from 'type-fest';
 
-Or<true, false>;
+type TT = Or<true, false>;
 //=> true
 
-Or<false, false>;
+type TF = Or<true, false>;
+//=> true
+
+type FT = Or<false, true>;
+//=> true
+
+type FF = Or<false, false>;
+//=> false
+```
+
+Note: When `boolean` is passed as an argument, it is distributed into separate cases, and the final result is a union of those cases.
+For example, `And<false, boolean>` expands to `And<false, true> | And<false, false>`, which simplifies to `true | false` (i.e., `boolean`).
+@example
+```
+import type {And} from 'type-fest';
+
+type A = Or<false, boolean>;
+//=> boolean
+
+type B = Or<boolean, false>;
+//=> boolean
+
+type C = Or<true, boolean>;
+//=> true
+
+type D = Or<boolean, true>;
+//=> true
+
+type E = Or<boolean, boolean>;
+//=> boolean
+```
+
+Note: If `never` is passed as an argument, it is treated as `false` and the result is computed accordingly.
+
+@example
+```
+import type {Or} from 'type-fest';
+
+type A = Or<true, never>;
+//=> true
+
+type B = Or<never, true>;
+//=> true
+
+type C = Or<false, never>;
+//=> false
+
+type D = Or<never, false>;
+//=> false
+
+type E = Or<boolean, never>;
+//=> boolean
+
+type F = Or<never, boolean>;
+//=> boolean
+
+type G = Or<never, never>;
 //=> false
 ```
 
