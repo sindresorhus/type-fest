@@ -1,4 +1,5 @@
 import type {If} from '../if.d.ts';
+import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 
@@ -99,7 +100,7 @@ Returns a boolean for whether every element in an array type extends another typ
 
 Note:
 - This type is not designed to be used with non-tuple arrays (like `number[]`), tuples with optional elements (like `[1?, 2?, 3?]`), or tuples that contain a rest element (like `[1, 2, ...number[]]`).
-- The `never` type does not match the target type unless the target type itself is `never`. For example, `Every<[never, never], never>` returns `true`, but `Every<[never, number], number>` returns `false`.
+- The `never` type does not match the target type unless the target type is `never` or `any`. For example, `Every<[never, never], never>` returns `true`, but `Every<[never, number], number>` returns `false`.
 
 @example
 ```
@@ -118,10 +119,12 @@ type D = Every<[true, boolean, true], true>;
 //=> boolean
 ```
 */
-export type Every<TArray extends UnknownArray, Type> = TArray extends readonly [infer First, ...infer Rest]
+export type Every<TArray extends UnknownArray, Type> = If<IsAny<Type>, true, TArray extends readonly [infer First, ...infer Rest]
 	? IsNever<First> extends true
-		? IsNever<Type>
+		? IsNever<Type> extends true
+			? Every<Rest, Type>
+			: false
 		: First extends Type
 			? Every<Rest, Type>
 			: false
-	: true;
+	: true>;
