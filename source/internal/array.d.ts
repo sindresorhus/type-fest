@@ -97,7 +97,9 @@ export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T ex
 /**
 Returns a boolean for whether every element in an array type extends another type.
 
-Note: This type is not designed to be used with non-tuple arrays (like `number[]`), tuples with optional elements (like `[1?, 2?, 3?]`), or tuples that contain a rest element (like `[1, 2, ...number[]]`).
+Note:
+- This type is not designed to be used with non-tuple arrays (like `number[]`), tuples with optional elements (like `[1?, 2?, 3?]`), or tuples that contain a rest element (like `[1, 2, ...number[]]`).
+- The `never` type does not match the target type unless the target type itself is `never`. For example, `Every<[never, never], never>` returns `true`, but `Every<[never, number], number>` returns `false`.
 
 @example
 ```
@@ -117,7 +119,9 @@ type D = Every<[true, boolean, true], true>;
 ```
 */
 export type Every<TArray extends UnknownArray, Type> = TArray extends readonly [infer First, ...infer Rest]
-	? First extends Type
-		? Every<Rest, Type>
-		: false
+	? IsNever<First> extends true
+		? IsNever<Type>
+		: First extends Type
+			? Every<Rest, Type>
+			: false
 	: true;

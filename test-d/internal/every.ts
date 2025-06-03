@@ -29,3 +29,13 @@ expectType<Every<[1, 2, '3'] | [4, 5, '6'], number>>(false); // Both `false`
 expectType<Every<[1, 2, 3] | ['1', '2', 3], number>>({} as boolean); // One `true`, one `false`
 expectType<Every<[true, true] | [true, boolean], true>>({} as boolean); // One `true`, one `boolean`
 expectType<Every<[true, false] | [true, boolean], true>>({} as boolean); // One `false`, one `boolean`
+
+// Boundary cases
+expectType<Every<[], any>>(true);
+expectType<Every<[], never>>(true);
+expectType<Every<[1, 2, '3', true, false, string[]], any>>(true);
+expectType<Every<[any, any], any>>(true);
+expectType<Every<[1, 2], never>>(false);
+expectType<Every<[never, never], never>>(true);
+expectType<Every<[1, 2, any], number>>({} as boolean);
+expectType<Every<[1, 2, never], number>>(false);
