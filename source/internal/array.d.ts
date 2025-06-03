@@ -2,6 +2,7 @@ import type {If} from '../if.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {IfNotAnyOrNever} from './type.d.ts';
 
 /**
 Infer the length of the given array `<T>`.
@@ -119,12 +120,14 @@ type D = Every<[true, boolean, true], true>;
 //=> boolean
 ```
 */
-export type Every<TArray extends UnknownArray, Type> = If<IsAny<Type>, true, TArray extends readonly [infer First, ...infer Rest]
-	? IsNever<First> extends true
-		? IsNever<Type> extends true
-			? Every<Rest, Type>
-			: false
-		: First extends Type
-			? Every<Rest, Type>
-			: false
-	: true>;
+export type Every<TArray extends UnknownArray, Type> = IfNotAnyOrNever<TArray, If<IsAny<Type>, true,
+	TArray extends readonly [infer First, ...infer Rest]
+		? IsNever<First> extends true
+			? IsNever<Type> extends true
+				? Every<Rest, Type>
+				: false
+			: First extends Type
+				? Every<Rest, Type>
+				: false
+		: true
+>, false, false>;

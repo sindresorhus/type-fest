@@ -44,3 +44,6 @@ expectType<Every<[never, number, never, any, never], never>>(false);
 expectType<Every<[never, any, never, any], never>>({} as boolean);
 expectType<Every<[1, 2, any], number>>({} as boolean);
 expectType<Every<[1, 2, never], number>>(false);
+
+expectType<Every<any, never>>(false);
+expectType<Every<never, any>>(false);
