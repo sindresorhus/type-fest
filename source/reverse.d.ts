@@ -73,14 +73,12 @@ type _Reverse<Array_ extends UnknownArray, Options extends Required<ArrayReverse
 		? []
 		: [
 			..._Reverse<ArrayTail<Array_>, Options>,
-			...[
-				Or<
-					Options['keepOptionals'],
-					ExtendsStrict<AHead, undefined>
-				> extends true
-					? AHead
-					: Exclude<AHead, undefined>,
-			],
+			Or<
+				Options['keepOptionals'],
+				ExtendsStrict<AHead, undefined>
+			> extends true
+				? AHead
+				: Exclude<AHead, undefined>,
 		];
 
 /**

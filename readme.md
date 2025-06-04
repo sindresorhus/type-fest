@@ -161,14 +161,13 @@ Click the type names for complete docs.
 - [`WritableKeysOf`](source/writable-keys-of.d.ts) - Extract all writable (non-readonly) keys from the given type.
 - [`HasWritableKeys`](source/has-writable-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any writable fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
+- [`SplitOnSpread`](source/split-on-spread.d.ts) - Splits an Array on its spreaded portion. return's `[[...Head], [Spread], [...Tail]]`.
+- [`ExtractSpread`](source/split-on-spread.d.ts) - Return's the spread element type from and array.
+- [`ExcludeSpread`](source/split-on-spread.d.ts) - Create a array with the spread element removed.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers (includes the start and excludes the end).
 - [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
-- [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
-- [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
-- [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
-- [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
@@ -236,7 +235,16 @@ Click the type names for complete docs.
 - [`Arrayable`](source/arrayable.d.ts) - Create a type that represents either the value or an array of the value.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
+- [`Reverse`](source/array-reverse.d.ts) - Creates a new array type by Reversing the order of each element in the original array.
+- [`IndexOf`](source/index-of.d.ts) - Returns the index of the first occurrence of a value in an array, or `-1` if it is not present.
+- [`LastIndexOf`](source/index-of.d.ts) - Returns the index of the last occurrence of a value in an array, or `-1` if it is not present.
+- [`IndicesOf`](source/index-of.d.ts) - Returns All the indices of the occurrence of a value in an array, or `[]` if it is not present.
+- [`CountOf`](source/count-of.d.ts) - Returns the count of occurrences of a value in an array, or `0` if it is not present.
 - [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.
+- [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
+- [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
+- [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
+- [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
@@ -295,6 +303,7 @@ Click the type names for complete docs.
 
 ### Improved built-in
 
+- [`ExtendsStrict`](source/extends-strict.d.ts) - A stricter version of `extends` that Checks Stricily if one type extends another without distribution.
 - [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of `Extract<T, U>` that ensures every member of `U` can successfully extract something from `T`.
 - [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of `Exclude<T, U>` that ensures every member of `U` can successfully exclude something from `T`.
 
