@@ -1,8 +1,8 @@
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {IfNotAnyOrNever} from './type.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
+import type {IfNotAnyOrNever} from './type.d.ts';
 
 /**
 Infer the length of the given array `<T>`.
