@@ -13,6 +13,7 @@ import type {Includes} from 'type-fest';
 type hasRed<array extends any[]> = Includes<array, 'red'>;
 ```
 
+@see CountOf
 @category Array
 */
 export type Includes<Array_ extends UnknownArray, Item, FromIndex extends number = 0> =
