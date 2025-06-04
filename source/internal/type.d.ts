@@ -99,3 +99,10 @@ type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 */
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
+
+/*
+Indicates the value of `exactOptionalPropertyTypes` compiler option.
+*/
+type ExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
+	? false
+	: true;

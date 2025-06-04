@@ -1,4 +1,4 @@
-import type {Every} from './internal/array.d.ts';
+import type {Every} from './every.d.ts';
 
 /**
 Returns a boolean for whether the given string literal is lowercase.
