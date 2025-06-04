@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ExcludeSpread, ExtractSpread, SplitOnSpread} from '../../source/slpit-on-spread.d.ts';
+import type {ExcludeSpread, ExtractSpread, SplitOnSpread} from '../../source/split-on-spread.d.ts';
 
 // Fixed Tuples
 expectType<SplitOnSpread<[]>>({} as [[], [], []]);

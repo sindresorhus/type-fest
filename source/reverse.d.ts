@@ -1,7 +1,7 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
-import type {SplitOnSpread} from './slpit-on-spread.d.ts';
-import type {ExtendsStrict} from './internal/type.d.ts';
+import type {SplitOnSpread} from './split-on-spread.d.ts';
+import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {ArrayTail} from './array-tail.d.ts';
 import type {IsAny} from './is-any.d.ts';

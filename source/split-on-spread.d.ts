@@ -17,7 +17,7 @@ type V = ExtractSpread<[number, string]>;
 ```
 
 @author benzaria
-@see ExcludeSpread
+@see ExcludeSpread, SplitOnSpread
 @category Array
 */
 export type ExtractSpread<T extends UnknownArray> =
@@ -43,7 +43,7 @@ type V = ExcludeSpread<[number, string]>;
 ```
 
 @author benzaria
-@see ExtractSpread
+@see ExtractSpread, SplitOnSpread
 @category Array
 */
 export type ExcludeSpread<T extends UnknownArray> =
@@ -73,6 +73,7 @@ type V = SplitOnSpread<[number, string]>;
 ```
 
 @author benzaria
+@see ExtractSpread, ExcludeSpread
 @category Array
 */
 export type SplitOnSpread<T extends UnknownArray> = [
