@@ -9,7 +9,7 @@ expectType<[string | null, number | bigint, boolean]>({} as CollapseRestElement<
 
 // Optional elements
 // If `exactOptionalPropertyTypes` were disabled, there would have been an additional `| undefined` for optional elements.
-// For example, `DissolveRestElement<[string?, number?]>` would have returned `[string | undefined, number | undefined]`.
+// For example, `CollapseRestElement<[string?, number?]>` would have returned `[string | undefined, number | undefined]`.
 expectType<[string]>({} as CollapseRestElement<[string?]>);
 expectType<[1, 2, 'a' | 'b', 'c' | 'd']>({} as CollapseRestElement<[1, 2, ('a' | 'b')?, ('c' | 'd')?]>);
 expectType<[string, number, boolean]>({} as CollapseRestElement<[string?, number?, boolean?]>);
