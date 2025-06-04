@@ -1,7 +1,7 @@
-import type {If} from '../if.d.ts';
-import type {IsAny} from '../is-any.d.ts';
-import type {IsNever} from '../is-never.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {IsNever} from '../is-never.d.ts';
+import type {IsAny} from '../is-any.d.ts';
+import type {If} from '../if.d.ts';
 import type {IfNotAnyOrNever} from './type.d.ts';
 
 /**
@@ -45,8 +45,8 @@ type B = StaticPartOfArray<A>;
 */
 export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends unknown
-		? number extends T['length'] ?
-			T extends readonly [infer U, ...infer V]
+		? number extends T['length']
+			? T extends readonly [infer U, ...infer V]
 				? StaticPartOfArray<V, [...Result, U]>
 				: Result
 			: T

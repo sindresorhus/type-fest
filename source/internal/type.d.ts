@@ -1,7 +1,9 @@
-import type {If} from '../if.d.ts';
-import type {IsAny} from '../is-any.d.ts';
-import type {IsNever} from '../is-never.d.ts';
+import type {ExtendsStrict} from '../extends-strict.d.ts';
 import type {Primitive} from '../primitive.d.ts';
+import type {IsNever} from '../is-never.d.ts';
+import type {IsAny} from '../is-any.d.ts';
+import type {Or} from '../or.d.ts';
+import type {If} from '../if.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -40,9 +42,19 @@ export type HasMultipleCallSignatures<T extends (...arguments_: any[]) => unknow
 		: false;
 
 /**
-Returns a boolean for whether the given `boolean` is not `false`.
+Returns a boolean for whether the given `boolean` Union contain `false`.
 */
-export type IsNotFalse<T extends boolean> = [T] extends [false] ? false : true;
+export type IsNotFalse<T extends boolean> = Not<IsFalse<T>>;
+
+/**
+Returns a boolean for whether the given `boolean` Union members are all `true`.
+*/
+export type IsTrue<T extends boolean> = ExtendsStrict<T, true>;
+
+/**
+Returns a boolean for whether the given `boolean` Union members are all `false`.
+*/
+export type IsFalse<T extends boolean> = ExtendsStrict<T, false>;
 
 /**
 Returns a boolean for whether the given type is primitive value or primitive type.
@@ -59,7 +71,7 @@ IsPrimitive<Object>
 //=> false
 ```
 */
-export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
+export type IsPrimitive<T> = ExtendsStrict<T, Primitive>;
 
 /**
 Returns a boolean for whether A is false.
@@ -99,3 +111,8 @@ type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 */
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
+
+/**
+Determines if a type is either `never` or `any`.
+*/
+export type IsAnyOrNever<T> = Or<IsAny<T>, IsNever<T>>;
