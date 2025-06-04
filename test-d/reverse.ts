@@ -37,8 +37,9 @@ expectType<Reverse<['x', 1, true]>>([true, 1, 'x'] as const);
 
 // Optional/undefined
 expectType<Reverse<[1?, 2?, 3?]>>([3, 2, 1] as const);
-expectType<Reverse<[undefined, 1, 2]>>([2, 1, undefined] as const);
+expectType<Reverse<[1, 2?, 3?], {keepOptionals: true}>>({} as [3 | undefined, 2 | undefined, 1]);
 expectType<Reverse<[1 | undefined, 2 | undefined]>>([2, 1] as const);
+expectType<Reverse<[undefined, 1, 2]>>([2, 1, undefined] as const);
 expectType<Reverse<[string, number?]>>([number, string] as const);
 expectType<Reverse<[number?, string?]>>([string, number] as const);
 expectType<Reverse<[...[]]>>([] as const);
@@ -56,12 +57,14 @@ expectType<Reverse<[1, 2?, 3?]>>([3, 2, 1] as const);
 expectType<Reverse<[boolean, ...[1, 2], string]>>([string, 2, 1, boolean] as const);
 expectType<Reverse<['a', ...[number, string], 'b']>>(['b', string, number, 'a'] as const);
 expectType<Reverse<[...['a'], ...['b'], 'c']>>(['c', 'b', 'a'] as const);
-expectType<Reverse<[...never[], 2, 1]>>([1] as const);
+expectType<Reverse<[...never[], 2, 1]>>({} as [1, 2, ...never[]]);
 expectType<Reverse<readonly [1, 2, 3]>>([3, 2, 1] as const);
 
 // Large tuples, readonly modifiers
-expectType<Reverse<readonly [1, 2, 3, 4, 5, 6]>>([6, 5, 4, 3, 2, 1] as const);
-expectType<Reverse<readonly ['a', 'b', 'c', 'd']>>(['d', 'c', 'b', 'a'] as const);
+expectType<Reverse<readonly [1, 2, 3, 4, 5, 6]>>({} as readonly [6, 5, 4, 3, 2, 1]);
+expectType<Reverse<readonly ['a', 'b', 'c', 'd']>>({} as readonly ['d', 'c', 'b', 'a']);
+expectType<Reverse<readonly [1, 2, 3, 4, 5, 6], {preserveReadonly: false}>>({} as [6, 5, 4, 3, 2, 1]);
+expectType<Reverse<readonly ['a', 'b', 'c', 'd'], {preserveReadonly: false}>>({} as ['d', 'c', 'b', 'a']);
 expectType<Reverse<readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>>([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] as const);
 expectType<Reverse<readonly ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']>>(['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'] as const);
 expectType<Reverse<readonly [readonly number[], boolean]>>([boolean, [number] as number[]] as const);
@@ -69,7 +72,7 @@ expectType<Reverse<readonly [string[], ...[1, 2], 'z']>>(['z', 2, 1, [string] as
 expectType<Reverse<readonly ['a', 'b', 'c', 'd', 'e']>>(['e', 'd', 'c', 'b', 'a'] as const);
 expectType<Reverse<readonly [boolean, boolean, boolean]>>([boolean, boolean, boolean] as const);
 expectType<Reverse<readonly ['x', ...[], 'y']>>(['y', 'x'] as const);
-expectType<Reverse<readonly [...['1', '2', '3']]> extends readonly ['3', '2', '1'] ? true : false>(true);
+expectType<Reverse<readonly [...['1', '2', '3']]>>(['3', '2', '1'] as const);
 
 // Union
 expectType<Reverse<[1, 2] | [3, 4]>>({} as [2, 1] | [4, 3]);
@@ -81,9 +84,9 @@ expectType<Reverse<[1, 2, ...number[]]>>({} as [...number[], 2, 1]);
 expectType<Reverse<['a', `on${string}`, 'c']>>(['c', `on${string}`, 'a'] as const);
 expectType<Reverse<[1, 'x', ...boolean[]]>>([boolean, 'x', 1] as const);
 
-expectType<Reverse<[...boolean[], true]>>({} as boolean[]);
-expectType<Reverse<[1, ...number[], 2]>>({} as [...number[], 1]);
-expectType<Reverse<[1, ...number[], 'end']>>({} as [...Array<(number | 'end')>, 1]);
+expectType<Reverse<[...boolean[], true]>>({} as [true, ...boolean[]]);
+expectType<Reverse<[1, ...number[], 2]>>({} as [2, ...number[], 1]);
+expectType<Reverse<[1, ...number[], 'end']>>({} as ['end', ...number[], 1]);
 
 // In Use
 declare function reverse<const T extends unknown[]>(array: T): Reverse<T>;

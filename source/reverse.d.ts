@@ -1,5 +1,6 @@
-import type {IsArrayReadonly, IsLeadingSpread} from './internal/array.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {IsArrayReadonly} from './internal/array.d.ts';
+import type {SplitOnSpread} from './slpit-on-spread.d.ts';
 import type {ExtendsStrict} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {ArrayTail} from './array-tail.d.ts';
@@ -68,23 +69,19 @@ type DefaultArrayReverseOptions = {
 Reverse an Array Items.
 */
 type _Reverse<Array_ extends UnknownArray, Options extends Required<ArrayReverseOptions>, AHead = Array_[0]> =
-	IsAny<Array_> extends false
-		? Array_ extends readonly []
-			? []
-			: [
-				..._Reverse<ArrayTail<Array_>, Options>,
-				...IsLeadingSpread<Array_> extends true
-					? AHead[]
-					: [
-						Or<
-							Options['keepOptionals'],
-							ExtendsStrict<AHead, undefined>
-						> extends true
-							? AHead
-							: Exclude<AHead, undefined>,
-					],
-			]
-		: never;
+	Array_ extends readonly []
+		? []
+		: [
+			..._Reverse<ArrayTail<Array_>, Options>,
+			...[
+				Or<
+					Options['keepOptionals'],
+					ExtendsStrict<AHead, undefined>
+				> extends true
+					? AHead
+					: Exclude<AHead, undefined>,
+			],
+		];
 
 /**
 Creates a new array type by Reversing the order of each element in the original array.
@@ -116,14 +113,22 @@ reverse(['a', 'b', 'c', 'd']);
 */
 export type Reverse<Array_ extends UnknownArray, Options extends ArrayReverseOptions = {}> =
 	ApplyDefaultOptions<ArrayReverseOptions, DefaultArrayReverseOptions, Options> extends infer ResolvedOptions extends Required<ArrayReverseOptions>
-		? Array_ extends UnknownArray // For distributing `Array_`
-			? _Reverse<Array_, ResolvedOptions> extends infer Result
-				? And<
-					ResolvedOptions['preserveReadonly'],
-					IsArrayReadonly<Array_>
-				> extends true
-					? Readonly<Result>
-					: Result
+		? IsAny<Array_> extends false // Prevent the return of `Readonly<[] | [unknown] | unknown[] | [...unknown[], unknown]>`
+			? Array_ extends UnknownArray // For distributing `Array_`
+				? SplitOnSpread<Array_> extends infer _Result extends UnknownArray[]
+					? [
+						..._Reverse<_Result[2], ResolvedOptions>,
+						..._Result[1],
+						..._Reverse<_Result[0], ResolvedOptions>,
+					] extends infer Result
+						? And<
+							ResolvedOptions['preserveReadonly'],
+							IsArrayReadonly<Array_>
+						> extends true
+							? Readonly<Result>
+							: Result
+						: never
+					: never
 				: never
 			: never
 		: never;

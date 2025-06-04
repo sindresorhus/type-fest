@@ -15,13 +15,13 @@ Matches non-recursive types.
 export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown);
 
 /**
-Checks if one type extends another. Note: this is not quite the same as `Left extends Right` because:
+Checks Stricily if one type extends another. Note: this is not quite the same as `Left extends Right` because:
 
-1. If either type is `never`, the result is `true` iff the other type is also `never`.
+1. Types are wrapped in a 1-tuple so that union types are not distributed - instead we consider `string | number` to _not_ extend `number`. If we used `Left extends Right` directly you would get `Extends<string | number, number>` => `false | true` => `boolean`.
 
-2. Types are wrapped in a 1-tuple so that union types are not distributed - instead we consider `string | number` to _not_ extend `number`. If we used `Left extends Right` directly you would get `Extends<string | number, number>` => `false | true` => `boolean`.
- */
-export type Extends<Left, Right> = IsNever<Left> extends true ? IsNever<Right> : [Left] extends [Right] ? true : false;
+2. Return's `true` if `[Left] extends [Right]`.
+*/
+export type ExtendsStrict<Left, Right> = IsNever<Left> extends true ? IsNever<Right> : [Left] extends [Right] ? true : false;
 
 /**
 Returns a boolean for whether the two given types extends the base type.
@@ -57,12 +57,12 @@ export type IsNotFalse<T extends boolean> = Not<IsFalse<T>>;
 /**
 Returns a boolean for whether the given `boolean` Union members are all `true`.
 */
-export type IsTrue<T extends boolean> = Extends<T, true>;
+export type IsTrue<T extends boolean> = ExtendsStrict<T, true>;
 
 /**
 Returns a boolean for whether the given `boolean` Union members are all `false`.
 */
-export type IsFalse<T extends boolean> = Extends<T, false>;
+export type IsFalse<T extends boolean> = ExtendsStrict<T, false>;
 
 /**
 Returns a boolean for whether the given type is primitive value or primitive type.
@@ -79,7 +79,7 @@ IsPrimitive<Object>
 //=> false
 ```
 */
-export type IsPrimitive<T> = Extends<T, Primitive>;
+export type IsPrimitive<T> = ExtendsStrict<T, Primitive>;
 
 /**
 Returns a boolean for whether A is false.
