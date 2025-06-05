@@ -103,6 +103,6 @@ export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 /*
 Indicates the value of `exactOptionalPropertyTypes` compiler option.
 */
-export type ExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
+export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;

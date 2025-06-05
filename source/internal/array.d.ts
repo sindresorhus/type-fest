@@ -2,7 +2,7 @@ import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {ExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
 /**
 Infer the length of the given array `<T>`.
@@ -149,7 +149,7 @@ type _CollapseRestElement<
 					[
 						...ForwardAccumulator,
 						'0' extends OptionalKeysOf<TArray>
-							? If<ExactOptionalPropertyTypesEnabled, First, First | undefined> // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+							? If<IsExactOptionalPropertyTypesEnabled, First, First | undefined> // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 							: First,
 					],
 					BackwardAccumulator
