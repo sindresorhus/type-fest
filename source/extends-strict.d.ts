@@ -1,4 +1,5 @@
 import type {IsNever} from './is-never.d.ts';
+import type {IsAny} from './is-any.d.ts';
 
 /**
 A stricter, non-distributive version of `extends` for checking whether one type is assignable to another.
@@ -11,7 +12,7 @@ Unlike the built-in `extends` keyword, `ExtendsStrict`:
 
 @example
 ```
-import type {ExtendsStrict} from 'type-fest'
+import type {ExtendsStrict} from 'type-fest';
 
 type T1 = ExtendsStrict<number | string, string>;
 //=> false
@@ -24,13 +25,18 @@ type T3 = ExtendsStrict<string, string>;
 
 type T4 = ExtendsStrict<never, never>;
 //=> true
+
+type T5 = ExtendsStrict<never, number>;
+//=> false
 ```
 
 @category Improved Built-in
 */
 export type ExtendsStrict<Left, Right> =
-	IsNever<Left> extends true
-		? IsNever<Right>
-		: [Left] extends [Right]
-			? true
-			: false;
+	IsAny<Left | Right> extends true
+		? true
+		: IsNever<Left> extends true
+			? IsNever<Right>
+			: [Left] extends [Right]
+				? true
+				: false;
