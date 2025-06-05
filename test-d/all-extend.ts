@@ -80,6 +80,9 @@ expectType<AllExtend<[], never>>(true);
 expectType<AllExtend<[1, 2, '3', true, false, string[], never], any>>(true);
 expectType<AllExtend<[any, any], any>>(true);
 expectType<AllExtend<[never, never], any>>(true);
+expectType<AllExtend<[never, 1], any>>(true);
+expectType<AllExtend<[1, never], any>>(true);
+expectType<AllExtend<unknown[], any>>(true);
 expectType<AllExtend<[1, 2], never>>(false);
 expectType<AllExtend<[never, never], never>>(true);
 expectType<AllExtend<[never, never, number], never>>(false);
@@ -96,6 +99,7 @@ expectType<AllExtend<['a', 'b', ...any[], Uppercase<string>, `${number}`], strin
 expectType<AllExtend<[1, 2, ...string[]], any>>(true);
 expectType<AllExtend<[...number[], never, never], any>>(true);
 expectType<AllExtend<['a', 'b', ...any[], 1, 2], any>>(true);
+expectType<AllExtend<[never, ...never[], never], any>>(true);
 expectType<AllExtend<[never, never, ...number[]], never>>(false);
 expectType<AllExtend<[never, ...never[], never], never>>(true);
 expectType<AllExtend<[...never[], never, string], never>>(false);
