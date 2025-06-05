@@ -33,9 +33,17 @@ expectType<Every<[true, false] | [true, boolean], true>>({} as boolean); // One 
 // Boundary cases
 expectType<Every<[], any>>(true);
 expectType<Every<[], never>>(true);
-expectType<Every<[1, 2, '3', true, false, string[]], any>>(true);
+expectType<Every<[1, 2, '3', true, false, string[], never], any>>(true);
 expectType<Every<[any, any], any>>(true);
+expectType<Every<[never, never], any>>(true);
 expectType<Every<[1, 2], never>>(false);
 expectType<Every<[never, never], never>>(true);
+expectType<Every<[never, never, number], never>>(false);
+expectType<Every<[number, never, never], never>>(false);
+expectType<Every<[never, number, never, any, never], never>>(false);
+expectType<Every<[never, any, never, any], never>>({} as boolean);
 expectType<Every<[1, 2, any], number>>({} as boolean);
 expectType<Every<[1, 2, never], number>>(false);
+
+expectType<Every<any, never>>(false);
+expectType<Every<never, any>>(false);
