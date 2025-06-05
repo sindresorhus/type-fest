@@ -58,7 +58,6 @@ expectType<ExtendsStrict<string, 'foo'>>(false);
 
 // Arrays
 expectType<ExtendsStrict<string[], string[]>>(true);
-expectType<ExtendsStrict<string[], string[]>>(true);
 expectType<ExtendsStrict<[string], string[]>>(true); // Tuple is assignable to array
 expectType<ExtendsStrict<string[], [string]>>(false); // Array not assignable to fixed tuple
 

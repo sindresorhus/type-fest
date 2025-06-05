@@ -11,7 +11,7 @@ Unlike the built-in `extends` keyword, `ExtendsStrict`:
 
 @example
 ```
-import {ExtendsStrict} from 'type-fest'
+import type {ExtendsStrict} from 'type-fest'
 
 type T1 = ExtendsStrict<number | string, string>;
 //=> false
