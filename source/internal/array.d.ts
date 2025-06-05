@@ -1,8 +1,8 @@
 import type {If} from '../if.d.ts';
-import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
+import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {IfNotAnyOrNever} from './type.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
 /**
 Infer the length of the given array `<T>`.
@@ -97,37 +97,62 @@ Returns whether the given array `T` is readonly.
 export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
 
 /**
-Returns a boolean for whether every element in an array type extends another type.
-
-Note:
-- This type is not designed to be used with non-tuple arrays (like `number[]`), tuples with optional elements (like `[1?, 2?, 3?]`), or tuples that contain a rest element (like `[1, 2, ...number[]]`).
-- The `never` type does not match the target type unless the target type is `never` or `any`. For example, `Every<[never, never], never>` returns `true`, but `Every<[never, number], number>` returns `false`.
+Transforms a tuple type by replacing it's rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.
 
 @example
 ```
-import type {Every} from 'type-fest';
+type A = CollapseRestElement<[string, string, ...number[]]>;
+//=> [string, string, number]
 
-type A = Every<[1, 2, 3], number>;
-//=> true
+type B = CollapseRestElement<[...string[], number, number]>;
+//=> [string, number, number]
 
-type B = Every<[1, 2, '3'], number>;
-//=> false
+type C = CollapseRestElement<[string, string, ...Array<number | bigint>]>;
+//=> [string, string, number | bigint]
 
-type C = Every<[number, number | string], number>;
-//=> boolean
+type D = CollapseRestElement<[string, number]>;
+//=> [string, number]
+```
 
-type D = Every<[true, boolean, true], true>;
-//=> boolean
+Note: Optional modifiers (`?`) are removed from elements unless the `exactOptionalPropertyTypes` compiler option is disabled. When disabled, there's an additional `| undefined` for optional elements.
+
+@example
+```
+// `exactOptionalPropertyTypes` enabled
+type A = CollapseRestElement<[string?, string?, ...number[]]>;
+//=> [string, string, number]
+
+// `exactOptionalPropertyTypes` disabled
+type B = CollapseRestElement<[string?, string?, ...number[]]>;
+//=> [string | undefined, string | undefined, number]
 ```
 */
-export type Every<TArray extends UnknownArray, Type> = IfNotAnyOrNever<TArray, If<IsAny<Type>, true,
-	TArray extends readonly [infer First, ...infer Rest]
-		? IsNever<First> extends true
-			? IsNever<Type> extends true
-				? Every<Rest, Type>
-				: false
-			: First extends Type
-				? Every<Rest, Type>
-				: false
-		: true
->, false, false>;
+export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, _CollapseRestElement<TArray>>;
+
+type _CollapseRestElement<
+	TArray extends UnknownArray,
+	ForwardAccumulator extends UnknownArray = [],
+	BackwardAccumulator extends UnknownArray = [],
+> =
+	TArray extends UnknownArray // For distributing `TArray`
+		? keyof TArray & `${number}` extends never
+			// Enters this branch, if `TArray` is empty (e.g., []),
+			// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+			? TArray extends readonly [...infer Rest, infer Last]
+				? _CollapseRestElement<Rest, ForwardAccumulator, [Last, ...BackwardAccumulator]> // Accumulate elements that are present after the rest element.
+				: TArray extends readonly []
+					? [...ForwardAccumulator, ...BackwardAccumulator]
+					: [...ForwardAccumulator, TArray[number], ...BackwardAccumulator] // Add the rest element between the accumulated elements.
+			: TArray extends readonly [(infer First)?, ...infer Rest]
+				? _CollapseRestElement<
+					Rest,
+					[
+						...ForwardAccumulator,
+						'0' extends OptionalKeysOf<TArray>
+							? If<IsExactOptionalPropertyTypesEnabled, First, First | undefined> // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+							: First,
+					],
+					BackwardAccumulator
+				>
+				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
+		: never; // Should never happen

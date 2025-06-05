@@ -1,4 +1,4 @@
-import type {Every} from './internal/array.d.ts';
+import type {AllExtend} from './all-extend.d.ts';
 
 /**
 Returns a boolean for whether two given types are both true.
@@ -74,4 +74,4 @@ type G = And<never, never>;
 
 @see {@link Or}
 */
-export type And<A extends boolean, B extends boolean> = Every<[A, B], true>;
+export type And<A extends boolean, B extends boolean> = AllExtend<[A, B], true>;
