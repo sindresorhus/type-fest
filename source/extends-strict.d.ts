@@ -17,17 +17,17 @@ import type {ExtendsStrict} from 'type-fest';
 type T1 = ExtendsStrict<number | string, string>;
 //=> false
 
-type T2 = ExtendsStrict<string, number | string>;
-//=> true
-
-type T3 = ExtendsStrict<string, string>;
-//=> true
-
-type T4 = ExtendsStrict<never, never>;
-//=> true
-
-type T5 = ExtendsStrict<never, number>;
+type T2 = ExtendsStrict<never, number>;
 //=> false
+
+type T3 = ExtendsStrict<never, never>;
+//=> true
+
+type T4 = ExtendsStrict<string, number | string>;
+//=> true
+
+type T5 = ExtendsStrict<string, string>;
+//=> true
 ```
 
 @category Improved Built-in
