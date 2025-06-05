@@ -25,6 +25,7 @@ expectType<ExtendsStrict<string, never>>(false);
 expectType<ExtendsStrict<any, any>>(true);
 expectType<ExtendsStrict<any, never>>(true);
 expectType<ExtendsStrict<never, any>>(true);
+expectType<ExtendsStrict<any, number>>(true);
 expectType<ExtendsStrict<any, unknown>>(true); // `any` is assignable to `unknown`
 expectType<ExtendsStrict<unknown, any>>(true); // `unknown` is assignable to `any`
 expectType<ExtendsStrict<unknown, unknown>>(true);

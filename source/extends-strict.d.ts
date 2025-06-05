@@ -8,7 +8,7 @@ Unlike the built-in `extends` keyword, `ExtendsStrict`:
 
 1. Prevents distribution over union types by wrapping both types in tuples. For example, `ExtendsStrict<string | number, number>` returns `false`, whereas `string | number extends number` would result in `boolean`.
 
-2. Treats `never` as a special case: returns `true` if both `Left` and `Right` are `never`.
+2. Treats `never` as a special case: `never` doesn't extend every other type, it only extends itself (or `any`). For example, `ExtendsStrict<never, number>` returns `false` whereas `never extends number` would result in `true`.
 
 @example
 ```
