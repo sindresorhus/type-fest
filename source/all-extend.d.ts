@@ -7,9 +7,9 @@ import type {IsNever} from './is-never.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-@see {@link Every}
+@see {@link AllExtend}
 */
-type EveryOptions = {
+type AllExtendOptions = {
 	/**
 	Consider `never` elements to match the target type only if the target type itself is `never` (or `any`).
 
@@ -20,37 +20,37 @@ type EveryOptions = {
 
 	@example
 	```
-	import type {Every} from 'type-fest';
+	import type {AllExtend} from 'type-fest';
 
-	type A = Every<[1, 2, never], number, {strictNever: true}>;
+	type A = AllExtend<[1, 2, never], number, {strictNever: true}>;
 	//=> false
 
-	type B = Every<[1, 2, never], number, {strictNever: false}>;
+	type B = AllExtend<[1, 2, never], number, {strictNever: false}>;
 	//=> true
 
-	type C = Every<[never, never], never, {strictNever: true}>;
+	type C = AllExtend<[never, never], never, {strictNever: true}>;
 	//=> true
 
-	type D = Every<[never, never], never, {strictNever: false}>;
+	type D = AllExtend<[never, never], never, {strictNever: false}>;
 	//=> true
 
-	type E = Every<['a', 'b', never], any, {strictNever: true}>;
+	type E = AllExtend<['a', 'b', never], any, {strictNever: true}>;
 	//=> true
 
-	type F = Every<['a', 'b', never], any, {strictNever: false}>;
+	type F = AllExtend<['a', 'b', never], any, {strictNever: false}>;
 	//=> true
 
-	type G = Every<[never, 1], never, {strictNever: true}>;
+	type G = AllExtend<[never, 1], never, {strictNever: true}>;
 	//=> false
 
-	type H = Every<[never, 1], never, {strictNever: false}>;
+	type H = AllExtend<[never, 1], never, {strictNever: false}>;
 	//=> false
 	```
 	*/
 	strictNever?: boolean;
 };
 
-type DefaultEveryOptions = {
+type DefaultAllExtendOptions = {
 	strictNever: true;
 };
 
@@ -59,57 +59,57 @@ Returns a boolean for whether every element in an array type extends another typ
 
 @example
 ```
-import type {Every} from 'type-fest';
+import type {AllExtend} from 'type-fest';
 
-type A = Every<[1, 2, 3], number>;
+type A = AllExtend<[1, 2, 3], number>;
 //=> true
 
-type B = Every<[1, 2, '3'], number>;
+type B = AllExtend<[1, 2, '3'], number>;
 //=> false
 
-type C = Every<[number, number | string], number>;
+type C = AllExtend<[number, number | string], number>;
 //=> boolean
 
-type D = Every<[true, boolean, true], true>;
+type D = AllExtend<[true, boolean, true], true>;
 //=> boolean
 ```
 
 Note: Behaviour of optional elements depend on the `exactOptionalPropertyTypes` compiler option. When the option is disabled, the target type must include `undefined` for a successful match.
 
 ```
-import type {Every} from 'type-fest';
+import type {AllExtend} from 'type-fest';
 
 // `exactOptionalPropertyTypes` enabled
-type A = Every<[1?, 2?, 3?], number>;
+type A = AllExtend<[1?, 2?, 3?], number>;
 //=> true
 
 // `exactOptionalPropertyTypes` disabled
-type B = Every<[1?, 2?, 3?], number>;
+type B = AllExtend<[1?, 2?, 3?], number>;
 //=> false
 
 // `exactOptionalPropertyTypes` disabled
-type C = Every<[1?, 2?, 3?], number | undefined>;
+type C = AllExtend<[1?, 2?, 3?], number | undefined>;
 //=> true
 ```
 
-@see {@link EveryOptions}
+@see {@link AllExtendOptions}
 
 @category Utilities
 @category Array
 */
-export type Every<TArray extends UnknownArray, Type, Options extends EveryOptions = {}> =
-	_Every<CollapseRestElement<TArray>, Type, ApplyDefaultOptions<EveryOptions, DefaultEveryOptions, Options>>;
+export type AllExtend<TArray extends UnknownArray, Type, Options extends AllExtendOptions = {}> =
+	_AllExtend<CollapseRestElement<TArray>, Type, ApplyDefaultOptions<AllExtendOptions, DefaultAllExtendOptions, Options>>;
 
-type _Every<TArray extends UnknownArray, Type, Options extends Required<EveryOptions>> = IfNotAnyOrNever<TArray, If<IsAny<Type>, true,
+type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllExtendOptions>> = IfNotAnyOrNever<TArray, If<IsAny<Type>, true,
 	TArray extends readonly [infer First, ...infer Rest]
 		? IsNever<First> extends true
 			? IsNever<Type> extends true
-				? _Every<Rest, Type, Options>
+				? _AllExtend<Rest, Type, Options>
 				: Options['strictNever'] extends true
 					? false
-					: _Every<Rest, Type, Options>
+					: _AllExtend<Rest, Type, Options>
 			: First extends Type
-				? _Every<Rest, Type, Options>
+				? _AllExtend<Rest, Type, Options>
 				: false
 		: true
 >, false, false>;
