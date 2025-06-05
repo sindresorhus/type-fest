@@ -107,6 +107,7 @@ export type {HasReadonlyKeys} from './source/has-readonly-keys.d.ts';
 export type {WritableKeysOf} from './source/writable-keys-of.d.ts';
 export type {HasWritableKeys} from './source/has-writable-keys.d.ts';
 export type {Spread} from './source/spread.d.ts';
+export type {SplitOnSpread, ExcludeSpread, ExtractSpread} from './source/split-on-spread.d.ts';
 export type {IsInteger} from './source/is-integer.d.ts';
 export type {IsFloat} from './source/is-float.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
