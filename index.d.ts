@@ -107,6 +107,7 @@ export type {HasReadonlyKeys} from './source/has-readonly-keys.d.ts';
 export type {WritableKeysOf} from './source/writable-keys-of.d.ts';
 export type {HasWritableKeys} from './source/has-writable-keys.d.ts';
 export type {Spread} from './source/spread.d.ts';
+export type {SplitOnSpread, ExcludeSpread, ExtractSpread} from './source/split-on-spread.d.ts';
 export type {IsInteger} from './source/is-integer.d.ts';
 export type {IsFloat} from './source/is-float.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
@@ -169,6 +170,7 @@ export type {DelimiterCase} from './source/delimiter-case.d.ts';
 export type {DelimiterCasedProperties} from './source/delimiter-cased-properties.d.ts';
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep.d.ts';
 export type {Join} from './source/join.d.ts';
+export type {Reverse} from './source/reverse.d.ts';
 export type {Split} from './source/split.d.ts';
 export type {Words} from './source/words.d.ts';
 export type {Trim} from './source/trim.d.ts';
@@ -186,5 +188,6 @@ export type {PackageJson} from './source/package-json.d.ts';
 export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 
 // Improved built-in
+export type {ExtendsStrict} from './source/extends-strict.d.ts';
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
