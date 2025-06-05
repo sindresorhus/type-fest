@@ -1,9 +1,10 @@
 import type {If} from './if.d.ts';
 import type {CollapseRestElement} from './internal/array.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {IfNotAnyOrNever, Not} from './internal/type.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {Or} from './or.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -103,11 +104,10 @@ export type AllExtend<TArray extends UnknownArray, Type, Options extends AllExte
 type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllExtendOptions>> = IfNotAnyOrNever<TArray, If<IsAny<Type>, true,
 	TArray extends readonly [infer First, ...infer Rest]
 		? IsNever<First> extends true
-			? IsNever<Type> extends true
+			? Or<IsNever<Type>, Not<Options['strictNever']>> extends true
+				// If target `Type` is also `never` OR `strictNever` is disabled, recurse further.
 				? _AllExtend<Rest, Type, Options>
-				: Options['strictNever'] extends true
-					? false
-					: _AllExtend<Rest, Type, Options>
+				: false
 			: First extends Type
 				? _AllExtend<Rest, Type, Options>
 				: false
