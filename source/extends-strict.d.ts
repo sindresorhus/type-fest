@@ -1,26 +1,28 @@
 import type {IsNever} from './is-never.d.ts';
 
 /**
-A stricter version of `extends` that Checks Stricily if one type extends another without distribution.
+A stricter, non-distributive version of `extends` for checking whether one type is assignable to another.
 
-Note: this is not quite the same as `Left extends Right` because:
+Unlike the built-in `extends` keyword, `ExtendsStrict`:
 
-1. Types are wrapped in a 1-tuple so that union types are not distributed - instead we consider `string | number` to _not_ extend `number`. If we used `Left extends Right` directly you would get `Extends<string | number, number>` => `false | true` => `boolean`. So it's return `true` if `[Left] extends [Right]`.
+1. Prevents distribution over union types by wrapping both types in tuples. For example, `ExtendsStrict<string | number, number>` returns `false`, whereas `string | number extends number` would result in `boolean`.
 
-2. Return's `true` if `Left` and `Right` are both `never`.
+2. Treats `never` as a special case: returns `true` if both `Left` and `Right` are `never`.
 
 @example
 ```
-type T = ExtendsStrict<number | string, string>
+import {ExtendsStrict} from 'type-fest'
+
+type T1 = ExtendsStrict<number | string, string>;
 //=> false
 
-type T = ExtendsStrict<string, number | string>
+type T2 = ExtendsStrict<string, number | string>;
 //=> true
 
-type T = ExtendsStrict<string, string>
+type T3 = ExtendsStrict<string, string>;
 //=> true
 
-type T = ExtendsStrict<never, never>
+type T4 = ExtendsStrict<never, never>;
 //=> true
 ```
 
