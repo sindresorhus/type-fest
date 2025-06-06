@@ -2,6 +2,7 @@
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"noEmit": true,
+		"allowJs": true,
 		"noUnusedLocals": false, // Allow unused variables in test-d/*.ts files
 		"module": "node18",
 		"target": "ES2023", // Node.js 20
