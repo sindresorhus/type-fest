@@ -1,4 +1,4 @@
-import type {Every} from './internal/array.d.ts';
+import type {AllExtend} from './all-extend.d.ts';
 
 /**
 Returns a boolean for whether the given string literal is uppercase.
@@ -17,7 +17,7 @@ IsUppercase<string>;
 //=> boolean
 ```
 */
-export type IsUppercase<S extends string> = Every<_IsUppercase<S>, true>;
+export type IsUppercase<S extends string> = AllExtend<_IsUppercase<S>, true>;
 
 /**
 Loops through each part in the string and returns a boolean array indicating whether each part is uppercase.
