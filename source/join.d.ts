@@ -9,7 +9,7 @@ type NullishCoalesce<
 > = Value extends undefined | null ? NonNullable<Value> | Fallback : Value;
 
 /**
-Join an array of strings and/or numbers using the given string as a delimiter (default: `,`).
+Join an array of strings and/or numbers using the given string as a delimiter.
 
 Use-case: Defining key paths in a nested object. For example, for dot-notation fields in MongoDB queries.
 
@@ -50,7 +50,7 @@ const path: Join<['hello' | undefined, 'world' | null], '.'> = ['hello', 'world'
 */
 export type Join<
 	Items extends readonly JoinableItem[],
-	Delimiter extends string = ',',
+	Delimiter extends string,
 > = Items extends readonly []
 	? ''
 	: Items extends readonly [JoinableItem?]
