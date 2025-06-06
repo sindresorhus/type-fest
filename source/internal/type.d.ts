@@ -1,8 +1,7 @@
-import type {Primitive} from '../primitive.d.ts';
-import type {IsNever} from '../is-never.d.ts';
-import type {IsAny} from '../is-any.d.ts';
-import type {And} from '../and.d.ts';
 import type {If} from '../if.d.ts';
+import type {IsAny} from '../is-any.d.ts';
+import type {IsNever} from '../is-never.d.ts';
+import type {Primitive} from '../primitive.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -13,13 +12,6 @@ export type BuiltIns = Primitive | void | Date | RegExp;
 Matches non-recursive types.
 */
 export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown);
-
-/**
- * Checks if one type extends another. Note: this is not quite the same as `Left extends Right` because:
- * 1. If either type is `never`, the result is `true` iff the other type is also `never`.
- * 2. Types are wrapped in a 1-tuple so that union types are not distributed - instead we consider `string | number` to _not_ extend `number`. If we used `Left extends Right` directly you would get `Extends<string | number, number>` => `false | true` => `boolean`.
- */
-export type Extends<Left, Right> = IsNever<Left> extends true ? IsNever<Right> : [Left] extends [Right] ? true : false;
 
 /**
 Returns a boolean for whether the two given types extends the base type.
@@ -48,19 +40,9 @@ export type HasMultipleCallSignatures<T extends (...arguments_: any[]) => unknow
 		: false;
 
 /**
-Returns a boolean for whether the given `boolean` Union containe's `false`.
+Returns a boolean for whether the given `boolean` is not `false`.
 */
-export type IsNotFalse<T extends boolean> = Not<IsFalse<T>>;
-
-/**
-Returns a boolean for whether the given `boolean` Union members are all `true`.
-*/
-export type IsTrue<T extends boolean> = Extends<T, true>;
-
-/**
-Returns a boolean for whether the given `boolean` Union members are all `false`.
-*/
-export type IsFalse<T extends boolean> = Extends<T, false>;
+export type IsNotFalse<T extends boolean> = [T] extends [false] ? false : true;
 
 /**
 Returns a boolean for whether the given type is primitive value or primitive type.
@@ -77,7 +59,7 @@ IsPrimitive<Object>
 //=> false
 ```
 */
-export type IsPrimitive<T> = Extends<T, Primitive>;
+export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
 /**
 Returns a boolean for whether A is false.
