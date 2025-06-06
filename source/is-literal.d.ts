@@ -1,6 +1,7 @@
 import type {ApplyDefaultOptions, CollapseLiterals} from './internal/object.d.ts';
-import type {Extends, IsNotFalse, IsTrue, Not} from './internal/type.d.ts';
 import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
+import type {IsNotFalse, Not} from './internal/type.d.ts';
+import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {Primitive} from './primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Numeric} from './numeric.d.ts';
@@ -44,8 +45,8 @@ type LiteralCheck<T, LiteralType extends Primitive> = (
 	IsNever<T> extends false // Must be wider than `never`
 		? [T] extends [LiteralType & infer U] // Remove any branding
 			? And<
-				Extends<U, LiteralType>, // Must be narrower than `LiteralType`
-				Not<Extends<LiteralType, U>>> // Cannot be wider than `LiteralType`
+				ExtendsStrict<U, LiteralType>, // Must be narrower than `LiteralType`
+				Not<ExtendsStrict<LiteralType, U>>> // Cannot be wider than `LiteralType`
 			: false
 		: false
 );
@@ -139,11 +140,12 @@ type L2 = Length<`${number}`>;
 @category Utilities
 */
 export type IsStringLiteral<T, Options extends IsLiteralOptions = {}> = (
-	ApplyDefaultOptions<IsLiteralOptions, DefaultIsLiteralOptions, Options> extends infer ResolvedOptions extends Required<IsLiteralOptions>
-		? IsNever<T> extends false
-			? _IsStringLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>, ResolvedOptions>
-			: false
-		: never
+	IsNever<T> extends false
+		? _IsStringLiteral<
+			CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>,
+			ApplyDefaultOptions<IsLiteralOptions, DefaultIsLiteralOptions, Options>
+		>
+		: false
 );
 
 type _IsStringLiteral<S, Options extends Required<IsLiteralOptions>> = (
@@ -205,13 +207,12 @@ endsWith('abc123', end);
 @category Type Guard
 @category Utilities
 */
-export type IsNumericLiteral<T> = IsTrue<
+export type IsNumericLiteral<T> =
 	T extends number
 		? T extends bigint
 			? LiteralCheck<T, Numeric>
 			: LiteralCheck<T, number>
-		: LiteralCheck<T, bigint>
->;
+		: LiteralCheck<T, bigint>;
 
 /**
 Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -338,7 +339,7 @@ stripLeading(str, 'abc');
 @category Utilities
 */
 export type IsLiteral<T, Options extends IsLiteralOptions = {}> = (
-	Extends<T, Primitive> extends true
+	ExtendsStrict<T, Primitive> extends true
 		? IsNotFalse<IsLiteralUnion<T, Options>>
 		: false
 );
