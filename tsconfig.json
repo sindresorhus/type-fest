@@ -8,6 +8,7 @@
 		"target": "ES2023", // Node.js 20
 		"lib": [
 			"ES2023",
+			"DOM"
 		],
 		"types": [], // Ensures no @types/ are unintentionally included
 		"exactOptionalPropertyTypes": true,
