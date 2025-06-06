@@ -128,16 +128,6 @@ type B = CollapseRestElement<[string?, string?, ...number[]]>;
 ```
 */
 export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, _CollapseRestElement<TArray>>;
-/* // eslint-disable-line no-warning-comments
-	TODO: Migrate `CollapseRestElement` to use `DeconstructSpreadArray`
-	export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray,
-		DeconstructSpreadArray<TArray, {keepOptionals: false}> extends infer Result
-			? Result extends UnknownArray[] // For distributing `Result`
-				? [...Result[0], ...Result[1],...Result[2]] // TODO: ArrayFlat Type
-				: never
-			: never
-	>;
-*/
 
 type _CollapseRestElement<
 	TArray extends UnknownArray,
