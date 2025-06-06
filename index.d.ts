@@ -143,6 +143,7 @@ export type {IsNull} from './source/is-null.d.ts';
 export type {IfNull} from './source/if-null.d.ts';
 export type {And} from './source/and.d.ts';
 export type {Or} from './source/or.d.ts';
+export type {AllExtend} from './source/all-extend.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
 export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type.d.ts';
 export type {If} from './source/if.d.ts';
@@ -185,5 +186,6 @@ export type {PackageJson} from './source/package-json.d.ts';
 export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 
 // Improved built-in
+export type {ExtendsStrict} from './source/extends-strict.d.ts';
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
