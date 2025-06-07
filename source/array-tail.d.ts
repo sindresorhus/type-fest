@@ -9,7 +9,7 @@ type ArrayTailOptions = {
 	/**
 	Return a readonly array if the input array is readonly.
 
-	@default false
+	@default true
 
 	@example
 	```
@@ -32,7 +32,7 @@ type ArrayTailOptions = {
 };
 
 type DefaultArrayTailOptions = {
-	preserveReadonly: false;
+	preserveReadonly: true;
 };
 
 /**
