@@ -98,7 +98,7 @@ import type {LiteralList} from 'type-fest';
 
 type Union = 'a' | 'b' | 'c';
 
-declare function literalList<const T extends readonly Union[]>(
+declare function literalList<const T extends UnknownArray>(
 	list: LiteralList<T, Union>
 ): typeof list;
 
