@@ -11,13 +11,13 @@ import type {IsNever} from './is-never.d.ts';
 */
 type UnionToEnumOptions = {
 	/**
-	The starting index of Numeric enums.
+	The starting **Index** of Numeric enums.
 
 	@default 1
 	*/
 	startIndex?: number;
 	/**
-	Wheter to use `CamelCase` for proprety names.
+	Whether to use **CamelCase** for property names.
 
 	@default false
 	*/
@@ -30,14 +30,14 @@ type DefaultUnionToEnumOptions = {
 };
 
 /**
-Converts a union or tuple of property keys (`string`, `number`, or `symbol`) into an object resembling an enum.
+Converts a union or tuple of property keys (string, number, or symbol) into an **Enum**-like object.
 
 The keys are preserved, and their values are either:
 
 - Their own literal values (by default)
 - Or numeric indices (`1`, `2`, ...) if `Numeric` is `true`
 
-By default, **Propety** names are not **CamelCased** and **Numeric Enums** starts from **Index `1`**. See {@link UnionToEnumOptions} to change this behaviour.
+By default, **Property** names are not **CamelCased** and **Numeric Enums** start from **Index `1`**. See {@link UnionToEnumOptions} to change this behaviour.
 
 This is useful for creating strongly typed enums from a union of literals.
 
@@ -49,7 +49,7 @@ type E1 = UnionToEnum<'A' | 'B' | 'C'>;
 type E2 = UnionToEnum<'X' | 'Y' | 'Z', true>;
 //=> { X: 1; Y: 2; Z: 3 }
 
-type E3 = UnionToEnum<['Play', 'Pause', 'Stop'], true, {startingIndex: 3}>;
+type E3 = UnionToEnum<['Play', 'Pause', 'Stop'], true, {startIndex: 3}>;
 //=> { Play: 3; Pause: 4; Stop: 5 }
 
 type E4 = UnionToEnum<['some_key', 'another_key'], false, {camelCase: true}>;
