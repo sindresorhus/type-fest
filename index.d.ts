@@ -39,6 +39,7 @@ export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './sour
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep.d.ts';
 export type {ReadonlyDeep} from './source/readonly-deep.d.ts';
 export type {LiteralUnion} from './source/literal-union.d.ts';
+export type {LiteralList} from './source/literal-list.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';
 export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged.d.ts';
@@ -169,6 +170,7 @@ export type {DelimiterCase} from './source/delimiter-case.d.ts';
 export type {DelimiterCasedProperties} from './source/delimiter-cased-properties.d.ts';
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep.d.ts';
 export type {Join} from './source/join.d.ts';
+export type {JoinUnion} from './source/join-union.d.ts';
 export type {Split} from './source/split.d.ts';
 export type {Words} from './source/words.d.ts';
 export type {Trim} from './source/trim.d.ts';
