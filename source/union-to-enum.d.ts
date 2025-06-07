@@ -52,8 +52,8 @@ type E2 = UnionToEnum<'X' | 'Y' | 'Z', true>;
 type E3 = UnionToEnum<['Play', 'Pause', 'Stop'], true, {startingIndex: 3}>;
 //=> { Play: 3; Pause: 4; Stop: 5 }
 
-type E4 = UnionToEnum<['Play', 'Pause', 'Stop'], false, {camelCase: true}>;
-//=> { play: 'Play'; pause: 'Pause'; stop: 'Stop' }
+type E4 = UnionToEnum<['some_key', 'another_key'], false, {camelCase: true}>;
+//=> { someKey: 'some_key'; anotherKey: 'another_key' }
 
 type E5 = UnionToEnum<never>;
 //=> {}
