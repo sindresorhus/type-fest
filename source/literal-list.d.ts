@@ -102,13 +102,13 @@ declare function literalList<const T extends readonly Union[]>(
 	list: LiteralList<T, Union>
 ): typeof list;
 
-const C1 = literalList(['a', 'b', 'c']);
+const C1 = literalList(['a', 'b', 'c'] as const);
 //=> ['a', 'b', 'c']
 
-const C2 = literalList(['c', 'a', 'b']);
+const C2 = literalList(['c', 'a', 'b'] as const);
 //=> ['c', 'a', 'b']
 
-const C3 = literalList(['b', 'b', 'b']); // ❌ Errors in Compiler and IDE
+const C3 = literalList(['b', 'b', 'b'] as const); // ❌ Errors in Compiler and IDE
 //=> '(a | b | c)[], Type [b, b, b] is missing Properties: [a, c]'
 ```
 
