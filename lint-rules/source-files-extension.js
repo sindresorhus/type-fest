@@ -9,31 +9,32 @@ export const sourceFilesExtensionRule = /** @type {const} */ ({
 		fixable: 'code',
 		messages: {
 			incorrectFilename:
-				'Filename \'{{currentFilename}}\' must end with a \'.d.ts\' extension. Use \'{{fixedFilename}}\' instead.',
+				'Filename \'{{filename}}\' must end with a \'.d.ts\' extension. Use \'{{fixedFilename}}\' instead.',
 		},
 		schema: [],
 	},
 	defaultOptions: [],
 	create(context) {
-		const {filename} = context;
+		const filename = path.basename(context.filename);
+		const firstDotIndex = filename.indexOf('.');
+		const extension = firstDotIndex === -1 ? '' : filename.slice(firstDotIndex);
 
-		if (filename.endsWith('.d.ts')) {
+		if (extension === '.d.ts') {
 			return {};
 		}
 
 		return {
 			Program(node) {
-				const extension = path.extname(filename);
-				const filenameWithoutExtension = path.basename(filename, extension);
+				const filenameWithoutExtension = extension.length > 0
+					? filename.slice(0, -extension.length)
+					: filename;
+				const fixedFilename = `${filenameWithoutExtension}.d.ts`;
 
 				context.report({
 					loc: {column: 0, line: 1}, // Report error on start of the file
 					node,
 					messageId: 'incorrectFilename',
-					data: {
-						currentFilename: path.basename(filename),
-						fixedFilename: `${filenameWithoutExtension}.d.ts`,
-					},
+					data: {filename, fixedFilename},
 				});
 			},
 		};
