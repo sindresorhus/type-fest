@@ -1,34 +1,151 @@
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 import type {BuildTuple} from './internal/tuple.d.ts';
 import type {Join, JoinableItem} from './join.d.ts';
 import type {JoinUnion} from './join-union.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
+/**
+Create a tuple where each element is the union `U`, with the length equal to the number of members in `U`.
+
+@example
+```
+type T1 = TupleOfUnions<'a' | 'b'>
+//=> ['a' | 'b', 'a' | 'b']
+
+type T2 = TupleOfUnions<1 | 2 | 3>
+//=> [1 | 2 | 3, 1 | 2 | 3, 1 | 2 | 3]
+```
+*/
 type TupleOfUnions<U> = UnionToTuple<U>['length'] extends infer Length extends number
-	? Readonly<BuildTuple<Length, U>>
+	? BuildTuple<Length, U>
 	: never;
 
-type TupleAsString<T, S extends string = '\', \''> = `['${
-	[T] extends [JoinableItem[]]
-		? Join<T, S>
-		: JoinUnion<T, S>
-}']`;
+/**
+Convert a tuple or union type into a string representation. Used for readable error messages in other types.
 
-type LiteralList<
-	T extends readonly any[],
-	U extends readonly any[] | any,
+ - `S`: **separator** between members (`default: ','`)
+ - `E`: **start** and **end** delimiters of the string (`default: ['', '']`)
+
+@example
+```
+type T1 = TypeAsString<['a', 'b'], ', ', ['[', ']']>;
+// => '[a, b]'
+
+type T2 = TypeAsString<'a' | 'b', ' | '>;
+// => 'a | b'
+```
+*/
+type TypeAsString<T, S extends string = ',', E extends [string, string] = ['', '']> =
+	`${E[0]}${
+		[T] extends [readonly JoinableItem[]]
+			? Join<T, S>
+			: [T] extends [JoinableItem]
+				? JoinUnion<T, S>
+				: 'unknown'
+	}${E[1]}`;
+
+/** Stringify a tuple as `'[a, b]'` */
+type TupleAsString<T> = TypeAsString<T, ', ', ['[', ']']>;
+
+/** Stringify a union as `'(a | b)[]'` */
+type UnionAsString<U> = TypeAsString<U, ' | ', ['(', ')[]']>;
+
+/**
+Validates a literal Tuple `List` against a required shape `Shap` (which can be a union or a tuple of same unions).
+
+Returns the tuple `List` if valid, or if these constraints are violated, a descriptive error message is returned as a string literal.
+
+#### Requirements:
+ - `List` **must have the same length** as the number of members in `Shap`
+ - Each member of `Shap` **must appear exactly once** in `List`, **No duplicates allowed**
+ - The **order does not matter**
+
+#### Use Cases:
+ - Ensuring exhaustive lists of options (e.g., all form field names, enum variants)
+ - Compile-time enforcement of exact permutations without duplicates
+ - Defining static configuration or table headers that match an enum or union
+
+@example-types
+```
+import type {LiteralList} from 'type-fest';
+
+// ✅ OK
+type T1 = LiteralList<['a', 'b'], 'a' | 'b'>;
+// => ['a', 'b']
+
+// ✅ OK
+type T2 = LiteralList<[2, 1], 1 | 2>;
+// => [2, 1]
+
+// ❌ Length unmatch
+type T3 = LiteralList<['a', 'b', 'c'], 'a' | 'b'>;
+// => '(a | b)[], Type [a, b, c] is not the required Length of: 2'
+
+// ❌ Missing element
+type T4 = LiteralList<['a'], 'a' | 'b'>;
+// => '(a | b)[], Type [a] is missing Properties: [b]'
+
+// ❌ Extra element
+type T5 = LiteralList<['a', 'e'], 'a' | 'b'>;
+// => '(a | b)[], Type [a, e] has extra Properties: [e]'
+```
+
+@example-function
+```
+import type {LiteralList} from 'type-fest';
+
+type Union = 'a' | 'b' | 'c';
+
+declare function literalList<const T extends readonly Union[]>(
+	list: LiteralList<T, Union>
+): typeof list;
+
+const C1 = literalList(['a', 'b', 'c']);
+//=> ['a', 'b', 'c']
+
+const C2 = literalList(['c', 'a', 'b']);
+//=> ['c', 'a', 'b']
+
+const C3 = literalList(['b', 'b', 'b']); // ❌ Errors in Compiler and IDE
+//=> '(a | b | c)[], Type [b, b, b] is missing Properties: [a, c]'
+```
+
+@author benzaria
+@category Type Guard
+@category Utilities
+*/
+export type LiteralList<List extends UnknownArray, Shape extends UnknownArray | unknown> =
+	([Shape] extends [UnknownArray] ? Shape : TupleOfUnions<Shape>) extends infer TupleShape extends UnknownArray
+		? IfNotAnyOrNever<List, _LiteralList<List, TupleShape, TupleAsString<List>, UnionAsString<TupleShape[number]>>>
+		: never;
+
+/**
+Internal comparison logic for `LiteralList`.
+
+Compares `T` and `U`:
+
+ - Validates that the lengths match.
+ - Then checks for extra or missing elements.
+ - If mismatch found, returns a readable error string.
+
+*/
+type _LiteralList<
+	T extends UnknownArray,
+	U extends UnknownArray,
+	TString extends string,
+	UString extends string,
 > = (
-	([U] extends [readonly any[]] ? U : TupleOfUnions<U>) extends infer V extends readonly any[]
-		? V['length'] extends T['length']
-			? Exclude<T[number], V[number]> extends infer TnV
-				? Exclude<V[number], T[number]> extends infer VnT
-					? IsNever<TnV> extends true
-						? IsNever<VnT> extends true
-							? T
-							: never | `Type ${TupleAsString<T>} is missing Properties: ${TupleAsString<VnT>}`
-						: never | `Type ${TupleAsString<T>} has extra Properties: ${TupleAsString<TnV>}`
-					: never
+	T['length'] extends U['length'] // U.length != number, T always finite
+		? Exclude<T[number], U[number]> extends infer TnU // T not U
+			? Exclude<U[number], T[number]> extends infer UnT // U not T
+				? IsNever<TnU> extends true // T includes U
+					? IsNever<UnT> extends true // U includes T
+						? T // T == U
+						: never | `${UString}, Type ${TString} is missing Members: ${TupleAsString<UnT>}`
+					: never | `${UString}, Type ${TString} has extra Members: ${TupleAsString<TnU>}`
 				: never
-			: never | `Type ${TupleAsString<T>} is not the required Length of: ${V['length']}`
-		: never
+			: never
+		: never | `${UString}, Type ${TString} is not the required Length of: ${U['length']}`
 );

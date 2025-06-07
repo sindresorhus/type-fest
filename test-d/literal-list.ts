@@ -1,73 +1,72 @@
 import {expectType} from 'tsd';
-import type {LiteralList, TupleOfUnions} from '../source/literal-list.d.ts';
+import type {LiteralList} from '../source/literal-list.d.ts';
+import type {UnknownArray} from '../source/unknown-array.d.ts';
 
-type Union = 'a' | 'b' | 'c' | 'd';
-type UnionList = TupleOfUnions<Union>;
+type U1 = 'a' | 'b' | 'c' | 'd';
+type U2 = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
-declare const bar1: ['a', 'b', 'c', 'd'];
-declare const bar2: ['a', 'b', 'd', 'c'];
-declare const bar3: ['a', 'c', 'b', 'd'];
-declare const bar4: ['a', 'c', 'd', 'b'];
-declare const bar5: ['a', 'd', 'b', 'c'];
-declare const bar6: ['a', 'd', 'c', 'b'];
-declare const bar7: ['b', 'a', 'c', 'd'];
-declare const bar8: ['b', 'a', 'd', 'c'];
-declare const bar9: ['b', 'c', 'a', 'd'];
-declare const bar10: ['b', 'c', 'd', 'a'];
-declare const bar11: ['b', 'd', 'a', 'c'];
-declare const bar12: ['b', 'd', 'c', 'a'];
-declare const bar13: ['c', 'a', 'b', 'd'];
-declare const bar14: ['c', 'a', 'd', 'b'];
-declare const bar15: ['c', 'b', 'a', 'd'];
-declare const bar16: ['c', 'b', 'd', 'a'];
-declare const bar17: ['c', 'd', 'a', 'b'];
-declare const bar18: ['c', 'd', 'b', 'a'];
-declare const bar19: ['d', 'a', 'b', 'c'];
-declare const bar20: ['d', 'a', 'c', 'b'];
-declare const bar21: ['d', 'b', 'a', 'c'];
-declare const bar22: ['d', 'b', 'c', 'a'];
-declare const bar23: ['d', 'c', 'a', 'b'];
-declare const bar24: ['d', 'c', 'b', 'a'];
+// ? Should we add this type
+type IsLiteralList<T extends UnknownArray, U> =
+	T extends LiteralList<T, U>
+		? true
+		: false;
 
-expectType<typeof bar1>(bar1 satisfies LiteralList<typeof bar1, Union>);
-expectType<typeof bar2>(bar2 satisfies LiteralList<typeof bar2, Union>);
-expectType<typeof bar3>(bar3 satisfies LiteralList<typeof bar3, Union>);
-expectType<typeof bar4>(bar4 satisfies LiteralList<typeof bar4, Union>);
-expectType<typeof bar5>(bar5 satisfies LiteralList<typeof bar5, Union>);
-expectType<typeof bar6>(bar6 satisfies LiteralList<typeof bar6, Union>);
-expectType<typeof bar7>(bar7 satisfies LiteralList<typeof bar7, Union>);
-expectType<typeof bar8>(bar8 satisfies LiteralList<typeof bar8, Union>);
-expectType<typeof bar9>(bar9 satisfies LiteralList<typeof bar9, Union>);
-expectType<typeof bar10>(bar10 satisfies LiteralList<typeof bar10, Union>);
-expectType<typeof bar11>(bar11 satisfies LiteralList<typeof bar11, Union>);
-expectType<typeof bar12>(bar12 satisfies LiteralList<typeof bar12, Union>);
-expectType<typeof bar13>(bar13 satisfies LiteralList<typeof bar13, Union>);
-expectType<typeof bar14>(bar14 satisfies LiteralList<typeof bar14, Union>);
-expectType<typeof bar15>(bar15 satisfies LiteralList<typeof bar15, Union>);
-expectType<typeof bar16>(bar16 satisfies LiteralList<typeof bar16, Union>);
-expectType<typeof bar17>(bar17 satisfies LiteralList<typeof bar17, Union>);
-expectType<typeof bar18>(bar18 satisfies LiteralList<typeof bar18, Union>);
-expectType<typeof bar19>(bar19 satisfies LiteralList<typeof bar19, Union>);
-expectType<typeof bar20>(bar20 satisfies LiteralList<typeof bar20, Union>);
-expectType<typeof bar21>(bar21 satisfies LiteralList<typeof bar21, Union>);
-expectType<typeof bar22>(bar22 satisfies LiteralList<typeof bar22, Union>);
-expectType<typeof bar23>(bar23 satisfies LiteralList<typeof bar23, Union>);
-expectType<typeof bar24>(bar24 satisfies LiteralList<typeof bar24, Union>);
+// Base
+expectType<IsLiteralList<[], U1>>(false);
+expectType<IsLiteralList<U1[], U1>>(false);
+expectType<IsLiteralList<[U1, U1, U1, U1], U1>>(true); // Should match
+expectType<IsLiteralList<[U1, U1, U1], U1>>(false);
+expectType<IsLiteralList<[U1, U1, U1, U1, U1], U1>>(false);
+expectType<IsLiteralList<[...['a', 'b', 'd', 'c']], U1>>(true);
+expectType<IsLiteralList<unknown[], U1>>(false);
+expectType<IsLiteralList<[unknown, unknown, unknown, unknown], U1>>(false);
+expectType<LiteralList<any, U1>>({} as any); // `any` can't match
+expectType<LiteralList<never, U1>>({} as never); // `never` can't match
 
-declare const foo1: ['a', 'b', 'c'];
-declare const foo2: ['b', 'c', 'd'];
-declare const foo3: ['c', 'a', 'd', 'b', 'f'];
-declare const foo4: ['c', 'd', 'e', 'b', 'a'];
-declare const foo5: ['a', 'd', 'b', 'b'];
-declare const foo6: ['a', 'a', 'c', 'b'];
-declare const foo7: ['b', 'a', 'c', 'm'];
-declare const foo8: ['b', 'c', 'e', 'd'];
+// Orders
+expectType<IsLiteralList<['a', 'b', 'c', 'd'], U1>>(true);
+expectType<IsLiteralList<['a', 'b', 'd', 'c'], U1>>(true);
+expectType<IsLiteralList<['a', 'c', 'b', 'd'], U1>>(true);
+expectType<IsLiteralList<['a', 'c', 'd', 'b'], U1>>(true);
+expectType<IsLiteralList<['a', 'd', 'b', 'c'], U1>>(true);
+expectType<IsLiteralList<['a', 'd', 'c', 'b'], U1>>(true);
+expectType<IsLiteralList<['b', 'a', 'c', 'd'], U1>>(true);
+expectType<IsLiteralList<['b', 'a', 'd', 'c'], U1>>(true);
+expectType<IsLiteralList<['b', 'c', 'a', 'd'], U1>>(true);
+expectType<IsLiteralList<['b', 'c', 'd', 'a'], U1>>(true);
+expectType<IsLiteralList<['b', 'd', 'a', 'c'], U1>>(true);
+expectType<IsLiteralList<['b', 'd', 'c', 'a'], U1>>(true);
+expectType<IsLiteralList<['c', 'a', 'b', 'd'], U1>>(true);
+expectType<IsLiteralList<['c', 'a', 'd', 'b'], U1>>(true);
+expectType<IsLiteralList<['c', 'b', 'a', 'd'], U1>>(true);
+expectType<IsLiteralList<['c', 'b', 'd', 'a'], U1>>(true);
+expectType<IsLiteralList<['c', 'd', 'a', 'b'], U1>>(true);
+expectType<IsLiteralList<['c', 'd', 'b', 'a'], U1>>(true);
+expectType<IsLiteralList<['d', 'a', 'b', 'c'], U1>>(true);
+expectType<IsLiteralList<['d', 'a', 'c', 'b'], U1>>(true);
+expectType<IsLiteralList<['d', 'b', 'a', 'c'], U1>>(true);
+expectType<IsLiteralList<['d', 'b', 'c', 'a'], U1>>(true);
+expectType<IsLiteralList<['d', 'c', 'a', 'b'], U1>>(true);
+expectType<IsLiteralList<['d', 'c', 'b', 'a'], U1>>(true);
 
-expectType<'Type [\'a\', \'b\', \'c\'] is not the required Length of: 4'>({} as LiteralList<typeof foo1, Union>);
-expectType<'Type [\'b\', \'c\', \'d\'] is not the required Length of: 4'>({} as LiteralList<typeof foo2, Union>);
-expectType<'Type [\'c\', \'a\', \'d\', \'b\', \'f\'] is not the required Length of: 4'>({} as LiteralList<typeof foo3, Union>);
-expectType<'Type [\'c\', \'d\', \'e\', \'b\', \'a\'] is not the required Length of: 4'>({} as LiteralList<typeof foo4, Union>);
-expectType<'Type [\'a\', \'d\', \'b\', \'b\'] is missing Properties: [\'c\']'>({} as LiteralList<typeof foo5, Union>);
-expectType<'Type [\'a\', \'a\', \'c\', \'b\'] is missing Properties: [\'d\']'>({} as LiteralList<typeof foo6, Union>);
-expectType<'Type [\'b\', \'a\', \'c\', \'m\'] has extra Properties: [\'m\']'>({} as LiteralList<typeof foo7, Union>);
-expectType<'Type [\'b\', \'c\', \'e\', \'d\'] has extra Properties: [\'e\']'>({} as LiteralList<typeof foo8, Union>);
+// Unions
+expectType<IsLiteralList<['a', 'b', 'c', 'd'] | ['a', 'b', 'd', 'c'], U1>>(true);
+expectType<IsLiteralList<['a', 'c', 'b', 'd'] | ['e'], U1>>({} as boolean);
+expectType<IsLiteralList<['a'] | ['e'], U1>>(false);
+
+// Long Unions
+expectType<IsLiteralList<[1, 2, 3, 4, 5, 6, 7, 8, 9], U2>>(true); // Match
+expectType<IsLiteralList<[1, 2, 3, 4, 5, 6, 7, 8], U2>>(false); // Shorter
+expectType<IsLiteralList<[1, 2, 3, 4, 5, 6, 7, 8, 0], U2>>(false); // Extra
+expectType<IsLiteralList<[1, 2, 3, 4, 5, 6, 7, 8, 8], U2>>(false); // Missing
+expectType<IsLiteralList<[1, 2, 3, 4, 5, 6, 7, 8, 9, 0], U2>>(false); // Longer
+
+// Errors
+expectType<IsLiteralList<['a', 'b', 'c'], U1>>(false);
+expectType<IsLiteralList<['b', 'c', 'd'], U1>>(false);
+expectType<IsLiteralList<['c', 'a', 'd', 'b', 'f'], U1>>(false);
+expectType<IsLiteralList<['c', 'd', 'e', 'b', 'a'], U1>>(false);
+expectType<IsLiteralList<['a', 'd', 'b', 'b'], U1>>(false);
+expectType<IsLiteralList<['a', 'a', 'c', 'b'], U1>>(false);
+expectType<IsLiteralList<['b', 'a', 'c', 'm'], U1>>(false);
+expectType<IsLiteralList<['b', 'c', 'e', 'd'], U1>>(false);
