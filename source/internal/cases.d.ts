@@ -111,6 +111,40 @@ Main utility type to apply a selected case transformation to a given string or o
 
 The type of transformation (`Type`) is chosen from `Cases`, and it automatically infers the correct
 options structure depending on the strategy (e.g., `delimiter` is added for Delimiter cases).
+
+@example
+```
+type Phrase = 'foo bar_baz-case';
+
+type T1 = Case<'Camel', Phrase>;
+//=> 'fooBarBazCase'
+
+type T2 = Case<'Kebab', Phrase>
+//=> 'foo-bar-baz-case';
+
+type T3 = Case<'Delimiter', Phrase, {delimiter: '#'}>
+//=> 'foo#bar#baz#case';
+```
+
+@example
+```
+type Template = {
+	'foo bar': string,
+	bar_baz: number,
+	baz1: 'foo',
+};
+
+type T = Case<'KebabProp', Template, {splitOnNumbers: true}>
+//=> {
+//   'foo-bar': string;
+//   'bar-baz': number;
+//   'baz-1': 'foo';
+// };
+```
+
+@author benzaria
+@category Change case
+@category Template literal
 */
 export type Case<
 	Type extends CaseKeys, Value,

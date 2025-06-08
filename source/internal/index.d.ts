@@ -1,4 +1,5 @@
 export type * from './array.d.ts';
+export type * from './cases.d.ts';
 export type * from './characters.d.ts';
 export type * from './keys.d.ts';
 export type * from './numeric.d.ts';

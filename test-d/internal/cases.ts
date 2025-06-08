@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Case} from '../source/internal/index.d.ts';
+import type {Case} from '../../source/internal/index.d.ts';
 
 type Phrase = 'foo bar_baz-case';
 
