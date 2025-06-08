@@ -1,5 +1,5 @@
 import type {If} from './if.d.ts';
-import type {IsArrayReadonly} from './internal/index.d.ts';
+import type {IfNotAnyOrNever, IsArrayReadonly} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -24,15 +24,18 @@ add3(4);
 
 @category Array
 */
-export type ArrayTail<TArray extends UnknownArray> =
+export type ArrayTail<TArray extends UnknownArray> = IfNotAnyOrNever<TArray,
 	TArray extends UnknownArray // For distributing `TArray`
 		? _ArrayTail<TArray> extends infer Result
 			? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
 			: never // Should never happen
-		: never; // Should never happen
+		: never
+>;
 
 type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?, ...infer Tail]
 	? keyof TArray & `${number}` extends never
-		? []
+		? TArray extends readonly []
+			? []
+			: TArray // Happens when `TArray` is a non-tuple array (e.g., `string[]`) or has a leading rest element (e.g., `[...string[], number]`)
 		: Tail
 	: [];
