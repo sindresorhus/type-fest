@@ -39,7 +39,7 @@ expectType<CamelTemplate>({
 	deleteFile: 'delete file',
 	deleteFolder: 'delete folder',
 	deleteLink: 'delete link',
-} as const);
+});
 
 expectType<PascalTemplate>({
 	WriteFile: 'write file',
@@ -51,7 +51,7 @@ expectType<PascalTemplate>({
 	DeleteLink: 'delete link',
 	DeleteFile: 'delete file',
 	DeleteFolder: 'delete folder',
-} as const);
+});
 
 expectType<KebabTemplate>({
 	'write-link': 'write link',
@@ -63,7 +63,7 @@ expectType<KebabTemplate>({
 	'delete-link': 'delete link',
 	'delete-file': 'delete file',
 	'delete-folder': 'delete folder',
-} as const);
+});
 
 expectType<SnakeTemplate>({
 	write_file: 'write file',
@@ -75,7 +75,7 @@ expectType<SnakeTemplate>({
 	delete_link: 'delete link',
 	delete_file: 'delete file',
 	delete_folder: 'delete folder',
-} as const);
+});
 
 expectType<DelimiterTemplate>({
 	'write#file': 'write file',
@@ -87,7 +87,7 @@ expectType<DelimiterTemplate>({
 	'delete#file': 'delete file',
 	'delete#folder': 'delete folder',
 	'delete#link': 'delete link',
-} as const);
+});
 
 expectType<DelimiterTemplate_>({
 	'write/file': 'write file',
@@ -99,4 +99,4 @@ expectType<DelimiterTemplate_>({
 	'delete/file': 'delete file',
 	'delete/folder': 'delete folder',
 	'delete/link': 'delete link',
-} as const);
+});
