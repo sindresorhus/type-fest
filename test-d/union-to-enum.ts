@@ -56,7 +56,7 @@ expectType<UnionToEnum<symbol[]>>({} as const);
 expectType<UnionToEnum<never>>({} as const);
 expectType<UnionToEnum<any>>({} as const);
 
-// CamelCase
+// Case transformation
 const level = ['DEBUG', 'INFO', 'ERROR', 'WARNING'] as const;
 expectType<UnionToEnum<typeof buttons, false, {propertyCase: 'Camel'}>>({
 	play: 'Play',
@@ -76,7 +76,7 @@ expectType<UnionToEnum<typeof level, true, {propertyCase: 'Pascal'}>>({
 	Warning: 4,
 } as const);
 
-// Dynamic Enum
+// Dynamic Enum Creation
 type verb = ['write', 'read', 'delete'];
 type resrc = ['file', 'folder', 'link'];
 
@@ -91,7 +91,8 @@ type CamelTemplate = ReturnType<typeof createEnum<verb, resrc, 'Camel'>>;
 type PascalTemplate = ReturnType<typeof createEnum<verb, resrc, 'Pascal'>>;
 type KebabTemplate = ReturnType<typeof createEnum<verb, resrc, 'Kebab'>>;
 type SnakeTemplate = ReturnType<typeof createEnum<verb, resrc, 'Snake'>>;
-type DelimiterTemplate = ReturnType<typeof createEnum<verb, resrc, 'Delimiter', {delimiter: '/'}>>;
+type DelimiterTemplate = ReturnType<typeof createEnum<verb, resrc, 'Delimiter'>>;
+type DelimiterTemplate_ = ReturnType<typeof createEnum<verb, resrc, 'Delimiter', {delimiter: '/'}>>;
 
 expectType<CamelTemplate>({
 	writeFile: 'write file',
@@ -138,6 +139,17 @@ expectType<SnakeTemplate>({
 	delete_folder: 'delete folder',
 } as const);
 expectType<DelimiterTemplate>({
+	'write#link': 'write link',
+	'write#file': 'write file',
+	'write#folder': 'write folder',
+	'read#link': 'read link',
+	'read#file': 'read file',
+	'read#folder': 'read folder',
+	'delete#link': 'delete link',
+	'delete#file': 'delete file',
+	'delete#folder': 'delete folder',
+} as const);
+expectType<DelimiterTemplate_>({
 	'write/link': 'write link',
 	'write/file': 'write file',
 	'write/folder': 'write folder',
