@@ -1,3 +1,6 @@
+import type {ConditionalSimplify} from './conditional-simplify.d.ts';
+import type {NonRecursiveType} from './internal/type.d.ts';
+
 /**
 Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 
@@ -54,5 +57,11 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 @link https://github.com/microsoft/TypeScript/issues/15300
 @see SimplifyDeep
 @category Object
+@category Array
+@category Union
 */
-export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
+export type Simplify<Type, ExcludeType = never> = ConditionalSimplify<
+	Type,
+	ExcludeType | NonRecursiveType | Set<unknown> | Map<unknown, unknown>,
+	object
+>;
