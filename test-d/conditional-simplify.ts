@@ -35,7 +35,9 @@ type UnSimplifiedUnion = Union1 | Union2;
 type UnSimplifiedObject = {prop: UnSimplifiedUnion}; // Hovering over `prop` dont show it's types
 type SimplifiedObject = {prop: ConditionalSimplify<UnSimplifiedUnion>}; // Hovering over `prop` show it's types
 
-const unSimpleObject: UnSimplifiedObject = {prop: 'a'}; // Hovering over object or `prop` dont show it's types
+const unSimpleObject: UnSimplifiedObject = {prop: 'a'}; // Hovering over `prop` dont show it's types
+expectType<UnSimplifiedObject>(unSimpleObject);
 
 // Shoud simplify the union members (mainly visual, mouse over the statement).
-const simpleObject: SimplifiedObject = {prop: 'a'}; // Hovering over object or `prop` show it's types
+const simpleObject: SimplifiedObject = {prop: 'a'}; // Hovering over `prop` show it's types
+expectType<SimplifiedObject>(simpleObject);

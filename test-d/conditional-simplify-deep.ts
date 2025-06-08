@@ -77,8 +77,11 @@ type Union2 = 2 | void | string | SomeFunction;
 
 type UnSimplifiedUnion = Union1 | Union2;
 type UnSimplifiedObject = {prop: UnSimplifiedUnion};
+type SimplifiedObject = ConditionalSimplifyDeep<UnSimplifiedObject, Function>;
 
 const unSimpleObject: UnSimplifiedObject = {prop: 'a'}; // Hovering over object or `prop` dont show it's types
+expectType<UnSimplifiedObject>(unSimpleObject);
 
 // Shoud simplify the union members (mainly visual, mouse over the statement).
-const simpleObject: ConditionalSimplifyDeep<UnSimplifiedObject, Function> = {prop: 'a'}; // Hovering over object or `prop` show it's types
+const simpleObject: SimplifiedObject = {prop: 'a'}; // Hovering over object or `prop` show it's types
+expectType<SimplifiedObject>(simpleObject);
