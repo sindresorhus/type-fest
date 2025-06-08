@@ -23,3 +23,19 @@ declare const simplifiedFunctionPass: SimplifiedFunctionPass;
 
 expectNotAssignable<SomeFunction>(simplifiedFunctionFail);
 expectType<SomeFunction>(simplifiedFunctionPass);
+
+declare const sym: unique symbol;
+
+type Sym = typeof sym;
+
+type Union1 = 'a' | Sym | null | ['b', 5];
+type Union2 = 2 | void | string | SomeFunction;
+
+type UnSimplifiedUnion = Union1 | Union2;
+type UnSimplifiedObject = {prop: UnSimplifiedUnion}; // Hovering over `prop` dont show it's types
+type SimplifiedObject = {prop: ConditionalSimplify<UnSimplifiedUnion>}; // Hovering over `prop` show it's types
+
+const unSimpleObject: UnSimplifiedObject = {prop: 'a'}; // Hovering over object or `prop` dont show it's types
+
+// Shoud simplify the union members (mainly visual, mouse over the statement).
+const simpleObject: SimplifiedObject = {prop: 'a'}; // Hovering over object or `prop` show it's types

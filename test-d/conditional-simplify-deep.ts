@@ -24,11 +24,9 @@ const someNode = {parent: positionAndSize, childs: [{parent: positionAndSize}, {
 expectType<SomeNodeSimplified>(someNode);
 
 // Should simplify interface deeply excluding Function type.
-// TODO: Convert this to a `type`.
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-interface MovablePosition extends Position {
+type MovablePosition = Position & {
 	move(position: Position): Position;
-}
+};
 
 type MovableCollection = {
 	position: MovablePosition;
@@ -68,3 +66,19 @@ expectType<ExcludeFunctionAndSize1>(movableNode);
 // Same as above but using `IncludeType` parameter (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize2 = ConditionalSimplifyDeep<MovableCollection, Function, MovableCollection | Position>;
 expectType<ExcludeFunctionAndSize2>(movableNode);
+
+declare const sym: unique symbol;
+
+type Sym = typeof sym;
+type SomeFunction = (type: string) => string;
+
+type Union1 = 'a' | Sym | null | ['b', 5];
+type Union2 = 2 | void | string | SomeFunction;
+
+type UnSimplifiedUnion = Union1 | Union2;
+type UnSimplifiedObject = {prop: UnSimplifiedUnion};
+
+const unSimpleObject: UnSimplifiedObject = {prop: 'a'}; // Hovering over object or `prop` dont show it's types
+
+// Shoud simplify the union members (mainly visual, mouse over the statement).
+const simpleObject: ConditionalSimplifyDeep<UnSimplifiedObject, Function> = {prop: 'a'}; // Hovering over object or `prop` show it's types

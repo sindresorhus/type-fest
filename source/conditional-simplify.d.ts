@@ -40,9 +40,13 @@ type C = Simplify<{a: number} & {b: string}>;
 
 @see ConditionalSimplifyDeep
 @category Object
+@category Array
+@category Union
 */
-export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
-	? Type
-	: Type extends IncludeType
-		? {[TypeKey in keyof Type]: Type[TypeKey]}
-		: Type;
+export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown> = {
+	[Member in Type as '_']: Member extends ExcludeType
+		? Member
+		: Member extends IncludeType
+			? {[Key in keyof Member]: Member[Key]}
+			: Member;
+}['_'];

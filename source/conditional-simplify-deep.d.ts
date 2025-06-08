@@ -63,9 +63,13 @@ type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, SomeComplexType
 
 @see SimplifyDeep
 @category Object
+@category Array
+@category Union
 */
-export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
-	? Type
-	: Type extends IncludeType
-		? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
-		: Type;
+export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = {
+	[Member in Type as '_']: Member extends ExcludeType
+		? Member
+		: Member extends IncludeType
+			? {[Key in keyof Member]: ConditionalSimplifyDeep<Member[Key], ExcludeType, IncludeType>}
+			: Member
+}['_'];

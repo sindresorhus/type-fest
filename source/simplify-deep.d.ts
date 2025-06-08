@@ -2,11 +2,13 @@ import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
 import type {NonRecursiveType} from './internal/type.d.ts';
 
 /**
-Deeply simplifies an object type.
+Deeply simplifies an object, array or union type.
 
 You can exclude certain types from being simplified by providing them in the second generic `ExcludeType`.
 
 Useful to flatten the type output to improve type hints shown in editors.
+
+And also to transform an interface into a type to aide with assignability.
 
 @example
 ```

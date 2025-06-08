@@ -2,7 +2,13 @@ import type {ConditionalSimplify} from './conditional-simplify.d.ts';
 import type {NonRecursiveType} from './internal/type.d.ts';
 
 /**
-Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+Simplify a object, array or union types
+
+You can exclude certain types from being simplified by providing them in the second generic `ExcludeType`.
+
+Useful to flatten the type output to improve type hints shown in editors.
+
+And also to transform an interface into a type to aide with assignability.
 
 @example
 ```
