@@ -1,11 +1,11 @@
 import {expectType} from 'tsd';
-import type {ArrayTail, UnknownArray} from '../index.d.ts';
+import type {ArrayTail} from '../index.d.ts';
 
 declare const getArrayTail: <T extends readonly unknown[]>(array: T) => ArrayTail<T>;
 
-expectType<[]>(getArrayTail([]));
-expectType<[]>(getArrayTail(['a']));
-expectType<[]>(getArrayTail(['a', 'b', 'c']));
+expectType<[]>(getArrayTail([] as []));
+expectType<[]>(getArrayTail(['a'] as ['a']));
+expectType<['b', 'c']>(getArrayTail(['a', 'b', 'c'] as ['a', 'b', 'c']));
 
 expectType<readonly []>(getArrayTail([] as const));
 expectType<readonly []>(getArrayTail(['a'] as const));
@@ -27,22 +27,23 @@ expectType<[boolean, number?, string?]>(getArrayTail(['test', false] as ComplexA
 
 // All optional elements
 expectType<['b'?]>([] as ArrayTail<['a'?, 'b'?]>);
+expectType<readonly [number?]>({} as ArrayTail<readonly [string?, number?]>);
+
+// Rest element
+expectType<readonly [number, boolean, ...string[]]>({} as ArrayTail<readonly [string, number, boolean, ...string[]]>); // Required & Rest
+expectType<readonly [number?, boolean?, ...string[]]>({} as ArrayTail<readonly [string?, number?, boolean?, ...string[]]>); // Optional & Rest
+expectType<readonly [number, boolean?, ...string[]]>({} as ArrayTail<readonly [string, number, boolean?, ...string[]]>); // Required, Optional & Rest
+// expectType<readonly [...string[], string, number]>({} as ArrayTail<readonly [...string[], string, number]>); // Rest & Required
+expectType<readonly [number, ...string[], boolean, bigint]>({} as ArrayTail<readonly [string, number, ...string[], boolean, bigint]>); // Required, Rest & Required
 
 // Union of tuples
 expectType<[] | ['b']>([] as ArrayTail<[] | ['a', 'b']>);
 expectType<readonly ['y'?] | ['b', ...string[]] | readonly []>([] as ArrayTail<readonly ['x'?, 'y'?] | ['a', 'b', ...string[]] | readonly string[]>);
+expectType<[number] | readonly [boolean, string?]>({} as ArrayTail<[string, number] | readonly [number, boolean, string?]>);
+expectType<readonly [number] | readonly []>({} as ArrayTail<readonly [string, number] | readonly string[]>);
 
-// `preserveReadonly` option
-type NotReadonlyPreservingArrayTail<Type extends UnknownArray> = ArrayTail<Type, {preserveReadonly: false}>;
-
-expectType<[]>({} as NotReadonlyPreservingArrayTail<[]>);
-expectType<[]>({} as NotReadonlyPreservingArrayTail<readonly []>);
-expectType<[number?, ...string[]]>({} as NotReadonlyPreservingArrayTail<[string?, number?, ...string[]]>);
-expectType<[number?, ...string[]]>({} as NotReadonlyPreservingArrayTail<readonly [string?, number?, ...string[]]>);
-
-expectType<[number] | [boolean, string?]>({} as NotReadonlyPreservingArrayTail<[string, number] | readonly [number, boolean, string?]>);
-expectType<[number] | []>({} as NotReadonlyPreservingArrayTail<readonly [string, number] | readonly string[]>);
-expectType<[number?] | [boolean, string?] | []>({} as NotReadonlyPreservingArrayTail<[string?, number?] | [number, boolean, string?] | [...string[], number]>);
-
-expectType<[]>({} as NotReadonlyPreservingArrayTail<string[]>);
-expectType<[]>({} as NotReadonlyPreservingArrayTail<readonly string[]>);
+// Non tuple arrays
+expectType<[]>({} as ArrayTail<string[]>);
+expectType<readonly []>({} as ArrayTail<readonly string[]>);
+expectType<[]>({} as ArrayTail<never[]>);
+expectType<[]>({} as ArrayTail<any[]>);
