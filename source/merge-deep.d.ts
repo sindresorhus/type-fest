@@ -86,7 +86,7 @@ type OmitRestTypeHelper<
 	Tail extends UnknownArrayOrTuple,
 	Type extends UnknownArrayOrTuple,
 	Result extends UnknownArrayOrTuple = [],
-> = Tail extends []
+> = Tail extends readonly []
 	? Result
 	: OmitRestType<Tail, [...Result, FirstArrayElement<Type>]>;
 
