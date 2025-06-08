@@ -33,6 +33,8 @@ export type ArrayTail<TArray extends UnknownArray> =
 
 type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?, ...infer Tail]
 	? keyof TArray & `${number}` extends never
-		? []
+		? TArray extends readonly []
+			? []
+			: TArray // Happens when `TArray` is a non-tuple array (e.g., `string[]`) or has a leading rest element (e.g., `[...string[], number]`)
 		: Tail
 	: [];

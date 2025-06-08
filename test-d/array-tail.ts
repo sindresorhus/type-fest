@@ -38,12 +38,12 @@ expectType<readonly [number, ...string[], boolean, bigint]>({} as ArrayTail<read
 
 // Union of tuples
 expectType<[] | ['b']>([] as ArrayTail<[] | ['a', 'b']>);
-expectType<readonly ['y'?] | ['b', ...string[]] | readonly []>([] as ArrayTail<readonly ['x'?, 'y'?] | ['a', 'b', ...string[]] | readonly string[]>);
+expectType<readonly ['y'?] | ['b', ...string[]] | readonly string[]>([] as ArrayTail<readonly ['x'?, 'y'?] | ['a', 'b', ...string[]] | readonly string[]>);
 expectType<[number] | readonly [boolean, string?]>({} as ArrayTail<[string, number] | readonly [number, boolean, string?]>);
-expectType<readonly [number] | readonly []>({} as ArrayTail<readonly [string, number] | readonly string[]>);
+expectType<readonly [number] | readonly string[]>({} as ArrayTail<readonly [string, number] | readonly string[]>);
 
 // Non tuple arrays
-expectType<[]>({} as ArrayTail<string[]>);
-expectType<readonly []>({} as ArrayTail<readonly string[]>);
-expectType<[]>({} as ArrayTail<never[]>);
-expectType<[]>({} as ArrayTail<any[]>);
+expectType<string[]>({} as ArrayTail<string[]>);
+expectType<readonly string[]>({} as ArrayTail<readonly string[]>);
+expectType<never[]>({} as ArrayTail<never[]>);
+expectType<any[]>({} as ArrayTail<any[]>);
