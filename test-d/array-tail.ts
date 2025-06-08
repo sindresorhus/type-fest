@@ -47,3 +47,7 @@ expectType<string[]>({} as ArrayTail<string[]>);
 expectType<readonly string[]>({} as ArrayTail<readonly string[]>);
 expectType<never[]>({} as ArrayTail<never[]>);
 expectType<any[]>({} as ArrayTail<any[]>);
+
+// Boundary cases
+expectType<never>({} as ArrayTail<never>);
+expectType<any>({} as ArrayTail<any>);
