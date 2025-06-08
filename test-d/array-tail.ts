@@ -28,6 +28,11 @@ expectType<readonly [number, boolean?, ...string[]]>({} as ArrayTail<readonly [s
 // expectType<readonly [...string[], string, number]>({} as ArrayTail<readonly [...string[], string, number]>); // Rest & Required
 expectType<readonly [number, ...string[], boolean, bigint]>({} as ArrayTail<readonly [string, number, ...string[], boolean, bigint]>); // Required, Rest & Required
 
+// Labelled tuples
+expectType<[y: string]>({} as ArrayTail<[x: number, y: string]>);
+expectType<[bar: string, ...rest: boolean[]]>({} as ArrayTail<[foo: number, bar: string, ...rest: boolean[]]>);
+expectType<[...rest: boolean[], foo: number, bar: string]>({} as ArrayTail<[...rest: boolean[], foo: number, bar: string]>);
+
 // Union of tuples
 expectType<[] | ['b']>({} as ArrayTail<[] | ['a', 'b']>);
 expectType<readonly ['y'?] | ['b', ...string[]] | readonly string[]>({} as ArrayTail<readonly ['x'?, 'y'?] | ['a', 'b', ...string[]] | readonly string[]>);
