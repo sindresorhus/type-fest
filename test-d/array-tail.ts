@@ -11,22 +11,14 @@ expectType<readonly []>(getArrayTail([] as const));
 expectType<readonly []>(getArrayTail(['a'] as const));
 expectType<readonly ['b', 'c']>(getArrayTail(['a', 'b', 'c'] as const));
 
-// Optional elements tests
-expectType<readonly [undefined, 'c']>(getArrayTail(['a', undefined, 'c'] as const));
-
-// Mixed optional/required
-type MixedArray = [string, undefined?, number?];
-expectType<[undefined?, number?]>(getArrayTail(['hello'] as MixedArray));
-
-// Optional numbers
-expectType<readonly [undefined, 3]>(getArrayTail([1, undefined, 3] as const));
-
-// Complex mixed case
-type ComplexArray = [string, boolean, number?, string?];
-expectType<[boolean, number?, string?]>(getArrayTail(['test', false] as ComplexArray));
+// Optional elements
+expectType<readonly [undefined, 'c'?]>(getArrayTail(['a', undefined, 'c'] as readonly ['a', undefined, 'c'?]));
+expectType<[undefined?, number?]>(getArrayTail(['hello'] as [string, undefined?, number?]));
+expectType<readonly [undefined?, 3?]>(getArrayTail([1, undefined, 3] as readonly [1, undefined?, 3?]));
+expectType<[boolean, number?, string?]>(getArrayTail(['test', false] as [string, boolean, number?, string?]));
 
 // All optional elements
-expectType<['b'?]>([] as ArrayTail<['a'?, 'b'?]>);
+expectType<['b'?]>({} as ArrayTail<['a'?, 'b'?]>);
 expectType<readonly [number?]>({} as ArrayTail<readonly [string?, number?]>);
 
 // Rest element
@@ -37,8 +29,8 @@ expectType<readonly [number, boolean?, ...string[]]>({} as ArrayTail<readonly [s
 expectType<readonly [number, ...string[], boolean, bigint]>({} as ArrayTail<readonly [string, number, ...string[], boolean, bigint]>); // Required, Rest & Required
 
 // Union of tuples
-expectType<[] | ['b']>([] as ArrayTail<[] | ['a', 'b']>);
-expectType<readonly ['y'?] | ['b', ...string[]] | readonly string[]>([] as ArrayTail<readonly ['x'?, 'y'?] | ['a', 'b', ...string[]] | readonly string[]>);
+expectType<[] | ['b']>({} as ArrayTail<[] | ['a', 'b']>);
+expectType<readonly ['y'?] | ['b', ...string[]] | readonly string[]>({} as ArrayTail<readonly ['x'?, 'y'?] | ['a', 'b', ...string[]] | readonly string[]>);
 expectType<[number] | readonly [boolean, string?]>({} as ArrayTail<[string, number] | readonly [number, boolean, string?]>);
 expectType<readonly [number] | readonly string[]>({} as ArrayTail<readonly [string, number] | readonly string[]>);
 
