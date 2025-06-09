@@ -9,6 +9,32 @@ Extracts the type of an array or tuple minus the first element.
 ```
 import type {ArrayTail} from 'type-fest';
 
+type A = ArrayTail<[1, 2, 3]>;
+//=> [2, 3]
+
+type B = ArrayTail<readonly [1, 2, 3]>;
+//=> readonly [2, 3]
+
+type C = ArrayTail<[1, 2, 3?, ...string[]]>;
+//=> [2, 3?, ...string[]]
+
+type D = ArrayTail<readonly [1]>;
+//=> readonly []
+
+type E = ArrayTail<[]>;
+//=> []
+
+type F = ArrayTail<string[]>;
+//=> string[]
+
+type G = ArrayTail<readonly [...string[], 1, 2]>;
+//=> readonly [...string[], 1, 2]
+```
+
+@example
+```
+import type {ArrayTail} from 'type-fest';
+
 type Curry<Func> = Func extends (...args_: infer Args) => infer ReturnValue
 	? Args extends readonly []
 		? ReturnValue
