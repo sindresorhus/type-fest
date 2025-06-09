@@ -9,17 +9,18 @@ Extracts the type of an array or tuple minus the first element.
 ```
 import type {ArrayTail} from 'type-fest';
 
-declare const curry: <Arguments extends unknown[], Return>(
-	function_: (...arguments_: Arguments) => Return,
-	...arguments_: ArrayTail<Arguments>
-) => (...arguments_: ArrayTail<Arguments>) => Return;
+type Curry<Func> = Func extends (...args_: infer Args) => infer ReturnValue
+	? Args extends readonly []
+		? ReturnValue
+		: (arg: Args[0]) => Curry<(...args: ArrayTail<Args>) => ReturnValue>
+	: never;
 
-const add = (a: number, b: number) => a + b;
+declare function curry<Func extends Function>(fn: Func): Curry<Func>;
 
-const add3 = curry(add, 3);
+declare function searchBooks(genre: string, minRating: number, available: boolean): string[];
 
-add3(4);
-//=> 7
+const availableTopSciFi = curry(searchBooks)('sci-fi')(4.5)(true);
+//=> string[]
 ```
 
 @category Array
