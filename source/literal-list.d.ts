@@ -19,7 +19,9 @@ type T2 = TupleOfUnions<1 | 2 | 3>;
 //=> [1 | 2 | 3, 1 | 2 | 3, 1 | 2 | 3]
 ```
 */
-type TupleOfUnions<U> = BuildTuple<UnionToTuple<U>['length'], U>;
+type TupleOfUnions<U> = UnionToTuple<U>['length'] extends infer Length extends number
+	? BuildTuple<Length, U>
+	: never;
 
 /**
 Convert a tuple or union type into a string representation. Used for readable error messages in other types.
@@ -36,7 +38,7 @@ type T2 = TypeAsString<'a' | 'b', ' | '>;
 //=> 'a | b'
 ```
 */
-// TODO: Make a separate `Stringify` type for `JoinableItem[]` mixed with `JoinableItem`
+// TODO: Make a separate `Stringify` type `JoinableItem[]` mixed with `JoinableItem`
 type TypeAsString<T, S extends string = ',', E extends [string, string] = ['', '']> =
 	`${E[0]}${
 		[T] extends [readonly JoinableItem[]] // TODO: add `JoinableArray` type
