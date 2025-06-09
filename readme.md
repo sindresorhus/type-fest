@@ -179,7 +179,7 @@ Click the type names for complete docs.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
-- [`JoinUnion`](source/join-union.d.ts) - Join an union of [`JoinableItems`](source/join.d.ts#L2) using the given string as a delimiter (default: `,`).
+- [`JoinUnion`](source/join-union.d.ts) - Join a union of strings and/or numbers using the given string as a delimiter.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
 - [`FindGlobalType`](source/find-global-type.d.ts) - Tries to find the type of a global with the given name.
