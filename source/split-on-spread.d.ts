@@ -21,7 +21,7 @@ type DefaultSplitOnSpreadOptions = {
 };
 
 /**
-Splits an Array on its spreaded portion. into three parts:
+Splits an array on its spread portion into three parts:
 
 1. The static (non-spread) prefix before any spread element.
 2. The inferred spread type (e.g., `string` from `...string[]`) as a single-element tuple.
@@ -29,7 +29,7 @@ Splits an Array on its spreaded portion. into three parts:
 
 If no spread exists, the entire array is treated as a static prefix with empty spread and suffix parts.
 
-By default, Optional modifier (`?`) is preserved. See {@link SplitOnSpreadOptions.keepOptionals keepOptionals} option to change this behaviour.
+By default, The optional modifier (?) is preserved. See {@link SplitOnSpreadOptions.keepOptionals keepOptionals} option to change this behavior.
 
 @example
 ```ts
@@ -59,7 +59,7 @@ export type SplitOnSpread<Array_ extends UnknownArray, Options extends SplitOnSp
 >;
 
 /**
-Deconstruct an Array on its rest element and return the split portions.
+Deconstructs an array on its rest element and returns the split portions.
 
 See {@link SplitOnSpread SplitOnSpread} for details.
 */

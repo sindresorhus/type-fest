@@ -2,7 +2,7 @@ import type {SplitOnSpread} from './split-on-spread.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Returns the spread element type from an array.
+Extracts the spread element type from an array.
 
 @example
 ```

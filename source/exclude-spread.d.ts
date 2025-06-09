@@ -3,7 +3,7 @@ import type {SplitOnSpread} from './split-on-spread.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Create a tuple with the spread element removed.
+Creates a tuple with the spread element removed.
 
 @example
 ```
@@ -31,5 +31,5 @@ export type ExcludeSpread<Array_ extends UnknownArray> =
 			? IsArrayReadonly<Array_> extends true
 				? Readonly<[...Result[0], ...Result[2]]>
 				: [...Result[0], ...Result[2]]
-			: Result // `never` or `any`
+			: Result // May be `never` or `any`
 		: never;
