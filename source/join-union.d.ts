@@ -2,23 +2,25 @@ import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {Join, JoinableItem} from './join.d.ts';
 
 /**
-Join an union of {@link JoinableItem `JoinableItems`} using the given string as a delimiter (default: `,`).
+Join an union of {@link JoinableItem `JoinableItems`} using the given string as a delimiter.
+
+Delimiter defaults to `,`.
 
 @example
 ```
 import type {JoinUnion} from 'type-fest';
 
 type T1 = JoinUnion<'a' | 'b' | 'c'>;
-// => "a, b, c"
+//=> 'a, b, c'
 
 type T2 = JoinUnion<1 | 2 | 3, ' | '>;
-// => "1 | 2 | 3"
+//=> '1 | 2 | 3'
 
 type T3 = JoinUnion<'foo'>;
-// => "foo"
+//=> 'foo'
 
 type T4 = JoinUnion<never>;
-// => ""
+//=> ''
 ```
 
 @see Join
