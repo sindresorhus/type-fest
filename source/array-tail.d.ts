@@ -35,10 +35,10 @@ type G = ArrayTail<readonly [...string[], 1, 2]>;
 ```
 import type {ArrayTail} from 'type-fest';
 
-type Curry<Func> = Func extends (...args_: infer Args) => infer ReturnValue
-	? Args extends readonly []
-		? ReturnValue
-		: (arg: Args[0]) => Curry<(...args: ArrayTail<Args>) => ReturnValue>
+type Curry<Func> = Func extends (...agruments_: infer Arguments) => infer Return
+	? Arguments extends readonly []
+		? Return
+		: (agrument: Arguments[0]) => Curry<(...agruments_: ArrayTail<Arguments>) => Return>
 	: never;
 
 declare function curry<Func extends Function>(fn: Func): Curry<Func>;
