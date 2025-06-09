@@ -9,19 +9,18 @@ Returns the spread element type from an array.
 import type {ExtractSpread} from 'type-fest';
 
 type T1 = ExtractSpread<[number, ...string[], string, 'foo']>;
-// => string
+//=> string
 
 type T2 = ExtractSpread<[...boolean[], string]>;
-// => boolean
+//=> boolean
 
 type T3 = ExtractSpread<[...'foo'[], true]>;
-// => 'foo'
+//=> 'foo'
 
 type T4 = ExtractSpread<[number, string]>;
-// => never
+//=> never
 ```
 
-@author benzaria
 @see ExcludeSpread, SplitOnSpread
 @category Array
 */

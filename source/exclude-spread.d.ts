@@ -10,19 +10,18 @@ Create a tuple with the spread element removed.
 import type {ExcludeSpread} from 'type-fest';
 
 type T1 = ExcludeSpread<[number, ...string[], string, 'foo']>;
-// => [number, string, 'foo']
+//=> [number, string, 'foo']
 
 type T2 = ExcludeSpread<[...boolean[], string]>;
-// => [string]
+//=> [string]
 
 type T3 = ExcludeSpread<[...'foo'[], true]>;
-// => [true]
+//=> [true]
 
 type T4 = ExcludeSpread<[number, string]>;
-// => [number, string]
+//=> [number, string]
 ```
 
-@author benzaria
 @see ExtractSpread, SplitOnSpread
 @category Array
 */
