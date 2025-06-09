@@ -5,22 +5,21 @@ import type {BuildTuple} from './internal/tuple.d.ts';
 import type {Join, JoinableItem} from './join.d.ts';
 import type {JoinUnion} from './join-union.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {IsUnion} from './is-union.d.ts';
 
 /**
 Create a tuple where each element is the union `U`, with the length equal to the number of members in `U`.
 
 @example
 ```
-type T1 = TupleOfUnions<'a' | 'b'>
+type T1 = TupleOfUnions<'a' | 'b'>;
 //=> ['a' | 'b', 'a' | 'b']
 
-type T2 = TupleOfUnions<1 | 2 | 3>
+type T2 = TupleOfUnions<1 | 2 | 3>;
 //=> [1 | 2 | 3, 1 | 2 | 3, 1 | 2 | 3]
 ```
 */
-type TupleOfUnions<U> = UnionToTuple<U>['length'] extends infer Length extends number
-	? BuildTuple<Length, U>
-	: never;
+type TupleOfUnions<U> = BuildTuple<UnionToTuple<U>['length'], U>;
 
 /**
 Convert a tuple or union type into a string representation. Used for readable error messages in other types.
@@ -31,19 +30,22 @@ Convert a tuple or union type into a string representation. Used for readable er
 @example
 ```
 type T1 = TypeAsString<['a', 'b'], ', ', ['[', ']']>;
-// => '[a, b]'
+//=> '[a, b]'
 
 type T2 = TypeAsString<'a' | 'b', ' | '>;
-// => 'a | b'
+//=> 'a | b'
 ```
 */
+// TODO: Make a separate `Stringify` type for `JoinableItem[]` mixed with `JoinableItem`
 type TypeAsString<T, S extends string = ',', E extends [string, string] = ['', '']> =
 	`${E[0]}${
-		[T] extends [readonly JoinableItem[]]
-			? Join<T, S>
+		[T] extends [readonly JoinableItem[]] // TODO: add `JoinableArray` type
+			? IsUnion<T> extends true
+				? JoinUnion<`[${Join<T, ', '>}]`, S>
+				: Join<T, S>
 			: [T] extends [JoinableItem]
 				? JoinUnion<T, S>
-				: 'unknown'
+				: '...' // To Complex
 	}${E[1]}`;
 
 /** Stringify a tuple as `'[a, b]'` */
@@ -53,7 +55,7 @@ type TupleAsString<T> = TypeAsString<T, ', ', ['[', ']']>;
 type UnionAsString<U> = TypeAsString<U, ' | ', ['(', ')[]']>;
 
 /**
-Validates a literal Tuple `List` against a required shape `Shap` (which can be a union or a tuple of same unions).
+Validates a literal Tuple `List` against a required union `Shap`.
 
 Returns the tuple `List` if valid, or if these constraints are violated, a descriptive error message is returned as a string literal.
 
@@ -67,32 +69,32 @@ Returns the tuple `List` if valid, or if these constraints are violated, a descr
  - Compile-time enforcement of exact permutations without duplicates
  - Defining static configuration or table headers that match an enum or union
 
-@example-types
+@example
 ```
 import type {LiteralList} from 'type-fest';
 
 // ✅ OK
 type T1 = LiteralList<['a', 'b'], 'a' | 'b'>;
-// => ['a', 'b']
+//=> ['a', 'b']
 
 // ✅ OK
 type T2 = LiteralList<[2, 1], 1 | 2>;
-// => [2, 1]
+//=> [2, 1]
 
 // ❌ Length unmatch
 type T3 = LiteralList<['a', 'b', 'c'], 'a' | 'b'>;
-// => '(a | b)[], Type [a, b, c] is not the required Length of: 2'
+//=> '(a | b)[], Type [a, b, c] is not the required Length of: 2'
 
 // ❌ Missing element
 type T4 = LiteralList<['a'], 'a' | 'b'>;
-// => '(a | b)[], Type [a] is missing Properties: [b]'
+//=> '(a | b)[], Type [a] is missing Properties: [b]'
 
 // ❌ Extra element
 type T5 = LiteralList<['a', 'e'], 'a' | 'b'>;
-// => '(a | b)[], Type [a, e] has extra Properties: [e]'
+//=> '(a | b)[], Type [a, e] has extra Properties: [e]'
 ```
 
-@example-function
+@example
 ```
 import type {LiteralList} from 'type-fest';
 
@@ -112,17 +114,14 @@ const C3 = literalList(['b', 'b', 'b'] as const); // ❌ Errors in Compiler and 
 //=> '(a | b | c)[], Type [b, b, b] is missing Properties: [a, c]'
 ```
 
-@author benzaria
 @category Type Guard
 @category Utilities
 */
 export type LiteralList<List extends UnknownArray, Shape extends UnknownArray | unknown> =
-	([Shape] extends [UnknownArray] ? Shape : TupleOfUnions<Shape>) extends infer TupleShape extends UnknownArray
-		? IfNotAnyOrNever<List, _LiteralList<List, TupleShape, TupleAsString<List>, UnionAsString<TupleShape[number]>>>
-		: never;
+	IfNotAnyOrNever<List, _LiteralList<List, TupleOfUnions<Shape>, TupleAsString<List>, UnionAsString<Shape>>>;
 
 /**
-Internal comparison logic for `LiteralList`.
+Internal comparison logic for {@link LiteralList `LiteralList`}.
 
 Compares `T` and `U`:
 
