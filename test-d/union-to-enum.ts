@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {UnionToEnum} from '../index.d.ts';
+import type {CamelCasedProperties, UnionToEnum} from '../index.d.ts';
 
 // Union input
 expectType<UnionToEnum<'b' | 'a' | 'd' | 'c'>>({b: 'b', a: 'a', d: 'd', c: 'c'} as const);
@@ -20,12 +20,6 @@ expectType<UnionToEnum<[1, 2, 3], true, {startIndex: 10}>>({1: 10, 2: 11, 3: 12}
 // Mixed keys
 expectType<UnionToEnum<['a', 1, 'b']>>({a: 'a', 1: 1, b: 'b'} as const);
 expectType<UnionToEnum<['a', 1, 'b'], true, {startIndex: 0}>>({a: 0, 1: 1, b: 2} as const);
-
-// Literal const arrays
-const buttons = ['Play', 'Pause', 'Stop'] as const;
-
-expectType<UnionToEnum<typeof buttons>>({Play: 'Play', Pause: 'Pause', Stop: 'Stop'} as const);
-expectType<UnionToEnum<typeof buttons, true, {startIndex: 0}>>({Play: 0, Pause: 1, Stop: 2} as const);
 
 // Symbol keys
 declare const sym1: unique symbol;
@@ -51,27 +45,28 @@ expectType<UnionToEnum<number[]>>({} as const);
 expectType<UnionToEnum<symbol[]>>({} as const);
 
 // `never` / `any`
-expectType<UnionToEnum<never>>({} as const);
-expectType<UnionToEnum<any>>({} as const);
+expectType<UnionToEnum<never>>({});
+expectType<UnionToEnum<any>>({});
 
-// CamelCase
+// Literal const arrays
+const buttons = ['Play', 'Pause', 'Stop'] as const;
+
+expectType<UnionToEnum<typeof buttons>>({Play: 'Play', Pause: 'Pause', Stop: 'Stop'} as const);
+expectType<UnionToEnum<typeof buttons, true, {startIndex: 0}>>({Play: 0, Pause: 1, Stop: 2} as const);
+
 const level = ['DEBUG', 'INFO', 'ERROR', 'WARNING'] as const;
-expectType<UnionToEnum<typeof buttons, false, {camelCase: true}>>({
-	play: 'Play',
-	pause: 'Pause',
-	stop: 'Stop',
+
+expectType<UnionToEnum<typeof level>>({
+	DEBUG: 'DEBUG',
+	INFO: 'INFO',
+	ERROR: 'ERROR',
+	WARNING: 'WARNING',
 } as const);
-expectType<UnionToEnum<typeof level, false, {camelCase: true}>>({
-	debug: 'DEBUG',
-	info: 'INFO',
-	error: 'ERROR',
-	warning: 'WARNING',
-} as const);
-expectType<UnionToEnum<typeof level, true, {camelCase: true}>>({
-	debug: 1,
-	info: 2,
-	error: 3,
-	warning: 4,
+expectType<UnionToEnum<typeof level, true>>({
+	DEBUG: 1,
+	INFO: 2,
+	ERROR: 3,
+	WARNING: 4,
 } as const);
 
 // Dynamic Enum
@@ -81,7 +76,7 @@ const resrc = ['file', 'folder', 'link'] as const;
 declare function createEnum<
 	const T extends readonly string[],
 	const U extends readonly string[],
->(x: T, y: U): UnionToEnum<`${T[number]}_${U[number]}`, false, {camelCase: true}>;
+>(x: T, y: U): CamelCasedProperties<UnionToEnum<`${T[number]}_${U[number]}`>>;
 
 const Template = createEnum(verb, resrc);
 
