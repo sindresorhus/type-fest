@@ -4,7 +4,15 @@ import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
 
+/**
+{@link SplitOnSpread} options.
+*/
 type SplitOnSpreadOptions = {
+	/**
+	Whether to preserve the optional modifier (`?`).
+
+	@default true
+	*/
 	keepOptionals?: boolean;
 };
 
@@ -16,7 +24,7 @@ type DefaultSplitOnSpreadOptions = {
 Splits an Array on its spreaded portion. into three parts:
 
 1. The static (non-spread) prefix before any spread element.
-2. The inferred spread type (e.g., `string` from `...string[]`) as an element-array.
+2. The inferred spread type (e.g., `string` from `...string[]`) as a single-element tuple.
 3. The static suffix after the spread (if any).
 
 If no spread exists, the entire array is treated as a static prefix with empty spread and suffix parts.
@@ -28,22 +36,21 @@ By default, Optional modifier (`?`) is preserved. See {@link SplitOnSpreadOption
 import type {SplitOnSpread} from 'type-fest';
 
 type T1 = SplitOnSpread<[number, ...string[], boolean]>;
-// => [[number], [string], [boolean]]
+//=> [[number], [string], [boolean]]
 
 type T2 = SplitOnSpread<[...boolean[], string]>;
-// => [[], [boolean], [string]]
+//=> [[], [boolean], [string]]
 
 type T3 = SplitOnSpread<[number, string?]>;
-// => [[number, string], [], []] Or [[number, string | undefined], [], []]
+//=> [[number, string?], [], []]
 
-type T4 = SplitOnSpread<[number, string?], {keepOptionals: true}>;
-// => [[number, string?], [], []]
+type T4 = SplitOnSpread<[number, string?], {keepOptionals: false}>;
+//=> [[number, string], [], []] Or [[number, string | undefined], [], []]
 
 type T5 = SplitOnSpread<[...number[]]>;
-// => [[], [number], []]
+//=> [[], [number], []]
 ```
 
-@author benzaria
 @see ExtractSpread, ExcludeSpread
 @category Array
 */
@@ -52,11 +59,9 @@ export type SplitOnSpread<Array_ extends UnknownArray, Options extends SplitOnSp
 >;
 
 /**
-Deconstruct an Array on its rest element and return the splited portions.
+Deconstruct an Array on its rest element and return the split portions.
 
-See {@link SplitOnSpread SplitOnSpread} For info.
-
-@credit-to som-sm
+See {@link SplitOnSpread SplitOnSpread} for details.
 */
 export type DeconstructSpreadArray<
 	Array_ extends UnknownArray,
@@ -64,10 +69,10 @@ export type DeconstructSpreadArray<
 	HeadAcc extends UnknownArray = [],
 	TailAcc extends UnknownArray = [],
 > =
-	Array_ extends UnknownArray // For distributing `TArray`
+	Array_ extends UnknownArray // For distributing `Array_`
 		? keyof Array_ & `${number}` extends never
-			// Enters this branch, if `TArray` is empty (e.g., []),
-			// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+			// Enters this branch, if `Array_` is empty (e.g., []),
+			// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
 			? Array_ extends readonly [...infer Rest, infer Last]
 				? DeconstructSpreadArray<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
 				: [HeadAcc, Array_ extends readonly [] ? [] : [Array_[number]], TailAcc] // Add the rest element between the accumulated elements.
