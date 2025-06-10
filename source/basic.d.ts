@@ -16,7 +16,7 @@ Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/Jav
 export type Constructor<T, Arguments extends unknown[] = any[]> = new(...arguments_: Arguments) => T;
 
 /**
-Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/classes.html#abstract-classes).
+Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/2/classes.html#abstract-classes-and-members).
 
 @category Class
 
