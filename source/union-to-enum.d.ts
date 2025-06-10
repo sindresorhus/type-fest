@@ -10,7 +10,7 @@ import type {IsNever} from './is-never.d.ts';
 */
 type UnionToEnumOptions = {
 	/**
-	The starting **Index** of Numeric enums.
+	The first numeric value to assign when using numeric indices.
 
 	@default 1
 	*/
@@ -22,7 +22,7 @@ type DefaultUnionToEnumOptions = {
 };
 
 /**
-Converts a union or tuple of property keys (string, number, or symbol) into an **Enum**-like object.
+Converts a union or tuple of property keys (string, number, or symbol) into an **Enum**.
 
 The keys are preserved, and their values are either:
 
@@ -58,14 +58,14 @@ type E5 = UnionToEnum<never>;
 import type {UnionToEnum, CamelCasedProperties} from 'type-fest';
 
 const verb = ['write', 'read', 'delete'] as const;
-const resrc = ['file', 'folder', 'link'] as const;
+const resource = ['file', 'folder', 'link'] as const;
 
 declare function createEnum<
 	const T extends readonly string[],
 	const U extends readonly string[],
 >(x: T, y: U): CamelCasedProperties<UnionToEnum<`${T[number]}_${U[number]}`>>;
 
-const Template = createEnum(verb, resrc);
+const Template = createEnum(verb, resource);
 //=> {
 //    writeFile: 'write_file',
 //    writeFolder: 'write_folder',
@@ -79,7 +79,6 @@ const Template = createEnum(verb, resrc);
 // }
 ```
 
-@author benzaria
 @see UnionToTuple
 @category Object
 */
