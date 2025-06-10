@@ -161,9 +161,9 @@ Click the type names for complete docs.
 - [`WritableKeysOf`](source/writable-keys-of.d.ts) - Extract all writable (non-readonly) keys from the given type.
 - [`HasWritableKeys`](source/has-writable-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any writable fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
-- [`SplitOnSpread`](source/split-on-spread.d.ts) - Splits an array on its spread portion into three parts: `[[...Head], [Spread], [...Tail]]`.
-- [`ExtractSpread`](source/split-on-spread.d.ts) - Extracts the spread element type from an array.
-- [`ExcludeSpread`](source/split-on-spread.d.ts) - Creates a tuple with the spread element removed.
+- [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an Array on its [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element portion into three parts: `[[...Head], [Rest], [...Tail]]`.
+- [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extracts the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
+- [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Creates a tuple with the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers (includes the start and excludes the end).

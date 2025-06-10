@@ -2,7 +2,7 @@ import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Extracts the spread element type from an array.
+Extracts the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
 
 @example
 ```
