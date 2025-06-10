@@ -8,11 +8,11 @@ import type {IsOptional} from 'type-fest';
 type A = IsOptional<string>
 //=> false
 
-type B = IsOptional<string | null>
-//=> false
-
-type C = IsOptional<string | undefined>
+type B = IsOptional<string | undefined>
 //=> true
+
+type C = IsOptional<string | null>
+//=> false
 
 type D = IsOptional<string | null | undefined>
 //=> true
