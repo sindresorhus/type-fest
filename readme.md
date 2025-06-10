@@ -204,7 +204,7 @@ Click the type names for complete docs.
 - [`IsUnion`](source/is-union.d.ts) - Returns a boolean for whether the given type is a union.
 - [`IsLowercase`](source/is-lowercase.d.ts) - Returns a boolean for whether the given string literal is lowercase.
 - [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.
-- [`LiteralList`](source/literal-list.d.ts) - Validates a literal Tuple `List` against a required union `Shap`. Returns `List` if valid, else an Error string.
+- [`LiteralList`](source/literal-list.d.ts) - Enforces that a tuple contains exactly the members of a union type, with no duplicates or omissions.
 
 ### JSON
 

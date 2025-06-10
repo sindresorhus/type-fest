@@ -38,7 +38,7 @@ type T2 = TypeAsString<'a' | 'b', ' | '>;
 //=> 'a | b'
 ```
 */
-// TODO: Make a separate `Stringify` type `JoinableItem[]` mixed with `JoinableItem`
+// TODO: Make a separate `Stringify` type for `JoinableItem[]` mixed with `JoinableItem`
 type TypeAsString<T, S extends string = ',', E extends [string, string] = ['', '']> =
 	`${E[0]}${
 		[T] extends [readonly JoinableItem[]] // TODO: add `JoinableArray` type
@@ -47,7 +47,7 @@ type TypeAsString<T, S extends string = ',', E extends [string, string] = ['', '
 				: Join<T, S>
 			: [T] extends [JoinableItem]
 				? JoinUnion<T, S>
-				: '...' // To Complex
+				: '...' // Too complex
 	}${E[1]}`;
 
 /** Stringify a tuple as `'[a, b]'` */
@@ -57,13 +57,13 @@ type TupleAsString<T> = TypeAsString<T, ', ', ['[', ']']>;
 type UnionAsString<U> = TypeAsString<U, ' | ', ['(', ')[]']>;
 
 /**
-Validates a literal Tuple `List` against a required union `Shap`.
+Enforces that a tuple contains exactly the members of a union type, with no duplicates or omissions.
 
-Returns the tuple `List` if valid, or if these constraints are violated, a descriptive error message is returned as a string literal.
+Returns the tuple `List` if valid. Otherwise, if any constraints are violated, a descriptive error message is returned as a string literal.
 
 #### Requirements:
- - `List` **must have the same length** as the number of members in `Shap`
- - Each member of `Shap` **must appear exactly once** in `List`, **No duplicates allowed**
+ - `List` **must have the same length** as the number of members in `Shape`
+ - Each member of `Shape` **must appear exactly once** in `List`, **No duplicates allowed**
  - The **order does not matter**
 
 #### Use Cases:
@@ -83,17 +83,17 @@ type T1 = LiteralList<['a', 'b'], 'a' | 'b'>;
 type T2 = LiteralList<[2, 1], 1 | 2>;
 //=> [2, 1]
 
-// ❌ Length unmatch
+// ❌ Length mismatch
 type T3 = LiteralList<['a', 'b', 'c'], 'a' | 'b'>;
 //=> '(a | b)[], Type [a, b, c] is not the required Length of: 2'
 
 // ❌ Missing element
 type T4 = LiteralList<['a'], 'a' | 'b'>;
-//=> '(a | b)[], Type [a] is missing Properties: [b]'
+//=> '(a | b)[], Type [a] is missing Members: [b]'
 
 // ❌ Extra element
 type T5 = LiteralList<['a', 'e'], 'a' | 'b'>;
-//=> '(a | b)[], Type [a, e] has extra Properties: [e]'
+//=> '(a | b)[], Type [a, e] has extra Members: [e]'
 ```
 
 @example
@@ -113,7 +113,7 @@ const C2 = literalList(['c', 'a', 'b'] as const);
 //=> ['c', 'a', 'b']
 
 const C3 = literalList(['b', 'b', 'b'] as const); // ❌ Errors in Compiler and IDE
-//=> '(a | b | c)[], Type [b, b, b] is missing Properties: [a, c]'
+//=> '(a | b | c)[], Type [b, b, b] is missing Members: [a, c]'
 ```
 
 @category Type Guard

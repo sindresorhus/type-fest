@@ -2,7 +2,7 @@ import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {Join, JoinableItem} from './join.d.ts';
 
 /**
-Join an union of {@link JoinableItem `JoinableItems`} using the given string as a delimiter.
+Join a union of strings and/or numbers ({@link JoinableItem `JoinableItems`}) using the given string as a delimiter.
 
 Delimiter defaults to `,`.
 
