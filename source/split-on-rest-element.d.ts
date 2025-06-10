@@ -5,9 +5,9 @@ import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
 
 /**
-{@link SplitOnSpread} options.
+{@link SplitOnRestElement} options.
 */
-type SplitOnSpreadOptions = {
+type SplitOnRestElementOptions = {
 	/**
 	Whether to preserve the optional modifier (`?`).
 
@@ -16,56 +16,56 @@ type SplitOnSpreadOptions = {
 	keepOptionals?: boolean;
 };
 
-type DefaultSplitOnSpreadOptions = {
+type DefaultSplitOnRestElementOptions = {
 	keepOptionals: true;
 };
 
 /**
-Splits an array on its spread portion into three parts:
+Splits an array on its [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element portion into three parts:
 
-1. The static (non-spread) prefix before any spread element.
-2. The inferred spread type (e.g., `string` from `...string[]`) as a single-element tuple.
-3. The static suffix after the spread (if any).
+1. The static prefix before any `Rest` element element (if any).
+2. The inferred `Rest` element type (e.g., `string` from `...string[]`) as a single-element tuple.
+3. The static suffix after the `Rest` element (if any).
 
-If no spread exists, the entire array is treated as a static prefix with empty spread and suffix parts.
+If no `Rest` element exists, the entire array is treated as a static prefix with empty `Rest` element and suffix parts.
 
-By default, The optional modifier (?) is preserved. See {@link SplitOnSpreadOptions.keepOptionals keepOptionals} option to change this behavior.
+By default, The optional modifier (`?`) is preserved. See {@link SplitOnRestElementOptions.keepOptionals keepOptionals} option to change this behavior.
 
 @example
 ```ts
-import type {SplitOnSpread} from 'type-fest';
+import type {SplitOnRestElement} from 'type-fest';
 
-type T1 = SplitOnSpread<[number, ...string[], boolean]>;
+type T1 = SplitOnRestElement<[number, ...string[], boolean]>;
 //=> [[number], [string], [boolean]]
 
-type T2 = SplitOnSpread<[...boolean[], string]>;
+type T2 = SplitOnRestElement<[...boolean[], string]>;
 //=> [[], [boolean], [string]]
 
-type T3 = SplitOnSpread<[number, string?]>;
+type T3 = SplitOnRestElement<[number, string?]>;
 //=> [[number, string?], [], []]
 
-type T4 = SplitOnSpread<[number, string?], {keepOptionals: false}>;
+type T4 = SplitOnRestElement<[number, string?], {keepOptionals: false}>;
 //=> [[number, string], [], []] Or [[number, string | undefined], [], []]
 
-type T5 = SplitOnSpread<[...number[]]>;
+type T5 = SplitOnRestElement<[...number[]]>;
 //=> [[], [number], []]
 ```
 
-@see ExtractSpread, ExcludeSpread
+@see ExtractRestElement, ExcludeRestElement
 @category Array
 */
-export type SplitOnSpread<Array_ extends UnknownArray, Options extends SplitOnSpreadOptions = {}> = IfNotAnyOrNever<Array_,
-	DeconstructSpreadArray<Array_, ApplyDefaultOptions<SplitOnSpreadOptions, DefaultSplitOnSpreadOptions, Options>>
+export type SplitOnRestElement<Array_ extends UnknownArray, Options extends SplitOnRestElementOptions = {}> = IfNotAnyOrNever<Array_,
+	DeconstructRestArray<Array_, ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>>
 >;
 
 /**
 Deconstructs an array on its rest element and returns the split portions.
 
-See {@link SplitOnSpread SplitOnSpread} for details.
+See {@link SplitOnRestElement SplitOnRestElement} for details.
 */
-export type DeconstructSpreadArray<
+export type DeconstructRestArray<
 	Array_ extends UnknownArray,
-	Options extends Required<SplitOnSpreadOptions>,
+	Options extends Required<SplitOnRestElementOptions>,
 	HeadAcc extends UnknownArray = [],
 	TailAcc extends UnknownArray = [],
 > =
@@ -74,10 +74,10 @@ export type DeconstructSpreadArray<
 			// Enters this branch, if `Array_` is empty (e.g., []),
 			// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
 			? Array_ extends readonly [...infer Rest, infer Last]
-				? DeconstructSpreadArray<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
+				? DeconstructRestArray<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
 				: [HeadAcc, Array_ extends readonly [] ? [] : [Array_[number]], TailAcc] // Add the rest element between the accumulated elements.
 			: Array_ extends readonly [(infer First)?, ...infer Rest]
-				? DeconstructSpreadArray<
+				? DeconstructRestArray<
 					Rest, Options,
 					[
 						...HeadAcc,

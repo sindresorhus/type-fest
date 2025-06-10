@@ -1,0 +1,32 @@
+import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+
+/**
+Extracts the spread element type from an array.
+
+@example
+```
+import type {ExtractRestElement} from 'type-fest';
+
+type T1 = ExtractRestElement<[number, ...string[], string, 'foo']>;
+//=> string
+
+type T2 = ExtractRestElement<[...boolean[], string]>;
+//=> boolean
+
+type T3 = ExtractRestElement<[...'foo'[], true]>;
+//=> 'foo'
+
+type T4 = ExtractRestElement<[number, string]>;
+//=> never
+```
+
+@see ExcludeRestElement, SplitOnRestElement
+@category Array
+*/
+export type ExtractRestElement<T extends UnknownArray> =
+	SplitOnRestElement<T>[1] extends infer Result extends UnknownArray
+		? Result extends readonly []
+			? never
+			: Result[number]
+		: never;
