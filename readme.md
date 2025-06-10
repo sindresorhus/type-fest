@@ -148,7 +148,7 @@ Click the type names for complete docs.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
-- [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
+- [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
 - [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
