@@ -5,16 +5,16 @@ Returns a boolean for whether the given type includes `null`.
 ```ts
 import type {IsNullable} from 'type-fest';
 
-type A = IsNullable<string>
+type A = IsNullable<string>;
 //=> false
 
-type B = IsNullable<string | null>
+type B = IsNullable<string | null>;
 //=> true
 
-type C = IsNullable<string | undefined>
+type C = IsNullable<string | undefined>;
 //=> false
 
-type D = IsNullable<string | null | undefined>
+type D = IsNullable<string | null | undefined>;
 //=> true
 ```
 

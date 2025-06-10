@@ -5,16 +5,16 @@ Returns a boolean for whether the given type includes `undefined`.
 ```ts
 import type {IsOptional} from 'type-fest';
 
-type A = IsOptional<string>
+type A = IsOptional<string>;
 //=> false
 
-type B = IsOptional<string | undefined>
+type B = IsOptional<string | undefined>;
 //=> true
 
-type C = IsOptional<string | null>
+type C = IsOptional<string | null>;
 //=> false
 
-type D = IsOptional<string | null | undefined>
+type D = IsOptional<string | null | undefined>;
 //=> true
 ```
 
