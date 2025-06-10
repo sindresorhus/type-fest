@@ -151,6 +151,7 @@ export type {IsUnion} from './source/is-union.d.ts';
 export type {IsLowercase} from './source/is-lowercase.d.ts';
 export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
+export type {IsNullable} from './source/is-nullable.d.ts';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case.d.ts';

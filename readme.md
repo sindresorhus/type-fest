@@ -204,6 +204,7 @@ Click the type names for complete docs.
 - [`IsLowercase`](source/is-lowercase.d.ts) - Returns a boolean for whether the given string literal is lowercase.
 - [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.
 - [`IsOptional`](source/is-optional.d.ts) - Returns a boolean for whether the given type includes `undefined`.
+- [`IsNullable`](source/is-nullable.d.ts) - Returns a boolean for whether the given type includes `null`.
 
 ### JSON
 
