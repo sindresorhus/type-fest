@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
-import type {StringKeyOf} from '../index.d.ts';
+import type {KeyAsString} from '../source/key-as-string.d.ts';
 
-declare const foo: StringKeyOf<{
+declare const foo: KeyAsString<{
 	1: number;
 	stringKey: string;
 }>;

@@ -9,17 +9,17 @@ Use-cases:
 
 @example
 ```
-import type {StringKeyOf} from 'type-fest';
+import type {KeyAsString} from 'type-fest';
 
 type Foo = {
 	1: number,
 	stringKey: string,
 };
 
-type StringKeysOfFoo = StringKeyOf<Foo>;
+type StringKeysOfFoo = KeyAsString<Foo>;
 //=> '1' | 'stringKey'
 ```
 
 @category Object
 */
-export type StringKeyOf<BaseType> = `${Extract<keyof BaseType, string | number>}`;
+export type KeyAsString<BaseType> = `${Extract<keyof BaseType, string | number>}`;

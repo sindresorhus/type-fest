@@ -2,7 +2,7 @@ import type {ApplyDefaultOptions, ToString} from './internal/index.d.ts';
 import type {LiteralStringUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
-import type {StringKeyOf} from './string-key-of.d.ts';
+import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 
 type GetOptions = {
@@ -112,7 +112,7 @@ type WithStringsKeys = keyof WithStrings;
 ```
 */
 type WithStringKeys<BaseType> = {
-	[Key in StringKeyOf<BaseType>]: UncheckedIndex<BaseType, Key>
+	[Key in KeyAsString<BaseType>]: UncheckedIndex<BaseType, Key>
 };
 
 /**
