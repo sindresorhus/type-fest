@@ -7,16 +7,16 @@ import type {If} from './if.d.ts';
 /**
 Determines whether a value `T` should be kept based on the filtering type `U`.
 
-If `U` is `Boolean`, it checks whether `T` is `truthy` like `Boolean(T)` does.
+If `U` is `Boolean`, it checks whether `T` is `truthy` like {@link Boolean `Boolean(T)`} does.
 
-Otherwise, it uses `Extends<T, U, S>` to check if `T extends U` with strict or loose mode.
+Otherwise, it uses {@link Extends `Extends<T, U, S>`} to check if `T extends U` with strict or loose mode.
 */
 export type FilterType<T, U, S extends boolean> = Boolean extends U ? IsTruthy<T> : Extends<T, U, S>;
 
 /**
 Filters elements from an `Array_` based on whether they match the given `Type`.
 
-If `Type` is `Boolean`, it filters out `falsy` values like `Boolean(T)` does.
+If `Type` is `Boolean`, it filters out `falsy` values like {@link Boolean `Boolean(T)`} does.
 
 Strict controls whether strict or loose type comparison is used (defaults to loose).
 */
@@ -56,5 +56,4 @@ type _ArrayFilter<
 			? FilterType<Tail, Type, Strict> extends true
 				? _ArrayFilter<Head, Type, Strict, HeadAcc, [...If<IsRest, Array_, [Tail]>, ...TailAcc]>
 				: _ArrayFilter<Head, Type, Strict, HeadAcc, TailAcc>
-			: never
-;
+			: never;

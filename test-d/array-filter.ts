@@ -1,50 +1,31 @@
 import {expectType} from 'tsd';
 import type {ArrayFilter} from '../source/array-filter.d.ts';
 
-// Basic loose filtering by number
-expectType<ArrayFilter<[1, '2', 3, 'hello', false], number>>([1, 3]);
-
-// Basic loose filtering by string
-expectType<ArrayFilter<[1, '2', 3, 'hello', false], string>>(['2', 'hello']);
+// Basic loose filtering
+expectType<ArrayFilter<[1, '2', 3, 'foo', false], number>>([1, 3]);
+expectType<ArrayFilter<[1, '2', 3, 'foo', false], string>>(['2', 'foo']);
 
 // Filtering Boolean (keep truthy values)
+expectType<ArrayFilter<[true, false, boolean, 0, 1], Boolean>>([true, 1]);
+expectType<ArrayFilter<[true, false, boolean, 0, 1], Boolean, true>>([true, 1]);
+expectType<ArrayFilter<[0, '', false, null, undefined, 'ok', 42], Boolean>>(['ok', 42]);
 expectType<ArrayFilter<[true, false, 0, 1, '', 'text', null, undefined], Boolean>>([true, 1, 'text']);
 
-// Strict filtering by literal string 'hello'
-expectType<ArrayFilter<['hello', 'world', 'hello', 'foo'], 'hello', true>>(['hello', 'hello']);
-
-// Strict filtering by literal number 3
+// Strict filtering by literals
 expectType<ArrayFilter<[1, 2, 3, 3, 4], 3, true>>([3, 3]);
+expectType<ArrayFilter<[1, '2', 3, 'foo', false], string | number>>([1, '2', 3, 'foo']);
+expectType<ArrayFilter<['foo', 'baz', 'foo', 'foo'], 'foo', true>>(['foo', 'foo', 'foo']);
+expectType<ArrayFilter<[1, '2', 3, 'foo', false], string | number, true>>([1, '2', 3, 'foo']);
 
-// Loose filtering by union string | number
-expectType<ArrayFilter<[1, '2', 3, 'hello', false], string | number>>([1, '2', 3, 'hello']);
-
-// Strict filtering by union string | number (exact matches)
-expectType<ArrayFilter<[1, '2', 3, 'hello', false], string | number, true>>([1, '2', 3, 'hello']);
-
-// Filtering with template literal `${number}`
 expectType<ArrayFilter<['1', '2', 3, 4, 'foo'], `${number}`>>(['1', '2']);
-
-// Filtering falsy values (should remove falsy)
-expectType<ArrayFilter<[0, '', false, null, undefined, 'ok', 42], Boolean>>(['ok', 42]);
-
-// Filtering strict by boolean true
-expectType<ArrayFilter<[true, false, true, 0, 1], true, true>>([true, true]);
-
-// Filtering strict by boolean false
-expectType<ArrayFilter<[true, false, true, 0, 1], false, true>>([false]);
-
-// Empty array input
-expectType<ArrayFilter<[], number>>([]);
-
-// Array of never type (should result empty)
-expectType<ArrayFilter<[never, never], number>>([]);
+expectType<ArrayFilter<[true, false, true, 0, 1], boolean>>([true, false, true]);
+expectType<ArrayFilter<[true, false, true, 0, 1], true>>([true, true]);
 
 // Filtering union with objects
 type Object1 = {a: number};
 type Object2 = {b: string};
-expectType<ArrayFilter<[Object1, Object2, {a: number; b: string}], Object1>>([{a: 1}, {a: 1, b: 'b'}]);
-expectType<ArrayFilter<[Object1, Object2, {a: number; b: string}], Object1, true>>([{a: 1}, {a: 1, b: 'b'}]);
+expectType<ArrayFilter<[Object1, Object2, Object1 & Object2], Object1>>([{a: 1}, {a: 1, b: 'b'}]);
+expectType<ArrayFilter<[Object1, Object2, Object1 & Object2], Object1, true>>([{a: 1}, {a: 1, b: 'b'}]);
 
 // Loose filtering by boolean or number
 expectType<ArrayFilter<[true, 0, 1, false, 'no'], boolean | number>>([true, 0, 1, false]);
@@ -61,12 +42,6 @@ expectType<ArrayFilter<[1, 'a', true], any>>([1, 'a', true]);
 // Filtering with never type (should remove everything)
 expectType<ArrayFilter<[1, 2, 3], never>>([]);
 // ? Shoud we change this behavior ?
-
-// Filtering with Boolean loose
-expectType<ArrayFilter<[true, false, 0, 1], Boolean>>([true, 1]);
-
-// Filtering with Boolean strict
-expectType<ArrayFilter<[true, false, 0, 1], Boolean, true>>([true, 1]);
 
 // Filtering array of arrays by array type
 expectType<ArrayFilter<[[number], string[], number[]], number[]>>([[1], [2, 3]]);
@@ -129,3 +104,8 @@ expectType<ArrayFilter<any[], any>>({} as []);
 expectType<ArrayFilter<any, any>>({} as []);
 expectType<ArrayFilter<never, never>>({} as never);
 expectType<ArrayFilter<never, any>>({} as never);
+
+expectType<ArrayFilter<[], number>>([]);
+expectType<ArrayFilter<[never, never], number>>([]);
+expectType<ArrayFilter<[never, never], never>>([]);
+expectType<ArrayFilter<[never, never], never, true>>({} as [never, never]);
