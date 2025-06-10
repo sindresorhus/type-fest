@@ -2,6 +2,7 @@ import type {If} from '../if.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
+import type {ExtendsStrict} from '../extends-strict.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -100,9 +101,45 @@ type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
 
-/*
+/**
 Indicates the value of `exactOptionalPropertyTypes` compiler option.
 */
 export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;
+
+/**
+Evaluates whether type `T extends U`, using either strict or loose comparison.
+
+ - Strict mode, {@link ExtendsStrict `ExtendsStrict<T, U>`} is used.
+ - Loose mode, {@link ExtendsLoose `ExtendsLoose<T, U>`} is used.
+*/
+export type Extends<T, U, S extends boolean = false> = {
+	true: ExtendsStrict<T, U>;
+	false: ExtendsLoose<T, U>;
+}[`${S}`];
+
+/**
+Performs a loose type comparison: checks if wheither of the members in `T` extends `U`.
+
+This is useful when needing to know if `T extends U` without distributing `T` in Main type
+*/
+export type ExtendsLoose<T, U> = IsNotFalse<T extends U ? true : false>;
+
+/**
+A union of `falsy` types in JS.
+*/
+type Falsy = false | 0 | '' | null | undefined; // `| never`
+
+/**
+Checks if `T` is {@link Falsy `falsy`} similar to `Boolean(T)`.
+*/
+type IsTruthy<T> =
+	IsNever<T> extends true ? false
+		: T extends Falsy ? false
+			: true;
+
+/**
+Prevents TS from expanding the underline type definition.
+*/
+export type Obfuscate<T> = T & Record<never, never>;

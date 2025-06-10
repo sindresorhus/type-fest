@@ -1,7 +1,10 @@
 import type {If} from '../if.d.ts';
+import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
-import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
+import type {IsUnion} from '../is-union.d.ts';
+import type {EmptyObject} from '../empty-object.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
 /**
@@ -156,3 +159,22 @@ type _CollapseRestElement<
 				>
 				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 		: never; // Should never happen
+
+/**
+Represents a empty array, the `readonly? []` value.
+*/
+export type EmptyArray = readonly [] | [];
+
+/**
+Cleans any extra empty arrays/objects from a union
+*/
+type CleanEmpty<T> = IsUnion<T> extends true
+	? T extends EmptyArray | EmptyObject
+		? never
+		: T
+	: T;
+
+type IsLeadingRestElement<T extends UnknownArray> =
+	If<IsAny<T>, false, number extends T['length']
+		? T[number] extends T[0] ? true : false
+		: false>;
