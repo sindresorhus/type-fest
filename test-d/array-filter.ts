@@ -91,10 +91,6 @@ expectType<ArrayFilter<['foo1', 'bar2', 'foo3'], `foo${number}`>>(['foo1', 'foo3
 class Foo {}
 expectType<ArrayFilter<[typeof Foo, {}, null, undefined], Boolean>>([Foo, {}]);
 
-// Filtering tuples with mixed optional and required elements
-type Tuple = [string, number?, boolean?];
-expectType<ArrayFilter<Tuple, number>>([/* should be [number?] filtered out? */]);
-
 // Filtering with strict = true and union including literals and primitives
 expectType<ArrayFilter<[1, '1', 2, '2', true, false], number | `${number}`, true>>([1, '1', 2, '2']);
 
@@ -110,14 +106,26 @@ expectType<ArrayFilter<['', 'non-empty'], '', true>>(['']);
 // Filtering with loose mode for literal union type and matching subset
 expectType<ArrayFilter<[1, 2, 3, 4, 5], 2 | 3>>([2, 3]);
 
+// Filtering tuples with mixed optional and required elements
+type Tuple = [string, number?, boolean?];
+expectType<ArrayFilter<Tuple, number>>({} as [number?]);
+expectType<ArrayFilter<Tuple, string | boolean>>({} as [string, boolean?]);
+
 // Rest elements
 expectType<ArrayFilter<['f', ...string[], 's'], string>>({} as ['f', ...string[], 's']);
 expectType<ArrayFilter<['f', ...string[], 's'], 'f' | 's'>>({} as ['f', 's']);
+expectType<ArrayFilter<[string, ...string[]], string>>({} as [string, ...string[]]);
+expectType<ArrayFilter<[string, ...string[], number], string>>({} as [string, ...string[]]);
+
+// Rest and Optiona
+expectType<ArrayFilter<[true, number?, ...string[]], string>>({} as string[]);
+expectType<ArrayFilter<[true, number?, ...string[]], number | string>>({} as [number?, ...string[]]);
+expectType<ArrayFilter<[string?, ...string[]], number | string>>({} as [string?, ...string[]]);
 
 // Edge cases
 expectType<ArrayFilter<any, never>>([]);
 expectType<ArrayFilter<any[], never>>([]);
 expectType<ArrayFilter<any[], any>>({} as []);
-expectType<ArrayFilter<any, any>>({} as [unknown]);
+expectType<ArrayFilter<any, any>>({} as []);
 expectType<ArrayFilter<never, never>>({} as never);
 expectType<ArrayFilter<never, any>>({} as never);

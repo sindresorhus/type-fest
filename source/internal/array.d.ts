@@ -168,13 +168,42 @@ export type EmptyArray = readonly [] | [];
 /**
 Cleans any extra empty arrays/objects from a union
 */
-type CleanEmpty<T> = IsUnion<T> extends true
+export type CleanEmpty<T> = IsUnion<T> extends true
 	? T extends EmptyArray | EmptyObject
 		? never
 		: T
 	: T;
 
-type IsLeadingRestElement<T extends UnknownArray> =
-	If<IsAny<T>, false, number extends T['length']
-		? T[number] extends T[0] ? true : false
-		: false>;
+/**
+Determines whether the first element of a tuple is a rest element (e.g., `...string[]`).
+
+This is useful for identifying tuple types that begin with a variadic segment.
+
+@example
+```
+type A = IsLeadingRestElement<[...string[], number]>;
+//=> true
+
+type B = IsLeadingRestElement<[number, string]>;
+//=> false
+
+type C = IsLeadingRestElement<[...any[]]>;
+//=> true
+
+type D = IsLeadingRestElement<[]>;
+//=> false
+
+type E = IsLeadingRestElement<[undefined, ...number[]]>;
+//=> false
+```
+*/
+// ! This type is not perfect wet but its working fine with `Filter` for now.
+export type IsLeadingRestElement<T extends UnknownArray> =
+	IsAny<T> extends true ? false
+		: number extends T['length']
+			? T[number] extends T[0]
+				? T extends [infer H, ...infer R] // Prevent `[type, ...type[]]` from being `true`
+					? false
+					: true
+				: false
+			: false;
