@@ -12,8 +12,8 @@ Use-cases:
 import type {KeyAsString} from 'type-fest';
 
 type Foo = {
-	1: number,
-	stringKey: string,
+	1: number;
+	stringKey: string;
 };
 
 type StringKeysOfFoo = KeyAsString<Foo>;
