@@ -81,7 +81,18 @@ expectType<IsLeadingRestElement<[...[], number]>>(false);
 
 expectType<IsLeadingRestElement<[string, ...string[]]>>(false);
 //     ^?
+expectType<IsLeadingRestElement<[number, ...number[]]>>(false);
+//     ^?
+expectType<IsLeadingRestElement<['foo', ...Array<'foo'>]>>(false);
+//     ^?
+expectType<IsLeadingRestElement<[boolean, ...boolean[]]>>(false);
+//     ^?
 
-// ! Need Fix: `[...string[]] extends [string?, ...string[]]`
-expectType<IsLeadingRestElement<[string?, ...string[]]>>(true);
+expectType<IsLeadingRestElement<[string, ...string[]]>>(false);
+//     ^?
+expectType<IsLeadingRestElement<[number, ...number[]]>>(false);
+//     ^?
+expectType<IsLeadingRestElement<['foo', ...Array<'foo'>]>>(false);
+//     ^?
+expectType<IsLeadingRestElement<[boolean, ...boolean[]]>>(false);
 //     ^?

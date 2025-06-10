@@ -99,7 +99,7 @@ expectType<ArrayFilter<[string?, ...string[]], number | string>>({} as [string?,
 
 // Edge cases
 expectType<ArrayFilter<any, never>>([]);
-expectType<ArrayFilter<any[], never>>([]);
+expectType<ArrayFilter<any[], never>>({} as any[]);
 expectType<ArrayFilter<any[], any>>({} as []);
 expectType<ArrayFilter<any, any>>({} as []);
 expectType<ArrayFilter<never, never>>({} as never);

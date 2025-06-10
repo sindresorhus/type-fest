@@ -197,13 +197,49 @@ type E = IsLeadingRestElement<[undefined, ...number[]]>;
 //=> false
 ```
 */
-// ! This type is not perfect wet but its working fine with `Filter` for now.
 export type IsLeadingRestElement<T extends UnknownArray> =
 	IsAny<T> extends true ? false
 		: number extends T['length']
-			? T[number] extends T[0]
-				? T extends [infer H, ...infer R] // Prevent `[type, ...type[]]` from being `true`
-					? false
-					: true
-				: false
+			? T extends [infer H, ...infer R] // Prevent `[type, ...type[]]` from being `true`
+				? false
+				: T extends [(infer H)?, ...infer R]
+					? [H?, ...R] extends T // Prevent `[type?, ...type[]]` from being `true`
+						? IsAny<T[number]> // Prevent `[...any[]]` from being `false`
+						: true
+					: never
+			: false;
+
+/**
+Determines whether the Last element of a tuple is a rest element (e.g., `...string[]`).
+
+This is useful for identifying tuple types that begin with a variadic segment.
+
+@example
+```
+type A = IsTrailingRestElement<[number, ...string[]]>;
+//=> true
+
+type B = IsTrailingRestElement<[number, string]>;
+//=> false
+
+type C = IsTrailingRestElement<[...any[]]>;
+//=> true
+
+type D = IsTrailingRestElement<[]>;
+//=> false
+
+type E = IsTrailingRestElement<[...number[], undefined]>;
+//=> false
+```
+*/
+export type IsTrailingRestElement<T extends UnknownArray> =
+	IsAny<T> extends true ? false
+		: number extends T['length']
+			? T extends [...infer H, infer R] // Prevent `[...type[], type]` from being `true`
+				? false
+				: T extends [...infer H, (infer R)?]
+					? [...H, R?] extends T // Prevent `[...type[], type?]` from being `true`
+						? IsAny<T[number]> // Prevent `[...any[]]` from being `false`
+						: true
+					: never
 			: false;
