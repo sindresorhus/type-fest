@@ -245,6 +245,7 @@ Click the type names for complete docs.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
+- [`UnionToEnum`](source/union-to-enum.d.ts) - Convert a union or tuple of property keys into an **Enum**-like object.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
 
 ### Numeric
