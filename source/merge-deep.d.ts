@@ -8,11 +8,20 @@ import type {
 	UnknownArrayOrTuple,
 } from './internal/index.d.ts';
 import type {NonEmptyTuple} from './non-empty-tuple.d.ts';
-import type {ArrayTail} from './array-tail.d.ts';
+import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
 import type {EnforceOptional} from './enforce-optional.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+
+type Writable<TArray extends UnknownArray> = {-readonly [Key in keyof TArray]: TArray[Key]}; // TODO: Remove this
+
+// Using the default `ArrayTail` type causes issues, refer https://github.com/sindresorhus/type-fest/pull/1175/files#r2134694728.
+type ArrayTail<TArray extends UnknownArray> = TArray extends unknown // For distributing `TArray`
+	? keyof TArray & `${number}` extends never
+		? []
+		: Writable<_ArrayTail<TArray>>
+	: never; // Should never happen
 
 type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;
 

@@ -25,7 +25,6 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"test:source-files-extension": "node script/test/source-files-extension.js",
 		"test:tsc": "tsc",
 		"test:tsd": "tsd",
 		"test:xo": "xo",

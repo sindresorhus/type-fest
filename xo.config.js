@@ -1,5 +1,6 @@
 // @ts-check
 import {importPathRule} from './lint-rules/import-path.js';
+import {sourceFilesExtensionRule} from './lint-rules/source-files-extension.js';
 
 /** @type {import('xo').FlatXoConfig} */
 const xoConfig = [
@@ -47,16 +48,25 @@ const xoConfig = [
 		},
 	},
 	{
-		files: ['source/**/*.d.ts', 'test-d/**/*.ts'],
 		plugins: {
 			'type-fest': {
 				rules: {
 					'import-path': importPathRule,
+					'source-files-extension': sourceFilesExtensionRule,
 				},
 			},
 		},
+	},
+	{
+		files: ['source/**/*.d.ts', 'test-d/**/*.ts'],
 		rules: {
 			'type-fest/import-path': 'error',
+		},
+	},
+	{
+		files: 'source/**/*',
+		rules: {
+			'type-fest/source-files-extension': 'error',
 		},
 	},
 ];
