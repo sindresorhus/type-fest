@@ -12,6 +12,8 @@ expectType<UnionToEnum<['X', 'Y', 'Z'], true>>({X: 1, Y: 2, Z: 3} as const);
 // Single element tuple
 expectType<UnionToEnum<['Only']>>({Only: 'Only'} as const);
 expectType<UnionToEnum<'Only', true>>({Only: 1} as const);
+expectType<UnionToEnum<[0]>>({0: 0} as const);
+expectType<UnionToEnum<[0], true, {startIndex: 5}>>({0: 5} as const);
 
 // Tuple with numeric keys
 expectType<UnionToEnum<[1, 2, 3]>>({1: 1, 2: 2, 3: 3} as const);
@@ -44,6 +46,10 @@ expectType<UnionToEnum<string[]>>({} as const);
 expectType<UnionToEnum<number[]>>({} as const);
 expectType<UnionToEnum<symbol[]>>({} as const);
 
+// Empty array cases
+expectType<UnionToEnum<[]>>({});
+expectType<UnionToEnum<readonly []>>({});
+
 // `never` / `any`
 expectType<UnionToEnum<never>>({});
 expectType<UnionToEnum<any>>({});
@@ -71,14 +77,15 @@ expectType<UnionToEnum<typeof level, true>>({
 
 // Dynamic Enum
 const verb = ['write', 'read', 'delete'] as const;
-const resrc = ['file', 'folder', 'link'] as const;
+const resource = ['file', 'folder', 'link'] as const;
 
 declare function createEnum<
 	const T extends readonly string[],
 	const U extends readonly string[],
 >(x: T, y: U): CamelCasedProperties<UnionToEnum<`${T[number]}_${U[number]}`>>;
 
-const Template = createEnum(verb, resrc);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const Template = createEnum(verb, resource);
 
 expectType<typeof Template>({
 	writeFile: 'write_file',
@@ -91,3 +98,12 @@ expectType<typeof Template>({
 	deleteFolder: 'delete_folder',
 	deleteLink: 'delete_link',
 } as const);
+
+// Edge cases for startIndex
+// expectType<UnionToEnum<['x'], true, {startIndex: -1}>>({} as const);
+expectType<UnionToEnum<['test'], true, {startIndex: 100}>>({test: 100} as const);
+expectType<UnionToEnum<['a', 'b'], true, {startIndex: 0}>>({a: 0, b: 1} as const);
+
+// Numeric edge cases
+expectType<UnionToEnum<0 | -1 | 42>>({0: 0, [-1]: -1, 42: 42} as const);
+expectType<UnionToEnum<[0, -5, 999], true>>({0: 1, [-5]: 2, 999: 3} as const);
