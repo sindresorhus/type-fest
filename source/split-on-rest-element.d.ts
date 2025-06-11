@@ -11,6 +11,12 @@ type SplitOnRestElementOptions = {
 	/**
 	Whether to preserve the optional modifier (`?`).
 
+	- When set to `true` (default), the optional modifiers are preserved as-is. For example, `SplitOnRestElement<[number, string?, ...boolean[]], {keepOptionals: true}>` returns `[[number, string?], boolean[], []]`.
+
+	- When set to `false`, optional elements like `T?` are transformed to `T | undefined` or simply `T` depending on the `exactOptionalPropertyTypes` compiler option. For example:
+		- With `exactOptionalPropertyTypes` enabled, `SplitOnRestElement<[number, string?, ...boolean[]], {keepOptionals: false}>` returns `[[number, string], boolean[], []]`.
+		- And, with it disabled, the result is `[[number, string | undefined], boolean[], []]`.
+
 	@default true
 	*/
 	keepOptionals?: boolean;
