@@ -138,7 +138,7 @@ Useful for:
 ```
 import type {IsNumericLiteral} from 'type-fest';
 
-// https://github.com/inocan-group/inferred-types/blob/master/src/types/boolean-logic/EndsWith.ts
+// https://github.com/inocan-group/inferred-types/blob/master/modules/types/src/boolean-logic/operators/EndsWith.ts
 type EndsWith<TValue, TEndsWith extends string> =
 	TValue extends string
 		? IsStringLiteral<TEndsWith> extends true
@@ -268,7 +268,7 @@ Useful for:
 ```
 import type {IsLiteral} from 'type-fest';
 
-// https://github.com/inocan-group/inferred-types/blob/master/src/types/string-literals/StripLeading.ts
+// https://github.com/inocan-group/inferred-types/blob/master/modules/types/src/string-literals/StripLeading.ts
 export type StripLeading<A, B> =
 	A extends string
 		? B extends string
