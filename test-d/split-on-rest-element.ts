@@ -34,7 +34,7 @@ expectType<SplitOnRestElement<unknown[]>>({} as [[], unknown[], []]);
 expectType<SplitOnRestElement<any[]>>({} as [[], any[], []]);
 
 // Readonly
-expectType<SplitOnRestElement<readonly []>>({} as [[], [], []]);
+expectType<SplitOnRestElement<readonly []>>({} as [[], readonly [], []]);
 expectType<SplitOnRestElement<readonly [number]>>({} as [[number], [], []]);
 expectType<SplitOnRestElement<readonly [...number[], 2]>>({} as [[], number[], [2]]);
 expectType<SplitOnRestElement<readonly [1, ...string[], 2]>>({} as [[1], string[], [2]]);
