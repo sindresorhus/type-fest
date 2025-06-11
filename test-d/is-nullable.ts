@@ -1,6 +1,7 @@
 import {expectType} from 'tsd';
 import type {IsNullable} from '../source/is-nullable.d.ts';
 
+expectType<IsNullable<any>>(true);
 expectType<IsNullable<null>>(true);
 expectType<IsNullable<null | undefined>>(true);
 expectType<IsNullable<string | null>>(true);

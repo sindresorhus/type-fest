@@ -1,3 +1,5 @@
+import type {IsAny} from './is-any.d.ts';
+
 /**
 Returns a boolean for whether the given type includes `undefined`.
 
@@ -21,4 +23,4 @@ type D = IsOptional<string | null | undefined>;
 @category Type Guard
 @category Utilities
 */
-export type IsOptional<T> = Extract<T, undefined> extends never ? false : true;
+export type IsOptional<T> = IsAny<T> extends true ? true : Extract<T, undefined> extends never ? false : true;

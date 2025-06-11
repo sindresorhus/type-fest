@@ -1,6 +1,7 @@
 import {expectType} from 'tsd';
 import type {IsOptional} from '../source/is-optional.d.ts';
 
+expectType<IsOptional<any>>(true);
 expectType<IsOptional<undefined>>(true);
 expectType<IsOptional<null | undefined>>(true);
 expectType<IsOptional<string | undefined>>(true);
