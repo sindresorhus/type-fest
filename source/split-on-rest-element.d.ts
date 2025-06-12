@@ -46,10 +46,10 @@ See {@link SplitOnRestElementOptions.preserveOptionalModifier `preserveOptionalM
 import type {SplitOnRestElement} from 'type-fest';
 
 type T1 = SplitOnRestElement<[number, ...string[], boolean]>;
-//=> [[number], [string], [boolean]]
+//=> [[number], string[], [boolean]]
 
 type T2 = SplitOnRestElement<[...boolean[], string]>;
-//=> [[], [boolean], [string]]
+//=> [[], boolean[], [string]]
 
 type T3 = SplitOnRestElement<[number, string?]>;
 //=> [[number, string?], [], []]
@@ -58,7 +58,7 @@ type T4 = SplitOnRestElement<[number, string?], {preserveOptionalModifier: false
 //=> [[number, string], [], []] Or [[number, string | undefined], [], []]
 
 type T5 = SplitOnRestElement<[...number[]]>;
-//=> [[], [number], []]
+//=> [[], number[], []]
 ```
 
 @see ExtractRestElement, ExcludeRestElement
