@@ -161,9 +161,6 @@ Click the type names for complete docs.
 - [`WritableKeysOf`](source/writable-keys-of.d.ts) - Extract all writable (non-readonly) keys from the given type.
 - [`HasWritableKeys`](source/has-writable-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any writable fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
-- [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
-- [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extracts the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
-- [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Creates a tuple with the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers (includes the start and excludes the end).
@@ -249,6 +246,9 @@ Click the type names for complete docs.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
+- [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
+- [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extracts the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
+- [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Creates a tuple with the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 
 ### Numeric
 
