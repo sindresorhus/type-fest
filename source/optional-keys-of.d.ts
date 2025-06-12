@@ -31,9 +31,57 @@ const update2: UpdateOperation<User> = {
 
 @category Utilities
 */
-export type OptionalKeysOf<BaseType extends object> =
-	BaseType extends unknown // For distributing `BaseType`
+export type OptionalKeysOf<Type extends object> =
+	Type extends unknown // For distributing `Type`
 		? (keyof {
-			[Key in keyof BaseType as BaseType extends Record<Key, BaseType[Key]> ? never : Key]: never
-		}) & (keyof BaseType) // Intersect with `keyof BaseType` to ensure result of `OptionalKeysOf<BaseType>` is always assignable to `keyof BaseType`
+			[Key in keyof Type as 
+				IsOptionalKeyOf<Type, Key> extends false 
+					? never 
+					: Key
+			]: never
+		}) & keyof Type // Intersect with `keyof Type` to ensure result of `OptionalKeysOf<Type>` is always assignable to `keyof Type`
+		: never; // Should never happen
+
+/**
+Returns a boolean to whether `Key` is an optional key of `Type`.
+
+This is useful when you want to create a new type that contains different type values for the optional keys only.
+
+@example
+```
+import type {IsOptionalKeyOf} from 'type-fest';
+
+interface User {
+	name: string;
+	surname: string;
+
+	luckyNumber?: number;
+}
+
+interface Admin {
+	name: string;
+	surname?: string
+}
+
+type T1 = IsOptionalKeyOf<User, 'luckyNumber'>
+//=> true
+
+type T2 = IsOptionalKeyOf<User, 'name'>
+//=> false
+
+type T3 = IsOptionalKeyOf<User, 'name' | 'luckyNumber'>
+//=> boolean
+
+type T4 = IsOptionalKeyOf<User | Admin, 'surname'>
+//=> boolean
+```
+
+@category Type Guard
+@category Utilities
+*/
+export type IsOptionalKeyOf<Type extends object, Key extends keyof Type> =
+	Key extends unknown // For distributing `Key`
+		? Type extends Record<Key, Type[Key]> 
+			? false 
+			: true
 		: never; // Should never happen

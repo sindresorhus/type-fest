@@ -1,4 +1,4 @@
-import type {WritableKeysOf} from './writable-keys-of.d.ts';
+import type {IsEqual} from './is-equal.js';
 
 /**
 Extract all readonly keys from the given type.
@@ -24,7 +24,20 @@ const update1: UpdateResponse<User> = {
 
 @category Utilities
 */
-export type ReadonlyKeysOf<T extends object> =
-	T extends unknown // For distributing `T`
-		? Exclude<keyof T, WritableKeysOf<T>>
+export type ReadonlyKeysOf<Type extends object> =
+	Type extends unknown // For distributing `Type`
+		? (keyof {
+			[Key in keyof Type as IsReadonlyKeyOf<Type, Key> extends true 
+				? Key 
+				: never
+			]: never
+		}) & keyof Type // Intersect with `keyof Type` to ensure result of `ReadonlyKeysOf<Type>` is always assignable to `keyof Type`
+		: never; // Should never happen
+
+export type IsReadonlyKeyOf<Type extends object, Key extends keyof Type> =
+	Key extends unknown // For distributing `Key`
+		? IsEqual<
+			{[K in Key]: Type[Key]},
+			{readonly [K in Key]: Type[Key]}
+		>
 		: never; // Should never happen
