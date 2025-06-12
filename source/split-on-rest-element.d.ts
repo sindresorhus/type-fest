@@ -30,9 +30,9 @@ type DefaultSplitOnRestElementOptions = {
 
 /**
 Splits an array into three parts,
-where the first part contains all the elements before the rest element,
-the second part is the rest element itself,
-and the third part contains all the elements after the rest element.
+where the first contains all elements before the rest element,
+the second is the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself,
+and the third contains all elements after the rest element.
 
 Note: If any of the parts are missing, then they will be represented as empty arrays.
 For example, `SplitOnRestElement<[string, number]>` returns `[[string, number], [], []]`,
