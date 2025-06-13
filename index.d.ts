@@ -134,6 +134,7 @@ export type {ArrayValues} from './source/array-values.d.ts';
 export type {ArraySlice} from './source/array-slice.d.ts';
 export type {ArraySplice} from './source/array-splice.d.ts';
 export type {ArrayTail} from './source/array-tail.d.ts';
+export type {ArrayAt} from './source/array-at.d.ts';
 export type {SetFieldType} from './source/set-field-type.d.ts';
 export type {Paths} from './source/paths.d.ts';
 export type {AllUnionFields} from './source/all-union-fields.d.ts';
