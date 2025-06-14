@@ -268,27 +268,39 @@ Useful for:
 ```
 import type {IsLiteral} from 'type-fest';
 
-// https://github.com/inocan-group/inferred-types/blob/master/modules/types/src/string-literals/StripLeading.ts
-export type StripLeading<A, B> =
-	A extends string
-		? B extends string
-			? IsLiteral<A> extends true
-				? string extends B ? never : A extends `${B & string}${infer After}` ? After : A
-				: string
-			: A
-		: A;
+type A = IsLiteral<1>;
+//=> true
 
-function stripLeading<Input extends string, Strip extends string>(input: Input, strip: Strip) {
-	return input.replace(`^${strip}`, '') as StripLeading<Input, Strip>;
-}
+type B = IsLiteral<number>;
+//=> false
 
-stripLeading('abc123', 'abc');
-//=> '123'
+type C = IsLiteral<1n>;
+//=> true
 
-const str = 'abc123' as string;
+type D = IsLiteral<bigint>;
+//=> false
 
-stripLeading(str, 'abc');
-//=> string
+type E = IsLiteral<'type-fest'>;
+//=> true
+
+type F = IsLiteral<string>;
+//=> false
+
+type G = IsLiteral<`on${string}`>;
+//=> false
+
+declare const symbolLiteral: unique symbol;
+type H = IsLiteral<typeof symbolLiteral>;
+//=> true
+
+type I = IsLiteral<symbol>;
+//=> false
+
+type J = IsLiteral<true>;
+//=> true
+
+type K = IsLiteral<boolean>;
+//=> false
 ```
 
 @category Type Guard
