@@ -268,6 +268,45 @@ Useful for:
 ```
 import type {IsLiteral} from 'type-fest';
 
+type A = IsLiteral<1>;
+//=> true
+
+type B = IsLiteral<number>;
+//=> false
+
+type C = IsLiteral<1n>;
+//=> true
+
+type D = IsLiteral<bigint>;
+//=> false
+
+type E = IsLiteral<'type-fest'>;
+//=> true
+
+type F = IsLiteral<string>;
+//=> false
+
+type G = IsLiteral<`on${string}`>;
+//=> false
+
+declare const symbolLiteral: unique symbol;
+type H = IsLiteral<typeof symbolLiteral>;
+//=> true
+
+type I = IsLiteral<symbol>;
+//=> false
+
+type J = IsLiteral<true>;
+//=> true
+
+type K = IsLiteral<boolean>;
+//=> false
+```
+
+@example
+```
+import type {IsLiteral} from 'type-fest';
+
 // https://github.com/inocan-group/inferred-types/blob/master/modules/types/src/string-literals/StripLeading.ts
 export type StripLeading<A, B> =
 	A extends string
