@@ -279,7 +279,7 @@ export type StripLeading<A, B> =
 		: A;
 
 function stripLeading<Input extends string, Strip extends string>(input: Input, strip: Strip) {
-	return input.replace(`^${strip}`, '') as StripLeading<Input, Strip>;
+	return input.replace(new RegExp(`^${strip}`), '') as StripLeading<Input, Strip>;
 }
 
 stripLeading('abc123', 'abc');
