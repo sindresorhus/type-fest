@@ -48,6 +48,7 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 //=> ['dog', 'cat', 'snake']
 ```
 
+@see UnionToEnum
 @category Array
 */
 export type UnionToTuple<T, L = LastOfUnion<T>> =

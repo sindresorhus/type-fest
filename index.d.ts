@@ -112,6 +112,7 @@ export type {IsFloat} from './source/is-float.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
 export type {TupleToUnion} from './source/tuple-to-union.d.ts';
 export type {UnionToTuple} from './source/union-to-tuple.d.ts';
+export type {UnionToEnum} from './source/union-to-enum.d.ts';
 export type {IntRange} from './source/int-range.d.ts';
 export type {IntClosedRange} from './source/int-closed-range.d.ts';
 export type {IsEqual} from './source/is-equal.d.ts';
