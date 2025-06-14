@@ -3,6 +3,8 @@ import type {IsAny} from './is-any.d.ts';
 /**
 Returns a boolean for whether the given type includes `null`.
 
+Note: The built-in `NonNullable` type removes both `null` and `undefined`, which is not accurate for the name.
+
 @example
 ```ts
 import type {IsNullable} from 'type-fest';
