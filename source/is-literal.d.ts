@@ -303,31 +303,6 @@ type K = IsLiteral<boolean>;
 //=> false
 ```
 
-@example
-```
-import type {IsLiteral} from 'type-fest';
-
-// https://github.com/inocan-group/inferred-types/blob/master/modules/types/src/string-literals/StripLeading.ts
-export type StripLeading<A, B> =
-	A extends string
-		? B extends string
-			? IsLiteral<A> extends true
-				? string extends B ? never : A extends `${B & string}${infer After}` ? After : A
-				: string
-			: A
-		: A;
-
-function stripLeading<Input extends string, Strip extends string>(input: Input, strip: Strip) {
-	return input.replace(new RegExp(`^${strip}`), '') as StripLeading<Input, Strip>;
-}
-
-stripLeading('abc123', 'abc');
-//=> '123'
-
-stripLeading('abc123' as string, 'abc');
-//=> string
-```
-
 @category Type Guard
 @category Utilities
 */
