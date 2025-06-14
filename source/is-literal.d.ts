@@ -285,9 +285,7 @@ function stripLeading<Input extends string, Strip extends string>(input: Input, 
 stripLeading('abc123', 'abc');
 //=> '123'
 
-const str = 'abc123' as string;
-
-stripLeading(str, 'abc');
+stripLeading('abc123' as string, 'abc');
 //=> string
 ```
 
