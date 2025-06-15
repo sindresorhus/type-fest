@@ -38,7 +38,7 @@ type T2 = TypeAsString<'a' | 'b', ' | '>;
 //=> 'a | b'
 ```
 */
-// TODO: Make a separate `Stringify` type for `JoinableItem[]` mixed with `JoinableItem`
+// TODO: Make a separate `Stringify` type
 type TypeAsString<T, S extends string = ',', E extends [string, string] = ['', '']> =
 	`${E[0]}${
 		[T] extends [readonly JoinableItem[]] // TODO: add `JoinableArray` type
@@ -85,15 +85,15 @@ type T2 = LiteralList<[2, 1], 1 | 2>;
 
 // ❌ Length mismatch
 type T3 = LiteralList<['a', 'b', 'c'], 'a' | 'b'>;
-//=> '(a | b)[], Type [a, b, c] is not the required Length of: 2'
+//=> '(a | b)[], Type [a, b, c] is not the required length of: 2'
 
 // ❌ Missing element
 type T4 = LiteralList<['a'], 'a' | 'b'>;
-//=> '(a | b)[], Type [a] is missing Members: [b]'
+//=> '(a | b)[], Type [a] is missing members: [b]'
 
 // ❌ Extra element
 type T5 = LiteralList<['a', 'e'], 'a' | 'b'>;
-//=> '(a | b)[], Type [a, e] has extra Members: [e]'
+//=> '(a | b)[], Type [a, e] has extra members: [e]'
 ```
 
 @example
@@ -113,7 +113,7 @@ const C2 = literalList(['c', 'a', 'b'] as const);
 //=> ['c', 'a', 'b']
 
 const C3 = literalList(['b', 'b', 'b'] as const); // ❌ Errors in Compiler and IDE
-//=> '(a | b | c)[], Type [b, b, b] is missing Members: [a, c]'
+//=> '(a | b | c)[], Type [b, b, b] is missing members: [a, c]'
 ```
 
 @category Type Guard
@@ -144,9 +144,9 @@ type _LiteralList<
 				? IsNever<TnU> extends true // T includes U
 					? IsNever<UnT> extends true // U includes T
 						? T // T == U
-						: never | `${UString}, Type ${TString} is missing Members: ${TupleAsString<UnT>}`
-					: never | `${UString}, Type ${TString} has extra Members: ${TupleAsString<TnU>}`
+						: never | `${UString}, Type ${TString} is missing members: ${TupleAsString<UnT>}`
+					: never | `${UString}, Type ${TString} has extra members: ${TupleAsString<TnU>}`
 				: never
 			: never
-		: never | `${UString}, Type ${TString} is not the required Length of: ${U['length']}`
+		: never | `${UString}, Type ${TString} is not the required length of: ${U['length']}`
 );
