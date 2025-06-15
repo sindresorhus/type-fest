@@ -1,5 +1,5 @@
 /**
-Extract all optional keys from the given type.
+Extract all optional keys from the given `Type`.
 
 This is useful when you want to create a new type that contains different type values for the optional keys only.
 
@@ -45,7 +45,7 @@ export type OptionalKeysOf<Type extends object> =
 /**
 Returns a boolean to whether `Key` is an optional key of `Type`.
 
-This is useful when you want to create a new type that contains different type values for the optional keys only.
+This is useful when writing utility types or schema validators that need to differentiate `optional` keys.
 
 @example
 ```
@@ -72,7 +72,10 @@ type T2 = IsOptionalKeyOf<User, 'name'>
 type T3 = IsOptionalKeyOf<User, 'name' | 'luckyNumber'>
 //=> boolean
 
-type T4 = IsOptionalKeyOf<User | Admin, 'surname'>
+type T4 = IsOptionalKeyOf<User | Admin, 'name'>
+//=> false
+
+type T5 = IsOptionalKeyOf<User | Admin, 'surname'>
 //=> boolean
 ```
 
