@@ -70,4 +70,4 @@ type T5 = IsRequiredKeyOf<User | Admin, 'surname'>
 @category Type Guard
 @category Utilities
 */
-export type IsRequiredKeyOf<Type extends object, Key extends keyof Type> = Not<IsOptionalKeyOf<Type, Key>>
+export type IsRequiredKeyOf<Type extends object, Key extends keyof Type> = Not<IsOptionalKeyOf<Type, Key>>;

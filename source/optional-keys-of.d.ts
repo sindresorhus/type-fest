@@ -34,10 +34,10 @@ const update2: UpdateOperation<User> = {
 export type OptionalKeysOf<Type extends object> =
 	Type extends unknown // For distributing `Type`
 		? (keyof {
-			[Key in keyof Type as 
-				IsOptionalKeyOf<Type, Key> extends false 
-					? never 
-					: Key
+			[Key in keyof Type as
+			IsOptionalKeyOf<Type, Key> extends false
+				? never
+				: Key
 			]: never
 		}) & keyof Type // Intersect with `keyof Type` to ensure result of `OptionalKeysOf<Type>` is always assignable to `keyof Type`
 		: never; // Should never happen
@@ -84,7 +84,7 @@ type T5 = IsOptionalKeyOf<User | Admin, 'surname'>
 */
 export type IsOptionalKeyOf<Type extends object, Key extends keyof Type> =
 	Key extends unknown // For distributing `Key`
-		? Type extends Record<Key, Type[Key]> 
-			? false 
+		? Type extends Record<Key, Type[Key]>
+			? false
 			: true
 		: never; // Should never happen
