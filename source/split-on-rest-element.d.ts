@@ -31,7 +31,7 @@ type DefaultSplitOnRestElementOptions = {
 /**
 Splits an array into three parts,
 where the first contains all elements before the rest element,
-the second is the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself,
+the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself,
 and the third contains all elements after the rest element.
 
 Note: If any of the parts are missing, then they will be represented as empty arrays.
@@ -39,7 +39,7 @@ For example, `SplitOnRestElement<[string, number]>` returns `[[string, number], 
 where parts corresponding to the rest element and elements after it are empty.
 
 By default, The optional modifier (`?`) is preserved.
-See {@link SplitOnRestElementOptions.preserveOptionalModifier `preserveOptionalModifier`} option to change this behavior.
+See {@link SplitOnRestElementOptions `SplitOnRestElementOptions`}.
 
 @example
 ```ts
@@ -83,19 +83,19 @@ export type _SplitOnRestElement<
 			// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
 			? Array_ extends readonly [...infer Rest, infer Last]
 				? _SplitOnRestElement<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
-				: [HeadAcc, Array_, TailAcc] // Add the rest element between the accumulated elements.
+				: [HeadAcc, Array_ extends readonly [] ? [] : Array_, TailAcc] // Add the rest element between the accumulated elements.
 			: Array_ extends readonly [(infer First)?, ...infer Rest]
 				? _SplitOnRestElement<
 					Rest, Options,
 					[
 						...HeadAcc,
-						...'0' extends OptionalKeysOf<Array_>
+						...'0' extends OptionalKeysOf<Array_> // TODO: seperate the logic for types like `OptionalKeysOf, ReadonlyKeysOf, ...` into `IsOptionalKeyOf, IsReadonlyKeyOf, ...`
 							? Options['preserveOptionalModifier'] extends false
 								? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 								: [First?]
 							: [First],
 					],
 					TailAcc
-				>
+				> // Accumulate elements that are present before the rest element.
 				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 		: never; // Should never happen

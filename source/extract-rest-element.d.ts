@@ -2,7 +2,7 @@ import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Extracts the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
+Extracts the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
 
 @example
 ```
@@ -24,9 +24,4 @@ type T4 = ExtractRestElement<[number, string]>;
 @see ExcludeRestElement, SplitOnRestElement
 @category Array
 */
-export type ExtractRestElement<T extends UnknownArray> =
-	SplitOnRestElement<T>[1] extends infer Result extends UnknownArray
-		? Result extends readonly []
-			? never
-			: Result[number]
-		: never;
+export type ExtractRestElement<T extends UnknownArray> = SplitOnRestElement<T>[1][number];

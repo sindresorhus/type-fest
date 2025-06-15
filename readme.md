@@ -248,9 +248,9 @@ Click the type names for complete docs.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
-- [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
-- [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extracts the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
-- [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Creates a tuple with the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
+- [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
+- [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extracts the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
+- [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Creates a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 
 ### Numeric
 

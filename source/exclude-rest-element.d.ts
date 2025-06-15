@@ -3,7 +3,7 @@ import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Creates a tuple with the [`Rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
+Creates a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 
 @example
 ```
