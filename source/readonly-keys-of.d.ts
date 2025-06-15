@@ -1,4 +1,4 @@
-import type {IsEqual} from './is-equal.js';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Extract all readonly keys from the given `Type`.

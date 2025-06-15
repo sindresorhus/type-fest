@@ -1,5 +1,5 @@
 import type {IsOptionalKeyOf, OptionalKeysOf} from './optional-keys-of.d.ts';
-import type {Not} from './internal/type.js';
+import type {Not} from './internal/type.d.ts';
 
 /**
 Extract all required keys from the given type.
