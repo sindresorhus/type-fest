@@ -1,3 +1,5 @@
+import type {IsNever} from './is-never.d.ts';
+
 declare const emptyObjectSymbol: unique symbol;
 
 /**
@@ -43,4 +45,7 @@ type Fail = IsEmptyObject<null>; //=> false
 @see EmptyObject
 @category Object
 */
-export type IsEmptyObject<T> = T extends EmptyObject ? true : false;
+export type IsEmptyObject<T> =
+	IsNever<T> extends true ? false
+		: T extends EmptyObject ? true
+			: false;

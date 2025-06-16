@@ -34,3 +34,11 @@ const _a: unknown = bar.id;
 
 const baz: Union = {id: 42};
 expectType<{id: number}>(baz);
+
+// Edge cases
+expectType<IsEmptyObject<never>>(false);
+expectType<IsEmptyObject<any>>({} as boolean);
+expectType<IsEmptyObject<Record<never, never>>>(true);
+
+type Signature = Record<keyof any, never>;
+expectType<IsEmptyObject<Signature>>(true); // ! Should this be fixed ?

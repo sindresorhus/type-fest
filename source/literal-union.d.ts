@@ -1,4 +1,5 @@
 import type {Primitive} from './primitive.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 export type LiteralStringUnion<T> = LiteralUnion<T, string>;
 
@@ -31,7 +32,4 @@ const pet: Pet2 = '';
 
 @category Type
 */
-export type LiteralUnion<
-	LiteralType,
-	BaseType extends Primitive,
-> = LiteralType | (BaseType & Record<never, never>);
+export type LiteralUnion<LiteralType, BaseType extends Primitive> = LiteralType | (BaseType & Simplify<{}>);

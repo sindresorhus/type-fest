@@ -387,3 +387,19 @@ expectType<never>(neverDepth);
 
 declare const anyDepth: Paths<DeepObject, {depth: any}>;
 expectType<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d'>(anyDepth);
+
+// Signature types
+declare const stringRecord: Paths<Record<string, {a: number; b: number}>>;
+expectType<(string & {}) | `${string}.a` | `${string}.b`>(stringRecord);
+
+declare const numberRecord: Paths<Record<number, {a: number; b: number}>>;
+expectType<number | `${number}` | `${number}.b` | `${number}.a`>(numberRecord);
+
+declare const symbolRecord: Paths<Record<symbol, {a: number; b: number}>>;
+expectType<never>(symbolRecord);
+
+declare const mixedRecord: Paths<Record<number | 'foo', {a: number; b: number}>>;
+expectType<number | `${number}` | `${number}.b` | `${number}.a` | 'foo' | 'foo.a' | 'foo.b'>(mixedRecord);
+
+declare const complexRecord: Paths<Record<number, {a: number; b: number}> & DeepObject>;
+expectType<number | `${number}` | 'a' | `${number}.b` | `${number}.a` | 'a.b' | 'a.b2' | 'a.b3' | 'a.b.c' | `a.b2.${number}` | 'a.b.c.d'>(complexRecord);
