@@ -52,7 +52,7 @@ expectType<SplitOnRestElement<readonly [1, 2, 3]>>({} as readonly [[1, 2, 3], []
 
 // Remove readonly
 expectType<SplitOnRestElement<readonly [], {preserveReadonly: false}>>({} as [[], [], []]);
-expectType<SplitOnRestElement<readonly [number] | [string], {preserveReadonly: false}>>({} as [[number], [], []]);
+expectType<SplitOnRestElement<readonly [number] | [string], {preserveReadonly: false}>>({} as [[number], [], []] | [[string], [], []]);
 expectType<SplitOnRestElement<readonly [...number[], 2], {preserveReadonly: false}>>({} as [[], number[], [2]]);
 expectType<SplitOnRestElement<readonly [1, ...string[], 2] | readonly ['foo'?, ...string[]], {preserveReadonly: false}>>({} as [[1], string[], [2]] | [['foo'?], string[], []]);
 expectType<SplitOnRestElement<readonly [1, 2, 3], {preserveReadonly: false}>>({} as [[1, 2, 3], [], []]);

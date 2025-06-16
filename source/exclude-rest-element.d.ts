@@ -27,7 +27,7 @@ type T4 = ExcludeRestElement<[number, string]>;
 */
 export type ExcludeRestElement<Array_ extends UnknownArray> =
 	SplitOnRestElement<Array_> extends infer Result
-		? Result extends UnknownArray[]
+		? Result extends readonly UnknownArray[]
 			? IsArrayReadonly<Array_> extends true
 				? Readonly<[...Result[0], ...Result[2]]>
 				: [...Result[0], ...Result[2]]
