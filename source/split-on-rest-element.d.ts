@@ -1,6 +1,7 @@
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
 
@@ -22,10 +23,26 @@ type SplitOnRestElementOptions = {
 	@default true
 	*/
 	preserveOptionalModifier?: boolean;
+	/**
+	Whether to preserve the readonly modifier (`readonly Array<T>`).
+
+	@example
+	```
+	type T1 = SplitOnRestElement<readonly [number, ...string[], boolean]>;
+	//=> readonly [[number], string[], [boolean]]
+
+	type T2 = SplitOnRestElement<readonly [...boolean[], string], {preserveReadonly: false}>;
+	//=> [[], boolean[], [string]]
+	```
+
+	@default true
+	*/
+	preserveReadonly?: boolean;
 };
 
 type DefaultSplitOnRestElementOptions = {
 	preserveOptionalModifier: true;
+	preserveReadonly: true;
 };
 
 /**
@@ -38,7 +55,7 @@ Note: If any of the parts are missing, then they will be represented as empty ar
 For example, `SplitOnRestElement<[string, number]>` returns `[[string, number], [], []]`,
 where parts corresponding to the rest element and elements after it are empty.
 
-By default, The optional modifier (`?`) is preserved.
+By default, The optional modifier (`?`) and `readonly` are preserved.
 See {@link SplitOnRestElementOptions `SplitOnRestElementOptions`}.
 
 @example
@@ -48,8 +65,8 @@ import type {SplitOnRestElement} from 'type-fest';
 type T1 = SplitOnRestElement<[number, ...string[], boolean]>;
 //=> [[number], string[], [boolean]]
 
-type T2 = SplitOnRestElement<[...boolean[], string]>;
-//=> [[], boolean[], [string]]
+type T2 = SplitOnRestElement<readonly [...boolean[], string]>;
+//=> readonly [[], boolean[], [string]]
 
 type T3 = SplitOnRestElement<[number, string?]>;
 //=> [[number, string?], [], []]
@@ -57,16 +74,23 @@ type T3 = SplitOnRestElement<[number, string?]>;
 type T4 = SplitOnRestElement<[number, string?], {preserveOptionalModifier: false}>;
 //=> [[number, string], [], []] Or [[number, string | undefined], [], []]
 
-type T5 = SplitOnRestElement<[...number[]]>;
+type T5 = SplitOnRestElement<readonly [...number[]], {preserveReadonly: false}>;
 //=> [[], number[], []]
 ```
 
 @see ExtractRestElement, ExcludeRestElement
 @category Array
 */
-export type SplitOnRestElement<Array_ extends UnknownArray, Options extends SplitOnRestElementOptions = {}> = IfNotAnyOrNever<Array_,
-	_SplitOnRestElement<Array_, ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>>
->;
+export type SplitOnRestElement<Array_ extends UnknownArray, Options extends SplitOnRestElementOptions = {}> =
+	ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options> extends infer ResolvedOptions extends Required<SplitOnRestElementOptions>
+		? Array_ extends unknown // For distributing `Array_`
+			? IfNotAnyOrNever<Array_, _SplitOnRestElement<Array_, ResolvedOptions>> extends infer Result extends UnknownArray
+				? ResolvedOptions['preserveReadonly'] extends true
+					? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
+					: Result
+				: never // Should never happen
+			: never // Should never happen
+		: never; // Should never happen
 
 /**
 Deconstructs an array on its rest element and returns the split portions.
@@ -77,25 +101,23 @@ export type _SplitOnRestElement<
 	HeadAcc extends UnknownArray = [],
 	TailAcc extends UnknownArray = [],
 > =
-	Array_ extends UnknownArray // For distributing `Array_`
-		? keyof Array_ & `${number}` extends never
-			// Enters this branch, if `Array_` is empty (e.g., []),
-			// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-			? Array_ extends readonly [...infer Rest, infer Last]
-				? _SplitOnRestElement<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
-				: [HeadAcc, Array_ extends readonly [] ? [] : Array_, TailAcc] // Add the rest element between the accumulated elements.
-			: Array_ extends readonly [(infer First)?, ...infer Rest]
-				? _SplitOnRestElement<
-					Rest, Options,
-					[
-						...HeadAcc,
-						...'0' extends OptionalKeysOf<Array_> // TODO: seperate the logic for types like `OptionalKeysOf, ReadonlyKeysOf, ...` into `IsOptionalKeyOf, IsReadonlyKeyOf, ...`
-							? Options['preserveOptionalModifier'] extends false
-								? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
-								: [First?]
-							: [First],
-					],
-					TailAcc
-				> // Accumulate elements that are present before the rest element.
-				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
-		: never; // Should never happen
+	keyof Array_ & `${number}` extends never
+		// Enters this branch, if `Array_` is empty (e.g., []),
+		// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+		? Array_ extends readonly [...infer Rest, infer Last]
+			? _SplitOnRestElement<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
+			: [HeadAcc, Array_ extends readonly [] ? [] : Array_, TailAcc] // Add the rest element between the accumulated elements.
+		: Array_ extends readonly [(infer First)?, ...infer Rest]
+			? _SplitOnRestElement<
+				Rest, Options,
+				[
+					...HeadAcc,
+					...'0' extends OptionalKeysOf<Array_> // TODO: seperate the logic for types like `OptionalKeysOf, ReadonlyKeysOf, ...` into `IsOptionalKeyOf, IsReadonlyKeyOf, ...`
+						? Options['preserveOptionalModifier'] extends false
+							? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+							: [First?]
+						: [First],
+				],
+				TailAcc
+			> // Accumulate elements that are present before the rest element.
+			: never; // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.

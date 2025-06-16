@@ -5,7 +5,7 @@ import type {SplitOnRestElement} from '../index.d.ts';
 expectType<SplitOnRestElement<[]>>({} as [[], [], []]);
 expectType<SplitOnRestElement<[1]>>({} as [[1], [], []]);
 expectType<SplitOnRestElement<[1, 2, 3]>>({} as [[1, 2, 3], [], []]);
-expectType<SplitOnRestElement<readonly ['a', 'b', 'c']>>({} as [['a', 'b', 'c'], [], []]);
+expectType<SplitOnRestElement<readonly ['a', 'b', 'c']>>({} as readonly [['a', 'b', 'c'], [], []]);
 
 // Rest elements (true variadic)
 expectType<SplitOnRestElement<[1, ...number[]]>>({} as [[1], number[], []]);
@@ -28,13 +28,6 @@ expectType<SplitOnRestElement<number[]>>({} as [[], number[], []]);
 expectType<SplitOnRestElement<unknown[]>>({} as [[], unknown[], []]);
 expectType<SplitOnRestElement<any[]>>({} as [[], any[], []]);
 
-// Readonly
-expectType<SplitOnRestElement<readonly []>>({} as [[], [], []]);
-expectType<SplitOnRestElement<readonly [number]>>({} as [[number], [], []]);
-expectType<SplitOnRestElement<readonly [...number[], 2]>>({} as [[], number[], [2]]);
-expectType<SplitOnRestElement<readonly [1, ...string[], 2]>>({} as [[1], string[], [2]]);
-expectType<SplitOnRestElement<readonly [1, 2, 3]>>({} as [[1, 2, 3], [], []]);
-
 // Unions
 expectType<SplitOnRestElement<[...Array<string | number>, boolean]>>({} as [[], Array<string | number>, [boolean]]);
 expectType<SplitOnRestElement<[1, 2] | [3, 4]>>({} as [[1, 2], [], []] | [[3, 4], [], []]);
@@ -49,6 +42,20 @@ expectType<SplitOnRestElement<[number, boolean?, ...string[]]>>({} as [[number, 
 expectType<SplitOnRestElement<[0, 1?, 2?, ...never[]], {preserveOptionalModifier: false}>>({} as [[0, 1, 2], never[], []]);
 expectType<SplitOnRestElement<[number?, ...string[]], {preserveOptionalModifier: false}>>({} as [[number], string[], []]);
 expectType<SplitOnRestElement<[number, boolean?, ...string[]], {preserveOptionalModifier: false}>>({} as [[number, boolean], string[], []]);
+
+// Preserve readonly
+expectType<SplitOnRestElement<readonly []>>({} as readonly [[], [], []]);
+expectType<SplitOnRestElement<readonly [number] | [string]>>({} as readonly [[number], [], []] | [[string], [], []]);
+expectType<SplitOnRestElement<readonly [...number[], 2]>>({} as readonly [[], number[], [2]]);
+expectType<SplitOnRestElement<readonly [1, ...string[], 2] | readonly ['foo'?, ...string[]]>>({} as readonly [[1], string[], [2]] | readonly [['foo'?], string[], []]);
+expectType<SplitOnRestElement<readonly [1, 2, 3]>>({} as readonly [[1, 2, 3], [], []]);
+
+// Remove readonly
+expectType<SplitOnRestElement<readonly [], {preserveReadonly: false}>>({} as [[], [], []]);
+expectType<SplitOnRestElement<readonly [number] | [string], {preserveReadonly: false}>>({} as [[number], [], []]);
+expectType<SplitOnRestElement<readonly [...number[], 2], {preserveReadonly: false}>>({} as [[], number[], [2]]);
+expectType<SplitOnRestElement<readonly [1, ...string[], 2] | readonly ['foo'?, ...string[]], {preserveReadonly: false}>>({} as [[1], string[], [2]] | [['foo'?], string[], []]);
+expectType<SplitOnRestElement<readonly [1, 2, 3], {preserveReadonly: false}>>({} as [[1, 2, 3], [], []]);
 
 // Edge: `never` / `any`
 expectType<SplitOnRestElement<any>>({} as any);
