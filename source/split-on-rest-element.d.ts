@@ -39,7 +39,7 @@ Note: If any of the parts are missing, then they will be represented as empty ar
 For example, `SplitOnRestElement<[string, number]>` returns `[[string, number], [], []]`,
 where parts corresponding to the rest element and elements after it are empty.
 
-By default, The optional modifier (`?`) and `readonly` are preserved.
+By default, The optional modifier (`?`) is preserved.
 See {@link SplitOnRestElementOptions `SplitOnRestElementOptions`}.
 
 @example
@@ -56,10 +56,10 @@ type T3 = SplitOnRestElement<[number, string?]>;
 //=> [[number, string?], [], []]
 
 type T4 = SplitOnRestElement<[number, string?], {preserveOptionalModifier: false}>;
-//=> [[number, string], [], []] Or [[number, string | undefined], [], []]
+//=> [[number, string], [], []] or [[number, string | undefined], [], []]
 
-type T5 = SplitOnRestElement<readonly [...number[]], {preserveReadonly: false}>;
-//=> [[], number[], []]
+type T5 = SplitOnRestElement<readonly [string?, ...number[]], {preserveOptionalModifier: false}>;
+//=> readonly [[string], number[], []] or readonly [[string | undefined], number[], []]
 ```
 
 @see ExtractRestElement, ExcludeRestElement
