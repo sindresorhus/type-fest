@@ -8,7 +8,7 @@ import type {Or} from './or.d.ts';
 */
 type RemovePrefixOptions = {
 	/**
-	When enabled, instantiations with non-literal prefixes (e.g., `string`, `Uppercase<string>`, `` `on${string}` ``) simply return back `string`, since their precise structure cannot be statically determined.
+	When enabled, instantiations with non-literal prefixes (e.g., `string`, `Uppercase<string>`, `` `on${string}` ``) simply return `string`, since their precise structure cannot be statically determined.
 
 	Note: Disabling this option can produce misleading results that might not reflect the actual runtime behavior.
 	For example, ``RemovePrefix<'on-change', `${string}-`, {strict: false}>`` returns `'change'`, but at runtime, prefix could be `'handle-'` (which satisfies `` `${string}-` ``) and removing `'handle-'` from `'on-change'` would not result in `'change'`.
@@ -65,13 +65,13 @@ type RemovePrefixOptions = {
 	type A = RemovePrefix<`${string}/${number}`, `${string}:`, {strict: true}>;
 	//=> `${string}/${number}`
 
-	type B = RemovePrefix<`${string}/${number}`, `${string}:`, {strict: true}>;
+	type B = RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>;
 	//=> `${string}/${number}`
 
 	type C = RemovePrefix<'on-change', `${number}-`, {strict: true}>;
 	//=> 'on-change'
 
-	type D = RemovePrefix<'on-change', `${number}-`, {strict: true}>;
+	type D = RemovePrefix<'on-change', `${number}-`, {strict: false}>;
 	//=> 'on-change'
 	```
 	*/
