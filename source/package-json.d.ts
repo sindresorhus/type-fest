@@ -583,7 +583,7 @@ declare namespace PackageJson {
 		/**
 		Describes and notifies consumers of a package's monetary support information.
 
-		[Read more.](https://github.com/npm/rfcs/blob/latest/accepted/0017-add-funding-support.md)
+		[Read more.](https://github.com/npm/rfcs/blob/main/implemented/0017-add-funding-support.md)
 		*/
 		funding?: string | {
 			/**

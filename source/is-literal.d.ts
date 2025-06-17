@@ -171,7 +171,7 @@ Useful for:
 ```
 import type {IsNumericLiteral} from 'type-fest';
 
-// https://github.com/inocan-group/inferred-types/blob/master/src/types/boolean-logic/EndsWith.ts
+// https://github.com/inocan-group/inferred-types/blob/master/modules/types/src/boolean-logic/operators/EndsWith.ts
 type EndsWith<TValue, TEndsWith extends string> =
 	TValue extends string
 		? IsStringLiteral<TEndsWith> extends true
@@ -311,6 +311,7 @@ Useful for:
 ```
 import type {IsLiteral} from 'type-fest';
 
+<<<<<<< is-literal
 // https://github.com/inocan-group/inferred-types/blob/master/src/types/string-literals/StripLeading.ts
 export type StripLeading<A, B> =
 A extends string
@@ -324,14 +325,41 @@ A extends string
 function stripLeading<Input extends string, Strip extends string>(input: Input, strip: Strip) {
 	return input.replace(`^${strip}`, '') as StripLeading<Input, Strip>;
 }
+=======
+type A = IsLiteral<1>;
+//=> true
+>>>>>>> main
 
-stripLeading('abc123', 'abc');
-//=> '123'
+type B = IsLiteral<number>;
+//=> false
 
-const str = 'abc123' as string;
+type C = IsLiteral<1n>;
+//=> true
 
-stripLeading(str, 'abc');
-//=> string
+type D = IsLiteral<bigint>;
+//=> false
+
+type E = IsLiteral<'type-fest'>;
+//=> true
+
+type F = IsLiteral<string>;
+//=> false
+
+type G = IsLiteral<`on${string}`>;
+//=> false
+
+declare const symbolLiteral: unique symbol;
+type H = IsLiteral<typeof symbolLiteral>;
+//=> true
+
+type I = IsLiteral<symbol>;
+//=> false
+
+type J = IsLiteral<true>;
+//=> true
+
+type K = IsLiteral<boolean>;
+//=> false
 ```
 
 @see IsPrimitive
