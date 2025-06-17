@@ -23,26 +23,10 @@ type SplitOnRestElementOptions = {
 	@default true
 	*/
 	preserveOptionalModifier?: boolean;
-	/**
-	Whether to preserve the readonly modifier (`readonly Array<T>`).
-
-	@example
-	```
-	type T1 = SplitOnRestElement<readonly [number, ...string[], boolean]>;
-	//=> readonly [[number], string[], [boolean]]
-
-	type T2 = SplitOnRestElement<readonly [...boolean[], string], {preserveReadonly: false}>;
-	//=> [[], boolean[], [string]]
-	```
-
-	@default true
-	*/
-	preserveReadonly?: boolean;
 };
 
 type DefaultSplitOnRestElementOptions = {
 	preserveOptionalModifier: true;
-	preserveReadonly: true;
 };
 
 /**
@@ -81,14 +65,21 @@ type T5 = SplitOnRestElement<readonly [...number[]], {preserveReadonly: false}>;
 @see ExtractRestElement, ExcludeRestElement
 @category Array
 */
-export type SplitOnRestElement<Array_ extends UnknownArray, Options extends SplitOnRestElementOptions = {}> =
-	ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options> extends infer ResolvedOptions extends Required<SplitOnRestElementOptions>
-		? Array_ extends unknown // For distributing `Array_`
-			? IfNotAnyOrNever<Array_, _SplitOnRestElement<Array_, ResolvedOptions>> extends infer Result extends UnknownArray
-				? ResolvedOptions['preserveReadonly'] extends true
-					? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
-					: Result
-				: never // Should never happen
+export type SplitOnRestElement<
+	Array_ extends UnknownArray,
+	Options extends SplitOnRestElementOptions = {},
+> =
+	Array_ extends unknown // For distributing `Array_`
+		? IfNotAnyOrNever<Array_,
+			_SplitOnRestElement<Array_,
+				ApplyDefaultOptions<
+					SplitOnRestElementOptions,
+					DefaultSplitOnRestElementOptions,
+					Options
+				>
+			>
+		> extends infer Result extends UnknownArray
+			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
 
