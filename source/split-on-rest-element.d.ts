@@ -12,13 +12,12 @@ type SplitOnRestElementOptions = {
 	/**
 	Whether to preserve the optional modifier (`?`).
 
-	- When set to `true`, the optional modifiers are preserved as-is. For example,
+	- When set to `true`, the optional modifiers are preserved as-is. For example:
 		`SplitOnRestElement<[number, string?, ...boolean[]], {preserveOptionalModifier: true}>` returns `[[number, string?], boolean[], []]`.
 
 	- When set to `false`, optional elements like `T?` are transformed to `T | undefined` or simply `T` depending on the `exactOptionalPropertyTypes` compiler option. For example:
-		- With `exactOptionalPropertyTypes` enabled,
-			`SplitOnRestElement<[number, string?, ...boolean[]], {preserveOptionalModifier: false}>` returns `[[number, string], boolean[], []]`.
-		- And, with it disabled, the result is `[[number, string | undefined], boolean[], []]`.
+		- With `exactOptionalPropertyTypes` enabled: `SplitOnRestElement<[number, string?, ...boolean[]], {preserveOptionalModifier: false}>` returns `[[number, string], boolean[], []]`
+		- And, with it disabled, the result is: `[[number, string | undefined], boolean[], []]`
 
 	@default true
 	*/
@@ -30,14 +29,9 @@ type DefaultSplitOnRestElementOptions = {
 };
 
 /**
-Splits an array into three parts,
-where the first contains all elements before the rest element,
-the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself,
-and the third contains all elements after the rest element.
+Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
 
-Note: If any of the parts are missing, then they will be represented as empty arrays.
-For example, `SplitOnRestElement<[string, number]>` returns `[[string, number], [], []]`,
-where parts corresponding to the rest element and elements after it are empty.
+Note: If any of the parts are missing, then they will be represented as empty arrays. For example, `SplitOnRestElement<[string, number]>` returns `[[string, number], [], []]`, where parts corresponding to the rest element and elements after it are empty.
 
 By default, The optional modifier (`?`) is preserved.
 See {@link SplitOnRestElementOptions `SplitOnRestElementOptions`}.
@@ -62,7 +56,8 @@ type T5 = SplitOnRestElement<readonly [string?, ...number[]], {preserveOptionalM
 //=> readonly [[string], number[], []] or readonly [[string | undefined], number[], []]
 ```
 
-@see ExtractRestElement, ExcludeRestElement
+@see ExtractRestElement
+@see ExcludeRestElement
 @category Array
 */
 export type SplitOnRestElement<
