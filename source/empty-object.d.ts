@@ -1,5 +1,3 @@
-import type {IsNever} from './is-never.d.ts';
-
 declare const emptyObjectSymbol: unique symbol;
 
 /**
@@ -37,16 +35,12 @@ Returns a `boolean` for whether the type is strictly equal to an empty plain obj
 ```
 import type {IsEmptyObject} from 'type-fest';
 
-type Pass1 = IsEmptyObject<{}>; //=> true
-type Pass2 = IsEmptyObject<Record<keyof any, never>>; //=> true
-type Fail1 = IsEmptyObject<[]>; //=> false
-type Fail2 = IsEmptyObject<null>; //=> false
+type Pass = IsEmptyObject<{}>; //=> true
+type Fail = IsEmptyObject<[]>; //=> false
+type Fail = IsEmptyObject<null>; //=> false
 ```
 
 @see EmptyObject
 @category Object
 */
-export type IsEmptyObject<T> =
-	IsNever<T> extends true ? false
-		: T extends EmptyObject ? true
-			: false;
+export type IsEmptyObject<T> = T extends EmptyObject ? true : false;
