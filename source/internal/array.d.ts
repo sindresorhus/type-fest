@@ -108,11 +108,20 @@ Returns a `boolean` for whether the type is an empty array, the `[]` or `readonl
 ```
 import type {IsEmptyArray} from 'type-fest';
 
-type Pass1 = IsEmptyArray<[]>; //=> true
-type Pass2 = IsEmptyArray<readonly []>; //=> true
-type Fail1 = IsEmptyArray<[0]>; //=> false
-type Fail2 = IsEmptyArray<[0?]>; //=> false
-type Fail3 = IsEmptyArray<...string[]>; //=> false
+type Pass1 = IsEmptyArray<[]>;
+//=> true
+
+type Pass2 = IsEmptyArray<readonly []>;
+//=> true
+
+type Fail1 = IsEmptyArray<[0]>;
+//=> false
+
+type Fail2 = IsEmptyArray<[0?]>;
+//=> false
+
+type Fail3 = IsEmptyArray<...string[]>;
+//=> false
 ```
 
 @see EmptyArray
