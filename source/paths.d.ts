@@ -1,7 +1,6 @@
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {EmptyObject} from './empty-object.d.ts';
-import type {GreaterThan} from './greater-than.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -194,14 +193,13 @@ open('listB.1'); // TypeError. Because listB only has one element.
 export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
 
 type _Paths<T, Options extends Required<PathsOptions>> =
-	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
-		? never
-		: IsAny<T> extends true
-			? never
+	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> ? never
+		: IsAny<T> extends true ? never
 			: T extends UnknownArray
 				? number extends T['length']
-					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Options> | InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
+					? // We need to handle the fixed and non-fixed index part of the array separately.
+					| InternalPaths<StaticPartOfArray<T>, Options> // ! Should this be updated to use `ExcludeRestElement`.
+					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options> // ! And this to use `ExtractRestElement`.
 					: InternalPaths<T, Options>
 				: T extends object
 					? InternalPaths<T, Options>
@@ -211,53 +209,49 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 	Options['maxRecursionDepth'] extends infer MaxDepth extends number
 		? Required<T> extends infer T
 			? IsNever<keyof T> extends true
-				? never // Ignore empty array/object
+				? never // Ignore empty array/object and not index signature types (e.g, `Record<string, 'foo'>`).
 				: {
-					[Key in keyof T]:
-					Key extends PathableKeys // Limit `Key` to string or number.
-						? (
-							Options['bracketNotation'] extends true
-								? IsNumberLike<Key> extends true
-									? `[${Key}]`
-									: (Key | ToString<Key>)
-								: (Key | ToString<Key>) // If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
+					[Key in keyof T]: Key extends PathableKeys // Limit `Key` to string or number.
+						? (Options['bracketNotation'] extends true
+							? IsNumberLike<Key> extends true
+								? `[${Key}]`
+								: (Key | ToString<Key>)
+							: (Key | ToString<Key>) // If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
 						) extends infer TranformedKey extends PathableKeys ?
 						// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
 						// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
-							| ((Options['leavesOnly'] extends true
-								? MaxDepth extends 0
-									? TranformedKey
-									: T[Key] extends EmptyObject | EmptyArray | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+							(
+								(Options['leavesOnly'] extends true
+									? MaxDepth extends 0
 										? TranformedKey
+										: T[Key] extends EmptyObject | EmptyArray | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+											? TranformedKey
+											: never
+									: TranformedKey
+								) extends infer _TransformedKey
+									// If `depth` is provided, the condition becomes truthy only when it reaches `0`.
+									// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
+									? 0 extends Options['depth']
+										? string extends _TransformedKey // TODO: Replace with `IsStringPrimitive` when approved.
+											? LiteralUnion<never, string> // Prevent returning `string`, instead returns `(string & {})`.
+											: _TransformedKey
 										: never
-								: TranformedKey
-							) extends infer _TransformedKey
-								// If `depth` is provided, the condition becomes truthy only when it reaches `0`.
-								// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
-								? 0 extends Options['depth']
-									? string extends _TransformedKey // TODO: Replace with `IsStringPrimitive` when approved.
-										? LiteralUnion<never, string> // Prevent returning `string`.
-										: _TransformedKey
 									: never
-								: never)
-							| (
+							) | (
 								// Recursively generate paths for the current key
-								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
-									? _Paths<T[Key], {
+								MaxDepth extends 0 ? never // Limit the depth to prevent infinite recursion
+									: _Paths<T[Key], {
 										bracketNotation: Options['bracketNotation'];
 										maxRecursionDepth: Subtract<MaxDepth, 1>;
 										depth: Subtract<Options['depth'], 1>;
 										leavesOnly: Options['leavesOnly'];
-									}> extends infer SubPath
-										? SubPath extends PathableKeys
-											? Options['bracketNotation'] extends true
-												? SubPath extends `[${PathableKeys}]${string}`
-													? `${TranformedKey}${SubPath}` // If next node is number key like `[3]`, no need to add `.` before it.
-													: `${TranformedKey}.${SubPath}`
+									}> extends infer SubPath extends PathableKeys
+										? Options['bracketNotation'] extends true
+											? SubPath extends `[${PathableKeys}]${string}` // Check if its a bracket notation.
+												? `${TranformedKey}${SubPath}` // If next node is number key like `[3]`, no need to add `.` before it.
 												: `${TranformedKey}.${SubPath}`
-											: never
+											: `${TranformedKey}.${SubPath}`
 										: never
-									: never
 							)
 							: never
 						: never
