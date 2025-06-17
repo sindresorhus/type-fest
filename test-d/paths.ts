@@ -392,6 +392,9 @@ expectType<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d
 declare const stringRecord: Paths<Record<string, {a: number; b: number}>>;
 expectType<(string & {}) | `${string}.a` | `${string}.b`>(stringRecord);
 
+declare const templateRecord: Paths<Record<`on${string}`, {a: number; b: number}>>;
+expectType<(`on${string}` & {}) | (`on${string}.a` & {}) | (`on${string}.b` & {})>(templateRecord);
+
 declare const numberRecord: Paths<Record<number, {a: number; b: number}>>;
 expectType<number | `${number}` | `${number}.b` | `${number}.a`>(numberRecord);
 
@@ -403,3 +406,10 @@ expectType<number | `${number}` | `${number}.b` | `${number}.a` | 'foo' | 'foo.a
 
 declare const complexRecord: Paths<Record<number, {a: number; b: number}> & DeepObject>;
 expectType<number | `${number}` | 'a' | `${number}.b` | `${number}.a` | 'a.b' | 'a.b2' | 'a.b3' | 'a.b.c' | `a.b2.${number}` | 'a.b.c.d'>(complexRecord);
+
+// Edge cases
+declare const edge1: Paths<{a: {[x: string]: number} | {b: number}}>;
+expectType<'a' | 'a.b' | (`a.${string}` & {})>(edge1);
+
+declare const edge2: Paths<{[x: Uppercase<string>]: {a: string}; C: {a: string}}>;
+expectType<'C' | 'C.a' | (Uppercase<string> & {}) | (`${Uppercase<string>}.a` & {})>(edge2);
