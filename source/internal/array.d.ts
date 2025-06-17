@@ -99,7 +99,7 @@ export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T ex
 /**
 Represents an empty array, the `[]` or `readonly []` value.
 */
-export type EmptyArray = readonly [] | []; // The extra `[]` just to prevent TS from expanding the type.
+export type EmptyArray = readonly [] | []; // The extra `[]` is just to prevent TS from expanding the type.
 
 /**
 Returns a `boolean` for whether the type is an empty array, the `[]` or `readonly []` value.
@@ -108,10 +108,11 @@ Returns a `boolean` for whether the type is an empty array, the `[]` or `readonl
 ```
 import type {IsEmptyArray} from 'type-fest';
 
-type Pass = IsEmptyArray<[]>; //=> true
-type Pass = IsEmptyArray<readonly []>; //=> true
-type Fail = IsEmptyArray<[0]>; //=> false
-type Fail = IsEmptyArray<[0?]>; //=> false
+type Pass1 = IsEmptyArray<[]>; //=> true
+type Pass2 = IsEmptyArray<readonly []>; //=> true
+type Fail1 = IsEmptyArray<[0]>; //=> false
+type Fail2 = IsEmptyArray<[0?]>; //=> false
+type Fail3 = IsEmptyArray<...string[]>; //=> false
 ```
 
 @see EmptyArray

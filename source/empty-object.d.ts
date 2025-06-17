@@ -37,9 +37,10 @@ Returns a `boolean` for whether the type is strictly equal to an empty plain obj
 ```
 import type {IsEmptyObject} from 'type-fest';
 
-type Pass = IsEmptyObject<{}>; //=> true
-type Fail = IsEmptyObject<[]>; //=> false
-type Fail = IsEmptyObject<null>; //=> false
+type Pass1 = IsEmptyObject<{}>; //=> true
+type Pass2 = IsEmptyObject<Record<keyof any, never>>; //=> true
+type Fail1 = IsEmptyObject<[]>; //=> false
+type Fail2 = IsEmptyObject<null>; //=> false
 ```
 
 @see EmptyObject
