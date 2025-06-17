@@ -1,6 +1,7 @@
 import type {Primitive} from './primitive.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
+/** Shorthand for: `LiteralUnion<T, string>` */
 export type LiteralStringUnion<T> = LiteralUnion<T, string>;
 
 /**
@@ -16,20 +17,25 @@ import type {LiteralUnion} from 'type-fest';
 
 // Before
 
-type Pet = 'dog' | 'cat' | string;
+type Pet1 = 'dog' | 'cat' | string;
+//    ^? type Pet1 = string
 
-const pet: Pet = '';
-// Start typing in your TypeScript-enabled IDE.
-// You **will not** get auto-completion for `dog` and `cat` literals.
+const pet1: Pet1 = '';
+```
+Start typing in your TypeScript-enabled IDE.
 
+You **will *not*** get auto-completion for `dog` and `cat` literals.
+
+```
 // After
 
 type Pet2 = LiteralUnion<'dog' | 'cat', string>;
+//    ^? type Pet2 = 'dog' | 'cat' | (string & {})
 
-const pet: Pet2 = '';
-// You **will** get auto-completion for `dog` and `cat` literals.
+const pet2: Pet2 = '';
 ```
+You **will** get auto-completion for `dog` and `cat` literals.
 
 @category Type
 */
-export type LiteralUnion<LiteralType, BaseType extends Primitive> = LiteralType | (BaseType & Simplify<{}>);
+export type LiteralUnion<LiteralType, PrimitiveType extends Primitive> = LiteralType | (PrimitiveType & Simplify<{}>);
