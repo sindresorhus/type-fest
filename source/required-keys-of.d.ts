@@ -31,7 +31,7 @@ export type RequiredKeysOf<Type extends object> =
 		: never; // Should never happen
 
 /**
-Returns a boolean to whether `Key` is a required key of `Type`.
+Returns a boolean for whether `Key` is a required key of `Type`.
 
 This is useful when writing utility types or schema validators that need to differentiate `required` keys.
 
@@ -51,19 +51,19 @@ interface Admin {
 	surname?: string
 }
 
-type T1 = IsRequiredKeyOf<User, 'name'>
+type T1 = IsRequiredKeyOf<User, 'name'>;
 //=> true
 
-type T2 = IsRequiredKeyOf<User, 'luckyNumber'>
+type T2 = IsRequiredKeyOf<User, 'luckyNumber'>;
 //=> false
 
-type T3 = IsRequiredKeyOf<User, 'name' | 'luckyNumber'>
+type T3 = IsRequiredKeyOf<User, 'name' | 'luckyNumber'>;
 //=> boolean
 
-type T4 = IsRequiredKeyOf<User | Admin, 'name'>
+type T4 = IsRequiredKeyOf<User | Admin, 'name'>;
 //=> true
 
-type T5 = IsRequiredKeyOf<User | Admin, 'surname'>
+type T5 = IsRequiredKeyOf<User | Admin, 'surname'>;
 //=> boolean
 ```
 

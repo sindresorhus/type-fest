@@ -1,7 +1,7 @@
 import type {IsEqual} from './is-equal.d.ts';
 
 /**
-Extract all readonly keys from the given `Type`.
+Extract all readonly keys from the given type.
 
 This is useful when you want to create a new type that contains readonly keys only.
 
@@ -36,7 +36,7 @@ export type ReadonlyKeysOf<Type extends object> =
 		: never; // Should never happen
 
 /**
-Returns a boolean to whether `Key` is a readonly key of `Type`.
+Returns a boolean for whether `Key` is a readonly key of `Type`.
 
 This is useful when writing utility types or schema validators that need to differentiate `readonly` keys.
 
@@ -55,19 +55,19 @@ interface Admin {
 	id: string
 }
 
-type T1 = IsReadonlyKeyOf<User, 'id'>
+type T1 = IsReadonlyKeyOf<User, 'id'>;
 //=> true
 
-type T2 = IsReadonlyKeyOf<User, 'name'>
+type T2 = IsReadonlyKeyOf<User, 'name'>;
 //=> false
 
-type T3 = IsReadonlyKeyOf<User, 'name' | 'id'>
+type T3 = IsReadonlyKeyOf<User, 'name' | 'id'>;
 //=> boolean
 
-type T4 = IsReadonlyKeyOf<User | Admin, 'name'>
+type T4 = IsReadonlyKeyOf<User | Admin, 'name'>;
 //=> false
 
-type T5 = IsReadonlyKeyOf<User | Admin, 'id'>
+type T5 = IsReadonlyKeyOf<User | Admin, 'id'>;
 //=> boolean
 ```
 

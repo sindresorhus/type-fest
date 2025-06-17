@@ -32,7 +32,7 @@ export type WritableKeysOf<Type extends object> =
 		: never; // Should never happen
 
 /**
-Returns a boolean to whether `Key` is a readonly key of `Type`.
+Returns a boolean for whether `Key` is a readonly key of `Type`.
 
 This is useful when writing utility types or schema validators that need to differentiate `writable` keys.
 
@@ -51,19 +51,19 @@ interface Admin {
 	id: string
 }
 
-type T1 = IsWritableKeyOf<User, 'name'>
+type T1 = IsWritableKeyOf<User, 'name'>;
 //=> true
 
-type T2 = IsWritableKeyOf<User, 'id'>
+type T2 = IsWritableKeyOf<User, 'id'>;
 //=> false
 
-type T3 = IsWritableKeyOf<User, 'name' | 'id'>
+type T3 = IsWritableKeyOf<User, 'name' | 'id'>;
 //=> boolean
 
-type T4 = IsWritableKeyOf<User | Admin, 'name'>
+type T4 = IsWritableKeyOf<User | Admin, 'name'>;
 //=> true
 
-type T5 = IsWritableKeyOf<User | Admin, 'id'>
+type T5 = IsWritableKeyOf<User | Admin, 'id'>;
 //=> boolean
 ```
 
