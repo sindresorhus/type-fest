@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {UnknownRecord, WritableKeysOf} from '../index.d.ts';
+import type {IsWritableKeyOf} from '../source/writable-keys-of.d.ts';
 
 type TestType1 = {
 	readonly a: string;
@@ -88,3 +89,13 @@ type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 
 // @ts-expect-error
 type AllowsOnlyObjects = WritableKeysOf<string>;
+
+// Uncovered cases for `IsWritableKeyOf`
+expectType<IsWritableKeyOf<TestType1, 'a'>>(false);
+expectType<IsWritableKeyOf<TestType1, 'b'>>(true);
+expectType<IsWritableKeyOf<TestType1, 'a' | 'b'>>({} as boolean);
+expectType<IsWritableKeyOf<TestType2, 'a' | 'b'>>(true);
+
+expectType<IsWritableKeyOf<TestType2 | TestType1, 'b'>>(true);
+expectType<IsWritableKeyOf<TestType2 | TestType1, 'a'>>({} as boolean);
+expectType<IsWritableKeyOf<TestType2 | TestType1, 'a' | 'b'>>({} as boolean);

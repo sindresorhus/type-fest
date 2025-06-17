@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {RequiredKeysOf, UnknownRecord} from '../index.d.ts';
+import type {IsRequiredKeyOf} from '../source/required-keys-of.d.ts';
 
 type TestType1 = {
 	a: string;
@@ -84,3 +85,13 @@ type Test9<T extends object> = Assignability9<T, keyof T>;
 type Assignability10<T extends UnknownRecord, _K extends RequiredKeysOf<T>> = unknown;
 // @ts-expect-error
 type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
+
+// Uncovered cases for `IsRequiredKeyOf`
+expectType<IsRequiredKeyOf<TestType1, 'a'>>(true);
+expectType<IsRequiredKeyOf<TestType1, 'b'>>(false);
+expectType<IsRequiredKeyOf<TestType1, 'a' | 'b'>>({} as boolean);
+expectType<IsRequiredKeyOf<TestType2, 'a' | 'b'>>(false);
+
+expectType<IsRequiredKeyOf<TestType2 | TestType1, 'b'>>(false);
+expectType<IsRequiredKeyOf<TestType2 | TestType1, 'a'>>({} as boolean);
+expectType<IsRequiredKeyOf<TestType2 | TestType1, 'a' | 'b'>>({} as boolean);

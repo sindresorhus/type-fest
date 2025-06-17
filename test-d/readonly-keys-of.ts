@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {ReadonlyKeysOf, UnknownRecord} from '../index.d.ts';
+import type {IsReadonlyKeyOf} from '../source/readonly-keys-of.d.ts';
 
 type TestType1 = {
 	a: string;
@@ -88,3 +89,13 @@ type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 
 // @ts-expect-error
 type AllowsOnlyObjects = ReadonlyKeysOf<string>;
+
+// Uncovered cases for `IsReadonlyKeyOf`
+expectType<IsReadonlyKeyOf<TestType1, 'a'>>(false);
+expectType<IsReadonlyKeyOf<TestType1, 'b'>>(true);
+expectType<IsReadonlyKeyOf<TestType1, 'a' | 'b'>>({} as boolean);
+expectType<IsReadonlyKeyOf<TestType2, 'a' | 'b'>>(true);
+
+expectType<IsReadonlyKeyOf<TestType2 | TestType1, 'b'>>(true);
+expectType<IsReadonlyKeyOf<TestType2 | TestType1, 'a'>>({} as boolean);
+expectType<IsReadonlyKeyOf<TestType2 | TestType1, 'a' | 'b'>>({} as boolean);

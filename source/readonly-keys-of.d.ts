@@ -76,8 +76,10 @@ type T5 = IsReadonlyKeyOf<User | Admin, 'id'>;
 */
 export type IsReadonlyKeyOf<Type extends object, Key extends keyof Type> =
 	Key extends unknown // For distributing `Key`
-		? IsEqual<
-			{[K in Key]: Type[Key]},
-			{readonly [K in Key]: Type[Key]}
-		>
+		? Type extends unknown // For distributing `Type`
+			? IsEqual<
+				{[K in Key]: Type[Key]},
+				{readonly [K in Key]: Type[Key]}
+			>
+			: never // Should never happen
 		: never; // Should never happen
