@@ -55,10 +55,16 @@ Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type A = UnionMin<3 | 1 | 2>;
+type A = UnionMin<1 | 3 | 2>;
 //=> 1
 
-type B = UnionMin<never>;
+type B = UnionMin<number>;
+//=> 0
+
+type C = UnionMin<any>;
+//=> any
+
+type D = UnionMin<never>;
 //=> never
 ```
 */
@@ -84,13 +90,20 @@ Note: Just supports numbers from 0 to 999.
 type A = UnionMax<1 | 3 | 2>;
 //=> 3
 
-type B = UnionMax<never>;
+type B = UnionMax<number>;
+//=> number
+
+type C = UnionMax<any>;
+//=> any
+
+type D = UnionMax<never>;
 //=> never
 ```
 */
 export type UnionMax<N extends number> =
 	IsAnyOrNever<N> extends true ? N // Returns `any` or `never`
-		: InternalUnionMax<N>;
+		: [number] extends [N] ? number
+			: InternalUnionMax<N>;
 
 /**
 The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
