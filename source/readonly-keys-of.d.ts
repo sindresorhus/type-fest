@@ -12,6 +12,7 @@ import type {ReadonlyKeysOf} from 'type-fest';
 interface User {
 	name: string;
 	surname: string;
+
 	readonly id: number;
 }
 
@@ -26,8 +27,7 @@ const update1: UpdateResponse<User> = {
 */
 export type ReadonlyKeysOf<Type extends object> =
 	Type extends unknown // For distributing `Type`
-		? (keyof {
-			[Key in keyof Type as
+		? (keyof {[Key in keyof Type as
 			IsReadonlyKeyOf<Type, Key> extends false
 				? never
 				: Key

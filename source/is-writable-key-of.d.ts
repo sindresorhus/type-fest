@@ -3,7 +3,7 @@ import type {Not} from './internal/type.d.ts';
 import type {IsAny} from './is-any.d.ts';
 
 /**
-Returns a boolean for whether `Key` is a readonly key of `Type`.
+Returns a boolean for whether the given key is a writable key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `writable` keys.
 
@@ -14,6 +14,7 @@ import type {IsWritableKeyOf} from 'type-fest';
 interface User {
 	name: string;
 	surname: string;
+
 	readonly id: number;
 }
 

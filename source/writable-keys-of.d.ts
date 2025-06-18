@@ -12,6 +12,7 @@ import type {WritableKeysOf} from 'type-fest';
 interface User {
 	name: string;
 	surname: string;
+
 	readonly id: number;
 }
 

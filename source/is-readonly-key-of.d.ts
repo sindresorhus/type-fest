@@ -2,7 +2,7 @@ import type {IsEqual} from './is-equal.d.ts';
 import type {IsAny} from './is-any.d.ts';
 
 /**
-Returns a boolean for whether `Key` is a readonly key of `Type`.
+Returns a boolean for whether the given key is a readonly key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `readonly` keys.
 
@@ -13,6 +13,7 @@ import type {IsReadonlyKeyOf} from 'type-fest';
 interface User {
 	name: string;
 	surname: string;
+
 	readonly id: number;
 }
 
