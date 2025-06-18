@@ -1,5 +1,6 @@
 import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
 import type {Not} from './internal/type.d.ts';
+import type {IsAny} from './is-any.d.ts';
 
 /**
 Returns a boolean for whether `Key` is a readonly key of `Type`.
@@ -41,6 +42,7 @@ type T5 = IsWritableKeyOf<User | Admin, 'id'>;
 @category Utilities
 */
 export type IsWritableKeyOf<Type extends object, Key extends keyof Type> =
-	Key extends keyof Type
-		? Not<IsReadonlyKeyOf<Type, Key>>
-		: false;
+	IsAny<Type | Key> extends true ? never
+		: Key extends keyof Type
+			? Not<IsReadonlyKeyOf<Type, Key>>
+			: false;

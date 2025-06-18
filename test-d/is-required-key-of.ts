@@ -17,7 +17,7 @@ expectType<IsRequiredKeyOf<A, 'b'>>(false);
 expectType<IsRequiredKeyOf<A, 'c'>>(true);
 
 // @ts-expect-error `d` is not in `keyof T`
-expectType<IsRequiredKeyOf<A, 'd'>>(never);
+expectType<IsRequiredKeyOf<A, 'd'>>(false);
 
 // Index signature with required keys
 type B = {

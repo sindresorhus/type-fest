@@ -17,7 +17,7 @@ expectType<IsOptionalKeyOf<A, 'b'>>(true);
 expectType<IsOptionalKeyOf<A, 'c'>>(false);
 
 // @ts-expect-error `d` is not in `keyof T`
-expectType<IsOptionalKeyOf<A, 'd'>>(never);
+expectType<IsOptionalKeyOf<A, 'd'>>(false);
 
 // Index signature with optional keys
 type B = {
@@ -104,7 +104,7 @@ expectType<IsOptionalKeyOf<L, 'a'>>(false);
 expectType<IsOptionalKeyOf<L, 'b'>>(true);
 
 // Union of keys
-expectType<IsOptionalKeyOf<A, 'b' | 'c'>>(true);
+expectType<IsOptionalKeyOf<A, 'b' | 'c'>>(boolean);
 expectType<IsOptionalKeyOf<A, 'a' | 'b'>>(boolean);
 // @ts-expect-error
 expectType<IsOptionalKeyOf<A, 'a' | 'd'>>(false);

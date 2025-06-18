@@ -42,7 +42,7 @@ type T5 = IsOptionalKeyOf<User | Admin, 'surname'>;
 */
 export type IsOptionalKeyOf<Type extends object, Key extends keyof Type> =
 	IsAny<Type | Key> extends true ? never
-		: Key extends keyof Type // For distributing `Key`
+		: Key extends keyof Type
 			? Type extends Record<Key, Type[Key]>
 				? false
 				: true
