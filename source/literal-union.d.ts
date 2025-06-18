@@ -18,7 +18,7 @@ import type {LiteralUnion} from 'type-fest';
 // Before
 
 type Pet1 = 'dog' | 'cat' | string;
-//    ^? type Pet1 = string
+//=> type Pet1 = string
 
 const pet1: Pet1 = '';
 ```
@@ -30,7 +30,7 @@ You **will *not*** get auto-completion for `dog` and `cat` literals.
 // After
 
 type Pet2 = LiteralUnion<'dog' | 'cat', string>;
-//    ^? type Pet2 = 'dog' | 'cat' | (string & {})
+//=> type Pet2 = 'dog' | 'cat' | (string & {})
 
 const pet2: Pet2 = '';
 ```
