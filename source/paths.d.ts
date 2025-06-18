@@ -2,7 +2,7 @@ import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {IsStringLiteral} from './is-literal.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
-import type {EmptyObject} from './empty-object.d.ts';
+import type {GreaterThan} from './greater-than.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -200,37 +200,12 @@ type _Paths<T, Options extends Required<PathsOptions>> =
 			? never
 			: T extends UnknownArray
 				? number extends T['length']
-					? // We need to handle the fixed and non-fixed index part of the array separately.
-					| InternalPaths<StaticPartOfArray<T>, Options> // ! Should this be updated to use `ExcludeRestElement`.
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options> // ! And this to use `ExtractRestElement`.
+					// We need to handle the fixed and non-fixed index part of the array separately.
+					? InternalPaths<StaticPartOfArray<T>, Options> | InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
 					: InternalPaths<T, Options>
 				: T extends object
 					? InternalPaths<T, Options>
 					: never;
-
-/**
-Transform object key based on notation style:
- 1. If `BracketNotation` is true and 'Key' is a number-like value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
- 2. Otherwise, transform 'Key' to `${Key}` | Key
-*/
-type TransformKey<Key extends PathableKeys, BracketNotation> =
-	BracketNotation extends true
-		? IsNumberLike<Key> extends true
-			? `[${Key}]`
-			: Key // If `Key` is not a `number` so its a `string`.
-		: (Key | ToString<Key>); // If `Key` is a `number`, return `Key | `${Key}``.
-
-/**
-Filter object values for `leaves`.
-*/
-type FilterLeaves<T, K extends keyof T, Key, MaxDepth, LeavesOnly> =
-	LeavesOnly extends true
-		? MaxDepth extends 0
-			? Key
-			: T[K] extends EmptyObject | EmptyArray | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
-				? Key
-				: never
-		: Key;
 
 /**
 Filter out wide string types (e.g., `string`, `Uppercase<string>`), and return there `LiteralUnion` form.
@@ -246,71 +221,78 @@ type FilterWideTypes<Key> =
 			: Key
 		: Key;
 
-/**
-Strict check whether `T` is a wide primitive (`string` or `number`).
-*/
-type IsPrimitive<T> = ExtendsStrict<string, T> | ExtendsStrict<number, T>;
-
-/**
-Concatenate the current path segment with the next one.
-*/
-type JoinPath<T extends PathableKeys, K extends PathableKeys, BracketNotation> =
-	BracketNotation extends true
-		? K extends `[${PathableKeys}]${string}` // Check if its a bracket notation.
-			? `${T}${K}` // If next node is `number` key like `[3]`, no need to add `.` before it.
-			: `${T}.${K}`
-		: `${T}.${K}`;
-
 type InternalPaths<T, Options extends Required<PathsOptions>> =
-	Options extends { // Spreading Options for easier work.
-		bracketNotation: infer BracketNotation extends boolean;
-		maxRecursionDepth: infer MaxDepth extends number;
-		leavesOnly: infer LeavesOnly extends boolean;
-		depth: infer Depth extends number;
-	} ? Required<T> extends infer T
-			? IsNever<OwnKeys<T>> extends true
-				? never // Ignore empty array/object but not index signature types (e.g, `Record<string, number>`).
-				: {
-					[Key in keyof T as Key extends OwnKeys<T> // Map over own property keys only.
-						? IsStringLiteral<Key> extends true
-							? Key
-							: '_' // Placeholder for wide types.
-						: never
-					]: Key extends PathableKeys // Limit `Key` to string or number.
-						? TransformKey<Key, BracketNotation> extends infer TranformedKey extends PathableKeys
+	Options['maxRecursionDepth'] extends infer MaxDepth extends number
+		? Required<T> extends infer T
+			? OwnKeys<T> extends infer _OwnKeys
+				? IsNever<_OwnKeys> extends true
+					? never // Ignore empty array/object but not index signature types (e.g, `Record<string, number>`).
+					: {
+						[Key in keyof T as Key extends _OwnKeys // Map over own property keys only.
+							? IsStringLiteral<Key> extends true
+								? Key
+								: '_' // Placeholder for wide types.
+							: never
+						]: Key extends PathableKeys // Limit `Key` to string or number.
 							? (
+								Options['bracketNotation'] extends true
+									? IsNumberLike<Key> extends true
+										? `[${Key}]`
+										: (Key | ToString<Key>)
+									: Options['bracketNotation'] extends false
+									// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
+										? (Key | ToString<Key>)
+										: never
+							) extends infer TranformedKey extends PathableKeys ?
+							// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
+							// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
+							| ((Options['leavesOnly'] extends true
+								? MaxDepth extends 0
+									? TranformedKey
+									: T[Key] extends infer Value
+										? Value extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+											? TranformedKey
+											: IsNever<OwnKeys<Value>> extends true // Check for empty object/array
+												? TranformedKey
+												: never
+										: never
+								: TranformedKey
+							) extends infer LeafKeys
 								// If `depth` is provided, the condition becomes truthy only when it reaches `0`.
 								// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
-								0 extends Depth
-									? FilterWideTypes<
-										FilterLeaves<T, Key, TranformedKey, MaxDepth, LeavesOnly>
-									> // Wrap wide types with a `LiteralUnion` syntax (type & {}).
+								? 0 extends Options['depth']
+									? FilterWideTypes<LeafKeys>
 									: never
-							) | (
+								: never)
+							| (
 								// Recursively generate paths for the current key
-								MaxDepth extends 0
-									? never // Limit the depth to prevent infinite recursion
-									: _Paths<T[Key], {
-										maxRecursionDepth: Subtract<MaxDepth, 1>;
-										bracketNotation: BracketNotation;
-										depth: Subtract<Depth, 1>;
-										leavesOnly: LeavesOnly;
-									}> extends infer SubPath
-										? SubPath extends PathableKeys // To distribute `SubPath`
-											? FilterWideTypes<
-												JoinPath<
-													TranformedKey,
-													CollapseLiterals<SubPath>, // Remove `{}` from (type & {}) in nested paths.
-													BracketNotation
+								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
+									? _Paths<T[Key],
+										{
+											bracketNotation: Options['bracketNotation'];
+											maxRecursionDepth: Subtract<MaxDepth, 1>;
+											leavesOnly: Options['leavesOnly'];
+											depth: Subtract<Options['depth'], 1>;
+										}> extends infer SubPath
+										? SubPath extends PathableKeys
+											? CollapseLiterals<SubPath> extends infer _SubPath extends PathableKeys
+												? FilterWideTypes<
+													Options['bracketNotation'] extends true
+														? SubPath extends `[${any}]` | `[${any}]${string}`
+															? `${TranformedKey}${_SubPath}` // If next node is number key like `[3]`, no need to add `.` before it.
+															: `${TranformedKey}.${_SubPath}`
+														: `${TranformedKey}.${_SubPath}`
 												>
-											> // Wrap wide types with a `LiteralUnion` syntax (type & {}).
+												: never
 											: never
 										: never
-							)
+									: never
+								)
+								: never
 							: never
+					} extends infer Result
+						? Result[keyof Result] // Convert to union.
 						: never
-				} extends infer Result
-					? Result[keyof Result]
-					: never
+				: never
 			: never
 		: never;

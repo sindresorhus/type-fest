@@ -440,10 +440,10 @@ declare const indexSignatureLeaves: Paths<{[x: string]: {a: string; b: number}},
 expectType<(`${string}.a` & {}) | (`${string}.b` & {})>(indexSignatureLeaves);
 
 declare const indexSignatureLeaves1: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {leavesOnly: true}>;
-expectType<'a' | 'd' | (`a.${string}.b` & {}) | (`a.${string}.c` & {}) | 'e.f'>(indexSignatureLeaves1);
+expectType<(`a.${string}.b` & {}) | (`a.${string}.c` & {}) | 'd' | 'e.f'>(indexSignatureLeaves1);
 
 declare const indexSignatureLeaves2: Paths<{a: {[x: string]: [] | {b: number}}}, {leavesOnly: true}>;
-expectType<'a' | (`a.${string}.b` & {})>(indexSignatureLeaves2); // Collapsed union
+expectType<(`a.${string}` & {}) | (`a.${string}.b` & {})>(indexSignatureLeaves2); // Collapsed union
 
 declare const indexSignatureDepth: Paths<{[x: string]: {a: string; b: number}}, {depth: 1}>;
 expectType<(`${string}.b` & {}) | (`${string}.a` & {})>(indexSignatureDepth);
