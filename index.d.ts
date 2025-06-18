@@ -184,6 +184,7 @@ export type {Get} from './source/get.d.ts';
 export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
+export type {RemovePrefix} from './source/remove-prefix.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
