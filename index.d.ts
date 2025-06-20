@@ -150,6 +150,8 @@ export type {If} from './source/if.d.ts';
 export type {IsUnion} from './source/is-union.d.ts';
 export type {IsLowercase} from './source/is-lowercase.d.ts';
 export type {IsUppercase} from './source/is-uppercase.d.ts';
+export type {IsOptional} from './source/is-optional.d.ts';
+export type {IsNullable} from './source/is-nullable.d.ts';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case.d.ts';
@@ -179,6 +181,7 @@ export type {Get} from './source/get.d.ts';
 export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
+export type {RemovePrefix} from './source/remove-prefix.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
