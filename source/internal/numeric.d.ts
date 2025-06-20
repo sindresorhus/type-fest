@@ -60,7 +60,7 @@ type A = UnionMin<1 | 3 | 2>;
 //=> 1
 
 type B = UnionMin<number>;
-//=> 0
+//=> number
 
 type C = UnionMin<any>;
 //=> any
