@@ -36,6 +36,17 @@ type NoMatchingKeys = ConditionalKeys<{a?: string}, string>;
 //=> never
 ```
 
+You can also extract array indicies whose value match the specified condition, as shown below:
+```
+import type {ConditionalKeys} from 'type-fest';
+
+type StringValueIndices = ConditionalKeys<[string, number, string], string>;
+//=> '0' | '2'
+
+type NumberValueIndices = ConditionalKeys<[string, number?, string?], number | undefined>;
+//=> '1'
+```
+
 @category Object
 */
 export type ConditionalKeys<Base, Condition> = (Base extends UnknownArray ? TupleToObject<Base> : Base) extends infer _Base // Remove non-numeric keys from arrays
