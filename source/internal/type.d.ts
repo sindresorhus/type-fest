@@ -129,17 +129,12 @@ export type ExtendsLoose<T, U> = IsNotFalse<T extends U ? true : false>;
 /**
 A union of `falsy` types in JS.
 */
-type Falsy = false | 0 | '' | null | undefined; // `| never`
+export type Falsy = false | 0 | '' | null | undefined; // `| never`
 
 /**
 Checks if `T` is {@link Falsy `falsy`} similar to `Boolean(T)`.
 */
-type IsTruthy<T> =
+export type IsTruthy<T> =
 	IsNever<T> extends true ? false
 		: T extends Falsy ? false
-			: true;
-
-/**
-Prevents TS from expanding the underline type definition.
-*/
-export type Obfuscate<T> = T & Record<never, never>;
+			: true; // ? Should this get exposed publicly

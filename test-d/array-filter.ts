@@ -92,20 +92,27 @@ expectType<ArrayFilter<['f', ...string[], 's'], 'f' | 's'>>({} as ['f', 's']);
 expectType<ArrayFilter<[string, ...string[]], string>>({} as [string, ...string[]]);
 expectType<ArrayFilter<[string, ...string[], number], string>>({} as [string, ...string[]]);
 
-// Rest and Optiona
+// Rest and Optional
 expectType<ArrayFilter<[true, number?, ...string[]], string>>({} as string[]);
 expectType<ArrayFilter<[true, number?, ...string[]], number | string>>({} as [number?, ...string[]]);
 expectType<ArrayFilter<[string?, ...string[]], number | string>>({} as [string?, ...string[]]);
 
+// Union
+expectType<ArrayFilter<[1, '2', 3, false] | ['1', 2, '3', true], number>>({} as [1, 3] | [2]);
+expectType<ArrayFilter<[1, '2', 3, false] | ['1', 2, '3', true], string>>({} as ['2'] | ['1', '3']);
+expectType<ArrayFilter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], string>>({} as string[] | Array<'foo'>);
+expectType<ArrayFilter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], number>>({} as [number?]);
+
 // Edge cases
-expectType<ArrayFilter<any, never>>([]);
-expectType<ArrayFilter<any[], never>>({} as any[]);
-expectType<ArrayFilter<any[], any>>({} as []);
 expectType<ArrayFilter<any, any>>({} as []);
-expectType<ArrayFilter<never, never>>({} as never);
+expectType<ArrayFilter<any, never>>([]);
+expectType<ArrayFilter<any[], any>>({} as []);
+expectType<ArrayFilter<any[], never>>({} as any[]);
 expectType<ArrayFilter<never, any>>({} as never);
+expectType<ArrayFilter<never, never>>({} as never);
 
 expectType<ArrayFilter<[], number>>([]);
 expectType<ArrayFilter<[never, never], number>>([]);
+expectType<ArrayFilter<[never, never], never>>([]);
 expectType<ArrayFilter<[never, never], never>>([]);
 expectType<ArrayFilter<[never, never], never, true>>({} as [never, never]);

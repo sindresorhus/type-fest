@@ -100,6 +100,35 @@ Returns whether the given array `T` is readonly.
 export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
 
 /**
+Represents an empty array, the `[]` or `readonly []` value.
+*/
+export type EmptyArray = readonly [] | []; // The extra `[]` is just to prevent TS from expanding the type.
+
+/**
+Returns a `boolean` for whether the type is an empty array, the `[]` or `readonly []` value.
+@example
+```
+import type {IsEmptyArray} from 'type-fest';
+type Pass1 = IsEmptyArray<[]>;
+//=> true
+type Pass2 = IsEmptyArray<readonly []>;
+//=> true
+type Fail1 = IsEmptyArray<[0]>;
+//=> false
+type Fail2 = IsEmptyArray<[0?]>;
+//=> false
+type Fail3 = IsEmptyArray<...string[]>;
+//=> false
+```
+@see EmptyArray
+@category Array
+*/
+export type IsEmptyArray<T> =
+	IsNever<T> extends true ? false
+		: T extends EmptyArray ? true
+			: false;
+
+/**
 Transforms a tuple type by replacing it's rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.
 
 @example
@@ -161,85 +190,23 @@ type _CollapseRestElement<
 		: never; // Should never happen
 
 /**
-Represents a empty array, the `readonly? []` value.
-*/
-export type EmptyArray = readonly [] | [];
-
-/**
-Cleans any extra empty arrays/objects from a union
-*/
-export type CleanEmpty<T> = IsUnion<T> extends true
-	? T extends EmptyArray | EmptyObject
-		? never
-		: T
-	: T;
-
-/**
-Determines whether the first element of a tuple is a rest element (e.g., `...string[]`).
-
-This is useful for identifying tuple types that begin with a variadic segment.
+Cleans any extra empty arrays/objects from a union.
 
 @example
 ```
-type A = IsLeadingRestElement<[...string[], number]>;
-//=> true
+type T1 = CleanEmpty<[number] | []>
+//=> [number]
 
-type B = IsLeadingRestElement<[number, string]>;
-//=> false
+type T2 = CleanEmpty<[number, string?] | [never] | []>
+//=> [number, string?] | [never]
 
-type C = IsLeadingRestElement<[...any[]]>;
-//=> true
-
-type D = IsLeadingRestElement<[]>;
-//=> false
-
-type E = IsLeadingRestElement<[undefined, ...number[]]>;
-//=> false
+type T3 = CleanEmpty<[]>
+//=> []
 ```
+
+@category Utilities
 */
-export type IsLeadingRestElement<T extends UnknownArray> =
-	IsAny<T> extends true ? false
-		: number extends T['length']
-			? T extends [infer H, ...infer R] // Prevent `[type, ...type[]]` from being `true`
-				? false
-				: T extends [(infer H)?, ...infer R]
-					? [H?, ...R] extends T // Prevent `[type?, ...type[]]` from being `true`
-						? IsAny<T[number]> // Prevent `[...any[]]` from being `false`
-						: true
-					: never
-			: false;
-
-/**
-Determines whether the Last element of a tuple is a rest element (e.g., `...string[]`).
-
-This is useful for identifying tuple types that begin with a variadic segment.
-
-@example
-```
-type A = IsTrailingRestElement<[number, ...string[]]>;
-//=> true
-
-type B = IsTrailingRestElement<[number, string]>;
-//=> false
-
-type C = IsTrailingRestElement<[...any[]]>;
-//=> true
-
-type D = IsTrailingRestElement<[]>;
-//=> false
-
-type E = IsTrailingRestElement<[...number[], undefined]>;
-//=> false
-```
-*/
-export type IsTrailingRestElement<T extends UnknownArray> =
-	IsAny<T> extends true ? false
-		: number extends T['length']
-			? T extends [...infer H, infer R] // Prevent `[...type[], type]` from being `true`
-				? false
-				: T extends [...infer H, (infer R)?]
-					? [...H, R?] extends T // Prevent `[...type[], type?]` from being `true`
-						? IsAny<T[number]> // Prevent `[...any[]]` from being `false`
-						: true
-					: never
-			: false;
+export type CleanEmpty<T> =
+	Exclude<T, EmptyArray | EmptyObject> extends infer U
+		? IsNever<U> extends true ? T : U
+		: never;
