@@ -267,9 +267,12 @@ export type CollapseLiterals<T> = {} extends T
 /**
 Extracts own property keys of an object/array.
 */
-export type OwnKeys<T> = {
-	[K in keyof T]: K
-}[keyof T & (T extends UnknownArray ? number : unknown)];
+export type OwnKeys<T> = 
+	T extends object
+		? T extends Map<unknown, unknown> | Set<unknown>
+			? never
+			: {[K in keyof T]: K}[keyof T & (T extends UnknownArray ? number : unknown)]
+		: never;
 // TODO: add `IsPrimitive` strict check to uncollapse litetals.
 // type T = OwnKeys<{[x: string]: never; 'foo': never}
 //=> (string & {}) | 'foo' <- should be the output
