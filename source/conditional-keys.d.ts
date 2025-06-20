@@ -10,25 +10,28 @@ Internally this is used for the `ConditionalPick` and `ConditionalExcept` types.
 ```
 import type {ConditionalKeys} from 'type-fest';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | number;
 	c?: string;
 	d: {};
-}
+};
 
 type StringKeysOnly = ConditionalKeys<Example, string>;
 //=> 'a'
 ```
 
-To support partial types, make sure your `Condition` is a union of undefined (for example, `string | undefined`) as demonstrated below.
+Note: To extract optional keys, make sure your `Condition` is a union of `undefined` (for example, `string | undefined`) as demonstrated below.
 
 @example
 ```
 import type {ConditionalKeys} from 'type-fest';
 
-type StringKeysAndUndefined = ConditionalKeys<Example, string | undefined>;
-//=> 'a' | 'c'
+type StringKeysAndUndefined = ConditionalKeys<{a?: string}, string | undefined>;
+//=> 'a'
+
+type NoMatchingKeys = ConditionalKeys<{a?: string}, string>;
+//=> never
 ```
 
 @category Object
