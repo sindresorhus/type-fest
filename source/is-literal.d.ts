@@ -5,10 +5,11 @@ import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {Primitive} from './primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Numeric} from './numeric.d.ts';
-import type {IsAny} from './is-any.d.ts';
 import type {And} from './and.d.ts';
 
 /**
+Supports all {@link IsStringLiteralOptions} options.
+
 @see {@link IsLiteral}
 */
 type IsLiteralOptions =
