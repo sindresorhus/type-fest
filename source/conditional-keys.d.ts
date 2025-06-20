@@ -1,5 +1,7 @@
-import type {If} from './if.d.ts';
-import type {IsNever} from './is-never.d.ts';
+import type {ExtendsStrict} from './extends-strict.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {TupleToObject} from './tuple-to-object.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Extract the keys from a type where the value type of the key extends the given `Condition`.
@@ -36,16 +38,13 @@ type NoMatchingKeys = ConditionalKeys<{a?: string}, string>;
 
 @category Object
 */
-export type ConditionalKeys<Base, Condition> =
-{
-	// Map through all the keys of the given base type.
-	[Key in keyof Base]-?:
-	// Pick only keys with types extending the given `Condition` type.
-	Base[Key] extends Condition
-	// Retain this key
-	// If the value for the key extends never, only include it if `Condition` also extends never
-		? If<IsNever<Base[Key]>, If<IsNever<Condition>, Key, never>, Key>
-	// Discard this key since the condition fails.
-		: never;
-	// Convert the produced object into a union type of the keys which passed the conditional test.
-}[keyof Base];
+export type ConditionalKeys<Base, Condition> = (Base extends UnknownArray ? TupleToObject<Base> : Base) extends infer _Base // Remove non-numeric keys from arrays
+	? IfNotAnyOrNever<_Base, _ConditionalKeys<_Base, Condition>, keyof _Base>
+	: never;
+
+type _ConditionalKeys<Base, Condition> = keyof {
+	[
+	Key in (keyof Base & {}) as // `& {}` prevents homomorphism
+	ExtendsStrict<Base[Key], Condition> extends true ? Key : never
+	]: never
+};
