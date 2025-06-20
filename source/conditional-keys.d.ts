@@ -36,7 +36,7 @@ type NoMatchingKeys = ConditionalKeys<{a?: string}, string>;
 //=> never
 ```
 
-You can also extract array indicies whose value match the specified condition, as shown below:
+You can also extract array indices whose value match the specified condition, as shown below:
 ```
 import type {ConditionalKeys} from 'type-fest';
 
