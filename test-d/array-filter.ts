@@ -2,8 +2,15 @@ import {expectType} from 'tsd';
 import type {ArrayFilter} from '../source/array-filter.d.ts';
 
 // Basic loose filtering
+expectType<ArrayFilter<[1, 2, 3, 3, 4], 3, true>>([3, 3]);
 expectType<ArrayFilter<[1, '2', 3, 'foo', false], number>>([1, 3]);
 expectType<ArrayFilter<[1, '2', 3, 'foo', false], string>>(['2', 'foo']);
+expectType<ArrayFilter<[1, '2', 3, 'foo', false], string | number>>([1, '2', 3, 'foo']);
+expectType<ArrayFilter<['foo', 'baz', 'foo', 'foo'], 'foo', true>>(['foo', 'foo', 'foo']);
+expectType<ArrayFilter<[1, '2', 3, 'foo', false], string | number, true>>([1, '2', 3, 'foo']);
+expectType<ArrayFilter<['1', '2', 3, 4, 'foo'], `${number}`>>(['1', '2']);
+expectType<ArrayFilter<[true, false, true, 0, 1], boolean>>([true, false, true]);
+expectType<ArrayFilter<[true, false, true, 0, 1], true>>([true, true]);
 
 // Filtering Boolean (keep truthy values)
 expectType<ArrayFilter<[true, false, boolean, 0, 1], Boolean>>([true, 1]);
@@ -11,21 +18,11 @@ expectType<ArrayFilter<[true, false, boolean, 0, 1], Boolean, true>>([true, 1]);
 expectType<ArrayFilter<[0, '', false, null, undefined, 'ok', 42], Boolean>>(['ok', 42]);
 expectType<ArrayFilter<[true, false, 0, 1, '', 'text', null, undefined], Boolean>>([true, 1, 'text']);
 
-// Strict filtering by literals
-expectType<ArrayFilter<[1, 2, 3, 3, 4], 3, true>>([3, 3]);
-expectType<ArrayFilter<[1, '2', 3, 'foo', false], string | number>>([1, '2', 3, 'foo']);
-expectType<ArrayFilter<['foo', 'baz', 'foo', 'foo'], 'foo', true>>(['foo', 'foo', 'foo']);
-expectType<ArrayFilter<[1, '2', 3, 'foo', false], string | number, true>>([1, '2', 3, 'foo']);
-
-expectType<ArrayFilter<['1', '2', 3, 4, 'foo'], `${number}`>>(['1', '2']);
-expectType<ArrayFilter<[true, false, true, 0, 1], boolean>>([true, false, true]);
-expectType<ArrayFilter<[true, false, true, 0, 1], true>>([true, true]);
-
-// Filtering union with objects
+// Filtering objects
 type Object1 = {a: number};
 type Object2 = {b: string};
-expectType<ArrayFilter<[Object1, Object2, Object1 & Object2], Object1>>([{a: 1}, {a: 1, b: 'b'}]);
-expectType<ArrayFilter<[Object1, Object2, Object1 & Object2], Object1, true>>([{a: 1}, {a: 1, b: 'b'}]);
+expectType<ArrayFilter<[Object1, Object2, Object1 & Object2], Object1>>({} as [Object1, Object1 & Object2]);
+expectType<ArrayFilter<[Object1, Object2, Object1 & Object2], Object1, true>>({} as [Object1, Object1 & Object2]);
 
 // Loose filtering by boolean or number
 expectType<ArrayFilter<[true, 0, 1, false, 'no'], boolean | number>>([true, 0, 1, false]);

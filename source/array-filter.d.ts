@@ -19,7 +19,7 @@ type FilterType<T, U, S extends boolean> =
 /**
 Determines whether the array `V` should be kept based on the boolean type `T`.
 */
-type IfFilter<T extends boolean, V extends UnknownArray> = T extends true ? V : [];
+type IfFilter<T extends boolean, V extends UnknownArray> = [T] extends [true] ? V : [];
 
 /**
 Filters elements from an `Array_` based on whether they match the given `Type`.
