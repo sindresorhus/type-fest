@@ -11,17 +11,49 @@ import type {And} from './and.d.ts';
 /**
 @see {@link IsLiteral}
 */
-type IsLiteralOptions = {
+type IsLiteralOptions =
+	& IsStringLiteralOptions;
+//  & Is*LiteralOptions...
+
+/**
+@see {@link IsStringLiteral}
+*/
+type IsStringLiteralOptions = {
 	/**
-	Whether to match only finite literal types.
+	Controls whether wide string patterns such as template literals (`on${string}`),
+	or utility type results like `Uppercase<string>`, should be treated as **non-literals**.
+
+	When `strictStringCheck` is `true`, types like `on${string}` or `Uppercase<string>`
+	are considered **not** string literals.
+
+	When set to `false`, those cases are considered **valid** literals.
+
+	@example
+	```
+	type E1 = IsStringLiteral<`abc${string}`>;
+	//=> false
+
+	type E2 = IsStringLiteral<`abc${string}`, {strictStringCheck: false}>;
+	//=> true
+
+	type E3 = IsLiteral<Uppercase<string>>;
+	//=> false
+
+	type E4 = IsLiteral<Uppercase<string>, {strictStringCheck: false}>;
+	//=> true
+	```
 
 	@default true
 	*/
-	strict?: boolean;
+	strictStringCheck?: boolean;
 };
 
-type DefaultIsLiteralOptions = {
-	strict: true;
+type DefaultIsLiteralOptions =
+	& DefaultIsStringLiteralOptions;
+//  & DefaultIs*LiteralOptions...
+
+type DefaultIsStringLiteralOptions = {
+	strictStringCheck: true;
 };
 
 /**
@@ -31,23 +63,21 @@ Returns a boolean for whether the given type `T` is the specified `LiteralType`.
 
 @example
 ```
-LiteralCheck<1, number>
+type T1 = LiteralCheck<1, number>
 //=> true
 
-LiteralCheck<number, number>
+type T2 = LiteralCheck<number, number>
 //=> false
 
-LiteralCheck<1, string>
+type T3 = LiteralCheck<1, string>
 //=> false
 ```
 */
 type LiteralCheck<T, LiteralType extends Primitive> = (
-	IsNever<T> extends false // Must be wider than `never`
-		? [T] extends [LiteralType & infer U] // Remove any branding
-			? And<
-				ExtendsStrict<U, LiteralType>, // Must be narrower than `LiteralType`
-				Not<ExtendsStrict<LiteralType, U>>> // Cannot be wider than `LiteralType`
-			: false
+	[T] extends [LiteralType & infer U] // Remove any branding
+		? And<
+			ExtendsStrict<U, LiteralType>, // Must be narrower than `LiteralType`
+			Not<ExtendsStrict<LiteralType, U>>> // Cannot be wider than `LiteralType`
 		: false
 );
 
@@ -56,17 +86,15 @@ Returns a boolean for whether the given type `T` is one of the specified literal
 
 @example
 ```
-LiteralChecks<1, Numeric>
+type T1 = LiteralChecks<1, Numeric>
 //=> true
 
-LiteralChecks<1n, Numeric>
+type T2 = LiteralChecks<1n, Numeric>
 //=> true
 
-LiteralChecks<bigint, Numeric>
+type T3 = LiteralChecks<bigint, Numeric>
 //=> false
 ```
-
-@deprecated
 
 */
 type LiteralChecks<T, LiteralUnionType> = (
@@ -83,7 +111,7 @@ type LiteralChecks<T, LiteralUnionType> = (
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
-By default, it's Strict only matching finite literals, See {@link IsLiteralOptions.strict strict} option to change this behaviour.
+By default, it returns `false` for wide string types like (`on${string}`, `Uppercase<string>`, ...). See {@link IsStringLiteralOptions `IsStringLiteralOptions`}.
 
 Useful for:
 	- providing strongly-typed string manipulation functions
@@ -139,24 +167,22 @@ type L2 = Length<`${number}`>;
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<T, Options extends IsLiteralOptions = {}> = (
+export type IsStringLiteral<T, Options extends IsStringLiteralOptions = {}> = (
 	IsNever<T> extends false
 		? _IsStringLiteral<
 			CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>,
-			ApplyDefaultOptions<IsLiteralOptions, DefaultIsLiteralOptions, Options>
+			ApplyDefaultOptions<IsStringLiteralOptions, DefaultIsStringLiteralOptions, Options>
 		>
 		: false
 );
 
-type _IsStringLiteral<S, Options extends Required<IsLiteralOptions>> = (
+type _IsStringLiteral<S, Options extends Required<IsStringLiteralOptions>> = (
 	// If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
 	// and since `{}` extends index signatures, the result becomes `false`.
 	S extends string
-		? Options['strict'] extends false
-			? LiteralChecks<S, string>
-			: {} extends Record<S, never>
-				? false
-				: true
+		? Options['strictStringCheck'] extends true
+			? {} extends Record<S, never> ? false : true
+			: LiteralCheck<S, string>
 		: false
 );
 
@@ -207,12 +233,7 @@ endsWith('abc123', end);
 @category Type Guard
 @category Utilities
 */
-export type IsNumericLiteral<T> =
-	T extends number
-		? T extends bigint
-			? LiteralCheck<T, Numeric>
-			: LiteralCheck<T, number>
-		: LiteralCheck<T, bigint>;
+export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
 
 /**
 Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -301,7 +322,7 @@ type IsLiteralUnion<T, O extends IsLiteralOptions> =
 /**
 Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
-By default, it's Strict only matching finite literals, See {@link IsLiteralOptions.strict strict} option to change this behaviour.
+See {@link IsLiteralOptions `IsLiteralOptions`}.
 
 Useful for:
 	- providing strongly-typed functions when given literal arguments
