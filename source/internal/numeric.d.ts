@@ -1,5 +1,5 @@
 import type {IsNever} from '../is-never.d.ts';
-import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
+import type {Finite, NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {StringToNumber} from './string.d.ts';
 import type {IsAnyOrNever} from './type.d.ts';
@@ -44,9 +44,10 @@ type E = IsNumberLike<'a'>;
 //=> false
 */
 export type IsNumberLike<N> =
-	N extends number | `${number}`
-		? true
-		: false;
+	IsAnyOrNever<N> extends true ? N
+		: N extends number | `${number}`
+			? true
+			: false;
 
 /**
 Returns the minimum number in the given union of numbers.
@@ -69,8 +70,11 @@ type D = UnionMin<never>;
 ```
 */
 export type UnionMin<N extends number> =
-	IsAnyOrNever<N> extends true ? N // Returns `any` or `never`
-		: InternalUnionMin<N>;
+	IsAnyOrNever<N> extends true ? N
+		: number extends N ? number
+			: NegativeInfinity extends N ? NegativeInfinity
+				: [N] extends [PositiveInfinity] ? PositiveInfinity
+					: InternalUnionMin<Finite<N>>;
 
 /**
 The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.
@@ -101,9 +105,11 @@ type D = UnionMax<never>;
 ```
 */
 export type UnionMax<N extends number> =
-	IsAnyOrNever<N> extends true ? N // Returns `any` or `never`
-		: [number] extends [N] ? number
-			: InternalUnionMax<N>;
+	IsAnyOrNever<N> extends true ? N
+		: number extends N ? number
+			: PositiveInfinity extends N ? PositiveInfinity
+				: [N] extends [NegativeInfinity] ? NegativeInfinity
+					: InternalUnionMax<Finite<N>>;
 
 /**
 The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
