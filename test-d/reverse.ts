@@ -39,7 +39,7 @@ expectType<Reverse<['x', 1, true]>>([true, 1, 'x'] as const);
 expectType<Reverse<[1?, 2?, 3?]>>([3, 2, 1] as const);
 expectType<Reverse<[1?, 2?, 3?], {preserveOptionalModifier: true}>>({} as [3?, 2?, 1?]);
 expectType<Reverse<[1, 2?, 3?], {preserveOptionalModifier: true}>>({} as [3 | undefined, 2 | undefined, 1]);
-expectType<Reverse<[1 | undefined, 2 | undefined]>>([2, 1] as const);
+expectType<Reverse<[1 | undefined, 2 | undefined]>>({} as [2 | undefined, 1 | undefined]);
 expectType<Reverse<[undefined, 1, 2]>>([2, 1, undefined] as const);
 expectType<Reverse<[string, number?]>>([number, string] as const);
 expectType<Reverse<[number?, string?]>>([string, number] as const);
