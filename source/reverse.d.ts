@@ -7,9 +7,11 @@ import type {IsAny} from './is-any.d.ts';
 import type {If} from './if.d.ts';
 
 /**
+Reverse options.
+
 @see {@link Reverse}
 */
-type ArrayReverseOptions = {
+type ReverseOptions = {
 	/**
 	Whether to preserve the optional modifier (`?`).
 
@@ -20,16 +22,16 @@ type ArrayReverseOptions = {
 	```
 	import type {Reverse} from 'type-fest';
 
-	type Example1 = Reverse<[string?, number?, boolean?]>;
+	type Ex1 = Reverse<[string, number, boolean]>;
 	//=> [boolean, number, string]
 
-	type Example2 = Reverse<[string?, number?, boolean?], {preserveOptionalModifier: true}>;
+	type Ex2 = Reverse<[string?, number?, boolean?], {preserveOptionalModifier: true}>;
 	//=> [boolean?, number?, string?]
 
-	type Example3 = Reverse<[string, number?, boolean?]>;
+	type Ex3 = Reverse<[string, number?, boolean?]>;
 	//=> [boolean, number, string] or [boolean | undefined, number | undefined, string]
 
-	type Example4 = Reverse<[string, number, boolean], {preserveOptionalModifier: true}>;
+	type Ex4 = Reverse<[string, number?, boolean?], {preserveOptionalModifier: true}>;
 	//=> [boolean | undefined, number | undefined, string]
 	```
 
@@ -38,7 +40,7 @@ type ArrayReverseOptions = {
 	preserveOptionalModifier?: boolean;
 };
 
-type DefaultArrayReverseOptions = {
+type DefaultReverseOptions = {
 	preserveOptionalModifier: false;
 };
 
@@ -69,7 +71,8 @@ type _Reverse<
 /**
 Creates a new array type by Reversing the order of each element in the original array.
 
-By default, The type Preserve `readonly` modifier, and replace Optional keys with `type | undefined`. See {@link ArrayReverseOptions} options to change this behaviour.
+By default, the optional modifier (`?`) is **not** preserved and replaced with `T` or `T | undefined` depending on the `exactOptionalPropertyTypes` compiler option.
+See {@link ReverseOptions `ReverseOptions`}.
 
 @example
 ```
@@ -85,29 +88,25 @@ type T3 = Reverse<['a', 'b'?, 'c'?]>
 type T4 = Reverse<['a'?, 'b'?, 'c'?], {preserveOptionalModifier: true}>
 //=> ['c'?, 'b'?, 'a'?]
 
-type T5 = Reverse<readonly [1, 2, ...number[]]>
-//=> readonly [...number[], 2, 1]
+type T5 = Reverse<readonly [1, 2, ...number[], 4]>
+//=> readonly [4, ...number[], 2, 1]
 
 declare function reverse<const T extends unknown[]>(array: T): Reverse<T>;
 reverse(['a', 'b', 'c', 'd']);
 //=> ['d', 'c', 'b', 'a']
 ```
 
-@author benzaria
-@see {@link ArrayReverseOptions}
 @category Array
 */
-export type Reverse<Array_ extends UnknownArray, Options extends ArrayReverseOptions = {}> =
+export type Reverse<Array_ extends UnknownArray, Options extends ReverseOptions = {}> =
 	IsAny<Array_> extends false // Prevent the return of `Readonly<[] | [unknown] | unknown[] | [...unknown[], unknown]>`
 		? Array_ extends UnknownArray // For distributing `Array_`
 			? _Reverse<Array_, ApplyDefaultOptions<
-				ArrayReverseOptions,
-				DefaultArrayReverseOptions,
+				ReverseOptions,
+				DefaultReverseOptions,
 				Options
 			>['preserveOptionalModifier']> extends infer Result
-				? IsArrayReadonly<Array_> extends true
-					? Readonly<Result>
-					: Result
+				? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
 				: never
 			: never
-		: never;
+		: Array_;
