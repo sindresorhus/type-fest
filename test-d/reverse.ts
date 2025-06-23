@@ -1,6 +1,7 @@
 import {expectType} from 'tsd';
 import type {Reverse} from '../source/reverse.d.ts';
 
+declare const any: any;
 declare const never: never;
 declare const string: string;
 declare const number: number;
