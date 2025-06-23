@@ -9,7 +9,7 @@ declare const boolean: boolean;
 
 // Edge cases
 expectType<Reverse<[]>>([]);
-expectType<Reverse<any>>(never);
+expectType<Reverse<any>>(any);
 expectType<Reverse<never>>(never);
 
 // Single element
