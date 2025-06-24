@@ -1,7 +1,5 @@
 import type {If} from '../if.d.ts';
-import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
-import type {IsUnion} from '../is-union.d.ts';
 import type {EmptyObject} from '../empty-object.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
@@ -109,14 +107,19 @@ Returns a `boolean` for whether the type is an empty array, the `[]` or `readonl
 @example
 ```
 import type {IsEmptyArray} from 'type-fest';
+
 type Pass1 = IsEmptyArray<[]>;
 //=> true
+
 type Pass2 = IsEmptyArray<readonly []>;
 //=> true
+
 type Fail1 = IsEmptyArray<[0]>;
 //=> false
+
 type Fail2 = IsEmptyArray<[0?]>;
 //=> false
+
 type Fail3 = IsEmptyArray<...string[]>;
 //=> false
 ```
