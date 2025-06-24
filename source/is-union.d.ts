@@ -19,7 +19,8 @@ export type IsUnion<T> = InternalIsUnion<T>;
 /**
 The actual implementation of `IsUnion`.
 */
-type InternalIsUnion<T, U = T> = (
+type InternalIsUnion<T, U = T> =
+(
 	IsNever<T> extends true
 		? false
 		: T extends any
