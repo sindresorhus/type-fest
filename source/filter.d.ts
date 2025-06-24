@@ -21,11 +21,11 @@ type FilterOptions = {
  	*/
 
 	strict?: boolean;
-}
+};
 
 type DefaultFilterOptions = {
 	strict: false;
-}
+};
 
 /**
 Shorhand for `ApplyDefaultOptions<...>`
