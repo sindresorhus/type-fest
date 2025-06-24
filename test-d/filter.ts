@@ -2,19 +2,19 @@ import {expectType} from 'tsd';
 import type {Filter} from '../source/filter.d.ts';
 
 // Basic loose filtering
-expectType<Filter<[1, 2, 3, 3, 4], 3, true>>([3, 3]);
+expectType<Filter<[1, 2, 3, 3, 4], 3, {strict: true}>>([3, 3]);
 expectType<Filter<[1, '2', 3, 'foo', false], number>>([1, 3]);
 expectType<Filter<[1, '2', 3, 'foo', false], string>>(['2', 'foo']);
 expectType<Filter<[1, '2', 3, 'foo', false], string | number>>([1, '2', 3, 'foo']);
-expectType<Filter<['foo', 'baz', 'foo', 'foo'], 'foo', true>>(['foo', 'foo', 'foo']);
-expectType<Filter<[1, '2', 3, 'foo', false], string | number, true>>([1, '2', 3, 'foo']);
+expectType<Filter<['foo', 'baz', 'foo', 'foo'], 'foo', {strict: true}>>(['foo', 'foo', 'foo']);
+expectType<Filter<[1, '2', 3, 'foo', false], string | number, {strict: true}>>([1, '2', 3, 'foo']);
 expectType<Filter<['1', '2', 3, 4, 'foo'], `${number}`>>(['1', '2']);
 expectType<Filter<[true, false, true, 0, 1], boolean>>([true, false, true]);
 expectType<Filter<[true, false, true, 0, 1], true>>([true, true]);
 
 // Filtering Boolean (keep truthy values)
 expectType<Filter<[true, false, boolean, 0, 1], Boolean>>([true, 1]);
-expectType<Filter<[true, false, boolean, 0, 1], Boolean, true>>([true, 1]);
+expectType<Filter<[true, false, boolean, 0, 1], Boolean, {strict: true}>>([true, 1]);
 expectType<Filter<[0, '', false, null, undefined, 'ok', 42], Boolean>>(['ok', 42]);
 expectType<Filter<[true, false, 0, 1, '', 'text', null, undefined], Boolean>>([true, 1, 'text']);
 
@@ -22,7 +22,7 @@ expectType<Filter<[true, false, 0, 1, '', 'text', null, undefined], Boolean>>([t
 type Object1 = {a: number};
 type Object2 = {b: string};
 expectType<Filter<[Object1, Object2, Object1 & Object2], Object1>>({} as [Object1, Object1 & Object2]);
-expectType<Filter<[Object1, Object2, Object1 & Object2], Object1, true>>({} as [Object1, Object1 & Object2]);
+expectType<Filter<[Object1, Object2, Object1 & Object2], Object1, {strict: true}>>({} as [Object1, Object1 & Object2]);
 
 // Loose filtering by boolean or number
 expectType<Filter<[true, 0, 1, false, 'no'], boolean | number>>([true, 0, 1, false]);
@@ -64,16 +64,16 @@ class Foo {}
 expectType<Filter<[typeof Foo, {}, null, undefined], Boolean>>([Foo, {}]);
 
 // Filtering with strict = true and union including literals and primitives
-expectType<Filter<[1, '1', 2, '2', true, false], number | `${number}`, true>>([1, '1', 2, '2']);
+expectType<Filter<[1, '1', 2, '2', true, false], number | `${number}`, {strict: true}>>([1, '1', 2, '2']);
 
 // Filtering falsy values mixed with ({} | [] is truthy)
 expectType<Filter<[false, 0, '', null, undefined, {}, []], Boolean>>([{}, []]);
 
 // Filtering with `true` literal (strict) but array contains boolean and number
-expectType<Filter<[true, false, 1, 0], true, true>>([true]);
+expectType<Filter<[true, false, 1, 0], true, {strict: true}>>([true]);
 
 // Filtering empty string literal type with strict mode
-expectType<Filter<['', 'non-empty'], '', true>>(['']);
+expectType<Filter<['', 'non-empty'], '', {strict: true}>>(['']);
 
 // Filtering with loose mode for literal union type and matching subset
 expectType<Filter<[1, 2, 3, 4, 5], 2 | 3>>([2, 3]);
@@ -112,4 +112,4 @@ expectType<Filter<[], number>>([]);
 expectType<Filter<[never, never], number>>([]);
 expectType<Filter<[never, never], never>>([]);
 expectType<Filter<[never, never], never>>([]);
-expectType<Filter<[never, never], never, true>>({} as [never, never]);
+expectType<Filter<[never, never], never, {strict: true}>>({} as [never, never]);
