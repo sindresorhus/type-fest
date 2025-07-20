@@ -40,7 +40,7 @@ expectType<{a: {b: {c: string}} | null | undefined}>({} as SetNonNullableDeep<{a
 expectType<{a: {b: {c: string} | null}}>({} as SetNonNullableDeep<{a: {b: {c: string | undefined} | null} | null | undefined}, 'a' | 'a.b.c'>);
 expectType<{a: {b?: {c: {d?: {e: number | string}; f: {g: boolean}} | undefined} | null; h: number | null}}>(
 	{} as SetNonNullableDeep<
-	{a: {b?: {c: {d?: {e: number | string} | null; f: {g: boolean | null}} | undefined} | null; h: number | null} | undefined},
+		{a: {b?: {c: {d?: {e: number | string} | null; f: {g: boolean | null}} | undefined} | null; h: number | null} | undefined},
 	'a' | 'a.b.c.d' | 'a.b.c.f.g'
 	>,
 );
@@ -92,9 +92,11 @@ expectType<{1.2?: string; 1?: {2?: string} | undefined}>({} as SetNonNullableDee
 expectType<{[x: string]: any; a: number; b: {c: number}}>({} as SetNonNullableDeep<{[x: string]: any; a: number | null; b: {c: number | null}}, 'a' | 'b.c'>);
 
 // Works with `KeyPaths` containing template literals
-expectType<{a: number | null; b: {c: number} | {d: number} | null | undefined}>({} as SetNonNullableDeep<{a: number | null; b: {c: number | null} | {d: number | undefined} | null | undefined}, `b.${'c' | 'd'}`>);
+expectType<{a: number | null; b: {c: number} | {d: number} | null | undefined}>(
+	{} as SetNonNullableDeep<{a: number | null; b: {c: number | null} | {d: number | undefined} | null | undefined}, `b.${'c' | 'd'}`>,
+);
 expectType<{a: number; b: null | {readonly c: {1: number[]} | undefined} | {d: {1: number[]} | null}}>({} as SetNonNullableDeep<
-{a: number | undefined; b: null | {readonly c: {1: number[] | undefined} | undefined} | {d: {1: number[] | undefined} | null}}, 'a' | `b.${'c' | 'd'}.1`
+	{a: number | undefined; b: null | {readonly c: {1: number[] | undefined} | undefined} | {d: {1: number[] | undefined} | null}}, 'a' | `b.${'c' | 'd'}.1`
 >);
 
 // Non recursive types
@@ -132,7 +134,10 @@ expectType<{a?: readonly [string | null, (number | undefined)?, (boolean | null)
 
 // Unions of arrays
 expectType<{a: [string] | [string, number?, (boolean | null)?, ...Array<number | null>] | readonly [string, number, (boolean | undefined)?]}>(
-	{} as SetNonNullableDeep<{a: [string | undefined] | [string | null, number?, (boolean | null)?, ...Array<number | null>] | readonly [string | null | undefined, number | null, (boolean | undefined)?]}, 'a.0' | 'a.1'>,
+	{} as SetNonNullableDeep<
+		{a: [string | undefined] | [string | null, number?, (boolean | null)?, ...Array<number | null>] | readonly [string | null | undefined, number | null, (boolean | undefined)?]},
+	'a.0' | 'a.1'
+	>,
 );
 
 // Labelled tuples
@@ -152,7 +157,7 @@ expectType<{a?: Array<[string | null, number?]> | null}>({} as SetNonNullableDee
 expectType<{a?: Array<{b: number}> | undefined}>({} as SetNonNullableDeep<{a?: Array<{b: number | null}> | undefined}, `a.${number}.b`>);
 expectType<{readonly a?: [{readonly b: number}]}>({} as SetNonNullableDeep<{readonly a?: [{readonly b: number | undefined}] | null}, 'a' | 'a.0' | 'a.0.b'>);
 expectType<{readonly a: [{readonly b: number}, {c?: string | null}?]}>(
-	{} as SetNonNullableDeep<{readonly a: [{readonly b: number | null | undefined}, ({c?: string | null} | undefined)?]}, 'a.0.b' | 'a.1' >,
+	{} as SetNonNullableDeep<{readonly a: [{readonly b: number | null | undefined}, ({c?: string | null} | undefined)?]}, 'a.0.b' | 'a.1'>,
 );
 expectType<{a?: Array<{b: number; c?: string | null}> | null}>({} as SetNonNullableDeep<{a?: Array<{b: number | undefined; c?: string | null}> | null}, `a.${number}.b`>);
 expectType<{a: [{b?: number | null; readonly c: string}]}>({} as SetNonNullableDeep<{a: [{b?: number | null; readonly c: string | undefined}]}, 'a.0.c'>);

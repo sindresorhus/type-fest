@@ -21,12 +21,12 @@ type OpaqueObjectData = {readonly a: number[]} | {readonly b: string};
 type OpaqueObject = Opaque<OpaqueObjectData, {readonly token: unknown}>;
 
 type ReadonlyJsonValue =
-  | {readonly [k: string]: ReadonlyJsonValue}
-  | readonly ReadonlyJsonValue[]
-  | number
-  | string
-  | boolean
-  | null;
+	| {readonly [k: string]: ReadonlyJsonValue}
+	| readonly ReadonlyJsonValue[]
+	| number
+	| string
+	| boolean
+	| null;
 
 const data = {
 	object: {

@@ -3,6 +3,8 @@ import type {IsNull} from './is-null.d.ts';
 /**
 An if-else-like type that resolves depending on whether the given type is `null`.
 
+@deprecated This type will be removed in the next major version. Use the {@link If} type instead.
+
 @see {@link IsNull}
 
 @example

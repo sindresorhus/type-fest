@@ -89,7 +89,7 @@ declare const variation23: SetRequiredDeep<{a?: number; b?: {c?: number} | {d?: 
 expectType<{a?: number; b?: {c: number} | {d: number}}>(variation23);
 
 declare const variation24: SetRequiredDeep<
-{a?: number; b?: {readonly c?: {1?: number}} | {d?: {1?: number}}}, 'a' | `b.${'c' | 'd'}.1`
+	{a?: number; b?: {readonly c?: {1?: number}} | {d?: {1?: number}}}, 'a' | `b.${'c' | 'd'}.1`
 >;
 expectType<{a: number; b?: {readonly c?: {1: number}} | {d?: {1: number}}}>(variation24);
 
@@ -176,7 +176,7 @@ expectType<{a?: Array<[string, number?]>}>({} as SetRequiredDeep<{a?: Array<[str
 expectType<{a?: Array<{b: number}>}>({} as SetRequiredDeep<{a?: Array<{b?: number}>}, `a.${number}.b`>);
 expectType<{readonly a?: [{readonly b: number}]}>({} as SetRequiredDeep<{readonly a?: [{readonly b?: number}]}, 'a.0.b'>);
 expectType<{readonly a: [{readonly b: number}, {c?: string}]}>(
-	{} as SetRequiredDeep<{readonly a?: [{readonly b?: number}, {c?: string}?]}, 'a' | 'a.0.b' | 'a.1' >,
+	{} as SetRequiredDeep<{readonly a?: [{readonly b?: number}, {c?: string}?]}, 'a' | 'a.0.b' | 'a.1'>,
 );
 
 // Set only specified keys inside array to required

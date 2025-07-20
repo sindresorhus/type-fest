@@ -92,8 +92,8 @@ type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
 */
 export type OmitDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
 	SimplifyDeep<
-	OmitDeepHelper<T, UnionToTuple<PathUnion>>,
-	UnknownArray>;
+		OmitDeepHelper<T, UnionToTuple<PathUnion>>,
+		UnknownArray>;
 
 /**
 Internal helper for {@link OmitDeep}.

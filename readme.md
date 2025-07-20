@@ -20,34 +20,6 @@
 			<sup>Special thanks to:</sup>
 			<br>
 			<br>
-			<a href="https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=type-fest&utm_source=github">
-				<div>
-					<img src="https://sindresorhus.com/assets/thanks/workos-logo-white-bg.svg" width="220" alt="WorkOS">
-				</div>
-				<b>Your app, enterprise-ready.</b>
-				<div>
-					<sub>Start selling to enterprise customers with just a few lines of code.</sub>
-					<br>
-					<sup>Add Single Sign-On (and more) in minutes instead of months.</sup>
-				</div>
-			</a>
-			<br>
-			<br>
-			<a href="https://logto.io/?ref=sindre">
-				<div>
-					<picture>
-						<source width="200" media="(prefers-color-scheme: dark)" srcset="https://sindresorhus.com/assets/thanks/logto-logo-dark.svg?x">
-						<source width="200" media="(prefers-color-scheme: light)" srcset="https://sindresorhus.com/assets/thanks/logto-logo-light.svg?x">
-						<img width="200" src="https://sindresorhus.com/assets/thanks/logto-logo-light.svg?x" alt="Logto logo">
-					</picture>
-				</div>
-				<b>The better identity infrastructure for developers</b>
-				<div>
-					<sup>Logto is an open-source Auth0 alternative designed for every app.</sup>
-				</div>
-			</a>
-			<br>
-			<br>
 			<a href="https://nitric.io/?utm_campaign=github_repo&utm_medium=referral&utm_content=sindresorhus&utm_source=github">
 				<div>
 					<img width="230" src="https://sindresorhus.com/assets/thanks/nitric-logo.svg" alt="nitric logo">
@@ -111,10 +83,14 @@ Click the type names for complete docs.
 - [`Primitive`](source/primitive.d.ts) - Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
 - [`Class`](source/basic.d.ts) - Matches a [`class`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`Constructor`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
-- [`AbstractClass`](source/basic.d.ts) - Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/classes.html#abstract-classes).
+- [`AbstractClass`](source/basic.d.ts) - Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/2/classes.html#abstract-classes-and-members).
 - [`AbstractConstructor`](source/basic.d.ts) - Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#abstract-construct-signatures) constructor.
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 - [`ObservableLike`](source/globals/observable-like.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
+- [`LowercaseLetter`](source/characters.d.ts) - Matches any lowercase letter in the basic Latin alphabet (a-z).
+- [`UppercaseLetter`](source/characters.d.ts) - Matches any uppercase letter in the basic Latin alphabet (A-Z).
+- [`DigitCharacter`](source/characters.d.ts) - Matches any digit as a string ('0'-'9').
+- [`Alphanumeric`](source/characters.d.ts) - Matches any lowercase letter (a-z), uppercase letter (A-Z), or digit ('0'-'9') in the basic Latin alphabet.
 
 ### Utilities
 
@@ -172,7 +148,7 @@ Click the type names for complete docs.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
-- [`StringKeyOf`](source/string-key-of.d.ts) - Get keys of the given type as strings.
+- [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
 - [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
@@ -202,6 +178,7 @@ Click the type names for complete docs.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
+- [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
 - [`FindGlobalType`](source/find-global-type.d.ts) - Tries to find the type of a global with the given name.
@@ -211,51 +188,32 @@ Click the type names for complete docs.
 
 ### Type Guard
 
-#### `IsType` vs. `IfType`
-
-For every `IsT` type (e.g. `IsAny`), there is an associated `IfT` type that can help simplify conditional types. While the `IsT` types return a `boolean`, the `IfT` types act like an `If`/`Else` - they resolve to the given `TypeIfT` or `TypeIfNotT` depending on whether `IsX` is `true` or not. By default, `IfT` returns a `boolean`:
-
-```ts
-type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = (
-	IsAny<T> extends true ? TypeIfAny : TypeIfNotAny
-);
-```
-
-#### Usage
-
-```ts
-import type {IsAny, IfAny} from 'type-fest';
-
-type ShouldBeTrue = IsAny<any> extends true ? true : false;
-//=> true
-
-type ShouldBeFalse = IfAny<'not any'>;
-//=> false
-
-type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
-//=> 'never'
-```
-
+- [`If`](source/if.d.ts) - An if-else-like type that resolves depending on whether the given `boolean` type is `true` or `false`.
 - [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsStringLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsNumericLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsBooleanLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsSymbolLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
-- [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`. (Conditional version: [`IfAny`](source/if-any.d.ts))
-- [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`. (Conditional version: [`IfNever`](source/if-never.d.ts))
-- [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`. (Conditional version: [`IfUnknown`](source/if-unknown.d.ts))
-- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value. (Conditional version: [`IfEmptyObject`](source/if-empty-object.d.ts))
-- [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`. (Conditional version: [`IfNull`](source/if-null.d.ts))
+- [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`.
+- [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`.
+- [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
+- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
+- [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
 - [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
+- [`IsUnion`](source/is-union.d.ts) - Returns a boolean for whether the given type is a union.
+- [`IsLowercase`](source/is-lowercase.d.ts) - Returns a boolean for whether the given string literal is lowercase.
+- [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.
+- [`IsOptional`](source/is-optional.d.ts) - Returns a boolean for whether the given type includes `undefined`.
+- [`IsNullable`](source/is-nullable.d.ts) - Returns a boolean for whether the given type includes `null`.
 
 ### JSON
 
 - [`Jsonify`](source/jsonify.d.ts) - Transform a type to one that is assignable to the `JsonValue` type.
 - [`Jsonifiable`](source/jsonifiable.d.ts) - Matches a value that can be losslessly converted to JSON.
-- [`JsonPrimitive`](source/basic.d.ts) - Matches a JSON primitive.
-- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
-- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
-- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
+- [`JsonPrimitive`](source/json-value.d.ts) - Matches a JSON primitive.
+- [`JsonObject`](source/json-value.d.ts) - Matches a JSON object.
+- [`JsonArray`](source/json-value.d.ts) - Matches a JSON array.
+- [`JsonValue`](source/json-value.d.ts) - Matches any valid JSON value.
 
 ### Structured clone
 
@@ -275,6 +233,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
+- [`RemovePrefix`](source/remove-prefix.d.ts) - Removes the specified prefix from the start of a string.
 
 ### Array
 
@@ -341,6 +300,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 
 ### Improved built-in
 
+- [`ExtendsStrict`](source/extends-strict.d.ts) - A stricter, non-distributive version of `extends` for checking whether one type is assignable to another.
 - [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of `Extract<T, U>` that ensures every member of `U` can successfully extract something from `T`.
 - [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of `Exclude<T, U>` that ensures every member of `U` can successfully exclude something from `T`.
 
@@ -376,6 +336,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
+- `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 
 ## Tips
 
@@ -400,7 +361,7 @@ type ShouldBeNever = IfAny<'not any', 'not never', 'never'>;
 ### Related
 
 - [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
-- [`Linter.Config`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/eslint/index.d.ts) - Definitions for the [ESLint configuration schema](https://eslint.org/docs/user-guide/configuring/language-options).
+- [`Linter.Config`](https://github.com/eslint/eslint/blob/main/lib/types/index.d.ts) - Definitions for the [ESLint configuration schema](https://eslint.org/docs/user-guide/configuring/language-options).
 
 ### Built-in types
 

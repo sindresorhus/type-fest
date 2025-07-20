@@ -1,4 +1,4 @@
-declare const tag: unique symbol;
+import type tag from 'tagged-tag';
 
 export type TagContainer<Token> = {
 	readonly [tag]: Token;
@@ -254,3 +254,5 @@ export type UnwrapOpaque<OpaqueType extends TagContainer<unknown>> =
 		: OpaqueType extends Opaque<infer Type, OpaqueType[typeof tag]>
 			? Type
 			: OpaqueType;
+
+export {type default as tag} from 'tagged-tag';

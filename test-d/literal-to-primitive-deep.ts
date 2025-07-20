@@ -48,7 +48,7 @@ type PrimitiveObject = {
 };
 
 const typeEqual: IsEqual<
-LiteralToPrimitiveDeep<LiteralObject>,
-PrimitiveObject
+	LiteralToPrimitiveDeep<LiteralObject>,
+	PrimitiveObject
 > = true;
 expectType<true>(typeEqual);

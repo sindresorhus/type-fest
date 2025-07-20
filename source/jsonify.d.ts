@@ -1,4 +1,4 @@
-import type {JsonPrimitive, JsonValue} from './basic.d.ts';
+import type {JsonPrimitive, JsonValue} from './json-value.d.ts';
 import type {EmptyObject} from './empty-object.d.ts';
 import type {UndefinedToOptional} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';

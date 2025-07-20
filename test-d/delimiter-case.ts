@@ -9,9 +9,9 @@ const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#a
 expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
 
 const delimiterFromComplexCamelSplitOnNumbers: DelimiterCase<
-'fooBarAbc123',
-'#',
-{splitOnNumbers: true}
+	'fooBarAbc123',
+	'#',
+	{splitOnNumbers: true}
 > = 'foo#bar#abc#123';
 expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumbers);
 
@@ -51,8 +51,8 @@ const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'>
 expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
 
 const delimiterFromVendorPrefixedCssProperty: DelimiterCase<
-'-webkit-animation',
-'#'
+	'-webkit-animation',
+	'#'
 > = 'webkit#animation';
 expectType<'webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
 

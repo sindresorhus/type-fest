@@ -10,7 +10,7 @@ Create a type from `ParameterType` and `InputType` and change keys exclusive to 
 - Mark these excess keys as `never`.
 */
 type ExactObject<ParameterType, InputType> = {[Key in keyof ParameterType]: Exact<ParameterType[Key], ObjectValue<InputType, Key>>}
-& Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
+	& Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
 
 /**
 Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.

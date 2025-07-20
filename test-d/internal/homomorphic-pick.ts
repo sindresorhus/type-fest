@@ -48,6 +48,5 @@ declare const test13: HomomorphicPick<{[k: string]: unknown; a: 1; b: 2}, 'a' | 
 expectType<{a: 1; b: 2}>(test13);
 
 // Doesn't pick `number` from a `string` index signature
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 declare const test14: HomomorphicPick<{[k: string]: unknown}, number>;
 expectType<{}>(test14);

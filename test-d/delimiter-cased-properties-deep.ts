@@ -57,7 +57,7 @@ expectType<{readonly 'user-id'?: number}>(key);
 /** Test Array */
 // Test for tuple
 declare const tuple: DelimiterCasedPropertiesDeep<[User], '-'>;
-expectType<[{'user-id': number;'user-name': string;date: Date;'reg-exp': RegExp}]>(tuple);
+expectType<[{'user-id': number; 'user-name': string; date: Date; 'reg-exp': RegExp}]>(tuple);
 declare const tuple2: DelimiterCasedPropertiesDeep<['UserId', 'UserAge', string], '-'>;
 expectType<['UserId', 'UserAge', string]>(tuple2);
 // Test for readonly tuple
@@ -65,7 +65,7 @@ declare const readonlyTuple: DelimiterCasedPropertiesDeep<readonly [{userId: str
 expectType<readonly [{'user-id': string}, {'user-name': number}]>(readonlyTuple);
 // Test for array
 declare const array: DelimiterCasedPropertiesDeep<User[], '-'>;
-expectType<Array<{'user-id': number;'user-name': string;date: Date;'reg-exp': RegExp}>>(array);
+expectType<Array<{'user-id': number; 'user-name': string; date: Date; 'reg-exp': RegExp}>>(array);
 // Test for readonly array
 declare const readonlyArray: DelimiterCasedPropertiesDeep<ReadonlyArray<{userId: string}>, '-'>;
 expectType<ReadonlyArray<{'user-id': string}>>(readonlyArray);

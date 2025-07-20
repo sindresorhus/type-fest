@@ -100,9 +100,9 @@ export type ConditionalPickDeep<
 	Condition,
 	Options extends ConditionalPickDeepOptions = {},
 > = _ConditionalPickDeep<
-Type,
-Condition,
-ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>
+	Type,
+	Condition,
+	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>
 >;
 
 type _ConditionalPickDeep<

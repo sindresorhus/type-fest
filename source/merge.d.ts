@@ -43,6 +43,6 @@ export type FooBar = Merge<Foo, Bar>;
 */
 export type Merge<Destination, Source> =
 Simplify<
-SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
-& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
+	SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
+	& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
 >;

@@ -2,6 +2,8 @@
 export type * from './source/primitive.d.ts';
 export type * from './source/typed-array.d.ts';
 export type * from './source/basic.d.ts';
+export type * from './source/json-value.d.ts';
+export type * from './source/characters.d.ts';
 
 // Utilities
 export type {KeysOfUnion} from './source/keys-of-union.d.ts';
@@ -92,7 +94,7 @@ export type {LessThan} from './source/less-than.d.ts';
 export type {LessThanOrEqual} from './source/less-than-or-equal.d.ts';
 export type {Sum} from './source/sum.d.ts';
 export type {Subtract} from './source/subtract.d.ts';
-export type {StringKeyOf} from './source/string-key-of.d.ts';
+export type {KeyAsString} from './source/key-as-string.d.ts';
 export type {Exact} from './source/exact.d.ts';
 export type {ReadonlyTuple} from './source/readonly-tuple.d.ts';
 export type {OptionalKeysOf} from './source/optional-keys-of.d.ts';
@@ -142,8 +144,15 @@ export type {IsNull} from './source/is-null.d.ts';
 export type {IfNull} from './source/if-null.d.ts';
 export type {And} from './source/and.d.ts';
 export type {Or} from './source/or.d.ts';
+export type {AllExtend} from './source/all-extend.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
 export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type.d.ts';
+export type {If} from './source/if.d.ts';
+export type {IsUnion} from './source/is-union.d.ts';
+export type {IsLowercase} from './source/is-lowercase.d.ts';
+export type {IsUppercase} from './source/is-uppercase.d.ts';
+export type {IsOptional} from './source/is-optional.d.ts';
+export type {IsNullable} from './source/is-nullable.d.ts';
 
 // Template literal types
 export type {CamelCase} from './source/camel-case.d.ts';
@@ -173,6 +182,7 @@ export type {Get} from './source/get.d.ts';
 export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
+export type {RemovePrefix} from './source/remove-prefix.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
@@ -180,5 +190,6 @@ export type {PackageJson} from './source/package-json.d.ts';
 export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 
 // Improved built-in
+export type {ExtendsStrict} from './source/extends-strict.d.ts';
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';

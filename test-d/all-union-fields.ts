@@ -5,10 +5,10 @@ import type {NonRecursiveType} from '../source/internal/index.d.ts';
 type TestingType = {
 	function: () => void;
 	record: Record<
-	string,
-	{
-		propertyA: string;
-	}
+		string,
+		{
+			propertyA: string;
+		}
 	>;
 	object: {
 		subObject: {
@@ -37,18 +37,18 @@ declare const normal: AllUnionFields<
 TestingType | {string: string; number: number; foo: any}
 >;
 expectType<Simplify<
-{
-	string: string;
-	number: number;
-	foo?: any;
-} & Partial<Omit<TestingType, 'string' | 'number'>>
+	{
+		string: string;
+		number: number;
+		foo?: any;
+	} & Partial<Omit<TestingType, 'string' | 'number'>>
 >>(normal);
 
 declare const unMatched: AllUnionFields<TestingType | {foo: any}>;
 expectType<Simplify<
-{
-	foo?: any;
-} & Partial<TestingType>
+	{
+		foo?: any;
+	} & Partial<TestingType>
 >>(unMatched);
 
 declare const number: AllUnionFields<TestingType | {number: number; foo: any}>;

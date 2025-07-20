@@ -1,6 +1,7 @@
-import type {IfAny} from './if-any.d.ts';
-import type {IfNever} from './if-never.d.ts';
+import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Requires all of the keys in the given object.
@@ -40,10 +41,10 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 */
 export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
 	IfNotAnyOrNever<ObjectType,
-	IfNever<KeysType,
-	ObjectType,
-	_RequireAllOrNone<ObjectType, IfAny<KeysType, keyof ObjectType, KeysType>>
-	>>;
+		If<IsNever<KeysType>,
+			ObjectType,
+			_RequireAllOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
+		>>;
 
 type _RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType> = (
 	| RequireAll<ObjectType, KeysType>

@@ -41,8 +41,10 @@ type PrivateIntRange<
 	Start extends number,
 	End extends number,
 	Step extends number,
-	Gap extends number = Subtract<Step, 1>, // The gap between each number, gap = step - 1
-	List extends unknown[] = BuildTuple<Start, never>, // The final `List` is `[...StartLengthTuple, ...[number, ...GapLengthTuple], ...[number, ...GapLengthTuple], ... ...]`, so can initialize the `List` with `[...StartLengthTuple]`
+	// The gap between each number, gap = step - 1
+	Gap extends number = Subtract<Step, 1>,
+	// The final `List` is `[...StartLengthTuple, ...[number, ...GapLengthTuple], ...[number, ...GapLengthTuple], ... ...]`, so can initialize the `List` with `[...StartLengthTuple]`
+	List extends unknown[] = BuildTuple<Start, never>,
 	EndLengthTuple extends unknown[] = BuildTuple<End>,
 > = Gap extends 0 ?
 	// Handle the case that without `Step`

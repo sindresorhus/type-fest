@@ -6,7 +6,7 @@ Use-case:
 
 @example
 ```
-import type {IsFloat, PositiveInfinity} from "type-fest";
+import type {IsFloat, PositiveInfinity} from 'type-fest';
 
 type A = IsFloat<1.5>;
 //=> true

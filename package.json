@@ -25,7 +25,6 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"test:source-files-extension": "node script/test/source-files-extension.js",
 		"test:tsc": "tsc",
 		"test:tsd": "tsd",
 		"test:xo": "xo",
@@ -49,48 +48,16 @@
 		"json",
 		"generics"
 	],
+	"dependencies": {
+		"tagged-tag": "^1.0.0"
+	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^7.0.0",
 		"expect-type": "^1.2.1",
 		"npm-run-all2": "^8.0.1",
 		"tsd": "^0.32.0",
 		"typescript": "~5.8.3",
-		"xo": "^0.60.0"
-	},
-	"xo": {
-		"rules": {
-			"@typescript-eslint/no-extraneous-class": "off",
-			"@typescript-eslint/ban-ts-comment": "off",
-			"@typescript-eslint/ban-types": "off",
-			"@typescript-eslint/naming-convention": "off",
-			"@typescript-eslint/no-redeclare": "off",
-			"@typescript-eslint/no-confusing-void-expression": "off",
-			"@typescript-eslint/no-unsafe-argument": "off",
-			"n/file-extension-in-import": "off",
-			"object-curly-newline": [
-				"error",
-				{
-					"multiline": true,
-					"consistent": true
-				}
-			],
-			"import/consistent-type-specifier-style": [
-				"error",
-				"prefer-top-level"
-			]
-		},
-		"overrides": [
-			{
-				"files": "**/*.d.ts",
-				"rules": {
-					"no-restricted-imports": [
-						"error",
-						"tsd",
-						"expect-type"
-					]
-				}
-			}
-		]
+		"xo": "^1.0.5"
 	},
 	"tsd": {
 		"compilerOptions": {
