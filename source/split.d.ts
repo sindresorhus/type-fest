@@ -78,7 +78,9 @@ type SplitHelper<
 			? S extends `${infer Head}${Delimiter}${infer Tail}`
 				? SplitHelper<Tail, Delimiter, Options, [...Accumulator, Head]>
 				: Delimiter extends ''
-					? Accumulator
+					? S extends ''
+						? Accumulator
+						: [...Accumulator, S]
 					: [...Accumulator, S]
 			// Otherwise, return `string[]`
 			: string[]
