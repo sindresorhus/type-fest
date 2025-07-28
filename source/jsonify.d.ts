@@ -7,7 +7,6 @@ import type {IsUnknown} from './is-unknown.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {TypedArray} from './typed-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import {And} from './and.d.ts';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
