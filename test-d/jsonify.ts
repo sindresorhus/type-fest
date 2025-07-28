@@ -369,3 +369,22 @@ expectType<typeof nestedObjectWithNameProperty>(
 // Regression test for https://github.com/sindresorhus/type-fest/issues/629
 declare const readonlyTuple: Jsonify<readonly [1, 2, 3]>;
 expectType<[1, 2, 3]>(readonlyTuple);
+
+// `unknown` values
+declare const unknownValue: Jsonify<unknown>;
+declare const unknownArray: Jsonify<unknown[]>;
+declare const unknownTuple: Jsonify<[unknown, unknown]>;
+declare const objectWithUnknownValue: Jsonify<{key: unknown}>;
+expectType<JsonValue>(unknownValue);
+expectAssignable<Jsonify<unknown>>('foo');
+expectAssignable<Jsonify<unknown>>(['foo']);
+expectNotAssignable<Jsonify<unknown>>(new Date());
+expectType<JsonValue[]>(unknownArray);
+expectAssignable<Jsonify<unknown[]>>(['foo']);
+expectNotAssignable<Jsonify<unknown[]>>([new Date()]);
+expectType<[JsonValue, JsonValue]>(unknownTuple);
+expectAssignable<Jsonify<[unknown, unknown]>>(['foo', 'foo']);
+expectNotAssignable<Jsonify<[unknown, unknown]>>([new Date(), new Date()]);
+expectType<{key: JsonValue}>(objectWithUnknownValue);
+expectAssignable<Jsonify<{key: unknown}>>({key: []});
+expectNotAssignable<Jsonify<{key: unknown}>>({key: new Date()});
