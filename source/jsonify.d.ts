@@ -7,6 +7,7 @@ import type {IsUnknown} from './is-unknown.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {TypedArray} from './typed-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import {And} from './and.d.ts';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
@@ -18,9 +19,11 @@ type UndefinedToNull<T> = T extends undefined ? null : T;
 type JsonifyList<T extends UnknownArray> = T extends readonly []
 	? []
 	: T extends readonly [infer F, ...infer R]
-		? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
+		? [F, ...R] extends T // With TS 5.8.3, if `string[] & ['foo']`, `R` is `unknown[]` here, making the infered types neq to the original one
+			? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
+			: [NeverToNull<Jsonify<F>>]
 		: IsUnknown<T[number]> extends true
-			? []
+			? JsonValue[]
 			: Array<T[number] extends NotJsonable ? null : Jsonify<UndefinedToNull<T[number]>>>;
 
 type FilterJsonableKeys<T extends object> = {
@@ -119,4 +122,6 @@ export type Jsonify<T> = IsAny<T> extends true
 											? JsonifyList<T>
 											: T extends object
 												? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
-												: never; // Otherwise any other non-object is removed
+												: IsUnknown<T> extends true
+													? JsonValue
+													: never; // Otherwise any other non-object is removed
