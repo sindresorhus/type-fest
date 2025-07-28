@@ -1,4 +1,4 @@
-import type {WritableKeysOf} from './writable-keys-of.d.ts';
+import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
 
 /**
 Extract all readonly keys from the given type.
@@ -12,6 +12,7 @@ import type {ReadonlyKeysOf} from 'type-fest';
 interface User {
 	name: string;
 	surname: string;
+
 	readonly id: number;
 }
 
@@ -24,7 +25,12 @@ const update1: UpdateResponse<User> = {
 
 @category Utilities
 */
-export type ReadonlyKeysOf<T extends object> =
-	T extends unknown // For distributing `T`
-		? Exclude<keyof T, WritableKeysOf<T>>
+export type ReadonlyKeysOf<Type extends object> =
+	Type extends unknown // For distributing `Type`
+		? (keyof {[Key in keyof Type as
+			IsReadonlyKeyOf<Type, Key> extends false
+				? never
+				: Key
+			]: never
+		}) & keyof Type // Intersect with `keyof Type` to ensure result of `ReadonlyKeysOf<Type>` is always assignable to `keyof Type`
 		: never; // Should never happen
