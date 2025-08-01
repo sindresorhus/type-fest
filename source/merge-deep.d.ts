@@ -5,6 +5,7 @@ import type {Merge} from './merge.d.ts';
 import type {
 	FirstArrayElement,
 	IsBothExtends,
+	IsExactOptionalPropertyTypesEnabled,
 	UnknownArrayOrTuple,
 } from './internal/index.d.ts';
 import type {NonEmptyTuple} from './non-empty-tuple.d.ts';
@@ -13,6 +14,9 @@ import type {UnknownRecord} from './unknown-record.d.ts';
 import type {EnforceOptional} from './enforce-optional.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {
+	OptionalKeysOf,
+} from './optional-keys-of.d.ts';
 
 type Writable<TArray extends UnknownArray> = {-readonly [Key in keyof TArray]: TArray[Key]}; // TODO: Remove this
 
@@ -28,20 +32,147 @@ type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;
 /**
 Try to merge two record properties or return the source property value, preserving `undefined` properties values in both cases.
 */
-type MergeDeepRecordProperty<
+type NonExactOptionalPropertyTypesOptionMergeStrategy<
 	Destination,
 	Source,
 	Options extends MergeDeepInternalOptions,
 	Default = Source, // Used for debug only
->
-= undefined extends Source
+> = undefined extends Source
 	? undefined extends Destination
 		? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
 		: MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options>
 	: undefined extends Destination
-		? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> // TODO | undefined ?
+		// TODO should undefined Destination be preserved once merged?
+		? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
 		: MergeDeepOrReturn<Default, Destination, Source, Options>
 	;
+
+type ExactOptionalPropertyTypesOptionMergeStrategy<
+	Destination,
+	Source,
+	Options extends MergeDeepInternalOptions,
+	Default = Source, // Used for debug only
+> = undefined extends Source
+	? undefined extends Destination
+		? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+		: MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options>
+	: undefined extends Destination
+		? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+		// ? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> // | undefined
+		: MergeDeepOrReturn<Default, Destination, Source, Options>
+	;
+
+// type ExactOptionalPropertyTypesOptionMergeStrategyBak<
+// 	Destination,
+// 	Source,
+// 	Options extends MergeDeepInternalOptions,
+// 	Source_KeyIsOptional_ValueExcludesUndefined extends boolean,
+// 	Source_KeyIsRequired_ValueIncludesUndefined extends boolean,
+
+// 	// TODO Destination_KeyIsRequired_ValueIncludesUndefined
+// 	Destination_KeyIsOptional_ValueExcludesUndefined extends boolean,
+// 	Destination_KeyIsRequired_ValueIncludesUndefined extends boolean, // Or both
+// 	Default = Source, // Used for debug only
+// >
+// = Source_KeyIsOptional_ValueExcludesUndefined extends true
+// 	? Destination_KeyIsOptional_ValueExcludesUndefined extends true // Source value does not contain "| undefined"
+// 		? MergeDeepOrReturn< // Destination value does not contain "| undefined"
+// 				Default,
+// 				Exclude<Destination, undefined>, // We exclude them from the value as their keys are optional
+// 				Exclude<Source, undefined>,      // and TS adds | undefined automatically due to their keys being optional
+// 				Options
+// 			> // No value as "| undefined"
+// 	: Destination_KeyIsRequired_ValueIncludesUndefined extends true
+// 		? MergeDeepOrReturn< // Destination value contains "| undefined" but key is required
+// 				Default,
+// 				Exclude<Destination, undefined>,
+// 				Exclude<Source, undefined>,
+// 				Options
+// 			> | undefined // Destination value contains "| undefined"
+// 	: Destination extends undefined
+// 		? MergeDeepOrReturn< // Destination value is undefined AND its key is optional
+// 				Default,
+// 				Exclude<Destination, undefined>,
+// 				Exclude<Source, undefined>,
+// 				Options
+// 			> | undefined // => we keep undefined
+// 	: MergeDeepOrReturn< // Destination value is not undefined AND its key is required
+// 			Default,
+// 			Exclude<Destination, undefined>,
+// 			Exclude<Source, undefined>,
+// 			Options
+// 		>
+// : Source_KeyIsRequired_ValueIncludesUndefined extends true	// Source value contains "| undefined"
+// 	? MergeDeepOrReturn<
+// 			Default,
+// 			Exclude<Destination, undefined>,
+// 			Exclude<Source, undefined>,
+// 			Options
+// 		> | undefined // => we keep undefined
+// : Source extends undefined
+// 	? MergeDeepOrReturn<
+// 			Default,
+// 			Exclude<Destination, undefined>,
+// 			Exclude<Source, undefined>,
+// 			Options
+// 		> | undefined // => we keep undefined
+// : // else Source Key is required and Source value does not contain "| undefined"
+// 	Destination_KeyIsOptional_ValueExcludesUndefined extends true
+// 	? MergeDeepOrReturn<
+// 			Default,
+// 			Exclude<Destination, undefined>,
+// 			Exclude<Source, undefined>,
+// 			Options
+// 		> // !!!!!!!
+// 		// > | undefined // !!!!!!!
+// : Destination_KeyIsRequired_ValueIncludesUndefined extends true
+// 	? MergeDeepOrReturn<
+// 			Default,
+// 			Exclude<Destination, undefined>,
+// 			Exclude<Source, undefined>,
+// 			Options
+// 		> | undefined
+// : Destination extends undefined
+// 	? MergeDeepOrReturn<
+// 			Default,
+// 			Exclude<Destination, undefined>,
+// 			Exclude<Source, undefined>,
+// 			Options
+// 		> | undefined
+// : MergeDeepOrReturn<
+// 		Default,
+// 		Exclude<Destination, undefined>,
+// 		Exclude<Source, undefined>,
+// 		Options
+// 	>
+// ;
+
+
+
+/**
+type Base = {
+  a: number,              // => false
+  b?: boolean,            // => true
+  c: string | undefined,  // => false (eventhough value is `undefined`)
+  d?: string | undefined, // => true
+}
+*/
+type KeyIsOptional<Target extends object, Key extends keyof Target>
+ = Key extends OptionalKeysOf<Target> ? true : false;
+
+type ValueIsUndefined<BaseType extends object, Key extends keyof BaseType>
+=	IsExactOptionalPropertyTypesEnabled extends false
+? undefined extends BaseType[Key] ? true : false // We can't know as it is casted to value | undefined
+: undefined extends Required<BaseType>[Key] ? true : false
+;
+
+
+type IsExactOptionalPropertyTypesMergeStrategyEnabled<Options extends MergeDeepInternalOptions> =
+	Options['exactOptionalPropertyTypes'] extends false
+	? false
+	: IsExactOptionalPropertyTypesEnabled extends true
+		? true
+		: false;
 
 /**
 Walk through the union of the keys of the two objects and test in which object the properties are defined.
@@ -66,12 +197,101 @@ type DoMergeDeepRecord<
 // Case in rule 3: Both the source and the destination contain the key.
 	& {
 		[Key in keyof Source as Key extends keyof Destination ? Key : never]:
-		MergeDeepRecordProperty<
-			Destination[Key],
-			Source[Key],
-			Options
-		>
-	};
+		IsExactOptionalPropertyTypesMergeStrategyEnabled<Options> extends false
+		? NonExactOptionalPropertyTypesOptionMergeStrategy<
+				Destination[Key],
+				Source[Key],
+				Options,
+				// {
+				// 	isExactOptionalPropertyTypesMergeStrategyEnabled: IsExactOptionalPropertyTypesMergeStrategyEnabled<Options> extends false ? false : true
+				// }
+			> // Will converts { a?: number } to { a?: number | undefined }
+		: ExactOptionalPropertyTypesOptionMergeStrategy<
+				Destination[Key],
+				Source[Key],
+				Options,
+				// {
+				// 	isExactOptionalPropertyTypesMergeStrategyEnabled: IsExactOptionalPropertyTypesMergeStrategyEnabled<Options> extends false ? false : true
+				// }
+			> // Will converts { a?: number } to { a?: number | undefined }
+		// : ExactOptionalPropertyTypesOptionMergeStrategyBak<
+		// 		Destination[Key],
+		// 		Source[Key],
+		// 		Options,
+		// 		// Source_KeyIsOptional_ValueExcludesUndefined extends boolean,
+		// 		// Source_KeyIsRequired_ValueIncludesUndefined extends boolean,
+		// 		KeyIsOptional<Source, Key>,
+		// 		ValueIsUndefined<Source, Key>,
+
+		// 		// Destination_KeyIsOptional_ValueExcludesUndefined extends boolean,
+		// 		// Destination_KeyIsRequired_ValueIncludesUndefined extends boolean,
+
+		// 		KeyIsOptional<Destination, Key>,
+		// 		ValueIsUndefined<Destination, Key>,
+		// 		// {
+		// 		// 	// Case: `${Exclude<Key, Symbol>} present on source and destination`,
+		// 		// 	source: Source;
+		// 		// 	destination: Destination;
+		// 		// 	key: Key;
+		// 		// 	is_undefined_in_source: ValueIsUndefined<Source, Key> extends true ? true : false;
+		// 		// 	is_undefined_in_destination: ValueIsUndefined<Destination, Key> extends true ? true : false;
+		// 		// 	// is_optional_in_source: Key extends OptionalKeysOf<Source> ? true : false;
+		// 		// 	// is_optional_in_destination: Key extends OptionalKeysOf<Destination> ? true : false;
+		// 		// }
+		// 	>
+	}
+
+	// & {
+	// 	[Key in keyof Source as Key extends keyof Destination
+	// 		? KeyIsOptional<Source, Key> extends true
+	// 			? `A ${Exclude<Key, Symbol>}`
+	// 			: never
+	// 		: never
+	// 	]?:
+	// 	MergeDeepRecordProperty<
+	// 		Destination[Key],
+	// 		Source[Key],
+	// 		// IsOptionalNotUndefined<Source, Key> extends true
+	// 		// 	? Source[Key]
+	// 		// 	: Exclude<Source[Key], undefined>, // TODO challenge me
+	// 		Options,
+	// 		{
+	// 			// Case: `${Exclude<Key, Symbol>} present on source and destination`,
+	// 			source: Source;
+	// 			destination: Destination;
+	// 			key: Key;
+	// 			is_optional_in_source: KeyIsOptional<Source, Key>;
+	// 			is_optional_in_destination: KeyIsOptional<Destination, Key>;
+	// 			// is_optional_in_source: KeyIsOptional<Source[Key]>;
+	// 			// is_optional_in_destination: KeyIsOptional<Destination[Key]>;
+	// 		}
+	// 	>;
+	// }
+	// & {
+	// 	[Key in keyof Source as Key extends keyof Destination
+	// 		? KeyIsOptional<Source, Key> extends true
+	// 			? never
+	// 			: `B ${Exclude<Key, Symbol>}`
+	// 		: never
+	// 	]:
+	// 	MergeDeepRecordProperty<
+	// 		// Exclude<Destination[Key], undefined>, // Source[Key] is not optional and will override Destination[Key]
+	// 		Destination[Key],
+	// 		Source[Key],
+	// 		Options,
+	// 		{
+	// 			// Case: `${Exclude<Key, Symbol>} present on source and destination`,
+	// 			source: Source;
+	// 			destination: Destination;
+	// 			key: Key;
+	// 			is_optional_in_source: KeyIsOptional<Source, Key>;
+	// 			is_optional_in_destination: KeyIsOptional<Destination, Key>;
+	// 			// is_optional_in_source: KeyIsOptional<Source[Key]>;
+	// 			// is_optional_in_destination: KeyIsOptional<Destination[Key]>;
+	// 		}
+	// 	>;
+	// }
+	;
 
 /**
 Wrapper around {@link DoMergeDeepRecord} which preserves index signatures.
@@ -363,6 +583,16 @@ export type MergeDeepOptions = {
 	@default false
 	*/
 	recurseIntoArrays?: boolean;
+
+	/**
+	Preserves the type of the optional properties during merge.
+	{a?: number} will not be converted to {a?: number | undefined}.
+
+	This option is always false if `exactOptionalPropertyTypes` is set to `false`.
+
+	@default true
+	*/
+	exactOptionalPropertyTypes?: boolean;
 };
 
 /**
@@ -377,6 +607,7 @@ type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 	arrayMergeMode: 'replace';
 	recurseIntoArrays: false;
 	spreadTopLevelArrays: true;
+	exactOptionalPropertyTypes: true;
 }, Options>;
 
 /**

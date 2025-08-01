@@ -1,6 +1,9 @@
 import {expectType} from 'tsd';
 import {expectTypeOf} from 'expect-type';
 import type {MergeDeep, MergeDeepOptions} from '../index.d.ts';
+import type {
+	IsExactOptionalPropertyTypesEnabled,
+} from '../source/internal/index.d.ts';
 
 // Test helper.
 declare function mergeDeep<
@@ -222,11 +225,45 @@ expectTypeOf<OptionalNestedRightIntoLeft>().toEqualTypeOf<{
 	};
 }>();
 
+type OptionalNestedRightIntoLeftInexact = MergeDeep<
+	OptionalNestedTest['Left'],
+	OptionalNestedTest['Right'],
+	{
+		exactOptionalPropertyTypes: false;
+	}
+>;
+expectTypeOf<OptionalNestedRightIntoLeftInexact>().toEqualTypeOf<{
+	nested: { // Optional is ovewritten by Right
+		in_left: string; // Subentries are kept in both directions
+		in_right: string;
+		sub_nested: { // Optional is ovewritten by Right in subentries
+			number: number | undefined;
+		} | undefined;
+	} | undefined; // | undefined is added to every optional entry
+}>();
+
 type OptionalNestedLeftIntoRight = MergeDeep<
 	OptionalNestedTest['Right'],
 	OptionalNestedTest['Left']
 >;
 expectTypeOf<OptionalNestedLeftIntoRight>().toEqualTypeOf<{
+	nested?: { // Optional is added by Left
+		in_left: string; // Subentries are kept in both directions
+		in_right: string;
+		sub_nested?: { // Optional is added by Left in subentries
+			number?: number;
+		};
+	};
+}>();
+
+type OptionalNestedLeftIntoRightInexact = MergeDeep<
+	OptionalNestedTest['Right'],
+	OptionalNestedTest['Left'],
+	{
+		exactOptionalPropertyTypes: false
+	}
+>;
+expectTypeOf<OptionalNestedLeftIntoRightInexact>().toEqualTypeOf<{
 	nested?: { // Optional is added by Left
 		in_left: string; // Subentries are kept in both directions
 		in_right: string;
@@ -261,11 +298,39 @@ expectTypeOf<OptionalOrUndefinedNestedRightIntoLeft>().toEqualTypeOf<{
 	} | undefined; // Undefined is kept in both directions
 }>();
 
+type OptionalOrUndefinedNestedRightIntoLeftInexact = MergeDeep<
+	OptionalOrUndefinedNestedTest['Left'],
+	OptionalOrUndefinedNestedTest['Right'],
+	{
+		exactOptionalPropertyTypes: false
+	}
+>;
+expectTypeOf<OptionalOrUndefinedNestedRightIntoLeftInexact>().toEqualTypeOf<{
+	nested: { // ? is ovewritten by Right
+		string: string;
+		number: number;
+	} | undefined; // Undefined is kept in both directions
+}>();
+
 type OptionalOrUndefinedNestedRightIntoRight = MergeDeep<
 	OptionalOrUndefinedNestedTest['Right'],
 	OptionalOrUndefinedNestedTest['Left']
 >;
 expectTypeOf<OptionalOrUndefinedNestedRightIntoRight>().toEqualTypeOf<{
+	nested?: { // ? is added by Left
+		string: string;
+		number: number;
+	} | undefined; // Undefined is kept in both directions
+}>();
+
+type OptionalOrUndefinedNestedRightIntoRightInexact = MergeDeep<
+	OptionalOrUndefinedNestedTest['Right'],
+	OptionalOrUndefinedNestedTest['Left'],
+	{
+		exactOptionalPropertyTypes: false
+	}
+>;
+expectTypeOf<OptionalOrUndefinedNestedRightIntoRightInexact>().toEqualTypeOf<{
 	nested?: { // ? is added by Left
 		string: string;
 		number: number;
@@ -294,9 +359,21 @@ expectTypeOf<OptionalAndUndefinedNestedRightIntoLeft>().toEqualTypeOf<{
 	nested: {
 		in_left: string;
 		in_right: string;
-	}; // Undefined is overwritten by Right
-	//  | undefined;
-	// TODO Should we preserve the "| undefined" there?
+	} | undefined
+}>();
+
+type OptionalAndUndefinedNestedRightIntoLeftInexact = MergeDeep<
+	OptionalAndUndefinedNestedTest['Left'],
+	OptionalAndUndefinedNestedTest['Right'],
+	{
+		exactOptionalPropertyTypes: false;
+	}
+>;
+expectTypeOf<OptionalAndUndefinedNestedRightIntoLeftInexact>().toEqualTypeOf<{
+	nested: {
+		in_left: string;
+		in_right: string;
+	} | undefined // "| undefined is mandatory here"
 }>();
 
 type OptionalAndUndefinedNestedRightIntoRight = MergeDeep<
@@ -307,9 +384,33 @@ expectTypeOf<OptionalAndUndefinedNestedRightIntoRight>().toEqualTypeOf<{
 	nested?: {
 		in_left: string;
 		in_right: string;
-	}; // Undefined is not kept as redundant
-	// TODO is there a way to force the undefined to be there? Should we?
+	} | undefined; // "| undefined" is optional here
 }>();
+
+type OptionalAndUndefinedNestedRightIntoRightInexact = MergeDeep<
+	OptionalAndUndefinedNestedTest['Right'],
+	OptionalAndUndefinedNestedTest['Left'],
+	{
+		exactOptionalPropertyTypes: false;
+	}
+>;
+expectTypeOf<OptionalAndUndefinedNestedRightIntoRightInexact>().toEqualTypeOf<{
+	nested?: {
+		in_left: string;
+		in_right: string;
+	}; // "| undefined" is not preserved here
+}>();
+
+
+
+
+
+// TODO all optional / undefined cases
+
+
+
+
+
 
 // Test for readonly
 type ReadonlyFoo = {
