@@ -35,12 +35,9 @@ type MergeDeepRecordProperty<
 	Default = Source, // Used for debug only
 >
 = undefined extends Source
-	? undefined extends Destination
-		? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
-		: MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options>
-	: undefined extends Destination
-		? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> // TODO | undefined ?
-		: MergeDeepOrReturn<Default, Destination, Source, Options>
+	? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+	: MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options>
+		// We cannot add | undefined here to follow the behavior of merging into "unknown"
 	;
 
 /**

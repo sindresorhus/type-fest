@@ -194,7 +194,7 @@ type OptionalNestedTest = {
 		nested?: {
 			in_left: string;
 			sub_nested?: {
-				number?: number;
+				in_both?: number;
 			};
 		};
 	};
@@ -202,7 +202,7 @@ type OptionalNestedTest = {
 		nested: {
 			in_right: string;
 			sub_nested: {
-				number: number;
+				in_both: number;
 			};
 		};
 	};
@@ -217,7 +217,7 @@ expectTypeOf<OptionalNestedRightIntoLeft>().toEqualTypeOf<{
 		in_left: string; // Subentries are kept in both directions
 		in_right: string;
 		sub_nested: { // Optional is ovewritten by Right in subentries
-			number: number;
+			in_both: number;
 		};
 	};
 }>();
@@ -231,21 +231,24 @@ expectTypeOf<OptionalNestedLeftIntoRight>().toEqualTypeOf<{
 		in_left: string; // Subentries are kept in both directions
 		in_right: string;
 		sub_nested?: { // Optional is added by Left in subentries
-			number?: number;
-		};
-	};
+			in_both?: number | undefined;
+		} | undefined;
+	} | undefined;
+	// "| undefined" is added here and the only way to remove it
+	// would depend on exactOptionalPropertyTypes and a complex
+	// logic which may not worth the effort
 }>();
 
 // Nested Optional: Optional versus undefined entry
 type OptionalOrUndefinedNestedTest = {
 	Left: {
 		nested?: {
-			string: string;
+			in_left: string;
 		};
 	};
 	Right: {
 		nested: {
-			number: number;
+			in_right: number;
 		} | undefined;
 	};
 };
@@ -256,8 +259,8 @@ type OptionalOrUndefinedNestedRightIntoLeft = MergeDeep<
 >;
 expectTypeOf<OptionalOrUndefinedNestedRightIntoLeft>().toEqualTypeOf<{
 	nested: { // ? is ovewritten by Right
-		string: string;
-		number: number;
+		in_left: string;
+		in_right: number;
 	} | undefined; // Undefined is kept in both directions
 }>();
 
@@ -267,8 +270,8 @@ type OptionalOrUndefinedNestedRightIntoRight = MergeDeep<
 >;
 expectTypeOf<OptionalOrUndefinedNestedRightIntoRight>().toEqualTypeOf<{
 	nested?: { // ? is added by Left
-		string: string;
-		number: number;
+		in_left: string;
+		in_right: number;
 	} | undefined; // Undefined is kept in both directions
 }>();
 
@@ -294,9 +297,7 @@ expectTypeOf<OptionalAndUndefinedNestedRightIntoLeft>().toEqualTypeOf<{
 	nested: {
 		in_left: string;
 		in_right: string;
-	}; // Undefined is overwritten by Right
-	//  | undefined;
-	// TODO Should we preserve the "| undefined" there?
+	}; // "| undefined" is removed by Right
 }>();
 
 type OptionalAndUndefinedNestedRightIntoRight = MergeDeep<
@@ -307,8 +308,7 @@ expectTypeOf<OptionalAndUndefinedNestedRightIntoRight>().toEqualTypeOf<{
 	nested?: {
 		in_left: string;
 		in_right: string;
-	}; // Undefined is not kept as redundant
-	// TODO is there a way to force the undefined to be there? Should we?
+	} | undefined; // "| undefined" is added by Left
 }>();
 
 // Test for readonly
