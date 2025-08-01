@@ -34,6 +34,7 @@ jobs:
       matrix:
         typescript-version:
           - 'latest'
+          - '~5.9.0'
           - '~5.8.0'
     steps:
       - uses: actions/checkout@v4
