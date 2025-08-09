@@ -52,12 +52,12 @@
 		"tagged-tag": "^1.0.0"
 	},
 	"devDependencies": {
-		"@sindresorhus/tsconfig": "^7.0.0",
-		"expect-type": "^1.2.1",
-		"npm-run-all2": "^8.0.1",
-		"tsd": "^0.32.0",
-		"typescript": "~5.8.3",
-		"xo": "^1.0.5"
+		"@sindresorhus/tsconfig": "^8.0.1",
+		"expect-type": "^1.2.2",
+		"npm-run-all2": "^8.0.4",
+		"tsd": "^0.33.0",
+		"typescript": "^5.9.2",
+		"xo": "^1.2.1"
 	},
 	"tsd": {
 		"compilerOptions": {
