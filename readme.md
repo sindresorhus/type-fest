@@ -151,8 +151,8 @@ Click the type names for complete docs.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
-- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
 - [`KeysOfUnion`](source/keys-of-union.d.ts) - Create a union of all keys from a given type, even those exclusive to specific union members.
+- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
 - [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
@@ -205,6 +205,10 @@ Click the type names for complete docs.
 - [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.
 - [`IsOptional`](source/is-optional.d.ts) - Returns a boolean for whether the given type includes `undefined`.
 - [`IsNullable`](source/is-nullable.d.ts) - Returns a boolean for whether the given type includes `null`.
+- [`IsOptionalKeyOf`](source/is-optional-key-of.d.ts) - Returns a boolean for whether the given key is an optional key of type.
+- [`IsRequiredKeyOf`](source/is-required-key-of.d.ts) - Returns a boolean for whether the given key is a required key of type.
+- [`IsReadonlyKeyOf`](source/is-readonly-key-of.d.ts) - Returns a boolean for whether the given key is a readonly key of type.
+- [`IsWritableKeyOf`](source/is-writable-key-of.d.ts) - Returns a boolean for whether the given key is a writable key of type.
 
 ### JSON
 
