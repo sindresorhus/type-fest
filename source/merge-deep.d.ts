@@ -132,7 +132,7 @@ type TypeNumberOrType<Type extends UnknownArrayOrTuple> = Type[number] extends n
 type PickRestTypeFlat<Type extends UnknownArrayOrTuple> = TypeNumberOrType<PickRestType<Type>>;
 
 /**
-Try to merge two array/tuple elements or return the source element if the end of the destination is reached or vis-versa.
+Try to merge two array/tuple elements or return the source element if the end of the destination is reached or vice versa.
 */
 type MergeDeepArrayOrTupleElements<
 	Destination,
