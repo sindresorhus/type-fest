@@ -9,7 +9,7 @@ import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
-import type {NonRecursiveType} from './type.d.ts';
+import type {IfNotAnyOrNever, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
 /**
@@ -220,16 +220,24 @@ type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOp
 */
 export type ApplyDefaultOptions<
 	Options extends object,
-	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
+	Defaults extends Simplify<
+		Omit<Required<Options>, RequiredKeysOf<Options>> &
+		Partial<Record<RequiredKeysOf<Options>, never>>
+	>,
 	SpecifiedOptions extends Options,
 > =
-	If<IsAny<SpecifiedOptions>, Defaults,
-		If<IsNever<SpecifiedOptions>, Defaults,
-			Simplify<Merge<Defaults, {
-				[Key in keyof SpecifiedOptions
-				as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
-				]: SpecifiedOptions[Key]
-			}> & Required<Options>>>>; // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
+	IfNotAnyOrNever<SpecifiedOptions,
+		(Merge<Defaults, {
+			[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options>
+				? undefined extends SpecifiedOptions[Key]
+					? never
+					: Key
+				: Key
+			]: SpecifiedOptions[Key]
+		}> & Required<Options>) extends infer ResolvedOptions extends Required<Options>
+			? Simplify<ResolvedOptions>
+			: never,
+		Defaults, Defaults>;
 
 /**
 Collapses literal types in a union into their corresponding primitive types, when possible. For example, `CollapseLiterals<'foo' | 'bar' | (string & {})>` returns `string`.
