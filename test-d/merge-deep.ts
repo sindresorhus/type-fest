@@ -188,7 +188,7 @@ expectType<MergedFooBar>(mergedFooBar);
 declare const mergedBarFoo: MergeDeep<FooOptional, BarOptional>;
 expectType<MergedFooBar>(mergedBarFoo);
 
-// Nested Optional: Ensuringing the merge goes deep
+// Nested Optional: Ensuring the merge goes deep
 type OptionalNestedTest = {
 	Left: {
 		nested?: {
@@ -213,10 +213,10 @@ type OptionalNestedRightIntoLeft = MergeDeep<
 	OptionalNestedTest['Right']
 >;
 expectTypeOf<OptionalNestedRightIntoLeft>().toEqualTypeOf<{
-	nested: { // Optional is ovewritten by Right
+	nested: { // Optional is overwritten by Right
 		in_left: string; // Subentries are kept in both directions
 		in_right: string;
-		sub_nested: { // Optional is ovewritten by Right in subentries
+		sub_nested: { // Optional is overwritten by Right in subentries
 			in_both: number;
 		};
 	};
@@ -258,7 +258,7 @@ type OptionalOrUndefinedNestedRightIntoLeft = MergeDeep<
 	OptionalOrUndefinedNestedTest['Right']
 >;
 expectTypeOf<OptionalOrUndefinedNestedRightIntoLeft>().toEqualTypeOf<{
-	nested: { // ? is ovewritten by Right
+	nested: { // ? is overwritten by Right
 		in_left: string;
 		in_right: number;
 	} | undefined; // Undefined is kept in both directions
