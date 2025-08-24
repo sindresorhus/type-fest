@@ -57,7 +57,7 @@
 		"npm-run-all2": "^8.0.4",
 		"tsd": "^0.33.0",
 		"typescript": "^5.9.2",
-		"xo": "^1.2.1"
+		"xo": "^1.2.2"
 	},
 	"tsd": {
 		"compilerOptions": {

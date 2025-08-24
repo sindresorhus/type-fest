@@ -16,7 +16,7 @@ expectType<IsNumberLike<'+1.1'>>(true);
 expectType<IsNumberLike<'1.1'>>(true);
 expectType<IsNumberLike<1.1>>(true);
 
-// Sientific
+// Scientific
 expectType<IsNumberLike<'+1.2e+3'>>(true);
 expectType<IsNumberLike<'1.2e+3'>>(true);
 expectType<IsNumberLike<1.2e+3>>(true);
@@ -29,7 +29,7 @@ expectType<IsNumberLike<-1.2e+3>>(true);
 expectType<IsNumberLike<'-5e-3'>>(true);
 expectType<IsNumberLike<-5e-3>>(true);
 
-// Non valid numeric
+// Invalid numeric
 expectType<IsNumberLike<'foo'>>(false);
 expectType<IsNumberLike<'1.2.3'>>(false);
 expectType<IsNumberLike<'5+1.2'>>(false);

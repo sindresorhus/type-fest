@@ -1,7 +1,5 @@
 import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 
-type ExcludeUndefined<T> = Exclude<T, undefined>;
-
 /**
 Create a type from another type with all keys and nested keys set to required.
 

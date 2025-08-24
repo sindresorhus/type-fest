@@ -19,7 +19,7 @@ interface User {
 
 interface Admin {
 	name: string;
-	id: string
+	id: string;
 }
 
 type T1 = IsReadonlyKeyOf<User, 'id'>;

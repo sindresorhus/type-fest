@@ -103,7 +103,7 @@ export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 /**
 Returns a boolean for whether the given type is `any` or `never`.
 
-This types can be better to use than {@link IfNotAnyOrNever `IfNotAnyOrNever`} in recursive types because it does ***not*** evaluate any branches.
+This type can be better to use than {@link IfNotAnyOrNever `IfNotAnyOrNever`} in recursive types because it does not evaluate any branches.
 
 @example
 ```

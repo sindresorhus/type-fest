@@ -20,7 +20,7 @@ interface User {
 
 interface Admin {
 	name: string;
-	surname?: string
+	surname?: string;
 }
 
 type T1 = IsRequiredKeyOf<User, 'name'>;

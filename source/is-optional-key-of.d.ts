@@ -18,7 +18,7 @@ interface User {
 
 interface Admin {
 	name: string;
-	surname?: string
+	surname?: string;
 }
 
 type T1 = IsOptionalKeyOf<User, 'luckyNumber'>;

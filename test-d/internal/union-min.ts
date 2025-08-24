@@ -8,7 +8,7 @@ expectType<UnionMin<0 | 5 | 2 | 1>>(0);
 expectType<UnionMin<1 | 2 | 5 | 3 | 7 | 9 | 0>>(0);
 
 // TODO: push `negative-union-max-min` branch
-// Negatives are not supported yet (skiped)
+// Negatives are not supported yet (skipped)
 // expectType<UnionMin<-1 | -3 | -2>>(-3);
 // expectType<UnionMin<0 | -5 | -2>>(-5);
 

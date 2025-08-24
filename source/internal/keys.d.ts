@@ -64,7 +64,7 @@ export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true 
 /**
 Get the exact version of the given `Key` in the given object `T`.
 
-Use-case: You known that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
+Use-case: You know that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
 
 @example
 ```
