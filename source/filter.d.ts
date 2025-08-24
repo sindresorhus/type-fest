@@ -19,7 +19,6 @@ type FilterOptions = {
 
 	@default false
  	*/
-
 	strict?: boolean;
 };
 
@@ -28,7 +27,7 @@ type DefaultFilterOptions = {
 };
 
 /**
-Shorhand for `ApplyDefaultOptions<...>`
+Shorthand for `ApplyDefaultOptions<...>`
 */
 export type ApplyFilterOptions<Options extends FilterOptions> =
 	ApplyDefaultOptions<
@@ -55,11 +54,14 @@ Determines whether the array `V` should be kept based on the boolean type `T`.
 type IfFilter<T extends boolean, V extends UnknownArray> = [T] extends [true] ? V : [];
 
 /**
-Filters elements from an `Array_` based on whether they extends the given `Type`.
+Filters elements from an array based on whether they extend the given type.
 
 If `Type` is `Boolean`, it filters out `falsy` values like {@link Boolean `Boolean(T)`} does.
 
 Strict controls whether strict or loose type comparison is used (defaults to loose).
+
+@category Array
+@category Utilities
 */
 export type Filter<
 	Array_ extends UnknownArray, Type,
