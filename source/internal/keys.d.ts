@@ -1,5 +1,6 @@
 import type {IsAny} from '../is-any.d.ts';
 import type {IsLiteral} from '../is-literal.d.ts';
+import type {IsUnknown} from '../is-unknown.d.ts';
 import type {ToString} from './string.d.ts';
 
 // Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
@@ -25,7 +26,7 @@ export type FilterDefinedKeys<T extends object> = Exclude<
 	{
 		[Key in keyof T]: IsAny<T[Key]> extends true
 			? Key
-			: undefined extends T[Key]
+			: IsUnknown<T[Key]> extends true ? Key : undefined extends T[Key]
 				? never
 				: T[Key] extends undefined
 					? never
