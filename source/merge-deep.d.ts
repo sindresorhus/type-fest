@@ -37,7 +37,7 @@ type MergeDeepRecordProperty<
 = undefined extends Source
 	? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
 	: MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options>
-		// We cannot add | undefined here to follow the behavior of merging into "unknown"
+		// We cannot add `| undefined` here to follow the behavior of merging into "unknown"
 	;
 
 /**
@@ -306,10 +306,10 @@ type MergeDeepArrayOrTuple<
 /**
 Try to merge two objects or two arrays/tuples recursively into a new type or return the default value.
 
-@param DefaultType The default type to return (if the Destination type or the Source type is undefined)
-@param Destination The Destination type
-@param Source The Source type
-@param Options The {@link MergeDeepInternalOptions}
+@param DefaultType - The default type to return (if the destination type or the source type is undefined).
+@param Destination - The destination type.
+@param Source - The source type.
+@param Options - The {@link MergeDeepInternalOptions}.
 */
 type MergeDeepOrReturn<
 	DefaultType,
