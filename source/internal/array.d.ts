@@ -104,6 +104,7 @@ export type EmptyArray = readonly [] | []; // The extra `[]` is just to prevent 
 
 /**
 Returns a `boolean` for whether the type is an empty array, the `[]` or `readonly []` value.
+
 @example
 ```
 import type {IsEmptyArray} from 'type-fest';
@@ -197,13 +198,13 @@ Cleans any extra empty arrays/objects from a union.
 
 @example
 ```
-type T1 = CleanEmpty<[number] | []>
+type T1 = CleanEmpty<[number] | []>;
 //=> [number]
 
-type T2 = CleanEmpty<[number, string?] | [never] | []>
+type T2 = CleanEmpty<[number, string?] | [never] | []>;
 //=> [number, string?] | [never]
 
-type T3 = CleanEmpty<[]>
+type T3 = CleanEmpty<[]>;
 //=> []
 ```
 
