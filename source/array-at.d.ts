@@ -18,6 +18,8 @@ Like [`Array#at()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 @example
 ```
+import type {ArrayAt} from 'type-fest';
+
 type A = [string, number, boolean];
 type B = ArrayAt<A, 0>;
 //=> string
