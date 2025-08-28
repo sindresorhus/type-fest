@@ -15,23 +15,23 @@ import type {RequiredDeep} from 'type-fest';
 
 type Settings = {
 	textEditor?: {
-		fontSize?: number | undefined;
-		fontColor?: string | undefined;
+		fontSize?: number;
+		fontColor?: string;
 		fontWeight?: number | undefined;
-	}
-	autocomplete?: boolean | undefined;
+	};
+	autocomplete?: boolean;
 	autosave?: boolean | undefined;
 };
 
 type RequiredSettings = RequiredDeep<Settings>;
-// type RequiredSettings = {
+//=> {
 // 	textEditor: {
 // 		fontSize: number;
 // 		fontColor: string;
-// 		fontWeight: number;
-// 	}
+// 		fontWeight: number | undefined;
+// 	};
 // 	autocomplete: boolean;
-// 	autosave: boolean;
+// 	autosave: boolean | undefined;
 // }
 ```
 
