@@ -77,7 +77,7 @@ declare const functionWithProperties3: RequiredDeep<FunctionWithProperties3>;
 expectType<void>(functionWithProperties3());
 expectType<{p1: {p2: string; p3: [{p4: number}, string]}}>({} as Simplify<typeof functionWithProperties3>);
 
-// Properties with functions containing multiple call signatures are not made required due to a TS limitation, refer https://github.com/microsoft/TypeScript/issues/29732
+// Properties within functions containing multiple call signatures are not made required due to TS limitations, refer https://github.com/microsoft/TypeScript/issues/29732
 type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1?: string};
 declare const functionWithProperties4: RequiredDeep<FunctionWithProperties4>;
 // @ts-expect-error
