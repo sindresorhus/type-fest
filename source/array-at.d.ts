@@ -1,7 +1,7 @@
 import type {ArraySlice} from './array-slice.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
-import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfStaticArray, OptionalPartOfStaticArray, ExactOptionalPropertyTypesEnable, IsMiddleSpreadArray, LeadingStaticPartOfMiddleSpreadArray, VariablePartOfMiddleSpreadArray, TrailingStaticPartOfMiddleSpreadArray, NumberAbsolute} from './internal/index.d.ts';
+import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfStaticArray, OptionalPartOfStaticArray, IsExactOptionalPropertyTypesEnabled, IsMiddleSpreadArray, LeadingStaticPartOfMiddleSpreadArray, VariablePartOfMiddleSpreadArray, TrailingStaticPartOfMiddleSpreadArray, NumberAbsolute} from './internal/index.d.ts';
 import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
@@ -32,24 +32,6 @@ number extends T['length']
 	? NonFixedLengthArrayAt<T, N>
 	: FixedLengthArrayAt<T, N>;
 
-type FixedLengthArrayAt2<T extends UnknownArray, N extends number> =
-IsNegative<N> extends false
-	? T[N]
-	: [RequiredPartOfStaticArray<T>, OptionalPartOfStaticArray<T>] extends [infer RequiredPart extends UnknownArray, infer OptionalPart extends UnknownArray]
-		? Sum<T['length'], N> extends infer Index extends number
-			? IsNegative<Index> extends true
-				? undefined
-				:
-					| RequiredPart[Index]
-					| [RequiredPart, Index]
-					| (
-						LessThanOrEqual<NumberAbsolute<N>, Required<OptionalPart>['length']> extends true
-							? ExactOptionalPropertyTypesEnable extends true ? Required<OptionalPart>[number] : OptionalPart[number]
-							: never
-					)
-			: never // Never happens
-		: never; // Never happens
-
 // Internal `ArrayAt` type for fixed-length array.
 type FixedLengthArrayAt<T extends UnknownArray, N extends number> =
 IsNegative<N> extends false
@@ -59,7 +41,7 @@ IsNegative<N> extends false
 			? Index extends unknown
 				? IsNegative<Index> extends true
 					? undefined
-					: ExactOptionalPropertyTypesEnable extends true
+					: IsExactOptionalPropertyTypesEnabled extends true
 						? Required<T>[Index]
 						: T[Index]
 				: never // Never happens
@@ -109,7 +91,7 @@ IsLeadingSpreadArray<T> extends true
 		// Handle trailing spread array like `[number, boolean, ...string[]]`
 		: IsTrailingSpreadArray<T> extends true
 			? [StaticPartOfArray<T>, VariablePartOfArray<T>] extends [infer _StaticPart extends UnknownArray, infer VariablePart extends UnknownArray]
-				? [ExactOptionalPropertyTypesEnable extends true ? Required<_StaticPart> : _StaticPart] extends [infer StaticPart extends UnknownArray]
+				? [IsExactOptionalPropertyTypesEnabled extends true ? Required<_StaticPart> : _StaticPart] extends [infer StaticPart extends UnknownArray]
 					// Handle positive index
 					? IsNegative<N> extends false
 						? GreaterThanOrEqual<N, StaticPart['length']> extends true
@@ -120,7 +102,7 @@ IsLeadingSpreadArray<T> extends true
 							? IsNegative<SliceLength> extends true
 								? T[number] | undefined
 								: T extends [...ArraySlice<StaticPart, 0, SliceLength>, ...infer Last]
-									? (ExactOptionalPropertyTypesEnable extends true ? Required<Last> : Last)[number]
+									? (IsExactOptionalPropertyTypesEnabled extends true ? Required<Last> : Last)[number]
 									: never
 							: never // Never happens
 					: never // Never happens

@@ -106,8 +106,3 @@ Indicates the value of `exactOptionalPropertyTypes` compiler option.
 export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;
-
-/**
-Return the value of exactOptionalPropertyTypes option in tsconfig
-*/
-export type ExactOptionalPropertyTypesEnable = [(string | undefined)?] extends [string?] ? false : true;
