@@ -1,6 +1,5 @@
 import type {ArraySlice} from './array-slice.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
-import type {GreaterThan} from './greater-than.d.ts';
 import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfStaticArray, OptionalPartOfStaticArray, IsExactOptionalPropertyTypesEnabled, IsMiddleSpreadArray, LeadingStaticPartOfMiddleSpreadArray, VariablePartOfMiddleSpreadArray, TrailingStaticPartOfMiddleSpreadArray, NumberAbsolute} from './internal/index.d.ts';
 import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
 import type {LessThan} from './less-than.d.ts';
@@ -28,9 +27,11 @@ type C = ArrayAt<A, -1>;
 //=> boolean
 */
 export type ArrayAt<T extends UnknownArray, N extends number> =
-number extends T['length']
-	? NonFixedLengthArrayAt<T, N>
-	: FixedLengthArrayAt<T, N>;
+number extends N
+	? T[number] | undefined
+	: number extends T['length']
+		? NonFixedLengthArrayAt<T, N>
+		: FixedLengthArrayAt<T, N>;
 
 // Internal `ArrayAt` type for fixed-length array.
 type FixedLengthArrayAt<T extends UnknownArray, N extends number> =
@@ -108,14 +109,3 @@ IsLeadingSpreadArray<T> extends true
 					: never // Never happens
 				: never // Never happens
 			: T[number];
-
-type TrailingSpreadArray2 = [object, number, boolean?, ...string[]];
-type MiddleSpreadArray = [number, ...string[], boolean];
-
-type B = [object, number, boolean?]['length'];
-
-type A = [boolean?, ...string[]] extends readonly [infer U, ...infer V] ? ['U', U, 'V', V] : never;
-
-type LeadingSpreadArray = [object, number, boolean?, string?];
-type N = LeadingSpreadArray['length'];
-type C = ArrayAt<LeadingSpreadArray, -1>; // Number, object, undefined
