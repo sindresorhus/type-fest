@@ -145,6 +145,7 @@ export type {SharedUnionFields} from './source/shared-union-fields.d.ts';
 export type {SharedUnionFieldsDeep} from './source/shared-union-fields-deep.d.ts';
 export type {IsNull} from './source/is-null.d.ts';
 export type {IfNull} from './source/if-null.d.ts';
+export type {IsUndefined} from './source/is-undefined.d.ts';
 export type {And} from './source/and.d.ts';
 export type {Or} from './source/or.d.ts';
 export type {AllExtend} from './source/all-extend.d.ts';
