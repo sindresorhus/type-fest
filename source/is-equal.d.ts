@@ -1,3 +1,5 @@
+import type {IsNever} from './is-never.d.ts';
+
 /**
 Returns a boolean for whether the two given types are equal.
 
@@ -25,22 +27,22 @@ type Includes<Value extends readonly any[], Item> =
 @category Utilities
 */
 export type IsEqual<A, B> =
-	_NonNever<A> extends [infer HeadA, ...infer TailA]
-		? _NonNever<B> extends [infer HeadB, ...infer TailB]
+	_NonNeverId<A> extends [infer HeadA, ...infer TailA]
+		? _NonNeverId<B> extends [infer HeadB, ...infer TailB]
 			? IsEqual<HeadA, HeadB> extends true
-				? [] extends TailA & TailB
-					? IsEqual<TailA, TailB>
-					: false
+				? IsEqual<TailA, TailB>
 				: false
 			: _IsEqual<A, B>
 		: _IsEqual<A, B>;
 
-// This is used directly as `IsEqual`. In this definition, it spits an error in the case of returns of type functions taking what tuple of tuple are intersected and it should be never. See `equalWrapedTupleIntersecToBeNeverAndNeverExpanded` in `test/is-equal.ts`.
-export type _IsEqual<A, B> =
+// This version fails the `equalTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
+type _IsEqual<A, B> =
 	(<G>() => G extends A & G | G ? 1 : 2) extends
 	(<G>() => G extends B & G | G ? 1 : 2)
 		? true
 		: false;
 
-// NonNullable is not appropriate for removing only never, as it also removes undefined, which causes test/includes.ts to fail.
-type _NonNever<A> = (<G>() => G extends A & G | G ? 1 : 2) extends (<G>() => G extends never & G | G ? 1 : 2) ? 0 : A;
+type _NonNeverId<T> =
+	true extends IsNever<T>
+		? 0
+		: T;
