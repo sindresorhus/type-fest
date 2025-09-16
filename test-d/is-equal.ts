@@ -69,18 +69,20 @@ expectType<UnionType>(true);
 type IntersectionType = IsEqual<{a: 1} | {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<IntersectionType>(true);
 
-type __TupleReturnValueTupleBool_wraped0<Fst> = (Fst extends [[0, 2]] ? ['A', true] : ['A', false]);
-type __TupleReturnValueTupleBool_wraped1<Fst> = (Fst extends [[0, 1]] ? ['A', true] : ['A', false]);
+// Test for PR https://github.com/sindresorhus/type-fest/pull/1231
+type BranchOnWrappedTupleMatches<Tpl> = (Tpl extends [[0, 2]] ? ['A', true] : ['A', false]);
+type BranchOnWrappedTupleDoesNotMatch<Tpl> = (Tpl extends [[0, 1]] ? ['A', true] : ['A', false]);
+type BranchOnTupleMatches<Tpl> = (Tpl extends [0, 2] ? ['A', true] : ['A', false]);
+type BranchOnTupleDoesNotMatch<Tpl> = (Tpl extends [0, 1] ? ['A', true] : ['A', false]);
 
-const equalWrapedTupleIntersecToBeNeverAndNever: IsEqual<(__TupleReturnValueTupleBool_wraped0<[[0, 2]]> & __TupleReturnValueTupleBool_wraped1<[[0, 2]]>), never> = true;
-expectType<true>(equalWrapedTupleIntersecToBeNeverAndNever);
-const equalWrapedTupleIntersecToBeNeverAndNeverExpanded: [0, 2] extends infer Fst ? IsEqual<(__TupleReturnValueTupleBool_wraped0<[Fst]> & __TupleReturnValueTupleBool_wraped1<[Fst]>), never> : never = true;
-expectType<true>(equalWrapedTupleIntersecToBeNeverAndNeverExpanded);
+const equalWrappedTupleIntersectionToBeNeverAndNever: IsEqual<(BranchOnWrappedTupleMatches<[[0, 2]]> & BranchOnWrappedTupleDoesNotMatch<[[0, 2]]>), never> = true;
+expectType<true>(equalWrappedTupleIntersectionToBeNeverAndNever);
 
-type __TupleReturnValueTupleBool0<Fst> = (Fst extends [0, 2] ? ['A', true] : ['A', false]);
-type __TupleReturnValueTupleBool1<Fst> = (Fst extends [0, 1] ? ['A', true] : ['A', false]);
+const equalWrappedTupleIntersectionToBeNeverAndNeverExpanded: [0, 2] extends infer Tpl ? IsEqual<(BranchOnWrappedTupleMatches<[Tpl]> & BranchOnWrappedTupleDoesNotMatch<[Tpl]>), never> : never = true;
+expectType<true>(equalWrappedTupleIntersectionToBeNeverAndNeverExpanded);
 
-const equalTupleIntersecToBeNeverAndNever: IsEqual<(__TupleReturnValueTupleBool0<[0, 2]> & __TupleReturnValueTupleBool1<[0, 2]>), never> = true;
-expectType<true>(equalTupleIntersecToBeNeverAndNever);
-const equalTupleIntersecToBeNeverAndNeverExpanded: [0, 2] extends infer Fst ? IsEqual<(__TupleReturnValueTupleBool0<Fst> & __TupleReturnValueTupleBool1<Fst>), never> : never = true;
-expectType<true>(equalTupleIntersecToBeNeverAndNeverExpanded);
+const equalTupleIntersectionToBeNeverAndNever: IsEqual<(BranchOnTupleMatches<[0, 2]> & BranchOnTupleDoesNotMatch<[0, 2]>), never> = true;
+expectType<true>(equalTupleIntersectionToBeNeverAndNever);
+
+const equalTupleIntersectionToBeNeverAndNeverExpanded: [0, 2] extends infer Tpl ? IsEqual<(BranchOnTupleMatches<Tpl> & BranchOnTupleDoesNotMatch<Tpl>), never> : never = true;
+expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
