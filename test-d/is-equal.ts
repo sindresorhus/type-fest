@@ -23,6 +23,9 @@ expectType<false>(notEqualArrayOfAnyAndArrayOfNever);
 const equalNeverAndNever: IsEqual<never, never> = true;
 expectType<true>(equalNeverAndNever);
 
+const equalTupleNeverAndTupleNever: IsEqual<[never], [never]> = true;
+expectType<true>(equalTupleNeverAndTupleNever);
+
 const equalEmptyArrayAndEmptyArray: IsEqual<[], []> = true;
 expectType<true>(equalEmptyArrayAndEmptyArray);
 
@@ -87,3 +90,30 @@ expectType<true>(equalTupleIntersectionToBeNeverAndNever);
 
 const equalTupleIntersectionToBeNeverAndNeverExpanded: [0, 2] extends infer Tpl ? IsEqual<(BranchOnTupleMatches<Tpl> & BranchOnTupleDoesNotMatch<Tpl>), never> : never = true;
 expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
+
+type OverloadFunction = {
+	(fullName: string): string;
+	(firstName: string, lastName: string): string;
+};
+// [T] & [T] is not simplified in TypeScript, so this test may fail depending on the definition of IsEqual.
+type InferOverloadFunction = OverloadFunction extends infer F ? F extends (0 extends 0 ? F : 1) ? [F] : 2 : 3;
+const equalTrueIntersectionOverloadFunction: IsEqual<[OverloadFunction] & [OverloadFunction], InferOverloadFunction> = true; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>(equalTrueIntersectionOverloadFunction);
+
+type OverloadFunctionStringArrayReturn = {
+	(s: string): string[];
+	(ss: string[]): string[];
+};
+// [T] & [T] is not simplified in TypeScript, so this test may fail depending on the definition of IsEqual.
+type InferOverloadFunctionStringArrayReturn = OverloadFunctionStringArrayReturn extends infer F ? F extends (0 extends 0 ? F : 1) ? [F] : 2 : 3;
+const equalTrueIntersectionOverloadFunctionStringArrayReturn: IsEqual<[OverloadFunctionStringArrayReturn] & [OverloadFunctionStringArrayReturn], InferOverloadFunctionStringArrayReturn> = true; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>(equalTrueIntersectionOverloadFunctionStringArrayReturn);
+
+type OverloadFunctionSomeTypeReturn = {
+	<T>(value: T): T;
+	<T>(value: T[]): T[];
+};
+// [T] & [T] is not simplified in TypeScript, so this test may fail depending on the definition of IsEqual.
+type InferOverloadFunctionSomeTypeReturn = OverloadFunctionSomeTypeReturn extends infer F ? F extends (0 extends 0 ? F : 1) ? [F] : 2 : 3;
+const equalTrueIntersectionOverloadFunctionSomeTypeReturn: IsEqual<[OverloadFunctionSomeTypeReturn] & [OverloadFunctionSomeTypeReturn], InferOverloadFunctionSomeTypeReturn> = true; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>(equalTrueIntersectionOverloadFunctionSomeTypeReturn);
