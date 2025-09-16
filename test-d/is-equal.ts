@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {IsEqual} from '../index.d.ts';
+import type {BuildTuple} from '../source/internal/index.d.ts';
 
 const notEqualNumberAndString: IsEqual<number, string> = false;
 expectType<false>(notEqualNumberAndString);
@@ -40,15 +41,15 @@ expectType<true>(equalReadonlyArrayNumberAndReadonlyArrayNumber);
 const notEqualReadonlyArrayNumberAndReadonlyArrayNumber: IsEqual<readonly number[], number[]> = false;
 expectType<false>(notEqualReadonlyArrayNumberAndReadonlyArrayNumber);
 
-type LongTupleNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
+type LongTupleNumber = BuildTuple<50, 0>;
 const equalLongTupleNumberAndLongTupleNumber: IsEqual<LongTupleNumber, LongTupleNumber> = true;
 expectType<true>(equalLongTupleNumberAndLongTupleNumber);
 
-type ReadonlyLongTupleNumber = readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
+type ReadonlyLongTupleNumber = Readonly<BuildTuple<50, 0>>;
 const equalLongReadonlyTupleNumberAndLongReadonlyTupleNumber: IsEqual<ReadonlyLongTupleNumber, ReadonlyLongTupleNumber> = true;
 expectType<true>(equalLongReadonlyTupleNumberAndLongReadonlyTupleNumber);
 
-const notEqualLongTupleNumberAndLongTupleNumber: IsEqual<readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]> = false;
+const notEqualLongTupleNumberAndLongTupleNumber: IsEqual<ReadonlyLongTupleNumber, LongTupleNumber> = false;
 expectType<false>(notEqualLongTupleNumberAndLongTupleNumber);
 
 const notEqualTupleUnionAndTuple: IsEqual<[0, 1] | [0, 2], [0, 2]> = false;
