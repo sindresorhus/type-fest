@@ -22,6 +22,38 @@ expectType<false>(notEqualArrayOfAnyAndArrayOfNever);
 const equalNeverAndNever: IsEqual<never, never> = true;
 expectType<true>(equalNeverAndNever);
 
+const equalEmptyArrayAndEmptyArray: IsEqual<[], []> = true;
+expectType<true>(equalEmptyArrayAndEmptyArray);
+
+const equalReadonlyEmptyArrayAndReadonlyEmptyArray: IsEqual<readonly [], readonly []> = true;
+expectType<true>(equalReadonlyEmptyArrayAndReadonlyEmptyArray);
+
+const notEqualReadonlyEmptyArrayAndReadonlyEmptyArray: IsEqual<readonly [], []> = false;
+expectType<false>(notEqualReadonlyEmptyArrayAndReadonlyEmptyArray);
+
+const equalArrayNumberAndArrayNumber: IsEqual<number[], number[]> = true;
+expectType<true>(equalArrayNumberAndArrayNumber);
+
+const equalReadonlyArrayNumberAndReadonlyArrayNumber: IsEqual<readonly number[], readonly number[]> = true;
+expectType<true>(equalReadonlyArrayNumberAndReadonlyArrayNumber);
+
+const notEqualReadonlyArrayNumberAndReadonlyArrayNumber: IsEqual<readonly number[], number[]> = false;
+expectType<false>(notEqualReadonlyArrayNumberAndReadonlyArrayNumber);
+
+type LongTupleNumber = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
+const equalLongTupleNumberAndLongTupleNumber: IsEqual<LongTupleNumber, LongTupleNumber> = true;
+expectType<true>(equalLongTupleNumberAndLongTupleNumber);
+
+type ReadonlyLongTupleNumber = readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
+const equalLongReadonlyTupleNumberAndLongReadonlyTupleNumber: IsEqual<ReadonlyLongTupleNumber, ReadonlyLongTupleNumber> = true;
+expectType<true>(equalLongReadonlyTupleNumberAndLongReadonlyTupleNumber);
+
+const notEqualLongTupleNumberAndLongTupleNumber: IsEqual<readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]> = false;
+expectType<false>(notEqualLongTupleNumberAndLongTupleNumber);
+
+const notEqualTupleUnionAndTuple: IsEqual<[0, 1] | [0, 2], [0, 2]> = false;
+expectType<false>(notEqualTupleUnionAndTuple);
+
 // Missing all generic parameters.
 // @ts-expect-error
 type A = IsEqual;
