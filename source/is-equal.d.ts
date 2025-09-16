@@ -27,13 +27,11 @@ type Includes<Value extends readonly any[], Item> =
 @category Utilities
 */
 export type IsEqual<A, B> =
-	_NonNeverId<A> extends [infer HeadA, ...infer TailA]
-		? _NonNeverId<B> extends [infer HeadB, ...infer TailB]
-			? IsEqual<HeadA, HeadB> extends true
-				? IsEqual<TailA, TailB>
-				: false
-			: _IsEqual<A, B>
-		: _IsEqual<A, B>;
+	[A] extends [infer A]
+		? [B] extends [infer B]
+			? _IsEqual<A, B>
+			: false
+		: false;
 
 // This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
 type _IsEqual<A, B> =
@@ -41,8 +39,3 @@ type _IsEqual<A, B> =
 	(<G>() => G extends B & G | G ? 1 : 2)
 		? true
 		: false;
-
-type _NonNeverId<T> =
-	true extends IsNever<T>
-		? 0
-		: T;
