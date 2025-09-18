@@ -17,6 +17,12 @@
 		},
 		"./globals": {
 			"types": "./source/globals/index.d.ts"
+		},
+		"./source/internal": {
+			"types": "./source/internal/index.d.ts"
+		},
+		"./source/*": {
+			"types": "./source/*/index.d.ts"
 		}
 	},
 	"types": "./index.d.ts",
