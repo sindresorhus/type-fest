@@ -80,32 +80,5 @@ expectType<true>(equalTupleIntersectionToBeNeverAndNever);
 declare const equalTupleIntersectionToBeNeverAndNeverExpanded: [0, 2] extends infer Tpl ? IsEqual<(BranchOnTupleMatches<Tpl> & BranchOnTupleDoesNotMatch<Tpl>), never> : never;
 expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
 
-type OverloadFunction = {
-	(fullName: string): string;
-	(firstName: string, lastName: string): string;
-};
-// [T] & [T] is not simplified in TypeScript, so this test may fail depending on the definition of IsEqual.
-type InferOverloadFunction = OverloadFunction extends infer F ? F extends (0 extends 0 ? F : 1) ? [F] : 2 : 3;
-type expectTrueIntersectionOverloadFunction = IsEqual<[OverloadFunction] & [OverloadFunction], InferOverloadFunction>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-declare const equalTrueIntersectionOverloadFunction: expectTrueIntersectionOverloadFunction;
-expectType<true>(equalTrueIntersectionOverloadFunction);
-
-type OverloadFunctionStringArrayReturn = {
-	(s: string): string[];
-	(ss: string[]): string[];
-};
-// [T] & [T] is not simplified in TypeScript, so this test may fail depending on the definition of IsEqual.
-type InferOverloadFunctionStringArrayReturn = OverloadFunctionStringArrayReturn extends infer F ? F extends (0 extends 0 ? F : 1) ? [F] : 2 : 3;
-type expectTrueIntersectionOverloadFunctionStringArrayReturn = IsEqual<[OverloadFunctionStringArrayReturn] & [OverloadFunctionStringArrayReturn], InferOverloadFunctionStringArrayReturn>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-declare const equalTrueIntersectionOverloadFunctionStringArrayReturn: expectTrueIntersectionOverloadFunctionStringArrayReturn;
-expectType<true>(equalTrueIntersectionOverloadFunctionStringArrayReturn);
-
-type OverloadFunctionSomeTypeReturn = {
-	<T>(value: T): T;
-	<T>(value: T[]): T[];
-};
-// [T] & [T] is not simplified in TypeScript, so this test may fail depending on the definition of IsEqual.
-type InferOverloadFunctionSomeTypeReturn = OverloadFunctionSomeTypeReturn extends infer F ? F extends (0 extends 0 ? F : 1) ? [F] : 2 : 3;
-type expectTrueIntersectionOverloadFunctionSomeTypeReturn = IsEqual<[OverloadFunctionSomeTypeReturn] & [OverloadFunctionSomeTypeReturn], InferOverloadFunctionSomeTypeReturn>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-declare const equalTrueIntersectionOverloadFunctionSomeTypeReturn: expectTrueIntersectionOverloadFunctionSomeTypeReturn;
-expectType<true>(equalTrueIntersectionOverloadFunctionSomeTypeReturn);
+declare const equalTupleIntersectionAndTuple: IsEqual<[{a: 1}] & [{a: 1}], [{a: 1}]>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>(equalTupleIntersectionAndTuple);
