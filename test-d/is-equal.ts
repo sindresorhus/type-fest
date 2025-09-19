@@ -2,61 +2,29 @@ import {expectType} from 'tsd';
 import type {IsEqual} from '../index.d.ts';
 import type {BuildTuple} from '../source/internal/index.d.ts';
 
-const notEqualNumberAndString: IsEqual<number, string> = false;
-expectType<false>(notEqualNumberAndString);
-
-const equalNumbers: IsEqual<1, 1> = true;
-expectType<true>(equalNumbers);
-
-const notEqualAnyAndNumber: IsEqual<any, number> = false;
-expectType<false>(notEqualAnyAndNumber);
-
-const notEqualUnionAndNumber: IsEqual<1 | 2, 1> = false;
-expectType<false>(notEqualUnionAndNumber);
-
-const notEqualAnyAndNever: IsEqual<any, never> = false;
-expectType<false>(notEqualAnyAndNever);
-
-const notEqualArrayOfAnyAndArrayOfNever: IsEqual<[any], [never]> = false;
-expectType<false>(notEqualArrayOfAnyAndArrayOfNever);
-
-const equalNeverAndNever: IsEqual<never, never> = true;
-expectType<true>(equalNeverAndNever);
-
-const equalTupleNeverAndTupleNever: IsEqual<[never], [never]> = true;
-expectType<true>(equalTupleNeverAndTupleNever);
-
-const equalEmptyArrayAndEmptyArray: IsEqual<[], []> = true;
-expectType<true>(equalEmptyArrayAndEmptyArray);
-
-const equalReadonlyEmptyArrayAndReadonlyEmptyArray: IsEqual<readonly [], readonly []> = true;
-expectType<true>(equalReadonlyEmptyArrayAndReadonlyEmptyArray);
-
-const notEqualReadonlyEmptyArrayAndReadonlyEmptyArray: IsEqual<readonly [], []> = false;
-expectType<false>(notEqualReadonlyEmptyArrayAndReadonlyEmptyArray);
-
-const equalArrayNumberAndArrayNumber: IsEqual<number[], number[]> = true;
-expectType<true>(equalArrayNumberAndArrayNumber);
-
-const equalReadonlyArrayNumberAndReadonlyArrayNumber: IsEqual<readonly number[], readonly number[]> = true;
-expectType<true>(equalReadonlyArrayNumberAndReadonlyArrayNumber);
-
-const notEqualReadonlyArrayNumberAndReadonlyArrayNumber: IsEqual<readonly number[], number[]> = false;
-expectType<false>(notEqualReadonlyArrayNumberAndReadonlyArrayNumber);
+expectType<false>({} as IsEqual<number, string>);
+expectType<true>({} as IsEqual<1, 1>);
+expectType<false>({} as IsEqual<any, number>);
+expectType<false>({} as IsEqual<1 | 2, 1>);
+expectType<false>({} as IsEqual<any, never>);
+expectType<false>({} as IsEqual<[any], [never]>);
+expectType<true>({} as IsEqual<never, never>);
+expectType<true>({} as IsEqual<[never], [never]>);
+expectType<true>({} as IsEqual<[], []>);
+expectType<true>({} as IsEqual<readonly [], readonly []>);
+expectType<false>({} as IsEqual<readonly [], []>);
+expectType<true>({} as IsEqual<number[], number[]>);
+expectType<true>({} as IsEqual<readonly number[], readonly number[]>);
+expectType<false>({} as IsEqual<readonly number[], number[]>);
+expectType<false>({} as IsEqual<[0, 1] | [0, 2], [0, 2]>);
 
 type LongTupleNumber = BuildTuple<50, 0>;
-declare const equalLongTupleNumberAndLongTupleNumber: IsEqual<LongTupleNumber, LongTupleNumber>;
-expectType<true>(equalLongTupleNumberAndLongTupleNumber);
+expectType<true>({} as IsEqual<LongTupleNumber, LongTupleNumber>);
 
 type ReadonlyLongTupleNumber = Readonly<BuildTuple<50, 0>>;
-declare const equalLongReadonlyTupleNumberAndLongReadonlyTupleNumber: IsEqual<ReadonlyLongTupleNumber, ReadonlyLongTupleNumber>;
-expectType<true>(equalLongReadonlyTupleNumberAndLongReadonlyTupleNumber);
+expectType<true>({} as IsEqual<ReadonlyLongTupleNumber, ReadonlyLongTupleNumber>);
 
-const notEqualLongTupleNumberAndLongTupleNumber: IsEqual<ReadonlyLongTupleNumber, LongTupleNumber> = false;
-expectType<false>(notEqualLongTupleNumberAndLongTupleNumber);
-
-const notEqualTupleUnionAndTuple: IsEqual<[0, 1] | [0, 2], [0, 2]> = false;
-expectType<false>(notEqualTupleUnionAndTuple);
+expectType<false>({} as IsEqual<ReadonlyLongTupleNumber, LongTupleNumber>);
 
 // Missing all generic parameters.
 // @ts-expect-error
@@ -67,10 +35,10 @@ type A = IsEqual;
 type B = IsEqual<number>;
 
 // Test for issue https://github.com/sindresorhus/type-fest/issues/537
-type UnionType = IsEqual<{a: 1} & {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type UnionType = IsEqual<{a: 1} | {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<UnionType>(true);
 
-type IntersectionType = IsEqual<{a: 1} | {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type IntersectionType = IsEqual<{a: 1} & {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<IntersectionType>(true);
 
 // Test for PR https://github.com/sindresorhus/type-fest/pull/1231
