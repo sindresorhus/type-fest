@@ -4,18 +4,39 @@ import type {BuildTuple} from '../source/internal/index.d.ts';
 
 expectType<false>({} as IsEqual<number, string>);
 expectType<true>({} as IsEqual<1, 1>);
+expectType<false>({} as IsEqual<'A', 'B'>);
+expectType<true>({} as IsEqual<'foo', 'foo'>);
+expectType<false>({} as IsEqual<true, false>);
+expectType<true>({} as IsEqual<false, false>);
+
 expectType<false>({} as IsEqual<any, number>);
-expectType<false>({} as IsEqual<1 | 2, 1>);
-expectType<false>({} as IsEqual<any, never>);
-expectType<false>({} as IsEqual<[any], [never]>);
+expectType<false>({} as IsEqual<'', never>);
+expectType<true>({} as IsEqual<any, any>);
 expectType<true>({} as IsEqual<never, never>);
+expectType<false>({} as IsEqual<any, never>);
+expectType<false>({} as IsEqual<never, any>);
+expectType<false>({} as IsEqual<any, unknown>);
+expectType<false>({} as IsEqual<[any], [never]>);
+expectType<true>({} as IsEqual<[any], [any]>);
 expectType<true>({} as IsEqual<[never], [never]>);
+
+expectType<false>({} as IsEqual<1 | 2, 1>);
+expectType<false>({} as IsEqual<1 | 2, 2 | 3>);
+expectType<true>({} as IsEqual<1 | 2, 2 | 1>);
+expectType<false>({} as IsEqual<boolean, true>);
+
+expectType<true>({} as IsEqual<{a: 1}, {a: 1}>);
+expectType<false>({} as IsEqual<{a: 1}, {a?: 1}>);
+expectType<false>({} as IsEqual<{a: 1}, {readonly a: 1}>);
+
 expectType<true>({} as IsEqual<[], []>);
 expectType<true>({} as IsEqual<readonly [], readonly []>);
 expectType<false>({} as IsEqual<readonly [], []>);
 expectType<true>({} as IsEqual<number[], number[]>);
 expectType<true>({} as IsEqual<readonly number[], readonly number[]>);
 expectType<false>({} as IsEqual<readonly number[], number[]>);
+expectType<true>({} as IsEqual<[string], [string]>);
+expectType<false>({} as IsEqual<[string], [string, number]>);
 expectType<false>({} as IsEqual<[0, 1] | [0, 2], [0, 2]>);
 
 type LongTupleNumber = BuildTuple<50, 0>;
