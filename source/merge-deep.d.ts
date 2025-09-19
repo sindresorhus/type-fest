@@ -6,11 +6,11 @@ import type {
 	FirstArrayElement,
 	IsBothExtends,
 	UnknownArrayOrTuple,
+	EnforceOptional,
 } from './internal/index.d.ts';
 import type {NonEmptyTuple} from './non-empty-tuple.d.ts';
 import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
-import type {EnforceOptional} from './enforce-optional.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
