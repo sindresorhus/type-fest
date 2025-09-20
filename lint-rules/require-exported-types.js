@@ -31,7 +31,7 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 	create(context) {
 		// Only run on TypeScript declaration files in source directory
 		// Convert to forward slashes for consistent path checking across platforms
-		const filename = (context.filename ?? context.getFilename?.() ?? '').replaceAll('\\', '/');
+		const filename = context.filename.replaceAll('\\', '/');
 		if (!filename.includes('/source/') || !filename.endsWith('.d.ts')) {
 			return {};
 		}
