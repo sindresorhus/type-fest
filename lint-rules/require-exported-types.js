@@ -105,7 +105,7 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 			// Skip if inside declare namespace
 			const ancestors = context.sourceCode.getAncestors(node);
 			const isInsideDeclareNamespace = ancestors.some(ancestor =>
-				ancestor.type === 'TSModuleDeclaration' && ancestor.declare === true,
+				ancestor.type === 'TSModuleDeclaration' && ancestor.declare,
 			);
 
 			if (isInsideDeclareNamespace) {
