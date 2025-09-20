@@ -1,11 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
 
-/**
-Cache for index exports to avoid repeated lookups
-*/
-const indexCache = new Map();
-
 export const requireExportedTypesRule = /** @type {const} */ ({
 	meta: {
 		type: 'suggestion',
@@ -15,8 +10,9 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 			recommended: true,
 		},
 		messages: {
-			missingExport: 'Type `{{typeName}}` is exported from this file but not from index.d.ts. Add it to index.d.ts or use `// eslint-disable-next-line type-fest/require-exported-types` to ignore.',
-			noTypeInfo: 'Rule requires TypeScript type information. Configure `parserOptions.project` in your ESLint config.',
+			missingExport: 'Type `{{typeName}}` is exported from this file but not from index.d.ts. '
+				+ 'Add it to index.d.ts or use `// eslint-disable-next-line type-fest/require-exported-types` to ignore.',
+			noTypeInfo: 'Rule requires TypeScript type information. Configure `parserServices` in your ESLint config.',
 		},
 		schema: [
 			{
@@ -34,7 +30,8 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 	defaultOptions: [],
 	create(context) {
 		// Only run on TypeScript declaration files in source directory
-		const filename = context.filename ?? context.getFilename?.() ?? '';
+		// Convert to forward slashes for consistent path checking across platforms
+		const filename = (context.filename ?? context.getFilename?.() ?? '').replaceAll('\\', '/');
 		if (!filename.includes('/source/') || !filename.endsWith('.d.ts')) {
 			return {};
 		}
@@ -78,28 +75,19 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 
 		const indexPath = path.join(projectRoot, indexFileName);
 
-		// Get or cache index exports
-		let indexExports;
-		const cacheKey = `index:${indexPath}`;
+		// Get index exports (no caching to detect changes immediately)
+		const indexExports = new Set();
 
-		if (indexCache.has(cacheKey)) {
-			indexExports = indexCache.get(cacheKey);
-		} else {
-			indexExports = new Set();
-
-			// Get the source file for index.d.ts
-			const indexSourceFile = program.getSourceFile(indexPath);
-			if (indexSourceFile) {
-				const indexSymbol = checker.getSymbolAtLocation(indexSourceFile);
-				if (indexSymbol) {
-					const exports = checker.getExportsOfModule(indexSymbol);
-					for (const exportSymbol of exports) {
-						indexExports.add(exportSymbol.name);
-					}
+		// Get the source file for index.d.ts
+		const indexSourceFile = program.getSourceFile(indexPath);
+		if (indexSourceFile) {
+			const indexSymbol = checker.getSymbolAtLocation(indexSourceFile);
+			if (indexSymbol) {
+				const exports = checker.getExportsOfModule(indexSymbol);
+				for (const exportSymbol of exports) {
+					indexExports.add(exportSymbol.name);
 				}
 			}
-
-			indexCache.set(cacheKey, indexExports);
 		}
 
 		// State to track processed nodes
@@ -149,12 +137,6 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 			'ExportNamedDeclaration > TSInterfaceDeclaration': checkExportedType,
 
 			// Clean up cache periodically
-			'Program:exit'() {
-				// Clear cache if it gets too large
-				if (indexCache.size > 100) {
-					indexCache.clear();
-				}
-			},
 		};
 	},
 });

@@ -92,7 +92,6 @@ describe('require-exported-types ESLint rule', () => {
 			const handlers = requireExportedTypesRule.create(context);
 			assert.ok(handlers['ExportNamedDeclaration > TSTypeAliasDeclaration']);
 			assert.ok(handlers['ExportNamedDeclaration > TSInterfaceDeclaration']);
-			assert.ok(handlers['Program:exit']);
 		});
 	});
 
@@ -411,49 +410,6 @@ describe('require-exported-types ESLint rule', () => {
 
 			const handlers = requireExportedTypesRule.create(context);
 			assert.ok(handlers['ExportNamedDeclaration > TSTypeAliasDeclaration']);
-		});
-	});
-
-	describe('cache management', () => {
-		test('has cache cleanup handler', () => {
-			const context = {
-				filename: '/project/source/foo.d.ts',
-				sourceCode: {
-					parserServices: {
-						program: {
-							getTypeChecker: () => ({}),
-							getSourceFile: () => null,
-						},
-						esTreeNodeToTSNodeMap: new Map(),
-					},
-				},
-				options: [],
-			};
-
-			const handlers = requireExportedTypesRule.create(context);
-			assert.ok(handlers['Program:exit']);
-			assert.equal(typeof handlers['Program:exit'], 'function');
-		});
-
-		test('cache cleanup does not throw', () => {
-			const context = {
-				filename: '/project/source/foo.d.ts',
-				sourceCode: {
-					parserServices: {
-						program: {
-							getTypeChecker: () => ({}),
-							getSourceFile: () => null,
-						},
-						esTreeNodeToTSNodeMap: new Map(),
-					},
-				},
-				options: [],
-			};
-
-			const handlers = requireExportedTypesRule.create(context);
-			const exitHandler = handlers['Program:exit'];
-
-			assert.doesNotThrow(() => exitHandler());
 		});
 	});
 
