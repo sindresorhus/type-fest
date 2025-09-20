@@ -45,7 +45,7 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 		const indexFileName = options.indexFile ?? 'index.d.ts';
 
 		// Get TypeScript type-aware services
-		const parserServices = context.sourceCode.parserServices;
+		const {parserServices} = context.sourceCode;
 
 		// Type information is required for this rule
 		if (!parserServices?.program || !parserServices?.esTreeNodeToTSNodeMap) {
