@@ -28,6 +28,7 @@
 		"test:tsc": "tsc",
 		"test:tsd": "tsd",
 		"test:xo": "xo",
+		"test:linter": "node --test",
 		"test": "run-p test:*"
 	},
 	"files": [
