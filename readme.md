@@ -60,6 +60,8 @@ npm install type-fest
 > [!NOTE]
 > This readme shows the current development version. For docs about the latest version, see the [npm page](https://www.npmjs.com/package/type-fest).
 
+*You may also like my [`ts-extras`](https://github.com/sindresorhus/ts-extras) package which provides runtime functions for some of these types.*
+
 ## Usage
 
 ```ts
