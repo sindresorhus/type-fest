@@ -1,5 +1,5 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {IsTruthy, Extends} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {CleanEmpty} from './internal/array.d.ts';
@@ -29,6 +29,7 @@ type DefaultFilterOptions = {
 /**
 Shorthand for `ApplyDefaultOptions<...>`
 */
+// eslint-disable-next-line type-fest/require-exported-types
 export type ApplyFilterOptions<Options extends FilterOptions> =
 	ApplyDefaultOptions<
 		FilterOptions,
@@ -58,8 +59,34 @@ Filters elements from an array based on whether they extend the given type.
 
 If `Type` is `Boolean`, it filters out `falsy` values like {@link Boolean `Boolean(T)`} does.
 
-Strict controls whether strict or loose type comparison is used (defaults to loose).
+Optional control for strict or loose type comparison.
 
+@default loose
+
+@example
+```
+import type {Filter} from 'type-fest';
+
+type T1 = Filter<[1, 2, 3 | 4, 3?, 4?], 3>;
+//=> [3 | 4, 3?]
+
+type T2 = Filter<[1, 2, 3 | 4, 3?, 4?], 3, {strict: true}>;
+//=> [3?]
+
+type T3 = Filter<['foo1', 'bar2', 'fooo', 'foo3'], `foo${number}`>;
+//=> ['foo1', 'foo3']
+
+type T4 = Filter<[1, '2', 3, 'foo', false], string | number>;
+//=> [1, '2', 3, 'foo']
+
+type T5 = Filter<[true, false, boolean, 0, 1], Boolean>;
+//=> [true, 1]
+
+type T6 = Filter<[0, '', false, null, undefined, 'ok', 42], Boolean>;
+//=> ['ok', 42]
+```
+
+@see ObjectFilter
 @category Array
 @category Utilities
 */
@@ -95,7 +122,7 @@ type _Filter<
 			? _Filter<Rest, Type, Strict, [
 				...HeadAcc,
 				...IfFilter<FilterType<First, Type, Strict>,
-					'0' extends OptionalKeysOf<Array_> // TODO: replace with `IsOptionalKeyOf`.
+					IsOptionalKeyOf<Array_, '0'> extends true
 						? [First?] // Preserve optional modifier.
 						: [First]
 				>,

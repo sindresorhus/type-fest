@@ -204,8 +204,14 @@ type T1 = CleanEmpty<[number] | []>;
 type T2 = CleanEmpty<[number, string?] | [never] | []>;
 //=> [number, string?] | [never]
 
-type T3 = CleanEmpty<[]>;
+type T3 = CleanEmpty<{a: 'A'} | {}>;
+//=> {a: 'A'}
+
+type T4 = CleanEmpty<[]>;
 //=> []
+
+type T5 = CleanEmpty<{}>;
+//=> {}
 ```
 
 @category Utilities

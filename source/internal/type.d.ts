@@ -160,4 +160,5 @@ Checks if `T` is **not** {@link Falsy `falsy`} similar to `Boolean(T)`.
 export type IsTruthy<T> =
 	IsNever<T> extends true ? false
 		: T extends Falsy ? false
-			: true; // ? Should this get exposed publicly
+			: true;
+// ? Should this get exposed publicly
