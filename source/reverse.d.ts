@@ -45,7 +45,7 @@ type DefaultReverseOptions = {
 };
 
 /**
-Reverse an Array Items.
+Reverse array/tuple elements.
 */
 type _Reverse<
 	Array_ extends UnknownArray,
