@@ -1,4 +1,4 @@
-import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions, NonRecursiveType} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -57,7 +57,7 @@ const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: {fooBARBiz
 export type CamelCasedPropertiesDeep<
 	Value,
 	Options extends CamelCaseOptions = {},
-> = _CamelCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>;
+> = _CamelCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
 
 type _CamelCasedPropertiesDeep<
 	Value,

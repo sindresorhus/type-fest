@@ -1,5 +1,6 @@
 import type tag from 'tagged-tag';
 
+// eslint-disable-next-line type-fest/require-exported-types
 export type TagContainer<Token> = {
 	readonly [tag]: Token;
 };

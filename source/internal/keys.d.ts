@@ -1,5 +1,6 @@
 import type {IsAny} from '../is-any.d.ts';
 import type {IsLiteral} from '../is-literal.d.ts';
+import type {IsUnknown} from '../is-unknown.d.ts';
 import type {ToString} from './string.d.ts';
 
 // Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
@@ -25,7 +26,7 @@ export type FilterDefinedKeys<T extends object> = Exclude<
 	{
 		[Key in keyof T]: IsAny<T[Key]> extends true
 			? Key
-			: undefined extends T[Key]
+			: IsUnknown<T[Key]> extends true ? Key : undefined extends T[Key]
 				? never
 				: T[Key] extends undefined
 					? never
@@ -63,7 +64,7 @@ export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true 
 /**
 Get the exact version of the given `Key` in the given object `T`.
 
-Use-case: You known that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
+Use-case: You know that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
 
 @example
 ```

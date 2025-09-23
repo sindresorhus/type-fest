@@ -55,10 +55,12 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 npm install type-fest
 ```
 
-*Requires TypeScript >=5.8, [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c), and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
+*Requires TypeScript >=5.9, [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c), and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
 
 > [!NOTE]
 > This readme shows the current development version. For docs about the latest version, see the [npm page](https://www.npmjs.com/package/type-fest).
+
+*You may also like my [`ts-extras`](https://github.com/sindresorhus/ts-extras) package which provides runtime functions for some of these types.*
 
 ## Usage
 
@@ -151,8 +153,8 @@ Click the type names for complete docs.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
-- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
 - [`KeysOfUnion`](source/keys-of-union.d.ts) - Create a union of all keys from a given type, even those exclusive to specific union members.
+- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
 - [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
@@ -199,12 +201,17 @@ Click the type names for complete docs.
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
+- [`IsUndefined`](source/is-undefined.d.ts) - Returns a boolean for whether the given type is `undefined`.
 - [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
 - [`IsUnion`](source/is-union.d.ts) - Returns a boolean for whether the given type is a union.
 - [`IsLowercase`](source/is-lowercase.d.ts) - Returns a boolean for whether the given string literal is lowercase.
 - [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.
 - [`IsOptional`](source/is-optional.d.ts) - Returns a boolean for whether the given type includes `undefined`.
 - [`IsNullable`](source/is-nullable.d.ts) - Returns a boolean for whether the given type includes `null`.
+- [`IsOptionalKeyOf`](source/is-optional-key-of.d.ts) - Returns a boolean for whether the given key is an optional key of type.
+- [`IsRequiredKeyOf`](source/is-required-key-of.d.ts) - Returns a boolean for whether the given key is a required key of type.
+- [`IsReadonlyKeyOf`](source/is-readonly-key-of.d.ts) - Returns a boolean for whether the given key is a readonly key of type.
+- [`IsWritableKeyOf`](source/is-writable-key-of.d.ts) - Returns a boolean for whether the given key is a writable key of type.
 
 ### JSON
 
@@ -339,6 +346,7 @@ Click the type names for complete docs.
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
+- `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
 
 ## Tips
 
