@@ -44,32 +44,28 @@ expectAssignable<Record<string, unknown>>(valueAsLiteral);
 expectAssignable<Record<string, unknown>>(valueAsSimplifiedInterface);
 expectNotAssignable<Record<string, unknown>>(valueAsInterface); // Index signature is missing in interface
 
-// The following tests should be fixed once we have determined the cause of the bug reported in https://github.com/sindresorhus/type-fest/issues/436
-
+// Should return the original type if it is not simplifiable
 type SomeFunction = (type: string) => string;
-type SimplifiedFunction = Simplify<SomeFunction>; // Return '{}' expected 'SomeFunction'
+type SimplifiedFunction = Simplify<SomeFunction>; // Return '(type: string) => string'
 
 declare const someFunction: SimplifiedFunction;
-
 expectNotAssignable<SomeFunction>(someFunction);
 
-// // Should return the original type if it is not simplifiable, like a function.
-// type SomeFunction = (type: string) => string;
-// expectType<Simplify<SomeFunction>>((type: string) => type);
+class SomeClass {
+	id: string;
 
-// class SomeClass {
-// 	id: string;
+	private readonly code: number;
 
-// 	private readonly code: number;
+	constructor() {
+		this.id = 'some-class';
+		this.code = 42;
+	}
 
-// 	constructor() {
-// 		this.id = 'some-class';
-// 		this.code = 42;
-// 	}
+	someMethod() {
+		return this.code;
+	}
+}
 
-// 	someMethod() {
-// 		return this.code;
-// 	}
-// }
+type SimplifiedClass = Simplify<typeof SomeClass>;
 
-// expectType<Simplify<SomeClass>>(new SomeClass());
+expectType<SimplifiedClass>(SomeClass);
