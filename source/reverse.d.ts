@@ -15,7 +15,7 @@ type ReverseOptions = {
 	/**
 	Whether to preserve the optional modifier (`?`).
 
-	- When set to `true` and all members are optional, the optional modifiers are preserved as-is. but if one of the members is required the (`?`) is replaced with `| undefined`.
+	- When set to `true` and all members are optional, the optional modifiers are preserved as-is. but if any member is required the (`?`) is replaced with `| undefined`.
 	- When set to `false`, optional elements like `T?` are transformed to `T | undefined` or simply `T` depending on the `exactOptionalPropertyTypes` compiler option.
 
 	@example
