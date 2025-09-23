@@ -19,6 +19,7 @@ declare namespace TsConfigJson {
 			| 'ESNext'
 			| 'Node16'
 			| 'Node18'
+			| 'Node20'
 			| 'NodeNext'
 			| 'Preserve'
 			| 'None'
@@ -34,6 +35,7 @@ declare namespace TsConfigJson {
 			| 'esnext'
 			| 'node16'
 			| 'node18'
+			| 'node20'
 			| 'nodenext'
 			| 'preserve'
 			| 'none';
