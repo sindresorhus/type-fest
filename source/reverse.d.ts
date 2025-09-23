@@ -1,6 +1,6 @@
 import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -22,16 +22,16 @@ type ReverseOptions = {
 	```
 	import type {Reverse} from 'type-fest';
 
-	type Ex1 = Reverse<[string, number, boolean]>;
+	type T1 = Reverse<[string, number, boolean]>;
 	//=> [boolean, number, string]
 
-	type Ex2 = Reverse<[string?, number?, boolean?], {preserveOptionalModifier: true}>;
+	type T2 = Reverse<[string?, number?, boolean?], {preserveOptionalModifier: true}>;
 	//=> [boolean?, number?, string?]
 
-	type Ex3 = Reverse<[string, number?, boolean?]>;
+	type T3 = Reverse<[string, number?, boolean?]>;
 	//=> [boolean, number, string] or [boolean | undefined, number | undefined, string]
 
-	type Ex4 = Reverse<[string, number?, boolean?], {preserveOptionalModifier: true}>;
+	type T4 = Reverse<[string, number?, boolean?], {preserveOptionalModifier: true}>;
 	//=> [boolean | undefined, number | undefined, string]
 	```
 
@@ -59,7 +59,7 @@ type _Reverse<
 			: [...Head, ...Array_, ...Tail]
 		: Array_ extends readonly [(infer First)?, ...infer Rest]
 			? _Reverse<Rest, KeepOptional, Head, [
-				...'0' extends OptionalKeysOf<Array_> // TODO: replace with `IsOptionalKeyOf`.
+				...IsOptionalKeyOf<Array_, '0'> extends true
 					? KeepOptional extends false
 						? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 						: [First?]
