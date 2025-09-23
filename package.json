@@ -1,6 +1,6 @@
 {
 	"name": "type-fest",
-	"version": "4.41.0",
+	"version": "5.0.1",
 	"description": "A collection of essential TypeScript types",
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
@@ -28,6 +28,7 @@
 		"test:tsc": "tsc",
 		"test:tsd": "tsd",
 		"test:xo": "xo",
+		"test:linter": "node --test",
 		"test": "run-p test:*"
 	},
 	"files": [
@@ -52,12 +53,12 @@
 		"tagged-tag": "^1.0.0"
 	},
 	"devDependencies": {
-		"@sindresorhus/tsconfig": "^7.0.0",
-		"expect-type": "^1.2.1",
-		"npm-run-all2": "^8.0.1",
-		"tsd": "^0.32.0",
-		"typescript": "~5.8.3",
-		"xo": "^1.0.5"
+		"@sindresorhus/tsconfig": "^8.0.1",
+		"expect-type": "^1.2.2",
+		"npm-run-all2": "^8.0.4",
+		"tsd": "^0.33.0",
+		"typescript": "^5.9.2",
+		"xo": "^1.2.2"
 	},
 	"tsd": {
 		"compilerOptions": {

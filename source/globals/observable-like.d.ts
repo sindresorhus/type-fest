@@ -16,6 +16,7 @@ As well, some guidance on making an `Observable` to not include `closed` propert
 
 @category Observable
 */
+// eslint-disable-next-line type-fest/require-exported-types
 export type Unsubscribable = {
 	unsubscribe(): void;
 };
@@ -38,6 +39,7 @@ type OnComplete = () => void;
 /**
 @category Observable
 */
+// eslint-disable-next-line type-fest/require-exported-types
 export type Observer<ValueType> = {
 	next: OnNext<ValueType>;
 	error: OnError;
@@ -67,6 +69,7 @@ But `Observable` implementations have evolved to preferring case 2 and some impl
 
 @category Observable
 */
+// eslint-disable-next-line type-fest/require-exported-types
 export type ObservableLike<ValueType = unknown> = {
 	subscribe(observer?: Partial<Observer<ValueType>>): Unsubscribable;
 	[Symbol.observable](): ObservableLike<ValueType>;
