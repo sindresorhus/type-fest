@@ -8,7 +8,7 @@ import type {IsAny} from './is-any.d.ts';
 /**
 Filter options.
 
-@see {@link Filter `Filter`}
+@see {@link Filter `Filter`}, `ObjectFilter`
 */
 type FilterOptions = {
 	/**
@@ -18,6 +18,23 @@ type FilterOptions = {
 	- When `false`, the check passes if **any** member of the union extends the filter type. For example, `string | number extends string` returns `true`.
 
 	@default false
+
+	@example
+	```
+	import type {Filter} from 'type-fest';
+
+	type T1 = Filter<[1, 2, 3 | 4, 3?, 4?], 3>;
+	//=> [3 | 4, 3?]
+
+	type T2 = Filter<[1, 2, 3 | 4, 3?, 4?], 3, {strict: true}>;
+	//=> [3?]
+
+	type T3 = Filter<{a: 1; b: 2; c: 3 | 4; d: 3?; e: 4?}; 3>;
+	//=> {c: 3 | 4; d: 3?}
+
+	type T4 = Filter<{a: 1; b: 2; c: 3 | 4; d: 3?; e: 4?}; 3, {strict: true}>;
+	//=> {c: 3?}
+	```
  	*/
 	strict?: boolean;
 };
