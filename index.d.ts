@@ -177,6 +177,7 @@ export type {DelimiterCase} from './source/delimiter-case.d.ts';
 export type {DelimiterCasedProperties} from './source/delimiter-cased-properties.d.ts';
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep.d.ts';
 export type {Join} from './source/join.d.ts';
+export type {JoinUnion} from './source/join-union.d.ts';
 export type {Split, SplitOptions} from './source/split.d.ts';
 export type {Words, WordsOptions} from './source/words.d.ts';
 export type {Trim} from './source/trim.d.ts';

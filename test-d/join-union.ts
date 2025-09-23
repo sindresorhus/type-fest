@@ -1,5 +1,5 @@
 import {expectAssignable, expectType} from 'tsd';
-import type {JoinUnion} from '../index.d.ts';
+import type {JoinUnion} from '../source/join-union.d.ts';
 
 expectAssignable<'a,b' | 'b,a'>({} as JoinUnion<'a' | 'b'>);
 expectAssignable<'1 | 2' | '2 | 1'>({} as JoinUnion<1 | 2, ' | '>);

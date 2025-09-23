@@ -1,27 +1,11 @@
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {BuildTuple} from './internal/tuple.d.ts';
+import type {ArrayLength} from './internal/array.d.ts';
 import type {Join, JoinableItem} from './join.d.ts';
 import type {JoinUnion} from './join-union.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnion} from './is-union.d.ts';
-
-/**
-Create a tuple where each element is the union `U`, with the length equal to the number of members in `U`.
-
-@example
-```
-type T1 = TupleOfUnions<'a' | 'b'>;
-//=> ['a' | 'b', 'a' | 'b']
-
-type T2 = TupleOfUnions<1 | 2 | 3>;
-//=> [1 | 2 | 3, 1 | 2 | 3, 1 | 2 | 3]
-```
-*/
-type TupleOfUnions<U> = UnionToTuple<U>['length'] extends infer Length extends number
-	? BuildTuple<Length, U>
-	: never;
 
 /**
 Convert a tuple or union type into a string representation. Used for readable error messages in other types.
@@ -120,7 +104,14 @@ const C3 = literalList(['b', 'b', 'b'] as const); // ❌ Errors in Compiler and 
 @category Utilities
 */
 export type LiteralList<List extends UnknownArray, Shape extends UnknownArray | unknown> =
-	IfNotAnyOrNever<List, _LiteralList<List, TupleOfUnions<Shape>, TupleAsString<List>, UnionAsString<Shape>>>;
+	IfNotAnyOrNever<List,
+		_LiteralList<
+			List, Shape,
+			ArrayLength<UnionToTuple<Shape>>,
+			TupleAsString<List>,
+			UnionAsString<Shape>
+		>
+	>;
 
 /**
 Internal comparison logic for {@link LiteralList `LiteralList`}.
@@ -133,20 +124,20 @@ Compares `T` and `U`:
 
 */
 type _LiteralList<
-	T extends UnknownArray,
-	U extends UnknownArray,
+	T extends UnknownArray, U,
+	ULength extends number,
 	TString extends string,
 	UString extends string,
 > = (
-	T['length'] extends U['length'] // U.length != number, T always finite
-		? Exclude<T[number], U[number]> extends infer TnU // T not U
-			? Exclude<U[number], T[number]> extends infer UnT // U not T
+	T['length'] extends ULength // U.length != number, T always finite
+		? Exclude<T[number], U> extends infer TnU // T not U
+			? Exclude<U, T[number]> extends infer UnT // U not T
 				? IsNever<TnU> extends true // T includes U
 					? IsNever<UnT> extends true // U includes T
-						? T // T == U
+						? T // T is U
 						: never | `${UString}, Type ${TString} is missing members: ${TupleAsString<UnT>}`
 					: never | `${UString}, Type ${TString} has extra members: ${TupleAsString<TnU>}`
 				: never
 			: never
-		: never | `${UString}, Type ${TString} is not the required length of: ${U['length']}`
+		: never | `${UString}, Type ${TString} is not the required length of: ${ULength}`
 );
