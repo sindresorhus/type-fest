@@ -69,7 +69,7 @@ type _Reverse<
 			: never;
 
 /**
-Creates a new array type by Reversing the order of each element in the original array.
+Creates a new array type by reversing the element order of the original array.
 
 By default, the optional modifier (`?`) is **not** preserved and replaced with `T` or `T | undefined` depending on the `exactOptionalPropertyTypes` compiler option.
 See {@link ReverseOptions `ReverseOptions`}.
