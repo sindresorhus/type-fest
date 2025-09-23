@@ -1,9 +1,10 @@
 import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-literal.d.ts';
 import type {Merge} from './merge.d.ts';
-import type {DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
+import type {RemovePrefix} from './remove-prefix.d.ts';
+import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 
-export type DefaultDelimiterCaseOptions = Merge<DefaultWordsOptions, {splitOnNumbers: false}>;
+export type _DefaultDelimiterCaseOptions = Merge<_DefaultWordsOptions, {splitOnNumbers: false}>;
 
 /**
 Convert an array of words to delimiter case starting with a delimiter with input capitalization.
@@ -20,10 +21,6 @@ type DelimiterCaseFromArray<
 		StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
 	}${FirstWord}`>
 	: OutputString;
-
-type RemoveFirstLetter<S extends string> = S extends `${infer _}${infer Rest}`
-	? Rest
-	: '';
 
 /**
 Convert a string literal to a custom string delimiter casing.
@@ -71,8 +68,8 @@ export type DelimiterCase<
 > = Value extends string
 	? IsStringLiteral<Value> extends false
 		? Value
-		: Lowercase<RemoveFirstLetter<DelimiterCaseFromArray<
-			Words<Value, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>,
+		: Lowercase<RemovePrefix<DelimiterCaseFromArray<
+			Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
 			Delimiter
-		>>>
+		>, string, {strict: false}>>
 	: Value;

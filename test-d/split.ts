@@ -40,6 +40,10 @@ expectType<['a', 'b', 'c'] | ['a,b,c'] | ['x', 'y', 'z'] | ['x:y:z']>({} as Spli
 // which, when split by `.`, would result in `['a', 'b', 'c', 'd']`, which wouldn't conform to the output type of `['a', 'b', string]`.
 expectType<['a', 'b', string]>({} as Split<`a.b.${string}`, '.', {strictLiteralChecks: false}>);
 
+// Ensure the last dynamic "string" is not dropped when split by `''`.
+// https://github.com/sindresorhus/type-fest/issues/1203
+expectType<['a', 'b', string]>({} as Split<`ab${string}`, '', {strictLiteralChecks: false}>);
+
 // -- strictLiteralChecks: true --
 expectType<string[]>({} as Split<string, ''>);
 expectType<string[]>({} as Split<Uppercase<string>, '-'>);
