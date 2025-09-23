@@ -144,17 +144,18 @@ export type Extends<T, U, S extends boolean = false> = {
 /**
 Performs a loose type comparison: checks if wheither of the members in `T` extends `U`.
 
-This is useful when needing to know if `T extends U` without distributing `T` in Main type
+This is useful when needing to know if any member of `T` extends `U` without returning `boolean`.
 */
 export type ExtendsLoose<T, U> = IsNotFalse<T extends U ? true : false>;
+// ? Should this get exposed publicly
 
 /**
 A union of `falsy` types in JS.
 */
-export type Falsy = false | 0 | '' | null | undefined; // `| never`
+export type Falsy = 0 | 0n | '' | false | null | undefined; // `| never`
 
 /**
-Checks if `T` is {@link Falsy `falsy`} similar to `Boolean(T)`.
+Checks if `T` is **not** {@link Falsy `falsy`} similar to `Boolean(T)`.
 */
 export type IsTruthy<T> =
 	IsNever<T> extends true ? false
