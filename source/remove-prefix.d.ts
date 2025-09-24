@@ -6,7 +6,7 @@ import type {Or} from './or.d.ts';
 /**
 @see {@link RemovePrefix}
 */
-type RemovePrefixOptions = {
+export type RemovePrefixOptions = {
 	/**
 	When enabled, instantiations with non-literal prefixes (e.g., `string`, `Uppercase<string>`, `` `on${string}` ``) simply return `string`, since their precise structure cannot be statically determined.
 
