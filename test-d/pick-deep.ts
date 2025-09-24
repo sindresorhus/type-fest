@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {PickDeep} from '../index.d.ts';
+import type {IsEqual, PickDeep} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -32,8 +32,9 @@ type Testing = BaseType & {
 	2?: BaseType;
 };
 
-declare const normal: PickDeep<Testing, 'string'>;
-expectType<{string: string}>(normal);
+type normal_Actual = PickDeep<Testing, 'string'>;
+type normal_Expected = {string: string};
+expectType<true>({} as IsEqual<normal_Actual, normal_Expected>);
 
 type DeepType = {
 	nested: {
@@ -48,8 +49,8 @@ type DeepType = {
 };
 type DepthType = {nested: {deep: {deeper: {value: string}}}};
 
-declare const deep: PickDeep<DeepType, 'nested.deep.deeper.value'>;
-expectType<DepthType>(deep);
+type deep_Actual = PickDeep<DeepType, 'nested.deep.deeper.value'>;
+expectType<true>({} as IsEqual<deep_Actual, DepthType>);
 
 // Test interface
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -59,70 +60,131 @@ interface DeepInterface extends DeepType {
 		string: string;
 	};
 }
-declare const deepInterface: PickDeep<DeepInterface, 'nested.deep.deeper.value'>;
-expectType<DepthType>(deepInterface);
-declare const deepInterface2: PickDeep<DeepInterface, 'bar.number'>;
-expectType<{bar: {number: number}}>(deepInterface2);
+type deepInterface_Actual = PickDeep<DeepInterface, 'nested.deep.deeper.value'>;
+expectType<true>({} as IsEqual<deepInterface_Actual, DepthType>);
+type deepInterface2_Actual = PickDeep<DeepInterface, 'bar.number'>;
+type deepInterface2_Expected = {bar: {number: number}};
+expectType<true>({} as IsEqual<deepInterface2_Actual, deepInterface2_Expected>);
 
 type GenericType<T> = {
 	genericKey: T;
 };
-declare const genericTest: PickDeep<GenericType<number>, 'genericKey'>;
-expectType<{genericKey: number}>(genericTest);
+type genericTest_Actual = PickDeep<GenericType<number>, 'genericKey'>;
+type genericTest_Expected = {genericKey: number};
+expectType<true>({} as IsEqual<genericTest_Actual, genericTest_Expected>);
 
-declare const union: PickDeep<Testing, 'object.number' | 'object.string'>;
-expectType<{object: {number: number} & {string: string}}>(union);
+type union_Actual = PickDeep<Testing, 'object.number' | 'object.string'>;
+type union_Expected = {object: {number: number; string: string}};
+expectType<true>({} as IsEqual<union_Actual, union_Expected>);
 
-declare const optional: PickDeep<Testing, 'optionalObject.optionalString'>;
-expectType<{optionalObject?: {optionalString?: string}}>(optional);
+type optional_Actual = PickDeep<Testing, 'optionalObject.optionalString'>;
+type optional_Expected = {optionalObject?: {optionalString?: string}};
+expectType<true>({} as IsEqual<optional_Actual, optional_Expected>);
 
-declare const optionalUnion: PickDeep<Testing, 'optionalObject.string' | 'object.number'>;
-expectType<{optionalObject?: {string?: string}; object: {number: number}}>(optionalUnion);
+type optionalUnion_Actual = PickDeep<Testing, 'optionalObject.string' | 'object.number'>;
+type optionalUnion_Expected = {
+	optionalObject?: {string?: string};
+	object: {number: number};
+};
+expectType<true>({} as IsEqual<optionalUnion_Actual, optionalUnion_Expected>);
 
-declare const readonlyTest: PickDeep<Testing, 'readonlyObject.a'>;
-expectType<{readonly readonlyObject: {a: 1}}>(readonlyTest);
+type readonlyTest_Actual = PickDeep<Testing, 'readonlyObject.a'>;
+type readonlyTest_Expected = {readonly readonlyObject: {a: 1}};
+expectType<true>({} as IsEqual<readonlyTest_Actual, readonlyTest_Expected>);
 
-declare const array: PickDeep<Testing, 'object.array'>;
-expectType<{object: {array: number[]}}>(array);
+type array_Actual = PickDeep<Testing, 'object.array'>;
+type array_Expected = {object: {array: number[]}};
+expectType<true>({} as IsEqual<array_Actual, array_Expected>);
 
-declare const readonlyArray: PickDeep<Testing, 'object.readonlyArray'>;
-expectType<{object: {readonlyArray: readonly number[]}}>(readonlyArray);
+type readonlyArray_Actual = PickDeep<Testing, 'object.readonlyArray'>;
+type readonlyArray_Expected = {object: {readonlyArray: readonly number[]}};
+expectType<true>({} as IsEqual<readonlyArray_Actual, readonlyArray_Expected>);
 
-declare const tuple: PickDeep<Testing, 'object.tuples'>;
-expectType<{object: {tuples: ['foo', 'bar']}}>(tuple);
+type tuple_Actual = PickDeep<Testing, 'object.tuples'>;
+type tuple_Expected = {object: {tuples: ['foo', 'bar']}};
+expectType<true>({} as IsEqual<tuple_Actual, tuple_Expected>);
 
-declare const objectArray1: PickDeep<Testing, `object.objectArray.${number}`>;
-expectType<{object: {objectArray: Array<{a: 1; b: 2}>}}>(objectArray1);
+type objectArray1_Actual = PickDeep<Testing, `object.objectArray.${number}`>;
+type objectArray1_Expected = {object: {objectArray: Array<{a: 1; b: 2}>}};
+expectType<true>({} as IsEqual<objectArray1_Actual, objectArray1_Expected>);
 
-declare const objectArray2: PickDeep<Testing, `object.objectArray.${number}.a`>;
-expectType<{object: {objectArray: Array<{a: 1}>}}>(objectArray2);
+type objectArray2_Actual = PickDeep<Testing, `object.objectArray.${number}.a`>;
+type objectArray2_Expected = {object: {objectArray: Array<{a: 1}>}};
+expectType<true>({} as IsEqual<objectArray2_Actual, objectArray2_Expected>);
 
-declare const leadingSpreadArray1: PickDeep<Testing, `object.leadingSpreadArray.${number}.a`>;
-expectType<{object: {leadingSpreadArray: [...Array<{a: 1}>]}}>(leadingSpreadArray1);
+type leadingSpreadArray1_Actual = PickDeep<Testing, `object.leadingSpreadArray.${number}.a`>;
+type leadingSpreadArray1_Expected = {object: {leadingSpreadArray: [...Array<{a: 1}> ]}};
+expectType<true>({} as IsEqual<leadingSpreadArray1_Actual, leadingSpreadArray1_Expected>);
 
-declare const leadingSpreadArray2: PickDeep<Testing, `object.leadingSpreadArray.${number}`>;
-expectType<{object: {leadingSpreadArray: [...Array<{a: 1}>, {b: 2}]}}>(leadingSpreadArray2);
+type leadingSpreadArray2_Actual = PickDeep<Testing, `object.leadingSpreadArray.${number}`>;
+type leadingSpreadArray2_Expected = {object: {leadingSpreadArray: [...Array<{a: 1}>, {b: 2}]}};
+expectType<true>({} as IsEqual<leadingSpreadArray2_Actual, leadingSpreadArray2_Expected>);
 
-declare const tailingSpreadArray1: PickDeep<Testing, 'object.tailingSpreadArray.1'>;
-expectType<{object: {tailingSpreadArray: [unknown, {b: {c: 2; other: 2}}]}}>(tailingSpreadArray1);
+type tailingSpreadArray1_Actual = PickDeep<Testing, 'object.tailingSpreadArray.1'>;
+type tailingSpreadArray1_Expected = {object: {tailingSpreadArray: [unknown, {b: {c: 2; other: 2}}]}};
+expectType<true>({} as IsEqual<tailingSpreadArray1_Actual, tailingSpreadArray1_Expected>);
 
-declare const tailingSpreadArray2: PickDeep<Testing, 'object.tailingSpreadArray.1.b.c'>;
-expectType<{object: {tailingSpreadArray: [unknown, {b: {c: 2}}]}}>(tailingSpreadArray2);
+type tailingSpreadArray2_Actual = PickDeep<Testing, 'object.tailingSpreadArray.1.b.c'>;
+type tailingSpreadArray2_Expected = {object: {tailingSpreadArray: [unknown, {b: {c: 2}}]}};
+expectType<true>({} as IsEqual<tailingSpreadArray2_Actual, tailingSpreadArray2_Expected>);
 
-declare const date: PickDeep<Testing, 'object.date'>;
-expectType<{object: {date: Date}}>(date);
+type date_Actual = PickDeep<Testing, 'object.date'>;
+type date_Expected = {object: {date: Date}};
+expectType<true>({} as IsEqual<date_Actual, date_Expected>);
 
-declare const instance: PickDeep<Testing, 'object.instance'>;
-expectType<{object: {instance: ClassA}}>(instance);
+// The `PickDeep` test for a property containing a class instance (ClassA).
+type instance_Actual = PickDeep<Testing, 'object.instance'>;
+type instance_Expected = {object: {instance: ClassA}};
+expectType<true>({} as IsEqual<instance_Actual, instance_Expected>);
 
-declare const classTest: PickDeep<Testing, 'object.Class'>;
-expectType<{object: {Class: typeof ClassA}}>(classTest);
+type classTest_Actual = PickDeep<Testing, 'object.Class'>;
+type classTest_Expected = {object: {Class: typeof ClassA}};
+expectType<true>({} as IsEqual<classTest_Actual, classTest_Expected>);
 
-declare const numberTest: PickDeep<Testing, '1'>;
-expectType<{1: BaseType}>(numberTest);
+type numberTest_Actual = PickDeep<Testing, '1'>;
+type numberTest_Expected = {1: BaseType};
+expectType<true>({} as IsEqual<numberTest_Actual, numberTest_Expected>);
 
-declare const numberTest2: PickDeep<Testing, '1.0'>;
-expectType<{1: {0: number}}>(numberTest2);
+type numberTest2_Actual = PickDeep<Testing, '1.0'>;
+type numberTest2_Expected = {1: {0: number}};
+expectType<true>({} as IsEqual<numberTest2_Actual, numberTest2_Expected>);
 
-declare const numberTest3: PickDeep<Testing, '2.0'>;
-expectType<{2?: {0: number}}>(numberTest3);
+type notEqual_NumberTest2_Actual0 = PickDeep<Testing, '1'>;
+type notEqual_NumberTest2_Expected0 = PickDeep<Testing, '1.0'>;
+expectType<false>({} as IsEqual<notEqual_NumberTest2_Actual0, notEqual_NumberTest2_Expected0>);
+
+type numberTest3_Actual = PickDeep<Testing, '2.0'>;
+type numberTest3_Expected = {2?: {0: number}};
+expectType<true>({} as IsEqual<numberTest3_Actual, numberTest3_Expected>);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1224
+type unionElement0_Actual = PickDeep<{obj: string | {a: string; b: number; c: boolean} | null | undefined}, 'obj'>;
+type unionElement0_Expected = {obj: string | {a: string; b: number; c: boolean} | null | undefined};
+expectType<true>({} as IsEqual<unionElement0_Actual, unionElement0_Expected>);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1224
+type unionElement1_Actual = PickDeep<{obj: string | {a: string; b: number; c: {d: 'result'}} | null | undefined}, 'obj.b'>;
+type unionElement1_Expected = {obj: string | null | undefined | {b: number}};
+expectType<true>({} as IsEqual<unionElement1_Actual, unionElement1_Expected>);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1224
+type unionElement2_Actual = PickDeep<{obj: string | {a: string; b: number; c: {readonly d?: 'result'}} | null | undefined}, 'obj.c.d'>;
+type unionElement2_Expected = {obj: string | null | undefined | {c: {readonly d?: 'result'}}};
+expectType<true>({} as IsEqual<unionElement2_Actual, unionElement2_Expected>);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1224
+type unionElement3_Actual = PickDeep<
+	{obj: string | {a: string; b: number; c?: {readonly d?: 'result' | 'is'}} | null | undefined}, 'obj.c.d'>;
+type unionElement3_Expected = {obj: string | null | undefined | {c?: {readonly d?: 'result' | 'is'}}};
+expectType<true>({} as IsEqual<unionElement3_Actual, unionElement3_Expected>);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1224
+type unionElement4_Actual = PickDeep<
+	{obj: string | {a: string; b: number; c?: {readonly d?: 'result' | 'is'}} | null | undefined}, 'obj.c.d' | 'obj.b'>;
+type unionElement4_Expected = {obj: string | null | undefined | {c?: {readonly d?: 'result' | 'is'}; b: number}};
+expectType<true>({} as IsEqual<unionElement4_Actual, unionElement4_Expected>);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1140#issuecomment-2881382244
+type unionObject0_Actual = PickDeep<{foo: string} | {foo: number}, 'foo'>;
+type unionObject0_Expected = {foo: string} | {foo: number};
+expectType<true>({} as IsEqual<unionObject0_Actual, unionObject0_Expected>);
