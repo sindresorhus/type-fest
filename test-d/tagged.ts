@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Tagged, UnwrapTagged, GetTagMetadata, Opaque} from '../index.d.ts';
+import type {Tag, Tagged, UnwrapTagged, GetTagMetadata, Opaque} from '../index.d.ts';
 
 // Unwrapping a single tag returns the underlying type.
 type Url = Tagged<string, 'URL'>;
@@ -45,3 +45,16 @@ expectTypeOf(null as unknown as GetTagMetadata<MixedPropertyKeyTags, typeof symb
 // Repeated use must remain practical as a value passes through many independently tagged stages.
 type ManyTags = Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<string, 'A'>, 'B'>, 'C'>, 'D'>, 'E'>, 'F'>, 'G'>, 'H'>, 'I'>, 'J'>, 'K'>, 'L'>;
 expectTypeOf(null as unknown as UnwrapTagged<ManyTags>).toBe<string>();
+
+// `Tagged` is the underlying type intersected with `Tag`, which is how TypeScript can show a reduced tagged type, for example in emitted declaration files.
+expectTypeOf(null as unknown as Tagged<string, 'URL'>).toBe<string & Tag<'URL', never>>();
+expectTypeOf(null as unknown as Tagged<Url, 'SpecialCacheKey'>).toBe<string & Tag<'URL', never> & Tag<'SpecialCacheKey', never>>();
+
+// `Tag` matches any type that has the tag, whatever its underlying type and metadata.
+expectTypeOf<Url>().toBeAssignableTo<Tag<'URL', unknown>>();
+expectTypeOf<SpecialCacheKey>().toBeAssignableTo<Tag<'URL', unknown>>();
+expectTypeOf<Tagged<string, 'URL' | 'Other'>>().toBeAssignableTo<Tag<'URL', unknown>>();
+expectTypeOf<Tagged<number, 'URL', {secure: true}>>().toBeAssignableTo<Tag<'URL', unknown>>();
+expectTypeOf<Tagged<string, 'JSON', number>>().not.toBeAssignableTo<Tag<'JSON', string>>();
+expectTypeOf<string>().not.toBeAssignableTo<Tag<'URL', unknown>>();
+expectTypeOf<Tagged<string, 'Other'>>().not.toBeAssignableTo<Tag<'URL', unknown>>();

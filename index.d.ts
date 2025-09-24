@@ -47,7 +47,7 @@ export type {LiteralUnion} from './source/literal-union.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';
 export type {Optional} from './source/optional.d.ts';
-export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged.d.ts';
+export type {Opaque, UnwrapOpaque, Tag, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged.d.ts';
 export type {InvariantOf} from './source/invariant-of.d.ts';
 export type {SetOptional} from './source/set-optional.d.ts';
 export type {SetOptionalDeep} from './source/set-optional-deep.d.ts';

@@ -1,12 +1,40 @@
 import type tag from 'tagged-tag';
 import type {UnionMember} from './union-member.d.ts';
 
+// Declaration emit cannot name the `tag` symbol unless the user's file imports it. So exporting a value whose inferred type contains the `[tag]` key directly (for example, after spreading a tagged object) fails with TS4023: https://github.com/microsoft/TypeScript/issues/64812
 // eslint-disable-next-line type-fest/require-exported-types
 export type TagContainer<Token> = {
 	readonly [tag]: Token;
 };
 
-type Tag<Token extends PropertyKey, TagMetadata> = TagContainer<{[K in Token]: TagMetadata}>;
+/**
+The tag part of a {@link Tagged} type, without the underlying type.
+
+`Tagged<Type, TagName, TagMetadata>` is `Type & Tag<TagName, TagMetadata>`. Use `Tagged` to create tagged types. Use `Tag` to accept any type that has a given tag, whatever its underlying type is.
+
+TypeScript can also show a tagged type as an intersection with `Tag`, for example in emitted declaration files. This is why `Tag` is exported.
+
+@example
+```
+import type {Tag, Tagged} from 'type-fest';
+
+type Url = Tagged<string, 'URL'>;
+type UrlObject = Tagged<URL, 'URL'>;
+
+// Accepts any type that has the `URL` tag, with any metadata.
+declare function fetchUrl(url: Tag<'URL', unknown>): void;
+
+fetchUrl('https://example.com' as Url);
+fetchUrl(new URL('https://example.com') as UrlObject);
+
+// @ts-expect-error
+fetchUrl('https://example.com');
+```
+
+@category Type
+*/
+// Exported so that declaration emit can name it. TypeScript can reduce a `Tagged` type to `Type & Tag<…>` (for example, `Tagged<T, 'A'> & T`), and package `exports` hide this file, so a user's exported value with that type would otherwise fail with TS4023: https://github.com/sindresorhus/type-fest/pull/1243
+export type Tag<TagName extends PropertyKey, TagMetadata> = TagContainer<{[Key in TagName]: TagMetadata}>;
 
 /**
 Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
