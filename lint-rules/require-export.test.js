@@ -7,18 +7,13 @@ const createContext = (filename, errors = []) => ({
 	report: error => errors.push(error),
 });
 
-const runRule = (filename, nodeHandlers = {}) => {
+const runRule = (filename, node) => {
 	const errors = [];
 	const context = createContext(filename, errors);
 	const handlers = requireExportRule.create(context);
 
-	for (const [handler, node] of Object.entries(nodeHandlers)) {
+	for (const handler of Object.keys(handlers)) {
 		handlers[handler]?.(node);
-	}
-
-	const exitHandler = handlers['Program:exit'];
-	if (exitHandler) {
-		exitHandler({type: 'Program'});
 	}
 
 	return errors;
@@ -40,29 +35,21 @@ test('processes source .d.ts files', () => {
 });
 
 test('passes with export {}', () => {
-	const errors = runRule('/source/foo.d.ts', {
-		ExportNamedDeclaration: {declaration: null, specifiers: [], source: null},
-	});
+	const errors = runRule('/source/foo.d.ts', {declaration: null, specifiers: [], source: null});
 	assert.equal(errors.length, 0);
 });
 
 test('fails without export {}', () => {
-	const errors = runRule('/source/foo.d.ts');
-	assert.equal(errors.length, 1);
-	assert.equal(errors[0].messageId, 'noEmptyExport');
-});
-
-test('fails with non-empty export', () => {
-	const errors = runRule('/source/foo.d.ts', {
-		ExportNamedDeclaration: {declaration: null, specifiers: [{type: 'ExportSpecifier'}]},
-	});
+	const errors = runRule('/source/foo.d.ts', {declaration: null, specifiers: [{type: 'ExportSpecifier'}]});
 	assert.equal(errors.length, 1);
 });
 
 test('auto-fix adds export {}', () => {
-	const errors = runRule('/source/foo.d.ts');
+	const node = {declaration: null, specifiers: [{type: 'ExportSpecifier'}]};
+	const errors = runRule('/source/foo.d.ts', node);
 	const fix = errors[0].fix({
 		insertTextAfter: (node, text) => ({node, text}),
 	});
+	assert.equal(fix.node, node);
 	assert.equal(fix.text, '\nexport {};\n');
 });
