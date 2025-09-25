@@ -9,7 +9,20 @@ declare const threeStrings: FixedToThreeStrings;
 expectType<string>(threeStrings[0]);
 expectType<string>(threeStrings[1]);
 expectType<string>(threeStrings[2]);
-expectType<string | undefined>(threeStrings[3]); // Out of bounds access is allowed, it just adds an extra `undefined` to the resultant type
+
+// @ts-expect-error
+type OutOfBoundsAccess = FixedToThreeStrings[3];
+
+// @ts-expect-error
+type NoSplice = FixedToThreeStrings['splice'];
+// @ts-expect-error
+type NoPush = FixedToThreeStrings['push'];
+// @ts-expect-error
+type NoPop = FixedToThreeStrings['pop'];
+// @ts-expect-error
+type NoShift = FixedToThreeStrings['shift'];
+// @ts-expect-error
+type NoUnshift = FixedToThreeStrings['unshift'];
 
 expectNotAssignable<FixedToThreeStrings>(['a', 'b', 123]);
 expectNotAssignable<FixedToThreeStrings>(['a']);

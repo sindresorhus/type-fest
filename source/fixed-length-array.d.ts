@@ -4,7 +4,7 @@ import type {BuildTuple} from './internal/tuple.d.ts';
 /**
 Methods to exclude.
 */
-type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift';
+type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift' | number;
 
 /**
 Create a type that represents an array of the given type and length. The array's length and the `Array` prototype methods that manipulate its length are excluded in the resulting type.
@@ -15,8 +15,6 @@ Use-cases:
 - Declaring fixed-length tuples or arrays with a large number of items.
 - Creating a range union (for example, `0 | 1 | 2 | 3 | 4` from the keys of such a type) without having to resort to recursive types.
 - Creating an array of coordinates with a static length, for example, length of 3 for a 3D vector.
-
-Note: This type does not prevent out-of-bounds access. Prefer `ReadonlyTuple` unless you need mutability.
 
 @example
 ```
@@ -34,7 +32,6 @@ guestFencingTeam.push('Sam');
 ```
 
 @category Array
-@see ReadonlyTuple
 */
 export type FixedLengthArray<Element, Length extends number> = Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys>;
 
