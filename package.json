@@ -54,6 +54,8 @@
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^8.0.1",
+		"@typescript-eslint/parser": "^8.44.0",
+		"eslint": "^9.35.0",
 		"expect-type": "^1.2.2",
 		"npm-run-all2": "^8.0.4",
 		"tsd": "^0.33.0",
