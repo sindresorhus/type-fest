@@ -25,7 +25,7 @@ export const requireExportRule = /** @type {const} */ ({
 		return {
 			ExportNamedDeclaration(node) {
 				// Check if this is specifically `export {}`
-				if (!node.declaration && (!node.specifiers || node.specifiers.length === 0) && !node.source) {
+				if (!node.declaration && node.specifiers.length === 0 && !node.source) {
 					hasEmptyExport = true;
 				}
 			},
