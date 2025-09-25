@@ -147,3 +147,5 @@ type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
 						? readonly [...BuildTuple<ArrayIndex>, ArrayType[ArrayIndex]]
 						: never
 			: never;
+
+export {};

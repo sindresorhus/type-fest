@@ -263,3 +263,5 @@ export type CollapseLiterals<T> = {} extends T
 	: T extends infer U & {}
 		? U
 		: T;
+
+export {};

@@ -63,3 +63,5 @@ export type If<Type extends boolean, IfBranch, ElseBranch> =
 		: Type extends true
 			? IfBranch
 			: ElseBranch;
+
+export {};

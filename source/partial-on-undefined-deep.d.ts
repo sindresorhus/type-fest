@@ -77,3 +77,5 @@ type PartialOnUndefinedDeepValue<T, Options extends Required<PartialOnUndefinedD
 		: T extends Record<any, any> | undefined
 			? _PartialOnUndefinedDeep<T, Options>
 			: unknown;
+
+export {};

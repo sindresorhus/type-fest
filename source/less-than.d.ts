@@ -24,3 +24,5 @@ export type LessThan<A extends number, B extends number> = number extends A | B
 			? false
 			: true
 		: never; // Should never happen
+
+export {};

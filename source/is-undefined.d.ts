@@ -18,3 +18,5 @@ type Example2 = UndefinedFallback<number, string>;
 @category Utilities
 */
 export type IsUndefined<T> = [T] extends [undefined] ? true : false;
+
+export {};

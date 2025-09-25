@@ -50,3 +50,5 @@ type _RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType> = (
 	| RequireAll<ObjectType, KeysType>
 	| RequireNone<KeysType>
 ) & Omit<ObjectType, KeysType>; // The rest of the keys.
+
+export {};

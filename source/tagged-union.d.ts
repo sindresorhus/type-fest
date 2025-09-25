@@ -49,3 +49,5 @@ export type TaggedUnion<
 > = {
 	[Name in keyof UnionMembers]: {[Key in TagKey]: Name} & UnionMembers[Name];
 }[keyof UnionMembers];
+
+export {};

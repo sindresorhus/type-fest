@@ -87,3 +87,5 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
 		>>
 	: Type;
+
+export {};

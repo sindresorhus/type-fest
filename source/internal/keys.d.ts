@@ -96,3 +96,5 @@ Key extends keyof T
 				? NumberKey
 				: never
 			: never;
+
+export {};

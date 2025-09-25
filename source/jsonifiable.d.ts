@@ -35,3 +35,5 @@ JSON.stringify(good);
 @category JSON
 */
 export type Jsonifiable = JsonPrimitive | JsonifiableObject | JsonifiableArray;
+
+export {};

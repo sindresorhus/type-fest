@@ -86,3 +86,5 @@ type SplitHelper<
 			: string[]
 		: never // Should never happen
 	: never; // Should never happen
+
+export {};

@@ -59,3 +59,5 @@ type _ConditionalKeys<Base, Condition> = keyof {
 	ExtendsStrict<Base[Key], Condition> extends true ? Key : never
 	]: never
 };
+
+export {};

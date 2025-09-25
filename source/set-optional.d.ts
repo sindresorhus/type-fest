@@ -42,3 +42,5 @@ type _SetOptional<BaseType, Keys extends keyof BaseType> =
 			Partial<HomomorphicPick<BaseType, Keys>>
 		>
 		: never;
+
+export {};

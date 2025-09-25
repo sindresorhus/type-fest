@@ -104,3 +104,5 @@ type DelimiterCasedPropertiesArrayDeep<
 						: Value extends ReadonlyArray<infer U>
 							? ReadonlyArray<_DelimiterCasedPropertiesDeep<U, Delimiter, Options>>
 							: never;
+
+export {};
