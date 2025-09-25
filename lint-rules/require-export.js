@@ -13,7 +13,7 @@ export const requireExportRule = /** @type {const} */ ({
 	},
 	defaultOptions: [],
 	create(context) {
-		const filename = (context.filename ?? context.getFilename?.() ?? '').replaceAll('\\', '/');
+		const filename = context.filename.replaceAll('\\', '/');
 
 		// Only check source .d.ts files
 		if (!filename.includes('/source/') || !filename.endsWith('.d.ts')) {
