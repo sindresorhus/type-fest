@@ -27,10 +27,10 @@ type FencingTeam = FixedLengthArray<string, 3>;
 const guestFencingTeam: FencingTeam = ['Josh', 'Michael', 'Robert'];
 
 const homeFencingTeam: FencingTeam = ['George', 'John'];
-//=> error TS2322: Type string[] is not assignable to type 'FencingTeam'
+//=> Error: Property '2' is missing in type '[string, string]' but required in type 'FencingTeam'
 
 guestFencingTeam.push('Sam');
-//=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
+//=> Error: Property 'push' does not exist on type 'FencingTeam'
 ```
 
 @category Array
