@@ -49,6 +49,8 @@ import type {BuildTuple} from 'type-fest';
 type EmptyTuple = BuildTuple<-3, string>;
 //=> []
 ```
+
+@category Array
 */
 export type BuildTuple<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length, _BuildTuple<If<IsNegative<Length>, 0, Length>, Fill, []>, Fill[], []>;
 
