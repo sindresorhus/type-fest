@@ -1,4 +1,4 @@
-import type {BuildTuple} from './internal/index.d.ts';
+import type {BuildTuple} from './build-tuple.d.ts';
 import type {Subtract} from './subtract.d.ts';
 
 /**

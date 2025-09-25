@@ -157,6 +157,7 @@ export type {IsLowercase} from './source/is-lowercase.d.ts';
 export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
 export type {IsNullable} from './source/is-nullable.d.ts';
+export type {BuildTuple} from './source/build-tuple.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';

@@ -1,4 +1,5 @@
-import type {NumberAbsolute, BuildTuple, TupleMax, ReverseSign} from './internal/index.d.ts';
+import type {BuildTuple} from './build-tuple.d.ts';
+import type {NumberAbsolute, TupleMax, ReverseSign} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 

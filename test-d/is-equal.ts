@@ -1,6 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual} from '../index.d.ts';
-import type {BuildTuple} from '../source/internal/index.d.ts';
+import type {BuildTuple, IsEqual} from '../index.d.ts';
 
 expectType<false>({} as IsEqual<number, string>);
 expectType<true>({} as IsEqual<1, 1>);

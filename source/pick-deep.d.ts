@@ -1,4 +1,5 @@
-import type {BuildObject, BuildTuple, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
+import type {BuildTuple} from './build-tuple.d.ts';
+import type {BuildObject, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
