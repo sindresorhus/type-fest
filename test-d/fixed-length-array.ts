@@ -9,7 +9,7 @@ declare const threeStrings: FixedToThreeStrings;
 expectType<string>(threeStrings[0]);
 expectType<string>(threeStrings[1]);
 expectType<string>(threeStrings[2]);
-expectType<string | undefined>(threeStrings[3]);
+expectType<string | undefined>(threeStrings[3]); // Out of bounds access is allowed, it just adds an extra `undefined` to the resultant type
 
 expectNotAssignable<FixedToThreeStrings>(['a', 'b', 123]);
 expectNotAssignable<FixedToThreeStrings>(['a']);
