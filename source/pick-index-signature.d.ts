@@ -48,3 +48,5 @@ export type PickIndexSignature<ObjectType> = {
 		? KeyType
 		: never]: ObjectType[KeyType];
 };
+
+export {};

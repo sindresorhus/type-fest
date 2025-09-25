@@ -28,3 +28,5 @@ export type RequiredKeysOf<Type extends object> =
 	Type extends unknown // For distributing `Type`
 		? Exclude<keyof Type, OptionalKeysOf<Type>>
 		: never; // Should never happen
+
+export {};

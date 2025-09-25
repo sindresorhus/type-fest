@@ -263,3 +263,5 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 					}[keyof T & (T extends UnknownArray ? number : unknown)]
 			: never
 		: never;
+
+export {};

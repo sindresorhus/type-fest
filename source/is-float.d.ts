@@ -39,3 +39,5 @@ export type IsFloat<T> = T extends number
 			? true
 			: false
 	: false;
+
+export {};

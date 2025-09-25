@@ -46,3 +46,5 @@ type _RequireAtLeastOne<
 }[KeysType] &
 // 3. Add the remaining keys not in `KeysType`
 Except<ObjectType, KeysType>;
+
+export {};

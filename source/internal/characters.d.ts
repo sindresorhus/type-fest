@@ -61,3 +61,5 @@ export type AsciiPunctuation =
 	| '|'
 	| '}'
 	| '~';
+
+export {};

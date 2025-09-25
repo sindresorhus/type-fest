@@ -40,3 +40,5 @@ export type ExtendsStrict<Left, Right> =
 			: [Left] extends [Right]
 				? true
 				: false;
+
+export {};

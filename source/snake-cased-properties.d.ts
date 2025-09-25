@@ -38,3 +38,5 @@ export type SnakeCasedProperties<
 	Value,
 	Options extends WordsOptions = {},
 > = DelimiterCasedProperties<Value, '_', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+
+export {};

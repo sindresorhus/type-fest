@@ -97,3 +97,5 @@ export type ArraySplice<
 			? [...U, ...Items, ...X]
 			: never // Should never happen
 		: never; // Should never happen
+
+export {};

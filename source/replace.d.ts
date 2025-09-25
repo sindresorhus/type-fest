@@ -83,3 +83,5 @@ type _Replace<
 			: `${Accumulator}${Input}`
 		: never
 	: never;
+
+export {};

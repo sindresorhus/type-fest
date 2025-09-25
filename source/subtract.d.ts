@@ -81,3 +81,5 @@ type SubtractIfAGreaterThanB<A extends number, B extends number> =
 	BuildTuple<A> extends [...BuildTuple<B>, ...infer R]
 		? R['length']
 		: never;
+
+export {};

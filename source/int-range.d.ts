@@ -55,3 +55,5 @@ type PrivateIntRange<
 	: List extends [...(infer U), ...EndLengthTuple] // The result of "List[length] >= End", because the `...BuildTuple<Gap, never>` maybe make `List` too long.
 		? Exclude<List[number], never>
 		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...BuildTuple<Gap, never>]>;
+
+export {};

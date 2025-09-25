@@ -106,3 +106,5 @@ type _Except<ObjectType, KeysType extends keyof ObjectType, Options extends Requ
 } & (Options['requireExactProps'] extends true
 	? Partial<Record<KeysType, never>>
 	: {});
+
+export {};

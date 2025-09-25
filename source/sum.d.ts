@@ -76,3 +76,5 @@ type SumPositives<A extends number, B extends number> =
 	[...BuildTuple<A>, ...BuildTuple<B>]['length'] extends infer Result extends number
 		? Result
 		: never;
+
+export {};

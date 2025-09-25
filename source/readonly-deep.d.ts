@@ -41,11 +41,11 @@ export type ReadonlyDeep<T> = T extends BuiltIns
 	: T extends new (...arguments_: any[]) => unknown
 		? T // Skip class constructors
 		: T extends (...arguments_: any[]) => unknown
-			? {} extends ReadonlyObjectDeep<T>
+			? {} extends _ReadonlyObjectDeep<T>
 				? T
 				: HasMultipleCallSignatures<T> extends true
 					? T
-					: ((...arguments_: Parameters<T>) => ReturnType<T>) & ReadonlyObjectDeep<T>
+					: ((...arguments_: Parameters<T>) => ReturnType<T>) & _ReadonlyObjectDeep<T>
 			: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
 				? ReadonlyMapDeep<KeyType, ValueType>
 				: T extends Readonly<ReadonlySet<infer ItemType>>
@@ -60,7 +60,7 @@ export type ReadonlyDeep<T> = T extends BuiltIns
 								: T extends ReadonlyArray<infer ItemType>
 									? ReadonlyArray<ReadonlyDeep<ItemType>>
 									: T extends object
-										? ReadonlyObjectDeep<T>
+										? _ReadonlyObjectDeep<T>
 										: unknown;
 
 /**
@@ -76,6 +76,8 @@ type ReadonlySetDeep<ItemType> = {} & Readonly<ReadonlySet<ReadonlyDeep<ItemType
 /**
 Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper for `ReadonlyDeep`.
 */
-type ReadonlyObjectDeep<ObjectType extends object> = {
+export type _ReadonlyObjectDeep<ObjectType extends object> = {
 	readonly [KeyType in keyof ObjectType]: ReadonlyDeep<ObjectType[KeyType]>
 };
+
+export {};

@@ -43,3 +43,5 @@ export type ExcludeStrict<
 		? unknown
 		: never,
 > = Exclude<T, U>;
+
+export {};

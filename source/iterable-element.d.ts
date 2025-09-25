@@ -62,3 +62,5 @@ export type IterableElement<TargetIterable> =
 		TargetIterable extends AsyncIterable<infer ElementType> ?
 			ElementType :
 			never;
+
+export {};

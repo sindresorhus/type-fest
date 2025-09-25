@@ -2,6 +2,7 @@
 import {importPathRule} from './lint-rules/import-path.js';
 import {sourceFilesExtensionRule} from './lint-rules/source-files-extension.js';
 import {requireExportedTypesRule} from './lint-rules/require-exported-types.js';
+import {requireExportRule} from './lint-rules/require-export.js';
 
 /** @type {import('xo').FlatXoConfig} */
 const xoConfig = [
@@ -55,6 +56,7 @@ const xoConfig = [
 					'import-path': importPathRule,
 					'source-files-extension': sourceFilesExtensionRule,
 					'require-exported-types': requireExportedTypesRule,
+					'require-export': requireExportRule,
 				},
 			},
 		},
@@ -76,6 +78,7 @@ const xoConfig = [
 		ignores: ['source/internal/**/*.d.ts'],
 		rules: {
 			'type-fest/require-exported-types': 'error',
+			'type-fest/require-export': 'error',
 		},
 	},
 ];

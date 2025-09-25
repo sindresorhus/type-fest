@@ -128,3 +128,5 @@ Indicates the value of `exactOptionalPropertyTypes` compiler option.
 export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;
+
+export {};

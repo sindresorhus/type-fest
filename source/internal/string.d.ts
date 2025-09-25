@@ -198,3 +198,5 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 			: false
 		: never
 	: never;
+
+export {};

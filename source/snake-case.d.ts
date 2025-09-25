@@ -43,3 +43,5 @@ export type SnakeCase<
 	Value,
 	Options extends WordsOptions = {},
 > = DelimiterCase<Value, '_', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+
+export {};

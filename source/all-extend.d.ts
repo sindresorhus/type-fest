@@ -113,3 +113,5 @@ type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllE
 				: false
 		: true
 >, false, false>;
+
+export {};

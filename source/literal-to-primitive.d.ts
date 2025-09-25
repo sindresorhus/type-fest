@@ -34,3 +34,5 @@ export type LiteralToPrimitive<T> = T extends number
 						: T extends undefined
 							? undefined
 							: never;
+
+export {};

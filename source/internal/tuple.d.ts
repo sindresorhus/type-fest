@@ -88,3 +88,5 @@ export type TupleMin<A extends number[], Result extends number = PositiveInfinit
 			? TupleMin<R, F>
 			: TupleMin<R, Result>
 		: Result;
+
+export {};

@@ -126,3 +126,5 @@ Prefix extends string // For distributing `Prefix`
 			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is disabled
 		: S // Return back `S` when `Prefix` is not present at the start of `S`
 	: never;
+
+export {};

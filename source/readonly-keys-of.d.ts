@@ -34,3 +34,5 @@ export type ReadonlyKeysOf<Type extends object> =
 			]: never
 		}) & keyof Type // Intersect with `keyof Type` to ensure result of `ReadonlyKeysOf<Type>` is always assignable to `keyof Type`
 		: never; // Should never happen
+
+export {};

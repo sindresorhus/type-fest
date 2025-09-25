@@ -116,3 +116,5 @@ type _ConditionalPickDeep<
 			? _ConditionalPickDeep<Type[Key], Condition, Options>
 			: typeof conditionalPickDeepSymbol;
 }, (typeof conditionalPickDeepSymbol | undefined) | EmptyObject>, never, UnknownRecord>;
+
+export {};

@@ -218,3 +218,5 @@ export type Get<
 		Path extends string ? ToPath<Path> : Path,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
+
+export {};

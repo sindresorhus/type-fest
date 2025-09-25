@@ -41,3 +41,5 @@ export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [E
 	[Symbol.iterator]: () => IterableIterator<Element>;
 	readonly length: Length;
 };
+
+export {};

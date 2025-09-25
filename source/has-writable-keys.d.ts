@@ -19,3 +19,5 @@ type UpdateService<Entity extends object> = {
 @category Utilities
 */
 export type HasWritableKeys<BaseType extends object> = WritableKeysOf<BaseType> extends never ? false : true;
+
+export {};
