@@ -1,3 +1,6 @@
+import type {Except} from './except.d.ts';
+import type {BuildTuple} from './internal/tuple.d.ts';
+
 /**
 Methods to exclude.
 */
@@ -33,13 +36,6 @@ guestFencingTeam.push('Sam');
 @category Array
 @see ReadonlyTuple
 */
-export type FixedLengthArray<Element, Length extends number, ArrayPrototype = [Element, ...Element[]]> = Pick<
-	ArrayPrototype,
-	Exclude<keyof ArrayPrototype, ArrayLengthMutationKeys>
-> & {
-	[index: number]: Element;
-	[Symbol.iterator]: () => IterableIterator<Element>;
-	readonly length: Length;
-};
+export type FixedLengthArray<Element, Length extends number> = Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys>;
 
 export {};
