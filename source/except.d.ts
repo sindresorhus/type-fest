@@ -30,7 +30,7 @@ type Filtered = Filter<'bar', 'foo'>;
 */
 type Filter<KeyType, ExcludeType> = IsEqual<KeyType, ExcludeType> extends true ? never : (KeyType extends ExcludeType ? never : KeyType);
 
-type ExceptOptions = {
+export type ExceptOptions = {
 	/**
 	Disallow assigning non-specified properties.
 
