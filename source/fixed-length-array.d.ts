@@ -113,6 +113,6 @@ console.log(print(team)); // `FixedLengthArray<string, number>` is assignable to
 @category Array
 */
 export type FixedLengthArray<Element, Length extends number> =
-    Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys | number> & {readonly [n: number]: Element};
+    Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys | number | 'length'> & {readonly [n: number]: Element; readonly length: Length};
 
 export {};
