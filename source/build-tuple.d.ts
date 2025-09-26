@@ -11,7 +11,7 @@ Creates a tuple type of the specified length with elements of the specified type
 import type {BuildTuple} from 'type-fest';
 
 type RGB = BuildTuple<3, number>;
-// => [number, number, number]
+//=> [number, number, number]
 
 type Line = BuildTuple<2, {x: number; y: number}>;
 //=> [{x: number; y: number}, {x: number; y: number}]
