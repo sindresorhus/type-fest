@@ -1,4 +1,4 @@
-import type {BuildTuple} from '../build-tuple.d.ts';
+import type {TupleOf} from '../tuple-of.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {Whitespace} from './characters.d.ts';
@@ -171,7 +171,7 @@ PositiveNumericStringGt<'1', '500'>;
 */
 export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false
-	: [BuildTuple<StringLength<A>, 0>, BuildTuple<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
+	: [TupleOf<StringLength<A>, 0>, TupleOf<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
 		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]
 			? 0 extends Remain['length']
 				? SameLengthPositiveNumericStringGt<A, B>

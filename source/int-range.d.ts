@@ -1,4 +1,4 @@
-import type {BuildTuple} from './build-tuple.d.ts';
+import type {TupleOf} from './tuple-of.d.ts';
 import type {Subtract} from './subtract.d.ts';
 
 /**
@@ -44,16 +44,16 @@ type PrivateIntRange<
 	// The gap between each number, gap = step - 1
 	Gap extends number = Subtract<Step, 1>,
 	// The final `List` is `[...StartLengthTuple, ...[number, ...GapLengthTuple], ...[number, ...GapLengthTuple], ... ...]`, so can initialize the `List` with `[...StartLengthTuple]`
-	List extends unknown[] = BuildTuple<Start, never>,
-	EndLengthTuple extends unknown[] = BuildTuple<End>,
+	List extends unknown[] = TupleOf<Start, never>,
+	EndLengthTuple extends unknown[] = TupleOf<End>,
 > = Gap extends 0 ?
 	// Handle the case that without `Step`
 	List['length'] extends End // The result of "List[length] === End"
 		? Exclude<List[number], never> // All unused elements are `never`, so exclude them
 		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'] ]>
 	// Handle the case that with `Step`
-	: List extends [...(infer U), ...EndLengthTuple] // The result of "List[length] >= End", because the `...BuildTuple<Gap, never>` maybe make `List` too long.
+	: List extends [...(infer U), ...EndLengthTuple] // The result of "List[length] >= End", because the `...TupleOf<Gap, never>` maybe make `List` too long.
 		? Exclude<List[number], never>
-		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...BuildTuple<Gap, never>]>;
+		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...TupleOf<Gap, never>]>;
 
 export {};
