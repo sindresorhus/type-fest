@@ -80,6 +80,7 @@ Note: If the specified length is the non-literal `number` type, accessing any in
 
 @example
 ```
+// @noUncheckedIndexedAccess: true
 import type {FixedLengthArray} from 'type-fest';
 
 let team: FixedLengthArray<string, number> = ['John', 'Jane', 'Jim'];
@@ -113,6 +114,8 @@ console.log(print(team)); // `FixedLengthArray<string, number>` is assignable to
 @category Array
 */
 export type FixedLengthArray<Element, Length extends number> =
-    Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys | number | 'length'> & {readonly [n: number]: Element; readonly length: Length};
+	Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys | number | 'length'>
+	& {readonly length: Length}
+	& (number extends Length ? {readonly [n: number]: Element} : {}); // Add `number` index signature only for non-tuple arrays.
 
 export {};

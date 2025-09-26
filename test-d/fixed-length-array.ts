@@ -14,7 +14,8 @@ expectType<string>({} as FixedToThreeStrings[1]);
 expectType<string>({} as FixedToThreeStrings[2]);
 
 // Reading out of bounds
-expectType<string | undefined>({} as FixedToThreeStrings[3]);
+// @ts-expect-error
+type OutOfBounds = FixedToThreeStrings[3];
 
 // Writing within bounds
 fixedToThreeStrings[0] = 'a';
@@ -50,8 +51,11 @@ expectAssignable<FixedLength>({} as string[]);
 expectAssignable<readonly string[]>({} as FixedLength);
 
 // Reading
-expectType<string | undefined>({} as FixedLength[0]);
-expectType<string | undefined>({} as FixedLength[100]);
+// Note: The extra `undefined` is only present when `noUncheckedIndexedAccess` is enabled.
+expectType<string | undefined>(fixedLength[0]);
+expectType<string | undefined>(fixedLength[100]);
+// Note: Reading directly from the type doesn't include `undefined`.
+expectType<string>({} as FixedLength[100]);
 
 // Writing
 // @ts-expect-error
