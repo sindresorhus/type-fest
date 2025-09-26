@@ -5,7 +5,7 @@ type FixedToThreeStrings = FixedLengthArray<string, 3>;
 
 expectAssignable<FixedToThreeStrings>(['a', 'b', 'c']);
 expectAssignable<readonly [string, string, string]>({} as FixedToThreeStrings);
-expectAssignable<readonly string[]>({} as FixedLengthArray<string, 3>);
+expectAssignable<readonly string[]>({} as FixedToThreeStrings);
 
 expectType<string>({} as FixedToThreeStrings[0]);
 expectType<string>({} as FixedToThreeStrings[1]);
