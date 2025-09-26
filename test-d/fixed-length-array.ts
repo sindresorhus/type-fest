@@ -2,15 +2,28 @@ import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {FixedLengthArray} from '../index.d.ts';
 
 type FixedToThreeStrings = FixedLengthArray<string, 3>;
+declare const fixedToThreeStrings: FixedToThreeStrings;
 
 expectAssignable<FixedToThreeStrings>(['a', 'b', 'c']);
 expectAssignable<readonly [string, string, string]>({} as FixedToThreeStrings);
 expectAssignable<readonly string[]>({} as FixedToThreeStrings);
 
+// Reading within bounds
 expectType<string>({} as FixedToThreeStrings[0]);
 expectType<string>({} as FixedToThreeStrings[1]);
 expectType<string>({} as FixedToThreeStrings[2]);
+
+// Reading out of bounds
 expectType<string | undefined>({} as FixedToThreeStrings[3]);
+
+// Writing within bounds
+fixedToThreeStrings[0] = 'a';
+fixedToThreeStrings[1] = 'b';
+fixedToThreeStrings[2] = 'c';
+
+// Writing out of bounds
+// @ts-expect-error
+fixedToThreeStrings[3] = 'd';
 
 expectType<3>({} as FixedToThreeStrings['length']);
 
@@ -29,6 +42,33 @@ expectNotAssignable<FixedToThreeStrings>(['a', 'b', 123]);
 expectNotAssignable<FixedToThreeStrings>(['a']);
 expectNotAssignable<FixedToThreeStrings>(['a', 'b']);
 expectNotAssignable<FixedToThreeStrings>(['a', 'b', 'c', 'd']);
+
+type FixedLength = FixedLengthArray<string, number>;
+declare const fixedLength: FixedLength;
+
+expectAssignable<FixedLength>({} as string[]);
+expectAssignable<readonly string[]>({} as FixedLength);
+
+// Reading
+expectType<string | undefined>({} as FixedLength[0]);
+expectType<string | undefined>({} as FixedLength[100]);
+
+// Writing
+// @ts-expect-error
+fixedLength[0] = 'a';
+// @ts-expect-error
+fixedLength[100] = 'b';
+
+// @ts-expect-error
+type NoSplice = FixedLength['splice'];
+// @ts-expect-error
+type NoPush = FixedLength['push'];
+// @ts-expect-error
+type NoPop = FixedLength['pop'];
+// @ts-expect-error
+type NoShift = FixedLength['shift'];
+// @ts-expect-error
+type NoUnshift = FixedLength['unshift'];
 
 expectAssignable<FixedLengthArray<string | number, 3>>(['a', 'b', 'c']);
 expectAssignable<FixedLengthArray<string | number, 3>>([3, 2, 1]);
