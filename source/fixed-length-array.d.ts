@@ -56,7 +56,7 @@ const alpha = color[3];
 //=> Error: Property '3' does not exist on type 'FixedLengthArray<number, 3>'.
 
 color[3] = 0.5;
-//=> Error: Type 'FixedLengthArray<number, 3>' only permits reading.
+//=> Error: Property '3' does not exist on type 'FixedLengthArray<number, 3>'.
 
 color.push(0.5);
 //=> Error: Property 'push' does not exist on type 'FixedLengthArray<number, 3>'.
