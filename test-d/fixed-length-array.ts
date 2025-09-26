@@ -10,11 +10,9 @@ expectAssignable<readonly string[]>({} as FixedLengthArray<string, 3>);
 expectType<string>({} as FixedToThreeStrings[0]);
 expectType<string>({} as FixedToThreeStrings[1]);
 expectType<string>({} as FixedToThreeStrings[2]);
+expectType<string | undefined>({} as FixedToThreeStrings[3]);
 
 expectType<3>({} as FixedToThreeStrings['length']);
-
-// @ts-expect-error
-type OutOfBoundsAccess = FixedToThreeStrings[3];
 
 // @ts-expect-error
 type NoSplice = FixedToThreeStrings['splice'];

@@ -4,7 +4,7 @@ import type {BuildTuple} from './internal/tuple.d.ts';
 /**
 Methods to exclude.
 */
-type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift' | number;
+type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift';
 
 /**
 Create a type that represents an array of the given type and length. The array's length and the `Array` prototype methods that manipulate its length are excluded in the resulting type.
@@ -33,6 +33,7 @@ guestFencingTeam.push('Sam');
 
 @category Array
 */
-export type FixedLengthArray<Element, Length extends number> = Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys>;
+export type FixedLengthArray<Element, Length extends number> =
+    Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys | number> & {readonly [n: number]: Element};
 
 export {};
