@@ -1,5 +1,5 @@
 import type {Except} from './except.d.ts';
-import type {BuildTuple} from './internal/tuple.d.ts';
+import type {TupleOf} from './tuple-of.d.ts';
 
 /**
 Methods to exclude.
@@ -114,7 +114,7 @@ console.log(print(team)); // `FixedLengthArray<string, number>` is assignable to
 @category Array
 */
 export type FixedLengthArray<Element, Length extends number> =
-	Except<BuildTuple<Length, Element>, ArrayLengthMutationKeys | number | 'length'>
+	Except<TupleOf<Length, Element>, ArrayLengthMutationKeys | number | 'length'>
 	& {readonly length: Length}
 	& (number extends Length ? {readonly [n: number]: Element} : {}); // Add `number` index signature only for non-tuple arrays.
 

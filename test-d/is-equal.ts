@@ -1,6 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual} from '../index.d.ts';
-import type {BuildTuple} from '../source/internal/index.d.ts';
+import type {IsEqual, TupleOf} from '../index.d.ts';
 
 expectType<false>({} as IsEqual<number, string>);
 expectType<true>({} as IsEqual<1, 1>);
@@ -39,10 +38,10 @@ expectType<true>({} as IsEqual<[string], [string]>);
 expectType<false>({} as IsEqual<[string], [string, number]>);
 expectType<false>({} as IsEqual<[0, 1] | [0, 2], [0, 2]>);
 
-type LongTupleNumber = BuildTuple<50, 0>;
+type LongTupleNumber = TupleOf<50, 0>;
 expectType<true>({} as IsEqual<LongTupleNumber, LongTupleNumber>);
 
-type ReadonlyLongTupleNumber = Readonly<BuildTuple<50, 0>>;
+type ReadonlyLongTupleNumber = Readonly<TupleOf<50, 0>>;
 expectType<true>({} as IsEqual<ReadonlyLongTupleNumber, ReadonlyLongTupleNumber>);
 
 expectType<false>({} as IsEqual<ReadonlyLongTupleNumber, LongTupleNumber>);

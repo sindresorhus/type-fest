@@ -256,6 +256,7 @@ Click the type names for complete docs.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
+- [`TupleOf`](source/tuple-of.d.ts) - Creates a tuple type of the specified length with elements of the specified type.
 
 ### Numeric
 

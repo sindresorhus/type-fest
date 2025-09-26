@@ -31,19 +31,6 @@ export type TupleLength<T extends UnknownArray> =
 		: never; // Should never happen
 
 /**
-Create a tuple type of the given length `<L>` and fill it with the given type `<Fill>`.
-
-If `<Fill>` is not provided, it will default to `unknown`.
-
-@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
-*/
-export type BuildTuple<L extends number, Fill = unknown, T extends readonly unknown[] = []> = number extends L
-	? Fill[]
-	: L extends T['length']
-		? T
-		: BuildTuple<L, Fill, [...T, Fill]>;
-
-/**
 Returns the maximum value from a tuple of integers.
 
 Note:
