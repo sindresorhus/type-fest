@@ -85,6 +85,7 @@ import type {FixedLengthArray} from 'type-fest';
 
 let team: FixedLengthArray<string, number> = ['John', 'Jane', 'Jim'];
 
+// Note: The extra `undefined` is present only when `noUncheckedIndexedAccess` compiler option is enabled.
 const john = team[0];
 //=> string | undefined
 const jane = team[1];
