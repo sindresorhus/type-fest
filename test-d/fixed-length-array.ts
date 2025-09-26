@@ -5,10 +5,13 @@ type FixedToThreeStrings = FixedLengthArray<string, 3>;
 
 expectAssignable<FixedToThreeStrings>(['a', 'b', 'c']);
 expectAssignable<readonly [string, string, string]>({} as FixedToThreeStrings);
+expectAssignable<readonly string[]>({} as FixedLengthArray<string, 3>);
 
 expectType<string>({} as FixedToThreeStrings[0]);
 expectType<string>({} as FixedToThreeStrings[1]);
 expectType<string>({} as FixedToThreeStrings[2]);
+
+expectType<3>({} as FixedToThreeStrings['length']);
 
 // @ts-expect-error
 type OutOfBoundsAccess = FixedToThreeStrings[3];
