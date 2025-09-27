@@ -35,3 +35,5 @@ export type StringSlice<
 	: ArraySlice<StringToArray<S>, Start, End> extends infer R extends readonly string[]
 		? Join<R, ''>
 		: never;
+
+export {};

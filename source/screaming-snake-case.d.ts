@@ -26,3 +26,5 @@ export type ScreamingSnakeCase<
 > = Value extends string
 	? Uppercase<SnakeCase<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>>
 	: Value;
+
+export {};

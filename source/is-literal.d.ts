@@ -310,3 +310,5 @@ export type IsLiteral<T> =
 	IsPrimitive<T> extends true
 		? IsNotFalse<IsLiteralUnion<T>>
 		: false;
+
+export {};

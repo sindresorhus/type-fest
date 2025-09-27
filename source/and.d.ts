@@ -75,3 +75,5 @@ type G = And<never, never>;
 @see {@link Or}
 */
 export type And<A extends boolean, B extends boolean> = AllExtend<[A, B], true>;
+
+export {};

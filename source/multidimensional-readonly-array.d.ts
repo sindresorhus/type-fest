@@ -46,3 +46,5 @@ export type MultidimensionalReadonlyArray<Element, Dimensions extends number> = 
 	: IsEqual<Dimensions, 0> extends true
 		? Element
 		: ReadonlyArray<MultidimensionalReadonlyArray<Element, Subtract<Dimensions, 1>>>;
+
+export {};

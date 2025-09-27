@@ -115,3 +115,5 @@ export type SetParameterType<Function_ extends (...arguments_: any[]) => unknown
 				: (this: ThisArgument, ...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
 		)
 		: Function_;	// This part should be unreachable
+
+export {};

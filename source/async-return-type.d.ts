@@ -21,3 +21,5 @@ asyncFunction().then(value => doSomething(value));
 @category Async
 */
 export type AsyncReturnType<Target extends AsyncFunction> = Awaited<ReturnType<Target>>;
+
+export {};

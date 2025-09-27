@@ -43,3 +43,5 @@ export type ConditionalExcept<Base, Condition> = Except<
 	Base,
 	ConditionalKeys<Base, Condition>
 >;
+
+export {};
