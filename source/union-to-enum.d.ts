@@ -143,3 +143,5 @@ type _UnionToEnum<
 			: never // Not an index
 		: Keys[K]
 }>;
+
+export {};
