@@ -220,3 +220,5 @@ export type CleanEmpty<T> =
 	Exclude<T, EmptyArray | EmptyObject> extends infer U
 		? IsNever<U> extends true ? T : U
 		: never;
+
+export {};

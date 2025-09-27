@@ -34,3 +34,5 @@ export type LiteralToPrimitiveDeep<T> = T extends object
 			[K in keyof OmitIndexSignature<T>]: LiteralToPrimitiveDeep<T[K]>;
 		}
 	: LiteralToPrimitive<T>;
+
+export {};

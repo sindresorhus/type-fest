@@ -1,4 +1,5 @@
-import type {NumberAbsolute, BuildTuple, TupleMax, ReverseSign} from './internal/index.d.ts';
+import type {TupleOf} from './tuple-of.d.ts';
+import type {NumberAbsolute, TupleMax, ReverseSign} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 
@@ -73,6 +74,8 @@ type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative
 Adds two positive numbers.
 */
 type SumPositives<A extends number, B extends number> =
-	[...BuildTuple<A>, ...BuildTuple<B>]['length'] extends infer Result extends number
+	[...TupleOf<A>, ...TupleOf<B>]['length'] extends infer Result extends number
 		? Result
 		: never;
+
+export {};

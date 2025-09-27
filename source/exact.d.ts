@@ -66,3 +66,5 @@ export type Exact<ParameterType, InputType> =
 						// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 						: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 							: ExactObject<ParameterType, InputType>;
+
+export {};

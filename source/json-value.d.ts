@@ -29,3 +29,5 @@ Matches any valid JSON value.
 @category JSON
 */
 export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+
+export {};

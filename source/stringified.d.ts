@@ -21,3 +21,5 @@ const carForm: Stringified<Car> = {
 @category Object
 */
 export type Stringified<ObjectType> = {[KeyType in keyof ObjectType]: string};
+
+export {};

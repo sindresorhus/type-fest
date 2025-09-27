@@ -24,3 +24,5 @@ type ShouldBeBar = IfAny<'not any', 'foo', 'bar'>;
 export type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = (
 	IsAny<T> extends true ? TypeIfAny : TypeIfNotAny
 );
+
+export {};

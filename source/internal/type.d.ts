@@ -162,3 +162,5 @@ export type IsTruthy<T> =
 		: T extends Falsy ? false
 			: true;
 // ? Should this get exposed publicly
+
+export {};

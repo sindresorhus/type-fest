@@ -50,3 +50,5 @@ export type IsUnknown<T> = (
 			: false
 		: false
 );
+
+export {};
