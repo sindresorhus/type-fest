@@ -113,7 +113,7 @@ type objectArray2_Expected = {object: {objectArray: Array<{a: 1}>}};
 expectType<true>({} as IsEqual<objectArray2_Actual, objectArray2_Expected>);
 
 type leadingSpreadArray1_Actual = PickDeep<Testing, `object.leadingSpreadArray.${number}.a`>;
-type leadingSpreadArray1_Expected = {object: {leadingSpreadArray: [...Array<{a: 1}> ]}};
+type leadingSpreadArray1_Expected = {object: {leadingSpreadArray: [...Array<{a: 1}>]}};
 expectType<true>({} as IsEqual<leadingSpreadArray1_Actual, leadingSpreadArray1_Expected>);
 
 type leadingSpreadArray2_Actual = PickDeep<Testing, `object.leadingSpreadArray.${number}`>;
