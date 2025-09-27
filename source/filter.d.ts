@@ -10,7 +10,8 @@ Filter options.
 
 @see {@link Filter `Filter`}, `ObjectFilter`
 */
-type FilterOptions = {
+// eslint-disable-next-line type-fest/require-exported-types
+export type FilterOptions = {
 	/**
 	Controls the strictness of type checking in {@link FilterType `FilterType`}.
 
@@ -61,7 +62,8 @@ If `U` is `Boolean`, it checks whether `T` is `truthy` like {@link Boolean `Bool
 
 Otherwise, it uses {@link Extends `Extends<T, U, S>`} to check if `T extends U` with strict or loose mode.
 */
-type FilterType<T, U, S extends boolean> =
+// eslint-disable-next-line type-fest/require-exported-types
+export type FilterType<T, U, S extends boolean> =
 	Boolean extends U
 		? IsTruthy<T>
 		: Extends<T, U, S>;

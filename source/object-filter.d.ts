@@ -40,13 +40,13 @@ type T6 = Filter<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42},
 @category Object
 @category Utilities
 */
-type ObjectFilter<
+export type ObjectFilter<
 	Object_ extends UnknownRecord, Type,
 	Options extends FilterOptions = {},
 > = IsAny<Object_> extends true ? {}
 	: CleanEmpty<_ObjectFilter<Object_, Type, ApplyFilterOptions<Options>['strict']>>;
 
-export type _ObjectFilter<
+type _ObjectFilter<
 	Object_ extends UnknownRecord, Type,
 	Strict extends boolean = false,
 > = Simplify<{
