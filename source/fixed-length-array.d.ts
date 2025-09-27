@@ -38,7 +38,6 @@ color.pop();
 
 Use-cases:
 - Declaring fixed-length tuples or arrays with a large number of items.
-- Creating a range union (for example, `0 | 1 | 2 | 3 | 4` from the keys of such a type) without having to resort to recursive types.
 - Creating an array of coordinates with a static length, for example, length of 3 for a 3D vector.
 
 @example
