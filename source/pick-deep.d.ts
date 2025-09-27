@@ -185,13 +185,7 @@ Assuming `T` is a union type:
 Here is an example that explains why tuples are merged via intersection and objects via union.
 
 type testMergeNarrow_0 = MergeNarrow<string | number | [unknown, 1, [2, 3, unknown], {x: unknown}] | [0, unknown, unknown, {x: 1, y: 2}] | {a: number, b: {readonly c: unknown}, d: [unknown, 1]} | {a: 100, b: 199, d: [0, unknown]}>
-
-// string
-// | number
-// | { a: number;
-//     d: [0, 1];
-//     b: 199 | {readonly c: unknown;}}
-// | [0, 1, [2, 3, unknown], {x: unknown; y: 2}]
+// ^ string | number | { a: number; d: [0, 1]; b: 199 | {readonly c: unknown;}} | [0, 1, [2, 3, unknown], {x: unknown; y: 2}]
 */
 type MergeNarrow<T, R extends UnknownArray = never, M extends object = never> =
 	LastOfUnion<T> extends infer L
@@ -215,8 +209,14 @@ type _MergeNarrowTuple<A extends UnknownArray, B extends UnknownArray> =
 					? [MergeNarrowObject<M[0], M[1]>, ..._MergeNarrowTuple<RestA, RestB>]
 					: [HeadA & HeadB, ..._MergeNarrowTuple<RestA, RestB>]
 			: [HeadA, ...RestA]
-		: [];
+		// For https://github.com/sindresorhus/type-fest/issues/1223
+		: [A, B] extends [Array<infer TA extends object>, Array<infer TB extends object>]
+			? Array<MergeNarrow<TA | TB>>
+			: [];
 
+/*
+If A is longer than B, fill the rest with A's elements, so position matters.
+*/
 type MergeNarrowTuple<A extends UnknownArray, B extends UnknownArray> =
 	A['length'] extends 0
 		? B
