@@ -76,47 +76,12 @@ console.log(toHex(color)); // `FixedLengthArray<number, 3>` is assignable to `re
 
 Note: If you try to access an index that is out of bounds, the resulting type will include an extra `undefined`, for example, `FixedLengthArray<string, 3>[10]` will result in `string | undefined`. Prefer `ReadonlyTuple` unless you need mutability.
 
-Note: If the specified length is the non-literal `number` type, accessing any index will include an extra `undefined` in the resulting type, and writing to any index will error. Refer to the example below.
-
-@example
-```
-// @noUncheckedIndexedAccess: true
-import type {FixedLengthArray} from 'type-fest';
-
-let team: FixedLengthArray<string, number> = ['John', 'Jane', 'Jim'];
-
-// Note: The extra `undefined` is present only when `noUncheckedIndexedAccess` compiler option is enabled.
-const john = team[0];
-//=> string | undefined
-const jane = team[1];
-//=> string | undefined
-const jim = team[2];
-//=> string | undefined
-
-team[3] = 'Jeff';
-//=> Error: Type 'FixedLengthArray<string, number>' only permits reading.
-
-team.push('Jeff');
-//=> Error: Property 'push' does not exist on type 'FixedLengthArray<string, number>'.
-
-team = ['John', 'Jane', 'Jim', 'Jeff']; // Allowed
-
-team.length = 5;
-//=> Error: Cannot assign to 'length' because it is a read-only property.
-
-function print(team: readonly string[]) {
-	return team.join(', ');
-}
-
-console.log(print(team)); // `FixedLengthArray<string, number>` is assignable to `readonly string[]`.
-```
-
 @see {@link ReadonlyTuple}
 @category Array
 */
 export type FixedLengthArray<Element, Length extends number> =
 	Except<TupleOf<Length, Element>, ArrayLengthMutationKeys | number | 'length'>
 	& {readonly length: Length}
-	& (number extends Length ? {readonly [n: number]: Element} : {}); // Add `number` index signature only for non-tuple arrays.
+	& (number extends Length ? {[n: number]: Element} : {}); // Add `number` index signature only for non-tuple arrays.
 
 export {};

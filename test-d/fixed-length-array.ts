@@ -58,9 +58,8 @@ expectType<string | undefined>(fixedLength[100]);
 expectType<string>({} as FixedLength[100]);
 
 // Writing
-// @ts-expect-error
+// This is allowed for now, refer https://github.com/sindresorhus/type-fest/pull/1246#discussion_r2384018774
 fixedLength[0] = 'a';
-// @ts-expect-error
 fixedLength[100] = 'b';
 
 // @ts-expect-error
