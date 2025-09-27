@@ -493,3 +493,5 @@ export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}
 	SimplifyDeepExcludeArray<Source>,
 	Options
 >;
+
+export {};

@@ -116,3 +116,5 @@ type WordsImplementation<
 							// No case change: concat word
 								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 	: [...SkipEmptyWord<CurrentWord>];
+
+export {};

@@ -42,3 +42,5 @@ export type ConditionalPick<Base, Condition> = Pick<
 	Base,
 	ConditionalKeys<Base, Condition>
 >;
+
+export {};

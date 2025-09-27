@@ -47,3 +47,5 @@ export type PascalCase<Value, Options extends CamelCaseOptions = {}> =
 type _PascalCase<Value, Options extends Required<CamelCaseOptions>> = CamelCase<Value, Options> extends string
 	? Capitalize<CamelCase<Value, Options>>
 	: CamelCase<Value, Options>;
+
+export {};

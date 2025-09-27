@@ -165,3 +165,5 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 				// If `ArrayIndex` is a number literal
 				: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
 			: ArrayType;
+
+export {};

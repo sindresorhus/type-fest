@@ -59,3 +59,5 @@ export type UnionToIntersection<Union> = (
 	// The `& Union` is to allow indexing by the resulting type
 	? Intersection & Union
 	: never;
+
+export {};

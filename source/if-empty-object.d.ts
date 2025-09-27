@@ -26,3 +26,5 @@ export type IfEmptyObject<
 	TypeIfEmptyObject = true,
 	TypeIfNotEmptyObject = false,
 > = IsEmptyObject<T> extends true ? TypeIfEmptyObject : TypeIfNotEmptyObject;
+
+export {};

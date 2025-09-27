@@ -220,3 +220,5 @@ type ShouldBeTrue = IsNegative<-1>;
 @category Numeric
 */
 export type IsNegative<T extends _Numeric> = T extends Negative<T> ? true : false;
+
+export {};

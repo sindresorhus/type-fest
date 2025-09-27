@@ -36,3 +36,5 @@ type _IsEqual<A, B> =
 	(<G>() => G extends B & G | G ? 1 : 2)
 		? true
 		: false;
+
+export {};

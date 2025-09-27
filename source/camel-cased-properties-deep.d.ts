@@ -95,3 +95,5 @@ type CamelCasedPropertiesArrayDeep<
 					: Value extends ReadonlyArray<infer U>
 						? ReadonlyArray<_CamelCasedPropertiesDeep<U, Options>>
 						: never;
+
+export {};

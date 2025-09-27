@@ -1,13 +1,13 @@
-declare namespace TsConfigJson {
+export namespace TsConfigJson {
 	namespace CompilerOptions {
-		export type JSX =
+		type JSX =
 			| 'preserve'
 			| 'react'
 			| 'react-jsx'
 			| 'react-jsxdev'
 			| 'react-native';
 
-		export type Module =
+		type Module =
 			| 'CommonJS'
 			| 'AMD'
 			| 'System'
@@ -40,14 +40,14 @@ declare namespace TsConfigJson {
 			| 'preserve'
 			| 'none';
 
-		export type NewLine =
+		type NewLine =
 			| 'CRLF'
 			| 'LF'
 			// Lowercase alternatives
 			| 'crlf'
 			| 'lf';
 
-		export type Target =
+		type Target =
 			| 'ES3'
 			| 'ES5'
 			| 'ES6'
@@ -78,7 +78,7 @@ declare namespace TsConfigJson {
 			| 'es2024'
 			| 'esnext';
 
-		export type Lib =
+		type Lib =
 			| 'ES5'
 			| 'ES6'
 			| 'ES7'
@@ -251,19 +251,19 @@ declare namespace TsConfigJson {
 			| 'webworker.importscripts'
 			| 'webworker.iterable';
 
-		export type Plugin = {
+		type Plugin = {
 			/**
 			Plugin name.
 			*/
 			name: string;
 		};
 
-		export type ImportsNotUsedAsValues =
+		type ImportsNotUsedAsValues =
 			| 'remove'
 			| 'preserve'
 			| 'error';
 
-		export type FallbackPolling =
+		type FallbackPolling =
 			| 'fixedPollingInterval'
 			| 'priorityPollingInterval'
 			| 'dynamicPriorityPolling'
@@ -272,13 +272,13 @@ declare namespace TsConfigJson {
 			| 'dynamicPriority'
 			| 'fixedChunkSize';
 
-		export type WatchDirectory =
+		type WatchDirectory =
 			| 'useFsEvents'
 			| 'fixedPollingInterval'
 			| 'dynamicPriorityPolling'
 			| 'fixedChunkSizePolling';
 
-		export type WatchFile =
+		type WatchFile =
 			| 'fixedPollingInterval'
 			| 'priorityPollingInterval'
 			| 'dynamicPriorityPolling'
@@ -286,7 +286,7 @@ declare namespace TsConfigJson {
 			| 'useFsEventsOnParentDirectory'
 			| 'fixedChunkSizePolling';
 
-		export type ModuleResolution =
+		type ModuleResolution =
 			| 'classic'
 			| 'node'
 			| 'node10'
@@ -301,15 +301,15 @@ declare namespace TsConfigJson {
 			| 'NodeNext'
 			| 'Bundler';
 
-		export type ModuleDetection =
+		type ModuleDetection =
 			| 'auto'
 			| 'legacy'
 			| 'force';
 
-		export type IgnoreDeprecations = '5.0';
+		type IgnoreDeprecations = '5.0';
 	}
 
-	export type CompilerOptions = {
+	type CompilerOptions = {
 		/**
 		The character set of the input files.
 
@@ -1129,7 +1129,7 @@ declare namespace TsConfigJson {
 	};
 
 	namespace WatchOptions {
-		export type WatchFileKind =
+		type WatchFileKind =
 			| 'FixedPollingInterval'
 			| 'PriorityPollingInterval'
 			| 'DynamicPriorityPolling'
@@ -1137,20 +1137,20 @@ declare namespace TsConfigJson {
 			| 'UseFsEvents'
 			| 'UseFsEventsOnParentDirectory';
 
-		export type WatchDirectoryKind =
+		type WatchDirectoryKind =
 			| 'UseFsEvents'
 			| 'FixedPollingInterval'
 			| 'DynamicPriorityPolling'
 			| 'FixedChunkSizePolling';
 
-		export type PollingWatchKind =
+		type PollingWatchKind =
 			| 'FixedInterval'
 			| 'PriorityInterval'
 			| 'DynamicPriority'
 			| 'FixedChunkSize';
 	}
 
-	export type WatchOptions = {
+	type WatchOptions = {
 
 		/**
 		Specify the strategy for watching individual files.
@@ -1190,7 +1190,7 @@ declare namespace TsConfigJson {
 	/**
 	Auto type (.d.ts) acquisition options for this project.
 	*/
-	export type TypeAcquisition = {
+	type TypeAcquisition = {
 		/**
 		Enable auto type acquisition.
 		*/
@@ -1212,7 +1212,7 @@ declare namespace TsConfigJson {
 		disableFilenameBasedTypeAcquisition?: boolean;
 	};
 
-	export type References = {
+	type References = {
 		/**
 		A normalized path on disk.
 		*/
@@ -1293,3 +1293,5 @@ export type TsConfigJson = {
 	*/
 	references?: TsConfigJson.References[];
 };
+
+export {};

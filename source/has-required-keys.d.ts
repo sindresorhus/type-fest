@@ -57,3 +57,5 @@ const optD: Options2 = {
 @category Utilities
 */
 export type HasRequiredKeys<BaseType extends object> = RequiredKeysOf<BaseType> extends never ? false : true;
+
+export {};

@@ -113,3 +113,5 @@ export type SimplifyDeep<Type, ExcludeType = never> =
 	ExcludeType | NonRecursiveType | Set<unknown> | Map<unknown, unknown>,
 	object
 	>;
+
+export {};

@@ -78,3 +78,5 @@ type UndefinedOnPartialList<T extends readonly unknown[]> = T extends []
 				: T extends ReadonlyArray<infer F>
 					? ReadonlyArray<UndefinedOnPartialDeep<F>>
 					: never;
+
+export {};

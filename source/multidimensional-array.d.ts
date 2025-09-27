@@ -42,3 +42,5 @@ export type MultidimensionalArray<Element, Dimensions extends number> = number e
 	: IsEqual<Dimensions, 0> extends true
 		? Element
 		: Array<MultidimensionalArray<Element, Subtract<Dimensions, 1>>>;
+
+export {};

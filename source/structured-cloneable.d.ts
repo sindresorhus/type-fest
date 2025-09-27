@@ -90,3 +90,5 @@ structuredClone(good);
 @category Structured clone
 */
 export type StructuredCloneable = StructuredCloneablePrimitive | StructuredCloneableData | StructuredCloneableCollection;
+
+export {};
