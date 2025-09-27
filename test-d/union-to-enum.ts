@@ -87,7 +87,6 @@ declare function createEnum<
 	const U extends readonly string[],
 >(x: T, y: U): CamelCasedProperties<UnionToEnum<`${T[number]}_${U[number]}`>>;
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const Template = createEnum(verb, resource);
 
 expectType<typeof Template>({

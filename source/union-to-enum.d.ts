@@ -59,7 +59,7 @@ Converts a union or tuple of property keys (string, number, or symbol) into an *
 The keys are preserved, and their values are either:
 
 - Their own literal values (by default)
-- Or numeric indices (`1`, `2`, ...) if {@link UnionToEnumOptions.numeric `numeric`} is `true`
+- Or numeric indices (`1`, `2`, ...) if {@link UnionToEnumOptions.numeric `numeric`} is `true`. Union ordering is not guaranteed.
 
 By default, **numeric Enums** start from **Index `1`**. See {@link UnionToEnumOptions.startIndex `startIndex`} to change this behavior.
 
@@ -132,7 +132,7 @@ type _UnionToEnum<
 > = Simplify<{readonly [
 	K in keyof Keys as K extends `${number}`
 		? Keys[K] extends PropertyKey
-			? IsLiteral<Keys[K]> extends true
+			? IsLiteral<Keys[K]> extends true // TODO: update to accept template literals
 				? Keys[K]
 				: never // Not a literal
 			: never // Not a property key
