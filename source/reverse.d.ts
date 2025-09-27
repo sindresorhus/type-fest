@@ -110,3 +110,5 @@ export type Reverse<Array_ extends UnknownArray, Options extends ReverseOptions 
 				: never
 			: never
 		: Array_;
+
+export {};
