@@ -80,9 +80,6 @@ function toHex([r, g, b]: readonly [number, number, number]) {
 console.log(toHex(color)); // `FixedLengthArray<number, 3>` is assignable to `readonly [number, number, number]`.
 ```
 
-Note: If you try to access an index that is out of bounds, the resulting type will include an extra `undefined`, for example, `FixedLengthArray<string, 3>[10]` will result in `string | undefined`. Prefer `ReadonlyTuple` unless you need mutability.
-
-@see {@link ReadonlyTuple}
 @category Array
 */
 export type FixedLengthArray<Element, Length extends number> =
