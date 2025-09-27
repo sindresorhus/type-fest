@@ -38,3 +38,5 @@ export type PascalCasedProperties<Value, Options extends CamelCaseOptions = {}> 
 	: Value extends Array<infer U>
 		? Value
 		: {[K in keyof Value as PascalCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>]: Value[K]};
+
+export {};

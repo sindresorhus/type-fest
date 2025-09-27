@@ -82,3 +82,5 @@ export type Spread<
 		? SpreadTupleOrArray<FirstType, SecondType>
 		: Simplify<SpreadObject<FirstType, SecondType>>
 	: Simplify<SpreadObject<FirstType, SecondType>>;
+
+export {};

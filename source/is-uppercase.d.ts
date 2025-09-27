@@ -34,3 +34,5 @@ type IsUppercaseHelper<S extends string> = S extends Uppercase<string>
 	: S extends Lowercase<string> | Uncapitalize<string> | `${string}${Lowercase<string>}${string}`
 		? false
 		: boolean;
+
+export {};

@@ -41,3 +41,5 @@ export type TupleToObject<TArray extends UnknownArray> = If<IsAny<TArray>, any, 
 	Key in keyof TArray as Key & (`${number}` | (IsTuple<TArray> extends true ? never : number))
 	]: TArray[Key];
 }>;
+
+export {};

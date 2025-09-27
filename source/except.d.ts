@@ -30,7 +30,7 @@ type Filtered = Filter<'bar', 'foo'>;
 */
 type Filter<KeyType, ExcludeType> = IsEqual<KeyType, ExcludeType> extends true ? never : (KeyType extends ExcludeType ? never : KeyType);
 
-type ExceptOptions = {
+export type ExceptOptions = {
 	/**
 	Disallow assigning non-specified properties.
 
@@ -106,3 +106,5 @@ type _Except<ObjectType, KeysType extends keyof ObjectType, Options extends Requ
 } & (Options['requireExactProps'] extends true
 	? Partial<Record<KeysType, never>>
 	: {});
+
+export {};

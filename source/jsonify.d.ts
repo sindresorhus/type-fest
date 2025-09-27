@@ -124,3 +124,5 @@ export type Jsonify<T> = IsAny<T> extends true
 												: IsUnknown<T> extends true
 													? JsonValue
 													: never; // Otherwise any other non-object is removed
+
+export {};

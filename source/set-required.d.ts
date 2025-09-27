@@ -75,3 +75,5 @@ type SetArrayRequired<
 				: SetArrayRequired<Rest, Keys, [...Counter, any], [...Accumulator, TArray[0]]>
 			: never // Should never happen, since `[(infer F)?, ...infer R]` is a top-type for arrays.
 	: never; // Should never happen
+
+export {};

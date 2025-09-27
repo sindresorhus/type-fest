@@ -1,7 +1,7 @@
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
-type SetFieldTypeOptions = {
+export type SetFieldTypeOptions = {
 	/**
 	Preserve optional and readonly modifiers for properties being updated.
 
@@ -63,3 +63,5 @@ type _SetFieldType<BaseType, Keys extends keyof BaseType, NewType, Options exten
 		// `Record` is used to remove property modifiers
 		Options['preservePropertyModifiers'] extends false ? Record<Keys, NewType> : unknown
 	)>;
+
+export {};

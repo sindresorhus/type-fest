@@ -74,3 +74,5 @@ export type ObservableLike<ValueType = unknown> = {
 	subscribe(observer?: Partial<Observer<ValueType>>): Unsubscribable;
 	[Symbol.observable](): ObservableLike<ValueType>;
 };
+
+export {};

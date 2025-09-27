@@ -47,3 +47,5 @@ export type IsOptionalKeyOf<Type extends object, Key extends keyof Type> =
 				? false
 				: true
 			: false;
+
+export {};

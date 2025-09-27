@@ -44,3 +44,5 @@ type _RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType> =
 		Required<Pick<ObjectType, Key>> &
 		Partial<Record<Exclude<KeysType, Key>, never>>
 	)}[KeysType] & Omit<ObjectType, KeysType>;
+
+export {};

@@ -1,6 +1,5 @@
 import {expectType} from 'tsd';
-import type {Split, StringRepeat} from '../index.d.ts';
-import type {BuildTuple} from '../source/internal/index.d.ts';
+import type {Split, StringRepeat, TupleOf} from '../index.d.ts';
 
 declare function split<
 	S extends string,
@@ -59,8 +58,8 @@ expectType<['a', 'b', 'c'] | string[]>({} as Split<'a,b,c' | `bye, ${string}`, '
 
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 type FiftyZeroes = StringRepeat<'0', 50>;
-expectType<BuildTuple<50, '0'>>({} as Split<FiftyZeroes, ''>);
+expectType<TupleOf<50, '0'>>({} as Split<FiftyZeroes, ''>);
 
 // Maximum allowed recursion depth for a tail recursive implementation.
 type NineHundredNinetyNineZeroes = StringRepeat<'0', 999>;
-expectType<BuildTuple<999, '0'>>({} as Split<NineHundredNinetyNineZeroes, ''>);
+expectType<TupleOf<999, '0'>>({} as Split<NineHundredNinetyNineZeroes, ''>);
