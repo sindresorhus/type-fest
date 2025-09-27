@@ -55,6 +55,12 @@ const blue = color[2];
 const alpha = color[3];
 //=> Error: Property '3' does not exist on type 'FixedLengthArray<number, 3>'.
 
+// You can write to valid indices.
+color[0] = 128;
+color[1] = 64;
+color[2] = 32;
+
+// But you cannot write to out-of-bounds indices.
 color[3] = 0.5;
 //=> Error: Property '3' does not exist on type 'FixedLengthArray<number, 3>'.
 
