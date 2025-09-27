@@ -146,3 +146,5 @@ export type ReverseSign<N extends number> =
 	`${N}` extends `-${infer P extends number}` ? P
 		// Handle positive numbers
 		: `-${N}` extends `${infer R extends number}` ? R : never;
+
+export {};

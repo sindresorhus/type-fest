@@ -20,3 +20,5 @@ GreaterThanOrEqual<1, 5>;
 export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
 	? never
 	: A extends B ? true : GreaterThan<A, B>;
+
+export {};

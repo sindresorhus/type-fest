@@ -51,3 +51,5 @@ export type IsReadonlyKeyOf<Type extends object, Key extends keyof Type> =
 				>
 				: never // Should never happen
 			: never; // Should never happen
+
+export {};

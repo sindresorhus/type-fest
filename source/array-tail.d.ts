@@ -66,3 +66,5 @@ type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?
 			: TArray // Happens when `TArray` is a non-tuple array (e.g., `string[]`) or has a leading rest element (e.g., `[...string[], number]`)
 		: Tail
 	: [];
+
+export {};

@@ -46,3 +46,5 @@ Simplify<
 	SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
 	& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
 >;
+
+export {};

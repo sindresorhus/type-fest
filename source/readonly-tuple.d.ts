@@ -39,3 +39,5 @@ export type ReadonlyTuple<Element, Length extends number> =
 		// Because `Length extends number` and `number extends Length`, then `Length` is not a specific finite number.
 		? readonly Element[] // It's not fixed length.
 		: BuildTupleHelper<Element, Length, []>; // Otherwise it is a fixed length tuple.
+
+export {};

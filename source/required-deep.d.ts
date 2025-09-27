@@ -70,3 +70,5 @@ export type RequiredDeep<T> = T extends BuiltIns
 type RequiredObjectDeep<ObjectType extends object> = {
 	[KeyType in keyof ObjectType]-?: RequiredDeep<ObjectType[KeyType]>
 };
+
+export {};

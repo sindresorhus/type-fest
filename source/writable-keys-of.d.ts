@@ -30,3 +30,5 @@ export type WritableKeysOf<Type extends object> =
 	Type extends unknown // For distributing `Type`
 		? Exclude<keyof Type, ReadonlyKeysOf<Type>>
 		: never; // Should never happen
+
+export {};

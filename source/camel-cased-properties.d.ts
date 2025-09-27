@@ -41,3 +41,5 @@ export type CamelCasedProperties<Value, Options extends CamelCaseOptions = {}> =
 			CamelCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>
 			]: Value[K];
 		};
+
+export {};

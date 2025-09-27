@@ -5,7 +5,7 @@ import type {Split} from './split.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 
-type GetOptions = {
+export type GetOptions = {
 	/**
 	Include `undefined` in the return type when accessing properties.
 
@@ -218,3 +218,5 @@ export type Get<
 		Path extends string ? ToPath<Path> : Path,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
+
+export {};

@@ -83,3 +83,5 @@ export type _Or<A extends boolean, B extends boolean> = A extends true
 	: B extends true
 		? true
 		: false;
+
+export {};
