@@ -61,7 +61,7 @@ The keys are preserved, and their values are either:
 - Their own literal values (by default)
 - Or numeric indices (`1`, `2`, ...) if {@link UnionToEnumOptions.numeric `numeric`} is `true`
 
-By default, **numeric Enums** start from **Index `1`**. See {@link UnionToEnumOptions.startIndex `startIndex`} to change this behaviour.
+By default, **numeric Enums** start from **Index `1`**. See {@link UnionToEnumOptions.startIndex `startIndex`} to change this behavior.
 
 This is useful for creating strongly typed enums from a union/tuple of literals.
 
