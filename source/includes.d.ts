@@ -1,3 +1,5 @@
+import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 
 /**
@@ -9,16 +11,39 @@ This can be useful if another type wants to make a decision based on whether the
 ```
 import type {Includes} from 'type-fest';
 
-type hasRed<array extends any[]> = Includes<array, 'red'>;
+type array = [1, 2, 3, ...4[], 5];
+
+type T1 = Includes<array, 1>;
+//=> true
+
+type T2 = Includes<array, 4>;
+//=> true
+
+type T3 = Includes<array, 0>;
+//=> false
+
+type T4 = Includes<[1, 2, 3?], 3>;
+//=> boolean
+
+type T5 = Includes<[1, 3, 3?], 3>;
+//=> true
 ```
 
 @category Array
 */
-export type Includes<Value extends readonly any[], Item> =
-	Value extends readonly [Value[0], ...infer rest]
-		? IsEqual<Value[0], Item> extends true
-			? true
-			: Includes<rest, Item>
-		: false;
+export type Includes<Array_ extends UnknownArray, Item> = {
+	[Key in keyof Array_]-?:
+	IsOptionalKeyOf<Array_, Key> extends true
+		? IsEqual<Array_[Key], Item | undefined> extends true
+			? 'boolean'
+			: 'false'
+		: IsEqual<Array_[Key], Item> extends true
+			? 'true'
+			: 'false'
+}[number] extends infer Result
+	? [Result] extends ['false'] ? false
+		: ['true'] extends [Result] ? true
+			: boolean
+	: never;
 
 export {};
