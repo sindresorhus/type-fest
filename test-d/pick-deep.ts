@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual, PickDeep} from '../index.d.ts';
+import type {IsEqual, PickDeep, Simplify} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -60,8 +60,10 @@ interface DeepInterface extends DeepType {
 		string: string;
 	};
 }
+
 type deepInterface_Actual = PickDeep<DeepInterface, 'nested.deep.deeper.value'>;
 expectType<true>({} as IsEqual<deepInterface_Actual, DepthType>);
+
 type deepInterface2_Actual = PickDeep<DeepInterface, 'bar.number'>;
 type deepInterface2_Expected = {bar: {number: number}};
 expectType<true>({} as IsEqual<deepInterface2_Actual, deepInterface2_Expected>);
@@ -197,3 +199,11 @@ expectType<true>({} as IsEqual<unionKeyObjectArray_Actual, unionKeyObjectArray_E
 type unionKeyObjectArrayArray_Actual = PickDeep<{arr: Array<Array<{a: string; b: number; c: boolean}>>}, `arr.${number}.${number}.${'b' | 'c'}`>;
 type unionKeyObjectArrayArray_Expected = {arr: Array<Array<{b: number; c: boolean}>>};
 expectType<true>({} as IsEqual<unionKeyObjectArrayArray_Actual, unionKeyObjectArrayArray_Expected>);
+
+type unionSameKeysObject_Actual = PickDeep<{a: string | {b: 1 | true; c: 2; d: {g: {f: 9; h: 10}}} | {b: '1'; c: '2'}; x: 10 | 11; y: [[0, 1], 2, 3]}, `a.${'b' | 'c'}` | 'x'>;
+type unionSameKeysObject_Expected = {x: 10 | 11; a: string | {b: 1 | true; c: 2} | {b: '1'; c: '2'}};
+expectType<true>({} as IsEqual<unionSameKeysObject_Actual, unionSameKeysObject_Expected>);
+
+type unionTupleTuple_Actual = PickDeep<[0, string | [1, [2]]], '1.1'>;
+type unionTupleTuple_Expected = [unknown, string | [unknown, [2]]];
+expectType<true>({} as IsEqual<unionTupleTuple_Actual, unionTupleTuple_Expected>);
