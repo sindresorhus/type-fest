@@ -32,7 +32,9 @@ export type IsEqual<A, B> =
 			? [b] extends [never]
 				? true
 				: false
-			: _IsEqual<a, b>
+			: [b] extends [never]
+				? false
+				: _IsEqual<a, b>
 		: false;
 
 // This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
