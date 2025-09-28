@@ -6,64 +6,61 @@ import type {Inc, Neg} from './index-of.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 
 type IndicesOfOptions = {
-    ignoreOptionalModifier?: boolean;
-    // fromIndex?: number;
-}
+	ignoreOptionalModifier?: boolean;
+	// FromIndex?: number;
+};
 
 type DefaultIndicesOfOptions = {
-    ignoreOptionalModifier: false;
-    // fromIndex: 0;
-}
+	ignoreOptionalModifier: false;
+	// FromIndex: 0;
+};
 
 export type IndicesOf<
-    Array_ extends UnknownArray, Item,
-    Options extends IndicesOfOptions = {},
+	Array_ extends UnknownArray, Item,
+	Options extends IndicesOfOptions = {},
 > = IsAnyOrNever<Array_> extends true ? Array_
-    : _IndicesOf<Array_, Item,
-        ApplyDefaultOptions<
-            IndicesOfOptions,
-            DefaultIndicesOfOptions,
-            Options
-        >
-    >;
+	: _IndicesOf<Array_, Item,
+		ApplyDefaultOptions<
+			IndicesOfOptions,
+			DefaultIndicesOfOptions,
+			Options
+		>
+	>;
 
 type _IndicesOf<
-    Array_ extends UnknownArray, Item,
-    Options extends Required<IndicesOfOptions>,
-    F_Index extends number[] = [],
-    F_Indices extends (number | undefined)[] = [],
-    B_Index extends number[] = [1],
-    B_Indices extends (number | undefined)[] = [],
-    T_Index extends number = F_Index['length'],
+	Array_ extends UnknownArray, Item,
+	Options extends Required<IndicesOfOptions>,
+	F_Index extends number[] = [],
+	F_Indices extends Array<number | undefined> = [],
+	B_Index extends number[] = [1],
+	B_Indices extends Array<number | undefined> = [],
+	T_Index extends number = F_Index['length'],
 > =
-    keyof Array_ & `${number}` extends never
+	keyof Array_ & `${number}` extends never
 
-        ? Array_ extends readonly [...infer Rest, infer Last]
-            ? IsEqual<Last, Item> extends true
-                ? _IndicesOf<Rest, Item, Options, F_Index, F_Indices, Inc<B_Index>, [Neg<B_Index>, ...B_Indices]>
-                : _IndicesOf<Rest, Item, Options, F_Index, F_Indices, Inc<B_Index>, B_Indices>
+		? Array_ extends readonly [...infer Rest, infer Last]
+			? IsEqual<Last, Item> extends true
+				? _IndicesOf<Rest, Item, Options, F_Index, F_Indices, Inc<B_Index>, [Neg<B_Index>, ...B_Indices]>
+				: _IndicesOf<Rest, Item, Options, F_Index, F_Indices, Inc<B_Index>, B_Indices>
 
-            : [
-                ...F_Indices,
-                ...Array_ extends readonly [] ? []
-                    : IsEqual<Array_[number], Item> extends false ? []
-                        : [Array_[number] | (number & {})],
-                ...B_Indices,
-            ]
+			: [
+				...F_Indices,
+				...Array_ extends readonly [] ? []
+					: IsEqual<Array_[number], Item> extends false ? []
+						: [Array_[number] | (number & {})],
+				...B_Indices,
+			]
 
-        : Array_ extends readonly [(infer First)?, ...infer Rest]
-            ? IsEqual<First, Item> extends true
-                ? _IndicesOf<Rest, Item, Options, Inc<F_Index>, [
-                    ...F_Indices,
-                    ...Options['ignoreOptionalModifier'] extends true ? [T_Index]
-                        : IsOptionalKeyOf<Array_, '0'> extends false ? [T_Index]
-                            : [T_Index?]
-                ]>
-                : _IndicesOf<Rest, Item, Options, Inc<F_Index>, F_Indices>
+		: Array_ extends readonly [(infer First)?, ...infer Rest]
+			? IsEqual<First, Item> extends true
+				? _IndicesOf<Rest, Item, Options, Inc<F_Index>, [
+					...F_Indices,
+					...Options['ignoreOptionalModifier'] extends true ? [T_Index]
+						: IsOptionalKeyOf<Array_, '0'> extends false ? [T_Index]
+							: [T_Index?],
+				]>
+				: _IndicesOf<Rest, Item, Options, Inc<F_Index>, F_Indices>
 
-            : never;
-
-type T = IndicesOf<[1, 2, 4, 6, ...4[], 8, 4, 2, 4], 4, {ignoreOptionalModifier: true}>
-//    ^?
+			: never;
 
 export {};

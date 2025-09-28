@@ -7,62 +7,58 @@ import type {IsAnyOrNever} from './internal/type.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 
-export type IndexOfOptions = {
-    ignoreOptionalModifier?: boolean;
-    fromIndex?: number;
-}
-
-type DefaultIndexOfOptions = {
-    ignoreOptionalModifier: false;
-    fromIndex: 0;
-}
-
+/* eslint-disable type-fest/require-exported-types */
 export type Inc<T extends number[]> = [...T, 1];
 export type Neg<T extends number[]> = ReverseSign<T['length']>;
+export type IndexOfOptions = {
+	ignoreOptionalModifier?: boolean;
+	fromIndex?: number;
+};
+/* eslint-enable type-fest/require-exported-types */
+
+type DefaultIndexOfOptions = {
+	ignoreOptionalModifier: false;
+	fromIndex: 0;
+};
 
 export type IndexOf<
-    Array_ extends UnknownArray, Item,
-    Options extends IndexOfOptions = {},
+	Array_ extends UnknownArray, Item,
+	Options extends IndexOfOptions = {},
 > = IsAnyOrNever<Array_> extends true ? Array_
-    : _IndexOf<Array_, Item,
-        ApplyDefaultOptions<
-            IndexOfOptions,
-            DefaultIndexOfOptions,
-            Options
-        >
-    >;
+	: _IndexOf<Array_, Item,
+		ApplyDefaultOptions<
+			IndexOfOptions,
+			DefaultIndexOfOptions,
+			Options
+		>
+	>;
 
 type _IndexOf<
-    Array_ extends UnknownArray, Item,
-    Options extends Required<IndexOfOptions>,
-    F_Index extends number[] = [],
-    B_Index extends number[] = [1],
-    T_Index extends number[] = never,
+	Array_ extends UnknownArray, Item,
+	Options extends Required<IndexOfOptions>,
+	F_Index extends number[] = [],
+	B_Index extends number[] = [1],
+	T_Index extends number[] = never,
 > =
-    keyof Array_ & `${number}` extends never
-        // Backward search
+	keyof Array_ & `${number}` extends never
+		// Backward search
 		? Array_ extends readonly [...infer Rest, infer Last]
 			? IsEqual<Last, Item> extends true
-                ? _IndexOf<Rest, Item, Options, F_Index, Inc<B_Index>, B_Index>
-                : _IndexOf<Rest, Item, Options, F_Index, Inc<B_Index>, T_Index>
+				? _IndexOf<Rest, Item, Options, F_Index, Inc<B_Index>, B_Index>
+				: _IndexOf<Rest, Item, Options, F_Index, Inc<B_Index>, T_Index>
 			: Array_ extends readonly [] ? Neg<T_Index>
-                : IsEqual<Array_[number], Item> extends false ? Neg<T_Index>
-                    : LiteralUnion<F_Index, number>
-        // Forward search
+				: IsEqual<Array_[number], Item> extends false ? Neg<T_Index>
+					: LiteralUnion<F_Index, number>
+		// Forward search
 		: Array_ extends readonly [(infer First)?, ...infer Rest]
 			? GreaterThanOrEqual<F_Index['length'], Options['fromIndex']> extends true
-                ? IsEqual<First, Item> extends true
-                    ? F_Index['length'] | (
-                        Options['ignoreOptionalModifier'] extends true ? never
-                            : IsOptionalKeyOf<Array_, '0'> extends false ? never
-                                : _IndexOf<Rest, Item, Options, Inc<F_Index>>)
-                    : _IndexOf<Rest, Item, Options, Inc<F_Index>>
-                : _IndexOf<Rest, Item, Options, Inc<F_Index>>
+				? IsEqual<First, Item> extends true ? F_Index['length'] | (
+					Options['ignoreOptionalModifier'] extends true ? never
+						: IsOptionalKeyOf<Array_, '0'> extends false ? never
+							: _IndexOf<Rest, Item, Options, Inc<F_Index>>)
+					: _IndexOf<Rest, Item, Options, Inc<F_Index>>
+				: _IndexOf<Rest, Item, Options, Inc<F_Index>>
 
 			: never;
-
-
-type T = IndexOf<[1, 3, 0, 6/* , ...10[] */, 8, 10, 4, 2, 4], 4, {fromIndex: 0}>
-//    ^?
 
 export {};
