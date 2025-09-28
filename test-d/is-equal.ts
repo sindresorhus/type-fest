@@ -15,6 +15,8 @@ expectType<true>({} as IsEqual<never, never>);
 expectType<false>({} as IsEqual<any, never>);
 expectType<false>({} as IsEqual<never, any>);
 expectType<false>({} as IsEqual<any, unknown>);
+expectType<false>({} as IsEqual<never, unknown>);
+expectType<false>({} as IsEqual<[never], [unknown]>);
 expectType<false>({} as IsEqual<[any], [never]>);
 expectType<true>({} as IsEqual<[any], [any]>);
 expectType<true>({} as IsEqual<[never], [never]>);
