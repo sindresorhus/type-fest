@@ -345,6 +345,7 @@ Click the type names for complete docs.
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
+- `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 
 ## Tips
 
