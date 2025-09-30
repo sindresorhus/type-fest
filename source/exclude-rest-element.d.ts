@@ -33,3 +33,5 @@ export type ExcludeRestElement<Array_ extends UnknownArray> =
 				: [...Result[0], ...Result[2]]
 			: Result // May be `never` or `any`
 		: never;
+
+export {};

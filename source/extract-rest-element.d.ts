@@ -25,3 +25,5 @@ type T4 = ExtractRestElement<[number, string]>;
 @category Array
 */
 export type ExtractRestElement<T extends UnknownArray> = SplitOnRestElement<T>[1][number];
+
+export {};

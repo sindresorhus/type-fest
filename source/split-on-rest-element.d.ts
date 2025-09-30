@@ -1,6 +1,6 @@
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
@@ -74,7 +74,9 @@ export type SplitOnRestElement<
 				>
 			>
 		> extends infer Result extends UnknownArray
-			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
+			? IsArrayReadonly<Array_> extends true
+				? Readonly<Result>
+				: Result
 			: never // Should never happen
 		: never; // Should never happen
 
@@ -98,7 +100,7 @@ export type _SplitOnRestElement<
 				Rest, Options,
 				[
 					...HeadAcc,
-					...'0' extends OptionalKeysOf<Array_> // TODO: seperate the logic for types like `OptionalKeysOf, ReadonlyKeysOf, ...` into `IsOptionalKeyOf, IsReadonlyKeyOf, ...`
+					...IsOptionalKeyOf<Array_, '0'> extends true
 						? Options['preserveOptionalModifier'] extends false
 							? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 							: [First?]
@@ -107,3 +109,5 @@ export type _SplitOnRestElement<
 				TailAcc
 			> // Accumulate elements that are present before the rest element.
 			: never; // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
+
+export {};
