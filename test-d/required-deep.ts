@@ -80,4 +80,6 @@ expectType<{p1: {p2: string; p3: [{p4: number}, string]}}>({} as Simplify<typeof
 // Properties within functions containing multiple call signatures are not made required due to TS limitations, refer https://github.com/microsoft/TypeScript/issues/29732
 type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1?: string};
 declare const functionWithProperties4: RequiredDeep<FunctionWithProperties4>;
+expectType<string>(functionWithProperties4(1));
+expectType<number>(functionWithProperties4('foo', 1));
 expectNotType<{p1: string}>({} as Simplify<typeof functionWithProperties4>);
