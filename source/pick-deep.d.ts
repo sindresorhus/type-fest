@@ -10,6 +10,7 @@ import type {IsTuple} from './is-tuple.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 `Pick<{0: 0}, '0'>` does not work as expected in some cases, but `ForcePick` handles both `string` and `number` keys correctly.
@@ -125,18 +126,12 @@ type PickOrSelf<A, K extends (number | string)> =
 				: never
 			: A;
 
-type LastOfUnion<T> = UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)	? R : never;
-
-/**
-This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
-*/
-type _IsEqual<A, B> =
-	(<G>() => G extends A & G | G ? 1 : 2) extends
-	(<G>() => G extends B & G | G ? 1 : 2)
-		? true
-		: false;
-
-type IsNever<MaybeNever> = _IsEqual<never, MaybeNever>;
+type LastOfUnion<T> =
+	IsEqual<T, never> extends true
+		? never
+		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
+			? R
+			: never;
 
 /**
 Merges only the `object` types from a union; otherwise, returns the value as-is.
@@ -269,7 +264,7 @@ type RecursionPickDeep<NextParent, NextPathTree extends PathTreeType> =
 						/* `tailingSpreadArray1_Actual` in `test-d/pick-deep.ts` */
 						: [...TupleOf<StringToNumber<`${CoerceKeyof<NextPathTree>}`>>, PickOrSelf<NextParent, CoerceKeyof<NextPathTree>>]
 					/* Not end */
-					: InternalPickDeep<PickOrSelf<NextParent, CoerceKeyof<NextPathTree>>, ForceGet<NextPathTree, CoerceKeyof<NextPathTree>> extends infer G extends PathTreeType ? G : never> extends infer Result
+					: InternalPickDeep<PickOrSelf<NextParent, CoerceKeyof<NextPathTree>>, As<ForceGet<NextPathTree, CoerceKeyof<NextPathTree>>, PathTreeType>> extends infer Result
 						? IsEqual<`${number}`, `${CoerceKeyof<NextPathTree>}`> extends true
 							/* `leadingSpreadArray1_Actual` in `test-d/pick-deep.ts` */
 							? Result[]
@@ -297,8 +292,8 @@ type _PickDeep<Parent, PathTree extends PathTreeType, K extends keyof PathTree, 
 						: _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<Build<L, RecursionPickDeep<ForceGet<Parent, L>, As<ForceGet<PathTree, L>, PathTreeType>>, As<Parent, object>>>>
 					: never
 				: never
-			: never
-		: MergeOnlyObjectUnion<U>;
+			: MergeOnlyObjectUnion<U>
+		: never;
 
 /**
 Converts a dot-delimited path string into a nested object tree structure.
@@ -323,26 +318,26 @@ Merges nested `object` trees from a union into a single tree structure.
 
 type Test_MergeTree_0 = MergeTree<{a: {b: ''}} | {a: {c: ''}}>; // {a: {b: ''; c: '';}}
 */
-type MergeTree<T, M extends object = never> =
-	LastOfUnion<T> extends infer L
-		? IsNever<T> extends false
-			? L extends object
-				? MergeTree<Exclude<T, L>, MergeTreeObject<M, L>>
-				: L | MergeTree<Exclude<T, L>, M>
-			: IsEqual<[M], [{}]> extends true
+type MergeTree<T extends object, M extends object = never> =
+	LastOfUnion<T> extends infer L extends object
+		? IsNever<L> extends false
+			? MergeTree<Exclude<T, L>, MergeTreeObject<M, L>>
+			: IsEqual<M, {}> extends true
 				? never
 				: M
 		: never;
 
 type _MergeTreeObject<A extends object, B extends object, KU extends (keyof A | keyof B), R extends object = {}> =
 	LastOfUnion<KU> extends infer K
-		? K extends (keyof A) & (keyof B)
-			? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, MergeTreeObject<A[K] extends object ? A[K] : never, B[K] extends object ? B[K] : never>, A | B>>>
-			: K extends keyof A
-				? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, A[K], A>>>
-				: K extends keyof B
-					? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, B[K], B>>>
-					: R
+		? IsNever<K> extends false
+			? K extends (keyof A) & (keyof B)
+				? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, MergeTreeObject<As<A[K], object>, As<B[K], object>>, A | B>>>
+				: K extends keyof A
+					? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, A[K], A>>>
+					: K extends keyof B
+						? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, B[K], B>>>
+						: R
+			: R
 		: never;
 
 type MergeTreeObject<A extends object, B extends object> =
@@ -350,6 +345,6 @@ type MergeTreeObject<A extends object, B extends object> =
 		? B
 		: Or<IsEqual<B, never>, IsEqual<B, {}>> extends true
 			? A
-			: _MergeTreeObject<A, B, (KeysOfUnion<A> | KeysOfUnion<B>) extends infer K extends (keyof A | keyof B) ? K : never>;
+			: _MergeTreeObject<A, B, As<(KeysOfUnion<A> | KeysOfUnion<B>), (keyof A | keyof B)>>;
 
 export {};
