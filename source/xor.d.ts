@@ -81,7 +81,7 @@ type G = Xor<never, never>;
 */
 export type Xor<A extends boolean, B extends boolean> = _Xor<IfNever<A>, IfNever<B>>; // `never` is treated as `false`
 
-export type _Xor<A extends boolean, B extends boolean> =
+type _Xor<A extends boolean, B extends boolean> =
 	A extends true
 		? B extends true
 			? false
