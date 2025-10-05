@@ -77,7 +77,8 @@ type G = Xor<never, never>;
 //=> false
 ```
 
-@see And, Or
+@see {@link And}
+@see {@link Or}
 */
 export type Xor<A extends boolean, B extends boolean> = _Xor<IfNever<A>, IfNever<B>>; // `never` is treated as `false`
 
