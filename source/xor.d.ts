@@ -1,9 +1,5 @@
-
-/**
-Returns `false` if the giving type is `never`, else return it.
-*/
-type IfNever<T> = [T] extends [never] ? false : T;
-// TODO: use to simplify `And`, `Or` types
+import type {If} from './if.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Returns a boolean for whether only one of two given types is true.
@@ -80,8 +76,16 @@ type G = Xor<never, never>;
 @see {@link And}
 @see {@link Or}
 */
-export type Xor<A extends boolean, B extends boolean> = _Xor<IfNever<A>, IfNever<B>>; // `never` is treated as `false`
+export type Xor<A extends boolean, B extends boolean> =
+	_Xor<If<IsNever<A>, false, A>, If<IsNever<B>, false, B>>; // `never` is treated as `false`
 
+/**
+Core type for `Xor` equivalent to:
+
+```
+type Xor<A extends boolean, B extends boolean> = And<Or<A, B>, Not<And<A, B>>>;
+```
+*/
 type _Xor<A extends boolean, B extends boolean> =
 	A extends true
 		? B extends true
