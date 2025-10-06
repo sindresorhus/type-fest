@@ -107,6 +107,7 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 - Edge cases mandatory
 - One concept per PR
 - Descriptive names > brevity
+- No unrelated changes
 
 ## Troubleshooting
 
