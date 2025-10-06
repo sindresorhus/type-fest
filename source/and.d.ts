@@ -1,4 +1,5 @@
-import type {AllExtend} from './all-extend.d.ts';
+import type {If} from './if.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Returns a boolean for whether two given types are both true.
@@ -46,6 +47,7 @@ type E = And<boolean, boolean>;
 ```
 
 Note: If either of the types is `never`, the result becomes `false`.
+
 @example
 ```
 import type {And} from 'type-fest';
@@ -73,7 +75,16 @@ type G = And<never, never>;
 ```
 
 @see {@link Or}
+@see {@link Xor}
 */
-export type And<A extends boolean, B extends boolean> = AllExtend<[A, B], true>;
+export type And<A extends boolean, B extends boolean> =
+	_And<If<IsNever<A>, false, A>, If<IsNever<B>, false, B>>; // `never` is treated as `false`
+
+type _And<A extends boolean, B extends boolean> =
+	A extends true
+		? B extends true
+			? true
+			: false
+		: false;
 
 export {};
