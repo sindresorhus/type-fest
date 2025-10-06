@@ -56,7 +56,7 @@ export type UnionToIntersection<Union> = (
 		// Infer the `Intersection` type since TypeScript represents the positional
 		// arguments of unions of functions as an intersection of the union.
 ) extends ((mergedIntersection: infer Intersection) => void)
-	// The `& Union` is to allow indexing by the resulting type
+	// The `& Union` is to ensure result of `UnionToIntersection<A | B>` is always assignable to `A | B`
 	? Intersection & Union
 	: never;
 
