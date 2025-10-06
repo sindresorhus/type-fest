@@ -61,6 +61,8 @@ type EmptyTuple = TupleOf<-3, string>;
 //=> []
 ```
 
+Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for example, to create `readonly [number, number, number]` use `Readonly<TupleOf<3, number>>`.
+
 @category Array
 */
 export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length,
