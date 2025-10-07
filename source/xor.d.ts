@@ -25,6 +25,7 @@ type FF = Xor<false, false>;
 
 Note: When `boolean` is passed as an argument, it is distributed into separate cases, and the final result is a union of those cases.
 For example, `Xor<false, boolean>` expands to `Xor<false, true> | Xor<false, false>`, which simplifies to `true | false` (i.e., `boolean`).
+
 @example
 ```
 import type {Xor} from 'type-fest';
