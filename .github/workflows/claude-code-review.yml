@@ -5,9 +5,11 @@ on:
 jobs:
   claude-review:
     runs-on: ubuntu-latest
+    # Only run if the PR is from the same repository (not a fork), because forks are not supported yet: https://github.com/anthropics/claude-code-action/issues/339
+    if: github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
       issues: read
       id-token: write
     steps:
@@ -30,11 +32,11 @@ jobs:
             - Performance considerations
             - Security concerns
             - Test coverage
-            
+
             Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive and helpful in your feedback.
 
             Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
-          
+
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://docs.claude.com/en/docs/claude-code/sdk#command-line for available options
           claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
