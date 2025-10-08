@@ -613,6 +613,13 @@ export namespace TsConfigJson {
 		removeComments?: boolean;
 
 		/**
+		Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files.
+
+		@default false
+		*/
+		rewriteRelativeImportExtensions?: boolean;
+
+		/**
 		Specifies the root directory of input files.
 
 		Use to control the output directory structure with `--outDir`.
