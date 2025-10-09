@@ -180,6 +180,7 @@ Click the type names for complete docs.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
+- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
@@ -348,6 +349,7 @@ Click the type names for complete docs.
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
+- `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 
 ## Tips
 
