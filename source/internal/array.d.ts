@@ -9,7 +9,7 @@ Infer the length of the given array `<T>`.
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
 */
-type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L extends number} ? L : never;
+type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
 
 /**
 Matches any unknown array or tuple.
