@@ -38,7 +38,10 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		const allComments = context.sourceCode.getAllComments();
 
 		const virtualFsMap = new Map();
+		virtualFsMap.set(FILENAME, '// Can\'t be empty');
+
 		const system = createFSBackedSystem(virtualFsMap, context.cwd, ts);
+		const env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, compilerOptions);
 
 		return {
 			Program() {
@@ -64,8 +67,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 						const matchOffset = match.index + openingFence.length + 2; // Add `2` because `comment.value` doesn't include the starting `/*`
 						const codeStartIndex = comment.range[0] + matchOffset;
 
-						virtualFsMap.set(FILENAME, code);
-						const env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, compilerOptions);
+						env.updateFile(FILENAME, code);
 						const syntacticDiagnostics = env.languageService.getSyntacticDiagnostics(FILENAME);
 						const semanticDiagnostics = env.languageService.getSemanticDiagnostics(FILENAME);
 						const diagnostics = syntacticDiagnostics.length > 0 ? syntacticDiagnostics : semanticDiagnostics; // Show semantic errors only if there are no syntactic errors
