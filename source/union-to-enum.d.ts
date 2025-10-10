@@ -20,10 +20,10 @@ type UnionToEnumOptions = {
 	type E2 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true}>;
 	//=> { Play: 1; Pause: 2; Stop: 3 }
 
-	type E2 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: 3}>;
+	type E3 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: 3}>;
 	//=> { Play: 3; Pause: 4; Stop: 5 }
 
-	type E3 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: -1}>;
+	type E4 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: -1}>;
 	//=> { Play: -1; Pause: 0; Stop: 1 }
 	```
 	*/
@@ -132,7 +132,7 @@ type _UnionToEnum<
 > = Simplify<{readonly [
 	K in keyof Keys as K extends `${number}`
 		? Keys[K] extends PropertyKey
-			? IsLiteral<Keys[K]> extends true // TODO: update to accept template literals
+			? IsLiteral<Keys[K]> extends true // TODO: Update to accept template literals.
 				? Keys[K]
 				: never // Not a literal
 			: never // Not a property key
