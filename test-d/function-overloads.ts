@@ -17,8 +17,8 @@ expectType<Function1>(twoIdenticalOverloads);
 
 type Function3 = (foo: string, bar: number, baz?: boolean) => object;
 
-declare const twoOverloadWithAssignableSignature: FunctionOverloads<Function1 & Function3>;
-expectType<Function1 | Function3>(twoOverloadWithAssignableSignature);
+declare const twoOverloadsWithAssignableSignature: FunctionOverloads<Function1 & Function3>;
+expectType<Function1 | Function3>(twoOverloadsWithAssignableSignature);
 
 declare const threeOverloads: FunctionOverloads<Function1 & Function2 & Function3>;
 expectType<Function1 | Function2 | Function3>(threeOverloads);
@@ -96,5 +96,5 @@ expectType<
 	| Function12
 >(manyOverloads);
 
-declare const noOveloads: FunctionOverloads<{}>;
-expectType<never>(noOveloads);
+declare const noOverloads: FunctionOverloads<{}>;
+expectType<never>(noOverloads);
