@@ -333,9 +333,9 @@ type _MergeTreeObject<A extends object, B extends object, KU extends (keyof A | 
 		: never;
 
 type MergeTreeObject<A extends object, B extends object> =
-	Or<IsEqual<A, never>, IsEqual<A, {}>> extends true
+	Or<IsNever<A>, IsEqual<A, {}>> extends true
 		? B
-		: Or<IsEqual<B, never>, IsEqual<B, {}>> extends true
+		: Or<IsNever<B>, IsEqual<B, {}>> extends true
 			? A
 			: _MergeTreeObject<A, B, As<(KeysOfUnion<A> | KeysOfUnion<B>), (keyof A | keyof B)>>;
 
