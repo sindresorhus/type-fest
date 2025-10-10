@@ -18,23 +18,21 @@ type RequestFunctionType = FunctionOverloads<typeof request>;
 //=> ((url: string) => Promise<string>) | ((url: string, options: {json: true}) => Promise<unknown>)
 ```
 
-This type can be used to extract event types of a Vue component:
+This type can also be used to extract event parameter types from framework emit functions:
 
 @example
 ```ts
-// Given a component `HelloWorld` defines its events as follows:
-
+// Given a Vue component that defines its events:
 defineEmits<{
 	submit: [formData: FormData];
 	cancel: [];
 }>();
 
-// Extract the type of `submit` event like this:
-
+// Extract the parameter types of the `submit` event:
 import type {ArrayTail, FunctionOverloads} from 'type-fest';
 import HelloWorld from './HelloWorld.vue';
 
-type SubmitEventType = ArrayTail<Parameters<Extract<FunctionOverloads<InstanceType<typeof HelloWorld>['$emit']>, (event: 'submit', ...args: any[]) => void>>>;
+type SubmitEventType = ArrayTail<Parameters<Extract<FunctionOverloads<InstanceType<typeof HelloWorld>['$emit']>, (event: 'submit', ...arguments_: any[]) => void>>>;
 //=> [formData: FormData]
 ```
 
