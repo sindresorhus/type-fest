@@ -17,11 +17,11 @@ Optional control for strict or loose type comparison.
 ```
 import type {Filter} from 'type-fest';
 
-type T1 = Filter<{a: 1; b: 2; c: 3 | 4; d: 3?; e: 4?}; 3>;
-//=> {c: 3 | 4; d: 3?}
+type T1 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3>;
+//=> {c: 3 | 4; d?: 3}
 
-type T2 = Filter<{a: 1; b: 2; c: 3 | 4; d: 3?; e: 4?}; 3, {strict: true}>;
-//=> {c: 3?}
+type T2 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3, {strict: true}>;
+//=> {c?: 3}
 
 type T3 = Filter<{a: 'foo1'; b: 'bar2'; c: 'fooo'; d: 'foo3'}, `foo${number}`>;
 //=> {a: 'foo1'; d: 'foo3'}
@@ -40,18 +40,23 @@ type T6 = Filter<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42},
 @category Object
 @category Utilities
 */
-export type ObjectFilter<
+export type FilterObject<
 	Object_ extends UnknownRecord, Type,
 	Options extends FilterOptions = {},
 > = IsAny<Object_> extends true ? {}
-	: CleanEmpty<_ObjectFilter<Object_, Type, ApplyFilterOptions<Options>['strict']>>;
+	: CleanEmpty<
+		_ObjectFilter<
+			Object_, Type,
+			ApplyFilterOptions<Options>
+		>
+	>;
 
 type _ObjectFilter<
 	Object_ extends UnknownRecord, Type,
-	Strict extends boolean = false,
+	Options extends Required<FilterOptions>,
 > = Simplify<{
 	[Key in keyof Object_ as
-	FilterType<Object_[Key], Type, Strict> extends true
+	FilterType<Object_[Key], Type, Options['strict']> extends true
 		? Key
 		: never
 	]: Object_[Key]
