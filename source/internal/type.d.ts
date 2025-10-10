@@ -142,7 +142,7 @@ export type Extends<T, U, S extends boolean = false> = {
 }[`${S}`];
 
 /**
-Performs a loose type comparison: checks if wheither of the members in `T` extends `U`.
+Performs a loose type comparison: checks if any of the members in `T` extends `U`.
 
 This is useful when needing to know if any member of `T` extends `U` without returning `boolean`.
 */
