@@ -38,6 +38,12 @@ expectType<Filter<[string?, ...string[]], number | string>>({} as [string?, ...s
 expectType<Filter<[1, 5?, 'd'?, ...Array<'foo'>], number>>({} as [1, 5?]);
 expectType<Filter<[1, 5?, 'd'?, ...Array<'foo'>], 'd'>>({} as ['d'?]);
 
+// Readonly array (verifies readonly modifiers are preserved)
+expectType<Filter<readonly [1, 2, 3 | 4, 3, 4], 3>>({} as readonly [3 | 4, 3]);
+expectType<Filter<readonly [1, '2', 3, 'foo', boolean], number>>({} as readonly [1, 3]);
+expectType<Filter<readonly [1, '2', 3 | 'bar', 'foo', false], string>>({} as readonly ['2', 3 | 'bar', 'foo']);
+expectType<Filter<readonly [1, '2', 3, false] | ['1', 2, '3', true], number>>({} as readonly [1, 3] | [2]);
+
 // Filtering Boolean (keep truthy values)
 expectType<Filter<[true, false, boolean, 0, 1], Boolean>>([true, 1]);
 expectType<Filter<[true, false, boolean, 0, 1], Boolean, {strict: true}>>([true, 1]);
@@ -49,6 +55,12 @@ type Object1 = {a: number};
 type Object2 = {b: string};
 expectType<Filter<[Object1, Object2, Object1 & Object2], Object1>>({} as [Object1, Object1 & Object2]);
 expectType<Filter<[Object1, Object2, Object1 & Object2], Object1, {strict: true}>>({} as [Object1, Object1 & Object2]);
+
+// Union
+expectType<Filter<[1, '2', 3, false] | ['1', 2, '3', true], number>>({} as [1, 3] | [2]);
+expectType<Filter<[1, '2', 3, false] | ['1', 2, '3', true], string>>({} as ['2'] | ['1', '3']);
+expectType<Filter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], string>>({} as string[] | Array<'foo'>);
+expectType<Filter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], number>>({} as [number?]);
 
 // Loose filtering by boolean or number
 expectType<Filter<[true, 0, 1, false, 'no'], boolean | number>>([true, 0, 1, false]);
@@ -103,14 +115,8 @@ expectType<Filter<['', 'non-empty'], '', {strict: true}>>(['']);
 // Filtering with loose mode for literal union type and matching subset
 expectType<Filter<[1, 2, 3, 4, 5], 2 | 3>>([2, 3]);
 
-// Union
-expectType<Filter<[1, '2', 3, false] | ['1', 2, '3', true], number>>({} as [1, 3] | [2]);
-expectType<Filter<[1, '2', 3, false] | ['1', 2, '3', true], string>>({} as ['2'] | ['1', '3']);
-expectType<Filter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], string>>({} as string[] | Array<'foo'>);
-expectType<Filter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], number>>({} as [number?]);
-
 // Edge cases
-expectType<Filter<any, never>>([]);
+expectType<Filter<any, never>>([]); // Should it return `any`
 expectType<Filter<any[], never>>({} as any[]);
 expectType<Filter<never, any>>({} as never);
 expectType<Filter<never, never>>({} as never);
