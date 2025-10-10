@@ -1,7 +1,6 @@
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {ArrayLength} from './internal/array.d.ts';
 import type {Join, JoinableItem} from './join.d.ts';
 import type {JoinUnion} from './join-union.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -107,7 +106,7 @@ export type LiteralList<List extends UnknownArray, Shape extends UnknownArray | 
 	IfNotAnyOrNever<List,
 		_LiteralList<
 			List, Shape,
-			ArrayLength<UnionToTuple<Shape>>,
+			UnionToTuple<Shape>['length'],
 			TupleAsString<List>,
 			UnionAsString<Shape>
 		>
@@ -141,3 +140,5 @@ type _LiteralList<
 			: never
 		: never | `${UString}, Type ${TString} is not the required length of: ${ULength}`
 );
+
+export {};

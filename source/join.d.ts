@@ -1,5 +1,11 @@
-// The builtin `join` method supports all these natively in the same way that typescript handles them so we can safely accept all of them.
-type JoinableItem = string | number | bigint | boolean | undefined | null;
+
+/**
+Union of all supported types for `Join` type.
+
+The builtin `join` method supports all these natively in the same way that typescript handles them so we can safely accept all of them.
+*/
+// eslint-disable-next-line type-fest/require-exported-types
+export type JoinableItem = string | number | bigint | boolean | undefined | null;
 
 // `null` and `undefined` are treated uniquely in the built-in join method, in a way that differs from the default `toString` that would result in the type `${undefined}`. That's why we need to handle it specifically with this helper.
 // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join#description

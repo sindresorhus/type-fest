@@ -33,3 +33,5 @@ export type JoinUnion<
 > = UnionToTuple<Items> extends infer Tuple extends JoinableItem[]
 	? Join<Tuple, Delimiter>
 	: '';
+
+export {};
