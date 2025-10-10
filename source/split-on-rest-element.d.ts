@@ -33,7 +33,7 @@ Splits an array into three parts, where the first contains all elements before t
 
 Note: If any of the parts are missing, then they will be represented as empty arrays. For example, `SplitOnRestElement<[string, number]>` returns `[[string, number], [], []]`, where parts corresponding to the rest element and elements after it are empty.
 
-By default, The optional modifier (`?`) is preserved.
+By default, the optional modifier (`?`) is preserved.
 See {@link SplitOnRestElementOptions `SplitOnRestElementOptions`}.
 
 @example
