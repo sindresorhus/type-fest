@@ -112,18 +112,18 @@ export type Filter<
 	Array_ extends UnknownArray, Type,
 	Options extends FilterOptions = {},
 > = IsAny<Array_> extends true ? []
-	: Array_ extends unknown // Distributing `Array_`
-		? CleanEmpty<
-			_Filter<
+	: CleanEmpty<
+		Array_ extends unknown // For distributing `Array_`
+			? _Filter<
 				Array_, Type,
 				ApplyFilterOptions<Options>
-			>
-		> extends infer Result extends UnknownArray
-			? IsArrayReadonly<Array_> extends true
-				? Readonly<Result> // Preserve readonly modifier
-				: Result
+			> extends infer Result extends UnknownArray
+				? IsArrayReadonly<Array_> extends true
+					? Readonly<Result> // Preserve readonly modifier
+					: Result
+				: never
 			: never
-		: never;
+	>;
 
 /**
 Internal implementation of {@link Filter}.
