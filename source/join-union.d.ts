@@ -23,7 +23,7 @@ type T4 = JoinUnion<never>;
 //=> ''
 ```
 
-@see Join
+@see {@link Join}
 @category Union
 @category Template literal
 */

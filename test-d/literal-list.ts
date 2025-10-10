@@ -6,7 +6,6 @@ type U1 = 'a' | 'b' | 'c' | 'd';
 type U2 = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type U3 = ['a'] | ['b', 'c'] | ['a', 'b'];
 
-// ? Should we add this type
 type IsLiteralList<T extends UnknownArray, U> =
 	T extends LiteralList<T, U>
 		? true
@@ -15,7 +14,7 @@ type IsLiteralList<T extends UnknownArray, U> =
 // Base
 expectType<IsLiteralList<[], U1>>(false);
 expectType<IsLiteralList<U1[], U1>>(false);
-expectType<IsLiteralList<[U1, U1, U1, U1], U1>>(true); // Should match
+expectType<IsLiteralList<[U1, U1, U1, U1], U1>>(true);
 expectType<IsLiteralList<[U1, U1, U1], U1>>(false);
 expectType<IsLiteralList<[U1, U1, U1, U1, U1], U1>>(false);
 expectType<IsLiteralList<[...['a', 'b', 'd', 'c']], U1>>(true);
