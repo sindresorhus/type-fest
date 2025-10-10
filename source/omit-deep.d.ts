@@ -33,7 +33,7 @@ type Info = {
 };
 
 type UsefulInfo = OmitDeep<Info, 'userInfo.uselessInfo'>;
-// type UsefulInfo = {
+//=> {
 // 	userInfo: {
 // 		name: string;
 // 	};
@@ -51,31 +51,32 @@ type Info1 = {
 };
 
 type UsefulInfo1 = OmitDeep<Info1, 'userInfo.uselessInfo' | 'userInfo.uselessField'>;
-// type UsefulInfo1 = {
+//=> {
 // 	userInfo: {
 // 		name: string;
 // 	};
 // };
 
 // Supports array
-type A = OmitDeep<[1, 'foo', 2], 1>;
-// type A = [1, unknown, 2];
+type A = OmitDeep<[1, 'foo', 2], '1'>;
+//=> [1, unknown, 2];
 
 // Supports recursing into array
 
-type Info1 = {
+type Info2 = {
 	address: [
 		{
-			street: string
+			street: string;
 		},
 		{
-			street2: string,
-			foo: string
-		};
+			street2: string;
+			foo: string;
+		},
 	];
-}
-type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
-// type AddressInfo = {
+};
+
+type AddressInfo = OmitDeep<Info2, 'address.1.foo'>;
+//=> {
 // 	address: [
 // 		{
 // 			street: string;
@@ -141,13 +142,7 @@ P extends `${infer RecordKeyInPath}.${infer SubPath}`
 /**
 Omit one path from from the given array.
 
-It replaces the item to `unknown` at the given index.
-
-@example
-```
-type A = OmitDeepArrayWithOnePath<[10, 20, 30, 40], 2>;
-//=> type A = [10, 20, unknown, 40];
-```
+It replaces the item to `unknown` at the given index, for example, `OmitDeepArrayWithOnePath<[10, 20, 30, 40], 2>` results in `[10, 20, unknown, 40]`.
 */
 type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string | number> =
 	// Handle paths that are `${number}.${string}`

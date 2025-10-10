@@ -57,7 +57,9 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
-type Integer = Integer<1>;
+import type {Integer} from 'type-fest';
+
+type SomeInteger = Integer<1>;
 //=> 1
 
 type IntegerWithDecimal = Integer<1.0>;
@@ -71,13 +73,13 @@ type Float = Integer<1.5>;
 
 // Supports non-decimal numbers
 
-type OctalInteger: Integer<0o10>;
+type OctalInteger = Integer<0o10>;
 //=> 0o10
 
-type BinaryInteger: Integer<0b10>;
+type BinaryInteger = Integer<0b10>;
 //=> 0b10
 
-type HexadecimalInteger: Integer<0x10>;
+type HexadecimalInteger = Integer<0x10>;
 //=> 0x10
 ```
 

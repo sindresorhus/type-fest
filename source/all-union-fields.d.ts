@@ -42,10 +42,11 @@ function displayPetInfo(petInfo: Cat | Dog) {
 	console.log('type: ', petInfo.type);
 
 	// TypeScript complains about `catType` and `dogType` not existing on type `Cat | Dog`.
+	// @ts-expect-error
 	console.log('animal type: ', petInfo.catType ?? petInfo.dogType);
 }
 
-function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
+function displayPetInfoWithAllUnionFields(petInfo: AllUnionFields<Cat | Dog>) {
 	// typeof petInfo =>
 	// {
 	// 	name: string;

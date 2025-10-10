@@ -23,9 +23,10 @@ This is useful for function type-guarding to reject arguments with excess proper
 ```
 type OnlyAcceptName = {name: string};
 
-function onlyAcceptName(arguments_: OnlyAcceptName) {}
+declare function onlyAcceptName(arguments_: OnlyAcceptName): void;
 
 // TypeScript complains about excess properties when an object literal is provided.
+// @ts-expect-error
 onlyAcceptName({name: 'name', id: 1});
 //=> `id` is excess
 
@@ -42,9 +43,10 @@ import {Exact} from 'type-fest';
 
 type OnlyAcceptName = {name: string};
 
-function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(arguments_: T) {}
+declare function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(arguments_: T): void;
 
 const invalidInput = {name: 'name', id: 1};
+// @ts-expect-error
 onlyAcceptNameImproved(invalidInput); // Compilation error
 ```
 
