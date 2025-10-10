@@ -44,3 +44,5 @@ export type DelimiterCasedProperties<
 		: {[K in keyof Value as
 			DelimiterCase<K, Delimiter, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>
 			]: Value[K]};
+
+export {};

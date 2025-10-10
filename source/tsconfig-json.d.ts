@@ -1,13 +1,13 @@
-declare namespace TsConfigJson {
+export namespace TsConfigJson {
 	namespace CompilerOptions {
-		export type JSX =
+		type JSX =
 			| 'preserve'
 			| 'react'
 			| 'react-jsx'
 			| 'react-jsxdev'
 			| 'react-native';
 
-		export type Module =
+		type Module =
 			| 'CommonJS'
 			| 'AMD'
 			| 'System'
@@ -40,14 +40,14 @@ declare namespace TsConfigJson {
 			| 'preserve'
 			| 'none';
 
-		export type NewLine =
+		type NewLine =
 			| 'CRLF'
 			| 'LF'
 			// Lowercase alternatives
 			| 'crlf'
 			| 'lf';
 
-		export type Target =
+		type Target =
 			| 'ES3'
 			| 'ES5'
 			| 'ES6'
@@ -78,7 +78,7 @@ declare namespace TsConfigJson {
 			| 'es2024'
 			| 'esnext';
 
-		export type Lib =
+		type Lib =
 			| 'ES5'
 			| 'ES6'
 			| 'ES7'
@@ -110,16 +110,19 @@ declare namespace TsConfigJson {
 			| 'ES2018.Regexp'
 			| 'ES2019'
 			| 'ES2019.Array'
+			| 'ES2019.Intl'
 			| 'ES2019.Object'
 			| 'ES2019.String'
 			| 'ES2019.Symbol'
 			| 'ES2020'
 			| 'ES2020.BigInt'
+			| 'ES2020.Date'
+			| 'ES2020.Intl'
+			| 'ES2020.Number'
 			| 'ES2020.Promise'
+			| 'ES2020.SharedMemory'
 			| 'ES2020.String'
 			| 'ES2020.Symbol.WellKnown'
-			| 'ES2020.SharedMemory'
-			| 'ES2020.Intl'
 			| 'ES2021'
 			| 'ES2021.Intl'
 			| 'ES2021.Promise'
@@ -131,6 +134,7 @@ declare namespace TsConfigJson {
 			| 'ES2022.Intl'
 			| 'ES2022.Object'
 			| 'ES2022.RegExp'
+			| 'ES2022.SharedMemory'
 			| 'ES2022.String'
 			| 'ES2023'
 			| 'ES2023.Array'
@@ -151,14 +155,20 @@ declare namespace TsConfigJson {
 			| 'ESNext.Collection'
 			| 'ESNext.Decorators'
 			| 'ESNext.Disposable'
+			| 'ESNext.Error'
 			| 'ESNext.Intl'
 			| 'ESNext.Iterator'
+			| 'ESNext.Object'
 			| 'ESNext.Promise'
+			| 'ESNext.Regexp'
 			| 'ESNext.String'
 			| 'ESNext.Symbol'
 			| 'ESNext.WeakRef'
 			| 'DOM'
+			| 'DOM.AsyncIterable'
 			| 'DOM.Iterable'
+			| 'Decorators'
+			| 'Decorators.Legacy'
 			| 'ScriptHost'
 			| 'WebWorker'
 			| 'WebWorker.AsyncIterable'
@@ -196,16 +206,19 @@ declare namespace TsConfigJson {
 			| 'es2018.regexp'
 			| 'es2019'
 			| 'es2019.array'
+			| 'es2019.intl'
 			| 'es2019.object'
 			| 'es2019.string'
 			| 'es2019.symbol'
 			| 'es2020'
 			| 'es2020.bigint'
+			| 'es2020.date'
+			| 'es2020.intl'
+			| 'es2020.number'
 			| 'es2020.promise'
+			| 'es2020.sharedmemory'
 			| 'es2020.string'
 			| 'es2020.symbol.wellknown'
-			| 'es2020.sharedmemory'
-			| 'es2020.intl'
 			| 'es2021'
 			| 'es2021.intl'
 			| 'es2021.promise'
@@ -217,6 +230,7 @@ declare namespace TsConfigJson {
 			| 'es2022.intl'
 			| 'es2022.object'
 			| 'es2022.regexp'
+			| 'es2022.sharedmemory'
 			| 'es2022.string'
 			| 'es2023'
 			| 'es2023.array'
@@ -237,33 +251,39 @@ declare namespace TsConfigJson {
 			| 'esnext.collection'
 			| 'esnext.decorators'
 			| 'esnext.disposable'
+			| 'esnext.error'
 			| 'esnext.intl'
 			| 'esnext.iterator'
+			| 'esnext.object'
 			| 'esnext.promise'
+			| 'esnext.regexp'
 			| 'esnext.string'
 			| 'esnext.symbol'
 			| 'esnext.weakref'
 			| 'dom'
+			| 'dom.asynciterable'
 			| 'dom.iterable'
+			| 'decorators'
+			| 'decorators.legacy'
 			| 'scripthost'
 			| 'webworker'
 			| 'webworker.asynciterable'
 			| 'webworker.importscripts'
 			| 'webworker.iterable';
 
-		export type Plugin = {
+		type Plugin = {
 			/**
 			Plugin name.
 			*/
 			name: string;
 		};
 
-		export type ImportsNotUsedAsValues =
+		type ImportsNotUsedAsValues =
 			| 'remove'
 			| 'preserve'
 			| 'error';
 
-		export type FallbackPolling =
+		type FallbackPolling =
 			| 'fixedPollingInterval'
 			| 'priorityPollingInterval'
 			| 'dynamicPriorityPolling'
@@ -272,13 +292,13 @@ declare namespace TsConfigJson {
 			| 'dynamicPriority'
 			| 'fixedChunkSize';
 
-		export type WatchDirectory =
+		type WatchDirectory =
 			| 'useFsEvents'
 			| 'fixedPollingInterval'
 			| 'dynamicPriorityPolling'
 			| 'fixedChunkSizePolling';
 
-		export type WatchFile =
+		type WatchFile =
 			| 'fixedPollingInterval'
 			| 'priorityPollingInterval'
 			| 'dynamicPriorityPolling'
@@ -286,7 +306,7 @@ declare namespace TsConfigJson {
 			| 'useFsEventsOnParentDirectory'
 			| 'fixedChunkSizePolling';
 
-		export type ModuleResolution =
+		type ModuleResolution =
 			| 'classic'
 			| 'node'
 			| 'node10'
@@ -301,15 +321,15 @@ declare namespace TsConfigJson {
 			| 'NodeNext'
 			| 'Bundler';
 
-		export type ModuleDetection =
+		type ModuleDetection =
 			| 'auto'
 			| 'legacy'
 			| 'force';
 
-		export type IgnoreDeprecations = '5.0';
+		type IgnoreDeprecations = '5.0';
 	}
 
-	export type CompilerOptions = {
+	type CompilerOptions = {
 		/**
 		The character set of the input files.
 
@@ -611,6 +631,13 @@ declare namespace TsConfigJson {
 		@default false
 		*/
 		removeComments?: boolean;
+
+		/**
+		Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files.
+
+		@default false
+		*/
+		rewriteRelativeImportExtensions?: boolean;
 
 		/**
 		Specifies the root directory of input files.
@@ -1129,7 +1156,7 @@ declare namespace TsConfigJson {
 	};
 
 	namespace WatchOptions {
-		export type WatchFileKind =
+		type WatchFileKind =
 			| 'FixedPollingInterval'
 			| 'PriorityPollingInterval'
 			| 'DynamicPriorityPolling'
@@ -1137,20 +1164,20 @@ declare namespace TsConfigJson {
 			| 'UseFsEvents'
 			| 'UseFsEventsOnParentDirectory';
 
-		export type WatchDirectoryKind =
+		type WatchDirectoryKind =
 			| 'UseFsEvents'
 			| 'FixedPollingInterval'
 			| 'DynamicPriorityPolling'
 			| 'FixedChunkSizePolling';
 
-		export type PollingWatchKind =
+		type PollingWatchKind =
 			| 'FixedInterval'
 			| 'PriorityInterval'
 			| 'DynamicPriority'
 			| 'FixedChunkSize';
 	}
 
-	export type WatchOptions = {
+	type WatchOptions = {
 
 		/**
 		Specify the strategy for watching individual files.
@@ -1190,7 +1217,7 @@ declare namespace TsConfigJson {
 	/**
 	Auto type (.d.ts) acquisition options for this project.
 	*/
-	export type TypeAcquisition = {
+	type TypeAcquisition = {
 		/**
 		Enable auto type acquisition.
 		*/
@@ -1212,7 +1239,7 @@ declare namespace TsConfigJson {
 		disableFilenameBasedTypeAcquisition?: boolean;
 	};
 
-	export type References = {
+	type References = {
 		/**
 		A normalized path on disk.
 		*/
@@ -1293,3 +1320,5 @@ export type TsConfigJson = {
 	*/
 	references?: TsConfigJson.References[];
 };
+
+export {};

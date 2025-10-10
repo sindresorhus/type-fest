@@ -83,3 +83,5 @@ export type DistributedPick<ObjectType, KeyType extends KeysOfUnion<ObjectType>>
 	ObjectType extends unknown
 		? Pick<ObjectType, Extract<KeyType, keyof ObjectType>>
 		: never;
+
+export {};

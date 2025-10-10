@@ -45,3 +45,5 @@ export type EnforceOptional<ObjectType> = Simplify<{
 } & {
 	[Key in keyof ObjectType as OptionalFilter<ObjectType, Key>]?: Exclude<ObjectType[Key], undefined>
 }>;
+
+export {};

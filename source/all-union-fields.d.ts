@@ -86,3 +86,5 @@ Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<un
 		>
 		: never
 	: never;
+
+export {};

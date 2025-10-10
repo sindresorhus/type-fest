@@ -44,3 +44,5 @@ type Fail = IsEmptyObject<null>; //=> false
 @category Object
 */
 export type IsEmptyObject<T> = T extends EmptyObject ? true : false;
+
+export {};

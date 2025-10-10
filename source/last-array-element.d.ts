@@ -36,3 +36,5 @@ export type LastArrayElement<Elements extends readonly unknown[], ElementBeforeT
 				: Elements extends ReadonlyArray<infer U>
 					? U | ElementBeforeTailingSpreadElement
 					: never;
+
+export {};

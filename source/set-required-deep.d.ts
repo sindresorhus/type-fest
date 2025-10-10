@@ -66,3 +66,5 @@ type SetRequiredDeepSinglePath<BaseType, KeyPath> = BaseType extends NonRecursiv
 				: BaseType[Key];
 		}
 		: SetRequired<BaseType, (KeyPath | StringToNumber<KeyPath & string>) & keyof BaseType>;
+
+export {};

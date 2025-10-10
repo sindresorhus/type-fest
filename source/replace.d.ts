@@ -1,6 +1,6 @@
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
-type ReplaceOptions = {
+export type ReplaceOptions = {
 	all?: boolean;
 };
 
@@ -83,3 +83,5 @@ type _Replace<
 			: `${Accumulator}${Input}`
 		: never
 	: never;
+
+export {};

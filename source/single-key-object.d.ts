@@ -28,3 +28,5 @@ export type SingleKeyObject<ObjectType> =
 	IsUnion<keyof ObjectType> extends true
 		? never
 		: If<IsEmptyObject<ObjectType>, never, ObjectType>;
+
+export {};

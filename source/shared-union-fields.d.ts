@@ -75,3 +75,5 @@ Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<un
 			: Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
 		: never
 	: never;
+
+export {};

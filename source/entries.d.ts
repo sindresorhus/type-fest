@@ -60,3 +60,5 @@ export type Entries<BaseType> =
 			: BaseType extends readonly unknown[] ? ArrayEntries<BaseType>
 				: BaseType extends object ? ObjectEntries<BaseType>
 					: never;
+
+export {};

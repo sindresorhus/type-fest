@@ -149,6 +149,7 @@ export type {IfNull} from './source/if-null.d.ts';
 export type {IsUndefined} from './source/is-undefined.d.ts';
 export type {And} from './source/and.d.ts';
 export type {Or} from './source/or.d.ts';
+export type {Xor} from './source/xor.d.ts';
 export type {AllExtend, AllExtendOptions} from './source/all-extend.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
 export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type.d.ts';
@@ -158,6 +159,7 @@ export type {IsLowercase} from './source/is-lowercase.d.ts';
 export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
 export type {IsNullable} from './source/is-nullable.d.ts';
+export type {TupleOf} from './source/tuple-of.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';

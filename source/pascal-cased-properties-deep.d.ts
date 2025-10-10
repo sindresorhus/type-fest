@@ -68,3 +68,5 @@ type _PascalCasedPropertiesDeep<Value, Options extends Required<CamelCaseOptions
 					[K in keyof Value as PascalCase<K, Options>]: _PascalCasedPropertiesDeep<Value[K], Options>;
 				}
 				: Value;
+
+export {};

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {EmptyObject, Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
+import type {EmptyObject, Jsonify, JsonObject, JsonValue, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
 interface A {
 	a: number;
@@ -388,3 +388,8 @@ expectNotAssignable<Jsonify<[unknown, unknown]>>([new Date(), new Date()]);
 expectType<{key: JsonValue}>(objectWithUnknownValue);
 expectAssignable<Jsonify<{key: unknown}>>({key: []});
 expectNotAssignable<Jsonify<{key: unknown}>>({key: new Date()});
+
+expectAssignable<JsonObject>({} as {a: string});
+expectNotAssignable<JsonObject>({} as {a: string | undefined});
+expectAssignable<JsonObject>({} as {a?: string});
+expectNotAssignable<JsonObject>({} as {a?: string | undefined}); // Requires `exactOptionalPropertyTypes` to be enabled
