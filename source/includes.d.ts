@@ -39,7 +39,7 @@ export type Includes<Array_ extends UnknownArray, Item> =
 
 type _Includes<Array_ extends UnknownArray, Item> =
 	keyof Array_ & `${number}` extends never
-		// Handle fackward search
+		// Handle backward search
 		? Array_ extends readonly [...infer Rest, infer Last]
 			? IsEqual<Last, Item> extends true ? true
 				: _Includes<Rest, Item>
@@ -53,7 +53,7 @@ type _Includes<Array_ extends UnknownArray, Item> =
 		: Array_ extends readonly [(infer First)?, ...infer Rest]
 			? IsEqual<First, Item> extends true ? true | (
 				IsOptionalKeyOf<Array_, '0'> extends true
-					? _Includes<Rest, Item> // Return boolean for optional elments unless finding a required one
+					? _Includes<Rest, Item> // Return boolean for optional elements unless finding a required one
 					: never)
 				: _Includes<Rest, Item>
 
