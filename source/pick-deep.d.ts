@@ -1,5 +1,5 @@
 import type {TupleOf} from './tuple-of.d.ts';
-import type {BuildObject} from './internal/index.d.ts';
+import type {BuildObject, LastOfUnion} from './internal/index.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
@@ -8,7 +8,6 @@ import type {Or} from './or.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {IsTuple} from './is-tuple.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -125,13 +124,6 @@ type PickOrSelf<A, K extends (number | string)> =
 				? ForcePick<A, K>
 				: never
 			: A;
-
-type LastOfUnion<T> =
-	IsEqual<T, never> extends true
-		? never
-		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
-			? R
-			: never;
 
 /**
 Merges only the `object` types from a union; otherwise, returns the value as-is.

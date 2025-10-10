@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual, PickDeep, Simplify} from '../index.d.ts';
+import type {IsEqual, PickDeep} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
