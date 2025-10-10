@@ -6,6 +6,7 @@ const FILENAME = 'example-codeblock.ts';
 
 const compilerOptions = {
 	lib: ['lib.es2023.d.ts', 'lib.dom.d.ts', 'lib.dom.iterable.d.ts'],
+	target: ts.ScriptTarget.ESNext,
 	module: ts.ModuleKind.Node20,
 	moduleResolution: ts.ModuleResolutionKind.Node16,
 	strict: true,
