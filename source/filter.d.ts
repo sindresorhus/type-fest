@@ -21,7 +21,7 @@ export type FilterOptions = {
 
 	@example
 	```
-	import type {Filter} from 'type-fest';
+	import type {Filter, FilterObject} from 'type-fest';
 
 	type T1 = Filter<[1, 2, 3 | 4, 3?, 4?], 3>;
 	//=> [3 | 4, 3?]
@@ -29,11 +29,11 @@ export type FilterOptions = {
 	type T2 = Filter<[1, 2, 3 | 4, 3?, 4?], 3, {strict: true}>;
 	//=> [3?]
 
-	type T3 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}; 3>;
-	//=> {c: 3 | 4; d: 3?}
+	type T3 = FilterObject<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3>;
+	//=> {c: 3 | 4; d?: 3}
 
-	type T4 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}; 3, {strict: true}>;
-	//=> {c?: 3}
+	type T4 = FilterObject<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3, {strict: true}>;
+	//=> {d?: 3}
 	```
  	*/
 	strict?: boolean;

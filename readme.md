@@ -172,7 +172,7 @@ Click the type names for complete docs.
 - [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
 - [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
 - [`Filter`](source/filter.d.ts) - Filters elements from an array based on whether they extend the given type.
-- [`FilterObject`](source/filter-object.d.ts) - Filters properties from an object where the property value extend the given type.
+- [`FilterObject`](source/filter-object.d.ts) - Filters properties from an object where the property value extends the given type.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
