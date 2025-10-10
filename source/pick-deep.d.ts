@@ -34,9 +34,9 @@ type TestForceGet_2 = ForceGet<{2: 'x'}, 2>; // 'x'
 type TestForceGet_3 = ForceGet<{'2': 'x'}, 2>; // 'x'
 type TestForceGet_4 = ForceGet<['x', 'xx'], 0>; // 'x'
 type TestForceGet_5 = ForceGet<['x', 'xx'], '0'>; // 'x'
-type TestForceGet_6 = ForceGet<['x', 'xx'], '2'> // never
-type TestForceGet_7 = ForceGet<{a: 'x'}, 'b'> // never
-type TestForceGet_8 = ForceGet<[0,1,2], `${number}`> // 0 | 1 | 2
+type TestForceGet_6 = ForceGet<['x', 'xx'], '2'>; // never
+type TestForceGet_7 = ForceGet<{a: 'x'}, 'b'>; // never
+type TestForceGet_8 = ForceGet<[0,1,2], `${number}`>; // 0 | 1 | 2
 type TestForceGet_9 = ForceGet<string[], `${number}`> // string
 */
 type ForceGet<T, Key extends PropertyKey> =
@@ -291,7 +291,7 @@ type _PickDeep<Parent, PathTree extends PathTreeType, K extends keyof PathTree, 
 Converts a dot-delimited path string into a nested object tree structure.
 Example: `'a.b.c'` becomes `{a: {b: {c: ''}}}`
 
-Type Test_PathToTree = MergeNarrow<PathToTree<`a.b.${'c'|'d'}.x` | `d.b.${'c'|'d'}`>>;
+type Test_PathToTree = MergeTree<PathToTree<`a.b.${'c'|'d'}.x` | `d.b.${'c'|'d'}`>>;
 // {d: {b: {d: ''; c: ''}};
 //  a: {b: {d: {x: ''}; c: {x: ''}}}}
 */
