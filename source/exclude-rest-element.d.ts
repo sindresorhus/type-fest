@@ -31,7 +31,7 @@ export type ExcludeRestElement<Array_ extends UnknownArray> =
 			? IsArrayReadonly<Array_> extends true
 				? Readonly<[...Result[0], ...Result[2]]>
 				: [...Result[0], ...Result[2]]
-			: Result // May be `never` or `any`
+			: Result
 		: never;
 
 export {};
