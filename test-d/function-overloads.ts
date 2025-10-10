@@ -98,3 +98,12 @@ expectType<
 
 declare const noOverloads: FunctionOverloads<{}>;
 expectType<never>(noOverloads);
+
+declare const anyOverload: FunctionOverloads<any>;
+expectType<(...arguments_: readonly unknown[]) => unknown>(anyOverload);
+
+declare const neverOverload: FunctionOverloads<never>;
+expectType<never>(neverOverload);
+
+declare const unknownOverload: FunctionOverloads<unknown>;
+expectType<never>(unknownOverload);
