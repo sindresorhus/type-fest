@@ -182,11 +182,25 @@ export type VariablePartOfLeadingSpreadArray<T extends UnknownArray> =
 
 /**
 Returns the trailing static, fixed-length portion of the given middle spread array.
+
+@example
+```
+type A = [1, ...string[], 2, 3];
+type B = TrailingStaticPartOfMiddleSpreadArray<A>;
+//=> [2, 3]
+```
 */
 export type TrailingStaticPartOfMiddleSpreadArray<T extends UnknownArray> = StaticPartOfLeadingSpreadArray<T>;
 
 /**
-Returns the leading variable, non-fixed-length portion of the given middle spread array.
+Returns the leading static, fixed-length portion of the given middle spread array.
+
+@example
+```
+type A = [1, 2, ...string[], 3];
+type B = LeadingStaticPartOfMiddleSpreadArray<A>;
+//=> [1, 2]
+```
 */
 export type LeadingStaticPartOfMiddleSpreadArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends readonly [infer U, ...infer V]
@@ -194,7 +208,14 @@ export type LeadingStaticPartOfMiddleSpreadArray<T extends UnknownArray, Result 
 		: Result;
 
 /**
-Returns the trailing variable, non-fixed-length portion of the given middle spread array.
+Returns the variable, non-fixed-length portion of the given middle spread array.
+
+@example
+```
+type A = [1, 2, ...string[], 3, 4];
+type B = VariablePartOfMiddleSpreadArray<A>;
+//=> string[]
+```
 */
 export type VariablePartOfMiddleSpreadArray<
 	T extends UnknownArray,
