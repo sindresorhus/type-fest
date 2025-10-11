@@ -261,6 +261,7 @@ Click the type names for complete docs.
 - [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
 - [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extracts the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
 - [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Creates a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
+- [`ArrayReverse`](source/array-reverse.d.ts) - Reverses the order of elements in a tuple type.
 
 ### Numeric
 
