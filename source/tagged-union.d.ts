@@ -29,7 +29,7 @@ type EventMessage = Tagged<{
 }>;
 
 // Here is the same type created without this utility.
-type EventMessage =
+type ManualEventMessage =
 	| {
 		type: 'OpenExternalUrl';
 		url: string;

@@ -54,6 +54,7 @@
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^8.0.1",
+		"@typescript/vfs": "^1.6.1",
 		"expect-type": "^1.2.2",
 		"npm-run-all2": "^8.0.4",
 		"tsd": "^0.33.0",

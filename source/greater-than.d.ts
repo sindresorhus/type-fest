@@ -11,13 +11,13 @@ Returns a boolean for whether a given number is greater than another number.
 ```
 import type {GreaterThan} from 'type-fest';
 
-GreaterThan<1, -5>;
+type A = GreaterThan<1, -5>;
 //=> true
 
-GreaterThan<1, 1>;
+type B = GreaterThan<1, 1>;
 //=> false
 
-GreaterThan<1, 5>;
+type C = GreaterThan<1, 5>;
 //=> false
 ```
 */

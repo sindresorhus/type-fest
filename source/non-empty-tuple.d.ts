@@ -10,6 +10,7 @@ const sum = (...numbers: NonEmptyTuple<number>) => numbers.reduce((total, value)
 sum(1, 2, 3);
 //=> 6
 
+// @ts-expect-error
 sum();
 //=> Error: Expected at least 1 arguments, but got 0.
 ```
