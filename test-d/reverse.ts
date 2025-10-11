@@ -33,12 +33,12 @@ expectType<Reverse<readonly [1, 2, 3, 4, 5, 6]>>([6, 5, 4, 3, 2, 1] as const);
 expectType<Reverse<readonly ['a', 'b', 'c', 'd']>>(['d', 'c', 'b', 'a'] as const);
 expectType<Reverse<readonly [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>>([10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] as const);
 expectType<Reverse<readonly ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']>>(['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'] as const);
-expectType<Reverse<readonly [readonly number[], boolean]>>({} as [boolean, readonly number[]]);
+expectType<Reverse<readonly [readonly number[], boolean]>>({} as readonly [boolean, readonly number[]]);
 expectType<Reverse<readonly ['a', 'b', 'c', 'd', 'e']>>(['e', 'd', 'c', 'b', 'a'] as const);
-expectType<Reverse<readonly [boolean, number, boolean]>>({} as [boolean, number, boolean]);
+expectType<Reverse<readonly [boolean, number, boolean]>>({} as readonly [boolean, number, boolean]);
 
 // Optional/undefined
-expectType<Reverse<[1?, 2?, 3?]>>({} as [3?, 2?, 1?]);
+expectType<Reverse<[1?, 2?, 3?]>>({} as [] | [1] | [2, 1] | [3, 2, 1]);
 expectType<Reverse<[1, 2?, 3?]>>({} as [1] | [2, 1] | [3, 2, 1]);
 expectType<Reverse<[1 | undefined, 2 | undefined]>>({} as [2 | undefined, 1 | undefined]);
 expectType<Reverse<[undefined, 1, 2]>>([2, 1, undefined] as const);
@@ -51,7 +51,7 @@ expectType<Reverse<[1, 2] | [3, 4]>>({} as [2, 1] | [4, 3]);
 expectType<Reverse<[1, 'a'] | ['b', 2]>>({} as ['a', 1] | [2, 'b']);
 expectType<Reverse<[1, 2, 3] | readonly ['a', 'b']>>({} as [3, 2, 1] | readonly ['b', 'a']);
 expectType<Reverse<readonly [1, 2?, 3?] | ['a'?, 'b'?] | [string, number]>>(
-	{} as Readonly<[1] | [2, 1] | [3, 2, 1]> | [number, string] | ['b'?, 'a'?],
+	{} as Readonly<[1] | [2, 1] | [3, 2, 1]> | [number, string] | [] | ['a'] | ['b', 'a'],
 );
 
 // Rest element
@@ -60,8 +60,8 @@ expectType<Reverse<[1, ...boolean[], 'x']>>({} as ['x', ...boolean[], 1]);
 expectType<Reverse<[1, 2, ...string[]]>>({} as [...string[], 2, 1]);
 
 // Mixed elements
-expectType<Reverse<[1, 2, 3?, ...string[]]>>({} as [2, 1] | [3, 2, 1] | [...string[], 3, 2, 1]);
-expectType<Reverse<[number?, boolean?, ...string[]]>>({} as [] | [number] | [boolean, number] | [...string[], boolean, number]);
+expectType<Reverse<[1, 2, 3?, ...string[]]>>({} as [2, 1] | [...string[], 3, 2, 1]);
+expectType<Reverse<[number?, boolean?, ...string[]]>>({} as [] | [number] | [...string[], boolean, number]);
 
 // In use
 declare function reverse<const T extends unknown[]>(array: T): Reverse<T>;
