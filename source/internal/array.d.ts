@@ -87,30 +87,30 @@ number extends ArrayLength<T>
 	: false;
 
 /**
- Returns the required part of the given array.
+Returns the required part of the given array.
 
- @example
- ```
- type A = [string, number, boolean?];
- type B = RequiredPartOfStaticArray<A>;
- //=> [string, number]
- ```
- */
+@example
+```
+type A = [string, number, boolean?];
+type B = RequiredPartOfStaticArray<A>;
+//=> [string, number]
+```
+*/
 export type RequiredPartOfStaticArray<T extends UnknownArray> =
 	T extends readonly [infer U, ...infer V]
 		? [U, ...RequiredPartOfStaticArray<V>]
 		: [];
 
 /**
- Returns the optional part of the given array.
+Returns the optional part of the given array.
 
- @example
- ```
- type A = [string, number, boolean?];
- type B = OptionalPartOfStaticArray<A>;
- //=> [boolean?]
- ```
- */
+@example
+```
+type A = [string, number, boolean?];
+type B = OptionalPartOfStaticArray<A>;
+//=> [boolean?]
+```
+*/
 export type OptionalPartOfStaticArray<T extends UnknownArray> =
 	T extends readonly [...RequiredPartOfStaticArray<T>, ...infer U]
 		? U
