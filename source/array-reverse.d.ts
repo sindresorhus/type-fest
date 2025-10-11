@@ -65,8 +65,8 @@ type _ArrayReverse<
 	Result extends UnknownArray = never,
 > =
 	keyof TArray & `${number}` extends never
-        // Enters this branch, if `Array_` is empty (e.g., `[]`),
-		// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+		// Enters this branch, if `TArray` is empty (e.g., `[]`),
+		// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
 		? TArray extends readonly [...infer Rest, infer Last]
 			? _ArrayReverse<Rest, BeforeRestAcc, [...AfterRestAcc, Last], Result> // Accumulate elements that are present after the rest element in reverse order.
 			: Result | [...AfterRestAcc, ...TArray, ...BeforeRestAcc] // Add the rest element between the accumulated elements.
@@ -76,7 +76,7 @@ type _ArrayReverse<
 					Rest,
 					[First | (If<IsExactOptionalPropertyTypesEnabled, never, undefined>), ...BeforeRestAcc], // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 					AfterRestAcc,
-                    Result | BeforeRestAcc
+					Result | BeforeRestAcc
 				>,
 				_ArrayReverse<Rest, [First, ...BeforeRestAcc], AfterRestAcc, Result>>
 			: never; // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
