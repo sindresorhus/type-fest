@@ -1,92 +1,27 @@
 import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {And} from './and.d.ts';
 import type {If} from './if.d.ts';
 
 /**
-Reverse options.
-
-@see {@link Reverse}
-*/
-type ReverseOptions = {
-	/**
-	Whether to preserve the optional modifier (`?`).
-
-	- When set to `true` and all members are optional, the optional modifiers are preserved as-is. But if any member is required, the (`?`) is replaced with `| undefined`.
-	- When set to `false`, optional elements like `T?` are transformed to `T | undefined` or simply `T` depending on the `exactOptionalPropertyTypes` compiler option.
-
-	@example
-	```
-	import type {Reverse} from 'type-fest';
-
-	type T1 = Reverse<[string, number, boolean]>;
-	//=> [boolean, number, string]
-
-	type T2 = Reverse<[string?, number?, boolean?], {preserveOptionalModifier: true}>;
-	//=> [boolean?, number?, string?]
-
-	type T3 = Reverse<[string, number?, boolean?]>;
-	//=> [boolean, number, string] or [boolean | undefined, number | undefined, string]
-
-	type T4 = Reverse<[string, number?, boolean?], {preserveOptionalModifier: true}>;
-	//=> [boolean | undefined, number | undefined, string]
-	```
-
-	@default false
-	*/
-	preserveOptionalModifier?: boolean;
-};
-
-type DefaultReverseOptions = {
-	preserveOptionalModifier: false;
-};
-
-/**
-Reverse array/tuple elements.
-*/
-type _Reverse<
-	Array_ extends UnknownArray,
-	Options extends Required<ReverseOptions>,
-	Head extends UnknownArray = [],
-	Tail extends UnknownArray = [],
-> =
-	keyof Array_ & `${number}` extends never // Is `Array_` leading a rest element or empty
-		? Array_ extends readonly [...infer Rest, infer Last]
-			? _Reverse<Rest, Options, [...Head, Last], Tail>
-			: [...Head, ...Array_, ...Tail]
-		: Array_ extends readonly [(infer First)?, ...infer Rest]
-			? _Reverse<Rest, Options, Head, [
-				...IsOptionalKeyOf<Array_, '0'> extends true
-					? Options['preserveOptionalModifier'] extends false
-						? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
-						: [First?]
-					: [First],
-				...Tail,
-			]>
-			: never;
-
-/**
-Creates a new array type by reversing the element order of the original array.
-
-By default, the optional modifier (`?`) is **not** preserved and replaced with `T` or `T | undefined` depending on the `exactOptionalPropertyTypes` compiler option.
-See {@link ReverseOptions `ReverseOptions`}.
+Reverses the order of elements in a tuple or array type.
 
 @example
 ```
 type T1 = Reverse<['a', 'b', 'c']>
 //=> ['c', 'b', 'a']
 
-type T2 = Reverse<readonly [1, 2, 3, 4, 5, 6]>
-//=> readonly [6, 5, 4, 3, 2, 1]
+type T2 = Reverse<readonly [1, 2, 3, 4, ...string[]]>
+//=> readonly [...string[], 4, 3, 2, 1]
 
-type T3 = Reverse<['a', 'b'?, 'c'?]>
-//=> ['c', 'b', 'a']
-
-type T4 = Reverse<['a'?, 'b'?, 'c'?], {preserveOptionalModifier: true}>
+type T3 = Reverse<['a'?, 'b'?, 'c'?]>
 //=> ['c'?, 'b'?, 'a'?]
+
+type T4 = Reverse<['foo', 'bar'] | readonly [1, 2, 3]>;
+//=> ["bar", "foo"] | readonly [3, 2, 1]
 
 type T5 = Reverse<readonly [1, 2, ...number[], 4]>
 //=> readonly [4, ...number[], 2, 1]
@@ -96,18 +31,67 @@ reverse(['a', 'b', 'c', 'd']);
 //=> ['d', 'c', 'b', 'a']
 ```
 
+Note: If the array contains mix of optional and required elements, the result will be a union of tuples covering all possible cases.
+
+@example
+```ts
+import type {Reverse} from 'type-fest';
+
+type T1 = Reverse<[string?, number?, boolean?]>;
+//=> [boolean?, number?, string?]
+
+type T2 = Reverse<[string, number?, boolean?]>;
+//=> [boolean, number, string] | [number, string] | [string]
+
+type T3 = Reverse<[string, number?, ...boolean[]]>;
+//=> [...boolean[], number, string] | [number, string] | [string]
+
+type T4 = Reverse<[string?, number?, ...boolean[]]>;
+//=> [...boolean[], number, string] | [number, string] | [string] | []
+```
+
 @category Array
 */
-export type Reverse<Array_ extends UnknownArray, Options extends ReverseOptions = {}> =
+export type Reverse<Array_ extends UnknownArray> =
 	IsAny<Array_> extends true ? Array_ // Prevent the return of `Readonly<[] | [unknown] | unknown[] | [...unknown[], unknown]>`
 		: Array_ extends UnknownArray // For distributing `Array_`
-			? _Reverse<Array_, ApplyDefaultOptions<
-				ReverseOptions,
-				DefaultReverseOptions,
-				Options
-			>> extends infer Result
-				? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
-				: never
-			: never;
+			? _Reverse<
+				Array_,
+				And<
+					IsOptionalKeyOf<Array_, 0>,
+					number extends Array_['length'] ? false : true
+				>
+			> extends infer Result
+				? If<IsArrayReadonly<Array_>, Readonly<Result>, Result> // Preserve readonly modifier
+				: never // Should never happen
+			: never; // Should never happen
+
+/**
+Core type for {@link Reverse `Reverse`}
+*/
+type _Reverse<
+	Array_ extends UnknownArray,
+	IsAllOptional extends boolean,
+	HeadAcc extends UnknownArray = [],
+	TailAcc extends UnknownArray = [],
+> =
+	keyof Array_ & `${number}` extends never // Is `Array_` leading a rest element or empty
+		? Array_ extends readonly [...infer Rest, infer Last]
+			? _Reverse<Rest, IsAllOptional, [...HeadAcc, Last], TailAcc> // Accumulate elements after a rest element in reverse order
+			: TailAcc | [...HeadAcc, ...Array_, ...TailAcc] // Add the rest element between the accumulated elements.
+		: Array_ extends readonly [(infer First)?, ...infer Rest]
+			// Accumulate elements before a rest element in reverse order.
+			? IsAllOptional extends true
+				? _Reverse<Rest, IsAllOptional, HeadAcc, [First?, ...TailAcc]> // Preserve optional modifier if all elements are optional.
+				: IsOptionalKeyOf<Array_, 0> extends true
+					? (
+						| TailAcc // Union of all possible cases when optional elements exist.
+						| _Reverse<Rest, IsAllOptional, HeadAcc, [
+							If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>, // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+							...TailAcc,
+						]>
+					)
+					: _Reverse<Rest, IsAllOptional, HeadAcc, [First, ...TailAcc]>
+			: never; // Should never happen
 
 export {};
