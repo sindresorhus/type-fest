@@ -234,8 +234,8 @@ Click the type names for complete docs.
 ### Function
 
 - [`FunctionOverloads`](source/function-overloads.d.ts) - Create a union of all the function's overloads.
-- [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
+- [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 
 ### String
 
