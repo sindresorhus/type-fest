@@ -1,5 +1,6 @@
-import type {FunctionWithMaybeThisParameter} from './internal/function.d.ts';
+import type {FunctionWithMaybeThisParameter, Not} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a union of all the function's overloads.
@@ -66,7 +67,7 @@ type FunctionOverloadsInternal<
 	LastParameters = never,
 > = AllOverloads extends (
 	this: infer ThisType,
-	...arguments_: infer ParametersType extends readonly unknown[]
+	...arguments_: infer ParametersType extends UnknownArray
 ) => infer ReturnType
 	? // This simultaneously checks if the last and the current parameters are equal and `MustStopIfParametersAreEqual` flag is true
 	IsEqual<
@@ -87,7 +88,7 @@ type FunctionOverloadsInternal<
 						// Credits: https://github.com/microsoft/TypeScript/issues/32164#issuecomment-1146737709
 						CheckedOverloads & AllOverloads,
 						CheckedOverloads & ((this: ThisType, ...arguments_: ParametersType) => ReturnType),
-						MustStopIfParametersAreEqual extends true ? false : true,
+						Not<MustStopIfParametersAreEqual>,
 						ParametersType
 			>
 			| FunctionWithMaybeThisParameter<ThisType, ParametersType, ReturnType>
