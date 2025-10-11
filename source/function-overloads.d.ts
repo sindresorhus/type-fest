@@ -4,7 +4,7 @@ import type {IsEqual} from './is-equal.d.ts';
 /**
 Create a union of all the function's overloads.
 
-TypeScript's built-in utility types like `Parameters` and `ReturnType` only work with the last overload signature. This type extracts all overload signatures as a union, allowing you to work with each overload individually.
+TypeScript's built-in utility types like `Parameters` and `ReturnType` only work with the last overload signature, [by design](https://github.com/microsoft/TypeScript/issues/32164). This type extracts all overload signatures as a union, allowing you to work with each overload individually.
 
 Use-cases:
 - Extract parameter types from specific overloads using `Extract` and `Parameters`
