@@ -64,11 +64,11 @@ expectType<ArrayFlat<['1', number[], '3']>>(null! as ['1', ...number[], '3']);
 expectType<DeepArrayFlat<['1', number[], '3']>>(null! as ['1', ...number[], '3']);
 expectAssignable<ArrayFlat<[...number[], string[]]>>([1, 2, 3, 'a', 'b', 'c']);
 expectAssignable<DeepArrayFlat<[...number[], string[]]>>([1, 2, 3, 'a', 'b', 'c']);
-type MutiSpreadArray = [number, Array<'a'>, Array<'b'>, boolean];
-expectAssignable<ArrayFlat<MutiSpreadArray>>([1, 'a', 'b', true]);
-expectAssignable<DeepArrayFlat<MutiSpreadArray>>([1, 'a', 'b', true]);
-expectAssignable<ArrayFlat<MutiSpreadArray>>([1, 'a', 'a', 'a', 'b', true]);
-expectAssignable<DeepArrayFlat<MutiSpreadArray>>([1, 'a', 'a', 'a', 'b', true]);
+type MultiSpreadArray = [number, Array<'a'>, Array<'b'>, boolean];
+expectAssignable<ArrayFlat<MultiSpreadArray>>([1, 'a', 'b', true]);
+expectAssignable<DeepArrayFlat<MultiSpreadArray>>([1, 'a', 'b', true]);
+expectAssignable<ArrayFlat<MultiSpreadArray>>([1, 'a', 'a', 'a', 'b', true]);
+expectAssignable<DeepArrayFlat<MultiSpreadArray>>([1, 'a', 'a', 'a', 'b', true]);
 
 type SpreadArray = ArrayFlat<[1, ...Array<[2, 3?]>, 4]>;
 expectAssignable<SpreadArray>([1, 2, 3, 4]);
