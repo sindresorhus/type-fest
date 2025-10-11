@@ -11,7 +11,7 @@ Delimiter defaults to `,`.
 import type {JoinUnion} from 'type-fest';
 
 type T1 = JoinUnion<'a' | 'b' | 'c'>;
-//=> 'a, b, c'
+//=> 'a,b,c'
 
 type T2 = JoinUnion<1 | 2 | 3, ' | '>;
 //=> '1 | 2 | 3'
