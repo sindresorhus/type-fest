@@ -6,6 +6,7 @@ Join a union of strings and/or numbers ({@link JoinableItem `JoinableItems`}) us
 
 Delimiter defaults to `,`.
 
+Note: The order of elements is not guaranteed.
 @example
 ```
 import type {JoinUnion} from 'type-fest';
