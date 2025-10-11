@@ -202,8 +202,8 @@ T extends readonly [infer _Item, ...infer Last]
 							hasSpreadArray extends true
 								? BuildRepeatedUnionArray<Item, RepeatNumber, Not<hasSpreadArray>>
 								: Array<Item[number]>
-						)
-						, ...DoRepeatArrayItem<Last, RepeatNumber, true>,
+						),
+						...DoRepeatArrayItem<Last, RepeatNumber, true>,
 					]
 					// If the item is not a single element array, we can only build by repeating the item, like:
 					// ArrayFlat<Array<[1, 2]>> => [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, ...]
