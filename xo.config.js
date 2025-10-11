@@ -62,7 +62,7 @@ const xoConfig = [
 		},
 	},
 	{
-		files: ['source/**/*.d.ts', 'test-d/**/*.ts'],
+		files: ['source/**/*.d.ts', 'test-d/**/*.ts', 'index.d.ts'],
 		rules: {
 			'type-fest/import-path': 'error',
 		},
