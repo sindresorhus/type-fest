@@ -49,18 +49,18 @@ Reverse array/tuple elements.
 */
 type _Reverse<
 	Array_ extends UnknownArray,
-	KeepOptional extends boolean,
+	Options extends Required<ReverseOptions>,
 	Head extends UnknownArray = [],
 	Tail extends UnknownArray = [],
 > =
 	keyof Array_ & `${number}` extends never // Is `Array_` leading a rest element or empty
 		? Array_ extends readonly [...infer Rest, infer Last]
-			? _Reverse<Rest, KeepOptional, [...Head, Last], Tail>
+			? _Reverse<Rest, Options, [...Head, Last], Tail>
 			: [...Head, ...Array_, ...Tail]
 		: Array_ extends readonly [(infer First)?, ...infer Rest]
-			? _Reverse<Rest, KeepOptional, Head, [
+			? _Reverse<Rest, Options, Head, [
 				...IsOptionalKeyOf<Array_, '0'> extends true
-					? KeepOptional extends false
+					? Options['preserveOptionalModifier'] extends false
 						? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 						: [First?]
 					: [First],
@@ -99,16 +99,15 @@ reverse(['a', 'b', 'c', 'd']);
 @category Array
 */
 export type Reverse<Array_ extends UnknownArray, Options extends ReverseOptions = {}> =
-	IsAny<Array_> extends false // Prevent the return of `Readonly<[] | [unknown] | unknown[] | [...unknown[], unknown]>`
-		? Array_ extends UnknownArray // For distributing `Array_`
+	IsAny<Array_> extends true ? Array_ // Prevent the return of `Readonly<[] | [unknown] | unknown[] | [...unknown[], unknown]>`
+		: Array_ extends UnknownArray // For distributing `Array_`
 			? _Reverse<Array_, ApplyDefaultOptions<
 				ReverseOptions,
 				DefaultReverseOptions,
 				Options
-			>['preserveOptionalModifier']> extends infer Result
+			>> extends infer Result
 				? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
 				: never
-			: never
-		: Array_;
+			: never;
 
 export {};
