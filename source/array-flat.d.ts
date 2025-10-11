@@ -1,5 +1,21 @@
 import type {And} from './and.d.ts';
-import type {ArrayLength, ExactOptionalPropertyTypesEnable, IsLeadingSpreadArray, IsMiddleSpreadArray, IsTrailingSpreadArray, LeadingStaticPartOfMiddleSpreadArray, Not, OptionalPartOfStaticArray, RequiredPartOfStaticArray, StaticPartOfArray, StaticPartOfLeadingSpreadArray, TrailingStaticPartOfMiddleSpreadArray, VariablePartOfArray, VariablePartOfLeadingSpreadArray, VariablePartOfMiddleSpreadArray} from './internal/index.d.ts';
+import type {
+	ArrayLength,
+	ExactOptionalPropertyTypesEnable,
+	IsLeadingSpreadArray,
+	IsMiddleSpreadArray,
+	IsTrailingSpreadArray,
+	LeadingStaticPartOfMiddleSpreadArray,
+	Not,
+	OptionalPartOfStaticArray,
+	RequiredPartOfStaticArray,
+	StaticPartOfArray,
+	StaticPartOfLeadingSpreadArray,
+	TrailingStaticPartOfMiddleSpreadArray,
+	VariablePartOfArray,
+	VariablePartOfLeadingSpreadArray,
+	VariablePartOfMiddleSpreadArray,
+} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {Or} from './or.d.ts';
 import type {Subtract} from './subtract.d.ts';
@@ -8,7 +24,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 declare const RepeatSymbol: unique symbol;
 
 /**
-Return true if the number is 0.
+Returns true if the number is 0.
 */
 type IsZero<T extends number> = [T] extends [0] ? true : false;
 
@@ -25,7 +41,7 @@ type ArrayFlatOptions = {
 	```
 	import type {ArrayFlat} from 'type-fest';
 
-	type FlatArr0 = ArrayFlat<Array<number, string>, 1, { maxRepeat: 3 }>;
+	type FlatArr0 = ArrayFlat<Array<[number, string]>, 1, {maxRepeat: 3}>;
 	//=> type FlatArr0 =
 	[]
 	| [number, string]
@@ -43,7 +59,7 @@ type DefaultArrayFlatOptions = {
 /**
 Creates a new array type by flattening an array to a specified depth.
 
-Use-case: You can handle data nested at any level within arrays without worrying about the nesting structure
+Use-case: You can handle data nested at any level within arrays without worrying about the nesting structure.
 
 Like [`Array#flat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat) but for types.
 
@@ -141,7 +157,7 @@ T extends UnknownArray
 	? Or<IsZero<ArrayLength<T>>, IsZero<Depth>> extends true
 		? [...Result, ...T]
 		: T extends readonly [infer ArrayItem, ...infer Last]
-			?	[ArrayItem] extends [UnknownArray]
+			? [ArrayItem] extends [UnknownArray]
 				? number extends ArrayLength<ArrayItem>
 					? InternalFixedLengthArrayFlat<Last, Depth, [...Result, ...InternalNonFixedLengthArrayFlat<ArrayItem, Depth>]>
 					: InternalArrayFlat<
@@ -166,11 +182,11 @@ type InternalInnerFixedLengthArrayFlat<
 [T] extends [UnknownArray]
 	? Or<IsZero<ArrayLength<T>>, IsZero<Depth>> extends true
 		? [...Result, ...T]
-		: [...Result, ...InternalArrayFlat<RequiredPartOfStaticArray<T>, Depth>, ...(InternalArrayFlat< OptionalPartOfStaticArray<T>, Depth> | [])]
+		: [...Result, ...InternalArrayFlat<RequiredPartOfStaticArray<T>, Depth>, ...(InternalArrayFlat<OptionalPartOfStaticArray<T>, Depth> | [])]
 	: [];
 
 /**
-Replaces items with the RepeatSymbol flag to the true result.
+Replaces items marked with the RepeatSymbol flag with their expanded union representations.
 */
 type DoRepeatArrayItem<T, RepeatNumber extends number, hasSpreadArray extends boolean = false> =
 T extends readonly [infer _Item, ...infer Last]
