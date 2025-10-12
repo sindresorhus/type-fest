@@ -1,5 +1,5 @@
 /**
-Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+Flattens a complex object type to make it more readable and improve editor IntelliSense. And also to transform an interface into a type to aide with assignability.
 
 @example
 ```
@@ -52,7 +52,8 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 ```
 
 @link https://github.com/microsoft/TypeScript/issues/15300
-@see SimplifyDeep
+@see {@link SimplifyDeep}
+@see {@link SimplifyUnion}
 @category Object
 */
 export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
