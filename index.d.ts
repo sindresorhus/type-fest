@@ -178,7 +178,7 @@ export type {DelimiterCase} from './source/delimiter-case.d.ts';
 export type {DelimiterCasedProperties} from './source/delimiter-cased-properties.d.ts';
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep.d.ts';
 export type {Join} from './source/join.d.ts';
-export type {Reverse} from './source/reverse.d.ts';
+export type {ArrayReverse} from './source/array-reverse.d.ts';
 export type {Split, SplitOptions} from './source/split.d.ts';
 export type {Words, WordsOptions} from './source/words.d.ts';
 export type {Trim} from './source/trim.d.ts';
