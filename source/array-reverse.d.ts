@@ -71,14 +71,14 @@ type _ArrayReverse<
 			? _ArrayReverse<Rest, BeforeRestAcc, [...AfterRestAcc, Last], Result> // Accumulate elements that are present after the rest element in reverse order.
 			: Result | [...AfterRestAcc, ...TArray, ...BeforeRestAcc] // Add the rest element between the accumulated elements.
 		: TArray extends readonly [(infer First)?, ...infer Rest]
-			? If<IsOptionalKeyOf<TArray, '0'>,
-				_ArrayReverse<
+			? IsOptionalKeyOf<TArray, '0'> extends true
+				? _ArrayReverse<
 					Rest,
 					[First | (If<IsExactOptionalPropertyTypesEnabled, never, undefined>), ...BeforeRestAcc], // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 					AfterRestAcc,
 					Result | BeforeRestAcc
-				>,
-				_ArrayReverse<Rest, [First, ...BeforeRestAcc], AfterRestAcc, Result>>
+				>
+				: _ArrayReverse<Rest, [First, ...BeforeRestAcc], AfterRestAcc, Result>
 			: never; // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
 
 export {};
