@@ -134,13 +134,19 @@ expectType<IsNumericLiteral<bigintLiteral>>(true);
 expectType<IsNumericLiteral<Numeric>>(false);
 expectType<IsNumericLiteral<number>>(false);
 expectType<IsNumericLiteral<bigint>>(false);
+expectType<IsNumericLiteral<any>>(false);
+expectType<IsNumericLiteral<never>>(false);
 
 expectType<IsBooleanLiteral<booleanLiteral>>(true);
 expectType<IsBooleanLiteral<true | false>>(false);
 expectType<IsBooleanLiteral<boolean>>(false);
+expectType<IsBooleanLiteral<any>>(false);
+expectType<IsBooleanLiteral<never>>(false);
 
 expectType<IsSymbolLiteral<symbolLiteral>>(true);
 expectType<IsSymbolLiteral<symbol>>(false);
+expectType<IsSymbolLiteral<any>>(false);
+expectType<IsSymbolLiteral<never>>(false);
 
 // Missing generic parameter
 // @ts-expect-error
