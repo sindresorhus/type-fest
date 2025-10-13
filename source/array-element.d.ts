@@ -5,10 +5,10 @@ Extracts the element type of an array or tuple.
 
 Use-cases:
 - When you need type-safe element extraction that returns `never` for non-arrays.
-- When working with arrays of unknown type where `T[number]` might not be safe.
-- For better readability in complex type operations.
+- When extracting element types from generic array parameters in function signatures.
+- For better readability and explicit intent over using `T[number]` directly.
 
-Returns `never` if the type is not an array.
+Note: Returns `never` if the type is not an array.
 
 @example
 ```
