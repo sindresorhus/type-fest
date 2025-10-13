@@ -43,3 +43,9 @@ expectType<unknown>({} as ArrayElement<unknown[]>);
 // Non-arrays return never
 expectType<never>({} as ArrayElement<string>);
 expectType<never>({} as ArrayElement<{a: string}>);
+
+// Optional and rest elements
+expectType<1 | 2 | 3 | undefined>(1 as ArrayElement<[1, 2, 3?]>);
+expectType<string | number>(1 as ArrayElement<[string, ...number[]]>);
+expectType<1 | 2 | string>(1 as ArrayElement<[1, 2, ...string[]]>);
+expectType<1 | 2 | undefined | string>(1 as ArrayElement<[1, 2?, ...string[]]>);
