@@ -83,7 +83,7 @@ type DefaultRemovePrefixOptions = {
 };
 
 /**
-Removes the specified prefix from the start of a string.
+Remove the specified prefix from the start of a string.
 
 @example
 ```

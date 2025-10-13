@@ -4,7 +4,7 @@ import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Creates a tuple type of the specified length with elements of the specified type.
+Create a tuple type of the specified length with elements of the specified type.
 
 @example
 ```
