@@ -17,11 +17,13 @@ type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, ReturnType<MyFunc
 
 @category Function
 */
-export type SetReturnType<Function_ extends (...arguments_: any[]) => any, TypeToReturn> =
-	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
-	Function_ extends (this: infer ThisArgument, ...arguments_: infer Arguments) => any
-		? FunctionWithMaybeThisParameter<ThisArgument, Arguments, TypeToReturn>
-		: // This part should be unreachable, but we make it meaningful just in case…
-		(...arguments_: Parameters<Function_>) => TypeToReturn;
+export type SetReturnType<
+	Function_ extends (...arguments_: any[]) => any,
+	TypeToReturn,
+> = FunctionWithMaybeThisParameter<
+	ThisParameterType<Function_>,
+	Parameters<Function_>,
+	TypeToReturn
+>;
 
 export {};
