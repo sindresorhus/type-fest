@@ -25,15 +25,6 @@ export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray exten
 	: never;
 
 /**
-Extract the element of an array that also works for array union.
-
-Returns `never` if T is not an array.
-
-It creates a type-safe way to access the element type of `unknown` type.
-*/
-export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
-
-/**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example
