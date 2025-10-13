@@ -54,7 +54,7 @@ type B = IfEqual<string, number, 'equal', 'not equal'>;
 //=> 'not equal'
 ```
 
-Note: Sometimes using the `If` type can make an implementation non tail recursive, which would affect the performance of the implementation. In such cases, it's better to use a conditional directly. Refer the following example:
+Note: Sometimes using the `If` type can make an implementation non–tail-recursive, which can impact performance. In such cases, it’s better to use a conditional directly. Refer to the following example:
 
 @example
 ```
