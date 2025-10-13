@@ -106,14 +106,10 @@ type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
 export type SetParameterType<
 	Function_ extends (...arguments_: any[]) => unknown,
 	P extends Record<number, unknown>,
-> =
-	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
-	Function_ extends (this: infer ThisArgument, ...arguments_: infer Arguments) => unknown
-		? FunctionWithMaybeThisParameter<
-			ThisArgument,
-			MergeObjectToArray<Arguments, P>,
-			ReturnType<Function_>
-		>
-		: Function_;	// This part should be unreachable
+> = FunctionWithMaybeThisParameter<
+	ThisParameterType<Function_>,
+	MergeObjectToArray<Parameters<Function_>, P>,
+	ReturnType<Function_>
+>;
 
 export {};
