@@ -1,5 +1,6 @@
 import type tag from 'tagged-tag';
 
+// eslint-disable-next-line type-fest/require-exported-types
 export type TagContainer<Token> = {
 	readonly [tag]: Token;
 };
@@ -256,3 +257,5 @@ export type UnwrapOpaque<OpaqueType extends TagContainer<unknown>> =
 			: OpaqueType;
 
 export {type default as tag} from 'tagged-tag';
+
+export {};

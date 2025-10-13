@@ -1,4 +1,4 @@
-import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
 /**
@@ -38,6 +38,8 @@ export type CamelCasedProperties<Value, Options extends CamelCaseOptions = {}> =
 		? Value
 		: {
 			[K in keyof Value as
-			CamelCase<K, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>
+			CamelCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>
 			]: Value[K];
 		};
+
+export {};

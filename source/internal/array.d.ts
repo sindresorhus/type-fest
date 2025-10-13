@@ -192,3 +192,5 @@ type _CollapseRestElement<
 				>
 				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 		: never; // Should never happen
+
+export {};

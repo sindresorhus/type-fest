@@ -1,4 +1,4 @@
-import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
+import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
@@ -42,5 +42,7 @@ export type DelimiterCasedProperties<
 	: Value extends Array<infer U>
 		? Value
 		: {[K in keyof Value as
-			DelimiterCase<K, Delimiter, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>
+			DelimiterCase<K, Delimiter, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>
 			]: Value[K]};
+
+export {};

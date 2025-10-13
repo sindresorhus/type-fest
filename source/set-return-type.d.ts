@@ -27,3 +27,5 @@ export type SetReturnType<Function_ extends (...arguments_: any[]) => any, TypeT
 		// This part should be unreachable, but we make it meaningful just in case…
 		(...arguments_: Parameters<Function_>) => TypeToReturn
 	);
+
+export {};

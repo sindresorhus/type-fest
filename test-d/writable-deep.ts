@@ -1,6 +1,6 @@
 import {expectType, expectAssignable} from 'tsd';
 import type {JsonValue, Opaque, ReadonlyDeep, WritableDeep} from '../index.d.ts';
-import type {WritableObjectDeep} from '../source/writable-deep.d.ts';
+import type {_WritableObjectDeep} from '../source/writable-deep.d.ts';
 import type {tag} from '../source/tagged.d.ts';
 
 type Overloaded = {
@@ -99,7 +99,7 @@ expectType<['foo']>(writableData.readonlyTuple);
 expectAssignable<ReadonlyJsonValue>(writableData.json);
 expectAssignable<Opaque<WritableDeep<OpaqueObjectData>, WritableDeep<OpaqueObject[typeof tag]>>>(writableData.opaqueObj);
 
-expectType<((foo: number) => string) & WritableObjectDeep<Namespace>>(writableData.namespace);
+expectType<((foo: number) => string) & _WritableObjectDeep<Namespace>>(writableData.namespace);
 expectType<string>(writableData.namespace(1));
 expectType<boolean[]>(writableData.namespace.baz);
 

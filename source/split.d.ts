@@ -8,7 +8,7 @@ Split options.
 
 @see {@link Split}
 */
-type SplitOptions = {
+export type SplitOptions = {
 	/**
 	When enabled, instantiations with non-literal string types (e.g., `string`, `Uppercase<string>`, `on${string}`) simply return back `string[]` without performing any splitting, as the exact structure cannot be statically determined.
 
@@ -78,9 +78,13 @@ type SplitHelper<
 			? S extends `${infer Head}${Delimiter}${infer Tail}`
 				? SplitHelper<Tail, Delimiter, Options, [...Accumulator, Head]>
 				: Delimiter extends ''
-					? Accumulator
+					? S extends ''
+						? Accumulator
+						: [...Accumulator, S]
 					: [...Accumulator, S]
 			// Otherwise, return `string[]`
 			: string[]
 		: never // Should never happen
 	: never; // Should never happen
+
+export {};

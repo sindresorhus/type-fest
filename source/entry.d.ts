@@ -1,10 +1,10 @@
 type MapKey<BaseType> = BaseType extends Map<infer KeyType, unknown> ? KeyType : never;
 type MapValue<BaseType> = BaseType extends Map<unknown, infer ValueType> ? ValueType : never;
 
-export type ArrayEntry<BaseType extends readonly unknown[]> = [number, BaseType[number]];
-export type MapEntry<BaseType> = [MapKey<BaseType>, MapValue<BaseType>];
-export type ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
-export type SetEntry<BaseType> = BaseType extends Set<infer ItemType> ? [ItemType, ItemType] : never;
+export type _ArrayEntry<BaseType extends readonly unknown[]> = [number, BaseType[number]];
+export type _MapEntry<BaseType> = [MapKey<BaseType>, MapValue<BaseType>];
+export type _ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
+export type _SetEntry<BaseType> = BaseType extends Set<infer ItemType> ? [ItemType, ItemType] : never;
 
 /**
 Many collections have an `entries` method which returns an array of a given object's own enumerable string-keyed property [key, value] pairs. The `Entry` type will return the type of that collection's entry.
@@ -58,8 +58,10 @@ const setEntryNumber: Entry<typeof setExample> = [1, 1];
 @category Set
 */
 export type Entry<BaseType> =
-	BaseType extends Map<unknown, unknown> ? MapEntry<BaseType>
-		: BaseType extends Set<unknown> ? SetEntry<BaseType>
-			: BaseType extends readonly unknown[] ? ArrayEntry<BaseType>
-				: BaseType extends object ? ObjectEntry<BaseType>
+	BaseType extends Map<unknown, unknown> ? _MapEntry<BaseType>
+		: BaseType extends Set<unknown> ? _SetEntry<BaseType>
+			: BaseType extends readonly unknown[] ? _ArrayEntry<BaseType>
+				: BaseType extends object ? _ObjectEntry<BaseType>
 					: never;
+
+export {};

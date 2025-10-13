@@ -66,3 +66,5 @@ BaseType extends ReadonlyMap<infer KeyType, infer ValueType>
 			// Pick the keys that should be writable from the base type and make them writable by removing the `readonly` modifier from the key.
 				{-readonly [KeyType in keyof Pick<BaseType, Keys>]: Pick<BaseType, Keys>[KeyType]}
 			>;
+
+export {};

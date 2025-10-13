@@ -10,7 +10,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 @see {@link AllExtend}
 */
-type AllExtendOptions = {
+export type AllExtendOptions = {
 	/**
 	Consider `never` elements to match the target type only if the target type itself is `never` (or `any`).
 
@@ -113,3 +113,5 @@ type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllE
 				: false
 		: true
 >, false, false>;
+
+export {};

@@ -1,4 +1,4 @@
-import type {CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {PascalCase} from './pascal-case.d.ts';
 
@@ -37,4 +37,6 @@ export type PascalCasedProperties<Value, Options extends CamelCaseOptions = {}> 
 	? Value
 	: Value extends Array<infer U>
 		? Value
-		: {[K in keyof Value as PascalCase<K, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>]: Value[K]};
+		: {[K in keyof Value as PascalCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>]: Value[K]};
+
+export {};

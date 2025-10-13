@@ -1,11 +1,11 @@
 import type {ApplyDefaultOptions, ToString} from './internal/index.d.ts';
-import type {LiteralStringUnion} from './literal-union.d.ts';
+import type {_LiteralStringUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 
-type GetOptions = {
+export type GetOptions = {
 	/**
 	Include `undefined` in the return type when accessing properties.
 
@@ -210,7 +210,7 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
-	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
+	| _LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
 	Options extends GetOptions = {},
 > =
 	GetWithPath<
@@ -218,3 +218,5 @@ export type Get<
 		Path extends string ? ToPath<Path> : Path,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
+
+export {};

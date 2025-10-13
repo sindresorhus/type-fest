@@ -276,3 +276,5 @@ export type OwnKeys<T> =
 // TODO: add `IsPrimitive` strict check to uncollapse litetals.
 // type T = OwnKeys<{[x: string]: never; 'foo': never}
 //=> (string & {}) | 'foo' <- should be the output
+
+export {};

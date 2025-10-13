@@ -40,3 +40,5 @@ export type _SetReadonly<BaseType, Keys extends keyof BaseType> =
 			Readonly<HomomorphicPick<BaseType, Keys>>
 		>
 		: never;
+
+export {};

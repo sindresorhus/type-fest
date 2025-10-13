@@ -56,3 +56,5 @@ T extends bigint
 				? false
 				: Not<IsFloat<T>>
 		: false;
+
+export {};

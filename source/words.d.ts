@@ -38,7 +38,7 @@ export type WordsOptions = {
 	splitOnNumbers?: boolean;
 };
 
-export type DefaultWordsOptions = {
+export type _DefaultWordsOptions = {
 	splitOnNumbers: true;
 };
 
@@ -76,7 +76,7 @@ type Words5 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 @category Template literal
 */
 export type Words<Sentence extends string, Options extends WordsOptions = {}> =
-	WordsImplementation<Sentence, ApplyDefaultOptions<WordsOptions, DefaultWordsOptions, Options>>;
+	WordsImplementation<Sentence, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>;
 
 type WordsImplementation<
 	Sentence extends string,
@@ -116,3 +116,5 @@ type WordsImplementation<
 							// No case change: concat word
 								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 	: [...SkipEmptyWord<CurrentWord>];
+
+export {};

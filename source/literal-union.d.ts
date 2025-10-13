@@ -1,8 +1,7 @@
 import type {Primitive} from './primitive.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
-/** Shorthand for: `LiteralUnion<T, string>` */
-export type LiteralStringUnion<T> = LiteralUnion<T, string>;
+export type _LiteralStringUnion<T> = LiteralUnion<T, string>;
 
 /**
 Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
@@ -38,4 +37,9 @@ You **will** get auto-completion for `dog` and `cat` literals.
 
 @category Type
 */
-export type LiteralUnion<LiteralType, PrimitiveType extends Primitive> = LiteralType | (PrimitiveType & Simplify<{}>);
+export type LiteralUnion<
+  LiteralType,
+  BaseType extends Primitive,
+> = LiteralType | (BaseType & Simplify<{}>);
+
+export {};

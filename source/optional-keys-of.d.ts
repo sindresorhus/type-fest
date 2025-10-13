@@ -1,3 +1,5 @@
+import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
+
 /**
 Extract all optional keys from the given type.
 
@@ -31,9 +33,14 @@ const update2: UpdateOperation<User> = {
 
 @category Utilities
 */
-export type OptionalKeysOf<BaseType extends object> =
-	BaseType extends unknown // For distributing `BaseType`
-		? (keyof {
-			[Key in keyof BaseType as BaseType extends Record<Key, BaseType[Key]> ? never : Key]: never
-		}) & (keyof BaseType) // Intersect with `keyof BaseType` to ensure result of `OptionalKeysOf<BaseType>` is always assignable to `keyof BaseType`
+export type OptionalKeysOf<Type extends object> =
+	Type extends unknown // For distributing `Type`
+		? (keyof {[Key in keyof Type as
+			IsOptionalKeyOf<Type, Key> extends false
+				? never
+				: Key
+			]: never
+		}) & keyof Type // Intersect with `keyof Type` to ensure result of `OptionalKeysOf<Type>` is always assignable to `keyof Type`
 		: never; // Should never happen
+
+export {};

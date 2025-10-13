@@ -7,7 +7,7 @@ Use-case: A shorter way to declare tagged unions with multiple members.
 ```
 import type {TaggedUnion} from 'type-fest';
 
-type Tagged<Fields extends Record<string, unknown> = TaggedUnion<'type', Fields>
+type Tagged<Fields extends Record<string, Record<string, unknown>>> = TaggedUnion<'type', Fields>
 
 // The TaggedUnion utility reduces the amount of boilerplate needed to create a tagged union with multiple members, making the code more concise.
 type EventMessage = Tagged<{
@@ -49,3 +49,5 @@ export type TaggedUnion<
 > = {
 	[Name in keyof UnionMembers]: {[Key in TagKey]: Name} & UnionMembers[Name];
 }[keyof UnionMembers];
+
+export {};
