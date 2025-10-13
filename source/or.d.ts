@@ -4,7 +4,7 @@ import type {IsNever} from './is-never.d.ts';
 /**
 Returns a boolean for whether either of two given types is true.
 
-Use-case: Constructing complex conditional types where single or multiple conditions must be satisfied.
+Use-case: Constructing complex conditional types where at least one condition must be satisfied.
 
 @example
 ```
