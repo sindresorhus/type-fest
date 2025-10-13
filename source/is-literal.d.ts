@@ -12,14 +12,14 @@ Supports all {@link IsStringLiteralOptions} options.
 
 @see {@link IsLiteral}
 */
-type IsLiteralOptions =
+export type IsLiteralOptions =
 	& IsStringLiteralOptions;
 //  & Is*LiteralOptions...
 
 /**
 @see {@link IsStringLiteral}
 */
-type IsStringLiteralOptions = {
+export type IsStringLiteralOptions = {
 	/**
 	Controls whether wide string patterns such as template literals (`on${string}`),
 	or utility type results like `Uppercase<string>`, should be treated as **non-literals**.
@@ -164,7 +164,6 @@ type L2 = Length<`${number}`>;
 //=> number
 ```
 
-@see IsStringPrimitive
 @category Type Guard
 @category Utilities
 */
@@ -230,7 +229,6 @@ endsWith('abc123', end);
 //=> boolean
 ```
 
-@see IsNumericPrimitive
 @category Type Guard
 @category Utilities
 */
@@ -271,7 +269,6 @@ const eitherId = getId({asString: runtimeBoolean});
 //=> number | string
 ```
 
-@see IsBooleanPrimitive
 @category Type Guard
 @category Utilities
 */
@@ -307,7 +304,6 @@ get({[symbolValue]: 1} as const, symbolValue);
 //=> number
 ```
 
-@see IsSymbolPrimitive
 @category Type Guard
 @category Utilities
 */
