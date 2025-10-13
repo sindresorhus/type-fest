@@ -1,5 +1,5 @@
 /**
-Flattens a complex object type to make it more readable and improve editor IntelliSense. And also to transform an interface into a type to aide with assignability.
+Flattens a complex object type to make it more readable and improve editor IntelliSense. And also to transform an interface into a type to aid with assignability.
 
 @example
 ```
