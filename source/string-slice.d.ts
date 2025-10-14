@@ -11,16 +11,16 @@ Returns a string slice of a given range, just like `String#slice()`.
 ```
 import type {StringSlice} from 'type-fest';
 
-StringSlice<'abcde', 0, 2>;
+type A = StringSlice<'abcde', 0, 2>;
 //=> 'ab'
 
-StringSlice<'abcde', 1>;
+type B = StringSlice<'abcde', 1>;
 //=> 'bcde'
 
-StringSlice<'abcde', 0, -1>;
+type C = StringSlice<'abcde', 0, -1>;
 //=> 'abcd'
 
-StringSlice<'abcde', -2, -1>;
+type D = StringSlice<'abcde', -2, -1>;
 //=> 'd'
 ```
 

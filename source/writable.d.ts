@@ -32,6 +32,7 @@ type Foo = {
 
 const writableFoo: Writable<Foo> = {a: 1, b: ['2'], c: true};
 writableFoo.a = 3;
+// @ts-expect-error
 writableFoo.b[0] = 'new value'; // Will still fail as the value of property "b" is still a readonly type.
 writableFoo.b = ['something']; // Will work as the "b" property itself is no longer readonly.
 
@@ -44,6 +45,7 @@ type SomeWritable = Writable<Foo, 'b' | 'c'>;
 
 // Also supports array
 const readonlyArray: readonly number[] = [1, 2, 3];
+// @ts-expect-error
 readonlyArray.push(4); // Will fail as the array itself is readonly.
 const writableArray: Writable<typeof readonlyArray> = readonlyArray as Writable<typeof readonlyArray>;
 writableArray.push(4); // Will work as the array itself is now writable.

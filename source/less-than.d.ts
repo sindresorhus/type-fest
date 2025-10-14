@@ -7,13 +7,13 @@ Returns a boolean for whether a given number is less than another number.
 ```
 import type {LessThan} from 'type-fest';
 
-LessThan<1, -5>;
+type A = LessThan<1, -5>;
 //=> false
 
-LessThan<1, 1>;
+type B = LessThan<1, 1>;
 //=> false
 
-LessThan<1, 5>;
+type C = LessThan<1, 5>;
 //=> true
 ```
 */

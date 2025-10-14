@@ -4,27 +4,9 @@ import type {IsEqual} from './is-equal.d.ts';
 /**
 Filter out keys from an object.
 
-Returns `never` if `Exclude` is strictly equal to `Key`.
-Returns `never` if `Key` extends `Exclude`.
-Returns `Key` otherwise.
-
-@example
-```
-type Filtered = Filter<'foo', 'foo'>;
-//=> never
-```
-
-@example
-```
-type Filtered = Filter<'bar', string>;
-//=> never
-```
-
-@example
-```
-type Filtered = Filter<'bar', 'foo'>;
-//=> 'bar'
-```
+Returns `never` if `ExcludeType` is strictly equal to `KeyType`, for example, `Filter<'foo', 'foo'>` results in `never`.
+Returns `never` if `KeyType` extends `ExcludeType`, for example, `Filter<'bar', string>` results in `never`.
+Returns `KeyType` otherwise, for example, `Filter<'bar', 'foo'>` results in `'bar'`.
 
 @see {Except}
 */
@@ -66,12 +48,14 @@ type Foo = {
 type FooWithoutA = Except<Foo, 'a'>;
 //=> {b: string}
 
+// @ts-expect-error
 const fooWithoutA: FooWithoutA = {a: 1, b: '2'};
 //=> errors: 'a' does not exist in type '{ b: string; }'
 
 type FooWithoutB = Except<Foo, 'b', {requireExactProps: true}>;
 //=> {a: number} & Partial<Record<"b", never>>
 
+// @ts-expect-error
 const fooWithoutB: FooWithoutB = {a: 1, b: '2'};
 //=> errors at 'b': Type 'string' is not assignable to type 'undefined'.
 
@@ -88,12 +72,12 @@ type UserData = {
 
 // `Omit` clearly doesn't behave as expected in this case:
 type PostPayload = Omit<UserData, 'email'>;
-//=> type PostPayload = { [x: string]: string; [x: number]: string; }
+//=> { [x: string]: string; [x: number]: string; }
 
 // In situations like this, `Except` works better.
 // It simply removes the `email` key while preserving all the other keys.
-type PostPayload = Except<UserData, 'email'>;
-//=> type PostPayload = { [x: string]: string; name: string; role: 'admin' | 'user'; }
+type PostPayloadFixed = Except<UserData, 'email'>;
+//=> { [x: string]: string; name: string; role: 'admin' | 'user'; }
 ```
 
 @category Object

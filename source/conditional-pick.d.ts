@@ -10,9 +10,7 @@ This is useful when you want to create a new type from a specific subset of an e
 import type {Primitive, ConditionalPick} from 'type-fest';
 
 class Awesome {
-	name: string;
-	successes: number;
-	failures: bigint;
+	constructor(public name: string, public successes: number, public failures: bigint) {}
 
 	run() {}
 }

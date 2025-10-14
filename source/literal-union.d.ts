@@ -17,7 +17,7 @@ import type {LiteralUnion} from 'type-fest';
 
 type Pet = 'dog' | 'cat' | string;
 
-const pet: Pet = '';
+const petWithoutAutocomplete: Pet = '';
 // Start typing in your TypeScript-enabled IDE.
 // You **will not** get auto-completion for `dog` and `cat` literals.
 
@@ -25,7 +25,7 @@ const pet: Pet = '';
 
 type Pet2 = LiteralUnion<'dog' | 'cat', string>;
 
-const pet: Pet2 = '';
+const petWithAutoComplete: Pet2 = '';
 // You **will** get auto-completion for `dog` and `cat` literals.
 ```
 

@@ -46,15 +46,7 @@ SplitIndex extends 0
 
 /**
 Split the given array `T` by the given `SplitIndex`.
-
-@example
-```
-type A = SplitArrayByIndex<[1, 2, 3, 4], 2>;
-// type A = [[1, 2], [3, 4]];
-
-type B = SplitArrayByIndex<[1, 2, 3, 4], 0>;
-// type B = [[], [1, 2, 3, 4]];
-```
+For example, `SplitArrayByIndex<[1, 2, 3, 4], 2>` results in `[[1, 2], [3, 4]]` and `SplitArrayByIndex<[1, 2, 3, 4], 0>` results in `[[], [1, 2, 3, 4]]`.
 */
 type SplitArrayByIndex<T extends UnknownArray, SplitIndex extends number> =
 	SplitIndex extends 0
@@ -72,17 +64,19 @@ Like [`Array#splice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/
 
 @example
 ```
+import type {ArraySplice} from 'type-fest';
+
 type SomeMonths0 = ['January', 'April', 'June'];
-type Mouths0 = ArraySplice<SomeMonths0, 1, 0, ['Feb', 'March']>;
-//=> type Mouths0 = ['January', 'Feb', 'March', 'April', 'June'];
+type Months0 = ArraySplice<SomeMonths0, 1, 0, ['Feb', 'March']>;
+//=> ['January', 'Feb', 'March', 'April', 'June'];
 
 type SomeMonths1 = ['January', 'April', 'June'];
-type Mouths1 = ArraySplice<SomeMonths1, 1, 1>;
-//=> type Mouths1 = ['January', 'June'];
+type Months1 = ArraySplice<SomeMonths1, 1, 1>;
+//=> ['January', 'June'];
 
 type SomeMonths2 = ['January', 'Foo', 'April'];
-type Mouths2 = ArraySplice<SomeMonths2, 1, 1, ['Feb', 'March']>;
-//=> type Mouths2 = ['January', 'Feb', 'March', 'April'];
+type Months2 = ArraySplice<SomeMonths2, 1, 1, ['Feb', 'March']>;
+//=> ['January', 'Feb', 'March', 'April'];
 ```
 
 @category Array

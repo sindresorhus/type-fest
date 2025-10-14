@@ -7,13 +7,13 @@ import type {GreaterThan} from './greater-than.d.ts';
 ```
 import type {LessThanOrEqual} from 'type-fest';
 
-LessThanOrEqual<1, -5>;
+type A = LessThanOrEqual<1, -5>;
 //=> false
 
-LessThanOrEqual<1, 1>;
+type B = LessThanOrEqual<1, 1>;
 //=> true
 
-LessThanOrEqual<1, 5>;
+type C = LessThanOrEqual<1, 5>;
 //=> true
 ```
 */

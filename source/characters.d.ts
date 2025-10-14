@@ -6,7 +6,9 @@ Matches any uppercase letter in the basic Latin alphabet (A-Z).
 import type {UppercaseLetter} from 'type-fest';
 
 const a: UppercaseLetter = 'A';  // Valid
+// @ts-expect-error
 const b: UppercaseLetter = 'a';  // Invalid
+// @ts-expect-error
 const c: UppercaseLetter = 'AB'; // Invalid
 ```
 
@@ -22,6 +24,7 @@ Matches any lowercase letter in the basic Latin alphabet (a-z).
 import type {LowercaseLetter} from 'type-fest';
 
 const a: LowercaseLetter = 'a'; // Valid
+// @ts-expect-error
 const b: LowercaseLetter = 'A'; // Invalid
 ```
 
@@ -37,6 +40,7 @@ Matches any digit as a string ('0'-'9').
 import type {DigitCharacter} from 'type-fest';
 
 const a: DigitCharacter = '0'; // Valid
+// @ts-expect-error
 const b: DigitCharacter = 0;   // Invalid
 ```
 
@@ -52,6 +56,7 @@ Matches any lowercase letter (a-z), uppercase letter (A-Z), or digit ('0'-'9') i
 import type {Alphanumeric} from 'type-fest';
 
 const a: Alphanumeric = 'A'; // Valid
+// @ts-expect-error
 const b: Alphanumeric = '#'; // Invalid
 ```
 
