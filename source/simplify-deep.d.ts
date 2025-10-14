@@ -104,7 +104,7 @@ type SimplifyDeepProperties = SimplifyDeep<Properties1 & Properties2, ComplexTyp
 // };
 ```
 
-@see Simplify
+@see {@link Simplify}
 @category Object
 */
 export type SimplifyDeep<Type, ExcludeType = never> =

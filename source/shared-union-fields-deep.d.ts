@@ -81,7 +81,7 @@ function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union

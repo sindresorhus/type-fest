@@ -7,8 +7,8 @@ Convert object properties to delimiter case but not recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see DelimiterCase
-@see DelimiterCasedPropertiesDeep
+@see {@link DelimiterCase}
+@see {@link DelimiterCasedPropertiesDeep}
 
 @example
 ```

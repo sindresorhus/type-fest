@@ -30,7 +30,7 @@ type ZeroToNine = IntRange<0, 10>;
 type Hundreds = IntRange<100, 901, 100>;
 ```
 
-@see IntClosedRange
+@see {@link IntClosedRange}
 */
 export type IntRange<Start extends number, End extends number, Step extends number = 1> = PrivateIntRange<Start, End, Step>;
 

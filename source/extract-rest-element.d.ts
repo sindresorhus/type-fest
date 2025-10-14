@@ -21,7 +21,8 @@ type T4 = ExtractRestElement<[number, string]>;
 //=> never
 ```
 
-@see ExcludeRestElement, SplitOnRestElement
+@see {@link ExcludeRestElement}
+@see {@link SplitOnRestElement}
 @category Array
 */
 export type ExtractRestElement<T extends UnknownArray> = SplitOnRestElement<T>[1][number];

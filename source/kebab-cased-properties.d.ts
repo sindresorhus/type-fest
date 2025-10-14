@@ -8,8 +8,8 @@ Convert object properties to kebab case but not recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see KebabCase
-@see KebabCasedPropertiesDeep
+@see {@link KebabCase}
+@see {@link KebabCasedPropertiesDeep}
 
 @example
 ```
