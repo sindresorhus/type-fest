@@ -6,7 +6,7 @@ Like `LiteralToPrimitive` except it converts literal types inside an object or a
 
 For example, given a constant object, it returns a new object type with the same keys but with all the values converted to primitives.
 
-@see LiteralToPrimitive
+@see {@link LiteralToPrimitive}
 
 Use-case: Deal with data that is imported from a JSON file.
 

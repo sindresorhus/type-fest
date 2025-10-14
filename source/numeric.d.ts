@@ -10,7 +10,7 @@ Matches the hidden `Infinity` type.
 
 Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/32277) if you want to have this type as a built-in in TypeScript.
 
-@see NegativeInfinity
+@see {@link NegativeInfinity}
 
 @category Numeric
 */
@@ -23,7 +23,7 @@ Matches the hidden `-Infinity` type.
 
 Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/32277) if you want to have this type as a built-in in TypeScript.
 
-@see PositiveInfinity
+@see {@link PositiveInfinity}
 
 @category Numeric
 */
@@ -88,8 +88,8 @@ import type {Integer} from 'type-fest';
 declare function setYear<T extends number>(length: Integer<T>): void;
 ```
 
-@see NegativeInteger
-@see NonNegativeInteger
+@see {@link NegativeInteger}
+@see {@link NonNegativeInteger}
 
 @category Numeric
 */
@@ -114,7 +114,7 @@ import type {Float} from 'type-fest';
 declare function setPercentage<T extends number>(length: Float<T>): void;
 ```
 
-@see Integer
+@see {@link Integer}
 
 @category Numeric
 */
@@ -129,8 +129,8 @@ Equivalent to `Negative<Float<T>>`.
 
 Use-case: Validating and documenting parameters.
 
-@see Negative
-@see Float
+@see {@link Negative}
+@see {@link Float}
 
 @category Numeric
 */
@@ -141,8 +141,8 @@ A negative `number`/`bigint` (`-∞ < x < 0`)
 
 Use-case: Validating and documenting parameters.
 
-@see NegativeInteger
-@see NonNegative
+@see {@link NegativeInteger}
+@see {@link NonNegative}
 
 @category Numeric
 */
@@ -156,8 +156,8 @@ You can't pass a `bigint` as they are already guaranteed to be integers, instead
 
 Use-case: Validating and documenting parameters.
 
-@see Negative
-@see Integer
+@see {@link Negative}
+@see {@link Integer}
 
 @category Numeric
 */
@@ -168,8 +168,8 @@ A non-negative `number`/`bigint` (`0 <= x < ∞`).
 
 Use-case: Validating and documenting parameters.
 
-@see NonNegativeInteger
-@see Negative
+@see {@link NonNegativeInteger}
+@see {@link Negative}
 
 @example
 ```
@@ -190,8 +190,8 @@ You can't pass a `bigint` as they are already guaranteed to be integers, instead
 
 Use-case: Validating and documenting parameters.
 
-@see NonNegative
-@see Integer
+@see {@link NonNegative}
+@see {@link Integer}
 
 @example
 ```
@@ -207,7 +207,7 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 /**
 Returns a boolean for whether the given number is a negative number.
 
-@see Negative
+@see {@link Negative}
 
 @example
 ```
