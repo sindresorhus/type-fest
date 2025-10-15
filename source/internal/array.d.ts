@@ -147,6 +147,7 @@ export type VariablePartOfArray<T extends UnknownArray> =
 
 /**
 Returns the static, fixed-length portion of the given leading spread array.
+
 @example
 ```
 type A = [...string[], number, boolean];
@@ -161,6 +162,7 @@ export type StaticPartOfLeadingSpreadArray<T extends UnknownArray, Result extend
 
 /**
 Returns the variable, non-fixed-length portion of the given leading spread array.
+
 @example
 ```
 type A = [...string[], number, boolean];
