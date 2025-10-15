@@ -15,7 +15,9 @@ import type {
 	VariablePartOfMiddleSpreadArray,
 } from './internal/array.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled, Not} from './internal/type.d.ts';
+import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {Or} from './or.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -135,15 +137,19 @@ T extends UnknownArray
 						...InternalFixedLengthArrayFlat<TrailingStaticPartOfMiddleSpreadArray<T>, Depth>,
 					]
 					// Handle non-spread and non-fixed-length array
-					: [
-						T[number] extends UnknownArray
-							? InternalArrayFlat<T[number], Subtract<Depth, 1>, Result>
-							: [T[number]],
-					] extends [infer Item extends UnknownArray]
-						? Item extends [{[RepeatSymbol]: unknown}]
-							? Item
-							: [{[RepeatSymbol]: Item}]
-						: never // Never happens
+					: IsAny<T[number]> extends true
+						? [{[RepeatSymbol]: [any]}]
+						: IsNever<T[number]> extends true
+							? [{[RepeatSymbol]: [never]}]
+							: [
+								T[number] extends UnknownArray
+									? InternalArrayFlat<T[number], Subtract<Depth, 1>, Result>
+									: [T[number]],
+							] extends [infer Item extends UnknownArray]
+								? Item extends [{[RepeatSymbol]: unknown}]
+									? Item
+									: [{[RepeatSymbol]: Item}]
+								: never // Never happens
 	: T;
 
 // Handle fixed length arrays
@@ -156,19 +162,23 @@ T extends UnknownArray
 	? Or<IsZero<ArrayLength<T>>, IsZero<Depth>> extends true
 		? [...Result, ...T]
 		: T extends readonly [infer ArrayItem, ...infer Last]
-			? [ArrayItem] extends [UnknownArray]
-				? number extends ArrayLength<ArrayItem>
-					? InternalFixedLengthArrayFlat<Last, Depth, [...Result, ...InternalNonFixedLengthArrayFlat<ArrayItem, Depth>]>
-					: InternalArrayFlat<
-						Last,
-						Depth,
-						[
-							...Result,
-							...InternalArrayFlat<RequiredPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>>,
-							...(InternalArrayFlat<OptionalPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>> | []),
-						]
-					>
-				: InternalInnerFixedLengthArrayFlat<Last, Depth, [...Result, ArrayItem]>
+			? IsAny<ArrayItem> extends true
+				? InternalFixedLengthArrayFlat<Last, Depth, [...Result, any]>
+				: IsNever<ArrayItem> extends true
+					? InternalFixedLengthArrayFlat<Last, Depth, [...Result, never]>
+					: [ArrayItem] extends [UnknownArray]
+						? number extends ArrayLength<ArrayItem>
+							? InternalFixedLengthArrayFlat<Last, Depth, [...Result, ...InternalNonFixedLengthArrayFlat<ArrayItem, Depth>]>
+							: InternalArrayFlat<
+								Last,
+								Depth,
+								[
+									...Result,
+									...InternalArrayFlat<RequiredPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>>,
+									...(InternalArrayFlat<OptionalPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>> | []),
+								]
+							>
+						: InternalInnerFixedLengthArrayFlat<Last, Depth, [...Result, ArrayItem]>
 			: [...Result, ...T]
 	: [];
 
@@ -189,29 +199,33 @@ Replaces items marked with the RepeatSymbol flag with their expanded union repre
 */
 type DoRepeatArrayItem<T, RepeatNumber extends number, hasSpreadArray extends boolean = false> =
 T extends readonly [infer _Item, ...infer Last]
-	? [_Item] extends [{[RepeatSymbol]: infer Item extends UnknownArray}]
-		? IsZero<Item['length']> extends true
-			? DoRepeatArrayItem<Last, RepeatNumber>
-			: Item extends unknown
-				? Item['length'] extends 1
-					// If the item is a single element array, we can build [...Array<Item[number]>], but if it already has spread
-					// array before, we should build [...Array<'SomeSpreadArrayBefore'>, Item[number], Item[number], Item[number], ...]
-					? [
-						...(
-							hasSpreadArray extends true
-								? BuildRepeatedUnionArray<Item, RepeatNumber, Not<hasSpreadArray>>
-								: Array<Item[number]>
-						),
-						...DoRepeatArrayItem<Last, RepeatNumber, true>,
-					]
-					// If the item is not a single element array, we can only build by repeating the item, like:
-					// ArrayFlat<Array<[1, 2]>> => [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, ...]
-					: [
-						...BuildRepeatedUnionArray<Item, RepeatNumber, Not<hasSpreadArray>>,
-						...DoRepeatArrayItem<Last, RepeatNumber>,
-					]
-				: never // Never happens
-		: [_Item, ...DoRepeatArrayItem<Last, RepeatNumber>]
+	? IsAny<_Item> extends true
+		? [any, ...DoRepeatArrayItem<Last, RepeatNumber>]
+		: IsNever<_Item> extends true
+			? [never, ...DoRepeatArrayItem<Last, RepeatNumber>]
+			: [_Item] extends [{[RepeatSymbol]: infer Item extends UnknownArray}]
+				? IsZero<Item['length']> extends true
+					? DoRepeatArrayItem<Last, RepeatNumber>
+					: Item extends unknown
+						? Item['length'] extends 1
+						// If the item is a single element array, we can build [...Array<Item[number]>], but if it already has spread
+						// array before, we should build [...Array<'SomeSpreadArrayBefore'>, Item[number], Item[number], Item[number], ...]
+							? [
+								...(
+									hasSpreadArray extends true
+										? BuildRepeatedUnionArray<Item, RepeatNumber, Not<hasSpreadArray>>
+										: Array<Item[number]>
+								),
+								...DoRepeatArrayItem<Last, RepeatNumber, true>,
+							]
+						// If the item is not a single element array, we can only build by repeating the item, like:
+						// ArrayFlat<Array<[1, 2]>> => [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, ...]
+							: [
+								...BuildRepeatedUnionArray<Item, RepeatNumber, Not<hasSpreadArray>>,
+								...DoRepeatArrayItem<Last, RepeatNumber>,
+							]
+						: never // Never happens
+				: [_Item, ...DoRepeatArrayItem<Last, RepeatNumber>]
 	: T;
 
 /**

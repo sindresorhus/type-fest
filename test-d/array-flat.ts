@@ -96,6 +96,14 @@ expectType<ArrayFlat<[[]]>>([]);
 expectType<ArrayFlat<[[], []]>>([]);
 expectType<ArrayFlat<undefined[]>>(null! as undefined[]);
 expectType<ArrayFlat<unknown[]>>(null! as unknown[]);
+expectType<ArrayFlat<string[]>>(null! as string[]);
+expectType<ArrayFlat<any>>(null! as any);
+expectType<ArrayFlat<never>>(null!);
+expectType<ArrayFlat<any[]>>(null! as any[]);
+expectType<ArrayFlat<[any, any]>>(null! as [any, any]);
+expectType<ArrayFlat<[never, never]>>(null! as [never, never]);
+expectType<ArrayFlat<never[]>>(null! as never[]);
+expectType<ArrayFlat<[any, [never]]>>(null! as [any, never]);
 
 // Test specifically for non-tuple array handling (Array<T> vs [T, T])
 type GenericNumberArrays = number[][];
