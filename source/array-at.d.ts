@@ -1,6 +1,8 @@
 import type {ArraySlice} from './array-slice.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
-import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfStaticArray, OptionalPartOfStaticArray, IsExactOptionalPropertyTypesEnabled, IsMiddleSpreadArray, LeadingStaticPartOfMiddleSpreadArray, VariablePartOfMiddleSpreadArray, TrailingStaticPartOfMiddleSpreadArray, NumberAbsolute} from './internal/index.d.ts';
+import type {NumberAbsolute} from './internal/numeric.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {StaticPartOfArray, VariablePartOfArray, IsLeadingSpreadArray, IsTrailingSpreadArray, StaticPartOfLeadingSpreadArray, VariablePartOfLeadingSpreadArray, RequiredPartOfStaticArray, OptionalPartOfStaticArray, IsMiddleSpreadArray, LeadingStaticPartOfMiddleSpreadArray, VariablePartOfMiddleSpreadArray, TrailingStaticPartOfMiddleSpreadArray} from './internal/array.d.ts';
 import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
@@ -63,11 +65,7 @@ IsLeadingSpreadArray<T> extends true
 				? IsNegative<Index> extends true
 					? VariablePart[number] | undefined
 					: StaticPart[Index]
-				: Sum<StaticPart['length'], N> extends infer Index extends number
-					? IsNegative<Index> extends true
-						? VariablePart[number] | undefined
-						: StaticPart[Index]
-					: never
+				: never
 		: never // Never happens
 	// Handle middle spread array like `[number, ...string[], boolean]`
 	: IsMiddleSpreadArray<T> extends true

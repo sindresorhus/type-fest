@@ -93,6 +93,11 @@ expectType<ArrayAt<readonly string[], -1>>({} as string);
 expectType<ArrayAt<readonly string[], -2>>({} as string);
 expectType<ArrayAt<readonly string[], -3>>({} as string);
 
+expectType<ArrayAt<readonly [string, number], 0>>({} as string);
+expectType<ArrayAt<readonly [string, number], 1>>({} as number);
+expectType<ArrayAt<readonly [string, number], 2>>(undefined);
+expectType<ArrayAt<readonly [string, number], -1>>({} as number);
+
 // Test unknown index
 expectType<ArrayAt<[1, 2, 3], number>>({} as 1 | 2 | 3 | undefined);
 expectType<ArrayAt<string[], number>>({} as string | undefined);
