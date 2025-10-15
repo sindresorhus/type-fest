@@ -6,7 +6,7 @@ type SpreadObject<FirstType extends object, SecondType extends object> = {
 		? FirstType[Key] | Required<SecondType>[Key]
 		: FirstType[Key];
 } & Pick<
-SecondType,
+	SecondType,
 RequiredKeysOf<SecondType> | Exclude<keyof SecondType, keyof FirstType>
 >;
 
@@ -82,3 +82,5 @@ export type Spread<
 		? SpreadTupleOrArray<FirstType, SecondType>
 		: Simplify<SpreadObject<FirstType, SecondType>>
 	: Simplify<SpreadObject<FirstType, SecondType>>;
+
+export {};

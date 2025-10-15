@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsLeadingSpreadArray} from '../../../source/internal/array.js';
+import type {IsLeadingSpreadArray} from '../../../source/internal/array.d.ts';
 
 expectType<IsLeadingSpreadArray<[1, 2, 3]>>(false);
 expectType<IsLeadingSpreadArray<readonly [1, 2, 3]>>(false);

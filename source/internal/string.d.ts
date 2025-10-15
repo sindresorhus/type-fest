@@ -1,7 +1,7 @@
+import type {TupleOf} from '../tuple-of.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {Whitespace} from './characters.d.ts';
-import type {BuildTuple} from './tuple.d.ts';
 
 /**
 Return a string representation of the given string or number.
@@ -113,16 +113,6 @@ export type StringLength<S extends string> = string extends S
 	: StringToArray<S>['length'];
 
 /**
-Returns a boolean for whether the string is lowercased.
-*/
-export type IsLowerCase<T extends string> = T extends Lowercase<T> ? true : false;
-
-/**
-Returns a boolean for whether the string is uppercased.
-*/
-export type IsUpperCase<T extends string> = T extends Uppercase<T> ? true : false;
-
-/**
 Returns a boolean for whether a string is whitespace.
 */
 export type IsWhitespace<T extends string> = T extends Whitespace
@@ -181,7 +171,7 @@ PositiveNumericStringGt<'1', '500'>;
 */
 export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false
-	: [BuildTuple<StringLength<A>, 0>, BuildTuple<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
+	: [TupleOf<StringLength<A>, 0>, TupleOf<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
 		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]
 			? 0 extends Remain['length']
 				? SameLengthPositiveNumericStringGt<A, B>
@@ -208,3 +198,5 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 			: false
 		: never
 	: never;
+
+export {};

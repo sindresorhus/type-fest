@@ -1,4 +1,4 @@
-import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
+import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
@@ -41,4 +41,6 @@ const rawCliOptions: KebabCasedProperties<CliOptions> = {
 export type KebabCase<
 	Value,
 	Options extends WordsOptions = {},
-> = DelimiterCase<Value, '-', ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;
+> = DelimiterCase<Value, '-', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+
+export {};

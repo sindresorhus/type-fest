@@ -1,11 +1,11 @@
 import type {ApplyDefaultOptions, ToString} from './internal/index.d.ts';
-import type {LiteralStringUnion} from './literal-union.d.ts';
+import type {_LiteralStringUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
-import type {StringKeyOf} from './string-key-of.d.ts';
+import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 
-type GetOptions = {
+export type GetOptions = {
 	/**
 	Include `undefined` in the return type when accessing properties.
 
@@ -28,9 +28,9 @@ type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
 			? GetWithPath<
-			PropertyOf<BaseType, Extract<Head, string>, Options>,
-			Extract<Tail, string[]>,
-			Options
+				PropertyOf<BaseType, Extract<Head, string>, Options>,
+				Extract<Tail, string[]>,
+				Options
 			>
 			: never;
 
@@ -112,7 +112,7 @@ type WithStringsKeys = keyof WithStrings;
 ```
 */
 type WithStringKeys<BaseType> = {
-	[Key in StringKeyOf<BaseType>]: UncheckedIndex<BaseType, Key>
+	[Key in KeyAsString<BaseType>]: UncheckedIndex<BaseType, Key>
 };
 
 /**
@@ -210,11 +210,13 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
-	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
+	| _LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
 	Options extends GetOptions = {},
 > =
 	GetWithPath<
-	BaseType,
-	Path extends string ? ToPath<Path> : Path,
-	ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
+		BaseType,
+		Path extends string ? ToPath<Path> : Path,
+		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
+
+export {};

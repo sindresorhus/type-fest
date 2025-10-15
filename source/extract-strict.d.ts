@@ -43,3 +43,5 @@ export type ExtractStrict<
 		? unknown
 		: never,
 > = Extract<T, U>;
+
+export {};

@@ -1,8 +1,9 @@
-import type {BuildObject, BuildTuple, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
+import type {TupleOf} from './tuple-of.d.ts';
+import type {BuildObject, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Paths} from './paths.d.ts';
-import type {Simplify} from './simplify.d.d.ts';
-import type {UnionToIntersection} from './union-to-intersection.d.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -131,9 +132,9 @@ type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
 					: never
 			// When `ArrayIndex` is a number literal
 			: ArrayType extends unknown[]
-				? [...BuildTuple<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
+				? [...TupleOf<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
 				: ArrayType extends readonly unknown[]
-					? readonly [...BuildTuple<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
+					? readonly [...TupleOf<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
 					: never
 		// When the path is equal to `number`
 		: P extends `${infer ArrayIndex extends number}`
@@ -142,8 +143,10 @@ type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
 				? ArrayType
 				// When `ArrayIndex` is a number literal
 				: ArrayType extends unknown[]
-					? [...BuildTuple<ArrayIndex>, ArrayType[ArrayIndex]]
+					? [...TupleOf<ArrayIndex>, ArrayType[ArrayIndex]]
 					: ArrayType extends readonly unknown[]
-						? readonly [...BuildTuple<ArrayIndex>, ArrayType[ArrayIndex]]
+						? readonly [...TupleOf<ArrayIndex>, ArrayType[ArrayIndex]]
 						: never
 			: never;
+
+export {};

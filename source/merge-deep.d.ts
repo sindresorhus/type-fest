@@ -6,13 +6,22 @@ import type {
 	FirstArrayElement,
 	IsBothExtends,
 	UnknownArrayOrTuple,
+	EnforceOptional,
 } from './internal/index.d.ts';
 import type {NonEmptyTuple} from './non-empty-tuple.d.ts';
-import type {ArrayTail} from './array-tail.d.ts';
+import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
-import type {EnforceOptional} from './enforce-optional.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+
+type Writable<TArray extends UnknownArray> = {-readonly [Key in keyof TArray]: TArray[Key]}; // TODO: Remove this
+
+// Using the default `ArrayTail` type causes issues, refer https://github.com/sindresorhus/type-fest/pull/1175/files#r2134694728.
+type ArrayTail<TArray extends UnknownArray> = TArray extends unknown // For distributing `TArray`
+	? keyof TArray & `${number}` extends never
+		? []
+		: Writable<_ArrayTail<TArray>>
+	: never; // Should never happen
 
 type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;
 
@@ -40,17 +49,17 @@ type DoMergeDeepRecord<
 	Options extends MergeDeepInternalOptions,
 > =
 // Case in rule 1: The destination contains the key but the source doesn't.
-{
-	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
-}
+	{
+		[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
+	}
 // Case in rule 2: The source contains the key but the destination doesn't.
-& {
-	[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
-}
+	& {
+		[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
+	}
 // Case in rule 3: Both the source and the destination contain the key.
-& {
-	[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
-};
+	& {
+		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
+	};
 
 /**
 Wrapper around {@link DoMergeDeepRecord} which preserves index signatures.
@@ -60,7 +69,7 @@ type MergeDeepRecord<
 	Source extends UnknownRecord,
 	Options extends MergeDeepInternalOptions,
 > = DoMergeDeepRecord<OmitIndexSignature<Destination>, OmitIndexSignature<Source>, Options>
-& Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
+	& Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
 // Helper to avoid computing ArrayTail twice.
 type PickRestTypeHelper<Tail extends UnknownArrayOrTuple, Type> = Tail extends [] ? Type : PickRestType<Tail>;
@@ -357,17 +366,17 @@ type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 This utility selects the correct entry point with the corresponding default options. This avoids re-merging the options at each iteration.
 */
 type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = SimplifyDeepExcludeArray<
-[undefined] extends [Destination | Source]
-	? never
-	: Destination extends UnknownRecord
-		? Source extends UnknownRecord
-			? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
-			: never
-		: Destination extends UnknownArrayOrTuple
-			? Source extends UnknownArrayOrTuple
-				? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
+	[undefined] extends [Destination | Source]
+		? never
+		: Destination extends UnknownRecord
+			? Source extends UnknownRecord
+				? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
 				: never
-			: never
+			: Destination extends UnknownArrayOrTuple
+				? Source extends UnknownArrayOrTuple
+					? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
+					: never
+				: never
 >;
 
 /**
@@ -480,7 +489,9 @@ function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 @category Utilities
 */
 export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepWithDefaultOptions<
-SimplifyDeepExcludeArray<Destination>,
-SimplifyDeepExcludeArray<Source>,
-Options
+	SimplifyDeepExcludeArray<Destination>,
+	SimplifyDeepExcludeArray<Source>,
+	Options
 >;
+
+export {};

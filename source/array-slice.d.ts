@@ -74,8 +74,8 @@ type VariableLengthArraySliceHelper<
 > = And<Not<IsNegative<Start>>, IsEqual<End, never>> extends true
 	? ArraySplice<Array_, 0, Start>
 	: And<
-	And<Not<IsNegative<Start>>, Not<IsNegative<End>>>,
-	IsEqual<GreaterThan<End, Start>, true>
+		And<Not<IsNegative<Start>>, Not<IsNegative<End>>>,
+		IsEqual<GreaterThan<End, Start>, true>
 	> extends true
 		? ArraySliceByPositiveIndex<Array_, Start, End>
 		: [];
@@ -107,3 +107,5 @@ type ArraySliceByPositiveIndex<
 > = Start extends End
 	? Result
 	: ArraySliceByPositiveIndex<Array_, Sum<Start, 1>, End, [...Result, Array_[Start]]>;
+
+export {};

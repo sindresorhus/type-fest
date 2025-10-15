@@ -1,11 +1,11 @@
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {JsonObject, JsonValue} from './json-value.d.ts';
 
-declare namespace PackageJson {
+export namespace PackageJson {
 	/**
 	A person who has been involved in creating or maintaining the package.
 	*/
-	export type Person =
+	type Person =
 		| string
 		| {
 			name: string;
@@ -13,7 +13,7 @@ declare namespace PackageJson {
 			email?: string;
 		};
 
-	export type BugsLocation =
+	type BugsLocation =
 		| string
 		| {
 			/**
@@ -27,7 +27,7 @@ declare namespace PackageJson {
 			email?: string;
 		};
 
-	export type DirectoryLocations = {
+	type DirectoryLocations = {
 		[directoryType: string]: JsonValue | undefined;
 
 		/**
@@ -61,7 +61,7 @@ declare namespace PackageJson {
 		test?: string;
 	};
 
-	export type Scripts = {
+	type Scripts = {
 		/**
 		Run **before** the package is published (Also run on local `npm install` without any arguments).
 		*/
@@ -206,33 +206,33 @@ declare namespace PackageJson {
 	/**
 	Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or Git URL.
 	*/
-	export type Dependency = Partial<Record<string, string>>;
+	type Dependency = Partial<Record<string, string>>;
 
 	/**
 	A mapping of conditions and the paths to which they resolve.
 	*/
-	type ExportConditions = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+	type ExportConditions = {
 		[condition: string]: Exports;
 	};
 
 	/**
 	Entry points of a module, optionally with conditions and subpath exports.
 	*/
-	export type Exports =
-	| null
-	| string
-	| Array<string | ExportConditions>
-	| ExportConditions;
+	type Exports =
+		| null
+		| string
+		| Array<string | ExportConditions>
+		| ExportConditions;
 
 	/**
 	Import map entries of a module, optionally with conditions and subpath imports.
 	*/
-	export type Imports = { // eslint-disable-line @typescript-eslint/consistent-indexed-object-style
+	type Imports = {
 		[key: `#${string}`]: Exports;
 	};
 
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-	export interface NonStandardEntryPoints {
+	interface NonStandardEntryPoints {
 		/**
 		An ECMAScript module ID that is the primary entry point to the program.
 		*/
@@ -242,19 +242,19 @@ declare namespace PackageJson {
 		A module ID with untranspiled code that is the primary entry point to the program.
 		*/
 		esnext?:
-		| string
-		| {
-			[moduleName: string]: string | undefined;
-			main?: string;
-			browser?: string;
-		};
+			| string
+			| {
+				[moduleName: string]: string | undefined;
+				main?: string;
+				browser?: string;
+			};
 
 		/**
 		A hint to JavaScript bundlers or component tools when packaging modules for client side use.
 		*/
 		browser?:
-		| string
-		| Partial<Record<string, string | false>>;
+			| string
+			| Partial<Record<string, string | false>>;
 
 		/**
 		Denote which files in your project are "pure" and therefore safe for Webpack to prune if unused.
@@ -264,7 +264,7 @@ declare namespace PackageJson {
 		sideEffects?: boolean | string[];
 	}
 
-	export type TypeScriptConfiguration = {
+	type TypeScriptConfiguration = {
 		/**
 		Location of the bundled TypeScript declaration file.
 		*/
@@ -284,7 +284,7 @@ declare namespace PackageJson {
 	/**
 	An alternative configuration for workspaces.
 	*/
-	export type WorkspaceConfig = {
+	type WorkspaceConfig = {
 		/**
 		An array of workspace pattern strings which contain the workspace packages.
 		*/
@@ -310,7 +310,7 @@ declare namespace PackageJson {
 	*/
 	type WorkspacePattern = string;
 
-	export type YarnConfiguration = {
+	type YarnConfiguration = {
 		/**
 		If your package only allows one version of a given dependency, and you’d like to enforce the same behavior as `yarn install --flat` on the command-line, set this to `true`.
 
@@ -324,7 +324,7 @@ declare namespace PackageJson {
 		resolutions?: Dependency;
 	};
 
-	export type JSPMConfiguration = {
+	type JSPMConfiguration = {
 		/**
 		JSPM configuration.
 		*/
@@ -335,7 +335,7 @@ declare namespace PackageJson {
 	Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Containing standard npm properties.
 	*/
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-	export interface PackageJsonStandard {
+	interface PackageJsonStandard {
 		/**
 		The name of the package.
 		*/
@@ -426,8 +426,8 @@ declare namespace PackageJson {
 		The executable files that should be installed into the `PATH`.
 		*/
 		bin?:
-		| string
-		| Partial<Record<string, string>>;
+			| string
+			| Partial<Record<string, string>>;
 
 		/**
 		Filenames to put in place for the `man` program to find.
@@ -443,18 +443,18 @@ declare namespace PackageJson {
 		Location for the code repository.
 		*/
 		repository?:
-		| string
-		| {
-			type: string;
-			url: string;
+			| string
+			| {
+				type: string;
+				url: string;
 
-			/**
+				/**
 			Relative path to package.json if it is placed in non-root directory (for example if it is part of a monorepo).
 
 			[Read more.](https://github.com/npm/rfcs/blob/latest/implemented/0010-monorepo-subdirectory-declaration.md)
 			*/
-			directory?: string;
-		};
+				directory?: string;
+			};
 
 		/**
 		Script commands that are run at various times in the lifecycle of the package. The key is the lifecycle event, and the value is the command to run at that point.
@@ -517,50 +517,50 @@ declare namespace PackageJson {
 		Operating systems the module runs on.
 		*/
 		os?: Array<LiteralUnion<
-		| 'aix'
-		| 'darwin'
-		| 'freebsd'
-		| 'linux'
-		| 'openbsd'
-		| 'sunos'
-		| 'win32'
-		| '!aix'
-		| '!darwin'
-		| '!freebsd'
-		| '!linux'
-		| '!openbsd'
-		| '!sunos'
-		| '!win32',
-		string
+			| 'aix'
+			| 'darwin'
+			| 'freebsd'
+			| 'linux'
+			| 'openbsd'
+			| 'sunos'
+			| 'win32'
+			| '!aix'
+			| '!darwin'
+			| '!freebsd'
+			| '!linux'
+			| '!openbsd'
+			| '!sunos'
+			| '!win32',
+			string
 		>>;
 
 		/**
 		CPU architectures the module runs on.
 		*/
 		cpu?: Array<LiteralUnion<
-		| 'arm'
-		| 'arm64'
-		| 'ia32'
-		| 'mips'
-		| 'mipsel'
-		| 'ppc'
-		| 'ppc64'
-		| 's390'
-		| 's390x'
-		| 'x32'
-		| 'x64'
-		| '!arm'
-		| '!arm64'
-		| '!ia32'
-		| '!mips'
-		| '!mipsel'
-		| '!ppc'
-		| '!ppc64'
-		| '!s390'
-		| '!s390x'
-		| '!x32'
-		| '!x64',
-		string
+			| 'arm'
+			| 'arm64'
+			| 'ia32'
+			| 'mips'
+			| 'mipsel'
+			| 'ppc'
+			| 'ppc64'
+			| 's390'
+			| 's390x'
+			| 'x32'
+			| 'x64'
+			| '!arm'
+			| '!arm64'
+			| '!ia32'
+			| '!mips'
+			| '!mipsel'
+			| '!ppc'
+			| '!ppc64'
+			| '!s390'
+			| '!s390x'
+			| '!x32'
+			| '!x64',
+			string
 		>>;
 
 		/**
@@ -583,20 +583,20 @@ declare namespace PackageJson {
 		/**
 		Describes and notifies consumers of a package's monetary support information.
 
-		[Read more.](https://github.com/npm/rfcs/blob/latest/accepted/0017-add-funding-support.md)
+		[Read more.](https://github.com/npm/rfcs/blob/main/implemented/0017-add-funding-support.md)
 		*/
 		funding?: string | {
 			/**
 			The type of funding.
 			*/
 			type?: LiteralUnion<
-			| 'github'
-			| 'opencollective'
-			| 'patreon'
-			| 'individual'
-			| 'foundation'
-			| 'corporation',
-			string
+				| 'github'
+				| 'opencollective'
+				| 'patreon'
+				| 'individual'
+				| 'foundation'
+				| 'corporation',
+				string
 			>;
 
 			/**
@@ -618,7 +618,7 @@ declare namespace PackageJson {
 	/**
 	Type for [`package.json` file used by the Node.js runtime](https://nodejs.org/api/packages.html#nodejs-packagejson-field-definitions).
 	*/
-	export type NodeJsStandard = {
+	type NodeJsStandard = {
 		/**
 		Defines which package manager is expected to be used when working on the current project. It can set to any of the [supported package managers](https://nodejs.org/api/corepack.html#supported-package-managers), and will ensure that your teams use the exact same package manager versions without having to install anything else than Node.js.
 
@@ -634,7 +634,7 @@ declare namespace PackageJson {
 		packageManager?: string;
 	};
 
-	export type PublishConfig = {
+	type PublishConfig = {
 		/**
 		Additional, less common properties from the [npm docs on `publishConfig`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#publishconfig).
 		*/
@@ -667,10 +667,12 @@ Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-j
 @category File
 */
 export type PackageJson =
-JsonObject &
-PackageJson.NodeJsStandard &
-PackageJson.PackageJsonStandard &
-PackageJson.NonStandardEntryPoints &
-PackageJson.TypeScriptConfiguration &
-PackageJson.YarnConfiguration &
-PackageJson.JSPMConfiguration;
+	JsonObject &
+	PackageJson.NodeJsStandard &
+	PackageJson.PackageJsonStandard &
+	PackageJson.NonStandardEntryPoints &
+	PackageJson.TypeScriptConfiguration &
+	PackageJson.YarnConfiguration &
+	PackageJson.JSPMConfiguration;
+
+export {};

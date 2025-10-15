@@ -59,8 +59,8 @@ function displayPetInfo(petInfo: SharedUnionFields<Cat | Dog>) {
 }
 ```
 
-@see SharedUnionFieldsDeep
-@see AllUnionFields
+@see {@link SharedUnionFieldsDeep}
+@see {@link AllUnionFields}
 
 @category Object
 @category Union
@@ -75,3 +75,5 @@ Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<un
 			: Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
 		: never
 	: never;
+
+export {};

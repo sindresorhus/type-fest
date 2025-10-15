@@ -1,4 +1,4 @@
-import type {If} from '../if.js';
+import type {If} from '../if.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
@@ -101,6 +101,32 @@ export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
 
 /**
-Returns the value of the `exactOptionalPropertyTypes` option in tsconfig.
+Returns a boolean for whether the given type is `any` or `never`.
+
+This type can be better to use than {@link IfNotAnyOrNever `IfNotAnyOrNever`} in recursive types because it does not evaluate any branches.
+
+@example
+```
+// When `T` is a NOT `any` or `never` (like `string`) => Returns `false`
+type A = IsAnyOrNever<string>;
+//=> false
+
+// When `T` is `any` => Returns `true`
+type B = IsAnyOrNever<any>;
+//=> true
+
+// When `T` is `never` => Returns `true`
+type C = IsAnyOrNever<never>;
+//=> true
+```
 */
-export type ExactOptionalPropertyTypesEnable = [(string | undefined)?] extends [string?] ? false : true;
+export type IsAnyOrNever<T> = IsNotFalse<IsAny<T> | IsNever<T>>;
+
+/**
+Indicates the value of `exactOptionalPropertyTypes` compiler option.
+*/
+export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
+	? false
+	: true;
+
+export {};

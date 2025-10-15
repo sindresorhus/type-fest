@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsTrailingSpreadArray} from '../../../source/internal/array.js';
+import type {IsTrailingSpreadArray} from '../../../source/internal/array.d.ts';
 
 expectType<IsTrailingSpreadArray<[1, 2, 3]>>(false);
 expectType<IsTrailingSpreadArray<readonly [1, 2, 3]>>(false);

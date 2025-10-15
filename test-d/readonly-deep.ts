@@ -1,6 +1,6 @@
 import {expectType, expectAssignable} from 'tsd';
 import type {Opaque, tag} from '../source/tagged.d.ts';
-import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep.d.ts';
+import type {ReadonlyDeep, _ReadonlyObjectDeep} from '../source/readonly-deep.d.ts';
 import type {JsonValue} from '../source/json-value.d.ts';
 
 type Overloaded = {
@@ -21,12 +21,12 @@ type OpaqueObjectData = {a: number[]} | {b: string};
 type OpaqueObject = Opaque<OpaqueObjectData, {token: unknown}>;
 
 type ReadonlyJsonValue =
-  | {readonly [k: string]: ReadonlyJsonValue}
-  | readonly ReadonlyJsonValue[]
-  | number
-  | string
-  | boolean
-  | null;
+	| {readonly [k: string]: ReadonlyJsonValue}
+	| readonly ReadonlyJsonValue[]
+	| number
+	| string
+	| boolean
+	| null;
 
 class ClassA {
 	foo = 1;
@@ -101,7 +101,7 @@ expectType<readonly ['foo']>(readonlyData.readonlyTuple);
 expectAssignable<ReadonlyJsonValue>(readonlyData.json);
 expectAssignable<Opaque<ReadonlyDeep<OpaqueObjectData>, ReadonlyDeep<OpaqueObject[typeof tag]>>>(readonlyData.opaqueObj);
 
-expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
+expectType<((foo: number) => string) & _ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
 expectType<string>(readonlyData.namespace(1));
 expectType<readonly boolean[]>(readonlyData.namespace.baz);
 

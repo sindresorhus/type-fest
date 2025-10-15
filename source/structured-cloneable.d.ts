@@ -21,30 +21,30 @@ type StructuredCloneableData =
 	| TypedArray
 	| FindGlobalInstanceType<
 	// DOM or Node types
-	| 'Blob'
-	| 'File'
+		| 'Blob'
+		| 'File'
 	// DOM exclusive types
-	| 'AudioData'
-	| 'CropTarget'
-	| 'CryptoKey'
-	| 'DOMException'
-	| 'DOMMatrix'
-	| 'DOMMatrixReadOnly'
-	| 'DOMPoint'
-	| 'DOMPointReadOnly'
-	| 'DOMQuad'
-	| 'DOMRect'
-	| 'DOMRectReadOnly'
-	| 'FileList'
-	| 'FileSystemDirectoryHandle'
-	| 'FileSystemFileHandle'
-	| 'FileSystemHandle'
-	| 'GPUCompilationInfo'
-	| 'GPUCompilationMessage'
-	| 'ImageBitmap'
-	| 'ImageData'
-	| 'RTCCertificate'
-	| 'VideoFrame'
+		| 'AudioData'
+		| 'CropTarget'
+		| 'CryptoKey'
+		| 'DOMException'
+		| 'DOMMatrix'
+		| 'DOMMatrixReadOnly'
+		| 'DOMPoint'
+		| 'DOMPointReadOnly'
+		| 'DOMQuad'
+		| 'DOMRect'
+		| 'DOMRectReadOnly'
+		| 'FileList'
+		| 'FileSystemDirectoryHandle'
+		| 'FileSystemFileHandle'
+		| 'FileSystemHandle'
+		| 'GPUCompilationInfo'
+		| 'GPUCompilationMessage'
+		| 'ImageBitmap'
+		| 'ImageData'
+		| 'RTCCertificate'
+		| 'VideoFrame'
 	>;
 
 type StructuredCloneableCollection =
@@ -90,3 +90,5 @@ structuredClone(good);
 @category Structured clone
 */
 export type StructuredCloneable = StructuredCloneablePrimitive | StructuredCloneableData | StructuredCloneableCollection;
+
+export {};

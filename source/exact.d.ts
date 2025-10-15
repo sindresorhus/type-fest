@@ -1,4 +1,5 @@
-import type {ArrayElement, ObjectValue} from './internal/index.d.ts';
+import type {ObjectValue} from './internal/index.d.ts';
+import type {ArrayElement} from './array-element.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
@@ -10,7 +11,7 @@ Create a type from `ParameterType` and `InputType` and change keys exclusive to 
 - Mark these excess keys as `never`.
 */
 type ExactObject<ParameterType, InputType> = {[Key in keyof ParameterType]: Exact<ParameterType[Key], ObjectValue<InputType, Key>>}
-& Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
+	& Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
 
 /**
 Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
@@ -66,3 +67,5 @@ export type Exact<ParameterType, InputType> =
 						// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 						: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 							: ExactObject<ParameterType, InputType>;
+
+export {};

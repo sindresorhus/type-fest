@@ -58,3 +58,5 @@ const b: Alphanumeric = '#'; // Invalid
 @category Type
 */
 export type Alphanumeric = LowercaseLetter | UppercaseLetter | DigitCharacter;
+
+export {};

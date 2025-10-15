@@ -1,7 +1,7 @@
-import type {If} from './if.js';
+import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever} from './internal/index.d.ts';
-import type {IsAny} from './is-any.js';
-import type {IsNever} from './is-never.js';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.
@@ -34,13 +34,15 @@ const responder: RequireExactlyOne<Responder, 'text' | 'json'> = {
 */
 export type RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
 	IfNotAnyOrNever<ObjectType,
-	If<IsNever<KeysType>,
-	never,
-	_RequireExactlyOne<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
-	>>;
+		If<IsNever<KeysType>,
+			never,
+			_RequireExactlyOne<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
+		>>;
 
 type _RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType> =
 	{[Key in KeysType]: (
 		Required<Pick<ObjectType, Key>> &
 		Partial<Record<Exclude<KeysType, Key>, never>>
 	)}[KeysType] & Omit<ObjectType, KeysType>;
+
+export {};

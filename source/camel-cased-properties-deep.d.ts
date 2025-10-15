@@ -1,4 +1,4 @@
-import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions, NonRecursiveType} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -7,8 +7,8 @@ Convert object properties to camel case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see CamelCasedProperties
-@see CamelCase
+@see {@link CamelCasedProperties}
+@see {@link CamelCase}
 
 @example
 ```
@@ -57,7 +57,7 @@ const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: {fooBARBiz
 export type CamelCasedPropertiesDeep<
 	Value,
 	Options extends CamelCaseOptions = {},
-> = _CamelCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>;
+> = _CamelCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
 
 type _CamelCasedPropertiesDeep<
 	Value,
@@ -95,3 +95,5 @@ type CamelCasedPropertiesArrayDeep<
 					: Value extends ReadonlyArray<infer U>
 						? ReadonlyArray<_CamelCasedPropertiesDeep<U, Options>>
 						: never;
+
+export {};

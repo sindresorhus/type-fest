@@ -1,8 +1,8 @@
-import type {ApplyDefaultOptions} from './internal/object.js';
-import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.js';
-import type {OptionalKeysOf} from './optional-keys-of.js';
-import type {Simplify} from './simplify.js';
-import type {UnknownArray} from './unknown-array.js';
+import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 @see {@link Schema}
@@ -89,8 +89,8 @@ const userMaskSettings: UserMask = {
 */
 export type Schema<Type, Value, Options extends SchemaOptions = {}> =
 	IfNotAnyOrNever<Type,
-	_Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>,
-	Value, Value>;
+		_Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>,
+		Value, Value>;
 
 type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
 	Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
@@ -108,7 +108,9 @@ Recursively transforms the value of each property in objects and arrays.
 */
 type SchemaHelper<Type, Value, Options extends Required<SchemaOptions>> = Simplify<{
 	[Key in keyof Type]: _Schema<
-	Key extends OptionalKeysOf<Type & object> ? Exclude<Type[Key], undefined> : Type[Key], // Remove `| undefined` when accessing optional properties
-	Value,
-	Options>
+		Key extends OptionalKeysOf<Type & object> ? Exclude<Type[Key], undefined> : Type[Key], // Remove `| undefined` when accessing optional properties
+		Value,
+		Options>
 }>;
+
+export {};

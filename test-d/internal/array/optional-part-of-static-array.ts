@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OptionalPartOfStaticArray} from '../../../source/internal/array.js';
+import type {OptionalPartOfStaticArray} from '../../../source/internal/array.d.ts';
 
 expectType<OptionalPartOfStaticArray<[1, 2, 3, 4?]>>(null! as [4?]);
 expectType<OptionalPartOfStaticArray<readonly [1, 2, 3, 4?]>>(null! as [4?]);

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsMiddleSpreadArray} from '../../../source/internal/array.js';
+import type {IsMiddleSpreadArray} from '../../../source/internal/array.d.ts';
 
 expectType<IsMiddleSpreadArray<[1, 2, 3]>>(false);
 expectType<IsMiddleSpreadArray<readonly [1, 2, 3]>>(false);

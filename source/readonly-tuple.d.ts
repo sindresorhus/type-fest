@@ -1,13 +1,4 @@
-/**
-Creates a read-only tuple of type `Element` and with the length of `Length`.
-
-@private
-@see `ReadonlyTuple` which is safer because it tests if `Length` is a specific finite number.
-*/
-type BuildTupleHelper<Element, Length extends number, Rest extends Element[]> =
-	Rest['length'] extends Length ?
-		readonly [...Rest] : // Terminate with readonly array (aka tuple)
-		BuildTupleHelper<Element, Length, [Element, ...Rest]>;
+import type {TupleOf} from './tuple-of.d.ts';
 
 /**
 Create a type that represents a read-only tuple of the given type and length.
@@ -32,10 +23,10 @@ guestFencingTeam.push('Sam');
 //=> error TS2339: Property 'push' does not exist on type 'FencingTeam'
 ```
 
+@deprecated This type will be removed in the next major version. Use the built-in `Readonly` type in combination with the {@link TupleOf} type instead, like `Readonly<TupleOf<Length, Element>>`.
+
 @category Utilities
 */
-export type ReadonlyTuple<Element, Length extends number> =
-	number extends Length
-		// Because `Length extends number` and `number extends Length`, then `Length` is not a specific finite number.
-		? readonly Element[] // It's not fixed length.
-		: BuildTupleHelper<Element, Length, []>; // Otherwise it is a fixed length tuple.
+export type ReadonlyTuple<Element, Length extends number> = Readonly<TupleOf<Length, Element>>;
+
+export {};

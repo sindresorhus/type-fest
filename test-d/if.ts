@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {If} from '../source/if.js';
+import type {If} from '../source/if.d.ts';
 
 expectType<string>({} as If<true, string, number>);
 expectType<number>({} as If<false, string, number>);

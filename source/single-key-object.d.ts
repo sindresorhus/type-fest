@@ -1,5 +1,5 @@
-import type {IsEmptyObject} from './empty-object.js';
-import type {If} from './if.js';
+import type {IsEmptyObject} from './empty-object.d.ts';
+import type {If} from './if.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 
 /**
@@ -28,3 +28,5 @@ export type SingleKeyObject<ObjectType> =
 	IsUnion<keyof ObjectType> extends true
 		? never
 		: If<IsEmptyObject<ObjectType>, never, ObjectType>;
+
+export {};

@@ -81,7 +81,7 @@ function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union
@@ -128,8 +128,8 @@ Same as `SharedUnionFieldsDeep`, but accepts only `UnknownArray`s and as inputs.
 type SharedArrayUnionFieldsDeep<Union extends UnknownArray, Options extends Required<SharedUnionFieldsDeepOptions>> =
 	// Restore the readonly modifier of the array.
 	SetArrayAccess<
-	InternalSharedArrayUnionFieldsDeep<Union, Options>,
-	IsArrayReadonly<Union>
+		InternalSharedArrayUnionFieldsDeep<Union, Options>,
+		IsArrayReadonly<Union>
 	>;
 
 /**
@@ -155,13 +155,13 @@ type InternalSharedArrayUnionFieldsDeep<
 				// Due to `ResultTuple` is the maximum possible fixed-length part of the tuple,
 				// so we can use `StaticPartOfArray` to get the rest of the union.
 				...Array<
-				SharedUnionFieldsDeep<VariablePartOfArray<Union>[number], Options>
+					SharedUnionFieldsDeep<VariablePartOfArray<Union>[number], Options>
 				>,
 			]
 			// Build the fixed-length tuple recursively.
 			: InternalSharedArrayUnionFieldsDeep<
-			Union, Options,
-			[...ResultTuple, SharedUnionFieldsDeep<Union[ResultTuple['length']], Options>]
+				Union, Options,
+				[...ResultTuple, SharedUnionFieldsDeep<Union[ResultTuple['length']], Options>]
 			>
 		// Rule 2: If at least one of the arrays in the union have fixed lengths,
 		// like `Array<string> | [number, string]`,
@@ -173,6 +173,8 @@ type InternalSharedArrayUnionFieldsDeep<
 			? ResultTuple
 			// As above, build tuple recursively.
 			: InternalSharedArrayUnionFieldsDeep<
-			Union, Options,
-			[...ResultTuple, SharedUnionFieldsDeep<Union[ResultTuple['length']], Options>]
+				Union, Options,
+				[...ResultTuple, SharedUnionFieldsDeep<Union[ResultTuple['length']], Options>]
 			>;
+
+export {};

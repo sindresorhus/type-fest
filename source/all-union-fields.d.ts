@@ -62,7 +62,7 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union
@@ -74,15 +74,17 @@ Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<un
 		| SkippedMembers
 		| Simplify<
 		// Include fields that are common in all union members
-		SharedUnionFields<RelevantMembers> &
+			SharedUnionFields<RelevantMembers> &
 		// Include readonly fields present in any union member
-		{
-			readonly [P in ReadonlyKeysOfUnion<RelevantMembers>]?: ValueOfUnion<RelevantMembers, P & KeysOfUnion<RelevantMembers>>
-		} &
+			{
+				readonly [P in ReadonlyKeysOfUnion<RelevantMembers>]?: ValueOfUnion<RelevantMembers, P & KeysOfUnion<RelevantMembers>>
+			} &
 		// Include remaining fields that are neither common nor readonly
-		{
-			[P in Exclude<KeysOfUnion<RelevantMembers>, ReadonlyKeysOfUnion<RelevantMembers> | keyof RelevantMembers>]?: ValueOfUnion<RelevantMembers, P>
-		}
+			{
+				[P in Exclude<KeysOfUnion<RelevantMembers>, ReadonlyKeysOfUnion<RelevantMembers> | keyof RelevantMembers>]?: ValueOfUnion<RelevantMembers, P>
+			}
 		>
 		: never
 	: never;
+
+export {};

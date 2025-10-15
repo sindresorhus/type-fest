@@ -1,9 +1,9 @@
 import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions} from './internal/index.d.ts';
-import type {EmptyObject} from './empty-object.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Paths options.
@@ -186,8 +186,7 @@ type _Paths<T, Options extends Required<PathsOptions>> =
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Options>
-					| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
+					? InternalPaths<StaticPartOfArray<T>, Options> | InternalPaths<Array<VariablePartOfArray<T>[number]>, Options>
 					: InternalPaths<T, Options>
 				: T extends object
 					? InternalPaths<T, Options>
@@ -196,30 +195,34 @@ type _Paths<T, Options extends Required<PathsOptions>> =
 type InternalPaths<T, Options extends Required<PathsOptions>> =
 	Options['maxRecursionDepth'] extends infer MaxDepth extends number
 		? Required<T> extends infer T
-			? T extends EmptyObject | readonly []
+			? T extends readonly []
 				? never
-				: {
-					[Key in keyof T]:
-					Key extends string | number // Limit `Key` to string or number.
-						? (
-							Options['bracketNotation'] extends true
-								? IsNumberLike<Key> extends true
-									? `[${Key}]`
-									: (Key | ToString<Key>)
-								: never
-								|
-								Options['bracketNotation'] extends false
-								// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
-									? (Key | ToString<Key>)
-									: never
-						) extends infer TranformedKey extends string | number ?
-						// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
-						// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
+				: IsNever<keyof T> extends true // Check for empty object
+					? never
+					: {
+						[Key in keyof T]:
+						Key extends string | number // Limit `Key` to string or number.
+							? (
+								Options['bracketNotation'] extends true
+									? IsNumberLike<Key> extends true
+										? `[${Key}]`
+										: (Key | ToString<Key>)
+									: Options['bracketNotation'] extends false
+									// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
+										? (Key | ToString<Key>)
+										: never
+							) extends infer TranformedKey extends string | number ?
+							// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
+							// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
 							| ((Options['leavesOnly'] extends true
 								? MaxDepth extends 0
 									? TranformedKey
-									: T[Key] extends EmptyObject | readonly [] | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
-										? TranformedKey
+									: T[Key] extends infer Value
+										? (Value extends readonly [] | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+											? TranformedKey
+											: IsNever<keyof Value> extends true // Check for empty object
+												? TranformedKey
+												: never)
 										: never
 								: TranformedKey
 							) extends infer _TransformedKey
@@ -233,12 +236,12 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 								// Recursively generate paths for the current key
 								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
 									? _Paths<T[Key],
-									{
-										bracketNotation: Options['bracketNotation'];
-										maxRecursionDepth: Subtract<MaxDepth, 1>;
-										leavesOnly: Options['leavesOnly'];
-										depth: Subtract<Options['depth'], 1>;
-									}> extends infer SubPath
+										{
+											bracketNotation: Options['bracketNotation'];
+											maxRecursionDepth: Subtract<MaxDepth, 1>;
+											leavesOnly: Options['leavesOnly'];
+											depth: Subtract<Options['depth'], 1>;
+										}> extends infer SubPath
 										? SubPath extends string | number
 											? (
 												Options['bracketNotation'] extends true
@@ -255,8 +258,10 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 										: never
 									: never
 							)
+								: never
 							: never
-						: never
-				}[keyof T & (T extends UnknownArray ? number : unknown)]
+					}[keyof T & (T extends UnknownArray ? number : unknown)]
 			: never
 		: never;
+
+export {};

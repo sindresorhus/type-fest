@@ -24,3 +24,5 @@ type ShouldBeBar = IfNever<'not never', 'foo', 'bar'>;
 export type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = (
 	IsNever<T> extends true ? TypeIfNever : TypeIfNotNever
 );
+
+export {};

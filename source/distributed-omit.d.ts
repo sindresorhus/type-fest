@@ -87,3 +87,5 @@ export type DistributedOmit<ObjectType, KeyType extends KeysOfUnion<ObjectType>>
 	ObjectType extends unknown
 		? Omit<ObjectType, KeyType>
 		: never;
+
+export {};

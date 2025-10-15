@@ -15,7 +15,7 @@ export type CamelCaseOptions = {
 	preserveConsecutiveUppercase?: boolean;
 };
 
-export type DefaultCamelCaseOptions = {
+export type _DefaultCamelCaseOptions = {
 	preserveConsecutiveUppercase: false;
 };
 
@@ -83,7 +83,9 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 	? string extends Type
 		? Type
 		: Uncapitalize<CamelCaseFromArray<
-		Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>,
-		ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>
+			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>,
+			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
 		>>
 	: Type;
+
+export {};

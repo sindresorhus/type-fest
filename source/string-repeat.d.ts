@@ -45,3 +45,5 @@ type StringRepeatHelper<
 				: IsNumericLiteral<Count> extends false
 					? string
 					: StringRepeatHelper<Input, Count, [...Counter, never], `${Accumulator}${Input}`>;
+
+export {};

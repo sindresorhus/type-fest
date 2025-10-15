@@ -1,12 +1,10 @@
 import type {And} from './and.d.ts';
 import type {
 	ArrayLength,
-	ExactOptionalPropertyTypesEnable,
 	IsLeadingSpreadArray,
 	IsMiddleSpreadArray,
 	IsTrailingSpreadArray,
 	LeadingStaticPartOfMiddleSpreadArray,
-	Not,
 	OptionalPartOfStaticArray,
 	RequiredPartOfStaticArray,
 	StaticPartOfArray,
@@ -15,7 +13,8 @@ import type {
 	VariablePartOfArray,
 	VariablePartOfLeadingSpreadArray,
 	VariablePartOfMiddleSpreadArray,
-} from './internal/index.d.ts';
+} from './internal/array.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled, Not} from './internal/type.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {Or} from './or.d.ts';
 import type {Subtract} from './subtract.d.ts';
@@ -161,13 +160,13 @@ T extends UnknownArray
 				? number extends ArrayLength<ArrayItem>
 					? InternalFixedLengthArrayFlat<Last, Depth, [...Result, ...InternalNonFixedLengthArrayFlat<ArrayItem, Depth>]>
 					: InternalArrayFlat<
-					Last,
-					Depth,
-					[
-						...Result,
-						...InternalArrayFlat<RequiredPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>>,
-						...(InternalArrayFlat<OptionalPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>> | []),
-					]
+						Last,
+						Depth,
+						[
+							...Result,
+							...InternalArrayFlat<RequiredPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>>,
+							...(InternalArrayFlat<OptionalPartOfStaticArray<ArrayItem>, Subtract<Depth, 1>> | []),
+						]
 					>
 				: InternalInnerFixedLengthArrayFlat<Last, Depth, [...Result, ArrayItem]>
 			: [...Result, ...T]
@@ -242,20 +241,21 @@ type BuildRepeatedUnionArray<
 > =
 RepeatNumber extends 0
 	? R
-	: ExactOptionalPropertyTypesEnable extends true
-		? R
-		| RequiredPart
-		| (And<IsEqual<RequiredPart['length'], 1>, CanSpread> extends true
-			? Array<RequiredPart[number]>
-			: never)
-		| BuildRepeatedUnionArray<
+	: IsExactOptionalPropertyTypesEnabled extends true
+	// eslint-disable-next-line @stylistic/indent
+	? R
+	| RequiredPart
+	| (And<IsEqual<RequiredPart['length'], 1>, CanSpread> extends true
+		? Array<RequiredPart[number]>
+		: never)
+	| BuildRepeatedUnionArray<
 		T,
 		Subtract<RepeatNumber, 1>,
 		CanSpread,
 		[
 			...R,
 			...(
-				ExactOptionalPropertyTypesEnable extends true
+				IsExactOptionalPropertyTypesEnabled extends true
 					? [
 						...RequiredPart,
 						...(IsZero<ArrayLength<OptionalPart>> extends true ? [] : [Exclude<OptionalPart[number], undefined>] | []),
@@ -263,5 +263,7 @@ RepeatNumber extends 0
 					: T
 			),
 		]
-		>
+	>
 		: never;
+
+export {};
