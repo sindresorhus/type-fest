@@ -24,7 +24,9 @@ const validator2 = createValidation<User>('surname', value => value.length < 25)
 
 @category Utilities
 */
-export type RequiredKeysOf<BaseType extends object> =
-	BaseType extends unknown // For distributing `BaseType`
-		? Exclude<keyof BaseType, OptionalKeysOf<BaseType>>
+export type RequiredKeysOf<Type extends object> =
+	Type extends unknown // For distributing `Type`
+		? Exclude<keyof Type, OptionalKeysOf<Type>>
 		: never; // Should never happen
+
+export {};

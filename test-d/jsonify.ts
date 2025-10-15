@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {EmptyObject, Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
+import type {EmptyObject, Jsonify, JsonObject, JsonValue, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
 interface A {
 	a: number;
@@ -369,3 +369,27 @@ expectType<typeof nestedObjectWithNameProperty>(
 // Regression test for https://github.com/sindresorhus/type-fest/issues/629
 declare const readonlyTuple: Jsonify<readonly [1, 2, 3]>;
 expectType<[1, 2, 3]>(readonlyTuple);
+
+// `unknown` values
+declare const unknownValue: Jsonify<unknown>;
+declare const unknownArray: Jsonify<unknown[]>;
+declare const unknownTuple: Jsonify<[unknown, unknown]>;
+declare const objectWithUnknownValue: Jsonify<{key: unknown}>;
+expectType<JsonValue>(unknownValue);
+expectAssignable<Jsonify<unknown>>('foo');
+expectAssignable<Jsonify<unknown>>(['foo']);
+expectNotAssignable<Jsonify<unknown>>(new Date());
+expectType<JsonValue[]>(unknownArray);
+expectAssignable<Jsonify<unknown[]>>(['foo']);
+expectNotAssignable<Jsonify<unknown[]>>([new Date()]);
+expectType<[JsonValue, JsonValue]>(unknownTuple);
+expectAssignable<Jsonify<[unknown, unknown]>>(['foo', 'foo']);
+expectNotAssignable<Jsonify<[unknown, unknown]>>([new Date(), new Date()]);
+expectType<{key: JsonValue}>(objectWithUnknownValue);
+expectAssignable<Jsonify<{key: unknown}>>({key: []});
+expectNotAssignable<Jsonify<{key: unknown}>>({key: new Date()});
+
+expectAssignable<JsonObject>({} as {a: string});
+expectNotAssignable<JsonObject>({} as {a: string | undefined});
+expectAssignable<JsonObject>({} as {a?: string});
+expectNotAssignable<JsonObject>({} as {a?: string | undefined}); // Requires `exactOptionalPropertyTypes` to be enabled

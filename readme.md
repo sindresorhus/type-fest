@@ -60,6 +60,8 @@ npm install type-fest
 > [!NOTE]
 > This readme shows the current development version. For docs about the latest version, see the [npm page](https://www.npmjs.com/package/type-fest).
 
+*You may also like my [`ts-extras`](https://github.com/sindresorhus/ts-extras) package which provides runtime functions for some of these types.*
+
 ## Usage
 
 ```ts
@@ -151,8 +153,8 @@ Click the type names for complete docs.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties.
-- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
 - [`KeysOfUnion`](source/keys-of-union.d.ts) - Create a union of all keys from a given type, even those exclusive to specific union members.
+- [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
 - [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
@@ -167,8 +169,8 @@ Click the type names for complete docs.
 - [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
-- [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
-- [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
+- [`ArraySplice`](source/array-splice.d.ts) - Create a new array type by adding or removing elements at a specified index range in the original array.
+- [`ArrayTail`](source/array-tail.d.ts) - Extract the type of an array or tuple minus the first element.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
@@ -178,6 +180,7 @@ Click the type names for complete docs.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
+- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
@@ -199,12 +202,17 @@ Click the type names for complete docs.
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
+- [`IsUndefined`](source/is-undefined.d.ts) - Returns a boolean for whether the given type is `undefined`.
 - [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
 - [`IsUnion`](source/is-union.d.ts) - Returns a boolean for whether the given type is a union.
 - [`IsLowercase`](source/is-lowercase.d.ts) - Returns a boolean for whether the given string literal is lowercase.
 - [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.
 - [`IsOptional`](source/is-optional.d.ts) - Returns a boolean for whether the given type includes `undefined`.
 - [`IsNullable`](source/is-nullable.d.ts) - Returns a boolean for whether the given type includes `null`.
+- [`IsOptionalKeyOf`](source/is-optional-key-of.d.ts) - Returns a boolean for whether the given key is an optional key of type.
+- [`IsRequiredKeyOf`](source/is-required-key-of.d.ts) - Returns a boolean for whether the given key is a required key of type.
+- [`IsReadonlyKeyOf`](source/is-readonly-key-of.d.ts) - Returns a boolean for whether the given key is a readonly key of type.
+- [`IsWritableKeyOf`](source/is-writable-key-of.d.ts) - Returns a boolean for whether the given key is a writable key of type.
 
 ### JSON
 
@@ -233,7 +241,7 @@ Click the type names for complete docs.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
-- [`RemovePrefix`](source/remove-prefix.d.ts) - Removes the specified prefix from the start of a string.
+- [`RemovePrefix`](source/remove-prefix.d.ts) - Remove the specified prefix from the start of a string.
 
 ### Array
 
@@ -242,14 +250,19 @@ Click the type names for complete docs.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
 - [`ArrayAt`](source/array-at.d.ts) - Returns the element at the given index of the given array, just like `Array#at()`.
 - [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.
-- [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
-- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
+- [`ArrayElement`](source/array-element.d.ts) - Extracts the element type of an array or tuple.
+- [`LastArrayElement`](source/last-array-element.d.ts) - Extract the type of the last element of an array.
+- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length. The `Array` prototype methods that manipulate its length are excluded from the resulting type.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
+- [`TupleOf`](source/tuple-of.d.ts) - Create a tuple type of the specified length with elements of the specified type.
+- [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
+- [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extract the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
+- [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 
 ### Numeric
 
@@ -279,11 +292,11 @@ Click the type names for complete docs.
 - [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert object properties to camel-case (`fooBar`).
 - [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) - Convert object properties to camel-case recursively (`fooBar`).
 - [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case (`foo-bar`).
-- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert a object properties to kebab-case recursively (`foo-bar`).
-- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab-case (`foo-bar`).
-- [`PascalCase`](source/pascal-case.d.ts) - Converts a string literal to pascal-case (`FooBar`)
-- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Converts object properties to pascal-case (`FooBar`)
-- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert object properties to kebab-case (`foo-bar`).
+- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab-case recursively (`foo-bar`).
+- [`PascalCase`](source/pascal-case.d.ts) - Convert a string literal to pascal-case (`FooBar`).
+- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Convert object properties to pascal-case (`FooBar`).
+- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Convert object properties to pascal-case recursively (`FooBar`).
 - [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case (`foo_bar`).
 - [`SnakeCasedProperties`](source/snake-cased-properties.d.ts) - Convert object properties to snake-case (`foo_bar`).
 - [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case recursively (`foo_bar`).
@@ -338,6 +351,7 @@ Click the type names for complete docs.
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
+- `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 
 ## Tips
 

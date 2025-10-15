@@ -1,7 +1,7 @@
 /**
 Create a type that represents either the value or an array of the value.
 
-@see Promisable
+@see {@link Promisable}
 
 @example
 ```
@@ -27,3 +27,5 @@ export type Arrayable<T> =
 	T
 // TODO: Use `readonly T[]` when this issue is resolved: https://github.com/microsoft/TypeScript/issues/17002
 	| T[];
+
+export {};

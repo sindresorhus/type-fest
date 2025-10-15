@@ -38,7 +38,7 @@ type C = Simplify<{a: number} & {b: string}>;
 //=> {a: number; b: string}
 ```
 
-@see ConditionalSimplifyDeep
+@see {@link ConditionalSimplifyDeep}
 @category Object
 */
 export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
@@ -46,3 +46,5 @@ export type ConditionalSimplify<Type, ExcludeType = never, IncludeType = unknown
 	: Type extends IncludeType
 		? {[TypeKey in keyof Type]: Type[TypeKey]}
 		: Type;
+
+export {};

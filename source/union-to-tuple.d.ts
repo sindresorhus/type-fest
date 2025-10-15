@@ -54,3 +54,5 @@ export type UnionToTuple<T, L = LastOfUnion<T>> =
 IsNever<T> extends false
 	? [...UnionToTuple<Exclude<T, L>>, L]
 	: [];
+
+export {};

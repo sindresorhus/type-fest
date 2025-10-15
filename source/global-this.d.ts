@@ -19,3 +19,5 @@ type ExtraGlobals = GlobalThis & {
 @category Type
 */
 export type GlobalThis = typeof globalThis;
+
+export {};

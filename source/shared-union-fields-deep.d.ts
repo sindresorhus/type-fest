@@ -81,7 +81,7 @@ function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union
@@ -176,3 +176,5 @@ type InternalSharedArrayUnionFieldsDeep<
 				Union, Options,
 				[...ResultTuple, SharedUnionFieldsDeep<Union[ResultTuple['length']], Options>]
 			>;
+
+export {};

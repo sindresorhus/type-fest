@@ -37,3 +37,5 @@ export type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseTyp
 		? NonNullable<BaseType[Key]>
 		: BaseType[Key];
 };
+
+export {};

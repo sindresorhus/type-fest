@@ -3,7 +3,7 @@ import type {IfNotAnyOrNever, IsArrayReadonly} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Extracts the type of an array or tuple minus the first element.
+Extract the type of an array or tuple minus the first element.
 
 @example
 ```
@@ -66,3 +66,5 @@ type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?
 			: TArray // Happens when `TArray` is a non-tuple array (e.g., `string[]`) or has a leading rest element (e.g., `[...string[], number]`)
 		: Tail
 	: [];
+
+export {};

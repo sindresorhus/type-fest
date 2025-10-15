@@ -109,3 +109,5 @@ IsLeadingSpreadArray<T> extends true
 					: never // Never happens
 				: never // Never happens
 			: T[number];
+
+export {};

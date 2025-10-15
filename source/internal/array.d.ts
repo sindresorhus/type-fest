@@ -26,15 +26,6 @@ export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray exten
 	: never;
 
 /**
-Extract the element of an array that also works for array union.
-
-Returns `never` if T is not an array.
-
-It creates a type-safe way to access the element type of `unknown` type.
-*/
-export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
-
-/**
 Returns if the given array is a leading spread array.
 
 @example
@@ -297,43 +288,6 @@ type _CollapseRestElement<
 					BackwardAccumulator
 				>
 				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
-		: never; // Should never happen, since `TArray` is a top-type for arrays.
+		: never; // Should never happen
 
-/**
-Returns a boolean for whether every element in an array type extends another type.
-
-Note: This type is not designed to be used with non-tuple arrays (like `number[]`), tuples with optional elements (like `[1?, 2?, 3?]`), or tuples that contain a rest element (like `[1, 2, ...number[]]`).
-
-@example
-```
-type A = CollapseRestElement<[string, string, ...number[]]>;
-//=> [string, string, number]
-
-type B = CollapseRestElement<[...string[], number, number]>;
-//=> [string, number, number]
-
-type C = CollapseRestElement<[string, string, ...Array<number | bigint>]>;
-//=> [string, string, number | bigint]
-
-type D = CollapseRestElement<[string, number]>;
-//=> [string, number]
-```
-
-Note: Optional modifiers (`?`) are removed from elements unless the `exactOptionalPropertyTypes` compiler option is disabled. When disabled, there's an additional `| undefined` for optional elements.
-
-@example
-```
-// `exactOptionalPropertyTypes` enabled
-type A = CollapseRestElement<[string?, string?, ...number[]]>;
-//=> [string, string, number]
-
-// `exactOptionalPropertyTypes` disabled
-type B = CollapseRestElement<[string?, string?, ...number[]]>;
-//=> [string | undefined, string | undefined, number]
-```
-*/
-export type Every<TArray extends UnknownArray, Type> = TArray extends readonly [infer First, ...infer Rest]
-	? First extends Type
-		? Every<Rest, Type>
-		: false
-	: true;
+export {};

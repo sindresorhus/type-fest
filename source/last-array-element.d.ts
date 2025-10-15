@@ -1,5 +1,5 @@
 /**
-Extracts the type of the last element of an array.
+Extract the type of the last element of an array.
 
 Use-case: Defining the return type of functions that extract the last element of an array, for example [`lodash.last`](https://lodash.com/docs/4.17.15#last).
 
@@ -36,3 +36,5 @@ export type LastArrayElement<Elements extends readonly unknown[], ElementBeforeT
 				: Elements extends ReadonlyArray<infer U>
 					? U | ElementBeforeTailingSpreadElement
 					: never;
+
+export {};

@@ -62,7 +62,7 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union
@@ -86,3 +86,5 @@ Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<un
 		>
 		: never
 	: never;
+
+export {};

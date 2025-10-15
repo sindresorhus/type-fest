@@ -1,6 +1,6 @@
 import type {Primitive} from './primitive.d.ts';
 
-export type LiteralStringUnion<T> = LiteralUnion<T, string>;
+export type _LiteralStringUnion<T> = LiteralUnion<T, string>;
 
 /**
 Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
@@ -35,3 +35,5 @@ export type LiteralUnion<
 	LiteralType,
 	BaseType extends Primitive,
 > = LiteralType | (BaseType & Record<never, never>);
+
+export {};

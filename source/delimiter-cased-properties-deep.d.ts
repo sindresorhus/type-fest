@@ -1,4 +1,4 @@
-import type {DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
+import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
 import type {ApplyDefaultOptions, NonRecursiveType} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {WordsOptions} from './words.d.ts';
@@ -8,8 +8,8 @@ Convert object properties to delimiter case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see DelimiterCase
-@see DelimiterCasedProperties
+@see {@link DelimiterCase}
+@see {@link DelimiterCasedProperties}
 
 @example
 ```
@@ -61,7 +61,7 @@ export type DelimiterCasedPropertiesDeep<
 	Value,
 	Delimiter extends string,
 	Options extends WordsOptions = {},
-> = _DelimiterCasedPropertiesDeep<Value, Delimiter, ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;
+> = _DelimiterCasedPropertiesDeep<Value, Delimiter, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
 
 type _DelimiterCasedPropertiesDeep<
 	Value,
@@ -104,3 +104,5 @@ type DelimiterCasedPropertiesArrayDeep<
 						: Value extends ReadonlyArray<infer U>
 							? ReadonlyArray<_DelimiterCasedPropertiesDeep<U, Delimiter, Options>>
 							: never;
+
+export {};

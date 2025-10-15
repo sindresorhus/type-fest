@@ -1,4 +1,4 @@
-import type {DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
+import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
 import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
@@ -8,8 +8,8 @@ Convert object properties to kebab case but not recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see KebabCase
-@see KebabCasedPropertiesDeep
+@see {@link KebabCase}
+@see {@link KebabCasedPropertiesDeep}
 
 @example
 ```
@@ -37,4 +37,6 @@ const splitOnNumbers: KebabCasedProperties<{line1: string}, {splitOnNumbers: tru
 export type KebabCasedProperties<
 	Value,
 	Options extends WordsOptions = {},
-> = DelimiterCasedProperties<Value, '-', ApplyDefaultOptions<WordsOptions, DefaultDelimiterCaseOptions, Options>>;
+> = DelimiterCasedProperties<Value, '-', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+
+export {};

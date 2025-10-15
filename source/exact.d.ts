@@ -1,4 +1,5 @@
-import type {ArrayElement, ObjectValue} from './internal/index.d.ts';
+import type {ObjectValue} from './internal/index.d.ts';
+import type {ArrayElement} from './array-element.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
@@ -66,3 +67,5 @@ export type Exact<ParameterType, InputType> =
 						// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 						: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 							: ExactObject<ParameterType, InputType>;
+
+export {};
