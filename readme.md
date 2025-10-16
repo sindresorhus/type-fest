@@ -147,7 +147,7 @@ Click the type names for complete docs.
 - [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
-- [`Simplify`](source/simplify.d.ts) - Flattens a complex object type to make it more readable and improve editor IntelliSense. And also to transform an interface into a type to aide with assignability.
+- [`Simplify`](source/simplify.d.ts) - Flattens a complex object type to make it more readable and improve editor IntelliSense. And also to transform an interface into a type to aid with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
 - [`SimplifyUnion`](source/simplify-union.d.ts) - Flattens a complex union type to make it more readable and improve editor IntelliSense.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
