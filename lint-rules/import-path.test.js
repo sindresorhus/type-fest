@@ -28,6 +28,43 @@ ruleTester.run('import-path', importPathRule, {
 		{
 			code: 'import type {Type} from "@types/node";',
 		},
+		// Export named declarations with .d.ts extension
+		{
+			code: 'export type {Foo} from "./foo.d.ts";',
+		},
+		{
+			code: 'export {Bar} from "../bar.d.ts";',
+		},
+		{
+			code: 'export type {Baz as Qux} from "./types/baz.d.ts";',
+		},
+		// Export all declarations with .d.ts extension
+		{
+			code: 'export * from "./foo.d.ts";',
+		},
+		{
+			code: 'export * from "../bar.d.ts";',
+		},
+		{
+			code: 'export * as Types from "./types.d.ts";',
+		},
+		// Non re-exports are ignored
+		{
+			code: 'export {localVar};',
+		},
+		{
+			code: 'export type {LocalType};',
+		},
+		{
+			code: 'export type Foo = string;',
+		},
+		// Non-relative exports are ignored
+		{
+			code: 'export {something} from "external-package";',
+		},
+		{
+			code: 'export * from "@types/node";',
+		},
 	],
 	invalid: [
 		// Missing extension
