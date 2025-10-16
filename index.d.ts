@@ -69,7 +69,6 @@ export type {SetParameterType} from './source/set-parameter-type.d.ts';
 export type {Asyncify} from './source/asyncify.d.ts';
 export type {Simplify} from './source/simplify.d.ts';
 export type {SimplifyDeep} from './source/simplify-deep.d.ts';
-export type {SimplifyUnion} from './source/simplify-union.d.ts';
 export type {Jsonify} from './source/jsonify.d.ts';
 export type {Jsonifiable} from './source/jsonifiable.d.ts';
 export type {StructuredCloneable} from './source/structured-cloneable.d.ts';

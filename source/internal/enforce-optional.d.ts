@@ -1,4 +1,4 @@
-import type {Simplify} from '../simplify.d.ts';
+import type {_Simplify} from '../simplify.d.ts';
 
 // Returns `never` if the key is optional otherwise return the key type.
 type RequiredFilter<Type, Key extends keyof Type> = undefined extends Type[Key]
@@ -40,7 +40,7 @@ type FooBar = EnforceOptional<Foo>;
 @internal
 @category Object
 */
-export type EnforceOptional<ObjectType> = Simplify<{
+export type EnforceOptional<ObjectType> = _Simplify<{
 	[Key in keyof ObjectType as RequiredFilter<ObjectType, Key>]: ObjectType[Key]
 } & {
 	[Key in keyof ObjectType as OptionalFilter<ObjectType, Key>]?: Exclude<ObjectType[Key], undefined>

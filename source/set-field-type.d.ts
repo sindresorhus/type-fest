@@ -1,5 +1,5 @@
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 
 export type SetFieldTypeOptions = {
 	/**
@@ -57,7 +57,7 @@ export type SetFieldType<BaseType, Keys extends keyof BaseType, NewType, Options
 	_SetFieldType<BaseType, Keys, NewType, ApplyDefaultOptions<SetFieldTypeOptions, DefaultSetFieldTypeOptions, Options>>;
 
 type _SetFieldType<BaseType, Keys extends keyof BaseType, NewType, Options extends Required<SetFieldTypeOptions>> =
-	Simplify<{
+	_Simplify<{
 		[P in keyof BaseType]: P extends Keys ? NewType : BaseType[P];
 	} & (
 		// `Record` is used to remove property modifiers

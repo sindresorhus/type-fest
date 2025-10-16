@@ -1,6 +1,6 @@
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 
 // Merges two objects without worrying about index signatures.
 type SimpleMerge<Destination, Source> = {
@@ -42,7 +42,7 @@ export type FooBar = Merge<Foo, Bar>;
 @category Object
 */
 export type Merge<Destination, Source> =
-Simplify<
+_Simplify<
 	SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
 	& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
 >;

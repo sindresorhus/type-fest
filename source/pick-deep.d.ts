@@ -2,7 +2,7 @@ import type {TupleOf} from './tuple-of.d.ts';
 import type {BuildObject, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Paths} from './paths.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -86,7 +86,7 @@ export type PickDeep<T, PathUnion extends Paths<T>> =
 			}[PathUnion]
 			>
 			: T extends object
-				? Simplify<UnionToIntersection<{
+				? _Simplify<UnionToIntersection<{
 					[P in PathUnion]: InternalPickDeep<T, P>;
 				}[PathUnion]>>
 				: never;
@@ -98,7 +98,7 @@ type InternalPickDeep<T, Path extends string | number> =
 	T extends NonRecursiveType
 		? never
 		: T extends UnknownArray ? PickDeepArray<T, Path>
-			: T extends object ? Simplify<PickDeepObject<T, Path>>
+			: T extends object ? _Simplify<PickDeepObject<T, Path>>
 				: never;
 
 /**

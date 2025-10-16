@@ -1,7 +1,7 @@
 import type {NonRecursiveType, ReadonlyKeysOfUnion, ValueOfUnion} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -72,7 +72,7 @@ Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<un
 	? Exclude<Union, SkippedMembers> extends infer RelevantMembers
 		?
 		| SkippedMembers
-		| Simplify<
+		| _Simplify<
 		// Include fields that are common in all union members
 			SharedUnionFields<RelevantMembers> &
 		// Include readonly fields present in any union member

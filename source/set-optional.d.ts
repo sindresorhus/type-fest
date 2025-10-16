@@ -1,6 +1,6 @@
 import type {Except} from './except.d.ts';
 import type {HomomorphicPick} from './internal/index.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 
 /**
 Create a type that makes the given keys optional. The remaining keys are kept as is. The sister of the `SetRequired` type.
@@ -35,7 +35,7 @@ export type SetOptional<BaseType, Keys extends keyof BaseType> =
 
 type _SetOptional<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown // To distribute `BaseType` when it's a union type.
-		? Simplify<
+		? _Simplify<
 		// Pick just the keys that are readonly from the base type.
 			Except<BaseType, Keys> &
 		// Pick the keys that should be mutable from the base type and make them mutable.
