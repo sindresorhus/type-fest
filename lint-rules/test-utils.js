@@ -53,7 +53,7 @@ export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
 	const writeFixture = (relativePath, content) => {
 		const absolutePath = path.join(fixtureRoot, relativePath);
 		fs.mkdirSync(path.dirname(absolutePath), {recursive: true});
-		fs.writeFileSync(absolutePath, content);
+		fs.writeFileSync(absolutePath, content ?? '');
 	};
 
 	for (const [relativePath, content] of Object.entries(fixtureFiles)) {

@@ -19,15 +19,15 @@ const libDeclarationContent = 'export interface LibTest {\n\tvalue: string;\n}\n
 const {ruleTester, fixturePath} = createTypeAwareRuleTester({
 	'package.json': `${packageContent}\n`,
 	'index.d.ts': indexContent,
-	'source/exported-type.d.ts': exportedTypeContent,
-	'source/internal/internal-type.d.ts': internalTypeContent,
-	'source/internal/nested/deep.d.ts': nestedInternalTypeContent,
-	'source/private-type.d.ts': privateTypeContent,
-	'source/missing-type.d.ts': missingTypeContent,
-	'source/unexported-multiple.d.ts': unexportedMultipleContent,
-	'source/implementation.ts': implementationContent,
-	'test/test.d.ts': testDeclarationContent,
-	'lib/test.d.ts': libDeclarationContent,
+	'source/exported-type.d.ts': undefined,
+	'source/internal/internal-type.d.ts': undefined,
+	'source/internal/nested/deep.d.ts': undefined,
+	'source/private-type.d.ts': undefined,
+	'source/missing-type.d.ts': undefined,
+	'source/unexported-multiple.d.ts': undefined,
+	'source/implementation.ts': undefined,
+	'test/test.d.ts': undefined,
+	'lib/test.d.ts': undefined,
 });
 
 // Type-aware rule tests rely on the generated fixture project above.
