@@ -50,5 +50,10 @@ ruleTester.run('import-path', importPathRule, {
 			'import type {Deep} from "../../deep/path.tsx";',
 			'import type {Deep} from \'../../deep/path.d.ts\';',
 		),
+		// Wrong extension .d.d.ts
+		invalidImport(
+			'import type {Foo} from "./foo.d.d.ts";',
+			'import type {Foo} from \'./foo.d.ts\';',
+		),
 	],
 });
