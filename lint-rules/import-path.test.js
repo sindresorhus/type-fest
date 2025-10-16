@@ -87,6 +87,42 @@ ruleTester.run('import-path', importPathRule, {
 			'import type {Deep} from "../../deep/path.tsx";',
 			'import type {Deep} from \'../../deep/path.d.ts\';',
 		),
+		// Export named declarations - missing extension
+		invalidImport(
+			'export type {Foo} from "./foo";',
+			'export type {Foo} from \'./foo.d.ts\';',
+		),
+		invalidImport(
+			'export {Bar} from "../bar";',
+			'export {Bar} from \'../bar.d.ts\';',
+		),
+		// Export named declarations - wrong extension
+		invalidImport(
+			'export type {Baz} from "./types.ts";',
+			'export type {Baz} from \'./types.d.ts\';',
+		),
+		invalidImport(
+			'export {Qux} from "./qux.js";',
+			'export {Qux} from \'./qux.d.ts\';',
+		),
+		// Export all declarations - missing extension
+		invalidImport(
+			'export * from "./foo";',
+			'export * from \'./foo.d.ts\';',
+		),
+		invalidImport(
+			'export * from "../bar";',
+			'export * from \'../bar.d.ts\';',
+		),
+		// Export all declarations - wrong extension
+		invalidImport(
+			'export * from "./types.ts";',
+			'export * from \'./types.d.ts\';',
+		),
+		invalidImport(
+			'export * as AllTypes from "../../all.js";',
+			'export * as AllTypes from \'../../all.d.ts\';',
+		),
 		// Wrong extension .d.d.ts
 		invalidImport(
 			'import type {Foo} from "./foo.d.d.ts";',
