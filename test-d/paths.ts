@@ -396,69 +396,69 @@ expectType<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d
 
 // Index signatures
 declare const indexSignature: Paths<{[x: string]: {a: string; b: number}}>;
-expectType<string>(indexSignature); // Collapsed union
+expectType<(string & {}) | (`${string}.a` & {}) | (`${string}.b` & {})>(indexSignature); // Collapsed union
 
 declare const indexSignature1: Paths<{[x: Lowercase<string>]: {a: string; b: number}}>;
-expectType<Lowercase<string> | `${Lowercase<string>}.a` | `${Lowercase<string>}.b`>(indexSignature1);
+expectType<(Lowercase<string> & {}) | (`${Lowercase<string>}.a` & {}) | (`${Lowercase<string>}.b` & {})>(indexSignature1);
 
 declare const indexSignature2: Paths<{[x: number]: {0: string; 1: number}}>;
-expectType<number | `${number}` | `${number}.0` | `${number}.1`>(indexSignature2);
+expectType<number | `${number}` | (`${number}.0` & {}) | (`${number}.1` & {})>(indexSignature2);
 
 declare const indexSignature3: Paths<{[x: Uppercase<string>]: {a: string; b: number}}>;
-expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignature3);
+expectType<(Uppercase<string> & {}) | (`${Uppercase<string>}.a` & {}) | (`${Uppercase<string>}.b` & {})>(indexSignature3);
 
 declare const indexSignature4: Paths<{a: {[x: symbol]: {b: number; c: number}}}>;
 expectType<'a'>(indexSignature4);
 
 declare const indexSignatureWithStaticKeys: Paths<{[x: Uppercase<string>]: {a: string; b: number}; c: number}>;
-expectType<'c' | Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignatureWithStaticKeys);
+expectType<'c' | (Uppercase<string> & {}) | (`${Uppercase<string>}.a` & {}) | (`${Uppercase<string>}.b` & {})>(indexSignatureWithStaticKeys);
 
 declare const indexSignatureWithStaticKeys1: Paths<{[x: Uppercase<string>]: {a: string; b?: number}; C: {a: 'a'}}>;
-expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignatureWithStaticKeys1); // Collapsed union
+expectType<'C' | 'C.a' | (Uppercase<string> & {}) | (`${Uppercase<string>}.a` & {}) | (`${Uppercase<string>}.b` & {})>(indexSignatureWithStaticKeys1); // Collapsed union
 
 declare const nonRootIndexSignature: Paths<{a: {[x: string]: {b: string; c: number}}}>;
-expectType<'a' | `a.${string}`>(nonRootIndexSignature); // Collapsed union
+expectType<'a' | (`a.${string}` & {}) | (`a.${string}.b` & {}) | (`a.${string}.c` & {})>(nonRootIndexSignature); // Collapsed union
 
 declare const nonRootIndexSignature1: Paths<{a: {[x: Lowercase<string>]: {b: string; c: number}}}>;
-expectType<'a' | `a.${Lowercase<string>}` | `a.${Lowercase<string>}.b` | `a.${Lowercase<string>}.c`>(nonRootIndexSignature1);
+expectType<'a' | (`a.${Lowercase<string>}` & {}) | (`a.${Lowercase<string>}.b` & {}) | (`a.${Lowercase<string>}.c` & {})>(nonRootIndexSignature1);
 
 declare const nestedIndexSignature: Paths<{[x: string]: {[x: Lowercase<string>]: {a: string; b: number}}}>;
-expectType<string>(nestedIndexSignature);
+expectType<(string & {}) | (`${string}.${Lowercase<string>}` & {}) | (`${string}.${Lowercase<string>}.a` & {}) | (`${string}.${Lowercase<string>}.b` & {})>(nestedIndexSignature);
 
 declare const nestedIndexSignature1: Paths<{[x: Uppercase<string>]: {[x: Lowercase<string>]: {a: string; b: number}}}>;
-expectType<Uppercase<string> | `${Uppercase<string>}.${Lowercase<string>}` | `${Uppercase<string>}.${Lowercase<string>}.a` | `${Uppercase<string>}.${Lowercase<string>}.b`>(
+expectType<(Uppercase<string> & {}) | (`${Uppercase<string>}.${Lowercase<string>}` & {}) | (`${Uppercase<string>}.${Lowercase<string>}.a` & {}) | (`${Uppercase<string>}.${Lowercase<string>}.b` & {})>(
 	nestedIndexSignature1,
 );
 
 declare const indexSignatureUnion: Paths<{a: {[x: string]: number} | {b: number}}>;
-expectType<'a' | `a.${string}`>(indexSignatureUnion); // Collapsed union
+expectType<'a' | 'a.b' | (`a.${string}` & {})>(indexSignatureUnion); // Collapsed union
 
 declare const indexSignatureUnion1: Paths<{a: {[x: Uppercase<string>]: number} | {b: number}}>;
-expectType<'a' | 'a.b' | `a.${Uppercase<string>}`>(indexSignatureUnion1);
+expectType<'a' | 'a.b' | (`a.${Uppercase<string>}` & {})>(indexSignatureUnion1);
 
 declare const indexSignatureLeaves: Paths<{[x: string]: {a: string; b: number}}, {leavesOnly: true}>;
-expectType<`${string}.a` | `${string}.b`>(indexSignatureLeaves);
+expectType<(`${string}.a` & {}) | (`${string}.b` & {})>(indexSignatureLeaves);
 
 declare const indexSignatureLeaves1: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {leavesOnly: true}>;
-expectType<`a.${string}.b` | `a.${string}.c` | 'd' | 'e.f'>(indexSignatureLeaves1);
+expectType<(`a.${string}.b` & {}) | (`a.${string}.c` & {}) | 'd' | 'e.f'>(indexSignatureLeaves1);
 
 declare const indexSignatureLeaves2: Paths<{a: {[x: string]: [] | {b: number}}}, {leavesOnly: true}>;
-expectType<`a.${string}`>(indexSignatureLeaves2); // Collapsed union
+expectType<(`a.${string}` & {}) | (`a.${string}.b` & {})>(indexSignatureLeaves2); // Collapsed union
 
 declare const indexSignatureDepth: Paths<{[x: string]: {a: string; b: number}}, {depth: 1}>;
-expectType<`${string}.b` | `${string}.a`>(indexSignatureDepth);
+expectType<(`${string}.b` & {}) | (`${string}.a` & {})>(indexSignatureDepth);
 
 declare const indexSignatureDepth1: Paths<{[x: string]: {a: string; b: number}}, {depth: 0}>;
-expectType<string>(indexSignatureDepth1);
+expectType<(string & {})>(indexSignatureDepth1);
 
 declare const indexSignatureDepth2: Paths<{[x: string]: {a: string; b: number}}, {depth: 0 | 1}>;
-expectType<string>(indexSignatureDepth2); // Collapsed union
+expectType<(string & {}) | (`${string}.a` & {}) | (`${string}.b` & {})>(indexSignatureDepth2); // Collapsed union
 
 declare const indexSignatureDepth3: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {depth: 0 | 2}>;
-expectType<'a' | `a.${string}.b` | `a.${string}.c` | 'd' | 'e'>(indexSignatureDepth3);
+expectType<'a' | (`a.${string}.b` & {}) | (`a.${string}.c` & {}) | 'd' | 'e'>(indexSignatureDepth3);
 
 declare const indexSignatureDepth4: Paths<{a: {[x: string]: [] | {b: number}}}, {depth: 2}>;
-expectType<`a.${string}.b`>(indexSignatureDepth4);
+expectType<(`a.${string}.b` & {})>(indexSignatureDepth4);
 
 declare const indexSignatureDepthLeaves: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {depth: 0 | 2; leavesOnly: true}>;
-expectType<`a.${string}.b` | `a.${string}.c` | 'd'>(indexSignatureDepthLeaves);
+expectType<'a' | (`a.${string}.b` & {}) | (`a.${string}.c` & {}) | 'd'>(indexSignatureDepthLeaves);

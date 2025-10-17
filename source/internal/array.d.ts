@@ -88,6 +88,42 @@ Returns whether the given array `T` is readonly.
 export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
 
 /**
+Represents an empty array, the `[]` or `readonly []` value.
+*/
+export type EmptyArray = readonly [] | []; // The extra `[]` is just to prevent TS from expanding the type.
+
+/**
+Returns a `boolean` for whether the type is an empty array, the `[]` or `readonly []` value.
+
+@example
+```
+import type {IsEmptyArray} from 'type-fest';
+
+type Pass1 = IsEmptyArray<[]>;
+//=> true
+
+type Pass2 = IsEmptyArray<readonly []>;
+//=> true
+
+type Fail1 = IsEmptyArray<[0]>;
+//=> false
+
+type Fail2 = IsEmptyArray<[0?]>;
+//=> false
+
+type Fail3 = IsEmptyArray<...string[]>;
+//=> false
+```
+
+@see EmptyArray
+@category Array
+*/
+export type IsEmptyArray<T> =
+	IsNever<T> extends true ? false
+		: T extends EmptyArray ? true
+			: false;
+
+/**
 Transforms a tuple type by replacing it's rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.
 
 @example
