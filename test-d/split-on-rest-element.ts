@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SplitOnRestElement} from '../index.d.ts';
+import type {SplitOnRestElement, UnknownArray} from '../index.d.ts';
 
 // Fixed tuples (No rest element)
 expectType<SplitOnRestElement<[]>>({} as [[], [], []]);
@@ -53,3 +53,7 @@ expectType<SplitOnRestElement<readonly [1, 2, 3]>>({} as readonly [[1, 2, 3], []
 // Edge: `never` / `any`
 expectType<SplitOnRestElement<any>>({} as any);
 expectType<SplitOnRestElement<never>>({} as never);
+
+// Generic instantiations
+type Assignability<_T extends UnknownArray> = unknown;
+type TestAssignability<T extends UnknownArray> = Assignability<SplitOnRestElement<T>>;
