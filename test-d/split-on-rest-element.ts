@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SplitOnRestElement, UnknownArray} from '../index.d.ts';
+import type {SplitOnRestElement, TupleOf, UnknownArray} from '../index.d.ts';
 
 // Fixed tuples (No rest element)
 expectType<SplitOnRestElement<[]>>({} as [[], [], []]);
@@ -53,6 +53,13 @@ expectType<SplitOnRestElement<readonly [1, 2, 3]>>({} as readonly [[1, 2, 3], []
 // Edge: `never` / `any`
 expectType<SplitOnRestElement<any>>({} as any);
 expectType<SplitOnRestElement<never>>({} as never);
+
+// Long tuples
+type FiftyZeroes = TupleOf<50, '0'>;
+expectType<SplitOnRestElement<[...FiftyZeroes, ...number[], ...FiftyZeroes]>>({} as [FiftyZeroes, number[], FiftyZeroes]);
+
+type FourHundredNinetyNineZeroes = TupleOf<499, '0'>;
+expectType<SplitOnRestElement<[...FourHundredNinetyNineZeroes, ...number[], ...FourHundredNinetyNineZeroes]>>({} as [FourHundredNinetyNineZeroes, number[], FourHundredNinetyNineZeroes]);
 
 // Generic instantiations
 type Assignability<_T extends UnknownArray> = unknown;
