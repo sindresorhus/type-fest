@@ -163,6 +163,9 @@ export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
 export type {IsNullable} from './source/is-nullable.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
+export type {IndexOf} from './source/index-of.d.ts';
+export type {LastIndexOf} from './source/last-index-of.d.ts';
+export type {IndicesOf} from './source/indices-of.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
