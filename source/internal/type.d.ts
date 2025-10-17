@@ -101,7 +101,7 @@ Note: Wrapping a recursive type with `IfNotAnyOrNever` makes the implementation 
 
 @example
 ```ts
-import type {IfNotAnyOrNever, StringRepeat} from 'type-fest';
+import type {StringRepeat} from 'type-fest';
 
 type NineHundredNinetyNineSpaces = StringRepeat<' ', 999>;
 

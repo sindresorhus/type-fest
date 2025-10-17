@@ -60,6 +60,8 @@ Note: Sometimes using the `If` type can make an implementation non–tail-recurs
 ```
 import type {If, IsEqual, StringRepeat} from 'type-fest';
 
+type HundredZeroes = StringRepeat<'0', 100>;
+
 // The following implementation is not tail recursive
 type Includes<S extends string, Char extends string> =
 	S extends `${infer First}${infer Rest}`
@@ -69,8 +71,6 @@ type Includes<S extends string, Char extends string> =
 		: 'not found';
 
 // Hence, instantiations with long strings will fail
-type HundredZeroes = StringRepeat<'0', 100>;
-
 // @ts-expect-error
 type Fails = Includes<HundredZeroes, '1'>;
 //           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
