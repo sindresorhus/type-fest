@@ -1,26 +1,44 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
-import type {IsAnyOrNever} from './internal/type.d.ts';
+import type {ExtendsStrict} from './extends-strict.d.ts';
+import type {IsAnyOrNever, Not} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {And} from './and.d.ts';
 
 /**
 {@link Includes `Includes`} Options.
 */
 export type IncludesOptions = {
 	/**
-	Control whether to distribute types.
+	Controls whether to distribute the types of both sides before comparison.
 
 	@example
 	```
+	import type {Includes} from 'type-fest';
+
 	type T1 = Includes<[1, 2, 3], 1 | 4, {distributeItems: false}>;
 	//=> false
 
 	type T2 = Includes<[1, 2, 3], 1 | 4, {distributeItems: true}>;
 	//=> boolean
 
-	type T2 = Includes<[1, 2, 3], 1 | 2, {distributeItems: true}>;
+	type T3 = Includes<[1 | 2, 3], 1, {distributeItems: false}>;
+	//=> false
+
+	type T4 = Includes<[1 | 2, 3], 1, {distributeItems: true}>;
+	//=> boolean
+
+	type T5 = Includes<[1, 2, 3], 1 | 2, {distributeItems: true}>;
 	//=> true
+
+	type T6 = Includes<[1, 2, 3], number, {distributeItems: true}>;
+	//=> boolean
+
+	type T7 = Includes<[string, 1], 'a', {distributeItems: true}>;
+	//=> boolean
+
 	```
 
 	@default false
@@ -32,12 +50,17 @@ type DefaultIncludesOptions = {
 	distributeItems: false;
 };
 
-type IsEqualOrExtend<A, B, Options extends Required<IncludesOptions>> =
-	Options['distributeItems'] extends true
-		? A extends unknown // Distribute element
-			? IsEqual<A, B>
+type IsEqualOrExtend<Type, Item, Options extends Required<IncludesOptions>> =
+	And<
+		Options['distributeItems'],
+		Not<IsNever<Type>>
+	> extends true
+		? Type extends unknown // Distribute element
+			? // Returns true if both extends eachother or boolean if only one extends the other
+			| ExtendsStrict<Type, Item>
+			| ExtendsStrict<Item, Type>
 			: never
-		: IsEqual<A, B>;
+		: IsEqual<Type, Item>;
 
 /**
 Returns a boolean for whether the given array includes the given item.
@@ -57,16 +80,20 @@ type T2 = Includes<[1, 2, ...3[]], 0>;
 type T3 = Includes<[1, 2, ...3[]], 3>;
 //=> boolean
 
-type T4 = Includes<[1, 3, ...3[]], 3>;
-//=> true
-
-type T5 = Includes<[1, 2, 3?], 3>;
+type T4 = Includes<[1, 2, 3?], 3>;
 //=> boolean
 
-type T6 = Includes<[1, 3, 3?], 3>;
+type T5 = Includes<[1, 3, 3?], 3>;
 //=> true
+
+type T6 = Includes<[1, 2, 3], 1 | 4, {distributeItems: true}>;
+//=> boolean
+
+type T7 = Includes<[string, number], 'a', {distributeItems: true}>;
+//=> boolean
 ```
 
+@see {@link IncludesOptions `IncludesOptions`}
 @category Array
 */
 export type Includes<
@@ -79,7 +106,10 @@ export type Includes<
 			DefaultIncludesOptions,
 			Options
 		> extends infer ResolvedOptions extends Required<IncludesOptions>
-			? ResolvedOptions['distributeItems'] extends true
+			? And<
+				ResolvedOptions['distributeItems'],
+				Not<IsNever<Item>>
+			> extends true
 				? Item extends unknown // Distribute item
 					? _Includes<Array_, Item, ResolvedOptions>
 					: never
