@@ -4,7 +4,7 @@ import type {IsUnknown} from './is-unknown.d.ts';
 import type {Merge} from './merge.d.ts';
 
 /**
-@see PartialOnUndefinedDeep
+@see {@link PartialOnUndefinedDeep}
 */
 export type PartialOnUndefinedDeepOptions = {
 	/**

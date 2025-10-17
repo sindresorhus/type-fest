@@ -8,8 +8,8 @@ Convert object properties to snake case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see SnakeCase
-@see SnakeCasedProperties
+@see {@link SnakeCase}
+@see {@link SnakeCasedProperties}
 
 @example
 ```

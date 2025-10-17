@@ -85,7 +85,7 @@ type ExampleWithoutIndexSignatures = OmitIndexSignature<Example>;
 // => { foo: 'bar'; qux?: 'baz' | undefined; }
 ```
 
-@see PickIndexSignature
+@see {@link PickIndexSignature}
 @category Object
 */
 export type OmitIndexSignature<ObjectType> = {

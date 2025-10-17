@@ -7,8 +7,8 @@ Convert object properties to pascal case but not recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see PascalCase
-@see PascalCasedPropertiesDeep
+@see {@link PascalCase}
+@see {@link PascalCasedPropertiesDeep}
 
 @example
 ```

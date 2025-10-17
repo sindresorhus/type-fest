@@ -4,7 +4,7 @@ import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Creates a tuple type of the specified length with elements of the specified type.
+Create a tuple type of the specified length with elements of the specified type.
 
 @example
 ```
@@ -60,6 +60,8 @@ import type {TupleOf} from 'type-fest';
 type EmptyTuple = TupleOf<-3, string>;
 //=> []
 ```
+
+Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for example, to create `readonly [number, number, number]` use `Readonly<TupleOf<3, number>>`.
 
 @category Array
 */
