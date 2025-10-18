@@ -59,7 +59,7 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 */
 export type Simplify<Type> =
 	Type extends unknown
-		? ExtractCallSignature<Type> & _Simplify<Type>
+		? ExtractCallSignature<Type> & _Simplify<Type> // TODO: change to `(_Simplify<Type> extends {} & infer U ? U : never)`
 		: never;
 
 type _Simplify<T> = {[K in keyof T]: T[K]} & {};
