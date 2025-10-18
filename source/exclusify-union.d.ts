@@ -42,23 +42,6 @@ loadConfig2({content: '{ "name": "app" }'}); // Ok
 ```
 import type {ExclusifyUnion} from 'type-fest';
 
-type A = ExclusifyUnion<{a: string} | {b: number}>;
-//=> {a: string; b?: never} | {a?: never; b: number}
-
-type B = ExclusifyUnion<{a: string} | {b: number} | {c: boolean}>;
-//=> {a: string; b?: never; c?: never} | {a?: never; b: number; c?: never} | {a?: never; b?: never; c: boolean}
-
-type C = ExclusifyUnion<{a: string; b: number} | {b: string; c: number}>;
-//=> {a: string; b: number; c?: never} | {a?: never; b: string; c: number}
-
-type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
-//=> {a?: 1; readonly b: 2; d?: never} | {a?: never; b?: never; d: 4}
-```
-
-@example
-```
-import type {ExclusifyUnion} from 'type-fest';
-
 type CardPayment = {
 	amount: number;
 	cardNumber: string;
@@ -90,6 +73,23 @@ function processPayment2(payment: Payment) {
 		//=> {amount: number; upiId: string; cardNumber?: never}
 	}
 }
+```
+
+@example
+```
+import type {ExclusifyUnion} from 'type-fest';
+
+type A = ExclusifyUnion<{a: string} | {b: number}>;
+//=> {a: string; b?: never} | {a?: never; b: number}
+
+type B = ExclusifyUnion<{a: string} | {b: number} | {c: boolean}>;
+//=> {a: string; b?: never; c?: never} | {a?: never; b: number; c?: never} | {a?: never; b?: never; c: boolean}
+
+type C = ExclusifyUnion<{a: string; b: number} | {b: string; c: number}>;
+//=> {a: string; b: number; c?: never} | {a?: never; b: string; c: number}
+
+type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
+//=> {a?: 1; readonly b: 2; d?: never} | {a?: never; b?: never; d: 4}
 ```
 
 @category Object
