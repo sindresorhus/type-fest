@@ -163,6 +163,7 @@ export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
 export type {IsNullable} from './source/is-nullable.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
+export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
