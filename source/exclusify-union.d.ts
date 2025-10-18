@@ -6,6 +6,10 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 Adds all missing properties from other union members as optional `never`, making each member mutually exclusive.
 
+Use-cases:
+- You want each union member to be exclusive, preventing overlapping object shapes.
+- You want to safely access any property defined across the union without additional type guards.
+
 @example
 ```
 import type {ExclusifyUnion} from 'type-fest';
