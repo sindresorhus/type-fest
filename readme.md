@@ -188,6 +188,7 @@ Click the type names for complete docs.
 - [`FindGlobalInstanceType`](source/find-global-type.d.ts) - Tries to find one or more types from their globally-defined constructors.
 - [`ConditionalSimplify`](source/conditional-simplify.d.ts) - Simplifies a type while including and/or excluding certain types from being simplified.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
+- [`ExclusifyUnion`](source/exclusify-union.d.ts) - Adds all missing properties from other union members as optional `never`, making each member mutually exclusive.
 
 ### Type Guard
 
