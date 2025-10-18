@@ -1,7 +1,7 @@
 import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -80,6 +80,6 @@ type SetNonNullableDeepSinglePath<BaseType, KeyPath> =
 					? SetNonNullableDeepSinglePath<BaseType[Key], RestPath>
 					: BaseType[Key];
 			}
-			: Simplify<SetNonNullable<BaseType, (KeyPath | StringToNumber<KeyPath & string>) & keyof BaseType>>;
+			: _Simplify<SetNonNullable<BaseType, (KeyPath | StringToNumber<KeyPath & string>) & keyof BaseType>>;
 
 export {};

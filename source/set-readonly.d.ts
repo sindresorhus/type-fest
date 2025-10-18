@@ -1,6 +1,6 @@
 import type {Except} from './except.d.ts';
 import type {HomomorphicPick} from './internal/index.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 
 /**
 Create a type that makes the given keys readonly. The remaining keys are kept as is.
@@ -35,7 +35,7 @@ export type SetReadonly<BaseType, Keys extends keyof BaseType> =
 
 export type _SetReadonly<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown // To distribute `BaseType` when it's a union type.
-		? Simplify<
+		? _Simplify<
 			Except<BaseType, Keys> &
 			Readonly<HomomorphicPick<BaseType, Keys>>
 		>

@@ -1,5 +1,5 @@
 import type {Except} from './except.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 
 /**
 Create a writable version of the given array type.
@@ -60,7 +60,7 @@ BaseType extends ReadonlyMap<infer KeyType, infer ValueType>
 			// Handle array
 			? WritableArray<BaseType>
 			// Handle object
-			: Simplify<
+			: _Simplify<
 			// Pick just the keys that are not writable from the base type.
 				Except<BaseType, Keys> &
 			// Pick the keys that should be writable from the base type and make them writable by removing the `readonly` modifier from the key.

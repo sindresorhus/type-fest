@@ -1,5 +1,5 @@
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 
 type SpreadObject<FirstType extends object, SecondType extends object> = {
 	[Key in keyof FirstType]: Key extends keyof SecondType
@@ -80,7 +80,7 @@ export type Spread<
 > = FirstType extends TupleOrArray
 	? SecondType extends TupleOrArray
 		? SpreadTupleOrArray<FirstType, SecondType>
-		: Simplify<SpreadObject<FirstType, SecondType>>
-	: Simplify<SpreadObject<FirstType, SecondType>>;
+		: _Simplify<SpreadObject<FirstType, SecondType>>
+	: _Simplify<SpreadObject<FirstType, SecondType>>;
 
 export {};

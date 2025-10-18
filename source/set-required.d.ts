@@ -2,7 +2,7 @@ import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -45,7 +45,7 @@ type _SetRequired<BaseType, Keys extends keyof BaseType> =
 		? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
 			? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
 			: never
-		: Simplify<
+		: _Simplify<
 		// Pick just the keys that are optional from the base type.
 			Except<BaseType, Keys> &
 		// Pick the keys that should be required from the base type and make them required.

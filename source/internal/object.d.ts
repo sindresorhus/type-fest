@@ -1,4 +1,4 @@
-import type {Simplify} from '../simplify.d.ts';
+import type {_Simplify} from '../simplify.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
@@ -79,7 +79,7 @@ type OptionalizedUser = UndefinedToOptional<User>;
 // }
 ```
 */
-export type UndefinedToOptional<T extends object> = Simplify<
+export type UndefinedToOptional<T extends object> = _Simplify<
 	{
 	// Property is not a union with `undefined`, keep it as-is.
 		[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
@@ -220,12 +220,12 @@ type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOp
 */
 export type ApplyDefaultOptions<
 	Options extends object,
-	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
+	Defaults extends _Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
 	SpecifiedOptions extends Options,
 > =
 	If<IsAny<SpecifiedOptions>, Defaults,
 		If<IsNever<SpecifiedOptions>, Defaults,
-			Simplify<Merge<Defaults, {
+			_Simplify<Merge<Defaults, {
 				[Key in keyof SpecifiedOptions
 				as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
 				]: SpecifiedOptions[Key]

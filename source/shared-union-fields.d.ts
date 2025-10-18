@@ -1,7 +1,7 @@
 import type {NonRecursiveType} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnion} from './is-union.d.ts';
-import type {Simplify} from './simplify.d.ts';
+import type {_Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -72,7 +72,7 @@ Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<un
 		| SkippedMembers
 		| (IsNever<RelevantMembers> extends true
 			? never
-			: Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
+			: _Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
 		: never
 	: never;
 
