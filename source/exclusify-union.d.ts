@@ -1,4 +1,6 @@
-import type {NonRecursiveType} from './internal/type.d.ts';
+import type {If} from './if.d.ts';
+import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
+import type {IsUnknown} from './is-unknown.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -99,10 +101,13 @@ type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
 @category Object
 @category Union
 */
-export type ExclusifyUnion<Union> =
-	Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
-		? SkippedMembers | _ExclusifyUnion<Exclude<Union, SkippedMembers>>
-		: never; // Should never happen
+export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union,
+	If<IsUnknown<Union>, Union,
+		Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
+			? SkippedMembers | _ExclusifyUnion<Exclude<Union, SkippedMembers>>
+			: never
+	>
+>;
 
 type _ExclusifyUnion<Union, UnionCopy = Union> = Union extends unknown // For distributing `Union`
 	? Simplify<

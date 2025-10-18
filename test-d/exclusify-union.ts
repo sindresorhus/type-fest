@@ -52,5 +52,6 @@ expectType<RegExp | null | {foo?: string; bar?: never; baz?: never} | {foo?: nev
 );
 
 // Boundary types
+expectType<unknown>({} as ExclusifyUnion<unknown>);
 expectType<any>({} as ExclusifyUnion<any>);
 expectType<never>({} as ExclusifyUnion<never>);
