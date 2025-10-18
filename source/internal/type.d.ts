@@ -97,7 +97,7 @@ type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 //=> 'IS_NEVER'
 ```
 
-Note: Wrapping a recursive type with `IfNotAnyOrNever` makes the implementation non-tail-recursive. To fix this, break the recursion using a helper type. Refer to the following example:
+Note: Wrapping a tail-recursive type with `IfNotAnyOrNever` makes the implementation non-tail-recursive. To fix this, move the recursion into a helper type. Refer to the following example:
 
 @example
 ```ts
@@ -114,8 +114,9 @@ type T1 = TrimLeft<NineHundredNinetyNineSpaces>;
 //        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Error: Type instantiation is excessively deep and possibly infinite.
 
-// To fix this, break the recursion using a helper type
+// To fix this, move the recursion into a helper type
 type TrimLeftOptimised<S extends string> = IfNotAnyOrNever<S, _TrimLeftOptimised<S>>;
+
 type _TrimLeftOptimised<S extends string> = S extends ` ${infer R}` ? _TrimLeftOptimised<R> : S;
 
 type T2 = TrimLeftOptimised<NineHundredNinetyNineSpaces>;
