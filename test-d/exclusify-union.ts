@@ -17,6 +17,10 @@ expectType<
 	{} as ExclusifyUnion<{a: string} | {b: string; c: number} | {d: 1; e: 2; f: 3}>,
 );
 
+// Single member union
+expectType<{a: string}>({} as ExclusifyUnion<{a: string}>);
+expectType<{a?: string; readonly b?: number}>({} as ExclusifyUnion<{a?: string; readonly b?: number}>);
+
 // Shared keys
 expectType<{a: string; b?: never} | {a: string; b: number}>({} as ExclusifyUnion<{a: string} | {a: string; b: number}>);
 expectType<{a: string; b?: never; c?: never} | {a: string; b: number; c?: never} | {a?: never; b: string; c: boolean}>(
