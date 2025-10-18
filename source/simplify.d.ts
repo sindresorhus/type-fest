@@ -1,3 +1,5 @@
+import type {ExtractCallSignature} from './internal/function.d.ts';
+
 /**
 Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 
@@ -55,6 +57,11 @@ fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` 
 @see {@link SimplifyDeep}
 @category Object
 */
-export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
+export type Simplify<Type> =
+	Type extends unknown
+		? ExtractCallSignature<Type> & _Simplify<Type>
+		: never;
+
+type _Simplify<T> = {[K in keyof T]: T[K]} & {};
 
 export {};
