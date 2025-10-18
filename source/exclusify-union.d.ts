@@ -55,6 +55,43 @@ type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
 //=> {a?: 1; readonly b: 2; d?: never} | {a?: never; b?: never; d: 4}
 ```
 
+@example
+```
+import type {ExclusifyUnion} from 'type-fest';
+
+type CardPayment = {
+	amount: number;
+	cardNumber: string;
+};
+
+type UpiPayment = {
+	amount: number;
+	upiId: string;
+};
+
+function processPayment1(payment: CardPayment | UpiPayment) {
+	// @ts-expect-error
+	const details = payment.cardNumber ?? payment.upiId; // Cannot access `cardNumber` or `upiId` directly
+}
+
+type Payment = ExclusifyUnion<CardPayment | UpiPayment>;
+//=> {amount: number; cardNumber: string; upiId?: never} | {amount: number; upiId: string; cardNumber?: never}
+
+function processPayment2(payment: Payment) {
+	const details = payment.cardNumber ?? payment.upiId; // Ok
+	//=> string
+
+	// Union members can be narrowed using appropriate checks
+	if (typeof payment.cardNumber === 'string') {
+		const cardPayment = payment;
+		//=> {amount: number; cardNumber: string; upiId?: never}
+	} else {
+		const cardPayment = payment;
+		//=> {amount: number; upiId: string; cardNumber?: never}
+	}
+}
+```
+
 @category Object
 @category Union
 */
