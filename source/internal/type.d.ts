@@ -96,6 +96,32 @@ type B = IfNotAnyOrNever<any, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 //=> 'IS_NEVER'
 ```
+
+Note: Wrapping a tail-recursive type with `IfNotAnyOrNever` makes the implementation non-tail-recursive. To fix this, move the recursion into a helper type. Refer to the following example:
+
+@example
+```ts
+import type {StringRepeat} from 'type-fest';
+
+type NineHundredNinetyNineSpaces = StringRepeat<' ', 999>;
+
+// The following implementation is not tail recursive
+type TrimLeft<S extends string> = IfNotAnyOrNever<S, S extends ` ${infer R}` ? TrimLeft<R> : S>;
+
+// Hence, instantiations with long strings will fail
+// @ts-expect-error
+type T1 = TrimLeft<NineHundredNinetyNineSpaces>;
+//        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Error: Type instantiation is excessively deep and possibly infinite.
+
+// To fix this, move the recursion into a helper type
+type TrimLeftOptimised<S extends string> = IfNotAnyOrNever<S, _TrimLeftOptimised<S>>;
+
+type _TrimLeftOptimised<S extends string> = S extends ` ${infer R}` ? _TrimLeftOptimised<R> : S;
+
+type T2 = TrimLeftOptimised<NineHundredNinetyNineSpaces>;
+//=> ''
+```
 */
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
