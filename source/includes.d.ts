@@ -38,7 +38,6 @@ export type IncludesOptions = {
 
 	type T7 = Includes<[string, 1], 'a', {distributeItems: true}>;
 	//=> boolean
-
 	```
 
 	@default false
@@ -128,7 +127,7 @@ type _Includes<
 					? true
 					: _Includes<Rest, Item, Options>
 				: never
-		// Handle rest element and result
+			// Handle rest element and result
 			: Array_ extends readonly []
 				? false // No match found
 				: IsEqualOrExtend<Array_[number], Item, Options> extends infer Result
