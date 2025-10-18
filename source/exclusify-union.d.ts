@@ -4,7 +4,7 @@ import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Adds all missing properties from other union members as optional `never`, making each member mutually exclusive.
+Add all missing properties from other union members as optional `never` to make each union member mutually exclusive.
 
 Use-cases:
 - You want each union member to be exclusive, preventing overlapping object shapes.
