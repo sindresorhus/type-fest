@@ -18,41 +18,41 @@ export type IncludesOptions = {
 	```
 	import type {Includes} from 'type-fest';
 
-	type T1 = Includes<[1, 2, 3], 1 | 4, {distributeItems: false}>;
+	type T1 = Includes<[1, 2, 3], 1 | 4, {distributeItem: false}>;
 	//=> false
 
-	type T2 = Includes<[1, 2, 3], 1 | 4, {distributeItems: true}>;
+	type T2 = Includes<[1, 2, 3], 1 | 4, {distributeItem: true}>;
 	//=> boolean
 
-	type T3 = Includes<[1 | 2, 3], 1, {distributeItems: false}>;
+	type T3 = Includes<[1 | 2, 3], 1, {distributeItem: false}>;
 	//=> false
 
-	type T4 = Includes<[1 | 2, 3], 1, {distributeItems: true}>;
+	type T4 = Includes<[1 | 2, 3], 1, {distributeItem: true}>;
 	//=> boolean
 
-	type T5 = Includes<[1, 2, 3], 1 | 2, {distributeItems: true}>;
+	type T5 = Includes<[1, 2, 3], 1 | 2, {distributeItem: true}>;
 	//=> true
 
-	type T6 = Includes<[1, 2, 3], number, {distributeItems: true}>;
+	type T6 = Includes<[1, 2, 3], number, {distributeItem: true}>;
 	//=> boolean
 
-	type T7 = Includes<[string, 1], 'a', {distributeItems: true}>;
+	type T7 = Includes<[string, 1], 'a', {distributeItem: true}>;
 	//=> boolean
 
 	```
 
 	@default false
 	*/
-	distributeItems?: boolean;
+	distributeItem?: boolean;
 };
 
 type DefaultIncludesOptions = {
-	distributeItems: false;
+	distributeItem: false;
 };
 
 type IsEqualOrExtend<Type, Item, Options extends Required<IncludesOptions>> =
 	And<
-		Options['distributeItems'],
+		Options['distributeItem'],
 		Not<IsNever<Type>>
 	> extends true
 		? Type extends unknown // Distribute element
@@ -86,10 +86,10 @@ type T4 = Includes<[1, 2, 3?], 3>;
 type T5 = Includes<[1, 3, 3?], 3>;
 //=> true
 
-type T6 = Includes<[1, 2, 3], 1 | 4, {distributeItems: true}>;
+type T6 = Includes<[1, 2, 3], 1 | 4, {distributeItem: true}>;
 //=> boolean
 
-type T7 = Includes<[string, number], 'a', {distributeItems: true}>;
+type T7 = Includes<[string, number], 'a', {distributeItem: true}>;
 //=> boolean
 ```
 
@@ -107,7 +107,7 @@ export type Includes<
 			Options
 		> extends infer ResolvedOptions extends Required<IncludesOptions>
 			? And<
-				ResolvedOptions['distributeItems'],
+				ResolvedOptions['distributeItem'],
 				Not<IsNever<Item>>
 			> extends true
 				? Item extends unknown // Distribute item

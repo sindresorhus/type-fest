@@ -21,7 +21,7 @@ expectType<Includes<[], undefined>>(false);
 // ---------- Homogeneous arrays ----------
 expectType<Includes<string[], string>>(boolean);
 expectType<Includes<string[], number>>(false);
-expectType<Includes<string[], 'a', {distributeItems: true}>>(boolean);
+expectType<Includes<string[], 'a', {distributeItem: true}>>(boolean);
 expectType<Includes<readonly number[], number>>(boolean);
 expectType<Includes<readonly number[], string>>(false);
 
@@ -61,13 +61,13 @@ expectType<Includes<[null], undefined>>(false);
 
 // ---------- Unions ----------
 expectType<Includes<[1 | 2, 3], 1>>(false);
-expectType<Includes<[1 | 2, 3], 1, {distributeItems: true}>>(boolean);
+expectType<Includes<[1 | 2, 3], 1, {distributeItem: true}>>(boolean);
 expectType<Includes<[1, 3], 1 | 2>>(false);
-expectType<Includes<[1, 3], 1 | 2, {distributeItems: true}>>(boolean);
+expectType<Includes<[1, 3], 1 | 2, {distributeItem: true}>>(boolean);
 expectType<Includes<[1, 2], 1 | 2>>(false);
-expectType<Includes<[1, 2], 1 | 2, {distributeItems: true}>>(true);
+expectType<Includes<[1, 2], 1 | 2, {distributeItem: true}>>(true);
 expectType<Includes<[1 | 2, 3], 1 | 2>>(true);
-expectType<Includes<[1 | 2, 3], 1 | 2, {distributeItems: true}>>(boolean);
+expectType<Includes<[1 | 2, 3], 1 | 2, {distributeItem: true}>>(boolean);
 expectType<Includes<[1, 3] | [2, 3], 3>>(true);
 expectType<Includes<[1, 3] | [2, 3], 5>>(false);
 expectType<Includes<[1, 3] | [2, 3], 1>>(boolean);
@@ -78,18 +78,18 @@ expectType<Includes<[true, false], boolean>>(false);
 expectType<Includes<[boolean], boolean>>(true);
 expectType<Includes<[string, number], 'a'>>(false);
 expectType<Includes<[1, 2, 3], number>>(false);
-expectType<Includes<[true, false], true, {distributeItems: true}>>(true);
-expectType<Includes<[true, false], boolean, {distributeItems: true}>>(true);
-expectType<Includes<[boolean], boolean, {distributeItems: true}>>(boolean);
-expectType<Includes<[string, number], 'a', {distributeItems: true}>>(boolean);
-expectType<Includes<[1, 2, 3], number, {distributeItems: true}>>(boolean);
-expectType<Includes<[any], unknown, {distributeItems: true}>>(true);
+expectType<Includes<[true, false], true, {distributeItem: true}>>(true);
+expectType<Includes<[true, false], boolean, {distributeItem: true}>>(true);
+expectType<Includes<[boolean], boolean, {distributeItem: true}>>(boolean);
+expectType<Includes<[string, number], 'a', {distributeItem: true}>>(boolean);
+expectType<Includes<[1, 2, 3], number, {distributeItem: true}>>(boolean);
+expectType<Includes<[any], unknown, {distributeItem: true}>>(true);
 
 // ---------- Edge cases ----------
 expectType<Includes<[never], any>>(false);
 expectType<Includes<[never], never>>(true);
-expectType<Includes<[never], any, {distributeItems: true}>>(false);
-expectType<Includes<[never], never, {distributeItems: true}>>(true);
+expectType<Includes<[never], any, {distributeItem: true}>>(false);
+expectType<Includes<[never], never, {distributeItem: true}>>(true);
 expectType<Includes<[unknown], unknown>>(true);
 expectType<Includes<[unknown], string>>(false);
 expectType<Includes<[1, unknown], unknown>>(true);
