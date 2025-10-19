@@ -53,30 +53,30 @@ type CardPayment = {
 	cardNumber: string;
 };
 
-type UpiPayment = {
+type PaypalPayment = {
 	amount: number;
-	upiId: string;
+	paypalId: string;
 };
 
-function processPayment1(payment: CardPayment | UpiPayment) {
+function processPayment1(payment: CardPayment | PaypalPayment) {
 	// @ts-expect-error
-	const details = payment.cardNumber ?? payment.upiId; // Cannot access `cardNumber` or `upiId` directly
+	const details = payment.cardNumber ?? payment.paypalId; // Cannot access `cardNumber` or `paypalId` directly
 }
 
-type Payment = ExclusifyUnion<CardPayment | UpiPayment>;
-//=> {amount: number; cardNumber: string; upiId?: never} | {amount: number; upiId: string; cardNumber?: never}
+type Payment = ExclusifyUnion<CardPayment | PaypalPayment>;
+//=> {amount: number; cardNumber: string; paypalId?: never} | {amount: number; paypalId: string; cardNumber?: never}
 
 function processPayment2(payment: Payment) {
-	const details = payment.cardNumber ?? payment.upiId; // Ok
+	const details = payment.cardNumber ?? payment.paypalId; // Ok
 	//=> string
 
 	// Union members can be narrowed using appropriate checks
 	if (typeof payment.cardNumber === 'string') {
 		const cardPayment = payment;
-		//=> {amount: number; cardNumber: string; upiId?: never}
+		//=> {amount: number; cardNumber: string; paypalId?: never}
 	} else {
 		const cardPayment = payment;
-		//=> {amount: number; upiId: string; cardNumber?: never}
+		//=> {amount: number; paypalId: string; cardNumber?: never}
 	}
 }
 ```
