@@ -1,0 +1,91 @@
+import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
+import type {ExtractRestElement} from './extract-rest-element.d.ts';
+import type {If} from './if.d.ts';
+import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
+import type {IsNegative} from './numeric.d.ts';
+import type {Subtract} from './subtract.d.ts';
+import type {Sum} from './sum.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+
+export type ArrayAt<TArray extends UnknownArray, Index extends number> =
+	TArray extends unknown // For distributing `Array_`
+		? Index extends unknown // For distributing `Index`
+			? number extends Index
+				? TArray[number] | undefined
+				: IsNegative<Index> extends true
+					? ArrayAtNegativeIndex<TArray, Index>
+					: ArrayAtPositiveIndex<TArray, Index>
+			: never // Should never happen
+		: never; // Should never happen
+
+/**
+Recursion order for `ArrayAtPositiveIndex<["a", "b", ...number[], "c", "d", "e"], 4>`:
+
+1. `ArrayAtPositiveIndex<["a", "b", ...number[], "c", "d", "e"], 4>` // No match, decrement `Index`.
+2. `ArrayAtPositiveIndex<["b", ...number[], "c", "d", "e"], 3, 0, never>` // No match, decrement `Index`.
+3. `ArrayAtPositiveIndex<[...number[], "c", "d", "e"], 2, 0, number>` // Found rest element, set `Index` to `0`, `Right` to `Index` (i.e., `2`), add rest element to result.
+4. `ArrayAtPositiveIndex<["c", "d", "e"], 0, 2, number | "c">` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
+5. `ArrayAtPositiveIndex<["d", "e"], 0, 1, number | "c" | "d">` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
+6. `ArrayAtPositiveIndex<["e"], 0, 0, number | "c" | "d" | "e">` // Match found, `Right` is `0`, add current element to result and return result.
+7. Result: `number | "c" | "d" | "e"`
+*/
+type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number, Right extends number = 0, Result = never> =
+	TArray extends readonly []
+		? Result | undefined // If the array is exhausted, and `Index` hasn't been found yet, return `Result` with `undefined`.
+		: keyof TArray & `${number}` extends never
+			// Enters this branch, if `TArray` is empty (e.g., `[]`),
+			// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+			? ExcludeRestElement<TArray> extends infer TWithoutRest extends UnknownArray
+				// Remove the rest element and recurse further with the elements AFTER the rest element,
+				// Set `Index` to `0` & `Right` to `Index`, so that elements keep getting matched until `Right` reaches `0`.
+				// Also, add the rest element to `Result`.
+				? ArrayAtPositiveIndex<TWithoutRest, 0, Index, Result | ExtractRestElement<TArray>>
+				: never // Should never happen
+			: TArray extends readonly [(infer First)?, ...infer Rest]
+				? Index extends 0
+					? Right extends 0
+						? Result | First | If<IsOptionalKeyOf<TArray, '0'>, undefined, never> // If there's a match, and `Right` is `0`, return `Result` with the current element.
+						: ArrayAtPositiveIndex<Rest, Index, Subtract<Right, 1>, Result | First> // Enters this branch for elements after the rest element, here we add the current element to the result and decrement `Right`.
+					: ArrayAtPositiveIndex<Rest, Subtract<Index, 1>, Right, Result> // Enters this branch for elements before the rest element, here we decrement `Index` and recurse further.
+				: never; // Should never happen
+
+/**
+Recursion order for `ArrayAtNegativeIndex<["a", "b", "c", ...number[], "d", "e"], -5>`:
+
+1. `ArrayAtNegativeIndex<["a", "b", "c", ...number[], "d", "e"], -5, 0, never>` // No match, increment `Index`.
+2. `ArrayAtNegativeIndex<["a", "b", "c", ...number[], "d"], -4, 0, never>` // No match, increment `Index`.
+3. `ArrayAtNegativeIndex<["a", "b", "c", ...number[]], -3, 0, never>` // Found rest element, set `Index` to `-1`, `Left` to `Sum<Index, 1>` (i.e., `-2`), add rest element to result.
+4. `ArrayAtNegativeIndex<["a", "b", "c"], -1, -2, number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
+5. `ArrayAtNegativeIndex<["a", "b"], -1, -1, "c" | number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
+6. `ArrayAtNegativeIndex<["a"], -1, 0, "b" | "c" | number>` // Match found, `Left` is `0`, add current element to result and return result.
+7. Result: "a" | "b" | "c" | number
+*/
+type ArrayAtNegativeIndex<TArray extends UnknownArray, Index extends number, Left extends number = 0, Result = never> =
+	TArray extends readonly []
+		? Result | undefined // If the array is exhausted, and `Index` hasn't been found yet, return `Result` with `undefined`.
+		: number extends TArray['length']
+			// Enters this branch, if `TArray` contains a rest element.
+			? TArray extends readonly [...infer Rest, infer L]
+				? Index extends -1
+					? L // If an element after the rest element matches, return it.
+					: ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Left, Result> // Otherwise, decrement `Index`.
+				// Enters this branch, if `TArray` contains no elements after the rest element.
+				: ExcludeRestElement<TArray> extends infer TWithoutRest extends UnknownArray
+					// Remove the rest element and recurse further with the elements BEFORE the rest element,
+					// Set `Index` to `-1` & `Left` to `Sum<Index, 1>`, so that elements keep getting matched until `Left` reaches `0`.
+					// Also, add the rest element to `Result`.
+					? ArrayAtNegativeIndex<TWithoutRest, -1, Sum<Index, 1>, ExtractRestElement<TArray> | Result>
+					: never // Should never happen
+			: TArray extends readonly [...infer Rest, (infer Last)?]
+				? Index extends -1
+					? TArray extends readonly [...infer Rest, infer Last] // If `Last` is not optional
+						? Left extends 0
+							? Last | Result // If there's a match, and `Left` is `0`, return `Result` with `Last`.
+							: ArrayAtNegativeIndex<Rest, Index, Sum<Left, 1>, Last | Result> // If there's a match, and `Left` is not `0`, increment `Left` and add `Last` to `Result`.
+						: ArrayAtNegativeIndex<Rest, Index, Left, Last | Result> // If `Last` is optional, just add it to `Result` without changing anything else.
+					: TArray extends readonly [...infer Rest, unknown]
+						? ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Left, Result> // If current element is not optional, just increment `Index`.
+						: ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Subtract<Left, 1>, Result> // If current element is optional, increment `Index` and decrement `Left`.
+				: never; // Should never happen
+
+export {};
