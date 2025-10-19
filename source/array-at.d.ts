@@ -1,11 +1,15 @@
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
 import type {ExtractRestElement} from './extract-rest-element.d.ts';
 import type {If} from './if.d.ts';
+import type {IntRange} from './int-range.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
+import type {LessThan} from './less-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
+import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Sum} from './sum.d.ts';
+import type {TupleOf} from './tuple-of.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -70,36 +74,12 @@ export type ArrayAt<TArray extends UnknownArray, Index extends number> =
 			: never // Should never happen
 		: never; // Should never happen
 
-/**
-Recursion order for `ArrayAtPositiveIndex<['a', 'b', ...number[], 'c', 'd', 'e'], 4>`:
-
-1. `ArrayAtPositiveIndex<['a', 'b', ...number[], 'c', 'd', 'e'], 4>` // No match, decrement `Index`.
-2. `ArrayAtPositiveIndex<['b', ...number[], 'c', 'd', 'e'], 3, 0, never>` // No match, decrement `Index`.
-3. `ArrayAtPositiveIndex<[...number[], 'c', 'd', 'e'], 2, 0, number>` // Found rest element, set `Index` to `0`, `Right` to `Index` (i.e., `2`), add rest element to result.
-4. `ArrayAtPositiveIndex<['c', 'd', 'e'], 0, 2, number | 'c'>` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
-5. `ArrayAtPositiveIndex<['d', 'e'], 0, 1, number | 'c' | 'd'>` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
-6. `ArrayAtPositiveIndex<['e'], 0, 0, number | 'c' | 'd' | 'e'>` // Match found, `Right` is `0`, add current element to result and return result.
-
-Result: `number | 'c' | 'd' | 'e'`
-*/
-type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number, Right extends number = 0, Result = never> =
-	TArray extends readonly []
-		? Result | undefined // If the array is exhausted, return `Result` with `undefined`.
-		: keyof TArray & `${number}` extends never
-			// Enters this branch, if `TArray` is empty (e.g., `[]`),
-			// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-			? ExcludeRestElement<TArray> extends infer TWithoutRest extends UnknownArray
-				// Remove the rest element and recurse further with the elements after the rest element,
-				// Set `Index` to `0` & `Right` to `Index`, so that elements keep getting matched until `Right` reaches `0`.
-				? ArrayAtPositiveIndex<TWithoutRest, 0, Index, Result | ExtractRestElement<TArray>> // Also, add the rest element to `Result`.
-				: never // Should never happen
-			: TArray extends readonly [(infer First)?, ...infer Rest]
-				? Index extends 0
-					? Right extends 0
-						? Result | First | If<IsOptionalKeyOf<TArray, '0'>, undefined, never> // If there's a match, and `Right` is `0`, return `Result` with `First`.
-						: ArrayAtPositiveIndex<Rest, Index, Subtract<Right, 1>, Result | First> // Enters this branch for elements after the rest element, so `First` cannot be optional here.
-					: ArrayAtPositiveIndex<Rest, Subtract<Index, 1>, Right, Result> // Enters this branch for elements before the rest element.
-				: never; // Should never happen
+type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number> =
+	SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
+		? LessThan<Index, Required<BeforeRest>['length']> extends true
+			? BeforeRest[Index]
+			: Rest[number] | AfterRest[IntRange<0, Sum<Subtract<Index, Required<BeforeRest>['length']>, 1>>]
+		: never; // Should never happen
 
 /**
 Recursion order for `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[], 'd', 'e'], -5>`:
