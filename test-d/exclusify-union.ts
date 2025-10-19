@@ -46,9 +46,11 @@ expectType<NonRecursiveType>({} as ExclusifyUnion<NonRecursiveType>);
 
 // Mix of non-recursive and recursive types
 expectType<{a: string; b?: never} | {a: number; b: true} | undefined>({} as ExclusifyUnion<{a: string} | {a: number; b: true} | undefined>);
-expectType<RegExp | {test: string}>({} as ExclusifyUnion<RegExp | {test: string}>);
-expectType<RegExp | null | {foo?: string; bar?: never; baz?: never} | {foo?: never; bar: number; baz: any}>(
-	{} as ExclusifyUnion<RegExp | null | {foo?: string} | {bar: number; baz: any}>,
+expectType<Date | {DDMMYYYY: string; MMDDYYYY?: never} | {DDMMYYYY?: never; MMDDYYYY: string}>(
+	{} as ExclusifyUnion<Date | {DDMMYYYY: string} | {MMDDYYYY: string}>,
+);
+expectType<RegExp | null | {foo: string; bar?: never; baz?: never} | {foo?: never; bar: number; baz: {qux: string}}>(
+	{} as ExclusifyUnion<RegExp | null | {foo: string} | {bar: number; baz: {qux: string}}>,
 );
 
 // Boundary types
