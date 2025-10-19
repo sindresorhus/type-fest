@@ -69,15 +69,6 @@ type Payment = ExclusifyUnion<CardPayment | PaypalPayment>;
 function processPayment2(payment: Payment) {
 	const details = payment.cardNumber ?? payment.paypalId; // Ok
 	//=> string
-
-	// Union members can be narrowed using appropriate checks
-	if (typeof payment.cardNumber === 'string') {
-		const cardPayment = payment;
-		//=> {amount: number; cardNumber: string; paypalId?: never}
-	} else {
-		const cardPayment = payment;
-		//=> {amount: number; paypalId: string; cardNumber?: never}
-	}
 }
 ```
 
