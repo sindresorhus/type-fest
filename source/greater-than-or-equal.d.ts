@@ -19,6 +19,12 @@ GreaterThanOrEqual<1, 5>;
 */
 export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
 	? never
-	: A extends B ? true : GreaterThan<A, B>;
+	: A extends number // For distributing `A`
+		? B extends number // For distributing `B`
+			? A extends B
+				? true
+				: GreaterThan<A, B>
+			: never // Should never happen
+		: never; // Should never happen
 
 export {};

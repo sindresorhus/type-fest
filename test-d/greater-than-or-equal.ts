@@ -27,6 +27,7 @@ expectType<GreaterThanOrEqual<-16 | 16, 0>>({} as boolean);
 expectType<GreaterThanOrEqual<-4 | 45, 20 | 30>>({} as boolean);
 expectType<GreaterThanOrEqual<1 | -1 | 3, 0 | 2>>({} as boolean);
 expectType<GreaterThanOrEqual<1 | 2 | 3, 3 | 4>>({} as boolean);
+expectType<GreaterThanOrEqual<1, 1 | 2>>({} as boolean);
 
 expectType<GreaterThanOrEqual<PositiveInfinity, -999>>(true);
 expectType<GreaterThanOrEqual<PositiveInfinity, 999>>(true);
