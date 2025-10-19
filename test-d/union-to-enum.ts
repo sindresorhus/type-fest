@@ -37,6 +37,12 @@ expectType<UnionToEnum<'left' | 'right' | 'up' | 'down', {numeric: true}>>({left
 type BigUnion = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
 expectType<UnionToEnum<BigUnion>>({a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f', g: 'g'} as const);
 
+// Symbols with numeric indices
+expectType<UnionToEnum<[typeof sym1, typeof sym2], {numeric: true}>>({[sym1]: 1, [sym2]: 2} as const);
+
+// Readonly tuple input
+expectType<UnionToEnum<readonly ['a', 'b', 'c']>>({a: 'a', b: 'b', c: 'c'} as const);
+
 // Non-literal input fallback
 expectType<UnionToEnum<string>>({});
 expectType<UnionToEnum<number>>({});
