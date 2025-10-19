@@ -71,16 +71,16 @@ export type ArrayAt<TArray extends UnknownArray, Index extends number> =
 		: never; // Should never happen
 
 /**
-Recursion order for `ArrayAtPositiveIndex<["a", "b", ...number[], "c", "d", "e"], 4>`:
+Recursion order for `ArrayAtPositiveIndex<['a', 'b', ...number[], 'c', 'd', 'e'], 4>`:
 
-1. `ArrayAtPositiveIndex<["a", "b", ...number[], "c", "d", "e"], 4>` // No match, decrement `Index`.
-2. `ArrayAtPositiveIndex<["b", ...number[], "c", "d", "e"], 3, 0, never>` // No match, decrement `Index`.
-3. `ArrayAtPositiveIndex<[...number[], "c", "d", "e"], 2, 0, number>` // Found rest element, set `Index` to `0`, `Right` to `Index` (i.e., `2`), add rest element to result.
-4. `ArrayAtPositiveIndex<["c", "d", "e"], 0, 2, number | "c">` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
-5. `ArrayAtPositiveIndex<["d", "e"], 0, 1, number | "c" | "d">` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
-6. `ArrayAtPositiveIndex<["e"], 0, 0, number | "c" | "d" | "e">` // Match found, `Right` is `0`, add current element to result and return result.
+1. `ArrayAtPositiveIndex<['a', 'b', ...number[], 'c', 'd', 'e'], 4>` // No match, decrement `Index`.
+2. `ArrayAtPositiveIndex<['b', ...number[], 'c', 'd', 'e'], 3, 0, never>` // No match, decrement `Index`.
+3. `ArrayAtPositiveIndex<[...number[], 'c', 'd', 'e'], 2, 0, number>` // Found rest element, set `Index` to `0`, `Right` to `Index` (i.e., `2`), add rest element to result.
+4. `ArrayAtPositiveIndex<['c', 'd', 'e'], 0, 2, number | 'c'>` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
+5. `ArrayAtPositiveIndex<['d', 'e'], 0, 1, number | 'c' | 'd'>` // Match found, `Right` not yet `0`, decrement `Right`, add current element to result.
+6. `ArrayAtPositiveIndex<['e'], 0, 0, number | 'c' | 'd' | 'e'>` // Match found, `Right` is `0`, add current element to result and return result.
 
-Result: `number | "c" | "d" | "e"`
+Result: `number | 'c' | 'd' | 'e'`
 */
 type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number, Right extends number = 0, Result = never> =
 	TArray extends readonly []
@@ -102,26 +102,38 @@ type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number, Rig
 				: never; // Should never happen
 
 /**
-Recursion order for `ArrayAtNegativeIndex<["a", "b", "c", ...number[], "d", "e"], -5>`:
+Recursion order for `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[], 'd', 'e'], -5>`:
 
-1. `ArrayAtNegativeIndex<["a", "b", "c", ...number[], "d", "e"], -5, 0, never>` // No match, increment `Index`.
-2. `ArrayAtNegativeIndex<["a", "b", "c", ...number[], "d"], -4, 0, never>` // No match, increment `Index`.
-3. `ArrayAtNegativeIndex<["a", "b", "c", ...number[]], -3, 0, never>` // Found rest element, set `Index` to `-1`, `Left` to `Sum<Index, 1>` (i.e., `-2`), add rest element to result.
-4. `ArrayAtNegativeIndex<["a", "b", "c"], -1, -2, number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
-5. `ArrayAtNegativeIndex<["a", "b"], -1, -1, "c" | number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
-6. `ArrayAtNegativeIndex<["a"], -1, 0, "b" | "c" | number>` // Match found, `Left` is `0`, add current element to result and return result.
+1. `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[], 'd', 'e'], -5, 0, never>` // No match, increment `Index`.
+2. `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[], 'd'], -4, 0, never>` // No match, increment `Index`.
+3. `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[]], -3, 0, never>` // Found rest element, set `Index` to `-1`, `Left` to `Sum<Index, 1>` (i.e., `-2`), add rest element to result.
+4. `ArrayAtNegativeIndex<['a', 'b', 'c'], -1, -2, number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
+5. `ArrayAtNegativeIndex<['a', 'b'], -1, -1, 'c' | number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
+6. `ArrayAtNegativeIndex<['a'], -1, 0, 'b' | 'c' | number>` // Match found, `Left` is `0`, add current element to result and return result.
 
-Result: "a" | "b" | "c" | number
+Result: `'a' | 'b' | 'c' | number`
 
 ---
 
-Recursion order for `ArrayAtNegativeIndex<["a", "b", "c"?, ...number[]], -1>`:
+Recursion order for `ArrayAtNegativeIndex<['a', 'b', 'c'?, ...number[]], -1>`:
 
-1. `ArrayAtNegativeIndex<["a", "b", "c"?, ...number[]], -1, 0, never>` // Found rest element, set `Index` to `-1`, `Left` to `Sum<Index, 1>` (i.e., `0`), add rest element to result.
-2. `ArrayAtNegativeIndex<["a", "b", "c"?], -1, 0, number>` // Match found, current element is optional, add it to result without changing anything else.
-3. `ArrayAtNegativeIndex<["a", "b"], -1, 0, number | "c">` // Match found, current element is not optional, add it to result and return result.
+1. `ArrayAtNegativeIndex<['a', 'b', 'c'?, ...number[]], -1, 0, never>` // Found rest element, set `Index` to `-1`, `Left` to `Sum<Index, 1>` (i.e., `0`), add rest element to result.
+2. `ArrayAtNegativeIndex<['a', 'b', 'c'?], -1, 0, number>` // Match found, current element is optional, add it to result without changing anything else.
+3. `ArrayAtNegativeIndex<['a', 'b'], -1, 0, number | 'c'>` // Match found, current element is not optional, add it to result and return result.
 
-Result: "b" | "c" | number
+Result: `'b' | 'c' | number`
+
+---
+
+Recursion order for `ArrayAt<['a', 'b', 'c', 'd'?, 'e'?], -3>`:
+
+1. `ArrayAtNegativeIndex<['a', 'b', 'c', 'd'?, 'e'?], -3, 0, never>` // No match, current element is optional, increment `Index` & decrement `Left`.
+2. `ArrayAtNegativeIndex<['a', 'b', 'c', 'd'?], -2, -1, never>` // No match, current element is optional, increment `Index` & decrement `Left`.
+3. `ArrayAtNegativeIndex<['a', 'b', 'c'], -1, -2, never>` // Match found, current element is not optional, `Left` is not `0`, increment `Left`, add current element to result.
+4. `ArrayAtNegativeIndex<['a', 'b'], -1, -1, 'c'>` // Match found, current element is not optional, `Left` is not `0`, increment `Left`, add current element to result.
+5. `ArrayAtNegativeIndex<['a'], -1, 0, 'b' | 'c'>` // Match found, current element is not optional, `Left` is `0`, add current element to result and return result.
+
+Result: `'a' | 'b' | 'c'`
 */
 type ArrayAtNegativeIndex<TArray extends UnknownArray, Index extends number, Left extends number = 0, Result = never> =
 	TArray extends readonly []
