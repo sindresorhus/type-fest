@@ -1,6 +1,7 @@
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
 import type {ExtractRestElement} from './extract-rest-element.d.ts';
 import type {If} from './if.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
@@ -144,7 +145,7 @@ type ArrayAtNegativeIndex<TArray extends UnknownArray, Index extends number, Lef
 						? Left extends 0
 							? Last | Result // If there's a match, and `Left` is `0`, return `Result` with `Last`.
 							: ArrayAtNegativeIndex<Rest, Index, Sum<Left, 1>, Last | Result> // If there's a match, and `Left` is not `0`, increment `Left` and add `Last` to `Result`.
-						: ArrayAtNegativeIndex<Rest, Index, Left, Last | Result> // If `Last` is optional, just add it to `Result` without changing anything else.
+						: ArrayAtNegativeIndex<Rest, Index, Left, Last | If<IsExactOptionalPropertyTypesEnabled, never, undefined> | Result> // If `Last` is optional, just add it to `Result` without changing anything else.
 					: TArray extends readonly [...infer Rest, unknown]
 						? ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Left, Result> // If `Last` is not optional, just increment `Index`.
 						: ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Subtract<Left, 1>, Result> // If `Last` is optional, increment `Index` and decrement `Left`.
