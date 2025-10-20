@@ -17,7 +17,7 @@ type UnionToEnumOptions = {
 
 	@example
 	```
-	type E2 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true}>;
+	type E1 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true}>;
 	//=> { Play: 1; Pause: 2; Stop: 3 }
 
 	type E2 = UnionToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: 3}>;
@@ -115,7 +115,11 @@ const Template = createEnum(verb, resource);
 @category Object
 */
 export type UnionToEnum<
-	Keys extends PropertyKey | readonly PropertyKey[],
+	Keys extends (
+		[Keys] extends [PropertyKey]
+			? PropertyKey
+			: readonly PropertyKey[]
+	),
 	Options extends UnionToEnumOptions = {},
 > = IsNever<Keys> extends true ? {}
 	: _UnionToEnum<
