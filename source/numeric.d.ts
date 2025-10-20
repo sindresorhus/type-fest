@@ -1,9 +1,6 @@
-import type {IsFloat} from './is-float.d.ts';
+import type {Numeric, Zero} from './internal/numeric.d.ts';
 import type {IsInteger} from './is-integer.d.ts';
-
-export type _Numeric = number | bigint;
-
-type Zero = 0 | 0n;
+import type {IsFloat} from './is-float.d.ts';
 
 /**
 Matches the hidden `Infinity` type.
@@ -146,7 +143,11 @@ Use-case: Validating and documenting parameters.
 
 @category Numeric
 */
-export type Negative<T extends _Numeric> = T extends Zero ? never : `${T}` extends `-${string}` ? T : never;
+export type Negative<N extends Numeric> =
+	N extends Zero ? never
+		: N extends NegativeInfinity ? N
+			: `${N}` extends `-${number}` ? N
+				: never;
 
 /**
 A negative (`-∞ < x < 0`) `number` that is an integer.
@@ -180,7 +181,7 @@ declare function setLength<T extends number>(length: NonNegative<T>): void;
 
 @category Numeric
 */
-export type NonNegative<T extends _Numeric> = T extends Zero ? T : Negative<T> extends never ? T : never;
+export type NonNegative<T extends Numeric> = T extends Zero ? T : Negative<T> extends never ? T : never;
 
 /**
 A non-negative (`0 <= x < ∞`) `number` that is an integer.
@@ -219,6 +220,6 @@ type ShouldBeTrue = IsNegative<-1>;
 
 @category Numeric
 */
-export type IsNegative<T extends _Numeric> = T extends Negative<T> ? true : false;
+export type IsNegative<T extends Numeric> = T extends Negative<T> ? true : false;
 
 export {};

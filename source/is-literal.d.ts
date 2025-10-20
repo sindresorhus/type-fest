@@ -1,5 +1,5 @@
 import type {Primitive} from './primitive.d.ts';
-import type {_Numeric} from './numeric.d.ts';
+import type {Numeric} from './internal/numeric.d.ts';
 import type {CollapseLiterals, IfNotAnyOrNever, IsNotFalse, IsPrimitive} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
@@ -173,7 +173,7 @@ endsWith('abc123', end);
 @category Type Guard
 @category Utilities
 */
-export type IsNumericLiteral<T> = LiteralChecks<T, _Numeric>;
+export type IsNumericLiteral<T> = LiteralChecks<T, Numeric>;
 
 /**
 Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
