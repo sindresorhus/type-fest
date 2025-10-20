@@ -80,11 +80,10 @@ type G = Or<never, never>;
 export type Or<A extends boolean, B extends boolean> =
 	_Or<If<IsNever<A>, false, A>, If<IsNever<B>, false, B>>; // `never` is treated as `false`
 
-type _Or<A extends boolean, B extends boolean> =
-	A extends true
+export type _Or<A extends boolean, B extends boolean> = A extends true
+	? true
+	: B extends true
 		? true
-		: B extends true
-			? true
-			: false;
+		: false;
 
 export {};
