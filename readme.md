@@ -78,8 +78,10 @@ type FooWithoutRainbow = Except<Foo, 'rainbow'>;
 
 ## Documentation
 
-Full API documentation with TypeDoc is available at:
+Full API documentation with TypeDoc will be available at:
 **https://sindresorhus.github.io/type-fest/**
+
+*(Once GitHub Pages is enabled in repository settings)*
 
 The documentation includes:
 - Complete type definitions with source code links
