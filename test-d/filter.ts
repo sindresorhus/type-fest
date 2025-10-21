@@ -4,7 +4,7 @@ import type {Filter} from '../source/filter.d.ts';
 type Object1 = {a: number};
 type Object2 = {b: string};
 type Object3 = {x: string} | {y: number} | null;
-class Foo {}
+class Class {}
 
 // Array tests
 
@@ -101,7 +101,7 @@ expectType<Filter<[0, '', false, null, undefined], Boolean>>([]);
 expectType<Filter<['foo1', 'bar2', 'fooo', 'foo3'], `foo${number}`>>(['foo1', 'foo3']);
 
 // Filtering with `Boolean` type but including custom objects with truthy/falsy behavior
-expectType<Filter<[typeof Foo, {}, null, undefined], Boolean>>([Foo, {}]);
+expectType<Filter<[typeof Class, {}, null, undefined], Boolean>>([Class, {}]);
 
 // Filtering with strict = true and union including literals and primitives
 expectType<Filter<[1, '1', 2, '2', true, false], number | `${number}`, {strict: true}>>([1, '1', 2, '2']);
@@ -216,7 +216,7 @@ expectType<Filter<{a: 0; b: ''; c: false; d: null; e: undefined}, Boolean>>({});
 expectType<Filter<{a: 'foo1'; b: 'bar2'; c: 'fooo'; d: 'foo3'}, `foo${number}`>>({a: 'foo1', d: 'foo3'});
 
 // Filtering with `Boolean` type but including custom objects with truthy/falsy behavior
-expectType<Filter<{a: typeof Foo; b: {}; c: null; d: undefined}, Boolean>>({a: Foo, b: {}});
+expectType<Filter<{a: typeof Class; b: {}; c: null; d: undefined}, Boolean>>({a: Class, b: {}});
 
 // Filtering with strict = true and union including literals and primitives
 expectType<Filter<{a: 1; b: '1'; c: 2; d: '2'; e: true; f: false}, number | `${number}`, {strict: true}>>({a: 1, b: '1', c: 2, d: '2'});

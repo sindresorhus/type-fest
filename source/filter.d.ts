@@ -96,22 +96,22 @@ type A6 = Filter<[0, '', false, null, undefined, 'ok', 42], Boolean>;
 ```
 import type {Filter} from 'type-fest';
 
-type O1 = FilterObject<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3>;
+type O1 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3>;
 //=> {c: 3 | 4; d?: 3}
 
-type O2 = FilterObject<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3, {strict: true}>;
+type O2 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3, {strict: true}>;
 //=> {c?: 3}
 
-type O3 = FilterObject<{a: 'foo1'; b: 'bar2'; c: 'fooo'; d: 'foo3'}, `foo${number}`>;
+type O3 = Filter<{a: 'foo1'; b: 'bar2'; c: 'fooo'; d: 'foo3'}, `foo${number}`>;
 //=> {a: 'foo1'; d: 'foo3'}
 
-type O4 = FilterObject<{a: 1; b: '2'; c: 3; d: 'foo'; e: false}, string | number>;
+type O4 = Filter<{a: 1; b: '2'; c: 3; d: 'foo'; e: false}, string | number>;
 //=> {a: 1; b: '2'; c: 3; d: 'foo'}
 
-type O5 = FilterObject<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean>;
+type O5 = Filter<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean>;
 //=> {a: true; e: 1}
 
-type O6 = FilterObject<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42}, Boolean>;
+type O6 = Filter<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42}, Boolean>;
 //=> {f: 'ok'; g: 42}
 ```
 
@@ -164,7 +164,7 @@ type FilterArray<
 		: never;
 
 /**
-Internal implementation of {@link FilterArray}.
+Core implementation of {@link FilterArray}.
 */
 type _FilterArray<
 	Array_ extends UnknownArray, Type,
