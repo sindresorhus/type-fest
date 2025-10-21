@@ -4,10 +4,12 @@ import outdent from 'outdent';
 const CODEBLOCK_REGEX = /```(?:ts|typescript)?(?<code>[\s\S]*?)```/g;
 const PLAYGROUND_BASE_URL = 'https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/';
 
-export const generatePlaygroundLink = code => {
+const generatePlaygroundLink = code => {
 	const zippedCode = lzString.compressToEncodedURIComponent(code);
 	return `${PLAYGROUND_BASE_URL}${zippedCode}`;
 };
+
+export const generateLinkText = code => `[Playground Link](${generatePlaygroundLink(code)})`;
 
 export const requirePlaygroundLinkRule = /** @type {const} */ ({
 	meta: {
@@ -17,8 +19,8 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 		},
 		fixable: 'code',
 		messages: {
-			missingPlaygroundLink: 'Example codeblocks must have an associated playground link. Add the following after the example codeblock:\n[Playground Link]({{playgroundURL}})',
-			incorrectPlaygroundLink: 'Incorrect playground link. Update the link to the following:\n{{playgroundURL}}',
+			missingPlaygroundLink: 'Example codeblocks must have an associated playground link. Add the following after the example codeblock:\n[Playground Link]({{playgroundLink}})',
+			incorrectPlaygroundLink: 'Incorrect playground link. Update the link to the following:\n{{playgroundLink}}',
 		},
 		schema: [],
 	},
@@ -58,12 +60,12 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 							continue;
 						}
 
-						const playgroundURL = generatePlaygroundLink(outdent.string(code));
+						const playgroundLink = generatePlaygroundLink(outdent.string(code));
 
 						const nextLineIndex = match.index + match[0].length + 1; // +1 to move past the newline
 						const nextLine = comment.slice(nextLineIndex).split('\n')[0];
 
-						if (nextLine.includes(playgroundURL)) {
+						if (nextLine.includes(playgroundLink)) {
 							continue;
 						}
 
@@ -75,7 +77,7 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 
 						const updatePlaygroundLink = nextLine.includes(PLAYGROUND_BASE_URL);
 						const leadingSpaces = nextLine.slice(0, nextLine.length - nextLine.trimStart().length);
-						const insertText = `${leadingSpaces}[Playground Link](${playgroundURL})` + (updatePlaygroundLink ? '' : '\n');
+						const insertText = `${leadingSpaces}${generateLinkText(outdent.string(code))}` + (updatePlaygroundLink ? '' : '\n');
 
 						context.report({
 							loc: {
@@ -84,7 +86,7 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 							},
 							messageId: updatePlaygroundLink ? 'incorrectPlaygroundLink' : 'missingPlaygroundLink',
 							data: {
-								playgroundURL,
+								playgroundLink,
 							},
 							fix(fixer) {
 								return fixer.replaceTextRange(

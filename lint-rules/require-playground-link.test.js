@@ -1,6 +1,6 @@
 import outdent from 'outdent';
 import {createRuleTester} from './test-utils.js';
-import {generatePlaygroundLink, requirePlaygroundLinkRule} from './require-playground-link.js';
+import {generateLinkText, requirePlaygroundLinkRule} from './require-playground-link.js';
 
 const ruleTester = createRuleTester();
 
@@ -11,7 +11,11 @@ const fence = (code, lang = '') =>
 		\`\`\`
 	`;
 
-const linkFor = code => `[Playground Link](${generatePlaygroundLink(code)})`;
+fence.link = (code, lang = '') =>
+	outdent`
+		${fence(code, lang)}
+		${generateLinkText(code)}
+	`;
 
 const jsdoc = (...parts) =>
 	outdent`
@@ -82,31 +86,31 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		exportedType('NoCodeblock', jsdoc('No codeblock here')),
 
 		// Valid link
-		exportedType('CorrectPlayground', jsdoc(fence(codeNumber), linkFor(codeNumber))),
+		exportedType('CorrectPlayground', jsdoc(fence.link(codeNumber))),
 
 		// Valid link on option property
 		exportedOptionsType(
 			'TypeOptions',
-			optionProp('correctPlayground', jsdoc(fence(codeNumber), linkFor(codeNumber))),
+			optionProp('correctPlayground', jsdoc(fence.link(codeNumber))),
 		),
 
 		// Valid link with text before and after
 		exportedType(
 			'WithText',
-			jsdoc('Some description.', fence(codeNumber), linkFor(codeNumber), '@category Some Category'),
+			jsdoc('Some description.', fence.link(codeNumber), '@category Some Category'),
 		),
 
 		// With `@example` tag
-		exportedType('WithExampleTag', jsdoc('@example', fence(codeNumber), linkFor(codeNumber))),
+		exportedType('WithExampleTag', jsdoc('@example', fence.link(codeNumber))),
 
 		// With language specifiers
 		exportedType(
 			'WithLangTs',
-			jsdoc(fence(codeNumber, 'ts'), linkFor(codeNumber)),
+			jsdoc(fence.link(codeNumber, 'ts')),
 		),
 		exportedType(
 			'WithLangTypescript',
-			jsdoc(fence(codeNumber, 'typescript'), linkFor(codeNumber)),
+			jsdoc(fence.link(codeNumber, 'typescript')),
 		),
 
 		// Multiple code blocks
@@ -114,12 +118,10 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			'MultipleCodeBlocks',
 			jsdoc(
 				'@example',
-				fence(codeNumber),
-				linkFor(codeNumber),
+				fence.link(codeNumber),
 				'\nSome text in between.\n',
 				'@example',
-				fence(codeString),
-				linkFor(codeString),
+				fence.link(codeString),
 			),
 		),
 
@@ -127,32 +129,32 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		exportedOptionsType(
 			'MultipleProps',
 			outdent`
-				${optionProp('first', jsdoc(fence(codeNumber), linkFor(codeNumber)))}
+				${optionProp('first', jsdoc(fence.link(codeNumber)))}
 
-				${optionProp('second', jsdoc(fence(codeString), linkFor(codeString)))}
+				${optionProp('second', jsdoc(fence.link(codeString)))}
 			`,
 		),
 
 		// Multiple exports
 		outdent`
-			${exportedType('First', jsdoc(fence(codeNumber, 'ts'), linkFor(codeNumber)))}
+			${exportedType('First', jsdoc(fence.link(codeNumber, 'ts')))}
 
-			${exportedType('Second', jsdoc('@example', fence(codeNumber), linkFor(codeNumber)))}
+			${exportedType('Second', jsdoc('@example', fence.link(codeNumber)))}
 		`,
 
 		// Mixbag
 		outdent`
 			${exportedOptionsType('FirstOptions', outdent`
-				${optionProp('foo', jsdoc(fence(codeNumber), linkFor(codeNumber)))}
+				${optionProp('foo', jsdoc(fence.link(codeNumber)))}
 
-				${optionProp('bar', jsdoc(fence(codeString), linkFor(codeString)))}
+				${optionProp('bar', jsdoc(fence.link(codeString)))}
 			`)}
 
-			${exportedType('First', jsdoc('Description here.', fence(codeNumber), linkFor(codeNumber), '\n@category Sample'))}
+			${exportedType('First', jsdoc('Description here.', fence.link(codeNumber), '\n@category Sample'))}
 
-			${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence(codeNumber), linkFor(codeNumber))))}
+			${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence.link(codeNumber))))}
 
-			${exportedType('Second', jsdoc(fence(codeNumber), linkFor(codeNumber), fence(codeString), linkFor(codeString)))}
+			${exportedType('Second', jsdoc(fence.link(codeNumber), fence.link(codeString)))}
 		`,
 	],
 	invalid: [],
