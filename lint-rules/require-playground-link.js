@@ -1,6 +1,7 @@
 import lzString from 'lz-string';
+import outdent from 'outdent';
 
-const CODEBLOCK_REGEX = /```(?:ts|typescript)?\n(?<code>[\s\S]*?)```/g;
+const CODEBLOCK_REGEX = /```(?:ts|typescript)?(?<code>[\s\S]*?)```/g;
 const PLAYGROUND_BASE_URL = 'https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/';
 
 export const generatePlaygroundLink = code => {
@@ -57,7 +58,7 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 							continue;
 						}
 
-						const playgroundURL = generatePlaygroundLink(code);
+						const playgroundURL = generatePlaygroundLink(outdent.string(code));
 
 						const nextLineIndex = match.index + match[0].length + 1; // +1 to move past the newline
 						const nextLine = comment.slice(nextLineIndex).split('\n')[0];
@@ -73,7 +74,8 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 						const fixerRangeEnd = fixerRangeStart + nextLine.length;
 
 						const updatePlaygroundLink = nextLine.includes(PLAYGROUND_BASE_URL);
-						const insertText = `[Playground Link](${playgroundURL})` + (updatePlaygroundLink ? '' : '\n');
+						const leadingSpaces = nextLine.slice(0, nextLine.length - nextLine.trimStart().length);
+						const insertText = `${leadingSpaces}[Playground Link](${playgroundURL})` + (updatePlaygroundLink ? '' : '\n');
 
 						context.report({
 							loc: {
