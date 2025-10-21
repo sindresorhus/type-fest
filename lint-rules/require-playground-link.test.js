@@ -229,6 +229,22 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 				jsdoc('Some description.\n', fence.link(codeNumber), '\n@category Some Category'),
 			),
 		),
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'WithTextOptions',
+				optionProp(
+					'someOption',
+					jsdoc('Some description.\n', fence(codeNumber), '\n@category Some Category'),
+				),
+			),
+			exportedOptionsType(
+				'WithTextOptions',
+				optionProp(
+					'someOption',
+					jsdoc('Some description.\n', fence.link(codeNumber), '\n@category Some Category'),
+				),
+			),
+		),
 
 		// Multiple code blocks
 		missingPlaygroundLinkError(

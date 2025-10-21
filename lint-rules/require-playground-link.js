@@ -11,6 +11,13 @@ const generatePlaygroundLink = code => {
 
 export const generateLinkText = code => `[Playground Link](${generatePlaygroundLink(code)})`;
 
+const getCodeIndent = code => {
+	const line = code.split('\n').filter(Boolean); // eslint-disable-line unicorn/prefer-array-find
+	const firstLine = line[0];
+	const leadingSpaces = firstLine.slice(0, firstLine.length - firstLine.trimStart().length);
+	return leadingSpaces;
+};
+
 export const requirePlaygroundLinkRule = /** @type {const} */ ({
 	meta: {
 		type: 'suggestion',
@@ -76,8 +83,8 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 						const fixerRangeEnd = fixerRangeStart + nextLine.length;
 
 						const updatePlaygroundLink = nextLine.includes(PLAYGROUND_BASE_URL);
-						const leadingSpaces = nextLine.slice(0, nextLine.length - nextLine.trimStart().length);
-						const insertText = `${leadingSpaces}${generateLinkText(outdent.string(code))}` + (updatePlaygroundLink ? '' : '\n');
+						const indentation = getCodeIndent(code);
+						const insertText = `${indentation}${generateLinkText(outdent.string(code))}` + (updatePlaygroundLink ? '' : '\n');
 
 						context.report({
 							loc: {
