@@ -8,7 +8,5 @@ expectAssignable<{a: string; b: number}>(intersection1);
 declare const intersection2: UnionToIntersection<{a: string} | {b: number} | {a: () => void}>;
 expectAssignable<{a: string | (() => void); b: number}>(intersection2);
 
-// It's possible to index by the resulting type.
-type ObjectsUnion = {a: string; z: string} | {b: string; z: string} | {c: string; z: string};
-declare const value: ObjectsUnion[UnionToIntersection<keyof ObjectsUnion>];
-expectType<string>(value);
+type Assignability<T, U, _K extends T | U> = never;
+type TestAssignability<T, U> = Assignability<T, U, UnionToIntersection<T | U>>;
