@@ -59,27 +59,35 @@ Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type A = UnionMin<1 | 3 | 2>;
+type T1 = UnionMax<1 | 2 | 3>;
 //=> 1
 
-type B = UnionMin<number>;
+type T2 = UnionMax<-1 | -2 | -3>
+//=> -3
+
+type T3 = UnionMax<-1 | 0 | 1>
+//=> -1
+
+type T4 = UnionMax<NegativeInfinity | -1 | 1>;
+//=> NegativeInfinity
+
+type T5 = UnionMax<-1 | 1 | PositiveInfinity>;
+//=> -1
+
+type T6 = UnionMax<number>;
 //=> number
-
-type C = UnionMin<any>;
-//=> any
-
-type D = UnionMin<never>;
-//=> never
 ```
 */
 export type UnionMin<N extends number> =
 	IsAnyOrNever<N> extends true ? N
-		: NegativeInfinity extends N ? NegativeInfinity
-			: SeparateNegatives<N> extends [infer Pos extends number, infer Neg extends number]
-				? IsNever<Neg> extends true
-					? _UnionMin<Pos>
-					: ReverseSign<_UnionMax<ReverseSign<Neg>>>
-				: never;
+		: number extends N ? number
+			: NegativeInfinity extends N ? NegativeInfinity
+				: [N] extends [PositiveInfinity] ? PositiveInfinity
+					: SeparateNegatives<N> extends [infer Pos extends number, infer Neg extends number]
+						? IsNever<Neg> extends true
+							? _UnionMin<Pos>
+							: ReverseSign<_UnionMax<ReverseSign<Neg>>>
+						: never;
 
 /**
 The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.
@@ -96,27 +104,35 @@ Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type A = UnionMax<1 | 3 | 2>;
+type T1 = UnionMax<1 | 2 | 3>;
 //=> 3
 
-type B = UnionMax<number>;
+type T2 = UnionMax<-1 | -2 | -3>
+//=> -1
+
+type T3 = UnionMax<-1 | 0 | 1>
+//=> 1
+
+type T4 = UnionMax<NegativeInfinity | -1 | 1>;
+//=> 1
+
+type T5 = UnionMax<-1 | 1 | PositiveInfinity>;
+//=> PositiveInfinity
+
+type T6 = UnionMax<number>;
 //=> number
-
-type C = UnionMax<any>;
-//=> any
-
-type D = UnionMax<never>;
-//=> never
 ```
 */
 export type UnionMax<N extends number> =
 	IsAnyOrNever<N> extends true ? N
-		: PositiveInfinity extends N ? PositiveInfinity
-			: SeparateNegatives<N> extends [infer Pos extends number, infer Neg extends number]
-				? IsNever<Pos> extends true
-					? ReverseSign<_UnionMin<ReverseSign<Neg>>>
-					: _UnionMax<Pos>
-				: never;
+		: number extends N ? number
+			: PositiveInfinity extends N ? PositiveInfinity
+				: [N] extends [NegativeInfinity] ? NegativeInfinity
+					: SeparateNegatives<N> extends [infer Pos extends number, infer Neg extends number]
+						? IsNever<Pos> extends true
+							? ReverseSign<_UnionMin<ReverseSign<Neg>>>
+							: _UnionMax<Pos>
+						: never;
 
 /**
 The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
@@ -177,6 +193,9 @@ type T1 = SeparateNegatives<-1 | 2 | 4 | -5>
 
 type T2 = SeparateNegatives<PositiveInfinity | NegativeInfinity | 0 | -1>
 //=> [0 | PositiveInfinity, NegativeInfinity | -1]
+
+type T3 = SeparateNegatives<1 | 4>
+//=> [4 | 1, never]
 ```
 */
 export type SeparateNegatives<N extends Numeric> =
@@ -217,21 +236,19 @@ type T7 = ToNumber<'-Infinity'>;
 //=> -Infinity
 ```
 
-@category String
+@see {@link ToBigint}
 @category Numeric
-@category Template literal
 */
-
 export type ToNumber<T extends Numeric | string | boolean> =
 	`${T}` extends `${infer F}${infer R}`
-		? F extends '0' ? ToNumber<R> // Prevent returning number when preseding `T` with 0, (e.g, '00123')
-			: `${T}` extends `${infer N extends number}` ? N
-				: `${T}` extends `${infer B extends bigint}n` ? ToNumber<B>
+		? F extends '0' ? ToNumber<R> // Prevent returning `number` when preseding `T` with 0, (e.g, '00123' -> 123)
+			: `${T}` extends `${infer N extends number}` ? N // For number strings (e.g, '123' -> 123)
+				: `${T}` extends `${infer B extends number}n` ? B // For bigint strings (e.g, '123n' -> 123)
 					: `${T}` extends 'Infinity' ? PositiveInfinity
 						: `${T}` extends '-Infinity' ? NegativeInfinity
-							: T extends boolean ? {true: 1; false: 0}[`${T}`]
-								: never
-		: never;
+							: T extends boolean ? {true: 1; false: 0}[`${T}`] // For boolean (e.g, true -> 1)
+								: never // Not a numeric convertable type
+		: string extends T ? never : 0; // `Number('')` returns `0`
 
 /**
 Converts a numeric type to a bigint.
@@ -253,6 +270,9 @@ type T4 = ToBigint<true>;
 type T5 = ToBigint<false>;
 //=> 0n
 ```
+
+@see {@link ToNumber}
+@category Numeric
 */
 // TODO: push `Round` type branch for review, and replace here.
 export type ToBigint<N extends Numeric | string | boolean> =
