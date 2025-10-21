@@ -50,6 +50,12 @@ const missingPlaygroundLinkError = (code, output, count = 1) => ({
 	output,
 });
 
+const incorrectPlaygroundLinkError = (code, output, count = 1) => ({
+	code,
+	errors: Array.from({length: count}, () => ({messageId: 'incorrectPlaygroundLink'})),
+	output,
+});
+
 // Reusable code samples
 const codeNumber = 'type Test = number;';
 const codeString = 'type Test = string;';
@@ -258,6 +264,23 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			),
 			2,
 		),
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'MultipleCodeBlocksOptions',
+				optionProp(
+					'someOption',
+					jsdoc(fence(codeNumber, 'ts'), '\nSome text\n', '@example', fence(codeString)),
+				),
+			),
+			exportedOptionsType(
+				'MultipleCodeBlocksOptions',
+				optionProp(
+					'someOption',
+					jsdoc(fence.link(codeNumber, 'ts'), '\nSome text\n', '@example', fence.link(codeString)),
+				),
+			),
+			2,
+		),
 
 		// Multiple properties
 		missingPlaygroundLinkError(
@@ -293,6 +316,43 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 				${exportedType('Second', jsdoc('@example', fence.link(codeNumber), '@category Test'))}
 			`,
 			2,
+		),
+
+		// Mixbag
+		missingPlaygroundLinkError(
+			outdent`
+				${exportedOptionsType('FirstOptions', outdent`
+					${optionProp('foo', jsdoc(fence(codeNumber)))}
+
+					${optionProp('bar', jsdoc(fence(codeString)))}
+				`)}
+
+				${exportedType('First', jsdoc('Description here.', fence(codeNumber), '\n@category Sample'))}
+
+				${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence(codeNumber))))}
+
+				${exportedType('Second', jsdoc(fence(codeNumber), fence(codeString)))}
+			`,
+			outdent`
+				${exportedOptionsType('FirstOptions', outdent`
+					${optionProp('foo', jsdoc(fence.link(codeNumber)))}
+
+					${optionProp('bar', jsdoc(fence.link(codeString)))}
+				`)}
+
+				${exportedType('First', jsdoc('Description here.', fence.link(codeNumber), '\n@category Sample'))}
+
+				${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence.link(codeNumber))))}
+
+				${exportedType('Second', jsdoc(fence.link(codeNumber), fence.link(codeString)))}
+			`,
+			6,
+		),
+
+		// Incorrect existing link
+		incorrectPlaygroundLinkError(
+			exportedType('IncorrectLink', jsdoc(fence(codeNumber), generateLinkText(codeString))),
+			exportedType('IncorrectLink', jsdoc(fence.link(codeNumber))),
 		),
 	],
 });
