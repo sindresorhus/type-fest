@@ -183,7 +183,7 @@ Returns the trailing static, fixed-length portion of the given middle spread arr
 export type TrailingStaticPartOfMiddleSpreadArray<T extends UnknownArray> = StaticPartOfLeadingSpreadArray<T>;
 
 /**
-Returns the leading variable, fixed-length portion of the given middle spread array.
+Returns the leading static, fixed-length portion of the given middle spread array.
 */
 export type LeadingStaticPartOfMiddleSpreadArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends readonly [infer U, ...infer V]

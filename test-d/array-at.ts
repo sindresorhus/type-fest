@@ -58,7 +58,7 @@ expectType<ArrayAt<TrailingSpreadArray, -3>>({} as boolean | string | number | u
 type TrailingSpreadArray2 = [object, number, boolean?, ...string[]];
 expectType<ArrayAt<TrailingSpreadArray2, 0>>({} as object);
 expectType<ArrayAt<TrailingSpreadArray2, 1>>({} as number);
-expectType<ArrayAt<TrailingSpreadArray2, 2>>({} as boolean);
+expectType<ArrayAt<TrailingSpreadArray2, 2>>({} as boolean | undefined);
 expectType<ArrayAt<TrailingSpreadArray2, 3>>({} as string | undefined);
 expectType<ArrayAt<TrailingSpreadArray2, -1>>({} as string | number | boolean);
 expectType<ArrayAt<TrailingSpreadArray2, -2>>({} as string | number | boolean | object);
@@ -79,19 +79,19 @@ expectType<ArrayAt<UnionArray, 1>>({} as number | string | undefined);
 expectType<ArrayAt<UnionArray, -1>>({} as number | string | boolean);
 expectType<ArrayAt<UnionArray, -2>>({} as undefined | string | boolean);
 
-expectType<ArrayAt<string[], 0>>({} as string);
-expectType<ArrayAt<string[], 1>>({} as string);
-expectType<ArrayAt<string[], 2>>({} as string);
-expectType<ArrayAt<string[], -1>>({} as string);
-expectType<ArrayAt<string[], -2>>({} as string);
-expectType<ArrayAt<string[], -3>>({} as string);
+expectType<ArrayAt<string[], 0>>({} as string | undefined);
+expectType<ArrayAt<string[], 1>>({} as string | undefined);
+expectType<ArrayAt<string[], 2>>({} as string | undefined);
+expectType<ArrayAt<string[], -1>>({} as string | undefined);
+expectType<ArrayAt<string[], -2>>({} as string | undefined);
+expectType<ArrayAt<string[], -3>>({} as string | undefined);
 
-expectType<ArrayAt<readonly string[], 0>>({} as string);
-expectType<ArrayAt<readonly string[], 1>>({} as string);
-expectType<ArrayAt<readonly string[], 2>>({} as string);
-expectType<ArrayAt<readonly string[], -1>>({} as string);
-expectType<ArrayAt<readonly string[], -2>>({} as string);
-expectType<ArrayAt<readonly string[], -3>>({} as string);
+expectType<ArrayAt<readonly string[], 0>>({} as string | undefined);
+expectType<ArrayAt<readonly string[], 1>>({} as string | undefined);
+expectType<ArrayAt<readonly string[], 2>>({} as string | undefined);
+expectType<ArrayAt<readonly string[], -1>>({} as string | undefined);
+expectType<ArrayAt<readonly string[], -2>>({} as string | undefined);
+expectType<ArrayAt<readonly string[], -3>>({} as string | undefined);
 
 expectType<ArrayAt<readonly [string, number], 0>>({} as string);
 expectType<ArrayAt<readonly [string, number], 1>>({} as number);
