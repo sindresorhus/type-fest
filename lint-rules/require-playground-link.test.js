@@ -43,6 +43,12 @@ const exportedOptionsType = (name, props) =>
 		}
 	`;
 
+const missingPlaygroundLinkError = (code, output, count = 1) => ({
+	code,
+	errors: Array.from({length: count}, () => ({messageId: 'missingPlaygroundLink'})),
+	output,
+});
+
 // Reusable code samples
 const codeNumber = 'type Test = number;';
 const codeString = 'type Test = string;';
@@ -157,5 +163,119 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			${exportedType('Second', jsdoc(fence.link(codeNumber), fence.link(codeString)))}
 		`,
 	],
-	invalid: [],
+	invalid: [
+		missingPlaygroundLinkError(
+			exportedType('Test', jsdoc(fence(codeNumber))),
+			exportedType('Test', jsdoc(fence.link(codeNumber))),
+		),
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'TestOptions',
+				optionProp('someOption', jsdoc(fence(codeNumber))),
+			),
+			exportedOptionsType(
+				'TestOptions',
+				optionProp('someOption', jsdoc(fence.link(codeNumber))),
+			),
+		),
+
+		// With `@example` tag
+		missingPlaygroundLinkError(
+			exportedType('WithExampleTag', jsdoc('@example', fence(codeNumber))),
+			exportedType('WithExampleTag', jsdoc('@example', fence.link(codeNumber))),
+		),
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'WithExampleTagOptions',
+				optionProp('someOption', jsdoc('@example', fence(codeNumber))),
+			),
+			exportedOptionsType(
+				'WithExampleTagOptions',
+				optionProp('someOption', jsdoc('@example', fence.link(codeNumber))),
+			),
+		),
+
+		// With language specifiers
+		missingPlaygroundLinkError(
+			exportedType(
+				'WithLangTs',
+				jsdoc(fence(codeNumber, 'ts')),
+			),
+			exportedType(
+				'WithLangTs',
+				jsdoc(fence.link(codeNumber, 'ts')),
+			),
+		),
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'WithLangTypescriptOptions',
+				optionProp('someOption', jsdoc(fence(codeNumber, 'typescript'))),
+			),
+			exportedOptionsType(
+				'WithLangTypescriptOptions',
+				optionProp('someOption', jsdoc(fence.link(codeNumber, 'typescript'))),
+			),
+		),
+
+		// Before and after text
+		missingPlaygroundLinkError(
+			exportedType(
+				'WithText',
+				jsdoc('Some description.\n', fence(codeNumber), '\n@category Some Category'),
+			),
+			exportedType(
+				'WithText',
+				jsdoc('Some description.\n', fence.link(codeNumber), '\n@category Some Category'),
+			),
+		),
+
+		// Multiple code blocks
+		missingPlaygroundLinkError(
+			exportedType(
+				'MultipleCodeBlocks',
+				jsdoc(fence(codeNumber, 'ts'), '\nSome text\n', '@example', fence(codeString)),
+			),
+			exportedType(
+				'MultipleCodeBlocks',
+				jsdoc(fence.link(codeNumber, 'ts'), '\nSome text\n', '@example', fence.link(codeString)),
+			),
+			2,
+		),
+
+		// Multiple properties
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'MultiplePropsOptions',
+				outdent`
+					${optionProp('first', jsdoc(fence(codeNumber)))}
+
+					${optionProp('second', jsdoc(fence(codeString)))}
+				`,
+			),
+			exportedOptionsType(
+				'MultiplePropsOptions',
+				outdent`
+					${optionProp('first', jsdoc(fence.link(codeNumber)))}
+
+					${optionProp('second', jsdoc(fence.link(codeString)))}
+				`,
+			),
+			2,
+		),
+
+		// Multiple exports
+		missingPlaygroundLinkError(
+			outdent`
+				${exportedType('First', jsdoc(fence(codeNumber, 'typescript')))}
+
+				${exportedType('Second', jsdoc('@example', fence(codeNumber), '@category Test'))}
+			`,
+			outdent`
+				${exportedType('First', jsdoc(fence.link(codeNumber, 'typescript')))}
+
+				${exportedType('Second', jsdoc('@example', fence.link(codeNumber), '@category Test'))}
+			`,
+			2,
+		),
+	],
 });
