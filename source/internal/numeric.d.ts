@@ -59,22 +59,22 @@ Note: Just supports numbers from 0 to 999.
 
 @example
 ```
-type T1 = UnionMax<1 | 2 | 3>;
+type T1 = UnionMin<1 | 2 | 3>;
 //=> 1
 
-type T2 = UnionMax<-1 | -2 | -3>
+type T2 = UnionMin<-1 | -2 | -3>;
 //=> -3
 
-type T3 = UnionMax<-1 | 0 | 1>
+type T3 = UnionMin<-1 | 0 | 1>;
 //=> -1
 
-type T4 = UnionMax<NegativeInfinity | -1 | 1>;
+type T4 = UnionMin<NegativeInfinity | -1 | 1>;
 //=> NegativeInfinity
 
-type T5 = UnionMax<-1 | 1 | PositiveInfinity>;
+type T5 = UnionMin<-1 | 1 | PositiveInfinity>;
 //=> -1
 
-type T6 = UnionMax<number>;
+type T6 = UnionMin<number>;
 //=> number
 ```
 */
@@ -107,10 +107,10 @@ Note: Just supports numbers from 0 to 999.
 type T1 = UnionMax<1 | 2 | 3>;
 //=> 3
 
-type T2 = UnionMax<-1 | -2 | -3>
+type T2 = UnionMax<-1 | -2 | -3>;
 //=> -1
 
-type T3 = UnionMax<-1 | 0 | 1>
+type T3 = UnionMax<-1 | 0 | 1>;
 //=> 1
 
 type T4 = UnionMax<NegativeInfinity | -1 | 1>;
@@ -188,13 +188,13 @@ Split a union of positive and negative number into a tuple in the form of `[Nega
 
 @example
 ```
-type T1 = SeparateNegatives<-1 | 2 | 4 | -5>
+type T1 = SeparateNegatives<-1 | 2 | 4 | -5>;
 //=> [4 | 2, -1 | -5]
 
-type T2 = SeparateNegatives<PositiveInfinity | NegativeInfinity | 0 | -1>
+type T2 = SeparateNegatives<PositiveInfinity | NegativeInfinity | 0 | -1>;
 //=> [0 | PositiveInfinity, NegativeInfinity | -1]
 
-type T3 = SeparateNegatives<1 | 4>
+type T3 = SeparateNegatives<1 | 4>;
 //=> [4 | 1, never]
 ```
 */
