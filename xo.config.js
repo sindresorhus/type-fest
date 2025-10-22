@@ -37,6 +37,12 @@ const xoConfig = [
 				'error',
 				'prefer-top-level',
 			],
+			'unicorn/template-indent': [
+				'error',
+				{
+					indent: '\t',
+				},
+			],
 		},
 	},
 	{
