@@ -57,27 +57,33 @@ const incorrectPlaygroundLinkError = (code, output, count = 1) => ({
 });
 
 // Reusable code samples
-const codeNumber = 'type Test = number;';
-const codeString = 'type Test = string;';
+const code1 = 'type Foo = number;';
+const code2 = 'type Bar = string;';
 
 ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 	valid: [
 		// Not exported
 		outdent`
-			${jsdoc(fence(codeNumber))}
+			${jsdoc(fence(code1))}
 			type NotExported = string;
 		`,
 		outdent`
 			type NotExportedOptions = {
-				${optionProp('someOption', jsdoc(fence(codeNumber)))}
+				${optionProp('foo', jsdoc(fence(code1)))}
 			}
 		`,
 
 		// Internal (leading underscore)
-		exportedType('_Internal', jsdoc(fence(codeNumber))),
+		exportedType('_Internal', jsdoc(fence(code1))),
 		exportedOptionsType(
 			'_InternalOptions',
-			optionProp('someOption', jsdoc(fence(codeNumber))),
+			optionProp('foo', jsdoc(fence(code1))),
+		),
+
+		// Without `Options` suffix
+		exportedOptionsType(
+			'SomeType',
+			optionProp('foo', jsdoc(fence(code1))),
 		),
 
 		// No JSDoc
@@ -95,35 +101,69 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			${exportedType('NoDoc')}
 		`,
 
-		// No code block in JSDoc
+		// No codeblock in JSDoc
 		exportedType('NoCodeblock', jsdoc('No codeblock here')),
 
 		// Valid link
-		exportedType('CorrectPlayground', jsdoc(fence.link(codeNumber))),
-
-		// Valid link on option property
+		exportedType('CorrectPlayground', jsdoc(fence.link(code1))),
 		exportedOptionsType(
-			'TypeOptions',
-			optionProp('correctPlayground', jsdoc(fence.link(codeNumber))),
+			'CorrectPlayground',
+			optionProp('foo', jsdoc(fence.link(code1))),
 		),
 
-		// Valid link with text before and after
+		// With text before and after
 		exportedType(
 			'WithText',
-			jsdoc('Some description.', fence.link(codeNumber), '@category Some Category'),
+			jsdoc('Some description.', fence.link(code1), '@category Test'),
+		),
+		exportedOptionsType(
+			'WithTextOptions',
+			optionProp(
+				'foo',
+				jsdoc('Some description.', fence.link(code1), '@category Test'),
+			),
+		),
+
+		// Multiple lines of text before and after
+		exportedType(
+			'WithText',
+			jsdoc(
+				'Some description.\n',
+				'Note: Some note.\n',
+				'@example',
+				fence.link(code1, 'ts'),
+				'\n@category Test',
+			),
+		),
+		exportedOptionsType(
+			'WithTextOptions',
+			optionProp(
+				'foo',
+				jsdoc(
+					'Some description.\n',
+					'Note: Some note.\n',
+					'@example',
+					fence.link(code1, 'typescript'),
+					'\n@category Test',
+				),
+			),
 		),
 
 		// With `@example` tag
-		exportedType('WithExampleTag', jsdoc('@example', fence.link(codeNumber))),
+		exportedType('WithExampleTag', jsdoc('@example', fence.link(code1))),
+		exportedOptionsType(
+			'WithExampleTagOptions',
+			optionProp('foo', jsdoc('@example', fence.link(code1))),
+		),
 
 		// With language specifiers
 		exportedType(
 			'WithLangTs',
-			jsdoc(fence.link(codeNumber, 'ts')),
+			jsdoc(fence.link(code1, 'ts')),
 		),
-		exportedType(
-			'WithLangTypescript',
-			jsdoc(fence.link(codeNumber, 'typescript')),
+		exportedOptionsType(
+			'WithLangTypescriptOptions',
+			optionProp('foo', jsdoc(fence.link(code1, 'typescript'))),
 		),
 
 		// Multiple code blocks
@@ -131,74 +171,162 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			'MultipleCodeBlocks',
 			jsdoc(
 				'@example',
-				fence.link(codeNumber),
+				fence.link(code1, 'ts'),
 				'\nSome text in between.\n',
 				'@example',
-				fence.link(codeString),
+				fence.link(code2),
+			),
+		),
+		exportedOptionsType(
+			'MultipleCodeBlocksOptions',
+			optionProp(
+				'foo',
+				jsdoc(fence.link(code1, 'ts'), '\nSome text\n', '@example', fence.link(code2)),
 			),
 		),
 
 		// Multiple properties
 		exportedOptionsType(
-			'MultipleProps',
+			'MultiplePropsOptions',
 			outdent`
-				${optionProp('first', jsdoc(fence.link(codeNumber)))}
+				${optionProp('first', jsdoc(fence.link(code1)))}
 
-				${optionProp('second', jsdoc(fence.link(codeString)))}
+				${optionProp('second', jsdoc(fence.link(code2)))}
 			`,
 		),
 
 		// Multiple exports
 		outdent`
-			${exportedType('First', jsdoc(fence.link(codeNumber, 'ts')))}
+			${exportedType('First', jsdoc(fence.link(code1, 'typescript')))}
 
-			${exportedType('Second', jsdoc('@example', fence.link(codeNumber)))}
+			${exportedType('Second', jsdoc('@example', fence.link(code1), '@category Test'))}
 		`,
 
 		// Mixbag
 		outdent`
 			${exportedOptionsType('FirstOptions', outdent`
-				${optionProp('foo', jsdoc(fence.link(codeNumber)))}
+				${optionProp('foo', jsdoc(fence.link(code1)))}
 
-				${optionProp('bar', jsdoc(fence.link(codeString)))}
+				${optionProp('bar', jsdoc(fence.link(code2)))}
 			`)}
 
-			${exportedType('First', jsdoc('Description here.', fence.link(codeNumber), '\n@category Sample'))}
+			${exportedType('First', jsdoc('Description here.', fence.link(code1), '\n@category Sample'))}
 
-			${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence.link(codeNumber))))}
+			${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence.link(code1))))}
 
-			${exportedType('Second', jsdoc(fence.link(codeNumber), fence.link(codeString)))}
+			${exportedType('Second', jsdoc(fence.link(code1), fence.link(code2)))}
 		`,
 	],
 	invalid: [
+		// Missing link
 		missingPlaygroundLinkError(
-			exportedType('Test', jsdoc(fence(codeNumber))),
-			exportedType('Test', jsdoc(fence.link(codeNumber))),
+			exportedType('MissingLink', jsdoc(fence(code1))),
+			exportedType('MissingLink', jsdoc(fence.link(code1))),
 		),
 		missingPlaygroundLinkError(
 			exportedOptionsType(
-				'TestOptions',
-				optionProp('someOption', jsdoc(fence(codeNumber))),
+				'MissingLinkOptions',
+				optionProp('foo', jsdoc(fence(code1))),
 			),
 			exportedOptionsType(
-				'TestOptions',
-				optionProp('someOption', jsdoc(fence.link(codeNumber))),
+				'MissingLinkOptions',
+				optionProp('foo', jsdoc(fence.link(code1))),
+			),
+		),
+
+		// With text before and after
+		missingPlaygroundLinkError(
+			exportedType(
+				'WithText',
+				jsdoc('Some description.', fence(code1), '@category Test'),
+			),
+			exportedType(
+				'WithText',
+				jsdoc('Some description.', fence.link(code1), '@category Test'),
+			),
+		),
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'WithTextOptions',
+				optionProp(
+					'foo',
+					jsdoc('Some description.', fence(code1), '@category Test'),
+				),
+			),
+			exportedOptionsType(
+				'WithTextOptions',
+				optionProp(
+					'foo',
+					jsdoc('Some description.', fence.link(code1), '@category Test'),
+				),
+			),
+		),
+
+		// Multiple lines of text before and after
+		missingPlaygroundLinkError(
+			exportedType(
+				'WithText',
+				jsdoc(
+					'Some description.\n',
+					'Note: Some note.\n',
+					'@example',
+					fence(code1, 'ts'),
+					'\n@category Test',
+				),
+			),
+			exportedType(
+				'WithText',
+				jsdoc(
+					'Some description.\n',
+					'Note: Some note.\n',
+					'@example',
+					fence.link(code1, 'ts'),
+					'\n@category Test',
+				),
+			),
+		),
+		missingPlaygroundLinkError(
+			exportedOptionsType(
+				'WithTextOptions',
+				optionProp(
+					'foo',
+					jsdoc(
+						'Some description.\n',
+						'Note: Some note.\n',
+						'@example',
+						fence(code1, 'typescript'),
+						'\n@category Test',
+					),
+				),
+			),
+			exportedOptionsType(
+				'WithTextOptions',
+				optionProp(
+					'foo',
+					jsdoc(
+						'Some description.\n',
+						'Note: Some note.\n',
+						'@example',
+						fence.link(code1, 'typescript'),
+						'\n@category Test',
+					),
+				),
 			),
 		),
 
 		// With `@example` tag
 		missingPlaygroundLinkError(
-			exportedType('WithExampleTag', jsdoc('@example', fence(codeNumber))),
-			exportedType('WithExampleTag', jsdoc('@example', fence.link(codeNumber))),
+			exportedType('WithExampleTag', jsdoc('@example', fence(code1))),
+			exportedType('WithExampleTag', jsdoc('@example', fence.link(code1))),
 		),
 		missingPlaygroundLinkError(
 			exportedOptionsType(
 				'WithExampleTagOptions',
-				optionProp('someOption', jsdoc('@example', fence(codeNumber))),
+				optionProp('foo', jsdoc('@example', fence(code1))),
 			),
 			exportedOptionsType(
 				'WithExampleTagOptions',
-				optionProp('someOption', jsdoc('@example', fence.link(codeNumber))),
+				optionProp('foo', jsdoc('@example', fence.link(code1))),
 			),
 		),
 
@@ -206,49 +334,21 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		missingPlaygroundLinkError(
 			exportedType(
 				'WithLangTs',
-				jsdoc(fence(codeNumber, 'ts')),
+				jsdoc(fence(code1, 'ts')),
 			),
 			exportedType(
 				'WithLangTs',
-				jsdoc(fence.link(codeNumber, 'ts')),
+				jsdoc(fence.link(code1, 'ts')),
 			),
 		),
 		missingPlaygroundLinkError(
 			exportedOptionsType(
 				'WithLangTypescriptOptions',
-				optionProp('someOption', jsdoc(fence(codeNumber, 'typescript'))),
+				optionProp('foo', jsdoc(fence(code1, 'typescript'))),
 			),
 			exportedOptionsType(
 				'WithLangTypescriptOptions',
-				optionProp('someOption', jsdoc(fence.link(codeNumber, 'typescript'))),
-			),
-		),
-
-		// Before and after text
-		missingPlaygroundLinkError(
-			exportedType(
-				'WithText',
-				jsdoc('Some description.\n', fence(codeNumber), '\n@category Some Category'),
-			),
-			exportedType(
-				'WithText',
-				jsdoc('Some description.\n', fence.link(codeNumber), '\n@category Some Category'),
-			),
-		),
-		missingPlaygroundLinkError(
-			exportedOptionsType(
-				'WithTextOptions',
-				optionProp(
-					'someOption',
-					jsdoc('Some description.\n', fence(codeNumber), '\n@category Some Category'),
-				),
-			),
-			exportedOptionsType(
-				'WithTextOptions',
-				optionProp(
-					'someOption',
-					jsdoc('Some description.\n', fence.link(codeNumber), '\n@category Some Category'),
-				),
+				optionProp('foo', jsdoc(fence.link(code1, 'typescript'))),
 			),
 		),
 
@@ -256,11 +356,11 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		missingPlaygroundLinkError(
 			exportedType(
 				'MultipleCodeBlocks',
-				jsdoc(fence(codeNumber, 'ts'), '\nSome text\n', '@example', fence(codeString)),
+				jsdoc(fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
 			),
 			exportedType(
 				'MultipleCodeBlocks',
-				jsdoc(fence.link(codeNumber, 'ts'), '\nSome text\n', '@example', fence.link(codeString)),
+				jsdoc(fence.link(code1, 'ts'), '\nSome text in between.\n', '@example', fence.link(code2)),
 			),
 			2,
 		),
@@ -268,15 +368,15 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			exportedOptionsType(
 				'MultipleCodeBlocksOptions',
 				optionProp(
-					'someOption',
-					jsdoc(fence(codeNumber, 'ts'), '\nSome text\n', '@example', fence(codeString)),
+					'foo',
+					jsdoc(fence(code1, 'ts'), '\nSome text\n', '@example', fence(code2)),
 				),
 			),
 			exportedOptionsType(
 				'MultipleCodeBlocksOptions',
 				optionProp(
-					'someOption',
-					jsdoc(fence.link(codeNumber, 'ts'), '\nSome text\n', '@example', fence.link(codeString)),
+					'foo',
+					jsdoc(fence.link(code1, 'ts'), '\nSome text\n', '@example', fence.link(code2)),
 				),
 			),
 			2,
@@ -287,17 +387,17 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			exportedOptionsType(
 				'MultiplePropsOptions',
 				outdent`
-					${optionProp('first', jsdoc(fence(codeNumber)))}
+					${optionProp('first', jsdoc(fence(code1)))}
 
-					${optionProp('second', jsdoc(fence(codeString)))}
+					${optionProp('second', jsdoc(fence(code2)))}
 				`,
 			),
 			exportedOptionsType(
 				'MultiplePropsOptions',
 				outdent`
-					${optionProp('first', jsdoc(fence.link(codeNumber)))}
+					${optionProp('first', jsdoc(fence.link(code1)))}
 
-					${optionProp('second', jsdoc(fence.link(codeString)))}
+					${optionProp('second', jsdoc(fence.link(code2)))}
 				`,
 			),
 			2,
@@ -306,14 +406,14 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		// Multiple exports
 		missingPlaygroundLinkError(
 			outdent`
-				${exportedType('First', jsdoc(fence(codeNumber, 'typescript')))}
+				${exportedType('First', jsdoc(fence(code1, 'typescript')))}
 
-				${exportedType('Second', jsdoc('@example', fence(codeNumber), '@category Test'))}
+				${exportedType('Second', jsdoc('@example', fence(code1), '@category Test'))}
 			`,
 			outdent`
-				${exportedType('First', jsdoc(fence.link(codeNumber, 'typescript')))}
+				${exportedType('First', jsdoc(fence.link(code1, 'typescript')))}
 
-				${exportedType('Second', jsdoc('@example', fence.link(codeNumber), '@category Test'))}
+				${exportedType('Second', jsdoc('@example', fence.link(code1), '@category Test'))}
 			`,
 			2,
 		),
@@ -322,37 +422,37 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		missingPlaygroundLinkError(
 			outdent`
 				${exportedOptionsType('FirstOptions', outdent`
-					${optionProp('foo', jsdoc(fence(codeNumber)))}
+					${optionProp('foo', jsdoc(fence(code1)))}
 
-					${optionProp('bar', jsdoc(fence(codeString)))}
+					${optionProp('bar', jsdoc(fence(code2)))}
 				`)}
 
-				${exportedType('First', jsdoc('Description here.', fence(codeNumber), '\n@category Sample'))}
+				${exportedType('First', jsdoc('Description here.', fence(code1), '\n@category Sample'))}
 
-				${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence(codeNumber))))}
+				${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence(code1))))}
 
-				${exportedType('Second', jsdoc(fence(codeNumber), fence(codeString)))}
+				${exportedType('Second', jsdoc(fence(code1), fence(code2)))}
 			`,
 			outdent`
 				${exportedOptionsType('FirstOptions', outdent`
-					${optionProp('foo', jsdoc(fence.link(codeNumber)))}
+					${optionProp('foo', jsdoc(fence.link(code1)))}
 
-					${optionProp('bar', jsdoc(fence.link(codeString)))}
+					${optionProp('bar', jsdoc(fence.link(code2)))}
 				`)}
 
-				${exportedType('First', jsdoc('Description here.', fence.link(codeNumber), '\n@category Sample'))}
+				${exportedType('First', jsdoc('Description here.', fence.link(code1), '\n@category Sample'))}
 
-				${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence.link(codeNumber))))}
+				${exportedOptionsType('SecondOptions', optionProp('foo', jsdoc(fence.link(code1))))}
 
-				${exportedType('Second', jsdoc(fence.link(codeNumber), fence.link(codeString)))}
+				${exportedType('Second', jsdoc(fence.link(code1), fence.link(code2)))}
 			`,
 			6,
 		),
 
 		// Incorrect existing link
 		incorrectPlaygroundLinkError(
-			exportedType('IncorrectLink', jsdoc(fence(codeNumber), generateLinkText(codeString))),
-			exportedType('IncorrectLink', jsdoc(fence.link(codeNumber))),
+			exportedType('IncorrectLink', jsdoc(fence(code1), generateLinkText(code2))),
+			exportedType('IncorrectLink', jsdoc(fence.link(code1))),
 		),
 	],
 });
