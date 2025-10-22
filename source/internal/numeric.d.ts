@@ -161,10 +161,10 @@ type T3 = ReverseSign<-1n>;
 type T4 = ReverseSign<1n>;
 //=> -1n
 
-type T5 = ReverseSign<NegativeInfinity>
+type T5 = ReverseSign<NegativeInfinity>;
 //=> Infinity
 
-type T6 = ReverseSign<PositiveInfinity>
+type T6 = ReverseSign<PositiveInfinity>;
 //=> -Infinity
 ```
 */
@@ -241,13 +241,13 @@ type T7 = ToNumber<'-Infinity'>;
 */
 export type ToNumber<T extends Numeric | string | boolean> =
 	`${T}` extends `${infer F}${infer R}`
-		? F extends '0' ? ToNumber<R> // Prevent returning `number` when preseding `T` with 0, (e.g, '00123' -> 123)
+		? F extends '0' ? ToNumber<R> // Prevent returning `number` when preceding `T` with 0, (e.g, '00123' -> 123)
 			: `${T}` extends `${infer N extends number}` ? N // For number strings (e.g, '123' -> 123)
 				: `${T}` extends `${infer B extends number}n` ? B // For bigint strings (e.g, '123n' -> 123)
 					: `${T}` extends 'Infinity' ? PositiveInfinity
 						: `${T}` extends '-Infinity' ? NegativeInfinity
 							: T extends boolean ? {true: 1; false: 0}[`${T}`] // For boolean (e.g, true -> 1)
-								: never // Not a numeric convertable type
+								: never // Not a numeric convertible type
 		: string extends T ? never : 0; // `Number('')` returns `0`
 
 /**
