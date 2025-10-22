@@ -8,6 +8,8 @@ expectType<UnionToEnum<3 | 2 | 4 | 1>>({1: 1, 2: 2, 3: 3, 4: 4} as const);
 // Tuple input
 expectType<UnionToEnum<['One', 'Two']>>({One: 'One', Two: 'Two'} as const);
 expectType<UnionToEnum<['X', 'Y', 'Z'], {numeric: true}>>({X: 1, Y: 2, Z: 3} as const);
+expectType<UnionToEnum<['A', 'B'] | ['C', 'D']>>({} as Readonly<{A: 'A'; B: 'B'} | {C: 'C'; D: 'D'}>);
+expectType<UnionToEnum<['A', 'B'] | ['C', 'D'], {numeric: true}>>({} as Readonly<{A: 1; B: 2} | {C: 1; D: 2}>);
 
 // Single element tuple
 expectType<UnionToEnum<['Only']>>({Only: 'Only'} as const);
@@ -50,8 +52,8 @@ expectType<UnionToEnum<symbol>>({});
 expectType<UnionToEnum<string[]>>({});
 expectType<UnionToEnum<number[]>>({});
 expectType<UnionToEnum<symbol[]>>({});
-expectType<UnionToEnum<[string]>>({} as const);
-expectType<UnionToEnum<number | string>>({} as const);
+expectType<UnionToEnum<[string]>>({});
+expectType<UnionToEnum<number | string>>({});
 expectType<UnionToEnum<[string, 'foo']>>({foo: 'foo'} as const);
 expectType<UnionToEnum<`foo${string}` | 'bar'>>({bar: 'bar'} as const);
 
@@ -115,3 +117,7 @@ expectType<UnionToEnum<['test'], {numeric: true; startIndex: 100}>>({test: 100} 
 // Numeric edge cases
 expectType<UnionToEnum<0 | -1 | 42>>({0: 0, [-1]: -1, 42: 42} as const);
 expectType<UnionToEnum<[0, -5, 999], {numeric: true}>>({0: 1, [-5]: 2, 999: 3} as const);
+
+// @ts-expect-error no mixed input
+type T = UnionToEnum<'A' | ['B']>;
+type V = UnionToEnum<['A'] | ['B']>;
