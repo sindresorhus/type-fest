@@ -55,7 +55,7 @@ export type IsNumberLike<N> =
 /**
 Returns the minimum number in the given union of numbers.
 
-Note: Just supports numbers from 0 to 999.
+Note: Just supports numbers from -999 to 999.
 
 @example
 ```
@@ -79,18 +79,23 @@ type T6 = UnionMin<number>;
 ```
 */
 export type UnionMin<N extends number> =
-	IsAnyOrNever<N> extends true ? N
-		: number extends N ? number
-			: NegativeInfinity extends N ? NegativeInfinity
-				: [N] extends [PositiveInfinity] ? PositiveInfinity
+	IsAnyOrNever<N> extends true ? N // Handles `any/never`
+		: number extends N ? number // If `N` is the wide `number` type, we cannot infer a literal manimum
+			: NegativeInfinity extends N ? NegativeInfinity // If `NegativeInfinity` is present, it dominates any finite number
+				: [N] extends [PositiveInfinity] ? PositiveInfinity // If `N` is exactly `PositiveInfinity`, return it directly
 					: SeparateNegatives<N> extends [infer Pos extends number, infer Neg extends number]
 						? IsNever<Neg> extends true
+							// If `N` only contains positive numbers, directly compute the minimum using `_UnionMin`
 							? _UnionMin<Pos>
+							// If `N` contains negative numbers, reverse their sign and compute a maximum,
+							// since among negative values, the one with the largest absolute magnitude is the smallest
 							: ReverseSign<_UnionMax<ReverseSign<Neg>>>
 						: never;
 
 /**
-The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.
+Core type of `UnionMin`.
+
+Iterates by growing tuple `T` until its length matches any member of `N`, returning the smallest value in the union.
 */
 type _UnionMin<N extends number, T extends UnknownArray = []> =
 	T['length'] extends N
@@ -100,7 +105,7 @@ type _UnionMin<N extends number, T extends UnknownArray = []> =
 /**
 Returns the maximum number in the given union of numbers.
 
-Note: Just supports numbers from 0 to 999.
+Note: Just supports numbers from -999 to 999.
 
 @example
 ```
@@ -124,18 +129,23 @@ type T6 = UnionMax<number>;
 ```
 */
 export type UnionMax<N extends number> =
-	IsAnyOrNever<N> extends true ? N
-		: number extends N ? number
-			: PositiveInfinity extends N ? PositiveInfinity
-				: [N] extends [NegativeInfinity] ? NegativeInfinity
+	IsAnyOrNever<N> extends true ? N // Handles `any/never`
+		: number extends N ? number // If `N` is the wide `number` type, we cannot infer a literal maximum
+			: PositiveInfinity extends N ? PositiveInfinity // If `PositiveInfinity` is present, it dominates any finite number
+				: [N] extends [NegativeInfinity] ? NegativeInfinity // If `N` is exactly `NegativeInfinity`, return it directly
 					: SeparateNegatives<N> extends [infer Pos extends number, infer Neg extends number]
 						? IsNever<Pos> extends true
+							// If `N` only contains negative numbers, reverse their sign and compute a minimum,
+							// since among negative values, the one with the smallest absolute magnitude is the largest
 							? ReverseSign<_UnionMin<ReverseSign<Neg>>>
+							// If `N` contains positive numbers, directly compute the maximum using `_UnionMax`
 							: _UnionMax<Pos>
 						: never;
 
 /**
-The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
+Core type of `UnionMax`.
+
+Iterates by growing tuple `T` until its length matches and removes all members of `N`, leaving the final length as the maximum value in the union.
 */
 type _UnionMax<N extends number, T extends UnknownArray = []> =
 	IsNever<N> extends true
@@ -200,14 +210,28 @@ type T3 = SeparateNegatives<1 | 4>;
 */
 export type SeparateNegatives<N extends Numeric> =
 	IsAnyOrNever<N> extends true ? N
-		: Negative<N> extends infer Negatives
-			? [Exclude<N, Negatives>, Negatives]
+		: Negative<N> extends infer Negatives // Extract negative numbers
+			? [Exclude<N, Negatives>, Negatives] // Extract positive numbers and return them both in a tuple
 			: never;
 
-export type SplitFloat<N extends Numeric> =
+/**
+Split a float number into a tuple in the form of `[Integer number, Decimal string]`
+
+@example
+```
+type T1 = SplitFloat<1.2>;
+//=> [1, '2']
+
+type T2 = SplitFloat<-2.005>;
+//=> [-2, '005']
+```
+*/
+export type SplitFloat<N extends number> =
 	`${N}` extends `${infer Int extends number}.${infer Dec}`
-		? [Int, Dec]
-		: [N, '0'];
+		? `${N}` extends `-0${string}`
+			? [0, Dec] // Special-case negative zero: preserve the decimal digits but coerce the integer part to `0`
+			: [Int, Dec] // Normal case: return the inferred integer and decimal parts
+		: [N, '0']; // If no decimal exists, return the number with a decimal of `0`
 
 /**
 Converts a numeric type to a number.
