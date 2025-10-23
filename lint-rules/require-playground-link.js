@@ -67,12 +67,14 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 							continue;
 						}
 
-						const playgroundLink = generatePlaygroundLink(outdent.string(code));
-
 						const nextLineIndex = match.index + match[0].length + 1; // +1 to move past the newline
 						const nextLine = comment.slice(nextLineIndex).split('\n')[0];
 
-						if (nextLine.includes(playgroundLink)) {
+						const playgroundLink = generatePlaygroundLink(outdent.string(code));
+						const indentation = getCodeIndent(code);
+						const insertText = `${indentation}${generateLinkText(outdent.string(code))}`;
+
+						if (nextLine === insertText) {
 							continue;
 						}
 
@@ -82,16 +84,16 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 						const fixerRangeStart = previousNode.range[0] + nextLineIndex + 2;
 						const fixerRangeEnd = fixerRangeStart + nextLine.length;
 
-						const updatePlaygroundLink = nextLine.includes(PLAYGROUND_BASE_URL);
-						const indentation = getCodeIndent(code);
-						const insertText = `${indentation}${generateLinkText(outdent.string(code))}` + (updatePlaygroundLink ? '' : '\n');
+						const doesPlaygroundLinkExist = nextLine.includes('[Playground Link]');
 
 						context.report({
 							loc: {
 								start: context.sourceCode.getLocFromIndex(codeblockStart),
 								end: context.sourceCode.getLocFromIndex(codeblockEnd),
 							},
-							messageId: updatePlaygroundLink ? 'incorrectPlaygroundLink' : 'missingPlaygroundLink',
+							messageId: doesPlaygroundLinkExist
+								? 'incorrectPlaygroundLink'
+								: 'missingPlaygroundLink',
 							data: {
 								playgroundLink,
 							},
@@ -99,9 +101,9 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 								return fixer.replaceTextRange(
 									[
 										fixerRangeStart, // Start is inclusive.
-										updatePlaygroundLink ? fixerRangeEnd : fixerRangeStart, // End is exclusive. If start and end are the same, it inserts at that position.
+										doesPlaygroundLinkExist ? fixerRangeEnd : fixerRangeStart, // End is exclusive. If start and end are the same, it inserts at that position.
 									],
-									insertText,
+									insertText + (doesPlaygroundLinkExist ? '' : '\n'),
 								);
 							},
 						});

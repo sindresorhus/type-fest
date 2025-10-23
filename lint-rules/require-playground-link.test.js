@@ -295,5 +295,17 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			exportedType('IncorrectLink', jsdoc(fence(code1), generateLinkText(code2))),
 			exportedType('IncorrectLink', jsdoc(fence.link(code1))),
 		),
+
+		// Fix indentation
+		incorrectPlaygroundLinkError(
+			exportedType('IncorrectIndent', jsdoc(fence(code1), '\t' + generateLinkText(code1))),
+			exportedType('IncorrectIndent', jsdoc(fence.link(code1))),
+		),
+
+		// Empty link
+		incorrectPlaygroundLinkError(
+			exportedType('EmptyLink', jsdoc(fence(code1), '[Playground Link]()')),
+			exportedType('EmptyLink', jsdoc(fence.link(code1))),
+		),
 	],
 });
