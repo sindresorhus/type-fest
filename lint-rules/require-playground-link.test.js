@@ -155,10 +155,10 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		// With text before and after
 		exportTypeAndOptions('WithText', jsdoc('Some description.', fence.link(code1), '@category Test')),
 
-		// Multiple lines of text before and after
+		// With line breaks before and after
 		exportTypeAndOptions(
 			'WithText',
-			jsdoc('Some description.\n', 'Note: Some note.\n', '@example', fence.link(code1, 'ts'), '\n@category Test'),
+			jsdoc('Some description.\n', 'Note: Some note.\n', fence.link(code1, 'ts'), '\n@category Test'),
 		),
 
 		// With `@example` tag
@@ -209,15 +209,15 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			2,
 		),
 
-		// Multiple lines of text before and after
+		// With line breaks before and after
 		missingPlaygroundLinkError(
 			exportTypeAndOptions(
 				'WithText',
-				jsdoc('Some description.\n', 'Note: Some note.\n', '@example', fence(code1, 'ts'), '\n@category Test'),
+				jsdoc('Some description.\n', 'Note: Some note.\n', fence(code1, 'ts'), '\n@category Test'),
 			),
 			exportTypeAndOptions(
 				'WithText',
-				jsdoc('Some description.\n', 'Note: Some note.\n', '@example', fence.link(code1, 'ts'), '\n@category Test'),
+				jsdoc('Some description.\n', 'Note: Some note.\n', fence.link(code1, 'ts'), '\n@category Test'),
 			),
 			2,
 		),
