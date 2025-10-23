@@ -37,6 +37,11 @@ expectType<string[] | undefined>(packageJson.bundleDependencies);
 expectType<string[] | undefined>(packageJson.bundledDependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
 expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
+expectAssignable<PackageJson.DevEngineDependency>({
+	name: 'unicorn',
+	version: '>= 1.0.0',
+	onFail: 'ignore',
+});
 expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
