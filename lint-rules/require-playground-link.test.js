@@ -115,14 +115,35 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			type Some = number;
 			${exportedType('NoDoc')}
 		`,
+		exportedOptionsType(
+			'NoDocOptions',
+			outdent`
+				${optionProp('first')}
+				${optionProp('second')}
+			`,
+		),
 		outdent`
 			// Not block comment
 			${exportedType('NoDoc')}
 		`,
+		exportedOptionsType(
+			'NoDocOptions',
+			outdent`
+				${optionProp('first', '// Not block comment')}
+				${optionProp('second', '// Not block comment')}
+			`,
+		),
 		outdent`
 			/* Block comment, but not JSDoc */
 			${exportedType('NoDoc')}
 		`,
+		exportedOptionsType(
+			'NoDocOptions',
+			outdent`
+				${optionProp('first', '/* Block comment, but not JSDoc */')}
+				${optionProp('second', '/* Block comment, but not JSDoc */')}
+			`,
+		),
 
 		// No codeblock in JSDoc
 		exportedType('NoCodeblock', jsdoc('No codeblock here')),
