@@ -184,7 +184,7 @@ export type ReverseSign<N extends Numeric> =
 					: never;
 
 /**
-Split a union of positive and negative number into a tuple in the form of `[Negatives, Positives]`
+Split a union of positive and negative number into a tuple in the form of `[Positives, Negatives]`
 
 @example
 ```
