@@ -115,7 +115,6 @@ type O6 = Filter<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42},
 
 @category Array
 @category Object
-@category Utilities
 */
 export type Filter<
 	BaseType extends UnknownArray | UnknownRecord,
@@ -177,7 +176,7 @@ type _FilterArray<
 				...IfFilter<FilterType<Last, Type, Options['strict']>, [Last]>,
 				...TailAcc,
 			]>
-			// Handle rest element or result
+			// Handle rest element (spread) or return the final result
 			: [
 				...HeadAcc,
 				...IfFilter<FilterType<Array_[number], Type, Options['strict']>, Array_>,
