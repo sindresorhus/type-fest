@@ -133,8 +133,8 @@ export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extend
 /**
 Evaluates whether type `T extends U`, using either strict or loose comparison.
 
- - Strict mode, {@link ExtendsStrict `ExtendsStrict<T, U>`} is used.
- - Loose mode, {@link ExtendsLoose `ExtendsLoose<T, U>`} is used.
+- Strict mode, {@link ExtendsStrict `ExtendsStrict<T, U>`} is used.
+- Loose mode, {@link ExtendsLoose `ExtendsLoose<T, U>`} is used.
 */
 export type Extends<T, U, S extends boolean = false> = {
 	true: ExtendsStrict<T, U>;
