@@ -137,7 +137,7 @@ export type Filter<
 		: never;
 
 /**
-Iterates through the object properties and keep them if they pass {@link FilterType `FilterType`}`.
+Iterates through the object properties and keeps them if they pass {@link FilterType `FilterType`}.
 */
 type FilterObject<
 	Object_ extends UnknownRecord, Type,
@@ -151,7 +151,7 @@ type FilterObject<
 }>;
 
 /**
-Iterates through the array elements and keep them if they pass {@link FilterType `FilterType`}`.
+Iterates through the array elements and keeps them if they pass {@link FilterType `FilterType`}.
 */
 type FilterArray<
 	Array_ extends UnknownArray, Type,
@@ -170,7 +170,7 @@ type _FilterArray<
 	HeadAcc extends UnknownArray = [],
 	TailAcc extends UnknownArray = [],
 > =
-	keyof Array_ & `${number}` extends never // Is `Array_` leading a rest element or empty
+	keyof Array_ & `${number}` extends never // Is `Array_` a rest element or empty array
 		? Array_ extends readonly [...infer Rest, infer Last]
 			// Add `Last` to `TailAcc` if it passes the filter
 			? _FilterArray<Rest, Type, Options, HeadAcc, [
