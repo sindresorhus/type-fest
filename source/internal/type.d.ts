@@ -150,7 +150,7 @@ export type ExtendsLoose<T, U> = IsNotFalse<T extends U ? true : false>;
 // ? Should this type get exposed publicly
 
 /**
-Union of `falsy` types in typescript. `never` isn't included.
+Union of `falsy` types in TypeScript. `never` isn't included.
 */
 export type Falsy = 0 | 0n | '' | false | null | undefined; // `| never`
 
