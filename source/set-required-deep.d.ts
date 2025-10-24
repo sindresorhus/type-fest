@@ -1,5 +1,5 @@
 import type {IsAny} from './is-any.d.ts';
-import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {NonRecursiveType, ToNumber} from './internal/index.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
@@ -65,6 +65,6 @@ type SetRequiredDeepSinglePath<BaseType, KeyPath> = BaseType extends NonRecursiv
 				? SetRequiredDeepSinglePath<BaseType[Key], RestPath>
 				: BaseType[Key];
 		}
-		: SetRequired<BaseType, (KeyPath | StringToNumber<KeyPath & string>) & keyof BaseType>;
+		: SetRequired<BaseType, (KeyPath | ToNumber<KeyPath & string>) & keyof BaseType>;
 
 export {};
