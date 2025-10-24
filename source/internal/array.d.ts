@@ -115,7 +115,8 @@ type Fail2 = IsEmptyArray<[0?]>;
 type Fail3 = IsEmptyArray<...string[]>;
 //=> false
 ```
-@see EmptyArray
+
+@see {@link EmptyArray}
 @category Array
 */
 export type IsEmptyArray<T> =
