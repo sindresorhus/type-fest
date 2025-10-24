@@ -112,7 +112,7 @@ type Fail1 = IsEmptyArray<[0]>;
 type Fail2 = IsEmptyArray<[0?]>;
 //=> false
 
-type Fail3 = IsEmptyArray<...string[]>;
+type Fail3 = IsEmptyArray<string[]>;
 //=> false
 ```
 

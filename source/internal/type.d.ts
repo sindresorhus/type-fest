@@ -147,7 +147,6 @@ Performs a loose type comparison: checks if any of the members in `T` extends `U
 This is useful when needing to know if any member of `T` extends `U` without returning `boolean`.
 */
 export type ExtendsLoose<T, U> = IsNotFalse<T extends U ? true : false>;
-// ? Should this type get exposed publicly
 
 /**
 Union of `falsy` types in TypeScript. `never` isn't included.
@@ -157,7 +156,6 @@ export type Falsy = 0 | 0n | '' | false | null | undefined; // `| never`
 /**
 Checks if `T` is **not** {@link Falsy `falsy`} similar to `Boolean(T)`.
 */
-// TODO: expose this type publicly
 export type IsTruthy<T> =
 	IsNever<T> extends true ? false
 		: T extends Falsy ? false
