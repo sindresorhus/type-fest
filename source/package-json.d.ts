@@ -209,6 +209,15 @@ export namespace PackageJson {
 	type Dependency = Partial<Record<string, string>>;
 
 	/**
+	Specifies requirements for development environment components such as operating systems, runtimes, or package managers. Used to ensure consistent development environments across the team.
+	*/
+	type DevEngineDependency = {
+		name: string;
+		version?: string;
+		onFail?: 'ignore' | 'warn' | 'error' | 'download';
+	};
+
+	/**
 	A mapping of conditions and the paths to which they resolve.
 	*/
 	type ExportConditions = {
@@ -562,6 +571,17 @@ export namespace PackageJson {
 			| '!x64',
 			string
 		>>;
+
+		/**
+		Define the runtime and package manager for developing the current project.
+		*/
+		devEngines?: {
+			os?: DevEngineDependency | DevEngineDependency[];
+			cpu?: DevEngineDependency | DevEngineDependency[];
+			libc?: DevEngineDependency | DevEngineDependency[];
+			runtime?: DevEngineDependency | DevEngineDependency[];
+			packageManager?: DevEngineDependency | DevEngineDependency[];
+		};
 
 		/**
 		If set to `true`, a warning will be shown if package is installed locally. Useful if the package is primarily a command-line application that should be installed globally.
