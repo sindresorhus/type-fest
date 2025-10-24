@@ -12,7 +12,7 @@ import type {If} from './if.d.ts';
 */
 export type FilterOptions = {
 	/**
-	Controls the strictness of type checking in {@link FilterType `FilterType`}.
+	Controls the strictness of type checking when filtering.
 
 	- When `true`, the entire union type **must** extend the filter type. For example, `string | number extends string` returns `false`.
 	- When `false`, the check passes if **any** member of the union extends the filter type. For example, `string | number extends string` returns `true`.
@@ -61,13 +61,11 @@ Determines whether the array `V` should be kept based on the boolean type `T`.
 type IfFilter<T extends boolean, V extends UnknownArray> = [T] extends [true] ? V : [];
 
 /**
-Filters elements or properties from an array or object based on whether they extend the specified filter type.s
+Filters elements or properties from an array or object based on whether they extend the specified filter type.
 
 If `FilterType` is `Boolean`, it filters out `falsy` values like {@link Boolean `Boolean(T)`} does.
 
 Optional control for strict or loose type comparison.
-
-@default loose
 
 @example
 ```
