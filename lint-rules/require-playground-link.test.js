@@ -307,5 +307,93 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			exportedType('EmptyLink', jsdoc(fence(code1), '[Playground Link]()')),
 			exportedType('EmptyLink', jsdoc(fence.link(code1))),
 		),
+
+		// With text before and after
+		incorrectPlaygroundLinkError(
+			exportTypeAndOptions('WithText', jsdoc('Some description.', fence(code1), generateLinkText(code2), '@category Test')),
+			exportTypeAndOptions('WithText', jsdoc('Some description.', fence.link(code1), '@category Test')),
+			2,
+		),
+
+		// With line breaks before and after
+		incorrectPlaygroundLinkError(
+			exportTypeAndOptions(
+				'WithText',
+				jsdoc('Some description.\n', 'Note: Some note.\n', fence(code2, 'ts'), generateLinkText(code1), '\n@category Test'),
+			),
+			exportTypeAndOptions(
+				'WithText',
+				jsdoc('Some description.\n', 'Note: Some note.\n', fence.link(code2, 'ts'), '\n@category Test'),
+			),
+			2,
+		),
+
+		// With `@example` tag
+		incorrectPlaygroundLinkError(
+			exportTypeAndOptions('WithExampleTag', jsdoc('@example', fence(code1), generateLinkText(code2))),
+			exportTypeAndOptions('WithExampleTag', jsdoc('@example', fence.link(code1))),
+			2,
+		),
+
+		// With language specifiers
+		incorrectPlaygroundLinkError(
+			exportTypeAndOptions('WithLangTs', jsdoc(fence(code1, 'ts'), generateLinkText(code2))),
+			exportTypeAndOptions('WithLangTs', jsdoc(fence.link(code1, 'ts'))),
+			2,
+		),
+		incorrectPlaygroundLinkError(
+			exportTypeAndOptions('WithLangTypeScript', jsdoc(fence(code1, 'typescript'), generateLinkText(code2))),
+			exportTypeAndOptions('WithLangTypeScript', jsdoc(fence.link(code1, 'typescript'))),
+			2,
+		),
+
+		// Multiple code blocks
+		incorrectPlaygroundLinkError(
+			exportTypeAndOptions(
+				'MultipleCodeBlocks',
+				jsdoc('@example', fence(code1, 'ts'), generateLinkText(code2), '\nSome text in between.\n', '@example', fence(code2), generateLinkText(code1)),
+			),
+			exportTypeAndOptions(
+				'MultipleCodeBlocks',
+				jsdoc('@example', fence.link(code1, 'ts'), '\nSome text in between.\n', '@example', fence.link(code2)),
+			),
+			4,
+		),
+
+		// Multiple properties
+		incorrectPlaygroundLinkError(
+			exportedOptionsType(
+				'MultiplePropsOptions',
+				outdent`
+					${optionProp('first', jsdoc(fence(code1), generateLinkText(code2)))}
+
+					${optionProp('second', jsdoc(fence(code2), generateLinkText(code1)))}
+				`,
+			),
+			exportedOptionsType(
+				'MultiplePropsOptions',
+				outdent`
+					${optionProp('first', jsdoc(fence.link(code1)))}
+	
+					${optionProp('second', jsdoc(fence.link(code2)))}
+				`,
+			),
+			2,
+		),
+
+		// Multiple exports
+		incorrectPlaygroundLinkError(
+			outdent`
+				${exportTypeAndOptions('First', jsdoc(fence(code1, 'typescript'), generateLinkText(code2)))}
+	
+				${exportTypeAndOptions('Second', jsdoc('@example', fence(code1), generateLinkText(code2), '@category Test'))}
+			`,
+			outdent`
+				${exportTypeAndOptions('First', jsdoc(fence.link(code1, 'typescript')))}
+	
+				${exportTypeAndOptions('Second', jsdoc('@example', fence.link(code1), '@category Test'))}
+			`,
+			4,
+		),
 	],
 });
