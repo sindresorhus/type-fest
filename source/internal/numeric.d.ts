@@ -80,7 +80,7 @@ type T6 = UnionMin<number>;
 */
 export type UnionMin<N extends number> =
 	IsAnyOrNever<N> extends true ? N // Handles `any/never`
-		: number extends N ? number // If `N` is the wide `number` type, we cannot infer a literal manimum
+		: number extends N ? number // If `N` is the wide `number` type, we cannot infer a literal minimum
 			: NegativeInfinity extends N ? NegativeInfinity // If `NegativeInfinity` is present, it dominates any finite number
 				: [N] extends [PositiveInfinity] ? PositiveInfinity // If `N` is exactly `PositiveInfinity`, return it directly
 					: SeparateNegatives<N> extends [infer Pos extends number, infer Neg extends number]
