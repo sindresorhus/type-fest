@@ -511,7 +511,7 @@ export namespace PackageJson {
 		bundleDependencies?: string[];
 
 		/**
-		npm dependency override map
+		Selective version overrides. Allows the definition of custom package versions inside dependencies without manual edits in the `package-lock.json` file.
 		*/
 		overrides?: Dependency;
 
