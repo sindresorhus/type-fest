@@ -511,6 +511,11 @@ export namespace PackageJson {
 		bundleDependencies?: string[];
 
 		/**
+		npm dependency override map
+		*/
+		overrides?: Dependency;
+
+		/**
 		Engines that this package runs on.
 		*/
 		engines?: {
