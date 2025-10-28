@@ -1,7 +1,8 @@
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
-import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
+import type {EmptyObject} from '../empty-object.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
 /**
@@ -88,6 +89,42 @@ Returns whether the given array `T` is readonly.
 export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
 
 /**
+Represents an empty array, the `[]` or `readonly []` value.
+*/
+export type EmptyArray = readonly [] | []; // The extra `[]` is just to prevent TS from expanding the type.
+
+/**
+Returns a `boolean` for whether the type is an empty array, the `[]` or `readonly []` value.
+
+@example
+```
+import type {IsEmptyArray} from 'type-fest';
+
+type Pass1 = IsEmptyArray<[]>;
+//=> true
+
+type Pass2 = IsEmptyArray<readonly []>;
+//=> true
+
+type Fail1 = IsEmptyArray<[0]>;
+//=> false
+
+type Fail2 = IsEmptyArray<[0?]>;
+//=> false
+
+type Fail3 = IsEmptyArray<string[]>;
+//=> false
+```
+
+@see {@link EmptyArray}
+@category Array
+*/
+export type IsEmptyArray<T> =
+	IsNever<T> extends true ? false
+		: T extends EmptyArray ? true
+			: false;
+
+/**
 Transforms a tuple type by replacing it's rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.
 
 @example
@@ -147,5 +184,33 @@ type _CollapseRestElement<
 				>
 				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 		: never; // Should never happen
+
+/**
+Cleans any extra empty arrays/objects from a union.
+
+@example
+```
+type T1 = CleanEmpty<[number] | []>;
+//=> [number]
+
+type T2 = CleanEmpty<[number, string?] | [never] | []>;
+//=> [number, string?] | [never]
+
+type T3 = CleanEmpty<{a: 'A'} | {}>;
+//=> {a: 'A'}
+
+type T4 = CleanEmpty<[]>;
+//=> []
+
+type T5 = CleanEmpty<{}>;
+//=> {}
+```
+
+@category Utilities
+*/
+export type CleanEmpty<T> =
+	Exclude<T, EmptyArray | EmptyObject> extends infer U
+		? IsNever<U> extends true ? T : U
+		: never;
 
 export {};
