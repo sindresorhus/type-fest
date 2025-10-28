@@ -3,6 +3,7 @@ import {importPathRule} from './lint-rules/import-path.js';
 import {sourceFilesExtensionRule} from './lint-rules/source-files-extension.js';
 import {requireExportedTypesRule} from './lint-rules/require-exported-types.js';
 import {requireExportRule} from './lint-rules/require-export.js';
+import {requirePlaygroundLinkRule} from './lint-rules/require-playground-link.js';
 
 /** @type {import('xo').FlatXoConfig} */
 const xoConfig = [
@@ -36,6 +37,12 @@ const xoConfig = [
 				'error',
 				'prefer-top-level',
 			],
+			'unicorn/template-indent': [
+				'error',
+				{
+					indent: '\t',
+				},
+			],
 		},
 	},
 	{
@@ -57,6 +64,7 @@ const xoConfig = [
 					'source-files-extension': sourceFilesExtensionRule,
 					'require-exported-types': requireExportedTypesRule,
 					'require-export': requireExportRule,
+					'require-playground-link': requirePlaygroundLinkRule,
 				},
 			},
 		},
@@ -79,6 +87,7 @@ const xoConfig = [
 		rules: {
 			'type-fest/require-exported-types': 'error',
 			'type-fest/require-export': 'error',
+			'type-fest/require-playground-link': 'error',
 		},
 	},
 ];
