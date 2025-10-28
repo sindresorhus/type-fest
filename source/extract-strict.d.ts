@@ -1,7 +1,7 @@
 /**
 A stricter version of {@link Extract<T, U>} that ensures every member of `U` can successfully extract something from `T`.
 
-For example, `StrictExtract<string | number | boolean, number | bigint>` will error because `bigint` cannot extract anything from `string | number | boolean`.
+For example, `ExtractStrict<string | number | boolean, number | bigint>` will error because `bigint` cannot extract anything from `string | number | boolean`.
 
 @example
 ```
