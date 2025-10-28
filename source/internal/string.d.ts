@@ -1,5 +1,4 @@
 import type {TupleOf} from '../tuple-of.d.ts';
-import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {Whitespace} from './characters.d.ts';
 
@@ -9,42 +8,6 @@ Return a string representation of the given string or number.
 Note: This type is not the return type of the `.toString()` function.
 */
 export type ToString<T> = T extends string | number ? `${T}` : never;
-
-/**
-Converts a numeric string to a number.
-
-@example
-```
-type PositiveInt = StringToNumber<'1234'>;
-//=> 1234
-
-type NegativeInt = StringToNumber<'-1234'>;
-//=> -1234
-
-type PositiveFloat = StringToNumber<'1234.56'>;
-//=> 1234.56
-
-type NegativeFloat = StringToNumber<'-1234.56'>;
-//=> -1234.56
-
-type PositiveInfinity = StringToNumber<'Infinity'>;
-//=> Infinity
-
-type NegativeInfinity = StringToNumber<'-Infinity'>;
-//=> -Infinity
-```
-
-@category String
-@category Numeric
-@category Template literal
-*/
-export type StringToNumber<S extends string> = S extends `${infer N extends number}`
-	? N
-	: S extends 'Infinity'
-		? PositiveInfinity
-		: S extends '-Infinity'
-			? NegativeInfinity
-			: never;
 
 /**
 Returns a boolean for whether the given string `S` starts with the given string `SearchString`.
