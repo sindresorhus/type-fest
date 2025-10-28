@@ -511,6 +511,11 @@ export namespace PackageJson {
 		bundleDependencies?: string[];
 
 		/**
+		Selective version overrides. Allows the definition of custom package versions inside dependencies without manual edits in the `package-lock.json` file.
+		*/
+		overrides?: Dependency;
+
+		/**
 		Engines that this package runs on.
 		*/
 		engines?: {
