@@ -29,7 +29,8 @@
 		"test:tsd": "tsd",
 		"test:xo": "xo",
 		"test:linter": "node --test",
-		"test": "run-p test:*"
+		"test": "run-p test:*",
+		"docs": "typedoc"
 	},
 	"files": [
 		"index.d.ts",
@@ -59,6 +60,7 @@
 		"expect-type": "^1.2.2",
 		"npm-run-all2": "^8.0.4",
 		"tsd": "^0.33.0",
+		"typedoc": "^0.28.14",
 		"typescript": "^5.9.2",
 		"xo": "^1.2.2"
 	},
