@@ -169,8 +169,9 @@ Click the type names for complete docs.
 - [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
-- [`ArraySplice`](source/array-splice.d.ts) - Create a new array type by adding or removing elements at a specified index range in the original array.
-- [`ArrayTail`](source/array-tail.d.ts) - Extract the type of an array or tuple minus the first element.
+- [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
+- [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
+- [`Filter`](source/filter.d.ts) - Filters elements or properties from an array or object based on whether they extend the specified filter type.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.

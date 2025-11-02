@@ -2,6 +2,7 @@ import type {If} from '../if.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
+import type {ExtendsStrict} from '../extends-strict.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -154,5 +155,36 @@ Indicates the value of `exactOptionalPropertyTypes` compiler option.
 export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;
+
+/**
+Evaluates whether type `T extends U`, using either strict or loose comparison.
+
+- Strict mode, {@link ExtendsStrict `ExtendsStrict<T, U>`} is used.
+- Loose mode, {@link ExtendsLoose `ExtendsLoose<T, U>`} is used.
+*/
+export type Extends<T, U, S extends boolean = false> = {
+	true: ExtendsStrict<T, U>;
+	false: ExtendsLoose<T, U>;
+}[`${S}`];
+
+/**
+Performs a loose type comparison: checks if any of the members in `T` extends `U`.
+
+This is useful when needing to know if any member of `T` extends `U` without returning `boolean`.
+*/
+export type ExtendsLoose<T, U> = IsNotFalse<T extends U ? true : false>;
+
+/**
+Union of `falsy` types in TypeScript. `never` isn't included.
+*/
+export type Falsy = 0 | 0n | '' | false | null | undefined; // `| never`
+
+/**
+Checks if `T` is **not** {@link Falsy `falsy`} similar to `Boolean(T)`.
+*/
+export type IsTruthy<T> =
+	IsNever<T> extends true ? false
+		: T extends Falsy ? false
+			: true;
 
 export {};
