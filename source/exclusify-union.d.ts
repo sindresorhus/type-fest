@@ -5,7 +5,7 @@ import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
-Add all missing properties from other union members as optional `never` to make each union member mutually exclusive.
+Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
 
 Use-cases:
 - You want each union member to be exclusive, preventing overlapping object shapes.
