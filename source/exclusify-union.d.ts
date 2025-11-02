@@ -101,7 +101,12 @@ export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union,
 
 type _ExclusifyUnion<Union, UnionCopy = Union> = Union extends unknown // For distributing `Union`
 	? Simplify<
-		Union & Partial<Record<Exclude<KeysOfUnion<UnionCopy>, keyof Union>, never>>
+		Union & Partial<
+			Record<
+				Exclude<KeysOfUnion<UnionCopy>, keyof Union>,
+				never
+			>
+		>
 	>
 	: never; // Should never happen
 
