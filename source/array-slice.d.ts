@@ -7,6 +7,8 @@ import type {Not, TupleMin} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {And} from './and.d.ts';
 import type {ArraySplice} from './array-splice.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {Or} from './or.d.ts';
 
 /**
 Returns an array slice of a given range, just like `Array#slice()`.
@@ -60,12 +62,24 @@ export type ArraySlice<
 	Start extends number = never,
 	End extends number = never,
 > = Array_ extends unknown // To distributive type
-	? And<IsEqual<Start, never>, IsEqual<End, never>> extends true
-		? Array_
-		: number extends Array_['length']
-			? VariableLengthArraySliceHelper<Array_, Start, End>
-			: ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? Array_['length'] : End>
+	? Or<IsNever<Start>, IsNever<End>> extends true
+		? _ArraySlice<Array_, Start, End>
+		: Start extends unknown // To distribute `Start`
+			? End extends unknown // To distribute `End`
+				? _ArraySlice<Array_, Start, End>
+				: never // Never happens
+			: never // Never happens
 	: never; // Never happens
+
+type _ArraySlice<
+	Array_ extends readonly unknown[],
+	Start extends number = 0,
+	End extends number = Array_['length'],
+> = And<IsEqual<Start, never>, IsEqual<End, never>> extends true
+	? Array_
+	: number extends Array_['length']
+		? VariableLengthArraySliceHelper<Array_, Start, End>
+		: ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? Array_['length'] : End>;
 
 type VariableLengthArraySliceHelper<
 	Array_ extends readonly unknown[],
