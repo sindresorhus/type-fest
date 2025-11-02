@@ -8,7 +8,6 @@ import type {IsEqual} from './is-equal.d.ts';
 import type {And} from './and.d.ts';
 import type {ArraySplice} from './array-splice.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {Or} from './or.d.ts';
 
 /**
 Returns an array slice of a given range, just like `Array#slice()`.
@@ -62,13 +61,21 @@ export type ArraySlice<
 	Start extends number = never,
 	End extends number = never,
 > = Array_ extends unknown // To distributive type
-	? Or<IsNever<Start>, IsNever<End>> extends true
-		? _ArraySlice<Array_, Start, End>
-		: Start extends unknown // To distribute `Start`
-			? End extends unknown // To distribute `End`
+	? IsNever<Start> extends true
+		? IsNever<End> extends true
+			? _ArraySlice<Array_, Start, End>
+			: End extends unknown // To distribute `End`
 				? _ArraySlice<Array_, Start, End>
 				: never // Never happens
-			: never // Never happens
+		: IsNever<End> extends true
+			? Start extends unknown // To distribute `Start`
+				? _ArraySlice<Array_, Start, End>
+				: never // Never happens
+			: Start extends unknown // To distribute `Start`
+				? End extends unknown // To distribute `End`
+					? _ArraySlice<Array_, Start, End>
+					: never // Never happens
+				: never // Never happens
 	: never; // Never happens
 
 type _ArraySlice<
