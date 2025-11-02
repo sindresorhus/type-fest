@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import type {ExclusifyUnion} from '../source/exclusify-union.d.ts';
-import type {NonRecursiveType} from '../source/internal/type.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
 expectType<{a: string; b?: never} | {a?: never; b: number}>({} as ExclusifyUnion<{a: string} | {b: number}>);
 expectType<{a: string; b?: never; c?: never} | {a?: never; b: number; c?: never} | {a?: never; b?: never; c: boolean}>(
@@ -41,8 +41,10 @@ expectType<{a?: string; readonly b: number} | {readonly a: string; b?: number}>(
 
 // Non-recursive types
 expectType<Set<string> | Map<string, string>>({} as ExclusifyUnion<Set<string> | Map<string, string>>);
+expectType<WeakSet<{a: string}> | WeakMap<{a: string}, string>>({} as ExclusifyUnion<WeakSet<{a: string}> | WeakMap<{a: string}, string>>);
 expectType<string[] | Set<string>>({} as ExclusifyUnion<string[] | Set<string>>);
 expectType<NonRecursiveType>({} as ExclusifyUnion<NonRecursiveType>);
+expectType<MapsSetsOrArrays>({} as ExclusifyUnion<MapsSetsOrArrays>);
 
 // Mix of non-recursive and recursive types
 expectType<{a: string; b?: never} | {a: number; b: true} | undefined>({} as ExclusifyUnion<{a: string} | {a: number; b: true} | undefined>);

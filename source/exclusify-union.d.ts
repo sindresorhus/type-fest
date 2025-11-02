@@ -1,9 +1,8 @@
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
+import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Simplify} from './simplify.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Add all missing properties from other union members as optional `never` to make each union member mutually exclusive.
@@ -94,7 +93,7 @@ type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
 */
 export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union,
 	If<IsUnknown<Union>, Union,
-		Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
+		Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
 			? SkippedMembers | _ExclusifyUnion<Exclude<Union, SkippedMembers>>
 			: never
 	>
