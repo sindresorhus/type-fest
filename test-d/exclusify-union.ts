@@ -55,6 +55,30 @@ expectType<RegExp | null | {foo: string; bar?: never; baz?: never} | {foo?: neve
 	{} as ExclusifyUnion<RegExp | null | {foo: string} | {bar: number; baz: {qux: string}}>,
 );
 
+// Practical test cases
+type FileConfig = {filePath: string};
+type InlineConfig = {content: string};
+
+type Config = ExclusifyUnion<FileConfig | InlineConfig>;
+//=> {filePath: string; content?: never} | {content: string; filePath?: never}
+
+declare function loadConfig(options: Config): void;
+
+// @ts-expect-error
+loadConfig({filePath: './config.json', content: '{ "name": "app" }'}); // Cannot provide both properties
+loadConfig({filePath: './config.json'}); // Ok
+loadConfig({content: '{ "name": "app" }'}); // Ok
+
+type CardPayment = {amount: number; cardNumber: string};
+type PaypalPayment = {amount: number; paypalId: string};
+
+function processPayment(payment: ExclusifyUnion<CardPayment | PaypalPayment>) {
+	// Can access `cardNumber` or `paypalId` directly
+	// And, the resulting type is also correctly `string`
+	const details = payment.cardNumber ?? payment.paypalId;
+	expectType<string>(details);
+}
+
 // Boundary types
 expectType<unknown>({} as ExclusifyUnion<unknown>);
 expectType<any>({} as ExclusifyUnion<any>);
