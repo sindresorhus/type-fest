@@ -66,5 +66,10 @@
 		"compilerOptions": {
 			"noUnusedLocals": false
 		}
+	},
+	"xo": {
+		"rules": {
+			"@typescript-eslint/unified-signatures": "off"
+		}
 	}
 }
