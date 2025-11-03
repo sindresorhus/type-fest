@@ -209,6 +209,13 @@ export namespace PackageJson {
 	type Dependency = Partial<Record<string, string>>;
 
 	/**
+	Recursive map describing selective dependency version overrides supported by npm.
+	*/
+	type DependencyOverrides = {
+		[packageName: string]: string | DependencyOverrides;
+	};
+
+	/**
 	Specifies requirements for development environment components such as operating systems, runtimes, or package managers. Used to ensure consistent development environments across the team.
 	*/
 	type DevEngineDependency = {
@@ -511,9 +518,9 @@ export namespace PackageJson {
 		bundleDependencies?: string[];
 
 		/**
-		Selective version overrides. Allows the definition of custom package versions inside dependencies without manual edits in the `package-lock.json` file.
+		Overrides is used to support selective version overrides using npm, which lets you define custom package versions or ranges inside your dependencies.
 		*/
-		overrides?: Dependency;
+		overrides?: DependencyOverrides;
 
 		/**
 		Engines that this package runs on.

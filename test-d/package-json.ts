@@ -37,6 +37,9 @@ expectType<string[] | undefined>(packageJson.bundleDependencies);
 expectType<string[] | undefined>(packageJson.bundledDependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
 expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
+expectAssignable<PackageJson['overrides']>({foo: '1.0.0'});
+expectAssignable<PackageJson['overrides']>({foo: {'.': '1.0.0', bar: '1.0.0'}});
+expectAssignable<PackageJson['overrides']>({baz: {bar: {foo: '1.0.0'}}});
 expectAssignable<PackageJson.DevEngineDependency>({
 	name: 'unicorn',
 	version: '>= 1.0.0',
