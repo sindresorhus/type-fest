@@ -212,7 +212,7 @@ export namespace PackageJson {
 	Recursive map describing selective dependency version overrides supported by npm.
 	*/
 	type DependencyOverrides = {
-		[packageName: string]: string | DependencyOverrides;
+		[packageName: string]: string | undefined | DependencyOverrides;
 	};
 
 	/**
