@@ -43,8 +43,8 @@ Note that types containing overloaded functions are not made deeply required due
 @category Set
 @category Map
 */
-export type RequiredDeep<T> =
-T extends BuiltIns ? T
+export type RequiredDeep<T> = T extends BuiltIns
+	? T
 	: T extends Map<infer KeyType, infer ValueType>
 		? Map<RequiredDeep<KeyType>, RequiredDeep<ValueType>>
 		: T extends Set<infer ItemType>
