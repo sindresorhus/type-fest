@@ -98,8 +98,8 @@ partialShape.dimensions = [15]; // OK
 export type PartialDeep<T, Options extends PartialDeepOptions = {}> =
 	_PartialDeep<T, ApplyDefaultOptions<PartialDeepOptions, DefaultPartialDeepOptions, Options>>;
 
-type _PartialDeep<T, Options extends Required<PartialDeepOptions>> =
-T extends BuiltIns | ((new (...arguments_: any[]) => unknown)) ? T
+type _PartialDeep<T, Options extends Required<PartialDeepOptions>> = T extends BuiltIns | ((new (...arguments_: any[]) => unknown))
+	? T
 	: T extends Map<infer KeyType, infer ValueType>
 		? PartialMapDeep<KeyType, ValueType, Options>
 		: T extends Set<infer ItemType>
