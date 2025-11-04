@@ -35,8 +35,6 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 	defaultOptions: [],
 	create(context) {
-		const allComments = context.sourceCode.getAllComments();
-
 		const virtualFsMap = new Map();
 		virtualFsMap.set(FILENAME, '// Can\'t be empty');
 
@@ -44,19 +42,32 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		const env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, compilerOptions);
 
 		return {
-			Program() {
-				for (const comment of allComments) {
-					// Skip non-block comments
-					if (comment.type !== 'Block') {
+			TSTypeAliasDeclaration(node) {
+				const {parent} = node;
+
+				// Skip if type is not exported or starts with an underscore (private/internal)
+				if (parent.type !== 'ExportNamedDeclaration' || node.id.name.startsWith('_')) {
+					return;
+				}
+
+				const previousNodes = [context.sourceCode.getTokenBefore(parent, {includeComments: true})];
+
+				// Handle JSDoc blocks for options
+				if (node.id.name.endsWith('Options') && node.typeAnnotation.type === 'TSTypeLiteral') {
+					for (const member of node.typeAnnotation.members) {
+						previousNodes.push(context.sourceCode.getTokenBefore(member, {includeComments: true}));
+					}
+				}
+
+				for (const previousNode of previousNodes) {
+					// Skip if previous node is not a JSDoc comment
+					if (!previousNode || previousNode.type !== 'Block' || !previousNode.value.startsWith('*')) {
 						continue;
 					}
 
-					// Skip non-JSDoc comments
-					if (!comment.value.startsWith('*')) {
-						continue;
-					}
+					const comment = previousNode.value;
 
-					for (const match of comment.value.matchAll(CODEBLOCK_REGEX)) {
+					for (const match of comment.matchAll(CODEBLOCK_REGEX)) {
 						const {code, openingFence} = match.groups ?? {};
 
 						// Skip empty code blocks
@@ -64,8 +75,8 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 							continue;
 						}
 
-						const matchOffset = match.index + openingFence.length + 2; // Add `2` because `comment.value` doesn't include the starting `/*`
-						const codeStartIndex = comment.range[0] + matchOffset;
+						const matchOffset = match.index + openingFence.length + 2; // Add `2` because `comment` doesn't include the starting `/*`
+						const codeStartIndex = previousNode.range[0] + matchOffset;
 
 						env.updateFile(FILENAME, code);
 						const syntacticDiagnostics = env.languageService.getSyntacticDiagnostics(FILENAME);
