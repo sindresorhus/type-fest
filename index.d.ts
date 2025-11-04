@@ -111,6 +111,9 @@ export type {WritableKeysOf} from './source/writable-keys-of.d.ts';
 export type {IsWritableKeyOf} from './source/is-writable-key-of.d.ts';
 export type {HasWritableKeys} from './source/has-writable-keys.d.ts';
 export type {Spread} from './source/spread.d.ts';
+export type {SplitOnRestElement} from './source/split-on-rest-element.d.ts';
+export type {ExtractRestElement} from './source/extract-rest-element.d.ts';
+export type {ExcludeRestElement} from './source/exclude-rest-element.d.ts';
 export type {IsInteger} from './source/is-integer.d.ts';
 export type {IsFloat} from './source/is-float.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
@@ -138,6 +141,7 @@ export type {ArrayValues} from './source/array-values.d.ts';
 export type {ArraySlice} from './source/array-slice.d.ts';
 export type {ArraySplice} from './source/array-splice.d.ts';
 export type {ArrayTail} from './source/array-tail.d.ts';
+export type {ArrayElement} from './source/array-element.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
 export type {Paths, PathsOptions} from './source/paths.d.ts';
 export type {AllUnionFields} from './source/all-union-fields.d.ts';
@@ -159,6 +163,7 @@ export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
 export type {IsNullable} from './source/is-nullable.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
+export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
@@ -199,3 +204,5 @@ export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 export type {ExtendsStrict} from './source/extends-strict.d.ts';
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
+
+export {};

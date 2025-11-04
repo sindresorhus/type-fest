@@ -1,7 +1,7 @@
 /**
 Create a type that represents either the value or an array of the value.
 
-@see Promisable
+@see {@link Promisable}
 
 @example
 ```

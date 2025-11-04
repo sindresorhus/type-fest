@@ -59,8 +59,8 @@ function displayPetInfoWithSharedUnionFields(petInfo: SharedUnionFields<Cat | Do
 }
 ```
 
-@see SharedUnionFieldsDeep
-@see AllUnionFields
+@see {@link SharedUnionFieldsDeep}
+@see {@link AllUnionFields}
 
 @category Object
 @category Union

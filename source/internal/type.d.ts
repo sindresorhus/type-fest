@@ -2,6 +2,7 @@ import type {If} from '../if.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -12,6 +13,11 @@ export type BuiltIns = Primitive | void | Date | RegExp;
 Matches non-recursive types.
 */
 export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown);
+
+/**
+Matches maps, sets, or arrays.
+*/
+export type MapsSetsOrArrays = ReadonlyMap<unknown, unknown> | WeakMap<WeakKey, unknown> | ReadonlySet<unknown> | WeakSet<WeakKey> | UnknownArray;
 
 /**
 Returns a boolean for whether the two given types extends the base type.
@@ -95,6 +101,32 @@ type B = IfNotAnyOrNever<any, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 // When `T` is `never` => Returns `IfNever` branch
 type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 //=> 'IS_NEVER'
+```
+
+Note: Wrapping a tail-recursive type with `IfNotAnyOrNever` makes the implementation non-tail-recursive. To fix this, move the recursion into a helper type. Refer to the following example:
+
+@example
+```ts
+import type {StringRepeat} from 'type-fest';
+
+type NineHundredNinetyNineSpaces = StringRepeat<' ', 999>;
+
+// The following implementation is not tail recursive
+type TrimLeft<S extends string> = IfNotAnyOrNever<S, S extends ` ${infer R}` ? TrimLeft<R> : S>;
+
+// Hence, instantiations with long strings will fail
+// @ts-expect-error
+type T1 = TrimLeft<NineHundredNinetyNineSpaces>;
+//        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Error: Type instantiation is excessively deep and possibly infinite.
+
+// To fix this, move the recursion into a helper type
+type TrimLeftOptimised<S extends string> = IfNotAnyOrNever<S, _TrimLeftOptimised<S>>;
+
+type _TrimLeftOptimised<S extends string> = S extends ` ${infer R}` ? _TrimLeftOptimised<R> : S;
+
+type T2 = TrimLeftOptimised<NineHundredNinetyNineSpaces>;
+//=> ''
 ```
 */
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =

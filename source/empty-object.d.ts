@@ -43,7 +43,7 @@ type Fail1 = IsEmptyObject<[]>; //=> false
 type Fail2 = IsEmptyObject<null>; //=> false
 ```
 
-@see EmptyObject
+@see {@link EmptyObject}
 @category Object
 */
 export type IsEmptyObject<T> = T extends EmptyObject ? true : false;

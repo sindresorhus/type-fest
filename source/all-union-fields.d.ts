@@ -63,7 +63,7 @@ function displayPetInfoWithAllUnionFields(petInfo: AllUnionFields<Cat | Dog>) {
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union

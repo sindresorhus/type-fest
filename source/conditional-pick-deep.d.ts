@@ -22,7 +22,7 @@ type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions
 /**
 ConditionalPickDeep options.
 
-@see ConditionalPickDeep
+@see {@link ConditionalPickDeep}
 */
 export type ConditionalPickDeepOptions = {
 	/**
@@ -40,7 +40,7 @@ type DefaultConditionalPickDeepOptions = {
 /**
 Pick keys recursively from the shape that matches the given condition.
 
-@see ConditionalPick
+@see {@link ConditionalPick}
 
 @example
 ```

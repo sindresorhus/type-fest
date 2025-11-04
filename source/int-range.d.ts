@@ -40,7 +40,7 @@ type Hundreds = IntRange<100, 901, 100>;
 //=> 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
 ```
 
-@see IntClosedRange
+@see {@link IntClosedRange}
 */
 export type IntRange<Start extends number, End extends number, Step extends number = 1> = PrivateIntRange<Start, End, Step>;
 

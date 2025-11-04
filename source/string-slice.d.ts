@@ -28,8 +28,8 @@ type D = StringSlice<'abcde', -2, -1>;
 */
 export type StringSlice<
 	S extends string,
-	Start extends number = 0,
-	End extends number = StringToArray<S>['length'],
+	Start extends number = never,
+	End extends number = never,
 > = string extends S
 	? string
 	: ArraySlice<StringToArray<S>, Start, End> extends infer R extends readonly string[]

@@ -1,12 +1,12 @@
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
-import type {Words} from './words.d.ts';
+import type {Words, WordsOptions} from './words.d.ts';
 
 /**
 CamelCase options.
 
 @see {@link CamelCase}
 */
-export type CamelCaseOptions = {
+export type CamelCaseOptions = WordsOptions & {
 	/**
 	Whether to preserved consecutive uppercase letter.
 
@@ -16,6 +16,7 @@ export type CamelCaseOptions = {
 };
 
 export type _DefaultCamelCaseOptions = {
+	splitOnNumbers: true;
 	preserveConsecutiveUppercase: false;
 };
 
@@ -83,7 +84,7 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 	? string extends Type
 		? Type
 		: Uncapitalize<CamelCaseFromArray<
-			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type>,
+			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
 			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
 		>>
 	: Type;

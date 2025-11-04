@@ -22,6 +22,7 @@ const xoConfig = [
 			'@typescript-eslint/no-deprecated': 'off',
 			'@typescript-eslint/no-wrapper-object-types': 'off',
 			'@typescript-eslint/consistent-indexed-object-style': 'off',
+			'@typescript-eslint/unified-signatures': 'off', // Temp
 			'@stylistic/quote-props': 'off',
 			'@stylistic/function-paren-newline': 'off',
 			'@stylistic/object-curly-newline': 'off',
@@ -64,7 +65,7 @@ const xoConfig = [
 		},
 	},
 	{
-		files: ['source/**/*.d.ts', 'test-d/**/*.ts'],
+		files: ['source/**/*.d.ts', 'test-d/**/*.ts', 'index.d.ts'],
 		rules: {
 			'type-fest/import-path': 'error',
 		},
