@@ -86,6 +86,7 @@ const xoConfig = [
 	},
 	{
 		files: 'source/**/*.d.ts',
+		ignores: ['source/internal/**/*.d.ts'],
 		rules: {
 			'type-fest/validate-jsdoc-codeblocks': 'error',
 		},
