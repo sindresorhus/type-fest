@@ -38,15 +38,14 @@ function createAccountNumber(): AccountNumber {
 	return 2 as AccountNumber;
 }
 
-function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
-	return 4 as AccountBalance;
-}
+declare function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance;
 
 // This will compile successfully.
 getMoneyForAccount(createAccountNumber());
 
 // But this won't, because it has to be explicitly passed as an `AccountNumber` type!
 // Critically, you could not accidentally use an `AccountBalance` as an `AccountNumber`.
+// @ts-expect-error
 getMoneyForAccount(2);
 
 // You can also use tagged values like their underlying, untagged type.
@@ -80,7 +79,7 @@ This article explains more about [how tag metadata works and when it can be usef
 
 @example
 ```
-import type {Tagged} from 'type-fest';
+import type {Tagged, GetTagMetadata} from 'type-fest';
 
 type JsonOf<T> = Tagged<string, 'JSON', T>;
 
@@ -123,6 +122,7 @@ const moneyByAccountType: Record<UnwrapTagged<AccountType>, number> = {
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
 // Attempting to pass an non-Tagged type to UnwrapTagged will raise a type error.
+// @ts-expect-error
 type WontWork = UnwrapTagged<string>;
 ```
 
@@ -180,6 +180,7 @@ function createNewThingOne (): NewThingOne {
 }
 
 // This will fail to compile, as they are fundamentally different types.
+// @ts-expect-error
 const thingTwo = createNewThingOne() as NewThingTwo;
 
 // Here's another example of opaque typing.
@@ -187,14 +188,13 @@ function createAccountNumber(): AccountNumber {
 	return 2 as AccountNumber;
 }
 
-function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
-	return 4 as AccountBalance;
-}
+declare function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance;
 
 // This will compile successfully.
 getMoneyForAccount(createAccountNumber());
 
 // But this won't, because it has to be explicitly passed as an `AccountNumber` type.
+// @ts-expect-error
 getMoneyForAccount(2);
 
 // You can use opaque values like they aren't opaque too.
@@ -240,9 +240,11 @@ const moneyByAccountType: Record<UnwrapOpaque<AccountType>, number> = {
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
 // Attempting to pass an non-Opaque type to UnwrapOpaque will raise a type error.
+// @ts-expect-error
 type WontWork = UnwrapOpaque<string>;
 
 // Using a Tagged type will work too.
+// @ts-expect-error
 type WillWork = UnwrapOpaque<Tagged<number, 'AccountNumber'>>; // number
 ```
 
