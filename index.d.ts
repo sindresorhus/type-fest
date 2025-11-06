@@ -114,6 +114,7 @@ export type {Spread} from './source/spread.d.ts';
 export type {IsInteger} from './source/is-integer.d.ts';
 export type {IsFloat} from './source/is-float.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
+export type {TupleToEnum, ToEnumOptions} from './source/tuple-to-enum.d.ts';
 export type {TupleToUnion} from './source/tuple-to-union.d.ts';
 export type {UnionToTuple} from './source/union-to-tuple.d.ts';
 export type {UnionToEnum} from './source/union-to-enum.d.ts';
