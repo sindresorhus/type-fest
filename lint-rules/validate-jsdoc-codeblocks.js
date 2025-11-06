@@ -1,3 +1,4 @@
+import path from 'node:path';
 import ts from 'typescript';
 import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescript/vfs';
 
@@ -22,6 +23,13 @@ const compilerOptions = {
 	exactOptionalPropertyTypes: true,
 };
 
+const virtualFsMap = new Map();
+virtualFsMap.set(FILENAME, '// Can\'t be empty');
+
+const rootDir = path.join(import.meta.dirname, '..');
+const system = createFSBackedSystem(virtualFsMap, rootDir, ts);
+const env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, compilerOptions);
+
 export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	meta: {
 		type: 'suggestion',
@@ -35,12 +43,6 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 	defaultOptions: [],
 	create(context) {
-		const virtualFsMap = new Map();
-		virtualFsMap.set(FILENAME, '// Can\'t be empty');
-
-		const system = createFSBackedSystem(virtualFsMap, context.cwd, ts);
-		const env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, compilerOptions);
-
 		return {
 			TSTypeAliasDeclaration(node) {
 				const filename = context.filename.replaceAll('\\', '/');
