@@ -11,10 +11,10 @@ const fence = (code, lang = '') =>
 		\`\`\`
 	`;
 
-const jsdoc = (...parts) =>
+const jsdoc = (...lines) =>
 	outdent`
 		/**
-		${parts.join('\n')}
+		${lines.join('\n')}
 		*/
 	`;
 
