@@ -30,11 +30,13 @@ const optionProp = (name, jsdocBlock = '') =>
 		${name}: string;
 	`;
 
+const indent = (text, indent = '\t') =>
+	text.split(/\r?\n/).map(line => line ? `${indent}${line}` : line).join('\n');
+
 const exportOption = (name, props) =>
-	// Replace line breaks with indented line breaks (except empty lines)
 	outdent`
 		export type ${name} = {
-			${props.replaceAll(/\n(?=[^\r\n])/g, '$&\t')}
+		${indent(props)}
 		};
 	`;
 
