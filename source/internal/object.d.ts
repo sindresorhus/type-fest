@@ -1,5 +1,4 @@
 import type {Simplify} from '../simplify.d.ts';
-import type {UnknownArray} from '../unknown-array.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
 import type {RequiredKeysOf} from '../required-keys-of.d.ts';
@@ -9,7 +8,7 @@ import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
-import type {NonRecursiveType} from './type.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
 /**
@@ -40,7 +39,7 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends objec
 Returns a boolean for whether the given type is a plain key-value object.
 */
 export type IsPlainObject<T> =
-	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+	T extends NonRecursiveType | MapsSetsOrArrays
 		? false
 		: T extends object
 			? true
