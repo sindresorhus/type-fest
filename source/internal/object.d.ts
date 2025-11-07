@@ -39,11 +39,13 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends objec
 Returns a boolean for whether the given type is a plain key-value object.
 */
 export type IsPlainObject<T> =
-	T extends NonRecursiveType | MapsSetsOrArrays
+	IsNever<T> extends true
 		? false
-		: T extends object
-			? true
-			: false;
+		: T extends NonRecursiveType | MapsSetsOrArrays
+			? false
+			: T extends object
+				? true
+				: false;
 
 /**
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
