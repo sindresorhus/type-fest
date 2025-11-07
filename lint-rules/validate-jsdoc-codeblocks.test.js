@@ -78,6 +78,22 @@ const codeWithErrors = outdent`
   });
 `;
 
+// eslint-disable-next-line max-params
+const errorAt = (line, after, target, endLine = line, isOption = false) => {
+	const column = after.length + 1 + (isOption ? 1 : 0); // `+1` if it's an option to adjust for the indentation
+	const lineOffset = 2 + (isOption ? 1 : 0); // JSDoc comment start + code block fence, and `+1` if it's an option to adjust for the option declaration line
+
+	return {
+		messageId: 'error',
+		line: line + lineOffset, // 1-based, inclusive
+		column, // 1-based, inclusive
+		endLine: endLine + lineOffset, // 1-based, inclusive
+		endColumn: column + target.length, // 1-based, exclusive
+	};
+};
+
+errorAt.option = (line, after, target, endLine = line) => errorAt(line, after, target, endLine, true);
+
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
 		// Not exported
@@ -182,5 +198,77 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			${exportTypeAndOption('Second', jsdoc('@example', fence(code2), '@category Test'))}
 		`,
 	],
-	invalid: [],
+	invalid: [
+		// Missing import
+		{
+			code: exportType('Add', jsdoc(
+				'Description',
+				fence(outdent`
+					type A = Add<1, 2>;
+					//=> 3
+
+					type B = Add<-1, 2>;
+					//=> 1
+				`),
+			)),
+			errors: [
+				errorAt(2, 'type A = ', 'Add'),
+				errorAt(5, 'type B = ', 'Add'),
+			],
+		},
+		// Floating examples
+		{
+			code: exportType('IsUppercase', jsdoc(
+				fence(outdent`
+					import type {IsUppercase} from 'type-fest';
+
+					IsUppercase<'ABC'>;
+					//=> true
+
+					IsUppercase<'Abc'>;
+					//=> false
+				`),
+				'@category Test',
+			)),
+			errors: [
+				errorAt(3, '', 'IsUppercase'),
+				errorAt(6, '', 'IsUppercase'),
+			],
+		},
+		// Hypthetical references
+		{
+			code: exportType('Except', jsdoc(
+				'Some description',
+				'Some note',
+				fence(outdent`
+					import type {Except} from 'type-fest';
+
+					type PostPayload = Except<UserData, 'email'>;
+				`),
+			)),
+			errors: [
+				errorAt(5, 'type PostPayload = Except<', 'UserData'),
+			],
+		},
+		// Duplicate identifiers
+		{
+			code: exportOption('IsTupleOptions', optionProp('fixedLengthOnly', jsdoc(
+				'@example',
+				fence(outdent`
+					import type {IsTuple} from 'type-fest';
+
+					type Example = IsTuple<[number, ...number[]], {fixedLengthOnly: true}>;
+					//=> false
+
+					type Example = IsTuple<[number, ...number[]], {fixedLengthOnly: false}>;
+					//=> true
+				`),
+				'@default true',
+			))),
+			errors: [
+				errorAt.option(4, 'type ', 'Example'),
+				errorAt.option(7, 'type ', 'Example'),
+			],
+		},
+	],
 });
