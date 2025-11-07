@@ -17,10 +17,10 @@ type Example = {
 	string: string;
 	map: Map<string, string>;
 	readonlyMap: ReadonlyMap<string, string>;
-	weakMap: WeakMap<object, string>;
+	weakMap: WeakMap<WeakKey, string>;
 	set: Set<string>;
 	readonlySet: ReadonlySet<string>;
-	weakSet: WeakSet<object>;
+	weakSet: WeakSet<WeakKey>;
 	date: Date;
 	number: 1;
 	array: string[];
