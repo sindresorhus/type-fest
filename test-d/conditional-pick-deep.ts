@@ -32,6 +32,7 @@ type Example = {
 	function: (...arguments_: string[]) => string;
 	promise: Promise<string>;
 	stringOrBoolean: string | boolean;
+	never: never;
 	object: {
 		string: string;
 		subObject: {
@@ -48,6 +49,7 @@ expectType<{
 	instanceA: {
 		a: string;
 	};
+	never: never;
 	object: {
 		string: string;
 		subObject: {
@@ -77,6 +79,7 @@ expectType<{
 	instanceA: {
 		a: string;
 	};
+	never: never;
 	object: {
 		string: string;
 		subObject: {
@@ -90,13 +93,16 @@ declare const stringPickOptionalOnly: ConditionalPickDeep<Example, string | unde
 expectType<{object: {subObject: {optional?: string}}}>(stringPickOptionalOnly);
 
 declare const booleanPick: ConditionalPickDeep<Example, boolean | undefined>;
-expectType<{optional?: boolean; optionalWithUndefined?: boolean | undefined}>(booleanPick);
+expectType<{optional?: boolean; optionalWithUndefined?: boolean | undefined; never: never}>(booleanPick);
 
 declare const numberPick: ConditionalPickDeep<Example, number>;
-expectType<{number: 1; interface: {a: number}}>(numberPick);
+expectType<{number: 1; interface: {a: number}; never: never}>(numberPick);
 
 declare const emptyPick: ConditionalPickDeep<Example, 'abcdefg'>;
-expectType<{}>(emptyPick);
+expectType<{never: never}>(emptyPick);
+
+declare const emptyEqualityPick: ConditionalPickDeep<Example, 'abcdefg', {condition: 'equality'}>;
+expectType<{}>(emptyEqualityPick);
 
 declare const stringOrBooleanPick: ConditionalPickDeep<Example, string | boolean>;
 expectType<{
@@ -106,6 +112,7 @@ expectType<{
 	instanceA: {
 		a: string;
 	};
+	never: never;
 	object: {
 		string: string;
 		subObject: {
@@ -118,28 +125,28 @@ declare const stringOrBooleanPickOnly: ConditionalPickDeep<Example, string | boo
 expectType<{stringOrBoolean: string | boolean}>(stringOrBooleanPickOnly);
 
 declare const arrayPick: ConditionalPickDeep<Example, string[]>;
-expectType<{array: string[]; tuples: ['foo', 'bar']}>(arrayPick);
+expectType<{array: string[]; tuples: ['foo', 'bar']; never: never}>(arrayPick);
 
 declare const arrayEqualityPick: ConditionalPickDeep<Example, string[], {condition: 'equality'}>;
 expectType<{array: string[]}>(arrayEqualityPick);
 
 declare const tuplePick: ConditionalPickDeep<Example, ['foo', 'bar']>;
-expectType<{tuples: ['foo', 'bar']}>(tuplePick);
+expectType<{tuples: ['foo', 'bar']; never: never}>(tuplePick);
 
 declare const instancePick: ConditionalPickDeep<Example, ClassA>;
-expectType<{instanceA: ClassA}>(instancePick);
+expectType<{instanceA: ClassA; never: never}>(instancePick);
 
 declare const classPick: ConditionalPickDeep<Example, typeof ClassA>;
-expectType<{ClassA: typeof ClassA}>(classPick);
+expectType<{ClassA: typeof ClassA; never: never}>(classPick);
 
 declare const functionPick: ConditionalPickDeep<Example, (...arguments_: string[]) => string>;
-expectType<{function: (...arguments_: string[]) => string}>(functionPick);
+expectType<{function: (...arguments_: string[]) => string; never: never}>(functionPick);
 
 declare const mapPick: ConditionalPickDeep<Example, Map<string, string>>;
-expectType<{map: Map<string, string>}>(mapPick);
+expectType<{map: Map<string, string>; never: never}>(mapPick);
 
 declare const setPick: ConditionalPickDeep<Example, Set<string>>;
-expectType<{set: Set<string>}>(setPick);
+expectType<{set: Set<string>; never: never}>(setPick);
 
 declare const interfaceTest: ConditionalPickDeep<Example, InterfaceA>;
-expectType<{interface: InterfaceA}>(interfaceTest);
+expectType<{interface: InterfaceA; never: never}>(interfaceTest);
