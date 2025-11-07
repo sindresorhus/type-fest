@@ -16,15 +16,21 @@ type Example = {
 	literal: 'foo';
 	string: string;
 	map: Map<string, string>;
+	readonlyMap: ReadonlyMap<string, string>;
+	weakMap: WeakMap<object, string>;
 	set: Set<string>;
+	readonlySet: ReadonlySet<string>;
+	weakSet: WeakSet<object>;
 	date: Date;
 	number: 1;
 	array: string[];
+	readonlyArray: readonly string[];
 	tuples: ['foo', 'bar'];
 	interface: InterfaceA;
 	instanceA: ClassA;
 	ClassA: typeof ClassA;
 	function: (...arguments_: string[]) => string;
+	promise: Promise<string>;
 	stringOrBoolean: string | boolean;
 	object: {
 		string: string;
