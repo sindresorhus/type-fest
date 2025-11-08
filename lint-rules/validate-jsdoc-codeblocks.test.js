@@ -76,21 +76,34 @@ const codeWithErrors = dedenter`
   });
 `;
 
-// eslint-disable-next-line max-params
-const errorAt = (line, after, target, endLine = line, isOption = false) => {
-	const column = after.length + 1 + (isOption ? 1 : 0); // `+1` if it's an option to adjust for the indentation
+/**
+@typedef {{
+	line: number;
+	textBeforeStart: string;
+	isOption?: boolean;
+} & ({ target: string } | { endLine: number; textBeforeEnd: string })} ErrorAtProps
+*/
+
+/**
+@param {ErrorAtProps} props
+*/
+const errorAt = props => {
+	const {line, textBeforeStart, isOption = false} = props;
+
+	const column = textBeforeStart.length + 1 + (isOption ? 1 : 0); // `+1` if it's an option to adjust for the indentation
+	const endColumn = 'textBeforeEnd' in props ? props.textBeforeEnd.length + 1 : column + props.target.length;
+
 	const lineOffset = 2 + (isOption ? 1 : 0); // `+2` for JSDoc comment start + code block fence, and `+1` if it's an option to adjust for the option declaration line
+	const endLine = 'endLine' in props ? props.endLine : line;
 
 	return {
 		messageId: 'error',
 		line: line + lineOffset, // 1-based, inclusive
 		column, // 1-based, inclusive
 		endLine: endLine + lineOffset, // 1-based, inclusive
-		endColumn: column + target.length, // 1-based, exclusive
+		endColumn, // 1-based, exclusive
 	};
 };
-
-errorAt.option = (line, after, target, endLine = line) => errorAt(line, after, target, endLine, true);
 
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
@@ -172,8 +185,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				`),
 			)),
 			errors: [
-				errorAt(2, 'type A = ', 'Add'),
-				errorAt(5, 'type B = ', 'Add'),
+				errorAt({line: 2, textBeforeStart: 'type A = ', target: 'Add'}),
+				errorAt({line: 5, textBeforeStart: 'type B = ', target: 'Add'}),
 			],
 		},
 		// Floating examples
@@ -191,8 +204,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				'@category Test',
 			)),
 			errors: [
-				errorAt(3, '', 'IsUppercase'),
-				errorAt(6, '', 'IsUppercase'),
+				errorAt({line: 3, textBeforeStart: '', target: 'IsUppercase'}),
+				errorAt({line: 6, textBeforeStart: '', target: 'IsUppercase'}),
 			],
 		},
 		// Hypthetical references
@@ -207,7 +220,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				`),
 			)),
 			errors: [
-				errorAt(5, 'type PostPayload = Except<', 'UserData'),
+				errorAt({line: 5, textBeforeStart: 'type PostPayload = Except<', target: 'UserData'}),
 			],
 		},
 		// Duplicate identifiers
@@ -226,8 +239,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				'@default true',
 			)),
 			errors: [
-				errorAt.option(4, 'type ', 'Example'),
-				errorAt.option(7, 'type ', 'Example'),
+				errorAt({line: 4, textBeforeStart: 'type ', target: 'Example', isOption: true}),
+				errorAt({line: 7, textBeforeStart: 'type ', target: 'Example', isOption: true}),
 			],
 		},
 	],
