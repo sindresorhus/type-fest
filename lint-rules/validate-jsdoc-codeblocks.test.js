@@ -79,7 +79,7 @@ const codeWithErrors = dedenter`
 // eslint-disable-next-line max-params
 const errorAt = (line, after, target, endLine = line, isOption = false) => {
 	const column = after.length + 1 + (isOption ? 1 : 0); // `+1` if it's an option to adjust for the indentation
-	const lineOffset = 2 + (isOption ? 1 : 0); // JSDoc comment start + code block fence, and `+1` if it's an option to adjust for the option declaration line
+	const lineOffset = 2 + (isOption ? 1 : 0); // `+2` for JSDoc comment start + code block fence, and `+1` if it's an option to adjust for the option declaration line
 
 	return {
 		messageId: 'error',
