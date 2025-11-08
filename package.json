@@ -57,9 +57,9 @@
 		"@typescript-eslint/parser": "^8.44.0",
 		"eslint": "^9.35.0",
 		"@typescript/vfs": "^1.6.1",
+		"dedent": "^1.7.0",
 		"expect-type": "^1.2.2",
 		"npm-run-all2": "^8.0.4",
-		"outdent": "^0.8.0",
 		"tsd": "^0.33.0",
 		"typescript": "^5.9.2",
 		"xo": "^1.2.2"

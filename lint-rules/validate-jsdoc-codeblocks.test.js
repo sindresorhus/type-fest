@@ -1,62 +1,58 @@
-import outdent from 'outdent';
-import {createRuleTester} from './test-utils.js';
+import {createRuleTester, dedenter} from './test-utils.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
 const ruleTester = createRuleTester();
 
 const fence = (code, lang = '') =>
-	outdent`
+	dedenter`
 		\`\`\`${lang}
 		${code}
 		\`\`\`
 	`;
 
 const jsdoc = (...lines) =>
-	outdent`
+	dedenter`
 		/**
 		${lines.join('\n')}
 		*/
 	`;
 
-const exportType = (name, jsdocBlock = '') =>
-	outdent`
-		${jsdocBlock}
-		export type ${name} = string;
-	`;
+const exportType = (...prefixes) =>
+	prefixes
+		.map((doc, i) => dedenter`
+			${doc}
+			export type T${i} = string;
+		`)
+		.join('\n\n');
 
-const optionProp = (name, jsdocBlock = '') =>
-	outdent`
-		${jsdocBlock}
-		${name}: string;
-	`;
-
-const indent = (text, indent = '\t') =>
-	text.split(/\r?\n/).map(line => line ? `${indent}${line}` : line).join('\n');
-
-const exportOption = (name, props) =>
-	outdent`
-		export type ${name} = {
-		${indent(props)}
+const exportOption = (...prefixes) =>
+	dedenter`
+		export type TOptions = {
+			${prefixes
+				.map((doc, i) => dedenter`
+					${doc}
+					p${i}: string; 
+				`)
+				.join('\n\n')}
 		};
 	`;
 
-const exportTypeAndOption = (name, jsdocBlock = '') =>
-	outdent`
-		${jsdocBlock}
-		export type ${name} = string;
+const exportTypeAndOption = (...prefixes) =>
+	dedenter`
+		${exportType(...prefixes)}
 
-		${exportOption(`${name}Options`, optionProp('foo', jsdocBlock))}
+		${exportOption(...prefixes)}
 	`;
 
 // Code samples
-const code1 = outdent`
+const code1 = dedenter`
   import type {Sum} from 'type-fest';
 
   type A = Sum<1, 2>;
   //=> 3
 `;
 
-const code2 = outdent`
+const code2 = dedenter`
   import type {LiteralToPrimitiveDeep} from 'type-fest';
 
   const config = {appName: 'MyApp', version: '1.0.0'} as const;
@@ -66,7 +62,7 @@ const code2 = outdent`
   updateConfig({appName: 'MyUpdatedApp', version: '2.0.0'});
 `;
 
-const codeWithErrors = outdent`
+const codeWithErrors = dedenter`
   const config = {
   	appName: 'MyApp',
   	version: '1.0.0',
@@ -99,113 +95,75 @@ errorAt.option = (line, after, target, endLine = line) => errorAt(line, after, t
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
 		// Not exported
-		outdent`
+		dedenter`
 			${jsdoc(fence(codeWithErrors))}
 			type NotExported = string;
 		`,
-		outdent`
+		dedenter`
 			type NotExportedOptions = {
-				${optionProp('foo', jsdoc(fence(codeWithErrors)))}
+				${jsdoc(fence(codeWithErrors))}
+				p1: string;
 			}
 		`,
 
 		// Internal (leading underscore)
-		exportType('_Internal', jsdoc(fence(codeWithErrors))),
-		exportOption(
-			'_InternalOptions',
-			optionProp('foo', jsdoc(fence(codeWithErrors))),
-		),
+		dedenter`
+			${jsdoc(fence(codeWithErrors))}
+			export type _Internal = string;
+		`,
+		dedenter`
+			export type _InternalOptions = {
+				${jsdoc(fence(codeWithErrors))}
+				p1: string;
+			}
+		`,
 
 		// Without `Options` suffix
-		exportOption(
-			'NoSuffix',
-			optionProp('foo', jsdoc(fence(codeWithErrors))),
-		),
+		dedenter`
+			export type NoSuffix = {
+				${jsdoc(fence(codeWithErrors))}
+				p1: string;
+			}
+		`,
 
 		// No JSDoc
-		exportTypeAndOption('NoDoc'),
-		outdent`
-			type Some = number;
-			${exportType('NoDoc')}
-		`,
-		exportOption(
-			'NoDocOptions',
-			outdent`
-				${optionProp('first')}
-				${optionProp('second')}
-			`,
-		),
-		outdent`
-			// Not block comment
-			${exportType('NoDoc')}
-		`,
-		exportOption(
-			'NoDocOptions',
-			outdent`
-				${optionProp('first', '// Not block comment')}
-				${optionProp('second', '// Not block comment')}
-			`,
-		),
-		outdent`
-			/* Block comment, but not JSDoc */
-			${exportType('NoDoc')}
-		`,
-		exportOption(
-			'NoDocOptions',
-			outdent`
-				${optionProp('first', '/* Block comment, but not JSDoc */')}
-				${optionProp('second', '/* Block comment, but not JSDoc */')}
-			`,
-		),
+		exportTypeAndOption(''),
+		exportType('type Some = number;'),
+		exportTypeAndOption('// Not block comment'),
+		exportTypeAndOption('/* Block comment, but not JSDoc */'),
 
 		// No codeblock in JSDoc
-		exportType('NoCodeblock', jsdoc('No codeblock here')),
+		exportType(jsdoc('No codeblock here')),
 
 		// With text before and after
-		exportTypeAndOption('WithText', jsdoc('Some description.', fence(code1), '@category Test')),
+		exportTypeAndOption(jsdoc('Some description.', fence(code1), '@category Test')),
 
 		// With line breaks before and after
 		exportTypeAndOption(
-			'WithText',
 			jsdoc('Some description.\n', 'Note: Some note.\n', fence(code1, 'ts'), '\n@category Test'),
 		),
 
 		// With `@example` tag
-		exportTypeAndOption('WithExampleTag', jsdoc('@example', fence(code1))),
+		exportTypeAndOption(jsdoc('@example', fence(code1))),
 
 		// With language specifiers
-		exportTypeAndOption('WithLangTs', jsdoc(fence(code1, 'ts'))),
-		exportTypeAndOption('WithLangTypeScript', jsdoc(fence(code1, 'typescript'))),
+		exportTypeAndOption(jsdoc(fence(code1, 'ts'))),
+		exportTypeAndOption(jsdoc(fence(code1, 'typescript'))),
 
 		// Multiple code blocks
 		exportTypeAndOption(
-			'MultipleCodeBlocks',
 			jsdoc('@example', fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
 		),
 
-		// Multiple properties
-		exportOption(
-			'MultiplePropsOptions',
-			outdent`
-				${optionProp('first', jsdoc(fence(code1)))}
-
-				${optionProp('second', jsdoc(fence(code2)))}
-			`,
-		),
-
-		// Multiple exports
-		outdent`
-			${exportTypeAndOption('First', jsdoc(fence(code1, 'typescript')))}
-
-			${exportTypeAndOption('Second', jsdoc('@example', fence(code2), '@category Test'))}
-		`,
+		// Multiple exports and multiple properties
+		exportTypeAndOption(jsdoc(fence(code1)), jsdoc(fence(code2))),
 	],
 	invalid: [
 		// Missing import
 		{
-			code: exportType('Add', jsdoc(
+			code: exportType(jsdoc(
 				'Description',
-				fence(outdent`
+				fence(dedenter`
 					type A = Add<1, 2>;
 					//=> 3
 
@@ -220,8 +178,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		},
 		// Floating examples
 		{
-			code: exportType('IsUppercase', jsdoc(
-				fence(outdent`
+			code: exportType(jsdoc(
+				fence(dedenter`
 					import type {IsUppercase} from 'type-fest';
 
 					IsUppercase<'ABC'>;
@@ -239,10 +197,10 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		},
 		// Hypthetical references
 		{
-			code: exportType('Except', jsdoc(
+			code: exportType(jsdoc(
 				'Some description',
 				'Some note',
-				fence(outdent`
+				fence(dedenter`
 					import type {Except} from 'type-fest';
 
 					type PostPayload = Except<UserData, 'email'>;
@@ -254,9 +212,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		},
 		// Duplicate identifiers
 		{
-			code: exportOption('IsTupleOptions', optionProp('fixedLengthOnly', jsdoc(
+			code: exportOption(jsdoc(
 				'@example',
-				fence(outdent`
+				fence(dedenter`
 					import type {IsTuple} from 'type-fest';
 
 					type Example = IsTuple<[number, ...number[]], {fixedLengthOnly: true}>;
@@ -266,7 +224,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 					//=> true
 				`),
 				'@default true',
-			))),
+			)),
 			errors: [
 				errorAt.option(4, 'type ', 'Example'),
 				errorAt.option(7, 'type ', 'Example'),

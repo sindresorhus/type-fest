@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {RuleTester} from 'eslint';
 import tsParser from '@typescript-eslint/parser';
+import dedent from 'dedent';
 
 export const createRuleTester = (overrides = {}) => {
 	const {
@@ -98,3 +99,5 @@ export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
 		writeFixture,
 	};
 };
+
+export const dedenter = dedent.withOptions({alignValues: true});
