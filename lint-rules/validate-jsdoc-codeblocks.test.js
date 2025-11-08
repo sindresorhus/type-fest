@@ -97,6 +97,11 @@ const errorAt = props => {
 	};
 };
 
+const hasErrors = (...prefixes) => (length = 2) => ({ // One for type, one for option
+	code: exportTypeAndOption(...prefixes),
+	errors: Array.from({length}, () => ({messageId: 'error'})),
+});
+
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
 		// Not exported
@@ -172,6 +177,29 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`))),
 	],
 	invalid: [
+		// With text before and after
+		hasErrors(jsdoc('Some description.', fence(codeWithErrors), '@category Test'))(),
+
+		// With line breaks before and after
+		hasErrors(
+			jsdoc('Some description.\n', 'Note: Some note.\n', fence(codeWithErrors, 'ts'), '\n@category Test'),
+		)(),
+
+		// With `@example` tag
+		hasErrors(jsdoc('@example', fence(codeWithErrors)))(),
+
+		// With language specifiers
+		hasErrors(jsdoc(fence(codeWithErrors, 'ts')))(),
+		hasErrors(jsdoc(fence(codeWithErrors, 'typescript')))(),
+
+		// Multiple code blocks
+		hasErrors(
+			jsdoc('@example', fence(codeWithErrors, 'ts'), '\nSome text in between.\n', '@example', fence(codeWithErrors)),
+		)(4),
+
+		// Multiple exports and multiple properties
+		hasErrors(jsdoc(fence(codeWithErrors)), jsdoc(fence(codeWithErrors)))(4),
+
 		// Missing import
 		{
 			code: exportType(jsdoc(
