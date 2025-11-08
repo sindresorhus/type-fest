@@ -97,11 +97,6 @@ const errorAt = props => {
 	};
 };
 
-const hasErrors = (...prefixes) => (length = 2) => ({ // One for type, one for option
-	code: exportTypeAndOption(...prefixes),
-	errors: Array.from({length}, () => ({messageId: 'error'})),
-});
-
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
 		// Not exported
@@ -178,27 +173,354 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	],
 	invalid: [
 		// With text before and after
-		hasErrors(jsdoc('Some description.', fence(codeWithErrors), '@category Test'))(),
+		{
+			code: dedenter`
+				/**
+				Some description.
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+				@category Test
+				*/
+				export type T0 = string;
+
+				export type TOptions = {
+					/**
+					Some description.
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+					@category Test
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				{
+					messageId: 'error',
+					line: 4,
+					column: 'type A = '.length + 1,
+					endLine: 4,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 14,
+					column: '\ttype A = '.length + 1,
+					endLine: 14,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+			],
+		},
 
 		// With line breaks before and after
-		hasErrors(
-			jsdoc('Some description.\n', 'Note: Some note.\n', fence(codeWithErrors, 'ts'), '\n@category Test'),
-		)(),
+		{
+			code: dedenter`
+				/**
+				Some description.
+
+				Note: Some note.
+
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+
+				@category Test
+				*/
+				export type T0 = string;
+
+				export type TOptions = {
+					/**
+					Some description.
+
+					Note: Some note.
+
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+
+					@category Test
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				{
+					messageId: 'error',
+					line: 7,
+					column: 'type A = '.length + 1,
+					endLine: 7,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 21,
+					column: '\ttype A = '.length + 1,
+					endLine: 21,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+			],
+		},
 
 		// With `@example` tag
-		hasErrors(jsdoc('@example', fence(codeWithErrors)))(),
+		{
+			code: dedenter`
+				/**
+				@example
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+				*/
+				export type T0 = string;
+
+				export type TOptions = {
+					/**
+					@example
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				{
+					messageId: 'error',
+					line: 4,
+					column: 'type A = '.length + 1,
+					endLine: 4,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 13,
+					column: '\ttype A = '.length + 1,
+					endLine: 13,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+			],
+		},
 
 		// With language specifiers
-		hasErrors(jsdoc(fence(codeWithErrors, 'ts')))(),
-		hasErrors(jsdoc(fence(codeWithErrors, 'typescript')))(),
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+				*/
+				export type T0 = string;
+
+				export type TOptions = {
+					/**
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				{
+					messageId: 'error',
+					line: 3,
+					column: 'type A = '.length + 1,
+					endLine: 3,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 11,
+					column: '\ttype A = '.length + 1,
+					endLine: 11,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+			],
+		},
+		{
+			code: dedenter`
+				/**
+				\`\`\`typescript
+				type A = Subtract<1, 2>;
+				\`\`\`
+				*/
+				export type T0 = string;
+
+				export type TOptions = {
+					/**
+					\`\`\`typescript
+					type A = Subtract<1, 2>;
+					\`\`\`
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				{
+					messageId: 'error',
+					line: 3,
+					column: 'type A = '.length + 1,
+					endLine: 3,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 11,
+					column: '\ttype A = '.length + 1,
+					endLine: 11,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+			],
+		},
 
 		// Multiple code blocks
-		hasErrors(
-			jsdoc('@example', fence(codeWithErrors, 'ts'), '\nSome text in between.\n', '@example', fence(codeWithErrors)),
-		)(4),
+		{
+			code: dedenter`
+				/**
+				@example
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+
+				Some text in between.
+
+				@example
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+				*/
+				export type T0 = string;
+
+				export type TOptions = {
+					/**
+					@example
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+
+					Some text in between.
+
+					@example
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				{
+					messageId: 'error',
+					line: 4,
+					column: 'type A = '.length + 1,
+					endLine: 4,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 11,
+					column: 'type A = '.length + 1,
+					endLine: 11,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+
+				},
+				{
+					messageId: 'error',
+					line: 20,
+					column: '\ttype A = '.length + 1,
+					endLine: 20,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 27,
+					column: '\ttype A = '.length + 1,
+					endLine: 27,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+			],
+		},
 
 		// Multiple exports and multiple properties
-		hasErrors(jsdoc(fence(codeWithErrors)), jsdoc(fence(codeWithErrors)))(4),
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+				*/
+				export type T0 = string;
+
+				/**
+				\`\`\`ts
+				type A = Subtract<1, 2>;
+				\`\`\`
+				*/
+				export type T1 = string;
+
+				export type T0Options = {
+					/**
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+					*/
+					p0: string;
+
+					/**
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+					*/
+					p1: string;
+				};
+
+				export type T1Options = {
+					/**
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				{
+					messageId: 'error',
+					line: 3,
+					column: 'type A = '.length + 1,
+					endLine: 3,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 10,
+					column: 'type A = '.length + 1,
+					endLine: 10,
+					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 18,
+					column: '\ttype A = '.length + 1,
+					endLine: 18,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 25,
+					column: '\ttype A = '.length + 1,
+					endLine: 25,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+				{
+					messageId: 'error',
+					line: 34,
+					column: '\ttype A = '.length + 1,
+					endLine: 34,
+					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
+				},
+			],
+		},
 
 		// Missing import
 		{
