@@ -170,6 +170,14 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 		// Multiple exports and multiple properties
 		exportTypeAndOption(jsdoc(fence(code1)), jsdoc(fence(code2))),
+
+		// With @ts-expect-error
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			import type {ExtractStrict} from 'type-fest';
+
+			// @ts-expect-error
+			type A = ExtractStrict<'foo' | 'bar', 'baz'>;
+		`))),
 	],
 	invalid: [
 		// Missing import
@@ -241,6 +249,53 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				errorAt({line: 4, textBeforeStart: 'type ', target: 'Example', isOption: true}),
 				errorAt({line: 7, textBeforeStart: 'type ', target: 'Example', isOption: true}),
+			],
+		},
+		// Multi line error
+		{
+			code: exportType(jsdoc(
+				'@example',
+				fence(dedenter`
+					declare function updateConfig(newConfig: {name?: string; version?: number}): void;
+
+					updateConfig({
+						name: undefined,
+						version: undefined,
+					});
+				`),
+				'@default true',
+			)),
+			errors: [
+				errorAt({line: 4, textBeforeStart: 'updateConfig(', endLine: 7, textBeforeEnd: '}'}),
+			],
+		},
+		// Precise one character error
+		{
+			code: exportOption(jsdoc(
+				fence(dedenter`
+					import type {ExcludeStrict} from 'type-fest';
+
+					type A = ExcludeStrict<'a' | 'b', 'A'>;
+				`),
+			)),
+			errors: [
+				errorAt({
+					line: 3,
+					textBeforeStart: 'type A = ExcludeStrict<\'a\' | \'b\', ',
+					target: '\'A\'',
+					isOption: true,
+				}),
+			],
+		},
+		// `exactOptionalPropertyTypes` is enabled
+		{
+			code: exportType(jsdoc(
+				fence(dedenter`
+					const test: {foo?: string} = {foo: undefined};
+				`),
+			)),
+			errors: [
+				errorAt({line: 1, textBeforeStart: 'const ', target: 'test'}),
 			],
 		},
 	],
