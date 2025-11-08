@@ -31,7 +31,7 @@ const exportOption = (...prefixes) =>
 			${prefixes
 				.map((doc, i) => dedenter`
 					${doc}
-					p${i}: string; 
+					p${i}: string;
 				`)
 				.join('\n\n')}
 		};
