@@ -63,17 +63,9 @@ const code2 = dedenter`
 `;
 
 const codeWithErrors = dedenter`
-  const config = {
-  	appName: 'MyApp',
-  	version: '1.0.0',
-  } as const;
+import type {RemovePrefix} from 'type-fest';
 
-  declare function updateConfig(newConfig: typeof config): void;
-
-  updateConfig({
-  	appName: 'MyUpdatedApp',
-  	version: '2.0.0',
-  });
+type A = RemovePrefix<'on-change', string, {strict: "yes"}>;
 `;
 
 /**
