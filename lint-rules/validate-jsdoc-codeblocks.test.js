@@ -72,27 +72,23 @@ type A = RemovePrefix<'on-change', string, {strict: "yes"}>;
 @typedef {{
 	line: number;
 	textBeforeStart: string;
-	isOption?: boolean;
 } & ({ target: string } | { endLine: number; textBeforeEnd: string })} ErrorAtProps
-*/
 
-/**
 @param {ErrorAtProps} props
 */
 const errorAt = props => {
-	const {line, textBeforeStart, isOption = false} = props;
+	const {line, textBeforeStart} = props;
 
-	const column = textBeforeStart.length + 1 + (isOption ? 1 : 0); // `+1` if it's an option to adjust for the indentation
+	const column = textBeforeStart.length + 1;
 	const endColumn = 'textBeforeEnd' in props ? props.textBeforeEnd.length + 1 : column + props.target.length;
 
-	const lineOffset = 2 + (isOption ? 1 : 0); // `+2` for JSDoc comment start + code block fence, and `+1` if it's an option to adjust for the option declaration line
 	const endLine = 'endLine' in props ? props.endLine : line;
 
 	return {
 		messageId: 'error',
-		line: line + lineOffset, // 1-based, inclusive
+		line, // 1-based, inclusive
 		column, // 1-based, inclusive
-		endLine: endLine + lineOffset, // 1-based, inclusive
+		endLine, // 1-based, inclusive
 		endColumn, // 1-based, exclusive
 	};
 };
@@ -538,8 +534,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type Add = string;
 			`,
 			errors: [
-				errorAt({line: 2, textBeforeStart: 'type A = ', target: 'Add'}),
-				errorAt({line: 5, textBeforeStart: 'type B = ', target: 'Add'}),
+				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Add'}),
+				errorAt({line: 7, textBeforeStart: 'type B = ', target: 'Add'}),
 			],
 		},
 
@@ -561,8 +557,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			export type IsUppercase = boolean;
 			`,
 			errors: [
-				errorAt({line: 3, textBeforeStart: '', target: 'IsUppercase'}),
-				errorAt({line: 6, textBeforeStart: '', target: 'IsUppercase'}),
+				errorAt({line: 5, textBeforeStart: '', target: 'IsUppercase'}),
+				errorAt({line: 8, textBeforeStart: '', target: 'IsUppercase'}),
 			],
 		},
 
@@ -581,7 +577,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type Except = string;
 			`,
 			errors: [
-				errorAt({line: 5, textBeforeStart: 'type PostPayload = Except<', target: 'UserData'}),
+				errorAt({line: 7, textBeforeStart: 'type PostPayload = Except<', target: 'UserData'}),
 			],
 		},
 
@@ -606,8 +602,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'type ', target: 'Example', isOption: true}),
-				errorAt({line: 7, textBeforeStart: 'type ', target: 'Example', isOption: true}),
+				errorAt({line: 7, textBeforeStart: '\ttype ', target: 'Example'}),
+				errorAt({line: 10, textBeforeStart: '\ttype ', target: 'Example'}),
 			],
 		},
 
@@ -629,7 +625,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type MultiLine = string;
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'updateConfig(', endLine: 7, textBeforeEnd: '}'}),
+				errorAt({line: 6, textBeforeStart: 'updateConfig(', endLine: 9, textBeforeEnd: '}'}),
 			],
 		},
 
@@ -647,7 +643,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 			errors: [
 				errorAt({
-					line: 3,
+					line: 5,
 					textBeforeStart: 'type A = ExcludeStrict<\'a\' | \'b\', ',
 					target: '\'A\'',
 				}),
@@ -665,7 +661,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			export type Test = string;
 			`,
 			errors: [
-				errorAt({line: 1, textBeforeStart: 'const ', target: 'test'}),
+				errorAt({line: 3, textBeforeStart: 'const ', target: 'test'}),
 			],
 		},
 	],
