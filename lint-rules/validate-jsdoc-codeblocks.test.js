@@ -192,20 +192,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				{
-					messageId: 'error',
-					line: 4,
-					column: 'type A = '.length + 1,
-					endLine: 4,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 14,
-					column: '\ttype A = '.length + 1,
-					endLine: 14,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
+				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 14, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -241,20 +229,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				{
-					messageId: 'error',
-					line: 7,
-					column: 'type A = '.length + 1,
-					endLine: 7,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 21,
-					column: '\ttype A = '.length + 1,
-					endLine: 21,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
+				errorAt({line: 7, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 21, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -280,20 +256,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				{
-					messageId: 'error',
-					line: 4,
-					column: 'type A = '.length + 1,
-					endLine: 4,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 13,
-					column: '\ttype A = '.length + 1,
-					endLine: 13,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
+				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 13, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -317,20 +281,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				{
-					messageId: 'error',
-					line: 3,
-					column: 'type A = '.length + 1,
-					endLine: 3,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 11,
-					column: '\ttype A = '.length + 1,
-					endLine: 11,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
+				errorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 11, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 		{
@@ -352,20 +304,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				{
-					messageId: 'error',
-					line: 3,
-					column: 'type A = '.length + 1,
-					endLine: 3,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 11,
-					column: '\ttype A = '.length + 1,
-					endLine: 11,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
+				errorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 11, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -405,35 +345,10 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				{
-					messageId: 'error',
-					line: 4,
-					column: 'type A = '.length + 1,
-					endLine: 4,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 11,
-					column: 'type A = '.length + 1,
-					endLine: 11,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-
-				},
-				{
-					messageId: 'error',
-					line: 20,
-					column: '\ttype A = '.length + 1,
-					endLine: 20,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 27,
-					column: '\ttype A = '.length + 1,
-					endLine: 27,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
+				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 11, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 20, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 27, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -480,41 +395,11 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				{
-					messageId: 'error',
-					line: 3,
-					column: 'type A = '.length + 1,
-					endLine: 3,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 10,
-					column: 'type A = '.length + 1,
-					endLine: 10,
-					endColumn: 'type A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 18,
-					column: '\ttype A = '.length + 1,
-					endLine: 18,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 25,
-					column: '\ttype A = '.length + 1,
-					endLine: 25,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
-				{
-					messageId: 'error',
-					line: 34,
-					column: '\ttype A = '.length + 1,
-					endLine: 34,
-					endColumn: '\ttype A = '.length + 1 + 'Subtract'.length,
-				},
+				errorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 10, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				errorAt({line: 18, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 25, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 34, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
