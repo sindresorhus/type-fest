@@ -524,60 +524,74 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 		// Missing import
 		{
-			code: exportType(jsdoc(
-				'Description',
-				fence(dedenter`
-					type A = Add<1, 2>;
-					//=> 3
+			code: dedenter`
+				/**
+				Description
+				\`\`\`
+				type A = Add<1, 2>;
+				//=> 3
 
-					type B = Add<-1, 2>;
-					//=> 1
-				`),
-			)),
+				type B = Add<-1, 2>;
+				//=> 1
+				\`\`\`
+				*/
+				export type Add = string;
+			`,
 			errors: [
 				errorAt({line: 2, textBeforeStart: 'type A = ', target: 'Add'}),
 				errorAt({line: 5, textBeforeStart: 'type B = ', target: 'Add'}),
 			],
 		},
+
 		// Floating examples
 		{
-			code: exportType(jsdoc(
-				fence(dedenter`
-					import type {IsUppercase} from 'type-fest';
+			code: dedenter`
+			/**
+			\`\`\`ts
+			import type {IsUppercase} from 'type-fest';
 
-					IsUppercase<'ABC'>;
-					//=> true
+			IsUppercase<'ABC'>;
+			//=> true
 
-					IsUppercase<'Abc'>;
-					//=> false
-				`),
-				'@category Test',
-			)),
+			IsUppercase<'Abc'>;
+			//=> false
+			\`\`\`
+			@category Utilities
+			*/
+			export type IsUppercase = boolean;
+			`,
 			errors: [
 				errorAt({line: 3, textBeforeStart: '', target: 'IsUppercase'}),
 				errorAt({line: 6, textBeforeStart: '', target: 'IsUppercase'}),
 			],
 		},
+
 		// Hypthetical references
 		{
-			code: exportType(jsdoc(
-				'Some description',
-				'Some note',
-				fence(dedenter`
-					import type {Except} from 'type-fest';
+			code: dedenter`
+				/**
+				Some description
+				Some note
+				\`\`\`
+				import type {Except} from 'type-fest';
 
-					type PostPayload = Except<UserData, 'email'>;
-				`),
-			)),
+				type PostPayload = Except<UserData, 'email'>;
+				\`\`\`
+				*/
+				export type Except = string;
+			`,
 			errors: [
 				errorAt({line: 5, textBeforeStart: 'type PostPayload = Except<', target: 'UserData'}),
 			],
 		},
+
 		// Duplicate identifiers
 		{
-			code: exportOption(jsdoc(
-				'@example',
-				fence(dedenter`
+			code: dedenter`
+				export type IsTupleOptions = {
+					/**
+					@example
+					\`\`\`
 					import type {IsTuple} from 'type-fest';
 
 					type Example = IsTuple<[number, ...number[]], {fixedLengthOnly: true}>;
@@ -585,57 +599,71 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 					type Example = IsTuple<[number, ...number[]], {fixedLengthOnly: false}>;
 					//=> true
-				`),
-				'@default true',
-			)),
+					\`\`\`
+					@default true
+					*/
+					fixedLengthOnly: boolean;
+				};
+			`,
 			errors: [
 				errorAt({line: 4, textBeforeStart: 'type ', target: 'Example', isOption: true}),
 				errorAt({line: 7, textBeforeStart: 'type ', target: 'Example', isOption: true}),
 			],
 		},
+
 		// Multi line error
 		{
-			code: exportType(jsdoc(
-				'@example',
-				fence(dedenter`
-					declare function updateConfig(newConfig: {name?: string; version?: number}): void;
+			code: dedenter`
+				/**
+				@example
+				\`\`\`
+				declare function updateConfig(newConfig: {name?: string; version?: number}): void;
 
-					updateConfig({
-						name: undefined,
-						version: undefined,
-					});
-				`),
-				'@default true',
-			)),
+				updateConfig({
+					name: undefined,
+					version: undefined,
+				});
+				\`\`\`
+				@category Utilities
+				*/
+				export type MultiLine = string;
+			`,
 			errors: [
 				errorAt({line: 4, textBeforeStart: 'updateConfig(', endLine: 7, textBeforeEnd: '}'}),
 			],
 		},
+
 		// Precise one character error
 		{
-			code: exportOption(jsdoc(
-				fence(dedenter`
-					import type {ExcludeStrict} from 'type-fest';
+			code: dedenter`
+			/**
+			\`\`\`
+			import type {ExcludeStrict} from 'type-fest';
 
-					type A = ExcludeStrict<'a' | 'b', 'A'>;
-				`),
-			)),
+			type A = ExcludeStrict<'a' | 'b', 'A'>;
+			\`\`\`
+			*/
+			export type ExcludeStrict = string;
+			`,
 			errors: [
 				errorAt({
 					line: 3,
 					textBeforeStart: 'type A = ExcludeStrict<\'a\' | \'b\', ',
 					target: '\'A\'',
-					isOption: true,
 				}),
 			],
 		},
+
 		// `exactOptionalPropertyTypes` is enabled
 		{
-			code: exportType(jsdoc(
-				fence(dedenter`
-					const test: {foo?: string} = {foo: undefined};
-				`),
-			)),
+			code: dedenter`
+			/**
+			\`\`\`
+			const test: {foo?: string} = {foo: undefined};
+			\`\`\`
+			*/
+			export type Test = string;
+			`,
 			errors: [
 				errorAt({line: 1, textBeforeStart: 'const ', target: 'test'}),
 			],
