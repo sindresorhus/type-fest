@@ -322,7 +322,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 				@example
 				\`\`\`ts
-				type A = Subtract<1, 2>;
+				import type {ExcludeStrict} from 'type-fest';
+
+				type A = ExcludeStrict<string, number>;
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -338,7 +340,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 					@example
 					\`\`\`ts
-					type A = Subtract<1, 2>;
+					import type {ExcludeStrict} from 'type-fest';
+
+					type A = ExcludeStrict<string, number>;
 					\`\`\`
 					*/
 					p0: string;
@@ -346,9 +350,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 			errors: [
 				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 11, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 20, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
-				errorAt({line: 27, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 13, textBeforeStart: 'type A = ExcludeStrict<string, ', target: 'number'}),
+				errorAt({line: 22, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 31, textBeforeStart: '\ttype A = ExcludeStrict<string, ', target: 'number'}),
 			],
 		},
 
@@ -364,7 +368,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 				/**
 				\`\`\`ts
-				type A = Subtract<1, 2>;
+				import type {ExcludeStrict} from 'type-fest';
+
+				type A = ExcludeStrict<string, number>;
 				\`\`\`
 				*/
 				export type T1 = string;
@@ -379,7 +385,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 					/**
 					\`\`\`ts
-					type A = Subtract<1, 2>;
+					import type {ExcludeStrict} from 'type-fest';
+
+					type A = ExcludeStrict<string, number>;
 					\`\`\`
 					*/
 					p1: string;
@@ -388,7 +396,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T1Options = {
 					/**
 					\`\`\`ts
-					type A = Subtract<1, 2>;
+					import type {Sum} from 'type-fest';
+
+					Sum<1, 2>; //=> 3
 					\`\`\`
 					*/
 					p0: string;
@@ -396,10 +406,10 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 			errors: [
 				errorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 10, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 18, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
-				errorAt({line: 25, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
-				errorAt({line: 34, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 12, textBeforeStart: 'type A = ExcludeStrict<string, ', target: 'number'}),
+				errorAt({line: 20, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 29, textBeforeStart: '\ttype A = ExcludeStrict<string, ', target: 'number'}),
+				errorAt({line: 40, textBeforeStart: '\t', target: 'Sum'}),
 			],
 		},
 
@@ -409,18 +419,18 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				/**
 				Description
 				\`\`\`
-				type A = Add<1, 2>;
+				type A = Sum<1, 2>;
 				//=> 3
 
-				type B = Add<-1, 2>;
+				type B = Sum<-1, 2>;
 				//=> 1
 				\`\`\`
 				*/
-				export type Add = string;
+				export type Sum = string;
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Add'}),
-				errorAt({line: 7, textBeforeStart: 'type B = ', target: 'Add'}),
+				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Sum'}),
+				errorAt({line: 7, textBeforeStart: 'type B = ', target: 'Sum'}),
 			],
 		},
 
