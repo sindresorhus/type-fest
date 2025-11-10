@@ -82,12 +82,6 @@ const xoConfig = [
 		rules: {
 			'type-fest/require-exported-types': 'error',
 			'type-fest/require-export': 'error',
-		},
-	},
-	{
-		files: 'source/**/*.d.ts',
-		ignores: ['source/internal/**/*.d.ts'],
-		rules: {
 			'type-fest/validate-jsdoc-codeblocks': 'error',
 		},
 	},
