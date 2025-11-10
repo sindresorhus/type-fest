@@ -85,7 +85,7 @@ const errorAt = props => {
 	const endLine = 'endLine' in props ? props.endLine : line;
 
 	return {
-		messageId: 'error',
+		messageId: 'invalidCodeblock',
 		line, // 1-based, inclusive
 		column, // 1-based, inclusive
 		endLine, // 1-based, inclusive

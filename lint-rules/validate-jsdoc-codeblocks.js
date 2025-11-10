@@ -37,7 +37,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 			description: 'Ensures JSDoc example codeblocks don\'t have errors',
 		},
 		messages: {
-			error: '{{message}}',
+			invalidCodeblock: '{{errorMessage}}',
 		},
 		schema: [],
 	},
@@ -102,9 +102,9 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 									start: context.sourceCode.getLocFromIndex(diagnosticStart),
 									end: context.sourceCode.getLocFromIndex(diagnosticEnd),
 								},
-								messageId: 'error',
+								messageId: 'invalidCodeblock',
 								data: {
-									message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
+									errorMessage: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
 								},
 							});
 						}
