@@ -1,48 +1,7 @@
-import {createRuleTester, dedenter} from './test-utils.js';
+import {createRuleTester, dedenter, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
 const ruleTester = createRuleTester();
-
-const fence = (code, lang = '') =>
-	dedenter`
-		\`\`\`${lang}
-		${code}
-		\`\`\`
-	`;
-
-const jsdoc = (...lines) =>
-	dedenter`
-		/**
-		${lines.join('\n')}
-		*/
-	`;
-
-const exportType = (...prefixes) =>
-	prefixes
-		.map((doc, i) => dedenter`
-			${doc}
-			export type T${i} = string;
-		`)
-		.join('\n\n');
-
-const exportOption = (...prefixes) =>
-	dedenter`
-		export type TOptions = {
-			${prefixes
-				.map((doc, i) => dedenter`
-					${doc}
-					p${i}: string;
-				`)
-				.join('\n\n')}
-		};
-	`;
-
-const exportTypeAndOption = (...prefixes) =>
-	dedenter`
-		${exportType(...prefixes)}
-
-		${exportOption(...prefixes)}
-	`;
 
 // Code samples
 const code1 = dedenter`

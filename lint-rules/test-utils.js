@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -101,3 +102,166 @@ export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
 };
 
 export const dedenter = dedent.withOptions({alignValues: true});
+
+/**
+Returns the specified code in a fenced code block, with an optional language tag.
+
+@example
+```
+fence('type A = string;');
+// Returns:
+// ```
+// type A = string;
+// ```
+
+fence(`import {RemovePrefix} from 'type-fest';
+
+type A = RemovePrefix<'onChange', 'on'>;
+//=> 'Change'`, 'ts');
+// Returns:
+// ```ts
+// import {RemovePrefix} from 'type-fest';
+
+// type A = RemovePrefix<'onChange', 'on'>;
+// //=> 'Change'
+// ```
+```
+*/
+export const fence = (code, lang = '') =>
+	dedenter`
+		\`\`\`${lang}
+		${code}
+		\`\`\`
+	`;
+
+/**
+Returns the specified lines as a JSDoc comment, placing each specified line on a new line.
+
+@example
+```
+jsdoc('Some description.', 'Note: Some note.');
+// Returns:
+// /**
+// Some description.
+// Note: Some note.
+// *​/
+
+jsdoc('@example', '```\ntype A = string;\n```', '@category Test');
+// Returns;
+// /**
+// @example
+// ```
+// type A = string;
+// ```
+// @category Test
+// *​/
+```
+*/
+export const jsdoc = (...lines) =>
+	dedenter`
+		/**
+		${lines.join('\n')}
+		*/
+	`;
+
+/**
+Returns an exported type for each provided prefix, with each prefix placed directly above its corresponding type declaration.
+
+@example
+```
+exportType(
+	'// Some comment',
+	'type Test = string;',
+	'/**\nSome description.\nNote: Some note.\n*​/'
+);
+// Returns:
+// // Some comment
+// export type T0 = string;
+//
+// type Test = string;
+// export type T1 = string;
+//
+// /**
+// Some description.
+// Note: Some note.
+// *​/
+// export type T2 = string;
+*/
+export const exportType = (...prefixes) =>
+	prefixes
+		.map((doc, i) => dedenter`
+			${doc}
+			export type T${i} = string;
+		`)
+		.join('\n\n');
+
+/**
+Returns an exported "Options" object type containing a property for each specified prefix, with each prefix placed directly above its corresponding property declaration.
+
+@example
+```
+exportOption(
+	'// Some comment',
+	'type Test = string;',
+	'/**\nSome description.\nNote: Some note.\n*​/'
+);
+// Returns:
+// export type TOptions = {
+// 	// Some comment
+// 	p0: string;
+
+// 	test: string;
+// 	p1: string;
+
+// 	/**
+// 	Some description.
+// 	Note: Some note.
+// 	*​/
+// 	p2: string;
+// };
+```
+*/
+export const exportOption = (...prefixes) =>
+	dedenter`
+		export type TOptions = {
+			${prefixes
+				.map((doc, i) => dedenter`
+					${doc}
+					p${i}: string;
+				`)
+				.join('\n\n')}
+		};
+	`;
+
+/**
+Returns an exported type for each provided prefix, and an exported "Options" object type containing a property for each specified prefix, with each prefix placed directly above its corresponding declaration.
+
+@example
+```
+exportTypeAndOption('// Some comment', '/**\nSome JSDoc\n*​/');
+// Returns:
+// // Some comment
+// type T0 = string;
+
+// /**
+// Some JSDoc
+// *​/
+// type T1 = string;
+
+// type TOptions = {
+// 	// Some comment
+// 	p0: string;
+
+// 	/**
+// 	Some JSDoc
+// 	*​/
+// 	p1: string;
+// };
+```
+*/
+export const exportTypeAndOption = (...prefixes) =>
+	dedenter`
+		${exportType(...prefixes)}
+
+		${exportOption(...prefixes)}
+	`;
