@@ -42,7 +42,7 @@ type A = IsTrue<never>;
 
 // If you don't want that behaviour, you can explicitly add an `IsNever` check before the distributive condtional.
 type IsTrueFixed<T> =
-	IsNever<T> extends true ? false : [T] extends [true] ? true : false;
+	IsNever<T> extends true ? false : T extends true ? true : false;
 
 type B = IsTrueFixed<never>;
 //   ^? type B = false
