@@ -166,6 +166,23 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			// @ts-expect-error
 			type A = ExtractStrict<'foo' | 'bar', 'baz'>;
 		`))),
+
+		// Indented code blocks
+		exportTypeAndOption(jsdoc(
+			'Note:',
+			dedenter`
+				1. First point
+					\`\`\`ts
+					import type {Subtract} from 'type-fest';
+					type A = Subtract<1, 2>;
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					import type {Sum} from 'type-fest';
+					type A = Sum<1, 2>;
+					\`\`\`
+			`,
+		)),
 	],
 	invalid: [
 		// With text before and after
@@ -413,6 +430,45 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			],
 		},
 
+		// Indented code blocks
+		{
+			code: dedenter`
+				/**
+				Note:
+				1. First point
+					\`\`\`ts
+					type A = Subtract<1, 2>;
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					type A = Sum<1, 2>;
+					\`\`\`
+				*/
+				export type T0 = string;
+
+				export type TOptions = {
+					/**
+					Note:
+					1. First point
+						\`\`\`ts
+						type A = Subtract<1, 2>;
+						\`\`\`
+					2. Second point
+						\`\`\`ts
+						type A = Sum<1, 2>;
+						\`\`\`
+					*/
+					p0: string;
+				};
+			`,
+			errors: [
+				errorAt({line: 5, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 9, textBeforeStart: '\ttype A = ', target: 'Sum'}),
+				errorAt({line: 19, textBeforeStart: '\t\ttype A = ', target: 'Subtract'}),
+				errorAt({line: 23, textBeforeStart: '\t\ttype A = ', target: 'Sum'}),
+			],
+		},
+
 		// Missing import
 		{
 			code: dedenter`
@@ -557,6 +613,24 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 			errors: [
 				errorAt({line: 3, textBeforeStart: 'const ', target: 'test'}),
+			],
+		},
+
+		// Overlapping errors
+		{
+			code: dedenter`
+			/**
+			\`\`\`typescript
+			import type {ExcludeStrict, Sum} from 'type-fest';
+
+			type A = Sum<1, '2'>;
+			\`\`\`
+			*/
+			export type Test = string;
+			`,
+			errors: [
+				errorAt({line: 5, textBeforeStart: 'type A = ', target: 'Sum<1, \'2\'>'}),
+				errorAt({line: 5, textBeforeStart: 'type A = Sum<1, ', target: '\'2\''}),
 			],
 		},
 	],
