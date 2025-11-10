@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';

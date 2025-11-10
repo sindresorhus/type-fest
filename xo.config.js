@@ -85,6 +85,17 @@ const xoConfig = [
 			'type-fest/validate-jsdoc-codeblocks': 'error',
 		},
 	},
+	{
+		files: 'lint-rules/test-utils.js',
+		rules: {
+			'no-irregular-whitespace': [
+				'error',
+				{
+					'skipComments': true,
+				},
+			],
+		},
+	},
 ];
 
 export default xoConfig;
