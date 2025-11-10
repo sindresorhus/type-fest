@@ -43,15 +43,15 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 	defaultOptions: [],
 	create(context) {
+		const filename = context.filename.replaceAll('\\', '/');
+
+		// Skip internal files
+		if (filename.includes('/internal/')) {
+			return {};
+		}
+
 		return {
 			TSTypeAliasDeclaration(node) {
-				const filename = context.filename.replaceAll('\\', '/');
-
-				// Skip internal files
-				if (filename.includes('/internal/')) {
-					return {};
-				}
-
 				const {parent} = node;
 
 				// Skip if type is not exported or starts with an underscore (private/internal)
