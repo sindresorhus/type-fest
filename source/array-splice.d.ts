@@ -46,7 +46,15 @@ SplitIndex extends 0
 
 /**
 Split the given array `T` by the given `SplitIndex`.
-For example, `SplitArrayByIndex<[1, 2, 3, 4], 2>` results in `[[1, 2], [3, 4]]` and `SplitArrayByIndex<[1, 2, 3, 4], 0>` results in `[[], [1, 2, 3, 4]]`.
+
+@example
+```
+type A = SplitArrayByIndex<[1, 2, 3, 4], 2>;
+// type A = [[1, 2], [3, 4]];
+
+type B = SplitArrayByIndex<[1, 2, 3, 4], 0>;
+// type B = [[], [1, 2, 3, 4]];
+```
 */
 type SplitArrayByIndex<T extends UnknownArray, SplitIndex extends number> =
 	SplitIndex extends 0

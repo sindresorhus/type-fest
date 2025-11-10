@@ -142,7 +142,13 @@ P extends `${infer RecordKeyInPath}.${infer SubPath}`
 /**
 Omit one path from from the given array.
 
-It replaces the item to `unknown` at the given index, for example, `OmitDeepArrayWithOnePath<[10, 20, 30, 40], 2>` results in `[10, 20, unknown, 40]`.
+It replaces the item to `unknown` at the given index.
+
+@example
+```
+type A = OmitDeepArrayWithOnePath<[10, 20, 30, 40], 2>;
+//=> type A = [10, 20, unknown, 40];
+```
 */
 type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string | number> =
 	// Handle paths that are `${number}.${string}`

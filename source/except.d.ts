@@ -4,9 +4,27 @@ import type {IsEqual} from './is-equal.d.ts';
 /**
 Filter out keys from an object.
 
-Returns `never` if `ExcludeType` is strictly equal to `KeyType`, for example, `Filter<'foo', 'foo'>` results in `never`.
-Returns `never` if `KeyType` extends `ExcludeType`, for example, `Filter<'bar', string>` results in `never`.
-Returns `KeyType` otherwise, for example, `Filter<'bar', 'foo'>` results in `'bar'`.
+Returns `never` if `Exclude` is strictly equal to `Key`.
+Returns `never` if `Key` extends `Exclude`.
+Returns `Key` otherwise.
+
+@example
+```
+type Filtered = Filter<'foo', 'foo'>;
+//=> never
+```
+
+@example
+```
+type Filtered = Filter<'bar', string>;
+//=> never
+```
+
+@example
+```
+type Filtered = Filter<'bar', 'foo'>;
+//=> 'bar'
+```
 
 @see {Except}
 */
