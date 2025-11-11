@@ -43,7 +43,7 @@ const path6 = ['foo', undefined, 'baz', null, 'xyz'].join('.') as Join<['foo', u
 
 // Partial tuple shapes (rest param last)
 const path7 = ['prefix'].join('.') as Join<['prefix', ...string[]], '.'>;
-//=> `prefix.{string}`
+//=> `prefix.${string}`
 
 // Partial tuple shapes (rest param first)
 const path8 = ['suffix'].join('.') as Join<[...string[], 'suffix'], '.'>;

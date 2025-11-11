@@ -72,7 +72,7 @@ type SplitHelper<
 	Options extends Required<SplitOptions>,
 	Accumulator extends string[] = [],
 > = S extends string // For distributing `S`
-	? Delimiter extends string // For distributing `Delimeter`
+	? Delimiter extends string // For distributing `Delimiter`
 		// If `strictLiteralChecks` is `false` OR `S` and `Delimiter` both are string literals, then perform the split
 		? Or<Not<Options['strictLiteralChecks']>, And<IsStringLiteral<S>, IsStringLiteral<Delimiter>>> extends true
 			? S extends `${infer Head}${Delimiter}${infer Tail}`
