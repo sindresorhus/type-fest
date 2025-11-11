@@ -1,5 +1,7 @@
 import {expectType} from 'tsd';
 import type {ArrayReverse} from '../source/array-reverse.d.ts';
+import type {TupleOf} from '../source/tuple-of.d.ts';
+import type {IntRange} from '../source/int-range.d.ts';
 
 // Empty & single-element tuples
 expectType<[]>({} as ArrayReverse<[]>);
@@ -81,6 +83,8 @@ type FirstFiftyIntegersReversed = [
 ];
 
 expectType<FirstFiftyIntegersReversed>({} as ArrayReverse<FirstFiftyIntegers>);
+
+expectType<TupleOf<IntRange<0, 51>, number>>({} as ArrayReverse<Partial<TupleOf<50, number>>>);
 
 type FirstNineHundredNinetyNineIntegers = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
