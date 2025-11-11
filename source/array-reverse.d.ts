@@ -10,6 +10,8 @@ Reverses the order of elements in a tuple or array type.
 
 @example
 ```
+import type {ArrayReverse} from 'type-fest';
+
 type T1 = ArrayReverse<['a', 'b', 'c']>
 //=> ['c', 'b', 'a']
 
