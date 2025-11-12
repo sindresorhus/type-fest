@@ -28,6 +28,8 @@ export type WordsOptions = {
 
 	@example
 	```
+	import type {Words} from 'type-fest';
+
 	type Example1 = Words<'p2pNetwork', {splitOnNumbers: true}>;
 	//=> ["p", "2", "p", "Network"]
 

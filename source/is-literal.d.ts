@@ -136,7 +136,7 @@ Useful for:
 
 @example
 ```
-import type {IsNumericLiteral} from 'type-fest';
+import type {IsNumericLiteral, IsStringLiteral} from 'type-fest';
 
 // https://github.com/inocan-group/inferred-types/blob/master/modules/types/src/boolean-logic/operators/EndsWith.ts
 type EndsWith<TValue, TEndsWith extends string> =

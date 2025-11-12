@@ -15,6 +15,7 @@ It relies on the fact that an empty object (`{}`) is assignable to an object wit
 ```
 const indexed: Record<string, unknown> = {}; // Allowed
 
+// @ts-expect-error
 const keyed: Record<'foo', unknown> = {}; // Error
 // => TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
 ```
@@ -36,8 +37,6 @@ type Keyed = {} extends Record<'foo' | 'bar', unknown>
 Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
 
 ```
-import type {OmitIndexSignature} from 'type-fest';
-
 type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType // Map each key of `ObjectType`...
 	]: ObjectType[KeyType]; // ...to its original value, i.e. `OmitIndexSignature<Foo> == Foo`.
@@ -47,14 +46,12 @@ type OmitIndexSignature<ObjectType> = {
 ...whether an empty object (`{}`) would be assignable to an object with that `KeyType` (`Record<KeyType, unknown>`)...
 
 ```
-import type {OmitIndexSignature} from 'type-fest';
-
 type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
 		// Is `{}` assignable to `Record<KeyType, unknown>`?
 		as {} extends Record<KeyType, unknown>
-			? ... // ✅ `{}` is assignable to `Record<KeyType, unknown>`
-			: ... // ❌ `{}` is NOT assignable to `Record<KeyType, unknown>`
+			? never // ✅ `{}` is assignable to `Record<KeyType, unknown>`
+			: KeyType // ❌ `{}` is NOT assignable to `Record<KeyType, unknown>`
 	]: ObjectType[KeyType];
 };
 ```

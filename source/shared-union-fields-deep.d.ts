@@ -67,7 +67,7 @@ function displayPetInfo(petInfo: (Cat | Dog)['info']) {
 	console.log('type: ', petInfo.type);
 }
 
-function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
+function displayPetInfoWithSharedUnionFieldsDeep(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 	// typeof petInfo =>
 	// {
 	// 	name: string;

@@ -168,38 +168,37 @@ Use-case: Retrieve a property from deep inside an API response or some other com
 @example
 ```
 import type {Get} from 'type-fest';
-import * as lodash from 'lodash';
 
-const get = <BaseType, Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>
-	lodash.get(object, path);
+declare function get<BaseType, const Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path>;
 
-interface ApiResponse {
+type ApiResponse = {
 	hits: {
 		hits: Array<{
-			_id: string
+			_id: string;
 			_source: {
 				name: Array<{
-					given: string[]
-					family: string
-				}>
-				birthDate: string
-			}
-		}>
-	}
-}
+					given: string[];
+					family: string;
+				}>;
+				birthDate: string;
+			};
+		}>;
+	};
+};
 
-const getName = (apiResponse: ApiResponse) =>
-	get(apiResponse, 'hits.hits[0]._source.name');
-	//=> Array<{given: string[]; family: string}> | undefined
+const getName = (apiResponse: ApiResponse) => get(apiResponse, 'hits.hits[0]._source.name');
+//=> (apiResponse: ApiResponse) => {given: string[]; family: string}[] | undefined
 
 // Path also supports a readonly array of strings
-const getNameWithPathArray = (apiResponse: ApiResponse) =>
-	get(apiResponse, ['hits','hits', '0', '_source', 'name'] as const);
-	//=> Array<{given: string[]; family: string}> | undefined
+const getNameWithPathArray = (apiResponse: ApiResponse) => get(apiResponse, ['hits', 'hits', '0', '_source', 'name']);
+//=> (apiResponse: ApiResponse) => {given: string[]; family: string}[] | undefined
 
 // Non-strict mode:
-Get<string[], '3', {strict: false}> //=> string
-Get<Record<string, string>, 'foo', {strict: true}> // => string
+type A = Get<string[], '3', {strict: false}>;
+//=> string
+
+type B = Get<Record<string, string>, 'foo', {strict: true}>;
+// => string | undefined
 ```
 
 @category Object

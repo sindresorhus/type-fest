@@ -7,13 +7,13 @@ Returns a boolean for whether a given number is greater than or equal to another
 ```
 import type {GreaterThanOrEqual} from 'type-fest';
 
-GreaterThanOrEqual<1, -5>;
+type A = GreaterThanOrEqual<1, -5>;
 //=> true
 
-GreaterThanOrEqual<1, 1>;
+type B = GreaterThanOrEqual<1, 1>;
 //=> true
 
-GreaterThanOrEqual<1, 5>;
+type C = GreaterThanOrEqual<1, 5>;
 //=> false
 ```
 */

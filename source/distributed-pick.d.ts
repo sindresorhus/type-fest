@@ -27,13 +27,14 @@ type Union = A | B;
 type PickedUnion = Pick<Union, 'discriminant' | 'foo'>;
 //=> {discriminant: 'A' | 'B', foo: {bar: string} | {baz: string}}
 
-const pickedUnion: PickedUnion = createPickedUnion();
+declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
 	// We would like to narrow `pickedUnion`'s type
 	// to `A` here, but we can't because `Pick`
 	// doesn't distribute over unions.
 
+	// @ts-expect-error
 	pickedUnion.foo.bar;
 	//=> Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
 }
@@ -41,6 +42,8 @@ if (pickedUnion.discriminant === 'A') {
 
 @example
 ```
+import type {DistributedPick} from 'type-fest';
+
 type A = {
 	discriminant: 'A';
 	foo: {
@@ -63,15 +66,17 @@ type Union = A | B;
 
 type PickedUnion = DistributedPick<Union, 'discriminant' | 'foo'>;
 
-const pickedUnion: PickedUnion = createPickedUnion();
+declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
 	pickedUnion.foo.bar;
  	//=> OK
 
+	// @ts-expect-error
 	pickedUnion.extraneous;
 	//=> Error: Property `extraneous` does not exist on type `Pick<A, 'discriminant' | 'foo'>`.
 
+	// @ts-expect-error
 	pickedUnion.foo.baz;
 	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
 }
