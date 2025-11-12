@@ -170,6 +170,19 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 			output: exportTypeAndOption(jsdoc(fenceWithLink(code1))),
 			errors: [{messageId: 'incorrectPlaygroundLink'}, {messageId: 'incorrectPlaygroundLink'}],
 		},
+		{
+			code: exportTypeAndOption(jsdoc(dedenter`
+				1. First point
+					${fence(code1)}
+				${generateLinkText(code1)}	
+			`)),
+			output: exportTypeAndOption(jsdoc(dedenter`
+				1. First point
+					${fence(code1)}
+					${generateLinkText(code1)}	
+			`)),
+			errors: [{messageId: 'incorrectPlaygroundLink'}, {messageId: 'incorrectPlaygroundLink'}],
+		},
 
 		// Empty link
 		{
