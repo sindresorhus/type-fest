@@ -4,10 +4,10 @@ import {generateLinkText, requirePlaygroundLinkRule} from './require-playground-
 
 const ruleTester = createRuleTester();
 
-const fenceWithLink = (code, lang = '') =>
+const fenceWithLink = (code, lang = '', linkCode = code) =>
 	outdent`
 		${fence(code, lang)}
-		${generateLinkText(code)}
+		${generateLinkText(linkCode)}
 	`;
 
 const missingPlaygroundLinkError = getPrefixes => {
@@ -28,11 +28,23 @@ const missingPlaygroundLinkError = getPrefixes => {
 	};
 };
 
-const incorrectPlaygroundLinkError = ({code, output, nErrors = 2}) => ({
-	code,
-	errors: Array.from({length: nErrors}, () => ({messageId: 'incorrectPlaygroundLink'})),
-	output,
-});
+const incorrectPlaygroundLinkError = getPrefixes => {
+	// Track the number of times `fence` is called to determine the no. of errors
+	let callCount = 0;
+	const trackedFenceWithIncorrectLink = (code, lang) => {
+		callCount++;
+		return fenceWithLink(code, lang, code + '\n// incorrect');
+	};
+
+	return {
+		// Codeblocks in input code have incorrect playground links
+		code: exportTypeAndOption(...getPrefixes(trackedFenceWithIncorrectLink)),
+		// Create two error objects for each `fence` call (one for type and one for option)
+		errors: Array.from({length: callCount * 2}, () => ({messageId: 'incorrectPlaygroundLink'})),
+		// Codeblocks in output code have correct playground links
+		output: exportTypeAndOption(...getPrefixes(fenceWithLink)),
+	};
+};
 
 // Code samples
 const code1 = outdent`
@@ -150,71 +162,43 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 		missingPlaygroundLinkError(fence => [jsdoc(fence(code1)), jsdoc(fence(code2))]),
 
 		// Incorrect existing link
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1), generateLinkText(code2))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1))),
-		}),
+		incorrectPlaygroundLinkError(fence => [jsdoc(fence(code1))]),
 
 		// Fix indentation
-		incorrectPlaygroundLinkError({
+		{
 			code: exportTypeAndOption(jsdoc(fence(code1), '\t' + generateLinkText(code1))),
 			output: exportTypeAndOption(jsdoc(fenceWithLink(code1))),
-		}),
+			errors: [{messageId: 'incorrectPlaygroundLink'}, {messageId: 'incorrectPlaygroundLink'}],
+		},
 
 		// Empty link
-		incorrectPlaygroundLinkError({
+		{
 			code: exportTypeAndOption(jsdoc(fence(code1), '[Playground Link]()')),
 			output: exportTypeAndOption(jsdoc(fenceWithLink(code1))),
-		}),
+			errors: [{messageId: 'incorrectPlaygroundLink'}, {messageId: 'incorrectPlaygroundLink'}],
+		},
 
 		// With text before and after
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc('Some description.', fence(code1), generateLinkText(code2), '@category Test')),
-			output: exportTypeAndOption(jsdoc('Some description.', fenceWithLink(code1), '@category Test')),
-		}),
+		incorrectPlaygroundLinkError(fence => [jsdoc('Some description.', fence(code1), '@category Test')]),
 
 		// With line breaks before and after
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(
-				jsdoc('Some description.\n', 'Note: Some note.\n', fence(code1, 'ts'), generateLinkText(code2), '\n@category Test'),
-			),
-			output: exportTypeAndOption(
-				jsdoc('Some description.\n', 'Note: Some note.\n', fenceWithLink(code1, 'ts'), '\n@category Test'),
-			),
-		}),
+		incorrectPlaygroundLinkError(fence => [
+			jsdoc('Some description.\n', 'Note: Some note.\n', fence(code1, 'ts'), '\n@category Test'),
+		]),
 
 		// With `@example` tag
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc('@example', fence(code1), generateLinkText(code2))),
-			output: exportTypeAndOption(jsdoc('@example', fenceWithLink(code1))),
-		}),
+		incorrectPlaygroundLinkError(fence => [jsdoc('@example', fence(code1))]),
 
 		// With language specifiers
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1, 'ts'), generateLinkText(code2))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1, 'ts'))),
-		}),
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1, 'typescript'), generateLinkText(code2))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1, 'typescript'))),
-		}),
+		incorrectPlaygroundLinkError(fence => [jsdoc(fence(code1, 'ts'))]),
+		incorrectPlaygroundLinkError(fence => [jsdoc(fence(code1, 'typescript'))]),
 
 		// Multiple code blocks
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(
-				jsdoc('@example', fence(code1, 'ts'), generateLinkText(code2), '\nSome text in between.\n', '@example', fence(code2), generateLinkText(code1)),
-			),
-			output: exportTypeAndOption(
-				jsdoc('@example', fenceWithLink(code1, 'ts'), '\nSome text in between.\n', '@example', fenceWithLink(code2)),
-			),
-			nErrors: 4,
-		}),
+		incorrectPlaygroundLinkError(fence => [
+			jsdoc('@example', fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
+		]),
 
 		// Multiple exports and multiple properties
-		incorrectPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1), generateLinkText(code2)), jsdoc(fence(code2), generateLinkText(code1))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1)), jsdoc(fenceWithLink(code2))),
-			nErrors: 4,
-		}),
+		incorrectPlaygroundLinkError(fence => [jsdoc(fence(code1)), jsdoc(fence(code2))]),
 	],
 });
