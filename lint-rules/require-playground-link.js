@@ -1,7 +1,7 @@
 import lzString from 'lz-string';
 import outdent from 'outdent';
 
-const CODEBLOCK_REGEX = /```(?:ts|typescript)?(?<code>[\s\S]*?)```/g;
+const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?)(?<code>[\s\S]*?)```/g;
 const PLAYGROUND_BASE_URL = 'https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/';
 
 const generatePlaygroundLink = code => {
@@ -60,10 +60,10 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 					const comment = previousNode.value;
 
 					for (const match of comment.matchAll(CODEBLOCK_REGEX)) {
-						const {code} = match.groups ?? {};
+						const {code, openingFence} = match.groups ?? {};
 
 						// Skip empty code blocks
-						if (!code) {
+						if (!code || !openingFence) {
 							continue;
 						}
 
@@ -79,17 +79,20 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 						}
 
 						const codeblockStart = previousNode.range[0] + match.index + 2;
-						const codeblockEnd = codeblockStart + match[0].length;
 
 						const fixerRangeStart = previousNode.range[0] + nextLineIndex + 2;
 						const fixerRangeEnd = fixerRangeStart + nextLine.length;
 
 						const doesPlaygroundLinkExist = nextLine.includes('[Playground Link]');
 
+						// For missing link, highlight the opening fence, and for incorrect link, highlight the link line
+						const errorStart = doesPlaygroundLinkExist ? fixerRangeStart : codeblockStart;
+						const errorEnd = doesPlaygroundLinkExist ? fixerRangeEnd : codeblockStart + openingFence.length;
+
 						context.report({
 							loc: {
-								start: context.sourceCode.getLocFromIndex(codeblockStart),
-								end: context.sourceCode.getLocFromIndex(codeblockEnd),
+								start: context.sourceCode.getLocFromIndex(errorStart),
+								end: context.sourceCode.getLocFromIndex(errorEnd),
 							},
 							messageId: doesPlaygroundLinkExist
 								? 'incorrectPlaygroundLink'
