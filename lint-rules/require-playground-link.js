@@ -26,7 +26,7 @@ export const requirePlaygroundLinkRule = /** @type {const} */ ({
 		},
 		fixable: 'code',
 		messages: {
-			missingPlaygroundLink: 'Example codeblocks must have an associated playground link. Add the following after the example codeblock:\n[Playground Link]({{playgroundLink}})',
+			missingPlaygroundLink: 'Example codeblocks must have an associated playground link. Add the following after the example codeblock:\n\n[Playground Link]({{playgroundLink}})\n\n',
 			incorrectPlaygroundLink: 'Incorrect playground link. Update the link to the following:\n{{playgroundLink}}',
 		},
 		schema: [],
