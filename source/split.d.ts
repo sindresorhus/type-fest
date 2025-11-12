@@ -16,7 +16,7 @@ export type SplitOptions = {
 
 	@example
 	```ts
-	import type {Split} from "type-fest";
+	import type {Split} from 'type-fest';
 
 	type Example1 = Split<`foo.${string}.bar`, '.', {strictLiteralChecks: false}>;
 	//=> ['foo', string, 'bar']
