@@ -19,16 +19,17 @@ class Cat extends Animal {
 	meow() {}
 }
 
-let animalArray: Animal[] = [animal];
-let catArray: Cat[] = [cat];
+let animalArray: Animal[] = [new Animal('jerry')];
+let catArray: Cat[] = [new Cat('tom')];
 
 animalArray = catArray; // Okay if covariant
 animalArray.push(new Animal('another animal')); // Pushed an animal into catArray
 catArray.forEach(c => c.meow()); // Allowed but, error at runtime
 
-let invariantAnimalArray: InvariantOf<Animal>[] = [animal] as InvariantOf<Animal>[];
-let invariantCatArray: InvariantOf<Cat>[] = [cat] as InvariantOf<Cat>[];
+let invariantAnimalArray: InvariantOf<Animal>[] = [new Animal('jerry')] as InvariantOf<Animal>[];
+let invariantCatArray: InvariantOf<Cat>[] = [new Cat('tom')] as InvariantOf<Cat>[];
 
+// @ts-expect-error
 invariantAnimalArray = invariantCatArray; // Error: Type 'InvariantOf<Cat>[]' is not assignable to type 'InvariantOf<Animal>[]'.
 ```
 
@@ -68,6 +69,8 @@ function keyOfInvariantFooBar(fooBar: InvariantOf<FooBar>) {
 }
 
 keyOfInvariantFooBar(invariantOf(fooBar)); // (keyof FooBar)[]
+
+// @ts-expect-error
 keyOfInvariantFooBar(invariantOf(fooBarBaz)); // Error: Argument of type 'InvariantOf<FooBarBaz>' is not assignable to parameter of type 'InvariantOf<FooBar>'.
 ```
 

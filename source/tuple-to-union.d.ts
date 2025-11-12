@@ -37,6 +37,7 @@ type Destination = typeof destinations[number];
 
 const erroringType = new Set(['a', 'b', 'c']);
 
+// @ts-expect-error
 type ErroringType = typeof erroringType[number];
 //=> Type 'Set<string>' has no matching index signature for type 'number'. ts(2537)
 

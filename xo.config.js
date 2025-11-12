@@ -3,6 +3,7 @@ import {importPathRule} from './lint-rules/import-path.js';
 import {sourceFilesExtensionRule} from './lint-rules/source-files-extension.js';
 import {requireExportedTypesRule} from './lint-rules/require-exported-types.js';
 import {requireExportRule} from './lint-rules/require-export.js';
+import {validateJSDocCodeblocksRule} from './lint-rules/validate-jsdoc-codeblocks.js';
 
 /** @type {import('xo').FlatXoConfig} */
 const xoConfig = [
@@ -58,6 +59,7 @@ const xoConfig = [
 					'source-files-extension': sourceFilesExtensionRule,
 					'require-exported-types': requireExportedTypesRule,
 					'require-export': requireExportRule,
+					'validate-jsdoc-codeblocks': validateJSDocCodeblocksRule,
 				},
 			},
 		},
@@ -80,6 +82,18 @@ const xoConfig = [
 		rules: {
 			'type-fest/require-exported-types': 'error',
 			'type-fest/require-export': 'error',
+			'type-fest/validate-jsdoc-codeblocks': 'error',
+		},
+	},
+	{
+		files: 'lint-rules/test-utils.js',
+		rules: {
+			'no-irregular-whitespace': [
+				'error',
+				{
+					'skipComments': true,
+				},
+			],
 		},
 	},
 ];

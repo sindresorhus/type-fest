@@ -26,8 +26,11 @@ let exclusiveOptions: ExclusiveOptions;
 
 exclusiveOptions = {exclusive1: true};
 //=> Works
+
 exclusiveOptions = {exclusive2: 'hi'};
 //=> Works
+
+// @ts-expect-error
 exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
 //=> Error
 ```

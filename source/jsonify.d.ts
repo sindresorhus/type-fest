@@ -61,17 +61,16 @@ const point: Geometry = {
 	coordinates: [1, 1]
 };
 
-const problemFn = (data: JsonValue) => {
-	// Does something with data
-};
+declare function problemFn(data: JsonValue): void;
 
+// @ts-expect-error
 problemFn(point); // Error: type Geometry is not assignable to parameter of type JsonValue because it is an interface
 
-const fixedFn = <T>(data: Jsonify<T>) => {
-	// Does something with data
-};
+declare function fixedFn<T>(data: Jsonify<T>): void;
 
 fixedFn(point); // Good: point is assignable. Jsonify<T> transforms Geometry into value assignable to JsonValue
+
+// @ts-expect-error
 fixedFn(new Date()); // Error: As expected, Date is not assignable. Jsonify<T> cannot transform Date into a value assignable to JsonValue
 ```
 

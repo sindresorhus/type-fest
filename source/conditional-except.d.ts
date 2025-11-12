@@ -11,9 +11,7 @@ This is useful when you want to create a new type with a specific set of keys fr
 import type {Primitive, ConditionalExcept} from 'type-fest';
 
 class Awesome {
-	name: string;
-	successes: number;
-	failures: bigint;
+	constructor(public name: string, public successes: number, public failures: bigint) {}
 
 	run() {}
 }

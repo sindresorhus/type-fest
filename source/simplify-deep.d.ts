@@ -61,7 +61,6 @@ type ComplexType = {
 	a: string;
 	b: 'b';
 	c: number;
-	...
 };
 
 type PositionX = {
