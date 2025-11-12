@@ -26,6 +26,7 @@ type E = IsFloat<PositiveInfinity>;
 type F = IsFloat<1.23e+21>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4DEA2EAhjADRwAKE2wMwAbipgHYBmwztiAvnK1BBBwA5ElQBaVimwxhAbgBQCsWgCCcALxwcBYjAA8ARgB0AVgB8igPRWN5hFACuKJSrgAhTdryES+8SYW1rb2ME4uyshoAMJeOr4GhijiAOyWCjZ2Ds6uUXAAInE+ekbGAAzpmfasRPjYEW4AokW6flQ0dIws7JxIlSF8tfW5qHC4LQmlAEwAzCgA1FOG-Vk1dShAA)
 
 @category Type Guard
 @category Numeric

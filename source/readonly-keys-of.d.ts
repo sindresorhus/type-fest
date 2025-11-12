@@ -22,6 +22,7 @@ const update1: UpdateResponse<User> = {
     id: 123,
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRQQwCYQB2ANogNIqIDOA8gGYC+cdUEIcA5EqgLR0pUYHANwAoUcEIwUUOjgDGaAKpUZGUQEhCOECgBccQVEkBzMRqoBXKNt0GjpsZqi4CJRHGB4DhSyABGMmIM4tzKYHg40thUkISqADwAolLASHAoAB7ShHhUcBD+AFYo8jAAfHAAvHAACsDyANbJqUgANHDY+ESkFNT0LTBpiOXlTvJEgnCWEVEoAIwGSrPRAnGJKjKVNeiicPue3nDzAEwAzG2iDMJAA)
 
 @category Utilities
 */

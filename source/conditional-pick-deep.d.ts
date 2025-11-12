@@ -92,6 +92,7 @@ type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 type StringOrBooleanPickOnly = ConditionalPickDeep<Example, string | boolean, {condition: 'equality'}>;
 //=> {b: string | boolean; c: {e: {h: string | boolean}}}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgArADGA1gCIopgC+cAZlBCHAORKoAtOxQBnGLwDcAKGnAcMFFHYlqaAKIAPEuDJp00gJAkAXHHFR5AcxmGARmYvW4AHzh2IEPSRy3qZg0NDPEcYSxwbI0MUAKjDdgB+UPDIoMMrJPdPb184gAtk5zcPLxQfWyDgMxKc13dgK3kYCpYKgCtq7LLcw1bpFlkBNABlMOsqOjgAXjhsfEJiHHIJhiYwAB4tHTA9ABpzMYiAPhkAelOpo4xTA5TJOH8MENvrFgHpIbhRlJWAeTAiKQyNNZrgCIClpQaKtmJttLoUPsnBE6gBXfAodjyFB4E7Sc6Xa6FCL3R7oZ7ImxwGIYRLEqxvd6fb7jaH-CHkX44MiIEFzcGLZbQxiwrYIpGHKxojFYnA4-boahgha4My8FAAR1R5EIiF4LDxBKuioCNPQdJeEUZg2QaAAQl0fCs+cqOVC6CKNmKdoisqUfNK8JjsbizhdjWSzRlOv6cK04B0-Tk3jbUHAAHKokB2JTOmb8lWQlaeuHbPZwHBZnNQQ3hjBM21fSW-KAO2N50HzN3Ftal8WWqXFR04WuEgznODGelhycOAd1GrdGeGMn406T4LTtcbs3btIFedD2N73rLwyJxflPd9CcNtMsiItts5P7c3n512C90wr3wn0SlIF2HBUlS7RY1U1bUyF1fVR2NOdKSA2NSVNAID0Qo9kzeIA)
 
 @category Object
 */

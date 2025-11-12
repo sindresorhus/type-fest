@@ -16,6 +16,7 @@ type FooType = FindGlobalType<'foo'>     //=> never (let/const don't work)
 type BarType = FindGlobalType<'bar'>     //=> string
 type OtherType = FindGlobalType<'other'> //=> never (no global named 'other')
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gMWAOwCYDiANhAEYCGRAKsigL5wBmUEIcA5EqgLSMoDOMdgG4AUKLwoAxkXJQ0AcxIUiGUQEgpEHIKYQIALjg4AriFIoowuAHobcIinjl8cLTvh5tnOAHdoANYaAG5ycBRQRoJQuArWcLb2oVB+gfyidOJcaJj6NKhwALxw2PjEZJT5KAA87Iz67AB8CS12hc04KMGWcAAUjjA27rpeOD7+UAEAlKLZcABCclVFJbiEypW0tRFNLQltzdGxs7RwAPIwABaWy8Wl6xXUW+wQV5a7B8ZdPb04EHBKR7GcggFB4Diva5QdhTIA)
 
 @category Utilities
 */
@@ -38,6 +39,7 @@ class Point {
 
 type PointLike = Point | FindGlobalInstanceType<'DOMPoint'>;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gMWAOwCYDiANhAEYCGRAkjgM4zk4DGKAKsigL5wBmUEIOAHIkqALQ8U9IQG4AUHKZFytWnAAKEXPHRyAkEwh0YUAK5MY0ABRhTpIsCZwAHgC44OUyFIooAGjhbe0c4RHdPb18ASgxOOTi5UTRNbQAZYABrNABeDS0ceAAfOGx8YjJKGnpGFnZUAB4hABEAeQBZFIKhAD4ZIA)
 
 @example
 ```
@@ -55,6 +57,7 @@ declare global {
 type FindFoo = FindGlobalInstanceType<'Foo'>; // Doesn't work
 type FindBar = FindGlobalInstanceType<'Bar'>; // Works
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gMWAOwCYDiANhAEYCGRAkjgM4zk4DGKAKsigL5wBmUEIOAHIkqALQ8U9IQG4AUHLwomRclDQBzEhSIY5ASAD0huAGFVtWnFqIcDAB5wA7hBwi45PHgQALNAGsURAQIOAADLTJKVh9gWjCDFXJLOEwIUPROBSMTXBgUKB5yFjgAajgmV3ooAFcmGGhrJCI0Fyh-WgM8gqKSgCE1DCz9ADdBgagALjgcFCc4AAoASjgAXgA+OAmZOGM4ADkIeBb4Rsq6GDksuVE0bHw00NXU3EJtShp6RhZ2VAAeISPITrHZ7AAiECkbngbX8Nw4L3wEzWiLeUWoF2+bA4AImwNBJgA6tAOkA)
 
 @category Utilities
 */

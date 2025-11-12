@@ -47,6 +47,7 @@ export type AllExtendOptions = {
 	type H = AllExtend<[never, 1], never, {strictNever: false}>;
 	//=> false
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQQDbYKIAeMKAdgCYC+cAZlBCHAORKoC01KAzjIwNwBQ-FmkxwAvHBz4ipMgB4A2gEYANHABMakigBuKKAF0tAVxAAjfWvTcowAMYwAcrv0AuBFGMoKAPgEB6fzEfGgBDbE4UQWE4ACFxSVxCYnJFVQ0tF0MTc0sMG3snLPdqcMjfAKCQmE8ooWQ0AGEEqWTZRW09KEyuozhOvOsawucu9xqvCv5A4I8vaIa4ABEWpJlUhQHu-qy+rasCh1G3MIjvP2mqubqYvFXpFPkFRlDGNUYzN53etVCSRAOwyOxWuUxm1VqC1QcAAYvc2hsXl8Pl8tn0-gD8kCimNTuULuDrlC0ABxeHrJ77OBKPZZQG2YG4ibnSqzUpnYlwAAS5MeHTp1NpXXpIxB7PxrJC4pQQA)
 	*/
 	strictNever?: boolean;
 };
@@ -74,6 +75,7 @@ type C = AllExtend<[number, number | string], number>;
 type D = AllExtend<[true, boolean, true], true>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQQDbYKIAeMKAdgCYC+cAZlBCHAORKoC01KAzjIwNwBQ-FmkxwAvHBz4ipMgB4A2gEYANHABMagMwBdNSQCuIAEYooAPgEB6K2PMIoBlIOFwAQuMm5CxcotUaaoxajHpwhiZmlvw2djQAhticzkLIaADCnlI+sooRplD6RgVwAD5w3FDAJADmYflR1rb2xhAQ2CjxJC5pcAAiWd4yfgowjihqre2dJGpjTmHzKNGxLW0dXUA)
 
 Note: Behaviour of optional elements depend on the `exactOptionalPropertyTypes` compiler option. When the option is disabled, the target type must include `undefined` for a successful match.
 
@@ -92,6 +94,7 @@ type B = AllExtend<[1?, 2?, 3?], number>;
 type C = AllExtend<[1?, 2?, 3?], number | undefined>;
 //=> true
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQQDbYKIAeMKAdgCYC+cAZlBCHAORKoC01KAzjIwNwBQ-APRC4AAxQEAhgGMYAeTAxgEElOwAFOqliIAKsi5i4pKQCNsKMvxZpMcALxwc+IqTIAeANoBGAPwANHAATIFwAMx+ALpBJACuIGYoUAB8AiIOKQhQcSiCIuKSsgpKKmqa2slIBqicxmTAnOaW1rZwAEKOzriExOTe-kGhQZExcPGJyWnCQpk06px5M4XScorKqupaEDrVhnVwDU0WVjaGcADCXS697gNhwxHRsQlJUHAAPnBx5CjUwCQrNMMlkYDkUEA)
 
 @see {@link AllExtendOptions}
 

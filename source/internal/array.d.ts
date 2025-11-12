@@ -33,6 +33,7 @@ type A = [string, number, boolean, ...string[]];
 type B = StaticPartOfArray<A>;
 //=> [string, number, boolean]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAglC8UDaBnYAnAlgOwOYBopsBXAWwCMJ1DyB7WgGwgENtCA6TtLPJAXT4BuAFChIUAEIIoAZWDNgmAMYAFZumAB5AGYx06ZiAA8MAHwiA9Bfink3HASJlK1KHUYtsfIA)
 */
 export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends unknown
@@ -52,6 +53,7 @@ type A = [string, number, boolean, ...string[]];
 type B = VariablePartOfArray<A>;
 //=> string[]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAglC8UDaBnYAnAlgOwOYBopsBXAWwCMJ1DyB7WgGwgENtCA6TtLPJAXT4BuAFChIUAEIIoANWZZm5JgAV5wAPIAzGOnTMQAHhgA+EQHoz8Y1G45c-IA)
 */
 export type VariablePartOfArray<T extends UnknownArray> =
 	T extends unknown
@@ -74,6 +76,7 @@ type ReadonlyResult = SetArrayAccess<NormalArray, true>;
 type NormalResult = SetArrayAccess<ReadonlyArray, false>;
 //=> string[]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAShCGATA9gOwDYgIICcfxCgF4ocEUNCBnYHAS1QHMBtAXQG4AoUSKAOWQ4AtvHS58hEjXpM2XbuGhwkaTHCoBXdMGJQAyhGDiCWAMamIVKgB4Bw0cZAAaKLQ0QAfFwD03oh9JyVWpaBhZWTgVeOxF0dS0dEgMjPBNzSxtlCkxHFwAzUSpPHz8A6TC2IA)
 */
 export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
 T extends readonly [...infer U] ?
@@ -104,6 +107,7 @@ type C = CollapseRestElement<[string, string, ...Array<number | bigint>]>;
 type D = CollapseRestElement<[string, number]>;
 //=> [string, number]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAglC8UDCB7ANmghmAzhAShDsAKJoQC2EAdsADwDaxATgJbUDmANFC+91AB0w6gFcKAIwjMGAXVkA+ANwAoAPRr4CqE2BtOPPgahjJ02SpWhIUAEIJk6LLgJFS5KrUbDBRjnJ5TKWZA8WDFVQ0tHT9QsxCTMPNLa2gkB1QMbDxCYjJKGnpdfQFYoWEYZmZMEDog6SgAHygJVg52YAUI9U1tYv5DPQHE+KaWto6LK3BoABEMp2zXPI9CxjL65m6ovo2kraA)
 
 Note: Optional modifiers (`?`) are removed from elements unless the `exactOptionalPropertyTypes` compiler option is disabled. When disabled, there's an additional `| undefined` for optional elements.
 
@@ -117,6 +121,7 @@ type A = CollapseRestElement<[string?, string?, ...number[]]>;
 type B = CollapseRestElement<[string?, string?, ...number[]]>;
 //=> [string | undefined, string | undefined, number]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEAMFMA8EMGMAuB5ADoglgewHawDYAKATlqpMYgJ4AqV5AzuKJHgEb6QAmAUNeaACCoALygAwlnz5YqBpABKkBogCinALatEAHgDaK4hhwBzAPwAaUIePmrAOkc4ArhrYU9AXU8A+ANw8ICI+oAaIRqZWNpGgLm4UnjyBYFBwSGiYuAQkZBTUdIzMXBgMsBzcfPSQoABCohJSMnKKymqa2vrRdtbhtpagjvZx7sRevgFBIWERJqAAPqDOOFyQAGbG3FG9pvOLy2sbXFbDCUA)
 */
 export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, _CollapseRestElement<TArray>>;
 

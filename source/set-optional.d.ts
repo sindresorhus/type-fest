@@ -24,6 +24,7 @@ type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
 // 	c?: boolean; // Is now optional.
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTA8mGYCAOwEMAbAXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaAGIQIcALwYBASFIAuOMQCuIAEYooguRoD8ynlGDEA5roDGyjRPIpSxQZSEi4mBinyESFae5xvIjJyAB5xCAAaZg0mOAAfZksmAD5BAHp0hGQ0DxAvAmC-GXQBTLgFZTVNbQysvUM4Y1MLOHKAdVIuOAooBwATRDgIQt9yHuJ+psJyceAuADoy+stG2wh7Rz42rIBJbuIIAHdh0ZCl8sogA)
 
 @category Object
 */

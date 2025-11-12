@@ -39,6 +39,7 @@ if (pickedUnion.discriminant === 'A') {
 	//=> Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
 }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAglC8UDeAoAkAEwJYGcDGATlgLZYB2AhmcAFxQDkM9A3OgGYD2HdqaaARhQJ0cwImQDmrNAF9WclClCQoAIQTJ02fEVKVqdeqpbsuPdAIoAvEWPJT0ChUvDQAqmSwcyGuAB81VhcVAAUsPABrCAwPLx9EMMiAHljvABoGbUIScipgeigA+k4OegA+VgB6Svgy5CzdXIMGJkKGYwySnkFhKFFxCRk2pEEbPrtJGRlFDAg8ABshaDxvUSgwcKiYz286RK3UsiCsNigACg3I6MOAOgac-WAEeERGegBKTTRqqAB1aAA7hwAK7zDBQeZYKJQYAcKCUAgEDgAqAAA0uBx2ZFR9BwMNc6B+sLRMFRUAAFhACBAMvxgU8AcsqPQnvw5hRgThoKj9qjCZUoBgOBAcGQWYLcHY6cBoBwAG5UqDArE4G6Kb4CgACwBwAFoIAAPSB4YD6xEcAjoDHXLE3Eo3HrSaq1KAAUXNvRCSMgBFADB6BSFIvhHCehslUG8+JU9BGQlsAyGATjY369hk9DVMiAA)
 
 @example
 ```
@@ -81,6 +82,7 @@ if (pickedUnion.discriminant === 'A') {
 	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
 }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gEWAZxlYAIwFcYUATABWAGMBrAXzgDMoIQ4ByJVAWmZR5OAbgBQonmgCCcALwZRASHK4aBEMAB2AQ00wAXFykilzCBEPoliwtqiG8BTQHMxihm5QAPfLpQRiHENCcwAbFF0xD3FJOAAhOQVlVXUtXQMuOJNFMwskm20ALwd8LVclaMVvX01-QOCwiM0osVEAeja4ADkIGFo0GAALbXgAA1yAOlsoUbhvXBgcOC04UalZknhNXuXNVbjRiZjkNABVTWAIPfkZAB941tjqegpzy+u4bEciUgpnugAPG8rgAaLgqHBqUBpPScOD3Ti5TgAPla5BQNFCdjQNCueDgYFodFeFyuhn+JPerWAzDgAApCS9yMDNBMIVCNDo9HJZPJOMYAJRJRnE5mk1mTaZiOCKDqyZFwADyAGlxLLOgABRa8byoGgwHVQNhQJQiylXCbVKB+AI4NxyhUAUSN0HJbFQsEQqytNsCs3IEEEcG28Hm+KuCBOq3+AKkYM47NSXJgcIRSORhzVHTgWpwOq8eoNKBdJsUZrF7wmkqK9ra8rgzuNhlG01muGDO20BPdxaQcAgtNG6ET0OThn5Ijg2hKTmcDEzDCAA)
 
 @category Object
 */

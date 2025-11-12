@@ -22,6 +22,7 @@ const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
 	secure: true
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRQRwK7BQoCCMAMigIYDOMA8gHYoC+cAZlBCHAORKoBaNilo8A3ACgJ-NNmqQGAExRQ4AXgwSAkDBQAPGAH4AXHAAUASnUA+OLSjAGAc0laAVtQgMT5q2tv2ji7a1CgAxnhEPgBGEBAANlQMksySEmFetHBE8l7KUKbY+IQk5FS0jCgAPHIK+QA0vLoGPHAAPrweXjy2GujaXQymlja86ABEICLUlE4o46bjEADW48w89SHhkSimMFB4KBKpQA)
 
 @category Object
 */

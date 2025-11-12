@@ -23,6 +23,7 @@ const update1: UpdateRequest<User> = {
 	surname: 'Acme',
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gdSsGBDAIwBsUBpFRAZwHkAzAXzlqghDgHIlUBaWlSmOwDcAKBHAAdjBRRaeAMZoAqpRkYRASAl4QKAFxwBOCQHNRGygFco23QaOSzYjVBR4AJhAlFEcYO4MJSxACGVF6MS5lMHc8aQAlFABHS34YAB4AUSlcXxQAD2kJd0o4CAIAKxR5GAA+OABeOAAFYHkAayycpAAaOGxcQhJyKjoumFza2tEReS8BOEsYuJQARgMlZYTk1IF0lRl6pvRNW30OAEEiNpR2Hs0rGx1z9gv5XTuReiEgA)
 
 @category Utilities
 */

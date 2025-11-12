@@ -39,6 +39,7 @@ export type RemovePrefixOptions = {
 	type F = RemovePrefix<`${string}/${number}`, `${string}/`, {strict: false}>;
 	//=> `${number}`
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRSCA3FABShQDNgAPAXzlKghDgHIlUBaUlAZxiYG4AUANZoAgnAC8cbLgLEylADxMIAOzYBjABYBDVQHMUTADRwABgBJ0PKMANU2Z09Zi2NMAFwIoAVxRUAPkEAemCJALgbO30hETgAIUlpHHwiEnIKZTVNXQMjU0sXW3tHZyj3L1IdABsufyCBUPDmbT1DJljkNABhJJlU+Qys9Va8k0jXaLLJiu8-QJCwiKiDTtQ4ABE+lLl0pRUR3PbTFf1pt09aGrqFxqXmQ7ajNbQAUW3ZNIVMwtOqYKsqh8IAARigoFQnOYrH9glCisBZq55g0mstJqthF04AAxD4DPY-GEY-T-QHAsEQqG-En-eHlS5VWr1RbNQpA0HgyFAA)
 
 	Note: This option has no effect when only the input string type is non-literal. For example, ``RemovePrefix<`on-${string}`, 'on-'>`` will always return `string`.
 
@@ -58,6 +59,7 @@ export type RemovePrefixOptions = {
 	type D = RemovePrefix<`id-${number}`, 'id-', {strict: false}>;
 	//=> `${number}`
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRSCA3FABShQDNgAPAXzlKghDgHIlUBaUlAZxiYG4AUANZoAgnAC8cbLgLEylADwADCADs2AEnQ8owNQHMqygDTN1bJmZ0w9AYxgAuBFACuKKgD5BAeh8TPOF19AyEROAAhSWkcfCIScgoVC21gw2MzJgsrDGCHZ1IAQwAbLg9vAT8AoNsQsOQ0AGFomTj5RJVgABMtdDVXEAAjFCgM5m7LazynF3cvX39A5W1+oZHjetQ4ABEW2LkEpWUJlYHh0dNxnpybexmi0vKF6uW+s-XlIA)
 
 	Note: If it can be statically determined that the input string can never start with the specified non-literal prefix, then the input string is returned as-is, regardless of the value of this option.
 	For example, ``RemovePrefix<`${string}/${number}`, `${string}:`>`` returns `` `${string}/${number}` ``, since a string of type `` `${string}/${number}` `` can never start with a prefix of type `` `${string}:` ``.
@@ -76,6 +78,7 @@ export type RemovePrefixOptions = {
 	type D = RemovePrefix<'on-change', `${number}-`, {strict: false}>;
 	//=> 'on-change'
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRSCA3FABShQDNgAPAXzlKghDgHIlUBaUlAZxiYG4AUANZoAgnAC8cbLgLEylADwADACToeUYADsA5lQD067QFcQAIxRQqygDRw1GmFr1UAXHYybgAYxhuEKBMUKgA+QQMDCVCHdW9XI3RTCysbIRE4ACFJaRx8IhJyChU45x19ROTLa09HeP0PeyctPwDSAEMAGy4Q8IFI6Njm8sNjM2q04WQ0AGEcmXz5IsUmCG02HwALdr0UJntHKtS2T2HWwOCwiKiY1fWtnd099Om4ABF5vLlCpTuN7d2+yGR2sJya3nOHW6vWugz+D0BQA)
 	*/
 	strict?: boolean;
 };
@@ -103,6 +106,7 @@ type C = RemovePrefix<'on-change', 'off-'>;
 type D = RemovePrefix<`handle${Capitalize<string>}`, 'handle'>;
 //=> Capitalize<string>
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRSCA3FABShQDNgAPAXzlKghDgHIlUBaUlAZxiYG4AUANZoAgnAC8cbLgLEylADxMIAOzYBjABYBDVQHMUTADTM1bJgD5BAehsTLzbXsNMhIuACFJ0nPiIk5BTKXCAAXKQANigUTHAAPsyhYWBsACxxiUzJ+jqpAEwmSeFWtvaOTFExmcypGQnMuQVuwshoAMI+Mv7yQcrmzgZGpiqkpBbWAnYOZuqDru5tcAAiXX5ygUoABrqqACbRACTo7XnAMDqRwABeKIo8UMAGllRbI7sHRpPTjqdg55cbncHk99JYgA)
 
 @see {@link RemovePrefixOptions}
 

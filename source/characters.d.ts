@@ -11,6 +11,7 @@ const b: UppercaseLetter = 'a';  // Invalid
 // @ts-expect-error
 const c: UppercaseLetter = 'AB'; // Invalid
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gVTKqBjAQwGcUAZFGGFKAXzgDMoIQ4ByJVAWnpSJlYDcAKCF4IAOz5wCALjjZchEuUrU4AXjYBBQXDgB6fXABqBADbAAJkMNwAAjCKcUAD1R4YzqEyiiJUgCM5BWolMgoqKA02Al0DIwBJcQA3cysbIwcnV3dPah8-SXg8YJxQ4nDVKM1WLQAhXVsk1ItLIA)
 
 @category Type
 */
@@ -27,6 +28,7 @@ const a: LowercaseLetter = 'a'; // Valid
 // @ts-expect-error
 const b: LowercaseLetter = 'A'; // Invalid
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gGQgdxVAYwEMBnFTFGGfAXzgDMoIQ4ByJVAWnpRJlYDcAKCEEIAOz5wiALjjY8hUuUrUocALxsiguAHo9cAGpEANsAAmQg3AACMEpxQAPVARhOoTKKIlSARnIK+MRkFFT4mmwAgro2AJLiAG5mlkA)
 
 @category Type
 */
@@ -43,6 +45,7 @@ const a: DigitCharacter = '0'; // Valid
 // @ts-expect-error
 const b: DigitCharacter = 0;   // Invalid
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gEWAc2DAYQAsBDKEgYxhSgF84AzKCEOAciVQFoGUBnGGwDcAKBEUIAOwFwSALjjY8hUuSo04AXnYAGYXAD0BuADUSAG2AATEUbgABGHy4oAHqiouozKOKkyAIwUlfGIySmooLTgdITh4uwBJSQA3C2sgA)
 
 @category Type
 */
@@ -59,6 +62,7 @@ const a: Alphanumeric = 'A'; // Valid
 // @ts-expect-error
 const b: Alphanumeric = '#'; // Invalid
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQQDZgBYCGAdgK4gpTADGAvnAGZQQhwDkSqAtPSgM4ysA3AChhVCEX5wCALjg58xMhWpwAvG0xC4Aeh1wAagWzAAJsL1wAAjF6cUAD1RUY9qEyhiJUgEZyFhKTklFTqbADE2pYAkkQAbsZmQA)
 
 @category Type
 */

@@ -18,6 +18,7 @@ type B = IsSet<ReadonlySet<number>>;
 type C = IsSet<string>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gVQHYGtsQDu2AyijAL5wBmUEIcA5EqgLTUoDOMjA3AFD8WaAJKcyMADwAVAHxwAvHGlwUADxgpsAE05wc+IqXJwA-AigBXNAC4aAQwA2nFAKHI0AQUVwxEyf7cUMDYAOaysgIA9FEK8jBWKILCcABCPn7kkgBKKPbaENiOiP7YliAARihQEdGx8YnJHnAAwhniWUEh4XVxDs4oQA)
 
 @category Type
 */

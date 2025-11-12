@@ -20,6 +20,7 @@ import type {Trim} from 'type-fest';
 type Example = Trim<' foo '>
 //=> 'foo'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gFSqAvnAMyghDgHIlUBaAlAZxjIG4AoFytAUQA8BDcADZoAvHGygAPGUIQI5AHwsA9EuHzyBWWSA)
 
 @category String
 @category Template literal

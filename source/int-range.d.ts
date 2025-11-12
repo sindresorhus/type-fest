@@ -26,6 +26,7 @@ type FontSize = IntRange<10, 20>;
 type EvenNumber = IntRange<0, 11, 2>;
 //=> 0 | 2 | 4 | 6 | 8 | 10
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQHYwEoCG2A5igL5wBmUEIcA5EqgLSUoDOM9A3AFC9M0AQVJwAvHBz4ipADwAGADRwAjACZ5APj4B6HWM1x5cAD6rTcNRYB0tiypUBOfoLgAxCLgDKwAF5oJKUISFFkVJUstXX1DcPsVeyszFQBmewAWewBWewA2ewB2ewAOe2cBZDQAUQA3FGwAOQBXEAAjFChxSVxguQiHZTVtXj0DIwskuEyzfLNS5PkgA)
 
 2. This can be used to define random numbers in a range. For example, `type RandomNumber = IntRange<0, 100>;`
 
@@ -39,6 +40,7 @@ type ZeroToNine = IntRange<0, 10>;
 type Hundreds = IntRange<100, 901, 100>;
 //=> 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQHYwEoCG2A5igL5wBmUEIcA5EqgLSUoDOM9A3AFC9M0ALRQ0AKhABywbGgC8cHPiKkAPAAYANHACM6gHx8A9Ebn646uAB9d1uACY7AZjsAWOwFY7ANjsB2OwAOOwBOfkE4AAkAV2wAEygUOPY4BSVCEhRVPS04EPUdbRzDXhMzXXVLG3tK51qbV3q4DybvJr8mwKb89SA)
 
 @see {@link IntClosedRange}
 */

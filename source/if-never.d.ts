@@ -17,6 +17,7 @@ type ShouldBeTrue = IfNever<never>;
 type ShouldBeBar = IfNever<'not never', 'foo', 'bar'>;
 //=> 'bar'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQGYDkUBuKUAvnNlBCHAORKoC02KAzjDQNwBQX9aAygAsIAVwA2AEwBCKACpQRaALxwc+IlAA8AO0LEAfNwD0RpfoQKUPPnCGjJMqQEMocFWr1aa2iPF0aaABpabAgIINoAIxcaQy4TMyiYoA)
 
 @category Type Guard
 @category Utilities

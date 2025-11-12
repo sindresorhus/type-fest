@@ -23,6 +23,7 @@ type C = StringSlice<'abcde', 0, -1>;
 type D = StringSlice<'abcde', -2, -1>;
 //=> 'd'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRlYA7Ac0wBtgBjFAXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaAIJwAvHGy5CJcigA8TAIYAjMgBMUTADRwADPoBMAPkEB6CxNPN1TISLgAhSdJz4ipCsvVad+gCM5gJWNswa2g7CyGgAwm4ynvI+qpEBhvpswZbWtmla0U4AIokect5KBVFZxlk5oXnMmkxAA)
 
 @category String
 */

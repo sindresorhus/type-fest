@@ -25,6 +25,7 @@ type A = BuildObject<'a', string>;
 type B = BuildObject<'a', string, {readonly a?: any}>;
 //=> {readonly a?: string}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAglC8UBCBXAlgGwCYHkBGAVhAMbAA8A5AIYUA0UAzsAE5oB2A5gHwDcAUAHoB8LlADeVAFyMW7DgF8+ggVADCAezAgoAA2YQqWdWwwgdUKmyy6A-OYBmzdQFsowABbQA1hG06q5ur2umL6hsamFjbSliDyOnygkMgIyOjY+ESklDT0TKyc9KEGRibaVNEWbHG8yiLiYaWRFdL5cvJAA)
 */
 export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
 	Key extends keyof CopiedFrom
@@ -79,6 +80,7 @@ type OptionalizedUser = UndefinedToOptional<User>;
 // 	lastName?: string;
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAqgzhATlAvFA3gKAJADMCWicwAcgIYC2EAXFMYvgHYDmA3DgDZnHlW31NmUAD5QArowAmEAowiT2AX3aZQkKAHkwwfAHtGZDvgBe8+ElSwpMpvIAqurTv2GAPOcQA+dgHofKTwxMPyg8Qh5KGjpgBhZfH1CuCKoAfn4YwXioRSA)
 */
 export type UndefinedToOptional<T extends object> = Simplify<
 	{
@@ -139,6 +141,7 @@ Extract all possible values for a given key from a union of object types.
 type Statuses = ValueOfUnion<{ id: 1, status: "open" } | { id: 2, status: "closed" }, "status">;
 //=> "open" | "closed"
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAysCGwCuBnCKoF4oDV4BskIB5AMwFUA7ASwHtKAeAbymoBMAuKARgBooUCZCi4AiWpEqioAXygAfKC3ZcATP0GJUYgMb5aaNtJn9Rm4aIB8AbgBQAenuZLUcZOmLRegxCNA)
 */
 export type ValueOfUnion<Union, Key extends KeysOfUnion<Union>> =
 	Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
@@ -162,6 +165,7 @@ type Post = {
 type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
 //=> "id" | "author"
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAqgzhATlAvFA3gKAJDcRAQwBMB7AOwBsQoBLIgLijmERrIHMBuHbMggWwiNmrDtwC+3TKEhQACiWaoMPfMXJVaDJizZdVhUpWoEArsAAWJRMN1ieAIxJEQt0fsmZp4aACVDGiAA0hAgcMr+6sYhYQDyAGYwZDTkADzwSFAAPvKKwAB83AD0RSj5UABEdBXZlWaW1hVAA)
 */
 export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 	[Key in keyof Union as IsEqual<{[K in Key]: Union[Key]}, {readonly [K in Key]: Union[Key]}> extends true ? Key : never]: never
@@ -179,6 +183,7 @@ type SpecifiedOptions = {leavesOnly: true};
 type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
 //=> {maxRecursionDepth: 10; leavesOnly: true}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBACghsAFgZwPJmASwPYDtlQC8UA3gLZwAeAShAMYCuATsjrgCIQaID8AXFFwMyAIwhMA3FAA2EOADcIaXNJD8oI7NllxcAXwkAoUJCicAZnAbTg8JGgxsCxclVqMWbTtwEBGAAxSOorKqgKW0sgQBsbg0ADKkHSY5pgQACboWHjOpMFKqCogAsBMDNFGsaa0yNbARFAAgmBgqhZWNllOADx2KF05ADRmEJZ1fQ7Z+MOJ9ClpmY45AHxGAPRrhMukFDT0zKx43kh+gTJyIYVhUKXlekA)
 
 @example
 ```
@@ -192,6 +197,7 @@ type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOp
 //                                              ~~~~~~~~~~~~~~~~~~~
 // Property 'leavesOnly' is missing in type 'DefaultPathsOptions' but required in type '{ maxRecursionDepth: number; leavesOnly: boolean; }'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEGEHsFsAcBsCGBLAdgZ1MgZqAJgKbaICu8ALqAG6LwkGaIBOBoqklsTkVyheobJCahIscskipao8ZIwAoBeQCesVgAVE5ABboA8nKmYAvKADe0RAA8ASgQDGJJunkARAuJ0B+AFxsSaAAjAiYAblB4AkQqBn1UeBU-UCDISCjEVABfMOU1Vg9iMnItXQMjDFAzSxt7Jxd3T11-AEYABhy89VAAZXUHHGQCPEMJYyqLTq7We3RiiYBBWAQVQtIKUfl0AB5SvU3jABpQNeK98rGMY77HQeGDjAA+XJBQN-ePz6-vn9-QAD9AUDgSDgQpXhpuOomKpQAByDKxAwJFRwrCYaDIdCuVAAcywqFAqm6cNOFHOD3QaKCJEoLAAjiRkCwBGgifl4eZQFY7I5nK4pB4vP5UIEQuFItEkfFEv5UuloqgIlk4QA6IA)
 
 @example
 ```
@@ -205,6 +211,7 @@ type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOp
 //                                              ~~~~~~~~~~~~~~~~~~~
 // Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEGEHsFsAcBsCGBLAdgZ1MgZqRrRJYAXZSVAckwBMBTbRAV3mNGIE9ZbRrJbNUkVgGNy2SACdobSGwAW3WgA8uw4rWptOtAFA6OXUAAVExOegDyJMhlABeUAG9oiJQCVawxhPQ2AIrQkcgD8AFygqIzQAEa0EgDcoPC0iABu-Bao8OxhoNGQkMn4AL7x+tqgAQzMxCZmltbkmA7Orh5ePv6BZuEAjAAMiUXpllns4RSCFKXlhgDKqjjIGlakTfZOM7PcHug1GwCCsAjsVUwsqzboADx15pdNADSV9Oe1pveNGM8LnksrX3QAD4yiBQOCIZCodCYbC4aAAH5I5Eo1EonRggAq2kwkFwsAkRDiHFAFGGGTGFDwEm4aFEcFMyGiyQAdKBsYYqMQJGgAOZU5ACIR4dC+XmoRDM7jEWQGbgUfKFFKUFlAA)
 
 @example
 ```
@@ -218,6 +225,7 @@ type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOp
 //                                                                   ~~~~~~~~~~~~~~~~
 // Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEGEHsFsAcBsCGBLAdgZ1MgZqRrRJYAXZSVAck3VgFMBjHZWgE1GIE87QXJbNUkYqHrlskAE7R2kdgAtaoWgA869Yq3ZdaAKB2duABUTE56APIkyGUAF5QAb2iJlAJQYBXCemsARWiRyAPwAXKCoHtAARrQSANyg8LSIAG785qjwHKGgUZCQSfgAvnH62qD+2Ige8MTGphZW5Jj2Ti7u9F4+5P6BYQCMAAwJhWkWmRxhVfDotCVl3ADKakyslqTNdo6j6RNhFBz8FPMLiu7oNcL2AIKwCByV1bXr1ugAPPVmL80ANBW0VUun0aGwwf2WDFWLG+GAAfKUQKAkciUai0eiMZisdjQAA-fEEwlE3E6REAFW0mEguFgEiIsU4oAoO3GWQoeAkijQojgJmQUSSADpQBTuFRiBI0ABzdnIARCPDoHxS1CIAWKYiyAyKCh5ArJSiCoA)
 */
 export type ApplyDefaultOptions<
 	Options extends object,
@@ -258,6 +266,7 @@ type D = CollapseLiterals<'click' | 'change' | (`on${string}` & {})>;
 type E = CollapseLiterals<LiteralUnion<'foo' | 'bar', string> | null | undefined>;
 //=> string | null | undefined
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gGWDFUCGANgKoB2wEpAvnAGZQQhwDkSqAtLSgM4zMDcAKEFs0AQTgBeOAGEIhQvjDcU2XAULcAPM1oQIzOAB8WAI3xRDJgBS8owUgHM4AMgxUAlAD4hAel+SXnB2Do7ConAAQlKy8orKqjh4RNpqySTklFoAjMZwAEx5AMwANHCkAK4gpnhePoL+geVVNVDhyGgyMXIKSippGqlJGmQUpDqUMoTAAMYA1lYskwAW+E4ozGUABpQAJOghTlRbdX4BQTuk+4eOx+2ocAAi3XF9ieopOjPT84vMM6t1otrJdrjB7Ectq53N4zk1-j8Fnl-oDHBs8qCDuDQncRB04ABRF69BIDT5kjJjHR6AzI8yWMo3IImSoKPIVUgAExQtAcKE59UaQRueVZhHZXJ5fM5QA)
 */
 export type CollapseLiterals<T> = {} extends T
 	? T

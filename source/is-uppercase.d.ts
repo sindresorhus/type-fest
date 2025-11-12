@@ -16,6 +16,7 @@ type B = IsUppercase<'Abc'>;
 type C = IsUppercase<string>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4FUypQDGAhtigL5wBmUEIcA5EqgLTUrYyMDcAUHxZoAgnAC8cHPkKlyAHkbCAQgGFGAPn4B6LWPUIoAVxQChcJeMl4CKYmRQLhAIyIbtu-dRIAbcqeRoKpZSNnbyXFDAAHYA5pp8OnpwThAQ3igkUUA)
 */
 export type IsUppercase<S extends string> = AllExtend<_IsUppercase<S>, true>;
 

@@ -35,6 +35,7 @@ type Example5 = TupleToObject<[number, string, ...boolean[]]>;
 type Example6 = TupleToObject<[x: number, y: number]>;
 //=> { 0: number; 1: number }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gFQK5gDYqYQDyARgFYoDGMAvnAGZQQhwDkSqAtAygM4w2AbgBQIzmgCiADwCG4AgEY4AXjg58hEhWowAPAG0AdthCkUUADRwBUYEYDm10hAgFZRgLoA+UQHo-FW8MOAAGAC44EzMLIThFSNt7BziAJkiXNxQPOFoxAPVcAj44AHdgGAALOAgwGGAII1k8OHsAE2AqfnFkKTkFFFTVQs0iMkoaQ2jzKxsYO0cAfmdXdyNFn39A4PQwyOnY+MXE+eS047hMtdz8vzgAJWy2xrxEBCLuiTgZeU0AZmGGgIYx0kygTxeb2Mphm1iSS02IgCQRC4NkzyMrz2URhhzRGKxigu8IcNyRdwAco0uDAPnBZFAoLJECUHCh4PMPHwGNAQCg2q0jDAIIK2ihpDZgA4mrTwXweqhvv1NAAWQEfEETfQkgyI5E7OAGaT7XFQTwnBakvLkkbFMoVapy+AoAh8oXyr4-AYAVnVo20Wqmprhp0c1gAdJGrtkjLq9dsQkaTTEzcmZnAAD5zS2Zy6rGNxCI4lNxBLZ5JkgpAtB4WTmPAlBloIwQeBgOUWABu-IVfV+BAAbH7gQHdIZjcXYXBEGmLPGUbsiwcoKXZ1BckA)
 
 @category Array
 */

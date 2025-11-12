@@ -19,6 +19,7 @@ const indexed: Record<string, unknown> = {}; // Allowed
 const keyed: Record<'foo', unknown> = {}; // Error
 // => TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/MYewdgzgLgBAlmAJgUwB7MQLhgJWaAJ0QB5oCEBzAGhgFcwBrMEAdzAD4YBeGAbwF8A3DAD0ImAEEANlNYYAUPLEwAAlAgBaNAAd8ULQQIgC80JFgNkATwzY8hEgHIAZiBCOa9Jqw7c+Q0XEAUUNjJXEuTgAVAGUAJgB2AGYATmwoq10YRwFHeAgYAFs4CAhKGCgAC2QYVxlWcu0jXQIoOGQC5yNCisyax3tjEgAiVxBhmAAfGGGAIwBDAmHPRmY2dkdsMZoFgiA)
 
 Instead of causing a type error like the above, you can also use a [conditional type](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html) to test whether a type is assignable to another:
 
@@ -33,6 +34,7 @@ type Keyed = {} extends Record<'foo' | 'bar', unknown>
 	: "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`";
 // => "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`"
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAkgdgEwgDwgqBeKBvAvlFYCRAZygCUIBjAewCcEAeE4OgSzgHMAaKAVzgBrODQDucAHwAoAJAB+KAHJAoORQABnjVQ2ZAIYkSbTnF0AjADbRgNdZVoNmrDj35CR4iWsWyAXEsAy5Oqa2mQAcgDyACpQ+obGZpZQ1rbU9Ews7Fy8AsJikl4A3FIA9MWYEkqqGrhaOjEGRiYWVjZqdmmOmS457vneUqCQUADSECBomDj4hMQIZO0OigBmNDSKUAA+Sqa6dIrZbnnS8lAARFXBdbGNCS0p9kzLq+tbijt7B7keaqe+Z4HVWphKL1OJNRLJNqpRYrNabba7fauL75U5FUrlf5BGohKARaLXeLNJKtBaPWEvBEfZG9TynIA)
 
 Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
 
@@ -42,6 +44,7 @@ type OmitIndexSignature<ObjectType> = {
 	]: ObjectType[KeyType]; // ...to its original value, i.e. `OmitIndexSignature<Foo> == Foo`.
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBA8gtgS2ASQHYBMIA8DKCDmqAhsAK4BOEAPDAEYBWEAxsACrgQB8UAvFAN4AoAJABtANIQQ7SFASooAaykB7AGawGzNhygB6PVACyRMFAhEmACyVSo6qAAM6jFjIiOAdN5EBdAFyarjqQElLuvgDc+obensAqcsAAzvbkBPJEADZQAG7ZpBAANHKeEJ5O8EhomLgExGSUVABiKircPHytKl6CAL6RQA)
 
 ...whether an empty object (`{}`) would be assignable to an object with that `KeyType` (`Record<KeyType, unknown>`)...
 
@@ -55,6 +58,7 @@ type OmitIndexSignature<ObjectType> = {
 	]: ObjectType[KeyType];
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBA8gtgS2ASQHYBMIA8DKCDmqAhsAK4BOEAPDAEYBWEAxsACrgQB8UAvFAN4AoAJABtANIQQ7SFASooAaykB7AGawGzNhxHCA9PqjIAzlAAG-AL7moREyYLFaAG2jAVFgErMV5dFSS0hwANFCkqIqoKgDuqJzmAPx69gJWUNjAEBhmPkx+AUEyEGERUbHxesKJUKgQAG4Q5FCGUICg5BbWtghm9o6ERK7unuZ5BYFSxaWR0XEJVQBcUEUcLUaAMuSdNnJmAHIwrHYOToNuUB7evv4TwZDT5XPmIgC6S3SMLMUSkxzPANyCKx-IA)
 
 If `{}` is assignable, it means that `KeyType` is an index signature and we want to remove it. If it is not assignable, `KeyType` is a "real" key and we want to keep it.
 
@@ -81,6 +85,7 @@ interface Example {
 type ExampleWithoutIndexSignatures = OmitIndexSignature<Example>;
 // => { foo: 'bar'; qux?: 'baz' | undefined; }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3geRMGBJAOwBMUAPAZWAHMCBDGAVyhQF84AzKCEOAciVQBadigDOMXgG4AUNOAEYKKO1oBjNAFFStcABs06aQEgA9CbgAVABZi08kqTijqdRs1FwA7sF264AIzRmEAgANxQiADpjAG1SAC4nGCh5KgBdRNoCRFiEuAIGEECoDLgsnKM4xNFEIohdUvLcxIADG1oiQQASdHEUgioWFtK+1Oa4Fp7RgZZBGFofYerkscq8tpQO7t6VmbmF3SWk-qpxyfR-ankYIZHd07XWlCKIkk6egpeoW+WT2VNzNZbHAyGBdMBVLhdIg4CR2PIInAANYoRAeby+ODBBYEaJGdgQCCJXj+WhQKTGACODFIAH5iaSAF4UliyASabR6FAAdVwVggDHwxDIlBo9CYYjgAF44NhcIQHKLXBKADxaHRglAAPhkZmlWowHEJDLJUjg1LpJuZcAAPnAGML4QQIpI4CwgA)
 
 @see {@link PickIndexSignature}
 @category Object

@@ -18,6 +18,7 @@ NumberAbsolute<1>;
 NumberAbsolute<NegativeInfinity>
 //=> PositiveInfinity
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/HIVwtgRgpgTgghAzgewDYgC5QDwFoCMAfANwBQA9OQLyEAE+ppoksCK6W2RZlN9jzaPCRpMOYFADmAQwwBLAG5QAkgDsAZnNVyMAT0IVqdAArJEOxSo1aduoA)
 */
 export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
@@ -68,6 +69,7 @@ type C = UnionMin<any>;
 type D = UnionMin<never>;
 //=> never
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAglC8UCqA7AlgexQWTSgPAIxQA+UAzKVAEwB8A3AFAD0z8tUhjjokUAQgmTosuAigCuAWwBGEAE4MWbDpNkLuvaAGEhqTDjz4AhihBLW7KKZCbw0ACJ6Rh8RABuCiyqgoPCoA)
 */
 export type UnionMin<N extends number> =
 	IsAnyOrNever<N> extends true ? N
@@ -103,6 +105,7 @@ type C = UnionMax<any>;
 type D = UnionMax<never>;
 //=> never
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAglC8UCqA7AlgexQWQIYA8AeARigB8oBmcqAJgD4BuAKAHpX56rnnRIoAQgmToseIigCuAWwBGEAE5M2HLlLmKefaAGFhqTDgKFcKEMvacopkFvDQAIvtFGJEAG6KLqqCg+KgA)
 */
 export type UnionMax<N extends number> =
 	IsAnyOrNever<N> extends true ? N
@@ -138,6 +141,7 @@ ReverseSign<NegativeInfinity>
 ReverseSign<PositiveInfinity>
 //=> NegativeInfinity
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/EoUwbiBODOIMoEsDmA7APAWgIwD4DcAUAPREC8OABFgQaBDPMuroSeRdjXVLIqmgDkQSAIYAXBBACSKAGYIUCMQE8cxMpQAKAe2hLJIGfMUqu4Ho3469E6XIVLV69kNG3D9k8qA)
 */
 export type ReverseSign<N extends number> =
 	// Handle edge cases

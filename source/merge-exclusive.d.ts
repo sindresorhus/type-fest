@@ -34,6 +34,7 @@ exclusiveOptions = {exclusive2: 'hi'};
 exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
 //=> Error
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWRVA5igUQA8BjAGwFcBnYANxQF84AzKCEOAciVQFpmUVGJwDcAKDHAAdjBzMAhiTTFy1OigBq8qMHkxgEKQEYMYgJApSlGvSMAuOACMIEMinlTxDCdNlQFSnAq1upaOnoGUgBMphZWavRRDkI6UrheEjzK8TYoAPJg+oZUcAC8cNh4hDnqADzBCZraukXGADRBNfRhLZFRAHziYm7wlqq5Ba1UDg0ThZFUQ2Mh9JMLZRjLjfYIUBSM4gD0h6X9cADq0ADWVBJbc1Mb6PfqSVwAFsCcDEcnZ5dQG4SY5wAACMCovEsqBIMChUDYUDEL1W82KTxRKB2MD2KA6mLenE+31+pyCCOgQA)
 
 @category Object
 */

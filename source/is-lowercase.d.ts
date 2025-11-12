@@ -16,6 +16,7 @@ type B = IsLowercase<'Abc'>;
 type C = IsLowercase<string>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4BkIDuKUAxgIbYoC+cAZlBCHAORKoC0tK2MzA3ACgBbNAEE4AXjg58RUhRQAeZmQBGJZgD5BAeh0TNCKAFcUQkXABCk6XkLFylZaPVbd+w7TIAbSueRoAMI2MvbyTjxQwAB2AObaAnoGcKoQEN4oZNFAA)
 */
 export type IsLowercase<S extends string> = AllExtend<_IsLowercase<S>, true>;
 

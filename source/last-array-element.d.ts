@@ -15,6 +15,7 @@ const last1 = lastOf(['foo', 'bar']);
 const last2 = lastOf([true, false, 'baz', 10]);
 //=> 10
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gGQIYGcYCCUU2iAogDYogoB2MAvnAGZQQhwDkSqAtMynycA3AChRAExQBjCtihpmAV1rSYwCLThz8AeWYAeaZvxwAanBQAPGHQm44C7BM0VEcbLUQBtALoA+AAp5EkQALnMASgicfCJQymo6GAMzfzFRY1pTHRgARjgAXm08GH1A705mCAhOABouACN5Tl9IsQB6DsL-JpbxLJzSgCYikr1mCpgoJRQG5mwKXDm+gC96uDyABjbO7t7toA)
 
 @category Array
 @category Template literal

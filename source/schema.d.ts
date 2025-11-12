@@ -34,6 +34,7 @@ export type SchemaOptions = {
 	// 	speakers: number;
 	// };
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZQMYAsUgCGAvnAGZQQhwDkSqAtGSgM4w0DcAUF-WgAqFYwbMDCEAdjBZwAvBi4BIQjBgoJAExSsAXHDZRgEgOYBtALrdFLVIQDWKKCz0GjZy12LdeyAUJgiYpLSAOrAMLgAsigwhBoqhHJwOPhEADyCwqLiUiwANBjAGnoSAK4gAEaOHHAShCAoLjCGJsQF6FAo2KVOKACSUhAAglBQhIjOCFClKMQAfNwA9IuycwrLcMqq6lq6cCNjiGnoRSXlVVA1dQ1NLcbzS4ubNij2jpMH48entefVtfVGvpmm4HlwNl4eHw4JkAtlgiwAMIQUpSJIpAiEDL+QI5aQFMqVRztTrdXoDGDDUbjSZkQgAGxYswW4JWa3QrM2KjUmm0k0JF0ez1sDicZyJl05XiAA)
 
 	@default true
 	*/
@@ -82,6 +83,7 @@ const userMaskSettings: UserMask = {
 	location: ['hide', 'hide'],
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZQMYAsUgCGAvnAGZQQhwDkSqAtGSgM4w0DcAUF-WgKosUUOAF4MXAJDAAJgC44bKMAB2Ac26SVhECgXopkssChttuhUtUbDAG0JmdexTGXrNxTdigpCMFPJwACJ+KJqE2DDAAG7OAEYQELa+KppgDiwA7tAyABIOuJau1pq2ENh+wBAqCgDa9lEwAK4yzipNIHHCADRwZerAza0K7Z3CALrcnjx8cILCALIOANZicDj4RAA881C9NEQsyzRwAD60uLIoJ+c0LLgQmTQAfNxc2NVscE1CUEtHmBQMCi6hYCl2-1W4gM0kCdweT26UnMzhhRhMjgstHujxoSMkknsmOcBxWeKkxHx3l8-jhOMRUgiUViCnhuPx6RYWRy+XurMurXJhPKlWqdRoAuu+0lNHGSM8QA)
 
 @see {@link SchemaOptions}
 

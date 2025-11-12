@@ -22,6 +22,7 @@ const typedA = get(typedObject, 'a');
 const anyA = get(anyObject, 'a');
 //=> any
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4EEB2iAvnAGZQQhwDkSqAtKStjNQNwBQHAxhPiwmQoAJgHkARgCsU3eAF4MAQwBccAIwAaOONUAmEouxxe-GJxMDFhCdNmqriOAvQr1WnXH2cOpAK75ZYD44AHMUGAAeUTgUAA8YFHxhIwAKHAJEKIA+GPjE5IQoXzQAfgwSVQAlGWhhCJYoYHwQrXxfEHEUKCyASi0AaVyEpKMAaxRECFI4aIVxyenRLJSIKVVRLXnVfp6MDgBIKHDfKHw4VckAbXmAXU4iLgt4OhFcJ1DwlJexKRkYLWoimoPU4AHpQXIcmpHnxLIQ3gowjAUg4bH8AUCQRxwZC4A4gA)
 
 @category Type Guard
 @category Utilities

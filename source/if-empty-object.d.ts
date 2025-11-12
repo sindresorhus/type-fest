@@ -17,6 +17,7 @@ type ShouldBeTrue = IfEmptyObject<{}>;
 type ShouldBeBar = IfEmptyObject<{key: any}, 'foo', 'bar'>;
 //=> 'bar'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQGYFFxIDyARgFYoDGMAvnNlBCHAORKoC02KAzjMwNwAoQWzQBlABYQArgBsAJgCEUAFSjS0AXjg58YImUowAPOmoA+IQHorm8wnUphouJJkLligIZQ423QSIJORUpgDWKIgAXHBeAHaI1AA0LNgQEMwpzMQ+zJaCNnYsOVDMQA)
 
 @category Type Guard
 @category Utilities

@@ -4,6 +4,7 @@ import {sourceFilesExtensionRule} from './lint-rules/source-files-extension.js';
 import {requireExportedTypesRule} from './lint-rules/require-exported-types.js';
 import {requireExportRule} from './lint-rules/require-export.js';
 import {validateJSDocCodeblocksRule} from './lint-rules/validate-jsdoc-codeblocks.js';
+import {requirePlaygroundLinkRule} from './lint-rules/require-playground-link.js';
 
 /** @type {import('xo').FlatXoConfig} */
 const xoConfig = [
@@ -38,6 +39,12 @@ const xoConfig = [
 				'error',
 				'prefer-top-level',
 			],
+			'unicorn/template-indent': [
+				'error',
+				{
+					indent: '\t',
+				},
+			],
 		},
 	},
 	{
@@ -60,6 +67,7 @@ const xoConfig = [
 					'require-exported-types': requireExportedTypesRule,
 					'require-export': requireExportRule,
 					'validate-jsdoc-codeblocks': validateJSDocCodeblocksRule,
+					'require-playground-link': requirePlaygroundLinkRule,
 				},
 			},
 		},
@@ -83,6 +91,7 @@ const xoConfig = [
 			'type-fest/require-exported-types': 'error',
 			'type-fest/require-export': 'error',
 			'type-fest/validate-jsdoc-codeblocks': 'error',
+			'type-fest/require-playground-link': 'error',
 		},
 	},
 	{
@@ -94,6 +103,7 @@ const xoConfig = [
 					'skipComments': true,
 				},
 			],
+			'type-fest/require-playground-link': 'error',
 		},
 	},
 ];

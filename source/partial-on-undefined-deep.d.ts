@@ -49,6 +49,7 @@ const testSettings: PartialOnUndefinedDeep<Settings> = {
 	},
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIa2NgGwHkA7AVRIBMUAzYElSgERRTAF84aoIQ4ByJKgC0NFAGcY-ANwAoWfRgooNbAGM0AZRQwY9AObiMsgJAQweiCQCCALjiSoBuWYvArAIXskAriABGynAAPnA+VLT0jC7iPv5Eblb26KYmsfGJNvb+EBAEKNgkLmlxCZYkXnA5eQUkIWERdAyULuyy7HKyalaSCBIw2roG4vY4eISkFNRNjCxsADyDeiSGAHxwALzGruV2AjS5-AA0pgD0p3CAvBuAkjtw5uUecMBGJBAA7neZhHCFlHBqhSqaF4wF0jFM6TK7hIyVSkMyexgUB8KBOJhM5yut3hDyeL3en3K32wRjeKAIBB+VH+gMCdxAoKUlFM7BOHSAA)
 
 @category Object
 */

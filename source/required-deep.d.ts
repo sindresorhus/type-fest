@@ -33,6 +33,7 @@ type RequiredSettings = RequiredDeep<Settings>;
 // 	autosave: boolean | undefined;
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRQRwK7BQoAmAIiimAL5wBmUEIcA5EqgLS0oDOMzA3AChBbNAGUUMGMAB2Ac25wAvBkEBIGCgAeMAKLFgMaAH4AXKrVraEGTDHAAXijNwZeEACMUUIZeu2AYQgAGxNzXihZOV8rGxgAdRRgOQALGBc3T284AB84PBliFFpZEl8qXwBDPCMAY0YwYMlncw8IEJRKmSqaiG5KgDcWuDaOrtz8wuLS4iEK4VE4bHxCEgkpKMUVZYIiMgowAB516XluAD4hAHorpXPVG7gNbT0DIyhzdEFHvzj7J3MmS8Pm+VyesUCIWg4RgkXk1zBv1siWSaUB7mBEwKRRKMjKoKe8x+1TqDSamla7SaXQRTxJfUGKEpYxkWKmuPxjyoQA)
 
 Note that types containing overloaded functions are not made deeply required due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 

@@ -24,6 +24,7 @@ const homeFencingTeam: FencingTeam = ['George', 'John'];
 guestFencingTeam.push('Sam');
 //=> Error: Property 'push' does not exist on type 'readonly [string, string, string]'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBAbwEoFMCGATCA7ANgTwBUBXMXFAXzgDMoIQ4ByGfMFAWmpQGcZGBuAFCCWbOADEU2AMbBsAc0LoGAXjipMOAiTIoAPLyhz5AGjgBmAHxDB0nLzjziPGJJnGlaEAC4JU2QqeqnAA2owAUhDcABaMZowAssDS0WgouHFMSBAARiiwjAC6NgD0JXAAAjDc7CgAHmzSMLVQdFC29vDR9ChuAYrKvn0eynBqYQDiKNDyKJkRENHYRUJlKpZwAKKt0L6ErChMIYbGZicKhYxwwNxw2BDwaNzcwPLYaDnkcDAQ3wdMUHQWDw+FC51McHBZxgRgujAAdMIypVqrUGigmi02oInC5hoFlPCwMQYgAKRgAZS8jAAlKsSustjsoL4AAp0NiwUGMYkxK5YHh3B5weo3eA4P5iRiAzQgsEw06QhUKaGw+SXeFAA)
 
 @deprecated This type will be removed in the next major version. Use the built-in `Readonly` type in combination with the {@link TupleOf} type instead, like `Readonly<TupleOf<Length, Element>>`.
 

@@ -38,6 +38,7 @@ type T4 = IsRequiredKeyOf<User | Admin, 'name'>;
 type T5 = IsRequiredKeyOf<User | Admin, 'surname'>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4CUUCOArsFCgCYDSKiA8gGYC+c9UEIcA5EqgLT0psMTgG4AUGOAA7GCij0AhgGM0AVWxyMYgJBSFIFAC44QqNIDm47diJQ9B46YvidAGyJKA1ogByREABGcgD8xlL+QVDijBLSsvLKaACC5CDSWrr6RiYwZlKWOjZ2WaE5eQUxYjxoACoAjHAAvHA4+MSkFNR09AA86nIANFz2KJwAfOIA9JONYwhQRCgS1XA1AExNLXiEJGRUNAx9GlBDnO5evhFy41Mzc4quGsvItQDMm607HfvdR4PDWU4cAAPlxzt4-IFrhMxNNZnAAhAIK4UAopM9UKsACwfbbtPZdQ79KAguApNJSU4jG6wu7zRYY2oAVlxbV2nQOvWJpPJ0lORWpMLhc0RyNRUiAA)
 
 @category Type Guard
 @category Utilities

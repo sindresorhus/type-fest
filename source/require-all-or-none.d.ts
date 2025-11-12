@@ -36,6 +36,7 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 	secure: true
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRQRwK7BQoCCANqQPJQByEAdigL5wBmUEIcA5EqgLQsUAZxhcA3ACgJvNNiGQ6AExRQ4AXgwSAkDBQAPGAH4AXHAAUASnUA+OCKjA6Ac0laAVkPonzVtbfuOLtpCKADGeESmAEYQEKQoAIZ0koySEqH0InBE8vTKUACMptj4hCTkVLQMADxyCvkANNy6BlxwAD7cHvRcthrowWERKKYwUHgoEqlSGXRZOfUqAEzFuAREZJQ09Ci1wotQTTz6oh1dnnS96po6J6aWNtzoAEQgwkIJTijPps8AFsBnowuA1tN06PdfLYuC83kIPl8fnBnhAANZAkGDcKRBDjSapIA)
 
 @category Object
 */

@@ -24,6 +24,7 @@ type SomeReadonly = SetReadonly<Foo, 'b' | 'c'>;
 // 	readonly c: boolean; // Is now readonly.
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTASigQwBMIA7AG0QF84AzKCEOAciVQFpaUBnGZgbgBQgtmgBiECHAC8GQQEgCALjikAriABGKKEPlRCJCojiaVvKMFIBzPQGMVmyeUKkhVYaLiZGKfMTJKGW8cfyNKAB4JCAAaFk1mOAAfFjtmAD4hAHoshGQ0HxA-Q0CTWXRBHLhFFXUtHWzc-RLjU3MYSxt+OCqAdQJuOAJyA2ITUfCTAlIiOF5gcnI4YG4AOkqmidK4B1NnV26qgElB0ggAdzgt43WqqiA)
 
 @category Object
 */

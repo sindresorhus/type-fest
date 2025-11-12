@@ -17,6 +17,7 @@ type Example2 = ExtractStrict<'xs' | 's' | 'm' | 'l' | 'xl', 'xs' | 's'>;
 type Example3 = ExtractStrict<{x: number; y: number} | [number, number], unknown[]>;
 //=> [number, number]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEDUEMBsEsBNQFEAekC2AHaBTAzgFCxYD2ATgC6gUCemOoA3qhWZAMYUDKrsnAvqABmZEulAAiWvQC0Q-BQkBuAgWkNUGbDgCMoALzIUrDt16cAPIzwVIFAK54AXKADkee+3b48rpaHg7SBcbMlgAOwBzAG0AXUEAHyYbO0cXVxwyUTI-UEzskN4o-gAaZNsHZzcPLx9XfgA+FRB9BvLUqvdPbzxff0DbQrCouP5VdSMtXAAmAyMTTh4wy1cUX1Ak91cNt3Rtzeh9txRDstX1zd8mgha286Ot8boNNCxcAGY5ljZF8worFAucL2dAAI0y-hoQJB4LIiVA0WBYMyZSRsNiZXs4QA1uESAB3cJxa63BFolGgclkWJAA)
 
 @example
 ```
@@ -35,6 +36,7 @@ type Example2 = ExtractStrict<{x: number; y: number} | {x: string; y: string}, u
 //                                                                             ~~~~~~~~~
 // Error: Type 'unknown[]' does not satisfy the constraint 'never'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEEkDsDcEMBsCWATUBRAHrAtgB3gKYDOAUIngPYBOALqDQJ64GgDemNVsAxjQMqdEvAL6gAZlQrZQAIkbMAtGOI0ZAbhIkQoAAYByDBnh6dobrEiQKdAhk486FhjQAWiSAHNxk6foxE9UAAfUD0A4NDsQJC9YwiDYx0tMAABGiIFW2ZeTKpJKhJ5FkwcfAIARlAAXnQ7Ll4BKiEaAB4DcJiOyOjQuJijPQAaUIH4w2MAPg1tUFm5+YXFpeWV1bmAP02t7c3k9DzqAC5QABUmFhkEnoMBmVBkCmJQKzoiWBpEIjEGehcWbgokCI9ncdD0kAI0AIVD0ADpNNodABXSAAaysAHdIABtAC6pnMlmsoFs9l4oCcrncXgkUl0rAwx0gSOwACNoWpQAwmSz2VRRCEGcdgU1PJzuaARdThEltGkMlkCDloflCudaqVCAAmaq1Mn8QS8FpC568jlcnls6ECtiMyWCMUW+2ijzCYYo9EULF4qZ7Nb+gOBoNrHbbPZoA5UY5nZihD2YnG4wIPJ4vSXvT7fX7-QEi2Cg0IQqEw2FAA)
 
 @category Improved Built-in
 */

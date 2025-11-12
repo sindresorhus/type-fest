@@ -19,6 +19,7 @@ class Awesome {
 type ExceptPrimitivesFromAwesome = ConditionalExcept<Awesome, Primitive>;
 //=> {run: () => void}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBSqYNgBuKANHAMIQB2AJnsFQIYA2AogB4DGKYMAvnADMoEEHADkSVAFoBKAM4wxAbgBQKjkwZy5cAIIB3eSLToVASA5UFUAK4cY0ABRgbAIybAOcSgxAoAXHDWwJQA5qQu7p5Bdlza8oGUNiCuKFARbh5eAgzATDZQCXCuwKEhMACUGLxqZraUjlXoNTUqkmjsXDzYuPhEcgBiwiAGRn5wALzkVLT4jKyc3DAAPKNyxqQ9IHREAHyqAPQHE7sY9YGNk6cEEMDUvEA)
 
 @example
 ```
@@ -34,6 +35,7 @@ interface Example {
 type NonStringKeysOnly = ConditionalExcept<Example, string>;
 //=> {b: string | number; c: () => void; d: {}}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgKIAeAximDAL5wBmUEIcA5EqgLQsUAZxhcA3ACgJwHDBRQWJOnGolwZNOgkBIEgC44IqDIDmk7QCMDR03AA+cHAFcQF+eZoGAFAEo4AXgA+OAA3CGA8czwDdEZJRileNAA5XABlGGMcEwBpFEQhAHkcMkQAuGx8QmIccmo6BgAeVXUUABpDTNNAyQB6XqCMK06sk3tHFzcoMThPOF8A4LCImeiMRkYgA)
 
 @category Object
 */

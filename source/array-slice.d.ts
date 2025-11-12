@@ -53,6 +53,7 @@ slice[2].a;
 // @ts-expect-error -- TS2493: Tuple type '[1, "2", {readonly a: 3}]' of length '3' has no element at index '3'.
 slice[3];
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQSlAhogZQBtgBjFAXzgDMoIQ4ByJVAWmpQGcZGBuAKH4s0AFQAMcALxxseQiXIAeANpiANHACMGgEwaAzBoAsAXQB8AgPSXJZuKo3a4euIbinBwuCM1SZOfGIyFBV1LV0DYxMNMNZNC35rW3swpxd9E09kUR0-WUCFEIdw50j3aJLWHQSku2U0zKFs7308gPlg0McI1yiNKuMamzqMrNRvIza5IKVitLLTfpc4oeTlUabxkQBWKYLOuZ63RbhYgE4L1brG6gBXADtSGGAIe7hcdpmQ-gBIUlfuP45AB9OAoAAeMBQ9wAJpw4FAULgYa8iIg4A8ANb3CAAd3uymivwIMA+8AhUNh8PutxAACMUFA-OpfgBRWFgyHQuFwGn0xl7RDA5SMIjQgDmMAAFowiWYABQfOQALiB+GBGm4ZIA-KqSWSNNzdXB2TCAJQYX6ImC3KBvJX4AB0nEK8q1sENsItuHh+Q6Sj9Grg+o9JthCQogn+90BLuCfgd-pQ8vqGkYOkYGnQuFV+goGmURg02xMFVimjNAk2KAg1DgcfIVmG9ic6czGARSJR9zR71zvDgFEaDZQyh0JkduCbyX0gmscAAAjBOKwIagnqucNA4KxWN4CDojGd9KqRLcwGKEM1GKm4AAiHR3rOI5Go9E51xDxhwWtwMX3SUpSYfRvylH1eQgMExRAaF4FweBgFhCFgMYR1+BHdYTF4IA)
 
 @category Array
 */

@@ -27,6 +27,7 @@ const preserveConsecutiveUppercase: CamelCasedProperties<{fooBAR: string}, {pres
 	fooBAR: 'string',
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQIYhQGxwGcUATABSglVmBSIF84AzKkOAciVQFpn6YHANwAoEcAB2MFFGbYAxmgCqJKBhEBIFTICSpAFxwJAVxAAjGaK2qAcrhSGiMKJIDmohmPkQJTuFHpjfBhDHDxCbBIKKhoYOiIAHm0oAD44AF51DWNVPUMARgAaTRyZOzxDDgAVCBAOYoZREW9feDAA1QA3FEwfEnljOO6lMBp5SIc4MIJiMkpqGTj6BPRmCAgAIQBBACVHZzcGQox2+hlu3t8UAaGUEbGJw2djFAY0zPRNNc3dyqcXCSueoiRpAA)
 
 @category Change case
 @category Template literal

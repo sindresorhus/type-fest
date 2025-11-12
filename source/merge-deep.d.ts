@@ -420,6 +420,7 @@ type FooBar2 = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
 // 	a: {b: number; c: boolean; d: (number | boolean)[]};
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWRVA5igERRTAF84AzKCEOAciVQFoKUBnGOgbgCgfG0AMQgQ4AXgw8AkABtgrAFxwAdgFcQAIxy8pwGChBslHKMGW4A2gF0dAQyXoNxmKfNc4AYyUaRMlLeV3ABMlNU0ca1JeKL4zfSgKWw80ACFbKEkpZVsQFGdXXB09AyMVdS0oazsHJzLwqGDvX39lSOi+AThhCDSoAEZxOGw8QmIwAB5ugBo4XoA+XgB6RclluFl5PLqKpZWsnK2TM0KeNd19Q1DyiJtTvfsMWrCdzyaIPwDGuB93lra7uCkDrIIQiXoAJkGw3wRBIkxEM16M3Q6SgtkQ0JQmAgQS2dDYYCg-iCdFICwB6ABG0U220VOyuXyx1262KlzgAAojuY4AAfWlQACUVSpD0cV3q7i832anzgIU5zxwfJlvwCwqsMTWpCAA)
 
 @example
 ```
@@ -437,6 +438,7 @@ type TupleArrayMerge = MergeDeep<[1, 2, 3], string[]>; // => (string | 1 | 2 | 3
 // Merge a tuple into an array
 type ArrayTupleMerge = MergeDeep<number[], ['a', 'b']>; // => (number | 'b' | 'a')[]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWRVA5igERRTAF84AzKCEOAciVQFoKUBnGOgbgCgeB6fnGx40MAO4Q4AQyhRpiNj0ZoAgnIUj8cALzCc+IiQA8HKMAB2uANoBdADRwLAVxAAjHHYB8XOIN1ecAAUZpa4cAA+Tq4eUACUdnz+WmKSCM5gADbsyshoACoZ2Sm6+qJGYMbWAIyOAEyOAMwOcNZ00nSOdG50tj5+QjqBQdWRcHVjjWPtdNM9CbZJQiXSFjIaiHCWMFLS6VkouahwhQfq8ogleikVVbXjTS2hVt6+-kPBz+FRo1ETUY0Fksyto9jAimhtrs1rILkc1BtTsUDGhrijbi53J4Wm0Ol0en03oNhpjYnNZlEZgsgA)
 
 @example
 ```
@@ -466,6 +468,7 @@ type FooBarTupleDeep = MergeDeep<[Foo, true, 42], [Bar, 'life'], {recurseIntoArr
 type FooBarTupleWithArrayDeep = MergeDeep<[Foo[], true], [Bar[], 'life', 42], {recurseIntoArrays: true}>;
 // [FooBar[], 'life', 42]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWRVA5igERRTABo5s9DiwB5MGYCAOwGcBfOAMyghDgDkSVAFouKVjAEBuAFCzhaAGIQIcALwYuqgFyDtEGd1UAhAIZQ9kqMGa4A2gF12cxXHNQNGAEYW9A3ygjAw89ZgBXEG8cJxd5NxUIDy9KfCISAB5E8g8APjkAegKMYwg9ACIDcuk4QIrA6tLQuAiomOd45GVTCwBlMCgUMwATFJw0mizVHItydAsoM0RUlEwIYZR-VgGh4YF2fNkikoMKqpq6uHKGmpC-OAAKa1tcOAAfFsjoqABKWM7UHBEh4AIJQRaIMZUdJgKYQJwzKBOQ7HB6Jd7uCx-RwA7pJCxgiEwqETTKJBGYpGOOaDADG4SgrBQAElmDAIISlqw9DAoOEUAdCsVgRYnLigT0oJzEP1BiNiZoVjC4RSPBT0HSGUzWezpdyEHyUDUFksVmsNlsdiN9ijhZLZbsxQouhL8VAACrhMAAG2oJBJfth9myBv55AALAAmalwewecgCb3AcQCGMalD0xkstkc8FcnmGwVHYrByUJpMpiPR8Uij1e30AdWAMAAFtKFRRxoGMqX4THefyY3HRTHE8mUAIq2nNVmdbmIfqBwLbbHaxSx5W4FHHEA)
 
 @example
 ```
@@ -477,6 +480,7 @@ declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions
 	options?: Options,
 ): MergeDeep<Destination, Source, Options>;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWRVA5igERRTABo5s9DiwB5MGYCAOwGcBfOAMyghDgDkSVAFouKVjAEBuAFCyAJigDGAGwCGUNFwCuzZYxZwQOfERIAeIpODN1h5uQDKEHVGUpy9B6zgoAHjAozAq+lGY03kxscAC8GOwAfAAUsgCQSjZ2DgBccNaM2dGk6ayu7ih5Lm4eJWkQDNGsAPx5USysJQCUeeHUlgW29sVw1RVejR2J0kA)
 
 @experimental This type is marked as experimental because it depends on {@link ConditionalSimplifyDeep} which itself is experimental.
 

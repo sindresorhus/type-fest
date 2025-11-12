@@ -14,6 +14,7 @@ type MyFunctionThatCanThrow = (foo: string, bar: number) => boolean;
 type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, ReturnType<MyFunctionThatCanThrow> | undefined>;
 //=> (foo: string, bar: number) => boolean | undefined;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTASjgVygDsAVZFAXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaALKIAYgWIBjGMAhkAFgEMYAYRXL6AdzgBeOAAoaECAC44PKMGIBzADRwARiqiXiBEM5RQAlAYAfC5mADYoWoLCFHDiAOpQKmCoACZSsvKKBnDYeIQk5KgAPOLpcgrKapraEDpO+DBEZBQlktLliqSqGlpdusEAPnDSKSg0tigpgYIA9DP6wSZmlta2ji5uHl4+-kEhEOFacEMjYxMpfEA)
 
 @category Function
 */

@@ -35,6 +35,7 @@ onlyAcceptName({name: 'name', id: 1});
 const invalidInput = {name: 'name', id: 1};
 onlyAcceptName(invalidInput); // No errors
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBA8gdgGxAQQMaomYA5AhgW2gF4oBvOAiALigGdgAnASzgHMBfAbgChuATCKgS4G0AGYBXOKmBMA9nCgKkaDFjyEAFCNYTCcYLQD6NeCvSYclAJQ0AbnKZ8e3APSuoAFXAQAyqmYsKFQ5fDBhFlooXAAjOQlgKAgADwxaKLAGOUgGWQgogHcACwhFXEU5GIArQUSEJmAIBlwEKCYMrLsnCD4AOjcPAAFDAFoUyBkxhiyGbmUUC3VKTXJKGgByCkJ1gBo2vhoARnZrHnciAD4oAAMna7aolLTaXncvH39AxL45fKg4OSJEJhCJlOIJJKpfIdbJNPKFEqKYAlKCZORdAR8KB2FoSaDtaLYkRMWIIaCaAGJcpKaq1KD1RrNBDWfohOD0NpwHH1PgASTgYAhJFWhA2Wwgu32Ry4c0QCzUVi0LG5Tn5guApygb2wciS0zkDFoQA)
 
 Having `Exact` allows TypeScript to reject excess properties.
 
@@ -50,6 +51,7 @@ const invalidInput = {name: 'name', id: 1};
 // @ts-expect-error
 onlyAcceptNameImproved(invalidInput); // Compilation error
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBAbwKIA8CGBjGBfOAzKCEOAchgE8wBTAWjyoGcYSBuAKDYurgHkA7ADbkAghgxUwMAHJoQVOAF5EfWVQBccJlGB8A5tnZsAJlQwC0UeXgCufLMAh84joaPGSZcgJLhCANyojAB4AFTgqFBgqPiMGOFRMGCD+VzEJaVUAGjgQgD5cgAoLXWs5PhgGAH0NEIBKDT8IYCNDDEcmOB0-NAFmrz4wa3glBBU5DRIxqhJs5o0ARgM2AHpluAABCpoI6ixtqEIoNhcRNI9VHzB-QIKunr6BodqWOFW4AGEiMGBzGAcnKgHaBAA)
 
 [Read more](https://stackoverflow.com/questions/49580725/is-it-possible-to-restrict-typescript-object-to-contain-only-properties-defined)
 

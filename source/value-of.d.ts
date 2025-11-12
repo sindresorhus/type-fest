@@ -16,6 +16,7 @@ type B = ValueOf<{id: number; name: string; active: boolean}, 'name'>;
 type C = ValueOf<{id: number; name: string; active: boolean}, 'id' | 'name'>;
 //=> number | string
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gNQIYBsCuKA8gGYC+cJUEIcA5EqgLQkoDOMdA3AFA+NoAgnAC8cHAWIkAPOmAATAFxwAdvhAAjFFC6rsIFMo5RgKgOa7sAYxjAAbobgaIEXCmwqyAPl4B6XyJequpaUHAAPnDGpmYRTi5uHnwCcABCouJ4hKSyCspqmtq6KvqO0eaWNvaOzq7ungA09CUGdD48-oFRMCbmychoAMIZEtkyckrBhTp6BkY9MZW2Dsq1iY30CnRxdC0obX4BQQWhceVmQA)
 
 @category Object
 */

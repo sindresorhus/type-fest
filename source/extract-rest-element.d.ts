@@ -20,6 +20,7 @@ type T3 = ExtractRestElement<[...'foo'[], true]>;
 type T4 = ExtractRestElement<[number, string]>;
 //=> never
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gUQB4ygQwGMYAlFAZxkwBsUQUA7GAXzgDMoIQ4ByJVALRsKMHgG4AUBP5oAKgEY4AXjg48RUiJp1GMADwBtBgFcQAIxRQANHAB09ylGAMA5gYC6Nx85c2ebCAgedwA+SQB6cKUQuG9XKRk4WQAmZVVcAmIySm16JkN7WzNA2nwGDy88H1CIqJjiiFKGBOQ5AGY0tUzNHNo8-QNC-0CeCoQoYxQaiUjo3gCgltQkgBZOjI1sqj7dQxNzS0qnV2nZmIYUADdLIA)
 
 @see {@link ExcludeRestElement}
 @see {@link SplitOnRestElement}

@@ -17,6 +17,7 @@ const carForm: Stringified<Car> = {
 	speed: '101'
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRlYA7Ac2ADNgUATAXzmKghDgHIlUBaYlAZxkYG4AofizQBhAIZQ4AXgz8AkCAjkUAGwBccbrkIC5nVBQ14AriABGKKAMqCAxhDzc4tiQDFoIDdm1FSFADziUAB80rIKSqoajO4QjAA08voohkwAjAAMaYz8lLxAA)
 
 @category Object
 */

@@ -21,6 +21,7 @@ type TypeAB = TypeA & TypeB;
 type SimplifyTypeAB = ConditionalSimplify<TypeAB, never, object>;
 //=> {a: string; b: string}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgMqhhnABmiAvnHVBCHAORKoC0dKAM4xOAbgBQ4nmgAqyFAEE4AXgziAkCQBccYVGA4A5hMYSp8uHNQAhFWvUAjHXoPHxpydMvyFt1VcU4ADJvGwkAenDlAD5QwJCA608LKnBaBgDfO2x8QmIcclSaekQAHkzrABo4HBQANxQoaogHACsUAGMYaIio2PRtXRh9I1E4JyGRw0YgA)
 
 @example
 ```
@@ -37,6 +38,7 @@ type B = Simplify<Map<number, number> & Map<string, string>>;
 type C = Simplify<{a: number} & {b: string}>;
 //=> {a: number; b: string}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgMqhhnABmiAvnHVBCHAORKoC0dKAM4xOAbgBQ4nmirhaDADwAVAHxwAvHGz5CxHOVk16iZQBo4FFDAUBXHAGscEAO441AHzgBZEmFsOnV3M7Rxc3OE8QwJwAbQBdcwgAIwArFABjGBUJKWQ0AEENC2p5E0trHBsQJJQoNQAyCysFYShgHABzFWzxAHpe9TVyhUrq2oam61b2rslpOAAhIsNShR8-UZqoc03xuEb1lpg2zvNpzu6JfsHvXxGqrZ2HvYO7846z45mVObytZZKxgU6BIAC44LsoMxGugkuD3owetc1CDwZDRHA4XAEUA)
 
 @see {@link ConditionalSimplifyDeep}
 @category Object

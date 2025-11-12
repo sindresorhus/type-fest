@@ -30,6 +30,7 @@ type Numbers = 1 | 2 | 3;
 type NumbersTuple = UnionToTuple<Numbers>;
 //=> [1, 2, 3]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gVQHbAtgFQgIFcwAbFAXzgDMoIQ4ByJVAWlpQGcZmBuAFCC2aAHIkQAIxRRucALxwAjHAA+cAEzq4AZiGi4E6bO6kKaJTjyFiZSgB5jMuQD4hAeg8LXcANrKADRawboAukA)
 
 @example
 ```
@@ -47,6 +48,7 @@ type Pet = keyof typeof pets;
 const petList = Object.keys(pets) as UnionToTuple<Pet>;
 //=> ['dog', 'cat', 'snake']
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gVQHbAtgFQgIFcwAbFAXzgDMoIQ4ByJVAWlpQGcZmBuAFCCAxvl5xUMbnAC8GQXDgATCAHMAXC0C8G4DYd5gBpFcEQEMYW5tsCMO4ePdspgNYpL2wLA7dqkMFs0ABRR4eRdECFoEZBRwySDuIQB6BNkAPhZVNWY4AB8WMz4clgdnFGZhMWwJKQAZYAl5AHkAIwArFBEYADpQ7gAKKW4ASjhTGRw8QmIySgAeQJgUxOS0gG1mDMM8803mYpdmAF0gA)
 
 @category Array
 */

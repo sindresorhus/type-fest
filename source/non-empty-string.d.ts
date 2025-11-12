@@ -24,6 +24,7 @@ declare const someString: string
 foo(someString);
 //=> Error: Argument of type 'string' is not assignable to parameter of type 'never'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gOQgOwKLhIDKMUwOA5gL5wBmUEIcA5EqgLS0oDOMzA3AChBAExQBjADYBDKGloBXHOJjBcdCBAA8AFTgoAHjBQ4R3OLzKUAfAApL5CgC442fIUQkrFXdYCULgBuEMAiQoK0mrbM0sx+QgD0CQC81nAA8gDSwklwAAIw3OyGqCrFUAxQEVHMcYkpaXgV0C4AglAUCiAm8BC0CMhozABEw8xwwOY4EPDS3NzAFDjSAEaSaDAQcGCy0t3GUHB9A6gsOCiBKFDMAHTCYlKyaOK4vBaMKF6OLg6UgrkFIolCQwcqVaoQewfL6UeL-BpwJqVNodLo9I79NhDX4UcaTODTWbzRbLNYbLY7KB7FAHDEnIbnS7XG5AA)
 
 @category String
 */

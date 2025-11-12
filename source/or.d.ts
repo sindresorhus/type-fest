@@ -22,6 +22,7 @@ type FT = Or<false, true>;
 type FF = Or<false, false>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3geSgXzgMyghDgHIlUBafFAZxlIG4AoZitAFQ7gF45sAPDCgBXFABoEolAD4WAenk8ZUsa3ZwOAMV78oQ6ZPwBDADa1ZCpSuFq2yNFu59BJ8xNWXmi5Z-UO4LR0XfTcLIzMLOW9rAkiUIA)
 
 Note: When `boolean` is passed as an argument, it is distributed into separate cases, and the final result is a union of those cases.
 For example, `Or<false, boolean>` expands to `Or<false, true> | Or<false, false>`, which simplifies to `true | false` (i.e., `boolean`).
@@ -45,6 +46,7 @@ type D = Or<boolean, true>;
 type E = Or<boolean, boolean>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3geSgXzgMyghDgHIlUBafFAZxlIG4AoZitAQTgF45sAefAEMANrRQAaOACMIEESiEA7AHwsA9Ou4qZchctbs4AIR58o-WfMVKpwsSjXNN23dYNtkaAMJmBMKABXSTd9VQ0tHQDgwy84ABE-CyswqWjHCNd02NQ4AFEkyz0bKRSbJxcdMuUgA)
 
 Note: If `never` is passed as an argument, it is treated as `false` and the result is computed accordingly.
 
@@ -73,6 +75,7 @@ type F = Or<never, boolean>;
 type G = Or<never, never>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3geSgXzgMyghDgHIlUBafFAZxlIG4AoZitAQTgF45sAeGFACuKADRwAdigBuKKAD4WAemXcFCESlbs4AIR58o-aXKgShopc1XrNoncjQBhQwPwBDADa1xU2fLWthqePtpsTnAAIm7GpvISob5BaiHevo6ocACisfwARhAQXigekhLxiiqpcIXFpZKZaABieZUSdSVlKXadDU1wAOJtAeb+Zj1pYUA)
 
 @see {@link And}
 @see {@link Xor}

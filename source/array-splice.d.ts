@@ -86,6 +86,7 @@ type SomeMonths2 = ['January', 'Foo', 'April'];
 type Months2 = ArraySplice<SomeMonths2, 1, 1, ['Feb', 'March']>;
 //=> ['January', 'Feb', 'March', 'April'];
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQSlAhogZTABtgBjFAXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaAgxQBZCADsYACy4AGOAF44AbSYApXNICuuKIiYAaZpjBRgxU8y17pKJgF1BIuFNkLla7HkIk5CgAPGIgkjLySmYAjGaKZpoAYigARrZMEoZkci4AfIIA9IUqeRraugZGGSnpZpnZufUWVjb19o4ugsLIouKeUTGq5Tr6hsbNltYZHU6uPagekQpDvjj4RKQUof3LXHFwBzEFAsWlI5XjMw5z3e5hEV5cAEzDmqNVE8xJEBAZLdN5u4BgpXmt-JsgjtwiCXrF4eVahkslAcvkiiUyu9LtV6kj6ii0ZNWl0gA)
 
 @category Array
 */

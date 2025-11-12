@@ -39,6 +39,7 @@ type UpdatedUser = SetNonNullableDeep<User, 'address.street' | 'contact.email' |
 // 	};
 // };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTAchAO1wFcAbUgQwCNSUARFFMAXzgDMoIQ4ByJVALRsUAZxg8A3ACgp-NAFURKKHAC8GKQEgCFECgBccMVGAEA5tM0UAJtaiiRh9Fs0BjYEkPHTZuAB84YgJrFDZTFGtLTWNGGAB+LxgTc384AjJSS2ZLV0IYClcYJxcUEApgUgSjJJ9U9PJUoJCwggiosAALQgNq5N8AptDwyK1sqTHZZAUwawoYCMVlNThsPEIScmpaBiYAHkWoABpeGzsHADoYnB5UnlyCfMLz0vLSG4C7vIKYc87ungAfNIAPTA1QAjSguDaXQ9bzmEHA6GnewiRyQpGaNweRCJPqNYJDVojKFYq7xPE+RHQsak+6PIoY6GaF4VKrwixSUmaP6tSkIrmY2lI7JAA)
 
 @example
 ```
@@ -52,6 +53,7 @@ type ArrayExample1 = SetNonNullableDeep<{a: [number | null, number | null, numbe
 type ArrayExample2 = SetNonNullableDeep<{a: [(number | null)?, (number | null)?]}, 'a.1'>;
 //=> {a: [(number | null)?, number?]}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTAchAO1wFcAbUgQwCNSUARFFMAXzgDMoIQ4ByJVALRsUAZxg8A3ACgpAellxs8EagDGwNsFVxgBACZbROgnAomKUKBUQIIcKmgKEBBMpRooAdFP5oAgpbWAKIAHhTgtACMcAC8ijj4RG7UtAxMADzoFABccADariAOUHAAPnCu5AA0FcRFKCXllaQ1hcVlcMT6KJoEKHoAusw1PBSekTwdo54ATDwAfNLyMfMYOfltDR3NrXXFu-VQQzLycADyYDDAhBSkcCAQBppbABQABgD8bwCUOiIVEHgUBQDwAbv1vL44AErIhQuEwLQZrF4nhCCRyCl6IwwJl1nkXptGrVyN8PjVCXstk03GShiMxhNFnJZCs1rkCUTtrTybVDh8hkA)
 
 @category Object
 */

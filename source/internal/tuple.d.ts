@@ -20,6 +20,7 @@ type Array = TupleLength<string[]>;
 type Union = TupleLength<[] | [1, 2, 3] | Array<number>>;
 //=> 1 | 3
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBAKgrmANtAvLByAyEB2BzYACwB4BtAZ2ACcBLfAGihzgFsAjCKxtgex+QCGOALoA+ANwAoAPTSUoqAGZJk0JCgBBKlQEgoaeEgjZ8RYpVr5SYqbPlMIAN04rZUAMoIwPKsHJQ4HBoeHCg1CHIAOlVwaABVIJD9dCMTAhJrKAAfKFIARkYAJkZFYWzNbV1iZnZOUQkZOQU88sUgA)
 */
 export type TupleLength<T extends UnknownArray> =
 	// `extends unknown` is used to convert `T` (if `T` is a union type) to
@@ -44,6 +45,7 @@ ArrayMax<[1, 2, 5, 3]>;
 ArrayMax<[1, 2, 5, 3, 99, -1]>;
 //=> 99
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/IIJxEME8FlwDwDwG0CMAaABAJkwVkwMwC6AfANwBQA9FQLwka4UWgQzzLrZ6GYCcfTAFoUpSjXoYBQA)
 */
 export type TupleMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
 	? never :
@@ -67,6 +69,7 @@ ArrayMin<[1, 2, 5, 3]>;
 ArrayMin<[1, 2, 5, 3, -5]>;
 //=> -5
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/IIJxEME8FkEsDsA8BtAjAGgAQCYsFYsBmAXQD4BuAKAHpqBeUzVSy0CGBFDHfIrAWjxkqtBpkFA)
 */
 export type TupleMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
 	? never

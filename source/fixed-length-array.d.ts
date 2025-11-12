@@ -23,6 +23,7 @@ color.pop(); // Allowed
 
 console.log(toHex(color)); // Compiles fine, but fails at runtime since index `2` no longer contains a `number`.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/MYewdgzgLgBKA2IBOAuGBtMBXAtgIwFMkAaGbfI08wpAXRgF4MAmAVldIEZmAOUgNgAstANwAoMQDMsYYFACW4GFBAAJAgA8AFOhIwA5qTy00SAgEMAJuHgBPDNUplcNKi6K0AlDADeYgJBmUFhIYDAABgDEACQ+SAB0KgDKUEjyYPpanPyeAL6x+okgKWkZWTn5PnhFJemZ2Xnh4rkSCMjxAA4gHVqeIjAA9AMwAILwiADuBJat4BAg8ATxiJkq6tptSJ59g8MAwiA4HfKLEDCS6QRGWLCS5idn5rBIMgo4BDAQ6cAf6ZaaEWY4TIIBgiAyRDg4Cg90gMHMEUcSHC8SAA)
 
 `ArrayLengthMutationKeys` solves this problem by excluding methods like `push`, `pop` etc from the resulting type.
 
@@ -36,6 +37,7 @@ const color: FixedLengthArray<number, 3> = [255, 128, 64];
 color.pop();
 //=> Error: Property 'pop' does not exist on type 'FixedLengthArray<number, 3>'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gMWADxQEwBkUA7AcxgAsBBKKAQ0QF84AzKCEOAciVQFpWKAM4xuAbgBQkgMYQSouHIA20AFxxseIqQo06jADwkAriABGKKABo4AZgB8cALxwA2gCYArF9sBGDwAOWwA2ABYAXSlJAHoYuAABGGF+FBxUGRhUumhZCFUoADpIMAAKAEopOOcnAFEcqA0ABQ5UWEQeEu44fAgROBIIeDTgRXkEZDRuLQJicipaBkRjM0sbewduQqA)
 
 Use-cases:
 - Declaring fixed-length tuples or arrays with a large number of items.
@@ -86,6 +88,7 @@ function toHex([r, g, b]: readonly [number, number, number]) {
 
 console.log(toHex(color)); // `FixedLengthArray<number, 3>` is assignable to `readonly [number, number, number]`.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gMWADxQEwBkUA7AcxgAsBBKKAQ0QF84AzKCEOAciVQFpWKAM4xuAbgBQkgDYp4AYwgzoALjjY8RUhRp1GAHhIBXEACMUUADRwAzAD44AXjgBtAEwBWTzYCM7gA4bADYAFgBdKUklElE4KAJnOCUVKFcABkjJAHpsp0cTc0toiFj4MgTSJJToV18s3Py4QosoErK4MxljNBcatPcGvILTVulcuAABGGF+FBxUBRg5umh2uPoZMEp6auVa2yGmgFFVqHUABQ5UWEQeW244fAgRZoh4eeA40oRkNG5NARiOQqLQGIgjKNLDYHNwAHTjbJwACaEGMyXoJDgAHcoMAYGgYBA4AA3TbAfBwYAkfDABQiBH9DLhJL+AJSJn1JJhDn7AYsly2dxRCYAIWM8EQaIxJBI7xxeIJCGJaOWEFY-DMaJpwipNLpDJySOms3mi2Wlg4bSZhyS6ThnikjUcpytl2uliQ90ez1eco+OC+8B+fH+gO0IL04MhRWsdns8MRUxmcwWKCWKytJVScLAxmElAAFPbPABKJ3DOCutRwK4QG5e7h5gs+l66-1wT7fLGhnjh4G6MGGFrQ+OJo3J01pjOWtb9JIZPyBGxeHxwEtHF1ndQAFT+PFcI7jR5sJ+aUKg4UeXze8HowmEwDIJHoXUJxN7ANwQJ0oP0ELPWE4TgPdUF1dU4DAD1bh4ORI0eegEj1JRwHoGBgDfBEJxNVNzUzOc+ThODdCSUIKxObc4AAYUxDt70fZ9lVg39KEeCwFHofM0HxKldV2BJ6HwfhShkO4oPrT1ECw1hjBIJZgBDCAAAl5kLVw4zIGwzHCdQBOeEhRLcM9jIvcJSwwSQAEgEhgYwoCxAADABiAASdAoDhIkAGUYDxchC18YJSyYNyyE8iAfL8sgAqCkL0DMcLIupaLAuChypCYaQYmEZQUCIiBoqJFScELfpS3LOAJgc-sWKHACLxhewHN4uB6KfF83yYhy9JEu5Dwa89Y1PUyHLhIA)
 
 @category Array
 */

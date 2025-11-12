@@ -38,6 +38,7 @@ type T4 = IsWritableKeyOf<User | Admin, 'name'>;
 type T5 = IsWritableKeyOf<User | Admin, 'id'>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4HUrAwCGARgDYoDSKiA8gGYC+c9UEIcA5EqgLT0psMTgG4AUGOAA7GCij0iAYzQBVbHIxiAkFKIgUALjhCCUgObit2AK5Rd+oyekWJWqCiIATCFLKI4wJ5GUtYgJHLijBLSsvJKaACCniDSmjp6hsYwpi5agY7ZzpESPGgAKgCMcAC8cDj4hKQU1HT0ADxqcgA0XPYonAB84gD0w9UDCFDWKCXI5QBMNXV4BMTkVDQMHepQPZyBgyNjEwpk6rOocGUAzEv1q00brdvdvRmccAA+XAdDYqPjOAkCAQChEKQXcoAFjuK0a6xaW06UC+cCSKSkez6h3+x0m00hVwArLCGmtmpt2sjUejpHtfkdAcDQR4pEA)
 
 @category Type Guard
 @category Utilities

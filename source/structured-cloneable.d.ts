@@ -81,6 +81,7 @@ const good = {
 const clonedGood = structuredClone(good);
 //=> {number: number; date: Date; map: Map<string, number>}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRlArgYxlyhQBMBhAGwgDsUBDAI0pQF84AzKCEOAciSoAtBxQBnGHwDcAKBn5K9MWLjlcEnlSUr0rOfloS4KKNyhwAvBhkBIfOpg8AXHDoB3VQ82LlACgCUADS2APQhcAACMGJCKAAeqISxptAy7GL0MMBiHMDicNh4hMRkVLQMzCiy8obwAOYQEKSW1jY0uCCMJi4AzME2pJkoLu5wACJDAf0g9GAjKB4AsrMAPBJQwDR1ga4dXVAAfFNpcBlZOXkqhQREJBTUdEws1QY0RgrlpADijc1W6zcSvdyr4Gk1-LIwhYDhh2p1urt4VApHBBjBhuMhiiZnM4MswGscJttoj9gdWEA)
 
 @category Structured clone
 */

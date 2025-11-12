@@ -42,6 +42,7 @@ type I = IsInteger<PositiveInfinity>;
 type J = IsInteger<1e-7>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM6YHYwoDmKUANHAAoTbAzABuK+AZsHnYgL5wtQQg4AciSoAtCxTYYQgNwAoeaLQBBOAF44OfIRJQAPAEYAfAoD0Z9cYRQArikXK4AIQ1bcBYqSMA6AAym8hZWNvaOyGgAwm7annr6YibmltYwdg5KEXAAIjEeut5+AEaGAckhaWGZqHAAonk6XgZ+EKWBwanp4TUAYg1xhQAebeWdVU4A4v0FBoY+AEwAzCgA1PNJQSmhGU4AEtNNvgCs7VssAIYANtg7WZgH8dS09Eys7JynIRfXtzUAUg9vIYUGIAOyfazfG5AA)
 
 @category Type Guard
 @category Numeric

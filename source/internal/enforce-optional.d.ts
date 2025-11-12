@@ -36,6 +36,7 @@ type FooBar = EnforceOptional<Foo>;
 // 	d?: number;
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gUQHYDNoDGKA8mDMBNgIYA2AvnLlBCHAORKoC0uKAzjDYBuAFAjOaAGIQIcALwYRASCoAuOAKjBsAc1FKARgH51m7XuUF1AV2wATFLm0o7+u+uzWQBlFDgAfOFsHJ2wXUTpRcWQpGQAhKj8FHHwoIlJySloAHmkIAD5RAHoi+XzFErgVUxgtXWLSwxMNWvMGqqsg+0dnVxFKpTtmz29fdrogA)
 
 @internal
 @category Object

@@ -50,6 +50,7 @@ type MyModelApi2 = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string, {pre
 // 	updatedAt: string; // no longer optional
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTAYsFAGwBMAVZFAXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaALKJREYkTgBeDAICQUFAENiEAHaFEcYMQBccTQFcQAIxRRBytRu26AxitUwUxAIIwjAEVcobEzBif08YAH5ff0FKQWEKOHFJaUIPMGAARjk4bDwCEnJUAB4kqSIAGmZnNTcwpjgAH2YgkNqvJkqeKGBNAHMAPkEAeiGFEbhbdS0dPUNjM0trAXHJ+xnq0K8jLp7e4dHFFs2I7Zhuvv24SiFxgAMwFS4rADcUAAV6VFgJKWAaAigXFucAgYBgwC0cEcqk0cEscCe8BgEDgtxoqkIT2BfzgiAgJjgAHcYUiUSoQBBXnAHqCrEg4BTiH8AVxaNBqZ86QRWZZdnAjrV4qhEj8UmlgAAmbK5fBEMgUEqiipVFxtXiNZrBY4dBFnXaVdAPbgvd6c77JZlWLhGdGYqiDZajdCOiYuNa6fRGUwWKyXRQbNWnc57ODjTQowhaXpWOBu6aIF2HLWB3XBvih0bhuCRvox0HgrQYl2UIA)
 
 @category Object
 */

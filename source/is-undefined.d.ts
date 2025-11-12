@@ -13,6 +13,7 @@ type Example1 = UndefinedFallback<undefined, string>;
 type Example2 = UndefinedFallback<number, string>;
 //=> number
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4FUB2AJigGbD4qEC+cJUEIcA5EqgLQkrYxMDcAUP1ZoCxMhUIAxAIYAbWQCNpAYwDWAHgAqAGjgz5StQD44AXjg5RpcpS0mUADxgoi2BFACuaAPx65ilVU4AC44TQEhZDQAUQdpcFkUAEYzOCtxSn0AtXUPImsJXW4ocgBzIwEAekrTE2KywWE4WPiwRIAmVPSbKX9DDXwPEAUUKCKYEvxyqpqTQeHRoA)
 
 @category Type Guard
 @category Utilities

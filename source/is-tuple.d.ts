@@ -26,6 +26,7 @@ export type IsTupleOptions = {
 	type Example2 = IsTuple<[number, ...number[]], {fixedLengthOnly: false}>;
 	//=> true
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4BUCuYANigL5wBmUEIcA5EqgLQUrYx0DcAUN42gFEAHgENwJAIxwAvHBwFiKADwBtAHb4QAIxRQANHAB0xjdt0qAuhYPoKwISgAmAGRRqA5jAAWAeTVFEAC4EKHwyAD4eAHoo6XDKESJsFF5+OGExRQAmGTk8QhJVUx19IxNNEstrDDsHFzdPX38ghKSI6Nj4mFCUIA)
 	*/
 	fixedLengthOnly?: boolean;
 };
@@ -61,6 +62,7 @@ type RestItemsNotAllowed = IsTuple<[1, 2, ...number[]]>;
 type RestItemsAllowed = IsTuple<[1, 2, ...number[]], {fixedLengthOnly: false}>;
 //=> true
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4BUCuYANigL5wBmUEIcA5EqgLQUrYx0DcAUN42gWJoAvHByCSAHgDaARgA0cAEyKAzAF0AfDwD0O4ZoRR8KXvzgA5CDAkixeQlIB2+EACMUUaVt37DFAEMibFM+ZAFHFAB1YBgACwB5MBhgCCcgzBgUEGw4UXFImVkAfkUlYp9uPQMjEzNwuAAlNhhM7OwrGABBIiIIAHcUABM8+1sissUAOhmXd09vSur-IJD61CaWtpyevsGR-IchCeVp2dcPL3V1RXQKYAAPYYAZFCcAc3iEpyJEAC5KKsyNoqn5aiggA)
 
 @see {@link IsTupleOptions}
 

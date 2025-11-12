@@ -21,6 +21,7 @@ type FT = And<false, true>;
 type FF = And<false, false>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQQHYBMC+cAZlBCHAORKoC0RKAzjBQNwBQb1aAKt3ALxwcuADwwoAVxQAaBJJQA+dgHpl-BXKkcucbgDEBQvGPmyiAQwA2DRSrUaL1lNuRo9fQcJGObs8VKU2VXViKxsXVDg9A09jHxlQp0DghzCUIA)
 
 Note: When `boolean` is passed as an argument, it is distributed into separate cases, and the final result is a union of those cases.
 For example, `And<true, boolean>` expands to `And<true, true> | And<true, false>`, which simplifies to `true | false` (i.e., `boolean`).
@@ -44,6 +45,7 @@ type D = And<boolean, false>;
 type E = And<boolean, boolean>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQQHYBMC+cAZlBCHAORKoC0RKAzjBQNwBQb1amcAvHDlwAeGFACuKADRwARhAgAbFAENsAPnYB6TbzWz5S1Ry5wAQnwF4hcxSuzTREjW2279to52RoAwhcFCRMoKDFLuhupaOnpBISjG3nAAIv5WNhHSsaHOrjHBoQmocACiqcLpdtIVqjnR4XZAA)
 
 Note: If either of the types is `never`, the result becomes `false`.
 
@@ -72,6 +74,7 @@ type F = And<never, boolean>;
 type G = And<never, never>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQQHYBMC+cAZlBCHAORKoC0RKAzjBQNwBQb1amcAvHDlwAeGFACuKADRxsKAG4ooAPnYB6VbyXEAhgBsGKDlzgAhPgLxDZCqNNESVbdZp37DnZGgDC5wUKJ6BtLWio7OWgFuRp5wACK+liG2rgZhGhGB7sYAognCAEYQELoo2tjB8qFq6SlZMQBieVaVyYXFpdhpLpEG0ahwAOJNSRU2XRluQA)
 
 @see {@link Or}
 @see {@link Xor}

@@ -16,6 +16,7 @@ plus('a', 'b'); // string
 plus(1, 2); // number
 plus(1n, 2n); // bigint
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gGWDFUCGANgCoQAKUoOwAbigL5wBmUEIcA5EqgLRMoBnGBwDcAKDEB6SXAByEOBDpRCEfABMBcAHYoU6-QgUBzFPBgALNAGNoUFNfj2YAVyjaEyFGKYvtj4AgPMEIXAQAeYjgUAA9cbU0dFxAAIzw4AB84FOBjYG14LKFKbWMAPgAKGIAuOGIAGjhEWuIASlrsXAISckoQajpIsowxAEhnNw8YuABqOArEOHwtfG1EVvF6CRCwio58DkaOFI4NuGk4YvzjMR2BCoBGRoAmM4vtZLSoW9D7h+0Xto3jIcnkCkA)
 
 @category Type
 */

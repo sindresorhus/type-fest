@@ -25,6 +25,7 @@ type Baz = OverrideProperties<Foo, {c: number}>
 type Fizz = OverrideProperties<Foo, {b: number; c: number}>
 // Error, type '{ b: number; c: number; }' does not satisfy the constraint '{ b: number; c: never; }'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3geQG4qlYAExQAUoJVZgUBnAXzgDNyQ4ByJVAWkdpjYDcAKCGc0AMQgQ4AXgxCAkAEMAXHBowCAOwDmigEZqN2vXRFi4AISVRZcHHgLEyFPDGo0APJIgAaDIZwWgCuIPp4dAB8QgD0MTKRGKrqmsC6-oEhYREicXAAAjA0XCgAHqgAxjAl+NCiyGjWAF52DvhEpOSU7rTeUv7oFWpZ4VBRsTFwAKK1UP4WbOhwQ0GhowJwdGxwhBC0QRDwNEruNIyICAAWaBUQWsZKafCLy8MouFAbW7mThcVllWqjjqFnEwCaLTkbScnVcVF6PgGmTWeA2KxGEWieRm5DmCAa7CWyOyn1eqxJX22u32WkO6hOwDOFxg12WdweT0JcGJ6zJWneqM2bCAA)
 
 @category Object
 */
