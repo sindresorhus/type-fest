@@ -10,11 +10,23 @@ const fenceWithLink = (code, lang = '') =>
 		${generateLinkText(code)}
 	`;
 
-const missingPlaygroundLinkError = ({code, output, nErrors = 2}) => ({
-	code,
-	errors: Array.from({length: nErrors}, () => ({messageId: 'missingPlaygroundLink'})),
-	output,
-});
+const missingPlaygroundLinkError = getPrefixes => {
+	// Track the number of times `fence` is called to determine the no. of errors
+	let callCount = 0;
+	const trackedFence = (...args) => {
+		callCount++;
+		return fence(...args);
+	};
+
+	return {
+		// Codeblocks in input code don't have playground links
+		code: exportTypeAndOption(...getPrefixes(trackedFence)),
+		// Create two error objects for each `fence` call (one for type and one for option)
+		errors: Array.from({length: callCount * 2}, () => ({messageId: 'missingPlaygroundLink'})),
+		// Codeblocks in output code have playground links
+		output: exportTypeAndOption(...getPrefixes(fenceWithLink)),
+	};
+};
 
 const incorrectPlaygroundLinkError = ({code, output, nErrors = 2}) => ({
 	code,
@@ -112,60 +124,30 @@ ruleTester.run('require-playground-link', requirePlaygroundLinkRule, {
 	],
 	invalid: [
 		// Missing link
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1))),
-		}),
+		missingPlaygroundLinkError(fence => [jsdoc(fence(code1))]),
 
 		// With text before and after
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc('Some description.', fence(code1), '@category Test')),
-			output: exportTypeAndOption(jsdoc('Some description.', fenceWithLink(code1), '@category Test')),
-		}),
+		missingPlaygroundLinkError(fence => [jsdoc('Some description.', fence(code1), '@category Test')]),
 
 		// With line breaks before and after
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(
-				jsdoc('Some description.\n', 'Note: Some note.\n', fence(code1, 'ts'), '\n@category Test'),
-			),
-			output: exportTypeAndOption(
-				jsdoc('Some description.\n', 'Note: Some note.\n', fenceWithLink(code1, 'ts'), '\n@category Test'),
-			),
-		}),
+		missingPlaygroundLinkError(fence => [
+			jsdoc('Some description.\n', 'Note: Some note.\n', fence(code1, 'ts'), '\n@category Test'),
+		]),
 
 		// With `@example` tag
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc('@example', fence(code1))),
-			output: exportTypeAndOption(jsdoc('@example', fenceWithLink(code1))),
-		}),
+		missingPlaygroundLinkError(fence => [jsdoc('@example', fence(code1))]),
 
 		// With language specifiers
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1, 'ts'))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1, 'ts'))),
-		}),
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1, 'typescript'))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1, 'typescript'))),
-		}),
+		missingPlaygroundLinkError(fence => [jsdoc(fence(code1, 'ts'))]),
+		missingPlaygroundLinkError(fence => [jsdoc(fence(code1, 'typescript'))]),
 
 		// Multiple code blocks
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(
-				jsdoc('@example', fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
-			),
-			output: exportTypeAndOption(
-				jsdoc('@example', fenceWithLink(code1, 'ts'), '\nSome text in between.\n', '@example', fenceWithLink(code2)),
-			),
-			nErrors: 4,
-		}),
+		missingPlaygroundLinkError(fence => [
+			jsdoc('@example', fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
+		]),
 
 		// Multiple exports and multiple properties
-		missingPlaygroundLinkError({
-			code: exportTypeAndOption(jsdoc(fence(code1)), jsdoc(fence(code2))),
-			output: exportTypeAndOption(jsdoc(fenceWithLink(code1)), jsdoc(fenceWithLink(code2))),
-			nErrors: 4,
-		}),
+		missingPlaygroundLinkError(fence => [jsdoc(fence(code1)), jsdoc(fence(code2))]),
 
 		// Incorrect existing link
 		incorrectPlaygroundLinkError({
