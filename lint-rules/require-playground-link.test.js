@@ -34,7 +34,7 @@ const incorrectPlaygroundLinkError = ({code, output, nErrors = 2}) => ({
 	output,
 });
 
-// Reusable code samples
+// Code samples
 const code1 = outdent`
 	type A = string;
 	//=> string
