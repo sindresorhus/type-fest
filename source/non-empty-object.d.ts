@@ -28,6 +28,7 @@ const update1: UpdateRequest<User> = {
 // @ts-expect-error
 const update2: UpdateRequest<User> = {};
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gOQgOwKLhIDyARgFYoDGMAvnAGZQQhwDkSqAtPSgM4ysA3AChhHNAFVeKKHAC8GYQEgcAQxAoAXHH5RgOAOYilvAK5Q1G7bv1HlwACbacpkCRkiaIscklgHqjAoAEooAI6mfDAAPHg4MMBIcCgAHkE4DrxwEORUMAB88nDY+ISIpBTU0QAKqrDAqgA2sfGJiPn53pS4-HCm-oEoAIzaEgNBoRFR0VIyhQroypZabACCjcCUKKwANMpmFuorrKuUGrvCXqIA9Ndwq-CNKKq9Q3AA1iiIcMBZUOGmYD-Bw7BAACxkKHo0DQMDBvzgAHdgI1GnB-pBYHBVHAAEwAZlxuOSUCYUE0wlucAAKr42OgaKwflkcBB4C9eMADGoSE8EBAEHTWGMAhMAdNZlB8qxKXcAAIwXicVKoajK0nQYTdHC9fqilC40bjELi-gzaRSooMwRAA)
 
 @see Use `IsEmptyObject` to check whether an object is empty.
 

@@ -48,6 +48,7 @@ const mapEntries: Entries<typeof mapExample> = [['a', 1]];
 const setExample = new Set(['a', 1]);
 const setEntries: Entries<typeof setExample> = [['a', 'a'], [1, 1]];
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gUQHYysFAZwF84AzKCEOAciVQFoyiYaBuAKA+FxSjICGAYzSYAHgPAAbNOg4BIQlRQBpFIgBccbAFcQAIz6diXIRGyF4IAdmBgdUgTCI48BQnAC8cABQoJ0kRarvhEADzikmAyAHwAlF4xcP5RMoQAdNZgfgHRaJ5JANoKAPQlcAAiEERwSiBoAlD6wHiNiHBglCKEhDwA5nDmCAAWaADW6r4A7i3DCMhoPGTQ1jDAQwIAbgLAjvoycQopgYUADAC66TAQAKpgqFAAwgKEKD5xADRc8mWV1R51BpNFpQNodLpEXrYAZDGCjODbKQ6NA+GZw+aoOBLFZOdbYOBbHZ7A5HXIyQoARku1wAYsAxCgACbvDjnOKcDhmCzwY55YJk-IYQFqTRwCnEThcyzJXChDzeADy+gAVighDB0ihZe4cqkUAkXnAQu4IgKYpLzNKIDoYPZ4N5rLZ7I5nIRjUQ-NqiOyuL8lar1YROZb4BAVWqYJFAl4MAItOKLdzBuH1e7CMEvYQwvQUBAyMmA5GzTHCoUaAIaB8xedzhzfgBBKCgxBBqXwRrNqN5EvlyvVxPSjsCRBpjNucI5vMEpvDruxEtnKu985VylVqm133lACyAjArZDcCyc8F2BQUzgu+ypd765rPrbR73o6NmezCynx+L3hvFbvm44X4AGUUBgA8k1eIs9RjM8LxAmAfDLP9qwfQ9IJfNN31QKd0O-OBfz7ZdVwpf82CAA)
 
 @category Object
 @category Map

@@ -83,6 +83,7 @@ type Key3 = ExactKey<Object, '1'>;
 type Key4 = ExactKey<Object, 1>;
 //=> '1'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBA8gRgKwgY2FAvFA3gKAJAAMAXFAHYCuAtnBAE4Dc+A5AIxMkDOwtAlqQOaMAvoxyhIUANIQQLDFACiADwCGqaSAA88JKgA0UJgSYA+RgHpz6E1AJjw0DQCZ5ytcA3bEKYAYJmcS2tbHHsJDQBmV1V1GS9dX0M2AKCbViYwxxkAFmj3Tx0fAxYUqzS2IA)
 
 @category Object
 */

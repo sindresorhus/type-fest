@@ -52,6 +52,7 @@ const splitOnNumbers: SnakeCasedPropertiesDeep<{line1: { line2: [{ line3: string
 	},
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZQHYEMDWKAwrgM4oAmAClBKrMCqQCIopgC+cAZrSHAHIkqALTcmMAQG4AUDODYYKKN1wBjNAFVyUDDICQAVx0BJCgC442QyABGy2UZ0A5XCBSXSMKAoDmsjjkFJRV1LR0AdWAYAAsAMR8UbApSPSdlE2xuCEttBwNjZQTGZNJcnQBtAF0AuTUIbC84KCZDABsYSxwCYjJKGjplGEYWNjAAHjyoKNjipJSAPjgAXjTCqAB9BWzLdAN0zeALOABGABp99Y28d0sBABUIEAEL-Q5Xq94SlMsK-b39ICrkdLAAmV5AnTXNweQQAKWUUEQL3273++wOW2OAGYIZibrCBJgwMBCCjAWj9FULhxZDJ6o14KQwG1ogB5bDOGz2KBlODdQgkcjUWj0YZMVjscboVnYFAnXZwWUoUG-dBKhQobGebx+OAcKr694YZmsmAcrl2ZR87yGFAcJarAHKjYKtL6F2quB-QH6AG+l3awReHzYXzkikQ6kGNG0oA)
 
 @category Change case
 @category Template literal

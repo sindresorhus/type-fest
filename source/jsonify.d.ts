@@ -73,6 +73,7 @@ fixedFn(point); // Good: point is assignable. Jsonify<T> transforms Geometry int
 // @ts-expect-error
 fixedFn(new Date()); // Error: As expected, Date is not assignable. Jsonify<T> cannot transform Date into a value assignable to JsonValue
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gKQM4QHbABmiANHDvgGoCGANgK4oC+chUEIcA5EqgLSEU2GFwDcAKHHA8MFFELUAxmgDiKDihhREGcQEheKAFzcAChGki4AHzMRaiAOb4x+xRGgATadVnYTANp49CAARnJkwWFyALoSTJLueMJwkJYmahpaOgC8ugbIxnaWXCRuHlDeeL5CgQCMZHUx4kwS4p4oirTUUGiE9HiKMMD4qeyhtCggAGJ4ABSevtQmFHg0DCgAlCYAbhaebQD0h3AAAjDYfCgAHqhDV1DsUOJg45Mz82kym6Jwx3AAUUe0BMhjgmRAmm0cGA2DgeAg8Go2GwwEc1QmaBgEFSPWokNkUDgEEICEK5FwazojDg4UU1Ho2DQwHgsLg1DwMJkcgUykkHS6PT6AyGI05hGA1xQnlmAB4ACoAPgWSxWlKIiAViu2cD2wAOkglUplnws31+-xUHk8Ji+rLhyNR6OomIAdBT8BqtQgoBzsIRoCA4RCoTpLDidtS0I60RjJggcat1oxJP9zpcbncYA8nuIjdLZnM8CgAO5wAAiNTmmx+fxOQKeJgAgnDM51ZJ4yJXZDC4QikSjYy7Ju7Vl6lXB6Xh+z6-QGoJxu8yZDjqLqo+zB87MQmPVSNkA)
 
 Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed to a value assignable to `JsonValue`:
 
@@ -87,6 +88,7 @@ const time = {
 // `Jsonify<typeof time>` is equivalent to `{timeValue: string}`
 const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gKQM4QHbABmiAvnIVBCHAORKoC0hK2MNA3AFCcDG+rCUGgC8GTgEgYQgGoBDADYBXFAC44eFAHc4AEVkwUACgCUnEl04B6S3AAGOfEUQAeeigiFBIFAD5bcYGw4FABHRWAANwUUPHgYCDt0KW85JVU4VihgPABzEltefjihBzw4UUwAZQB5ADkAOjBZKGwjKrr6zOycp0NklGNjOFkg0qdXZHdPfp92IA)
 
 @link https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
 

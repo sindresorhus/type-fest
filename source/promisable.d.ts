@@ -19,6 +19,7 @@ async function logger(getLogEntry: () => Promisable<string>): Promise<void> {
 logger(() => 'foo');
 logger(() => Promise.resolve('bar'));
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBShEwDOAhgEYA2KAvnAGY4hwDkSqAtNSvjAwNwBQvhfIgB2AYxoBXMTGARhcUhADmSlFAAUqmABllAUWEwoiAFxx1ASjgBeAHxxsuAiXIAeTlGDClti2cd4+CiuAG4QwAAm9ui8AJCicpxwKIbGNnCEAO6EwPBaukoGRoiWfPGJEOQAdIpK6inFFnwU-LWqGpY29gzUEBAMTbxtauqddg50BChVUByVISjqDMSEUANNQA)
 
 @category Async
 */

@@ -18,6 +18,7 @@ function * iAmGenerator() {
 
 type MeNumber = IterableElement<ReturnType<typeof iAmGenerator>>
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSRiqBDAIwBsUBREkFAOxgF84AzKCEOAciVQFoGUBnGGwDcAKBEMArlQDGMYBCpwAVHGABBEAHFquPDGgAKAJQYRASETAURACZwAjKItXbcAEyjaYzmgCyKADkJEAJcOABeOGxdYjIKahgAHgAlFBgJKCoAFWQURJ8IBlUNbSpdfSgAPkqgA)
 
 And here is an example with an async generator:
 
@@ -32,6 +33,7 @@ async function * iAmGeneratorAsync() {
 
 type MeStringOrBoolean = IterableElement<ReturnType<typeof iAmGeneratorAsync>>
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSRiqBDAIwBsUBREkFAOxgF84AzKCEOAciVQFoGUBnGGwDcAKBF4+iKgGNGAVxkxgEKnABUcYAEEQAcWq48MaFskyAFAEoMIgJCJgKIgBN2AC2DC7Dp65hQ5FFFaMU40AFkUAGV-YCoAcwB5KAAhCAgSPFUAXjhsQ2IyCmoYAB4AJRQYOSgqABVkFFKwiAZNHX0qQ2MoUylpAD4BoA)
 
 Many types in JavaScript/TypeScript are iterables. This type works on all types that implement those interfaces.
 
@@ -43,6 +45,7 @@ import type {IterableElement} from 'type-fest';
 
 type MeString = IterableElement<string[]>
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSRiqBDAIwBsUBREkFAOxgF84AzKCEOAciVQFoGUBnGGwDcAKBGc0AWRQBlGFGBUA5nAC8cbLkIlyKSjQA8AhcoDaAXQB8QA)
 
 @example
 ```
@@ -53,6 +56,7 @@ const fruits = new Set(['🍎', '🍌', '🍉'] as const);
 type Fruit = IterableElement<typeof fruits>;
 //=> '🍎' | '🍌' | '🍉'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSRiqBDAIwBsUBREkFAOxgF84AzKCEOAciVQFoGUBnGGwDcAKBEBjCFQGMoAV2Aw+cALxwqKAO5wAyihgAKANptAPBuA5fbYAadqcAy+9duBJfbYBdOHmWTpMAJSiRTjQAMXlFVThsXEISchRKGgAeIIgGWQUlAD5RAHoclUzbSzgAH1sHUuc2IA)
 
 @category Iterable
 */

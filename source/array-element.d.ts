@@ -32,6 +32,7 @@ declare function getRandomElement<T extends readonly unknown[]>(array: T): Array
 getRandomElement(['foo', 'bar', 'baz'] as const);
 //=> 'foo' | 'bar' | 'baz'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQSlAhogUQBsUQUA7GAXzgDMoIQ4ByJVAWlpQGcZmBuAFCCA9CLjY8iboLZoAyjCjByAc0n44AXgk58xUhRgAeXsrUBtALoA+IWK024ZlauFi4AFQCuYEjLkvXxJtXSkDMkpjCwBGABo4ACYEgGZbexFHOBi4AB8kvLgU93FPZBR2blwuWXK4ADkIGA1EUJaIo2N0XAAuZyVXKjtRTKdyFAA3FCgSuAAFPABjGGBF3CI4FAAPXHASQQATFEWiXCg0Wm9yZeAIcjhVFBgAJVxyA8YOqM9NrZgKA7cODnXAfchEVpXADW5AgAHdyNYbAAKM5SPqeACUfXaJEiJk8w0Ejxebw+IC+MGRFmYtAgEGYCWYACMzoyWKyAF7MKxwXBAxZ3XiYjJZWn05iFFlsqVc5hAA)
 
 @see {@link ArrayValues} - For directly extracting values from a constant array type.
 @see {@link IterableElement} - For iterables like `Set`, `Map`, and generators (not suitable for all use cases due to different inference behavior).

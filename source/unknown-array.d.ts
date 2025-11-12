@@ -18,6 +18,7 @@ type B = IsArray<readonly number[]>;
 type C = IsArray<string>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gVQHYGtsQDu2AglFAIaIC+cAZlBCHAORKoC0dKAzjCwG4AUEPZoAkjzKVEAHgAqAPjgBeOPLgoAHjBTYAJjzg58RUuSpwA-AigBXNAC56FADY8Uw0cjQlVcSWkqWQBtFjoICBYAXUVhAHp4lWUYexQRMTgAIX9AizkoFAp9CGxXRDhsOxAAIxQoENiEpJS0jJ84AGFcqXzZPihgbABzOKFE5Jd3FCA)
 
 @category Type
 @category Array

@@ -12,6 +12,7 @@ type Union = {the(): void} | {great(arg: string): void} | {escape: boolean};
 type Intersection = UnionToIntersection<Union>;
 //=> {the(): void; great(arg: string): void; escape: boolean};
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gVQHbAtgFQgElsYUoBnFAYxj2wF84AzKCEOAciVQFoWKSjC4BuAFDjeaHAzgBeDDAAWKABQBKAFxwAbhGAATZgB8MAcygoAhjDXWo5ncKjBs57XoPG4Z9EJprVB0AIwgIABsbJgkpZDRScipaenwFOFl8IkSKajoGAB5M7AA+CQB6cvkSpVVNHX0jUThLGzsHJzgXNw8G72aAoJRQ8KjrGKA)
 
 @category Type
 */

@@ -37,6 +37,7 @@ export type PathsOptions = {
 	type B = Paths<ArrayExample, {bracketNotation: true}>;
 	//=> 'array' | 'array[0]'
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIYwBYDOAvnAGZQQhwDkSqAtKSgTNQNwBQHdaAglFGyIAogA9s4ADZoAvBg4BIbAKEAuOAG1qpCBGoBdTkU7dkfOHJz4CAHn6CR4qSgA0GAEaCAxgGsUMADkIGFxgCAA7dVJsSQIUIgA+TgB6ZJkEmmUHajgAH0yVRAA6AAZqLh44ACELOCtCO0KxCTBpN3RPbF9-IJCYMMiEKABXeKSOVPSC7LzpoQ0S-WogA)
 
 	@example
 	```
@@ -52,6 +53,7 @@ export type PathsOptions = {
 	type B = Paths<NumberKeyExample, {bracketNotation: true}>;
 	//=> '[1]' | '[1][0]'
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIYwBYDOAvnAGZQQhwDkSqAtKSgTNQNwBQHdaAcgK4gARiigBpFIgCiAD2zgANmgC8GDgEgAjAC44AbWqkIEagF1ORTt2RoAgnFU58BADwDhoidLmKUAGgwhKGwAYwBrFBheCBhcYAgAO11SbAUCFCIAPk4AehzlTLhNOAAfGk1qUvKAOgAGai4eOAAhBzgnQjdBEXFJWXkwJQD0INCIqJi4xN0YKH4M7I48gpo9TVNKsuo10z1ajaA)
 	*/
 	bracketNotation?: boolean;
 
@@ -81,6 +83,7 @@ export type PathsOptions = {
 	type LeafPaths = Paths<Post, {leavesOnly: true}>;
 	//=> 'id' | 'author.id' | 'author.name.first' | 'author.name.last'
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIYwBYDOAvnAGZQQhwDkSqAtKSgTNQNwBQHdamELcALwYOASGAATAFxwAdgFcQAIxRROo7PPzQZ6MeOlzFKtftnYQKXftGlgUFjJZRgsgObrRogDbZHcZ1cPfSJ1UI5w7mQ0AEFvbxx8AiE4RMIAHj4WABoMbxRsADdmAHlZb0QZUmxvAhQiAD5OAHpmwQaaSWo4AB8aTW0obr7qAbxoADou3v6tcagJ80th2cHFixQJuwdWGdG5yaXN3xZqLh44ABkC0jTk4TvM-hhc9Hyi0vLKhCh5eqaOK12p0JCt9mtpiMxocNlt7Kc9tCFkcJidWEA)
 
 	@example
 	```
@@ -97,6 +100,7 @@ export type PathsOptions = {
 	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
 	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIYwBYDOAvnAGZQQhwDkSqAtKSgTNQNwBQHdaAglFGyIAogA9s4ADZoAvBg4BIbAKEAuOP0GIAPOlIQI6llGAA7AOZEAfJwUwArmGnqA2sbPmANBgBGyozAmFkQAupxEnNzIfJKSOPgEcHLxhNqaQmISTije6NLYAG7MAPKmkojqpNiSBCjWnAD0DTJWNMpa1HAAPnAABu1CAHQAJOim9iA+KFBEvd19A4gjYxNTM4P6EHM9tI7SnTsO2YMADAc0R9KDAIznu8fXg35Q1Fw8cAAyKNikKYnJuFS6RE4ikOQw+SKBFK5XUgXsdRsHCaLQWKiWo3Gk2mRA2Bm2Fz2KFOd0uxMez2oQA)
 	*/
 	leavesOnly?: boolean;
 
@@ -134,6 +138,7 @@ export type PathsOptions = {
 	type LeavesAtDepthOne = Paths<Post, {leavesOnly: true; depth: 1}>;
 	//=> 'author.id'
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIYwBYDOAvnAGZQQhwDkSqAtKSgTNQNwBQHdamELcALwYOASGAATAFxwAdgFcQAIxRROo7PPzQZ6MeOlzFKtftnYQKXftGlgUFjJZRgsgObrRogDbZHcZ1cPfSJ1UI5w7mQ0ABEUMHwALVUIITgcfAIAHj4WABoMCXj8GQAGIgA+TgB6asEKmklqOAAfGk1tKGouHjg4hLwAeVk0YQzCHP4YAvQigZkARkqauobqDrxoADom1vatTagt80tuqNQ+4rwAFQB3VLHcCdzpwquZACZljlr6-c7jhYUFs7A5WHt1gdtidgb4WGdegAZFDYABuzAAgjB+vhhqN0k9si8Zt4UeiCMNvIgZDAoPIUGw4HMSnAllUfqt-ocdhJqEA)
 	*/
 	depth?: number;
 };
@@ -184,6 +189,7 @@ open('listB.0'); // Pass
 // @ts-expect-error
 open('listB.1'); // TypeError. Because listB only has one element.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIYwBYDOAvnAGZQQhwDkSqAtKSgTNQNwBQHdamFAVigDG8ALwYOASFLAANigB22ECgBccFlGAKA5p0mzgLAILrN2nQG0AuvsMsAQusvoZ8pSrMwtuoramkELIAJihQ6uhSkgQArgBGgSFhEVHScorKahreFvqSRPoFHEXcyLwCwjA4+ARw4tWEADx8EIIiAHycAPRdou00bhkq1HAAPjT2MMYj49STDjMDQaFQiwAGk8YAdAAk6AoxIHFhRGtjE0YwDlsADItzl9c3W4MeKPeJK1uxCcthH38oN94p8wi90m9qFxQkJZNgoGhSDEFCJgBAFHAIKgFM1cHg4CgAB4wRTBWotNpVPEEdoACjAePUDQAlOoAG4QYDBTgcLGKWnUV6ZajMthwHpwHAEAi87EC0FAn4KkViiVSmV8hTywHA35JIFC4ai8VdSXYaUcCUAARgBHoRNQIntUAoUFl-MFEAgKpNcAAKmUAKIu6BcCXGWQECBwADu0AA1rUY8B8HB4VBsIgNXKHiYtgBGH1q83Zj3zW5F03qy2mm12h2VZ2u91a3NXAuV-1BkNAuAOYTYGIENDzTEKWSIOB4c1jtAoeQqBQwLZAA)
 
 @category Object
 @category Array

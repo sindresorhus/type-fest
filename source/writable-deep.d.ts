@@ -20,6 +20,7 @@ writableDeepFoo.a = 3;
 writableDeepFoo.b[0] = 'new value';
 writableDeepFoo.b = ['something'];
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gdSsGBDAIwBsUARFFMAXzgDMoIQ4ByJVAWlpQGcZmBuAFCC2aAGIQIcALwZBASCgo8AEwgA7Iojh4AXHHUBXEARRQhi5Ws3aC+pao1a4vHOoDmAbQC6-OAHp-OAAVKW4ACwgAdwRwvHgQQ3wCYCJcbWBuOBUKMGc8Wi4AYxgUFQA6BQdrZyL9AkkSPHUhKiFBIo1eOCicZJJySgkIfWxcQgHcgB5hgD4ZDD04AEYAGjg7OE9mACZmb3W6hChDFDbBXvHiMlzh8rwFgGYhS-6boclygk8ABm8F5jqFAxABueCIpwEFz6E3eYDuBAW224jBQMHCwA8+34QA)
 
 Note that types containing overloaded functions are not made deeply writable due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 

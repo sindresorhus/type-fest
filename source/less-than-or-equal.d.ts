@@ -16,6 +16,7 @@ type B = LessThanOrEqual<1, 1>;
 type C = LessThanOrEqual<1, 5>;
 //=> true
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gGRQZxwFQAsBDAOwHkoBRARwFdiAbAXzgDMoIQ4ByJVALRtcMHgG4AUBP5oAgnAC8cbHiJlKtBowA8ARgA0cAQFYAfJID0FhafZMcKKTLgAhRctwESFavSZ7DXXMJKxsEKDpHaWQ0AGF3FS91Xy0AuDNLa1sYCJQgA)
 */
 export type LessThanOrEqual<A extends number, B extends number> = number extends A | B
 	? never

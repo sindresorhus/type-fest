@@ -16,6 +16,7 @@ type B = GreaterThanOrEqual<1, 1>;
 type C = GreaterThanOrEqual<1, 5>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gcSighjFKAFQAtcA7AeSgFEBHAV1wBsBfOAMyghDgHIkqALQcUAZxh8A3ACgZgtAEE4AXjjY8BYmSq1GLADwBGADRwhAVgB8sgPS2VVhFAYo5CuACFV6nPkKkFNT0TMzGZkY2MvaOzq7uyGgAwj4a-tpBeqHhcNZ2Dk4cLGIoQA)
 */
 export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
 	? never

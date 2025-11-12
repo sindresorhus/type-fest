@@ -20,6 +20,7 @@ type B = GreaterThan<1, 1>;
 type C = GreaterThan<1, 5>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gcSighjFKAFQAtcA7AXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaAIJwAvHGx4CxMuQA8ARgA0cNgFYAfIID0eidoRQAriiEi4AIUnSc+QqQor1y3QINHauADZcLYWQ0AGE7GUd5FzU4HX1DYxo-AKA)
 */
 export type GreaterThan<A extends number, B extends number> =
 	A extends number // For distributing `A`

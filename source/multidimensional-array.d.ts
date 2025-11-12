@@ -26,6 +26,7 @@ const unknown3DMatrix = emptyMatrix()(3);
 const boolean2DMatrix = emptyMatrix<boolean>()(2);
 //=> boolean[][]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWQK4BsbAAmoKAdgM7ASkCGuAglFDYgL5wBmUEIcA5ElQBaDinIw+AbgBQ0wigDGuGlDQdspBQWpwU4JJhowowAB4AeAJIw9cALxwNAa1IQA7qQB8ACgCUALjhzABESCipSXVMbUkJyOFJsEAAjFCgfaQBIYhAySmpyQNDc8OoAGmlfe084HHwiMPzaBiYWKxsQMrhivIjPGWkFAvhnVw8AZmDDYzN7XX1EaZNTP29x3xkAek27GtH3UgBtAF0Tk9khinhkiAhcFBpSACYpo2W5vTADN7NzG7uHl5Vk8NtJtrs4P97o8zscgA)
 
 @category Array
 */

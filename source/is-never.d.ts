@@ -29,6 +29,7 @@ type E = IsNever<object>;
 type F = IsNever<string>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4DkUBuKUANHAIIB2AJgL5wBmUEIcA5EqgLQMrYxsA3AChhnNOTgBeODnxEoAHkqFiAPhEB6TVLUIoAVxSjxcAELTZeVUoCGlRBuHbdjWwBtsxscjQBhSzkbRQNKAGtKCAB3SicXPQYPLxNfOAARQOsFZRsAbQBdOJ0EpO9TAFFM+WJFCAAjACsUAGMYItdEzzLUgDEq4P4oYEoAc3aSrqA)
 
 @example
 ```
@@ -47,6 +48,7 @@ type IsTrueFixed<T> =
 type B = IsTrueFixed<never>;
 //   ^? type B = false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4DkUBuKUAvnAGZQQhwDkSqAtOStjLQNwBQXDaOAFSgBXFAB4BAPjgBeOALgoAHjBQA7ACbYEItAH4douAC4KAQwA22FNy4B6O3ADqAC3VwzcDcDZRgAI2EYYCI4AGMITWBgyMs4H3i1NjM1YLNVDTgAd2iXOAADNUJifIAaBDdFVOAoNAiomLU42uxhCxhtYDUCoqIofIA6XmQ0AEFZOEFdMV7iSW4HOCWAPQM+OHG5WageRcxyOEQIYS9I+myU+BgXdLh-FBuCYGOocqOTsJTFJTALYDDohZEB4NJkvvkcPg+vlwm4wgBrO4ocjQNDXNDeXwBIIhOqRDSNSxDdZTUQAMWAShQGgk0hkXAAkJDilBad9VJptDBdHADORLNYTPJ2eotIZ9OKhfyrDYeOsAEITUkoClUmnbeb2RwrNYjOCKuTS6xAA)
 
 @category Type Guard
 @category Utilities

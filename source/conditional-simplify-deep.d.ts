@@ -20,6 +20,7 @@ type TypeB = {
 type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, never, object>;
 //=> {foo: {a: string; b: string}}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgMqhhnABmiAIiimAL5x1QQhwDkSVAFo6KAM4w+AbgBQMwWgAqyFAEE4AXgwyAkHQgQAXNp06SxiVGA4A5rJ1tZjuQrjLUAIU0n9RkzoAjCxgrW3tnZ3kVOCpwWgZmVnc1Ly1sfEJiHHJYmnomFjAAHmT1ADI3FQ8AGjgcFAA3FChaiACAKxQAYxgAPlkAegGNXoxfY3RzOEtrOzgg6ZDZtjYgA)
 
 @example
 ```
@@ -60,6 +61,7 @@ type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, SomeComplexType
 //	};
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgMqhhnABmiAIiimAL5x1QQhwDkSVAFo6KAM4w+AbgBQMwWgo8U2cGRQAPACrIUARjgBeDDICQJPQC44EqMBwBzWaYBGVuDgCuIFyijOAY3cXCAh1EhxZNll5XTglEBUeGk0dVAAmIxNzdOtbeyczF1yPb19-MwCSkLCUCKiYhTg0lABBLPQzOlDrTtNzPJg7R2dTAOT1bV1rBKS1VN09Z2iZFdjUZt0AIQ6unuzXQeHC-vH5qdQZ5VUUi5R05Ya5Jqo1eiYWMBbWneNsfEIxBw5FeNHezFYAB5vnAAGSbVBbAA08WuEwWqAMAB9UYkbpMWukURAXAArFABGAAPlkAHpaYYqSZ6aZuhBejJ6XB+iQjgU6bTuYcbEN+ZzBad0XcrnipS0DPDZviMfcBaYVly2EA)
 
 @see {@link SimplifyDeep}
 @category Object

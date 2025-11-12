@@ -29,6 +29,7 @@ type AllNonNullable = SetNonNullable<Foo>;
 // 	c?: boolean; // Can no longer be null, but is still optional.
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTAchAO1wFcAbUgQwCNSUBfOAMyghDgHIlUBaRlAZxjsA3AChRXNADEIEOAF4MogJAUAXHALEQVFFDgAfTWVJjlVDYKjACAc0NxiBACYpGNlM7MBjAPwaqWVoKAgctcjE6cUk4TFYUfCITaloFWJxEknIUlAAeGQgAGg4qdgd2b3YAPjEAelqEZDQ4kATCLMoaNEV0UXq4VQ0tHT0wkzqG80sYazthOH6AYRDNOVJCW1HdRxc3D2cAOj7JvwCglBD5pZWCNY2ttHDSYqpieGB+OEFgcjgIMBgwEIFFIR36UQkTTgAEFyJlkl00tg8O0EbR8rIasdGqgYXDUdlET1sYNjCMoFcGstQrc4Os7A9jOQwZMLF8ZjZbJS4NTVnT7vptk5XO4CJ4WQNTnBAhBggRubzafTNoLHiYXm84B92T9SH8AUCCCCJXQgA)
 
 @category Object
 */

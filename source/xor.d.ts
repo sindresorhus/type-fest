@@ -23,6 +23,7 @@ type FT = Xor<false, true>;
 type FF = Xor<false, false>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gDWgXzgMyghDgHIlUBafFAZxlIG4AoZitAFQ7gF45soAHhhQArigA0CMSgB8LAPQKesggEMANrRSt2cDgDFe-aMJlT8m7fOZKV08buRoD3PgMGWtkh3MXLVEUc2ZzgDI3dTL20LKz9bAPVvIA)
 
 Note: When `boolean` is passed as an argument, it is distributed into separate cases, and the final result is a union of those cases.
 For example, `Xor<false, boolean>` expands to `Xor<false, true> | Xor<false, false>`, which simplifies to `true | false` (i.e., `boolean`).
@@ -46,6 +47,7 @@ type D = Xor<boolean, true>;
 type E = Xor<boolean, boolean>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gDWgXzgMyghDgHIlUBafFAZxlIG4AoZitAQTgF45soAPPgCGAG1ooANHABGECKJTCAdgD4WAeg3dVs+YpWt2cAEI8+0AXIVLl0keJTrmWnXpuG2yNAGFz-ARgoAFcpdwM1TW1dawijbzgAEX9LWNtpINDnVxj9W3jUOABRFME0lWlyyJdo8NsgA)
 
 Note: If `never` is passed as an argument, it is treated as `false` and the result is computed accordingly.
 
@@ -74,6 +76,7 @@ type F = Xor<never, boolean>;
 type G = Xor<never, never>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gDWgXzgMyghDgHIlUBafFAZxlIG4AoZitAQTgF45soAPDCgBXFABo4AOxQA3FFAB8LAPQruihKJSt2cAEI8+0ATPlRJwscuZqNWsbuRoAwkf4D8AQwA2tCdJyCjZ2mt5+OmzOcAAi7iZmCpLh-iHqYb7+TqhwAKLxggBGEBA+KF5SkolKqulwxaXlUtloAGIFpkEW9SVlFWn2DX3NUTkA4h3VVV0DGRFAA)
 
 @see {@link And}
 @see {@link Or}

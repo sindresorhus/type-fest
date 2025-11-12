@@ -28,6 +28,7 @@ type Pet2 = LiteralUnion<'dog' | 'cat', string>;
 const petWithAutoComplete: Pet2 = '';
 // You **will** get auto-completion for `dog` and `cat` literals.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gGWDFUCGANgKoB2wEpAvnAGZQQhwDkSqAtLSgM4zMDcAKEEB6EXABCKWtBTC2aAAop4AXhYATCAHNmcAD4sAxvj4G4vKMFLahgo5V5xUMAOo4AFhACuMAIK+EA7ghCooAFxwymosAqLiAMow+LAIyNbacNZwiD5QcAAqyCgJRlZgMOwopPgARqEacACSACIAogB08XAAmj5wAFQDAO7AhIRwpBAwQ3DaKnD4gezBYKEwFKR00HAABlrau4ukjbsmMEeEOHhE3F3dfrS4UPLFUSoATHDq2M9EZJsADzMA56QzMc7MAA0FhgVhsAD47A5SE4XO4YB4AjAIABhRhrMKRaJfdTMOJiXr9IajcazebwJY4lYE9abbb5fY6I74E57c6Xa4EQh3IA)
 
 @category Type
 */

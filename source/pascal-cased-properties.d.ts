@@ -28,6 +28,7 @@ const preserveConsecutiveUppercase: PascalCasedProperties<{fooBAR: string}, {pre
 	FooBAR: 'string',
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIYGcDG2ANgMJ4oAmmUEqswKuAvnAGY0hwDkSqAtK0YwuAbgBQY4ADsYKKK2z40AVVxyMYgJABXNVACSFAFxwp2kACM54nXoBy2EChO4YUaQHNxTCfghTXOChGbSIYExwCYjI1Kho6GAZcAB5VOQA+OABeDU00g2M4AEYAGi18hycTLgAVCBAuMqZxMT8A+DBgvQA3FBJ-NXxtRN7lMDpCNQi8QlJyONo5RMZk9FYICAAhAEEAJRc3TyYSjE7GOV7+gJQhkZQxifITN20UJkyc9C0AMQ2d-e4rncUg8jTEzSAA)
 
 @category Change case
 @category Template literal

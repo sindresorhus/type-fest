@@ -34,6 +34,7 @@ export type PartialDeepOptions = {
 
 	partialSettings.languages = [undefined]; // OK
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIa2NgGwBEUUwBfOAMyghDgHIlUBaKlAZxgYG4AoPszQBlFDBjAAdgHMOcALwY+ASALYZAV2zTOALjhcoU6QG0Auv3L8+AExQBjNVDT2IkrnDC4JhUeOMc+jh4hCRkADx+EjIcADQYzvYaUBwoAJKSMBAAglBQ2IiBCFAaKDxwhAQQAO4AqpJ2VFIoNhkAcm4AKhpgBCi5+YX6MCUo5AB81l4hBFEBAHRqmtqcCnAmGg0oTZItFnAA9AdwAPIA0kA)
 	*/
 	readonly allowUndefinedInNonTupleArrays?: boolean;
 };
@@ -70,6 +71,7 @@ const applySavedSettings = (savedSettings: PartialDeep<typeof settings>) => (
 
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIa2NgGwBEUUwBfOAMyghDgHIlUBaKlAZxgYG4AoPgRTwOwmMAB2Acw5wAvBj4BIGCgAeMAKIATYDGgAuRUqVUIEmAGVgALxRGAjABYANMtPmYAYQgFDjAGIABhDQhjcTMwsAdRRgKQALGCMnEIjyCOwAV30AYzowIVUjKkJRTJyIDmwAN3sEKCyUN3J+PnyJLjhsMELES1qUbUsxSRl5OAAKarrh0ekOIxw8QhIyAB5mFAgqOFEYcQWAPgBKeSOp5XQAOlv9w5kXOFvrmaGRg7GOJ9UNHT1-Dc7vMZNdflpdPooE8Xm85p8FmD1BCAVByOQ+Cc2vcvhMen0BrMPg8OJN0OD-lCjOgojBYvEkkYAKwhdFYoA)
 
 By default, this does not affect elements in array and tuple types. You can change this by passing `{recurseIntoArrays: true}` as the second type argument:
 
@@ -86,6 +88,7 @@ const partialShape: PartialDeep<Shape, {recurseIntoArrays: true}> = {
 
 partialShape.dimensions = [15]; // OK
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBQIa2NgGwBEUUwBfOAMyghDgHIlUBaKlAZxgYG4AoPszQBlABbZUcALwY+ASAAmoFADsOwCGoBccANoqAriABGKKABo4hk2YC6-cvz4BjTVzhhcMfATESUOjh4hCRkADx+qJboUCjOBlAcKACSKjAQAIJQUNiIHDowUAYo5AB80rKKymoa2nq2lgD0jXAA8gDSfI4CnsG+4qgAdEogqupuFboAjACs9nDNbe1AA)
 
 @see {@link PartialDeepOptions}
 

@@ -22,6 +22,7 @@ type T3 = ExcludeRestElement<[...'foo'[], true]>;
 type T4 = ExcludeRestElement<[number, string]>;
 //=> [number, string]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gUQB4GMA2ArgCYoBKKAzjJviiCgHYwC+cAZlBCHAORKoAtOyoxeAbgBQkgWgAqARjgBeODgIlyo2vSYwAPAG1GhEACMUUADRwAdPepRgjAOaGAujcfOXN3uwgIXncAPikAenDlELhjUwtrOG9XPwCg92lZODkAJhU1PCJSCmodBmYje1szQLoAQ0YPLxgnV1CIqJjDZJcMmWR5AGZ89SKtUrpyg0Mq-0DeJoQoQhR2yUjo2JaVvqy5ABYRws0Smkm9IxNzS2bW3rD1ztirhNufdyA)
 
 @see {@link ExtractRestElement}
 @see {@link SplitOnRestElement}

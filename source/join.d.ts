@@ -53,6 +53,7 @@ const path8 = ['suffix'].join('.') as Join<[...string[], 'suffix'], '.'>;
 const path9 = ['hello', 'world'].join('.') as Join<['hello' | undefined, 'world' | null], '.'>;
 //=> '.' | '.world' | 'hello.' | 'hello.world'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gKQsAdgXzgDMoIQ4ByJVAWiJQGcYKBuAKDYHpO4BZYAB4oAJnAAUTKHgDmDOADI4uAK4gARiigMAlHGAwUIBmwDGEXEzhgAhjAAWARjgBeOAG0KRCBAoAaOAAM-hRq1gBeFAC6AHQAVji4YhTRFLrWcth4ADweXj7+QZShEZHBKQB87NzO5ZR50QHRxRQc3HAA8rgANohwkjJ6Bkam5pY29gBMLu6e3n5F1lDzIeFRcQlJKWkZCTmz+QtLwc2llBVVnDV13k2LtxGtPJ09SqoaUIOGxmYW8ON2AGZpm4HP4Jv4ATF4nhNqk4Ok4JlcDlQXBwXBIWUKJUuJdahQHNEJtEAS1cR1ur01MBpHh4PoviNflZbHYACzAhy4MHcjG4KEbZJwhFIlG8ia8gH8rE46r4wnE0mPCkvNTeLooay4T7DH5jVkAVmBMCgyhQ-iI1i6DHNCFNKAFMKF20RuzcJrNFqtNv8HodMouVyo9uilutKGifrJbQAwuYYNY8HIVF0usAGHYdd9Rn9WQA2YH7ebKXDCFBEPAiY6rfwprrBASIErrJ1beE7bK5Ob+Etliu4KsLCK15SphtNqIB3FB+r3aLRRsPckABUWMGAVoQyjAGr6dmsqDkYigjFzUGs5C66Rg2iZ+vsAHZC2ATxWBGtoYlne3XZ2KC-y0EeZ52ifpcGkNxIlOIVZTxOAAAMALfaJ0DA6R8Hg5VV1gDcui3Hc0AzA9GHEE99XPcgKy0G871zewAA5CwYZQiDfD9BTbEU3RAtDIOCZjWKA6DzmnWp4IAElQk0ZHwUCWLfTDyQAFW3DU5AZIw4AAd30TM63TTMS2AUZaJZewAE5CzsFBUwOCgtOgLphHY1thQ7ZEPGs2yKDgAAfOBe0AgdhGCByoCcnz-LrYTsUDfEUj8s4woixKKC8roIAS-y0psjLomS5ygA)
 
 @category Array
 @category Template literal

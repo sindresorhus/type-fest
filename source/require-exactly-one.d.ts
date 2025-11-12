@@ -29,6 +29,7 @@ const responder: RequireExactlyOne<Responder, 'text' | 'json'> = {
 	secure: true
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRQRwK7BQoCiAHgIYDGMANogPIB2KAvnAGZQQhwDkSqALTsUAZxi8A3AChpAtNlGRGAExRQ4AXgzSAkDBSkYALjgAKAJRaAfHHFRgjAOYzdAK1ERGpyzbswHZ1dRFEo8IlMAIwgIGhRyRhkWGWlKL3E4IiUvNShTbHxCEgpqOiYUAB5FZVyAGj4DI144AB8+Dy9eW210PQB6PrgAQRUVRyc4cjgAA0aYabgAaxREOAALdTQAdwg8GhU4SnI8EMnD7jBgOLh1LigAOll3T29zK01bXnQAIhAxUXIThQ31M3wgi2+LF4tT0ITCEQQUDwKGkySAA)
 
 @category Object
 */

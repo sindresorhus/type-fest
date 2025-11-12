@@ -21,6 +21,7 @@ type C = IsNullable<string | undefined>;
 type D = IsNullable<string | null | undefined>;
 //=> true
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4DkCuANoQIYBGhKAvnAGZQQhwDkSqAtLStjMwNwAoAWzQBBOAF44OAsXKUAPDyjAAdgHMAfIID0OiZrolC2FEJFwAQpOl4ipCiiUwVGuAB84q+9oF6DCFD4ZsLIaADCNjL28k7KauoecPiqACYotGooqb7+hrTGpuZhcAAiUXZyjs6uiZ7exEkp6Zmq2bn6hi7BQA)
 
 @category Type Guard
 @category Utilities

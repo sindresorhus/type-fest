@@ -18,6 +18,7 @@ type B = IsMap<ReadonlyMap<number, string>>;
 type C = IsMap<string>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gVQHYGtsQDu2AsgIZgC+cAZlBCHAORKoC0NKAzjEwNwAoAazQBJLuTAAeACoA+OAF44MuCgAeMFNgAmXODnxFSFOAH4EUAK5oAXLTIAbLikHDkaAIJK44yVP8eKGBsAHMAGjhsKxAAIxQoOTlBAHoUxQUYaxQhETgAIR8-CikAJRQyHQhsR0R-aLiEyKCQ0KTU9Mzs3I84AGEiiRKWsOSBNIyHZxQgA)
 
 @category Type
 */

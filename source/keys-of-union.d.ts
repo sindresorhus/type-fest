@@ -34,6 +34,7 @@ type CommonKeys = keyof Union;
 type AllKeys = KeysOfUnion<Union>;
 //=> 'common' | 'a' | 'b' | 'c'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gaRYgzgeQDMBVAO2AlIF85CoIQ4ByJVAWkJVxiYG4AofqzQBBOAF4M-AJABjBiEoAuONyjBSAcwHSAhitIBXEACMUUAVQFDkaAEISpchctUx1WnSZVqN2-laCwnAAwo7oMvIgiqQ+7n46siomEBAANii6pJbWwWQUpI5iAD5wDqUhubahLqTYeI4A1jgQhHD5lAIA9F3iAHzMUTFMQdUiaWn1uI5TRB2kADzzfd29A0xDlExwpUy627smB4NMQA)
 
 @category Object
 */

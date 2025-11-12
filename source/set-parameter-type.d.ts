@@ -70,6 +70,7 @@ Note:
 	type Fn = SetParameterType<typeof fn, {0: string}>;
  	//=> (a: string) => number;
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTACgQynxBxSgBVkUBfOAMyghDgHIlUBaOlAZxhYDcAKCEBjCADs+9CXAC8cABT4AXHAkBXEACMyASnkA+OPmEB6M3ON0Ja5Ws079R9Vt1RhQgJAW4AdTRRAAt8CQBzNHY0CDo4AAN8OIQIeL4oYHC4gBo4bQ14KBwNKFkouGAeOD5gABsa+Md3OIA6ITKAMVkFbDxCYlIKKgAeKJiZHPQABjU0jLDqQ2EfS2N7Kph08IMrVycPIA)
 
 Use-case:
 - Define a wrapped function that receives something different while returning the same type.
@@ -107,6 +108,7 @@ type HandleLog = SetParameterType<HandleMessage, [data: Data, message: 'log', ..
 type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
 //=> (data: Data, message: string, ...arguments_: string[]) => void;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTACgQynxBxSgBVkUBfOAMyghDgHIlUBaOlAZxhYDcAKCHs0mAK4BjKbx4ARfDHxwAvBh7TZPHgC4EUCSgFwAbvgA2R-QDsJIAEZlqwsXACiURlEXK1GrTl9OkseYzgyb30+KGAbAHMXUSo4XxV1SRk5NLgAHw8vaDThZNQ4AAl8GwATCxQAWTl8eLR1AApqpXx9NIAaOBIdZpRomFiE-oA6acJ4+xQbGB4AfX0qxABtAF0ASjUAPjMIYGqSt0qauoB5AGt-bDxCYlIKKgAeC9qGppb+9AAGfSZbQKLomACM+hYEBuLGo+2EAHpEapDh0ukDAjo+gMfiNWDCWFMZlA5iRFis1jZNrsDkcTiVkXAAII2CAwAAWZDgAHd8IgEBA4NUUHQ4mhOWgwE8SDAyDxBXAoCgwBZ8LJJqU0J86p5vPccAQiLKyJRUB8ql9GkNfnANp1lPo9UUuv1BjxhlDItAWFsEUJkai4OjHQVvDj3Z7WN6oES4NNJrN5hTVnB1ts9kHTMdTiImQBhDlVFpwHhxeJ1ODS40vBBUTXnS11ADqhBsBseNblr3NOu+NpQf0hrD5UBscP9gbRDu6qVduIHUNH4+JidJyaWqfTtKzOcZiLgheLaGVfCrMtrYk1AYPrYFw4AkjYwBJ4HQJBYLOeu9yr1qKk2KAADIQPEHZGs83ZmigFqXP2Hq2vaGJzsobp4lCFigXGCZJuSm6jOM8TbH6SIotOyERuhrCYfE2EkmSCz4aWYzlhmdLZgyea3vycAAEz6E+L7wKe8DVpBv4pA4ApXA4ABWKBSPAcQigAHg2KR9iB8S8eBF5Qe8fbWghg4YPxzGEfCpFBiGs6UYu5nlquuGMZSDkJGxu4MkAA)
 
 @category Function
 */

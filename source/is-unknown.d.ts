@@ -29,6 +29,7 @@ type E = IsUnknown<object>;
 type F = IsUnknown<string>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4FUB2A1vhAO74C+cAZlBCHAORKoC01K2MjA3AFB8WaAIJwAvHBwFiZfAB4ArkRLkAfPwD0GsarhKZ5AULgAhcZLzLZcgIb5E6vlp00bAG2wojyNAGFzUlbkcvgoAG4oUI7OutTunt6ocAAiAZYG8voq+ADaALrR2rHxXoI+cACiadLZchAARgBWKADGMIUucR6lxgBi1UHyXFDA+ADmHcXdQA)
 
 @category Utilities
 */

@@ -17,6 +17,7 @@ someFunction({value: true});
 someFunction({value: true, otherKey: true});
 // Error: Argument of type '{value: boolean; otherKey: boolean}' is not assignable to parameter of type 'never'.ts(2345)
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZWAOwOYA2KA0iogPIBGAVigMYwC+cAZlBCHAORKoC0LFAGcYXANwAoCQBN6BAIZQ0LAK44GwCDjhCOKAGJqNWgDwAVAHwAKMIvkgUMFFABccbPiKkKNejHMWAJRuAG4QwNKSEroOhuowmjhW6CHyBCoobjBQGYyBUQD0BXAAAjBCfCgAHqgMlVDsUNF6ccZJKWkZWTkoADRwEDAAFs7e3bn5EkVwAKIN0G4AglB4Kg448BAsCMhoXB3pmXCUEBBE8jhiA8OjZG4nZygXjFxwwEJwOINw8kJCwHgcPJKEQEBA4LYoPZHM4BtteHscCgQs4uAA6cpWABMAGYACwAVkCQA)
 
 @category Object
 */

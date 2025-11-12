@@ -33,6 +33,7 @@ type PositiveInfinity = StringToNumber<'Infinity'>;
 type NegativeInfinity = StringToNumber<'-Infinity'>;
 //=> -Infinity
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/C4TwDgpgBACg9gZwJbCQNwgSQHbCgXigGVgAnJbAcwBU4A5AVwFsAjCUgHgHIBGAJgDMAFi4A+ANwAoAPTT8oqP2GTJoSFDoRKAQ1QYceQiXJVajVu24BaJSIky5Cm4KEq10eMj0QAYgBs4XQJiMgoaemY2Tl4XADoAVgA2MSlZeUU4pLdwaE0db39AwxCTcPMo61sE5Ps0pyqs1RzYRBR0LGwAMwoUEGDjMLNIyy4cbuxelId0sZ7QbPU83XbZidB+0NMIi2irVcnaxyg9rrmQIA)
 
 @category String
 @category Numeric
@@ -63,6 +64,7 @@ StartsWith<string, 'bc'>;
 StartsWith<'abcde', string>;
 //=> never
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/MoFwhgTiDODqCWIAWAeA5GARgYwCYFM0AaAAgxzQD4BuAKAHp6BeSkkCAV31ttEhgTJ0WPIVJoKNBs1YAzMABto3XuChxEqaO3gA7AObjJdRixK78AN3wQefdYNTlRxEtoh79U06wvWIQA)
 
 @category String
 @category Template literal
@@ -84,6 +86,7 @@ StringToArray<'abcde'>;
 StringToArray<string>;
 //=> never
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/MoFwTglgdg5gKgewIJjAQwJ4B4DkaBGAxgCYCmOAfANwBQA9HQLwUAEA2njgDQs77e9CAnMWHkAujRqhIsRCnTYAzuGgxq9JqyikAbqTBA)
 
 @category String
 */
@@ -104,6 +107,7 @@ StringLength<'abcde'>;
 StringLength<string>;
 //=> never
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/MoFwTglgdg5gMgU1iAFgHgOQEMBGBjAEwQwD4BuAKAHoqBeEgAgFYKLRJZFl0BncaGOWp1GUBADcEYIA)
 
 @category String
 @category Template literal
@@ -168,6 +172,7 @@ PositiveNumericStringGt<'1', '1'>;
 PositiveNumericStringGt<'1', '500'>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/AoewzglgLhBuCmA5ArgW3gJwgYwMpSwDsBzAcSgB4ByAVgAY6qAaAAioEYqA+AbgCgA9AIC8XFgWTw+fUJBgIU6LHgIQS5ap1Ydu-IaJYAzAIYAbMFJnhocJGkw58RMpR3b6jXoJFiT5+EA)
 */
 export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false

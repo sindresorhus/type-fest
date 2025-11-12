@@ -30,6 +30,7 @@ type F = ArrayTail<string[]>;
 type G = ArrayTail<readonly [...string[], 1, 2]>;
 //=> readonly [...string[], 1, 2]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQSlAhogFV2ABsBfOAMyghDgHIlUBaSlAZxnoG4AoXpmkxwAvHGx5CxEgB4A2gEYANHABMKgMwBdAHx8A9PpE64c9XG39BcAEKjxOfEVIyoKXABMIAOxKJTymqaugZGJm6ePn6m5pYCyGgAwvYSTtLygbEA-CoAdPmcUMDeAOZyWiG8hsYxmjlw+bmFxWUVVglwACIpjlIuEV6+-oqV1eHug9Hl7ahwAKI9ks6y5XpVYaZaM2gAYotpLs2lq6E1R63bcADi+32yA1HDjeflKpmjGw9Dps8wRcdaN4qVRaIA)
 
 @example
 ```
@@ -48,6 +49,7 @@ declare function searchBooks(genre: string, minRating: number, available: boolea
 const availableTopSciFi = curry(searchBooks)('sci-fi')(4.5)(true);
 //=> string[]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQSlAhogFV2ABsBfOAMyghDgHIlUBaSlAZxnoG4AoXpmgDCAVxyIAPADERAOwDGAPjgBeODIVwUADxgpZAE3ZwAFADoLuAOZQRIfTHYB9AFxxgstlDjYrdh+wAlKrKHl5wAEooMGKyvACQAPw+UH72so5auvpGcFAouAYQsiSIcADaALoJSZHRsTVuJta26TBuvv4Z7OUADJXBKsqi4hLmljZdjq4peITEJBKdbeyKg8pRMVCyiglusigAbihQfLwGKPIkuPlUcvIwwMVw8mJQkhryWXqGxp+PxUUJkosjcn0CbhG72k90UZwuVxuaEo9wBsjg7AKUHkAAsAEIQCAAa3YJis+nybk4UA8VgANHAQB4IrhHrIrPs7AAjE4M3CHBa4LkkFBuLmEkW4WQQjEwGnsqpneTFThwfmC4UoAgQMAAZXkwCkwFULzeiBMmJuuIJxKCJno7ANrGA9ECJgALGYAKxuuUiFCBPgAeiDQ1l8qsVSAA)
 
 @category Array
 */

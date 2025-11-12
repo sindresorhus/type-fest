@@ -19,6 +19,7 @@ type C = IsOptional<string | null>;
 type D = IsOptional<string | null | undefined>;
 //=> true
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4HkwzAQB2AhgDYC+cAZlBCHAORKoC0NK2MTA3AFD9WaAIJwAvHBz5CJCgB5uUYMQDmAPgEB6LePW0K2FIOFwAQhKl4CRMuUUxlauAB84AV2IATFDRUovTX4dPQQod2MhZDQAYUtpGzl7JRVVVzhid3JyIJD9GkNI0wAReOtZOwcnNLdM7PTPHz9iANzdfUcIoA)
 
 @category Type Guard
 @category Utilities

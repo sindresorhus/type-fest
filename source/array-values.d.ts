@@ -14,6 +14,7 @@ type Weekday = ArrayIndices<typeof weekdays>;
 
 const getWeekdayName = (day: Weekday): WeekdayName => weekdays[day];
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gQSlAhogNVwBsBXFAZwBo5s9EBJAOwBNgBjSgXzgDMoIIOAHIkqALS9KMYQG4AUPPYQmFeAHcUKANYt8FOAF44AbWEBZFXsTCawgCrkK12yIDqKFk0ou79gBakUM74rsIAYlDAviIAyrgwQTHCsaSsoQC6cLgGyqowCvJiaB461gByuCBoxnT4RGSUADzFELxwmmX6AHwKxXCluvhGtDj4zGycFC3IKG0dWkOIFL2KeWpwAOYoMIMVVTVwABTWAFwDi9YAlOd7+JXVRt0LXcsm1hmyQA)
 
 @see {@link ArrayIndices}
 

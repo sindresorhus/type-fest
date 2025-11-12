@@ -28,6 +28,7 @@ const splitOnNumbers: DelimiterCasedProperties<{line1: string}, '-', {splitOnNum
 	'line-1': 'string',
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gERQG1MGFKAYQEMBnFAEwAUoJVZgVyBfOAM3pDgHIlUAWg4sYvANwAoScAB2hKB1IBjNAFVKUDJICQAV00BJKgC44svSABGRKfs0A5UiBRnyMKHIDmU1tOUQsu5wUCx6ODBm2HggBERklLT0jDDM5AA8GkQANHyCvAB8cAC82jq8BkSCwFS8ZgCM2boVmoKyzih1fAAqECC8TaxSkgFB8ORgeDAA8rIOljZQ5FG4+AoJ1HQMRKks6eh4sij1bh7erLm8+bnoE1Oz89ZEywhQeiisRaXozYcogvUurx3J5ZF4BpIhkA)
 
 @category Change case
 @category Template literal

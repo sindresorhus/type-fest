@@ -16,6 +16,7 @@ const someVariable: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
 const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNumbers: false}> = 'P2P_NETWORK';
 
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZQMZRQQxGADsBzTY-AaxQGF8BnFAXzgDMoIQ4ByJVALRsUDGDwDcAKEnYIxUXAZcUANXxRg+AEYAbFAC44OPIRLlKNekwA8PNhAgAhdTwB8cALy8AYgHlfAPqOAIIAShIycgpKIKrqmrooAHIQmGA6wDC+xEkAriBaKFAMhsYERGQU1HSMKLZgAExgSSgwAO7QVDwANBgM6ZnZeQVFJez4OkzM7l48AAoNcwFJAKIAKgDqvqEA0hFAA)
 
 @category Change case
 @category Template literal

@@ -17,6 +17,7 @@ type ShouldBeTrue = IfAny<any>;
 type ShouldBeBar = IfAny<'not any', 'foo', 'bar'>;
 //=> 'bar'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQGYEEB2iAvnNlBCHAORKoC02KAzjFQNwBQHtaAygBYQArgBsAJgCEUAFShC0AXjg4CiADwBDQgD5OAej0LtCOSi484A4eKkSNUOEpWE1VfBHhbEVADTVsEBC+1ABG9lS6HAZGoeFAA)
 
 @category Type Guard
 @category Utilities

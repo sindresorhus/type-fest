@@ -37,6 +37,7 @@ type T4 = IsReadonlyKeyOf<User | Admin, 'name'>;
 type T5 = IsReadonlyKeyOf<User | Admin, 'id'>;
 //=> boolean
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4CUUCGAJhAHYA2iA0iogPIBmAvnA1BCHAORKoC0DFNhhcA3AChxwUjBRQGBAMZoAqtjkZxASFIEQKAFxxhUaQHMJW7AFcou-UZPmJ2qIRIVEcYESOlrIABGchJMktKy8kpoAIJEINKaOnqGxjCmpBbaPo7pzuJh4rxoACoAjHAAvHA4+MRklDT0DAA8anIANNw+XAB8EgD0A5W9CFDWKJLFcCUATFU1eO4N1LSMbepQXVz2KH2Dw6MK5OpTyKUAzAu1y55N6+1b3LtccAA+3UT74kMjcIEQCDkQikM6oGYAFmuS3qdzWrUe7zgcQSpG2L36P0OrAIJ0mRXOMwArNC6h5GvCNhoPijpNsepjfqMAUCQUA)
 
 @category Type Guard
 @category Utilities

@@ -57,6 +57,7 @@ replaceAll('__userName__', '__', '');
 replaceAll('My Cool Title', ' ', '');
 //=> 'MyCoolTitle'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBAbwEoFMwBsCGBjFBfOAMyghDgHIYBPMFAWkJQGcZyBuAKA4BMVssoKIgFcAdthjAIouIIw4UAHg4BIAJKiww+CgAeMFKO5M4LKMFEBzADSqAyikxRsACzh6DRk2Ys3VqeVwQQx19Q2NTGHMrDgA+AApVCy0YAC44DRTbFSZHZxd0hydXbLksIJD0gPKUYNEYDgBKKrQaxUztazgi-K7qhTqYWM4ePgEhQjEJKRkyhQBBdHRldU1tdzCvSOi-FR7XDc8Inyts-or6w-DvKN84xJVk7XSOmGzc4oLuvJLVOYu0nBzrUQk0WoElK8uvsXH1WgMQl0EJglukosJ8MMuAB6bFwAAqLiEghgwigMmotDgwBMMCJGxw8BOljg6GABigKK6ogg8AAVsIWHAAAbM4UAOi4-xQ8XIRKWEDgAH5yF1yCq1YA+DcAIbvkRqcXEAXliFHl6EVOvIUvhuFlZsVSo1FCd5EAyuR6g3Y42mlAKuCulXWiGLdCygCMAAZUgAWABMqQjEdVFFSyfIdA9HCNJvIkbocboiatHGlIdlAH1y4KUFAAHKYYKVtNNtWZ7MUat1hsoYulpaygCyVDgAGEIBB0AT2ege2qKK39VmvTmh2OJ-jpz2gA)
 
 @category String
 @category Template literal

@@ -30,6 +30,7 @@ export type SplitOptions = {
 	type Example4 = Split<'foobarbaz', `b${string}`, {strictLiteralChecks: true}>;
 	//=> string[]
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZTAG2DAXzgDMoIQ4ByJVAWmJQGcZKBuAKHZrQFEAPAIbgcKAIxwAvHGx4YAHgAGxCBAB0AEnTMowAHYBzAqoBGAqAoA0VVZStaYOgMYwAMvhRQBOAMIALFI4A1owAXCRejCgEAHwcAPRxEtFwANqUyhC2cNp6+laUplCUALqc3HD8QrgoAEyS0rj4ihka9joGBJbWWW3Azm4wHl5+AcFhDgCuUbHsCUnZDrkppVzIvILCKADM9TJN6SqFpgBeWQrGmjkdXb397p4+-kGh4TiRMfGJyWkZWZRF+VOK3KlU2ABZdo15AcIEcBKcrOdLotrnYcndBg8Rs9xlAph9Zl8Fu19MsgA)
 	*/
 	strictLiteralChecks?: boolean;
 };
@@ -55,6 +56,7 @@ let array: Item[];
 
 array = split(items, ',');
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZTAG2DAXzgDMoIQ4ByJVAWmJQGcZKBuAKHYBMUBjHAIZQ0xAK4A7XjGARxcRrnwAeTHBQAPGCnFdG8mFGDiA5gBo4AETWbtu-YZMA+ABTMHxgFxxM5xijBCAjDQXhYAlF7YeDAq5haOHOw0aACSWhQAvFTEEBCUcAA+VABGQvlFlKUAXuVUAO4COFx5HLyyzHD4KCB6WZQ5EKalUEMCVaYNTS3sOCjwQlACiF5p3QDaALqJC0twWQrRzl095pSmlGGsQA)
 
 @see {@link SplitOptions}
 

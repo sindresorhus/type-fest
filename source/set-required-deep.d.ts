@@ -37,6 +37,7 @@ type SomeRequiredDeep = SetRequiredDeep<Foo, 'a' | `c.${number}.d`>;
 type ArrayExample = SetRequiredDeep<{a: [number?, number?, number?]}, 'a.0' | 'a.1'>;
 //=> {a: [number, number, number?]}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTASigRwFdgoUATAERRTAF84AzKCEOAciVQFpGUBnGOwDcAKFFc0AMQgQ4AXgyiAkAEMA-AC44AOyIgARiihjlBrXEFRgOgOamAxhfQrl5C3sPGVdANoBdUTpxSThMVhR8YlIKaloFMJwokjIqGjAAHhkIABoOVXY4AB84AAMHADoAEnRPIyg6CvJSgD4xAHp2+RalTrg1bTrjYTg+gEl+XQgAdzgyaNTRPrMLKxt7Jfb+p20XZbdB-XqR8cmdGbnCFIpN-r9-Dq3g2+x4flQHYEZgBzgbch+Aj+OjgqhBqigUFUiAQciMlwWFAqEmQaAAgpDoQBRAAeqnAABs0IpXskYmlaBl0KptL4hlB1Hl6YzdEdjOp-HQ8uxVBUAAyFEo8ioARnYbU23QwNLgdLZUCZ8sVXgZnKAA)
 
 @category Object
 */

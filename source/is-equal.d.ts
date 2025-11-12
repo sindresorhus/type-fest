@@ -21,6 +21,7 @@ type Includes<Value extends readonly any[], Item> =
 			: Includes<rest, Item>
 		: false;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4FECOArgIYA2AvnAGZQQhwDkSqAtFStjAwNwBQvAegFwAKgAtg2BMjRQUMQlAB2U4nABGECKRTEl1aHADuY+aagJTcAObAAbin3EoUYojjAlAY1KEAJhyWaLYO+sAwKCAAdILCAAY4BCSkcR5ShNgofggQcF50YM5oMFYhjnDOru7E8JDY4cAQ+gAMFUrZJcH25eGRbR2m+nIKyghQhGjAVEHVcnAoRGQxzGiY3r4B2AA8AGpkE-MAHhHtUnLEfk2k1UqIANoAugA0cJgRIAB8cAC8vACQe18aBQx0cfjOukuSmucDugImd2azzgUVRnnYFjknAe-z+AH5XnhFqRdvsUIjkW9Il8QSdwWMJrj8QyUEyAFyvdb+DhbLEwF5Uz64jlUMiZbhAA)
 
 @category Type Guard
 @category Utilities

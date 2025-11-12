@@ -17,6 +17,7 @@ type Example2 = ExcludeStrict<'xs' | 's' | 'm' | 'l' | 'xl', 'xs' | 's'>;
 type Example3 = ExcludeStrict<{x: number; y: number} | [number, number], unknown[]>;
 //=> {x: number; y: number}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEDUEMBsEsBNQFEAekC2AHaBTAzgFCxYD2ATgC6gUCemOoA3qgMbQCu8OAyhWbCwoBfUADMyJdKADktegFpR+CtIDcBAnIaoM2HAEZQAXmQo2nHnwEUAPIzwVIFdngBcMvOxYt8eNaHgnSHcHfgA7AHMAbQBdEQAfJgcnF3dpHDIJMn8MrJCrSKEAGiTHZzcPLx88PyEAPnUQIzrSlIr0zPIczrJ88IihDS1TXVwAJmNTcy5efkEbaRQ-UETpZdX0aRWZaC3VlF2SxfWPaQaCJpbpTe3pXduD6SG6bTQsXABmSdYOGat5xgodxhdjoABGGVUoBowNBELICVAURB4IyJRR8JiJXYYQA1mESAB3MKxc6XJhA0AYyHQ2GohFAA)
 
 @example
 ```
@@ -35,6 +36,7 @@ type Example2 = ExcludeStrict<{x: number; y: number} | {x: string; y: string}, u
 //                                                                             ~~~~~~~~~
 // Error: Type 'unknown[]' does not satisfy the constraint 'never'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEEkDsDcEMBsCWATUBRAHrAtgB3gKYDOAUIngPYBOALqDQJ64GgDemAxvAK7IEDKNKog40AvqABmVCtlAByRswC0k4jXkBuEiRCgABvIwZ48-aA6xIkCnQIYuvFlYY0AFokgBzKTLmGMInlQAB8FINCFbGCw+VNIo1N9XTAAARoiZXtmUSyqGSoSJRZMHHwCAEZQAF50Bx4+QWFRAB4jCNiOqJiFeNiTeQAaBQGE41MAPm09UFm5+YXFpeWV1bmAP02t7c2U9HzqAC5QABUmFgAiRJ6jAYvQZApiUBs6IlgaRCJJBno3Fg4FEgRCEsE8dHkkAI0AIVHkADodHp9NxIABrGwAd0gAG0ALrmSzWWygeyOPigFzuTw+aSyAysDDHSDcbAAI1hmlADGZrI5VAkYUZxxBwm8XJ5oFFNLEyT06Uy2QIuVhBSK5zqZUIACYanVyQIhCIaC1hS8+Zzubz2bDBWwmVKjeKrY6xV4xMNURiKNj8VM9mtA0HgyG1jttns0AcqMczswFF6sbi8cFHs9XlKPl8fn8AUDRWDIBCoTC4fCgA)
 
 @category Improved Built-in
 */

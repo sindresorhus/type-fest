@@ -26,6 +26,7 @@ const readonlyUnknown3DMatrix = emptyMatrix()(3);
 const readonlyBoolean2DMatrix = emptyMatrix<boolean>()(2);
 //=> readonly (readonly boolean[])[]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWQK4BsbAAmoKAdgM7ASkCGuASijYdbogIJRQ2IC+cAMygQQcAORJUAWgEpyMMQG4AUMsIoAxrhpQ0A7KQ0FqcFOCSYaMKMAAeAHgCSMM3AC8cAwGtSEAO6kAHwAFACUAFxw9gAiJBRUpKa2LqSE5HCk2CAARihQIcoAkMQgZJTU5JGxpfHUADTKoe6BcDj4RHHltAxMLKRsnNyITi4gdXDVZQmBKsoaFfC6zKyIAKqkPv6kAMzRltZ27qbmiPs2tmHB26EqAPS3bi1LfWxwwc8rbx-9iJ4bvgEANoAXVCILBwNU8woi16KwAQhAILgmKQAEx7KznI5mMAWLF2ezZJEomhBS5om7Ke6PODfV7vOE-ODE5Go8EgoA)
 
 @category Array
 */

@@ -13,6 +13,7 @@ type A = IsUnion<string | number>;
 type B = IsUnion<string>;
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4FUB2wE+AvnAGZQQhwDkSqAtOStjLQNwBQXDaAgnAC8cHASL4APGyjB8AczgAfOPgCuIAEYooAPm4B6A0N0IoalDz5wAQsNF5CxaTFkL9XIyYoBDADbYKEA)
 */
 export type IsUnion<T> = InternalIsUnion<T>;
 

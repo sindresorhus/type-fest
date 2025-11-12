@@ -45,6 +45,7 @@ import type {Finite} from 'type-fest';
 
 declare function setScore<T extends number>(length: Finite<T>): void;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gMWAO2DFAXzgDMoIQ4ByJVAWhJQGcYqBuAKA4BMUBjADYBDKGhIBXHHxjAIOOExQwAyn2goAPABU4KAB4Ec3JnBziQAIxRQAfAAoBKHAHMYACwBccbHgLabAJReAG4QwNxsQA)
 
 @category Numeric
 */
@@ -115,6 +116,7 @@ import type {Float} from 'type-fest';
 
 declare function setPercentage<T extends number>(length: Float<T>): void;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gMQDYQIYwC+cAZlBCHAORKoC0JKAzjFQNwBQHAJigMbY8UNCQCuAOz4xgEcXCYoYABRRQ+KcTDwBzFAB4AKnBQAPGBu5M440SABGqgHwAKbBu0wAFgC44OfDCGjgCUvgBuEMDcbEA)
 
 @see {@link Integer}
 
@@ -179,6 +181,7 @@ import type {NonNegative} from 'type-fest';
 
 declare function setLength<T extends number>(length: NonNegative<T>): void;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gOQgO0ygcwEMZgA3FAXzgDMoIQ4ByJVAWhpQGcYmBuAFACAJigDGAGyJQ0NAK44xpXHC4oYAGRQ4CMABYAeACpwUADxjbhXODjkgARiigA+ABQTtuvQC442PEISchRjFwBKPzIIYGE+IA)
 
 @category Numeric
 */
@@ -201,6 +204,7 @@ import type {NonNegativeInteger} from 'type-fest';
 
 declare function setLength<T extends number>(length: NonNegativeInteger<T>): void;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gOQgO0ygcwEMZgA3FASRxkJSgF84AzKCEOAciVQFpmUAZxicA3AChxAExQBjADZEoaZgFccs0rjiCUMADIocBGAAsAPABU4KAB60cUwXByqQAI3oA+ABTyjJqYAXHDYeIQk5FQ0dFBWXgCUIWQQwFKiQA)
 
 @category Numeric
 */
@@ -218,6 +222,7 @@ import type {IsNegative} from 'type-fest';
 type ShouldBeFalse = IsNegative<1>;
 type ShouldBeTrue = IsNegative<-1>;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4DkUDmAhjMAG4oC+cAZlBCHAORKoC0NK2MTA3AFD9WaAMoALCAFcANgBMAQigBiRadjQBeODnzFSFADwBGAHwDhccVLmKAKlEmbteQiXIoDbU7yA)
 
 @category Numeric
 */

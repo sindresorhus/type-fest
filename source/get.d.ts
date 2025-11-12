@@ -200,6 +200,7 @@ type A = Get<string[], '3', {strict: false}>;
 type B = Get<Record<string, string>, 'foo', {strict: true}>;
 // => string | undefined
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gcRTAvnAMyghDgHIlUBaAlAZxjIG4AoFgExQGMAbAQyhoCAVwB2XGMAii4AcxwAeAEJ86KACrIUAGjhdpDOAAU+MABZwUADxgpR7OnAZRgo2XAA+cQX3bSeiE4wLm4A2gC6AHwAFBAARgBW3DAAXHAqapqoumCmZmkm5gCUadgwyqoaWrqFZpGsLJRoAIJgwABK9JCianAAvBgsAJBmwDB0aejDI2MTcM1QUHyIClND6wD6wOxpzq6yrOtDG3QQwlBcKJPT66J8IFfzi8urN+uywABudrvB+xGHI5DAj3YABX4hA5vXD1N5xYCwMwAEVMjz2bkBQ1wgJhh2xLHxLH0PXg8hgADl7mgBtE+G1OnRumo0q0Ol0DCgiv1InIcLT6eyejpyKNxgA6UV0UIABnCYpOZwuKDFdweZCKrAA9Jq+jz+WzGRyWQLDUKubqMB9vqIIf9wkxCKDwUFIbgIp44GJOARXCh2GxtcY8nA+DxTk5hGBILBHHxvChfP5AgIloEIAQXfs6ESDKScJSHgB1MZmWoLVP9OD6hlMx6smsc808snVwVqXShMiSsi6LuzHvkaUDsgK86XYeqlBkcIaljai2t03M+Ym2tNy1fH6ZsL2x0gMGIW1uN3hD1elA+0R+gOauDk6RUPYSOAgCCcFKNLTzStlBTo2QRL2ADMA7oE+qSOmGKC4nOOo8v+bBNOkP6KJ0+hQOwf5-G4uj-pEvYEBAECgeBaTBMI0GwoGFr-me9gXr67BAA)
 
 @category Object
 @category Array

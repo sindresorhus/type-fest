@@ -15,6 +15,7 @@ type UpdateService<Entity extends object> = {
 		: never
 }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gCQIYGcDyYMwEAdtgDYDSKiuANHIcWZTXfgGYC+cnUEEHADkSVAFpOKXDGEBuAFAKxaAKpgAJthgoAyiigA3YAGMUAHgCipYkjgoAHjtIbccCACMAVihMwAfHAAvBgKAJBQKCAQhigAYsAoFBoAXHA4BEQk5NS0uFY2wEiBjs6uCFAArijhYQD8cAAUnInJaczZbHlcBbaI-gCUwYEACgIgwLgWhhDAGv61aaQosVAK3EA)
 
 @category Utilities
 */

@@ -51,6 +51,7 @@ const setExample = new Set(['a', 1]);
 const setEntryString: Entry<typeof setExample> = ['a', 'a'];
 const setEntryNumber: Entry<typeof setExample> = [1, 1];
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gUQHYyogXzgDMoIQ4ByJVAWmJQGcZKBuAKHeFxSmIEMAxmkwAPfuAA2adOwCQjcigDSKRAC442AK4gARrw4FOgiNmZwQ-bMDDbJ-GExx5EcALxwAFCnFSUmi74ADxiEmDSAHwAlB6RcADa8gD0yXAAIhBMcIogaPxQesB4BW5gZMKMjNwA5nBmCAAWaADWat4A7sWNCMho3MTQVjDADfwAbvzADnrS0fK+4dIJAAwAugB0MBAAqmCoUADC-IwoXtEANJxyqRlZjDlKcAVFJfhw5RCV1dh1DTDNOCTSTaNBeLoA3qoOADIaOUbYZ6Tab8WYoeZyRb+BIARk22wAYsBRCgACbnK5rDjsUzmeBYiIBOBhfweDC5FRqTQ4ggcWkWFC4d6eADyegAVihBDANoK8MAmD4-Izoqs1s8HkFEKFlVE+WYLBBtDA7PBPFYbHYHE5GFqfELENFqbcxZLpYwaQb4BAJVKYCzGWz0PxubzPXT6r7pVrAg7gjQUBBiJG3f7dSh4p4EpR+JQLnA8c60gBBKBQfiID38+AFcuIAPSNnZ3P5wvhiy1itagDK8t+sdc8b6SeeZa76cziRW+ZzlCp7ZrY-rDoAcroDFAByEEyPO-WJ02ca35+xbgBZfhgKteyyXhtoTzYFAdOAXsBeBLNvMFtZrJ0L28wBjZk4x3ZMrCAg8s1nY8izgbsUBga8I1ONMlgfLRn3gxCPxgn9-2rHJEJ7Psai3bUwKItD-EnL8Z1zedCNQrU130XhyKHVAR2YqDEiPH9WCAA)
 
 @category Object
 @category Map

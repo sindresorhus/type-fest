@@ -36,6 +36,7 @@ export type WordsOptions = {
 	type Example2 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 	//=> ["p2p", "Network"]
 	```
+	[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gdWgEwM4C+cAZlBCHAORKoC0xKeMlA3AFBs1oCiAHgIbgANigCMcALxxsUfAB5KYAExgAcihgB3aAGtKAGgx4wQ4DADyAO1UBXEACMUUPAC4EUGygIA+dgHo-CW84AG0AIjAwwzClKLgIuLD1LV0wgF0OLjg+QRMUJUlpXDwFZTUNbSg9Q3RjUwtrO0dnN2J+ITwvXzYAoNCIlUTkyp10oA)
 	*/
 	splitOnNumbers?: boolean;
 };
@@ -73,6 +74,7 @@ type Words4 = Words<'lifeIs42'>;
 type Words5 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 //=> ['p2p', 'Network']
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gdWgEwM4C+cAZlBCHAORKoC0xKeMlA3AFBs1rZT4AMcALxwe+ADyUAFigA2MiDxk5KAPnYB6dYJVwA2lNnzKAGiqLlAXQ5cRuPAEYht3ngnS5CgPIAlADIARVQ0tHX13I1NKTB8AyitOZG47ACYnUVcDD1oAd2glILZNbT1MiKpcqHz4m3SAZjS7CVpacIgEaQB9Cvy1QpCS1pMqGGkhym7La0TnfAAWBpcJGWAGAEk8WeSCotDKZYYx9bHNuKnUGbwAVgXxSjBksAA5FBgKgGsh9DwwZZhPADtHgBXEAAIxQUDwAC4SABDGR4FAEXo7Er3MBjZ6vaAfCxAA)
 
 @category Change case
 @category Template literal

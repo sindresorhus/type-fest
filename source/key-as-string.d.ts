@@ -19,6 +19,7 @@ type Foo = {
 type StringKeysOfFoo = KeyAsString<Foo>;
 //=> '1' | 'stringKey'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gaRYgggZwGUYpgA7AcwF84AzKCEOAciVQFpaV8ZmBuAFAC2aAGIQIcALwYBASACMALjhkAriABGKKILk9SlbIhUHyFQVUHDkaYoYrH8AeVrjJM4wXvmAPO4A+QQB6YKkAlgVmOAAfFjMjHGYgA)
 
 @category Object
 */

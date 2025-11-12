@@ -55,6 +55,7 @@ type T4 = SplitOnRestElement<[number, string?], {preserveOptionalModifier: false
 type T5 = SplitOnRestElement<readonly [string?, ...number[]], {preserveOptionalModifier: false}>;
 //=> readonly [[string], number[], []] or readonly [[string | undefined], number[], []]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZTAG2DAeQDsAlFAZxgFEcUQUiYBfOAMyghDgHIlUBaVhRjcA3AChxfNABUAjHAC8cbHkKlhNOgxgAeANpEAriABGKKABo4AOjuUowIgHN9AXWumIEWgEMibgB8EgD0IYqBcPqGJuZQHnAOTq4J+l4+KP5ubpLScDIATEoquPjEZJRa9Iy6UJkAJhBEOIhRdjbpfkTu1kkuQaHhkXW+jc2t0Qmdmd2pfc7ZuciyAMzFqmUalbTVejFmFr0wji4A-APiYRFR+3FHJ87n1j1Ri1LL+QAs66XqFdQ7HQGYwHKyJY7JJ4YMB1cgWABuKAIYBgwCavhwAFkIPVgKxgBYAFxsDFwpjBS5DG4gu7gh6pBluODQamxQ505JwAA+cCMRHqKHxRBQ9QZzzeeRkAFYfmpyppATURmMWlF5qdrO0aRZ3Al0DCKAikSi0UQMdjcfiiSScGSKVdhg0mqrovMEtqoC9dcyoHBlc6Jvp5tzefzBU4Re62Z7GUA)
 
 @see {@link ExtractRestElement}
 @see {@link ExcludeRestElement}

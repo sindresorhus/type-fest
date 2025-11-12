@@ -31,6 +31,7 @@ type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 //=> [number, number, number?]
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRTASigRwFdgoUATAXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaAGIQIcALwYBASACGAfgBccAHZEQAIxRRBc7Wp5Rg6gOYGAxqrjaJAGxQL1gykJFxMDFPmKkKaS8cPxIycgAecQgAGmZtJjgAH2YrJgA+QQB6LIRkNG8QX0IwwJl0ARy4RVtNHT1s3MNjGFMLPjgqgHUFLjgFBzIFckQ4Mn9w-vVyOB5gBwc4YC4AOkqmqzV7CCcXDqqAST71CAB3MZKA8jWq93Xg+C5UK2AaYCsl6ffuT6n+qCgClGMEkuguEwoa08AEEAUCAKIADwU4CcQWweEu4QiAG06rooEo4vi9ESNFoCUoALpxAAMyTgAEZMuspOk4HiKXpiVyoDz6oSqUA)
 
 @category Object
 */

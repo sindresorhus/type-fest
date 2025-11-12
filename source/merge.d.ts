@@ -38,6 +38,7 @@ export type FooBar = Merge<Foo, Bar>;
 // 	baz: boolean;
 // }
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gWRVA5igXzgDMoIQ4ByJVAWmJQGcZKBuAKHeADsYdiAhgGM0AMQgQM7AJABtAB4AuOMyg9cAXWUBXbgGtuEAO7cOcpXG7aQAIxxa4ug8dMziE5avVmbAqJ8RbCAAbDgJOGjQAIT84AF4pc2UrW3tk6zsoMwUAoOCHJ0MTHz9lABEBPhKAL2UbCWCUAVcCDnYUeUhYBGQxCRioeLhsPBQAHnEIABo4AYA+DgB6Rfi5qWW4JJUYNW5NHX0i1w2tlMyHM5wlla3GQPr8g+di9hP3CE8d71eb3384CpVH6bXy1OD1EJNY4rAhAA)
 
 @category Object
 */

@@ -13,6 +13,7 @@ type Example1 = NonNullFallback<null, string>;
 type Example2 = NonNullFallback<number, string>;
 //=? number
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4DkCuANoQL5wBmUEIcA5EqgLTkrYy0DcAUFw2rhAB2BYgDEAhsQBG4gMYBrADwAVADRwJ0ufIB8cALxwcIwir0oAHjBSCAJtgRR8aAPwbJhGQrgAuOMu5eZDQAUQtxcEIUAEYDOAFhIkJNT21FQST1NihgQQBzHW4AeiL9PWzcvJ4+ODCIsCiAJjiEkxSvJQyQKRQoLJgc-MKuEv03Lp6oIA)
 
 @category Type Guard
 @category Utilities

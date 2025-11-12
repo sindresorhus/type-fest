@@ -27,6 +27,7 @@ const validator2 = createValidation<User>('surname', value => value.length < 25)
 const validator3 = createValidation<User>('luckyNumber', value => value > 0);
 // Error: Argument of type '"luckyNumber"' is not assignable to parameter of type '"name" | "surname"'.
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gJRQRwK7BQoAmA0iogM4DyAZgL5y1QQhwDkSqAtLSpTHYBuAFAjiKAMYAbAIZEmeAHaSYwCEriSismCgBqs6cGK71SgDwiAkAFElapHBQAPPUuKU4EAEYArKRgAGhtyRGc3FA8vbHxCEjCaWgt7R0QAPjgAXjhYgiIyCiSUh2AkdJD0gApaYBRpYgAuODCguAA3IxNdaGaqzuk8FGbUssQAbTCAXQBKbMyfCAhpFFklGb6otJHSpDmshaWVtdERYAcUKFpZSTQAVUpLjBslWRBhuAEoc4BzUWtKHgoK93s0vr9-oNJABrRAAOTwIB8lwA-M0lIjkVBRPQxJINAIOl1TDBoABGbJaHR6QzGEnmCwPS7VdgglDsNoDIbzImDFAAOhWSh+MAAFnALHAAEwAVhmonxSkJA26pKgUsp2lWNOJZg0jMeUBZgOBb3ZnKM3IOvKGgqiIvFktl8rEAHpXXAAAIwSjcVyoVR+qAsKAiRXK3VqgDMmupBkjDKZRqq7ChsIRSMuHJtaGtXLQmQADC73XBbMHenAAIJQH6IrbeWgIZBodgAIjT8Mxlzb7DgwC8Sgg8FklEowB+rx8KwQEDgYHkZr0UEbzdQHDbbLbcAAPnA2yat+x+UA)
 
 @category Utilities
 */

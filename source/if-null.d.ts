@@ -17,6 +17,7 @@ type ShouldBeTrue = IfNull<null>;
 type ShouldBeBar = IfNull<'not null', 'foo', 'bar'>;
 //=> 'bar'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQGYDkCuANoQL5zZQQhwDkSqAtNigM4w0DcAUF-WgMoALCEQAmAIRQAVKPjQBeODgLEAPADsihAHzcA9HvnaEslDz5whIwhJTiAhlDiLlW1TXUR4m4jQA0tNgQEP60AEaONLpcBkbhkUA)
 
 @category Type Guard
 @category Utilities

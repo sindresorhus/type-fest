@@ -18,6 +18,7 @@ class Awesome {
 type PickPrimitivesFromAwesome = ConditionalPick<Awesome, Primitive>;
 //=> {name: string; successes: number; failures: bigint}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gBSqYNgBuKANHAMIQB2AJnsFQIYA2mwAxgNYC+cAZlBBBwA5ElQBaXigDOMYQG4AUIrZMG06XACCAdxmC06RQEg2VWVACubGNAAUYSwCMm7OJQYgUALjgXglADmpI4ubtLWbDLSMr6UliBOKFAhzq5sfAzATJZQsXBOwIEBMACUGFzKxlaUduXolZWKYmisnNi4+ETSAGICILr6XnAAvORUtPiMLOwcADyD0gakHSB0RAB8SgD02yMbGB5evv5B8n6R0fnxicnnvFk5edK+hcWUMFxAA)
 
 @example
 ```
@@ -33,6 +34,7 @@ interface Example {
 type StringKeysOnly = ConditionalPick<Example, string>;
 //=> {a: string}
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgArADGA1gL5wBmUEIcA5EqgLRMoBnGBwDcAKDHAcMFFCYlqaAKIAPEuDJp0YgJAkAXHCFQpAc3E6ARoeNm4AHzg4AriEuyL1QwAoAlHABeAD44ADcIYDwLPEN0enF6CW40AGUYExxTAGkURAEAeRwyREC4bHxCYhxyKjoAHlV1ME0AGiN0syDxAHpu4IwDdozTeiA)
 
 @category Object
 */

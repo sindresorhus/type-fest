@@ -24,6 +24,7 @@ const bar3: EmptyObject = 42; // Fail
 // @ts-expect-error
 const bar4: EmptyObject = {a: 1}; // Fail
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gUXEg8gIwCsUBjGAXzgDMoIQ4ByJVAWipQGcYGBuAKD4B6QXAAqACzRUIAGxkQA7sAB2AczjA5AVy5QAhjE4JJcMLXwyU9JTHFwABunL2AdHxIRlXahAgBGAC4MSgBeYJ44YTgABT0ODndPb2kIACYgpzgwgG0AXQio2PjEr3gUgGYM0LgAFlSCkSKEj1KfCBqqrIw9IL9yBpi4hKERAHVgWwdsMDwiUhh7OE8ZRGMpYChvEji0YA44ADc9GWAAEzcW73w9KEC4adniMi6nAaaRuAABGA4WFAAPVBkP5QWhQEpXG7pe44RAEJ7wHL5SIiABiek0H2+vwBQJgILBEPg1yglRhMzhc2eYTqA3RmKi2L+gPmBOgRLgJI65Me8xePTgfTpGJkQA)
 
 Unfortunately, `Record<string, never>`, `Record<keyof any, never>` and `Record<never, never>` do not work. See {@link https://github.com/sindresorhus/type-fest/issues/395 #395}.
 
@@ -42,6 +43,7 @@ type Pass = IsEmptyObject<{}>; //=> true
 type Fail1 = IsEmptyObject<[]>; //=> false
 type Fail2 = IsEmptyObject<null>; //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQM4FFxIDyARgFYoDGMAvnAGZQQhwDkSqAtHStjCwNwAoQezQAFAIbZscALxwc+METKUYAHnTUAfPzgB6fbO0IoAVxQjkaAGITgAGwCMchXgKIS5KuoDaAXV0DIxM6CQdsS1E4O0cAJldFDy81dQA7MwcHIMNjenDIoA)
 
 @see {@link EmptyObject}
 @category Object

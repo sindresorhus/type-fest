@@ -29,6 +29,7 @@ const splitOnNumbers: KebabCasedProperties<{line1: string}, {splitOnNumbers: tru
 	'line-1': 'string',
 };
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gaRQIwIY4DCeAzigCYAKUEqswKJAvnAGY0hwDkSqAtK0YwuAbgBQY4ADsYKKKzwBjNAFUyUDGICQAV3UBJcgC44UnSBxzxu9QDk8IFCZIwo0gObimExRCku4KEYdABsYE2x8IlIKalo5GAYSAB41OQA+OABeTS0uPTk+YHIuEwBGABptfPU+KQcUUu4AFQgQLiqmcTFff3gSMBDgGAB5KVtzSygSCNwCYjIqGjpExmT0IakUMudXDyYKjAGh0fHJuRmEKB0UJkyc9GrNlD4ypq4XNyl3DrEuoA)
 
 @category Change case
 @category Template literal

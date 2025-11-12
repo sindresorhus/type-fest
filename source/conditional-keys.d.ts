@@ -22,6 +22,7 @@ type Example = {
 type StringKeysOnly = ConditionalKeys<Example, string>;
 //=> 'a'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgNIqIDOAvnAGZQQhwDkSqAtIyjTHYBuAFAiuaAKIAPEuDJoAvBhEBIEgC44AqMBwBzUaoBGWnXv1wAPnBwBXEMZRQjAYwD8ZmLoNG8W9DpRILEJOABlbwsqWgB5HDJEOGVsfEJiHHIYmgAeGTkwBQAabSiDAD5RAHoqxXKOEnYgA)
 
 Note: To extract optional keys, make sure your `Condition` is a union of `undefined` (for example, `string | undefined`) as demonstrated below.
 
@@ -35,6 +36,7 @@ type StringKeysAndUndefined = ConditionalKeys<{a?: string}, string | undefined>;
 type NoMatchingKeys = ConditionalKeys<{a?: string}, string>;
 //=> never
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgNIqIDOAvnAGZQQhwDkSqAtIyjTHYBuAFAiuaAMowowHAHMqtAIL4AqvhSM5KPHAC8cbPkLEc5JTQA86EgH4AXHAGyFdADTOZc+XAA+cACumto4ugB8ogD0UfrhHCTsYhJwAHIQALIkMADGABY+lgZGuAREpJTU1raOXq7yHnU+kSIxcXBhAG4oUEA)
 
 You can also extract array indices whose value match the specified condition, as shown below:
 ```
@@ -46,6 +48,7 @@ type StringValueIndices = ConditionalKeys<[string, number, string], string>;
 type NumberValueIndices = ConditionalKeys<[string, number?, string?], number | undefined>;
 //=> '1'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gYQgOwCbAzC4CGANgNIqIDOAvnAGZQQhwDkSqAtIyjTHYBuAFAiuaAMowowHAHMAauQCuKAJL5gAY35wAvHGxaipStRoAeANoDZCgDRwcKkACMUUJ3bnyAut4yvgB8ogD0YfrBHAAM7HAAPhwATOxiEnAAcq4eUMpkapoEujQGRrgEpjjkVLQ2Po7OOZ4A-IH28i0BTe6eiXAq+CiMcih4oSIRURwAjOxAA)
 
 @category Object
 */

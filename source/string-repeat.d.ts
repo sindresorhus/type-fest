@@ -21,6 +21,7 @@ stringRepeat('foo', 2);
 stringRepeat('=', 3);
 //=> '==='
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBAbwMoysAdgcwEoFMy4CGMAvnAGZQQhwDkMAngQLTm4DOMtA3AFC8ATXAGMANoSi4KAV3TCYwCOjic0WPAWIAeXgEgAkujDT4uAB4xc6AexWoMmADR6AwhFmmLVm3HTSQAEa4ULwAfAAUGMYwAFxwhtGOcMLu6LFwbh4AlHEoajj4RDBaCSZJmWmhfLwA9DVwACoAFlKSMNJQyowEcMC2MC1w5oTydvlwosCWUISiSegQ8ABW0pxwAAaqDusAdPxb6oXE4bTkEBC0SQBMWXx1ALyhdGcQL7T79oeaMCf3l3AAZlutRqjzo9whtCAA)
 
 @category String
 @category Template literal

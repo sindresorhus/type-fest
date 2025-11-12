@@ -15,6 +15,7 @@ type ExtraGlobals = GlobalThis & {
 
 (globalThis as ExtraGlobals).GLOBAL_TOKEN;
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gcQDYQEYCG2AKgBbADOAvnAGZQQhwDkSqAtLShTMwNwAoAWzQBRAB4woBHPiIU4AXjizCJcgoBkGAQEgoKAgBMIAO2yIVAGQDyAIQCCVgPrEbAaVEA5AFxweUMCmAOaCVIICABTBuGpklHAEChJSMrHyAJQAdJi2ji5unl58QA)
 
 @category Type
 */

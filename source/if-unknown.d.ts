@@ -17,6 +17,7 @@ type ShouldBeTrue = IfUnknown<unknown>;
 type ShouldBeBar = IfUnknown<'not unknown', 'foo', 'bar'>;
 //=> 'bar'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gSQGYFUB2A1vhAO74C+c2UEIcA5EqgLTYoDOMDA3AFB9maAMoALCAFcANgBMAQigAqUCWgC8cHAWJl8AHglES5AHz8A9ObUmEKlAKFwxk2QrkBDKHA1ajuvQwk8IY65AwANIzYEBARjABGngxmfJbWCUlAA)
 
 @category Type Guard
 @category Utilities

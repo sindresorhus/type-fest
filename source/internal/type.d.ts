@@ -64,6 +64,7 @@ IsPrimitive<string>
 IsPrimitive<Object>
 //=> false
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JIZwCgTglgtlAuUBuBTAPAchPaA7A5hgHwBQA9GQLxEAEOAriiSaJLAsutnvqRdXQiNmraHESo0AeQBGAKxQBjeHyq0AZgEMANiBRA)
 */
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
@@ -78,6 +79,7 @@ Not<true>;
 Not<false>;
 //=> true
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/HIewLgPGBOCuCmA+A3AKAPToLyIAQDMBDAGwGd5VVRIiyk1MdcYEg)
 */
 export type Not<A extends boolean> = A extends true
 	? false
@@ -102,6 +104,7 @@ type B = IfNotAnyOrNever<any, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 type C = IfNotAnyOrNever<never, 'VALID', 'IS_ANY', 'IS_NEVER'>;
 //=> 'IS_NEVER'
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEHUAsFMDtQAYBUGgJYGdQENQDkB5JRbWAT1QHsAnRWaAN2mtQAoAbNAa2kQwBdqaWAHMEASlABeAHygAStH4BXarCwIAkgDM8lfgEFyBankbNUAI2qkAxpABQ-MgAdeB6aB17Dx0+eoAHgEhUQAaUAByADUDABlNABFIiMjNAGUAfQM8AE0UqIzMvABRaJL5SJkAbgcQWSjYhOSHOrAoOEQUdA1SCmk5RRU1DR0jfus7R2c3UAAhT299cZMzJiC+1KakgrSsnPzUotLyypq2hr3svMjWkAgYeGRUTDoA1Aah1XVEb3fQSawexOVy8ADCi10yz8a2YgXo6y28R2R32N1RxTKFSqtXqciuJ2xQA)
 
 Note: Wrapping a tail-recursive type with `IfNotAnyOrNever` makes the implementation non-tail-recursive. To fix this, move the recursion into a helper type. Refer to the following example:
 
@@ -128,6 +131,7 @@ type _TrimLeftOptimised<S extends string> = S extends ` ${infer R}` ? _TrimLeftO
 type T2 = TrimLeftOptimised<NineHundredNinetyNineSpaces>;
 //=> ''
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/JYWwDg9gTgLgBDAnmApnA3gZRlYA7AcwCUVUBDGAXzgDMoIQ4ByJVAWhpQGcYmBuAFADWaAHL4UACQCueACZQUc8XhRIVKTGDIBjbnAC8cbLkIlyMADxNmAGjgBOJwD5BAgPTu4AFQAWaGggAGyCIAHd8AjhQMCCUEBQ8GApgCDxorjg8CHhk4CC4RR1pKC5gADcUYWQ0b1wQABkUGitMOBQADxhEuUyeUwJnQzgASRpRHIBBPEQAeShRFEqoS0x7Ns7u+UyAAzgAEnR8Tig4Iko9gH4feqaWyyIhgC5jVyFPOElEvXt8HjIksAUmlMhEYL44KFCHB+pFQfkCjQyPkPF4AAIwLhsTqoHQwbFQehQaqoHwARmGdVAdysGhk8kUygk6gkWl03DeHzg3J5cAAfgLBULhSLRWK+ai4ABRQnQF7eGrRPD-QHA9LATKdPRcMqVIKIOByFCkOAAuRwSA64AAI31Spo+GA3QAdO8vN4ILRgB0EL4NfYQBBKr60EUSmU0kqYJ6yHB-EFUKcRCTardmjBZmAYKANUpVu0uj0+jhIkMjGMJjBpnMFksUCs1nAAPpUxrpzPZkC5uSrZxvFPN1s0js5rh5jaF7YwkuEMvGAtbXpwPaHY71s4XODXFtplojrtjnuPOAvTBuEQ+ABMlN3Gazo7zdNkCiUGhZqjZ2s57gMQyYTCAA)
 */
 export type IfNotAnyOrNever<T, IfNotAnyOrNever, IfAny = any, IfNever = never> =
 	If<IsAny<T>, IfAny, If<IsNever<T>, IfNever, IfNotAnyOrNever>>;
@@ -151,6 +155,7 @@ type B = IsAnyOrNever<any>;
 type C = IsAnyOrNever<never>;
 //=> true
 ```
+[Playground Link](https://www.typescriptlang.org/play/?exactOptionalPropertyTypes=true#code/PTAEHUAsFMDtQAYBUGgJYGdQENQDkB5JRbWAT1QHsAnRWaAN2mtQAoAbNAa2kQwBdqaWAHMEASlABeAHygAStH4BXarCwIAZtnYZoCAFD8yAB14BBaaACSGc+QLU8jZgB4BQ0TIDcBkLNBtXWgDPzAoOEQUdA1SCmk5RRU1DUFlfSNTXgAhK1t7MkdnJmpXOJ8wgLSQsIgYeGRUTDoXFgSFJVV1RGrDYzNQAGE8uwcnVtd6Eor-OWqgA)
 */
 export type IsAnyOrNever<T> = IsNotFalse<IsAny<T> | IsNever<T>>;
 
