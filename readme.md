@@ -249,6 +249,7 @@ Click the type names for complete docs.
 - [`Arrayable`](source/arrayable.d.ts) - Create a type that represents either the value or an array of the value.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
+- [`Concat`](source/concat.d.ts) - Concatenate two array types: the equivalent of `array1.concat(array2)`.
 - [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.
 - [`ArrayElement`](source/array-element.d.ts) - Extracts the element type of an array or tuple.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extract the type of the last element of an array.
