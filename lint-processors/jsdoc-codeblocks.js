@@ -5,7 +5,7 @@ import tsParser from '@typescript-eslint/parser';
 @import {Linter} from 'eslint';
 */
 
-const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/g;
+const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^\s*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gm;
 /** @type {Map<string, {lineOffset: number, columnOffset: number, characterOffset: number, cumulativeIndentSizePerLine: number[]}[]>} */
 const jsdocDataPerFile = new Map();
 
@@ -30,24 +30,24 @@ export const jsdocCodeblocksProcessor = {
 
 		// Loop over all JSDoc comments in the file
 		for (const comment of jsdocComments) {
-			const indentSize = comment.loc.start.column; // `comment.loc.start.column` is 0-based
-			const commentLines = comment.value.split('\n');
-
-			// Skip comments that are not consistently indented
-			if (!commentLines.every(line => line === '*' || line === '' || new RegExp(`^\\s{${indentSize}}`).test(line))) {
-				continue;
-			}
-
 			// Loop over all codeblocks in the JSDoc comment
 			for (const match of comment.value.matchAll(CODEBLOCK_REGEX)) {
-				const {code, openingFence} = match.groups ?? {};
+				const {code, openingFence, indent} = match.groups ?? {};
 
 				// Skip empty code blocks
-				if (!code || !openingFence) {
+				if (!code || !openingFence || indent === undefined) {
 					continue;
 				}
 
-				const indentSizePerLine = code.split('\n').map(line => line === '' ? 0 : indentSize);
+				const codeLines = code.split('\n');
+				const indentSize = indent.length;
+
+				// Skip comments that are not consistently indented
+				if (!codeLines.every(line => line === '*' || line === '' || line.startsWith(indent))) {
+					continue;
+				}
+
+				const indentSizePerLine = codeLines.map(line => line === '' ? 0 : indentSize);
 				/** @type number[] */
 				const cumulativeIndentSizePerLine = [];
 				for (const size of indentSizePerLine) {
@@ -63,8 +63,7 @@ export const jsdocCodeblocksProcessor = {
 					cumulativeIndentSizePerLine,
 				});
 
-				const dedentedCode = code
-					.split('\n')
+				const dedentedCode = codeLines
 					.map(line => line.slice(indentSize))
 					.join('\n');
 
