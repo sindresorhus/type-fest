@@ -15,7 +15,7 @@ NumberAbsolute<-1>;
 NumberAbsolute<1>;
 //=> 1
 
-NumberAbsolute<NegativeInfinity>
+NumberAbsolute<NegativeInfinity>;
 //=> PositiveInfinity
 ```
 */
@@ -132,10 +132,10 @@ ReverseSign<-1>;
 ReverseSign<1>;
 //=> -1
 
-ReverseSign<NegativeInfinity>
+ReverseSign<NegativeInfinity>;
 //=> PositiveInfinity
 
-ReverseSign<PositiveInfinity>
+ReverseSign<PositiveInfinity>;
 //=> NegativeInfinity
 ```
 */

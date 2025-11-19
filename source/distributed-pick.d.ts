@@ -70,7 +70,7 @@ declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
 	pickedUnion.foo.bar;
- 	//=> OK
+	//=> OK
 
 	// @ts-expect-error
 	pickedUnion.extraneous;

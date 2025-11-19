@@ -55,13 +55,13 @@ Returns a boolean for whether the given type is primitive value or primitive typ
 
 @example
 ```
-IsPrimitive<'string'>
+IsPrimitive<'string'>;
 //=> true
 
-IsPrimitive<string>
+IsPrimitive<string>;
 //=> true
 
-IsPrimitive<Object>
+IsPrimitive<Object>;
 //=> false
 ```
 */

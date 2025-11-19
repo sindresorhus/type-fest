@@ -12,13 +12,13 @@ Use-cases:
 ```
 import type {UndefinedOnPartialDeep} from 'type-fest';
 
-interface Settings {
+type Settings = {
 	optionA: string;
 	optionB?: number;
 	subOption: {
 		subOptionA: boolean;
 		subOptionB?: boolean;
-	}
+	};
 };
 
 const testSettingsA: Settings = {

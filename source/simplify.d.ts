@@ -27,11 +27,11 @@ If the type definition must be an interface (perhaps it was defined in a third-p
 ```
 import type {Simplify} from 'type-fest';
 
-interface SomeInterface {
+type SomeInterface = {
 	foo: number;
 	bar?: string;
 	baz: number | undefined;
-}
+};
 
 type SomeType = {
 	foo: number;

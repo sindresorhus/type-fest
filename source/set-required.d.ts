@@ -18,7 +18,7 @@ type Foo = {
 	a?: number;
 	b: string;
 	c?: boolean;
-}
+};
 
 type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
 // type SomeRequired = {

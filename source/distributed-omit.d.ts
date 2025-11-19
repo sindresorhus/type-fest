@@ -74,7 +74,7 @@ declare const omittedUnion: OmittedUnion;
 
 if (omittedUnion.discriminant === 'A') {
 	omittedUnion.a;
- 	//=> OK
+	//=> OK
 
 	// @ts-expect-error
 	omittedUnion.foo;
@@ -82,7 +82,7 @@ if (omittedUnion.discriminant === 'A') {
 
 	// @ts-expect-error
 	omittedUnion.bar;
- 	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
+	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
 }
 ```
 

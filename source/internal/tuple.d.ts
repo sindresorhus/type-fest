@@ -17,7 +17,7 @@ type Array = TupleLength<string[]>;
 //=> never
 
 // Supports union types.
-type Union = TupleLength<[] | [1, 2, 3] | Array<number>>;
+type Union = TupleLength<[] | [1, 2, 3] | number[]>;
 //=> 1 | 3
 ```
 */

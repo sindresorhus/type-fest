@@ -23,12 +23,12 @@ type PickPrimitivesFromAwesome = ConditionalPick<Awesome, Primitive>;
 ```
 import type {ConditionalPick} from 'type-fest';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | number;
 	c: () => void;
 	d: {};
-}
+};
 
 type StringKeysOnly = ConditionalPick<Example, string>;
 //=> {a: string}

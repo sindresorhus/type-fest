@@ -9,12 +9,12 @@ import type {FindGlobalType} from 'type-fest';
 
 declare global {
 	const foo: number; // let and const don't work
-	var bar: string;   // var works
+	var bar: string; // var works
 }
 
-type FooType = FindGlobalType<'foo'>     //=> never (let/const don't work)
-type BarType = FindGlobalType<'bar'>     //=> string
-type OtherType = FindGlobalType<'other'> //=> never (no global named 'other')
+type FooType = FindGlobalType<'foo'>; //=> never (let/const don't work)
+type BarType = FindGlobalType<'bar'>; //=> string
+type OtherType = FindGlobalType<'other'>; //=> never (no global named 'other')
 ```
 
 @category Utilities

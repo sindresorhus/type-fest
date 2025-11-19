@@ -24,12 +24,12 @@ type ExceptPrimitivesFromAwesome = ConditionalExcept<Awesome, Primitive>;
 ```
 import type {ConditionalExcept} from 'type-fest';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | number;
 	c: () => void;
 	d: {};
-}
+};
 
 type NonStringKeysOnly = ConditionalExcept<Example, string>;
 //=> {b: string | number; c: () => void; d: {}}

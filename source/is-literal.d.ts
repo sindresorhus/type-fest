@@ -11,13 +11,13 @@ Returns a boolean for whether the given type `T` is the specified `LiteralType`.
 
 @example
 ```
-LiteralCheck<1, number>
+LiteralCheck<1, number>;
 //=> true
 
-LiteralCheck<number, number>
+LiteralCheck<number, number>;
 //=> false
 
-LiteralCheck<1, string>
+LiteralCheck<1, string>;
 //=> false
 ```
 */
@@ -38,13 +38,13 @@ Returns a boolean for whether the given type `T` is one of the specified literal
 
 @example
 ```
-LiteralChecks<1, Numeric>
+LiteralChecks<1, Numeric>;
 //=> true
 
-LiteralChecks<1n, Numeric>
+LiteralChecks<1n, Numeric>;
 //=> true
 
-LiteralChecks<bigint, Numeric>
+LiteralChecks<bigint, Numeric>;
 //=> false
 ```
 */
@@ -161,7 +161,7 @@ function endsWith<Input extends string | number, End extends string>(input: Inpu
 endsWith('abc', 'c');
 //=> true
 
-endsWith(123456, '456');
+endsWith(123_456, '456');
 //=> true
 
 const end = '123' as string;
@@ -226,17 +226,17 @@ Useful for:
 ```
 import type {IsSymbolLiteral} from 'type-fest';
 
-type Get<Obj extends Record<symbol, number>, Key extends keyof Obj> =
+type Get<Object_ extends Record<symbol, number>, Key extends keyof Object_> =
 	IsSymbolLiteral<Key> extends true
-		? Obj[Key]
+		? Object_[Key]
 		: number;
 
-function get<Obj extends Record<symbol, number>, Key extends keyof Obj>(o: Obj, key: Key) {
-	return o[key] as Get<Obj, Key>;
+function get<Object_ extends Record<symbol, number>, Key extends keyof Object_>(o: Object_, key: Key) {
+	return o[key] as Get<Object_, Key>;
 }
 
 const symbolLiteral = Symbol('literal');
-const symbolValue: symbol = Symbol('value');
+const symbolValue = Symbol('value');
 
 get({[symbolLiteral]: 1} as const, symbolLiteral);
 //=> 1

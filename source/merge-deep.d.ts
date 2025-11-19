@@ -398,11 +398,11 @@ type Foo = {
 	a: {b: string; c: boolean; d: number[]};
 };
 
-interface Bar {
+type Bar = {
 	name: string;
 	items: number[];
 	a: {b: number; d: boolean[]};
-}
+};
 
 type FooBar1 = MergeDeep<Foo, Bar>;
 // {

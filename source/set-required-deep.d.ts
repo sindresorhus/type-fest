@@ -19,10 +19,10 @@ import type {SetRequiredDeep} from 'type-fest';
 type Foo = {
 	a?: number;
 	b?: string;
-	c?: {
-		d?: number
-	}[]
-}
+	c?: Array<{
+		d?: number;
+	}>;
+};
 
 type SomeRequiredDeep = SetRequiredDeep<Foo, 'a' | `c.${number}.d`>;
 //=> {

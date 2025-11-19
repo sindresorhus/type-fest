@@ -16,7 +16,7 @@ type T1 = ExcludeRestElement<[number, ...string[], string, 'foo']>;
 type T2 = ExcludeRestElement<[...boolean[], string]>;
 //=> [string]
 
-type T3 = ExcludeRestElement<[...'foo'[], true]>;
+type T3 = ExcludeRestElement<[...Array<'foo'>, true]>;
 //=> [true]
 
 type T4 = ExcludeRestElement<[number, string]>;
