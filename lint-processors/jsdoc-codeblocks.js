@@ -5,8 +5,8 @@ import tsParser from '@typescript-eslint/parser';
 @import {Linter} from 'eslint';
 */
 
-const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)```/g;
-/** @type {Map<string, {lineOffset: number, characterOffset: number}[]>} */
+const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/g;
+/** @type {Map<string, {lineOffset: number, columnOffset: number, characterOffset: number, cumulativeIndentSizePerLine: number[]}[]>} */
 const jsdocDataPerFile = new Map();
 
 export const jsdocCodeblocksProcessor = {
@@ -30,6 +30,14 @@ export const jsdocCodeblocksProcessor = {
 
 		// Loop over all JSDoc comments in the file
 		for (const comment of jsdocComments) {
+			const indentSize = comment.loc.start.column; // `comment.loc.start.column` is 0-based
+			const commentLines = comment.value.split('\n');
+
+			// Skip comments that are not consistently indented
+			if (!commentLines.every(line => line === '*' || line === '' || new RegExp(`^\\s{${indentSize}}`).test(line))) {
+				continue;
+			}
+
 			// Loop over all codeblocks in the JSDoc comment
 			for (const match of comment.value.matchAll(CODEBLOCK_REGEX)) {
 				const {code, openingFence} = match.groups ?? {};
@@ -39,14 +47,29 @@ export const jsdocCodeblocksProcessor = {
 					continue;
 				}
 
+				const indentSizePerLine = code.split('\n').map(line => line === '' ? 0 : indentSize);
+				/** @type number[] */
+				const cumulativeIndentSizePerLine = [];
+				for (const size of indentSizePerLine) {
+					const last = cumulativeIndentSizePerLine.length > 0 ? cumulativeIndentSizePerLine.at(-1) ?? 0 : 0;
+					cumulativeIndentSizePerLine.push(last + size);
+				}
+
 				const linesBeforeMatch = comment.value.slice(0, match.index).split('\n').length - 1;
 				allCodeblocksData.push({
 					lineOffset: comment.loc.start.line + linesBeforeMatch,
+					columnOffset: indentSize,
 					characterOffset: comment.range[0] + match.index + openingFence.length + 2,
+					cumulativeIndentSizePerLine,
 				});
 
+				const dedentedCode = code
+					.split('\n')
+					.map(line => line.slice(indentSize))
+					.join('\n');
+
 				files.push({
-					text: code,
+					text: dedentedCode,
 					filename: `${files.length}.ts`, // Final filename example: `/path/to/type-fest/source/and.d.ts/1_1.ts`
 				});
 			}
@@ -75,24 +98,32 @@ export const jsdocCodeblocksProcessor = {
 				continue;
 			}
 
-			const {lineOffset, characterOffset} = codeblockData;
+			const {lineOffset, columnOffset, characterOffset, cumulativeIndentSizePerLine} = codeblockData;
 
 			for (const message of codeblockMessages) {
 				const adjustedMessage = {...message};
 
 				adjustedMessage.line += lineOffset;
+				adjustedMessage.column += columnOffset;
+
+				if (typeof adjustedMessage.endColumn === 'number' && adjustedMessage.endColumn > 1) {
+					// An `endColumn` of `1` indicates the error actually ended on the previous line since it's exclusive.
+					// So, adding `columnOffset` in this case would incorrectly move the error marker into the indentation.
+					// Therefore, the offset is only added when `endColumn` is greater than `1`.
+					adjustedMessage.endColumn += columnOffset;
+				}
 
 				if (typeof adjustedMessage.endLine === 'number') {
 					adjustedMessage.endLine += lineOffset;
 				}
 
-				adjustedMessage.fix &&= {
-					...adjustedMessage.fix,
-					range: [
-						adjustedMessage.fix.range[0] + characterOffset,
-						adjustedMessage.fix.range[1] + characterOffset,
-					],
-				};
+				if (adjustedMessage.fix) {
+					const cumulativeIndentSize = cumulativeIndentSizePerLine[message.line - 1] ?? 0;
+					adjustedMessage.fix.range = [
+						adjustedMessage.fix.range[0] + characterOffset + cumulativeIndentSize,
+						adjustedMessage.fix.range[1] + characterOffset + cumulativeIndentSize,
+					];
+				}
 
 				normalizedMessages.push(adjustedMessage);
 			}

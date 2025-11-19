@@ -104,13 +104,6 @@ const xoConfig = [
 		files: 'source/**/*.d.ts/*.ts', // Virtual files created by the `jsdoc-codeblocks` processor
 		rules: {
 			'type-fest/source-files-extension': 'off',
-			'@stylistic/indent': 'off',
-			'@stylistic/no-trailing-spaces': [
-				'error',
-				{
-					'skipBlankLines': true,
-				},
-			],
 			'@stylistic/eol-last': 'off',
 			'capitalized-comments': 'off',
 		},
