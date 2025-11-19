@@ -1,9 +1,11 @@
 // @ts-check
+import tseslint from 'typescript-eslint';
 import {importPathRule} from './lint-rules/import-path.js';
 import {sourceFilesExtensionRule} from './lint-rules/source-files-extension.js';
 import {requireExportedTypesRule} from './lint-rules/require-exported-types.js';
 import {requireExportRule} from './lint-rules/require-export.js';
 import {validateJSDocCodeblocksRule} from './lint-rules/validate-jsdoc-codeblocks.js';
+import {jsdocCodeblocksProcessor} from './lint-processors/jsdoc-codeblocks.js';
 
 /** @type {import('xo').FlatXoConfig} */
 const xoConfig = [
@@ -61,6 +63,9 @@ const xoConfig = [
 					'require-export': requireExportRule,
 					'validate-jsdoc-codeblocks': validateJSDocCodeblocksRule,
 				},
+				processors: {
+					'jsdoc-codeblocks': jsdocCodeblocksProcessor,
+				},
 			},
 		},
 	},
@@ -83,6 +88,31 @@ const xoConfig = [
 			'type-fest/require-exported-types': 'error',
 			'type-fest/require-export': 'error',
 			'type-fest/validate-jsdoc-codeblocks': 'error',
+		},
+	},
+	// Register processor for all source `.d.ts` files
+	{
+		files: 'source/**/*.d.ts',
+		processor: 'type-fest/jsdoc-codeblocks',
+
+	},
+	{
+		files: 'source/**/*.d.ts/*.ts', // Virtual files created by the `jsdoc-codeblocks` processor
+		...tseslint.configs.disableTypeChecked,
+	},
+	{
+		files: 'source/**/*.d.ts/*.ts', // Virtual files created by the `jsdoc-codeblocks` processor
+		rules: {
+			'type-fest/source-files-extension': 'off',
+			'@stylistic/indent': 'off',
+			'@stylistic/no-trailing-spaces': [
+				'error',
+				{
+					'skipBlankLines': true,
+				},
+			],
+			'@stylistic/eol-last': 'off',
+			'capitalized-comments': 'off',
 		},
 	},
 	{
