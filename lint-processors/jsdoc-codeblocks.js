@@ -5,7 +5,7 @@ import tsParser from '@typescript-eslint/parser';
 @import {Linter} from 'eslint';
 */
 
-const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^\s*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gm;
+const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[ \t]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gm;
 /** @type {Map<string, {lineOffset: number, columnOffset: number, characterOffset: number, cumulativeIndentSizePerLine: number[]}[]>} */
 const jsdocDataPerFile = new Map();
 

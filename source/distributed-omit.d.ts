@@ -33,7 +33,7 @@ if (omittedUnion.discriminant === 'A') {
 	// doesn't distribute over unions.
 
 	// @ts-expect-error
-	omittedUnion.a;
+	const aValue = omittedUnion.a;
 	//=> Error: `a` is not a property of `{discriminant: 'A' | 'B'}`
 }
 ```

@@ -35,7 +35,7 @@ if (pickedUnion.discriminant === 'A') {
 	// doesn't distribute over unions.
 
 	// @ts-expect-error
-	pickedUnion.foo.bar;
+	const barValue = pickedUnion.foo.bar;
 	//=> Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
 }
 ```
