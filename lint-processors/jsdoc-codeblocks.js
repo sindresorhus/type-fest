@@ -124,6 +124,14 @@ export const jsdocCodeblocksProcessor = {
 					];
 				}
 
+				for (const {fix} of (adjustedMessage.suggestions ?? [])) {
+					const cumulativeIndentSize = cumulativeIndentSizePerLine[message.line - 1] ?? 0;
+					fix.range = [
+						fix.range[0] + characterOffset + cumulativeIndentSize,
+						fix.range[1] + characterOffset + cumulativeIndentSize,
+					];
+				}
+
 				normalizedMessages.push(adjustedMessage);
 			}
 		}
