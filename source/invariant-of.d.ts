@@ -16,7 +16,9 @@ class Animal {
 }
 
 class Cat extends Animal {
-	meow() {}
+	meow() {
+		// do something
+	}
 }
 
 let animalArray: Animal[] = [new Animal('jerry')];

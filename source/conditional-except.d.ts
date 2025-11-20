@@ -13,7 +13,9 @@ import type {Primitive, ConditionalExcept} from 'type-fest';
 class Awesome {
 	constructor(public name: string, public successes: number, public failures: bigint) {}
 
-	run() {}
+	run() {
+		// do something
+	}
 }
 
 type ExceptPrimitivesFromAwesome = ConditionalExcept<Awesome, Primitive>;

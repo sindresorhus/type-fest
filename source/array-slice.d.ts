@@ -44,14 +44,14 @@ function arraySlice<
 
 const slice = arraySlice([1, '2', {a: 3}, [4, 5]], 0, -1);
 
-typeof slice;
+type Slice = typeof slice;
 //=> [1, '2', { readonly a: 3; }]
 
-slice[2].a;
+const value = slice[2].a;
 //=> 3
 
 // @ts-expect-error -- TS2493: Tuple type '[1, "2", {readonly a: 3}]' of length '3' has no element at index '3'.
-slice[3];
+const invalidIndexAccess = slice[3];
 ```
 
 @category Array

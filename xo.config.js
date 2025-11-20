@@ -97,15 +97,32 @@ const xoConfig = [
 
 	},
 	{
-		files: 'source/**/*.d.ts/*.ts', // Virtual files created by the `jsdoc-codeblocks` processor
+		// Virtual files created by the `jsdoc-codeblocks` processor
+		files: 'source/**/*.d.ts/*.ts',
 		...tseslint.configs.disableTypeChecked,
 	},
 	{
-		files: 'source/**/*.d.ts/*.ts', // Virtual files created by the `jsdoc-codeblocks` processor
+		// Virtual files created by the `jsdoc-codeblocks` processor
+		files: 'source/**/*.d.ts/*.ts',
 		rules: {
 			'type-fest/source-files-extension': 'off',
 			'@stylistic/eol-last': 'off',
 			'capitalized-comments': 'off',
+			'unicorn/prefer-structured-clone': 'off',
+		},
+	},
+	{
+		// Virtual files created by the `jsdoc-codeblocks` processor
+		files: ['source/is-float.d.ts/*.ts', 'source/is-integer.d.ts/*.ts', 'source/numeric.d.ts/*.ts'],
+		rules: {
+			'unicorn/no-zero-fractions': 'off',
+		},
+	},
+	{
+		// Virtual files created by the `jsdoc-codeblocks` processor
+		files: ['source/find-global-type.d.ts/*.ts'],
+		rules: {
+			'@typescript-eslint/consistent-type-definitions': 'off',
 		},
 	},
 	{

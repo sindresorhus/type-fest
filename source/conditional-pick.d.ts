@@ -12,7 +12,9 @@ import type {Primitive, ConditionalPick} from 'type-fest';
 class Awesome {
 	constructor(public name: string, public successes: number, public failures: bigint) {}
 
-	run() {}
+	run() {
+		// do something
+	}
 }
 
 type PickPrimitivesFromAwesome = ConditionalPick<Awesome, Primitive>;

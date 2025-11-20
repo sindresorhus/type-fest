@@ -55,13 +55,13 @@ Returns a boolean for whether the given type is primitive value or primitive typ
 
 @example
 ```
-IsPrimitive<'string'>;
+type A = IsPrimitive<'string'>;
 //=> true
 
-IsPrimitive<string>;
+type B = IsPrimitive<string>;
 //=> true
 
-IsPrimitive<Object>;
+type C = IsPrimitive<Object>;
 //=> false
 ```
 */
@@ -72,10 +72,10 @@ Returns a boolean for whether A is false.
 
 @example
 ```
-Not<true>;
+type A = Not<true>;
 //=> false
 
-Not<false>;
+type B = Not<false>;
 //=> true
 ```
 */

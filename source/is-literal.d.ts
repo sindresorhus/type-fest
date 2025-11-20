@@ -11,13 +11,13 @@ Returns a boolean for whether the given type `T` is the specified `LiteralType`.
 
 @example
 ```
-LiteralCheck<1, number>;
+type A = LiteralCheck<1, number>;
 //=> true
 
-LiteralCheck<number, number>;
+type B = LiteralCheck<number, number>;
 //=> false
 
-LiteralCheck<1, string>;
+type C = LiteralCheck<1, string>;
 //=> false
 ```
 */
@@ -38,13 +38,13 @@ Returns a boolean for whether the given type `T` is one of the specified literal
 
 @example
 ```
-LiteralChecks<1, Numeric>;
+type A = LiteralChecks<1, Numeric>;
 //=> true
 
-LiteralChecks<1n, Numeric>;
+type B = LiteralChecks<1n, Numeric>;
 //=> true
 
-LiteralChecks<bigint, Numeric>;
+type C = LiteralChecks<bigint, Numeric>;
 //=> false
 ```
 */

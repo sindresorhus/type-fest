@@ -48,7 +48,9 @@ declare global {
 	class Foo {}
 
 	// interface + constructor style works
-	interface Bar {}
+	interface Bar {
+		bar: string;
+	}
 	var Bar: new () => Bar; // Not let or const
 }
 

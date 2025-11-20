@@ -73,15 +73,15 @@ type OmittedUnion = DistributedOmit<Union, 'foo' | 'bar'>;
 declare const omittedUnion: OmittedUnion;
 
 if (omittedUnion.discriminant === 'A') {
-	omittedUnion.a;
+	const aValue = omittedUnion.a;
 	//=> OK
 
 	// @ts-expect-error
-	omittedUnion.foo;
+	const fooValue = omittedUnion.foo;
 	//=> Error: `foo` is not a property of `{discriminant: 'A'; a: string}`
 
 	// @ts-expect-error
-	omittedUnion.bar;
+	const barValue = omittedUnion.bar;
 	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
 }
 ```

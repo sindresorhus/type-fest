@@ -38,10 +38,10 @@ Note:
 
 @example
 ```
-ArrayMax<[1, 2, 5, 3]>;
+type A = TupleMax<[1, 2, 5, 3]>;
 //=> 5
 
-ArrayMax<[1, 2, 5, 3, 99, -1]>;
+type B = TupleMax<[1, 2, 5, 3, 99, -1]>;
 //=> 99
 ```
 */
@@ -61,10 +61,10 @@ Note:
 
 @example
 ```
-ArrayMin<[1, 2, 5, 3]>;
+type A = TupleMin<[1, 2, 5, 3]>;
 //=> 1
 
-ArrayMin<[1, 2, 5, 3, -5]>;
+type B = TupleMin<[1, 2, 5, 3, -5]>;
 //=> -5
 ```
 */
