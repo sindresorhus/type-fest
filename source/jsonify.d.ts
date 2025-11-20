@@ -51,10 +51,10 @@ An interface cannot be structurally compared to `JsonValue` because an interface
 ```
 import type {Jsonify, JsonValue} from 'type-fest';
 
-type Geometry = {
+interface Geometry {
 	type: 'Point' | 'Polygon';
 	coordinates: [number, number];
-};
+}
 
 const point: Geometry = {
 	type: 'Point',
