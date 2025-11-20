@@ -2,7 +2,7 @@
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
 		"noEmit": true,
-		"allowJs": false,
+		"allowJs": true,
 		"noUnusedLocals": false, // Allow unused variables in test-d/*.ts files
 		"types": [], // Ensures no @types/ are unintentionally included
 		"exactOptionalPropertyTypes": true,
