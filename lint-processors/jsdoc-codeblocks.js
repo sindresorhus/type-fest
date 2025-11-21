@@ -6,8 +6,40 @@ import tsParser from '@typescript-eslint/parser';
 */
 
 const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[ \t]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gm;
-/** @type {Map<string, {lineOffset: number, columnOffset: number, characterOffset: number, cumulativeIndentSizePerLine: number[]}[]>} */
+/** @type {Map<string, {lineOffset: number, characterOffset: number, indent: string, unindentedText: string}[]>} */
 const jsdocDataPerFile = new Map();
+
+/**
+@param {string} text
+@param {number} index
+@param {string} indent
+@returns {number}
+*/
+function indentsUptoIndex(text, index, indent) {
+	if (index <= 0) {
+		return 0;
+	}
+
+	let i = 0;
+	let indents = 0;
+
+	for (const line of text.split('\n')) {
+		if (i > index) {
+			break;
+		}
+
+		if (line === '') {
+			i += 1; // +1 for the newline
+			continue;
+		}
+
+		i += line.length + 1; // +1 for the newline
+		i -= indent.length; // Because `text` is unindented but `index` corresponds to dedented text
+		indents += indent.length;
+	}
+
+	return indents;
+}
 
 export const jsdocCodeblocksProcessor = {
 	supportsAutofix: true,
@@ -47,22 +79,6 @@ export const jsdocCodeblocksProcessor = {
 					continue;
 				}
 
-				const indentSizePerLine = codeLines.map(line => line === '' ? 0 : indentSize);
-				/** @type number[] */
-				const cumulativeIndentSizePerLine = [];
-				for (const size of indentSizePerLine) {
-					const last = cumulativeIndentSizePerLine.length > 0 ? cumulativeIndentSizePerLine.at(-1) ?? 0 : 0;
-					cumulativeIndentSizePerLine.push(last + size);
-				}
-
-				const linesBeforeMatch = comment.value.slice(0, match.index).split('\n').length - 1;
-				allCodeblocksData.push({
-					lineOffset: comment.loc.start.line + linesBeforeMatch,
-					columnOffset: indentSize,
-					characterOffset: comment.range[0] + match.index + openingFence.length + 2,
-					cumulativeIndentSizePerLine,
-				});
-
 				const dedentedCode = codeLines
 					.map(line => line.slice(indentSize))
 					.join('\n');
@@ -70,6 +86,14 @@ export const jsdocCodeblocksProcessor = {
 				files.push({
 					text: dedentedCode,
 					filename: `${files.length}.ts`, // Final filename example: `/path/to/type-fest/source/and.d.ts/1_1.ts`
+				});
+
+				const linesBeforeMatch = comment.value.slice(0, match.index).split('\n').length - 1;
+				allCodeblocksData.push({
+					lineOffset: comment.loc.start.line + linesBeforeMatch,
+					characterOffset: comment.range[0] + match.index + openingFence.length + 2,
+					indent,
+					unindentedText: code,
 				});
 			}
 		}
@@ -97,19 +121,19 @@ export const jsdocCodeblocksProcessor = {
 				continue;
 			}
 
-			const {lineOffset, columnOffset, characterOffset, cumulativeIndentSizePerLine} = codeblockData;
+			const {lineOffset, characterOffset, indent, unindentedText} = codeblockData;
 
 			for (const message of codeblockMessages) {
 				const adjustedMessage = {...message};
 
 				adjustedMessage.line += lineOffset;
-				adjustedMessage.column += columnOffset;
+				adjustedMessage.column += indent.length;
 
 				if (typeof adjustedMessage.endColumn === 'number' && adjustedMessage.endColumn > 1) {
 					// An `endColumn` of `1` indicates the error actually ended on the previous line since it's exclusive.
-					// So, adding `columnOffset` in this case would incorrectly move the error marker into the indentation.
-					// Therefore, the offset is only added when `endColumn` is greater than `1`.
-					adjustedMessage.endColumn += columnOffset;
+					// So, adding `indent.length` in this case would incorrectly move the error marker into the indentation.
+					// Therefore, the indentation length is only added when `endColumn` is greater than `1`.
+					adjustedMessage.endColumn += indent.length;
 				}
 
 				if (typeof adjustedMessage.endLine === 'number') {
@@ -117,18 +141,26 @@ export const jsdocCodeblocksProcessor = {
 				}
 
 				if (adjustedMessage.fix) {
-					const cumulativeIndentSize = cumulativeIndentSizePerLine[message.line - 1] ?? 0;
+					adjustedMessage.fix.text = adjustedMessage.fix.text.split('\n').join(`\n${indent}`);
+
+					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, adjustedMessage.fix.range[0], indent);
+					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, adjustedMessage.fix.range[1] - 1, indent); // -1 because range end is exclusive
+
 					adjustedMessage.fix.range = [
-						adjustedMessage.fix.range[0] + characterOffset + cumulativeIndentSize,
-						adjustedMessage.fix.range[1] + characterOffset + cumulativeIndentSize,
+						adjustedMessage.fix.range[0] + characterOffset + indentsBeforeFixStart,
+						adjustedMessage.fix.range[1] + characterOffset + indentsBeforeFixEnd,
 					];
 				}
 
 				for (const {fix} of (adjustedMessage.suggestions ?? [])) {
-					const cumulativeIndentSize = cumulativeIndentSizePerLine[message.line - 1] ?? 0;
+					fix.text = fix.text.split('\n').join(`\n${indent}`);
+
+					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, fix.range[0], indent);
+					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, fix.range[1] - 1, indent); // -1 because range end is exclusive
+
 					fix.range = [
-						fix.range[0] + characterOffset + cumulativeIndentSize,
-						fix.range[1] + characterOffset + cumulativeIndentSize,
+						fix.range[0] + characterOffset + indentsBeforeFixStart,
+						fix.range[1] + characterOffset + indentsBeforeFixEnd,
 					];
 				}
 
