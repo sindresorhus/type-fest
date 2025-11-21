@@ -75,7 +75,7 @@ export const jsdocCodeblocksProcessor = {
 				const indentSize = indent.length;
 
 				// Skip comments that are not consistently indented
-				if (!codeLines.every(line => line === '*' || line === '' || line.startsWith(indent))) {
+				if (!codeLines.every(line => line === '' || line.startsWith(indent))) {
 					continue;
 				}
 
