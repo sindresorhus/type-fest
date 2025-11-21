@@ -21,7 +21,7 @@ type RequestBody = {
 };
 
 function verifyRequestBody(body: unknown): body is RequestBody {
-	const deliverTo = (body as any).deliverTo;
+	const {deliverTo} = (body as any);
 	return typeof body === 'object' && body !== null && verifyDestination(deliverTo);
 }
 ```
@@ -41,7 +41,7 @@ const erroringType = new Set(['a', 'b', 'c']);
 type ErroringType = typeof erroringType[number];
 //=> Type 'Set<string>' has no matching index signature for type 'number'. ts(2537)
 
-const numberBool: { [n: number]: boolean } = { 1: true };
+const numberBool: {[n: number]: boolean} = {1: true};
 
 type NumberBool = typeof numberBool[number];
 //=> boolean

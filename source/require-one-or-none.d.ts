@@ -18,17 +18,17 @@ type Responder = RequireOneOrNone<{
 }, 'text' | 'json'>;
 
 const responder1: Responder = {
-	secure: true
+	secure: true,
 };
 
 const responder2: Responder = {
 	text: () => '{"message": "hi"}',
-	secure: true
+	secure: true,
 };
 
 const responder3: Responder = {
 	json: () => '{"message": "ok"}',
-	secure: true
+	secure: true,
 };
 ```
 

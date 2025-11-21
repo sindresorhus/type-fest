@@ -10,17 +10,17 @@ This is useful when writing utility types or schema validators that need to diff
 ```
 import type {IsReadonlyKeyOf} from 'type-fest';
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
 
 	readonly id: number;
-}
+};
 
-interface Admin {
+type Admin = {
 	name: string;
 	id: string;
-}
+};
 
 type T1 = IsReadonlyKeyOf<User, 'id'>;
 //=> true

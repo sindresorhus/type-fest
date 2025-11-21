@@ -10,11 +10,11 @@ import type {Stringified} from 'type-fest';
 type Car = {
 	model: string;
 	speed: number;
-}
+};
 
 const carForm: Stringified<Car> = {
 	model: 'Foo',
-	speed: '101'
+	speed: '101',
 };
 ```
 

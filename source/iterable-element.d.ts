@@ -16,7 +16,7 @@ function * iAmGenerator() {
 	yield 2;
 }
 
-type MeNumber = IterableElement<ReturnType<typeof iAmGenerator>>
+type MeNumber = IterableElement<ReturnType<typeof iAmGenerator>>;
 ```
 
 And here is an example with an async generator:
@@ -30,7 +30,7 @@ async function * iAmGeneratorAsync() {
 	yield true;
 }
 
-type MeStringOrBoolean = IterableElement<ReturnType<typeof iAmGeneratorAsync>>
+type MeStringOrBoolean = IterableElement<ReturnType<typeof iAmGeneratorAsync>>;
 ```
 
 Many types in JavaScript/TypeScript are iterables. This type works on all types that implement those interfaces.
@@ -41,7 +41,7 @@ An example with an array of strings:
 ```
 import type {IterableElement} from 'type-fest';
 
-type MeString = IterableElement<string[]>
+type MeString = IterableElement<string[]>;
 ```
 
 @example

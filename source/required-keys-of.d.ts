@@ -14,11 +14,11 @@ declare function createValidation<
 	Key extends RequiredKeysOf<Entity> = RequiredKeysOf<Entity>,
 >(field: Key, validator: (value: Entity[Key]) => boolean): (entity: Entity) => boolean;
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
 	luckyNumber?: number;
-}
+};
 
 const validator1 = createValidation<User>('name', value => value.length < 25);
 const validator2 = createValidation<User>('surname', value => value.length < 25);

@@ -12,22 +12,26 @@ Use-case:
 import type {InvariantOf} from 'type-fest';
 
 class Animal {
-	constructor(public name: string){}
+	constructor(public name: string) {}
 }
 
 class Cat extends Animal {
-	meow() {}
+	meow() {
+		// do something
+	}
 }
 
 let animalArray: Animal[] = [new Animal('jerry')];
-let catArray: Cat[] = [new Cat('tom')];
+const catArray: Cat[] = [new Cat('tom')];
 
 animalArray = catArray; // Okay if covariant
 animalArray.push(new Animal('another animal')); // Pushed an animal into catArray
-catArray.forEach(c => c.meow()); // Allowed but, error at runtime
+for (const c of catArray) {
+	c.meow();
+} // Allowed but, error at runtime
 
-let invariantAnimalArray: InvariantOf<Animal>[] = [new Animal('jerry')] as InvariantOf<Animal>[];
-let invariantCatArray: InvariantOf<Cat>[] = [new Cat('tom')] as InvariantOf<Cat>[];
+let invariantAnimalArray: Array<InvariantOf<Animal>> = [new Animal('jerry')] as Array<InvariantOf<Animal>>;
+const invariantCatArray: Array<InvariantOf<Cat>> = [new Cat('tom')] as Array<InvariantOf<Cat>>;
 
 // @ts-expect-error
 invariantAnimalArray = invariantCatArray; // Error: Type 'InvariantOf<Cat>[]' is not assignable to type 'InvariantOf<Animal>[]'.
@@ -39,24 +43,24 @@ import type {InvariantOf} from 'type-fest';
 
 // In covariance (default)
 
-interface FooBar {
+type FooBar = {
 	foo: number;
-	bar: string
-}
+	bar: string;
+};
 
-interface FooBarBaz extends FooBar {
-	baz: boolean
-}
+type FooBarBaz = {
+	baz: boolean;
+} & FooBar;
 
-declare const fooBar: FooBar
-declare const fooBarBaz: FooBarBaz
+declare const fooBar: FooBar;
+declare const fooBarBaz: FooBarBaz;
 
 function keyOfFooBar(fooBar: FooBar) {
-	return Object.keys(fooBar) as (keyof FooBar)[]
+	return Object.keys(fooBar) as Array<keyof FooBar>;
 }
 
-keyOfFooBar(fooBar) //=> (keyof FooBar)[]
-keyOfFooBar(fooBarBaz) //=> (keyof FooBar)[] but, (keyof FooBarBaz)[] at runtime
+keyOfFooBar(fooBar); //=> (keyof FooBar)[]
+keyOfFooBar(fooBarBaz); //=> (keyof FooBar)[] but, (keyof FooBarBaz)[] at runtime
 
 // In invariance
 
@@ -65,7 +69,7 @@ export function invariantOf<Type>(value: Type): InvariantOf<Type> {
 }
 
 function keyOfInvariantFooBar(fooBar: InvariantOf<FooBar>) {
-	return Object.keys(fooBar) as (keyof FooBar)[]
+	return Object.keys(fooBar) as Array<keyof FooBar>;
 }
 
 keyOfInvariantFooBar(invariantOf(fooBar)); // (keyof FooBar)[]

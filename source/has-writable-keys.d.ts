@@ -12,8 +12,8 @@ import type {HasWritableKeys, WritableKeysOf} from 'type-fest';
 type UpdateService<Entity extends object> = {
 	removeField: HasWritableKeys<Entity> extends true
 		? (field: WritableKeysOf<Entity>) => Promise<void>
-		: never
-}
+		: never;
+};
 ```
 
 @category Utilities

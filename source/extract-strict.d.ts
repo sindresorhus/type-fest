@@ -6,7 +6,7 @@ For example, `ExtractStrict<string | number | boolean, number | bigint>` will er
 @example
 ```
 // Valid Examples
-import type {ExtractStrict} from "type-fest";
+import type {ExtractStrict} from 'type-fest';
 
 type Example1 = ExtractStrict<{status: 'success'; data: string[]} | {status: 'error'; error: string}, {status: 'success'}>;
 //=> {status: 'success'; data: string[]}
@@ -21,7 +21,7 @@ type Example3 = ExtractStrict<{x: number; y: number} | [number, number], unknown
 @example
 ```
 // Invalid Examples
-import type {ExtractStrict} from "type-fest";
+import type {ExtractStrict} from 'type-fest';
 
 // `'xxl'` cannot extract anything from `'xs' | 's' | 'm' | 'l' | 'xl'`
 // @ts-expect-error

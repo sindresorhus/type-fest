@@ -15,7 +15,7 @@ type Foo = {
 	a: number;
 	readonly b: string;
 	c: boolean;
-}
+};
 
 type SomeReadonly = SetReadonly<Foo, 'b' | 'c'>;
 // type SomeReadonly = {

@@ -9,13 +9,13 @@ Returns the absolute value of a given value.
 
 @example
 ```
-NumberAbsolute<-1>;
+type A = NumberAbsolute<-1>;
 //=> 1
 
-NumberAbsolute<1>;
+type B = NumberAbsolute<1>;
 //=> 1
 
-NumberAbsolute<NegativeInfinity>
+type C = NumberAbsolute<NegativeInfinity>;
 //=> PositiveInfinity
 ```
 */
@@ -126,16 +126,16 @@ Returns the number with reversed sign.
 
 @example
 ```
-ReverseSign<-1>;
+type A = ReverseSign<-1>;
 //=> 1
 
-ReverseSign<1>;
+type B = ReverseSign<1>;
 //=> -1
 
-ReverseSign<NegativeInfinity>
+type C = ReverseSign<NegativeInfinity>;
 //=> PositiveInfinity
 
-ReverseSign<PositiveInfinity>
+type D = ReverseSign<PositiveInfinity>;
 //=> NegativeInfinity
 ```
 */

@@ -51,9 +51,7 @@ declare function split<S extends string, D extends string>(string: S, separator:
 
 type Item = 'foo' | 'bar' | 'baz' | 'waldo';
 const items = 'foo,bar,baz,waldo';
-let array: Item[];
-
-array = split(items, ',');
+const array: Item[] = split(items, ',');
 ```
 
 @see {@link SplitOptions}

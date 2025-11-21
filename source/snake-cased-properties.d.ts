@@ -15,10 +15,10 @@ This can be useful when, for example, converting some API types from a different
 ```
 import type {SnakeCasedProperties} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
 const result: SnakeCasedProperties<User> = {
 	user_id: 1,

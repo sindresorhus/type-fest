@@ -15,15 +15,15 @@ This can be useful when, for example, converting some API types from a different
 ```
 import type {SnakeCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	user_info: {
@@ -42,7 +42,7 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 
-const splitOnNumbers: SnakeCasedPropertiesDeep<{line1: { line2: [{ line3: string }] }}, {splitOnNumbers: true}> = {
+const splitOnNumbers: SnakeCasedPropertiesDeep<{line1: {line2: [{line3: string}]}}, {splitOnNumbers: true}> = {
 	line_1: {
 		line_2: [
 			{

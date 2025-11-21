@@ -84,14 +84,14 @@ import type {Tagged, GetTagMetadata} from 'type-fest';
 type JsonOf<T> = Tagged<string, 'JSON', T>;
 
 function stringify<T>(it: T) {
-  return JSON.stringify(it) as JsonOf<T>;
+	return JSON.stringify(it) as JsonOf<T>;
 }
 
 function parse<T extends JsonOf<unknown>>(it: T) {
-  return JSON.parse(it) as GetTagMetadata<T, 'JSON'>;
+	return JSON.parse(it) as GetTagMetadata<T, 'JSON'>;
 }
 
-const x = stringify({ hello: 'world' });
+const x = stringify({hello: 'world'});
 const parsed = parse(x); // The type of `parsed` is { hello: string }
 ```
 
@@ -115,7 +115,7 @@ type AccountType = Tagged<'SAVINGS' | 'CHECKING', 'AccountType'>;
 
 const moneyByAccountType: Record<UnwrapTagged<AccountType>, number> = {
 	SAVINGS: 99,
-	CHECKING: 0.1
+	CHECKING: 0.1,
 };
 
 // Without UnwrapTagged, the following expression would throw a type error.
@@ -174,7 +174,7 @@ type NewThingOne = Opaque<string, 'ThingOne'>;
 type NewThingTwo = Opaque<string, 'ThingTwo'>;
 
 // Now they're completely separate types, so the following will fail to compile.
-function createNewThingOne (): NewThingOne {
+function createNewThingOne(): NewThingOne {
 	// As you can see, casting from a string is still allowed. However, you may not cast NewThingOne to NewThingTwo, and vice versa.
 	return 'new thing one' as NewThingOne;
 }
@@ -233,7 +233,7 @@ type AccountType = Opaque<'SAVINGS' | 'CHECKING', 'AccountType'>;
 
 const moneyByAccountType: Record<UnwrapOpaque<AccountType>, number> = {
 	SAVINGS: 99,
-	CHECKING: 0.1
+	CHECKING: 0.1,
 };
 
 // Without UnwrapOpaque, the following expression would throw a type error.

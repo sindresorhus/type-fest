@@ -17,7 +17,7 @@ Remove leading and trailing spaces from a string.
 ```
 import type {Trim} from 'type-fest';
 
-type Example = Trim<' foo '>
+type Example = Trim<' foo '>;
 //=> 'foo'
 ```
 

@@ -17,7 +17,8 @@ type Value = AsyncReturnType<typeof asyncFunction>;
 
 declare function doSomething(value: Value): void;
 
-asyncFunction().then(value => doSomething(value));
+const value = await asyncFunction();
+doSomething(value);
 ```
 
 @category Async

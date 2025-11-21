@@ -58,14 +58,14 @@ type CamelCasedProperties<T> = {
 	[K in keyof T as CamelCase<K>]: T[K]
 };
 
-interface RawOptions {
+type RawOptions = {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;
 	BAR: string;
 	QUZ_QUX: number;
 	'OTHER-FIELD': boolean;
-}
+};
 
 const dbResult: CamelCasedProperties<RawOptions> = {
 	dryRun: true,
@@ -73,7 +73,7 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 	foo: 123,
 	bar: 'foo',
 	quzQux: 6,
-	otherField: false
+	otherField: false,
 };
 ```
 

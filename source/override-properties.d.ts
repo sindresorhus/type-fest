@@ -10,19 +10,19 @@ This is useful when you want to override existing properties with a different ty
 import type {OverrideProperties} from 'type-fest';
 
 type Foo = {
-	a: string
-	b: string
-}
+	a: string;
+	b: string;
+};
 
-type Bar = OverrideProperties<Foo, {b: number}>
+type Bar = OverrideProperties<Foo, {b: number}>;
 //=> {a: string, b: number}
 
 // @ts-expect-error
-type Baz = OverrideProperties<Foo, {c: number}>
+type Baz = OverrideProperties<Foo, {c: number}>;
 // Error, type '{ c: number; }' does not satisfy the constraint '{ c: never; }'
 
 // @ts-expect-error
-type Fizz = OverrideProperties<Foo, {b: number; c: number}>
+type Fizz = OverrideProperties<Foo, {b: number; c: number}>;
 // Error, type '{ b: number; c: number; }' does not satisfy the constraint '{ b: number; c: never; }'
 ```
 
