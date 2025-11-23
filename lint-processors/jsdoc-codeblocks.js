@@ -91,7 +91,7 @@ export const jsdocCodeblocksProcessor = {
 				const linesBeforeMatch = comment.value.slice(0, match.index).split('\n').length - 1;
 				allCodeblocksData.push({
 					lineOffset: comment.loc.start.line + linesBeforeMatch,
-					characterOffset: comment.range[0] + match.index + openingFence.length + 2,
+					characterOffset: comment.range[0] + match.index + openingFence.length + 2, // +2 because `comment.value` doesn't include the starting `/*`
 					indent,
 					unindentedText: code,
 				});
