@@ -1,4 +1,4 @@
-import {createRuleTester, dedenter, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
+import {createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
 const ruleTester = createRuleTester();
@@ -27,30 +27,7 @@ import type {RemovePrefix} from 'type-fest';
 type A = RemovePrefix<'on-change', string, {strict: "yes"}>;
 `;
 
-/**
-@typedef {{
-	line: number;
-	textBeforeStart: string;
-} & ({ target: string } | { endLine: number; textBeforeEnd: string })} ErrorAtProps
-
-@param {ErrorAtProps} props
-*/
-const errorAt = props => {
-	const {line, textBeforeStart} = props;
-
-	const column = textBeforeStart.length + 1;
-	const endColumn = 'textBeforeEnd' in props ? props.textBeforeEnd.length + 1 : column + props.target.length;
-
-	const endLine = 'endLine' in props ? props.endLine : line;
-
-	return {
-		messageId: 'invalidCodeblock',
-		line, // 1-based, inclusive
-		column, // 1-based, inclusive
-		endLine, // 1-based, inclusive
-		endColumn, // 1-based, exclusive
-	};
-};
+const errorAt = props => errorAt_({...props, messageId: 'invalidCodeblock'});
 
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
