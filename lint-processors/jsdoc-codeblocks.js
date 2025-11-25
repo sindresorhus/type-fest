@@ -16,10 +16,6 @@ const jsdocDataPerFile = new Map();
 @returns {number}
 */
 function indentsUptoIndex(text, index, indent) {
-	if (index <= 0) {
-		return 0;
-	}
-
 	let i = 0;
 	let indents = 0;
 
