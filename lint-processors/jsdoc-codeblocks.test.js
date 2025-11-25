@@ -598,22 +598,22 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 	const eslint = new ESLint({cwd: root});
 	const eslintFixed = new ESLint({cwd: root, fix: true});
 
-	for (const testCase of invalid) {
-		test(testCase.name, async t => {
-			const fileName = `test-${testCase.name.replaceAll(/\s+/g, '-')}.d.ts`;
+	for (const {name, code, output, errors} of invalid) {
+		test(name, async t => {
+			const fileName = `test-${name.replaceAll(/\s+/g, '-')}.d.ts`;
 			const filePath = path.join(root, fileName);
 
-			await fs.writeFile(filePath, testCase.code);
+			await fs.writeFile(filePath, code);
 			t.after(async () => {
 				await fs.unlink(filePath);
 			});
 
 			const results = await eslint.lintFiles([fileName]);
 
-			t.assert.strictEqual(results[0].messages.length, testCase.errors.length);
+			t.assert.strictEqual(results[0].messages.length, errors.length);
 
 			// Manual loop because `assert.partialDeepStrictEqual` isn't available in Node 20
-			for (const [index, expected] of testCase.errors.entries()) {
+			for (const [index, expected] of errors.entries()) {
 				const actual = results[0].messages[index];
 				for (const key of Object.keys(expected)) {
 					t.assert.strictEqual(actual[key], expected[key]);
@@ -622,7 +622,7 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 
 			const resultsFixed = await eslintFixed.lintFiles([fileName]);
 
-			t.assert.strictEqual(resultsFixed[0].output, testCase.output);
+			t.assert.strictEqual(resultsFixed[0].output, output);
 		});
 	}
 });
