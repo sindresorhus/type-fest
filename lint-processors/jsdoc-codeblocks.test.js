@@ -592,6 +592,508 @@ const invalid = [
 			}),
 		],
 	},
+
+	{
+		name: 'Error and fix starting at the first character of the codeblock',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			var foo = 1;
+			foo = 2;
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				var foo = 1;
+				foo = 2;
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			let foo = 1;
+			foo = 2;
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				let foo = 1;
+				foo = 2;
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		errors: [
+			errorAt({
+				ruleId: 'no-var',
+				line: 3,
+				textBeforeStart: '',
+				target: 'var foo = 1;',
+			}),
+			errorAt({
+				ruleId: 'no-var',
+				line: 12,
+				textBeforeStart: '\t',
+				target: 'var foo = 1;',
+			}),
+		],
+	},
+
+	{
+		name: 'Error and fix in the middle of the codeblock',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			const foo: string[] = [];
+
+			const bar: Array<number> = [];
+
+			const baz: boolean[] = [];
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				const foo: string[] = [];
+
+				const bar: Array<number> = [];
+
+				const baz: boolean[] = [];
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			const foo: string[] = [];
+
+			const bar: number[] = [];
+
+			const baz: boolean[] = [];
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				const foo: string[] = [];
+
+				const bar: number[] = [];
+
+				const baz: boolean[] = [];
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 5,
+				textBeforeStart: 'const bar: ',
+				target: 'Array<number>',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 17,
+				textBeforeStart: '\tconst bar: ',
+				target: 'Array<number>',
+			}),
+		],
+	},
+
+	{
+		name: 'Error and fix ending at the last character of the codeblock',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			type Foo = {a: string}
+			type Bar = {[K: string]: Foo}
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				type Foo = {a: string}
+				type Bar = {[K: string]: Foo}
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			type Foo = {a: string}
+			type Bar = Record<string, Foo>
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				type Foo = {a: string}
+				type Bar = Record<string, Foo>
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-indexed-object-style',
+				line: 4,
+				textBeforeStart: 'type Bar = ',
+				target: '{[K: string]: Foo}',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-indexed-object-style',
+				line: 13,
+				textBeforeStart: '\ttype Bar = ',
+				target: '{[K: string]: Foo}',
+			}),
+		],
+	},
+
+	{
+		name: 'Error spanning multiple lines',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			import type {PickIndexSignature} from 'type-fest';
+
+			type Foo = {
+				[key: string]: unknown;
+			};
+
+			type Test = PickIndexSignature<Foo>;
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				import type {PickIndexSignature} from 'type-fest';
+
+				type Foo = {
+					[key: string]: unknown;
+				};
+
+				type Test = PickIndexSignature<Foo>;
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			import type {PickIndexSignature} from 'type-fest';
+
+			type Foo = Record<string, unknown>;
+
+			type Test = PickIndexSignature<Foo>;
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				import type {PickIndexSignature} from 'type-fest';
+
+				type Foo = Record<string, unknown>;
+
+				type Test = PickIndexSignature<Foo>;
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-indexed-object-style',
+				line: 5,
+				textBeforeStart: 'type Foo = ',
+				endLine: 7,
+				textBeforeEnd: '}',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-indexed-object-style',
+				line: 19,
+				textBeforeStart: '\ttype Foo = ',
+				endLine: 21,
+				textBeforeEnd: '\t}',
+			}),
+		],
+	},
+
+	{
+		name: 'Multiline fix',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			type Test = {(
+				foo: string,
+				bar: number
+			): void};
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				type Test = {(
+					foo: string,
+					bar: number
+				): void};
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			type Test = (
+				foo: string,
+				bar: number
+			) => void;
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				type Test = (
+					foo: string,
+					bar: number
+				) => void;
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/prefer-function-type',
+				line: 3,
+				textBeforeStart: 'type Test = {',
+				endLine: 6,
+				textBeforeEnd: '): void',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/prefer-function-type',
+				line: 14,
+				textBeforeStart: '\ttype Test = {',
+				endLine: 17,
+				textBeforeEnd: '\t): void',
+			}),
+		],
+	},
+
+	{
+		name: 'Multiple errors',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			const foo: number = 1
+
+			const bar: Map<string, number> = new Map()
+
+			interface Baz {
+				(x: string): unknown
+			}
+			\`\`\`
+			*/
+			export type T0 = string;
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			const foo = 1
+
+			const bar = new Map<string, number>()
+
+			type Baz = (x: string) => unknown
+			\`\`\`
+			*/
+			export type T0 = string;
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/no-inferrable-types',
+				line: 3,
+				textBeforeStart: 'const ',
+				target: 'foo: number = 1',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-generic-constructors',
+				line: 5,
+				textBeforeStart: 'const ',
+				target: 'bar: Map<string, number> = new Map()',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-type-definitions',
+				line: 7,
+				textBeforeStart: 'interface ',
+				target: 'Baz',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/prefer-function-type',
+				line: 8,
+				textBeforeStart: '\t',
+				target: '(x: string): unknown',
+			}),
+		],
+	},
+
+	{
+		name: 'Overlapping errors',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			const foo: Array<Array<string>> = [];
+			\`\`\`
+			*/
+			export type T0 = string;
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			const foo: string[][] = [];
+			\`\`\`
+			*/
+			export type T0 = string;
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 3,
+				textBeforeStart: 'const foo: ',
+				target: 'Array<Array<string>>',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 3,
+				textBeforeStart: 'const foo: Array<',
+				target: 'Array<string>',
+			}),
+		],
+	},
+
+	{
+		name: 'Error reporting location different from fix location',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			type Foo = {
+				(): void;
+			};
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				type Foo = {
+					(): void;
+				};
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: dedenter`
+			/**
+			\`\`\`ts
+			type Foo = () => void;
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				type Foo = () => void;
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/prefer-function-type',
+				line: 4,
+				textBeforeStart: '\t',
+				target: '(): void;',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/prefer-function-type',
+				line: 14,
+				textBeforeStart: '\t\t',
+				target: '(): void;',
+			}),
+		],
+	},
+
+	{
+		name: 'Non fixable error',
+		code: dedenter`
+			/**
+			\`\`\`ts
+			type Foo = {};
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				type Foo = {};
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: undefined,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/no-empty-object-type',
+				line: 3,
+				textBeforeStart: 'type Foo = ',
+				target: '{}',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/no-empty-object-type',
+				line: 11,
+				textBeforeStart: '\ttype Foo = ',
+				target: '{}',
+			}),
+		],
+	},
 ];
 
 describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
