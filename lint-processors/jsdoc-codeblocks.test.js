@@ -2,15 +2,97 @@ import {describe, test} from 'node:test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {ESLint} from 'eslint';
-import {dedenter, errorAt} from '../lint-rules/test-utils.js';
+import {dedenter, errorAt, jsdoc, fence, exportType, exportTypeAndOption} from '../lint-rules/test-utils.js';
 
 const root = path.join(import.meta.dirname, 'fixtures');
+
+// Code samples
+const code1 = dedenter`
+  import type {Sum} from 'type-fest';
+
+  type A = Sum<1, 2>;
+  //=> 3
+`;
+
+const code2 = dedenter`
+  import type {LiteralToPrimitiveDeep} from 'type-fest';
+
+  const config = {appName: 'MyApp', version: '1.0.0'} as const;
+
+  declare function updateConfig(newConfig: LiteralToPrimitiveDeep<typeof config>): void;
+
+  updateConfig({appName: 'MyUpdatedApp', version: '2.0.0'});
+`;
 
 try {
 	await fs.access(path.join(root, 'eslint.config.js'));
 } catch {
 	throw new Error('\'eslint.config.js\' is missing in \'lint-processors/fixtures\' directory.');
 }
+
+const valid = [
+	{
+		name: 'No JSDoc',
+		code: exportTypeAndOption(''),
+	},
+	{
+		name: 'JSDoc without code block',
+		code: exportType(jsdoc('No codeblock here')),
+	},
+	{
+		name: 'Valid code block',
+		code: exportTypeAndOption(jsdoc(fence(code1))),
+	},
+	{
+		name: 'With text before and after',
+		code: exportTypeAndOption(jsdoc('Some description.', fence(code1), '@category Test')),
+	},
+	{
+		name: 'With line breaks before and after',
+		code: exportTypeAndOption(
+			jsdoc('Some description.\n', 'Note: Some note.\n', fence(code1, 'ts'), '\n@category Test'),
+		),
+	},
+	{
+		name: 'With @example tag',
+		code: exportTypeAndOption(jsdoc('@example', fence(code1))),
+	},
+	{
+		name: 'With language specifiers',
+		code: dedenter`
+			${exportTypeAndOption(jsdoc(fence(code1, 'ts')))}
+			${exportTypeAndOption(jsdoc(fence(code1, 'typescript')))}
+		`,
+	},
+	{
+		name: 'Multiple code blocks',
+		code: exportTypeAndOption(
+			jsdoc('@example', fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
+		),
+	},
+	{
+		name: 'Multiple exports and multiple properties',
+		code: exportTypeAndOption(jsdoc(fence(code1)), jsdoc(fence(code2))),
+	},
+	{
+		name: 'Indented code blocks',
+		code: exportTypeAndOption(jsdoc(
+			'Note:',
+			dedenter`
+				1. First point
+					\`\`\`ts
+					import type {Subtract} from 'type-fest';
+					type A = Subtract<1, 2>;
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					import type {Sum} from 'type-fest';
+					type A = Sum<1, 2>;
+					\`\`\`
+			`,
+		)),
+	},
+];
 
 const invalid = [
 	{
@@ -1230,31 +1312,35 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 	const eslint = new ESLint({cwd: root});
 	const eslintFixed = new ESLint({cwd: root, fix: true});
 
-	for (const {name, code, output, errors} of invalid) {
-		test(name, async t => {
-			const fileName = `test-${name.replaceAll(/\s+/g, '-')}.d.ts`;
-			const filePath = path.join(root, fileName);
+	const testCases = [
+		...valid.map(testCase => ({...testCase, type: 'valid'})),
+		...invalid.map(testCase => ({...testCase, type: 'invalid'})),
+	];
 
+	for (const {type, name, code, output, errors = []} of testCases) {
+		test(`${type} - ${name}`, async t => {
+			const fileName = `test-${type}-${name.replaceAll(/\s+/g, '-')}.d.ts`;
+			const filePath = path.join(root, fileName);
 			await fs.writeFile(filePath, code);
 			t.after(async () => {
 				await fs.unlink(filePath);
 			});
 
 			const results = await eslint.lintFiles([fileName]);
-
 			t.assert.strictEqual(results[0].messages.length, errors.length);
 
-			// Manual loop because `assert.partialDeepStrictEqual` isn't available in Node 20
-			for (const [index, expected] of errors.entries()) {
-				const actual = results[0].messages[index];
-				const actualSubset = Object.fromEntries(Object.keys(expected).map(key => [key, actual[key]]));
+			if (type === 'invalid') {
+				// Manual loop because `assert.partialDeepStrictEqual` isn't available in Node 20
+				for (const [index, expected] of errors.entries()) {
+					const actual = results[0].messages[index];
+					const actualSubset = Object.fromEntries(Object.keys(expected).map(key => [key, actual[key]]));
 
-				t.assert.deepStrictEqual(actualSubset, expected);
+					t.assert.deepStrictEqual(actualSubset, expected);
+				}
+
+				const resultsFixed = await eslintFixed.lintFiles([fileName]);
+				t.assert.strictEqual(resultsFixed[0].output, output);
 			}
-
-			const resultsFixed = await eslintFixed.lintFiles([fileName]);
-
-			t.assert.strictEqual(resultsFixed[0].output, output);
 		});
 	}
 });
