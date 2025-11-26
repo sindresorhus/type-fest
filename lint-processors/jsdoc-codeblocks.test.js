@@ -615,9 +615,9 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 			// Manual loop because `assert.partialDeepStrictEqual` isn't available in Node 20
 			for (const [index, expected] of errors.entries()) {
 				const actual = results[0].messages[index];
-				for (const key of Object.keys(expected)) {
-					t.assert.strictEqual(actual[key], expected[key]);
-				}
+				const actualSubset = Object.fromEntries(Object.keys(expected).map(key => [key, actual[key]]));
+
+				t.assert.deepStrictEqual(actualSubset, expected);
 			}
 
 			const resultsFixed = await eslintFixed.lintFiles([fileName]);
