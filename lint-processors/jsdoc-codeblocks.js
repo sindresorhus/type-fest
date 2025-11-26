@@ -44,7 +44,7 @@ export const jsdocCodeblocksProcessor = {
 	@param {string} text
 	@param {string} filename
 	@returns {(string | Linter.ProcessorFile)[]}
-    */
+	*/
 	preprocess(text, filename) {
 		const ast = tsParser.parse(text);
 
