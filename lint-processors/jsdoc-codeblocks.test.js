@@ -19,7 +19,7 @@ const invalid = [
 			/**
 			Some description.
 			\`\`\`ts
-			const a: Array<string> = [];
+			const foo: Array<string> = [];
 			\`\`\`
 			@category Test
 			*/
@@ -29,7 +29,7 @@ const invalid = [
 				/**
 				Some description.
 				\`\`\`ts
-				const a: Array<string> = [];
+				const foo: Array<string> = [];
 				\`\`\`
 				@category Test
 				*/
@@ -40,7 +40,7 @@ const invalid = [
 			/**
 			Some description.
 			\`\`\`ts
-			const a: string[] = [];
+			const foo: string[] = [];
 			\`\`\`
 			@category Test
 			*/
@@ -50,7 +50,7 @@ const invalid = [
 				/**
 				Some description.
 				\`\`\`ts
-				const a: string[] = [];
+				const foo: string[] = [];
 				\`\`\`
 				@category Test
 				*/
@@ -61,13 +61,13 @@ const invalid = [
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
 				line: 4,
-				textBeforeStart: 'const a: ',
+				textBeforeStart: 'const foo: ',
 				target: 'Array<string>',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
 				line: 14,
-				textBeforeStart: '\tconst a: ',
+				textBeforeStart: '\tconst foo: ',
 				target: 'Array<string>',
 			}),
 		],
@@ -82,7 +82,7 @@ const invalid = [
 			Note: Some note.
 
 			\`\`\`ts
-			const a: number = 1;
+			const foo: number = 1;
 			\`\`\`
 
 			@category Test
@@ -96,7 +96,7 @@ const invalid = [
 				Note: Some note.
 
 				\`\`\`ts
-				const a: number = 1;
+				const foo: number = 1;
 				\`\`\`
 
 				@category Test
@@ -111,7 +111,7 @@ const invalid = [
 			Note: Some note.
 
 			\`\`\`ts
-			const a = 1;
+			const foo = 1;
 			\`\`\`
 
 			@category Test
@@ -125,7 +125,7 @@ const invalid = [
 				Note: Some note.
 
 				\`\`\`ts
-				const a = 1;
+				const foo = 1;
 				\`\`\`
 
 				@category Test
@@ -138,13 +138,13 @@ const invalid = [
 				ruleId: '@typescript-eslint/no-inferrable-types',
 				line: 7,
 				textBeforeStart: 'const ',
-				target: 'a: number = 1',
+				target: 'foo: number = 1',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/no-inferrable-types',
 				line: 21,
 				textBeforeStart: '\tconst ',
-				target: 'a: number = 1',
+				target: 'foo: number = 1',
 			}),
 		],
 	},
@@ -222,7 +222,7 @@ const invalid = [
 		code: dedenter`
 			/**
 			\`\`\`ts
-			const a: Array<string> = [];
+			const foo: Array<string> = [];
 			\`\`\`
 			*/
 			export type T0 = string;
@@ -230,7 +230,7 @@ const invalid = [
 			export type TOptions = {
 				/**
 				\`\`\`typescript
-				const a: Array<string> = [];
+				const foo: Array<string> = [];
 				\`\`\`
 				*/
 				p0: string;
@@ -239,7 +239,7 @@ const invalid = [
 		output: dedenter`
 			/**
 			\`\`\`ts
-			const a: string[] = [];
+			const foo: string[] = [];
 			\`\`\`
 			*/
 			export type T0 = string;
@@ -247,7 +247,7 @@ const invalid = [
 			export type TOptions = {
 				/**
 				\`\`\`typescript
-				const a: string[] = [];
+				const foo: string[] = [];
 				\`\`\`
 				*/
 				p0: string;
@@ -257,13 +257,13 @@ const invalid = [
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
 				line: 3,
-				textBeforeStart: 'const a: ',
+				textBeforeStart: 'const foo: ',
 				target: 'Array<string>',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
 				line: 11,
-				textBeforeStart: '\tconst a: ',
+				textBeforeStart: '\tconst foo: ',
 				target: 'Array<string>',
 			}),
 		],
@@ -275,14 +275,14 @@ const invalid = [
 			/**
 			@example
 			\`\`\`ts
-			const a: Array<string> = [];
+			const foo: Array<string> = [];
 			\`\`\`
 
 			Some text in between.
 
 			@example
 			\`\`\`ts
-			const b: number = 1;
+			const bar: number = 1;
 			\`\`\`
 			*/
 			export type T0 = string;
@@ -291,14 +291,14 @@ const invalid = [
 				/**
 				@example
 				\`\`\`ts
-				const a: Array<string> = [];
+				const foo: Array<string> = [];
 				\`\`\`
 
 				Some text in between.
 
 				@example
 				\`\`\`ts
-				const b: number = 1;
+				const bar: number = 1;
 				\`\`\`
 				*/
 				p0: string;
@@ -308,14 +308,14 @@ const invalid = [
 			/**
 			@example
 			\`\`\`ts
-			const a: string[] = [];
+			const foo: string[] = [];
 			\`\`\`
 
 			Some text in between.
 
 			@example
 			\`\`\`ts
-			const b = 1;
+			const bar = 1;
 			\`\`\`
 			*/
 			export type T0 = string;
@@ -324,14 +324,14 @@ const invalid = [
 				/**
 				@example
 				\`\`\`ts
-				const a: string[] = [];
+				const foo: string[] = [];
 				\`\`\`
 
 				Some text in between.
 
 				@example
 				\`\`\`ts
-				const b = 1;
+				const bar = 1;
 				\`\`\`
 				*/
 				p0: string;
@@ -341,26 +341,26 @@ const invalid = [
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
 				line: 4,
-				textBeforeStart: 'const a: ',
+				textBeforeStart: 'const foo: ',
 				target: 'Array<string>',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/no-inferrable-types',
 				line: 11,
 				textBeforeStart: 'const ',
-				target: 'b: number = 1',
+				target: 'bar: number = 1',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
 				line: 20,
-				textBeforeStart: '\tconst a: ',
+				textBeforeStart: '\tconst foo: ',
 				target: 'Array<string>',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/no-inferrable-types',
 				line: 27,
 				textBeforeStart: '\tconst ',
-				target: 'b: number = 1',
+				target: 'bar: number = 1',
 			}),
 		],
 	},
@@ -597,6 +597,7 @@ const invalid = [
 		name: 'Error and fix starting at the first character of the codeblock',
 		code: dedenter`
 			/**
+			Some description.
 			\`\`\`ts
 			var foo = 1;
 			foo = 2;
@@ -606,6 +607,7 @@ const invalid = [
 
 			export type TOptions = {
 				/**
+				Some description.
 				\`\`\`ts
 				var foo = 1;
 				foo = 2;
@@ -616,6 +618,7 @@ const invalid = [
 		`,
 		output: dedenter`
 			/**
+			Some description.
 			\`\`\`ts
 			let foo = 1;
 			foo = 2;
@@ -625,6 +628,7 @@ const invalid = [
 
 			export type TOptions = {
 				/**
+				Some description.
 				\`\`\`ts
 				let foo = 1;
 				foo = 2;
@@ -636,13 +640,13 @@ const invalid = [
 		errors: [
 			errorAt({
 				ruleId: 'no-var',
-				line: 3,
+				line: 4,
 				textBeforeStart: '',
 				target: 'var foo = 1;',
 			}),
 			errorAt({
 				ruleId: 'no-var',
-				line: 12,
+				line: 14,
 				textBeforeStart: '\t',
 				target: 'var foo = 1;',
 			}),
@@ -660,6 +664,7 @@ const invalid = [
 
 			const baz: boolean[] = [];
 			\`\`\`
+			Some text after.
 			*/
 			export type T0 = string;
 
@@ -672,6 +677,7 @@ const invalid = [
 
 				const baz: boolean[] = [];
 				\`\`\`
+				Some text after.
 				*/
 				p0: string;
 			};
@@ -685,6 +691,7 @@ const invalid = [
 
 			const baz: boolean[] = [];
 			\`\`\`
+			Some text after.
 			*/
 			export type T0 = string;
 
@@ -697,6 +704,7 @@ const invalid = [
 
 				const baz: boolean[] = [];
 				\`\`\`
+				Some text after.
 				*/
 				p0: string;
 			};
@@ -710,7 +718,7 @@ const invalid = [
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
-				line: 17,
+				line: 18,
 				textBeforeStart: '\tconst bar: ',
 				target: 'Array<number>',
 			}),
@@ -721,6 +729,9 @@ const invalid = [
 		name: 'Error and fix ending at the last character of the codeblock',
 		code: dedenter`
 			/**
+			Some description.
+
+			@example
 			\`\`\`ts
 			type Foo = {a: string}
 			type Bar = {[K: string]: Foo}
@@ -730,6 +741,9 @@ const invalid = [
 
 			export type TOptions = {
 				/**
+				Some description.
+
+				@example
 				\`\`\`ts
 				type Foo = {a: string}
 				type Bar = {[K: string]: Foo}
@@ -740,6 +754,9 @@ const invalid = [
 		`,
 		output: dedenter`
 			/**
+			Some description.
+
+			@example
 			\`\`\`ts
 			type Foo = {a: string}
 			type Bar = Record<string, Foo>
@@ -749,6 +766,9 @@ const invalid = [
 
 			export type TOptions = {
 				/**
+				Some description.
+
+				@example
 				\`\`\`ts
 				type Foo = {a: string}
 				type Bar = Record<string, Foo>
@@ -760,13 +780,13 @@ const invalid = [
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/consistent-indexed-object-style',
-				line: 4,
+				line: 7,
 				textBeforeStart: 'type Bar = ',
 				target: '{[K: string]: Foo}',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/consistent-indexed-object-style',
-				line: 13,
+				line: 19,
 				textBeforeStart: '\ttype Bar = ',
 				target: '{[K: string]: Foo}',
 			}),
@@ -851,46 +871,66 @@ const invalid = [
 		name: 'Multiline fix',
 		code: dedenter`
 			/**
+			Some description.
+			Some more description.
+
+			@example
 			\`\`\`ts
 			type Test = {(
 				foo: string,
 				bar: number
 			): void};
 			\`\`\`
+			@category Test
 			*/
 			export type T0 = string;
 
 			export type TOptions = {
 				/**
+				Some description.
+				Some more description.
+
+				@example
 				\`\`\`ts
 				type Test = {(
 					foo: string,
 					bar: number
 				): void};
 				\`\`\`
+				@category Test
 				*/
 				p0: string;
 			};
 		`,
 		output: dedenter`
 			/**
+			Some description.
+			Some more description.
+
+			@example
 			\`\`\`ts
 			type Test = (
 				foo: string,
 				bar: number
 			) => void;
 			\`\`\`
+			@category Test
 			*/
 			export type T0 = string;
 
 			export type TOptions = {
 				/**
+				Some description.
+				Some more description.
+
+				@example
 				\`\`\`ts
 				type Test = (
 					foo: string,
 					bar: number
 				) => void;
 				\`\`\`
+				@category Test
 				*/
 				p0: string;
 			};
@@ -898,16 +938,16 @@ const invalid = [
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/prefer-function-type',
-				line: 3,
+				line: 7,
 				textBeforeStart: 'type Test = {',
-				endLine: 6,
+				endLine: 10,
 				textBeforeEnd: '): void',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/prefer-function-type',
-				line: 14,
+				line: 23,
 				textBeforeStart: '\ttype Test = {',
-				endLine: 17,
+				endLine: 26,
 				textBeforeEnd: '\t): void',
 			}),
 		],
@@ -917,7 +957,8 @@ const invalid = [
 		name: 'Multiple errors',
 		code: dedenter`
 			/**
-			\`\`\`ts
+			@example
+			\`\`\`typescript
 			const foo: number = 1
 
 			const bar: Map<string, number> = new Map()
@@ -928,10 +969,27 @@ const invalid = [
 			\`\`\`
 			*/
 			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				@example
+				\`\`\`typescript
+				const foo: number = 1
+
+				const bar: Map<string, number> = new Map()
+
+				interface Baz {
+					(x: string): unknown
+				}
+				\`\`\`
+				*/
+				p0: string;
+			};
 		`,
 		output: dedenter`
 			/**
-			\`\`\`ts
+			@example
+			\`\`\`typescript
 			const foo = 1
 
 			const bar = new Map<string, number>()
@@ -940,30 +998,68 @@ const invalid = [
 			\`\`\`
 			*/
 			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				@example
+				\`\`\`typescript
+				const foo = 1
+
+				const bar = new Map<string, number>()
+
+				type Baz = (x: string) => unknown
+				\`\`\`
+				*/
+				p0: string;
+			};
 		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/no-inferrable-types',
-				line: 3,
+				line: 4,
 				textBeforeStart: 'const ',
 				target: 'foo: number = 1',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/consistent-generic-constructors',
-				line: 5,
+				line: 6,
 				textBeforeStart: 'const ',
 				target: 'bar: Map<string, number> = new Map()',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/consistent-type-definitions',
-				line: 7,
+				line: 8,
 				textBeforeStart: 'interface ',
 				target: 'Baz',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/prefer-function-type',
-				line: 8,
+				line: 9,
 				textBeforeStart: '\t',
+				target: '(x: string): unknown',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/no-inferrable-types',
+				line: 19,
+				textBeforeStart: '\tconst ',
+				target: 'foo: number = 1',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-generic-constructors',
+				line: 21,
+				textBeforeStart: '\tconst ',
+				target: 'bar: Map<string, number> = new Map()',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/consistent-type-definitions',
+				line: 23,
+				textBeforeStart: '\tinterface ',
+				target: 'Baz',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/prefer-function-type',
+				line: 24,
+				textBeforeStart: '\t\t',
 				target: '(x: string): unknown',
 			}),
 		],
@@ -978,6 +1074,15 @@ const invalid = [
 			\`\`\`
 			*/
 			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				const foo: Array<Array<string>> = [];
+				\`\`\`
+				*/
+				p0: string;
+			};
 		`,
 		output: dedenter`
 			/**
@@ -986,6 +1091,15 @@ const invalid = [
 			\`\`\`
 			*/
 			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				const foo: string[][] = [];
+				\`\`\`
+				*/
+				p0: string;
+			};
 		`,
 		errors: [
 			errorAt({
@@ -998,6 +1112,18 @@ const invalid = [
 				ruleId: '@typescript-eslint/array-type',
 				line: 3,
 				textBeforeStart: 'const foo: Array<',
+				target: 'Array<string>',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 11,
+				textBeforeStart: '\tconst foo: ',
+				target: 'Array<Array<string>>',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 11,
+				textBeforeStart: '\tconst foo: Array<',
 				target: 'Array<string>',
 			}),
 		],
@@ -1063,7 +1189,9 @@ const invalid = [
 		name: 'Non fixable error',
 		code: dedenter`
 			/**
-			\`\`\`ts
+			Some description.
+			@example
+			\`\`\`
 			type Foo = {};
 			\`\`\`
 			*/
@@ -1071,7 +1199,9 @@ const invalid = [
 
 			export type TOptions = {
 				/**
-				\`\`\`ts
+				Some description.
+				@example
+				\`\`\`
 				type Foo = {};
 				\`\`\`
 				*/
@@ -1082,13 +1212,13 @@ const invalid = [
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/no-empty-object-type',
-				line: 3,
+				line: 5,
 				textBeforeStart: 'type Foo = ',
 				target: '{}',
 			}),
 			errorAt({
 				ruleId: '@typescript-eslint/no-empty-object-type',
-				line: 11,
+				line: 15,
 				textBeforeStart: '\ttype Foo = ',
 				target: '{}',
 			}),
