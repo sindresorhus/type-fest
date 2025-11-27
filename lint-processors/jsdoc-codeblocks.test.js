@@ -40,11 +40,12 @@ const valid = [
 		code: exportTypeAndOption(jsdoc('@example', fence(code1))),
 	},
 	{
-		name: 'With language specifiers',
-		code: dedenter`
-			${exportTypeAndOption(jsdoc(fence(code1, 'ts')))}
-			${exportTypeAndOption(jsdoc(fence(code1, 'typescript')))}
-		`,
+		name: 'With ts language specifier',
+		code: exportTypeAndOption(jsdoc(fence(code1, 'ts'))),
+	},
+	{
+		name: 'With typescript language specifier',
+		code: exportTypeAndOption(jsdoc(fence(code1, 'typescript'))),
 	},
 	{
 		name: 'Multiple code blocks',
@@ -308,7 +309,7 @@ const invalid = [
 
 			export type TOptions = {
 				/**
-				\`\`\`typescript
+				\`\`\`ts
 				const foo: Array<string> = [];
 				\`\`\`
 				*/
@@ -318,6 +319,58 @@ const invalid = [
 		output: dedenter`
 			/**
 			\`\`\`ts
+			const foo: string[] = [];
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`ts
+				const foo: string[] = [];
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 3,
+				textBeforeStart: 'const foo: ',
+				target: 'Array<string>',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 11,
+				textBeforeStart: '\tconst foo: ',
+				target: 'Array<string>',
+			}),
+		],
+	},
+
+	{
+		name: 'With typescript language specifiers',
+		code: dedenter`
+			/**
+			\`\`\`typescript
+			const foo: Array<string> = [];
+			\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				\`\`\`typescript
+				const foo: Array<string> = [];
+				\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: dedenter`
+			/**
+			\`\`\`typescript
 			const foo: string[] = [];
 			\`\`\`
 			*/
