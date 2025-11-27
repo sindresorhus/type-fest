@@ -1361,6 +1361,51 @@ const invalid = [
 			}),
 		],
 	},
+	{
+		name: 'Error ending at first column',
+		code: dedenter`
+			/**
+			Some description.
+
+			Note:
+			    @example
+				\`\`\`ts
+				type Foo = 'error_ending_at_first_column'
+				type Bar = number
+				\`\`\`
+			*/
+			export type T0 = string;
+
+			export type TOptions = {
+				/**
+				Some description.
+
+				Note:
+					@example
+					\`\`\`ts
+					type Foo = 'error_ending_at_first_column'
+					type Bar = number
+					\`\`\`
+				*/
+				p0: string;
+			};
+		`,
+		output: undefined,
+		errors: [
+			errorAt({
+				line: 7,
+				textBeforeStart: '\t',
+				endLine: 8,
+				textBeforeEnd: '',
+			}),
+			errorAt({
+				line: 20,
+				textBeforeStart: '\t\t',
+				endLine: 21,
+				textBeforeEnd: '',
+			}),
+		],
+	},
 ];
 
 describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
