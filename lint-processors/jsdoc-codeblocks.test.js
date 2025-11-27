@@ -92,6 +92,21 @@ const valid = [
 			`,
 		)),
 	},
+	{
+		name: 'Ignore codeblocks with inconsistent indentation',
+		code: exportTypeAndOption(jsdoc(
+			'Some description.',
+			dedenter`
+			Note:
+				@example
+				\`\`\`ts
+				const foo: string = '1';
+
+			const bar: number = 1;
+				\`\`\`
+			`,
+		)),
+	},
 ];
 
 const invalid = [
@@ -1303,6 +1318,46 @@ const invalid = [
 				line: 15,
 				textBeforeStart: '\ttype Foo = ',
 				target: '{}',
+			}),
+		],
+	},
+
+	{
+		name: 'Error outside JSDoc',
+		code: dedenter`
+			/**
+			Some description.
+			\`\`\`
+			type Foo = string;
+			\`\`\`
+			*/
+			export type T0 = Array<string>;
+
+			type Foo = String;
+		`,
+		output: dedenter`
+			/**
+			Some description.
+			\`\`\`
+			type Foo = string;
+			\`\`\`
+			*/
+			export type T0 = string[];
+
+			type Foo = string;
+		`,
+		errors: [
+			errorAt({
+				ruleId: '@typescript-eslint/array-type',
+				line: 7,
+				textBeforeStart: 'export type T0 = ',
+				target: 'Array<string>',
+			}),
+			errorAt({
+				ruleId: '@typescript-eslint/no-wrapper-object-types',
+				line: 9,
+				textBeforeStart: 'type Foo = ',
+				target: 'String',
 			}),
 		],
 	},
