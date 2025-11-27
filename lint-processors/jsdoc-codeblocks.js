@@ -125,35 +125,33 @@ export const jsdocCodeblocksProcessor = {
 			const {lineOffset, characterOffset, indent, unindentedText} = codeblockData;
 
 			for (const message of codeblockMessages) {
-				const adjustedMessage = {...message};
+				message.line += lineOffset;
+				message.column += indent.length;
 
-				adjustedMessage.line += lineOffset;
-				adjustedMessage.column += indent.length;
-
-				if (typeof adjustedMessage.endColumn === 'number' && adjustedMessage.endColumn > 1) {
+				if (typeof message.endColumn === 'number' && message.endColumn > 1) {
 					// An `endColumn` of `1` indicates the error actually ended on the previous line since it's exclusive.
 					// So, adding `indent.length` in this case would incorrectly move the error marker into the indentation.
 					// Therefore, the indentation length is only added when `endColumn` is greater than `1`.
-					adjustedMessage.endColumn += indent.length;
+					message.endColumn += indent.length;
 				}
 
-				if (typeof adjustedMessage.endLine === 'number') {
-					adjustedMessage.endLine += lineOffset;
+				if (typeof message.endLine === 'number') {
+					message.endLine += lineOffset;
 				}
 
-				if (adjustedMessage.fix) {
-					adjustedMessage.fix.text = adjustedMessage.fix.text.split('\n').join(`\n${indent}`);
+				if (message.fix) {
+					message.fix.text = message.fix.text.split('\n').join(`\n${indent}`);
 
-					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, adjustedMessage.fix.range[0], indent);
-					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, adjustedMessage.fix.range[1] - 1, indent); // -1 because range end is exclusive
+					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, message.fix.range[0], indent);
+					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, message.fix.range[1] - 1, indent); // -1 because range end is exclusive
 
-					adjustedMessage.fix.range = [
-						adjustedMessage.fix.range[0] + characterOffset + indentsBeforeFixStart,
-						adjustedMessage.fix.range[1] + characterOffset + indentsBeforeFixEnd,
+					message.fix.range = [
+						message.fix.range[0] + characterOffset + indentsBeforeFixStart,
+						message.fix.range[1] + characterOffset + indentsBeforeFixEnd,
 					];
 				}
 
-				for (const {fix} of (adjustedMessage.suggestions ?? [])) {
+				for (const {fix} of (message.suggestions ?? [])) {
 					fix.text = fix.text.split('\n').join(`\n${indent}`);
 
 					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, fix.range[0], indent);
@@ -165,7 +163,7 @@ export const jsdocCodeblocksProcessor = {
 					];
 				}
 
-				normalizedMessages.push(adjustedMessage);
+				normalizedMessages.push(message);
 			}
 		}
 
