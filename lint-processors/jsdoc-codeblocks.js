@@ -6,8 +6,11 @@ import tsParser from '@typescript-eslint/parser';
 */
 
 const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[ \t]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gm;
-/** @type {Map<string, {lineOffset: number, characterOffset: number, indent: string, unindentedText: string}[]>} */
-const jsdocDataPerFile = new Map();
+/**
+@typedef {{lineOffset: number, characterOffset: number, indent: string, unindentedText: string}} CodeblockData
+@type {Map<string, CodeblockData[]>}
+*/
+const codeblockDataPerFile = new Map();
 
 /**
 @param {string} text
@@ -54,6 +57,7 @@ export const jsdocCodeblocksProcessor = {
 
 		/** @type {(string | Linter.ProcessorFile)[]} */
 		const files = [text]; // First entry is for the entire file
+		/** @type {CodeblockData[]} */
 		const allCodeblocksData = [];
 
 		// Loop over all JSDoc comments in the file
@@ -94,7 +98,7 @@ export const jsdocCodeblocksProcessor = {
 			}
 		}
 
-		jsdocDataPerFile.set(filename, allCodeblocksData);
+		codeblockDataPerFile.set(filename, allCodeblocksData);
 
 		return files;
 	},
@@ -102,10 +106,11 @@ export const jsdocCodeblocksProcessor = {
 	/**
 	@param {import('eslint').Linter.LintMessage[][]} messages
 	@param {string} filename
+	@returns {import('eslint').Linter.LintMessage[]}
 	*/
 	postprocess(messages, filename) {
-		const codeblocks = jsdocDataPerFile.get(filename) || [];
-		jsdocDataPerFile.delete(filename);
+		const codeblocks = codeblockDataPerFile.get(filename) || [];
+		codeblockDataPerFile.delete(filename);
 
 		const normalizedMessages = [...(messages[0] ?? [])]; // First entry contains errors for the entire file, and it doesn't need any adjustments
 
