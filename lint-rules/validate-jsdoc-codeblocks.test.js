@@ -1,25 +1,7 @@
-import {createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
+import {code1, code2, createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
 const ruleTester = createRuleTester();
-
-// Code samples
-const code1 = dedenter`
-  import type {Sum} from 'type-fest';
-
-  type A = Sum<1, 2>;
-  //=> 3
-`;
-
-const code2 = dedenter`
-  import type {LiteralToPrimitiveDeep} from 'type-fest';
-
-  const config = {appName: 'MyApp', version: '1.0.0'} as const;
-
-  declare function updateConfig(newConfig: LiteralToPrimitiveDeep<typeof config>): void;
-
-  updateConfig({appName: 'MyUpdatedApp', version: '2.0.0'});
-`;
 
 const codeWithErrors = dedenter`
 import type {RemovePrefix} from 'type-fest';

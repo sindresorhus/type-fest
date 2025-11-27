@@ -293,3 +293,21 @@ export const errorAt = props => {
 		endColumn, // 1-based, exclusive
 	};
 };
+
+/// Code samples
+export const code1 = dedenter`
+import type {Sum} from 'type-fest';
+
+type A = Sum<1, 2>;
+//=> 3
+`;
+
+export const code2 = dedenter`
+import type {LiteralToPrimitiveDeep} from 'type-fest';
+
+const config = {appName: 'MyApp', version: '1.0.0'} as const;
+
+declare function updateConfig(newConfig: LiteralToPrimitiveDeep<typeof config>): void;
+
+updateConfig({appName: 'MyUpdatedApp', version: '2.0.0'});
+`;

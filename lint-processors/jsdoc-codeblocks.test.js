@@ -2,27 +2,9 @@ import {describe, test} from 'node:test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {ESLint} from 'eslint';
-import {dedenter, errorAt, jsdoc, fence, exportType, exportTypeAndOption} from '../lint-rules/test-utils.js';
+import {code1, code2, dedenter, errorAt, exportType, exportTypeAndOption, fence, jsdoc} from '../lint-rules/test-utils.js';
 
 const root = path.join(import.meta.dirname, 'fixtures');
-
-// Code samples
-const code1 = dedenter`
-  import type {Sum} from 'type-fest';
-
-  type A = Sum<1, 2>;
-  //=> 3
-`;
-
-const code2 = dedenter`
-  import type {LiteralToPrimitiveDeep} from 'type-fest';
-
-  const config = {appName: 'MyApp', version: '1.0.0'} as const;
-
-  declare function updateConfig(newConfig: LiteralToPrimitiveDeep<typeof config>): void;
-
-  updateConfig({appName: 'MyUpdatedApp', version: '2.0.0'});
-`;
 
 try {
 	await fs.access(path.join(root, 'eslint.config.js'));
