@@ -5,9 +5,9 @@ Matches any uppercase letter in the basic Latin alphabet (A-Z).
 ```
 import type {UppercaseLetter} from 'type-fest';
 
-const a: UppercaseLetter = 'A';  // Valid
+const a: UppercaseLetter = 'A'; // Valid
 // @ts-expect-error
-const b: UppercaseLetter = 'a';  // Invalid
+const b: UppercaseLetter = 'a'; // Invalid
 // @ts-expect-error
 const c: UppercaseLetter = 'AB'; // Invalid
 ```
@@ -41,7 +41,7 @@ import type {DigitCharacter} from 'type-fest';
 
 const a: DigitCharacter = '0'; // Valid
 // @ts-expect-error
-const b: DigitCharacter = 0;   // Invalid
+const b: DigitCharacter = 0; // Invalid
 ```
 
 @category Type

@@ -65,13 +65,13 @@ Set the given array to readonly if `IsReadonly` is `true`, otherwise set the giv
 
 @example
 ```
-type ReadonlyArray = readonly string[];
-type NormalArray = string[];
+type ReadonlyStringArray = readonly string[];
+type NormalStringArray = string[];
 
-type ReadonlyResult = SetArrayAccess<NormalArray, true>;
+type ReadonlyResult = SetArrayAccess<NormalStringArray, true>;
 //=> readonly string[]
 
-type NormalResult = SetArrayAccess<ReadonlyArray, false>;
+type NormalResult = SetArrayAccess<ReadonlyStringArray, false>;
 //=> string[]
 ```
 */

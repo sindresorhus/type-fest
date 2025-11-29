@@ -58,7 +58,7 @@ interface Geometry {
 
 const point: Geometry = {
 	type: 'Point',
-	coordinates: [1, 1]
+	coordinates: [1, 1],
 };
 
 declare function problemFn(data: JsonValue): void;
@@ -81,7 +81,7 @@ Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed
 import type {Jsonify} from 'type-fest';
 
 const time = {
-	timeValue: new Date()
+	timeValue: new Date(),
 };
 
 // `Jsonify<typeof time>` is equivalent to `{timeValue: string}`

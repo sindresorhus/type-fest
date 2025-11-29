@@ -264,3 +264,50 @@ export const exportTypeAndOption = (...prefixes) =>
 
 		${exportOption(...prefixes)}
 	`;
+
+/**
+@typedef {{
+	line: number;
+	textBeforeStart: string;
+	ruleId?: string;
+	messageId?: string;
+} & ({ target: string } | { endLine: number; textBeforeEnd: string })} ErrorAtProps
+
+@param {ErrorAtProps} props
+@returns {{line: number, column: number, endLine: number, endColumn: number, ruleId?: string, messageId?: string}}
+*/
+export const errorAt = props => {
+	const {line, textBeforeStart, ruleId, messageId} = props;
+
+	const column = textBeforeStart.length + 1;
+	const endColumn = 'textBeforeEnd' in props ? props.textBeforeEnd.length + 1 : column + props.target.length;
+
+	const endLine = 'endLine' in props ? props.endLine : line;
+
+	return {
+		...(ruleId && {ruleId}),
+		...(messageId && {messageId}),
+		line, // 1-based, inclusive
+		column, // 1-based, inclusive
+		endLine, // 1-based, inclusive
+		endColumn, // 1-based, exclusive
+	};
+};
+
+/// Code samples
+export const code1 = dedenter`
+import type {Sum} from 'type-fest';
+
+type A = Sum<1, 2>;
+//=> 3
+`;
+
+export const code2 = dedenter`
+import type {LiteralToPrimitiveDeep} from 'type-fest';
+
+const config = {appName: 'MyApp', version: '1.0.0'} as const;
+
+declare function updateConfig(newConfig: LiteralToPrimitiveDeep<typeof config>): void;
+
+updateConfig({appName: 'MyUpdatedApp', version: '2.0.0'});
+`;

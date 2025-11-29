@@ -9,12 +9,12 @@ This is useful when you want to create a new type that contains writable keys on
 ```
 import type {WritableKeysOf} from 'type-fest';
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
 
 	readonly id: number;
-}
+};
 
 type UpdateRequest<Entity extends object> = Pick<Entity, WritableKeysOf<Entity>>;
 

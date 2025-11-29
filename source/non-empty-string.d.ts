@@ -19,7 +19,7 @@ foo('a');
 foo('');
 //=> Error: Argument of type '""' is not assignable to parameter of type 'never'.
 
-declare const someString: string
+declare const someString: string;
 // @ts-expect-error
 foo(someString);
 //=> Error: Argument of type 'string' is not assignable to parameter of type 'never'.

@@ -10,7 +10,7 @@ Use-cases:
 
 @example
 ```
-import {ReadonlyTuple} from 'type-fest';
+import type {ReadonlyTuple} from 'type-fest';
 
 type FencingTeam = ReadonlyTuple<string, 3>;
 

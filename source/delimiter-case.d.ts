@@ -45,16 +45,16 @@ type OddlyCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
 };
 
-interface SomeOptions {
+type SomeOptions = {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
-}
+};
 
 const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 	'dry#run': true,
 	'include#file': 'bar.js',
-	foo: 123
+	foo: 123,
 };
 ```
 

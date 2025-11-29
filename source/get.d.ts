@@ -58,10 +58,10 @@ Splits a dot-prop style path into a tuple comprised of the properties in the pat
 
 @example
 ```
-ToPath<'foo.bar.baz'>
+type A = ToPath<'foo.bar.baz'>;
 //=> ['foo', 'bar', 'baz']
 
-ToPath<'foo[0].bar.baz'>
+type B = ToPath<'foo[0].bar.baz'>;
 //=> ['foo', '0', 'bar', 'baz']
 ```
 */
@@ -84,10 +84,10 @@ Returns true if `LongString` is made up out of `Substring` repeated 0 or more ti
 
 @example
 ```
-ConsistsOnlyOf<'aaa', 'a'> //=> true
-ConsistsOnlyOf<'ababab', 'ab'> //=> true
-ConsistsOnlyOf<'aBa', 'a'> //=> false
-ConsistsOnlyOf<'', 'a'> //=> true
+type A = ConsistsOnlyOf<'aaa', 'a'>; //=> true
+type B = ConsistsOnlyOf<'ababab', 'ab'>; //=> true
+type C = ConsistsOnlyOf<'aBa', 'a'>; //=> false
+type D = ConsistsOnlyOf<'', 'a'>; //=> true
 ```
 */
 type ConsistsOnlyOf<LongString extends string, Substring extends string> =

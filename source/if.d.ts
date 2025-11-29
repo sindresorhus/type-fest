@@ -12,7 +12,7 @@ Note:
 
 @example
 ```
-import {If} from 'type-fest';
+import type {If} from 'type-fest';
 
 type A = If<true, 'yes', 'no'>;
 //=> 'yes'
@@ -32,7 +32,7 @@ type E = If<never, 'yes', 'no'>;
 
 @example
 ```
-import {If, IsAny, IsNever} from 'type-fest';
+import type {If, IsAny, IsNever} from 'type-fest';
 
 type A = If<IsAny<unknown>, 'is any', 'not any'>;
 //=> 'not any'
@@ -43,7 +43,7 @@ type B = If<IsNever<never>, 'is never', 'not never'>;
 
 @example
 ```
-import {If, IsEqual} from 'type-fest';
+import type {If, IsEqual} from 'type-fest';
 
 type IfEqual<T, U, IfBranch, ElseBranch> = If<IsEqual<T, U>, IfBranch, ElseBranch>;
 

@@ -136,7 +136,7 @@ Extract all possible values for a given key from a union of object types.
 
 @example
 ```
-type Statuses = ValueOfUnion<{ id: 1, status: "open" } | { id: 2, status: "closed" }, "status">;
+type Statuses = ValueOfUnion<{id: 1; status: 'open'} | {id: 2; status: 'closed'}, 'status'>;
 //=> "open" | "closed"
 ```
 */
@@ -149,14 +149,14 @@ Extract all readonly keys from a union of object types.
 @example
 ```
 type User = {
-		readonly id: string;
-		name: string;
+	readonly id: string;
+	name: string;
 };
 
 type Post = {
-		readonly id: string;
-		readonly author: string;
-		body: string;
+	readonly id: string;
+	readonly author: string;
+	body: string;
 };
 
 type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;

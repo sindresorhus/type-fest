@@ -29,8 +29,8 @@ type Indexed = {} extends Record<string, unknown>
 // => '✅ `{}` is assignable to `Record<string, unknown>`'
 
 type Keyed = {} extends Record<'foo' | 'bar', unknown>
-	? "✅ `{}` is assignable to `Record<'foo' | 'bar', unknown>`"
-	: "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`";
+	? '✅ `{}` is assignable to `Record<\'foo\' | \'bar\', unknown>`'
+	: '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', unknown>`';
 // => "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`"
 ```
 
@@ -48,10 +48,10 @@ type OmitIndexSignature<ObjectType> = {
 ```
 type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
-		// Is `{}` assignable to `Record<KeyType, unknown>`?
-		as {} extends Record<KeyType, unknown>
-			? never // ✅ `{}` is assignable to `Record<KeyType, unknown>`
-			: KeyType // ❌ `{}` is NOT assignable to `Record<KeyType, unknown>`
+	// Is `{}` assignable to `Record<KeyType, unknown>`?
+	as {} extends Record<KeyType, unknown>
+		? never // ✅ `{}` is assignable to `Record<KeyType, unknown>`
+		: KeyType // ❌ `{}` is NOT assignable to `Record<KeyType, unknown>`
 	]: ObjectType[KeyType];
 };
 ```
@@ -62,21 +62,21 @@ If `{}` is assignable, it means that `KeyType` is an index signature and we want
 ```
 import type {OmitIndexSignature} from 'type-fest';
 
-interface Example {
+type Example = {
 	// These index signatures will be removed.
-	[x: string]: any
-	[x: number]: any
-	[x: symbol]: any
-	[x: `head-${string}`]: string
-	[x: `${string}-tail`]: string
-	[x: `head-${string}-tail`]: string
-	[x: `${bigint}`]: string
-	[x: `embedded-${number}`]: string
+	[x: string]: any;
+	[x: number]: any;
+	[x: symbol]: any;
+	[x: `head-${string}`]: string;
+	[x: `${string}-tail`]: string;
+	[x: `head-${string}-tail`]: string;
+	[x: `${bigint}`]: string;
+	[x: `embedded-${number}`]: string;
 
 	// These explicitly defined keys will remain.
 	foo: 'bar';
 	qux?: 'baz';
-}
+};
 
 type ExampleWithoutIndexSignatures = OmitIndexSignature<Example>;
 // => { foo: 'bar'; qux?: 'baz' | undefined; }

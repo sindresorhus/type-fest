@@ -35,7 +35,7 @@ if (pickedUnion.discriminant === 'A') {
 	// doesn't distribute over unions.
 
 	// @ts-expect-error
-	pickedUnion.foo.bar;
+	const barValue = pickedUnion.foo.bar;
 	//=> Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
 }
 ```
@@ -69,15 +69,15 @@ type PickedUnion = DistributedPick<Union, 'discriminant' | 'foo'>;
 declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
-	pickedUnion.foo.bar;
- 	//=> OK
+	const barValue = pickedUnion.foo.bar;
+	//=> OK
 
 	// @ts-expect-error
-	pickedUnion.extraneous;
+	const extraneousValue = pickedUnion.extraneous;
 	//=> Error: Property `extraneous` does not exist on type `Pick<A, 'discriminant' | 'foo'>`.
 
 	// @ts-expect-error
-	pickedUnion.foo.baz;
+	const bazValue = pickedUnion.foo.baz;
 	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
 }
 ```
