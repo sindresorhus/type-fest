@@ -26,14 +26,10 @@ type Includes<Value extends readonly any[], Item> =
 @category Utilities
 */
 export type IsEqual<A, B> =
-	[A, B] extends [infer AA, infer BB]
-		? [AA] extends [never]
-			? [BB] extends [never]
-				? true
-				: false
-			: [BB] extends [never]
-				? false
-				: _IsEqual<AA, BB>
+	[A] extends [B]
+		? [B] extends [A]
+			? _IsEqual<A, B>
+			: false
 		: false;
 
 // This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
