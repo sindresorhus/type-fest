@@ -1,4 +1,5 @@
 import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
+import type {Simplify} from './simplify.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -68,8 +69,8 @@ export type RequiredDeep<T> = T extends BuiltIns
 										? RequiredObjectDeep<T>
 										: unknown;
 
-type RequiredObjectDeep<ObjectType extends object> = {
+type RequiredObjectDeep<ObjectType extends object> = Simplify<{
 	[KeyType in keyof ObjectType]-?: RequiredDeep<ObjectType[KeyType]>
-};
+}>;
 
 export {};
