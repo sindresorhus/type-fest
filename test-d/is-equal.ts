@@ -89,4 +89,3 @@ expectType<true>(equalTupleIntersectionAndTuple);
 // Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
 type Assignability<T, U, _V extends IsEqual<T, U>> = any;
 type TestAssignability<T> = Assignability<T, T, true>;
-
