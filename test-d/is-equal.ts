@@ -87,9 +87,6 @@ declare const equalTupleIntersectionAndTuple: IsEqual<[{a: 1}] & [{a: 1}], [{a: 
 expectType<true>(equalTupleIntersectionAndTuple);
 
 // Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
-type FieldProps<T1> = {
-	onChange: <T2>(value: T2, shouldBeTrue: IsEqual<T1, T2>) => void;
-};
-const _TextField = <T>(value: T) => {
-	({} as FieldProps<T>).onChange(value, true); // eslint-disable-line @typescript-eslint/consistent-type-assertions
-};
+type Assignability<T, U, _V extends IsEqual<T, U>> = any;
+type TestAssignability<T> = Assignability<T, T, true>;
+
