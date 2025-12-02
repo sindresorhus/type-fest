@@ -42,4 +42,4 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }}
-      - run: NODE_OPTIONS="--max-old-space-size=5120" npx tsc
+      - run: NODE_OPTIONS="--max-old-space-size=6144" npx tsc
