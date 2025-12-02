@@ -5,7 +5,7 @@ import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Reverses the order of elements in a tuple type.
+Reverse the order of elements in a tuple type.
 
 @example
 ```ts
