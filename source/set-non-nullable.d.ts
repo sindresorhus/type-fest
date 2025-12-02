@@ -13,7 +13,7 @@ type Foo = {
 	a: number | null;
 	b: string | undefined;
 	c?: boolean | null;
-}
+};
 
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
 // type SomeNonNullable = {

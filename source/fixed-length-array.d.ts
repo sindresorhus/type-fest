@@ -32,6 +32,7 @@ import type {FixedLengthArray} from 'type-fest';
 
 const color: FixedLengthArray<number, 3> = [255, 128, 64];
 
+// @ts-expect-error
 color.pop();
 //=> Error: Property 'pop' does not exist on type 'FixedLengthArray<number, 3>'.
 ```
@@ -42,6 +43,8 @@ Use-cases:
 
 @example
 ```
+import type {FixedLengthArray} from 'type-fest';
+
 let color: FixedLengthArray<number, 3> = [255, 128, 64];
 
 const red = color[0];
@@ -51,6 +54,7 @@ const green = color[1];
 const blue = color[2];
 //=> number
 
+// @ts-expect-error
 const alpha = color[3];
 //=> Error: Property '3' does not exist on type 'FixedLengthArray<number, 3>'.
 
@@ -60,15 +64,19 @@ color[1] = 64;
 color[2] = 32;
 
 // But you cannot write to out-of-bounds indices.
+// @ts-expect-error
 color[3] = 0.5;
 //=> Error: Property '3' does not exist on type 'FixedLengthArray<number, 3>'.
 
+// @ts-expect-error
 color.push(0.5);
 //=> Error: Property 'push' does not exist on type 'FixedLengthArray<number, 3>'.
 
+// @ts-expect-error
 color = [0, 128, 255, 0.5];
 //=> Error: Type '[number, number, number, number]' is not assignable to type 'FixedLengthArray<number, 3>'. Types of property 'length' are incompatible.
 
+// @ts-expect-error
 color.length = 4;
 //=> Error: Cannot assign to 'length' because it is a read-only property.
 

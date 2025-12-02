@@ -32,6 +32,9 @@ jobs:
             - Performance considerations
             - Security concerns
             - Test coverage
+            - Be succinct
+            - Only comment about things that needs to be fixed/improved
+            - Review thoroughly
 
             Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive and helpful in your feedback.
 

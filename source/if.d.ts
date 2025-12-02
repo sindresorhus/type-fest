@@ -12,7 +12,7 @@ Note:
 
 @example
 ```
-import {If} from 'type-fest';
+import type {If} from 'type-fest';
 
 type A = If<true, 'yes', 'no'>;
 //=> 'yes'
@@ -32,7 +32,7 @@ type E = If<never, 'yes', 'no'>;
 
 @example
 ```
-import {If, IsAny, IsNever} from 'type-fest';
+import type {If, IsAny, IsNever} from 'type-fest';
 
 type A = If<IsAny<unknown>, 'is any', 'not any'>;
 //=> 'not any'
@@ -43,7 +43,7 @@ type B = If<IsNever<never>, 'is never', 'not never'>;
 
 @example
 ```
-import {If, IsEqual} from 'type-fest';
+import type {If, IsEqual} from 'type-fest';
 
 type IfEqual<T, U, IfBranch, ElseBranch> = If<IsEqual<T, U>, IfBranch, ElseBranch>;
 
@@ -52,6 +52,41 @@ type A = IfEqual<string, string, 'equal', 'not equal'>;
 
 type B = IfEqual<string, number, 'equal', 'not equal'>;
 //=> 'not equal'
+```
+
+Note: Sometimes using the `If` type can make an implementation non–tail-recursive, which can impact performance. In such cases, it’s better to use a conditional directly. Refer to the following example:
+
+@example
+```
+import type {If, IsEqual, StringRepeat} from 'type-fest';
+
+type HundredZeroes = StringRepeat<'0', 100>;
+
+// The following implementation is not tail recursive
+type Includes<S extends string, Char extends string> =
+	S extends `${infer First}${infer Rest}`
+		? If<IsEqual<First, Char>,
+			'found',
+			Includes<Rest, Char>>
+		: 'not found';
+
+// Hence, instantiations with long strings will fail
+// @ts-expect-error
+type Fails = Includes<HundredZeroes, '1'>;
+//           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Error: Type instantiation is excessively deep and possibly infinite.
+
+// However, if we use a simple conditional instead of `If`, the implementation becomes tail-recursive
+type IncludesWithoutIf<S extends string, Char extends string> =
+	S extends `${infer First}${infer Rest}`
+		? IsEqual<First, Char> extends true
+			? 'found'
+			: IncludesWithoutIf<Rest, Char>
+		: 'not found';
+
+// Now, instantiations with long strings will work
+type Works = IncludesWithoutIf<HundredZeroes, '1'>;
+//=> 'not found'
 ```
 
 @category Type Guard

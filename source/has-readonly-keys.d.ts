@@ -12,8 +12,8 @@ import type {HasReadonlyKeys, ReadonlyKeysOf} from 'type-fest';
 type UpdateService<Entity extends object> = {
 	removeField: HasReadonlyKeys<Entity> extends true
 		? (field: ReadonlyKeysOf<Entity>) => Promise<void>
-		: never
-}
+		: never;
+};
 ```
 
 @category Utilities

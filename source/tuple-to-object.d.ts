@@ -10,6 +10,8 @@ Note: Tuple labels are [lost in the transformation process](https://stackoverflo
 
 @example
 ```
+import type {TupleToObject} from 'type-fest';
+
 type Example1 = TupleToObject<[number, string, boolean]>;
 //=> { 0: number; 1: string; 2: boolean }
 

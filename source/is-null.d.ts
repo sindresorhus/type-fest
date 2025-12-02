@@ -11,7 +11,7 @@ type Example1 = NonNullFallback<null, string>;
 //=> string
 
 type Example2 = NonNullFallback<number, string>;
-//=? number
+//=> number
 ```
 
 @category Type Guard

@@ -8,17 +8,17 @@ Convert object properties to snake case but not recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see SnakeCase
-@see SnakeCasedPropertiesDeep
+@see {@link SnakeCase}
+@see {@link SnakeCasedPropertiesDeep}
 
 @example
 ```
 import type {SnakeCasedProperties} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
 const result: SnakeCasedProperties<User> = {
 	user_id: 1,

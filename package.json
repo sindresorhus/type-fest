@@ -1,6 +1,6 @@
 {
 	"name": "type-fest",
-	"version": "5.0.1",
+	"version": "5.3.0",
 	"description": "A collection of essential TypeScript types",
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
@@ -25,7 +25,7 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"test:tsc": "tsc",
+		"test:tsc": "node --max-old-space-size=5120 ./node_modules/.bin/tsc",
 		"test:tsd": "tsd",
 		"test:xo": "xo",
 		"test:linter": "node --test",
@@ -54,10 +54,15 @@
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^8.0.1",
+		"@typescript-eslint/parser": "^8.44.0",
+		"eslint": "^9.35.0",
+		"@typescript/vfs": "^1.6.1",
+		"dedent": "^1.7.0",
 		"expect-type": "^1.2.2",
 		"npm-run-all2": "^8.0.4",
 		"tsd": "^0.33.0",
 		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.47.0",
 		"xo": "^1.2.2"
 	},
 	"tsd": {

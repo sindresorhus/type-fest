@@ -25,15 +25,6 @@ export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray exten
 	: never;
 
 /**
-Extract the element of an array that also works for array union.
-
-Returns `never` if T is not an array.
-
-It creates a type-safe way to access the element type of `unknown` type.
-*/
-export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
-
-/**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example
@@ -74,13 +65,13 @@ Set the given array to readonly if `IsReadonly` is `true`, otherwise set the giv
 
 @example
 ```
-type ReadonlyArray = readonly string[];
-type NormalArray = string[];
+type ReadonlyStringArray = readonly string[];
+type NormalStringArray = string[];
 
-type ReadonlyResult = SetArrayAccess<NormalArray, true>;
+type ReadonlyResult = SetArrayAccess<NormalStringArray, true>;
 //=> readonly string[]
 
-type NormalResult = SetArrayAccess<ReadonlyArray, false>;
+type NormalResult = SetArrayAccess<ReadonlyStringArray, false>;
 //=> string[]
 ```
 */

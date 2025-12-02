@@ -2,7 +2,7 @@ import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './came
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
 /**
-Converts a string literal to pascal-case.
+Convert a string literal to pascal-case.
 
 @example
 ```
@@ -19,7 +19,7 @@ type PascalCasedProperties<T> = {
 	[K in keyof T as PascalCase<K>]: T[K]
 };
 
-interface RawOptions {
+type RawOptions = {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;

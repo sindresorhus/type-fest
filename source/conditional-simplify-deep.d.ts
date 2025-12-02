@@ -61,7 +61,7 @@ type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, SomeComplexType
 // }
 ```
 
-@see SimplifyDeep
+@see {@link SimplifyDeep}
 @category Object
 */
 export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType

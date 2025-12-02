@@ -398,13 +398,13 @@ type Foo = {
 	a: {b: string; c: boolean; d: number[]};
 };
 
-interface Bar {
+type Bar = {
 	name: string;
 	items: number[];
 	a: {b: number; d: boolean[]};
-}
+};
 
-type FooBar = MergeDeep<Foo, Bar>;
+type FooBar1 = MergeDeep<Foo, Bar>;
 // {
 // 	life: number;
 // 	name: string;
@@ -412,7 +412,7 @@ type FooBar = MergeDeep<Foo, Bar>;
 // 	a: {b: number; c: boolean; d: boolean[]};
 // }
 
-type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
+type FooBar2 = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
 // {
 // 	life: number;
 // 	name: string;
@@ -471,13 +471,11 @@ type FooBarTupleWithArrayDeep = MergeDeep<[Foo[], true], [Bar[], 'life', 42], {r
 ```
 import type {MergeDeep, MergeDeepOptions} from 'type-fest';
 
-function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
+declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 	destination: Destination,
 	source: Source,
 	options?: Options,
-): MergeDeep<Destination, Source, Options> {
-	// Make your implementation ...
-}
+): MergeDeep<Destination, Source, Options>;
 ```
 
 @experimental This type is marked as experimental because it depends on {@link ConditionalSimplifyDeep} which itself is experimental.

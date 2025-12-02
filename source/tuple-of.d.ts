@@ -4,7 +4,7 @@ import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Creates a tuple type of the specified length with elements of the specified type.
+Create a tuple type of the specified length with elements of the specified type.
 
 @example
 ```
@@ -22,6 +22,8 @@ type TicTacToeBoard = TupleOf<3, TupleOf<3, 'X' | 'O' | null>>;
 
 @example
 ```
+import type {TupleOf} from 'type-fest';
+
 type Range<Start extends number, End extends number> = Exclude<keyof TupleOf<End>, keyof TupleOf<Start>>;
 
 type ZeroToFour = Range<0, 5>;

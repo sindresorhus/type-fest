@@ -56,8 +56,8 @@ type T5 = SplitOnRestElement<readonly [string?, ...number[]], {preserveOptionalM
 //=> readonly [[string], number[], []] or readonly [[string | undefined], number[], []]
 ```
 
-@see ExtractRestElement
-@see ExcludeRestElement
+@see {@link ExtractRestElement}
+@see {@link ExcludeRestElement}
 @category Array
 */
 export type SplitOnRestElement<
