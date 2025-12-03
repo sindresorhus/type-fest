@@ -155,7 +155,23 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 								const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
 
 								if (quickInfo) {
-									const display = ts.displayPartsToString(quickInfo.displayParts);
+									const display = quickInfo.displayParts.map((part, index) => {
+										const {kind, text} = part;
+
+										// Replace spaces used for indentation with tabs
+										const previousPart = quickInfo.displayParts[index - 1];
+										if (kind === 'space' && (index === 0 || previousPart?.kind === 'lineBreak')) {
+											return text.replaceAll('    ', '\t');
+										}
+
+										// Replace double-quoted string literals with single-quoted ones
+										if (kind === 'stringLiteral' && text.startsWith('"') && text.endsWith('"')) {
+											return `'${text.slice(1, -1).replaceAll(String.raw`\"`, '"').replaceAll('\'', String.raw`\'`)}'`;
+										}
+
+										return text;
+									}).join('');
+
 									const expectedType = display.replace(/^(?:type|interface|class|enum|const|let|var|function)\s+.*?\s*[:=]\s+/, '');
 
 									if (actualType !== expectedType) {
