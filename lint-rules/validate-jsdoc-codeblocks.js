@@ -1,9 +1,11 @@
+/* eslint-disable max-depth */
 import path from 'node:path';
 import ts from 'typescript';
 import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescript/vfs';
 
 const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)```/g;
 const FILENAME = 'example-codeblock.ts';
+const TWOSLASH_COMMENT = '//=>';
 
 const compilerOptions = {
 	lib: ['lib.es2023.d.ts', 'lib.dom.d.ts', 'lib.dom.iterable.d.ts'],
@@ -36,8 +38,10 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		docs: {
 			description: 'Ensures JSDoc example codeblocks don\'t have errors',
 		},
+		fixable: 'code',
 		messages: {
 			invalidCodeblock: '{{errorMessage}}',
+			typeMismatch: 'Expected type `{{expectedType}}` but found `{{actualType}}`.',
 		},
 		schema: [],
 	},
@@ -113,6 +117,77 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 									errorMessage: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
 								},
 							});
+						}
+
+						const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
+						const lines = code.split('\n');
+
+						for (const [index, line] of lines.entries()) {
+							const trimmedLine = line.trim();
+							if (!trimmedLine.startsWith(TWOSLASH_COMMENT)) {
+								continue;
+							}
+
+							const previousLineIndex = index - 1;
+							if (previousLineIndex < 0) {
+								continue;
+							}
+
+							const lineWithoutTwoslash = trimmedLine.replace(TWOSLASH_COMMENT, '');
+							const delimiter = lineWithoutTwoslash.startsWith(' ') ? ' ' : '';
+							let actualType = lineWithoutTwoslash.slice(delimiter.length);
+							let actualTypeEndLine = index;
+
+							for (let i = index + 1; i < lines.length; i++) {
+								const nextLine = lines[i].trim();
+								if (!nextLine.startsWith('//' + delimiter) || nextLine.startsWith(TWOSLASH_COMMENT)) {
+									break;
+								}
+
+								actualType += '\n' + nextLine.replace('//' + delimiter, '');
+								actualTypeEndLine = i;
+							}
+
+							const previousLine = lines[previousLineIndex];
+							const previousLineOffset = sourceFile.getPositionOfLineAndCharacter(previousLineIndex, 0);
+
+							for (let i = 0; i < previousLine.length; i++) {
+								const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
+
+								if (quickInfo) {
+									const display = ts.displayPartsToString(quickInfo.displayParts);
+									const expectedType = display.replace(/^(?:type|interface|class|enum|const|let|var|function)\s+.*?\s*[:=]\s+/, '');
+
+									if (actualType !== expectedType) {
+										const commentIndex = line.indexOf(TWOSLASH_COMMENT);
+										const indentation = line.slice(0, commentIndex);
+										const actualTypeIndex = commentIndex + TWOSLASH_COMMENT.length + delimiter.length;
+
+										const actualTypeStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualTypeIndex);
+										const actualTypeEndOffset = sourceFile.getPositionOfLineAndCharacter(actualTypeEndLine, lines[actualTypeEndLine].length);
+
+										const start = codeStartIndex + actualTypeStartOffset;
+										const end = codeStartIndex + actualTypeEndOffset;
+
+										context.report({
+											loc: {
+												start: context.sourceCode.getLocFromIndex(start),
+												end: context.sourceCode.getLocFromIndex(end),
+											},
+											messageId: 'typeMismatch',
+											data: {
+												expectedType,
+												actualType,
+											},
+											fix(fixer) {
+												return fixer.replaceTextRange([start, end], expectedType.replaceAll('\n', `\n${indentation}//${delimiter}`));
+											},
+										});
+									}
+
+									break;
+								}
+							}
 						}
 					}
 				}
