@@ -160,11 +160,33 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 								const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
 
 								if (quickInfo) {
-									const display = quickInfo.displayParts.map((part, index) => {
+									let depth = 0;
+									const separatorIndex = quickInfo.displayParts.findIndex(part => {
+										if (part.kind === 'punctuation') {
+											if (['(', '{', '<'].includes(part.text)) {
+												depth++;
+											} else if ([')', '}', '>'].includes(part.text)) {
+												depth--;
+											} else if (part.text === ':' && depth === 0) {
+												return true;
+											}
+										} else if (part.kind === 'operator' && part.text === '=' && depth === 0) {
+											return true;
+										}
+
+										return false;
+									});
+
+									let partsToUse = quickInfo.displayParts;
+									if (separatorIndex !== -1) {
+										partsToUse = quickInfo.displayParts.slice(separatorIndex + 1);
+									}
+
+									const expectedType = partsToUse.map((part, index) => {
 										const {kind, text} = part;
 
 										// Replace spaces used for indentation with tabs
-										const previousPart = quickInfo.displayParts[index - 1];
+										const previousPart = partsToUse[index - 1];
 										if (kind === 'space' && (index === 0 || previousPart?.kind === 'lineBreak')) {
 											return text.replaceAll('    ', '\t');
 										}
