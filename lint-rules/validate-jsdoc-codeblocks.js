@@ -42,7 +42,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		fixable: 'code',
 		messages: {
 			invalidCodeblock: '{{errorMessage}}',
-			typeMismatch: 'Expected type `{{expectedType}}` but found `{{actualType}}`.',
+			typeMismatch: 'Expected type to be: {{expectedType}}, but found: {{actualType}}',
 		},
 		schema: [],
 	},
