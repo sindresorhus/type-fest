@@ -31,7 +31,36 @@ virtualFsMap.set(FILENAME, '// Can\'t be empty');
 
 const rootDir = path.join(import.meta.dirname, '..');
 const system = createFSBackedSystem(virtualFsMap, rootDir, ts);
-const env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, compilerOptions);
+const defaultEnv = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, compilerOptions);
+
+function parseCompilerOptions(code) {
+	const options = {};
+	const lines = code.split('\n');
+
+	for (const line of lines) {
+		if (!line.trim()) {
+			// Skip empty lines
+			continue;
+		}
+
+		const match = line.match(/^\s*\/\/ @(\w+): (.*)$/);
+		if (!match) {
+			// Stop parsing at the first non-matching line
+			return options;
+		}
+
+		const [, key, value] = match;
+		const trimmedValue = value.trim();
+
+		try {
+			options[key] = JSON.parse(trimmedValue);
+		} catch {
+			options[key] = trimmedValue;
+		}
+	}
+
+	return options;
+}
 
 export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	meta: {
@@ -97,6 +126,18 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 
 						const matchOffset = match.index + openingFence.length + 2; // Add `2` because `comment` doesn't include the starting `/*`
 						const codeStartIndex = previousNode.range[0] + matchOffset;
+
+						const overrides = parseCompilerOptions(code);
+						let env = defaultEnv;
+
+						if (Object.keys(overrides).length > 0) {
+							const {options, errors} = ts.convertCompilerOptionsFromJson(overrides, rootDir);
+
+							if (errors.length === 0) {
+								// Create a new enviroment with overridden options
+								env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, {...compilerOptions, ...options});
+							}
+						}
 
 						env.updateFile(FILENAME, code);
 						const syntacticDiagnostics = env.languageService.getSyntacticDiagnostics(FILENAME);
