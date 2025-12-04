@@ -119,6 +119,11 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 							});
 						}
 
+						// Skip type mismatch checks if there are diagnostic errors
+						if (diagnostics.length > 0) {
+							continue;
+						}
+
 						const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
 						const lines = code.split('\n');
 
