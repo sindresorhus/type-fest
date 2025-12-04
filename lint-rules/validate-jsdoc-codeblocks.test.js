@@ -102,6 +102,18 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 					\`\`\`
 			`,
 		)),
+
+		// Compiler options overrides
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			// @exactOptionalPropertyTypes: false
+			const foo: {a?: number} = {a: undefined};
+		`))),
+
+		// Incorrect compiler options are ignored
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			// @noUnusedLocals: 'invalid-value'
+			const foo = {a: 1};
+		`))),
 	],
 	invalid: [
 		// With text before and after
@@ -552,6 +564,22 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				errorAt({line: 5, textBeforeStart: 'type A = Sum<1, ', target: '\'2\''}),
 			],
 		},
+
+		// Compiler options overrides
+		{
+			code: dedenter`
+			/**
+			\`\`\`ts
+			// @noUnusedLocals: true
+			const foo = {a: 1};
+			\`\`\`
+			*/
+			export type T0 = string;
+			`,
+			errors: [
+				errorAt({line: 4, textBeforeStart: 'const ', target: 'foo'}),
+			],
+		},
 	],
 });
 
@@ -684,6 +712,15 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			// 		};
 			// 	}, string, ['foo', 'bar']];
 			// }
+		`))),
+
+		// Compiler options overrides
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			// @exactOptionalPropertyTypes: false
+			import type {AllExtend} from 'type-fest';
+
+			type A = AllExtend<[1?, 2?, 3?], number>;
+			//=> boolean
 		`))),
 
 		// === Different types of quick info ===
@@ -936,6 +973,52 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				const foo = {b: 1};
 				//=> {
 				// 	b: number;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Compiler options overrides
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				// @exactOptionalPropertyTypes: false
+				type Prettify<T> = {
+					[P in keyof T]: T[P];
+				};
+
+				type T1 = Prettify<{a?: string; b?: number}>;
+				//=> {
+				// 	a?: string;
+				// 	b?: number;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 9,
+					textBeforeStart: '//=> ',
+					endLine: 12,
+					textBeforeEnd: '// }',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				// @exactOptionalPropertyTypes: false
+				type Prettify<T> = {
+					[P in keyof T]: T[P];
+				};
+
+				type T1 = Prettify<{a?: string; b?: number}>;
+				//=> {
+				// 	a?: string | undefined;
+				// 	b?: number | undefined;
 				// }
 				\`\`\`
 				*/
