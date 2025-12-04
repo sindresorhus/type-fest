@@ -10,6 +10,7 @@ type A = RemovePrefix<'on-change', string, {strict: "yes"}>;
 `;
 
 const errorAt = props => errorAt_({...props, messageId: 'invalidCodeblock'});
+const typeMismatchErrorAt = props => errorAt_({...props, messageId: 'typeMismatch'});
 
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
@@ -550,6 +551,396 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				errorAt({line: 5, textBeforeStart: 'type A = ', target: 'Sum<1, \'2\'>'}),
 				errorAt({line: 5, textBeforeStart: 'type A = Sum<1, ', target: '\'2\''}),
 			],
+		},
+	],
+});
+
+// Type mismatch tests
+ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
+	valid: [
+		// No twoslash comment at all
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = 'bar';
+		`))),
+
+		// Twoslash comment at very first line
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			//=> 'bar'
+			const foo = 'bar';
+		`))),
+
+		// With no space after `//=>`
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = 'bar';
+			//=>'bar'
+		`))),
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = {a: 1, b: 2};
+			//=>{
+			//	a: number;
+			//	b: number;
+			//}
+		`))),
+
+		// With single space after `//=>`
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Foo = string;
+			//=> string
+		`))),
+
+		// Multiline type
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Foo = {a: number, b: number};
+			//=> {
+			// 	a: number;
+			// 	b: number;
+			// }
+		`))),
+
+		// Quick info at 0th index
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			let foo = 1;
+			foo++;
+			//=> number
+		`))),
+
+		// Quick info at some middle index
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = 1 as string | number;
+			//=> string | number
+		`))),
+
+		// Quick info at last index
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = {n: 1}
+			const bar = foo
+				.n
+			//=> number
+		`))),
+
+		// Double-quotes properly replaced
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			import type {Simplify} from 'type-fest';
+
+			type Foo = {a: 'abc'; b: 123; c: 'def'};
+			type Bar = {x: {y: 'y'; z: 'z'}};
+			type Baz = Simplify<Foo & Bar>;
+			//=> {
+			// 	a: 'abc';
+			// 	b: 123;
+			// 	c: 'def';
+			// 	x: {
+			// 		y: 'y';
+			// 		z: 'z';
+			// 	};
+			// }
+		`))),
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Foo = 'a"b"c';
+			//=> 'a"b"c'
+
+			type Bar = "d'e'f";
+			//=> 'd\'e\'f'
+		`))),
+
+		// Space indentation properly replaced
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			import type {Simplify} from 'type-fest';
+
+			type Foo = {
+				a: {
+					ab: boolean;
+					ac: {
+						acd: string | number;
+					};
+				};
+				e: [
+					{
+						fgh: false;
+						ijk: {
+							lmno: 'yes' | 'no';
+						};
+					},
+					string,
+					[
+						'foo',
+						'bar',
+					],
+				];
+			};
+
+			type Bar = Simplify<Foo>;
+			//=> {
+			// 	a: {
+			// 		ab: boolean;
+			// 		ac: {
+			// 			acd: string | number;
+			// 		};
+			// 	};
+			// 	e: [{
+			// 		fgh: false;
+			// 		ijk: {
+			// 			lmno: 'yes' | 'no';
+			// 		};
+			// 	}, string, ['foo', 'bar']];
+			// }
+		`))),
+
+		// === Different types of quick info ===
+		// Function
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			declare function foo(a: string): {b: string; c: number};
+			foo('a');
+			//=> {
+			// 	b: string;
+			// 	c: number;
+			// }
+		`))),
+
+		// Variable
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = 'foo';
+			//=> 'foo'
+
+			let bar = {a: 1};
+			//=> {
+			// 	a: number;
+			// }
+
+			var baz = true;
+			//=> boolean
+		`))),
+
+		// Type Alias
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Foo = {a: number};
+			//=> {
+			// 	a: number;
+			// }
+		`))),
+
+		// Interface
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			interface Foo { foo: string; }
+			//=> interface Foo
+		`))),
+
+		// Parameter
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			function foo(n: number) {
+				n++;
+				//=> number
+			}
+		`))),
+
+		// Property
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = {n: 1};
+			foo
+				.n++;
+			//=> number
+		`))),
+
+		// Method
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			class Foo {
+				m() {
+					return 'foo';
+				}
+			}
+
+			const f = new Foo()
+				.m();
+			//=> string
+		`))),
+
+		// Constructor
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			class Foo {
+				constructor() {
+					//=> Foo
+					console.log('Foo');
+				}
+			}
+		`))),
+
+		// Enum
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			enum Foo {}
+			void Foo;
+			//=> enum Foo
+		`))),
+
+		// Enum Member
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			enum Foo { A }
+			void Foo
+			.A;
+			//=> 0
+		`))),
+	],
+	invalid: [
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = 'bar';
+				//=> 'baz'
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=> ',
+					target: '\'baz\'',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = 'bar';
+				//=> 'bar'
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// More than one space after `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=>     string
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=> ',
+					target: '    string',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=> string
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multiline replace
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1};
+				//=> {
+				// 	a: string;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=> ',
+					endLine: 6,
+					textBeforeEnd: '// }',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1};
+				//=> {
+				// 	a: number;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multiline add missing lines
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: 2, c: 'c'};
+				//=> {
+				// 	b: number;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=> ',
+					endLine: 6,
+					textBeforeEnd: '// }',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: 2, c: 'c'};
+				//=> {
+				// 	a: boolean;
+				// 	b: number;
+				// 	c: string;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multiline remove extra lines
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {b: 1};
+				//=> {
+				// 	a: boolean;
+				// 	b: number;
+				// 	c: string;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=> ',
+					endLine: 8,
+					textBeforeEnd: '// }',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {b: 1};
+				//=> {
+				// 	b: number;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
 		},
 	],
 });
