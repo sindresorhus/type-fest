@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable max-depth */
 import path from 'node:path';
 import ts from 'typescript';
@@ -191,9 +192,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 										}
 
 										return text;
-									}).join('');
-
-									const expectedType = display.replace(/^(?:type|interface|class|enum|const|let|var|function)\s+.*?\s*[:=]\s+/, '');
+									}).join('').trim();
 
 									if (actualType !== expectedType) {
 										const commentIndex = line.indexOf(TWOSLASH_COMMENT);
