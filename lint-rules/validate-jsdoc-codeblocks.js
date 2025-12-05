@@ -240,7 +240,11 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 									}).join('').trim();
 
 									if (expectedType.length < 50) {
-										expectedType = expectedType.replaceAll(/\r?\n\s*/g, ' ');
+										expectedType = expectedType
+											.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
+											.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
+											.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
+											.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
 									}
 
 									const expectedComment = TWOSLASH_COMMENT + ' ' + expectedType.replaceAll('\n', '\n// ');

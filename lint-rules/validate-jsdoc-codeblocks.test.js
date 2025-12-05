@@ -605,7 +605,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Object type collapsed into single line
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			const foo = {a: 1, b: {c: 'c'}};
-			//=> { a: number; b: { c: string; }; }
+			//=> {a: number; b: {c: string}}
 		`))),
 
 		// Multiline type
@@ -728,7 +728,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			declare function foo(a: string): {b: string; c: number};
 			foo('a');
-			//=> { b: string; c: number; }
+			//=> {b: string; c: number}
 		`))),
 
 		// Variable
@@ -737,7 +737,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> 'foo'
 
 			let bar = {a: 1};
-			//=> { a: number; }
+			//=> {a: number}
 
 			var baz = true;
 			//=> boolean
@@ -746,7 +746,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Type Alias
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Foo = {a: number};
-			//=> { a: number; }
+			//=> {a: number}
 		`))),
 
 		// Interface
@@ -1045,7 +1045,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				/**
 				\`\`\`ts
 				const foo = [{a: 1}] as const;
-				//=> readonly [{ readonly a: 1; }]
+				//=> readonly [{readonly a: 1}]
 				\`\`\`
 				*/
 				export type T0 = string;
