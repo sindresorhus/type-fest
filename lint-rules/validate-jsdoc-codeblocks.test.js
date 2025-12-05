@@ -821,11 +821,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					target: '//=> \'baz\'',
-				}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=> \'baz\''}),
 			],
 			output: dedenter`
 				/**
@@ -850,11 +846,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					target: '//=>string',
-				}),
+				typeMismatchErrorAt({line: 4,	textBeforeStart: '',	target: '//=>string'}),
 			],
 			output: dedenter`
 				/**
@@ -879,11 +871,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					target: '//=>     string',
-				}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=>     string'}),
 			],
 			output: dedenter`
 				/**
@@ -912,12 +900,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					endLine: 8,
-					textBeforeEnd: '//}',
-				}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 8, textBeforeEnd: '//}'}),
 			],
 			output: dedenter`
 				/**
@@ -951,12 +934,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					endLine: 9,
-					textBeforeEnd: '// }',
-				}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 9, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
@@ -991,12 +969,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					endLine: 9,
-					textBeforeEnd: '// }',
-				}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 9, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
@@ -1034,12 +1007,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					endLine: 11,
-					textBeforeEnd: '// }',
-				}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 11, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
@@ -1071,12 +1039,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '',
-					endLine: 6,
-					textBeforeEnd: '// }]',
-				}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 6, textBeforeEnd: '// }]'}),
 			],
 			output: dedenter`
 				/**
@@ -1109,12 +1072,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({
-					line: 9,
-					textBeforeStart: '',
-					endLine: 12,
-					textBeforeEnd: '// }',
-				}),
+				typeMismatchErrorAt({line: 9, textBeforeStart: '', endLine: 12, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
