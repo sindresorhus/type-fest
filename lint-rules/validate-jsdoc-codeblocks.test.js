@@ -586,6 +586,11 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 // Type mismatch tests
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Foo = string;
+			//=> string
+		`))),
+
 		// No twoslash comment at all
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			const foo = 'bar';
@@ -595,26 +600,6 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			//=> 'bar'
 			const foo = 'bar';
-		`))),
-
-		// With no space after `//=>`
-		exportTypeAndOption(jsdoc(fence(dedenter`
-			const foo = 'bar';
-			//=>'bar'
-		`))),
-		exportTypeAndOption(jsdoc(fence(dedenter`
-			const foo = [{a: 1}, {b: 1}] as const;
-			//=>readonly [{
-			//	readonly a: 1;
-			//}, {
-			//	readonly b: 1;
-			//}]
-		`))),
-
-		// With single space after `//=>`
-		exportTypeAndOption(jsdoc(fence(dedenter`
-			type Foo = string;
-			//=> string
 		`))),
 
 		// Object type collapsed into single line
@@ -838,8 +823,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 4,
-					textBeforeStart: '//=> ',
-					target: '\'baz\'',
+					textBeforeStart: '',
+					target: '//=> \'baz\'',
 				}),
 			],
 			output: dedenter`
@@ -847,6 +832,35 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				\`\`\`ts
 				const foo = 'bar';
 				//=> 'bar'
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// No space after `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=>string
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '',
+					target: '//=>string',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=> string
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -867,8 +881,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 4,
-					textBeforeStart: '//=> ',
-					target: '    string',
+					textBeforeStart: '',
+					target: '//=>     string',
 				}),
 			],
 			output: dedenter`
@@ -882,7 +896,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
-		// No space to single space after `//=>`
+		// No space in subsequent lines
 		{
 			code: dedenter`
 				/**
@@ -900,7 +914,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 4,
-					textBeforeStart: '//=> ',
+					textBeforeStart: '',
 					endLine: 8,
 					textBeforeEnd: '//}',
 				}),
@@ -914,44 +928,6 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				// 	readonly b: 2;
 				// 	readonly c: 3;
 				// }
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-		},
-
-		// Single space to no space after `//=>`
-		{
-			code: dedenter`
-				/**
-				\`\`\`ts
-				const foo = {a: 1, b: 2, c: 3} as const;
-				//=>{
-				// 	readonly a: 1;
-				// 	readonly b: 2;
-				// 	readonly c: 3;
-				// }
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-			errors: [
-				typeMismatchErrorAt({
-					line: 4,
-					textBeforeStart: '//=>',
-					endLine: 8,
-					textBeforeEnd: '// }',
-				}),
-			],
-			output: dedenter`
-				/**
-				\`\`\`ts
-				const foo = {a: 1, b: 2, c: 3} as const;
-				//=>{
-				//	readonly a: 1;
-				//	readonly b: 2;
-				//	readonly c: 3;
-				//}
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -977,7 +953,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 4,
-					textBeforeStart: '//=> ',
+					textBeforeStart: '',
 					endLine: 9,
 					textBeforeEnd: '// }',
 				}),
@@ -1017,7 +993,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 4,
-					textBeforeStart: '//=> ',
+					textBeforeStart: '',
 					endLine: 9,
 					textBeforeEnd: '// }',
 				}),
@@ -1060,7 +1036,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 4,
-					textBeforeStart: '//=> ',
+					textBeforeStart: '',
 					endLine: 11,
 					textBeforeEnd: '// }',
 				}),
@@ -1097,7 +1073,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 4,
-					textBeforeStart: '//=> ',
+					textBeforeStart: '',
 					endLine: 6,
 					textBeforeEnd: '// }]',
 				}),
@@ -1135,7 +1111,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			errors: [
 				typeMismatchErrorAt({
 					line: 9,
-					textBeforeStart: '//=> ',
+					textBeforeStart: '',
 					endLine: 12,
 					textBeforeEnd: '// }',
 				}),

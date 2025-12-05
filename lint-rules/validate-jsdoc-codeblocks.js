@@ -71,7 +71,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		fixable: 'code',
 		messages: {
 			invalidCodeblock: '{{errorMessage}}',
-			typeMismatch: 'Expected type to be: {{expectedType}}, but found: {{actualType}}',
+			typeMismatch: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
 		},
 		schema: [],
 	},
@@ -170,8 +170,8 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 						const lines = code.split('\n');
 
 						for (const [index, line] of lines.entries()) {
-							const trimmedLine = line.trim();
-							if (!trimmedLine.startsWith(TWOSLASH_COMMENT)) {
+							const dedentedLine = line.trimStart();
+							if (!dedentedLine.startsWith(TWOSLASH_COMMENT)) {
 								continue;
 							}
 
@@ -180,19 +180,17 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 								continue;
 							}
 
-							const lineWithoutTwoslash = trimmedLine.replace(TWOSLASH_COMMENT, '');
-							const delimiter = lineWithoutTwoslash.startsWith(' ') ? ' ' : '';
-							let actualType = lineWithoutTwoslash.slice(delimiter.length);
-							let actualTypeEndLine = index;
+							let actualComment = dedentedLine;
+							let actualCommentEndLine = index;
 
 							for (let i = index + 1; i < lines.length; i++) {
-								const nextLine = lines[i].trim();
-								if (!nextLine.startsWith('//') || nextLine.startsWith(TWOSLASH_COMMENT)) {
+								const dedentedNextLine = lines[i].trimStart();
+								if (!dedentedNextLine.startsWith('//') || dedentedNextLine.startsWith(TWOSLASH_COMMENT)) {
 									break;
 								}
 
-								actualType += '\n' + nextLine.replace('//' + delimiter, '');
-								actualTypeEndLine = i;
+								actualComment += '\n' + dedentedNextLine;
+								actualCommentEndLine = i;
 							}
 
 							const previousLine = lines[previousLineIndex];
@@ -245,16 +243,16 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 										expectedType = expectedType.replaceAll(/\r?\n\s*/g, ' ');
 									}
 
-									if (actualType !== expectedType) {
-										const commentIndex = line.indexOf(TWOSLASH_COMMENT);
-										const indentation = line.slice(0, commentIndex);
-										const actualTypeIndex = commentIndex + TWOSLASH_COMMENT.length + delimiter.length;
+									const expectedComment = TWOSLASH_COMMENT + ' ' + expectedType.replaceAll('\n', '\n// ');
 
-										const actualTypeStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualTypeIndex);
-										const actualTypeEndOffset = sourceFile.getPositionOfLineAndCharacter(actualTypeEndLine, lines[actualTypeEndLine].length);
+									if (actualComment !== expectedComment) {
+										const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
 
-										const start = codeStartIndex + actualTypeStartOffset;
-										const end = codeStartIndex + actualTypeEndOffset;
+										const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
+										const actualCommentEndOffset = sourceFile.getPositionOfLineAndCharacter(actualCommentEndLine, lines[actualCommentEndLine].length);
+
+										const start = codeStartIndex + actualCommentStartOffset;
+										const end = codeStartIndex + actualCommentEndOffset;
 
 										context.report({
 											loc: {
@@ -263,11 +261,16 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 											},
 											messageId: 'typeMismatch',
 											data: {
-												expectedType,
-												actualType,
+												expectedComment,
+												actualComment,
 											},
 											fix(fixer) {
-												return fixer.replaceTextRange([start, end], expectedType.replaceAll('\n', `\n${indentation}//${delimiter}`));
+												const indent = line.slice(0, actualCommentIndex);
+
+												return fixer.replaceTextRange(
+													[start, end],
+													expectedComment.replaceAll('\n', `\n${indent}`),
+												);
 											},
 										});
 									}
