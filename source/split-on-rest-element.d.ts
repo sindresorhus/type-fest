@@ -50,10 +50,10 @@ type T3 = SplitOnRestElement<[number, string?]>;
 //=> [[number, string?], [], []]
 
 type T4 = SplitOnRestElement<[number, string?], {preserveOptionalModifier: false}>;
-//=> [[number, string], [], []] or [[number, string | undefined], [], []]
+//=> [[number, string], [], []]
 
 type T5 = SplitOnRestElement<readonly [string?, ...number[]], {preserveOptionalModifier: false}>;
-//=> readonly [[string], number[], []] or readonly [[string | undefined], number[], []]
+//=> readonly [[string], number[], []]
 ```
 
 @see {@link ExtractRestElement}
