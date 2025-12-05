@@ -25,13 +25,7 @@ type Foo = {
 };
 
 type SomeRequiredDeep = SetRequiredDeep<Foo, 'a' | `c.${number}.d`>;
-//=> {
-// 	a: number; // Is now required
-// 	b?: string;
-// 	c?: {
-// 		d: number; // Is now required
-// 	}[];
-// }
+//=> {b?: string; c?: {d: number}[]; a: number}
 
 // Set specific indices in an array to be required.
 type ArrayExample = SetRequiredDeep<{a: [number?, number?, number?]}, 'a.0' | 'a.1'>;

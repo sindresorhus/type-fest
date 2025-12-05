@@ -8,13 +8,13 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31438)
 import type {ValueOf} from 'type-fest';
 
 type A = ValueOf<{id: number; name: string; active: boolean}>;
-//=> number | string | boolean
+//=> string | number | boolean
 
 type B = ValueOf<{id: number; name: string; active: boolean}, 'name'>;
 //=> string
 
 type C = ValueOf<{id: number; name: string; active: boolean}, 'id' | 'name'>;
-//=> number | string
+//=> string | number
 ```
 
 @category Object

@@ -49,10 +49,15 @@ Note: If either of the types is `never`, the result becomes `false`.
 
 @example
 ```
-import type {And} from 'type-fest';
+import type {And, Simplify} from 'type-fest';
 
 type A = And<true, never>;
 //=> false
+
+type Foo = {a: 'abc'; b: 123; c: 'def'};
+type Bar = {x: {y: 'y'; z: 'z'}};
+type Baz = Simplify<Foo & Bar>;
+//=> {a: 'abc'; b: 123; c: 'def'; x: {y: 'y'; z: 'z'}}
 
 type B = And<never, true>;
 //=> false
