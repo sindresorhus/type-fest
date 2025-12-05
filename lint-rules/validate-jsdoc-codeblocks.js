@@ -239,7 +239,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 										return text;
 									}).join('').trim();
 
-									if (expectedType.length < 50) {
+									if (expectedType.length < 80) {
 										expectedType = expectedType
 											.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
 											.replaceAll(/{\s+/g, '{') // Remove spaces after `{`

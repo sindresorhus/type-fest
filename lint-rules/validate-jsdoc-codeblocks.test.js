@@ -612,16 +612,17 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			import type {Simplify} from 'type-fest';
 
-			type Foo = {a: number; b: number};
-			type Bar = {c: string; d: {e: boolean}};
+			type Foo = {readonly a: number; readonly b?: number};
+			type Bar = {c?: string; d: {readonly e: boolean}; e: string};
 			type Baz = Simplify<Foo & Bar>;
 			//=> {
-			// 	a: number;
-			// 	b: number;
-			// 	c: string;
+			// 	readonly a: number;
+			// 	readonly b?: number;
+			// 	c?: string;
 			// 	d: {
-			// 		e: boolean;
+			// 		readonly e: boolean;
 			// 	};
+			// 	e: string;
 			// }
 		`))),
 
@@ -653,15 +654,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			type Foo = {a: 'abc'; b: 123; c: 'def'};
 			type Bar = {x: {y: 'y'; z: 'z'}};
 			type Baz = Simplify<Foo & Bar>;
-			//=> {
-			// 	a: 'abc';
-			// 	b: 123;
-			// 	c: 'def';
-			// 	x: {
-			// 		y: 'y';
-			// 		z: 'z';
-			// 	};
-			// }
+			//=> {a: 'abc'; b: 123; c: 'def'; x: {y: 'y'; z: 'z'}}
 		`))),
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Foo = 'a"b"c';
@@ -889,27 +882,31 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {a: 1, b: 2, c: 3} as const;
+				const foo = {a: true, b: true, c: false, d: false, e: true} as const;
 				//=> {
-				//	readonly a: 1;
-				//	readonly b: 2;
-				//	readonly c: 3;
+				//	readonly a: true;
+				//	readonly b: true;
+				//	readonly c: false;
+				//	readonly d: false;
+				//	readonly e: true;
 				//}
 				\`\`\`
 				*/
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 8, textBeforeEnd: '//}'}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 10, textBeforeEnd: '//}'}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {a: 1, b: 2, c: 3} as const;
+				const foo = {a: true, b: true, c: false, d: false, e: true} as const;
 				//=> {
-				// 	readonly a: 1;
-				// 	readonly b: 2;
-				// 	readonly c: 3;
+				// 	readonly a: true;
+				// 	readonly b: true;
+				// 	readonly c: false;
+				// 	readonly d: false;
+				// 	readonly e: true;
 				// }
 				\`\`\`
 				*/
@@ -922,11 +919,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				type Foo = {foo?: string; bar: {readonly baz: string | null}};
+				const foo = {foo: true, bar: {baz: true, qux: [true, false]}} as const;
 				//=> {
-				// 	foo: string;
-				// 	bar: {
-				// 		baz: null;
+				// 	foo: true;
+				// 	readonly bar: {
+				// 		readonly baz: false;
+				// 		readonly qux: [true, false];
 				// 	};
 				// }
 				\`\`\`
@@ -934,16 +932,17 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 9, textBeforeEnd: '// }'}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 10, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				type Foo = {foo?: string; bar: {readonly baz: string | null}};
+				const foo = {foo: true, bar: {baz: true, qux: [true, false]}} as const;
 				//=> {
-				// 	foo?: string;
-				// 	bar: {
-				// 		readonly baz: string | null;
+				// 	readonly foo: true;
+				// 	readonly bar: {
+				// 		readonly baz: true;
+				// 		readonly qux: readonly [true, false];
 				// 	};
 				// }
 				\`\`\`
@@ -957,11 +956,10 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				type Foo = {foo?: string; bar: {readonly baz: string; qux?: number}};
+				const foo = {foo: true, bar: {baz: true, qux: [true, false]}} as const;
 				//=> {
-				// 	foo?: string;
-				// 	bar: {
-				// 		qux?: number;
+				// 	readonly bar: {
+				// 		readonly qux: readonly [true, false];
 				// 	};
 				// }
 				\`\`\`
@@ -969,17 +967,17 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 9, textBeforeEnd: '// }'}),
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 8, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				type Foo = {foo?: string; bar: {readonly baz: string; qux?: number}};
+				const foo = {foo: true, bar: {baz: true, qux: [true, false]}} as const;
 				//=> {
-				// 	foo?: string;
-				// 	bar: {
-				// 		readonly baz: string;
-				// 		qux?: number;
+				// 	readonly foo: true;
+				// 	readonly bar: {
+				// 		readonly baz: true;
+				// 		readonly qux: readonly [true, false];
 				// 	};
 				// }
 				\`\`\`
@@ -993,14 +991,14 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				type Foo = {bar: {readonly baz: string}; readonly quxx: number[]};
+				const foo = {bar: {qux: [true, false]}, quux: [null, undefined]} as const;
 				//=> {
-				// 	foo?: string;
-				// 	bar: {
-				// 		readonly baz: string;
-				// 		qux?: number;
+				// 	readonly foo: true;
+				// 	readonly bar: {
+				// 		readonly baz: true;
+				// 		readonly qux: readonly [true, false];
 				// 	};
-				// 	readonly quxx: number[];
+				// 	readonly quux: readonly [null, undefined];
 				// }
 				\`\`\`
 				*/
@@ -1012,12 +1010,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			output: dedenter`
 				/**
 				\`\`\`ts
-				type Foo = {bar: {readonly baz: string}; readonly quxx: number[]};
+				const foo = {bar: {qux: [true, false]}, quux: [null, undefined]} as const;
 				//=> {
-				// 	bar: {
-				// 		readonly baz: string;
+				// 	readonly bar: {
+				// 		readonly qux: readonly [true, false];
 				// 	};
-				// 	readonly quxx: number[];
+				// 	readonly quux: readonly [null, undefined];
 				// }
 				\`\`\`
 				*/
@@ -1083,10 +1081,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 
 				type T1 = Prettify<{a?: string; b?: number}>;
-				//=> {
-				// 	a?: string | undefined;
-				// 	b?: number | undefined;
-				// }
+				//=> {a?: string | undefined; b?: number | undefined}
 				\`\`\`
 				*/
 				export type T0 = string;
