@@ -882,6 +882,82 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// No space to single space after `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2, c: 3} as const;
+				//=> {
+				//	readonly a: 1;
+				//	readonly b: 2;
+				//	readonly c: 3;
+				//}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=> ',
+					endLine: 8,
+					textBeforeEnd: '//}',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2, c: 3} as const;
+				//=> {
+				// 	readonly a: 1;
+				// 	readonly b: 2;
+				// 	readonly c: 3;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Single space to no space after `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2, c: 3} as const;
+				//=>{
+				// 	readonly a: 1;
+				// 	readonly b: 2;
+				// 	readonly c: 3;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=>',
+					endLine: 8,
+					textBeforeEnd: '// }',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2, c: 3} as const;
+				//=>{
+				//	readonly a: 1;
+				//	readonly b: 2;
+				//	readonly c: 3;
+				//}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// Multiline replace
 		{
 			code: dedenter`
