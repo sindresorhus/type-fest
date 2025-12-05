@@ -187,7 +187,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 
 							for (let i = index + 1; i < lines.length; i++) {
 								const nextLine = lines[i].trim();
-								if (!nextLine.startsWith('//' + delimiter) || nextLine.startsWith(TWOSLASH_COMMENT)) {
+								if (!nextLine.startsWith('//') || nextLine.startsWith(TWOSLASH_COMMENT)) {
 									break;
 								}
 
