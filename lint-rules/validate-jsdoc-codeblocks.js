@@ -224,7 +224,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 										partsToUse = quickInfo.displayParts.slice(separatorIndex + 1);
 									}
 
-									const expectedType = partsToUse.map((part, index) => {
+									let expectedType = partsToUse.map((part, index) => {
 										const {kind, text} = part;
 
 										// Replace spaces used for indentation with tabs
@@ -240,6 +240,10 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 
 										return text;
 									}).join('').trim();
+
+									if (expectedType.length < 50) {
+										expectedType = expectedType.replaceAll(/\r?\n\s*/g, ' ');
+									}
 
 									if (actualType !== expectedType) {
 										const commentIndex = line.indexOf(TWOSLASH_COMMENT);

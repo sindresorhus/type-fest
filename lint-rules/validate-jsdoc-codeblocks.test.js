@@ -603,11 +603,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=>'bar'
 		`))),
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			const foo = {a: 1, b: 2};
-			//=>{
-			//	a: number;
-			//	b: number;
-			//}
+			const foo = [{a: 1}, {b: 1}] as const;
+			//=>readonly [{
+			//	readonly a: 1;
+			//}, {
+			//	readonly b: 1;
+			//}]
 		`))),
 
 		// With single space after `//=>`
@@ -616,12 +617,26 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> string
 		`))),
 
+		// Object type collapsed into single line
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = {a: 1, b: {c: 'c'}};
+			//=> { a: number; b: { c: string; }; }
+		`))),
+
 		// Multiline type
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			type Foo = {a: number, b: number};
+			import type {Simplify} from 'type-fest';
+
+			type Foo = {a: number; b: number};
+			type Bar = {c: string; d: {e: boolean}};
+			type Baz = Simplify<Foo & Bar>;
 			//=> {
 			// 	a: number;
 			// 	b: number;
+			// 	c: string;
+			// 	d: {
+			// 		e: boolean;
+			// 	};
 			// }
 		`))),
 
@@ -728,10 +743,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			declare function foo(a: string): {b: string; c: number};
 			foo('a');
-			//=> {
-			// 	b: string;
-			// 	c: number;
-			// }
+			//=> { b: string; c: number; }
 		`))),
 
 		// Variable
@@ -740,9 +752,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> 'foo'
 
 			let bar = {a: 1};
-			//=> {
-			// 	a: number;
-			// }
+			//=> { a: number; }
 
 			var baz = true;
 			//=> boolean
@@ -751,9 +761,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Type Alias
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Foo = {a: number};
-			//=> {
-			// 	a: number;
-			// }
+			//=> { a: number; }
 		`))),
 
 		// Interface
@@ -879,9 +887,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {a: 1};
+				type Foo = {foo?: string; bar: {readonly baz: string | null}};
 				//=> {
-				// 	a: string;
+				// 	foo: string;
+				// 	bar: {
+				// 		baz: null;
+				// 	};
 				// }
 				\`\`\`
 				*/
@@ -891,16 +902,19 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				typeMismatchErrorAt({
 					line: 4,
 					textBeforeStart: '//=> ',
-					endLine: 6,
+					endLine: 9,
 					textBeforeEnd: '// }',
 				}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {a: 1};
+				type Foo = {foo?: string; bar: {readonly baz: string | null}};
 				//=> {
-				// 	a: number;
+				// 	foo?: string;
+				// 	bar: {
+				// 		readonly baz: string | null;
+				// 	};
 				// }
 				\`\`\`
 				*/
@@ -913,9 +927,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {a: true, b: 2, c: 'c'};
+				type Foo = {foo?: string; bar: {readonly baz: string; qux?: number}};
 				//=> {
-				// 	b: number;
+				// 	foo?: string;
+				// 	bar: {
+				// 		qux?: number;
+				// 	};
 				// }
 				\`\`\`
 				*/
@@ -925,18 +942,20 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				typeMismatchErrorAt({
 					line: 4,
 					textBeforeStart: '//=> ',
-					endLine: 6,
+					endLine: 9,
 					textBeforeEnd: '// }',
 				}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {a: true, b: 2, c: 'c'};
+				type Foo = {foo?: string; bar: {readonly baz: string; qux?: number}};
 				//=> {
-				// 	a: boolean;
-				// 	b: number;
-				// 	c: string;
+				// 	foo?: string;
+				// 	bar: {
+				// 		readonly baz: string;
+				// 		qux?: number;
+				// 	};
 				// }
 				\`\`\`
 				*/
@@ -949,11 +968,14 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {b: 1};
+				type Foo = {bar: {readonly baz: string}; readonly quxx: number[]};
 				//=> {
-				// 	a: boolean;
-				// 	b: number;
-				// 	c: string;
+				// 	foo?: string;
+				// 	bar: {
+				// 		readonly baz: string;
+				// 		qux?: number;
+				// 	};
+				// 	readonly quxx: number[];
 				// }
 				\`\`\`
 				*/
@@ -963,17 +985,52 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				typeMismatchErrorAt({
 					line: 4,
 					textBeforeStart: '//=> ',
-					endLine: 8,
+					endLine: 11,
 					textBeforeEnd: '// }',
 				}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				const foo = {b: 1};
+				type Foo = {bar: {readonly baz: string}; readonly quxx: number[]};
 				//=> {
-				// 	b: number;
+				// 	bar: {
+				// 		readonly baz: string;
+				// 	};
+				// 	readonly quxx: number[];
 				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multi line to single line
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = [{a: 1}] as const;
+				//=> readonly [{
+				// 	readonly a: 1;
+				// }]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({
+					line: 4,
+					textBeforeStart: '//=> ',
+					endLine: 6,
+					textBeforeEnd: '// }]',
+				}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = [{a: 1}] as const;
+				//=> readonly [{ readonly a: 1; }]
 				\`\`\`
 				*/
 				export type T0 = string;
