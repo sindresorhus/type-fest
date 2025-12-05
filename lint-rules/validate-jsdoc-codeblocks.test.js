@@ -9,7 +9,7 @@ import type {RemovePrefix} from 'type-fest';
 type A = RemovePrefix<'on-change', string, {strict: "yes"}>;
 `;
 
-const errorAt = props => errorAt_({...props, messageId: 'invalidCodeblock'});
+const invalidCodeblockErrorAt = props => errorAt_({...props, messageId: 'invalidCodeblock'});
 const typeMismatchErrorAt = props => errorAt_({...props, messageId: 'typeMismatch'});
 
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
@@ -140,8 +140,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 14, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 14, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -177,8 +177,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 7, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 21, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 7, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 21, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -204,8 +204,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 13, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 13, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -229,8 +229,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 11, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 11, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 		{
@@ -252,8 +252,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 11, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 11, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
 			],
 		},
 
@@ -297,10 +297,10 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 13, textBeforeStart: 'type A = ExcludeStrict<string, ', target: 'number'}),
-				errorAt({line: 22, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
-				errorAt({line: 31, textBeforeStart: '\ttype A = ExcludeStrict<string, ', target: 'number'}),
+				invalidCodeblockErrorAt({line: 4, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 13, textBeforeStart: 'type A = ExcludeStrict<string, ', target: 'number'}),
+				invalidCodeblockErrorAt({line: 22, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 31, textBeforeStart: '\ttype A = ExcludeStrict<string, ', target: 'number'}),
 			],
 		},
 
@@ -353,11 +353,11 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
-				errorAt({line: 12, textBeforeStart: 'type A = ExcludeStrict<string, ', target: 'number'}),
-				errorAt({line: 20, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
-				errorAt({line: 29, textBeforeStart: '\ttype A = ExcludeStrict<string, ', target: 'number'}),
-				errorAt({line: 40, textBeforeStart: '\t', target: 'Sum'}),
+				invalidCodeblockErrorAt({line: 3, textBeforeStart: 'type A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 12, textBeforeStart: 'type A = ExcludeStrict<string, ', target: 'number'}),
+				invalidCodeblockErrorAt({line: 20, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 29, textBeforeStart: '\ttype A = ExcludeStrict<string, ', target: 'number'}),
+				invalidCodeblockErrorAt({line: 40, textBeforeStart: '\t', target: 'Sum'}),
 			],
 		},
 
@@ -393,10 +393,10 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 5, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
-				errorAt({line: 9, textBeforeStart: '\ttype A = ', target: 'Sum'}),
-				errorAt({line: 19, textBeforeStart: '\t\ttype A = ', target: 'Subtract'}),
-				errorAt({line: 23, textBeforeStart: '\t\ttype A = ', target: 'Sum'}),
+				invalidCodeblockErrorAt({line: 5, textBeforeStart: '\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 9, textBeforeStart: '\ttype A = ', target: 'Sum'}),
+				invalidCodeblockErrorAt({line: 19, textBeforeStart: '\t\ttype A = ', target: 'Subtract'}),
+				invalidCodeblockErrorAt({line: 23, textBeforeStart: '\t\ttype A = ', target: 'Sum'}),
 			],
 		},
 
@@ -416,8 +416,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type Sum = string;
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'type A = ', target: 'Sum'}),
-				errorAt({line: 7, textBeforeStart: 'type B = ', target: 'Sum'}),
+				invalidCodeblockErrorAt({line: 4, textBeforeStart: 'type A = ', target: 'Sum'}),
+				invalidCodeblockErrorAt({line: 7, textBeforeStart: 'type B = ', target: 'Sum'}),
 			],
 		},
 
@@ -439,8 +439,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			export type IsUppercase = boolean;
 			`,
 			errors: [
-				errorAt({line: 5, textBeforeStart: '', target: 'IsUppercase'}),
-				errorAt({line: 8, textBeforeStart: '', target: 'IsUppercase'}),
+				invalidCodeblockErrorAt({line: 5, textBeforeStart: '', target: 'IsUppercase'}),
+				invalidCodeblockErrorAt({line: 8, textBeforeStart: '', target: 'IsUppercase'}),
 			],
 		},
 
@@ -459,7 +459,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type Except = string;
 			`,
 			errors: [
-				errorAt({line: 7, textBeforeStart: 'type PostPayload = Except<', target: 'UserData'}),
+				invalidCodeblockErrorAt({line: 7, textBeforeStart: 'type PostPayload = Except<', target: 'UserData'}),
 			],
 		},
 
@@ -484,8 +484,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				};
 			`,
 			errors: [
-				errorAt({line: 7, textBeforeStart: '\ttype ', target: 'Example'}),
-				errorAt({line: 10, textBeforeStart: '\ttype ', target: 'Example'}),
+				invalidCodeblockErrorAt({line: 7, textBeforeStart: '\ttype ', target: 'Example'}),
+				invalidCodeblockErrorAt({line: 10, textBeforeStart: '\ttype ', target: 'Example'}),
 			],
 		},
 
@@ -507,7 +507,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type MultiLine = string;
 			`,
 			errors: [
-				errorAt({line: 6, textBeforeStart: 'updateConfig(', endLine: 9, textBeforeEnd: '}'}),
+				invalidCodeblockErrorAt({line: 6, textBeforeStart: 'updateConfig(', endLine: 9, textBeforeEnd: '}'}),
 			],
 		},
 
@@ -524,7 +524,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			export type ExcludeStrict = string;
 			`,
 			errors: [
-				errorAt({
+				invalidCodeblockErrorAt({
 					line: 5,
 					textBeforeStart: 'type A = ExcludeStrict<\'a\' | \'b\', ',
 					target: '\'A\'',
@@ -543,7 +543,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			export type Test = string;
 			`,
 			errors: [
-				errorAt({line: 3, textBeforeStart: 'const ', target: 'test'}),
+				invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'test'}),
 			],
 		},
 
@@ -560,8 +560,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			export type Test = string;
 			`,
 			errors: [
-				errorAt({line: 5, textBeforeStart: 'type A = ', target: 'Sum<1, \'2\'>'}),
-				errorAt({line: 5, textBeforeStart: 'type A = Sum<1, ', target: '\'2\''}),
+				invalidCodeblockErrorAt({line: 5, textBeforeStart: 'type A = ', target: 'Sum<1, \'2\'>'}),
+				invalidCodeblockErrorAt({line: 5, textBeforeStart: 'type A = Sum<1, ', target: '\'2\''}),
 			],
 		},
 
@@ -577,7 +577,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			export type T0 = string;
 			`,
 			errors: [
-				errorAt({line: 4, textBeforeStart: 'const ', target: 'foo'}),
+				invalidCodeblockErrorAt({line: 4, textBeforeStart: 'const ', target: 'foo'}),
 			],
 		},
 	],
