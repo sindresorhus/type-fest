@@ -83,7 +83,7 @@ type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 // 	c: {
 // 		d: string;
 // 		e: {
-// 			h: string | boolean
+// 			h: string | boolean;
 // 		};
 // 		j: boolean;
 // 	};

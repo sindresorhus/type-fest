@@ -30,13 +30,19 @@ loadConfig1({filePath: './config.json', content: '{ "name": "app" }'}); // No er
 
 // Use `ExclusifyUnion` to prevent that mistake.
 type Config = ExclusifyUnion<FileConfig | InlineConfig>;
-//=> {filePath: string; content?: never} | {content: string; filePath?: never}
+//=> {
+// 	filePath: string;
+// 	content?: never;
+// } | {
+// 	content: string;
+// 	filePath?: never;
+// }
 
 declare function loadConfig2(options: Config): void;
 
 // @ts-expect-error
 loadConfig2({filePath: './config.json', content: '{ "name": "app" }'});
-//=> Error: Argument of type '{ filePath: string; content: string; }' is not assignable to parameter of type '{ filePath: string; content?: never; } | { content: string; filePath?: never; }'.
+// Error: Argument of type '{ filePath: string; content: string; }' is not assignable to parameter of type '{ filePath: string; content?: never; } | { content: string; filePath?: never; }'.
 
 loadConfig2({filePath: './config.json'}); // Ok
 
@@ -63,7 +69,15 @@ function processPayment1(payment: CardPayment | PaypalPayment) {
 }
 
 type Payment = ExclusifyUnion<CardPayment | PaypalPayment>;
-//=> {amount: number; cardNumber: string; paypalId?: never} | {amount: number; paypalId: string; cardNumber?: never}
+//=> {
+// 	amount: number;
+// 	cardNumber: string;
+// 	paypalId?: never;
+// } | {
+// 	amount: number;
+// 	paypalId: string;
+// 	cardNumber?: never;
+// }
 
 function processPayment2(payment: Payment) {
 	const details = payment.cardNumber ?? payment.paypalId; // Ok
@@ -76,16 +90,36 @@ function processPayment2(payment: Payment) {
 import type {ExclusifyUnion} from 'type-fest';
 
 type A = ExclusifyUnion<{a: string} | {b: number}>;
-//=> {a: string; b?: never} | {a?: never; b: number}
+//=> {a: string; b?: never} | {b: number; a?: never}
 
 type B = ExclusifyUnion<{a: string} | {b: number} | {c: boolean}>;
-//=> {a: string; b?: never; c?: never} | {a?: never; b: number; c?: never} | {a?: never; b?: never; c: boolean}
+//=> {
+// 	a: string;
+// 	b?: never;
+// 	c?: never;
+// } | {
+// 	b: number;
+// 	a?: never;
+// 	c?: never;
+// } | {
+// 	c: boolean;
+// 	a?: never;
+// 	b?: never;
+// }
 
 type C = ExclusifyUnion<{a: string; b: number} | {b: string; c: number}>;
-//=> {a: string; b: number; c?: never} | {a?: never; b: string; c: number}
+//=> {
+// 	a: string;
+// 	b: number;
+// 	c?: never;
+// } | {
+// 	b: string;
+// 	c: number;
+// 	a?: never;
+// }
 
 type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
-//=> {a?: 1; readonly b: 2; d?: never} | {a?: never; b?: never; d: 4}
+//=> {a?: 1; readonly b: 2; d?: never} | {d: 4; a?: never; b?: never}
 ```
 
 @category Object

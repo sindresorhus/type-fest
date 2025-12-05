@@ -37,7 +37,7 @@ type UpdatedUser = SetNonNullableDeep<User, 'address.street' | 'contact.email' |
 // 		email?: string;
 // 		phone: string;
 // 	};
-// };
+// }
 ```
 
 @example

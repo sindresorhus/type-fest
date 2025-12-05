@@ -92,7 +92,7 @@ export type PathsOptions = {
 	};
 
 	type AllPaths = Paths<ArrayExample, {leavesOnly: false}>;
-	//=> 'array' | `array.${number}` | `array.${number}.foo` | 'tuple' | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
+	//=> 'array' | 'tuple' | `array.${number}` | `array.${number}.foo` | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
 
 	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
 	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'

@@ -34,7 +34,7 @@ if (omittedUnion.discriminant === 'A') {
 
 	// @ts-expect-error
 	const aValue = omittedUnion.a;
-	//=> Error: `a` is not a property of `{discriminant: 'A' | 'B'}`
+	// Error: `a` is not a property of `{discriminant: 'A' | 'B'}`
 }
 ```
 
@@ -74,15 +74,15 @@ declare const omittedUnion: OmittedUnion;
 
 if (omittedUnion.discriminant === 'A') {
 	const aValue = omittedUnion.a;
-	//=> OK
+	// OK
 
 	// @ts-expect-error
 	const fooValue = omittedUnion.foo;
-	//=> Error: `foo` is not a property of `{discriminant: 'A'; a: string}`
+	// Error: `foo` is not a property of `{discriminant: 'A'; a: string}`
 
 	// @ts-expect-error
 	const barValue = omittedUnion.bar;
-	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
+	// Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
 }
 ```
 

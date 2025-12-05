@@ -76,15 +76,15 @@ import type {ArraySplice} from 'type-fest';
 
 type SomeMonths0 = ['January', 'April', 'June'];
 type Months0 = ArraySplice<SomeMonths0, 1, 0, ['Feb', 'March']>;
-//=> ['January', 'Feb', 'March', 'April', 'June'];
+//=> ['January', 'Feb', 'March', 'April', 'June']
 
 type SomeMonths1 = ['January', 'April', 'June'];
 type Months1 = ArraySplice<SomeMonths1, 1, 1>;
-//=> ['January', 'June'];
+//=> ['January', 'June']
 
 type SomeMonths2 = ['January', 'Foo', 'April'];
 type Months2 = ArraySplice<SomeMonths2, 1, 1, ['Feb', 'March']>;
-//=> ['January', 'Feb', 'March', 'April'];
+//=> ['January', 'Feb', 'March', 'April']
 ```
 
 @category Array
