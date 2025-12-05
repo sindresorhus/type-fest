@@ -30,3 +30,5 @@ expectType<And<false, never>>(false);
 expectType<And<never, boolean>>(false);
 expectType<And<boolean, never>>(false);
 expectType<And<never, never>>(false);
+
+const foo = {foo: true, bar: {baz: true, qux: [true, false]}} as const;

@@ -45,7 +45,7 @@ function arraySlice<
 const slice = arraySlice([1, '2', {a: 3}, [4, 5]], 0, -1);
 
 type Slice = typeof slice;
-//=> [1, '2', { readonly a: 3; }]
+//=> [1, '2', {readonly a: 3}]
 
 const value = slice[2].a;
 //=> 3
