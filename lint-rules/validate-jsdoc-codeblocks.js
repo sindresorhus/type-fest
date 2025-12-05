@@ -134,7 +134,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 							const {options, errors} = ts.convertCompilerOptionsFromJson(overrides, rootDir);
 
 							if (errors.length === 0) {
-								// Create a new enviroment with overridden options
+								// Create a new environment with overridden options
 								env = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, {...compilerOptions, ...options});
 							}
 						}
