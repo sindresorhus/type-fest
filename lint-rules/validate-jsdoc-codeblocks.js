@@ -50,6 +50,12 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 			return {};
 		}
 
+		try {
+			env.updateFile(context.filename, context.sourceCode.getText());
+		} catch {
+			// Ignore
+		}
+
 		return {
 			TSTypeAliasDeclaration(node) {
 				const {parent} = node;
