@@ -716,6 +716,41 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> boolean
 		`))),
 
+		// Multiple `//=>`
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const foo = {a: true, b: false, c: {d: true}} as const;
+			//=> {
+			// 	readonly a: true;
+			// 	readonly b: false;
+			// 	readonly c: {
+			// 		readonly d: true;
+			// 	};
+			// }
+			const bar = ['a', 'b', 'c'] as const;
+			//=> readonly ['a', 'b', 'c']
+			const baz = new Set(bar);
+			//=> Set<'a' | 'b' | 'c'>
+		`))),
+
+		// Indented code blocks
+		exportTypeAndOption(jsdoc(
+			'Note:',
+			dedenter`
+				1. First point
+					\`\`\`ts
+					import type {Subtract} from 'type-fest';
+					type A = Subtract<1, 2>;
+					//=> -1
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					import type {Sum} from 'type-fest';
+					type A = Sum<1, 2>;
+					//=> 3
+					\`\`\`
+			`,
+		)),
+
 		// === Different types of quick info ===
 		// Function
 		exportTypeAndOption(jsdoc(fence(dedenter`
@@ -821,6 +856,31 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				\`\`\`ts
 				const foo = 'bar';
 				//=> 'bar'
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Empty `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=> string
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -1082,6 +1142,103 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 				type T1 = Prettify<{a?: string; b?: number}>;
 				//=> {a?: string | undefined; b?: number | undefined}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Indented code blocks
+		{
+			code: dedenter`
+				/**
+				Note:
+				1. First point
+					\`\`\`ts
+					const foo = {a: true, b: false, c: {d: true}} as const;
+					//=> {
+					// 	a?: false;
+					// 	c?: {
+					// 		d?: false;
+					// 	};
+					// }
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					const bar = ['a', 'b', 'c'] as const;
+					//=> ['a', 'c']
+					const baz = new Set(bar);
+					//=> Set<string>
+					\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({line: 6, textBeforeStart: '\t', endLine: 11, textBeforeEnd: '\t// }'}),
+				typeMismatchErrorAt({line: 16, textBeforeStart: '\t', target: '//=> [\'a\', \'c\']'}),
+				typeMismatchErrorAt({line: 18, textBeforeStart: '\t', target: '//=> Set<string>'}),
+			],
+			output: dedenter`
+				/**
+				Note:
+				1. First point
+					\`\`\`ts
+					const foo = {a: true, b: false, c: {d: true}} as const;
+					//=> {
+					// 	readonly a: true;
+					// 	readonly b: false;
+					// 	readonly c: {
+					// 		readonly d: true;
+					// 	};
+					// }
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					const bar = ['a', 'b', 'c'] as const;
+					//=> readonly ['a', 'b', 'c']
+					const baz = new Set(bar);
+					//=> Set<'a' | 'b' | 'c'>
+					\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multiple `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: false, c: {d: true}} as const;
+				//=>
+				const bar = ['a', 'b', 'c'] as const;
+				//=>
+				const baz = new Set(bar);
+				//=>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
+				typeMismatchErrorAt({line: 6, textBeforeStart: '', target: '//=>'}),
+				typeMismatchErrorAt({line: 8, textBeforeStart: '', target: '//=>'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: false, c: {d: true}} as const;
+				//=> {
+				// 	readonly a: true;
+				// 	readonly b: false;
+				// 	readonly c: {
+				// 		readonly d: true;
+				// 	};
+				// }
+				const bar = ['a', 'b', 'c'] as const;
+				//=> readonly ['a', 'b', 'c']
+				const baz = new Set(bar);
+				//=> Set<'a' | 'b' | 'c'>
 				\`\`\`
 				*/
 				export type T0 = string;
