@@ -1,5 +1,4 @@
-/* eslint-disable complexity */
-/* eslint-disable max-depth */
+/* eslint complexity: ['error', 25] */
 import path from 'node:path';
 import ts from 'typescript';
 import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescript/vfs';
@@ -161,127 +160,8 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 							});
 						}
 
-						// Skip type mismatch checks if there are diagnostic errors
-						if (diagnostics.length > 0) {
-							continue;
-						}
-
-						const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
-						const lines = code.split('\n');
-
-						for (const [index, line] of lines.entries()) {
-							const dedentedLine = line.trimStart();
-							if (!dedentedLine.startsWith(TWOSLASH_COMMENT)) {
-								continue;
-							}
-
-							const previousLineIndex = index - 1;
-							if (previousLineIndex < 0) {
-								continue;
-							}
-
-							let actualComment = dedentedLine;
-							let actualCommentEndLine = index;
-
-							for (let i = index + 1; i < lines.length; i++) {
-								const dedentedNextLine = lines[i].trimStart();
-								if (!dedentedNextLine.startsWith('//') || dedentedNextLine.startsWith(TWOSLASH_COMMENT)) {
-									break;
-								}
-
-								actualComment += '\n' + dedentedNextLine;
-								actualCommentEndLine = i;
-							}
-
-							const previousLine = lines[previousLineIndex];
-							const previousLineOffset = sourceFile.getPositionOfLineAndCharacter(previousLineIndex, 0);
-
-							for (let i = 0; i < previousLine.length; i++) {
-								const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
-
-								if (quickInfo) {
-									let depth = 0;
-									const separatorIndex = quickInfo.displayParts.findIndex(part => {
-										if (part.kind === 'punctuation') {
-											if (['(', '{', '<'].includes(part.text)) {
-												depth++;
-											} else if ([')', '}', '>'].includes(part.text)) {
-												depth--;
-											} else if (part.text === ':' && depth === 0) {
-												return true;
-											}
-										} else if (part.kind === 'operator' && part.text === '=' && depth === 0) {
-											return true;
-										}
-
-										return false;
-									});
-
-									let partsToUse = quickInfo.displayParts;
-									if (separatorIndex !== -1) {
-										partsToUse = quickInfo.displayParts.slice(separatorIndex + 1);
-									}
-
-									let expectedType = partsToUse.map((part, index) => {
-										const {kind, text} = part;
-
-										// Replace spaces used for indentation with tabs
-										const previousPart = partsToUse[index - 1];
-										if (kind === 'space' && (index === 0 || previousPart?.kind === 'lineBreak')) {
-											return text.replaceAll('    ', '\t');
-										}
-
-										// Replace double-quoted string literals with single-quoted ones
-										if (kind === 'stringLiteral' && text.startsWith('"') && text.endsWith('"')) {
-											return `'${text.slice(1, -1).replaceAll(String.raw`\"`, '"').replaceAll('\'', String.raw`\'`)}'`;
-										}
-
-										return text;
-									}).join('').trim();
-
-									if (expectedType.length < 80) {
-										expectedType = expectedType
-											.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
-											.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
-											.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
-											.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
-									}
-
-									const expectedComment = TWOSLASH_COMMENT + ' ' + expectedType.replaceAll('\n', '\n// ');
-
-									if (actualComment !== expectedComment) {
-										const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
-
-										const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
-										const actualCommentEndOffset = sourceFile.getPositionOfLineAndCharacter(actualCommentEndLine, lines[actualCommentEndLine].length);
-
-										const start = codeStartIndex + actualCommentStartOffset;
-										const end = codeStartIndex + actualCommentEndOffset;
-
-										context.report({
-											loc: {
-												start: context.sourceCode.getLocFromIndex(start),
-												end: context.sourceCode.getLocFromIndex(end),
-											},
-											messageId: 'typeMismatch',
-											data: {
-												expectedComment,
-												actualComment,
-											},
-											fix(fixer) {
-												const indent = line.slice(0, actualCommentIndex);
-
-												return fixer.replaceTextRange(
-													[start, end],
-													expectedComment.replaceAll('\n', `\n${indent}`),
-												);
-											},
-										});
-									}
-
-									break;
-								}
-							}
+						if (diagnostics.length === 0) {
+							validateTwoslashTypes(context, env, code, codeStartIndex);
 						}
 					}
 				}
@@ -289,3 +169,123 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		};
 	},
 });
+
+function validateTwoslashTypes(context, env, code, codeStartIndex) {
+	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
+	const lines = code.split('\n');
+
+	for (const [index, line] of lines.entries()) {
+		const dedentedLine = line.trimStart();
+		if (!dedentedLine.startsWith(TWOSLASH_COMMENT)) {
+			continue;
+		}
+
+		const previousLineIndex = index - 1;
+		if (previousLineIndex < 0) {
+			continue;
+		}
+
+		let actualComment = dedentedLine;
+		let actualCommentEndLine = index;
+
+		for (let i = index + 1; i < lines.length; i++) {
+			const dedentedNextLine = lines[i].trimStart();
+			if (!dedentedNextLine.startsWith('//') || dedentedNextLine.startsWith(TWOSLASH_COMMENT)) {
+				break;
+			}
+
+			actualComment += '\n' + dedentedNextLine;
+			actualCommentEndLine = i;
+		}
+
+		const previousLine = lines[previousLineIndex];
+		const previousLineOffset = sourceFile.getPositionOfLineAndCharacter(previousLineIndex, 0);
+
+		for (let i = 0; i < previousLine.length; i++) {
+			const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
+
+			if (quickInfo) {
+				let depth = 0;
+				const separatorIndex = quickInfo.displayParts.findIndex(part => {
+					if (part.kind === 'punctuation') {
+						if (['(', '{', '<'].includes(part.text)) {
+							depth++;
+						} else if ([')', '}', '>'].includes(part.text)) {
+							depth--;
+						} else if (part.text === ':' && depth === 0) {
+							return true;
+						}
+					} else if (part.kind === 'operator' && part.text === '=' && depth === 0) {
+						return true;
+					}
+
+					return false;
+				});
+
+				let partsToUse = quickInfo.displayParts;
+				if (separatorIndex !== -1) {
+					partsToUse = quickInfo.displayParts.slice(separatorIndex + 1);
+				}
+
+				let expectedType = partsToUse.map((part, index) => {
+					const {kind, text} = part;
+
+					// Replace spaces used for indentation with tabs
+					const previousPart = partsToUse[index - 1];
+					if (kind === 'space' && (index === 0 || previousPart?.kind === 'lineBreak')) {
+						return text.replaceAll('    ', '\t');
+					}
+
+					// Replace double-quoted string literals with single-quoted ones
+					if (kind === 'stringLiteral' && text.startsWith('"') && text.endsWith('"')) {
+						return `'${text.slice(1, -1).replaceAll(String.raw`\"`, '"').replaceAll('\'', String.raw`\'`)}'`;
+					}
+
+					return text;
+				}).join('').trim();
+
+				if (expectedType.length < 80) {
+					expectedType = expectedType
+						.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
+						.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
+						.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
+						.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
+				}
+
+				const expectedComment = TWOSLASH_COMMENT + ' ' + expectedType.replaceAll('\n', '\n// ');
+
+				if (actualComment !== expectedComment) {
+					const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
+
+					const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
+					const actualCommentEndOffset = sourceFile.getPositionOfLineAndCharacter(actualCommentEndLine, lines[actualCommentEndLine].length);
+
+					const start = codeStartIndex + actualCommentStartOffset;
+					const end = codeStartIndex + actualCommentEndOffset;
+
+					context.report({
+						loc: {
+							start: context.sourceCode.getLocFromIndex(start),
+							end: context.sourceCode.getLocFromIndex(end),
+						},
+						messageId: 'typeMismatch',
+						data: {
+							expectedComment,
+							actualComment,
+						},
+						fix(fixer) {
+							const indent = line.slice(0, actualCommentIndex);
+
+							return fixer.replaceTextRange(
+								[start, end],
+								expectedComment.replaceAll('\n', `\n${indent}`),
+							);
+						},
+					});
+				}
+
+				break;
+			}
+		}
+	}
+}
