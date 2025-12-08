@@ -29,7 +29,7 @@ declare function onlyAcceptName(arguments_: OnlyAcceptName): void;
 // TypeScript complains about excess properties when an object literal is provided.
 // @ts-expect-error
 onlyAcceptName({name: 'name', id: 1});
-//=> `id` is excess
+// `id` is excess
 
 // TypeScript does not complain about excess properties when the provided value is a variable (not an object literal).
 const invalidInput = {name: 'name', id: 1};

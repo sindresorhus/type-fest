@@ -18,11 +18,11 @@ const guestFencingTeam: FencingTeam = ['Josh', 'Michael', 'Robert'];
 
 // @ts-expect-error
 const homeFencingTeam: FencingTeam = ['George', 'John'];
-//=> Error: Type '[string, string]' is not assignable to type 'readonly [string, string, string]'.
+// Error: Type '[string, string]' is not assignable to type 'readonly [string, string, string]'.
 
 // @ts-expect-error
 guestFencingTeam.push('Sam');
-//=> Error: Property 'push' does not exist on type 'readonly [string, string, string]'.
+// Error: Property 'push' does not exist on type 'readonly [string, string, string]'.
 ```
 
 @deprecated This type will be removed in the next major version. Use the built-in `Readonly` type in combination with the {@link TupleOf} type instead, like `Readonly<TupleOf<Length, Element>>`.

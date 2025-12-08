@@ -25,14 +25,14 @@ type ExclusiveOptions = MergeExclusive<ExclusiveVariation1, ExclusiveVariation2>
 let exclusiveOptions: ExclusiveOptions;
 
 exclusiveOptions = {exclusive1: true};
-//=> Works
+// Works
 
 exclusiveOptions = {exclusive2: 'hi'};
-//=> Works
+// Works
 
 // @ts-expect-error
 exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
-//=> Error
+// Error
 ```
 
 @category Object

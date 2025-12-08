@@ -30,7 +30,7 @@ type ZeroToFour = Range<0, 5>;
 //=> '0' | '1' | '2' | '3' | '4'
 
 type ThreeToEight = Range<3, 9>;
-//=> '3' | '4' | '5' | '6' | '7' | '8'
+//=> '5' | '3' | '4' | '6' | '7' | '8'
 ```
 
 Note: If the specified length is the non-literal `number` type, the result will not be a tuple but a regular array.

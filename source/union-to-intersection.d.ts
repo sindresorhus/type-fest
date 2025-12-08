@@ -10,7 +10,7 @@ import type {UnionToIntersection} from 'type-fest';
 type Union = {the(): void} | {great(arg: string): void} | {escape: boolean};
 
 type Intersection = UnionToIntersection<Union>;
-//=> {the(): void; great(arg: string): void; escape: boolean};
+//=> {the(): void} & {great(arg: string): void} & {escape: boolean}
 ```
 
 @category Type

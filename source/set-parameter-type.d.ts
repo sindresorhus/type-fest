@@ -64,11 +64,11 @@ Note:
 	import type {SetParameterType} from 'type-fest';
 
 	const fn = (a: number) => a;
-	//=> fn: (a: number) => number;
+	//=> (a: number) => number
 
  	// We change type of `a` to `string`, but return type is still `number`.
 	type Fn = SetParameterType<typeof fn, {0: string}>;
- 	//=> (a: string) => number;
+ 	//=> (a: string) => number
 	```
 
 Use-case:
@@ -87,25 +87,25 @@ type Data = SuccessData | ErrorData;
 type HandleMessage = (data: Data, message: string, ...arguments_: any[]) => void;
 
 type HandleOk = SetParameterType<HandleMessage, {0: SuccessData; 1: 'ok'}>;
-//=> (data: SuccessData, message: 'ok', ...arguments_: any[]) => void;
+//=> (data: SuccessData, message: 'ok', ...arguments_: any[]) => void
 
 // Another way to define the parameters to replace.
 type HandleError = SetParameterType<HandleMessage, [data: ErrorData, message: 'error']>;
-//=> (data: ErrorData, message: 'error', ...arguments_: any[]) => void;
+//=> (data: ErrorData, message: 'error', ...arguments_: any[]) => void
 
 // Change single parameter type.
 type HandleWarn = SetParameterType<HandleMessage, {1: 'warn'}>;
-//=> (data: Data, message: 'warn', ...arguments_: any[]) => void;
+//=> (data: Data, message: 'warn', ...arguments_: any[]) => void
 
 // Change rest parameter type.
 
 // Way 1: Input full parameter type.
 type HandleLog = SetParameterType<HandleMessage, [data: Data, message: 'log', ...arguments_: string[]]>;
-//=> (data: Data, message: 'log', ...arguments_: string[]) => void;
+//=> (data: Data, message: 'log', ...arguments_: string[]) => void
 
 // Way 2: Input rest parameter type by Object index.
 type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
-//=> (data: Data, message: string, ...arguments_: string[]) => void;
+//=> (data: Data, message: string, ...arguments_: string[]) => void
 ```
 
 @category Function

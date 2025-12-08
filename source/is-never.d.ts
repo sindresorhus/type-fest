@@ -38,14 +38,14 @@ type IsTrue<T> = T extends true ? true : false;
 
 // When a distributive conditional is instantiated with `never`, the entire conditional results in `never`.
 type A = IsTrue<never>;
-//   ^? type A = never
+//=> never
 
 // If you don't want that behaviour, you can explicitly add an `IsNever` check before the distributive conditional.
 type IsTrueFixed<T> =
 	IsNever<T> extends true ? false : T extends true ? true : false;
 
 type B = IsTrueFixed<never>;
-//   ^? type B = false
+//=> false
 ```
 
 @category Type Guard
