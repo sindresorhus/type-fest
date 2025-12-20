@@ -26,7 +26,7 @@ type D = Subtract<18, 96>;
 //=> -78
 
 type E = Subtract<PositiveInfinity, 9999>;
-//=> PositiveInfinity
+//=> Infinity
 
 type F = Subtract<PositiveInfinity, PositiveInfinity>;
 //=> number

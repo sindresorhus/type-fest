@@ -114,6 +114,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			// @noUnusedLocals: 'invalid-value'
 			const foo = {a: 1};
 		`))),
+
+		// Line comment between JSDoc and type/option
+		exportTypeAndOption(dedenter`
+			${jsdoc(fence(code1))}
+			// Some line comment between JSDoc and export
+		`),
 	],
 	invalid: [
 		// With text before and after

@@ -1,4 +1,3 @@
-/* eslint complexity: ['error', 25] */
 import path from 'node:path';
 import ts from 'typescript';
 import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescript/vfs';
@@ -61,6 +60,21 @@ function parseCompilerOptions(code) {
 	return options;
 }
 
+function getJSDocNode(sourceCode, node) {
+	let previousToken = sourceCode.getTokenBefore(node, {includeComments: true});
+
+	// Skip over any line comments immediately before the node
+	while (previousToken && previousToken.type === 'Line') {
+		previousToken = sourceCode.getTokenBefore(previousToken, {includeComments: true});
+	}
+
+	if (previousToken && previousToken.type === 'Block' && previousToken.value.startsWith('*')) {
+		return previousToken;
+	}
+
+	return undefined;
+}
+
 export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	meta: {
 		type: 'suggestion',
@@ -98,21 +112,23 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 					return;
 				}
 
-				const previousNodes = [context.sourceCode.getTokenBefore(parent, {includeComments: true})];
+				const previousNodes = [];
+				const jsdocForExport = getJSDocNode(context.sourceCode, parent);
+				if (jsdocForExport) {
+					previousNodes.push(jsdocForExport);
+				}
 
 				// Handle JSDoc blocks for options
 				if (node.id.name.endsWith('Options') && node.typeAnnotation.type === 'TSTypeLiteral') {
 					for (const member of node.typeAnnotation.members) {
-						previousNodes.push(context.sourceCode.getTokenBefore(member, {includeComments: true}));
+						const jsdocForMember = getJSDocNode(context.sourceCode, member);
+						if (jsdocForMember) {
+							previousNodes.push(jsdocForMember);
+						}
 					}
 				}
 
 				for (const previousNode of previousNodes) {
-					// Skip if previous node is not a JSDoc comment
-					if (!previousNode || previousNode.type !== 'Block' || !previousNode.value.startsWith('*')) {
-						continue;
-					}
-
 					const comment = previousNode.value;
 
 					for (const match of comment.matchAll(CODEBLOCK_REGEX)) {
