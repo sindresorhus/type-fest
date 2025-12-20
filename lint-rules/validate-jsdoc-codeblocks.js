@@ -98,7 +98,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		}
 
 		try {
-			env.updateFile(context.filename, context.sourceCode.getText());
+			defaultEnv.updateFile(context.filename, context.sourceCode.getText());
 		} catch {
 			// Ignore
 		}
