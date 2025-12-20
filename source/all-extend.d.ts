@@ -92,7 +92,6 @@ import type {AllExtend} from 'type-fest';
 type A = AllExtend<[1?, 2?, 3?], number>;
 //=> boolean
 
-// `exactOptionalPropertyTypes` disabled
 type B = AllExtend<[1?, 2?, 3?], number | undefined>;
 //=> true
 ```
