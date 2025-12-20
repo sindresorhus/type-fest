@@ -204,7 +204,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 		for (let i = 0; i < previousLine.length; i++) {
 			const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
 
-			if (quickInfo) {
+			if (quickInfo?.displayParts) {
 				let depth = 0;
 				const separatorIndex = quickInfo.displayParts.findIndex(part => {
 					if (part.kind === 'punctuation') {
