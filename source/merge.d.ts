@@ -29,7 +29,7 @@ type Bar = {
 };
 
 export type FooBar = Merge<Foo, Bar>;
-// => {
+//=> {
 // 	[x: string]: unknown;
 // 	[x: number]: number;
 // 	[x: symbol]: unknown;

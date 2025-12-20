@@ -446,25 +446,25 @@ type Foo = {foo: 'foo'; fooBar: string[]};
 type Bar = {bar: 'bar'; fooBar: number[]};
 
 type FooBar = MergeDeep<Foo, Bar>;
-// { foo: "foo"; bar: "bar"; fooBar: number[]}
+//=> {foo: 'foo'; bar: 'bar'; fooBar: number[]}
 
 type FooBarSpread = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
-// { foo: "foo"; bar: "bar"; fooBar: (string | number)[]}
+//=> {foo: 'foo'; bar: 'bar'; fooBar: (string | number)[]}
 
 type FooBarArray = MergeDeep<Foo[], Bar[]>;
-// (Foo | Bar)[]
+//=> (Foo | Bar)[]
 
 type FooBarArrayDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true}>;
-// FooBar[]
+//=> {foo: 'foo'; bar: 'bar'; fooBar: number[]}[]
 
 type FooBarArraySpreadDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
-// FooBarSpread[]
+//=> {foo: 'foo'; bar: 'bar'; fooBar: (string | number)[]}[]
 
 type FooBarTupleDeep = MergeDeep<[Foo, true, 42], [Bar, 'life'], {recurseIntoArrays: true}>;
-// [FooBar, 'life', 42]
+//=> [{foo: 'foo'; bar: 'bar'; fooBar: number[]}, 'life', 42]
 
 type FooBarTupleWithArrayDeep = MergeDeep<[Foo[], true], [Bar[], 'life', 42], {recurseIntoArrays: true}>;
-// [FooBar[], 'life', 42]
+//=> [{foo: 'foo'; bar: 'bar'; fooBar: number[]}[], 'life', 42]
 ```
 
 @example

@@ -204,7 +204,7 @@ type A = Get<string[], '3', {strict: false}>;
 //=> string
 
 type B = Get<Record<string, string>, 'foo', {strict: true}>;
-// => string | undefined
+//=> string | undefined
 ```
 
 @category Object
