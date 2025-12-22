@@ -186,6 +186,53 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 });
 
+function extractTypeFromQuickInfo(quickInfo) {
+	let depth = 0;
+	const separatorIndex = quickInfo.displayParts.findIndex(part => {
+		if (part.kind === 'punctuation') {
+			if (['(', '{', '<'].includes(part.text)) {
+				depth++;
+			} else if ([')', '}', '>'].includes(part.text)) {
+				depth--;
+			} else if (part.text === ':' && depth === 0) {
+				return true;
+			}
+		} else if (part.kind === 'operator' && part.text === '=' && depth === 0) {
+			return true;
+		}
+
+		return false;
+	});
+
+	let partsToUse = quickInfo.displayParts;
+	if (separatorIndex !== -1) {
+		partsToUse = quickInfo.displayParts.slice(separatorIndex + 1);
+	}
+
+	return partsToUse
+		.map((part, index) => {
+			const {kind, text} = part;
+
+			// Replace spaces used for indentation with tabs
+			const previousPart = partsToUse[index - 1];
+			if (kind === 'space' && (index === 0 || previousPart?.kind === 'lineBreak')) {
+				return text.replaceAll('    ', '\t');
+			}
+
+			// Replace double-quoted string literals with single-quoted ones
+			if (kind === 'stringLiteral' && text.startsWith('"') && text.endsWith('"')) {
+				return `'${text
+					.slice(1, -1)
+					.replaceAll(String.raw`\"`, '"')
+					.replaceAll('\'', String.raw`\'`)}'`;
+			}
+
+			return text;
+		})
+		.join('')
+		.trim();
+}
+
 function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
 	const lines = code.split('\n');
@@ -221,44 +268,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 			const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
 
 			if (quickInfo?.displayParts) {
-				let depth = 0;
-				const separatorIndex = quickInfo.displayParts.findIndex(part => {
-					if (part.kind === 'punctuation') {
-						if (['(', '{', '<'].includes(part.text)) {
-							depth++;
-						} else if ([')', '}', '>'].includes(part.text)) {
-							depth--;
-						} else if (part.text === ':' && depth === 0) {
-							return true;
-						}
-					} else if (part.kind === 'operator' && part.text === '=' && depth === 0) {
-						return true;
-					}
-
-					return false;
-				});
-
-				let partsToUse = quickInfo.displayParts;
-				if (separatorIndex !== -1) {
-					partsToUse = quickInfo.displayParts.slice(separatorIndex + 1);
-				}
-
-				let expectedType = partsToUse.map((part, index) => {
-					const {kind, text} = part;
-
-					// Replace spaces used for indentation with tabs
-					const previousPart = partsToUse[index - 1];
-					if (kind === 'space' && (index === 0 || previousPart?.kind === 'lineBreak')) {
-						return text.replaceAll('    ', '\t');
-					}
-
-					// Replace double-quoted string literals with single-quoted ones
-					if (kind === 'stringLiteral' && text.startsWith('"') && text.endsWith('"')) {
-						return `'${text.slice(1, -1).replaceAll(String.raw`\"`, '"').replaceAll('\'', String.raw`\'`)}'`;
-					}
-
-					return text;
-				}).join('').trim();
+				let expectedType = extractTypeFromQuickInfo(quickInfo);
 
 				if (expectedType.length < 80) {
 					expectedType = expectedType
