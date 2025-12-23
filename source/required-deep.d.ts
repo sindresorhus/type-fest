@@ -66,7 +66,7 @@ export type RequiredDeep<T> = T extends BuiltIns
 											? T
 											: ((...arguments_: Parameters<T>) => ReturnType<T>) & RequiredObjectDeep<T>
 									: T extends object
-										? Simplify<RequiredObjectDeep<T>>
+										? Simplify<RequiredObjectDeep<T>> // `Simplify` to prevent `RequiredObjectDeep` from appearing in the resulting type
 										: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {

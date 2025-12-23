@@ -119,7 +119,7 @@ P extends `${infer RecordKeyInPath}.${infer SubPath}`
 		? IsNever<Key> extends true
 			? ObjectT
 			: Key extends PropertyKey
-				? Simplify<Omit<ObjectT, Key>>
+				? Simplify<Omit<ObjectT, Key>> // `Simplify` to prevent `Omit` from appearing in the resulting type
 				: ObjectT
 		: ObjectT;
 
