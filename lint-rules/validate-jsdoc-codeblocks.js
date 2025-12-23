@@ -189,7 +189,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 function extractTypeFromQuickInfo(quickInfo) {
 	const {displayParts} = quickInfo;
 
-	// For interfaces and enums, return everything after the keyword.
+	// For interfaces and enums, return everything after the keyword
 	const keywordIndex = displayParts.findIndex(
 		part => part.kind === 'keyword' && ['interface', 'enum'].includes(part.text),
 	);
@@ -215,7 +215,7 @@ function extractTypeFromQuickInfo(quickInfo) {
 		return false;
 	});
 
-	// If `separatorIndex` is `-1` (not found), return the entire thing.
+	// If `separatorIndex` is `-1` (not found), return the entire thing
 	return displayParts.slice(separatorIndex + 1).map(part => part.text).join('').trim();
 }
 
@@ -238,7 +238,7 @@ function normalizeUnions(type) {
 			const types = node.types
 				.map(t => [print(t), t])
 				.sort(([a], [b]) =>
-					// Numbers are sorted only wrt other numbers.
+					// Numbers are sorted only wrt other numbers
 					isNumeric(a) && isNumeric(b) ? Number(a) - Number(b) : 0,
 				)
 				.map(t => t[1]);
@@ -249,14 +249,14 @@ function normalizeUnions(type) {
 			);
 		}
 
-		// Prefer single-line formatting for tuple types.
+		// Prefer single-line formatting for tuple types
 		if (ts.isTupleTypeNode(node)) {
 			const updated = ts.factory.createTupleTypeNode(node.elements);
 			ts.setEmitFlags(updated, ts.EmitFlags.SingleLine);
 			return updated;
 		}
 
-		// Replace double-quoted string literals with single-quoted ones.
+		// Replace double-quoted string literals with single-quoted ones
 		if (ts.isStringLiteral(node)) {
 			const updated = ts.factory.createStringLiteral(node.text, true);
 			// Preserve non-ASCII characters like emojis.
