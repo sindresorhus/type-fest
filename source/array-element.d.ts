@@ -20,7 +20,7 @@ type StringArray = ArrayElement<string[]>;
 
 // Tuples
 type Tuple = ArrayElement<[1, 2, 3]>;
-//=> 3 | 1 | 2
+//=> 1 | 2 | 3
 
 // Type-safe
 type NotArray = ArrayElement<{a: string}>;

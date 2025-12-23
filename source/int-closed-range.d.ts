@@ -18,10 +18,10 @@ Use-cases:
 import type {IntClosedRange} from 'type-fest';
 
 type Age = IntClosedRange<0, 20>;
-//=> 0 | 1 | 20 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19
+//=> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
 
 type FontSize = IntClosedRange<10, 20>;
-//=> 20 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19
+//=> 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
 
 type EvenNumber = IntClosedRange<0, 10, 2>;
 //=> 0 | 2 | 4 | 6 | 8 | 10
@@ -34,10 +34,10 @@ type EvenNumber = IntClosedRange<0, 10, 2>;
 import type {IntClosedRange} from 'type-fest';
 
 type ZeroToNine = IntClosedRange<0, 9>;
-//=> 0 | 1 | 9 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+//=> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
 type Hundreds = IntClosedRange<100, 900, 100>;
-//=> 100 | 900 | 200 | 300 | 400 | 500 | 600 | 700 | 800
+//=> 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
 ```
 
 @see {@link IntRange}
