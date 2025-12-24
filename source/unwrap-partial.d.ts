@@ -14,10 +14,10 @@ type Config = Partial<{
 }>;
 
 type InitializedConfig = UnwrapPartial<Config>;
-//=> { port: number; host: string; secure?: boolean }
+//=> {port: number; host: string; secure?: boolean}
 ```
 
-If the provided type isn’t of `Partial<T>`, `UnwrapPartial` has no effect on the original type.
+Note: If the provided type isn’t of `Partial<T>`, `UnwrapPartial` has no effect on the original type.
 
 @category Object
 */
