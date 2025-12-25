@@ -15,7 +15,7 @@ type Foo = {
 };
 
 type Bar = OverrideProperties<Foo, {b: number}>;
-//=> {a: string, b: number}
+//=> {a: string; b: number}
 
 // @ts-expect-error
 type Baz = OverrideProperties<Foo, {c: number}>;

@@ -17,7 +17,7 @@ const indexed: Record<string, unknown> = {}; // Allowed
 
 // @ts-expect-error
 const keyed: Record<'foo', unknown> = {}; // Error
-// => TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
+// TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
 ```
 
 Instead of causing a type error like the above, you can also use a [conditional type](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html) to test whether a type is assignable to another:
@@ -26,12 +26,16 @@ Instead of causing a type error like the above, you can also use a [conditional 
 type Indexed = {} extends Record<string, unknown>
 	? '✅ `{}` is assignable to `Record<string, unknown>`'
 	: '❌ `{}` is NOT assignable to `Record<string, unknown>`';
-// => '✅ `{}` is assignable to `Record<string, unknown>`'
+
+type IndexedResult = Indexed;
+//=> '✅ `{}` is assignable to `Record<string, unknown>`'
 
 type Keyed = {} extends Record<'foo' | 'bar', unknown>
 	? '✅ `{}` is assignable to `Record<\'foo\' | \'bar\', unknown>`'
 	: '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', unknown>`';
-// => "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`"
+
+type KeyedResult = Keyed;
+//=> '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', unknown>`'
 ```
 
 Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
@@ -79,7 +83,7 @@ type Example = {
 };
 
 type ExampleWithoutIndexSignatures = OmitIndexSignature<Example>;
-// => { foo: 'bar'; qux?: 'baz' | undefined; }
+//=> {foo: 'bar'; qux?: 'baz'}
 ```
 
 @see {@link PickIndexSignature}

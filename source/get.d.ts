@@ -187,18 +187,24 @@ type ApiResponse = {
 };
 
 const getName = (apiResponse: ApiResponse) => get(apiResponse, 'hits.hits[0]._source.name');
-//=> (apiResponse: ApiResponse) => {given: string[]; family: string}[] | undefined
+//=> (apiResponse: ApiResponse) => {
+// 	given: string[];
+// 	family: string;
+// }[] | undefined
 
 // Path also supports a readonly array of strings
 const getNameWithPathArray = (apiResponse: ApiResponse) => get(apiResponse, ['hits', 'hits', '0', '_source', 'name']);
-//=> (apiResponse: ApiResponse) => {given: string[]; family: string}[] | undefined
+//=> (apiResponse: ApiResponse) => {
+// 	given: string[];
+// 	family: string;
+// }[] | undefined
 
 // Non-strict mode:
 type A = Get<string[], '3', {strict: false}>;
 //=> string
 
 type B = Get<Record<string, string>, 'foo', {strict: true}>;
-// => string | undefined
+//=> string | undefined
 ```
 
 @category Object

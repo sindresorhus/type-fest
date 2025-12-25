@@ -207,7 +207,7 @@ const stringId = getId({asString: true});
 
 declare const runtimeBoolean: boolean;
 const eitherId = getId({asString: runtimeBoolean});
-//=> number | string
+//=> string | number
 ```
 
 @category Type Guard
@@ -236,7 +236,8 @@ function get<Object_ extends Record<symbol, number>, Key extends keyof Object_>(
 }
 
 const symbolLiteral = Symbol('literal');
-const symbolValue = Symbol('value');
+let symbolValue = Symbol('value1');
+symbolValue = Symbol('value2');
 
 get({[symbolLiteral]: 1} as const, symbolLiteral);
 //=> 1

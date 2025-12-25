@@ -18,7 +18,7 @@ type B = ArrayReverse<readonly [string, number, ...boolean[]]>;
 //=> readonly [...boolean[], number, string]
 
 type C = ArrayReverse<['foo', 'bar'] | readonly [1, 2, 3]>;
-//=> ["bar", "foo"] | readonly [3, 2, 1]
+//=> ['bar', 'foo'] | readonly [3, 2, 1]
 
 type D = ArrayReverse<string[]>;
 //=> string[]
@@ -34,19 +34,19 @@ Note: If the tuple contains optional elements, the result will be a union of tup
 import type {ArrayReverse} from 'type-fest';
 
 type A = ArrayReverse<[string, number, boolean?]>;
-//=> [boolean, number, string] | [number, string]
+//=> [number, string] | [boolean, number, string]
 
 type B = ArrayReverse<[string, number?, boolean?]>;
-//=> [boolean, number, string] | [number, string] | [string]
+//=> [string] | [number, string] | [boolean, number, string]
 
 type C = ArrayReverse<[string?, number?, boolean?]>;
-//=> [boolean, number, string] | [number, string] | [string] | []
+//=> [] | [string] | [number, string] | [boolean, number, string]
 
 type D = ArrayReverse<[string, number?, ...boolean[]]>;
-//=> [...boolean[], number, string] | [string]
+//=> [string] | [...boolean[], number, string]
 
 type E = ArrayReverse<[string?, number?, ...boolean[]]>;
-//=> [...boolean[], number, string] | [string] | []
+//=> [] | [string] | [...boolean[], number, string]
 ```
 
 @category Array

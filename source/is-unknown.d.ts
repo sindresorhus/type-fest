@@ -12,7 +12,7 @@ Useful in type utilities, such as when dealing with unknown data from API calls.
 import type {IsUnknown} from 'type-fest';
 
 type A = IsUnknown<unknown>;
-//=> unknown
+//=> true
 
 type B = IsUnknown<any>;
 //=> false

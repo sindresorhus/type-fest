@@ -12,7 +12,7 @@ import type {SetReturnType} from 'type-fest';
 type MyFunctionThatCanThrow = (foo: string, bar: number) => boolean;
 
 type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, ReturnType<MyFunctionThatCanThrow> | undefined>;
-//=> (foo: string, bar: number) => boolean | undefined;
+//=> (foo: string, bar: number) => boolean | undefined
 ```
 
 @category Function

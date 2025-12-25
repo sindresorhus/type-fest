@@ -74,13 +74,13 @@ type Float = Integer<1.5>;
 // Supports non-decimal numbers
 
 type OctalInteger = Integer<0o10>;
-//=> 0o10
+//=> 8
 
 type BinaryInteger = Integer<0b10>;
-//=> 0b10
+//=> 2
 
 type HexadecimalInteger = Integer<0x10>;
-//=> 0x10
+//=> 16
 ```
 
 @example

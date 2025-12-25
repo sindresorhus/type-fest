@@ -23,7 +23,7 @@ type C = Sum<111, -222>;
 //=> -111
 
 type D = Sum<PositiveInfinity, -9999>;
-//=> PositiveInfinity
+//=> Infinity
 
 type E = Sum<PositiveInfinity, NegativeInfinity>;
 //=> number

@@ -25,7 +25,7 @@ type B = {
 type Union = A | B;
 
 type PickedUnion = Pick<Union, 'discriminant' | 'foo'>;
-//=> {discriminant: 'A' | 'B', foo: {bar: string} | {baz: string}}
+//=> {discriminant: 'A' | 'B'; foo: {bar: string} | {baz: string}}
 
 declare const pickedUnion: PickedUnion;
 
@@ -36,7 +36,7 @@ if (pickedUnion.discriminant === 'A') {
 
 	// @ts-expect-error
 	const barValue = pickedUnion.foo.bar;
-	//=> Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
+	// Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
 }
 ```
 
@@ -70,15 +70,15 @@ declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
 	const barValue = pickedUnion.foo.bar;
-	//=> OK
+	// OK
 
 	// @ts-expect-error
 	const extraneousValue = pickedUnion.extraneous;
-	//=> Error: Property `extraneous` does not exist on type `Pick<A, 'discriminant' | 'foo'>`.
+	// Error: Property `extraneous` does not exist on type `Pick<A, 'discriminant' | 'foo'>`.
 
 	// @ts-expect-error
 	const bazValue = pickedUnion.foo.baz;
-	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
+	// Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
 }
 ```
 
