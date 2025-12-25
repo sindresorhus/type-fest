@@ -33,7 +33,7 @@ type MergeDeepRecordProperty<
 	Source,
 	Options extends MergeDeepInternalOptions,
 > = undefined extends Source
-	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | (undefined extends Destination ? undefined : never)
 	: MergeDeepOrReturn<Source, Destination, Source, Options>;
 
 /**
@@ -58,7 +58,7 @@ type DoMergeDeepRecord<
 	}
 // Case in rule 3: Both the source and the destination contain the key.
 	& {
-		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
+		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Required<Destination>[Key], Required<Source>[Key], Options>;
 	};
 
 /**
