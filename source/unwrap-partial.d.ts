@@ -1,7 +1,7 @@
 /**
 Revert the `Partial` modifier on an object type.
 
-Use case: Infer the underlying type `T` when only `Partial<T>` is available or the original type may not be directly accessible.
+Use-case: Infer the underlying type `T` when only `Partial<T>` is available or the original type may not be directly accessible.
 
 @example
 ```

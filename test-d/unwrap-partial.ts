@@ -77,5 +77,9 @@ expectType<TestTuple>({} as UnwrapPartial<[string?, number?, boolean?]>);
 expectType<EmptyObject>({} as UnwrapPartial<Partial<EmptyObject>>);
 expectType<unknown>({} as UnwrapPartial<Partial<unknown>>);
 expectType<any>({} as UnwrapPartial<Partial<any>>);
+expectType<never>({} as UnwrapPartial<never>);
 expectType<Record<string, unknown>>({} as UnwrapPartial<Partial<Record<string, unknown>>>);
 expectType<Record<string, any>>({} as UnwrapPartial<Partial<Record<string, any>>>);
+
+// `UnwrapPartial` has no effect on non-partial types
+expectType<TestType>({} as UnwrapPartial<TestType>);
