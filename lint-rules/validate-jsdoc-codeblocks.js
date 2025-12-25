@@ -187,8 +187,19 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 });
 
 function extractTypeFromQuickInfo(quickInfo) {
+	const {displayParts} = quickInfo;
+
+	// For interfaces and enums, return everything after the keyword
+	const keywordIndex = displayParts.findIndex(
+		part => part.kind === 'keyword' && ['interface', 'enum'].includes(part.text),
+	);
+
+	if (keywordIndex !== -1) {
+		return displayParts.slice(keywordIndex + 1).map(part => part.text).join('').trim();
+	}
+
 	let depth = 0;
-	const separatorIndex = quickInfo.displayParts.findIndex(part => {
+	const separatorIndex = displayParts.findIndex(part => {
 		if (part.kind === 'punctuation') {
 			if (['(', '{', '<'].includes(part.text)) {
 				depth++;
@@ -204,33 +215,65 @@ function extractTypeFromQuickInfo(quickInfo) {
 		return false;
 	});
 
-	let partsToUse = quickInfo.displayParts;
-	if (separatorIndex !== -1) {
-		partsToUse = quickInfo.displayParts.slice(separatorIndex + 1);
-	}
+	// If `separatorIndex` is `-1` (not found), return the entire thing
+	return displayParts.slice(separatorIndex + 1).map(part => part.text).join('').trim();
+}
 
-	return partsToUse
-		.map((part, index) => {
-			const {kind, text} = part;
+function normalizeUnions(type) {
+	const sourceFile = ts.createSourceFile(
+		'twoslash-type.ts',
+		`declare const test: ${type};`,
+		ts.ScriptTarget.Latest,
+	);
 
-			// Replace spaces used for indentation with tabs
-			const previousPart = partsToUse[index - 1];
-			if (kind === 'space' && (index === 0 || previousPart?.kind === 'lineBreak')) {
-				return text.replaceAll('    ', '\t');
-			}
+	const typeNode = sourceFile.statements[0].declarationList.declarations[0].type;
 
-			// Replace double-quoted string literals with single-quoted ones
-			if (kind === 'stringLiteral' && text.startsWith('"') && text.endsWith('"')) {
-				return `'${text
-					.slice(1, -1)
-					.replaceAll(String.raw`\"`, '"')
-					.replaceAll('\'', String.raw`\'`)}'`;
-			}
+	const print = node => ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, sourceFile);
+	const isNumeric = v => v.trim() !== '' && Number.isFinite(Number(v));
 
-			return text;
-		})
-		.join('')
-		.trim();
+	const visit = node => {
+		node = ts.visitEachChild(node, visit, undefined);
+
+		if (ts.isUnionTypeNode(node)) {
+			const types = node.types
+				.map(t => [print(t), t])
+				.sort(([a], [b]) =>
+					// Numbers are sorted only wrt other numbers
+					isNumeric(a) && isNumeric(b) ? Number(a) - Number(b) : 0,
+				)
+				.map(t => t[1]);
+
+			return ts.factory.updateUnionTypeNode(
+				node,
+				ts.factory.createNodeArray(types),
+			);
+		}
+
+		// Prefer single-line formatting for tuple types
+		if (ts.isTupleTypeNode(node)) {
+			const updated = ts.factory.createTupleTypeNode(node.elements);
+			ts.setEmitFlags(updated, ts.EmitFlags.SingleLine);
+			return updated;
+		}
+
+		// Replace double-quoted string literals with single-quoted ones
+		if (ts.isStringLiteral(node)) {
+			const updated = ts.factory.createStringLiteral(node.text, true);
+			// Preserve non-ASCII characters like emojis.
+			ts.setEmitFlags(updated, ts.EmitFlags.NoAsciiEscaping);
+			return updated;
+		}
+
+		return node;
+	};
+
+	return print(visit(typeNode)).replaceAll(/^( +)/gm, indentation => {
+		// Replace spaces used for indentation with tabs
+		const spacesPerTab = 4;
+		const tabCount = Math.floor(indentation.length / spacesPerTab);
+		const remainingSpaces = indentation.length % spacesPerTab;
+		return '\t'.repeat(tabCount) + ' '.repeat(remainingSpaces);
+	});
 }
 
 function validateTwoslashTypes(context, env, code, codeStartIndex) {
@@ -268,7 +311,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 			const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
 
 			if (quickInfo?.displayParts) {
-				let expectedType = extractTypeFromQuickInfo(quickInfo);
+				let expectedType = normalizeUnions(extractTypeFromQuickInfo(quickInfo));
 
 				if (expectedType.length < 80) {
 					expectedType = expectedType

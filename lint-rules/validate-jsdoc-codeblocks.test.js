@@ -757,6 +757,54 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		)),
 
+		// Numbers are sorted in union
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			import type {IntClosedRange} from 'type-fest';
+
+			type ZeroToNine = IntClosedRange<0, 9>;
+			//=> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+		`))),
+
+		// Nested union are sorted
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Test = {w: 0 | 10 | 5; x: [2 | 16 | 4]; y: {z: 3 | 27 | 9}};
+			//=> {w: 0 | 5 | 10; x: [2 | 4 | 16]; y: {z: 3 | 9 | 27}}
+		`))),
+
+		// Unions inside unions are sorted
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Test = {a: 'foo' | 27 | 1 | {b: 2 | 1 | 8 | 4} | 9 | 3 | 'bar'};
+			//=> {a: 'foo' | 1 | 3 | 9 | 27 | {b: 1 | 2 | 4 | 8} | 'bar'}
+		`))),
+
+		// Only numbers are sorted in union, non-numbers remain unchanged
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			import type {ArrayElement} from 'type-fest';
+
+			type Tuple1 = ArrayElement<[null, string, boolean, 1, 3, 0, -2, 4, 2, -1]>;
+			//=> string | boolean | -2 | -1 | 0 | 1 | 2 | 3 | 4 | null
+
+			type Tuple2 = ArrayElement<[null, 1, 3, string, 0, -2, 4, 2, boolean, -1]>;
+			//=> string | boolean | -2 | -1 | 0 | 1 | 2 | 3 | 4 | null
+		`))),
+
+		// Tuples are in single line
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			import type {TupleOf} from 'type-fest';
+
+			type RGB = TupleOf<3, number>;
+			//=> [number, number, number]
+
+			type TicTacToeBoard = TupleOf<3, TupleOf<3, 'X' | 'O' | null>>;
+			//=> [['X' | 'O' | null, 'X' | 'O' | null, 'X' | 'O' | null], ['X' | 'O' | null, 'X' | 'O' | null, 'X' | 'O' | null], ['X' | 'O' | null, 'X' | 'O' | null, 'X' | 'O' | null]]
+		`))),
+
+		// Emojis are preserved
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Pets = '🦄' | '🐶' | '🐇';
+			//=> '🦄' | '🐶' | '🐇'
+		`))),
+
 		// === Different types of quick info ===
 		// Function
 		exportTypeAndOption(jsdoc(fence(dedenter`
@@ -786,7 +834,13 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Interface
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			interface Foo { foo: string; }
-			//=> interface Foo
+			//=> Foo
+		`))),
+
+		// Generic interface
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			interface Foo<T> { foo: T; }
+			//=> Foo<T>
 		`))),
 
 		// Parameter
@@ -831,8 +885,13 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Enum
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			enum Foo {}
-			void Foo;
-			//=> enum Foo
+			//=> Foo
+		`))),
+
+		// Const enum
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			const enum Foo { A = 1 }
+			//=> Foo
 		`))),
 
 		// Enum Member
