@@ -25,9 +25,9 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"test:tsc": "node --max-old-space-size=5120 ./node_modules/.bin/tsc",
-		"test:tsd": "tsd",
-		"test:xo": "xo",
+		"test:tsc": "node --max-old-space-size=6144 ./node_modules/.bin/tsc",
+		"test:tsd": "node --max-old-space-size=6144 ./node_modules/.bin/tsd",
+		"test:xo": "node --max-old-space-size=6144 ./node_modules/.bin/xo",
 		"test:linter": "node --test",
 		"test": "run-p test:*"
 	},
