@@ -32,9 +32,13 @@ type MergeDeepRecordProperty<
 	Destination,
 	Source,
 	Options extends MergeDeepInternalOptions,
-> = undefined extends Source
-	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
-	: MergeDeepOrReturn<Source, Destination, Source, Options>;
+	Default = Source, // Used for debug only
+>
+= undefined extends Source
+	? MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+	: MergeDeepOrReturn<Default, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options>
+		// We cannot add `| undefined` here to follow the behavior of merging into "unknown"
+	;
 
 /**
 Walk through the union of the keys of the two objects and test in which object the properties are defined.
@@ -58,7 +62,12 @@ type DoMergeDeepRecord<
 	}
 // Case in rule 3: Both the source and the destination contain the key.
 	& {
-		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
+		[Key in keyof Source as Key extends keyof Destination ? Key : never]:
+		MergeDeepRecordProperty<
+			Destination[Key],
+			Source[Key],
+			Options
+		>
 	};
 
 /**
@@ -123,7 +132,7 @@ type TypeNumberOrType<Type extends UnknownArrayOrTuple> = Type[number] extends n
 type PickRestTypeFlat<Type extends UnknownArrayOrTuple> = TypeNumberOrType<PickRestType<Type>>;
 
 /**
-Try to merge two array/tuple elements or return the source element if the end of the destination is reached or vis-versa.
+Try to merge two array/tuple elements or return the source element if the end of the destination is reached or vice versa.
 */
 type MergeDeepArrayOrTupleElements<
 	Destination,
@@ -296,6 +305,11 @@ type MergeDeepArrayOrTuple<
 
 /**
 Try to merge two objects or two arrays/tuples recursively into a new type or return the default value.
+
+@param DefaultType - The default type to return (if the destination type or the source type is undefined).
+@param Destination - The destination type.
+@param Source - The source type.
+@param Options - The {@link MergeDeepInternalOptions}.
 */
 type MergeDeepOrReturn<
 	DefaultType,
@@ -303,15 +317,15 @@ type MergeDeepOrReturn<
 	Source,
 	Options extends MergeDeepInternalOptions,
 > = SimplifyDeepExcludeArray<[undefined] extends [Destination | Source]
-	? DefaultType
+	? DefaultType // At least one is undefined
 	: Destination extends UnknownRecord
 		? Source extends UnknownRecord
 			? MergeDeepRecord<Destination, Source, Options>
-			: DefaultType
+			: DefaultType // Destination is a Record but Source is not
 		: Destination extends UnknownArrayOrTuple
 			? Source extends UnknownArrayOrTuple
 				? MergeDeepArrayOrTuple<Destination, Source, EnforceOptional<Merge<Options, {spreadTopLevelArrays: false}>>>
-				: DefaultType
+				: DefaultType // Destination is an Array or Tuple but Source is not
 			: DefaultType>;
 
 /**
