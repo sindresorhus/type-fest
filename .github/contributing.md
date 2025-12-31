@@ -23,6 +23,6 @@
 - If you add any internal helper types, they should still be properly documented and tested.
 - Add the type to the readme.
 - Make sure the file in the `source` directory uses a `.d.ts` extension and not `.ts`.
-- **Use AI (like ChatGPT) to catch type bugs, improve docs, spot typos, validate examples, and suggest more tests.** Include all relevant code (type, tests, helpers, etc.) in the prompt, and also provide a couple of existing types as examples of how it's done. Try this prompt: “Review this TypeScript type for correctness, edge cases, naming, docs, and test coverage. Suggest improvements and realistic succint examples.”
+- **Use AI (like ChatGPT) to catch type bugs, improve docs, spot typos, validate examples, and suggest more tests.** Include all relevant code (type, tests, helpers, etc.) in the prompt, and also provide a couple of existing types as examples of how it's done. Try this prompt: “Review this TypeScript type for correctness, edge cases, naming, docs, and test coverage. Suggest improvements and realistic succinct examples.”
 - Run `$ npm test` before submitting and make sure it passes.
 - Name the pull request ```Add `TypeName` type```.

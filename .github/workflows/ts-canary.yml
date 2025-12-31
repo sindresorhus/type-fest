@@ -23,4 +23,4 @@ jobs:
       - run: npm install typescript@${{ matrix.typescript-version }}
       - name: show installed typescript version
         run: npm list typescript --depth=0
-      - run: npx tsc
+      - run: NODE_OPTIONS="--max-old-space-size=6144" npx tsc

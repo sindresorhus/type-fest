@@ -41,11 +41,11 @@ function displayPetInfo(petInfo: Cat | Dog) {
 
 	// petInfo type is complex and have some needless fields
 
-	console.log('name: ', petInfo.name);
-	console.log('type: ', petInfo.type);
+	console.log('name:', petInfo.name);
+	console.log('type:', petInfo.type);
 }
 
-function displayPetInfo(petInfo: SharedUnionFields<Cat | Dog>) {
+function displayPetInfoWithSharedUnionFields(petInfo: SharedUnionFields<Cat | Dog>) {
 	// typeof petInfo =>
 	// {
 	// 	name: string;
@@ -54,13 +54,13 @@ function displayPetInfo(petInfo: SharedUnionFields<Cat | Dog>) {
 
 	// petInfo type is simple and clear
 
-	console.log('name: ', petInfo.name);
-	console.log('type: ', petInfo.type);
+	console.log('name:', petInfo.name);
+	console.log('type:', petInfo.type);
 }
 ```
 
-@see SharedUnionFieldsDeep
-@see AllUnionFields
+@see {@link SharedUnionFieldsDeep}
+@see {@link AllUnionFields}
 
 @category Object
 @category Union

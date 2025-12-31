@@ -78,18 +78,21 @@ type D = AllExtend<[true, boolean, true], true>;
 Note: Behaviour of optional elements depend on the `exactOptionalPropertyTypes` compiler option. When the option is disabled, the target type must include `undefined` for a successful match.
 
 ```
+// @exactOptionalPropertyTypes: true
 import type {AllExtend} from 'type-fest';
 
-// `exactOptionalPropertyTypes` enabled
 type A = AllExtend<[1?, 2?, 3?], number>;
 //=> true
+```
 
-// `exactOptionalPropertyTypes` disabled
-type B = AllExtend<[1?, 2?, 3?], number>;
-//=> false
+```
+// @exactOptionalPropertyTypes: false
+import type {AllExtend} from 'type-fest';
 
-// `exactOptionalPropertyTypes` disabled
-type C = AllExtend<[1?, 2?, 3?], number | undefined>;
+type A = AllExtend<[1?, 2?, 3?], number>;
+//=> boolean
+
+type B = AllExtend<[1?, 2?, 3?], number | undefined>;
 //=> true
 ```
 

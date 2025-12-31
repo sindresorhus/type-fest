@@ -16,7 +16,12 @@ export const importPathRule = /** @type {const} */ ({
 	defaultOptions: [],
 	create(context) {
 		return {
-			ImportDeclaration(node) {
+			'ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration'(node) {
+				// Exit if not a re-export
+				if (!node.source) {
+					return;
+				}
+
 				const importPath = node.source.value;
 
 				// Skip if not relative path

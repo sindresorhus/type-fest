@@ -51,16 +51,16 @@ Returns a boolean for whether the given string `S` starts with the given string 
 
 @example
 ```
-StartsWith<'abcde', 'abc'>;
+type A = StartsWith<'abcde', 'abc'>;
 //=> true
 
-StartsWith<'abcde', 'bc'>;
+type B = StartsWith<'abcde', 'bc'>;
 //=> false
 
-StartsWith<string, 'bc'>;
+type C = StartsWith<string, 'bc'>;
 //=> never
 
-StartsWith<'abcde', string>;
+type D = StartsWith<'abcde', string>;
 //=> never
 ```
 
@@ -78,10 +78,10 @@ Returns an array of the characters of the string.
 
 @example
 ```
-StringToArray<'abcde'>;
+type A = StringToArray<'abcde'>;
 //=> ['a', 'b', 'c', 'd', 'e']
 
-StringToArray<string>;
+type B = StringToArray<string>;
 //=> never
 ```
 
@@ -98,10 +98,10 @@ Returns the length of the given string.
 
 @example
 ```
-StringLength<'abcde'>;
+type A = StringLength<'abcde'>;
 //=> 5
 
-StringLength<string>;
+type B = StringLength<string>;
 //=> never
 ```
 
@@ -137,10 +137,10 @@ Returns a boolean for whether `A` represents a number greater than `B`, where `A
 
 @example
 ```
-SameLengthPositiveNumericStringGt<'50', '10'>;
+type A = SameLengthPositiveNumericStringGt<'50', '10'>;
 //=> true
 
-SameLengthPositiveNumericStringGt<'10', '10'>;
+type B = SameLengthPositiveNumericStringGt<'10', '10'>;
 //=> false
 ```
 */
@@ -159,13 +159,13 @@ Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are bot
 
 @example
 ```
-PositiveNumericStringGt<'500', '1'>;
+type A = PositiveNumericStringGt<'500', '1'>;
 //=> true
 
-PositiveNumericStringGt<'1', '1'>;
+type B = PositiveNumericStringGt<'1', '1'>;
 //=> false
 
-PositiveNumericStringGt<'1', '500'>;
+type C = PositiveNumericStringGt<'1', '500'>;
 //=> false
 ```
 */
@@ -184,10 +184,10 @@ Returns a boolean for whether `A` represents a number greater than `B`, where `A
 
 @example
 ```
-PositiveNumericCharacterGt<'5', '1'>;
+type A = PositiveNumericCharacterGt<'5', '1'>;
 //=> true
 
-PositiveNumericCharacterGt<'1', '1'>;
+type B = PositiveNumericCharacterGt<'1', '1'>;
 //=> false
 ```
 */

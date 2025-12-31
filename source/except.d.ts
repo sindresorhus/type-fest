@@ -66,14 +66,16 @@ type Foo = {
 type FooWithoutA = Except<Foo, 'a'>;
 //=> {b: string}
 
+// @ts-expect-error
 const fooWithoutA: FooWithoutA = {a: 1, b: '2'};
-//=> errors: 'a' does not exist in type '{ b: string; }'
+// errors: 'a' does not exist in type '{ b: string; }'
 
 type FooWithoutB = Except<Foo, 'b', {requireExactProps: true}>;
-//=> {a: number} & Partial<Record<"b", never>>
+//=> {a: number} & Partial<Record<'b', never>>
 
+// @ts-expect-error
 const fooWithoutB: FooWithoutB = {a: 1, b: '2'};
-//=> errors at 'b': Type 'string' is not assignable to type 'undefined'.
+// errors at 'b': Type 'string' is not assignable to type 'undefined'.
 
 // The `Omit` utility type doesn't work when omitting specific keys from objects containing index signatures.
 
@@ -88,12 +90,12 @@ type UserData = {
 
 // `Omit` clearly doesn't behave as expected in this case:
 type PostPayload = Omit<UserData, 'email'>;
-//=> type PostPayload = { [x: string]: string; [x: number]: string; }
+//=> {[x: string]: string; [x: number]: string}
 
 // In situations like this, `Except` works better.
 // It simply removes the `email` key while preserving all the other keys.
-type PostPayload = Except<UserData, 'email'>;
-//=> type PostPayload = { [x: string]: string; name: string; role: 'admin' | 'user'; }
+type PostPayloadFixed = Except<UserData, 'email'>;
+//=> {[x: string]: string; name: string; role: 'admin' | 'user'}
 ```
 
 @category Object

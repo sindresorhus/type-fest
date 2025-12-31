@@ -6,11 +6,11 @@ Returns a new string which contains the specified number of copies of a given st
 
 @example
 ```
-import {StringRepeat} from 'type-fest';
+import type {StringRepeat} from 'type-fest';
 
 declare function stringRepeat<
 	Input extends string,
-	Count extends number
+	Count extends number,
 >(input: Input, count: Count): StringRepeat<Input, Count>;
 
 // The return type is the exact string literal, not just `string`.

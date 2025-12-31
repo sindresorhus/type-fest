@@ -209,6 +209,22 @@ export namespace PackageJson {
 	type Dependency = Partial<Record<string, string>>;
 
 	/**
+	Recursive map describing selective dependency version overrides supported by npm.
+	*/
+	type DependencyOverrides = {
+		[packageName in string]: string | undefined | DependencyOverrides;
+	};
+
+	/**
+	Specifies requirements for development environment components such as operating systems, runtimes, or package managers. Used to ensure consistent development environments across the team.
+	*/
+	type DevEngineDependency = {
+		name: string;
+		version?: string;
+		onFail?: 'ignore' | 'warn' | 'error' | 'download';
+	};
+
+	/**
 	A mapping of conditions and the paths to which they resolve.
 	*/
 	type ExportConditions = {
@@ -502,6 +518,11 @@ export namespace PackageJson {
 		bundleDependencies?: string[];
 
 		/**
+		Overrides is used to support selective version overrides using npm, which lets you define custom package versions or ranges inside your dependencies.
+		*/
+		overrides?: DependencyOverrides;
+
+		/**
 		Engines that this package runs on.
 		*/
 		engines?: {
@@ -562,6 +583,17 @@ export namespace PackageJson {
 			| '!x64',
 			string
 		>>;
+
+		/**
+		Define the runtime and package manager for developing the current project.
+		*/
+		devEngines?: {
+			os?: DevEngineDependency | DevEngineDependency[];
+			cpu?: DevEngineDependency | DevEngineDependency[];
+			libc?: DevEngineDependency | DevEngineDependency[];
+			runtime?: DevEngineDependency | DevEngineDependency[];
+			packageManager?: DevEngineDependency | DevEngineDependency[];
+		};
 
 		/**
 		If set to `true`, a warning will be shown if package is installed locally. Useful if the package is primarily a command-line application that should be installed globally.

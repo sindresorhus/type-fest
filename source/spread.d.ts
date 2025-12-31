@@ -47,9 +47,7 @@ type FooBar = Spread<Foo, Bar>;
 // 	c: boolean;
 // }
 
-const baz = (argument: FooBar) => {
-	// Do something
-}
+declare function baz(argument: FooBar): void;
 
 baz(fooBar);
 ```
@@ -65,9 +63,7 @@ const fooBar = [...foo, ...bar];
 type FooBar = Spread<typeof foo, typeof bar>;
 // FooBar = (string | number)[]
 
-const baz = (argument: FooBar) => {
-	// Do something
-};
+declare function baz(argument: FooBar): void;
 
 baz(fooBar);
 ```
