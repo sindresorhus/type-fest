@@ -22,6 +22,7 @@ export type {TaggedUnion} from './source/tagged-union.d.ts';
 export type {Writable} from './source/writable.d.ts';
 export type {WritableDeep} from './source/writable-deep.d.ts';
 export type {Merge} from './source/merge.d.ts';
+export type {ObjectMerge} from './source/object-merge.d.ts';
 export type {MergeDeep, MergeDeepOptions} from './source/merge-deep.d.ts';
 export type {MergeExclusive} from './source/merge-exclusive.d.ts';
 export type {RequireAtLeastOne} from './source/require-at-least-one.d.ts';
