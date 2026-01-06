@@ -104,7 +104,7 @@ type _ObjectMerge<
 	NormalizedSecond extends object,
 > = Simplify<{
 	// Map over literal keys of `Second`, except those that are optional and also present in `First`.
-	[P in keyof Second as P extends NormalizedSecondLiteralKeys
+	-readonly [P in keyof Second as P extends NormalizedSecondLiteralKeys
 		? P extends NormalizedFirstLiteralKeys
 			? If<IsOptionalKeyOf<Second, P>, never, P>
 			: P
@@ -115,7 +115,7 @@ type _ObjectMerge<
 				: never)
 } & {
 	// Map over literal keys of `First`, except those that are not present in `Second`.
-	[P in keyof First as P extends NormalizedFirstLiteralKeys
+	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys
 		? P extends NormalizedSecondLiteralKeys
 			? never
 			: P
@@ -128,7 +128,7 @@ type _ObjectMerge<
 				: never);
 } & {
 	// Map over non-literal keys of `Second`.
-	[P in keyof Second as P extends NormalizedSecondLiteralKeys ? never : P]:
+	-readonly [P in keyof Second as P extends NormalizedSecondLiteralKeys ? never : P]:
 		| Second[P]
 			// If there's a matching key in `First`, then add the type for it as well,
 			// for example, in `Merge<{a: number}, {[x: string]: string}>`,
@@ -143,7 +143,7 @@ type _ObjectMerge<
 			: never); // Should never happen
 } & {
 	// Map over non-literal keys of `First`
-	[P in keyof First as P extends NormalizedFirstLiteralKeys ? never : P]:
+	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys ? never : P]:
 		| First[P]
 		| If<IsNever<NormalizedKeys<P> & keyof Second>, // This check is required because indexing with `never` doesn't always yield `never`, for example, `{[x: string]: number}[never]` results in `number`.
 			never,
@@ -151,7 +151,7 @@ type _ObjectMerge<
 } & {
 	// Handle optional keys of `Second` that are also present in `First`.
 	// Map over `First` instead of `Second` because the modifier is in accordance with `First`.
-	[P in keyof First as P extends NormalizedFirstLiteralKeys
+	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys
 		? P extends NormalizedSecondLiteralKeys
 			? If<IsOptionalKeyOf<Second, NormalizedKeys<P> & keyof Second>, P, never>
 			: never

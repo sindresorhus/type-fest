@@ -34,7 +34,27 @@ expectType<{a?: number | string; b: string | number; c: string; d: boolean; e?: 
 	>,
 );
 
-// TODO: Readonly properties
+// Readonly properties
+expectType<{a: string; b: string}>({} as ObjectMerge<{a: number}, {readonly a: string; readonly b: string}>);
+expectType<{a: string; b: number}>({} as ObjectMerge<{readonly a: number; readonly b: number}, {a: string}>);
+expectType<{a: string; b: number; c: string}>(
+	{} as ObjectMerge<{readonly a: number; readonly b: number}, {readonly a: string; readonly c: string}>,
+);
+expectType<{a: number | string; b: string; c?: number | string}>(
+	{} as ObjectMerge<
+		{a: number; readonly b?: number; readonly c?: number},
+		{readonly a?: string; b: string; readonly c?: string}
+	>,
+);
+expectType<{a: number | string; b: string}>(
+	{} as ObjectMerge<{a: number; readonly b?: number}, {readonly a?: string; b: string}>,
+);
+expectType<{[x: string]: number | string; a: string | number}>(
+	{} as ObjectMerge<{a: string}, {readonly [x: string]: number}>,
+);
+expectType<{[x: string]: number | string; a: 1 | 2 | 3; b: string}>(
+	{} as ObjectMerge<{readonly [x: string]: number; a: 1 | 2 | 3}, {b: string}>,
+);
 
 // Index signatures
 expectType<{[x: string]: string | number | boolean; a: string | number; b: boolean | number}>( // TODO: Make tests like this, double properties
