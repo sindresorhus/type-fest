@@ -183,3 +183,14 @@ expectType<{a: number; b: string} | {a: string; b: string; c: number} | {c: numb
 type T1 = ObjectMerge<string, {a: string}>;
 // @ts-expect-error
 type T2 = ObjectMerge<{a: string}, number>;
+expectType<unknown>({} as ObjectMerge<string[], {0: string}>);
+expectType<unknown>({} as ObjectMerge<{0: string}, string[]>);
+expectType<unknown>({} as ObjectMerge<string[], number[]>);
+expectType<unknown>({} as ObjectMerge<ReadonlyMap<string, number>, {a: string}>);
+expectType<unknown>({} as ObjectMerge<{a: string}, ReadonlyMap<string, number>>);
+expectType<unknown>({} as ObjectMerge<WeakMap<WeakKey, number>, {a: string}>);
+expectType<unknown>({} as ObjectMerge<{a: string}, WeakMap<WeakKey, number>>);
+expectType<unknown>({} as ObjectMerge<ReadonlySet<string>, {a: string}>);
+expectType<unknown>({} as ObjectMerge<{a: string}, ReadonlySet<string>>);
+expectType<unknown>({} as ObjectMerge<WeakSet<WeakKey>, {a: string}>);
+expectType<unknown>({} as ObjectMerge<{a: string}, WeakSet<WeakKey>>);
