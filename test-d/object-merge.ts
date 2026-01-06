@@ -177,3 +177,9 @@ expectType<{a: number; b: string} | {a: string; b: number}>(
 expectType<{a: number; b: string} | {a: string; b: string; c: number} | {c: number; d: string} | {a: number; c: string; d: string}>(
 	{} as ObjectMerge<{a: string; b: string} | {c: string; d: string}, {a: number} | {c: number}>,
 );
+
+// Non-objects
+// @ts-expect-error
+type T1 = ObjectMerge<string, {a: string}>;
+// @ts-expect-error
+type T2 = ObjectMerge<{a: string}, number>;

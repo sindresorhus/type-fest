@@ -59,7 +59,7 @@ objectMerge.a.toUpperCase(); // Correctly errors at compile time
 ```ts
 import type {ObjectMerge} from 'type-fest';
 
-function withoutObjectMerge<T, U>(left: T, right: U) {
+function withoutObjectMerge<T extends object, U extends object>(left: T, right: U) {
 	return {...left, ...right};
 }
 
@@ -69,8 +69,8 @@ const result1 = withoutObjectMerge({a: 1}, {a: 'one'});
 const {a} = result1;
 //=> never
 
-function withObjectMerge<T, U>(left: T, right: U) {
-	return {...left, ...right} as ObjectMerge<T, U>;
+function withObjectMerge<T extends object, U extends object>(left: T, right: U) {
+	return {...left, ...right} as unknown as ObjectMerge<T, U>;
 }
 
 const result2 = withObjectMerge({b: 1}, {b: 'one'});
@@ -82,11 +82,11 @@ const {b} = result2;
 
 @category Object
 */
-export type ObjectMerge<First, Second> = First extends unknown // For distributing `First`
+export type ObjectMerge<First extends object, Second extends object> = First extends unknown // For distributing `First`
 	? Second extends unknown // For distributing `Second`
 		? _ObjectMerge<
-			First & object,
-			Second & object,
+			First,
+			Second,
 			NormalizedLiteralKeys<First>,
 			NormalizedLiteralKeys<Second>,
 			IsExactOptionalPropertyTypesEnabled extends true ? Required<First> : First,
@@ -98,8 +98,8 @@ export type ObjectMerge<First, Second> = First extends unknown // For distributi
 type _ObjectMerge<
 	First extends object,
 	Second extends object,
-	NormalizedFirstLiteralKeys,
-	NormalizedSecondLiteralKeys,
+	NormalizedFirstLiteralKeys extends PropertyKey,
+	NormalizedSecondLiteralKeys extends PropertyKey,
 	NormalizedFirst extends object,
 	NormalizedSecond extends object,
 > = Simplify<{
