@@ -9,6 +9,77 @@ import type {RequiredKeysOf} from './required-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
+Merge two object types into a new object type such that keys from the second object type override keys from the first object type.
+
+@example
+```ts
+import type {ObjectMerge} from 'type-fest';
+
+type PartialOverwrite = ObjectMerge<{foo: string; bar: string}, {foo: number; biz: number}>;
+//=> {foo: number; biz: number; bar: string}
+
+type CompleteOverwrite = ObjectMerge<{foo: string; bar: number}, {foo: number; bar: string; biz: boolean}>;
+//=> {foo: number; bar: string; biz: boolean}
+
+type NoOverwrite = ObjectMerge<{foo: string; bar: number}, {biz: boolean; qux: bigint}>;
+//=> {biz: boolean; qux: bigint; foo: string; bar: number}
+```
+
+Usages:
+
+1. Can be used to type the object spreading operation or `Object.assign` because the default type can sometimes be incorrect, for example:
+
+@example
+```ts
+import type {ObjectMerge} from 'type-fest';
+
+const left: {a: string} = {a: '1'};
+const right: {[x: string]: number} = {a: 1};
+
+const inferred = {...left, ...right};
+//=> {a: string}
+
+inferred.a.toUpperCase(); // No compile time error, but fails at runtime
+
+const objectAssign = Object.assign(left, right);
+//=> {a: string} & {[x: string]: number}
+
+objectAssign.a.toUpperCase(); // No compile time error, but fails at runtime
+
+declare const objectMerge: ObjectMerge<typeof left, typeof right>;
+//=> {[x: string]: string | number; a: string | number}
+
+// @ts-expect-error
+objectMerge.a.toUpperCase(); // Correctly errors at compile time
+```
+
+2. Can be used to merge generic type arguments:
+
+@example
+```ts
+import type {ObjectMerge} from 'type-fest';
+
+function withoutObjectMerge<T, U>(left: T, right: U) {
+	return {...left, ...right};
+}
+
+const result1 = withoutObjectMerge({a: 1}, {a: 'one'});
+//=> {a: number} & {a: string}
+
+const {a} = result1;
+//=> never
+
+function withObjectMerge<T, U>(left: T, right: U) {
+	return {...left, ...right} as ObjectMerge<T, U>;
+}
+
+const result2 = withObjectMerge({b: 1}, {b: 'one'});
+//=> {b: string}
+
+const {b} = result2;
+//=> string
+```
+
 @category Object
 */
 export type ObjectMerge<First, Second> = First extends unknown // For distributing `First`
@@ -89,12 +160,49 @@ type _ObjectMerge<
 			| NormalizedSecond[NormalizedKeys<P> & keyof NormalizedSecond]
 }>;
 
+/**
+Normalize keys by including string and number representations wherever applicable.
+
+@example
+```ts
+import type {NormalizedKeys} from 'type-fest';
+
+type A = NormalizedKeys<0 | '1'>;
+//=> 0 | '0' | 1 | '1'
+
+type B = NormalizedKeys<string>;
+//=> string | number
+
+type C = NormalizedKeys<number>;
+//=> number | `${number}`
+
+type D = NormalizedKeys<symbol | 'foo'>;
+//=> symbol | 'foo'
+```
+*/
 type NormalizedKeys<Keys extends PropertyKey> =
 	| Keys
 	| (string extends Keys ? number : never)
 	| StringToNumber<Keys & string>
 	| ToString<Keys & number>;
 
+/**
+Get literal keys of a type including both string and number representations wherever applicable.
+
+@example
+```ts
+import type {NormalizedLiteralKeys} from 'type-fest';
+
+type A = NormalizedLiteralKeys<{0: string; '1'?: number; foo: boolean}>;
+//=> 0 | '0' | 1 | '1' | 'foo'
+
+type B = NormalizedLiteralKeys<{[x: string]: string | number; 0: string; '1'?: number}>;
+//=> 0 | '0' | 1 | '1'
+
+type C = NormalizedLiteralKeys<{[x: string]: unknown}>;
+//=> never
+```
+*/
 type NormalizedLiteralKeys<Type> = Type extends unknown // For distributing `Type`
 	? NormalizedKeys<keyof OmitIndexSignature<Type>>
 	: never; // Should never happen

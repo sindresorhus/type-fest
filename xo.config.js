@@ -126,6 +126,13 @@ const xoConfig = [
 		},
 	},
 	{
+		// Virtual files created by the `jsdoc-codeblocks` processor
+		files: ['source/object-merge.d.ts/*.ts'],
+		rules: {
+			'@typescript-eslint/consistent-type-assertions': 'off',
+		},
+	},
+	{
 		files: 'lint-rules/test-utils.js',
 		rules: {
 			'no-irregular-whitespace': [
