@@ -25,11 +25,11 @@ type NoOverride = ObjectMerge<{foo: string; bar: number}, {baz: boolean; qux: bi
 //=> {baz: boolean; qux: bigint; foo: string; bar: number}
 ```
 
-Usages:
+Use-cases:
 
 Can be used to accurately type object spread and `Object.assign`. The built-in inference for these operations can sometimes be unsound, especially when index signatures are involved.
 
-In the following example, both object spread and `Object.assign` infer a type that allows unsafe usage, whereas `ObjectMerge` produces a type that prevents this unsafe access.
+In the following example, both object spread and `Object.assign` produce a type that allows unsafe usage, whereas `ObjectMerge` produces a type that prevents this unsafe access.
 
 @example
 ```ts
@@ -41,18 +41,18 @@ const right: {[x: string]: number} = {a: 1};
 const inferred = {...left, ...right};
 //=> {a: string}
 
-inferred.a.toUpperCase(); // No compile time error, but fails at runtime
+inferred.a.toUpperCase(); // No compile time error, but fails at runtime.
 
 const objectAssign = Object.assign(left, right);
 //=> {a: string} & {[x: string]: number}
 
-objectAssign.a.toUpperCase(); // No compile time error, but fails at runtime
+objectAssign.a.toUpperCase(); // No compile time error, but fails at runtime.
 
 declare const objectMerge: ObjectMerge<typeof left, typeof right>;
 //=> {[x: string]: string | number; a: string | number}
 
 // @ts-expect-error
-objectMerge.a.toUpperCase(); // Correctly errors at compile time
+objectMerge.a.toUpperCase(); // Correctly errors at compile time.
 ```
 
 Can be used to merge generic type arguments.
@@ -154,7 +154,7 @@ type _ObjectMerge<
 				NormalizedFirst[NonOverwrittenKeysOfFirst & keyof NormalizedFirst]>
 			: never); // Should never happen
 } & {
-	// Map over non-literal keys of `First`
+	// Map over non-literal keys of `First`.
 	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys ? never : P]:
 		| First[P]
 		| If<IsNever<NormalizedKeys<P> & keyof Second>, // This check is required because indexing with `never` doesn't always yield `never`, for example, `{[x: string]: number}[never]` results in `number`.

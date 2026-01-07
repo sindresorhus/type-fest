@@ -192,7 +192,7 @@ expectType<{[x: string]: number | string; a?: number | string}>(
 	{} as ObjectMerge<{[x: string]: number; a?: number}, {a?: string}>,
 );
 
-// === `number` indexors ===
+// === Normalized keys cases ===
 // ===== Cases covering branch that handles literal keys of `Second` =====
 // String/number key overwrites corresponding number/string key
 expectType<{0: string; 1: string}>({} as ObjectMerge<{'0': number}, {0: string; 1: string}>);
@@ -205,9 +205,9 @@ expectType<{[x: string]: number | string; 0?: string | number}>({} as ObjectMerg
 // Optional string key with number index signature
 expectType<{[x: number]: number | string; [x: symbol]: boolean; '0'?: string | number}>(
 	// The `symbol` index signature is added because
-	// `{[x: number]: number}[never]` yields `number` instead of `never`
-	// but if add a `symbol` index signature to it, then
-	// `{[x: number]: number; [x: symbol]: boolean}[never]` yields `never` as expected
+	// `{[x: number]: number}[never]` yields `number` instead of `never`,
+	// but if we add a `symbol` index signature to it, then
+	// `{[x: number]: number; [x: symbol]: boolean}[never]` yields `never` as expected.
 	{} as ObjectMerge<{[x: number]: number; [x: symbol]: boolean}, {'0'?: string}>,
 );
 
