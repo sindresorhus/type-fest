@@ -1,20 +1,23 @@
 import {expectType} from 'tsd';
 import type {ObjectMerge} from '../source/object-merge.d.ts';
 
-// Simple cases
+declare const sym: unique symbol;
+
+// === Simple cases ===
 expectType<{a: number; b: string}>({} as ObjectMerge<{a: number}, {b: string}>);
 expectType<{a: string}>({} as ObjectMerge<{a: number}, {a: string}>);
 expectType<{a: string; b: boolean}>({} as ObjectMerge<{a: number}, {a: string; b: boolean}>);
+expectType<{a: string; b: boolean}>({} as ObjectMerge<{a: number; b: boolean}, {a: string}>);
 expectType<{a: string; b: string; c: number}>({} as ObjectMerge<{a: number; b: string}, {a: string; c: number}>);
 expectType<{a: string; b: boolean}>({} as ObjectMerge<{}, {a: string; b: boolean}>);
 expectType<{a: string; b: boolean}>({} as ObjectMerge<{a: string; b: boolean}, {}>);
 
-// Optional properties
-// Optional only in second
+// === Optional properties ===
+// Optional in second
 expectType<{a: number | string; b: number; c: boolean}>(
 	{} as ObjectMerge<{a: number; b: number}, {a?: string; c: boolean}>,
 );
-// Optional only in first
+// Optional in first
 expectType<{a: string; b: number; c: boolean}>(
 	{} as ObjectMerge<{a?: number; b: number}, {a: string; c: boolean}>,
 );
@@ -34,62 +37,134 @@ expectType<{a?: number | string; b: string | number; c: string; d: boolean; e?: 
 	>,
 );
 
-// Readonly properties
-expectType<{a: string; b: string}>({} as ObjectMerge<{a: number}, {readonly a: string; readonly b: string}>);
-expectType<{a: string; b: number}>({} as ObjectMerge<{readonly a: number; readonly b: number}, {a: string}>);
-expectType<{a: string; b: number; c: string}>(
-	{} as ObjectMerge<{readonly a: number; readonly b: number}, {readonly a: string; readonly c: string}>,
-);
-expectType<{a: number | string; b: string; c?: number | string}>(
-	{} as ObjectMerge<
-		{a: number; readonly b?: number; readonly c?: number},
-		{readonly a?: string; b: string; readonly c?: string}
-	>,
-);
-expectType<{a: number | string; b: string}>(
-	{} as ObjectMerge<{a: number; readonly b?: number}, {readonly a?: string; b: string}>,
+// === Readonly properties ===
+// Readonly in second
+expectType<{a: string; b: number; c: boolean}>(
+	{} as ObjectMerge<{a: number; b: number}, {readonly a: string; c: boolean}>,
 );
 expectType<{[x: string]: number | string; a: string | number}>(
 	{} as ObjectMerge<{a: string}, {readonly [x: string]: number}>,
 );
-expectType<{[x: string]: number | string; a: 1 | 2 | 3; b: string}>(
-	{} as ObjectMerge<{readonly [x: string]: number; a: 1 | 2 | 3}, {b: string}>,
+// Readonly in first
+expectType<{a: string; b: number; c: boolean}>(
+	{} as ObjectMerge<{readonly a: number; b: number}, {a: string; c: boolean}>,
+);
+expectType<{[x: string]: number | string; b: string}>(
+	{} as ObjectMerge<{readonly [x: string]: number}, {b: string}>,
+);
+// Readonly in both
+expectType<{a: string; b: number; c: boolean}>(
+	{} as ObjectMerge<{readonly a: number; b: number}, {readonly a: string; c: boolean}>,
+);
+expectType<{[x: string]: number | string; b: number | string; c: string}>(
+	{} as ObjectMerge<{readonly [x: string]: number; b: number}, {readonly [x: string]: string; c: string}>,
+);
+// Readonly is not preserved even for non-overlapping keys
+expectType<{a: string; b: number; c: string}>(
+	{} as ObjectMerge<{a: number; readonly b: number}, {a: string; readonly c: string}>,
+);
+expectType<{[x: string]: string; [x: symbol]: number}>(
+	{} as ObjectMerge<{readonly [x: string]: string}, {readonly [x: symbol]: number}>,
+);
+// Mix
+expectType<{a: string; b: number; c: string; d: boolean; e: bigint; f: boolean; g: bigint}>(
+	{} as ObjectMerge<
+		{readonly a: number; b: string; readonly c: number; d: boolean; readonly e: bigint},
+		{readonly a: string; readonly b: number; c: string; f: boolean; readonly g: bigint}
+	>,
 );
 
-// Index signatures
-expectType<{[x: string]: string | number | boolean; a: string | number; b: boolean | number}>( // TODO: Make tests like this, double properties
-	{} as ObjectMerge<{a: string; b: boolean}, {[x: string]: number}>,
+// === Optional and readonly properties ===
+expectType<{a: string; b: number | string}>(
+	{} as ObjectMerge<{a?: number; readonly b: number}, {readonly a: string; b?: string}>,
 );
-expectType<{[x: `handle${string}`]: number; [x: `on${string}`]: string | number; onChange: string | number}>(
-	{} as ObjectMerge<{onChange: string}, {[x: `on${string}` | `handle${string}`]: number}>,
+expectType<{[x: string]: string | number; [x: symbol]: number | string; [sym]: string | number; a?: string | number}>(
+	{} as ObjectMerge<{readonly [x: string]: number; [sym]: string}, {[x: symbol]: number; a?: string}>,
 );
-expectType<{[x: string]: string | number; a: string}>(
-	{} as ObjectMerge<{[x: string]: number}, {a: string}>,
-);
-expectType<{[x: string]: number; a: 1 | 2 | 3}>(
-	{} as ObjectMerge<{a: string}, {[x: string]: number; a: 1 | 2 | 3}>,
-);
-expectType<{[x: string]: string | number; a: string}>(
-	{} as ObjectMerge<{[x: string]: number; a: 1 | 2 | 3}, {a: string}>,
-);
-expectType<{[x: number]: string; a: number; b?: number}>(
-	{} as ObjectMerge<{a: number; b?: number}, {[x: number]: string}>,
-);
-expectType<{[x: number]: string; a: number; b?: number}>(
-	{} as ObjectMerge<{[x: number]: string}, {a: number; b?: number}>,
+expectType<{a?: number | string; b: string | number; c: string; d: boolean; e?: bigint; f: boolean; g?: bigint}>(
+	{} as ObjectMerge<
+		{readonly a?: number; b: string; readonly c?: number; d: boolean; readonly e?: bigint},
+		{readonly a?: string; readonly b?: number; c: string; f: boolean; readonly g?: bigint}
+	>,
 );
 
+// === Index signatures ===
+// Index signature in second
+expectType<{[x: string]: string | number; a: string | number; b: 1; c: 2}>(
+	{} as ObjectMerge<{a: string; b: boolean}, {[x: string]: number; b: 1; c: 2}>,
+);
+expectType<
+	{[x: `is${string}`]: boolean | 'y' | 'n'; isLoading: boolean | 'y' | 'n'; isOpen: boolean | 'y' | 'n'; foo: string; bar: number}
+>(
+	{} as ObjectMerge<
+		{isLoading: 'y' | 'n'; isOpen: 'y' | 'n'; foo: string; bar: number},
+		{[x: `is${string}`]: boolean}
+	>,
+);
+// Index signature in first
+expectType<{[x: string]: number | string | boolean; a: string; b: 2; c: boolean}>(
+	{} as ObjectMerge<{[x: string]: number; a: 1; b: 2}, {a: string; c: boolean}>,
+);
+expectType<
+	{[x: `is${string}`]: boolean | 'y' | 'n'; isLoading: 'y' | 'n'; isOpen: 'y' | 'n'; foo: string; bar: number}
+>(
+	{} as ObjectMerge<
+		{[x: `is${string}`]: boolean},
+		{isLoading: 'y' | 'n'; isOpen: 'y' | 'n'; foo: string; bar: number}
+	>,
+);
+// Index signature in both
+expectType<{[x: string]: number | string; [sym]: boolean; a: 1 | string; b: 'b'; c: 'c'}>(
+	{} as ObjectMerge<{[x: string]: number; [sym]: boolean; a: 1; b: 2}, {[x: string]: string; b: 'b'; c: 'c'}>,
+);
+// Multiple index signatures
+expectType<
+	{[x: `on${string}`]: string | string[]; [x: `handle${string}`]: number | number[]; onChange: string | string[]; handleClick: number | number[]}
+>(
+	{} as ObjectMerge<
+		{onChange: string[]; handleClick: number[]},
+		{[x: `on${string}`]: string; [x: `handle${string}`]: number}
+	>,
+);
+expectType<
+	{[x: `on${string}`]: string | string[]; [x: `handle${string}`]: number | number[]; onChange: string[]; handleClick: number[]}
+>(
+	{} as ObjectMerge<
+		{[x: `on${string}`]: string; [x: `handle${string}`]: number},
+		{onChange: string[]; handleClick: number[]}
+	>,
+);
+expectType<
+	{[x: string]: string | boolean | bigint; [x: symbol]: number; [x: number]: string | boolean; [x: `is${string}`]: bigint | string}
+>(
+	{} as ObjectMerge<
+		{[x: string]: string; [x: symbol]: number},
+		{[x: number]: boolean; [x: `is${string}`]: bigint}
+	>,
+);
 // Indexor in `First` is same as in `Second`
 expectType<{[x: string]: string | number}>(
 	{} as ObjectMerge<{[x: string]: string}, {[x: string]: number}>,
+);
+expectType<{[x: `${number}`]: number | string; [x: number]: string | number}>(
+	{} as ObjectMerge<{[x: `${number}`]: number}, {[x: number]: string}>,
 );
 // Indexor in `First` is supertype of indexor in `Second`
 expectType<{[x: string]: string | number; [x: Lowercase<string>]: string | number}>(
 	{} as ObjectMerge<{[x: string]: string}, {[x: Lowercase<string>]: number}>,
 );
+expectType<{[x: string]: number | string; [x: number]: string | number}>(
+	{} as ObjectMerge<{[x: string]: number}, {[x: number]: string}>,
+);
+expectType<{[x: string]: string | boolean; [x: `is${string}`]: boolean | string}>(
+	{} as ObjectMerge<{[x: string]: string}, {[x: `is${string}`]: boolean}>,
+);
 // Indexor in `First` is subtype of indexor in `Second`
 expectType<{[x: string]: string | number; [x: Lowercase<string>]: string | number}>(
 	{} as ObjectMerge<{[x: Lowercase<string>]: string}, {[x: string]: number}>,
+);
+expectType<{[x: number]: number | string; [x: string]: string | number}>(
+	{} as ObjectMerge<{[x: number]: number}, {[x: string]: string}>,
 );
 // No overlap b/w indexors
 expectType<{[x: symbol]: number; [x: number]: string}>(
@@ -100,7 +175,7 @@ expectType<{[x: Lowercase<string>]: string | number; [x: Uppercase<string>]: str
 	{} as ObjectMerge<{[x: Lowercase<string>]: number}, {[x: Uppercase<string>]: string}>,
 );
 
-// Index signatures and optional properties
+// === Index signatures and optional properties ===
 expectType<{[x: string]: string | number; a?: string | number}>(
 	{} as ObjectMerge<{a?: string}, {[x: string]: number}>,
 );
@@ -112,6 +187,9 @@ expectType<{[x: string]: number | string; a: number | string}>(
 );
 expectType<{[x: string]: number | string; a: string}>(
 	{} as ObjectMerge<{[x: string]: number; a?: number}, {a: string}>,
+);
+expectType<{[x: string]: number | string; a?: number | string}>(
+	{} as ObjectMerge<{[x: string]: number; a?: number}, {a?: string}>,
 );
 
 // === `number` indexors ===
@@ -167,7 +245,7 @@ expectType<{0: number | string}>({} as ObjectMerge<{0: number}, {'0'?: string}>)
 expectType<{'0'?: number | string}>({} as ObjectMerge<{'0'?: number}, {0?: string}>);
 expectType<{0?: number | string}>({} as ObjectMerge<{0?: number}, {'0'?: string}>);
 
-// Unions
+// === Unions ===
 expectType<{a: number; b: string; c: number} | {a: number; c: number; d: string}>(
 	{} as ObjectMerge<{a: string; b: string} | {c: string; d: string}, {a: number; c: number}>,
 );
@@ -178,7 +256,13 @@ expectType<{a: number; b: string} | {a: string; b: string; c: number} | {c: numb
 	{} as ObjectMerge<{a: string; b: string} | {c: string; d: string}, {a: number} | {c: number}>,
 );
 
-// Non-objects
+// === Functions ===
+expectType<{a: string}>({} as ObjectMerge<{a: string}, (a1: string, a2: number) => void>);
+expectType<{a: number}>({} as ObjectMerge<{a: string}, {(a1: string, a2: number): void; a: number}>);
+expectType<{a: string}>({} as ObjectMerge<() => string, {a: string}>);
+expectType<{a: string}>({} as ObjectMerge<{(): string; a: number}, {a: string}>);
+
+// === Non-objects ===
 // @ts-expect-error
 type T1 = ObjectMerge<string, {a: string}>;
 // @ts-expect-error
