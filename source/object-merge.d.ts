@@ -1,6 +1,6 @@
 import type {If} from './if.d.ts';
 import type {StringToNumber, ToString} from './internal/string.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
