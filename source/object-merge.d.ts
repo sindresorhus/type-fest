@@ -84,6 +84,9 @@ const {b} = result2;
 //=> string
 ```
 
+Note: If you want a simple merge where properties from the second object always override properties from the first object without considering runtime implications, refer to the {@link Merge} type.
+
+@see {@link Merge}
 @category Object
 */
 export type ObjectMerge<First extends object, Second extends object> =
