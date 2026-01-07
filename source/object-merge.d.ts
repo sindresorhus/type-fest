@@ -174,8 +174,6 @@ Normalize keys by including string and number representations wherever applicabl
 
 @example
 ```ts
-import type {NormalizedKeys} from 'type-fest';
-
 type A = NormalizedKeys<0 | '1'>;
 //=> 0 | '0' | 1 | '1'
 
@@ -200,8 +198,6 @@ Get literal keys of a type, including both string and number representations whe
 
 @example
 ```ts
-import type {NormalizedLiteralKeys} from 'type-fest';
-
 type A = NormalizedLiteralKeys<{0: string; '1'?: number; foo: boolean}>;
 //=> 0 | '0' | 1 | '1' | 'foo'
 
