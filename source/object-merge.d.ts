@@ -1,6 +1,6 @@
 import type {If} from './if.d.ts';
 import type {StringToNumber, ToString} from './internal/string.d.ts';
-import type {IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
@@ -86,22 +86,23 @@ const {b} = result2;
 
 @category Object
 */
-export type ObjectMerge<First extends object, Second extends object> = First extends unknown // For distributing `First`
-	? Second extends unknown // For distributing `Second`
-		? First extends MapsSetsOrArrays
-			? unknown
-			: Second extends MapsSetsOrArrays
+export type ObjectMerge<First extends object, Second extends object> =
+	IfNotAnyOrNever<First, IfNotAnyOrNever<Second, First extends unknown // For distributing `First`
+		? Second extends unknown // For distributing `Second`
+			? First extends MapsSetsOrArrays
 				? unknown
-				: _ObjectMerge<
-					First,
-					Second,
-					NormalizedLiteralKeys<First>,
-					NormalizedLiteralKeys<Second>,
-					IsExactOptionalPropertyTypesEnabled extends true ? Required<First> : First,
-					IsExactOptionalPropertyTypesEnabled extends true ? Required<Second> : Second
-				>
-		: never // Should never happen
-	: never; // Should never happen
+				: Second extends MapsSetsOrArrays
+					? unknown
+					: _ObjectMerge<
+						First,
+						Second,
+						NormalizedLiteralKeys<First>,
+						NormalizedLiteralKeys<Second>,
+						IsExactOptionalPropertyTypesEnabled extends true ? Required<First> : First,
+						IsExactOptionalPropertyTypesEnabled extends true ? Required<Second> : Second
+					>
+			: never // Should never happen
+		: never>, First & Second>; // Should never happen
 
 type _ObjectMerge<
 	First extends object,

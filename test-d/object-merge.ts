@@ -278,3 +278,11 @@ expectType<unknown>({} as ObjectMerge<ReadonlySet<string>, {a: string}>);
 expectType<unknown>({} as ObjectMerge<{a: string}, ReadonlySet<string>>);
 expectType<unknown>({} as ObjectMerge<WeakSet<WeakKey>, {a: string}>);
 expectType<unknown>({} as ObjectMerge<{a: string}, WeakSet<WeakKey>>);
+
+// === Boundary cases ===
+expectType<any>({} as ObjectMerge<any, {a: string}>);
+expectType<any>({} as ObjectMerge<{a: string}, any>);
+expectType<never>({} as ObjectMerge<never, {a: string}>);
+expectType<never>({} as ObjectMerge<{a: string}, never>);
+expectType<never>({} as ObjectMerge<any, never>);
+expectType<never>({} as ObjectMerge<never, any>);
