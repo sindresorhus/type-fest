@@ -1,5 +1,5 @@
 import type {If} from './if.d.ts';
-import type {StringToNumber, ToString} from './internal/string.d.ts';
+import type {NormalizedKeys} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
@@ -168,30 +168,6 @@ type _ObjectMerge<
 			| First[P]
 			| NormalizedSecond[NormalizedKeys<P> & keyof NormalizedSecond]
 }>;
-
-/**
-Normalize keys by including string and number representations wherever applicable.
-
-@example
-```ts
-type A = NormalizedKeys<0 | '1'>;
-//=> 0 | '0' | 1 | '1'
-
-type B = NormalizedKeys<string>;
-//=> string | number
-
-type C = NormalizedKeys<number>;
-//=> number | `${number}`
-
-type D = NormalizedKeys<symbol | 'foo'>;
-//=> symbol | 'foo'
-```
-*/
-type NormalizedKeys<Keys extends PropertyKey> =
-	| Keys
-	| (string extends Keys ? number : never)
-	| StringToNumber<Keys & string>
-	| ToString<Keys & number>;
 
 /**
 Get literal keys of a type, including both string and number representations wherever applicable.
