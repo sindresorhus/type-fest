@@ -9,25 +9,27 @@ import type {RequiredKeysOf} from './required-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
-Merge two object types into a new object type such that keys from the second object type override keys from the first object type.
+Merge two object types into a new object type, where keys from the second override keys from the first.
 
 @example
 ```ts
 import type {ObjectMerge} from 'type-fest';
 
-type PartialOverwrite = ObjectMerge<{foo: string; bar: string}, {foo: number; biz: number}>;
-//=> {foo: number; biz: number; bar: string}
+type PartialOverride = ObjectMerge<{foo: string; bar: string}, {foo: number; baz: number}>;
+//=> {foo: number; baz: number; bar: string}
 
-type CompleteOverwrite = ObjectMerge<{foo: string; bar: number}, {foo: number; bar: string; biz: boolean}>;
-//=> {foo: number; bar: string; biz: boolean}
+type CompleteOverride = ObjectMerge<{foo: string; bar: number}, {foo: number; bar: string; baz: boolean}>;
+//=> {foo: number; bar: string; baz: boolean}
 
-type NoOverwrite = ObjectMerge<{foo: string; bar: number}, {biz: boolean; qux: bigint}>;
-//=> {biz: boolean; qux: bigint; foo: string; bar: number}
+type NoOverride = ObjectMerge<{foo: string; bar: number}, {baz: boolean; qux: bigint}>;
+//=> {baz: boolean; qux: bigint; foo: string; bar: number}
 ```
 
 Usages:
 
-1. Can be used to type the object spreading operation or `Object.assign` because the default type can sometimes be incorrect, for example:
+Can be used to accurately type object spread and `Object.assign`. The built-in inference for these operations can sometimes be unsound, especially when index signatures are involved.
+
+In the following example, both object spread and `Object.assign` infer a type that allows unsafe usage, whereas `ObjectMerge` produces a type that prevents this unsafe access.
 
 @example
 ```ts
@@ -53,7 +55,9 @@ declare const objectMerge: ObjectMerge<typeof left, typeof right>;
 objectMerge.a.toUpperCase(); // Correctly errors at compile time
 ```
 
-2. Can be used to merge generic type arguments:
+Can be used to merge generic type arguments.
+
+In the following example, object spread without `ObjectMerge` produces an intersection type that is not particularly usable, whereas `ObjectMerge` produces a correctly merged and usable result.
 
 @example
 ```ts
@@ -191,7 +195,7 @@ type NormalizedKeys<Keys extends PropertyKey> =
 	| ToString<Keys & number>;
 
 /**
-Get literal keys of a type including both string and number representations wherever applicable.
+Get literal keys of a type, including both string and number representations wherever applicable.
 
 @example
 ```ts
