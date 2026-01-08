@@ -134,7 +134,7 @@ type _ObjectMerge<
 		: never]:
 			| First[P]
 				// If there's a matching index signature in `Second`, then add the type for it as well,
-				// for example, in `Merge<{a: string}, {[x: string]: number}>`, `a` is of type `string | number`.
+				// for example, in `ObjectMerge<{a: string}, {[x: string]: number}>`, `a` is of type `string | number`.
 			| (P extends NormalizedKeys<keyof Second>
 				? Second[NormalizedKeys<P> & keyof Second]
 				: never);
@@ -143,10 +143,10 @@ type _ObjectMerge<
 	-readonly [P in keyof Second as P extends NormalizedSecondLiteralKeys ? never : P]:
 		| Second[P]
 			// If there's a matching key in `First`, then add the type for it as well,
-			// for example, in `Merge<{a: number}, {[x: string]: string}>`,
+			// for example, in `ObjectMerge<{a: number}, {[x: string]: string}>`,
 			// the resulting type is `{[x: string]: number | string; a: number | string}`.
 			// But, exclude keys from `First` that would surely get overwritten,
-			// for example, in `Merge<{a: number}, {[x: string]: string; a: string}>`,
+			// for example, in `ObjectMerge<{a: number}, {[x: string]: string; a: string}>`,
 			// `a` from `First` would get overwritten by `a` from `Second`, so don't add type for it.
 		| (NormalizedKeys<P> & Exclude<keyof First, NormalizedKeys<RequiredKeysOf<OmitIndexSignature<Second>>>> extends infer NonOverwrittenKeysOfFirst
 			? If<IsNever<NonOverwrittenKeysOfFirst>, // This check is required because indexing with `never` doesn't always yield `never`, for example, `{[x: string]: number}[never]` results in `number`.
