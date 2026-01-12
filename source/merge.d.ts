@@ -39,6 +39,9 @@ export type FooBar = Merge<Foo, Bar>;
 // }
 ```
 
+Note: If you want a merge type that more accurately reflects the runtime behavior of object spread or `Object.assign`, refer to the {@link ObjectMerge} type.
+
+@see {@link ObjectMerge}
 @category Object
 */
 export type Merge<Destination, Source> =
