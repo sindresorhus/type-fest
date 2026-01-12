@@ -267,6 +267,10 @@ expectType<{a: string}>({} as ObjectMerge<{(): string; a: number}, {a: string}>)
 type T1 = ObjectMerge<string, {a: string}>;
 // @ts-expect-error
 type T2 = ObjectMerge<{a: string}, number>;
+// @ts-expect-error
+type T3 = ObjectMerge<{a: string}, unknown>;
+// @ts-expect-error
+type T4 = ObjectMerge<unknown, {a: string}>;
 expectType<unknown>({} as ObjectMerge<string[], {0: string}>);
 expectType<unknown>({} as ObjectMerge<{0: string}, string[]>);
 expectType<unknown>({} as ObjectMerge<string[], number[]>);

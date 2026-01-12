@@ -19,3 +19,5 @@ expectType<never>({} as NormalizedKeys<never>);
 type T1 = NormalizedKeys<boolean>;
 // @ts-expect-error
 type T2 = NormalizedKeys<string[]>;
+// @ts-expect-error
+type T3 = NormalizedKeys<unknown>;
