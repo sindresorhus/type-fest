@@ -147,8 +147,8 @@ expectType<{
 type FooWithOptional = {foo: string; fooOptional?: string; fooBar: Foo; fooBarOptional: Foo | undefined};
 type BarWithOptional = {bar: number; barOptional?: number; fooBar: Bar; fooBarOptional: Bar | undefined};
 
-type fooBarWithOptional = MergeDeep<FooWithOptional, BarWithOptional>;
-expectType<true>({} as IsEqual<fooBarWithOptional, {
+declare const fooBarWithOptional: MergeDeep<FooWithOptional, BarWithOptional>;
+expectType<{
 	foo: string;
 	bar: number;
 	fooOptional?: string;
@@ -165,7 +165,7 @@ expectType<true>({} as IsEqual<fooBarWithOptional, {
 		fooBar: boolean;
 		items: number[];
 	} | undefined;
-}>);
+}>(fooBarWithOptional);
 
 // Test for optional
 type FooOptional = {
@@ -310,7 +310,6 @@ expectType<[Bar, FooBarReplace, ...FooBarReplace[]]>(tupleIntoTupleWithVariadicR
 declare const tupleIntoTupleWithVariadicReplaceReversed: MergeDeep<[Foo, ...Foo[]], [number, Bar, ...Bar[]], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
 expectType<[number, FooBarReplace, ...FooBarReplace[]]>(tupleIntoTupleWithVariadicReplaceReversed);
 
-// Test for https://github.com/sindresorhus/type-fest/issues/1314
 type RecordNotPartial = {
 	name: string;
 	type: string;
@@ -318,26 +317,11 @@ type RecordNotPartial = {
 };
 type RecordPartial = Partial<RecordNotPartial>;
 
-type testOptionalRecordReplacedByRecord = MergeDeep<RecordPartial, RecordNotPartial>;
-expectType<true>({} as IsEqual<RecordNotPartial, testOptionalRecordReplacedByRecord>);
+expectType<RecordNotPartial>({} as MergeDeep<RecordPartial, RecordNotPartial>);
+expectType<RecordPartial>({} as MergeDeep<RecordNotPartial, RecordPartial>);
 
-type testRecordReplacedByOptionalRecord = MergeDeep<RecordNotPartial, RecordPartial>;
-expectType<true>({} as IsEqual<RecordPartial, testRecordReplacedByOptionalRecord>);
+type NotOptional = {a: string; b: number; c: boolean};
+type OptionalWithUndefined = {a: string | undefined; b?: number; c?: boolean | undefined};
 
-type NodeOptional = {
-	name: string;
-	type: string;
-	b: {bb?: string; cc: string};
-};
-
-type NodeNotOptional = {
-	name: string;
-	type: string;
-	b: {bb: string; cc: string | undefined};
-};
-
-type testExpectedNotOptional = MergeDeep<NodeOptional, NodeNotOptional>;
-expectType<true>({} as IsEqual<NodeNotOptional, testExpectedNotOptional>);
-
-type testExpectedOptional = MergeDeep<NodeNotOptional, NodeOptional>;
-expectType<true>({} as IsEqual<NodeOptional, testExpectedOptional>);
+expectType<OptionalWithUndefined>({} as MergeDeep<NotOptional, OptionalWithUndefined>);
+expectType<NotOptional>({} as MergeDeep<OptionalWithUndefined, NotOptional>);
