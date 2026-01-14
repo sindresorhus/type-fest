@@ -3,9 +3,9 @@ import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 // Merges two objects without worrying about index signatures.
-type SimpleMerge<Destination, Source> = {
+type SimpleMerge<Destination, Source> = Simplify<{
 	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
-} & Source;
+} & Source>;
 
 /**
 Merge two types into a new type. Keys of the second type overrides keys of the first type.
@@ -45,9 +45,13 @@ Note: If you want a merge type that more accurately reflects the runtime behavio
 @category Object
 */
 export type Merge<Destination, Source> =
-Simplify<
-	SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
-	& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
->;
+	Destination extends unknown // For distributing `Destination`
+		? Source extends unknown // For distributing `Source`
+			? Simplify<
+				SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
+				& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
+			>
+			: never // Should never happen
+		: never; // Should never happen
 
 export {};
