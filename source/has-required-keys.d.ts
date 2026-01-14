@@ -16,40 +16,40 @@ type GeneratorOptions<Template extends object> = {
 	? {template: Template}
 	: {template?: Template});
 
-interface Template1 {
+type Template1 = {
 	optionalSubParam?: string;
-}
+};
 
-interface Template2 {
+type Template2 = {
 	requiredSubParam: string;
-}
+};
 
 type Options1 = GeneratorOptions<Template1>;
 type Options2 = GeneratorOptions<Template2>;
 
 const optA: Options1 = {
 	prop1: 0,
-	prop2: 'hi'
+	prop2: 'hi',
 };
 const optB: Options1 = {
 	prop1: 0,
 	prop2: 'hi',
-	template: {}
+	template: {},
 };
 const optC: Options1 = {
 	prop1: 0,
 	prop2: 'hi',
 	template: {
-		optionalSubParam: 'optional value'
-	}
+		optionalSubParam: 'optional value',
+	},
 };
 
 const optD: Options2 = {
 	prop1: 0,
 	prop2: 'hi',
 	template: {
-		requiredSubParam: 'required value'
-	}
+		requiredSubParam: 'required value',
+	},
 };
 
 ```

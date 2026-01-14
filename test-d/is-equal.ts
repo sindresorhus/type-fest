@@ -15,6 +15,10 @@ expectType<true>({} as IsEqual<never, never>);
 expectType<false>({} as IsEqual<any, never>);
 expectType<false>({} as IsEqual<never, any>);
 expectType<false>({} as IsEqual<any, unknown>);
+expectType<false>({} as IsEqual<never, unknown>);
+expectType<false>({} as IsEqual<unknown, never>);
+expectType<false>({} as IsEqual<[never], [unknown]>);
+expectType<false>({} as IsEqual<[unknown], [never]>);
 expectType<false>({} as IsEqual<[any], [never]>);
 expectType<true>({} as IsEqual<[any], [any]>);
 expectType<true>({} as IsEqual<[never], [never]>);
@@ -81,3 +85,7 @@ expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
 
 declare const equalTupleIntersectionAndTuple: IsEqual<[{a: 1}] & [{a: 1}], [{a: 1}]>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<true>(equalTupleIntersectionAndTuple);
+
+// Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
+type Assignability<T, U, _V extends IsEqual<T, U>> = any;
+type TestAssignability<T> = Assignability<T, T, true>;

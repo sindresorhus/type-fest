@@ -22,7 +22,7 @@ type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions
 /**
 ConditionalPickDeep options.
 
-@see ConditionalPickDeep
+@see {@link ConditionalPickDeep}
 */
 export type ConditionalPickDeepOptions = {
 	/**
@@ -40,13 +40,13 @@ type DefaultConditionalPickDeepOptions = {
 /**
 Pick keys recursively from the shape that matches the given condition.
 
-@see ConditionalPick
+@see {@link ConditionalPick}
 
 @example
 ```
 import type {ConditionalPickDeep} from 'type-fest';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | boolean;
 	c: {
@@ -59,7 +59,7 @@ interface Example {
 		};
 		j: boolean;
 	};
-}
+};
 
 type StringPick = ConditionalPickDeep<Example, string>;
 //=> {a: string; c: {d: string}}
@@ -83,7 +83,7 @@ type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 // 	c: {
 // 		d: string;
 // 		e: {
-// 			h: string | boolean
+// 			h: string | boolean;
 // 		};
 // 		j: boolean;
 // 	};

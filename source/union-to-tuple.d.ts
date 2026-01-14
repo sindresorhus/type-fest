@@ -22,9 +22,9 @@ type NumbersTuple = UnionToTuple<Numbers>;
 import type {UnionToTuple} from 'type-fest';
 
 const pets = {
-  dog: '🐶',
-  cat: '🐱',
-  snake: '🐍',
+	dog: '🐶',
+	cat: '🐱',
+	snake: '🐍',
 };
 
 type Pet = keyof typeof pets;

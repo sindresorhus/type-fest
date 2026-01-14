@@ -7,22 +7,22 @@ Convert object properties to camel case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see CamelCasedProperties
-@see CamelCase
+@see {@link CamelCasedProperties}
+@see {@link CamelCase}
 
 @example
 ```
 import type {CamelCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	UserId: number;
 	UserName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	UserInfo: User;
 	UserFriends: User[];
-}
+};
 
 const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	userInfo: {

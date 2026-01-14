@@ -14,12 +14,12 @@ Merge two types into a new type. Keys of the second type overrides keys of the f
 ```
 import type {Merge} from 'type-fest';
 
-interface Foo {
+type Foo = {
 	[x: string]: unknown;
 	[x: number]: unknown;
 	foo: string;
 	bar: symbol;
-}
+};
 
 type Bar = {
 	[x: number]: number;
@@ -29,7 +29,7 @@ type Bar = {
 };
 
 export type FooBar = Merge<Foo, Bar>;
-// => {
+//=> {
 // 	[x: string]: unknown;
 // 	[x: number]: number;
 // 	[x: symbol]: unknown;
@@ -39,6 +39,9 @@ export type FooBar = Merge<Foo, Bar>;
 // }
 ```
 
+Note: If you want a merge type that more accurately reflects the runtime behavior of object spread or `Object.assign`, refer to the {@link ObjectMerge} type.
+
+@see {@link ObjectMerge}
 @category Object
 */
 export type Merge<Destination, Source> =

@@ -13,7 +13,8 @@ type ExtraGlobals = GlobalThis & {
 	readonly GLOBAL_TOKEN: string;
 };
 
-(globalThis as ExtraGlobals).GLOBAL_TOKEN;
+const globalToken = (globalThis as ExtraGlobals).GLOBAL_TOKEN;
+//=> string
 ```
 
 @category Type

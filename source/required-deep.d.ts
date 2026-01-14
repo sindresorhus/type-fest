@@ -1,4 +1,6 @@
 import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 /**
 Create a type from another type with all keys and nested keys set to required.
@@ -58,13 +60,13 @@ export type RequiredDeep<T> = T extends BuiltIns
 							: T extends Promise<infer ValueType>
 								? Promise<RequiredDeep<ValueType>>
 								: T extends (...arguments_: any[]) => unknown
-									? {} extends RequiredObjectDeep<T>
+									? IsNever<keyof T> extends true
 										? T
 										: HasMultipleCallSignatures<T> extends true
 											? T
 											: ((...arguments_: Parameters<T>) => ReturnType<T>) & RequiredObjectDeep<T>
 									: T extends object
-										? RequiredObjectDeep<T>
+										? Simplify<RequiredObjectDeep<T>> // `Simplify` to prevent `RequiredObjectDeep` from appearing in the resulting type
 										: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {

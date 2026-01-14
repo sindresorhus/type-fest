@@ -8,22 +8,22 @@ Convert object properties to kebab case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see KebabCase
-@see KebabCasedProperties
+@see {@link KebabCase}
+@see {@link KebabCasedProperties}
 
 @example
 ```
-import type [KebabCasedPropertiesDeep] from 'type-fest';
+import type {KebabCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 	'user-info': {
@@ -42,7 +42,7 @@ const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 
-const splitOnNumbers: KebabCasedPropertiesDeep<{line1: { line2: [{ line3: string }] }}, {splitOnNumbers: true}> = {
+const splitOnNumbers: KebabCasedPropertiesDeep<{line1: {line2: [{line3: string}]}}, {splitOnNumbers: true}> = {
 	'line-1': {
 		'line-2': [
 			{

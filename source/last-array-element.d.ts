@@ -1,5 +1,5 @@
 /**
-Extracts the type of the last element of an array.
+Extract the type of the last element of an array.
 
 Use-case: Defining the return type of functions that extract the last element of an array, for example [`lodash.last`](https://lodash.com/docs/4.17.15#last).
 
@@ -7,17 +7,13 @@ Use-case: Defining the return type of functions that extract the last element of
 ```
 import type {LastArrayElement} from 'type-fest';
 
-declare function lastOf<V extends readonly any[]>(array: V): LastArrayElement<V>;
+declare function lastOf<const V extends readonly any[]>(array: V): LastArrayElement<V>;
 
-const array = ['foo', 2];
+const last1 = lastOf(['foo', 'bar']);
+//=> 'bar'
 
-typeof lastOf(array);
-//=> number
-
-const array = ['foo', 2] as const;
-
-typeof lastOf(array);
-//=> 2
+const last2 = lastOf([true, false, 'baz', 10]);
+//=> 10
 ```
 
 @category Array

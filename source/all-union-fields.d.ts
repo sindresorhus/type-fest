@@ -38,14 +38,15 @@ function displayPetInfo(petInfo: Cat | Dog) {
 	// 	dogType: string;
 	// }
 
-	console.log('name: ', petInfo.name);
-	console.log('type: ', petInfo.type);
+	console.log('name:', petInfo.name);
+	console.log('type:', petInfo.type);
 
 	// TypeScript complains about `catType` and `dogType` not existing on type `Cat | Dog`.
-	console.log('animal type: ', petInfo.catType ?? petInfo.dogType);
+	// @ts-expect-error
+	console.log('animal type:', petInfo.catType ?? petInfo.dogType);
 }
 
-function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
+function displayPetInfoWithAllUnionFields(petInfo: AllUnionFields<Cat | Dog>) {
 	// typeof petInfo =>
 	// {
 	// 	name: string;
@@ -54,15 +55,15 @@ function displayPetInfo(petInfo: AllUnionFields<Cat | Dog>) {
 	// 	dogType?: string;
 	// }
 
-	console.log('name: ', petInfo.name);
-	console.log('type: ', petInfo.type);
+	console.log('name:', petInfo.name);
+	console.log('type:', petInfo.type);
 
 	// No TypeScript error.
-	console.log('animal type: ', petInfo.catType ?? petInfo.dogType);
+	console.log('animal type:', petInfo.catType ?? petInfo.dogType);
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union

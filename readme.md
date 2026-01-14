@@ -106,6 +106,7 @@ Click the type names for complete docs.
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
+- [`ObjectMerge`](source/object-merge.d.ts) - Merge two object types into a new object type, where keys from the second override keys from the first.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`OverrideProperties`](source/override-properties.d.ts) - Override only existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
@@ -122,6 +123,7 @@ Click the type names for complete docs.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
+- [`UnwrapPartial`](source/unwrap-partial.d.ts) - Revert the `Partial` modifier on an object type.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf). (This replaces the previous [`Opaque`](source/tagged.d.ts) type, which is now deprecated.)
@@ -169,8 +171,8 @@ Click the type names for complete docs.
 - [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
-- [`ArraySplice`](source/array-splice.d.ts) - Creates a new array type by adding or removing elements at a specified index range in the original array.
-- [`ArrayTail`](source/array-tail.d.ts) - Extracts the type of an array or tuple minus the first element.
+- [`ArraySplice`](source/array-splice.d.ts) - Create a new array type by adding or removing elements at a specified index range in the original array.
+- [`ArrayTail`](source/array-tail.d.ts) - Extract the type of an array or tuple minus the first element.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
@@ -179,7 +181,8 @@ Click the type names for complete docs.
 - [`DistributedOmit`](source/distributed-omit.d.ts) - Omits keys from a type, distributing the operation over a union.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
-- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types are true.
+- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is true.
+- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
@@ -187,6 +190,7 @@ Click the type names for complete docs.
 - [`FindGlobalInstanceType`](source/find-global-type.d.ts) - Tries to find one or more types from their globally-defined constructors.
 - [`ConditionalSimplify`](source/conditional-simplify.d.ts) - Simplifies a type while including and/or excluding certain types from being simplified.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
+- [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
 
 ### Type Guard
 
@@ -240,7 +244,7 @@ Click the type names for complete docs.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
-- [`RemovePrefix`](source/remove-prefix.d.ts) - Removes the specified prefix from the start of a string.
+- [`RemovePrefix`](source/remove-prefix.d.ts) - Remove the specified prefix from the start of a string.
 
 ### Array
 
@@ -248,15 +252,20 @@ Click the type names for complete docs.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
 - [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.
-- [`LastArrayElement`](source/last-array-element.d.ts) - Extracts the type of the last element of an array.
-- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
+- [`ArrayElement`](source/array-element.d.ts) - Extracts the element type of an array or tuple.
+- [`LastArrayElement`](source/last-array-element.d.ts) - Extract the type of the last element of an array.
+- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length. The `Array` prototype methods that manipulate its length are excluded from the resulting type.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
-- [`TupleOf`](source/tuple-of.d.ts) - Creates a tuple type of the specified length with elements of the specified type.
+- [`TupleOf`](source/tuple-of.d.ts) - Create a tuple type of the specified length with elements of the specified type.
+- [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
+- [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extract the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
+- [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
+- [`ArrayReverse`](source/array-reverse.d.ts) - Reverse the order of elements in a tuple type.
 
 ### Numeric
 
@@ -286,11 +295,11 @@ Click the type names for complete docs.
 - [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert object properties to camel-case (`fooBar`).
 - [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) - Convert object properties to camel-case recursively (`fooBar`).
 - [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case (`foo-bar`).
-- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert a object properties to kebab-case recursively (`foo-bar`).
-- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab-case (`foo-bar`).
-- [`PascalCase`](source/pascal-case.d.ts) - Converts a string literal to pascal-case (`FooBar`)
-- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Converts object properties to pascal-case (`FooBar`)
-- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Converts object properties to pascal-case (`FooBar`)
+- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert object properties to kebab-case (`foo-bar`).
+- [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab-case recursively (`foo-bar`).
+- [`PascalCase`](source/pascal-case.d.ts) - Convert a string literal to pascal-case (`FooBar`).
+- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Convert object properties to pascal-case (`FooBar`).
+- [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Convert object properties to pascal-case recursively (`FooBar`).
 - [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case (`foo_bar`).
 - [`SnakeCasedProperties`](source/snake-cased-properties.d.ts) - Convert object properties to snake-case (`foo_bar`).
 - [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake-case recursively (`foo_bar`).
@@ -345,6 +354,7 @@ Click the type names for complete docs.
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
+- `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 
 ## Tips
 
@@ -467,6 +477,8 @@ There are many advanced types most users don't know about.
 	// NodeConfig interface.
 	new NodeAppBuilder().config({appName: 'ToDoApp'});
 	```
+
+	`Partial<T>` can be reverted with [`UnwrapPartial`](source/unwrap-partial.d.ts).
 	</details>
 
 - [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) - Make all properties in `T` required.

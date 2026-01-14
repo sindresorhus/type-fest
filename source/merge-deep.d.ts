@@ -33,7 +33,7 @@ type MergeDeepRecordProperty<
 	Source,
 	Options extends MergeDeepInternalOptions,
 > = undefined extends Source
-	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | (undefined extends Destination ? undefined : never)
 	: MergeDeepOrReturn<Source, Destination, Source, Options>;
 
 /**
@@ -58,7 +58,7 @@ type DoMergeDeepRecord<
 	}
 // Case in rule 3: Both the source and the destination contain the key.
 	& {
-		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
+		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Required<Destination>[Key], Required<Source>[Key], Options>;
 	};
 
 /**
@@ -398,13 +398,13 @@ type Foo = {
 	a: {b: string; c: boolean; d: number[]};
 };
 
-interface Bar {
+type Bar = {
 	name: string;
 	items: number[];
 	a: {b: number; d: boolean[]};
-}
+};
 
-type FooBar = MergeDeep<Foo, Bar>;
+type FooBar1 = MergeDeep<Foo, Bar>;
 // {
 // 	life: number;
 // 	name: string;
@@ -412,7 +412,7 @@ type FooBar = MergeDeep<Foo, Bar>;
 // 	a: {b: number; c: boolean; d: boolean[]};
 // }
 
-type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
+type FooBar2 = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
 // {
 // 	life: number;
 // 	name: string;
@@ -446,38 +446,36 @@ type Foo = {foo: 'foo'; fooBar: string[]};
 type Bar = {bar: 'bar'; fooBar: number[]};
 
 type FooBar = MergeDeep<Foo, Bar>;
-// { foo: "foo"; bar: "bar"; fooBar: number[]}
+//=> {foo: 'foo'; bar: 'bar'; fooBar: number[]}
 
 type FooBarSpread = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
-// { foo: "foo"; bar: "bar"; fooBar: (string | number)[]}
+//=> {foo: 'foo'; bar: 'bar'; fooBar: (string | number)[]}
 
 type FooBarArray = MergeDeep<Foo[], Bar[]>;
-// (Foo | Bar)[]
+//=> (Foo | Bar)[]
 
 type FooBarArrayDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true}>;
-// FooBar[]
+//=> {foo: 'foo'; bar: 'bar'; fooBar: number[]}[]
 
 type FooBarArraySpreadDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
-// FooBarSpread[]
+//=> {foo: 'foo'; bar: 'bar'; fooBar: (string | number)[]}[]
 
 type FooBarTupleDeep = MergeDeep<[Foo, true, 42], [Bar, 'life'], {recurseIntoArrays: true}>;
-// [FooBar, 'life', 42]
+//=> [{foo: 'foo'; bar: 'bar'; fooBar: number[]}, 'life', 42]
 
 type FooBarTupleWithArrayDeep = MergeDeep<[Foo[], true], [Bar[], 'life', 42], {recurseIntoArrays: true}>;
-// [FooBar[], 'life', 42]
+//=> [{foo: 'foo'; bar: 'bar'; fooBar: number[]}[], 'life', 42]
 ```
 
 @example
 ```
 import type {MergeDeep, MergeDeepOptions} from 'type-fest';
 
-function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
+declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 	destination: Destination,
 	source: Source,
 	options?: Options,
-): MergeDeep<Destination, Source, Options> {
-	// Make your implementation ...
-}
+): MergeDeep<Destination, Source, Options>;
 ```
 
 @experimental This type is marked as experimental because it depends on {@link ConditionalSimplifyDeep} which itself is experimental.

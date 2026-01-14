@@ -4,7 +4,7 @@ import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Creates a tuple type of the specified length with elements of the specified type.
+Create a tuple type of the specified length with elements of the specified type.
 
 @example
 ```
@@ -22,13 +22,15 @@ type TicTacToeBoard = TupleOf<3, TupleOf<3, 'X' | 'O' | null>>;
 
 @example
 ```
+import type {TupleOf} from 'type-fest';
+
 type Range<Start extends number, End extends number> = Exclude<keyof TupleOf<End>, keyof TupleOf<Start>>;
 
 type ZeroToFour = Range<0, 5>;
 //=> '0' | '1' | '2' | '3' | '4'
 
 type ThreeToEight = Range<3, 9>;
-//=> '3' | '4' | '5' | '6' | '7' | '8'
+//=> '5' | '3' | '4' | '6' | '7' | '8'
 ```
 
 Note: If the specified length is the non-literal `number` type, the result will not be a tuple but a regular array.
@@ -60,6 +62,8 @@ import type {TupleOf} from 'type-fest';
 type EmptyTuple = TupleOf<-3, string>;
 //=> []
 ```
+
+Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for example, to create `readonly [number, number, number]` use `Readonly<TupleOf<3, number>>`.
 
 @category Array
 */

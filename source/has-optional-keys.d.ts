@@ -12,8 +12,8 @@ import type {HasOptionalKeys, OptionalKeysOf} from 'type-fest';
 type UpdateService<Entity extends object> = {
 	removeField: HasOptionalKeys<Entity> extends true
 		? (field: OptionalKeysOf<Entity>) => Promise<void>
-		: never
-}
+		: never;
+};
 ```
 
 @category Utilities
