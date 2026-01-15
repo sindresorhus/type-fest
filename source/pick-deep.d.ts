@@ -279,7 +279,10 @@ type _PickDeep<Parent, PathTree extends PathTreeType, K extends keyof PathTree, 
 								? _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<[...TupleOf<StringToNumber<`${L}`>>, PickResult]>>
 								: _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<PickResult>>
 							: never
-						: _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<Build<L, RecursionPickDeep<ForceGet<Parent, L>, Extract<ForceGet<PathTree, L>, PathTreeType>>, Extract<Parent, object>>>>
+						/* Not a leaf - recurse deeper */
+						: ForceGet<PathTree, L> extends infer SubTree
+							? _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<Build<L, RecursionPickDeep<ForceGet<Parent, L>, Extract<SubTree, PathTreeType>>, Extract<Parent, object>>>>
+							: never
 					: never
 				: never
 			: MergeOnlyObjectUnion<U>
