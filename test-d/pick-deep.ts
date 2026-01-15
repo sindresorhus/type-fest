@@ -160,6 +160,7 @@ type numberTest3_Expected = {2?: {0: number}};
 expectType<true>({} as IsEqual<numberTest3_Actual, numberTest3_Expected>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1224
+// Ensures `null` and `undefined` are preserved: https://github.com/sindresorhus/type-fest/issues/880#issuecomment-2115864014
 type unionElement0_Actual = PickDeep<{obj: string | {a: string; b: number; c: boolean} | null | undefined}, 'obj'>;
 type unionElement0_Expected = {obj: string | {a: string; b: number; c: boolean} | null | undefined};
 expectType<true>({} as IsEqual<unionElement0_Actual, unionElement0_Expected>);
@@ -223,3 +224,8 @@ type MutableArrayContainer = {
 type mutableArrayPick_Actual = PickDeep<MutableArrayContainer, `items.${number}.a`>;
 type mutableArrayPick_Expected = {items: Array<{a: 1}>};
 expectType<true>({} as IsEqual<mutableArrayPick_Actual, mutableArrayPick_Expected>);
+
+// Test: https://github.com/sindresorhus/type-fest/issues/880#issuecomment-2115864014
+type Nested = {name: string; age: number};
+type RootNestedNullable = {name: string; age: number; nested: Nested | null};
+expectType<true>({} as IsEqual<{name: string; nested: {name: string} | null}, PickDeep<RootNestedNullable, 'name' | 'nested.name'>>);
