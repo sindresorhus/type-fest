@@ -207,3 +207,19 @@ expectType<true>({} as IsEqual<unionSameKeysObject_Actual, unionSameKeysObject_E
 type unionTupleTuple_Actual = PickDeep<[0, string | [1, [2]]], '1.1'>;
 type unionTupleTuple_Expected = [unknown, string | [unknown, [2]]];
 expectType<true>({} as IsEqual<unionTupleTuple_Actual, unionTupleTuple_Expected>);
+
+// Test: readonly array should preserve readonly modifier when picking into elements
+type ReadonlyArrayContainer = {
+	items: ReadonlyArray<{a: 1; b: 2}>;
+};
+type readonlyArrayPick_Actual = PickDeep<ReadonlyArrayContainer, `items.${number}.a`>;
+type readonlyArrayPick_Expected = {items: ReadonlyArray<{a: 1}>};
+expectType<true>({} as IsEqual<readonlyArrayPick_Actual, readonlyArrayPick_Expected>);
+
+// Test: mutable array should stay mutable
+type MutableArrayContainer = {
+	items: Array<{a: 1; b: 2}>;
+};
+type mutableArrayPick_Actual = PickDeep<MutableArrayContainer, `items.${number}.a`>;
+type mutableArrayPick_Expected = {items: Array<{a: 1}>};
+expectType<true>({} as IsEqual<mutableArrayPick_Actual, mutableArrayPick_Expected>);

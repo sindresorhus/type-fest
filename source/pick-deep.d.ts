@@ -49,7 +49,7 @@ type ForceGet<T, Key extends PropertyKey> =
 						? T[(`${Key}` extends infer K extends keyof T ? K : never)] | T[(Number_ extends infer K extends keyof T ? K : never)]
 						/* `${number}` case */
 						: `${Key}` extends `${infer N extends number}`
-							? [IsEqual<N, number>, T] extends [true, Array<infer ArrayType>]
+							? [IsEqual<N, number>, T] extends [true, ReadonlyArray<infer ArrayType>]
 								? ArrayType
 								: never
 							: never
@@ -146,14 +146,18 @@ type CoerceKeyof<R> = R extends object ? keyof R extends (string | number) ? key
 type Build<K extends PropertyKey, L, M extends object | UnknownArray> =
 	`${K extends string ? K : never}` extends `${infer N extends number}`
 		? IsEqual<N, number> extends true
-			? L[]
-			: M extends UnknownArray
+			/* Preserve readonly for arrays */
+			? M extends unknown[]
+				? L[]
+				: M extends readonly unknown[]
+					? readonly L[]
+					: never
+			: M extends unknown[]
 				? [...TupleOf<N>, L]
-				: BuildObject<K, L, M>
+				: M extends readonly unknown[]
+					? readonly [...TupleOf<N>, L]
+					: BuildObject<K, L, M>
 		: BuildObject<K, L, M>;
-
-/* Just rename */
-type As<Source, T> = Extract<Source, T>;
 
 /**
 Pick properties from a deeply-nested object.
@@ -239,7 +243,7 @@ type RecursionPickDeep<NextParent, NextPathTree extends PathTreeType> =
 	NextParent extends infer NextParentArray extends UnknownArray
 		/* NextParent: array */
 		? IsEqual<IsTuple<NextParentArray>, false> extends true
-			? NextParentArray extends Array<infer _>
+			? NextParentArray extends readonly unknown[]
 				/* If end */
 				? ForceGet<NextPathTree, CoerceKeyof<NextPathTree>> extends LeafMarker
 					? IsEqual<`${number}`, `${CoerceKeyof<NextPathTree>}`> extends true
@@ -248,10 +252,12 @@ type RecursionPickDeep<NextParent, NextPathTree extends PathTreeType> =
 						/* `tailingSpreadArray1_Actual` in `test-d/pick-deep.ts` */
 						: [...TupleOf<StringToNumber<`${CoerceKeyof<NextPathTree>}`>>, PickOrSelf<NextParent, CoerceKeyof<NextPathTree>>]
 					/* Not end */
-					: InternalPickDeep<PickOrSelf<NextParent, CoerceKeyof<NextPathTree>>, As<ForceGet<NextPathTree, CoerceKeyof<NextPathTree>>, PathTreeType>> extends infer Result
+					: InternalPickDeep<PickOrSelf<NextParent, CoerceKeyof<NextPathTree>>, Extract<ForceGet<NextPathTree, CoerceKeyof<NextPathTree>>, PathTreeType>> extends infer Result
 						? IsEqual<`${number}`, `${CoerceKeyof<NextPathTree>}`> extends true
 							/* `leadingSpreadArray1_Actual` in `test-d/pick-deep.ts` */
-							? Result[]
+							? NextParentArray extends unknown[]
+								? Result[]
+								: readonly Result[]
 							/* `tailingSpreadArray2_Actual` in `test-d/pick-deep.ts`. */
 							: [...TupleOf<StringToNumber<`${CoerceKeyof<NextPathTree>}`>>, Result]
 						: never
@@ -273,7 +279,7 @@ type _PickDeep<Parent, PathTree extends PathTreeType, K extends keyof PathTree, 
 								? _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<[...TupleOf<StringToNumber<`${L}`>>, PickResult]>>
 								: _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<PickResult>>
 							: never
-						: _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<Build<L, RecursionPickDeep<ForceGet<Parent, L>, As<ForceGet<PathTree, L>, PathTreeType>>, As<Parent, object>>>>
+						: _PickDeep<Parent, PathTree, Exclude<K, L>, U | Simplify<Build<L, RecursionPickDeep<ForceGet<Parent, L>, Extract<ForceGet<PathTree, L>, PathTreeType>>, Extract<Parent, object>>>>
 					: never
 				: never
 			: MergeOnlyObjectUnion<U>
@@ -315,7 +321,7 @@ type _MergeTreeObject<A extends object, B extends object, KU extends (keyof A | 
 	LastOfUnion<KU> extends infer K
 		? IsNever<K> extends false
 			? K extends (keyof A) & (keyof B)
-				? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, MergeTreeObject<As<A[K], object>, As<B[K], object>>, A | B>>>
+				? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, MergeTreeObject<Extract<A[K], object>, Extract<B[K], object>>, A | B>>>
 				: K extends keyof A
 					? _MergeTreeObject<A, B, Exclude<KU, K>, Simplify<R & BuildObject<K, A[K], A>>>
 					: K extends keyof B
@@ -329,6 +335,6 @@ type MergeTreeObject<A extends object, B extends object> =
 		? B
 		: Or<IsNever<B>, IsEqual<B, {}>> extends true
 			? A
-			: _MergeTreeObject<A, B, As<(KeysOfUnion<A> | KeysOfUnion<B>), (keyof A | keyof B)>>;
+			: _MergeTreeObject<A, B, Extract<(KeysOfUnion<A> | KeysOfUnion<B>), (keyof A | keyof B)>>;
 
 export {};
