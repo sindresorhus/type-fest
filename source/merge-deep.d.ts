@@ -71,7 +71,7 @@ type MergeDeepRecord<
 > = DoMergeDeepRecord<OmitIndexSignature<Destination>, OmitIndexSignature<Source>, Options>
 	& Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
-// Helper to avoid computing ArrayTail twice.
+// helper to avoid computing ArrayTail twice.
 type PickRestTypeHelper<Tail extends UnknownArrayOrTuple, Type> = Tail extends [] ? Type : PickRestType<Tail>;
 
 /**
@@ -270,18 +270,24 @@ Merge two array/tuple recursively by selecting one of the four strategies accord
 - tuple/array
 - array/tuple
 - array/array
+
+Each cases are considered that the one or both are empty.
 */
 type MergeDeepArrayOrTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepInternalOptions,
-> = IsBothExtends<NonEmptyTuple, Destination, Source> extends true
-	? MergeDeepTupleAndTupleRecursive<Destination, Source, Options>
-	: Destination extends NonEmptyTuple
-		? MergeDeepTupleAndArrayRecursive<Destination, Source, Options>
-		: Source extends NonEmptyTuple
-			? MergeDeepArrayAndTupleRecursive<Destination, Source, Options>
-			: MergeDeepArrayRecursive<Destination, Source, Options>;
+> = Destination extends []
+	? Source
+	: Source extends []
+		? Destination
+		: IsBothExtends<NonEmptyTuple, Destination, Source> extends true
+			? MergeDeepTupleAndTupleRecursive<Destination, Source, Options>
+			: Destination extends NonEmptyTuple
+				? MergeDeepTupleAndArrayRecursive<Destination, Source, Options>
+				: Source extends NonEmptyTuple
+					? MergeDeepArrayAndTupleRecursive<Destination, Source, Options>
+					: MergeDeepArrayRecursive<Destination, Source, Options>;
 
 /**
 Merge two array/tuple according to {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option.
