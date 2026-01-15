@@ -1,5 +1,5 @@
 import type {TupleOf} from './tuple-of.d.ts';
-import type {BuildObject, LastOfUnion} from './internal/index.d.ts';
+import type {BuildObject, LastOfUnion, StringToNumber} from './internal/index.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
@@ -56,14 +56,6 @@ type ForceGet<T, Key extends PropertyKey> =
 					: never
 				: never
 			: never;
-
-/**
-Converts a `string` to a `number` if possible; otherwise, returns `never`.
-
-type Test_StringToNumber_0 = StringToNumber<'s'>; // never
-type Test_StringToNumber_1 = StringToNumber<'0'>; // 0
-*/
-type StringToNumber<T extends string> = T extends `${infer N extends number}` ? N : never;
 
 /**
 Returns `true` if the key is theoretically accessible on the value `A`; otherwise, returns `false`.
