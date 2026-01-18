@@ -102,6 +102,7 @@ type IsKeyOf<A, K extends PropertyKey> =
 Returns `A` itself if it is not an `object`.
 If `A` is an `object`, behaves like `Pick<A, K>`.
 If `A` is an `UnknownArray`, returns `A[K]`.
+If `K` is `never`, returns `never`.
 
 This fixes https://github.com/sindresorhus/type-fest/issues/1224.
 
@@ -110,6 +111,7 @@ type Test_PickOrSelf_1 = PickOrSelf<{readonly a?: 0}, 'a'>; // {readonly a?: 0}
 type Test_PickOrSelf_2 = PickOrSelf<{2?: 0}, '2'>; // {2?: 0}
 type Test_PickOrSelf_3 = PickOrSelf<{2?: 0}, 2>; // {2?: 0}
 type Test_PickOrSelf_4 = PickOrSelf<{'2': 0}, 2>; // {'2': 0}
+type Test_PickOrSelf_5 = PickOrSelf<{2?: 0}, never>; // never
 */
 type PickOrSelf<A, K extends (number | string)> =
 	A extends UnknownArray
@@ -140,8 +142,9 @@ type _MergeOnlyObjectUnion<MaybeObjectUnion, ObjectStack = {}, UnionStack = neve
 /**
 This doesn't fail with non-object type, to safely support `keyof` with union types including `object`s.
 
-type Test_CoerceKeyof_0 = CoerceKeyof<string | {x: 0}>;
-// "x"
+type Test_CoerceKeyof_0 = CoerceKeyof<string | {x: 0}>; // "x"
+type Test_CoerceKeyof_1 = CoerceKeyof<string | {x: 0} | {y: 0}>; // "x" | "y"
+type Test_CoerceKeyof_2 = CoerceKeyof<string>; // never
 */
 type CoerceKeyof<R> = R extends object ? keyof R extends (string | number) ? keyof R : never : never;
 
