@@ -73,27 +73,30 @@ type Test_IsKeyOf_9 = IsKeyOf<{0: 'a0'}, 0>; // true
 type Test_IsKeyOf_10 = IsKeyOf<{'0': 'a0'}, 0>; // true
 type Test_IsKeyOf_11 = IsKeyOf<{0: 'a0'}, '0'>; // true
 type Test_IsKeyOf_12 = IsKeyOf<{'0': 'a0'}, 0>; // true
+type Test_IsKeyOf_13 = IsKeyOf<{'0': 'a0'}, never>; // false
 */
 type IsKeyOf<A, K extends PropertyKey> =
-	A extends UnknownArray
-		? IsEqual<IsTuple<A>, true> extends false
-			? K extends `${number}`
-				? true
+	IsEqual<K, never> extends true
+		? false
+		: A extends UnknownArray
+			? IsEqual<IsTuple<A>, true> extends false
+				? K extends `${number}`
+					? true
+					: K extends (string | number)
+						? IsEqual<false, IsNegative<StringToNumber<`${K}`>>>
+						: never
 				: K extends (string | number)
-					? IsEqual<false, IsNegative<StringToNumber<`${K}`>>>
-					: never
-			: K extends (string | number)
-				? [A['length'], IsEqual<A['length'], number>, IsEqual<false, IsNegative<StringToNumber<`${K}`>>>, GreaterThan<A['length'], StringToNumber<`${K}`>>] extends [number, false, true, true]
-					? true
+					? [A['length'], IsEqual<A['length'], number>, IsEqual<false, IsNegative<StringToNumber<`${K}`>>>, GreaterThan<A['length'], StringToNumber<`${K}`>>] extends [number, false, true, true]
+						? true
+						: false
 					: false
-				: false
-		: A extends object
-			? K extends (string | number)
-				? `${K}` extends `${keyof A extends (string | number) ? keyof A : never}`
-					? true
+			: A extends object
+				? K extends (string | number)
+					? `${K}` extends `${keyof A extends (string | number) ? keyof A : never}`
+						? true
+						: false
 					: false
-				: false
-			: false;
+				: false;
 
 /**
 Returns `A` itself if it is not an `object`.
