@@ -27,8 +27,8 @@ expectTypeOf(get(apiResponse, 'hits.hits.0._source.name')).toEqualTypeOf<Array<{
 
 expectTypeOf(get(apiResponse, 'hits.hits[0]._source.name[0].given[0]')).toBeString();
 
-// TypeScript is structurally typed. It's *possible* this value exists even though it's not on the parent interface, so the type is `unknown`.
-expectTypeOf(get(apiResponse, 'hits.someNonsense.notTheRightPath')).toBeUnknown();
+// When accessing a non-existent property, returns `undefined` (changed from `unknown` to support union distribution).
+expectTypeOf(get(apiResponse, 'hits.someNonsense.notTheRightPath')).toEqualTypeOf<undefined>();
 
 type WithDictionary = {
 	foo: Record<string, {
@@ -64,7 +64,8 @@ expectTypeOf<Get<WithTuples, 'foo[0].bar', NonStrict>>().toBeNumber();
 expectTypeOf<Get<WithTuples, 'foo.0.bar', NonStrict>>().toBeNumber();
 
 expectTypeOf<Get<WithTuples, 'foo[1].baz', NonStrict>>().toBeBoolean();
-expectTypeOf<Get<WithTuples, 'foo[1].bar', NonStrict>>().toBeUnknown();
+// Property 'bar' doesn't exist in foo[1], returns undefined
+expectTypeOf<Get<WithTuples, 'foo[1].bar', NonStrict>>().toEqualTypeOf<undefined>();
 
 expectTypeOf<Get<WithTuples, 'foo[-1]', NonStrict>>().toBeUnknown();
 expectTypeOf<Get<WithTuples, 'foo[999]', NonStrict>>().toBeUnknown();
@@ -87,8 +88,9 @@ type WithNumberKeys = {
 expectTypeOf<Get<WithNumberKeys, 'foo[1].bar', NonStrict>>().toBeNumber();
 expectTypeOf<Get<WithNumberKeys, 'foo.1.bar', NonStrict>>().toBeNumber();
 
-expectTypeOf<Get<WithNumberKeys, 'foo[2].bar', NonStrict>>().toBeUnknown();
-expectTypeOf<Get<WithNumberKeys, 'foo.2.bar', NonStrict>>().toBeUnknown();
+// Key '2' doesn't exist in foo, returns undefined
+expectTypeOf<Get<WithNumberKeys, 'foo[2].bar', NonStrict>>().toEqualTypeOf<undefined>();
+expectTypeOf<Get<WithNumberKeys, 'foo.2.bar', NonStrict>>().toEqualTypeOf<undefined>();
 
 // Test `readonly`, `ReadonlyArray`, optional properties, and unions with null.
 
@@ -112,9 +114,11 @@ expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi', NonStrict>>().toEqualTypeO
 // Test bracket notation
 expectTypeOf<Get<number[], '[0]', NonStrict>>().toBeNumber();
 // NOTE: This would fail if `[0][0]` was converted into `00`:
-expectTypeOf<Get<number[], '[0][0]', NonStrict>>().toBeUnknown();
+// Accessing index on a non-array (number) returns undefined
+expectTypeOf<Get<number[], '[0][0]', NonStrict>>().toEqualTypeOf<undefined>();
 expectTypeOf<Get<number[][][], '[0][0][0]', NonStrict>>().toBeNumber();
-expectTypeOf<Get<number[][][], '[0][0][0][0]', NonStrict>>().toBeUnknown();
+// Accessing index on a non-array (number) returns undefined
+expectTypeOf<Get<number[][][], '[0][0][0][0]', NonStrict>>().toEqualTypeOf<undefined>();
 expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id', NonStrict>>().toBeNumber();
 expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, ['a', 'b', '0', '0', '0', 'id'], NonStrict>>().toBeNumber();
 
@@ -152,3 +156,48 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 	type FooPaths2 = 'array.1';
 	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
 }
+
+// Test discriminated unions with partial properties (Issue #1205)
+
+// Discriminated union where some members have a property and others don't
+type TestDiscriminatedUnion = {
+	data:
+		| {type: 'type1'; someVal: number}
+		| {type: 'type2'; someVal: string}
+		| {type: 'type3'}; // `someVal` doesn't exist here
+};
+
+declare const testDiscriminatedUnion: TestDiscriminatedUnion;
+
+// Property that exists in all union members - using the get function pattern from existing tests
+expectTypeOf(get(testDiscriminatedUnion, ['data', 'type'] as const)).toEqualTypeOf<'type1' | 'type2' | 'type3'>();
+
+// Property that exists only in some union members - should return the union of values plus undefined
+expectTypeOf(get(testDiscriminatedUnion, ['data', 'someVal'] as const)).toEqualTypeOf<number | string | undefined>();
+
+// Property that doesn't exist in any union member - should return undefined
+expectTypeOf(get(testDiscriminatedUnion, ['data', 'nonExistent'] as const)).toEqualTypeOf<undefined>();
+
+// Test nested unions
+type TestNestedUnion = {
+	outer:
+		| {inner: {deep: number}}
+		| {inner: {other: string}};
+};
+
+declare const testNestedUnion: TestNestedUnion;
+
+// Each union member has 'inner', but inner's properties differ
+expectTypeOf(get(testNestedUnion, ['outer', 'inner', 'deep'] as const)).toEqualTypeOf<number | undefined>();
+expectTypeOf(get(testNestedUnion, ['outer', 'inner', 'other'] as const)).toEqualTypeOf<string | undefined>();
+
+// Test union at root level
+type TestRootUnion =
+	| {a: number; common: string}
+	| {b: boolean; common: string};
+
+declare const testRootUnion: TestRootUnion;
+
+expectTypeOf(get(testRootUnion, ['common'] as const)).toEqualTypeOf<string>();
+expectTypeOf(get(testRootUnion, ['a'] as const)).toEqualTypeOf<number | undefined>();
+expectTypeOf(get(testRootUnion, ['b'] as const)).toEqualTypeOf<boolean | undefined>();

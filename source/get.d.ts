@@ -124,40 +124,45 @@ type UncheckedIndex<T, U extends string | number> = [T] extends [Record<string |
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
 
 Note:
-- Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
+- Returns `unknown` if `Key` is not a property of any union member of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
+- For union types, distributes over each member and returns `undefined` for members that don't have the key, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 - Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
 type PropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	BaseType extends null | undefined
 		? undefined
-		: Key extends keyof BaseType
-			? StrictPropertyOf<BaseType, Key, Options>
-			// Handle arrays and tuples
-			: BaseType extends readonly unknown[]
-				? Key extends `${number}`
-					// For arrays with unknown length (regular arrays)
-					? number extends BaseType['length']
-						? Strictify<BaseType[number], Options>
-						// For tuples: check if the index is valid
-						: Key extends keyof BaseType
-							? Strictify<BaseType[Key & keyof BaseType], Options>
-							// Out-of-bounds access for tuples
-							: unknown
-					// Non-numeric string key for arrays/tuples
-					: unknown
-				// Handle array-like objects
-				: BaseType extends {
-					[n: number]: infer Item;
-					length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
-				}
-					? (
-						ConsistsOnlyOf<Key, DigitCharacter> extends true
-							? Strictify<Item, Options>
-							: unknown
-					)
-					: Key extends keyof WithStringKeys<BaseType>
-						? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
-						: unknown;
+		// Distribute over union types to handle partial properties correctly
+		: BaseType extends BaseType
+			? Key extends keyof BaseType
+				? StrictPropertyOf<BaseType, Key, Options>
+				// Handle arrays and tuples
+				: BaseType extends readonly unknown[]
+					? Key extends `${number}`
+						// For arrays with unknown length (regular arrays)
+						? number extends BaseType['length']
+							? Strictify<BaseType[number], Options>
+							// For tuples: check if the index is valid
+							: Key extends keyof BaseType
+								? Strictify<BaseType[Key & keyof BaseType], Options>
+								// Out-of-bounds access for tuples
+								: unknown
+						// Non-numeric string key for arrays/tuples
+						: unknown
+					// Handle array-like objects
+					: BaseType extends {
+						[n: number]: infer Item;
+						length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
+					}
+						? (
+							ConsistsOnlyOf<Key, DigitCharacter> extends true
+								? Strictify<Item, Options>
+								: unknown
+						)
+						: Key extends keyof WithStringKeys<BaseType>
+							? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
+							// Key doesn't exist in this union member, return undefined
+							: undefined
+			: never;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
