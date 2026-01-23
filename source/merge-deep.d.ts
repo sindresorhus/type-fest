@@ -71,7 +71,7 @@ type MergeDeepRecord<
 > = DoMergeDeepRecord<OmitIndexSignature<Destination>, OmitIndexSignature<Source>, Options>
 	& Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
-// helper to avoid computing ArrayTail twice.
+// Helper to avoid computing ArrayTail twice.
 type PickRestTypeHelper<Tail extends UnknownArrayOrTuple, Type> = Tail extends [] ? Type : PickRestType<Tail>;
 
 /**
