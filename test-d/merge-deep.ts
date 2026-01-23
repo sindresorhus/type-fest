@@ -15,10 +15,10 @@ expectType<{}>(mergeDeep({}, {} as const));
 expectType<{}>(mergeDeep({} as const, {} as const));
 
 // Test valid signatures for arrays/tuples.
-expectType<never[]>(mergeDeep([], []));
-expectType<never[]>(mergeDeep([] as const, []));
-expectType<never[]>(mergeDeep([], [] as const));
-expectType<never[]>(mergeDeep([] as const, [] as const));
+expectType<true>({} as IsEqual<[], MergeDeep<[], []>>);
+expectType<true>({} as IsEqual<[], MergeDeep<readonly [], []>>);
+expectType<true>({} as IsEqual<readonly [], MergeDeep<[], readonly []>>);
+expectType<true>({} as IsEqual<readonly [], MergeDeep<readonly [], readonly []>>);
 
 // Test invalid signatures.
 expectType<never>(mergeDeep({}, []));

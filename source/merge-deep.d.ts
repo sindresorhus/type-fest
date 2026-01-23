@@ -238,9 +238,13 @@ type DoMergeArrayOrTuple<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepInternalOptions,
-> = ShouldSpread<Options> extends true
-	? Array<Exclude<Destination, undefined>[number] | Exclude<Source, undefined>[number]>
-	: Source; // 'replace'
+> = [Destination, Source] extends [readonly [], readonly []]
+	? Source extends []
+		? []
+		: readonly []
+	: ShouldSpread<Options> extends true
+		? Array<Exclude<Destination, undefined>[number] | Exclude<Source, undefined>[number]>
+		: Source; // 'replace'
 
 /**
 Merge two arrays recursively.
