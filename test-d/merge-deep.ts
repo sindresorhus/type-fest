@@ -15,10 +15,10 @@ expectType<{}>(mergeDeep({}, {} as const));
 expectType<{}>(mergeDeep({} as const, {} as const));
 
 // Test valid signatures for arrays/tuples.
-expectType<true>({} as IsEqual<[], MergeDeep<[], []>>);
-expectType<true>({} as IsEqual<[], MergeDeep<readonly [], []>>);
-expectType<true>({} as IsEqual<readonly [], MergeDeep<[], readonly []>>);
-expectType<true>({} as IsEqual<readonly [], MergeDeep<readonly [], readonly []>>);
+expectType<[]>(mergeDeep([], []));
+expectType<[]>(mergeDeep([] as const, []));
+expectType<readonly []>(mergeDeep([], [] as const));
+expectType<readonly []>(mergeDeep([] as const, [] as const));
 
 // Test invalid signatures.
 expectType<never>(mergeDeep({}, []));
@@ -330,46 +330,49 @@ expectType<NotOptional>({} as MergeDeep<OptionalWithUndefined, NotOptional>);
 type EmptyFoo = {foo: []};
 type NotEmptyTupleFoo = {foo: [0, 1]};
 type NotEmptyArrayFoo = {foo: number[]};
-expectType<true>({} as IsEqual<NotEmptyTupleFoo, MergeDeep<EmptyFoo, NotEmptyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyTupleFoo, MergeDeep<NotEmptyTupleFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyArrayFoo, MergeDeep<EmptyFoo, NotEmptyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyArrayFoo, MergeDeep<NotEmptyArrayFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
+expectType<NotEmptyTupleFoo>({} as MergeDeep<EmptyFoo, NotEmptyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyTupleFoo>({} as MergeDeep<NotEmptyTupleFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyArrayFoo>({} as MergeDeep<EmptyFoo, NotEmptyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyArrayFoo>({} as MergeDeep<NotEmptyArrayFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1200
 type EmptyReadonlyFoo = {readonly foo: []};
-type NotEmptyReadonlyFoo = {readonly foo: [0, 1]};
-expectType<true>({} as IsEqual<NotEmptyReadonlyFoo, MergeDeep<EmptyReadonlyFoo, NotEmptyReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyReadonlyFoo, MergeDeep<NotEmptyReadonlyFoo, EmptyReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
+type NotEmptyReadonlyTupleFoo = {readonly foo: [0, 1]};
+type NotEmptyReadonlyArrayFoo = {readonly foo: number[]};
+expectType<NotEmptyReadonlyTupleFoo>({} as MergeDeep<EmptyReadonlyFoo, NotEmptyReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyReadonlyTupleFoo>({} as MergeDeep<NotEmptyReadonlyTupleFoo, EmptyReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyReadonlyArrayFoo>({} as MergeDeep<EmptyReadonlyFoo, NotEmptyReadonlyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyReadonlyArrayFoo>({} as MergeDeep<NotEmptyReadonlyArrayFoo, EmptyReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1200
 type EmptyOptionalFoo = {foo?: []};
 type NotEmptyOptionalTupleFoo = {foo?: [0, 1]};
 type NotEmptyOptionalArrayFoo = {foo?: number[]};
-expectType<true>({} as IsEqual<NotEmptyOptionalTupleFoo, MergeDeep<EmptyOptionalFoo, NotEmptyOptionalTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyOptionalTupleFoo, MergeDeep<NotEmptyOptionalTupleFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyOptionalArrayFoo, MergeDeep<EmptyOptionalFoo, NotEmptyOptionalArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyOptionalArrayFoo, MergeDeep<NotEmptyOptionalArrayFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
+expectType<NotEmptyOptionalTupleFoo>({} as MergeDeep<EmptyOptionalFoo, NotEmptyOptionalTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyOptionalTupleFoo>({} as MergeDeep<NotEmptyOptionalTupleFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyOptionalArrayFoo>({} as MergeDeep<EmptyOptionalFoo, NotEmptyOptionalArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyOptionalArrayFoo>({} as MergeDeep<NotEmptyOptionalArrayFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1200
 type EmptyOptionalReadonlyFoo = {readonly foo?: []};
 type NotEmptyOptionalReadonlyTupleFoo = {readonly foo?: [0, 1]};
 type NotEmptyOptionalReadonlyArrayFoo = {readonly foo?: number[]};
-expectType<true>({} as IsEqual<NotEmptyOptionalReadonlyTupleFoo, MergeDeep<EmptyOptionalReadonlyFoo, NotEmptyOptionalReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyOptionalReadonlyTupleFoo, MergeDeep<NotEmptyOptionalReadonlyTupleFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyOptionalReadonlyArrayFoo, MergeDeep<EmptyOptionalReadonlyFoo, NotEmptyOptionalReadonlyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyOptionalReadonlyArrayFoo, MergeDeep<NotEmptyOptionalReadonlyArrayFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
+expectType<NotEmptyOptionalReadonlyTupleFoo>({} as MergeDeep<EmptyOptionalReadonlyFoo, NotEmptyOptionalReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyOptionalReadonlyTupleFoo>({} as MergeDeep<NotEmptyOptionalReadonlyTupleFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyOptionalReadonlyArrayFoo>({} as MergeDeep<EmptyOptionalReadonlyFoo, NotEmptyOptionalReadonlyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyOptionalReadonlyArrayFoo>({} as MergeDeep<NotEmptyOptionalReadonlyArrayFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1200
-expectType<true>({} as IsEqual<NotEmptyOptionalReadonlyTupleFoo, MergeDeep<EmptyOptionalFoo, NotEmptyOptionalReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyOptionalTupleFoo, MergeDeep<NotEmptyOptionalReadonlyTupleFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<EmptyOptionalFoo, MergeDeep<EmptyOptionalReadonlyFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<EmptyOptionalReadonlyFoo, MergeDeep<EmptyOptionalFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
+expectType<NotEmptyOptionalReadonlyTupleFoo>({} as MergeDeep<EmptyOptionalFoo, NotEmptyOptionalReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyOptionalTupleFoo>({} as MergeDeep<NotEmptyOptionalReadonlyTupleFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<EmptyOptionalFoo>({} as MergeDeep<EmptyOptionalReadonlyFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<EmptyOptionalReadonlyFoo>({} as MergeDeep<EmptyOptionalFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1200
 type EmptyFooRecursive = {foo: [0, string, {bar: []}]};
 type NotEmptyTupleFooRecursive = {foo: [0, number, {bar: [0, 1]}]};
 type NotEmptyArrayFooRecursive = {foo: [0, number, {bar: number[]}]};
-expectType<true>({} as IsEqual<NotEmptyTupleFooRecursive, MergeDeep<EmptyFooRecursive, NotEmptyTupleFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<{foo: [0, string, {bar: [0, 1]}]}, MergeDeep<NotEmptyTupleFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<NotEmptyArrayFooRecursive, MergeDeep<EmptyFooRecursive, NotEmptyArrayFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
-expectType<true>({} as IsEqual<{foo: [0, string, {bar: number[]}]}, MergeDeep<NotEmptyArrayFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>);
+expectType<NotEmptyTupleFooRecursive>({} as MergeDeep<EmptyFooRecursive, NotEmptyTupleFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<{foo: [0, string, {bar: [0, 1]}]}>({} as MergeDeep<NotEmptyTupleFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyArrayFooRecursive>({} as MergeDeep<EmptyFooRecursive, NotEmptyArrayFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<{foo: [0, string, {bar: number[]}]}>({} as MergeDeep<NotEmptyArrayFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
