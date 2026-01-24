@@ -138,6 +138,7 @@ export type {IfNever} from './source/if-never.d.ts';
 export type {IsUnknown} from './source/is-unknown.d.ts';
 export type {IfUnknown} from './source/if-unknown.d.ts';
 export type {IsTuple, IsTupleOptions} from './source/is-tuple.d.ts';
+export type {ArrayExclude} from './source/array-exclude.d.ts';
 export type {ArrayIndices} from './source/array-indices.d.ts';
 export type {ArrayValues} from './source/array-values.d.ts';
 export type {ArraySlice} from './source/array-slice.d.ts';

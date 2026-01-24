@@ -266,6 +266,7 @@ Click the type names for complete docs.
 - [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extract the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
 - [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 - [`ArrayReverse`](source/array-reverse.d.ts) - Reverse the order of elements in a tuple type.
+- [`ArrayExclude`](source/array-exclude.d.ts) - Exclude types from the source array based on the supplied exclude conditions. The source array can be an ordinary array, a readonly array or a tuple.
 
 ### Numeric
 
