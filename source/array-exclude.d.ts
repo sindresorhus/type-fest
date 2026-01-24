@@ -30,8 +30,8 @@ Notes:
 	- If the provided conditions filter out all elements from the source array, a `never[]` type is returned.
 	- If `never` is provided as the exclude condition, then the original type will be returned.
 	- If a tuple or readonly array has elements that are defined as `boolean`
-	(i.e. not narrowed as `true` or `false`), this will result in a discriminative
-	union return. For example an `ArrayExclude<[number, boolean], number>` will result in
+	(i.e. not narrowed as `true` or `false`) this will result in a discriminative
+	union return. For example, an `ArrayExclude<[number, boolean], number>` will result in
 	a `[true]|[false]` type.
 
 @category Array
