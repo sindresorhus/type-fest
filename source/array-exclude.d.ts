@@ -9,7 +9,6 @@ type ExcludeFromArray<ArrayLike extends UnknownArray, ExcludeConditions> =
 	ArrayLike extends Array<infer Union>
 		? Array<Exclude<Union, ExcludeConditions>>
 		: never;
-
 /**
 Exclude types from the source array based on the supplied exclude conditions.
 The source array can be an ordinary array, a readonly array or a tuple.
@@ -27,9 +26,13 @@ type ReadonlyArray = ArrayExclude<readonly ['literalValue', 1, 2, 3, {readonly p
 type Tuple = ArrayExclude<['literalValue', 1, 2, 3, {prop: 'prop'}, true], string | 2 | Record<string, unknown>>;
 //=> [1, 3, true]
 ```
-Note:
+Notes:
 	- If the provided conditions filter out all elements from the source array, a `never[]` type is returned.
 	- If `never` is provided as the exclude condition, then the original type will be returned.
+	- If a tuple or readonly array has elements that are defined as `boolean`
+	(i.e. not narrowed as `true` or `false`), this will result in a discriminative
+	union return. For example an `ArrayExclude<[number, boolean], number>` will result in
+	a `[true]|[false]` type.
 
 @category Array
  */

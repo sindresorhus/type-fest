@@ -131,6 +131,15 @@ declare const invalidObjectSource: ArrayExclude<
 expectType<never>(invalidPrimitiveSource);
 expectType<never>(invalidObjectSource);
 
+// BOOLEAN EDGE CASE
+
+// If the tuple has a boolean type specification for one of its elements
+// this results in discriminative union return
+declare const tupleBoolean: ArrayExclude<[number, boolean], number>;
+declare const readonlyBoolean: ArrayExclude<readonly [number, boolean], number>;
+expectType<[false] | [true]>(tupleBoolean);
+expectType<readonly [false] | readonly [true]>(readonlyBoolean);
+
 // DOCUMENTATION EXAMPLES
 declare const docsOrdinaryArray: ArrayExclude<Array<string | number | boolean>, string | boolean>;
 declare const docsReadonlyArray: ArrayExclude<readonly ['literalValue', 1, 2, 3, {readonly prop: 'prop'}, true], string | 2 | Record<string, unknown>>;
