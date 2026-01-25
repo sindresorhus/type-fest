@@ -149,8 +149,8 @@ expectType<number[]>(docsOrdinaryArray);
 expectType<readonly [1, 3, true]>(docsReadonlyArray);
 expectType<[1, 3, true]>(docsTuple);
 
-// readonly non-tuple arrays
-declare const readonlyArrayExclude: ArrayExclude<readonly (string | number | boolean)[], string | boolean>;
+// Readonly non-tuple arrays
+declare const readonlyArrayExclude: ArrayExclude<ReadonlyArray<(string | number | boolean)>, string | boolean>;
 declare const readonlyArrayNoOp: ArrayExclude<readonly string[], number>;
 declare const readonlyArrayNever: ArrayExclude<readonly string[], string>;
 expectType<readonly number[]>(readonlyArrayExclude);
