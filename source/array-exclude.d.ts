@@ -1,14 +1,6 @@
+import type {IsArrayReadonly, SetArrayAccess} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
-type ConditionalReadonly<
-	ArrayLike extends UnknownArray,
-	IsReadonly extends boolean,
-> = IsReadonly extends true ? Readonly<ArrayLike> : ArrayLike;
-
-type ExcludeFromArray<ArrayLike extends UnknownArray, ExcludeConditions> =
-	ArrayLike extends Array<infer Union>
-		? Array<Exclude<Union, ExcludeConditions>>
-		: never;
 /**
 Exclude types from the source array based on the supplied exclude conditions.
 The source array can be an ordinary array, a readonly array or a tuple.
@@ -40,12 +32,12 @@ export type ArrayExclude<
 	ArrayLike extends UnknownArray,
 	ExcludeConditions,
 	FilteredTuple extends UnknownArray = [],
-	IsReadonly extends boolean = ArrayLike extends unknown[] ? false : true,
+	IsReadonly extends boolean = IsArrayReadonly<ArrayLike>,
 > = ArrayLike extends
 | Readonly<[infer First, ...infer Rest]>
 | [infer First, ...infer Rest]
 	? Rest extends []
-		? ConditionalReadonly<
+		? SetArrayAccess<
 			First extends ExcludeConditions
 				? FilteredTuple extends [] ? never[] : FilteredTuple
 				: [...FilteredTuple, First],
@@ -54,5 +46,7 @@ export type ArrayExclude<
 		:
 		ArrayExclude<Rest, ExcludeConditions, First extends ExcludeConditions ? FilteredTuple : [...FilteredTuple, First], IsReadonly>
 
-	: ExcludeFromArray<ArrayLike, ExcludeConditions>;
+	: ArrayLike extends Array<infer Union> | ReadonlyArray<infer Union>
+		? SetArrayAccess<Array<Exclude<Union, ExcludeConditions>>, IsReadonly>
+		: never;
 export { };
