@@ -120,6 +120,23 @@ expectType<ExpectedTupleOmitSeveral>(tupleOmitSeveral);
 expectType<never[]>(tupleNever);
 expectType<readonly never[]>(readonlyNever);
 
+// UNION TYPES
+declare const arrayUnionType: ArrayExclude<Array<1 | 2 | 3>, 1>;
+declare const tupleUnionType: ArrayExclude<[1 | 2, 3 | 4], 1 | 4>;
+declare const readonlyUnionType: ArrayExclude<readonly [1 | 2, 3 | 4], 1 | 4>;
+expectType<Array<2 | 3>>(arrayUnionType);
+expectType<[2, 3]>(tupleUnionType);
+expectType<readonly [2, 3]>(readonlyUnionType);
+
+// BOOLEANS
+declare const arrayBoolean: ArrayExclude<Array<number | boolean | string>, string>;
+declare const tupleBoolean: ArrayExclude<[number, boolean], number>;
+declare const readonlyBoolean: ArrayExclude<readonly [number, boolean], number>;
+/* Declare const readonlyUnionType: ArrayExclude<readonly [1 | 2, 3 | 4], 1 | 4>; */
+expectType<Array<number | boolean>>(arrayBoolean);
+expectType<[boolean]>(tupleBoolean);
+expectType<readonly [boolean]>(readonlyBoolean);
+
 // INVALID TYPES
 // @ts-expect-error
 declare const invalidPrimitiveSource: ArrayExclude<string, 'something'>;
@@ -130,15 +147,6 @@ declare const invalidObjectSource: ArrayExclude<
 >;
 expectType<never>(invalidPrimitiveSource);
 expectType<never>(invalidObjectSource);
-
-// BOOLEAN EDGE CASE
-
-// If the tuple has a boolean type specification for one of its elements
-// this results in discriminative union return
-declare const tupleBoolean: ArrayExclude<[number, boolean], number>;
-declare const readonlyBoolean: ArrayExclude<readonly [number, boolean], number>;
-expectType<[false] | [true]>(tupleBoolean);
-expectType<readonly [false] | readonly [true]>(readonlyBoolean);
 
 // DOCUMENTATION EXAMPLES
 declare const docsOrdinaryArray: ArrayExclude<Array<string | number | boolean>, string | boolean>;

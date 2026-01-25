@@ -1,6 +1,12 @@
 import type {IsArrayReadonly, SetArrayAccess} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
+type FilteredElement<Element, ExcludeConditions> = Element extends ExcludeConditions
+	? never
+	: Exclude<Element, ExcludeConditions> extends never
+		? never
+		: Exclude<Element, ExcludeConditions>;
+
 /**
 Exclude types from the source array based on the supplied exclude conditions.
 The source array can be an ordinary array, a readonly array or a tuple.
@@ -21,10 +27,6 @@ type Tuple = ArrayExclude<['literalValue', 1, 2, 3, {prop: 'prop'}, true], strin
 Notes:
 	- If the provided conditions filter out all elements from the source array, a `never[]` type is returned.
 	- If `never` is provided as the exclude condition, then the original type will be returned.
-	- If a tuple or readonly array has elements that are defined as `boolean`
-	(i.e. not narrowed as `true` or `false`) this will result in a discriminative
-	union return. For example, an `ArrayExclude<[number, boolean], number>` will result in
-	a `[true]|[false]` type.
 
 @category Array
  */
@@ -38,14 +40,13 @@ export type ArrayExclude<
 | [infer First, ...infer Rest]
 	? Rest extends []
 		? SetArrayAccess<
-			First extends ExcludeConditions
+			FilteredElement<First, ExcludeConditions> extends never
 				? FilteredTuple extends [] ? never[] : FilteredTuple
-				: [...FilteredTuple, First],
+				: [...FilteredTuple, FilteredElement<First, ExcludeConditions>],
 			IsReadonly
 		>
 		:
-		ArrayExclude<Rest, ExcludeConditions, First extends ExcludeConditions ? FilteredTuple : [...FilteredTuple, First], IsReadonly>
-
+		ArrayExclude<Rest, ExcludeConditions, FilteredElement<First, ExcludeConditions> extends never ? FilteredTuple : [...FilteredTuple, FilteredElement<First, ExcludeConditions>], IsReadonly>
 	: ArrayLike extends Array<infer Union> | ReadonlyArray<infer Union>
 		? SetArrayAccess<Array<Exclude<Union, ExcludeConditions>>, IsReadonly>
 		: never;
