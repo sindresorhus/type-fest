@@ -148,3 +148,15 @@ declare const docsTuple: ArrayExclude<['literalValue', 1, 2, 3, {prop: 'prop'}, 
 expectType<number[]>(docsOrdinaryArray);
 expectType<readonly [1, 3, true]>(docsReadonlyArray);
 expectType<[1, 3, true]>(docsTuple);
+
+// readonly non-tuple arrays
+declare const readonlyArrayExclude: ArrayExclude<readonly (string | number | boolean)[], string | boolean>;
+declare const readonlyArrayNoOp: ArrayExclude<readonly string[], number>;
+declare const readonlyArrayNever: ArrayExclude<readonly string[], string>;
+expectType<readonly number[]>(readonlyArrayExclude);
+expectType<readonly string[]>(readonlyArrayNoOp);
+expectType<readonly never[]>(readonlyArrayNever);
+
+// `never` input type
+declare const neverArray: ArrayExclude<never, string>;
+expectType<never>(neverArray);
