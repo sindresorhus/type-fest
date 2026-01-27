@@ -1,4 +1,5 @@
 import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {UniqueUnionDeep} from './internal/type.d.ts';
 
 /**
 Returns a boolean for whether the two given types are equal.
@@ -29,7 +30,7 @@ type Includes<Value extends readonly any[], Item> =
 export type IsEqual<A, B> =
 	[A, B] extends [B, A]
 		? [A, B] extends [object, object]
-			? _IsEqual<SimplifyDeep<A>, SimplifyDeep<B>>
+			? _IsEqual<SimplifyDeep<UniqueUnionDeep<A>>, SimplifyDeep<UniqueUnionDeep<B>>>
 			: _IsEqual<A, B>
 		: false;
 

@@ -95,3 +95,9 @@ expectType<true>({} as IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>);
 expectType<true>({} as IsEqual<{aa: {a: {x: 0} & {y: 0}} & {b: 0}}, {aa: {a: {x: 0; y: 0}; b: 0}}>);
 expectType<false>({} as IsEqual<{readonly a: 0} & {b: 0}, {a: 0; b: 0}>);
 expectType<false>({} as IsEqual<{readonly aa: {a: 0} & {b: 0}}, {aa: {a: 0; b: 0}}>);
+
+// Ensure `{a: t}` is equal to `{a: t} | {a: t}`
+expectType<true>({} as IsEqual<{a: 0} & ({b: 0} | {b: 0}), {a: 0; b: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{aa: {a: {x: 0} & ({y: 0} | {y: 0})} & {b: 0}}, {aa: {a: {x: 0; y: 0}; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<false>({} as IsEqual<{readonly a: 0} & ({b: 0} | {b: 0}), {a: 0; b: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<false>({} as IsEqual<{readonly aa: {a: 0} & ({b: 0} | {b: 0})}, {aa: {a: 0; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
