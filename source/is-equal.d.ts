@@ -1,5 +1,4 @@
-import type {Simplify} from './simplify.d.ts';
-
+import type {IsNever} from './is-never.d.ts';
 /**
 Returns a boolean for whether the two given types are equal.
 
@@ -27,10 +26,10 @@ type Includes<Value extends readonly any[], Item> =
 @category Utilities
 */
 export type IsEqual<A, B> =
-	[A, B] extends [B, A]
-		? [A, B] extends [object, object]
-			? _IsEqual<Simplify<A>, Simplify<B>>
-			: _IsEqual<A, B>
+	[A] extends [B]
+		? [B] extends [A]
+			? _IsEqual<A, B>
+			: false
 		: false;
 
 // This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
