@@ -1,6 +1,8 @@
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Simplify} from './simplify.d.ts';
+import type {If} from './if.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 // Merges two objects without worrying about index signatures.
 type SimpleMerge<Destination, Source> = Simplify<{
@@ -44,7 +46,9 @@ Note: If you want a merge type that more accurately reflects the runtime behavio
 @see {@link ObjectMerge}
 @category Object
 */
-export type Merge<Destination, Source> =
+export type Merge<Destination, Source> = If<IsEqual<Destination, Source>, Destination, _Merge<Destination, Source>>;
+
+export type _Merge<Destination, Source> =
 	Destination extends unknown // For distributing `Destination`
 		? Source extends unknown // For distributing `Source`
 			? Simplify<

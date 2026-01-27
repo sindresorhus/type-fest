@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Merge, FixedLengthArray} from '../index.d.ts';
+import type {Merge, FixedLengthArray, IsEqual} from '../index.d.ts';
 
 type Foo = {
 	a: number;
@@ -191,3 +191,9 @@ expectType<
 // Idempotency
 expectType<BarWithIndexSignatureOverwrite>({} as Merge<BarWithIndexSignatureOverwrite, BarWithIndexSignatureOverwrite>);
 expectType<FixedLengthArray<string, 3>>({} as Merge<FixedLengthArray<string, 3>, FixedLengthArray<string, 3>>);
+
+// Idempotency
+type TestIntersectionObject = {a: string} & {b: string};
+type IDMerge = Merge<TestIntersectionObject, TestIntersectionObject>;
+expectType<TestIntersectionObject>({} as IDMerge);
+expectType<IDMerge>({} as TestIntersectionObject);
