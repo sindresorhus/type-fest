@@ -90,5 +90,5 @@ expectType<true>(equalTupleIntersectionAndTuple);
 export type IntersectionMerge<tuple extends readonly unknown[]> = Except<tuple, 'length'> & {__brand: 'tag'};
 type SampleTuple = [0, 1, 2];
 
-expectType<false>({} as IsEqual<IntersectionMerge<SampleTuple>, Merge<IntersectionMerge<SampleTuple>, IntersectionMerge<SampleTuple>>>);
+expectType<true>({} as IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>);
 expectType<true>({} as IsEqual<Simplify<IntersectionMerge<SampleTuple>>, Merge<IntersectionMerge<SampleTuple>, IntersectionMerge<SampleTuple>>>);
