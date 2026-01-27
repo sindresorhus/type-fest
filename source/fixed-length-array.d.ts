@@ -1,6 +1,5 @@
 import type {Except} from './except.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Methods to exclude.
@@ -90,9 +89,9 @@ console.log(toHex(color)); // `FixedLengthArray<number, 3>` is assignable to `re
 
 @category Array
 */
-export type FixedLengthArray<Element, Length extends number> = Simplify<
+export type FixedLengthArray<Element, Length extends number> =
 	Except<TupleOf<Length, Element>, ArrayLengthMutationKeys | number | 'length'>
 	& {readonly length: Length}
-	& (number extends Length ? {[n: number]: Element} : {})>; // Add `number` index signature only for non-tuple arrays.
+	& (number extends Length ? {[n: number]: Element} : {}); // Add `number` index signature only for non-tuple arrays.
 
 export {};
