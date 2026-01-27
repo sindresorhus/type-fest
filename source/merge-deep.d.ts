@@ -238,9 +238,13 @@ type DoMergeArrayOrTuple<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepInternalOptions,
-> = ShouldSpread<Options> extends true
-	? Array<Exclude<Destination, undefined>[number] | Exclude<Source, undefined>[number]>
-	: Source; // 'replace'
+> = [Destination, Source] extends [readonly [], readonly []]
+	? Source extends []
+		? []
+		: readonly []
+	: ShouldSpread<Options> extends true
+		? Array<Exclude<Destination, undefined>[number] | Exclude<Source, undefined>[number]>
+		: Source; // 'replace'
 
 /**
 Merge two arrays recursively.
@@ -270,18 +274,24 @@ Merge two array/tuple recursively by selecting one of the four strategies accord
 - tuple/array
 - array/tuple
 - array/array
+
+Each cases are considered that the one or both are empty.
 */
 type MergeDeepArrayOrTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepInternalOptions,
-> = IsBothExtends<NonEmptyTuple, Destination, Source> extends true
-	? MergeDeepTupleAndTupleRecursive<Destination, Source, Options>
-	: Destination extends NonEmptyTuple
-		? MergeDeepTupleAndArrayRecursive<Destination, Source, Options>
-		: Source extends NonEmptyTuple
-			? MergeDeepArrayAndTupleRecursive<Destination, Source, Options>
-			: MergeDeepArrayRecursive<Destination, Source, Options>;
+> = Destination extends []
+	? Source
+	: Source extends []
+		? Destination
+		: IsBothExtends<NonEmptyTuple, Destination, Source> extends true
+			? MergeDeepTupleAndTupleRecursive<Destination, Source, Options>
+			: Destination extends NonEmptyTuple
+				? MergeDeepTupleAndArrayRecursive<Destination, Source, Options>
+				: Source extends NonEmptyTuple
+					? MergeDeepArrayAndTupleRecursive<Destination, Source, Options>
+					: MergeDeepArrayRecursive<Destination, Source, Options>;
 
 /**
 Merge two array/tuple according to {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option.
