@@ -86,9 +86,8 @@ expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
 declare const equalTupleIntersectionAndTuple: IsEqual<[{a: 1}] & [{a: 1}], [{a: 1}]>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<true>(equalTupleIntersectionAndTuple);
 
-// Distinct whether an object is merged by `&` or via `Simplify`, to ensure Branded Types are handled strictly.
-export type IntersectionMerge<tuple extends readonly unknown[]> = Except<tuple, 'length'> & {__brand: 'tag'};
-type SampleTuple = [0, 1, 2];
-
+// Ensure `{a: t; b: s}` is equal to `{a: t} & {b: s}`
 expectType<true>({} as IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>);
-expectType<true>({} as IsEqual<Simplify<IntersectionMerge<SampleTuple>>, Merge<IntersectionMerge<SampleTuple>, IntersectionMerge<SampleTuple>>>);
+expectType<true>({} as IsEqual<{aa: {a: {x: 0} & {y: 0}} & {b: 0}}, {aa: {a: {x: 0; y: 0}; b: 0}}>);
+expectType<false>({} as IsEqual<{readonly a: 0} & {b: 0}, {a: 0; b: 0}>);
+expectType<false>({} as IsEqual<{readonly aa: {a: 0} & {b: 0}}, {aa: {a: 0; b: 0}}>);
