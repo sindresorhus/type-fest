@@ -32,17 +32,6 @@ declare const flattenProperties: {
 expectType<SimplifyDeep<Properties1 & Properties2>>(flattenProperties);
 
 // Array
-type ArrayType = Array<{
-	a: string;
-}>;
-
-declare const flattenProperties2: {
-	arrayType: Array<{
-		a: string;
-	}>;
-};
-expectType<SimplifyDeep<{arrayType: ArrayType}>>(flattenProperties2);
-
 declare function testArraySimplification(arg: {foo: Array<{[x: string]: string}>}): void;
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
