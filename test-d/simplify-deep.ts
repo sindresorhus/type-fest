@@ -42,3 +42,15 @@ declare const flattenProperties2: {
 	}>;
 };
 expectType<SimplifyDeep<{arrayType: ArrayType}>>(flattenProperties2);
+
+declare function testArraySimplification(arg: {foo: Array<{[x: string]: string}>}): void;
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface BarBaz {
+	bar: string;
+	baz: string;
+}
+
+// This would fail if `SimplifyDeep` did not simplify arrays,
+// because interfaces being open are not compatible with index signatures.
+testArraySimplification({} as SimplifyDeep<{foo: BarBaz[]}>);
