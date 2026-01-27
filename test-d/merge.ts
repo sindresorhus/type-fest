@@ -187,3 +187,6 @@ expectType<
 		{[x: number]: number; foo: number} | {bar: boolean; baz: boolean}
 	>,
 );
+
+// Idempotency
+expectType<BarWithIndexSignatureOverwrite>({} as Merge<BarWithIndexSignatureOverwrite, BarWithIndexSignatureOverwrite>);

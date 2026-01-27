@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual, TupleOf} from '../index.d.ts';
+import type {IsEqual, TupleOf, Merge, Simplify, Except} from '../index.d.ts';
 
 expectType<false>({} as IsEqual<number, string>);
 expectType<true>({} as IsEqual<1, 1>);
@@ -86,6 +86,9 @@ expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
 declare const equalTupleIntersectionAndTuple: IsEqual<[{a: 1}] & [{a: 1}], [{a: 1}]>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<true>(equalTupleIntersectionAndTuple);
 
-// Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
-type Assignability<T, U, _V extends IsEqual<T, U>> = any;
-type TestAssignability<T> = Assignability<T, T, true>;
+// Distinct whether an object is merged by `&` or via `Simplify`, to ensure Branded Types are handled strictly.
+export type IntersectionMerge<tuple extends readonly unknown[]> = Except<tuple, 'length'> & {__brand: 'tag'};
+type SampleTuple = [0, 1, 2];
+
+expectType<false>({} as IsEqual<IntersectionMerge<SampleTuple>, Merge<IntersectionMerge<SampleTuple>, IntersectionMerge<SampleTuple>>>);
+expectType<true>({} as IsEqual<Simplify<IntersectionMerge<SampleTuple>>, Merge<IntersectionMerge<SampleTuple>, IntersectionMerge<SampleTuple>>>);
