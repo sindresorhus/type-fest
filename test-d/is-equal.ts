@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual, TupleOf, Merge, Simplify, Except} from '../index.d.ts';
+import type {IsEqual, TupleOf} from '../index.d.ts';
 
 expectType<false>({} as IsEqual<number, string>);
 expectType<true>({} as IsEqual<1, 1>);
