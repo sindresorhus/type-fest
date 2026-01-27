@@ -1,4 +1,3 @@
-import type {Simplify} from './simplify.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 
 /**
