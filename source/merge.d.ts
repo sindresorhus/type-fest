@@ -46,7 +46,7 @@ Note: If you want a merge type that more accurately reflects the runtime behavio
 @see {@link ObjectMerge}
 @category Object
 */
-export type Merge<Destination, Source> = If<IsEqual<Destination, Source>, Destination, _Merge<Destination, Source>>;
+export type Merge<Destination, Source> = If<IsEqual<Destination, Source>, Simplify<Destination>, _Merge<Destination, Source>>;
 
 export type _Merge<Destination, Source> =
 	Destination extends unknown // For distributing `Destination`
