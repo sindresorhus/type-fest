@@ -1,4 +1,3 @@
-import type {IsNever} from './is-never.d.ts';
 /**
 Returns a boolean for whether the two given types are equal.
 
@@ -26,10 +25,8 @@ type Includes<Value extends readonly any[], Item> =
 @category Utilities
 */
 export type IsEqual<A, B> =
-	[A] extends [B]
-		? [B] extends [A]
-			? _IsEqual<A, B>
-			: false
+	[A, B] extends [B, A]
+		? _IsEqual<A, B>
 		: false;
 
 // This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
