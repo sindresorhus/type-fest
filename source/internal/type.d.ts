@@ -218,16 +218,17 @@ And it disturbs a calculation of `IsEqual`.
 type NT = _IsEqual<{z: {a: 0}}, {z: {a: 0} | {a: 0}}>; // => false
 ```
 
-`UniqueUnionDeep` is a helper type function: removes a duplicated type and keeps the other types.
+`UniqueUnionDeep` is a helper type function: removes a duplicated type and keeps the other types recursively.
+But union distribution also works as usual outside of objects.
 
 @example
 ```
 type UniqueUnionDeepTest = UniqueUnionDeep<{z: {a: {aa: 0} | {aa: 0}} | {a: {aa: 0} | {aa: 0}} | {b: 0}; x: '1'}>; // => {z: {a: {aa: 0}} | {b: 0}; x: '1'}
-type UniqueUnionDeepKeepDistributionTest = UniqueUnionDeep<{z: {a: 0} | {a: 0}; x: '1'} | {z: {a: 0} | {a: 0}; x: '1'}>; // => {z: {a: 0}; x: '1'} | {z: {a: 0}; x: '1'}
+type UniqueUnionDeepKeepDistributionTest = UniqueUnionDeep<{z: {a: 0} | {a: 0}; x: '1'} | {z: {a: 0} | {a: 0}; x: '2'}>; // => {z: {a: 0}; x: '1'} | {z: {a: 0}; x: '2'}
 ```
 
 To remove delayed intersection, use `SimplifyDeep`.
-And use `SimplifyDeep<UniqueUnionDeep<A>>>` if eliminating duplicated union and intersection.
+And use `SimplifyDeep<UniqueUnionDeep<A>>` if eliminating duplicated union and intersection.
 */
 export type UniqueUnionDeep<U> = SimplifyDeep<_UniqueUnionDeep<U>>;
 type _UniqueUnionDeep<U> = {[K in keyof U]: U[K] extends object ? UniqueUnion<_UniqueUnionDeep<U[K]>> : U[K]};
