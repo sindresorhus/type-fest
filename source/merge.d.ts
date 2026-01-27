@@ -46,16 +46,16 @@ Note: If you want a merge type that more accurately reflects the runtime behavio
 @see {@link ObjectMerge}
 @category Object
 */
-export type Merge<Destination, Source> = If<IsEqual<Destination, Source>, Simplify<Destination>, _Merge<Destination, Source>>;
+export type Merge<Destination, Source> =
+Destination extends unknown // For distributing `Destination`
+	? Source extends unknown // For distributing `Source`
+		? If<IsEqual<Destination, Source>, Destination, _Merge<Destination, Source>>
+		: never // Should never happen
+	: never; // Should never happen
 
 export type _Merge<Destination, Source> =
-	Destination extends unknown // For distributing `Destination`
-		? Source extends unknown // For distributing `Source`
-			? Simplify<
-				SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
-				& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
-			>
-			: never // Should never happen
-		: never; // Should never happen
+	Simplify<
+		SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
+		& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>>;
 
 export {};

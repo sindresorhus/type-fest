@@ -196,10 +196,16 @@ expectType<FixedLengthArray<string, 3>>({} as Merge<FixedLengthArray<string, 3>,
 type TestGeneralObject = {a: string; b: string};
 type IDMergeGeneral = Merge<TestGeneralObject, TestGeneralObject>;
 type TestIntersectionObject = {a: string} & {b: string};
-type IDMergeIntersection = Merge<TestIntersectionObject, TestIntersectionObject>;
 expectType<TestGeneralObject>({} as IDMergeGeneral);
 expectType<IDMergeGeneral>({} as TestGeneralObject);
-expectType<TestGeneralObject>({} as IDMergeIntersection);
+expectType<TestIntersectionObject>({} as Merge<TestIntersectionObject, TestIntersectionObject>);
+// There's no problem that this test is not passed.
+// See: https://github.com/sindresorhus/type-fest/pull/1336#issuecomment-3804951968
+// type IDMergeIntersection = Merge<TestIntersectionObject, TestIntersectionObject>;
 
 expectAssignable<TestIntersectionObject>({a: '1', b: '1'});
 expectAssignable<TestGeneralObject>({} as TestIntersectionObject);
+
+// Idempotency: Union Distribution Cases
+expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject | {c: string}, TestIntersectionObject>);
+expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject, TestIntersectionObject | {c: string}>);
