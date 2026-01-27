@@ -86,6 +86,10 @@ expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
 declare const equalTupleIntersectionAndTuple: IsEqual<[{a: 1}] & [{a: 1}], [{a: 1}]>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<true>(equalTupleIntersectionAndTuple);
 
+// Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
+type Assignability<T, U, _V extends IsEqual<T, U>> = any;
+type TestAssignability<T> = Assignability<T, T, true>;
+
 // Ensure `{a: t; b: s}` is equal to `{a: t} & {b: s}`
 expectType<true>({} as IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>);
 expectType<true>({} as IsEqual<{aa: {a: {x: 0} & {y: 0}} & {b: 0}}, {aa: {a: {x: 0; y: 0}; b: 0}}>);
