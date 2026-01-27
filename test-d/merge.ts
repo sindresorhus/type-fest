@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Merge} from '../index.d.ts';
+import type {Merge, FixedLengthArray} from '../index.d.ts';
 
 type Foo = {
 	a: number;
@@ -190,3 +190,4 @@ expectType<
 
 // Idempotency
 expectType<BarWithIndexSignatureOverwrite>({} as Merge<BarWithIndexSignatureOverwrite, BarWithIndexSignatureOverwrite>);
+expectType<FixedLengthArray<string, 3>>({} as Merge<FixedLengthArray<string, 3>, FixedLengthArray<string, 3>>);
