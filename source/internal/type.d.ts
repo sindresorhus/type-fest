@@ -2,6 +2,8 @@ import type {If} from '../if.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
+import type {IsEqual} from '../is-equal.d.ts';
+import type {UnionToIntersection} from '../union-to-intersection.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**
@@ -160,5 +162,51 @@ Indicates the value of `exactOptionalPropertyTypes` compiler option.
 export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;
+
+/**
+Returns the last element of a union type; otherwise `never` if `never` passed.
+Note that this is non-deterministic because the order of union type is not guaranteed.
+
+@see https://github.com/microsoft/TypeScript/issues/13298#issuecomment-468375328
+
+This can be used to implement a recursive type function that accepts a union type.
+It can detect a termination case using {@link IsNever `IsNever`}.
+
+@example
+```
+type RecursionType<T, R = []> =
+	LastOfUnion<T> extends infer L
+		? IsNever<L> extends false
+			? RecursionType<Exclude<T, L>, [...R, L]>
+			: R
+		: never;
+
+type RecursionTest = RecursionType<string | number>;
+//=> [string, number]
+```
+
+@example
+```
+export type UnionToTuple<T, L = LastOfUnion<T>> =
+	IsNever<T> extends false
+		? [...UnionToTuple<Exclude<T, L>>, L]
+		: [];
+```
+
+@example
+```
+type Last = LastOfUnion<1 | 2 | 3>;
+//=> 3
+
+type LastNever = LastOfUnion<never>;
+//=> never
+```
+*/
+export type LastOfUnion<T> =
+	IsEqual<T, never> extends true
+		? never
+		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
+			? R
+			: never;
 
 export {};
