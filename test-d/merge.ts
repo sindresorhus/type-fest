@@ -192,3 +192,7 @@ type TestIntersectionObject = {a: string} & {b: string};
 // Note: If `Merge` simplified `TestIntersectionObject` to `{a: string; b: string}` then the following test would fail,
 // because `expectType` doesn't consider `{a: string; b: string}` equal to `{a: string} & {b: string}`.
 expectType<TestIntersectionObject>({} as Merge<TestIntersectionObject, TestIntersectionObject>);
+
+// Idempotency: Union Distribution Cases
+expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject | {c: string}, TestIntersectionObject>);
+expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject, TestIntersectionObject | {c: string}>);
