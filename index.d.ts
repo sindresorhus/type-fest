@@ -191,7 +191,7 @@ export type {Words, WordsOptions} from './source/words.d.ts';
 export type {Trim} from './source/trim.d.ts';
 export type {Replace, ReplaceOptions} from './source/replace.d.ts';
 export type {StringRepeat} from './source/string-repeat.d.ts';
-export type {Includes} from './source/includes.d.ts';
+export type {Includes, IncludesOptions} from './source/includes.d.ts';
 export type {Get, GetOptions} from './source/get.d.ts';
 export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
