@@ -47,11 +47,11 @@ Note: If you want a merge type that more accurately reflects the runtime behavio
 @category Object
 */
 export type Merge<Destination, Source> =
-Destination extends unknown // For distributing `Destination`
-	? Source extends unknown // For distributing `Source`
-		? If<IsEqual<Destination, Source>, Destination, _Merge<Destination, Source>>
-		: never // Should never happen
-	: never; // Should never happen
+	Destination extends unknown // For distributing `Destination`
+		? Source extends unknown // For distributing `Source`
+			? If<IsEqual<Destination, Source>, Destination, _Merge<Destination, Source>>
+			: never // Should never happen
+		: never; // Should never happen
 
 export type _Merge<Destination, Source> =
 	Simplify<
