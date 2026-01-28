@@ -34,7 +34,18 @@ export type IsEqual<A, B> =
 			: _IsEqual<A, B>
 		: false;
 
-// This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
+/**
+Note that this doesn't regard the identical union/intersection type `T | T` and/or `T & T` as `T` recursively.
+e.g., `{a: 0} | {a: 0}` and/or `{a: 0} & {a: 0}` as `{a: 0}`.
+
+@example
+```
+type IDUnionIsTrue = _IsEqual<{a: {b: 0}} | {a: {b: 0}}, {a: {b: 0}}>; // true
+type RecurivelyIDUnionIsFalse = _IsEqual<{a: {b: 0} | {b: 0}}, {a: {b: 0}}>; // => false
+```
+
+This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
+*/
 type _IsEqual<A, B> =
 	(<G>() => G extends A & G | G ? 1 : 2) extends
 	(<G>() => G extends B & G | G ? 1 : 2)
