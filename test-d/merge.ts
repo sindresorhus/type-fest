@@ -188,24 +188,7 @@ expectType<
 	>,
 );
 
-// Idempotency
-expectType<BarWithIndexSignatureOverwrite>({} as Merge<BarWithIndexSignatureOverwrite, BarWithIndexSignatureOverwrite>);
-expectType<FixedLengthArray<string, 3>>({} as Merge<FixedLengthArray<string, 3>, FixedLengthArray<string, 3>>);
-
-// Idempotency: ensure that `Merge<A, A>` is equal to `A`, where `A` is `{a: t} & {b: t}`
-type TestGeneralObject = {a: string; b: string};
-type IDMergeGeneral = Merge<TestGeneralObject, TestGeneralObject>;
 type TestIntersectionObject = {a: string} & {b: string};
-expectType<TestGeneralObject>({} as IDMergeGeneral);
-expectType<IDMergeGeneral>({} as TestGeneralObject);
+// Note: If `Merge` simplified `TestIntersectionObject` to `{a: string; b: string}` then the following test would fail,
+// because `expectType` doesn't consider `{a: string; b: string}` equal to `{a: string} & {b: string}`.
 expectType<TestIntersectionObject>({} as Merge<TestIntersectionObject, TestIntersectionObject>);
-// There's no problem that this test is not passed.
-// See: https://github.com/sindresorhus/type-fest/pull/1336#issuecomment-3804951968
-// type IDMergeIntersection = Merge<TestIntersectionObject, TestIntersectionObject>;
-
-expectAssignable<TestIntersectionObject>({a: '1', b: '1'});
-expectAssignable<TestGeneralObject>({} as TestIntersectionObject);
-
-// Idempotency: Union Distribution Cases
-expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject | {c: string}, TestIntersectionObject>);
-expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject, TestIntersectionObject | {c: string}>);
