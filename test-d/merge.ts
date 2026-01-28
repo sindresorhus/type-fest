@@ -1,5 +1,5 @@
-import {expectType, expectAssignable} from 'tsd';
-import type {Merge, FixedLengthArray} from '../index.d.ts';
+import {expectType} from 'tsd';
+import type {Merge} from '../index.d.ts';
 
 type Foo = {
 	a: number;
