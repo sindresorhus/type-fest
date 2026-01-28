@@ -143,6 +143,7 @@ export type {ArrayValues} from './source/array-values.d.ts';
 export type {ArraySlice} from './source/array-slice.d.ts';
 export type {ArraySplice} from './source/array-splice.d.ts';
 export type {ArrayTail} from './source/array-tail.d.ts';
+export type {ArrayFlat} from './source/array-flat.d.ts';
 export type {ArrayElement} from './source/array-element.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
 export type {Paths, PathsOptions} from './source/paths.d.ts';
