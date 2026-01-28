@@ -56,6 +56,7 @@ Destination extends unknown // For distributing `Destination`
 export type _Merge<Destination, Source> =
 	Simplify<
 		SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
-		& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>>;
+		& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
+	>;
 
 export {};
