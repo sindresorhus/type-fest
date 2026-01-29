@@ -417,7 +417,7 @@ declare const indexSignatureWithStaticKeys1: Paths<{[x: Uppercase<string>]: {a: 
 expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignatureWithStaticKeys1); // Collapsed union
 
 declare const nonRootIndexSignature: Paths<{a: {[x: string]: {b: string; c: number}}}>;
-expectType<'a' | `a.${string}`>(nonRootIndexSignature); // Collapsed union
+expectType<'a' | `a.${string}` | `a.${string}.b` | `a.${string}.c`>(nonRootIndexSignature);
 
 declare const nonRootIndexSignature1: Paths<{a: {[x: Lowercase<string>]: {b: string; c: number}}}>;
 expectType<'a' | `a.${Lowercase<string>}` | `a.${Lowercase<string>}.b` | `a.${Lowercase<string>}.c`>(nonRootIndexSignature1);
@@ -443,7 +443,7 @@ declare const indexSignatureLeaves1: Paths<{a: {[x: string]: {b: string; c: numb
 expectType<`a.${string}.b` | `a.${string}.c` | 'd' | 'e.f'>(indexSignatureLeaves1);
 
 declare const indexSignatureLeaves2: Paths<{a: {[x: string]: [] | {b: number}}}, {leavesOnly: true}>;
-expectType<`a.${string}`>(indexSignatureLeaves2); // Collapsed union
+expectType<`a.${string}` | `a.${string}.b`>(indexSignatureLeaves2);
 
 declare const indexSignatureDepth: Paths<{[x: string]: {a: string; b: number}}, {depth: 1}>;
 expectType<`${string}.b` | `${string}.a`>(indexSignatureDepth);
@@ -462,3 +462,15 @@ expectType<`a.${string}.b`>(indexSignatureDepth4);
 
 declare const indexSignatureDepthLeaves: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {depth: 0 | 2; leavesOnly: true}>;
 expectType<`a.${string}.b` | `a.${string}.c` | 'd'>(indexSignatureDepthLeaves);
+
+// Generic types
+type SomeTypeWithConstraint<T, _U extends Paths<T>> = never;
+
+type Foo<T> = {bar: {baz: T}};
+type Test1<T> = SomeTypeWithConstraint<Foo<T>, 'bar.baz'>;
+
+type Bar<T> = {bar: {baz: {qux: T}; fizz: {buzz: T} | T}};
+type Test2<T> = SomeTypeWithConstraint<
+	Bar<T>,
+	'bar' | 'bar.baz' | 'bar.baz.qux' | 'bar.fizz' | 'bar.fizz.buzz'
+>;
