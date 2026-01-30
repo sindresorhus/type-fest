@@ -33,6 +33,8 @@ type B = IsDeterminableLength<[1, 2, 3]>;
 
 ```
 
+@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
+
 @category Array
 */
 export type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
