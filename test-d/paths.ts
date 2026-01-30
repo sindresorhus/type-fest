@@ -469,8 +469,8 @@ type SomeTypeWithConstraint<T, _U extends Paths<T>> = never;
 type Foo<T> = {bar: {baz: T}};
 type Test1<T> = SomeTypeWithConstraint<Foo<T>, 'bar.baz'>;
 
-type Bar<T> = {bar: {baz: {qux: T}; fizz: {buzz: T} | T}};
-type Test2<T> = SomeTypeWithConstraint<
-	Bar<T>,
+type Bar<T, U> = {bar: {baz: {qux: T}; fizz: {buzz: U} | U | T}};
+type Test2<T, U> = SomeTypeWithConstraint<
+	Bar<T, U>,
 	'bar' | 'bar.baz' | 'bar.baz.qux' | 'bar.fizz' | 'bar.fizz.buzz'
 >;
