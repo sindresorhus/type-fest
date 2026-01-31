@@ -43,9 +43,6 @@ const xoConfig = [
 		},
 	},
 	{
-		ignores: ['lint-processors/fixtures/**/*.d.ts'],
-	},
-	{
 		files: 'source/**/*.d.ts',
 		rules: {
 			'no-restricted-imports': [
