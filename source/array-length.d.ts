@@ -1,9 +1,7 @@
 /**
-Infers the length of an array. Tuples resolve to numeric literals,
-while non-tuples resolve to the `number` type.
+Infers the length of an array. Tuples resolve to numeric literals, while non-tuples resolve to the `number` type.
 
-Useful for enforcing fixed-length arrays and distinguishing between
-tuple and non-tuple like arrays.
+Useful for enforcing fixed-length arrays and distinguishing between tuple and non-tuple like arrays.
 
 @example
 ```
@@ -21,16 +19,14 @@ type NonTupleArray = ArrayLength<string[]>;
 type TupleWithSpreadElements = ArrayLength<[1, 2, ...string[]]>;
 //=> number
 
-// Distinguish between arrays with determinable and non-determinable
-// lengths
-type IsDeterminableLength<T extends readonly unknown[]> =
-  number extends ArrayLength<T> ? false : true;
+// Distinguish between arrays with determinable and non-determinable lengths
+type IsDeterminableLength<T extends readonly unknown[]> = number extends ArrayLength<T> ? false : true;
 
 type A = IsDeterminableLength<number[]>;
 //=> false
+
 type B = IsDeterminableLength<[1, 2, 3]>;
 //=> true
-
 ```
 
 @link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
