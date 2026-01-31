@@ -137,6 +137,20 @@ type Object3 = {
 };
 expectType<Paths<Object3, {bracketNotation: true}>>({} as '[1]' | '[2]');
 
+type Object4 = {
+	1: {
+		a: string;
+	};
+};
+expectType<Paths<Object4, {bracketNotation: true}>>({} as '[1]' | '[1].a');
+
+type Object5 = {
+	1: {
+		2: string;
+	};
+};
+expectType<Paths<Object5, {bracketNotation: true}>>({} as '[1]' | '[1][2]');
+
 type deepArray = {
 	arr: Array<Array<Array<{a: string}>>>;
 };
