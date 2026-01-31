@@ -44,4 +44,3 @@ type DisallowedSet = ArrayLength<Set<number>>;
 type DisallowedObject = ArrayLength<Record<string, unknown>>;
 // @ts-expect-error
 type DisallowedObjectWithLength = ArrayLength<{length: number}>;
-
