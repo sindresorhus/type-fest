@@ -1,5 +1,6 @@
 import type {If} from '../if.d.ts';
 import type {IsAny} from '../is-any.d.ts';
+import type {IsUnknown} from '../is-unknown.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
@@ -242,7 +243,7 @@ type _UniqueUnion<U, R> =
 		? [K] extends [never]
 			? R
 			: _UniqueUnion<
-				UniqueExclude<U, K>,
+				ExcludeExactly<U, K>,
 				(<G>() => G extends K & G | G ? 1 : 2) extends
 				(<G>() => G extends R & G | G ? 1 : 2)
 					? [R, unknown] extends [never, K]
@@ -260,24 +261,34 @@ type NeverReturned_0 = Exclude<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // =>
 type NeverReturned_1 = ExcludeStrict<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // => never
 ```
 
-This `UniqueExclude` keeps the union objects element if the keys of the first and the second aren't identical.
+This `ExcludeExactly` keeps the union objects element if the keys of the first and the second aren't identical.
 
 @example
 ```
-type ExcludeNever = UniqueExclude<{a: 0} | {a: 0} | {readonly a: 0}, never>; // => {a: 0} | {a: 0} | {readonly a: 0}
-type ExcludeReadonlyKey = UniqueExclude<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // => {a: 0}
-type ExcludeKey = UniqueExclude<{readonly a: 0}, {a: 0}>; // => {readonly a: 0}
-type ExcludeReadonly = UniqueExclude<{readonly a: 0}, {readonly a: 0}>; // => {readonly a: 0}
-type ExcludeSubType = UniqueExclude<0 | 1 | number, 1>; // => number
-type ExcludeAllSet = UniqueExclude<0 | 1 | number, number>; // => never
-type ExcludeFromUnknown = UniqueExclude<unknown, string>; // => unknown
-type ExcludeFromUnknownArray = UniqueExclude<number[] | unknown[], number[]>; // => unknown[]
+type ExcludeNever = ExcludeExactly<{a: 0} | {a: 0} | {readonly a: 0}, never>; // => {a: 0} | {a: 0} | {readonly a: 0}
+type ExcludeReadonlyKey = ExcludeExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // => {a: 0}
+type ExcludeKey = ExcludeExactly<{readonly a: 0}, {a: 0}>; // => {readonly a: 0}
+type ExcludeReadonly = ExcludeExactly<{readonly a: 0}, {readonly a: 0}>; // => {readonly a: 0}
+type ExcludeSubType = ExcludeExactly<0 | 1 | number, 1>; // => number
+type ExcludeAllSet = ExcludeExactly<0 | 1 | number, number>; // => never
+type ExcludeFromUnknown = ExcludeExactly<unknown, string>; // => unknown
+type ExcludeFromUnknownArray = ExcludeExactly<number[] | unknown[], number[]>; // => unknown[]
 ```
 */
-export type UniqueExclude<UnionU, DeleteT> =
-	UnionU extends unknown // Only for union distribution.
-		? MatchOrNever<UnionU, DeleteT>
+export type ExcludeExactly<UnionU, DeleteT> =
+	LastOfUnion<DeleteT> extends infer D
+		? true extends IsNever<D>
+			? UnionU
+			: ExcludeExactly<_ExcludeExactly<UnionU, D>, _ExcludeExactly<DeleteT, D>>
 		: never;
+type _ExcludeExactly<UnionU, DeleteT> =
+	true extends IsAny<DeleteT>
+		? never
+		: true extends IsUnknown<DeleteT>
+			? never
+			: UnionU extends unknown // Only for union distribution.
+				? MatchOrNever<UnionU, DeleteT>
+				: never;
 
 /**
 Return `never` if the 1st and the 2nd arguments are mutually identical.
