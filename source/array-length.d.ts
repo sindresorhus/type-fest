@@ -1,8 +1,6 @@
 /**
 Return the length of an array. Tuples resolve to numeric literals, while non-tuples resolve to the `number` type.
 
-Useful for enforcing fixed-length arrays and distinguishing between tuple and non-tuple like arrays.
-
 @example
 ```
 import type {ArrayLength} from 'type-fest';
@@ -19,7 +17,7 @@ type NonTupleArrayLength = ArrayLength<string[]>;
 type TupleWithRestElementLength = ArrayLength<[1, 2, ...string[]]>;
 //=> number
 
-// Distinguish between arrays with determinable and non-determinable lengths
+// Distinguish between arrays with fixed and non-fixed lengths
 type IsFixedLengthArray<T extends readonly unknown[]> = number extends ArrayLength<T> ? false : true;
 
 type A = IsFixedLengthArray<number[]>;
