@@ -4,9 +4,9 @@ import type {Primitive} from '../source/primitive.d.ts';
 
 // Non-tuples
 expectType<number>({} as ArrayLength<unknown[]>);
-expectType<0>({} as ArrayLength<[]>);
 
 // Tuples
+expectType<0>({} as ArrayLength<[]>);
 expectType<1>({} as ArrayLength<[never]>);
 expectType<3>({} as ArrayLength<['one', 2, true]>);
 expectType<2 | 3 | 4>({} as ArrayLength<[number, string, boolean?, boolean?]>);
@@ -29,6 +29,7 @@ expectType<number>({} as ArrayLength<readonly [0, ...unknown[], 1, 2]>);
 
 // Edge cases and disallowed types
 expectType<never>({} as never);
+expectType<unknown>({} as any);
 
 // @ts-expect-error
 type DisallowedPrimitive = ArrayLength<string>;
