@@ -805,6 +805,26 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> '🦄' | '🐶' | '🐇'
 		`))),
 
+		// Union symbols are sorted.
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			namespace AAA {
+				export type aaa = {a: string};
+			}
+			namespace BBB {
+				export type aaa = {a: string};
+			}
+			namespace CCC {
+				export type aaa = {a: string};
+				export type bbb = {a: string};
+			}
+
+			type Symbols_0 = AAA.aaa | CCC.bbb | CCC.aaa | BBB.aaa;
+			//=> AAA.aaa | BBB.aaa | CCC.aaa | CCC.bbb
+
+			type Symbols_1 = AAA.aaa | CCC.bbb | CCC.aaa | BBB.aaa;
+			//=> BBB.aaa | AAA.aaa | CCC.aaa | CCC.bbb
+		`))),
+
 		// === Different types of quick info ===
 		// Function
 		exportTypeAndOption(jsdoc(fence(dedenter`

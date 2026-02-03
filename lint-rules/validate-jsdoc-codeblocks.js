@@ -239,7 +239,7 @@ function normalizeUnions(type) {
 				.map(t => [print(t), t])
 				.sort(([a], [b]) =>
 					// Numbers are sorted only wrt other numbers
-					isNumeric(a) && isNumeric(b) ? Number(a) - Number(b) : 0,
+					isNumeric(a) && isNumeric(b) ? Number(a) - Number(b) : a.localeCompare(b),
 				)
 				.map(t => t[1]);
 
@@ -274,6 +274,18 @@ function normalizeUnions(type) {
 		const remainingSpaces = indentation.length % spacesPerTab;
 		return '\t'.repeat(tabCount) + ' '.repeat(remainingSpaces);
 	});
+}
+
+function flattenObjectExpression(maybeObjectExpression) {
+	return maybeObjectExpression
+		.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
+		.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
+		.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
+		.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
+}
+
+function toArrowCommentExpression(typeExpression) {
+	return TWOSLASH_COMMENT + ' ' + typeExpression.replaceAll('\n', '\n// ');
 }
 
 function validateTwoslashTypes(context, env, code, codeStartIndex) {
@@ -311,19 +323,25 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 			const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
 
 			if (quickInfo?.displayParts) {
-				let expectedType = normalizeUnions(extractTypeFromQuickInfo(quickInfo));
+				const expectedType = normalizeUnions(extractTypeFromQuickInfo(quickInfo));
 
-				if (expectedType.length < 80) {
-					expectedType = expectedType
-						.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
-						.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
-						.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
-						.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
+				// Save both `expectedComment` and `actualComment` to pass them to report.
+				let saveExpectedType = expectedType;
+				if (saveExpectedType.length < 80) {
+					saveExpectedType = flattenObjectExpression(saveExpectedType);
 				}
 
-				const expectedComment = TWOSLASH_COMMENT + ' ' + expectedType.replaceAll('\n', '\n// ');
+				const saveExpectedComment = toArrowCommentExpression(saveExpectedType);
+				const saveActualComment = actualComment;
+				// To compare with `actualComment`.
+				const expectedComment = toArrowCommentExpression(flattenObjectExpression(expectedType));
 
-				if (actualComment !== expectedComment) {
+				const isPassed = (/\s*\/\/=>\s\S+/g).test(actualComment);
+				const isNotPassed = (/\/\/}/g.test(actualComment)) || (actualComment.length < 80 && (/\[{\n/g.test(actualComment)));
+
+				actualComment = flattenObjectExpression(TWOSLASH_COMMENT + ' ' + normalizeUnions(actualComment.replaceAll(/(\/\/=>)|(\/\/)/g, '')));
+
+				if (!isPassed || isNotPassed || actualComment !== expectedComment) {
 					const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
 
 					const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
@@ -339,15 +357,15 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 						},
 						messageId: 'typeMismatch',
 						data: {
-							expectedComment,
-							actualComment,
+							expectedComment: saveExpectedComment,
+							actualComment: saveActualComment,
 						},
 						fix(fixer) {
 							const indent = line.slice(0, actualCommentIndex);
 
 							return fixer.replaceTextRange(
 								[start, end],
-								expectedComment.replaceAll('\n', `\n${indent}`),
+								saveExpectedComment.replaceAll('\n', `\n${indent}`),
 							);
 						},
 					});
