@@ -1,4 +1,4 @@
-import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
@@ -196,14 +196,9 @@ type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends numb
 		? never
 		: IsAny<T> extends true
 			? never
-			: T extends UnknownArray
-				? number extends T['length']
-					// We need to handle the fixed and non-fixed index part of the array separately.
-					? InternalPaths<StaticPartOfArray<T>, Options, CurrentDepth> | InternalPaths<Array<VariablePartOfArray<T>[number]>, Options, CurrentDepth>
-					: InternalPaths<T, Options, CurrentDepth>
-				: T extends object
-					? InternalPaths<T, Options, CurrentDepth>
-					: never;
+			: T extends object
+				? InternalPaths<T, Options, CurrentDepth>
+				: never;
 
 type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number> =
 	Options['maxRecursionDepth'] extends infer MaxDepth extends number
