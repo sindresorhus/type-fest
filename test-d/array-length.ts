@@ -12,6 +12,7 @@ expectType<3>({} as ArrayLength<['one', 2, true]>);
 expectType<2 | 3 | 4>({} as ArrayLength<[number, string, boolean?, boolean?]>);
 
 expectType<number>({} as ArrayLength<[1, 2, ...unknown[]]>);
+expectType<number>({} as ArrayLength<[1, 2?, ...unknown[]]>);
 expectType<number>({} as ArrayLength<[...unknown[], 1, 2]>);
 expectType<number>({} as ArrayLength<[0, ...unknown[], 1, 2]>);
 
@@ -24,6 +25,7 @@ expectType<3>({} as ArrayLength<readonly ['one', 2, true]>);
 expectType<2 | 3 | 4>({} as ArrayLength<readonly [number, string, boolean?, boolean?]>);
 
 expectType<number>({} as ArrayLength<readonly [1, 2, ...unknown[]]>);
+expectType<number>({} as ArrayLength<readonly [1, 2?, ...unknown[]]>);
 expectType<number>({} as ArrayLength<readonly [...unknown[], 1, 2]>);
 expectType<number>({} as ArrayLength<readonly [0, ...unknown[], 1, 2]>);
 
