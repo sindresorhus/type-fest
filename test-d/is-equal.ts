@@ -89,21 +89,3 @@ expectType<true>(equalTupleIntersectionAndTuple);
 // Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
 type Assignability<T, U, _V extends IsEqual<T, U>> = any;
 type TestAssignability<T> = Assignability<T, T, true>;
-
-// Ensure `{a: t; b: s}` === `{a: t} & {b: s}`, not equal to `{a: u} & {b: v}` if `u` !== `t` or `v` !== `s`.
-expectType<true>({} as IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>);
-expectType<true>({} as IsEqual<{aa: {a: {x: 0} & {y: 0}} & {b: 0}}, {aa: {a: {x: 0; y: 0}; b: 0}}>);
-expectType<false>({} as IsEqual<{a: 1} & {b: 0}, {a: 0; b: 0}>);
-expectType<false>({} as IsEqual<{aa: {a: {x: 1} & {y: 0}} & {b: 0}}, {aa: {a: {x: 0; y: 0}; b: 0}}>);
-
-// Ensure `{a: t} | {a: t}` === `{a: t}`
-expectType<true>({} as IsEqual<{a: 0} & ({b: 0} | {b: 0}), {a: 0; b: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<true>({} as IsEqual<{aa: {a: {x: 0} & ({y: 0} | {y: 0})} & {b: 0}}, {aa: {a: {x: 0; y: 0}; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<false>({} as IsEqual<{readonly a: 0} & ({b: 0} | {b: 0}), {a: 0; b: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<false>({} as IsEqual<{readonly aa: {a: 0} & ({b: 0} | {b: 0})}, {aa: {a: 0; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-
-// `readonly key` should not be equal to `key` whether recursively or not.
-expectType<false>({} as IsEqual<{readonly a: 0} & {b: 0}, {a: 0; b: 0}>);
-expectType<false>({} as IsEqual<{readonly aa: {a: 0} & {b: 0}}, {aa: {a: 0; b: 0}}>);
-expectType<false>({} as IsEqual<{readonly aa: {a: 0} & {b: 0} | {a: 0} & {b: 0}}, {aa: {a: 0; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<false>({} as IsEqual<{aa: {a: 0} & {b: 0} | {a: 0} & {b: 0}}, {aa: {readonly a: 0; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents

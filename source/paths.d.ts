@@ -77,10 +77,10 @@ export type PathsOptions = {
 	};
 
 	type AllPaths = Paths<Post, {leavesOnly: false}>;
-	//=> 'id' | 'author' | 'author.name' | 'author.name.first' | 'author.name.last' | 'author.id'
+	//=> 'id' | 'author' | 'author.id' | 'author.name' | 'author.name.first' | 'author.name.last'
 
 	type LeafPaths = Paths<Post, {leavesOnly: true}>;
-	//=> 'id' | 'author.name.first' | 'author.name.last' | 'author.id'
+	//=> 'id' | 'author.id' | 'author.name.first' | 'author.name.last'
 	```
 
 	@example
@@ -127,7 +127,7 @@ export type PathsOptions = {
 	//=> 'id' | 'author'
 
 	type DepthOne = Paths<Post, {depth: 1}>;
-	//=> 'author.name' | 'author.id'
+	//=> 'author.id' | 'author.name'
 
 	type DepthTwo = Paths<Post, {depth: 2}>;
 	//=> 'author.name.first' | 'author.name.last'
