@@ -1,5 +1,6 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {Paths} from '../index.d.ts';
+import type {Paths, UnknownArray} from '../index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);
@@ -76,6 +77,9 @@ expectType<never>(map2);
 declare const readonlyMap: Paths<{foo?: {bar?: ReadonlyMap<string, number>}}>;
 expectType<'foo' | 'foo.bar'>(readonlyMap);
 
+declare const weakMap: Paths<{foo?: {bar?: WeakMap<{a: string}, number>}}>;
+expectType<'foo' | 'foo.bar'>(weakMap);
+
 declare const set: Paths<{foo?: {bar?: Set<string>}}>;
 expectType<'foo' | 'foo.bar'>(set);
 
@@ -84,6 +88,12 @@ expectType<never>(set2);
 
 declare const readonlySet: Paths<{foo?: {bar?: ReadonlySet<string>}}>;
 expectType<'foo' | 'foo.bar'>(readonlySet);
+
+declare const weakSet: Paths<{foo?: {bar?: WeakSet<{a: string}>}}>;
+expectType<'foo' | 'foo.bar'>(weakSet);
+
+declare const nonRecursives: Paths<{a: NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>}>;
+expectType<'a'>(nonRecursives);
 
 // Test for unknown length array
 declare const trailingSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>]>;
@@ -183,6 +193,9 @@ expectType<'a' | 'a.c'>(unionLeaves1);
 declare const unionLeaves2: Paths<{a: {[x: string]: number} | {c: number}}, {leavesOnly: true}>;
 expectType<`a.${string}`>(unionLeaves2); // Collapsed union
 
+declare const unionLeaves3: Paths<{a: string | {toLowerCase: number}}, {leavesOnly: true}>;
+expectType<'a' | 'a.toLowerCase'>(unionLeaves3);
+
 declare const emptyObjectLeaves: Paths<{a: {}}, {leavesOnly: true}>;
 expectType<'a'>(emptyObjectLeaves);
 
@@ -257,6 +270,18 @@ expectType<'a[1]' | 'a[2]'>(bracketNumericLeaves);
 
 declare const bracketNestedArrayLeaves: Paths<{a: Array<Array<Array<{b: string}>>>}, {bracketNotation: true; leavesOnly: true}>;
 expectType<`a[${number}][${number}][${number}].b`>(bracketNestedArrayLeaves);
+
+declare const mapLeaves: Paths<{a: {b: Map<string, number>; c: ReadonlyMap<string, number>}; d: WeakMap<{a: string}, number>}, {leavesOnly: true}>;
+expectType<'a.b' | 'a.c' | 'd'>(mapLeaves);
+
+declare const setLeaves: Paths<{a: {b: Set<string>; c: ReadonlySet<string>}; d: WeakSet<{a: string}>}, {leavesOnly: true}>;
+expectType<'a.b' | 'a.c' | 'd'>(setLeaves);
+
+declare const unknownLeaves: Paths<{a: {b: unknown}}, {leavesOnly: true}>;
+expectType<'a.b'>(unknownLeaves);
+
+declare const anyLeaves: Paths<{a: {b: any}}, {leavesOnly: true}>;
+expectType<'a.b'>(anyLeaves);
 
 // -- depth option --
 declare const zeroDepth: Paths<DeepObject, {depth: 0}>;
