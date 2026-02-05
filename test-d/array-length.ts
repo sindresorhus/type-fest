@@ -30,8 +30,8 @@ expectType<number>({} as ArrayLength<readonly [...unknown[], 1, 2]>);
 expectType<number>({} as ArrayLength<readonly [0, ...unknown[], 1, 2]>);
 
 // Edge cases and disallowed types
-expectType<never>({} as never);
-expectType<any>({} as any);
+expectType<never>({} as ArrayLength<never>);
+expectType<any>({} as ArrayLength<any>);
 
 // @ts-expect-error
 type DisallowedPrimitive = ArrayLength<string>;
