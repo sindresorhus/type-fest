@@ -191,7 +191,7 @@ Click the type names for complete docs.
 - [`ConditionalSimplify`](source/conditional-simplify.d.ts) - Simplifies a type while including and/or excluding certain types from being simplified.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 - [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
-- [`LastOfUnion`](source/last-of-union-d.ts) - Return a type picked in an union-type. Order is not guaranteed.
+- [`LastOfUnion`](source/last-of-union.d.ts) - Return a type picked in a union type. Order is not guaranteed.
 
 ### Type Guard
 

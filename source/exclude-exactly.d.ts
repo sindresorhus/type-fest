@@ -54,7 +54,7 @@ type MatchOrNever<A, B> =
 			: A;
 
 /**
-TypeScript's built-in `Exclude` and `ExcludeStrict` in `type-fest` don't distinguish kinds of keys of objects.
+TypeScript's built-in `Exclude` and `ExcludeStrict` in `type-fest` don't distinguishes key modifiers of objects.
 
 @example
 ```
@@ -64,7 +64,7 @@ type NeverReturned_0 = Exclude<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // =>
 type NeverReturned_1 = ExcludeStrict<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // => never
 ```
 
-This `ExcludeExactly` keeps the union objects element if the keys of the first and the second aren't identical.
+`ExcludeExactly` keeps the union members element if the members are not identical.
 
 @example
 ```

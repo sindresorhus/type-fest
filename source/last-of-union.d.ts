@@ -2,8 +2,8 @@ import type {IsNever} from './is-never.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 
 /**
-Returns the last element of a union type; otherwise `never` if `never` passed.
-Note that this is non-deterministic because the order of union type is not guaranteed.
+Returns the last element of a union type; otherwise returns `never` if `never` is passed.
+Note that this is non-deterministic because the order of union members is not guaranteed.
 
 @see https://github.com/microsoft/TypeScript/issues/13298#issuecomment-468375328
 
