@@ -90,14 +90,22 @@ declare const trailingSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>]>;
 expectType<number | `${number}` | '0.a' | `${number}.b`>(trailingSpreadTuple);
 
 declare const trailingSpreadTuple1: Paths<[{a: string}, {b: number}, ...Array<{c: number}>]>;
-expectType<number | `${number}` | '0.a' | `${number}.b`>(trailingSpreadTuple);
 expectType<number | `${number}` | '0.a' | '1.b' | `${number}.c`>(trailingSpreadTuple1);
+
+declare const optionalElementsWithTrailingSpreadTuple: Paths<{foo: [{a: string}, ({b: number})?, ...Array<{c: number}>]}>;
+expectType<'foo' | `foo.${number}` | 'foo.0.a' | 'foo.1.b' | `foo.${number}.c`>(optionalElementsWithTrailingSpreadTuple);
+
+declare const optionalElementsWithTrailingSpreadTuple1: Paths<[({a: string})?, ({b: number})?, ...Array<{c: number}>]>;
+expectType<number | `${number}` | '0.a' | '1.b' | `${number}.c`>(optionalElementsWithTrailingSpreadTuple1);
 
 declare const leadingSpreadTuple: Paths<[...Array<{a: string}>, {b: number}]>;
 expectType<number | `${number}` | `${number}.b` | `${number}.a`>(leadingSpreadTuple);
 
 declare const leadingSpreadTuple1: Paths<[...Array<{a: string}>, {b: number}, {c: number}]>;
 expectType<number | `${number}` | `${number}.b` | `${number}.c` | `${number}.a`>(leadingSpreadTuple1);
+
+declare const middleSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>, {c: boolean}]>;
+expectType<number | `${number}` | '0.a' | `${number}.b` | `${number}.c`>(middleSpreadTuple);
 
 // Circularly references
 type MyEntity = {
