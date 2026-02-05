@@ -1,4 +1,3 @@
-import type {SimplifyDeep} from './simplify-deep.d.ts';
 import type {UniqueUnionDeep} from './internal/type.d.ts';
 
 /**
@@ -30,7 +29,7 @@ type Includes<Value extends readonly any[], Item> =
 export type IsEqual<A, B> =
 	[A, B] extends [B, A]
 		? [A, B] extends [object, object]
-			? _IsEqual<SimplifyDeep<UniqueUnionDeep<A>>, SimplifyDeep<UniqueUnionDeep<B>>>
+			? _IsEqual<UniqueUnionDeep<A>, UniqueUnionDeep<B>>
 			: _IsEqual<A, B>
 		: false;
 
@@ -40,8 +39,10 @@ e.g., `{a: 0} | {a: 0}` and/or `{a: 0} & {a: 0}` as `{a: 0}`.
 
 @example
 ```
-type IDUnionIsTrue = _IsEqual<{a: {b: 0}} | {a: {b: 0}}, {a: {b: 0}}>; // true
-type RecurivelyIDUnionIsFalse = _IsEqual<{a: {b: 0} | {b: 0}}, {a: {b: 0}}>; // => false
+type IDUnionIsTrue = _IsEqual<{a: {b: 0}} | {a: {b: 0}}, {a: {b: 0}}>;
+//=> true
+type RecurivelyIDUnionIsFalse = _IsEqual<{a: {b: 0} | {b: 0}}, {a: {b: 0}}>;
+//=> false
 ```
 
 This version fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/is-equal.ts`.
