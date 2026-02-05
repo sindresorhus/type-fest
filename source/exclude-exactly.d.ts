@@ -10,28 +10,38 @@ Return the 1st if not.
 
 @example
 ```
-type A = MatchOrNever<string | number, string>; // => string | number
-type B = MatchOrNever<string | number, string | number>; // => never
-type C = MatchOrNever<string | number, unknown>; // => string | number
-type D = MatchOrNever<string, string | number>; // => string
+type A = MatchOrNever<string | number, string>;
+//=> string | number
+type B = MatchOrNever<string | number, string | number>;
+//=> never
+type C = MatchOrNever<string | number, unknown>;
+//=> string | number
+type D = MatchOrNever<string, string | number>;
+//=> string
 ```
 
 This does NOT depend on assignability.
 
 @example
 ```
-type RO_0 = MatchOrNever<{readonly a: 0}, {a: 0}>; // => {readonly a: 0}
-type RO_1 = MatchOrNever<{a: 0}, {readonly a: 0}>; // => {a: 0}
+type RO_0 = MatchOrNever<{readonly a: 0}, {a: 0}>;
+//=> {readonly a: 0}
+type RO_1 = MatchOrNever<{a: 0}, {readonly a: 0}>;
+//=> {a: 0}
 ```
 
 `unknown` and `never` cases, which easily break equality in type level code base.
 
 @example
 ```
-type E = MatchOrNever<unknown, never>; // => unknown
-type F = MatchOrNever<unknown, unknown>; // => never
-type G = MatchOrNever<never, never>; // => never
-type H = MatchOrNever<never, unknown>; // => never
+type E = MatchOrNever<unknown, never>;
+//=> unknown
+type F = MatchOrNever<unknown, unknown>;
+//=> never
+type G = MatchOrNever<never, never>;
+//=> never
+type H = MatchOrNever<never, unknown>;
+//=> never
 ```
 
 Note that this doesn't regard the identical union/intersection type `T | T` and/or `T & T` as `T` recursively.
@@ -39,9 +49,11 @@ e.g., `{a: 0} | {a: 0}` and/or `{a: 0} & {a: 0}` as `{a: 0}`.
 
 @example
 ```
-type IDUnion = MatchOrNever<{a: {b: 0}} | {a: {b: 0}}, {a: {b: 0}}>; // => never
+type IDUnion = MatchOrNever<{a: {b: 0}} | {a: {b: 0}}, {a: {b: 0}}>;
+//=> never
 type A = {a: {b: 0} | {b: 0}};
-type RecurivelyIDUnion = MatchOrNever<A, {a: {b: 0}}>; // => A
+type RecurivelyIDUnion = MatchOrNever<A, {a: {b: 0}}>;
+//=> A
 ```
 */
 type MatchOrNever<A, B> =
@@ -60,8 +72,10 @@ TypeScript's built-in `Exclude` and `ExcludeStrict` in `type-fest` don't disting
 ```
 import type {ExcludeStrict} from 'type-fest';
 
-type NeverReturned_0 = Exclude<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // => never
-type NeverReturned_1 = ExcludeStrict<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // => never
+type NeverReturned_0 = Exclude<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
+//=> never
+type NeverReturned_1 = ExcludeStrict<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
+//=> never
 ```
 
 `ExcludeExactly` keeps the union members element if the members are not identical.
@@ -70,14 +84,22 @@ type NeverReturned_1 = ExcludeStrict<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
 ```
 import type {ExcludeExactly} from 'type-fest';
 
-type ExcludeNever = ExcludeExactly<{a: 0} | {a: 0} | {readonly a: 0}, never>; // => {a: 0} | {a: 0} | {readonly a: 0}
-type ExcludeReadonlyKey = ExcludeExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>; // => {a: 0}
-type ExcludeKey = ExcludeExactly<{readonly a: 0}, {a: 0}>; // => {readonly a: 0}
-type ExcludeReadonly = ExcludeExactly<{readonly a: 0}, {readonly a: 0}>; // => {readonly a: 0}
-type ExcludeSubType = ExcludeExactly<0 | 1 | number, 1>; // => number
-type ExcludeAllSet = ExcludeExactly<0 | 1 | number, number>; // => never
-type ExcludeFromUnknown = ExcludeExactly<unknown, string>; // => unknown
-type ExcludeFromUnknownArray = ExcludeExactly<number[] | unknown[], number[]>; // => unknown[]
+type ExcludeNever = ExcludeExactly<{a: 0} | {a: 0} | {readonly a: 0}, never>;
+//=> {a: 0} | {a: 0} | {readonly a: 0}
+type ExcludeReadonlyKey = ExcludeExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
+//=> {a: 0}
+type ExcludeKey = ExcludeExactly<{readonly a: 0}, {a: 0}>;
+//=> {readonly a: 0}
+type ExcludeReadonly = ExcludeExactly<{readonly a: 0}, {readonly a: 0}>;
+//=> never
+type ExcludeSubType = ExcludeExactly<0 | 1 | number, 1>;
+//=> number
+type ExcludeAllSet = ExcludeExactly<0 | 1 | number, number>;
+//=> never
+type ExcludeFromUnknown = ExcludeExactly<unknown, string>;
+//=> unknown
+type ExcludeFromUnknownArray = ExcludeExactly<number[] | unknown[], number[]>;
+//=> unknown[]
 ```
 */
 export type ExcludeExactly<UnionU, DeleteT> =
@@ -86,6 +108,7 @@ export type ExcludeExactly<UnionU, DeleteT> =
 			? UnionU
 			: ExcludeExactly<_ExcludeExactly<UnionU, D>, _ExcludeExactly<DeleteT, D>>
 		: never;
+
 type _ExcludeExactly<UnionU, DeleteT> =
 	true extends IsAny<DeleteT>
 		? never
@@ -94,5 +117,4 @@ type _ExcludeExactly<UnionU, DeleteT> =
 			: UnionU extends unknown // Only for union distribution.
 				? MatchOrNever<UnionU, DeleteT>
 				: never;
-
 export {};
