@@ -11,3 +11,6 @@ expectType<Options1[number]>({} as (1 | 2 | 3));
 
 type Options2 = UnionToTuple<boolean | 1>;
 expectType<Options2[number]>({} as (1 | false | true));
+
+type DifferentModifiers = {a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0};
+expectType<UnionToTuple<DifferentModifiers>[number]>({} as DifferentModifiers);
