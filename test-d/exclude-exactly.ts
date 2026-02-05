@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ExcludeExactly} from '../../source/internal/type.d.ts';
+import type {ExcludeExactly} from '../index.d.ts';
 
 expectType<number>({} as ExcludeExactly<0 | 1 | number, '1'>);
 expectType<never>({} as ExcludeExactly<0 | 1 | number, number>);
