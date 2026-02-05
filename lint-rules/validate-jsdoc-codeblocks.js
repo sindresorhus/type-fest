@@ -186,6 +186,15 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 });
 
+function getLeftmostQuickInfo(env, line, lineOffset) {
+	for (let i = 0; i < line.length; i++) {
+		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i);
+		if (quickInfo?.displayParts) {
+			return quickInfo;
+		}
+	}
+}
+
 function extractTypeFromQuickInfo(quickInfo) {
 	const {displayParts} = quickInfo;
 
@@ -219,7 +228,7 @@ function extractTypeFromQuickInfo(quickInfo) {
 	return displayParts.slice(separatorIndex + 1).map(part => part.text).join('').trim();
 }
 
-function normalizeUnions(type) {
+function normalizeType(type, onlySortNumbers = false) {
 	const sourceFile = ts.createSourceFile(
 		'twoslash-type.ts',
 		`declare const test: ${type};`,
@@ -229,6 +238,7 @@ function normalizeUnions(type) {
 	const typeNode = sourceFile.statements[0].declarationList.declarations[0].type;
 
 	const print = node => ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, sourceFile);
+
 	const isNumeric = v => v.trim() !== '' && Number.isFinite(Number(v));
 
 	const visit = node => {
@@ -237,9 +247,12 @@ function normalizeUnions(type) {
 		if (ts.isUnionTypeNode(node)) {
 			const types = node.types
 				.map(t => [print(t), t])
-				.sort(([a], [b]) =>
-					// Numbers are sorted only wrt other numbers
-					isNumeric(a) && isNumeric(b) ? Number(a) - Number(b) : 0,
+				.sort(
+					([a], [b]) => isNumeric(a) && isNumeric(b)
+						? Number(a) - Number(b)
+						: (onlySortNumbers
+							? 0 // Numbers are sorted only wrt other numbers
+							: a.localeCompare(b)),
 				)
 				.map(t => t[1]);
 
@@ -276,6 +289,20 @@ function normalizeUnions(type) {
 	});
 }
 
+function getCommentForType(type) {
+	let comment = type;
+
+	if (type.length < 80) {
+		comment = type
+			.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
+			.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
+			.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
+			.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
+	}
+
+	return `${TWOSLASH_COMMENT} ${comment.replaceAll('\n', '\n// ')}`;
+}
+
 function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
 	const lines = code.split('\n');
@@ -307,31 +334,27 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 		const previousLine = lines[previousLineIndex];
 		const previousLineOffset = sourceFile.getPositionOfLineAndCharacter(previousLineIndex, 0);
 
-		for (let i = 0; i < previousLine.length; i++) {
-			const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
+		const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
 
-			if (quickInfo?.displayParts) {
-				let expectedType = normalizeUnions(extractTypeFromQuickInfo(quickInfo));
+		const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
+		const actualCommentEndOffset = sourceFile.getPositionOfLineAndCharacter(actualCommentEndLine, lines[actualCommentEndLine].length);
 
-				if (expectedType.length < 80) {
-					expectedType = expectedType
-						.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
-						.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
-						.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
-						.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
-				}
+		const start = codeStartIndex + actualCommentStartOffset;
+		const end = codeStartIndex + actualCommentEndOffset;
 
-				const expectedComment = TWOSLASH_COMMENT + ' ' + expectedType.replaceAll('\n', '\n// ');
+		const quickInfo = getLeftmostQuickInfo(env, previousLine, previousLineOffset);
+
+		if (quickInfo?.displayParts) {
+			const rawActualType = actualComment.slice(TWOSLASH_COMMENT.length).replaceAll('\n// ', '\n');
+
+			const expectedType = normalizeType(extractTypeFromQuickInfo(quickInfo));
+			const actualType = normalizeType(rawActualType);
+
+			if (actualType === expectedType) {
+				// If the types are equal, check for formatting errors and unordered numbers in unions
+				const expectedComment = getCommentForType(normalizeType(rawActualType, true));
 
 				if (actualComment !== expectedComment) {
-					const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
-
-					const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
-					const actualCommentEndOffset = sourceFile.getPositionOfLineAndCharacter(actualCommentEndLine, lines[actualCommentEndLine].length);
-
-					const start = codeStartIndex + actualCommentStartOffset;
-					const end = codeStartIndex + actualCommentEndOffset;
-
 					context.report({
 						loc: {
 							start: context.sourceCode.getLocFromIndex(start),
@@ -352,8 +375,28 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 						},
 					});
 				}
+			} else {
+				const expectedComment = getCommentForType(expectedType);
 
-				break;
+				context.report({
+					loc: {
+						start: context.sourceCode.getLocFromIndex(start),
+						end: context.sourceCode.getLocFromIndex(end),
+					},
+					messageId: 'typeMismatch',
+					data: {
+						expectedComment,
+						actualComment,
+					},
+					fix(fixer) {
+						const indent = line.slice(0, actualCommentIndex);
+
+						return fixer.replaceTextRange(
+							[start, end],
+							expectedComment.replaceAll('\n', `\n${indent}`),
+						);
+					},
+				});
 			}
 		}
 	}

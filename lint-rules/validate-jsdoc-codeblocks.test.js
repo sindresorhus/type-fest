@@ -757,7 +757,19 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		)),
 
-		// Numbers are sorted in union
+		// Order of non-numeric values in unions doesn't matter
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Test = 'a' | 'b' | 'c' | {w: 'd' | 'e'; x: ['f' | 'g' | 'h']; y: {z: 'i' | 'j' | 'k'}};
+			//=> 'b' | 'a' | {
+			// 	w: 'e' | 'd';
+			// 	x: ['h' | 'g' | 'f'];
+			// 	y: {
+			// 		z: 'i' | 'k' | 'j';
+			// 	};
+			// } | 'c'
+		`))),
+
+		// Numbers are sorted in unions
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			import type {IntClosedRange} from 'type-fest';
 
@@ -765,27 +777,27 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 		`))),
 
-		// Nested union are sorted
+		// Numbers in nested unions are sorted
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Test = {w: 0 | 10 | 5; x: [2 | 16 | 4]; y: {z: 3 | 27 | 9}};
 			//=> {w: 0 | 5 | 10; x: [2 | 4 | 16]; y: {z: 3 | 9 | 27}}
 		`))),
 
-		// Unions inside unions are sorted
+		// Numbers in unions inside unions are sorted, non-numbers can be in any order
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			type Test = {a: 'foo' | 27 | 1 | {b: 2 | 1 | 8 | 4} | 9 | 3 | 'bar'};
-			//=> {a: 'foo' | 1 | 3 | 9 | 27 | {b: 1 | 2 | 4 | 8} | 'bar'}
+			type Test = {a: 'foo' | 27 | 1 | {b: 2 | 1 | 8 | 4} | 'baz' | 9 | 3 | 'bar'};
+			//=> {a: 1 | 3 | 9 | 27 | {b: 1 | 2 | 4 | 8} | 'bar' | 'foo' | 'baz'}
 		`))),
 
-		// Only numbers are sorted in union, non-numbers remain unchanged
+		// Only numbers are sorted in unions, non-numbers can be in any order
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			import type {ArrayElement} from 'type-fest';
 
 			type Tuple1 = ArrayElement<[null, string, boolean, 1, 3, 0, -2, 4, 2, -1]>;
-			//=> string | boolean | -2 | -1 | 0 | 1 | 2 | 3 | 4 | null
+			//=> string | -2 | -1 | boolean | 0 | null | 1 | 2 | 3 | 4
 
 			type Tuple2 = ArrayElement<[null, 1, 3, string, 0, -2, 4, 2, boolean, -1]>;
-			//=> string | boolean | -2 | -1 | 0 | 1 | 2 | 3 | 4 | null
+			//=> -2 | boolean | -1 | 0 | 1 | 2 | 3 | 4 | null | string
 		`))),
 
 		// Tuples are in single line
@@ -1002,6 +1014,31 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// Incorrect spacing
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = 'a' | 'b' | { c: 'd' } | 'e';
+				//=> 'a'|'b'   |    { c :  'd' }|    'e'  
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=> \'a\'|\'b\'   |    { c :  \'d\' }|    \'e\'  '}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = 'a' | 'b' | { c: 'd' } | 'e';
+				//=> 'a' | 'b' | {c: 'd'} | 'e'
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// No space in subsequent lines
 		{
 			code: dedenter`
@@ -1033,6 +1070,31 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				// 	readonly d: false;
 				// 	readonly e: true;
 				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Incorrect double quotes
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = ["a", {b: "c", d: {e: "f"}}, "g" | "h"];
+				//=> ["a", {b: "c"; d: {e: "f"}}, "g" | "h"]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=> ["a", {b: "c"; d: {e: "f"}}, "g" | "h"]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = ["a", {b: "c", d: {e: "f"}}, "g" | "h"];
+				//=> ['a', {b: 'c'; d: {e: 'f'}}, 'g' | 'h']
 				\`\`\`
 				*/
 				export type T0 = string;
