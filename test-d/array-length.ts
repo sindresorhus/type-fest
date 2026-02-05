@@ -44,6 +44,6 @@ type DisallowedMap = ArrayLength<Map<string, number>>;
 // @ts-expect-error
 type DisallowedSet = ArrayLength<Set<number>>;
 // @ts-expect-error
-type DisallowedObject = ArrayLength<Record<string, unknown>>;
+type DisallowedRecord = ArrayLength<Record<string, unknown>>;
 // @ts-expect-error
 type DisallowedObjectWithLength = ArrayLength<{length: number}>;
