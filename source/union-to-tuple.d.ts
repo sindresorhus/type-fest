@@ -1,4 +1,5 @@
 import type {IsNever} from './is-never.d.ts';
+import type {ExcludeExactly} from './exclude-exactly.d.ts';
 import type {LastOfUnion} from './last-of-union.d.ts';
 
 /**
@@ -38,7 +39,9 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 */
 export type UnionToTuple<T, L = LastOfUnion<T>> =
 IsNever<T> extends false
-	? [...UnionToTuple<Exclude<T, L>>, L]
+	? ExcludeExactly<T, L> extends infer E // Improve performance.
+		? [...UnionToTuple<E>, L]
+		: never // Unreachable.
 	: [];
 
 export {};
