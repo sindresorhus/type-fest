@@ -1,5 +1,7 @@
 /**
-Return the length of an array. Tuples resolve to numeric literals, while non-tuples resolve to the `number` type.
+Return the length of an array.
+
+Tuples resolve to numeric literals, while non-tuples resolve to the `number` type.
 
 @example
 ```
