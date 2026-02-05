@@ -77,8 +77,14 @@ expectType<never>(map2);
 declare const readonlyMap: Paths<{foo?: {bar?: ReadonlyMap<string, number>}}>;
 expectType<'foo' | 'foo.bar'>(readonlyMap);
 
+declare const readonlyMap2: Paths<ReadonlyMap<string, number>>;
+expectType<never>(readonlyMap2);
+
 declare const weakMap: Paths<{foo?: {bar?: WeakMap<{a: string}, number>}}>;
 expectType<'foo' | 'foo.bar'>(weakMap);
+
+declare const weakMap2: Paths<WeakMap<{a: string}, number>>;
+expectType<never>(weakMap2);
 
 declare const set: Paths<{foo?: {bar?: Set<string>}}>;
 expectType<'foo' | 'foo.bar'>(set);
@@ -89,8 +95,14 @@ expectType<never>(set2);
 declare const readonlySet: Paths<{foo?: {bar?: ReadonlySet<string>}}>;
 expectType<'foo' | 'foo.bar'>(readonlySet);
 
+declare const readonlySet2: Paths<ReadonlySet<string>>;
+expectType<never>(readonlySet2);
+
 declare const weakSet: Paths<{foo?: {bar?: WeakSet<{a: string}>}}>;
 expectType<'foo' | 'foo.bar'>(weakSet);
+
+declare const weakSet2: Paths<WeakSet<{a: string}>>;
+expectType<never>(weakSet2);
 
 declare const nonRecursives: Paths<{a: NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>}>;
 expectType<'a'>(nonRecursives);
