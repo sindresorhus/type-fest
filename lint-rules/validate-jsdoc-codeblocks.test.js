@@ -759,14 +759,16 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 		// Order of non-numeric values in unions doesn't matter
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			type Test = 'a' | 'b' | 'c' | {w: 'd' | 'e'; x: ['f' | 'g' | 'h']; y: {z: 'i' | 'j' | 'k'}};
-			//=> 'b' | 'a' | {
-			// 	w: 'e' | 'd';
-			// 	x: ['h' | 'g' | 'f'];
-			// 	y: {
-			// 		z: 'i' | 'k' | 'j';
-			// 	};
-			// } | 'c'
+			type Test = 'a' | 'b' | {x: ['c' | 'd' | 'e']; y: {z: 'f' | 'g' | 'h'}};
+
+			type Valid = Test
+			//=> 'b' | 'a' | {x: ['d' | 'c' | 'e']; y: {z: 'g' | 'h' | 'f'}}
+			
+			type Valid2 = Test
+			//=> 'a' | {x: ['e' | 'd' | 'c']; y: {z: 'h' | 'g' | 'f'}} | 'b'
+			
+			type Valid3 = Test
+			//=> {x: ['e' | 'c' | 'd']; y: {z: 'h' | 'f' | 'g'}} | 'b' | 'a'
 		`))),
 
 		// Numbers are sorted in unions
@@ -786,7 +788,15 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Numbers in unions inside unions are sorted, non-numbers can be in any order
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Test = {a: 'foo' | 27 | 1 | {b: 2 | 1 | 8 | 4} | 'baz' | 9 | 3 | 'bar'};
+
+			type Valid = Test;
 			//=> {a: 1 | 3 | 9 | 27 | {b: 1 | 2 | 4 | 8} | 'bar' | 'foo' | 'baz'}
+			
+			type Valid2 = Test;
+			//=> {a: {b: 1 | 2 | 4 | 8} | 1 | 'foo' | 3 | 'baz' | 'bar' | 9 | 27}
+			
+			type Valid3 = Test;
+			//=> {a: 'baz' | 'foo' | 1 | 3 | 9 | 'bar' | 27 | {b: 1 | 2 | 4 | 8}}
 		`))),
 
 		// Only numbers are sorted in unions, non-numbers can be in any order
