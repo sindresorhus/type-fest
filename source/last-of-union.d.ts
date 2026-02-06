@@ -2,12 +2,15 @@ import type {IsNever} from './is-never.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 
 /**
-Returns the last element of a union type; otherwise returns `never` if `never` is passed.
-Note that this is non-deterministic because the order of union members is not guaranteed.
+Return a member of a union type. Order is not guaranteed.
+Returns `never` when the input is `never`.
 
 @see https://github.com/microsoft/TypeScript/issues/13298#issuecomment-468375328
 
-This can be used to implement a recursive type function that accepts a union type.
+Use-cases:
+- Implementing recursive type functions that accept a union type.
+- Reducing a union one member at a time, for example when building tuples.
+
 It can detect a termination case using {@link IsNever `IsNever`}.
 
 @example
@@ -30,6 +33,8 @@ type Last = LastOfUnion<1 | 2 | 3>;
 type LastNever = LastOfUnion<never>;
 //=> never
 ```
+
+@category Type
 */
 export type LastOfUnion<T> =
 	true extends IsNever<T>

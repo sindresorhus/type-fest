@@ -4,9 +4,9 @@ import type {IsAny} from './is-any.d.ts';
 import type {LastOfUnion} from './last-of-union.d.ts';
 
 /**
-Return `never` if the 1st and the 2nd arguments are mutually identical.
-Return the 1st if not.
-(But there's a limitation about union/intersection type. See `MatchOrNever` or `_IsEqual` in `source/is-equal.d.ts` doc.)
+Return `never` if the first and second arguments are identical.
+Return the first argument if not.
+(But there's a limitation about union/intersection type. See `IsEqual` in `source/is-equal.d.ts`.)
 
 @example
 ```
@@ -30,7 +30,7 @@ type RO_1 = MatchOrNever<{a: 0}, {readonly a: 0}>;
 //=> {a: 0}
 ```
 
-`unknown` and `never` cases, which easily break equality in type level code base.
+`unknown` and `never` cases, which easily break equality in type-level codebase.
 
 @example
 ```
@@ -66,7 +66,9 @@ type MatchOrNever<A, B> =
 			: A;
 
 /**
-TypeScript's built-in `Exclude` and `ExcludeStrict` in `type-fest` don't distinguishes key modifiers of objects.
+A stricter version of `Exclude<T, U>` that ensures objects with different key modifiers are not considered identical.
+
+TypeScript's built-in `Exclude` and `ExcludeStrict` in `type-fest` don't distinguish key modifiers of objects.
 
 @example
 ```
@@ -101,6 +103,8 @@ type ExcludeFromUnknown = ExcludeExactly<unknown, string>;
 type ExcludeFromUnknownArray = ExcludeExactly<number[] | unknown[], number[]>;
 //=> unknown[]
 ```
+
+@category Improved Built-in
 */
 export type ExcludeExactly<UnionU, DeleteT> =
 	LastOfUnion<DeleteT> extends infer D
