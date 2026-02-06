@@ -213,13 +213,15 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 			? ((Options['leavesOnly'] extends true
 				? Options['maxRecursionDepth'] extends CurrentDepth
 					? TransformedKey
-					: T[Key] extends infer Value // For distributing `T[Key]`
-						? (Value extends readonly [] | NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
-							? TransformedKey
-							: IsNever<keyof Value> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`.
+					: IsNever<T[Key]> extends true
+						? TransformedKey
+						: T[Key] extends infer Value // For distributing `T[Key]`
+							? (Value extends readonly [] | NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
 								? TransformedKey
-								: never)
-						: never // Should never happen
+								: IsNever<keyof Value> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`.
+									? TransformedKey
+									: never)
+							: never // Should never happen
 				: TransformedKey
 			) extends infer _TransformedKey
 				// If `depth` is provided, the condition becomes truthy only when it matches `CurrentDepth`.

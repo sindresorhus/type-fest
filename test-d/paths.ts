@@ -295,6 +295,9 @@ expectType<'a.b'>(unknownLeaves);
 declare const anyLeaves: Paths<{a: {b: any}}, {leavesOnly: true}>;
 expectType<'a.b'>(anyLeaves);
 
+declare const neverLeaves: Paths<{a: {b: never}}, {leavesOnly: true}>;
+expectType<'a.b'>(neverLeaves);
+
 // -- depth option --
 declare const zeroDepth: Paths<DeepObject, {depth: 0}>;
 expectType<'a'>(zeroDepth);
