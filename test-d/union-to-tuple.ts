@@ -12,5 +12,13 @@ expectType<Options1[number]>({} as (1 | 2 | 3));
 type Options2 = UnionToTuple<boolean | 1>;
 expectType<Options2[number]>({} as (1 | false | true));
 
+// Different modifiers cases.
 type DifferentModifiers = {a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0};
 expectType<UnionToTuple<DifferentModifiers>[number]>({} as DifferentModifiers);
+
+// Super type cases.
+type UnionSuperType0 = {a: string; b: string} | {a: string};
+expectType<UnionSuperType0>({} as UnionToTuple<UnionSuperType0>[number]);
+
+type UnionSuperType1 = {a: 1} | {b: 1} | {[x: string]: number};
+expectType<UnionSuperType1>({} as UnionToTuple<UnionSuperType1>[number]);
