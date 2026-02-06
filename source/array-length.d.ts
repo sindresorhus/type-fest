@@ -31,6 +31,6 @@ type B = IsFixedLengthArray<[1, 2, 3]>;
 
 @category Array
 */
-export type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
+export type ArrayLength<T extends readonly unknown[]> = T['length'];
 
 export {};
