@@ -303,6 +303,20 @@ function getCommentForType(type) {
 	return `${TWOSLASH_COMMENT} ${comment.replaceAll('\n', '\n// ')}`;
 }
 
+function reportTypeMismatch(context, {start, end}, data, fix) {
+	context.report({
+		loc: {
+			start: context.sourceCode.getLocFromIndex(start),
+			end: context.sourceCode.getLocFromIndex(end),
+		},
+		messageId: 'typeMismatch',
+		data,
+		fix(fixer) {
+			return fixer.replaceTextRange([start, end], fix);
+		},
+	});
+}
+
 function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
 	const lines = code.split('\n');
@@ -342,6 +356,8 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 		const start = codeStartIndex + actualCommentStartOffset;
 		const end = codeStartIndex + actualCommentEndOffset;
 
+		const indent = line.slice(0, actualCommentIndex);
+
 		const quickInfo = getLeftmostQuickInfo(env, previousLine, previousLineOffset);
 
 		if (quickInfo?.displayParts) {
@@ -355,48 +371,22 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 				const expectedComment = getCommentForType(normalizeType(rawActualType, true));
 
 				if (actualComment !== expectedComment) {
-					context.report({
-						loc: {
-							start: context.sourceCode.getLocFromIndex(start),
-							end: context.sourceCode.getLocFromIndex(end),
-						},
-						messageId: 'typeMismatch',
-						data: {
-							expectedComment,
-							actualComment,
-						},
-						fix(fixer) {
-							const indent = line.slice(0, actualCommentIndex);
-
-							return fixer.replaceTextRange(
-								[start, end],
-								expectedComment.replaceAll('\n', `\n${indent}`),
-							);
-						},
-					});
+					reportTypeMismatch(
+						context,
+						{start, end},
+						{expectedComment, actualComment},
+						expectedComment.replaceAll('\n', `\n${indent}`),
+					);
 				}
 			} else {
 				const expectedComment = getCommentForType(expectedType);
 
-				context.report({
-					loc: {
-						start: context.sourceCode.getLocFromIndex(start),
-						end: context.sourceCode.getLocFromIndex(end),
-					},
-					messageId: 'typeMismatch',
-					data: {
-						expectedComment,
-						actualComment,
-					},
-					fix(fixer) {
-						const indent = line.slice(0, actualCommentIndex);
-
-						return fixer.replaceTextRange(
-							[start, end],
-							expectedComment.replaceAll('\n', `\n${indent}`),
-						);
-					},
-				});
+				reportTypeMismatch(
+					context,
+					{start, end},
+					{expectedComment, actualComment},
+					expectedComment.replaceAll('\n', `\n${indent}`),
+				);
 			}
 		}
 	}
