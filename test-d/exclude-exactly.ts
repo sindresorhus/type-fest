@@ -37,3 +37,9 @@ expectType<2>({} as ExcludeExactly<0 | 1 | 2, 0 | 1>);
 expectType<never>({} as ExcludeExactly<0 | 1 | 2, 0 | 1 | 2>);
 expectType<{readonly a?: 0}>({} as ExcludeExactly<{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}, {a: 0} | {readonly a: 0} | {a?: 0}>);
 expectType<never>({} as ExcludeExactly<{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}, {a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}>);
+
+// Identical Union
+expectType<never>({} as ExcludeExactly<{a: 0} | {a: 0}, {a: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+// Identical Intersection
+expectType<never>({} as ExcludeExactly<{a: 0} & {a: 0}, {a: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
