@@ -17,7 +17,10 @@ expectType<IsUnion<'foo' | 'bar' | 1>>(true);
 expectType<IsUnion<'foo' | 1>>(true);
 expectType<IsUnion<[] | {}>>(true);
 
-type SuperTypeUnion =
-	{optionalField?: number; test1: number; test2: string}
-	| {test1: number; test2: string};
-expectType<true>({} as IsUnion<SuperTypeUnion>);
+type TestUnion =
+	// Here, the entire union extends both the individual members:
+	// So, `TestUnion` extends `{opt?: number; a: number; b: string}`, and
+	// `TestUnion` extends `{a: number; b: string}`.
+	| {opt?: number; a: number; b: string}
+	| {a: number; b: string};
+expectType<IsUnion<TestUnion>>(true);

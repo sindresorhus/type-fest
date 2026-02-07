@@ -25,7 +25,7 @@ type InternalIsUnion<T, U = T> =
 	IsNever<T> extends true
 		? false
 		: T extends any
-			? true extends IsEqual<[U], [T]>
+			? IsEqual<U, T> extends true
 				? false
 				: true
 			: never
