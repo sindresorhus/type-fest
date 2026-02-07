@@ -17,7 +17,7 @@ expectType<IsUnion<'foo' | 'bar' | 1>>(true);
 expectType<IsUnion<'foo' | 1>>(true);
 expectType<IsUnion<[] | {}>>(true);
 
-type TestType =
+type SuperTypeUnion =
 	{optionalField?: number; test1: number; test2: string}
 	| {test1: number; test2: string};
-expectType<true>({} as IsUnion<TestType>);
+expectType<true>({} as IsUnion<SuperTypeUnion>);
