@@ -10,7 +10,8 @@ type A = RemovePrefix<'on-change', string, {strict: "yes"}>;
 `;
 
 const invalidCodeblockErrorAt = props => errorAt_({...props, messageId: 'invalidCodeblock'});
-const typeMismatchErrorAt = props => errorAt_({...props, messageId: 'typeMismatch'});
+const incorrectTwoslashTypeErrorAt = props => errorAt_({...props, messageId: 'incorrectTwoslashType'});
+const incorrectTwoslashFormatErrorAt = props => errorAt_({...props, messageId: 'incorrectTwoslashFormat'});
 
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
@@ -757,7 +758,21 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		)),
 
-		// Numbers are sorted in union
+		// Order of non-numbers in unions doesn't matter
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Test = 'a' | 'b' | {x: ['c' | 'd' | 'e']; y: {z: 'f' | 'g' | 'h'}};
+
+			type Valid = Test
+			//=> 'b' | 'a' | {x: ['d' | 'c' | 'e']; y: {z: 'g' | 'h' | 'f'}}
+			
+			type Valid2 = Test
+			//=> 'a' | {x: ['e' | 'd' | 'c']; y: {z: 'h' | 'g' | 'f'}} | 'b'
+			
+			type Valid3 = Test
+			//=> {x: ['e' | 'c' | 'd']; y: {z: 'h' | 'f' | 'g'}} | 'b' | 'a'
+		`))),
+
+		// Numbers are sorted in unions
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			import type {IntClosedRange} from 'type-fest';
 
@@ -765,27 +780,35 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 		`))),
 
-		// Nested union are sorted
+		// Numbers in nested unions are sorted
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Test = {w: 0 | 10 | 5; x: [2 | 16 | 4]; y: {z: 3 | 27 | 9}};
 			//=> {w: 0 | 5 | 10; x: [2 | 4 | 16]; y: {z: 3 | 9 | 27}}
 		`))),
 
-		// Unions inside unions are sorted
+		// Numbers in unions inside unions are sorted, non-numbers can be in any order
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			type Test = {a: 'foo' | 27 | 1 | {b: 2 | 1 | 8 | 4} | 9 | 3 | 'bar'};
-			//=> {a: 'foo' | 1 | 3 | 9 | 27 | {b: 1 | 2 | 4 | 8} | 'bar'}
+			type Test = {a: 'foo' | 27 | 1 | {b: 2 | 1 | 8 | 4} | 'baz' | 9 | 3 | 'bar'};
+
+			type Valid = Test;
+			//=> {a: 1 | 3 | 9 | 27 | {b: 1 | 2 | 4 | 8} | 'bar' | 'foo' | 'baz'}
+			
+			type Valid2 = Test;
+			//=> {a: {b: 1 | 2 | 4 | 8} | 1 | 'foo' | 3 | 'baz' | 'bar' | 9 | 27}
+			
+			type Valid3 = Test;
+			//=> {a: 'baz' | 'foo' | 1 | 3 | 9 | 'bar' | 27 | {b: 1 | 2 | 4 | 8}}
 		`))),
 
-		// Only numbers are sorted in union, non-numbers remain unchanged
+		// Only numbers are sorted in unions, non-numbers can be in any order
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			import type {ArrayElement} from 'type-fest';
 
 			type Tuple1 = ArrayElement<[null, string, boolean, 1, 3, 0, -2, 4, 2, -1]>;
-			//=> string | boolean | -2 | -1 | 0 | 1 | 2 | 3 | 4 | null
+			//=> string | -2 | -1 | boolean | 0 | null | 1 | 2 | 3 | 4
 
 			type Tuple2 = ArrayElement<[null, 1, 3, string, 0, -2, 4, 2, boolean, -1]>;
-			//=> string | boolean | -2 | -1 | 0 | 1 | 2 | 3 | 4 | null
+			//=> -2 | boolean | -1 | 0 | 1 | 2 | 3 | 4 | null | string
 		`))),
 
 		// Tuples are in single line
@@ -903,54 +926,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`))),
 	],
 	invalid: [
-		{
-			code: dedenter`
-				/**
-				\`\`\`ts
-				const foo = 'bar';
-				//=> 'baz'
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=> \'baz\''}),
-			],
-			output: dedenter`
-				/**
-				\`\`\`ts
-				const foo = 'bar';
-				//=> 'bar'
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-		},
-
-		// Empty `//=>`
-		{
-			code: dedenter`
-				/**
-				\`\`\`ts
-				type Foo = string;
-				//=>
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
-			],
-			output: dedenter`
-				/**
-				\`\`\`ts
-				type Foo = string;
-				//=> string
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-		},
+		// === Twoslash format errors ===
 
 		// No space after `//=>`
 		{
@@ -964,7 +940,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4,	textBeforeStart: '',	target: '//=>string'}),
+				incorrectTwoslashFormatErrorAt({line: 4,	textBeforeStart: '',	target: '//=>string'}),
 			],
 			output: dedenter`
 				/**
@@ -989,13 +965,38 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=>     string'}),
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', target: '//=>     string'}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
 				type Foo = string;
 				//=> string
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Incorrect spacing
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = 'a' | 'b' | { c: 'd' } | 'e';
+				//=> 'a'|'b'   |    { c :  'd' }|    'e'  
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', target: '//=> \'a\'|\'b\'   |    { c :  \'d\' }|    \'e\'  '}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = 'a' | 'b' | { c: 'd' } | 'e';
+				//=> 'a' | 'b' | {c: 'd'} | 'e'
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -1020,7 +1021,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 10, textBeforeEnd: '//}'}),
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', endLine: 10, textBeforeEnd: '//}'}),
 			],
 			output: dedenter`
 				/**
@@ -1033,6 +1034,332 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				// 	readonly d: false;
 				// 	readonly e: true;
 				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Incorrect double quotes
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = ["a", {b: "c", d: {e: "f"}}, "g" | "h"];
+				//=> ["a", {b: "c"; d: {e: "f"}}, "g" | "h"]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', target: '//=> ["a", {b: "c"; d: {e: "f"}}, "g" | "h"]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = ["a", {b: "c", d: {e: "f"}}, "g" | "h"];
+				//=> ['a', {b: 'c'; d: {e: 'f'}}, 'g' | 'h']
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Incorrect multiline tuples
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				import type {TupleOf} from 'type-fest';
+
+				type RGB = TupleOf<3, number>;
+				//=> [
+				// 	number,
+				// 	number,
+				// 	number,
+				// ]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 6, textBeforeStart: '', endLine: 10, textBeforeEnd: '// ]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				import type {TupleOf} from 'type-fest';
+
+				type RGB = TupleOf<3, number>;
+				//=> [number, number, number]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multi line to single line
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = [{a: 1}] as const;
+				//=> readonly [{
+				// 	readonly a: 1;
+				// }]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', endLine: 6, textBeforeEnd: '// }]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = [{a: 1}] as const;
+				//=> readonly [{readonly a: 1}]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Single line to multi line
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: true, c: false, d: false, e: true} as const;
+				//=> {readonly a: true; readonly b: true; readonly c: false; readonly d: false; readonly e: true}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', target: '//=> {readonly a: true; readonly b: true; readonly c: false; readonly d: false; readonly e: true}'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: true, c: false, d: false, e: true} as const;
+				//=> {
+				// 	readonly a: true;
+				// 	readonly b: true;
+				// 	readonly c: false;
+				// 	readonly d: false;
+				// 	readonly e: true;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Incorrect order of numbers in unions
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type T1 = 5 | 4 | 3 | 2 | 1;
+				//=> 5 | 4 | 1 | 2 | 3
+
+				type T2 = 1 | 2 | 3 | 'a';
+				//=> 2 | 'a' | 3 | 1
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', target: '//=> 5 | 4 | 1 | 2 | 3'}),
+				incorrectTwoslashFormatErrorAt({line: 7, textBeforeStart: '', target: '//=> 2 | \'a\' | 3 | 1'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type T1 = 5 | 4 | 3 | 2 | 1;
+				//=> 1 | 2 | 3 | 4 | 5
+
+				type T2 = 1 | 2 | 3 | 'a';
+				//=> 1 | 'a' | 2 | 3
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Indented code blocks
+		{
+			code: dedenter`
+				/**
+				Note:
+				1. First point
+					\`\`\`ts
+					const foo = {a: true, b: false, c: {d: true}};
+					//=> {a: boolean; b: boolean;
+					// c: {d: boolean};
+					// }
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					const bar = ['a', 'b', 'c'] as const;
+					//=> readonly [ 'a', 'b', 'c' ]
+					const baz = new Set(bar);
+					//=>Set< 'a'|'b'|'c' >
+					\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 6, textBeforeStart: '\t', endLine: 8, textBeforeEnd: '\t// }'}),
+				incorrectTwoslashFormatErrorAt({line: 13, textBeforeStart: '\t', target: '//=> readonly [ \'a\', \'b\', \'c\' ]'}),
+				incorrectTwoslashFormatErrorAt({line: 15, textBeforeStart: '\t', target: '//=>Set< \'a\'|\'b\'|\'c\' >'}),
+			],
+			output: dedenter`
+				/**
+				Note:
+				1. First point
+					\`\`\`ts
+					const foo = {a: true, b: false, c: {d: true}};
+					//=> {a: boolean; b: boolean; c: {d: boolean}}
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					const bar = ['a', 'b', 'c'] as const;
+					//=> readonly ['a', 'b', 'c']
+					const baz = new Set(bar);
+					//=> Set<'a' | 'b' | 'c'>
+					\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multiple `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {
+				// 	readonly a: 'a';
+				// 	readonly b: 'b';
+				// }
+				const bar = ['a', 'b', 'c'] as const;
+				//=> readonly [
+				// 	'a', 
+				// 	'b', 
+				// 	'c'
+				// ]
+				const baz = new Set(bar);
+				//=> Set<
+				// 	| 'a'
+				// 	| 'b'
+				// 	| 'c'
+				// >
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', endLine: 7, textBeforeEnd: '// }'}),
+				incorrectTwoslashFormatErrorAt({line: 9, textBeforeStart: '', endLine: 13, textBeforeEnd: '// ]'}),
+				incorrectTwoslashFormatErrorAt({line: 15, textBeforeStart: '', endLine: 19, textBeforeEnd: '// >'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {readonly a: 'a'; readonly b: 'b'}
+				const bar = ['a', 'b', 'c'] as const;
+				//=> readonly ['a', 'b', 'c']
+				const baz = new Set(bar);
+				//=> Set<'a' | 'b' | 'c'>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// === Twoslash type errors ===
+
+		// Incorrect type
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = 'bar';
+				//=> 'baz'
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> \'baz\''}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = 'bar';
+				//=> 'bar'
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Empty `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Foo = string;
+				//=> string
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Broken type
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2};
+				//=> {a
+				
+				const bar = {a: 1, b: 2};
+				//=> {a: number
+				// 	b:
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> {a'}),
+				incorrectTwoslashTypeErrorAt({line: 7, textBeforeStart: '', endLine: 8, textBeforeEnd: '// 	b:'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2};
+				//=> {a: number; b: number}
+
+				const bar = {a: 1, b: 2};
+				//=> {a: number; b: number}
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -1057,7 +1384,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 10, textBeforeEnd: '// }'}),
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 10, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
@@ -1092,7 +1419,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 8, textBeforeEnd: '// }'}),
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 8, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
@@ -1130,7 +1457,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 11, textBeforeEnd: '// }'}),
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 11, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
@@ -1142,33 +1469,6 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				// 	};
 				// 	readonly quux: readonly [null, undefined];
 				// }
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-		},
-
-		// Multi line to single line
-		{
-			code: dedenter`
-				/**
-				\`\`\`ts
-				const foo = [{a: 1}] as const;
-				//=> readonly [{
-				// 	readonly a: 1;
-				// }]
-				\`\`\`
-				*/
-				export type T0 = string;
-			`,
-			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', endLine: 6, textBeforeEnd: '// }]'}),
-			],
-			output: dedenter`
-				/**
-				\`\`\`ts
-				const foo = [{a: 1}] as const;
-				//=> readonly [{readonly a: 1}]
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -1195,7 +1495,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 9, textBeforeStart: '', endLine: 12, textBeforeEnd: '// }'}),
+				incorrectTwoslashTypeErrorAt({line: 9, textBeforeStart: '', endLine: 12, textBeforeEnd: '// }'}),
 			],
 			output: dedenter`
 				/**
@@ -1207,6 +1507,41 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 				type T1 = Prettify<{a?: string; b?: number}>;
 				//=> {a?: string | undefined; b?: number | undefined}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Incorrect type and improper formatting
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {
+				// 	a: 'a';
+				// 	b: 'b';
+				// }
+
+				const bar = 'bar';
+				//=>"baz"
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 7, textBeforeEnd: '// }'}),
+				incorrectTwoslashTypeErrorAt({line: 10, textBeforeStart: '', target: '//=>"baz"'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {readonly a: 'a'; readonly b: 'b'}
+
+				const bar = 'bar';
+				//=> 'bar'
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -1239,9 +1574,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 6, textBeforeStart: '\t', endLine: 11, textBeforeEnd: '\t// }'}),
-				typeMismatchErrorAt({line: 16, textBeforeStart: '\t', target: '//=> [\'a\', \'c\']'}),
-				typeMismatchErrorAt({line: 18, textBeforeStart: '\t', target: '//=> Set<string>'}),
+				incorrectTwoslashTypeErrorAt({line: 6, textBeforeStart: '\t', endLine: 11, textBeforeEnd: '\t// }'}),
+				incorrectTwoslashTypeErrorAt({line: 16, textBeforeStart: '\t', target: '//=> [\'a\', \'c\']'}),
+				incorrectTwoslashTypeErrorAt({line: 18, textBeforeStart: '\t', target: '//=> Set<string>'}),
 			],
 			output: dedenter`
 				/**
@@ -1285,9 +1620,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				export type T0 = string;
 			`,
 			errors: [
-				typeMismatchErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
-				typeMismatchErrorAt({line: 6, textBeforeStart: '', target: '//=>'}),
-				typeMismatchErrorAt({line: 8, textBeforeStart: '', target: '//=>'}),
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
+				incorrectTwoslashTypeErrorAt({line: 6, textBeforeStart: '', target: '//=>'}),
+				incorrectTwoslashTypeErrorAt({line: 8, textBeforeStart: '', target: '//=>'}),
 			],
 			output: dedenter`
 				/**
