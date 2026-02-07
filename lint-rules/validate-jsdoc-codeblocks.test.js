@@ -758,7 +758,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		)),
 
-		// Order of non-numeric values in unions doesn't matter
+		// Order of non-numbers in unions doesn't matter
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Test = 'a' | 'b' | {x: ['c' | 'd' | 'e']; y: {z: 'f' | 'g' | 'h'}};
 
@@ -1092,6 +1092,37 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// Single line to multi line
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: true, c: false, d: false, e: true} as const;
+				//=> {readonly a: true; readonly b: true; readonly c: false; readonly d: false; readonly e: true}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', target: '//=> {readonly a: true; readonly b: true; readonly c: false; readonly d: false; readonly e: true}'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: true, b: true, c: false, d: false, e: true} as const;
+				//=> {
+				// 	readonly a: true;
+				// 	readonly b: true;
+				// 	readonly c: false;
+				// 	readonly d: false;
+				// 	readonly e: true;
+				// }
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// Incorrect order of numbers in unions
 		{
 			code: dedenter`
@@ -1124,8 +1155,102 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// Indented code blocks
+		{
+			code: dedenter`
+				/**
+				Note:
+				1. First point
+					\`\`\`ts
+					const foo = {a: true, b: false, c: {d: true}};
+					//=> {a: boolean; b: boolean;
+					// c: {d: boolean};
+					// }
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					const bar = ['a', 'b', 'c'] as const;
+					//=> readonly [ 'a', 'b', 'c' ]
+					const baz = new Set(bar);
+					//=>Set< 'a'|'b'|'c' >
+					\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 6, textBeforeStart: '\t', endLine: 8, textBeforeEnd: '\t// }'}),
+				incorrectTwoslashFormatErrorAt({line: 13, textBeforeStart: '\t', target: '//=> readonly [ \'a\', \'b\', \'c\' ]'}),
+				incorrectTwoslashFormatErrorAt({line: 15, textBeforeStart: '\t', target: '//=>Set< \'a\'|\'b\'|\'c\' >'}),
+			],
+			output: dedenter`
+				/**
+				Note:
+				1. First point
+					\`\`\`ts
+					const foo = {a: true, b: false, c: {d: true}};
+					//=> {a: boolean; b: boolean; c: {d: boolean}}
+					\`\`\`
+				2. Second point
+					\`\`\`ts
+					const bar = ['a', 'b', 'c'] as const;
+					//=> readonly ['a', 'b', 'c']
+					const baz = new Set(bar);
+					//=> Set<'a' | 'b' | 'c'>
+					\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Multiple `//=>`
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {
+				// 	readonly a: 'a';
+				// 	readonly b: 'b';
+				// }
+				const bar = ['a', 'b', 'c'] as const;
+				//=> readonly [
+				// 	'a', 
+				// 	'b', 
+				// 	'c'
+				// ]
+				const baz = new Set(bar);
+				//=> Set<
+				// 	| 'a'
+				// 	| 'b'
+				// 	| 'c'
+				// >
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', endLine: 7, textBeforeEnd: '// }'}),
+				incorrectTwoslashFormatErrorAt({line: 9, textBeforeStart: '', endLine: 13, textBeforeEnd: '// ]'}),
+				incorrectTwoslashFormatErrorAt({line: 15, textBeforeStart: '', endLine: 19, textBeforeEnd: '// >'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {readonly a: 'a'; readonly b: 'b'}
+				const bar = ['a', 'b', 'c'] as const;
+				//=> readonly ['a', 'b', 'c']
+				const baz = new Set(bar);
+				//=> Set<'a' | 'b' | 'c'>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// === Twoslash type errors ===
 
+		// Incorrect type
 		{
 			code: dedenter`
 				/**
@@ -1316,6 +1441,41 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 				type T1 = Prettify<{a?: string; b?: number}>;
 				//=> {a?: string | undefined; b?: number | undefined}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Incorrect type and improper formatting
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {
+				// 	a: 'a';
+				// 	b: 'b';
+				// }
+
+				const bar = 'bar';
+				//=>"baz"
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 7, textBeforeEnd: '// }'}),
+				incorrectTwoslashTypeErrorAt({line: 10, textBeforeStart: '', target: '//=>"baz"'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 'a', b: 'b'} as const;
+				//=> {readonly a: 'a'; readonly b: 'b'}
+
+				const bar = 'bar';
+				//=> 'bar'
 				\`\`\`
 				*/
 				export type T0 = string;
