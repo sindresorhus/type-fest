@@ -335,6 +335,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 			continue;
 		}
 
+		let rawActualType = dedentedLine.slice(TWOSLASH_COMMENT.length);
 		let actualComment = dedentedLine;
 		let actualCommentEndLine = index;
 
@@ -345,6 +346,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 			}
 
 			actualComment += '\n' + dedentedNextLine;
+			rawActualType += '\n' + dedentedNextLine.slice(2); // Remove the `//` from start
 			actualCommentEndLine = i;
 		}
 
@@ -364,8 +366,6 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 		const quickInfo = getLeftmostQuickInfo(env, previousLine, previousLineOffset);
 
 		if (quickInfo?.displayParts) {
-			const rawActualType = actualComment.slice(TWOSLASH_COMMENT.length).replaceAll('\n//', '\n');
-
 			const expectedType = normalizeType(extractTypeFromQuickInfo(quickInfo));
 			const actualType = normalizeType(rawActualType);
 
