@@ -3,6 +3,7 @@ import type {ExcludeExactly} from '../index.d.ts';
 
 expectType<number>({} as ExcludeExactly<0 | 1 | number, '1'>);
 expectType<never>({} as ExcludeExactly<0 | 1 | number, number>);
+expectType<0>({} as ExcludeExactly<0, number>);
 expectType<string>({} as ExcludeExactly<'0' | '1' | string, '1'>);
 expectType<never>({} as ExcludeExactly<'0' | '1' | string, string>);
 
@@ -22,15 +23,13 @@ expectType<unknown[]>({} as ExcludeExactly<unknown[], number[]>);
 expectType<{a: unknown}>({} as ExcludeExactly<{a: unknown}, {a: number}>);
 expectType<unknown[]>({} as ExcludeExactly<number[] | unknown[], number[]>);
 
-// `unknown` and `any` exclude themselves.
+// `unknown` excludes `unknown`, `any` excludes `any`.
 expectType<never>({} as ExcludeExactly<unknown, unknown>);
-expectType<never>({} as ExcludeExactly<unknown, any>);
+expectType<unknown>({} as ExcludeExactly<unknown, any>);
 expectType<never>({} as ExcludeExactly<any, any>);
-expectType<never>({} as ExcludeExactly<any, unknown>);
-
-// `unknown` and `any` exclude other types.
-expectType<never>({} as ExcludeExactly<string | number, unknown>);
-expectType<never>({} as ExcludeExactly<string | number, any>);
+expectType<any>({} as ExcludeExactly<any, unknown>);
+expectType<string | number>({} as ExcludeExactly<string | number, unknown>);
+expectType<string | number>({} as ExcludeExactly<string | number, any>);
 
 // Union
 expectType<2>({} as ExcludeExactly<0 | 1 | 2, 0 | 1>);
