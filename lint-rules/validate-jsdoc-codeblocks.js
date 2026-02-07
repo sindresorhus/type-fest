@@ -306,7 +306,7 @@ function getCommentForType(type) {
 	return `${TWOSLASH_COMMENT} ${comment.replaceAll('\n', '\n// ')}`;
 }
 
-function reportTypeMismatch(messageId, context, {start, end}, data, fix) { // eslint-disable-line max-params
+function reportTypeMismatch({context, messageId, start, end, data, fix}) {
 	context.report({
 		loc: {
 			start: context.sourceCode.getLocFromIndex(start),
@@ -374,24 +374,26 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 				const expectedComment = getCommentForType(normalizeType(rawActualType, true));
 
 				if (actualComment !== expectedComment) {
-					reportTypeMismatch(
-						'incorrectTwoslashFormat',
+					reportTypeMismatch({
+						messageId: 'incorrectTwoslashFormat',
 						context,
-						{start, end},
-						{expectedComment, actualComment},
-						expectedComment.replaceAll('\n', `\n${indent}`),
-					);
+						start,
+						end,
+						data: {expectedComment, actualComment},
+						fix: expectedComment.replaceAll('\n', `\n${indent}`),
+					});
 				}
 			} else {
 				const expectedComment = getCommentForType(expectedType);
 
-				reportTypeMismatch(
-					'incorrectTwoslashType',
+				reportTypeMismatch({
+					messageId: 'incorrectTwoslashType',
 					context,
-					{start, end},
-					{expectedComment, actualComment},
-					expectedComment.replaceAll('\n', `\n${indent}`),
-				);
+					start,
+					end,
+					data: {expectedComment, actualComment},
+					fix: expectedComment.replaceAll('\n', `\n${indent}`),
+				});
 			}
 		}
 	}
