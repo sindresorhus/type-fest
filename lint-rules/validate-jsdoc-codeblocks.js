@@ -246,16 +246,18 @@ function normalizeType(type, onlySortNumbers = false) {
 		node = ts.visitEachChild(node, visit, undefined);
 
 		if (ts.isUnionTypeNode(node)) {
-			const types = node.types
-				.map(t => [print(t), t])
-				.sort(
-					([a], [b]) => isNumeric(a) && isNumeric(b)
-						? Number(a) - Number(b)
-						: (onlySortNumbers
-							? 0 // Numbers are sorted only wrt other numbers
-							: a.localeCompare(b)),
-				)
-				.map(t => t[1]);
+			let types = node.types.map(t => [print(t), t]);
+
+			if (onlySortNumbers) {
+				// Sort only numeric members while keeping non-numeric members at their original positions
+				const sortedNumericTypes = types.filter(([a]) => isNumeric(a)).sort(([a], [b]) => Number(a) - Number(b));
+				let numericIndex = 0;
+				types = types.map(t => isNumeric(t[0]) ? sortedNumericTypes[numericIndex++][1] : t[1]);
+			} else {
+				types = types
+					.sort(([a], [b]) => a < b ? -1 : (a > b ? 1 : 0))
+					.map(t => t[1]);
+			}
 
 			return ts.factory.updateUnionTypeNode(
 				node,

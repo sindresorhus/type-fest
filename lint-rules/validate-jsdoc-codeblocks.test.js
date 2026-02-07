@@ -1092,6 +1092,38 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// Incorrect order of numbers in unions
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type T1 = 5 | 4 | 3 | 2 | 1;
+				//=> 5 | 4 | 1 | 2 | 3
+
+				type T2 = 1 | 2 | 3 | 'a';
+				//=> 2 | 'a' | 3 | 1
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', target: '//=> 5 | 4 | 1 | 2 | 3'}),
+				incorrectTwoslashFormatErrorAt({line: 7, textBeforeStart: '', target: '//=> 2 | \'a\' | 3 | 1'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type T1 = 5 | 4 | 3 | 2 | 1;
+				//=> 1 | 2 | 3 | 4 | 5
+
+				type T2 = 1 | 2 | 3 | 'a';
+				//=> 1 | 'a' | 2 | 3
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// === Twoslash type errors ===
 
 		{
