@@ -1065,6 +1065,39 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// Incorrect multiline tuples
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				import type {TupleOf} from 'type-fest';
+
+				type RGB = TupleOf<3, number>;
+				//=> [
+				// 	number,
+				// 	number,
+				// 	number,
+				// ]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 6, textBeforeStart: '', endLine: 10, textBeforeEnd: '// ]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				import type {TupleOf} from 'type-fest';
+
+				type RGB = TupleOf<3, number>;
+				//=> [number, number, number]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// Multi line to single line
 		{
 			code: dedenter`
@@ -1294,6 +1327,39 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				\`\`\`ts
 				type Foo = string;
 				//=> string
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Broken type
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2};
+				//=> {a
+				
+				const bar = {a: 1, b: 2};
+				//=> {a: number
+				// 	b:
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> {a'}),
+				incorrectTwoslashTypeErrorAt({line: 7, textBeforeStart: '', endLine: 8, textBeforeEnd: '// 	b:'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				const foo = {a: 1, b: 2};
+				//=> {a: number; b: number}
+
+				const bar = {a: 1, b: 2};
+				//=> {a: number; b: number}
 				\`\`\`
 				*/
 				export type T0 = string;
