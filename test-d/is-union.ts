@@ -23,4 +23,5 @@ type TestUnion =
 	// `TestUnion` extends `{a: number; b: string}`.
 	| {opt?: number; a: number; b: string}
 	| {a: number; b: string};
+
 expectType<IsUnion<TestUnion>>(true);
