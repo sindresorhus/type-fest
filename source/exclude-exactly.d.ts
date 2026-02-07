@@ -1,7 +1,7 @@
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {IfNotAnyOrNever, SimpleIsEqual} from './internal/type.d.ts';
 
 /**
 A stricter version of `Exclude<T, U>` that ensures objects with different key modifiers are not considered identical.
@@ -65,11 +65,5 @@ type _ExcludeExactly<Union, Delete> =
 		// because `Union` cannot be `any` or `never` here.
 		Union, Union
 	>;
-
-type SimpleIsEqual<A, B> =
-	(<G>() => G extends A & G | G ? 1 : 2) extends
-	(<G>() => G extends B & G | G ? 1 : 2)
-		? true
-		: false;
 
 export {};

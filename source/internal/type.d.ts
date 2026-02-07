@@ -161,4 +161,28 @@ export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extend
 	? false
 	: true;
 
+/**
+A simple version of `IsEqual`.
+
+`SimpleIsEqual<never, unknown>` and `SimpleIsEqual<unknown, never>` return `true`, whereas `IsEqual` returns `false` correctly.
+
+`SimpleIsEqual` doesn't return `false` correctly for identical union/intersection arguments.
+
+@example
+```
+type UnionCase = SimpleIsEqual<{a: {b: 0} | {b: 0}}, {a: {b: 0}}>;
+//=> false
+
+type IntersectionCase = SimpleIsEqual<{a: {b: 0} & {b: 0}}, {a: {b: 0}}>;
+//=> false
+```
+
+`SimpleIsEqual` fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/internal/simple-is-equal.ts`.
+*/
+export type SimpleIsEqual<A, B> =
+	(<G>() => G extends A & G | G ? 1 : 2) extends
+	(<G>() => G extends B & G | G ? 1 : 2)
+		? true
+		: false;
+
 export {};
