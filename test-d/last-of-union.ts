@@ -35,13 +35,9 @@ type ExcludeExactly<UnionU, DeleteT> =
 		: never;
 
 type _ExcludeExactly<UnionU, DeleteT> =
-	true extends IsAny<DeleteT>
-		? never
-		: true extends IsUnknown<DeleteT>
-			? never
-			: UnionU extends unknown // Only for union distribution.
-				? MatchOrNever<UnionU, DeleteT>
-				: never;
+	UnionU extends unknown // Only for union distribution.
+		? MatchOrNever<UnionU, DeleteT>
+		: never;
 
 type DifferentModifierUnion = {readonly a: 0} | {a: 0};
 expectType<DifferentModifierUnion>({} as UnionToTuple<DifferentModifierUnion>[number]);
