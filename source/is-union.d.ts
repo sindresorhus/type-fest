@@ -1,4 +1,5 @@
 import type {IsNever} from './is-never.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Returns a boolean for whether the given type is a union.
@@ -14,7 +15,7 @@ type B = IsUnion<string>;
 //=> false
 ```
 */
-export type IsUnion<T> = InternalIsUnion<T>;
+export type IsUnion<T> = InternalIsUnion<T, T>;
 
 /**
 The actual implementation of `IsUnion`.
@@ -24,7 +25,7 @@ type InternalIsUnion<T, U = T> =
 	IsNever<T> extends true
 		? false
 		: T extends any
-			? [U] extends [T]
+			? true extends IsEqual<[U], [T]>
 				? false
 				: true
 			: never
