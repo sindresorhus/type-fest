@@ -84,7 +84,8 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		fixable: 'code',
 		messages: {
 			invalidCodeblock: '{{errorMessage}}',
-			typeMismatch: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
+			incorrectTwoslashType: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
+			incorrectTwoslashFormat: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
 		},
 		schema: [],
 	},
@@ -303,13 +304,13 @@ function getCommentForType(type) {
 	return `${TWOSLASH_COMMENT} ${comment.replaceAll('\n', '\n// ')}`;
 }
 
-function reportTypeMismatch(context, {start, end}, data, fix) {
+function reportTypeMismatch(messageId, context, {start, end}, data, fix) { // eslint-disable-line max-params
 	context.report({
 		loc: {
 			start: context.sourceCode.getLocFromIndex(start),
 			end: context.sourceCode.getLocFromIndex(end),
 		},
-		messageId: 'typeMismatch',
+		messageId,
 		data,
 		fix(fixer) {
 			return fixer.replaceTextRange([start, end], fix);
@@ -361,7 +362,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 		const quickInfo = getLeftmostQuickInfo(env, previousLine, previousLineOffset);
 
 		if (quickInfo?.displayParts) {
-			const rawActualType = actualComment.slice(TWOSLASH_COMMENT.length).replaceAll('\n// ', '\n');
+			const rawActualType = actualComment.slice(TWOSLASH_COMMENT.length).replaceAll('\n//', '\n');
 
 			const expectedType = normalizeType(extractTypeFromQuickInfo(quickInfo));
 			const actualType = normalizeType(rawActualType);
@@ -372,6 +373,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 
 				if (actualComment !== expectedComment) {
 					reportTypeMismatch(
+						'incorrectTwoslashFormat',
 						context,
 						{start, end},
 						{expectedComment, actualComment},
@@ -382,6 +384,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 				const expectedComment = getCommentForType(expectedType);
 
 				reportTypeMismatch(
+					'incorrectTwoslashType',
 					context,
 					{start, end},
 					{expectedComment, actualComment},
