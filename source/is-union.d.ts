@@ -15,7 +15,7 @@ type B = IsUnion<string>;
 //=> false
 ```
 */
-export type IsUnion<T> = InternalIsUnion<T, T>;
+export type IsUnion<T> = InternalIsUnion<T>;
 
 /**
 The actual implementation of `IsUnion`.
