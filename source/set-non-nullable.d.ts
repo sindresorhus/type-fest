@@ -16,18 +16,14 @@ type Foo = {
 };
 
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
-// type SomeNonNullable = {
+//=> {
 // 	a: number | null;
-// 	b: string; // Can no longer be undefined.
-// 	c?: boolean; // Can no longer be null, but is still optional.
+// 	b: string;
+// 	c?: NonNullable<boolean | null | undefined>;
 // }
 
 type AllNonNullable = SetNonNullable<Foo>;
-// type AllNonNullable = {
-// 	a: number; // Can no longer be null.
-// 	b: string; // Can no longer be undefined.
-// 	c?: boolean; // Can no longer be null, but is still optional.
-// }
+//=> {a: number; b: string; c?: NonNullable<boolean | null | undefined>}
 ```
 
 @category Object

@@ -37,11 +37,7 @@ writableFoo.b[0] = 'new value'; // Will still fail as the value of property "b" 
 writableFoo.b = ['something']; // Will work as the "b" property itself is no longer readonly.
 
 type SomeWritable = Writable<Foo, 'b' | 'c'>;
-// type SomeWritable = {
-// 	readonly a: number;
-// 	b: readonly string[]; // It's now writable. The type of the property remains unaffected.
-// 	c: boolean; // It's now writable.
-// }
+//=> {readonly a: number; b: readonly string[]; c: boolean}
 
 // Also supports array
 const readonlyArray: readonly number[] = [1, 2, 3];
