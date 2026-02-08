@@ -49,7 +49,7 @@ expectAssignable<PackageJson.DevEngineDependency>({
 	version: '>= 1.0.0',
 	onFail: 'ignore',
 });
-expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
+expectAssignable<{[EngineName in LiteralUnion<'npm' | 'node', string>]?: string} | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
 	| undefined
