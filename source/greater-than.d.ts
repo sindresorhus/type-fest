@@ -36,6 +36,22 @@ type B = GreaterThan<1, number>;
 type C = GreaterThan<number, number>;
 //=> boolean
 ```
+
+@example
+```
+import type {GreaterThan} from 'type-fest';
+
+// Use `GreaterThan` to constrain a function parameter to positive numbers.
+declare function setPositive<N extends number>(value: GreaterThan<N, 0> extends true ? N : never): void;
+
+setPositive(1);
+
+// @ts-expect-error
+setPositive(-1);
+
+// @ts-expect-error
+setPositive(0);
+```
 */
 export type GreaterThan<A extends number, B extends number> =
 	A extends number // For distributing `A`
