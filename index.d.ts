@@ -50,6 +50,7 @@ export type {SetReadonly} from './source/set-readonly.d.ts';
 export type {SetRequired} from './source/set-required.d.ts';
 export type {SetRequiredDeep} from './source/set-required-deep.d.ts';
 export type {SetNonNullable} from './source/set-non-nullable.d.ts';
+export type {SetNullable} from './source/set-nullable.d.ts';
 export type {SetNonNullableDeep} from './source/set-non-nullable-deep.d.ts';
 export type {ValueOf} from './source/value-of.d.ts';
 export type {AsyncReturnType} from './source/async-return-type.d.ts';
