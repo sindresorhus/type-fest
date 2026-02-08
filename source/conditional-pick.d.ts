@@ -1,4 +1,5 @@
 import type {ConditionalKeys} from './conditional-keys.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Pick keys from the shape that matches the given `Condition`.
@@ -38,9 +39,8 @@ type StringKeysOnly = ConditionalPick<Example, string>;
 
 @category Object
 */
-export type ConditionalPick<Base, Condition> = Pick<
-	Base,
-	ConditionalKeys<Base, Condition>
->;
+export type ConditionalPick<Base, Condition> = IsNever<ConditionalKeys<Base, Condition>> extends true
+	? never
+	: Pick<Base, ConditionalKeys<Base, Condition>>;
 
 export {};

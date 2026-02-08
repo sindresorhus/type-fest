@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectNever, expectType} from 'tsd';
 import type {ConditionalPick, Primitive} from '../index.d.ts';
 
 class Awesome {
@@ -26,3 +26,10 @@ expectType<{name: string; successes: number; failures: bigint}>(awesomeCondition
 
 declare const exampleConditionalPickWithUndefined: ConditionalPick<Example, string | undefined>;
 expectType<{a: string; c?: string}>(exampleConditionalPickWithUndefined);
+
+// Returns `never` when no keys match the condition
+declare const noMatchingKeys: ConditionalPick<Example, number>;
+expectNever(noMatchingKeys);
+
+declare const noMatchingKeysBoolean: ConditionalPick<{a: string; b: number}, boolean>;
+expectNever(noMatchingKeysBoolean);
