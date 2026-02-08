@@ -184,6 +184,7 @@ Click the type names for complete docs.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is true.
 - [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
+- [`EmptyArray`](source/empty-array.d.ts) - Represents a strictly empty array, the `[]` value.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
 - [`FindGlobalType`](source/find-global-type.d.ts) - Tries to find the type of a global with the given name.
@@ -203,6 +204,7 @@ Click the type names for complete docs.
 - [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`.
 - [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`.
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
+- [`IsEmptyArray`](source/empty-array.d.ts) - Returns a boolean for whether the given array type is an empty array (`[]`).
 - [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
 - [`IsUndefined`](source/is-undefined.d.ts) - Returns a boolean for whether the given type is `undefined`.
