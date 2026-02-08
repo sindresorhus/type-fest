@@ -1,5 +1,5 @@
-import type {LiteralUnion} from './literal-union.d.ts';
 import type {JsonObject, JsonValue} from './json-value.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 
 export namespace PackageJson {
 	/**
@@ -526,7 +526,7 @@ export namespace PackageJson {
 		Engines that this package runs on.
 		*/
 		engines?: {
-			[EngineName in 'npm' | 'node' | string]?: string;
+			[EngineName in LiteralUnion<'npm' | 'node', string>]?: string;
 		};
 
 		/**
