@@ -1,5 +1,5 @@
-import {expectAssignable} from 'tsd';
-import type {Entries} from '../index.d.ts';
+import {expectAssignable, expectType} from 'tsd';
+import type {Entries, ObjectEntries, ObjectEntry} from '../index.d.ts';
 import type {Entry} from '../source/entry.d.ts';
 
 // Objects
@@ -49,3 +49,26 @@ const setEntries: Entries<typeof setExample> = [
 	setEntryNumber,
 ];
 expectAssignable<Array<[(string | number), (string | number)]>>(setEntries);
+
+// ObjectEntry
+type Example = {
+	a: number;
+	b: string;
+};
+
+declare const exampleObjectEntry: ObjectEntry<Example>;
+expectType<['a' | 'b', string | number]>(exampleObjectEntry);
+
+// ObjectEntries
+declare const exampleObjectEntries: ObjectEntries<Example>;
+expectType<Array<['a' | 'b', string | number]>>(exampleObjectEntries);
+
+// ObjectEntry and ObjectEntries preserve type information with generic type parameters
+declare function getEntries<T extends Record<string, unknown>>(object: T): ObjectEntries<T>;
+declare function getEntry<T extends Record<string, unknown>>(object: T): ObjectEntry<T>;
+
+declare const genericEntries: ReturnType<typeof getEntries<Example>>;
+expectType<Array<['a' | 'b', string | number]>>(genericEntries);
+
+declare const genericEntry: ReturnType<typeof getEntry<Example>>;
+expectType<['a' | 'b', string | number]>(genericEntry);
