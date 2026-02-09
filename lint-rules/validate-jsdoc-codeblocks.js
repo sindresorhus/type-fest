@@ -189,7 +189,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 
 function getLeftmostQuickInfo(env, line, lineOffset) {
 	for (let i = 0; i < line.length; i++) {
-		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i, undefined, 10);
+		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i, undefined, Infinity);
 		if (quickInfo?.displayParts) {
 			return quickInfo;
 		}
