@@ -48,11 +48,16 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 //=> ['dog', 'cat', 'snake']
 ```
 
+@see UnionToEnum
 @category Array
 */
-export type UnionToTuple<T, L = LastOfUnion<T>> =
-IsNever<T> extends false
-	? [...UnionToTuple<Exclude<T, L>>, L]
-	: [];
+export type UnionToTuple<T> =
+	_UnionToTuple<T> extends infer Result extends T[]
+		? Result
+		: never;
+
+type _UnionToTuple<T, L = LastOfUnion<T>> =
+	IsNever<T> extends true ? []
+		: [..._UnionToTuple<Exclude<T, L>>, L];
 
 export {};
