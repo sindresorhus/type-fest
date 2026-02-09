@@ -145,7 +145,7 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 		// If `ArrayIndex` is equal to `number`
 		? number extends ArrayIndex
 			? Array<OmitDeepWithOnePath<NonNullable<ArrayType[number]>, SubPath>>
-			// If `ArrayIndex` is a number literal
+			// If `ArrayIndex` is a number literal and out-of-bounds, returns the original type.
 			: [true, false] extends [IsTuple<ArrayType>, IsValidIndex<ArrayType, ArrayIndex>]
 				? ArrayType
 				: ArraySplice<ArrayType, ArrayIndex, 1, [OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>]>
@@ -154,7 +154,7 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 			// If `ArrayIndex` is `number`
 			? number extends ArrayIndex
 				? []
-				// If `ArrayIndex` is a number literal
+				// If `ArrayIndex` is a number literal and out-of-bounds, returns the original type.
 				: [true, false] extends [IsTuple<ArrayType>, IsValidIndex<ArrayType, ArrayIndex>]
 					? ArrayType
 					: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
