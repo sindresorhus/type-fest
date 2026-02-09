@@ -20,12 +20,28 @@ type B = GreaterThan<1, 1>;
 type C = GreaterThan<1, 5>;
 //=> false
 ```
+
+Note: If either argument is the non-literal `number` type, the result is `boolean`.
+
+@example
+```
+import type {GreaterThan} from 'type-fest';
+
+type A = GreaterThan<number, 1>;
+//=> boolean
+
+type B = GreaterThan<1, number>;
+//=> boolean
+
+type C = GreaterThan<number, number>;
+//=> boolean
+```
 */
 export type GreaterThan<A extends number, B extends number> =
 	A extends number // For distributing `A`
 		? B extends number // For distributing `B`
 			? number extends A | B
-				? never
+				? boolean
 				: [
 					IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
 					IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
