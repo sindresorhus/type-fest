@@ -1,4 +1,4 @@
-import {expectNever, expectType} from 'tsd';
+import {expectType} from 'tsd';
 import type {ConditionalPickDeep} from '../index.d.ts';
 
 declare class ClassA {
@@ -102,11 +102,11 @@ declare const emptyPick: ConditionalPickDeep<Example, 'abcdefg'>;
 expectType<{never: never}>(emptyPick);
 
 declare const emptyEqualityPick: ConditionalPickDeep<Example, 'abcdefg', {condition: 'equality'}>;
-expectNever(emptyEqualityPick);
+expectType<never>(emptyEqualityPick);
 
 // Returns `never` when no keys match the condition
 declare const noMatchingKeys: ConditionalPickDeep<{a: string; b: number}, boolean>;
-expectNever(noMatchingKeys);
+expectType<never>(noMatchingKeys);
 
 declare const stringOrBooleanPick: ConditionalPickDeep<Example, string | boolean>;
 expectType<{
