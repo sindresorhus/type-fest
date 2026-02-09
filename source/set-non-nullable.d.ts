@@ -16,21 +16,17 @@ type Foo = {
 };
 
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
-//=> {
-// 	a: number | null;
-// 	b: string;
-// 	c?: NonNullable<boolean | null | undefined>;
-// }
+//=> {a: null | number; b: string; c?: boolean}
 
 type AllNonNullable = SetNonNullable<Foo>;
-//=> {a: number; b: string; c?: NonNullable<boolean | null | undefined>}
+//=> {a: number; b: string; c?: boolean}
 ```
 
 @category Object
 */
 export type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
 	[Key in keyof BaseType]: Key extends Keys
-		? NonNullable<BaseType[Key]>
+		? BaseType[Key] & {} // `& {}` is used instead of `NonNullable<BaseType[Key]>` because `NonNullable` doesn't get simplified.
 		: BaseType[Key];
 };
 
