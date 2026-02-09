@@ -15,19 +15,11 @@ type Foo = {
 	c?: boolean;
 };
 
-type SomeNullable = SetNullable<Foo, 'a' | 'c'>;
-// type SomeNullable = {
-// 	a: number | null;
-// 	b: string;
-// 	c?: boolean | null;
-// }
+type SomeNullable = SetNullable<Foo, 'a' | 'c'>; // Optionality is preserved for `c`
+//=> {a: number | null; b: string; c?: boolean | null}
 
 type AllNullable = SetNullable<Foo>;
-// type AllNullable = {
-// 	a: number | null;
-// 	b: string | null;
-// 	c?: boolean | null;
-// }
+//=> {a: number | null; b: string | null; c?: boolean | null}
 ```
 
 @see {@link SetNonNullable}
