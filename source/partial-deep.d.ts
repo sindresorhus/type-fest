@@ -1,4 +1,5 @@
 import type {ApplyDefaultOptions, BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
+import type {Simplify} from './simplify.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -148,8 +149,8 @@ type PartialReadonlySetDeep<T, Options extends Required<PartialDeepOptions>> = {
 /**
 Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.
 */
-type PartialObjectDeep<ObjectType extends object, Options extends Required<PartialDeepOptions>> = {
+type PartialObjectDeep<ObjectType extends object, Options extends Required<PartialDeepOptions>> = Simplify<{
 	[KeyType in keyof ObjectType]?: _PartialDeep<ObjectType[KeyType], Options>
-};
+}>;
 
 export {};
