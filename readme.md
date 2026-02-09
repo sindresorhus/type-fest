@@ -1034,6 +1034,12 @@ There are many advanced types most users don't know about.
 
 You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/utility-types.html).
 
+## Used by
+
+[![Used by](https://api.usedby.dev/npm/type-fest?max=30&sort=stars)](https://github.com/sindresorhus/type-fest/network/dependents)
+
+Generated with [usedby.dev](https://usedby.dev/)
+
 ## Maintainers
 
 - [Sindre Sorhus](https://github.com/sindresorhus)
