@@ -16,9 +16,28 @@ type B = LessThanOrEqual<1, 1>;
 type C = LessThanOrEqual<1, 5>;
 //=> true
 ```
+
+Note: If either argument is the non-literal `number` type, the result is `boolean`.
+
+@example
+```
+import type {LessThanOrEqual} from 'type-fest';
+
+type A = LessThanOrEqual<number, 1>;
+//=> boolean
+
+type B = LessThanOrEqual<1, number>;
+//=> boolean
+
+type C = LessThanOrEqual<number, number>;
+//=> boolean
+```
 */
-export type LessThanOrEqual<A extends number, B extends number> = number extends A | B
-	? never
-	: GreaterThan<A, B> extends true ? false : true;
+export type LessThanOrEqual<A extends number, B extends number> =
+	GreaterThan<A, B> extends infer Result
+		? Result extends true
+			? false
+			: true
+		: never; // Should never happen
 
 export {};
