@@ -15,6 +15,7 @@ type Foo = {
 	c?: boolean | null;
 };
 
+// Note: In the following example, `c` can no longer be `null`, but it's still optional.
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
 //=> {a: null | number; b: string; c?: boolean}
 
