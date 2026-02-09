@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OmitDeep} from '../index.d.ts';
+import type {OmitDeep, IsEqual} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -141,3 +141,10 @@ expectType<{array: Array<{c: string}>}>(arrayWithMultiplePaths);
 
 declare const tupleWithMultiplePaths: OmitDeep<{tuple: [{a: string; b: number; c: string}]}, 'tuple.0.a' | 'tuple.0.b'>;
 expectType<{tuple: [{c: string}]}>(tupleWithMultiplePaths);
+
+// Returns the original type unchanged if the specified path does not exist.
+type TupleInObject = {obj: {a: [0, 1]; b: {bb: {bbb: 10}}; c: boolean}};
+expectType<TupleInObject>({} as OmitDeep<TupleInObject, 'obj.b.bb.zzz' | `obj.a.${2}` | 'c.c'>);
+
+type ObjectInTuple = {obj: {a: [0, 1, {bb: {bbb: 10}}]; c: [0, 1, ['20', '22']]}};
+expectType<ObjectInTuple>({} as OmitDeep<ObjectInTuple, 'obj.a.3.3' | 'obj.c.2.9'>);
