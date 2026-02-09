@@ -31,5 +31,5 @@ expectType<{a: string; c?: string}>(exampleConditionalPickWithUndefined);
 declare const noMatchingKeys: ConditionalPick<Example, number>;
 expectType<never>(noMatchingKeys);
 
-declare const noMatchingKeysBoolean: ConditionalPick<{a: string; b: number}, boolean>;
-expectType<never>(noMatchingKeysBoolean);
+declare const noMatchingKeys2: ConditionalPick<{a: string; b: number}, boolean>;
+expectType<never>(noMatchingKeys2);
