@@ -11,3 +11,5 @@ expectType<Options1[number]>({} as (1 | 2 | 3));
 
 type Options2 = UnionToTuple<boolean | 1>;
 expectType<Options2[number]>({} as (1 | false | true));
+
+expectType<[]>({} as UnionToTuple<never>);
