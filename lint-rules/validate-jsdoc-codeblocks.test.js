@@ -898,9 +898,11 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Constructor
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			class Foo {
+				bar: string;
+
 				constructor() {
-					//=> Foo
-					console.log('Foo');
+					//=> {bar: string}
+					this.bar = 'bar';
 				}
 			}
 		`))),
