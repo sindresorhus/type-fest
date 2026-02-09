@@ -39,8 +39,10 @@ type StringKeysOnly = ConditionalPick<Example, string>;
 
 @category Object
 */
-export type ConditionalPick<Base, Condition> = IsNever<ConditionalKeys<Base, Condition>> extends true
-	? never
-	: Pick<Base, ConditionalKeys<Base, Condition>>;
+export type ConditionalPick<Base, Condition> = ConditionalKeys<Base, Condition> extends infer Keys
+	? IsNever<Keys> extends true
+		? never
+		: Pick<Base, Keys & keyof Base>
+	: never;
 
 export {};
