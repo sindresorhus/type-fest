@@ -1,4 +1,5 @@
 import type {IsNever} from './is-never.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 
 /**
@@ -50,9 +51,14 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 
 @category Array
 */
-export type UnionToTuple<T, L = LastOfUnion<T>> =
-IsNever<T> extends false
-	? [...UnionToTuple<Exclude<T, L>>, L]
-	: [];
+export type UnionToTuple<T> =
+	_UnionToTuple<T> extends infer Result extends UnknownArray
+		? Result
+		: never;
+
+type _UnionToTuple<T, L = LastOfUnion<T>> =
+	IsNever<T> extends false
+		? [...UnionToTuple<Exclude<T, L>>, L]
+		: [];
 
 export {};
