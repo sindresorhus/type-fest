@@ -15,26 +15,19 @@ type Foo = {
 	c?: boolean | null;
 };
 
+// Note: In the following example, `c` can no longer be `null`, but it's still optional.
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
-// type SomeNonNullable = {
-// 	a: number | null;
-// 	b: string; // Can no longer be undefined.
-// 	c?: boolean; // Can no longer be null, but is still optional.
-// }
+//=> {a: null | number; b: string; c?: boolean}
 
 type AllNonNullable = SetNonNullable<Foo>;
-// type AllNonNullable = {
-// 	a: number; // Can no longer be null.
-// 	b: string; // Can no longer be undefined.
-// 	c?: boolean; // Can no longer be null, but is still optional.
-// }
+//=> {a: number; b: string; c?: boolean}
 ```
 
 @category Object
 */
 export type SetNonNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
 	[Key in keyof BaseType]: Key extends Keys
-		? NonNullable<BaseType[Key]>
+		? BaseType[Key] & {} // `& {}` is used instead of `NonNullable<BaseType[Key]>` because `NonNullable` doesn't get simplified.
 		: BaseType[Key];
 };
 
