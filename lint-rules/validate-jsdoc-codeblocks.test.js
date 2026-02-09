@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import {code1, code2, createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
@@ -828,6 +829,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> '🦄' | '🐶' | '🐇'
 		`))),
 
+		// Types are simplified
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Test = {foo: Pick<{bar: string}, 'bar'>};
+			//=> {foo: {bar: string}}
+		`))),
+
 		// === Different types of quick info ===
 		// Function
 		exportTypeAndOption(jsdoc(fence(dedenter`
@@ -898,9 +905,11 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		// Constructor
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			class Foo {
+				bar: string;
+
 				constructor() {
-					//=> Foo
-					console.log('Foo');
+					//=> {bar: string}
+					this.bar = 'bar';
 				}
 			}
 		`))),
@@ -1639,6 +1648,31 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				//=> readonly ['a', 'b', 'c']
 				const baz = new Set(bar);
 				//=> Set<'a' | 'b' | 'c'>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Not simplified
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: string}, 'bar'>};
+				//=> {foo: Pick<{bar: string}, 'bar'>}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> {foo: Pick<{bar: string}, \'bar\'>}'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: string}, 'bar'>};
+				//=> {foo: {bar: string}}
 				\`\`\`
 				*/
 				export type T0 = string;
