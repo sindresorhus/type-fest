@@ -148,3 +148,12 @@ expectType<TupleInObject>({} as OmitDeep<TupleInObject, 'obj.b.bb.zzz' | `obj.a.
 
 type ObjectInTuple = {obj: {a: [0, 1, {bb: {bbb: 10}}]; c: [0, 1, ['20', '22']]}};
 expectType<ObjectInTuple>({} as OmitDeep<ObjectInTuple, 'obj.a.3.3' | 'obj.c.2.9'>);
+
+declare const tupleNegativeIndex: OmitDeep<{tuple: ['a', 'b']}, 'tuple.-1'>;
+expectType<{tuple: ['a', 'b']}>(tupleNegativeIndex);
+
+declare const tupleNegativeNestedIndex: OmitDeep<{tuple: [{x: 1}]}, 'tuple.-1.x'>;
+expectType<{tuple: [{x: 1}]}>(tupleNegativeNestedIndex);
+
+declare const tupleMixedValidAndNegativeIndex: OmitDeep<{tuple: [{x: 1; y: 2}]}, 'tuple.0.x' | 'tuple.-1.y'>;
+expectType<{tuple: [{y: 2}]}>(tupleMixedValidAndNegativeIndex);
