@@ -12,7 +12,7 @@ Use-cases:
 - Analyze all possible function signatures in type-level code
 - Extract event handler signatures from framework APIs
 
-Known limitions:
+Known limitations:
 - Functions that have identical parameters but different `this` types or return types will only extract one overload (the last one)
 - Generic type parameters are lost and inferred as `unknown`
 
