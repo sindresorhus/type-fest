@@ -11,7 +11,6 @@ expectType<LessThanOrEqual<10, -2>>(false);
 expectType<LessThanOrEqual<2, 2>>(true);
 expectType<LessThanOrEqual<-2, -2>>(true);
 expectType<LessThanOrEqual<-2, -3>>(false);
-expectType<LessThanOrEqual<-2, number>>(never);
 expectType<LessThanOrEqual<PositiveInfinity, -999>>(false);
 expectType<LessThanOrEqual<PositiveInfinity, 999>>(false);
 expectType<LessThanOrEqual<999, PositiveInfinity>>(true);
@@ -20,3 +19,8 @@ expectType<LessThanOrEqual<-999, NegativeInfinity>>(false);
 expectType<LessThanOrEqual<PositiveInfinity, PositiveInfinity>>(true);
 expectType<LessThanOrEqual<NegativeInfinity, NegativeInfinity>>(true);
 expectType<LessThanOrEqual<PositiveInfinity, NegativeInfinity>>(false);
+
+// Non-literal `number`
+expectType<LessThanOrEqual<number, number>>({} as boolean);
+expectType<LessThanOrEqual<number, 1>>({} as boolean);
+expectType<LessThanOrEqual<1, number>>({} as boolean);

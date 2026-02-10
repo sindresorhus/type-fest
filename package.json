@@ -1,6 +1,6 @@
 {
 	"name": "type-fest",
-	"version": "5.4.1",
+	"version": "5.4.4",
 	"description": "A collection of essential TypeScript types",
 	"license": "(MIT OR CC0-1.0)",
 	"repository": "sindresorhus/type-fest",
@@ -27,7 +27,7 @@
 	"scripts": {
 		"test:tsc": "node --max-old-space-size=6144 ./node_modules/.bin/tsc",
 		"test:tsd": "node --max-old-space-size=6144 ./node_modules/.bin/tsd",
-		"test:xo": "node --max-old-space-size=6144 ./node_modules/.bin/xo",
+		"test:xo": "node --max-old-space-size=6144 ./node_modules/.bin/xo --ignores=lint-processors/fixtures/**/*.d.ts",
 		"test:linter": "node --test",
 		"test": "run-p test:*"
 	},

@@ -16,3 +16,12 @@ expectType<IsUnion<'foo' | 'bar'>>(true);
 expectType<IsUnion<'foo' | 'bar' | 1>>(true);
 expectType<IsUnion<'foo' | 1>>(true);
 expectType<IsUnion<[] | {}>>(true);
+
+type TestUnion =
+	// Here, the entire union extends both the individual members:
+	// So, `TestUnion` extends `{opt?: number; a: number; b: string}`, and
+	// `TestUnion` extends `{a: number; b: string}`.
+	| {opt?: number; a: number; b: string}
+	| {a: number; b: string};
+
+expectType<IsUnion<TestUnion>>(true);

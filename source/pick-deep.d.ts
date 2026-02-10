@@ -5,6 +5,7 @@ import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
 
 /**
 Pick properties from a deeply-nested object.
@@ -36,24 +37,15 @@ type Configuration = {
 };
 
 type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
-// type NameConfig = {
-// 	userConfig: {
-// 		name: string;
-// 	}
-// };
+//=> {userConfig: {name: string}}
 
 // Supports optional properties
 type User = PickDeep<PartialDeep<Configuration>, 'userConfig.name' | 'userConfig.age'>;
-// type User = {
-// 	userConfig?: {
-// 		name?: string;
-// 		age?: number;
-// 	};
-// };
+//=> {userConfig?: {name?: string; age?: number}}
 
 // Supports array
 type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
-// type AddressConfig = {
+//=> {
 // 	userConfig: {
 // 		address: [{
 // 			city1: string;
@@ -64,14 +56,7 @@ type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
 
 // Supports recurse into array
 type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
-// type Street = {
-// 	userConfig: {
-// 		address: [
-// 			unknown,
-// 			{street2: string}
-// 		];
-// 	};
-// }
+//=> {userConfig: {address: [unknown, {street2: string}]}}
 ```
 
 @category Object
@@ -86,7 +71,7 @@ export type PickDeep<T, PathUnion extends Paths<T>> =
 			}[PathUnion]
 			>
 			: T extends object
-				? Simplify<UnionToIntersection<{
+				? SimplifyDeep<UnionToIntersection<{
 					[P in PathUnion]: InternalPickDeep<T, P>;
 				}[PathUnion]>>
 				: never;
