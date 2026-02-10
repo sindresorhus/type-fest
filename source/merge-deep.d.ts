@@ -79,11 +79,16 @@ Pick the rest type.
 
 @example
 ```
-type Rest1 = PickRestType<[]>; // => []
-type Rest2 = PickRestType<[string]>; // => []
-type Rest3 = PickRestType<[...number[]]>; // => number[]
-type Rest4 = PickRestType<[string, ...number[]]>; // => number[]
-type Rest5 = PickRestType<string[]>; // => string[]
+type Rest1 = PickRestType<[]>;
+//=> []
+type Rest2 = PickRestType<[string]>;
+//=> []
+type Rest3 = PickRestType<[...number[]]>;
+//=> number[]
+type Rest4 = PickRestType<[string, ...number[]]>;
+//=> number[]
+type Rest5 = PickRestType<string[]>;
+//=> string[]
 ```
 */
 type PickRestType<Type extends UnknownArrayOrTuple> = number extends Type['length']
@@ -104,12 +109,18 @@ Omit the rest type.
 
 @example
 ```
-type Tuple1 = OmitRestType<[]>; // => []
-type Tuple2 = OmitRestType<[string]>; // => [string]
-type Tuple3 = OmitRestType<[...number[]]>; // => []
-type Tuple4 = OmitRestType<[string, ...number[]]>; // => [string]
-type Tuple5 = OmitRestType<[string, boolean[], ...number[]]>; // => [string, boolean[]]
-type Tuple6 = OmitRestType<string[]>; // => []
+type Tuple1 = OmitRestType<[]>;
+//=> []
+type Tuple2 = OmitRestType<[string]>;
+//=> [string]
+type Tuple3 = OmitRestType<[...number[]]>;
+//=> []
+type Tuple4 = OmitRestType<[string, ...number[]]>;
+//=> [string]
+type Tuple5 = OmitRestType<[string, boolean[], ...number[]]>;
+//=> [string, boolean[]]
+type Tuple6 = OmitRestType<string[]>;
+//=> []
 ```
 */
 type OmitRestType<Type extends UnknownArrayOrTuple, Result extends UnknownArrayOrTuple = []> = number extends Type['length']
@@ -415,7 +426,7 @@ type Bar = {
 };
 
 type FooBar1 = MergeDeep<Foo, Bar>;
-// {
+// => {
 // 	life: number;
 // 	name: string;
 // 	items: number[];
@@ -423,7 +434,7 @@ type FooBar1 = MergeDeep<Foo, Bar>;
 // }
 
 type FooBar2 = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
-// {
+// => {
 // 	life: number;
 // 	name: string;
 // 	items: (string | number)[];
@@ -436,16 +447,20 @@ type FooBar2 = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
 import type {MergeDeep} from 'type-fest';
 
 // Merge two arrays
-type ArrayMerge = MergeDeep<string[], number[]>; // => (string | number)[]
+type ArrayMerge = MergeDeep<string[], number[]>;
+//=> (string | number)[]
 
 // Merge two tuples
-type TupleMerge = MergeDeep<[1, 2, 3], ['a', 'b']>; // => (1 | 2 | 3 | 'a' | 'b')[]
+type TupleMerge = MergeDeep<[1, 2, 3], ['a', 'b']>;
+//=> (1 | 2 | 3 | 'a' | 'b')[]
 
 // Merge an array into a tuple
-type TupleArrayMerge = MergeDeep<[1, 2, 3], string[]>; // => (string | 1 | 2 | 3)[]
+type TupleArrayMerge = MergeDeep<[1, 2, 3], string[]>;
+//=> (string | 1 | 2 | 3)[]
 
 // Merge a tuple into an array
-type ArrayTupleMerge = MergeDeep<number[], ['a', 'b']>; // => (number | 'b' | 'a')[]
+type ArrayTupleMerge = MergeDeep<number[], ['a', 'b']>;
+//=> (number | 'b' | 'a')[]
 ```
 
 @example
