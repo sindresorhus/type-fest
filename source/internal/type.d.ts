@@ -3,7 +3,6 @@ import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {SimplifyDeep} from '../simplify-deep.d.ts';
 import type {UnionToTuple} from '../union-to-tuple.d.ts';
 
 /**
@@ -177,15 +176,31 @@ But union distribution also works as usual outside of objects.
 
 @example
 ```
-type UniqueUnionDeepTest = UniqueUnionDeep<{z: {a: {aa: 0} | {aa: 0}} | {a: {aa: 0} | {aa: 0}} | {b: 0}; x: '1'}>; // => {z: {a: {aa: 0}} | {b: 0}; x: '1'}
-type UniqueUnionDeepKeepDistributionTest = UniqueUnionDeep<{z: {a: 0} | {a: 0}; x: '1'} | {z: {a: 0} | {a: 0}; x: '2'}>; // => {z: {a: 0}; x: '1'} | {z: {a: 0}; x: '2'}
-```
+type UniqueUnionDeepTest = SimplifyDeep<UniqueUnionDeep<{z: {a: {aa: 0} | {aa: 0}} | {a: {aa: 0} | {aa: 0}} | {b: 0}; x: '1'}>>;
+//=> {z: {a: {aa: 0}} | {b: 0}; x: '1'}
 
-To remove delayed intersection, use `SimplifyDeep`.
-And use `SimplifyDeep<UniqueUnionDeep<A>>` if eliminating duplicated union and intersection.
+type UniqueUnionDeepKeepDistributionTest = SimplifyDeep<UniqueUnionDeep<{z: {a: 0} | {a: 0}; x: '1'} | {z: {a: 0} | {a: 0}; x: '2'}>>;
+//=> {z: {a: 0}; x: '1'} | {z: {a: 0}; x: '2'}
+
+type UniqueUnionDeepArguments = SimplifyDeep<UniqueUnionDeep<(a: {a: number} | {a: number}) => {b: number} | {b: number}>>;
+//=> (a: {a: number} | {a: number}) => {b: number} | {b: number}
+
+type UniqueUnionDeepArgumentsDeep = SimplifyDeep<UniqueUnionDeep<(a: {a: number} | {a: number}) => {b: {b: number} | {b: number}}>>;
+//=> (a: {a: number}) => {b: {b: number}}
+```
 */
-export type UniqueUnionDeep<U> = U extends object ? SimplifyDeep<_UniqueUnionDeep<U>> : U;
-type _UniqueUnionDeep<U extends object> = {[K in keyof U]: U[K] extends object ? UniqueUnion<_UniqueUnionDeep<U[K]>> : U[K]};
+export type UniqueUnionDeep<U> =
+	U extends Record<PropertyKey, unknown>
+		? _UniqueUnionDeep<U>
+		: U extends Lambda
+			? (...args: _UniqueUnionDeep<Parameters<U>>) => (UniqueUnion<_UniqueUnionDeep<ReturnType<U>>>)
+			: U;
+/**
+Wrapping this with `Simplify`, `test-d/exact.ts` fails in "Spec: recursive type with union".
+*/
+type _UniqueUnionDeep<U extends object> = {[K in keyof U]: UniqueUnion<UniqueUnionDeep<U[K]>>};
+
+type Lambda = ((...args: any[]) => any);
 
 /**
 The flat version of `UniqueUnionDeep`.

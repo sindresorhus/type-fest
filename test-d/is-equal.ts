@@ -42,6 +42,86 @@ expectType<true>({} as IsEqual<[string], [string]>);
 expectType<false>({} as IsEqual<[string], [string, number]>);
 expectType<false>({} as IsEqual<[0, 1] | [0, 2], [0, 2]>);
 
+// Lambda cases.
+type SpecificNumericLambda = (value: {a: 1}) => {b: 1};
+type SpecificNumericLambda1 = (value: {a: 2}) => {b: 1};
+type NumberLambda = (value: {a: number}) => {b: number};
+type AnyLambda = (value: {a: any}) => {b: any};
+type UnknownLambda = (value: {a: unknown}) => {b: unknown};
+type NeverLambda = (value: {a: never}) => {b: never};
+expectType<true>({} as IsEqual<SpecificNumericLambda, SpecificNumericLambda>);
+expectType<false>({} as IsEqual<SpecificNumericLambda, SpecificNumericLambda1>);
+expectType<false>({} as IsEqual<SpecificNumericLambda, NumberLambda>);
+expectType<false>({} as IsEqual<NumberLambda, SpecificNumericLambda>);
+expectType<true>({} as IsEqual<UnknownLambda, UnknownLambda>);
+expectType<true>({} as IsEqual<NeverLambda, NeverLambda>);
+expectType<false>({} as IsEqual<NeverLambda, UnknownLambda>);
+expectType<false>({} as IsEqual<UnknownLambda, NeverLambda>);
+expectType<false>({} as IsEqual<NeverLambda, AnyLambda>);
+expectType<false>({} as IsEqual<AnyLambda, NeverLambda>);
+expectType<true>({} as IsEqual<AnyLambda, AnyLambda>);
+expectType<false>({} as IsEqual<AnyLambda, NumberLambda>);
+expectType<false>({} as IsEqual<NumberLambda, AnyLambda>);
+
+// Lambda: Identical Union and Intersection cases.
+expectType<true>({} as IsEqual<SpecificNumericLambda & SpecificNumericLambda, SpecificNumericLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<SpecificNumericLambda | SpecificNumericLambda, SpecificNumericLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type NumberLambdaIntersection = (value: {a: number} & {a: number}) => {b: number}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type NumberLambdaUnion = (value: {a: number} | {a: number}) => {b: number}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type NumberLambdaReturnIntersection = (value: {a: number}) => {b: number} & {b: number}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type NumberLambdaReturnUnion = (value: {a: number}) => {b: number} | {b: number}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type NumberLambdaBothIntersection = (value: {a: number} & {a: number}) => {b: number} & {b: number}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+type NumberLambdaBothUnion = (value: {a: number} | {a: number}) => {b: number} | {b: number}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+expectType<true>({} as IsEqual<NumberLambdaIntersection, NumberLambda>);
+expectType<true>({} as IsEqual<NumberLambdaUnion, NumberLambda>);
+expectType<true>({} as IsEqual<NumberLambdaReturnIntersection, NumberLambda>);
+expectType<true>({} as IsEqual<NumberLambdaReturnUnion, NumberLambda>);
+expectType<true>({} as IsEqual<NumberLambdaBothIntersection, NumberLambda>);
+expectType<true>({} as IsEqual<NumberLambdaBothUnion, NumberLambda>);
+expectType<true>({} as IsEqual<AnyLambda & AnyLambda, AnyLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<AnyLambda | AnyLambda, AnyLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<NeverLambda & NeverLambda, NeverLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<NeverLambda | NeverLambda, NeverLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<UnknownLambda & UnknownLambda, UnknownLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<UnknownLambda | UnknownLambda, UnknownLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+// Date cases.
+const foo = {date: new Date(), a: null} as const;
+expectType<true>({} as IsEqual<typeof foo, typeof foo>);
+expectType<false>({} as IsEqual<{a: null}, typeof foo>);
+expectType<false>({} as IsEqual<{date: Date}, typeof foo>);
+// Date: Identical Union and Intersection cases.
+
+// Set cases.
+expectType<true>({} as IsEqual<Set<string>, Set<string>>);
+expectType<false>({} as IsEqual<Set<number>, Set<string>>);
+expectType<false>({} as IsEqual<Set<0>, Set<number>>);
+
+// Set: Identical Union and Intersection cases.
+expectType<true>({} as IsEqual<{a: {b: Set<0> & Set<0>}}, {a: {b: Set<0>}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{a: {b: Set<0> | Set<0>}}, {a: {b: Set<0>}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+// Set: Identical Union and Intersection cases.
+expectType<true>({} as IsEqual<{a: {b: Set<0> & Set<0>}}, {a: {b: Set<0>}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{a: {b: Set<0> | Set<0>}}, {a: {b: Set<0>}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+// Map cases.
+expectType<true>({} as IsEqual<Map<string, number>, Map<string, number>>);
+expectType<false>({} as IsEqual<Map<string, number>, Map<string, 0>>);
+expectType<false>({} as IsEqual<Map<string, 0>, Map<string, number>>);
+expectType<true>({} as IsEqual<Map<string, unknown>, Map<string, unknown>>);
+expectType<true>({} as IsEqual<Map<string, never>, Map<string, never>>);
+expectType<false>({} as IsEqual<Map<string, never>, Map<string, unknown>>);
+expectType<false>({} as IsEqual<Map<string, unknown>, Map<string, never>>);
+expectType<true>({} as IsEqual<Map<string, any>, Map<string, any>>);
+expectType<false>({} as IsEqual<Map<string, any>, Map<string, number>>);
+expectType<false>({} as IsEqual<Map<string, number>, Map<string, any>>);
+
+// Map: Identical Union and Intersection cases.
+expectType<true>({} as IsEqual<Map<string, number> | Map<string, number>, Map<string, number>>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<Map<string, number> & Map<string, number>, Map<string, number>>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
 type LongTupleNumber = TupleOf<50, 0>;
 expectType<true>({} as IsEqual<LongTupleNumber, LongTupleNumber>);
 
