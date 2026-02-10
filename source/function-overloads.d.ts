@@ -16,6 +16,10 @@ Known limitations:
 - Functions that have identical parameters but different `this` types or return types will only extract one overload (the last one)
 - Generic type parameters are lost and inferred as `unknown`
 
+See also TypeScript limitation discussions:
+- https://github.com/microsoft/TypeScript/issues/14107
+- https://github.com/microsoft/TypeScript/issues/32164
+
 @example
 ```ts
 import type {FunctionOverloads} from 'type-fest';
