@@ -176,6 +176,8 @@ type TupleNumberOutOfIndex = IsValidIndex<[0, 1, 2], 9>;
 //=> false
 type TupleStringOutOfIndex = IsValidIndex<[0, 1, 2], '9'>;
 //=> false
+type TupleNumberOutOfIndexMinus = IsValidIndex<[0, 1, 2], -1>;
+//=> false
 type TupleNumber = IsValidIndex<[0, 1, 2], number>;
 //=> false
 type ArrayNumberIndex = IsValidIndex<readonly number[], 0>;
@@ -194,7 +196,9 @@ type IsValidIndex<A extends UnknownArray, Index extends string | number> =
 			? true
 			: number extends numberString
 				? false
-				: LessThan<numberString, A['length']>
+				: true extends LessThan<numberString, A['length']>
+					? LessThan<-1, numberString>
+					: false
 		: false;
 
 export {};
