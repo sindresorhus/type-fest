@@ -1,5 +1,5 @@
 /**
-Return the length of an array.
+Return the length of an array. Equivalent to `T['length']` where `T` extends any array.
 
 Tuples resolve to numeric literals, while non-tuples resolve to the `number` type.
 
