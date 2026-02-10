@@ -12,6 +12,11 @@ expectType<Options1[number]>({} as (1 | 2 | 3));
 type Options2 = UnionToTuple<boolean | 1>;
 expectType<Options2[number]>({} as (1 | false | true));
 
+// Edge cases.
+expectType<UnionToTuple<never>['length']>(0);
+expectType<UnionToTuple<any>['length']>(1);
+expectType<UnionToTuple<unknown>['length']>(1);
+
 // Different modifiers cases.
 type DifferentModifiers = {a: 0} | {readonly a: 0};
 expectType<UnionToTuple<DifferentModifiers>[number]>({} as DifferentModifiers);

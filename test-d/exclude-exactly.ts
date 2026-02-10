@@ -16,6 +16,11 @@ expectType<never>({} as ExcludeExactly<{readonly a: 0}, {readonly a: 0}>);
 expectType<0 | 1 | 2>({} as ExcludeExactly<0 | 1 | 2, never>);
 expectType<never>({} as ExcludeExactly<never, never>);
 
+// Edge cases.
+expectType<never>({} as ExcludeExactly<never, never>);
+expectType<any>({} as ExcludeExactly<any, never>);
+expectType<unknown>({} as ExcludeExactly<unknown, never>);
+
 // `unknown` cannot be excluded like `unknown\T` in any cases.
 expectType<unknown>({} as ExcludeExactly<unknown, string>);
 expectType<[unknown]>({} as ExcludeExactly<[unknown], [number]>);
