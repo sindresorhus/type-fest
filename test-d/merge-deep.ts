@@ -334,6 +334,10 @@ expectType<NotEmptyTupleFoo>({} as MergeDeep<EmptyFoo, NotEmptyTupleFoo, {recurs
 expectType<NotEmptyTupleFoo>({} as MergeDeep<NotEmptyTupleFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 expectType<NotEmptyArrayFoo>({} as MergeDeep<EmptyFoo, NotEmptyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 expectType<NotEmptyArrayFoo>({} as MergeDeep<NotEmptyArrayFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<NotEmptyTupleFoo>({} as MergeDeep<EmptyFoo, NotEmptyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>);
+expectType<NotEmptyTupleFoo>({} as MergeDeep<NotEmptyTupleFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>);
+expectType<NotEmptyArrayFoo>({} as MergeDeep<EmptyFoo, NotEmptyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>);
+expectType<NotEmptyArrayFoo>({} as MergeDeep<NotEmptyArrayFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1200
 type EmptyReadonlyFoo = {readonly foo: []};
@@ -376,3 +380,9 @@ expectType<NotEmptyTupleFooRecursive>({} as MergeDeep<EmptyFooRecursive, NotEmpt
 expectType<{foo: [0, string, {bar: [0, 1]}]}>({} as MergeDeep<NotEmptyTupleFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 expectType<NotEmptyArrayFooRecursive>({} as MergeDeep<EmptyFooRecursive, NotEmptyArrayFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
 expectType<{foo: [0, string, {bar: number[]}]}>({} as MergeDeep<NotEmptyArrayFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+
+// Tuple and array recursion behavior with primitive values
+expectType<[string, string, ...string[]]>({} as MergeDeep<[1, 2], string[], {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<[string, string, ...string[]]>({} as MergeDeep<[1, 2], string[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>);
+expectType<[1, 2, ...string[]]>({} as MergeDeep<string[], [1, 2], {recurseIntoArrays: true; arrayMergeMode: 'replace'}>);
+expectType<[1, 2, ...string[]]>({} as MergeDeep<string[], [1, 2], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>);
