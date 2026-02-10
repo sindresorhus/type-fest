@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {MergeDeep, MergeDeepOptions, IsEqual} from '../index.d.ts';
+import type {MergeDeep, MergeDeepOptions} from '../index.d.ts';
 
 // Test helper.
 declare function mergeDeep<
