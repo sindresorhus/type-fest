@@ -1,5 +1,3 @@
-import type {SimpleIsEqual} from './internal/type.d.ts';
-
 /**
 Returns a boolean for whether the two given types are equal.
 
@@ -29,8 +27,14 @@ type Includes<Value extends readonly any[], Item> =
 export type IsEqual<A, B> =
 	[A] extends [B]
 		? [B] extends [A]
-			? SimpleIsEqual<A, B>
+			? _IsEqual<A, B>
 			: false
+		: false;
+
+type _IsEqual<A, B> =
+	(<G>() => G extends A & G | G ? 1 : 2) extends
+	(<G>() => G extends B & G | G ? 1 : 2)
+		? true
 		: false;
 
 export {};

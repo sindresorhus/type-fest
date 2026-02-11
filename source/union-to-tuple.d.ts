@@ -1,6 +1,6 @@
 import type {IsNever} from './is-never.d.ts';
 import type {ExcludeExactly} from './exclude-exactly.d.ts';
-import type {LastOfUnion} from './last-of-union.d.ts';
+import type {LastOfUnion} from './internal/index.d.ts';
 
 /**
 Convert a union type into an unordered tuple type of its elements.

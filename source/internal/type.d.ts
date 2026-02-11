@@ -3,6 +3,7 @@ import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {UnionToIntersection} from '../union-to-intersection.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -162,27 +163,45 @@ export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extend
 	: true;
 
 /**
-A simple version of `IsEqual`.
+Return a member of a union type. Order is not guaranteed.
+Returns `never` when the input is `never`.
 
-`SimpleIsEqual<never, unknown>` and `SimpleIsEqual<unknown, never>` return `true`, whereas `IsEqual` returns `false` correctly.
+@see https://github.com/microsoft/TypeScript/issues/13298#issuecomment-468375328
 
-`SimpleIsEqual` doesn't return `false` correctly for identical union/intersection arguments.
+Use-cases:
+- Implementing recursive type functions that accept a union type.
+- Reducing a union one member at a time, for example when building tuples.
+
+It can detect a termination case using {@link IsNever `IsNever`}.
 
 @example
 ```
-type UnionCase = SimpleIsEqual<{a: {b: 0} | {b: 0}}, {a: {b: 0}}>;
-//=> false
+import type {LastOfUnion, ExcludeExactly, IsNever} from 'type-fest';
 
-type IntersectionCase = SimpleIsEqual<{a: {b: 0} & {b: 0}}, {a: {b: 0}}>;
-//=> false
+export type UnionToTuple<T, L = LastOfUnion<T>> =
+	IsNever<T> extends false
+		? [...UnionToTuple<ExcludeExactly<T, L>>, L]
+		: [];
 ```
 
-`SimpleIsEqual` fails the `equalWrappedTupleIntersectionToBeNeverAndNeverExpanded` test in `test-d/internal/simple-is-equal.ts`.
+@example
+```
+import type {LastOfUnion} from 'type-fest';
+
+type Last = LastOfUnion<1 | 2 | 3>;
+//=> 3
+
+type LastNever = LastOfUnion<never>;
+//=> never
+```
+
+@category Type
 */
-export type SimpleIsEqual<A, B> =
-	(<G>() => G extends A & G | G ? 1 : 2) extends
-	(<G>() => G extends B & G | G ? 1 : 2)
-		? true
-		: false;
+export type LastOfUnion<T> =
+	true extends IsNever<T>
+		? never
+		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
+			? R
+			: never;
 
 export {};

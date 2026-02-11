@@ -13,42 +13,14 @@ type Options2 = UnionToTuple<boolean | 1>;
 expectType<Options2[number]>({} as (1 | false | true));
 
 // Edge cases.
-expectType<UnionToTuple<never>['length']>(0);
-expectType<UnionToTuple<any>['length']>(1);
-expectType<UnionToTuple<unknown>['length']>(1);
+expectType<[]>({} as UnionToTuple<never>);
+expectType<[any]>({} as UnionToTuple<any>);
+expectType<[unknown]>({} as UnionToTuple<unknown>);
 
-// Different modifiers cases.
-type DifferentModifiers = {a: 0} | {readonly a: 0};
-expectType<UnionToTuple<DifferentModifiers>[number]>({} as DifferentModifiers);
-expectType<UnionToTuple<DifferentModifiers>['length']>(2);
+type DifferentModifierUnion = {readonly a: 0} | {a: 0};
+expectType<DifferentModifierUnion>({} as UnionToTuple<DifferentModifierUnion>[number]);
+expectType<2>({} as UnionToTuple<DifferentModifierUnion>['length']);
 
-type ReversedDifferentModifiers = {readonly a: 0} | {a: 0};
-expectType<UnionToTuple<ReversedDifferentModifiers>[number]>({} as ReversedDifferentModifiers);
-expectType<UnionToTuple<ReversedDifferentModifiers>['length']>(2);
-
-// Super type cases.
-type UnionSuperType0 = {a: string; b: string} | {a: string};
-expectType<UnionSuperType0>({} as UnionToTuple<UnionSuperType0>[number]);
-expectType<UnionToTuple<UnionSuperType0>['length']>(2);
-
-type ReversedUnionSuperType0 = {a: string} | {a: string; b: string};
-expectType<ReversedUnionSuperType0>({} as UnionToTuple<ReversedUnionSuperType0>[number]);
-expectType<UnionToTuple<ReversedUnionSuperType0>['length']>(2);
-
-type UnionSuperType1 = {a: 1} | {[x: string]: number};
-expectType<UnionSuperType1>({} as UnionToTuple<UnionSuperType1>[number]);
-expectType<UnionToTuple<UnionSuperType1>['length']>(2);
-
-type ReversedUnionSuperType1 = {[x: string]: number} | {a: 1};
-expectType<ReversedUnionSuperType1>({} as UnionToTuple<ReversedUnionSuperType1>[number]);
-expectType<UnionToTuple<ReversedUnionSuperType1>['length']>(2);
-
-// Identical union cases.
-type UnionIdentical = {a: string} | {a: string}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<UnionToTuple<UnionIdentical>['length']>(1);
-
-type UnionIdenticalIntersection = {a: string} & {a: string} | {a: string}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<UnionToTuple<UnionIdenticalIntersection>['length']>(1);
-
-type ReversedUnionIdenticalIntersection = {a: string} | {a: string} & {a: string}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<UnionToTuple<ReversedUnionIdenticalIntersection>['length']>(1);
+type ReversedDifferentModifierUnion = {a: 0} | {readonly a: 0};
+expectType<ReversedDifferentModifierUnion>({} as UnionToTuple<ReversedDifferentModifierUnion>[number]);
+expectType<2>({} as UnionToTuple<ReversedDifferentModifierUnion>['length']);

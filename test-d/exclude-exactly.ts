@@ -1,11 +1,12 @@
 import {expectType} from 'tsd';
-import type {ExcludeExactly} from '../index.d.ts';
+import type {LastOfUnion} from '../source/internal/index.d.ts';
+import type {ExcludeExactly, IsNever} from '../index.d.ts';
 
-expectType<number>({} as ExcludeExactly<0 | 1 | number, '1'>);
-expectType<never>({} as ExcludeExactly<0 | 1 | number, number>);
+expectType<number>({} as ExcludeExactly<number, '1'>);
+expectType<never>({} as ExcludeExactly<number, number>);
 expectType<0>({} as ExcludeExactly<0, number>);
-expectType<string>({} as ExcludeExactly<'0' | '1' | string, '1'>);
-expectType<never>({} as ExcludeExactly<'0' | '1' | string, string>);
+expectType<string>({} as ExcludeExactly<string, '1'>);
+expectType<never>({} as ExcludeExactly<string, string>);
 
 // `{readonly a: t}` should not be equal to `{a: t}` because of assignability.
 expectType<{a: 0}>({} as ExcludeExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>);

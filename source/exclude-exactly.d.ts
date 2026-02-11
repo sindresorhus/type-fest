@@ -1,22 +1,11 @@
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever, SimpleIsEqual} from './internal/type.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 
 /**
-A stricter version of `Exclude<T, U>` that ensures objects with different key modifiers are not considered identical.
-
-TypeScript's built-in `Exclude` and `ExcludeStrict` in `type-fest` don't distinguish key modifiers of objects.
-
-@example
-```
-import type {ExcludeStrict} from 'type-fest';
-
-type NeverReturned_0 = Exclude<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
-//=> never
-type NeverReturned_1 = ExcludeStrict<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
-//=> never
-```
+A stricter version of `Exclude<T, U>` that excludes types only when they are exactly identical.
 
 `ExcludeExactly` keeps the union members element if the members are not identical.
 
@@ -24,22 +13,18 @@ type NeverReturned_1 = ExcludeStrict<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
 ```
 import type {ExcludeExactly} from 'type-fest';
 
-type ExcludeNever = ExcludeExactly<{a: 0} | {a: 0} | {readonly a: 0}, never>;
-//=> {a: 0} | {a: 0} | {readonly a: 0}
-type ExcludeReadonlyKey = ExcludeExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>;
-//=> {a: 0}
-type ExcludeKey = ExcludeExactly<{readonly a: 0}, {a: 0}>;
-//=> {readonly a: 0}
-type ExcludeReadonly = ExcludeExactly<{readonly a: 0}, {readonly a: 0}>;
+type TestExclude1 = Exclude<'a' | 'b' | 'c' | 1 | 2 | 3, string>;
+//=> 1 | 2 | 3
+type TestExcludeExactly1 = ExcludeExactly<'a' | 'b' | 'c' | 1 | 2 | 3, string>;
+//=> 'a' | 'b' | 'c' | 1 | 2 | 3
+type TestExclude2 = Exclude<'a' | 'b' | 'c' | 1 | 2 | 3, any>;
 //=> never
-type ExcludeSubType = ExcludeExactly<0 | 1 | number, 1>;
-//=> number
-type ExcludeAllSet = ExcludeExactly<0 | 1 | number, number>;
+type TestExcludeExactly2 = ExcludeExactly<'a' | 'b' | 'c' | 1 | 2 | 3, any>;
+//=> 'a' | 'b' | 'c' | 1 | 2 | 3
+type TestExclude3 = Exclude<{a: string} | {a: string; b: string}, {a: string}>;
 //=> never
-type ExcludeFromUnknown = ExcludeExactly<unknown, string>;
-//=> unknown
-type ExcludeFromUnknownArray = ExcludeExactly<number[] | unknown[], number[]>;
-//=> unknown[]
+type TestExcludeExactly3 = ExcludeExactly<{a: string} | {a: string; b: string}, {a: string}>;
+//=> {a: string; b: string}
 ```
 
 @category Improved Built-in
@@ -58,7 +43,7 @@ type _ExcludeExactly<Union, Delete> =
 	IfNotAnyOrNever<Delete,
 		Union extends unknown // For distributing `Union`
 			? [Delete extends unknown // For distributing `Delete`
-				? If<SimpleIsEqual<Union, Delete>, true, never>
+				? If<IsEqual<Union, Delete>, true, never>
 				: never] extends [never] ? Union : never
 			: never,
 		// If `Delete` is `any` or `never`, then return `Union`,
