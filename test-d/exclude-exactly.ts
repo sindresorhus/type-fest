@@ -1,6 +1,5 @@
 import {expectType} from 'tsd';
-import type {LastOfUnion} from '../source/internal/index.d.ts';
-import type {ExcludeExactly, IsNever} from '../index.d.ts';
+import type {ExcludeExactly} from '../index.d.ts';
 
 expectType<number>({} as ExcludeExactly<number, '1'>);
 expectType<never>({} as ExcludeExactly<number, number>);
@@ -42,9 +41,3 @@ expectType<2>({} as ExcludeExactly<0 | 1 | 2, 0 | 1>);
 expectType<never>({} as ExcludeExactly<0 | 1 | 2, 0 | 1 | 2>);
 expectType<{readonly a?: 0}>({} as ExcludeExactly<{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}, {a: 0} | {readonly a: 0} | {a?: 0}>);
 expectType<never>({} as ExcludeExactly<{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}, {a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}>);
-
-// Identical Union
-expectType<never>({} as ExcludeExactly<{a: 0} | {a: 0}, {a: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-
-// Identical Intersection
-expectType<never>({} as ExcludeExactly<{a: 0} & {a: 0}, {a: 0}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents

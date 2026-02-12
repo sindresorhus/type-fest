@@ -17,10 +17,13 @@ expectType<[]>({} as UnionToTuple<never>);
 expectType<[any]>({} as UnionToTuple<any>);
 expectType<[unknown]>({} as UnionToTuple<unknown>);
 
+// Test for https://github.com/sindresorhus/type-fest/issues/1352
 type DifferentModifierUnion = {readonly a: 0} | {a: 0};
 expectType<DifferentModifierUnion>({} as UnionToTuple<DifferentModifierUnion>[number]);
 expectType<2>({} as UnionToTuple<DifferentModifierUnion>['length']);
 
+// Note: Union order is not guaranteed, but this test is still valuable.
+// https://github.com/microsoft/TypeScript/issues/13298#issuecomment-468375328
 type ReversedDifferentModifierUnion = {a: 0} | {readonly a: 0};
 expectType<ReversedDifferentModifierUnion>({} as UnionToTuple<ReversedDifferentModifierUnion>[number]);
 expectType<2>({} as UnionToTuple<ReversedDifferentModifierUnion>['length']);
