@@ -187,3 +187,20 @@ expectType<false>({} as IsEqual<{readonly a: 0} & {b: 0}, {a: 0; b: 0}>);
 expectType<false>({} as IsEqual<{readonly aa: {a: 0} & {b: 0}}, {aa: {a: 0; b: 0}}>);
 expectType<false>({} as IsEqual<{readonly aa: {a: 0} & {b: 0} | {a: 0} & {b: 0}}, {aa: {a: 0; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<false>({} as IsEqual<{aa: {a: 0} & {b: 0} | {a: 0} & {b: 0}}, {aa: {readonly a: 0; b: 0}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+// Assume that two lambdas `Parameters` and `ReturnType` are equal, `IsEqual` returns `true`.
+type ArgumentsExpected = (a: {a: number}) => {b: number};
+type ArgumentsIdenticalUnion = (a: {a: number} | {a: number}) => ({b: number} | {b: number}); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<ArgumentsIdenticalUnion, ArgumentsExpected>);
+type ArgumentsIdenticalIntersection = (a: {a: number} & {a: number}) => ({b: number} & {b: number}); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<ArgumentsIdenticalIntersection, (a: {a: number}) => {b: number}>);
+type ArgumentsDeepExpected = (a: {a: {b: number}}) => {b: {b: number}};
+type ArgumentsIdenticalUnionDeep = (a: {a: {b: number} | {b: number}}) => {b: {b: number} | {b: number}}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<ArgumentsIdenticalUnionDeep, ArgumentsDeepExpected>);
+type ArgumentsIdenticalIntersectionDeep = (a: {a: {b: number} & {b: number}}) => {b: {b: number} & {b: number}}; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<ArgumentsIdenticalIntersectionDeep, ArgumentsDeepExpected>);
+
+// Deep identical union/intersection in tuples.
+type TupleDeepIdenticalExpected = {a: [{b: 0}]};
+expectType<true>({} as IsEqual<{a: [{b: 0} | {b: 0}]} | {a: [{b: 0}]}, TupleDeepIdenticalExpected>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{a: [{b: 0} & {b: 0}]} | {a: [{b: 0}]}, TupleDeepIdenticalExpected>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents

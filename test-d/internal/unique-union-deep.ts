@@ -1,6 +1,5 @@
 import {expectType} from 'tsd';
 import type {UniqueUnionDeep} from '../../source/internal/type.d.ts';
-import type {IsEqual} from '../../source/is-equal.d.ts';
 
 // The returns of `UniqueUnionDeep` are expected to be equal to `UniqueUnion`, if there's no recursive object type in the passed union type.
 // That's why those tests are pasted from 'test-d/internal/union-unique.ts'.
@@ -32,5 +31,8 @@ expectType<[0, 1, 2] | ['0', unknown] | [0, unknown] | number[]>({} as UniqueUni
 
 expectType<{z: {a: {aa: 0}} | {b: 0}; x: '1'}>({} as UniqueUnionDeep<{z: {a: {aa: 0} | {aa: 0}} | {a: {aa: 0} | {aa: 0}} | {b: 0}; x: '1'}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<{z: {a: 0}; x: '1'} | {z: {a: 0}; x: '2'}>({} as UniqueUnionDeep<{z: {a: 0} | {a: 0}; x: '1'} | {z: {a: 0} | {a: 0}; x: '2'}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+type UniqueUnionDeepArgumentsDeep = UniqueUnionDeep<(a: {a: number} | {a: number}) => {b: {b: number} | {b: number}}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<(a: {a: number}) => {b: {b: number}}>({} as UniqueUnionDeepArgumentsDeep);
 
 expectType<{a: [{b: 0}]}>({} as UniqueUnionDeep<{a: [{b: 0} | {b: 0}]} | {a: [{b: 0}]}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
