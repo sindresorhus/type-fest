@@ -4,6 +4,7 @@ import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {UnionToTuple} from '../union-to-tuple.d.ts';
+import type {SimplifyDeep} from '../simplify-deep.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -189,16 +190,21 @@ type UniqueUnionDeepArgumentsDeep = SimplifyDeep<UniqueUnionDeep<(a: {a: number}
 //=> (a: {a: number}) => {b: {b: number}}
 ```
 */
-export type UniqueUnionDeep<U> =
+export type UniqueUnionDeep<U> = SimplifyDeep<RecurseUniqueUnionDeep<{r: U}>['r']>;
+
+type RecurseUniqueUnionDeep<U> =
 	U extends Record<PropertyKey, unknown>
-		? _UniqueUnionDeep<U>
-		: U extends Lambda
-			? (...args: _UniqueUnionDeep<Parameters<U>>) => (UniqueUnion<_UniqueUnionDeep<ReturnType<U>>>)
-			: U;
+		? SimplifyUniqueUnionDeep<U>
+		: U extends UnknownArray
+			? SimplifyUniqueUnionDeep<U>
+			: U extends Lambda
+				// `Parametes` and `ReturnType` results are possible to be object or lambda; both should be passed into `UniqueUnionDeep`.
+				? (...args: UniqueUnionDeep<Parameters<U>> extends infer A extends any[] ? A : never) => (UniqueUnionDeep<ReturnType<U>>)
+				: U;
 /**
-Wrapping this with `Simplify`, `test-d/exact.ts` fails in "Spec: recursive type with union".
+Note: Wrapping this with `Simplify`, `test-d/exact.ts` fails in "Spec: recursive type with union".
 */
-type _UniqueUnionDeep<U extends object> = {[K in keyof U]: UniqueUnion<UniqueUnionDeep<U[K]>>};
+type SimplifyUniqueUnionDeep<U extends object> = {[K in keyof U]: UniqueUnion<RecurseUniqueUnionDeep<U[K]>>};
 
 type Lambda = ((...args: any[]) => any);
 
