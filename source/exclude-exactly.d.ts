@@ -7,22 +7,25 @@ import type {IfNotAnyOrNever} from './internal/type.d.ts';
 /**
 A stricter version of `Exclude<T, U>` that excludes types only when they are exactly identical.
 
-`ExcludeExactly` keeps the union members element if the members are not identical.
-
 @example
 ```
 import type {ExcludeExactly} from 'type-fest';
 
 type TestExclude1 = Exclude<'a' | 'b' | 'c' | 1 | 2 | 3, string>;
 //=> 1 | 2 | 3
+
 type TestExcludeExactly1 = ExcludeExactly<'a' | 'b' | 'c' | 1 | 2 | 3, string>;
 //=> 'a' | 'b' | 'c' | 1 | 2 | 3
+
 type TestExclude2 = Exclude<'a' | 'b' | 'c' | 1 | 2 | 3, any>;
 //=> never
+
 type TestExcludeExactly2 = ExcludeExactly<'a' | 'b' | 'c' | 1 | 2 | 3, any>;
 //=> 'a' | 'b' | 'c' | 1 | 2 | 3
+
 type TestExclude3 = Exclude<{a: string} | {a: string; b: string}, {a: string}>;
 //=> never
+
 type TestExcludeExactly3 = ExcludeExactly<{a: string} | {a: string; b: string}, {a: string}>;
 //=> {a: string; b: string}
 ```
