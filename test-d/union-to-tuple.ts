@@ -18,6 +18,9 @@ expectType<[any]>({} as UnionToTuple<any>);
 expectType<[unknown]>({} as UnionToTuple<unknown>);
 
 // Test for https://github.com/sindresorhus/type-fest/issues/1352
+// This union is special because `{readonly a: 0}` extends `{a: 0}`, and `{a: 0}` also extends `{readonly a: 0}`,
+// meaning both types are assignable to each other.
+// See [this comment](https://github.com/sindresorhus/type-fest/pull/1349#issuecomment-3858719735) for more details.
 type DifferentModifierUnion = {readonly a: 0} | {a: 0};
 expectType<DifferentModifierUnion>({} as UnionToTuple<DifferentModifierUnion>[number]);
 expectType<2>({} as UnionToTuple<DifferentModifierUnion>['length']);
