@@ -40,7 +40,8 @@ import type {LessThan} from 'type-fest';
 // Use `LessThan` to constrain a function parameter to negative numbers.
 declare function setNegative<N extends number>(value: LessThan<N, 0> extends true ? N : never): void;
 
-setNegative(-1);
+setNegative(-1); // ✅ Allowed
+setNegative(-2); // ✅ Allowed
 
 // @ts-expect-error
 setNegative(0);
