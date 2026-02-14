@@ -32,6 +32,22 @@ type B = LessThan<1, number>;
 type C = LessThan<number, number>;
 //=> boolean
 ```
+
+@example
+```
+import type {LessThan} from 'type-fest';
+
+// Use `LessThan` to constrain a function parameter to negative numbers.
+declare function setNegative<N extends number>(value: LessThan<N, 0> extends true ? N : never): void;
+
+setNegative(-1);
+
+// @ts-expect-error
+setNegative(0);
+
+// @ts-expect-error
+setNegative(1);
+```
 */
 export type LessThan<A extends number, B extends number> =
 	GreaterThanOrEqual<A, B> extends infer Result
