@@ -105,7 +105,7 @@ export type ConditionalPickDeep<
 	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>
 >>;
 
-type _NeverIfEmpty<Type> = [keyof Type] extends [never] ? never : Type;
+type _NeverIfEmpty<Type> = Type extends EmptyObject ? never : Type;
 
 type _ConditionalPickDeep<
 	Type,

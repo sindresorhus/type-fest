@@ -108,6 +108,10 @@ expectType<never>(emptyEqualityPick);
 declare const noMatchingKeys: ConditionalPickDeep<{a: string; b: number}, boolean>;
 expectType<never>(noMatchingKeys);
 
+// Union with no common properties
+declare const unionNoCommon: ConditionalPickDeep<{a: string} | {b: string}, string>;
+expectType<{a: string} | {b: string}>(unionNoCommon);
+
 declare const stringOrBooleanPick: ConditionalPickDeep<Example, string | boolean>;
 expectType<{
 	literal: 'foo';
