@@ -8,5 +8,8 @@
 		"exactOptionalPropertyTypes": true,
 		"skipLibCheck": false, // Ensures .d.ts files are checked: https://github.com/sindresorhus/tsconfig/issues/15
 		"erasableSyntaxOnly": false // We cannot do this as we need to be able to test enums.
-	}
+	},
+	"exclude": [
+		"docs"
+	]
 }

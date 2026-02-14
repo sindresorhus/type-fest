@@ -29,7 +29,8 @@
 		"test:tsd": "node --max-old-space-size=6144 ./node_modules/.bin/tsd",
 		"test:xo": "node --max-old-space-size=6144 ./node_modules/.bin/xo --ignores=lint-processors/fixtures/**/*.d.ts",
 		"test:linter": "node --test",
-		"test": "run-p test:*"
+		"test": "run-p test:*",
+		"docs": "typedoc"
 	},
 	"files": [
 		"index.d.ts",
@@ -61,6 +62,7 @@
 		"expect-type": "^1.2.2",
 		"npm-run-all2": "^8.0.4",
 		"tsd": "^0.33.0",
+		"typedoc": "^0.28.14",
 		"typescript": "^5.9.2",
 		"typescript-eslint": "^8.47.0",
 		"xo": "^1.2.2"
