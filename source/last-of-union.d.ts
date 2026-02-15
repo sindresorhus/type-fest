@@ -1,9 +1,21 @@
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Returns a member of a union type. Order is not guaranteed.
 
 Returns `never` when the input is `never`.
+
+@example
+```
+import type {LastOfUnion} from 'type-fest';
+
+type Last = LastOfUnion<1 | 2 | 3>;
+//=> 3
+
+type LastNever = LastOfUnion<never>;
+//=> never
+```
 
 @see https://github.com/microsoft/TypeScript/issues/13298#issuecomment-468375328
 
@@ -23,21 +35,10 @@ type UnionToTuple<T, L = LastOfUnion<T>> =
 		: [];
 ```
 
-@example
-```
-import type {LastOfUnion} from 'type-fest';
-
-type Last = LastOfUnion<1 | 2 | 3>;
-//=> 3
-
-type LastNever = LastOfUnion<never>;
-//=> never
-```
-
 @category Type
 */
 export type LastOfUnion<T> =
-	[T] extends [never]
+	IsNever<T> extends true
 		? never
 		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
 			? R
