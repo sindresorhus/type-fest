@@ -191,6 +191,7 @@ Click the type names for complete docs.
 - [`ConditionalSimplify`](source/conditional-simplify.d.ts) - Simplifies a type while including and/or excluding certain types from being simplified.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 - [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
+- [`LastOfUnion`](source/last-of-union.d.ts) - Return a type picked in an union-type. Order is not guaranteed.
 
 ### Type Guard
 
@@ -319,6 +320,7 @@ Click the type names for complete docs.
 - [`ExtendsStrict`](source/extends-strict.d.ts) - A stricter, non-distributive version of `extends` for checking whether one type is assignable to another.
 - [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of `Extract<T, U>` that ensures every member of `U` can successfully extract something from `T`.
 - [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of `Exclude<T, U>` that ensures every member of `U` can successfully exclude something from `T`.
+- [`ExcludeExactly`](source/exclude-exactly.d.ts) - A stricter version of `Exclude<T, U>` that ensures objects with different key modifiers are not considered identical.
 
 ## Declined types
 

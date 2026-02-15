@@ -167,6 +167,7 @@ export type {IsNullable} from './source/is-nullable.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
 export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
 export type {ArrayReverse} from './source/array-reverse.d.ts';
+export type {LastOfUnion} from './source/last-of-union.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
@@ -207,5 +208,6 @@ export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 export type {ExtendsStrict} from './source/extends-strict.d.ts';
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
+export type {ExcludeExactly} from './source/exclude-exactly.d.ts';
 
 export {};
