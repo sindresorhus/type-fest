@@ -167,6 +167,7 @@ export type {IsNullable} from './source/is-nullable.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
 export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
 export type {ArrayReverse} from './source/array-reverse.d.ts';
+export type {UnionMember} from './source/union-member.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
