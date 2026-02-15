@@ -1,48 +1,20 @@
-import type {IsNever} from './is-never.d.ts';
 import type {ExcludeExactly} from './exclude-exactly.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 
 /**
-Return a member of a union type. Order is not guaranteed.
-Returns `never` when the input is `never`.
-
-@see https://github.com/microsoft/TypeScript/issues/13298#issuecomment-468375328
-
-Use-cases:
-- Implementing recursive type functions that accept a union type.
-- Reducing a union one member at a time, for example when building tuples.
-
-It can detect a termination case using {@link IsNever `IsNever`}.
+Returns the last element of a union type.
 
 @example
 ```
-import type {LastOfUnion, ExcludeExactly, IsNever} from 'type-fest';
-
-export type UnionToTuple<T, L = LastOfUnion<T>> =
-	IsNever<T> extends false
-		? [...UnionToTuple<ExcludeExactly<T, L>>, L]
-		: [];
-```
-
-@example
-```
-import type {LastOfUnion} from 'type-fest';
-
 type Last = LastOfUnion<1 | 2 | 3>;
 //=> 3
-
-type LastNever = LastOfUnion<never>;
-//=> never
 ```
-
-@category Type
 */
 type LastOfUnion<T> =
-	true extends IsNever<T>
-		? never
-		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
-			? R
-			: never;
+UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
+	? R
+	: never;
 
 /**
 Convert a union type into an unordered tuple type of its elements.
@@ -81,9 +53,7 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 */
 export type UnionToTuple<T, L = LastOfUnion<T>> =
 IsNever<T> extends false
-	? ExcludeExactly<T, L> extends infer E // Improve performance.
-		? [...UnionToTuple<E>, L]
-		: never // Unreachable.
+	? [...UnionToTuple<ExcludeExactly<T, L>>, L]
 	: [];
 
 export {};
