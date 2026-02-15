@@ -12,8 +12,9 @@ expectType<never>({} as UnionMember<never>);
 expectType<unknown>({} as UnionMember<unknown>);
 expectType<any>({} as UnionMember<any>);
 
+// Ensure exactly one member is selected at a time, while covering all members in the union.
 type UnionToTupleWithExclude<T, L = UnionMember<T>> =
 	IsNever<T> extends false
-		? [...UnionToTupleWithExclude<Exclude<T, L>>, L]
-		: [];
-expectType<1 | 2 | 3>({} as UnionToTupleWithExclude<1 | 2 | 3>[number]);
+		? UnionToTupleWithExclude<Exclude<T, L>> | [L]
+		: never;
+expectType<[1] | [2] | [3]>({} as UnionToTupleWithExclude<1 | 2 | 3>);
