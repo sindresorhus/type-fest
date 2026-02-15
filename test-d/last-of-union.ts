@@ -27,8 +27,8 @@ IsNever<T> extends false
 type MatchOrNever<A, B> =
 	[unknown, B] extends [A, never]
 		? A
-		// This equality code base below doesn't work if `A` is `unknown` and `B` is `never` case.
-		// So this branch should be wrapped to take care of this.
+		// The equality comparison below does not work when `A` is `unknown` and `B` is `never`.
+		// This branch handles that case.
 		: (<G>() => G extends A & G | G ? 1 : 2) extends (<G>() => G extends B & G | G ? 1 : 2)
 			? never
 			: A;
