@@ -319,6 +319,7 @@ Click the type names for complete docs.
 - [`ExtendsStrict`](source/extends-strict.d.ts) - A stricter, non-distributive version of `extends` for checking whether one type is assignable to another.
 - [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of `Extract<T, U>` that ensures every member of `U` can successfully extract something from `T`.
 - [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of `Exclude<T, U>` that ensures every member of `U` can successfully exclude something from `T`.
+- [`ExcludeExactly`](source/exclude-exactly.d.ts) - A stricter version of `Exclude<T, U>` that excludes types only when they are exactly identical.
 
 ## Declined types
 
