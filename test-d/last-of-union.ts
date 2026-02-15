@@ -18,6 +18,7 @@ type UnionToTupleWithExclude<T, L = LastOfUnion<T>> =
 		: [];
 
 expectType<1 | 2 | 3>({} as UnionToTupleWithExclude<1 | 2 | 3>[number]);
+
 // Ensure a loop of `LastOfUnion` returns all elements.
 type UnionToTuple<T, L = LastOfUnion<T>> =
 IsNever<T> extends false
