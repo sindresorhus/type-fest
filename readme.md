@@ -191,7 +191,7 @@ Click the type names for complete docs.
 - [`ConditionalSimplify`](source/conditional-simplify.d.ts) - Simplifies a type while including and/or excluding certain types from being simplified.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 - [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
-- [`LastOfUnion`](source/last-of-union.d.ts) - Returns a member of a union type. Order is not guaranteed.
+- [`UnionMember`](source/union-member.d.ts) - Returns a member of a union type. Order is not guaranteed.
 
 ### Type Guard
 
@@ -356,6 +356,8 @@ Click the type names for complete docs.
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
 - `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
+- `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
+- `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 
 ## Tips
 

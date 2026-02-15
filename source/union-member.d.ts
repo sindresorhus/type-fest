@@ -8,12 +8,12 @@ Returns `never` when the input is `never`.
 
 @example
 ```
-import type {LastOfUnion} from 'type-fest';
+import type {UnionMember} from 'type-fest';
 
-type Last = LastOfUnion<1 | 2 | 3>;
+type Last = UnionMember<1 | 2 | 3>;
 //=> 3
 
-type LastNever = LastOfUnion<never>;
+type LastNever = UnionMember<never>;
 //=> never
 ```
 
@@ -27,9 +27,9 @@ It can detect a termination case using {@link IsNever `IsNever`}.
 
 @example
 ```
-import type {LastOfUnion, IsNever} from 'type-fest';
+import type {UnionMember, IsNever} from 'type-fest';
 
-type UnionToTuple<T, L = LastOfUnion<T>> =
+type UnionToTuple<T, L = UnionMember<T>> =
 	IsNever<T> extends false
 		? [...UnionToTuple<Exclude<T, L>>, L]
 		: [];
@@ -37,7 +37,7 @@ type UnionToTuple<T, L = LastOfUnion<T>> =
 
 @category Type
 */
-export type LastOfUnion<T> =
+export type UnionMember<T> =
 	IsNever<T> extends true
 		? never
 		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
