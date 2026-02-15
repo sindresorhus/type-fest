@@ -1,5 +1,5 @@
-import {expectAssignable} from 'tsd';
-import type {Entries} from '../index.d.ts';
+import {expectAssignable, expectType} from 'tsd';
+import type {Entries, ObjectEntries, ObjectEntry} from '../index.d.ts';
 import type {Entry} from '../source/entry.d.ts';
 
 // Objects
@@ -49,3 +49,35 @@ const setEntries: Entries<typeof setExample> = [
 	setEntryNumber,
 ];
 expectAssignable<Array<[(string | number), (string | number)]>>(setEntries);
+
+// ObjectEntry
+type Example = {
+	a: number;
+	b: string;
+};
+
+declare const exampleObjectEntry: ObjectEntry<Example>;
+expectType<['a' | 'b', string | number]>(exampleObjectEntry);
+
+// ObjectEntries
+declare const exampleObjectEntries: ObjectEntries<Example>;
+expectType<Array<['a' | 'b', string | number]>>(exampleObjectEntries);
+
+// ObjectEntry and ObjectEntries preserve type information with generic type parameters
+declare function getEntries<T extends Record<string, unknown>>(object: T): ObjectEntries<T>;
+declare function getEntry<T extends Record<string, unknown>>(object: T): ObjectEntry<T>;
+
+declare const genericEntries: ReturnType<typeof getEntries<Example>>;
+expectType<Array<['a' | 'b', string | number]>>(genericEntries);
+
+declare const genericEntry: ReturnType<typeof getEntry<Example>>;
+expectType<['a' | 'b', string | number]>(genericEntry);
+
+// Entry and Entries can widen in generic object contexts because they are conditional over collection kinds.
+type EntryAssignability<BaseType extends Record<string, unknown>, EntryType extends [keyof BaseType, BaseType[keyof BaseType]]> = EntryType;
+// @ts-expect-error -- Entry<BaseType> can widen to the generic constraint when BaseType is generic.
+type EntryAssignabilityTest<BaseType extends Record<string, unknown>> = EntryAssignability<BaseType, Entry<BaseType>>;
+
+type EntriesAssignability<BaseType extends Record<string, unknown>, EntriesType extends Array<[keyof BaseType, BaseType[keyof BaseType]]>> = EntriesType;
+// @ts-expect-error -- Entries<BaseType> can widen to the generic constraint when BaseType is generic.
+type EntriesAssignabilityTest<BaseType extends Record<string, unknown>> = EntriesAssignability<BaseType, Entries<BaseType>>;
