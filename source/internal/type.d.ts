@@ -3,6 +3,8 @@ import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {UnionToTuple} from '../union-to-tuple.d.ts';
+import type {SimplifyDeep} from '../simplify-deep.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -160,5 +162,58 @@ Indicates the value of `exactOptionalPropertyTypes` compiler option.
 export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;
+
+/**
+In TypeScript, `{a: T}` and `{a: T} | {a: T}` are assignable mutually but automatically simplified.
+And it disturbs a calculation of `IsEqual`.
+
+@example
+```
+type NT = _IsEqual<{z: {a: 0}}, {z: {a: 0} | {a: 0}}>; // => false
+```
+
+`UniqueUnionDeep` is a helper type function: removes a duplicated type and keeps the other types recursively.
+But union distribution also works as usual outside of objects.
+
+@example
+```
+type UniqueUnionDeepTest = SimplifyDeep<UniqueUnionDeep<{z: {a: {aa: 0} | {aa: 0}} | {a: {aa: 0} | {aa: 0}} | {b: 0}; x: '1'}>>;
+//=> {z: {a: {aa: 0}} | {b: 0}; x: '1'}
+
+type UniqueUnionDeepKeepDistributionTest = SimplifyDeep<UniqueUnionDeep<{z: {a: 0} | {a: 0}; x: '1'} | {z: {a: 0} | {a: 0}; x: '2'}>>;
+//=> {z: {a: 0}; x: '1'} | {z: {a: 0}; x: '2'}
+
+type UniqueUnionDeepArguments = SimplifyDeep<UniqueUnionDeep<(a: {a: number} | {a: number}) => {b: number} | {b: number}>>;
+//=> (a: {a: number} | {a: number}) => {b: number} | {b: number}
+
+type UniqueUnionDeepArgumentsDeep = SimplifyDeep<UniqueUnionDeep<(a: {a: number} | {a: number}) => {b: {b: number} | {b: number}}>>;
+//=> (a: {a: number}) => {b: {b: number}}
+```
+*/
+export type UniqueUnionDeep<U> = SimplifyDeep<RecurseUniqueUnionDeep<{r: U}>['r']>;
+
+type RecurseUniqueUnionDeep<U> =
+	U extends Record<PropertyKey, unknown>
+		? SimplifyUniqueUnionDeep<U>
+		: U extends UnknownArray
+			? SimplifyUniqueUnionDeep<U>
+			: U extends Lambda
+				// `Parametes` and `ReturnType` results are possible to be object or lambda; both should be passed into `UniqueUnionDeep`.
+				? (...args: UniqueUnionDeep<Parameters<U>> extends infer A extends any[] ? A : never) => (UniqueUnionDeep<ReturnType<U>>)
+				: U;
+/**
+Note: Wrapping this with `Simplify`, `test-d/exact.ts` fails in "Spec: recursive type with union".
+*/
+type SimplifyUniqueUnionDeep<U extends object> = {[K in keyof U]: UniqueUnion<RecurseUniqueUnionDeep<U[K]>>};
+
+type Lambda = ((...args: any[]) => any);
+
+/**
+The flat version of `UniqueUnionDeep`.
+*/
+export type UniqueUnion<U> =
+	UnionToTuple<U> extends infer E extends readonly unknown[] // Improve performance.
+		? E[number]
+		: never; // Unreachable.
 
 export {};
