@@ -1,6 +1,5 @@
 import {expectType} from 'tsd';
-import type {ArrayLength} from '../source/array-length.d.ts';
-import type {Primitive} from '../source/primitive.d.ts';
+import type {ArrayLength, Primitive} from '../index.d.ts';
 
 // Non-tuples
 expectType<number>({} as ArrayLength<unknown[]>);
@@ -15,6 +14,7 @@ expectType<number>({} as ArrayLength<[1, 2, ...unknown[]]>);
 expectType<number>({} as ArrayLength<[1, 2?, ...unknown[]]>);
 expectType<number>({} as ArrayLength<[...unknown[], 1, 2]>);
 expectType<number>({} as ArrayLength<[0, ...unknown[], 1, 2]>);
+expectType<0 | 2>({} as ArrayLength<[] | [1, 2]>);
 
 // Read-only arrays
 expectType<number>({} as ArrayLength<readonly unknown[]>);
@@ -28,6 +28,7 @@ expectType<number>({} as ArrayLength<readonly [1, 2, ...unknown[]]>);
 expectType<number>({} as ArrayLength<readonly [1, 2?, ...unknown[]]>);
 expectType<number>({} as ArrayLength<readonly [...unknown[], 1, 2]>);
 expectType<number>({} as ArrayLength<readonly [0, ...unknown[], 1, 2]>);
+expectType<0 | 2>({} as ArrayLength<readonly [] | readonly [1, 2]>);
 
 // Edge cases and disallowed types
 expectType<never>({} as ArrayLength<never>);
