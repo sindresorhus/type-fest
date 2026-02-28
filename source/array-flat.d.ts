@@ -42,12 +42,8 @@ type ArrayFlatOptions = {
 	```
 	import type {ArrayFlat} from 'type-fest';
 
-	type FlatArr0 = ArrayFlat<Array<[number, string]>, 1, {maxRepeat: 3}>;
-	//=> type FlatArr0 =
-	[]
-	| [number, string]
-	| [number, string, number, string]
-	| [number, string, number, string, number, string];
+	type FlatArray0 = ArrayFlat<Array<[number, string]>, 1, {maxRepeat: 3}>;
+	//=> [] | [number, string] | [number, string, number, string] | [number, string, number, string, number, string];
 	```
 	*/
 	maxRepeat: number;
@@ -68,20 +64,20 @@ Like [`Array#flat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Re
 ```
 import type {ArrayFlat, PositiveInfinity} from 'type-fest';
 
-type FlatArr0 = ArrayFlat<[[0, 1], [2, 3], [4, 5]]>;
-//=> type FlatArr0 = [0, 1, 2, 3, 4, 5];
+type FlatArray0 = ArrayFlat<[[0, 1], [2, 3], [4, 5]]>;
+//=> [0, 1, 2, 3, 4, 5]
 
 // Flatten to depth
-type Arr1 = [[0, [1, [2, [3, [4, [5]]]]]]];
-type FlatArr1 = ArrayFlat<Arr1, 1>;
-//=> type FlatArr1 = [0, [1, [2, [3, [4, [5]]]]]];
+type Array1 = [[0, [1, [2, [3, [4, [5]]]]]]];
+type FlatArray1 = ArrayFlat<Array1, 1>;
+//=> [0, [1, [2, [3, [4, [5]]]]]]
 
-type FlatArr2 = ArrayFlat<Arr1, 3>;
-//=> type FlatArr2 = [0, 1, 2, [3, [4, [5]]]];
+type FlatArray2 = ArrayFlat<Array1, 3>;
+//=> [0, 1, 2, [3, [4, [5]]]]
 
 // Flatten to depth Infinity
-type FlatArr3 = ArrayFlat<Arr1, PositiveInfinity>;
-//=> type FlatArr3 = [0, 1, 2, 3, 4, 5];
+type FlatArray3 = ArrayFlat<Array1, PositiveInfinity>;
+//=> [0, 1, 2, 3, 4, 5]
 ```
 
 @category Array
@@ -234,15 +230,7 @@ Builds a union that lists all the possible combinations of the given array items
 @example
 ```
 type A = BuildRepeatedUnionArray<[number, string?], 2, true>;
-//=> type A =
-[]
-| number[]
-| [number]
-| [number, string]
-| [number, number]
-| [number, string, number]
-| [number, number, string]
-| [number, string, number, string]
+//=> [] | [number] | [number, string] | [number, number] | [number, string, number] | [number, number, string] | [number, string, number, string]
 ```
 */
 type BuildRepeatedUnionArray<
