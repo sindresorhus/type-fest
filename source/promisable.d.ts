@@ -16,8 +16,8 @@ async function logger(getLogEntry: () => Promisable<string>): Promise<void> {
 	console.log(entry);
 }
 
-logger(() => 'foo');
-logger(() => Promise.resolve('bar'));
+await logger(() => 'foo');
+await logger(() => Promise.resolve('bar'));
 ```
 
 @category Async

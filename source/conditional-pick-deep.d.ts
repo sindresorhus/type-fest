@@ -46,7 +46,7 @@ Pick keys recursively from the shape that matches the given condition.
 ```
 import type {ConditionalPickDeep} from 'type-fest';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | boolean;
 	c: {
@@ -59,7 +59,7 @@ interface Example {
 		};
 		j: boolean;
 	};
-}
+};
 
 type StringPick = ConditionalPickDeep<Example, string>;
 //=> {a: string; c: {d: string}}
@@ -74,7 +74,7 @@ type BooleanPick = ConditionalPickDeep<Example, boolean | undefined>;
 //=> {c: {e: {g?: boolean}; j: boolean}}
 
 type NumberPick = ConditionalPickDeep<Example, number>;
-//=> {}
+//=> never
 
 type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 //=> {
@@ -83,7 +83,7 @@ type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 // 	c: {
 // 		d: string;
 // 		e: {
-// 			h: string | boolean
+// 			h: string | boolean;
 // 		};
 // 		j: boolean;
 // 	};
@@ -99,11 +99,13 @@ export type ConditionalPickDeep<
 	Type,
 	Condition,
 	Options extends ConditionalPickDeepOptions = {},
-> = _ConditionalPickDeep<
+> = _NeverIfEmpty<_ConditionalPickDeep<
 	Type,
 	Condition,
 	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>
->;
+>>;
+
+type _NeverIfEmpty<Type> = Type extends EmptyObject ? never : Type;
 
 type _ConditionalPickDeep<
 	Type,

@@ -22,16 +22,16 @@ type KebabCasedProperties<T> = {
 	[K in keyof T as KebabCase<K>]: T[K]
 };
 
-interface CliOptions {
+type CliOptions = {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
-}
+};
 
 const rawCliOptions: KebabCasedProperties<CliOptions> = {
 	'dry-run': true,
 	'include-file': 'bar.js',
-	foo: 123
+	foo: 123,
 };
 ```
 

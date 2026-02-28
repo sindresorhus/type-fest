@@ -14,15 +14,15 @@ This can be useful when, for example, converting some API types from a different
 ```
 import type {CamelCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	UserId: number;
 	UserName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	UserInfo: User;
 	UserFriends: User[];
-}
+};
 
 const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	userInfo: {

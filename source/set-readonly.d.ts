@@ -15,14 +15,10 @@ type Foo = {
 	a: number;
 	readonly b: string;
 	c: boolean;
-}
+};
 
 type SomeReadonly = SetReadonly<Foo, 'b' | 'c'>;
-// type SomeReadonly = {
-// 	a: number;
-// 	readonly b: string; // Was already readonly and still is.
-// 	readonly c: boolean; // Is now readonly.
-// }
+//=> {a: number; readonly b: string; readonly c: boolean}
 ```
 
 @category Object

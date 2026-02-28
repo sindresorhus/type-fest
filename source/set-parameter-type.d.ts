@@ -61,12 +61,14 @@ Note:
 - This type will ignore the given function's generic type.
 - If you change the parameter type that return type depends on, the return type will not change:
 	```
+	import type {SetParameterType} from 'type-fest';
+
 	const fn = (a: number) => a;
-	//=> fn: (a: number) => number;
+	//=> (a: number) => number
 
  	// We change type of `a` to `string`, but return type is still `number`.
 	type Fn = SetParameterType<typeof fn, {0: string}>;
- 	//=> (a: string) => number;
+ 	//=> (a: string) => number
 	```
 
 Use-case:
@@ -78,28 +80,32 @@ Use-case:
 ```
 import type {SetParameterType} from 'type-fest';
 
+type SuccessData = {success: true; value: number};
+type ErrorData = {success: false; error: string};
+type Data = SuccessData | ErrorData;
+
 type HandleMessage = (data: Data, message: string, ...arguments_: any[]) => void;
 
-type HandleOk = SetParameterType<HandleMessage, {0: SuccessData, 1: 'ok'}>;
-//=> type HandleOk = (data: SuccessData, message: 'ok') => void;
+type HandleOk = SetParameterType<HandleMessage, {0: SuccessData; 1: 'ok'}>;
+//=> (data: SuccessData, message: 'ok', ...arguments_: any[]) => void
 
 // Another way to define the parameters to replace.
 type HandleError = SetParameterType<HandleMessage, [data: ErrorData, message: 'error']>;
-//=> type HandleError = (data: ErrorData, message: 'error') => void;
+//=> (data: ErrorData, message: 'error', ...arguments_: any[]) => void
 
 // Change single parameter type.
 type HandleWarn = SetParameterType<HandleMessage, {1: 'warn'}>;
-//=> type HandleWarn = (data: Data, message: 'warn') => void;
+//=> (data: Data, message: 'warn', ...arguments_: any[]) => void
 
 // Change rest parameter type.
 
 // Way 1: Input full parameter type.
 type HandleLog = SetParameterType<HandleMessage, [data: Data, message: 'log', ...arguments_: string[]]>;
-//=> type HandleLog = (data: Data, message: 'log', ...arguments_: string[]) => void;
+//=> (data: Data, message: 'log', ...arguments_: string[]) => void
 
 // Way 2: Input rest parameter type by Object index.
 type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
-//=> type HandleLog2 = (data: Data, message: string, ...arguments_: string[]) => void;
+//=> (data: Data, message: string, ...arguments_: string[]) => void
 ```
 
 @category Function

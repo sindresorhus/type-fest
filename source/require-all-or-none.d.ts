@@ -27,13 +27,13 @@ type Responder = {
 };
 
 const responder1: RequireAllOrNone<Responder, 'text' | 'json'> = {
-	secure: true
+	secure: true,
 };
 
 const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 	text: () => '{"message": "hi"}',
 	json: () => '{"message": "ok"}',
-	secure: true
+	secure: true,
 };
 ```
 

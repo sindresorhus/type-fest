@@ -8,14 +8,17 @@ There has been [discussion](https://github.com/microsoft/TypeScript/pull/35998) 
 @example
 ```ts
 import type {AsyncReturnType} from 'type-fest';
-import {asyncFunction} from 'api';
+
+declare function asyncFunction(): Promise<{foo: string}>;
 
 // This type resolves to the unwrapped return type of `asyncFunction`.
 type Value = AsyncReturnType<typeof asyncFunction>;
+//=> {foo: string}
 
-async function doSomething(value: Value) {}
+declare function doSomething(value: Value): void;
 
-asyncFunction().then(value => doSomething(value));
+const value = await asyncFunction();
+doSomething(value);
 ```
 
 @category Async

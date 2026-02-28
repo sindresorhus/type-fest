@@ -79,3 +79,11 @@ expectType<CamelCase<'foo\tBAR-Biz_BUZZ'>>('fooBarBizBuzz');
 
 expectType<CamelCase<string, {preserveConsecutiveUppercase: true}>>('string' as string);
 expectType<CamelCase<string>>('string' as string);
+
+// Test splitOnNumbers option
+expectType<'a1bText'>('' as CamelCase<'a1b_text', {splitOnNumbers: false}>);
+expectType<'a1BText'>('' as CamelCase<'a1b_text', {splitOnNumbers: true}>);
+expectType<'a1BText'>('' as CamelCase<'a1b_text'>);
+
+expectType<'p2pNetwork'>('' as CamelCase<'p2pNetwork', {splitOnNumbers: false}>);
+expectType<'p2PNetwork'>('' as CamelCase<'p2pNetwork', {splitOnNumbers: true}>);

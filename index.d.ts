@@ -22,6 +22,7 @@ export type {TaggedUnion} from './source/tagged-union.d.ts';
 export type {Writable} from './source/writable.d.ts';
 export type {WritableDeep} from './source/writable-deep.d.ts';
 export type {Merge} from './source/merge.d.ts';
+export type {ObjectMerge} from './source/object-merge.d.ts';
 export type {MergeDeep, MergeDeepOptions} from './source/merge-deep.d.ts';
 export type {MergeExclusive} from './source/merge-exclusive.d.ts';
 export type {RequireAtLeastOne} from './source/require-at-least-one.d.ts';
@@ -32,6 +33,7 @@ export type {SingleKeyObject} from './source/single-key-object.d.ts';
 export type {OmitIndexSignature} from './source/omit-index-signature.d.ts';
 export type {PickIndexSignature} from './source/pick-index-signature.d.ts';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep.d.ts';
+export type {UnwrapPartial} from './source/unwrap-partial.d.ts';
 export type {RequiredDeep} from './source/required-deep.d.ts';
 export type {PickDeep} from './source/pick-deep.d.ts';
 export type {OmitDeep} from './source/omit-deep.d.ts';
@@ -164,6 +166,8 @@ export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
 export type {IsNullable} from './source/is-nullable.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
+export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
+export type {ArrayReverse} from './source/array-reverse.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
@@ -204,3 +208,5 @@ export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 export type {ExtendsStrict} from './source/extends-strict.d.ts';
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
+
+export {};

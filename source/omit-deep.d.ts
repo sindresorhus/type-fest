@@ -5,6 +5,7 @@ import type {IsNever} from './is-never.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {Simplify} from './simplify.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -33,11 +34,7 @@ type Info = {
 };
 
 type UsefulInfo = OmitDeep<Info, 'userInfo.uselessInfo'>;
-// type UsefulInfo = {
-// 	userInfo: {
-// 		name: string;
-// 	};
-// };
+//=> {userInfo: {name: string}}
 
 // Supports removing multiple paths
 type Info1 = {
@@ -51,40 +48,28 @@ type Info1 = {
 };
 
 type UsefulInfo1 = OmitDeep<Info1, 'userInfo.uselessInfo' | 'userInfo.uselessField'>;
-// type UsefulInfo1 = {
-// 	userInfo: {
-// 		name: string;
-// 	};
-// };
+//=> {userInfo: {name: string}}
 
 // Supports array
-type A = OmitDeep<[1, 'foo', 2], 1>;
-// type A = [1, unknown, 2];
+type A = OmitDeep<[1, 'foo', 2], '1'>;
+//=> [1, unknown, 2]
 
 // Supports recursing into array
 
-type Info1 = {
+type Info2 = {
 	address: [
 		{
-			street: string
+			street: string;
 		},
 		{
-			street2: string,
-			foo: string
-		};
+			street2: string;
+			foo: string;
+		},
 	];
-}
-type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
-// type AddressInfo = {
-// 	address: [
-// 		{
-// 			street: string;
-// 		},
-// 		{
-// 			street2: string;
-// 		};
-// 	];
-// };
+};
+
+type AddressInfo = OmitDeep<Info2, 'address.1.foo'>;
+//=> {address: [{street: string}, {street2: string}]}
 ```
 
 @category Object
@@ -134,7 +119,7 @@ P extends `${infer RecordKeyInPath}.${infer SubPath}`
 		? IsNever<Key> extends true
 			? ObjectT
 			: Key extends PropertyKey
-				? Omit<ObjectT, Key>
+				? Simplify<Omit<ObjectT, Key>> // `Simplify` to prevent `Omit` from appearing in the resulting type
 				: ObjectT
 		: ObjectT;
 

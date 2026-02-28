@@ -28,11 +28,13 @@ export type WordsOptions = {
 
 	@example
 	```
+	import type {Words} from 'type-fest';
+
 	type Example1 = Words<'p2pNetwork', {splitOnNumbers: true}>;
-	//=> ["p", "2", "p", "Network"]
+	//=> ['p', '2', 'p', 'Network']
 
 	type Example2 = Words<'p2pNetwork', {splitOnNumbers: false}>;
-	//=> ["p2p", "Network"]
+	//=> ['p2p', 'Network']
 	```
 	*/
 	splitOnNumbers?: boolean;

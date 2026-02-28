@@ -1,4 +1,5 @@
 import type {IsNever} from './is-never.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Returns a boolean for whether the given type is a union.
@@ -24,7 +25,7 @@ type InternalIsUnion<T, U = T> =
 	IsNever<T> extends true
 		? false
 		: T extends any
-			? [U] extends [T]
+			? IsEqual<U, T> extends true
 				? false
 				: true
 			: never

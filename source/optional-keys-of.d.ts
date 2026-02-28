@@ -9,12 +9,12 @@ This is useful when you want to create a new type that contains different type v
 ```
 import type {OptionalKeysOf, Except} from 'type-fest';
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
 
 	luckyNumber?: number;
-}
+};
 
 const REMOVE_FIELD = Symbol('remove field symbol');
 type UpdateOperation<Entity extends object> = Except<Partial<Entity>, OptionalKeysOf<Entity>> & {
@@ -22,12 +22,12 @@ type UpdateOperation<Entity extends object> = Except<Partial<Entity>, OptionalKe
 };
 
 const update1: UpdateOperation<User> = {
-	name: 'Alice'
+	name: 'Alice',
 };
 
 const update2: UpdateOperation<User> = {
 	name: 'Bob',
-	luckyNumber: REMOVE_FIELD
+	luckyNumber: REMOVE_FIELD,
 };
 ```
 
