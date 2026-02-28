@@ -1,4 +1,4 @@
-import {expectAssignable, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {ArrayFlat, PositiveInfinity} from '../index.d.ts';
 
 type DeepArrayFlat<T> = ArrayFlat<[[[[[[T]]]]]], 10>;
@@ -152,3 +152,21 @@ expectAssignable<ArrayFlat<ReadonlyNestedComplex, 2>>([1, 'a', 'b', 'c']);
 // Test for recursive flattening with non-array elements
 type RecursiveWithNonArray = [number, [string, {a: number}]];
 expectAssignable<ArrayFlat<RecursiveWithNonArray>>([1, 'string', {a: 42}]);
+
+// Test options.maxRepeat for non-fixed length arrays
+type RepeatedPair = ArrayFlat<Array<[number, string]>, 1, {maxRepeat: 2}>;
+expectAssignable<RepeatedPair>([]);
+expectAssignable<RepeatedPair>([1, 'a']);
+expectAssignable<RepeatedPair>([1, 'a', 2, 'b']);
+expectNotAssignable<RepeatedPair>([1]);
+expectNotAssignable<RepeatedPair>([1, 'a', 2]);
+expectNotAssignable<RepeatedPair>([1, 'a', 2, 'b', 3, 'c']);
+
+type SingleRepeatedPair = ArrayFlat<Array<[number, string]>, 1, {maxRepeat: 1}>;
+expectAssignable<SingleRepeatedPair>([]);
+expectAssignable<SingleRepeatedPair>([1, 'a']);
+expectNotAssignable<SingleRepeatedPair>([1, 'a', 2, 'b']);
+
+type NoRepeatedPair = ArrayFlat<Array<[number, string]>, 1, {maxRepeat: 0}>;
+expectType<NoRepeatedPair>([]);
+expectNotAssignable<NoRepeatedPair>([1, 'a']);
