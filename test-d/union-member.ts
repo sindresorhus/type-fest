@@ -1,10 +1,10 @@
 import {expectType} from 'tsd';
-import type {UnionMember, IsNever} from '../index.d.ts';
+import type {UnionMember, IsNever, IsEqual} from '../index.d.ts';
 
-// `UnionMember` distinguishes between different modifiers.
-type UnionType = {a: 0} | {b: 0} | {a?: 0} | {readonly a?: 0} | {readonly a: 0};
-expectType<true>({} as UnionMember<UnionType> extends UnionType ? true : false);
-expectType<false>({} as UnionType extends UnionMember<UnionType> ? true : false);
+type UnionType = {a: 0} | {readonly a: 0};
+type PickedUnionMember = UnionMember<UnionType>;
+expectType<true>({} as PickedUnionMember extends UnionType ? true : false);
+expectType<false>({} as IsEqual<UnionType, PickedUnionMember>);
 
 // `never` acts as a termination condition with `IsNever`.
 expectType<never>({} as UnionMember<never>);
@@ -12,9 +12,14 @@ expectType<never>({} as UnionMember<never>);
 expectType<unknown>({} as UnionMember<unknown>);
 expectType<any>({} as UnionMember<any>);
 
-// Ensure exactly one member is selected at a time, while covering all members in the union.
-type UnionToTupleWithExclude<T, L = UnionMember<T>> =
+// `WrapMemberInTuple` ensures `UnionMember` selects exactly one member at a time.
+type WrapMemberInTuple<T, L = UnionMember<T>> =
 	IsNever<T> extends false
-		? UnionToTupleWithExclude<Exclude<T, L>> | [L]
+		? WrapMemberInTuple<Exclude<T, L>> | [L]
 		: never;
-expectType<[1] | [2] | [3]>({} as UnionToTupleWithExclude<1 | 2 | 3>);
+expectType<[1] | [2] | [3]>({} as WrapMemberInTuple<1 | 2 | 3>);
+expectType<['foo'] | ['bar'] | ['baz']>({} as WrapMemberInTuple<'foo' | 'bar' | 'baz'>);
+expectType<[1] | ['foo'] | [true] | [100n] | [null] | [undefined]>(
+	{} as WrapMemberInTuple<1 | 'foo' | true | 100n | null | undefined>,
+);
+expectType<[{a: string}] | [{b: number}]>({} as WrapMemberInTuple<{a: string} | {b: number}>);
