@@ -18,8 +18,11 @@ expectType<ArrayFlat<[1, [2, [3]], 4]>>([1, 2, [3], 4]);
 // eslint-disable-next-line unicorn/prevent-abbreviations
 type Arr = [[0, [1, [2, [3, [4, [5]]]]]]];
 expectType<ArrayFlat<Arr, 0>>(null! as Arr);
+expectType<ArrayFlat<Arr, -1>>(null! as Arr);
+expectType<ArrayFlat<Arr, 0.5>>(null! as Arr);
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments
 expectType<ArrayFlat<Arr, 1>>([0, [1, [2, [3, [4, [5]]]]]]);
+expectType<ArrayFlat<Arr, 1.5>>([0, [1, [2, [3, [4, [5]]]]]]);
 expectType<ArrayFlat<Arr, 2>>([0, 1, [2, [3, [4, [5]]]]]);
 expectType<ArrayFlat<Arr, 3>>([0, 1, 2, [3, [4, [5]]]]);
 expectType<ArrayFlat<Arr, 4>>([0, 1, 2, 3, [4, [5]]]);
