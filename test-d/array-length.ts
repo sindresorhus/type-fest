@@ -14,7 +14,6 @@ expectType<number>({} as ArrayLength<[1, 2, ...unknown[]]>);
 expectType<number>({} as ArrayLength<[1, 2?, ...unknown[]]>);
 expectType<number>({} as ArrayLength<[...unknown[], 1, 2]>);
 expectType<number>({} as ArrayLength<[0, ...unknown[], 1, 2]>);
-expectType<0 | 2>({} as ArrayLength<[] | [1, 2]>);
 
 // Read-only arrays
 expectType<number>({} as ArrayLength<readonly unknown[]>);
@@ -28,7 +27,13 @@ expectType<number>({} as ArrayLength<readonly [1, 2, ...unknown[]]>);
 expectType<number>({} as ArrayLength<readonly [1, 2?, ...unknown[]]>);
 expectType<number>({} as ArrayLength<readonly [...unknown[], 1, 2]>);
 expectType<number>({} as ArrayLength<readonly [0, ...unknown[], 1, 2]>);
+
+// Unions
+expectType<0 | 2>({} as ArrayLength<[] | [1, 2]>);
 expectType<0 | 2>({} as ArrayLength<readonly [] | readonly [1, 2]>);
+expectType<0 | 2>({} as ArrayLength<[] | readonly [1, 2]>);
+expectType<1 | 2 | 3 | 4>({} as ArrayLength<[1, 2?, 3?] | ['one', 'two', 'three', 'four']>);
+expectType<number>({} as ArrayLength<readonly [1] | [1, ...number[]]>);
 
 // Edge cases and disallowed types
 expectType<never>({} as ArrayLength<never>);
