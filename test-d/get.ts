@@ -152,3 +152,66 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 	type FooPaths2 = 'array.1';
 	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
 }
+
+// Test keys containing dots (https://github.com/sindresorhus/type-fest/issues/1372)
+// eslint-disable-next-line no-lone-blocks
+{
+	type WithDotKeys = {
+		['test1.test2']: {
+			test3: {
+				test4: number;
+			};
+		};
+	};
+
+	expectTypeOf<Get<WithDotKeys, 'test1.test2'>>().toEqualTypeOf<{test3: {test4: number}}>();
+	expectTypeOf<Get<WithDotKeys, 'test1.test2.test3'>>().toEqualTypeOf<{test4: number}>();
+	expectTypeOf<Get<WithDotKeys, 'test1.test2.test3.test4'>>().toEqualTypeOf<number>();
+
+	expectTypeOf<Get<WithDotKeys, 'test1.test2', NonStrict>>().toEqualTypeOf<{test3: {test4: number}}>();
+	expectTypeOf<Get<WithDotKeys, 'test1.test2.test3', NonStrict>>().toEqualTypeOf<{test4: number}>();
+	expectTypeOf<Get<WithDotKeys, 'test1.test2.test3.test4', NonStrict>>().toEqualTypeOf<number>();
+
+	// Array path should treat the dotted key as a single element
+	expectTypeOf<Get<WithDotKeys, ['test1.test2']>>().toEqualTypeOf<{test3: {test4: number}}>();
+	expectTypeOf<Get<WithDotKeys, ['test1.test2', 'test3', 'test4']>>().toEqualTypeOf<number>();
+
+	// Non-existent paths should still return unknown
+	expectTypeOf<Get<WithDotKeys, 'test1', NonStrict>>().toBeUnknown();
+	expectTypeOf<Get<WithDotKeys, 'test1.test2.nonexistent', NonStrict>>().toBeUnknown();
+
+	// Key with multiple dots
+	type WithMultiDotKey = {
+		['test1.test2.test3']: {
+			test4: number;
+		};
+	};
+
+	expectTypeOf<Get<WithMultiDotKey, 'test1.test2.test3'>>().toEqualTypeOf<{test4: number}>();
+	expectTypeOf<Get<WithMultiDotKey, 'test1.test2.test3.test4'>>().toEqualTypeOf<number>();
+	expectTypeOf<Get<WithMultiDotKey, 'test1.test2.test3', NonStrict>>().toEqualTypeOf<{test4: number}>();
+	expectTypeOf<Get<WithMultiDotKey, 'test1.test2.test3.test4', NonStrict>>().toEqualTypeOf<number>();
+	expectTypeOf<Get<WithMultiDotKey, 'test1.test2', NonStrict>>().toBeUnknown();
+	expectTypeOf<Get<WithMultiDotKey, 'test1', NonStrict>>().toBeUnknown();
+
+	// Multiple levels of dot-containing keys
+	type NestedDotKeys = {
+		['a.b']: {
+			['c.d']: {
+				value: string;
+			};
+		};
+	};
+
+	expectTypeOf<Get<NestedDotKeys, 'a.b.c.d.value', NonStrict>>().toBeString();
+	expectTypeOf<Get<NestedDotKeys, 'a.b.c.d', NonStrict>>().toEqualTypeOf<{value: string}>();
+
+	// When both a dotted key and a nested path exist, prefer the nested path (matches JS dot-access semantics)
+	type Ambiguous = {
+		a: {b: number};
+		'a.b': string;
+	};
+
+	expectTypeOf<Get<Ambiguous, 'a.b', NonStrict>>().toBeNumber();
+	expectTypeOf<Get<Ambiguous, ['a.b'], NonStrict>>().toBeString();
+}

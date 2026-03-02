@@ -22,17 +22,44 @@ type DefaultGetOptions = {
 
 /**
 Like the `Get` type but receives an array of strings as a path parameter.
+
+When a key segment doesn't directly match a property and the type has keys containing dots
+that start with that segment, it tries progressively joining adjacent segments with dots
+to match those keys (e.g. `{'foo.bar': value}`).
 */
 type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 	Keys extends readonly []
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
+			? Extract<Head, string> extends keyof BaseType
+				? GetWithPath<
+					PropertyOf<BaseType, Extract<Head, string>, Options>,
+					Extract<Tail, string[]>,
+					Options
+				>
+				: [keyof BaseType & `${Extract<Head, string>}.${string}`] extends [never]
+					? GetWithPath<
+						PropertyOf<BaseType, Extract<Head, string>, Options>,
+						Extract<Tail, string[]>,
+						Options
+					>
+					: GetWithPath_TryDotKey<BaseType, Extract<Head, string>, Extract<Tail, string[]>, Options>
+			: never;
+
+/**
+Try progressively longer dot-joined key prefixes to handle object keys that contain dots.
+Falls back to `PropertyOf` for the original key when no dotted key matches.
+*/
+type GetWithPath_TryDotKey<BaseType, Prefix extends string, Remaining extends readonly string[], Options extends Required<GetOptions>> =
+	Remaining extends readonly [infer Next extends string, ...infer Rest extends string[]]
+		? `${Prefix}.${Next}` extends keyof BaseType
 			? GetWithPath<
-				PropertyOf<BaseType, Extract<Head, string>, Options>,
-				Extract<Tail, string[]>,
+				PropertyOf<BaseType, `${Prefix}.${Next}`, Options>,
+				Rest,
 				Options
 			>
-			: never;
+			: GetWithPath_TryDotKey<BaseType, `${Prefix}.${Next}`, Rest, Options>
+		: PropertyOf<BaseType, Prefix, Options>;
 
 /**
 Adds `undefined` to `Type` if `strict` is enabled.
