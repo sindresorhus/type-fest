@@ -187,9 +187,9 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 });
 
-function getLeftmostQuickInfo(env, line, lineOffset) {
+function getLeftmostQuickInfo(env, line, lineOffset, verbose = false) {
 	for (let i = 0; i < line.length; i++) {
-		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i, undefined, Infinity);
+		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i, undefined, verbose ? Infinity : undefined);
 		if (quickInfo?.displayParts) {
 			return quickInfo;
 		}
@@ -364,12 +364,14 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 		const indent = line.slice(0, actualCommentIndex);
 
 		const quickInfo = getLeftmostQuickInfo(env, previousLine, previousLineOffset);
+		const quickInfoVerbose = getLeftmostQuickInfo(env, previousLine, previousLineOffset, true);
 
-		if (quickInfo?.displayParts) {
+		if (quickInfo?.displayParts && quickInfoVerbose?.displayParts) {
 			const expectedType = normalizeType(extractTypeFromQuickInfo(quickInfo));
+			const expectedTypeVerbose = normalizeType(extractTypeFromQuickInfo(quickInfoVerbose));
 			const actualType = normalizeType(rawActualType);
 
-			if (actualType === expectedType) {
+			if (actualType === expectedType || actualType === expectedTypeVerbose) {
 				// If the types are equal, check for formatting errors and unordered numbers in unions
 				const expectedComment = getCommentForType(normalizeType(rawActualType, true));
 
@@ -384,7 +386,8 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 					});
 				}
 			} else {
-				const expectedComment = getCommentForType(expectedType);
+				// While suggesting use the verbose version
+				const expectedComment = getCommentForType(expectedTypeVerbose);
 
 				reportTypeMismatch({
 					messageId: 'incorrectTwoslashType',

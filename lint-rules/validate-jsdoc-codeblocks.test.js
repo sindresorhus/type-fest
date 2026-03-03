@@ -829,10 +829,15 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> '🦄' | '🐶' | '🐇'
 		`))),
 
-		// Types are simplified
+		// Both simplified and unsimplified types are allowed
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			type Test = {foo: Pick<{bar: string}, 'bar'>};
-			//=> {foo: {bar: string}}
+			type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+
+			type FullySimplified = Test;
+			//=> {foo: {bar: {baz: string}}}
+
+			type NotSimplified = Test;
+			//=> {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>}
 		`))),
 
 		// === Different types of quick info ===
@@ -1654,25 +1659,50 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
-		// Not simplified
+		// Fixer suggests the fully simplified variant
 		{
 			code: dedenter`
 				/**
 				\`\`\`ts
-				type Test = {foo: Pick<{bar: string}, 'bar'>};
-				//=> {foo: Pick<{bar: string}, 'bar'>}
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=>
 				\`\`\`
 				*/
 				export type T0 = string;
 			`,
 			errors: [
-				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> {foo: Pick<{bar: string}, \'bar\'>}'}),
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				type Test = {foo: Pick<{bar: string}, 'bar'>};
-				//=> {foo: {bar: string}}
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=> {foo: {bar: {baz: string}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Partially simplified
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=> {foo: {bar: Pick<{baz: string}, 'baz'>}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> {foo: {bar: Pick<{baz: string}, \'baz\'>}}'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=> {foo: {bar: {baz: string}}}
 				\`\`\`
 				*/
 				export type T0 = string;
