@@ -23,9 +23,7 @@ type DefaultGetOptions = {
 /**
 Like the `Get` type but receives an array of strings as a path parameter.
 
-When a key segment doesn't directly match a property and the type has keys containing dots
-that start with that segment, it tries progressively joining adjacent segments with dots
-to match those keys (e.g. `{'foo.bar': value}`).
+When a key segment doesn't directly match a property and the type has keys containing dots that start with that segment, it tries progressively joining adjacent segments with dots to match those keys (e.g. `{'foo.bar': value}`).
 */
 type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 	Keys extends readonly []
