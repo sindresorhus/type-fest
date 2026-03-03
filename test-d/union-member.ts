@@ -1,10 +1,6 @@
 import {expectType} from 'tsd';
 import type {UnionMember, IsNever, IsEqual} from '../index.d.ts';
 
-type UnionType = {a: 0} | {readonly a: 0};
-type PickedUnionMember = UnionMember<UnionType>;
-expectType<false>({} as IsEqual<UnionType, PickedUnionMember>);
-
 expectType<false>({} as boolean extends UnionMember<boolean> ? true : false);
 expectType<false>({} as (1 | 'foo' | 'bar') extends UnionMember<1 | 'foo' | 'bar'> ? true : false);
 expectType<false>({} as ({foo: string} | {bar: number}) extends UnionMember<{foo: string} | {bar: number}> ? true : false);
@@ -32,3 +28,9 @@ expectType<[1] | ['foo'] | [true] | [100n] | [null] | [undefined]>(
 	{} as WrapMemberInTuple<1 | 'foo' | true | 100n | null | undefined>,
 );
 expectType<[{a: string}] | [{b: number}]>({} as WrapMemberInTuple<{a: string} | {b: number}>);
+
+type UnionType = {a: 0} | {readonly a: 0};
+type PickedUnionMember = UnionMember<UnionType>;
+// We can't use `UnionType extends PickedUnionMember ? true : false` for testing here,
+// because that would always be `true` as `UnionType` extends both of its members individually.
+expectType<false>({} as IsEqual<UnionType, PickedUnionMember>);
