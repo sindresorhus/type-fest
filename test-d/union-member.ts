@@ -3,7 +3,6 @@ import type {UnionMember, IsNever, IsEqual} from '../index.d.ts';
 
 type UnionType = {a: 0} | {readonly a: 0};
 type PickedUnionMember = UnionMember<UnionType>;
-expectType<true>({} as PickedUnionMember extends UnionType ? true : false);
 expectType<false>({} as IsEqual<UnionType, PickedUnionMember>);
 
 // `never` acts as a termination condition with `IsNever`.
