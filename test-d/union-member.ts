@@ -5,9 +5,7 @@ type UnionType = {a: 0} | {readonly a: 0};
 type PickedUnionMember = UnionMember<UnionType>;
 expectType<false>({} as IsEqual<UnionType, PickedUnionMember>);
 
-// `never` acts as a termination condition with `IsNever`.
 expectType<never>({} as UnionMember<never>);
-
 expectType<unknown>({} as UnionMember<unknown>);
 expectType<any>({} as UnionMember<any>);
 
