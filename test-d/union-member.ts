@@ -5,6 +5,18 @@ type UnionType = {a: 0} | {readonly a: 0};
 type PickedUnionMember = UnionMember<UnionType>;
 expectType<false>({} as IsEqual<UnionType, PickedUnionMember>);
 
+expectType<false>({} as boolean extends UnionMember<boolean> ? true : false);
+expectType<false>({} as (1 | 'foo' | 'bar') extends UnionMember<1 | 'foo' | 'bar'> ? true : false);
+expectType<false>({} as ({foo: string} | {bar: number}) extends UnionMember<{foo: string} | {bar: number}> ? true : false);
+
+expectType<number>({} as UnionMember<number>);
+expectType<string>({} as UnionMember<string>);
+expectType<bigint>({} as UnionMember<bigint>);
+expectType<true>({} as UnionMember<true>);
+expectType<false>({} as UnionMember<false>);
+expectType<null>({} as any as UnionMember<null>);
+expectType<undefined>({} as any as UnionMember<undefined>);
+
 expectType<never>({} as UnionMember<never>);
 expectType<unknown>({} as UnionMember<unknown>);
 expectType<any>({} as UnionMember<any>);
