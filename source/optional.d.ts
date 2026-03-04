@@ -21,11 +21,13 @@ type Config = {
 	name: string;
 	description: Optional<string>;
 };
+
+type Description = Config['description'];
+//=> string | undefined
 ```
 
 @category Utilities
 */
-// Uses `Exclude` instead of a conditional type so that `Optional<null>` resolves to `undefined` rather than `never`.
 export type Optional<Value> = Exclude<Value, null> | undefined;
 
 export {};
