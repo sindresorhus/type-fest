@@ -1,5 +1,4 @@
-import type {IsUnknown} from './is-unknown.d.ts';
-import type {StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
+import type {FunctionWithMaybeThisParameter, StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -110,16 +109,13 @@ type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
 
 @category Function
 */
-export type SetParameterType<Function_ extends (...arguments_: any[]) => unknown, P extends Record<number, unknown>> =
-	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
-	Function_ extends (this: infer ThisArgument, ...arguments_: infer Arguments) => unknown
-		? (
-			// If a function did not specify the `this` fake parameter, it will be inferred to `unknown`.
-			// We want to detect this situation just to display a friendlier type upon hovering on an IntelliSense-powered IDE.
-			IsUnknown<ThisArgument> extends true
-				? (...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
-				: (this: ThisArgument, ...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
-		)
-		: Function_;	// This part should be unreachable
+export type SetParameterType<
+	Function_ extends (...arguments_: any[]) => unknown,
+	P extends Record<number, unknown>,
+> = FunctionWithMaybeThisParameter<
+	ThisParameterType<Function_>,
+	MergeObjectToArray<Parameters<Function_>, P>,
+	ReturnType<Function_>
+>;
 
 export {};
