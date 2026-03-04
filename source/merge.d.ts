@@ -29,12 +29,12 @@ type Bar = {
 };
 
 // With `&`, `a` becomes `string & number` which is `never`. Not what you want.
-type FooAndBar = Foo & Bar;
-//=> Foo & Bar
+type WithIntersection = (Foo & Bar)['a'];
+//=> never
 
 // With `Merge`, `a` is cleanly overridden to `number`.
-type FooMergedWithBar = Merge<Foo, Bar>;
-//=> {b: number; a: number; c: boolean}
+type WithMerge = Merge<Foo, Bar>['a'];
+//=> number
 ```
 
 @example
