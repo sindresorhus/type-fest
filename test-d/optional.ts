@@ -31,7 +31,7 @@ expectType<undefined>(nullOrUndefined);
 declare const pureUndefined: Optional<undefined>;
 expectType<undefined>(pureUndefined);
 
-// Nested optional is idempotent
+// Nested `Optional` is idempotent
 expectType<string | undefined>({} as Optional<Optional<string>>);
 
 // `void`
