@@ -337,7 +337,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const lines = code.split('\n');
 
 	const specifiedVerbosityLevels = context.options[0]?.verbosityLevels ?? [];
-	const verbosityLevels = [0, ...specifiedVerbosityLevels, Infinity];
+	const verbosityLevels = [0, ...specifiedVerbosityLevels, Infinity]; // Keep `Infinity` last since suggestion logic relies on the order
 
 	for (const [index, line] of lines.entries()) {
 		const dedentedLine = line.trimStart();
