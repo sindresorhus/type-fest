@@ -831,31 +831,50 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 		// `0` and `Infinity` verbosity levels
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+			type Test = {a: Pick<{b: Pick<{c: Pick<{d: 1}, 'd'>}, 'c'>}, 'b'>};
 
 			type LevelZero = Test;
-			//=> {foo: {bar: {baz: string}}}
+			//=> {a: {b: {c: {d: 1}}}}
 
-			type LevelTwo = Test;
-			//=> {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>}
+			type LevelThree = Test;
+			//=> {
+			// 	a: Pick<{
+			// 		b: Pick<{
+			// 			c: Pick<{
+			// 				d: 1;
+			// 			}, 'd'>;
+			// 		}, 'c'>;
+			// 	}, 'b'>;
+			// }
 		`))),
 
 		// Custom verbosity level
 		// `0` and `Infinity` verbosity levels are still allowed
 		{
 			code: exportTypeAndOption(jsdoc(fence(dedenter`
-				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				type Test = {a: Pick<{b: Pick<{c: Pick<{d: 1}, 'd'>}, 'c'>}, 'b'>};
 
 				type LevelZero = Test;
-				//=> {foo: {bar: {baz: string}}}
+				//=> {a: {b: {c: {d: 1}}}}
 
 				type LevelOne = Test;
-				//=> {foo: {bar: Pick<{baz: string}, 'baz'>}}
+				//=> {a: {b: Pick<{c: Pick<{d: 1}, 'd'>}, 'c'>}}
 
 				type LevelTwo = Test;
-				//=> {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>}
+				//=> {a: {b: {c: Pick<{d: 1}, 'd'>}}}
+
+				type LevelThree = Test;
+				//=> {
+				// 	a: Pick<{
+				// 		b: Pick<{
+				// 			c: Pick<{
+				// 				d: 1;
+				// 			}, 'd'>;
+				// 		}, 'c'>;
+				// 	}, 'b'>;
+				// }
 			`))),
-			options: [{verbosityLevels: [1]}],
+			options: [{verbosityLevels: [1, 2]}],
 		},
 
 		// === Different types of quick info ===
@@ -1677,7 +1696,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
-		// Fixer suggests the fully simplified variant
+		// Fixer suggests types at `Infinity` verbosity level
 		{
 			code: dedenter`
 				/**
@@ -1702,7 +1721,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
-		// Partially simplified
+		// Only `0` and `Infinity` verbosity levels are allowed by default
 		{
 			code: dedenter`
 				/**
