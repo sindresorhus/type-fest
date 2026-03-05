@@ -1332,6 +1332,51 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// Preserves the specified verbosity level during formatting fixes
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {a: Pick<{b: Pick<{c: Pick<{d: 'abracadabra'}, 'd'>}, 'c'>}, 'b'>};
+
+				type LevelOne = Test;
+				//=> {a: {b: Pick<{c: Pick<{d: 'abracadabra'}, 'd'>}, 'c'>}}
+
+				type LevelTwo = Test;
+				//=> {a: {b: {c: Pick<{d: "abracadabra"}, "d">}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 6, textBeforeStart: '', target: '//=> {a: {b: Pick<{c: Pick<{d: \'abracadabra\'}, \'d\'>}, \'c\'>}}'}),
+				incorrectTwoslashFormatErrorAt({line: 9, textBeforeStart: '', target: '//=> {a: {b: {c: Pick<{d: "abracadabra"}, "d">}}}'}),
+			],
+			options: [{verbosityLevels: [1, 2]}],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {a: Pick<{b: Pick<{c: Pick<{d: 'abracadabra'}, 'd'>}, 'c'>}, 'b'>};
+
+				type LevelOne = Test;
+				//=> {
+				// 	a: {
+				// 		b: Pick<{
+				// 			c: Pick<{
+				// 				d: 'abracadabra';
+				// 			}, 'd'>;
+				// 		}, 'c'>;
+				// 	};
+				// }
+
+				type LevelTwo = Test;
+				//=> {a: {b: {c: Pick<{d: 'abracadabra'}, 'd'>}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// === Twoslash type errors ===
 
 		// Incorrect type
