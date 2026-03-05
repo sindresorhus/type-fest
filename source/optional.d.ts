@@ -20,10 +20,8 @@ type NullableString = Optional<string | null>;
 type Config = {
 	name: string;
 	description: Optional<string>;
+	//=> string | undefined
 };
-
-type Description = Config['description'];
-//=> string | undefined
 ```
 
 @category Utilities
