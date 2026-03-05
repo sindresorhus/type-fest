@@ -87,7 +87,19 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 			incorrectTwoslashType: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
 			incorrectTwoslashFormat: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
 		},
-		schema: [],
+		schema: [{
+			type: 'object',
+			properties: {
+				verbosityLevels: {
+					type: 'array',
+					uniqueItems: true,
+					items: {
+						minimum: 0,
+						type: 'number',
+					},
+				},
+			},
+		}],
 	},
 	defaultOptions: [],
 	create(context) {
@@ -187,9 +199,9 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 });
 
-function getLeftmostQuickInfo(env, line, lineOffset, verbose = false) {
+function getLeftmostQuickInfo(env, line, lineOffset, verbosityLevel) {
 	for (let i = 0; i < line.length; i++) {
-		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i, undefined, verbose ? Infinity : undefined);
+		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i, undefined, verbosityLevel);
 		if (quickInfo?.displayParts) {
 			return quickInfo;
 		}
@@ -324,6 +336,9 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
 	const lines = code.split('\n');
 
+	const specifiedVerbosityLevels = context.options[0]?.verbosityLevels ?? [];
+	const verbosityLevels = [0, ...specifiedVerbosityLevels, Infinity];
+
 	for (const [index, line] of lines.entries()) {
 		const dedentedLine = line.trimStart();
 		if (!dedentedLine.startsWith(TWOSLASH_COMMENT)) {
@@ -363,16 +378,16 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 
 		const indent = line.slice(0, actualCommentIndex);
 
-		const quickInfo = getLeftmostQuickInfo(env, previousLine, previousLineOffset);
-		const quickInfoVerbose = getLeftmostQuickInfo(env, previousLine, previousLineOffset, true);
+		const quickInfos = verbosityLevels
+			.map(verbosity => getLeftmostQuickInfo(env, previousLine, previousLineOffset, verbosity))
+			.filter(qi => qi?.displayParts);
 
-		if (quickInfo?.displayParts && quickInfoVerbose?.displayParts) {
-			const expectedType = normalizeType(extractTypeFromQuickInfo(quickInfo));
-			const expectedTypeVerbose = normalizeType(extractTypeFromQuickInfo(quickInfoVerbose));
+		if (quickInfos.length > 0) {
+			const expectedTypes = quickInfos.map(qi => normalizeType(extractTypeFromQuickInfo(qi)));
 			const actualType = normalizeType(rawActualType);
 
-			if (actualType === expectedType || actualType === expectedTypeVerbose) {
-				// If the types are equal, check for formatting errors and unordered numbers in unions
+			if (expectedTypes.includes(actualType)) {
+				// If the types match, check for formatting errors and unordered numbers in unions
 				const expectedComment = getCommentForType(normalizeType(rawActualType, true));
 
 				if (actualComment !== expectedComment) {
@@ -386,8 +401,8 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 					});
 				}
 			} else {
-				// While suggesting use the verbose version
-				const expectedComment = getCommentForType(expectedTypeVerbose);
+				// For suggestion, use infinite verbosity, and it should be the last one
+				const expectedComment = getCommentForType(expectedTypes.at(-1));
 
 				reportTypeMismatch({
 					messageId: 'incorrectTwoslashType',

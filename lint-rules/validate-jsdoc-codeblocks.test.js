@@ -829,16 +829,34 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> '🦄' | '🐶' | '🐇'
 		`))),
 
-		// Both simplified and unsimplified types are allowed
+		// `0` and `Infinity` verbosity levels
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
 
-			type FullySimplified = Test;
+			type LevelZero = Test;
 			//=> {foo: {bar: {baz: string}}}
 
-			type NotSimplified = Test;
+			type LevelTwo = Test;
 			//=> {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>}
 		`))),
+
+		// Custom verbosity level
+		// `0` and `Infinity` verbosity levels are still allowed
+		{
+			code: exportTypeAndOption(jsdoc(fence(dedenter`
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+
+				type LevelZero = Test;
+				//=> {foo: {bar: {baz: string}}}
+
+				type LevelOne = Test;
+				//=> {foo: {bar: Pick<{baz: string}, 'baz'>}}
+
+				type LevelTwo = Test;
+				//=> {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>}
+			`))),
+			options: [{verbosityLevels: [1]}],
+		},
 
 		// === Different types of quick info ===
 		// Function
