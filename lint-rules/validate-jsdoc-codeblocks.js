@@ -100,8 +100,11 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 				},
 			},
 		}],
+		/** @type {unknown[]} */
+		defaultOptions: [{
+			verbosityLevels: [],
+		}],
 	},
-	defaultOptions: [],
 	create(context) {
 		const filename = context.filename.replaceAll('\\', '/');
 
@@ -336,7 +339,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
 	const lines = code.split('\n');
 
-	const specifiedVerbosityLevels = context.options[0]?.verbosityLevels ?? [];
+	const specifiedVerbosityLevels = context.options[0].verbosityLevels;
 	const verbosityLevels = [0, ...specifiedVerbosityLevels, Infinity]; // Keep `Infinity` last since suggestion logic relies on the order
 
 	for (const [index, line] of lines.entries()) {
