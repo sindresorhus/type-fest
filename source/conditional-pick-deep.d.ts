@@ -74,7 +74,7 @@ type BooleanPick = ConditionalPickDeep<Example, boolean | undefined>;
 //=> {c: {e: {g?: boolean}; j: boolean}}
 
 type NumberPick = ConditionalPickDeep<Example, number>;
-//=> {}
+//=> never
 
 type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 //=> {
@@ -99,11 +99,13 @@ export type ConditionalPickDeep<
 	Type,
 	Condition,
 	Options extends ConditionalPickDeepOptions = {},
-> = _ConditionalPickDeep<
+> = _NeverIfEmpty<_ConditionalPickDeep<
 	Type,
 	Condition,
 	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>
->;
+>>;
+
+type _NeverIfEmpty<Type> = Type extends EmptyObject ? never : Type;
 
 type _ConditionalPickDeep<
 	Type,

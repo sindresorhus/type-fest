@@ -191,6 +191,7 @@ Click the type names for complete docs.
 - [`ConditionalSimplify`](source/conditional-simplify.d.ts) - Simplifies a type while including and/or excluding certain types from being simplified.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 - [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
+- [`Optional`](source/optional.d.ts) - Create a type that represents either the value or `undefined`, while stripping `null` from the type.
 - [`UnionMember`](source/union-member.d.ts) - Returns an arbitrary member of a union type.
 
 ### Type Guard
@@ -267,6 +268,7 @@ Click the type names for complete docs.
 - [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extract the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
 - [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 - [`ArrayReverse`](source/array-reverse.d.ts) - Reverse the order of elements in a tuple type.
+- [`ArrayLength`](source/array-length.d.ts) - Return the length of an array. Equivalent to `T['length']` where `T` extends any array.
 
 ### Numeric
 
@@ -282,7 +284,7 @@ Click the type names for complete docs.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
 - [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number.
 - [`IsFloat`](source/is-float.d.ts) - Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
-- [`IsInteger`](source/is-integer.d.ts) - Returns a boolean for whether the given number is a integer, like `-5`, `1.0` or `100`.
+- [`IsInteger`](source/is-integer.d.ts) - Returns a boolean for whether the given number is an integer, like `-5`, `1.0` or `100`.
 - [`GreaterThan`](source/greater-than.d.ts) - Returns a boolean for whether a given number is greater than another number.
 - [`GreaterThanOrEqual`](source/greater-than-or-equal.d.ts) - Returns a boolean for whether a given number is greater than or equal to another number.
 - [`LessThan`](source/less-than.d.ts) - Returns a boolean for whether a given number is less than another number.
@@ -354,6 +356,7 @@ Click the type names for complete docs.
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
+- `Maybe`, `Option` - See [`Optional`](source/optional.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
 - `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 - `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)

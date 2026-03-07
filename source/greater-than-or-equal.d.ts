@@ -32,6 +32,23 @@ type B = GreaterThanOrEqual<1, number>;
 type C = GreaterThanOrEqual<number, number>;
 //=> boolean
 ```
+
+@example
+```
+import type {GreaterThanOrEqual} from 'type-fest';
+
+// Use `GreaterThanOrEqual` to constrain a function parameter to non-negative numbers.
+declare function setNonNegative<N extends number>(value: GreaterThanOrEqual<N, 0> extends true ? N : never): void;
+
+setNonNegative(0); // ✅ Allowed
+setNonNegative(1); // ✅ Allowed
+
+// @ts-expect-error
+setNonNegative(-1);
+
+// @ts-expect-error
+setNonNegative(-2);
+```
 */
 export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
 	? boolean

@@ -526,13 +526,57 @@ declare const indexSignatureDepthLeaves: Paths<{a: {[x: string]: {b: string; c: 
 expectType<`a.${string}.b` | `a.${string}.c` | 'd'>(indexSignatureDepthLeaves);
 
 // Generic types
-type SomeTypeWithConstraint<T, _U extends Paths<T>> = never;
+type PathsConstraint<T, _U extends Paths<T>> = never;
 
-type Foo<T> = {bar: {baz: T}};
-type Test1<T> = SomeTypeWithConstraint<Foo<T>, 'bar.baz'>;
+type Generic1<T> = {bar: {baz: T}};
+type Test1<T> = PathsConstraint<Generic1<T>, 'bar.baz'>;
 
-type Bar<T, U> = {bar: {baz: {qux: T}; fizz: {buzz: U} | U | T}};
-type Test2<T, U> = SomeTypeWithConstraint<
-	Bar<T, U>,
+type Generic2<T, U> = {bar: {baz: {qux: T}; fizz: {buzz: U} | U | T}};
+type Test2<T, U> = PathsConstraint<
+	Generic2<T, U>,
 	'bar' | 'bar.baz' | 'bar.baz.qux' | 'bar.fizz' | 'bar.fizz.buzz'
 >;
+
+type LeavesOnlyPathsConstraint<T, _U extends Paths<T, {leavesOnly: true}>> = never;
+
+type Generic3<T> = {bar: {baz: T; qux: string}};
+type Test3<T> = LeavesOnlyPathsConstraint<Generic3<T>, 'bar.qux'>;
+// @ts-expect-error
+type Test4<T> = LeavesOnlyPathsConstraint<Generic3<T>, 'bar'>; // 'bar' is not a leaf
+// @ts-expect-error
+type Test5<T> = LeavesOnlyPathsConstraint<Generic3<T>, 'bar.baz'>; // 'bar.baz' is not a leaf, because `T` is not known.
+
+type DepthPathsConstraint<T, _U extends Paths<T, {depth: 1}>> = never;
+
+type Generic4<T> = {bar: {baz: T}; qux: [T]};
+type Test6<T> = DepthPathsConstraint<Generic4<T>, 'bar.baz' | 'qux.0'>;
+// @ts-expect-error
+type Test7<T> = DepthPathsConstraint<Generic4<T>, 'bar'>; // 'bar' is not at depth `1`
+// @ts-expect-error
+type Test8<T> = DepthPathsConstraint<Generic4<T>, 'qux'>; // 'qux' is not at depth `1`
+
+type BracketNotationPathsConstraint<T, _U extends Paths<T, {bracketNotation: true}>> = never;
+
+type Generic5<T> = {1: {2: T}; 3: [T]};
+type Test9<T> = BracketNotationPathsConstraint<Generic5<T>, '[1]' | '[1][2]' | '[3]' | '[3][0]'>;
+
+type MaxRecursionDepthPathsConstraint<T, _U extends Paths<T, {maxRecursionDepth: 2}>> = never;
+
+type Generic6<T> = {foo: {bar: T}; baz: T; fizz: {buzz: {qux: {quxx: T}}}};
+type Test10<T> = MaxRecursionDepthPathsConstraint<
+	Generic6<T>,
+	'foo' | 'foo.bar' | 'baz' | 'fizz' | 'fizz.buzz' | 'fizz.buzz.qux'
+>;
+// @ts-expect-error
+type Test11<T> = MaxRecursionDepthPathsConstraint<Generic6<T>, 'fizz.buzz.qux.quxx'>; // 'fizz.buzz.qux.quxx' is at depth `3`
+
+type LeavesOnlyAndDepthPathsConstraint<T, _U extends Paths<T, {leavesOnly: true; depth: 1}>> = never;
+
+type Generic7<T> = {foo: {bar: T; baz: string; fizz: {buzz: number}}; qux: string};
+type Test12<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.baz'>;
+// @ts-expect-error
+type Test13<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'qux'>; // 'qux' is a leaf, but not at depth `1`.
+// @ts-expect-error
+type Test14<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.fizz'>; // 'foo.fizz' is at depth `1`, but not a leaf.
+// @ts-expect-error
+type Test15<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.bar'>; // 'foo.bar' is at depth `1`, but not a leaf because `T` is not known.

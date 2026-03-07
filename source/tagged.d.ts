@@ -121,7 +121,7 @@ const moneyByAccountType: Record<UnwrapTagged<AccountType>, number> = {
 // Without UnwrapTagged, the following expression would throw a type error.
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
-// Attempting to pass an non-Tagged type to UnwrapTagged will raise a type error.
+// Attempting to pass a non-Tagged type to UnwrapTagged will raise a type error.
 // @ts-expect-error
 type WontWork = UnwrapTagged<string>;
 ```
@@ -239,7 +239,7 @@ const moneyByAccountType: Record<UnwrapOpaque<AccountType>, number> = {
 // Without UnwrapOpaque, the following expression would throw a type error.
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
-// Attempting to pass an non-Opaque type to UnwrapOpaque will raise a type error.
+// Attempting to pass a non-Opaque type to UnwrapOpaque will raise a type error.
 // @ts-expect-error
 type WontWork = UnwrapOpaque<string>;
 
