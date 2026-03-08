@@ -144,6 +144,7 @@ export type {ArrayValues} from './source/array-values.d.ts';
 export type {ArraySlice} from './source/array-slice.d.ts';
 export type {ArraySplice} from './source/array-splice.d.ts';
 export type {ArrayTail} from './source/array-tail.d.ts';
+export type {ArrayAt} from './source/array-at.d.ts';
 export type {ArrayElement} from './source/array-element.d.ts';
 export type {ArrayLength} from './source/array-length.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
