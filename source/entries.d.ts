@@ -1,9 +1,33 @@
-import type {_ArrayEntry, _MapEntry, _ObjectEntry, _SetEntry} from './entry.d.ts';
+import type {_ArrayEntry, _MapEntry, _SetEntry, ObjectEntry} from './entry.d.ts';
 
 type ArrayEntries<BaseType extends readonly unknown[]> = Array<_ArrayEntry<BaseType>>;
 type MapEntries<BaseType> = Array<_MapEntry<BaseType>>;
-type ObjectEntries<BaseType> = Array<_ObjectEntry<BaseType>>;
 type SetEntries<BaseType extends Set<unknown>> = Array<_SetEntry<BaseType>>;
+
+/**
+Create a type that represents the type of the entries of an object type.
+
+This is useful when you want to work with `Object.entries()` directly without going through the generic {@link Entries} type, which may lose type information with generic type parameters due to TypeScript's conditional type limitations.
+
+@see {@link ObjectEntry} for the type of a single entry.
+@see {@link Entries} for a version that works with all collection types.
+
+@example
+```
+import type {ObjectEntries} from 'type-fest';
+
+type Example = {
+	a: number;
+	b: string;
+};
+
+type ExampleEntries = ObjectEntries<Example>;
+//=> ObjectEntry<Example>[]
+```
+
+@category Object
+*/
+export type ObjectEntries<BaseType> = Array<ObjectEntry<BaseType>>;
 
 /**
 Many collections have an `entries` method which returns an array of a given object's own enumerable string-keyed property [key, value] pairs. The `Entries` type will return the type of that collection's entries.
