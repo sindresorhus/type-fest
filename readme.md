@@ -192,6 +192,7 @@ Click the type names for complete docs.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 - [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
 - [`Optional`](source/optional.d.ts) - Create a type that represents either the value or `undefined`, while stripping `null` from the type.
+- [`UnionMember`](source/union-member.d.ts) - Returns an arbitrary member of a union type.
 
 ### Type Guard
 
@@ -358,6 +359,8 @@ Click the type names for complete docs.
 - `Maybe`, `Option` - See [`Optional`](source/optional.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
 - `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
+- `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
+- `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 
 ## Tips
 
