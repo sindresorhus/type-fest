@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import {code1, code2, createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
@@ -828,6 +829,54 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> '🦄' | '🐶' | '🐇'
 		`))),
 
+		// `0` and `Infinity` verbosity levels
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type Test = {a: Pick<{b: Pick<{c: Pick<{d: 1}, 'd'>}, 'c'>}, 'b'>};
+
+			type LevelZero = Test;
+			//=> {a: {b: {c: {d: 1}}}}
+
+			type LevelThree = Test;
+			//=> {
+			// 	a: Pick<{
+			// 		b: Pick<{
+			// 			c: Pick<{
+			// 				d: 1;
+			// 			}, 'd'>;
+			// 		}, 'c'>;
+			// 	}, 'b'>;
+			// }
+		`))),
+
+		// Custom verbosity level
+		// `0` and `Infinity` verbosity levels are still allowed
+		{
+			code: exportTypeAndOption(jsdoc(fence(dedenter`
+				type Test = {a: Pick<{b: Pick<{c: Pick<{d: 1}, 'd'>}, 'c'>}, 'b'>};
+
+				type LevelZero = Test;
+				//=> {a: {b: {c: {d: 1}}}}
+
+				type LevelOne = Test;
+				//=> {a: {b: Pick<{c: Pick<{d: 1}, 'd'>}, 'c'>}}
+
+				type LevelTwo = Test;
+				//=> {a: {b: {c: Pick<{d: 1}, 'd'>}}}
+
+				type LevelThree = Test;
+				//=> {
+				// 	a: Pick<{
+				// 		b: Pick<{
+				// 			c: Pick<{
+				// 				d: 1;
+				// 			}, 'd'>;
+				// 		}, 'c'>;
+				// 	}, 'b'>;
+				// }
+			`))),
+			options: [{verbosityLevels: [1, 2]}],
+		},
+
 		// === Different types of quick info ===
 		// Function
 		exportTypeAndOption(jsdoc(fence(dedenter`
@@ -1281,6 +1330,51 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		// Preserves the specified verbosity level during formatting fixes
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {a: Pick<{b: Pick<{c: Pick<{d: 'abracadabra'}, 'd'>}, 'c'>}, 'b'>};
+
+				type LevelOne = Test;
+				//=> {a: {b: Pick<{c: Pick<{d: 'abracadabra'}, 'd'>}, 'c'>}}
+
+				type LevelTwo = Test;
+				//=> {a: {b: {c: Pick<{d: "abracadabra"}, "d">}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 6, textBeforeStart: '', target: '//=> {a: {b: Pick<{c: Pick<{d: \'abracadabra\'}, \'d\'>}, \'c\'>}}'}),
+				incorrectTwoslashFormatErrorAt({line: 9, textBeforeStart: '', target: '//=> {a: {b: {c: Pick<{d: "abracadabra"}, "d">}}}'}),
+			],
+			options: [{verbosityLevels: [1, 2]}],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {a: Pick<{b: Pick<{c: Pick<{d: 'abracadabra'}, 'd'>}, 'c'>}, 'b'>};
+
+				type LevelOne = Test;
+				//=> {
+				// 	a: {
+				// 		b: Pick<{
+				// 			c: Pick<{
+				// 				d: 'abracadabra';
+				// 			}, 'd'>;
+				// 		}, 'c'>;
+				// 	};
+				// }
+
+				type LevelTwo = Test;
+				//=> {a: {b: {c: Pick<{d: 'abracadabra'}, 'd'>}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// === Twoslash type errors ===
 
 		// Incorrect type
@@ -1639,6 +1733,56 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				//=> readonly ['a', 'b', 'c']
 				const baz = new Set(bar);
 				//=> Set<'a' | 'b' | 'c'>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Fixer suggests types at `Infinity` verbosity level
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=>
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=>'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=> {foo: {bar: {baz: string}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		// Only `0` and `Infinity` verbosity levels are allowed by default
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=> {foo: {bar: Pick<{baz: string}, 'baz'>}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> {foo: {bar: Pick<{baz: string}, \'baz\'>}}'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				type Test = {foo: Pick<{bar: Pick<{baz: string}, 'baz'>}, 'bar'>};
+				//=> {foo: {bar: {baz: string}}}
 				\`\`\`
 				*/
 				export type T0 = string;
