@@ -142,3 +142,14 @@ expectType<true>({} as (keyof TestObject extends keyof PartialDeep<TestObject> ?
 declare function testGenericPartialDeep<T extends Record<string, unknown>>(
 	key: keyof PartialDeep<T>,
 ): T[keyof PartialDeep<T>];
+
+// Root-level regression coverage. The top-level mapped type bypasses the
+// existing special-case branches unless `PartialDeep<T>` preserves them before mapping.
+declare const partialDeepRootArray: PartialDeep<string[]>;
+expectType<string[]>(partialDeepRootArray);
+
+declare const partialDeepRootReadonlyArray: PartialDeep<readonly string[]>;
+expectType<readonly string[]>(partialDeepRootReadonlyArray);
+
+declare const partialDeepRootTuple: PartialDeep<[string, number]>;
+expectType<[string, number]>(partialDeepRootTuple);
