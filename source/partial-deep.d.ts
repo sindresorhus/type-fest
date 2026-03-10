@@ -95,9 +95,15 @@ partialShape.dimensions = [15]; // OK
 @category Map
 */
 export type PartialDeep<T, Options extends PartialDeepOptions = {}> =
-	_PartialDeep<T, ApplyDefaultOptions<PartialDeepOptions, DefaultPartialDeepOptions, Options>>;
+	// The mapped type at the top level ensures `keyof PartialDeep<T>` equals `keyof T`
+	// even when T is a generic type parameter, fixing #1102.
+	{
+		[KeyType in keyof T]?: _PartialDeepValue<T[KeyType], ApplyDefaultOptions<PartialDeepOptions, DefaultPartialDeepOptions, Options>>;
+	};
 
-type _PartialDeep<T, Options extends Required<PartialDeepOptions>> = T extends BuiltIns | ((new (...arguments_: any[]) => unknown))
+// Handles the value-level recursion for PartialDeep. All special-case handling
+// (BuiltIns, Map, Set, arrays, functions) happens here, not at the key level.
+type _PartialDeepValue<T, Options extends Required<PartialDeepOptions>> = T extends BuiltIns | ((new (...arguments_: any[]) => unknown))
 	? T
 	: T extends Map<infer KeyType, infer ValueType>
 		? PartialMapDeep<KeyType, ValueType, Options>
@@ -118,8 +124,8 @@ type _PartialDeep<T, Options extends Required<PartialDeepOptions>> = T extends B
 								? Options['recurseIntoArrays'] extends true
 									? ItemType[] extends T // Test for arrays (non-tuples) specifically
 										? readonly ItemType[] extends T // Differentiate readonly and mutable arrays
-											? ReadonlyArray<_PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
-											: Array<_PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
+											? ReadonlyArray<_PartialDeepValue<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
+											: Array<_PartialDeepValue<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
 										: PartialObjectDeep<T, Options> // Tuples behave properly
 									: T // If they don't opt into array testing, just use the original type
 								: PartialObjectDeep<T, Options>
@@ -128,28 +134,28 @@ type _PartialDeep<T, Options extends Required<PartialDeepOptions>> = T extends B
 /**
 Same as `PartialDeep`, but accepts only `Map`s and as inputs. Internal helper for `PartialDeep`.
 */
-type PartialMapDeep<KeyType, ValueType, Options extends Required<PartialDeepOptions>> = {} & Map<_PartialDeep<KeyType, Options>, _PartialDeep<ValueType, Options>>;
+type PartialMapDeep<KeyType, ValueType, Options extends Required<PartialDeepOptions>> = {} & Map<_PartialDeepValue<KeyType, Options>, _PartialDeepValue<ValueType, Options>>;
 
 /**
 Same as `PartialDeep`, but accepts only `Set`s as inputs. Internal helper for `PartialDeep`.
 */
-type PartialSetDeep<T, Options extends Required<PartialDeepOptions>> = {} & Set<_PartialDeep<T, Options>>;
+type PartialSetDeep<T, Options extends Required<PartialDeepOptions>> = {} & Set<_PartialDeepValue<T, Options>>;
 
 /**
 Same as `PartialDeep`, but accepts only `ReadonlyMap`s as inputs. Internal helper for `PartialDeep`.
 */
-type PartialReadonlyMapDeep<KeyType, ValueType, Options extends Required<PartialDeepOptions>> = {} & ReadonlyMap<_PartialDeep<KeyType, Options>, _PartialDeep<ValueType, Options>>;
+type PartialReadonlyMapDeep<KeyType, ValueType, Options extends Required<PartialDeepOptions>> = {} & ReadonlyMap<_PartialDeepValue<KeyType, Options>, _PartialDeepValue<ValueType, Options>>;
 
 /**
 Same as `PartialDeep`, but accepts only `ReadonlySet`s as inputs. Internal helper for `PartialDeep`.
 */
-type PartialReadonlySetDeep<T, Options extends Required<PartialDeepOptions>> = {} & ReadonlySet<_PartialDeep<T, Options>>;
+type PartialReadonlySetDeep<T, Options extends Required<PartialDeepOptions>> = {} & ReadonlySet<_PartialDeepValue<T, Options>>;
 
 /**
 Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.
 */
 type PartialObjectDeep<ObjectType extends object, Options extends Required<PartialDeepOptions>> = {
-	[KeyType in keyof ObjectType]?: _PartialDeep<ObjectType[KeyType], Options>
+	[KeyType in keyof ObjectType]?: _PartialDeepValue<ObjectType[KeyType], Options>
 };
 
 export {};
