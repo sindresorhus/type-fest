@@ -153,7 +153,9 @@ expectType<{p1?: string[]}>({} as Simplify<PartialDeep<{(): void; p1: string[]},
 
 type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1: string};
 declare const functionWithProperties4: PartialDeep<FunctionWithProperties4>;
-expectType<{p1?: string}>({} as Simplify<typeof functionWithProperties4>);
+expectType<string>(functionWithProperties4(1));
+expectType<number>(functionWithProperties4('foo', 1));
+expectNotType<{p1?: string}>({} as Simplify<typeof functionWithProperties4>);
 
 // Test for #1102: keyof PartialDeep<T> should be usable to index T in generic contexts
 type TestObject = {a: string; b: number; c: {d: boolean}};
