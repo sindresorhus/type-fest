@@ -111,6 +111,27 @@ expectAssignable<ReadonlySet<string | undefined> | undefined>(partialDeepNoRecur
 expectType<readonly string[] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyArray);
 expectType<readonly ['foo'] | undefined>(partialDeepNoRecurseIntoArraysBar.readonlyTuple);
 
+declare const partialDeepRootDate: PartialDeep<Date>;
+expectType<Date>(partialDeepRootDate);
+
+declare const partialDeepRootMap: PartialDeep<Map<string, {value: number}>>;
+expectAssignable<Map<string, {value?: number}>>(partialDeepRootMap);
+
+declare const partialDeepRootReadonlyMap: PartialDeep<ReadonlyMap<string, {value: number}>>;
+expectAssignable<ReadonlyMap<string, {value?: number}>>(partialDeepRootReadonlyMap);
+
+declare const partialDeepRootSet: PartialDeep<Set<{value: number}>>;
+expectAssignable<Set<{value?: number}>>(partialDeepRootSet);
+
+declare const partialDeepRootReadonlySet: PartialDeep<ReadonlySet<{value: number}>>;
+expectAssignable<ReadonlySet<{value?: number}>>(partialDeepRootReadonlySet);
+
+declare const partialDeepRootFunction: PartialDeep<() => void>;
+expectAssignable<() => void>(partialDeepRootFunction);
+
+declare const partialDeepRootConstructor: PartialDeep<typeof ClassA>;
+expectAssignable<typeof ClassA>(partialDeepRootConstructor);
+
 // With the mapped-type approach (fixing #1102), PartialDeep uses a top-level mapped type,
 // which means call signatures are not preserved at the PartialDeep level. Properties are
 // still made optional. Call signatures on function VALUES inside objects are preserved
