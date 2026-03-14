@@ -156,6 +156,7 @@ export type {IfNull} from './source/if-null.d.ts';
 export type {IsUndefined} from './source/is-undefined.d.ts';
 export type {And} from './source/and.d.ts';
 export type {Or} from './source/or.d.ts';
+export type {OrMultiple} from './source/or-multiple.d.ts';
 export type {Xor} from './source/xor.d.ts';
 export type {AllExtend, AllExtendOptions} from './source/all-extend.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
