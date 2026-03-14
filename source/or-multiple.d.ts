@@ -8,13 +8,13 @@ Use-cases:
 
 @example
 ```
-import type {OrMultiple} from 'type-fest'; 
+import type {OrMultiple} from 'type-fest';
 
 type IsValid = OrMultiple<[false, true, false]>;
-//=> true 
+//=> true
 
 type IsInvalid = OrMultiple<[false, false]>;
-//=> false 
+//=> false
 ```
 */
 export type OrMultiple<T extends readonly boolean[]> = T extends [
