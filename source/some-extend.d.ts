@@ -34,10 +34,10 @@ export type SomeExtendOptions = {
 	type D = SomeExtend<[1, never], never, {strictNever: false}>;
 	//=> true
 
-	type E = SomeExtend<['a', 'b', never], any, {strictNever: true}>;
+	type E = SomeExtend<[never], any, {strictNever: true}>;
 	//=> true
 
-	type F = SomeExtend<['a', 'b', never], any, {strictNever: false}>;
+	type F = SomeExtend<[never], any, {strictNever: false}>;
 	//=> true
 	```
 	*/
