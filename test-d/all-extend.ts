@@ -40,7 +40,7 @@ expectType<AllExtend<readonly [...ReadonlyArray<string | undefined>, string, str
 
 // Optional elements
 // If `exactOptionalPropertyTypes` were disabled, the target type would need an additional `| undefined` for a successful match.
-// For example, `AllExtend<[1?, 2?], number>` would return `false`. To make it return `true`, the target type must be `number | undefined`.
+// For example, `AllExtend<[1?, 2?], number>` would return `boolean`. To make it return `true`, the target type must be `number | undefined`.
 expectType<AllExtend<[1?, 2?, 3?], number>>(true);
 expectType<AllExtend<[1?, (2 | undefined)?], number>>({} as boolean);
 expectType<AllExtend<[1?, 2?, 3?], number | undefined>>(true);
