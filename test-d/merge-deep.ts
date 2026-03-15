@@ -318,10 +318,69 @@ type RecordNotPartial = {
 type RecordPartial = Partial<RecordNotPartial>;
 
 expectType<RecordNotPartial>({} as MergeDeep<RecordPartial, RecordNotPartial>);
-expectType<RecordPartial>({} as MergeDeep<RecordNotPartial, RecordPartial>);
+// When source keys are optional but destination keys are required,
+// the result keys should be required (fix for #941).
+expectType<RecordNotPartial>({} as MergeDeep<RecordNotPartial, RecordPartial>);
 
 type NotOptional = {a: string; b: number; c: boolean};
 type OptionalWithUndefined = {a: string | undefined; b?: number; c?: boolean | undefined};
 
-expectType<OptionalWithUndefined>({} as MergeDeep<NotOptional, OptionalWithUndefined>);
+// `a` is required in both → required. `b` is required in dest → required.
+// `c` is required in dest → required. Values preserve `| undefined` from source.
+expectType<{a: string | undefined; b: number; c: boolean | undefined}>({} as MergeDeep<NotOptional, OptionalWithUndefined>);
 expectType<NotOptional>({} as MergeDeep<OptionalWithUndefined, NotOptional>);
+
+// Test for #941: MergeDeep should preserve required keys from destination
+// when source has the same keys as optional.
+type FullPerson = {name: string; age: number; address: {city: string; zip: number}};
+type PartialPersonInfo = {name?: string; address?: {city?: string}};
+
+// Source has optional keys, destination has required keys → result should be required.
+expectType<{
+	name: string;
+	age: number;
+	address: {city: string; zip: number};
+}>({} as MergeDeep<FullPerson, PartialPersonInfo>);
+
+// Both optional → result should be optional.
+type BothOptional = {x?: string; y?: number};
+type BothOptional2 = {x?: boolean; z?: string};
+expectType<{x?: boolean; y?: number; z?: string}>({} as MergeDeep<BothOptional, BothOptional2>);
+
+// Source required, destination optional → result should be required.
+type WithOptionalKey = {name?: string; age?: number};
+type WithRequiredKey = {name: string};
+expectType<{name: string; age?: number}>({} as MergeDeep<WithOptionalKey, WithRequiredKey>);
+
+// Edge case: any type with optionality
+type AnyOptDest = {a?: any; b: string};
+type AnyRequiredSource = {a: number; b?: string};
+declare const anyTest: MergeDeep<AnyOptDest, AnyRequiredSource>;
+const _anyA: number = anyTest.a;
+const _anyB: string = anyTest.b;
+
+// Edge case: never type — optional never field (Supabase pattern)
+type WithNeverOpt = {id?: never; name: string};
+type WithName = {name?: string; extra: number};
+declare const neverTest: MergeDeep<WithNeverOpt, WithName>;
+const _neverName: string = neverTest.name;
+const _neverExtra: number = neverTest.extra;
+
+// Edge case: Deep nesting — optionality at each level
+type DeepRequiredNested = {a: {b: {c: string; d: number}}};
+type DeepOptNested = {a?: {b?: {c?: boolean}}};
+declare const deepTest: MergeDeep<DeepRequiredNested, DeepOptNested>;
+// A: required in dest → required. Source value type (boolean) overrides dest (string).
+const _deepA: {b: {c: boolean; d: number}} = deepTest.a;
+
+// Edge case: empty objects
+expectType<{a: string}>({} as MergeDeep<{a: string}, {}>);
+expectType<{a: string}>({} as MergeDeep<{}, {a: string}>);
+
+// Edge case: same type required
+type SameType = {a: string; b: number};
+expectType<SameType>({} as MergeDeep<SameType, SameType>);
+
+// Edge case: same type optional
+type SameOptType = {a?: string; b?: number};
+expectType<SameOptType>({} as MergeDeep<SameOptType, SameOptType>);

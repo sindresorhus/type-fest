@@ -57,8 +57,26 @@ type DoMergeDeepRecord<
 		[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
 	}
 // Case in rule 3: Both the source and the destination contain the key.
+// Split into two sub-cases to correctly handle optionality:
+// 3a: Key is optional in both Source and Destination → result is optional.
 	& {
-		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Required<Destination>[Key], Required<Source>[Key], Options>;
+		[Key in keyof Source as Key extends keyof Destination
+			? {} extends Pick<Source, Key>
+				? {} extends Pick<Destination, Key>
+					? Key
+					: never
+				: never
+			: never]?: MergeDeepRecordProperty<Required<Destination>[Key], Required<Source>[Key], Options>;
+	}
+// 3b: Key is required in at least one of Source or Destination → result is required.
+	& {
+		[Key in keyof Source as Key extends keyof Destination
+			? {} extends Pick<Source, Key>
+				? {} extends Pick<Destination, Key>
+					? never
+					: Key
+				: Key
+			: never]-?: MergeDeepRecordProperty<Required<Destination>[Key], Required<Source>[Key], Options>;
 	};
 
 /**
