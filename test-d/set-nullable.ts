@@ -37,6 +37,9 @@ expectType<{a: '1' | null; b: string | null; c: boolean} | {a: '2' | null; b: st
 declare const variation9: SetNullable<{[k: string]: unknown; a: number; b: string}, 'a'>;
 expectType<{[k: string]: unknown; a: number | null; b: string}>(variation9);
 
+declare const variation9a: SetNullable<{[k: Uppercase<string>]: number; A: number; b: string}, Uppercase<string>>;
+expectType<{[k: Uppercase<string>]: number | null; A: number | null; b: string}>(variation9a);
+
 // Makes all keys nullable when `Keys` is `any`.
 declare const variation10: SetNullable<{readonly a: number; b?: string; c: boolean}, any>;
 expectType<{readonly a: number | null; b?: string | null; c: boolean | null}>(variation10);
