@@ -183,6 +183,7 @@ Click the type names for complete docs.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is true.
 - [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
+- [`OrMultiple`](source/or-multiple.d.ts) - Returns a boolean for the provided array or tuple.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
 - [`SomeExtend`](source/some-extend.d.ts) - Returns a boolean for whether some element in an array type extends another type.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
