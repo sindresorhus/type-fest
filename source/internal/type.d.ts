@@ -3,6 +3,7 @@ import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {UnionToIntersection} from '../union-to-intersection.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.

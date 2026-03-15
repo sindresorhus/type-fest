@@ -1,4 +1,3 @@
-import type {IsNever} from './is-never.d.ts';
 /**
 Returns a boolean for whether the two given types are equal.
 
