@@ -55,4 +55,3 @@ expectType<{a: string | undefined | null; b: number}>(variation12);
 // Works with unions where only some keys are shared across branches.
 declare const variation13: SetNullable<{a: number; c: boolean} | {a: string; d: boolean}, 'a'>;
 expectType<{a: number | null; c: boolean} | {a: string | null; d: boolean}>(variation13);
-
