@@ -1,4 +1,4 @@
-import type {Or} from './or.d.ts';
+import type {SomeExtend} from './some-extend.d.ts';
 
 /**
 Returns a boolean for whether any of the given elements are `true`.
@@ -15,13 +15,11 @@ type IsValid = OrMultiple<[false, true, false]>;
 
 type IsInvalid = OrMultiple<[false, false]>;
 //=> false
+
+type OnBooleanCase = SomeExtend<[true, boolean], false>;
+//=> boolean
 ```
 */
-export type OrMultiple<T extends readonly boolean[]> = T extends [
-	infer First extends boolean,
-	...infer Rest extends readonly boolean[],
-]
-	? Or<First, OrMultiple<Rest>>
-	: false;
+export type OrMultiple<T extends readonly boolean[]> = SomeExtend<T, true>;
 
 export {};
