@@ -16,7 +16,10 @@ type IsValid = OrMultiple<[false, true, false]>;
 type IsInvalid = OrMultiple<[false, false]>;
 //=> false
 
-type OnBooleanCase = OrMultiple<[true, boolean]>;
+type OnBooleanFirstCase = OrMultiple<[true, boolean]>;
+//=> true
+
+type OnBooleanSecondCase = OrMultiple<[false, boolean]>;
 //=> boolean
 ```
 */
