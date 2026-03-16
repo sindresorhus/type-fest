@@ -159,6 +159,7 @@ export type {Or} from './source/or.d.ts';
 export type {OrMultiple} from './source/or-multiple.d.ts';
 export type {Xor} from './source/xor.d.ts';
 export type {AllExtend, AllExtendOptions} from './source/all-extend.d.ts';
+export type {SomeExtend, SomeExtendOptions} from './source/some-extend.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
 export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type.d.ts';
 export type {If} from './source/if.d.ts';
