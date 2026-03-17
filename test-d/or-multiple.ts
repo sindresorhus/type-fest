@@ -20,7 +20,6 @@ expectType<OrMultiple<[true, boolean]>>(true);
 expectType<OrMultiple<[]>>(false);
 
 expectType<OrMultiple<[false, any]>>(boolean);
-expectType<OrMultiple<[false, any]>>(boolean);
 expectType<OrMultiple<[any, any]>>(boolean);
 
 expectType<OrMultiple<[false, never]>>(false);
