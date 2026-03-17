@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OrAll} from '../source/or-multiple.d.ts';
+import type {OrAll} from '../source/or-all.d.ts';
 
 declare const boolean: boolean;
 
