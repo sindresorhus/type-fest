@@ -184,6 +184,10 @@ Click the type names for complete docs.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is true.
 - [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
 - [`AndAll`](source/and-all.d.ts) - Returns a boolean for whether all of the given elements are `true`.
+- [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both `true`.
+- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is `true`.
+- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is `true`.
+- [`OrAll`](source/or-all.d.ts) - Returns a boolean for whether any of the given elements is `true`.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
 - [`SomeExtend`](source/some-extend.d.ts) - Returns a boolean for whether some element in an array type extends another type.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
@@ -194,6 +198,7 @@ Click the type names for complete docs.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 - [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
 - [`Optional`](source/optional.d.ts) - Create a type that represents either the value or `undefined`, while stripping `null` from the type.
+- [`UnionMember`](source/union-member.d.ts) - Returns an arbitrary member of a union type.
 
 ### Type Guard
 
@@ -360,6 +365,8 @@ Click the type names for complete docs.
 - `Maybe`, `Option` - See [`Optional`](source/optional.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
 - `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
+- `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
+- `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 
 ## Tips
 
