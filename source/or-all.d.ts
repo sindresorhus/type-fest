@@ -57,6 +57,8 @@ type A = OrAll<[false, any]>;
 type B = OrAll<[true, any]>;
 //=> true
 ```
+
+@see {@link Or}
 */
 export type OrAll<T extends readonly boolean[]> = SomeExtend<T, true>;
 
