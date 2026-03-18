@@ -23,6 +23,7 @@ type TFT = AndAll<[true, false, true]>;
 Note: When `boolean` is passed as an element, it is distributed into separate cases, and the final result is a union of those cases.
 For example, `AndAll<[true, boolean]>` expands to `AndAll<[true, true]> | AndAll<[true, false]>`, which simplifies to `true | false` (i.e., `boolean`).
 
+@example
 ```
 import type {AndAll} from 'type-fest';
 
@@ -34,6 +35,8 @@ type B = AndAll<[false, boolean]>;
 ```
 
 Note: If any of the elements is `never`, the result becomes `false`.
+
+@example
 ```
 import type {AndAll} from 'type-fest';
 
@@ -51,6 +54,8 @@ type D = AndAll<[boolean, true, never]>;
 ```
 
 Note: If `any` is passed as an element, it is treated as `boolean` and the result is computed accordingly.
+
+@example
 ```
 import type {AndAll} from 'type-fest';
 
