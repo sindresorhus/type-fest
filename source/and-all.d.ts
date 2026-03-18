@@ -68,14 +68,6 @@ type B = AndAll<[true, any]>;
 
 Note: `AndAll<[]>` evaluates to `true` due to the concept of [vacuous truth](https://en.wikipedia.org/wiki/Logical_conjunction#:~:text=In%20keeping%20with%20the%20concept%20of%20vacuous%20truth%2C%20when%20conjunction%20is%20defined%20as%20an%20operator%20or%20function%20of%20arbitrary%20arity%2C%20the%20empty%20conjunction%20(AND%2Ding%20over%20an%20empty%20set%20of%20operands)%20is%20often%20defined%20as%20having%20the%20result%20true.), i.e., there are no `false` elements.
 
-@example
-```
-import type {AndAll} from 'type-fest';
-
-type A = AndAll<[]>;
-//=> true
-```
-
 @see {@link And}
 */
 export type AndAll<T extends readonly boolean[]> = AllExtend<T, true>;
