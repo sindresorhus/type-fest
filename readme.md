@@ -180,9 +180,9 @@ Click the type names for complete docs.
 - [`AllUnionFields`](source/all-union-fields.d.ts) - Create a type with all fields from a union of object types.
 - [`DistributedOmit`](source/distributed-omit.d.ts) - Omits keys from a type, distributing the operation over a union.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Picks keys from a type, distributing the operation over a union.
-- [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
-- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is true.
-- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
+- [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both `true`.
+- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is `true`.
+- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is `true`.
 - [`AndAll`](source/and-all.d.ts) - Returns a boolean for whether all of the given elements are `true`.
 - [`OrAll`](source/or-all.d.ts) - Returns a boolean for whether any of the given elements is `true`.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
