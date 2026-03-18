@@ -57,6 +57,6 @@ expectType<OrAll<[never, never, never]>>(false);
 
 // Errors with non-boolean or optional elements
 // @ts-expect-error
-type Error2 = OrAll<[1, 0]>;
+type Error1 = OrAll<[1, 0]>;
 // @ts-expect-error
-type Error1 = OrAll<[true, false?]>;
+type Error2 = OrAll<[true, false?]>;
