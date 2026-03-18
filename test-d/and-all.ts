@@ -58,6 +58,6 @@ expectType<AndAll<[never, never, never]>>(false);
 
 // Errors with non-boolean or optional elements
 // @ts-expect-error
-type Error2 = AndAll<[1, 0]>;
+type Error1 = AndAll<[1, 0]>;
 // @ts-expect-error
-type Error1 = AndAll<[true, false?]>;
+type Error2 = AndAll<[true, false?]>;
