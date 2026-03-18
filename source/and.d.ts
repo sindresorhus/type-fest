@@ -73,6 +73,7 @@ type G = And<never, never>;
 //=> false
 ```
 
+@see {@link AndAll}
 @see {@link Or}
 @see {@link Xor}
 */
