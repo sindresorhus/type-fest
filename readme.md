@@ -184,9 +184,6 @@ Click the type names for complete docs.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is true.
 - [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
 - [`AndAll`](source/and-all.d.ts) - Returns a boolean for whether all of the given elements are `true`.
-- [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both `true`.
-- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is `true`.
-- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is `true`.
 - [`OrAll`](source/or-all.d.ts) - Returns a boolean for whether any of the given elements is `true`.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
 - [`SomeExtend`](source/some-extend.d.ts) - Returns a boolean for whether some element in an array type extends another type.
