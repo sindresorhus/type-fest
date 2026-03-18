@@ -63,6 +63,8 @@ type B = OrAll<[true, any]>;
 //=> true
 ```
 
+Note: `OrAll<[]>` evaluates to `false` because there are no `true` elements in an empty tuple. See [Wikipedia: Clause (logic) > Empty clauses](https://en.wikipedia.org/wiki/Clause_(logic)#Empty_clauses:~:text=The%20truth%20evaluation%20of%20an%20empty%20disjunctive%20clause%20is%20always%20false.).
+
 @see {@link Or}
 */
 export type OrAll<T extends readonly boolean[]> = SomeExtend<T, true>;
