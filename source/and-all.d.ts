@@ -33,20 +33,20 @@ type B = AndAll<[false, boolean]>;
 //=> false
 ```
 
-Note: If `never` is passed as an element, it is treated as `false` and the result is computed accordingly.
+Note: If any of the elements is `never`, the result becomes `false`.
 ```
 import type {AndAll} from 'type-fest';
 
-type A = AndAll<[never, never, true]>;
+type A = AndAll<[true, true, never]>;
 //=> false
 
-type B = AndAll<[never, never, false]>;
+type B = AndAll<[false, never, never]>;
 //=> false
 
 type C = AndAll<[never, never, never]>;
 //=> false
 
-type D = AndAll<[never, never, boolean]>;
+type D = AndAll<[boolean, true, never]>;
 //=> false
 ```
 
