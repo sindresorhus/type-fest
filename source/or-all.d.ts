@@ -20,6 +20,7 @@ type FFF = OrAll<[false, false, false]>;
 Note: When `boolean` is passed as an element, it is distributed into separate cases, and the final result is a union of those cases.
 For example, `OrAll<[false, boolean]>` expands to `OrAll<[false, true]> | OrAll<[false, false]>`, which simplifies to `true | false` (i.e., `boolean`).
 
+@example
 ```
 import type {OrAll} from 'type-fest';
 
@@ -31,6 +32,8 @@ type B = OrAll<[true, boolean]>;
 ```
 
 Note: If `never` is passed as an element, it is treated as `false` and the result is computed accordingly.
+
+@example
 ```
 import type {OrAll} from 'type-fest';
 
@@ -48,6 +51,8 @@ type D = OrAll<[never, never, boolean]>;
 ```
 
 Note: If `any` is passed as an element, it is treated as `boolean` and the result is computed accordingly.
+
+@example
 ```
 import type {OrAll} from 'type-fest';
 
