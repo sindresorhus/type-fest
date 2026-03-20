@@ -28,7 +28,7 @@ type Includes<Value extends readonly any[], Item> =
 */
 export type IsEqual<A, B> =
 	[A, B] extends [B, A]
-		? _IsEqual<A, B>
+		? _IsEqual<UniqueUnionDeep<A>, UniqueUnionDeep<B>>
 		: false;
 
 /**
