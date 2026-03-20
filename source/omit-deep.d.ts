@@ -5,7 +5,6 @@ import type {IsNever} from './is-never.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
-import type {Simplify} from './simplify.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -119,7 +118,7 @@ P extends `${infer RecordKeyInPath}.${infer SubPath}`
 		? IsNever<Key> extends true
 			? ObjectT
 			: Key extends PropertyKey
-				? Simplify<Omit<ObjectT, Key>> // `Simplify` to prevent `Omit` from appearing in the resulting type
+				? Omit<ObjectT, Key>
 				: ObjectT
 		: ObjectT;
 

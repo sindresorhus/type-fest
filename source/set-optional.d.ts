@@ -18,11 +18,7 @@ type Foo = {
 };
 
 type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
-// type SomeOptional = {
-// 	a: number;
-// 	b?: string; // Was already optional and still is.
-// 	c?: boolean; // Is now optional.
-// }
+//=> {a: number; b?: string; c?: boolean}
 ```
 
 @category Object

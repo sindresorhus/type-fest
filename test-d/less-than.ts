@@ -11,7 +11,6 @@ expectType<LessThan<10, -2>>(false);
 expectType<LessThan<2, 2>>(false);
 expectType<LessThan<-2, -2>>(false);
 expectType<LessThan<-2, -3>>(false);
-expectType<LessThan<-2, number>>(never);
 
 // === unions ===
 expectType<LessThan<10, 50 | 100>>(true);
@@ -36,3 +35,8 @@ expectType<LessThan<-999, NegativeInfinity>>(false);
 expectType<LessThan<PositiveInfinity, PositiveInfinity>>(false);
 expectType<LessThan<NegativeInfinity, NegativeInfinity>>(false);
 expectType<LessThan<PositiveInfinity, NegativeInfinity>>(false);
+
+// Non-literal `number`
+expectType<LessThan<number, number>>({} as boolean);
+expectType<LessThan<number, 1>>({} as boolean);
+expectType<LessThan<1, number>>({} as boolean);

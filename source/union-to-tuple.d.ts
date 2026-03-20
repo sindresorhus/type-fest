@@ -1,6 +1,6 @@
-import type {IsNever} from './is-never.d.ts';
 import type {ExcludeExactly} from './exclude-exactly.d.ts';
-import type {LastOfUnion} from './last-of-union.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {UnionMember} from './union-member.d.ts';
 
 /**
 Convert a union type into an unordered tuple type of its elements.
@@ -37,11 +37,9 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 
 @category Array
 */
-export type UnionToTuple<T, L = LastOfUnion<T>> =
+export type UnionToTuple<T, L = UnionMember<T>> =
 IsNever<T> extends false
-	? ExcludeExactly<T, L> extends infer E // Improve performance.
-		? [...UnionToTuple<E>, L]
-		: never // Unreachable.
+	? [...UnionToTuple<ExcludeExactly<T, L>>, L]
 	: [];
 
 export {};
