@@ -194,9 +194,9 @@ export type UniqueUnionDeep<U> = SimplifyDeep<RecurseUniqueUnionDeep<{r: U}>['r'
 
 type RecurseUniqueUnionDeep<U> =
 	U extends Record<PropertyKey, unknown>
-		? SimplifyUniqueUnionDeep<U>
+		? InternalUniqueUnionDeep<U>
 		: U extends UnknownArray
-			? SimplifyUniqueUnionDeep<U>
+			? InternalUniqueUnionDeep<U>
 			: U extends Lambda
 				// `Parametes` and `ReturnType` results are possible to be object or lambda; both should be passed into `UniqueUnionDeep`.
 				? (...args: UniqueUnionDeep<Parameters<U>> extends infer A extends any[] ? A : never) => (UniqueUnionDeep<ReturnType<U>>)
@@ -204,7 +204,7 @@ type RecurseUniqueUnionDeep<U> =
 /**
 Note: Wrapping this with `Simplify`, `test-d/exact.ts` fails in "Spec: recursive type with union".
 */
-type SimplifyUniqueUnionDeep<U extends object> = {[K in keyof U]: UniqueUnion<RecurseUniqueUnionDeep<U[K]>>};
+type InternalUniqueUnionDeep<U extends object> = {[K in keyof U]: UniqueUnion<RecurseUniqueUnionDeep<U[K]>>};
 
 type Lambda = ((...args: any[]) => any);
 
