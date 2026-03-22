@@ -63,6 +63,17 @@ expectType<true>({} as IsEqual<AnyLambda, AnyLambda>);
 expectType<false>({} as IsEqual<AnyLambda, NumberLambda>);
 expectType<false>({} as IsEqual<NumberLambda, AnyLambda>);
 
+// Branded Type
+expectType<false>({} as IsEqual<1 & {foo?: 1}, 1>);
+expectType<true>({} as IsEqual<1 & {foo?: 1}, 1 & {foo?: 1}>);
+expectType<false>({} as IsEqual<{bar: 'a'} & {foo?: 1}, {bar: 'a'}>);
+expectType<false>({} as IsEqual<((value: number) => void) & {foo?: 1}, (value: number) => void>);
+
+// Overload
+expectType<false>({} as IsEqual<{(value: 'a'): 1; (value: string): 1}, (value: string) => 1>);
+expectType<false>({} as IsEqual<{(value: 'a'): 1; (value: string): 1; key: 'value'}, (value: string) => 1>);
+expectType<false>({} as IsEqual<{(value: 'a'): 1; (value: string): 1; key: 'value'}, {(value: string): 1; key: 'value'}>);
+
 // Lambda: Identical Union and Intersection cases.
 expectType<true>({} as IsEqual<SpecificNumericLambda & SpecificNumericLambda, SpecificNumericLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 expectType<true>({} as IsEqual<SpecificNumericLambda | SpecificNumericLambda, SpecificNumericLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
