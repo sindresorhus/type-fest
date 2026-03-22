@@ -63,9 +63,13 @@ expectType<true>({} as IsEqual<AnyLambda, AnyLambda>);
 expectType<false>({} as IsEqual<AnyLambda, NumberLambda>);
 expectType<false>({} as IsEqual<NumberLambda, AnyLambda>);
 
-// Branded Type
+// Branded Type with Tuple
+expectType<false>({} as IsEqual<[0, 1] & {foo?: 1}, [0, 1]>);
+expectType<true>({} as IsEqual<[0, 1] & {foo?: 1}, [0, 1] & {foo?: 1}>);
+// Branded Type with Primitive
 expectType<false>({} as IsEqual<1 & {foo?: 1}, 1>);
 expectType<true>({} as IsEqual<1 & {foo?: 1}, 1 & {foo?: 1}>);
+// Branded Type with Lambda
 expectType<false>({} as IsEqual<{bar: 'a'} & {foo?: 1}, {bar: 'a'}>);
 expectType<false>({} as IsEqual<((value: number) => void) & {foo?: 1}, (value: number) => void>);
 

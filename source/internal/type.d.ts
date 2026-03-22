@@ -4,7 +4,6 @@ import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {UnionToTuple} from '../union-to-tuple.d.ts';
-import type {SimplifyDeep} from '../simplify-deep.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -190,7 +189,9 @@ type UniqueUnionDeepArgumentsDeep = SimplifyDeep<UniqueUnionDeep<(a: {a: number}
 //=> (a: {a: number}) => {b: {b: number}}
 ```
 */
-export type UniqueUnionDeep<U> = SimplifyDeep<RecurseUniqueUnionDeep<{r: U}>['r']>;
+export type UniqueUnionDeep<U> =
+	/** Note: Wrapping this with `SimplifyDeep`, `test-d/is-equal.ts` fails in `Branded Type with Tuple`. */
+	RecurseUniqueUnionDeep<{r: U}>['r'];
 
 type RecurseUniqueUnionDeep<U> =
 	U extends Record<PropertyKey, unknown>
@@ -199,7 +200,7 @@ type RecurseUniqueUnionDeep<U> =
 			? InternalUniqueUnionDeep<U>
 			: U extends Lambda
 				? IsNever<keyof U> extends true
-					// `Parametes` and `ReturnType` results are possible to be object or lambda; both should be passed into `UniqueUnionDeep`.
+					/** `Parametes` and `ReturnType` results are possible to be object or lambda; both should be passed into `UniqueUnionDeep`. */
 					? HasMultipleCallSignatures<U> extends true
 						? U
 						: (...args: UniqueUnionDeep<Parameters<U>> extends infer A extends any[] ? A : never) => (UniqueUnionDeep<ReturnType<U>>)
