@@ -1,8 +1,9 @@
-import type {NumberAbsolute, PositiveNumericStringGt} from './internal/index.d.ts';
+import type {PositiveNumericStringGt} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {And} from './and.d.ts';
 import type {Or} from './or.d.ts';
+import type {Absolute} from './absolute.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than another number.
@@ -82,7 +83,7 @@ export type GreaterThan<A extends number, B extends number> =
 											? true
 											: [false, false] extends R
 												? PositiveNumericStringGt<`${A}`, `${B}`>
-												: PositiveNumericStringGt<`${NumberAbsolute<B>}`, `${NumberAbsolute<A>}`>
+												: PositiveNumericStringGt<`${Absolute<B>}`, `${Absolute<A>}`>
 									: never
 					: never
 			: never // Should never happen

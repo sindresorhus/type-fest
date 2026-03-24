@@ -1,25 +1,7 @@
 import type {IsNever} from '../is-never.d.ts';
 import type {Finite, NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {StringToNumber} from './string.d.ts';
 import type {IfNotAnyOrNever, IsAnyOrNever} from './type.d.ts';
-
-/**
-Returns the absolute value of a given value.
-
-@example
-```
-type A = NumberAbsolute<-1>;
-//=> 1
-
-type B = NumberAbsolute<1>;
-//=> 1
-
-type C = NumberAbsolute<NegativeInfinity>;
-//=> PositiveInfinity
-```
-*/
-export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
 
 /**
 Check whether the given type is a number or a number string.
