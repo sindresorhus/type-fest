@@ -272,6 +272,7 @@ Click the type names for complete docs.
 - [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 - [`ArrayReverse`](source/array-reverse.d.ts) - Reverse the order of elements in a tuple type.
 - [`ArrayLength`](source/array-length.d.ts) - Return the length of an array. Equivalent to `T['length']` where `T` extends any array.
+- [`ArrayAt`](source/array-at.d.ts) - Return the element at the given index of the given array.
 
 ### Numeric
 
