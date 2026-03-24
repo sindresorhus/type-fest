@@ -14,7 +14,7 @@ type T1 = ExtractRestElement<[number, ...string[], string, 'foo']>;
 type T2 = ExtractRestElement<[...boolean[], string]>;
 //=> boolean
 
-type T3 = ExtractRestElement<[...'foo'[], true]>;
+type T3 = ExtractRestElement<[...Array<'foo'>, true]>;
 //=> 'foo'
 
 type T4 = ExtractRestElement<[number, string]>;

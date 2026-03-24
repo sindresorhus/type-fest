@@ -11,17 +11,17 @@ This is useful when writing utility types or schema validators that need to diff
 ```
 import type {IsRequiredKeyOf} from 'type-fest';
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
 
 	luckyNumber?: number;
-}
+};
 
-interface Admin {
+type Admin = {
 	name: string;
 	surname?: string;
-}
+};
 
 type T1 = IsRequiredKeyOf<User, 'name'>;
 //=> true

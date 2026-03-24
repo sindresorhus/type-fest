@@ -19,7 +19,7 @@ type PascalCasedProperties<T> = {
 	[K in keyof T as PascalCase<K>]: T[K]
 };
 
-interface RawOptions {
+type RawOptions = {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;

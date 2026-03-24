@@ -309,3 +309,19 @@ expectType<[Bar, FooBarReplace, ...FooBarReplace[]]>(tupleIntoTupleWithVariadicR
 
 declare const tupleIntoTupleWithVariadicReplaceReversed: MergeDeep<[Foo, ...Foo[]], [number, Bar, ...Bar[]], {arrayMergeMode: 'replace'; recurseIntoArrays: true}>;
 expectType<[number, FooBarReplace, ...FooBarReplace[]]>(tupleIntoTupleWithVariadicReplaceReversed);
+
+type RecordNotPartial = {
+	name: string;
+	type: string;
+	b: {bb?: string; cc: string};
+};
+type RecordPartial = Partial<RecordNotPartial>;
+
+expectType<RecordNotPartial>({} as MergeDeep<RecordPartial, RecordNotPartial>);
+expectType<RecordPartial>({} as MergeDeep<RecordNotPartial, RecordPartial>);
+
+type NotOptional = {a: string; b: number; c: boolean};
+type OptionalWithUndefined = {a: string | undefined; b?: number; c?: boolean | undefined};
+
+expectType<OptionalWithUndefined>({} as MergeDeep<NotOptional, OptionalWithUndefined>);
+expectType<NotOptional>({} as MergeDeep<OptionalWithUndefined, NotOptional>);

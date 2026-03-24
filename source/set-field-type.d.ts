@@ -35,7 +35,7 @@ type MyModel = {
 	updatedAt?: Date;
 };
 
-type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
+type MyModelApi1 = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
 // {
 // 	readonly id: number;
 // 	readonly createdAt: string;
@@ -43,7 +43,7 @@ type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string>;
 // }
 
 // `preservePropertyModifiers` option can be set to `false` if you want to remove property modifiers for properties being updated
-type MyModelApi = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string, {preservePropertyModifiers: false}>;
+type MyModelApi2 = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string, {preservePropertyModifiers: false}>;
 // {
 // 	readonly id: number;
 // 	createdAt: string; // no longer readonly

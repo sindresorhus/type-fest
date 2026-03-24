@@ -16,20 +16,18 @@ import type {Jsonifiable} from 'type-fest';
 
 // @ts-expect-error
 const error: Jsonifiable = {
-    map: new Map([['a', 1]]),
+	map: new Map([['a', 1]]),
 };
 
-JSON.stringify(error);
-//=> {"map": {}}
+console.log(JSON.stringify(error)); // {"map": {}}
 
 const good: Jsonifiable = {
-    number: 3,
-    date: new Date(),
-    missing: undefined,
-}
+	number: 3,
+	date: new Date('2025-12-25'),
+	missing: undefined,
+};
 
-JSON.stringify(good);
-//=> {"number": 3, "date": "2022-10-17T22:22:35.920Z"}
+console.log(JSON.stringify(good)); // {"number": 3, "date": "2025-12-25T00:00:00.000Z"}
 ```
 
 @category JSON

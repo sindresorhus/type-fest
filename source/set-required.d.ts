@@ -18,14 +18,10 @@ type Foo = {
 	a?: number;
 	b: string;
 	c?: boolean;
-}
+};
 
 type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
-// type SomeRequired = {
-// 	a?: number;
-// 	b: string; // Was already required and still is.
-// 	c: boolean; // Is now required.
-// }
+//=> {a?: number; b: string; c: boolean}
 
 // Set specific indices in an array to be required.
 type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;

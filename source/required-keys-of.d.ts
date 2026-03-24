@@ -9,17 +9,23 @@ This is useful when you want to create a new type that contains different type v
 ```
 import type {RequiredKeysOf} from 'type-fest';
 
-declare function createValidation<Entity extends object, Key extends RequiredKeysOf<Entity> = RequiredKeysOf<Entity>>(field: Key, validator: (value: Entity[Key]) => boolean): ValidatorFn;
+declare function createValidation<
+	Entity extends object,
+	Key extends RequiredKeysOf<Entity> = RequiredKeysOf<Entity>,
+>(field: Key, validator: (value: Entity[Key]) => boolean): (entity: Entity) => boolean;
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
-
 	luckyNumber?: number;
-}
+};
 
 const validator1 = createValidation<User>('name', value => value.length < 25);
 const validator2 = createValidation<User>('surname', value => value.length < 25);
+
+// @ts-expect-error
+const validator3 = createValidation<User>('luckyNumber', value => value > 0);
+// Error: Argument of type '"luckyNumber"' is not assignable to parameter of type '"name" | "surname"'.
 ```
 
 @category Utilities

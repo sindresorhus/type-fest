@@ -9,16 +9,12 @@ Create a type that only accepts an object with a single key.
 ```
 import type {SingleKeyObject} from 'type-fest';
 
-const someFunction = <T>(parameter: SingleKeyObject<T>) => {};
+declare function someFunction<T>(parameter: SingleKeyObject<T>): void;
 
-someFunction({
-	value: true
-});
+someFunction({value: true});
 
-someFunction({
-	value: true,
-	otherKey: true
-});
+// @ts-expect-error
+someFunction({value: true, otherKey: true});
 // Error: Argument of type '{value: boolean; otherKey: boolean}' is not assignable to parameter of type 'never'.ts(2345)
 ```
 

@@ -7,17 +7,22 @@ This is useful when you want to override existing properties with a different ty
 
 @example
 ```
-type Foo = {
-	a: string
-	b: string
-}
-type Bar = OverrideProperties<Foo, {b: number}>
-//=> {a: string, b: number}
+import type {OverrideProperties} from 'type-fest';
 
-type Baz = OverrideProperties<Foo, {c: number}>
+type Foo = {
+	a: string;
+	b: string;
+};
+
+type Bar = OverrideProperties<Foo, {b: number}>;
+//=> {a: string; b: number}
+
+// @ts-expect-error
+type Baz = OverrideProperties<Foo, {c: number}>;
 // Error, type '{ c: number; }' does not satisfy the constraint '{ c: never; }'
 
-type Fizz = OverrideProperties<Foo, {b: number; c: number}>
+// @ts-expect-error
+type Fizz = OverrideProperties<Foo, {b: number; c: number}>;
 // Error, type '{ b: number; c: number; }' does not satisfy the constraint '{ b: number; c: never; }'
 ```
 

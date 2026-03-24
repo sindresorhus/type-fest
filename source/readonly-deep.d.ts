@@ -9,24 +9,57 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/13923)
 
 @example
 ```
-// data.json
-{
-	"foo": ["bar"]
+import type {ReadonlyDeep} from 'type-fest';
+
+declare const foo: {
+	a: string;
+	b: {c: number};
+	d: Array<{e: number}>;
+};
+
+foo.a = 'bar'; // Allowed
+
+foo.b = {c: 3}; // Allowed
+
+foo.b.c = 4; // Allowed
+
+foo.d = [{e: 5}]; // Allowed
+
+foo.d.push({e: 6}); // Allowed
+
+const last = foo.d.at(-1);
+if (last) {
+	last.e = 7; // Allowed
 }
 
-// main.ts
-import type {ReadonlyDeep} from 'type-fest';
-import dataJson = require('./data.json');
+declare const readonlyFoo: ReadonlyDeep<typeof foo>;
 
-const data: ReadonlyDeep<typeof dataJson> = dataJson;
+// @ts-expect-error
+readonlyFoo.a = 'bar';
+// Error: Cannot assign to 'a' because it is a read-only property.
 
-export default data;
+// @ts-expect-error
+readonlyFoo.b = {c: 3};
+// Error: Cannot assign to 'b' because it is a read-only property.
 
-// test.ts
-import data from './main.d.ts';
+// @ts-expect-error
+readonlyFoo.b.c = 4;
+// Error: Cannot assign to 'c' because it is a read-only property.
 
-data.foo.push('bar');
-//=> error TS2339: Property 'push' does not exist on type 'readonly string[]'
+// @ts-expect-error
+readonlyFoo.d = [{e: 5}];
+// Error: Cannot assign to 'd' because it is a read-only property.
+
+// @ts-expect-error
+readonlyFoo.d.push({e: 6});
+// Error: Property 'push' does not exist on type 'ReadonlyArray<{readonly e: number}>'.
+
+const readonlyLast = readonlyFoo.d.at(-1);
+if (readonlyLast) {
+	// @ts-expect-error
+	readonlyLast.e = 8;
+	// Error: Cannot assign to 'e' because it is a read-only property.
+}
 ```
 
 Note that types containing overloaded functions are not made deeply readonly due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).

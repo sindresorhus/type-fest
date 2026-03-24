@@ -16,27 +16,15 @@ Use-cases:
 ```
 import type {MultidimensionalReadonlyArray} from 'type-fest';
 
-function emptyMatrix<T extends number>(dimensions: T): MultidimensionalReadonlyArray<unknown, T> {
-	const matrix: unknown[] = [];
+declare function emptyMatrix<Item = unknown>(): <Dimension extends number>(
+	dimensions: Dimension,
+) => MultidimensionalReadonlyArray<Item, Dimension>;
 
-	let subMatrix = matrix;
-	for (let dimension = 1; dimension < dimensions; ++dimension) {
-		console.log(`Initializing dimension #${dimension}`);
+const readonlyUnknown3DMatrix = emptyMatrix()(3);
+//=> readonly (readonly (readonly unknown[])[])[]
 
-		subMatrix[0] = [];
-		if (dimension < dimensions - 1) {
-			subMatrix = subMatrix[0] as unknown[];
-		} else {
-			subMatrix[0] = 42;
-		}
-	}
-
-	return matrix as MultidimensionalReadonlyArray<unknown, T>;
-}
-
-const matrix = emptyMatrix(3);
-
-const answer = matrix[0][0][0]; // 42
+const readonlyBoolean2DMatrix = emptyMatrix<boolean>()(2);
+//=> readonly (readonly boolean[])[]
 ```
 
 @category Array

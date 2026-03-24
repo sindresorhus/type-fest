@@ -9,22 +9,13 @@ Use-case: You have two functions, one synchronous and one asynchronous that do t
 ```
 import type {Asyncify} from 'type-fest';
 
-// Synchronous function.
-function getFooSync(someArg: SomeType): Foo {
-	// …
-}
+// Synchronous function
+type Config = {featureFlags: Record<string, boolean>};
 
-type AsyncifiedFooGetter = Asyncify<typeof getFooSync>;
-//=> type AsyncifiedFooGetter = (someArg: SomeType) => Promise<Foo>;
+declare function loadConfigSync(path: string): Config;
 
-// Same as `getFooSync` but asynchronous.
-const getFooAsync: AsyncifiedFooGetter = (someArg) => {
-	// TypeScript now knows that `someArg` is `SomeType` automatically.
-	// It also knows that this function must return `Promise<Foo>`.
-	// If you have `@typescript-eslint/promise-function-async` linter rule enabled, it will even report that "Functions that return promises must be async.".
-
-	// …
-}
+type LoadConfigAsync = Asyncify<typeof loadConfigSync>;
+//=> (path: string) => Promise<Config>
 ```
 
 @category Async

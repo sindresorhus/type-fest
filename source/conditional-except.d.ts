@@ -11,11 +11,11 @@ This is useful when you want to create a new type with a specific set of keys fr
 import type {Primitive, ConditionalExcept} from 'type-fest';
 
 class Awesome {
-	name: string;
-	successes: number;
-	failures: bigint;
+	constructor(public name: string, public successes: number, public failures: bigint) {}
 
-	run() {}
+	run() {
+		// do something
+	}
 }
 
 type ExceptPrimitivesFromAwesome = ConditionalExcept<Awesome, Primitive>;
@@ -26,12 +26,12 @@ type ExceptPrimitivesFromAwesome = ConditionalExcept<Awesome, Primitive>;
 ```
 import type {ConditionalExcept} from 'type-fest';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | number;
 	c: () => void;
 	d: {};
-}
+};
 
 type NonStringKeysOnly = ConditionalExcept<Example, string>;
 //=> {b: string | number; c: () => void; d: {}}

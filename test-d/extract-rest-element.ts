@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ExtractRestElement} from '../index.d.ts';
+import type {ExtractRestElement, TupleOf} from '../index.d.ts';
 
 // Leading rest element
 expectType<ExtractRestElement<[...string[], 1]>>({} as string);
@@ -49,3 +49,10 @@ expectType<ExtractRestElement<[['a'], ...boolean[], ['z']]>>({} as boolean);
 // Edge: `never` / `any`
 expectType<ExtractRestElement<any>>({} as any);
 expectType<ExtractRestElement<never>>({} as never);
+
+// Long tuples
+type FiftyZeroes = TupleOf<50, '0'>;
+expectType<ExtractRestElement<[...FiftyZeroes, ...number[]]>>({} as number);
+
+type NineHundredNinetyNineZeroes = TupleOf<999, '0'>;
+expectType<ExtractRestElement<[...NineHundredNinetyNineZeroes, ...number[]]>>({} as number);

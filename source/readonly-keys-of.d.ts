@@ -9,17 +9,17 @@ This is useful when you want to create a new type that contains readonly keys on
 ```
 import type {ReadonlyKeysOf} from 'type-fest';
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
 
 	readonly id: number;
-}
+};
 
 type UpdateResponse<Entity extends object> = Pick<Entity, ReadonlyKeysOf<Entity>>;
 
 const update1: UpdateResponse<User> = {
-    id: 123,
+	id: 123,
 };
 ```
 

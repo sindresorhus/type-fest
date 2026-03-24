@@ -23,16 +23,16 @@ type SnakeCasedProperties<T> = {
 	[K in keyof T as SnakeCase<K>]: T[K]
 };
 
-interface ModelProps {
+type ModelProps = {
 	isHappy: boolean;
 	fullFamilyName: string;
 	foo: number;
-}
+};
 
 const dbResult: SnakeCasedProperties<ModelProps> = {
 	'is_happy': true,
 	'full_family_name': 'Carla Smith',
-	foo: 123
+	foo: 123,
 };
 ```
 

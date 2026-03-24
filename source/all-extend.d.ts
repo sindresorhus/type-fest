@@ -1,4 +1,3 @@
-import type {If} from './if.d.ts';
 import type {CollapseRestElement} from './internal/array.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, Not} from './internal/type.d.ts';
@@ -78,18 +77,21 @@ type D = AllExtend<[true, boolean, true], true>;
 Note: Behaviour of optional elements depend on the `exactOptionalPropertyTypes` compiler option. When the option is disabled, the target type must include `undefined` for a successful match.
 
 ```
+// @exactOptionalPropertyTypes: true
 import type {AllExtend} from 'type-fest';
 
-// `exactOptionalPropertyTypes` enabled
 type A = AllExtend<[1?, 2?, 3?], number>;
 //=> true
+```
 
-// `exactOptionalPropertyTypes` disabled
-type B = AllExtend<[1?, 2?, 3?], number>;
-//=> false
+```
+// @exactOptionalPropertyTypes: false
+import type {AllExtend} from 'type-fest';
 
-// `exactOptionalPropertyTypes` disabled
-type C = AllExtend<[1?, 2?, 3?], number | undefined>;
+type A = AllExtend<[1?, 2?, 3?], number>;
+//=> boolean
+
+type B = AllExtend<[1?, 2?, 3?], number | undefined>;
 //=> true
 ```
 
@@ -101,17 +103,17 @@ type C = AllExtend<[1?, 2?, 3?], number | undefined>;
 export type AllExtend<TArray extends UnknownArray, Type, Options extends AllExtendOptions = {}> =
 	_AllExtend<CollapseRestElement<TArray>, Type, ApplyDefaultOptions<AllExtendOptions, DefaultAllExtendOptions, Options>>;
 
-type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllExtendOptions>> = IfNotAnyOrNever<TArray, If<IsAny<Type>, true,
+type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllExtendOptions>> = IfNotAnyOrNever<TArray,
 	TArray extends readonly [infer First, ...infer Rest]
 		? IsNever<First> extends true
-			? Or<IsNever<Type>, Not<Options['strictNever']>> extends true
-				// If target `Type` is also `never` OR `strictNever` is disabled, recurse further.
+			? Or<Or<IsNever<Type>, IsAny<Type>>, Not<Options['strictNever']>> extends true
+				// If target `Type` is also `never`, or is `any`, or `strictNever` is disabled, recurse further.
 				? _AllExtend<Rest, Type, Options>
 				: false
 			: First extends Type
 				? _AllExtend<Rest, Type, Options>
 				: false
-		: true
->, false, false>;
+		: true,
+	false, false>;
 
 export {};

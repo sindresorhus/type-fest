@@ -2,20 +2,20 @@ import type {IsNever} from '../is-never.d.ts';
 import type {Finite, NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {StringToNumber} from './string.d.ts';
-import type {IsAnyOrNever} from './type.d.ts';
+import type {IfNotAnyOrNever, IsAnyOrNever} from './type.d.ts';
 
 /**
 Returns the absolute value of a given value.
 
 @example
 ```
-NumberAbsolute<-1>;
+type A = NumberAbsolute<-1>;
 //=> 1
 
-NumberAbsolute<1>;
+type B = NumberAbsolute<1>;
 //=> 1
 
-NumberAbsolute<NegativeInfinity>
+type C = NumberAbsolute<NegativeInfinity>;
 //=> PositiveInfinity
 ```
 */
@@ -44,10 +44,11 @@ type E = IsNumberLike<'a'>;
 //=> false
 */
 export type IsNumberLike<N> =
-	IsAnyOrNever<N> extends true ? N
-		: N extends number | `${number}`
+	IfNotAnyOrNever<N,
+		N extends number | `${number}`
 			? true
-			: false;
+			: false,
+		boolean, false>;
 
 /**
 Returns the minimum number in the given union of numbers.
@@ -126,16 +127,16 @@ Returns the number with reversed sign.
 
 @example
 ```
-ReverseSign<-1>;
+type A = ReverseSign<-1>;
 //=> 1
 
-ReverseSign<1>;
+type B = ReverseSign<1>;
 //=> -1
 
-ReverseSign<NegativeInfinity>
+type C = ReverseSign<NegativeInfinity>;
 //=> PositiveInfinity
 
-ReverseSign<PositiveInfinity>
+type D = ReverseSign<PositiveInfinity>;
 //=> NegativeInfinity
 ```
 */

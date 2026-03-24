@@ -17,13 +17,13 @@ type Array = TupleLength<string[]>;
 //=> never
 
 // Supports union types.
-type Union = TupleLength<[] | [1, 2, 3] | Array<number>>;
+type Union = TupleLength<[] | [1, 2, 3] | number[]>;
 //=> 1 | 3
 ```
 */
 export type TupleLength<T extends UnknownArray> =
 	// `extends unknown` is used to convert `T` (if `T` is a union type) to
-	// a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
+	// a [distributive conditional type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
 	T extends unknown
 		? number extends T['length']
 			? never // Return never if the given type is an non-flexed-length array like `Array<string>`
@@ -38,10 +38,10 @@ Note:
 
 @example
 ```
-ArrayMax<[1, 2, 5, 3]>;
+type A = TupleMax<[1, 2, 5, 3]>;
 //=> 5
 
-ArrayMax<[1, 2, 5, 3, 99, -1]>;
+type B = TupleMax<[1, 2, 5, 3, 99, -1]>;
 //=> 99
 ```
 */
@@ -61,10 +61,10 @@ Note:
 
 @example
 ```
-ArrayMin<[1, 2, 5, 3]>;
+type A = TupleMin<[1, 2, 5, 3]>;
 //=> 1
 
-ArrayMin<[1, 2, 5, 3, -5]>;
+type B = TupleMin<[1, 2, 5, 3, -5]>;
 //=> -5
 ```
 */
