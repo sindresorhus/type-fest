@@ -25,6 +25,7 @@ const xoConfig = [
 			'@typescript-eslint/no-wrapper-object-types': 'off',
 			'@typescript-eslint/consistent-indexed-object-style': 'off',
 			'@typescript-eslint/unified-signatures': 'off', // Temp
+			'@typescript-eslint/no-unnecessary-type-arguments': 'off',
 			'@stylistic/quote-props': 'off',
 			'@stylistic/function-paren-newline': 'off',
 			'@stylistic/object-curly-newline': 'off',
