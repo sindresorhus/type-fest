@@ -48,8 +48,8 @@ const defaultTypeAwareTsconfig = {
 	],
 };
 
-export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
-	const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'type-fest-type-aware-'));
+export const createFixtures = fixtureFiles => {
+	const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'type-fest-fixtures-'));
 
 	const writeFixture = (relativePath, content) => {
 		const absolutePath = path.join(fixtureRoot, relativePath);
@@ -61,6 +61,14 @@ export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
 		writeFixture(relativePath, content);
 	}
 
+	const fixturePath = relativePath => path.join(fixtureRoot, relativePath);
+
+	return {fixtureRoot, fixturePath, writeFixture};
+};
+
+export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
+	const fixture = createFixtures(fixtureFiles);
+
 	const hasRuleTesterOption = Object.hasOwn(options, 'ruleTester');
 	const hasTsconfigOption = Object.hasOwn(options, 'tsconfig');
 	const ruleTesterOverrides = hasRuleTesterOption || hasTsconfigOption ? options.ruleTester ?? {} : options;
@@ -69,7 +77,7 @@ export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
 		: defaultTypeAwareTsconfig;
 
 	if (!('tsconfig.json' in fixtureFiles)) {
-		writeFixture('tsconfig.json', `${JSON.stringify(tsconfig, null, '\t')}\n`);
+		fixture.writeFixture('tsconfig.json', `${JSON.stringify(tsconfig, null, '\t')}\n`);
 	}
 
 	const overrideLanguageOptions = ruleTesterOverrides.languageOptions ?? {};
@@ -85,19 +93,12 @@ export const createTypeAwareRuleTester = (fixtureFiles, options = {}) => {
 					allowDefaultProject: ['*.ts*'],
 					...overrideProjectService,
 				},
-				tsconfigRootDir: fixtureRoot,
+				tsconfigRootDir: fixture.fixtureRoot,
 			},
 		},
 	});
 
-	const fixturePath = relativePath => path.join(fixtureRoot, relativePath);
-
-	return {
-		ruleTester,
-		fixtureRoot,
-		fixturePath,
-		writeFixture,
-	};
+	return {ruleTester, ...fixture};
 };
 
 export const dedenter = dedent.withOptions({alignValues: true});

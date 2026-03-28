@@ -1,13 +1,15 @@
 // @ts-check
+import markdown from '@eslint/markdown';
 import tseslint from 'typescript-eslint';
 import {importPathRule} from './lint-rules/import-path.js';
 import {sourceFilesExtensionRule} from './lint-rules/source-files-extension.js';
 import {requireExportedTypesRule} from './lint-rules/require-exported-types.js';
 import {requireExportRule} from './lint-rules/require-export.js';
 import {validateJSDocCodeblocksRule} from './lint-rules/validate-jsdoc-codeblocks.js';
+import {readmeJSDocSyncRule} from './lint-rules/readme-jsdoc-sync.js';
 import {jsdocCodeblocksProcessor} from './lint-processors/jsdoc-codeblocks.js';
 
-/** @type {import('xo').FlatXoConfig} */
+/** @type {Array<import('xo').XoConfigItem | import('@eslint/core').ConfigObject>} */
 const xoConfig = [
 	{
 		rules: {
@@ -55,6 +57,7 @@ const xoConfig = [
 		},
 	},
 	{
+		files: ['**/*'],
 		plugins: {
 			'type-fest': {
 				rules: {
@@ -63,6 +66,7 @@ const xoConfig = [
 					'require-exported-types': requireExportedTypesRule,
 					'require-export': requireExportRule,
 					'validate-jsdoc-codeblocks': validateJSDocCodeblocksRule,
+					'readme-jsdoc-sync': readmeJSDocSyncRule,
 				},
 				processors: {
 					'jsdoc-codeblocks': jsdocCodeblocksProcessor,
@@ -135,6 +139,16 @@ const xoConfig = [
 					'skipComments': true,
 				},
 			],
+		},
+	},
+	{
+		files: ['readme.md'],
+		language: 'markdown/commonmark',
+		plugins: {
+			markdown,
+		},
+		rules: {
+			'type-fest/readme-jsdoc-sync': 'error',
 		},
 	},
 ];
