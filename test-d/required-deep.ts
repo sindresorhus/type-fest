@@ -65,21 +65,21 @@ expectType<RequiredDeep<Promise<Promise<{a?: string; b?: [number, number?]}>>>>(
 type FunctionWithProperties = {(a1: string, a2: number): boolean; p1?: string; readonly p2?: number};
 declare const functionWithProperties: RequiredDeep<FunctionWithProperties>;
 expectType<boolean>(functionWithProperties('foo', 1));
-expectType<{p1: string; readonly p2: number}>({} as Simplify<typeof functionWithProperties>); // `Simplify` removes the call signature from `typeof functionWithProperties`
+expectType<((a1: string, a2: number) => boolean) & {p1: string; readonly p2: number}>(functionWithProperties);
 
 type FunctionWithProperties2 = {(a1: boolean, ...a2: string[]): number; p1?: {p2?: string; p3: {readonly p4?: boolean}}};
 declare const functionWithProperties2: RequiredDeep<FunctionWithProperties2>;
 expectType<number>(functionWithProperties2(true, 'foo', 'bar'));
-expectType<{p1: {p2: string; p3: {readonly p4: boolean}}}>({} as Simplify<typeof functionWithProperties2>);
+expectType<((a1: boolean, ...a2: string[]) => number) & {p1: {p2: string; p3: {readonly p4: boolean}}}>(functionWithProperties2);
 
 type FunctionWithProperties3 = {(): void; p1?: {p2?: string; p3: [{p4?: number}, string?]}};
 declare const functionWithProperties3: RequiredDeep<FunctionWithProperties3>;
 expectType<void>(functionWithProperties3());
-expectType<{p1: {p2: string; p3: [{p4: number}, string]}}>({} as Simplify<typeof functionWithProperties3>);
+expectType<(() => void) & {p1: {p2: string; p3: [{p4: number}, string]}}>(functionWithProperties3);
 
 // Properties within functions containing multiple call signatures are not made required due to TS limitations, refer https://github.com/microsoft/TypeScript/issues/29732
 type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1?: string};
 declare const functionWithProperties4: RequiredDeep<FunctionWithProperties4>;
 expectType<string>(functionWithProperties4(1));
 expectType<number>(functionWithProperties4('foo', 1));
-expectNotType<{p1: string}>({} as Simplify<typeof functionWithProperties4>);
+expectNotType<((a1: number) => string) & ((a1: string, a2: number) => number) & {p1: string}>(functionWithProperties4);
