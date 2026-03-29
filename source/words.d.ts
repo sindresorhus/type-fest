@@ -46,11 +46,11 @@ export type WordsOptions = {
 	```
 	import type {Words} from 'type-fest';
 
-	type Example1 = Words<'hello:world', {splitOnPunctuation: false}>;
-	//=> ['hello', ':world']
-
-	type Example2 = Words<'hello:world', {splitOnPunctuation: true}>;
+	type Example1 = Words<'hello:world', {splitOnPunctuation: true}>;
 	//=> ['hello', 'world']
+
+	type Example2 = Words<'hello:world', {splitOnPunctuation: false}>;
+	//=> ['hello', ':world']
 	```
 	*/
 	splitOnPunctuation?: boolean;
@@ -91,11 +91,11 @@ type Words5 = Words<'lifeIs42'>;
 type Words6 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 //=> ['p2p', 'Network']
 
-type Words7 = Words<'hello:world', {splitOnPunctuation: true}>;
-//=> ['hello', 'world']
-
-type Words8 = Words<'hello:world', {splitOnPunctuation: false}>;
+type Words7 = Words<'hello:world'>;
 //=> ['hello', ':world']
+
+type Words8 = Words<'hello:world', {splitOnPunctuation: true}>;
+//=> ['hello', 'world']
 ```
 
 @category Change case
