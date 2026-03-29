@@ -108,3 +108,5 @@ expectType<Words<'hello::', {splitOnPunctuation: true}>>(['hello']);
 expectType<Words<'hello:world', {splitOnPunctuation: true}>>(['hello', 'world']);
 expectType<Words<'hello::world', {splitOnPunctuation: true}>>(['hello', 'world']);
 expectType<Words<'hello-braveNew:world', {splitOnPunctuation: true}>>(['hello', 'brave', 'New', 'world']);
+expectType<Words<'item::01', {splitOnPunctuation:true, splitOnNumbers: false }>>(['item', '01'])
+expectType<Words<'item::01', {splitOnPunctuation:true, splitOnNumbers: true }>>(['item', '01'])
