@@ -114,10 +114,13 @@ declare const withPunctuationSplitAndNumber: SnakeCase<'foo-bar::01', {splitOnPu
 expectType<'foo_bar_01'>(withPunctuationSplitAndNumber);
 
 declare const withPunctuationSplitAndNumberSplit: SnakeCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>;
-expectType<'foo_bar_01'>(withPunctuationSplitAndNumber);
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumberSplit);
 
 declare const withPunctuationAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
 expectType<'foo_bar::_01'>(withPunctuationAndNumberSplit2);
 
 declare const withPunctuationSplitAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectType<'foo_bar_01'>(withPunctuationSplitAndNumberSplit2);
+
+declare const withPunctuationSplitAndNumber2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumber2);
