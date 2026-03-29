@@ -110,114 +110,37 @@ type WordsImplementation<
 	LastCharacter extends string = '',
 	CurrentWord extends string = '',
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
-	? FirstCharacter extends
-	| WordSeparators
-	| (Options['splitOnPunctuation'] extends true ? AsciiPunctuation : never)
-		? // Skip word separator
-		[
-			...SkipEmptyWord<CurrentWord>,
-			...WordsImplementation<RemainingCharacters, Options>,
-		]
+	? FirstCharacter extends WordSeparators | (Options['splitOnPunctuation'] extends true ? AsciiPunctuation : never)
+		// Skip word separator
+		? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options>]
 		: LastCharacter extends ''
-			? // Fist char of word
-			WordsImplementation<
-				RemainingCharacters,
-				Options,
-				FirstCharacter,
-				FirstCharacter
-			>
-			: // Case change: non-numeric to numeric
-			[false, true] extends [
-				IsNumeric<LastCharacter>,
-				IsNumeric<FirstCharacter>,
-			]
+			// Fist char of word
+			? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
+			// Case change: non-numeric to numeric
+			: [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
 				? Options['splitOnNumbers'] extends true
-					? // Split on number: push word
-					[
-						...SkipEmptyWord<CurrentWord>,
-						...WordsImplementation<
-							RemainingCharacters,
-							Options,
-							FirstCharacter,
-							FirstCharacter
-						>,
-					]
-					: // No split on number: concat word
-					WordsImplementation<
-						RemainingCharacters,
-						Options,
-						FirstCharacter,
-							`${CurrentWord}${FirstCharacter}`
-					>
-				: // Case change: numeric to non-numeric
-				[true, false] extends [
-					IsNumeric<LastCharacter>,
-					IsNumeric<FirstCharacter>,
-				]
+					// Split on number: push word
+					? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+					// No split on number: concat word
+					: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+				// Case change: numeric to non-numeric
+				: [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
 					? Options['splitOnNumbers'] extends true
-						? // Split on number: push word
-						[
-							...SkipEmptyWord<CurrentWord>,
-							...WordsImplementation<
-								RemainingCharacters,
-								Options,
-								FirstCharacter,
-								FirstCharacter
-							>,
-						]
-						: // No split on number: concat word
-						WordsImplementation<
-							RemainingCharacters,
-							Options,
-							FirstCharacter,
-								`${CurrentWord}${FirstCharacter}`
-						>
-					: // No case change: concat word
-					[true, true] extends [
-						IsNumeric<LastCharacter>,
-						IsNumeric<FirstCharacter>,
-					]
-						? WordsImplementation<
-							RemainingCharacters,
-							Options,
-							FirstCharacter,
-								`${CurrentWord}${FirstCharacter}`
-						>
-						: // Case change: lower to upper, push word
-						[true, true] extends [
-							IsLowercase<LastCharacter>,
-							IsUppercase<FirstCharacter>,
-						]
-							? [
-								...SkipEmptyWord<CurrentWord>,
-								...WordsImplementation<
-									RemainingCharacters,
-									Options,
-									FirstCharacter,
-									FirstCharacter
-								>,
-							]
-							: // Case change: upper to lower, brings back the last character, push word
-							[true, true] extends [
-								IsUppercase<LastCharacter>,
-								IsLowercase<FirstCharacter>,
-							]
-								? [
-									...RemoveLastCharacter<CurrentWord, LastCharacter>,
-									...WordsImplementation<
-										RemainingCharacters,
-										Options,
-										FirstCharacter,
-											`${LastCharacter}${FirstCharacter}`
-									>,
-								]
-								: // No case change: concat word
-								WordsImplementation<
-									RemainingCharacters,
-									Options,
-									FirstCharacter,
-										`${CurrentWord}${FirstCharacter}`
-								>
+						// Split on number: push word
+						? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+						// No split on number: concat word
+						: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+					// No case change: concat word
+					: [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
+						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+					// Case change: lower to upper, push word
+						: [true, true] extends [IsLowercase<LastCharacter>, IsUppercase<FirstCharacter>]
+							? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+						// Case change: upper to lower, brings back the last character, push word
+							: [true, true] extends [IsUppercase<LastCharacter>, IsLowercase<FirstCharacter>]
+								? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
+							// No case change: concat word
+								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 	: [...SkipEmptyWord<CurrentWord>];
 
 export {};
