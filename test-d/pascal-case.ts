@@ -22,3 +22,14 @@ expectType<PascalCase<'foo\tBAR-Biz_BUZZ'>>('FooBarBizBuzz');
 
 expectType<PascalCase<string, {preserveConsecutiveUppercase: true}>>({} as Capitalize<string>);
 expectType<PascalCase<string>>({} as Capitalize<string>);
+
+// Punctuation
+expectType<PascalCase<'onDialog:close'>>('OnDialog:close');
+expectType<PascalCase<'foo-bar>>baz'>>('FooBar>>baz');
+expectType<PascalCase<'foo-bar::01'>>('FooBar::01');
+
+expectType<PascalCase<'onDialog:close', {splitOnPunctuation: true}>>('OnDialogClose');
+expectType<PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}>>('FooBarBaz');
+expectType<PascalCase<'fooBAR:biz', {splitOnPunctuation: true; preserveConsecutiveUppercase: true}>>('FooBARBiz');
+expectType<PascalCase<'foo-bar::01', {splitOnPunctuation: true}>>('FooBar01');
+

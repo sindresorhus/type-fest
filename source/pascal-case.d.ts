@@ -10,8 +10,15 @@ import type {PascalCase} from 'type-fest';
 
 // Simple
 
-const someVariable: PascalCase<'foo-bar'> = 'FooBar';
-const preserveConsecutiveUppercase: PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'FooBARBaz';
+type PascalCase1 = PascalCase<'foo-bar'>;
+//=> 'FooBar'
+
+type PascalCase2 = PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}>;
+//=> 'FooBARBaz'
+
+type PascalCase3 = PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
+//=> 'FooBarBaz'
+
 
 // Advanced
 
