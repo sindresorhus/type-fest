@@ -28,6 +28,10 @@ const result: KebabCasedProperties<User> = {
 const splitOnNumbers: KebabCasedProperties<{line1: string}, {splitOnNumbers: true}> = {
 	'line-1': 'string',
 };
+
+const splitOnPunctuation: KebabCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	'foo-bar': 'string',
+};
 ```
 
 @category Change case

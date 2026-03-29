@@ -48,6 +48,13 @@ const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: {fooBARBiz
 		}],
 	},
 };
+
+const splitOnPunctuation: CamelCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
+	userInfo: {
+		userId: 1,
+		userName: 'Tom',
+	},
+};
 ```
 
 @category Change case
