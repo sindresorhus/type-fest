@@ -34,4 +34,3 @@ expectType<PascalCase<'fooBAR:biz', {splitOnPunctuation: true; preserveConsecuti
 expectType<PascalCase<'foo-bar::01', {splitOnPunctuation: true}>>('FooBar01');
 expectType<PascalCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('FooBar01');
 expectType<PascalCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>>('FooBar01');
-
