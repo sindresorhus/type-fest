@@ -42,11 +42,16 @@ export type WordsOptions = {
 	/**
 	Split on ASCII punctuation mark. Set to `false` by default for now..
 
-	type Example1 = Words<'hello:world', {splitOnPunctuation: false}>
+	@example
+	```
+	import type {Words} from 'type-fest';
+
+	type Example1 = Words<'hello:world', {splitOnPunctuation: false}>;
 	//=> ['hello', ':world']
 
-	type Example2 = Words<'hello:world', {splitOnPunctuation: true}>
+	type Example2 = Words<'hello:world', {splitOnPunctuation: true}>;
 	//=> ['hello', 'world']
+	```
 	*/
 	splitOnPunctuation?: boolean;
 };
