@@ -50,4 +50,3 @@ type _PascalCase<Value, Options extends Required<CamelCaseOptions>> = CamelCase<
 	: CamelCase<Value, Options>;
 
 export {};
-
