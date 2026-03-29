@@ -38,6 +38,7 @@ type UserPunctuated = {
 	'user::name': string;
 	date: Date;
 	'reg::exp': RegExp;
+	Role: UserRole;
 };
 
 type UserWithFriends = {
@@ -79,6 +80,7 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 };
 
 expectType<CamelCasedPropertiesDeep<UserWithFriends>>(result);
+expectType<CamelCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
 
 expectType<{fooBar: unknown}>({} as CamelCasedPropertiesDeep<{foo_bar: unknown}>);
 expectType<{fooBar: {barBaz: unknown}; biz: unknown}>({} as CamelCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>);
