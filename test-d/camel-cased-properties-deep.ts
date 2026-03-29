@@ -33,9 +33,21 @@ type User = {
 	Role: UserRole;
 };
 
+type UserPunctuated = {
+	'user::id': number;
+	'user::name': string;
+	date: Date;
+	'reg::exp': RegExp;
+};
+
 type UserWithFriends = {
 	UserInfo: User;
 	UserFriends: User[];
+};
+
+type UserWithFriendsPunctuated = {
+	'user@info': UserPunctuated;
+	'user#friends': UserPunctuated[];
 };
 
 const role = 'someRole' as UserRole;
@@ -65,6 +77,7 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
+
 expectType<CamelCasedPropertiesDeep<UserWithFriends>>(result);
 
 expectType<{fooBar: unknown}>({} as CamelCasedPropertiesDeep<{foo_bar: unknown}>);
@@ -72,3 +85,6 @@ expectType<{fooBar: {barBaz: unknown}; biz: unknown}>({} as CamelCasedProperties
 
 expectType<{fooBar: any}>({} as CamelCasedPropertiesDeep<{foo_bar: any}>);
 expectType<{fooBar: {barBaz: any}; biz: any}>({} as CamelCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);
+
+expectType<{'fooBar': unknown}>({} as CamelCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
+expectType<{'fooBar': {'barBaz': unknown}; biz: unknown}>({} as CamelCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);

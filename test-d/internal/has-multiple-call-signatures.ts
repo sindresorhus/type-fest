@@ -8,7 +8,7 @@ type Overloaded = {
 
 type Overloaded2 = {
 	(foo: number | undefined): string;
-	// eslint-disable-next-line @typescript-eslint/unified-signatures
+
 	(foo: number): string;
 };
 
