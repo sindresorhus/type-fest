@@ -40,7 +40,7 @@ export type WordsOptions = {
 	*/
 	splitOnNumbers?: boolean;
 	/**
-	Split on ASCII punctuation mark. Set to `false` by default for now..
+	Split on {@link AsciiPunctuation | punctuation characters} (e.g., `#`, `&`, `*`, `:`, `?`, `@`, `~`).
 
 	@example
 	```
@@ -66,8 +66,8 @@ Split a string (almost) like Lodash's `_.words()` function.
 
 - Split on each word that begins with a capital letter.
 - Split on each {@link WordSeparators}.
+- Split on each {@link AsciiPunctuation} (if {@link WordsOptions.splitOnPunctuation} is enabled).
 - Split on numeric sequence.
-- Split on {@link AsciiPunctuation} (if `splitOnPunctuation: true`)
 
 @example
 ```
