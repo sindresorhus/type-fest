@@ -118,4 +118,3 @@ expectType<'foo-bar::-01'>(withPunctuationAndNumberSplit2);
 
 declare const withPunctuationSplitAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectType<'foo-bar-01'>(withPunctuationSplitAndNumberSplit2);
-
