@@ -32,4 +32,6 @@ expectType<PascalCase<'onDialog:close', {splitOnPunctuation: true}>>('OnDialogCl
 expectType<PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}>>('FooBarBaz');
 expectType<PascalCase<'fooBAR:biz', {splitOnPunctuation: true; preserveConsecutiveUppercase: true}>>('FooBARBiz');
 expectType<PascalCase<'foo-bar::01', {splitOnPunctuation: true}>>('FooBar01');
+expectType<PascalCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('FooBar01');
+expectType<PascalCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>>('FooBar01');
 

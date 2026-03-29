@@ -83,22 +83,41 @@ const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: SnakeCase<'FOO22Bar'>
 expectType<'foo22_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
 
 // Punctuation
-expectType<SnakeCase<'onDialog:close'>>('on_dialog:close');
-expectType<SnakeCase<'foo-bar>>baz'>>('foo_bar>>baz');
-expectType<SnakeCase<'card::after'>>('card::after');
-expectType<SnakeCase<'div.card::after'>>('div.card::after');
-expectType<SnakeCase<'foo-bar::01'>>('foo_bar::01');
+declare const withPunctuation: SnakeCase<'onDialog:close'>;
+expectType<'on_dialog:close'>(withPunctuation);
 
-expectType<SnakeCase<'onDialog:close', {splitOnPunctuation: true}>>('on_dialog_close');
-expectType<SnakeCase<'foo-bar>>baz', {splitOnPunctuation: true}>>('foo_bar_baz');
-expectType<SnakeCase<'card::after', {splitOnPunctuation: true}>>('card_after');
-expectType<SnakeCase<'div.card::after', {splitOnPunctuation: true}>>('div_card_after');
-expectType<SnakeCase<'foo-bar::01', {splitOnPunctuation: true}>>('foo_bar_01');
+declare const withPunctuationSplit: SnakeCase<'onDialog:close', {splitOnPunctuation: true}>;
+expectType<'on_dialog_close'>(withPunctuationSplit);
 
-// Punctuation with number
-expectType<SnakeCase<'foo-bar::01'>>('foo_bar::01');
-expectType<SnakeCase<'foo-bar::01', {splitOnNumbers: true}>>('foo_bar::_01');
+declare const withPunctuation2: SnakeCase<'foo-bar>>baz'>;
+expectType<'foo_bar>>baz'>(withPunctuation2);
 
-expectType<SnakeCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('foo_bar_01');
-expectType<SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>>('foo_bar_01');
+declare const withPunctuationSplit2: SnakeCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
+expectType<'foo_bar_baz'>(withPunctuationSplit2);
 
+declare const withPunctuation3: SnakeCase<'card::after'>;
+expectType<'card::after'>(withPunctuation3);
+
+declare const withPunctuationSplit3: SnakeCase<'card::after', {splitOnPunctuation: true}>;
+expectType<'card_after'>(withPunctuationSplit3);
+
+declare const withPunctuation4: SnakeCase<'div.card::after'>;
+expectType<'div.card::after'>(withPunctuation4);
+
+declare const withPunctuationSplit4: SnakeCase<'div.card::after', {splitOnPunctuation: true}>;
+expectType<'div_card_after'>(withPunctuationSplit4);
+
+declare const withPunctuationAndNumber: SnakeCase<'foo-bar::01'>;
+expectType<'foo_bar::01'>(withPunctuationAndNumber);
+
+declare const withPunctuationSplitAndNumber: SnakeCase<'foo-bar::01', {splitOnPunctuation: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumber);
+
+declare const withPunctuationSplitAndNumberSplit: SnakeCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumber);
+
+declare const withPunctuationAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
+expectType<'foo_bar::_01'>(withPunctuationAndNumberSplit2);
+
+declare const withPunctuationSplitAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumberSplit2);

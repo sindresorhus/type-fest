@@ -97,3 +97,5 @@ expectType<CamelCase<'onDialog:close', {splitOnPunctuation: true}>>('onDialogClo
 expectType<CamelCase<'foo-bar>>baz', {splitOnPunctuation: true}>>('fooBarBaz');
 expectType<CamelCase<'fooBAR:biz', {splitOnPunctuation: true; preserveConsecutiveUppercase: true}>>('fooBARBiz');
 expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true}>>('fooBar01');
+expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('fooBar01');
+expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>>('fooBar01');
