@@ -82,20 +82,23 @@ expectType<'fo_o2bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: SnakeCase<'FOO22Bar'> = 'foo22_bar';
 expectType<'foo22_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
 
-declare const withPunctuation: SnakeCase<'onDialog:close'>;
-expectType<'on_dialog:close'>(withPunctuation);
+// Punctuation
+expectType<SnakeCase<'onDialog:close'>>('on_dialog:close');
+expectType<SnakeCase<'foo-bar>>baz'>>('foo_bar>>baz');
+expectType<SnakeCase<'card::after'>>('card::after');
+expectType<SnakeCase<'div.card::after'>>('div.card::after');
+expectType<SnakeCase<'foo-bar::01'>>('foo_bar::01');
 
-declare const withPunctuation2: SnakeCase<'foo-bar>>baz'>;
-expectType<'foo_bar>>baz'>(withPunctuation2);
+expectType<SnakeCase<'onDialog:close', {splitOnPunctuation: true}>>('on_dialog_close');
+expectType<SnakeCase<'foo-bar>>baz', {splitOnPunctuation: true}>>('foo_bar_baz');
+expectType<SnakeCase<'card::after', {splitOnPunctuation: true}>>('card_after');
+expectType<SnakeCase<'div.card::after', {splitOnPunctuation: true}>>('div_card_after');
+expectType<SnakeCase<'foo-bar::01', {splitOnPunctuation: true}>>('foo_bar_01');
 
-declare const withPunctuation3: SnakeCase<'card::after'>;
-expectType<'card::after'>(withPunctuation3);
+// Punctuation with number
+expectType<SnakeCase<'foo-bar::01'>>('foo_bar::01');
+expectType<SnakeCase<'foo-bar::01', {splitOnNumbers: true}>>('foo_bar::_01');
 
-declare const withPunctuation4: SnakeCase<'div.card::after'>;
-expectType<'div.card::after'>(withPunctuation4);
+expectType<SnakeCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('foo_bar_01');
+expectType<SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>>('foo_bar_01');
 
-declare const withPunctuationAndNumber: SnakeCase<'foo-bar::01'>;
-expectType<'foo_bar::01'>(withPunctuationAndNumber);
-
-declare const withPunctuationAndNumber2: SnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'foo_bar::_01'>(withPunctuationAndNumber2);
