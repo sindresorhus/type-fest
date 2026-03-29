@@ -10,14 +10,9 @@ import type {PascalCase} from 'type-fest';
 
 // Simple
 
-type PascalCase1 = PascalCase<'foo-bar'>;
-//=> 'FooBar'
-
-type PascalCase2 = PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}>;
-//=> 'FooBARBaz'
-
-type PascalCase3 = PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
-//=> 'FooBarBaz'
+const someVariable: PascalCase<'foo-bar'> = 'FooBar';
+const preserveConsecutiveUppercase: PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'FooBARBaz';
+const splitOnPunctuation: PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}> = 'FooBarBaz';
 
 // Advanced
 
@@ -54,4 +49,5 @@ type _PascalCase<Value, Options extends Required<CamelCaseOptions>> = CamelCase<
 	? Capitalize<CamelCase<Value, Options>>
 	: CamelCase<Value, Options>;
 
-export {};
+export { };
+

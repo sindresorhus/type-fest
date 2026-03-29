@@ -12,14 +12,11 @@ This can be useful when, for example, converting a camel-cased object property t
 import type {SnakeCase} from 'type-fest';
 
 // Simple
-type SnakeCase1 = SnakeCase<'fooBar'>;
-//=> 'foo_bar'
 
-type SnakeCase2 = SnakeCase<'p2pNetwork', {splitOnNumbers: false}>;
-//=> 'p2p_network'
-
-type SnakeCase3 = SnakeCase<'div.card::after', {splitOnPunctuation: true}>;
-//=> 'div_card_after'
+const someVariable: SnakeCase<'fooBar'> = 'foo_bar';
+const noSplitOnNumbers: SnakeCase<'p2pNetwork'> = 'p2p_network';
+const splitOnNumbers: SnakeCase<'p2pNetwork', {splitOnNumbers: true}> = 'p_2_p_network';
+const splitOnPunctuation: SnakeCase<'div.card::after', {splitOnPunctuation: true}> = 'div_card_after';
 
 // Advanced
 

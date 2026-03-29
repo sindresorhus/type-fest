@@ -48,14 +48,9 @@ import type {CamelCase} from 'type-fest';
 
 // Simple
 
-type CamelCase1 = CamelCase<'foo-bar'>;
-//=> 'fooBar'
-
-type CamelCase2 = CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}>;
-//=> 'fooBARBaz'
-
-type CamelCase3 = CamelCase<'foo-bar:BAZ', {splitOnPunctuation: true}>;
-//=> 'fooBarBaz'
+const someVariable: CamelCase<'foo-bar'> = 'fooBar';
+const preserveConsecutiveUppercase: CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'fooBARBaz';
+const splitOnPunctuation: CamelCase<'foo-bar:BAZ', {splitOnPunctuation: true}> = 'fooBarBaz';
 
 // Advanced
 
