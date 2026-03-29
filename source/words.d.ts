@@ -104,13 +104,7 @@ type Words8 = Words<'hello:world', {splitOnPunctuation: true}>;
 @category Change case
 @category Template literal
 */
-export type Words<
-	Sentence extends string,
-	Options extends WordsOptions = {},
-> = WordsImplementation<
-	Sentence,
-	ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>
->;
+export type Words<Sentence extends string, Options extends WordsOptions = {}> = WordsImplementation<Sentence, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>;
 
 type WordsImplementation<
 	Sentence extends string,

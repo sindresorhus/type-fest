@@ -18,6 +18,7 @@ const someVariableNoSplitOnNumbers: KebabCase<'p2pNetwork', {splitOnNumbers: fal
 const someVariableWithPunctuation: KebabCase<'div.card::after', {splitOnPunctuation: true}> = 'div-card-after';
 
 // Advanced
+
 type KebabCasedProperties<T> = {
 	[K in keyof T as KebabCase<K>]: T[K]
 };
