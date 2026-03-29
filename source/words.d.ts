@@ -40,14 +40,14 @@ export type WordsOptions = {
 	*/
 	splitOnNumbers?: boolean;
 	/**
-	 Split on ASCII punctuation mark. Set to `false` by default for now..
+	Split on ASCII punctuation mark. Set to `false` by default for now..
 
-	 type Example1 = Words<'hello:world', {splitOnPunctuation: false}>
-	 //=> ['hello', ':world']
+	type Example1 = Words<'hello:world', {splitOnPunctuation: false}>
+	//=> ['hello', ':world']
 
-	 type Example2 = Words<'hello:world', {splitOnPunctuation: true}>
-	 //=> ['hello', 'world']
-	 */
+	type Example2 = Words<'hello:world', {splitOnPunctuation: true}>
+	//=> ['hello', 'world']
+	*/
 	splitOnPunctuation?: boolean;
 };
 
