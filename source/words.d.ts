@@ -68,28 +68,28 @@ Split a string (almost) like Lodash's `_.words()` function.
 ```
 import type {Words} from 'type-fest';
 
-type Words0 = Words<'helloWorld'>;
+type Words1 = Words<'helloWorld'>;
 //=> ['hello', 'World']
 
-type Words1 = Words<'helloWORLD'>;
+type Words2 = Words<'helloWORLD'>;
 //=> ['hello', 'WORLD']
 
-type Words2 = Words<'hello-world'>;
+type Words3 = Words<'hello-world'>;
 //=> ['hello', 'world']
 
-type Words3 = Words<'--hello the_world'>;
+type Words4 = Words<'--hello the_world'>;
 //=> ['hello', 'the', 'world']
 
-type Words4 = Words<'lifeIs42'>;
+type Words5 = Words<'lifeIs42'>;
 //=> ['life', 'Is', '42']
 
-type Words5 = Words<'p2pNetwork', {splitOnNumbers: false}>;
+type Words6 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 //=> ['p2p', 'Network']
 
-type Words6 = Words<'hello:world', {splitOnPunctuation: true}>;
+type Words7 = Words<'hello:world', {splitOnPunctuation: true}>;
 //=> ['hello', 'world']
 
-type Words7 = Words<'hello:world', {splitOnPunctuation: false}>;
+type Words8 = Words<'hello:world', {splitOnPunctuation: false}>;
 //=> ['hello', ':world']
 ```
 
