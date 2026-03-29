@@ -12,12 +12,19 @@ This can be useful when, for example, converting a camel-cased object property t
 import type {KebabCase} from 'type-fest';
 
 // Simple
+type KebabCase1 = KebabCase<'fooBar'>;
+//=> 'foo-bar'
 
-const someVariable: KebabCase<'fooBar'> = 'foo-bar';
-const someVariableNoSplitOnNumbers: KebabCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p-network';
+type KebabCase2 = KebabCase<'p2pNetwork', {splitOnNumbers: false}>;
+//=> 'p2p-network'
+
+type KebabCase3 = KebabCase<'div.card::after', {splitOnPunctuation: true}>;
+//=> 'div-card-after'
+
+type KebabCase4 = KebabCase<'foo-bar::01', {splitOnPunctuation: true}>
+//=> 'foo-bar-01'
 
 // Advanced
-
 type KebabCasedProperties<T> = {
 	[K in keyof T as KebabCase<K>]: T[K]
 };

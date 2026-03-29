@@ -79,20 +79,21 @@ expectType<'fo-o2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: KebabCase<'FOO22Bar'> = 'foo22-bar';
 expectType<'foo22-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
 
-declare const withPunctuation: KebabCase<'onDialog:close'>;
-expectType<'on-dialog:close'>(withPunctuation);
+// Punctuation
+expectType<KebabCase<'onDialog:close'>>('on-dialog:close');
+expectType<KebabCase<'foo-bar>>baz'>>('foo-bar>>baz');
+expectType<KebabCase<'card::after'>>('card::after');
+expectType<KebabCase<'div.card::after'>>('div.card::after');
 
-declare const withPunctuation2: KebabCase<'foo-bar>>baz'>;
-expectType<'foo-bar>>baz'>(withPunctuation2);
+expectType<KebabCase<'onDialog:close', {splitOnPunctuation: true}>>('on-dialog-close');
+expectType<KebabCase<'foo-bar>>baz', {splitOnPunctuation: true}>>('foo-bar-baz');
+expectType<KebabCase<'card::after', {splitOnPunctuation: true}>>('card-after');
+expectType<KebabCase<'div.card::after', {splitOnPunctuation: true}>>('div-card-after');
 
-declare const withPunctuation3: KebabCase<'card::after'>;
-expectType<'card::after'>(withPunctuation3);
+// Punctuation with number
+expectType<KebabCase<'foo-bar::01'>>('foo-bar::01');
+expectType<KebabCase<'foo-bar::01', {splitOnNumbers: true}>>('foo-bar::-01');
 
-declare const withPunctuation4: KebabCase<'div.card::after'>;
-expectType<'div.card::after'>(withPunctuation4);
+expectType<KebabCase<'foo-bar::01', {splitOnPunctuation: true, splitOnNumbers:false}>>('foo-bar-01');
+expectType<KebabCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>>('foo-bar-01');
 
-declare const withPunctuationAndNumber: KebabCase<'foo-bar::01'>;
-expectType<'foo-bar::01'>(withPunctuationAndNumber);
-
-declare const withPunctuationAndNumber2: KebabCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'foo-bar::-01'>(withPunctuationAndNumber2);
