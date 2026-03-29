@@ -21,7 +21,7 @@ type KebabCase2 = KebabCase<'p2pNetwork', {splitOnNumbers: false}>;
 type KebabCase3 = KebabCase<'div.card::after', {splitOnPunctuation: true}>;
 //=> 'div-card-after'
 
-type KebabCase4 = KebabCase<'foo-bar::01', {splitOnPunctuation: true}>
+type KebabCase4 = KebabCase<'foo-bar::01', {splitOnPunctuation: true}>;
 //=> 'foo-bar-01'
 
 // Advanced

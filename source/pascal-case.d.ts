@@ -19,7 +19,6 @@ type PascalCase2 = PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true
 type PascalCase3 = PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
 //=> 'FooBarBaz'
 
-
 // Advanced
 
 type PascalCasedProperties<T> = {

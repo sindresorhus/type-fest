@@ -94,6 +94,6 @@ expectType<KebabCase<'div.card::after', {splitOnPunctuation: true}>>('div-card-a
 expectType<KebabCase<'foo-bar::01'>>('foo-bar::01');
 expectType<KebabCase<'foo-bar::01', {splitOnNumbers: true}>>('foo-bar::-01');
 
-expectType<KebabCase<'foo-bar::01', {splitOnPunctuation: true, splitOnNumbers:false}>>('foo-bar-01');
+expectType<KebabCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('foo-bar-01');
 expectType<KebabCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>>('foo-bar-01');
 
