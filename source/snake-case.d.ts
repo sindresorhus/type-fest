@@ -21,9 +21,6 @@ type SnakeCase2 = SnakeCase<'p2pNetwork', {splitOnNumbers: false}>;
 type SnakeCase3 = SnakeCase<'div.card::after', {splitOnPunctuation: true}>;
 //=> 'div_card_after'
 
-type SnakeCase4 = SnakeCase<'foo-bar::01', {splitOnPunctuation: true}>;
-//=> 'foo_bar_01'
-
 // Advanced
 
 type SnakeCasedProperties<T> = {
