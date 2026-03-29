@@ -1454,7 +1454,7 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 
 	for (const {type, name, code, output, errors = []} of testCases) {
 		test(`${type} - ${name}`, async t => {
-			const fileName = `test-${type}-${name.replaceAll(/\s+/g, '-')}.d.ts`;
+			const fileName = `test-${type}-${name.replaceAll(/\s+/gv, '-')}.d.ts`;
 			const filePath = path.join(root, fileName);
 			await fs.writeFile(filePath, code);
 			t.after(async () => {

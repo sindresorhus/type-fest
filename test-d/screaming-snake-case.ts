@@ -22,20 +22,20 @@ expectType<'FOOBAR'>(noSnakeFromMono);
 const snakeFromCamelPascal: ScreamingSnakeCase<'FooBar'> = 'FOO_BAR';
 expectType<'FOO_BAR'>(snakeFromCamelPascal);
 
-const snakeFromComplexKebab: ScreamingSnakeCase<'foo-bar-abc-123'>
-	= 'FOO_BAR_ABC_123';
+const snakeFromComplexKebab: ScreamingSnakeCase<'foo-bar-abc-123'> =
+	'FOO_BAR_ABC_123';
 expectType<'FOO_BAR_ABC_123'>(snakeFromComplexKebab);
 
-const snakeFromMixed: ScreamingSnakeCase<'foo-bar_abc xyzBarFoo'>
-	= 'FOO_BAR_ABC_XYZ_BAR_FOO';
+const snakeFromMixed: ScreamingSnakeCase<'foo-bar_abc xyzBarFoo'> =
+	'FOO_BAR_ABC_XYZ_BAR_FOO';
 expectType<'FOO_BAR_ABC_XYZ_BAR_FOO'>(snakeFromMixed);
 
-const snakeFromVendorPrefixedCssProperty: ScreamingSnakeCase<'-webkit-animation'>
-	= 'WEBKIT_ANIMATION';
+const snakeFromVendorPrefixedCssProperty: ScreamingSnakeCase<'-webkit-animation'> =
+	'WEBKIT_ANIMATION';
 expectType<'WEBKIT_ANIMATION'>(snakeFromVendorPrefixedCssProperty);
 
-const snakeFromDoublePrefixedKebab: ScreamingSnakeCase<'--very-prefixed'>
-	= 'VERY_PREFIXED';
+const snakeFromDoublePrefixedKebab: ScreamingSnakeCase<'--very-prefixed'> =
+	'VERY_PREFIXED';
 expectType<'VERY_PREFIXED'>(snakeFromDoublePrefixedKebab);
 
 const snakeFromRepeatedSeparators: ScreamingSnakeCase<'foo____bar'> = 'FOO_BAR';

@@ -26,9 +26,12 @@ const xoConfig = [
 			'@typescript-eslint/consistent-indexed-object-style': 'off',
 			'@typescript-eslint/unified-signatures': 'off', // Temp
 			'@typescript-eslint/no-unnecessary-type-arguments': 'off',
+			'@typescript-eslint/no-unsafe-type-assertion': 'off',
 			'@stylistic/quote-props': 'off',
 			'@stylistic/function-paren-newline': 'off',
 			'@stylistic/object-curly-newline': 'off',
+			'@stylistic/curly-newline': 'off',
+			'@stylistic/operator-linebreak': ['error', 'before', {overrides: {'=': 'after'}}],
 			'n/file-extension-in-import': 'off',
 			'object-curly-newline': [
 				'error',
@@ -44,7 +47,7 @@ const xoConfig = [
 		},
 	},
 	{
-		files: 'source/**/*.d.ts',
+		files: ['source/**/*.d.ts', 'index.d.ts'],
 		rules: {
 			'no-restricted-imports': [
 				'error',
@@ -52,6 +55,14 @@ const xoConfig = [
 					paths: ['tsd', 'expect-type'],
 				},
 			],
+			'unicorn/require-module-specifiers': 'off',
+		},
+	},
+	{
+		files: 'test-d/**/*.ts',
+		rules: {
+			'unicorn/no-immediate-mutation': 'off',
+			'require-unicode-regexp': 'off',
 		},
 	},
 	{
@@ -110,6 +121,7 @@ const xoConfig = [
 			'@stylistic/eol-last': 'off',
 			'capitalized-comments': 'off',
 			'unicorn/prefer-structured-clone': 'off',
+			'unicorn/no-immediate-mutation': 'off',
 		},
 	},
 	{

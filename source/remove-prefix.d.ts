@@ -110,23 +110,23 @@ type D = RemovePrefix<`handle${Capitalize<string>}`, 'handle'>;
 @category Template literal
 */
 export type RemovePrefix<S extends string, Prefix extends string, Options extends RemovePrefixOptions = {}> =
-IfNotAnyOrNever<
-	S,
 	IfNotAnyOrNever<
-		Prefix,
-		_RemovePrefix<S, Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>,
-		string,
-		S
-	>
->;
+		S,
+		IfNotAnyOrNever<
+			Prefix,
+			_RemovePrefix<S, Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>,
+			string,
+			S
+		>
+	>;
 
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
-Prefix extends string // For distributing `Prefix`
-	? S extends `${Prefix}${infer Rest}`
-		? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
-			? Rest
-			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is disabled
-		: S // Return back `S` when `Prefix` is not present at the start of `S`
-	: never;
+	Prefix extends string // For distributing `Prefix`
+		? S extends `${Prefix}${infer Rest}`
+			? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
+				? Rest
+				: string // Fallback to `string` when `Prefix` is non-literal and `strict` is disabled
+			: S // Return back `S` when `Prefix` is not present at the start of `S`
+		: never;
 
 export {};

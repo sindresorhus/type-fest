@@ -47,14 +47,14 @@ type J = IsInteger<1e-7>;
 @category Numeric
 */
 export type IsInteger<T> =
-T extends bigint
-	? true
-	: T extends number
-		? number extends T
-			? false
-			: T extends PositiveInfinity | NegativeInfinity
+	T extends bigint
+		? true
+		: T extends number
+			? number extends T
 				? false
-				: Not<IsFloat<T>>
-		: false;
+				: T extends PositiveInfinity | NegativeInfinity
+					? false
+					: Not<IsFloat<T>>
+			: false;
 
 export {};

@@ -38,8 +38,8 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 @category Array
 */
 export type UnionToTuple<T, L = UnionMember<T>> =
-IsNever<T> extends false
-	? [...UnionToTuple<ExcludeExactly<T, L>>, L]
-	: [];
+	IsNever<T> extends false
+		? [...UnionToTuple<ExcludeExactly<T, L>>, L]
+		: [];
 
 export {};

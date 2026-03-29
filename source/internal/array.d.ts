@@ -29,8 +29,8 @@ type B = StaticPartOfArray<A>;
 */
 export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends unknown
-		? number extends T['length'] ?
-			T extends readonly [infer U, ...infer V]
+		? number extends T['length']
+			? T extends readonly [infer U, ...infer V]
 				? StaticPartOfArray<V, [...Result, U]>
 				: Result
 			: T
@@ -69,11 +69,11 @@ type NormalResult = SetArrayAccess<ReadonlyStringArray, false>;
 ```
 */
 export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
-T extends readonly [...infer U] ?
-	IsReadonly extends true
-		? readonly [...U]
-		: [...U]
-	: T;
+	T extends readonly [...infer U]
+		? IsReadonly extends true
+			? readonly [...U]
+			: [...U]
+		: T;
 
 /**
 Returns whether the given array `T` is readonly.

@@ -30,8 +30,8 @@ expectType<'foo#bar'>(delimiterFromPascal);
 const delimiterFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromKebab);
 
-const delimiterFromComplexKebab: DelimiterCase<'foo-bar-abc-123', '#'>
-	= 'foo#bar#abc#123';
+const delimiterFromComplexKebab: DelimiterCase<'foo-bar-abc-123', '#'> =
+	'foo#bar#abc#123';
 expectType<'foo#bar#abc#123'>(delimiterFromComplexKebab);
 
 const delimiterFromSpace: DelimiterCase<'foo bar', '#'> = 'foo#bar';
@@ -46,8 +46,8 @@ expectType<'foo#bar'>(delimiterFromSnake);
 const noDelimiterFromMono: DelimiterCase<'foobar', '#'> = 'foobar';
 expectType<'foobar'>(noDelimiterFromMono);
 
-const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'>
-	= 'foo#bar#abc#xyz#bar#foo';
+const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'> =
+	'foo#bar#abc#xyz#bar#foo';
 expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
 
 const delimiterFromVendorPrefixedCssProperty: DelimiterCase<
@@ -56,12 +56,12 @@ const delimiterFromVendorPrefixedCssProperty: DelimiterCase<
 > = 'webkit#animation';
 expectType<'webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
 
-const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'>
-	= 'very#prefixed';
+const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'> =
+	'very#prefixed';
 expectType<'very#prefixed'>(delimiterFromDoublePrefixedKebab);
 
-const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'>
-	= 'foo#bar';
+const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> =
+	'foo#bar';
 expectType<'foo#bar'>(delimiterFromRepeatedSeparators);
 
 const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
@@ -73,8 +73,8 @@ expectType<'foo#bar'>(delimiterFromScreamingSnake);
 const delimiterFromMixed2: DelimiterCase<'parseHTML', '#'> = 'parse#html';
 expectType<'parse#html'>(delimiterFromMixed2);
 
-const delimiterFromMixed3: DelimiterCase<'parseHTMLItem', '#'>
-	= 'parse#html#item';
+const delimiterFromMixed3: DelimiterCase<'parseHTMLItem', '#'> =
+	'parse#html#item';
 expectType<'parse#html#item'>(delimiterFromMixed3);
 
 const delimiterFromNumberInTheMiddleSplitOnNumbers: DelimiterCase<'foo2bar', '#', {splitOnNumbers: true}> = 'foo#2#bar';

@@ -32,10 +32,10 @@ export type SetOptional<BaseType, Keys extends keyof BaseType> =
 type _SetOptional<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown // To distribute `BaseType` when it's a union type.
 		? Simplify<
-		// Pick just the keys that are readonly from the base type.
-			Except<BaseType, Keys> &
-		// Pick the keys that should be mutable from the base type and make them mutable.
-			Partial<HomomorphicPick<BaseType, Keys>>
+			// Pick just the keys that are readonly from the base type.
+			Except<BaseType, Keys>
+			// Pick the keys that should be mutable from the base type and make them mutable.
+			& Partial<HomomorphicPick<BaseType, Keys>>
 		>
 		: never;
 

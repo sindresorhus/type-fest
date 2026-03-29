@@ -699,12 +699,12 @@ Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-j
 @category File
 */
 export type PackageJson =
-	JsonObject &
-	PackageJson.NodeJsStandard &
-	PackageJson.PackageJsonStandard &
-	PackageJson.NonStandardEntryPoints &
-	PackageJson.TypeScriptConfiguration &
-	PackageJson.YarnConfiguration &
-	PackageJson.JSPMConfiguration;
+	JsonObject
+	& PackageJson.NodeJsStandard
+	& PackageJson.PackageJsonStandard
+	& PackageJson.NonStandardEntryPoints
+	& PackageJson.TypeScriptConfiguration
+	& PackageJson.YarnConfiguration
+	& PackageJson.JSPMConfiguration;
 
 export {};

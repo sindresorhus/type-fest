@@ -19,7 +19,7 @@ const foo = {
 		readonlySet: new Set<string>() as ReadonlySet<string>,
 		readonlyArray: ['foo'] as readonly string[],
 		readonlyTuple: ['foo'] as const,
-		regExp: /.*/g,
+		regExp: /.*/gv,
 	},
 };
 

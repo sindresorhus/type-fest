@@ -124,10 +124,18 @@ type D = ReverseSign<PositiveInfinity>;
 */
 export type ReverseSign<N extends number> =
 	// Handle edge cases
-	N extends 0 ? 0 : N extends PositiveInfinity ? NegativeInfinity : N extends NegativeInfinity ? PositiveInfinity :
-	// Handle negative numbers
-	`${N}` extends `-${infer P extends number}` ? P
-		// Handle positive numbers
-		: `-${N}` extends `${infer R extends number}` ? R : never;
+	N extends 0
+		? 0
+		: N extends PositiveInfinity
+			? NegativeInfinity
+			: N extends NegativeInfinity
+				? PositiveInfinity
+				// Handle negative numbers
+				: `${N}` extends `-${infer P extends number}`
+					? P
+					// Handle positive numbers
+					: `-${N}` extends `${infer R extends number}`
+						? R
+						: never;
 
 export {};
