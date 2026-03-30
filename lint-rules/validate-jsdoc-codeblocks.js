@@ -2,7 +2,7 @@ import path from 'node:path';
 import ts from 'typescript';
 import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescript/vfs';
 
-const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)```/g;
+const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)```/gv;
 const FILENAME = 'example-codeblock.ts';
 const TWOSLASH_COMMENT = '//=>';
 
@@ -24,8 +24,7 @@ const compilerOptions = {
 	exactOptionalPropertyTypes: true,
 };
 
-const virtualFsMap = new Map();
-virtualFsMap.set(FILENAME, '// Can\'t be empty');
+const virtualFsMap = new Map([[FILENAME, '// Can\'t be empty']]);
 
 const rootDir = path.join(import.meta.dirname, '..');
 const system = createFSBackedSystem(virtualFsMap, rootDir, ts);
@@ -41,7 +40,7 @@ function parseCompilerOptions(code) {
 			continue;
 		}
 
-		const match = line.match(/^\s*\/\/ @(\w+): (.*)$/);
+		const match = line.match(/^\s*\/\/ @(\w+): (.*)$/v);
 		if (!match) {
 			// Stop parsing at the first non-matching line
 			return options;
@@ -265,12 +264,12 @@ function normalizeType(type, onlySortNumbers = false) {
 
 			if (onlySortNumbers) {
 				// Sort only numeric members while keeping non-numeric members at their original positions
-				const sortedNumericTypes = types.filter(([a]) => isNumeric(a)).sort(([a], [b]) => Number(a) - Number(b));
+				const sortedNumericTypes = types.filter(([a]) => isNumeric(a)).toSorted(([a], [b]) => Number(a) - Number(b));
 				let numericIndex = 0;
 				types = types.map(t => isNumeric(t[0]) ? sortedNumericTypes[numericIndex++][1] : t[1]);
 			} else {
 				types = types
-					.sort(([a], [b]) => a < b ? -1 : (a > b ? 1 : 0))
+					.toSorted(([a], [b]) => a < b ? -1 : (a > b ? 1 : 0))
 					.map(t => t[1]);
 			}
 
@@ -298,7 +297,7 @@ function normalizeType(type, onlySortNumbers = false) {
 		return node;
 	};
 
-	return print(visit(typeNode)).replaceAll(/^( +)/gm, indentation => {
+	return print(visit(typeNode)).replaceAll(/^( +)/gmv, indentation => {
 		// Replace spaces used for indentation with tabs
 		const spacesPerTab = 4;
 		const tabCount = Math.floor(indentation.length / spacesPerTab);
@@ -312,10 +311,10 @@ function getCommentForType(type) {
 
 	if (type.length < 80) {
 		comment = type
-			.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
-			.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
-			.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
-			.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
+			.replaceAll(/\r?\n\s*/gv, ' ') // Collapse into single line
+			.replaceAll(/\{\s+/gv, '{') // Remove spaces after `{`
+			.replaceAll(/\s+\}/gv, '}') // Remove spaces before `}`
+			.replaceAll(/;(?=\})/gv, ''); // Remove semicolons before `}`
 	}
 
 	return `${TWOSLASH_COMMENT} ${comment.replaceAll('\n', '\n// ')}`;

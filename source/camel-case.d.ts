@@ -1,5 +1,5 @@
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
-import type {Words, WordsOptions} from './words.d.ts';
+import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 
 /**
 CamelCase options.
@@ -15,8 +15,7 @@ export type CamelCaseOptions = WordsOptions & {
 	preserveConsecutiveUppercase?: boolean;
 };
 
-export type _DefaultCamelCaseOptions = {
-	splitOnNumbers: true;
+export type _DefaultCamelCaseOptions = _DefaultWordsOptions & {
 	preserveConsecutiveUppercase: false;
 };
 
@@ -51,6 +50,7 @@ import type {CamelCase} from 'type-fest';
 
 const someVariable: CamelCase<'foo-bar'> = 'fooBar';
 const preserveConsecutiveUppercase: CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'fooBARBaz';
+const splitOnPunctuation: CamelCase<'foo-bar:BAZ', {splitOnPunctuation: true}> = 'fooBarBaz';
 
 // Advanced
 

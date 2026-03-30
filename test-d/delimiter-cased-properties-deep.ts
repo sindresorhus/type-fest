@@ -13,6 +13,15 @@ expectType<Set<{'foo-bar': string}>>(bar);
 declare const withOptions: DelimiterCasedPropertiesDeep<Set<{helloWorld: {p2p: Array<{addressLine1: string}>}}>, '.', {splitOnNumbers: true}>;
 expectType<Set<{'hello.world': {'p.2.p': Array<{'address.line.1': string}>}}>>(withOptions);
 
+declare const withPunctuation: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.'>;
+expectType<{'hello@.world1': {'foo::.bar': string}}>(withPunctuation);
+
+declare const withPunctuationSplit: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true}>;
+expectType<{'hello.world1': {'foo.bar': string}}>(withPunctuationSplit);
+
+declare const withPunctuationSplitAndNumbers: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar1': string}}, '.', {splitOnPunctuation: true; splitOnNumbers: true}>;
+expectType<{'hello.world.1': {'foo.bar.1': string}}>(withPunctuationSplitAndNumbers);
+
 // Verify example
 type User = {
 	userId: number;
@@ -24,6 +33,18 @@ type User = {
 type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
+};
+
+type UserPunctuated = {
+	'user::id': number;
+	'user::name': string;
+	date: Date;
+	'reg::exp': RegExp;
+};
+
+type UserWithFriendsPunctuated = {
+	'user@info': UserPunctuated;
+	'user#friends': UserPunctuated[];
 };
 
 const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
@@ -49,6 +70,7 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	],
 };
 expectType<DelimiterCasedPropertiesDeep<UserWithFriends, '-'>>(result);
+expectType<DelimiterCasedPropertiesDeep<UserWithFriendsPunctuated, '-', {splitOnPunctuation: true}>>(result);
 
 // Test object key properties
 declare const key: DelimiterCasedPropertiesDeep<{readonly userId?: number}, '-'>;
@@ -89,3 +111,6 @@ expectType<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>({} as DelimiterCased
 
 expectType<{'foo-bar': any}>({} as DelimiterCasedPropertiesDeep<{fooBar: any}, '-'>);
 expectType<{'foo_bar': {'bar_baz': any}; biz: any}>({} as DelimiterCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}, '_'>);
+
+expectType<{'foo-bar': unknown}>({} as DelimiterCasedPropertiesDeep<{'foo::bar': unknown}, '-', {splitOnPunctuation: true}>);
+expectType<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>({} as DelimiterCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, '_', {splitOnPunctuation: true}>);

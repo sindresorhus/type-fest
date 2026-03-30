@@ -56,9 +56,9 @@ type PrivateIntRange<
 	// The final `List` is `[...StartLengthTuple, ...[number, ...GapLengthTuple], ...[number, ...GapLengthTuple], ... ...]`, so can initialize the `List` with `[...StartLengthTuple]`
 	List extends unknown[] = TupleOf<Start, never>,
 	EndLengthTuple extends unknown[] = TupleOf<End>,
-> = Gap extends 0 ?
+> = Gap extends 0
 	// Handle the case that without `Step`
-	List['length'] extends End // The result of "List[length] === End"
+	? List['length'] extends End // The result of "List[length] === End"
 		? Exclude<List[number], never> // All unused elements are `never`, so exclude them
 		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'] ]>
 	// Handle the case that with `Step`

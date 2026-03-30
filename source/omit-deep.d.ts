@@ -93,34 +93,34 @@ type OmitDeepHelper<T, PathTuple extends UnknownArray> =
 Omit one path from the given object/array.
 */
 type OmitDeepWithOnePath<T, Path extends string | number> =
-T extends NonRecursiveType
-	? T
-	: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, Path>, IsArrayReadonly<T>>
-		: T extends object ? OmitDeepObjectWithOnePath<T, Path>
-			: T;
+	T extends NonRecursiveType
+		? T
+		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, Path>, IsArrayReadonly<T>>
+			: T extends object ? OmitDeepObjectWithOnePath<T, Path>
+				: T;
 
 /**
 Omit one path from the given object.
 */
 type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number> =
-P extends `${infer RecordKeyInPath}.${infer SubPath}`
-	? {
-		[Key in keyof ObjectT]:
-		IsEqual<RecordKeyInPath, ToString<Key>> extends true
-			? ExactKey<ObjectT, Key> extends infer RealKey
-				? RealKey extends keyof ObjectT
-					? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
+	P extends `${infer RecordKeyInPath}.${infer SubPath}`
+		? {
+			[Key in keyof ObjectT]:
+			IsEqual<RecordKeyInPath, ToString<Key>> extends true
+				? ExactKey<ObjectT, Key> extends infer RealKey
+					? RealKey extends keyof ObjectT
+						? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
+						: ObjectT[Key]
 					: ObjectT[Key]
 				: ObjectT[Key]
-			: ObjectT[Key]
-	}
-	: ExactKey<ObjectT, P> extends infer Key
-		? IsNever<Key> extends true
-			? ObjectT
-			: Key extends PropertyKey
-				? Omit<ObjectT, Key>
-				: ObjectT
-		: ObjectT;
+		}
+		: ExactKey<ObjectT, P> extends infer Key
+			? IsNever<Key> extends true
+				? ObjectT
+				: Key extends PropertyKey
+					? Omit<ObjectT, Key>
+					: ObjectT
+			: ObjectT;
 
 /**
 Omit one path from from the given array.

@@ -15,6 +15,7 @@ import type {KebabCase} from 'type-fest';
 
 const someVariable: KebabCase<'fooBar'> = 'foo-bar';
 const someVariableNoSplitOnNumbers: KebabCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p-network';
+const someVariableWithPunctuation: KebabCase<'div.card::after', {splitOnPunctuation: true}> = 'div-card-after';
 
 // Advanced
 

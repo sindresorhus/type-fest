@@ -30,8 +30,8 @@ expectType<'foo#bar'>(delimiterFromPascal);
 const delimiterFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
 expectType<'foo#bar'>(delimiterFromKebab);
 
-const delimiterFromComplexKebab: DelimiterCase<'foo-bar-abc-123', '#'>
-	= 'foo#bar#abc#123';
+const delimiterFromComplexKebab: DelimiterCase<'foo-bar-abc-123', '#'> =
+	'foo#bar#abc#123';
 expectType<'foo#bar#abc#123'>(delimiterFromComplexKebab);
 
 const delimiterFromSpace: DelimiterCase<'foo bar', '#'> = 'foo#bar';
@@ -46,8 +46,8 @@ expectType<'foo#bar'>(delimiterFromSnake);
 const noDelimiterFromMono: DelimiterCase<'foobar', '#'> = 'foobar';
 expectType<'foobar'>(noDelimiterFromMono);
 
-const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'>
-	= 'foo#bar#abc#xyz#bar#foo';
+const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'> =
+	'foo#bar#abc#xyz#bar#foo';
 expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
 
 const delimiterFromVendorPrefixedCssProperty: DelimiterCase<
@@ -56,12 +56,12 @@ const delimiterFromVendorPrefixedCssProperty: DelimiterCase<
 > = 'webkit#animation';
 expectType<'webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
 
-const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'>
-	= 'very#prefixed';
+const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'> =
+	'very#prefixed';
 expectType<'very#prefixed'>(delimiterFromDoublePrefixedKebab);
 
-const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'>
-	= 'foo#bar';
+const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> =
+	'foo#bar';
 expectType<'foo#bar'>(delimiterFromRepeatedSeparators);
 
 const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
@@ -73,8 +73,8 @@ expectType<'foo#bar'>(delimiterFromScreamingSnake);
 const delimiterFromMixed2: DelimiterCase<'parseHTML', '#'> = 'parse#html';
 expectType<'parse#html'>(delimiterFromMixed2);
 
-const delimiterFromMixed3: DelimiterCase<'parseHTMLItem', '#'>
-	= 'parse#html#item';
+const delimiterFromMixed3: DelimiterCase<'parseHTMLItem', '#'> =
+	'parse#html#item';
 expectType<'parse#html#item'>(delimiterFromMixed3);
 
 const delimiterFromNumberInTheMiddleSplitOnNumbers: DelimiterCase<'foo2bar', '#', {splitOnNumbers: true}> = 'foo#2#bar';
@@ -115,20 +115,38 @@ expectType<`foo${string}`>(stringPart);
 declare const withPunctuation: DelimiterCase<'onDialog:close', '#'>;
 expectType<'on#dialog:close'>(withPunctuation);
 
+declare const withPunctuationAndSplit: DelimiterCase<'onDialog:close', '#', {splitOnPunctuation: true}>;
+expectType<'on#dialog#close'>(withPunctuationAndSplit);
+
 declare const withPunctuation2: DelimiterCase<'foo-bar>>baz', '#'>;
 expectType<'foo#bar>>baz'>(withPunctuation2);
+
+declare const withPunctuationAndSplit2: DelimiterCase<'foo-bar>>baz', '#', {splitOnPunctuation: true}>;
+expectType<'foo#bar#baz'>(withPunctuationAndSplit2);
 
 declare const withPunctuation3: DelimiterCase<'card::after', '#'>;
 expectType<'card::after'>(withPunctuation3);
 
+declare const withPunctuationAndSplit3: DelimiterCase<'card::after', '#', {splitOnPunctuation: true}>;
+expectType<'card#after'>(withPunctuationAndSplit3);
+
 declare const withPunctuation4: DelimiterCase<'div.card::after', '#'>;
 expectType<'div.card::after'>(withPunctuation4);
+
+declare const withPunctuationAndSplit4: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: true}>;
+expectType<'div#card#after'>(withPunctuationAndSplit4);
 
 declare const withPunctuationAndNumber: DelimiterCase<'foo-bar::01', '#'>;
 expectType<'foo#bar::01'>(withPunctuationAndNumber);
 
 declare const withPunctuationAndNumber2: DelimiterCase<'foo-bar::01', '#', {splitOnNumbers: true}>;
 expectType<'foo#bar::#01'>(withPunctuationAndNumber2);
+
+declare const withPunctuationSplitAndNumber: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true}>;
+expectType<'foo#bar#01'>(withPunctuationSplitAndNumber);
+
+declare const withPunctuationSplitAndNumberSplit: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true; splitOnNumbers: true}>;
+expectType<'foo#bar#01'>(withPunctuationSplitAndNumberSplit);
 
 // Verifying example
 type OddCasedProperties<T> = {

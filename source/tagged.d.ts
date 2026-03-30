@@ -129,7 +129,7 @@ type WontWork = UnwrapTagged<string>;
 @category Type
 */
 export type UnwrapTagged<TaggedType extends Tag<PropertyKey, any>> =
-RemoveAllTags<TaggedType>;
+	RemoveAllTags<TaggedType>;
 
 type RemoveAllTags<T> = T extends Tag<PropertyKey, any>
 	? {

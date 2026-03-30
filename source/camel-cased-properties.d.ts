@@ -26,6 +26,10 @@ const result: CamelCasedProperties<User> = {
 const preserveConsecutiveUppercase: CamelCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: true}> = {
 	fooBAR: 'string',
 };
+
+const splitOnPunctuation: CamelCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	fooBar: 'string',
+};
 ```
 
 @category Change case

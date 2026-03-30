@@ -38,6 +38,7 @@ import type {DelimiterCase} from 'type-fest';
 
 const someVariable: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 const someVariableNoSplitOnNumbers: DelimiterCase<'p2pNetwork', '#', {splitOnNumbers: false}> = 'p2p#network';
+const someVariableWithPunctuation: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: true}> = 'div#card#after';
 
 // Advanced
 

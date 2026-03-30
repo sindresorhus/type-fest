@@ -121,11 +121,11 @@ export type IsStringLiteral<S> = IfNotAnyOrNever<S,
 export type _IsStringLiteral<S> =
 // If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,
 // and since `{}` extends index signatures, the result becomes `false`.
-S extends string
-	? {} extends Record<S, never>
-		? false
-		: true
-	: false;
+	S extends string
+		? {} extends Record<S, never>
+			? false
+			: true
+		: false;
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).

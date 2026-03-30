@@ -28,6 +28,10 @@ const result: SnakeCasedProperties<User> = {
 const splitOnNumbers: SnakeCasedProperties<{line1: string}, {splitOnNumbers: true}> = {
 	'line_1': 'string',
 };
+
+const splitOnPunctuation: SnakeCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	'foo_bar': 'string',
+};
 ```
 
 @category Change case

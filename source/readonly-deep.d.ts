@@ -83,8 +83,8 @@ export type ReadonlyDeep<T> = T extends BuiltIns
 				? ReadonlyMapDeep<KeyType, ValueType>
 				: T extends Readonly<ReadonlySet<infer ItemType>>
 					? ReadonlySetDeep<ItemType>
-					: // Identify tuples to avoid converting them to arrays inadvertently; special case `readonly [...never[]]`, as it emerges undesirably from recursive invocations of ReadonlyDeep below.
-					T extends readonly [] | readonly [...never[]]
+					// Identify tuples to avoid converting them to arrays inadvertently; special case `readonly [...never[]]`, as it emerges undesirably from recursive invocations of ReadonlyDeep below.
+					: T extends readonly [] | readonly [...never[]]
 						? readonly []
 						: T extends readonly [infer U, ...infer V]
 							? readonly [ReadonlyDeep<U>, ...ReadonlyDeep<V>]

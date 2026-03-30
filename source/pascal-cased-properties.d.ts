@@ -27,6 +27,10 @@ const result: PascalCasedProperties<User> = {
 const preserveConsecutiveUppercase: PascalCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: true}> = {
 	FooBAR: 'string',
 };
+
+const splitOnPunctuation: PascalCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	FooBar: 'string',
+};
 ```
 
 @category Change case

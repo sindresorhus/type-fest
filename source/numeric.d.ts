@@ -121,9 +121,9 @@ declare function setPercentage<T extends number>(length: Float<T>): void;
 @category Numeric
 */
 export type Float<T> =
-T extends unknown // To distributive type
-	? IsFloat<T> extends true ? T : never
-	: never; // Never happens
+	T extends unknown // To distributive type
+		? IsFloat<T> extends true ? T : never
+		: never; // Never happens
 
 /**
 A negative (`-∞ < x < 0`) `number` that is not an integer.

@@ -93,3 +93,20 @@ expectType<Words<'01item01'>>(['01', 'item', '01']);
 expectType<Words<'10item10'>>(['10', 'item', '10']);
 expectType<Words<'010item010'>>(['010', 'item', '010']);
 expectType<Words<'item0_item_1 item -2'>>(['item', '0', 'item', '1', 'item', '2']);
+
+// SplitOnPunctuation
+expectType<Words<':'>>([':']);
+expectType<Words<'::'>>([':', ':']);
+expectType<Words<'hello::'>>(['hello', ':', ':']);
+expectType<Words<'hello:world'>>(['hello', ':world']);
+expectType<Words<'hello::world'>>(['hello', ':', ':world']);
+expectType<Words<'hello-braveNew:world'>>(['hello', 'brave', 'New', ':world']);
+
+expectType<Words<':', {splitOnPunctuation: true}>>([]);
+expectType<Words<'::', {splitOnPunctuation: true}>>([]);
+expectType<Words<'hello::', {splitOnPunctuation: true}>>(['hello']);
+expectType<Words<'hello:world', {splitOnPunctuation: true}>>(['hello', 'world']);
+expectType<Words<'hello::world', {splitOnPunctuation: true}>>(['hello', 'world']);
+expectType<Words<'hello-braveNew:world', {splitOnPunctuation: true}>>(['hello', 'brave', 'New', 'world']);
+expectType<Words<'item::01', {splitOnPunctuation: true; splitOnNumbers: false}>>(['item', '01']);
+expectType<Words<'item::01', {splitOnPunctuation: true; splitOnNumbers: true}>>(['item', '01']);

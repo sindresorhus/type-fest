@@ -25,16 +25,16 @@ expectType<'foo_bar'>(snakeFromCamelPascal);
 const snakeFromComplexKebab: SnakeCase<'foo-bar-abc-123'> = 'foo_bar_abc_123';
 expectType<'foo_bar_abc_123'>(snakeFromComplexKebab);
 
-const snakeFromMixed: SnakeCase<'foo-bar_abc xyzBarFoo'>
-	= 'foo_bar_abc_xyz_bar_foo';
+const snakeFromMixed: SnakeCase<'foo-bar_abc xyzBarFoo'> =
+	'foo_bar_abc_xyz_bar_foo';
 expectType<'foo_bar_abc_xyz_bar_foo'>(snakeFromMixed);
 
-const snakeFromVendorPrefixedCssProperty: SnakeCase<'-webkit-animation'>
-	= 'webkit_animation';
+const snakeFromVendorPrefixedCssProperty: SnakeCase<'-webkit-animation'> =
+	'webkit_animation';
 expectType<'webkit_animation'>(snakeFromVendorPrefixedCssProperty);
 
-const snakeFromDoublePrefixedKebab: SnakeCase<'--very-prefixed'>
-	= 'very_prefixed';
+const snakeFromDoublePrefixedKebab: SnakeCase<'--very-prefixed'> =
+	'very_prefixed';
 expectType<'very_prefixed'>(snakeFromDoublePrefixedKebab);
 
 const snakeFromRepeatedSeparators: SnakeCase<'foo____bar'> = 'foo_bar';
@@ -58,16 +58,16 @@ expectType<'parse_html'>(snakeFromMixed2);
 const snakeFromMixed3: SnakeCase<'parseHTMLItem'> = 'parse_html_item';
 expectType<'parse_html_item'>(snakeFromMixed3);
 
-const snakeFromNumberInTheMiddleSplitOnNumbers: SnakeCase<'foo2bar', {splitOnNumbers: true}>
-	= 'foo_2_bar';
+const snakeFromNumberInTheMiddleSplitOnNumbers: SnakeCase<'foo2bar', {splitOnNumbers: true}> =
+	'foo_2_bar';
 expectType<'foo_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumbers);
 
-const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase: SnakeCase<'foO2Bar', {splitOnNumbers: true}>
-	= 'fo_o_2_bar';
+const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase: SnakeCase<'foO2Bar', {splitOnNumbers: true}> =
+	'fo_o_2_bar';
 expectType<'fo_o_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase);
 
-const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2: SnakeCase<'foO2bar', {splitOnNumbers: true}>
-	= 'fo_o_2_bar';
+const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2: SnakeCase<'foO2bar', {splitOnNumbers: true}> =
+	'fo_o_2_bar';
 expectType<'fo_o_2_bar'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
 
 const snakeFromNumberInTheMiddleNoSplitOnNumbers: SnakeCase<'foo2bar'> = 'foo2bar';
@@ -82,20 +82,45 @@ expectType<'fo_o2bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
 const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: SnakeCase<'FOO22Bar'> = 'foo22_bar';
 expectType<'foo22_bar'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
 
+// Punctuation
 declare const withPunctuation: SnakeCase<'onDialog:close'>;
 expectType<'on_dialog:close'>(withPunctuation);
+
+declare const withPunctuationSplit: SnakeCase<'onDialog:close', {splitOnPunctuation: true}>;
+expectType<'on_dialog_close'>(withPunctuationSplit);
 
 declare const withPunctuation2: SnakeCase<'foo-bar>>baz'>;
 expectType<'foo_bar>>baz'>(withPunctuation2);
 
+declare const withPunctuationSplit2: SnakeCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
+expectType<'foo_bar_baz'>(withPunctuationSplit2);
+
 declare const withPunctuation3: SnakeCase<'card::after'>;
 expectType<'card::after'>(withPunctuation3);
+
+declare const withPunctuationSplit3: SnakeCase<'card::after', {splitOnPunctuation: true}>;
+expectType<'card_after'>(withPunctuationSplit3);
 
 declare const withPunctuation4: SnakeCase<'div.card::after'>;
 expectType<'div.card::after'>(withPunctuation4);
 
+declare const withPunctuationSplit4: SnakeCase<'div.card::after', {splitOnPunctuation: true}>;
+expectType<'div_card_after'>(withPunctuationSplit4);
+
 declare const withPunctuationAndNumber: SnakeCase<'foo-bar::01'>;
 expectType<'foo_bar::01'>(withPunctuationAndNumber);
 
-declare const withPunctuationAndNumber2: SnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'foo_bar::_01'>(withPunctuationAndNumber2);
+declare const withPunctuationSplitAndNumber: SnakeCase<'foo-bar::01', {splitOnPunctuation: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumber);
+
+declare const withPunctuationSplitAndNumberSplit: SnakeCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumberSplit);
+
+declare const withPunctuationAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
+expectType<'foo_bar::_01'>(withPunctuationAndNumberSplit2);
+
+declare const withPunctuationSplitAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumberSplit2);
+
+declare const withPunctuationSplitAndNumber2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
+expectType<'foo_bar_01'>(withPunctuationSplitAndNumber2);

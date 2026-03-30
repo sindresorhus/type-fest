@@ -5,7 +5,7 @@ import tsParser from '@typescript-eslint/parser';
 @import {Linter} from 'eslint';
 */
 
-const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[ \t]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gm;
+const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[ \t]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gmv;
 /**
 @typedef {{lineOffset: number, characterOffset: number, indent: string, unindentedText: string}} CodeblockData
 @type {Map<string, CodeblockData[]>}

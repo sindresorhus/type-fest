@@ -20,8 +20,8 @@ jobs:
           - 22
           - 20
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
@@ -34,10 +34,11 @@ jobs:
       matrix:
         typescript-version:
           - 'latest'
+          - '~6.0.0'
           - '~5.9.0'
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: npm install

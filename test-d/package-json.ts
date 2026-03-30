@@ -55,14 +55,14 @@ expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
 	| undefined
 	| Array<LiteralUnion<
-'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
+		'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 		string
 	>>
 >(packageJson.os);
 expectAssignable<
 	| undefined
 	| Array<LiteralUnion<
-'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
+		'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
 		string
 	>>
 >(packageJson.cpu);

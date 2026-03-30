@@ -40,11 +40,9 @@ type _RequireAtLeastOne<
 	KeysType extends keyof ObjectType,
 > = {
 	// For each `Key` in `KeysType` make a mapped type:
-	[Key in KeysType]-?: Required<Pick<ObjectType, Key>> & // 1. Make `Key`'s type required
-	// 2. Make all other keys in `KeysType` optional
-		Partial<Pick<ObjectType, Exclude<KeysType, Key>>>;
-}[KeysType] &
-// 3. Add the remaining keys not in `KeysType`
-Except<ObjectType, KeysType>;
+	[Key in KeysType]-?: Required<Pick<ObjectType, Key>> // 1. Make `Key`'s type required
+		& Partial<Pick<ObjectType, Exclude<KeysType, Key>>>; // 2. Make all other keys in `KeysType` optional
+}[KeysType]
+& Except<ObjectType, KeysType>; // 3. Add the remaining keys not in `KeysType`
 
 export {};
