@@ -53,7 +53,7 @@
 		"tagged-tag": "^1.0.0"
 	},
 	"devDependencies": {
-		"@eslint/markdown": "^7.5.1",
+		"@eslint/markdown": "^8.0.1",
 		"@sindresorhus/tsconfig": "^8.0.1",
 		"@types/node": "^25.5.0",
 		"@typescript-eslint/parser": "^8.44.0",

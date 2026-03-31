@@ -9,9 +9,10 @@ import {validateJSDocCodeblocksRule} from './lint-rules/validate-jsdoc-codeblock
 import {readmeJSDocSyncRule} from './lint-rules/readme-jsdoc-sync.js';
 import {jsdocCodeblocksProcessor} from './lint-processors/jsdoc-codeblocks.js';
 
-/** @type {Array<import('xo').XoConfigItem | import('@eslint/core').ConfigObject>} */
+/** @type {import('xo').FlatXoConfig} */
 const xoConfig = [
 	{
+		files: '**/*.{js,ts}',
 		rules: {
 			'@typescript-eslint/no-extraneous-class': 'off',
 			'@typescript-eslint/ban-ts-comment': 'off',
