@@ -3,7 +3,7 @@ import type {And} from './and.d.ts';
 import type {Or} from './or.d.ts';
 
 /**
-Returns a boolean for whether only one of two given types is true.
+Returns a boolean for whether only one of two given types is `true`.
 
 Use-case: Constructing complex conditional types where one single condition must be satisfied.
 

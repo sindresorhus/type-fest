@@ -2,7 +2,7 @@ import type {IntRange} from './int-range.d.ts';
 import type {Sum} from './sum.d.ts';
 
 /**
-Generate a union of numbers.
+Generate a union of numbers (includes the start and the end).
 
 The numbers are created from the given `Start` (inclusive) parameter to the given `End` (inclusive) parameter.
 

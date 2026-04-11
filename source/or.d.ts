@@ -1,7 +1,7 @@
 import type {OrAll} from './or-all.d.ts';
 
 /**
-Returns a boolean for whether either of two given types is true.
+Returns a boolean for whether either of two given types is `true`.
 
 Use-case: Constructing complex conditional types where at least one condition must be satisfied.
 

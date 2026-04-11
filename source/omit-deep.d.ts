@@ -9,7 +9,7 @@ import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Omit properties from a deeply-nested object.
+Omit properties from a deeply-nested object. Use [`Omit<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
 
 It supports recursing into arrays.
 

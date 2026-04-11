@@ -1,7 +1,7 @@
 import type {AndAll} from './and-all.d.ts';
 
 /**
-Returns a boolean for whether two given types are both true.
+Returns a boolean for whether two given types are both `true`.
 
 Use-case: Constructing complex conditional types where multiple conditions must be satisfied.
 

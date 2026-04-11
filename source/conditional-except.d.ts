@@ -2,7 +2,7 @@ import type {Except} from './except.d.ts';
 import type {ConditionalKeys} from './conditional-keys.d.ts';
 
 /**
-Exclude keys from a shape that matches the given `Condition`.
+Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
 
 This is useful when you want to create a new type with a specific set of keys from a shape. For example, you might want to exclude all the primitive properties from a class and form a new shape containing everything but the primitive properties.
 

@@ -44,7 +44,7 @@ type DefaultPartialDeepOptions = {
 };
 
 /**
-Create a type from another type with all keys and nested keys set to optional.
+Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
 
 Use-cases:
 - Merging a default settings/config object with another object, the second object would be a deep partial of the default object.

@@ -102,30 +102,30 @@ Click the type names for complete docs.
 - [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
 - [`UnknownMap`](source/unknown-map.d.ts) - Represents a map with `unknown` key and value.
 - [`UnknownSet`](source/unknown-set.d.ts) - Represents a set with `unknown` value.
-- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys.
+- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`ObjectMerge`](source/object-merge.d.ts) - Merge two object types into a new object type, where keys from the second override keys from the first.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
-- [`OverrideProperties`](source/override-properties.d.ts) - Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
+- [`OverrideProperties`](source/override-properties.d.ts) - Override only existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys. The remaining keys are kept as is.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys. The remaining keys are kept as is.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly one of the given keys and disallows more, or none of the given keys. The remaining keys are kept as is.
 - [`SingleKeyObject`](source/single-key-object.d.ts) - Create a type that only accepts an object with a single key.
-- [`RequiredDeep`](source/required-deep.d.ts) - Create a type from another type with all keys and nested keys set to required.
-- [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object.
-- [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object.
+- [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type. Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
+- [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
+- [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object. Use [`Omit<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
-- [`PartialDeep`](source/partial-deep.d.ts) - Create a type from another type with all keys and nested keys set to optional.
+- [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
 - [`UnwrapPartial`](source/unwrap-partial.d.ts) - Revert the `Partial` modifier on an object type.
-- [`ReadonlyDeep`](source/readonly-deep.d.ts) - Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
-- [`LiteralUnion`](source/literal-union.d.ts) - Allows creating a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
+- [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
+- [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
 - [`Tagged`](source/tagged.d.ts) - Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for distinct concepts in your program that should not be interchangeable, even if their runtime values have the same type. (See examples.)
 - [`UnwrapTagged`](source/tagged.d.ts) - Revert a tagged type back to its original type by removing all tags.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
@@ -136,40 +136,39 @@ Click the type names for complete docs.
 - [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable, where the remaining keys are kept as is.
 - [`SetNonNullableDeep`](source/set-non-nullable-deep.d.ts) - Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
-- [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract the keys from a type where the value type of the key extends the given `Condition`.
-- [`ConditionalPick`](source/conditional-pick.d.ts) - Pick keys from the shape that matches the given `Condition`.
-- [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Pick keys recursively from the shape that matches the given condition.
-- [`ConditionalExcept`](source/conditional-except.d.ts) - Exclude keys from a shape that matches the given `Condition`.
-- [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type using [distributive conditional types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
-<!-- eslint-disable-next-line type-fest/readme-jsdoc-sync -->
-- [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [`primitive type`](source/primitive.d.ts#Primitive) it belongs to, or `never` if it's not a primitive.
+- [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
+- [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
+- [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Like `ConditionalPick` except that it selects the properties deeply.
+- [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
+- [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
+- [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) it belongs to, or `never` if it's not a primitive.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
-- [`Entry`](source/entry.d.ts) - Many collections have an `entries` method which returns an array of a given object's own enumerable string-keyed property [key, value] pairs. The `Entry` type will return the type of that collection's entry.
-- [`Entries`](source/entries.d.ts) - Many collections have an `entries` method which returns an array of a given object's own enumerable string-keyed property [key, value] pairs. The `Entries` type will return the type of that collection's entries.
+- [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
+- [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
-- [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like Lodash's `.get()` function.
+- [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
 - [`KeysOfUnion`](source/keys-of-union.d.ts) - Create a union of all keys from a given type, even those exclusive to specific union members.
 - [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
-- [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Creates a type that represents `true` or `false` depending on whether the given type has any optional fields.
+- [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
-- [`HasRequiredKeys`](source/has-required-keys.d.ts) - Creates a type that represents `true` or `false` depending on whether the given type has any required fields.
+- [`HasRequiredKeys`](source/has-required-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any required fields.
 - [`ReadonlyKeysOf`](source/readonly-keys-of.d.ts) - Extract all readonly keys from the given type.
-- [`HasReadonlyKeys`](source/has-readonly-keys.d.ts) - Creates a type that represents `true` or `false` depending on whether the given type has any readonly fields.
-- [`WritableKeysOf`](source/writable-keys-of.d.ts) - Extract all writable keys from the given type.
-- [`HasWritableKeys`](source/has-writable-keys.d.ts) - Creates a type that represents `true` or `false` depending on whether the given type has any writable fields.
+- [`HasReadonlyKeys`](source/has-readonly-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any readonly fields.
+- [`WritableKeysOf`](source/writable-keys-of.d.ts) - Extract all writable (non-readonly) keys from the given type.
+- [`HasWritableKeys`](source/has-writable-keys.d.ts) - Create a `true`/`false` type depending on whether the given type has any writable fields.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
-- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers.
-- [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers.
+- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers (includes the start and excludes the end).
+- [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`ArraySplice`](source/array-splice.d.ts) - Create a new array type by adding or removing elements at a specified index range in the original array.
@@ -181,9 +180,9 @@ Click the type names for complete docs.
 - [`AllUnionFields`](source/all-union-fields.d.ts) - Create a type with all fields from a union of object types.
 - [`DistributedOmit`](source/distributed-omit.d.ts) - Omits keys from a type, distributing the operation over a union.
 - [`DistributedPick`](source/distributed-pick.d.ts) - Pick keys from a type, distributing the operation over a union.
-- [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both true.
-- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is true.
-- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is true.
+- [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both `true`.
+- [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is `true`.
+- [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is `true`.
 - [`AndAll`](source/and-all.d.ts) - Returns a boolean for whether all of the given elements are `true`.
 - [`OrAll`](source/or-all.d.ts) - Returns a boolean for whether any of the given elements is `true`.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
@@ -209,7 +208,7 @@ Click the type names for complete docs.
 - [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`.
 - [`IsNever`](source/is-never.d.ts) - Returns a boolean for whether the given type is `never`.
 - [`IsUnknown`](source/is-unknown.d.ts) - Returns a boolean for whether the given type is `unknown`.
-- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
+- [`IsEmptyObject`](source/empty-object.d.ts) - Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
 - [`IsUndefined`](source/is-undefined.d.ts) - Returns a boolean for whether the given type is `undefined`.
 - [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
@@ -246,7 +245,7 @@ Click the type names for complete docs.
 
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
-- [`Words`](source/words.d.ts) - Split a string (almost) like Lodash's `_.words()` function.
+- [`Words`](source/words.d.ts) - Represents an array of strings split using a heuristic for detecting words.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
@@ -261,8 +260,8 @@ Click the type names for complete docs.
 - [`ArrayElement`](source/array-element.d.ts) - Extracts the element type of an array or tuple.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extract the type of the last element of an array.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length. The `Array` prototype methods that manipulate its length are excluded from the resulting type.
-- [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Creates a type that represents a multidimensional array of the given type and dimension.
-- [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Creates a type that represents a multidimensional readonly array that of the given type and dimension.
+- [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
+- [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
@@ -320,7 +319,7 @@ Click the type names for complete docs.
 
 - [`GlobalThis`](source/global-this.d.ts) - Declare locally scoped properties on `globalThis`.
 - [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types for fields used by other popular projects, like TypeScript and Yarn.
-- [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 3.7).
+- [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html).
 
 ### Improved built-in
 
@@ -392,7 +391,6 @@ Click the type names for complete docs.
 ### Related
 
 - [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
-
 - [`Linter.Config`](https://github.com/eslint/eslint/blob/main/lib/types/index.d.ts) - Definitions for the [ESLint configuration schema](https://eslint.org/docs/user-guide/configuring/language-options).
 
 ### Built-in types

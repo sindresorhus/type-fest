@@ -46,7 +46,7 @@ type DefaultExceptOptions = {
 };
 
 /**
-Create a type from an object type without certain keys.
+Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 
 We recommend setting the `requireExactProps` option to `true`.
 

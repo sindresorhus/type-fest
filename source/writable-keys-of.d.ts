@@ -1,7 +1,7 @@
 import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 
 /**
-Extract all writable keys from the given type.
+Extract all writable (non-readonly) keys from the given type.
 
 This is useful when you want to create a new type that contains writable keys only.
 
