@@ -115,6 +115,7 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 			code: dedenter`
 				Some introduction paragraph.
 
+
 				## Types
 
 				### Some group
@@ -149,6 +150,11 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 		testCase({
 			code: '- [`Missing`](source/does-not-exist.d.ts) - Some description.',
 			errors: [{messageId: 'fileNotFound'}],
+		}),
+		// Linked type has no JSDoc description
+		testCase({
+			code: '- [`NoDoc`](source/noDoc.d.ts) - Some description.',
+			errors: [{messageId: 'missingJSDoc'}],
 		}),
 	],
 });

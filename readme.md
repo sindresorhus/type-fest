@@ -141,7 +141,8 @@ Click the type names for complete docs.
 - [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Pick keys recursively from the shape that matches the given condition.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Exclude keys from a shape that matches the given `Condition`.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type using [distributive conditional types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
-- [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the {@link Primitive | primitive type} it belongs to, or `never` if it's not a primitive.
+<!-- eslint-disable-next-line type-fest/readme-jsdoc-sync -->
+- [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [`primitive type`](source/primitive.d.ts#Primitive) it belongs to, or `never` if it's not a primitive.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
@@ -324,8 +325,8 @@ Click the type names for complete docs.
 ### Improved built-in
 
 - [`ExtendsStrict`](source/extends-strict.d.ts) - A stricter, non-distributive version of `extends` for checking whether one type is assignable to another.
-- [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of {@link Extract <T, U>} that ensures every member of `U` can successfully extract something from `T`.
-- [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of {@link Exclude <T, U>} that ensures every member of `U` can successfully exclude something from `T`.
+- [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of `Extract<T, U>` that ensures every member of `U` can successfully extract something from `T`.
+- [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of `Exclude<T, U>` that ensures every member of `U` can successfully exclude something from `T`.
 - [`ExcludeExactly`](source/exclude-exactly.d.ts) - A stricter version of `Exclude<T, U>` that excludes types only when they are exactly identical.
 
 ## Declined types

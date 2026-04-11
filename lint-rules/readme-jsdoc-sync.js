@@ -14,6 +14,7 @@ export const readmeJSDocSyncRule = {
 		fixable: 'code',
 		messages: {
 			mismatch: 'Type description does not match the source JSDoc.\n\nExpected: {{expected}}\n\nFound: {{actual}}',
+			missingJSDoc: 'Linked type `{{typeName}}` in `{{filePath}}` does not have a JSDoc documentation.',
 			fileNotFound: 'Linked file `{{filePath}}` not found.',
 		},
 		schema: [],
@@ -59,27 +60,41 @@ export const readmeJSDocSyncRule = {
 				}
 
 				const sourceFile = ts.createSourceFile(linkNode.url, sourceContent, ts.ScriptTarget.Latest, true);
-				const jsDocFirstLine = ts.forEachChild(sourceFile, node => {
+				const jsdocDescription = ts.forEachChild(sourceFile, node => {
 					if ((ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) && node.name.text === typeName) {
 						const jsDocs = ts.getJSDocCommentsAndTags(node);
-						return ts.getTextOfJSDocComment(jsDocs[0]?.comment)?.split('\n')[0];
+						return jsDocs[0]?.getText().split('\n')[1];
 					}
 
 					return undefined;
 				});
 
-				if (jsDocFirstLine && typeDescription !== jsDocFirstLine) {
+				if (!jsdocDescription) {
+					return context.report({
+						node: linkNode,
+						messageId: 'missingJSDoc',
+						data: {
+							typeName,
+							filePath: linkNode.url,
+						},
+					});
+				}
+
+				const tagRegex = /\{@link\s+([^\}]+)\}/gv;
+				const descriptionWithoutTags = jsdocDescription.replaceAll(tagRegex, (_, content) => `\`${content}\``);
+
+				if (typeDescription !== descriptionWithoutTags) {
 					context.report({
 						node,
 						messageId: 'mismatch',
 						data: {
-							expected: jsDocFirstLine,
+							expected: descriptionWithoutTags,
 							actual: typeDescription,
 						},
 						fix(fixer) {
 							return fixer.replaceText(
 								paragraph,
-								`${context.sourceCode.getText(linkNode)} - ${jsDocFirstLine}`,
+								`${context.sourceCode.getText(linkNode)} - ${descriptionWithoutTags}`,
 							);
 						},
 					});
@@ -88,4 +103,3 @@ export const readmeJSDocSyncRule = {
 		};
 	},
 };
-
