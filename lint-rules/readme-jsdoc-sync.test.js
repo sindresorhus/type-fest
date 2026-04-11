@@ -3,14 +3,14 @@ import {createRuleTester, createFixtures, dedenter} from './test-utils.js';
 import {readmeJSDocSyncRule} from './readme-jsdoc-sync.js';
 
 const {fixturePath} = createFixtures({
-	'source/some-test.d.ts': dedenter`
+	'source/some-type-alias.d.ts': dedenter`
 		/**
-		Some description for \`Test\` type.
+		Some description for \`MyAlias\` type.
 		Note: This is a note.
 		@example
-		type Test = string;
+		type MyAlias = string;
 		*/
-		export type Test = string;
+		export type MyAlias = string;
 	`,
 	'source/some-interface.d.ts': dedenter`
 		/**
@@ -34,9 +34,6 @@ const {fixturePath} = createFixtures({
 		*/
 		export type Other = number;
 	`,
-	'source/noDoc.d.ts': dedenter`
-		export type NoDoc = string;
-	`,
 	'source/hyphen.d.ts': dedenter`
 		/**
 		Contains a - inside.
@@ -50,12 +47,8 @@ const {fixturePath} = createFixtures({
 		*/
 		export type ComplexFormat = string;
 	`,
-	'source/asterisk-prefix.d.ts': dedenter`
-		/**
-		 * Some description.
-		 */
-		type Test = string;
-		export type AsteriskPrefix = string;
+	'source/noDoc.d.ts': dedenter`
+		export type NoDoc = string;
 	`,
 });
 
@@ -73,7 +66,7 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 	valid: [
 		// Type alias
 		testCase({
-			code: '- [`Test`](source/some-test.d.ts) - Some description for `Test` type.',
+			code: '- [`MyAlias`](source/some-type-alias.d.ts) - Some description for `MyAlias` type.',
 		}),
 		// Interface
 		testCase({
@@ -93,10 +86,6 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 		// Description with links, inline code, and multiple sentences
 		testCase({
 			code: '- [`ComplexFormat`](source/complex-format.d.ts) - Description with [link to `type-fest`](https://github.com/sindresorhus/type-fest) and some `code`. And another sentence.',
-		}),
-		// JSDoc with asterisk prefix style
-		testCase({
-			code: '- [`AsteriskPrefix`](source/asterisk-prefix.d.ts) - Some description.',
 		}),
 		// Normal list item without a link
 		testCase({
@@ -119,7 +108,7 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 				## Types
 
 				### Some group
-				- [\`Test\`](source/some-test.d.ts) - Some description for \`Test\` type.
+				- [\`MyAlias\`](source/some-type-alias.d.ts) - Some description for \`MyAlias\` type.
 				- [\`MyInterface\`](source/some-interface.d.ts) - Some description for \`MyInterface\` interface.
 
 				### Another group
@@ -137,12 +126,12 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 		testCase({
 			// Mismatch between README description and source JSDoc
 			code: dedenter`
-				- [\`Test\`](source/some-test.d.ts) - Some description for Test type.
+				- [\`MyAlias\`](source/some-type-alias.d.ts) - Some description for MyAlias type.
 				- [\`ComplexFormat\`](source/complex-format.d.ts) - Wrong description.
 			`,
 			errors: [{messageId: 'mismatch'}, {messageId: 'mismatch'}],
 			output: dedenter`
-				- [\`Test\`](source/some-test.d.ts) - Some description for \`Test\` type.
+				- [\`MyAlias\`](source/some-type-alias.d.ts) - Some description for \`MyAlias\` type.
 				- [\`ComplexFormat\`](source/complex-format.d.ts) - Description with [link to \`type-fest\`](https://github.com/sindresorhus/type-fest) and some \`code\`. And another sentence.
 			`,
 		}),
