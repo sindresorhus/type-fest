@@ -393,7 +393,6 @@ Click the type names for complete docs.
 
 - [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
 
-<!-- eslint-disable-next-line type-fest/readme-jsdoc-sync -->
 - [`Linter.Config`](https://github.com/eslint/eslint/blob/main/lib/types/index.d.ts) - Definitions for the [ESLint configuration schema](https://eslint.org/docs/user-guide/configuring/language-options).
 
 ### Built-in types

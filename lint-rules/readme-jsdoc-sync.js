@@ -32,7 +32,7 @@ export const readmeJSDocSyncRule = {
 				}
 
 				const linkNode = paragraph.children[0];
-				if (linkNode?.type !== 'link' || !linkNode?.url.endsWith('.d.ts')) {
+				if (linkNode?.type !== 'link' || linkNode.url.startsWith('http') || !linkNode.url.endsWith('.d.ts')) {
 					return;
 				}
 
