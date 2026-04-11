@@ -47,6 +47,12 @@ const {fixturePath} = createFixtures({
 		*/
 		export type ComplexFormat = string;
 	`,
+	'source/link-tag.d.ts': dedenter`
+		/**
+		Similar to {@link Exclude<T, U>} type.
+		*/
+		export type LinkTag = string;
+	`,
 	'source/noDoc.d.ts': dedenter`
 		export type NoDoc = string;
 	`,
@@ -86,6 +92,10 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 		// Description with links, inline code, and multiple sentences
 		testCase({
 			code: '- [`ComplexFormat`](source/complex-format.d.ts) - Description with [link to `type-fest`](https://github.com/sindresorhus/type-fest) and some `code`. And another sentence.',
+		}),
+		// Description with JSDoc link tag
+		testCase({
+			code: '- [`LinkTag`](source/link-tag.d.ts) - Similar to `Exclude<T, U>` type.',
 		}),
 		// Normal list item without a link
 		testCase({
