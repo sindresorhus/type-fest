@@ -145,5 +145,10 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 			code: '- [`NoDoc`](source/noDoc.d.ts) - Some description.',
 			errors: [{messageId: 'missingJSDoc'}],
 		}),
+		// Linked type does not exist
+		testCase({
+			code: '- [`Foo`](source/some-type-alias.d.ts) - Some description for `MyAlias` type.',
+			errors: [{messageId: 'missingJSDoc'}],
+		}),
 	],
 });

@@ -14,7 +14,7 @@ export const readmeJSDocSyncRule = {
 		fixable: 'code',
 		messages: {
 			mismatch: 'Type description does not match the source JSDoc.\n\nExpected: {{expected}}\n\nFound: {{actual}}',
-			missingJSDoc: 'Linked type `{{typeName}}` in `{{filePath}}` does not have a JSDoc documentation.',
+			missingJSDoc: 'Type `{{typeName}}` in `{{filePath}}` either does not exist or lacks JSDoc documentation.',
 			fileNotFound: 'Linked file `{{filePath}}` not found.',
 		},
 		schema: [],
