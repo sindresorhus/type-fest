@@ -142,11 +142,13 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 			code: dedenter`
 				- [\`MyAlias\`](source/some-type-alias.d.ts) - Some description for MyAlias type.
 				- [\`ComplexFormat\`](source/complex-format.d.ts) - Wrong description.
+				- [\`LinkTag\`](source/link-tag.d.ts) - Similar to Exclude type.
 			`,
-			errors: [{messageId: 'mismatch'}, {messageId: 'mismatch'}],
+			errors: [{messageId: 'mismatch'}, {messageId: 'mismatch'}, {messageId: 'mismatch'}],
 			output: dedenter`
 				- [\`MyAlias\`](source/some-type-alias.d.ts) - Some description for \`MyAlias\` type.
 				- [\`ComplexFormat\`](source/complex-format.d.ts) - Description with [link to \`type-fest\`](https://github.com/sindresorhus/type-fest) and some \`code\`. And another sentence.
+				- [\`LinkTag\`](source/link-tag.d.ts) - Similar to \`Exclude<T, U>\` type.
 			`,
 		}),
 		// Linked `.d.ts` file does not exist
