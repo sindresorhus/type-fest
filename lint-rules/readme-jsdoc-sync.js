@@ -61,7 +61,7 @@ export const readmeJSDocSyncRule = {
 				}
 
 				const sourceFile = ts.createSourceFile(linkNode.url, sourceContent, ts.ScriptTarget.Latest, true);
-				const jsdocDescription = ts.forEachChild(sourceFile, node => {
+				let jsdocDescription = ts.forEachChild(sourceFile, node => {
 					if ((ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) && node.name.text === typeName) {
 						const jsDocs = ts.getJSDocCommentsAndTags(node);
 						return jsDocs[0]?.getText().split('\n')[1];
@@ -86,20 +86,20 @@ export const readmeJSDocSyncRule = {
 				// It doesn't handle captions or external links, for example, "{@link SymbolName | some caption}" simply becomes "`SymbolName | some caption`".
 				// For external links, markdown syntax should be used, like "[type-fest](https://github.com/sindresorhus/type-fest)".
 				// And for symbols, if just "`SymbolName`" isn't sufficient, then for those specific cases this rule should be disabled.
-				const descriptionWithoutTags = jsdocDescription.replaceAll(tagRegex, (_, content) => `\`${content}\``);
+				jsdocDescription = jsdocDescription.replaceAll(tagRegex, (_, content) => `\`${content}\``);
 
-				if (typeDescription !== descriptionWithoutTags) {
+				if (typeDescription !== jsdocDescription) {
 					context.report({
 						node,
 						messageId: 'mismatch',
 						data: {
-							expected: descriptionWithoutTags,
+							expected: jsdocDescription,
 							actual: typeDescription,
 						},
 						fix(fixer) {
 							return fixer.replaceText(
 								paragraph,
-								`${context.sourceCode.getText(linkNode)} - ${descriptionWithoutTags}`,
+								`${context.sourceCode.getText(linkNode)} - ${jsdocDescription}`,
 							);
 						},
 					});
