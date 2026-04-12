@@ -3,7 +3,7 @@ import type {Primitive} from './primitive.d.ts';
 export type _LiteralStringUnion<T> = LiteralUnion<T, string>;
 
 /**
-Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
+Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
 
 Currently, when a union type of a primitive type is combined with literal types, TypeScript loses all information about the combined literals. Thus, when such type is used in an IDE with autocompletion, no suggestions are made for the declared literals.
 

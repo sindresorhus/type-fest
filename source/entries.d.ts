@@ -6,9 +6,7 @@ type ObjectEntries<BaseType> = Array<_ObjectEntry<BaseType>>;
 type SetEntries<BaseType extends Set<unknown>> = Array<_SetEntry<BaseType>>;
 
 /**
-Create a type that represents the type of the entries of a collection.
-
-For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries|`Object`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries|`Map`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries|`Array`}, and {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/entries|`Set`} collections all have this method. Note that `WeakMap` and `WeakSet` do not have this method since their entries are not enumerable.
+Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
 
 @see `Entry` if you want to just access the type of a single entry.
 

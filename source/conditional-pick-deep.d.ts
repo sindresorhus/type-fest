@@ -38,7 +38,7 @@ type DefaultConditionalPickDeepOptions = {
 };
 
 /**
-Like `ConditionalPick` except that it selects the properties deeply.
+Pick keys recursively from the shape that matches the given condition.
 
 @see {@link ConditionalPick}
 

@@ -2,7 +2,7 @@ import type {ConditionalKeys} from './conditional-keys.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
-Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
+Pick keys from the shape that matches the given `Condition`.
 
 This is useful when you want to create a new type from a specific subset of an existing type. For example, you might want to pick all the primitive properties from a class and form a new automatically derived type.
 

@@ -8,11 +8,13 @@ import type {UnknownArray} from './unknown-array.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 
 /**
-Pick properties from a deeply-nested object. Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
+Pick properties from a deeply-nested object.
 
 It supports recursing into arrays.
 
 Use-case: Distill complex objects down to the components you need to target.
+
+Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 
 @example
 ```
