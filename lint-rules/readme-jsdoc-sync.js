@@ -63,8 +63,8 @@ export const readmeJSDocSyncRule = {
 				const sourceFile = ts.createSourceFile(linkNode.url, sourceContent, ts.ScriptTarget.Latest, true);
 				let jsdocDescription = ts.forEachChild(sourceFile, node => {
 					if ((ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) && node.name.text === typeName) {
-						const jsDocs = ts.getJSDocCommentsAndTags(node);
-						return jsDocs[0]?.getText().split('\n')[1];
+						const jsdocs = ts.getJSDocCommentsAndTags(node);
+						return jsdocs[0]?.getText().split('\n')[1];
 					}
 
 					return undefined;
