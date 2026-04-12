@@ -102,18 +102,18 @@ Click the type names for complete docs.
 - [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
 - [`UnknownMap`](source/unknown-map.d.ts) - Represents a map with `unknown` key and value.
 - [`UnknownSet`](source/unknown-set.d.ts) - Represents a set with `unknown` value.
-- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
+- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys.
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
 - [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
 - [`ObjectMerge`](source/object-merge.d.ts) - Merge two object types into a new object type, where keys from the second override keys from the first.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
-- [`OverrideProperties`](source/override-properties.d.ts) - Override only existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
-- [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys. The remaining keys are kept as is.
-- [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.
-- [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys. The remaining keys are kept as is.
-- [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly one of the given keys and disallows more, or none of the given keys. The remaining keys are kept as is.
+- [`OverrideProperties`](source/override-properties.d.ts) - Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
+- [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys, while keeping the remaining keys as is.
+- [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
+- [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys, while keeping the remaining keys as is.
+- [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly one of the given keys or none of the given keys, while keeping the remaining keys as is.
 - [`SingleKeyObject`](source/single-key-object.d.ts) - Create a type that only accepts an object with a single key.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type.
 - [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object.
@@ -126,20 +126,20 @@ Click the type names for complete docs.
 - [`UnwrapPartial`](source/unwrap-partial.d.ts) - Revert the `Partial` modifier on an object type.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of another type.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
-- [`Tagged`](source/tagged.d.ts) - Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for distinct concepts in your program that should not be interchangeable, even if their runtime values have the same type. (See examples.)
-- [`UnwrapTagged`](source/tagged.d.ts) - Revert a tagged type back to its original type by removing all tags.
+- [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
+- [`UnwrapTagged`](source/tagged.d.ts) - Get the untagged portion of a tagged type created with `Tagged`.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
-- [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional. The remaining keys are kept as is. The sister of the `SetRequired` type.
-- [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly. The remaining keys are kept as is.
-- [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required. The remaining keys are kept as is. The sister of the `SetOptional` type.
-- [`SetRequiredDeep`](source/set-required-deep.d.ts) - Create a type that makes the given keys required. You can specify deeply nested key paths. The remaining keys are kept as is.
-- [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable, where the remaining keys are kept as is.
+- [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional, while keeping the remaining keys as is.
+- [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly, while keeping the remaining keys as is.
+- [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required, while keeping the remaining keys as is.
+- [`SetRequiredDeep`](source/set-required-deep.d.ts) - Create a type that makes the given keys required, with support for deeply nested key paths, while keeping the remaining keys as is.
+- [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable, while keeping the remaining keys as is.
 - [`SetNonNullableDeep`](source/set-non-nullable-deep.d.ts) - Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
-- [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
+- [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract the keys from a type where the value type of the key extends the given `Condition`.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Pick keys from the shape that matches the given `Condition`.
 - [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Pick keys recursively from the shape that matches the given condition.
-- [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
+- [`ConditionalExcept`](source/conditional-except.d.ts) - Exclude keys from a shape that matches the given `Condition`.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) it belongs to, or `never` if it's not a primitive.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
@@ -167,8 +167,8 @@ Click the type names for complete docs.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
-- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers (includes the start and excludes the end).
-- [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers (includes the start and the end).
+- [`IntRange`](source/int-range.d.ts) - Generate a union of numbers between a specified start (inclusive) and end (exclusive), with an optional step.
+- [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers between a specified start and end (both inclusive), with an optional step.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`ArraySplice`](source/array-splice.d.ts) - Create a new array type by adding or removing elements at a specified index range in the original array.
@@ -245,7 +245,7 @@ Click the type names for complete docs.
 
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
-- [`Words`](source/words.d.ts) - Represents an array of strings split using a heuristic for detecting words.
+- [`Words`](source/words.d.ts) - Split a string similar to Lodash's `_.words()` function.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
@@ -260,8 +260,8 @@ Click the type names for complete docs.
 - [`ArrayElement`](source/array-element.d.ts) - Extracts the element type of an array or tuple.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extract the type of the last element of an array.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length. The `Array` prototype methods that manipulate its length are excluded from the resulting type.
-- [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimensions.
-- [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimensions.
+- [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimension.
+- [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimension.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
@@ -299,21 +299,21 @@ Click the type names for complete docs.
 ### Change case
 
 - [`CamelCase`](source/camel-case.d.ts) - Convert a string literal to camel-case.
-- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert object properties to camel case but not recursively.
+- [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert top-level object properties to camel case.
 - [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) - Convert object properties to camel case recursively.
 - [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case.
-- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert object properties to kebab case but not recursively.
+- [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert top-level object properties to kebab case.
 - [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab case recursively.
 - [`PascalCase`](source/pascal-case.d.ts) - Convert a string literal to pascal-case.
-- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Convert object properties to pascal case but not recursively.
+- [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Convert top-level object properties to pascal case.
 - [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Convert object properties to pascal case recursively.
 - [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case.
-- [`SnakeCasedProperties`](source/snake-cased-properties.d.ts) - Convert object properties to snake case but not recursively.
+- [`SnakeCasedProperties`](source/snake-cased-properties.d.ts) - Convert top-level object properties to snake case.
 - [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake case recursively.
 - [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case.
 - [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.
-- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) - Convert object properties to delimiter case but not recursively.
-- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) - Convert object properties to delimiter case recursively.
+- [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) - Convert object properties to a custom string delimiter casing.
+- [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) - Convert object properties to a custom string delimiter casing recursively.
 
 ### Miscellaneous
 

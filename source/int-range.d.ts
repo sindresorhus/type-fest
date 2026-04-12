@@ -2,9 +2,7 @@ import type {TupleOf} from './tuple-of.d.ts';
 import type {Subtract} from './subtract.d.ts';
 
 /**
-Generate a union of numbers (includes the start and excludes the end).
-
-The numbers are created from the given `Start` (inclusive) parameter to the given `End` (exclusive) parameter.
+Generate a union of numbers between a specified start (inclusive) and end (exclusive), with an optional step.
 
 You skip over numbers using the `Step` parameter (defaults to `1`). For example, `IntRange<0, 10, 2>` will create a union of `0 | 2 | 4 | 6 | 8`.
 

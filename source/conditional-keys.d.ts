@@ -4,7 +4,7 @@ import type {TupleToObject} from './tuple-to-object.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Extract keys from a shape where values extend the given `Condition` type.
+Extract the keys from a type where the value type of the key extends the given `Condition`.
 
 Internally this is used for the `ConditionalPick` and `ConditionalExcept` types.
 

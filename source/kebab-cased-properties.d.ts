@@ -4,7 +4,7 @@ import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
 /**
-Convert object properties to kebab case but not recursively.
+Convert top-level object properties to kebab case.
 
 This can be useful when, for example, converting some API types from a different style.
 

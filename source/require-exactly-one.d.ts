@@ -4,7 +4,7 @@ import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
-Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.
+Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
 
 Use-cases:
 - Creating interfaces for components that only need one of the keys to display properly.

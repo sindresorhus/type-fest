@@ -1,5 +1,5 @@
 /**
-Create a type that makes the given keys non-nullable, where the remaining keys are kept as is.
+Create a type that makes the given keys non-nullable, while keeping the remaining keys as is.
 
 If no keys are given, all keys will be made non-nullable.
 

@@ -5,7 +5,7 @@ import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
-Create a type that requires at least one of the given keys. The remaining keys are kept as is.
+Create a type that requires at least one of the given keys, while keeping the remaining keys as is.
 
 @example
 ```

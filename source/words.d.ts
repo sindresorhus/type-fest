@@ -62,7 +62,7 @@ export type _DefaultWordsOptions = {
 };
 
 /**
-Represents an array of strings split using a heuristic for detecting words.
+Split a string similar to Lodash's `_.words()` function.
 
 - Split on each word that begins with a capital letter.
 - Split on each {@link WordSeparators}.

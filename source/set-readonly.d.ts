@@ -3,7 +3,7 @@ import type {HomomorphicPick} from './internal/index.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
-Create a type that makes the given keys readonly. The remaining keys are kept as is.
+Create a type that makes the given keys readonly, while keeping the remaining keys as is.
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the keys are readonly.
 

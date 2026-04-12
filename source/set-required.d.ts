@@ -6,7 +6,7 @@ import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Create a type that makes the given keys required. The remaining keys are kept as is. The sister of the `SetOptional` type.
+Create a type that makes the given keys required, while keeping the remaining keys as is.
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the keys are required.
 
