@@ -105,7 +105,7 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 		testCase({
 			code: '- [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) - Make all properties in `T` optional.',
 		}),
-		// `.d.ts` link with HTTP URL
+		// `.d.ts` link with HTTP url
 		testCase({
 			code: '- [`Linter.Config`](https://github.com/eslint/eslint/blob/main/lib/types/index.d.ts) - Some description.',
 		}),
