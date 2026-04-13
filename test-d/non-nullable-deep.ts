@@ -109,15 +109,15 @@ expectType<number>(functionWithProperties2(true, undefined));
 expectType<{p1: {p2?: string}}>({} as Simplify<typeof functionWithProperties2>);
 
 // Functions containing multiple call signatures are not transformed
-type FunctionWithProperties4 = {
+type FunctionWithProperties3 = {
 	(a1: number | null): string | null;
 	(a1: string | undefined, a2: number | undefined): number | undefined;
 	p1: string | null;
 };
-declare const functionWithProperties4: NonNullableDeep<FunctionWithProperties4>;
-expectType<string | null>(functionWithProperties4(null));
-expectType<number | undefined>(functionWithProperties4(undefined, undefined));
-expectType<{p1: string | null}>({} as Simplify<typeof functionWithProperties4>);
+declare const functionWithProperties3: NonNullableDeep<FunctionWithProperties3>;
+expectType<string | null>(functionWithProperties3(null));
+expectType<number | undefined>(functionWithProperties3(undefined, undefined));
+expectType<{p1: string | null}>({} as Simplify<typeof functionWithProperties3>);
 
 // `any`, `never`, and `unknown` as nested values
 expectType<{a: {b: any}; c: never; d: unknown}>({} as NonNullableDeep<{a: {b: any}; c: never; d: unknown}>);
