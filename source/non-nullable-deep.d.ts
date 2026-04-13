@@ -9,34 +9,60 @@ Use-cases:
 - Normalizing data received from external sources where `null`/`undefined` have been cleaned.
 - Creating non-nullable variants of deeply nested types.
 
+NOTE: Optional modifiers (`?`) are not removed from properties. For example, `NonNullableDeep<{foo?: string | null | undefined}>` will result in `{foo?: string}`. To remove both optional modifiers and nullables, use {@link RequiredDeep} in conjunction with this type.
+
 @example
 ```
 import type {NonNullableDeep} from 'type-fest';
 
-type User = {
+type UserDraft = {
 	name: string | null;
 	address: {
 		city: string | undefined;
-		street?: string | null;
+		postalCode: string | null;
+		landmark?: string | undefined;
 	};
-	contact: {
-		email?: string | null | undefined;
-		phone: string | undefined;
-	};
+	tags: Array<string | null>;
+	visits: Map<string | null, {
+		date: Date | null;
+		notes: Set<string | undefined>;
+	}>;
 };
 
-type UpdatedUser = NonNullableDeep<User>;
+type User = NonNullableDeep<UserDraft>;
 //=> {
 // 	name: string;
 // 	address: {
 // 		city: string;
-// 		street?: string;
+// 		postalCode: string;
+// 		landmark?: string;
 // 	};
-// 	contact: {
-// 		email?: string;
-// 		phone: string;
-// 	};
+// 	tags: string[];
+// 	visits: Map<string, {
+// 		date: Date;
+// 		notes: Set<string>;
+// 	}>;
 // }
+```
+
+@example
+```
+import type {NonNullableDeep} from 'type-fest';
+
+type ArrayExample = NonNullableDeep<[{a: number | undefined}, ...Array<{b: string | null}>]>;
+//=> [{a: number}, ...{b: string}[]]
+
+type MapExample = NonNullableDeep<{a: Map<{a: string | null}, {c: number | undefined}>}>;
+//=> {a: Map<{a: string}, {c: number}>}
+
+type SetExample = NonNullableDeep<Set<{a: string | null}> | null | undefined>;
+//=> Set<{a: string}>
+
+type PromiseExample = NonNullableDeep<{a: Promise<{b: string | null}>}>;
+//=> {a: Promise<{b: string}>}
+
+type FunctionExample = NonNullableDeep<(a: string | null) => number | undefined>;
+//=> (a: string) => number
 ```
 
 @category Utilities
