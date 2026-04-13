@@ -1,4 +1,6 @@
 import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
 import type {Simplify} from './simplify.d.ts';
@@ -55,8 +57,9 @@ type ArrayExample2 = SetNonNullableDeep<{a: [(number | null)?, (number | null)?]
 
 @category Object
 */
-export type SetNonNullableDeep<BaseType, KeyPaths extends Paths<BaseType>> =
-	SetNonNullableDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
+export type SetNonNullableDeep<BaseType, KeyPaths extends Paths<BaseType>> = IsAny<KeyPaths> extends true
+	? NonNullableDeep<BaseType>
+	: SetNonNullableDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
 
 /**
 Internal helper for {@link SetNonNullableDeep}.
