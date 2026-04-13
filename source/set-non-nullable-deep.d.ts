@@ -10,7 +10,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
 
-NOTE: Optional modifiers (`?`) are not removed from properties. For example, `SetNonNullableDeep<{foo?: string | null | undefined}, 'foo'>` will result in `{foo?: string}`.
+NOTE: Optional modifiers (`?`) are not removed from properties. For example, `SetNonNullableDeep<{foo?: string | null | undefined}, 'foo'>` will result in `{foo?: string}`. To remove both optional modifiers and nullables, use {@link SetRequiredDeep} in conjunction with this type.
 
 @example
 ```
