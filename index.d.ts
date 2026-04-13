@@ -52,6 +52,7 @@ export type {SetRequired} from './source/set-required.d.ts';
 export type {SetRequiredDeep} from './source/set-required-deep.d.ts';
 export type {SetNonNullable} from './source/set-non-nullable.d.ts';
 export type {SetNonNullableDeep} from './source/set-non-nullable-deep.d.ts';
+export type {NonNullableDeep} from './source/non-nullable-deep.d.ts';
 export type {ValueOf} from './source/value-of.d.ts';
 export type {AsyncReturnType} from './source/async-return-type.d.ts';
 export type {ConditionalExcept} from './source/conditional-except.d.ts';
