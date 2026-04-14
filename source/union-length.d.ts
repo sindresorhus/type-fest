@@ -25,13 +25,13 @@ type T4 = UnionLength<never>;
 
 @category Type
 */
-export type UnionLength<T> = _UnionLength<T>;
+export type UnionLength<Union> = _UnionLength<Union>;
 
-type _UnionLength<T, Accumulator extends UnknownArray = []> =
-	IsNever<T> extends true
+type _UnionLength<Union, Accumulator extends UnknownArray = []> =
+	IsNever<Union> extends true
 		? Accumulator['length']
-		: UnionMember<T> extends infer Member
-			? _UnionLength<ExcludeExactly<T, Member>, [...Accumulator, Member]>
+		: UnionMember<Union> extends infer Member
+			? _UnionLength<ExcludeExactly<Union, Member>, [...Accumulator, Member]>
 			: never;
 
 export {};
