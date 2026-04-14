@@ -13,11 +13,25 @@ export type CamelCaseOptions = WordsOptions & {
 	@default false
 	*/
 	preserveConsecutiveUppercase?: boolean;
+
+	/**
+	Whether to preserve leading underscores.
+
+	This matches the behavior of the [`camelcase`](https://github.com/sindresorhus/camelcase) package v9+.
+
+	@default false
+	*/
+	preserveLeadingUnderscores?: boolean;
 };
 
 export type _DefaultCamelCaseOptions = _DefaultWordsOptions & {
 	preserveConsecutiveUppercase: false;
+	preserveLeadingUnderscores: false;
 };
+
+type LeadingUnderscores<S extends string> = S extends `_${infer Rest}` ? `_${LeadingUnderscores<Rest>}` : '';
+
+type StripLeadingUnderscores<S extends string> = S extends `_${infer Rest}` ? StripLeadingUnderscores<Rest> : S;
 
 /**
 Convert an array of words to camel-case.
@@ -42,6 +56,8 @@ This can be useful when, for example, converting some kebab-cased command-line f
 
 By default, consecutive uppercase letter are preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
 
+Use the `preserveLeadingUnderscores` option to retain leading underscores, matching the runtime behavior of [`camelcase`](https://github.com/sindresorhus/camelcase) v9+.
+
 @example
 ```
 import type {CamelCase} from 'type-fest';
@@ -51,6 +67,7 @@ import type {CamelCase} from 'type-fest';
 const someVariable: CamelCase<'foo-bar'> = 'fooBar';
 const preserveConsecutiveUppercase: CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'fooBARBaz';
 const splitOnPunctuation: CamelCase<'foo-bar:BAZ', {splitOnPunctuation: true}> = 'fooBarBaz';
+const preserveLeadingUnderscores: CamelCase<'_foo_bar', {preserveLeadingUnderscores: true}> = '_fooBar';
 
 // Advanced
 
@@ -83,10 +100,17 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
 	? string extends Type
 		? Type
-		: Uncapitalize<CamelCaseFromArray<
-			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
-			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
-		>>
+		: Options['preserveLeadingUnderscores'] extends true
+			? StripLeadingUnderscores<Type> extends infer Stripped extends string
+				? `${LeadingUnderscores<Type>}${Uncapitalize<CamelCaseFromArray<
+					Words<Stripped extends Uppercase<Stripped> ? Lowercase<Stripped> : Stripped, Options>,
+					ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
+				>>}`
+				: never
+			: Uncapitalize<CamelCaseFromArray<
+				Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
+				ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
+			>>
 	: Type;
 
 export {};
