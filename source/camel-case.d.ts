@@ -46,7 +46,6 @@ type LeadingUnderscores<Type extends string, Underscores extends string = ''> =
 		? LeadingUnderscores<Rest, `_${Underscores}`>
 		: Underscores;
 
-
 /**
 Convert an array of words to camel-case.
 */
@@ -117,9 +116,9 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 		: `${Options['preserveLeadingUnderscores'] extends true
 			? LeadingUnderscores<Type>
 			: ''}${Uncapitalize<CamelCaseFromArray<
-			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
-			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
-		>>}`
+				Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
+				ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
+			>>}`
 	: Type;
 
 export {};
