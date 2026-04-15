@@ -38,7 +38,8 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 
 @category Array
 */
-export type UnionToTuple<Union> = _UnionToTuple<Union>;
+export type UnionToTuple<Union> =
+	_UnionToTuple<Union> extends infer Result extends UnknownArray ? Result : never;
 
 type _UnionToTuple<Union, Accumulator extends UnknownArray = [], Member = UnionMember<Union>> =
 	IsNever<Union> extends true

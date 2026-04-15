@@ -1,7 +1,4 @@
-import type {ExcludeExactly} from './exclude-exactly.d.ts';
-import type {IsNever} from './is-never.d.ts';
-import type {UnionMember} from './union-member.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
+import type {UnionToTuple} from './union-to-tuple.d.ts';
 
 /**
 Returns the length of a union type.
@@ -25,13 +22,6 @@ type T4 = UnionLength<never>;
 
 @category Type
 */
-export type UnionLength<Union> = _UnionLength<Union>;
-
-type _UnionLength<Union, Accumulator extends UnknownArray = []> =
-	IsNever<Union> extends true
-		? Accumulator['length']
-		: UnionMember<Union> extends infer Member
-			? _UnionLength<ExcludeExactly<Union, Member>, [...Accumulator, Member]>
-			: never;
+export type UnionLength<Union> = UnionToTuple<Union>['length'];
 
 export {};

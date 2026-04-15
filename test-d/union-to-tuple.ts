@@ -23,6 +23,9 @@ expectType<DifferentModifierUnion>({} as UnionToTuple<DifferentModifierUnion>[nu
 expectType<50>({} as UnionToTuple<IntClosedRange<1, 50>>['length']);
 expectType<200>({} as UnionToTuple<IntClosedRange<1, 200>>['length']);
 
+// Indexable with `"length"`
+type Test<T> = UnionToTuple<T>['length'];
+
 // Edge cases.
 expectType<[]>({} as UnionToTuple<never>);
 expectType<[any]>({} as UnionToTuple<any>);
