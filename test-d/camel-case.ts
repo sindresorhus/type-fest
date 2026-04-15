@@ -100,6 +100,7 @@ expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true}>>('fooBar01');
 expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('fooBar01');
 expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>>('fooBar01');
 
+expectType<CamelCase<'foo_bar', {preserveLeadingUnderscores: true}>>('fooBar');
 expectType<CamelCase<'_foo_bar', {preserveLeadingUnderscores: true}>>('_fooBar');
 expectType<CamelCase<'__foo_bar', {preserveLeadingUnderscores: true}>>('__fooBar');
 expectType<CamelCase<'_FOO_BAR', {preserveLeadingUnderscores: true}>>('_fooBar');
