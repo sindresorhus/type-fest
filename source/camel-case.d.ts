@@ -115,10 +115,11 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 		? Type
 		: `${Options['preserveLeadingUnderscores'] extends true
 			? LeadingUnderscores<Type>
-			: ''}${Uncapitalize<CamelCaseFromArray<
-				Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
-				ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
-			>>}`
+			: ''
+		}${Uncapitalize<CamelCaseFromArray<
+			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
+			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
+		>>}`
 	: Type;
 
 export {};
