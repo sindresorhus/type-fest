@@ -29,7 +29,22 @@ export type _DefaultCamelCaseOptions = _DefaultWordsOptions & {
 	preserveLeadingUnderscores: false;
 };
 
-type LeadingUnderscores<S extends string> = S extends `_${infer Rest}` ? `_${LeadingUnderscores<Rest>}` : '';
+/**
+Extract leading underscores from a string.
+
+@example
+```
+type A = LeadingUnderscores<'__foo_bar'>;
+//=> '__'
+
+type B = LeadingUnderscores<'foo_bar'>;
+//=> ''
+```
+*/
+type LeadingUnderscores<Type extends string, Underscores extends string = ''> =
+	Type extends `_${infer Rest}`
+		? LeadingUnderscores<Rest, `_${Underscores}`>
+		: Underscores;
 
 type StripLeadingUnderscores<S extends string> = S extends `_${infer Rest}` ? StripLeadingUnderscores<Rest> : S;
 
