@@ -46,7 +46,6 @@ type LeadingUnderscores<Type extends string, Underscores extends string = ''> =
 		? LeadingUnderscores<Rest, `_${Underscores}`>
 		: Underscores;
 
-type StripLeadingUnderscores<S extends string> = S extends `_${infer Rest}` ? StripLeadingUnderscores<Rest> : S;
 
 /**
 Convert an array of words to camel-case.
@@ -115,17 +114,12 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
 	? string extends Type
 		? Type
-		: Options['preserveLeadingUnderscores'] extends true
-			? StripLeadingUnderscores<Type> extends infer Stripped extends string
-				? `${LeadingUnderscores<Type>}${Uncapitalize<CamelCaseFromArray<
-					Words<Stripped extends Uppercase<Stripped> ? Lowercase<Stripped> : Stripped, Options>,
-					ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
-				>>}`
-				: never
-			: Uncapitalize<CamelCaseFromArray<
-				Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
-				ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
-			>>
+		: `${Options['preserveLeadingUnderscores'] extends true
+			? LeadingUnderscores<Type>
+			: ''}${Uncapitalize<CamelCaseFromArray<
+			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
+			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
+		>>}`
 	: Type;
 
 export {};
