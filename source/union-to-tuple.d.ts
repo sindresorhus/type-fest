@@ -39,7 +39,7 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 @category Array
 */
 export type UnionToTuple<Union> =
-	_UnionToTuple<Union> extends infer Result extends UnknownArray ? Result : never;
+	_UnionToTuple<Union> extends infer Result extends UnknownArray ? Result : never; // Nudges the compiler that `UnionToTuple` always yields an array.
 
 type _UnionToTuple<Union, Accumulator extends UnknownArray = [], Member = UnionMember<Union>> =
 	IsNever<Union> extends true
