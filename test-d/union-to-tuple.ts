@@ -20,11 +20,8 @@ type DifferentModifierUnion = {readonly a: 0} | {a: 0};
 expectType<DifferentModifierUnion>({} as UnionToTuple<DifferentModifierUnion>[number]);
 
 // Long unions
-type OneToFifty = IntClosedRange<1, 50>;
-type OneToTwoHundred = IntClosedRange<1, 200>;
-
-expectType<UnionToTuple<OneToFifty>[number]>({} as OneToFifty);
-expectType<UnionToTuple<OneToTwoHundred>[number]>({} as OneToTwoHundred);
+expectType<50>({} as UnionToTuple<IntClosedRange<1, 50>>['length']);
+expectType<200>({} as UnionToTuple<IntClosedRange<1, 200>>['length']);
 
 // Edge cases.
 expectType<[]>({} as UnionToTuple<never>);
