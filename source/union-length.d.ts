@@ -10,7 +10,7 @@ import type {UnionLength} from 'type-fest';
 type T1 = UnionLength<'foo' | 'bar' | 'baz'>;
 //=> 3
 
-type T2 = UnionLength<[string, string] | {x: string; y: string}>;
+type T2 = UnionLength<[string, string, string] | {x: string; y: string; z: string}>;
 //=> 2
 
 type T3 = UnionLength<any>;
