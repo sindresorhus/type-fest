@@ -499,7 +499,7 @@ export namespace TsConfigJson {
 		/**
 		Specify module code generation: 'None', 'CommonJS', 'AMD', 'System', 'UMD', 'ES6', 'ES2015' or 'ESNext'. Only 'AMD' and 'System' can be used in conjunction with `--outFile`. 'ES6' and 'ES2015' values may be used when targeting 'ES5' or lower.
 
-		@default 'ESNext' since TypeScript 6.0, ['ES3', 'ES5'].includes(target) ? 'CommonJS' : 'ES6' before
+		Default: `'ESNext'` since TypeScript 6.0, `['ES3', 'ES5'].includes(target) ? 'CommonJS' : 'ES6'` before.
 		*/
 		module?: CompilerOptions.Module;
 
@@ -725,7 +725,7 @@ export namespace TsConfigJson {
 		/**
 		Specify ECMAScript target version.
 
-		@default current-year ES version since TypeScript 6.0, 'es3' before
+		Default: Current-year ES version since TypeScript 6.0, `'es3'` before.
 		*/
 		target?: CompilerOptions.Target;
 
@@ -805,7 +805,7 @@ export namespace TsConfigJson {
 		/**
 		Report error if failed to find a source file for a side effect import.
 
-		@default true since TypeScript 6.0, false before
+		Default: `true` since TypeScript 6.0, `false` before.
 		*/
 		noUncheckedSideEffectImports?: boolean;
 
@@ -975,7 +975,7 @@ export namespace TsConfigJson {
 		/**
 		Enable all strict type checking options.
 
-		@default true since TypeScript 6.0, false before
+		Default: `true` since TypeScript 6.0, `false` before.
 		*/
 		strict?: boolean;
 
@@ -1182,7 +1182,7 @@ export namespace TsConfigJson {
 		/**
 		Enable lib replacement.
 
-		@default false since TypeScript 6.0, true before
+		Default: `false` since TypeScript 6.0, `true` before.
 		*/
 		libReplacement?: boolean;
 	};
