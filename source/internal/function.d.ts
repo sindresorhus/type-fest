@@ -60,8 +60,6 @@ type MaxOverloadPatterns = 4;
 type OverloadIndex = IntRange<0, MaxOverloadPatterns>;
 /**
 Extract the Nth-from-last (N < MaxOverloadPatterns) overload of a function type as a standalone function, correctly preserving implicit `this` (omitted) vs explicit `this` (kept).
-
-F can contain a `() => Unique` sentinel (prepended by `CollectOverloads`).
 */
 type NthLastOverload<F extends (...args: any) => any, N extends OverloadIndex> = F extends {
 	(this: infer T3, ...args: infer P3 extends UnknownArray): infer R3;
@@ -75,9 +73,7 @@ type NthLastOverload<F extends (...args: any) => any, N extends OverloadIndex> =
 		1: [T1, P1, R1];
 		0: [T0, P0, R0];
 	}[N] extends [infer T, infer P extends UnknownArray, infer R]
-		? IsEqual<R, Unique> extends true
-			? undefined // No overload at this position
-			: HasExplicitThis<F, T, P, R> extends true
+		? HasExplicitThis<F, T, P, R> extends true
 				? (this: T, ...args: P) => R
 				: (...args: P) => R
 		: never)
@@ -102,11 +98,13 @@ export type CollectOverloads<
 	N extends OverloadIndex = 0,
 	ResultOverloads extends Array<(...args: any) => any> = [],
 > = NthLastOverload<AllOverloads, N> extends infer ExtractedN extends (...args: any) => any
-	? IsEqual<NthLastOverload<ExtractedN & AllOverloads, N>, ExtractedN> extends true
-		? Sum<N, 1> extends infer NextN extends OverloadIndex
-			? CollectOverloads<F, AllOverloads, NextN, [ExtractedN, ...ResultOverloads]>
-			: [ExtractedN, ...ResultOverloads]
-		: CollectOverloads<F, ExtractedN & AllOverloads, N, [ExtractedN, ...ResultOverloads]>
-	: ResultOverloads;
+	? IsEqual<ExtractedN, () => Unique> extends true
+		? ResultOverloads
+		: IsEqual<NthLastOverload<ExtractedN & AllOverloads, N>, ExtractedN> extends true
+			? Sum<N, 1> extends infer NextN extends OverloadIndex
+				? CollectOverloads<F, AllOverloads, NextN, [ExtractedN, ...ResultOverloads]>
+				: [ExtractedN, ...ResultOverloads]
+			: CollectOverloads<F, ExtractedN & AllOverloads, N, [ExtractedN, ...ResultOverloads]>
+	: never;
 
 export {};
