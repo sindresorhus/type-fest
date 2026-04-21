@@ -248,9 +248,9 @@ Click the type names for complete docs.
 
 ### Function
 
-- [`Overloads`](source/function-overloads.d.ts) - Extract all overload signatures of the given function type as a tuple, preserving declaration order.
-- [`OverloadParameters`](source/function-overloads.d.ts) - Extract the parameter types of all overloads as a union.
-- [`OverloadReturnType`](source/function-overloads.d.ts) - Extract the return types of all overloads as a union.
+- [`Overloads`](source/overloads.d.ts) - Extract all overload signatures of the given function type as a tuple, preserving declaration order.
+- [`OverloadParameters`](source/overload-parameters.d.ts) - Extract the parameter types of all overloads as a union.
+- [`OverloadReturnType`](source/overload-return-type.d.ts) - Extract the return types of all overloads as a union.
 - [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
 - [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
 
