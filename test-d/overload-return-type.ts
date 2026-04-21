@@ -7,3 +7,6 @@ type Function2 = (foo: bigint, ...bar: any[]) => void;
 
 declare const overloadReturnType: OverloadReturnType<Function1 & Function2>;
 expectType<object | void>(overloadReturnType);
+
+declare const anyOverloadReturnType: OverloadReturnType<any>;
+expectType<any>(anyOverloadReturnType);

@@ -45,7 +45,7 @@ type RequestOverloadsUnion = Overloads<typeof request>[number];
 */
 export type Overloads<FunctionType extends (...args: any) => any> = FunctionType extends unknown
 	? IsAny<FunctionType> extends true
-		? [(...arguments_: any[]) => any]
+		? any
 		: CollectOverloads<FunctionType>
 	: never;
 

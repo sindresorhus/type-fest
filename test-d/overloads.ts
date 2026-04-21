@@ -129,11 +129,9 @@ expectType<[
 	Function12,
 ]>(manyOverloads);
 
-// Edge case: `any` returns a single generic function signature
 declare const anyOverload: Overloads<any>;
-expectType<[(...arguments_: any[]) => any]>(anyOverload);
+expectType<any>(anyOverload);
 
-// Edge case: `never` returns never (distributes over union)
 declare const neverOverload: Overloads<never>;
 expectType<never>(neverOverload);
 
