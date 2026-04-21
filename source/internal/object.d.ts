@@ -3,7 +3,6 @@ import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
 import type {RequiredKeysOf} from '../required-keys-of.d.ts';
 import type {Merge} from '../merge.d.ts';
-import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
@@ -228,7 +227,7 @@ export type ApplyDefaultOptions<
 		If<IsNever<SpecifiedOptions>, Defaults,
 			Simplify<Merge<Defaults, {
 				[Key in keyof SpecifiedOptions
-				as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
+				as undefined extends Required<Options>[Key & keyof Options] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
 				]: SpecifiedOptions[Key]
 			}> & Required<Options>>>>; // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
 
