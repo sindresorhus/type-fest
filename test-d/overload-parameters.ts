@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OverloadParameters} from '../index.js';
+import type {OverloadParameters} from '../index.d.ts';
 
 // The details of overload enumeration are tested in overloads.ts, so only one case is tested here.
 type Function1 = (foo: string, bar: number) => object;

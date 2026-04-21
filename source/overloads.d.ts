@@ -1,5 +1,9 @@
-import type {CollectOverloads} from './internal/index.js';
-import type {IsAny} from './is-any.js';
+import type {HasExplicitThis} from './internal/index.d.ts';
+import type {IntRange} from './int-range.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {Sum} from './sum.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Extract all overload signatures of the given function type as a tuple, preserving declaration order.
@@ -45,6 +49,58 @@ export type Overloads<FunctionType extends (...args: any) => any> = FunctionType
 		: CollectOverloads<FunctionType>
 	: never;
 
+type MaxOverloadPatterns = 4;
+type OverloadIndex = IntRange<0, MaxOverloadPatterns>;
+/**
+Extract the Nth-from-last (N < MaxOverloadPatterns) overload of a function type as a standalone function, correctly preserving implicit `this` (omitted) vs explicit `this` (kept).
+*/
+type NthLastOverload<F extends (...args: any) => any, N extends OverloadIndex> = F extends {
+	(this: infer T3, ...args: infer P3 extends UnknownArray): infer R3;
+	(this: infer T2, ...args: infer P2 extends UnknownArray): infer R2;
+	(this: infer T1, ...args: infer P1 extends UnknownArray): infer R1;
+	(this: infer T0, ...args: infer P0 extends UnknownArray): infer R0;
+}
+	? ({
+		3: [T3, P3, R3];
+		2: [T2, P2, R2];
+		1: [T1, P1, R1];
+		0: [T0, P0, R0];
+	}[N] extends [infer T, infer P extends UnknownArray, infer R]
+		? HasExplicitThis<F, T, P, R> extends true
+			? (this: T, ...args: P) => R
+			: (...args: P) => R
+		: never)
+	: never;
 
+declare const unique: unique symbol;
+type Unique = typeof unique;
+
+/**
+Extracts TypeScript's enumerated overload list into a tuple (see "Overload enumeration" above).
+
+`AllOverloads` defaults to `(() => Unique) & F`, prepending a `() => Unique` sentinel that marks the boundary of the original overloads. Each iteration extracts `NthLastOverload<AllOverloads, N>` and then checks whether intersecting the extracted overload onto `AllOverloads` changes what position N sees:
+
+- **Effect observed** (the two differ): the intersection advanced the view. Output `ExtractedN`, intersect it onto `AllOverloads`, and continue with the same N.
+- **No effect** (they are equal): the intersection would not advance the view (e.g. aliasing generic overloads that infer to the same concrete signature). Output `ExtractedN` without intersecting, and advance N to the next position.
+- **Sentinel hit** (`NthLastOverload` returns `undefined`): no original overload at this depth. Return the accumulated result.
+
+The loop terminates when either N exceeds `OverloadIndex` or the sentinel is reached.
+
+@see https://github.com/microsoft/TypeScript/issues/32164#issuecomment-1146737709
+*/
+type CollectOverloads<
+	F extends (...args: any) => any,
+	AllOverloads extends (...args: any) => any = (() => Unique) & F,
+	N extends OverloadIndex = 0,
+	ResultOverloads extends Array<(...args: any) => any> = [],
+> = NthLastOverload<AllOverloads, N> extends infer ExtractedN extends (...args: any) => any
+	? IsEqual<ExtractedN, () => Unique> extends true
+		? ResultOverloads
+		: IsEqual<NthLastOverload<ExtractedN & AllOverloads, N>, ExtractedN> extends true
+			? Sum<N, 1> extends infer NextN extends OverloadIndex
+				? CollectOverloads<F, AllOverloads, NextN, [ExtractedN, ...ResultOverloads]>
+				: [ExtractedN, ...ResultOverloads]
+			: CollectOverloads<F, ExtractedN & AllOverloads, N, [ExtractedN, ...ResultOverloads]>
+	: never;
 
 export {};

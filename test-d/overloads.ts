@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual, Overloads, OverloadReturnType, UnknownArray} from '../index.js';
+import type {IsEqual, Overloads, UnknownArray} from '../index.d.ts';
 
 /*
 Neither `expectType` nor `IsEqual` can distinguish implicit `this` from explicit `this: unknown`:

@@ -1,4 +1,4 @@
-import type {Overloads} from "./overloads.js";
+import type {Overloads} from './overloads.d.ts';
 
 /**
 Extract the parameter types of all overloads as a union.
