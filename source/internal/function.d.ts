@@ -7,7 +7,7 @@ Obtain the parameters of a function type in a tuple.
 
 This works even when the parameters type is a readonly array.
 */
-export type Parameters<T extends (...args: any) => any> = T extends (...args: infer P extends UnknownArray) => any ? P : never;
+export type FunctionParameters<T extends (...args: any) => any> = T extends (...args: infer P extends UnknownArray) => any ? P : never;
 
 /*
 Internal documentation: TypeScript's overload enumeration behavior

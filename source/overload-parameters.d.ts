@@ -1,3 +1,4 @@
+import type {FunctionParameters} from './internal/index.d.ts';
 import type {Overloads} from './overloads.d.ts';
 
 /**
@@ -20,6 +21,6 @@ Known limitations are the same as {@link Overloads}.
 
 @category Function
 */
-export type OverloadParameters<FunctionType extends (...args: any) => any> = Parameters<Overloads<FunctionType>[number]>;
+export type OverloadParameters<FunctionType extends (...args: any) => any> = FunctionParameters<Overloads<FunctionType>[number]>;
 
 export {};
