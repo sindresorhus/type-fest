@@ -99,3 +99,13 @@ expectType<CamelCase<'fooBAR:biz', {splitOnPunctuation: true; preserveConsecutiv
 expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true}>>('fooBar01');
 expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>('fooBar01');
 expectType<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>>('fooBar01');
+
+expectType<CamelCase<'foo_bar', {preserveLeadingUnderscores: true}>>('fooBar');
+expectType<CamelCase<'_foo_bar', {preserveLeadingUnderscores: true}>>('_fooBar');
+expectType<CamelCase<'__foo_bar', {preserveLeadingUnderscores: true}>>('__fooBar');
+expectType<CamelCase<'_FOO_BAR', {preserveLeadingUnderscores: true}>>('_fooBar');
+expectType<CamelCase<'__FOO_BAR', {preserveLeadingUnderscores: true}>>('__fooBar');
+expectType<CamelCase<'_foo-bar', {preserveLeadingUnderscores: true}>>('_fooBar');
+expectType<CamelCase<'_fooBAR', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>('_fooBAR');
+expectType<CamelCase<'_foo_bar'>>('fooBar');
+expectType<CamelCase<'_foo_bar', {preserveLeadingUnderscores: false}>>('fooBar');

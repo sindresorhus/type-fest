@@ -42,3 +42,9 @@ const result: CamelCasedProperties<User> = {
 };
 expectType<CamelCasedProperties<User>>(result);
 expectType<CamelCasedProperties<UserPunctuated, {splitOnPunctuation: true}>>(result);
+
+declare const withLeadingUnderscores: CamelCasedProperties<{_foo_bar: string; __baz_qux: number}, {preserveLeadingUnderscores: true}>;
+expectType<{_fooBar: string; __bazQux: number}>(withLeadingUnderscores);
+
+declare const withLeadingUnderscoresDefault: CamelCasedProperties<{_foo_bar: string}>;
+expectType<{fooBar: string}>(withLeadingUnderscoresDefault);

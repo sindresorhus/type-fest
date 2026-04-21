@@ -1,5 +1,5 @@
 import {expectAssignable, expectType} from 'tsd';
-import type {UnionToTuple} from '../index.d.ts';
+import type {IntClosedRange, UnionToTuple} from '../index.d.ts';
 
 type Options = UnionToTuple<'a' | 'b' | 'c'>;
 // Results unordered
@@ -18,6 +18,13 @@ expectType<Options2[number]>({} as (1 | false | true));
 // See [this comment](https://github.com/sindresorhus/type-fest/pull/1349#issuecomment-3858719735) for more details.
 type DifferentModifierUnion = {readonly a: 0} | {a: 0};
 expectType<DifferentModifierUnion>({} as UnionToTuple<DifferentModifierUnion>[number]);
+
+// Long unions
+expectType<50>({} as UnionToTuple<IntClosedRange<1, 50>>['length']);
+expectType<200>({} as UnionToTuple<IntClosedRange<1, 200>>['length']);
+
+// Indexable with `"length"`
+type Test<T> = UnionToTuple<T>['length'];
 
 // Edge cases.
 expectType<[]>({} as UnionToTuple<never>);

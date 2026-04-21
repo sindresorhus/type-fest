@@ -90,3 +90,7 @@ expectType<{fooBar: {barBaz: any}; biz: any}>({} as CamelCasedPropertiesDeep<{fo
 
 expectType<{'fooBar': unknown}>({} as CamelCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
 expectType<{'fooBar': {'barBaz': unknown}; biz: unknown}>({} as CamelCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);
+
+expectType<{_fooBar: {_bazQux: string}}>({} as CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}, {preserveLeadingUnderscores: true}>);
+expectType<{__fooBar: string}>({} as CamelCasedPropertiesDeep<{__foo_bar: string}, {preserveLeadingUnderscores: true}>);
+expectType<{fooBar: {bazQux: string}}>({} as CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}>);
