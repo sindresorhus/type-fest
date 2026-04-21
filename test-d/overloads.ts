@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsEqual, Overloads, OverloadParameters, OverloadReturnType, UnknownArray} from '../index.d.ts';
+import type {IsEqual, Overloads, OverloadReturnType, UnknownArray} from '../index.js';
 
 /*
 Neither `expectType` nor `IsEqual` can distinguish implicit `this` from explicit `this: unknown`:
@@ -266,11 +266,3 @@ declare const implicitThenExplicitThisUnknown: Overloads<Function1 & Function1Wi
 expectType<IsEqualStrict<typeof implicitThenExplicitThisUnknown, [Function1]>>(true);
 declare const explicitThisUnknownThenImplicit: Overloads<Function1WithThis<unknown> & Function1>;
 expectType<IsEqualStrict<typeof explicitThisUnknownThenImplicit, [Function1WithThis<unknown>]>>(true);
-
-// === OverloadParameters / OverloadReturnType ===
-
-declare const overloadParameters: OverloadParameters<Function1 & Function2>;
-expectType<[foo: string, bar: number] | [foo: bigint, ...bar: any[]]>(overloadParameters);
-
-declare const overloadReturnType: OverloadReturnType<Function1 & Function2>;
-expectType<object | void>(overloadReturnType);
