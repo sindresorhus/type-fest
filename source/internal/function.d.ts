@@ -49,7 +49,9 @@ Intersects `(this: Unique, ...args: Parameters) => Return` onto the function typ
 */
 export type HasExplicitThis<
 	FunctionType extends (...args: any) => any,
-	This, Parameters_ extends UnknownArray, Return,
+	This,
+	Parameters_ extends UnknownArray,
+	Return,
 > = IsUnknown<This> extends true
 	? IsEqual<ThisParameterType<FunctionType & ((this: Unique, ...args: Parameters_) => Return)>, Unique>
 	: true;
