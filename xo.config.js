@@ -66,6 +66,7 @@ const xoConfig = [
 		rules: {
 			'unicorn/no-immediate-mutation': 'off',
 			'require-unicode-regexp': 'off',
+			'@typescript-eslint/no-unnecessary-type-assertion': 'off',
 		},
 	},
 	{
