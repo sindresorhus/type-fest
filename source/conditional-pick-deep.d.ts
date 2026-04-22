@@ -15,7 +15,7 @@ Assert the condition according to the {@link ConditionalPickDeepOptions.conditio
 */
 type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions> = Options['condition'] extends 'equality'
 	? IsEqual<Type, Condition>
-	: Type extends Condition
+	: [Type] extends [Condition]
 		? true
 		: false;
 
@@ -114,7 +114,7 @@ type _ConditionalPickDeep<
 > = ConditionalSimplifyDeep<ConditionalExcept<{
 	[Key in keyof Type]: AssertCondition<Type[Key], Condition, Options> extends true
 		? Type[Key]
-		: IsPlainObject<Type[Key]> extends true
+		: IsPlainObject<NonNullable<Type[Key]>> extends true
 			? _ConditionalPickDeep<Type[Key], Condition, Options>
 			: typeof conditionalPickDeepSymbol;
 }, (typeof conditionalPickDeepSymbol | undefined) | EmptyObject>, never, UnknownRecord>;
