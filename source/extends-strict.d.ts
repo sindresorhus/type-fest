@@ -2,7 +2,6 @@ import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {And} from './and.d.ts';
-import type {Not} from './internal/type.d.ts';
 import type {Or} from './or.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 
