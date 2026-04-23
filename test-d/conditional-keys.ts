@@ -62,7 +62,7 @@ expectType<never>({} as ConditionalKeys<{length: number} | [number], number>);
 expectType<'a' | 'b' | 'c' | 'd' | 'e'>(
 	{} as ConditionalKeys<{a?: string; b: string | number; readonly c: boolean; readonly d?: bigint; e: never}, any>,
 );
-expectType<'a' | 'b' | 'c' | 'd'>(
+expectType<'a' | 'b' | 'c' | 'd' | 'e'>(
 	{} as ConditionalKeys<{a?: string; b: string | number; readonly c: boolean; readonly d?: bigint; e: never}, unknown>,
 );
 

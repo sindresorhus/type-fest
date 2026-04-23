@@ -4,6 +4,7 @@ import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {And} from './and.d.ts';
 import type {Or} from './or.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
+import type {OrAll} from './or-all.d.ts';
 
 export type ExtendsStrictOptions = {
 	/**
@@ -27,7 +28,7 @@ export type ExtendsStrictOptions = {
 	/**
 	Whether `never` extends every other type.
 
-	When enabled, `never` is not treated as a bottom type and only extends itself (or `any`).
+	When enabled, `never` is not treated as a bottom type and only extends itself (or `any` / `unknown`).
 
 	@default true
 
@@ -45,6 +46,9 @@ export type ExtendsStrictOptions = {
 	//=> true
 
 	type T4 = ExtendsStrict<never, any, {strictNever: true}>;
+	//=> true
+
+	type T5 = ExtendsStrict<never, unknown, {strictNever: true}>;
 	//=> true
 	```
 
@@ -134,7 +138,7 @@ type _ExtendsStrict<Left, Right, Options extends Required<ExtendsStrictOptions>>
 		? Or<IsAny<Right>, IsUnknown<Right>>
 		: IsNever<Left> extends true
 			? Options['strictNever'] extends true
-				? Or<IsNever<Right>, IsAny<Right>>
+				? OrAll<[IsNever<Right>, IsAny<Right>, IsUnknown<Right>]>
 				: true
 			: Options['distributiveUnions'] extends true
 				? Left extends Right

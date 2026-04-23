@@ -89,7 +89,7 @@ expectType<ExtendsStrict<1 | 2 | 3, number, {distributiveUnions: true}>>(true);
 expectType<ExtendsStrict<never, string, {strictNever: true}>>(false);
 expectType<ExtendsStrict<never, never, {strictNever: true}>>(true);
 expectType<ExtendsStrict<never, any, {strictNever: true}>>(true);
-expectType<ExtendsStrict<never, unknown, {strictNever: true}>>(false);
+expectType<ExtendsStrict<never, unknown, {strictNever: true}>>(true);
 
 expectType<ExtendsStrict<never, string, {strictNever: false}>>(true);
 expectType<ExtendsStrict<never, never, {strictNever: false}>>(true);
