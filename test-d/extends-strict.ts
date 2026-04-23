@@ -86,21 +86,26 @@ expectType<ExtendsStrict<number | bigint, string, {distributiveUnions: true}>>(f
 expectType<ExtendsStrict<1 | 2 | 3, number, {distributiveUnions: true}>>(true);
 
 // `strictNever`
-expectType<ExtendsStrict<never, string, {strictNever: false}>>(true);
-expectType<ExtendsStrict<never, never, {strictNever: false}>>(true);
-expectType<ExtendsStrict<never, any, {strictNever: false}>>(true);
-expectType<ExtendsStrict<never, unknown, {strictNever: false}>>(true);
-
 expectType<ExtendsStrict<never, string, {strictNever: true}>>(false);
 expectType<ExtendsStrict<never, never, {strictNever: true}>>(true);
 expectType<ExtendsStrict<never, any, {strictNever: true}>>(true);
 expectType<ExtendsStrict<never, unknown, {strictNever: true}>>(false);
 
+expectType<ExtendsStrict<never, string, {strictNever: false}>>(true);
+expectType<ExtendsStrict<never, never, {strictNever: false}>>(true);
+expectType<ExtendsStrict<never, any, {strictNever: false}>>(true);
+expectType<ExtendsStrict<never, unknown, {strictNever: false}>>(true);
+
 // `strictAny`
-expectType<ExtendsStrict<any, string, {strictAny: false}>>(true);
 expectType<ExtendsStrict<any, string, {strictAny: true}>>(false);
+expectType<ExtendsStrict<any, never, {strictAny: true}>>(false);
 expectType<ExtendsStrict<any, any, {strictAny: true}>>(true);
 expectType<ExtendsStrict<any, unknown, {strictAny: true}>>(true);
+
+expectType<ExtendsStrict<any, string, {strictAny: false}>>(true);
+expectType<ExtendsStrict<any, never, {strictAny: false}>>(false);
+expectType<ExtendsStrict<any, any, {strictAny: false}>>(true);
+expectType<ExtendsStrict<any, unknown, {strictAny: false}>>(true);
 
 // When `strictAny` is `false`, behavior depends on `distributiveUnions`
 expectType<ExtendsStrict<any, string, {strictAny: false; distributiveUnions: true}>>({} as boolean);
