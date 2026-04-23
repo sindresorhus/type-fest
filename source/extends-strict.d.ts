@@ -47,6 +47,8 @@ export type ExtendsStrictOptions = {
 	type T4 = ExtendsStrict<never, any, {strictNever: true}>;
 	//=> true
 	```
+
+	Note: This option only has an effect when checking assignability from `never` (`ExtendsStrict<never, ...>`), and not when checking assignability to `never` (`ExtendsStrict<..., never>`).
 	*/
 	strictNever?: boolean;
 
@@ -89,6 +91,8 @@ export type ExtendsStrictOptions = {
 	type T3 = ExtendsStrict<any, unknown, {strictAny: false; distributiveUnions: true}>;
 	//=> true
 	```
+
+	Note: This option only has an effect when checking assignability from `any` (`ExtendsStrict<any, ...>`), and not when checking assignability to `any` (`ExtendsStrict<..., any>`).
 	*/
 	strictAny?: boolean;
 };
