@@ -35,16 +35,16 @@ export type ExtendsStrictOptions = {
 	```
 	import type {ExtendsStrict} from 'type-fest';
 
-	type T1 = ExtendsStrict<never, number, {strictNever: false}>;
-	//=> true
-
-	type T2 = ExtendsStrict<never, number, {strictNever: true}>;
+	type T1 = ExtendsStrict<never, number, {strictNever: true}>;
 	//=> false
 
-	type T3 = ExtendsStrict<never, never, {strictNever: false}>;
+	type T2 = ExtendsStrict<never, number, {strictNever: false}>;
 	//=> true
 
-	type T4 = ExtendsStrict<never, any, {strictNever: false}>;
+	type T3 = ExtendsStrict<never, never, {strictNever: true}>;
+	//=> true
+
+	type T4 = ExtendsStrict<never, any, {strictNever: true}>;
 	//=> true
 	```
 	*/
@@ -61,16 +61,16 @@ export type ExtendsStrictOptions = {
 	```
 	import type {ExtendsStrict} from 'type-fest';
 
-	type T1 = ExtendsStrict<any, number, {strictAny: false; distributiveUnions: false}>;
-	//=> true
-
-	type T2 = ExtendsStrict<any, number, {strictAny: true}>;
+	type T1 = ExtendsStrict<any, number, {strictAny: true}>;
 	//=> false
 
-	type T3 = ExtendsStrict<any, any, {strictAny: false}>;
+	type T2 = ExtendsStrict<any, number, {strictAny: false; distributiveUnions: false}>;
 	//=> true
 
-	type T4 = ExtendsStrict<any, unknown, {strictAny: false}>;
+	type T3 = ExtendsStrict<any, any, {strictAny: true}>;
+	//=> true
+
+	type T4 = ExtendsStrict<any, unknown, {strictAny: true}>;
 	//=> true
 	```
 
