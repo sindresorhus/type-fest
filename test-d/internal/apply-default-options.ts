@@ -45,6 +45,9 @@ expectType<{recurseIntoArrays: undefined}>(undefinedAsValidValue);
 declare const optionalOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {maxRecursionDepth?: 5; bracketNotation?: true}>;
 expectType<DefaultPathsOptions>(optionalOptionsGetOverwritten);
 
+declare const anyAsValue: ApplyDefaultOptions<{includes?: any}, {includes: any}, {includes: string}>;
+expectType<{includes: string}>(anyAsValue);
+
 declare const neverAsOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, never>;
 expectType<DefaultPathsOptions>(neverAsOptionsGetOverwritten);
 
@@ -69,3 +72,17 @@ declare const noDefaultForRequiredOptions: ApplyDefaultOptions<{fixedLengthOnly:
 // The output of `ApplyDefaultOptions<SomeOption, ...>` should be assignable to `Required<SomeOption>`
 type SomeType<Options extends PathsOptions = {}> = _SomeType<ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
 type _SomeType<Options extends Required<PathsOptions>> = Options;
+
+// @ts-expect-error
+type SomeType2<Options extends PathsOptions = {}> = _SomeType2<ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
+type _SomeType2<Options extends Required<PathsOptions> & {extra: string}> = Options;
+
+type SomeTypeOptions = {foo: string; bar?: number};
+type DefaultSomeTypeOptions = {bar: 0};
+
+type SomeType3<Options extends SomeTypeOptions> = _SomeType3<ApplyDefaultOptions<SomeTypeOptions, DefaultSomeTypeOptions, Options>>;
+type _SomeType3<Options extends Required<SomeTypeOptions>> = Options;
+
+// @ts-expect-error
+type SomeType4<Options extends SomeTypeOptions> = _SomeType4<ApplyDefaultOptions<SomeTypeOptions, DefaultSomeTypeOptions, Options>>;
+type _SomeType4<Options extends Required<SomeTypeOptions> & {extra: string}> = Options;
