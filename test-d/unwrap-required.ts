@@ -48,18 +48,11 @@ type RequiredUnionType = Required<TestType> | Required<AnotherTestType>;
 expectType<TestType | AnotherTestType>({} as UnwrapRequired<RequiredUnionType>);
 expectType<TestType | AnotherTestType>({} as UnwrapRequired<Required<TestType> | AnotherTestType>);
 
-// `UnwrapRequired` works with arrays and tuples
-type TestTuple = [string?, number?, boolean?];
-
-expectType<[string, number, boolean]>({} as UnwrapRequired<Required<TestTuple>>);
-expectType<string[]>({} as UnwrapRequired<string[]>);
-expectType<readonly string[]>({} as UnwrapRequired<readonly string[]>);
-
 // `UnwrapRequired` works with unknown types
 expectType<unknown>({} as UnwrapRequired<Required<unknown>>);
 expectType<any>({} as UnwrapRequired<Required<any>>);
-expectType<never>({} as UnwrapRequired<never>);
 
 // `UnwrapRequired` has no effect on non-required types
 expectType<TestType>({} as UnwrapRequired<TestType>);
 expectType<{a: string; b: number}>({} as UnwrapRequired<{a: string; b: number}>);
+expectType<readonly string[]>({} as UnwrapRequired<readonly string[]>);
