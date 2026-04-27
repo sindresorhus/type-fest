@@ -16,7 +16,9 @@ type DraftContactFormData = UnwrapRequired<ContactFormData>;
 //=> {email: string; message?: string}
 ```
 
-Note: If the provided type isn’t of `Required<T>`, `UnwrapRequired` has no effect on the original type.
+Note 1: If the provided type isn’t of `Required<T>`, `UnwrapRequired` has no effect on the original type.
+
+Note 2: `Required<T>` is lossy for tuples with optional elements. `UnwrapRequired` cannot recover the original tuple type in these cases. Object types with optional properties are unaffected by this limitation (and work as expected with `UnwrapRequired`).
 
 @category Object
 */
