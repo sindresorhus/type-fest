@@ -23,11 +23,7 @@ Note: If the provided type isn’t of `Partial<T>`, `UnwrapPartial` has no effec
 */
 export type UnwrapPartial<PartialObjectType> =
 	PartialObjectType extends Partial<infer ObjectType>
-		? (
-			Partial<ObjectType> extends PartialObjectType
-				? ObjectType
-				: PartialObjectType
-		)
+		? ObjectType
 		: PartialObjectType;
 
 export {};
