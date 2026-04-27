@@ -208,6 +208,9 @@ expectType<`a.${string}`>(unionLeaves2); // Collapsed union
 declare const unionLeaves3: Paths<{a: string | {toLowerCase: number}}, {leavesOnly: true}>;
 expectType<'a' | 'a.toLowerCase'>(unionLeaves3);
 
+declare const unionLeaves4: Paths<{a: {b: string} | {c: string}}, {leavesOnly: true}>; // No common keys b/w `{b: string}` and `{c: string}`, but this shouldn't make `a` a leaf.
+expectType<'a.b' | 'a.c'>(unionLeaves4);
+
 declare const emptyObjectLeaves: Paths<{a: {}}, {leavesOnly: true}>;
 expectType<'a'>(emptyObjectLeaves);
 
