@@ -22,11 +22,7 @@ Note: If the provided type isn’t of `Required<T>`, `UnwrapRequired` has no eff
 */
 export type UnwrapRequired<RequiredObjectType> =
 	RequiredObjectType extends Required<infer ObjectType>
-		? (
-			Required<ObjectType> extends RequiredObjectType
-				? ObjectType
-				: RequiredObjectType
-		)
+		? ObjectType
 		: RequiredObjectType;
 
 export {};
