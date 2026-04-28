@@ -24,7 +24,11 @@ Note 2: `Required<T>` is lossy for tuples with optional elements. `UnwrapRequire
 */
 export type UnwrapRequired<RequiredObjectType> =
 	RequiredObjectType extends Required<infer ObjectType>
-		? ObjectType
+		? (
+			Required<ObjectType> extends RequiredObjectType
+				? ObjectType
+				: RequiredObjectType
+		)
 		: RequiredObjectType;
 
 export {};

@@ -56,3 +56,7 @@ expectType<any>({} as UnwrapRequired<Required<any>>);
 expectType<TestType>({} as UnwrapRequired<TestType>);
 expectType<{a: string; b: number}>({} as UnwrapRequired<{a: string; b: number}>);
 expectType<readonly string[]>({} as UnwrapRequired<readonly string[]>);
+expectType<Set<string>>({} as UnwrapRequired<Set<string>>);
+expectType<Map<string, string>>({} as UnwrapRequired<Map<string, string>>);
+expectType<string>({} as UnwrapRequired<string>);
+expectType<() => string>({} as UnwrapRequired<() => string>);
