@@ -21,17 +21,42 @@ type DefaultGetOptions = {
 };
 
 /**
+Tries to find the longest prefix of `[CurrentKey, ...Rest]` (when joined with `.`) that is a
+direct key of `BaseType`. If `CurrentKey` alone is a key of `BaseType`, it resolves that property
+and continues traversal with `Rest`. If not, it tries appending the next element from `Rest` to
+`CurrentKey` and recurses (to handle keys that themselves contain dots). Falls back to `unknown`
+when no prefix matches.
+
+This is required so that `Get` works correctly with object keys that contain dots, for example:
+```
+type T = { ['test1.test2']: { test3: number } };
+Get<T, 'test1.test2.test3'> // should be `number`
+```
+*/
+type GetWithPathGreedy<BaseType, CurrentKey extends string, Rest extends readonly string[], Options extends Required<GetOptions>> =
+	// Try the current accumulated key as a direct key of BaseType
+	CurrentKey extends keyof BaseType
+		? Rest extends readonly []
+			// Path is fully consumed — return the property value
+			? PropertyOf<BaseType, CurrentKey, Options>
+			// More path segments remain — recurse into the value
+			: GetWithPath<PropertyOf<BaseType, CurrentKey, Options>, Rest, Options>
+		// Current key not found — try extending with the next segment (handles dotted keys)
+		: Rest extends readonly [infer NextHead extends string, ...infer NextTail extends string[]]
+			? GetWithPathGreedy<BaseType, `${CurrentKey}.${NextHead}`, NextTail, Options>
+			// No more segments to try — fall back to standard PropertyOf (handles arrays, number keys, etc.)
+			: PropertyOf<BaseType, CurrentKey, Options>;
+
+/**
 Like the `Get` type but receives an array of strings as a path parameter.
 */
 type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 	Keys extends readonly []
 		? BaseType
-		: Keys extends readonly [infer Head, ...infer Tail]
-			? GetWithPath<
-				PropertyOf<BaseType, Extract<Head, string>, Options>,
-				Extract<Tail, string[]>,
-				Options
-			>
+		: Keys extends readonly [infer Head extends string, ...infer Tail extends string[]]
+			? BaseType extends null | undefined
+				? undefined
+				: GetWithPathGreedy<BaseType, Head, Tail, Options>
 			: never;
 
 /**

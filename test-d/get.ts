@@ -136,6 +136,26 @@ expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x']>>().toEqua
 expectTypeOf<Get<{a: []}, 'a[0]'>>().toEqualTypeOf<unknown>();
 expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<unknown>();
 
+// Test keys that contain dots (issue #1372)
+// When an object has a key that itself contains a dot, `Get` should be able to traverse it.
+type WithDottedKey = {['test1.test2']: {test3: {test4: number}}};
+expectTypeOf<Get<WithDottedKey, 'test1.test2', {strict: true}>>().toEqualTypeOf<{test3: {test4: number}} | undefined>();
+expectTypeOf<Get<WithDottedKey, 'test1.test2.test3', {strict: true}>>().toEqualTypeOf<{test4: number} | undefined>();
+expectTypeOf<Get<WithDottedKey, 'test1.test2.test3.test4', {strict: true}>>().toEqualTypeOf<number | undefined>();
+
+// Using path array notation should also work
+expectTypeOf<Get<WithDottedKey, ['test1.test2', 'test3', 'test4']>>().toEqualTypeOf<number | undefined>();
+
+// A mix: normal key followed by dotted key
+type WithMixedKeys = {outer: {['a.b']: {inner: boolean}}};
+expectTypeOf<Get<WithMixedKeys, 'outer.a.b.inner', {strict: true}>>().toEqualTypeOf<boolean | undefined>();
+
+// Dotted keys should take priority over split traversal when both would be valid
+// (i.e., when 'foo' is also a key but 'foo.bar' is the intended target)
+type WithAmbiguousKeys = {['foo.bar']: string; foo: {bar: number}};
+// Non-dotted traversal 'foo' -> 'bar' should be tried first (foo IS a key of the type)
+expectTypeOf<Get<WithAmbiguousKeys, 'foo.bar', {strict: true}>>().toEqualTypeOf<number | undefined>();
+
 // Test empty path array
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, []>>();
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>();
