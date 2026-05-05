@@ -25,11 +25,9 @@ Note 2: `Required<T>` is lossy for arrays and tuples with optional elements, so 
 @category Object
 */
 export type UnwrapRequired<RequiredObjectType> =
-	// Isolate members where `Required<T>` produces unwanted results (accounting for unions)
-	Extract<RequiredObjectType, MapsSetsOrArrays | NonRecursiveType> extends infer PreservedType
-		// Recombine the preserved types with the unwrapped members
-		? PreservedType | _UnwrapRequired<Exclude<RequiredObjectType, PreservedType>>
-		: RequiredObjectType;
+	RequiredObjectType extends NonRecursiveType | MapsSetsOrArrays
+		? RequiredObjectType
+		: _UnwrapRequired<RequiredObjectType>;
 
 type _UnwrapRequired<RequiredObjectType> =
 	RequiredObjectType extends Required<infer ObjectType>
