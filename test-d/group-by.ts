@@ -17,21 +17,22 @@ type Tomato = {
 };
 
 // Grouping a single type
-expectType<GroupBy<Apple, 'color'>>({
-	green: {} as Apple,
-});
+declare const singleType: GroupBy<Apple, 'color'>;
+expectType<{green: Apple}>(singleType);
 
 // Grouping discriminated unions
-expectType<GroupBy<Apple | Banana | Tomato, 'color'>>({
-	green: {} as Apple,
-	yellow: {} as Banana,
-	red: {} as Tomato,
-});
+declare const groupedByColor: GroupBy<Apple | Banana | Tomato, 'color'>;
+expectType<{
+	green: Apple;
+	yellow: Banana;
+	red: Tomato;
+}>(groupedByColor);
 
-expectType<GroupBy<Apple | Banana | Tomato, 'kind'>>({
-	fruit: {} as Apple | Banana,
-	vegetable: {} as Tomato,
-});
+declare const groupedByKind: GroupBy<Apple | Banana | Tomato, 'kind'>;
+expectType<{
+	fruit: Apple | Banana;
+	vegetable: Tomato;
+}>(groupedByKind);
 
 // Grouping a key that is a union
 type WithUnionKey = {
@@ -39,18 +40,20 @@ type WithUnionKey = {
 	value: number;
 };
 
-expectType<GroupBy<WithUnionKey, 'type'>>({
-	a: {} as WithUnionKey,
-	b: {} as WithUnionKey,
-});
+declare const groupedByUnionKey: GroupBy<WithUnionKey, 'type'>;
+expectType<{
+	a: WithUnionKey;
+	b: WithUnionKey;
+}>(groupedByUnionKey);
 
 // Test with numeric keys
 type WithNumberKey = {id: 1 | 2; name: string};
 
-expectType<GroupBy<WithNumberKey, 'id'>>({
-	1: {} as WithNumberKey,
-	2: {} as WithNumberKey,
-});
+declare const groupedByNumberKey: GroupBy<WithNumberKey, 'id'>;
+expectType<{
+	1: WithNumberKey;
+	2: WithNumberKey;
+}>(groupedByNumberKey);
 
 // Edge cases with any, never, unknown
 expectType<GroupBy<any, never>>({} as Record<string, any>);

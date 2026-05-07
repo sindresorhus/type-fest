@@ -19,13 +19,13 @@ type Apple = {
 };
 
 type Banana = {
-    color: 'yellow';
-    kind: 'fruit';
+	color: 'yellow';
+	kind: 'fruit';
 };
 
 type Tomato = {
-    color: 'red';
-    kind: 'vegetable';
+	color: 'red';
+	kind: 'vegetable';
 };
 
 type GroupedByColor = GroupBy<Apple | Banana | Tomato, 'color'>;
