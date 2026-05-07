@@ -59,6 +59,7 @@ export type {ConditionalExcept} from './source/conditional-except.d.ts';
 export type {ConditionalKeys} from './source/conditional-keys.d.ts';
 export type {ConditionalPick} from './source/conditional-pick.d.ts';
 export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep.d.ts';
+export type {GroupBy} from './source/group-by.d.ts';
 export type {UnionToIntersection} from './source/union-to-intersection.d.ts';
 export type {Stringified} from './source/stringified.d.ts';
 export type {StringSlice} from './source/string-slice.d.ts';
