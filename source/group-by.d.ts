@@ -1,4 +1,4 @@
-import type { ConditionalKeys } from "./conditional-keys.d.ts";
+import type {ConditionalKeys} from './conditional-keys.d.ts';
 
 /**
 Groups items by the value of a specified key.
