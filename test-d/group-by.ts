@@ -53,7 +53,7 @@ expectType<GroupBy<WithNumberKey, "id">>({
 });
 
 // Edge cases with any, never, unknown
-expectType<GroupBy<any, never>>({} as {});
+expectType<GroupBy<any, never>>({} as Record<string, any>);
 expectType<GroupBy<never, never>>({} as {});
 expectType<GroupBy<unknown, never>>({} as {});
 
