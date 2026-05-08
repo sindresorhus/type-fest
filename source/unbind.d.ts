@@ -1,7 +1,7 @@
 import type {ExclusifyUnion} from './exclusify-union.d.ts';
 
 /**
-Collapse a union type into a single object type by merging all members.
+Collapse a union into a single object type by merging all members.
 
 Each property becomes:
 - A union of all possible values across the union members
@@ -25,7 +25,7 @@ type Failure = {
 };
 
 type Result = Unbind<Success | Failure>;
-//=> {
+// {
 // 	kind: 'success' | 'error';
 // 	data?: string;
 // 	error?: Error;
