@@ -126,6 +126,11 @@ expectType<never>(undefined as unknown as GetTagMetadata<UrlString, 'URL'>);
 type JsonOf<T> = Tagged<string, 'JSON', T>;
 expectType<number>(JSON.parse('43') as GetTagMetadata<JsonOf<number>, 'JSON'>);
 
+// GetTagMetadata: NoInfer prevents TagName widening from Type's structure (issue #848)
+type MultiTagged = Tagged<Tagged<string, 'TagA', number>, 'TagB', boolean>;
+expectType<number>(undefined as unknown as GetTagMetadata<MultiTagged, 'TagA'>);
+expectType<boolean>(undefined as unknown as GetTagMetadata<MultiTagged, 'TagB'>);
+
 // It's a type error to try to get the metadata for a tag that doesn't exist on a type.
 // @ts-expect-error
 const _a = '' as GetTagMetadata<UrlString, 'NonExistentTag'>;
