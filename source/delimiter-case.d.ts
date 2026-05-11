@@ -69,10 +69,15 @@ export type DelimiterCase<
 > = Value extends string
 	? IsStringLiteral<Value> extends false
 		? Value
-		: Lowercase<RemovePrefix<DelimiterCaseFromArray<
-			Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
-			Delimiter
-		>, string, {strict: false}>>
+		: Lowercase<Delimiter extends ''
+			? DelimiterCaseFromArray<
+				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
+				Delimiter
+			>
+			: RemovePrefix<DelimiterCaseFromArray<
+				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
+				Delimiter
+			>, string, {strict: false}>>
 	: Value;
 
 export {};

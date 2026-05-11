@@ -22,6 +22,9 @@ expectType<{'hello.world1': {'foo::Bar': string}}>(withPunctuationSplit);
 declare const withPunctuationSplitAndNumbers: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectType<{'hello.world.1': {'foo::Bar': string}}>(withPunctuationSplitAndNumbers);
 
+declare const withEmptyDelimiter: DelimiterCasedProperties<{helloWorld: string; FooBar: number}, ''>;
+expectType<{helloworld: string; foobar: number}>(withEmptyDelimiter);
+
 // Verify example
 type User = {
 	userId: number;
