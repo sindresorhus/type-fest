@@ -103,11 +103,11 @@ expectType<'foo22#bar'>(
 declare const unionValue: DelimiterCase<'fooBar' | 'barBaz', '#'>;
 expectType<'foo#bar' | 'bar#baz'>(unionValue);
 
-declare const unionDelimiter: DelimiterCase<'fooBar', '#' | '$'>;
-expectType<'foo#bar' | 'foo$bar'>(unionDelimiter);
+declare const unionDelimiter: DelimiterCase<'fooBarBaz', '#' | '$'>;
+expectType<'foo#bar#baz' | 'foo$bar$baz'>(unionDelimiter);
 
-declare const unionValueAndDelimiter: DelimiterCase<'fooBar' | 'barBaz', '#' | '$'>;
-expectType<'foo#bar' | 'bar#baz' | 'foo$bar' | 'bar$baz'>(unionValueAndDelimiter);
+declare const unionValueAndDelimiter: DelimiterCase<'fooBarBaz' | 'barBazFoo', '#' | '$'>;
+expectType<'foo#bar#baz' | 'bar#baz#foo' | 'foo$bar$baz' | 'bar$baz$foo'>(unionValueAndDelimiter);
 
 const stringPart: DelimiterCase<`foo${string}`, '#'> = 'fooSomeString';
 expectType<`foo${string}`>(stringPart);

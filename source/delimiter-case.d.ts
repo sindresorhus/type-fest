@@ -13,14 +13,17 @@ type DelimiterCaseFromArray<
 	Words extends string[],
 	Delimiter extends string,
 	OutputString extends string = '',
-> = Words extends [
-	infer FirstWord extends string,
-	...infer RemainingWords extends string[],
-]
-	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${
-		StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
-	}${FirstWord}`>
-	: OutputString;
+> =
+	Delimiter extends string // For distributing `Delimiter`
+		? Words extends [
+			infer FirstWord extends string,
+			...infer RemainingWords extends string[],
+		]
+			? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${
+				StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
+			}${FirstWord}`>
+			: OutputString
+		: never;
 
 /**
 Convert a string literal to a custom string delimiter casing.
