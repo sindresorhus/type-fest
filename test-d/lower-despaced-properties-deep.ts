@@ -1,12 +1,12 @@
 import {expectType} from 'tsd';
-import type {LowerCasedPropertiesDeep} from '../index.d.ts';
+import type {LowerDespacedPropertiesDeep} from '../index.d.ts';
 
 type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
 
-declare const foo: LowerCasedPropertiesDeep<FooBar>;
+declare const foo: LowerDespacedPropertiesDeep<FooBar>;
 expectType<{helloworld: {p2p: Array<{addressline1: string}>}}>(foo);
 
-declare const bar: LowerCasedPropertiesDeep<FooBar, {splitOnNumbers: true}>;
+declare const bar: LowerDespacedPropertiesDeep<FooBar, {splitOnNumbers: true}>;
 expectType<{helloworld: {p2p: Array<{addressline1: string}>}}>(bar);
 
 type User = {
@@ -33,7 +33,7 @@ type UserWithFriendsPunctuated = {
 	'user#friends': UserPunctuated[];
 };
 
-const result: LowerCasedPropertiesDeep<UserWithFriends> = {
+const result: LowerDespacedPropertiesDeep<UserWithFriends> = {
 	userinfo: {
 		userid: 1,
 		username: 'Tom',
@@ -55,5 +55,5 @@ const result: LowerCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
-expectType<LowerCasedPropertiesDeep<UserWithFriends>>(result);
-expectType<LowerCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
+expectType<LowerDespacedPropertiesDeep<UserWithFriends>>(result);
+expectType<LowerDespacedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);

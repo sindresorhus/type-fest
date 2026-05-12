@@ -1,0 +1,41 @@
+import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
+import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {WordsOptions} from './words.d.ts';
+
+/**
+Convert top-level object properties to lowercase with words separated by spaces.
+
+This can be useful when, for example, converting some API types from a different style.
+
+@see {@link LowerSpaced}
+
+@example
+```
+import type {LowerSpacedProperties} from 'type-fest';
+
+type User = {
+	userId: number;
+	userName: string;
+};
+
+const result: LowerSpacedProperties<User> = {
+	'user id': 1,
+	'user name': 'Tom',
+};
+
+const splitOnPunctuation: LowerSpacedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	'foo bar': 'string',
+};
+```
+
+@category Change case
+@category Template literal
+@category Object
+*/
+export type LowerSpacedProperties<
+	Value,
+	Options extends WordsOptions = {},
+> = DelimiterCasedProperties<Value, ' ', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+
+export {};

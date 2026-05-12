@@ -317,9 +317,13 @@ Click the type names for complete docs.
 - [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case.
 - [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert top-level object properties to kebab case.
 - [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab case recursively.
-- [`LowerCase`](source/lower-case.d.ts) - Convert a string literal to lowercase.
-- [`LowerCasedProperties`](source/lower-cased-properties.d.ts) - Convert top-level object properties to lowercase.
-- [`LowerCasedPropertiesDeep`](source/lower-cased-properties-deep.d.ts) - Convert object properties to lowercase recursively.
+- [`LowerDespaced`](source/lower-despaced.d.ts) - Convert a string literal to lowercase without delimiters.
+- [`LowerSpaced`](source/lower-spaced.d.ts) - Convert a string literal to lowercase with words separated by spaces.
+- [`LowerCaseProperties`](source/lower-case-properties.d.ts) - Convert top-level object properties to lowercase without changing existing delimiters.
+- [`LowerSpacedProperties`](source/lower-spaced-properties.d.ts) - Convert top-level object properties to lowercase with words separated by spaces.
+- [`LowerSpacedPropertiesDeep`](source/lower-spaced-properties-deep.d.ts) - Convert object properties to lowercase with words separated by spaces recursively.
+- [`LowerDespacedProperties`](source/lower-despaced-properties.d.ts) - Convert top-level object properties to lowercase.
+- [`LowerDespacedPropertiesDeep`](source/lower-despaced-properties-deep.d.ts) - Convert object properties to lowercase recursively.
 - [`PascalCase`](source/pascal-case.d.ts) - Convert a string literal to pascal-case.
 - [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Convert top-level object properties to pascal case.
 - [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Convert object properties to pascal case recursively.

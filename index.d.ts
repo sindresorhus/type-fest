@@ -184,9 +184,13 @@ export type {CamelCasedPropertiesDeep} from './source/camel-cased-properties-dee
 export type {KebabCase} from './source/kebab-case.d.ts';
 export type {KebabCasedProperties} from './source/kebab-cased-properties.d.ts';
 export type {KebabCasedPropertiesDeep} from './source/kebab-cased-properties-deep.d.ts';
-export type {LowerCase} from './source/lower-case.d.ts';
-export type {LowerCasedProperties} from './source/lower-cased-properties.d.ts';
-export type {LowerCasedPropertiesDeep} from './source/lower-cased-properties-deep.d.ts';
+export type {LowerDespaced} from './source/lower-despaced.d.ts';
+export type {LowerSpaced} from './source/lower-spaced.d.ts';
+export type {LowerCaseProperties} from './source/lower-case-properties.d.ts';
+export type {LowerSpacedProperties} from './source/lower-spaced-properties.d.ts';
+export type {LowerSpacedPropertiesDeep} from './source/lower-spaced-properties-deep.d.ts';
+export type {LowerDespacedProperties} from './source/lower-despaced-properties.d.ts';
+export type {LowerDespacedPropertiesDeep} from './source/lower-despaced-properties-deep.d.ts';
 export type {PascalCase} from './source/pascal-case.d.ts';
 export type {PascalCasedProperties} from './source/pascal-cased-properties.d.ts';
 export type {PascalCasedPropertiesDeep} from './source/pascal-cased-properties-deep.d.ts';

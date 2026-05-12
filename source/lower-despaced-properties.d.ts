@@ -8,24 +8,24 @@ Convert top-level object properties to lowercase.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see {@link LowerCase}
-@see {@link LowerCasedPropertiesDeep}
+@see {@link LowerDespaced}
+@see {@link LowerDespacedPropertiesDeep}
 
 @example
 ```
-import type {LowerCasedProperties} from 'type-fest';
+import type {LowerDespacedProperties} from 'type-fest';
 
 type User = {
 	userId: number;
 	userName: string;
 };
 
-const result: LowerCasedProperties<User> = {
+const result: LowerDespacedProperties<User> = {
 	userid: 1,
 	username: 'Tom',
 };
 
-const splitOnPunctuation: LowerCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+const splitOnPunctuation: LowerDespacedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
 	foobar: 'string',
 };
 ```
@@ -34,7 +34,7 @@ const splitOnPunctuation: LowerCasedProperties<{'foo::bar': string}, {splitOnPun
 @category Template literal
 @category Object
 */
-export type LowerCasedProperties<
+export type LowerDespacedProperties<
 	Value,
 	Options extends WordsOptions = {},
 > = DelimiterCasedProperties<Value, '', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
