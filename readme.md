@@ -317,6 +317,9 @@ Click the type names for complete docs.
 - [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case.
 - [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert top-level object properties to kebab case.
 - [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab case recursively.
+- [`LowerCase`](source/lower-case.d.ts) - Convert a string literal to lowercase.
+- [`LowerCasedProperties`](source/lower-cased-properties.d.ts) - Convert top-level object properties to lowercase.
+- [`LowerCasedPropertiesDeep`](source/lower-cased-properties-deep.d.ts) - Convert object properties to lowercase recursively.
 - [`PascalCase`](source/pascal-case.d.ts) - Convert a string literal to pascal-case.
 - [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Convert top-level object properties to pascal case.
 - [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Convert object properties to pascal case recursively.
