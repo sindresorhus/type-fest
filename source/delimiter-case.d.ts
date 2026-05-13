@@ -1,7 +1,6 @@
 import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-literal.d.ts';
 import type {Merge} from './merge.d.ts';
-import type {RemovePrefix} from './remove-prefix.d.ts';
 import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 
 export type _DefaultDelimiterCaseOptions = Merge<_DefaultWordsOptions, {splitOnNumbers: false}>;
@@ -17,7 +16,7 @@ type DelimiterCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${
+	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? FirstWord : `${OutputString}${
 		StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
 	}${FirstWord}`>
 	: OutputString;
@@ -70,10 +69,10 @@ export type DelimiterCase<
 	? Delimiter extends string // For distributing `Delimiter`
 		? IsStringLiteral<Value> extends false
 			? Value
-			: Lowercase<RemovePrefix<DelimiterCaseFromArray<
+			: Lowercase<DelimiterCaseFromArray<
 				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
 				Delimiter
-			>, string, {strict: false}>>
+			>>
 		: never
 	: Value;
 

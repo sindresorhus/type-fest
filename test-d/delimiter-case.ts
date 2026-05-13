@@ -148,6 +148,21 @@ expectType<'foo#bar#01'>(withPunctuationSplitAndNumber);
 declare const withPunctuationSplitAndNumberSplit: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectType<'foo#bar#01'>(withPunctuationSplitAndNumberSplit);
 
+declare const startsWithPunctuation: DelimiterCase<'^fooBarBaz', ':'>;
+expectType<'^foo:bar:baz'>(startsWithPunctuation);
+
+declare const startsWithPunctuationSameAsDelimiter: DelimiterCase<'#fooBarBaz', '#'>;
+expectType<'#foo#bar#baz'>(startsWithPunctuationSameAsDelimiter);
+
+declare const emptyStringDelimiter: DelimiterCase<'fooBarBaz', ''>;
+expectType<'foobarbaz'>(emptyStringDelimiter);
+
+declare const moreThanOneLengthDelimiter: DelimiterCase<'fooBarBaz', '__'>;
+expectType<'foo__bar__baz'>(moreThanOneLengthDelimiter);
+
+declare const moreThanOneLengthDelimiter1: DelimiterCase<'fooBarBaz', '-->'>;
+expectType<'foo-->bar-->baz'>(moreThanOneLengthDelimiter1);
+
 declare const anyValue: DelimiterCase<any, '#'>;
 expectType<any>(anyValue);
 
