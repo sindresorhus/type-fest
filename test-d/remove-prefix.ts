@@ -80,6 +80,7 @@ expectType<'on-change'>({} as RemovePrefix<'on-change', never>);
 expectType<'change'>({} as RemovePrefix<'on-change', 'on-', {strict: false}>);
 expectType<'change' | 'hover'>({} as RemovePrefix<'on-change' | 'on-hover', 'on-', {strict: false}>);
 expectType<Capitalize<string>>({} as RemovePrefix<`handle${Capitalize<string>}`, 'handle', {strict: false}>);
+expectType<'foo:bar:baz'>({} as RemovePrefix<':foo:bar:baz', any, {strict: false}>);
 
 expectType<'click'>({} as RemovePrefix<'on-click', `${string}-`, {strict: false}>);
 expectType<'over:flex'>({} as RemovePrefix<'hover:flex', string, {strict: false}>);
