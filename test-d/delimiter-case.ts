@@ -170,7 +170,7 @@ declare const anyDelimiter: DelimiterCase<'fooBar', any>;
 expectType<`foo${Lowercase<any>}bar`>(anyDelimiter);
 
 declare const neverDelimiter: DelimiterCase<'fooBar', never>;
-expectType<'fooBar'>(neverDelimiter);
+expectType<never>(neverDelimiter);
 
 // Verifying example
 type OddCasedProperties<T> = {
