@@ -39,7 +39,7 @@ expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, 'foo
 // Input: Literal, Prefix: Non-literal
 expectType<string>({} as RemovePrefix<'on-click', `${string}-`>);
 expectType<string>({} as RemovePrefix<'hover:flex', string>);
-expectType<string>({} as RemovePrefix<'on-change', any>);
+expectType<string>({} as RemovePrefix<':foo:bar:baz', any>);
 expectType<'handle-click'>({} as RemovePrefix<'handle-click', Uppercase<string>>);
 expectType<'on-change'>({} as RemovePrefix<'on-change', `${string}--`>);
 
