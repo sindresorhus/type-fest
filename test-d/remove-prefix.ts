@@ -39,6 +39,7 @@ expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, 'foo
 // Input: Literal, Prefix: Non-literal
 expectType<string>({} as RemovePrefix<'on-click', `${string}-`>);
 expectType<string>({} as RemovePrefix<'hover:flex', string>);
+expectType<string>({} as RemovePrefix<'on-change', any>);
 expectType<'handle-click'>({} as RemovePrefix<'handle-click', Uppercase<string>>);
 expectType<'on-change'>({} as RemovePrefix<'on-change', `${string}--`>);
 
@@ -46,6 +47,7 @@ expectType<'on-change'>({} as RemovePrefix<'on-change', `${string}--`>);
 expectType<string>({} as RemovePrefix<`hover:${string}`, `${string}:`>);
 expectType<string>({} as RemovePrefix<`${string}/${number}`, `${string}/`>);
 expectType<string>({} as RemovePrefix<string, string>);
+expectType<string>({} as RemovePrefix<`${any}foo${any}bar`, any>);
 expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, `${string}:`>);
 expectType<`${number}:${number}`>({} as RemovePrefix<`${number}:${number}`, `-${string}`>);
 
@@ -87,6 +89,8 @@ expectType<'on:change' | 'change'>({} as RemovePrefix<'on:change' | 'on-change',
 expectType<Uppercase<string> | `id:${Uppercase<string>}` | `${number}` | `id/${number}`>(
 	{} as RemovePrefix<`id:${Uppercase<string>}` | `id/${number}`, `${string}:` | `${string}/`, {strict: false}>,
 );
+expectType<`foo${any}bar`>({} as RemovePrefix<`${any}foo${any}bar`, any, {strict: false}>);
+expectType<`foo${string}bar`>({} as RemovePrefix<`${string}foo${string}bar`, any, {strict: false}>);
 
 // Generic assignability test
 type Assignability<S extends string> = S;
