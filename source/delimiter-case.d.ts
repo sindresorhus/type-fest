@@ -1,5 +1,6 @@
 import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-literal.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {Merge} from './merge.d.ts';
 import type {RemovePrefix} from './remove-prefix.d.ts';
 import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
@@ -67,14 +68,16 @@ export type DelimiterCase<
 	Delimiter extends string,
 	Options extends WordsOptions = {},
 > = Value extends string
-	? Delimiter extends string // For distributing `Delimiter`
-		? IsStringLiteral<Value> extends false
-			? Value
-			: Lowercase<RemovePrefix<DelimiterCaseFromArray<
-				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
-				Delimiter
-			>, string, {strict: false}>>
-		: Value
+	? IsNever<Delimiter> extends true
+		? Value
+		: Delimiter extends string // For distributing `Delimiter`
+			? IsStringLiteral<Value> extends false
+				? Value
+				: Lowercase<RemovePrefix<DelimiterCaseFromArray<
+					Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
+					Delimiter
+				>, string, {strict: false}>>
+			: never
 	: Value;
 
 export {};

@@ -148,6 +148,30 @@ expectType<'foo#bar#01'>(withPunctuationSplitAndNumber);
 declare const withPunctuationSplitAndNumberSplit: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectType<'foo#bar#01'>(withPunctuationSplitAndNumberSplit);
 
+declare const anyValue: DelimiterCase<any, '#'>;
+expectType<any>(anyValue);
+
+declare const anyValue1: DelimiterCase<any, any>;
+expectType<any>(anyValue1);
+
+declare const anyValue2: DelimiterCase<any, never>;
+expectType<any>(anyValue2);
+
+declare const neverValue: DelimiterCase<never, '#'>;
+expectType<never>(neverValue);
+
+declare const neverValue1: DelimiterCase<never, any>;
+expectType<never>(neverValue1);
+
+declare const neverValue2: DelimiterCase<never, never>;
+expectType<never>(neverValue2);
+
+declare const anyDelimiter: DelimiterCase<'fooBar', any>;
+expectType<`foo${Lowercase<any>}bar`>(anyDelimiter);
+
+declare const neverDelimiter: DelimiterCase<'fooBar', never>;
+expectType<'fooBar'>(neverDelimiter);
+
 // Verifying example
 type OddCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K];
