@@ -22,6 +22,21 @@ expectType<{'hello.world1': {'foo::Bar': string}}>(withPunctuationSplit);
 declare const withPunctuationSplitAndNumbers: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectType<{'hello.world.1': {'foo::Bar': string}}>(withPunctuationSplitAndNumbers);
 
+declare const startsWithPunctuation: DelimiterCasedProperties<{'^fooBarBaz': {'^foo_bar_baz': string}}, ':'>;
+expectType<{'^foo:bar:baz': {'^foo_bar_baz': string}}>(startsWithPunctuation);
+
+declare const startsWithPunctuationSameAsDelimiter: DelimiterCasedProperties<{'#fooBarBaz': {'#foo_bar_baz': string}}, '#'>;
+expectType<{'#foo#bar#baz': {'#foo_bar_baz': string}}>(startsWithPunctuationSameAsDelimiter);
+
+declare const emptyStringDelimiter: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, ''>;
+expectType<{'foobarbaz': {'foo_bar_baz': string}}>(emptyStringDelimiter);
+
+declare const moreThanOneLengthDelimiter: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, '__'>;
+expectType<{'foo__bar__baz': {'foo_bar_baz': string}}>(moreThanOneLengthDelimiter);
+
+declare const moreThanOneLengthDelimiter1: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, '-->'>;
+expectType<{'foo-->bar-->baz': {'foo_bar_baz': string}}>(moreThanOneLengthDelimiter1);
+
 // Verify example
 type User = {
 	userId: number;
