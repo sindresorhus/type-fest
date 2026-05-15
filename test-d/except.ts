@@ -28,3 +28,14 @@ type Example = {
 const test: Except<Example, 'bar', {requireExactProps: false}> = {foo: 123, bar: 'asdf'};
 expectType<number>(test.foo);
 expectType<unknown>(test['bar']);
+
+// Test for generic type
+type GenericType<T> = T extends string ? {
+	foo: T;
+	bar: string;
+} : {
+	baz: T;
+};
+type GenericTypeExcept<T> = Except<GenericType<T>, 'foo'>;
+expectType<GenericTypeExcept<string>>({} as {bar: string});
+expectType<GenericTypeExcept<number>>({} as {baz: number});
