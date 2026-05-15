@@ -1,5 +1,6 @@
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 
 /**
 Filter out keys from an object.
@@ -100,10 +101,10 @@ type PostPayloadFixed = Except<UserData, 'email'>;
 
 @category Object
 */
-export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {}> =
+export type Except<ObjectType, KeysType extends LiteralUnion<keyof ObjectType, PropertyKey>, Options extends ExceptOptions = {}> =
 	_Except<ObjectType, KeysType, ApplyDefaultOptions<ExceptOptions, DefaultExceptOptions, Options>>;
 
-type _Except<ObjectType, KeysType extends keyof ObjectType, Options extends Required<ExceptOptions>> = {
+type _Except<ObjectType, KeysType extends LiteralUnion<keyof ObjectType, PropertyKey>, Options extends Required<ExceptOptions>> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
 } & (Options['requireExactProps'] extends true
 	? Partial<Record<KeysType, never>>
