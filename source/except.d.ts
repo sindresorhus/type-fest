@@ -104,7 +104,7 @@ type PostPayloadFixed = Except<UserData, 'email'>;
 export type Except<ObjectType, KeysType extends LiteralUnion<keyof ObjectType, PropertyKey>, Options extends ExceptOptions = {}> =
 	_Except<ObjectType, KeysType, ApplyDefaultOptions<ExceptOptions, DefaultExceptOptions, Options>>;
 
-type _Except<ObjectType, KeysType extends LiteralUnion<keyof ObjectType, PropertyKey>, Options extends Required<ExceptOptions>> = {
+type _Except<ObjectType, KeysType extends PropertyKey, Options extends Required<ExceptOptions>> = {
 	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
 } & (Options['requireExactProps'] extends true
 	? Partial<Record<KeysType, never>>
