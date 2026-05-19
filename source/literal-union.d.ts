@@ -34,6 +34,6 @@ const petWithAutoComplete: Pet2 = '';
 export type LiteralUnion<
 	LiteralType,
 	BaseType extends Primitive,
-> = LiteralType | (BaseType & Record<never, never>);
+> = LiteralType | (NoInfer<BaseType> & Record<never, never>);
 
 export {};
