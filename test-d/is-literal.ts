@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectType, expectAssignable} from 'tsd';
 import type {
 	IsLiteral,
 	IsStringLiteral,
@@ -139,3 +139,15 @@ expectType<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${str
 
 expectType<IsNumericLiteral<Tagged<number, 'Tag'>>>(false);
 expectType<IsBooleanLiteral<Tagged<boolean, 'Tag'>>>(false);
+
+// NoInfer: BaseType should not be inferred from usage
+// When using LiteralUnion, BaseType should not drive inference in generic contexts
+type LiteralUnionNoInfer = LiteralUnion<'foo' | 'bar', string>;
+declare const literalUnionNoInfer: LiteralUnionNoInfer;
+expectAssignable<'foo' | 'bar' | string>(literalUnionNoInfer);
+
+// Verify that BaseType is used as fallback (accepts both literal and base type)
+declare const acceptsLiteral: LiteralUnion<'foo' | 'bar', string>;
+declare const acceptsBase: LiteralUnion<'foo' | 'bar', string>;
+expectAssignable<'foo' | 'bar' | string>(acceptsLiteral);
+expectAssignable<'foo' | 'bar' | string>(acceptsBase);

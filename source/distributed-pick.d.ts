@@ -86,7 +86,7 @@ if (pickedUnion.discriminant === 'A') {
 */
 export type DistributedPick<ObjectType, KeyType extends KeysOfUnion<ObjectType>> =
 	ObjectType extends unknown
-		? Pick<ObjectType, Extract<KeyType, keyof ObjectType>>
+		? Pick<ObjectType, Extract<NoInfer<KeyType>, keyof ObjectType>>
 		: never;
 
 export {};

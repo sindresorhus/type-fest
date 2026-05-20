@@ -87,3 +87,14 @@ expectType<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>(test2);
 // Works with index signatures
 declare const test4: DistributedPick<{[k: string]: unknown; a?: number; b: string}, 'a' | 'b'>;
 expectType<{a?: number; b: string}>(test4);
+
+// NoInfer: KeyType should not be inferred from usage
+// When using DistributedPick, KeyType should be constrained by ObjectType keys
+// NoInfer prevents backward inference from constraints
+type DistributedPickNoInfer = DistributedPick<{a: string; b: number}, 'a'>;
+declare const distributedPickNoInfer: DistributedPickNoInfer;
+expectType<{a: string}>(distributedPickNoInfer);
+
+// Verify KeyType is properly constrained (cannot pick non-existent keys)
+// @ts-expect-error - 'c' does not exist in {a: string; b: number}
+type InvalidPick = DistributedPick<{a: string; b: number}, 'c'>;

@@ -90,7 +90,7 @@ if (omittedUnion.discriminant === 'A') {
 */
 export type DistributedOmit<ObjectType, KeyType extends KeysOfUnion<ObjectType>> =
 	ObjectType extends unknown
-		? Omit<ObjectType, KeyType>
+		? Omit<ObjectType, NoInfer<KeyType>>
 		: never;
 
 export {};
