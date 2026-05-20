@@ -146,6 +146,8 @@ export type {ArraySlice} from './source/array-slice.d.ts';
 export type {ArraySplice} from './source/array-splice.d.ts';
 export type {ArrayTail} from './source/array-tail.d.ts';
 export type {ArrayElement} from './source/array-element.d.ts';
+export type {FirstArrayElement} from './source/internal/array.d.ts';
+export type {UnknownArrayOrTuple} from './source/internal/array.d.ts';
 export type {ArrayLength} from './source/array-length.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
 export type {Paths, PathsOptions} from './source/paths.d.ts';
