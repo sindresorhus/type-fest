@@ -139,3 +139,15 @@ expectType<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${str
 
 expectType<IsNumericLiteral<Tagged<number, 'Tag'>>>(false);
 expectType<IsBooleanLiteral<Tagged<boolean, 'Tag'>>>(false);
+
+// NoInfer: BaseType should not be inferred from usage
+// When using LiteralUnion, BaseType should not drive inference in generic contexts
+type LiteralUnionNoInfer = LiteralUnion<'foo' | 'bar', string>;
+declare const literalUnionNoInfer: LiteralUnionNoInfer;
+expectType<'foo' | 'bar' | string>(literalUnionNoInfer);
+
+// Verify that BaseType is used as fallback (accepts both literal and base type)
+declare const acceptsLiteral: LiteralUnion<'foo' | 'bar', string>;
+declare const acceptsBase: LiteralUnion<'foo' | 'bar', string>;
+expectType<'foo' | 'bar' | string>(acceptsLiteral);
+expectType<'foo' | 'bar' | string>(acceptsBase);

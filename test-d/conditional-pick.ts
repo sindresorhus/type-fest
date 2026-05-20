@@ -33,3 +33,23 @@ expectType<never>(noMatchingKeys);
 
 declare const noMatchingKeys2: ConditionalPick<{a: string; b: number}, boolean>;
 expectType<never>(noMatchingKeys2);
+
+// NoInfer: Condition should not be inferred from usage
+// When using ConditionalPick, Condition should be used as filter parameter
+// NoInfer prevents Condition from driving backward inference
+type ConditionalPickNoInfer = ConditionalPick<{a: string; b: number}, string>;
+declare const conditionalPickNoInfer: ConditionalPickNoInfer;
+expectType<{a: string}>(conditionalPickNoInfer);
+
+// Verify Condition works correctly - picks properties whose value type extends Condition
+type ConditionalPickString = ConditionalPick<{a: string; b: number; c: boolean}, string>;
+declare const picksStrings: ConditionalPickString;
+expectType<{a: string}>(picksStrings);
+
+type ConditionalPickNumber = ConditionalPick<{a: string; b: number; c: boolean}, number>;
+declare const picksNumbers: ConditionalPickNumber;
+expectType<{b: number}>(picksNumbers);
+
+type ConditionalPickBoolean = ConditionalPick<{a: string; b: number; c: boolean}, boolean>;
+declare const picksBooleans: ConditionalPickBoolean;
+expectType<{c: boolean}>(picksBooleans);

@@ -76,3 +76,14 @@ if (omittedUnion.discriminant === 'A') {
 	// @ts-expect-error
 	const _b: unknown = omittedUnion.bar;
 }
+
+// NoInfer: KeyType should not be inferred from usage
+// When using DistributedOmit, KeyType should be constrained by ObjectType keys
+// NoInfer prevents backward inference from constraints
+type DistributedOmitNoInfer = DistributedOmit<{a: string; b: number}, 'b'>;
+declare const distributedOmitNoInfer: DistributedOmitNoInfer;
+expectType<{a: string}>(distributedOmitNoInfer);
+
+// Verify KeyType is properly constrained (cannot omit non-existent keys)
+// @ts-expect-error - 'c' does not exist in {a: string; b: number}
+type InvalidOmit = DistributedOmit<{a: string; b: number}, 'c'>;
