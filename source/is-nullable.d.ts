@@ -25,6 +25,6 @@ type D = IsNullable<string | null | undefined>;
 @category Type Guard
 @category Utilities
 */
-export type IsNullable<T> = IsAny<T> extends true ? true : Extract<T, null> extends never ? false : true;
+export type IsNullable<T> = IsAny<T> extends true ? true : Extract<NoInfer<T>, null> extends never ? false : true;
 
 export {};

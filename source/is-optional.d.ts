@@ -23,6 +23,6 @@ type D = IsOptional<string | null | undefined>;
 @category Type Guard
 @category Utilities
 */
-export type IsOptional<T> = IsAny<T> extends true ? true : Extract<T, undefined> extends never ? false : true;
+export type IsOptional<T> = IsAny<T> extends true ? true : Extract<NoInfer<T>, undefined> extends never ? false : true;
 
 export {};
