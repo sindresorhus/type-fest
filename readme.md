@@ -122,6 +122,7 @@ Click the type names for complete docs.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`OverrideProperties`](source/override-properties.d.ts) - Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
 - [`RenameKey`](source/rename-key.d.ts) - Rename a single key in an object type, preserving its value type and modifiers (optional, readonly).
+- [`RenameKeys`](source/rename-keys.d.ts) - Rename multiple keys in an object type at once, preserving each value type and modifiers (optional, readonly).
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys, while keeping the remaining keys as is.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys, while keeping the remaining keys as is.
