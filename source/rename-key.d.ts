@@ -1,4 +1,4 @@
-import type { KeysOfUnion } from "./keys-of-union.d.ts";
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 
 /**
 Rename a single key in an object type, preserving its value type and modifiers (optional, readonly).
