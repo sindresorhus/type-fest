@@ -257,6 +257,8 @@ Click the type names for complete docs.
 ### String
 
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
+- [`Whitespace`](source/whitespace.d.ts) - A union of all valid [Unicode whitespace characters](https://en.wikipedia.org/wiki/Whitespace_character).
+- [`WordSeparators`](source/word-separators.d.ts) - A union of characters commonly used to separate words in identifiers: hyphens, underscores, and all Unicode whitespace.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Words`](source/words.d.ts) - Split a string similar to Lodash's `_.words()` function.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
