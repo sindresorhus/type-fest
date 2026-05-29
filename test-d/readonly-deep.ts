@@ -38,6 +38,14 @@ const data = {
 	},
 	constructor: ClassA,
 	fn: (_: string) => true,
+	fnReturningObject: (_: string) => ({a: 1, nested: {b: 2}}),
+	fnReturningMap: (_: string) => new Map<string, string>(),
+	method(_: string) {
+		return {a: 1, nested: {b: 2}};
+	},
+	get getterReturningObject() {
+		return {a: 1, nested: {b: 2}};
+	},
 	fnWithOverload: ((_: number) => 'foo') as Overloaded,
 	namespace: {} as unknown as Namespace,
 	namespaceWithOverload: {} as unknown as NamespaceWithOverload,
@@ -67,6 +75,15 @@ const data = {
 
 const readonlyData: ReadonlyDeep<typeof data> = data;
 readonlyData.fn('foo');
+
+// The return type of a function or method is not made readonly, only the function's own properties are.
+// See https://github.com/sindresorhus/type-fest/issues/826
+expectType<{a: number; nested: {b: number}}>(readonlyData.fnReturningObject('foo'));
+expectType<Map<string, string>>(readonlyData.fnReturningMap('foo'));
+expectType<{a: number; nested: {b: number}}>(readonlyData.method('foo'));
+
+// A getter is treated as a data property, so its type is made deeply readonly.
+expectType<{readonly a: number; readonly nested: {readonly b: number}}>(readonlyData.getterReturningObject);
 
 readonlyData.fnWithOverload(1);
 readonlyData.fnWithOverload('', 1);
@@ -138,3 +155,7 @@ expectAssignable<{
 	(foo: number): string;
 	readonly baz: readonly boolean[];
 }>(readonlyNamespace);
+
+// A function returning an object keeps the return type as-is (not made readonly).
+const readonlyFnReturningMap = (() => new Map<string, string>()) as ReadonlyDeep<() => Map<string, string>>;
+expectType<Map<string, string>>(readonlyFnReturningMap());
