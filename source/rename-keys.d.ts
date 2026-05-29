@@ -5,6 +5,8 @@ Rename multiple keys in an object type at once, preserving each value type and m
 
 Each entry in the rename map relabels one source key to one target key. Keys absent from the map are kept unchanged. See {@link RenameKey} for the single-key variant.
 
+Map entries must be required and their targets must not collide: an entry whose target already exists as a kept key, or two entries sharing a target, are rejected, because collapsing keys would also collapse their modifiers. Swapping keys (each renamed away to the other's name) is allowed since no key is lost.
+
 @example
 ```
 import type {RenameKeys} from 'type-fest';
@@ -35,7 +37,17 @@ type Bad = RenameKeys<User, {nme: 'fullName'}>;
 */
 export type RenameKeys<
 	BaseType,
-	RenameMap extends Partial<Record<KeysOfUnion<BaseType>, PropertyKey>>,
+	RenameMap extends Partial<Record<KeysOfUnion<BaseType>, PropertyKey>> & {
+		[Key in keyof RenameMap]: Key extends KeysOfUnion<BaseType>
+			? RenameMap[Key] extends PropertyKey
+				? RenameMap[Key] extends Exclude<KeysOfUnion<BaseType>, keyof RenameMap>
+					? never
+					: RenameMap[Key] extends RenameMap[Exclude<keyof RenameMap, Key>]
+						? never
+						: RenameMap[Key]
+				: never
+			: never;
+	},
 > = {
 	[Key in keyof BaseType as Key extends keyof RenameMap
 		? RenameMap[Key] extends PropertyKey
