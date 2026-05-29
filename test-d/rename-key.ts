@@ -174,3 +174,5 @@ import type {RenameKey} from '../source/rename-key.d.ts';
 	// @ts-expect-error 'nested' is not a top-level key.
 	type Bad = RenameKey<Source, 'nested', 'x'>;
 }
+
+/* eslint-enable no-lone-blocks */
