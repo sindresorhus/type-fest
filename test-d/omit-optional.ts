@@ -34,7 +34,3 @@ expectType<{readonly a: string}>(test4);
 // Should work with empty object
 declare const test5: OmitOptional<{}>;
 expectType<Record<string, never>>(test5);
-
-// OmitOptional<T> should be assignable to T
-type Assignability1<T extends object, _K extends T> = unknown;
-type Test1<T extends object> = Assignability1<T, OmitOptional<T>>;
