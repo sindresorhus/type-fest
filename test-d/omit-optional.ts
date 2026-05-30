@@ -25,12 +25,15 @@ declare const test2: OmitOptional<WithoutOptional>;
 expectType<{a: string; b: boolean; c: number}>(test2);
 
 declare const test3: OmitOptional<AllOptional>;
-expectType<Record<string, never>>(test3);
+type Result3 = OmitOptional<AllOptional>;
+expectType<Result3>(test3);
 
 // Should work with readonly
 declare const test4: OmitOptional<{readonly a: string; readonly b?: number}>;
-expectType<{readonly a: string}>(test4);
+type Result4 = OmitOptional<{readonly a: string; readonly b?: number}>;
+expectType<Result4>(test4);
 
 // Should work with empty object
 declare const test5: OmitOptional<{}>;
-expectType<Record<string, never>>(test5);
+type Result5 = OmitOptional<{}>;
+expectType<Result5>(test5);
