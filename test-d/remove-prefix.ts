@@ -85,6 +85,8 @@ expectType<'foo:bar:baz'>({} as RemovePrefix<':foo:bar:baz', any, {strict: false
 expectType<'click'>({} as RemovePrefix<'on-click', `${string}-`, {strict: false}>);
 expectType<'over:flex'>({} as RemovePrefix<'hover:flex', string, {strict: false}>);
 expectType<`${number}`>({} as RemovePrefix<`${string}/${number}`, `${string}/`, {strict: false}>);
+expectType<'on-change'>({} as RemovePrefix<'on-change', `${string}--`, {strict: false}>);
+expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>);
 expectType<'change' | '-change'>({} as RemovePrefix<'on-change', `${string}-` | 'on', {strict: false}>);
 expectType<'on:change' | 'change'>({} as RemovePrefix<'on:change' | 'on-change', `${string}-`, {strict: false}>);
 expectType<Uppercase<string> | `id:${Uppercase<string>}` | `${number}` | `id/${number}`>(
