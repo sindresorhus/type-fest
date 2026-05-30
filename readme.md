@@ -263,6 +263,7 @@ Click the type names for complete docs.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
 - [`RemovePrefix`](source/remove-prefix.d.ts) - Remove the specified prefix from the start of a string.
+- [`RemoveSuffix`](source/remove-suffix.d.ts) - Remove the specified suffix from the end of a string.
 
 ### Array
 
