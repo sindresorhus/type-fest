@@ -49,6 +49,7 @@ export type {InvariantOf} from './source/invariant-of.d.ts';
 export type {SetOptional} from './source/set-optional.d.ts';
 export type {SetReadonly} from './source/set-readonly.d.ts';
 export type {SetRequired} from './source/set-required.d.ts';
+export type {OmitOptional} from './source/omit-optional.d.ts';
 export type {SetRequiredDeep} from './source/set-required-deep.d.ts';
 export type {SetNonNullable} from './source/set-non-nullable.d.ts';
 export type {SetNonNullableDeep} from './source/set-non-nullable-deep.d.ts';
