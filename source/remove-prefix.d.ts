@@ -60,24 +60,6 @@ export type RemovePrefixOptions = {
 	type D = RemovePrefix<`id-${number}`, 'id-', {strict: false}>;
 	//=> `${number}`
 	```
-
-	Note: If it can be statically determined that the input string can never start with the specified non-literal prefix, then the input string is returned as-is, regardless of the value of this option.
-	For example, ``RemovePrefix<`${string}/${number}`, `${string}:`>`` returns `` `${string}/${number}` ``, since a string of type `` `${string}/${number}` `` can never start with a prefix of type `` `${string}:` ``.
-	```
-	import type {RemovePrefix} from 'type-fest';
-
-	type A = RemovePrefix<`${string}/${number}`, `${string}:`, {strict: true}>;
-	//=> `${string}/${number}`
-
-	type B = RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>;
-	//=> `${string}/${number}`
-
-	type C = RemovePrefix<'on-change', `${number}-`, {strict: true}>;
-	//=> 'on-change'
-
-	type D = RemovePrefix<'on-change', `${number}-`, {strict: false}>;
-	//=> 'on-change'
-	```
 	*/
 	strict?: boolean;
 };
@@ -123,11 +105,11 @@ export type RemovePrefix<S extends string, Prefix extends string, Options extend
 
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
 	Prefix extends string // For distributing `Prefix`
-		? S extends `${Prefix}${infer Rest}`
-			? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
+		? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
+			? S extends `${Prefix}${infer Rest}`
 				? Rest
-				: string // Fallback to `string` when `Prefix` is non-literal and `strict` is disabled
-			: S // Return back `S` when `Prefix` is not present at the start of `S`
+				: S // Return back `S` when `Prefix` is not present at the start of `S`
+			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is disabled
 		: never;
 
 export {};

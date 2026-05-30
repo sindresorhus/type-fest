@@ -40,16 +40,16 @@ expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, 'foo
 expectType<string>({} as RemovePrefix<'on-click', `${string}-`>);
 expectType<string>({} as RemovePrefix<'hover:flex', string>);
 expectType<string>({} as RemovePrefix<':foo:bar:baz', any>);
-expectType<'handle-click'>({} as RemovePrefix<'handle-click', Uppercase<string>>);
-expectType<'on-change'>({} as RemovePrefix<'on-change', `${string}--`>);
+expectType<string>({} as RemovePrefix<'handle-click', Uppercase<string>>);
+expectType<string>({} as RemovePrefix<'on-change', `${string}--`>);
 
 // Input: Non-literal, Prefix: Non-literal
 expectType<string>({} as RemovePrefix<`hover:${string}`, `${string}:`>);
 expectType<string>({} as RemovePrefix<`${string}/${number}`, `${string}/`>);
 expectType<string>({} as RemovePrefix<string, string>);
 expectType<string>({} as RemovePrefix<`${any}foo${any}bar`, any>);
-expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, `${string}:`>);
-expectType<`${number}:${number}`>({} as RemovePrefix<`${number}:${number}`, `-${string}`>);
+expectType<string>({} as RemovePrefix<`${string}/${number}`, `${string}:`>);
+expectType<string>({} as RemovePrefix<`${number}:${number}`, `-${string}`>);
 
 // Unions
 expectType<'click' | 'hover' | 'change'>({} as RemovePrefix<'on-click' | 'on-hover' | 'on-change', 'on-'>);
@@ -62,7 +62,7 @@ expectType<'change' | 'on-change'>({} as RemovePrefix<'on-change', 'on-' | 'hand
 expectType<'on-change'>({} as RemovePrefix<'on-change', 'off-' | 'handle-'>);
 expectType<string>({} as RemovePrefix<'on-change', `${string}-` | 'on'>);
 
-expectType<'on:change' | 'onChange'>({} as RemovePrefix<'on:change' | 'onChange', `${string}-`>);
+expectType<string>({} as RemovePrefix<'on:change' | 'onChange', `${string}-`>);
 expectType<'name' | 'get-name' | 'age' | 'set-age' | 'other'>(
 	{} as RemovePrefix<'get-name' | 'set-age' | 'other', 'get-' | 'set-'>,
 );
