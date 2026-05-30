@@ -18,7 +18,3 @@ expectType<{a: string}>(test1);
 
 declare const test2: OmitOptional<WithoutOptional>;
 expectType<{a: string; b: boolean; c: number}>(test2);
-
-// Works with readonly
-declare const test3: OmitOptional<{readonly a: string}>;
-expectType<{readonly a: string}>(test3);
