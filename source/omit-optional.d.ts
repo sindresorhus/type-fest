@@ -25,3 +25,5 @@ type MinimalUser = OmitOptional<User>;
 export type OmitOptional<ObjectType extends object> = {
 	[Key in RequiredKeysOf<ObjectType>]: ObjectType[Key];
 };
+
+export {};
