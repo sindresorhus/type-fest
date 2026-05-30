@@ -109,7 +109,7 @@ type _RemovePrefix<S extends string, Prefix extends string, Options extends Requ
 			? S extends `${Prefix}${infer Rest}`
 				? Rest
 				: S // Return back `S` when `Prefix` is not present at the start of `S`
-			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is disabled
+			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is enabled
 		: never;
 
 export {};
