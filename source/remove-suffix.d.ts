@@ -109,7 +109,7 @@ type _RemoveSuffix<S extends string, Suffix extends string, Options extends Requ
 			? S extends `${infer Rest}${Suffix}`
 				? Rest
 				: S // Return back `S` when `Suffix` is not present at the end of `S`
-			: string // Fallback to `string` when `Suffix` is non-literal and `strict` is disabled
+			: string // Fallback to `string` when `Suffix` is non-literal and `strict` is enabled
 		: never;
 
 export {};
