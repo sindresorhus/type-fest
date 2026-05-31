@@ -72,11 +72,21 @@ export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Len
 	_TupleOf<If<IsNegative<Length>, 0, Length>, Fill>,
 	Fill[], []>;
 
-type _TupleOf<L extends number, Fill> = number extends L
+type _TupleOf<Length extends number, Fill> = number extends Length
 	? Fill[]
-	: _Repeat<`${L}`, Fill>;
+	: BuildTupleDigitByDigit<`${Length}`, Fill>;
 
-type AddBlockFromDigit<Digit extends DigitCharacter, Fill> = [
+type BuildTupleDigitByDigit<Length extends string, Fill, Accumulator extends UnknownArray = []> =
+	Length extends `${infer First extends DigitCharacter}${infer Rest}`
+		? BuildTupleDigitByDigit<Rest, Fill, [...RepeatTupleTenTimes<Accumulator>, ...DigitTupleOf<First, Fill>]>
+		: Accumulator;
+
+type RepeatTupleTenTimes<Tuple extends UnknownArray> = [
+	...Tuple, ...Tuple, ...Tuple, ...Tuple, ...Tuple,
+	...Tuple, ...Tuple, ...Tuple, ...Tuple, ...Tuple,
+];
+
+type DigitTupleOf<Digit extends DigitCharacter, Fill> = [
 	[],
 	[Fill],
 	[Fill, Fill],
@@ -88,15 +98,5 @@ type AddBlockFromDigit<Digit extends DigitCharacter, Fill> = [
 	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
 	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
 ][Digit];
-
-type MultiplyTupleByTen<T extends UnknownArray> = [
-	...T, ...T, ...T, ...T, ...T,
-	...T, ...T, ...T, ...T, ...T,
-];
-
-type _Repeat<L extends string, Fill, Accumulator extends UnknownArray = []> =
-	L extends `${infer First extends DigitCharacter}${infer Rest}`
-		? _Repeat<Rest, Fill, [...MultiplyTupleByTen<Accumulator>, ...AddBlockFromDigit<First, Fill>]>
-		: Accumulator;
 
 export {};
