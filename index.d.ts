@@ -207,6 +207,7 @@ export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
 export type {RemovePrefix, RemovePrefixOptions} from './source/remove-prefix.d.ts';
+export type {RemoveSuffix, RemoveSuffixOptions} from './source/remove-suffix.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
