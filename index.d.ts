@@ -34,6 +34,7 @@ export type {OmitIndexSignature} from './source/omit-index-signature.d.ts';
 export type {PickIndexSignature} from './source/pick-index-signature.d.ts';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep.d.ts';
 export type {UnwrapPartial} from './source/unwrap-partial.d.ts';
+export type {UnwrapRequired} from './source/unwrap-required.d.ts';
 export type {RequiredDeep} from './source/required-deep.d.ts';
 export type {PickDeep} from './source/pick-deep.d.ts';
 export type {OmitDeep} from './source/omit-deep.d.ts';
