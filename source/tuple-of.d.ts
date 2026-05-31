@@ -1,6 +1,7 @@
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsNegative} from './numeric.d.ts';
+import type {DigitCharacter} from './characters.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -30,7 +31,7 @@ type ZeroToFour = Range<0, 5>;
 //=> '0' | '1' | '2' | '3' | '4'
 
 type ThreeToEight = Range<3, 9>;
-//=> '5' | '3' | '4' | '6' | '7' | '8'
+//=> '3' | '4' | '5' | '6' | '7' | '8'
 ```
 
 Note: If the specified length is the non-literal `number` type, the result will not be a tuple but a regular array.
@@ -68,13 +69,34 @@ Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for e
 @category Array
 */
 export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length,
-	_TupleOf<If<IsNegative<Length>, 0, Length>, Fill, []>,
+	_TupleOf<If<IsNegative<Length>, 0, Length>, Fill>,
 	Fill[], []>;
 
-type _TupleOf<L extends number, Fill, Accumulator extends UnknownArray> = number extends L
+type _TupleOf<L extends number, Fill> = number extends L
 	? Fill[]
-	: L extends Accumulator['length']
-		? Accumulator
-		: _TupleOf<L, Fill, [...Accumulator, Fill]>;
+	: _Repeat<`${L}`, Fill>;
+
+type AddBlockFromDigit<Digit extends DigitCharacter, Fill> = [
+	[],
+	[Fill],
+	[Fill, Fill],
+	[Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
+][Digit];
+
+type MultiplyTupleByTen<T extends UnknownArray> = [
+	...T, ...T, ...T, ...T, ...T,
+	...T, ...T, ...T, ...T, ...T,
+];
+
+type _Repeat<L extends string, Fill, Accumulator extends UnknownArray = []> =
+	L extends `${infer First extends DigitCharacter}${infer Rest}`
+		? _Repeat<Rest, Fill, [...MultiplyTupleByTen<Accumulator>, ...AddBlockFromDigit<First, Fill>]>
+		: Accumulator;
 
 export {};
