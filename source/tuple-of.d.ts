@@ -64,6 +64,16 @@ type EmptyTuple = TupleOf<-3, string>;
 //=> []
 ```
 
+Note: If the specified length has a decimal part, the decimal part will be ignored.
+
+@example
+```
+import type {TupleOf} from 'type-fest';
+
+type DecimalLength = TupleOf<3.5, string>;
+//=> [string, string, string]
+```
+
 Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for example, to create `readonly [number, number, number]` use `Readonly<TupleOf<3, number>>`.
 
 @category Array
