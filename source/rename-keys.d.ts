@@ -1,11 +1,22 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {IsLiteral} from './is-literal.d.ts';
+import type {IsUnion} from './is-union.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {HasOptionalKeys} from './has-optional-keys.d.ts';
 
 /**
-Rename multiple keys in an object type at once, preserving each value type and modifiers (optional, readonly).
+Rename keys in an object type according to a map of old-to-new names. Keys absent from the map pass through unchanged. The value type, the optional modifier, and the readonly modifier go to the new key.
 
-Each entry in the rename map relabels one source key to one target key. Keys absent from the map are kept unchanged. See {@link RenameKey} for the single-key variant.
+Distributes over a union of rename maps and over a union of source types. See {@link RenameKey} for the single-key form.
 
-Map entries must be required and their targets must not collide: an entry whose target already exists as a kept key, or two entries sharing a target, are rejected, because collapsing keys would also collapse their modifiers. Swapping keys (each renamed away to the other's name) is allowed since no key is lost.
+Returns `never` if any of the following hold:
+- A rename map entry's key is not a property of the source type.
+- A rename map entry is optional (e.g. `{a?: 'b'}`).
+- A rename map entry's value is not a single literal `PropertyKey` (rejects unions like `'b' | 'c'` and primitives like `string`).
+- A target collides with a kept property of the source type, or with another rename map entry's target.
+- The source type is `any` or `never`.
 
 @example
 ```
@@ -21,39 +32,129 @@ type Renamed = RenameKeys<User, {firstName: 'first_name'; createdAt: 'created_at
 //=> {id: string; first_name: string; created_at: Date}
 ```
 
-The rename map constraint enforces that every source key exists on the input so you can't mess up the key names and you also get intellisense:
-
 @example
 ```
 import type {RenameKeys} from 'type-fest';
 
 type User = {id: string; name: string};
 
-// @ts-expect-error 'nme' is not a key of User.
-type Bad = RenameKeys<User, {nme: 'fullName'}>;
+type Typo = RenameKeys<User, {nme: 'fullName'}>;
+//=> never
+
+type Collision = RenameKeys<{a: number; b: string}, {a: 'b'}>;
+//=> never
 ```
 
+@see {@link RenameKey}
 @category Object
 */
 export type RenameKeys<
 	BaseType,
-	RenameMap extends Partial<Record<KeysOfUnion<BaseType>, PropertyKey>> & {
-		[Key in keyof RenameMap]: Key extends KeysOfUnion<BaseType>
-			? RenameMap[Key] extends PropertyKey
-				? RenameMap[Key] extends Exclude<KeysOfUnion<BaseType>, keyof RenameMap>
-					? never
-					: RenameMap[Key] extends RenameMap[Exclude<keyof RenameMap, Key>]
-						? never
-						: RenameMap[Key]
-				: never
+	RenameMap extends Record<PropertyKey, PropertyKey>,
+> = IsAny<BaseType> extends true
+	? never
+	: IsNever<BaseType> extends true
+		? never
+		: RenameMap extends RenameMap // Distribute over a union of maps.
+			? HasOptionalKeys<RenameMap> extends true // Reject `{a?: 'b'}`-style entries.
+				? never
+				: [_AllSourceKeysExist<BaseType, RenameMap>] extends [true] // Reject typo'd source keys.
+					? _AllTargetsAreSingleLiterals<RenameMap> extends true // Reject targets that aren't a single literal `PropertyKey`.
+						? _HasKeptCollision<BaseType, RenameMap> extends true // Reject targets that collide with a kept literal key.
+							? never
+							: _HasDuplicateTargets<RenameMap> extends true // Reject duplicate targets across entries.
+								? never
+								: _RenameOnce<BaseType, RenameMap> // Apply the rename.
+						: never
+					: never
 			: never;
-	},
-> = {
-	[Key in keyof BaseType as Key extends keyof RenameMap
-		? RenameMap[Key] extends PropertyKey
+
+// The literal keys of `BaseType`, with index signatures dropped. Distributes
+// over union members so a target that matches a sibling member's key counts
+// as a collision.
+type _LiteralKeysOf<BaseType> = BaseType extends unknown // distribute per union member
+	? keyof OmitIndexSignature<BaseType> // strip index signatures
+	: never;
+
+// True when `T` is a single literal `PropertyKey` (`'a'`, `1`, a unique
+// symbol). False for unions (`'a' | 'b'`), primitives (`string`, `number`),
+// and non-`PropertyKey` types. Keeps rename targets unambiguous: a union
+// target distributes in the mapped-type `as` clause and creates multiple
+// output keys; a primitive target widens to an index signature.
+type _IsSingleLiteral<T> = IsLiteral<T> extends true // literal? (`'a'` ok, `string` not ok)
+	? IsUnion<T> extends true // also a union? (`'a' | 'b'`)
+		? false
+		: true
+	: false;
+
+// True when every value in `RenameMap` passes `_IsSingleLiteral`.
+//
+// The `[X] extends [Y]` tuple-wrap prevents
+// `never` distribution. Without it, an empty `RenameMap` would yield
+// `{}[never] = never`, and `never extends true ? ... : ...` distributes
+// over zero cases and produces `never` rather than `true` or `false`.
+// `[never] extends [true]` is true because a tuple position evaluates
+// `never` as the bottom value, which keeps the empty-map case vacuous.
+type _AllTargetsAreSingleLiterals<RenameMap> = [
+	{
+		[Key in keyof RenameMap]: _IsSingleLiteral<RenameMap[Key]>;
+	}[keyof RenameMap], // union of every entry's verdict
+] extends [true]
+	? true
+	: false;
+
+// True when every key in `RenameMap` is a property of `BaseType`. Rejects
+// typo'd source keys.
+type _AllSourceKeysExist<BaseType, RenameMap> = [
+	{
+		[Key in keyof RenameMap]: Key extends KeysOfUnion<BaseType> ? true : false; // source key is in keys of `BaseType`?
+	}[keyof RenameMap],
+] extends [true]
+	? true
+	: false;
+
+// True when any rename target matches a kept literal key of `BaseType`.
+// Kept keys = `_LiteralKeysOf<BaseType>` minus the source keys in
+// `RenameMap`. Index signatures are excluded, so a literal target onto a
+// string-indexed object passes. Swapping two keys passes too: both keys
+// rename away simultaneously, so neither is kept.
+type _HasKeptCollision<BaseType, RenameMap> = [
+	{
+		[Key in keyof RenameMap]: RenameMap[Key] extends Exclude<_LiteralKeysOf<BaseType>, keyof RenameMap> // target is in kept literal keys?
+			? true
+			: false;
+	}[keyof RenameMap],
+] extends [false] // no entry collides
+	? false
+	: true;
+
+// True when two or more entries in `RenameMap` point at the same target.
+// The double-nested mapped type compares each target against every other
+// target.
+type _HasDuplicateTargets<RenameMap> = [
+	{
+		[Key in keyof RenameMap]: [
+			{
+				[Other in Exclude<keyof RenameMap, Key>]: RenameMap[Key] extends RenameMap[Other] // this target is in a subset of another target?
+					? true
+					: false;
+			}[Exclude<keyof RenameMap, Key>],
+		] extends [false]
+			? false
+			: true;
+	}[keyof RenameMap],
+] extends [false]
+	? false
+	: true;
+
+// Apply the rename. For each key on `BaseType`, look it up in `RenameMap`;
+// if found, emit it under the new name; otherwise keep the original.
+type _RenameOnce<BaseType, RenameMap> = {
+	[Key in keyof BaseType as Key extends keyof RenameMap // key being renamed?
+		? RenameMap[Key] extends PropertyKey // use the new name from the map
 			? RenameMap[Key]
 			: Key
-		: Key]: BaseType[Key];
+		: Key]: BaseType[Key]; // keep the value
 };
 
 export {};
