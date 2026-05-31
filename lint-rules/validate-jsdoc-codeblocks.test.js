@@ -560,16 +560,17 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 			/**
 			\`\`\`typescript
-			import type {ExcludeStrict, Sum} from 'type-fest';
+			type Identity<T extends string> = T;
+			type JustBoolean<T extends boolean> = T;
 
-			type A = Sum<1, '2'>;
+			type A = JustBoolean<Identity<number>>;
 			\`\`\`
 			*/
 			export type Test = string;
 			`,
 			errors: [
-				invalidCodeblockErrorAt({line: 5, textBeforeStart: 'type A = ', target: 'Sum<1, \'2\'>'}),
-				invalidCodeblockErrorAt({line: 5, textBeforeStart: 'type A = Sum<1, ', target: '\'2\''}),
+				invalidCodeblockErrorAt({line: 6, textBeforeStart: 'type A = JustBoolean<', target: 'Identity<number>'}),
+				invalidCodeblockErrorAt({line: 6, textBeforeStart: 'type A = JustBoolean<Identity<', target: 'number'}),
 			],
 		},
 
