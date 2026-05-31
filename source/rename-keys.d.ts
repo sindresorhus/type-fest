@@ -72,8 +72,8 @@ export type RenameKeys<
 // The literal keys of `BaseType`, with index signatures dropped. Distributes
 // over union members so a target that matches a sibling member's key counts
 // as a collision.
-type _LiteralKeysOf<BaseType> = BaseType extends unknown // distribute per union member
-	? keyof OmitIndexSignature<BaseType> // strip index signatures
+type _LiteralKeysOf<BaseType> = BaseType extends unknown // Distribute per union member.
+	? keyof OmitIndexSignature<BaseType> // Strip index signatures.
 	: never;
 
 // True when `T` is a single literal `PropertyKey` (`'a'`, `1`, a unique
@@ -81,8 +81,8 @@ type _LiteralKeysOf<BaseType> = BaseType extends unknown // distribute per union
 // and non-`PropertyKey` types. Keeps rename targets unambiguous: a union
 // target distributes in the mapped-type `as` clause and creates multiple
 // output keys; a primitive target widens to an index signature.
-type _IsSingleLiteral<T> = IsLiteral<T> extends true // literal? (`'a'` ok, `string` not ok)
-	? IsUnion<T> extends true // also a union? (`'a' | 'b'`)
+type _IsSingleLiteral<T> = IsLiteral<T> extends true // Literal? (`'a'` ok, `string` not ok)
+	? IsUnion<T> extends true // Also a union? (`'a' | 'b'`)
 		? false
 		: true
 	: false;
@@ -98,7 +98,7 @@ type _IsSingleLiteral<T> = IsLiteral<T> extends true // literal? (`'a'` ok, `str
 type _AllTargetsAreSingleLiterals<RenameMap> = [
 	{
 		[Key in keyof RenameMap]: _IsSingleLiteral<RenameMap[Key]>;
-	}[keyof RenameMap], // union of every entry's verdict
+	}[keyof RenameMap], // Union of every entry's verdict.
 ] extends [true]
 	? true
 	: false;
@@ -107,7 +107,7 @@ type _AllTargetsAreSingleLiterals<RenameMap> = [
 // typo'd source keys.
 type _AllSourceKeysExist<BaseType, RenameMap> = [
 	{
-		[Key in keyof RenameMap]: Key extends KeysOfUnion<BaseType> ? true : false; // source key is in keys of `BaseType`?
+		[Key in keyof RenameMap]: Key extends KeysOfUnion<BaseType> ? true : false; // Source key is in keys of `BaseType`?
 	}[keyof RenameMap],
 ] extends [true]
 	? true
@@ -120,11 +120,11 @@ type _AllSourceKeysExist<BaseType, RenameMap> = [
 // rename away simultaneously, so neither is kept.
 type _HasKeptCollision<BaseType, RenameMap> = [
 	{
-		[Key in keyof RenameMap]: RenameMap[Key] extends Exclude<_LiteralKeysOf<BaseType>, keyof RenameMap> // target is in kept literal keys?
+		[Key in keyof RenameMap]: RenameMap[Key] extends Exclude<_LiteralKeysOf<BaseType>, keyof RenameMap> // Target is in kept literal keys?
 			? true
 			: false;
 	}[keyof RenameMap],
-] extends [false] // no entry collides
+] extends [false] // No entry collides.
 	? false
 	: true;
 
@@ -135,7 +135,7 @@ type _HasDuplicateTargets<RenameMap> = [
 	{
 		[Key in keyof RenameMap]: [
 			{
-				[Other in Exclude<keyof RenameMap, Key>]: RenameMap[Key] extends RenameMap[Other] // this target is in a subset of another target?
+				[Other in Exclude<keyof RenameMap, Key>]: RenameMap[Key] extends RenameMap[Other] // This target is a subset of another target?
 					? true
 					: false;
 			}[Exclude<keyof RenameMap, Key>],
@@ -150,11 +150,11 @@ type _HasDuplicateTargets<RenameMap> = [
 // Apply the rename. For each key on `BaseType`, look it up in `RenameMap`;
 // if found, emit it under the new name; otherwise keep the original.
 type _RenameOnce<BaseType, RenameMap> = {
-	[Key in keyof BaseType as Key extends keyof RenameMap // key being renamed?
-		? RenameMap[Key] extends PropertyKey // use the new name from the map
+	[Key in keyof BaseType as Key extends keyof RenameMap // Key being renamed?
+		? RenameMap[Key] extends PropertyKey // Use the new name from the map.
 			? RenameMap[Key]
 			: Key
-		: Key]: BaseType[Key]; // keep the value
+		: Key]: BaseType[Key]; // Keep the value.
 };
 
 export {};
