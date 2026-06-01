@@ -177,6 +177,7 @@ export type {ArrayReverse} from './source/array-reverse.d.ts';
 export type {UnionMember} from './source/union-member.d.ts';
 export type {Absolute} from './source/absolute.d.ts';
 export type {UnionLength} from './source/union-length.d.ts';
+export type {OptionalPaths, OptionalPathsOptions} from './source/optional-paths.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
