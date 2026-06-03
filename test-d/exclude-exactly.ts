@@ -43,6 +43,8 @@ expectType<never>({} as ExcludeExactly<never, unknown>);
 // Unions
 expectType<2>({} as ExcludeExactly<0 | 1 | 2, 0 | 1>);
 expectType<never>({} as ExcludeExactly<0 | 1 | 2, 0 | 1 | 2>);
+expectType<2 | null>({} as ExcludeExactly<'1' | 2 | true | null, '1' | boolean | undefined>);
+expectType<'' | null | false>({} as ExcludeExactly<0 | '' | null | undefined | false, 0 | string | undefined>);
 expectType<{readonly a?: 0}>({} as ExcludeExactly<
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
 	{a: 0} | {readonly a: 0} | {a?: 0}
