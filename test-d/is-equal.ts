@@ -73,10 +73,31 @@ expectType<true>({} as IsEqual<1 & {foo?: 1}, 1 & {foo?: 1}>);
 expectType<false>({} as IsEqual<{bar: 'a'} & {foo?: 1}, {bar: 'a'}>);
 expectType<false>({} as IsEqual<((value: number) => void) & {foo?: 1}, (value: number) => void>);
 
-// Overload
+// Overloads
 expectType<false>({} as IsEqual<{(value: 'a'): 1; (value: string): 1}, (value: string) => 1>);
 expectType<false>({} as IsEqual<{(value: 'a'): 1; (value: string): 1; key: 'value'}, (value: string) => 1>);
 expectType<false>({} as IsEqual<{(value: 'a'): 1; (value: string): 1; key: 'value'}, {(value: string): 1; key: 'value'}>);
+
+declare function testf(a: string): number;
+declare function testf(a: number): string;
+
+declare function testg(a: number): string;
+declare function testg(a: string): number;
+expectType<false>({} as IsEqual<typeof testf, typeof testg>);
+
+expectType<true>({} as IsEqual<{(a: string): {rr: number}; (a: string): {rr: number}}, (a: string) => {rr: number}>);
+expectType<true>({} as IsEqual<{(a: {aa: string} | {aa: string}): {rr: number}; (a: {aa: string}): {rr: number}}, (a: {aa: string}) => ({rr: number} | {rr: number})>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{(a: {aa: string} & {aa: string}): {rr: number}; (a: {aa: string}): {rr: number}}, (a: {aa: string}) => ({rr: number} & {rr: number})>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{(a: {aa: string} | {aa: string}): {rr: number}; (a: {aa: string}): {rr: number}}, (a: {aa: string} | {aa: string}) => ({rr: number} | {rr: number})>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{(a: {aa: string} & {aa: string}): {rr: number}; (a: {aa: string}): {rr: number}}, (a: {aa: string} & {aa: string}) => ({rr: number} & {rr: number})>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+
+// Object: Overload & Record.
+expectType<true>({} as IsEqual<{key: 'value'; (a: string): {rr: number}}, {key: 'value'; (a: string): {rr: number}}>);
+expectType<true>({} as IsEqual<{key: 'value'; (a: string): {rr: number}; (a: string): {rr: number}}, {key: 'value'; (a: string): {rr: number}}>);
+
+expectType<false>({} as IsEqual<{(value: 'a'): 1; (value: string): 1; key0: {key1: {key2: 'value2'} | {key2: 'value2'}}}, {(value: string): 1; key0: {key1: {key2: 'value2'} | {key2: 'value2'}}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{(value: string): 1; key0: {key1: {key2: 'value2'} | {key2: 'value2'}}}, {(value: string): 1; key0: {key1: {key2: 'value2'} | {key2: 'value2'}}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
+expectType<true>({} as IsEqual<{(value: string): 1; key0: {key1: {key2: 'value2'} | {key2: 'value2'}}}, {(value: string): 1; key0: {key1: {key2: 'value2'}}}>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
 
 // Lambda: Identical Union and Intersection cases.
 expectType<true>({} as IsEqual<SpecificNumericLambda & SpecificNumericLambda, SpecificNumericLambda>); // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
