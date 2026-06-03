@@ -48,6 +48,13 @@ const preserveConsecutiveUppercase: PascalCasedPropertiesDeep<{fooBAR: {fooBARBi
 		}],
 	},
 };
+
+const splitOnPunctuation: PascalCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
+	UserInfo: {
+		UserId: 1,
+		UserName: 'Tom',
+	},
+};
 ```
 
 @category Change case

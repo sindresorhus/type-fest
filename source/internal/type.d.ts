@@ -5,6 +5,7 @@ import type {Primitive} from '../primitive.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {UnionToIntersection} from '../union-to-intersection.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
+import type {UnionToIntersection} from '../union-to-intersection.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.

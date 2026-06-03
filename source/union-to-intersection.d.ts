@@ -1,5 +1,5 @@
 /**
-Convert a union type to an intersection type using [distributive conditional types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
+Convert a union type to an intersection type.
 
 Inspired by [this Stack Overflow answer](https://stackoverflow.com/a/50375286/2172153).
 

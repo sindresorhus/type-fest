@@ -4,7 +4,7 @@ import type {IsEqual} from './is-equal.d.ts';
 type Recursive<T> = Array<Recursive<T>>;
 
 /**
-Creates a type that represents a multidimensional array of the given type and dimension.
+Create a type that represents a multidimensional array of the given type and dimension.
 
 Use-cases:
 - Return a n-dimensional array from functions.

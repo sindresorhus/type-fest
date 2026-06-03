@@ -172,6 +172,8 @@ It supports recursing into arrays.
 
 Use-case: Distill complex objects down to the components you need to target.
 
+Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
+
 @example
 ```
 import type {PickDeep, PartialDeep} from 'type-fest';
@@ -195,24 +197,15 @@ type Configuration = {
 };
 
 type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
-// type NameConfig = {
-// 	userConfig: {
-// 		name: string;
-// 	}
-// };
+//=> {userConfig: {name: string}}
 
 // Supports optional properties
 type User = PickDeep<PartialDeep<Configuration>, 'userConfig.name' | 'userConfig.age'>;
-// type User = {
-// 	userConfig?: {
-// 		name?: string;
-// 		age?: number;
-// 	};
-// };
+//=> {userConfig?: {name?: string; age?: number}}
 
 // Supports array
 type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
-// type AddressConfig = {
+//=> {
 // 	userConfig: {
 // 		address: [{
 // 			city1: string;
@@ -223,20 +216,25 @@ type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
 
 // Supports recurse into array
 type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
-// type Street = {
-// 	userConfig: {
-// 		address: [
-// 			unknown,
-// 			{street2: string}
-// 		];
-// 	};
-// }
+//=> {userConfig: {address: [unknown, {street2: string}]}}
 ```
 
 @category Object
 @category Array
 */
-export type PickDeep<T, PathUnion extends Paths<T>> = InternalPickDeep<T, MergeTree<PathToTree<PathUnion>> extends infer M extends PathTreeType ? M : never>;
+export type PickDeep<T, PathUnion extends Paths<T>> =
+	T extends NonRecursiveType
+		? never
+		: T extends UnknownArray
+			? UnionToIntersection<{
+				[P in PathUnion]: InternalPickDeep<T, P>;
+			}[PathUnion]
+			>
+			: T extends object
+				? SimplifyDeep<UnionToIntersection<{
+					[P in PathUnion]: InternalPickDeep<T, P>;
+				}[PathUnion]>>
+				: never;
 
 type InternalPickDeep<Parent, PathTree extends PathTreeType> =
 	Parent extends UnknownArray

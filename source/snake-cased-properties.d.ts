@@ -4,7 +4,7 @@ import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
 /**
-Convert object properties to snake case but not recursively.
+Convert top-level object properties to snake case.
 
 This can be useful when, for example, converting some API types from a different style.
 
@@ -27,6 +27,10 @@ const result: SnakeCasedProperties<User> = {
 
 const splitOnNumbers: SnakeCasedProperties<{line1: string}, {splitOnNumbers: true}> = {
 	'line_1': 'string',
+};
+
+const splitOnPunctuation: SnakeCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	'foo_bar': 'string',
 };
 ```
 

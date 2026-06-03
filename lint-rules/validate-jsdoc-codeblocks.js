@@ -2,7 +2,7 @@ import path from 'node:path';
 import ts from 'typescript';
 import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescript/vfs';
 
-const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)```/g;
+const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)```/gv;
 const FILENAME = 'example-codeblock.ts';
 const TWOSLASH_COMMENT = '//=>';
 
@@ -24,8 +24,7 @@ const compilerOptions = {
 	exactOptionalPropertyTypes: true,
 };
 
-const virtualFsMap = new Map();
-virtualFsMap.set(FILENAME, '// Can\'t be empty');
+const virtualFsMap = new Map([[FILENAME, '// Can\'t be empty']]);
 
 const rootDir = path.join(import.meta.dirname, '..');
 const system = createFSBackedSystem(virtualFsMap, rootDir, ts);
@@ -41,7 +40,7 @@ function parseCompilerOptions(code) {
 			continue;
 		}
 
-		const match = line.match(/^\s*\/\/ @(\w+): (.*)$/);
+		const match = line.match(/^\s*\/\/ @(\w+): (.*)$/v);
 		if (!match) {
 			// Stop parsing at the first non-matching line
 			return options;
@@ -84,11 +83,27 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 		fixable: 'code',
 		messages: {
 			invalidCodeblock: '{{errorMessage}}',
-			typeMismatch: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
+			incorrectTwoslashType: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
+			incorrectTwoslashFormat: 'Expected twoslash comment to be: {{expectedComment}}, but found: {{actualComment}}',
 		},
-		schema: [],
+		schema: [{
+			type: 'object',
+			properties: {
+				verbosityLevels: {
+					type: 'array',
+					uniqueItems: true,
+					items: {
+						minimum: 0,
+						type: 'number',
+					},
+				},
+			},
+		}],
+		/** @type {unknown[]} */
+		defaultOptions: [{
+			verbosityLevels: [],
+		}],
 	},
-	defaultOptions: [],
 	create(context) {
 		const filename = context.filename.replaceAll('\\', '/');
 
@@ -186,6 +201,15 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 	},
 });
 
+function getLeftmostQuickInfo(env, line, lineOffset, verbosityLevel) {
+	for (let i = 0; i < line.length; i++) {
+		const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, lineOffset + i, undefined, verbosityLevel);
+		if (quickInfo?.displayParts) {
+			return quickInfo;
+		}
+	}
+}
+
 function extractTypeFromQuickInfo(quickInfo) {
 	const {displayParts} = quickInfo;
 
@@ -219,7 +243,7 @@ function extractTypeFromQuickInfo(quickInfo) {
 	return displayParts.slice(separatorIndex + 1).map(part => part.text).join('').trim();
 }
 
-function normalizeUnions(type) {
+function normalizeType(type, onlySortNumbers = false) {
 	const sourceFile = ts.createSourceFile(
 		'twoslash-type.ts',
 		`declare const test: ${type};`,
@@ -229,19 +253,25 @@ function normalizeUnions(type) {
 	const typeNode = sourceFile.statements[0].declarationList.declarations[0].type;
 
 	const print = node => ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, sourceFile);
+
 	const isNumeric = v => v.trim() !== '' && Number.isFinite(Number(v));
 
 	const visit = node => {
 		node = ts.visitEachChild(node, visit, undefined);
 
 		if (ts.isUnionTypeNode(node)) {
-			const types = node.types
-				.map(t => [print(t), t])
-				.sort(([a], [b]) =>
-					// Numbers are sorted only wrt other numbers
-					isNumeric(a) && isNumeric(b) ? Number(a) - Number(b) : 0,
-				)
-				.map(t => t[1]);
+			let types = node.types.map(t => [print(t), t]);
+
+			if (onlySortNumbers) {
+				// Sort only numeric members while keeping non-numeric members at their original positions
+				const sortedNumericTypes = types.filter(([a]) => isNumeric(a)).toSorted(([a], [b]) => Number(a) - Number(b));
+				let numericIndex = 0;
+				types = types.map(t => isNumeric(t[0]) ? sortedNumericTypes[numericIndex++][1] : t[1]);
+			} else {
+				types = types
+					.toSorted(([a], [b]) => a < b ? -1 : (a > b ? 1 : 0))
+					.map(t => t[1]);
+			}
 
 			return ts.factory.updateUnionTypeNode(
 				node,
@@ -267,7 +297,7 @@ function normalizeUnions(type) {
 		return node;
 	};
 
-	return print(visit(typeNode)).replaceAll(/^( +)/gm, indentation => {
+	return print(visit(typeNode)).replaceAll(/^( +)/gmv, indentation => {
 		// Replace spaces used for indentation with tabs
 		const spacesPerTab = 4;
 		const tabCount = Math.floor(indentation.length / spacesPerTab);
@@ -276,9 +306,40 @@ function normalizeUnions(type) {
 	});
 }
 
+function getCommentForType(type) {
+	let comment = type;
+
+	if (type.length < 80) {
+		comment = type
+			.replaceAll(/\r?\n\s*/gv, ' ') // Collapse into single line
+			.replaceAll(/\{\s+/gv, '{') // Remove spaces after `{`
+			.replaceAll(/\s+\}/gv, '}') // Remove spaces before `}`
+			.replaceAll(/;(?=\})/gv, ''); // Remove semicolons before `}`
+	}
+
+	return `${TWOSLASH_COMMENT} ${comment.replaceAll('\n', '\n// ')}`;
+}
+
+function reportTypeMismatch({context, messageId, start, end, data, fix}) {
+	context.report({
+		loc: {
+			start: context.sourceCode.getLocFromIndex(start),
+			end: context.sourceCode.getLocFromIndex(end),
+		},
+		messageId,
+		data,
+		fix(fixer) {
+			return fixer.replaceTextRange([start, end], fix);
+		},
+	});
+}
+
 function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
 	const lines = code.split('\n');
+
+	const specifiedVerbosityLevels = context.options[0].verbosityLevels;
+	const verbosityLevels = [0, ...specifiedVerbosityLevels, Infinity]; // Keep `Infinity` last since suggestion logic relies on the order
 
 	for (const [index, line] of lines.entries()) {
 		const dedentedLine = line.trimStart();
@@ -291,6 +352,7 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 			continue;
 		}
 
+		let rawActualType = dedentedLine.slice(TWOSLASH_COMMENT.length);
 		let actualComment = dedentedLine;
 		let actualCommentEndLine = index;
 
@@ -301,59 +363,57 @@ function validateTwoslashTypes(context, env, code, codeStartIndex) {
 			}
 
 			actualComment += '\n' + dedentedNextLine;
+			rawActualType += '\n' + dedentedNextLine.slice(2); // Remove the `//` from start
 			actualCommentEndLine = i;
 		}
 
 		const previousLine = lines[previousLineIndex];
 		const previousLineOffset = sourceFile.getPositionOfLineAndCharacter(previousLineIndex, 0);
 
-		for (let i = 0; i < previousLine.length; i++) {
-			const quickInfo = env.languageService.getQuickInfoAtPosition(FILENAME, previousLineOffset + i);
+		const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
 
-			if (quickInfo?.displayParts) {
-				let expectedType = normalizeUnions(extractTypeFromQuickInfo(quickInfo));
+		const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
+		const actualCommentEndOffset = sourceFile.getPositionOfLineAndCharacter(actualCommentEndLine, lines[actualCommentEndLine].length);
 
-				if (expectedType.length < 80) {
-					expectedType = expectedType
-						.replaceAll(/\r?\n\s*/g, ' ') // Collapse into single line
-						.replaceAll(/{\s+/g, '{') // Remove spaces after `{`
-						.replaceAll(/\s+}/g, '}') // Remove spaces before `}`
-						.replaceAll(/;(?=})/g, ''); // Remove semicolons before `}`
-				}
+		const start = codeStartIndex + actualCommentStartOffset;
+		const end = codeStartIndex + actualCommentEndOffset;
 
-				const expectedComment = TWOSLASH_COMMENT + ' ' + expectedType.replaceAll('\n', '\n// ');
+		const indent = line.slice(0, actualCommentIndex);
+
+		const quickInfos = verbosityLevels
+			.map(verbosity => getLeftmostQuickInfo(env, previousLine, previousLineOffset, verbosity))
+			.filter(qi => qi?.displayParts);
+
+		if (quickInfos.length > 0) {
+			const expectedTypes = quickInfos.map(qi => normalizeType(extractTypeFromQuickInfo(qi)));
+			const actualType = normalizeType(rawActualType);
+
+			if (expectedTypes.includes(actualType)) {
+				// If the types match, check for formatting errors and unordered numbers in unions
+				const expectedComment = getCommentForType(normalizeType(rawActualType, true));
 
 				if (actualComment !== expectedComment) {
-					const actualCommentIndex = line.indexOf(TWOSLASH_COMMENT);
-
-					const actualCommentStartOffset = sourceFile.getPositionOfLineAndCharacter(index, actualCommentIndex);
-					const actualCommentEndOffset = sourceFile.getPositionOfLineAndCharacter(actualCommentEndLine, lines[actualCommentEndLine].length);
-
-					const start = codeStartIndex + actualCommentStartOffset;
-					const end = codeStartIndex + actualCommentEndOffset;
-
-					context.report({
-						loc: {
-							start: context.sourceCode.getLocFromIndex(start),
-							end: context.sourceCode.getLocFromIndex(end),
-						},
-						messageId: 'typeMismatch',
-						data: {
-							expectedComment,
-							actualComment,
-						},
-						fix(fixer) {
-							const indent = line.slice(0, actualCommentIndex);
-
-							return fixer.replaceTextRange(
-								[start, end],
-								expectedComment.replaceAll('\n', `\n${indent}`),
-							);
-						},
+					reportTypeMismatch({
+						messageId: 'incorrectTwoslashFormat',
+						context,
+						start,
+						end,
+						data: {expectedComment, actualComment},
+						fix: expectedComment.replaceAll('\n', `\n${indent}`),
 					});
 				}
+			} else {
+				// For suggestion, use infinite verbosity, and it should be the last one
+				const expectedComment = getCommentForType(expectedTypes.at(-1));
 
-				break;
+				reportTypeMismatch({
+					messageId: 'incorrectTwoslashType',
+					context,
+					start,
+					end,
+					data: {expectedComment, actualComment},
+					fix: expectedComment.replaceAll('\n', `\n${indent}`),
+				});
 			}
 		}
 	}

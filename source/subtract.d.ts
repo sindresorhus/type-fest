@@ -1,7 +1,8 @@
-import type {NumberAbsolute, ReverseSign} from './internal/index.d.ts';
+import type {ReverseSign} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
+import type {Absolute} from './absolute.d.ts';
 
 /**
 Returns the difference between two numbers.
@@ -59,9 +60,9 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 		? SubtractPositives<A, B>
 		: AreNegative extends [true, true]
 			// When both numbers are negative we subtract the absolute values and then reverse the sign
-			? ReverseSign<SubtractPositives<NumberAbsolute<A>, NumberAbsolute<B>>>
+			? ReverseSign<SubtractPositives<Absolute<A>, Absolute<B>>>
 			// When the signs are different we can add the absolute values and then reverse the sign if A < B
-			: [...TupleOf<NumberAbsolute<A>>, ...TupleOf<NumberAbsolute<B>>] extends infer R extends unknown[]
+			: [...TupleOf<Absolute<A>>, ...TupleOf<Absolute<B>>] extends infer R extends unknown[]
 				? LessThan<A, B> extends true ? ReverseSign<R['length']> : R['length']
 				: never;
 

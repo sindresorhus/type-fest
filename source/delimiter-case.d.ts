@@ -1,7 +1,6 @@
 import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-literal.d.ts';
 import type {Merge} from './merge.d.ts';
-import type {RemovePrefix} from './remove-prefix.d.ts';
 import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 
 export type _DefaultDelimiterCaseOptions = Merge<_DefaultWordsOptions, {splitOnNumbers: false}>;
@@ -17,7 +16,7 @@ type DelimiterCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${
+	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? FirstWord : `${OutputString}${
 		StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
 	}${FirstWord}`>
 	: OutputString;
@@ -38,6 +37,7 @@ import type {DelimiterCase} from 'type-fest';
 
 const someVariable: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 const someVariableNoSplitOnNumbers: DelimiterCase<'p2pNetwork', '#', {splitOnNumbers: false}> = 'p2p#network';
+const someVariableWithPunctuation: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: true}> = 'div#card#after';
 
 // Advanced
 
@@ -66,12 +66,14 @@ export type DelimiterCase<
 	Delimiter extends string,
 	Options extends WordsOptions = {},
 > = Value extends string
-	? IsStringLiteral<Value> extends false
-		? Value
-		: Lowercase<RemovePrefix<DelimiterCaseFromArray<
-			Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
-			Delimiter
-		>, string, {strict: false}>>
+	? Delimiter extends string // For distributing `Delimiter`
+		? IsStringLiteral<Value> extends false
+			? Value
+			: Lowercase<DelimiterCaseFromArray<
+				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
+				Delimiter
+			>>
+		: never
 	: Value;
 
 export {};

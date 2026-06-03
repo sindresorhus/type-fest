@@ -8,7 +8,7 @@ import type {RequiredDeep} from './required-deep.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Create a type that makes the given keys required. You can specify deeply nested key paths. The remaining keys are kept as is.
+Create a type that makes the given keys required, with support for deeply nested key paths, while keeping the remaining keys as is.
 
 Use-case: Selectively make nested properties required in complex types like models.
 

@@ -32,7 +32,7 @@ Unfortunately, `Record<string, never>`, `Record<keyof any, never>` and `Record<n
 export type EmptyObject = {[emptyObjectSymbol]?: never};
 
 /**
-Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
+Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 
 @example
 ```

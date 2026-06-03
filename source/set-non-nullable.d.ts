@@ -1,5 +1,5 @@
 /**
-Create a type that makes the given keys non-nullable, where the remaining keys are kept as is.
+Create a type that makes the given keys non-nullable, while keeping the remaining keys as is.
 
 If no keys are given, all keys will be made non-nullable.
 
@@ -15,19 +15,12 @@ type Foo = {
 	c?: boolean | null;
 };
 
+// Note: In the following example, `c` can no longer be `null`, but it's still optional.
 type SomeNonNullable = SetNonNullable<Foo, 'b' | 'c'>;
-// type SomeNonNullable = {
-// 	a: number | null;
-// 	b: string; // Can no longer be undefined.
-// 	c?: boolean; // Can no longer be null, but is still optional.
-// }
+//=> {a: null | number; b: string; c?: boolean}
 
 type AllNonNullable = SetNonNullable<Foo>;
-// type AllNonNullable = {
-// 	a: number; // Can no longer be null.
-// 	b: string; // Can no longer be undefined.
-// 	c?: boolean; // Can no longer be null, but is still optional.
-// }
+//=> {a: number; b: string; c?: boolean}
 ```
 
 @category Object

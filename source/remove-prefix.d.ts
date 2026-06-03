@@ -1,7 +1,9 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, Not} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-literal.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {Or} from './or.d.ts';
+import type {If} from './if.d.ts';
 
 /**
 @see {@link RemovePrefix}
@@ -58,24 +60,6 @@ export type RemovePrefixOptions = {
 	type D = RemovePrefix<`id-${number}`, 'id-', {strict: false}>;
 	//=> `${number}`
 	```
-
-	Note: If it can be statically determined that the input string can never start with the specified non-literal prefix, then the input string is returned as-is, regardless of the value of this option.
-	For example, ``RemovePrefix<`${string}/${number}`, `${string}:`>`` returns `` `${string}/${number}` ``, since a string of type `` `${string}/${number}` `` can never start with a prefix of type `` `${string}:` ``.
-	```
-	import type {RemovePrefix} from 'type-fest';
-
-	type A = RemovePrefix<`${string}/${number}`, `${string}:`, {strict: true}>;
-	//=> `${string}/${number}`
-
-	type B = RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>;
-	//=> `${string}/${number}`
-
-	type C = RemovePrefix<'on-change', `${number}-`, {strict: true}>;
-	//=> 'on-change'
-
-	type D = RemovePrefix<'on-change', `${number}-`, {strict: false}>;
-	//=> 'on-change'
-	```
 	*/
 	strict?: boolean;
 };
@@ -110,23 +94,22 @@ type D = RemovePrefix<`handle${Capitalize<string>}`, 'handle'>;
 @category Template literal
 */
 export type RemovePrefix<S extends string, Prefix extends string, Options extends RemovePrefixOptions = {}> =
-IfNotAnyOrNever<
-	S,
 	IfNotAnyOrNever<
-		Prefix,
-		_RemovePrefix<S, Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>,
-		string,
-		S
-	>
->;
+		S,
+		If<
+			IsNever<Prefix>,
+			S,
+			_RemovePrefix<S, Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
+		>
+	>;
 
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
-Prefix extends string // For distributing `Prefix`
-	? S extends `${Prefix}${infer Rest}`
+	Prefix extends string // For distributing `Prefix`
 		? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
-			? Rest
-			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is disabled
-		: S // Return back `S` when `Prefix` is not present at the start of `S`
-	: never;
+			? S extends `${Prefix}${infer Rest}`
+				? Rest
+				: S // Return back `S` when `Prefix` is not present at the start of `S`
+			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is enabled
+		: never;
 
 export {};

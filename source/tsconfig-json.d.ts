@@ -61,6 +61,7 @@ export namespace TsConfigJson {
 			| 'ES2022'
 			| 'ES2023'
 			| 'ES2024'
+			| 'ES2025'
 			| 'ESNext'
 			// Lowercase alternatives
 			| 'es3'
@@ -76,6 +77,7 @@ export namespace TsConfigJson {
 			| 'es2022'
 			| 'es2023'
 			| 'es2024'
+			| 'es2025'
 			| 'esnext';
 
 		type Lib =
@@ -148,6 +150,13 @@ export namespace TsConfigJson {
 			| 'ES2024.Regexp'
 			| 'ES2024.SharedMemory'
 			| 'ES2024.String'
+			| 'ES2025'
+			| 'ES2025.Collection'
+			| 'ES2025.Float16'
+			| 'ES2025.Intl'
+			| 'ES2025.Iterator'
+			| 'ES2025.Promise'
+			| 'ES2025.RegExp'
 			| 'ESNext'
 			| 'ESNext.Array'
 			| 'ESNext.AsyncIterable'
@@ -156,6 +165,7 @@ export namespace TsConfigJson {
 			| 'ESNext.Decorators'
 			| 'ESNext.Disposable'
 			| 'ESNext.Error'
+			| 'ESNext.Float16'
 			| 'ESNext.Intl'
 			| 'ESNext.Iterator'
 			| 'ESNext.Object'
@@ -163,6 +173,7 @@ export namespace TsConfigJson {
 			| 'ESNext.Regexp'
 			| 'ESNext.String'
 			| 'ESNext.Symbol'
+			| 'ESNext.Temporal'
 			| 'ESNext.WeakRef'
 			| 'DOM'
 			| 'DOM.AsyncIterable'
@@ -244,6 +255,13 @@ export namespace TsConfigJson {
 			| 'es2024.regexp'
 			| 'es2024.sharedmemory'
 			| 'es2024.string'
+			| 'es2025'
+			| 'es2025.collection'
+			| 'es2025.float16'
+			| 'es2025.intl'
+			| 'es2025.iterator'
+			| 'es2025.promise'
+			| 'es2025.regexp'
 			| 'esnext'
 			| 'esnext.array'
 			| 'esnext.asynciterable'
@@ -252,6 +270,7 @@ export namespace TsConfigJson {
 			| 'esnext.decorators'
 			| 'esnext.disposable'
 			| 'esnext.error'
+			| 'esnext.float16'
 			| 'esnext.intl'
 			| 'esnext.iterator'
 			| 'esnext.object'
@@ -259,6 +278,7 @@ export namespace TsConfigJson {
 			| 'esnext.regexp'
 			| 'esnext.string'
 			| 'esnext.symbol'
+			| 'esnext.temporal'
 			| 'esnext.weakref'
 			| 'dom'
 			| 'dom.asynciterable'
@@ -326,7 +346,7 @@ export namespace TsConfigJson {
 			| 'legacy'
 			| 'force';
 
-		type IgnoreDeprecations = '5.0';
+		type IgnoreDeprecations = '5.0' | '6.0';
 	}
 
 	type CompilerOptions = {
@@ -479,7 +499,7 @@ export namespace TsConfigJson {
 		/**
 		Specify module code generation: 'None', 'CommonJS', 'AMD', 'System', 'UMD', 'ES6', 'ES2015' or 'ESNext'. Only 'AMD' and 'System' can be used in conjunction with `--outFile`. 'ES6' and 'ES2015' values may be used when targeting 'ES5' or lower.
 
-		@default ['ES3', 'ES5'].includes(target) ? 'CommonJS' : 'ES6'
+		Default: `'ESNext'` since TypeScript 6.0, `['ES3', 'ES5'].includes(target) ? 'CommonJS' : 'ES6'` before.
 		*/
 		module?: CompilerOptions.Module;
 
@@ -588,7 +608,16 @@ export namespace TsConfigJson {
 		skipLibCheck?: boolean;
 
 		/**
+		Enforce stable type ordering.
+
+		@default false
+		*/
+		stableTypeOrdering?: boolean;
+
+		/**
 		Concatenate and emit output to single file.
+
+		@deprecated since TypeScript 6.0.
 		*/
 		outFile?: string;
 
@@ -696,7 +725,7 @@ export namespace TsConfigJson {
 		/**
 		Specify ECMAScript target version.
 
-		@default 'es3'
+		Default: Current-year ES version since TypeScript 6.0, `'es3'` before.
 		*/
 		target?: CompilerOptions.Target;
 
@@ -776,7 +805,7 @@ export namespace TsConfigJson {
 		/**
 		Report error if failed to find a source file for a side effect import.
 
-		@default false
+		Default: `true` since TypeScript 6.0, `false` before.
 		*/
 		noUncheckedSideEffectImports?: boolean;
 
@@ -822,6 +851,8 @@ export namespace TsConfigJson {
 
 		/**
 		Base directory to resolve non-relative module names.
+
+		@deprecated since TypeScript 6.0.
 		*/
 		baseUrl?: string;
 
@@ -944,7 +975,7 @@ export namespace TsConfigJson {
 		/**
 		Enable all strict type checking options.
 
-		@default false
+		Default: `true` since TypeScript 6.0, `false` before.
 		*/
 		strict?: boolean;
 
@@ -959,6 +990,7 @@ export namespace TsConfigJson {
 		Provide full support for iterables in `for-of`, spread, and destructuring when targeting `ES5` or `ES3`.
 
 		@default false
+		@deprecated since TypeScript 6.0.
 		*/
 		downlevelIteration?: boolean;
 
@@ -1150,7 +1182,7 @@ export namespace TsConfigJson {
 		/**
 		Enable lib replacement.
 
-		@default true
+		Default: `false` since TypeScript 6.0, `true` before.
 		*/
 		libReplacement?: boolean;
 	};
@@ -1266,7 +1298,7 @@ export namespace TsConfigJson {
 }
 
 /**
-Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 3.7).
+Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html).
 
 @category File
 */

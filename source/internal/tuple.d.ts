@@ -23,7 +23,7 @@ type Union = TupleLength<[] | [1, 2, 3] | number[]>;
 */
 export type TupleLength<T extends UnknownArray> =
 	// `extends unknown` is used to convert `T` (if `T` is a union type) to
-	// a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
+	// a [distributive conditional type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
 	T extends unknown
 		? number extends T['length']
 			? never // Return never if the given type is an non-flexed-length array like `Array<string>`
@@ -46,8 +46,8 @@ type B = TupleMax<[1, 2, 5, 3, 99, -1]>;
 ```
 */
 export type TupleMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
-	? never :
-	A extends [infer F extends number, ...infer R extends number[]]
+	? never
+	: A extends [infer F extends number, ...infer R extends number[]]
 		? GreaterThan<F, Result> extends true
 			? TupleMax<R, F>
 			: TupleMax<R, Result>

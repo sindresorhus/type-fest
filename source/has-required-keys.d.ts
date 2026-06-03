@@ -1,7 +1,7 @@
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
 
 /**
-Creates a type that represents `true` or `false` depending on whether the given type has any required fields.
+Returns a boolean for whether the given type has any required fields.
 
 This is useful when you want to create an API whose behavior depends on the presence or absence of required fields.
 

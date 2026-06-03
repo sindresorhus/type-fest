@@ -3,7 +3,7 @@ import type {HomomorphicPick} from './internal/index.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
-Create a type that makes the given keys readonly. The remaining keys are kept as is.
+Create a type that makes the given keys readonly, while keeping the remaining keys as is.
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the keys are readonly.
 
@@ -18,11 +18,7 @@ type Foo = {
 };
 
 type SomeReadonly = SetReadonly<Foo, 'b' | 'c'>;
-// type SomeReadonly = {
-// 	a: number;
-// 	readonly b: string; // Was already readonly and still is.
-// 	readonly c: boolean; // Is now readonly.
-// }
+//=> {a: number; readonly b: string; readonly c: boolean}
 ```
 
 @category Object
@@ -36,8 +32,8 @@ export type SetReadonly<BaseType, Keys extends keyof BaseType> =
 export type _SetReadonly<BaseType, Keys extends keyof BaseType> =
 	BaseType extends unknown // To distribute `BaseType` when it's a union type.
 		? Simplify<
-			Except<BaseType, Keys> &
-			Readonly<HomomorphicPick<BaseType, Keys>>
+			Except<BaseType, Keys>
+			& Readonly<HomomorphicPick<BaseType, Keys>>
 		>
 		: never;
 

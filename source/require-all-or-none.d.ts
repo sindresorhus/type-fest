@@ -9,7 +9,7 @@ Requires all of the keys in the given object.
 type RequireAll<ObjectType, KeysType extends keyof ObjectType> = Required<Pick<ObjectType, KeysType>>;
 
 /**
-Create a type that requires all of the given keys or none of the given keys. The remaining keys are kept as is.
+Create a type that requires all of the given keys or none of the given keys, while keeping the remaining keys as is.
 
 Use-cases:
 - Creating interfaces for components with mutually-inclusive keys.

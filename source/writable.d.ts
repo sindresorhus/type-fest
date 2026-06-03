@@ -37,11 +37,7 @@ writableFoo.b[0] = 'new value'; // Will still fail as the value of property "b" 
 writableFoo.b = ['something']; // Will work as the "b" property itself is no longer readonly.
 
 type SomeWritable = Writable<Foo, 'b' | 'c'>;
-// type SomeWritable = {
-// 	readonly a: number;
-// 	b: readonly string[]; // It's now writable. The type of the property remains unaffected.
-// 	c: boolean; // It's now writable.
-// }
+//=> {readonly a: number; b: readonly string[]; c: boolean}
 
 // Also supports array
 const readonlyArray: readonly number[] = [1, 2, 3];
@@ -54,19 +50,19 @@ writableArray.push(4); // Will work as the array itself is now writable.
 @category Object
 */
 export type Writable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
-BaseType extends ReadonlyMap<infer KeyType, infer ValueType>
-	? Map<KeyType, ValueType>
-	: BaseType extends ReadonlySet<infer ItemType>
-		? Set<ItemType>
-		: BaseType extends readonly unknown[]
-			// Handle array
-			? WritableArray<BaseType>
-			// Handle object
-			: Simplify<
-			// Pick just the keys that are not writable from the base type.
-				Except<BaseType, Keys> &
-			// Pick the keys that should be writable from the base type and make them writable by removing the `readonly` modifier from the key.
-				{-readonly [KeyType in keyof Pick<BaseType, Keys>]: Pick<BaseType, Keys>[KeyType]}
-			>;
+	BaseType extends ReadonlyMap<infer KeyType, infer ValueType>
+		? Map<KeyType, ValueType>
+		: BaseType extends ReadonlySet<infer ItemType>
+			? Set<ItemType>
+			: BaseType extends readonly unknown[]
+				// Handle array
+				? WritableArray<BaseType>
+				// Handle object
+				: Simplify<
+					// Pick just the keys that are not writable from the base type.
+					Except<BaseType, Keys>
+					// Pick the keys that should be writable from the base type and make them writable by removing the `readonly` modifier from the key.
+					& {-readonly [KeyType in keyof Pick<BaseType, Keys>]: Pick<BaseType, Keys>[KeyType]}
+				>;
 
 export {};

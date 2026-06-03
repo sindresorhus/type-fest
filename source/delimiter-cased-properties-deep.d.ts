@@ -4,7 +4,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
 /**
-Convert object properties to delimiter case recursively.
+Convert object properties to a custom string delimiter casing recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
@@ -49,6 +49,13 @@ const splitOnNumbers: DelimiterCasedPropertiesDeep<{line1: {line2: [{line3: stri
 				'line-3': 'string',
 			},
 		],
+	},
+};
+
+const splitOnPunctuation: DelimiterCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, '-', {splitOnPunctuation: true}> = {
+	'user-info': {
+		'user-id': 1,
+		'user-name': 'Tom',
 	},
 };
 ```
