@@ -44,8 +44,10 @@ expectType<never>({} as ExcludeExactly<never, unknown>);
 expectType<2>({} as ExcludeExactly<0 | 1 | 2, 0 | 1>);
 expectType<never>({} as ExcludeExactly<0 | 1 | 2, 0 | 1 | 2>);
 expectType<{readonly a?: 0}>({} as ExcludeExactly<
-	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}, {a: 0} | {readonly a: 0} | {a?: 0}
+	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
+	{a: 0} | {readonly a: 0} | {a?: 0}
 >);
 expectType<never>({} as ExcludeExactly<
-	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}, {a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}
+	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
+	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}
 >);
