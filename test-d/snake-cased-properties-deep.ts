@@ -17,9 +17,21 @@ type User = {
 	regExp: RegExp;
 };
 
+type UserPunctuated = {
+	'user::id': number;
+	'user::name': string;
+	date: Date;
+	'reg::exp': RegExp;
+};
+
 type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
+};
+
+type UserWithFriendsPunctuated = {
+	'user@info': UserPunctuated;
+	'user#friends': UserPunctuated[];
 };
 
 const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
@@ -45,9 +57,13 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 expectType<SnakeCasedPropertiesDeep<UserWithFriends>>(result);
+expectType<SnakeCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
 
 expectType<{foo_bar: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: unknown}>);
 expectType<{foo_bar: {bar_baz: unknown}; biz: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: unknown}>);
 
 expectType<{foo_bar: any}>({} as SnakeCasedPropertiesDeep<{fooBar: any}>);
 expectType<{foo_bar: {bar_baz: any}; biz: any}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>);
+
+expectType<{'foo_bar': unknown}>({} as SnakeCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
+expectType<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>({} as SnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);

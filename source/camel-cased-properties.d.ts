@@ -2,7 +2,7 @@ import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './came
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
 /**
-Convert object properties to camel case but not recursively.
+Convert top-level object properties to camel case.
 
 This can be useful when, for example, converting some API types from a different style.
 
@@ -25,6 +25,10 @@ const result: CamelCasedProperties<User> = {
 
 const preserveConsecutiveUppercase: CamelCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: true}> = {
 	fooBAR: 'string',
+};
+
+const splitOnPunctuation: CamelCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	fooBar: 'string',
 };
 ```
 

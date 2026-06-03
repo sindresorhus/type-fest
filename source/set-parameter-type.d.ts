@@ -38,14 +38,14 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 					: K extends keyof TObject ? TObject[K] : TArray[K]
 			}
 		: TObject extends object
-			// If `TObject` is a object witch key is number like `{0: string, 1: number}`
+			// If `TObject` is an object with number keys like `{0: string, 1: number}`
 			? {
 				[K in keyof TArray]:
 				K extends `${infer NumberK extends number}`
 					? NumberK extends keyof TObject ? TObject[NumberK] : TArray[K]
 					: number extends K
 					// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`.
-					// example: `MergeObjectToParamterArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
+					// example: `MergeObjectToArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
 						? StaticPartOfArray<TArrayCopy>['length'] extends keyof TObject
 							? TObject[StaticPartOfArray<TArrayCopy>['length']]
 							: TArray[K]

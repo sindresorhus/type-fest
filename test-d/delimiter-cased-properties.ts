@@ -13,13 +13,44 @@ expectType<() => {a: string}>(fooBar);
 declare const withOptions: DelimiterCasedProperties<{helloWorld1: {fooBar: string}}, '.', {splitOnNumbers: true}>;
 expectType<{'hello.world.1': {fooBar: string}}>(withOptions);
 
+declare const withPunctuation: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.'>;
+expectType<{'hello@.world1': {'foo::Bar': string}}>(withPunctuation);
+
+declare const withPunctuationSplit: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true}>;
+expectType<{'hello.world1': {'foo::Bar': string}}>(withPunctuationSplit);
+
+declare const withPunctuationSplitAndNumbers: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true; splitOnNumbers: true}>;
+expectType<{'hello.world.1': {'foo::Bar': string}}>(withPunctuationSplitAndNumbers);
+
+declare const startsWithPunctuation: DelimiterCasedProperties<{'^fooBarBaz': {'^foo_bar_baz': string}}, ':'>;
+expectType<{'^foo:bar:baz': {'^foo_bar_baz': string}}>(startsWithPunctuation);
+
+declare const startsWithPunctuationSameAsDelimiter: DelimiterCasedProperties<{'#fooBarBaz': {'#foo_bar_baz': string}}, '#'>;
+expectType<{'#foo#bar#baz': {'#foo_bar_baz': string}}>(startsWithPunctuationSameAsDelimiter);
+
+declare const emptyStringDelimiter: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, ''>;
+expectType<{'foobarbaz': {'foo_bar_baz': string}}>(emptyStringDelimiter);
+
+declare const moreThanOneLengthDelimiter: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, '__'>;
+expectType<{'foo__bar__baz': {'foo_bar_baz': string}}>(moreThanOneLengthDelimiter);
+
+declare const moreThanOneLengthDelimiter1: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, '-->'>;
+expectType<{'foo-->bar-->baz': {'foo_bar_baz': string}}>(moreThanOneLengthDelimiter1);
+
 // Verify example
 type User = {
 	userId: number;
 	userName: string;
 };
+
+type UserPunctuated = {
+	'user::Id': number;
+	'user::Name': string;
+};
+
 const result: DelimiterCasedProperties<User, '-'> = {
 	'user-id': 1,
 	'user-name': 'Tom',
 };
 expectType<DelimiterCasedProperties<User, '-'>>(result);
+expectType<DelimiterCasedProperties<UserPunctuated, '-', {splitOnPunctuation: true}>>(result);

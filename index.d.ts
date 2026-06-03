@@ -34,6 +34,7 @@ export type {OmitIndexSignature} from './source/omit-index-signature.d.ts';
 export type {PickIndexSignature} from './source/pick-index-signature.d.ts';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep.d.ts';
 export type {UnwrapPartial} from './source/unwrap-partial.d.ts';
+export type {UnwrapRequired} from './source/unwrap-required.d.ts';
 export type {RequiredDeep} from './source/required-deep.d.ts';
 export type {PickDeep} from './source/pick-deep.d.ts';
 export type {OmitDeep} from './source/omit-deep.d.ts';
@@ -43,6 +44,7 @@ export type {ReadonlyDeep} from './source/readonly-deep.d.ts';
 export type {LiteralUnion} from './source/literal-union.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';
+export type {Optional} from './source/optional.d.ts';
 export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged.d.ts';
 export type {InvariantOf} from './source/invariant-of.d.ts';
 export type {SetOptional} from './source/set-optional.d.ts';
@@ -51,6 +53,7 @@ export type {SetRequired} from './source/set-required.d.ts';
 export type {SetRequiredDeep} from './source/set-required-deep.d.ts';
 export type {SetNonNullable} from './source/set-non-nullable.d.ts';
 export type {SetNonNullableDeep} from './source/set-non-nullable-deep.d.ts';
+export type {NonNullableDeep} from './source/non-nullable-deep.d.ts';
 export type {ValueOf} from './source/value-of.d.ts';
 export type {AsyncReturnType} from './source/async-return-type.d.ts';
 export type {ConditionalExcept} from './source/conditional-except.d.ts';
@@ -144,6 +147,7 @@ export type {ArraySlice} from './source/array-slice.d.ts';
 export type {ArraySplice} from './source/array-splice.d.ts';
 export type {ArrayTail} from './source/array-tail.d.ts';
 export type {ArrayElement} from './source/array-element.d.ts';
+export type {ArrayLength} from './source/array-length.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
 export type {Paths, PathsOptions} from './source/paths.d.ts';
 export type {AllUnionFields} from './source/all-union-fields.d.ts';
@@ -153,9 +157,12 @@ export type {IsNull} from './source/is-null.d.ts';
 export type {IfNull} from './source/if-null.d.ts';
 export type {IsUndefined} from './source/is-undefined.d.ts';
 export type {And} from './source/and.d.ts';
+export type {AndAll} from './source/and-all.d.ts';
 export type {Or} from './source/or.d.ts';
+export type {OrAll} from './source/or-all.d.ts';
 export type {Xor} from './source/xor.d.ts';
 export type {AllExtend, AllExtendOptions} from './source/all-extend.d.ts';
+export type {SomeExtend, SomeExtendOptions} from './source/some-extend.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';
 export type {FindGlobalInstanceType, FindGlobalType} from './source/find-global-type.d.ts';
 export type {If} from './source/if.d.ts';
@@ -167,6 +174,9 @@ export type {IsNullable} from './source/is-nullable.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
 export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
 export type {ArrayReverse} from './source/array-reverse.d.ts';
+export type {UnionMember} from './source/union-member.d.ts';
+export type {Absolute} from './source/absolute.d.ts';
+export type {UnionLength} from './source/union-length.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
@@ -197,6 +207,7 @@ export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
 export type {RemovePrefix, RemovePrefixOptions} from './source/remove-prefix.d.ts';
+export type {RemoveSuffix, RemoveSuffixOptions} from './source/remove-suffix.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
@@ -204,8 +215,10 @@ export type {PackageJson} from './source/package-json.d.ts';
 export type {TsConfigJson} from './source/tsconfig-json.d.ts';
 
 // Improved built-in
-export type {ExtendsStrict} from './source/extends-strict.d.ts';
+export type {ExtendsStrict, ExtendsStrictOptions} from './source/extends-strict.d.ts';
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
+export type {ExcludeExactly} from './source/exclude-exactly.d.ts';
+export type {ExtractExactly} from './source/extract-exactly.d.ts';
 
 export {};

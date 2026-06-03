@@ -4,7 +4,7 @@ import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
-Create a type that requires exactly one of the given keys and disallows more. The remaining keys are kept as is.
+Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
 
 Use-cases:
 - Creating interfaces for components that only need one of the keys to display properly.
@@ -41,8 +41,8 @@ export type RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType = ke
 
 type _RequireExactlyOne<ObjectType, KeysType extends keyof ObjectType> =
 	{[Key in KeysType]: (
-		Required<Pick<ObjectType, Key>> &
-		Partial<Record<Exclude<KeysType, Key>, never>>
+		Required<Pick<ObjectType, Key>>
+		& Partial<Record<Exclude<KeysType, Key>, never>>
 	)}[KeysType] & Omit<ObjectType, KeysType>;
 
 export {};

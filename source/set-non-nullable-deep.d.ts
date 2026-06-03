@@ -1,4 +1,6 @@
 import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
 import type {Simplify} from './simplify.d.ts';
@@ -8,7 +10,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
 
-NOTE: Optional modifiers (`?`) are not removed from properties. For example, `SetNonNullableDeep<{foo?: string | null | undefined}, 'foo'>` will result in `{foo?: string}`.
+NOTE: Optional modifiers (`?`) are not removed from properties. For example, `SetNonNullableDeep<{foo?: string | null | undefined}, 'foo'>` will result in `{foo?: string}`. To remove both optional modifiers and nullables, use {@link SetRequiredDeep} in conjunction with this type.
 
 @example
 ```
@@ -55,8 +57,9 @@ type ArrayExample2 = SetNonNullableDeep<{a: [(number | null)?, (number | null)?]
 
 @category Object
 */
-export type SetNonNullableDeep<BaseType, KeyPaths extends Paths<BaseType>> =
-	SetNonNullableDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
+export type SetNonNullableDeep<BaseType, KeyPaths extends Paths<BaseType>> = IsAny<KeyPaths> extends true
+	? NonNullableDeep<BaseType>
+	: SetNonNullableDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
 
 /**
 Internal helper for {@link SetNonNullableDeep}.

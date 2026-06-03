@@ -161,7 +161,7 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
-Get a deeply-nested property from an object using a key path, like Lodash's `.get()` function.
+Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
 

@@ -1,11 +1,13 @@
 import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 
 /**
-Convert `object`s, `Map`s, `Set`s, and `Array`s and all of their keys/elements into immutable structures recursively.
+Create a deeply immutable version of another type.
 
 This is useful when a deeply nested structure needs to be exposed as completely immutable, for example, an imported JSON module or when receiving an API response that is passed around.
 
 Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/13923) if you want to have this type as a built-in in TypeScript.
+
+Use [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) if you only need one level deep.
 
 @example
 ```
@@ -83,8 +85,8 @@ export type ReadonlyDeep<T> = T extends BuiltIns
 				? ReadonlyMapDeep<KeyType, ValueType>
 				: T extends Readonly<ReadonlySet<infer ItemType>>
 					? ReadonlySetDeep<ItemType>
-					: // Identify tuples to avoid converting them to arrays inadvertently; special case `readonly [...never[]]`, as it emerges undesirably from recursive invocations of ReadonlyDeep below.
-					T extends readonly [] | readonly [...never[]]
+					// Identify tuples to avoid converting them to arrays inadvertently; special case `readonly [...never[]]`, as it emerges undesirably from recursive invocations of ReadonlyDeep below.
+					: T extends readonly [] | readonly [...never[]]
 						? readonly []
 						: T extends readonly [infer U, ...infer V]
 							? readonly [ReadonlyDeep<U>, ...ReadonlyDeep<V>]

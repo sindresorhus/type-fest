@@ -36,8 +36,8 @@ expectType<IsNumberLike<'5+1.2'>>(false);
 expectType<IsNumberLike<'5e-3.1'>>(false);
 
 // Edge cases
-expectType<IsNumberLike<never>>({} as never);
-expectType<IsNumberLike<any>>({} as any);
+expectType<IsNumberLike<never>>(false);
+expectType<IsNumberLike<any>>({} as boolean);
 expectType<IsNumberLike<number>>(true);
 expectType<IsNumberLike<PositiveInfinity>>(true);
 expectType<IsNumberLike<NegativeInfinity>>(true);

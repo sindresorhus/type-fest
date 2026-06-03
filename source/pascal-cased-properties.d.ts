@@ -3,7 +3,7 @@ import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {PascalCase} from './pascal-case.d.ts';
 
 /**
-Convert object properties to pascal case but not recursively.
+Convert top-level object properties to pascal case.
 
 This can be useful when, for example, converting some API types from a different style.
 
@@ -26,6 +26,10 @@ const result: PascalCasedProperties<User> = {
 
 const preserveConsecutiveUppercase: PascalCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: true}> = {
 	FooBAR: 'string',
+};
+
+const splitOnPunctuation: PascalCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	FooBar: 'string',
 };
 ```
 

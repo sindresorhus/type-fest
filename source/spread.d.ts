@@ -41,11 +41,7 @@ const bar = {c: false};
 const fooBar = {...foo, ...bar};
 
 type FooBar = Spread<Foo, Bar>;
-// type FooBar = {
-// 	a: number;
-// 	b?: string | number | undefined;
-// 	c: boolean;
-// }
+//=> {a: number; b?: string | number; c: boolean}
 
 declare function baz(argument: FooBar): void;
 

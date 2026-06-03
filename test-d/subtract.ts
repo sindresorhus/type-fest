@@ -42,3 +42,9 @@ expectType<9 | 8>({} as Subtract<10, 1 | 2>);
 expectType<9 | 4>({} as Subtract<10 | 5, 1>);
 expectType<9 | 8 | 4 | 3>({} as Subtract<10 | 5, 1 | 2>);
 expectType<11 | 8 | -4 | -7>({} as Subtract<10 | -5, -1 | 2>);
+
+// Large numbers
+expectType<-1111>({} as Subtract<1111, 2222>);
+expectType<-7000>({} as Subtract<-5000, 2000>);
+expectType<7070>({} as Subtract<6540, -530>);
+expectType<-8876>({} as Subtract<-8888, -12>);

@@ -2,9 +2,7 @@ import type {TupleOf} from './tuple-of.d.ts';
 import type {Subtract} from './subtract.d.ts';
 
 /**
-Generate a union of numbers.
-
-The numbers are created from the given `Start` (inclusive) parameter to the given `End` (exclusive) parameter.
+Generate a union of numbers between a specified start (inclusive) and end (exclusive), with an optional step.
 
 You skip over numbers using the `Step` parameter (defaults to `1`). For example, `IntRange<0, 10, 2>` will create a union of `0 | 2 | 4 | 6 | 8`.
 
@@ -56,9 +54,9 @@ type PrivateIntRange<
 	// The final `List` is `[...StartLengthTuple, ...[number, ...GapLengthTuple], ...[number, ...GapLengthTuple], ... ...]`, so can initialize the `List` with `[...StartLengthTuple]`
 	List extends unknown[] = TupleOf<Start, never>,
 	EndLengthTuple extends unknown[] = TupleOf<End>,
-> = Gap extends 0 ?
+> = Gap extends 0
 	// Handle the case that without `Step`
-	List['length'] extends End // The result of "List[length] === End"
+	? List['length'] extends End // The result of "List[length] === End"
 		? Exclude<List[number], never> // All unused elements are `never`, so exclude them
 		: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'] ]>
 	// Handle the case that with `Step`

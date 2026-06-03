@@ -14,6 +14,7 @@ import type {ScreamingSnakeCase} from 'type-fest';
 
 const someVariable: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
 const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNumbers: false}> = 'P2P_NETWORK';
+const someVariableWithPunctuation: ScreamingSnakeCase<'div.card::after', {splitOnPunctuation: true}> = 'DIV_CARD_AFTER';
 
 ```
 

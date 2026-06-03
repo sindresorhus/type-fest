@@ -27,7 +27,7 @@ declare function replace<
 >(
 	input: Input,
 	search: Search,
-	replacement: Replacement
+	replacement: Replacement,
 ): Replace<Input, Search, Replacement>;
 
 declare function replaceAll<
@@ -37,7 +37,7 @@ declare function replaceAll<
 >(
 	input: Input,
 	search: Search,
-	replacement: Replacement
+	replacement: Replacement,
 ): Replace<Input, Search, Replacement, {all: true}>;
 
 // The return type is the exact string literal, not just `string`.

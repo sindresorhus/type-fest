@@ -66,14 +66,14 @@ function displayPetInfoWithSharedUnionFields(petInfo: SharedUnionFields<Cat | Do
 @category Union
 */
 export type SharedUnionFields<Union> =
-Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
-	? Exclude<Union, SkippedMembers> extends infer RelevantMembers
-		?
-		| SkippedMembers
-		| (IsNever<RelevantMembers> extends true
-			? never
-			: Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
-		: never
-	: never;
+	Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
+		? Exclude<Union, SkippedMembers> extends infer RelevantMembers
+			? // eslint-disable-line @stylistic/operator-linebreak
+			| SkippedMembers
+			| (IsNever<RelevantMembers> extends true
+				? never
+				: Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
+			: never
+		: never;
 
 export {};

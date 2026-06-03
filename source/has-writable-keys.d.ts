@@ -1,7 +1,7 @@
 import type {WritableKeysOf} from './writable-keys-of.d.ts';
 
 /**
-Creates a type that represents `true` or `false` depending on whether the given type has any writable fields.
+Returns a boolean for whether the given type has any writable fields.
 
 This is useful when you want to create an API whose behavior depends on the presence or absence of writable fields.
 

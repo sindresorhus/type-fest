@@ -38,8 +38,8 @@ exclusiveOptions = {exclusive1: true, exclusive2: 'hi'};
 @category Object
 */
 export type MergeExclusive<FirstType, SecondType> =
-	(FirstType | SecondType) extends object ?
-		(Without<FirstType, SecondType> & SecondType) | (Without<SecondType, FirstType> & FirstType) :
-		FirstType | SecondType;
+	(FirstType | SecondType) extends object
+		? (Without<FirstType, SecondType> & SecondType) | (Without<SecondType, FirstType> & FirstType)
+		: FirstType | SecondType;
 
 export {};

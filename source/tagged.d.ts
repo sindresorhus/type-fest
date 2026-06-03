@@ -8,11 +8,9 @@ export type TagContainer<Token> = {
 type Tag<Token extends PropertyKey, TagMetadata> = TagContainer<{[K in Token]: TagMetadata}>;
 
 /**
-Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for distinct concepts in your program that should not be interchangeable, even if their runtime values have the same type. (See examples.)
+Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
 
 A type returned by `Tagged` can be passed to `Tagged` again, to create a type with multiple tags.
-
-[Read more about tagged types.](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d)
 
 A tag's name is usually a string (and must be a string, number, or symbol), but each application of a tag can also contain an arbitrary type as its "metadata". See {@link GetTagMetadata} for examples and explanation.
 
@@ -100,7 +98,7 @@ const parsed = parse(x); // The type of `parsed` is { hello: string }
 export type GetTagMetadata<Type extends Tag<TagName, unknown>, TagName extends PropertyKey> = Type[typeof tag][TagName];
 
 /**
-Revert a tagged type back to its original type by removing all tags.
+Get the untagged portion of a tagged type created with `Tagged`.
 
 Why is this necessary?
 
@@ -121,7 +119,7 @@ const moneyByAccountType: Record<UnwrapTagged<AccountType>, number> = {
 // Without UnwrapTagged, the following expression would throw a type error.
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
-// Attempting to pass an non-Tagged type to UnwrapTagged will raise a type error.
+// Attempting to pass a non-Tagged type to UnwrapTagged will raise a type error.
 // @ts-expect-error
 type WontWork = UnwrapTagged<string>;
 ```
@@ -129,7 +127,7 @@ type WontWork = UnwrapTagged<string>;
 @category Type
 */
 export type UnwrapTagged<TaggedType extends Tag<PropertyKey, any>> =
-RemoveAllTags<TaggedType>;
+	RemoveAllTags<TaggedType>;
 
 type RemoveAllTags<T> = T extends Tag<PropertyKey, any>
 	? {
@@ -239,7 +237,7 @@ const moneyByAccountType: Record<UnwrapOpaque<AccountType>, number> = {
 // Without UnwrapOpaque, the following expression would throw a type error.
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
-// Attempting to pass an non-Opaque type to UnwrapOpaque will raise a type error.
+// Attempting to pass a non-Opaque type to UnwrapOpaque will raise a type error.
 // @ts-expect-error
 type WontWork = UnwrapOpaque<string>;
 

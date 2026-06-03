@@ -15,12 +15,12 @@ jobs:
           - next
           - latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: lts/*
       - run: npm install
-      - run: npm install typescript@${{ matrix.typescript-version }}
+      - run: npm install typescript@${{ matrix.typescript-version }} --legacy-peer-deps
       - name: show installed typescript version
         run: npm list typescript --depth=0
       - run: NODE_OPTIONS="--max-old-space-size=6144" npx tsc

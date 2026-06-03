@@ -49,19 +49,20 @@ expectAssignable<PackageJson.DevEngineDependency>({
 	version: '>= 1.0.0',
 	onFail: 'ignore',
 });
-expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
+expectType<{[EngineName in LiteralUnion<'npm' | 'node', string>]?: string} | undefined>(packageJson.engines);
+expectAssignable<Partial<Record<string, string>> | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
 	| undefined
 	| Array<LiteralUnion<
-'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
+		'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 		string
 	>>
 >(packageJson.os);
 expectAssignable<
 	| undefined
 	| Array<LiteralUnion<
-'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
+		'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
 		string
 	>>
 >(packageJson.cpu);

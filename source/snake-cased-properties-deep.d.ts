@@ -51,6 +51,13 @@ const splitOnNumbers: SnakeCasedPropertiesDeep<{line1: {line2: [{line3: string}]
 		],
 	},
 };
+
+const splitOnPunctuation: SnakeCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
+	'user_info': {
+		'user_id': 1,
+		'user_name': 'Tom',
+	},
+};
 ```
 
 @category Change case

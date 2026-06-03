@@ -18,9 +18,21 @@ type User = {
 	regExp: RegExp;
 };
 
+type UserPunctuated = {
+	'user::id': number;
+	'user::name': string;
+	date: Date;
+	'reg::exp': RegExp;
+};
+
 type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
+};
+
+type UserWithFriendsPunctuated = {
+	'user@info': UserPunctuated;
+	'user#friends': UserPunctuated[];
 };
 
 const result: PascalCasedPropertiesDeep<UserWithFriends> = {
@@ -46,12 +58,16 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 expectType<PascalCasedPropertiesDeep<UserWithFriends>>(result);
+expectType<PascalCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
 
 expectType<{'FooBar': unknown}>({} as PascalCasedPropertiesDeep<{foo_bar: unknown}>);
 expectType<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>({} as PascalCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>);
 
 expectType<{'FooBar': any}>({} as PascalCasedPropertiesDeep<{foo_bar: any}>);
 expectType<{'FooBar': {'BarBaz': any}; Biz: any}>({} as PascalCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);
+
+expectType<{'FooBar': unknown}>({} as PascalCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
+expectType<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>({} as PascalCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);
 
 type bazBizDeep = {fooBAR: number; baz: {fooBAR: Array<{BARFoo: string}>}};
 

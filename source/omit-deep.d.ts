@@ -5,7 +5,6 @@ import type {IsNever} from './is-never.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
-import type {Simplify} from './simplify.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -18,7 +17,7 @@ It supports removing specific items from an array, replacing each removed item w
 
 Use-case: Remove unneeded parts of complex objects.
 
-Use [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
+Use [`Omit<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
 
 @example
 ```
@@ -94,34 +93,34 @@ type OmitDeepHelper<T, PathTuple extends UnknownArray> =
 Omit one path from the given object/array.
 */
 type OmitDeepWithOnePath<T, Path extends string | number> =
-T extends NonRecursiveType
-	? T
-	: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, Path>, IsArrayReadonly<T>>
-		: T extends object ? OmitDeepObjectWithOnePath<T, Path>
-			: T;
+	T extends NonRecursiveType
+		? T
+		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, Path>, IsArrayReadonly<T>>
+			: T extends object ? OmitDeepObjectWithOnePath<T, Path>
+				: T;
 
 /**
 Omit one path from the given object.
 */
 type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number> =
-P extends `${infer RecordKeyInPath}.${infer SubPath}`
-	? {
-		[Key in keyof ObjectT]:
-		IsEqual<RecordKeyInPath, ToString<Key>> extends true
-			? ExactKey<ObjectT, Key> extends infer RealKey
-				? RealKey extends keyof ObjectT
-					? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
+	P extends `${infer RecordKeyInPath}.${infer SubPath}`
+		? {
+			[Key in keyof ObjectT]:
+			IsEqual<RecordKeyInPath, ToString<Key>> extends true
+				? ExactKey<ObjectT, Key> extends infer RealKey
+					? RealKey extends keyof ObjectT
+						? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
+						: ObjectT[Key]
 					: ObjectT[Key]
 				: ObjectT[Key]
-			: ObjectT[Key]
-	}
-	: ExactKey<ObjectT, P> extends infer Key
-		? IsNever<Key> extends true
-			? ObjectT
-			: Key extends PropertyKey
-				? Simplify<Omit<ObjectT, Key>> // `Simplify` to prevent `Omit` from appearing in the resulting type
-				: ObjectT
-		: ObjectT;
+		}
+		: ExactKey<ObjectT, P> extends infer Key
+			? IsNever<Key> extends true
+				? ObjectT
+				: Key extends PropertyKey
+					? Omit<ObjectT, Key>
+					: ObjectT
+			: ObjectT;
 
 /**
 Omit one path from from the given array.

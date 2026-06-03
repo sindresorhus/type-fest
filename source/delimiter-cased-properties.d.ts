@@ -3,7 +3,7 @@ import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
 /**
-Convert object properties to delimiter case but not recursively.
+Convert object properties to a custom string delimiter casing.
 
 This can be useful when, for example, converting some API types from a different style.
 
@@ -26,6 +26,10 @@ const result: DelimiterCasedProperties<User, '-'> = {
 
 const splitOnNumbers: DelimiterCasedProperties<{line1: string}, '-', {splitOnNumbers: true}> = {
 	'line-1': 'string',
+};
+
+const splitOnPunctuation: DelimiterCasedProperties<{'foo::bar': string}, '-', {splitOnPunctuation: true}> = {
+	'foo-bar': 'string',
 };
 ```
 
