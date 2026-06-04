@@ -23,6 +23,10 @@ expectType<StringRepeat<string, 2>>(unknown as string);
 expectType<StringRepeat<`abc${string}`, 2>>(unknown as `abc${string}abc${string}`);
 expectType<StringRepeat<Uppercase<string>, 2>>(unknown as `${Uppercase<string>}${Uppercase<string>}`);
 
+// Fractional counts
+expectType<StringRepeat<'0', 7.5>>(unknown as '0000000');
+expectType<StringRepeat<'pi', 3.14>>(unknown as 'pipipi');
+
 // Union cases
 expectType<StringRepeat<'0' | '1', 5>>(unknown as '00000' | '11111');
 expectType<StringRepeat<'0', 4 | 5>>(unknown as '0000' | '00000');
