@@ -23,6 +23,16 @@ stringRepeat('=', 3);
 //=> '==='
 ```
 
+Note: If the specified count has a decimal part, the decimal part will be ignored.
+
+@example
+```
+import type {StringRepeat} from 'type-fest';
+
+type DecimalCount = StringRepeat<'foo', 2.5>;
+//=> 'foofoo'
+```
+
 @category String
 @category Template literal
 */
