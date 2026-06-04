@@ -10,9 +10,9 @@ Returns a new string which contains the specified number of copies of a given st
 import type {StringRepeat} from 'type-fest';
 
 declare function stringRepeat<
-	Input extends string,
+	S extends string,
 	Count extends number,
->(input: Input, count: Count): StringRepeat<Input, Count>;
+>(input: S, count: Count): StringRepeat<S, Count>;
 
 // The return type is the exact string literal, not just `string`.
 
