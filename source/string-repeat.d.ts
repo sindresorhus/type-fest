@@ -1,5 +1,6 @@
 import type {IsNumericLiteral} from './is-literal.d.ts';
 import type {IsNegative} from './numeric.d.ts';
+import type {DigitCharacter} from './characters.d.ts';
 
 /**
 Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
@@ -25,25 +26,37 @@ stringRepeat('=', 3);
 @category String
 @category Template literal
 */
-export type StringRepeat<
-	Input extends string,
-	Count extends number,
-> = StringRepeatHelper<Input, Count>;
-
-type StringRepeatHelper<
-	Input extends string,
-	Count extends number,
-	Counter extends never[] = [],
-	Accumulator extends string = '',
-> =
+export type StringRepeat<S extends string, Count extends number> =
 	IsNegative<Count> extends true
 		? never
-		: Input extends ''
+		: S extends ''
 			? ''
-			: Count extends Counter['length']
-				? Accumulator
-				: IsNumericLiteral<Count> extends false
-					? string
-					: StringRepeatHelper<Input, Count, [...Counter, never], `${Accumulator}${Input}`>;
+			: IsNumericLiteral<Count> extends false
+				? string
+				: BuildStringDigitByDigit<S, `${Count}`>;
+
+type BuildStringDigitByDigit<S extends string, Count extends string, Accumulator extends string = ''> =
+	Count extends `${infer First extends DigitCharacter}${infer Rest}`
+		? BuildStringDigitByDigit<
+			S,
+			Rest,
+			`${RepeatStringTenTimes<Accumulator>}${DigitStringRepeat<S, First>}`
+		>
+		: Accumulator;
+
+type RepeatStringTenTimes<S extends string> = `${S}${S}${S}${S}${S}${S}${S}${S}${S}${S}`;
+
+type DigitStringRepeat<S extends string, Digit extends DigitCharacter> = [
+	'',
+	`${S}`,
+	`${S}${S}`,
+	`${S}${S}${S}`,
+	`${S}${S}${S}${S}`,
+	`${S}${S}${S}${S}${S}`,
+	`${S}${S}${S}${S}${S}${S}`,
+	`${S}${S}${S}${S}${S}${S}${S}`,
+	`${S}${S}${S}${S}${S}${S}${S}${S}`,
+	`${S}${S}${S}${S}${S}${S}${S}${S}${S}`,
+][Digit];
 
 export {};
