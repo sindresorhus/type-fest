@@ -1,4 +1,5 @@
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
+import type {_Numeric} from './numeric.d.ts';
 
 /**
 Returns a boolean for whether a given number is less than another number.
@@ -50,7 +51,7 @@ setNegative(0);
 setNegative(1);
 ```
 */
-export type LessThan<A extends number, B extends number> =
+export type LessThan<A extends _Numeric, B extends _Numeric> =
 	GreaterThanOrEqual<A, B> extends infer Result
 		? Result extends true
 			? false

@@ -1,6 +1,6 @@
 import type {PositiveNumericStringGt} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
+import type {PositiveInfinity, NegativeInfinity, IsNegative, _Numeric} from './numeric.d.ts';
 import type {And} from './and.d.ts';
 import type {Or} from './or.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -55,10 +55,10 @@ setPositive(0);
 setPositive(-1);
 ```
 */
-export type GreaterThan<A extends number, B extends number> =
-	A extends number // For distributing `A`
-		? B extends number // For distributing `B`
-			? number extends A | B
+export type GreaterThan<A extends _Numeric, B extends _Numeric> =
+	A extends _Numeric // For distributing `A`
+		? B extends _Numeric // For distributing `B`
+			? Or<number extends A | B ? true : false, bigint extends A | B ? true : false> extends true
 				? boolean
 				: [
 					IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,

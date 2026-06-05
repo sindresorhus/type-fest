@@ -1,4 +1,6 @@
 import type {GreaterThan} from './greater-than.d.ts';
+import type {_Numeric} from './numeric.d.ts';
+import type {Or} from './or.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than or equal to another number.
@@ -50,14 +52,15 @@ setNonNegative(-1);
 setNonNegative(-2);
 ```
 */
-export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
-	? boolean
-	: A extends number // For distributing `A`
-		? B extends number // For distributing `B`
-			? A extends B
-				? true
-				: GreaterThan<A, B>
-			: never // Should never happen
-		: never; // Should never happen
+export type GreaterThanOrEqual<A extends _Numeric, B extends _Numeric> =
+	Or<number extends A | B ? true : false, bigint extends A | B ? true : false> extends true
+		? boolean
+		: A extends _Numeric // For distributing `A`
+			? B extends _Numeric // For distributing `B`
+				? `${A}` extends `${B}` // Ts will automatically convert `100n` to `100`, which can be used to compare equality between number and bigint
+					? true
+					: GreaterThan<A, B>
+				: never // Should never happen
+			: never; // Should never happen
 
 export {};
