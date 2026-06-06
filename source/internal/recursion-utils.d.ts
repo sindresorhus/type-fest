@@ -53,26 +53,26 @@ export type GetNext1000<CurrentState extends NextAble> =
 export type GetNext10000<CurrentState extends NextAble> = 
     CurrentState extends Constant<any>
     ? CurrentState
-    : GetNext1000<CurrentState> extends infer Res1 extends NextAble
-        ? Res1 extends Constant<any> ? Res1
-        : GetNext1000<Res1> extends infer Res2 extends NextAble
-            ? Res2 extends Constant<any> ? Res2
-            : GetNext1000<Res2> extends infer Res3 extends NextAble
-                ? Res3 extends Constant<any> ? Res3
-                : GetNext1000<Res3> extends infer Res4 extends NextAble
-                    ? Res4 extends Constant<any> ? Res4
-                    : GetNext1000<Res4> extends infer Res5 extends NextAble
-                        ? Res5 extends Constant<any> ? Res5
-                        : GetNext1000<Res5> extends infer Res6 extends NextAble
-                            ? Res6 extends Constant<any> ? Res6
-                            : GetNext1000<Res6> extends infer Res7 extends NextAble
-                                ? Res7 extends Constant<any> ? Res7
-                                : GetNext1000<Res7> extends infer Res8 extends NextAble
-                                    ? Res8 extends Constant<any> ? Res8
-                                    : GetNext1000<Res8> extends infer Res9 extends NextAble
-                                        ? Res9 extends Constant<any> ? Res9
-                                        : GetNext1000<Res9> extends infer Res10 extends NextAble
-                                            ? Res10
+    : GetNext1000<CurrentState> extends infer Result1 extends NextAble
+        ? Result1 extends Constant<any> ? Result1
+        : GetNext1000<Result1> extends infer Result2 extends NextAble
+            ? Result2 extends Constant<any> ? Result2
+            : GetNext1000<Result2> extends infer Result3 extends NextAble
+                ? Result3 extends Constant<any> ? Result3
+                : GetNext1000<Result3> extends infer Result4 extends NextAble
+                    ? Result4 extends Constant<any> ? Result4
+                    : GetNext1000<Result4> extends infer Result5 extends NextAble
+                        ? Result5 extends Constant<any> ? Result5
+                        : GetNext1000<Result5> extends infer Result6 extends NextAble
+                            ? Result6 extends Constant<any> ? Result6
+                            : GetNext1000<Result6> extends infer Result7 extends NextAble
+                                ? Result7 extends Constant<any> ? Result7
+                                : GetNext1000<Result7> extends infer Result8 extends NextAble
+                                    ? Result8 extends Constant<any> ? Result8
+                                    : GetNext1000<Result8> extends infer Result9 extends NextAble
+                                        ? Result9 extends Constant<any> ? Result9
+                                        : GetNext1000<Result9> extends infer Result10 extends NextAble
+                                            ? Result10
                                             : never
                                         : never
                                     : never
@@ -90,26 +90,26 @@ export type GetNext10000<CurrentState extends NextAble> =
 export type GetNext100000<CurrentState extends NextAble> = 
     CurrentState extends Constant<any>
     ? CurrentState
-    : GetNext10000<CurrentState> extends infer Res1 extends NextAble
-        ? Res1 extends Constant<any> ? Res1
-        : GetNext10000<Res1> extends infer Res2 extends NextAble
-            ? Res2 extends Constant<any> ? Res2
-            : GetNext10000<Res2> extends infer Res3 extends NextAble
-                ? Res3 extends Constant<any> ? Res3
-                : GetNext10000<Res3> extends infer Res4 extends NextAble
-                    ? Res4 extends Constant<any> ? Res4
-                    : GetNext10000<Res4> extends infer Res5 extends NextAble
-                        ? Res5 extends Constant<any> ? Res5
-                        : GetNext10000<Res5> extends infer Res6 extends NextAble
-                            ? Res6 extends Constant<any> ? Res6
-                            : GetNext10000<Res6> extends infer Res7 extends NextAble
-                                ? Res7 extends Constant<any> ? Res7
-                                : GetNext10000<Res7> extends infer Res8 extends NextAble
-                                    ? Res8 extends Constant<any> ? Res8
-                                    : GetNext10000<Res8> extends infer Res9 extends NextAble
-                                        ? Res9 extends Constant<any> ? Res9
-                                        : GetNext10000<Res9> extends infer Res10 extends NextAble
-                                            ? Res10
+    : GetNext10000<CurrentState> extends infer Result1 extends NextAble
+        ? Result1 extends Constant<any> ? Result1
+        : GetNext10000<Result1> extends infer Result2 extends NextAble
+            ? Result2 extends Constant<any> ? Result2
+            : GetNext10000<Result2> extends infer Result3 extends NextAble
+                ? Result3 extends Constant<any> ? Result3
+                : GetNext10000<Result3> extends infer Result4 extends NextAble
+                    ? Result4 extends Constant<any> ? Result4
+                    : GetNext10000<Result4> extends infer Result5 extends NextAble
+                        ? Result5 extends Constant<any> ? Result5
+                        : GetNext10000<Result5> extends infer Result6 extends NextAble
+                            ? Result6 extends Constant<any> ? Result6
+                            : GetNext10000<Result6> extends infer Result7 extends NextAble
+                                ? Result7 extends Constant<any> ? Result7
+                                : GetNext10000<Result7> extends infer Result8 extends NextAble
+                                    ? Result8 extends Constant<any> ? Result8
+                                    : GetNext10000<Result8> extends infer Result9 extends NextAble
+                                        ? Result9 extends Constant<any> ? Result9
+                                        : GetNext10000<Result9> extends infer Result10 extends NextAble
+                                            ? Result10
                                             : never
                                         : never
                                     : never
