@@ -3,7 +3,7 @@ export interface NextAble {
 	next: NextAble;
 }
 /**
- * Using this interface is required here as it stops typescript from creating more intermediate types and use already existing this type
+ * Using interface is required here as it stops typescript from creating more intermediate types and use already existing this type
  */
 
 export interface Constant<T> {
