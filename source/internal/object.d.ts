@@ -223,7 +223,9 @@ export type ApplyDefaultOptions<
     Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
     SpecifiedOptions extends Options,
 > =
-    _ApplyDefaultOptions<Options, Defaults, SpecifiedOptions>;
+    _ApplyDefaultOptions<Options, Defaults, SpecifiedOptions> extends infer Result extends Required<Options>
+        ? Result
+        : never;
 
 type _ApplyDefaultOptions<
 	Options,
