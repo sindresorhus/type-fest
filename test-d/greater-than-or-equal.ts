@@ -67,3 +67,8 @@ expectType<GreaterThanOrEqual<bigint, bigint>>({} as boolean);
 expectType<GreaterThanOrEqual<bigint, number>>({} as boolean);
 expectType<GreaterThanOrEqual<bigint, 1>>({} as boolean);
 expectType<GreaterThanOrEqual<1, bigint>>({} as boolean);
+
+expectType<GreaterThanOrEqual<PositiveInfinity, bigint>>({} as true);
+expectType<GreaterThanOrEqual<bigint, PositiveInfinity>>({} as false);
+expectType<GreaterThanOrEqual<NegativeInfinity, bigint>>({} as false);
+expectType<GreaterThanOrEqual<bigint, NegativeInfinity>>({} as true);

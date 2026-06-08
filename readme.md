@@ -302,6 +302,7 @@ Click the type names for complete docs.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
 - [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number.
 - [`IsFloat`](source/is-float.d.ts) - Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
+- [`IsFinite`](source/numeric.d.ts) - Returns a boolean for whether the given number is a finite number.
 - [`IsInteger`](source/is-integer.d.ts) - Returns a boolean for whether the given number is an integer, like `-5`, `1.0`, or `100`.
 - [`GreaterThan`](source/greater-than.d.ts) - Returns a boolean for whether a given number is greater than another number.
 - [`GreaterThanOrEqual`](source/greater-than-or-equal.d.ts) - Returns a boolean for whether a given number is greater than or equal to another number.

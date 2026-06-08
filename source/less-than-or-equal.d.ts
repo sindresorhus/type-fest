@@ -2,7 +2,7 @@ import type {GreaterThan} from './greater-than.d.ts';
 import type {_Numeric} from './numeric.d.ts';
 
 /**
-Returns a boolean for whether a given number is less than or equal to another number.
+Returns a boolean for whether a given integer is less than or equal to another integer.
 
 @example
 ```

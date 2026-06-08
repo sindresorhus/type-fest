@@ -65,3 +65,8 @@ expectType<LessThan<bigint, bigint>>({} as boolean);
 expectType<LessThan<bigint, number>>({} as boolean);
 expectType<LessThan<bigint, 1>>({} as boolean);
 expectType<LessThan<1, bigint>>({} as boolean);
+
+expectType<LessThan<PositiveInfinity, bigint>>({} as false);
+expectType<LessThan<bigint, PositiveInfinity>>({} as true);
+expectType<LessThan<NegativeInfinity, bigint>>({} as true);
+expectType<LessThan<bigint, NegativeInfinity>>({} as false);
