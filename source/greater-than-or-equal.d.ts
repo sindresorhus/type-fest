@@ -11,11 +11,17 @@ import type {GreaterThanOrEqual} from 'type-fest';
 type A = GreaterThanOrEqual<1, -5>;
 //=> true
 
-type B = GreaterThanOrEqual<1, 1>;
+type B = GreaterThanOrEqual<1, -5n>;
 //=> true
 
-type C = GreaterThanOrEqual<1, 5>;
+type C = GreaterThanOrEqual<1, 1>;
+//=> true
+
+type D = GreaterThanOrEqual<1, 5>;
 //=> false
+
+type E = GreaterThanOrEqual<5n, 5n>;
+//=> true
 ```
 
 Note: If either argument is the non-literal `number` type, the result is `boolean`.

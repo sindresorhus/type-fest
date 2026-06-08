@@ -11,10 +11,13 @@ import type {LessThan} from 'type-fest';
 type A = LessThan<1, -5>;
 //=> false
 
-type B = LessThan<1, 1>;
+type B = LessThan<1, -5n>;
 //=> false
 
-type C = LessThan<1, 5>;
+type C = LessThan<1, 1>;
+//=> false
+
+type D = LessThan<1, 5>;
 //=> true
 ```
 

@@ -11,10 +11,16 @@ import type {LessThanOrEqual} from 'type-fest';
 type A = LessThanOrEqual<1, -5>;
 //=> false
 
-type B = LessThanOrEqual<1, 1>;
+type B = LessThanOrEqual<1, -5n>;
+//=> false
+
+type C = LessThanOrEqual<1, 1>;
 //=> true
 
-type C = LessThanOrEqual<1, 5>;
+type D = LessThanOrEqual<1, 5>;
+//=> true
+
+type E = LessThanOrEqual<5n, 5n>;
 //=> true
 ```
 

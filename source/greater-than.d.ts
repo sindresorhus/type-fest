@@ -20,6 +20,9 @@ type B = GreaterThan<1, 1>;
 
 type C = GreaterThan<1, 5>;
 //=> false
+
+type D = GreaterThan<5n, 1>;
+//=> true
 ```
 
 Note: If either argument is the non-literal `number` type, the result is `boolean`.
