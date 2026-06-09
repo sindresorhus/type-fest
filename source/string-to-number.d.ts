@@ -27,7 +27,7 @@ type NegativeInfinity = StringToNumber<'-Infinity'>;
 //=> -Infinity
 ```
 
-Note: Some strings, such as `'1.50'`, `'0b10'`, or `'12_345'`, may look like they can be converted to numbers, but actually they don't have any corresponding number literals. So, in such cases, this type produces `never`. See [type-fest#1446](https://github.com/sindresorhus/type-fest/pull/1446) for more details.
+Note: Some strings, such as `'1.50'`, `'0b10'`, or `'12_345'`, may look like they can be converted to numbers, but they don't actually have corresponding numeric literals. So, in such cases, this type produces `never`. See [type-fest#1446](https://github.com/sindresorhus/type-fest/pull/1446) for more details.
 
 @example
 ```
