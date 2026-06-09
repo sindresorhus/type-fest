@@ -1384,6 +1384,38 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				interface Foo {
+					a: string;
+				}
+
+				type T = [Foo, Foo, Foo];
+				//=> [  Foo,   Foo, Foo ]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 8, textBeforeStart: '', target: '//=> [  Foo,   Foo, Foo ]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				interface Foo {
+					a: string;
+				}
+
+				type T = [Foo, Foo, Foo];
+				//=> [Foo, Foo, Foo]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
 		// === Twoslash type errors ===
 
 		// Incorrect type
