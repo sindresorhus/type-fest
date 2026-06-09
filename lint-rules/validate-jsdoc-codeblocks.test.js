@@ -878,6 +878,14 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			options: [{verbosityLevels: [1, 2]}],
 		},
 
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type PosInf = 1e999;
+			//=> Infinity
+
+			type NegInf = -1e999;
+			//=> -Infinity
+		`))),
+
 		// === Different types of quick info ===
 		// Function
 		exportTypeAndOption(jsdoc(fence(dedenter`
