@@ -9,6 +9,18 @@ on:
     branches:
       - main
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - run: npm install
+      - run: npm run test:linter
+      - run: npm run test:xo
+
   test:
     name: Node.js ${{ matrix.node-version }}
     runs-on: ubuntu-latest
@@ -25,7 +37,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm test
+      - run: npm run test:tsd
+
   types:
     name: TypeScript ${{ matrix.typescript-version }}
     runs-on: ubuntu-latest
