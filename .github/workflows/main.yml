@@ -18,8 +18,7 @@ jobs:
         with:
           node-version: 24
       - run: npm install
-      - run: npm run test:linter
-      - run: npm run test:xo
+      - run: npm run test:linter & npm run test:xo
 
   test:
     name: Node.js ${{ matrix.node-version }}
