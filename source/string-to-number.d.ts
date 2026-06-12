@@ -49,7 +49,7 @@ type NumericSeparators = StringToNumber<'12_345'>;
 */
 export type StringToNumber<S extends string> = IfNotAnyOrNever<S, _StringToNumber<S>, number>;
 
-export type _StringToNumber<S extends string> =
+type _StringToNumber<S extends string> =
 	S extends `${infer N extends number}`
 		? number extends N
 			? `${number}` extends S
