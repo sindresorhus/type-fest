@@ -878,6 +878,14 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			options: [{verbosityLevels: [1, 2]}],
 		},
 
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type PosInf = 1e999;
+			//=> Infinity
+
+			type NegInf = -1e999;
+			//=> -Infinity
+		`))),
+
 		// === Different types of quick info ===
 		// Function
 		exportTypeAndOption(jsdoc(fence(dedenter`
@@ -1370,6 +1378,38 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 				type LevelTwo = Test;
 				//=> {a: {b: {c: Pick<{d: 'abracadabra'}, 'd'>}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				interface Foo {
+					a: string;
+				}
+
+				type T = [Foo, Foo, Foo];
+				//=> [  Foo,   Foo, Foo ]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 8, textBeforeStart: '', target: '//=> [  Foo,   Foo, Foo ]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				interface Foo {
+					a: string;
+				}
+
+				type T = [Foo, Foo, Foo];
+				//=> [Foo, Foo, Foo]
 				\`\`\`
 				*/
 				export type T0 = string;
