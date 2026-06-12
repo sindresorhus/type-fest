@@ -9,34 +9,23 @@ on:
     branches:
       - main
 jobs:
-  lint:
-    name: Lint
+  test:
+    name: Test ${{ matrix.script }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        script:
+          - tsd
+          - xo
+          - linter
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 24
       - run: npm install
-      - run: npm run test:linter & npm run test:xo
-
-  test:
-    name: Node.js ${{ matrix.node-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version:
-          - 24
-          - 22
-          - 20
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm run test:tsd
+      - run: npm run test:${{ matrix.script }}
 
   types:
     name: TypeScript ${{ matrix.typescript-version }}
