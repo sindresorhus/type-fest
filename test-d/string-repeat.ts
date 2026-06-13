@@ -31,7 +31,7 @@ expectType<StringRepeat<'pi', 3.14>>(unknown as 'pipipi');
 expectType<StringRepeat<'0', 1e2>>(unknown as '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000');
 expectType<StringRepeat<'0', 3e1>>(unknown as '000000000000000000000000000000');
 expectType<StringRepeat<'0', 1e-5>>(unknown as '');
-expectType<StringRepeat<'0', 5e-7>>(unknown as '');
+expectType<StringRepeat<'0', 2e-6>>(unknown as '');
 
 // Counts whose string representation is in scientific notation
 expectType<StringRepeat<'0', 1e-7>>(unknown as string);
