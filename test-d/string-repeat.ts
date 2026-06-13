@@ -27,7 +27,7 @@ expectType<StringRepeat<Uppercase<string>, 2>>(unknown as `${Uppercase<string>}$
 expectType<StringRepeat<'0', 7.5>>(unknown as '0000000');
 expectType<StringRepeat<'pi', 3.14>>(unknown as 'pipipi');
 
-// Counts represented in scientific notation cannot be expanded precisely, so they resolve to `string`
+// Counts whose string representation is in scientific notation
 expectType<StringRepeat<'a', 1e-7>>(unknown as string);
 expectType<StringRepeat<'a', 2e21>>(unknown as string);
 expectType<StringRepeat<'a', 1e21>>(unknown as string);
