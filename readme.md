@@ -310,6 +310,7 @@ Click the type names for complete docs.
 - [`Sum`](source/sum.d.ts) - Returns the sum of two numbers.
 - [`Subtract`](source/subtract.d.ts) - Returns the difference between two numbers.
 - [`Absolute`](source/absolute.d.ts) - Returns the absolute value of the specified number or bigint.
+- [`StringToNumber`](source/string-to-number.d.ts) - Converts a numeric string to a number.
 
 ### Change case
 

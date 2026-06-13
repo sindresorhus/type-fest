@@ -197,6 +197,7 @@ expectType<{[x: string]: number | string; a?: number | string}>(
 // String/number key overwrites corresponding number/string key
 expectType<{0: string; 1: string}>({} as ObjectMerge<{'0': number}, {0: string; 1: string}>);
 expectType<{'0': string; '1': string}>({} as ObjectMerge<{0?: number}, {'0': string; '1': string}>);
+expectType<{1.5: number; '1.50': string}>({} as ObjectMerge<{1.5: number}, {'1.50': string}>);
 // String/number key with number/string index signature
 expectType<{[x: string]: number | string; 0: string}>({} as ObjectMerge<{[x: string]: number}, {0: string}>);
 expectType<{[x: number]: number | string; '0': string}>({} as ObjectMerge<{[x: number]: number}, {'0': string}>);

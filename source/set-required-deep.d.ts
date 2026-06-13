@@ -1,11 +1,12 @@
 import type {IsAny} from './is-any.d.ts';
-import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {NonRecursiveType} from './internal/index.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {RequiredDeep} from './required-deep.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {StringToNumber} from './string-to-number.d.ts';
 
 /**
 Create a type that makes the given keys required, with support for deeply nested key paths, while keeping the remaining keys as is.

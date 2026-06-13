@@ -1,9 +1,10 @@
-import type {NonRecursiveType, StringToNumber} from './internal/index.d.ts';
+import type {NonRecursiveType} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
 import type {Simplify} from './simplify.d.ts';
+import type {StringToNumber} from './string-to-number.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
