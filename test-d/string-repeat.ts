@@ -37,6 +37,8 @@ expectType<StringRepeat<'0', 2e-6>>(unknown as '');
 expectType<StringRepeat<'0', 1e-7>>(unknown as string);
 expectType<StringRepeat<'0', 2e21>>(unknown as string);
 expectType<StringRepeat<'0', 1e21>>(unknown as string);
+expectType<StringRepeat<'0', 1_000_000_000_000_000_000_000>>(unknown as string);
+expectType<StringRepeat<'0', 0.000_000_1>>(unknown as string);
 
 // Union cases
 expectType<StringRepeat<'0' | '1', 5>>(unknown as '00000' | '11111');
