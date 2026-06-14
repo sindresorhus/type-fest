@@ -44,10 +44,6 @@ expectType<StringRepeat<'0', 0.000_000_1>>(unknown as string);
 expectType<StringRepeat<'0' | '1', 5>>(unknown as '00000' | '11111');
 expectType<StringRepeat<'0', 4 | 5>>(unknown as '0000' | '00000');
 expectType<StringRepeat<'0' | '1', 4 | 5>>(unknown as '0000' | '00000' | '1111' | '11111');
-
-// Union counts where at least one member is in scientific notation.
-// The guard distributes over `Count`, so the scientific-notation member resolves to `string`,
-// which then absorbs the other literal members of the union.
 expectType<StringRepeat<'0', 1e-7 | 2>>(unknown as string);
 expectType<StringRepeat<'0', 1e-7 | 2e21>>(unknown as string);
 expectType<StringRepeat<'0', 1e21 | 3>>(unknown as string);
