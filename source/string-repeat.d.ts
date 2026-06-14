@@ -33,8 +33,6 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 //=> 'foofoo'
 ```
 
-Note: If the count is large or small enough that it gets stored in scientific notation internally, then in such cases the result is `string`.
-
 @category String
 @category Template literal
 */
