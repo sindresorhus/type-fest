@@ -10,22 +10,22 @@ on:
       - main
 jobs:
   test:
-    name: Node.js ${{ matrix.node-version }}
+    name: Test ${{ matrix.script }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node-version:
-          - 24
-          - 22
-          - 20
+        script:
+          - tsd
+          - xo
+          - linter
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
       - run: npm install
-      - run: npm test
+      - run: npm run test:${{ matrix.script }}
   types:
     name: TypeScript ${{ matrix.typescript-version }}
     runs-on: ubuntu-latest
