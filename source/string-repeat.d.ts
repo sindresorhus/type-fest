@@ -37,7 +37,7 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 @category Template literal
 */
 export type StringRepeat<S extends string, Count extends number> =
-	Count extends Count // Distribute over `Count` so the checks below apply to each union member individually.
+	Count extends unknown // To distribute `Count`
 		? IsNegative<Count> extends true
 			? never
 			: S extends ''
