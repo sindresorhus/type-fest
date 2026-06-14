@@ -26,7 +26,6 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm run test:${{ matrix.script }}
-
   types:
     name: TypeScript ${{ matrix.typescript-version }}
     runs-on: ubuntu-latest
