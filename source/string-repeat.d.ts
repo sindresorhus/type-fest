@@ -33,21 +33,23 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 //=> 'foofoo'
 ```
 
-Note: If the count is large or small enough to be represented in scientific notation (for example, `1e21` or `1e-7`), the result resolves to `string`, since the exact repeated literal cannot be computed.
+Note: If the count is large or small enough that it gets stored in scientific notation internally, then in such cases the result is `string`.
 
 @category String
 @category Template literal
 */
 export type StringRepeat<S extends string, Count extends number> =
-	IsNegative<Count> extends true
-		? never
-		: S extends ''
-			? ''
-			: IsNumericLiteral<Count> extends false
-				? string
-				: `${Count}` extends `${string}e${string}`
+	Count extends Count // Distribute over `Count` so the checks below apply to each union member individually.
+		? IsNegative<Count> extends true
+			? never
+			: S extends ''
+				? ''
+				: IsNumericLiteral<Count> extends false
 					? string
-					: BuildStringDigitByDigit<S, `${Count}`>;
+					: `${Count}` extends `${string}e${string}`
+						? string
+						: BuildStringDigitByDigit<S, `${Count}`>
+		: never;
 
 type BuildStringDigitByDigit<S extends string, Count extends string, Accumulator extends string = ''> =
 	Count extends `${infer First extends DigitCharacter}${infer Rest}`
