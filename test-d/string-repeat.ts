@@ -27,10 +27,26 @@ expectType<StringRepeat<Uppercase<string>, 2>>(unknown as `${Uppercase<string>}$
 expectType<StringRepeat<'0', 7.5>>(unknown as '0000000');
 expectType<StringRepeat<'pi', 3.14>>(unknown as 'pipipi');
 
+// Counts in scientific notation
+expectType<StringRepeat<'0', 1e2>>(unknown as '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000');
+expectType<StringRepeat<'0', 3e1>>(unknown as '000000000000000000000000000000');
+expectType<StringRepeat<'0', 1e-5>>(unknown as '');
+expectType<StringRepeat<'0', 2e-6>>(unknown as '');
+
+// Counts whose string representation is in scientific notation
+expectType<StringRepeat<'0', 1e-7>>(unknown as string);
+expectType<StringRepeat<'0', 2e21>>(unknown as string);
+expectType<StringRepeat<'0', 1e21>>(unknown as string);
+expectType<StringRepeat<'0', 1_000_000_000_000_000_000_000>>(unknown as string);
+expectType<StringRepeat<'0', 0.000_000_1>>(unknown as string);
+
 // Union cases
 expectType<StringRepeat<'0' | '1', 5>>(unknown as '00000' | '11111');
 expectType<StringRepeat<'0', 4 | 5>>(unknown as '0000' | '00000');
 expectType<StringRepeat<'0' | '1', 4 | 5>>(unknown as '0000' | '00000' | '1111' | '11111');
+expectType<StringRepeat<'0', 1e-7 | 2>>(unknown as string);
+expectType<StringRepeat<'0', 1e-7 | 2e21>>(unknown as string);
+expectType<StringRepeat<'0', 1e21 | 3>>(unknown as string);
 
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 const fiftyZeroes = '00000000000000000000000000000000000000000000000000';

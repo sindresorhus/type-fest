@@ -37,13 +37,17 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 @category Template literal
 */
 export type StringRepeat<S extends string, Count extends number> =
-	IsNegative<Count> extends true
-		? never
-		: S extends ''
-			? ''
-			: IsNumericLiteral<Count> extends false
-				? string
-				: BuildStringDigitByDigit<S, `${Count}`>;
+	Count extends unknown // To distribute `Count`
+		? IsNegative<Count> extends true
+			? never
+			: S extends ''
+				? ''
+				: IsNumericLiteral<Count> extends false
+					? string
+					: `${Count}` extends `${string}e${string}`
+						? string
+						: BuildStringDigitByDigit<S, `${Count}`>
+		: never;
 
 type BuildStringDigitByDigit<S extends string, Count extends string, Accumulator extends string = ''> =
 	Count extends `${infer First extends DigitCharacter}${infer Rest}`
