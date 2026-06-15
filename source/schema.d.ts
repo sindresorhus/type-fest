@@ -1,3 +1,4 @@
+import {EmptyObject} from './empty-object.js';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
@@ -96,13 +97,17 @@ export type Schema<Type, Value, Options extends SchemaOptions = {}> =
 		Value, Value>;
 
 type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
-	Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+	Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>   
 		? Value
 		: Type extends UnknownArray
 			? Options['recurseIntoArrays'] extends false
 				? Value
 				: SchemaHelper<Type, Value, Options>
-			: SchemaHelper<Type, Value, Options>;
+			: Type extends EmptyObject
+				? keyof Type extends never
+					? Value
+					: SchemaHelper<Type, Value, Options>
+				: SchemaHelper<Type, Value, Options>;
 
 /**
 Internal helper for {@link _Schema}.
