@@ -46,7 +46,7 @@ const fooSchema: FooSchema = {
 		readonlyArray: ['A', 'A', 'A'] as const,
 		readonlyTuple: ['A'] as const,
 		regExp: 'A',
-		emptyObject: 'A', 
+		emptyObject: 'A',
 	},
 };
 
