@@ -1,5 +1,6 @@
 import type {TupleOf} from '../tuple-of.d.ts';
 import type {Trim} from '../trim.d.ts';
+import type {StringToArray} from '../string-to-array.d.ts';
 import type {Whitespace} from './characters.d.ts';
 
 /**
@@ -35,26 +36,6 @@ export type StartsWith<S extends string, SearchString extends string> = string e
 	: S extends `${SearchString}${infer T}`
 		? true
 		: false;
-
-/**
-Returns an array of the characters of the string.
-
-@example
-```
-type A = StringToArray<'abcde'>;
-//=> ['a', 'b', 'c', 'd', 'e']
-
-type B = StringToArray<string>;
-//=> never
-```
-
-@category String
-*/
-export type StringToArray<S extends string, Result extends string[] = []> = string extends S
-	? never
-	: S extends `${infer F}${infer R}`
-		? StringToArray<R, [...Result, F]>
-		: Result;
 
 /**
 Returns the length of the given string.
