@@ -1,6 +1,6 @@
 import type {TupleOf} from '../tuple-of.d.ts';
 import type {Trim} from '../trim.d.ts';
-import type {StringToArray} from '../string-to-array.d.ts';
+import type {StringLength} from '../string-length.d.ts';
 import type {Whitespace} from './characters.d.ts';
 
 /**
