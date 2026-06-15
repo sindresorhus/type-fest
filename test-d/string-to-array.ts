@@ -1,5 +1,7 @@
 import {expectType} from 'tsd';
 import type {StringToArray} from '../source/string-to-array.d.ts';
+import type {StringRepeat} from '../source/string-repeat.d.ts';
+import type {TupleOf} from '../source/tuple-of.d.ts';
 
 type StringToArrayElementNonLiterals<S extends string> = StringToArray<S, {nonLiteralsAsElements: true}>;
 
@@ -59,6 +61,10 @@ expectType<['a', 'b', ...string[]] | Array<`${number}`>>({} as StringToArray<`ab
 expectType<['a', 'b', 'c'] | ['d', 'e', 'f']>({} as StringToArrayElementNonLiterals<'abc' | 'def'>);
 expectType<['a', 'b', 'c'] | [Uppercase<string>]>({} as StringToArrayElementNonLiterals<'abc' | Uppercase<string>>);
 expectType<['a', 'b', string] | [`${number}`]>({} as StringToArrayElementNonLiterals<`ab${string}` | `${number}`>);
+
+// Long strings
+expectType<TupleOf<200, 'a'>>({} as StringToArray<StringRepeat<'a', 200>>);
+expectType<TupleOf<900, 'a'>>({} as StringToArray<StringRepeat<'a', 900>>);
 
 // Boundary cases
 expectType<never>({} as StringToArray<never>);

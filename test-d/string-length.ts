@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {StringLength} from '../source/string-length.d.ts';
+import type {StringRepeat} from '../source/string-repeat.d.ts';
 
 // Empty string
 expectType<0>({} as StringLength<''>);
@@ -21,6 +22,10 @@ expectType<number>({} as StringLength<`abc${string}def${string}ij`>);
 expectType<3 | 5>({} as StringLength<'abcde' | 'fgh'>);
 expectType<number>({} as StringLength<'abc' | Uppercase<string>>);
 expectType<number>({} as StringLength<`ab${string}` | `${number}`>);
+
+// Long strings
+expectType<200>({} as StringLength<StringRepeat<'a', 200>>);
+expectType<900>({} as StringLength<StringRepeat<'a', 900>>);
 
 // Boundary cases
 expectType<never>({} as StringLength<never>);
