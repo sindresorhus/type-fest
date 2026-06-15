@@ -59,6 +59,15 @@ type A = StringToArray<'abcde'>;
 
 type B = StringToArray<''>;
 //=> []
+
+type C = StringToArray<string>;
+//=> string[]
+
+type D = StringToArray<`foo${string}bar`>;
+//=> ['f', 'o', 'o', ...string[], 'b', 'a', 'r']
+
+type E = StringToArray<`foo${string}bar`, {nonLiteralsAsElements: true}>;
+//=> ['f', 'o', 'o', string, 'b', 'a', 'r']
 ```
 
 @see {@link StringToArrayOptions}
