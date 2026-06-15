@@ -3,6 +3,9 @@ import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-literal.d.ts';
 import type {Or} from './or.d.ts';
 
+/**
+@see {@link StringToArray}
+*/
 export type StringToArrayOptions = {
 	/**
 	When enabled, non-literal parts of the string (e.g., `string`, `Uppercase<string>`) are mapped as single elements instead of being mapped as rest elements.
@@ -57,6 +60,8 @@ type A = StringToArray<'abcde'>;
 type B = StringToArray<''>;
 //=> []
 ```
+
+@see {@link StringToArrayOptions}
 
 @category String
 */
