@@ -38,25 +38,6 @@ export type StartsWith<S extends string, SearchString extends string> = string e
 		: false;
 
 /**
-Returns the length of the given string.
-
-@example
-```
-type A = StringLength<'abcde'>;
-//=> 5
-
-type B = StringLength<string>;
-//=> never
-```
-
-@category String
-@category Template literal
-*/
-export type StringLength<S extends string> = string extends S
-	? never
-	: StringToArray<S>['length'];
-
-/**
 Returns a boolean for whether a string is whitespace.
 */
 export type IsWhitespace<T extends string> = T extends Whitespace
