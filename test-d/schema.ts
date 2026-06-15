@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {Schema} from '../index.d.ts';
+import type {EmptyObject, Schema} from '../index.d.ts';
 
 const foo = {
 	baz: 'fred',
@@ -20,6 +20,7 @@ const foo = {
 		readonlyArray: ['foo'] as readonly string[],
 		readonlyTuple: ['foo'] as const,
 		regExp: /.*/gv,
+		emptyObject: {},
 	},
 };
 
@@ -45,6 +46,7 @@ const fooSchema: FooSchema = {
 		readonlyArray: ['A', 'A', 'A'] as const,
 		readonlyTuple: ['A'] as const,
 		regExp: 'A',
+		emptyObject: 'A', 
 	},
 };
 
@@ -70,6 +72,7 @@ expectType<FooOption>(barSchema.readonlySet);
 expectType<readonly FooOption[]>(barSchema.readonlyArray);
 expectType<readonly [FooOption]>(barSchema.readonlyTuple);
 expectType<FooOption>(barSchema.regExp);
+expectType<FooOption>(barSchema.emptyObject);
 
 type ComplexOption = {
 	type: 'readonly' | 'required' | 'optional';
@@ -103,6 +106,7 @@ const complexFoo: ComplexSchema = {
 		readonlyArray: [createComplexOption('readonly'), createComplexOption('readonly'), createComplexOption('readonly')] as const,
 		readonlyTuple: [createComplexOption('readonly')] as const,
 		regExp: createComplexOption('readonly'),
+		emptyObject: createComplexOption('readonly'),
 	},
 };
 
@@ -126,6 +130,7 @@ expectType<ComplexOption>(complexBarSchema.readonlySet);
 expectType<readonly ComplexOption[]>(complexBarSchema.readonlyArray);
 expectType<readonly [ComplexOption]>(complexBarSchema.readonlyTuple);
 expectType<ComplexOption>(complexBarSchema.regExp);
+expectType<ComplexOption>(complexBarSchema.emptyObject);
 
 // With Options and `recurseIntoArrays` set to `false`
 type FooSchemaWithOptionsNoRecurse = Schema<typeof foo, FooOption, {recurseIntoArrays: false}>;
@@ -149,6 +154,7 @@ const fooSchemaWithOptionsNoRecurse: FooSchemaWithOptionsNoRecurse = {
 		readonlyArray: 'A',
 		readonlyTuple: 'A',
 		regExp: 'A',
+		emptyObject: 'A',
 	},
 };
 
@@ -174,6 +180,7 @@ expectType<FooOption>(barSchemaWithOptionsNoRecurse.readonlySet);
 expectType<FooOption>(barSchemaWithOptionsNoRecurse.readonlyArray);
 expectType<FooOption>(barSchemaWithOptionsNoRecurse.readonlyTuple);
 expectType<FooOption>(barSchemaWithOptionsNoRecurse.regExp);
+expectType<FooOption>(barSchemaWithOptionsNoRecurse.emptyObject);
 
 // With Options and `recurseIntoArrays` set to `true`
 type FooSchemaWithOptionsRecurse = Schema<typeof foo, FooOption, {recurseIntoArrays: true}>;
@@ -197,6 +204,7 @@ const fooSchemaWithOptionsRecurse: FooSchemaWithOptionsRecurse = {
 		readonlyArray: ['A', 'A', 'A'] as const,
 		readonlyTuple: ['A'] as const,
 		regExp: 'A',
+		emptyObject: 'A',
 	},
 };
 
@@ -222,6 +230,7 @@ expectType<FooOption>(barSchemaWithOptionsRecurse.readonlySet);
 expectType<readonly FooOption[]>(barSchemaWithOptionsRecurse.readonlyArray);
 expectType<readonly [FooOption]>(barSchemaWithOptionsRecurse.readonlyTuple);
 expectType<FooOption>(barSchemaWithOptionsRecurse.regExp);
+expectType<FooOption>(barSchemaWithOptionsRecurse.emptyObject);
 
 // Non recursives
 expectType<number>({} as Schema<string, number>);
