@@ -45,7 +45,7 @@ type DefaultStringToArrayOptions = {
 };
 
 /**
-Returns an array of the characters of the string.
+Returns an array of the characters of the specified string.
 
 @example
 ```
