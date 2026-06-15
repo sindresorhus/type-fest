@@ -33,7 +33,7 @@ expectType<['a', 'b', ...Array<Capitalize<string> | 'c' | 'd' | Uppercase<string
 	{} as StringToArray<`ab${Capitalize<string>}cd${Uppercase<string>}`>,
 );
 
-// --- `nonLiteralsAsElements: false` ---
+// --- `nonLiteralsAsElements: true` ---
 expectType<[string]>({} as StringToArrayElementNonLiterals<string>);
 expectType<[Lowercase<string>]>({} as StringToArrayElementNonLiterals<Lowercase<string>>);
 expectType<[Uppercase<string>]>({} as StringToArrayElementNonLiterals<Uppercase<string>>);
