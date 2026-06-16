@@ -3,7 +3,7 @@ import type {StringToArray} from '../source/string-to-array.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 
-type StringToArrayElementNonLiterals<S extends string> = StringToArray<S, {nonLiteralsAsElements: true}>;
+type StringToArrayElementNonLiterals<S extends string> = StringToArray<S, {mapNonLiteralsDirectly: true}>;
 
 // Empty string
 expectType<[]>({} as StringToArray<''>);
@@ -33,7 +33,7 @@ expectType<['a', 'b', ...Array<Capitalize<string> | 'c' | 'd' | Uppercase<string
 	{} as StringToArray<`ab${Capitalize<string>}cd${Uppercase<string>}`>,
 );
 
-// --- `nonLiteralsAsElements: true` ---
+// --- `mapNonLiteralsDirectly: true` ---
 expectType<[string]>({} as StringToArrayElementNonLiterals<string>);
 expectType<[Lowercase<string>]>({} as StringToArrayElementNonLiterals<Lowercase<string>>);
 expectType<[Uppercase<string>]>({} as StringToArrayElementNonLiterals<Uppercase<string>>);
