@@ -209,6 +209,8 @@ export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
 export type {RemovePrefix, RemovePrefixOptions} from './source/remove-prefix.d.ts';
 export type {RemoveSuffix, RemoveSuffixOptions} from './source/remove-suffix.d.ts';
+export type {StringToArray, StringToArrayOptions} from './source/string-to-array.d.ts';
+export type {StringLength} from './source/string-length.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';

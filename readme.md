@@ -265,6 +265,8 @@ Click the type names for complete docs.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
 - [`RemovePrefix`](source/remove-prefix.d.ts) - Remove the specified prefix from the start of a string.
 - [`RemoveSuffix`](source/remove-suffix.d.ts) - Remove the specified suffix from the end of a string.
+- [`StringToArray`](source/string-to-array.d.ts) - Returns an array of the characters of the specified string.
+- [`StringLength`](source/string-length.d.ts) - Returns the length of the given string.
 
 ### Array
 
