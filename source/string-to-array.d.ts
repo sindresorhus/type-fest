@@ -8,7 +8,7 @@ import type {Or} from './or.d.ts';
 */
 export type StringToArrayOptions = {
 	/**
-	When enabled, non-literal parts of the string (e.g., `string`, `Uppercase<string>`) are mapped as single elements instead of being mapped as rest elements.
+	When enabled, non-literal parts of the string (e.g., `string`, `Uppercase<string>`) are mapped as single elements instead of being mapped as a rest element.
 
 	Note: Enabling this option can produce misleading results that might not reflect the actual runtime behavior.
 	For example, `StringToArray<string, {mapNonLiteralsDirectly: true}>` returns `[string]`, but at runtime, the string could be `'abc'` (which satisfies `string`), and converting it to an array would result in `['a', 'b', 'c']`, which doesn't satisfy `[string]`.
