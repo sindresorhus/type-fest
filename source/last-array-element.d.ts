@@ -30,7 +30,11 @@ export type LastArrayElement<Elements extends readonly unknown[], ElementBeforeT
 				// So we need to recurse type `V` and carry over the type of the element before the spread element.
 				? LastArrayElement<V, U>
 				: Elements extends ReadonlyArray<infer U>
-					? U | ElementBeforeTailingSpreadElement
+					? number extends Elements['length']
+						// A genuine non-tuple array (e.g., `number[]`) or trailing spread element — the last element can be the rest type or the element before it.
+						? U | ElementBeforeTailingSpreadElement
+						// A tuple consisting solely of optional elements (e.g., `[string?, number?]`). The last element is the type of any of those elements (without the `| undefined` added by the optional modifier) or, when they are all absent, the element before them.
+						: Exclude<U, undefined> | ElementBeforeTailingSpreadElement
 					: never;
 
 export {};
