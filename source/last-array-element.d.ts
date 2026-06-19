@@ -1,3 +1,9 @@
+import type {If} from './if.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+
 /**
 Extract the type of the last element of an array.
 
@@ -19,22 +25,31 @@ const last2 = lastOf([true, false, 'baz', 10]);
 @category Array
 @category Template literal
 */
-export type LastArrayElement<Elements extends readonly unknown[], ElementBeforeTailingSpreadElement = never> =
-	// If the last element of an array is a spread element, the `LastArrayElement` result should be `'the type of the element before the spread element' | 'the type of the spread element'`.
-	Elements extends readonly []
-		? ElementBeforeTailingSpreadElement
-		: Elements extends readonly [...infer U, infer V]
-			? V
-			: Elements extends readonly [infer U, ...infer V]
-				// If we return `V[number] | U` directly, it would be wrong for `[[string, boolean, object, ...number[]]`.
-				// So we need to recurse type `V` and carry over the type of the element before the spread element.
-				? LastArrayElement<V, U>
-				: Elements extends ReadonlyArray<infer U>
-					? number extends Elements['length']
-						// A genuine non-tuple array (e.g., `number[]`) or trailing spread element — the last element can be the rest type or the element before it.
-						? U | ElementBeforeTailingSpreadElement
-						// A tuple consisting solely of optional elements (e.g., `[string?, number?]`). The last element is the type of any of those elements (without the `| undefined` added by the optional modifier) or, when they are all absent, the element before them.
-						: Exclude<U, undefined> | ElementBeforeTailingSpreadElement
-					: never;
+export type LastArrayElement<TArray extends UnknownArray> =
+	IsAny<TArray> extends true
+		? any
+		: TArray extends UnknownArray // For distributing `TArray`
+			? SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
+				? _LastArrayElement<BeforeRest, Rest, AfterRest>
+				: never
+			: never;
+
+type _LastArrayElement<BeforeRest extends UnknownArray, Rest extends UnknownArray, AfterRest extends UnknownArray> =
+	AfterRest extends readonly [...any, infer Last] // Note there are no optional elements in `AfterRest`.
+		? Last // If there's a `Last` in `AfterRest`, then that's the result.
+		: Rest[number] | BeforeRestLastElement<BeforeRest>; // Otherwise, the result is union of the `Rest` element and the last element in `BeforeRest`.
+
+type BeforeRestLastElement<BeforeRest extends UnknownArray, Accumulator = never> =
+	BeforeRest extends readonly []
+		? Accumulator | undefined
+		: BeforeRest extends readonly [...any, infer Last]
+			? Last | Accumulator
+			: BeforeRest extends readonly [...infer Rest, (infer Last)?]
+				? BeforeRestLastElement<
+					Rest,
+					// Add `undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+					Last | Accumulator | If<IsExactOptionalPropertyTypesEnabled, never, undefined>
+				>
+				: never;
 
 export {};
