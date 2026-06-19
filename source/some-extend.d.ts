@@ -97,8 +97,8 @@ type B = SomeExtend<[1?, 2?, '3'?], string | undefined>;
 export type SomeExtend<TArray extends UnknownArray, Type, Options extends SomeExtendOptions = {}> =
 	_SomeExtend<CollapseRestElement<TArray>, Type, ApplyDefaultOptions<SomeExtendOptions, DefaultSomeExtendOptions, Options>>;
 
-type _SomeExtend<TArray extends UnknownArray, Type, Options extends Required<SomeExtendOptions>> = IfNotAnyOrNever<TArray,
-	TArray extends readonly [infer First, ...infer Rest]
+type _SomeExtend<TArray extends UnknownArray, Type, Options extends Required<SomeExtendOptions>> = IfNotAnyOrNever<TArray, {
+	ifNot: TArray extends readonly [infer First, ...infer Rest]
 		? IsNever<First> extends true
 			? Or<Or<IsNever<Type>, IsAny<Type>>, Not<Options['strictNever']>> extends true
 				// If target `Type` is also `never`, or is `any`, or `strictNever` is disabled, return `true`.
@@ -107,7 +107,9 @@ type _SomeExtend<TArray extends UnknownArray, Type, Options extends Required<Som
 			: First extends Type
 				? true
 				: _SomeExtend<Rest, Type, Options>
-		: false,
-	false, false>;
+		: false;
+	ifAny: false;
+	ifNever: false;
+}>;
 
 export {};

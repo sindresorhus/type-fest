@@ -40,11 +40,11 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 @category Object
 */
 export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
-	IfNotAnyOrNever<ObjectType,
-		If<IsNever<KeysType>,
+	IfNotAnyOrNever<ObjectType, {
+		ifNot: If<IsNever<KeysType>,
 			ObjectType,
-			_RequireAllOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
-		>>;
+			_RequireAllOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>>;
+	}>;
 
 type _RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType> = (
 	| RequireAll<ObjectType, KeysType>

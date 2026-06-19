@@ -29,11 +29,11 @@ export type RequireAtLeastOne<
 	ObjectType,
 	KeysType extends keyof ObjectType = keyof ObjectType,
 > =
-	IfNotAnyOrNever<ObjectType,
-		If<IsNever<KeysType>,
+	IfNotAnyOrNever<ObjectType, {
+		ifNot: If<IsNever<KeysType>,
 			never,
-			_RequireAtLeastOne<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
-		>>;
+			_RequireAtLeastOne<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>>;
+	}>;
 
 type _RequireAtLeastOne<
 	ObjectType,

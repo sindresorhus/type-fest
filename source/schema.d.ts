@@ -91,9 +91,11 @@ const userMaskSettings: UserMask = {
 @category Object
 */
 export type Schema<Type, Value, Options extends SchemaOptions = {}> =
-	IfNotAnyOrNever<Type,
-		_Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>,
-		Value, Value>;
+	IfNotAnyOrNever<Type, {
+		ifNot: _Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>;
+		ifAny: Value;
+		ifNever: Value;
+	}>;
 
 type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
 	Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
