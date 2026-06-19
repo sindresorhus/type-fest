@@ -34,6 +34,7 @@ const xoConfig = [
 			'@stylistic/function-paren-newline': 'off',
 			'@stylistic/object-curly-newline': 'off',
 			'@stylistic/curly-newline': 'off',
+			'@stylistic/member-delimiter-style': ['error', {multilineDetection: 'last-member'}],
 			'@stylistic/operator-linebreak': ['error', 'before', {overrides: {'=': 'after'}}],
 			'n/file-extension-in-import': 'off',
 			'object-curly-newline': [
