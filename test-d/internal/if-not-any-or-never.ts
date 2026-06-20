@@ -24,3 +24,25 @@ type CrashIfAny<T, Acc extends unknown[] = []> = 0 extends 1 & T // Check if `T`
 // @ts-expect-error
 type T1 = CrashIfAny<any>;
 type T2 = CrashIfAnyWrapper<any>;
+
+type CrashIfNeverWrapper<T> = IfNotAnyOrNever<T, {ifNot: CrashIfNever<T>}>;
+
+type CrashIfNever<T, Acc extends unknown[] = []> = [never] extends [T] // Check if `T` is `never`
+	? CrashIfNever<T, [...Acc, unknown]>
+	: never;
+
+// `CrashIfNever<never>` errors with a recursion depth error, but `CrashIfNeverWrapper<never>` shouldn't.
+// @ts-expect-error
+type T3 = CrashIfNever<never>;
+type T4 = CrashIfNeverWrapper<never>;
+
+type CrashIfNotAnyWrapper<T> = IfNotAnyOrNever<T, {ifNot: never; ifAny: CrashIfNotAny<T>}>;
+
+type CrashIfNotAny<T, Acc extends unknown[] = []> = 0 extends 1 & T // Check if `T` is `any`
+	? never
+	: CrashIfNotAny<T, [...Acc, unknown]>;
+
+// `CrashIfNotAny<string>` errors with a recursion depth error, but `CrashIfNotAnyWrapper<string>` shouldn't.
+// @ts-expect-error
+type T5 = CrashIfNotAny<string>;
+type T6 = CrashIfNotAnyWrapper<string>;
