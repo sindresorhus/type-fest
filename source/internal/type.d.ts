@@ -128,17 +128,14 @@ type T2 = TrimLeftOptimised<NineHundredNinetyNineSpaces>;
 ```
 */
 export type IfNotAnyOrNever<T, Cases extends {ifNot: unknown; ifAny?: unknown; ifNever?: unknown}> =
-	_IfNotAnyOrNever<T, Required<Cases> & (
-		'ifAny' extends keyof Cases ? unknown : {ifAny: any}
-	) & (
-		'ifNever' extends keyof Cases ? unknown : {ifNever: never}
-	)>;
-
-type _IfNotAnyOrNever<T, Cases extends {ifNot: unknown; ifAny: unknown; ifNever: unknown}> =
 	IsAny<T> extends true
-		? Cases['ifAny']
+		? 'ifAny' extends keyof Cases
+			? Cases['ifAny']
+			: any
 		: IsNever<T> extends true
-			? Cases['ifNever']
+			? 'ifNever' extends keyof Cases
+				? Cases['ifNever']
+				: never
 			: Cases['ifNot'];
 
 /**
