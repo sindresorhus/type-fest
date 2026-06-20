@@ -94,7 +94,7 @@ type D = RemovePrefix<`handle${Capitalize<string>}`, 'handle'>;
 @category Template literal
 */
 export type RemovePrefix<S extends string, Prefix extends string, Options extends RemovePrefixOptions = {}> =
-	IfNotAnyOrNever<S,	{
+	IfNotAnyOrNever<S, {
 		ifNot: If<
 			IsNever<Prefix>,
 			S,

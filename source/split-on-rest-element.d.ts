@@ -69,7 +69,8 @@ export type SplitOnRestElement<
 			ifNot: _SplitOnRestElement<
 				Array_,
 				ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>
-			>}> extends infer Result extends UnknownArray
+			>;
+		}> extends infer Result extends UnknownArray
 			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
