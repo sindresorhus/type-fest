@@ -56,7 +56,8 @@ export type ArrayReverse<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, 
 		? _ArrayReverse<TArray> extends infer Result
 			? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
 			: never // Should never happen
-		: never}>; // Should never happen
+		: never; // Should never happen
+}>;
 
 type _ArrayReverse<
 	TArray extends UnknownArray,

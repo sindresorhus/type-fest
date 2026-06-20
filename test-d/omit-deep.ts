@@ -131,7 +131,7 @@ expectType<{array: [
 	{a: 1; b: 2}, // 2
 	{b: 2}, // 3
 	...Array<{a: 1; b: 2}>,
-]}>(recurseIntoArray3);
+];}>(recurseIntoArray3);
 
 declare const tuple: OmitDeep<{array: BaseType['tuples']}, 'array.0'>;
 expectType<{array: [unknown, 'bar']}>(tuple);
