@@ -21,6 +21,41 @@ const last2 = lastOf([true, false, 'baz', 10]);
 //=> 10
 ```
 
+Note: When the array ends with an optional or rest element, the last element's position becomes ambiguous. In such cases, the result is a union of the types of all elements that could potentially be the last element of the array.
+
+@example
+```
+import type {LastArrayElement} from 'type-fest';
+
+type A = LastArrayElement<[string, number?, bigint?]>;
+//=> bigint | number | string
+
+type B = LastArrayElement<[string, number, bigint?, ...boolean[]]>;
+//=> boolean | bigint | number
+```
+
+Note: If empty array is a valid value for the array type, the result includes an `undefined`. This aligns with the runtime behavior of `[].at(-1)`.
+
+@example
+```
+import type {LastArrayElement} from 'type-fest';
+
+type A = LastArrayElement<[]>;
+//=> undefined
+
+// `[]` is assignable to `string[]`
+type B = LastArrayElement<string[]>;
+//=> string | undefined
+
+// `[]` is assignable to `[string?, number?]`
+type C = LastArrayElement<[string?, number?]>;
+//=> number | string | undefined
+
+// `[]` is assignable to [string?, number?, ...bigint[]]`
+type D = LastArrayElement<[string?, number?, ...bigint[]]>;
+//=> bigint | number | string | undefined
+```
+
 @category Array
 @category Template literal
 */
