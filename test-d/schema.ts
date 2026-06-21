@@ -21,6 +21,7 @@ const foo = {
 		readonlyTuple: ['foo'] as const,
 		regExp: /.*/gv,
 		unknown: undefined as unknown,
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		any: undefined as any,
 	},
 };
