@@ -136,6 +136,24 @@ expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x']>>().toEqua
 expectTypeOf<Get<{a: []}, 'a[0]'>>().toEqualTypeOf<unknown>();
 expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<unknown>();
 
+// Test union base types: a key missing on *some* members resolves to `undefined`
+// for those members, instead of collapsing the whole result to `unknown`.
+// https://github.com/sindresorhus/type-fest/issues/1205
+type DiscriminatedUnion = {
+	data:
+		| {type: 'number'; someValue: number}
+		| {type: 'string'; someValue: string}
+		| {type: 'none'};
+};
+// Key present on every member of the union.
+expectTypeOf<Get<DiscriminatedUnion, 'data.type'>>().toEqualTypeOf<'number' | 'string' | 'none'>();
+// Key present on some members, absent on others.
+expectTypeOf<Get<DiscriminatedUnion, 'data.someValue'>>().toEqualTypeOf<number | string | undefined>();
+// Union as the base type directly.
+expectTypeOf<Get<{a: number} | {b: string}, 'a'>>().toEqualTypeOf<number | undefined>();
+// A genuinely missing key on a non-union type still resolves to `unknown`.
+expectTypeOf<Get<{a: number}, 'b'>>().toEqualTypeOf<unknown>();
+
 // Test empty path array
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, []>>();
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>();
