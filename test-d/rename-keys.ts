@@ -73,9 +73,25 @@ expectType<{x: 1 | 2; c: 3}>({} as RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'; b: 'x
 // an index signature.
 expectType<never>({} as RenameKeys<{a: number; b: string}, {a: string}>);
 
-// Union targets return `never`: a `'b' | 'c'` target would distribute in the
-// mapped-type `as` clause and create multiple output keys.
-expectType<never>({} as RenameKeys<{a: 1; b: 2}, {a: 'b' | 'c'}>);
+// Union targets distribute, producing one output key per member.
+expectType<{b: string; c: string}>({} as RenameKeys<{a: string}, {a: 'b' | 'c'}>);
+
+// Union target preserves modifiers across all expanded keys.
+expectType<{readonly b: string; readonly c: string}>(
+	{} as RenameKeys<{readonly a: string}, {a: 'b' | 'c'}>,
+);
+
+// Preserves optional modifier only when all contributors are optional.
+expectType<{b?: string; c?: string}>({} as RenameKeys<{a?: string}, {a: 'b' | 'c'}>);
+
+// Union target combined with a kept-key collision: both `b` and `c` are
+// produced, and `b` merges the source's `a` and `b` values.
+expectType<{b: 1 | 2; c: 1}>({} as RenameKeys<{a: 1; b: 2}, {a: 'b' | 'c'}>);
+
+// Union target combined with another source mapping to the same target.
+expectType<{b: string | number; c: number}>(
+	{} as RenameKeys<{a: string; d: number}, {a: 'b'; d: 'b' | 'c'}>,
+);
 
 // Three-member union of rename maps distributes correctly.
 expectType<{x: 1; b: 2; c: 3} | {a: 1; y: 2; c: 3} | {a: 1; b: 2; z: 3}>(
