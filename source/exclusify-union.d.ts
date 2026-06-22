@@ -125,13 +125,13 @@ type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
 @category Object
 @category Union
 */
-export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union,
-	If<IsUnknown<Union>, Union,
+export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union, {
+	ifNot: If<IsUnknown<Union>, Union,
 		Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
 			? SkippedMembers | _ExclusifyUnion<Exclude<Union, SkippedMembers>>
 			: never
-	>
->;
+	>;
+}>;
 
 type _ExclusifyUnion<Union, UnionCopy = Union> = Union extends unknown // For distributing `Union`
 	? Simplify<

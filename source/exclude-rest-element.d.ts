@@ -27,14 +27,14 @@ type T4 = ExcludeRestElement<[number, string]>;
 @see {@link SplitOnRestElement}
 @category Array
 */
-export type ExcludeRestElement<Array_ extends UnknownArray> = IfNotAnyOrNever<Array_,
-	SplitOnRestElement<Array_> extends infer Result
+export type ExcludeRestElement<Array_ extends UnknownArray> = IfNotAnyOrNever<Array_, {
+	ifNot: SplitOnRestElement<Array_> extends infer Result
 		? Result extends readonly UnknownArray[]
 			? IsArrayReadonly<Array_> extends true
 				? Readonly<[...Result[0], ...Result[2]]>
 				: [...Result[0], ...Result[2]]
 			: never
-		: never
->;
+		: never;
+}>;
 
 export {};

@@ -78,9 +78,11 @@ Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for e
 
 @category Array
 */
-export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length,
-	_TupleOf<If<IsNegative<Length>, 0, Length>, Fill>,
-	Fill[], []>;
+export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length, {
+	ifNot: _TupleOf<If<IsNegative<Length>, 0, Length>, Fill>;
+	ifAny: Fill[];
+	ifNever: [];
+}>;
 
 type _TupleOf<Length extends number, Fill> = number extends Length
 	? Fill[]

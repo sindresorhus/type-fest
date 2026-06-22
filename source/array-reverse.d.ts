@@ -51,12 +51,13 @@ type E = ArrayReverse<[string?, number?, ...boolean[]]>;
 
 @category Array
 */
-export type ArrayReverse<TArray extends UnknownArray> = IfNotAnyOrNever<TArray,
-	TArray extends unknown // For distributing `TArray`
+export type ArrayReverse<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {
+	ifNot: TArray extends unknown // For distributing `TArray`
 		? _ArrayReverse<TArray> extends infer Result
 			? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
 			: never // Should never happen
-		: never>; // Should never happen
+		: never; // Should never happen
+}>;
 
 type _ArrayReverse<
 	TArray extends UnknownArray,

@@ -32,25 +32,25 @@ type TestExtractExactly3 = ExtractExactly<{a: string} | {a: string; b: string}, 
 @category Improved Built-in
 */
 export type ExtractExactly<Union, Match> =
-	IfNotAnyOrNever<
-		Union,
-		_ExtractExactly<Union, Match>,
+	IfNotAnyOrNever<Union, {
+		ifNot: _ExtractExactly<Union, Match>;
 		// If `Union` is `any`, then if `Match` is `any`, return `any`, else return `never`.
-		If<IsAny<Match>, Union, never>,
+		ifAny: If<IsAny<Match>, Union, never>;
 		// If `Union` is `never`, return `never`, doesn't matter what `Match` is.
-		never
-	>;
+		ifNever: never;
+	}>;
 
 type _ExtractExactly<Union, Match> =
-	IfNotAnyOrNever<Match,
-		Union extends unknown // For distributing `Union`
+	IfNotAnyOrNever<Match, {
+		ifNot: Union extends unknown // For distributing `Union`
 			? [Match extends unknown // For distributing `Match`
 				? If<IsEqual<Union, Match>, true, never>
 				: never] extends [never] ? never : Union
-			: never,
+			: never;
 		// If `Match` is `any` or `never`, then return `never`,
 		// because `Union` cannot be `any` or `never` here.
-		never, never
-	>;
+		ifAny: never;
+		ifNever: never;
+	}>;
 
 export {};

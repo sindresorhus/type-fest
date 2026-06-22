@@ -77,8 +77,10 @@ type E = StringToArray<`foo${string}bar`, {mapNonLiteralsDirectly: true}>;
 export type StringToArray<S extends string, Options extends StringToArrayOptions = {}> =
 	IfNotAnyOrNever<
 		S,
-		_StringToArray<S, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>,
-		unknown[]
+		{
+			ifNot: _StringToArray<S, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>;
+			ifAny: unknown[];
+		}
 	>;
 
 type _StringToArray<S extends string, Options extends Required<StringToArrayOptions>, Accumulator extends string[] = []> =

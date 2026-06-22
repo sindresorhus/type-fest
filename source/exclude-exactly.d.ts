@@ -33,25 +33,25 @@ type TestExcludeExactly3 = ExcludeExactly<{a: string} | {a: string; b: string}, 
 @category Improved Built-in
 */
 export type ExcludeExactly<Union, Delete> =
-	IfNotAnyOrNever<
-		Union,
-		_ExcludeExactly<Union, Delete>,
+	IfNotAnyOrNever<Union, {
+		ifNot: _ExcludeExactly<Union, Delete>;
 		// If `Union` is `any`, then if `Delete` is `any`, return `never`, else return `Union`.
-		If<IsAny<Delete>, never, Union>,
+		ifAny: If<IsAny<Delete>, never, Union>;
 		// If `Union` is `never`, then if `Delete` is `never`, return `never`, else return `Union`.
-		If<IsNever<Delete>, never, Union>
-	>;
+		ifNever: If<IsNever<Delete>, never, Union>;
+	}>;
 
 type _ExcludeExactly<Union, Delete> =
-	IfNotAnyOrNever<Delete,
-		Union extends unknown // For distributing `Union`
+	IfNotAnyOrNever<Delete, {
+		ifNot: Union extends unknown // For distributing `Union`
 			? [Delete extends unknown // For distributing `Delete`
 				? If<IsEqual<Union, Delete>, true, never>
 				: never] extends [never] ? Union : never
-			: never,
+			: never;
 		// If `Delete` is `any` or `never`, then return `Union`,
 		// because `Union` cannot be `any` or `never` here.
-		Union, Union
-	>;
+		ifAny: Union;
+		ifNever: Union;
+	}>;
 
 export {};

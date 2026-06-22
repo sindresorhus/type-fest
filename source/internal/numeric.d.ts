@@ -26,11 +26,13 @@ type E = IsNumberLike<'a'>;
 //=> false
 */
 export type IsNumberLike<N> =
-	IfNotAnyOrNever<N,
-		N extends number | `${number}`
+	IfNotAnyOrNever<N, {
+		ifNot: N extends number | `${number}`
 			? true
-			: false,
-		boolean, false>;
+			: false;
+		ifAny: boolean;
+		ifNever: false;
+	}>;
 
 /**
 Returns the minimum number in the given union of numbers.
