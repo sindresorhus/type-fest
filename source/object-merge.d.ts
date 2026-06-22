@@ -90,22 +90,27 @@ Note: If you want a simple merge where properties from the second object always 
 @category Object
 */
 export type ObjectMerge<First extends object, Second extends object> =
-	IfNotAnyOrNever<First, IfNotAnyOrNever<Second, First extends unknown // For distributing `First`
-		? Second extends unknown // For distributing `Second`
-			? First extends MapsSetsOrArrays
-				? unknown
-				: Second extends MapsSetsOrArrays
-					? unknown
-					: _ObjectMerge<
-						First,
-						Second,
-						NormalizedLiteralKeys<First>,
-						NormalizedLiteralKeys<Second>,
-						IsExactOptionalPropertyTypesEnabled extends true ? Required<First> : First,
-						IsExactOptionalPropertyTypesEnabled extends true ? Required<Second> : Second
-					>
-			: never // Should never happen
-		: never>, First & Second>; // Should never happen
+	IfNotAnyOrNever<First, {
+		ifNot: IfNotAnyOrNever<Second, {
+			ifNot: First extends unknown // For distributing `First`
+				? Second extends unknown // For distributing `Second`
+					? First extends MapsSetsOrArrays
+						? unknown
+						: Second extends MapsSetsOrArrays
+							? unknown
+							: _ObjectMerge<
+								First,
+								Second,
+								NormalizedLiteralKeys<First>,
+								NormalizedLiteralKeys<Second>,
+								IsExactOptionalPropertyTypesEnabled extends true ? Required<First> : First,
+								IsExactOptionalPropertyTypesEnabled extends true ? Required<Second> : Second
+							>
+					: never // Should never happen
+				: never; // Should never happen
+		}>;
+		ifAny: First & Second;
+	}>;
 
 type _ObjectMerge<
 	First extends object,

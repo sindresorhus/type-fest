@@ -94,14 +94,13 @@ type D = RemovePrefix<`handle${Capitalize<string>}`, 'handle'>;
 @category Template literal
 */
 export type RemovePrefix<S extends string, Prefix extends string, Options extends RemovePrefixOptions = {}> =
-	IfNotAnyOrNever<
-		S,
-		If<
+	IfNotAnyOrNever<S, {
+		ifNot: If<
 			IsNever<Prefix>,
 			S,
 			_RemovePrefix<S, Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
-		>
-	>;
+		>;
+	}>;
 
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
 	Prefix extends string // For distributing `Prefix`

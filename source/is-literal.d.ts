@@ -114,9 +114,11 @@ type L2 = Length<`${number}`>;
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<S> = IfNotAnyOrNever<S,
-	_IsStringLiteral<CollapseLiterals<S extends TagContainer<any> ? UnwrapTagged<S> : S>>,
-	false, false>;
+export type IsStringLiteral<S> = IfNotAnyOrNever<S, {
+	ifNot: _IsStringLiteral<CollapseLiterals<S extends TagContainer<any> ? UnwrapTagged<S> : S>>;
+	ifAny: false;
+	ifNever: false;
+}>;
 
 export type _IsStringLiteral<S> =
 // If `T` is an infinite string type (e.g., `on${string}`), `Record<T, never>` produces an index signature,

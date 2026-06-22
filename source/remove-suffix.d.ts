@@ -94,14 +94,13 @@ type D = RemoveSuffix<`api/${string}/analytics`, '/analytics'>;
 @category Template literal
 */
 export type RemoveSuffix<S extends string, Suffix extends string, Options extends RemoveSuffixOptions = {}> =
-	IfNotAnyOrNever<
-		S,
-		If<
+	IfNotAnyOrNever<S, {
+		ifNot: If<
 			IsNever<Suffix>,
 			S,
 			_RemoveSuffix<S, Suffix, ApplyDefaultOptions<RemoveSuffixOptions, DefaultRemoveSuffixOptions, Options>>
-		>
-	>;
+		>;
+	}>;
 
 type _RemoveSuffix<S extends string, Suffix extends string, Options extends Required<RemoveSuffixOptions>> =
 	Suffix extends string // For distributing `Suffix`
