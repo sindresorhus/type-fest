@@ -5,6 +5,7 @@ import type {IsNever} from './is-never.d.ts';
 import type {HasOptionalKeys} from './has-optional-keys.d.ts';
 import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 
 /**
 Rename keys in an object type according to a map of old-to-new names. Keys absent from the map pass through unchanged. The value type, the optional modifier, and the readonly modifier go to the new key.
@@ -83,10 +84,6 @@ type _AllTargetsAreSingleLiterals<RenameMap> = [
 	? true
 	: false;
 
-// With EOPT off, the optional modifier implicitly admits `undefined`, so
-// `{a: undefined}` is assignable to `{a?: string}`. With EOPT on it isn't.
-type _IsExactOptionalDisabled = {a: undefined} extends {a?: string} ? true : false;
-
 type _TargetOf<SourceKey, RenameMap> =
 	SourceKey extends keyof RenameMap
 		? RenameMap[SourceKey] extends PropertyKey
@@ -99,9 +96,9 @@ type _TargetOf<SourceKey, RenameMap> =
 // into the value when EOPT is on. With EOPT off, the natural `BaseType[Key]`
 // keeps `undefined` so mixed-optionality merges still admit it.
 type _NewValue<BaseType, Key extends keyof BaseType> =
-	_IsExactOptionalDisabled extends true
-		? BaseType[Key]
-		: Required<Pick<BaseType, Key>>[Key];
+	IsExactOptionalPropertyTypesEnabled extends true
+		? Required<Pick<BaseType, Key>>[Key]
+		: BaseType[Key];
 
 // TS's mapped-type key-remapping picks the readonly modifier of the first
 // source iterated, not "any". This collects the targets that need to be
