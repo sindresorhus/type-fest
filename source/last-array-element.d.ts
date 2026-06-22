@@ -1,5 +1,6 @@
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IsAny} from './is-any.d.ts';
 import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -60,12 +61,13 @@ type D = LastArrayElement<[string?, number?, ...bigint[]]>;
 @category Template literal
 */
 export type LastArrayElement<TArray extends UnknownArray> =
-	IfNotAnyOrNever<TArray,
-		TArray extends UnknownArray // For distributing `TArray`
+	IsAny<TArray> extends true
+		? any
+		: TArray extends UnknownArray // For distributing `TArray`
 			? SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
 				? _LastArrayElement<BeforeRest, Rest, AfterRest>
 				: never
-			: never>;
+			: never;
 
 type _LastArrayElement<BeforeRest extends UnknownArray, Rest extends UnknownArray, AfterRest extends UnknownArray> =
 	AfterRest extends readonly [...any, infer Last] // Note there are no optional elements in `AfterRest`.
