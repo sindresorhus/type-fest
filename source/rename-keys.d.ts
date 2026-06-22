@@ -9,7 +9,7 @@ import type {Simplify} from './simplify.d.ts';
 /**
 Rename keys in an object type according to a map of old-to-new names. Keys absent from the map pass through unchanged. The value type, the optional modifier, and the readonly modifier go to the new key.
 
-Distributes over a union of rename maps and over a union of source types. See {@link RenameKey} for the single-key form.
+Distributes over a union of rename maps and over a union of source types.
 
 When multiple source keys end up at the same target, the target's value type is the union of the contributors' value types. The target keeps the optional modifier only when every contributor is optional, and is `readonly` when any contributor is `readonly`. With `exactOptionalPropertyTypes` disabled, mixed-optionality merges also union `undefined` into the value type.
 
@@ -48,7 +48,6 @@ type Normalized = RenameKeys<SearchInput, {textQuery: 'query'; voiceQuery: 'quer
 //=> {query: string | Blob | File}
 ```
 
-@see {@link RenameKey}
 @category Object
 */
 export type RenameKeys<
