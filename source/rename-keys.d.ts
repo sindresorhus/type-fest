@@ -2,7 +2,6 @@ import type {IsLiteral} from './is-literal.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {HasOptionalKeys} from './has-optional-keys.d.ts';
 import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
@@ -14,10 +13,9 @@ Distributes over a union of rename maps and over a union of source types.
 
 When multiple source keys end up at the same target, the target's value type is the union of the contributors' value types. The target keeps the optional modifier only when every contributor is optional, and is `readonly` when any contributor is `readonly`. With `exactOptionalPropertyTypes` disabled, mixed-optionality merges also union `undefined` into the value type.
 
-A rename map entry whose key is not a property of the source type is ignored, matching the behavior of `Omit`.
+A rename map entry whose key is not a property of the source type is ignored, matching the behavior of `Omit`. The optional modifier on a rename map entry is ignored, so `{a?: 'alpha'}` behaves the same as `{a: 'alpha'}`.
 
 Returns `never` if any of the following hold:
-- A rename map entry is optional (e.g. `{a?: 'b'}`).
 - A rename map entry's value is not a single literal `PropertyKey` (rejects unions like `'b' | 'c'` and primitives like `string`).
 - The source type is `any` or `never`.
 
@@ -61,11 +59,9 @@ export type RenameKeys<
 		: BaseType extends BaseType // Distribute over union sources.
 			? BaseType extends object
 				? RenameMap extends RenameMap // Distribute over union maps.
-					? HasOptionalKeys<RenameMap> extends true
-						? never
-						: _AllTargetsAreSingleLiterals<RenameMap> extends true
-							? _RenameOnce<BaseType, RenameMap>
-							: never
+					? _AllTargetsAreSingleLiterals<Required<RenameMap>> extends true
+						? _RenameOnce<BaseType, Required<RenameMap>>
+						: never
 					: never
 				: never
 			: never;

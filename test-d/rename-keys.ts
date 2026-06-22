@@ -51,16 +51,14 @@ expectType<{[x: string]: number; b: 1}>(
 // kept-key collision occurs.
 expectType<{b: 1; a: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: 'b'; b: 'a'}>);
 
-// Renaming to itself is a no-op (the only "collision" allowed: the key is
-// renaming away, not into a kept property).
+// Renaming a key to itself is a no-op.
 expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: 'a'}>);
 
 // Typo'd source key is ignored, matching `Omit`'s behavior on missing keys.
 expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {nme: 'fullName'}>);
 
-// Optional rename-map entry returns `never`. Without this, an optional source
-// key could silently make a required target key optional.
-expectType<never>({} as RenameKeys<{a: number; b: string}, {a?: 'alpha'}>);
+// Optional rename-map entries have the optional modifier ignored.
+expectType<{alpha: number; b: string}>({} as RenameKeys<{a: number; b: string}, {a?: 'alpha'}>);
 
 // Collision with a kept property merges the values into a union.
 expectType<{b: number | string}>({} as RenameKeys<{a: number; b: string}, {a: 'b'}>);
