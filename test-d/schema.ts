@@ -340,3 +340,4 @@ expectType<{a: {b: {c: {d: {e: string[]}}}}}>({} as Schema<{a: {b: {c: {d: strin
 expectType<{a: number}>({} as Schema<{a: unknown}, number>);
 expectType<{a: number}>({} as Schema<{a: any}, number>);
 expectType<number>({} as Schema<unknown, number>);
+expectType<number>({} as Schema<any, number>);
