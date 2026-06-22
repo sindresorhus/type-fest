@@ -70,14 +70,12 @@ expectType<{[x: string]: number; b: 1}>(
 	{} as RenameKey<{[x: string]: number; a: 1}, 'a', 'b'>,
 );
 
-// Renaming onto an existing key returns `never`: collapsing two keys would
-// also collapse their modifiers (an optional source key could silently turn
-// a required target key optional).
-expectType<never>({} as RenameKey<{a: number; b: string}, 'a', 'b'>);
+// Renaming onto an existing key merges the values into a union at the target.
+expectType<{b: number | string}>({} as RenameKey<{a: number; b: string}, 'a', 'b'>);
 
-// Cross-union collision returns `never`: a target that exists in any sibling
-// union member is treated as a collision union-wide.
-expectType<never>({} as RenameKey<{a: number} | {b: string}, 'a', 'b'>);
+// Cross-union collision merges per union member; the source key in a member
+// that lacks it is ignored, the member that has it merges.
+expectType<{b: number} | {b: string}>({} as RenameKey<{a: number} | {b: string}, 'a', 'b'>);
 
 // Source must be a property of BaseType.
 // @ts-expect-error 'missing' is not a property of the source.

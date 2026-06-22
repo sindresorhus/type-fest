@@ -55,22 +55,21 @@ expectType<{b: 1; a: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: 'b'; b: 'a'}>);
 // renaming away, not into a kept property).
 expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: 'a'}>);
 
-// Typo'd source key returns `never`.
-expectType<never>({} as RenameKeys<{a: 1; b: 2}, {nme: 'fullName'}>);
+// Typo'd source key is ignored, matching `Omit`'s behavior on missing keys.
+expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {nme: 'fullName'}>);
 
 // Optional rename-map entry returns `never`. Without this, an optional source
 // key could silently make a required target key optional.
 expectType<never>({} as RenameKeys<{a: number; b: string}, {a?: 'alpha'}>);
 
-// Collision with a kept property returns `never`.
-expectType<never>({} as RenameKeys<{a: number; b: string}, {a: 'b'}>);
+// Collision with a kept property merges the values into a union.
+expectType<{b: number | string}>({} as RenameKeys<{a: number; b: string}, {a: 'b'}>);
 
-// Cross-union collision returns `never`: a target that exists in any sibling
-// union member is treated as a collision union-wide.
-expectType<never>({} as RenameKeys<{a: number} | {b: string}, {a: 'b'}>);
+// Cross-union collision merges per union member.
+expectType<{b: number} | {b: string}>({} as RenameKeys<{a: number} | {b: string}, {a: 'b'}>);
 
-// Duplicate targets across the same rename map return `never`.
-expectType<never>({} as RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'; b: 'x'}>);
+// Duplicate targets across the same rename map merge into a union.
+expectType<{x: 1 | 2; c: 3}>({} as RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'; b: 'x'}>);
 
 // Non-literal targets return `never`: a `string`-typed target would widen to
 // an index signature.
@@ -93,3 +92,27 @@ expectType<never>({} as RenameKeys<any, {a: 'x'}>);
 // be used inside other generics without erroring at the definition site.
 type WrappedGeneric<T, K extends keyof T & string> = RenameKeys<T, {[P in K]: `new_${P}`}>;
 expectType<{new_a: number; b: string; new_c: string}>({} as WrappedGeneric<{a: number; b: string; c: string}, 'a' | 'c'>);
+
+// Merge: all contributors required.
+expectType<{new_p: string | number | bigint}>(
+	{} as RenameKeys<{p1: string; p2: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
+);
+
+// Merge: all contributors optional. The optional modifier carries to the
+// target.
+expectType<{new_p?: string | number | bigint}>(
+	{} as RenameKeys<{p1?: string; p2?: number; p3?: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
+);
+
+// Merge: mixed optionality. The target is required because at least one
+// contributor is required. The value type follows `exactOptionalPropertyTypes`:
+// with EOPT on (as in this test project), the value omits `undefined`.
+expectType<{new_p: string | number | bigint}>(
+	{} as RenameKeys<{p1: string; p2?: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
+);
+
+// Merge: mixed readonly. The target is readonly because at least one
+// contributor is readonly.
+expectType<{readonly new_p: string | number | bigint}>(
+	{} as RenameKeys<{p1: string; readonly p2: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
+);
