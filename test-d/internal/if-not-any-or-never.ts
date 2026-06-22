@@ -27,7 +27,7 @@ type T2 = CrashIfAnyWrapper<any>;
 
 type CrashIfNeverWrapper<T> = IfNotAnyOrNever<T, {ifNot: CrashIfNever<T>}>;
 
-type CrashIfNever<T, Acc extends unknown[] = []> = [never] extends [T] // Check if `T` is `never`
+type CrashIfNever<T, Acc extends unknown[] = []> = [T] extends [never] // Check if `T` is `never`
 	? CrashIfNever<T, [...Acc, unknown]>
 	: never;
 
