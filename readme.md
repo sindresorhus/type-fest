@@ -121,7 +121,7 @@ Click the type names for complete docs.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`OverrideProperties`](source/override-properties.d.ts) - Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
-- [`RenameKeys`](source/rename-keys.d.ts) - Rename keys in an object type according to a map of old-to-new names. Keys absent from the map pass through unchanged. The value type, the optional modifier, and the readonly modifier go to the new key.
+- [`RenameKeys`](source/rename-keys.d.ts) - Rename keys in an object type according to a map of old-to-new names. Keys absent from the map are returned unchanged. The value type, the optional modifier, and the readonly modifier are applied to the new key.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys, while keeping the remaining keys as is.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys, while keeping the remaining keys as is.
