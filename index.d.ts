@@ -84,6 +84,7 @@ export type {
 	PositiveInfinity,
 	NegativeInfinity,
 	Finite,
+	IsFinite,
 	Integer,
 	Float,
 	NegativeFloat,
