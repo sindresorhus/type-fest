@@ -160,8 +160,6 @@ Click the type names for complete docs.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
 - [`Entry`](source/entry.d.ts) - Create a type that describes a single key-value pair produced when calling a collection’s `entries` method.
 - [`Entries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
-- [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
-- [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
@@ -248,6 +246,14 @@ Click the type names for complete docs.
 ### Structured clone
 
 - [`StructuredCloneable`](source/structured-cloneable.d.ts) - Matches a value that can be losslessly cloned using `structuredClone`.
+
+### Function
+
+- [`Overloads`](source/overloads.d.ts) - Extract all overload signatures of the given function type as a tuple, preserving declaration order.
+- [`OverloadParameters`](source/overload-parameters.d.ts) - Extract the parameter types of all overloads as a union.
+- [`OverloadReturnType`](source/overload-return-type.d.ts) - Extract the return types of all overloads as a union.
+- [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
+- [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
 
 ### Async
 
