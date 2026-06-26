@@ -69,9 +69,27 @@ expectType<{b: number} | {b: string}>({} as RenameKeys<{a: number} | {b: string}
 // Duplicate targets across the same rename map merge into a union.
 expectType<{x: 1 | 2; c: 3}>({} as RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'; b: 'x'}>);
 
-// Non-literal targets return `never`. A `string`-typed target would widen to
-// an index signature.
-expectType<never>({} as RenameKeys<{a: number; b: string}, {a: string}>);
+// A non-literal target (like `string`) is ignored, leaving that key unchanged,
+// the same way a missing source key is ignored.
+expectType<{a: number; b: string}>({} as RenameKeys<{a: number; b: string}, {a: string}>);
+
+// Other entries in the same map still apply.
+expectType<{a: number; c: string}>({} as RenameKeys<{a: number; b: string}, {a: string; b: 'c'}>);
+
+// More non-literal targets, all ignored.
+expectType<{a: number; c: string}>({} as RenameKeys<{a: number; b: string}, {a: Uppercase<string>; b: 'c'}>);
+expectType<{a: number; c: string}>({} as RenameKeys<{a: number; b: string}, {a: `foo${string}`; b: 'c'}>);
+expectType<{a: 1; c: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: number; b: 'c'}>);
+expectType<{a: 1; c: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: symbol; b: 'c'}>);
+
+// A union target with a non-literal member is ignored as a whole.
+expectType<{a: 1}>({} as RenameKeys<{a: 1}, {a: 'b' | string}>);
+
+// A map whose targets are all non-literal is the identity.
+expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: string; b: number}>);
+
+// An ignored key's kept name can collide with another rename and merge values.
+expectType<{a: 1 | 2}>({} as RenameKeys<{a: 1; b: 2}, {a: string; b: 'a'}>);
 
 // Union targets distribute, producing one output key per member.
 expectType<{b: string; c: string}>({} as RenameKeys<{a: string}, {a: 'b' | 'c'}>);
@@ -200,3 +218,41 @@ expectType<{[x: string]: number; b?: 1}>(
 expectType<{b: 1; c?: 2; a: 3}>(
 	{} as RenameKeys<{a: 1; b?: 2; c: 3}, {a: 'b'; b: 'c'; c: 'a'}>,
 );
+
+// Swapping a required and an optional key. Each modifier travels with its key,
+// so the new `a` is optional (it came from the optional `b`).
+expectType<{b: 1; a?: 2}>({} as RenameKeys<{a: 1; b?: 2}, {a: 'b'; b: 'a'}>);
+
+// Symbol source key renamed through a symbol map key.
+expectType<{x: 1; b: 2}>({} as RenameKeys<{[symbolKey]: 1; b: 2}, {[symbolKey]: 'x'}>);
+
+// Two sources merged into a symbol target.
+expectType<{[symbolKey]: 1 | 2}>(
+	{} as RenameKeys<{a?: 1; b: 2}, {a: SymbolKey; b: SymbolKey}>,
+);
+
+// Both string and number index signatures are carried across.
+expectType<{[x: string]: unknown; [x: number]: number; b?: 1}>(
+	{} as RenameKeys<{[x: string]: unknown; [x: number]: number; a?: 1}, {a: 'b'}>,
+);
+
+// A readonly index signature stays readonly.
+expectType<{readonly [x: string]: number; b?: 1}>(
+	{} as RenameKeys<{readonly [x: string]: number; a?: 1}, {a: 'b'}>,
+);
+
+// `any` and `unknown` values survive a merge.
+expectType<{x: any}>({} as RenameKeys<{a: any; b?: 1}, {a: 'x'; b: 'x'}>);
+expectType<{x: unknown}>({} as RenameKeys<{a: unknown; b?: 1}, {a: 'x'; b: 'x'}>);
+
+// A self-referential source renames one key, the recursive reference is left alone.
+type Tree = {value: number; next: Tree};
+expectType<{v: number; next: Tree}>({} as RenameKeys<Tree, {value: 'v'}>);
+
+// An explicit `| undefined` in a required value is kept on rename.
+expectType<{x: number | undefined; b: 2}>(
+	{} as RenameKeys<{a: number | undefined; b: 2}, {a: 'x'}>,
+);
+
+// Numeric keys merged into one target.
+expectType<{a: string | number}>({} as RenameKeys<{0: number; 1?: string}, {0: 'a'; 1: 'a'}>);

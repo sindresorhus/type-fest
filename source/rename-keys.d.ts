@@ -18,11 +18,9 @@ When multiple source keys map to the same target, the target's value type is the
 
 A union target distributes, producing one output key per member. For example, `{a: 'b' | 'c'}` on a source with `a: string` produces both `b: string` and `c: string`.
 
-A rename map entry whose key is not a property of the source type is ignored, matching the result of `Omit`. The optional modifier on a rename map entry is ignored, so `{a?: 'alpha'}` produces the same result as `{a: 'alpha'}`.
+A rename map entry whose key is not a property of the source type is ignored, matching the result of `Omit`. An entry whose value is not a literal `PropertyKey` (such as `string`) is also ignored, leaving that key's name unchanged. The optional modifier on a rename map entry is ignored, so `{a?: 'alpha'}` produces the same result as `{a: 'alpha'}`.
 
-Returns `never` in the following cases.
-- A rename map entry's value is not a literal `PropertyKey` (rejects primitives like `string`).
-- The source type is `any` or `never`.
+Returns `never` when the source type is `any` or `never`.
 
 @example
 ```
@@ -64,29 +62,19 @@ export type RenameKeys<
 		: BaseType extends BaseType // Once per member when BaseType is a union.
 			? BaseType extends object
 				? RenameMap extends RenameMap // Once per member when the rename map is a union.
-					? _AllTargetsAreLiterals<Required<RenameMap>> extends true
-						? _RenameOnce<BaseType, Required<RenameMap>>
-						: never
+					? _RenameOnce<BaseType, Required<RenameMap>>
 					: never
 				: never
 			: never;
 
-// True only when every new name in the map is a literal such as 'a' or 1. The
-// brackets compare the whole union at once, so one wide target (like string,
-// which would turn into an index signature) makes the result false.
-type _AllTargetsAreLiterals<RenameMap> = [
-	{
-		[Key in keyof RenameMap]: IsLiteral<RenameMap[Key]>;
-	}[keyof RenameMap],
-] extends [true]
-	? true
-	: false;
-
-// The new name for a source key. A key missing from the map keeps its own name.
+// The new name for a source key. A key missing from the map, or mapped to a
+// non-literal like `string`, keeps its own name.
 type _TargetOf<SourceKey, RenameMap> =
 	SourceKey extends keyof RenameMap
 		? RenameMap[SourceKey] extends PropertyKey
-			? RenameMap[SourceKey]
+			? IsLiteral<RenameMap[SourceKey]> extends true
+				? RenameMap[SourceKey]
+				: SourceKey
 			: SourceKey
 		: SourceKey;
 
