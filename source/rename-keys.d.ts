@@ -1,8 +1,9 @@
 import type {IsLiteral} from './is-literal.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
-import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
+import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
+import type {RequiredKeysOf} from './required-keys-of.d.ts';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Simplify} from './simplify.d.ts';
@@ -60,9 +61,9 @@ export type RenameKeys<
 	? never
 	: IsNever<BaseType> extends true
 		? never
-		: BaseType extends BaseType // Distribute over union sources.
+		: BaseType extends BaseType // Once per member when BaseType is a union.
 			? BaseType extends object
-				? RenameMap extends RenameMap // Distribute over union maps.
+				? RenameMap extends RenameMap // Once per member when the rename map is a union.
 					? _AllTargetsAreLiterals<Required<RenameMap>> extends true
 						? _RenameOnce<BaseType, Required<RenameMap>>
 						: never
@@ -70,6 +71,9 @@ export type RenameKeys<
 				: never
 			: never;
 
+// True only when every new name in the map is a literal such as 'a' or 1. The
+// brackets compare the whole union at once, so one wide target (like string,
+// which would turn into an index signature) makes the result false.
 type _AllTargetsAreLiterals<RenameMap> = [
 	{
 		[Key in keyof RenameMap]: IsLiteral<RenameMap[Key]>;
@@ -78,6 +82,7 @@ type _AllTargetsAreLiterals<RenameMap> = [
 	? true
 	: false;
 
+// The new name for a source key. A key missing from the map keeps its own name.
 type _TargetOf<SourceKey, RenameMap> =
 	SourceKey extends keyof RenameMap
 		? RenameMap[SourceKey] extends PropertyKey
@@ -85,33 +90,21 @@ type _TargetOf<SourceKey, RenameMap> =
 			: SourceKey
 		: SourceKey;
 
-// `BaseType[Key]` on an optional key includes `undefined`. With EOPT on,
-// `Required<Pick>` strips that `undefined`. With EOPT off, the natural
-// index access retains it, so mixed-optionality merges include it.
+// The value type for one renamed key. With exactOptionalPropertyTypes on, an
+// optional key's value should not carry undefined, so Required strips it. With the
+// flag off, BaseType[Key] keeps the undefined an optional key may hold.
 type _NewValue<BaseType, Key extends keyof BaseType> =
 	IsExactOptionalPropertyTypesEnabled extends true
 		? Required<Pick<BaseType, Key>>[Key]
 		: BaseType[Key];
 
-// Targets where at least one contributing source key is readonly.
-type _ReadonlyTargets<BaseType extends object, RenameMap> = {
-	[Key in keyof BaseType]: Key extends keyof BaseType
-		? IsReadonlyKeyOf<BaseType, Key> extends true
-			? _TargetOf<Key, RenameMap>
-			: never
-		: never;
-}[keyof BaseType];
+type _ReadonlyTargets<BaseType extends object, RenameMap> = _TargetOf<ReadonlyKeysOf<BaseType>, RenameMap>;
+type _RequiredTargets<BaseType extends object, RenameMap> = _TargetOf<RequiredKeysOf<BaseType>, RenameMap>;
+type _OptionalTargets<BaseType extends object, RenameMap> = _TargetOf<OptionalKeysOf<BaseType>, RenameMap>;
 
-// Targets where at least one contributing source key is required.
-type _RequiredTargets<BaseType extends object, RenameMap> = {
-	[Key in keyof BaseType]: Key extends keyof BaseType
-		? IsOptionalKeyOf<BaseType, Key> extends false
-			? _TargetOf<Key, RenameMap>
-			: never
-		: never;
-}[keyof BaseType];
-
-// `Target extends Target` distributes per union member.
+// Keeps a new name only when its readonly and required state matches the block
+// being built. `Target extends Target` runs this once per name when the new name
+// is a union.
 type _RouteTarget<Target, ReadOnly, Required, NeedReadonly extends boolean, NeedRequired extends boolean> =
 	Target extends Target
 		? (Target extends ReadOnly ? true : false) extends NeedReadonly
@@ -121,16 +114,43 @@ type _RouteTarget<Target, ReadOnly, Required, NeedReadonly extends boolean, Need
 			: never
 		: never;
 
-// A literal like `'b'` extends the index signature's `string` key, so
-// routing both through the same fragments misclassifies the literals.
+// Handle the index signature on its own. A literal key like `'b'` counts as a
+// match for an index signature's `string` key, so renaming them together would
+// mix the two up. PickIndexSignature carries the index signature across
+// unchanged, and the named keys go through the rename.
 type _RenameOnce<BaseType extends object, RenameMap> = Simplify<
 	& PickIndexSignature<BaseType>
 	& _RenameLiteralKeys<OmitIndexSignature<BaseType>, RenameMap>
 >;
 
-// TS's key-remapping inherits the first source's modifiers on collision,
-// not "any" or "all". The four fragments specify the modifiers per target.
+// Rename the named keys, then restore any undefined the required blocks dropped.
+// The second argument is the set of new names fed by both a required and an
+// optional source key.
 type _RenameLiteralKeys<BaseType extends object, RenameMap> =
+	_RestoreMergedUndefined<
+		_RouteToBlocks<BaseType, RenameMap>,
+		_RequiredTargets<BaseType, RenameMap> & _OptionalTargets<BaseType, RenameMap>
+	>;
+
+// A new name fed by both a required and an optional source key becomes one
+// required key, and the required block's `-?` strips the undefined the optional
+// key allowed. With exactOptionalPropertyTypes off that undefined should stay, so add
+// it back on those names. With the flag on there is nothing to restore.
+type _RestoreMergedUndefined<Result, MixedTargets> =
+	IsExactOptionalPropertyTypesEnabled extends true
+		? Result
+		: {
+			[Key in keyof Result]: Key extends MixedTargets
+				? Result[Key] | undefined
+				: Result[Key];
+		};
+
+// Build the renamed keys in four blocks, one for each pairing of readonly or
+// mutable with required or optional. When several source keys collide on one new
+// name, TS's key remapping would copy only the first key's readonly and optional
+// flags, so each block sets its own flags and _RouteTarget sends every name to
+// the block that matches.
+type _RouteToBlocks<BaseType extends object, RenameMap> =
 	// Readonly and required
 	& {
 		readonly [Key in keyof BaseType as _RouteTarget<
