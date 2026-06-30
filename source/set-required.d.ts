@@ -38,9 +38,7 @@ export type SetRequired<BaseType, Keys extends keyof BaseType> =
 
 type _SetRequired<BaseType, Keys extends keyof BaseType> =
 	BaseType extends UnknownArray
-		? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
-			? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
-			: never
+		? If<IsArrayReadonly<BaseType>, Readonly<SetArrayRequired<BaseType, Keys>>, SetArrayRequired<BaseType, Keys>>
 		: Simplify<
 		// Pick just the keys that are optional from the base type.
 			Except<BaseType, Keys>
