@@ -1,4 +1,5 @@
 import type {Except} from './except.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
@@ -58,11 +59,14 @@ export type Writable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 				// Handle array
 				? WritableArray<BaseType>
 				// Handle object
-				: Simplify<
-					// Pick just the keys that are not writable from the base type.
-					Except<BaseType, Keys>
-					// Pick the keys that should be writable from the base type and make them writable by removing the `readonly` modifier from the key.
-					& {-readonly [KeyType in keyof Pick<BaseType, Keys>]: Pick<BaseType, Keys>[KeyType]}
-				>;
+				: IsEqual<Keys, keyof BaseType> extends true
+					// When every key is made writable (the default, when no `Keys` argument is passed), use a plain homomorphic mapped type. It only strips the `readonly` modifier and otherwise preserves the input structure exactly — including index signatures — instead of rebuilding it via `Except`/`Pick`, which alters the shape. See: https://github.com/sindresorhus/type-fest/issues/717
+					? {-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}
+					: Simplify<
+						// Pick just the keys that are not writable from the base type.
+						Except<BaseType, Keys>
+						// Pick the keys that should be writable from the base type and make them writable by removing the `readonly` modifier from the key.
+						& {-readonly [KeyType in keyof Pick<BaseType, Keys>]: Pick<BaseType, Keys>[KeyType]}
+					>;
 
 export {};
