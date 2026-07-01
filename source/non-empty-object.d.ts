@@ -1,4 +1,5 @@
 import type {HasRequiredKeys} from './has-required-keys.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {RequireAtLeastOne} from './require-at-least-one.d.ts';
 
 /**
@@ -33,6 +34,11 @@ const update2: UpdateRequest<User> = {};
 
 @category Object
 */
-export type NonEmptyObject<T extends object> = HasRequiredKeys<T> extends true ? T : RequireAtLeastOne<T, keyof T>;
+export type NonEmptyObject<T extends object> =
+	[keyof OmitIndexSignature<T>] extends [never]
+		? never
+		: HasRequiredKeys<T> extends true
+			? T
+			: RequireAtLeastOne<T, keyof T>;
 
 export {};
