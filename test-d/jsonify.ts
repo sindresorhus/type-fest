@@ -188,6 +188,9 @@ expectType<never>(plainFunction);
 declare const plainSymbol: Jsonify<typeof symbol>;
 expectType<never>(plainSymbol);
 
+declare const plainNever: Jsonify<never>;
+expectType<never>(plainNever);
+
 // Array members become null
 declare const arrayMemberUndefined: Jsonify<Array<typeof undefined>>;
 expectType<null[]>(arrayMemberUndefined);
@@ -304,6 +307,28 @@ declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
 expectType<{a?: string}>(jsonifiedOptionalPrimitive);
 expectType<{}>(jsonifiedOptionalTypeUnion);
 expectType<{a?: string}>(jsonifiedNonOptionalTypeUnion);
+
+// Test that optional properties don't leak `undefined` into the key set and that re-applying `Jsonify` is a no-op.
+type OptionalMixed = {
+	required: string;
+	optional?: string;
+};
+
+declare const keyOfJsonifiedOptionalMixed: keyof Jsonify<OptionalMixed>;
+expectType<'required' | 'optional'>(keyOfJsonifiedOptionalMixed);
+
+declare const doubleJsonifiedOptionalMixed: Jsonify<Jsonify<OptionalMixed>>;
+expectType<OptionalMixed>(doubleJsonifiedOptionalMixed);
+
+declare const keyOfJsonifiedOptionalUnknown: keyof Jsonify<{a?: unknown}>;
+expectType<'a'>(keyOfJsonifiedOptionalUnknown);
+
+declare const keyOfJsonifiedOptionalAny: keyof Jsonify<{a?: any}>;
+expectType<'a'>(keyOfJsonifiedOptionalAny);
+
+// An `a?: never` property can only hold `undefined`, so the key is dropped like `{a: undefined}`.
+declare const keyOfJsonifiedOptionalNever: keyof Jsonify<{a?: never}>;
+expectType<never>(keyOfJsonifiedOptionalNever);
 
 // Test for 'Jsonify support for optional object keys, unserializable object values' #424
 // See https://github.com/sindresorhus/type-fest/issues/424
