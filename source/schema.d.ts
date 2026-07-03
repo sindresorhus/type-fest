@@ -1,7 +1,5 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
-import type {IsAny} from './is-any.d.ts';
-import type {IsUnknown} from './is-unknown.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -100,17 +98,13 @@ export type Schema<Type, Value, Options extends SchemaOptions = {}> =
 	}>;
 
 type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
-	IsAny<Type> extends true
+	Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
 		? Value
-		: IsUnknown<Type> extends true
-			? Value
-			: Type extends NonRecursiveType | Map<unknown, unknown> | Set<unknown> | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+		: Type extends UnknownArray
+			? Options['recurseIntoArrays'] extends false
 				? Value
-				: Type extends UnknownArray
-					? Options['recurseIntoArrays'] extends false
-						? Value
-						: SchemaHelper<Type, Value, Options>
-					: SchemaHelper<Type, Value, Options>;
+				: SchemaHelper<Type, Value, Options>
+			: SchemaHelper<Type, Value, Options>;
 
 /**
 Internal helper for {@link _Schema}.
