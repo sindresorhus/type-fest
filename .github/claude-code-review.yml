@@ -10,8 +10,9 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-      issues: read
-      id-token: write
+      issues: write
+      id-token:read
+               write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
