@@ -3,7 +3,7 @@ name: Documentation
 on:
   push:
     branches:
-      - main
+      - may
   workflow_dispatch:
 
 permissions:
