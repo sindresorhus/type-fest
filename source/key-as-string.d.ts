@@ -17,7 +17,7 @@ type Foo = {
 };
 
 type StringKeysOfFoo = KeyAsString<Foo>;
-//=> '1' | 'stringKey'
+//=> 'stringKey' | '1'
 ```
 
 @category Object

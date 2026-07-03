@@ -46,6 +46,7 @@ type E = And<boolean, boolean>;
 ```
 
 Note: If either of the types is `never`, the result becomes `false`.
+
 @example
 ```
 import type {And} from 'type-fest';
@@ -73,6 +74,7 @@ type G = And<never, never>;
 ```
 
 @see {@link Or}
+@see {@link Xor}
 */
 export type And<A extends boolean, B extends boolean> = AllExtend<[A, B], true>;
 

@@ -19,7 +19,7 @@ type Responder = {
 
 const responder: RequireAtLeastOne<Responder, 'text' | 'json'> = {
 	json: () => '{"message": "ok"}',
-	secure: true
+	secure: true,
 };
 ```
 

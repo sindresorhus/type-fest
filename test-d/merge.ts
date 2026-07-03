@@ -165,3 +165,25 @@ expectType<{
 	t4?: number;
 	list: string[];
 }>(baz);
+
+// Unions
+expectType<{foo: number} | {foo: string; bar: boolean}>(
+	{} as Merge<{foo: string}, {foo: number} | {bar: boolean}>,
+);
+expectType<{foo: string} | {bar: boolean; foo: string}>(
+	{} as Merge<{foo: number} | {bar: boolean}, {foo: string}>,
+);
+expectType<{foo: number} | {foo: string; baz: boolean} | {bar: number; foo: number} | {bar: number; baz: boolean}>(
+	{} as Merge<{foo: string} | {bar: number}, {foo: number} | {baz: boolean}>,
+);
+expectType<
+	| {[x: number]: number; foo: number; bar: string}
+	| {[x: number]: number; bar: bigint; foo: number}
+	| {foo: string; bar: boolean; baz: boolean}
+	| {[x: number]: bigint; bar: boolean; baz: boolean}
+>(
+	{} as Merge<
+		{foo: string; bar: string} | {[x: number]: bigint; bar: bigint},
+		{[x: number]: number; foo: number} | {bar: boolean; baz: boolean}
+	>,
+);

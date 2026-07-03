@@ -24,15 +24,18 @@ export type SchemaOptions = {
 
 	type ParticipantsWithMetadata = Schema<Participants, {id: number; name: string}, {recurseIntoArrays: true}>;
 	//=> {
-	// 	attendees: Array<{id: number; name: string}>;
-	// 	speakers: Array<{id: number; name: string}>;
-	// };
+	// 	attendees: {
+	// 		id: number;
+	// 		name: string;
+	// 	}[];
+	// 	speakers: {
+	// 		id: number;
+	// 		name: string;
+	// 	}[];
+	// }
 
 	type ParticipantsCount = Schema<Participants, number, {recurseIntoArrays: false}>;
-	//=> {
-	// 	attendees: number;
-	// 	speakers: number;
-	// };
+	//=> {attendees: number; speakers: number}
 	```
 
 	@default true

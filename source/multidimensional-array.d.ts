@@ -16,23 +16,15 @@ Use-cases:
 ```
 import type {MultidimensionalArray} from 'type-fest';
 
-function emptyMatrix<T extends number>(dimensions: T): MultidimensionalArray<unknown, T> {
-	const matrix: unknown[] = [];
+declare function emptyMatrix<Item = unknown>(): <Dimension extends number>(
+	dimensions: Dimension,
+) => MultidimensionalArray<Item, Dimension>;
 
-	let subMatrix = matrix;
-	for (let dimension = 1; dimension < dimensions; ++dimension) {
-		console.log(`Initializing dimension #${dimension}`);
+const unknown3DMatrix = emptyMatrix()(3);
+//=> unknown[][][]
 
-		subMatrix[0] = [];
-		subMatrix = subMatrix[0] as unknown[];
-	}
-
-	return matrix as MultidimensionalArray<unknown, T>;
-}
-
-const matrix = emptyMatrix(3);
-
-matrix[0][0][0] = 42;
+const boolean2DMatrix = emptyMatrix<boolean>()(2);
+//=> boolean[][]
 ```
 
 @category Array

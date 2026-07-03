@@ -8,26 +8,26 @@ Convert object properties to delimiter case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see DelimiterCase
-@see DelimiterCasedProperties
+@see {@link DelimiterCase}
+@see {@link DelimiterCasedProperties}
 
 @example
 ```
 import type {DelimiterCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	'user-info': {
-	'user-id': 1,
+		'user-id': 1,
 		'user-name': 'Tom',
 	},
 	'user-friends': [
@@ -42,7 +42,7 @@ const result: DelimiterCasedPropertiesDeep<UserWithFriends, '-'> = {
 	],
 };
 
-const splitOnNumbers: DelimiterCasedPropertiesDeep<{line1: { line2: [{ line3: string }] }}, '-', {splitOnNumbers: true}> = {
+const splitOnNumbers: DelimiterCasedPropertiesDeep<{line1: {line2: [{line3: string}]}}, '-', {splitOnNumbers: true}> = {
 	'line-1': {
 		'line-2': [
 			{

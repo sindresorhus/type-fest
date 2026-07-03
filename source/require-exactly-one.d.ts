@@ -26,7 +26,7 @@ const responder: RequireExactlyOne<Responder, 'text' | 'json'> = {
 	// Adding a `text` key here would cause a compile error.
 
 	json: () => '{"message": "ok"}',
-	secure: true
+	secure: true,
 };
 ```
 

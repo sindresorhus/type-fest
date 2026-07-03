@@ -30,7 +30,7 @@ type E = IsInteger<0o10>;
 type F = IsInteger<0x10>;
 //=> true
 
-type G = IsInteger<1.23+21>;
+type G = IsInteger<1.23e+21>;
 //=> true
 
 type H = IsInteger<1.5>;

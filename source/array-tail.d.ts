@@ -3,7 +3,7 @@ import type {IfNotAnyOrNever, IsArrayReadonly} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Extracts the type of an array or tuple minus the first element.
+Extract the type of an array or tuple minus the first element.
 
 @example
 ```

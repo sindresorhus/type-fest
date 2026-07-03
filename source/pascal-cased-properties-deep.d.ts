@@ -7,22 +7,22 @@ Convert object properties to pascal case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see PascalCase
-@see PascalCasedProperties
+@see {@link PascalCase}
+@see {@link PascalCasedProperties}
 
 @example
 ```
 import type {PascalCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {

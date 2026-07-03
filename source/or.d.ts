@@ -2,15 +2,15 @@ import type {If} from './if.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
-Returns a boolean for whether either of two given types are true.
+Returns a boolean for whether either of two given types is true.
 
-Use-case: Constructing complex conditional types where multiple conditions must be satisfied.
+Use-case: Constructing complex conditional types where at least one condition must be satisfied.
 
 @example
 ```
 import type {Or} from 'type-fest';
 
-type TT = Or<true, false>;
+type TT = Or<true, true>;
 //=> true
 
 type TF = Or<true, false>;
@@ -24,10 +24,11 @@ type FF = Or<false, false>;
 ```
 
 Note: When `boolean` is passed as an argument, it is distributed into separate cases, and the final result is a union of those cases.
-For example, `And<false, boolean>` expands to `And<false, true> | And<false, false>`, which simplifies to `true | false` (i.e., `boolean`).
+For example, `Or<false, boolean>` expands to `Or<false, true> | Or<false, false>`, which simplifies to `true | false` (i.e., `boolean`).
+
 @example
 ```
-import type {And} from 'type-fest';
+import type {Or} from 'type-fest';
 
 type A = Or<false, boolean>;
 //=> boolean
@@ -74,6 +75,7 @@ type G = Or<never, never>;
 ```
 
 @see {@link And}
+@see {@link Xor}
 */
 export type Or<A extends boolean, B extends boolean> =
 	_Or<If<IsNever<A>, false, A>, If<IsNever<B>, false, B>>; // `never` is treated as `false`

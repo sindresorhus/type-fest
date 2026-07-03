@@ -1,55 +1,66 @@
-import {test} from 'node:test';
-import assert from 'node:assert/strict';
+import {createRuleTester} from './test-utils.js';
 import {requireExportRule} from './require-export.js';
 
-const createContext = (filename, errors = []) => ({
+const ruleTester = createRuleTester();
+
+const missingEmptyExport = (code, filename, output) => ({
+	code,
 	filename,
-	report: error => errors.push(error),
+	errors: [{messageId: 'noEmptyExport'}],
+	output,
 });
 
-const runRule = (filename, node) => {
-	const errors = [];
-	const context = createContext(filename, errors);
-	const handlers = requireExportRule.create(context);
-
-	for (const handler of Object.keys(handlers)) {
-		handlers[handler]?.(node);
-	}
-
-	return errors;
-};
-
-test('ignores non-.d.ts files', () => {
-	const handlers = requireExportRule.create(createContext('/source/foo.ts'));
-	assert.deepEqual(handlers, {});
-});
-
-test('ignores files outside source', () => {
-	const handlers = requireExportRule.create(createContext('/test/foo.d.ts'));
-	assert.deepEqual(handlers, {});
-});
-
-test('processes source .d.ts files', () => {
-	const handlers = requireExportRule.create(createContext('/source/foo.d.ts'));
-	assert.ok(handlers['Program:exit']);
-});
-
-test('passes with export {}', () => {
-	const errors = runRule('/source/foo.d.ts', {declaration: null, specifiers: [], source: null});
-	assert.equal(errors.length, 0);
-});
-
-test('fails without export {}', () => {
-	const errors = runRule('/source/foo.d.ts', {declaration: null, specifiers: [{type: 'ExportSpecifier'}]});
-	assert.equal(errors.length, 1);
-});
-
-test('auto-fix adds export {}', () => {
-	const node = {declaration: null, specifiers: [{type: 'ExportSpecifier'}]};
-	const errors = runRule('/source/foo.d.ts', node);
-	const fix = errors[0].fix({
-		insertTextAfter: (node, text) => ({node, text}),
-	});
-	assert.equal(fix.node, node);
-	assert.equal(fix.text, '\nexport {};\n');
+ruleTester.run('require-export', requireExportRule, {
+	valid: [
+		// Has export {}
+		{
+			code: 'export {};',
+			filename: '/source/foo.d.ts',
+		},
+		// Has export {} with other exports
+		{
+			code: 'export type Foo = string;\nexport {};',
+			filename: '/source/bar.d.ts',
+		},
+		// Non-.d.ts files don't need export {}
+		{
+			code: 'const x = 1;',
+			filename: '/source/foo.ts',
+		},
+		{
+			code: 'export const y = 2;',
+			filename: '/source/bar.js',
+		},
+		// Files outside source directory are ignored
+		{
+			code: 'type Test = string;',
+			filename: '/test/foo.d.ts',
+		},
+		{
+			code: 'interface ITest {}',
+			filename: '/lib/bar.d.ts',
+		},
+	],
+	invalid: [
+		// Missing export {} in empty file
+		missingEmptyExport('', '/source/foo.d.ts', '\nexport {};\n'),
+		// Missing export {} with type declarations
+		missingEmptyExport(
+			'export type Foo = string;',
+			'/source/bar.d.ts',
+			'export type Foo = string;\nexport {};\n',
+		),
+		// Missing export {} with interface
+		missingEmptyExport(
+			'export interface IFoo {\n\tx: string;\n}',
+			'/source/baz.d.ts',
+			'export interface IFoo {\n\tx: string;\n}\nexport {};\n',
+		),
+		// Missing export {} with multiple exports
+		missingEmptyExport(
+			'export type A = string;\nexport type B = number;',
+			'/source/multi.d.ts',
+			'export type A = string;\nexport type B = number;\nexport {};\n',
+		),
+	],
 });

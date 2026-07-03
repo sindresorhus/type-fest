@@ -11,24 +11,24 @@ Note:
 
 @example
 ```
-import type {Subtract} from 'type-fest';
+import type {Subtract, PositiveInfinity} from 'type-fest';
 
-Subtract<333, 222>;
+type A = Subtract<333, 222>;
 //=> 111
 
-Subtract<111, -222>;
+type B = Subtract<111, -222>;
 //=> 333
 
-Subtract<-111, 222>;
+type C = Subtract<-111, 222>;
 //=> -333
 
-Subtract<18, 96>;
+type D = Subtract<18, 96>;
 //=> -78
 
-Subtract<PositiveInfinity, 9999>;
-//=> PositiveInfinity
+type E = Subtract<PositiveInfinity, 9999>;
+//=> Infinity
 
-Subtract<PositiveInfinity, PositiveInfinity>;
+type F = Subtract<PositiveInfinity, PositiveInfinity>;
 //=> number
 ```
 

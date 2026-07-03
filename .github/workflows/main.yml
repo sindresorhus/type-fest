@@ -42,14 +42,4 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }}
-      - run: npx tsc
-  test-export:
-    name: Test Module Export
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24
-      - run: npm install rollup rollup-plugin-dts
-      - run: npx rollup index.d.ts -p rollup-plugin-dts -d temp
+      - run: NODE_OPTIONS="--max-old-space-size=6144" npx tsc

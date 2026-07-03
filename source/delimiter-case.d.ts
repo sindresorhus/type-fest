@@ -27,8 +27,8 @@ Convert a string literal to a custom string delimiter casing.
 
 This can be useful when, for example, converting a camel-cased object property to an oddly cased one.
 
-@see KebabCase
-@see SnakeCase
+@see {@link KebabCase}
+@see {@link SnakeCase}
 
 @example
 ```
@@ -45,16 +45,16 @@ type OddlyCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
 };
 
-interface SomeOptions {
+type SomeOptions = {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
-}
+};
 
 const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 	'dry#run': true,
 	'include#file': 'bar.js',
-	foo: 123
+	foo: 123,
 };
 ```
 

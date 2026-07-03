@@ -29,8 +29,8 @@ type Configuration = {
 			{
 				city2: string;
 				street2: string;
-			}
-		]
+			},
+		];
 	};
 	otherConfig: any;
 };

@@ -17,16 +17,16 @@ For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/R
 ```
 import type {Entry} from 'type-fest';
 
-interface Example {
+type Example = {
 	someKey: number;
-}
+};
 
 const manipulatesEntry = (example: Entry<Example>) => [
 	// Does some arbitrary processing on the key (with type information available)
 	example[0].toUpperCase(),
 
 	// Does some arbitrary processing on the value (with type information available)
-	example[1].toFixed(),
+	example[1].toFixed(0),
 ];
 
 const example: Example = {someKey: 1};

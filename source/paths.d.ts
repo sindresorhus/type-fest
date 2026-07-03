@@ -25,6 +25,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type ArrayExample = {
 		array: ['foo'];
 	};
@@ -38,6 +40,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type NumberKeyExample = {
 		1: ['foo'];
 	};
@@ -58,6 +62,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type Post = {
 		id: number;
 		author: {
@@ -78,13 +84,15 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type ArrayExample = {
 		array: Array<{foo: string}>;
 		tuple: [string, {bar: string}];
 	};
 
 	type AllPaths = Paths<ArrayExample, {leavesOnly: false}>;
-	//=> 'array' | `array.${number}` | `array.${number}.foo` | 'tuple' | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
+	//=> 'array' | 'tuple' | `array.${number}` | `array.${number}.foo` | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
 
 	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
 	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
@@ -101,6 +109,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type Post = {
 		id: number;
 		author: {
@@ -165,11 +175,13 @@ declare function open<Path extends ProjectPaths>(path: Path): void;
 open('filename'); // Pass
 open('folder.subfolder'); // Pass
 open('folder.subfolder.filename'); // Pass
+// @ts-expect-error
 open('foo'); // TypeError
 
 // Also works with arrays
 open('listA.1'); // Pass
 open('listB.0'); // Pass
+// @ts-expect-error
 open('listB.1'); // TypeError. Because listB only has one element.
 ```
 
