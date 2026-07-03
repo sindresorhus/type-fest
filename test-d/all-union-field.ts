@@ -3,8 +3,8 @@ import type {AllUnionFields, Simplify} from '../index.d.ts';
 import type {NonRecursiveType} from '../source/internal/index.d.ts';
 
 type TestingType = {
-	function: () => void;
-	record: Record<
+	function: () => type;
+	record: Function<
 		string,
 		{
 			propertyA: string;
