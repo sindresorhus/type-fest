@@ -8,16 +8,16 @@ Returns a boolean for whether the given type is a `symbol` [literal type](https:
 ```
 import type {IsSymbolLiteral} from 'type-fest';
 
-declare const sym1: unique symbol;
-declare const sym2: unique symbol;
+declare const symbolLiteral1: unique symbol;
+declare const symbolLiteral2: unique symbol;
 
-type A = IsSymbolLiteral<typeof sym1>;
+type A = IsSymbolLiteral<typeof symbolLiteral1>;
 //=> true
 
 type B = IsSymbolLiteral<symbol>;
 //=> false
 
-type C = IsSymbolLiteral<typeof sym1 | typeof sym2>;
+type C = IsSymbolLiteral<typeof symbolLiteral1 | typeof symbolLiteral2>;
 //=> true
 ```
 

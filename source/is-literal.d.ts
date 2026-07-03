@@ -35,9 +35,8 @@ type F = IsLiteral<string>;
 type G = IsLiteral<`on${string}`>;
 //=> false
 
-declare const sym1: unique symbol;
-
-type H = IsLiteral<typeof sym1>;
+declare const symbolLiteral: unique symbol;
+type H = IsLiteral<typeof symbolLiteral>;
 //=> true
 
 type I = IsLiteral<symbol>;
