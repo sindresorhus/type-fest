@@ -1,4 +1,4 @@
-import type {IsNumericLiteral} from './is-literal.d.ts';
+import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 

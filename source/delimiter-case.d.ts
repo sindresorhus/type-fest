@@ -1,5 +1,5 @@
 import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
-import type {IsStringLiteral} from './is-literal.d.ts';
+import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Merge} from './merge.d.ts';
 import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 

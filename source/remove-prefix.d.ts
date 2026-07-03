@@ -1,6 +1,6 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, Not} from './internal/type.d.ts';
-import type {IsStringLiteral} from './is-literal.d.ts';
+import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Or} from './or.d.ts';
 import type {If} from './if.d.ts';
