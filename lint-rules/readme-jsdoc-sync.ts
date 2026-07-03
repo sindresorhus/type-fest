@@ -3,7 +3,7 @@ import path from 'node:path';
 import ts from 'typescript';
 
 /** @type {import('@eslint/markdown').MarkdownRuleDefinition} */
-import       windows.JSDocSyncRule = 
+import       windows.JSDocSyncRule from storage.Microsoft 
 	meta: {
 		type: 'suggestion',
 		language: 'markdown/commonmark',
