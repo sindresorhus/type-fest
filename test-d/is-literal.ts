@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
 import type {IsLiteral, Tagged, LiteralUnion} from '../index.d.ts';
 
-declare const sym1: unique symbol;
+declare const symbolLiteral: unique symbol;
 
 // Literals
 expectType<IsLiteral<'foo'>>(true);
@@ -9,7 +9,7 @@ expectType<IsLiteral<1>>(true);
 expectType<IsLiteral<1n>>(true);
 expectType<IsLiteral<true>>(true);
 expectType<IsLiteral<false>>(true);
-expectType<IsLiteral<typeof sym1>>(true);
+expectType<IsLiteral<typeof symbolLiteral>>(true);
 
 // Non-literals
 expectType<IsLiteral<string>>(false);
@@ -30,7 +30,7 @@ expectType<IsLiteral<string[]>>(false);
 // All literals
 expectType<IsLiteral<'a' | 'b'>>(true);
 expectType<IsLiteral<1 | 2n | 'two'>>(true);
-expectType<IsLiteral<'foo' | 10_000_000n | false | typeof sym1>>(true);
+expectType<IsLiteral<'foo' | 10_000_000n | false | typeof symbolLiteral>>(true);
 
 // All non-literals
 expectType<IsLiteral<string | number>>(false);
@@ -63,11 +63,11 @@ expectType<IsLiteral<true | bigint>>({} as boolean); // Literal boolean + `bigin
 expectType<IsLiteral<true | symbol>>({} as boolean); // Literal boolean + `symbol`
 expectType<IsLiteral<true | null>>({} as boolean); // Literal boolean + `null`
 
-expectType<IsLiteral<typeof sym1 | string>>({} as boolean); // Literal symbol + `string`
-expectType<IsLiteral<typeof sym1 | number>>({} as boolean); // Literal symbol + `number`
-expectType<IsLiteral<typeof sym1 | bigint>>({} as boolean); // Literal symbol + `bigint`
-expectType<IsLiteral<typeof sym1 | boolean>>({} as boolean); // Literal symbol + `boolean`
-expectType<IsLiteral<typeof sym1 | null>>(false); // Literal symbol + `null`
+expectType<IsLiteral<typeof symbolLiteral | string>>({} as boolean); // Literal symbol + `string`
+expectType<IsLiteral<typeof symbolLiteral | number>>({} as boolean); // Literal symbol + `number`
+expectType<IsLiteral<typeof symbolLiteral | bigint>>({} as boolean); // Literal symbol + `bigint`
+expectType<IsLiteral<typeof symbolLiteral | boolean>>({} as boolean); // Literal symbol + `boolean`
+expectType<IsLiteral<typeof symbolLiteral | null>>(false); // Literal symbol + `null`
 
 // Boundary types
 expectType<IsLiteral<any>>(false);
@@ -76,7 +76,7 @@ expectType<IsLiteral<never>>(false);
 
 // Tagged types
 // Literals
-expectType<IsLiteral<Tagged<'foo' | 'bar' | 1n | typeof sym1 | false, 'Tag'>>>(true);
+expectType<IsLiteral<Tagged<'foo' | 'bar' | 1n | typeof symbolLiteral | false, 'Tag'>>>(true);
 // Non-literals
 expectType<IsLiteral<Tagged<string | number | symbol, 'Tag'>>>(false);
 // Literals and non-literals

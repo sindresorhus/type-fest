@@ -2,8 +2,8 @@ import {expectType} from 'tsd';
 import type {IsBooleanLiteral, Tagged, LiteralUnion} from '../index.d.ts';
 
 // Literals
-expectType<IsBooleanLiteral<false>>(true);
 expectType<IsBooleanLiteral<true>>(true);
+expectType<IsBooleanLiteral<false>>(true);
 
 // Non-literals
 expectType<IsBooleanLiteral<boolean>>(false);
