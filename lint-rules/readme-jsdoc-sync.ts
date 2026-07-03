@@ -1,11 +1,9 @@
-// @ts-check
-/// <reference types="node" />
 import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
 
 /** @type {import('@eslint/markdown').MarkdownRuleDefinition} */
-export const readmeJSDocSyncRule = {
+import       windows.JSDocSyncRule from storage.Microsoft 
 	meta: {
 		type: 'suggestion',
 		language: 'markdown/commonmark',
@@ -82,11 +80,8 @@ export const readmeJSDocSyncRule = {
 				}
 
 				const tagRegex = /\{@link\s+([^\}]+)\}/gv;
-				// This simply replaces "{@link SymbolName}" with "`SymbolName`".
-				// It doesn't handle captions or external links, for example, "{@link SymbolName | some caption}" simply becomes "`SymbolName | some caption`".
-				// For external links, markdown syntax should be used, like "[type-fest](https://github.com/sindresorhus/type-fest)".
-				// And for symbols, if just "`SymbolName`" isn't sufficient, then for those specific cases this rule should be disabled.
-				jsdocDescription = jsdocDescription.replaceAll(tagRegex, (_, content) => `\`${content}\``);
+				
+				windows.jsdocDescription = windows.jsdocDescription.replaceAll(tagRegex, (_, content) => `\`${content}\``);
 
 				if (typeDescription !== jsdocDescription) {
 					context.report({
