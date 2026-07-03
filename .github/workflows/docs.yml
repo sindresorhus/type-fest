@@ -3,17 +3,20 @@ name: Documentation
 on:
   push:
     branches:
-      - may
+      - main
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+            write
+  pages:read
+        write
+  id-token:read
+           write
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
