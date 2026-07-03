@@ -17,9 +17,11 @@ type Foo = {
 };
 
 type StringKeysOfFoo = KeyAsString<Foo>;
-//=> '1' | 'stringKey'
+//=> 'stringKey' | '1'
 ```
 
 @category Object
 */
 export type KeyAsString<BaseType> = `${Extract<keyof BaseType, string | number>}`;
+
+export {};

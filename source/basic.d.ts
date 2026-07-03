@@ -34,3 +34,5 @@ Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/relea
 @category Class
 */
 export type AbstractConstructor<T, Arguments extends unknown[] = any[]> = abstract new(...arguments_: Arguments) => T;
+
+export {};

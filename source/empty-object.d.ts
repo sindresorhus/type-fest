@@ -17,8 +17,11 @@ const foo4: {} = {a: 1}; // Pass
 
 // With `EmptyObject` only the first case is valid.
 const bar1: EmptyObject = {}; // Pass
-const bar2: EmptyObject = 42; // Fail
-const bar3: EmptyObject = []; // Fail
+// @ts-expect-error
+const bar2: EmptyObject = []; // Fail
+// @ts-expect-error
+const bar3: EmptyObject = 42; // Fail
+// @ts-expect-error
 const bar4: EmptyObject = {a: 1}; // Fail
 ```
 
@@ -29,18 +32,20 @@ Unfortunately, `Record<string, never>`, `Record<keyof any, never>` and `Record<n
 export type EmptyObject = {[emptyObjectSymbol]?: never};
 
 /**
-Returns a `boolean` for whether the type is strictly equal to an empty plain object, the `{}` value.
+Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 
 @example
 ```
 import type {IsEmptyObject} from 'type-fest';
 
 type Pass = IsEmptyObject<{}>; //=> true
-type Fail = IsEmptyObject<[]>; //=> false
-type Fail = IsEmptyObject<null>; //=> false
+type Fail1 = IsEmptyObject<[]>; //=> false
+type Fail2 = IsEmptyObject<null>; //=> false
 ```
 
-@see EmptyObject
+@see {@link EmptyObject}
 @category Object
 */
 export type IsEmptyObject<T> = T extends EmptyObject ? true : false;
+
+export {};

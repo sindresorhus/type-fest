@@ -1,4 +1,4 @@
-import type {IsEqual} from './is-equal.d.ts';
+import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 
 /**
 Extract all writable keys from the given type.
@@ -9,11 +9,12 @@ This is useful when you want to create a new type that contains writable keys on
 ```
 import type {WritableKeysOf} from 'type-fest';
 
-interface User {
+type User = {
 	name: string;
 	surname: string;
+
 	readonly id: number;
-}
+};
 
 type UpdateRequest<Entity extends object> = Pick<Entity, WritableKeysOf<Entity>>;
 
@@ -25,9 +26,9 @@ const update1: UpdateRequest<User> = {
 
 @category Utilities
 */
-export type WritableKeysOf<T extends object> =
-	T extends unknown // For distributing `T`
-		? (keyof {
-			[P in keyof T as IsEqual<{[Q in P]: T[P]}, {readonly [Q in P]: T[P]}> extends false ? P : never]: never
-		}) & keyof T // Intersect with `keyof T` to ensure result of `WritableKeysOf<T>` is always assignable to `keyof T`
+export type WritableKeysOf<Type extends object> =
+	Type extends unknown // For distributing `Type`
+		? Exclude<keyof Type, ReadonlyKeysOf<Type>>
 		: never; // Should never happen
+
+export {};

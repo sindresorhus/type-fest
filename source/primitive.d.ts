@@ -11,3 +11,5 @@ export type Primitive =
 	| boolean
 	| symbol
 	| bigint;
+
+export {};

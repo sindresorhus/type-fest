@@ -23,3 +23,5 @@ type C = IsArray<string>;
 @category Array
 */
 export type UnknownArray = readonly unknown[];
+
+export {};

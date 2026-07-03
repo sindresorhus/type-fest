@@ -71,7 +71,7 @@ declare const genericTest: PickDeep<GenericType<number>, 'genericKey'>;
 expectType<{genericKey: number}>(genericTest);
 
 declare const union: PickDeep<Testing, 'object.number' | 'object.string'>;
-expectType<{object: {number: number} & {string: string}}>(union);
+expectType<{object: {number: number; string: string}}>(union);
 
 declare const optional: PickDeep<Testing, 'optionalObject.optionalString'>;
 expectType<{optionalObject?: {optionalString?: string}}>(optional);

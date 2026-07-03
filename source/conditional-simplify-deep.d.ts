@@ -53,15 +53,15 @@ type TypeB = {
 
 type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, SomeComplexType1 | SomeComplexType2, object>;
 //=> {
-//	foo: {
+// 	foo: {
 // 		a: string;
-// 		b: string;
 // 		complexType: SomeComplexType1 & SomeComplexType2;
-//	};
+// 		b: string;
+// 	};
 // }
 ```
 
-@see SimplifyDeep
+@see {@link SimplifyDeep}
 @category Object
 */
 export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
@@ -69,3 +69,5 @@ export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unk
 	: Type extends IncludeType
 		? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
 		: Type;
+
+export {};

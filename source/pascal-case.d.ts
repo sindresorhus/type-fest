@@ -1,8 +1,8 @@
-import type {CamelCase, CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
 /**
-Converts a string literal to pascal-case.
+Convert a string literal to pascal-case.
 
 @example
 ```
@@ -12,6 +12,7 @@ import type {PascalCase} from 'type-fest';
 
 const someVariable: PascalCase<'foo-bar'> = 'FooBar';
 const preserveConsecutiveUppercase: PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'FooBARBaz';
+const splitOnPunctuation: PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}> = 'FooBarBaz';
 
 // Advanced
 
@@ -19,7 +20,7 @@ type PascalCasedProperties<T> = {
 	[K in keyof T as PascalCase<K>]: T[K]
 };
 
-interface RawOptions {
+type RawOptions = {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;
@@ -42,8 +43,10 @@ const dbResult: PascalCasedProperties<RawOptions> = {
 @category Template literal
 */
 export type PascalCase<Value, Options extends CamelCaseOptions = {}> =
-	_PascalCase<Value, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>;
+	_PascalCase<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
 
 type _PascalCase<Value, Options extends Required<CamelCaseOptions>> = CamelCase<Value, Options> extends string
 	? Capitalize<CamelCase<Value, Options>>
 	: CamelCase<Value, Options>;
+
+export {};

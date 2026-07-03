@@ -25,6 +25,7 @@ const update1: UpdateRequest<User> = {
 
 // At least 1 key is required, therefore this will report a 2322 error:
 // Type '{}' is not assignable to type 'UpdateRequest<User>'
+// @ts-expect-error
 const update2: UpdateRequest<User> = {};
 ```
 
@@ -33,3 +34,5 @@ const update2: UpdateRequest<User> = {};
 @category Object
 */
 export type NonEmptyObject<T extends object> = HasRequiredKeys<T> extends true ? T : RequireAtLeastOne<T, keyof T>;
+
+export {};

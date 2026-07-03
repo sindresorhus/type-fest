@@ -1,23 +1,23 @@
-import type {CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {PascalCase} from './pascal-case.d.ts';
 
 /**
-Convert object properties to pascal case but not recursively.
+Convert top-level object properties to pascal case.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see PascalCase
-@see PascalCasedPropertiesDeep
+@see {@link PascalCase}
+@see {@link PascalCasedPropertiesDeep}
 
 @example
 ```
 import type {PascalCasedProperties} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
 const result: PascalCasedProperties<User> = {
 	UserId: 1,
@@ -26,6 +26,10 @@ const result: PascalCasedProperties<User> = {
 
 const preserveConsecutiveUppercase: PascalCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: true}> = {
 	FooBAR: 'string',
+};
+
+const splitOnPunctuation: PascalCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	FooBar: 'string',
 };
 ```
 
@@ -37,4 +41,6 @@ export type PascalCasedProperties<Value, Options extends CamelCaseOptions = {}> 
 	? Value
 	: Value extends Array<infer U>
 		? Value
-		: {[K in keyof Value as PascalCase<K, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>]: Value[K]};
+		: {[K in keyof Value as PascalCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>]: Value[K]};
+
+export {};

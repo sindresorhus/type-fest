@@ -88,3 +88,5 @@ type _IsTuple<
 				: true
 			: false
 	>>;
+
+export {};

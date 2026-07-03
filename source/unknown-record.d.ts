@@ -11,21 +11,23 @@ function toJson(object: UnknownRecord) {
 	return JSON.stringify(object);
 }
 
-toJson({hello: 'world'});
-//=> '{"hello":"world"}'
+toJson({hello: 'world'}); // Ok
 
 function isObject(value: unknown): value is UnknownRecord {
 	return typeof value === 'object' && value !== null;
 }
 
-isObject({hello: 'world'});
-//=> true
+const value: unknown = {hello: 'world'};
 
-isObject('hello');
-//=> false
+if (isObject(value)) {
+	const v = value;
+	//=> UnknownRecord
+}
 ```
 
 @category Type
 @category Object
 */
 export type UnknownRecord = Record<PropertyKey, unknown>;
+
+export {};

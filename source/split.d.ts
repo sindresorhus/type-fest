@@ -8,7 +8,7 @@ Split options.
 
 @see {@link Split}
 */
-type SplitOptions = {
+export type SplitOptions = {
 	/**
 	When enabled, instantiations with non-literal string types (e.g., `string`, `Uppercase<string>`, `on${string}`) simply return back `string[]` without performing any splitting, as the exact structure cannot be statically determined.
 
@@ -16,6 +16,8 @@ type SplitOptions = {
 
 	@example
 	```ts
+	import type {Split} from 'type-fest';
+
 	type Example1 = Split<`foo.${string}.bar`, '.', {strictLiteralChecks: false}>;
 	//=> ['foo', string, 'bar']
 
@@ -49,9 +51,7 @@ declare function split<S extends string, D extends string>(string: S, separator:
 
 type Item = 'foo' | 'bar' | 'baz' | 'waldo';
 const items = 'foo,bar,baz,waldo';
-let array: Item[];
-
-array = split(items, ',');
+const array: Item[] = split(items, ',');
 ```
 
 @see {@link SplitOptions}
@@ -72,15 +72,19 @@ type SplitHelper<
 	Options extends Required<SplitOptions>,
 	Accumulator extends string[] = [],
 > = S extends string // For distributing `S`
-	? Delimiter extends string // For distributing `Delimeter`
+	? Delimiter extends string // For distributing `Delimiter`
 		// If `strictLiteralChecks` is `false` OR `S` and `Delimiter` both are string literals, then perform the split
 		? Or<Not<Options['strictLiteralChecks']>, And<IsStringLiteral<S>, IsStringLiteral<Delimiter>>> extends true
 			? S extends `${infer Head}${Delimiter}${infer Tail}`
 				? SplitHelper<Tail, Delimiter, Options, [...Accumulator, Head]>
 				: Delimiter extends ''
-					? Accumulator
+					? S extends ''
+						? Accumulator
+						: [...Accumulator, S]
 					: [...Accumulator, S]
 			// Otherwise, return `string[]`
 			: string[]
 		: never // Should never happen
 	: never; // Should never happen
+
+export {};

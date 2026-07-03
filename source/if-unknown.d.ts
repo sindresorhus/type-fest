@@ -24,3 +24,5 @@ type ShouldBeBar = IfUnknown<'not unknown', 'foo', 'bar'>;
 export type IfUnknown<T, TypeIfUnknown = true, TypeIfNotUnknown = false> = (
 	IsUnknown<T> extends true ? TypeIfUnknown : TypeIfNotUnknown
 );
+
+export {};

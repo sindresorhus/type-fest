@@ -1,11 +1,11 @@
 import type {ApplyDefaultOptions, ToString} from './internal/index.d.ts';
-import type {LiteralStringUnion} from './literal-union.d.ts';
+import type {_LiteralStringUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 
-type GetOptions = {
+export type GetOptions = {
 	/**
 	Include `undefined` in the return type when accessing properties.
 
@@ -58,10 +58,10 @@ Splits a dot-prop style path into a tuple comprised of the properties in the pat
 
 @example
 ```
-ToPath<'foo.bar.baz'>
+type A = ToPath<'foo.bar.baz'>;
 //=> ['foo', 'bar', 'baz']
 
-ToPath<'foo[0].bar.baz'>
+type B = ToPath<'foo[0].bar.baz'>;
 //=> ['foo', '0', 'bar', 'baz']
 ```
 */
@@ -84,10 +84,10 @@ Returns true if `LongString` is made up out of `Substring` repeated 0 or more ti
 
 @example
 ```
-ConsistsOnlyOf<'aaa', 'a'> //=> true
-ConsistsOnlyOf<'ababab', 'ab'> //=> true
-ConsistsOnlyOf<'aBa', 'a'> //=> false
-ConsistsOnlyOf<'', 'a'> //=> true
+type A = ConsistsOnlyOf<'aaa', 'a'>; //=> true
+type B = ConsistsOnlyOf<'ababab', 'ab'>; //=> true
+type C = ConsistsOnlyOf<'aBa', 'a'>; //=> false
+type D = ConsistsOnlyOf<'', 'a'>; //=> true
 ```
 */
 type ConsistsOnlyOf<LongString extends string, Substring extends string> =
@@ -161,45 +161,50 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
-Get a deeply-nested property from an object using a key path, like Lodash's `.get()` function.
+Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
 
 @example
 ```
 import type {Get} from 'type-fest';
-import * as lodash from 'lodash';
 
-const get = <BaseType, Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>
-	lodash.get(object, path);
+declare function get<BaseType, const Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path>;
 
-interface ApiResponse {
+type ApiResponse = {
 	hits: {
 		hits: Array<{
-			_id: string
+			_id: string;
 			_source: {
 				name: Array<{
-					given: string[]
-					family: string
-				}>
-				birthDate: string
-			}
-		}>
-	}
-}
+					given: string[];
+					family: string;
+				}>;
+				birthDate: string;
+			};
+		}>;
+	};
+};
 
-const getName = (apiResponse: ApiResponse) =>
-	get(apiResponse, 'hits.hits[0]._source.name');
-	//=> Array<{given: string[]; family: string}> | undefined
+const getName = (apiResponse: ApiResponse) => get(apiResponse, 'hits.hits[0]._source.name');
+//=> (apiResponse: ApiResponse) => {
+// 	given: string[];
+// 	family: string;
+// }[] | undefined
 
 // Path also supports a readonly array of strings
-const getNameWithPathArray = (apiResponse: ApiResponse) =>
-	get(apiResponse, ['hits','hits', '0', '_source', 'name'] as const);
-	//=> Array<{given: string[]; family: string}> | undefined
+const getNameWithPathArray = (apiResponse: ApiResponse) => get(apiResponse, ['hits', 'hits', '0', '_source', 'name']);
+//=> (apiResponse: ApiResponse) => {
+// 	given: string[];
+// 	family: string;
+// }[] | undefined
 
 // Non-strict mode:
-Get<string[], '3', {strict: false}> //=> string
-Get<Record<string, string>, 'foo', {strict: true}> // => string
+type A = Get<string[], '3', {strict: false}>;
+//=> string
+
+type B = Get<Record<string, string>, 'foo', {strict: true}>;
+//=> string | undefined
 ```
 
 @category Object
@@ -210,7 +215,7 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
-	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
+	| _LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
 	Options extends GetOptions = {},
 > =
 	GetWithPath<
@@ -218,3 +223,5 @@ export type Get<
 		Path extends string ? ToPath<Path> : Path,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
+
+export {};

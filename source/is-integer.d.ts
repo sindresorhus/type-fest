@@ -30,7 +30,7 @@ type E = IsInteger<0o10>;
 type F = IsInteger<0x10>;
 //=> true
 
-type G = IsInteger<1.23+21>;
+type G = IsInteger<1.23e+21>;
 //=> true
 
 type H = IsInteger<1.5>;
@@ -47,12 +47,14 @@ type J = IsInteger<1e-7>;
 @category Numeric
 */
 export type IsInteger<T> =
-T extends bigint
-	? true
-	: T extends number
-		? number extends T
-			? false
-			: T extends PositiveInfinity | NegativeInfinity
+	T extends bigint
+		? true
+		: T extends number
+			? number extends T
 				? false
-				: Not<IsFloat<T>>
-		: false;
+				: T extends PositiveInfinity | NegativeInfinity
+					? false
+					: Not<IsFloat<T>>
+			: false;
+
+export {};

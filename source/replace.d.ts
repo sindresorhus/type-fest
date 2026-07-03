@@ -1,6 +1,6 @@
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
-type ReplaceOptions = {
+export type ReplaceOptions = {
 	all?: boolean;
 };
 
@@ -18,26 +18,26 @@ Use-case:
 
 @example
 ```
-import {Replace} from 'type-fest';
+import type {Replace} from 'type-fest';
 
 declare function replace<
 	Input extends string,
 	Search extends string,
-	Replacement extends string
+	Replacement extends string,
 >(
 	input: Input,
 	search: Search,
-	replacement: Replacement
+	replacement: Replacement,
 ): Replace<Input, Search, Replacement>;
 
 declare function replaceAll<
 	Input extends string,
 	Search extends string,
-	Replacement extends string
+	Replacement extends string,
 >(
 	input: Input,
 	search: Search,
-	replacement: Replacement
+	replacement: Replacement,
 ): Replace<Input, Search, Replacement, {all: true}>;
 
 // The return type is the exact string literal, not just `string`.
@@ -83,3 +83,5 @@ type _Replace<
 			: `${Accumulator}${Input}`
 		: never
 	: never;
+
+export {};

@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions, BuiltIns} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -44,11 +44,13 @@ type DefaultPartialDeepOptions = {
 };
 
 /**
-Create a type from another type with all keys and nested keys set to optional.
+Create a deeply optional version of another type.
 
 Use-cases:
 - Merging a default settings/config object with another object, the second object would be a deep partial of the default object.
 - Mocking and testing complex entities, where populating an entire object with its keys would be redundant in terms of the mock or test.
+
+Use [`Partial<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) if you only need one level deep.
 
 @example
 ```
@@ -99,16 +101,20 @@ export type PartialDeep<T, Options extends PartialDeepOptions = {}> =
 
 type _PartialDeep<T, Options extends Required<PartialDeepOptions>> = T extends BuiltIns | ((new (...arguments_: any[]) => unknown))
 	? T
-	: IsNever<keyof T> extends true // For functions with no properties
-		? T
-		: T extends Map<infer KeyType, infer ValueType>
-			? PartialMapDeep<KeyType, ValueType, Options>
-			: T extends Set<infer ItemType>
-				? PartialSetDeep<ItemType, Options>
-				: T extends ReadonlyMap<infer KeyType, infer ValueType>
-					? PartialReadonlyMapDeep<KeyType, ValueType, Options>
-					: T extends ReadonlySet<infer ItemType>
-						? PartialReadonlySetDeep<ItemType, Options>
+	: T extends Map<infer KeyType, infer ValueType>
+		? PartialMapDeep<KeyType, ValueType, Options>
+		: T extends Set<infer ItemType>
+			? PartialSetDeep<ItemType, Options>
+			: T extends ReadonlyMap<infer KeyType, infer ValueType>
+				? PartialReadonlyMapDeep<KeyType, ValueType, Options>
+				: T extends ReadonlySet<infer ItemType>
+					? PartialReadonlySetDeep<ItemType, Options>
+					: T extends (...arguments_: any[]) => unknown
+						? IsNever<keyof T> extends true
+							? T // For functions with no properties
+							: HasMultipleCallSignatures<T> extends true
+								? T
+								: ((...arguments_: Parameters<T>) => ReturnType<T>) & PartialObjectDeep<T, Options>
 						: T extends object
 							? T extends ReadonlyArray<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
 								? Options['recurseIntoArrays'] extends true
@@ -144,9 +150,8 @@ type PartialReadonlySetDeep<T, Options extends Required<PartialDeepOptions>> = {
 /**
 Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.
 */
-type PartialObjectDeep<ObjectType extends object, Options extends Required<PartialDeepOptions>> =
-	(ObjectType extends (...arguments_: any) => unknown
-		? (...arguments_: Parameters<ObjectType>) => ReturnType<ObjectType>
-		: {}) & ({
-			[KeyType in keyof ObjectType]?: _PartialDeep<ObjectType[KeyType], Options>
-		});
+type PartialObjectDeep<ObjectType extends object, Options extends Required<PartialDeepOptions>> = {
+	[KeyType in keyof ObjectType]?: _PartialDeep<ObjectType[KeyType], Options>
+};
+
+export {};

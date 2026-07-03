@@ -15,8 +15,9 @@ It relies on the fact that an empty object (`{}`) is assignable to an object wit
 ```
 const indexed: Record<string, unknown> = {}; // Allowed
 
+// @ts-expect-error
 const keyed: Record<'foo', unknown> = {}; // Error
-// => TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
+// TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
 ```
 
 Instead of causing a type error like the above, you can also use a [conditional type](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html) to test whether a type is assignable to another:
@@ -25,19 +26,21 @@ Instead of causing a type error like the above, you can also use a [conditional 
 type Indexed = {} extends Record<string, unknown>
 	? '✅ `{}` is assignable to `Record<string, unknown>`'
 	: '❌ `{}` is NOT assignable to `Record<string, unknown>`';
-// => '✅ `{}` is assignable to `Record<string, unknown>`'
+
+type IndexedResult = Indexed;
+//=> '✅ `{}` is assignable to `Record<string, unknown>`'
 
 type Keyed = {} extends Record<'foo' | 'bar', unknown>
-	? "✅ `{}` is assignable to `Record<'foo' | 'bar', unknown>`"
-	: "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`";
-// => "❌ `{}` is NOT assignable to `Record<'foo' | 'bar', unknown>`"
+	? '✅ `{}` is assignable to `Record<\'foo\' | \'bar\', unknown>`'
+	: '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', unknown>`';
+
+type KeyedResult = Keyed;
+//=> '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', unknown>`'
 ```
 
 Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
 
 ```
-import type {OmitIndexSignature} from 'type-fest';
-
 type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType // Map each key of `ObjectType`...
 	]: ObjectType[KeyType]; // ...to its original value, i.e. `OmitIndexSignature<Foo> == Foo`.
@@ -47,14 +50,12 @@ type OmitIndexSignature<ObjectType> = {
 ...whether an empty object (`{}`) would be assignable to an object with that `KeyType` (`Record<KeyType, unknown>`)...
 
 ```
-import type {OmitIndexSignature} from 'type-fest';
-
 type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
-		// Is `{}` assignable to `Record<KeyType, unknown>`?
-		as {} extends Record<KeyType, unknown>
-			? ... // ✅ `{}` is assignable to `Record<KeyType, unknown>`
-			: ... // ❌ `{}` is NOT assignable to `Record<KeyType, unknown>`
+	// Is `{}` assignable to `Record<KeyType, unknown>`?
+	as {} extends Record<KeyType, unknown>
+		? never // ✅ `{}` is assignable to `Record<KeyType, unknown>`
+		: KeyType // ❌ `{}` is NOT assignable to `Record<KeyType, unknown>`
 	]: ObjectType[KeyType];
 };
 ```
@@ -65,27 +66,27 @@ If `{}` is assignable, it means that `KeyType` is an index signature and we want
 ```
 import type {OmitIndexSignature} from 'type-fest';
 
-interface Example {
+type Example = {
 	// These index signatures will be removed.
-	[x: string]: any
-	[x: number]: any
-	[x: symbol]: any
-	[x: `head-${string}`]: string
-	[x: `${string}-tail`]: string
-	[x: `head-${string}-tail`]: string
-	[x: `${bigint}`]: string
-	[x: `embedded-${number}`]: string
+	[x: string]: any;
+	[x: number]: any;
+	[x: symbol]: any;
+	[x: `head-${string}`]: string;
+	[x: `${string}-tail`]: string;
+	[x: `head-${string}-tail`]: string;
+	[x: `${bigint}`]: string;
+	[x: `embedded-${number}`]: string;
 
 	// These explicitly defined keys will remain.
 	foo: 'bar';
 	qux?: 'baz';
-}
+};
 
 type ExampleWithoutIndexSignatures = OmitIndexSignature<Example>;
-// => { foo: 'bar'; qux?: 'baz' | undefined; }
+//=> {foo: 'bar'; qux?: 'baz'}
 ```
 
-@see PickIndexSignature
+@see {@link PickIndexSignature}
 @category Object
 */
 export type OmitIndexSignature<ObjectType> = {
@@ -93,3 +94,5 @@ export type OmitIndexSignature<ObjectType> = {
 		? never
 		: KeyType]: ObjectType[KeyType];
 };
+
+export {};

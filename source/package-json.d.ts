@@ -1,11 +1,11 @@
-import type {LiteralUnion} from './literal-union.d.ts';
 import type {JsonObject, JsonValue} from './json-value.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 
-declare namespace PackageJson {
+export namespace PackageJson {
 	/**
 	A person who has been involved in creating or maintaining the package.
 	*/
-	export type Person =
+	type Person =
 		| string
 		| {
 			name: string;
@@ -13,7 +13,7 @@ declare namespace PackageJson {
 			email?: string;
 		};
 
-	export type BugsLocation =
+	type BugsLocation =
 		| string
 		| {
 			/**
@@ -27,7 +27,7 @@ declare namespace PackageJson {
 			email?: string;
 		};
 
-	export type DirectoryLocations = {
+	type DirectoryLocations = {
 		[directoryType: string]: JsonValue | undefined;
 
 		/**
@@ -61,7 +61,7 @@ declare namespace PackageJson {
 		test?: string;
 	};
 
-	export type Scripts = {
+	type Scripts = {
 		/**
 		Run **before** the package is published (Also run on local `npm install` without any arguments).
 		*/
@@ -206,7 +206,23 @@ declare namespace PackageJson {
 	/**
 	Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or Git URL.
 	*/
-	export type Dependency = Partial<Record<string, string>>;
+	type Dependency = Partial<Record<string, string>>;
+
+	/**
+	Recursive map describing selective dependency version overrides supported by npm.
+	*/
+	type DependencyOverrides = {
+		[packageName in string]: string | undefined | DependencyOverrides;
+	};
+
+	/**
+	Specifies requirements for development environment components such as operating systems, runtimes, or package managers. Used to ensure consistent development environments across the team.
+	*/
+	type DevEngineDependency = {
+		name: string;
+		version?: string;
+		onFail?: 'ignore' | 'warn' | 'error' | 'download';
+	};
 
 	/**
 	A mapping of conditions and the paths to which they resolve.
@@ -218,7 +234,7 @@ declare namespace PackageJson {
 	/**
 	Entry points of a module, optionally with conditions and subpath exports.
 	*/
-	export type Exports =
+	type Exports =
 		| null
 		| string
 		| Array<string | ExportConditions>
@@ -227,12 +243,12 @@ declare namespace PackageJson {
 	/**
 	Import map entries of a module, optionally with conditions and subpath imports.
 	*/
-	export type Imports = {
+	type Imports = {
 		[key: `#${string}`]: Exports;
 	};
 
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-	export interface NonStandardEntryPoints {
+	interface NonStandardEntryPoints {
 		/**
 		An ECMAScript module ID that is the primary entry point to the program.
 		*/
@@ -264,7 +280,7 @@ declare namespace PackageJson {
 		sideEffects?: boolean | string[];
 	}
 
-	export type TypeScriptConfiguration = {
+	type TypeScriptConfiguration = {
 		/**
 		Location of the bundled TypeScript declaration file.
 		*/
@@ -284,7 +300,7 @@ declare namespace PackageJson {
 	/**
 	An alternative configuration for workspaces.
 	*/
-	export type WorkspaceConfig = {
+	type WorkspaceConfig = {
 		/**
 		An array of workspace pattern strings which contain the workspace packages.
 		*/
@@ -310,7 +326,7 @@ declare namespace PackageJson {
 	*/
 	type WorkspacePattern = string;
 
-	export type YarnConfiguration = {
+	type YarnConfiguration = {
 		/**
 		If your package only allows one version of a given dependency, and you’d like to enforce the same behavior as `yarn install --flat` on the command-line, set this to `true`.
 
@@ -324,7 +340,7 @@ declare namespace PackageJson {
 		resolutions?: Dependency;
 	};
 
-	export type JSPMConfiguration = {
+	type JSPMConfiguration = {
 		/**
 		JSPM configuration.
 		*/
@@ -335,7 +351,7 @@ declare namespace PackageJson {
 	Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Containing standard npm properties.
 	*/
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-	export interface PackageJsonStandard {
+	interface PackageJsonStandard {
 		/**
 		The name of the package.
 		*/
@@ -502,10 +518,15 @@ declare namespace PackageJson {
 		bundleDependencies?: string[];
 
 		/**
+		Overrides is used to support selective version overrides using npm, which lets you define custom package versions or ranges inside your dependencies.
+		*/
+		overrides?: DependencyOverrides;
+
+		/**
 		Engines that this package runs on.
 		*/
 		engines?: {
-			[EngineName in 'npm' | 'node' | string]?: string;
+			[EngineName in LiteralUnion<'npm' | 'node', string>]?: string;
 		};
 
 		/**
@@ -564,6 +585,17 @@ declare namespace PackageJson {
 		>>;
 
 		/**
+		Define the runtime and package manager for developing the current project.
+		*/
+		devEngines?: {
+			os?: DevEngineDependency | DevEngineDependency[];
+			cpu?: DevEngineDependency | DevEngineDependency[];
+			libc?: DevEngineDependency | DevEngineDependency[];
+			runtime?: DevEngineDependency | DevEngineDependency[];
+			packageManager?: DevEngineDependency | DevEngineDependency[];
+		};
+
+		/**
 		If set to `true`, a warning will be shown if package is installed locally. Useful if the package is primarily a command-line application that should be installed globally.
 
 		@deprecated
@@ -618,7 +650,7 @@ declare namespace PackageJson {
 	/**
 	Type for [`package.json` file used by the Node.js runtime](https://nodejs.org/api/packages.html#nodejs-packagejson-field-definitions).
 	*/
-	export type NodeJsStandard = {
+	type NodeJsStandard = {
 		/**
 		Defines which package manager is expected to be used when working on the current project. It can set to any of the [supported package managers](https://nodejs.org/api/corepack.html#supported-package-managers), and will ensure that your teams use the exact same package manager versions without having to install anything else than Node.js.
 
@@ -634,7 +666,7 @@ declare namespace PackageJson {
 		packageManager?: string;
 	};
 
-	export type PublishConfig = {
+	type PublishConfig = {
 		/**
 		Additional, less common properties from the [npm docs on `publishConfig`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#publishconfig).
 		*/
@@ -667,10 +699,12 @@ Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-j
 @category File
 */
 export type PackageJson =
-	JsonObject &
-	PackageJson.NodeJsStandard &
-	PackageJson.PackageJsonStandard &
-	PackageJson.NonStandardEntryPoints &
-	PackageJson.TypeScriptConfiguration &
-	PackageJson.YarnConfiguration &
-	PackageJson.JSPMConfiguration;
+	JsonObject
+	& PackageJson.NodeJsStandard
+	& PackageJson.PackageJsonStandard
+	& PackageJson.NonStandardEntryPoints
+	& PackageJson.TypeScriptConfiguration
+	& PackageJson.YarnConfiguration
+	& PackageJson.JSPMConfiguration;
+
+export {};

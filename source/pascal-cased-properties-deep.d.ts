@@ -1,4 +1,4 @@
-import type {CamelCaseOptions, DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {PascalCase} from './pascal-case.d.ts';
 
@@ -7,22 +7,22 @@ Convert object properties to pascal case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see PascalCase
-@see PascalCasedProperties
+@see {@link PascalCase}
+@see {@link PascalCasedProperties}
 
 @example
 ```
 import type {PascalCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {
@@ -48,6 +48,13 @@ const preserveConsecutiveUppercase: PascalCasedPropertiesDeep<{fooBAR: {fooBARBi
 		}],
 	},
 };
+
+const splitOnPunctuation: PascalCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
+	UserInfo: {
+		UserId: 1,
+		UserName: 'Tom',
+	},
+};
 ```
 
 @category Change case
@@ -55,7 +62,7 @@ const preserveConsecutiveUppercase: PascalCasedPropertiesDeep<{fooBAR: {fooBARBi
 @category Object
 */
 export type PascalCasedPropertiesDeep<Value, Options extends CamelCaseOptions = {}> =
-	_PascalCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, DefaultCamelCaseOptions, Options>>;
+	_PascalCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
 
 type _PascalCasedPropertiesDeep<Value, Options extends Required<CamelCaseOptions>> = Value extends Function | Date | RegExp
 	? Value
@@ -68,3 +75,5 @@ type _PascalCasedPropertiesDeep<Value, Options extends Required<CamelCaseOptions
 					[K in keyof Value as PascalCase<K, Options>]: _PascalCasedPropertiesDeep<Value[K], Options>;
 				}
 				: Value;
+
+export {};

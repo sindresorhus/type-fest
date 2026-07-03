@@ -1,0 +1,45 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"entryPoints": ["./index.d.ts"],
+	"out": "docs",
+	"exclude": ["**/node_modules/**", "**/test-d/**"],
+	"excludePrivate": false,
+	"excludeProtected": false,
+	"excludeExternals": true,
+	"readme": "readme.md",
+	"plugin": [],
+	"githubPages": true,
+	"disableSources": false,
+	"sourceLinkTemplate": "https://github.com/sindresorhus/type-fest/blob/{gitRevision}/{path}#L{line}",
+	"gitRevision": "main",
+	"includeVersion": true,
+	"navigation": {
+		"includeCategories": true,
+		"includeGroups": false
+	},
+	"categorizeByGroup": false,
+	"sort": ["source-order"],
+	"kindSortOrder": [
+		"TypeAlias",
+		"Interface",
+		"Class",
+		"Enum",
+		"Function",
+		"Variable",
+		"Constructor",
+		"Property",
+		"Method",
+		"CallSignature",
+		"IndexSignature",
+		"ConstructorSignature",
+		"Accessor",
+		"GetSignature",
+		"SetSignature"
+	],
+	"visibilityFilters": {
+		"protected": false,
+		"private": false,
+		"inherited": true,
+		"external": false
+	}
+}

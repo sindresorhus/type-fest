@@ -63,11 +63,11 @@ function displayPetInfo(petInfo: (Cat | Dog)['info']) {
 
 	// petInfo type is complex and have some needless fields
 
-	console.log('name: ', petInfo.name);
-	console.log('type: ', petInfo.type);
+	console.log('name:', petInfo.name);
+	console.log('type:', petInfo.type);
 }
 
-function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
+function displayPetInfoWithSharedUnionFieldsDeep(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 	// typeof petInfo =>
 	// {
 	// 	name: string;
@@ -76,12 +76,12 @@ function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 
 	// petInfo type is simple and clear
 
-	console.log('name: ', petInfo.name);
-	console.log('type: ', petInfo.type);
+	console.log('name:', petInfo.name);
+	console.log('type:', petInfo.type);
 }
 ```
 
-@see SharedUnionFields
+@see {@link SharedUnionFields}
 
 @category Object
 @category Union
@@ -89,7 +89,7 @@ function displayPetInfo(petInfo: SharedUnionFieldsDeep<Cat | Dog>['info']) {
 export type SharedUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOptions = {}> =
 	ApplyDefaultOptions<SharedUnionFieldsDeepOptions, DefaultSharedUnionFieldsDeepOptions, Options> extends infer OptionsWithDefaults extends Required<SharedUnionFieldsDeepOptions>
 	// `Union extends` will convert `Union`
-	// to a [distributive conditionaltype](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
+	// to a [distributive conditional type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types).
 	// But this is not what we want, so we need to wrap `Union` with `[]` to prevent it.
 		? [Union] extends [NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>]
 			? Union
@@ -176,3 +176,5 @@ type InternalSharedArrayUnionFieldsDeep<
 				Union, Options,
 				[...ResultTuple, SharedUnionFieldsDeep<Union[ResultTuple['length']], Options>]
 			>;
+
+export {};

@@ -43,16 +43,19 @@ const literal = {foo: 123, bar: 'hello', baz: 456};
 const someType: SomeType = literal;
 const someInterface: SomeInterface = literal;
 
-function fn(object: Record<string, unknown>): void {}
+declare function fn(object: Record<string, unknown>): void;
 
 fn(literal); // Good: literal object type is sealed
 fn(someType); // Good: type is sealed
+// @ts-expect-error
 fn(someInterface); // Error: Index signature for type 'string' is missing in type 'someInterface'. Because `interface` can be re-opened
 fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` into a `type`
 ```
 
 @link https://github.com/microsoft/TypeScript/issues/15300
-@see SimplifyDeep
+@see {@link SimplifyDeep}
 @category Object
 */
 export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
+
+export {};

@@ -1,142 +1,98 @@
 import {expectType} from 'tsd';
-import type {
-	IsLiteral,
-	IsStringLiteral,
-	IsNumericLiteral,
-	IsBooleanLiteral,
-	IsSymbolLiteral,
-	Tagged,
-	LiteralUnion,
-} from '../index.d.ts';
+import type {IsLiteral, Tagged, LiteralUnion} from '../index.d.ts';
 
-const stringLiteral = '';
-const numberLiteral = 1;
-// Note: tsd warns on direct literal usage so we cast to the literal type
-const bigintLiteral = BigInt(1) as 1n;
-const booleanLiteral = true;
-const symbolLiteral = Symbol('');
+declare const sym1: unique symbol;
 
-declare const _string: string;
-declare const _number: number;
-declare const _bigint: bigint;
-declare const _boolean: boolean;
-declare const _symbol: symbol;
+// Literals
+expectType<IsLiteral<'foo'>>(true);
+expectType<IsLiteral<1>>(true);
+expectType<IsLiteral<1n>>(true);
+expectType<IsLiteral<true>>(true);
+expectType<IsLiteral<false>>(true);
+expectType<IsLiteral<typeof sym1>>(true);
 
-// Literals should be true
-expectType<IsLiteral<typeof stringLiteral>>(true);
-expectType<IsLiteral<typeof numberLiteral>>(true);
-expectType<IsLiteral<typeof bigintLiteral>>(true);
-expectType<IsLiteral<typeof booleanLiteral>>(true);
-expectType<IsLiteral<typeof symbolLiteral>>(true);
+// Non-literals
+expectType<IsLiteral<string>>(false);
+expectType<IsLiteral<Uppercase<string>>>(false);
+expectType<IsLiteral<`${number}`>>(false);
+expectType<IsLiteral<number>>(false);
+expectType<IsLiteral<bigint>>(false);
+expectType<IsLiteral<boolean>>(false);
+expectType<IsLiteral<symbol>>(false);
 
-// Primitives should be false
-expectType<IsLiteral<typeof _string>>(false);
-expectType<IsLiteral<typeof _number>>(false);
-expectType<IsLiteral<typeof _bigint>>(false);
-expectType<IsLiteral<typeof _boolean>>(false);
-expectType<IsLiteral<typeof _symbol>>(false);
-
-// Null, undefined, and non-primitives should fail all literal checks
 expectType<IsLiteral<null>>(false);
 expectType<IsLiteral<undefined>>(false);
-expectType<IsLiteral<any>>(false);
-expectType<IsLiteral<never>>(false);
+expectType<IsLiteral<object>>(false);
+expectType<IsLiteral<(x: number) => number>>(false);
+expectType<IsLiteral<string[]>>(false);
 
-expectType<IsStringLiteral<typeof stringLiteral>>(true);
-expectType<IsStringLiteral<typeof _string>>(false);
+// Unions
+// All literals
+expectType<IsLiteral<'a' | 'b'>>(true);
+expectType<IsLiteral<1 | 2n | 'two'>>(true);
+expectType<IsLiteral<'foo' | 10_000_000n | false | typeof sym1>>(true);
 
-// Strings with infinite set of possible values return `false`
-expectType<IsStringLiteral<Uppercase<string>>>(false);
-expectType<IsStringLiteral<Lowercase<string>>>(false);
-expectType<IsStringLiteral<Capitalize<string>>>(false);
-expectType<IsStringLiteral<Uncapitalize<string>>>(false);
-expectType<IsStringLiteral<Capitalize<Lowercase<string>>>>(false);
-expectType<IsStringLiteral<Uncapitalize<Uppercase<string>>>>(false);
-expectType<IsStringLiteral<`abc${string}`>>(false);
-expectType<IsStringLiteral<`${string}abc`>>(false);
-expectType<IsStringLiteral<`${number}:${string}`>>(false);
-expectType<IsStringLiteral<`abc${Uppercase<string>}`>>(false);
-expectType<IsStringLiteral<`${Lowercase<string>}abc`>>(false);
-expectType<IsStringLiteral<`${number}`>>(false);
-expectType<IsStringLiteral<`${number}${string}`>>(false);
-expectType<IsStringLiteral<`${number}` | Uppercase<string>>>(false);
-expectType<IsStringLiteral<Capitalize<string> | Uppercase<string>>>(false);
-expectType<IsStringLiteral<`abc${string}` | `${string}abc`>>(false);
+// All non-literals
+expectType<IsLiteral<string | number>>(false);
+expectType<IsLiteral<bigint | symbol | boolean>>(false);
 
-// Strings with finite set of possible values return `true`
-expectType<IsStringLiteral<'a' | 'b'>>(true);
-expectType<IsStringLiteral<Uppercase<'a'>>>(true);
-expectType<IsStringLiteral<Lowercase<'a'>>>(true);
-expectType<IsStringLiteral<Uppercase<'a' | 'b'>>>(true);
-expectType<IsStringLiteral<Lowercase<'a' | 'b'>>>(true);
-expectType<IsStringLiteral<Capitalize<'abc' | 'xyz'>>>(true);
-expectType<IsStringLiteral<Uncapitalize<'Abc' | 'Xyz'>>>(true);
-expectType<IsStringLiteral<`ab${'c' | 'd' | 'e'}`>>(true);
-expectType<IsStringLiteral<Uppercase<'a' | 'b'> | 'C' | 'D'>>(true);
-expectType<IsStringLiteral<Lowercase<'xyz'> | Capitalize<'abc'>>>(true);
+expectType<IsLiteral<object | null | undefined>>(false);
 
-// Strings with union of literals and non-literals return `boolean`
-expectType<IsStringLiteral<Uppercase<string> | 'abc'>>({} as boolean);
-expectType<IsStringLiteral<Lowercase<string> | 'Abc'>>({} as boolean);
-expectType<IsStringLiteral<null | '1' | '2' | '3'>>({} as boolean);
-expectType<IsStringLiteral<1 | 2 | '3'>>({} as boolean);
-expectType<IsStringLiteral<'foo' | 'bar' | number>>({} as boolean);
+// Literals and non-literals
+expectType<IsLiteral<'foo' | number>>({} as boolean); // Literal string + `number`
+expectType<IsLiteral<'foo' | bigint>>({} as boolean); // Literal string + `bigint`
+expectType<IsLiteral<'foo' | boolean>>({} as boolean); // Literal string + `boolean`
+expectType<IsLiteral<'foo' | symbol>>({} as boolean); // Literal string + `symbol`
+expectType<IsLiteral<'foo' | null>>({} as boolean); // Literal string + `null`
 
-// Types other than string return `false`
-expectType<IsStringLiteral<bigint>>(false);
-expectType<IsStringLiteral<1 | 2 | 3>>(false);
-expectType<IsStringLiteral<object>>(false);
-expectType<IsStringLiteral<false | undefined | null>>(false);
+expectType<IsLiteral<1 | string>>({} as boolean); // Literal number + `string`
+expectType<IsLiteral<1 | bigint>>({} as boolean); // Literal number + `bigint`
+expectType<IsLiteral<1 | boolean>>({} as boolean); // Literal number + `boolean`
+expectType<IsLiteral<1 | symbol>>({} as boolean); // Literal number + `symbol`
+expectType<IsLiteral<1 | null>>({} as boolean); // Literal number + `null`
+
+expectType<IsLiteral<1n | string>>({} as boolean); // Literal bigint + `string`
+expectType<IsLiteral<1n | number>>({} as boolean); // Literal bigint + `number`
+expectType<IsLiteral<1n | boolean>>({} as boolean); // Literal bigint + `boolean`
+expectType<IsLiteral<1n | symbol>>({} as boolean); // Literal bigint + `symbol`
+expectType<IsLiteral<1n | null>>({} as boolean); // Literal bigint + `null`
+
+expectType<IsLiteral<true | string>>({} as boolean); // Literal boolean + `string`
+expectType<IsLiteral<true | number>>({} as boolean); // Literal boolean + `number`
+expectType<IsLiteral<true | bigint>>({} as boolean); // Literal boolean + `bigint`
+expectType<IsLiteral<true | symbol>>({} as boolean); // Literal boolean + `symbol`
+expectType<IsLiteral<true | null>>({} as boolean); // Literal boolean + `null`
+
+expectType<IsLiteral<typeof sym1 | string>>({} as boolean); // Literal symbol + `string`
+expectType<IsLiteral<typeof sym1 | number>>({} as boolean); // Literal symbol + `number`
+expectType<IsLiteral<typeof sym1 | bigint>>({} as boolean); // Literal symbol + `bigint`
+expectType<IsLiteral<typeof sym1 | boolean>>({} as boolean); // Literal symbol + `boolean`
+expectType<IsLiteral<typeof sym1 | null>>(false); // Literal symbol + `null`
 
 // Boundary types
-expectType<IsStringLiteral<{}>>(false);
-expectType<IsStringLiteral<any>>(false);
-expectType<IsStringLiteral<never>>(false);
-
-expectType<IsNumericLiteral<typeof numberLiteral>>(true);
-expectType<IsNumericLiteral<typeof bigintLiteral>>(true);
-expectType<IsNumericLiteral<typeof _number>>(false);
-expectType<IsNumericLiteral<typeof _bigint>>(false);
-
-expectType<IsBooleanLiteral<typeof booleanLiteral>>(true);
-expectType<IsBooleanLiteral<typeof _boolean>>(false);
-
-expectType<IsSymbolLiteral<typeof symbolLiteral>>(true);
-expectType<IsSymbolLiteral<typeof _symbol>>(false);
-
-// Missing generic parameter
-// @ts-expect-error
-type A0 = IsLiteral;
-// @ts-expect-error
-type A1 = IsStringLiteral;
-// @ts-expect-error
-type A2 = IsNumericLiteral;
-// @ts-expect-error
-type A3 = IsBooleanLiteral;
-// @ts-expect-error
-type A4 = IsSymbolLiteral;
+expectType<IsLiteral<any>>(false);
+expectType<IsLiteral<unknown>>(false);
+expectType<IsLiteral<never>>(false);
 
 // Tagged types
-expectType<IsStringLiteral<Tagged<string, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<Uppercase<string>, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<number, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'>>>(true);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar' | `on${string}`, 'Tag'>>>({} as boolean);
-expectType<IsStringLiteral<Tagged<'1st' | '2nd' | '3rd' | number, 'Tag'>>>({} as boolean);
+// Literals
+expectType<IsLiteral<Tagged<'foo' | 'bar' | 1n | typeof sym1 | false, 'Tag'>>>(true);
+// Non-literals
+expectType<IsLiteral<Tagged<string | number | symbol, 'Tag'>>>(false);
+// Literals and non-literals
+expectType<IsLiteral<Tagged<'foo' | 'bar' | number, 'Tag'>>>({} as boolean);
+expectType<IsLiteral<Tagged<0 | '' | boolean, 'Tag'>>>({} as boolean);
 
-expectType<IsStringLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<'foo', 'Tag'> | Tagged<'bar', 'Tag'>>>(true);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>({} as boolean);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>({} as boolean);
+// Unions
+expectType<IsLiteral<Tagged<'foo', 'Tag'> | Tagged<1, 'Tag'>>>(true);
+expectType<IsLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
+expectType<IsLiteral<Tagged<'foo', 'Tag'> | Tagged<bigint, 'Tag'>>>({} as boolean);
+expectType<IsLiteral<Tagged<'foo', 'Tag'> | number>>({} as boolean);
+expectType<IsLiteral<Tagged<symbol, 'Tag'> | 'foo'>>({} as boolean);
 
-// Uncollapsed unions (e.g., `'foo' | 'bar' | (string & {})`)
-expectType<IsStringLiteral<'foo' | 'bar' | (string & {})>>(false);
-expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', string>>>(false);
-expectType<IsStringLiteral<LiteralUnion<'onClick' | 'onMouseDown', `on${string}`>>>(false);
-expectType<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 'onMouseDown', `on${string}`>>>({} as boolean);
-expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', number>>>({} as boolean);
-expectType<IsStringLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${string}`>, 'Tag'>>>({} as boolean);
-
-expectType<IsNumericLiteral<Tagged<number, 'Tag'>>>(false);
-expectType<IsBooleanLiteral<Tagged<boolean, 'Tag'>>>(false);
+// Uncollapsed unions
+expectType<IsLiteral<'foo' | 1 | false | (string & {})>>(false);
+expectType<IsLiteral<LiteralUnion<1n | 2n | 3n, bigint>>>(false);
+expectType<IsLiteral<LiteralUnion<'foo' | 1 | false, string>>>({} as boolean);
+expectType<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>(false);
+expectType<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', number>, 'Tag'>>>({} as boolean);

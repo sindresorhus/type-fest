@@ -3,7 +3,7 @@ import type {IfNotAnyOrNever, IsArrayReadonly} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Extracts the type of an array or tuple minus the first element.
+Extract the type of an array or tuple minus the first element.
 
 @example
 ```
@@ -51,13 +51,13 @@ const availableTopSciFi = curry(searchBooks)('sci-fi')(4.5)(true);
 
 @category Array
 */
-export type ArrayTail<TArray extends UnknownArray> = IfNotAnyOrNever<TArray,
-	TArray extends UnknownArray // For distributing `TArray`
+export type ArrayTail<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {
+	ifNot: TArray extends UnknownArray // For distributing `TArray`
 		? _ArrayTail<TArray> extends infer Result
 			? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
 			: never // Should never happen
-		: never
->;
+		: never;
+}>;
 
 type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?, ...infer Tail]
 	? keyof TArray & `${number}` extends never
@@ -66,3 +66,5 @@ type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?
 			: TArray // Happens when `TArray` is a non-tuple array (e.g., `string[]`) or has a leading rest element (e.g., `[...string[], number]`)
 		: Tail
 	: [];
+
+export {};

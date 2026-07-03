@@ -7,13 +7,13 @@ Returns a boolean for whether the given string literal is lowercase.
 ```
 import type {IsLowercase} from 'type-fest';
 
-IsLowercase<'abc'>;
+type A = IsLowercase<'abc'>;
 //=> true
 
-IsLowercase<'Abc'>;
+type B = IsLowercase<'Abc'>;
 //=> false
 
-IsLowercase<string>;
+type C = IsLowercase<string>;
 //=> boolean
 ```
 */
@@ -34,3 +34,5 @@ type IsLowercaseHelper<S extends string> = S extends Lowercase<string>
 	: S extends Uppercase<string> | Capitalize<string> | `${string}${Uppercase<string>}${string}`
 		? false
 		: boolean;
+
+export {};

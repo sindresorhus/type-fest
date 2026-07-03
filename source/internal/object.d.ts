@@ -1,15 +1,14 @@
 import type {Simplify} from '../simplify.d.ts';
-import type {UnknownArray} from '../unknown-array.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
 import type {RequiredKeysOf} from '../required-keys-of.d.ts';
 import type {Merge} from '../merge.d.ts';
-import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
+import type {StringToNumber} from '../string-to-number.d.ts';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
-import type {NonRecursiveType} from './type.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
 /**
@@ -40,11 +39,13 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends objec
 Returns a boolean for whether the given type is a plain key-value object.
 */
 export type IsPlainObject<T> =
-	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+	IsNever<T> extends true
 		? false
-		: T extends object
-			? true
-			: false;
+		: T extends NonRecursiveType | MapsSetsOrArrays
+			? false
+			: T extends object
+				? true
+				: false;
 
 /**
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
@@ -135,7 +136,7 @@ Extract all possible values for a given key from a union of object types.
 
 @example
 ```
-type Statuses = ValueOfUnion<{ id: 1, status: "open" } | { id: 2, status: "closed" }, "status">;
+type Statuses = ValueOfUnion<{id: 1; status: 'open'} | {id: 2; status: 'closed'}, 'status'>;
 //=> "open" | "closed"
 ```
 */
@@ -148,14 +149,14 @@ Extract all readonly keys from a union of object types.
 @example
 ```
 type User = {
-		readonly id: string;
-		name: string;
+	readonly id: string;
+	name: string;
 };
 
 type Post = {
-		readonly id: string;
-		readonly author: string;
-		body: string;
+	readonly id: string;
+	readonly author: string;
+	body: string;
 };
 
 type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
@@ -223,13 +224,22 @@ export type ApplyDefaultOptions<
 	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
 	SpecifiedOptions extends Options,
 > =
+	_ApplyDefaultOptions<Options, Defaults, SpecifiedOptions> extends infer Result extends Required<Options> // `extends Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
+		? Result
+		: never;
+
+type _ApplyDefaultOptions<
+	Options,
+	Defaults,
+	SpecifiedOptions,
+> =
 	If<IsAny<SpecifiedOptions>, Defaults,
 		If<IsNever<SpecifiedOptions>, Defaults,
-			Simplify<Merge<Defaults, {
+			Merge<Defaults, {
 				[Key in keyof SpecifiedOptions
-				as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key
+				as undefined extends Required<Options>[Key & keyof Options] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
 				]: SpecifiedOptions[Key]
-			}> & Required<Options>>>>; // `& Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
+			}>>>;
 
 /**
 Collapses literal types in a union into their corresponding primitive types, when possible. For example, `CollapseLiterals<'foo' | 'bar' | (string & {})>` returns `string`.
@@ -263,3 +273,29 @@ export type CollapseLiterals<T> = {} extends T
 	: T extends infer U & {}
 		? U
 		: T;
+
+/**
+Normalize keys by including string and number representations wherever applicable.
+
+@example
+```ts
+type A = NormalizedKeys<0 | '1'>;
+//=> 0 | '0' | 1 | '1'
+
+type B = NormalizedKeys<string>;
+//=> string | number
+
+type C = NormalizedKeys<number>;
+//=> number | `${number}`
+
+type D = NormalizedKeys<symbol | 'foo'>;
+//=> symbol | 'foo'
+```
+*/
+export type NormalizedKeys<Keys extends PropertyKey> =
+	| Keys
+	| (string extends Keys ? number : never)
+	| StringToNumber<Keys & string>
+	| ToString<Keys & number>;
+
+export {};

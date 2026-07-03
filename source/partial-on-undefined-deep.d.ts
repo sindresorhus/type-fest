@@ -4,7 +4,7 @@ import type {IsUnknown} from './is-unknown.d.ts';
 import type {Merge} from './merge.d.ts';
 
 /**
-@see PartialOnUndefinedDeep
+@see {@link PartialOnUndefinedDeep}
 */
 export type PartialOnUndefinedDeepOptions = {
 	/**
@@ -31,13 +31,13 @@ Use-cases:
 ```
 import type {PartialOnUndefinedDeep} from 'type-fest';
 
-interface Settings {
+type Settings = {
 	optionA: string;
 	optionB: number | undefined;
 	subOption: {
 		subOptionA: boolean;
 		subOptionB: boolean | undefined;
-	}
+	};
 };
 
 const testSettings: PartialOnUndefinedDeep<Settings> = {
@@ -77,3 +77,5 @@ type PartialOnUndefinedDeepValue<T, Options extends Required<PartialOnUndefinedD
 		: T extends Record<any, any> | undefined
 			? _PartialOnUndefinedDeep<T, Options>
 			: unknown;
+
+export {};

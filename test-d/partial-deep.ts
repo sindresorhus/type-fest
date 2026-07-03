@@ -1,4 +1,4 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectType, expectAssignable, expectNotType} from 'tsd';
 import type {PartialDeep, Simplify} from '../index.d.ts';
 
 class ClassA {
@@ -128,3 +128,10 @@ expectType<{p1?: {p2?: string; p3?: [{p4?: number}?, string?]}}>({} as Simplify<
 
 expectType<{p1?: string[]}>({} as Simplify<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: false}>>);
 expectType<{p1?: string[]}>({} as Simplify<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: true}>>);
+
+// Properties within functions containing multiple call signatures are not made partial due to TS limitations, refer https://github.com/microsoft/TypeScript/issues/29732
+type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1: string};
+declare const functionWithProperties4: PartialDeep<FunctionWithProperties4>;
+expectType<string>(functionWithProperties4(1));
+expectType<number>(functionWithProperties4('foo', 1));
+expectNotType<{p1?: string}>({} as Simplify<typeof functionWithProperties4>);

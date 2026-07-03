@@ -67,6 +67,14 @@ expectType<{a: {b: string} | {c: string} | {b: {c: string | null}}}>(
 	{} as SetNonNullableDeep<{a: {b: string | null} | {c: string} | {b: {c: string | null} | undefined}}, 'a.b'>,
 );
 
+// Calls `NonNullableDeep` when `KeyPaths` is `any`
+expectType<{a: number; readonly b?: {c: string}}>(
+	{} as SetNonNullableDeep<{a: number | null; readonly b?: {c: string | undefined} | null}, any>,
+);
+expectType<[[{a: string}], Map<{a: string}, string>]>(
+	{} as SetNonNullableDeep<[[{a: string | null}], Map<{a: string | null}, string | null>], any>,
+);
+
 // Preserves non-nullable values when they are in a union with objects
 expectType<{a?: {b: string} | number}>({} as SetNonNullableDeep<{a?: {b: string} | number | null | undefined}, 'a'>);
 expectType<{a: {b: Array<{c?: number | null}> | number}}>({} as SetNonNullableDeep<{a: {b: Array<{c?: number | null}> | number | null}}, 'a.b'>);

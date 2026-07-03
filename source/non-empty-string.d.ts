@@ -13,16 +13,20 @@ import type {NonEmptyString} from 'type-fest';
 declare function foo<T extends string>(string: NonEmptyString<T>): void;
 
 foo('a');
-//=> OK
+// OK
 
+// @ts-expect-error
 foo('');
-//=> Error: Argument of type '""' is not assignable to parameter of type 'never'.
+// Error: Argument of type '""' is not assignable to parameter of type 'never'.
 
-declare const someString: string
+declare const someString: string;
+// @ts-expect-error
 foo(someString);
-//=> Error: Argument of type 'string' is not assignable to parameter of type 'never'.
+// Error: Argument of type 'string' is not assignable to parameter of type 'never'.
 ```
 
 @category String
 */
 export type NonEmptyString<T extends string> = '' extends T ? never : T;
+
+export {};

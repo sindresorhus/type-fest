@@ -24,3 +24,5 @@ type ShouldBeBar = IfNull<'not null', 'foo', 'bar'>;
 export type IfNull<T, TypeIfNull = true, TypeIfNotNull = false> = (
 	IsNull<T> extends true ? TypeIfNull : TypeIfNotNull
 );
+
+export {};
