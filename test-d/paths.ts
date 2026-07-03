@@ -483,6 +483,7 @@ expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.
 
 declare const nonRootIndexSignature: Paths<{a: {[x: string]: {b: string; c: number}}}>;
 expectType<'a' | `a.${string}` | `a.${string}.b` | `a.${string}.c`>(nonRootIndexSignature);
+expectType<'a' | `a.${string}`>(nonRootIndexSignature); // Collapsed union
 
 declare const nonRootIndexSignature1: Paths<{a: {[x: Lowercase<string>]: {b: string; c: number}}}>;
 expectType<'a' | `a.${Lowercase<string>}` | `a.${Lowercase<string>}.b` | `a.${Lowercase<string>}.c`>(nonRootIndexSignature1);
@@ -509,6 +510,7 @@ expectType<`a.${string}.b` | `a.${string}.c` | 'd' | 'e.f'>(indexSignatureLeaves
 
 declare const indexSignatureLeaves2: Paths<{a: {[x: string]: [] | {b: number}}}, {leavesOnly: true}>;
 expectType<`a.${string}` | `a.${string}.b`>(indexSignatureLeaves2);
+expectType<`a.${string}`>(indexSignatureLeaves2); // Collapsed union
 
 declare const indexSignatureDepth: Paths<{[x: string]: {a: string; b: number}}, {depth: 1}>;
 expectType<`${string}.b` | `${string}.a`>(indexSignatureDepth);
