@@ -31,13 +31,13 @@ Use-cases:
 ```
 import type {PartialOnUndefinedDeep} from 'type-fest';
 
-interface Settings {
+type Settings = {
 	optionA: string;
 	optionB: number | undefined;
 	subOption: {
 		subOptionA: boolean;
 		subOptionB: boolean | undefined;
-	}
+	};
 };
 
 const testSettings: PartialOnUndefinedDeep<Settings> = {

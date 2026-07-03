@@ -1,6 +1,7 @@
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsNegative} from './numeric.d.ts';
+import type {DigitCharacter} from './characters.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -22,6 +23,8 @@ type TicTacToeBoard = TupleOf<3, TupleOf<3, 'X' | 'O' | null>>;
 
 @example
 ```
+import type {TupleOf} from 'type-fest';
+
 type Range<Start extends number, End extends number> = Exclude<keyof TupleOf<End>, keyof TupleOf<Start>>;
 
 type ZeroToFour = Range<0, 5>;
@@ -61,18 +64,51 @@ type EmptyTuple = TupleOf<-3, string>;
 //=> []
 ```
 
+Note: If the specified length has a decimal part, the decimal part will be ignored.
+
+@example
+```
+import type {TupleOf} from 'type-fest';
+
+type DecimalLength = TupleOf<3.5, string>;
+//=> [string, string, string]
+```
+
 Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for example, to create `readonly [number, number, number]` use `Readonly<TupleOf<3, number>>`.
 
 @category Array
 */
-export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length,
-	_TupleOf<If<IsNegative<Length>, 0, Length>, Fill, []>,
-	Fill[], []>;
+export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length, {
+	ifNot: _TupleOf<If<IsNegative<Length>, 0, Length>, Fill>;
+	ifAny: Fill[];
+	ifNever: [];
+}>;
 
-type _TupleOf<L extends number, Fill, Accumulator extends UnknownArray> = number extends L
+type _TupleOf<Length extends number, Fill> = number extends Length
 	? Fill[]
-	: L extends Accumulator['length']
-		? Accumulator
-		: _TupleOf<L, Fill, [...Accumulator, Fill]>;
+	: BuildTupleDigitByDigit<`${Length}`, Fill>;
+
+type BuildTupleDigitByDigit<Length extends string, Fill, Accumulator extends UnknownArray = []> =
+	Length extends `${infer First extends DigitCharacter}${infer Rest}`
+		? BuildTupleDigitByDigit<Rest, Fill, [...RepeatTupleTenTimes<Accumulator>, ...DigitTupleOf<First, Fill>]>
+		: Accumulator;
+
+type RepeatTupleTenTimes<Tuple extends UnknownArray> = [
+	...Tuple, ...Tuple, ...Tuple, ...Tuple, ...Tuple,
+	...Tuple, ...Tuple, ...Tuple, ...Tuple, ...Tuple,
+];
+
+type DigitTupleOf<Digit extends DigitCharacter, Fill> = [
+	[],
+	[Fill],
+	[Fill, Fill],
+	[Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
+	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
+][Digit];
 
 export {};

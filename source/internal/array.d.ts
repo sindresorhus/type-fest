@@ -5,13 +5,6 @@ import type {UnknownArray} from '../unknown-array.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
 /**
-Infer the length of the given array `<T>`.
-
-@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
-*/
-type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
-
-/**
 Matches any unknown array or tuple.
 */
 export type UnknownArrayOrTuple = readonly [...unknown[]];
@@ -36,8 +29,8 @@ type B = StaticPartOfArray<A>;
 */
 export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends unknown
-		? number extends T['length'] ?
-			T extends readonly [infer U, ...infer V]
+		? number extends T['length']
+			? T extends readonly [infer U, ...infer V]
 				? StaticPartOfArray<V, [...Result, U]>
 				: Result
 			: T
@@ -65,22 +58,22 @@ Set the given array to readonly if `IsReadonly` is `true`, otherwise set the giv
 
 @example
 ```
-type ReadonlyArray = readonly string[];
-type NormalArray = string[];
+type ReadonlyStringArray = readonly string[];
+type NormalStringArray = string[];
 
-type ReadonlyResult = SetArrayAccess<NormalArray, true>;
+type ReadonlyResult = SetArrayAccess<NormalStringArray, true>;
 //=> readonly string[]
 
-type NormalResult = SetArrayAccess<ReadonlyArray, false>;
+type NormalResult = SetArrayAccess<ReadonlyStringArray, false>;
 //=> string[]
 ```
 */
 export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
-T extends readonly [...infer U] ?
-	IsReadonly extends true
-		? readonly [...U]
-		: [...U]
-	: T;
+	T extends readonly [...infer U]
+		? IsReadonly extends true
+			? readonly [...U]
+			: [...U]
+		: T;
 
 /**
 Returns whether the given array `T` is readonly.
@@ -118,7 +111,7 @@ type B = CollapseRestElement<[string?, string?, ...number[]]>;
 //=> [string | undefined, string | undefined, number]
 ```
 */
-export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, _CollapseRestElement<TArray>>;
+export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {ifNot: _CollapseRestElement<TArray>}>;
 
 type _CollapseRestElement<
 	TArray extends UnknownArray,

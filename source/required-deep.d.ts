@@ -1,12 +1,15 @@
 import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 /**
-Create a type from another type with all keys and nested keys set to required.
+Create a deeply required version of another type.
 
 Use-cases:
 - Creating optional configuration interfaces where the underlying implementation still requires all options to be fully specified.
 - Modeling the resulting type after a deep merge with a set of defaults.
+
+Use [`Required<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype) if you only need one level deep.
 
 @example
 ```
@@ -65,7 +68,7 @@ export type RequiredDeep<T> = T extends BuiltIns
 											? T
 											: ((...arguments_: Parameters<T>) => ReturnType<T>) & RequiredObjectDeep<T>
 									: T extends object
-										? RequiredObjectDeep<T>
+										? Simplify<RequiredObjectDeep<T>> // `Simplify` to prevent `RequiredObjectDeep` from appearing in the resulting type
 										: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {

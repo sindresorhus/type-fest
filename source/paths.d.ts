@@ -1,7 +1,6 @@
 import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {Subtract} from './subtract.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -25,6 +24,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type ArrayExample = {
 		array: ['foo'];
 	};
@@ -38,6 +39,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type NumberKeyExample = {
 		1: ['foo'];
 	};
@@ -58,6 +61,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type Post = {
 		id: number;
 		author: {
@@ -78,13 +83,15 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type ArrayExample = {
 		array: Array<{foo: string}>;
 		tuple: [string, {bar: string}];
 	};
 
 	type AllPaths = Paths<ArrayExample, {leavesOnly: false}>;
-	//=> 'array' | `array.${number}` | `array.${number}.foo` | 'tuple' | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
+	//=> 'array' | 'tuple' | `array.${number}` | `array.${number}.foo` | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
 
 	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
 	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
@@ -101,6 +108,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type Post = {
 		id: number;
 		author: {
@@ -165,11 +174,13 @@ declare function open<Path extends ProjectPaths>(path: Path): void;
 open('filename'); // Pass
 open('folder.subfolder'); // Pass
 open('folder.subfolder.filename'); // Pass
+// @ts-expect-error
 open('foo'); // TypeError
 
 // Also works with arrays
 open('listA.1'); // Pass
 open('listB.0'); // Pass
+// @ts-expect-error
 open('listB.1'); // TypeError. Because listB only has one element.
 ```
 
@@ -178,11 +189,49 @@ open('listB.1'); // TypeError. Because listB only has one element.
 */
 export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
 
-type _Paths<T, Options extends Required<PathsOptions>> =
-	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends number = 0> =
+	T extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
 		? never
 		: IsAny<T> extends true
 			? never
+			: T extends object
+				? InternalPaths<Required<T>, Options, CurrentDepth>
+				: never;
+
+type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number> =
+	{[Key in keyof T]: Key extends string | number // Limit `Key` to `string | number`
+		? (
+			And<Options['bracketNotation'], IsNumberLike<Key>> extends true
+				? `[${Key}]`
+				: CurrentDepth extends 0
+					// Return both `Key` and `ToString<Key>` because for number keys, like `1`, both `1` and `'1'` are valid keys.
+					? Key | ToString<Key>
+					: `.${(Key | ToString<Key>)}`
+		) extends infer TransformedKey extends string | number
+			? ((Options['leavesOnly'] extends true
+				? Options['maxRecursionDepth'] extends CurrentDepth
+					? TransformedKey
+					: IsNever<T[Key]> extends true
+						? TransformedKey
+						: T[Key] extends infer Value // For distributing `T[Key]`
+							? (Value extends readonly [] | NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
+								? TransformedKey
+								: IsNever<keyof Value> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`.
+									? TransformedKey
+									: never)
+							: never // Should never happen
+				: TransformedKey
+			) extends infer _TransformedKey
+				// If `depth` is provided, the condition becomes truthy only when it matches `CurrentDepth`.
+				// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
+				? CurrentDepth extends Options['depth']
+					? _TransformedKey
+					: never
+				: never)
+			// Recursively generate paths for the current key
+			| (GreaterThan<Options['maxRecursionDepth'], CurrentDepth> extends true // Limit the depth to prevent infinite recursion
+				? `${TransformedKey}${_Paths<T[Key], Options, Sum<CurrentDepth, 1>> & (string | number)}`
+				: never)
 			: T extends UnknownArray
 				? number extends T['length']
 					// We need to handle the fixed and non-fixed index part of the array separately.
@@ -262,6 +311,7 @@ type InternalPaths<T, Options extends Required<PathsOptions>> =
 							: never
 					}[keyof T & (T extends UnknownArray ? number : unknown)]
 			: never
-		: never;
+		: never
+	}[keyof T & (T extends UnknownArray ? number : unknown)];
 
 export {};

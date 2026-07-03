@@ -1,25 +1,7 @@
 import type {IsNever} from '../is-never.d.ts';
 import type {Finite, NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {StringToNumber} from './string.d.ts';
-import type {IsAnyOrNever} from './type.d.ts';
-
-/**
-Returns the absolute value of a given value.
-
-@example
-```
-NumberAbsolute<-1>;
-//=> 1
-
-NumberAbsolute<1>;
-//=> 1
-
-NumberAbsolute<NegativeInfinity>
-//=> PositiveInfinity
-```
-*/
-export type NumberAbsolute<N extends number> = `${N}` extends `-${infer StringPositiveN}` ? StringToNumber<StringPositiveN> : N;
+import type {IfNotAnyOrNever, IsAnyOrNever} from './type.d.ts';
 
 /**
 Check whether the given type is a number or a number string.
@@ -44,10 +26,13 @@ type E = IsNumberLike<'a'>;
 //=> false
 */
 export type IsNumberLike<N> =
-	IsAnyOrNever<N> extends true ? N
-		: N extends number | `${number}`
+	IfNotAnyOrNever<N, {
+		ifNot: N extends number | `${number}`
 			? true
 			: false;
+		ifAny: boolean;
+		ifNever: false;
+	}>;
 
 /**
 Returns the minimum number in the given union of numbers.
@@ -126,25 +111,33 @@ Returns the number with reversed sign.
 
 @example
 ```
-ReverseSign<-1>;
+type A = ReverseSign<-1>;
 //=> 1
 
-ReverseSign<1>;
+type B = ReverseSign<1>;
 //=> -1
 
-ReverseSign<NegativeInfinity>
+type C = ReverseSign<NegativeInfinity>;
 //=> PositiveInfinity
 
-ReverseSign<PositiveInfinity>
+type D = ReverseSign<PositiveInfinity>;
 //=> NegativeInfinity
 ```
 */
 export type ReverseSign<N extends number> =
 	// Handle edge cases
-	N extends 0 ? 0 : N extends PositiveInfinity ? NegativeInfinity : N extends NegativeInfinity ? PositiveInfinity :
-	// Handle negative numbers
-	`${N}` extends `-${infer P extends number}` ? P
-		// Handle positive numbers
-		: `-${N}` extends `${infer R extends number}` ? R : never;
+	N extends 0
+		? 0
+		: N extends PositiveInfinity
+			? NegativeInfinity
+			: N extends NegativeInfinity
+				? PositiveInfinity
+				// Handle negative numbers
+				: `${N}` extends `-${infer P extends number}`
+					? P
+					// Handle positive numbers
+					: `-${N}` extends `${infer R extends number}`
+						? R
+						: never;
 
 export {};

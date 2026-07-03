@@ -87,14 +87,14 @@ type Key4 = ExactKey<Object, 1>;
 @category Object
 */
 export type ExactKey<T extends object, Key extends PropertyKey> =
-Key extends keyof T
-	? Key
-	: ToString<Key> extends keyof T
-		? ToString<Key>
-		: Key extends `${infer NumberKey extends number}`
-			? NumberKey extends keyof T
-				? NumberKey
-				: never
-			: never;
+	Key extends keyof T
+		? Key
+		: ToString<Key> extends keyof T
+			? ToString<Key>
+			: Key extends `${infer NumberKey extends number}`
+				? NumberKey extends keyof T
+					? NumberKey
+					: never
+				: never;
 
 export {};

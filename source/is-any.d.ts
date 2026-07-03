@@ -12,8 +12,8 @@ import type {IsAny} from 'type-fest';
 const typedObject = {a: 1, b: 2} as const;
 const anyObject: any = {a: 1, b: 2};
 
-function get<O extends (IsAny<O> extends true ? {} : Record<string, number>), K extends keyof O = keyof O>(obj: O, key: K) {
-	return obj[key];
+function get<O extends (IsAny<O> extends true ? {} : Record<string, number>), K extends keyof O = keyof O>(object: O, key: K) {
+	return object[key];
 }
 
 const typedA = get(typedObject, 'a');

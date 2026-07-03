@@ -12,6 +12,7 @@ import type {PascalCase} from 'type-fest';
 
 const someVariable: PascalCase<'foo-bar'> = 'FooBar';
 const preserveConsecutiveUppercase: PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'FooBARBaz';
+const splitOnPunctuation: PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}> = 'FooBarBaz';
 
 // Advanced
 
@@ -19,7 +20,7 @@ type PascalCasedProperties<T> = {
 	[K in keyof T as PascalCase<K>]: T[K]
 };
 
-interface RawOptions {
+type RawOptions = {
 	'dry-run': boolean;
 	'full_family_name': string;
 	foo: number;

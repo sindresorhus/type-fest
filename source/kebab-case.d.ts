@@ -15,6 +15,7 @@ import type {KebabCase} from 'type-fest';
 
 const someVariable: KebabCase<'fooBar'> = 'foo-bar';
 const someVariableNoSplitOnNumbers: KebabCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p-network';
+const someVariableWithPunctuation: KebabCase<'div.card::after', {splitOnPunctuation: true}> = 'div-card-after';
 
 // Advanced
 
@@ -22,16 +23,16 @@ type KebabCasedProperties<T> = {
 	[K in keyof T as KebabCase<K>]: T[K]
 };
 
-interface CliOptions {
+type CliOptions = {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
-}
+};
 
 const rawCliOptions: KebabCasedProperties<CliOptions> = {
 	'dry-run': true,
 	'include-file': 'bar.js',
-	foo: 123
+	foo: 123,
 };
 ```
 

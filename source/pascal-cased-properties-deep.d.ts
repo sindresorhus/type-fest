@@ -14,15 +14,15 @@ This can be useful when, for example, converting some API types from a different
 ```
 import type {PascalCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	userId: number;
 	userName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
-}
+};
 
 const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 	UserInfo: {
@@ -46,6 +46,13 @@ const preserveConsecutiveUppercase: PascalCasedPropertiesDeep<{fooBAR: {fooBARBi
 		FooBARBiz: [{
 			FooBARBaz: 'string',
 		}],
+	},
+};
+
+const splitOnPunctuation: PascalCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
+	UserInfo: {
+		UserId: 1,
+		UserName: 'Tom',
 	},
 };
 ```

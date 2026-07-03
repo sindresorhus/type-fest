@@ -5,7 +5,7 @@ import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
-Create a type that requires exactly one of the given keys and disallows more, or none of the given keys. The remaining keys are kept as is.
+Create a type that requires exactly one of the given keys or none of the given keys, while keeping the remaining keys as is.
 
 @example
 ```
@@ -18,28 +18,28 @@ type Responder = RequireOneOrNone<{
 }, 'text' | 'json'>;
 
 const responder1: Responder = {
-	secure: true
+	secure: true,
 };
 
 const responder2: Responder = {
 	text: () => '{"message": "hi"}',
-	secure: true
+	secure: true,
 };
 
 const responder3: Responder = {
 	json: () => '{"message": "ok"}',
-	secure: true
+	secure: true,
 };
 ```
 
 @category Object
 */
 export type RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
-	IfNotAnyOrNever<ObjectType,
-		If<IsNever<KeysType>,
+	IfNotAnyOrNever<ObjectType, {
+		ifNot: If<IsNever<KeysType>,
 			ObjectType,
-			_RequireOneOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>
-		>>;
+			_RequireOneOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>>;
+	}>;
 
 type _RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType> = (
 	| RequireExactlyOne<ObjectType, KeysType>

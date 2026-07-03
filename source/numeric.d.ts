@@ -57,7 +57,9 @@ Use-case: Validating and documenting parameters.
 
 @example
 ```
-type Integer = Integer<1>;
+import type {Integer} from 'type-fest';
+
+type SomeInteger = Integer<1>;
 //=> 1
 
 type IntegerWithDecimal = Integer<1.0>;
@@ -71,14 +73,14 @@ type Float = Integer<1.5>;
 
 // Supports non-decimal numbers
 
-type OctalInteger: Integer<0o10>;
-//=> 0o10
+type OctalInteger = Integer<0o10>;
+//=> 8
 
-type BinaryInteger: Integer<0b10>;
-//=> 0b10
+type BinaryInteger = Integer<0b10>;
+//=> 2
 
-type HexadecimalInteger: Integer<0x10>;
-//=> 0x10
+type HexadecimalInteger = Integer<0x10>;
+//=> 16
 ```
 
 @example
@@ -119,9 +121,9 @@ declare function setPercentage<T extends number>(length: Float<T>): void;
 @category Numeric
 */
 export type Float<T> =
-T extends unknown // To distributive type
-	? IsFloat<T> extends true ? T : never
-	: never; // Never happens
+	T extends unknown // To distributive type
+		? IsFloat<T> extends true ? T : never
+		: never; // Never happens
 
 /**
 A negative (`-∞ < x < 0`) `number` that is not an integer.

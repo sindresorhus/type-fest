@@ -5,6 +5,7 @@ import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
 
 /**
 Pick properties from a deeply-nested object.
@@ -12,6 +13,8 @@ Pick properties from a deeply-nested object.
 It supports recursing into arrays.
 
 Use-case: Distill complex objects down to the components you need to target.
+
+Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 
 @example
 ```
@@ -29,31 +32,22 @@ type Configuration = {
 			{
 				city2: string;
 				street2: string;
-			}
-		]
+			},
+		];
 	};
 	otherConfig: any;
 };
 
 type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
-// type NameConfig = {
-// 	userConfig: {
-// 		name: string;
-// 	}
-// };
+//=> {userConfig: {name: string}}
 
 // Supports optional properties
 type User = PickDeep<PartialDeep<Configuration>, 'userConfig.name' | 'userConfig.age'>;
-// type User = {
-// 	userConfig?: {
-// 		name?: string;
-// 		age?: number;
-// 	};
-// };
+//=> {userConfig?: {name?: string; age?: number}}
 
 // Supports array
 type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
-// type AddressConfig = {
+//=> {
 // 	userConfig: {
 // 		address: [{
 // 			city1: string;
@@ -64,14 +58,7 @@ type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
 
 // Supports recurse into array
 type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
-// type Street = {
-// 	userConfig: {
-// 		address: [
-// 			unknown,
-// 			{street2: string}
-// 		];
-// 	};
-// }
+//=> {userConfig: {address: [unknown, {street2: string}]}}
 ```
 
 @category Object
@@ -86,7 +73,7 @@ export type PickDeep<T, PathUnion extends Paths<T>> =
 			}[PathUnion]
 			>
 			: T extends object
-				? Simplify<UnionToIntersection<{
+				? SimplifyDeep<UnionToIntersection<{
 					[P in PathUnion]: InternalPickDeep<T, P>;
 				}[PathUnion]>>
 				: never;

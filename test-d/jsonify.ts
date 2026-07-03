@@ -113,7 +113,7 @@ expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
 expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
 
 class NonJsonExtendPrimitiveWithToJSON extends Number {
-	public fixture = BigInt('42');
+	public fixture = 42n;
 
 	public toJSON(): {fixture: string} {
 		return {

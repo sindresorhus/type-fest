@@ -50,10 +50,10 @@ type T3 = SplitOnRestElement<[number, string?]>;
 //=> [[number, string?], [], []]
 
 type T4 = SplitOnRestElement<[number, string?], {preserveOptionalModifier: false}>;
-//=> [[number, string], [], []] or [[number, string | undefined], [], []]
+//=> [[number, string], [], []]
 
 type T5 = SplitOnRestElement<readonly [string?, ...number[]], {preserveOptionalModifier: false}>;
-//=> readonly [[string], number[], []] or readonly [[string | undefined], number[], []]
+//=> readonly [[string], number[], []]
 ```
 
 @see {@link ExtractRestElement}
@@ -65,10 +65,12 @@ export type SplitOnRestElement<
 	Options extends SplitOnRestElementOptions = {},
 > =
 	Array_ extends unknown // For distributing `Array_`
-		? IfNotAnyOrNever<Array_, _SplitOnRestElement<
-			Array_,
-			ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>
-		>> extends infer Result extends UnknownArray
+		? IfNotAnyOrNever<Array_, {
+			ifNot: _SplitOnRestElement<
+				Array_,
+				ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>
+			>;
+		}> extends infer Result extends UnknownArray
 			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
