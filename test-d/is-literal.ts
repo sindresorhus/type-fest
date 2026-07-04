@@ -1,5 +1,7 @@
 import {expectType} from 'tsd';
-import type {IsLiteral, Tagged, LiteralUnion} from '../index.d.ts';
+import type {IsLiteral} from '../source/is-literal.d.ts';
+import type {LiteralUnion} from '../source/literal-union.d.ts';
+import type {Tagged} from '../source/tagged.d.ts';
 
 declare const symbolLiteral: unique symbol;
 

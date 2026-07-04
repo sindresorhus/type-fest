@@ -1,4 +1,5 @@
-import type {CollapseLiterals, IfNotAnyOrNever} from './internal/index.d.ts';
+import type {CollapseLiterals} from './internal/object.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
 
 /**

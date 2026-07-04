@@ -1,5 +1,7 @@
 import {expectType} from 'tsd';
-import type {IsSymbolLiteral, Tagged, LiteralUnion} from '../index.d.ts';
+import type {IsSymbolLiteral} from '../source/is-symbol-literal.d.ts';
+import type {Tagged} from '../source/tagged.d.ts';
+import type {LiteralUnion} from '../source/literal-union.d.ts';
 
 const symbolLiteral1 = Symbol('');
 const symbolLiteral2 = Symbol('foo');

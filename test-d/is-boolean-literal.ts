@@ -1,5 +1,7 @@
 import {expectType} from 'tsd';
-import type {IsBooleanLiteral, Tagged, LiteralUnion} from '../index.d.ts';
+import type {IsBooleanLiteral} from '../source/is-boolean-literal.d.ts';
+import type {Tagged} from '../source/tagged.d.ts';
+import type {LiteralUnion} from '../source/literal-union.d.ts';
 
 // Literals
 expectType<IsBooleanLiteral<true>>(true);

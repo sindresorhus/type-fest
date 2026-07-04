@@ -1,5 +1,7 @@
 import {expectType} from 'tsd';
-import type {IsNumericLiteral, Tagged, LiteralUnion} from '../index.d.ts';
+import type {IsNumericLiteral} from '../source/is-numeric-literal.d.ts';
+import type {LiteralUnion} from '../source/literal-union.d.ts';
+import type {Tagged} from '../source/tagged.d.ts';
 
 // Literals
 expectType<IsNumericLiteral<1>>(true);
