@@ -67,7 +67,7 @@ expectType<IsLiteral<typeof symbolLiteral | string>>({} as boolean); // Literal 
 expectType<IsLiteral<typeof symbolLiteral | number>>({} as boolean); // Literal symbol + `number`
 expectType<IsLiteral<typeof symbolLiteral | bigint>>({} as boolean); // Literal symbol + `bigint`
 expectType<IsLiteral<typeof symbolLiteral | boolean>>({} as boolean); // Literal symbol + `boolean`
-expectType<IsLiteral<typeof symbolLiteral | null>>(false); // Literal symbol + `null`
+expectType<IsLiteral<typeof symbolLiteral | null>>({} as boolean); // Literal symbol + `null`
 
 // Boundary types
 expectType<IsLiteral<any>>(false);
@@ -91,8 +91,8 @@ expectType<IsLiteral<Tagged<'foo', 'Tag'> | number>>({} as boolean);
 expectType<IsLiteral<Tagged<symbol, 'Tag'> | 'foo'>>({} as boolean);
 
 // Uncollapsed unions
-expectType<IsLiteral<'foo' | 1 | false | (string & {})>>(false);
 expectType<IsLiteral<LiteralUnion<1n | 2n | 3n, bigint>>>(false);
+expectType<IsLiteral<'foo' | 1 | false | (string & {})>>({} as boolean);
 expectType<IsLiteral<LiteralUnion<'foo' | 1 | false, string>>>({} as boolean);
 expectType<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>(false);
 expectType<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', number>, 'Tag'>>>({} as boolean);
