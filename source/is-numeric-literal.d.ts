@@ -39,7 +39,7 @@ export type IsNumericLiteral<T> = IfNotAnyOrNever<T, {
 	ifNever: false;
 }>;
 
-export type _IsNumericLiteral<T> = T extends number | bigint
+type _IsNumericLiteral<T> = T extends number | bigint
 	? number extends T
 		? false
 		: bigint extends T
