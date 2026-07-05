@@ -168,4 +168,11 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 	expectTypeOf<Get<Foo, 'key'>>().toEqualTypeOf<number>();
 	expectTypeOf<Get<Foo, Paths<Foo>>>().toEqualTypeOf<number>();
 	expectTypeOf<WrapperOfGeneric<Foo>['value']>().toEqualTypeOf<number>();
+
+	type WithNumberKey = {
+		1: boolean;
+	};
+
+	expectTypeOf<Get<WithNumberKey, Paths<WithNumberKey>>>().toEqualTypeOf<boolean>();
+	expectTypeOf<WrapperOfGeneric<WithNumberKey>['value']>().toEqualTypeOf<boolean>();
 }
