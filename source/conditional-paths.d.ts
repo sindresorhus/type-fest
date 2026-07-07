@@ -125,6 +125,11 @@ type NumberPaths = ConditionalPaths<Data, number>;
 @see {@link Paths}
 @see {@link ConditionalKeys}
 
+@remarks
+Traversal mirrors {@link Paths}: every key is recursed into regardless of whether the current key matches `Condition`, so deeper matching paths are always reachable. At each key the value type is tested against `Condition` via a non-distributive (tuple-wrapped) extends check — `[Value] extends [Condition]` — so union value types are compared as a whole. Optional properties are normalised by the internal `Required<T>` call and match their base type (e.g. `name?: string` matches `string`), but explicitly nullable fields do not (e.g. `name: string | null` does not match `string`).
+
+@see https://github.com/sindresorhus/type-fest/issues/1328
+
 @category Object
 @category Array
 */
