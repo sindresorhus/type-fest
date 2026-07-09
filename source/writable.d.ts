@@ -61,7 +61,7 @@ export type Writable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 				: Simplify<
 					// Pick just the keys that are not writable from the base type.
 					Except<BaseType, Keys>
-					// Make the specified keys writable
+					// Make the specified keys writable.
 					& {-readonly [KeyType in keyof BaseType as KeyType extends Keys ? KeyType : never]: BaseType[KeyType]}
 				>;
 
