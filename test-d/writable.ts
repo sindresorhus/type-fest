@@ -56,3 +56,6 @@ expectType<{[key: string]: number}>(variation11);
 // Preserve an index signature alongside named keys while stripping `readonly`.
 declare const variation12: Writable<{readonly [key: string]: number; readonly foo: number}>;
 expectType<{[key: string]: number; foo: number}>(variation12);
+
+declare const variation13: Writable<{readonly [key: string]: number; readonly foo: number}, 'foo'>;
+expectType<{readonly [key: string]: number; foo: number}>(variation13);
