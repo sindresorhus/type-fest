@@ -77,12 +77,8 @@ type _RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, 
 type _RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	// Two keys mapping to one target produce a union value and keep only the first key's modifiers
 	// Like for example, {a?: 1; b: 2} with {a: 'x'; b: 'x'} produces {x?: 1 | 2}, taking a's optional
-	[Key in keyof BaseType as _TargetOf<Key, RenameMap>]: _SourceValue<BaseType, Key>;
+	[Key in keyof BaseType as _TargetOf<Key, RenameMap>]: Required<BaseType>[Key];
 };
-
-type _SourceValue<BaseType extends object, Key extends keyof BaseType> =
-	// EOPT on: Required drops the implicit undefined from an optional value
-	(IsExactOptionalPropertyTypesEnabled extends true ? Required<BaseType> : BaseType)[Key];
 
 // A merged target kept only one modifier in _RenameNaive, so re-force these from every contributor.
 type _ApplyRequired<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
