@@ -116,13 +116,18 @@ expectType<{x: 1; b: 2; c: 3} | {a: 1; y: 2; c: 3} | {a: 1; b: 2; z: 3}>(
 	{} as RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'} | {b: 'y'} | {c: 'z'}>,
 );
 
-// `any` source returns `never`. The target key cannot be proven absent from
-// an `any` shape.
-expectType<never>({} as RenameKeys<any, {a: 'x'}>);
+// `any` source returns `any`.
+expectType<any>({} as RenameKeys<any, {a: 'x'}>);
 
-// Generic instantiation. The constraint is structural-only, so the type can
-// be used inside other generics without erroring at the definition site.
-type WrappedGeneric<T, K extends keyof T & string> = RenameKeys<T, {[P in K]: `new_${P}`}>;
+// `never` source returns `never`.
+expectType<never>({} as RenameKeys<never, {a: 'x'}>);
+
+// @ts-expect-error -- A non-object source is rejected by the `object` constraint.
+type Rejected = RenameKeys<string, {a: 'b'}>;
+
+// Generic instantiation works inside other generics without erroring at the
+// definition site.
+type WrappedGeneric<T extends object, K extends keyof T & string> = RenameKeys<T, {[P in K]: `new_${P}`}>;
 expectType<{new_a: number; b: string; new_c: string}>({} as WrappedGeneric<{a: number; b: string; c: string}, 'a' | 'c'>);
 
 // All contributors required.
@@ -147,6 +152,15 @@ expectType<{new_p: string | number | bigint}>(
 expectType<{readonly new_p: string | number | bigint}>(
 	{} as RenameKeys<{p1: string; readonly p2: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
 );
+
+// Union-valued sources merge into a flattened union.
+expectType<{x: 1 | 2 | 3 | 4}>({} as RenameKeys<{a: 1 | 2; b: 3 | 4}, {a: 'x'; b: 'x'}>);
+
+// Overlapping members in the merged union collapse.
+expectType<{x: 1 | 2 | 3}>({} as RenameKeys<{a: 1 | 2; b: 2 | 3}, {a: 'x'; b: 'x'}>);
+
+// Union-valued mixed-optionality merge. The target is required and the values flatten.
+expectType<{x: 1 | 2 | 3}>({} as RenameKeys<{a?: 1 | 2; b: 3}, {a: 'x'; b: 'x'}>);
 
 // Optional source first, required source second. The target is required
 // because a required contributor exists, regardless of source order.
