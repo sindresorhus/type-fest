@@ -53,12 +53,13 @@ type Normalized = RenameKeys<SearchInput, {textQuery: 'query'; voiceQuery: 'quer
 export type RenameKeys<
 	BaseType extends object,
 	RenameMap extends Record<PropertyKey, PropertyKey>,
-> = IfNotAnyOrNever<BaseType,
-	BaseType extends unknown // Distribute over a union source
+> = IfNotAnyOrNever<BaseType, {
+	ifNot: BaseType extends unknown // Distribute over a union source
 		? RenameMap extends unknown // Distribute over a union map
 			? _RenameOnce<BaseType, _NormalizeMap<RenameMap>>
 			: never
-		: never>;
+		: never;
+}>;
 
 type _NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key : never]-?: RenameMap[Key];
