@@ -65,10 +65,12 @@ export type SplitOnRestElement<
 	Options extends SplitOnRestElementOptions = {},
 > =
 	Array_ extends unknown // For distributing `Array_`
-		? IfNotAnyOrNever<Array_, _SplitOnRestElement<
-			Array_,
-			ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>
-		>> extends infer Result extends UnknownArray
+		? IfNotAnyOrNever<Array_, {
+			ifNot: _SplitOnRestElement<
+				Array_,
+				ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>
+			>;
+		}> extends infer Result extends UnknownArray
 			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen

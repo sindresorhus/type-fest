@@ -1266,7 +1266,7 @@ export namespace TsConfigJson {
 		exclude?: string[];
 
 		/**
-		Disable infering what types should be added based on filenames in a project.
+		Disable inferring what types should be added based on filenames in a project.
 		*/
 		disableFilenameBasedTypeAcquisition?: boolean;
 	};

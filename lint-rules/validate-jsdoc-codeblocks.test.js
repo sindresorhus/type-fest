@@ -560,16 +560,17 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 			/**
 			\`\`\`typescript
-			import type {ExcludeStrict, Sum} from 'type-fest';
+			type Identity<T extends string> = T;
+			type JustBoolean<T extends boolean> = T;
 
-			type A = Sum<1, '2'>;
+			type A = JustBoolean<Identity<number>>;
 			\`\`\`
 			*/
 			export type Test = string;
 			`,
 			errors: [
-				invalidCodeblockErrorAt({line: 5, textBeforeStart: 'type A = ', target: 'Sum<1, \'2\'>'}),
-				invalidCodeblockErrorAt({line: 5, textBeforeStart: 'type A = Sum<1, ', target: '\'2\''}),
+				invalidCodeblockErrorAt({line: 6, textBeforeStart: 'type A = JustBoolean<', target: 'Identity<number>'}),
+				invalidCodeblockErrorAt({line: 6, textBeforeStart: 'type A = JustBoolean<Identity<', target: 'number'}),
 			],
 		},
 
@@ -876,6 +877,14 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`))),
 			options: [{verbosityLevels: [1, 2]}],
 		},
+
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type PosInf = 1e999;
+			//=> Infinity
+
+			type NegInf = -1e999;
+			//=> -Infinity
+		`))),
 
 		// === Different types of quick info ===
 		// Function
@@ -1369,6 +1378,38 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 				type LevelTwo = Test;
 				//=> {a: {b: {c: Pick<{d: 'abracadabra'}, 'd'>}}}
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+		},
+
+		{
+			code: dedenter`
+				/**
+				\`\`\`ts
+				interface Foo {
+					a: string;
+				}
+
+				type T = [Foo, Foo, Foo];
+				//=> [  Foo,   Foo, Foo ]
+				\`\`\`
+				*/
+				export type T0 = string;
+			`,
+			errors: [
+				incorrectTwoslashFormatErrorAt({line: 8, textBeforeStart: '', target: '//=> [  Foo,   Foo, Foo ]'}),
+			],
+			output: dedenter`
+				/**
+				\`\`\`ts
+				interface Foo {
+					a: string;
+				}
+
+				type T = [Foo, Foo, Foo];
+				//=> [Foo, Foo, Foo]
 				\`\`\`
 				*/
 				export type T0 = string;

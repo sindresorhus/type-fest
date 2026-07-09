@@ -1,5 +1,10 @@
 {
 	"extends": "@sindresorhus/tsconfig",
+	"include": [
+		"index.d.ts",
+		"source/**/*.d.ts",
+		"test-d/**/*.ts"
+	],
 	"compilerOptions": {
 		"noEmit": true,
 		"allowJs": true,

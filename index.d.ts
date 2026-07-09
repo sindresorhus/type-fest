@@ -34,6 +34,7 @@ export type {OmitIndexSignature} from './source/omit-index-signature.d.ts';
 export type {PickIndexSignature} from './source/pick-index-signature.d.ts';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep.d.ts';
 export type {UnwrapPartial} from './source/unwrap-partial.d.ts';
+export type {UnwrapRequired} from './source/unwrap-required.d.ts';
 export type {RequiredDeep} from './source/required-deep.d.ts';
 export type {PickDeep} from './source/pick-deep.d.ts';
 export type {OmitDeep} from './source/omit-deep.d.ts';
@@ -177,6 +178,7 @@ export type {ArrayReverse} from './source/array-reverse.d.ts';
 export type {UnionMember} from './source/union-member.d.ts';
 export type {Absolute} from './source/absolute.d.ts';
 export type {UnionLength} from './source/union-length.d.ts';
+export type {StringToNumber} from './source/string-to-number.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
@@ -207,6 +209,9 @@ export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
 export type {RemovePrefix, RemovePrefixOptions} from './source/remove-prefix.d.ts';
+export type {RemoveSuffix, RemoveSuffixOptions} from './source/remove-suffix.d.ts';
+export type {StringToArray, StringToArrayOptions} from './source/string-to-array.d.ts';
+export type {StringLength} from './source/string-length.d.ts';
 
 // Miscellaneous
 export type {GlobalThis} from './source/global-this.d.ts';
@@ -218,5 +223,6 @@ export type {ExtendsStrict, ExtendsStrictOptions} from './source/extends-strict.
 export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
 export type {ExcludeExactly} from './source/exclude-exactly.d.ts';
+export type {ExtractExactly} from './source/extract-exactly.d.ts';
 
 export {};

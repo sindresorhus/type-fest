@@ -50,7 +50,7 @@ type NumberValueIndices = ConditionalKeys<[string, number?, string?], number | u
 @category Object
 */
 export type ConditionalKeys<Base, Condition> = (Base extends UnknownArray ? TupleToObject<Base> : Base) extends infer _Base // Remove non-numeric keys from arrays
-	? IfNotAnyOrNever<_Base, _ConditionalKeys<_Base, Condition>, keyof _Base>
+	? IfNotAnyOrNever<_Base, {ifNot: _ConditionalKeys<_Base, Condition>; ifAny: keyof _Base}>
 	: never;
 
 type _ConditionalKeys<Base, Condition> = keyof {

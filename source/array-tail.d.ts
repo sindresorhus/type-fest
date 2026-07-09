@@ -51,13 +51,13 @@ const availableTopSciFi = curry(searchBooks)('sci-fi')(4.5)(true);
 
 @category Array
 */
-export type ArrayTail<TArray extends UnknownArray> = IfNotAnyOrNever<TArray,
-	TArray extends UnknownArray // For distributing `TArray`
+export type ArrayTail<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {
+	ifNot: TArray extends UnknownArray // For distributing `TArray`
 		? _ArrayTail<TArray> extends infer Result
 			? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
 			: never // Should never happen
-		: never
->;
+		: never;
+}>;
 
 type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?, ...infer Tail]
 	? keyof TArray & `${number}` extends never

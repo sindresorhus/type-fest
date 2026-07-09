@@ -111,7 +111,7 @@ type B = CollapseRestElement<[string?, string?, ...number[]]>;
 //=> [string | undefined, string | undefined, number]
 ```
 */
-export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, _CollapseRestElement<TArray>>;
+export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {ifNot: _CollapseRestElement<TArray>}>;
 
 type _CollapseRestElement<
 	TArray extends UnknownArray,

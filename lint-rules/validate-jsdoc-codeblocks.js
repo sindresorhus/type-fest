@@ -250,6 +250,10 @@ function normalizeType(type, onlySortNumbers = false) {
 		ts.ScriptTarget.Latest,
 	);
 
+	if (sourceFile.parseDiagnostics.length > 0) {
+		return type.trim();
+	}
+
 	const typeNode = sourceFile.statements[0].declarationList.declarations[0].type;
 
 	const print = node => ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, sourceFile);

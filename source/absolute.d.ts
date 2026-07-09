@@ -1,4 +1,4 @@
-import type {StringToNumber} from './internal/string.d.ts';
+import type {StringToNumber} from './string-to-number.d.ts';
 
 /**
 Returns the absolute value of the specified number or bigint.

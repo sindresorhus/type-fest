@@ -136,6 +136,7 @@ Click the type names for complete docs.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
 - [`UnwrapPartial`](source/unwrap-partial.d.ts) - Revert the `Partial` modifier on an object type.
+- [`UnwrapRequired`](source/unwrap-required.d.ts) - Revert the `Required` modifier on an object type.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of another type.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
 - [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
@@ -264,6 +265,9 @@ Click the type names for complete docs.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
 - [`RemovePrefix`](source/remove-prefix.d.ts) - Remove the specified prefix from the start of a string.
+- [`RemoveSuffix`](source/remove-suffix.d.ts) - Remove the specified suffix from the end of a string.
+- [`StringToArray`](source/string-to-array.d.ts) - Returns an array of the characters of the specified string.
+- [`StringLength`](source/string-length.d.ts) - Returns the length of the given string.
 
 ### Array
 
@@ -309,6 +313,7 @@ Click the type names for complete docs.
 - [`Sum`](source/sum.d.ts) - Returns the sum of two numbers.
 - [`Subtract`](source/subtract.d.ts) - Returns the difference between two numbers.
 - [`Absolute`](source/absolute.d.ts) - Returns the absolute value of the specified number or bigint.
+- [`StringToNumber`](source/string-to-number.d.ts) - Converts a numeric string to a number.
 
 ### Change case
 
@@ -341,6 +346,7 @@ Click the type names for complete docs.
 - [`ExtractStrict`](source/extract-strict.d.ts) - A stricter version of `Extract<T, U>` that ensures every member of `U` can successfully extract something from `T`.
 - [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of `Exclude<T, U>` that ensures every member of `U` can successfully exclude something from `T`.
 - [`ExcludeExactly`](source/exclude-exactly.d.ts) - A stricter version of `Exclude<T, U>` that excludes types only when they are exactly identical.
+- [`ExtractExactly`](source/extract-exactly.d.ts) - A stricter version of `Extract<T, U>` that extracts types only when they are exactly identical.
 
 ## Declined types
 
@@ -535,6 +541,8 @@ There are many advanced types most users don't know about.
 			email: 'ex@mple.com',
 	});
 	```
+
+	`Required<T>` can be reverted with [`UnwrapRequired`](source/unwrap-required.d.ts).
 	</details>
 
 - [`Readonly<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype) - Make all properties in `T` readonly.

@@ -6,9 +6,10 @@ import type {Merge} from '../merge.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
+import type {StringToNumber} from '../string-to-number.d.ts';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
-import type {StringToNumber, ToString} from './string.d.ts';
+import type {ToString} from './string.d.ts';
 
 /**
 Create an object type with the given key `<Key>` and value `<Value>`.

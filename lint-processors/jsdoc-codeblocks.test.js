@@ -1,8 +1,10 @@
-import {describe, test} from 'node:test';
+import {describe, test, snapshot} from 'node:test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {ESLint} from 'eslint';
 import {code1, code2, dedenter, errorAt, exportType, exportTypeAndOption, fence, jsdoc} from '../lint-rules/test-utils.js';
+
+snapshot.setDefaultSnapshotSerializers([String]);
 
 const root = path.join(import.meta.dirname, 'fixtures');
 
@@ -116,27 +118,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			Some description.
-			\`\`\`ts
-			const foo: string[] = [];
-			\`\`\`
-			@category Test
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				Some description.
-				\`\`\`ts
-				const foo: string[] = [];
-				\`\`\`
-				@category Test
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
@@ -177,35 +158,6 @@ const invalid = [
 
 				\`\`\`ts
 				const foo: number = 1;
-				\`\`\`
-
-				@category Test
-				*/
-				p0: string;
-			};
-		`,
-		output: dedenter`
-			/**
-			Some description.
-
-			Note: Some note.
-
-			\`\`\`ts
-			const foo = 1;
-			\`\`\`
-
-			@category Test
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				Some description.
-
-				Note: Some note.
-
-				\`\`\`ts
-				const foo = 1;
 				\`\`\`
 
 				@category Test
@@ -256,31 +208,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			@example
-			\`\`\`ts
-			type Foo = {
-				a: string;
-				b: number;
-			}
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				@example
-				\`\`\`ts
-				type Foo = {
-					a: string;
-					b: number;
-				}
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/consistent-type-definitions',
@@ -316,23 +243,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			\`\`\`ts
-			const foo: string[] = [];
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				\`\`\`ts
-				const foo: string[] = [];
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
@@ -363,23 +273,6 @@ const invalid = [
 				/**
 				\`\`\`typescript
 				const foo: Array<string> = [];
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
-		output: dedenter`
-			/**
-			\`\`\`typescript
-			const foo: string[] = [];
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				\`\`\`typescript
-				const foo: string[] = [];
 				\`\`\`
 				*/
 				p0: string;
@@ -431,39 +324,6 @@ const invalid = [
 				@example
 				\`\`\`ts
 				const bar: number = 1;
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
-		output: dedenter`
-			/**
-			@example
-			\`\`\`ts
-			const foo: string[] = [];
-			\`\`\`
-
-			Some text in between.
-
-			@example
-			\`\`\`ts
-			const bar = 1;
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				@example
-				\`\`\`ts
-				const foo: string[] = [];
-				\`\`\`
-
-				Some text in between.
-
-				@example
-				\`\`\`ts
-				const bar = 1;
 				\`\`\`
 				*/
 				p0: string;
@@ -547,50 +407,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			\`\`\`ts
-			function foo(example: () => number): number {
-				return example();
-			}
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			/**
-			\`\`\`ts
-			type Foo = Record<string, unknown>;
-			\`\`\`
-			*/
-			export type T1 = string;
-
-			export type T0Options = {
-				/**
-				\`\`\`ts
-				function foo(example: () => number): number {
-					return example();
-				}
-				\`\`\`
-				*/
-				p0: string;
-
-				/**
-				\`\`\`ts
-				type Foo = Record<string, unknown>;
-				\`\`\`
-				*/
-				p1: string;
-			};
-
-			export type T1Options = {
-				/**
-				\`\`\`ts
-				const foo = new Map<string, number>();
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/prefer-function-type',
@@ -666,35 +482,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			Note:
-			1. First point
-				\`\`\`ts
-				type Foo = Record<string, unknown>;
-				\`\`\`
-			2. Second point
-				\`\`\`ts
-				type Bar = (arg: string) => number;
-				\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				Note:
-				1. First point
-					\`\`\`ts
-					type Foo = Record<string, unknown>;
-					\`\`\`
-				2. Second point
-					\`\`\`ts
-					type Bar = (arg: string) => number;
-					\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/consistent-indexed-object-style',
@@ -748,27 +535,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			Some description.
-			\`\`\`ts
-			let foo = 1;
-			foo = 2;
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				Some description.
-				\`\`\`ts
-				let foo = 1;
-				foo = 2;
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: 'no-var',
@@ -806,33 +572,6 @@ const invalid = [
 				const foo: string[] = [];
 
 				const bar: Array<number> = [];
-
-				const baz: boolean[] = [];
-				\`\`\`
-				Some text after.
-				*/
-				p0: string;
-			};
-		`,
-		output: dedenter`
-			/**
-			\`\`\`ts
-			const foo: string[] = [];
-
-			const bar: number[] = [];
-
-			const baz: boolean[] = [];
-			\`\`\`
-			Some text after.
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				\`\`\`ts
-				const foo: string[] = [];
-
-				const bar: number[] = [];
 
 				const baz: boolean[] = [];
 				\`\`\`
@@ -884,31 +623,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			Some description.
-
-			@example
-			\`\`\`ts
-			type Foo = {a: string}
-			type Bar = Record<string, Foo>
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				Some description.
-
-				@example
-				\`\`\`ts
-				type Foo = {a: string}
-				type Bar = Record<string, Foo>
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/consistent-indexed-object-style',
@@ -949,31 +663,6 @@ const invalid = [
 				type Foo = {
 					[key: string]: unknown;
 				};
-
-				type Test = PickIndexSignature<Foo>;
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
-		output: dedenter`
-			/**
-			\`\`\`ts
-			import type {PickIndexSignature} from 'type-fest';
-
-			type Foo = Record<string, unknown>;
-
-			type Test = PickIndexSignature<Foo>;
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				\`\`\`ts
-				import type {PickIndexSignature} from 'type-fest';
-
-				type Foo = Record<string, unknown>;
 
 				type Test = PickIndexSignature<Foo>;
 				\`\`\`
@@ -1034,39 +723,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			Some description.
-			Some more description.
-
-			@example
-			\`\`\`ts
-			type Test = (
-				foo: string,
-				bar: number
-			) => void;
-			\`\`\`
-			@category Test
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				Some description.
-				Some more description.
-
-				@example
-				\`\`\`ts
-				type Test = (
-					foo: string,
-					bar: number
-				) => void;
-				\`\`\`
-				@category Test
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/prefer-function-type',
@@ -1113,33 +769,6 @@ const invalid = [
 				interface Baz {
 					(x: string): unknown
 				}
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
-		output: dedenter`
-			/**
-			@example
-			\`\`\`typescript
-			const foo = 1
-
-			const bar = new Map<string, number>()
-
-			type Baz = (x: string) => unknown
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				@example
-				\`\`\`typescript
-				const foo = 1
-
-				const bar = new Map<string, number>()
-
-				type Baz = (x: string) => unknown
 				\`\`\`
 				*/
 				p0: string;
@@ -1216,23 +845,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			\`\`\`ts
-			const foo: string[][] = [];
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				\`\`\`ts
-				const foo: string[][] = [];
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/array-type',
@@ -1284,23 +896,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: dedenter`
-			/**
-			\`\`\`ts
-			type Foo = () => void;
-			\`\`\`
-			*/
-			export type T0 = string;
-
-			export type TOptions = {
-				/**
-				\`\`\`ts
-				type Foo = () => void;
-				\`\`\`
-				*/
-				p0: string;
-			};
-		`,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/prefer-function-type',
@@ -1340,7 +935,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: undefined,
 		errors: [
 			errorAt({
 				ruleId: '@typescript-eslint/no-empty-object-type',
@@ -1369,17 +963,6 @@ const invalid = [
 			export type T0 = Array<string>;
 
 			type Foo = String;
-		`,
-		output: dedenter`
-			/**
-			Some description.
-			\`\`\`
-			type Foo = string;
-			\`\`\`
-			*/
-			export type T0 = string[];
-
-			type Foo = string;
 		`,
 		errors: [
 			errorAt({
@@ -1425,7 +1008,6 @@ const invalid = [
 				p0: string;
 			};
 		`,
-		output: undefined,
 		errors: [
 			errorAt({
 				line: 7,
@@ -1452,7 +1034,7 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 		...invalid.map(testCase => ({...testCase, type: 'invalid'})),
 	];
 
-	for (const {type, name, code, output, errors = []} of testCases) {
+	for (const {type, name, code, errors = []} of testCases) {
 		test(`${type} - ${name}`, async t => {
 			const fileName = `test-${type}-${name.replaceAll(/\s+/gv, '-')}.d.ts`;
 			const filePath = path.join(root, fileName);
@@ -1465,16 +1047,12 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 			t.assert.strictEqual(results[0].messages.length, errors.length);
 
 			if (type === 'invalid') {
-				// Manual loop because `assert.partialDeepStrictEqual` isn't available in Node 20
 				for (const [index, expected] of errors.entries()) {
-					const actual = results[0].messages[index];
-					const actualSubset = Object.fromEntries(Object.keys(expected).map(key => [key, actual[key]]));
-
-					t.assert.deepStrictEqual(actualSubset, expected);
+					t.assert.partialDeepStrictEqual(results[0].messages[index], expected);
 				}
 
 				const resultsFixed = await eslintFixed.lintFiles([fileName]);
-				t.assert.strictEqual(resultsFixed[0].output, output);
+				t.assert.snapshot(resultsFixed[0].output);
 			}
 		});
 	}
