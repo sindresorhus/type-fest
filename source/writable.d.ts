@@ -61,7 +61,7 @@ export type Writable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 				: Simplify<
 					// Pick just the keys that are not writable from the base type.
 					Except<BaseType, Keys>
-					// Map over the base type, keeping only the keys that should be writable and making them writable by removing the `readonly` modifier. Mapping over the base type itself (with key remapping) rather than `Pick` preserves the structure of the input type, e.g. index signatures. See: https://github.com/sindresorhus/type-fest/issues/717
+					// Make the specified keys writable
 					& {-readonly [KeyType in keyof BaseType as KeyType extends Keys ? KeyType : never]: BaseType[KeyType]}
 				>;
 
