@@ -4,14 +4,14 @@ import type {UnwrapBrand} from '../../source/internal/object.d.ts';
 type Brand = {readonly __brand: unique symbol};
 declare const symbolLiteral: unique symbol;
 
-// Non-literal primitives
+// Non-literals
 expectType<string>({} as UnwrapBrand<string & Brand>);
 expectType<number>({} as UnwrapBrand<number & Brand>);
 expectType<bigint>({} as UnwrapBrand<bigint & Brand>);
 expectType<symbol>({} as UnwrapBrand<symbol & Brand>);
 expectType<boolean>({} as UnwrapBrand<boolean & Brand>);
 
-// Literal primitives
+// Literals
 expectType<'foo'>({} as UnwrapBrand<'foo' & Brand>);
 expectType<1>({} as UnwrapBrand<1 & Brand>);
 expectType<100n>({} as UnwrapBrand<100n & Brand>);
@@ -33,10 +33,12 @@ expectType<typeof symbolLiteral>({} as UnwrapBrand<typeof symbolLiteral>);
 expectType<true>({} as UnwrapBrand<true>);
 expectType<false>({} as UnwrapBrand<false>);
 
-// Non-primitives
+// Non-primitives, `null` & `undefined`
 expectType<object>({} as UnwrapBrand<object>);
 expectType<{foo: string}>({} as UnwrapBrand<{foo: string}>);
 expectType<(() => string) & Brand>({} as UnwrapBrand<(() => string) & Brand>);
+expectType<null>({} as any as UnwrapBrand<null>);
+expectType<undefined>({} as any as UnwrapBrand<undefined>);
 
 // Unions
 // All non-literals

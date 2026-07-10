@@ -300,7 +300,7 @@ export type UnwrapBrand<T> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitiv
 type _UnwrapBrand<T, Base> = T extends Primitive
 	? T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
 		? U
-		: never
+		: T
 	: T;
 
 /**
