@@ -288,15 +288,20 @@ type A = UnwrapBrand<string & Brand>;
 type B = UnwrapBrand<number & Brand>;
 //=> number
 
-type C = UnwrapBrand<(1 | 200n | 'foo' | 'bar') & Brand>;
+type C = UnwrapBrand<PropertyKey & Brand>;
+//=> PropertyKey
+
+type D = UnwrapBrand<(1 | 200n | 'foo' | 'bar') & Brand>;
 //=> 1 | 200n | 'foo' | 'bar'
 ```
 */
-export type UnwrapBrand<T extends Primitive> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitive>}>;
+export type UnwrapBrand<T> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitive>}>;
 
-type _UnwrapBrand<T, Base> = T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
-	? U
-	: never;
+type _UnwrapBrand<T, Base> = T extends Primitive
+	? T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
+		? U
+		: never
+	: T;
 
 /**
 Normalize keys by including string and number representations wherever applicable.

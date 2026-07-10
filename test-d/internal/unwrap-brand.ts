@@ -19,6 +19,25 @@ expectType<typeof symbolLiteral>({} as UnwrapBrand<typeof symbolLiteral & Brand>
 expectType<true>({} as UnwrapBrand<true & Brand>);
 expectType<false>({} as UnwrapBrand<false & Brand>);
 
+// Non-branded types
+expectType<string>({} as UnwrapBrand<string>);
+expectType<number>({} as UnwrapBrand<number>);
+expectType<bigint>({} as UnwrapBrand<bigint>);
+expectType<symbol>({} as UnwrapBrand<symbol>);
+expectType<boolean>({} as UnwrapBrand<boolean>);
+
+expectType<'foo'>({} as UnwrapBrand<'foo'>);
+expectType<1>({} as UnwrapBrand<1>);
+expectType<100n>({} as UnwrapBrand<100n>);
+expectType<typeof symbolLiteral>({} as UnwrapBrand<typeof symbolLiteral>);
+expectType<true>({} as UnwrapBrand<true>);
+expectType<false>({} as UnwrapBrand<false>);
+
+// Non-primitives
+expectType<object>({} as UnwrapBrand<object>);
+expectType<{foo: string}>({} as UnwrapBrand<{foo: string}>);
+expectType<(() => string) & Brand>({} as UnwrapBrand<(() => string) & Brand>);
+
 // Unions
 // All non-literals
 expectType<PropertyKey>({} as UnwrapBrand<PropertyKey & Brand>);
@@ -42,6 +61,14 @@ expectType<(string | number | 5000n | typeof symbolLiteral)>(
 );
 expectType<('foo' | 0.5 | bigint | symbol | boolean)>(
 	{} as UnwrapBrand<('foo' | 0.5 | bigint | symbol | boolean) & Brand>,
+);
+
+// Mix of non-literals, literals, and non-primitives
+expectType<(string | number | ({foo: string} & Brand))>(
+	{} as UnwrapBrand<(string | number | {foo: string}) & Brand>,
+);
+expectType<('foo' | number | 100n | typeof symbolLiteral | boolean | ({foo: string} & Brand))>(
+	{} as UnwrapBrand<('foo' | number | 100n | typeof symbolLiteral | boolean | {foo: string}) & Brand>,
 );
 
 // Edge cases
