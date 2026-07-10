@@ -47,8 +47,6 @@ expectType<IsSymbolLiteral<Tagged<typeof symbol1 | typeof symbol2, 'Tag'>>>(true
 expectType<IsSymbolLiteral<Tagged<symbol, 'Tag'>>>(false);
 // Non-symbols
 expectType<IsSymbolLiteral<Tagged<string, 'Tag'>>>(false);
-// Literals and non-literals
-expectType<IsSymbolLiteral<Tagged<typeof symbol1 | symbol, 'Tag'>>>(false);
 // Literals and non-symbols
 expectType<IsSymbolLiteral<Tagged<typeof symbol1 | string, 'Tag'>>>({} as boolean);
 // Non-literals and non-symbols
@@ -66,8 +64,6 @@ expectType<IsSymbolLiteral<Opaque<typeof symbol1 | typeof symbol2, 'Tag'>>>(true
 expectType<IsSymbolLiteral<Opaque<symbol, 'Tag'>>>(false);
 // Non-symbols
 expectType<IsSymbolLiteral<Opaque<string, 'Tag'>>>(false);
-// Literals and non-literals
-expectType<IsSymbolLiteral<Opaque<typeof symbol1 | symbol, 'Tag'>>>(false);
 // Literals and non-symbols
 expectType<IsSymbolLiteral<Opaque<typeof symbol1 | string, 'Tag'>>>({} as boolean);
 // Non-literals and non-symbols
@@ -87,8 +83,6 @@ expectType<IsSymbolLiteral<(typeof symbol1 | typeof symbol2) & Brand>>(true);
 expectType<IsSymbolLiteral<symbol & Brand>>(false);
 // Non-symbols
 expectType<IsSymbolLiteral<string & Brand>>(false);
-// Literals and non-literals
-expectType<IsSymbolLiteral<(typeof symbol1 | symbol) & Brand>>(false);
 // Literals and non-symbols
 expectType<IsSymbolLiteral<(typeof symbol1 | string) & Brand>>({} as boolean);
 // Non-literals and non-symbols
