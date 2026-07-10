@@ -7,8 +7,9 @@ import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {StringToNumber} from '../string-to-number.d.ts';
+import type {Primitive} from '../primitive.d.ts';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
+import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
 /**
@@ -273,6 +274,29 @@ export type CollapseLiterals<T> = {} extends T
 	: T extends infer U & {}
 		? U
 		: T;
+
+/**
+Returns the base type of a branded type.
+
+@example
+```
+type Brand = {readonly __brand: unique symbol};
+
+type A = UnwrapBrand<string & Brand>;
+//=> string
+
+type B = UnwrapBrand<number & Brand>;
+//=> number
+
+type C = UnwrapBrand<(1 | 200n | 'foo' | 'bar') & Brand>;
+//=> 1 | 200n | 'foo' | 'bar'
+```
+*/
+export type UnwrapBrand<T extends Primitive> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitive>}>;
+
+type _UnwrapBrand<T, Base> = T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
+	? U
+	: never;
 
 /**
 Normalize keys by including string and number representations wherever applicable.
