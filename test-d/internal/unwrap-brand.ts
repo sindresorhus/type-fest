@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {UnwrapBrand} from '../../source/internal/object.d.ts';
+import type {Opaque, Tagged} from '../../source/tagged.d.ts';
 
 type Brand = {readonly __brand: unique symbol};
 declare const symbolLiteral: unique symbol;
@@ -72,6 +73,31 @@ expectType<(string | number | ({foo: string} & Brand))>(
 expectType<('foo' | number | 100n | typeof symbolLiteral | boolean | ({foo: string} & Brand))>(
 	{} as UnwrapBrand<('foo' | number | 100n | typeof symbolLiteral | boolean | {foo: string}) & Brand>,
 );
+
+// Types built using `Opaque`
+expectType<string | number | bigint | symbol | boolean>(
+	{} as UnwrapBrand<Opaque<string | number | bigint | symbol | boolean, 'Tag'>>,
+);
+expectType<'foo' | 1 | 100n | typeof symbolLiteral | true>(
+	{} as UnwrapBrand<Opaque<'foo' | 1 | 100n | typeof symbolLiteral | true, 'Tag'>>,
+);
+
+// Types built using `Tagged`
+expectType<string | number | bigint | symbol | boolean>(
+	{} as UnwrapBrand<Tagged<string | number | bigint | symbol | boolean, 'Tag'>>,
+);
+expectType<'foo' | 1 | 100n | typeof symbolLiteral | true>(
+	{} as UnwrapBrand<Tagged<'foo' | 1 | 100n | typeof symbolLiteral | true, 'Tag'>>,
+);
+
+// Mix
+expectType<string | number | 900n | typeof symbolLiteral | true | {foo: string}>(
+	{} as UnwrapBrand<
+		| ((string | number) & Brand)
+		| Tagged<900n | typeof symbolLiteral, 'Tag'>
+		| Opaque<true, 'Tag'>
+		| {foo: string}
+	>);
 
 // Edge cases
 expectType<any>({} as UnwrapBrand<any>);
