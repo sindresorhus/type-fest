@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
 import type {IsLiteral} from '../source/is-literal.d.ts';
 import type {LiteralUnion} from '../source/literal-union.d.ts';
-import type {Tagged} from '../source/tagged.d.ts';
+import type {Opaque, Tagged} from '../source/tagged.d.ts';
 
 declare const symbolLiteral: unique symbol;
 
@@ -91,6 +91,40 @@ expectType<IsLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
 expectType<IsLiteral<Tagged<'foo', 'Tag'> | Tagged<bigint, 'Tag'>>>({} as boolean);
 expectType<IsLiteral<Tagged<'foo', 'Tag'> | number>>({} as boolean);
 expectType<IsLiteral<Tagged<symbol, 'Tag'> | 'foo'>>({} as boolean);
+
+// Opaque types
+// Literals
+expectType<IsLiteral<Opaque<'foo' | 'bar' | 1n | typeof symbolLiteral | false, 'Tag'>>>(true);
+// Non-literals
+expectType<IsLiteral<Opaque<string | number | symbol, 'Tag'>>>(false);
+// Literals and non-literals
+expectType<IsLiteral<Opaque<'foo' | 'bar' | number, 'Tag'>>>({} as boolean);
+expectType<IsLiteral<Opaque<0 | '' | boolean, 'Tag'>>>({} as boolean);
+
+// Unions
+expectType<IsLiteral<Opaque<'foo', 'Tag'> | Opaque<1, 'Tag'>>>(true);
+expectType<IsLiteral<Opaque<string, 'Tag'> | Opaque<number, 'Tag'>>>(false);
+expectType<IsLiteral<Opaque<'foo', 'Tag'> | Opaque<bigint, 'Tag'>>>({} as boolean);
+expectType<IsLiteral<Opaque<'foo', 'Tag'> | number>>({} as boolean);
+expectType<IsLiteral<Opaque<symbol, 'Tag'> | 'foo'>>({} as boolean);
+
+// Branded types
+type Brand = {readonly __brand: unique symbol};
+
+// Literals
+expectType<IsLiteral<('foo' | 'bar' | 1n | typeof symbolLiteral | false) & Brand>>(true);
+// Non-literals
+expectType<IsLiteral<(string | number | symbol) & Brand>>(false);
+// Literals and non-literals
+expectType<IsLiteral<('foo' | 'bar' | number) & Brand>>({} as boolean);
+expectType<IsLiteral<(0 | '' | boolean) & Brand>>({} as boolean);
+
+// Unions
+expectType<IsLiteral<('foo' & Brand) | (1 & Brand)>>(true);
+expectType<IsLiteral<(string & Brand) | (number & Brand)>>(false);
+expectType<IsLiteral<('foo' & Brand) | (bigint & Brand)>>({} as boolean);
+expectType<IsLiteral<('foo' & Brand) | number>>({} as boolean);
+expectType<IsLiteral<(symbol & Brand) | 'foo'>>({} as boolean);
 
 // Uncollapsed unions
 expectType<IsLiteral<LiteralUnion<1n | 2n | 3n, bigint>>>(false);

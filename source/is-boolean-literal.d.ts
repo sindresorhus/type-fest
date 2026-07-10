@@ -1,6 +1,5 @@
-import type {CollapseLiterals} from './internal/object.d.ts';
+import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -26,7 +25,7 @@ type D = IsBooleanLiteral<true | false>;
 @category Utilities
 */
 export type IsBooleanLiteral<T> = IfNotAnyOrNever<T, {
-	ifNot: _IsBooleanLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>>;
+	ifNot: _IsBooleanLiteral<CollapseLiterals<UnwrapBrand<T>>>;
 	ifAny: false;
 	ifNever: false;
 }>;

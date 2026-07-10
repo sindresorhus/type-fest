@@ -4,8 +4,7 @@ import type {IsBooleanLiteral} from './is-boolean-literal.d.ts';
 import type {IsSymbolLiteral} from './is-symbol-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {CollapseLiterals} from './internal/object.d.ts';
-import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
+import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
 
 /**
 Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -65,7 +64,7 @@ type O = IsLiteral<1000n | string | true>;
 @category Utilities
 */
 export type IsLiteral<T> = IfNotAnyOrNever<T, {
-	ifNot: _IsLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>>;
+	ifNot: _IsLiteral<CollapseLiterals<UnwrapBrand<T>>>;
 	ifAny: false;
 	ifNever: false;
 }>;

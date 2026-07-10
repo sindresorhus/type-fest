@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
 import type {IsStringLiteral} from '../source/is-string-literal.d.ts';
-import type {Tagged} from '../source/tagged.d.ts';
+import type {Opaque, Tagged} from '../source/tagged.d.ts';
 import type {LiteralUnion} from '../source/literal-union.d.ts';
 
 // Literals
@@ -86,6 +86,48 @@ expectType<IsStringLiteral<Tagged<'foo', 'Tag'> | Tagged<'bar', 'Tag'>>>(true);
 expectType<IsStringLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
 expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>({} as boolean);
 expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>({} as boolean); // Tagged and untagged
+
+// Opaque types
+// Literals
+expectType<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'>>>(true);
+// Non-literals
+expectType<IsStringLiteral<Opaque<string, 'Tag'>>>(false);
+expectType<IsStringLiteral<Opaque<Uppercase<string>, 'Tag'>>>(false);
+// Non-strings
+expectType<IsStringLiteral<Opaque<number, 'Tag'>>>(false);
+// Literals and non-literals
+expectType<IsStringLiteral<Opaque<'foo' | 'bar' | `on${string}`, 'Tag'>>>({} as boolean);
+// Literals and non-strings
+expectType<IsStringLiteral<Opaque<'1st' | '2nd' | '3rd' | number, 'Tag'>>>({} as boolean);
+// Non-literals and non-strings
+expectType<IsStringLiteral<Opaque<string | number, 'Tag'>>>({} as false);
+// Unions
+expectType<IsStringLiteral<Opaque<'foo', 'Tag'> | Opaque<'bar', 'Tag'>>>(true);
+expectType<IsStringLiteral<Opaque<string, 'Tag'> | Opaque<number, 'Tag'>>>(false);
+expectType<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'> | Opaque<number, 'Tag'>>>({} as boolean);
+expectType<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'> | number>>({} as boolean); // Opaque and untagged
+
+// Branded types
+type Brand = {readonly __brand: unique symbol};
+
+// Literals
+expectType<IsStringLiteral<('foo' | 'bar') & Brand>>(true);
+// Non-literals
+expectType<IsStringLiteral<string & Brand>>(false);
+expectType<IsStringLiteral<Uppercase<string> & Brand>>(false);
+// Non-strings
+expectType<IsStringLiteral<number & Brand>>(false);
+// Literals and non-literals
+expectType<IsStringLiteral<('foo' | 'bar' | `on${string}`) & Brand>>({} as boolean);
+// Literals and non-strings
+expectType<IsStringLiteral<('1st' | '2nd' | '3rd' | number) & Brand>>({} as boolean);
+// Non-literals and non-strings
+expectType<IsStringLiteral<(string | number) & Brand>>({} as false);
+// Unions
+expectType<IsStringLiteral<('foo' & Brand) | ('bar' & Brand)>>(true);
+expectType<IsStringLiteral<(string & Brand) | (number & Brand)>>(false);
+expectType<IsStringLiteral<(('foo' | 'bar') & Brand) | (number & Brand)>>({} as boolean);
+expectType<IsStringLiteral<(('foo' | 'bar') & Brand) | number>>({} as boolean); // Branded and untagged
 
 // Uncollapsed unions (e.g., `'foo' | 'bar' | (string & {})`)
 expectType<IsStringLiteral<'foo' | 'bar' | (string & {})>>(false);

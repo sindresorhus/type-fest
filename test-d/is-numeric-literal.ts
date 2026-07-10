@@ -1,7 +1,7 @@
 import {expectType} from 'tsd';
 import type {IsNumericLiteral} from '../source/is-numeric-literal.d.ts';
 import type {LiteralUnion} from '../source/literal-union.d.ts';
-import type {Tagged} from '../source/tagged.d.ts';
+import type {Opaque, Tagged} from '../source/tagged.d.ts';
 
 // Literals
 expectType<IsNumericLiteral<1>>(true);
@@ -64,6 +64,49 @@ expectType<IsNumericLiteral<Tagged<1, 'Tag'> | Tagged<2, 'Tag'>>>(true);
 expectType<IsNumericLiteral<Tagged<number, 'Tag'> | Tagged<string, 'Tag'>>>(false);
 expectType<IsNumericLiteral<Tagged<1 | 2, 'Tag'> | Tagged<string, 'Tag'>>>({} as boolean);
 expectType<IsNumericLiteral<Tagged<1 | 2, 'Tag'> | string>>({} as boolean); // Tagged and untagged
+
+// Opaque types
+// Literals
+expectType<IsNumericLiteral<Opaque<1 | 2, 'Tag'>>>(true);
+// Non-literals
+expectType<IsNumericLiteral<Opaque<number, 'Tag'>>>(false);
+// Non-numerics
+expectType<IsNumericLiteral<Opaque<string, 'Tag'>>>(false);
+// Literals and non-literals
+expectType<IsNumericLiteral<Opaque<1 | 2 | bigint, 'Tag'>>>({} as boolean);
+expectType<IsNumericLiteral<Opaque<1n | 2n | number, 'Tag'>>>({} as boolean);
+// Literals and non-numerics
+expectType<IsNumericLiteral<Opaque<1 | 2n | string, 'Tag'>>>({} as boolean);
+// Non-literals and non-numerics
+expectType<IsNumericLiteral<Opaque<number | string, 'Tag'>>>({} as false);
+// Unions
+expectType<IsNumericLiteral<Opaque<1, 'Tag'> | Opaque<2, 'Tag'>>>(true);
+expectType<IsNumericLiteral<Opaque<number, 'Tag'> | Opaque<string, 'Tag'>>>(false);
+expectType<IsNumericLiteral<Opaque<1 | 2, 'Tag'> | Opaque<string, 'Tag'>>>({} as boolean);
+expectType<IsNumericLiteral<Opaque<1 | 2, 'Tag'> | string>>({} as boolean); // Opaque and non-opaque
+
+// Branded types
+type Brand = {readonly __brand: unique symbol};
+
+// Tagged types
+// Literals
+expectType<IsNumericLiteral<(1 | 2) & Brand>>(true);
+// Non-literals
+expectType<IsNumericLiteral<number & Brand>>(false);
+// Non-numerics
+expectType<IsNumericLiteral<string & Brand>>(false);
+// Literals and non-literals
+expectType<IsNumericLiteral<(1 | 2 | bigint) & Brand>>({} as boolean);
+expectType<IsNumericLiteral<(1n | 2n | number) & Brand>>({} as boolean);
+// Literals and non-numerics
+expectType<IsNumericLiteral<(1 | 2n | string) & Brand>>({} as boolean);
+// Non-literals and non-numerics
+expectType<IsNumericLiteral<(number | string) & Brand>>({} as false);
+// Unions
+expectType<IsNumericLiteral<(1 & Brand) | (2 & Brand)>>(true);
+expectType<IsNumericLiteral<(number & Brand) | (string & Brand)>>(false);
+expectType<IsNumericLiteral<((1 | 2) & Brand) | (string & Brand)>>({} as boolean);
+expectType<IsNumericLiteral<((1 | 2) & Brand) | string>>({} as boolean); // Branded and non-branded
 
 // Uncollapsed unions (e.g., `1 | 2 | (number & {})`)
 expectType<IsNumericLiteral<1 | 2 | (number & {})>>(false);

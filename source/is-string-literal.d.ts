@@ -1,6 +1,5 @@
-import type {CollapseLiterals} from './internal/object.d.ts';
+import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -56,7 +55,7 @@ type L3 = StringLength<`${number}`>;
 @category Utilities
 */
 export type IsStringLiteral<S> = IfNotAnyOrNever<S, {
-	ifNot: _IsStringLiteral<CollapseLiterals<S extends TagContainer<any> ? UnwrapTagged<S> : S>>;
+	ifNot: _IsStringLiteral<CollapseLiterals<UnwrapBrand<S>>>;
 	ifAny: false;
 	ifNever: false;
 }>;

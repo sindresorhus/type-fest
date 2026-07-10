@@ -1,6 +1,5 @@
-import type {CollapseLiterals} from './internal/object.d.ts';
+import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -35,7 +34,7 @@ type G = IsNumericLiteral<1 | bigint>;
 @category Utilities
 */
 export type IsNumericLiteral<T> = IfNotAnyOrNever<T, {
-	ifNot: _IsNumericLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>>;
+	ifNot: _IsNumericLiteral<CollapseLiterals<UnwrapBrand<T>>>;
 	ifAny: false;
 	ifNever: false;
 }>;

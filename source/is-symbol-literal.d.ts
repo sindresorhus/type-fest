@@ -1,6 +1,5 @@
-import type {CollapseLiterals} from './internal/object.d.ts';
+import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -26,7 +25,7 @@ type C = IsSymbolLiteral<typeof symbolLiteral1 | typeof symbolLiteral2>;
 @category Utilities
 */
 export type IsSymbolLiteral<T> = IfNotAnyOrNever<T, {
-	ifNot: _IsSymbolLiteral<CollapseLiterals<T extends TagContainer<any> ? UnwrapTagged<T> : T>>;
+	ifNot: _IsSymbolLiteral<CollapseLiterals<UnwrapBrand<T>>>;
 	ifAny: false;
 	ifNever: false;
 }>;
