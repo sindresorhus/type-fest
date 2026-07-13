@@ -25,16 +25,11 @@ type JsonifyList<T extends UnknownArray> = T extends readonly []
 			? JsonValue[]
 			: Array<T[number] extends NotJsonable ? null : Jsonify<UndefinedToNull<T[number]>>>;
 
-// Note: `Exclude<..., undefined>` is required because optional properties add `undefined` to the resulting union, which would otherwise corrupt the key set of the resulting object (e.g., `keyof Jsonify<{a?: string}>` would include `undefined`).
-type FilterJsonableKeys<T extends object> = Exclude<{
-	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
-}[keyof T], undefined>;
-
 /**
 JSON serialize objects (not including arrays) and classes.
 */
 type JsonifyObject<T extends object> = {
-	[Key in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[Key]>;
+	[Key in keyof T as T[Key] extends NotJsonable ? never : Key]: Jsonify<T[Key]>;
 };
 
 /**
