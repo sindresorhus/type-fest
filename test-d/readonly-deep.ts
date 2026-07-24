@@ -143,20 +143,16 @@ expectAssignable<{
 // structurally ordinary properties, so their values are.
 // See https://github.com/sindresorhus/type-fest/issues/826
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const readonlyFunctionReturningMap = {} as ReadonlyDeep<() => Map<string, number[]>>;
+declare const readonlyFunctionReturningMap: ReadonlyDeep<() => Map<string, number[]>>;
 expectType<() => Map<string, number[]>>(readonlyFunctionReturningMap);
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const readonlyObjectWithMethod = {} as ReadonlyDeep<{
+declare const readonlyObjectWithMethod: ReadonlyDeep<{
 	method: () => Map<string, number[]>;
 }>;
-// The method member becomes readonly, but its signature — including the
-// returned Map — is left untouched.
+// The method member becomes readonly, but its signature — including the returned Map — is left untouched.
 expectType<{
 	readonly method: () => Map<string, number[]>;
 }>(readonlyObjectWithMethod);
-expectType<() => Map<string, number[]>>(readonlyObjectWithMethod.method);
 
 class ClassWithGetter {
 	get accessor(): Map<string, number[]> {
@@ -164,7 +160,6 @@ class ClassWithGetter {
 	}
 }
 
-// A getter on a class is seen as a plain property of its type, so its value
-// is deep-readonly like any other property.
+// A getter on a class is seen as a plain property of its type, so its value is deep-readonly like any other property.
 declare const readonlyClassWithGetter: ReadonlyDeep<ClassWithGetter>;
 expectType<Readonly<ReadonlyMap<string, readonly number[]>>>(readonlyClassWithGetter.accessor);
