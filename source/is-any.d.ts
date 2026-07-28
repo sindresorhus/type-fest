@@ -5,6 +5,8 @@ Returns a boolean for whether the given type is `any`.
 
 Useful in type utilities, such as disallowing `any`s to be passed to a function.
 
+Uses the built-in [`NoInfer`](https://www.typescriptlang.org/docs/handbook/utility-types.html#noinfertype) utility type to prevent circular constraint errors.
+
 @example
 ```
 import type {IsAny} from 'type-fest';
@@ -22,6 +24,8 @@ const typedA = get(typedObject, 'a');
 const anyA = get(anyObject, 'a');
 //=> any
 ```
+
+@see https://www.typescriptlang.org/docs/handbook/utility-types.html#noinfertype
 
 @category Type Guard
 @category Utilities
