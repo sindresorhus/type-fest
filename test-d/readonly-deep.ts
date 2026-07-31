@@ -138,3 +138,28 @@ expectAssignable<{
 	(foo: number): string;
 	readonly baz: readonly boolean[];
 }>(readonlyNamespace);
+
+// Function and method return types are not transformed, while getters are
+// structurally ordinary properties, so their values are.
+// See https://github.com/sindresorhus/type-fest/issues/826
+
+declare const readonlyFunctionReturningMap: ReadonlyDeep<() => Map<string, number[]>>;
+expectType<() => Map<string, number[]>>(readonlyFunctionReturningMap);
+
+declare const readonlyObjectWithMethod: ReadonlyDeep<{
+	method: () => Map<string, number[]>;
+}>;
+// The method member becomes readonly, but its signature — including the returned Map — is left untouched.
+expectType<{
+	readonly method: () => Map<string, number[]>;
+}>(readonlyObjectWithMethod);
+
+class ClassWithGetter {
+	get accessor(): Map<string, number[]> {
+		return new Map();
+	}
+}
+
+// A getter on a class is seen as a plain property of its type, so its value is deep-readonly like any other property.
+declare const readonlyClassWithGetter: ReadonlyDeep<ClassWithGetter>;
+expectType<Readonly<ReadonlyMap<string, readonly number[]>>>(readonlyClassWithGetter.accessor);
