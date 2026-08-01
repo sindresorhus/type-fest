@@ -56,50 +56,50 @@ export type RenameKeys<
 > = IfNotAnyOrNever<BaseType, {
 	ifNot: BaseType extends unknown // Distribute over a union source
 		? RenameMap extends unknown // Distribute over a union map
-			? _RenameOnce<BaseType, _NormalizeMap<RenameMap>>
+			? RenameOnce<BaseType, NormalizeMap<RenameMap>>
 			: never
 		: never;
 }>;
 
-type _NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
+type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key : never]-?: RenameMap[Key];
 };
 
-type _TargetOf<SourceKey extends PropertyKey, RenameMap extends Record<PropertyKey, PropertyKey>> =
+type TargetOf<SourceKey extends PropertyKey, RenameMap extends Record<PropertyKey, PropertyKey>> =
 	SourceKey extends keyof RenameMap ? RenameMap[SourceKey] : SourceKey;
 
-type _RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	_RestoreMergedUndefined<BaseType, RenameMap,
-		_ApplyReadonly<BaseType, RenameMap,
-			_ApplyRequired<BaseType, RenameMap,
-				_RenameNaive<BaseType, RenameMap>>>>;
+type RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
+	RestoreMergedUndefined<BaseType, RenameMap,
+		ApplyReadonly<BaseType, RenameMap,
+			ApplyRequired<BaseType, RenameMap,
+				RenameNaive<BaseType, RenameMap>>>>;
 
-type _RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> = {
+type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	// Two keys mapping to one target produce a union value and keep only the first key's modifiers
 	// Like for example, {a?: 1; b: 2} with {a: 'x'; b: 'x'} produces {x?: 1 | 2}, taking a's optional
-	[Key in keyof BaseType as _TargetOf<Key, RenameMap>]: Required<BaseType>[Key];
+	[Key in keyof BaseType as TargetOf<Key, RenameMap>]: Required<BaseType>[Key];
 };
 
 // A merged target kept only one modifier in _RenameNaive, so re-force these from every contributor.
-type _ApplyRequired<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
-	SetRequired<Renamed, _TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
+type ApplyRequired<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
+	SetRequired<Renamed, TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
 
-type _ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
-	SetReadonly<Renamed, _TargetOf<ReadonlyKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
+type ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
+	SetReadonly<Renamed, TargetOf<ReadonlyKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
 
-type _MergedTargets<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
+type MergedTargets<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
 	// Targets renamed from both a required and an optional key prefer the required modifier
 	// Required b and optional a both rename to x in {a?: 1; b: 2} with {a: 'x'; b: 'x'}
-	_TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>
-	& _TargetOf<OptionalKeysOf<OmitIndexSignature<BaseType>>, RenameMap>;
+	TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>
+	& TargetOf<OptionalKeysOf<OmitIndexSignature<BaseType>>, RenameMap>;
 
 // EOPT off keeps undefined on a target that merged a required and an optional source
 // Source {a?: 1; x: 2} with {a: 'x'} gives {x: 1 | 2 | undefined}
-type _RestoreMergedUndefined<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Result> =
+type RestoreMergedUndefined<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Result> =
 	IsExactOptionalPropertyTypesEnabled extends true
 		? Result
 		: {
-			[Key in keyof Result]: Key extends _MergedTargets<BaseType, RenameMap>
+			[Key in keyof Result]: Key extends MergedTargets<BaseType, RenameMap>
 				? Result[Key] | undefined
 				: Result[Key];
 		};
