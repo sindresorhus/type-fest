@@ -61,13 +61,6 @@ export type RenameKeys<
 		: never;
 }>;
 
-type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
-	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key : never]-?: RenameMap[Key];
-};
-
-type TargetOf<SourceKey extends PropertyKey, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	SourceKey extends keyof RenameMap ? RenameMap[SourceKey] : SourceKey;
-
 type RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
 	RestoreMergedUndefined<BaseType, RenameMap,
 		ApplyReadonly<BaseType, RenameMap,
@@ -87,12 +80,6 @@ type ApplyRequired<BaseType extends object, RenameMap extends Record<PropertyKey
 type ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
 	SetReadonly<Renamed, TargetOf<ReadonlyKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
 
-type MergedTargets<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	// Targets renamed from both a required and an optional key prefer the required modifier.
-	// Required `b` and optional `a` both rename to `x` in `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}`.
-	TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>
-	& TargetOf<OptionalKeysOf<OmitIndexSignature<BaseType>>, RenameMap>;
-
 // `exactOptionalPropertyTypes` off keeps `undefined` on a target that merged a required and an optional source.
 // Source `{a?: 1; x: 2}` with `{a: 'x'}` gives `{x: 1 | 2 | undefined}`.
 type RestoreMergedUndefined<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Result> =
@@ -103,5 +90,18 @@ type RestoreMergedUndefined<BaseType extends object, RenameMap extends Record<Pr
 				? Result[Key] | undefined
 				: Result[Key];
 		};
+
+type MergedTargets<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
+	// Targets renamed from both a required and an optional key prefer the required modifier.
+	// Required `b` and optional `a` both rename to `x` in `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}`.
+	TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>
+	& TargetOf<OptionalKeysOf<OmitIndexSignature<BaseType>>, RenameMap>;
+
+type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
+	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key : never]-?: RenameMap[Key];
+};
+
+type TargetOf<SourceKey extends PropertyKey, RenameMap extends Record<PropertyKey, PropertyKey>> =
+	SourceKey extends keyof RenameMap ? RenameMap[SourceKey] : SourceKey;
 
 export {};
