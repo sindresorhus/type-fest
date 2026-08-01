@@ -8,17 +8,7 @@ import type {SetReadonly} from './set-readonly.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 
 /**
-Rename keys in an object type according to a map of old-to-new names. Keys absent from the map are returned unchanged. The value type, the optional modifier, and the readonly modifier are applied to the new key.
-
-Distributes over a union of rename maps and over a union of source types.
-
-When multiple source keys map to the same target, the target's value type is the union of the contributors' value types. The target is optional only when every contributor is optional, and is `readonly` when any contributor is `readonly`. With `exactOptionalPropertyTypes` disabled, the value type of a mixed-optionality merge also includes `undefined`.
-
-A union target distributes, producing one output key per member. For example, `{a: 'b' | 'c'}` on a source with `a: string` produces both `b: string` and `c: string`.
-
-A rename map entry whose key is not a property of the source type is ignored, matching the result of `Omit`. An entry whose value is not a literal `PropertyKey` (such as `string`) is also ignored, leaving that key's name unchanged. The optional modifier on a rename map entry is ignored, so `{a?: 'alpha'}` produces the same result as `{a: 'alpha'}`.
-
-An `any` source returns `any`, and a `never` source returns `never`.
+Rename keys in an object type according to a map of old-to-new names.
 
 @example
 ```
@@ -46,6 +36,72 @@ type SearchInput = {
 
 type Normalized = RenameKeys<SearchInput, {textQuery: 'query'; voiceQuery: 'query'; imageQuery: 'query'}>;
 //=> {query: string | Blob | File}
+```
+
+Note: When multiple source keys map to the same target, the target's value type is the union of the contributors' value types. The target is optional only when every contributor is optional, and is `readonly` when any contributor is `readonly`. With `exactOptionalPropertyTypes` disabled, the value type of a mixed-optionality merge also includes `undefined`.
+
+@example
+```
+import type {RenameKeys} from 'type-fest';
+
+// All colliding keys are required, so the target is required.
+type A = RenameKeys<{a: 1; b: 2}, {a: 'x'; b: 'x'}>;
+//=> {x: 1 | 2}
+
+// All colliding keys are optional, so the target is optional.
+type B = RenameKeys<{a?: 1; b?: 2}, {a: 'x'; b: 'x'}>;
+//=> {x?: 1 | 2}
+
+// One of the colliding keys is required, so the target is required.
+type C = RenameKeys<{a: 1; b?: 2}, {a: 'x'; b: 'x'}>;
+//=> {x: 1 | 2}
+
+// One of the colliding keys is `readonly`, so the target is `readonly`.
+type D = RenameKeys<{readonly a: 1; b: 2}, {a: 'x'; b: 'x'}>;
+//=> {readonly x: 1 | 2}
+```
+
+@example
+```
+// @exactOptionalPropertyTypes: false
+import type {RenameKeys} from 'type-fest';
+
+// With `exactOptionalPropertyTypes` disabled, a mixed-optionality merge includes `undefined`.
+type E = RenameKeys<{a?: 1; b: 2}, {a: 'x'; b: 'x'}>;
+//=> {x: 1 | 2 | undefined}
+```
+
+Note: A union target distributes, producing one output key per member.
+
+@example
+```
+import type {RenameKeys} from 'type-fest';
+
+type A = RenameKeys<{a: string}, {a: 'b' | 'c'}>;
+//=> {b: string; c: string}
+```
+
+Note: An entry whose value is not a literal `PropertyKey` (such as `string`) is also ignored, leaving that key's name unchanged.
+
+@example
+```
+import type {RenameKeys} from 'type-fest';
+
+type A = RenameKeys<{a: 1}, {a: string}>;
+//=> {a: 1}
+
+type B = RenameKeys<{a: 1; b: 2}, {a: 'x'; b: symbol}>;
+//=> {x: 1; b: 2}
+```
+
+Note: A rename map entry whose key is not a property of the source type is ignored.
+
+@example
+```
+import type {RenameKeys} from 'type-fest';
+
+type A = RenameKeys<{a: 1; b: 2}, {a: 'x'; c: 'y'}>;
+//=> {x: 1; b: 2}
 ```
 
 @category Object
