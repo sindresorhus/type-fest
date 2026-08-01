@@ -54,8 +54,8 @@ export type RenameKeys<
 	BaseType extends object,
 	RenameMap extends Record<PropertyKey, PropertyKey>,
 > = IfNotAnyOrNever<BaseType, {
-	ifNot: BaseType extends unknown // Distribute over a union source
-		? RenameMap extends unknown // Distribute over a union map
+	ifNot: BaseType extends unknown // For distributing `BaseType`
+		? RenameMap extends unknown // For distributing `RenameMap`
 			? RenameOnce<BaseType, NormalizeMap<RenameMap>>
 			: never
 		: never;
@@ -75,12 +75,12 @@ type RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, P
 				RenameNaive<BaseType, RenameMap>>>>;
 
 type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> = {
-	// Two keys mapping to one target produce a union value and keep only the first key's modifiers
-	// Like for example, {a?: 1; b: 2} with {a: 'x'; b: 'x'} produces {x?: 1 | 2}, taking a's optional
+	// Two keys mapping to one target produce a union value and keep only the first key's modifiers.
+	// Like for example, `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}` produces `{x?: 1 | 2}`, taking `a`'s optional.
 	[Key in keyof BaseType as TargetOf<Key, RenameMap>]: Required<BaseType>[Key];
 };
 
-// A merged target kept only one modifier in _RenameNaive, so re-force these from every contributor.
+// A merged target kept only one modifier in `RenameNaive`, so re-force these from every contributor.
 type ApplyRequired<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
 	SetRequired<Renamed, TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
 
@@ -88,13 +88,13 @@ type ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey
 	SetReadonly<Renamed, TargetOf<ReadonlyKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
 
 type MergedTargets<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	// Targets renamed from both a required and an optional key prefer the required modifier
-	// Required b and optional a both rename to x in {a?: 1; b: 2} with {a: 'x'; b: 'x'}
+	// Targets renamed from both a required and an optional key prefer the required modifier.
+	// Required `b` and optional `a` both rename to `x` in `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}`.
 	TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>
 	& TargetOf<OptionalKeysOf<OmitIndexSignature<BaseType>>, RenameMap>;
 
-// EOPT off keeps undefined on a target that merged a required and an optional source
-// Source {a?: 1; x: 2} with {a: 'x'} gives {x: 1 | 2 | undefined}
+// `exactOptionalPropertyTypes` off keeps `undefined` on a target that merged a required and an optional source.
+// Source `{a?: 1; x: 2}` with `{a: 'x'}` gives `{x: 1 | 2 | undefined}`.
 type RestoreMergedUndefined<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Result> =
 	IsExactOptionalPropertyTypesEnabled extends true
 		? Result
