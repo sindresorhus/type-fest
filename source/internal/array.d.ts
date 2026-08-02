@@ -186,7 +186,7 @@ export type FilterArrayExact<List extends unknown[], SearchType> = List extends 
 				? [Head, ...Return]
 				: Return
 			: never
-		: never;
+		: [];
 
 /**
 Returns the count of elements in the given list that are exactly equal to the given search type.
