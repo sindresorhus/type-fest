@@ -142,7 +142,10 @@ expectAssignable<string>({} as MyEntityPaths);
 
 // By default, the recursion limit should be reasonably long
 type RecursiveFoo = {foo: RecursiveFoo};
-expectAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 5}>>('foo.foo.foo.foo.foo.foo');
+expectAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 10; maxCircularDepth: 10}>>('foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo');
+
+// Ensure it still stops at the correct depth
+expectNotAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 10; maxCircularDepth: 10}>>('foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo');
 
 declare const recursion0: Paths<RecursiveFoo, {maxRecursionDepth: 0}>;
 expectType<'foo'>(recursion0);
@@ -396,7 +399,7 @@ expectType<'a.b'>(unreachableAndReachableDepth);
 declare const maxLessThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 3}>;
 expectType<never>(maxLessThanDepth);
 
-declare const maxLessThanDepth2: Paths<RecursiveFoo, {depth: 12}>; // Default `maxRecursionDepth` is 10
+declare const maxLessThanDepth2: Paths<RecursiveFoo, {depth: 12}>; // Default `maxRecursionDepth` is 5
 expectType<never>(maxLessThanDepth2);
 
 declare const maxSimilarToDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 2}>;
@@ -405,7 +408,7 @@ expectType<'a.b.c' | `a.b2.${number}`>(maxSimilarToDepth);
 declare const maxSimilarToDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 0; depth: 0}>;
 expectType<'foo'>(maxSimilarToDepth2);
 
-declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // Default `maxRecursionDepth` is 10
+declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // Default `maxRecursionDepth` and `maxCircularDepth` is 5
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(maxSimilarToDepth3);
 
 declare const maxMoreThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 1}>;
