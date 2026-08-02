@@ -20,11 +20,11 @@ export type PathsOptions = {
 	maxRecursionDepth?: number;
 
 	/**
-	The maximum depth to recurse circular objects when searching for paths.
+	The maximum depth to recurse into circular references when searching for paths.
 
 	Notes:
-	`maxCircularDepth: 0` will fully disable recursion into circular references.
-	`maxRecursionDepth` will still limit the depth of recursion, even if `maxCircularDepth` is greater.
+	- `maxCircularDepth: 0` fully disables recursion into circular references.
+	- {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} still limits the overall depth, even if `maxCircularDepth` allows more.
 
 	@default 5
 
@@ -38,13 +38,13 @@ export type PathsOptions = {
 	};
 
 	type Circular0 = Paths<DeepWithCircular, {maxCircularDepth: 0}>;
-	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular'
+	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular'
 
 	type Circular1 = Paths<DeepWithCircular, {maxCircularDepth: 1}>;
-	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular'
+	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular'
 
 	type Circular2 = Paths<DeepWithCircular, {maxCircularDepth: 2}>;
-	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular' | 'foo.circular.foo.circular.a' | 'foo.circular.foo.circular.a.b' | 'foo.circular.foo.circular.foo' | 'foo.circular.foo.circular.foo.circular'
+	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular' | 'foo.circular.foo.circular.a' | 'foo.circular.foo.circular.a.b' | 'foo.circular.foo.circular.foo' | 'foo.circular.foo.circular.foo.circular'
 	```
 	*/
 	maxCircularDepth?: number;
