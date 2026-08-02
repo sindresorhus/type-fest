@@ -197,27 +197,27 @@ Note: The variable part of the list and everything after it is ignored.
 ```
 type StaticList = [string, 1, 'Hello', number, 2, string, 1, boolean, 4, 1, 'bye'];
 
-type A = CountInArray<StaticList, number>;
+type A = CountExactInArray<StaticList, number>;
 //=> 1
 
-type B = CountInArray<StaticList, string>;
+type B = CountExactInArray<StaticList, string>;
 //=> 2
 
-type C = CountInArray<StaticList, 1>;
+type C = CountExactInArray<StaticList, 1>;
 //=> 3
 
 type VariableList = [string, number, 1, string, ...string[], number, 1, string, 2];
 
-type D = CountInArray<VariableList, string>;
+type D = CountExactInArray<VariableList, string>;
 //=> 2
 
-type E = CountInArray<VariableList, 1>;
+type E = CountExactInArray<VariableList, 1>;
 //=> 1
 
-type F = CountInArray<VariableList, 2>;
+type F = CountExactInArray<VariableList, 2>;
 //=> 0
 ```
 */
-export type CountInArray<List extends unknown[], SearchType> = FilterArrayExact<List, SearchType>['length'];
+export type CountExactInArray<List extends unknown[], SearchType> = FilterArrayExact<List, SearchType>['length'];
 
 export {};

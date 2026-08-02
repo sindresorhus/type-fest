@@ -1,4 +1,4 @@
-import type {NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions, MapsSetsOrArrays, CountInArray} from './internal/index.d.ts';
+import type {NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions, MapsSetsOrArrays, CountExactInArray} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
@@ -228,7 +228,7 @@ type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends numb
 		: IsAny<T> extends true
 			? never
 			: T extends object
-				? GreaterThan<CountInArray<Seen, T>, Options['maxCircularDepth']> extends false // Limit the depth of circular references
+				? GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends false // Limit the depth of circular references
 					? InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
 					: never
 				: never;
