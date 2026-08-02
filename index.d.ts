@@ -149,6 +149,7 @@ export type {ArrayElement} from './source/array-element.d.ts';
 export type {ArrayLength} from './source/array-length.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
 export type {Paths, PathsOptions} from './source/paths.d.ts';
+export type {ConditionalPaths, ConditionalPathsOptions} from './source/conditional-paths.d.ts';
 export type {AllUnionFields} from './source/all-union-fields.d.ts';
 export type {SharedUnionFields} from './source/shared-union-fields.d.ts';
 export type {SharedUnionFieldsDeep, SharedUnionFieldsDeepOptions} from './source/shared-union-fields-deep.d.ts';
