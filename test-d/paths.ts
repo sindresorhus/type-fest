@@ -165,6 +165,14 @@ expectAssignable<CircularFooDefault>('internal.parent.foo.foo.foo');
 expectAssignable<CircularFooDefault>('internal.parent.foo.a.b.c');
 expectAssignable<CircularFooDefault>('internal.parent.a.b.c');
 
+type OptionalCircular = {value: string; next?: OptionalCircular};
+
+// Should only expose the first hop when circular recursion is disabled
+expectType<'value' | 'next'>({} as Paths<OptionalCircular, {maxCircularDepth: 0}>);
+
+// The moment we allow one circular hop, the deeper path must appear
+expectAssignable<Paths<OptionalCircular, {maxCircularDepth: 1}>>({} as 'next.value');
+
 type GetKeysAtNextLevel<PreviousLevelKeys extends string> = PreviousLevelKeys | `foo.${PreviousLevelKeys}` | `internal.parent.${PreviousLevelKeys}`;
 
 type KeysAtLevel0 = 'foo' | 'a' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'internal' | 'internal.parent';
