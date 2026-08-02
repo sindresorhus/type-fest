@@ -25,6 +25,7 @@ export type PathsOptions = {
 	Notes:
 	- `maxCircularDepth: 0` fully disables recursion into circular references.
 	- {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} still limits the overall depth, even if `maxCircularDepth` allows more.
+	- When {@link PathsOptions.leavesOnly | `leavesOnly`} is `true`, paths that terminate at the circular reference limit are treated as leaves.
 
 	@default 5
 
@@ -253,7 +254,9 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 								? TransformedKey
 								: IsNever<keyof Value> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`.
 									? TransformedKey
-									: never)
+									: GreaterThan<CountExactInArray<Seen, Value>, Options['maxCircularDepth']> extends true // The path terminates at the circular reference limit, just like it does at `maxRecursionDepth`.
+										? TransformedKey
+										: never)
 							: never // Should never happen
 				: TransformedKey
 			) extends infer _TransformedKey
