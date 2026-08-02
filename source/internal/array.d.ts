@@ -147,24 +147,26 @@ Returns elements from the List that are equal to the SearchType.
 
 @example
 ```
-type StaticList = [string, 1, 'Hello', number, 2, 1, boolean, 4, 'bye'];
-type B = FilterArrayExact<StaticList, number>;
+type StaticList = [string, 1, 'Hello', number, 2, string, 1, boolean, 4, 1, 'bye'];
+type A = FilterArrayExact<StaticList, number>;
 //=> [number]
-type C = FilterArrayExact<StaticList, string>;
-//=> [string]
-type D = FilterArrayExact<StaticList, 'Hello'>;
+type B = FilterArrayExact<StaticList, string>;
+//=> [string, string]
+type C = FilterArrayExact<StaticList, 'Hello'>;
 //=> ['Hello']
-type E = FilterArrayExact<StaticList, 1>;
-//=> [1, 1]
+type D = FilterArrayExact<StaticList, 1>;
+//=> [1, 1, 1]
 
 // Note: Variable part in the array will discard all subsequent elements.
-type VariableList = [string, 1, 'Hello', number, 2, ...string[], 1, boolean, 4, 'bye'];
-type F = FilterArrayExact<VariableList, number>;
+type VariableList = [string, number, 1, string, ...string[], number, 1, string, 2];
+type E = FilterArrayExact<VariableList, number>;
 //=> [number]
-type G = FilterArrayExact<VariableList, string>;
-//=> [string]
-type H = FilterArrayExact<VariableList, 1>;
+type F = FilterArrayExact<VariableList, string>;
+//=> [string, string]
+type G = FilterArrayExact<VariableList, 1>;
 //=> [1]
+type H = FilterArrayExact<VariableList, 2>;
+//=> []
 ```
 @category Array
 */
@@ -183,22 +185,26 @@ Returns count of how many elements in the List are equal to the SearchType.
 
 @example
 ```
-type StaticList = [string, 1, 'Hello', number, 2, 1, boolean, 4, 'bye'];
-type B = CountInArray<StaticList, number>;
-//=> 5
-type C = CountInArray<StaticList, string>;
-//=> 3
-type D = CountInArray<StaticList, 1>;
+type StaticList = [string, 1, 'Hello', number, 2, string, 1, boolean, 4, 1, 'bye'];
+type A = CountInArray<StaticList, number>;
+//=> 1
+type B = CountInArray<StaticList, string>;
 //=> 2
+type C = CountInArray<StaticList, 'Hello'>;
+//=> 1
+type D = CountInArray<StaticList, 1>;
+//=> 3
 
 // Note: Variable part in the array will discard all subsequent elements.
-type VariableList = [string, 1, 'Hello', number, 2, ...string[], 1, boolean, 4, 'bye'];
+type VariableList = [string, number, 1, string, ...string[], number, 1, string, 2];
 type E = CountInArray<VariableList, number>;
-//=> 3
+//=> 1
 type F = CountInArray<VariableList, string>;
 //=> 2
 type G = CountInArray<VariableList, 1>;
 //=> 1
+type H = CountInArray<VariableList, 2>;
+//=> 0
 ```
 @category Array
 */

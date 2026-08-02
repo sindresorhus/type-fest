@@ -22,7 +22,9 @@ export type PathsOptions = {
 	/**
 	The maximum depth to recurse circular objects when searching for paths.
 
-	Note: `maxCircularDepth: 0` will fully disable recursion into circular references.
+	Notes:
+	`maxCircularDepth: 0` will fully disable recursion into circular references.
+	`maxRecursionDepth` will still limit the depth of recursion, even if `maxCircularDepth` is greater.
 
 	@default 5
 
@@ -31,18 +33,18 @@ export type PathsOptions = {
 	import type {Paths} from 'type-fest';
 
 	type DeepWithCircular = {
-		a: {b: {c: {d: {e: string}}}};
+		a: {b: {c: {d: string}}};
 		foo: {circular: DeepWithCircular};
 	};
 
 	type Circular0 = Paths<DeepWithCircular, {maxCircularDepth: 0}>;
-	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular'
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular'
 
 	type Circular1 = Paths<DeepWithCircular, {maxCircularDepth: 1}>;
-	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.foo' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.a.b.c.d.e' | 'foo.circular.foo.circular'
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular'
 
 	type Circular2 = Paths<DeepWithCircular, {maxCircularDepth: 2}>;
-	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'a.b.c.d.e' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.foo' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | ... 8 more ... | 'foo.circular.foo.circular.foo.circular'
+	// => 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular' | 'foo.circular.foo.circular.a' | 'foo.circular.foo.circular.a.b' | 'foo.circular.foo.circular.foo' | 'foo.circular.foo.circular.foo.circular'
 	```
 	*/
 	maxCircularDepth?: number;
