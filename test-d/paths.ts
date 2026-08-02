@@ -1,6 +1,7 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {DefaultPathsOptions, Paths} from '../source/paths';
-import type {LimitStringDepth} from '../source/internal';
+import type {DefaultPathsOptions, Paths, UnknownArray} from '../index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
+import type {LimitStringDepth} from '../source/internal/string.d.ts';
 
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);
@@ -77,6 +78,15 @@ expectType<never>(map2);
 declare const readonlyMap: Paths<{foo?: {bar?: ReadonlyMap<string, number>}}>;
 expectType<'foo' | 'foo.bar'>(readonlyMap);
 
+declare const readonlyMap2: Paths<ReadonlyMap<string, number>>;
+expectType<never>(readonlyMap2);
+
+declare const weakMap: Paths<{foo?: {bar?: WeakMap<{a: string}, number>}}>;
+expectType<'foo' | 'foo.bar'>(weakMap);
+
+declare const weakMap2: Paths<WeakMap<{a: string}, number>>;
+expectType<never>(weakMap2);
+
 declare const set: Paths<{foo?: {bar?: Set<string>}}>;
 expectType<'foo' | 'foo.bar'>(set);
 
@@ -86,19 +96,39 @@ expectType<never>(set2);
 declare const readonlySet: Paths<{foo?: {bar?: ReadonlySet<string>}}>;
 expectType<'foo' | 'foo.bar'>(readonlySet);
 
+declare const readonlySet2: Paths<ReadonlySet<string>>;
+expectType<never>(readonlySet2);
+
+declare const weakSet: Paths<{foo?: {bar?: WeakSet<{a: string}>}}>;
+expectType<'foo' | 'foo.bar'>(weakSet);
+
+declare const weakSet2: Paths<WeakSet<{a: string}>>;
+expectType<never>(weakSet2);
+
+declare const nonRecursives: Paths<{a: NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>}>;
+expectType<'a'>(nonRecursives);
+
 // Test for unknown length array
 declare const trailingSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>]>;
 expectType<number | `${number}` | '0.a' | `${number}.b`>(trailingSpreadTuple);
 
 declare const trailingSpreadTuple1: Paths<[{a: string}, {b: number}, ...Array<{c: number}>]>;
-expectType<number | `${number}` | '0.a' | `${number}.b`>(trailingSpreadTuple);
 expectType<number | `${number}` | '0.a' | '1.b' | `${number}.c`>(trailingSpreadTuple1);
+
+declare const optionalElementsWithTrailingSpreadTuple: Paths<{foo: [{a: string}, ({b: number})?, ...Array<{c: number}>]}>;
+expectType<'foo' | `foo.${number}` | 'foo.0.a' | 'foo.1.b' | `foo.${number}.c`>(optionalElementsWithTrailingSpreadTuple);
+
+declare const optionalElementsWithTrailingSpreadTuple1: Paths<[({a: string})?, ({b: number})?, ...Array<{c: number}>]>;
+expectType<number | `${number}` | '0.a' | '1.b' | `${number}.c`>(optionalElementsWithTrailingSpreadTuple1);
 
 declare const leadingSpreadTuple: Paths<[...Array<{a: string}>, {b: number}]>;
 expectType<number | `${number}` | `${number}.b` | `${number}.a`>(leadingSpreadTuple);
 
 declare const leadingSpreadTuple1: Paths<[...Array<{a: string}>, {b: number}, {c: number}]>;
 expectType<number | `${number}` | `${number}.b` | `${number}.c` | `${number}.a`>(leadingSpreadTuple1);
+
+declare const middleSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>, {c: boolean}]>;
+expectType<number | `${number}` | '0.a' | `${number}.b` | `${number}.c`>(middleSpreadTuple);
 
 // Circularly references
 type MyEntity = {
@@ -112,7 +142,7 @@ expectAssignable<string>({} as MyEntityPaths);
 
 // By default, the recursion limit should be reasonably long
 type RecursiveFoo = {foo: RecursiveFoo};
-expectAssignable<Paths<RecursiveFoo>>('foo.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 5}>>('foo.foo.foo.foo.foo.foo');
 
 declare const recursion0: Paths<RecursiveFoo, {maxRecursionDepth: 0}>;
 expectType<'foo'>(recursion0);
@@ -121,33 +151,33 @@ declare const recursion1: Paths<RecursiveFoo, {maxRecursionDepth: 1}>;
 expectType<'foo' | 'foo.foo'>(recursion1);
 
 // Circular depth
-type CircularFoo = {foo: CircularFoo; a: {b: {c: {d: {e: {f: {g: string}}}}}}; internal: {parent: CircularFoo}};
+type CircularFoo = {foo: CircularFoo; a: {b: {c: {d: string}}}; internal: {parent: CircularFoo}};
 
 // Default circular limit should be respected
 type CircularFooDefault = Paths<CircularFoo>;
-expectAssignable<CircularFooDefault>('foo.foo.foo.foo.foo.foo.foo.foo');
-expectAssignable<CircularFooDefault>('foo.foo.foo.a.b.c.d.e');
-expectAssignable<CircularFooDefault>('foo.foo.a.b.c.d.e.f.g');
-expectAssignable<CircularFooDefault>('foo.a.b.c.d.e.f.g');
+expectAssignable<CircularFooDefault>('foo.foo.foo.foo.foo.foo');
+expectAssignable<CircularFooDefault>('foo.foo.foo.a.b.c');
+expectAssignable<CircularFooDefault>('foo.foo.a.b.c.d');
 expectAssignable<CircularFooDefault>('foo.foo.a.b.c');
-expectAssignable<CircularFooDefault>('internal.parent.foo.foo.foo.foo.foo.foo.foo');
+expectAssignable<CircularFooDefault>('internal.parent.foo.foo.foo');
 expectAssignable<CircularFooDefault>('internal.parent.foo.a.b.c');
 expectAssignable<CircularFooDefault>('internal.parent.a.b.c');
 
 type GetKeysAtNextLevel<PreviousLevelKeys extends string> = PreviousLevelKeys | `foo.${PreviousLevelKeys}` | `internal.parent.${PreviousLevelKeys}`;
 
-type KeysAtLevel0 = 'foo' | 'a' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'internal' | 'internal.parent' | 'a.b.c.d.e' | 'a.b.c.d.e.f' | 'a.b.c.d.e.f.g';
+type KeysAtLevel0 = 'foo' | 'a' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'internal' | 'internal.parent';
 expectType<KeysAtLevel0>({} as Paths<CircularFoo, {maxCircularDepth: 0}>);
 
 type KeysAtLevel1 = GetKeysAtNextLevel<KeysAtLevel0>;
 expectType<KeysAtLevel1>({} as Paths<CircularFoo, {maxCircularDepth: 1}>);
 
+// Level 2+ will hit the max recursion depth, so we have to limit the expected keys to that depth for testing
 type KeysAtLevel2 = GetKeysAtNextLevel<KeysAtLevel1>;
-expectType<KeysAtLevel2>({} as Paths<CircularFoo, {maxCircularDepth: 2}>);
+expectType<LimitStringDepth<KeysAtLevel2, '.', DefaultPathsOptions['maxRecursionDepth']>>({} as Paths<CircularFoo, {maxCircularDepth: 2}>);
 
-// Level 3 will hit the max recursion depth, so we have to limit the expected keys to that depth for testing
 type KeysAtLevel3 = GetKeysAtNextLevel<KeysAtLevel2>;
 expectType<LimitStringDepth<KeysAtLevel3, '.', DefaultPathsOptions['maxRecursionDepth']>>({} as Paths<CircularFoo, {maxCircularDepth: 3}>);
+
 // We can also test that it in fact doesn't go deeper
 expectNotAssignable<Paths<CircularFoo, {maxCircularDepth: 3}>>({} as KeysAtLevel3);
 
@@ -189,6 +219,20 @@ type Object3 = {
 };
 expectType<Paths<Object3, {bracketNotation: true}>>({} as '[1]' | '[2]');
 
+type Object4 = {
+	1: {
+		a: string;
+	};
+};
+expectType<Paths<Object4, {bracketNotation: true}>>({} as '[1]' | '[1].a');
+
+type Object5 = {
+	1: {
+		2: string;
+	};
+};
+expectType<Paths<Object5, {bracketNotation: true}>>({} as '[1]' | '[1][2]');
+
 type deepArray = {
 	arr: Array<Array<Array<{a: string}>>>;
 };
@@ -206,6 +250,18 @@ expectType<'a.b' | 'a.c' | 'a.d' | 'a.e' | 'a.f.g' | 'h'>(leaves);
 
 declare const unionLeaves: Paths<{a: {b?: number}} | {a: string; b?: {c: string}}, {leavesOnly: true}>;
 expectType<'a.b' | 'a' | 'b.c'>(unionLeaves);
+
+declare const unionLeaves1: Paths<{a: {} | {c: number}}, {leavesOnly: true}>;
+expectType<'a' | 'a.c'>(unionLeaves1);
+
+declare const unionLeaves2: Paths<{a: {[x: string]: number} | {c: number}}, {leavesOnly: true}>;
+expectType<`a.${string}`>(unionLeaves2); // Collapsed union
+
+declare const unionLeaves3: Paths<{a: string | {toLowerCase: number}}, {leavesOnly: true}>;
+expectType<'a' | 'a.toLowerCase'>(unionLeaves3);
+
+declare const unionLeaves4: Paths<{a: {b: string} | {c: string}}, {leavesOnly: true}>; // No common keys b/w `{b: string}` and `{c: string}`, but this shouldn't make `a` a leaf.
+expectType<'a.b' | 'a.c'>(unionLeaves4);
 
 declare const emptyObjectLeaves: Paths<{a: {}}, {leavesOnly: true}>;
 expectType<'a'>(emptyObjectLeaves);
@@ -258,7 +314,7 @@ expectType<`${number}.a` | `${number}.b`>(leadingSpreadLeaves);
 declare const leadingSpreadLeaves1: Paths<[...Array<{a?: string}>, {readonly b: number}, {c: number}], {leavesOnly: true}>;
 expectType<`${number}.a` | `${number}.b` | `${number}.c`>(leadingSpreadLeaves1);
 
-declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true}>;
+declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 10; maxCircularDepth: 10}>;
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveLeaves);
 
 declare const recursiveWithMaxLeaves: Paths<RecursiveFoo, {maxRecursionDepth: 0; leavesOnly: true}>;
@@ -281,6 +337,21 @@ expectType<'a[1]' | 'a[2]'>(bracketNumericLeaves);
 
 declare const bracketNestedArrayLeaves: Paths<{a: Array<Array<Array<{b: string}>>>}, {bracketNotation: true; leavesOnly: true}>;
 expectType<`a[${number}][${number}][${number}].b`>(bracketNestedArrayLeaves);
+
+declare const mapLeaves: Paths<{a: {b: Map<string, number>; c: ReadonlyMap<string, number>}; d: WeakMap<{a: string}, number>}, {leavesOnly: true}>;
+expectType<'a.b' | 'a.c' | 'd'>(mapLeaves);
+
+declare const setLeaves: Paths<{a: {b: Set<string>; c: ReadonlySet<string>}; d: WeakSet<{a: string}>}, {leavesOnly: true}>;
+expectType<'a.b' | 'a.c' | 'd'>(setLeaves);
+
+declare const unknownLeaves: Paths<{a: {b: unknown}}, {leavesOnly: true}>;
+expectType<'a.b'>(unknownLeaves);
+
+declare const anyLeaves: Paths<{a: {b: any}}, {leavesOnly: true}>;
+expectType<'a.b'>(anyLeaves);
+
+declare const neverLeaves: Paths<{a: {b: never}}, {leavesOnly: true}>;
+expectType<'a.b'>(neverLeaves);
 
 // -- depth option --
 declare const zeroDepth: Paths<DeepObject, {depth: 0}>;
@@ -334,7 +405,7 @@ expectType<'a.b.c' | `a.b2.${number}`>(maxSimilarToDepth);
 declare const maxSimilarToDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 0; depth: 0}>;
 expectType<'foo'>(maxSimilarToDepth2);
 
-declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10}>; // Default `maxRecursionDepth` is 10
+declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // Default `maxRecursionDepth` is 10
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(maxSimilarToDepth3);
 
 declare const maxMoreThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 1}>;
@@ -382,14 +453,14 @@ expectType<'a' | 'a.0.0.0.b'>(nestedTupleDepth);
 declare const recursiveDepth: Paths<RecursiveFoo, {depth: 4}>;
 expectType<'foo.foo.foo.foo.foo'>(recursiveDepth);
 
-declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8}>;
+declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8; maxRecursionDepth: 10; maxCircularDepth: 10}>;
 expectType<'foo.foo' | 'foo.foo.foo.foo' | 'foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth2);
 
 // For recursive types, leaves are at `maxRecursionDepth`
-declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5}>;
+declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10}>;
 expectType<never>(recursiveDepth3);
 
-declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10}>; // No leaves at depth `5`
+declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // No leaves at depth `5`
 expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth4);
 
 declare const recursiveDepth6: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 6; depth: 5}>; // Leaves are at depth `6`
@@ -439,3 +510,128 @@ expectType<never>(neverDepth);
 
 declare const anyDepth: Paths<DeepObject, {depth: any}>;
 expectType<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d'>(anyDepth);
+
+// Index signatures
+declare const indexSignature: Paths<{[x: string]: {a: string; b: number}}>;
+expectType<string>(indexSignature); // Collapsed union
+
+declare const indexSignature1: Paths<{[x: Lowercase<string>]: {a: string; b: number}}>;
+expectType<Lowercase<string> | `${Lowercase<string>}.a` | `${Lowercase<string>}.b`>(indexSignature1);
+
+declare const indexSignature2: Paths<{[x: number]: {0: string; 1: number}}>;
+expectType<number | `${number}` | `${number}.0` | `${number}.1`>(indexSignature2);
+
+declare const indexSignature3: Paths<{[x: Uppercase<string>]: {a: string; b: number}}>;
+expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignature3);
+
+declare const indexSignature4: Paths<{a: {[x: symbol]: {b: number; c: number}}}>;
+expectType<'a'>(indexSignature4);
+
+declare const indexSignatureWithStaticKeys: Paths<{[x: Uppercase<string>]: {a: string; b: number}; c: number}>;
+expectType<'c' | Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignatureWithStaticKeys);
+
+declare const indexSignatureWithStaticKeys1: Paths<{[x: Uppercase<string>]: {a: string; b?: number}; C: {a: 'a'}}>;
+expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignatureWithStaticKeys1); // Collapsed union
+
+declare const nonRootIndexSignature: Paths<{a: {[x: string]: {b: string; c: number}}}>;
+expectType<'a' | `a.${string}` | `a.${string}.b` | `a.${string}.c`>(nonRootIndexSignature);
+
+declare const nonRootIndexSignature1: Paths<{a: {[x: Lowercase<string>]: {b: string; c: number}}}>;
+expectType<'a' | `a.${Lowercase<string>}` | `a.${Lowercase<string>}.b` | `a.${Lowercase<string>}.c`>(nonRootIndexSignature1);
+
+declare const nestedIndexSignature: Paths<{[x: string]: {[x: Lowercase<string>]: {a: string; b: number}}}>;
+expectType<string>(nestedIndexSignature);
+
+declare const nestedIndexSignature1: Paths<{[x: Uppercase<string>]: {[x: Lowercase<string>]: {a: string; b: number}}}>;
+expectType<Uppercase<string> | `${Uppercase<string>}.${Lowercase<string>}` | `${Uppercase<string>}.${Lowercase<string>}.a` | `${Uppercase<string>}.${Lowercase<string>}.b`>(
+	nestedIndexSignature1,
+);
+
+declare const indexSignatureUnion: Paths<{a: {[x: string]: number} | {b: number}}>;
+expectType<'a' | `a.${string}`>(indexSignatureUnion); // Collapsed union
+
+declare const indexSignatureUnion1: Paths<{a: {[x: Uppercase<string>]: number} | {b: number}}>;
+expectType<'a' | 'a.b' | `a.${Uppercase<string>}`>(indexSignatureUnion1);
+
+declare const indexSignatureLeaves: Paths<{[x: string]: {a: string; b: number}}, {leavesOnly: true}>;
+expectType<`${string}.a` | `${string}.b`>(indexSignatureLeaves);
+
+declare const indexSignatureLeaves1: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {leavesOnly: true}>;
+expectType<`a.${string}.b` | `a.${string}.c` | 'd' | 'e.f'>(indexSignatureLeaves1);
+
+declare const indexSignatureLeaves2: Paths<{a: {[x: string]: [] | {b: number}}}, {leavesOnly: true}>;
+expectType<`a.${string}` | `a.${string}.b`>(indexSignatureLeaves2);
+
+declare const indexSignatureDepth: Paths<{[x: string]: {a: string; b: number}}, {depth: 1}>;
+expectType<`${string}.b` | `${string}.a`>(indexSignatureDepth);
+
+declare const indexSignatureDepth1: Paths<{[x: string]: {a: string; b: number}}, {depth: 0}>;
+expectType<string>(indexSignatureDepth1);
+
+declare const indexSignatureDepth2: Paths<{[x: string]: {a: string; b: number}}, {depth: 0 | 1}>;
+expectType<string>(indexSignatureDepth2); // Collapsed union
+
+declare const indexSignatureDepth3: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {depth: 0 | 2}>;
+expectType<'a' | `a.${string}.b` | `a.${string}.c` | 'd' | 'e'>(indexSignatureDepth3);
+
+declare const indexSignatureDepth4: Paths<{a: {[x: string]: [] | {b: number}}}, {depth: 2}>;
+expectType<`a.${string}.b`>(indexSignatureDepth4);
+
+declare const indexSignatureDepthLeaves: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {depth: 0 | 2; leavesOnly: true}>;
+expectType<`a.${string}.b` | `a.${string}.c` | 'd'>(indexSignatureDepthLeaves);
+
+// Generic types
+type PathsConstraint<T, _U extends Paths<T>> = never;
+
+type Generic1<T> = {bar: {baz: T}};
+type Test1<T> = PathsConstraint<Generic1<T>, 'bar.baz'>;
+
+type Generic2<T, U> = {bar: {baz: {qux: T}; fizz: {buzz: U} | U | T}};
+type Test2<T, U> = PathsConstraint<
+	Generic2<T, U>,
+	'bar' | 'bar.baz' | 'bar.baz.qux' | 'bar.fizz' | 'bar.fizz.buzz'
+>;
+
+type LeavesOnlyPathsConstraint<T, _U extends Paths<T, {leavesOnly: true}>> = never;
+
+type Generic3<T> = {bar: {baz: T; qux: string}};
+type Test3<T> = LeavesOnlyPathsConstraint<Generic3<T>, 'bar.qux'>;
+// @ts-expect-error
+type Test4<T> = LeavesOnlyPathsConstraint<Generic3<T>, 'bar'>; // 'bar' is not a leaf
+// @ts-expect-error
+type Test5<T> = LeavesOnlyPathsConstraint<Generic3<T>, 'bar.baz'>; // 'bar.baz' is not a leaf, because `T` is not known.
+
+type DepthPathsConstraint<T, _U extends Paths<T, {depth: 1}>> = never;
+
+type Generic4<T> = {bar: {baz: T}; qux: [T]};
+type Test6<T> = DepthPathsConstraint<Generic4<T>, 'bar.baz' | 'qux.0'>;
+// @ts-expect-error
+type Test7<T> = DepthPathsConstraint<Generic4<T>, 'bar'>; // 'bar' is not at depth `1`
+// @ts-expect-error
+type Test8<T> = DepthPathsConstraint<Generic4<T>, 'qux'>; // 'qux' is not at depth `1`
+
+type BracketNotationPathsConstraint<T, _U extends Paths<T, {bracketNotation: true}>> = never;
+
+type Generic5<T> = {1: {2: T}; 3: [T]};
+type Test9<T> = BracketNotationPathsConstraint<Generic5<T>, '[1]' | '[1][2]' | '[3]' | '[3][0]'>;
+
+type MaxRecursionDepthPathsConstraint<T, _U extends Paths<T, {maxRecursionDepth: 2}>> = never;
+
+type Generic6<T> = {foo: {bar: T}; baz: T; fizz: {buzz: {qux: {quxx: T}}}};
+type Test10<T> = MaxRecursionDepthPathsConstraint<
+	Generic6<T>,
+	'foo' | 'foo.bar' | 'baz' | 'fizz' | 'fizz.buzz' | 'fizz.buzz.qux'
+>;
+// @ts-expect-error
+type Test11<T> = MaxRecursionDepthPathsConstraint<Generic6<T>, 'fizz.buzz.qux.quxx'>; // 'fizz.buzz.qux.quxx' is at depth `3`
+
+type LeavesOnlyAndDepthPathsConstraint<T, _U extends Paths<T, {leavesOnly: true; depth: 1}>> = never;
+
+type Generic7<T> = {foo: {bar: T; baz: string; fizz: {buzz: number}}; qux: string};
+type Test12<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.baz'>;
+// @ts-expect-error
+type Test13<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'qux'>; // 'qux' is a leaf, but not at depth `1`.
+// @ts-expect-error
+type Test14<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.fizz'>; // 'foo.fizz' is at depth `1`, but not a leaf.
+// @ts-expect-error
+type Test15<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.bar'>; // 'foo.bar' is at depth `1`, but not a leaf because `T` is not known.

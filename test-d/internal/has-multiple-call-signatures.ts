@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {HasMultipleCallSignatures} from '../../source/internal';
+import type {HasMultipleCallSignatures} from '../../source/internal/index.d.ts';
 
 type Overloaded = {
 	(foo: number): string;
@@ -8,7 +8,6 @@ type Overloaded = {
 
 type Overloaded2 = {
 	(foo: number | undefined): string;
-	// eslint-disable-next-line @typescript-eslint/unified-signatures
 	(foo: number): string;
 };
 

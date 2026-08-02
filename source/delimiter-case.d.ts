@@ -1,5 +1,9 @@
-import type {IsStringLiteral} from './is-literal';
-import type {Words, WordsOptions} from './words';
+import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
+import type {IsStringLiteral} from './is-string-literal.d.ts';
+import type {Merge} from './merge.d.ts';
+import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
+
+export type _DefaultDelimiterCaseOptions = Merge<_DefaultWordsOptions, {splitOnNumbers: false}>;
 
 /**
 Convert an array of words to delimiter case starting with a delimiter with input capitalization.
@@ -12,20 +16,18 @@ type DelimiterCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? DelimiterCaseFromArray<RemainingWords, Delimiter, `${OutputString}${Delimiter}${FirstWord}`>
+	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? FirstWord : `${OutputString}${
+		StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
+	}${FirstWord}`>
 	: OutputString;
-
-type RemoveFirstLetter<S extends string> = S extends `${infer _}${infer Rest}`
-	? Rest
-	: '';
 
 /**
 Convert a string literal to a custom string delimiter casing.
 
 This can be useful when, for example, converting a camel-cased object property to an oddly cased one.
 
-@see KebabCase
-@see SnakeCase
+@see {@link KebabCase}
+@see {@link SnakeCase}
 
 @example
 ```
@@ -35,6 +37,7 @@ import type {DelimiterCase} from 'type-fest';
 
 const someVariable: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 const someVariableNoSplitOnNumbers: DelimiterCase<'p2pNetwork', '#', {splitOnNumbers: false}> = 'p2p#network';
+const someVariableWithPunctuation: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: true}> = 'div#card#after';
 
 // Advanced
 
@@ -42,16 +45,16 @@ type OddlyCasedProperties<T> = {
 	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
 };
 
-interface SomeOptions {
+type SomeOptions = {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
-}
+};
 
 const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 	'dry#run': true,
 	'include#file': 'bar.js',
-	foo: 123
+	foo: 123,
 };
 ```
 
@@ -61,13 +64,16 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 export type DelimiterCase<
 	Value,
 	Delimiter extends string,
-	Options extends WordsOptions = {splitOnNumbers: false},
+	Options extends WordsOptions = {},
 > = Value extends string
-	? IsStringLiteral<Value> extends false
-		? Value
-		: Lowercase<
-		RemoveFirstLetter<
-		DelimiterCaseFromArray<Words<Value, Options>, Delimiter>
-		>
-		>
+	? Delimiter extends string // For distributing `Delimiter`
+		? IsStringLiteral<Value> extends false
+			? Value
+			: Lowercase<DelimiterCaseFromArray<
+				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
+				Delimiter
+			>>
+		: never
 	: Value;
+
+export {};

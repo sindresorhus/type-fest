@@ -1,1 +1,3 @@
-export * from './tagged';
+export type * from './tagged.d.ts';
+
+export {};

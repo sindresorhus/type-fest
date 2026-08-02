@@ -1,5 +1,5 @@
 import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
-import type {PackageJson, LiteralUnion, JsonObject} from '../index';
+import type {PackageJson, LiteralUnion, JsonObject} from '../index.d.ts';
 
 const packageJson: PackageJson = {};
 
@@ -36,22 +36,35 @@ expectType<PackageJson.Dependency | undefined>(packageJson.peerDependencies);
 expectType<string[] | undefined>(packageJson.bundleDependencies);
 expectType<string[] | undefined>(packageJson.bundledDependencies);
 expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
+expectType<keyof PackageJson.Dependency>({} as string);
 expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
-expectType<Partial<Record<string, string>> | undefined>(packageJson.engines);
+expectAssignable<PackageJson['overrides']>({foo: '1.0.0'});
+expectAssignable<PackageJson['overrides']>({foo: {'.': '1.0.0', bar: '1.0.0'}});
+expectAssignable<PackageJson['overrides']>({baz: {bar: {foo: '1.0.0'}}});
+expectAssignable<PackageJson['overrides']>({foo: undefined});
+expectAssignable<PackageJson['overrides']>({foo: {bar: undefined}});
+expectType<keyof PackageJson.DependencyOverrides>({} as string);
+expectAssignable<PackageJson.DevEngineDependency>({
+	name: 'unicorn',
+	version: '>= 1.0.0',
+	onFail: 'ignore',
+});
+expectType<{[EngineName in LiteralUnion<'npm' | 'node', string>]?: string} | undefined>(packageJson.engines);
+expectAssignable<Partial<Record<string, string>> | undefined>(packageJson.engines);
 expectType<boolean | undefined>(packageJson.engineStrict);
 expectAssignable<
-| undefined
-| Array<LiteralUnion<
-'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
-string
->>
+	| undefined
+	| Array<LiteralUnion<
+		'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
+		string
+	>>
 >(packageJson.os);
 expectAssignable<
-| undefined
-| Array<LiteralUnion<
-'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
-string
->>
+	| undefined
+	| Array<LiteralUnion<
+		'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
+		string
+	>>
 >(packageJson.cpu);
 expectAssignable<PackageJson.Imports>({'#unicorn': 'unicorn'});
 expectAssignable<PackageJson.Imports>({
@@ -79,13 +92,13 @@ expectType<boolean | undefined>(packageJson.private);
 expectType<PackageJson.PublishConfig | undefined>(packageJson.publishConfig);
 expectType<string | undefined>(packageJson.module);
 expectType<
-| string
-| {
-	[moduleName: string]: string | undefined;
-	main?: string;
-	browser?: string;
-}
-| undefined
+	| string
+	| {
+		[moduleName: string]: string | undefined;
+		main?: string;
+		browser?: string;
+	}
+	| undefined
 >(packageJson.esnext);
 expectType<PackageJson | undefined>(packageJson.jspm);
 

@@ -1,9 +1,10 @@
-import type {StaticPartOfArray, VariablePartOfArray, NonRecursiveType, ToString, IsNumberLike, CountInArray} from './internal';
-import type {EmptyObject} from './empty-object';
-import type {IsAny} from './is-any';
-import type {UnknownArray} from './unknown-array';
-import type {Subtract} from './subtract';
-import type {GreaterThan} from './greater-than';
+import type {NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions, MapsSetsOrArrays, CountInArray} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+import type {GreaterThan} from './greater-than.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {Sum} from './sum.d.ts';
+import type {And} from './and.d.ts';
 
 /**
 Paths options.
@@ -12,9 +13,9 @@ Paths options.
 */
 export type PathsOptions = {
 	/**
-	The maximum depth to recurse when searching for paths.
+	The maximum depth to recurse when searching for paths. Range: 0 ~ 10.
 
-	@default 10
+	@default 5
 	*/
 	maxRecursionDepth?: number;
 
@@ -23,10 +24,12 @@ export type PathsOptions = {
 
 	Note: `maxCircularDepth: 0` will fully disable recursion into circular references.
 
-	@default 10
+	@default 5
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type DeepWithCircular = {
 		a: {b: {c: {d: {e: string}}}};
 		foo: {circular: DeepWithCircular};
@@ -51,6 +54,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type ArrayExample = {
 		array: ['foo'];
 	};
@@ -64,6 +69,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type NumberKeyExample = {
 		1: ['foo'];
 	};
@@ -84,6 +91,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type Post = {
 		id: number;
 		author: {
@@ -104,13 +113,15 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type ArrayExample = {
 		array: Array<{foo: string}>;
 		tuple: [string, {bar: string}];
 	};
 
 	type AllPaths = Paths<ArrayExample, {leavesOnly: false}>;
-	//=> 'array' | `array.${number}` | `array.${number}.foo` | 'tuple' | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
+	//=> 'array' | 'tuple' | `array.${number}` | `array.${number}.foo` | 'tuple.0' | 'tuple.1' | 'tuple.1.bar'
 
 	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
 	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
@@ -127,6 +138,8 @@ export type PathsOptions = {
 
 	@example
 	```
+	import type {Paths} from 'type-fest';
+
 	type Post = {
 		id: number;
 		author: {
@@ -155,8 +168,8 @@ export type PathsOptions = {
 };
 
 export type DefaultPathsOptions = {
-	maxRecursionDepth: 10;
-	maxCircularDepth: 10;
+	maxRecursionDepth: 5;
+	maxCircularDepth: 5;
 	bracketNotation: false;
 	leavesOnly: false;
 	depth: number;
@@ -192,113 +205,68 @@ declare function open<Path extends ProjectPaths>(path: Path): void;
 open('filename'); // Pass
 open('folder.subfolder'); // Pass
 open('folder.subfolder.filename'); // Pass
+// @ts-expect-error
 open('foo'); // TypeError
 
 // Also works with arrays
 open('listA.1'); // Pass
 open('listB.0'); // Pass
+// @ts-expect-error
 open('listB.1'); // TypeError. Because listB only has one element.
 ```
 
 @category Object
 @category Array
 */
-export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, {
-	// Set default maxRecursionDepth to 10
-	maxRecursionDepth: Options['maxRecursionDepth'] extends number ? Options['maxRecursionDepth'] : DefaultPathsOptions['maxRecursionDepth'];
-	// Set default maxCircularDepth to 10
-	maxCircularDepth: Options['maxCircularDepth'] extends number ? Options['maxCircularDepth'] : DefaultPathsOptions['maxCircularDepth'];
-	// Set default bracketNotation to false
-	bracketNotation: Options['bracketNotation'] extends boolean ? Options['bracketNotation'] : DefaultPathsOptions['bracketNotation'];
-	// Set default leavesOnly to false
-	leavesOnly: Options['leavesOnly'] extends boolean ? Options['leavesOnly'] : DefaultPathsOptions['leavesOnly'];
-	// Set default depth to number
-	depth: Options['depth'] extends number ? Options['depth'] : DefaultPathsOptions['depth'];
-}>;
+export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
 
-type _Paths<T, Options extends Required<PathsOptions>, Seen extends unknown[] = []> =
-	T extends NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends number = 0, Seen extends unknown[] = []> =
+	T extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
 		? never
 		: IsAny<T> extends true
 			? never
-			: GreaterThan<CountInArray<Seen, T>, Options['maxCircularDepth']> extends false
-				? T extends UnknownArray
-					? number extends T['length']
-					// We need to handle the fixed and non-fixed index part of the array separately.
-						? InternalPaths<StaticPartOfArray<T>, Options, Seen>
-						// For the variable part of the array we need to include the full array as Seen to prevent circular recursion.
-						| InternalPaths<Array<VariablePartOfArray<T>[number]>, Options, [...Seen, T]>
-						: InternalPaths<T, Options, Seen>
-					: T extends object
-						? InternalPaths<T, Options, Seen>
-						: never
+			: T extends object
+				? GreaterThan<CountInArray<Seen, T>, Options['maxCircularDepth']> extends false // Limit the depth of circular references
+					? InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
+					: never
 				: never;
 
-type InternalPaths<T, Options extends Required<PathsOptions>, Seen extends unknown[]> =
-	Options['maxRecursionDepth'] extends infer MaxDepth extends number
-		? Required<T> extends infer T
-			? T extends EmptyObject | readonly []
-				? never
-				: {
-					[Key in keyof T]:
-					Key extends string | number // Limit `Key` to string or number.
-						? (
-							Options['bracketNotation'] extends true
-								? IsNumberLike<Key> extends true
-									? `[${Key}]`
-									: (Key | ToString<Key>)
-								: never
-								|
-								Options['bracketNotation'] extends false
-								// If `Key` is a number, return `Key | `${Key}``, because both `array[0]` and `array['0']` work.
-									? (Key | ToString<Key>)
-									: never
-						) extends infer TranformedKey extends string | number ?
-						// 1. If style is 'a[0].b' and 'Key' is a numberlike value like 3 or '3', transform 'Key' to `[${Key}]`, else to `${Key}` | Key
-						// 2. If style is 'a.0.b', transform 'Key' to `${Key}` | Key
-							| ((Options['leavesOnly'] extends true
-								? MaxDepth extends 0
-									? TranformedKey
-									: T[Key] extends EmptyObject | readonly [] | NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
-										? TranformedKey
-										: never
-								: TranformedKey
-							) extends infer _TransformedKey
-								// If `depth` is provided, the condition becomes truthy only when it reaches `0`.
-								// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
-								? 0 extends Options['depth']
-									? _TransformedKey
-									: never
-								: never)
-							| (
-								// Recursively generate paths for the current key
-								GreaterThan<MaxDepth, 0> extends true // Limit the depth to prevent infinite recursion
-									? _Paths<T[Key],
-									{
-										bracketNotation: Options['bracketNotation'];
-										maxRecursionDepth: Subtract<MaxDepth, 1>;
-										maxCircularDepth: Options['maxCircularDepth'];
-										leavesOnly: Options['leavesOnly'];
-										depth: Subtract<Options['depth'], 1>;
-									}, [...Seen, T]> extends infer SubPath
-										? SubPath extends string | number
-											? (
-												Options['bracketNotation'] extends true
-													? SubPath extends `[${any}]` | `[${any}]${string}`
-														? `${TranformedKey}${SubPath}` // If next node is number key like `[3]`, no need to add `.` before it.
-														: `${TranformedKey}.${SubPath}`
-													: never
-											) | (
-												Options['bracketNotation'] extends false
-													? `${TranformedKey}.${SubPath}`
-													: never
-											)
-											: never
-										: never
-									: never
-							)
-							: never
-						: never
-				}[keyof T & (T extends UnknownArray ? number : unknown)]
+type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number, Seen extends unknown[]> =
+	{[Key in keyof T]: Key extends string | number // Limit `Key` to `string | number`
+		? (
+			And<Options['bracketNotation'], IsNumberLike<Key>> extends true
+				? `[${Key}]`
+				: CurrentDepth extends 0
+					// Return both `Key` and `ToString<Key>` because for number keys, like `1`, both `1` and `'1'` are valid keys.
+					? Key | ToString<Key>
+					: `.${(Key | ToString<Key>)}`
+		) extends infer TransformedKey extends string | number
+			? ((Options['leavesOnly'] extends true
+				? Options['maxRecursionDepth'] extends CurrentDepth
+					? TransformedKey
+					: IsNever<T[Key]> extends true
+						? TransformedKey
+						: T[Key] extends infer Value // For distributing `T[Key]`
+							? (Value extends readonly [] | NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
+								? TransformedKey
+								: IsNever<keyof Value> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`.
+									? TransformedKey
+									: never)
+							: never // Should never happen
+				: TransformedKey
+			) extends infer _TransformedKey
+				// If `depth` is provided, the condition becomes truthy only when it matches `CurrentDepth`.
+				// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
+				? CurrentDepth extends Options['depth']
+					? _TransformedKey
+					: never
+				: never)
+			// Recursively generate paths for the current key
+			| (GreaterThan<Options['maxRecursionDepth'], CurrentDepth> extends true // Limit the depth to prevent infinite recursion
+				? `${TransformedKey}${_Paths<T[Key], Options, Sum<CurrentDepth, 1>, Seen> & (string | number)}`
+				: never)
 			: never
-		: never;
+		: never
+	}[keyof T & (T extends UnknownArray ? number : unknown)];
+
+export {};

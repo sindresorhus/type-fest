@@ -5,38 +5,20 @@ Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31438)
 
 @example
 ```
-// data.json
-{
-	'foo': 1,
-	'bar': 2,
-	'biz': 3
-}
-
-// main.ts
 import type {ValueOf} from 'type-fest';
-import data = require('./data.json');
 
-export function getData(name: string): ValueOf<typeof data> {
-	return data[name];
-}
+type A = ValueOf<{id: number; name: string; active: boolean}>;
+//=> string | number | boolean
 
-export function onlyBar(name: string): ValueOf<typeof data, 'bar'> {
-	return data[name];
-}
+type B = ValueOf<{id: number; name: string; active: boolean}, 'name'>;
+//=> string
 
-// file.ts
-import {getData, onlyBar} from './main';
-
-getData('foo');
-//=> 1
-
-onlyBar('foo');
-//=> TypeError ...
-
-onlyBar('bar');
-//=> 2
+type C = ValueOf<{id: number; name: string; active: boolean}, 'id' | 'name'>;
+//=> string | number
 ```
 
 @category Object
 */
 export type ValueOf<ObjectType, ValueType extends keyof ObjectType = keyof ObjectType> = ObjectType[ValueType];
+
+export {};

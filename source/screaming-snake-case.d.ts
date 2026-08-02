@@ -1,5 +1,7 @@
-import type {SnakeCase} from './snake-case';
-import type {WordsOptions} from './words';
+import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {SnakeCase} from './snake-case.d.ts';
+import type {WordsOptions} from './words.d.ts';
 
 /**
 Convert a string literal to screaming-snake-case.
@@ -12,6 +14,7 @@ import type {ScreamingSnakeCase} from 'type-fest';
 
 const someVariable: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
 const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNumbers: false}> = 'P2P_NETWORK';
+const someVariableWithPunctuation: ScreamingSnakeCase<'div.card::after', {splitOnPunctuation: true}> = 'DIV_CARD_AFTER';
 
 ```
 
@@ -20,5 +23,9 @@ const someVariableNoSplitOnNumbers: ScreamingSnakeCase<'p2pNetwork', {splitOnNum
  */
 export type ScreamingSnakeCase<
 	Value,
-	Options extends WordsOptions = {splitOnNumbers: false},
-> = Value extends string ? Uppercase<SnakeCase<Value, Options>> : Value;
+	Options extends WordsOptions = {},
+> = Value extends string
+	? Uppercase<SnakeCase<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>>
+	: Value;
+
+export {};

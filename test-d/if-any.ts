@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IfAny} from '../index';
+import type {IfAny} from '../index.d.ts';
 
 declare const _any: any;
 

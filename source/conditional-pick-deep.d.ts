@@ -1,9 +1,9 @@
-import type {IsEqual} from './is-equal';
-import type {ConditionalExcept} from './conditional-except';
-import type {ConditionalSimplifyDeep} from './conditional-simplify';
-import type {UnknownRecord} from './unknown-record';
-import type {EmptyObject} from './empty-object';
-import type {IsPlainObject} from './internal';
+import type {IsEqual} from './is-equal.d.ts';
+import type {ConditionalExcept} from './conditional-except.d.ts';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
+import type {UnknownRecord} from './unknown-record.d.ts';
+import type {EmptyObject} from './empty-object.d.ts';
+import type {ApplyDefaultOptions, IsPlainObject} from './internal/index.d.ts';
 
 /**
 Used to mark properties that should be excluded.
@@ -22,7 +22,7 @@ type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions
 /**
 ConditionalPickDeep options.
 
-@see ConditionalPickDeep
+@see {@link ConditionalPickDeep}
 */
 export type ConditionalPickDeepOptions = {
 	/**
@@ -33,16 +33,20 @@ export type ConditionalPickDeepOptions = {
 	condition?: 'extends' | 'equality';
 };
 
+type DefaultConditionalPickDeepOptions = {
+	condition: 'extends';
+};
+
 /**
 Pick keys recursively from the shape that matches the given condition.
 
-@see ConditionalPick
+@see {@link ConditionalPick}
 
 @example
 ```
 import type {ConditionalPickDeep} from 'type-fest';
 
-interface Example {
+type Example = {
 	a: string;
 	b: string | boolean;
 	c: {
@@ -55,7 +59,7 @@ interface Example {
 		};
 		j: boolean;
 	};
-}
+};
 
 type StringPick = ConditionalPickDeep<Example, string>;
 //=> {a: string; c: {d: string}}
@@ -70,7 +74,7 @@ type BooleanPick = ConditionalPickDeep<Example, boolean | undefined>;
 //=> {c: {e: {g?: boolean}; j: boolean}}
 
 type NumberPick = ConditionalPickDeep<Example, number>;
-//=> {}
+//=> never
 
 type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 //=> {
@@ -79,7 +83,7 @@ type StringOrBooleanPick = ConditionalPickDeep<Example, string | boolean>;
 // 	c: {
 // 		d: string;
 // 		e: {
-// 			h: string | boolean
+// 			h: string | boolean;
 // 		};
 // 		j: boolean;
 // 	};
@@ -95,10 +99,24 @@ export type ConditionalPickDeep<
 	Type,
 	Condition,
 	Options extends ConditionalPickDeepOptions = {},
+> = _NeverIfEmpty<_ConditionalPickDeep<
+	Type,
+	Condition,
+	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>
+>>;
+
+type _NeverIfEmpty<Type> = Type extends EmptyObject ? never : Type;
+
+type _ConditionalPickDeep<
+	Type,
+	Condition,
+	Options extends Required<ConditionalPickDeepOptions>,
 > = ConditionalSimplifyDeep<ConditionalExcept<{
 	[Key in keyof Type]: AssertCondition<Type[Key], Condition, Options> extends true
 		? Type[Key]
 		: IsPlainObject<Type[Key]> extends true
-			? ConditionalPickDeep<Type[Key], Condition, Options>
+			? _ConditionalPickDeep<Type[Key], Condition, Options>
 			: typeof conditionalPickDeepSymbol;
 }, (typeof conditionalPickDeepSymbol | undefined) | EmptyObject>, never, UnknownRecord>;
+
+export {};

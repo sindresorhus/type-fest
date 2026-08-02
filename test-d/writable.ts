@@ -1,5 +1,5 @@
 import {expectNotAssignable, expectType} from 'tsd';
-import type {Writable} from '../index';
+import type {Writable} from '../index.d.ts';
 
 type Foo = {
 	readonly a: number;
@@ -48,3 +48,14 @@ expectType<Set<string>>(variation9);
 // Test readonly map
 declare const variation10: Writable<ReadonlyMap<string, number>>;
 expectType<Map<string, number>>(variation10);
+
+// Only strip `readonly` without otherwise changing the structure, so an index signature is preserved (https://github.com/sindresorhus/type-fest/issues/717).
+declare const variation11: Writable<{readonly [key: string]: number}>;
+expectType<{[key: string]: number}>(variation11);
+
+// Preserve an index signature alongside named keys while stripping `readonly`.
+declare const variation12: Writable<{readonly [key: string]: number; readonly foo: number}>;
+expectType<{[key: string]: number; foo: number}>(variation12);
+
+declare const variation13: Writable<{readonly [key: string]: number; readonly foo: number}, 'foo'>;
+expectType<{readonly [key: string]: number; foo: number}>(variation13);

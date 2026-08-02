@@ -1,12 +1,12 @@
-import type {ArraySplice} from './array-splice';
-import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToString} from './internal';
-import type {IsEqual} from './is-equal';
-import type {IsNever} from './is-never';
-import type {LiteralUnion} from './literal-union';
-import type {Paths} from './paths';
-import type {SimplifyDeep} from './simplify-deep';
-import type {UnionToTuple} from './union-to-tuple';
-import type {UnknownArray} from './unknown-array';
+import type {ArraySplice} from './array-splice.d.ts';
+import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToString} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {UnionToTuple} from './union-to-tuple.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Omit properties from a deeply-nested object.
@@ -17,7 +17,7 @@ It supports removing specific items from an array, replacing each removed item w
 
 Use-case: Remove unneeded parts of complex objects.
 
-Use [`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
+Use [`Omit<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) if you only need one level deep.
 
 @example
 ```
@@ -33,11 +33,7 @@ type Info = {
 };
 
 type UsefulInfo = OmitDeep<Info, 'userInfo.uselessInfo'>;
-// type UsefulInfo = {
-// 	userInfo: {
-// 		name: string;
-// 	};
-// };
+//=> {userInfo: {name: string}}
 
 // Supports removing multiple paths
 type Info1 = {
@@ -51,40 +47,28 @@ type Info1 = {
 };
 
 type UsefulInfo1 = OmitDeep<Info1, 'userInfo.uselessInfo' | 'userInfo.uselessField'>;
-// type UsefulInfo1 = {
-// 	userInfo: {
-// 		name: string;
-// 	};
-// };
+//=> {userInfo: {name: string}}
 
 // Supports array
-type A = OmitDeep<[1, 'foo', 2], 1>;
-// type A = [1, unknown, 2];
+type A = OmitDeep<[1, 'foo', 2], '1'>;
+//=> [1, unknown, 2]
 
 // Supports recursing into array
 
-type Info1 = {
+type Info2 = {
 	address: [
 		{
-			street: string
+			street: string;
 		},
 		{
-			street2: string,
-			foo: string
-		};
+			street2: string;
+			foo: string;
+		},
 	];
-}
-type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
-// type AddressInfo = {
-// 	address: [
-// 		{
-// 			street: string;
-// 		},
-// 		{
-// 			street2: string;
-// 		};
-// 	];
-// };
+};
+
+type AddressInfo = OmitDeep<Info2, 'address.1.foo'>;
+//=> {address: [{street: string}, {street2: string}]}
 ```
 
 @category Object
@@ -92,8 +76,8 @@ type AddressInfo = OmitDeep<Info1, 'address.1.foo'>;
 */
 export type OmitDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
 	SimplifyDeep<
-	OmitDeepHelper<T, UnionToTuple<PathUnion>>,
-	UnknownArray>;
+		OmitDeepHelper<T, UnionToTuple<PathUnion>>,
+		UnknownArray>;
 
 /**
 Internal helper for {@link OmitDeep}.
@@ -109,34 +93,34 @@ type OmitDeepHelper<T, PathTuple extends UnknownArray> =
 Omit one path from the given object/array.
 */
 type OmitDeepWithOnePath<T, Path extends string | number> =
-T extends NonRecursiveType
-	? T
-	: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, Path>, IsArrayReadonly<T>>
-		: T extends object ? OmitDeepObjectWithOnePath<T, Path>
-			: T;
+	T extends NonRecursiveType
+		? T
+		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, Path>, IsArrayReadonly<T>>
+			: T extends object ? OmitDeepObjectWithOnePath<T, Path>
+				: T;
 
 /**
 Omit one path from the given object.
 */
 type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number> =
-P extends `${infer RecordKeyInPath}.${infer SubPath}`
-	? {
-		[Key in keyof ObjectT]:
-		IsEqual<RecordKeyInPath, ToString<Key>> extends true
-			? ExactKey<ObjectT, Key> extends infer RealKey
-				? RealKey extends keyof ObjectT
-					? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
+	P extends `${infer RecordKeyInPath}.${infer SubPath}`
+		? {
+			[Key in keyof ObjectT]:
+			IsEqual<RecordKeyInPath, ToString<Key>> extends true
+				? ExactKey<ObjectT, Key> extends infer RealKey
+					? RealKey extends keyof ObjectT
+						? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
+						: ObjectT[Key]
 					: ObjectT[Key]
 				: ObjectT[Key]
-			: ObjectT[Key]
-	}
-	: ExactKey<ObjectT, P> extends infer Key
-		? IsNever<Key> extends true
-			? ObjectT
-			: Key extends PropertyKey
-				? Omit<ObjectT, Key>
-				: ObjectT
-		: ObjectT;
+		}
+		: ExactKey<ObjectT, P> extends infer Key
+			? IsNever<Key> extends true
+				? ObjectT
+				: Key extends PropertyKey
+					? Omit<ObjectT, Key>
+					: ObjectT
+			: ObjectT;
 
 /**
 Omit one path from from the given array.
@@ -165,3 +149,5 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 				// If `ArrayIndex` is a number literal
 				: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
 			: ArrayType;
+
+export {};

@@ -9,12 +9,12 @@ import type {FindGlobalType} from 'type-fest';
 
 declare global {
 	const foo: number; // let and const don't work
-	var bar: string;   // var works
+	var bar: string; // var works
 }
 
-type FooType = FindGlobalType<'foo'>     //=> never (let/const don't work)
-type BarType = FindGlobalType<'bar'>     //=> string
-type OtherType = FindGlobalType<'other'> //=> never (no global named 'other')
+type FooType = FindGlobalType<'foo'>; //=> never (let/const don't work)
+type BarType = FindGlobalType<'bar'>; //=> string
+type OtherType = FindGlobalType<'other'>; //=> never (no global named 'other')
 ```
 
 @category Utilities
@@ -48,7 +48,9 @@ declare global {
 	class Foo {}
 
 	// interface + constructor style works
-	interface Bar {}
+	interface Bar {
+		bar: string;
+	}
 	var Bar: new () => Bar; // Not let or const
 }
 
@@ -60,5 +62,7 @@ type FindBar = FindGlobalInstanceType<'Bar'>; // Works
 */
 export type FindGlobalInstanceType<Name extends string> =
 	Name extends string
-		? typeof globalThis extends Record<Name, abstract new (...arguments: any[]) => infer T> ? T : never
+		? typeof globalThis extends Record<Name, abstract new (...arguments_: any[]) => infer T> ? T : never
 		: never;
+
+export {};

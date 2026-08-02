@@ -1,5 +1,7 @@
-import type {IsNever} from '../is-never';
-import type {Primitive} from '../primitive';
+import type {IsAny} from '../is-any.d.ts';
+import type {IsNever} from '../is-never.d.ts';
+import type {Primitive} from '../primitive.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -9,7 +11,12 @@ export type BuiltIns = Primitive | void | Date | RegExp;
 /**
 Matches non-recursive types.
 */
-export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown);
+export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown) | Promise<unknown>;
+
+/**
+Matches maps, sets, or arrays.
+*/
+export type MapsSetsOrArrays = ReadonlyMap<unknown, unknown> | WeakMap<WeakKey, unknown> | ReadonlySet<unknown> | WeakSet<WeakKey> | UnknownArray;
 
 /**
 Returns a boolean for whether the two given types extends the base type.
@@ -47,13 +54,13 @@ Returns a boolean for whether the given type is primitive value or primitive typ
 
 @example
 ```
-IsPrimitive<'string'>
+type A = IsPrimitive<'string'>;
 //=> true
 
-IsPrimitive<string>
+type B = IsPrimitive<string>;
 //=> true
 
-IsPrimitive<Object>
+type C = IsPrimitive<Object>;
 //=> false
 ```
 */
@@ -64,10 +71,10 @@ Returns a boolean for whether A is false.
 
 @example
 ```
-Not<true>;
+type A = Not<true>;
 //=> false
 
-Not<false>;
+type B = Not<false>;
 //=> true
 ```
 */
@@ -78,36 +85,87 @@ export type Not<A extends boolean> = A extends true
 		: never;
 
 /**
-Returns a boolean for whether the given type is a union type.
+An if-else-like type that resolves depending on whether the given type is `any` or `never`.
 
 @example
 ```
-type A = IsUnion<string | number>;
-//=> true
+// When `T` is neither `any` nor `never` (like `string`) => Returns `IfNot` branch
+type A = IfNotAnyOrNever<string, {ifNot: 'VALID'; ifAny: 'IS_ANY'; ifNever: 'IS_NEVER'}>;
+//=> 'VALID'
 
-type B = IsUnion<string>;
-//=> false
+// When `T` is `any` => Returns `IfAny` branch
+type B = IfNotAnyOrNever<any, {ifNot: 'VALID'; ifAny: 'IS_ANY'; ifNever: 'IS_NEVER'}>;
+//=> 'IS_ANY'
+
+// When `T` is `never` => Returns `IfNever` branch
+type C = IfNotAnyOrNever<never, {ifNot: 'VALID'; ifAny: 'IS_ANY'; ifNever: 'IS_NEVER'}>;
+//=> 'IS_NEVER'
+```
+
+Note: Wrapping a tail-recursive type with `IfNotAnyOrNever` makes the implementation non-tail-recursive. To fix this, move the recursion into a helper type. Refer to the following example:
+
+@example
+```ts
+import type {StringRepeat} from 'type-fest';
+
+type NineHundredNinetyNineSpaces = StringRepeat<' ', 999>;
+
+// The following implementation is not tail recursive
+type TrimLeft<S extends string> = IfNotAnyOrNever<S, {ifNot: S extends ` ${infer R}` ? TrimLeft<R> : S}>;
+
+// Hence, instantiations with long strings will fail
+// @ts-expect-error
+type T1 = TrimLeft<NineHundredNinetyNineSpaces>;
+//        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Error: Type instantiation is excessively deep and possibly infinite.
+
+// To fix this, move the recursion into a helper type
+type TrimLeftOptimised<S extends string> = IfNotAnyOrNever<S, {ifNot: _TrimLeftOptimised<S>}>;
+
+type _TrimLeftOptimised<S extends string> = S extends ` ${infer R}` ? _TrimLeftOptimised<R> : S;
+
+type T2 = TrimLeftOptimised<NineHundredNinetyNineSpaces>;
+//=> ''
 ```
 */
-export type IsUnion<T> = InternalIsUnion<T>;
+export type IfNotAnyOrNever<T, Cases extends {ifNot: unknown; ifAny?: unknown; ifNever?: unknown}> =
+	IsAny<T> extends true
+		? 'ifAny' extends keyof Cases
+			? Cases['ifAny']
+			: any
+		: IsNever<T> extends true
+			? 'ifNever' extends keyof Cases
+				? Cases['ifNever']
+				: never
+			: Cases['ifNot'];
 
 /**
-The actual implementation of `IsUnion`.
+Returns a boolean for whether the given type is `any` or `never`.
+
+This type can be better to use than {@link IfNotAnyOrNever `IfNotAnyOrNever`} in recursive types because it does not evaluate any branches.
+
+@example
+```
+// When `T` is a NOT `any` or `never` (like `string`) => Returns `false`
+type A = IsAnyOrNever<string>;
+//=> false
+
+// When `T` is `any` => Returns `true`
+type B = IsAnyOrNever<any>;
+//=> true
+
+// When `T` is `never` => Returns `true`
+type C = IsAnyOrNever<never>;
+//=> true
+```
 */
-type InternalIsUnion<T, U = T> =
-(
-	// @link https://ghaiklor.github.io/type-challenges-solutions/en/medium-isunion.html
-	IsNever<T> extends true
-		? false
-		: T extends any
-			? [U] extends [T]
-				? false
-				: true
-			: never
-) extends infer Result
-	// In some cases `Result` will return `false | true` which is `boolean`,
-	// that means `T` has at least two types and it's a union type,
-	// so we will return `true` instead of `boolean`.
-	? boolean extends Result ? true
-		: Result
-	: never; // Should never happen
+export type IsAnyOrNever<T> = IsNotFalse<IsAny<T> | IsNever<T>>;
+
+/**
+Indicates the value of `exactOptionalPropertyTypes` compiler option.
+*/
+export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
+	? false
+	: true;
+
+export {};

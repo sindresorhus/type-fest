@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Replace, StringRepeat} from '../index';
+import type {Replace, StringRepeat} from '../index.d.ts';
 
 declare function replace<
 	Input extends string,
@@ -8,7 +8,7 @@ declare function replace<
 >(
 	input: Input,
 	search: Search,
-	replacement: Replacement
+	replacement: Replacement,
 ): Replace<Input, Search, Replacement>;
 
 declare function replaceAll<
@@ -18,7 +18,7 @@ declare function replaceAll<
 >(
 	input: Input,
 	search: Search,
-	replacement: Replacement
+	replacement: Replacement,
 ): Replace<Input, Search, Replacement, {all: true}>;
 
 expectType<'hello 🦄'>(replace('hello ?', '?', '🦄'));

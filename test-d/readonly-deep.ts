@@ -1,7 +1,7 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {Opaque, tag} from '../source/tagged';
-import type {ReadonlyDeep, ReadonlyObjectDeep} from '../source/readonly-deep';
-import type {JsonValue} from '../source/basic';
+import type {Opaque, tag} from '../source/tagged.d.ts';
+import type {ReadonlyDeep, _ReadonlyObjectDeep} from '../source/readonly-deep.d.ts';
+import type {JsonValue} from '../source/json-value.d.ts';
 
 type Overloaded = {
 	(foo: number): string;
@@ -21,12 +21,12 @@ type OpaqueObjectData = {a: number[]} | {b: string};
 type OpaqueObject = Opaque<OpaqueObjectData, {token: unknown}>;
 
 type ReadonlyJsonValue =
-  | {readonly [k: string]: ReadonlyJsonValue}
-  | readonly ReadonlyJsonValue[]
-  | number
-  | string
-  | boolean
-  | null;
+	| {readonly [k: string]: ReadonlyJsonValue}
+	| readonly ReadonlyJsonValue[]
+	| number
+	| string
+	| boolean
+	| null;
 
 class ClassA {
 	foo = 1;
@@ -101,7 +101,7 @@ expectType<readonly ['foo']>(readonlyData.readonlyTuple);
 expectAssignable<ReadonlyJsonValue>(readonlyData.json);
 expectAssignable<Opaque<ReadonlyDeep<OpaqueObjectData>, ReadonlyDeep<OpaqueObject[typeof tag]>>>(readonlyData.opaqueObj);
 
-expectType<((foo: number) => string) & ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
+expectType<((foo: number) => string) & _ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
 expectType<string>(readonlyData.namespace(1));
 expectType<readonly boolean[]>(readonlyData.namespace.baz);
 
@@ -138,3 +138,28 @@ expectAssignable<{
 	(foo: number): string;
 	readonly baz: readonly boolean[];
 }>(readonlyNamespace);
+
+// Function and method return types are not transformed, while getters are
+// structurally ordinary properties, so their values are.
+// See https://github.com/sindresorhus/type-fest/issues/826
+
+declare const readonlyFunctionReturningMap: ReadonlyDeep<() => Map<string, number[]>>;
+expectType<() => Map<string, number[]>>(readonlyFunctionReturningMap);
+
+declare const readonlyObjectWithMethod: ReadonlyDeep<{
+	method: () => Map<string, number[]>;
+}>;
+// The method member becomes readonly, but its signature — including the returned Map — is left untouched.
+expectType<{
+	readonly method: () => Map<string, number[]>;
+}>(readonlyObjectWithMethod);
+
+class ClassWithGetter {
+	get accessor(): Map<string, number[]> {
+		return new Map();
+	}
+}
+
+// A getter on a class is seen as a plain property of its type, so its value is deep-readonly like any other property.
+declare const readonlyClassWithGetter: ReadonlyDeep<ClassWithGetter>;
+expectType<Readonly<ReadonlyMap<string, readonly number[]>>>(readonlyClassWithGetter.accessor);

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsTuple} from '../index';
+import type {IsTuple} from '../index.d.ts';
 
 // Tuples
 expectType<IsTuple<[]>>(true);

@@ -1,4 +1,4 @@
-import type {KeysOfUnion} from './keys-of-union';
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 
 /**
 Omits keys from a type, distributing the operation over a union.
@@ -25,15 +25,16 @@ type Union = A | B;
 type OmittedUnion = Omit<Union, 'foo'>;
 //=> {discriminant: 'A' | 'B'}
 
-const omittedUnion: OmittedUnion = createOmittedUnion();
+declare const omittedUnion: OmittedUnion;
 
 if (omittedUnion.discriminant === 'A') {
 	// We would like to narrow `omittedUnion`'s type
 	// to `A` here, but we can't because `Omit`
 	// doesn't distribute over unions.
 
-	omittedUnion.a;
- 	//=> Error: `a` is not a property of `{discriminant: 'A' | 'B'}`
+	// @ts-expect-error
+	const aValue = omittedUnion.a;
+	// Error: `a` is not a property of `{discriminant: 'A' | 'B'}`
 }
 ```
 
@@ -41,6 +42,8 @@ While `Except` solves this problem, it restricts the keys you can omit to the on
 
 @example
 ```
+import type {DistributedOmit} from 'type-fest';
+
 type A = {
 	discriminant: 'A';
 	foo: string;
@@ -67,17 +70,19 @@ type Union = A | B | C;
 
 type OmittedUnion = DistributedOmit<Union, 'foo' | 'bar'>;
 
-const omittedUnion: OmittedUnion = createOmittedUnion();
+declare const omittedUnion: OmittedUnion;
 
 if (omittedUnion.discriminant === 'A') {
-	omittedUnion.a;
- 	//=> OK
+	const aValue = omittedUnion.a;
+	// OK
 
-	omittedUnion.foo;
- 	//=> Error: `foo` is not a property of `{discriminant: 'A'; a: string}`
+	// @ts-expect-error
+	const fooValue = omittedUnion.foo;
+	// Error: `foo` is not a property of `{discriminant: 'A'; a: string}`
 
-	omittedUnion.bar;
- 	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
+	// @ts-expect-error
+	const barValue = omittedUnion.bar;
+	// Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
 }
 ```
 
@@ -87,3 +92,5 @@ export type DistributedOmit<ObjectType, KeyType extends KeysOfUnion<ObjectType>>
 	ObjectType extends unknown
 		? Omit<ObjectType, KeyType>
 		: never;
+
+export {};

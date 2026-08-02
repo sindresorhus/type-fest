@@ -1,25 +1,34 @@
-import type {CamelCase, CamelCaseOptions} from './camel-case';
+import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
 
 /**
-Convert object properties to camel case but not recursively.
+Convert top-level object properties to camel case.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see CamelCasedPropertiesDeep
-@see CamelCase
+@see {@link CamelCasedPropertiesDeep}
+@see {@link CamelCase}
 
 @example
 ```
 import type {CamelCasedProperties} from 'type-fest';
 
-interface User {
+type User = {
 	UserId: number;
 	UserName: string;
-}
+};
 
 const result: CamelCasedProperties<User> = {
 	userId: 1,
 	userName: 'Tom',
+};
+
+const preserveConsecutiveUppercase: CamelCasedProperties<{fooBAR: string}, {preserveConsecutiveUppercase: true}> = {
+	fooBAR: 'string',
+};
+
+const splitOnPunctuation: CamelCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
+	fooBar: 'string',
 };
 ```
 
@@ -27,10 +36,14 @@ const result: CamelCasedProperties<User> = {
 @category Template literal
 @category Object
 */
-export type CamelCasedProperties<Value, Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true}> = Value extends Function
+export type CamelCasedProperties<Value, Options extends CamelCaseOptions = {}> = Value extends Function
 	? Value
 	: Value extends Array<infer U>
 		? Value
 		: {
-			[K in keyof Value as CamelCase<K, Options>]: Value[K];
+			[K in keyof Value as
+			CamelCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>
+			]: Value[K];
 		};
+
+export {};

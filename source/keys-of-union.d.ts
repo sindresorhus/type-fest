@@ -1,4 +1,4 @@
-import type {UnionToIntersection} from './union-to-intersection';
+import type {UnionToIntersection} from './union-to-intersection.d.ts';
 
 /**
 Create a union of all keys from a given type, even those exclusive to specific union members.
@@ -38,5 +38,7 @@ type AllKeys = KeysOfUnion<Union>;
 @category Object
 */
 export type KeysOfUnion<ObjectType> =
-  // Hack to fix https://github.com/sindresorhus/type-fest/issues/1008
-  keyof UnionToIntersection<ObjectType extends unknown ? Record<keyof ObjectType, never> : never>;
+	// Hack to fix https://github.com/sindresorhus/type-fest/issues/1008
+	keyof UnionToIntersection<ObjectType extends unknown ? Record<keyof ObjectType, never> : never>;
+
+export {};

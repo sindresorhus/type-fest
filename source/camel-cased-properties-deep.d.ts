@@ -1,28 +1,28 @@
-import type {CamelCase, CamelCaseOptions} from './camel-case';
-import type {NonRecursiveType} from './internal';
-import type {UnknownArray} from './unknown-array';
+import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
+import type {ApplyDefaultOptions, NonRecursiveType} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Convert object properties to camel case recursively.
 
 This can be useful when, for example, converting some API types from a different style.
 
-@see CamelCasedProperties
-@see CamelCase
+@see {@link CamelCasedProperties}
+@see {@link CamelCase}
 
 @example
 ```
 import type {CamelCasedPropertiesDeep} from 'type-fest';
 
-interface User {
+type User = {
 	UserId: number;
 	UserName: string;
-}
+};
 
-interface UserWithFriends {
+type UserWithFriends = {
 	UserInfo: User;
 	UserFriends: User[];
-}
+};
 
 const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 	userInfo: {
@@ -40,6 +40,21 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
+
+const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: {fooBARBiz: [{fooBARBaz: string}]}}, {preserveConsecutiveUppercase: true}> = {
+	fooBAR: {
+		fooBARBiz: [{
+			fooBARBaz: 'string',
+		}],
+	},
+};
+
+const splitOnPunctuation: CamelCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
+	userInfo: {
+		userId: 1,
+		userName: 'Tom',
+	},
+};
 ```
 
 @category Change case
@@ -48,36 +63,44 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 */
 export type CamelCasedPropertiesDeep<
 	Value,
-	Options extends CamelCaseOptions = {preserveConsecutiveUppercase: true},
+	Options extends CamelCaseOptions = {},
+> = _CamelCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
+
+type _CamelCasedPropertiesDeep<
+	Value,
+	Options extends Required<CamelCaseOptions>,
 > = Value extends NonRecursiveType
 	? Value
 	: Value extends UnknownArray
-		? CamelCasedPropertiesArrayDeep<Value>
+		? CamelCasedPropertiesArrayDeep<Value, Options>
 		: Value extends Set<infer U>
-			? Set<CamelCasedPropertiesDeep<U, Options>>
-			: {
-				[K in keyof Value as CamelCase<K, Options>]: CamelCasedPropertiesDeep<
-				Value[K],
-				Options
-				>;
-			};
+			? Set<_CamelCasedPropertiesDeep<U, Options>>
+			: Value extends object
+				? {
+					[K in keyof Value as CamelCase<K, Options>]: _CamelCasedPropertiesDeep<Value[K], Options>;
+				}
+				: Value;
 
 // This is a copy of DelimiterCasedPropertiesArrayDeep (see: delimiter-cased-properties-deep.d.ts).
 // These types should be kept in sync.
-type CamelCasedPropertiesArrayDeep<Value extends UnknownArray> =
-	Value extends []
-		? []
-		: // Tailing spread array
-		Value extends [infer U, ...infer V]
-			? [CamelCasedPropertiesDeep<U>, ...CamelCasedPropertiesDeep<V>]
-			: Value extends readonly [infer U, ...infer V]
-				? readonly [CamelCasedPropertiesDeep<U>, ...CamelCasedPropertiesDeep<V>]
-				: // Leading spread array
-				Value extends readonly [...infer U, infer V]
-					? [...CamelCasedPropertiesDeep<U>, CamelCasedPropertiesDeep<V>]
-					: // Array
-					Value extends Array<infer U>
-						? Array<CamelCasedPropertiesDeep<U>>
-						: Value extends ReadonlyArray<infer U>
-							? ReadonlyArray<CamelCasedPropertiesDeep<U>>
-							: never;
+type CamelCasedPropertiesArrayDeep<
+	Value extends UnknownArray,
+	Options extends Required<CamelCaseOptions>,
+> = Value extends []
+	? []
+	// Trailing spread array
+	: Value extends [infer U, ...infer V]
+		? [_CamelCasedPropertiesDeep<U, Options>, ..._CamelCasedPropertiesDeep<V, Options>]
+		: Value extends readonly [infer U, ...infer V]
+			? readonly [_CamelCasedPropertiesDeep<U, Options>, ..._CamelCasedPropertiesDeep<V, Options>]
+			// Leading spread array
+			: Value extends readonly [...infer U, infer V]
+				? [..._CamelCasedPropertiesDeep<U, Options>, _CamelCasedPropertiesDeep<V, Options>]
+				// Array
+				: Value extends Array<infer U>
+					? Array<_CamelCasedPropertiesDeep<U, Options>>
+					: Value extends ReadonlyArray<infer U>
+						? ReadonlyArray<_CamelCasedPropertiesDeep<U, Options>>
+						: never;
+
+export {};

@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
-import type {Sum} from '../index';
-import type {NegativeInfinity, PositiveInfinity} from '../source/numeric';
+import type {Sum} from '../index.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Positive result
 expectType<0>({} as Sum<-999, 999>);
@@ -47,3 +47,9 @@ expectType<3 | 4>({} as Sum<1, 2 | 3>);
 expectType<4 | 5>({} as Sum<1 | 2, 3>);
 expectType<5 | 6 | 7 | 8>({} as Sum<1 | 2 | 3, 4 | 5>);
 expectType<2 | 4 | 5 | 7 | 9 | -2 | -4 | -7>({} as Sum<1 | -2 | 3, 4 | -5 | 6>);
+
+// Large numbers
+expectType<3333>({} as Sum<1111, 2222>);
+expectType<-3000>({} as Sum<-5000, 2000>);
+expectType<6010>({} as Sum<6540, -530>);
+expectType<-8900>({} as Sum<-8888, -12>);

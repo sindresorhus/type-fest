@@ -1,5 +1,6 @@
-declare const tag: unique symbol;
+import type tag from 'tagged-tag';
 
+// eslint-disable-next-line type-fest/require-exported-types
 export type TagContainer<Token> = {
 	readonly [tag]: Token;
 };
@@ -7,11 +8,9 @@ export type TagContainer<Token> = {
 type Tag<Token extends PropertyKey, TagMetadata> = TagContainer<{[K in Token]: TagMetadata}>;
 
 /**
-Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for distinct concepts in your program that should not be interchangeable, even if their runtime values have the same type. (See examples.)
+Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
 
 A type returned by `Tagged` can be passed to `Tagged` again, to create a type with multiple tags.
-
-[Read more about tagged types.](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d)
 
 A tag's name is usually a string (and must be a string, number, or symbol), but each application of a tag can also contain an arbitrary type as its "metadata". See {@link GetTagMetadata} for examples and explanation.
 
@@ -37,15 +36,14 @@ function createAccountNumber(): AccountNumber {
 	return 2 as AccountNumber;
 }
 
-function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
-	return 4 as AccountBalance;
-}
+declare function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance;
 
 // This will compile successfully.
 getMoneyForAccount(createAccountNumber());
 
 // But this won't, because it has to be explicitly passed as an `AccountNumber` type!
 // Critically, you could not accidentally use an `AccountBalance` as an `AccountNumber`.
+// @ts-expect-error
 getMoneyForAccount(2);
 
 // You can also use tagged values like their underlying, untagged type.
@@ -79,19 +77,19 @@ This article explains more about [how tag metadata works and when it can be usef
 
 @example
 ```
-import type {Tagged} from 'type-fest';
+import type {Tagged, GetTagMetadata} from 'type-fest';
 
 type JsonOf<T> = Tagged<string, 'JSON', T>;
 
 function stringify<T>(it: T) {
-  return JSON.stringify(it) as JsonOf<T>;
+	return JSON.stringify(it) as JsonOf<T>;
 }
 
 function parse<T extends JsonOf<unknown>>(it: T) {
-  return JSON.parse(it) as GetTagMetadata<T, 'JSON'>;
+	return JSON.parse(it) as GetTagMetadata<T, 'JSON'>;
 }
 
-const x = stringify({ hello: 'world' });
+const x = stringify({hello: 'world'});
 const parsed = parse(x); // The type of `parsed` is { hello: string }
 ```
 
@@ -100,7 +98,7 @@ const parsed = parse(x); // The type of `parsed` is { hello: string }
 export type GetTagMetadata<Type extends Tag<TagName, unknown>, TagName extends PropertyKey> = Type[typeof tag][TagName];
 
 /**
-Revert a tagged type back to its original type by removing all tags.
+Get the untagged portion of a tagged type created with `Tagged`.
 
 Why is this necessary?
 
@@ -115,20 +113,21 @@ type AccountType = Tagged<'SAVINGS' | 'CHECKING', 'AccountType'>;
 
 const moneyByAccountType: Record<UnwrapTagged<AccountType>, number> = {
 	SAVINGS: 99,
-	CHECKING: 0.1
+	CHECKING: 0.1,
 };
 
 // Without UnwrapTagged, the following expression would throw a type error.
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
-// Attempting to pass an non-Tagged type to UnwrapTagged will raise a type error.
+// Attempting to pass a non-Tagged type to UnwrapTagged will raise a type error.
+// @ts-expect-error
 type WontWork = UnwrapTagged<string>;
 ```
 
 @category Type
 */
 export type UnwrapTagged<TaggedType extends Tag<PropertyKey, any>> =
-RemoveAllTags<TaggedType>;
+	RemoveAllTags<TaggedType>;
 
 type RemoveAllTags<T> = T extends Tag<PropertyKey, any>
 	? {
@@ -173,12 +172,13 @@ type NewThingOne = Opaque<string, 'ThingOne'>;
 type NewThingTwo = Opaque<string, 'ThingTwo'>;
 
 // Now they're completely separate types, so the following will fail to compile.
-function createNewThingOne (): NewThingOne {
+function createNewThingOne(): NewThingOne {
 	// As you can see, casting from a string is still allowed. However, you may not cast NewThingOne to NewThingTwo, and vice versa.
 	return 'new thing one' as NewThingOne;
 }
 
 // This will fail to compile, as they are fundamentally different types.
+// @ts-expect-error
 const thingTwo = createNewThingOne() as NewThingTwo;
 
 // Here's another example of opaque typing.
@@ -186,14 +186,13 @@ function createAccountNumber(): AccountNumber {
 	return 2 as AccountNumber;
 }
 
-function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance {
-	return 4 as AccountBalance;
-}
+declare function getMoneyForAccount(accountNumber: AccountNumber): AccountBalance;
 
 // This will compile successfully.
 getMoneyForAccount(createAccountNumber());
 
 // But this won't, because it has to be explicitly passed as an `AccountNumber` type.
+// @ts-expect-error
 getMoneyForAccount(2);
 
 // You can use opaque values like they aren't opaque too.
@@ -232,16 +231,18 @@ type AccountType = Opaque<'SAVINGS' | 'CHECKING', 'AccountType'>;
 
 const moneyByAccountType: Record<UnwrapOpaque<AccountType>, number> = {
 	SAVINGS: 99,
-	CHECKING: 0.1
+	CHECKING: 0.1,
 };
 
 // Without UnwrapOpaque, the following expression would throw a type error.
 const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does not exist
 
-// Attempting to pass an non-Opaque type to UnwrapOpaque will raise a type error.
+// Attempting to pass a non-Opaque type to UnwrapOpaque will raise a type error.
+// @ts-expect-error
 type WontWork = UnwrapOpaque<string>;
 
 // Using a Tagged type will work too.
+// @ts-expect-error
 type WillWork = UnwrapOpaque<Tagged<number, 'AccountNumber'>>; // number
 ```
 
@@ -254,3 +255,7 @@ export type UnwrapOpaque<OpaqueType extends TagContainer<unknown>> =
 		: OpaqueType extends Opaque<infer Type, OpaqueType[typeof tag]>
 			? Type
 			: OpaqueType;
+
+export {type default as tag} from 'tagged-tag';
+
+export {};

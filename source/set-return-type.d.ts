@@ -1,4 +1,4 @@
-import type {IsUnknown} from './is-unknown';
+import type {IsUnknown} from './is-unknown.d.ts';
 
 /**
 Create a function type with a return type of your choice and the same parameters as the given function type.
@@ -9,10 +9,10 @@ Use-case: You want to define a wrapped function that returns something different
 ```
 import type {SetReturnType} from 'type-fest';
 
-type MyFunctionThatCanThrow = (foo: SomeType, bar: unknown) => SomeOtherType;
+type MyFunctionThatCanThrow = (foo: string, bar: number) => boolean;
 
-type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, SomeOtherType | undefined>;
-//=> type MyWrappedFunction = (foo: SomeType, bar: unknown) => SomeOtherType | undefined;
+type MyWrappedFunction = SetReturnType<MyFunctionThatCanThrow, ReturnType<MyFunctionThatCanThrow> | undefined>;
+//=> (foo: string, bar: number) => boolean | undefined
 ```
 
 @category Function
@@ -27,3 +27,5 @@ export type SetReturnType<Function_ extends (...arguments_: any[]) => any, TypeT
 		// This part should be unreachable, but we make it meaningful just in case…
 		(...arguments_: Parameters<Function_>) => TypeToReturn
 	);
+
+export {};

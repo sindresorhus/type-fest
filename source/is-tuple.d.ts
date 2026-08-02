@@ -1,6 +1,8 @@
-import type {IfAny} from './if-any';
-import type {IfNever} from './if-never';
-import type {UnknownArray} from './unknown-array';
+import type {If} from './if.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 @see {@link IsTuple}
@@ -26,6 +28,10 @@ export type IsTupleOptions = {
 	```
 	*/
 	fixedLengthOnly?: boolean;
+};
+
+type DefaultIsTupleOptions = {
+	fixedLengthOnly: true;
 };
 
 /**
@@ -63,16 +69,24 @@ type RestItemsAllowed = IsTuple<[1, 2, ...number[]], {fixedLengthOnly: false}>;
 */
 export type IsTuple<
 	TArray extends UnknownArray,
-	Options extends IsTupleOptions = {fixedLengthOnly: true},
+	Options extends IsTupleOptions = {},
 > =
-	IfAny<TArray, boolean, IfNever<TArray, false,
-	TArray extends unknown // For distributing `TArray`
-		? number extends TArray['length']
-			? Options['fixedLengthOnly'] extends false
-				? IfNever<keyof TArray & `${number}`,
-				TArray extends readonly [...any, any] ? true : false, // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
-				true>
-				: false
-			: true
-		: false
+	_IsTuple<TArray, ApplyDefaultOptions<IsTupleOptions, DefaultIsTupleOptions, Options>>;
+
+type _IsTuple<
+	TArray extends UnknownArray,
+	Options extends Required<IsTupleOptions>,
+> =
+	If<IsAny<TArray>, boolean, If<IsNever<TArray>, false,
+		TArray extends unknown // For distributing `TArray`
+			? number extends TArray['length']
+				? Options['fixedLengthOnly'] extends false
+					? If<IsNever<keyof TArray & `${number}`>,
+						TArray extends readonly [...any, any] ? true : false, // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
+						true>
+					: false
+				: true
+			: false
 	>>;
+
+export {};

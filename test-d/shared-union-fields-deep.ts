@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {SharedUnionFieldsDeep} from '../index';
+import type {SharedUnionFieldsDeep} from '../index.d.ts';
 
 type TestingType = {
 	function: (() => void);
@@ -25,7 +25,7 @@ type TestingType = {
 	optional?: boolean | undefined;
 	readonly propertyWithKeyword: boolean;
 	map: Map<string, {propertyA: string; propertyB: string}>;
-	set: Set<string> ;
+	set: Set<string>;
 	objectSet: Set<{propertyA: string; propertyB: string}>;
 	array: Array<{a: number; b: string}>;
 	readonlyArray: ReadonlyArray<{a: number; b: string}>;

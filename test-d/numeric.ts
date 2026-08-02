@@ -10,7 +10,7 @@ import type {
 	NonNegative,
 	NonNegativeInteger,
 	PositiveInfinity,
-} from '../index';
+} from '../index.d.ts';
 
 // Finite
 declare const infinity: Finite<PositiveInfinity | NegativeInfinity>;

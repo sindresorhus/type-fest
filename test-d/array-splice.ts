@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ArraySplice} from '../index';
+import type {ArraySplice} from '../index.d.ts';
 
 // Test fixed array
 type TestTuple = ['a', 'b', 'c', 'd'];

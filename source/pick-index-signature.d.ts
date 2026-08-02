@@ -40,7 +40,7 @@ type ExampleIndexSignature = PickIndexSignature<Example>;
 // }
 ```
 
-@see OmitIndexSignature
+@see {@link OmitIndexSignature}
 @category Object
 */
 export type PickIndexSignature<ObjectType> = {
@@ -48,3 +48,5 @@ export type PickIndexSignature<ObjectType> = {
 		? KeyType
 		: never]: ObjectType[KeyType];
 };
+
+export {};

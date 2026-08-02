@@ -1,4 +1,4 @@
-import type {KeysOfUnion} from './keys-of-union';
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 
 /**
 Pick keys from a type, distributing the operation over a union.
@@ -25,22 +25,25 @@ type B = {
 type Union = A | B;
 
 type PickedUnion = Pick<Union, 'discriminant' | 'foo'>;
-//=> {discriminant: 'A' | 'B', foo: {bar: string} | {baz: string}}
+//=> {discriminant: 'A' | 'B'; foo: {bar: string} | {baz: string}}
 
-const pickedUnion: PickedUnion = createPickedUnion();
+declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
 	// We would like to narrow `pickedUnion`'s type
 	// to `A` here, but we can't because `Pick`
 	// doesn't distribute over unions.
 
-	pickedUnion.foo.bar;
-	//=> Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
+	// @ts-expect-error
+	const barValue = pickedUnion.foo.bar;
+	// Error: Property 'bar' does not exist on type '{bar: string} | {baz: string}'.
 }
 ```
 
 @example
 ```
+import type {DistributedPick} from 'type-fest';
+
 type A = {
 	discriminant: 'A';
 	foo: {
@@ -63,17 +66,19 @@ type Union = A | B;
 
 type PickedUnion = DistributedPick<Union, 'discriminant' | 'foo'>;
 
-const pickedUnion: PickedUnion = createPickedUnion();
+declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
-	pickedUnion.foo.bar;
- 	//=> OK
+	const barValue = pickedUnion.foo.bar;
+	// OK
 
-	pickedUnion.extraneous;
-	//=> Error: Property `extraneous` does not exist on type `Pick<A, 'discriminant' | 'foo'>`.
+	// @ts-expect-error
+	const extraneousValue = pickedUnion.extraneous;
+	// Error: Property `extraneous` does not exist on type `Pick<A, 'discriminant' | 'foo'>`.
 
-	pickedUnion.foo.baz;
-	//=> Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
+	// @ts-expect-error
+	const bazValue = pickedUnion.foo.baz;
+	// Error: `bar` is not a property of `{discriminant: 'A'; a: string}`.
 }
 ```
 
@@ -83,3 +88,5 @@ export type DistributedPick<ObjectType, KeyType extends KeysOfUnion<ObjectType>>
 	ObjectType extends unknown
 		? Pick<ObjectType, Extract<KeyType, keyof ObjectType>>
 		: never;
+
+export {};

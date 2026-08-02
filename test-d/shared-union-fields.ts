@@ -1,6 +1,6 @@
 import {expectType} from 'tsd';
-import type {SharedUnionFields} from '../index';
-import type {NonRecursiveType} from '../source/internal';
+import type {SharedUnionFields} from '../index.d.ts';
+import type {NonRecursiveType} from '../source/internal/index.d.ts';
 
 type TestingType = {
 	function: (() => void);
@@ -26,7 +26,7 @@ type TestingType = {
 	optional?: boolean | undefined;
 	readonly propertyWithKeyword: boolean;
 	map: Map<string, {propertyA: string; propertyB: string}>;
-	set: Set<string> ;
+	set: Set<string>;
 	objectSet: Set<{propertyA: string; propertyB: string}>;
 };
 

@@ -1,4 +1,4 @@
-import type {Exact, Opaque} from '../index';
+import type {Exact, Opaque} from '../index.d.ts';
 
 { // Spec - string type
 	type Type = string;
@@ -27,7 +27,7 @@ import type {Exact, Opaque} from '../index';
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept bigint
-		const input = BigInt(9_007_199_254_740_991);
+		const input = 9_007_199_254_740_991n;
 		function_(input);
 	}
 

@@ -1,11 +1,13 @@
 import {expectType} from 'tsd';
-import type {SnakeCasedPropertiesDeep} from '../index';
+import type {SnakeCasedPropertiesDeep} from '../index.d.ts';
 
-declare const foo: SnakeCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
-expectType<{hello_world: {foo_bar: string}}>(foo);
+type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
 
-declare const bar: SnakeCasedPropertiesDeep<Set<{fooBar: string}>>;
-expectType<Set<{foo_bar: string}>>(bar);
+declare const foo: SnakeCasedPropertiesDeep<FooBar>;
+expectType<{hello_world: {p2p: Array<{address_line1: string}>}}>(foo);
+
+declare const bar: SnakeCasedPropertiesDeep<FooBar, {splitOnNumbers: true}>;
+expectType<{hello_world: {p_2_p: Array<{address_line_1: string}>}}>(bar);
 
 // Verify example
 type User = {
@@ -15,9 +17,21 @@ type User = {
 	regExp: RegExp;
 };
 
+type UserPunctuated = {
+	'user::id': number;
+	'user::name': string;
+	date: Date;
+	'reg::exp': RegExp;
+};
+
 type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
+};
+
+type UserWithFriendsPunctuated = {
+	'user@info': UserPunctuated;
+	'user#friends': UserPunctuated[];
 };
 
 const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
@@ -43,3 +57,13 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 	],
 };
 expectType<SnakeCasedPropertiesDeep<UserWithFriends>>(result);
+expectType<SnakeCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
+
+expectType<{foo_bar: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: unknown}>);
+expectType<{foo_bar: {bar_baz: unknown}; biz: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: unknown}>);
+
+expectType<{foo_bar: any}>({} as SnakeCasedPropertiesDeep<{fooBar: any}>);
+expectType<{foo_bar: {bar_baz: any}; biz: any}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>);
+
+expectType<{'foo_bar': unknown}>({} as SnakeCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
+expectType<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>({} as SnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);

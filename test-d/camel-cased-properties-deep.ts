@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {CamelCasedPropertiesDeep, Tagged} from '../index';
+import type {CamelCasedPropertiesDeep, Tagged} from '../index.d.ts';
 
 declare const foo: CamelCasedPropertiesDeep<{A: {B: number; C: Array<{D: string}>}}>;
 
@@ -11,13 +11,13 @@ expectType<() => {a: string}>(fooBar);
 declare const bar: CamelCasedPropertiesDeep<Set<{fooBar: string}>>;
 expectType<Set<{fooBar: string}>>(bar);
 
-type bazBizDeep = {fooBAR: number; baz: {fooBAR: number; BARFoo: string}};
+type bazBizDeep = {fooBAR: number; baz: {fooBAR: Array<{BARFoo: string}>}};
 
-declare const baz: CamelCasedPropertiesDeep<bazBizDeep>;
-expectType<{fooBAR: number; baz: {fooBAR: number; bARFoo: string}}>(baz);
+declare const baz: CamelCasedPropertiesDeep<bazBizDeep, {preserveConsecutiveUppercase: true}>;
+expectType<{fooBAR: number; baz: {fooBAR: Array<{bARFoo: string}>}}>(baz);
 
-declare const biz: CamelCasedPropertiesDeep<bazBizDeep, {preserveConsecutiveUppercase: false}>;
-expectType<{fooBar: number; baz: {fooBar: number; barFoo: string}}>(biz);
+declare const biz: CamelCasedPropertiesDeep<bazBizDeep>;
+expectType<{fooBar: number; baz: {fooBar: Array<{barFoo: string}>}}>(biz);
 
 declare const tuple: CamelCasedPropertiesDeep<{tuple: [number, string, {D: string}]}>;
 expectType<{tuple: [number, string, {d: string}]}>(tuple);
@@ -33,9 +33,22 @@ type User = {
 	Role: UserRole;
 };
 
+type UserPunctuated = {
+	'user::id': number;
+	'user::name': string;
+	date: Date;
+	'reg::exp': RegExp;
+	Role: UserRole;
+};
+
 type UserWithFriends = {
 	UserInfo: User;
 	UserFriends: User[];
+};
+
+type UserWithFriendsPunctuated = {
+	'user@info': UserPunctuated;
+	'user#friends': UserPunctuated[];
 };
 
 const role = 'someRole' as UserRole;
@@ -65,4 +78,19 @@ const result: CamelCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
+
 expectType<CamelCasedPropertiesDeep<UserWithFriends>>(result);
+expectType<CamelCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
+
+expectType<{fooBar: unknown}>({} as CamelCasedPropertiesDeep<{foo_bar: unknown}>);
+expectType<{fooBar: {barBaz: unknown}; biz: unknown}>({} as CamelCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>);
+
+expectType<{fooBar: any}>({} as CamelCasedPropertiesDeep<{foo_bar: any}>);
+expectType<{fooBar: {barBaz: any}; biz: any}>({} as CamelCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);
+
+expectType<{'fooBar': unknown}>({} as CamelCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
+expectType<{'fooBar': {'barBaz': unknown}; biz: unknown}>({} as CamelCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);
+
+expectType<{_fooBar: {_bazQux: string}}>({} as CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}, {preserveLeadingUnderscores: true}>);
+expectType<{__fooBar: string}>({} as CamelCasedPropertiesDeep<{__foo_bar: string}, {preserveLeadingUnderscores: true}>);
+expectType<{fooBar: {bazQux: string}}>({} as CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}>);

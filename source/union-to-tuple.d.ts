@@ -1,19 +1,7 @@
-import type {IsNever} from './is-never';
-import type {UnionToIntersection} from './union-to-intersection';
-
-/**
-Returns the last element of a union type.
-
-@example
-```
-type Last = LastOfUnion<1 | 2 | 3>;
-//=> 3
-```
-*/
-type LastOfUnion<T> =
-UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
-	? R
-	: never;
+import type {ExcludeExactly} from './exclude-exactly.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {UnionMember} from './union-member.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Convert a union type into an unordered tuple type of its elements.
@@ -36,9 +24,9 @@ type NumbersTuple = UnionToTuple<Numbers>;
 import type {UnionToTuple} from 'type-fest';
 
 const pets = {
-  dog: '🐶',
-  cat: '🐱',
-  snake: '🐍',
+	dog: '🐶',
+	cat: '🐱',
+	snake: '🐍',
 };
 
 type Pet = keyof typeof pets;
@@ -50,7 +38,12 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 
 @category Array
 */
-export type UnionToTuple<T, L = LastOfUnion<T>> =
-IsNever<T> extends false
-	? [...UnionToTuple<Exclude<T, L>>, L]
-	: [];
+export type UnionToTuple<Union> =
+	_UnionToTuple<Union> extends infer Result extends UnknownArray ? Result : never; // Nudges the compiler that `UnionToTuple` always yields an array.
+
+type _UnionToTuple<Union, Accumulator extends UnknownArray = [], Member = UnionMember<Union>> =
+	IsNever<Union> extends true
+		? Accumulator
+		: _UnionToTuple<ExcludeExactly<Union, Member>, [Member, ...Accumulator]>;
+
+export {};

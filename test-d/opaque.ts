@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectNotType, expectType} from 'tsd';
-import type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged, InvariantOf,	SnakeCasedPropertiesDeep} from '../index';
+import type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged, InvariantOf,	SnakeCasedPropertiesDeep} from '../index.d.ts';
 
 type Value = Opaque<number, 'Value'>;
 
@@ -43,7 +43,7 @@ const userEntities: NormalizedDictionary<Foo> = {
 const johnsId = '7dd4a16e-d5ee-454c-b1d0-71e23d9fa70b' as UUID;
 
 const userJohn = userEntities[johnsId];
-expectType<Foo>(userJohn);
+expectType<Foo | undefined>(userJohn);
 
 // Remove tag from opaque value.
 // Note: This will simply return number as type.
@@ -78,7 +78,7 @@ const userEntities2: Record<TaggedUUID, Foo> = {
 const johnsId2 = '7dd4a16e-d5ee-454c-b1d0-71e23d9fa70b' as TaggedUUID;
 
 const userJohn2 = userEntities2[johnsId2];
-expectType<Foo>(userJohn2);
+expectType<Foo | undefined>(userJohn2);
 
 // Tagged types should support multiple tags,
 // by intersection or repeated application of Tagged.

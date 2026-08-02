@@ -1,5 +1,5 @@
-import type {TypedArray} from './typed-array';
-import type {FindGlobalInstanceType} from './find-global-type';
+import type {TypedArray} from './typed-array.d.ts';
+import type {FindGlobalInstanceType} from './find-global-type.d.ts';
 
 type StructuredCloneablePrimitive =
 	| string
@@ -21,30 +21,30 @@ type StructuredCloneableData =
 	| TypedArray
 	| FindGlobalInstanceType<
 	// DOM or Node types
-	| 'Blob'
-	| 'File'
+		| 'Blob'
+		| 'File'
 	// DOM exclusive types
-	| 'AudioData'
-	| 'CropTarget'
-	| 'CryptoKey'
-	| 'DOMException'
-	| 'DOMMatrix'
-	| 'DOMMatrixReadOnly'
-	| 'DOMPoint'
-	| 'DOMPointReadOnly'
-	| 'DOMQuad'
-	| 'DOMRect'
-	| 'DOMRectReadOnly'
-	| 'FileList'
-	| 'FileSystemDirectoryHandle'
-	| 'FileSystemFileHandle'
-	| 'FileSystemHandle'
-	| 'GPUCompilationInfo'
-	| 'GPUCompilationMessage'
-	| 'ImageBitmap'
-	| 'ImageData'
-	| 'RTCCertificate'
-	| 'VideoFrame'
+		| 'AudioData'
+		| 'CropTarget'
+		| 'CryptoKey'
+		| 'DOMException'
+		| 'DOMMatrix'
+		| 'DOMMatrixReadOnly'
+		| 'DOMPoint'
+		| 'DOMPointReadOnly'
+		| 'DOMQuad'
+		| 'DOMRect'
+		| 'DOMRectReadOnly'
+		| 'FileList'
+		| 'FileSystemDirectoryHandle'
+		| 'FileSystemFileHandle'
+		| 'FileSystemHandle'
+		| 'GPUCompilationInfo'
+		| 'GPUCompilationMessage'
+		| 'ImageBitmap'
+		| 'ImageData'
+		| 'RTCCertificate'
+		| 'VideoFrame'
 	>;
 
 type StructuredCloneableCollection =
@@ -67,26 +67,23 @@ import type {StructuredCloneable} from 'type-fest';
 
 class CustomClass {}
 
-// @ts-expect-error
-const error: StructuredCloneable = {
-    custom: new CustomClass(),
-};
+const error = {
+	custom: new CustomClass(),
+	// @ts-expect-error
+} satisfies StructuredCloneable;
 
-structuredClone(error);
-//=> {custom: {}}
+const good = {
+	number: 3,
+	date: new Date(),
+	map: new Map<string, number>(),
+} satisfies StructuredCloneable;
 
-const good: StructuredCloneable = {
-    number: 3,
-    date: new Date(),
-    map: new Map<string, number>(),
-}
-
-good.map.set('key', 1);
-
-structuredClone(good);
-//=> {number: 3, date: Date(2022-10-17 22:22:35.920), map: Map {'key' -> 1}}
+const clonedGood = structuredClone(good);
+//=> {number: number; date: Date; map: Map<string, number>}
 ```
 
 @category Structured clone
 */
 export type StructuredCloneable = StructuredCloneablePrimitive | StructuredCloneableData | StructuredCloneableCollection;
+
+export {};

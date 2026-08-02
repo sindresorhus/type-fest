@@ -1,7 +1,9 @@
-import type {IsNever} from './is-never';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 An if-else-like type that resolves depending on whether the given type is `never`.
+
+@deprecated This type will be removed in the next major version. Use the {@link If} type instead.
 
 @see {@link IsNever}
 
@@ -22,3 +24,5 @@ type ShouldBeBar = IfNever<'not never', 'foo', 'bar'>;
 export type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = (
 	IsNever<T> extends true ? TypeIfNever : TypeIfNotNever
 );
+
+export {};

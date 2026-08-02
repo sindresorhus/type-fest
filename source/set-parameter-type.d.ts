@@ -1,6 +1,6 @@
-import type {IsUnknown} from './is-unknown';
-import type {StaticPartOfArray, VariablePartOfArray} from './internal';
-import type {UnknownArray} from './unknown-array';
+import type {IsUnknown} from './is-unknown.d.ts';
+import type {StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create an array that replaces the given `TArray`'s elements with the given `TObject`'s values at the given indices.
@@ -38,14 +38,14 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 					: K extends keyof TObject ? TObject[K] : TArray[K]
 			}
 		: TObject extends object
-			// If `TObject` is a object witch key is number like `{0: string, 1: number}`
+			// If `TObject` is an object with number keys like `{0: string, 1: number}`
 			? {
 				[K in keyof TArray]:
 				K extends `${infer NumberK extends number}`
 					? NumberK extends keyof TObject ? TObject[NumberK] : TArray[K]
 					: number extends K
 					// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`.
-					// example: `MergeObjectToParamterArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
+					// example: `MergeObjectToArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
 						? StaticPartOfArray<TArrayCopy>['length'] extends keyof TObject
 							? TObject[StaticPartOfArray<TArrayCopy>['length']]
 							: TArray[K]
@@ -61,12 +61,14 @@ Note:
 - This type will ignore the given function's generic type.
 - If you change the parameter type that return type depends on, the return type will not change:
 	```
+	import type {SetParameterType} from 'type-fest';
+
 	const fn = (a: number) => a;
-	//=> fn: (a: number) => number;
+	//=> (a: number) => number
 
  	// We change type of `a` to `string`, but return type is still `number`.
 	type Fn = SetParameterType<typeof fn, {0: string}>;
- 	//=> (a: string) => number;
+ 	//=> (a: string) => number
 	```
 
 Use-case:
@@ -78,28 +80,32 @@ Use-case:
 ```
 import type {SetParameterType} from 'type-fest';
 
-type HandleMessage = (data: Data, message: string, ...arguments: any[]) => void;
+type SuccessData = {success: true; value: number};
+type ErrorData = {success: false; error: string};
+type Data = SuccessData | ErrorData;
 
-type HandleOk = SetParameterType<HandleMessage, {0: SuccessData, 1: 'ok'}>;
-//=> type HandleOk = (data: SuccessData, message: 'ok') => void;
+type HandleMessage = (data: Data, message: string, ...arguments_: any[]) => void;
+
+type HandleOk = SetParameterType<HandleMessage, {0: SuccessData; 1: 'ok'}>;
+//=> (data: SuccessData, message: 'ok', ...arguments_: any[]) => void
 
 // Another way to define the parameters to replace.
 type HandleError = SetParameterType<HandleMessage, [data: ErrorData, message: 'error']>;
-//=> type HandleError = (data: ErrorData, message: 'error') => void;
+//=> (data: ErrorData, message: 'error', ...arguments_: any[]) => void
 
 // Change single parameter type.
 type HandleWarn = SetParameterType<HandleMessage, {1: 'warn'}>;
-//=> type HandleWarn = (data: Data, message: 'warn') => void;
+//=> (data: Data, message: 'warn', ...arguments_: any[]) => void
 
 // Change rest parameter type.
 
 // Way 1: Input full parameter type.
-type HandleLog = SetParameterType<HandleMessage, [data: Data, message: 'log', ...arguments: string[]]>;
-//=> type HandleLog = (data: Data, message: 'log', ...arguments: string[]) => void;
+type HandleLog = SetParameterType<HandleMessage, [data: Data, message: 'log', ...arguments_: string[]]>;
+//=> (data: Data, message: 'log', ...arguments_: string[]) => void
 
 // Way 2: Input rest parameter type by Object index.
 type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
-//=> type HandleLog2 = (data: Data, message: string, ...arguments: string[]) => void;
+//=> (data: Data, message: string, ...arguments_: string[]) => void
 ```
 
 @category Function
@@ -115,3 +121,5 @@ export type SetParameterType<Function_ extends (...arguments_: any[]) => unknown
 				: (this: ThisArgument, ...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
 		)
 		: Function_;	// This part should be unreachable
+
+export {};

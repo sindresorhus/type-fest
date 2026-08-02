@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {DistributedOmit, Except} from '../index';
+import type {DistributedOmit, Except} from '../index.d.ts';
 
 // When passing a non-union type, and
 // omitting keys that are present in the type.

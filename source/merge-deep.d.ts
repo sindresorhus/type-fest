@@ -1,18 +1,27 @@
-import type {ConditionalSimplifyDeep} from './conditional-simplify';
-import type {OmitIndexSignature} from './omit-index-signature';
-import type {PickIndexSignature} from './pick-index-signature';
-import type {Merge} from './merge';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {PickIndexSignature} from './pick-index-signature.d.ts';
+import type {Merge} from './merge.d.ts';
 import type {
 	FirstArrayElement,
 	IsBothExtends,
 	UnknownArrayOrTuple,
-} from './internal';
-import type {NonEmptyTuple} from './non-empty-tuple';
-import type {ArrayTail} from './array-tail';
-import type {UnknownRecord} from './unknown-record';
-import type {EnforceOptional} from './enforce-optional';
-import type {SimplifyDeep} from './simplify-deep';
-import type {UnknownArray} from './unknown-array';
+	EnforceOptional,
+} from './internal/index.d.ts';
+import type {NonEmptyTuple} from './non-empty-tuple.d.ts';
+import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
+import type {UnknownRecord} from './unknown-record.d.ts';
+import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
+
+type Writable<TArray extends UnknownArray> = {-readonly [Key in keyof TArray]: TArray[Key]}; // TODO: Remove this
+
+// Using the default `ArrayTail` type causes issues, refer https://github.com/sindresorhus/type-fest/pull/1175/files#r2134694728.
+type ArrayTail<TArray extends UnknownArray> = TArray extends unknown // For distributing `TArray`
+	? keyof TArray & `${number}` extends never
+		? []
+		: Writable<_ArrayTail<TArray>>
+	: never; // Should never happen
 
 type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;
 
@@ -24,7 +33,7 @@ type MergeDeepRecordProperty<
 	Source,
 	Options extends MergeDeepInternalOptions,
 > = undefined extends Source
-	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | (undefined extends Destination ? undefined : never)
 	: MergeDeepOrReturn<Source, Destination, Source, Options>;
 
 /**
@@ -40,17 +49,17 @@ type DoMergeDeepRecord<
 	Options extends MergeDeepInternalOptions,
 > =
 // Case in rule 1: The destination contains the key but the source doesn't.
-{
-	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
-}
+	{
+		[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
+	}
 // Case in rule 2: The source contains the key but the destination doesn't.
-& {
-	[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
-}
+	& {
+		[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
+	}
 // Case in rule 3: Both the source and the destination contain the key.
-& {
-	[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
-};
+	& {
+		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Required<Destination>[Key], Required<Source>[Key], Options>;
+	};
 
 /**
 Wrapper around {@link DoMergeDeepRecord} which preserves index signatures.
@@ -60,7 +69,7 @@ type MergeDeepRecord<
 	Source extends UnknownRecord,
 	Options extends MergeDeepInternalOptions,
 > = DoMergeDeepRecord<OmitIndexSignature<Destination>, OmitIndexSignature<Source>, Options>
-& Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
+	& Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
 
 // Helper to avoid computing ArrayTail twice.
 type PickRestTypeHelper<Tail extends UnknownArrayOrTuple, Type> = Tail extends [] ? Type : PickRestType<Tail>;
@@ -357,17 +366,17 @@ type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 This utility selects the correct entry point with the corresponding default options. This avoids re-merging the options at each iteration.
 */
 type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = SimplifyDeepExcludeArray<
-[undefined] extends [Destination | Source]
-	? never
-	: Destination extends UnknownRecord
-		? Source extends UnknownRecord
-			? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
-			: never
-		: Destination extends UnknownArrayOrTuple
-			? Source extends UnknownArrayOrTuple
-				? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
+	[undefined] extends [Destination | Source]
+		? never
+		: Destination extends UnknownRecord
+			? Source extends UnknownRecord
+				? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
 				: never
-			: never
+			: Destination extends UnknownArrayOrTuple
+				? Source extends UnknownArrayOrTuple
+					? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
+					: never
+				: never
 >;
 
 /**
@@ -389,13 +398,13 @@ type Foo = {
 	a: {b: string; c: boolean; d: number[]};
 };
 
-interface Bar {
+type Bar = {
 	name: string;
 	items: number[];
 	a: {b: number; d: boolean[]};
-}
+};
 
-type FooBar = MergeDeep<Foo, Bar>;
+type FooBar1 = MergeDeep<Foo, Bar>;
 // {
 // 	life: number;
 // 	name: string;
@@ -403,7 +412,7 @@ type FooBar = MergeDeep<Foo, Bar>;
 // 	a: {b: number; c: boolean; d: boolean[]};
 // }
 
-type FooBar = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
+type FooBar2 = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
 // {
 // 	life: number;
 // 	name: string;
@@ -437,38 +446,36 @@ type Foo = {foo: 'foo'; fooBar: string[]};
 type Bar = {bar: 'bar'; fooBar: number[]};
 
 type FooBar = MergeDeep<Foo, Bar>;
-// { foo: "foo"; bar: "bar"; fooBar: number[]}
+//=> {foo: 'foo'; bar: 'bar'; fooBar: number[]}
 
 type FooBarSpread = MergeDeep<Foo, Bar, {arrayMergeMode: 'spread'}>;
-// { foo: "foo"; bar: "bar"; fooBar: (string | number)[]}
+//=> {foo: 'foo'; bar: 'bar'; fooBar: (string | number)[]}
 
 type FooBarArray = MergeDeep<Foo[], Bar[]>;
-// (Foo | Bar)[]
+//=> (Foo | Bar)[]
 
 type FooBarArrayDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true}>;
-// FooBar[]
+//=> {foo: 'foo'; bar: 'bar'; fooBar: number[]}[]
 
 type FooBarArraySpreadDeep = MergeDeep<Foo[], Bar[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
-// FooBarSpread[]
+//=> {foo: 'foo'; bar: 'bar'; fooBar: (string | number)[]}[]
 
 type FooBarTupleDeep = MergeDeep<[Foo, true, 42], [Bar, 'life'], {recurseIntoArrays: true}>;
-// [FooBar, 'life', 42]
+//=> [{foo: 'foo'; bar: 'bar'; fooBar: number[]}, 'life', 42]
 
 type FooBarTupleWithArrayDeep = MergeDeep<[Foo[], true], [Bar[], 'life', 42], {recurseIntoArrays: true}>;
-// [FooBar[], 'life', 42]
+//=> [{foo: 'foo'; bar: 'bar'; fooBar: number[]}[], 'life', 42]
 ```
 
 @example
 ```
 import type {MergeDeep, MergeDeepOptions} from 'type-fest';
 
-function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
+declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 	destination: Destination,
 	source: Source,
 	options?: Options,
-): MergeDeep<Destination, Source, Options> {
-	// Make your implementation ...
-}
+): MergeDeep<Destination, Source, Options>;
 ```
 
 @experimental This type is marked as experimental because it depends on {@link ConditionalSimplifyDeep} which itself is experimental.
@@ -480,7 +487,9 @@ function mergeDeep<Destination, Source, Options extends MergeDeepOptions = {}>(
 @category Utilities
 */
 export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepWithDefaultOptions<
-SimplifyDeepExcludeArray<Destination>,
-SimplifyDeepExcludeArray<Source>,
-Options
+	SimplifyDeepExcludeArray<Destination>,
+	SimplifyDeepExcludeArray<Source>,
+	Options
 >;
+
+export {};

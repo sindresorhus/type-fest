@@ -1,7 +1,7 @@
 /**
 Create a type that represents either the value or an array of the value.
 
-@see Promisable
+@see {@link Promisable}
 
 @example
 ```
@@ -13,7 +13,7 @@ function bundle(input: string, output: Arrayable<string>) {
 	// …
 
 	for (const output of outputList) {
-		console.log(`write to: ${output}`);
+		console.log(`write ${input} to: ${output}`);
 	}
 }
 
@@ -24,6 +24,8 @@ bundle('src/index.js', ['dist/index.cjs', 'dist/index.mjs']);
 @category Array
 */
 export type Arrayable<T> =
-T
+	T
 // TODO: Use `readonly T[]` when this issue is resolved: https://github.com/microsoft/TypeScript/issues/17002
-| T[];
+	| T[];
+
+export {};

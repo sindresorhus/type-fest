@@ -1,8 +1,9 @@
-import type {ArrayElement, ObjectValue} from './internal';
-import type {IsEqual} from './is-equal';
-import type {KeysOfUnion} from './keys-of-union';
-import type {IsUnknown} from './is-unknown';
-import type {Primitive} from './primitive';
+import type {ObjectValue} from './internal/index.d.ts';
+import type {ArrayElement} from './array-element.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {IsUnknown} from './is-unknown.d.ts';
+import type {Primitive} from './primitive.d.ts';
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
@@ -10,7 +11,7 @@ Create a type from `ParameterType` and `InputType` and change keys exclusive to 
 - Mark these excess keys as `never`.
 */
 type ExactObject<ParameterType, InputType> = {[Key in keyof ParameterType]: Exact<ParameterType[Key], ObjectValue<InputType, Key>>}
-& Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
+	& Record<Exclude<keyof InputType, KeysOfUnion<ParameterType>>, never>;
 
 /**
 Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
@@ -23,11 +24,12 @@ This is useful for function type-guarding to reject arguments with excess proper
 ```
 type OnlyAcceptName = {name: string};
 
-function onlyAcceptName(arguments_: OnlyAcceptName) {}
+declare function onlyAcceptName(arguments_: OnlyAcceptName): void;
 
 // TypeScript complains about excess properties when an object literal is provided.
+// @ts-expect-error
 onlyAcceptName({name: 'name', id: 1});
-//=> `id` is excess
+// `id` is excess
 
 // TypeScript does not complain about excess properties when the provided value is a variable (not an object literal).
 const invalidInput = {name: 'name', id: 1};
@@ -38,13 +40,14 @@ Having `Exact` allows TypeScript to reject excess properties.
 
 @example
 ```
-import {Exact} from 'type-fest';
+import type {Exact} from 'type-fest';
 
 type OnlyAcceptName = {name: string};
 
-function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(arguments_: T) {}
+declare function onlyAcceptNameImproved<T extends Exact<OnlyAcceptName, T>>(arguments_: T): void;
 
 const invalidInput = {name: 'name', id: 1};
+// @ts-expect-error
 onlyAcceptNameImproved(invalidInput); // Compilation error
 ```
 
@@ -66,3 +69,5 @@ export type Exact<ParameterType, InputType> =
 						// In TypeScript, Array is a subtype of ReadonlyArray, so always test Array before ReadonlyArray.
 						: ParameterType extends readonly unknown[] ? ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 							: ExactObject<ParameterType, InputType>;
+
+export {};

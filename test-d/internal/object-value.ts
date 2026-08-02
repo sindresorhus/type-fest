@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ObjectValue} from '../../source/internal';
+import type {ObjectValue} from '../../source/internal/index.d.ts';
 
 type ObjectT = {
 	string: string;

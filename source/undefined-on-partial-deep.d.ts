@@ -1,4 +1,4 @@
-import type {BuiltIns} from './internal';
+import type {BuiltIns} from './internal/index.d.ts';
 
 /**
 Create a deep version of another type where all optional keys are set to also accept `undefined`.
@@ -12,18 +12,19 @@ Use-cases:
 ```
 import type {UndefinedOnPartialDeep} from 'type-fest';
 
-interface Settings {
+type Settings = {
 	optionA: string;
 	optionB?: number;
 	subOption: {
 		subOptionA: boolean;
 		subOptionB?: boolean;
-	}
+	};
 };
 
 const testSettingsA: Settings = {
 	optionA: 'foo',
 	optionB: undefined, // TypeScript error if `exactOptionalPropertyTypes` is true.
+	// @ts-expect-error
 	subOption: {
 		subOptionA: true,
 		subOptionB: undefined, // TypeScript error if `exactOptionalPropertyTypes` is true
@@ -32,10 +33,10 @@ const testSettingsA: Settings = {
 
 const testSettingsB: UndefinedOnPartialDeep<Settings> = {
 	optionA: 'foo',
-	optionB: undefined, // 👉 `optionB` can be set to undefined now.
+	optionB: undefined, // `optionB` can be set to `undefined` now.
 	subOption: {
 		subOptionA: true,
-		subOptionB: undefined, // 👉 `subOptionB` can be set to undefined now.
+		subOptionB: undefined, // `subOptionB` can be set to `undefined` now.
 	},
 };
 ```
@@ -78,3 +79,5 @@ type UndefinedOnPartialList<T extends readonly unknown[]> = T extends []
 				: T extends ReadonlyArray<infer F>
 					? ReadonlyArray<UndefinedOnPartialDeep<F>>
 					: never;
+
+export {};

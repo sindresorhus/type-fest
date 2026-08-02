@@ -1,6 +1,8 @@
-import type {NumberAbsolute, BuildTuple, ReverseSign} from './internal';
-import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
-import type {LessThan} from './less-than';
+import type {ReverseSign} from './internal/index.d.ts';
+import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
+import type {LessThan} from './less-than.d.ts';
+import type {TupleOf} from './tuple-of.d.ts';
+import type {Absolute} from './absolute.d.ts';
 
 /**
 Returns the difference between two numbers.
@@ -10,24 +12,24 @@ Note:
 
 @example
 ```
-import type {Subtract} from 'type-fest';
+import type {Subtract, PositiveInfinity} from 'type-fest';
 
-Subtract<333, 222>;
+type A = Subtract<333, 222>;
 //=> 111
 
-Subtract<111, -222>;
+type B = Subtract<111, -222>;
 //=> 333
 
-Subtract<-111, 222>;
+type C = Subtract<-111, 222>;
 //=> -333
 
-Subtract<18, 96>;
+type D = Subtract<18, 96>;
 //=> -78
 
-Subtract<PositiveInfinity, 9999>;
-//=> PositiveInfinity
+type E = Subtract<PositiveInfinity, 9999>;
+//=> Infinity
 
-Subtract<PositiveInfinity, PositiveInfinity>;
+type F = Subtract<PositiveInfinity, PositiveInfinity>;
 //=> number
 ```
 
@@ -58,9 +60,9 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 		? SubtractPositives<A, B>
 		: AreNegative extends [true, true]
 			// When both numbers are negative we subtract the absolute values and then reverse the sign
-			? ReverseSign<SubtractPositives<NumberAbsolute<A>, NumberAbsolute<B>>>
+			? ReverseSign<SubtractPositives<Absolute<A>, Absolute<B>>>
 			// When the signs are different we can add the absolute values and then reverse the sign if A < B
-			: [...BuildTuple<NumberAbsolute<A>>, ...BuildTuple<NumberAbsolute<B>>] extends infer R extends unknown[]
+			: [...TupleOf<Absolute<A>>, ...TupleOf<Absolute<B>>] extends infer R extends unknown[]
 				? LessThan<A, B> extends true ? ReverseSign<R['length']> : R['length']
 				: never;
 
@@ -78,6 +80,8 @@ Subtracts two positive numbers A and B such that A > B.
 */
 type SubtractIfAGreaterThanB<A extends number, B extends number> =
 	// This is where we always want to end up and do the actual subtraction
-	BuildTuple<A> extends [...BuildTuple<B>, ...infer R]
+	TupleOf<A> extends [...TupleOf<B>, ...infer R]
 		? R['length']
 		: never;
+
+export {};

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {GlobalThis} from '../index';
+import type {GlobalThis} from '../index.d.ts';
 
 type ExtraProperties = GlobalThis & {
 	readonly GLOBAL_TOKEN: string;

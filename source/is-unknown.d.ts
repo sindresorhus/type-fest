@@ -1,4 +1,4 @@
-import type {IsNull} from './is-null';
+import type {IsNull} from './is-null.d.ts';
 
 /**
 Returns a boolean for whether the given type is `unknown`.
@@ -11,34 +11,23 @@ Useful in type utilities, such as when dealing with unknown data from API calls.
 ```
 import type {IsUnknown} from 'type-fest';
 
-// https://github.com/pajecawav/tiny-global-store/blob/master/src/index.ts
-type Action<TState, TPayload = void> =
-	IsUnknown<TPayload> extends true
-		? (state: TState) => TState,
-		: (state: TState, payload: TPayload) => TState;
+type A = IsUnknown<unknown>;
+//=> true
 
-class Store<TState> {
-	constructor(private state: TState) {}
+type B = IsUnknown<any>;
+//=> false
 
-	execute<TPayload = void>(action: Action<TState, TPayload>, payload?: TPayload): TState {
-		this.state = action(this.state, payload);
-		return this.state;
-	}
+type C = IsUnknown<never>;
+//=> false
 
-	// ... other methods
-}
+type D = IsUnknown<unknown[]>;
+//=> false
 
-const store = new Store({value: 1});
-declare const someExternalData: unknown;
+type E = IsUnknown<object>;
+//=> false
 
-store.execute(state => ({value: state.value + 1}));
-//=> `TPayload` is `void`
-
-store.execute((state, payload) => ({value: state.value + payload}), 5);
-//=> `TPayload` is `5`
-
-store.execute((state, payload) => ({value: state.value + payload}), someExternalData);
-//=> Errors: `action` is `(state: TState) => TState`
+type F = IsUnknown<string>;
+//=> false
 ```
 
 @category Utilities
@@ -50,3 +39,5 @@ export type IsUnknown<T> = (
 			: false
 		: false
 );
+
+export {};

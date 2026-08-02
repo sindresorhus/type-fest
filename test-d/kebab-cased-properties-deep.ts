@@ -1,11 +1,13 @@
 import {expectType} from 'tsd';
-import type {KebabCasedPropertiesDeep} from '../index';
+import type {KebabCasedPropertiesDeep} from '../index.d.ts';
 
-declare const foo: KebabCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
-expectType<{'hello-world': {'foo-bar': string}}>(foo);
+type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
 
-declare const bar: KebabCasedPropertiesDeep<Set<{fooBar: string}>>;
-expectType<Set<{'foo-bar': string}>>(bar);
+declare const foo: KebabCasedPropertiesDeep<FooBar>;
+expectType<{'hello-world': {p2p: Array<{'address-line1': string}>}}>(foo);
+
+declare const bar: KebabCasedPropertiesDeep<FooBar, {splitOnNumbers: true}>;
+expectType<{'hello-world': {'p-2-p': Array<{'address-line-1': string}>}}>(bar);
 
 // Verify example
 type User = {
@@ -15,9 +17,21 @@ type User = {
 	regExp: RegExp;
 };
 
+type UserPunctuated = {
+	'user::id': number;
+	'user::name': string;
+	date: Date;
+	'reg::exp': RegExp;
+};
+
 type UserWithFriends = {
 	userInfo: User;
 	userFriends: User[];
+};
+
+type UserWithFriendsPunctuated = {
+	'user@info': UserPunctuated;
+	'user#friends': UserPunctuated[];
 };
 
 const result: KebabCasedPropertiesDeep<UserWithFriends> = {
@@ -42,4 +56,15 @@ const result: KebabCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
+
 expectType<KebabCasedPropertiesDeep<UserWithFriends>>(result);
+expectType<KebabCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
+
+expectType<{'foo-bar': unknown}>({} as KebabCasedPropertiesDeep<{foo_bar: unknown}>);
+expectType<{'foo-bar': {'bar-baz': unknown}; biz: unknown}>({} as KebabCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>);
+
+expectType<{'foo-bar': any}>({} as KebabCasedPropertiesDeep<{foo_bar: any}>);
+expectType<{'foo-bar': {'bar-baz': any}; biz: any}>({} as KebabCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);
+
+expectType<{'foo-bar': unknown}>({} as KebabCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
+expectType<{'foo-bar': {'bar-baz': unknown}; biz: unknown}>({} as KebabCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);

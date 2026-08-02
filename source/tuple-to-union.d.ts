@@ -21,7 +21,7 @@ type RequestBody = {
 };
 
 function verifyRequestBody(body: unknown): body is RequestBody {
-	const deliverTo = (body as any).deliverTo;
+	const {deliverTo} = (body as any);
 	return typeof body === 'object' && body !== null && verifyDestination(deliverTo);
 }
 ```
@@ -37,10 +37,11 @@ type Destination = typeof destinations[number];
 
 const erroringType = new Set(['a', 'b', 'c']);
 
+// @ts-expect-error
 type ErroringType = typeof erroringType[number];
-//=> Type 'Set<string>' has no matching index signature for type 'number'. ts(2537)
+// Error: Type 'Set<string>' has no matching index signature for type 'number'. ts(2537)
 
-const numberBool: { [n: number]: boolean } = { 1: true };
+const numberBool: {[n: number]: boolean} = {1: true};
 
 type NumberBool = typeof numberBool[number];
 //=> boolean
@@ -49,3 +50,5 @@ type NumberBool = typeof numberBool[number];
 @category Array
 */
 export type TupleToUnion<ArrayType> = ArrayType extends readonly unknown[] ? ArrayType[number] : never;
+
+export {};

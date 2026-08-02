@@ -17,32 +17,41 @@ Use-case: Defining key paths in a nested object. For example, for dot-notation f
 ```
 import type {Join} from 'type-fest';
 
-// Mixed (strings & numbers) items; result is: 'foo.0.baz'
-const path: Join<['foo', 0, 'baz'], '.'> = ['foo', 0, 'baz'].join('.');
+// Mixed (strings & numbers) items
+const path1 = ['foo', 0, 'baz'].join('.') as Join<['foo', 0, 'baz'], '.'>;
+//=> 'foo.0.baz'
 
-// Only string items; result is: 'foo.bar.baz'
-const path: Join<['foo', 'bar', 'baz'], '.'> = ['foo', 'bar', 'baz'].join('.');
+// Only string items
+const path2 = ['foo', 'bar', 'baz'].join('.') as Join<['foo', 'bar', 'baz'], '.'>;
+//=> 'foo.bar.baz'
 
-// Only number items; result is: '1.2.3'
-const path: Join<[1, 2, 3], '.'> = [1, 2, 3].join('.');
+// Only number items
+const path3 = [1, 2, 3].join('.') as Join<[1, 2, 3], '.'>;
+//=> '1.2.3'
 
-// Only bigint items; result is '1.2.3'
-const path: Join<[1n, 2n, 3n], '.'> = [1n, 2n, 3n].join('.');
+// Only bigint items
+const path4 = [1n, 2n, 3n].join('.') as Join<[1n, 2n, 3n], '.'>;
+//=> '1.2.3'
 
-// Only boolean items; result is: 'true.false.true'
-const path: Join<[true, false, true], '.'> = [true, false, true].join('.');
+// Only boolean items
+const path5 = [true, false, true].join('.') as Join<[true, false, true], '.'>;
+//=> 'true.false.true'
 
-// Contains nullish items; result is: 'foo..baz..xyz'
-const path: Join<['foo', undefined, 'baz', null, 'xyz'], '.'> = ['foo', undefined, 'baz', null, 'xyz'].join('.');
+// Contains nullish items
+const path6 = ['foo', undefined, 'baz', null, 'xyz'].join('.') as Join<['foo', undefined, 'baz', null, 'xyz'], '.'>;
+//=> 'foo..baz..xyz'
 
-// Partial tuple shapes (rest param last); result is: `prefix.${string}`
-const path: Join<['prefix', ...string[]], '.'> = ['prefix'].join('.');
+// Partial tuple shapes (rest param last)
+const path7 = ['prefix'].join('.') as Join<['prefix', ...string[]], '.'>;
+//=> `prefix.${string}`
 
-// Partial tuple shapes (rest param first); result is: `${string}.suffix`
-const path: Join<[...string[], 'suffix'], '.'> = ['suffix'].join('.');
+// Partial tuple shapes (rest param first)
+const path8 = ['suffix'].join('.') as Join<[...string[], 'suffix'], '.'>;
+//=> `${string}.suffix`
 
-// Tuples items with nullish unions; result is '.' | 'hello.' | '.world' | 'hello.world'
-const path: Join<['hello' | undefined, 'world' | null], '.'> = ['hello', 'world'].join('.');
+// Tuples items with nullish unions
+const path9 = ['hello', 'world'].join('.') as Join<['hello' | undefined, 'world' | null], '.'>;
+//=> '.' | '.world' | 'hello.' | 'hello.world'
 ```
 
 @category Array
@@ -66,3 +75,5 @@ export type Join<
 			]
 				? `${Join<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}`
 				: string;
+
+export {};

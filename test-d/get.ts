@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'expect-type';
-import type {Get} from '../index';
+import type {Get} from '../index.d.ts';
 
 type NonStrict = {strict: false};
 

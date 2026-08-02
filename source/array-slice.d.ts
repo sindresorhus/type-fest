@@ -1,12 +1,13 @@
-import type {Sum} from './sum';
-import type {LessThanOrEqual} from './less-than-or-equal';
-import type {GreaterThanOrEqual} from './greater-than-or-equal';
-import type {GreaterThan} from './greater-than';
-import type {IsNegative} from './numeric';
-import type {Not, TupleMin} from './internal';
-import type {IsEqual} from './is-equal';
-import type {And} from './and';
-import type {ArraySplice} from './array-splice';
+import type {Sum} from './sum.d.ts';
+import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
+import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
+import type {GreaterThan} from './greater-than.d.ts';
+import type {IsNegative} from './numeric.d.ts';
+import type {Not, TupleMin} from './internal/index.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {And} from './and.d.ts';
+import type {ArraySplice} from './array-splice.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Returns an array slice of a given range, just like `Array#slice()`.
@@ -43,14 +44,14 @@ function arraySlice<
 
 const slice = arraySlice([1, '2', {a: 3}, [4, 5]], 0, -1);
 
-typeof slice;
-//=> [1, '2', { readonly a: 3; }]
+type Slice = typeof slice;
+//=> [1, '2', {readonly a: 3}]
 
-slice[2].a;
+const value = slice[2].a;
 //=> 3
 
 // @ts-expect-error -- TS2493: Tuple type '[1, "2", {readonly a: 3}]' of length '3' has no element at index '3'.
-slice[3];
+const invalidIndexAccess = slice[3];
 ```
 
 @category Array
@@ -60,12 +61,32 @@ export type ArraySlice<
 	Start extends number = never,
 	End extends number = never,
 > = Array_ extends unknown // To distributive type
-	? And<IsEqual<Start, never>, IsEqual<End, never>> extends true
-		? Array_
-		: number extends Array_['length']
-			? VariableLengthArraySliceHelper<Array_, Start, End>
-			: ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? Array_['length'] : End>
+	? IsNever<Start> extends true
+		? IsNever<End> extends true
+			? _ArraySlice<Array_, Start, End>
+			: End extends unknown // To distribute `End`
+				? _ArraySlice<Array_, Start, End>
+				: never // Never happens
+		: IsNever<End> extends true
+			? Start extends unknown // To distribute `Start`
+				? _ArraySlice<Array_, Start, End>
+				: never // Never happens
+			: Start extends unknown // To distribute `Start`
+				? End extends unknown // To distribute `End`
+					? _ArraySlice<Array_, Start, End>
+					: never // Never happens
+				: never // Never happens
 	: never; // Never happens
+
+type _ArraySlice<
+	Array_ extends readonly unknown[],
+	Start extends number = 0,
+	End extends number = Array_['length'],
+> = And<IsEqual<Start, never>, IsEqual<End, never>> extends true
+	? Array_
+	: number extends Array_['length']
+		? VariableLengthArraySliceHelper<Array_, Start, End>
+		: ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? Array_['length'] : End>;
 
 type VariableLengthArraySliceHelper<
 	Array_ extends readonly unknown[],
@@ -74,8 +95,8 @@ type VariableLengthArraySliceHelper<
 > = And<Not<IsNegative<Start>>, IsEqual<End, never>> extends true
 	? ArraySplice<Array_, 0, Start>
 	: And<
-	And<Not<IsNegative<Start>>, Not<IsNegative<End>>>,
-	IsEqual<GreaterThan<End, Start>, true>
+		And<Not<IsNegative<Start>>, Not<IsNegative<End>>>,
+		IsEqual<GreaterThan<End, Start>, true>
 	> extends true
 		? ArraySliceByPositiveIndex<Array_, Start, End>
 		: [];
@@ -107,3 +128,5 @@ type ArraySliceByPositiveIndex<
 > = Start extends End
 	? Result
 	: ArraySliceByPositiveIndex<Array_, Sum<Start, 1>, End, [...Result, Array_[Start]]>;
+
+export {};

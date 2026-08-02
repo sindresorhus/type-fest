@@ -1,10 +1,11 @@
-import type {StringDigit, ToString} from './internal';
-import type {LiteralStringUnion} from './literal-union';
-import type {Paths} from './paths';
-import type {Split} from './split';
-import type {StringKeyOf} from './string-key-of';
+import type {ApplyDefaultOptions, ToString} from './internal/index.d.ts';
+import type {_LiteralStringUnion} from './literal-union.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {Split} from './split.d.ts';
+import type {KeyAsString} from './key-as-string.d.ts';
+import type {DigitCharacter} from './characters.d.ts';
 
-type GetOptions = {
+export type GetOptions = {
 	/**
 	Include `undefined` in the return type when accessing properties.
 
@@ -15,24 +16,28 @@ type GetOptions = {
 	strict?: boolean;
 };
 
+type DefaultGetOptions = {
+	strict: true;
+};
+
 /**
 Like the `Get` type but receives an array of strings as a path parameter.
 */
-type GetWithPath<BaseType, Keys, Options extends GetOptions = {}> =
+type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 	Keys extends readonly []
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
 			? GetWithPath<
-			PropertyOf<BaseType, Extract<Head, string>, Options>,
-			Extract<Tail, string[]>,
-			Options
+				PropertyOf<BaseType, Extract<Head, string>, Options>,
+				Extract<Tail, string[]>,
+				Options
 			>
 			: never;
 
 /**
 Adds `undefined` to `Type` if `strict` is enabled.
 */
-type Strictify<Type, Options extends GetOptions> =
+type Strictify<Type, Options extends Required<GetOptions>> =
 	Options['strict'] extends false ? Type : (Type | undefined);
 
 /**
@@ -41,7 +46,7 @@ If `Options['strict']` is `true`, includes `undefined` in the returned type when
 Known limitations:
 - Does not include `undefined` in the type on object types with an index signature (for example, `{a: string; [key: string]: string}`).
 */
-type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends GetOptions> =
+type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends Required<GetOptions>> =
 	Record<string, any> extends BaseType
 		? string extends keyof BaseType
 			? Strictify<BaseType[Key], Options> // Record<string, any>
@@ -53,14 +58,14 @@ Splits a dot-prop style path into a tuple comprised of the properties in the pat
 
 @example
 ```
-ToPath<'foo.bar.baz'>
+type A = ToPath<'foo.bar.baz'>;
 //=> ['foo', 'bar', 'baz']
 
-ToPath<'foo[0].bar.baz'>
+type B = ToPath<'foo[0].bar.baz'>;
 //=> ['foo', '0', 'bar', 'baz']
 ```
 */
-type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.'>;
+type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.', {strictLiteralChecks: false}>;
 
 /**
 Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.
@@ -79,10 +84,10 @@ Returns true if `LongString` is made up out of `Substring` repeated 0 or more ti
 
 @example
 ```
-ConsistsOnlyOf<'aaa', 'a'> //=> true
-ConsistsOnlyOf<'ababab', 'ab'> //=> true
-ConsistsOnlyOf<'aBa', 'a'> //=> false
-ConsistsOnlyOf<'', 'a'> //=> true
+type A = ConsistsOnlyOf<'aaa', 'a'>; //=> true
+type B = ConsistsOnlyOf<'ababab', 'ab'>; //=> true
+type C = ConsistsOnlyOf<'aBa', 'a'>; //=> false
+type D = ConsistsOnlyOf<'', 'a'>; //=> true
 ```
 */
 type ConsistsOnlyOf<LongString extends string, Substring extends string> =
@@ -107,7 +112,7 @@ type WithStringsKeys = keyof WithStrings;
 ```
 */
 type WithStringKeys<BaseType> = {
-	[Key in StringKeyOf<BaseType>]: UncheckedIndex<BaseType, Key>
+	[Key in KeyAsString<BaseType>]: UncheckedIndex<BaseType, Key>
 };
 
 /**
@@ -122,7 +127,7 @@ Note:
 - Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
 - Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
-type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
+type PropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	BaseType extends null | undefined
 		? undefined
 		: Key extends keyof BaseType
@@ -146,7 +151,7 @@ type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 					length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
 				}
 					? (
-						ConsistsOnlyOf<Key, StringDigit> extends true
+						ConsistsOnlyOf<Key, DigitCharacter> extends true
 							? Strictify<Item, Options>
 							: unknown
 					)
@@ -156,45 +161,50 @@ type PropertyOf<BaseType, Key extends string, Options extends GetOptions = {}> =
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
-Get a deeply-nested property from an object using a key path, like Lodash's `.get()` function.
+Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs/latest#get) function.
 
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
 
 @example
 ```
 import type {Get} from 'type-fest';
-import * as lodash from 'lodash';
 
-const get = <BaseType, Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path> =>
-	lodash.get(object, path);
+declare function get<BaseType, const Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path>;
 
-interface ApiResponse {
+type ApiResponse = {
 	hits: {
 		hits: Array<{
-			_id: string
+			_id: string;
 			_source: {
 				name: Array<{
-					given: string[]
-					family: string
-				}>
-				birthDate: string
-			}
-		}>
-	}
-}
+					given: string[];
+					family: string;
+				}>;
+				birthDate: string;
+			};
+		}>;
+	};
+};
 
-const getName = (apiResponse: ApiResponse) =>
-	get(apiResponse, 'hits.hits[0]._source.name');
-	//=> Array<{given: string[]; family: string}> | undefined
+const getName = (apiResponse: ApiResponse) => get(apiResponse, 'hits.hits[0]._source.name');
+//=> (apiResponse: ApiResponse) => {
+// 	given: string[];
+// 	family: string;
+// }[] | undefined
 
 // Path also supports a readonly array of strings
-const getNameWithPathArray = (apiResponse: ApiResponse) =>
-	get(apiResponse, ['hits','hits', '0', '_source', 'name'] as const);
-	//=> Array<{given: string[]; family: string}> | undefined
+const getNameWithPathArray = (apiResponse: ApiResponse) => get(apiResponse, ['hits', 'hits', '0', '_source', 'name']);
+//=> (apiResponse: ApiResponse) => {
+// 	given: string[];
+// 	family: string;
+// }[] | undefined
 
 // Non-strict mode:
-Get<string[], '3', {strict: false}> //=> string
-Get<Record<string, string>, 'foo', {strict: true}> // => string
+type A = Get<string[], '3', {strict: false}>;
+//=> string
+
+type B = Get<Record<string, string>, 'foo', {strict: true}>;
+//=> string | undefined
 ```
 
 @category Object
@@ -205,6 +215,13 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
-	| LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
-	Options extends GetOptions = {}> =
-		GetWithPath<BaseType, Path extends string ? ToPath<Path> : Path, Options>;
+	| _LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
+	Options extends GetOptions = {},
+> =
+	GetWithPath<
+		BaseType,
+		Path extends string ? ToPath<Path> : Path,
+		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
+	>;
+
+export {};

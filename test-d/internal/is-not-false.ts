@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-duplicate-type-constituents */
 import {expectType} from 'tsd';
-import type {IsNotFalse} from '../../source/internal';
+import type {IsNotFalse} from '../../source/internal/index.d.ts';
 
 expectType<IsNotFalse<true>>(true);
 expectType<IsNotFalse<boolean>>(true);

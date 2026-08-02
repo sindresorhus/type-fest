@@ -11,32 +11,46 @@ Useful in type utilities, such as checking if something does not occur.
 ```
 import type {IsNever, And} from 'type-fest';
 
-// https://github.com/andnp/SimplyTyped/blob/master/src/types/strings.ts
-type AreStringsEqual<A extends string, B extends string> =
-	And<
-		IsNever<Exclude<A, B>> extends true ? true : false,
-		IsNever<Exclude<B, A>> extends true ? true : false
-	>;
+type A = IsNever<never>;
+//=> true
 
-type EndIfEqual<I extends string, O extends string> =
-	AreStringsEqual<I, O> extends true
-		? never
-		: void;
+type B = IsNever<any>;
+//=> false
 
-function endIfEqual<I extends string, O extends string>(input: I, output: O): EndIfEqual<I, O> {
-	if (input === output) {
-		process.exit(0);
-	}
-}
+type C = IsNever<unknown>;
+//=> false
 
-endIfEqual('abc', 'abc');
+type D = IsNever<never[]>;
+//=> false
+
+type E = IsNever<object>;
+//=> false
+
+type F = IsNever<string>;
+//=> false
+```
+
+@example
+```
+import type {IsNever} from 'type-fest';
+
+type IsTrue<T> = T extends true ? true : false;
+
+// When a distributive conditional is instantiated with `never`, the entire conditional results in `never`.
+type A = IsTrue<never>;
 //=> never
 
-endIfEqual('abc', '123');
-//=> void
+// If you don't want that behaviour, you can explicitly add an `IsNever` check before the distributive conditional.
+type IsTrueFixed<T> =
+	IsNever<T> extends true ? false : T extends true ? true : false;
+
+type B = IsTrueFixed<never>;
+//=> false
 ```
 
 @category Type Guard
 @category Utilities
 */
 export type IsNever<T> = [T] extends [never] ? true : false;
+
+export {};

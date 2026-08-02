@@ -1,6 +1,8 @@
-import type {NumberAbsolute, BuildTuple, TupleMax, ReverseSign} from './internal';
-import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric';
-import type {Subtract} from './subtract';
+import type {TupleOf} from './tuple-of.d.ts';
+import type {TupleMax, ReverseSign} from './internal/index.d.ts';
+import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
+import type {Subtract} from './subtract.d.ts';
+import type {Absolute} from './absolute.d.ts';
 
 /**
 Returns the sum of two numbers.
@@ -10,21 +12,21 @@ Note:
 
 @example
 ```
-import type {Sum} from 'type-fest';
+import type {Sum, PositiveInfinity, NegativeInfinity} from 'type-fest';
 
-Sum<111, 222>;
+type A = Sum<111, 222>;
 //=> 333
 
-Sum<-111, 222>;
+type B = Sum<-111, 222>;
 //=> 111
 
-Sum<111, -222>;
+type C = Sum<111, -222>;
 //=> -111
 
-Sum<PositiveInfinity, -9999>;
-//=> PositiveInfinity
+type D = Sum<PositiveInfinity, -9999>;
+//=> Infinity
 
-Sum<PositiveInfinity, NegativeInfinity>;
+type E = Sum<PositiveInfinity, NegativeInfinity>;
 //=> number
 ```
 
@@ -56,11 +58,11 @@ type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative
 		? SumPositives<A, B>
 		: AreNegative extends [true, true]
 			// When both numbers are negative we add the absolute values and then reverse the sign
-			? ReverseSign<SumPositives<NumberAbsolute<A>, NumberAbsolute<B>>>
+			? ReverseSign<SumPositives<Absolute<A>, Absolute<B>>>
 			// When the signs are different we can subtract the absolute values, remove the sign
 			// and then reverse the sign if the larger absolute value is negative
-			: NumberAbsolute<Subtract<NumberAbsolute<A>, NumberAbsolute<B>>> extends infer Result extends number
-				? TupleMax<[NumberAbsolute<A>, NumberAbsolute<B>]> extends infer Max_ extends number
+			: Absolute<Subtract<Absolute<A>, Absolute<B>>> extends infer Result extends number
+				? TupleMax<[Absolute<A>, Absolute<B>]> extends infer Max_ extends number
 					? Max_ extends A | B
 						// The larger absolute value is positive, so the result is positive
 						? Result
@@ -73,6 +75,8 @@ type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative
 Adds two positive numbers.
 */
 type SumPositives<A extends number, B extends number> =
-	[...BuildTuple<A>, ...BuildTuple<B>]['length'] extends infer Result extends number
+	[...TupleOf<A>, ...TupleOf<B>]['length'] extends infer Result extends number
 		? Result
 		: never;
+
+export {};

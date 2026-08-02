@@ -1,12 +1,12 @@
-import type {Except} from './except';
-import type {HomomorphicPick, IfArrayReadonly} from './internal';
-import type {KeysOfUnion} from './keys-of-union';
-import type {OptionalKeysOf} from './optional-keys-of';
-import type {Simplify} from './simplify';
-import type {UnknownArray} from './unknown-array';
+import type {Except} from './except.d.ts';
+import type {If} from './if.d.ts';
+import type {HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {Simplify} from './simplify.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Create a type that makes the given keys required. The remaining keys are kept as is. The sister of the `SetOptional` type.
+Create a type that makes the given keys required, while keeping the remaining keys as is.
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the keys are required.
 
@@ -18,14 +18,10 @@ type Foo = {
 	a?: number;
 	b: string;
 	c?: boolean;
-}
+};
 
 type SomeRequired = SetRequired<Foo, 'b' | 'c'>;
-// type SomeRequired = {
-// 	a?: number;
-// 	b: string; // Was already required and still is.
-// 	c: boolean; // Is now required.
-// }
+//=> {a?: number; b: string; c: boolean}
 
 // Set specific indices in an array to be required.
 type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
@@ -35,15 +31,21 @@ type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 @category Object
 */
 export type SetRequired<BaseType, Keys extends keyof BaseType> =
+	(BaseType extends (...arguments_: never) => any
+		? (...arguments_: Parameters<BaseType>) => ReturnType<BaseType>
+		: unknown)
+	& _SetRequired<BaseType, Keys>;
+
+type _SetRequired<BaseType, Keys extends keyof BaseType> =
 	BaseType extends UnknownArray
 		? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
-			? IfArrayReadonly<BaseType, Readonly<ResultantArray>, ResultantArray>
+			? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
 			: never
 		: Simplify<
 		// Pick just the keys that are optional from the base type.
-		Except<BaseType, Keys> &
+			Except<BaseType, Keys>
 		// Pick the keys that should be required from the base type and make them required.
-		Required<HomomorphicPick<BaseType, Keys>>
+			& Required<HomomorphicPick<BaseType, Keys>>
 		>;
 
 /**
@@ -69,3 +71,5 @@ type SetArrayRequired<
 				: SetArrayRequired<Rest, Keys, [...Counter, any], [...Accumulator, TArray[0]]>
 			: never // Should never happen, since `[(infer F)?, ...infer R]` is a top-type for arrays.
 	: never; // Should never happen
+
+export {};

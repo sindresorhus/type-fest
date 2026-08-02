@@ -1,13 +1,9 @@
-import type {IfNever} from '../if-never';
-import type {IsEqual} from '../is-equal';
-import type {UnknownArray} from '../unknown-array';
-
-/**
-Infer the length of the given array `<T>`.
-
-@link https://itnext.io/implementing-arithmetic-within-typescripts-type-system-a1ef140a6f6f
-*/
-type ArrayLength<T extends readonly unknown[]> = T extends {readonly length: infer L} ? L : never;
+import type {If} from '../if.d.ts';
+import type {IsEqual} from '../is-equal.d.ts';
+import type {IsNever} from '../is-never.d.ts';
+import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
+import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
 /**
 Matches any unknown array or tuple.
@@ -23,15 +19,6 @@ export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray exten
 	: never;
 
 /**
-Extract the element of an array that also works for array union.
-
-Returns `never` if T is not an array.
-
-It creates a type-safe way to access the element type of `unknown` type.
-*/
-export type ArrayElement<T> = T extends readonly unknown[] ? T[0] : never;
-
-/**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 @example
@@ -43,8 +30,8 @@ type B = StaticPartOfArray<A>;
 */
 export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArray = []> =
 	T extends unknown
-		? number extends T['length'] ?
-			T extends readonly [infer U, ...infer V]
+		? number extends T['length']
+			? T extends readonly [infer U, ...infer V]
 				? StaticPartOfArray<V, [...Result, U]>
 				: Result
 			: T
@@ -72,58 +59,87 @@ Set the given array to readonly if `IsReadonly` is `true`, otherwise set the giv
 
 @example
 ```
-type ReadonlyArray = readonly string[];
-type NormalArray = string[];
+type ReadonlyStringArray = readonly string[];
+type NormalStringArray = string[];
 
-type ReadonlyResult = SetArrayAccess<NormalArray, true>;
+type ReadonlyResult = SetArrayAccess<NormalStringArray, true>;
 //=> readonly string[]
 
-type NormalResult = SetArrayAccess<ReadonlyArray, false>;
+type NormalResult = SetArrayAccess<ReadonlyStringArray, false>;
 //=> string[]
 ```
 */
 export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
-T extends readonly [...infer U] ?
-	IsReadonly extends true
-		? readonly [...U]
-		: [...U]
-	: T;
+	T extends readonly [...infer U]
+		? IsReadonly extends true
+			? readonly [...U]
+			: [...U]
+		: T;
 
 /**
 Returns whether the given array `T` is readonly.
 */
-export type IsArrayReadonly<T extends UnknownArray> = IfNever<T, false, T extends unknown[] ? false : true>;
+export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
 
 /**
-An if-else-like type that resolves depending on whether the given array is readonly.
-
-@see {@link IsArrayReadonly}
+Transforms a tuple type by replacing it's rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.
 
 @example
 ```
-import type {ArrayTail} from 'type-fest';
+type A = CollapseRestElement<[string, string, ...number[]]>;
+//=> [string, string, number]
 
-type ReadonlyPreservingArrayTail<TArray extends readonly unknown[]> =
-	ArrayTail<TArray> extends infer Tail
-		? IfArrayReadonly<TArray, Readonly<Tail>, Tail>
-		: never;
+type B = CollapseRestElement<[...string[], number, number]>;
+//=> [string, number, number]
 
-type ReadonlyTail = ReadonlyPreservingArrayTail<readonly [string, number, boolean]>;
-//=> readonly [number, boolean]
+type C = CollapseRestElement<[string, string, ...Array<number | bigint>]>;
+//=> [string, string, number | bigint]
 
-type NonReadonlyTail = ReadonlyPreservingArrayTail<[string, number, boolean]>;
-//=> [number, boolean]
+type D = CollapseRestElement<[string, number]>;
+//=> [string, number]
+```
 
-type ShouldBeTrue = IfArrayReadonly<readonly unknown[]>;
-//=> true
+Note: Optional modifiers (`?`) are removed from elements unless the `exactOptionalPropertyTypes` compiler option is disabled. When disabled, there's an additional `| undefined` for optional elements.
 
-type ShouldBeBar = IfArrayReadonly<unknown[], 'foo', 'bar'>;
-//=> 'bar'
+@example
+```
+// `exactOptionalPropertyTypes` enabled
+type A = CollapseRestElement<[string?, string?, ...number[]]>;
+//=> [string, string, number]
+
+// `exactOptionalPropertyTypes` disabled
+type B = CollapseRestElement<[string?, string?, ...number[]]>;
+//=> [string | undefined, string | undefined, number]
 ```
 */
-export type IfArrayReadonly<T extends UnknownArray, TypeIfArrayReadonly = true, TypeIfNotArrayReadonly = false> =
-	IsArrayReadonly<T> extends infer Result
-		? Result extends true ? TypeIfArrayReadonly : TypeIfNotArrayReadonly
+export type CollapseRestElement<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {ifNot: _CollapseRestElement<TArray>}>;
+
+type _CollapseRestElement<
+	TArray extends UnknownArray,
+	ForwardAccumulator extends UnknownArray = [],
+	BackwardAccumulator extends UnknownArray = [],
+> =
+	TArray extends UnknownArray // For distributing `TArray`
+		? keyof TArray & `${number}` extends never
+			// Enters this branch, if `TArray` is empty (e.g., []),
+			// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+			? TArray extends readonly [...infer Rest, infer Last]
+				? _CollapseRestElement<Rest, ForwardAccumulator, [Last, ...BackwardAccumulator]> // Accumulate elements that are present after the rest element.
+				: TArray extends readonly []
+					? [...ForwardAccumulator, ...BackwardAccumulator]
+					: [...ForwardAccumulator, TArray[number], ...BackwardAccumulator] // Add the rest element between the accumulated elements.
+			: TArray extends readonly [(infer First)?, ...infer Rest]
+				? _CollapseRestElement<
+					Rest,
+					[
+						...ForwardAccumulator,
+						'0' extends OptionalKeysOf<TArray>
+							? If<IsExactOptionalPropertyTypesEnabled, First, First | undefined> // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+							: First,
+					],
+					BackwardAccumulator
+				>
+				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 		: never; // Should never happen
 
 /**
@@ -132,29 +148,31 @@ Returns elements from the List that are equal to the SearchType.
 @example
 ```
 type StaticList = [string, 1, 'Hello', number, 2, 1, boolean, 4, 'bye'];
-type B = FilterArrayIncludes<StaticList, number>;
-//=> [1, number, 2, 1, 4]
-type C = FilterArrayIncludes<StaticList, string>;
-//=> [string, "Hello", "bye"]
-type D = FilterArrayIncludes<StaticList, 1>;
+type B = FilterArrayExact<StaticList, number>;
+//=> [number]
+type C = FilterArrayExact<StaticList, string>;
+//=> [string]
+type D = FilterArrayExact<StaticList, 'Hello'>;
+//=> ['Hello']
+type E = FilterArrayExact<StaticList, 1>;
 //=> [1, 1]
 
 // Note: Variable part in the array will discard all subsequent elements.
 type VariableList = [string, 1, 'Hello', number, 2, ...string[], 1, boolean, 4, 'bye'];
-type E = FilterArrayIncludes<VariableList, number>;
-//=> [1, number, 2]
-type F = FilterArrayIncludes<VariableList, string>;
-//=> [string, "Hello"]
-type G = FilterArrayIncludes<VariableList, 1>;
+type F = FilterArrayExact<VariableList, number>;
+//=> [number]
+type G = FilterArrayExact<VariableList, string>;
+//=> [string]
+type H = FilterArrayExact<VariableList, 1>;
 //=> [1]
 ```
 @category Array
 */
-export type FilterArrayIncludes<List extends unknown[], SearchType> = List extends []
+export type FilterArrayExact<List extends unknown[], SearchType> = List extends []
 	? []
 	: StaticPartOfArray<List> extends [infer Head, ...infer Tail]
-		? FilterArrayIncludes<Tail, SearchType> extends infer Return extends unknown[]
-			? IsEqual<Head, SearchType> extends true
+		? FilterArrayExact<Tail, SearchType> extends infer Return extends unknown[]
+			? IsEqual<SearchType, Head> extends true
 				? [Head, ...Return]
 				: Return
 			: never
@@ -162,11 +180,6 @@ export type FilterArrayIncludes<List extends unknown[], SearchType> = List exten
 
 /**
 Returns count of how many elements in the List are equal to the SearchType.
-
-@uses
-```
-type CountInArray<...> = FilterArrayIncludes<List, SearchType>['length']
-```
 
 @example
 ```
@@ -189,4 +202,6 @@ type G = CountInArray<VariableList, 1>;
 ```
 @category Array
 */
-export type CountInArray<List extends unknown[], SearchType> = FilterArrayIncludes<List, SearchType>['length'];
+export type CountInArray<List extends unknown[], SearchType> = FilterArrayExact<List, SearchType>['length'];
+
+export {};

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {NonEmptyTuple} from '../index';
+import type {NonEmptyTuple} from '../index.d.ts';
 
 declare const sum: (...numbers: NonEmptyTuple<number>) => number;
 

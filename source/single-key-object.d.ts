@@ -1,5 +1,6 @@
-import type {IfEmptyObject} from './if-empty-object';
-import type {IsUnion} from './internal';
+import type {IsEmptyObject} from './empty-object.d.ts';
+import type {If} from './if.d.ts';
+import type {IsUnion} from './is-union.d.ts';
 
 /**
 Create a type that only accepts an object with a single key.
@@ -8,16 +9,12 @@ Create a type that only accepts an object with a single key.
 ```
 import type {SingleKeyObject} from 'type-fest';
 
-const someFunction = <T>(parameter: SingleKeyObject<T>) => {};
+declare function someFunction<T>(parameter: SingleKeyObject<T>): void;
 
-someFunction({
-	value: true
-});
+someFunction({value: true});
 
-someFunction({
-	value: true,
-	otherKey: true
-});
+// @ts-expect-error
+someFunction({value: true, otherKey: true});
 // Error: Argument of type '{value: boolean; otherKey: boolean}' is not assignable to parameter of type 'never'.ts(2345)
 ```
 
@@ -26,4 +23,6 @@ someFunction({
 export type SingleKeyObject<ObjectType> =
 	IsUnion<keyof ObjectType> extends true
 		? never
-		: IfEmptyObject<ObjectType, never, ObjectType>;
+		: If<IsEmptyObject<ObjectType>, never, ObjectType>;
+
+export {};

@@ -1,5 +1,6 @@
-import type {DelimiterCase} from './delimiter-case';
-import type {WordsOptions} from './words';
+import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
+import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {WordsOptions} from './words.d.ts';
 
 /**
 Convert a string literal to kebab-case.
@@ -14,6 +15,7 @@ import type {KebabCase} from 'type-fest';
 
 const someVariable: KebabCase<'fooBar'> = 'foo-bar';
 const someVariableNoSplitOnNumbers: KebabCase<'p2pNetwork', {splitOnNumbers: false}> = 'p2p-network';
+const someVariableWithPunctuation: KebabCase<'div.card::after', {splitOnPunctuation: true}> = 'div-card-after';
 
 // Advanced
 
@@ -21,16 +23,16 @@ type KebabCasedProperties<T> = {
 	[K in keyof T as KebabCase<K>]: T[K]
 };
 
-interface CliOptions {
+type CliOptions = {
 	dryRun: boolean;
 	includeFile: string;
 	foo: number;
-}
+};
 
 const rawCliOptions: KebabCasedProperties<CliOptions> = {
 	'dry-run': true,
 	'include-file': 'bar.js',
-	foo: 123
+	foo: 123,
 };
 ```
 
@@ -39,5 +41,7 @@ const rawCliOptions: KebabCasedProperties<CliOptions> = {
 */
 export type KebabCase<
 	Value,
-	Options extends WordsOptions = {splitOnNumbers: false},
-> = DelimiterCase<Value, '-', Options>;
+	Options extends WordsOptions = {},
+> = DelimiterCase<Value, '-', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+
+export {};

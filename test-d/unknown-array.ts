@@ -1,5 +1,5 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {UnknownArray} from '../index';
+import type {UnknownArray} from '../index.d.ts';
 
 declare const foo: readonly [];
 declare const bar: {

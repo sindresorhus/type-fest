@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {HomomorphicPick} from '../../source/internal';
+import type {HomomorphicPick} from '../../source/internal/index.d.ts';
 
 // Picks specified keys
 declare const test1: HomomorphicPick<{a: 1; b: 2; c: 3}, 'a' | 'b'>;
@@ -48,6 +48,5 @@ declare const test13: HomomorphicPick<{[k: string]: unknown; a: 1; b: 2}, 'a' | 
 expectType<{a: 1; b: 2}>(test13);
 
 // Doesn't pick `number` from a `string` index signature
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 declare const test14: HomomorphicPick<{[k: string]: unknown}, number>;
 expectType<{}>(test14);

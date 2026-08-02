@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {EmptyObject, Jsonify, JsonValue, NegativeInfinity, PositiveInfinity} from '..';
+import type {EmptyObject, Jsonify, JsonObject, JsonValue, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
 interface A {
 	a: number;
@@ -113,7 +113,7 @@ expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
 expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
 
 class NonJsonExtendPrimitiveWithToJSON extends Number {
-	public fixture = BigInt('42');
+	public fixture = 42n;
 
 	public toJSON(): {fixture: string} {
 		return {
@@ -187,6 +187,9 @@ expectType<never>(plainFunction);
 
 declare const plainSymbol: Jsonify<typeof symbol>;
 expectType<never>(plainSymbol);
+
+declare const plainNever: Jsonify<never>;
+expectType<never>(plainNever);
 
 // Array members become null
 declare const arrayMemberUndefined: Jsonify<Array<typeof undefined>>;
@@ -305,6 +308,28 @@ expectType<{a?: string}>(jsonifiedOptionalPrimitive);
 expectType<{}>(jsonifiedOptionalTypeUnion);
 expectType<{a?: string}>(jsonifiedNonOptionalTypeUnion);
 
+// Test that optional properties don't leak `undefined` into the key set and that re-applying `Jsonify` is a no-op.
+type OptionalMixed = {
+	required: string;
+	optional?: string;
+};
+
+declare const keyOfJsonifiedOptionalMixed: keyof Jsonify<OptionalMixed>;
+expectType<'required' | 'optional'>(keyOfJsonifiedOptionalMixed);
+
+declare const doubleJsonifiedOptionalMixed: Jsonify<Jsonify<OptionalMixed>>;
+expectType<OptionalMixed>(doubleJsonifiedOptionalMixed);
+
+declare const keyOfJsonifiedOptionalUnknown: keyof Jsonify<{a?: unknown}>;
+expectType<'a'>(keyOfJsonifiedOptionalUnknown);
+
+declare const keyOfJsonifiedOptionalAny: keyof Jsonify<{a?: any}>;
+expectType<'a'>(keyOfJsonifiedOptionalAny);
+
+// An `a?: never` property can only hold `undefined`, so the key is dropped like `{a: undefined}`.
+declare const keyOfJsonifiedOptionalNever: keyof Jsonify<{a?: never}>;
+expectType<never>(keyOfJsonifiedOptionalNever);
+
 // Test for 'Jsonify support for optional object keys, unserializable object values' #424
 // See https://github.com/sindresorhus/type-fest/issues/424
 type AppData = {
@@ -369,3 +394,27 @@ expectType<typeof nestedObjectWithNameProperty>(
 // Regression test for https://github.com/sindresorhus/type-fest/issues/629
 declare const readonlyTuple: Jsonify<readonly [1, 2, 3]>;
 expectType<[1, 2, 3]>(readonlyTuple);
+
+// `unknown` values
+declare const unknownValue: Jsonify<unknown>;
+declare const unknownArray: Jsonify<unknown[]>;
+declare const unknownTuple: Jsonify<[unknown, unknown]>;
+declare const objectWithUnknownValue: Jsonify<{key: unknown}>;
+expectType<JsonValue>(unknownValue);
+expectAssignable<Jsonify<unknown>>('foo');
+expectAssignable<Jsonify<unknown>>(['foo']);
+expectNotAssignable<Jsonify<unknown>>(new Date());
+expectType<JsonValue[]>(unknownArray);
+expectAssignable<Jsonify<unknown[]>>(['foo']);
+expectNotAssignable<Jsonify<unknown[]>>([new Date()]);
+expectType<[JsonValue, JsonValue]>(unknownTuple);
+expectAssignable<Jsonify<[unknown, unknown]>>(['foo', 'foo']);
+expectNotAssignable<Jsonify<[unknown, unknown]>>([new Date(), new Date()]);
+expectType<{key: JsonValue}>(objectWithUnknownValue);
+expectAssignable<Jsonify<{key: unknown}>>({key: []});
+expectNotAssignable<Jsonify<{key: unknown}>>({key: new Date()});
+
+expectAssignable<JsonObject>({} as {a: string});
+expectNotAssignable<JsonObject>({} as {a: string | undefined});
+expectAssignable<JsonObject>({} as {a?: string});
+expectNotAssignable<JsonObject>({} as {a?: string | undefined}); // Requires `exactOptionalPropertyTypes` to be enabled

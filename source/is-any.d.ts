@@ -1,7 +1,3 @@
-// Can eventually be replaced with the built-in once this library supports
-// TS5.4+ only. Tracked in https://github.com/sindresorhus/type-fest/issues/848
-type NoInfer<T> = T extends infer U ? U : never;
-
 /**
 Returns a boolean for whether the given type is `any`.
 
@@ -16,8 +12,8 @@ import type {IsAny} from 'type-fest';
 const typedObject = {a: 1, b: 2} as const;
 const anyObject: any = {a: 1, b: 2};
 
-function get<O extends (IsAny<O> extends true ? {} : Record<string, number>), K extends keyof O = keyof O>(obj: O, key: K) {
-	return obj[key];
+function get<O extends (IsAny<O> extends true ? {} : Record<string, number>), K extends keyof O = keyof O>(object: O, key: K) {
+	return object[key];
 }
 
 const typedA = get(typedObject, 'a');
@@ -31,3 +27,5 @@ const anyA = get(anyObject, 'a');
 @category Utilities
 */
 export type IsAny<T> = 0 extends 1 & NoInfer<T> ? true : false;
+
+export {};

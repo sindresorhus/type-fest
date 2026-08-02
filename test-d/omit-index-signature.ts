@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {OmitIndexSignature} from '../index';
+import type {OmitIndexSignature} from '../index.d.ts';
 
 type ExampleInterface = {
 	// These index signatures will be removed.
@@ -31,7 +31,7 @@ expectType<{
 }>(exampleInterfaceKnownKeys);
 
 declare const exampleMappedTypeKnownKeys: OmitIndexSignature<
-MappedType<ExampleInterface>
+	MappedType<ExampleInterface>
 >;
 expectType<{
 	foo: {key: 'foo'; value: 'bar'};

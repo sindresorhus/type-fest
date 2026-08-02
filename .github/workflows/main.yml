@@ -10,22 +10,22 @@ on:
       - main
 jobs:
   test:
-    name: Node.js ${{ matrix.node-version }}
+    name: Test ${{ matrix.script }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node-version:
-          - 22
-          - 20
-          - 18
+        script:
+          - tsd
+          - xo
+          - linter
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
       - run: npm install
-      - run: npm test
+      - run: npm run test:${{ matrix.script }}
   types:
     name: TypeScript ${{ matrix.typescript-version }}
     runs-on: ubuntu-latest
@@ -33,30 +33,15 @@ jobs:
       fail-fast: false
       matrix:
         typescript-version:
-          - "latest"
-          - "~5.8.0"
-          - "~5.7.0"
-          - "~5.6.0"
-          - "~5.5.0"
-          - "~5.4.0"
-          - "~5.3.0"
-          - "~5.2.0"
-          - "~5.1.0"
+          - 'latest'
+          - '~7.0.0'
+          - '~6.0.0'
+          - '~5.9.0'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: 24
       - run: npm install
-      - run: npm install typescript@${{ matrix.typescript-version }}
-      - run: npx tsc
-  test-export:
-    name: Test Module Export
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install rollup rollup-plugin-dts
-      - run: npx rollup index.d.ts -p rollup-plugin-dts -d temp
+      - run: npm install typescript@${{ matrix.typescript-version }} --legacy-peer-deps
+      - run: NODE_OPTIONS="--max-old-space-size=6144" npx tsc

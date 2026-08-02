@@ -1,12 +1,12 @@
-import type {JsonPrimitive, JsonValue} from './basic';
-import type {EmptyObject} from './empty-object';
-import type {UndefinedToOptional} from './internal';
-import type {IsAny} from './is-any';
-import type {IsNever} from './is-never';
-import type {IsUnknown} from './is-unknown';
-import type {NegativeInfinity, PositiveInfinity} from './numeric';
-import type {TypedArray} from './typed-array';
-import type {UnknownArray} from './unknown-array';
+import type {JsonPrimitive, JsonValue} from './json-value.d.ts';
+import type {EmptyObject} from './empty-object.d.ts';
+import type {UndefinedToOptional} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {IsUnknown} from './is-unknown.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
+import type {TypedArray} from './typed-array.d.ts';
+import type {UnknownArray} from './unknown-array.d.ts';
 
 // Note: The return value has to be `any` and not `unknown` so it can match `void`.
 type NotJsonable = ((...arguments_: any[]) => any) | undefined | symbol;
@@ -18,20 +18,18 @@ type UndefinedToNull<T> = T extends undefined ? null : T;
 type JsonifyList<T extends UnknownArray> = T extends readonly []
 	? []
 	: T extends readonly [infer F, ...infer R]
-		? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
+		? [F, ...R] extends T // With TS 5.8.3, if `string[] & ['foo']`, `R` is `unknown[]` here, making the inferred types not equal to the original one
+			? [NeverToNull<Jsonify<F>>, ...JsonifyList<R>]
+			: [NeverToNull<Jsonify<F>>]
 		: IsUnknown<T[number]> extends true
-			? []
+			? JsonValue[]
 			: Array<T[number] extends NotJsonable ? null : Jsonify<UndefinedToNull<T[number]>>>;
-
-type FilterJsonableKeys<T extends object> = {
-	[Key in keyof T]: T[Key] extends NotJsonable ? never : Key;
-}[keyof T];
 
 /**
 JSON serialize objects (not including arrays) and classes.
 */
 type JsonifyObject<T extends object> = {
-	[Key in keyof Pick<T, FilterJsonableKeys<T>>]: Jsonify<T[Key]>;
+	[Key in keyof T as T[Key] extends NotJsonable ? never : Key]: Jsonify<T[Key]>;
 };
 
 /**
@@ -43,7 +41,7 @@ This includes:
 
 @remarks
 
-An interface cannot be structurally compared to `JsonValue` because an interface can be re-opened to add properties that may not be satisfy `JsonValue`.
+An interface cannot be structurally compared to `JsonValue` because an interface can be re-opened to add properties that may not satisfy `JsonValue`.
 
 @example
 ```
@@ -56,21 +54,20 @@ interface Geometry {
 
 const point: Geometry = {
 	type: 'Point',
-	coordinates: [1, 1]
+	coordinates: [1, 1],
 };
 
-const problemFn = (data: JsonValue) => {
-	// Does something with data
-};
+declare function problemFn(data: JsonValue): void;
 
+// @ts-expect-error
 problemFn(point); // Error: type Geometry is not assignable to parameter of type JsonValue because it is an interface
 
-const fixedFn = <T>(data: Jsonify<T>) => {
-	// Does something with data
-};
+declare function fixedFn<T>(data: Jsonify<T>): void;
 
 fixedFn(point); // Good: point is assignable. Jsonify<T> transforms Geometry into value assignable to JsonValue
-fixedFn(new Date()); // Error: As expected, Date is not assignable. Jsonify<T> cannot transforms Date into value assignable to JsonValue
+
+// @ts-expect-error
+fixedFn(new Date()); // Error: As expected, Date is not assignable. Jsonify<T> cannot transform Date into a value assignable to JsonValue
 ```
 
 Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed to a value assignable to `JsonValue`:
@@ -80,7 +77,7 @@ Non-JSON values such as `Date` implement `.toJSON()`, so they can be transformed
 import type {Jsonify} from 'type-fest';
 
 const time = {
-	timeValue: new Date()
+	timeValue: new Date(),
 };
 
 // `Jsonify<typeof time>` is equivalent to `{timeValue: string}`
@@ -97,13 +94,13 @@ export type Jsonify<T> = IsAny<T> extends true
 		? null
 		: T extends JsonPrimitive
 			? T
-			: // Any object with toJSON is special case
-			T extends {toJSON(): infer J}
+			// Any object with toJSON is special case
+			: T extends {toJSON(): infer J}
 				? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
 					? J // Then T is Jsonable and its Jsonable value is J
 					: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
-				: // Instanced primitives are objects
-				T extends Number
+				// Instanced primitives are objects
+				: T extends Number
 					? number
 					: T extends String
 						? string
@@ -119,4 +116,8 @@ export type Jsonify<T> = IsAny<T> extends true
 											? JsonifyList<T>
 											: T extends object
 												? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
-												: never; // Otherwise any other non-object is removed
+												: IsUnknown<T> extends true
+													? JsonValue
+													: never; // Otherwise any other non-object is removed
+
+export {};

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {MultidimensionalArray} from '../index';
+import type {MultidimensionalArray} from '../index.d.ts';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalArray<unknown, T> {
 	const root: unknown[] = [];
@@ -18,6 +18,7 @@ const b: MultidimensionalArray<boolean, number> = [];
 const c = createArray(2);
 const d = createArray(7);
 
+// @ts-expect-error
 a[0][0][0] = 42;
 
 type RecursiveArray<T> = Array<RecursiveArray<T>>;

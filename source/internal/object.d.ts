@@ -1,10 +1,16 @@
-import type {Simplify} from '../simplify';
-import type {UnknownArray} from '../unknown-array';
-import type {IsEqual} from '../is-equal';
-import type {KeysOfUnion} from '../keys-of-union';
-import type {FilterDefinedKeys, FilterOptionalKeys} from './keys';
-import type {NonRecursiveType} from './type';
-import type {ToString} from './string';
+import type {Simplify} from '../simplify.d.ts';
+import type {IsEqual} from '../is-equal.d.ts';
+import type {KeysOfUnion} from '../keys-of-union.d.ts';
+import type {RequiredKeysOf} from '../required-keys-of.d.ts';
+import type {Merge} from '../merge.d.ts';
+import type {IsAny} from '../is-any.d.ts';
+import type {If} from '../if.d.ts';
+import type {IsNever} from '../is-never.d.ts';
+import type {StringToNumber} from '../string-to-number.d.ts';
+import type {Primitive} from '../primitive.d.ts';
+import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
+import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
+import type {ToString} from './string.d.ts';
 
 /**
 Create an object type with the given key `<Key>` and value `<Value>`.
@@ -34,11 +40,13 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends objec
 Returns a boolean for whether the given type is a plain key-value object.
 */
 export type IsPlainObject<T> =
-	T extends NonRecursiveType | UnknownArray | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+	IsNever<T> extends true
 		? false
-		: T extends object
-			? true
-			: false;
+		: T extends NonRecursiveType | MapsSetsOrArrays
+			? false
+			: T extends object
+				? true
+				: false;
 
 /**
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
@@ -74,13 +82,13 @@ type OptionalizedUser = UndefinedToOptional<User>;
 ```
 */
 export type UndefinedToOptional<T extends object> = Simplify<
-{
+	{
 	// Property is not a union with `undefined`, keep it as-is.
-	[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
-} & {
+		[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
+	} & {
 	// Property _is_ a union with defined value. Set as optional (via `?`) and remove `undefined` from the union.
-	[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
-}
+		[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
+	}
 >;
 
 /**
@@ -129,7 +137,7 @@ Extract all possible values for a given key from a union of object types.
 
 @example
 ```
-type Statuses = ValueOfUnion<{ id: 1, status: "open" } | { id: 2, status: "closed" }, "status">;
+type Statuses = ValueOfUnion<{id: 1; status: 'open'} | {id: 2; status: 'closed'}, 'status'>;
 //=> "open" | "closed"
 ```
 */
@@ -142,14 +150,14 @@ Extract all readonly keys from a union of object types.
 @example
 ```
 type User = {
-		readonly id: string;
-		name: string;
+	readonly id: string;
+	name: string;
 };
 
 type Post = {
-		readonly id: string;
-		readonly author: string;
-		body: string;
+	readonly id: string;
+	readonly author: string;
+	body: string;
 };
 
 type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
@@ -159,3 +167,164 @@ type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
 export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 	[Key in keyof Union as IsEqual<{[K in Key]: Union[Key]}, {readonly [K in Key]: Union[Key]}> extends true ? Key : never]: never
 } : never;
+
+/**
+Merges user specified options with default options.
+
+@example
+```
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
+type SpecifiedOptions = {leavesOnly: true};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//=> {maxRecursionDepth: 10; leavesOnly: true}
+```
+
+@example
+```
+// Complains if default values are not provided for optional options
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10};
+type SpecifiedOptions = {};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                              ~~~~~~~~~~~~~~~~~~~
+// Property 'leavesOnly' is missing in type 'DefaultPathsOptions' but required in type '{ maxRecursionDepth: number; leavesOnly: boolean; }'.
+```
+
+@example
+```
+// Complains if an option's default type does not conform to the expected type
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: 'no'};
+type SpecifiedOptions = {};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                              ~~~~~~~~~~~~~~~~~~~
+// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
+```
+
+@example
+```
+// Complains if an option's specified type does not conform to the expected type
+
+type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
+type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
+type SpecifiedOptions = {leavesOnly: 'yes'};
+
+type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
+//                                                                   ~~~~~~~~~~~~~~~~
+// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
+```
+*/
+export type ApplyDefaultOptions<
+	Options extends object,
+	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
+	SpecifiedOptions extends Options,
+> =
+	_ApplyDefaultOptions<Options, Defaults, SpecifiedOptions> extends infer Result extends Required<Options> // `extends Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
+		? Result
+		: never;
+
+type _ApplyDefaultOptions<
+	Options,
+	Defaults,
+	SpecifiedOptions,
+> =
+	If<IsAny<SpecifiedOptions>, Defaults,
+		If<IsNever<SpecifiedOptions>, Defaults,
+			Merge<Defaults, {
+				[Key in keyof SpecifiedOptions
+				as undefined extends Required<Options>[Key & keyof Options] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
+				]: SpecifiedOptions[Key]
+			}>>>;
+
+/**
+Collapses literal types in a union into their corresponding primitive types, when possible. For example, `CollapseLiterals<'foo' | 'bar' | (string & {})>` returns `string`.
+
+Note: This doesn't collapse literals within tagged types. For example, `CollapseLiterals<Tagged<'foo' | (string & {}), 'Tag'>>` returns `("foo" & Tag<"Tag", never>) | (string & Tag<"Tag", never>)` and not `string & Tag<"Tag", never>`.
+
+Use-case: For collapsing unions created using {@link LiteralUnion}.
+
+@example
+```
+import type {LiteralUnion} from 'type-fest';
+
+type A = CollapseLiterals<'foo' | 'bar' | (string & {})>;
+//=> string
+
+type B = CollapseLiterals<LiteralUnion<1 | 2 | 3, number>>;
+//=> number
+
+type C = CollapseLiterals<LiteralUnion<'onClick' | 'onChange', `on${string}`>>;
+//=> `on${string}`
+
+type D = CollapseLiterals<'click' | 'change' | (`on${string}` & {})>;
+//=> 'click' | 'change' | `on${string}`
+
+type E = CollapseLiterals<LiteralUnion<'foo' | 'bar', string> | null | undefined>;
+//=> string | null | undefined
+```
+*/
+export type CollapseLiterals<T> = {} extends T
+	? T
+	: T extends infer U & {}
+		? U
+		: T;
+
+/**
+Returns the base type of a branded type.
+
+@example
+```
+type Brand = {readonly __brand: unique symbol};
+
+type A = UnwrapBrand<string & Brand>;
+//=> string
+
+type B = UnwrapBrand<number & Brand>;
+//=> number
+
+type C = UnwrapBrand<PropertyKey & Brand>;
+//=> PropertyKey
+
+type D = UnwrapBrand<(1 | 200n | 'foo' | 'bar') & Brand>;
+//=> 1 | 200n | 'foo' | 'bar'
+```
+*/
+export type UnwrapBrand<T> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitive>}>;
+
+type _UnwrapBrand<T, Base> = T extends Primitive
+	? T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
+		? U
+		: T
+	: T;
+
+/**
+Normalize keys by including string and number representations wherever applicable.
+
+@example
+```ts
+type A = NormalizedKeys<0 | '1'>;
+//=> 0 | '0' | 1 | '1'
+
+type B = NormalizedKeys<string>;
+//=> string | number
+
+type C = NormalizedKeys<number>;
+//=> number | `${number}`
+
+type D = NormalizedKeys<symbol | 'foo'>;
+//=> symbol | 'foo'
+```
+*/
+export type NormalizedKeys<Keys extends PropertyKey> =
+	| Keys
+	| (string extends Keys ? number : never)
+	| StringToNumber<Keys & string>
+	| ToString<Keys & number>;
+
+export {};

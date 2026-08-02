@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {MultidimensionalReadonlyArray} from '../index';
+import type {MultidimensionalReadonlyArray} from '../index.d.ts';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalReadonlyArray<string, T> {
 	const root: unknown[] = [];
@@ -21,11 +21,11 @@ const a: MultidimensionalReadonlyArray<number, 3> = [];
 const b: MultidimensionalReadonlyArray<boolean, number> = [];
 const c = createArray(2);
 
-const answer = c[0][0]; // '42'
+const answer = c?.[0]?.[0]; // '42'
 
 type RecursiveArray<T> = ReadonlyArray<RecursiveArray<T>>;
 
-expectType<string>(answer);
+expectType<string | undefined>(answer);
 
 expectType<ReadonlyArray<ReadonlyArray<readonly number[]>>>(a);
 expectType<RecursiveArray<boolean>>(b);

@@ -1,12 +1,12 @@
-import type {RequiredKeysOf} from './required-keys-of';
-import type {Simplify} from './simplify';
+import type {RequiredKeysOf} from './required-keys-of.d.ts';
+import type {Simplify} from './simplify.d.ts';
 
 type SpreadObject<FirstType extends object, SecondType extends object> = {
 	[Key in keyof FirstType]: Key extends keyof SecondType
 		? FirstType[Key] | Required<SecondType>[Key]
 		: FirstType[Key];
 } & Pick<
-SecondType,
+	SecondType,
 RequiredKeysOf<SecondType> | Exclude<keyof SecondType, keyof FirstType>
 >;
 
@@ -41,15 +41,9 @@ const bar = {c: false};
 const fooBar = {...foo, ...bar};
 
 type FooBar = Spread<Foo, Bar>;
-// type FooBar = {
-// 	a: number;
-// 	b?: string | number | undefined;
-// 	c: boolean;
-// }
+//=> {a: number; b?: string | number; c: boolean}
 
-const baz = (argument: FooBar) => {
-	// Do something
-}
+declare function baz(argument: FooBar): void;
 
 baz(fooBar);
 ```
@@ -65,9 +59,7 @@ const fooBar = [...foo, ...bar];
 type FooBar = Spread<typeof foo, typeof bar>;
 // FooBar = (string | number)[]
 
-const baz = (argument: FooBar) => {
-	// Do something
-};
+declare function baz(argument: FooBar): void;
 
 baz(fooBar);
 ```
@@ -82,3 +74,5 @@ export type Spread<
 		? SpreadTupleOrArray<FirstType, SecondType>
 		: Simplify<SpreadObject<FirstType, SecondType>>
 	: Simplify<SpreadObject<FirstType, SecondType>>;
+
+export {};

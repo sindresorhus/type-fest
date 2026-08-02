@@ -1,4 +1,4 @@
-import type {BuiltIns, HasMultipleCallSignatures} from './internal';
+import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
 
 /**
 Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
@@ -23,7 +23,7 @@ writableDeepFoo.b = ['something'];
 
 Note that types containing overloaded functions are not made deeply writable due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 
-@see Writable
+@see {@link Writable}
 @category Object
 @category Array
 @category Set
@@ -32,11 +32,11 @@ Note that types containing overloaded functions are not made deeply writable due
 export type WritableDeep<T> = T extends BuiltIns
 	? T
 	: T extends (...arguments_: any[]) => unknown
-		? {} extends WritableObjectDeep<T>
+		? {} extends _WritableObjectDeep<T>
 			? T
 			: HasMultipleCallSignatures<T> extends true
 				? T
-				: ((...arguments_: Parameters<T>) => ReturnType<T>) & WritableObjectDeep<T>
+				: ((...arguments_: Parameters<T>) => ReturnType<T>) & _WritableObjectDeep<T>
 		: T extends ReadonlyMap<unknown, unknown>
 			? WritableMapDeep<T>
 			: T extends ReadonlySet<unknown>
@@ -44,7 +44,7 @@ export type WritableDeep<T> = T extends BuiltIns
 				: T extends readonly unknown[]
 					? WritableArrayDeep<T>
 					: T extends object
-						? WritableObjectDeep<T>
+						? _WritableObjectDeep<T>
 						: unknown;
 
 /**
@@ -66,7 +66,7 @@ type WritableSetDeep<SetType extends ReadonlySet<unknown>> =
 /**
 Same as `WritableDeep`, but accepts only `object`s as inputs. Internal helper for `WritableDeep`.
 */
-type WritableObjectDeep<ObjectType extends object> = {
+export type _WritableObjectDeep<ObjectType extends object> = {
 	-readonly [KeyType in keyof ObjectType]: WritableDeep<ObjectType[KeyType]>
 };
 
@@ -81,3 +81,4 @@ type WritableArrayDeep<ArrayType extends readonly unknown[]> =
 					: ArrayType extends Array<infer U> ? Array<WritableDeep<U>>
 						: ArrayType;
 
+export {};
