@@ -169,7 +169,7 @@ export type PathsOptions = {
 	depth?: number;
 };
 
-export type DefaultPathsOptions = {
+type DefaultPathsOptions = {
 	maxRecursionDepth: 5;
 	maxCircularDepth: 5;
 	bracketNotation: false;

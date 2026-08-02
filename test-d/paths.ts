@@ -1,7 +1,6 @@
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {DefaultPathsOptions, Paths, UnknownArray} from '../index.d.ts';
+import type {Paths, Subtract, UnknownArray} from '../index.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
-import type {LimitStringDepth} from '../source/internal/string.d.ts';
 
 declare const normal: Paths<{foo: string}>;
 expectType<'foo'>(normal);
@@ -140,7 +139,7 @@ type MyOtherEntity = {
 type MyEntityPaths = Paths<MyEntity>;
 expectAssignable<string>({} as MyEntityPaths);
 
-// By default, the recursion limit should be reasonably long
+// The recursion limit can be raised beyond the defaults
 type RecursiveFoo = {foo: RecursiveFoo};
 expectAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 10; maxCircularDepth: 10}>>('foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo');
 
@@ -174,12 +173,19 @@ expectType<KeysAtLevel0>({} as Paths<CircularFoo, {maxCircularDepth: 0}>);
 type KeysAtLevel1 = GetKeysAtNextLevel<KeysAtLevel0>;
 expectType<KeysAtLevel1>({} as Paths<CircularFoo, {maxCircularDepth: 1}>);
 
-// Level 2+ will hit the max recursion depth, so we have to limit the expected keys to that depth for testing
+// Truncates `Path` to at most `MaxDepth + 1` dot-separated segments, mirroring how `maxRecursionDepth` limits paths.
+type LimitPathDepth<Path extends string, MaxDepth extends number> = Path extends `${infer Head}.${infer Rest}`
+	? MaxDepth extends 0
+		? Head
+		: `${Head}.${LimitPathDepth<Rest, Subtract<MaxDepth, 1>>}`
+	: Path;
+
+// Level 2+ will hit the default `maxRecursionDepth` of `5`, so we have to limit the expected keys to that depth for testing
 type KeysAtLevel2 = GetKeysAtNextLevel<KeysAtLevel1>;
-expectType<LimitStringDepth<KeysAtLevel2, '.', DefaultPathsOptions['maxRecursionDepth']>>({} as Paths<CircularFoo, {maxCircularDepth: 2}>);
+expectType<LimitPathDepth<KeysAtLevel2, 5>>({} as Paths<CircularFoo, {maxCircularDepth: 2}>);
 
 type KeysAtLevel3 = GetKeysAtNextLevel<KeysAtLevel2>;
-expectType<LimitStringDepth<KeysAtLevel3, '.', DefaultPathsOptions['maxRecursionDepth']>>({} as Paths<CircularFoo, {maxCircularDepth: 3}>);
+expectType<LimitPathDepth<KeysAtLevel3, 5>>({} as Paths<CircularFoo, {maxCircularDepth: 3}>);
 
 // We can also test that it in fact doesn't go deeper
 expectNotAssignable<Paths<CircularFoo, {maxCircularDepth: 3}>>({} as KeysAtLevel3);

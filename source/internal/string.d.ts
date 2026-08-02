@@ -1,6 +1,5 @@
 import type {TupleOf} from '../tuple-of.d.ts';
 import type {Trim} from '../trim.d.ts';
-import type {Subtract} from '../subtract.d.ts';
 import type {StringLength} from '../string-length.d.ts';
 import type {Whitespace} from './characters.d.ts';
 
@@ -124,26 +123,5 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 			: false
 		: never
 	: never;
-
-/**
-Returns a string limited by the Delimiter to the given Depth
-
-@example
-```
-type Limited0 = LimitStringDepth<'internal.parent.foo.foo.foo.foo.foo.foo.foo', '.', 0>;
-//=> 'internal'
-
-type Limited2 = LimitStringDepth<'internal.parent.foo.foo.foo.foo.foo.foo.foo', '.', 2>;
-//=> 'internal.parent.foo'
-
-type Limited3 = LimitStringDepth<'internal.parent.foo.foo.foo.foo.foo.foo.foo', '.', 3>;
-//=> 'internal.parent.foo.foo'
-```
-*/
-export type LimitStringDepth<S extends string, Delimiter extends string, Depth extends number> = S extends `${infer Head}${Delimiter}${infer Tail}`
-	? Depth extends 0
-		? Head
-		: `${Head}${Delimiter}${LimitStringDepth<Tail, Delimiter, Subtract<Depth, 1>>}`
-	: S;
 
 export {};
