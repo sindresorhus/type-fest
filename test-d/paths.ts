@@ -192,6 +192,9 @@ type LimitPathDepth<Path extends string, MaxDepth extends number> = Path extends
 type KeysAtLevel2 = GetKeysAtNextLevel<KeysAtLevel1>;
 expectType<LimitPathDepth<KeysAtLevel2, 5>>({} as Paths<CircularFoo, {maxCircularDepth: 2}>);
 
+// A non-literal limit should not exclude paths that might be within the limit
+expectType<'foo' | 'foo.foo'>({} as Paths<RecursiveFoo, {maxRecursionDepth: 1; maxCircularDepth: number}>);
+
 type KeysAtLevel3 = GetKeysAtNextLevel<KeysAtLevel2>;
 expectType<LimitPathDepth<KeysAtLevel3, 5>>({} as Paths<CircularFoo, {maxCircularDepth: 3}>);
 

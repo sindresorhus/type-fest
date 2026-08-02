@@ -229,9 +229,9 @@ type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends numb
 		: IsAny<T> extends true
 			? never
 			: T extends object
-				? GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends false // Limit the depth of circular references
-					? InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
-					: never
+				? GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends true // Limit the depth of circular references
+					? never
+					: InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
 				: never;
 
 type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number, Seen extends unknown[]> =

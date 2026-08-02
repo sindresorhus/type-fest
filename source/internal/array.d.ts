@@ -178,9 +178,9 @@ type H = FilterArrayExact<VariableList, 2>;
 //=> []
 ```
 */
-export type FilterArrayExact<List extends unknown[], SearchType> = List extends []
+export type FilterArrayExact<List extends UnknownArray, SearchType> = List extends readonly []
 	? []
-	: StaticPartOfArray<List> extends [infer Head, ...infer Tail]
+	: StaticPartOfArray<List> extends readonly [infer Head, ...infer Tail]
 		? FilterArrayExact<Tail, SearchType> extends infer Return extends unknown[]
 			? IsEqual<SearchType, Head> extends true
 				? [Head, ...Return]
@@ -218,6 +218,6 @@ type F = CountExactInArray<VariableList, 2>;
 //=> 0
 ```
 */
-export type CountExactInArray<List extends unknown[], SearchType> = FilterArrayExact<List, SearchType>['length'];
+export type CountExactInArray<List extends UnknownArray, SearchType> = FilterArrayExact<List, SearchType>['length'];
 
 export {};

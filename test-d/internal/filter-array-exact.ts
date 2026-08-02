@@ -11,6 +11,7 @@ expectType<FilterArrayExact<StaticList, boolean>>({} as [boolean]);
 // Matches are exact, not assignability-based
 expectType<FilterArrayExact<[string, 'a'], string>>({} as [string]);
 expectType<FilterArrayExact<[1 | 2, 1], 1>>({} as [1]);
+expectType<FilterArrayExact<readonly [string, 'a'], string>>({} as [string]);
 
 // The variable part and everything after it is ignored
 type VariableList = [string, number, 1, string, ...string[], number, 1, string, 2];
@@ -19,6 +20,7 @@ expectType<FilterArrayExact<VariableList, string>>({} as [string, string]);
 expectType<FilterArrayExact<VariableList, 1>>({} as [1]);
 expectType<FilterArrayExact<VariableList, 2>>({} as []);
 expectType<FilterArrayExact<string[], string>>({} as []);
+expectType<FilterArrayExact<readonly string[], string>>({} as []);
 
 // Empty list
 expectType<FilterArrayExact<[], string>>({} as []);
