@@ -48,6 +48,7 @@ export type {Optional} from './source/optional.d.ts';
 export type {Opaque, UnwrapOpaque, Tagged, GetTagMetadata, UnwrapTagged} from './source/tagged.d.ts';
 export type {InvariantOf} from './source/invariant-of.d.ts';
 export type {SetOptional} from './source/set-optional.d.ts';
+export type {SetOptionalDeep} from './source/set-optional-deep.d.ts';
 export type {SetReadonly} from './source/set-readonly.d.ts';
 export type {SetRequired} from './source/set-required.d.ts';
 export type {SetRequiredDeep} from './source/set-required-deep.d.ts';
