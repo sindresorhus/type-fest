@@ -488,11 +488,11 @@ declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; 
 expectType<never>(recursiveDepth3);
 
 // With the default `maxCircularDepth` of `5`, leaves are at the circular cutoff instead
-declare const recursiveDepth5: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10}>;
-expectType<'foo.foo.foo.foo.foo.foo'>(recursiveDepth5);
+declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10}>;
+expectType<'foo.foo.foo.foo.foo.foo'>(recursiveDepth4);
 
-declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // No leaves at depth `5`
-expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth4);
+declare const recursiveDepth5: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // No leaves at depth `5`
+expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth5);
 
 declare const recursiveDepth6: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 6; maxCircularDepth: 6; depth: 5}>; // Leaves are at depth `6`
 expectType<never>(recursiveDepth6);
