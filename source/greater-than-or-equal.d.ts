@@ -1,7 +1,8 @@
 import type {GreaterThan} from './greater-than.d.ts';
+import type {_Numeric} from './numeric.d.ts';
 
 /**
-Returns a boolean for whether a given number is greater than or equal to another number.
+Returns a boolean for whether a given integer is greater than or equal to another integer.
 
 @example
 ```
@@ -10,11 +11,17 @@ import type {GreaterThanOrEqual} from 'type-fest';
 type A = GreaterThanOrEqual<1, -5>;
 //=> true
 
-type B = GreaterThanOrEqual<1, 1>;
+type B = GreaterThanOrEqual<1, -5n>;
 //=> true
 
-type C = GreaterThanOrEqual<1, 5>;
+type C = GreaterThanOrEqual<1, 1>;
+//=> true
+
+type D = GreaterThanOrEqual<1, 5>;
 //=> false
+
+type E = GreaterThanOrEqual<5n, 5n>;
+//=> true
 ```
 
 Note: If either argument is the non-literal `number` type, the result is `boolean`.
@@ -50,14 +57,17 @@ setNonNegative(-1);
 setNonNegative(-2);
 ```
 */
-export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
-	? boolean
-	: A extends number // For distributing `A`
-		? B extends number // For distributing `B`
-			? A extends B
-				? true
-				: GreaterThan<A, B>
-			: never // Should never happen
-		: never; // Should never happen
+export type GreaterThanOrEqual<A extends _Numeric, B extends _Numeric> =
+	number extends A | B
+		? boolean
+		: bigint extends A | B
+			? GreaterThan<A, B>
+			: A extends _Numeric // For distributing `A`
+				? B extends _Numeric // For distributing `B`
+					? `${A}` extends `${B}` // Ts will automatically convert `100n` to `100`, which can be used to compare equality between number and bigint
+						? true
+						: GreaterThan<A, B>
+					: never // Should never happen
+				: never; // Should never happen
 
 export {};
