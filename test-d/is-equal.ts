@@ -8,6 +8,11 @@ expectType<true>({} as IsEqual<'foo', 'foo'>);
 expectType<false>({} as IsEqual<true, false>);
 expectType<true>({} as IsEqual<false, false>);
 
+// Number and bigint are distinct types.
+expectType<false>({} as IsEqual<100, 100n>);
+expectType<false>({} as IsEqual<number, bigint>);
+expectType<true>({} as IsEqual<42n, 42n>);
+
 expectType<false>({} as IsEqual<any, number>);
 expectType<false>({} as IsEqual<'', never>);
 expectType<true>({} as IsEqual<any, any>);
