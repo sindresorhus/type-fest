@@ -83,9 +83,9 @@ the earliest requested index and everything from there on is made optional.
 */
 type SetArrayOptional<TArray extends UnknownArray, Keys> =
 	TArray extends unknown // For distributing `TArray` when it's a union
-		? number extends TArray['length']
-			// A non-tuple array (e.g. `string[]`) or a variadic tuple with a rest
-			// element has no fixed trailing index to mark optional, so leave it as is.
+		? keyof TArray & `${number}` extends never
+			// A non-tuple array (e.g. `string[]`) has no fixed index to mark optional, so leave it as is.
+			// Tuples that end in a rest element still have fixed leading elements, which `MakeTailOptional` handles.
 			? TArray
 			: MakeTailOptional<TArray, TupleCut<TArray, Keys>>
 		: never;

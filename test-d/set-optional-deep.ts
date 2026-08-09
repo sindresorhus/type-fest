@@ -93,6 +93,14 @@ expectType<{a: [string, number?, boolean?]}>({} as SetOptionalDeep<{a: [string, 
 // Non tuple arrays are left unchanged
 expectType<{a: string[]}>({} as SetOptionalDeep<{a: string[]}, `a.${number}`>);
 
+// Fixed elements of a tuple with a rest element can be made optional
+expectType<{a: [string, number?, ...boolean[]]}>({} as SetOptionalDeep<{a: [string, number, ...boolean[]]}, 'a.1'>);
+expectType<{a: [string?, number?, ...boolean[]]}>({} as SetOptionalDeep<{a: [string, number, ...boolean[]]}, 'a.0'>);
+expectType<{a: [string, number?, boolean?, ...string[]]}>({} as SetOptionalDeep<{a: [string, number, boolean?, ...string[]]}, 'a.1'>);
+expectType<{readonly a: readonly [string, number?, ...boolean[]]}>(
+	{} as SetOptionalDeep<{readonly a: readonly [string, number, ...boolean[]]}, 'a.1'>,
+);
+
 // Set key inside array to optional
 expectType<{a: Array<{b?: number}>}>({} as SetOptionalDeep<{a: Array<{b: number}>}, `a.${number}.b`>);
 expectType<{readonly a: [{readonly b?: number}]}>({} as SetOptionalDeep<{readonly a: [{readonly b: number}]}, 'a.0.b'>);
