@@ -98,6 +98,9 @@ Click the type names for complete docs.
 - [`Constructor`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
 - [`AbstractClass`](source/basic.d.ts) - Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/2/classes.html#abstract-classes-and-members).
 - [`AbstractConstructor`](source/basic.d.ts) - Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#abstract-construct-signatures) constructor.
+- [`AsyncFunction`](source/basic.d.ts) - Matches an asynchronous function.
+- [`AnyAsyncFunction`](source/basic.d.ts) - Matches any asynchronous function.
+- [`AnyFunction`](source/basic.d.ts) - Matches any function.
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
 - [`ObservableLike`](source/globals/observable-like.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 - [`LowercaseLetter`](source/characters.d.ts) - Matches any lowercase letter in the basic Latin alphabet (a-z).
