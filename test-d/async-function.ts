@@ -8,7 +8,7 @@ declare const defaultAsyncFunction: AsyncFunction;
 expectType<Promise<unknown>>(defaultAsyncFunction());
 
 declare const anyAsyncFunction: AsyncFunction<any, any>;
-expectType<any>(anyAsyncFunction());
+expectType<Promise<any>>(anyAsyncFunction());
 
 expectAssignable<AnyAsyncFunction>(async () => 'value');
 expectNotAssignable<AnyAsyncFunction>(() => 'value');
