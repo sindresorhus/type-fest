@@ -135,6 +135,7 @@ Click the type names for complete docs.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
+- [`UndefinableDeep`](source/undefinable-deep.d.ts) - Create a deep version of another type where all keys are set to also accept `undefined`.
 - [`UnwrapPartial`](source/unwrap-partial.d.ts) - Revert the `Partial` modifier on an object type.
 - [`UnwrapRequired`](source/unwrap-required.d.ts) - Revert the `Required` modifier on an object type.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of another type.
