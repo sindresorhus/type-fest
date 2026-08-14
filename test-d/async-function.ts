@@ -10,8 +10,12 @@ expectType<Promise<unknown>>(defaultAsyncFunction());
 declare const anyAsyncFunction: AsyncFunction<any, any>;
 expectType<Promise<any>>(anyAsyncFunction());
 
-expectAssignable<AnyAsyncFunction>(async () => 'value');
-expectNotAssignable<AnyAsyncFunction>(() => 'value');
+expectAssignable<AnyAsyncFunction>(async (value: string) => value.length);
+expectNotAssignable<AnyAsyncFunction>(async (value: never) => value);
+declare const promiseReturningFunction: (value: {id: string}) => Promise<string>;
+declare const synchronousFunction: (value: {id: string}) => string;
+expectAssignable<AnyAsyncFunction>(promiseReturningFunction);
+expectNotAssignable<AnyAsyncFunction>(synchronousFunction);
 
 expectAssignable<AnyFunction>((value: never) => value);
 expectAssignable<AnyFunction>(async () => 'value');

@@ -62,19 +62,20 @@ export type AsyncFunction<Arguments extends readonly unknown[] = readonly any[],
 Matches any asynchronous function.
 
 Use-cases:
-- Constrain a generic type to any asynchronous function while erasing its parameters and return value.
+- Constrain a generic type to any asynchronous function without prescribing its parameters or return value.
 
 @example
 ```
 import type {AnyAsyncFunction} from 'type-fest';
 
-function schedule(task: AnyAsyncFunction): void {
-	void task();
+function register<FunctionType extends AnyAsyncFunction>(function_: FunctionType): FunctionType {
+	return function_;
 }
 
-schedule(async () => {
-	await Promise.resolve();
-});
+const parse = register(async (value: string) => Number.parseInt(value, 10));
+
+const result = parse('42');
+//=> Promise<number>
 ```
 
 @category Basic
