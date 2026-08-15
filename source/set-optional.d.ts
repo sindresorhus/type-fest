@@ -59,14 +59,13 @@ type SetArrayOptional<
 		// Enters this branch if `TArray` contains a rest element
 		? TArray extends readonly [...any[], any]
 			? TArray // If there are elements after the rest element, then we can't make any elements optional.
-			: SetArrayOptionalHelper<TArray, Keys, TArray>
-		: SetArrayOptionalHelper<TArray, Keys, TArray>
+			: SetArrayOptionalHelper<TArray, Keys>
+		: SetArrayOptionalHelper<TArray, Keys>
 	: never;
 
 type SetArrayOptionalHelper<
 	TArray extends UnknownArray,
 	Keys,
-	OriginalArray extends UnknownArray,
 	Counter extends any[] = [],
 	Accumulator extends UnknownArray = [],
 	OptionalsAccumulator extends UnknownArray = [],
@@ -78,10 +77,10 @@ type SetArrayOptionalHelper<
 		? '0' extends OptionalKeysOf<TArray> // If the first element of `TArray` is optional
 			? [...Accumulator, ...Partial<OptionalsAccumulator>, ...TArray]
 			: `${Counter['length']}` extends `${Keys & (string | number)}` // If the current index needs to be optional
-				? SetArrayOptionalHelper<Rest, Keys, OriginalArray, [...Counter, any], Accumulator, [...OptionalsAccumulator, First]>
+				? SetArrayOptionalHelper<Rest, Keys, [...Counter, any], Accumulator, [...OptionalsAccumulator, First]>
 				// If the current element is required, but it doesn't need to be optional,
 				// then clear the `OptionalsAccumulator` since optional elements cannot appear before required ones.
-				: SetArrayOptionalHelper<Rest, Keys, OriginalArray, [...Counter, any], [...Accumulator, ...OptionalsAccumulator, First]>
+				: SetArrayOptionalHelper<Rest, Keys, [...Counter, any], [...Accumulator, ...OptionalsAccumulator, First]>
 		: never; // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 
 export {};
