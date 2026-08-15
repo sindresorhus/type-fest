@@ -1,9 +1,8 @@
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
-import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
-import type {Subtract} from './subtract.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -56,30 +55,33 @@ type SetArrayOptional<
 	TArray extends UnknownArray,
 	Keys,
 > = TArray extends unknown // For distributing `TArray` when it's a union
-	? SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
-		? AfterRest extends readonly []
-			? SetArrayBeforeRestOptional<BeforeRest, Keys> extends infer ResultantArray extends UnknownArray
-				? [...ResultantArray, ...Rest]
-				: never
-			: TArray // If there are elements after the rest element, then we can't make any elements optional.
-		: never
+	? number extends TArray['length']
+		// Enters this branch if `TArray` contains a rest element
+		? TArray extends readonly [...any[], any]
+			? TArray // If there are elements after the rest element, then we can't make any elements optional.
+			: SetArrayOptionalHelper<TArray, Keys, TArray>
+		: SetArrayOptionalHelper<TArray, Keys, TArray>
 	: never;
 
-type SetArrayBeforeRestOptional<
+type SetArrayOptionalHelper<
 	TArray extends UnknownArray,
 	Keys,
-	ReverseCounter extends number = Subtract<Required<TArray>['length'], 1>,
+	OriginalArray extends UnknownArray,
+	Counter extends any[] = [],
 	Accumulator extends UnknownArray = [],
-> = TArray extends readonly []
-	? Accumulator
-	: TArray extends readonly [...infer Rest, (infer Last)?]
-		? TArray extends readonly [...any[], any] // If last element is required
-			? `${ReverseCounter}` extends `${Keys & (string | number)}` // If the current index needs to be optional
-				? SetArrayBeforeRestOptional<Rest, Keys, Subtract<ReverseCounter, 1>, [Last?, ...Accumulator]>
+	OptionalsAccumulator extends UnknownArray = [],
+> = keyof TArray & `${number}` extends never
+	// Enters this branch if `TArray` is empty (e.g., []), or
+	// `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+	? [...Accumulator, ...Partial<OptionalsAccumulator>, ...TArray]
+	: TArray extends readonly [(infer First)?, ...infer Rest]
+		? '0' extends OptionalKeysOf<TArray> // If the first element of `TArray` is optional
+			? [...Accumulator, ...Partial<OptionalsAccumulator>, ...TArray]
+			: `${Counter['length']}` extends `${Keys & (string | number)}` // If the current index needs to be optional
+				? SetArrayOptionalHelper<Rest, Keys, OriginalArray, [...Counter, any], Accumulator, [...OptionalsAccumulator, First]>
 				// If the current element is required, but it doesn't need to be optional,
-				// then we can exit early, since no further elements can now be made optional.
-				: [...TArray, ...Accumulator]
-			: SetArrayBeforeRestOptional<Rest, Keys, Subtract<ReverseCounter, 1>, [Last?, ...Accumulator]>
-		: never; // Should never happen, since `[...infer Rest, (infer Last)?]` is a top-type for arrays.
+				// then clear the `OptionalsAccumulator` since optional elements cannot appear before required ones.
+				: SetArrayOptionalHelper<Rest, Keys, OriginalArray, [...Counter, any], [...Accumulator, ...OptionalsAccumulator, First]>
+		: never; // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 
 export {};
