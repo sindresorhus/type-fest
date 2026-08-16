@@ -1,5 +1,6 @@
 import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {TupleToObject} from './tuple-to-object.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -53,28 +54,18 @@ export type ConditionalKeys<Base, Condition> = (Base extends UnknownArray ? Tupl
 	? IfNotAnyOrNever<_Base, {ifNot: _ConditionalKeys<_Base, Condition>; ifAny: keyof _Base}>
 	: never;
 
-// A string index signature widens `keyof` to `string | number`, which swallows the declared
-// literal keys, so they have to be collected separately and matched on their own.
+// An index signature widens `keyof` — `string` to `string | number`, `` `data-${string}` `` to
+// itself — which swallows the declared literal keys it covers. So the declared keys are matched
+// a second time on their own. The two key sets have to stay separate: unioning them first just
+// collapses the literal keys back into the index signature.
 type _ConditionalKeys<Base, Condition> =
 	| _MatchingKeys<Base, Condition, keyof Base>
-	| _MatchingKeys<Base, Condition, DeclaredKeys<Base>>;
+	| _MatchingKeys<Base, Condition, keyof OmitIndexSignature<Base>>;
 
 type _MatchingKeys<Base, Condition, Keys> = keyof {
 	[
 	Key in (Keys & keyof Base) as // The intersection prevents homomorphism
 	ExtendsStrict<Base[Key], Condition> extends true ? Key : never
-	]: never
-};
-
-// The keys `Base` declares itself, without the ones contributed by a `string`, `number` or
-// `symbol` index signature. Homomorphic on purpose — that is what keeps the declared keys
-// visible one by one instead of collapsed into the index signature.
-type DeclaredKeys<Base> = keyof {
-	[
-	Key in keyof Base as string extends Key ? never
-		: number extends Key ? never
-			: symbol extends Key ? never
-				: Key
 	]: never
 };
 

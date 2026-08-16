@@ -80,6 +80,12 @@ expectType<'a'>({} as ConditionalKeys<{[x: number]: unknown; [x: string]: unknow
 expectType<'a'>({} as ConditionalKeys<{[x: symbol]: unknown; a: string}, string>);
 expectType<'a'>({} as ConditionalKeys<{[x: string]: unknown; a?: string}, string | undefined>);
 expectType<never>({} as ConditionalKeys<{[x: string]: unknown; a: string}, boolean>);
+expectType<'data-known'>({} as ConditionalKeys<{[x: `data-${string}`]: unknown; 'data-known': string}, string>);
+expectType<'a'>({} as ConditionalKeys<{[x: Uppercase<string>]: unknown; a: string}, string>);
+expectType<'A' | 'a'>({} as ConditionalKeys<{[x: Uppercase<string>]: unknown; A: string; a: string}, string>);
+expectType<'a'>({} as ConditionalKeys<{[x: string]: unknown} & {a: string; b: number}, string>);
+// A pattern index signature that matches still contributes, and subsumes the literal keys it covers
+expectType<`data-${string}`>({} as ConditionalKeys<{[x: `data-${string}`]: string; 'data-known': string}, string>);
 
 // Arrays and tuples
 expectType<'0' | '2'>({} as ConditionalKeys<[string, number, string], string>);
