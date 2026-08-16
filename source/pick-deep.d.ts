@@ -18,7 +18,7 @@ Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#
 
 @example
 ```
-import type {PickDeep, PartialDeep} from 'type-fest';
+import type {PickDeep, PartialDeep, Get} from 'type-fest';
 
 type Configuration = {
 	userConfig: {
@@ -59,6 +59,34 @@ type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
 // Supports recurse into array
 type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
 //=> {userConfig: {address: [unknown, {street2: string}]}}
+
+// Supports the same `PathsOptions` as `Paths`. The default `maxRecursionDepth` is `5`.
+type Leaf = {
+	bar?: 'LeafBar';
+	foo: 'LeafString';
+};
+
+type Tree = {
+	foo?: Array<
+		{
+			mode: 'test1';
+			bar: Array<{
+				foo: Leaf[] | Leaf;
+			}>;
+		}
+		| {
+			mode: 'test2';
+			foo: 'foo.number.foo';
+			bar: Array<{
+				foo: Leaf[] | Leaf;
+			}>;
+		}
+	>;
+};
+
+type DeepPath = `foo.${number}.bar.${number}.foo.${number}.bar`;
+type TreePick = Get<PickDeep<Tree, DeepPath, {maxRecursionDepth: 6}>, DeepPath>;
+//=> undefined | 'LeafBar'
 ```
 
 @category Object
