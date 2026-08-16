@@ -233,7 +233,7 @@ type InternalPickDeep<Parent, PathTree extends PathTreeType> =
 type RecursionPickDeep<NextParent, NextPathTree extends PathTreeType> =
 	NextParent extends infer NextParentArray extends UnknownArray
 		/* NextParent: array */
-		? IsEqual<IsTuple<NextParentArray>, false> extends true
+		? NextParentArray extends readonly unknown[]
 			? NextParentArray extends readonly unknown[]
 				/* If end */
 				? ForceGet<NextPathTree, CoerceKeyof<NextPathTree>> extends LeafMarker

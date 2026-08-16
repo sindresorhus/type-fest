@@ -106,6 +106,10 @@ type tuple_Actual = PickDeep<Testing, 'object.tuples'>;
 type tuple_Expected = {object: {tuples: ['foo', 'bar']}};
 expectType<true>({} as IsEqual<tuple_Actual, tuple_Expected>);
 
+type objectArray0_Actual = PickDeep<Testing, 'object.objectArray.0'>;
+type objectArray0_Expected = {object: {objectArray: [{a: 1; b: 2}]}};
+expectType<true>({} as IsEqual<objectArray0_Actual, objectArray0_Expected>);
+
 type objectArray1_Actual = PickDeep<Testing, `object.objectArray.${number}`>;
 type objectArray1_Expected = {object: {objectArray: Array<{a: 1; b: 2}>}};
 expectType<true>({} as IsEqual<objectArray1_Actual, objectArray1_Expected>);
@@ -229,3 +233,46 @@ expectType<true>({} as IsEqual<mutableArrayPick_Actual, mutableArrayPick_Expecte
 type Nested = {name: string; age: number};
 type RootNestedNullable = {name: string; age: number; nested: Nested | null};
 expectType<true>({} as IsEqual<{name: string; nested: {name: string} | null}, PickDeep<RootNestedNullable, 'name' | 'nested.name'>>);
+
+// ---
+type Configuration = {
+	userConfig: {
+		name: string;
+		age: number;
+		address: [
+			{
+				city1: string;
+				street1: string;
+			},
+			{
+				city2: string;
+				street2: string;
+			},
+		];
+	};
+	otherConfig: any;
+};
+
+type Actual_config_pick = PickDeep<Configuration, 'userConfig.address.0'>;
+type Expected_config_pick = {userConfig: {address: [{city1: string; street1: string}]}};
+expectType<true>({} as IsEqual<Actual_config_pick, Expected_config_pick>);
+
+type Configuration2 = {
+	userConfig: {
+		name: string;
+		age: number;
+		address: Array<
+			{
+				city1: string;
+				street1: string;
+			}>
+		;
+	};
+	otherConfig: any;
+};
+
+type Actual_config_pick2 = PickDeep<Configuration2, 'userConfig.address.0'>;
+expectType<true>({} as IsEqual<Actual_config_pick2, Expected_config_pick>);
+
+type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
+expectType<true>({} as IsEqual<{userConfig: {address: [unknown, {street2: string}]}}, Street>);
