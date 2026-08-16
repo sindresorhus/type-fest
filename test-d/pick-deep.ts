@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {PickDeep} from '../index.d.ts';
+import type {PickDeep, Get} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -126,3 +126,34 @@ expectType<{1: {0: number}}>(numberTest2);
 
 declare const numberTest3: PickDeep<Testing, '2.0'>;
 expectType<{2?: {0: number}}>(numberTest3);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1502.
+type Leaf = {
+	bar?: 'LeafBar';
+	foo: 'LeafString';
+};
+
+type Tree = {
+	foo?: Array<
+		{
+			mode: 'test1';
+			bar: Array<{
+				foo: Leaf[] | Leaf;
+			}>;
+		}
+		| {
+			mode: 'test2';
+			foo: 'foo.number.foo';
+			bar: Array<{
+				foo: Leaf[] | Leaf;
+			}>;
+		}
+	>;
+};
+
+declare const maxRecursionDepthPathTest0: Get<
+	PickDeep<Tree, `foo.${number}.bar.${number}.foo.${number}.bar`, {maxRecursionDepth: 6}>,
+	`foo.${number}.bar.${number}.foo.${number}.bar`
+>;
+expectType<'LeafBar' | undefined>(maxRecursionDepthPathTest0);
+

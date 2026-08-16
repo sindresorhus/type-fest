@@ -139,7 +139,8 @@ export type PathsOptions = {
 	depth?: number;
 };
 
-type DefaultPathsOptions = {
+// eslint-disable-next-line type-fest/require-exported-types
+export type DefaultPathsOptions = {
 	maxRecursionDepth: 5;
 	bracketNotation: false;
 	leavesOnly: false;

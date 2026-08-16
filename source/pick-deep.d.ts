@@ -1,7 +1,7 @@
 import type {TupleOf} from './tuple-of.d.ts';
 import type {BuildObject, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {Paths} from './paths.d.ts';
+import type {Paths, PathsOptions, DefaultPathsOptions} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -64,18 +64,16 @@ type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
 @category Object
 @category Array
 */
-export type PickDeep<T, PathUnion extends Paths<T>> =
+
+export type PickDeep<T, PathUnion extends Paths<T, OP>, OP extends PathsOptions = DefaultPathsOptions> =
 	T extends NonRecursiveType
 		? never
 		: T extends UnknownArray
-			? UnionToIntersection<{
-				[P in PathUnion]: InternalPickDeep<T, P>;
-			}[PathUnion]
+			? UnionToIntersection<PathUnion extends infer P extends string | number ? InternalPickDeep<T, P> : never
 			>
 			: T extends object
-				? SimplifyDeep<UnionToIntersection<{
-					[P in PathUnion]: InternalPickDeep<T, P>;
-				}[PathUnion]>>
+				? SimplifyDeep<UnionToIntersection<PathUnion extends infer P extends string | number ? InternalPickDeep<T, P> : never
+				>>
 				: never;
 
 /**
