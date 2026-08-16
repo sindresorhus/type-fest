@@ -53,10 +53,28 @@ export type ConditionalKeys<Base, Condition> = (Base extends UnknownArray ? Tupl
 	? IfNotAnyOrNever<_Base, {ifNot: _ConditionalKeys<_Base, Condition>; ifAny: keyof _Base}>
 	: never;
 
-type _ConditionalKeys<Base, Condition> = keyof {
+// A string index signature widens `keyof` to `string | number`, which swallows the declared
+// literal keys, so they have to be collected separately and matched on their own.
+type _ConditionalKeys<Base, Condition> =
+	| _MatchingKeys<Base, Condition, keyof Base>
+	| _MatchingKeys<Base, Condition, DeclaredKeys<Base>>;
+
+type _MatchingKeys<Base, Condition, Keys> = keyof {
 	[
-	Key in (keyof Base & {}) as // `& {}` prevents homomorphism
+	Key in (Keys & keyof Base) as // The intersection prevents homomorphism
 	ExtendsStrict<Base[Key], Condition> extends true ? Key : never
+	]: never
+};
+
+// The keys `Base` declares itself, without the ones contributed by a `string`, `number` or
+// `symbol` index signature. Homomorphic on purpose — that is what keeps the declared keys
+// visible one by one instead of collapsed into the index signature.
+type DeclaredKeys<Base> = keyof {
+	[
+	Key in keyof Base as string extends Key ? never
+		: number extends Key ? never
+			: symbol extends Key ? never
+				: Key
 	]: never
 };
 
