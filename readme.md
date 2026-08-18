@@ -181,6 +181,7 @@ Click the type names for complete docs.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
+- [`Destructurable`](source/destructurable.d.ts) - Convert a union of object types into a type whose members can be destructured directly.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers between a specified start (inclusive) and end (exclusive), with an optional step.
 - [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers between a specified start and end (both inclusive), with an optional step.
 - [`ArrayIndices`](source/array-indices.d.ts) - Provides valid indices for a constant array or tuple.
