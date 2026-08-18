@@ -139,11 +139,7 @@ export type PathsOptions = {
 	depth?: number;
 };
 
-/**
-Exports for `PickDeep`.
-*/
-// eslint-disable-next-line type-fest/require-exported-types
-export type DefaultPathsOptions = {
+type DefaultPathsOptions = {
 	maxRecursionDepth: 5;
 	bracketNotation: false;
 	leavesOnly: false;
