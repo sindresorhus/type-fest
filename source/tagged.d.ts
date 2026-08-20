@@ -95,7 +95,7 @@ const parsed = parse(x); // The type of `parsed` is { hello: string }
 
 @category Type
 */
-export type GetTagMetadata<Type extends Tag<TagName, unknown>, TagName extends PropertyKey> = Type[typeof tag][TagName];
+export type GetTagMetadata<Type extends Tag<NoInfer<TagName>, unknown>, TagName extends PropertyKey> = Type[typeof tag][TagName];
 
 /**
 Get the untagged portion of a tagged type created with `Tagged`.
