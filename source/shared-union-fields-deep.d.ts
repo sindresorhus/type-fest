@@ -106,10 +106,10 @@ export type SharedUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOp
 Same as `SharedUnionFieldsDeep`, but accepts only `object`s and as inputs. Internal helper for `SharedUnionFieldsDeep`.
 */
 type SharedObjectUnionFieldsDeep<Union, Options extends Required<SharedUnionFieldsDeepOptions>> =
-	// `keyof Union` can extract the same key in union type, if there is no same key, return never.
+	// Extract the shared keys from the union. Throughout this type, use `Keys` instead of `keyof Union`
+	// to prevent the mapped type from distributing over the union.
 	keyof Union extends infer Keys extends keyof Union
 		? IsNever<Keys> extends false
-			// Prevent distributing the mapped type over the union type.
 			? {
 				[Key in Keys]:
 				Union[Key] extends NonRecursiveType
