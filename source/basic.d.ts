@@ -101,6 +101,6 @@ function identity<FunctionType extends AnyFunction>(function_: FunctionType): Fu
 @category Basic
 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyFunction = (...arguments_: readonly any[]) => any;
+export type AnyFunction = (...arguments_: readonly any[]) => unknown;
 
 export {};
