@@ -1,6 +1,5 @@
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
@@ -84,25 +83,27 @@ export type _SplitOnRestElement<
 	HeadAcc extends UnknownArray = [],
 	TailAcc extends UnknownArray = [],
 > =
-	keyof Array_ & `${number}` extends never
-		// Enters this branch, if `Array_` is empty (e.g., []),
-		// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-		? Array_ extends readonly [...infer Rest, infer Last]
-			? _SplitOnRestElement<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
-			: [HeadAcc, Array_ extends readonly [] ? [] : Array_, TailAcc] // Add the rest element between the accumulated elements.
-		: Array_ extends readonly [(infer First)?, ...infer Rest]
+	'0' extends keyof Array_
+		// Enters this branch, if `Array_` starts with a non-rest element (e.g., `[string, number]` or `[string, ...number[]]`).
+		? Array_ extends readonly [(infer First)?, ...infer Rest]
 			? _SplitOnRestElement<
 				Rest, Options,
 				[
 					...HeadAcc,
-					...IsOptionalKeyOf<Array_, '0'> extends true
-						? Options['preserveOptionalModifier'] extends false
+					// A tuple allows fewer than one element only when its first element is optional. Written in exactly this shape because equivalent ones, such as `[] extends Array_`, are several times slower.
+					...Array_ extends readonly [unknown, ...unknown[]]
+						? [First]
+						: Options['preserveOptionalModifier'] extends false
 							? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
-							: [First?]
-						: [First],
+							: [First?],
 				],
 				TailAcc
 			> // Accumulate elements that are present before the rest element.
-			: never; // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
+			: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
+		// Enters this branch, if `Array_` is empty (e.g., []),
+		// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+		: Array_ extends readonly [...infer Rest, infer Last]
+			? _SplitOnRestElement<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
+			: [HeadAcc, Array_ extends readonly [] ? [] : Array_, TailAcc]; // Add the rest element between the accumulated elements.
 
 export {};

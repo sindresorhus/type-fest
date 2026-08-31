@@ -1,5 +1,6 @@
 import {expectType} from 'tsd';
 import type {AllExtend} from '../source/all-extend.d.ts';
+import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
 expectType<AllExtend<[], number>>(true);
@@ -119,3 +120,11 @@ expectType<NonStrictNeverAllExtend<[never, any, never, any], never>>({} as boole
 
 expectType<AllExtend<any, never>>(false);
 expectType<AllExtend<never, any>>(false);
+
+// Recursion depth at which the previous non-tail-recursive implementation started to fail.
+// Not tested at the usual depth of 999, because collapsing an array that long costs over a million type instantiations.
+type TwoHundredZeroes = TupleOf<200, '0'>;
+expectType<AllExtend<TwoHundredZeroes, string>>(true);
+
+// Elements that follow a rest element are collapsed by a separate branch.
+expectType<AllExtend<[...number[], ...TwoHundredZeroes], string | number>>(true);
