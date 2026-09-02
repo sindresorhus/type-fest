@@ -1,6 +1,5 @@
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
-import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
@@ -119,26 +118,28 @@ type _CollapseRestElement<
 	BackwardAccumulator extends UnknownArray = [],
 > =
 	TArray extends UnknownArray // For distributing `TArray`
-		? keyof TArray & `${number}` extends never
-			// Enters this branch, if `TArray` is empty (e.g., []),
-			// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-			? TArray extends readonly [...infer Rest, infer Last]
-				? _CollapseRestElement<Rest, ForwardAccumulator, [Last, ...BackwardAccumulator]> // Accumulate elements that are present after the rest element.
-				: TArray extends readonly []
-					? [...ForwardAccumulator, ...BackwardAccumulator]
-					: [...ForwardAccumulator, TArray[number], ...BackwardAccumulator] // Add the rest element between the accumulated elements.
-			: TArray extends readonly [(infer First)?, ...infer Rest]
+		? '0' extends keyof TArray
+			// Enters this branch, if `TArray` starts with a non-rest element (e.g., `[string, number]` or `[string, ...number[]]`).
+			? TArray extends readonly [(infer First)?, ...infer Rest]
 				? _CollapseRestElement<
 					Rest,
 					[
 						...ForwardAccumulator,
-						'0' extends OptionalKeysOf<TArray>
-							? If<IsExactOptionalPropertyTypesEnabled, First, First | undefined> // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
-							: First,
+						// A tuple allows fewer than one element only when its first element is optional. Written in exactly this shape because equivalent ones, such as `[] extends TArray`, are several times slower.
+						TArray extends readonly [unknown, ...unknown[]]
+							? First
+							: If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>, // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 					],
 					BackwardAccumulator
 				>
 				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
+			// Enters this branch, if `TArray` is empty (e.g., []),
+			// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+			: TArray extends readonly [...infer Rest, infer Last]
+				? _CollapseRestElement<Rest, ForwardAccumulator, [Last, ...BackwardAccumulator]> // Accumulate elements that are present after the rest element.
+				: TArray extends readonly []
+					? [...ForwardAccumulator, ...BackwardAccumulator]
+					: [...ForwardAccumulator, TArray[number], ...BackwardAccumulator] // Add the rest element between the accumulated elements.
 		: never; // Should never happen
 
 export {};

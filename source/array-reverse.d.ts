@@ -1,7 +1,6 @@
 import type {If} from './if.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
-import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -65,21 +64,23 @@ type _ArrayReverse<
 	AfterRestAcc extends UnknownArray = [],
 	Result extends UnknownArray = never,
 > =
-	keyof TArray & `${number}` extends never
-		// Enters this branch, if `TArray` is empty (e.g., `[]`),
-		// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-		? TArray extends readonly [...infer Rest, infer Last]
-			? _ArrayReverse<Rest, BeforeRestAcc, [...AfterRestAcc, Last], Result> // Accumulate elements that are present after the rest element in reverse order.
-			: Result | [...AfterRestAcc, ...TArray, ...BeforeRestAcc] // Add the rest element between the accumulated elements.
-		: TArray extends readonly [(infer First)?, ...infer Rest]
-			? IsOptionalKeyOf<TArray, '0'> extends true
-				? _ArrayReverse<
+	'0' extends keyof TArray
+		// Enters this branch, if `TArray` starts with a non-rest element (e.g., `[string, number]` or `[string, ...number[]]`).
+		? TArray extends readonly [(infer First)?, ...infer Rest]
+			// A tuple allows fewer than one element only when its first element is optional. Written in exactly this shape because equivalent ones, such as `[] extends TArray`, are several times slower.
+			? TArray extends readonly [unknown, ...unknown[]]
+				? _ArrayReverse<Rest, [First, ...BeforeRestAcc], AfterRestAcc, Result>
+				: _ArrayReverse<
 					Rest,
 					[First | (If<IsExactOptionalPropertyTypesEnabled, never, undefined>), ...BeforeRestAcc], // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
 					AfterRestAcc,
 					Result | BeforeRestAcc
 				>
-				: _ArrayReverse<Rest, [First, ...BeforeRestAcc], AfterRestAcc, Result>
-			: never; // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
+			: never // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
+		// Enters this branch, if `TArray` is empty (e.g., `[]`),
+		// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+		: TArray extends readonly [...infer Rest, infer Last]
+			? _ArrayReverse<Rest, BeforeRestAcc, [...AfterRestAcc, Last], Result> // Accumulate elements that are present after the rest element in reverse order.
+			: Result | [...AfterRestAcc, ...TArray, ...BeforeRestAcc]; // Add the rest element between the accumulated elements.
 
 export {};

@@ -1,7 +1,6 @@
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -57,19 +56,21 @@ type SetArrayRequired<
 	Counter extends any[] = [],
 	Accumulator extends UnknownArray = [],
 > = TArray extends unknown // For distributing `TArray` when it's a union
-	? keyof TArray & `${number}` extends never
-		// Exit if `TArray` is empty (e.g., []), or
-		// `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-		? [...Accumulator, ...TArray]
-		: TArray extends readonly [(infer First)?, ...infer Rest]
-			? '0' extends OptionalKeysOf<TArray> // If the first element of `TArray` is optional
-				? `${Counter['length']}` extends `${Keys & (string | number)}` // If the current index needs to be required
+	? '0' extends keyof TArray
+		? TArray extends readonly [(infer First)?, ...infer Rest]
+			// A tuple allows fewer than one element only when its first element is optional. Written in exactly this shape because equivalent ones, such as `[] extends TArray`, are several times slower.
+			// Unlike the other array loops, this one has no `any` guard above it, so the check is wrapped in tuples to stop `any` from matching both branches.
+			? [TArray] extends [readonly [unknown, ...unknown[]]]
+				? SetArrayRequired<Rest, Keys, [...Counter, any], [...Accumulator, First]>
+				: `${Counter['length']}` extends `${Keys & (string | number)}` // If the current index needs to be required
 					? SetArrayRequired<Rest, Keys, [...Counter, any], [...Accumulator, First]>
 					// If the current element is optional, but it doesn't need to be required,
 					// then we can exit early, since no further elements can now be made required.
 					: [...Accumulator, ...TArray]
-				: SetArrayRequired<Rest, Keys, [...Counter, any], [...Accumulator, TArray[0]]>
 			: never // Should never happen, since `[(infer F)?, ...infer R]` is a top-type for arrays.
+		// Exit if `TArray` is empty (e.g., []), or
+		// `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
+		: [...Accumulator, ...TArray]
 	: never; // Should never happen
 
 export {};
