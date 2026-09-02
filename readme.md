@@ -29,17 +29,6 @@
 					<sup>An open-source framework that supports any programming language, cloud provider, or deployment automation tool.</sup>
 				</div>
 			</a>
-			<br>
-			<br>
-			<a href="https://circleback.ai?utm_source=sindresorhus&utm_medium=sponsorship&utm_campaign=awesome-list&utm_id=type-fest">
-				<div>
-					<img width="300" src="https://sindresorhus.com/assets/thanks/circleback-logo.png?x" alt="Circleback logo">
-				</div>
-				<b>Get the most out of every conversation.</b>
-				<div>
-					<sup>AI-powered meeting notes, automations, and search. Give AI agents the context they need to get things done.</sup>
-				</div>
-			</a>
 		</p>
 	</div>
 	<br>
