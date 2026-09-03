@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {PickDeep} from '../index.d.ts';
+import type {PickDeep, Get} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -126,3 +126,161 @@ expectType<{1: {0: number}}>(numberTest2);
 
 declare const numberTest3: PickDeep<Testing, '2.0'>;
 expectType<{2?: {0: number}}>(numberTest3);
+
+// Test for https://github.com/sindresorhus/type-fest/issues/1502.
+type Leaf = {
+	bar?: 'LeafBar';
+	foo: 'LeafString';
+};
+
+type Tree = {
+	foo?: Array<
+		{
+			mode: 'test1';
+			bar: Array<{
+				foo: Leaf[] | Leaf;
+			}>;
+		}
+		| {
+			mode: 'test2';
+			foo: 'foo.number.foo';
+			bar: Array<{
+				foo: Leaf[] | Leaf;
+			}>;
+		}
+	>;
+};
+
+declare const maxRecursionDepthPathTest0: Get<
+	PickDeep<Tree, `foo.${number}.bar.${number}.foo.${number}.bar`>,
+	`foo.${number}.bar.${number}.foo.${number}.bar`
+>;
+expectType<'LeafBar' | undefined>(maxRecursionDepthPathTest0);
+
+// Returns `never` if a path is invalid.
+type ValidTestObject = {
+	fooRoot: Array<{bar: 0}>;
+	barRoot: {foo: 1};
+};
+
+declare const invalidPathTest0: PickDeep<ValidTestObject, `fooRoot.${number}.bar.invalidPath`>;
+expectType<never>(invalidPathTest0);
+
+declare const invalidPathTest1: PickDeep<ValidTestObject, `fooRoot.${number}.invalidPath`>;
+expectType<never>(invalidPathTest1);
+
+declare const invalidPathTest2: PickDeep<ValidTestObject, `fooRoot.${number}..bar`>;
+expectType<never>(invalidPathTest2);
+
+declare const invalidPathTest3: PickDeep<ValidTestObject, `invalidValidTestObject.fooRoot.${number}.bar`>;
+expectType<never>(invalidPathTest3);
+
+declare const invalidPathTest4: PickDeep<ValidTestObject, `barRoot.${number}`>;
+expectType<never>(invalidPathTest4);
+
+declare const invalidPathTest5: PickDeep<ValidTestObject, `barRoot.foo.${number}`>;
+expectType<never>(invalidPathTest5);
+
+declare const invalidPathTest6: PickDeep<ValidTestObject, 'barRoot.invalidPath'>;
+expectType<never>(invalidPathTest6);
+
+type ValidTestArray = Array<{foo: 0; bar: 1}>;
+
+// Invalid property after a valid array index.
+declare const invalidArrayPathTest0: PickDeep<
+	ValidTestArray,
+	`${number}.invalidPath`
+>;
+expectType<never>(invalidArrayPathTest0);
+
+// Cannot recurse into a non-object/non-array value.
+declare const invalidArrayPathTest1: PickDeep<
+	ValidTestArray,
+	`${number}.foo.${number}`
+>;
+expectType<never>(invalidArrayPathTest1);
+
+// Malformed path.
+declare const invalidArrayPathTest2: PickDeep<
+	ValidTestArray,
+	`${number}..foo`
+>;
+expectType<never>(invalidArrayPathTest2);
+
+type ValidTestTuple = [
+	{foo: 0; bar: 1},
+	{foo: 2; bar: 3},
+];
+
+declare const invalidTuplePathTest0: PickDeep<ValidTestTuple, '0.invalidPath'>;
+expectType<never>(invalidTuplePathTest0);
+
+declare const invalidTuplePathTest1: PickDeep<ValidTestTuple, '1.foo.invalidPath'>;
+expectType<never>(invalidTuplePathTest1);
+
+declare const invalidTuplePathTest2: PickDeep<ValidTestTuple, '2.foo'>;
+expectType<never>(invalidTuplePathTest2);
+
+declare const invalidTuplePathTest3: PickDeep<ValidTestTuple, 'invalidPath.foo'>;
+expectType<never>(invalidTuplePathTest3);
+
+declare const invalidTuplePathTest4: PickDeep<ValidTestTuple, '0..foo'>;
+expectType<never>(invalidTuplePathTest4);
+
+type ValidTestReadonlyArray = ReadonlyArray<{foo: 0; bar: 1}>;
+
+// Invalid property after a valid array index.
+declare const invalidReadonlyArrayPathTest0: PickDeep<
+	ValidTestReadonlyArray,
+	`${number}.invalidPath`
+>;
+expectType<never>(invalidReadonlyArrayPathTest0);
+
+// Cannot recurse into a non-object/non-array value.
+declare const invalidReadonlyArrayPathTest1: PickDeep<
+	ValidTestReadonlyArray,
+	`${number}.foo.${number}`
+>;
+expectType<never>(invalidReadonlyArrayPathTest1);
+
+// Malformed path.
+declare const invalidReadonlyArrayPathTest2: PickDeep<
+	ValidTestReadonlyArray,
+	`${number}..foo`
+>;
+expectType<never>(invalidReadonlyArrayPathTest2);
+
+type ValidTestReadonlyTuple = readonly [
+	{foo: 0; bar: 1},
+	{foo: 2; bar: 3},
+];
+
+declare const invalidReadonlyTuplePathTest0: PickDeep<
+	ValidTestReadonlyTuple,
+	'0.invalidPath'
+>;
+expectType<never>(invalidReadonlyTuplePathTest0);
+
+declare const invalidReadonlyTuplePathTest1: PickDeep<
+	ValidTestReadonlyTuple,
+	'1.foo.invalidPath'
+>;
+expectType<never>(invalidReadonlyTuplePathTest1);
+
+declare const invalidReadonlyTuplePathTest2: PickDeep<
+	ValidTestReadonlyTuple,
+	'2.foo'
+>;
+expectType<never>(invalidReadonlyTuplePathTest2);
+
+declare const invalidReadonlyTuplePathTest3: PickDeep<
+	ValidTestReadonlyTuple,
+	'invalidPath.foo'
+>;
+expectType<never>(invalidReadonlyTuplePathTest3);
+
+declare const invalidReadonlyTuplePathTest4: PickDeep<
+	ValidTestReadonlyTuple,
+	'0..foo'
+>;
+expectType<never>(invalidReadonlyTuplePathTest4);
