@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {ConditionalPickDeep} from '../index.d.ts';
+import type {ConditionalPickDeep, Paths} from '../index.d.ts';
 
 declare class ClassA {
 	public a: string;
@@ -8,6 +8,11 @@ declare class ClassA {
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface InterfaceA {
 	a: number;
+}
+
+enum TestEnum {
+	TEST1 = 'TEST1',
+	TEST2 = 'TEST2',
 }
 
 type Example = {
@@ -40,6 +45,15 @@ type Example = {
 			string: string;
 		};
 	};
+};
+
+type EnumExample = {
+	enum: TestEnum;
+	string: string | null;
+};
+
+type UnionExample = {
+	a: string | null;
 };
 
 declare const stringPick: ConditionalPickDeep<Example, string>;
@@ -158,3 +172,23 @@ expectType<{set: Set<string>; never: never}>(setPick);
 
 declare const interfaceTest: ConditionalPickDeep<Example, InterfaceA>;
 expectType<{interface: InterfaceA; never: never}>(interfaceTest);
+
+declare const enumPick: ConditionalPickDeep<EnumExample, TestEnum>;
+expectType<{enum: TestEnum}>(enumPick);
+
+expectType<'enum'>({} as Paths<ConditionalPickDeep<EnumExample, TestEnum>>);
+
+declare const unionPick:
+ConditionalPickDeep<UnionExample, TestEnum>;
+expectType<never>(unionPick);
+
+type NestedEnumExample = {
+	obj: {
+		value: TestEnum;
+		other: string | null;
+	};
+};
+
+declare const nestedPick:
+ConditionalPickDeep<NestedEnumExample, TestEnum>;
+expectType<{obj: {value: TestEnum}}>(nestedPick);
