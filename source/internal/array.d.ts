@@ -1,4 +1,5 @@
 import type {If} from '../if.d.ts';
+import type {IsEqual} from '../is-equal.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {OptionalKeysOf} from '../optional-keys-of.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
@@ -140,5 +141,83 @@ type _CollapseRestElement<
 				>
 				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 		: never; // Should never happen
+
+/**
+Returns the elements of the given list that are exactly equal to the given search type.
+
+Note: The variable part of the list and everything after it is ignored.
+
+@example
+```
+type StaticList = [string, 1, 'Hello', number, 2, string, 1, boolean, 4, 1, 'bye'];
+
+type A = FilterArrayExact<StaticList, number>;
+//=> [number]
+
+type B = FilterArrayExact<StaticList, string>;
+//=> [string, string]
+
+type C = FilterArrayExact<StaticList, 'Hello'>;
+//=> ['Hello']
+
+type D = FilterArrayExact<StaticList, 1>;
+//=> [1, 1, 1]
+
+type VariableList = [string, number, 1, string, ...string[], number, 1, string, 2];
+
+type E = FilterArrayExact<VariableList, number>;
+//=> [number]
+
+type F = FilterArrayExact<VariableList, string>;
+//=> [string, string]
+
+type G = FilterArrayExact<VariableList, 1>;
+//=> [1]
+
+type H = FilterArrayExact<VariableList, 2>;
+//=> []
+```
+*/
+export type FilterArrayExact<List extends UnknownArray, SearchType> = List extends readonly []
+	? []
+	: StaticPartOfArray<List> extends readonly [infer Head, ...infer Tail]
+		? FilterArrayExact<Tail, SearchType> extends infer Return extends unknown[]
+			? IsEqual<SearchType, Head> extends true
+				? [Head, ...Return]
+				: Return
+			: never
+		: [];
+
+/**
+Returns the count of elements in the given list that are exactly equal to the given search type.
+
+Note: The variable part of the list and everything after it is ignored.
+
+@example
+```
+type StaticList = [string, 1, 'Hello', number, 2, string, 1, boolean, 4, 1, 'bye'];
+
+type A = CountExactInArray<StaticList, number>;
+//=> 1
+
+type B = CountExactInArray<StaticList, string>;
+//=> 2
+
+type C = CountExactInArray<StaticList, 1>;
+//=> 3
+
+type VariableList = [string, number, 1, string, ...string[], number, 1, string, 2];
+
+type D = CountExactInArray<VariableList, string>;
+//=> 2
+
+type E = CountExactInArray<VariableList, 1>;
+//=> 1
+
+type F = CountExactInArray<VariableList, 2>;
+//=> 0
+```
+*/
+export type CountExactInArray<List extends UnknownArray, SearchType> = FilterArrayExact<List, SearchType>['length'];
 
 export {};
