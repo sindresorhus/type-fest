@@ -76,11 +76,19 @@ type _Replace<
 	Accumulator extends string = '',
 > = Search extends string // For distributing `Search`
 	? Replacement extends string // For distributing `Replacement`
-		? Input extends `${infer Head}${Search}${infer Tail}`
+		? Search extends ''
 			? Options['all'] extends true
-				? _Replace<Tail, Search, Replacement, Options, `${Accumulator}${Head}${Replacement}`>
-				: `${Head}${Replacement}${Tail}`
-			: `${Accumulator}${Input}`
+				? Input extends `${infer First}${infer Rest}`
+					? _Replace<Rest, Search, Replacement, Options, `${Accumulator}${Replacement}${First}`>
+					: `${Accumulator}${Replacement}`
+				: `${Accumulator}${Replacement}${Input}`
+			: Input extends `${Search}${infer Rest}`
+				? Options['all'] extends true
+					? _Replace<Rest, Search, Replacement, Options, `${Accumulator}${Replacement}`>
+					: `${Accumulator}${Replacement}${Rest}`
+				: Input extends `${infer First}${infer Rest}`
+					? _Replace<Rest, Search, Replacement, Options, `${Accumulator}${First}`>
+					: Accumulator
 		: never
 	: never;
 

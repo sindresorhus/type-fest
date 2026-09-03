@@ -28,6 +28,19 @@ expectType<'userName'>(replaceAll('__userName__', '__', ''));
 expectType<'MyCoolTitle'>(replaceAll('My Cool Title', ' ', ''));
 expectType<'fobarfobar'>(replaceAll('foobarfoobar', 'ob', 'b'));
 
+// Empty search string
+expectType<'Xabc'>({} as Replace<'abc', '', 'X'>);
+expectType<'XaXbXcX'>({} as Replace<'abc', '', 'X', {all: true}>);
+expectType<'foo'>({} as Replace<'', '', 'foo'>);
+expectType<'foo'>({} as Replace<'', '', 'foo', {all: true}>);
+
+// Non-literal searches
+expectType<'foobarBaz'>({} as Replace<'fooBarBaz', Uppercase<string>, 'b'>);
+expectType<'foobarbaz'>({} as Replace<'fooBarBaz', Uppercase<string>, 'b', {all: true}>);
+
+expectType<`foo[0-9]bar${number}`>({} as Replace<`foo${number}bar${number}`, `${number}`, '[0-9]'>);
+expectType<'foo[0-9]bar[0-9]'>({} as Replace<`foo${number}bar${number}`, `${number}`, '[0-9]', {all: true}>);
+
 // Unions
 expectType<'bcabc' | 'cbcba'>({} as Replace<'abcabc' | 'cbacba', 'a', ''>);
 expectType<'bcabc' | 'acabc'>({} as Replace<'abcabc', 'a' | 'b', ''>);
