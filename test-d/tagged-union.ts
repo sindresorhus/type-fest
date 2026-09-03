@@ -28,3 +28,18 @@ const failsToo = {
 
 expectNotAssignable<Union>(fails);
 expectNotAssignable<Union>(failsToo);
+
+// Issue #1211: `TaggedUnion` should be usable through a generic wrapper whose
+// members are constrained as `Record<string, unknown>`, as shown in the docs.
+type Tagged<Fields extends Record<string, unknown>> = TaggedUnion<'type', Fields>;
+
+type EventMessage = Tagged<{
+	OpenExternalUrl: {url: string; id: number};
+	ToggleBackButtonVisibility: {visible: boolean};
+}>;
+
+expectAssignable<EventMessage>({type: 'OpenExternalUrl', url: 'https://example.com', id: 1});
+expectAssignable<EventMessage>({type: 'ToggleBackButtonVisibility', visible: true});
+
+// The discriminant still narrows the field types correctly.
+expectNotAssignable<EventMessage>({type: 'ToggleBackButtonVisibility', visible: 'yes'});
