@@ -1,5 +1,5 @@
 /**
-Represents a strictly empty readonly array, the `[]` value.
+Represents a strictly empty readonly array, implemented as the readonly empty tuple `readonly []`.
 
 When you annotate something as the type `unknown[]` or `any[]`, it can be any array, including a non-empty one. This means that you cannot use `unknown[]` or `any[]` to represent a strictly empty array.
 
@@ -30,25 +30,9 @@ function getItems(items: readonly string[] = DEFAULT_ITEMS) {
 }
 ```
 
+@see https://github.com/sindresorhus/type-fest/issues/929
 @category Array
 */
 export type EmptyArray = readonly [];
-
-/**
-Returns a boolean for whether the type is strictly equal to an empty readonly array, the `[]` value.
-
-@example
-```
-import type {IsEmptyArray} from 'type-fest';
-
-type Pass = IsEmptyArray<[]>; //=> true
-type Fail1 = IsEmptyArray<[1, 2, 3]>; //=> false
-type Fail2 = IsEmptyArray<string[]>; //=> false
-```
-
-@see {@link EmptyArray}
-@category Array
-*/
-export type IsEmptyArray<T> = T extends EmptyArray ? true : false;
 
 export {};
