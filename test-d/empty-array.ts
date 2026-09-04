@@ -17,6 +17,7 @@ foo = null;
 // @ts-expect-error
 foo[0] = 1;
 // @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 foo.push(1);
 
 type Union = EmptyArray | [id: number];
