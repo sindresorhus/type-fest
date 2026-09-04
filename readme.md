@@ -260,6 +260,7 @@ Click the type names for complete docs.
 
 ### Array
 
+- [`EmptyArray`](source/empty-array.d.ts) - Represents a strictly empty readonly array, implemented as the readonly empty tuple `readonly []`.
 - [`Arrayable`](source/arrayable.d.ts) - Create a type that represents either the value or an array of the value.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
