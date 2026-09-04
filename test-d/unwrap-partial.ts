@@ -82,4 +82,10 @@ expectType<Record<string, unknown>>({} as UnwrapPartial<Partial<Record<string, u
 expectType<Record<string, any>>({} as UnwrapPartial<Partial<Record<string, any>>>);
 
 // `UnwrapPartial` has no effect on non-partial types
+type TestTypeWithMixedProps = {
+	a: string;
+	b?: number;
+};
+
 expectType<TestType>({} as UnwrapPartial<TestType>);
+expectType<TestTypeWithMixedProps>({} as UnwrapPartial<TestTypeWithMixedProps>);
