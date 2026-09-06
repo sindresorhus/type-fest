@@ -1,6 +1,5 @@
 import type {Except} from './except.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {IsNever} from './is-never.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
@@ -51,7 +50,7 @@ writableArray.push(4); // Will work as the array itself is now writable.
 
 @category Object
 */
-export type Writable<BaseType, Keys extends keyof BaseType = never> =
+export type Writable<BaseType, Keys extends keyof BaseType | undefined = undefined> =
 	BaseType extends ReadonlyMap<infer KeyType, infer ValueType>
 		? Map<KeyType, ValueType>
 		: BaseType extends ReadonlySet<infer ItemType>
@@ -60,13 +59,13 @@ export type Writable<BaseType, Keys extends keyof BaseType = never> =
 				// Handle array
 				? WritableArray<BaseType>
 				// Handle object
-				: IsNever<Keys> extends true
+				: [undefined] extends [Keys]
 					? {-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}
-					: IsEqual<Keys, keyof BaseType> extends true
+					: IsEqual<Extract<Keys, keyof BaseType>, keyof BaseType> extends true
 						? {-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}
 						: Simplify<
 							// Pick just the keys that are not writable from the base type.
-							Except<BaseType, Keys>
+							Except<BaseType, Extract<Keys, keyof BaseType>>
 							// Make the specified keys writable.
 							& {-readonly [KeyType in keyof BaseType as KeyType extends Keys ? KeyType : never]: BaseType[KeyType]}
 						>;

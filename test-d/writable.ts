@@ -64,6 +64,40 @@ expectType<{readonly [key: string]: number; foo: number}>(variation13);
 declare const variation14: Writable<Foo, keyof Foo>;
 expectType<{a: number; b: string}>(variation14);
 
+// Explicit `never` makes no properties writable.
+declare const variationNever: Writable<Foo, never>;
+expectType<Foo>(variationNever);
+// @ts-expect-error
+variationNever.a = 2;
+// @ts-expect-error
+variationNever.b = '2';
+
+// Computed key selection resolving to `never` makes no properties writable.
+type RecordData = {readonly id: string};
+type EditableKeys = Extract<keyof RecordData, `editable${string}`>;
+declare const computedNeverData: Writable<RecordData, EditableKeys>;
+expectType<RecordData>(computedNeverData);
+// @ts-expect-error
+computedNeverData.id = 'changed';
+
+// Readonly index signature preserved when `never` is selected.
+declare const indexNever: Writable<{readonly [key: string]: number}, never>;
+expectType<{readonly [key: string]: number}>(indexNever);
+// @ts-expect-error
+indexNever.foo = 1;
+// @ts-expect-error
+indexNever['foo'] = 1;
+
+// Readonly index signature preserved when computed key selection resolves to `never`.
+type IndexRecord = {readonly [key: string]: number};
+type IndexKeys = Extract<keyof IndexRecord, number>;
+declare const computedIndexNever: Writable<IndexRecord, IndexKeys>;
+expectType<IndexRecord>(computedIndexNever);
+// @ts-expect-error
+computedIndexNever.foo = 1;
+// @ts-expect-error
+computedIndexNever['foo'] = 1;
+
 // Test edge cases: any, never, unknown
 declare const anyVariation: Writable<any>;
 expectType<any>(anyVariation);
