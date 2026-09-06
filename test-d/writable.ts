@@ -59,3 +59,27 @@ expectType<{[key: string]: number; foo: number}>(variation12);
 
 declare const variation13: Writable<{readonly [key: string]: number; readonly foo: number}, 'foo'>;
 expectType<{readonly [key: string]: number; foo: number}>(variation13);
+
+// Support explicit `keyof BaseType` as Keys argument
+declare const variation14: Writable<Foo, keyof Foo>;
+expectType<{a: number; b: string}>(variation14);
+
+// Test edge cases: any, never, unknown
+declare const anyVariation: Writable<any>;
+expectType<any>(anyVariation);
+
+declare const neverVariation: Writable<never>;
+expectType<never>(neverVariation);
+
+declare const unknownVariation: Writable<unknown>;
+expectType<{}>(unknownVariation);
+
+// Support polymorphic `this` within class methods (https://github.com/sindresorhus/type-fest/issues/1515).
+class SomeClass {
+	readonly field!: number;
+
+	method() {
+		(this as Writable<this>).field = 4;
+		(this as Writable<typeof this>).field = 4;
+	}
+}
