@@ -59,15 +59,13 @@ export type Writable<BaseType, Keys extends keyof BaseType | undefined = undefin
 				// Handle array
 				? WritableArray<BaseType>
 				// Handle object
-				: [undefined] extends [Keys]
+				: IsEqual<Keys, undefined> extends true
 					? {-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}
-					: IsEqual<Extract<Keys, keyof BaseType>, keyof BaseType> extends true
-						? {-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}
-						: Simplify<
-							// Pick just the keys that are not writable from the base type.
-							Except<BaseType, Extract<Keys, keyof BaseType>>
-							// Make the specified keys writable.
-							& {-readonly [KeyType in keyof BaseType as KeyType extends Keys ? KeyType : never]: BaseType[KeyType]}
-						>;
+					: Simplify<
+						// Pick just the keys that are not writable from the base type.
+						Except<BaseType, Extract<Keys, keyof BaseType>>
+						// Make the specified keys writable.
+						& {-readonly [KeyType in keyof BaseType as KeyType extends Keys ? KeyType : never]: BaseType[KeyType]}
+					>;
 
 export {};

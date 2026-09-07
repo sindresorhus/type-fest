@@ -60,9 +60,16 @@ expectType<{[key: string]: number; foo: number}>(variation12);
 declare const variation13: Writable<{readonly [key: string]: number; readonly foo: number}, 'foo'>;
 expectType<{readonly [key: string]: number; foo: number}>(variation13);
 
-// Support explicit `keyof BaseType` as Keys argument
+// Support explicit concrete `keyof BaseType` as Keys argument
 declare const variation14: Writable<Foo, keyof Foo>;
 expectType<{a: number; b: string}>(variation14);
+
+// A union with undefined selects only the specified keys, not all keys.
+declare const variationUnionWithUndefined: Writable<Foo, 'a' | undefined>;
+variationUnionWithUndefined.a = 2;
+// @ts-expect-error
+variationUnionWithUndefined.b = '2';
+expectType<{a: number; readonly b: string}>(variationUnionWithUndefined);
 
 // Explicit `never` makes no properties writable.
 declare const variationNever: Writable<Foo, never>;
@@ -90,7 +97,7 @@ indexNever['foo'] = 1;
 
 // Readonly index signature preserved when computed key selection resolves to `never`.
 type IndexRecord = {readonly [key: string]: number};
-type IndexKeys = Extract<keyof IndexRecord, number>;
+type IndexKeys = Extract<keyof IndexRecord, symbol>;
 declare const computedIndexNever: Writable<IndexRecord, IndexKeys>;
 expectType<IndexRecord>(computedIndexNever);
 // @ts-expect-error
@@ -116,4 +123,10 @@ class SomeClass {
 		(this as Writable<this>).field = 4;
 		(this as Writable<typeof this>).field = 4;
 	}
+}
+
+// Support uninstantiated generic types with default Writable<T>.
+function testGeneric<T extends {readonly a: number; readonly b: string}>(item: Writable<T>) {
+	item.a = 1;
+	item.b = 'test';
 }
