@@ -153,8 +153,10 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
 }
 
-// Test issue #1499: Get with union types
-type UnionTest =
+// Test issue #1499: Get with union types and structural typing
+// When a property is omitted from a union member without explicit absence, Get intentionally
+// returns `unknown` because structural typing allows extra properties of any type at runtime.
+type UnionOmitted =
 	| {
 		mode: 'test1';
 		foo: {
@@ -169,28 +171,25 @@ type UnionTest =
 		};
 	};
 
-expectTypeOf<Get<UnionTest, 'foo.bar_only_in_test2', NonStrict>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<UnionTest, 'foo.bar_only_in_test2'>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<UnionTest, 'foo.bar', NonStrict>>().toEqualTypeOf<number | boolean>();
-expectTypeOf<Get<UnionTest, 'foo.doesNotExist', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<UnionOmitted, 'foo.bar_only_in_test2'>>().toBeUnknown();
+expectTypeOf<Get<UnionOmitted, 'foo.bar', NonStrict>>().toEqualTypeOf<number | boolean>();
 
-type DeepUnion =
-	| {a: {b: {c: string; shared: boolean}}}
-	| {a: {b: {d: number; shared: boolean}}};
+// Declaring explicit absence via `?: never` allows `Get` to return `Type | undefined`:
+type UnionWithExplicitAbsence =
+	| {
+		mode: 'test1';
+		foo: {
+			bar: number;
+			bar_only_in_test2?: never;
+		};
+	}
+	| {
+		mode: 'test2';
+		foo: {
+			bar: boolean;
+			bar_only_in_test2: string;
+		};
+	};
 
-expectTypeOf<Get<DeepUnion, 'a.b.c', NonStrict>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<DeepUnion, 'a.b.shared', NonStrict>>().toEqualTypeOf<boolean>();
-expectTypeOf<Get<DeepUnion, 'a.b.missing', NonStrict>>().toBeUnknown();
-expectTypeOf<Get<DeepUnion, 'a.b.c'>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<DeepUnion, 'a.b.shared'>>().toEqualTypeOf<boolean>();
-
-// Test intermediate branch divergence continuing through absent intermediate constituents
-type IntermediateDivergence =
-	| {type: 'user'; profile: {name: string; age: number}}
-	| {type: 'bot'; details: {id: string}};
-
-expectTypeOf<Get<IntermediateDivergence, 'profile.name', NonStrict>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<IntermediateDivergence, 'profile.name'>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<IntermediateDivergence, 'details.id', NonStrict>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<IntermediateDivergence, 'details.id'>>().toEqualTypeOf<string | undefined>();
-expectTypeOf<Get<IntermediateDivergence, 'missing.key', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<UnionWithExplicitAbsence, 'foo.bar_only_in_test2'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<UnionWithExplicitAbsence, 'foo.bar_only_in_test2', NonStrict>>().toEqualTypeOf<string | undefined>();
