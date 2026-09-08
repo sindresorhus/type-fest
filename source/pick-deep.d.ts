@@ -1,11 +1,12 @@
 import type {TupleOf} from './tuple-of.d.ts';
 import type {BuildObject, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
+import type {Paths} from './paths.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 
 /**
 Pick properties from a deeply-nested object.
@@ -64,18 +65,15 @@ type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
 @category Object
 @category Array
 */
-export type PickDeep<T, PathUnion extends Paths<T>> =
+export type PickDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
 	T extends NonRecursiveType
 		? never
 		: T extends UnknownArray
-			? UnionToIntersection<{
-				[P in PathUnion]: InternalPickDeep<T, P>;
-			}[PathUnion]
+			? UnionToIntersection<PathUnion extends infer P extends string | number ? InternalPickDeep<T, P> : never
 			>
 			: T extends object
-				? SimplifyDeep<UnionToIntersection<{
-					[P in PathUnion]: InternalPickDeep<T, P>;
-				}[PathUnion]>>
+				? SimplifyDeep<UnionToIntersection<PathUnion extends infer P extends string | number ? InternalPickDeep<T, P> : never
+				>>
 				: never;
 
 /**
@@ -84,8 +82,18 @@ Pick an object/array from the given object/array by one path.
 type InternalPickDeep<T, Path extends string | number> =
 	T extends NonRecursiveType
 		? never
-		: T extends UnknownArray ? PickDeepArray<T, Path>
-			: T extends object ? Simplify<PickDeepObject<T, Path>>
+		: T extends UnknownArray
+			? PickDeepArray<T, Path> extends infer DeepLeaf
+				? IsNever<DeepLeaf> extends false
+					? DeepLeaf
+					: never
+				: never
+			: T extends object
+				? PickDeepObject<T, Path> extends infer DeepLeaf
+					? IsNever<DeepLeaf> extends false
+						? Simplify<DeepLeaf>
+						: never
+					: never
 				: never;
 
 /**
@@ -95,7 +103,11 @@ type PickDeepObject<RecordType extends object, P extends string | number> =
 	P extends `${infer RecordKeyInPath}.${infer SubPath}`
 		? ObjectValue<RecordType, RecordKeyInPath> extends infer ObjectV
 			? IsNever<ObjectV> extends false
-				? BuildObject<RecordKeyInPath, InternalPickDeep<NonNullable<ObjectV>, SubPath>, RecordType>
+				? InternalPickDeep<NonNullable<ObjectV>, SubPath> extends infer NextLeaf
+					? IsNever<NextLeaf> extends false
+						? BuildObject<RecordKeyInPath, NextLeaf, RecordType>
+						: never
+					: never
 				: never
 			: never
 		: ObjectValue<RecordType, P> extends infer ObjectV
@@ -112,17 +124,24 @@ type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
 	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
 		// When `ArrayIndex` is equal to `number`
 		? number extends ArrayIndex
-			? ArrayType extends unknown[]
-				? Array<InternalPickDeep<NonNullable<ArrayType[number]>, SubPath>>
-				: ArrayType extends readonly unknown[]
-					? ReadonlyArray<InternalPickDeep<NonNullable<ArrayType[number]>, SubPath>>
+			? InternalPickDeep<NonNullable<ArrayType[number]>, SubPath> extends infer NextLeaf
+				? IsNever<NextLeaf> extends false
+					? ArrayType extends unknown[]
+						? NextLeaf[]
+						: ArrayType extends readonly unknown[]
+							? readonly NextLeaf[]
+							: never
 					: never
-			// When `ArrayIndex` is a number literal
-			: ArrayType extends unknown[]
-				? [...TupleOf<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
-				: ArrayType extends readonly unknown[]
-					? readonly [...TupleOf<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
+				: never
+			: InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath> extends infer NextLeaf
+				? IsNever<NextLeaf> extends false
+					? ArrayType extends unknown[]
+						? [...TupleOf<ArrayIndex>, NextLeaf]
+						: ArrayType extends readonly unknown[]
+							? readonly [...TupleOf<ArrayIndex>, NextLeaf]
+							: never
 					: never
+				: never
 		// When the path is equal to `number`
 		: P extends `${infer ArrayIndex extends number}`
 			// When `ArrayIndex` is `number`
