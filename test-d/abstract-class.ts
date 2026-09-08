@@ -2,8 +2,10 @@ import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {AbstractConstructor, AbstractClass, IsAny} from '../index.d.ts';
 
 abstract class Foo {
+	x: number;
+
 	constructor(x: number) {
-		void (x);
+		this.x = x;
 	}
 
 	abstract fooMethod(): void;
@@ -31,10 +33,8 @@ class WrongConcreteExtendedBar extends withBar(Bar) {}
 
 // This should be alright since `barMethod` is implemented.
 class CorrectConcreteExtendedBar extends withBar(Bar) {
-	constructor(x: number, y: number) {
+	constructor(_x: number, _y: number) {
 		super();
-		void (x);
-		void (y);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function

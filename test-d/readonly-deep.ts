@@ -71,8 +71,9 @@ readonlyData.fn('foo');
 readonlyData.fnWithOverload(1);
 readonlyData.fnWithOverload('', 1);
 
-expectType<typeof ClassA>(readonlyData.constructor);
-const instance = new readonlyData.constructor();
+const Constructor = readonlyData.constructor;
+expectType<typeof ClassA>(Constructor);
+const instance = new Constructor();
 instance.foo = 2; // Constructor is not made readonly
 
 // @ts-expect-error
