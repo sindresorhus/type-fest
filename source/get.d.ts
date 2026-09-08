@@ -127,7 +127,14 @@ Note:
 - Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
 - Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
-type PropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
+type KeysOfUnion<ObjectType> = ObjectType extends unknown ? keyof WithStringKeys<ObjectType> : never;
+
+type PropertyOf<
+	BaseType,
+	Key extends string,
+	Options extends Required<GetOptions>,
+	AllKeys = KeysOfUnion<BaseType>,
+> =
 	BaseType extends null | undefined
 		? undefined
 		: Key extends keyof BaseType
@@ -157,8 +164,9 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 					)
 					: Key extends keyof WithStringKeys<BaseType>
 						? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
-						: unknown;
-
+						: Key extends AllKeys
+							? undefined
+							: unknown;
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
 Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.

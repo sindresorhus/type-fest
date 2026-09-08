@@ -152,3 +152,45 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 	type FooPaths2 = 'array.1';
 	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
 }
+
+// Test issue #1499: Get with union types
+type UnionTest =
+	| {
+		mode: 'test1';
+		foo: {
+			bar: number;
+		};
+	}
+	| {
+		mode: 'test2';
+		foo: {
+			bar: boolean;
+			bar_only_in_test2: string;
+		};
+	};
+
+expectTypeOf<Get<UnionTest, 'foo.bar_only_in_test2', NonStrict>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<UnionTest, 'foo.bar_only_in_test2'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<UnionTest, 'foo.bar', NonStrict>>().toEqualTypeOf<number | boolean>();
+expectTypeOf<Get<UnionTest, 'foo.doesNotExist', NonStrict>>().toBeUnknown();
+
+type DeepUnion =
+	| {a: {b: {c: string; shared: boolean}}}
+	| {a: {b: {d: number; shared: boolean}}};
+
+expectTypeOf<Get<DeepUnion, 'a.b.c', NonStrict>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<DeepUnion, 'a.b.shared', NonStrict>>().toEqualTypeOf<boolean>();
+expectTypeOf<Get<DeepUnion, 'a.b.missing', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<DeepUnion, 'a.b.c'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<DeepUnion, 'a.b.shared'>>().toEqualTypeOf<boolean>();
+
+// Test intermediate branch divergence continuing through absent intermediate constituents
+type IntermediateDivergence =
+	| {type: 'user'; profile: {name: string; age: number}}
+	| {type: 'bot'; details: {id: string}};
+
+expectTypeOf<Get<IntermediateDivergence, 'profile.name', NonStrict>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<IntermediateDivergence, 'profile.name'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<IntermediateDivergence, 'details.id', NonStrict>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<IntermediateDivergence, 'details.id'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<IntermediateDivergence, 'missing.key', NonStrict>>().toBeUnknown();
