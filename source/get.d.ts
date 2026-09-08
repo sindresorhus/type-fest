@@ -158,7 +158,6 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 					: Key extends keyof WithStringKeys<BaseType>
 						? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
 						: unknown;
-
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
 Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.
@@ -204,6 +203,20 @@ type A = Get<string[], '3', {strict: false}>;
 //=> string
 
 type B = Get<Record<string, string>, 'foo', {strict: true}>;
+//=> string | undefined
+```
+
+Note on union types:
+When accessing a property on a union where some members omit the property, `Get` returns `unknown` because TypeScript's structural typing does not guarantee the property is absent at runtime (it could exist with another type). To receive `Type | undefined`, explicitly declare the property as absent (`property?: never`) on members where it must not exist:
+
+```ts
+import type {Get} from 'type-fest';
+
+type Animal =
+	| {type: 'dog'; sound: string}
+	| {type: 'fish'; sound?: never};
+
+type Sound = Get<Animal, 'sound'>;
 //=> string | undefined
 ```
 
