@@ -6,7 +6,7 @@ Generate a union of numbers between a specified start and end (both inclusive), 
 
 You skip over numbers using the `Step` parameter (defaults to `1`). For example, `IntClosedRange<0, 10, 2>` will create a union of `0 | 2 | 4 | 6 | 8 | 10`.
 
-Note: `Start` or `End` must be non-negative and smaller than `999`.
+Note: `Start` and `End` must each be between `-998` and `998`. The maximum is one less than for `IntRange` because the end is incremented internally to make it inclusive. If `Start` is greater than `End`, the result is `never`.
 
 Use-cases:
 1. This can be used to define a set of valid input/output values. for example:
@@ -23,6 +23,9 @@ type FontSize = IntClosedRange<10, 20>;
 
 type EvenNumber = IntClosedRange<0, 10, 2>;
 //=> 0 | 2 | 4 | 6 | 8 | 10
+
+type Offset = IntClosedRange<-3, 3>;
+//=> -3 | -2 | -1 | 0 | 1 | 2 | 3
 ```
 
 2. This can be used to define random numbers in a range. For example, `type RandomNumber = IntClosedRange<0, 100>;`
