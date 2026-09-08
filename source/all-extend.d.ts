@@ -101,10 +101,15 @@ type B = AllExtend<[1?, 2?, 3?], number | undefined>;
 @category Array
 */
 export type AllExtend<TArray extends UnknownArray, Type, Options extends AllExtendOptions = {}> =
-	_AllExtend<CollapseRestElement<TArray>, Type, ApplyDefaultOptions<AllExtendOptions, DefaultAllExtendOptions, Options>>;
+	IfNotAnyOrNever<CollapseRestElement<TArray>, {
+		ifNot: _AllExtend<CollapseRestElement<TArray>, Type, ApplyDefaultOptions<AllExtendOptions, DefaultAllExtendOptions, Options>>;
+		ifAny: false;
+		ifNever: false;
+	}>;
 
-type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllExtendOptions>> = IfNotAnyOrNever<TArray, {
-	ifNot: TArray extends readonly [infer First, ...infer Rest]
+// Kept free of `IfNotAnyOrNever` so that it stays tail-recursive, which allows it to handle long arrays.
+type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllExtendOptions>> =
+	TArray extends readonly [infer First, ...infer Rest]
 		? IsNever<First> extends true
 			? Or<Or<IsNever<Type>, IsAny<Type>>, Not<Options['strictNever']>> extends true
 				// If target `Type` is also `never`, or is `any`, or `strictNever` is disabled, recurse further.
@@ -114,8 +119,5 @@ type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllE
 				? _AllExtend<Rest, Type, Options>
 				: false
 		: true;
-	ifAny: false;
-	ifNever: false;
-}>;
 
 export {};

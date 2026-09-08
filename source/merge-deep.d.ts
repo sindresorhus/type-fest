@@ -18,9 +18,9 @@ type Writable<TArray extends UnknownArray> = {-readonly [Key in keyof TArray]: T
 
 // Using the default `ArrayTail` type causes issues, refer https://github.com/sindresorhus/type-fest/pull/1175/files#r2134694728.
 type ArrayTail<TArray extends UnknownArray> = TArray extends unknown // For distributing `TArray`
-	? keyof TArray & `${number}` extends never
-		? []
-		: Writable<_ArrayTail<TArray>>
+	? '0' extends keyof TArray
+		? Writable<_ArrayTail<TArray>>
+		: []
 	: never; // Should never happen
 
 type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;

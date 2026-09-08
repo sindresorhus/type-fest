@@ -81,9 +81,9 @@ type _IsTuple<
 		TArray extends unknown // For distributing `TArray`
 			? number extends TArray['length']
 				? Options['fixedLengthOnly'] extends false
-					? If<IsNever<keyof TArray & `${number}`>,
-						TArray extends readonly [...any, any] ? true : false, // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
-						true>
+					? '0' extends keyof TArray
+						? true
+						: TArray extends readonly [...any, any] ? true : false // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
 					: false
 				: true
 			: false
