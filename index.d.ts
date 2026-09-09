@@ -10,6 +10,7 @@ export type {KeysOfUnion} from './source/keys-of-union.d.ts';
 export type {DistributedOmit} from './source/distributed-omit.d.ts';
 export type {DistributedPick} from './source/distributed-pick.d.ts';
 export type {EmptyObject, IsEmptyObject} from './source/empty-object.d.ts';
+export type {EmptyArray} from './source/empty-array.d.ts';
 export type {IfEmptyObject} from './source/if-empty-object.d.ts';
 export type {NonEmptyObject} from './source/non-empty-object.d.ts';
 export type {NonEmptyString} from './source/non-empty-string.d.ts';
