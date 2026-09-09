@@ -80,7 +80,7 @@ type SameLengthPositiveNumericStringGt<A extends string, B extends string> = A e
 type NumericString = '0123456789';
 
 /**
-Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are both positive numeric strings.
+Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are both positive integer strings.
 
 @example
 ```
@@ -105,7 +105,7 @@ export type PositiveNumericStringGt<A extends string, B extends string> = A exte
 		: never;
 
 /**
-Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both positive numeric characters.
+Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both positive integer characters.
 
 @example
 ```
