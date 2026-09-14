@@ -223,4 +223,6 @@ export type {ExcludeStrict} from './source/exclude-strict.d.ts';
 export type {ExcludeExactly} from './source/exclude-exactly.d.ts';
 export type {ExtractExactly} from './source/extract-exactly.d.ts';
 
+export type {UnionMax} from './source/union-max.d.ts';
+
 export {};

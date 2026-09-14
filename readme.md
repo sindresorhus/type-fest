@@ -282,6 +282,8 @@ Click the type names for complete docs.
 
 ### Numeric
 
+- [`UnionMax`](source/union-max.d.ts) - Returns the maximum number in a union of numbers.
+
 - [`PositiveInfinity`](source/numeric.d.ts) - Matches the hidden `Infinity` type.
 - [`NegativeInfinity`](source/numeric.d.ts) - Matches the hidden `-Infinity` type.
 - [`Finite`](source/numeric.d.ts) - A finite `number`.
