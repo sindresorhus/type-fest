@@ -102,6 +102,4 @@ export type ReverseSign<N extends number> =
 						? R
 						: never;
 
-export type {UnionMax} from '../union-max.d.ts';
-
 export {};

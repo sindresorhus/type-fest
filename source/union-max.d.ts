@@ -1,7 +1,7 @@
 import type {IsNever} from './is-never.d.ts';
 import type {Finite, NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {IsAnyOrNever} from './internal/index.d.ts';
+import type {IsAnyOrNever} from './internal/type.d.ts';
 
 /**
 Returns the maximum number in a union of numbers.

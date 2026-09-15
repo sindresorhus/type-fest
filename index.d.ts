@@ -99,6 +99,7 @@ export type {LessThan} from './source/less-than.d.ts';
 export type {LessThanOrEqual} from './source/less-than-or-equal.d.ts';
 export type {Sum} from './source/sum.d.ts';
 export type {Subtract} from './source/subtract.d.ts';
+export type {UnionMax} from './source/union-max.d.ts';
 export type {KeyAsString} from './source/key-as-string.d.ts';
 export type {Exact} from './source/exact.d.ts';
 export type {ReadonlyTuple} from './source/readonly-tuple.d.ts';
@@ -222,7 +223,5 @@ export type {ExtractStrict} from './source/extract-strict.d.ts';
 export type {ExcludeStrict} from './source/exclude-strict.d.ts';
 export type {ExcludeExactly} from './source/exclude-exactly.d.ts';
 export type {ExtractExactly} from './source/extract-exactly.d.ts';
-
-export type {UnionMax} from './source/union-max.d.ts';
 
 export {};

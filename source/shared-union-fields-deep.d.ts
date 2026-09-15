@@ -1,4 +1,5 @@
-import type {NonRecursiveType, UnionMin, UnionMax, TupleLength, StaticPartOfArray, VariablePartOfArray, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {NonRecursiveType, UnionMin, TupleLength, StaticPartOfArray, VariablePartOfArray, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {UnionMax} from './union-max.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
