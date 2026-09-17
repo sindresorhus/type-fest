@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"module": "node20",
+		"moduleResolution": "node16",
+		"types": [],
+		"strict": true,
+		"noEmit": true
+	},
+	"include": ["typed-array.ts"]
+}
