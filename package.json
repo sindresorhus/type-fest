@@ -26,6 +26,7 @@
 	},
 	"scripts": {
 		"test:tsc": "node --max-old-space-size=6144 ./node_modules/.bin/tsc",
+		"test:minimum-lib": "node --max-old-space-size=6144 ./node_modules/.bin/tsc -p tsconfig.minimum-lib.json",
 		"test:tsd": "node --max-old-space-size=6144 ./node_modules/.bin/tsd",
 		"test:xo": "node --max-old-space-size=6144 ./node_modules/.bin/xo --ignores=lint-processors/fixtures/**/*.d.ts '**/*.{js,ts,md}'",
 		"test:linter": "node --test",

@@ -45,3 +45,4 @@ jobs:
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }} --legacy-peer-deps
       - run: NODE_OPTIONS="--max-old-space-size=6144" npx tsc
+      - run: npm run test:minimum-lib
