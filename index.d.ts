@@ -40,6 +40,7 @@ export type {PickDeep} from './source/pick-deep.d.ts';
 export type {OmitDeep} from './source/omit-deep.d.ts';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep.d.ts';
 export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep.d.ts';
+export type {UndefinableDeep} from './source/undefinable-deep.d.ts';
 export type {ReadonlyDeep} from './source/readonly-deep.d.ts';
 export type {LiteralUnion} from './source/literal-union.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
