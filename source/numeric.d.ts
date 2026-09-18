@@ -51,6 +51,32 @@ declare function setScore<T extends number>(length: Finite<T>): void;
 export type Finite<T extends number> = T extends PositiveInfinity | NegativeInfinity ? never : T;
 
 /**
+Returns a boolean for whether the given number is a finite number.
+
+@example
+```
+import type {IsFinite, PositiveInfinity} from 'type-fest';
+
+type A = IsFinite<1>;
+//=> true
+
+type B = IsFinite<PositiveInfinity>;
+//=> false
+
+type C = IsFinite<number>;
+//=> boolean
+```
+
+@category Numeric
+*/
+export type IsFinite<T extends _Numeric> =
+	T extends PositiveInfinity | NegativeInfinity
+		? false
+		: number extends T
+			? boolean
+			: true;
+
+/**
 A `number` that is an integer.
 
 Use-case: Validating and documenting parameters.
