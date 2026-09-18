@@ -49,3 +49,110 @@ expectType<{p1?: string; readonly p2?: number; p3: boolean}>({} as Simplify<type
 // Functions without properties are returned as is
 declare const variation12: SetOptional<(a: string) => number, never>;
 expectType<number>(variation12('foo'));
+
+// =================
+// Works with arrays
+// =================
+
+// Empty array
+expectType<[]>({} as SetOptional<[], never>);
+expectType<readonly []>({} as SetOptional<readonly [], never>);
+
+// All required elements
+expectType<[string, number?]>({} as SetOptional<[string, number], '1'>);
+expectType<[string?, number?, boolean?]>({} as SetOptional<[string, number, boolean], '0' | '1' | '2'>);
+expectType<[(string | number)?]>({} as SetOptional<[(string | number)], '0'>);
+
+// Works with number `Keys`, string `Keys`, and union of them.
+expectType<[string, number, boolean?]>({} as SetOptional<[string, number, boolean], 2>);
+expectType<[string, number?, boolean?, ...number[]]>({} as SetOptional<[string, number, boolean, ...number[]], '1' | '2'>);
+expectType<readonly [string?, number?, boolean?]>({} as SetOptional<readonly [string, number, boolean], '0' | 1 | 2>);
+
+// Mix of optional and required elements
+expectType<[string, number?, boolean?]>({} as SetOptional<[string, number, boolean?], '1'>);
+expectType<readonly [string?, number?, boolean?]>({} as SetOptional<readonly [string, number, boolean?], '0' | '1'>);
+
+// Mix of required and rest elements
+expectType<[string, number, boolean?, ...number[]]>({} as SetOptional<[string, number, boolean, ...number[]], '2'>);
+expectType<[string, number?, boolean?, ...number[]]>({} as SetOptional<[string, number, boolean, ...number[]], '1' | 2>);
+
+// Mix of optional, required, and rest elements
+expectType<readonly [string, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number, boolean?, ...number[]], '1'>);
+expectType<[string?, number?, boolean?, ...string[]]>({} as SetOptional<[string, number, boolean?, ...string[]], '0' | 1>);
+
+// Works with readonly arrays
+expectType<readonly [(string | number)?]>({} as SetOptional<readonly [(string | number)], '0'>);
+expectType<readonly [string, number?, boolean?]>({} as SetOptional<readonly [string, number, boolean?], '1'>);
+expectType<readonly [string, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number, boolean, ...number[]], '1' | '2'>);
+expectType<readonly [string?, number?, boolean?, ...string[]]>({} as SetOptional<readonly [string, number, boolean?, ...string[]], 0 | '1'>);
+
+// Ignores `Keys` that are already optional
+expectType<[string, number, boolean?]>({} as SetOptional<[string, number, boolean?], '2'>);
+expectType<readonly [string, number?, boolean?]>({} as SetOptional<readonly [string, number?, boolean?], 1 | 2>);
+expectType<readonly [string, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number?, boolean?, ...number[]], 1 | 2>);
+expectType<[string, number?, boolean?, ...number[]]>({} as SetOptional<[string, number, boolean?, ...number[]], '1' | '2'>);
+
+// Ignores `Keys` that are out of bounds
+expectType<[]>({} as SetOptional<[], 1>);
+expectType<[string, number, boolean]>({} as SetOptional<[string, number, boolean], 10>);
+expectType<[string?, number?, boolean?]>({} as SetOptional<[string, number, boolean], 0 | 1 | 2 | 3 | 4>);
+expectType<readonly [string, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number, boolean?, ...number[]], 10 | 1>);
+
+// Marks all keys as optional, if `Keys` is `any`.
+expectType<[string?, number?, boolean?]>({} as SetOptional<[string, number, boolean], any>);
+expectType<[string?, number?, boolean?, ...number[]]>({} as SetOptional<[string, number, boolean, ...number[]], any>);
+expectType<readonly [string?, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number, boolean, ...number[]], any>);
+expectType<readonly [string?, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number, boolean?, ...number[]], any>);
+
+// Marks all keys as optional, if `Keys` is `number`.
+expectType<[string?, number?, boolean?]>({} as SetOptional<[string, number, boolean], number>);
+expectType<[string?, number?, boolean?, ...number[]]>({} as SetOptional<[string, number, boolean, ...number[]], number>);
+expectType<readonly [string?, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number, boolean, ...number[]], number>);
+expectType<readonly [string?, number?, boolean?, ...number[]]>({} as SetOptional<readonly [string, number, boolean?, ...number[]], number>);
+
+// Returns the array as-is, if `Keys` is `never`.
+expectType<[string, number?]>({} as SetOptional<[string, number?], never>);
+expectType<readonly [string, number?, ...number[]]>({} as SetOptional<readonly [string, number?, ...number[]], never>);
+
+// Arrays where non-rest elements appear after the rest element are left unchanged, because they can never have optional elements.
+expectType<[...string[], string | undefined, number]>({} as SetOptional<[...string[], string | undefined, number], any>);
+expectType<[boolean, ...string[], string, number]>({} as SetOptional<[boolean, ...string[], string, number], any>);
+
+// Preserves `| undefined`, similar to how built-in `Partial` works.
+expectType<[string | undefined, (number | undefined)?, boolean?]>({} as SetOptional<[string | undefined, number | undefined, boolean], 1 | 2>);
+expectType<readonly [(string | undefined)?, (number | undefined)?, boolean?]>({} as SetOptional<readonly [string | undefined, number | undefined, boolean], 0 | 1 | 2>);
+
+// Optional elements cannot appear before required ones, `Keys` leading to such situations are ignored.
+expectType<[string, number, boolean]>({} as SetOptional<[string, number, boolean], 0 | 1>); // `0` and `1` can't be optional when `2` is required
+expectType<[string, number, boolean, string, string?]>(
+	{} as SetOptional<[string, number, boolean, string, string], 0 | 2 | 4>, // `0` and `2` can't be optional when `3` is required
+);
+expectType<readonly [string, number, boolean?, ...string[]]>(
+	{} as SetOptional<readonly [string, number, boolean, ...string[]], 0 | 2>, // `0` can't be optional when `1` is required
+);
+
+// Works with unions of arrays
+expectType<readonly [] | []>({} as SetOptional<readonly [] | [], never>);
+expectType<[] | readonly [(string | number)?]>({} as SetOptional<[] | readonly [(string | number)], 0>);
+expectType<[string?] | [string, number, boolean?, ...number[]] | readonly [string, number]>(
+	{} as SetOptional<[string] | [string, number, boolean, ...number[]] | readonly [string, number], 0 | 2>,
+);
+expectType<readonly [number, string?] | [string, boolean?, ...number[]] | readonly [string, number, boolean, (string | undefined)?]>(
+	{} as SetOptional<readonly [number, string] | [string, boolean, ...number[]] | readonly [string, number, boolean, (string | undefined)], 1 | 3>,
+);
+expectType<readonly [...number[], number] | [string?, boolean?, ...number[]] | readonly [string?, (number | undefined)?, boolean?, string?]>(
+	{} as SetOptional<readonly [...number[], number] | [string, boolean, ...number[]] | readonly [string, number | undefined, boolean?, string?], any>,
+);
+expectType<readonly string[] | [x?: number, y?: number] | [string?, number?, ...string[]]>(
+	{} as SetOptional<readonly string[] | [x: number, y: number] | [string, number, ...string[]], number>,
+);
+
+// Works with labelled tuples
+expectType<[x: string, y?: number]>({} as SetOptional<[x: string, y: number], '1'>);
+expectType<readonly [x: number, y?: number, z?: number]>({} as SetOptional<readonly [x: number, y: number, z: number], 1 | 2>);
+expectType<readonly [x: number, y?: number, z?: number, ...rest: number[]]>({} as SetOptional<readonly [x: number, y: number, z: number, ...rest: number[]], 1 | 2>);
+
+// Non tuple arrays are left unchanged
+expectType<string[]>({} as SetOptional<string[], number>);
+expectType<ReadonlyArray<string | number>>({} as SetOptional<ReadonlyArray<string | number>, number>);
+expectType<number[]>({} as SetOptional<[...number[]], never>);
