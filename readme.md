@@ -76,6 +76,19 @@ type FooWithoutRainbow = Except<Foo, 'rainbow'>;
 //=> {unicorn: string}
 ```
 
+## Documentation
+
+Full API documentation with TypeDoc will be available at:
+**https://sindresorhus.github.io/type-fest/**
+
+*(Once GitHub Pages is enabled in repository settings)*
+
+The documentation includes:
+- Complete type definitions with source code links
+- Detailed examples and use cases
+- Categorized type listings
+- Interactive search functionality
+
 ## API
 
 Click the type names for complete docs.
