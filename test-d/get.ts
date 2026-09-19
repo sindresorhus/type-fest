@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'expect-type';
-import type {Get} from '../index.d.ts';
+import type {Get, Paths} from '../index.d.ts';
 
 type NonStrict = {strict: false};
 
@@ -151,4 +151,28 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 
 	type FooPaths2 = 'array.1';
 	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
+}
+
+// eslint-disable-next-line no-lone-blocks
+{
+	// `Paths<GenericType>` must always be assignable to `Get`'s `Path` parameter, even when `GenericType` is an unresolved generic.
+	// https://github.com/sindresorhus/type-fest/issues/991
+	type WrapperOfGeneric<GenericType extends {}> = {
+		value: Get<GenericType, Paths<GenericType>>;
+	};
+
+	type Foo = {
+		key: number;
+	};
+
+	expectTypeOf<Get<Foo, 'key'>>().toEqualTypeOf<number>();
+	expectTypeOf<Get<Foo, Paths<Foo>>>().toEqualTypeOf<number>();
+	expectTypeOf<WrapperOfGeneric<Foo>['value']>().toEqualTypeOf<number>();
+
+	type WithNumberKey = {
+		1: boolean;
+	};
+
+	expectTypeOf<Get<WithNumberKey, Paths<WithNumberKey>>>().toEqualTypeOf<boolean>();
+	expectTypeOf<WrapperOfGeneric<WithNumberKey>['value']>().toEqualTypeOf<boolean>();
 }

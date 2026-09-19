@@ -215,12 +215,18 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
+	// `Paths<BaseType>`, using `Paths`'s default options, is included directly (in addition to the `_LiteralStringUnion` below)
+	// so that `Get<BaseType, Paths<BaseType>>` is always valid, even when `BaseType` is an unresolved generic type. In that
+	// case, `Paths<BaseType>` can be structurally deferred to something TypeScript treats as `string | number` (for example,
+	// when `BaseType` may have number-like keys), which the plain `string`-based `_LiteralStringUnion` below does not accept.
+	// See: https://github.com/sindresorhus/type-fest/issues/991
+	| Paths<BaseType>
 	| _LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
 	Options extends GetOptions = {},
 > =
 	GetWithPath<
 		BaseType,
-		Path extends string ? ToPath<Path> : Path,
+		Path extends string | number ? ToPath<ToString<Path>> : Path,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
 
