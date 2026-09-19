@@ -27,8 +27,8 @@ expectTypeOf(get(apiResponse, 'hits.hits.0._source.name')).toEqualTypeOf<Array<{
 
 expectTypeOf(get(apiResponse, 'hits.hits[0]._source.name[0].given[0]')).toBeString();
 
-// TypeScript is structurally typed. It's *possible* this value exists even though it's not on the parent interface, so the type is `unknown`.
-expectTypeOf(get(apiResponse, 'hits.someNonsense.notTheRightPath')).toBeUnknown();
+// A key that is not present resolves to `undefined`, matching the behaviour of deep-key libraries like lodash.
+expectTypeOf(get(apiResponse, 'hits.someNonsense.notTheRightPath')).toEqualTypeOf<undefined>();
 
 type WithDictionary = {
 	foo: Record<string, {
@@ -64,16 +64,16 @@ expectTypeOf<Get<WithTuples, 'foo[0].bar', NonStrict>>().toBeNumber();
 expectTypeOf<Get<WithTuples, 'foo.0.bar', NonStrict>>().toBeNumber();
 
 expectTypeOf<Get<WithTuples, 'foo[1].baz', NonStrict>>().toBeBoolean();
-expectTypeOf<Get<WithTuples, 'foo[1].bar', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<WithTuples, 'foo[1].bar', NonStrict>>().toEqualTypeOf<undefined>();
 
-expectTypeOf<Get<WithTuples, 'foo[-1]', NonStrict>>().toBeUnknown();
-expectTypeOf<Get<WithTuples, 'foo[999]', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<WithTuples, 'foo[-1]', NonStrict>>().toEqualTypeOf<undefined>();
+expectTypeOf<Get<WithTuples, 'foo[999]', NonStrict>>().toEqualTypeOf<undefined>();
 
 type EmptyTuple = Parameters<() => {}>;
 
-expectTypeOf<Get<EmptyTuple, '-1', NonStrict>>().toBeUnknown();
-expectTypeOf<Get<EmptyTuple, '0', NonStrict>>().toBeUnknown();
-expectTypeOf<Get<EmptyTuple, '1', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<EmptyTuple, '-1', NonStrict>>().toEqualTypeOf<undefined>();
+expectTypeOf<Get<EmptyTuple, '0', NonStrict>>().toEqualTypeOf<undefined>();
+expectTypeOf<Get<EmptyTuple, '1', NonStrict>>().toEqualTypeOf<undefined>();
 expectTypeOf<Get<EmptyTuple, 'length', NonStrict>>().toEqualTypeOf<0>();
 
 type WithNumberKeys = {
@@ -87,8 +87,8 @@ type WithNumberKeys = {
 expectTypeOf<Get<WithNumberKeys, 'foo[1].bar', NonStrict>>().toBeNumber();
 expectTypeOf<Get<WithNumberKeys, 'foo.1.bar', NonStrict>>().toBeNumber();
 
-expectTypeOf<Get<WithNumberKeys, 'foo[2].bar', NonStrict>>().toBeUnknown();
-expectTypeOf<Get<WithNumberKeys, 'foo.2.bar', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<WithNumberKeys, 'foo[2].bar', NonStrict>>().toEqualTypeOf<undefined>();
+expectTypeOf<Get<WithNumberKeys, 'foo.2.bar', NonStrict>>().toEqualTypeOf<undefined>();
 
 // Test `readonly`, `ReadonlyArray`, optional properties, and unions with null.
 
@@ -112,9 +112,9 @@ expectTypeOf<Get<WithModifiers, 'foo[0].abc.def.ghi', NonStrict>>().toEqualTypeO
 // Test bracket notation
 expectTypeOf<Get<number[], '[0]', NonStrict>>().toBeNumber();
 // NOTE: This would fail if `[0][0]` was converted into `00`:
-expectTypeOf<Get<number[], '[0][0]', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<number[], '[0][0]', NonStrict>>().toEqualTypeOf<undefined>();
 expectTypeOf<Get<number[][][], '[0][0][0]', NonStrict>>().toBeNumber();
-expectTypeOf<Get<number[][][], '[0][0][0][0]', NonStrict>>().toBeUnknown();
+expectTypeOf<Get<number[][][], '[0][0][0][0]', NonStrict>>().toEqualTypeOf<undefined>();
 expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, 'a.b[0][0][0].id', NonStrict>>().toBeNumber();
 expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, ['a', 'b', '0', '0', '0', 'id'], NonStrict>>().toBeNumber();
 
@@ -133,8 +133,26 @@ expectTypeOf<Get<WithDictionary, 'baz.whatever.qux[3].x'>>().toEqualTypeOf<boole
 expectTypeOf<Get<WithDictionary, ['baz', 'whatever', 'qux', '3', 'x']>>().toEqualTypeOf<boolean | undefined>();
 
 // Test array index out of bounds
-expectTypeOf<Get<{a: []}, 'a[0]'>>().toEqualTypeOf<unknown>();
-expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<unknown>();
+expectTypeOf<Get<{a: []}, 'a[0]'>>().toEqualTypeOf<undefined>();
+expectTypeOf<Get<{a: readonly []}, 'a[0]'>>().toEqualTypeOf<undefined>();
+
+// Test union base types: a key missing on *some* members resolves to `undefined`
+// for those members, instead of collapsing the whole result to `unknown`.
+// https://github.com/sindresorhus/type-fest/issues/1205
+type DiscriminatedUnion = {
+	data:
+		| {type: 'number'; someValue: number}
+		| {type: 'string'; someValue: string}
+		| {type: 'none'};
+};
+// Key present on every member of the union.
+expectTypeOf<Get<DiscriminatedUnion, 'data.type'>>().toEqualTypeOf<'number' | 'string' | 'none'>();
+// Key present on some members, absent on others.
+expectTypeOf<Get<DiscriminatedUnion, 'data.someValue'>>().toEqualTypeOf<number | string | undefined>();
+// Union as the base type directly.
+expectTypeOf<Get<{a: number} | {b: string}, 'a'>>().toEqualTypeOf<number | undefined>();
+// A genuinely missing key on a non-union type resolves to `undefined`, consistent with the union case.
+expectTypeOf<Get<{a: number}, 'b'>>().toEqualTypeOf<undefined>();
 
 // Test empty path array
 expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, []>>();

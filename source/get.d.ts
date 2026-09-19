@@ -4,6 +4,7 @@ import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
+import type {IsUnion} from './is-union.d.ts';
 
 export type GetOptions = {
 	/**
@@ -124,10 +125,25 @@ type UncheckedIndex<T, U extends string | number> = [T] extends [Record<string |
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
 
 Note:
-- Returns `unknown` if `Key` is not a property of `BaseType`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
-- Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
+- Returns `undefined` if `Key` is not a property of `BaseType`, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
 type PropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
+	IsUnion<BaseType> extends true
+		// Distribute over the union so that a key which is missing on *some*
+		// members resolves to `undefined` for those members instead of
+		// collapsing the whole result. For example,
+		// `Get<{a: number} | {b: string}, 'a'>` is `number | undefined`.
+		? BaseType extends unknown
+			? SinglePropertyOf<BaseType, Key, Options>
+			: never
+		: SinglePropertyOf<BaseType, Key, Options>;
+
+/**
+Get a property of a single (non-union) object or array.
+
+A `Key` that is not present on `BaseType` resolves to `undefined`.
+*/
+type SinglePropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	BaseType extends null | undefined
 		? undefined
 		: Key extends keyof BaseType
@@ -142,9 +158,9 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 						: Key extends keyof BaseType
 							? Strictify<BaseType[Key & keyof BaseType], Options>
 							// Out-of-bounds access for tuples
-							: unknown
+							: undefined
 					// Non-numeric string key for arrays/tuples
-					: unknown
+					: undefined
 				// Handle array-like objects
 				: BaseType extends {
 					[n: number]: infer Item;
@@ -153,11 +169,11 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 					? (
 						ConsistsOnlyOf<Key, DigitCharacter> extends true
 							? Strictify<Item, Options>
-							: unknown
+							: undefined
 					)
 					: Key extends keyof WithStringKeys<BaseType>
 						? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
-						: unknown;
+						: undefined;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
 /**
