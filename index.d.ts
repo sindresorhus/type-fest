@@ -19,6 +19,7 @@ export type {UnknownSet} from './source/unknown-set.d.ts';
 export type {UnknownMap} from './source/unknown-map.d.ts';
 export type {Except, ExceptOptions} from './source/except.d.ts';
 export type {TaggedUnion} from './source/tagged-union.d.ts';
+export type {Destructurable} from './source/destructurable.d.ts';
 export type {Writable} from './source/writable.d.ts';
 export type {WritableDeep} from './source/writable-deep.d.ts';
 export type {Merge} from './source/merge.d.ts';
