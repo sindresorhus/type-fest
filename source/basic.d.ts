@@ -35,4 +35,72 @@ Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/relea
 */
 export type AbstractConstructor<T, Arguments extends unknown[] = any[]> = abstract new(...arguments_: Arguments) => T;
 
+/**
+Matches an asynchronous function.
+
+Use-cases:
+- Constrain a generic type to an asynchronous function.
+- Declare a reusable asynchronous callback signature.
+
+@example
+```
+import type {AsyncFunction} from 'type-fest';
+
+type FetchData = AsyncFunction<[url: URL], Uint8Array>;
+
+const fetchData: FetchData = async url => {
+	const response = await fetch(url);
+	return new Uint8Array(await response.arrayBuffer());
+};
+```
+
+@category Basic
+*/
+export type AsyncFunction<Arguments extends readonly unknown[] = readonly any[], ReturnValue = unknown> = (...arguments_: Arguments) => Promise<ReturnValue>;
+
+/**
+Matches any asynchronous function.
+
+Use-cases:
+- Constrain a generic type to any asynchronous function without prescribing its parameters or return value.
+
+@example
+```
+import type {AnyAsyncFunction} from 'type-fest';
+
+function register<FunctionType extends AnyAsyncFunction>(function_: FunctionType): FunctionType {
+	return function_;
+}
+
+const parse = register(async (value: string) => Number.parseInt(value, 10));
+
+const result = parse('42');
+//=> Promise<number>
+```
+
+@category Basic
+*/
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyAsyncFunction = (...arguments_: readonly any[]) => Promise<unknown>;
+
+/**
+Matches any function.
+
+Use-cases:
+- Constrain a generic type to any function while erasing its parameters and return value.
+
+@example
+```
+import type {AnyFunction} from 'type-fest';
+
+function identity<FunctionType extends AnyFunction>(function_: FunctionType): FunctionType {
+	return function_;
+}
+```
+
+@category Basic
+*/
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyFunction = (...arguments_: readonly any[]) => unknown;
+
 export {};
