@@ -33,3 +33,7 @@ expectType<never>(noMatchingKeys);
 
 declare const noMatchingKeys2: ConditionalPick<{a: string; b: number}, boolean>;
 expectType<never>(noMatchingKeys2);
+
+// Declared keys are still picked when a non-matching index signature widens `keyof` (https://github.com/sindresorhus/type-fest/issues/1501)
+declare const indexSignaturePick: ConditionalPick<{[x: string]: unknown; a: string; b: number}, string>;
+expectType<{a: string}>(indexSignaturePick);

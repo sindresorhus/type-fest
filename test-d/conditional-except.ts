@@ -26,3 +26,7 @@ expectType<{run: () => void}>(awesomeConditionalExcept);
 
 declare const exampleConditionalExceptWithUndefined: ConditionalExcept<Example, string | undefined>;
 expectType<{b?: string | number; d: Record<string, unknown>}>(exampleConditionalExceptWithUndefined);
+
+// Declared keys are still excluded when a non-matching index signature widens `keyof` (https://github.com/sindresorhus/type-fest/issues/1501)
+declare const indexSignatureExcept: ConditionalExcept<{[x: string]: unknown; a: string; b: number}, string>;
+expectType<{[x: string]: unknown; b: number}>(indexSignatureExcept);
