@@ -1,4 +1,4 @@
-import type {NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions, MapsSetsOrArrays} from './internal/index.d.ts';
+import type {NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions, MapsSetsOrArrays, CountExactInArray} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
@@ -18,6 +18,37 @@ export type PathsOptions = {
 	@default 5
 	*/
 	maxRecursionDepth?: number;
+
+	/**
+	The maximum depth to recurse into circular references when searching for paths.
+
+	Notes:
+	- `maxCircularDepth: 0` fully disables recursion into circular references.
+	- {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} still limits the overall depth, even if `maxCircularDepth` allows more.
+	- When {@link PathsOptions.leavesOnly | `leavesOnly`} is `true`, paths that terminate at the circular reference limit are treated as leaves.
+
+	@default 5
+
+	@example
+	```
+	import type {Paths} from 'type-fest';
+
+	type DeepWithCircular = {
+		a: {b: {c: {d: string}}};
+		foo: {circular: DeepWithCircular};
+	};
+
+	type Circular0 = Paths<DeepWithCircular, {maxCircularDepth: 0}>;
+	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular'
+
+	type Circular1 = Paths<DeepWithCircular, {maxCircularDepth: 1}>;
+	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular'
+
+	type Circular2 = Paths<DeepWithCircular, {maxCircularDepth: 2}>;
+	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular' | 'foo.circular.foo.circular.a' | 'foo.circular.foo.circular.a.b' | 'foo.circular.foo.circular.foo' | 'foo.circular.foo.circular.foo.circular'
+	```
+	*/
+	maxCircularDepth?: number;
 
 	/**
 	Use bracket notation for array indices and numeric object keys.
@@ -141,6 +172,7 @@ export type PathsOptions = {
 
 type DefaultPathsOptions = {
 	maxRecursionDepth: 5;
+	maxCircularDepth: 5;
 	bracketNotation: false;
 	leavesOnly: false;
 	depth: number;
@@ -191,16 +223,18 @@ open('listB.1'); // TypeError. Because listB only has one element.
 */
 export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
 
-type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends number = 0> =
+type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends number = 0, Seen extends unknown[] = []> =
 	T extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
 		? never
 		: IsAny<T> extends true
 			? never
 			: T extends object
-				? InternalPaths<Required<T>, Options, CurrentDepth>
+				? GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends true // Limit the depth of circular references
+					? never
+					: InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
 				: never;
 
-type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number> =
+type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number, Seen extends unknown[]> =
 	{[Key in keyof T]: Key extends string | number // Limit `Key` to `string | number`
 		? (
 			And<Options['bracketNotation'], IsNumberLike<Key>> extends true
@@ -220,7 +254,9 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 								? TransformedKey
 								: IsNever<keyof Value> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`.
 									? TransformedKey
-									: never)
+									: GreaterThan<CountExactInArray<Seen, Value>, Options['maxCircularDepth']> extends true // The path terminates at the circular reference limit, just like it does at `maxRecursionDepth`.
+										? TransformedKey
+										: never)
 							: never // Should never happen
 				: TransformedKey
 			) extends infer _TransformedKey
@@ -232,7 +268,7 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 				: never)
 			// Recursively generate paths for the current key
 			| (GreaterThan<Options['maxRecursionDepth'], CurrentDepth> extends true // Limit the depth to prevent infinite recursion
-				? `${TransformedKey}${_Paths<T[Key], Options, Sum<CurrentDepth, 1>> & (string | number)}`
+				? `${TransformedKey}${_Paths<T[Key], Options, Sum<CurrentDepth, 1>, Seen> & (string | number)}`
 				: never)
 			: never
 		: never
