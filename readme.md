@@ -302,6 +302,7 @@ Click the type names for complete docs.
 - [`Sum`](source/sum.d.ts) - Returns the sum of two numbers.
 - [`Subtract`](source/subtract.d.ts) - Returns the difference between two numbers.
 - [`UnionMax`](source/union-max.d.ts) - Returns the maximum number in a union of numbers.
+- [`UnionMin`](source/union-min.d.ts) - Returns the minimum number in a union of numbers.
 - [`Absolute`](source/absolute.d.ts) - Returns the absolute value of the specified number or bigint.
 - [`StringToNumber`](source/string-to-number.d.ts) - Converts a numeric string to a number.
 
