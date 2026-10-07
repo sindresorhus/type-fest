@@ -126,7 +126,7 @@ expectType<[boolean, ...string[], string, number]>({} as SetRequired<[boolean, .
 expectType<[string | undefined, number | undefined, boolean]>({} as SetRequired<[string | undefined, (number | undefined)?, boolean?], 0 | 1 | 2>);
 expectType<readonly [string | undefined, (number | undefined)?, boolean?]>({} as SetRequired<readonly [(string | undefined)?, (number | undefined)?, boolean?], 0>);
 
-// Optional elements cannot appear after required ones, `Keys` leading to such situations are ignored.
+// Required elements cannot appear after optional ones, so `Keys` leading to such situations are ignored.
 expectType<[string?, number?, boolean?]>({} as SetRequired<[string?, number?, boolean?], 1 | 2>); // `1` and `2` can't be required when `0` is optional
 expectType<[string, number, boolean?, string?, string?]>(
 	{} as SetRequired<[string?, number?, boolean?, string?, string?], 0 | 1 | 3>, // `3` can't be required when `2` is optional
@@ -160,3 +160,34 @@ expectType<readonly [x: number, y: number, z?: number, ...rest: number[]]>({} as
 expectType<string[]>({} as SetRequired<string[], number>);
 expectType<ReadonlyArray<string | number>>({} as SetRequired<ReadonlyArray<string | number>, number>);
 expectType<number[]>({} as SetRequired<[...number[]], never>);
+
+// A key that lands in a rest element is ignored, unlike `SetNonNullable`, which makes the rest element non-nullable. Making a rest element required is not expressible either, because a rest element has no optionality to remove: its elements are always present, and the `undefined` in `number | undefined` is a value the element may hold rather than the element being absent. `SetRequired<[string, number?], 1>` is `[string, number]` because there the `?` is real optionality. See the note in the docs.
+expectType<[string, ...Array<number | undefined>]>({} as SetRequired<[string, ...Array<number | undefined>], 1>);
+
+// A key that only one member of a union has is accepted, and a member without it is left as it is.
+expectType<{a: 1} | {b?: 2}>({} as SetRequired<{a?: 1} | {b?: 2}, 'a'>);
+expectType<{a?: 1} | {b: 2}>({} as SetRequired<{a?: 1} | {b?: 2}, 'b'>);
+
+// TypeScript rejects a required element that follows an optional one, so `[number?, number]` is not a tuple type and the walk stops at the first optional element. Naming both keys gives `[number, number]`, which is the answer when the earlier key is named too.
+declare const afterAnOptionalElement: SetRequired<[number?, number?], 1>;
+expectType<[number?, number?]>(afterAnOptionalElement);
+
+declare const afterAnOptionalElementWithBothKeys: SetRequired<[number?, number?], '0' | '1'>;
+expectType<[number, number]>(afterAnOptionalElementWithBothKeys);
+
+declare const afterAnOptionalElementWithBothKeysAsNumbers: SetRequired<[number?, number?], 0 | 1>;
+expectType<[number, number]>(afterAnOptionalElementWithBothKeysAsNumbers);
+
+// The rebuilt call signature keeps the `this` parameter, which `Parameters` leaves out, so a wrong receiver stays a type error after the transform.
+declare const thisParameter: ThisParameterType<SetRequired<{(this: Date, a: string): void; p: string}, 'p'>>;
+expectType<Date>(thisParameter);
+
+// The call signature is kept per member, so a union of callables does not mix their signatures, and a callable member keeps its signature beside a member that is not callable.
+type StringCallable = ((a: string) => 1) & {x?: 1};
+type NumberCallable = ((a: number) => 2) & {y?: 2};
+expectNotAssignable<SetRequired<StringCallable | NumberCallable, 'x'>>({} as ((a: string) => 1) & {y?: 2});
+expectType<1>(({} as Extract<SetRequired<StringCallable | {z?: 1}, 'x'>, Function>)('a'));
+
+// `any` is not an array, so it does not take the tuple branch as well as the object branch.
+declare const anyBase: SetRequired<any, 'a'>;
+expectType<{[x: string]: any}>(anyBase);

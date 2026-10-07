@@ -1,7 +1,9 @@
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
-import type {HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
 import type {Simplify} from './simplify.d.ts';
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -27,24 +29,31 @@ type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 //=> [number, number, number?]
 ```
 
+Known limitations:
+- A key that lands after an optional element of a tuple is ignored. TypeScript rejects a required element that follows an optional one, so `[number?, number]` is not a tuple type, and the walk stops at the first optional element. `SetRequired<[number?, number?], 1>` is `[number?, number?]`, while naming both keys gives `[number, number]`. `SetRequiredDeep` answers the same way for a path that lands on such a key.
+- A key that lands in a rest element is ignored, because a rest element has no optionality to remove: its elements are always present, and the `undefined` in a rest element of `Array<number | undefined>` is a value the element may hold rather than the element being absent. `SetRequired<[string, number?], 1>` is `[string, number]` because there the `?` is real optionality. `SetNonNullable` does make a rest element non-nullable, because that is a change to the value rather than to the optionality.
+
 @category Object
 */
-export type SetRequired<BaseType, Keys extends keyof BaseType> =
-	(BaseType extends (...arguments_: never) => any
-		? (...arguments_: Parameters<BaseType>) => ReturnType<BaseType>
-		: unknown)
-	& _SetRequired<BaseType, Keys>;
+export type SetRequired<BaseType, Keys extends KeysOfUnion<BaseType>> =
+	// The call signature is rebuilt per member, so a union of callables does not mix their signatures.
+	BaseType extends unknown
+		? CallSignatureOf<BaseType> & _SetRequired<BaseType, Keys>
+		: never;
 
-type _SetRequired<BaseType, Keys extends keyof BaseType> =
+type _SetRequired<BaseType, Keys> =
 	BaseType extends UnknownArray
-		? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
-			? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
-			: never
+		// `any` takes both branches of the array check, so its array branch is dropped to leave just the object branch.
+		? IsAny<BaseType> extends true
+			? never
+			: SetArrayRequired<BaseType, Keys> extends infer ResultantArray
+				? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
+				: never
 		: Simplify<
 		// Pick just the keys that are optional from the base type.
-			Except<BaseType, Keys>
+			Except<BaseType, Keys & keyof BaseType>
 		// Pick the keys that should be required from the base type and make them required.
-			& Required<HomomorphicPick<BaseType, Keys>>
+			& Required<HomomorphicPick<BaseType, Keys & keyof BaseType>>
 		>;
 
 /**

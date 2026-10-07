@@ -49,3 +49,34 @@ expectType<{readonly p1: string; readonly p2?: number; p3: boolean}>({} as Simpl
 // Functions without properties are returned as is
 declare const variation12: SetReadonly<(a: string) => number, never>;
 expectType<number>(variation12('foo'));
+
+// A tuple stays a tuple, and becomes readonly when any index is given.
+declare const tuple: SetReadonly<[string, number, boolean], '0'>;
+expectType<readonly [string, number, boolean]>(tuple);
+
+declare const readonlyTuple: SetReadonly<readonly [string, number, boolean], '2'>;
+expectType<readonly [string, number, boolean]>(readonlyTuple);
+
+declare const optionalTail: SetReadonly<[string, number, boolean?], '1'>;
+expectType<readonly [string, number, boolean?]>(optionalTail);
+
+declare const noKeys: SetReadonly<[string, number], never>;
+expectType<[string, number]>(noKeys);
+
+// A key that only one member of a union has is still a key of that member, and the type distributes over the union anyway, so it should be accepted. `keyof` of a union is the intersection of its members' keys, so the constraint rejected it and the user got a type error instead of a result.
+declare const keyOfOneMember: SetReadonly<{a: 1} | {b: 2}, 'a'>;
+expectType<{readonly a: 1} | {b: 2}>(keyOfOneMember);
+
+declare const keyOfTheOtherMember: SetReadonly<{a: 1} | {b: 2}, 'b'>;
+expectType<{a: 1} | {readonly b: 2}>(keyOfTheOtherMember);
+
+// The rebuilt call signature keeps the `this` parameter, which `Parameters` leaves out, so a wrong receiver stays a type error after the transform.
+declare const thisParameter: ThisParameterType<SetReadonly<{(this: Date, a: string): void; p: string}, 'p'>>;
+expectType<Date>(thisParameter);
+
+// A tuple member of a union that the key does not reach is left alone.
+expectType<[1, 2] | {readonly a: 1}>({} as SetReadonly<[1, 2] | {a: 1}, 'a'>);
+
+// `any` is not an array, so it does not take the tuple branch as well as the object branch.
+declare const anyBase: SetReadonly<any, 'a'>;
+expectType<{[x: string]: any}>(anyBase);

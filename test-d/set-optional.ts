@@ -49,3 +49,47 @@ expectType<{p1?: string; readonly p2?: number; p3: boolean}>({} as Simplify<type
 // Functions without properties are returned as is
 declare const variation12: SetOptional<(a: string) => number, never>;
 expectType<number>(variation12('foo'));
+
+// A tuple stays a tuple, with trailing selected indices made optional. An element before a required one gains `| undefined` instead, since TypeScript rejects a required element after an optional one.
+declare const tuple: SetOptional<[string, number, boolean], '2'>;
+expectType<[string, number, boolean?]>(tuple);
+
+declare const readonlyTuple: SetOptional<readonly [string, number, boolean], '1' | '2'>;
+expectType<readonly [string, number?, boolean?]>(readonlyTuple);
+
+declare const optionalTail: SetOptional<[string, number, boolean?], '1'>;
+expectType<[string, number?, boolean?]>(optionalTail);
+
+declare const alreadyOptional: SetOptional<[string, number?], '1'>;
+expectType<[string, number?]>(alreadyOptional);
+
+expectType<[1, 2 | undefined, 3]>({} as SetOptional<[1, 2, 3], 1>);
+expectType<readonly [1 | undefined, 2, 3?]>({} as SetOptional<readonly [1, 2, 3], 0 | 2>);
+
+// A tuple can require its trailing element after a rest element, so an earlier selected element remains required too.
+expectType<[1 | undefined, ...string[], 2]>({} as SetOptional<[1, ...string[], 2], 0>);
+
+// A key that lands in a rest element is ignored, because a rest element has no optionality to add: its elements are always present, so there is nothing for the key to change.
+expectType<[string, number, ...boolean[]]>({} as SetOptional<[string, number, ...boolean[]], 2>);
+
+// A key that only one member of a union has is still a key of that member, and the type distributes over the union anyway, so it should be accepted. `keyof` of a union is the intersection of its members' keys, so the constraint rejected it and the user got a type error instead of a result.
+declare const keyOfOneMember: SetOptional<{a: 1} | {b: 2}, 'a'>;
+expectType<{a?: 1} | {b: 2}>(keyOfOneMember);
+
+declare const keyOfOneMemberRequired: SetOptional<{a: 1} | {b: 2}, 'b'>;
+expectType<{a: 1} | {b?: 2}>(keyOfOneMemberRequired);
+
+declare const keyOfBothMembers: SetOptional<{a: 1} | {a: 2}, 'a'>;
+expectType<{a?: 1} | {a?: 2}>(keyOfBothMembers);
+
+// The rebuilt call signature keeps the `this` parameter, which `Parameters` leaves out, so a wrong receiver stays a type error after the transform.
+declare const thisParameter: ThisParameterType<SetOptional<{(this: Date, a: string): void; p: string}, 'p'>>;
+expectType<Date>(thisParameter);
+
+// The keys are required, like for `SetRequired` and `SetReadonly`.
+// @ts-expect-error
+type MissingKeys = SetOptional<{a: 1}>;
+
+// `any` is not an array, so it does not take the tuple branch as well as the object branch.
+declare const anyBase: SetOptional<any, 'a'>;
+expectType<{[x: string]: any}>(anyBase);

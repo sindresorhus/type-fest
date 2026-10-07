@@ -38,3 +38,25 @@ expectType<{a: number; readonly b: string; c: number}>(variation10);
 // Falls back to default of `true`, if `preservePropertyModifiers` is set to `boolean`
 declare const variation11: SetFieldType<{a?: string; readonly b: string; readonly c?: string}, 'a' | 'c', number, {preservePropertyModifiers: boolean}>;
 expectType<{a?: number; readonly b: string; readonly c?: number}>(variation11);
+
+// A tuple is keyed by a number, so the numeric index must be rewritten just like the string form is. Otherwise the request is silently ignored.
+declare const tupleNumericIndex: SetFieldType<[1, 2], 0, string>;
+expectType<[string, 2]>(tupleNumericIndex);
+
+declare const tupleNumericIndexThird: SetFieldType<[string, number, boolean], 2, Date>;
+expectType<[string, number, Date]>(tupleNumericIndexThird);
+
+// A key that only one member of a union has is accepted, and a member without it is left as it is.
+declare const keyOfOneMember: SetFieldType<{a: 1} | {b: 2}, 'a', string>;
+expectType<{a: string} | {b: 2}>(keyOfOneMember);
+
+declare const keyOfTheOtherMember: SetFieldType<{a: 1} | {b: 2}, 'b', string>;
+expectType<{a: 1} | {b: string}>(keyOfTheOtherMember);
+
+// A union member the key does not reach is left as it is, rather than gaining the key as a required one.
+declare const withoutTheKey: SetFieldType<{a: 1} | {b: 2}, 'a', string, {preservePropertyModifiers: false}>;
+expectType<{a: string} | {b: 2}>(withoutTheKey);
+
+// A tuple stays a tuple: a `Record` over `number` would answer with every member an array has.
+declare const tupleWithoutModifiers: SetFieldType<[1, 2], 0, string, {preservePropertyModifiers: false}>;
+expectType<[string, 2]>(tupleWithoutModifiers);

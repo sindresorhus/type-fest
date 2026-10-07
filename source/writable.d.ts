@@ -1,20 +1,22 @@
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
 import type {Simplify} from './simplify.d.ts';
+import type {IsAny} from './is-any.d.ts';
+
+// The default of the keys, which stands for every key. It is not a key any type can have, so it is told apart from an explicit key set, including `never`.
+declare const allKeys: unique symbol;
 
 /**
 Create a writable version of the given array type.
 */
-type WritableArray<ArrayType extends readonly unknown[]> =
-	ArrayType extends readonly [] ? []
-		: ArrayType extends readonly [...infer U, infer V] ? [...U, V]
-			: ArrayType extends readonly [infer U, ...infer V] ? [U, ...V]
-				: ArrayType extends ReadonlyArray<infer U> ? U[]
-					: ArrayType;
+type WritableArray<ArrayType extends readonly unknown[]> = {-readonly [Key in keyof ArrayType]: ArrayType[Key]};
 
 /**
 Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 
-The 2nd argument will be ignored if the input type is not an object.
+The 2nd argument will be ignored if the input type is not an object. Passing `never` as the keys makes no key of an object writable, while passing no keys makes every key writable.
+
+Note: A `Map`, `Set` or array member of a union is made writable as a whole whenever any key is named.
 
 Note: This type can make readonly `Set` and `Map` writable. This behavior is different from `Readonly<T>` (as of TypeScript 5.2.2). See: https://github.com/microsoft/TypeScript/issues/29655
 
@@ -49,7 +51,25 @@ writableArray.push(4); // Will work as the array itself is now writable.
 
 @category Object
 */
-export type Writable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
+// `BaseType` is distributed, because `keyof` of a union is the intersection of the members' keys, so without it no member of a union would have its `readonly` removed. The keys are gathered with `KeysOfUnion` for the same reason, so a key only one member has is accepted. The default is a sentinel rather than the key set itself, so `Writable<this>` reaches the single mapped type below without comparing key sets that are not resolved yet. The check goes both ways, because `never` is assignable to the sentinel and the sentinel is assignable to `symbol`, so either alone would read such a key set as every key.
+export type Writable<BaseType, Keys extends KeysOfUnion<BaseType> | typeof allKeys = typeof allKeys> =
+	[Keys, typeof allKeys] extends [typeof allKeys, Keys]
+		? WritableAllKeys<BaseType>
+		: WritableSelectedKeys<BaseType, Keys>;
+
+// A single mapped type rather than the intersection `_Writable` builds, because an intersection of two mapped types never resolves when it is written over `this`.
+type WritableAllKeys<BaseType> = BaseType extends unknown
+	? BaseType extends ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | readonly unknown[]
+		? _Writable<BaseType, keyof BaseType>
+		: IsAny<BaseType> extends true
+			? BaseType
+			: Simplify<{-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}>
+	: never;
+
+// The intersection is against the member, not the union, so a key only one member has is applied to that member and is a no-op for the others.
+type WritableSelectedKeys<BaseType, Keys> = BaseType extends unknown ? _Writable<BaseType, Keys & keyof BaseType> : never;
+
+type _Writable<BaseType, Keys extends keyof BaseType> =
 	BaseType extends ReadonlyMap<infer KeyType, infer ValueType>
 		? Map<KeyType, ValueType>
 		: BaseType extends ReadonlySet<infer ItemType>
@@ -58,7 +78,7 @@ export type Writable<BaseType, Keys extends keyof BaseType = keyof BaseType> =
 				// Handle array
 				? WritableArray<BaseType>
 				// Handle object
-				: Simplify<
+				: IsAny<BaseType> extends true ? BaseType : Simplify<
 					// Pick just the keys that are not writable from the base type.
 					Except<BaseType, Keys>
 					// Make the specified keys writable.
