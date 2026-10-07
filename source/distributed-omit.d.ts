@@ -38,7 +38,7 @@ if (omittedUnion.discriminant === 'A') {
 }
 ```
 
-While `Except` solves this problem, it restricts the keys you can omit to the ones that are present in **ALL** union members, where `DistributedOmit` allows you to omit keys that are present in **ANY** union member.
+While `Except` solves this problem too, it also keeps the named keys that `Omit` loses when the type has an index signature, where `DistributedOmit` passes each union member to `Omit` directly. Both accept a key that only some union members have.
 
 @example
 ```

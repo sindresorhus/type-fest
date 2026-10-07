@@ -1,3 +1,4 @@
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 
@@ -100,13 +101,17 @@ type PostPayloadFixed = Except<UserData, 'email'>;
 
 @category Object
 */
-export type Except<ObjectType, KeysType extends keyof ObjectType, Options extends ExceptOptions = {}> =
+export type Except<ObjectType, KeysType extends KeysOfUnion<ObjectType>, Options extends ExceptOptions = {}> =
 	_Except<ObjectType, KeysType, ApplyDefaultOptions<ExceptOptions, DefaultExceptOptions, Options>>;
 
-type _Except<ObjectType, KeysType extends keyof ObjectType, Options extends Required<ExceptOptions>> = {
-	[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
-} & (Options['requireExactProps'] extends true
-	? Partial<Record<KeysType, never>>
-	: {});
+// The mapped type is homomorphic, so it distributes over a union `ObjectType` by itself, and a generic `ObjectType` stays assignable to it. Only `requireExactProps` needs an explicit distribution, so that each member gets its own keys.
+type _Except<ObjectType, KeysType, Options extends Required<ExceptOptions>> =
+	Options['requireExactProps'] extends true
+		? ObjectType extends unknown
+			? {[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType]} & Partial<Record<KeysType & keyof ObjectType, never>>
+			: never
+		: {
+			[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
+		};
 
 export {};

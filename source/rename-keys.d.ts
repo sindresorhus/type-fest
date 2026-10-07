@@ -1,4 +1,6 @@
 import type {IsLiteral} from './is-literal.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
@@ -6,6 +8,7 @@ import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 import type {SetReadonly} from './set-readonly.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {NormalizedKeys, ObjectValue} from './internal/object.d.ts';
 
 /**
 Rename keys in an object type according to a map of old-to-new names.
@@ -104,6 +107,10 @@ type A = RenameKeys<{a: 1; b: 2}, {a: 'x'; c: 'y'}>;
 //=> {x: 1; b: 2}
 ```
 
+Known limitations:
+- Renaming an array or tuple key is unsupported and resolves to `never`. A map that renames none of its keys, such as `{}`, `{a: 'a'}`, or `{missing: 'new'}`, keeps the array or tuple, including in a union.
+- A real rename of a callable object drops its call signature, so `RenameKeys<{(a: string): number; p?: number}, {p: 'q'}>` is `{q?: number}` rather than an object that is still callable. A map that renames nothing keeps the call signature. The rename is a mapped type over `keyof`, and that cannot carry a call signature over. `SetFieldType` and `SetNonNullable` drop it the same way.
+
 @category Object
 */
 export type RenameKeys<
@@ -111,11 +118,30 @@ export type RenameKeys<
 	RenameMap extends Record<PropertyKey, PropertyKey>,
 > = IfNotAnyOrNever<BaseType, {
 	ifNot: BaseType extends unknown // For distributing `BaseType`
-		? RenameMap extends unknown // For distributing `RenameMap`
-			? RenameOnce<BaseType, NormalizeMap<RenameMap>>
-			: never
+		? IsNever<RenameMap> extends true // A `never` map renames nothing, so don't distribute over it
+			? BaseType
+			: RenameMap extends unknown // For distributing `RenameMap`
+				? RenameWithNormalizedMap<BaseType, NormalizeMap<RenameMap>>
+				: never
 		: never;
 }>;
+
+/**
+Renames with an already normalized map. A map that changes none of the source's keys skips {@link RenameOnce}, because rebuilding would drop call signatures and array or tuple structure.
+*/
+type RenameWithNormalizedMap<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
+	[RenamesSomething<BaseType, RenameMap>] extends [never]
+		? BaseType
+		: BaseType extends readonly unknown[]
+			? never
+			: RenameOnce<BaseType, RenameMap>;
+
+/**
+The source keys whose names change, so that a map with only missing source keys or identity entries skips rebuilding the type. The same target lookup is used here and by the rename itself, including numeric keys and index signatures.
+*/
+type RenamesSomething<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> = keyof {
+	[Key in keyof BaseType as IsEqual<NormalizedKeys<TargetOf<Key, RenameMap>>, NormalizedKeys<Key>> extends true ? never : Key]: never;
+};
 
 type RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
 	RestoreMergedUndefined<BaseType, RenameMap,
@@ -157,7 +183,10 @@ type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key : never]-?: RenameMap[Key];
 };
 
+// At runtime a numeric key and its string form are the same key, so `{'0': 'x'}` renames a property declared as `{0: …}` too. `keyof` keeps the two apart, so both forms are checked.
 type TargetOf<SourceKey extends PropertyKey, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	SourceKey extends keyof RenameMap ? RenameMap[SourceKey] : SourceKey;
+	SourceKey extends NormalizedKeys<keyof RenameMap>
+		? ObjectValue<RenameMap, SourceKey>
+		: SourceKey;
 
 export {};

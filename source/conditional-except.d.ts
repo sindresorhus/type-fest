@@ -1,5 +1,6 @@
 import type {Except} from './except.d.ts';
 import type {ConditionalKeys} from './conditional-keys.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Exclude keys from a shape that matches the given `Condition`.
@@ -39,9 +40,12 @@ type NonStringKeysOnly = ConditionalExcept<Example, string>;
 
 @category Object
 */
-export type ConditionalExcept<Base, Condition> = Except<
-	Base,
-	ConditionalKeys<Base, Condition>
->;
+export type ConditionalExcept<Base, Condition> = Base extends unknown // For distributing `Base`, so each member contributes the keys that do not match the condition, like `ConditionalPick` does
+	? ConditionalKeys<Base, Condition> extends infer Keys
+		? IsNever<Keys> extends true
+			? Base
+			: Except<Base, Keys & keyof Base>
+		: never
+	: never; // Should never happen
 
 export {};

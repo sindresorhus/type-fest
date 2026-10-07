@@ -39,10 +39,14 @@ type StringKeysOnly = ConditionalPick<Example, string>;
 
 @category Object
 */
-export type ConditionalPick<Base, Condition> = ConditionalKeys<Base, Condition> extends infer Keys
-	? IsNever<Keys> extends true
+// The result is `never` only when no member of a union has a matching key. Once some member has one, an object member without any is kept as `{}`, the same as `ConditionalExcept` keeps an object member it empties. A member that is not an object, like `undefined`, is dropped.
+export type ConditionalPick<Base, Condition> =
+	IsNever<Base extends unknown ? ConditionalKeys<Base, Condition> : never> extends true
 		? never
-		: Pick<Base, Keys & keyof Base>
-	: never;
+		: Base extends unknown // For distributing `Base`
+			? IsNever<ConditionalKeys<Base, Condition>> extends true
+				? Base extends object ? {} : never
+				: Pick<Base, ConditionalKeys<Base, Condition> & keyof Base>
+			: never; // Should never happen
 
 export {};

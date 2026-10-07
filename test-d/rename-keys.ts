@@ -270,3 +270,77 @@ expectType<{x: number | undefined; b: 2}>(
 
 // Numeric keys merged into one target.
 expectType<{a: string | number}>({} as RenameKeys<{0: number; 1?: string}, {0: 'a'; 1: 'a'}>);
+
+// A `never` map renames nothing, so the result is the base type.
+expectType<{a: 1}>({} as RenameKeys<{a: 1}, never>);
+expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {}>);
+expectType<{a: 1; readonly b: 2}>({} as RenameKeys<{a: 1; readonly b: 2}, never>);
+
+// A tuple and an array are objects too, so an empty rename map must leave them unchanged. Without this, the `as` clause below drops the tuple and the array gains a `readonly`.
+declare const tupleUnchanged: RenameKeys<[1, 2], {}>;
+expectType<[1, 2]>(tupleUnchanged);
+
+declare const arrayUnchanged: RenameKeys<string[], {}>;
+expectType<string[]>(arrayUnchanged);
+
+declare const unionUnchanged: RenameKeys<[1, 2] | {a: 1}, {}>;
+expectType<[1, 2] | {a: 1}>(unionUnchanged);
+
+// A map that only renames keys to themselves renames nothing, so it must not rebuild the type either. Rebuilding is what drops the tuple-ness of a tuple and adds a `readonly` to an array.
+declare const tupleSelfRenamed: RenameKeys<[1, 2], {a: 'a'}>;
+expectType<[1, 2]>(tupleSelfRenamed);
+
+declare const arraySelfRenamed: RenameKeys<string[], {a: 'a'}>;
+expectType<string[]>(arraySelfRenamed);
+
+declare const unionWithSelfRenamedTuple: RenameKeys<[1, 2] | {a: 1}, {a: 'a'}>;
+expectType<[1, 2] | {a: 1}>(unionWithSelfRenamedTuple);
+
+declare const objectSelfRenamedTwice: RenameKeys<{a: 1}, {a: 'a'; b: 'b'}>;
+expectType<{a: 1}>(objectSelfRenamedTwice);
+
+// Known limitation: a real rename of an array or tuple is unsupported and gives `never`. An ignored rename leaves the member unchanged, including in a union. See the docs.
+declare const tupleRenamed: RenameKeys<[1, 2], {0: 'x'}>;
+expectType<never>(tupleRenamed);
+
+expectType<never>({} as RenameKeys<string[], {length: 'size'}>);
+
+declare const unionWithTuple: RenameKeys<[1, 2] | {a: 1}, {a: 'x'}>;
+expectType<[1, 2] | {x: 1}>(unionWithTuple);
+
+// At runtime a numeric key and its string form are the same key, so a rename written either way renames the property.
+declare const numericKey: RenameKeys<{0: 1}, {'0': 'x'}>;
+expectType<{x: 1}>(numericKey);
+
+declare const numericKeyOtherWay: RenameKeys<{0: 1}, {0: 'x'}>;
+expectType<{x: 1}>(numericKeyOtherWay);
+
+expectType<{x: 1}>({} as RenameKeys<{'0': 1}, {0: 'x'}>);
+
+// A map whose key is not a literal still renames, because a target cannot be compared with a pattern: `Record<string, 'x'>` renames every key rather than renaming a key to itself.
+declare const indexSignatureMap: RenameKeys<{a: 1; b: 2}, Record<string, 'x'>>;
+expectType<{x: 1 | 2}>(indexSignatureMap);
+
+// A real rename of a callable object drops the call signature, while a map that renames nothing keeps it. The rename is a mapped type over `keyof`, which cannot carry one. See the note in the docs.
+type CallableWithProperty = {(a: string): number; p?: number};
+
+declare const renamesCallSignature: RenameKeys<CallableWithProperty, {p: 'q'}>;
+expectType<{q?: number}>(renamesCallSignature);
+
+declare const keepsCallSignature: RenameKeys<CallableWithProperty, {}>;
+expectType<CallableWithProperty>(keepsCallSignature);
+
+// Missing source keys are ignored without rebuilding tuples, arrays, or callable objects.
+expectType<[1, 2]>({} as RenameKeys<[1, 2], {missing: 'renamed'}>);
+expectType<string[]>({} as RenameKeys<string[], {missing: 'renamed'}>);
+expectType<CallableWithProperty>({} as RenameKeys<CallableWithProperty, {missing: 'renamed'}>);
+
+// Renaming a numeric tuple key to itself also leaves its structure unchanged.
+expectType<[1, 2]>({} as RenameKeys<[1, 2], {'0': '0'}>);
+
+// Numeric and string spellings of the same target key are both identity renames.
+expectType<[1, 2]>({} as RenameKeys<[1, 2], {0: 0}>);
+expectType<readonly [1, 2]>({} as RenameKeys<readonly [1, 2], {'0': 0}>);
+
+// A literal target changes a broad source key even though it is assignable to that key.
+expectType<{x: 1}>({} as RenameKeys<Record<string, 1>, Record<string, 'x'>>);
