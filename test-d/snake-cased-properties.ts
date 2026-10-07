@@ -11,7 +11,7 @@ declare const bar: SnakeCasedProperties<Foobar, {splitOnNumbers: true}>;
 expectType<{hello_world_1: {fooBar: string}}>(bar);
 
 declare const fooBarPunctuated: SnakeCasedProperties<FoobarPunctuated>;
-expectType<{'hello@_world1': {'foo::Bar': string}}>(fooBarPunctuated);
+expectType<{'hello@world1': {'foo::Bar': string}}>(fooBarPunctuated);
 
 declare const fooBarPunctuatedSplit: SnakeCasedProperties<FoobarPunctuated, {splitOnPunctuation: true}>;
 expectType<{'hello_world1': {'foo::Bar': string}}>(fooBarPunctuatedSplit);

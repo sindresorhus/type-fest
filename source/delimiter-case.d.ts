@@ -1,3 +1,4 @@
+import type {Or} from './or.d.ts';
 import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Merge} from './merge.d.ts';
@@ -17,9 +18,17 @@ type DelimiterCaseFromArray<
 	...infer RemainingWords extends string[],
 ]
 	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? FirstWord : `${OutputString}${
-		StartsWith<FirstWord, AsciiPunctuation> extends true ? '' : Delimiter
+		// A delimiter is not emitted next to punctuation, or the two double up. `OutputString` ends with the last character of the previous word, so testing it covers the word that ends in punctuation, and `FirstWord` covers the one that begins with it.
+		Or<StartsWith<FirstWord, AsciiPunctuation>, EndsWithPunctuation<OutputString>> extends true
+			? ''
+			: Delimiter
 	}${FirstWord}`>
 	: OutputString;
+
+/**
+Whether the given string ends in punctuation.
+*/
+type EndsWithPunctuation<String_ extends string> = String_ extends `${string}${AsciiPunctuation}` ? true : false;
 
 /**
 Convert a string literal to a custom string delimiter casing.

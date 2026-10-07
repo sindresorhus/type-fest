@@ -1,3 +1,4 @@
+import type {TitlecaseCharacter} from './internal/characters.d.ts';
 import type {AllExtend} from './all-extend.d.ts';
 
 /**
@@ -33,6 +34,9 @@ type IsUppercaseHelper<S extends string> = S extends Uppercase<string>
 	? true
 	: S extends Lowercase<string> | Uncapitalize<string> | `${string}${Lowercase<string>}${string}`
 		? false
-		: boolean;
+		// A titlecase character is changed by both lowercasing and uppercasing, so it is neither, but none of the patterns above name it either.
+		: S extends TitlecaseCharacter
+			? false
+			: boolean;
 
 export {};

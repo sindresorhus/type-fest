@@ -140,7 +140,7 @@ declare const withPunctuationAndNumber: DelimiterCase<'foo-bar::01', '#'>;
 expectType<'foo#bar::01'>(withPunctuationAndNumber);
 
 declare const withPunctuationAndNumber2: DelimiterCase<'foo-bar::01', '#', {splitOnNumbers: true}>;
-expectType<'foo#bar::#01'>(withPunctuationAndNumber2);
+expectType<'foo#bar::01'>(withPunctuationAndNumber2);
 
 declare const withPunctuationSplitAndNumber: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true}>;
 expectType<'foo#bar#01'>(withPunctuationSplitAndNumber);
@@ -203,3 +203,7 @@ expectAssignable<OddCasedProperties<CliOptions>>({
 	'include#file': 'bar.js',
 	foo: 123,
 });
+
+// A delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo#-bar`.
+expectType<'foo.bar'>({} as DelimiterCase<'foo.Bar', '#'>);
+expectType<'foo.bar'>({} as DelimiterCase<'foo .bar', '#'>);

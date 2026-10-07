@@ -38,15 +38,18 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 */
 export type StringRepeat<S extends string, Count extends number> =
 	Count extends unknown // To distribute `Count`
-		? IsNegative<Count> extends true
-			? never
-			: S extends ''
-				? ''
-				: IsNumericLiteral<Count> extends false
-					? string
-					: `${Count}` extends `${string}e${string}`
+		// `String#repeat()` truncates the count toward zero, so a count between -1 and 0 truncates to `-0`, which it turns into an empty string. Only a count that truncates to a negative integer is a `RangeError`. A count whose magnitude is below `1e-6` is one TypeScript prints in scientific notation, so the `-0.` prefix does not match it.
+		? `${Count}` extends `-0.${string}` | `-${string}e-${string}`
+			? ''
+			: IsNegative<Count> extends true
+				? never
+				: S extends ''
+					? ''
+					: IsNumericLiteral<Count> extends false
 						? string
-						: BuildStringDigitByDigit<S, `${Count}`>
+						: `${Count}` extends `${string}e${string}`
+							? string
+							: BuildStringDigitByDigit<S, `${Count}`>
 		: never;
 
 type BuildStringDigitByDigit<S extends string, Count extends string, Accumulator extends string = ''> =

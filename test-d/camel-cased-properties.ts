@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {CamelCasedProperties} from '../index.d.ts';
+import type {CamelCasedProperties, IsEqual} from '../index.d.ts';
 
 declare const foo: CamelCasedProperties<{A: number; B: {C: string}}>;
 expectType<{a: number; b: {C: string}}>(foo);
@@ -48,3 +48,9 @@ expectType<{_fooBar: string; __bazQux: number}>(withLeadingUnderscores);
 
 declare const withLeadingUnderscoresDefault: CamelCasedProperties<{_foo_bar: string}>;
 expectType<{fooBar: string}>(withLeadingUnderscoresDefault);
+
+// A readonly array has no properties to re-case, so it passes through unchanged, like it does for `PascalCasedProperties` and `DelimiterCasedProperties`. `IsEqual` is used because the flattened object the bug produced still satisfies `expectType<readonly string[]>`.
+expectType<true>({} as IsEqual<CamelCasedProperties<readonly string[]>, readonly string[]>);
+expectType<true>({} as IsEqual<CamelCasedProperties<readonly [1, 2]>, readonly [1, 2]>);
+expectType<true>({} as IsEqual<CamelCasedProperties<string[]>, string[]>);
+expectType<true>({} as IsEqual<CamelCasedProperties<[1, 2]>, [1, 2]>);

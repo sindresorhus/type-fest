@@ -43,7 +43,8 @@ export type DelimiterCasedProperties<
 	Options extends WordsOptions = {},
 > = Value extends Function
 	? Value
-	: Value extends Array<infer U>
+	: Value extends readonly unknown[]
+		// Arrays pass through unchanged, since they have no properties to re-case.
 		? Value
 		: {[K in keyof Value as
 			DelimiterCase<K, Delimiter, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>

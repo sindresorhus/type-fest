@@ -117,10 +117,16 @@ declare const withPunctuationSplitAndNumberSplit: SnakeCase<'foo-bar::01', {spli
 expectType<'foo_bar_01'>(withPunctuationSplitAndNumberSplit);
 
 declare const withPunctuationAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'foo_bar::_01'>(withPunctuationAndNumberSplit2);
+expectType<'foo_bar::01'>(withPunctuationAndNumberSplit2);
 
 declare const withPunctuationSplitAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectType<'foo_bar_01'>(withPunctuationSplitAndNumberSplit2);
 
 declare const withPunctuationSplitAndNumber2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectType<'foo_bar_01'>(withPunctuationSplitAndNumber2);
+
+// A delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
+expectType<'foo.bar'>({} as SnakeCase<'foo.Bar'>);
+
+// An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
+expectType<'get_url!'>({} as SnakeCase<'getURL!'>);

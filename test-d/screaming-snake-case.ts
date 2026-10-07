@@ -111,10 +111,13 @@ declare const withPunctuationAndNumber: ScreamingSnakeCase<'foo-bar::01'>;
 expectType<'FOO_BAR::01'>(withPunctuationAndNumber);
 
 declare const withPunctuationAndNumber2: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'FOO_BAR::_01'>(withPunctuationAndNumber2);
+expectType<'FOO_BAR::01'>(withPunctuationAndNumber2);
 
 declare const withPunctuationSplitAndNumber: ScreamingSnakeCase<'foo-bar::01', {splitOnPunctuation: true}>;
 expectType<'FOO_BAR_01'>(withPunctuationSplitAndNumber);
 
 declare const withPunctuationSplitAndNumberSplit: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectType<'FOO_BAR_01'>(withPunctuationSplitAndNumberSplit);
+
+// A delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
+expectType<'FOO.BAR'>({} as ScreamingSnakeCase<'foo.Bar'>);

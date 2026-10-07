@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
+import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 
 /**
@@ -9,6 +10,8 @@ CamelCase options.
 export type CamelCaseOptions = WordsOptions & {
 	/**
 	Whether to preserved consecutive uppercase letter.
+
+	Note: A string that is entirely uppercase, such as `'FOO_BAR'`, is lowercased before it is split into words, so the option has no effect on it and the result is `'fooBar'` either way. This keeps `CamelCase<'FOO_BAR'>` the same regardless of the option.
 
 	@default false
 	*/
@@ -48,6 +51,8 @@ type LeadingUnderscores<Type extends string, Underscores extends string = ''> =
 
 /**
 Convert an array of words to camel-case.
+
+The first word is uncapitalized and every other word is capitalized. The first word is never capitalized and then uncapitalized again, because `Capitalize<'ß'>` is `'SS'` and `Uncapitalize<'SS'>` is `'sS'`.
 */
 type CamelCaseFromArray<
 	Words extends string[],
@@ -57,9 +62,9 @@ type CamelCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? Options['preserveConsecutiveUppercase'] extends true
-		? `${Capitalize<FirstWord>}${CamelCaseFromArray<RemainingWords, Options>}`
-		: `${Capitalize<Lowercase<FirstWord>>}${CamelCaseFromArray<RemainingWords, Options>}`
+	? (Options['preserveConsecutiveUppercase'] extends true ? FirstWord : Lowercase<FirstWord>) extends infer Word extends string
+		? CamelCaseFromArray<RemainingWords, Options, OutputString extends '' ? Uncapitalize<Word> : `${OutputString}${Capitalize<Word>}`>
+		: never
 	: OutputString;
 
 /**
@@ -67,7 +72,7 @@ Convert a string literal to camel-case.
 
 This can be useful when, for example, converting some kebab-cased command-line flags or a snake-cased database result.
 
-By default, consecutive uppercase letter are preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
+By default, consecutive uppercase letter are not preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
 
 Use the `preserveLeadingUnderscores` option to retain leading underscores, matching the runtime behavior of [`camelcase`](https://github.com/sindresorhus/camelcase) v9+.
 
@@ -111,15 +116,18 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 @category Template literal
 */
 export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
-	? string extends Type
+	? IsStringLiteral<Type> extends false
 		? Type
-		: `${Options['preserveLeadingUnderscores'] extends true
-			? LeadingUnderscores<Type>
-			: ''
-		}${Uncapitalize<CamelCaseFromArray<
-			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
-			ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
-		>>}`
+		// The brand is removed first, because the entirely-uppercase pre-lowering and the leading underscores must read the string itself: an intersection with a brand does not reduce under `Uppercase` and does not match `_`. `Words` unwraps its own input too, but only after these have already run.
+		: CamelCaseUnbranded<UnwrapBrand<Type>, Options>
 	: Type;
+
+type CamelCaseUnbranded<Type extends string, Options extends CamelCaseOptions> = `${Options['preserveLeadingUnderscores'] extends true
+	? LeadingUnderscores<Type>
+	: ''
+}${CamelCaseFromArray<
+	Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
+	ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
+>}`;
 
 export {};

@@ -11,7 +11,7 @@ declare const bar: KebabCasedProperties<Foobar, {splitOnNumbers: true}>;
 expectType<{'hello-world-1': {fooBar: string}}>(bar);
 
 declare const fooBarPunctuated: KebabCasedProperties<FoobarPunctuated>;
-expectType<{'hello@-world1': {'foo::Bar': string}}>(fooBarPunctuated);
+expectType<{'hello@world1': {'foo::Bar': string}}>(fooBarPunctuated);
 
 declare const fooBarPunctuatedSplit: KebabCasedProperties<FoobarPunctuated, {splitOnPunctuation: true}>;
 expectType<{'hello-world1': {'foo::Bar': string}}>(fooBarPunctuatedSplit);
@@ -37,3 +37,7 @@ const result: KebabCasedProperties<User> = {
 expectType<KebabCasedProperties<User>>(result);
 
 expectType<KebabCasedProperties<UserPunctuated, {splitOnPunctuation: true}>>(result);
+
+// A readonly array is still an array, and passes through unchanged.
+expectType<ReadonlyArray<{fooBar: number}>>({} as KebabCasedProperties<ReadonlyArray<{fooBar: number}>>);
+expectType<Array<{fooBar: number}>>({} as KebabCasedProperties<Array<{fooBar: number}>>);

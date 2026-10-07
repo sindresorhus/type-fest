@@ -5,6 +5,8 @@ import type {
 	WordSeparators,
 } from './internal/index.d.ts';
 import type {IsLowercase} from './is-lowercase.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
+import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {IsUppercase} from './is-uppercase.d.ts';
 
 type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
@@ -50,7 +52,7 @@ export type WordsOptions = {
 	//=> ['hello', 'world']
 
 	type Example2 = Words<'hello:world', {splitOnPunctuation: false}>;
-	//=> ['hello', ':world']
+	//=> ['hello:world']
 	```
 	*/
 	splitOnPunctuation?: boolean;
@@ -95,7 +97,7 @@ type Words6 = Words<'hello:world', {splitOnPunctuation: true}>;
 //=> ['hello', 'world']
 
 type Words7 = Words<'hello:world', {splitOnPunctuation: false}>;
-//=> ['hello', ':world']
+//=> ['hello:world']
 
 type Words8 = Words<'hello::world', {splitOnPunctuation: true}>;
 //=> ['hello', 'world']
@@ -104,7 +106,12 @@ type Words8 = Words<'hello::world', {splitOnPunctuation: true}>;
 @category Change case
 @category Template literal
 */
-export type Words<Sentence extends string, Options extends WordsOptions = {}> = WordsImplementation<Sentence, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>;
+export type Words<Sentence extends string, Options extends WordsOptions = {}> = Sentence extends string // For distributing `Sentence`
+	? IsStringLiteral<Sentence> extends true // A string type with an infinite set of possible values cannot be walked character by character, so only the element type survives.
+		// A branded or tagged string is a literal, so the brand is removed before walking it, since an intersection with a non-empty object type does not match a template literal pattern.
+		? WordsImplementation<UnwrapBrand<Sentence>, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>
+		: string[]
+	: never; // Should never happen, since `Sentence` is a string
 
 type WordsImplementation<
 	Sentence extends string,
@@ -137,12 +144,32 @@ type WordsImplementation<
 						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 					// Case change: lower to upper, push word
 						: [true, true] extends [IsLowercase<LastCharacter>, IsUppercase<FirstCharacter>]
-							? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+							// Only a capital letter starts a new word. A character with no case at all, such as a Han character or an emoji, satisfies both case predicates but is its own lowercase form, so it is not one.
+							? IsCapitalLetter<FirstCharacter> extends true
+								? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 						// Case change: upper to lower, brings back the last character, push word
 							: [true, true] extends [IsUppercase<LastCharacter>, IsLowercase<FirstCharacter>]
-								? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
+								// Only a capital followed by a lowercase letter starts a new word. Punctuation or a character with no case after an acronym, as in `userID?`, satisfies both case predicates, so it would otherwise split off the last capital.
+								? [IsCapitalLetter<LastCharacter>, IsLowercaseLetter<FirstCharacter>] extends [true, true]
+									? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
+									: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 							// No case change: concat word
 								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
 	: [...SkipEmptyWord<CurrentWord>];
+
+/**
+Whether the given character is a capital letter, which is what decides whether it begins a new word.
+
+A character with no case at all, such as a Han character or an emoji, is its own lowercase form and so is not a capital. Every other cased character is, in any script, so this is deliberately not restricted to ASCII: `É` and `Ä` are capitals just as `A` is.
+*/
+type IsCapitalLetter<Character extends string> = Lowercase<Character> extends Character ? false : true;
+
+/**
+Whether the given character is a lowercase letter, which is what decides whether a preceding capital begins a new word.
+
+Like {@link IsCapitalLetter}, a character with no case at all, such as punctuation, a Han character, or an emoji, is its own uppercase form and so is not a lowercase letter.
+*/
+type IsLowercaseLetter<Character extends string> = Uppercase<Character> extends Character ? false : true;
 
 export {};

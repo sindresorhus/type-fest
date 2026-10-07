@@ -1,8 +1,11 @@
 import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 /**
 Convert a string literal to pascal-case.
+
+Note: `PascalCase` capitalizes the result of `CamelCase`, and `Capitalize` does nothing when the first character has no uppercase form. An underscore has none, so the `preserveLeadingUnderscores` option also turns off the Pascal casing: `PascalCase<'_foo', {preserveLeadingUnderscores: true}>` is `'_foo'`, not `'_Foo'`.
 
 @example
 ```
@@ -45,8 +48,10 @@ const dbResult: PascalCasedProperties<RawOptions> = {
 export type PascalCase<Value, Options extends CamelCaseOptions = {}> =
 	_PascalCase<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
 
-type _PascalCase<Value, Options extends Required<CamelCaseOptions>> = CamelCase<Value, Options> extends string
-	? Capitalize<CamelCase<Value, Options>>
-	: CamelCase<Value, Options>;
+type _PascalCase<Value, Options extends Required<CamelCaseOptions>> = Value extends string
+	? IsStringLiteral<Value> extends false
+		? Value
+		: Capitalize<CamelCase<Value, Options>>
+	: Value;
 
 export {};

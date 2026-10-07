@@ -1,5 +1,5 @@
 import {expectType, expectAssignable} from 'tsd';
-import type {CamelCase} from '../index.d.ts';
+import type {CamelCase, PascalCase, Tagged} from '../index.d.ts';
 
 // CamelCase
 const camelFromPascal: CamelCase<'FooBar'> = 'fooBar';
@@ -109,3 +109,59 @@ expectType<CamelCase<'_foo-bar', {preserveLeadingUnderscores: true}>>('_fooBar')
 expectType<CamelCase<'_fooBAR', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>('_fooBAR');
 expectType<CamelCase<'_foo_bar'>>('fooBar');
 expectType<CamelCase<'_foo_bar', {preserveLeadingUnderscores: false}>>('fooBar');
+
+// Non-literal string types are passed through unchanged, like `DelimiterCase` does.
+expectType<CamelCase<Uppercase<string>>>({} as Uppercase<string>);
+expectType<CamelCase<Lowercase<string>>>({} as Lowercase<string>);
+expectType<CamelCase<`${string}abc`>>({} as `${string}abc`);
+expectType<CamelCase<`on${string}`>>({} as `on${string}`);
+expectType<CamelCase<string>>(null! as string);
+
+// A string that is entirely uppercase is lowercased before it is split into words, so `preserveConsecutiveUppercase` has no effect on it. See the docs.
+expectType<CamelCase<'FOO_BAR', {preserveConsecutiveUppercase: true}>>('fooBar');
+expectType<CamelCase<'FOO_BAR', {preserveConsecutiveUppercase: false}>>('fooBar');
+expectType<CamelCase<'FOO-BAR', {preserveConsecutiveUppercase: true}>>('fooBar');
+
+// The option does apply to a string that is not entirely uppercase.
+expectType<CamelCase<'foo BAR-Biz_BUZZ', {preserveConsecutiveUppercase: true}>>('fooBARBizBUZZ');
+
+// A branded or tagged string is still a finite string literal, so it is converted like any other.
+expectType<CamelCase<Tagged<'foo-bar', 'x'>>>('fooBar');
+expectType<CamelCase<Tagged<'FooBar', 'x'>>>('fooBar');
+
+// The first word is only uncapitalized, so a character whose uppercase form is more than one character, such as `ß` or the `ﬁ` ligature, is kept there, like the `camelcase` package does.
+expectType<CamelCase<'ß'>>('ß');
+expectType<CamelCase<'ß-bar'>>('ßBar');
+expectType<CamelCase<'ﬁeld'>>('ﬁeld');
+expectType<CamelCase<'ﬁ-x'>>('ﬁX');
+expectType<CamelCase<'ﬄx'>>('ﬄx');
+
+// A later word is capitalized in full, so the same character expands there, like `camelcase` and `change-case` do.
+expectType<'aSSb'>({} as CamelCase<'a-ßb'>);
+expectType<'aFIx'>({} as CamelCase<'a-ﬁx'>);
+expectType<'ASSb'>({} as PascalCase<'a-ßb'>);
+
+// `PascalCase` capitalizes the first word too, so it expands there.
+expectType<PascalCase<'ß'>>('SS');
+expectType<PascalCase<'ﬁeld'>>('FIeld');
+
+// A word is capitalized whatever script it is in.
+expectType<'aÉcaille'>({} as CamelCase<'a-écaille'>);
+expectType<'aÀVache'>({} as CamelCase<'a-à-vache'>);
+expectType<'ǆDz'>({} as CamelCase<'ǆ-dz'>);
+expectType<'aÖcaille'>({} as CamelCase<'a-öcaille'>);
+expectType<'aЖcaille'>({} as CamelCase<'a-жcaille'>);
+expectType<'aΑcaille'>({} as CamelCase<'a-αcaille'>);
+expectType<'aБcaille'>({} as CamelCase<'a-бcaille'>);
+
+// A word whose first character has no uppercase form is left as it is, in every script, the same way an ASCII digit or punctuation mark is.
+expectType<'aאcaille'>({} as CamelCase<'a-אcaille'>);
+expectType<'a한caille'>({} as CamelCase<'a-한caille'>);
+expectType<'aبcaille'>({} as CamelCase<'a-بcaille'>);
+
+// A branded string that is entirely uppercase is pre-lowered like the same string without the brand, so the entirely-uppercase rule applies to it too and the option has no effect on it.
+expectType<CamelCase<'FOO_BAR' & {readonly __brand: 'x'}, {preserveConsecutiveUppercase: true}>>('fooBar');
+expectType<CamelCase<Tagged<'FOO_BAR', 'x'>, {preserveConsecutiveUppercase: true}>>('fooBar');
+
+// The leading underscores are read from the string itself, so all of them are kept.
+expectType<CamelCase<'__FOO_BAR' & {readonly __brand: 'x'}, {preserveConsecutiveUppercase: true; preserveLeadingUnderscores: true}>>('__fooBar');

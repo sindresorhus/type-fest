@@ -114,7 +114,19 @@ declare const withPunctuationSplitAndNumberSplit: KebabCase<'foo-bar::01', {spli
 expectType<'foo-bar-01'>(withPunctuationSplitAndNumberSplit);
 
 declare const withPunctuationAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'foo-bar::-01'>(withPunctuationAndNumberSplit2);
+expectType<'foo-bar::01'>(withPunctuationAndNumberSplit2);
 
 declare const withPunctuationSplitAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectType<'foo-bar-01'>(withPunctuationSplitAndNumberSplit2);
+
+// A delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo.-bar`.
+expectType<'foo.bar'>({} as KebabCase<'foo.Bar'>);
+expectType<'foo.bar'>({} as KebabCase<'foo .bar'>);
+expectType<'a.b.c'>({} as KebabCase<'a.b.c'>);
+expectType<'a-b.c'>({} as KebabCase<'a-b.c'>);
+
+expectType<'a-b'>({} as KebabCase<'a\u{85}b'>);
+
+// An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
+expectType<'user-id?'>({} as KebabCase<'userID?'>);
+expectType<'parse-json😀'>({} as KebabCase<'parseJSON😀'>);

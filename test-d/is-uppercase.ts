@@ -54,3 +54,16 @@ expectType<IsUppercase<'ABc' | 'XyZ'>>(false); // Both `false`
 expectType<IsUppercase<'ABC' | 'aBC'>>({} as boolean); // One `true`, one `false`
 expectType<IsUppercase<'ABC' | `${Capitalize<string>}END`>>({} as boolean); // One `true`, one `boolean`
 expectType<IsUppercase<'XyZ' | `ABC${string}`>>({} as boolean); // One `false`, one `boolean`
+
+// A character with no case is not changed by uppercasing either, so it counts as uppercase, the same as it counts as lowercase in the sibling type.
+expectType<IsUppercase<'A1_B'>>(true);
+expectType<IsUppercase<'a1_b'>>(false);
+expectType<IsUppercase<'123'>>(true);
+expectType<IsUppercase<'_-.'>>(true);
+
+// A character that uppercasing changes is not uppercase, even though none of the lowercase-shaped patterns name it: a titlecase digraph such as `ǅ` uppercases to `Ǆ`, so it answers `false` rather than the undecided `boolean`.
+expectType<IsUppercase<'ǅ'>>(false);
+expectType<IsUppercase<'ǈ'>>(false);
+expectType<IsUppercase<'ǋ'>>(false);
+expectType<IsUppercase<'ǲ'>>(false);
+expectType<IsUppercase<'ᾈ'>>(false);

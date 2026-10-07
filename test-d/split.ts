@@ -63,3 +63,8 @@ expectType<TupleOf<50, '0'>>({} as Split<FiftyZeroes, ''>);
 // Maximum allowed recursion depth for a tail recursive implementation.
 type NineHundredNinetyNineZeroes = StringRepeat<'0', 999>;
 expectType<TupleOf<999, '0'>>({} as Split<NineHundredNinetyNineZeroes, ''>);
+
+// The non-strict option splits only the literal parts it can see, so a subject whose literal parts have no delimiter is one part, even when its non-literal parts could contain one. `Get` relies on this to read a non-literal path as a single key.
+expectType<[string]>({} as Split<string, ',', {strictLiteralChecks: false}>);
+declare const numberPatternSplit: [`v${number}`];
+expectType<typeof numberPatternSplit>({} as Split<`v${number}`, '.', {strictLiteralChecks: false}>);

@@ -14,7 +14,7 @@ declare const withOptions: DelimiterCasedProperties<{helloWorld1: {fooBar: strin
 expectType<{'hello.world.1': {fooBar: string}}>(withOptions);
 
 declare const withPunctuation: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.'>;
-expectType<{'hello@.world1': {'foo::Bar': string}}>(withPunctuation);
+expectType<{'hello@world1': {'foo::Bar': string}}>(withPunctuation);
 
 declare const withPunctuationSplit: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true}>;
 expectType<{'hello.world1': {'foo::Bar': string}}>(withPunctuationSplit);

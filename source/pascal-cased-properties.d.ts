@@ -39,7 +39,8 @@ const splitOnPunctuation: PascalCasedProperties<{'foo::bar': string}, {splitOnPu
 */
 export type PascalCasedProperties<Value, Options extends CamelCaseOptions = {}> = Value extends Function
 	? Value
-	: Value extends Array<infer U>
+	: Value extends readonly unknown[]
+		// Arrays pass through unchanged, since they have no properties to re-case.
 		? Value
 		: {[K in keyof Value as PascalCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>]: Value[K]};
 

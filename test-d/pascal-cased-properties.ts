@@ -44,3 +44,7 @@ expectType<{FooBAR: number; BARFoo: string}>(baz);
 
 declare const biz: PascalCasedProperties<{fooBAR: number; BARFoo: string}>;
 expectType<{FooBar: number; BarFoo: string}>(biz);
+
+// A readonly array is still an array, and passes through unchanged.
+expectType<ReadonlyArray<{fooBar: number}>>({} as PascalCasedProperties<ReadonlyArray<{fooBar: number}>>);
+expectType<Array<{fooBar: number}>>({} as PascalCasedProperties<Array<{fooBar: number}>>);

@@ -62,3 +62,31 @@ expectType<FiftyOnes>({} as Replace<FiftyZeroes, '0', '1', {all: true}>);
 type NineHundredNinetyNineZeroes = StringRepeat<'0', 999>;
 type NineHundredNinetyNineOnes = StringRepeat<'1', 999>;
 expectType<NineHundredNinetyNineOnes>({} as Replace<NineHundredNinetyNineZeroes, '0', '1', {all: true}>);
+
+// An empty `Search` is a zero-width match, so it matches at the start of the string first, the same way `String.prototype.replace()` does.
+declare const prependOnce: Replace<'abc', '', '-'>;
+expectType<'-abc'>(prependOnce);
+
+declare const prependAll: Replace<'abc', '', '-', {all: true}>;
+expectType<'-a-b-c-'>(prependAll);
+
+declare const onlyWhenEmpty: Replace<'', '', 'X'>;
+expectType<'X'>(onlyWhenEmpty);
+
+// Known limitation: the replacement is inserted literally, so the substitution patterns that `String.prototype.replace()` expands are left as they are. See the docs.
+declare const substitutesMatch: Replace<'abc', 'b', '$&'>;
+expectType<'a$&c'>(substitutesMatch);
+
+declare const leavesDollarAlone: Replace<'abc', 'b', 'a$b'>;
+expectType<'aa$bc'>(leavesDollarAlone);
+
+declare const leavesNonPattern: Replace<'abc', 'b', '$1'>;
+expectType<'a$1c'>(leavesNonPattern);
+
+// Replacing an empty search in an unknown string must not discard the unknown suffix.
+expectType<string>({} as Replace<string, '', '-', {all: true}>);
+expectType<string>({} as Replace<`prefix${string}`, '', '-', {all: true}>);
+expectType<string>({} as Replace<`${number}`, '', '-', {all: true}>);
+
+// An impossible input stays impossible across the empty-search and ordinary-search branches.
+expectType<never>({} as Replace<never, '' | 'a', 'x', {all: true}>);
