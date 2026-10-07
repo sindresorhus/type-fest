@@ -97,3 +97,10 @@ expectType<RegExp | null | {test: string | number}>({} as SharedUnionFields<RegE
 // Boundary types
 expectType<any>({} as SharedUnionFields<any>);
 expectType<never>({} as SharedUnionFields<never>);
+
+// A `WeakMap` and a `WeakSet` are passed through like a `Map` and a `Set`, rather than being stripped of their members.
+declare const weakMapSkipped: SharedUnionFields<WeakMap<object, string> | {a: 1}>;
+expectType<WeakMap<object, string> | {a: 1}>(weakMapSkipped);
+
+declare const weakSetSkipped: SharedUnionFields<WeakSet<object> | {a: 1}>;
+expectType<WeakSet<object> | {a: 1}>(weakSetSkipped);

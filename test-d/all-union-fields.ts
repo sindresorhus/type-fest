@@ -182,3 +182,10 @@ expectType<RegExp | null | {test: string | number; foo?: any}>({} as AllUnionFie
 // Boundary types
 expectType<any>({} as AllUnionFields<any>);
 expectType<never>({} as AllUnionFields<never>);
+
+// A `WeakMap` and a `WeakSet` are passed through like a `Map` and a `Set`, rather than having their members spread into an object.
+declare const weakMapSkipped: AllUnionFields<WeakMap<object, string> | {a: 1}>;
+expectType<WeakMap<object, string> | {a: 1}>(weakMapSkipped);
+
+declare const weakSetSkipped: AllUnionFields<WeakSet<object> | {a: 1}>;
+expectType<WeakSet<object> | {a: 1}>(weakSetSkipped);

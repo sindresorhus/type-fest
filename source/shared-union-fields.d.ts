@@ -1,8 +1,6 @@
-import type {NonRecursiveType} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {IsUnion} from './is-union.d.ts';
 import type {Simplify} from './simplify.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type with shared fields from a union of object types.
@@ -66,7 +64,7 @@ function displayPetInfoWithSharedUnionFields(petInfo: SharedUnionFields<Cat | Do
 @category Union
 */
 export type SharedUnionFields<Union> =
-	Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
+	Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
 		? Exclude<Union, SkippedMembers> extends infer RelevantMembers
 			? // eslint-disable-line @stylistic/operator-linebreak
 			| SkippedMembers

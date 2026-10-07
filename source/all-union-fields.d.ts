@@ -1,8 +1,7 @@
-import type {NonRecursiveType, ReadonlyKeysOfUnion, ValueOfUnion} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType, ReadonlyKeysOfUnion, ValueOfUnion} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts';
 import type {Simplify} from './simplify.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Create a type with all fields from a union of object types.
@@ -69,7 +68,7 @@ function displayPetInfoWithAllUnionFields(petInfo: AllUnionFields<Cat | Dog>) {
 @category Union
 */
 export type AllUnionFields<Union> =
-	Extract<Union, NonRecursiveType | ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | UnknownArray> extends infer SkippedMembers
+	Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
 		? Exclude<Union, SkippedMembers> extends infer RelevantMembers
 			? // eslint-disable-line @stylistic/operator-linebreak
 			| SkippedMembers

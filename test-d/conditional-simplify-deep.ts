@@ -1,4 +1,4 @@
-import {expectNotAssignable, expectType} from 'tsd';
+import {expectNotAssignable, expectNotType, expectType} from 'tsd';
 import type {ConditionalSimplifyDeep} from '../index.d.ts';
 
 type Position = {top: number; left: number};
@@ -68,3 +68,23 @@ expectType<ExcludeFunctionAndSize1>(movableNode);
 // Same as above but using `IncludeType` parameter (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize2 = ConditionalSimplifyDeep<MovableCollection, Function, MovableCollection | Position>;
 expectType<ExcludeFunctionAndSize2>(movableNode);
+
+// The default `IncludeType` is `unknown`, so the recursion reaches everything, and a function or a built-in comes back as an object of its own members with `{}` types. A function is then not callable at all. `ExcludeType` is the way out, and the test above shows the same for a method. See the note in the docs.
+declare const functionMember: ConditionalSimplifyDeep<{a: () => void}>;
+expectType<{a: {}}>(functionMember);
+
+declare const dateMember: ConditionalSimplifyDeep<{a: Date}>['a'];
+expectNotType<Date>(dateMember);
+
+declare const withFunctionsExcluded: ConditionalSimplifyDeep<{a: () => void}, Function>;
+expectType<{a: () => void}>(withFunctionsExcluded);
+
+declare const withDateExcluded: ConditionalSimplifyDeep<{a: Date}, Date>;
+expectType<{a: Date}>(withDateExcluded);
+
+declare const withBuiltInsExcluded: ConditionalSimplifyDeep<{a: Date; b: () => void}, Date | Function>;
+expectType<{a: Date; b: () => void}>(withBuiltInsExcluded);
+
+// A plain object is still simplified, which is the type's job.
+declare const plainObject: ConditionalSimplifyDeep<{a: {b: string} & {c: number}}>;
+expectType<{a: {b: string; c: number}}>(plainObject);

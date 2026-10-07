@@ -61,6 +61,9 @@ type SimplifyDeepTypeAB = ConditionalSimplifyDeep<TypeA & TypeB, SomeComplexType
 // }
 ```
 
+Known limitations:
+- The default `IncludeType` is `unknown`, so the recursion reaches everything, and a function or a built-in comes back as an object of its own members with `{}` types. A function is then not callable at all, and a `Date` is no longer a `Date`. `SimplifyDeep`, which this type generalises, keeps both. Pass them as the `ExcludeType` to keep them: `ConditionalSimplifyDeep<Settings, Date | Function>`.
+
 @see {@link SimplifyDeep}
 @category Object
 */

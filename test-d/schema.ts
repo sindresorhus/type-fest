@@ -341,3 +341,40 @@ expectType<{a: number}>({} as Schema<{a: unknown}, number>);
 expectType<{a: number}>({} as Schema<{a: any}, number>);
 expectType<number>({} as Schema<unknown, number>);
 expectType<number>({} as Schema<any, number>);
+
+// Binary and weak-collection built-ins are leaf values, not structures to recurse into.
+expectType<{a: number}>({} as Schema<{a: ArrayBuffer}, number>);
+expectType<{a: number}>({} as Schema<{a: SharedArrayBuffer}, number>);
+expectType<{a: number}>({} as Schema<{a: DataView}, number>);
+expectType<{a: number}>({} as Schema<{a: Uint8Array}, number>);
+expectType<{a: number}>({} as Schema<{a: Float64Array}, number>);
+expectType<{a: number}>({} as Schema<{a: WeakMap<object, number>}, number>);
+expectType<{a: number}>({} as Schema<{a: WeakSet<object>}, number>);
+expectType<{a: {b: number}}>({} as Schema<{a: {b: ArrayBuffer}}, number>);
+
+// A plain object with `name` and `message` is structurally an `Error`, but it is data, so it is still walked.
+expectType<{a: {name: number; message: number; code: number}}>({} as Schema<{a: {name: string; message: string; code: number}}, number>);
+
+// A leaf that cannot be walked is still a leaf, so `any` and `unknown` are replaced by the value type. A member of type `never` is the one exception: it is a bottom type with no shape to replace, and the source's `never` branch is about the whole input rather than each member.
+declare const topTypesSchema: Schema<{a: any; b: unknown; c: null}, string>;
+expectType<{a: string; b: string; c: string}>(topTypesSchema);
+
+declare const anySchema: Schema<any, string>;
+expectType<string>(anySchema);
+
+declare const neverSchema: Schema<never, string>;
+expectType<string>(neverSchema);
+
+declare const neverMemberSchema: Schema<{a: never; b: string}, string>;
+expectType<{a: never; b: string}>(neverMemberSchema);
+
+// A member nested two levels down is reached, and so is one behind an array.
+declare const nestedSchema: Schema<{a: {b: {c: number}; d: ReadonlyArray<{e: boolean}>}}, string>;
+expectType<{a: {b: {c: string}; d: ReadonlyArray<{e: string}>}}>(nestedSchema);
+
+// The modifiers of every member are kept, since only the value types are replaced.
+declare const modifiersSchema: Schema<{readonly a?: {b: number}; c: ReadonlyArray<{d: string}>}, number>;
+expectType<{readonly a?: {b: number}; c: ReadonlyArray<{d: number}>}>(modifiersSchema);
+
+// A `PromiseLike` is a single value, like a `Promise`.
+expectType<{a: number}>({} as Schema<{a: PromiseLike<string>}, number>);
