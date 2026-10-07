@@ -91,7 +91,10 @@ type _TupleOf<Length extends number, Fill> = number extends Length
 type BuildTupleDigitByDigit<Length extends string, Fill, Accumulator extends UnknownArray = []> =
 	Length extends `${infer First extends DigitCharacter}${infer Rest}`
 		? BuildTupleDigitByDigit<Rest, Fill, [...RepeatTupleTenTimes<Accumulator>, ...DigitTupleOf<First, Fill>]>
-		: Accumulator;
+		// TypeScript prints a length below `1e-6` in scientific notation, and the whole of such a length is the fraction the decimal part rule drops.
+		: Length extends `${string}e-${string}`
+			? []
+			: Accumulator;
 
 type RepeatTupleTenTimes<Tuple extends UnknownArray> = [
 	...Tuple, ...Tuple, ...Tuple, ...Tuple, ...Tuple,

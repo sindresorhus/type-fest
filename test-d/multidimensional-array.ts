@@ -27,3 +27,10 @@ expectType<number[][][]>(a);
 expectType<RecursiveArray<boolean>>(b);
 expectType<unknown[][]>(c);
 expectType<unknown[][][][][][][]>(d);
+
+// A union of dimensions is a dynamic dimension, so it resolves to the union of the arrays of each dimension.
+const union: MultidimensionalArray<number, 1 | 2 | 3> = [];
+
+expectType<number[] | number[][] | number[][][]>(union);
+
+expectType<unknown[] | unknown[][]>(createArray(1 as 1 | 2));

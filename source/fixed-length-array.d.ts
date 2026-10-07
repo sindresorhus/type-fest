@@ -91,7 +91,8 @@ console.log(toHex(color)); // `FixedLengthArray<number, 3>` is assignable to `re
 */
 export type FixedLengthArray<Element, Length extends number> =
 	Except<TupleOf<Length, Element>, ArrayLengthMutationKeys | number | 'length'>
-	& {readonly length: Length}
+	// Read the length back off the built tuple so it stays consistent with the actual elements. `TupleOf` ignores a decimal part and turns a negative length into an empty tuple.
+	& {readonly length: TupleOf<Length, Element>['length']}
 	& (number extends Length ? {[n: number]: Element} : {}); // Add `number` index signature only for non-tuple arrays.
 
 export {};

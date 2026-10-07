@@ -104,6 +104,7 @@ export type _SplitOnRestElement<
 		// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
 		: Array_ extends readonly [...infer Rest, infer Last]
 			? _SplitOnRestElement<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
-			: [HeadAcc, Array_ extends readonly [] ? [] : Array_, TailAcc]; // Add the rest element between the accumulated elements.
+			// Add the rest element between the accumulated elements. It is spread into a fresh array, because a rest-only input such as `readonly [...string[]]` is the whole array and would otherwise bake `readonly` into the middle part, which the branch above, that peels the rest off element by element, never does.
+			: [HeadAcc, Array_ extends readonly [] ? [] : [...Array_], TailAcc];
 
 export {};

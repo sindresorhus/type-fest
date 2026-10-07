@@ -29,10 +29,13 @@ const readonlyBoolean2DMatrix = emptyMatrix<boolean>()(2);
 
 @category Array
 */
-export type MultidimensionalReadonlyArray<Element, Dimensions extends number> = number extends Dimensions
-	? Recursive<Element>
-	: IsEqual<Dimensions, 0> extends true
-		? Element
-		: ReadonlyArray<MultidimensionalReadonlyArray<Element, Subtract<Dimensions, 1>>>;
+export type MultidimensionalReadonlyArray<Element, Dimensions extends number> =
+	Dimensions extends number // For distributing `Dimensions`
+		? number extends Dimensions
+			? Recursive<Element>
+			: IsEqual<Dimensions, 0> extends true
+				? Element
+				: ReadonlyArray<MultidimensionalReadonlyArray<Element, Subtract<Dimensions, 1>>>
+		: never;
 
 export {};

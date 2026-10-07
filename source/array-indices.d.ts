@@ -20,6 +20,13 @@ const getWeekdayName = (day: Weekday): WeekdayName => weekdays[day];
 @category Array
 */
 export type ArrayIndices<Element extends readonly unknown[]> =
-	Exclude<Partial<Element>['length'], Element['length']>;
+	// `keyof` of a union is the intersection of the members' keys, so the union is distributed first to give every member's indices. An array of unknown length can be indexed with any number, while an array of known length can only be indexed with the positions it actually has. A tuple's keys are string literals, so they are turned back into numbers.
+	Element extends unknown
+		? number extends Element['length']
+			? number
+			: {
+				[Key in Extract<keyof Element, `${number}`>]: Key extends `${infer Index extends number}` ? Index : never
+			}[Extract<keyof Element, `${number}`>]
+		: never;
 
 export {};

@@ -30,3 +30,14 @@ expectType<string | undefined>(answer);
 expectType<ReadonlyArray<ReadonlyArray<readonly number[]>>>(a);
 expectType<RecursiveArray<boolean>>(b);
 expectType<ReadonlyArray<readonly string[]>>(c);
+
+// A union of dimensions is a dynamic dimension, so it resolves to the union of the arrays of each dimension, like `MultidimensionalArray` does.
+const union: MultidimensionalReadonlyArray<number, 1 | 2 | 3> = [];
+
+expectType<
+	readonly number[]
+	| ReadonlyArray<readonly number[]>
+	| ReadonlyArray<ReadonlyArray<readonly number[]>>
+>(union);
+
+expectType<readonly string[] | ReadonlyArray<readonly string[]>>(createArray(1 as 1 | 2));

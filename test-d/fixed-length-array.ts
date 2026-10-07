@@ -44,6 +44,12 @@ expectNotAssignable<FixedToThreeStrings>(['a']);
 expectNotAssignable<FixedToThreeStrings>(['a', 'b']);
 expectNotAssignable<FixedToThreeStrings>(['a', 'b', 'c', 'd']);
 
+// `length` must describe the array that `TupleOf` actually builds, so a decimal part is ignored and a negative length yields an empty tuple.
+expectType<3>({} as FixedLengthArray<string, 3.5>['length']);
+expectType<0>({} as FixedLengthArray<string, -2>['length']);
+expectType<2 | 3>({} as FixedLengthArray<string, 2 | 3>['length']);
+expectType<number>({} as FixedLengthArray<string, number>['length']);
+
 type FixedLength = FixedLengthArray<string, number>;
 declare const fixedLength: FixedLength;
 

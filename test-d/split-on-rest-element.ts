@@ -64,3 +64,7 @@ expectType<SplitOnRestElement<[...FourHundredNinetyNineZeroes, ...number[], ...F
 // Generic instantiations
 type Assignability<_T extends UnknownArray> = unknown;
 type TestAssignability<T extends UnknownArray> = Assignability<SplitOnRestElement<T>>;
+
+// The rest part is the input verbatim, so a readonly-only rest array must not bake `readonly` in, the way the neighbouring case does not.
+declare const readonlyRestOnly: SplitOnRestElement<readonly [...string[]]>;
+expectType<readonly [[], string[], []]>(readonlyRestOnly);

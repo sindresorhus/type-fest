@@ -39,3 +39,15 @@ expectType<TupleOf<3, any>>({} as [any, any, any]);
 
 // @ts-expect-error
 type LengthShouldBeNumber = TupleOf<'ten'>;
+
+// A length with a decimal part keeps only the whole part.
+expectType<TupleOf<3.5, string>>({} as [string, string, string]);
+expectType<TupleOf<0.5, string>>({} as []);
+
+// A length below `1e-6` is one TypeScript prints in scientific notation. The digit-by-digit walk then read the leading digit of the mantissa as a length of one, where the whole of such a length is the fraction the decimal part rule drops.
+expectType<TupleOf<1e-7, string>>({} as []);
+expectType<TupleOf<1.5e-7, string>>({} as []);
+
+// The same for a union of lengths, where the printed text is a union of texts and only one member may be in scientific notation, so the check has to be per member.
+expectType<TupleOf<1e-7 | 3, string>>({} as [] | [string, string, string]);
+expectType<TupleOf<1e-7 | 1.5e-7 | 3, string>>({} as [] | [string, string, string]);

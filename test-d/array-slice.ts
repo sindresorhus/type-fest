@@ -75,3 +75,85 @@ expectType<ArraySlice<[0, 1, 2, 3], -5 | 0 | 1, -2 | 0 | 3>>( // Positive/Negati
 expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1 | -4, 4 | -1>>( // Positive/Negative start, positive/negative end
 	{} as [1] | [1, 2] | [0, 1] | [0, 1, 2] | ['a', 'b', 'c', 'd'] | ['a', 'b', 'c'] | ['b', 'c'] | ['b', 'c', 'd'],
 );
+
+// Optional elements (https://github.com/sindresorhus/type-fest/issues/1090)
+declare const withOptionalParameter: (a: number, b: string, isLast?: boolean) => void;
+expectType<[string, (boolean | undefined)?]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, 1>);
+expectType<[string, (boolean | undefined)?]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, -2>);
+expectType<[number, string, (boolean | undefined)?]>({} as ArraySlice<Parameters<typeof withOptionalParameter>>);
+expectType<[string]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, 1, 2>);
+expectType<[]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, 3>);
+expectType<[string?, boolean?]>({} as ArraySlice<[number, string?, boolean?], 1>);
+expectType<[number?, string?]>({} as ArraySlice<[number?, string?], 0>);
+expectType<[string?]>({} as ArraySlice<[number, string?], -1>);
+expectType<[string?]>({} as ArraySlice<[number, string?], 1, 2>);
+expectType<readonly [string?, boolean?]>({} as ArraySlice<readonly [number, string?, boolean?], 1>);
+
+// A variable-length array can be shorter than the requested range, so the slice keeps an unknown length.
+expectType<number[]>({} as ArraySlice<number[], 0, -1>);
+expectType<number[]>({} as ArraySlice<number[], -2>);
+expectType<number[]>({} as ArraySlice<number[], 1, 3>);
+expectType<number[]>({} as ArraySlice<number[], 0, 2>);
+expectType<readonly number[]>({} as ArraySlice<readonly number[], 1, 3>);
+expectType<Array<number | string>>({} as ArraySlice<Array<number | string>, 1, 3>);
+
+// A `readonly` array keeps its `readonly` modifier no matter which branch produces the slice.
+expectType<readonly number[]>({} as ArraySlice<readonly number[]>);
+expectType<readonly number[]>({} as ArraySlice<readonly number[], 0>);
+expectType<readonly number[]>({} as ArraySlice<readonly number[], 2>);
+expectType<readonly number[]>({} as ArraySlice<readonly number[], -2>);
+expectType<number[]>({} as ArraySlice<number[]>);
+expectType<number[]>({} as ArraySlice<number[], 2>);
+
+expectType<readonly [1, 2, 3]>({} as ArraySlice<readonly [1, 2, 3]>);
+expectType<readonly [2, 3]>({} as ArraySlice<readonly [1, 2, 3], 1>);
+expectType<readonly [1, 2]>({} as ArraySlice<readonly [1, 2, 3], 0, 2>);
+expectType<readonly [3]>({} as ArraySlice<readonly [1, 2, 3], -1>);
+expectType<readonly []>({} as ArraySlice<readonly [1, 2, 3], 3>);
+expectType<readonly []>({} as ArraySlice<readonly [1, 2, 3], 1, 1>);
+expectType<readonly []>({} as ArraySlice<readonly [], 0>);
+expectType<readonly [2]>({} as ArraySlice<readonly [1, 2, 3, ...string[]], 1, 2>);
+expectType<[2]>({} as ArraySlice<[1, 2, 3, ...string[]], 1, 2>);
+
+// An array with a statically known prefix still produces a fixed-length slice.
+expectType<[string | 1 | 2, string | 1 | 2]>({} as ArraySlice<[...string[], 1, 2], 0, 2>);
+
+// A non-literal index can be any value, so the slice can start or end anywhere and its length is unknown.
+expectType<Array<0 | 1 | 2 | 3 | 4>>({} as ArraySlice<[0, 1, 2, 3, 4], number>);
+expectType<Array<0 | 1 | 2 | 3 | 4>>({} as ArraySlice<[0, 1, 2, 3, 4], number, 4>);
+expectType<ReadonlyArray<0 | 1 | 2 | 3 | 4>>({} as ArraySlice<readonly [0, 1, 2, 3, 4], number>);
+
+// A negative `End` is resolved against the longest length a tuple with optional elements can have, so the result is that longest-case slice. See the known limitation in the docs.
+declare const optionalTailNegativeEnd: ArraySlice<[1, 2?], 0, -1>;
+expectType<[1]>(optionalTailNegativeEnd);
+
+declare const allOptionalNegativeEnd: ArraySlice<[1?, 2?], 0, -1>;
+expectType<[1?]>(allOptionalNegativeEnd);
+
+// A fractional index truncates toward zero at runtime, but the range is resolved through the tuple helpers, which have no answer for a decimal, so the whole slice comes out as `never`. The runtime answers `[1, 2, 3].slice(1.5)` with `[2, 3]` and `[1, 2, 3, 4].slice(0, 2.5)` with `[1, 2]`. Round the index before passing it, or use `StringSlice` for a string.
+expectType<never>({} as ArraySlice<[1, 2, 3], 1.5>);
+expectType<never>({} as ArraySlice<[1, 2, 3, 4], 0, 2.5>);
+
+// Empty ranges remain empty even when the source length is unknown.
+expectType<[]>({} as ArraySlice<string[], 2, 1>);
+expectType<readonly []>({} as ArraySlice<readonly [1, ...string[]], 2, 2>);
+expectType<[]>({} as ArraySlice<string[], 0, 0>);
+
+// An omitted start still defaults to zero when an end is supplied.
+expectType<[1, 2]>({} as ArraySlice<[1, 2, ...string[]], never, 2>);
+
+// An index of `1e21` or more is printed in exponential notation, and is still clamped to the length.
+declare const exponentEnd: ArraySlice<[1, 2, 3], 1, 1e21>;
+expectType<[2, 3]>(exponentEnd);
+
+declare const exponentEndFromStart: ArraySlice<[1, 2, 3], 0, 1e21>;
+expectType<[1, 2, 3]>(exponentEndFromStart);
+
+declare const exponentStart: ArraySlice<[1, 2, 3], 1e21>;
+expectType<[]>(exponentStart);
+
+declare const negativeExponentStart: ArraySlice<[1, 2, 3], -1e21>;
+expectType<[1, 2, 3]>(negativeExponentStart);
+
+declare const negativeExponentEnd: ArraySlice<[1, 2, 3], 0, -1e21>;
+expectType<[]>(negativeExponentEnd);

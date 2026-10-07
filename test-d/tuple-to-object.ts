@@ -1,4 +1,5 @@
 import {expectType} from 'tsd';
+import type {FixedLengthArray} from '../source/fixed-length-array.d.ts';
 import type {TupleToObject} from '../source/tuple-to-object.d.ts';
 
 // Tuples
@@ -60,3 +61,11 @@ expectType<TupleToObject<never>>({} as never);
 
 // @ts-expect-error only works with arrays
 type T = TupleToObject<{}>;
+// A rest element in the middle widens the result to an index signature. Only the leading positions keep their own keys and types, because the positions after the rest element have no fixed index.
+// A rest element in the middle widens the result to an index signature while the declared positions keep their own keys and types.
+expectType<TupleToObject<[string, ...number[], boolean]>>(
+	{} as {[x: number]: string | number | boolean; 0: string},
+);
+
+// `FixedLengthArray` is a tuple of a known length with the mutating members removed, so its positions are still positions.
+expectType<TupleToObject<FixedLengthArray<string, 3>>>({} as {0: string; 1: string; 2: string});

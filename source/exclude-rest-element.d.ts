@@ -28,11 +28,14 @@ type T4 = ExcludeRestElement<[number, string]>;
 @category Array
 */
 export type ExcludeRestElement<Array_ extends UnknownArray> = IfNotAnyOrNever<Array_, {
-	ifNot: SplitOnRestElement<Array_> extends infer Result
-		? Result extends readonly UnknownArray[]
-			? IsArrayReadonly<Array_> extends true
-				? Readonly<[...Result[0], ...Result[2]]>
-				: [...Result[0], ...Result[2]]
+	// The union is distributed, so that `readonly` is decided per member. Without it, `IsArrayReadonly` resolves to `boolean` for a mixed union and every member loses it.
+	ifNot: Array_ extends unknown
+		? SplitOnRestElement<Array_> extends infer Result
+			? Result extends readonly UnknownArray[]
+				? IsArrayReadonly<Array_> extends true
+					? Readonly<[...Result[0], ...Result[2]]>
+					: [...Result[0], ...Result[2]]
+				: never
 			: never
 		: never;
 }>;

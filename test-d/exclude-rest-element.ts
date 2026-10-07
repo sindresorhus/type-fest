@@ -62,3 +62,10 @@ expectType<ExcludeRestElement<[...NineHundredNinetyNineZeroes, ...number[]]>>({}
 // Generic instantiations
 type Assignability<_T extends UnknownArray> = unknown;
 type TestAssignability<T extends UnknownArray> = Assignability<ExcludeRestElement<T>>;
+
+// `readonly` is decided per union member, so a readonly member stays readonly even when the union also has a mutable one.
+declare const unionWithReadonly: ExcludeRestElement<[1, 2] | readonly []>;
+expectType<[1, 2] | readonly []>(unionWithReadonly);
+
+declare const unionOfReadonly: ExcludeRestElement<readonly [1, 2] | readonly [3]>;
+expectType<readonly [1, 2] | readonly [3]>(unionOfReadonly);
