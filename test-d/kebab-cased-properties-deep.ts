@@ -68,3 +68,19 @@ expectType<{'foo-bar': {'bar-baz': any}; biz: any}>({} as KebabCasedPropertiesDe
 
 expectType<{'foo-bar': unknown}>({} as KebabCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
 expectType<{'foo-bar': {'bar-baz': unknown}; biz: unknown}>({} as KebabCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);
+
+// Map, Set, and their readonly and weak variants are preserved, with their contents recursed into.
+declare const readonlySet: KebabCasedPropertiesDeep<ReadonlySet<{fooBar: number}>>;
+expectType<ReadonlySet<{'foo-bar': number}>>(readonlySet);
+
+declare const readonlyMap: KebabCasedPropertiesDeep<ReadonlyMap<{fooBar: number}, {bazQux: 1}>>;
+expectType<ReadonlyMap<{'foo-bar': number}, {'baz-qux': 1}>>(readonlyMap);
+
+declare const weakMap: KebabCasedPropertiesDeep<WeakMap<{fooBar: 1}, string>>;
+expectType<WeakMap<{'foo-bar': 1}, string>>(weakMap);
+
+declare const weakSet: KebabCasedPropertiesDeep<WeakSet<{fooBar: 1}>>;
+expectType<WeakSet<{'foo-bar': 1}>>(weakSet);
+
+declare const mutableMap: KebabCasedPropertiesDeep<Map<{fooBar: 1}, {bazQux: 2}>>;
+expectType<Map<{'foo-bar': 1}, {'baz-qux': 2}>>(mutableMap);

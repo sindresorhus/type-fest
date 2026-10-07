@@ -14,7 +14,7 @@ declare const withOptions: DelimiterCasedPropertiesDeep<Set<{helloWorld: {p2p: A
 expectType<Set<{'hello.world': {'p.2.p': Array<{'address.line.1': string}>}}>>(withOptions);
 
 declare const withPunctuation: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.'>;
-expectType<{'hello@.world1': {'foo::.bar': string}}>(withPunctuation);
+expectType<{'hello@world1': {'foo::bar': string}}>(withPunctuation);
 
 declare const withPunctuationSplit: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true}>;
 expectType<{'hello.world1': {'foo.bar': string}}>(withPunctuationSplit);
@@ -91,7 +91,9 @@ expectType<DelimiterCasedPropertiesDeep<UserWithFriendsPunctuated, '-', {splitOn
 declare const key: DelimiterCasedPropertiesDeep<{readonly userId?: number}, '-'>;
 expectType<{readonly 'user-id'?: number}>(key);
 
-/** Test Array */
+/**
+Test Array
+*/
 // Test for tuple
 declare const tuple: DelimiterCasedPropertiesDeep<[User], '-'>;
 expectType<[{'user-id': number; 'user-name': string; date: Date; 'reg-exp': RegExp}]>(tuple);
@@ -112,6 +114,14 @@ expectType<[{'user-id': string}, {'user-name': number}, ...Array<{'user-age': nu
 // Test for leading spread array
 declare const leadingSpreadArray: DelimiterCasedPropertiesDeep<[...Array<{userId: string}>, {userName: number}, {userAge: number}], '-'>;
 expectType<[...Array<{'user-id': string}>, {'user-name': number}, {'user-age': number}]>(leadingSpreadArray);
+// Test for readonly leading spread array
+declare const readonlyLeadingSpreadArray: DelimiterCasedPropertiesDeep<readonly [...Array<{userId: string}>, {userName: number}, {userAge: number}], '-'>;
+expectType<readonly [...Array<{'user-id': string}>, {'user-name': number}, {'user-age': number}]>(readonlyLeadingSpreadArray);
+// Test for empty tuples
+declare const emptyTuple: DelimiterCasedPropertiesDeep<[], '-'>;
+expectType<[]>(emptyTuple);
+declare const readonlyEmptyTuple: DelimiterCasedPropertiesDeep<readonly [], '-'>;
+expectType<readonly []>(readonlyEmptyTuple);
 // Test for enum
 enum UserType {
 	AdminUser = 'adminUser',
@@ -129,3 +139,8 @@ expectType<{'foo_bar': {'bar_baz': any}; biz: any}>({} as DelimiterCasedProperti
 
 expectType<{'foo-bar': unknown}>({} as DelimiterCasedPropertiesDeep<{'foo::bar': unknown}, '-', {splitOnPunctuation: true}>);
 expectType<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>({} as DelimiterCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, '_', {splitOnPunctuation: true}>);
+
+// A tuple with an optional element keeps its `?` modifier, so its length stays fixed.
+expectType<[string, number?]>({} as DelimiterCasedPropertiesDeep<[string, number?], '-'>);
+expectType<[string?, number?]>({} as DelimiterCasedPropertiesDeep<[string?, number?], '-'>);
+expectType<readonly [string, number?]>({} as DelimiterCasedPropertiesDeep<readonly [string, number?], '-'>);

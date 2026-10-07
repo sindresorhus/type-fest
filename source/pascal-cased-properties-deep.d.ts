@@ -1,6 +1,6 @@
 import type {CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
-import type {PascalCase} from './pascal-case.d.ts';
+import type {CasedPropertiesDeep} from './internal/cased-properties-deep.d.ts';
 
 /**
 Convert object properties to pascal case recursively.
@@ -62,18 +62,6 @@ const splitOnPunctuation: PascalCasedPropertiesDeep<{'user@info': {'user::id': n
 @category Object
 */
 export type PascalCasedPropertiesDeep<Value, Options extends CamelCaseOptions = {}> =
-	_PascalCasedPropertiesDeep<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
-
-type _PascalCasedPropertiesDeep<Value, Options extends Required<CamelCaseOptions>> = Value extends Function | Date | RegExp
-	? Value
-	: Value extends Array<infer U>
-		? Array<_PascalCasedPropertiesDeep<U, Options>>
-		: Value extends Set<infer U>
-			? Set<_PascalCasedPropertiesDeep<U, Options>>
-			: Value extends object
-				? {
-					[K in keyof Value as PascalCase<K, Options>]: _PascalCasedPropertiesDeep<Value[K], Options>;
-				}
-				: Value;
+	CasedPropertiesDeep<Value, 'pascal', ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
 
 export {};
