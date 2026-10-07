@@ -130,6 +130,7 @@ Click the type names for complete docs.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
 - [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
 - [`UnwrapTagged`](source/tagged.d.ts) - Get the untagged portion of a tagged type created with `Tagged`.
+- [`GetTagMetadata`](source/tagged.d.ts) - Given a type and a tag name, returns the metadata associated with that tag on that type.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional, while keeping the remaining keys as is.
 - [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly, while keeping the remaining keys as is.
@@ -146,7 +147,7 @@ Click the type names for complete docs.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) it belongs to, or `never` if it's not a primitive.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
-- [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
+- [`Stringified`](source/stringified.d.ts) - Create a type with the values of the given type changed to `string` type.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
 - [`Entry`](source/entry.d.ts) - Create a type that describes a single key-value pair produced when calling a collection’s `entries` method.
 - [`Entries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
@@ -288,7 +289,7 @@ Click the type names for complete docs.
 - [`Integer`](source/numeric.d.ts) - A `number` that is an integer.
 - [`Float`](source/numeric.d.ts) - A `number` that is not an integer.
 - [`NegativeFloat`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is not an integer.
-- [`Negative`](source/numeric.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`)
+- [`Negative`](source/numeric.d.ts) - A negative `number`/`bigint` (`-∞ < x < 0`).
 - [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
 - [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.

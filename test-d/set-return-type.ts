@@ -34,3 +34,7 @@ declare function withExplicitThis(this: unknown, foo: string): number;
 declare function withImplicitThis(foo: string): number;
 expectType<typeof withExplicitThis>(withImplicitThis);
 expectType<typeof withImplicitThis>(withExplicitThis);
+
+// A type with several call signatures collapses to its last signature. This is a TypeScript limitation, not a choice, so it is pinned here rather than worked around.
+declare const overloaded: SetReturnType<{(): void; (x: number): void}, string>;
+expectType<(x: number) => string>(overloaded);

@@ -3,6 +3,8 @@ import type {IsAny} from './is-any.d.ts';
 /**
 Returns a boolean for whether the given type includes `undefined`.
 
+Note: `IsOptional<unknown>` and `IsOptional<void>` are `false`, because `undefined` is assignable to them but is not a member of them. `IsOptional<any>` is `true`.
+
 @example
 ```ts
 import type {IsOptional} from 'type-fest';

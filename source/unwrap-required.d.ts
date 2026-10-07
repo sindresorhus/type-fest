@@ -20,6 +20,7 @@ type DraftContactFormData = UnwrapRequired<ContactFormData>;
 
 Note:
 	- If the provided type isn’t of the form `Required<T>`, `UnwrapRequired` simply returns the input type.
+	- A numeric or symbol index signature cannot be reversed through `Required<infer T>`, so `UnwrapRequired<{[index: number]: string}>` is `unknown` rather than the input type.
 	- `UnwrapRequired` doesn't work with arrays, if instantiated with arrays, it simply returns the input type.
 
 @category Object

@@ -1,6 +1,24 @@
 import type {IsUnknown} from './is-unknown.d.ts';
-import type {StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
+import type {MaxLength, VariablePartOfArray} from './internal/index.d.ts';
+import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+
+/**
+Returns the index at which the rest element of the given array starts, that is, the number of elements before it.
+
+@example
+```ts
+type A = RestElementIndex<[string, ...boolean[]]>;
+//=> 1
+
+type B = RestElementIndex<[string, number?, ...boolean[]]>;
+//=> 2
+```
+*/
+type RestElementIndex<ArrayType extends UnknownArray> =
+	SplitOnRestElement<ArrayType>[0] extends infer Head extends UnknownArray
+		? MaxLength<Head>
+		: never; // Should never happen
 
 /**
 Create an array that replaces the given `TArray`'s elements with the given `TObject`'s values at the given indices.
@@ -33,8 +51,11 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 			? TObject
 			: {
 				[K in keyof TArray]:
+				// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`. The index is matched as a string, like in the object branch below, because `keyof` an array also contains `number`, which would make an out of bounds index resolve to `undefined` instead of missing. example: `MergeObjectToArray<[string, ...boolean[]], [string, number]>` => `[string, ...number[]]`
 				number extends K
-					? VariablePartOfArray<TArray>[number]
+					? `${RestElementIndex<TArrayCopy>}` extends keyof TObject
+						? TObject[`${RestElementIndex<TArrayCopy>}`]
+						: VariablePartOfArray<TArray>[number]
 					: K extends keyof TObject ? TObject[K] : TArray[K]
 			}
 		: TObject extends object
@@ -46,8 +67,8 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 					: number extends K
 					// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`.
 					// example: `MergeObjectToArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
-						? StaticPartOfArray<TArrayCopy>['length'] extends keyof TObject
-							? TObject[StaticPartOfArray<TArrayCopy>['length']]
+						? RestElementIndex<TArrayCopy> extends keyof TObject
+							? TObject[RestElementIndex<TArrayCopy>]
 							: TArray[K]
 						: never
 			} : never;
@@ -74,7 +95,8 @@ Note:
 Use-case:
 - Define a wrapped function that receives something different while returning the same type.
 - Mocking and testing.
-- Overload function type. (See example)
+
+Note that a type containing overloaded functions collapses to its last signature, so `SetParameterType<{(): void; (x: number): void}, [string]>` is `(x: string) => void`, due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 
 @example
 ```

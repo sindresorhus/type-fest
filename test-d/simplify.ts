@@ -73,3 +73,7 @@ expectNotAssignable<SomeFunction>(someFunction);
 // }
 
 // expectType<Simplify<SomeClass>>(new SomeClass());
+
+// `keyof` of an intersection is the union of its members' keys, so `Simplify` flattens both members rather than one of them.
+declare const simplifyIntersection: Simplify<{a: 1} & {b?: 2}>;
+expectType<{a: 1; b?: 2}>(simplifyIntersection);

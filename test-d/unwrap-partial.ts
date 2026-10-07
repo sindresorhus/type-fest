@@ -83,3 +83,7 @@ expectType<Record<string, any>>({} as UnwrapPartial<Partial<Record<string, any>>
 
 // `UnwrapPartial` has no effect on non-partial types
 expectType<TestType>({} as UnwrapPartial<TestType>);
+
+// Known limitation: a numeric or symbol index signature cannot be reversed through `Partial<infer T>`, so the inferred object type is `unknown`. See the note in the docs.
+declare const numericIndex: UnwrapPartial<{[index: number]: string | undefined}>;
+expectType<unknown>(numericIndex);

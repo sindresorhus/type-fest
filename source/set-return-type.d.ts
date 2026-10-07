@@ -5,6 +5,8 @@ Create a function type with a return type of your choice and the same parameters
 
 Use-case: You want to define a wrapped function that returns something different while receiving the same parameters. For example, you might want to wrap a function that can throw an error into one that will return `undefined` instead.
 
+Note that a type containing overloaded functions collapses to its last signature, so `SetReturnType<{(): void; (x: number): void}, string>` is `(x: number) => string`, due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
+
 @example
 ```
 import type {SetReturnType} from 'type-fest';

@@ -19,6 +19,8 @@ type InitializedConfig = UnwrapPartial<Config>;
 
 Note: If the provided type isn’t of `Partial<T>`, `UnwrapPartial` has no effect on the original type.
 
+Note: A numeric or symbol index signature cannot be reversed through `Partial<infer T>`, so `UnwrapPartial<{[index: number]: string | undefined}>` is `unknown` rather than the input type.
+
 @category Object
 */
 export type UnwrapPartial<PartialObjectType> =

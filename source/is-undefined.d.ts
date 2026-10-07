@@ -17,6 +17,7 @@ type Example2 = UndefinedFallback<number, string>;
 @category Type Guard
 @category Utilities
 */
-export type IsUndefined<T> = [T] extends [undefined] ? true : false;
+// `never` is checked first, because it is assignable to `undefined` and would otherwise answer `true`.
+export type IsUndefined<T> = [T] extends [never] ? false : [T] extends [undefined] ? true : false;
 
 export {};

@@ -17,6 +17,7 @@ type Example2 = NonNullFallback<number, string>;
 @category Type Guard
 @category Utilities
 */
-export type IsNull<T> = [T] extends [null] ? true : false;
+// `never` is checked first, because it is assignable to `null` and would otherwise answer `true`.
+export type IsNull<T> = [T] extends [never] ? false : [T] extends [null] ? true : false;
 
 export {};

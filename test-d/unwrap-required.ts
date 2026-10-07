@@ -71,3 +71,7 @@ expectType<RegExp>({} as UnwrapRequired<RegExp>);
 expectType<Promise<string>>({} as UnwrapRequired<Promise<string>>);
 expectType<string>({} as UnwrapRequired<string>);
 expectType<() => string>({} as UnwrapRequired<() => string>);
+
+// Known limitation: a numeric or symbol index signature cannot be reversed through `Required<infer T>`, so the inferred object type is `unknown` and the index signature is lost. See the note in the docs.
+declare const numericIndex: UnwrapRequired<{[index: number]: string}>;
+expectType<unknown>(numericIndex);

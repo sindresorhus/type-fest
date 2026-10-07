@@ -1,4 +1,5 @@
 import type tag from 'tagged-tag';
+import type {UnionMember} from './union-member.d.ts';
 
 // eslint-disable-next-line type-fest/require-exported-types
 export type TagContainer<Token> = {
@@ -126,16 +127,29 @@ type WontWork = UnwrapTagged<string>;
 
 @category Type
 */
-export type UnwrapTagged<TaggedType extends Tag<PropertyKey, any>> =
+// The constraint accepts a bare `TagContainer` too, so that the deprecated `Opaque` form, which tags with a token rather than a keyed object, can be unwrapped as well.
+export type UnwrapTagged<TaggedType extends TagContainer<any>> =
 	RemoveAllTags<TaggedType>;
 
-type RemoveAllTags<T> = T extends Tag<PropertyKey, any>
-	? {
-		[ThisTag in keyof T[typeof tag]]: T extends Tagged<infer Type, ThisTag, T[typeof tag][ThisTag]>
-			? RemoveAllTags<Type>
+type RemoveAllTags<T> = T extends TagContainer<any>
+	// Every order of removing the tags ends at the same type, so following only one of them avoids branching recursively over every removal order.
+	? RemoveAllTags<UnionMember<RemoveTag<T>>>
+	: T;
+
+/**
+Removes a single tag from `T`, returning every possible result.
+
+A tag can be applied one tag-name at a time (each application contributes its own layer to the intersection) or as a union of tag names in a single application (one layer holding a multi-key tag object). Because the intersection is only stripped when a layer matches a target tag object exactly, both shapes are peeled here, and only strictly smaller results are kept so that the recursion always makes progress and terminates.
+*/
+type RemoveTag<T extends TagContainer<unknown>> =
+	| {
+		[ThisTag in keyof T[typeof tag]]: T extends infer Underlying & Tag<ThisTag, T[typeof tag][ThisTag]>
+			? [Underlying] extends [T] ? never : Underlying
 			: never
 	}[keyof T[typeof tag]]
-	: T;
+	| (T extends infer Underlying & TagContainer<T[typeof tag]>
+		? [Underlying] extends [T] ? never : Underlying
+		: never);
 
 /**
 Note: The `Opaque` type is deprecated in favor of `Tagged`.
@@ -225,7 +239,7 @@ Why is this necessary?
 
 @example
 ```
-import type {Opaque, UnwrapOpaque} from 'type-fest';
+import type {Opaque, Tagged, UnwrapOpaque} from 'type-fest';
 
 type AccountType = Opaque<'SAVINGS' | 'CHECKING', 'AccountType'>;
 
@@ -242,7 +256,6 @@ const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does n
 type WontWork = UnwrapOpaque<string>;
 
 // Using a Tagged type will work too.
-// @ts-expect-error
 type WillWork = UnwrapOpaque<Tagged<number, 'AccountNumber'>>; // number
 ```
 
