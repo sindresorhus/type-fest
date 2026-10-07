@@ -1,3 +1,5 @@
+import type {PickIndexSignature} from './pick-index-signature.d.ts';
+
 declare const emptyObjectSymbol: unique symbol;
 
 /**
@@ -41,11 +43,19 @@ import type {IsEmptyObject} from 'type-fest';
 type Pass = IsEmptyObject<{}>; //=> true
 type Fail1 = IsEmptyObject<[]>; //=> false
 type Fail2 = IsEmptyObject<null>; //=> false
+type Fail3 = IsEmptyObject<{[key: string]: number}>; //=> false
+type Fail4 = IsEmptyObject<{[key: symbol]: number}>; //=> false
 ```
 
 @see {@link EmptyObject}
 @category Object
 */
-export type IsEmptyObject<T> = T extends EmptyObject ? true : false;
+export type IsEmptyObject<T> =
+	T extends EmptyObject
+		// A type with an index signature, of any key type, can hold any property, so it is not strictly `{}`.
+		? [keyof PickIndexSignature<T>] extends [never]
+			? true
+			: false
+		: false;
 
 export {};

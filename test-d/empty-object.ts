@@ -34,3 +34,13 @@ const _a: unknown = bar.id;
 
 const baz: Union = {id: 42};
 expectType<{id: number}>(baz);
+
+// A type with an index signature can hold any property, so it is not strictly `{}`.
+expectType<IsEmptyObject<{[key: string]: number}>>(false);
+expectType<IsEmptyObject<{[key: number]: number}>>(false);
+expectType<IsEmptyObject<Record<string, unknown>>>(false);
+
+// A type with an index signature of any key type can hold a property, so it is not strictly `{}`.
+expectType<IsEmptyObject<{[key: symbol]: number}>>(false);
+expectType<IsEmptyObject<{[key: `data-${string}`]: number}>>(false);
+expectType<IsEmptyObject<{[key: `${bigint}`]: number}>>(false);

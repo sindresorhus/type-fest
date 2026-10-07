@@ -176,7 +176,7 @@ import type {Exact, Opaque} from '../index.d.ts';
 }
 
 { // Spec - union - mixture object/primitive
-	type Type = {code: string} | string;
+	type Type = string | {code: string};
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	{ // It should accept type a
@@ -194,6 +194,30 @@ import type {Exact, Opaque} from '../index.d.ts';
 		// @ts-expect-error
 		function_(input);
 	}
+
+	// It should accept a union of both types
+	function_(primitiveOrObjectInput);
+
+	// It should reject a union with an excess property on the object member
+	// @ts-expect-error
+	function_(primitiveOrExcessObjectInput);
+}
+
+declare const primitiveOrObjectInput: 'a' | {code: string};
+declare const primitiveOrExcessObjectInput: 'a' | {code: string; name: string};
+declare const arrayOrObjectInput: {a: 'x'} | ['q'];
+declare const arrayOrExcessObjectInput: {a: 'x'; b: 'y'} | ['q'];
+
+{ // Spec - union - mixture object/array
+	type Type = {a: string} | string[];
+	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+
+	// It should accept a union of both types
+	function_(arrayOrObjectInput);
+
+	// It should reject a union with an excess property on the object member
+	// @ts-expect-error
+	function_(arrayOrExcessObjectInput);
 }
 
 { // Spec - jsonschema2ts generated request type with additionalProperties: true
@@ -552,4 +576,45 @@ import type {Exact, Opaque} from '../index.d.ts';
 	const function_ = <T extends Exact<Expected, T>>(arguments_: T) => arguments_;
 
 	function_({} as Expected);
+}
+
+{ // Spec - tuple
+	type Type = [string, number];
+	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+
+	{ // It should accept an exact tuple
+		const input: [string, number] = ['', 1];
+		function_(input);
+	}
+
+	{ // It should reject a longer tuple
+		const input: [string, number, number] = ['', 1, 2];
+		// @ts-expect-error
+		function_(input);
+	}
+}
+
+declare const unionInput: {name: string} | {name: string; id: number};
+
+{ // Spec - the union is on the input side, and it should reject an input whose union has a member with an excess property
+	type Type = {name: string};
+	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+	// @ts-expect-error
+	function_(unionInput);
+}
+
+{ // Spec - readonly tuple
+	type Type = readonly [string, number];
+	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
+
+	{ // It should accept a readonly tuple of the same length
+		const input = ['', 1] as const;
+		function_(input);
+	}
+
+	{ // It should reject a longer readonly tuple
+		const input = ['', 1, 2] as const;
+		// @ts-expect-error
+		function_(input);
+	}
 }

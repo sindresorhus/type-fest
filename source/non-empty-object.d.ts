@@ -31,8 +31,12 @@ const update2: UpdateRequest<User> = {};
 
 @see Use `IsEmptyObject` to check whether an object is empty.
 
+Note: An index signature counts as a required key, so a type with one accepts `{}`.
+
 @category Object
 */
-export type NonEmptyObject<T extends object> = HasRequiredKeys<T> extends true ? T : RequireAtLeastOne<T, keyof T>;
+export type NonEmptyObject<T extends object> = T extends unknown // For distributing `T`, so each union member is checked on its own keys
+	? HasRequiredKeys<T> extends true ? T : RequireAtLeastOne<T, keyof T>
+	: never;
 
 export {};

@@ -1,4 +1,4 @@
-import {expectAssignable, expectType} from 'tsd';
+import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 import type {RequireAtLeastOne, Simplify} from '../index.d.ts';
 
 type SystemMessages = {
@@ -66,3 +66,24 @@ expectType<never>({} as RequireAtLeastOne<never>);
 expectType<never>({} as RequireAtLeastOne<never, 'foo'>);
 expectType<never>({} as RequireAtLeastOne<never, any>);
 expectType<never>({} as RequireAtLeastOne<never, never>);
+
+// A key that only one member of a union has is accepted, and a member without it is left as it is.
+expectAssignable<RequireAtLeastOne<{a?: 1} | {b: 2}, 'a'>>({a: 1});
+expectAssignable<RequireAtLeastOne<{a?: 1} | {b: 2}, 'a'>>({b: 2});
+
+// Each key of the set is the required one in its own branch of the union, and the others stay optional. The `readonly` of a key travels with it, because the branch is built from `Pick` over the input.
+declare const oneOfTwo: Simplify<RequireAtLeastOne<{a?: 1; b?: 2}, 'a' | 'b'>>;
+expectType<{a: 1; b?: 2} | {a?: 1; b: 2}>(oneOfTwo);
+
+declare const oneOfTwoReadonly: Simplify<RequireAtLeastOne<{readonly a?: 1; b?: 2}, 'a' | 'b'>>;
+expectType<{readonly a: 1; b?: 2} | {readonly a?: 1; b: 2}>(oneOfTwoReadonly);
+
+// A key of the object that the set does not name is carried through in every branch, modifiers included.
+declare const untouchedKey: Simplify<RequireAtLeastOne<{a?: 1; b?: 2; readonly c?: string}, 'a' | 'b'>>;
+expectType<{a: 1; b?: 2; readonly c?: string} | {a?: 1; b: 2; readonly c?: string}>(untouchedKey);
+
+// A union member that has none of the keys is left as it is.
+type Shape = {kind: 'circle'; radius?: number; diameter?: number} | {kind: 'square'; side: number};
+expectAssignable<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>({kind: 'square', side: 1});
+expectAssignable<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>({kind: 'circle', radius: 1});
+expectNotAssignable<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>({kind: 'circle'} as const);

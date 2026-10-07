@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectAssignable, expectType} from 'tsd';
 import type {ExclusifyUnion} from '../source/exclusify-union.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
@@ -83,3 +83,11 @@ function processPayment(payment: ExclusifyUnion<CardPayment | PaypalPayment>) {
 expectType<unknown>({} as ExclusifyUnion<unknown>);
 expectType<any>({} as ExclusifyUnion<any>);
 expectType<never>({} as ExclusifyUnion<never>);
+
+// A string index signature contributes `string | number` to the keys of the union, and adding those as `never` keys collides with the other members' own named string keys, which left the union with nothing assignable to it. The type only ever adds keys, so it must not reject a member of its input.
+expectAssignable<ExclusifyUnion<{[k: string]: number} | {a: string}>>({a: 'x'});
+expectAssignable<ExclusifyUnion<Record<string, number> | {a: string}>>({a: 'x'});
+
+// A `number` or `symbol` index signature does not cover a named string key, so those keys are still added as `never` and the member keeps its own index signature.
+expectType<{[k: number]: number; a?: never} | {a: string}>({} as ExclusifyUnion<{[k: number]: number} | {a: string}>);
+expectType<{[k: symbol]: number; a?: never} | {a: string}>({} as ExclusifyUnion<{[k: symbol]: number} | {a: string}>);

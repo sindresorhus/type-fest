@@ -102,3 +102,8 @@ expectType<never>({} as RequireAllOrNone<never>);
 expectType<never>({} as RequireAllOrNone<never, 'foo'>);
 expectType<never>({} as RequireAllOrNone<never, any>);
 expectType<never>({} as RequireAllOrNone<never, never>);
+
+// A key that only one member of a union has is accepted, and a member without it is left as it is.
+expectAssignable<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({c: 2});
+expectAssignable<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({a: 1, b: 1});
+expectNotAssignable<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({a: 1} as const);

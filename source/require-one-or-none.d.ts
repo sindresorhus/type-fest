@@ -1,3 +1,4 @@
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {RequireExactlyOne} from './require-exactly-one.d.ts';
 import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
@@ -34,16 +35,20 @@ const responder3: Responder = {
 
 @category Object
 */
-export type RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
+export type RequireOneOrNone<ObjectType, KeysType extends KeysOfUnion<ObjectType> = KeysOfUnion<ObjectType>> =
 	IfNotAnyOrNever<ObjectType, {
 		ifNot: If<IsNever<KeysType>,
 			ObjectType,
-			_RequireOneOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>>;
+			_RequireOneOrNone<ObjectType, If<IsAny<KeysType>, KeysOfUnion<ObjectType>, KeysType>>>;
 	}>;
 
-type _RequireOneOrNone<ObjectType, KeysType extends keyof ObjectType> = (
-	| RequireExactlyOne<ObjectType, KeysType>
-	| RequireNone<KeysType>
-) & Omit<ObjectType, KeysType>; // Ignore unspecified keys.
+// The keys are intersected with each member's own inside the distribution, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would otherwise be dropped before the type ever saw it.
+type _RequireOneOrNone<ObjectType, KeysType extends PropertyKey> = ObjectType extends unknown
+	? (
+		| RequireExactlyOne<ObjectType, KeysType & keyof ObjectType>
+		| RequireNone<KeysType & keyof ObjectType>
+	) & Omit<ObjectType, KeysType & keyof ObjectType> // Ignore unspecified keys.
+	& RequireNone<Exclude<KeysType, keyof ObjectType>> // Forbid the keys of the other union members.
+	: never;
 
 export {};

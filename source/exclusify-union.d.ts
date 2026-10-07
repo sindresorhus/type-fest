@@ -2,6 +2,7 @@ import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
 /**
@@ -137,7 +138,8 @@ type _ExclusifyUnion<Union, UnionCopy = Union> = Union extends unknown // For di
 	? Simplify<
 		Union & Partial<
 			Record<
-				Exclude<KeysOfUnion<UnionCopy>, keyof Union>,
+				// A string index signature contributes `string | number` to `KeysOfUnion`, and adding those as `never` keys would collide with the other members' own named string keys and leave the union with nothing assignable to it, so the keys are read with the index signatures taken off.
+				Exclude<KeysOfUnion<OmitIndexSignature<UnionCopy>>, keyof OmitIndexSignature<Union>>,
 				never
 			>
 		>

@@ -130,3 +130,15 @@ expectType<never>({} as RequireOneOrNone<never>);
 expectType<never>({} as RequireOneOrNone<never, 'foo'>);
 expectType<never>({} as RequireOneOrNone<never, any>);
 expectType<never>({} as RequireOneOrNone<never, never>);
+
+// A key that only one member of a union has is accepted, and a member without it is left as it is.
+expectAssignable<RequireOneOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({c: 2});
+expectAssignable<RequireOneOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({a: 1});
+expectNotAssignable<RequireOneOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({a: 1, b: 1} as const);
+
+// At most one of the keys is allowed across the union members, so a key from another member is not allowed next to it.
+type SplitKeys = {a?: 1; z?: 0} | {b?: 2; z?: 0};
+expectAssignable<RequireOneOrNone<SplitKeys, 'a' | 'b'>>({a: 1});
+expectAssignable<RequireOneOrNone<SplitKeys, 'a' | 'b'>>({b: 2, z: 0});
+expectAssignable<RequireOneOrNone<SplitKeys, 'a' | 'b'>>({z: 0});
+expectNotAssignable<RequireOneOrNone<SplitKeys, 'a' | 'b'>>({a: 1, b: 2} as const);

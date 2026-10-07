@@ -1,3 +1,4 @@
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -39,16 +40,19 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 
 @category Object
 */
-export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> =
+export type RequireAllOrNone<ObjectType, KeysType extends KeysOfUnion<ObjectType> = KeysOfUnion<ObjectType>> =
 	IfNotAnyOrNever<ObjectType, {
 		ifNot: If<IsNever<KeysType>,
 			ObjectType,
-			_RequireAllOrNone<ObjectType, If<IsAny<KeysType>, keyof ObjectType, KeysType>>>;
+			_RequireAllOrNone<ObjectType, If<IsAny<KeysType>, KeysOfUnion<ObjectType>, KeysType>>>;
 	}>;
 
-type _RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType> = (
-	| RequireAll<ObjectType, KeysType>
-	| RequireNone<KeysType>
-) & Omit<ObjectType, KeysType>; // The rest of the keys.
+// The keys are intersected with each member's own inside the distribution, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would otherwise be dropped before the type ever saw it.
+type _RequireAllOrNone<ObjectType, KeysType> = ObjectType extends unknown
+	? (
+		| RequireAll<ObjectType, KeysType & keyof ObjectType>
+		| RequireNone<KeysType & keyof ObjectType>
+	) & Omit<ObjectType, KeysType & keyof ObjectType> // The rest of the keys.
+	: never;
 
 export {};
