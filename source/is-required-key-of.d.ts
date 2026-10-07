@@ -1,3 +1,4 @@
+import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {Not} from './internal/type.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -42,10 +43,12 @@ type T5 = IsRequiredKeyOf<User | Admin, 'surname'>;
 @category Type Guard
 @category Utilities
 */
-export type IsRequiredKeyOf<Type extends object, Key extends keyof Type> =
+export type IsRequiredKeyOf<Type extends object, Key extends KeysOfUnion<Type>> =
 	IsAny<Type | Key> extends true ? never
-		: Key extends keyof Type
-			? Not<IsOptionalKeyOf<Type, Key>>
-			: false;
+		: Type extends unknown
+			? Key extends keyof Type
+				? Not<IsOptionalKeyOf<Type, Key>>
+				: false
+			: never;
 
 export {};

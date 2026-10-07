@@ -123,3 +123,12 @@ expectType<IsRequiredKeyOf<any, 'a'>>(never);
 expectType<IsRequiredKeyOf<K, never>>(never);
 expectType<IsRequiredKeyOf<any, never>>(never);
 expectType<IsRequiredKeyOf<never, 'a'>>(never);
+
+// The mirror of the `IsOptionalKeyOf` index-signature discrepancy: only the built-in `Record` type reports a literal key as required. See the note in that type's docs.
+expectType<false>({} as IsRequiredKeyOf<{[key: string]: number}, 'a'>);
+expectType<false>({} as IsRequiredKeyOf<{[Key in string]: number}, 'a'>);
+expectType<true>({} as IsRequiredKeyOf<Record<string, number>, 'a'>);
+
+// A key that only one member of a union has is still a key of that member, and the type distributes over the union anyway, so it should be accepted. `keyof` of a union is the intersection of its members' keys, so the constraint rejected it. The answer is `boolean`, because the member that has the key decides it and the one that does not contributes `false`.
+declare const keyOfOneMember: IsRequiredKeyOf<{a: 1} | {b: 2}, 'a'>;
+expectType<boolean>(keyOfOneMember);

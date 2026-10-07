@@ -88,3 +88,22 @@ type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 
 // @ts-expect-error
 type AllowsOnlyObjects = WritableKeysOf<string>;
+
+// Known limitation: an index signature is reported as a writable key, for the same reason `RequiredKeysOf` reports it as a required key. See the note in that type's docs.
+declare const indexSignature: WritableKeysOf<{[k: string]: string; readonly a: string}>;
+expectType<string | number>(indexSignature);
+
+declare const onlyIndexSignature: WritableKeysOf<{[k: string]: string}>;
+expectType<string | number>(onlyIndexSignature);
+
+// A readonly index signature is not a writable key, and it must not swallow the writable named keys next to it
+expectType<never>({} as WritableKeysOf<{readonly [key: string]: string; readonly a: string}>);
+expectType<'id'>({} as WritableKeysOf<{readonly [key: string]: unknown; id: number}>);
+expectType<'a' | 'b'>({} as WritableKeysOf<{readonly [key: string]: unknown; a: string; b?: string}>);
+
+// A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
+expectType<'a' | 'b'>({} as WritableKeysOf<{a: 1} | {b: 2}>);
+expectType<'a' | 'b'>({} as WritableKeysOf<{a: 1; b: 2} | {a: 1}>);
+
+// `any` has every key, and none of them are readonly, consistent with `RequiredKeysOf<any>`
+expectType<string | number | symbol>({} as WritableKeysOf<any>);

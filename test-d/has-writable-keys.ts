@@ -27,3 +27,9 @@ declare const test3: HasWritableKeys3;
 expectType<true>(test1);
 expectType<false>(test2);
 expectType<true>(test3);
+
+// A readonly index signature must not swallow the writable named keys next to it
+expectType<true>({} as HasWritableKeys<{readonly [key: string]: unknown; id: number}>);
+expectType<false>({} as HasWritableKeys<{readonly [key: string]: unknown; readonly id: number}>);
+
+expectType<true>({} as HasWritableKeys<any>);

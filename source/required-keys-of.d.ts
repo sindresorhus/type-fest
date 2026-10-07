@@ -28,6 +28,10 @@ const validator3 = createValidation<User>('luckyNumber', value => value > 0);
 // Error: Argument of type '"luckyNumber"' is not assignable to parameter of type '"name" | "surname"'.
 ```
 
+Known limitations:
+- An index signature is reported as a required key, so `RequiredKeysOf<Record<string, unknown>>` is `string` rather than `never`, and `HasRequiredKeys<Record<string, unknown>>` is `true`. This is because `Exclude<keyof Type, …>` puts the signature back, and the same `Exclude` is relied on to keep the members an array inherits from `Array`.
+- A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `RequiredKeysOf<{a: string} | {b: number}>` is `'a' | 'b'` while `keyof` of the same union is `never`. Read one member at a time if you need a key that is valid for the whole union.
+
 @category Utilities
 */
 export type RequiredKeysOf<Type extends object> =

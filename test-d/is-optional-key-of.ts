@@ -123,3 +123,16 @@ expectType<IsOptionalKeyOf<any, 'a'>>(never);
 expectType<IsOptionalKeyOf<K, never>>(never);
 expectType<IsOptionalKeyOf<any, never>>(never);
 expectType<IsOptionalKeyOf<never, 'a'>>(never);
+
+// Only the built-in `Record` type disagrees, because TypeScript compares it with the `Record` in the check by its type arguments instead of by its properties. It is not caused by `keyof`, which is the same for `Record<string, T>` and `{[Key in string]: T}`. See the note in the docs.
+type CustomRecord<Key extends PropertyKey, Value> = {[RecordKey in Key]: Value};
+expectType<true>({} as IsOptionalKeyOf<{[key: string]: number}, 'a'>);
+expectType<true>({} as IsOptionalKeyOf<{[Key in string]: number}, 'a'>);
+expectType<true>({} as IsOptionalKeyOf<CustomRecord<string, number>, 'a'>);
+expectType<false>({} as IsOptionalKeyOf<Record<string, number>, 'a'>);
+expectType<false>({} as IsOptionalKeyOf<{[key: string]: number}, string>);
+expectType<false>({} as IsOptionalKeyOf<Record<string, number>, string>);
+
+// A key that only one member of a union has is still a key of that member, and the type distributes over the union anyway, so it should be accepted. `keyof` of a union is the intersection of its members' keys, so the constraint rejected it. The answer is `boolean`, because the member that has the key decides it and the one that does not contributes `false`.
+declare const keyOfOneMember: IsOptionalKeyOf<{a?: 1} | {b: 2}, 'a'>;
+expectType<boolean>(keyOfOneMember);

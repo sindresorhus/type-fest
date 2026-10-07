@@ -88,3 +88,7 @@ type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 
 // @ts-expect-error
 type AllowsOnlyObjects = ReadonlyKeysOf<string>;
+
+// A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
+expectType<'a' | 'b'>({} as ReadonlyKeysOf<{readonly a: 1} | {readonly b: 2}>);
+expectType<'a' | 'b'>({} as ReadonlyKeysOf<{readonly a: 1; readonly b: 2} | {readonly a: 1; c: 3}>);
