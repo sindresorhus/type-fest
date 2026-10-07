@@ -1,5 +1,5 @@
 import {expectType, expectAssignable, expectNotType} from 'tsd';
-import type {PartialDeep, Simplify} from '../index.d.ts';
+import type {IsEqual, PartialDeep, Simplify} from '../index.d.ts';
 
 class ClassA {
 	foo = 1;
@@ -135,3 +135,72 @@ declare const functionWithProperties4: PartialDeep<FunctionWithProperties4>;
 expectType<string>(functionWithProperties4(1));
 expectType<number>(functionWithProperties4('foo', 1));
 expectNotType<{p1?: string}>({} as Simplify<typeof functionWithProperties4>);
+
+// `Promise` and its `then` method are not made partial, unlike `Map` and `Set`.
+declare const partialDeepPromise: PartialDeep<Promise<{a: number}>>;
+expectType<Promise<{a: number}>>(partialDeepPromise);
+
+// A `WeakMap` and its methods are not made partial.
+declare const partialDeepWeakMap: PartialDeep<WeakMap<{a: number}, number>>;
+expectType<WeakMap<{a: number}, number>>(partialDeepWeakMap);
+
+// A `WeakSet` and its methods are not made partial.
+declare const partialDeepWeakSet: PartialDeep<WeakSet<{a: number}>>;
+expectType<WeakSet<{a: number}>>(partialDeepWeakSet);
+
+// A `Set` is structurally a `WeakSet`, so its items must still be made partial, like a `Map`'s.
+expectType<true>({} as IsEqual<PartialDeep<Set<{a: number}>>, Set<{a?: number}>>);
+expectType<true>({} as IsEqual<PartialDeep<{s: Set<{a: number}>}>, {s?: Set<{a?: number}>}>);
+expectType<true>({} as IsEqual<PartialDeep<Map<string, Set<{a: number}>>>, Map<string, Set<{a?: number}>>>);
+expectType<true>({} as IsEqual<PartialDeep<{s: Array<Set<{a: number}>>}, {recurseIntoArrays: true}>, {s?: Array<Set<{a?: number}>>}>);
+
+// An abstract class has an `abstract new` signature, so it must be kept as is just like a concrete class constructor.
+abstract class AbstractClassForTest {
+	foo = 1;
+}
+
+expectType<true>({} as IsEqual<PartialDeep<typeof AbstractClassForTest>, typeof AbstractClassForTest>);
+
+// These are a single value rather than a structure to recurse into, so they are kept as is. Making every member of one optional does not describe a `Uint8Array` any more.
+declare const typedArray: PartialDeep<Uint8Array>;
+expectType<Uint8Array>(typedArray);
+
+declare const arrayBuffer: PartialDeep<ArrayBuffer>;
+expectType<ArrayBuffer>(arrayBuffer);
+
+declare const sharedArrayBuffer: PartialDeep<SharedArrayBuffer>;
+expectType<SharedArrayBuffer>(sharedArrayBuffer);
+
+declare const dataView: PartialDeep<DataView>;
+expectType<DataView>(dataView);
+
+// A member that is a method keeps its `this` parameter. `Parameters` leaves `this` out, so the rebuilt function would otherwise accept any receiver. `NonNullable` is only there because an optional member carries an `| undefined` that `ThisParameterType` cannot see through.
+declare const methodWithThis: PartialDeep<{m: ((this: Date, a: string) => void) & {count: number}}>;
+expectType<Date>({} as ThisParameterType<NonNullable<(typeof methodWithThis)['m']>>);
+// A `Map` is structurally assignable to a `WeakMap` as soon as its key is an object or a symbol, so the weak-collection guard must not match it first and leave the whole map as it was, key and value alike.
+declare const objectKeyMap: PartialDeep<Map<{a: number}, {b: number}>>;
+expectType<Map<{a?: number}, {b?: number}>>(objectKeyMap);
+
+declare const symbolKeyMap: PartialDeep<Map<symbol, {a: number}>>;
+expectType<Map<symbol, {a?: number}>>(symbolKeyMap);
+
+declare const dateKeyMap: PartialDeep<Map<Date, {a: number}>>;
+expectType<Map<Date, {a?: number}>>(dateKeyMap);
+
+// The weak collections have no `set` and no iteration, so they are still left alone.
+declare const weakMap: PartialDeep<WeakMap<object, {a: number}>>;
+expectType<WeakMap<object, {a: number}>>(weakMap);
+
+declare const weakSet: PartialDeep<WeakSet<object>>;
+expectType<WeakSet<object>>(weakSet);
+
+// The `Function` interface has no call signature, so the function branch misses it, and mapping it produced an uncallable record of its own methods.
+expectType<Function>({} as PartialDeep<Function>);
+expectType<{callback?: Function}>({} as PartialDeep<{callback: Function}>);
+
+// A `PromiseLike` is kept like a `Promise`, so it stays a thenable that `Awaited` can unwrap.
+expectType<PromiseLike<{a: number}>>({} as PartialDeep<PromiseLike<{a: number}>>);
+
+// A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
+declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
+expectAssignable<PartialDeep<((event: string) => void) & {displayName: string}>>(handlerWithThis);

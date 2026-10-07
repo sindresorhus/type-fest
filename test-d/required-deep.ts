@@ -1,6 +1,8 @@
-import {expectNotType, expectType} from 'tsd';
-import type {RequiredDeep, Simplify} from '../index.d.ts';
+import {expectAssignable, expectNotType, expectType} from 'tsd';
+import type {IsEqual, RequiredDeep, Simplify} from '../index.d.ts';
 import type {BuiltIns} from '../source/internal/type.d.ts';
+
+declare const key: unique symbol;
 
 expectType<RequiredDeep<{a?: number; b: string}>>({} as {a: number; b: string});
 expectType<RequiredDeep<{a?: {b?: {c?: string}; d?: string}}>>({} as {a: {b: {c: string}; d: string}});
@@ -83,3 +85,53 @@ declare const functionWithProperties4: RequiredDeep<FunctionWithProperties4>;
 expectType<string>(functionWithProperties4(1));
 expectType<number>(functionWithProperties4('foo', 1));
 expectNotType<{p1: string}>({} as Simplify<typeof functionWithProperties4>);
+
+// Class constructors keep their construct signature, like the other `*Deep` utilities do.
+declare class ClassWithStatics {
+	static optionalStatic?: string;
+	optionalInstance?: string;
+	constructor(optionalInstance?: string);
+}
+expectType<typeof ClassWithStatics>({} as RequiredDeep<typeof ClassWithStatics>);
+
+// An abstract class has an `abstract new` signature, so it must be kept as is just like a concrete class constructor.
+abstract class AbstractClassForTest {
+	foo = 1;
+}
+
+expectType<true>({} as IsEqual<RequiredDeep<typeof AbstractClassForTest>, typeof AbstractClassForTest>);
+
+// A `WeakMap` and a `WeakSet` are rebuilt with their contents made required, like a `Map` and a `Set`, rather than having their own methods mapped one by one.
+expectType<{cache: WeakMap<object, {a: number}>}>({} as RequiredDeep<{cache?: WeakMap<object, {a?: number}>}>);
+expectType<{tags: WeakSet<{a: number}>}>({} as RequiredDeep<{tags?: WeakSet<{a?: number}>}>);
+
+// A plain object with `name` and `message` is structurally an `Error`, but it is data, so it is still walked.
+expectType<{name: string; message: string; meta: {code: number}}>({} as RequiredDeep<{name: string; message: string; meta?: {code?: number}}>);
+
+declare const arrayBufferKept: RequiredDeep<ArrayBuffer>;
+expectType<ArrayBuffer>(arrayBufferKept);
+
+declare const dataViewKept: RequiredDeep<DataView>;
+expectType<DataView>(dataViewKept);
+
+declare const typedArrayKept: RequiredDeep<Uint8Array>;
+expectType<Uint8Array>(typedArrayKept);
+
+declare const functionKept: RequiredDeep<() => void>;
+expectType<() => void>(functionKept);
+
+// A member that is a method keeps its `this` parameter. `Parameters` leaves `this` out, so the rebuilt function would otherwise accept any receiver.
+declare const methodWithThis: RequiredDeep<{m: ((this: Date, a: string) => void) & {count: number}}>;
+expectType<Date>({} as ThisParameterType<(typeof methodWithThis)['m']>);
+
+// A `unique symbol` key is a key like any other, and the walk has to reach it: the key is not a string, so a walk that builds its keys as text would leave it out.
+declare const requiredSymbol: RequiredDeep<{[key]?: {a?: number}}>;
+expectType<{[key]: {a: number}}>(requiredSymbol);
+
+// The `Function` interface has no call signature, so the function branch misses it, and mapping it produced an uncallable record of its own methods.
+expectType<Function>({} as RequiredDeep<Function>);
+expectType<{callback: Function}>({} as RequiredDeep<{callback: Function}>);
+
+// A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
+declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
+expectAssignable<RequiredDeep<((event: string) => void) & {displayName: string}>>(handlerWithThis);

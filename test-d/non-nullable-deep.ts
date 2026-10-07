@@ -1,7 +1,8 @@
-import {expectType} from 'tsd';
+import {expectAssignable, expectType} from 'tsd';
 import type {NonNullableDeep} from '../source/non-nullable-deep.d.ts';
 import type {Primitive} from '../source/primitive.d.ts';
 import type {Simplify} from '../source/simplify.d.ts';
+import type {IsEqual} from '../source/is-equal.d.ts';
 
 expectType<string>({} as NonNullableDeep<string | null | undefined>);
 expectType<string | number | boolean | bigint | symbol>({} as NonNullableDeep<Primitive>);
@@ -126,3 +127,51 @@ expectType<{a: {b: any}; c: never; d: unknown}>({} as NonNullableDeep<{a: {b: an
 expectType<never>({} as NonNullableDeep<never>);
 expectType<any>({} as NonNullableDeep<any>);
 expectType<unknown>({} as NonNullableDeep<unknown>);
+
+// An abstract class has an `abstract new` signature, so it must be kept as is just like a concrete class constructor.
+abstract class AbstractClassForTest {
+	foo = 1;
+}
+
+expectType<true>({} as IsEqual<NonNullableDeep<typeof AbstractClassForTest>, typeof AbstractClassForTest>);
+
+// A typed array is a single value, so it must be kept rather than recursed into.
+expectType<Uint8Array>({} as NonNullableDeep<Uint8Array | null>);
+
+// The same holds for the other non-recursive built-ins.
+expectType<ArrayBuffer>({} as NonNullableDeep<ArrayBuffer | null>);
+expectType<DataView>({} as NonNullableDeep<DataView | null>);
+expectType<Promise<{a: string}>>({} as NonNullableDeep<Promise<{a: string}> | null>);
+
+// Known limitation: a generic function is rebuilt from its `Parameters` and `ReturnType`, which instantiate its type parameter with `unknown`. See the docs.
+declare const genericFunction: NonNullableDeep<<Value>(value: Value) => Value>;
+expectType<(value: unknown) => unknown>(genericFunction);
+
+// A `this` parameter is neither `null` nor `undefined`, so it survives, and it is recursed into like any other parameter. `Parameters` excludes it, so it has to be added back explicitly, otherwise the rebuilt function would accept any `this`.
+expectType<Date>({} as ThisParameterType<NonNullableDeep<(this: Date, x: string) => void>>);
+expectType<{x: number}>({} as ThisParameterType<NonNullableDeep<(this: {x: number | null}, a: string) => void>>);
+expectType<{m: (this: Date, a: string) => void}>({} as NonNullableDeep<{m(this: Date, a: string | null): void}>);
+
+// The `this` constraint must survive, so a function whose `this` is a different type is still rejected. `ReadonlyDeep`, `WritableDeep`, `PartialDeep` and `RequiredDeep` all behave this way.
+declare function needsDateThis(function_: (this: Date, x: string) => void): void;
+declare const wrongThis: (this: RegExp, x: string) => void;
+// @ts-expect-error
+needsDateThis(wrongThis as NonNullableDeep<typeof wrongThis>);
+
+// The `Function` interface has no call signature, so the function branch misses it, and mapping it used to produce an uncallable record of its own methods.
+expectType<Function>({} as NonNullableDeep<Function>);
+expectType<{callback: Function}>({} as NonNullableDeep<{callback: Function}>);
+
+// A `PromiseLike` is a container like `Promise`, so its value is cleaned and the thenable is kept.
+expectType<PromiseLike<number>>({} as NonNullableDeep<PromiseLike<number | null>>);
+expectType<{value: PromiseLike<string>}>({} as NonNullableDeep<{value: PromiseLike<string | null>}>);
+
+// A thenable with other members, like a query builder, is kept as is, because rebuilding it as a `PromiseLike` would drop those members.
+type Query<Result> = PromiseLike<Result> & {where(field: string): Query<Result>};
+declare const query: NonNullableDeep<{query: Query<{a: 1 | null}>}>;
+expectType<Query<{a: 1 | null}>>(query.query);
+expectType<Query<{a: 1 | null}>>(query.query.where('x'));
+
+// A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
+declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
+expectAssignable<NonNullableDeep<((event: string) => void) & {displayName: string}>>(handlerWithThis);

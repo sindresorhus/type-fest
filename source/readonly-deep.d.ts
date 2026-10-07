@@ -1,4 +1,5 @@
-import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
+import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Create a deeply immutable version of another type.
@@ -71,42 +72,41 @@ Note that types containing overloaded functions are not made deeply readonly due
 @category Set
 @category Map
 */
-export type ReadonlyDeep<T> = T extends BuiltIns
+export type ReadonlyDeep<T> = T extends NonRecursiveLeaf
 	? T
-	: T extends new (...arguments_: any[]) => unknown
-		? T // Skip class constructors
-		: T extends (...arguments_: any[]) => unknown
-			? {} extends _ReadonlyObjectDeep<T>
+	: T extends (...arguments_: any[]) => unknown
+		? IsNever<keyof T> extends true // For functions with no properties
+			? T
+			: HasMultipleCallSignatures<T> extends true
 				? T
-				: HasMultipleCallSignatures<T> extends true
-					? T
-					: ((...arguments_: Parameters<T>) => ReturnType<T>) & _ReadonlyObjectDeep<T>
-			: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
-				? ReadonlyMapDeep<KeyType, ValueType>
-				: T extends Readonly<ReadonlySet<infer ItemType>>
-					? ReadonlySetDeep<ItemType>
-					// Identify tuples to avoid converting them to arrays inadvertently; special case `readonly [...never[]]`, as it emerges undesirably from recursive invocations of ReadonlyDeep below.
-					: T extends readonly [] | readonly [...never[]]
-						? readonly []
-						: T extends readonly [infer U, ...infer V]
-							? readonly [ReadonlyDeep<U>, ...ReadonlyDeep<V>]
-							: T extends readonly [...infer U, infer V]
-								? readonly [...ReadonlyDeep<U>, ReadonlyDeep<V>]
-								: T extends ReadonlyArray<infer ItemType>
-									? ReadonlyArray<ReadonlyDeep<ItemType>>
-									: T extends object
-										? _ReadonlyObjectDeep<T>
-										: unknown;
+				: CallSignatureOf<T> & _ReadonlyObjectDeep<T>
+		: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
+			? ReadonlyMapDeep<KeyType, ValueType>
+			: T extends Readonly<ReadonlySet<infer ItemType>>
+				? ReadonlySetDeep<ItemType>
+				: T extends readonly unknown[]
+					? IsArrayOfUnknownLength<T> extends false
+						// A homomorphic mapped type keeps the length, the optional elements and the rest element, without a recursion step per element.
+						? {readonly [Key in keyof T]: ReadonlyDeep<T[Key]>}
+						// An array of unknown length is rebuilt directly, because mapping it makes a recursive element type, such as `JsonValue`, infinitely deep.
+						: ReadonlyArray<ReadonlyDeep<T[number]>>
+					: T extends NonRecursiveType | WeakMap<WeakKey, unknown> | WeakSet<WeakKey>
+						? T // These are a single value rather than a structure to recurse into, so their methods are not made readonly. The weak collections are separate because they are rebuilt rather than skipped by the sibling types.
+						: T extends object
+							? _ReadonlyObjectDeep<T>
+							: unknown;
 
 /**
 Same as `ReadonlyDeep`, but accepts only `ReadonlyMap`s as inputs. Internal helper for `ReadonlyDeep`.
+
+The result is the `ReadonlyMap` built-in rather than a `Readonly` wrapped around it. A `ReadonlyMap` is already immutable, so the wrapper added nothing but an anonymous object type that is only mutually assignable to a `ReadonlyMap` rather than being one, which every other `*Deep` type here returns directly.
 */
-type ReadonlyMapDeep<KeyType, ValueType> = {} & Readonly<ReadonlyMap<ReadonlyDeep<KeyType>, ReadonlyDeep<ValueType>>>;
+type ReadonlyMapDeep<KeyType, ValueType> = {} & ReadonlyMap<ReadonlyDeep<KeyType>, ReadonlyDeep<ValueType>>;
 
 /**
-Same as `ReadonlyDeep`, but accepts only `ReadonlySet`s as inputs. Internal helper for `ReadonlyDeep`.
+Same as `ReadonlyDeep`, but accepts only `ReadonlySet`s as inputs. Internal helper for `ReadonlyDeep`. See the note on {@link ReadonlyMapDeep `ReadonlyMapDeep`} for why the built-in is returned unwrapped.
 */
-type ReadonlySetDeep<ItemType> = {} & Readonly<ReadonlySet<ReadonlyDeep<ItemType>>>;
+type ReadonlySetDeep<ItemType> = {} & ReadonlySet<ReadonlyDeep<ItemType>>;
 
 /**
 Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper for `ReadonlyDeep`.

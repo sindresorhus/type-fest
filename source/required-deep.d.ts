@@ -1,4 +1,4 @@
-import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
+import type {CallSignatureOf, HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
@@ -39,13 +39,15 @@ type RequiredSettings = RequiredDeep<Settings>;
 
 Note that types containing overloaded functions are not made deeply required due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 
+Note that an `Error` is walked like any other object, because a plain object with `name` and `message` is structurally an `Error` too. So `RequiredDeep<Error>` makes `stack` required, and a real `Error` is not assignable to it.
+
 @category Utilities
 @category Object
 @category Array
 @category Set
 @category Map
 */
-export type RequiredDeep<T> = T extends BuiltIns
+export type RequiredDeep<T> = T extends NonRecursiveLeaf
 	? T
 	: T extends Map<infer KeyType, infer ValueType>
 		? Map<RequiredDeep<KeyType>, RequiredDeep<ValueType>>
@@ -66,10 +68,13 @@ export type RequiredDeep<T> = T extends BuiltIns
 										? T
 										: HasMultipleCallSignatures<T> extends true
 											? T
-											: ((...arguments_: Parameters<T>) => ReturnType<T>) & RequiredObjectDeep<T>
-									: T extends object
-										? Simplify<RequiredObjectDeep<T>> // `Simplify` to prevent `RequiredObjectDeep` from appearing in the resulting type
-										: unknown;
+											: CallSignatureOf<T> & RequiredObjectDeep<T>
+									// The `Function` interface has no call signature, so the branch above misses it, and mapping it would produce an uncallable record of its own methods.
+									: T extends Function
+										? T
+										: T extends object
+											? Simplify<RequiredObjectDeep<T>> // `Simplify` to prevent `RequiredObjectDeep` from appearing in the resulting type
+											: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {
 	[KeyType in keyof ObjectType]-?: RequiredDeep<ObjectType[KeyType]>

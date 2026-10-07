@@ -1,4 +1,5 @@
-import type {BuiltIns, HasMultipleCallSignatures} from './internal/index.d.ts';
+import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
@@ -29,23 +30,26 @@ Note that types containing overloaded functions are not made deeply writable due
 @category Set
 @category Map
 */
-export type WritableDeep<T> = T extends BuiltIns
+export type WritableDeep<T> = T extends NonRecursiveLeaf
 	? T
 	: T extends (...arguments_: any[]) => unknown
-		? {} extends _WritableObjectDeep<T>
+		? IsNever<keyof T> extends true // For functions with no properties
 			? T
 			: HasMultipleCallSignatures<T> extends true
 				? T
-				: ((...arguments_: Parameters<T>) => ReturnType<T>) & _WritableObjectDeep<T>
+				: CallSignatureOf<T> & _WritableObjectDeep<T>
 		: T extends ReadonlyMap<unknown, unknown>
 			? WritableMapDeep<T>
 			: T extends ReadonlySet<unknown>
 				? WritableSetDeep<T>
 				: T extends readonly unknown[]
 					? WritableArrayDeep<T>
-					: T extends object
-						? _WritableObjectDeep<T>
-						: unknown;
+					// These are a single value rather than a structure to recurse into, or a weak collection whose contents cannot be reached, so they are left alone and their methods are not rebuilt.
+					: T extends NonRecursiveType | WeakMap<WeakKey, unknown> | WeakSet<WeakKey>
+						? T
+						: T extends object
+							? _WritableObjectDeep<T>
+							: unknown;
 
 /**
 Same as `WritableDeep`, but accepts only `Map`s as inputs. Internal helper for `WritableDeep`.
@@ -74,11 +78,11 @@ export type _WritableObjectDeep<ObjectType extends object> = {
 Same as `WritableDeep`, but accepts only `Array`s as inputs. Internal helper for `WritableDeep`.
 */
 type WritableArrayDeep<ArrayType extends readonly unknown[]> =
-	ArrayType extends readonly [] ? []
-		: ArrayType extends readonly [...infer U, infer V] ? [...WritableArrayDeep<U>, WritableDeep<V>]
-			: ArrayType extends readonly [infer U, ...infer V] ? [WritableDeep<U>, ...WritableArrayDeep<V>]
-				: ArrayType extends ReadonlyArray<infer U> ? Array<WritableDeep<U>>
-					: ArrayType extends Array<infer U> ? Array<WritableDeep<U>>
-						: ArrayType;
+	// A tuple has fixed elements at either end, including an optional first element or a fixed element after a leading rest.
+	IsArrayOfUnknownLength<ArrayType> extends false
+		// A homomorphic mapped type keeps the length, labels, optional elements and rest element without a recursion step per element.
+		? _WritableObjectDeep<ArrayType>
+		// An array of unknown length is rebuilt directly, because mapping it makes a recursive element type, such as `JsonValue`, infinitely deep.
+		: Array<WritableDeep<ArrayType[number]>>;
 
 export {};
