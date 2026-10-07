@@ -10,7 +10,9 @@ type StructuredCloneablePrimitive =
 	| undefined
 	| Boolean
 	| Number
-	| String;
+	| String
+	// The algorithm serializes a `[[BigIntData]]` platform object in the same step as the other three wrappers, so `structuredClone` hands one back rather than throwing.
+	| BigInt;
 
 type StructuredCloneableData =
 	| ArrayBuffer

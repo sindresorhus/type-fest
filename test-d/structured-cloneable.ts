@@ -52,7 +52,7 @@ For Error types, the error name must be one of: Error, EvalError, RangeError, Re
  - VideoFrame
 */
 
-// Date, Boolean, Number, String
+// Date, Boolean, Number, String, BigInt
 expectAssignable<StructuredCloneable>(new Date());
 declare const booleanWrapperObject: Boolean;
 expectAssignable<StructuredCloneable>(booleanWrapperObject);
@@ -60,6 +60,9 @@ declare const numberWrapperObject: Number;
 expectAssignable<StructuredCloneable>(numberWrapperObject);
 declare const stringWrapperObject: String;
 expectAssignable<StructuredCloneable>(stringWrapperObject);
+// The algorithm serializes a `[[BigIntData]]` platform object in the same step as the other three wrappers, and `structuredClone` hands one back, so the fourth belongs with them. It has to be named as a type because `Object(1n)` is declared to return `any`.
+declare const bigintWrapperObject: BigInt;
+expectAssignable<StructuredCloneable>(bigintWrapperObject);
 
 // Primitive types, except symbol.
 expectAssignable<StructuredCloneable>(undefined);

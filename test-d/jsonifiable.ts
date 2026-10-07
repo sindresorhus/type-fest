@@ -28,3 +28,13 @@ expectNotAssignable<Jsonifiable>(undefined);
 expectNotAssignable<Jsonifiable>(new Map());
 expectNotAssignable<Jsonifiable>({a: new Map()});
 expectNotAssignable<Jsonifiable>([new Map()]);
+
+// `JSON.stringify` passes the property key to `toJSON`, so `toJSON` may declare parameters.
+declare const toJSONWithKey: {toJSON(key: string): string};
+expectAssignable<Jsonifiable>(toJSONWithKey);
+
+declare const toJSONWithoutKey: {toJSON(): string};
+expectAssignable<Jsonifiable>(toJSONWithoutKey);
+
+declare const toJSONReturningMap: {toJSON(): Map<string, number>};
+expectNotAssignable<Jsonifiable>(toJSONReturningMap);

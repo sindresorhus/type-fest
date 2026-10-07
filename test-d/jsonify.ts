@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
-import type {EmptyObject, Jsonify, JsonObject, JsonValue, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
+import type {EmptyObject, Jsonify, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
 interface A {
 	a: number;
@@ -207,6 +207,32 @@ expectType<null[]>(arrayMemberFunction);
 declare const arrayMemberSymbol: Jsonify<Array<typeof symbol>>;
 expectType<null[]>(arrayMemberSymbol);
 
+// A non-JSON-able member of a union still becomes null instead of collapsing the union
+declare const arrayMemberUnionWithSymbol: Jsonify<Array<typeof symbol | typeof number>>;
+expectType<Array<null | number>>(arrayMemberUnionWithSymbol);
+
+declare const arrayMemberUnionWithFunction: Jsonify<Array<typeof function_ | typeof number>>;
+expectType<Array<null | number>>(arrayMemberUnionWithFunction);
+
+// The same holds for tuple members
+declare const tupleMemberUnionWithSymbol: Jsonify<[typeof string | typeof symbol, number]>;
+expectType<[string | null, number]>(tupleMemberUnionWithSymbol);
+
+// The member mapping is distributive, and distributing over the empty union gives `never` rather than `null`, so this changed from `null[]` to `never[]`. That is the better answer: an array of `never` can only be empty, and `JSON.stringify([])` is `'[]'`.
+declare const arrayMemberNever: Jsonify<never[]>;
+expectType<never[]>(arrayMemberNever);
+
+// A tuple position cannot be empty, so a `never` member still becomes `null`.
+declare const tupleMemberNever: Jsonify<[never]>;
+expectType<[null]>(tupleMemberNever);
+
+declare const tupleMemberNeverAfterString: Jsonify<[string, never]>;
+expectType<[string, null]>(tupleMemberNeverAfterString);
+
+// `JSON.stringify` throws for a `bigint`, so there is no runtime answer, but a member it cannot represent still follows the same rule as a symbol or a function.
+declare const arrayMemberBigint: Jsonify<Array<1n>>;
+expectType<null[]>(arrayMemberBigint);
+
 // When used in object values, these keys are filtered
 declare const objectValueUndefined: Jsonify<{keep: string; undefined: typeof undefined}>;
 expectType<{keep: string}>(objectValueUndefined);
@@ -277,6 +303,19 @@ expectAssignable<Jsonify<typeof set>>({});
 // Regression test for https://github.com/sindresorhus/type-fest/issues/466
 expectNotAssignable<Jsonify<typeof set>>(42);
 expectNotAssignable<Jsonify<typeof set>>({foo: 42});
+
+// A `ReadonlyMap`/`ReadonlySet` is the same as a `Map`/`Set` at runtime and also stringifies to `{}`.
+declare const readonlyMap: ReadonlyMap<string, number>;
+declare const readonlyMapJson: Jsonify<typeof readonlyMap>;
+expectType<EmptyObject>(readonlyMapJson);
+expectAssignable<Jsonify<typeof readonlyMap>>({});
+expectNotAssignable<Jsonify<typeof readonlyMap>>({size: 1});
+
+declare const readonlySet: ReadonlySet<string>;
+declare const readonlySetJson: Jsonify<typeof readonlySet>;
+expectType<EmptyObject>(readonlySetJson);
+expectAssignable<Jsonify<typeof readonlySet>>({});
+expectNotAssignable<Jsonify<typeof readonlySet>>({size: 1});
 
 // Positive and negative Infinity, NaN and null are turned into null
 // NOTE: NaN is not detectable in TypeScript, so it is not tested; see https://github.com/sindresorhus/type-fest/issues/406
@@ -418,3 +457,68 @@ expectAssignable<JsonObject>({} as {a: string});
 expectNotAssignable<JsonObject>({} as {a: string | undefined});
 expectAssignable<JsonObject>({} as {a?: string});
 expectNotAssignable<JsonObject>({} as {a?: string | undefined}); // Requires `exactOptionalPropertyTypes` to be enabled
+
+// `JSON.stringify` always passes the property key to `toJSON`, so `toJSON` may declare parameters.
+declare const toJSONWithKey: Jsonify<{toJSON(key: string): string}>;
+expectType<string>(toJSONWithKey);
+
+declare const nestedToJSONWithKey: Jsonify<{nested: {toJSON(key: string): number}}>;
+expectType<{nested: number}>(nestedToJSONWithKey);
+
+declare const toJSONWithoutKey: Jsonify<{toJSON(): string}>;
+expectType<string>(toJSONWithoutKey);
+
+// `Map`, `Set`, and `RegExp` all stringify to `{}`, because their properties are not enumerable.
+declare const regexpValue: Jsonify<RegExp>;
+expectType<EmptyObject>(regexpValue);
+
+declare const nestedEmptyValues: Jsonify<{a: RegExp; b: SharedArrayBuffer}>;
+expectType<{a: EmptyObject; b: EmptyObject}>(nestedEmptyValues);
+
+// A plain object with `name` and `message` is structurally an `Error`, but it is data, so it is still walked.
+expectType<{name: string; message: string; code: number}>({} as Jsonify<{name: string; message: string; code: number}>);
+
+// The `Function` interface is a function, so it is not written.
+expectType<never>({} as Jsonify<Function>);
+expectType<null[]>({} as Jsonify<Function[]>);
+
+declare const mapValue: Jsonify<Map<string, number>>;
+expectType<EmptyObject>(mapValue);
+
+// `ArrayBuffer` and `DataView` also stringify to `{}`, like the other non-enumerable built-ins.
+declare const arrayBufferValue: Jsonify<ArrayBuffer>;
+expectType<EmptyObject>(arrayBufferValue);
+
+declare const dataViewValue: Jsonify<DataView>;
+expectType<EmptyObject>(dataViewValue);
+
+declare const nestedArrayBuffer: Jsonify<{a: ArrayBuffer}>;
+expectType<{a: EmptyObject}>(nestedArrayBuffer);
+
+// A class is a function at runtime, so `JSON.stringify` drops a value holding one the same way it drops a value holding a plain function. A construct signature is not assignable to a call signature, so a class was not in the list of values that are not JSON-able.
+type Class_ = new () => {a: number};
+type AbstractClass = abstract new () => {a: number};
+
+declare const plainClass: Jsonify<Class_>;
+expectType<never>(plainClass);
+
+declare const plainAbstractClass: Jsonify<AbstractClass>;
+expectType<never>(plainAbstractClass);
+
+declare const arrayMemberClass: Jsonify<Class_[]>;
+expectType<null[]>(arrayMemberClass);
+
+declare const objectValueClass: Jsonify<{keep: string; class: Class_}>;
+expectType<{keep: string}>(objectValueClass);
+
+// An enum is a subtype of `string` or `number`, so it passes through where a primitive would, and TypeScript cannot tell an enum from a union of the same literals. A plain string is not assignable to the result, even though that is what `JSON.parse` gives back. `LiteralToPrimitiveDeep` unwraps it.
+enum Status {
+	Open = 'open',
+	Closed = 'closed',
+}
+
+declare const enumMember: Jsonify<{status: Status}>;
+expectType<{status: Status}>(enumMember);
+
+declare const enumMemberUnwrapped: LiteralToPrimitiveDeep<{status: Status}>;
+expectType<{status: string}>(enumMemberUnwrapped);
