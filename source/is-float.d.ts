@@ -1,3 +1,6 @@
+import type {IsAny} from './is-any.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
+
 /**
 Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
 
@@ -30,7 +33,14 @@ type F = IsFloat<1.23e+21>;
 @category Type Guard
 @category Numeric
 */
-export type IsFloat<T> = T extends number
+// A branded or tagged literal is still a literal, so the brand is removed first, because `${T}` does not reduce for a literal intersected with an object type.
+export type IsFloat<T> =
+	// `any` is not a float and is not the absence of one either, so it answers `boolean`, the same as `IsInteger` does for it. `IsNumericLiteral`, `IsBooleanLiteral`, `IsStringLiteral` and `IsSymbolLiteral` answer `false` for `any` instead, because each of them narrows to one kind of literal, while a number may be either a float or an integer.
+	IsAny<T> extends true
+		? boolean
+		: _IsFloat<UnwrapBrand<T>>;
+
+type _IsFloat<T> = T extends number
 	? `${T}` extends `${number}e${infer E extends '-' | '+'}${number}`
 		? E extends '-'
 			? true

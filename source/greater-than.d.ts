@@ -4,6 +4,7 @@ import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.t
 import type {And} from './and.d.ts';
 import type {Or} from './or.d.ts';
 import type {Absolute} from './absolute.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than another number.
@@ -23,6 +24,8 @@ type C = GreaterThan<1, 5>;
 ```
 
 Note: If either argument is the non-literal `number` type, the result is `boolean`.
+
+Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
 
 @example
 ```
@@ -56,6 +59,9 @@ setPositive(-1);
 ```
 */
 export type GreaterThan<A extends number, B extends number> =
+	_GreaterThan<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+
+type _GreaterThan<A extends number, B extends number> =
 	A extends number // For distributing `A`
 		? B extends number // For distributing `B`
 			? number extends A | B

@@ -1,5 +1,6 @@
 import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -39,10 +40,11 @@ export type IsNumericLiteral<T> = IfNotAnyOrNever<T, {
 	ifNever: false;
 }>;
 
+// A numeric enum member is a literal even though `number extends T` is `true` for it, because TypeScript 5.0 made every enum a union of its members. Identity is what separates a member from the widened `number` and `bigint`, so a member is whatever is neither of those.
 type _IsNumericLiteral<T> = T extends number | bigint
-	? number extends T
+	? IsEqual<T, number> extends true
 		? false
-		: bigint extends T
+		: IsEqual<T, bigint> extends true
 			? false
 			: true
 	: false;

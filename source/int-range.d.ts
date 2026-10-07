@@ -48,9 +48,16 @@ type Hundreds = IntRange<100, 901, 100>;
 @see {@link IntClosedRange}
 */
 export type IntRange<Start extends number, End extends number, Step extends number = 1> =
-	IsNegative<Start> extends true
-		? PrivateNegativeIntRange<Start, End, Step>
-		: PrivateIntRange<Start, End, Step>;
+	// Both bounds are distributed, because a comparison against a union only considers the first member, which would silently give a smaller range than the bound asks for. The result is the union of the ranges of every combination of members, so the widest pair of bounds decides how far the range reaches. `Start` needs it as much as `End` does: it is compared and counted through `TupleOf<Start>`, and `TupleOf<-1 | 0>` is an empty tuple, so a negative member was dropped and a positive one made the recursion non-terminating. Each `Step` member also generates its entire range independently, so the recursion cannot mix different steps between iterations.
+	Start extends unknown
+		? End extends unknown
+			? Step extends unknown
+				? IsNegative<Start> extends true
+					? PrivateNegativeIntRange<Start, End, Step>
+					: PrivateIntRange<Start, End, Step>
+				: never // Should never happen
+			: never // Should never happen
+		: never; // Should never happen
 
 /**
 Removes `StepTuple['length']` elements from the front of `Tuple`, or empties it when it is too short.

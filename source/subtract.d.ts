@@ -9,6 +9,7 @@ Returns the difference between two numbers.
 
 Note:
 - A or B can only support `-999` ~ `999`.
+- A or B must be written without a decimal point or exponent. Such a value resolves to `never` rather than a silently truncated whole number. A union that mixes both kinds is not caught.
 
 @example
 ```
@@ -37,6 +38,10 @@ type F = Subtract<PositiveInfinity, PositiveInfinity>;
 */
 // TODO: Support big integer.
 export type Subtract<A extends number, B extends number> =
+	// A decimal fraction or exponent notation is not supported, so the result is `never` rather than a silently truncated whole number.
+	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never : _Subtract<A, B>;
+
+type _Subtract<A extends number, B extends number> =
 	// Handle cases when A or B is the actual "number" type
 	number extends A | B ? number
 		// Handle cases when A and B are both +/- infinity

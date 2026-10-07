@@ -1,5 +1,5 @@
-import type {Not} from './internal/index.d.ts';
 import type {IsFloat} from './is-float.d.ts';
+import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
 import type {PositiveInfinity, NegativeInfinity} from './numeric.d.ts';
 
 /**
@@ -49,12 +49,13 @@ type J = IsInteger<1e-7>;
 export type IsInteger<T> =
 	T extends bigint
 		? true
-		: T extends number
-			? number extends T
+		// A numeric enum member is a literal even though `number extends T` is `true` for it, so what separates it from the widened `number` is being a literal, which is the question `IsNumericLiteral` answers, brand included.
+		: IsNumericLiteral<T> extends true
+			? T extends PositiveInfinity | NegativeInfinity
 				? false
-				: T extends PositiveInfinity | NegativeInfinity
+				: IsFloat<T> extends true
 					? false
-					: Not<IsFloat<T>>
+					: true
 			: false;
 
 export {};

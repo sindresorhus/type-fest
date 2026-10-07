@@ -41,3 +41,15 @@ expectType<GreaterThanOrEqual<PositiveInfinity, NegativeInfinity>>(true);
 expectType<GreaterThanOrEqual<number, number>>({} as boolean);
 expectType<GreaterThanOrEqual<number, 1>>({} as boolean);
 expectType<GreaterThanOrEqual<1, number>>({} as boolean);
+
+// A number in exponential notation is larger or smaller than any number in plain decimal notation.
+declare const exponentGreaterThanOrEqualPlain: GreaterThanOrEqual<1e21, 5>;
+expectType<true>(exponentGreaterThanOrEqualPlain);
+declare const plainGreaterThanOrEqualExponent: GreaterThanOrEqual<5, 1e21>;
+expectType<false>(plainGreaterThanOrEqualExponent);
+declare const negativeExponentGreaterThanOrEqualZero: GreaterThanOrEqual<1e-7, 0>;
+expectType<true>(negativeExponentGreaterThanOrEqualZero);
+declare const sameExponent: GreaterThanOrEqual<1e21, 1e21>;
+expectType<true>(sameExponent);
+declare const bothExponent: GreaterThanOrEqual<1e21, 2e21>;
+expectType<boolean>(bothExponent);

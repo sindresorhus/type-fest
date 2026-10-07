@@ -1,3 +1,4 @@
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {StringToNumber} from './string-to-number.d.ts';
 
 /**
@@ -41,7 +42,10 @@ type C = Absolute<number | bigint>;
 
 @category Numeric
 */
-export type Absolute<N extends number | bigint> = N extends bigint // Also, distributes `N`
+// The brand is removed first, because `${N}` does not reduce for a literal intersected with an object type, so a branded literal would be returned unchanged.
+export type Absolute<N extends number | bigint> = _Absolute<N extends object ? UnwrapBrand<N> : N>;
+
+type _Absolute<N extends number | bigint> = N extends bigint // Also, distributes `N`
 	? `${N}` extends `-${infer Magnitude extends bigint}`
 		? Magnitude
 		: N

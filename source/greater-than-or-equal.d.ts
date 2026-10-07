@@ -1,4 +1,5 @@
 import type {GreaterThan} from './greater-than.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than or equal to another number.
@@ -18,6 +19,8 @@ type C = GreaterThanOrEqual<1, 5>;
 ```
 
 Note: If either argument is the non-literal `number` type, the result is `boolean`.
+
+Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
 
 @example
 ```
@@ -50,7 +53,10 @@ setNonNegative(-1);
 setNonNegative(-2);
 ```
 */
-export type GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
+export type GreaterThanOrEqual<A extends number, B extends number> =
+	_GreaterThanOrEqual<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+
+type _GreaterThanOrEqual<A extends number, B extends number> = number extends A | B
 	? boolean
 	: A extends number // For distributing `A`
 		? B extends number // For distributing `B`

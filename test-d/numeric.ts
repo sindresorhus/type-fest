@@ -1,6 +1,8 @@
 import {expectType} from 'tsd';
 import type {
 	Finite,
+	IsNegative,
+	Opaque,
 	Float,
 	Integer,
 	Negative,
@@ -80,3 +82,10 @@ expectType<0 | 0n | 1 | 1n>(nonNegative);
 declare const nonNegativeInteger: NonNegativeInteger<-1 | 0 | 1>;
 
 expectType<0 | 1>(nonNegativeInteger);
+
+// A branded literal is still a literal, so the brand is removed before the checks run.
+declare const brandedNegative: IsNegative<Opaque<-5, 'A'>>;
+expectType<true>(brandedNegative);
+
+declare const brandedPositive: IsNegative<Opaque<5, 'A'>>;
+expectType<false>(brandedPositive);

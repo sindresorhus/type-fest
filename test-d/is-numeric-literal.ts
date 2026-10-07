@@ -117,3 +117,29 @@ expectType<IsNumericLiteral<LiteralUnion<1n | 2n, number>>>({} as boolean);
 expectType<IsNumericLiteral<LiteralUnion<1 | 2, string>>>({} as boolean);
 expectType<IsNumericLiteral<Tagged<LiteralUnion<1 | 2, number>, 'Tag'>>>(false);
 expectType<IsNumericLiteral<Tagged<LiteralUnion<1n | 2n, number>, 'Tag'>>>({} as boolean);
+
+// A numeric enum member is a literal even though `number` is assignable to it, which is what separates it from the widened `number`. A string enum member is recognised the same way, so the two enum kinds agree.
+enum NumericEnum {
+	A,
+	B,
+}
+
+enum StringEnum {
+	A = 'a',
+	B = 'b',
+}
+
+enum NegativeNumericEnum {
+	A = -1,
+}
+
+const enum ConstNumericEnum {
+	A = 5,
+}
+
+expectType<IsNumericLiteral<NumericEnum.A>>(true);
+expectType<IsNumericLiteral<NegativeNumericEnum.A>>(true);
+expectType<IsNumericLiteral<ConstNumericEnum.A>>(true);
+expectType<IsNumericLiteral<NumericEnum>>(true);
+expectType<IsNumericLiteral<NumericEnum.A | 1>>(true);
+expectType<IsNumericLiteral<NumericEnum.A | number>>(false);

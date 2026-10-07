@@ -1,3 +1,4 @@
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IsFloat} from './is-float.d.ts';
 import type {IsInteger} from './is-integer.d.ts';
 
@@ -139,7 +140,7 @@ Use-case: Validating and documenting parameters.
 export type NegativeFloat<T extends number> = Negative<Float<T>>;
 
 /**
-A negative `number`/`bigint` (`-∞ < x < 0`)
+A negative `number`/`bigint` (`-∞ < x < 0`).
 
 Use-case: Validating and documenting parameters.
 
@@ -221,6 +222,9 @@ type ShouldBeTrue = IsNegative<-1>;
 
 @category Numeric
 */
-export type IsNegative<T extends _Numeric> = T extends Negative<T> ? true : false;
+// The brand is removed first, because `${T}` does not reduce for a literal intersected with an object type, so a branded literal would otherwise take the wrong branch.
+export type IsNegative<T extends _Numeric> = _IsNegative<T extends object ? UnwrapBrand<T> : T>;
+
+type _IsNegative<T extends _Numeric> = T extends Negative<T> ? true : false;
 
 export {};

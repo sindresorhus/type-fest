@@ -74,3 +74,52 @@ expectType<never>(neverTest);
 
 // @ts-expect-error
 type UnknownTest = IntRange<unknown, unknown>;
+
+// A union bound silently keeps only its first member, so `IntRange<0, 5 | 10>` gives `0..4` where the range `0..9` is what the numbers mean. The union of both single-bound ranges is what is expected, because a range covers every value up to the bound.
+declare const unionEnd: IntRange<0, 5 | 10>;
+expectType<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(unionEnd);
+
+// The start is a bound the same way the end is, so it is distributed for the same reason.
+declare const unionStart: IntRange<-1 | 0, 2>;
+expectType<-1 | 0 | 1>(unionStart);
+
+declare const unionStartOnlyNegative: IntRange<-2 | 0, 1>;
+expectType<-2 | -1 | 0>(unionStartOnlyNegative);
+
+declare const unionStartBothSigns: IntRange<-2 | 1, 3>;
+expectType<-2 | -1 | 0 | 1 | 2>(unionStartBothSigns);
+
+declare const unionStartWithStep: IntRange<0 | 2, 6, 2>;
+expectType<0 | 2 | 4>(unionStartWithStep);
+
+// The end is exclusive, so a range whose start equals its end is empty. `show.sh` truncates a long union, which makes an inclusive end look plausible, so these count the members exactly.
+declare const emptyRange: IntRange<0, 0>;
+expectType<never>(emptyRange);
+
+declare const singleValue: IntRange<0, 1>;
+expectType<0>(singleValue);
+
+declare const threeValues: IntRange<0, 3>;
+expectType<0 | 1 | 2>(threeValues);
+
+declare const fromThree: IntRange<3, 6>;
+expectType<3 | 4 | 5>(fromThree);
+
+declare const stepTwoShort: IntRange<0, 4, 2>;
+expectType<0 | 2>(stepTwoShort);
+
+declare const stepTwoOnEnd: IntRange<0, 5, 2>;
+expectType<0 | 2 | 4>(stepTwoOnEnd);
+
+declare const negativeRange: IntRange<-3, 3>;
+expectType<-3 | -2 | -1 | 0 | 1 | 2>(negativeRange);
+
+// A union bound is distributed for every shape of pair, including one where the members are equal to each other and one where they are far apart.
+expectType<0 | 1>({} as IntRange<0 | 1, 2>);
+expectType<-3 | -2 | -1 | 0>({} as IntRange<-3 | 0, 1>);
+expectType<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>({} as IntRange<0, 5 | 10>);
+expectType<0 | 2 | 4 | 6 | 8>({} as IntRange<0, 9, 2 | 4>);
+
+// Different steps produce complete ranges independently, rather than mixing the steps between iterations.
+expectType<0 | 2 | 3 | 4 | 6>({} as IntRange<0, 7, 2 | 3>);
+expectType<-4 | -2 | -1 | 0 | 2>({} as IntRange<-4, 3, 2 | 3>);

@@ -58,3 +58,27 @@ expectType<never>(neverTest);
 
 // @ts-expect-error
 type UnknownTest = IntClosedRange<unknown, unknown>;
+
+// A union bound silently keeps only its first member, so `IntClosedRange<0, 5 | 10>` gives `0..5` where the range `0..10` is what the numbers mean.
+declare const unionEnd: IntClosedRange<0, 5 | 10>;
+expectType<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10>(unionEnd);
+
+// The end is inclusive, so a range whose start equals its end is that one value.
+declare const singleValue: IntClosedRange<5, 5>;
+expectType<5>(singleValue);
+
+declare const emptyRange: IntClosedRange<5, 4>;
+expectType<never>(emptyRange);
+
+declare const threeValues: IntClosedRange<0, 2>;
+expectType<0 | 1 | 2>(threeValues);
+
+declare const negativeRange: IntClosedRange<-2, 2>;
+expectType<-2 | -1 | 0 | 1 | 2>(negativeRange);
+
+// The start is a bound the same way the end is, so it is distributed for the same reason.
+declare const unionStart: IntClosedRange<-1 | 0, 1>;
+expectType<-1 | 0 | 1>(unionStart);
+
+declare const unionStartOnlyNegative: IntClosedRange<-2 | 0, 0>;
+expectType<-2 | -1 | 0>(unionStartOnlyNegative);

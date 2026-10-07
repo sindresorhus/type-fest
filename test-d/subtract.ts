@@ -48,3 +48,13 @@ expectType<-1111>({} as Subtract<1111, 2222>);
 expectType<-7000>({} as Subtract<-5000, 2000>);
 expectType<7070>({} as Subtract<6540, -530>);
 expectType<-8876>({} as Subtract<-8888, -12>);
+
+// A decimal fraction is not supported, so the result is `never` rather than a silently truncated whole number.
+expectType<never>({} as Subtract<0.5, 0.25>);
+expectType<never>({} as Subtract<1.5, 1.25>);
+expectType<never>({} as Subtract<-0.5, -0.25>);
+
+// A number written in exponent notation cannot be computed digit by digit either, so it resolves to `never` rather than a silently truncated whole number.
+expectType<never>({} as Subtract<1e-7, 1>);
+expectType<never>({} as Subtract<3, 1e-7>);
+expectType<never>({} as Subtract<1, 1e21>);

@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {IsFloat, PositiveInfinity} from '../index.d.ts';
+import type {IsFloat, IsInteger, Opaque, PositiveInfinity} from '../index.d.ts';
 
 declare const x: unknown;
 
@@ -23,3 +23,17 @@ expectType<false>(x as IsFloat<1.23e+21>);
 expectType<false>(x as IsFloat<-1.23e+21>);
 expectType<false>(x as IsFloat<'1.23'>);
 expectType<false>(x as IsFloat<PositiveInfinity>);
+
+// A branded literal is still a literal, so the brand is removed before the checks run.
+declare const brandedFloat: IsFloat<Opaque<5.5, 'A'>>;
+expectType<true>(brandedFloat);
+
+declare const brandedInteger: IsFloat<Opaque<5, 'A'>>;
+expectType<false>(brandedInteger);
+
+// `any` is not a float and not the absence of one, so the answer has to be `boolean` rather than a decision either way. It used to be `false`, which contradicted `IsInteger<any>`, whose number branch is defined as `Not<IsFloat<T>>` and which answers `boolean`: the same input was a definite no and a maybe at once.
+declare const topType: IsFloat<any>;
+expectType<boolean>(topType);
+
+declare const topTypeInteger: IsInteger<any>;
+expectType<boolean>(topTypeInteger);

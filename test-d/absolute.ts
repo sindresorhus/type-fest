@@ -1,5 +1,5 @@
 import {expectType} from 'tsd';
-import type {Absolute} from '../source/absolute.d.ts';
+import type {Absolute, Opaque} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Integers
@@ -85,3 +85,10 @@ expectType<Absolute<-123_456_789n | number>>({} as 123_456_789n | number);
 // Boundary cases
 expectType<any>({} as Absolute<any>);
 expectType<never>({} as Absolute<never>);
+
+// A branded literal is still a literal, so the brand is removed before `${N}` is used, because that does not reduce for a literal intersected with an object type.
+declare const brandedNegative: Absolute<Opaque<-5, 'A'>>;
+expectType<5>(brandedNegative);
+
+declare const brandedPositive: Absolute<Opaque<5, 'A'>>;
+expectType<5>(brandedPositive);

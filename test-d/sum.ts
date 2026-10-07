@@ -53,3 +53,14 @@ expectType<3333>({} as Sum<1111, 2222>);
 expectType<-3000>({} as Sum<-5000, 2000>);
 expectType<6010>({} as Sum<6540, -530>);
 expectType<-8900>({} as Sum<-8888, -12>);
+
+// A decimal fraction is not supported, so the result is `never` rather than a silently truncated whole number.
+expectType<never>({} as Sum<0.5, 0.5>);
+expectType<never>({} as Sum<1.5, 1.5>);
+expectType<never>({} as Sum<0.25, 0.25>);
+expectType<never>({} as Sum<-0.5, -0.5>);
+
+// A number written in exponent notation cannot be computed digit by digit either, so it resolves to `never` rather than a silently truncated whole number.
+expectType<never>({} as Sum<1e-7, 1>);
+expectType<never>({} as Sum<1e-7, 1e-7>);
+expectType<never>({} as Sum<1e21, 1>);
