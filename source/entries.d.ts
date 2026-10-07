@@ -1,9 +1,4 @@
-import type {_ArrayEntry, _MapEntry, _ObjectEntry, _SetEntry} from './entry.d.ts';
-
-type ArrayEntries<BaseType extends readonly unknown[]> = Array<_ArrayEntry<BaseType>>;
-type MapEntries<BaseType> = Array<_MapEntry<BaseType>>;
-type ObjectEntries<BaseType> = Array<_ObjectEntry<BaseType>>;
-type SetEntries<BaseType extends Set<unknown>> = Array<_SetEntry<BaseType>>;
+import type {Entry} from './entry.d.ts';
 
 /**
 Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
@@ -55,10 +50,14 @@ const setEntries: Entries<typeof setExample> = [['a', 'a'], [1, 1]];
 @category Array
 */
 export type Entries<BaseType> =
-	BaseType extends Map<unknown, unknown> ? MapEntries<BaseType>
-		: BaseType extends Set<unknown> ? SetEntries<BaseType>
-			: BaseType extends readonly unknown[] ? ArrayEntries<BaseType>
-				: BaseType extends object ? ObjectEntries<BaseType>
-					: never;
+	// A `WeakMap` and a `WeakSet` have no `entries` method, so there are no entries to describe, not even an empty list of them.
+	BaseType extends WeakMap<WeakKey, unknown> | WeakSet<WeakKey>
+		// The methods of `WeakMap` and `WeakSet` are compared bivariantly, so a `Map` with object keys or a `Set` with object items also lands here, and it does have entries. It is checked here rather than first so that the entries of a generic `T extends object` are still read as `[never, never][]`.
+		? BaseType extends ReadonlyMap<unknown, unknown> | ReadonlySet<unknown>
+			? Array<Entry<BaseType>>
+			: never
+		: BaseType extends object
+			? Array<Entry<BaseType>>
+			: never;
 
 export {};

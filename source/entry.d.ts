@@ -1,10 +1,41 @@
-type MapKey<BaseType> = BaseType extends Map<infer KeyType, unknown> ? KeyType : never;
-type MapValue<BaseType> = BaseType extends Map<unknown, infer ValueType> ? ValueType : never;
+type MapKey<BaseType> = BaseType extends ReadonlyMap<infer KeyType, unknown> ? KeyType : never;
+type MapValue<BaseType> = BaseType extends ReadonlyMap<unknown, infer ValueType> ? ValueType : never;
 
-export type _ArrayEntry<BaseType extends readonly unknown[]> = [number, BaseType[number]];
+/**
+The key-value pairs `Array.prototype.entries` yields.
+
+An array of unknown length has one index type and one element type, so a single pair describes every entry. A tuple has an index per position, so it gets one pair per position instead, which keeps each index paired with its own element: `[1, 'a']` is not an entry of `['a', 1]`.
+*/
+export type _ArrayEntry<BaseType extends readonly unknown[]> = number extends BaseType['length']
+	? [number, BaseType[number]]
+	: keyof BaseType extends infer Key
+		// A tuple's positions are its numeric keys, spelled as strings. Anything else on `keyof` belongs to the array every tuple is, so it is not an index and has no entry.
+		? Key extends `${infer Index extends number}`
+			? [Index, BaseType[Key & keyof BaseType]]
+			: never
+		: never;
 export type _MapEntry<BaseType> = [MapKey<BaseType>, MapValue<BaseType>];
-export type _ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
-export type _SetEntry<BaseType> = BaseType extends Set<infer ItemType> ? [ItemType, ItemType] : never;
+/**
+The key-value pairs `Object.entries` yields.
+
+The result is one pair per key rather than a single pair over the union of the keys and the union of the values, so that a key stays paired with its own value: `Object.entries({a: 'x', b: 1})` never yields `['b', 'x']`. The uncorrelated form also made this type's own example fail on a second member, since `example[1]` would no longer be known to be a number.
+*/
+export type _ObjectEntry<BaseType> = Exclude<keyof BaseType, symbol> extends infer Key
+	? [Key] extends [never]
+		// A type with no keys at all, such as `object`, gives a pair of `never`s rather than `never`, so the entries of a generic `T extends object`, which are read through that constraint, can still be destructured. A type with only symbol keys has no entry at all, because `Object.entries` never yields one.
+		? [keyof BaseType] extends [never]
+			? [never, never]
+			: never
+		: Key extends unknown // For pairing each key with its own value
+			? [
+				// `Object.entries` yields every key as a string, because every property key is a string or a symbol at runtime, so a numeric key arrives as its string form.
+				Key extends string ? Key : Key extends number ? `${Key}` : never,
+				BaseType[Key & keyof BaseType],
+			]
+			: never
+	: never;
+
+export type _SetEntry<BaseType> = BaseType extends ReadonlySet<infer ItemType> ? [ItemType, ItemType] : never;
 
 /**
 Create a type that describes a single key-value pair produced when calling a collection’s `entries` method.
@@ -58,10 +89,13 @@ const setEntryNumber: Entry<typeof setExample> = [1, 1];
 @category Set
 */
 export type Entry<BaseType> =
-	BaseType extends Map<unknown, unknown> ? _MapEntry<BaseType>
-		: BaseType extends Set<unknown> ? _SetEntry<BaseType>
-			: BaseType extends readonly unknown[] ? _ArrayEntry<BaseType>
-				: BaseType extends object ? _ObjectEntry<BaseType>
-					: never;
+	// `Map` and `Set` are assignable to `ReadonlyMap` and `ReadonlySet`, so they are matched through those. A map must be matched before a set, because a map is also assignable to `ReadonlySet`.
+	BaseType extends ReadonlyMap<unknown, unknown> ? _MapEntry<BaseType>
+		: BaseType extends ReadonlySet<unknown> ? _SetEntry<BaseType>
+			// A `WeakMap` and a `WeakSet` have no `entries` method, so there is no entry to describe. They are matched before plain objects, because they would otherwise be treated as one. They must come after `Map` and `Set`, because the methods of `WeakMap` and `WeakSet` are compared bivariantly, which makes a `Map` with object keys assignable to `WeakMap<WeakKey, unknown>`.
+			: BaseType extends WeakMap<WeakKey, unknown> | WeakSet<WeakKey> ? never
+				: BaseType extends readonly unknown[] ? _ArrayEntry<BaseType>
+					: BaseType extends object ? _ObjectEntry<BaseType>
+						: never;
 
 export {};
