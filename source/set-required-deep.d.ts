@@ -3,9 +3,7 @@ import type {NonRecursiveType} from './internal/index.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
-import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {RequiredDeep} from './required-deep.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
 import type {StringToNumber} from './string-to-number.d.ts';
 
 /**
@@ -37,29 +35,36 @@ type ArrayExample = SetRequiredDeep<{a: [number?, number?, number?]}, 'a.0' | 'a
 */
 export type SetRequiredDeep<BaseType, KeyPaths extends Paths<BaseType>> = IsAny<KeyPaths> extends true
 	? SimplifyDeep<RequiredDeep<BaseType>>
-	: SetRequiredDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
+	: SetRequiredDeepHelper<BaseType, KeyPaths>;
 
 /**
 Internal helper for {@link SetRequiredDeep}.
 
-Recursively transforms the `BaseType` by applying {@link SetRequiredDeepSinglePath} for each path in `KeyPathsTuple`.
+Recursively transforms the `BaseType` by applying all terminal keys together at each level, so the order of members in `KeyPaths` cannot affect tuple optionality.
 */
-type SetRequiredDeepHelper<BaseType, KeyPathsTuple extends UnknownArray> =
-	KeyPathsTuple extends [infer KeyPath, ...infer RestPaths]
-		? SetRequiredDeepHelper<SetRequiredDeepSinglePath<BaseType, KeyPath>, RestPaths>
-		: BaseType;
+type SetRequiredDeepHelper<BaseType, KeyPaths> =
+	[KeyPaths] extends [never]
+		? BaseType
+		: BaseType extends NonRecursiveType
+			? BaseType
+			: SetRequired<{
+				[Key in keyof BaseType]: SetRequiredDeepHelper<BaseType[Key], SubPaths<KeyPaths, Key>>;
+			}, TerminalKeys<KeyPaths> & keyof BaseType>;
 
 /**
-Makes a single path required in `BaseType`.
+Converts terminal paths into keys, keeping a numeric key such as `1.2` distinct from a dotted string path such as `'1.2'`.
 */
-type SetRequiredDeepSinglePath<BaseType, KeyPath> = BaseType extends NonRecursiveType
-	? BaseType
-	: KeyPath extends `${infer Property}.${infer RestPath}`
-		? {
-			[Key in keyof BaseType]: Property extends `${Key & (string | number)}`
-				? SetRequiredDeepSinglePath<BaseType[Key], RestPath>
-				: BaseType[Key];
-		}
-		: SetRequired<BaseType, (KeyPath | StringToNumber<KeyPath & string>) & keyof BaseType>;
+type TerminalKeys<KeyPaths> = KeyPaths extends `${string}.${string}`
+	? never
+	: KeyPaths | StringToNumber<KeyPaths & string>;
+
+/**
+Finds the subpaths whose first property matches `Key` in `BaseType`.
+*/
+type SubPaths<KeyPaths, Key> = KeyPaths extends `${infer Property}.${infer RestPath}`
+	? Property extends `${Key & (string | number)}`
+		? RestPath
+		: never
+	: never;
 
 export {};

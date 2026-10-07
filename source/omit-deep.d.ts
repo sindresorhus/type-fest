@@ -1,5 +1,5 @@
 import type {ArraySplice} from './array-splice.d.ts';
-import type {ExactKey, IsArrayReadonly, NonRecursiveType, SetArrayAccess, ToString} from './internal/index.d.ts';
+import type {ExactKey, IsArrayReadonly, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -71,6 +71,8 @@ type AddressInfo = OmitDeep<Info2, 'address.1.foo'>;
 //=> {address: [{street: string}, {street2: string}]}
 ```
 
+Note: A path that goes through a tuple element drops that element's `?` modifier and its `null`.
+
 @category Object
 @category Array
 */
@@ -112,7 +114,13 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 						? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
 						: ObjectT[Key]
 					: ObjectT[Key]
-				: ObjectT[Key]
+				// A signature covers every key of its kind, so a key in the path that is not the mapped key still goes through it, and the omit is applied to the signature's value type because there is no single key to remove. `Paths` emits such a path as `${string}`.
+				: RecordKeyInPath extends ToString<Key>
+					// A member that names the key outright is what the key reads, so the signature is left alone.
+					? RecordKeyInPath extends ToString<LiteralKeyOf<ObjectT>>
+						? ObjectT[Key]
+						: OmitDeepWithOnePath<ObjectT[Key], SubPath>
+					: ObjectT[Key]
 		}
 		: ExactKey<ObjectT, P> extends infer Key
 			? IsNever<Key> extends true
@@ -138,9 +146,12 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
 		// If `ArrayIndex` is equal to `number`
 		? number extends ArrayIndex
-			? Array<OmitDeepWithOnePath<NonNullable<ArrayType[number]>, SubPath>>
+			// An array with nothing left to omit is kept empty. Omitting the whole array already removed every index, so a path that continues into one of those indices has nothing to recurse into, and reading the element type would yield `never`, which would collapse the array into `never[]` rather than leaving it empty. An empty tuple is kept as it is for the same reason, rather than keeping the `unknown` placeholder an element that does not exist would leave.
+			? ArrayType extends readonly [] ? ArrayType : Array<OmitDeepWithOnePath<NonNullable<ArrayType[number]>, SubPath>>
 			// If `ArrayIndex` is a number literal
-			: ArraySplice<ArrayType, ArrayIndex, 1, [OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>]>
+			: ArrayType extends readonly []
+				? ArrayType
+				: ArraySplice<ArrayType, ArrayIndex, 1, [OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>]>
 		// If the path is equal to `number`
 		: P extends `${infer ArrayIndex extends number}`
 			// If `ArrayIndex` is `number`

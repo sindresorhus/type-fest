@@ -1,9 +1,11 @@
-import type {ApplyDefaultOptions, ToString} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, ExactKey, ToString} from './internal/index.d.ts';
 import type {_LiteralStringUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
+import type {IsNever} from './is-never.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 
 export type GetOptions = {
 	/**
@@ -40,12 +42,7 @@ Adds `undefined` to `Type` if `strict` is enabled.
 type Strictify<Type, Options extends Required<GetOptions>> =
 	Options['strict'] extends false ? Type : (Type | undefined);
 
-/**
-If `Options['strict']` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`.
-
-Known limitations:
-- Does not include `undefined` in the type on object types with an index signature (for example, `{a: string; [key: string]: string}`).
-*/
+// If `Options['strict']` is `true`, includes `undefined` in the returned type when accessing properties on `Record<string, any>`.
 type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends Required<GetOptions>> =
 	Record<string, any> extends BaseType
 		? string extends keyof BaseType
@@ -130,8 +127,9 @@ Note:
 type PropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	BaseType extends null | undefined
 		? undefined
-		: Key extends keyof BaseType
-			? StrictPropertyOf<BaseType, Key, Options>
+		// Normalize declared numeric members before the array-like fallback, so its index signature does not hide their more precise types.
+		: Key extends keyof BaseType | (BaseType extends object ? KeyAsString<OmitIndexSignature<BaseType>> : never)
+			? StrictPropertyOf<BaseType, (Key | ExactKey<OmitIndexSignature<BaseType>, Key>) & keyof BaseType, Options>
 			// Handle arrays and tuples
 			: BaseType extends readonly unknown[]
 				? Key extends `${number}`
@@ -155,8 +153,16 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 							? Strictify<Item, Options>
 							: unknown
 					)
-					: Key extends keyof WithStringKeys<BaseType>
-						? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
+					// A key that names a member of the subject is read from the subject, not from its string keys: a number index signature covers every numeric key, so `'0' extends keyof` is false for `{[k: number]: string; 0: 'x'}` even though the member is right there.
+					: BaseType extends object
+						? ExactKey<BaseType, Key> extends infer Exact extends keyof BaseType
+							? IsNever<Exact> extends true
+								// `never` is assignable to every key set, so it has to be told apart from a key that was found, or a key the subject does not have answers `never`.
+								? Key extends keyof WithStringKeys<BaseType>
+									? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
+									: unknown
+								: StrictPropertyOf<BaseType, Exact, Options>
+							: unknown
 						: unknown;
 
 // This works by first splitting the path based on `.` and `[...]` characters into a tuple of string keys. Then it recursively uses the head key to get the next property of the current object, until there are no keys left. Number keys extract the item type from arrays, or are converted to strings to extract types from tuples and dictionaries with number keys.
@@ -164,6 +170,11 @@ type PropertyOf<BaseType, Key extends string, Options extends Required<GetOption
 Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.
 
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
+
+Known limitations:
+- Resolves to `unknown` for a path that descends past a union whose members do not share their keys, such as `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>`, because `keyof` of a union is the intersection of the members' keys. {@link Paths} still accepts that path, so the two disagree about the same object. Reading the same value one key at a time is unaffected, so `Get<T, 'data.user'>` and then indexing it works.
+- For a numeric segment that lands in the rest of a variadic tuple, answers the union of every element type, so it also includes the positions the tuple declares itself. `Get<{t: [1, [2, {a: string}], ...Array<{b: number}>]}, 't.2'>` is `1 | [2, {a: string}] | {b: number} | undefined` rather than `{b: number} | undefined`, because a variadic tuple has an unbounded `length` and TypeScript cannot recover the rest element type here. A path one level deeper into the rest resolves to `unknown`. Positions the tuple declares itself are correct.
+- With `strict` (the default), `undefined` is only added for a key read through a `Record<string, …>` or an array. A key read through an index signature on an object that also has named keys (`{a: string; [key: string]: string}`), or through a number index signature, does not get `undefined`.
 
 @example
 ```

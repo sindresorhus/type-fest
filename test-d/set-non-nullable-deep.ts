@@ -1,4 +1,5 @@
 import {expectType} from 'tsd';
+import type {Paths} from '../source/paths.d.ts';
 import type {SetNonNullableDeep} from '../source/set-non-nullable-deep.d.ts';
 
 expectType<{a: number}>({} as SetNonNullableDeep<{a: number | null}, 'a'>);
@@ -76,9 +77,9 @@ expectType<[[{a: string}], Map<{a: string}, string>]>(
 );
 
 // Preserves non-nullable values when they are in a union with objects
-expectType<{a?: {b: string} | number}>({} as SetNonNullableDeep<{a?: {b: string} | number | null | undefined}, 'a'>);
+expectType<{a?: number | {b: string}}>({} as SetNonNullableDeep<{a?: number | {b: string} | null | undefined}, 'a'>);
 expectType<{a: {b: Array<{c?: number | null}> | number}}>({} as SetNonNullableDeep<{a: {b: Array<{c?: number | null}> | number | null}}, 'a.b'>);
-expectType<{a: {b: string | number} | number}>({} as SetNonNullableDeep<{a: {b: string | number | null} | number | null | undefined}, 'a' | 'a.b'>);
+expectType<{a: number | {b: string | number}}>({} as SetNonNullableDeep<{a: number | {b: string | number | null} | null | undefined}, 'a' | 'a.b'>);
 expectType<{a: number; b: {c: number | null} | {d: string}}>({} as SetNonNullableDeep<{a: number; b: {c: number | null} | {d: string | undefined} | null}, 'b' | 'b.d'>);
 
 // Preserves `readonly` modifier
@@ -108,8 +109,8 @@ expectType<{a: number; b: null | {readonly c: {1: number[]} | undefined} | {d: {
 >);
 
 // Non recursive types
-expectType<{a: {b: never} | Set<number | null>}>({} as SetNonNullableDeep<{a: {b: null} | Set<number | null>}, 'a.b'>);
-expectType<{a: {b: {c: string} | Map<string, string>}}>({} as SetNonNullableDeep<{a: {b: {c: string} | Map<string, string> | null}}, 'a.b'>);
+expectType<{a: Set<number | null> | {b: never}}>({} as SetNonNullableDeep<{a: Set<number | null> | {b: null}}, 'a.b'>);
+expectType<{a: {b: Map<string, string> | {c: string}}}>({} as SetNonNullableDeep<{a: {b: Map<string, string> | {c: string} | null}}, 'a.b'>);
 
 // === Arrays ===
 expectType<[string, number | null, boolean]>({} as SetNonNullableDeep<[string | null, number | null, boolean | undefined], '0' | '2'>);
@@ -133,11 +134,14 @@ expectType<{a: readonly [string, number, boolean, ...Array<string | undefined>] 
 expectType<{a: [string, (number | null)?, boolean?]}>({} as SetNonNullableDeep<{a: [string, (number | null)?, boolean?]}, 'a.0'>);
 expectType<{a: [string, number?, boolean?]}>({} as SetNonNullableDeep<{a: [string, (number | null)?, boolean?]}, 'a.0' | 'a.1'>);
 
-// Ignores `Keys` that are not known
-// This case is only possible when the array contains a rest element,
-// because otherwise the constaint on `KeyPaths` would disallow out of bound keys.
-expectType<{a?: readonly [string | null, (number | undefined)?, (boolean | null)?, ...Array<number | null | undefined>] | undefined}>(
+// A key past the elements a tuple declares lands in its rest element, which is the type of every index from there on, so it does reach it and the rest element is made non-nullable.
+expectType<{a?: readonly [string | null, (number | undefined)?, (boolean | null)?, ...number[]] | undefined}>(
 	{} as SetNonNullableDeep<{a?: readonly [string | null, (number | undefined)?, (boolean | null)?, ...Array<number | null | undefined>] | undefined}, 'a.10'>,
+);
+
+// A key that is one of the elements the tuple declares changes only that element, and an optional element keeps the `undefined` its `?` contributes.
+expectType<{a?: readonly [string, (number | undefined)?, (boolean | null)?, ...Array<number | null | undefined>] | undefined}>(
+	{} as SetNonNullableDeep<{a?: readonly [string | null, (number | undefined)?, (boolean | null)?, ...Array<number | null | undefined>] | undefined}, 'a.0'>,
 );
 
 // Unions of arrays
@@ -169,3 +173,25 @@ expectType<{readonly a: [{readonly b: number}, {c?: string | null}?]}>(
 );
 expectType<{a?: Array<{b: number; c?: string | null}> | null}>({} as SetNonNullableDeep<{a?: Array<{b: number | undefined; c?: string | null}> | null}, `a.${number}.b`>);
 expectType<{a: [{b?: number | null; readonly c: string}]}>({} as SetNonNullableDeep<{a: [{b?: number | null; readonly c: string | undefined}]}, 'a.0.c'>);
+
+// Known limitation: an index path into a tuple with a leading rest element does nothing, because the element after the rest element is keyed by a number the walk does not reach. See the docs.
+declare const leadingRestTuple: SetNonNullableDeep<{a: [...string[], number | null]}, 'a.1'>;
+expectType<{a: [...string[], number | null]}>(leadingRestTuple);
+
+// Naming one path leaves the other properties of the same object alone, and a property that was optional stays optional.
+declare const oneOfTwoPaths: SetNonNullableDeep<{a: {b: string | null; c?: number | null}}, 'a.b'>;
+expectType<{a: {b: string; c?: number | null}}>(oneOfTwoPaths);
+
+declare const theOtherPath: SetNonNullableDeep<{a: {b: string | null; c?: number | null}}, 'a.c'>;
+expectType<{a: {b: string | null; c?: number}}>(theOtherPath);
+
+// Naming every path applies the transform to all of them.
+declare const everyPath: SetNonNullableDeep<{a: {b: string | null}}, Paths<{a: {b: string | null}}>>;
+expectType<{a: {b: string}}>(everyPath);
+
+// Naming no path applies it to none, which is what a `Set*` type means. `any` is the way to name every path without spelling them out.
+declare const noPath: SetNonNullableDeep<{a: {b: string | null}}, never>;
+expectType<{a: {b: string | null}}>(noPath);
+
+declare const anyPath: SetNonNullableDeep<{a: {b: string | null}}, any>;
+expectType<{a: {b: string}}>(anyPath);

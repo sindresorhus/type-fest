@@ -1,5 +1,6 @@
 import type {TupleOf} from './tuple-of.d.ts';
-import type {BuildObject, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
+import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
+import type {BuildObject, ExactKey, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
@@ -13,6 +14,10 @@ Pick properties from a deeply-nested object.
 It supports recursing into arrays.
 
 Use-case: Distill complex objects down to the components you need to target.
+
+Known limitations:
+- Picking several indices of the same tuple in one call resolves to `never`, because each path produces a `unknown`-padded tuple and the results are then intersected, so the tuple's `length` becomes the intersection of the different lengths. Pick one index at a time, or pick the whole array and index into it.
+- A path that goes through a tuple element drops that element's `?` modifier and its `null`.
 
 Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 
@@ -95,7 +100,7 @@ type PickDeepObject<RecordType extends object, P extends string | number> =
 	P extends `${infer RecordKeyInPath}.${infer SubPath}`
 		? ObjectValue<RecordType, RecordKeyInPath> extends infer ObjectV
 			? IsNever<ObjectV> extends false
-				? BuildObject<RecordKeyInPath, InternalPickDeep<NonNullable<ObjectV>, SubPath>, RecordType>
+				? PickDeepUnderKey<RecordType, RecordKeyInPath, ObjectV, SubPath>
 				: never
 			: never
 		: ObjectValue<RecordType, P> extends infer ObjectV
@@ -103,6 +108,29 @@ type PickDeepObject<RecordType extends object, P extends string | number> =
 				? BuildObject<P, ObjectV, RecordType>
 				: never
 			: never;
+
+/**
+Build the picked member under its key. A key covered by an index signature is written as that literal key, like `Pick` does, and a non-literal path segment such as the `${string}` that `Paths` emits for a signature keeps the signature.
+*/
+type PickDeepUnderKey<RecordType extends object, Key extends string | number, ObjectV, SubPath extends string | number> =
+	BuildObject<Key, PickedDeepValue<RecordType, Key, ObjectV, SubPath>, RecordType>;
+
+/**
+The member the pick produces: the recursion needs `NonNullable` to typecheck, so the explicitly declared nullish part of the member is put back, because the member can still be `null` (or `undefined`) when the picked value is read, and reading a path from it throws the same way it does for the source. An optional member keeps the `?` that already covers absence.
+*/
+type PickedDeepValue<RecordType extends object, Key extends string | number, ObjectV, SubPath extends string | number> =
+	InternalPickDeep<NonNullable<ObjectV>, SubPath> | NullishPartOfMember<ObjectV, RecordType, Key>;
+
+/**
+The nullish part of the member under the key.
+*/
+type NullishPartOfMember<ObjectV, RecordType extends object, Key extends string | number> =
+	ExactKey<RecordType, Key> extends infer Exact extends PropertyKey
+		? Exact extends keyof RecordType
+			// `Required` removes implicit absence from optional members while preserving explicitly declared `undefined` with `exactOptionalPropertyTypes`.
+			? Extract<Required<RecordType>[Exact], null | undefined>
+			: Extract<ObjectV, null>
+		: never;
 
 /**
 Pick an array from the given array by one path.
@@ -130,9 +158,17 @@ type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
 				? ArrayType
 				// When `ArrayIndex` is a number literal
 				: ArrayType extends unknown[]
-					? [...TupleOf<ArrayIndex>, ArrayType[ArrayIndex]]
+					? [
+						...TupleOf<ArrayIndex>,
+						// A tuple allows fewer than one element only when its first element is optional, so a picked element that was optional in the source must keep its `?` modifier.
+						...ExcludeRestElement<ArrayType> extends readonly [...TupleOf<ArrayIndex>, unknown, ...unknown[]] ? [ArrayType[ArrayIndex]] : [ArrayType[ArrayIndex]?],
+					]
 					: ArrayType extends readonly unknown[]
-						? readonly [...TupleOf<ArrayIndex>, ArrayType[ArrayIndex]]
+						? readonly [
+							...TupleOf<ArrayIndex>,
+							// A tuple allows fewer than one element only when its first element is optional, so a picked element that was optional in the source must keep its `?` modifier.
+							...ExcludeRestElement<ArrayType> extends readonly [...TupleOf<ArrayIndex>, unknown, ...unknown[]] ? [ArrayType[ArrayIndex]] : [ArrayType[ArrayIndex]?],
+						]
 						: never
 			: never;
 

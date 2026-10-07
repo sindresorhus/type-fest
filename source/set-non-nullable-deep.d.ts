@@ -13,6 +13,9 @@ Create a type that makes the specified keys non-nullable (removes `null` and `un
 
 NOTE: Optional modifiers (`?`) are not removed from properties. For example, `SetNonNullableDeep<{foo?: string | null | undefined}, 'foo'>` will result in `{foo?: string}`. To remove both optional modifiers and nullables, use {@link SetRequiredDeep} in conjunction with this type.
 
+Known limitations:
+- An index path into a tuple with a leading rest element, such as `a.1` on `[...string[], number | null]`, does nothing. The element after the rest element is keyed by a number that the walk does not reach, so pick the whole array and index into it instead.
+
 @example
 ```
 import type {SetNonNullableDeep} from 'type-fest';

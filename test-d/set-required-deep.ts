@@ -182,3 +182,11 @@ expectType<{readonly a: [{readonly b: number}, {c?: string}]}>(
 // Set only specified keys inside array to required
 expectType<{a?: Array<{b: number; c?: string}>}>({} as SetRequiredDeep<{a?: Array<{b?: number; c?: string}>}, `a.${number}.b`>);
 expectType<{a: [{b?: number; readonly c: string}]}>({} as SetRequiredDeep<{a: [{b?: number; readonly c?: string}]}, 'a.0.c'>);
+
+// All terminal keys of a tuple are applied together, so union member order cannot leave a later element optional.
+declare const allOptionalIndices: SetRequiredDeep<readonly [string?, number?, boolean?], '2' | '1' | '0'>;
+expectType<readonly [string, number, boolean]>(allOptionalIndices);
+
+// Each object-union member keeps its own paths, and selected siblings are required together at each level.
+declare const disjointPaths: SetRequiredDeep<{left?: {first?: string; second?: number}} | {right?: [string?, number?]}, 'left.first' | 'left.second' | 'right.0' | 'right.1'>;
+expectType<{left?: {first: string; second: number}} | {right?: [string, number]}>(disjointPaths);

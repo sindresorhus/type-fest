@@ -583,3 +583,24 @@ type Test13<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'qux'>; // 'qux'
 type Test14<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.fizz'>; // 'foo.fizz' is at depth `1`, but not a leaf.
 // @ts-expect-error
 type Test15<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.bar'>; // 'foo.bar' is at depth `1`, but not a leaf because `T` is not known.
+
+// An array is not a leaf, because there is a path for its elements, so its own path is dropped while the paths through it stay.
+declare const leavesWithArray: Paths<{a: Array<{b: string}>}, {leavesOnly: true}>;
+expectType<`a.${number}.b`>(leavesWithArray);
+
+// A `maxRecursionDepth` past the deepest path stops nothing.
+declare const limitPastTheShape: Paths<{a: {b: {c: string}}}, {leavesOnly: true; maxRecursionDepth: 3}>;
+expectType<'a.b.c'>(limitPastTheShape);
+
+// In bracket notation a numeric segment is written in brackets and joined with nothing, and the whole path stays one template literal type rather than a pattern followed by a `.key`.
+declare const bracketedNestedArray: Paths<{a: ReadonlyArray<{b: string}>}, {bracketNotation: true}>;
+expectType<'a' | `a[${number}]` | `a[${number}].b`>(bracketedNestedArray);
+
+// A plain object with `name` and `message` is structurally an `Error`, but it is data, so its paths are walked.
+expectType<'contact' | 'contact.name' | 'contact.message' | 'contact.meta' | 'contact.meta.source'>({} as Paths<{contact: {name: string; message: string; meta: {source: string}}}>);
+
+// A thenable is a single value like a `Promise`, so its members, extra ones included, are not paths.
+expectType<'a'>({} as Paths<{a: PromiseLike<number> & {extra: {b: 1}}}>);
+
+// A typed array is a single value, so its indices and methods are not paths.
+expectType<'a'>({} as Paths<{a: Uint8Array}>);

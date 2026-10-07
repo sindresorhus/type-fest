@@ -121,6 +121,9 @@ expectTypeOf<Get<{a: {b: Array<Array<Array<{id: number}>>>}}, ['a', 'b', '0', '0
 // Test strict version:
 expectTypeOf<Get<string[], '0'>>().toEqualTypeOf<string | undefined>();
 expectTypeOf<Get<Record<string, number>, 'foo'>>().toEqualTypeOf<number | undefined>();
+// A non-literal path is read as a single key.
+expectTypeOf<Get<Record<string, number>, string>>().toEqualTypeOf<number | undefined>();
+expectTypeOf<Get<{a: {b: number}}, string>>().toEqualTypeOf<unknown>();
 expectTypeOf<Get<Record<'a' | 'b', number>, 'a'>>().toEqualTypeOf<number>();
 expectTypeOf<Get<Record<1 | 2, string>, '1'>>().toEqualTypeOf<string>();
 expectTypeOf<Get<{1: boolean}, '1'>>().toBeBoolean();
@@ -152,3 +155,57 @@ expectTypeOf<WithDictionary>().toEqualTypeOf<Get<WithDictionary, readonly []>>()
 	type FooPaths2 = 'array.1';
 	expectTypeOf<Get<Foo, FooPaths2>>().toEqualTypeOf<string | undefined>();
 }
+
+// Known limitation: a path that descends past a union whose members do not share their keys resolves to `unknown`, because `keyof` of a union is the intersection of the members' keys. `Paths` still accepts that path. See the note in the docs.
+type WithNestedUnion = {data: {user: {id: string} | {error: string}}};
+expectTypeOf<Get<WithNestedUnion, 'data.user.id'>>().toEqualTypeOf<unknown>();
+
+// A key every member of the union shares is found, because then it is in the intersection.
+expectTypeOf<Get<{data: {user: {id: string} | {id: string; extra: number}}}, 'data.user.id'>>().toEqualTypeOf<string>();
+
+// The workaround for the union limitation above: stop at the union and read the key from it.
+expectTypeOf<Get<WithNestedUnion, 'data.user'>>().toEqualTypeOf<{id: string} | {error: string}>();
+
+// Known limitation: a numeric segment that lands in the rest of a variadic tuple answers the union of every element type, because a variadic tuple has an unbounded `length` and TypeScript cannot recover the rest element type. The positions the tuple declares itself are correct.
+type WithVariadicTuple = {t: [1, [2, {a: string}], ...Array<{b: number}>]};
+expectTypeOf<Get<WithVariadicTuple, 't.0', NonStrict>>().toEqualTypeOf<1>();
+expectTypeOf<Get<WithVariadicTuple, 't.1', NonStrict>>().toEqualTypeOf<[2, {a: string}]>();
+expectTypeOf<Get<WithVariadicTuple, 't.2', NonStrict>>().toEqualTypeOf<1 | [2, {a: string}] | {b: number}>();
+// With `strict` (the default), it also has `undefined`, like the docs example.
+expectTypeOf<Get<WithVariadicTuple, 't.2'>>().toEqualTypeOf<1 | [2, {a: string}] | {b: number} | undefined>();
+expectTypeOf<Get<WithVariadicTuple, 't.2.b', NonStrict>>().toEqualTypeOf<unknown>();
+expectTypeOf<Get<{tuple: [string, ...Array<{z: number}>]}, 'tuple.0', NonStrict>>().toEqualTypeOf<string>();
+expectTypeOf<Get<{tuple: [string, ...Array<{z: number}>]}, 'tuple.1', NonStrict>>().toEqualTypeOf<string | {z: number}>();
+
+// A number index signature covers every numeric key, so `'0' extends keyof` is false for a subject that declares `0` outright, and reading it must still answer the declared member type, like TypeScript's own indexed access.
+type WithNumberIndexAndMember = {[k: number]: string; 0: 'x'};
+
+expectTypeOf<Get<WithNumberIndexAndMember, '0', NonStrict>>().toEqualTypeOf<'x'>();
+expectTypeOf<Get<WithNumberIndexAndMember, '0'>>().toEqualTypeOf<'x'>();
+expectTypeOf<Get<WithNumberIndexAndMember, '1', NonStrict>>().toEqualTypeOf<string>();
+
+// A declared member stays precise even when the number index signature also has an array-like `length`.
+type WithArrayLikeIndexAndMember = WithNumberIndexAndMember & {length: number};
+expectTypeOf<Get<WithArrayLikeIndexAndMember, '0', NonStrict>>().toEqualTypeOf<'x'>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, '0'>>().toEqualTypeOf<'x'>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, '1', NonStrict>>().toEqualTypeOf<string>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, '1'>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, 'length'>>().toEqualTypeOf<number>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, ['-1']>>().toBeUnknown();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, ['1.2']>>().toBeUnknown();
+expectTypeOf<Get<string, 'length'>>().toEqualTypeOf<number>();
+expectTypeOf<Get<string, '0'>>().toEqualTypeOf<string | undefined>();
+
+// A key the subject does not have at all still answers the signature. No `undefined` is added for a number index signature, which is a documented limitation.
+expectTypeOf<Get<{[k: number]: string}, '5', NonStrict>>().toEqualTypeOf<string>();
+expectTypeOf<Get<{[k: number]: string}, '5'>>().toEqualTypeOf<string>();
+
+// A string index signature still answers a key it does not have, and `unknown` for a subject without one.
+expectTypeOf<Get<{[k: string]: boolean; a: true}, 'a', NonStrict>>().toEqualTypeOf<true>();
+expectTypeOf<Get<{[k: string]: boolean}, 'nope', NonStrict>>().toEqualTypeOf<boolean>();
+expectTypeOf<Get<{a: {b: number}}, 'a.nope', NonStrict>>().toBeUnknown();
+
+// A single-segment pattern path is one path segment, so it reads the key the pattern names.
+expectTypeOf<Get<{[k: `v${number}`]: {a: 1}}, `v${number}`>>().toEqualTypeOf<{a: 1}>();
+expectTypeOf<Get<string[], `[${number}]`>>().toEqualTypeOf<string | undefined>();
+expectTypeOf<Get<{[k: Lowercase<string>]: number}, Lowercase<string>>>().toEqualTypeOf<number>();
