@@ -96,6 +96,7 @@ export namespace TsConfigJson {
 			| 'ES2015.Symbol'
 			| 'ES2016'
 			| 'ES2016.Array.Include'
+			| 'ES2016.Intl'
 			| 'ES2017'
 			| 'ES2017.ArrayBuffer'
 			| 'ES2017.Date'
@@ -136,7 +137,6 @@ export namespace TsConfigJson {
 			| 'ES2022.Intl'
 			| 'ES2022.Object'
 			| 'ES2022.RegExp'
-			| 'ES2022.SharedMemory'
 			| 'ES2022.String'
 			| 'ES2023'
 			| 'ES2023.Array'
@@ -162,6 +162,7 @@ export namespace TsConfigJson {
 			| 'ESNext.AsyncIterable'
 			| 'ESNext.BigInt'
 			| 'ESNext.Collection'
+			| 'ESNext.Date'
 			| 'ESNext.Decorators'
 			| 'ESNext.Disposable'
 			| 'ESNext.Error'
@@ -171,9 +172,11 @@ export namespace TsConfigJson {
 			| 'ESNext.Object'
 			| 'ESNext.Promise'
 			| 'ESNext.Regexp'
+			| 'ESNext.SharedMemory'
 			| 'ESNext.String'
 			| 'ESNext.Symbol'
 			| 'ESNext.Temporal'
+			| 'ESNext.TypedArrays'
 			| 'ESNext.WeakRef'
 			| 'DOM'
 			| 'DOM.AsyncIterable'
@@ -201,6 +204,7 @@ export namespace TsConfigJson {
 			| 'es2015.symbol'
 			| 'es2016'
 			| 'es2016.array.include'
+			| 'es2016.intl'
 			| 'es2017'
 			| 'es2017.arraybuffer'
 			| 'es2017.date'
@@ -241,7 +245,6 @@ export namespace TsConfigJson {
 			| 'es2022.intl'
 			| 'es2022.object'
 			| 'es2022.regexp'
-			| 'es2022.sharedmemory'
 			| 'es2022.string'
 			| 'es2023'
 			| 'es2023.array'
@@ -267,6 +270,7 @@ export namespace TsConfigJson {
 			| 'esnext.asynciterable'
 			| 'esnext.bigint'
 			| 'esnext.collection'
+			| 'esnext.date'
 			| 'esnext.decorators'
 			| 'esnext.disposable'
 			| 'esnext.error'
@@ -276,9 +280,11 @@ export namespace TsConfigJson {
 			| 'esnext.object'
 			| 'esnext.promise'
 			| 'esnext.regexp'
+			| 'esnext.sharedmemory'
 			| 'esnext.string'
 			| 'esnext.symbol'
 			| 'esnext.temporal'
+			| 'esnext.typedarrays'
 			| 'esnext.weakref'
 			| 'dom'
 			| 'dom.asynciterable'
@@ -303,6 +309,9 @@ export namespace TsConfigJson {
 			| 'preserve'
 			| 'error';
 
+		/**
+		@deprecated The compiler only reads this option under `watchOptions`. Use `WatchOptions.PollingWatchKind` instead.
+		*/
 		type FallbackPolling =
 			| 'fixedPollingInterval'
 			| 'priorityPollingInterval'
@@ -312,12 +321,18 @@ export namespace TsConfigJson {
 			| 'dynamicPriority'
 			| 'fixedChunkSize';
 
+		/**
+		@deprecated The compiler only reads this option under `watchOptions`. Use `WatchOptions.WatchDirectoryKind` instead.
+		*/
 		type WatchDirectory =
 			| 'useFsEvents'
 			| 'fixedPollingInterval'
 			| 'dynamicPriorityPolling'
 			| 'fixedChunkSizePolling';
 
+		/**
+		@deprecated The compiler only reads this option under `watchOptions`. Use `WatchOptions.WatchFileKind` instead.
+		*/
 		type WatchFile =
 			| 'fixedPollingInterval'
 			| 'priorityPollingInterval'
@@ -737,37 +752,6 @@ export namespace TsConfigJson {
 		useUnknownInCatchVariables?: boolean;
 
 		/**
-		Watch input files.
-
-		@default false
-		@deprecated Use watchOptions instead.
-		*/
-		watch?: boolean;
-
-		/**
-		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
-
-		@deprecated Use watchOptions.fallbackPolling instead.
-		*/
-		fallbackPolling?: CompilerOptions.FallbackPolling;
-
-		/**
-		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
-
-		@default 'useFsEvents'
-		@deprecated Use watchOptions.watchDirectory instead.
-		*/
-		watchDirectory?: CompilerOptions.WatchDirectory;
-
-		/**
-		Specify the strategy for watching individual files.
-
-		@default 'useFsEvents'
-		@deprecated Use watchOptions.watchFile instead.
-		*/
-		watchFile?: CompilerOptions.WatchFile;
-
-		/**
 		Enables experimental support for ES7 decorators.
 
 		@default false
@@ -846,8 +830,10 @@ export namespace TsConfigJson {
 
 		/**
 		Generates an event trace and a list of types.
+
+		The value is the directory to write `trace.json` and `types.json` to.
 		*/
-		generateTrace?: boolean;
+		generateTrace?: string;
 
 		/**
 		Base directory to resolve non-relative module names.
@@ -1080,13 +1066,6 @@ export namespace TsConfigJson {
 		extendedDiagnostics?: boolean;
 
 		/**
-		Print names of files that are part of the compilation and then stop processing.
-
-		@default false
-		*/
-		listFilesOnly?: boolean;
-
-		/**
 		Disable preferring source files instead of declaration files when referencing composite projects.
 
 		@default true if composite, false otherwise
@@ -1216,19 +1195,20 @@ export namespace TsConfigJson {
 
 		@default 'UseFsEvents'
 		*/
-		watchFile?: WatchOptions.WatchFileKind | Lowercase<WatchOptions.WatchFileKind>;
+		// The compiler compares the value case-insensitively, and the TSConfig reference documents the camelCase spellings, so the PascalCase, camelCase and lowercase spellings are all accepted.
+		watchFile?: WatchOptions.WatchFileKind | Uncapitalize<WatchOptions.WatchFileKind> | Lowercase<WatchOptions.WatchFileKind>;
 
 		/**
 		Specify the strategy for watching directories under systems that lack recursive file-watching functionality.
 
 		@default 'UseFsEvents'
 		*/
-		watchDirectory?: WatchOptions.WatchDirectoryKind | Lowercase<WatchOptions.WatchDirectoryKind>;
+		watchDirectory?: WatchOptions.WatchDirectoryKind | Uncapitalize<WatchOptions.WatchDirectoryKind> | Lowercase<WatchOptions.WatchDirectoryKind>;
 
 		/**
 		Specify the polling strategy to use when the system runs out of or doesn't support native file watchers.
 		*/
-		fallbackPolling?: WatchOptions.PollingWatchKind | Lowercase<WatchOptions.PollingWatchKind>;
+		fallbackPolling?: WatchOptions.PollingWatchKind | Uncapitalize<WatchOptions.PollingWatchKind> | Lowercase<WatchOptions.PollingWatchKind>;
 
 		/**
 		Enable synchronous updates on directory watchers for platforms that don't support recursive watching natively.

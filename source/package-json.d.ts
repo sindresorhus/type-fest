@@ -1,6 +1,15 @@
 import type {JsonObject, JsonValue} from './json-value.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 
+// A value of the `libc` field. npm accepts a single one or an array of them.
+type Libc = LiteralUnion<
+	| 'glibc'
+	| 'musl'
+	| '!glibc'
+	| '!musl',
+	string
+>;
+
 export namespace PackageJson {
 	/**
 	A person who has been involved in creating or maintaining the package.
@@ -232,12 +241,44 @@ export namespace PackageJson {
 	};
 
 	/**
+	An entry of the `funding` field, describing one way to support a package.
+
+	@example
+	```
+	import type {PackageJson} from 'type-fest';
+
+	const funding = {type: 'github', url: 'https://github.com/sponsors/sindresorhus'} satisfies PackageJson.Funding;
+	```
+	*/
+	type Funding = {
+		/**
+		The type of funding.
+		*/
+		type?: LiteralUnion<
+			| 'github'
+			| 'opencollective'
+			| 'patreon'
+			| 'individual'
+			| 'foundation'
+			| 'corporation',
+			string
+		>;
+
+		/**
+		The URL to the funding page.
+		*/
+		url: string;
+	};
+
+	/**
 	Entry points of a module, optionally with conditions and subpath exports.
+
+	A fallback array may contain `null` entries, which are skipped while checking the remaining entries. If no entry resolves, `null` prevents the module from being imported.
 	*/
 	type Exports =
 		| null
 		| string
-		| Array<string | ExportConditions>
+		| Array<string | ExportConditions | null>
 		| ExportConditions;
 
 	/**
@@ -556,6 +597,21 @@ export namespace PackageJson {
 		>>;
 
 		/**
+		C standard library the module runs on. Only applies when `os` is `linux`. It can be a single value or an array of values.
+
+		[Read more.](https://docs.npmjs.com/cli/v11/configuring-npm/package-json#libc)
+
+		@example
+		```
+		import type {PackageJson} from 'type-fest';
+
+		const manifest = {os: ['linux'], libc: 'glibc'} satisfies PackageJson;
+		const manifestWithArray = {os: ['linux'], libc: ['glibc', 'musl']} satisfies PackageJson;
+		```
+		*/
+		libc?: Libc | Libc[];
+
+		/**
 		CPU architectures the module runs on.
 		*/
 		cpu?: Array<LiteralUnion<
@@ -616,26 +672,27 @@ export namespace PackageJson {
 		Describes and notifies consumers of a package's monetary support information.
 
 		[Read more.](https://github.com/npm/rfcs/blob/main/implemented/0017-add-funding-support.md)
-		*/
-		funding?: string | {
-			/**
-			The type of funding.
-			*/
-			type?: LiteralUnion<
-				| 'github'
-				| 'opencollective'
-				| 'patreon'
-				| 'individual'
-				| 'foundation'
-				| 'corporation',
-				string
-			>;
 
-			/**
-			The URL to the funding page.
-			*/
-			url: string;
-		};
+		@example
+		```
+		import type {PackageJson} from 'type-fest';
+
+		const manifest = {funding: ['https://example.com/donate', {type: 'github', url: 'https://github.com/sponsors/sindresorhus'}]} satisfies PackageJson;
+		```
+		*/
+		funding?: string | Funding | Array<string | Funding>;
+
+		/**
+		Whether the package has a `binding.gyp` file. npm detects the file itself and writes `true`. Set it to `false` to stop npm from running `node-gyp rebuild` on install.
+
+		@example
+		```
+		import type {PackageJson} from 'type-fest';
+
+		const manifest = {gypfile: false} satisfies PackageJson;
+		```
+		*/
+		gypfile?: boolean;
 
 		/**
 		Used to configure [npm workspaces](https://docs.npmjs.com/cli/using-npm/workspaces) / [Yarn workspaces](https://classic.yarnpkg.com/docs/workspaces/).

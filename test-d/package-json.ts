@@ -144,3 +144,44 @@ expectNotAssignable<PackageJson>(unknownRecord);
 
 expectAssignable<PackageJson>(jsonObject);
 expectAssignable<JsonObject>(packageJson);
+
+// The type describes a manifest as a reader sees it, so the loose forms npm tolerates when writing are not accepted.
+// @ts-expect-error
+expectAssignable<PackageJson>({keywords: 'modules, stdlib, util'});
+// @ts-expect-error
+expectAssignable<PackageJson>({os: 'linux'});
+// @ts-expect-error
+expectAssignable<PackageJson>({bundleDependencies: true});
+// @ts-expect-error
+expectAssignable<PackageJson>({author: {email: 'a@example.com'}});
+// @ts-expect-error
+expectAssignable<PackageJson>({repository: {url: 'git+https://github.com/npm/cli.git'}});
+
+// `funding` accepts an array of string URLs and funding objects, alongside a single string or a single object.
+expectAssignable<PackageJson['funding']>(['https://example.com/donate', {type: 'github', url: 'https://github.com/sponsors/x'}]);
+
+// A fallback `exports` array may contain `null` entries, which mean the module cannot be imported when nothing else in the array resolves.
+expectAssignable<PackageJson.Exports>({'./c': ['./c.js', null]});
+expectAssignable<PackageJson.Exports>(['./c.js', null]);
+// A null entry does not prevent a later valid fallback from resolving.
+expectAssignable<PackageJson.Exports>([null, {node: './node.js', default: './browser.js'}]);
+expectNotAssignable<PackageJson['funding']>([{type: 'github'}]);
+expectNotAssignable<PackageJson>({gypfile: 'false'});
+expectNotAssignable<PackageJson>({libc: true});
+
+// `gypfile` and `libc` are documented npm fields. Without a declaration they fell through to the index signature, so reading them back gave `JsonValue | undefined`.
+declare const documentedFields: PackageJson;
+expectType<boolean | undefined>(documentedFields.gypfile);
+expectAssignable<PackageJson>({gypfile: true});
+expectAssignable<PackageJson>({libc: ['glibc', 'musl']});
+expectAssignable<PackageJson>({libc: ['!musl']});
+expectAssignable<PackageJson>({libc: ['glibc']});
+// The npm docs show `libc` as a single string, and npm also accepts an array.
+expectAssignable<PackageJson>({libc: 'glibc'});
+expectAssignable<PackageJson>({os: ['linux'], libc: 'musl'});
+expectNotAssignable<PackageJson>({libc: [true]});
+expectType<
+	| undefined
+	| LiteralUnion<'glibc' | 'musl' | '!glibc' | '!musl', string>
+	| Array<LiteralUnion<'glibc' | 'musl' | '!glibc' | '!musl', string>>
+>(documentedFields.libc);
