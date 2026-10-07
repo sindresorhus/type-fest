@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectAssignable, expectType} from 'tsd';
 import type {MergeDeep, MergeDeepOptions} from '../index.d.ts';
 
 // Test helper.
@@ -56,7 +56,8 @@ expectType<Array<string | 42>>(mergeDeep(['life'], [42] as const, {arrayMergeMod
 expectType<Array<'life' | 42>>(mergeDeep(['life'] as const, [42] as const, {arrayMergeMode: 'replace'}));
 
 // Should merge tuples with union
-expectType<Array<number | string | boolean>>(mergeDeep(['life', true], [42], {arrayMergeMode: 'spread'}));
+declare const stringsOrBooleans: Array<string | boolean>;
+expectType<Array<number | string | boolean>>(mergeDeep(stringsOrBooleans, [42], {arrayMergeMode: 'spread'}));
 expectType<Array<number | string | true>>(mergeDeep(['life'], [42, true], {arrayMergeMode: 'spread'}));
 
 // Should not deep merge classes
@@ -325,3 +326,232 @@ type OptionalWithUndefined = {a: string | undefined; b?: number; c?: boolean | u
 
 expectType<OptionalWithUndefined>({} as MergeDeep<NotOptional, OptionalWithUndefined>);
 expectType<NotOptional>({} as MergeDeep<OptionalWithUndefined, NotOptional>);
+
+// An empty destination has no element to merge with, so the merge mode decides the result.
+declare const emptyDestinationReplace: MergeDeep<{foo: []}, {foo: [1, 2]}, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>;
+expectType<{foo: [1, 2]}>(emptyDestinationReplace);
+
+declare const emptyDestinationSpread: MergeDeep<{foo: []}, {foo: [1, 2]}, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<{foo: [1, 2]}>(emptyDestinationSpread);
+
+declare const emptyDestinationArray: MergeDeep<{foo: []}, {foo: number[]}, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>;
+expectType<{foo: number[]}>(emptyDestinationArray);
+
+// A trailing optional element is merged like any other element, instead of collapsing to `never`.
+declare const optionalTailTuple: MergeDeep<[string, string?], [number, number?], {recurseIntoArrays: true}>;
+expectType<[number, number?]>(optionalTailTuple);
+
+// A tuple element merged with an array element keeps its optional modifier, just like when merging two tuples.
+declare const tupleWithOptionalTailIntoArray: MergeDeep<{foo: [string, number?]}, {foo: string[]}, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<{foo: [string, string?, ...string[]]}>(tupleWithOptionalTailIntoArray);
+
+declare const arrayIntoTupleWithOptionalTail: MergeDeep<{foo: string[]}, {foo: [string, number?]}, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<{foo: [string, number?, ...string[]]}>(arrayIntoTupleWithOptionalTail);
+
+declare const topLevelTupleWithOptionalTailIntoArray: MergeDeep<[string, number?], string[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<[string, string?, ...string[]]>(topLevelTupleWithOptionalTailIntoArray);
+
+// The optional modifier is also kept when the optional element is followed by a rest element.
+declare const optionalTailWithRestTuple: MergeDeep<[string, string?, ...string[]], [number, number?, ...number[]], {recurseIntoArrays: true}>;
+expectType<[number, number?, ...number[]]>(optionalTailWithRestTuple);
+
+declare const optionalTailWithRestTupleIntoArray: MergeDeep<[string, string?, ...string[]], number[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<[number, number?, ...Array<string | number>]>(optionalTailWithRestTupleIntoArray);
+
+declare const arrayIntoOptionalTailWithRestTuple: MergeDeep<number[], [string, string?, ...string[]], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<[string, string?, ...Array<string | number>]>(arrayIntoOptionalTailWithRestTuple);
+
+// A source property that is only `undefined` replaces the destination property, just like object spread does at runtime. It must not collapse the property to `never`.
+declare const sourceUndefinedReplacesDestination: MergeDeep<{a: {b: 1}}, {a: undefined}>;
+expectType<{a: undefined}>(sourceUndefinedReplacesDestination);
+
+declare const sourceUndefinedReplacesPrimitive: MergeDeep<{a: string}, {a: undefined}>;
+expectType<{a: undefined}>(sourceUndefinedReplacesPrimitive);
+
+declare const sourceUndefinedReplacesArray: MergeDeep<{a: string[]}, {a: undefined}>;
+expectType<{a: undefined}>(sourceUndefinedReplacesArray);
+
+declare const sourceUndefinedReplacesTuple: MergeDeep<{a: [1, 2]}, {a: undefined}>;
+expectType<{a: undefined}>(sourceUndefinedReplacesTuple);
+
+// An empty source array contains no indices, so the destination value is returned, the same way it is when the source does not have the key at all.
+declare const emptySourceTuple: MergeDeep<[1, 2, 3], [], {recurseIntoArrays: true}>;
+expectType<[1, 2, 3]>(emptySourceTuple);
+
+declare const emptySourceNested: MergeDeep<{a: [1, 2]}, {a: []}, {recurseIntoArrays: true}>;
+expectType<{a: [1, 2]}>(emptySourceNested);
+
+declare const emptySourceWithSpreadMode: MergeDeep<[1, 2], [], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<[1, 2]>(emptySourceWithSpreadMode);
+
+declare const emptySourceArray: MergeDeep<number[], [], {recurseIntoArrays: true}>;
+expectType<number[]>(emptySourceArray);
+
+// By default inner arrays are replaced, which must not depend on whether the array sits at the top level or inside an object.
+declare const nestedArrayReplacedInObject: MergeDeep<{a: number[][]}, {a: string[][]}, {recurseIntoArrays: true}>;
+expectType<{a: string[][]}>(nestedArrayReplacedInObject);
+
+declare const nestedArrayReplacedAtTopLevel: MergeDeep<number[][], string[][], {recurseIntoArrays: true}>;
+expectType<string[][]>(nestedArrayReplacedAtTopLevel);
+
+declare const nestedArraySpreadAtTopLevel: MergeDeep<number[][], string[][], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectType<Array<Array<string | number>>>(nestedArraySpreadAtTopLevel);
+
+// A `readonly` array does not keep its modifier through the spread, because the result is a fresh array. See the note in the docs.
+declare const readonlyArrays: MergeDeep<readonly string[], readonly number[]>;
+expectType<Array<string | number>>(readonlyArrays);
+
+declare const readonlyArraysSpread: MergeDeep<readonly string[], readonly number[], {arrayMergeMode: 'spread'}>;
+expectType<Array<string | number>>(readonlyArraysSpread);
+
+// A source of `any` is a value of any type, so it has to win the way any other source does. `any` satisfies every assignability check, so without a guard for it the "source of only `undefined`" rule fired and the property was narrowed to `undefined`, which no object spread can produce.
+declare const anySource: MergeDeep<{a: string}, {a: any}>;
+expectType<{a: any}>(anySource);
+
+declare const anySourceWithExtraKey: MergeDeep<{a: 1}, {a: any; b: 2}>;
+expectType<{b: 2; a: any}>(anySourceWithExtraKey);
+
+declare const anySourceOptional: MergeDeep<{a?: 1}, {a?: any}>;
+expectType<{a?: any}>(anySourceOptional);
+
+declare const anySourceTuple: MergeDeep<[1], [any], {recurseIntoArrays: true}>;
+expectType<[any]>(anySourceTuple);
+
+declare const anySourceElement: MergeDeep<{a: [1]}, {a: [any]}, {recurseIntoArrays: true}>;
+expectType<{a: [any]}>(anySourceElement);
+
+// A key the two operands share comes out with the modifiers of the source, whichever way round the two are written, because the mapped type that carries rule 3 is homomorphic over the source.
+declare const modifiersFromSource: MergeDeep<{readonly a?: string}, {a: number}>;
+expectType<{a: number}>(modifiersFromSource);
+
+declare const modifiersFromSourceReversed: MergeDeep<{a: number}, {readonly a?: string}>;
+expectType<{readonly a?: string}>(modifiersFromSourceReversed);
+
+declare const bothReadonly: MergeDeep<{readonly a: string}, {readonly a: number}>;
+expectType<{readonly a: number}>(bothReadonly);
+
+declare const onlyDestinationReadonly: MergeDeep<{readonly a: string}, {b: number}>;
+expectType<{readonly a: string; b: number}>(onlyDestinationReadonly);
+
+declare const sharedKeyLeftOptional: MergeDeep<{a: string; b?: number}, {b?: string}>;
+expectType<{a: string; b?: string}>(sharedKeyLeftOptional);
+
+// A key only the source has is copied whole, so it keeps the source's own modifiers rather than either operand's modifier rules.
+declare const onlySourceReadonly: MergeDeep<{a: 1}, {readonly b: 2}>;
+expectType<{a: 1; readonly b: 2}>(onlySourceReadonly);
+
+declare const onlySourceOptional: MergeDeep<{a: 1}, {b?: 2}>;
+expectType<{a: 1; b?: 2}>(onlySourceOptional);
+
+declare const onlySourceReadonlyOptional: MergeDeep<{a: 1}, {readonly b?: 2}>;
+expectType<{a: 1; readonly b?: 2}>(onlySourceReadonlyOptional);
+
+// A shared key that is a record on both sides is merged, and the merged record keeps the source's modifier rather than either contributor's.
+declare const mergedRecordModifier: MergeDeep<{readonly a?: {x: string}}, {a: {y: number}}>;
+expectType<{a: {x: string; y: number}}>(mergedRecordModifier);
+
+declare const mergedRecordOptional: MergeDeep<{a: {x: string}}, {a?: {y: number}}>;
+expectType<{a?: {x: string; y: number}}>(mergedRecordOptional);
+
+// `any` satisfies every assignability check, so the guard that asks whether `undefined` can reach the result fired for a destination of `any` and narrowed the whole merge to `never`, which accepts nothing at all. `MergeDeep` already guards `any` per property, and `ObjectMerge` returns `any` for the same input.
+declare const topTypeDestination: MergeDeep<any, {b: 2}>;
+expectType<any>(topTypeDestination);
+
+declare const topTypeBoth: MergeDeep<any, any>;
+expectType<any>(topTypeBoth);
+
+// A source of `any` is returned as it is too, the same as a destination of `any`: a merge with a value of any shape has no shape of its own to work out.
+declare const topTypeSourceNamed: MergeDeep<{a: 1}, any>;
+expectType<any>(topTypeSourceNamed);
+
+// A key under an index signature both records share may be in either record or in both, so its value is the destination's, the source's, or the two merged.
+type FooSharedIndexSignature = {[x: string]: {b: string}};
+type BarSharedIndexSignature = {[x: string]: {c: number}};
+
+declare const fooBarSharedIndexSignature: MergeDeep<FooSharedIndexSignature, BarSharedIndexSignature>;
+expectType<{[x: string]: {b: string} | {c: number} | {b: string; c: number}}>(fooBarSharedIndexSignature);
+
+type FooSharedNumberIndexSignature = {[x: number]: {b: string}};
+type BarSharedNumberIndexSignature = {[x: number]: {c: number}};
+
+declare const fooBarSharedNumberIndexSignature: MergeDeep<FooSharedNumberIndexSignature, BarSharedNumberIndexSignature>;
+expectType<{[x: number]: {b: string} | {c: number} | {b: string; c: number}}>(fooBarSharedNumberIndexSignature);
+
+// A signature only one record has is left as it is, and a named key is still merged next to it.
+type FooOnlyDestinationSignature = {[x: string]: unknown; shared: {d: string}};
+type BarOnlySourceSignature = {[x: symbol]: unknown; shared: {e: string}};
+
+declare const fooBarMixedSignatures: MergeDeep<FooOnlyDestinationSignature, BarOnlySourceSignature>;
+expectType<{[x: string]: unknown; [x: symbol]: unknown; shared: {d: string; e: string}}>(fooBarMixedSignatures);
+
+// `object` is an object whose keys are unknown, so a merge with it is inside the domain of this type, but it is not assignable to `UnknownRecord`, which used to drop the whole merge to `never`, a type that accepts nothing at all. Nothing can be said about the result beyond `object` itself, which is also what the shallow `Merge` answers for `Merge<object, object>`.
+declare const objectBoth: MergeDeep<object, object>;
+expectType<object>(objectBoth);
+
+declare const objectDestination: MergeDeep<object, {a: 1}>;
+expectType<{a: 1}>(objectDestination);
+
+declare const objectSource: MergeDeep<{a: 1}, object>;
+expectType<{a: 1}>(objectSource);
+
+declare const objectArraySource: MergeDeep<string[], object>;
+expectType<never>(objectArraySource);
+
+// A source that is not an object at all is outside the documented domain, and still answers `never`.
+declare const primitiveSource: MergeDeep<{a: 1}, string>;
+expectType<never>(primitiveSource);
+
+declare const emptyDestinationTopLevel: MergeDeep<[], [1], {recurseIntoArrays: true}>;
+expectType<[1]>(emptyDestinationTopLevel);
+
+// A signature describes keys either side may not have, so a key under a shared signature can hold either side's value alone, like the runtime merge of `{foo: {b: 'x'}}` and `{bar: {c: 1}}` does.
+expectAssignable<MergeDeep<{[x: string]: {b: string}}, {[x: string]: {c: number}}>>({foo: {b: 'x'}, bar: {c: 1}});
+
+// The keys of a generic destination and of the source stay readable on the result. A branch that answers `object` in the constraint would hide them.
+function mergeDeepOfGeneric<Destination extends {a: {b: number}}>(merged: MergeDeep<Destination, {a: {c: 1}}>) {
+	expectType<number>(merged.a.b);
+	expectType<1>(merged.a.c);
+}
+
+function mergeDeepIntoGeneric<Source extends {a: {b: number}}>(merged: MergeDeep<{c: 1}, Source>) {
+	expectType<number>(merged.a.b);
+	expectType<1>(merged.c);
+}
+
+// A tuple containing only optional elements still has fixed positions and must not become an unbounded array.
+declare const allOptionalTuples: MergeDeep<readonly [string?, boolean?], readonly [number?], {recurseIntoArrays: true}>;
+expectType<[number?, boolean?]>(allOptionalTuples);
+
+declare const allOptionalTupleIntoArray: MergeDeep<[string?], number[], {recurseIntoArrays: true}>;
+expectType<[number?, ...number[]]>(allOptionalTupleIntoArray);
+
+declare const arrayIntoAllOptionalTuple: MergeDeep<number[], [string?], {recurseIntoArrays: true}>;
+expectType<[string?, ...number[]]>(arrayIntoAllOptionalTuple);
+
+// Recursing into a merge still creates a fresh mutable array when an operand is an empty readonly tuple.
+declare const readonlyEmptyDestination: MergeDeep<readonly [], readonly [1, 2], {recurseIntoArrays: true}>;
+expectType<[1, 2]>(readonlyEmptyDestination);
+
+declare const readonlyEmptySource: MergeDeep<readonly [1, 2], readonly [], {recurseIntoArrays: true}>;
+expectType<[1, 2]>(readonlyEmptySource);
+
+// An actual empty-array element replaces an incompatible value; it is distinct from a tuple having no element at that index.
+declare const emptyArrayElementReplacesPrimitive: MergeDeep<[1], [[]], {recurseIntoArrays: true}>;
+expectType<[[]]>(emptyArrayElementReplacesPrimitive);
+
+declare const emptyArrayElementReplacesObject: MergeDeep<[{value: 1}], [[]], {recurseIntoArrays: true}>;
+expectType<[[]]>(emptyArrayElementReplacesObject);
+
+// A position is guaranteed to exist when either tuple declares it as required.
+declare const requiredSourceElement: MergeDeep<[1?], [2], {recurseIntoArrays: true}>;
+expectType<[2]>(requiredSourceElement);
+
+declare const requiredDestinationElement: MergeDeep<[1], [2?], {recurseIntoArrays: true}>;
+expectType<[2]>(requiredDestinationElement);
+
+// A rest element of `never[]` has no elements, so the source elements past the destination's fixed elements are kept as they are.
+declare const neverRestDestination: MergeDeep<[1, ...never[]], [2, 3], {recurseIntoArrays: true}>;
+expectType<[2, 3, ...never[]]>(neverRestDestination);
+
+declare const neverRestSource: MergeDeep<[1, 2], [3, ...never[]], {recurseIntoArrays: true}>;
+expectType<[3, 2, ...never[]]>(neverRestSource);

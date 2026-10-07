@@ -1,14 +1,15 @@
+import type {IsAny} from './is-any.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
+import type {And} from './and.d.ts';
 import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Merge} from './merge.d.ts';
 import type {
 	FirstArrayElement,
-	IsBothExtends,
 	UnknownArrayOrTuple,
 	EnforceOptional,
 } from './internal/index.d.ts';
-import type {NonEmptyTuple} from './non-empty-tuple.d.ts';
 import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
@@ -32,9 +33,15 @@ type MergeDeepRecordProperty<
 	Destination,
 	Source,
 	Options extends MergeDeepInternalOptions,
-> = undefined extends Source
-	? MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | (undefined extends Destination ? undefined : never)
-	: MergeDeepOrReturn<Source, Destination, Source, Options>;
+> = IsAny<Source> extends true
+	// `any` satisfies every assignability check below, so without this guard a source of `any` looks like a source of only `undefined` and the property is narrowed to `undefined`, which no object spread can produce.
+	? Source
+	: undefined extends Source
+		// A source of only `undefined` has nothing to merge with, so the property keeps `undefined`, like object spread does at runtime.
+		? [Source] extends [undefined]
+			? undefined
+			: MergeDeepOrReturn<Source, Exclude<Destination, undefined>, Exclude<Source, undefined>, Options> | undefined
+		: MergeDeepOrReturn<Source, Destination, Source, Options>;
 
 /**
 Walk through the union of the keys of the two objects and test in which object the properties are defined.
@@ -69,7 +76,22 @@ type MergeDeepRecord<
 	Source extends UnknownRecord,
 	Options extends MergeDeepInternalOptions,
 > = DoMergeDeepRecord<OmitIndexSignature<Destination>, OmitIndexSignature<Source>, Options>
-	& Merge<PickIndexSignature<Destination>, PickIndexSignature<Source>>;
+	& MergeDeepIndexSignatures<PickIndexSignature<Destination>, PickIndexSignature<Source>, Options>;
+
+/**
+Like {@link DoMergeDeepRecord}, but for index signatures. A signature describes keys that each side may not have, so a key under a signature both sides share holds the destination's value, the source's value, or the two merged.
+*/
+type MergeDeepIndexSignatures<
+	Destination extends UnknownRecord,
+	Source extends UnknownRecord,
+	Options extends MergeDeepInternalOptions,
+> = {
+	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
+} & {
+	[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
+} & {
+	[Key in keyof Source as Key extends keyof Destination ? Key : never]: Destination[Key] | Source[Key] | MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
+};
 
 // Helper to avoid computing ArrayTail twice.
 type PickRestTypeHelper<Tail extends UnknownArrayOrTuple, Type> = Tail extends [] ? Type : PickRestType<Tail>;
@@ -97,7 +119,9 @@ type OmitRestTypeHelper<
 	Result extends UnknownArrayOrTuple = [],
 > = Tail extends []
 	? Result
-	: OmitRestType<Tail, [...Result, FirstArrayElement<Type>]>;
+	: Type extends readonly [unknown, ...unknown[]]
+		? OmitRestType<Tail, [...Result, FirstArrayElement<Type>]>
+		: OmitRestType<Tail, [...Result, FirstArrayElement<Type>?]>;
 
 /**
 Omit the rest type.
@@ -116,24 +140,31 @@ type OmitRestType<Type extends UnknownArrayOrTuple, Result extends UnknownArrayO
 	? OmitRestTypeHelper<ArrayTail<Type>, Type, Result>
 	: Type;
 
-// Utility to avoid picking two times the type.
-type TypeNumberOrType<Type extends UnknownArrayOrTuple> = Type[number] extends never ? Type : Type[number];
-
-// Pick the rest type (array) and try to get the intrinsic type or return the provided type.
-type PickRestTypeFlat<Type extends UnknownArrayOrTuple> = TypeNumberOrType<PickRestType<Type>>;
-
 /**
-Try to merge two array/tuple elements or return the source element if the end of the destination is reached or vis-versa.
+Try to merge two array/tuple elements, or return the source element when their types cannot be merged.
+
+An `any` or `never` element is an actual source value, so it is handled by `MergeDeepOrReturn` rather than being interpreted as a missing rest element.
 */
 type MergeDeepArrayOrTupleElements<
 	Destination,
 	Source,
 	Options extends MergeDeepInternalOptions,
-> = Source extends []
-	? Destination
-	: Destination extends []
-		? Source
-		: MergeDeepOrReturn<Source, Destination, Source, Options>;
+> = MergeDeepOrReturn<Source, Destination, Source, Options>;
+
+/**
+Merge the rest arrays of two tuples. An empty rest has no indices, so the other rest is copied into a fresh mutable array instead of being passed as an element value.
+
+The rest types are passed as arrays so they are computed once and their absence is kept distinct from an actual empty-array element.
+*/
+type MergeDeepRestArrays<
+	Destination extends UnknownArrayOrTuple,
+	Source extends UnknownArrayOrTuple,
+	Options extends MergeDeepInternalOptions,
+> = Destination extends readonly []
+	? Writable<Source>
+	: Source extends readonly []
+		? Writable<Destination>
+		: MergeDeepArrayOrTupleElements<Destination, Source, Options>;
 
 /**
 Merge two tuples recursively.
@@ -141,17 +172,28 @@ Merge two tuples recursively.
 type DoMergeDeepTupleAndTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
-	DestinationRestType,
-	SourceRestType,
+	DestinationRestType extends UnknownArrayOrTuple,
+	SourceRestType extends UnknownArrayOrTuple,
 	Options extends MergeDeepInternalOptions,
 > = Destination extends []
 	? Source extends []
 		? []
-		: MergeArrayTypeAndTuple<DestinationRestType, Source, Options>
+		// A rest of `never[]` has no elements, the same as no rest at all, so it is not merged as an element of `never`, which would turn the merged element into `never`.
+		: [DestinationRestType[number]] extends [never]
+			? Writable<Source>
+			: MergeArrayTypeAndTuple<DestinationRestType[number], Source, Options>
 	: Source extends []
-		? MergeTupleAndArrayType<Destination, SourceRestType, Options>
+		? [SourceRestType[number]] extends [never]
+			? Writable<Destination>
+			: MergeTupleAndArrayType<Destination, SourceRestType[number], Options>
 		: [
-			MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>,
+			// The merged position is optional only when both inputs make it optional. A required element on either side guarantees the position exists.
+			...And<
+				Destination extends readonly [unknown, ...unknown[]] ? false : true,
+				Source extends readonly [unknown, ...unknown[]] ? false : true
+			> extends true
+				? [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>?]
+				: [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>],
 			...DoMergeDeepTupleAndTupleRecursive<ArrayTail<Destination>, ArrayTail<Source>, DestinationRestType, SourceRestType, Options>,
 		];
 
@@ -163,8 +205,8 @@ type MergeDeepTupleAndTupleRecursive<
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepInternalOptions,
 > = [
-	...DoMergeDeepTupleAndTupleRecursive<OmitRestType<Destination>, OmitRestType<Source>, PickRestTypeFlat<Destination>, PickRestTypeFlat<Source>, Options>,
-	...MergeDeepArrayOrTupleElements<PickRestType<Destination>, PickRestType<Source>, Options>,
+	...DoMergeDeepTupleAndTupleRecursive<OmitRestType<Destination>, OmitRestType<Source>, PickRestType<Destination>, PickRestType<Source>, Options>,
+	...MergeDeepRestArrays<PickRestType<Destination>, PickRestType<Source>, Options>,
 ];
 
 /**
@@ -176,10 +218,15 @@ type MergeTupleAndArrayType<
 	Options extends MergeDeepInternalOptions,
 > = Tuple extends []
 	? Tuple
-	: [
-		MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>,
-		...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
-	];
+	: Tuple extends readonly [unknown, ...unknown[]]
+		? [
+			MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>,
+			...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
+		]
+		: [
+			MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>?,
+			...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
+		];
 
 /**
 Merge an array into a tuple recursively taking into account a possible rest element.
@@ -190,7 +237,7 @@ type MergeDeepTupleAndArrayRecursive<
 	Options extends MergeDeepInternalOptions,
 > = [
 	...MergeTupleAndArrayType<OmitRestType<Destination>, Source[number], Options>,
-	...MergeDeepArrayOrTupleElements<PickRestType<Destination>, PickRestType<Source>, Options>,
+	...MergeDeepRestArrays<PickRestType<Destination>, PickRestType<Source>, Options>,
 ];
 
 /**
@@ -202,10 +249,15 @@ type MergeArrayTypeAndTuple<
 	Options extends MergeDeepInternalOptions,
 > = Tuple extends []
 	? Tuple
-	: [
-		MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>,
-		...MergeArrayTypeAndTuple<ArrayType, ArrayTail<Tuple>, Options>,
-	];
+	: Tuple extends readonly [unknown, ...unknown[]]
+		? [
+			MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>,
+			...MergeArrayTypeAndTuple<ArrayType, ArrayTail<Tuple>, Options>,
+		]
+		: [
+			MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>?,
+			...MergeArrayTypeAndTuple<ArrayType, ArrayTail<Tuple>, Options>,
+		];
 
 /**
 Merge a tuple into an array recursively taking into account a possible rest element.
@@ -216,7 +268,7 @@ type MergeDeepArrayAndTupleRecursive<
 	Options extends MergeDeepInternalOptions,
 > = [
 	...MergeArrayTypeAndTuple<Destination[number], OmitRestType<Source>, Options>,
-	...MergeDeepArrayOrTupleElements<PickRestType<Destination>, PickRestType<Source>, Options>,
+	...MergeDeepRestArrays<PickRestType<Destination>, PickRestType<Source>, Options>,
 ];
 
 /**
@@ -255,11 +307,12 @@ type MergeDeepArrayRecursive<
 	Options extends MergeDeepInternalOptions,
 > = Destination[number] extends UnknownArrayOrTuple
 	? Source[number] extends UnknownArrayOrTuple
-		? Array<MergeDeepArrayOrTupleRecursive<Destination[number], Source[number], Options>>
+		// Only the top level is always spread, so the flag is turned off before recursing, the same way it is when descending into a property.
+		? Array<MergeDeepArrayOrTupleRecursive<Destination[number], Source[number], EnforceOptional<Merge<Options, {spreadTopLevelArrays: false}>>>>
 		: DoMergeArrayOrTuple<Destination, Source, Options>
 	: Destination[number] extends UnknownRecord
 		? Source[number] extends UnknownRecord
-			? Array<SimplifyDeepExcludeArray<MergeDeepRecord<Destination[number], Source[number], Options>>>
+			? Array<SimplifyDeepExcludeArray<MergeDeepRecord<Destination[number], Source[number], EnforceOptional<Merge<Options, {spreadTopLevelArrays: false}>>>>>
 			: DoMergeArrayOrTuple<Destination, Source, Options>
 		: DoMergeArrayOrTuple<Destination, Source, Options>;
 
@@ -275,13 +328,20 @@ type MergeDeepArrayOrTupleRecursive<
 	Destination extends UnknownArrayOrTuple,
 	Source extends UnknownArrayOrTuple,
 	Options extends MergeDeepInternalOptions,
-> = IsBothExtends<NonEmptyTuple, Destination, Source> extends true
-	? MergeDeepTupleAndTupleRecursive<Destination, Source, Options>
-	: Destination extends NonEmptyTuple
-		? MergeDeepTupleAndArrayRecursive<Destination, Source, Options>
-		: Source extends NonEmptyTuple
-			? MergeDeepArrayAndTupleRecursive<Destination, Source, Options>
-			: MergeDeepArrayRecursive<Destination, Source, Options>;
+> = Destination extends readonly []
+	// An empty destination has no element to merge with, so the source elements are kept in a fresh mutable array.
+	? Writable<Source>
+	// An empty source has no indices to replace, so the destination elements are kept in a fresh mutable array.
+	: Source extends readonly []
+		? Writable<Destination>
+		// A tuple has a fixed first position even when all its elements are optional. `NonEmptyTuple` only matches tuples with a required first element.
+		: '0' extends keyof Destination
+			? '0' extends keyof Source
+				? MergeDeepTupleAndTupleRecursive<Destination, Source, Options>
+				: MergeDeepTupleAndArrayRecursive<Destination, Source, Options>
+			: '0' extends keyof Source
+				? MergeDeepArrayAndTupleRecursive<Destination, Source, Options>
+				: MergeDeepArrayRecursive<Destination, Source, Options>;
 
 /**
 Merge two array/tuple according to {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option.
@@ -371,12 +431,20 @@ type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepO
 		: Destination extends UnknownRecord
 			? Source extends UnknownRecord
 				? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
-				: never
+				// `object` is an object whose keys are unknown, but it is not assignable to `UnknownRecord`. It contributes no known keys, so it is merged as `{}`, the way the shallow `Merge` does. It is matched only after the record checks, so for a generic input, whose constraint is read through these checks, the `object` arms drop out instead of hiding its keys.
+				: IsEqual<Source, object> extends true
+					? MergeDeepWithDefaultOptions<Destination, {}, Options>
+					: never
 			: Destination extends UnknownArrayOrTuple
 				? Source extends UnknownArrayOrTuple
 					? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
 					: never
-				: never
+				: IsEqual<Destination, object> extends true
+					// Two of them answer `object`.
+					? IsEqual<Source, object> extends true
+						? object
+						: MergeDeepWithDefaultOptions<{}, Source, Options>
+					: never
 >;
 
 /**
@@ -385,6 +453,8 @@ Merge two objects or two arrays/tuples recursively into a new type.
 - Properties that only exist in one object are copied into the new object.
 - Properties that exist in both objects are merged if possible or replaced by the one of the source if not.
 - Top-level arrays and tuples are always spread.
+- A `readonly` array does not keep its `readonly` modifier when it is spread, because the result is a fresh array.
+- A `number` index signature and a `string` one are not merged with each other, so `MergeDeep<{[x: number]: A}, {[x: string]: B}>` is `{[x: string]: B}`.
 - By default, inner arrays and tuples are replaced. See {@link MergeDeepOptions.arrayMergeMode arrayMergeMode} option to change this behaviour.
 - By default, individual array/tuple elements are not affected. See {@link MergeDeepOptions.recurseIntoArrays recurseIntoArrays} option to change this behaviour.
 
@@ -486,10 +556,16 @@ declare function mergeDeep<Destination, Source, Options extends MergeDeepOptions
 @category Object
 @category Utilities
 */
-export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> = MergeDeepWithDefaultOptions<
-	SimplifyDeepExcludeArray<Destination>,
-	SimplifyDeepExcludeArray<Source>,
-	Options
->;
+export type MergeDeep<Destination, Source, Options extends MergeDeepOptions = {}> =
+	// `any` satisfies every assignability check, so the guard inside `MergeDeepWithDefaultOptions` that asks whether `undefined` can reach the result fires for it and narrows the whole merge to `never`, which accepts nothing at all. An `any` on either side is returned as it is, which is what `ObjectMerge` does and what the per-property guard in `MergeDeepRecordProperty` assumes.
+	IsAny<Destination> extends true
+		? any
+		: IsAny<Source> extends true
+			? any
+			: MergeDeepWithDefaultOptions<
+				SimplifyDeepExcludeArray<Destination>,
+				SimplifyDeepExcludeArray<Source>,
+				Options
+			>;
 
 export {};

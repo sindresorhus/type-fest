@@ -246,6 +246,18 @@ expectType<{0: number | string}>({} as ObjectMerge<{0: number}, {'0'?: string}>)
 expectType<{'0'?: number | string}>({} as ObjectMerge<{'0'?: number}, {0?: string}>);
 expectType<{0?: number | string}>({} as ObjectMerge<{0?: number}, {'0'?: string}>);
 
+// ===== `readonly` on a member the merge touches never survives, because the result is a fresh object. A `readonly` one level down does survive, because that member is copied by reference. =====
+
+// A key only the second has keeps its own modifier minus `readonly`.
+expectType<{a: string; b: number}>({} as ObjectMerge<{readonly a: string}, {readonly b: number}>);
+// A key on both sides takes the second's modifier, and `readonly` is dropped either way.
+expectType<{a: number}>({} as ObjectMerge<{readonly a: string}, {a: number}>);
+expectType<{a: number}>({} as ObjectMerge<{a: string}, {readonly a: number}>);
+expectType<{a?: number | string}>({} as ObjectMerge<{readonly a?: string}, {a?: number}>);
+
+// One level down the member is copied whole, so its `readonly` is still there, which is what the runtime does as well.
+expectType<{a: {readonly b: string}; c: number}>({} as ObjectMerge<{a: {readonly b: string}}, {c: number}>);
+
 // === Unions ===
 expectType<{a: number; b: string; c: number} | {a: number; c: number; d: string}>(
 	{} as ObjectMerge<{a: string; b: string} | {c: string; d: string}, {a: number; c: number}>,

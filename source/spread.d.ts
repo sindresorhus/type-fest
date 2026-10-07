@@ -1,14 +1,20 @@
+import type {IsAny} from './is-any.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
 import type {Simplify} from './simplify.d.ts';
 
+// The spread syntax always produces a fresh object literal, so `readonly` is dropped, and an index signature survives only when both operands have it.
 type SpreadObject<FirstType extends object, SecondType extends object> = {
-	[Key in keyof FirstType]: Key extends keyof SecondType
-		? FirstType[Key] | Required<SecondType>[Key]
+	-readonly [Key in keyof OmitIndexSignature<FirstType>]: Key extends keyof OmitIndexSignature<SecondType>
+		? FirstType[Key] | Required<OmitIndexSignature<SecondType>>[Key]
 		: FirstType[Key];
 } & Pick<
-	SecondType,
-RequiredKeysOf<SecondType> | Exclude<keyof SecondType, keyof FirstType>
->;
+	{-readonly [Key in keyof OmitIndexSignature<SecondType>]: OmitIndexSignature<SecondType>[Key]},
+RequiredKeysOf<OmitIndexSignature<SecondType>> | Exclude<keyof OmitIndexSignature<SecondType>, keyof OmitIndexSignature<FirstType>>
+> & {
+	[Key in keyof PickIndexSignature<FirstType> & keyof PickIndexSignature<SecondType>]: PickIndexSignature<FirstType>[Key] | PickIndexSignature<SecondType>[Key];
+};
 
 type TupleOrArray = readonly [...unknown[]];
 
@@ -69,10 +75,20 @@ baz(fooBar);
 export type Spread<
 	FirstType extends Spreadable,
 	SecondType extends Spreadable,
-> = FirstType extends TupleOrArray
-	? SecondType extends TupleOrArray
-		? SpreadTupleOrArray<FirstType, SecondType>
-		: Simplify<SpreadObject<FirstType, SecondType>>
-	: Simplify<SpreadObject<FirstType, SecondType>>;
+> =
+	// The spread syntax infers `any` when either operand is `any`, so this has to as well. Without the guard the mapped type walked `keyof any`, which is `string | number | symbol`, and the result kept the other operand's own keys only, so it accepted strictly less than the runtime does. `ObjectMerge`, the sound version of the same merge, answers `any` for the same input.
+	IsAny<FirstType> extends true
+		? any
+		: IsAny<SecondType> extends true
+			? any
+			: FirstType extends TupleOrArray
+				? SecondType extends TupleOrArray
+					? SpreadTupleOrArray<FirstType, SecondType>
+					: SecondType extends unknown // For distributing `SecondType`
+						? Simplify<SpreadObject<FirstType, SecondType>>
+						: never
+				: SecondType extends unknown // For distributing `SecondType`
+					? Simplify<SpreadObject<FirstType, SecondType>>
+					: never;
 
 export {};

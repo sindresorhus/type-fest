@@ -197,3 +197,54 @@ expectType<TestIntersectionObject>({} as Merge<TestIntersectionObject, TestInter
 // Idempotency: Unions
 expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject | {c: string}, TestIntersectionObject>);
 expectType<TestIntersectionObject | {a: string; b: string; c: string}>({} as Merge<TestIntersectionObject, TestIntersectionObject | {c: string}>);
+
+// An array or tuple combines position by position, with the source's elements overriding the destination's. This is `Merge`'s own rule applied to the index keys a tuple has, not what either built-in spread does: the array spread appends and the object spread gives a plain object. See the note on `CombineTwoArrays` in the source.
+declare const twoTuples: Merge<[1, 2, 3], [4, 5]>;
+expectType<[4, 5, 3]>(twoTuples);
+
+declare const shorterSource: Merge<[1, 2, 3, 4], [9]>;
+expectType<[9, 2, 3, 4]>(shorterSource);
+
+declare const longerSource: Merge<[9], [1, 2, 3, 4]>;
+expectType<[1, 2, 3, 4]>(longerSource);
+
+declare const twoArrays: Merge<string[], number[]>;
+expectType<Array<string | number>>(twoArrays);
+
+declare const twoReadonlyArrays: Merge<readonly string[], readonly number[]>;
+expectType<ReadonlyArray<string | number>>(twoReadonlyArrays);
+
+declare const mixedReadonlyArrays: Merge<readonly string[], number[]>;
+expectType<Array<string | number>>(mixedReadonlyArrays);
+
+// Two readonly tuples spread to a readonly tuple, the same rule the arrays above already follow.
+declare const twoReadonlyTuples: Merge<readonly [1, 2, 3], readonly [4, 5]>;
+expectType<readonly [4, 5, 3]>(twoReadonlyTuples);
+
+declare const mixedReadonlyTuples: Merge<readonly [1, 2, 3], [4, 5]>;
+expectType<[4, 5, 3]>(mixedReadonlyTuples);
+
+declare const mixedReadonlyTuplesReversed: Merge<[1, 2, 3], readonly [4, 5]>;
+expectType<[4, 5, 3]>(mixedReadonlyTuplesReversed);
+
+// Known limitation: a tuple merged with an object collapses to `never`, where the real spread gives an object carrying the array's own members: `{...['a', 1], ...{0: true}}` has `length` and `toString` alongside the positions. See the note in the docs.
+declare const tupleIntoObject: Merge<[1], {0: 2}>;
+expectType<never>(tupleIntoObject);
+
+// A source with an optional element has no fixed positions to override.
+declare const optionalSourceElement: Merge<[1, 2], [3?]>;
+expectType<Array<1 | 2 | 3 | undefined>>(optionalSourceElement);
+
+// An optional destination element is a position the source can override.
+declare const optionalDestinationElement: Merge<[1?], [2]>;
+expectType<[2]>(optionalDestinationElement);
+
+declare const optionalDestinationTail: Merge<[1, 2?, 3?], [4, 5]>;
+expectType<[4, 5, 3?]>(optionalDestinationTail);
+
+// `any` is not an array, so a merge with a tuple does not take the array branch as well as the object branch, which made the result a union with `any[]`.
+declare const anyDestinationTupleSource: Merge<any, [1]>;
+expectType<any>(anyDestinationTupleSource['foo']);
+
+declare const tupleDestinationAnySource: Merge<[1], any>;
+expectType<any>(tupleDestinationAnySource['foo']);
