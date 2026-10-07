@@ -1,3 +1,4 @@
+import type {IsEqual} from '../is-equal.d.ts';
 import type {TupleOf} from '../tuple-of.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {StringLength} from '../string-length.d.ts';
@@ -82,6 +83,8 @@ type NumericString = '0123456789';
 /**
 Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are both positive numeric strings.
 
+TypeScript prints numbers of `1e21` and above, and positive numbers below `1e-6`, in exponential notation. Such a number is larger or smaller than any number in plain decimal notation, so a comparison with one exponential side is still decided. Returns `boolean` when both strings use exponential notation with an exponent of the same sign, because comparing digit by digit only works for plain decimal notation.
+
 @example
 ```
 type A = PositiveNumericStringGt<'500', '1'>;
@@ -92,17 +95,92 @@ type B = PositiveNumericStringGt<'1', '1'>;
 
 type C = PositiveNumericStringGt<'1', '500'>;
 //=> false
+
+type D = PositiveNumericStringGt<'1.1', '1.05'>;
+//=> true
+
+type E = PositiveNumericStringGt<'1e+21', '1'>;
+//=> true
+
+type F = PositiveNumericStringGt<'1e-7', '0'>;
+//=> true
+
+type G = PositiveNumericStringGt<'2e+21', '1e+21'>;
+//=> boolean
 ```
 */
 export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
 	? false
-	: [TupleOf<StringLength<A>, 0>, TupleOf<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
+	// A positive exponent, like `1e+21`, is larger than any plain decimal number.
+	: A extends `${string}e+${string}`
+		? B extends `${string}e+${string}`
+			? boolean
+			: true
+		: B extends `${string}e+${string}`
+			? false
+			// A negative exponent, like `1e-7`, is smaller than any plain decimal number except `0`.
+			: A extends `${string}e-${string}`
+				? B extends `${string}e-${string}`
+					? boolean
+					: B extends '0'
+						? true
+						: false
+				: B extends `${string}e-${string}`
+					? A extends '0'
+						? false
+						: true
+					: PositiveIntegerStringGt<IntegerPartOfNumericString<A>, IntegerPartOfNumericString<B>> extends infer IntegerResult extends boolean
+						? IntegerResult extends true
+							? true
+							: IsEqual<IntegerPartOfNumericString<A>, IntegerPartOfNumericString<B>> extends true
+								? FractionalPartGt<FractionalPartOfNumericString<A>, FractionalPartOfNumericString<B>>
+								: false
+						: never; // Should never happen
+
+type IntegerPartOfNumericString<S extends string> = S extends `${infer IntegerPart}.${string}` ? IntegerPart : S;
+
+type FractionalPartOfNumericString<S extends string> = S extends `${string}.${infer FractionalPart}` ? FractionalPart : '';
+
+/**
+Returns a boolean for whether `A` is greater than `B`, where `A` and `B` are both plain positive integer strings.
+
+@example
+```
+type A = PositiveIntegerStringGt<'500', '1'>;
+//=> true
+
+type B = PositiveIntegerStringGt<'1', '1'>;
+//=> false
+
+type C = PositiveIntegerStringGt<'1', '500'>;
+//=> false
+```
+*/
+type PositiveIntegerStringGt<A extends string, B extends string> =
+	[TupleOf<StringLength<A>, 0>, TupleOf<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
 		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]
 			? 0 extends Remain['length']
 				? SameLengthPositiveNumericStringGt<A, B>
 				: true
 			: false
 		: never;
+
+/**
+Returns a boolean for whether the fractional part `A` is greater than `B`. The first differing character decides, and a part that runs out of characters first is the smaller one, so `'5'` is less than `'50'` while `'50'` is greater than `'5'`. TypeScript never prints a numeric literal with a trailing zero, so the two are the same value in practice and the difference cannot be reached.
+*/
+type FractionalPartGt<A extends string, B extends string> = A extends B
+	? false
+	: B extends ''
+		? true
+		: A extends ''
+			? false
+			: A extends `${infer FirstA}${infer RestA}`
+				? B extends `${infer FirstB}${infer RestB}`
+					? FirstA extends FirstB
+						? FractionalPartGt<RestA, RestB>
+						: PositiveNumericCharacterGt<FirstA, FirstB>
+					: never // Should never happen
+				: never; // Should never happen
 
 /**
 Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both positive numeric characters.

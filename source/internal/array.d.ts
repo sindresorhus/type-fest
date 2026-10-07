@@ -14,10 +14,18 @@ Extracts the type of the first element of an array or tuple.
 */
 export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray extends readonly [infer THead, ...unknown[]]
 	? THead
-	: never;
+	// A tuple whose elements are all optional has no required first element, but it still has a first element.
+	: '0' extends keyof TArray
+		? TArray extends readonly [(infer THead)?, ...unknown[]]
+			? THead
+			: never
+		: never;
 
 /**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
+
+Known limitations:
+- A tuple with a leading rest element, such as `[...string[], 1, 2]`, has its fixed part at the other end, which this does not reach, so the result is `[]` rather than `[1, 2]`.
 
 @example
 ```
@@ -37,6 +45,9 @@ export type StaticPartOfArray<T extends UnknownArray, Result extends UnknownArra
 
 /**
 Returns the variable, non-fixed-length portion of the given array, excluding static-length parts.
+
+Known limitations:
+- A tuple with a leading rest element, such as `[...string[], 1, 2]`, is returned whole rather than reduced to `string[]`, because the fixed part is at the other end. See {@link StaticPartOfArray}.
 
 @example
 ```
@@ -78,6 +89,63 @@ export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
 Returns whether the given array `T` is readonly.
 */
 export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
+
+/**
+The largest length the array can have, including its optional elements.
+
+`T['length']` is a union such as `1 | 2` for `[string, number?]`, which breaks index arithmetic that needs a single length.
+
+@example
+```
+type A = MaxLength<[string, number?]>;
+//=> 2
+```
+*/
+export type MaxLength<Array_ extends UnknownArray> = Required<Array_>['length'];
+
+/**
+Returns whether the given array has no statically known element at either end, so it can be shorter than any given index.
+
+@example
+```
+type A = HasNoStaticElements<string[]>;
+//=> true
+
+type B = HasNoStaticElements<[...string[], 1, 2]>;
+//=> false
+
+type C = HasNoStaticElements<[1, 2, ...string[]]>;
+//=> false
+```
+*/
+export type HasNoStaticElements<Array_ extends UnknownArray> = Array_ extends readonly [unknown, ...unknown[]]
+	? false
+	: Array_ extends readonly [...unknown[], unknown]
+		? false
+		: true;
+
+/**
+Returns whether the given array is an array of unknown length, such as `string[]`, rather than a tuple. A tuple with a rest element still has fixed elements, so it is not one.
+
+@example
+```
+type A = IsArrayOfUnknownLength<string[]>;
+//=> true
+
+type B = IsArrayOfUnknownLength<[1?, ...string[]]>;
+//=> false
+
+type C = IsArrayOfUnknownLength<[...string[], 1]>;
+//=> false
+```
+*/
+export type IsArrayOfUnknownLength<Array_ extends UnknownArray> = number extends Array_['length']
+	? '0' extends keyof Array_
+		? false
+		: Array_ extends readonly [...unknown[], unknown]
+			? false
+			: true
+	: false;
 
 /**
 Transforms a tuple type by replacing it's rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.

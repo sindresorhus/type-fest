@@ -36,7 +36,7 @@ export type IsNumberLike<N> =
 /**
 Returns the minimum number in the given union of numbers.
 
-Note: Just supports numbers from 0 to 999.
+Note: Just supports numbers from 0 to 998. A larger value exceeds TypeScript's recursion limit, because the implementation counts upward one tuple element at a time.
 
 @example
 ```

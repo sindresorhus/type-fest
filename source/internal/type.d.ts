@@ -1,6 +1,7 @@
 import type {IsAny} from '../is-any.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {Primitive} from '../primitive.d.ts';
+import type {TypedArray} from '../typed-array.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 
 /**
@@ -9,9 +10,22 @@ Matches any primitive, `void`, `Date`, or `RegExp` value.
 export type BuiltIns = Primitive | void | Date | RegExp;
 
 /**
-Matches non-recursive types.
+Matches the built-ins that are a single value rather than a structure to recurse into. Recursing into any of them replaces their members with something useless, so the `*Deep` types keep them as is.
+
+A plain construct signature is assignable to an abstract one, so the abstract form matches every class constructor.
 */
-export type NonRecursiveType = BuiltIns | Function | (new (...arguments_: any[]) => unknown) | Promise<unknown>;
+export type NonRecursiveLeaf =
+	| BuiltIns
+	| (abstract new (...arguments_: any[]) => unknown)
+	| ArrayBuffer
+	| SharedArrayBuffer
+	| DataView
+	| TypedArray;
+
+/**
+Matches non-recursive types: {@link NonRecursiveLeaf} plus thenables (`PromiseLike`), which `await` unwraps rather than walks, and functions.
+*/
+export type NonRecursiveType = NonRecursiveLeaf | PromiseLike<unknown> | Function;
 
 /**
 Matches maps, sets, or arrays.
@@ -167,5 +181,16 @@ Indicates the value of `exactOptionalPropertyTypes` compiler option.
 export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
 	? false
 	: true;
+
+/**
+The call signature of the given type, rebuilt with its `this` parameter, which `Parameters` leaves out, so the rebuilt signature does not accept any receiver. A function that declares no `this` is rebuilt without one, like `OmitThisParameter` does, because `this: unknown` would reject a function that declares a `this`. `unknown` for a type that is not callable, so it can be intersected with anything.
+
+Note: An overloaded function keeps only its last signature, and a generic one loses its type parameters.
+*/
+export type CallSignatureOf<Type> = Type extends (...arguments_: never) => any
+	? unknown extends ThisParameterType<Type>
+		? (...arguments_: Parameters<Type>) => ReturnType<Type>
+		: (this: ThisParameterType<Type>, ...arguments_: Parameters<Type>) => ReturnType<Type>
+	: unknown;
 
 export {};

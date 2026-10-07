@@ -16,9 +16,9 @@ type Tuple = TupleLength<[string, number, boolean]>;
 type Array = TupleLength<string[]>;
 //=> never
 
-// Supports union types.
+// Supports union types. The empty tuple has length `0`, and the array of unknown length drops out.
 type Union = TupleLength<[] | [1, 2, 3] | number[]>;
-//=> 1 | 3
+//=> 0 | 3
 ```
 */
 export type TupleLength<T extends UnknownArray> =
