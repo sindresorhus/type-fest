@@ -1,41 +1,41 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {DelimiterCasedProperties} from '../index.d.ts';
 
 declare const foo: DelimiterCasedProperties<{helloWorld: {fooBar: string}}, '/'>;
-expectType<{'hello/world': {fooBar: string}}>(foo);
+expectTypeOf(foo).toBe<{'hello/world': {fooBar: string}}>();
 
 declare const bar: DelimiterCasedProperties<Array<{helloWorld: string}>, '-'>;
-expectType<Array<{helloWorld: string}>>(bar);
+expectTypeOf(bar).toBe<Array<{helloWorld: string}>>();
 
 declare const fooBar: DelimiterCasedProperties<() => {a: string}, '-'>;
-expectType<() => {a: string}>(fooBar);
+expectTypeOf(fooBar).toBe<() => {a: string}>();
 
 declare const withOptions: DelimiterCasedProperties<{helloWorld1: {fooBar: string}}, '.', {splitOnNumbers: true}>;
-expectType<{'hello.world.1': {fooBar: string}}>(withOptions);
+expectTypeOf(withOptions).toBe<{'hello.world.1': {fooBar: string}}>();
 
 declare const withPunctuation: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.'>;
-expectType<{'hello@world1': {'foo::Bar': string}}>(withPunctuation);
+expectTypeOf(withPunctuation).toBe<{'hello@world1': {'foo::Bar': string}}>();
 
 declare const withPunctuationSplit: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true}>;
-expectType<{'hello.world1': {'foo::Bar': string}}>(withPunctuationSplit);
+expectTypeOf(withPunctuationSplit).toBe<{'hello.world1': {'foo::Bar': string}}>();
 
 declare const withPunctuationSplitAndNumbers: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true; splitOnNumbers: true}>;
-expectType<{'hello.world.1': {'foo::Bar': string}}>(withPunctuationSplitAndNumbers);
+expectTypeOf(withPunctuationSplitAndNumbers).toBe<{'hello.world.1': {'foo::Bar': string}}>();
 
 declare const startsWithPunctuation: DelimiterCasedProperties<{'^fooBarBaz': {'^foo_bar_baz': string}}, ':'>;
-expectType<{'^foo:bar:baz': {'^foo_bar_baz': string}}>(startsWithPunctuation);
+expectTypeOf(startsWithPunctuation).toBe<{'^foo:bar:baz': {'^foo_bar_baz': string}}>();
 
 declare const startsWithPunctuationSameAsDelimiter: DelimiterCasedProperties<{'#fooBarBaz': {'#foo_bar_baz': string}}, '#'>;
-expectType<{'#foo#bar#baz': {'#foo_bar_baz': string}}>(startsWithPunctuationSameAsDelimiter);
+expectTypeOf(startsWithPunctuationSameAsDelimiter).toBe<{'#foo#bar#baz': {'#foo_bar_baz': string}}>();
 
 declare const emptyStringDelimiter: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, ''>;
-expectType<{'foobarbaz': {'foo_bar_baz': string}}>(emptyStringDelimiter);
+expectTypeOf(emptyStringDelimiter).toBe<{'foobarbaz': {'foo_bar_baz': string}}>();
 
 declare const moreThanOneLengthDelimiter: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, '__'>;
-expectType<{'foo__bar__baz': {'foo_bar_baz': string}}>(moreThanOneLengthDelimiter);
+expectTypeOf(moreThanOneLengthDelimiter).toBe<{'foo__bar__baz': {'foo_bar_baz': string}}>();
 
 declare const moreThanOneLengthDelimiter1: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, '-->'>;
-expectType<{'foo-->bar-->baz': {'foo_bar_baz': string}}>(moreThanOneLengthDelimiter1);
+expectTypeOf(moreThanOneLengthDelimiter1).toBe<{'foo-->bar-->baz': {'foo_bar_baz': string}}>();
 
 // Verify example
 type User = {
@@ -52,5 +52,5 @@ const result: DelimiterCasedProperties<User, '-'> = {
 	'user-id': 1,
 	'user-name': 'Tom',
 };
-expectType<DelimiterCasedProperties<User, '-'>>(result);
-expectType<DelimiterCasedProperties<UserPunctuated, '-', {splitOnPunctuation: true}>>(result);
+expectTypeOf(result).toBe<DelimiterCasedProperties<User, '-'>>();
+expectTypeOf(result).toBe<DelimiterCasedProperties<UserPunctuated, '-', {splitOnPunctuation: true}>>();

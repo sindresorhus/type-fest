@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnknownSet} from '../index.d.ts';
 
 declare const foo: ReadonlySet<string>;
@@ -6,15 +6,15 @@ declare const bar: {
 	readonly set: ReadonlySet<number>;
 };
 
-expectAssignable<UnknownSet>(foo);
-expectAssignable<UnknownSet>(bar.set);
-expectAssignable<UnknownSet>(new Set());
-expectAssignable<UnknownSet>(new Set('foo'));
+expectTypeOf(foo).toBeAssignableTo<UnknownSet>();
+expectTypeOf(bar.set).toBeAssignableTo<UnknownSet>();
+expectTypeOf(new Set()).toBeAssignableTo<UnknownSet>();
+expectTypeOf(new Set('foo')).toBeAssignableTo<UnknownSet>();
 
-expectNotAssignable<UnknownSet>(null);
-expectNotAssignable<UnknownSet>(undefined);
-expectNotAssignable<UnknownSet>({});
-expectNotAssignable<UnknownSet>([]);
-expectNotAssignable<UnknownSet>({0: 1});
-expectNotAssignable<UnknownSet>(1);
-expectNotAssignable<UnknownSet>(Date);
+expectTypeOf<null>().not.toBeAssignableTo<UnknownSet>();
+expectTypeOf<undefined>().not.toBeAssignableTo<UnknownSet>();
+expectTypeOf<{}>().not.toBeAssignableTo<UnknownSet>();
+expectTypeOf<[]>().not.toBeAssignableTo<UnknownSet>();
+expectTypeOf<{0: 1}>().not.toBeAssignableTo<UnknownSet>();
+expectTypeOf<1>().not.toBeAssignableTo<UnknownSet>();
+expectTypeOf(Date).not.toBeAssignableTo<UnknownSet>();

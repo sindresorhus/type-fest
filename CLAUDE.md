@@ -9,7 +9,7 @@ TypeScript utility types library. Pure type-level programming—no runtime code.
 ```bash
 npm test         # MUST pass before committing (runs all below)
 npm run test:tsc # TypeScript compiler
-npm run test:tsd # Type tests (tsd)
+npm run test:nz  # Type tests (nz)
 npm run test:xo  # Linter
 ```
 
@@ -17,7 +17,7 @@ npm run test:xo  # Linter
 
 ```
 source/type-name.d.ts → Type definition (.d.ts REQUIRED)
-test-d/type-name.ts   → Tests (tsd)
+test-d/type-name.ts   → Tests (nz)
 index.d.ts            → Export (MUST add, lint enforces)
 readme.md             → API docs (add to category)
 source/internal/      → Shared helpers (not exported)
@@ -61,10 +61,11 @@ Docs: No `*` prefix. First line → readme. Include use-cases, examples, `@categ
 **ALWAYS test edge cases** (`any`, `never`, `unknown`).
 
 ```ts
-expectType<string>('' as MyType<'foo'>);           // Basic
-expectType<any>('' as MyType<any>);                // any/never/unknown
-expectNotAssignable<MyType<'foo'>>({wrong: true}); // Negative
-expectError<MyType<number>>();                     // Should error
+expectTypeOf<MyType<'foo'>>().toBe<string>();                       // Basic
+expectTypeOf<MyType<any>>().toBe<any>();                            // any/never/unknown
+expectTypeOf<{wrong: true}>().not.toBeAssignableTo<MyType<'foo'>>(); // Negative
+// @ts-expect-error                                                 // Should error
+type Invalid = MyType<number>;
 ```
 
 Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/*.d.ts`

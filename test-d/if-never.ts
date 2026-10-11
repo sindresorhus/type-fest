@@ -1,11 +1,11 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IfNever} from '../index.d.ts';
 
 // `IfNever` should return `true`/`false` if only `T` is specified
-expectType<IfNever<never>>(true);
-expectType<IfNever<string>>(false);
-expectType<IfNever<never, 'T', 'F'>>('T');
-expectType<IfNever<string, 'T', 'F'>>('F');
+expectTypeOf<IfNever<never>>().toBe<true>();
+expectTypeOf<IfNever<string>>().toBe<false>();
+expectTypeOf<IfNever<never, 'T', 'F'>>().toBe<'T'>();
+expectTypeOf<IfNever<string, 'T', 'F'>>().toBe<'F'>();
 
 // Missing generic parameter
 // @ts-expect-error

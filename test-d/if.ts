@@ -1,8 +1,8 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {If} from '../source/if.d.ts';
 
-expectType<string>({} as If<true, string, number>);
-expectType<number>({} as If<false, string, number>);
-expectType<string | number>({} as If<boolean, string, number>);
-expectType<string | number>({} as If<any, string, number>);
-expectType<number>({} as If<never, string, number>);
+expectTypeOf<If<true, string, number>>().toBe<string>();
+expectTypeOf<If<false, string, number>>().toBe<number>();
+expectTypeOf<If<boolean, string, number>>().toBe<string | number>();
+expectTypeOf<If<any, string, number>>().toBe<string | number>();
+expectTypeOf<If<never, string, number>>().toBe<number>();

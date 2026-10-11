@@ -1,23 +1,23 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {KebabCasedProperties} from '../index.d.ts';
 
 type Foobar = {helloWorld1: {fooBar: string}};
 type FoobarPunctuated = {'hello@World1': {'foo::Bar': string}};
 
 declare const foo: KebabCasedProperties<Foobar>;
-expectType<{'hello-world1': {fooBar: string}}>(foo);
+expectTypeOf(foo).toBe<{'hello-world1': {fooBar: string}}>();
 
 declare const bar: KebabCasedProperties<Foobar, {splitOnNumbers: true}>;
-expectType<{'hello-world-1': {fooBar: string}}>(bar);
+expectTypeOf(bar).toBe<{'hello-world-1': {fooBar: string}}>();
 
 declare const fooBarPunctuated: KebabCasedProperties<FoobarPunctuated>;
-expectType<{'hello@world1': {'foo::Bar': string}}>(fooBarPunctuated);
+expectTypeOf(fooBarPunctuated).toBe<{'hello@world1': {'foo::Bar': string}}>();
 
 declare const fooBarPunctuatedSplit: KebabCasedProperties<FoobarPunctuated, {splitOnPunctuation: true}>;
-expectType<{'hello-world1': {'foo::Bar': string}}>(fooBarPunctuatedSplit);
+expectTypeOf(fooBarPunctuatedSplit).toBe<{'hello-world1': {'foo::Bar': string}}>();
 
 declare const fooBarPunctuatedSplitNumberSplit: KebabCasedProperties<FoobarPunctuated, {splitOnPunctuation: true; splitOnNumbers: true}>;
-expectType<{'hello-world-1': {'foo::Bar': string}}>(fooBarPunctuatedSplitNumberSplit);
+expectTypeOf(fooBarPunctuatedSplitNumberSplit).toBe<{'hello-world-1': {'foo::Bar': string}}>();
 
 // Verify example
 type User = {
@@ -34,10 +34,10 @@ const result: KebabCasedProperties<User> = {
 	'user-id': 1,
 	'user-name': 'Tom',
 };
-expectType<KebabCasedProperties<User>>(result);
+expectTypeOf(result).toBe<KebabCasedProperties<User>>();
 
-expectType<KebabCasedProperties<UserPunctuated, {splitOnPunctuation: true}>>(result);
+expectTypeOf(result).toBe<KebabCasedProperties<UserPunctuated, {splitOnPunctuation: true}>>();
 
 // A readonly array is still an array, and passes through unchanged.
-expectType<ReadonlyArray<{fooBar: number}>>({} as KebabCasedProperties<ReadonlyArray<{fooBar: number}>>);
-expectType<Array<{fooBar: number}>>({} as KebabCasedProperties<Array<{fooBar: number}>>);
+expectTypeOf<KebabCasedProperties<ReadonlyArray<{fooBar: number}>>>().toBe<ReadonlyArray<{fooBar: number}>>();
+expectTypeOf<KebabCasedProperties<Array<{fooBar: number}>>>().toBe<Array<{fooBar: number}>>();

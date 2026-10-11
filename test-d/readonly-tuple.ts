@@ -1,14 +1,14 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ReadonlyTuple} from '../index.d.ts';
 
 type TupleOfThreeStrings = ReadonlyTuple<string, 3>;
 
-expectAssignable<TupleOfThreeStrings>(['a', 'b', 'c']);
+['a', 'b', 'c'] satisfies TupleOfThreeStrings;
 
-expectNotAssignable<TupleOfThreeStrings>(['a', 'b', 123]);
-expectNotAssignable<TupleOfThreeStrings>(['a']);
-expectNotAssignable<TupleOfThreeStrings>(['a', 'b']);
-expectNotAssignable<TupleOfThreeStrings>(['a', 'b', 'c', 'd']);
+expectTypeOf<['a', 'b', 123]>().not.toBeAssignableTo<TupleOfThreeStrings>();
+expectTypeOf<['a']>().not.toBeAssignableTo<TupleOfThreeStrings>();
+expectTypeOf<['a', 'b']>().not.toBeAssignableTo<TupleOfThreeStrings>();
+expectTypeOf<['a', 'b', 'c', 'd']>().not.toBeAssignableTo<TupleOfThreeStrings>();
 
 declare const test: TupleOfThreeStrings;
 

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ConditionalKeys} from '../index.d.ts';
 
 type Example = {
@@ -10,89 +10,81 @@ type Example = {
 };
 
 declare const exampleConditionalKeys: ConditionalKeys<Example, string>;
-expectType<'a'>(exampleConditionalKeys);
+expectTypeOf(exampleConditionalKeys).toBe<'a'>();
 
 declare const exampleConditionalKeysWithUndefined: ConditionalKeys<Example, string | undefined>;
-expectType<'a' | 'c'>(exampleConditionalKeysWithUndefined);
+expectTypeOf(exampleConditionalKeysWithUndefined).toBe<'a' | 'c'>();
 
 declare const exampleConditionalKeysTargetingNever: ConditionalKeys<Example, never>;
-expectType<'e'>(exampleConditionalKeysTargetingNever);
+expectTypeOf(exampleConditionalKeysTargetingNever).toBe<'e'>();
 
 // Readonly modifiers
-expectType<'a' | 'c'>({} as ConditionalKeys<{readonly a: string; readonly b: number; c: Uppercase<string>}, string>);
-expectType<never>({} as ConditionalKeys<{readonly a?: string; readonly b: number}, string>);
-expectType<'a'>({} as ConditionalKeys<{readonly a?: string; readonly b?: number}, string | undefined>);
+expectTypeOf<ConditionalKeys<{readonly a: string; readonly b: number; c: Uppercase<string>}, string>>().toBe<'a' | 'c'>();
+expectTypeOf<ConditionalKeys<{readonly a?: string; readonly b: number}, string>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{readonly a?: string; readonly b?: number}, string | undefined>>().toBe<'a'>();
 
 // Optional modifiers
-expectType<'b'>({} as ConditionalKeys<{a?: string; b: string}, string>);
-expectType<never>({} as ConditionalKeys<{a?: string; b?: string}, string>);
-expectType<never>({} as ConditionalKeys<{a?: string; b: string}, undefined>);
-expectType<'a' | 'b'>({} as ConditionalKeys<{a?: string; b: string}, string | undefined>);
-expectType<'a' | 'b'>({} as ConditionalKeys<{readonly a?: string; readonly b: string}, string | undefined>);
+expectTypeOf<ConditionalKeys<{a?: string; b: string}, string>>().toBe<'b'>();
+expectTypeOf<ConditionalKeys<{a?: string; b?: string}, string>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a?: string; b: string}, undefined>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a?: string; b: string}, string | undefined>>().toBe<'a' | 'b'>();
+expectTypeOf<ConditionalKeys<{readonly a?: string; readonly b: string}, string | undefined>>().toBe<'a' | 'b'>();
 
 // Union in property values
-expectType<never>({} as ConditionalKeys<{a: boolean | number}, boolean>);
-expectType<'a' | 'b' | 'c'>({} as ConditionalKeys<{a: boolean | number; b: boolean; c: number}, boolean | number>);
-expectType<'b'>({} as ConditionalKeys<{a?: boolean | number; readonly b: boolean | number}, boolean | number>);
-expectType<'a' | 'b'>(
-	{} as ConditionalKeys<{a?: boolean | number; readonly b?: boolean; c: bigint | number}, boolean | number | undefined>,
-);
+expectTypeOf<ConditionalKeys<{a: boolean | number}, boolean>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: boolean | number; b: boolean; c: number}, boolean | number>>().toBe<'a' | 'b' | 'c'>();
+expectTypeOf<ConditionalKeys<{a?: boolean | number; readonly b: boolean | number}, boolean | number>>().toBe<'b'>();
+expectTypeOf<ConditionalKeys<{a?: boolean | number; readonly b?: boolean; c: bigint | number}, boolean | number | undefined>>().toBe<'a' | 'b'>();
 
 // `never` as condition
-expectType<never>({} as ConditionalKeys<{a: string; b: number}, never>);
-expectType<never>({} as ConditionalKeys<{readonly a?: string; readonly b?: number}, never>);
-expectType<'a' | 'b'>({} as ConditionalKeys<{a: never; b: never}, never>);
-expectType<'a' | 'b'>({} as ConditionalKeys<{a: never; b: never}, any>);
-expectType<never>({} as ConditionalKeys<{a?: never; b?: never}, never>);
-expectType<'a' | 'b'>({} as ConditionalKeys<{a?: never; b?: never}, undefined>);
+expectTypeOf<ConditionalKeys<{a: string; b: number}, never>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{readonly a?: string; readonly b?: number}, never>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: never; b: never}, never>>().toBe<'a' | 'b'>();
+expectTypeOf<ConditionalKeys<{a: never; b: never}, any>>().toBe<'a' | 'b'>();
+expectTypeOf<ConditionalKeys<{a?: never; b?: never}, never>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a?: never; b?: never}, undefined>>().toBe<'a' | 'b'>();
 
 // Unions
-expectType<never>({} as ConditionalKeys<{a: string} | {b: number}, string | number>);
-expectType<never>({} as ConditionalKeys<{a: string} | {b: number}, string>);
-expectType<never>({} as ConditionalKeys<{a: string} | {b: number}, number>);
-expectType<never>({} as ConditionalKeys<{a: string} | {a: number}, number>);
-expectType<'a'>({} as ConditionalKeys<{a: string} | {a: number}, string | number>);
-expectType<'a' | 'b'>(
-	{} as ConditionalKeys<{a: string; b: bigint} | {a: number; b: string; c: boolean}, string | number | bigint>,
-);
-expectType<'a'>({} as ConditionalKeys<{a: string} | {a: Lowercase<string>; b: Uppercase<string>}, string>);
-expectType<never>({} as ConditionalKeys<{length: number} | [number], number>);
+expectTypeOf<ConditionalKeys<{a: string} | {b: number}, string | number>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: string} | {b: number}, string>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: string} | {b: number}, number>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: string} | {a: number}, number>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: string} | {a: number}, string | number>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a: string; b: bigint} | {a: number; b: string; c: boolean}, string | number | bigint>>().toBe<'a' | 'b'>();
+expectTypeOf<ConditionalKeys<{a: string} | {a: Lowercase<string>; b: Uppercase<string>}, string>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{length: number} | [number], number>>().toBe<never>();
 
 // `any`/`unknown` as condition
-expectType<'a' | 'b' | 'c' | 'd' | 'e'>(
-	{} as ConditionalKeys<{a?: string; b: string | number; readonly c: boolean; readonly d?: bigint; e: never}, any>,
-);
-expectType<'a' | 'b' | 'c' | 'd' | 'e'>(
-	{} as ConditionalKeys<{a?: string; b: string | number; readonly c: boolean; readonly d?: bigint; e: never}, unknown>,
-);
+expectTypeOf<ConditionalKeys<{a?: string; b: string | number; readonly c: boolean; readonly d?: bigint; e: never}, any>>().toBe<'a' | 'b' | 'c' | 'd' | 'e'>();
+expectTypeOf<ConditionalKeys<{a?: string; b: string | number; readonly c: boolean; readonly d?: bigint; e: never}, unknown>>().toBe<'a' | 'b' | 'c' | 'd' | 'e'>();
 
 // Index signatures
-expectType<string | number>({} as ConditionalKeys<{[x: string]: boolean}, boolean>);
-expectType<string | number>({} as ConditionalKeys<{[x: string]: string; a: string}, string>);
-expectType<Uppercase<string> | 'a'>({} as ConditionalKeys<{[x: Uppercase<string>]: string; a: string}, string>);
-expectType<number | 'a'>({} as ConditionalKeys<{[x: Uppercase<string>]: string; [x: number]: number; a: number}, number>);
+expectTypeOf<ConditionalKeys<{[x: string]: boolean}, boolean>>().toBe<string | number>();
+expectTypeOf<ConditionalKeys<{[x: string]: string; a: string}, string>>().toBe<string | number>();
+expectTypeOf<ConditionalKeys<{[x: Uppercase<string>]: string; a: string}, string>>().toBe<Uppercase<string> | 'a'>();
+expectTypeOf<ConditionalKeys<{[x: Uppercase<string>]: string; [x: number]: number; a: number}, number>>().toBe<number | 'a'>();
 
 // Arrays and tuples
-expectType<'0' | '2'>({} as ConditionalKeys<[string, number, string], string>);
-expectType<'0' | '1'>({} as ConditionalKeys<[string, string, string | number], string>);
-expectType<'0' | '1' | '2'>({} as ConditionalKeys<[string, number, string], any>);
-expectType<'0'>({} as ConditionalKeys<[string, string?, string?], string>);
-expectType<'0' | '1' | '2'>({} as ConditionalKeys<[string, string?, string?], string | undefined>);
-expectType<never>({} as ConditionalKeys<[string, number, ...boolean[]], boolean>);
-expectType<'0'>({} as ConditionalKeys<[string, number?, ...boolean[]], string | number | boolean>);
-expectType<'1'>({} as ConditionalKeys<[string?, number?, ...boolean[]], number | undefined>);
-expectType<'0' | '1' | number>({} as ConditionalKeys<[string, number, ...boolean[]], string | number | boolean>);
-expectType<'0'>({} as ConditionalKeys<[bigint, ...number[], bigint], bigint>);
-expectType<never>({} as ConditionalKeys<[...boolean[], string, string], string>);
-expectType<number>({} as ConditionalKeys<[...string[], string, string], string>);
-expectType<number>({} as ConditionalKeys<string[], string>);
-expectType<never>({} as ConditionalKeys<string[], number>);
+expectTypeOf<ConditionalKeys<[string, number, string], string>>().toBe<'0' | '2'>();
+expectTypeOf<ConditionalKeys<[string, string, string | number], string>>().toBe<'0' | '1'>();
+expectTypeOf<ConditionalKeys<[string, number, string], any>>().toBe<'0' | '1' | '2'>();
+expectTypeOf<ConditionalKeys<[string, string?, string?], string>>().toBe<'0'>();
+expectTypeOf<ConditionalKeys<[string, string?, string?], string | undefined>>().toBe<'0' | '1' | '2'>();
+expectTypeOf<ConditionalKeys<[string, number, ...boolean[]], boolean>>().toBe<never>();
+expectTypeOf<ConditionalKeys<[string, number?, ...boolean[]], string | number | boolean>>().toBe<'0'>();
+expectTypeOf<ConditionalKeys<[string?, number?, ...boolean[]], number | undefined>>().toBe<'1'>();
+expectTypeOf<ConditionalKeys<[string, number, ...boolean[]], string | number | boolean>>().toBe<'0' | '1' | number>();
+expectTypeOf<ConditionalKeys<[bigint, ...number[], bigint], bigint>>().toBe<'0'>();
+expectTypeOf<ConditionalKeys<[...boolean[], string, string], string>>().toBe<never>();
+expectTypeOf<ConditionalKeys<[...string[], string, string], string>>().toBe<number>();
+expectTypeOf<ConditionalKeys<string[], string>>().toBe<number>();
+expectTypeOf<ConditionalKeys<string[], number>>().toBe<never>();
 
 // Primitives
-expectType<'length'>({} as ConditionalKeys<string, number>);
-expectType<'valueOf'>({} as ConditionalKeys<number, () => number>);
+expectTypeOf<ConditionalKeys<string, number>>().toBe<'length'>();
+expectTypeOf<ConditionalKeys<number, () => number>>().toBe<'valueOf'>();
 
 // Boundary cases
-expectType<never>({} as ConditionalKeys<{}, boolean>);
-expectType<PropertyKey>({} as ConditionalKeys<any, boolean>);
-expectType<never>({} as ConditionalKeys<never, boolean>);
+expectTypeOf<ConditionalKeys<{}, boolean>>().toBe<never>();
+expectTypeOf<ConditionalKeys<any, boolean>>().toBe<PropertyKey>();
+expectTypeOf<ConditionalKeys<never, boolean>>().toBe<never>();

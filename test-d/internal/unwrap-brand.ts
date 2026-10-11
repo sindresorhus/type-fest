@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnwrapBrand} from '../../source/internal/object.d.ts';
 import type {Opaque, Tagged} from '../../source/tagged.d.ts';
 
@@ -6,99 +6,78 @@ type Brand = {readonly __brand: unique symbol};
 declare const symbolLiteral: unique symbol;
 
 // Non-literals
-expectType<string>({} as UnwrapBrand<string & Brand>);
-expectType<number>({} as UnwrapBrand<number & Brand>);
-expectType<bigint>({} as UnwrapBrand<bigint & Brand>);
-expectType<symbol>({} as UnwrapBrand<symbol & Brand>);
-expectType<boolean>({} as UnwrapBrand<boolean & Brand>);
+expectTypeOf<UnwrapBrand<string & Brand>>().toBe<string>();
+expectTypeOf<UnwrapBrand<number & Brand>>().toBe<number>();
+expectTypeOf<UnwrapBrand<bigint & Brand>>().toBe<bigint>();
+expectTypeOf<UnwrapBrand<symbol & Brand>>().toBe<symbol>();
+expectTypeOf<UnwrapBrand<boolean & Brand>>().toBe<boolean>();
 
 // Literals
-expectType<'foo'>({} as UnwrapBrand<'foo' & Brand>);
-expectType<1>({} as UnwrapBrand<1 & Brand>);
-expectType<100n>({} as UnwrapBrand<100n & Brand>);
-expectType<typeof symbolLiteral>({} as UnwrapBrand<typeof symbolLiteral & Brand>);
-expectType<true>({} as UnwrapBrand<true & Brand>);
-expectType<false>({} as UnwrapBrand<false & Brand>);
+expectTypeOf<UnwrapBrand<'foo' & Brand>>().toBe<'foo'>();
+expectTypeOf<UnwrapBrand<1 & Brand>>().toBe<1>();
+expectTypeOf<UnwrapBrand<100n & Brand>>().toBe<100n>();
+expectTypeOf<UnwrapBrand<typeof symbolLiteral & Brand>>().toBe<typeof symbolLiteral>();
+expectTypeOf<UnwrapBrand<true & Brand>>().toBe<true>();
+expectTypeOf<UnwrapBrand<false & Brand>>().toBe<false>();
 
 // Non-branded types
-expectType<string>({} as UnwrapBrand<string>);
-expectType<number>({} as UnwrapBrand<number>);
-expectType<bigint>({} as UnwrapBrand<bigint>);
-expectType<symbol>({} as UnwrapBrand<symbol>);
-expectType<boolean>({} as UnwrapBrand<boolean>);
+expectTypeOf<UnwrapBrand<string>>().toBe<string>();
+expectTypeOf<UnwrapBrand<number>>().toBe<number>();
+expectTypeOf<UnwrapBrand<bigint>>().toBe<bigint>();
+expectTypeOf<UnwrapBrand<symbol>>().toBe<symbol>();
+expectTypeOf<UnwrapBrand<boolean>>().toBe<boolean>();
 
-expectType<'foo'>({} as UnwrapBrand<'foo'>);
-expectType<1>({} as UnwrapBrand<1>);
-expectType<100n>({} as UnwrapBrand<100n>);
-expectType<typeof symbolLiteral>({} as UnwrapBrand<typeof symbolLiteral>);
-expectType<true>({} as UnwrapBrand<true>);
-expectType<false>({} as UnwrapBrand<false>);
+expectTypeOf<UnwrapBrand<'foo'>>().toBe<'foo'>();
+expectTypeOf<UnwrapBrand<1>>().toBe<1>();
+expectTypeOf<UnwrapBrand<100n>>().toBe<100n>();
+expectTypeOf<UnwrapBrand<typeof symbolLiteral>>().toBe<typeof symbolLiteral>();
+expectTypeOf<UnwrapBrand<true>>().toBe<true>();
+expectTypeOf<UnwrapBrand<false>>().toBe<false>();
 
 // Non-primitives, `null` & `undefined`
-expectType<object>({} as UnwrapBrand<object>);
-expectType<{foo: string}>({} as UnwrapBrand<{foo: string}>);
-expectType<(() => string) & Brand>({} as UnwrapBrand<(() => string) & Brand>);
-expectType<null>({} as any as UnwrapBrand<null>);
-expectType<undefined>({} as any as UnwrapBrand<undefined>);
+expectTypeOf<UnwrapBrand<object>>().toBe<object>();
+expectTypeOf<UnwrapBrand<{foo: string}>>().toBe<{foo: string}>();
+expectTypeOf<UnwrapBrand<(() => string) & Brand>>().toBe<(() => string) & Brand>();
+expectTypeOf({} as any as UnwrapBrand<null>).toBe<null>();
+expectTypeOf({} as any as UnwrapBrand<undefined>).toBe<undefined>();
 
 // Unions
 // All non-literals
-expectType<PropertyKey>({} as UnwrapBrand<PropertyKey & Brand>);
-expectType<number | bigint>({} as UnwrapBrand<(number | bigint) & Brand>);
-expectType<string | number | bigint | symbol | boolean>(
-	{} as UnwrapBrand<(string | number | bigint | symbol | boolean) & Brand>,
-);
+expectTypeOf<UnwrapBrand<PropertyKey & Brand>>().toBe<PropertyKey>();
+expectTypeOf<UnwrapBrand<(number | bigint) & Brand>>().toBe<number | bigint>();
+expectTypeOf<UnwrapBrand<(string | number | bigint | symbol | boolean) & Brand>>().toBe<string | number | bigint | symbol | boolean>();
 
 // All literals
-expectType<'a' | 'b'>({} as UnwrapBrand<('a' | 'b') & Brand>);
-expectType<1 | 2 | 3 | 4 | 5>({} as UnwrapBrand<(1 | 2 | 3 | 4 | 5) & Brand>);
-expectType<('foo' | 1 | 100n | typeof symbolLiteral | true)>(
-	{} as UnwrapBrand<('foo' | 1 | 100n | typeof symbolLiteral | true) & Brand>,
-);
+expectTypeOf<UnwrapBrand<('a' | 'b') & Brand>>().toBe<'a' | 'b'>();
+expectTypeOf<UnwrapBrand<(1 | 2 | 3 | 4 | 5) & Brand>>().toBe<1 | 2 | 3 | 4 | 5>();
+expectTypeOf<UnwrapBrand<('foo' | 1 | 100n | typeof symbolLiteral | true) & Brand>>().toBe<('foo' | 1 | 100n | typeof symbolLiteral | true)>();
 
 // Mix of non-literals and literals
-expectType<Uppercase<string> | 'foo' | 'bar'>({} as UnwrapBrand<(Uppercase<string> | 'foo' | 'bar') & Brand>);
-expectType<100 | 200 | 300 | bigint>({} as UnwrapBrand<(100 | 200 | 300 | bigint) & Brand>);
-expectType<(string | number | 5000n | typeof symbolLiteral)>(
-	{} as UnwrapBrand<(string | number | 5000n | typeof symbolLiteral) & Brand>,
-);
-expectType<('foo' | 0.5 | bigint | symbol | boolean)>(
-	{} as UnwrapBrand<('foo' | 0.5 | bigint | symbol | boolean) & Brand>,
-);
+expectTypeOf<UnwrapBrand<(Uppercase<string> | 'foo' | 'bar') & Brand>>().toBe<Uppercase<string> | 'foo' | 'bar'>();
+expectTypeOf<UnwrapBrand<(100 | 200 | 300 | bigint) & Brand>>().toBe<100 | 200 | 300 | bigint>();
+expectTypeOf<UnwrapBrand<(string | number | 5000n | typeof symbolLiteral) & Brand>>().toBe<(string | number | 5000n | typeof symbolLiteral)>();
+expectTypeOf<UnwrapBrand<('foo' | 0.5 | bigint | symbol | boolean) & Brand>>().toBe<('foo' | 0.5 | bigint | symbol | boolean)>();
 
 // Mix of non-literals, literals, and non-primitives
-expectType<(string | number | ({foo: string} & Brand))>(
-	{} as UnwrapBrand<(string | number | {foo: string}) & Brand>,
-);
-expectType<('foo' | number | 100n | typeof symbolLiteral | boolean | ({foo: string} & Brand))>(
-	{} as UnwrapBrand<('foo' | number | 100n | typeof symbolLiteral | boolean | {foo: string}) & Brand>,
-);
+expectTypeOf<UnwrapBrand<(string | number | {foo: string}) & Brand>>().toBe<(string | number | ({foo: string} & Brand))>();
+expectTypeOf<UnwrapBrand<('foo' | number | 100n | typeof symbolLiteral | boolean | {foo: string}) & Brand>>().toBe<('foo' | number | 100n | typeof symbolLiteral | boolean | ({foo: string} & Brand))>();
 
 // Types built using `Opaque`
-expectType<string | number | bigint | symbol | boolean>(
-	{} as UnwrapBrand<Opaque<string | number | bigint | symbol | boolean, 'Tag'>>,
-);
-expectType<'foo' | 1 | 100n | typeof symbolLiteral | true>(
-	{} as UnwrapBrand<Opaque<'foo' | 1 | 100n | typeof symbolLiteral | true, 'Tag'>>,
-);
+expectTypeOf<UnwrapBrand<Opaque<string | number | bigint | symbol | boolean, 'Tag'>>>().toBe<string | number | bigint | symbol | boolean>();
+expectTypeOf<UnwrapBrand<Opaque<'foo' | 1 | 100n | typeof symbolLiteral | true, 'Tag'>>>().toBe<'foo' | 1 | 100n | typeof symbolLiteral | true>();
 
 // Types built using `Tagged`
-expectType<string | number | bigint | symbol | boolean>(
-	{} as UnwrapBrand<Tagged<string | number | bigint | symbol | boolean, 'Tag'>>,
-);
-expectType<'foo' | 1 | 100n | typeof symbolLiteral | true>(
-	{} as UnwrapBrand<Tagged<'foo' | 1 | 100n | typeof symbolLiteral | true, 'Tag'>>,
-);
+expectTypeOf<UnwrapBrand<Tagged<string | number | bigint | symbol | boolean, 'Tag'>>>().toBe<string | number | bigint | symbol | boolean>();
+expectTypeOf<UnwrapBrand<Tagged<'foo' | 1 | 100n | typeof symbolLiteral | true, 'Tag'>>>().toBe<'foo' | 1 | 100n | typeof symbolLiteral | true>();
 
 // Mix
-expectType<string | number | 900n | typeof symbolLiteral | true | {foo: string}>(
-	{} as UnwrapBrand<
+expectTypeOf<UnwrapBrand<
 		| ((string | number) & Brand)
 		| Tagged<900n | typeof symbolLiteral, 'Tag'>
 		| Opaque<true, 'Tag'>
 		| {foo: string}
-	>);
+>>().toBe<string | number | 900n | typeof symbolLiteral | true | {foo: string}>();
 
 // Edge cases
-expectType<any>({} as UnwrapBrand<any>);
-expectType<never>({} as UnwrapBrand<never>);
+expectTypeOf<UnwrapBrand<any>>().toBe<any>();
+expectTypeOf<UnwrapBrand<never>>().toBe<never>();

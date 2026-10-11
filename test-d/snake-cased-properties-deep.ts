@@ -1,13 +1,13 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {SnakeCasedPropertiesDeep} from '../index.d.ts';
 
 type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
 
 declare const foo: SnakeCasedPropertiesDeep<FooBar>;
-expectType<{hello_world: {p2p: Array<{address_line1: string}>}}>(foo);
+expectTypeOf(foo).toBe<{hello_world: {p2p: Array<{address_line1: string}>}}>();
 
 declare const bar: SnakeCasedPropertiesDeep<FooBar, {splitOnNumbers: true}>;
-expectType<{hello_world: {p_2_p: Array<{address_line_1: string}>}}>(bar);
+expectTypeOf(bar).toBe<{hello_world: {p_2_p: Array<{address_line_1: string}>}}>();
 
 // Verify example
 type User = {
@@ -56,14 +56,14 @@ const result: SnakeCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
-expectType<SnakeCasedPropertiesDeep<UserWithFriends>>(result);
-expectType<SnakeCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
+expectTypeOf(result).toBe<SnakeCasedPropertiesDeep<UserWithFriends>>();
+expectTypeOf(result).toBe<SnakeCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>();
 
-expectType<{foo_bar: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: unknown}>);
-expectType<{foo_bar: {bar_baz: unknown}; biz: unknown}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: unknown}>);
+expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: unknown}>>().toBe<{foo_bar: unknown}>();
+expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: unknown}>>().toBe<{foo_bar: {bar_baz: unknown}; biz: unknown}>();
 
-expectType<{foo_bar: any}>({} as SnakeCasedPropertiesDeep<{fooBar: any}>);
-expectType<{foo_bar: {bar_baz: any}; biz: any}>({} as SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>);
+expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: any}>>().toBe<{foo_bar: any}>();
+expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>>().toBe<{foo_bar: {bar_baz: any}; biz: any}>();
 
-expectType<{'foo_bar': unknown}>({} as SnakeCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
-expectType<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>({} as SnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);
+expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'foo_bar': unknown}>();
+expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>();

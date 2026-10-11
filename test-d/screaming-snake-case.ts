@@ -1,123 +1,123 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ScreamingSnakeCase} from '../index.d.ts';
 
 const snakeFromCamel: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromCamel);
+expectTypeOf(snakeFromCamel).toBe<'FOO_BAR'>();
 
 const snakeFromPascal: ScreamingSnakeCase<'FooBar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromPascal);
+expectTypeOf(snakeFromPascal).toBe<'FOO_BAR'>();
 
 const snakeFromKebab: ScreamingSnakeCase<'foo-bar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromKebab);
+expectTypeOf(snakeFromKebab).toBe<'FOO_BAR'>();
 
 const snakeFromSpace: ScreamingSnakeCase<'foo bar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromSpace);
+expectTypeOf(snakeFromSpace).toBe<'FOO_BAR'>();
 
 const snakeFromSnake: ScreamingSnakeCase<'foo_bar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromSnake);
+expectTypeOf(snakeFromSnake).toBe<'FOO_BAR'>();
 
 const noSnakeFromMono: ScreamingSnakeCase<'foobar'> = 'FOOBAR';
-expectType<'FOOBAR'>(noSnakeFromMono);
+expectTypeOf(noSnakeFromMono).toBe<'FOOBAR'>();
 
 const snakeFromCamelPascal: ScreamingSnakeCase<'FooBar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromCamelPascal);
+expectTypeOf(snakeFromCamelPascal).toBe<'FOO_BAR'>();
 
 const snakeFromComplexKebab: ScreamingSnakeCase<'foo-bar-abc-123'> =
 	'FOO_BAR_ABC_123';
-expectType<'FOO_BAR_ABC_123'>(snakeFromComplexKebab);
+expectTypeOf(snakeFromComplexKebab).toBe<'FOO_BAR_ABC_123'>();
 
 const snakeFromMixed: ScreamingSnakeCase<'foo-bar_abc xyzBarFoo'> =
 	'FOO_BAR_ABC_XYZ_BAR_FOO';
-expectType<'FOO_BAR_ABC_XYZ_BAR_FOO'>(snakeFromMixed);
+expectTypeOf(snakeFromMixed).toBe<'FOO_BAR_ABC_XYZ_BAR_FOO'>();
 
 const snakeFromVendorPrefixedCssProperty: ScreamingSnakeCase<'-webkit-animation'> =
 	'WEBKIT_ANIMATION';
-expectType<'WEBKIT_ANIMATION'>(snakeFromVendorPrefixedCssProperty);
+expectTypeOf(snakeFromVendorPrefixedCssProperty).toBe<'WEBKIT_ANIMATION'>();
 
 const snakeFromDoublePrefixedKebab: ScreamingSnakeCase<'--very-prefixed'> =
 	'VERY_PREFIXED';
-expectType<'VERY_PREFIXED'>(snakeFromDoublePrefixedKebab);
+expectTypeOf(snakeFromDoublePrefixedKebab).toBe<'VERY_PREFIXED'>();
 
 const snakeFromRepeatedSeparators: ScreamingSnakeCase<'foo____bar'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromRepeatedSeparators);
+expectTypeOf(snakeFromRepeatedSeparators).toBe<'FOO_BAR'>();
 
 const snakeFromUppercase: ScreamingSnakeCase<'FOO'> = 'FOO';
-expectType<'FOO'>(snakeFromUppercase);
+expectTypeOf(snakeFromUppercase).toBe<'FOO'>();
 
 const snakeFromLowercase: ScreamingSnakeCase<'foo'> = 'FOO';
-expectType<'FOO'>(snakeFromLowercase);
+expectTypeOf(snakeFromLowercase).toBe<'FOO'>();
 
 const snakeFromScreamingSnakeCase: ScreamingSnakeCase<'FOO_BAR'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromScreamingSnakeCase);
+expectTypeOf(snakeFromScreamingSnakeCase).toBe<'FOO_BAR'>();
 
 const snakeFromScreamingKebabCase: ScreamingSnakeCase<'FOO-BAR'> = 'FOO_BAR';
-expectType<'FOO_BAR'>(snakeFromScreamingKebabCase);
+expectTypeOf(snakeFromScreamingKebabCase).toBe<'FOO_BAR'>();
 
 const snakeFromMixed2: ScreamingSnakeCase<'parseHTML'> = 'PARSE_HTML';
-expectType<'PARSE_HTML'>(snakeFromMixed2);
+expectTypeOf(snakeFromMixed2).toBe<'PARSE_HTML'>();
 
 const snakeFromMixed3: ScreamingSnakeCase<'parseHTMLItem'> = 'PARSE_HTML_ITEM';
-expectType<'PARSE_HTML_ITEM'>(snakeFromMixed3);
+expectTypeOf(snakeFromMixed3).toBe<'PARSE_HTML_ITEM'>();
 
 const snakeFromNumberInTheMiddleSplitOnNumbers: ScreamingSnakeCase<'foo2bar', {splitOnNumbers: true}> = 'FOO_2_BAR';
-expectType<'FOO_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumbers);
+expectTypeOf(snakeFromNumberInTheMiddleSplitOnNumbers).toBe<'FOO_2_BAR'>();
 
 const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase: ScreamingSnakeCase<'foO2Bar', {splitOnNumbers: true}> = 'FO_O_2_BAR';
-expectType<'FO_O_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase);
+expectTypeOf(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase).toBe<'FO_O_2_BAR'>();
 
 const snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2: ScreamingSnakeCase<'foO2bar', {splitOnNumbers: true}> = 'FO_O_2_BAR';
-expectType<'FO_O_2_BAR'>(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
+expectTypeOf(snakeFromNumberInTheMiddleSplitOnNumbersEdgeCase2).toBe<'FO_O_2_BAR'>();
 
 const snakeFromNumberInTheMiddleNoSplitOnNumbers: ScreamingSnakeCase<'foo2bar'> = 'FOO2BAR';
-expectType<'FOO2BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbers);
+expectTypeOf(snakeFromNumberInTheMiddleNoSplitOnNumbers).toBe<'FOO2BAR'>();
 
 const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: ScreamingSnakeCase<'foo2Bar'> = 'FOO2_BAR';
-expectType<'FOO2_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
+expectTypeOf(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase).toBe<'FOO2_BAR'>();
 
 const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: ScreamingSnakeCase<'foO2bar'> = 'FO_O2BAR';
-expectType<'FO_O2BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
+expectTypeOf(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2).toBe<'FO_O2BAR'>();
 
 const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: ScreamingSnakeCase<'FOO22Bar'> = 'FOO22_BAR';
-expectType<'FOO22_BAR'>(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
+expectTypeOf(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3).toBe<'FOO22_BAR'>();
 
 const nonStringFromNonString: ScreamingSnakeCase<[]> = [];
-expectType<[]>(nonStringFromNonString);
+expectTypeOf(nonStringFromNonString).toBe<[]>();
 
 declare const withPunctuation: ScreamingSnakeCase<'onDialog:close'>;
-expectType<'ON_DIALOG:CLOSE'>(withPunctuation);
+expectTypeOf(withPunctuation).toBe<'ON_DIALOG:CLOSE'>();
 
 declare const withPunctuationSplit: ScreamingSnakeCase<'onDialog:close', {splitOnPunctuation: true}>;
-expectType<'ON_DIALOG_CLOSE'>(withPunctuationSplit);
+expectTypeOf(withPunctuationSplit).toBe<'ON_DIALOG_CLOSE'>();
 
 declare const withPunctuation2: ScreamingSnakeCase<'foo-bar>>baz'>;
-expectType<'FOO_BAR>>BAZ'>(withPunctuation2);
+expectTypeOf(withPunctuation2).toBe<'FOO_BAR>>BAZ'>();
 
 declare const withPunctuationSplit2: ScreamingSnakeCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
-expectType<'FOO_BAR_BAZ'>(withPunctuationSplit2);
+expectTypeOf(withPunctuationSplit2).toBe<'FOO_BAR_BAZ'>();
 
 declare const withPunctuation3: ScreamingSnakeCase<'card::after'>;
-expectType<'CARD::AFTER'>(withPunctuation3);
+expectTypeOf(withPunctuation3).toBe<'CARD::AFTER'>();
 
 declare const withPunctuationSplit3: ScreamingSnakeCase<'card::after', {splitOnPunctuation: true}>;
-expectType<'CARD_AFTER'>(withPunctuationSplit3);
+expectTypeOf(withPunctuationSplit3).toBe<'CARD_AFTER'>();
 
 declare const withPunctuation4: ScreamingSnakeCase<'div.card::after'>;
-expectType<'DIV.CARD::AFTER'>(withPunctuation4);
+expectTypeOf(withPunctuation4).toBe<'DIV.CARD::AFTER'>();
 
 declare const withPunctuationSplit4: ScreamingSnakeCase<'div.card::after', {splitOnPunctuation: true}>;
-expectType<'DIV_CARD_AFTER'>(withPunctuationSplit4);
+expectTypeOf(withPunctuationSplit4).toBe<'DIV_CARD_AFTER'>();
 
 declare const withPunctuationAndNumber: ScreamingSnakeCase<'foo-bar::01'>;
-expectType<'FOO_BAR::01'>(withPunctuationAndNumber);
+expectTypeOf(withPunctuationAndNumber).toBe<'FOO_BAR::01'>();
 
 declare const withPunctuationAndNumber2: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'FOO_BAR::01'>(withPunctuationAndNumber2);
+expectTypeOf(withPunctuationAndNumber2).toBe<'FOO_BAR::01'>();
 
 declare const withPunctuationSplitAndNumber: ScreamingSnakeCase<'foo-bar::01', {splitOnPunctuation: true}>;
-expectType<'FOO_BAR_01'>(withPunctuationSplitAndNumber);
+expectTypeOf(withPunctuationSplitAndNumber).toBe<'FOO_BAR_01'>();
 
 declare const withPunctuationSplitAndNumberSplit: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
-expectType<'FOO_BAR_01'>(withPunctuationSplitAndNumberSplit);
+expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'FOO_BAR_01'>();
 
 // A delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
-expectType<'FOO.BAR'>({} as ScreamingSnakeCase<'foo.Bar'>);
+expectTypeOf<ScreamingSnakeCase<'foo.Bar'>>().toBe<'FOO.BAR'>();

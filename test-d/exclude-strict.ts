@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ExcludeStrict} from '../source/exclude-strict.d.ts';
 
 // Primitive union tests
@@ -8,10 +8,10 @@ type LargeShirtSize = 'xxxl' | 'xxl' | 'xl' | 'l';
 type SmallShirtSize = 's' | 'xs' | 'xxs';
 
 declare const nonLargeShirtSizes: ExcludeStrict<ShirtSize, LargeShirtSize>;
-expectType<'m' | SmallShirtSize>(nonLargeShirtSizes);
+expectTypeOf(nonLargeShirtSizes).toBe<'m' | SmallShirtSize>();
 
 declare const nonSmallShirtSizes: ExcludeStrict<ShirtSize, SmallShirtSize>;
-expectType<LargeShirtSize | 'm'>(nonSmallShirtSizes);
+expectTypeOf(nonSmallShirtSizes).toBe<LargeShirtSize | 'm'>();
 
 // @ts-expect-error
 declare const allInvalidShirtSizes: ExcludeStrict<ShirtSize, 'skyscraper-large' | 'atom-small'>;
@@ -36,11 +36,11 @@ type Bar = {
 
 type Foobar = Foo | Bar;
 
-expectType<never>({} as ExcludeStrict<Foobar, {a: string}>);
-expectType<Bar>({} as ExcludeStrict<Foobar, {kind: 'foo'}>);
-expectType<Bar>({} as ExcludeStrict<Foobar, {b: string}>);
-expectType<Foo>({} as ExcludeStrict<Foobar, {c: boolean}>);
-expectType<never>({} as ExcludeStrict<Foobar, {b: string} | {c: boolean}>);
+expectTypeOf<ExcludeStrict<Foobar, {a: string}>>().toBe<never>();
+expectTypeOf<ExcludeStrict<Foobar, {kind: 'foo'}>>().toBe<Bar>();
+expectTypeOf<ExcludeStrict<Foobar, {b: string}>>().toBe<Bar>();
+expectTypeOf<ExcludeStrict<Foobar, {c: boolean}>>().toBe<Foo>();
+expectTypeOf<ExcludeStrict<Foobar, {b: string} | {c: boolean}>>().toBe<never>();
 
 // @ts-expect-error
 declare const invalidLoneField: ExcludeStrict<Foobar, {d: string}>;
@@ -52,9 +52,9 @@ declare const invalidMixedFields: ExcludeStrict<Foobar, {kind: 'foo'; d: string}
 declare const undefinedField: ExcludeStrict<Foobar, undefined>;
 
 // Primitives
-expectType<number>({} as ExcludeStrict<string | number, string>);
-expectType<string>({} as ExcludeStrict<string | number | bigint, number | bigint>);
-expectType<'foo'>({} as ExcludeStrict<'foo' | 'bar' | 'baz', `b${string}`>);
+expectTypeOf<ExcludeStrict<string | number, string>>().toBe<number>();
+expectTypeOf<ExcludeStrict<string | number | bigint, number | bigint>>().toBe<string>();
+expectTypeOf<ExcludeStrict<'foo' | 'bar' | 'baz', `b${string}`>>().toBe<'foo'>();
 
 // @ts-expect-error
 type invalid1 = ExcludeStrict<string | number | boolean, number | bigint>;
@@ -62,9 +62,9 @@ type invalid1 = ExcludeStrict<string | number | boolean, number | bigint>;
 type invalid2 = ExcludeStrict<string, Uppercase<string>>;
 
 // Optional and readonly modifiers
-expectType<never>({} as ExcludeStrict<{a: string; b: number}, {a?: string}>);
-expectType<{c: string; d: number}>({} as ExcludeStrict<{a: string; b: number} | {c: string; d: number}, {a?: string}>);
-expectType<never>({} as ExcludeStrict<string[], readonly string[]>);
+expectTypeOf<ExcludeStrict<{a: string; b: number}, {a?: string}>>().toBe<never>();
+expectTypeOf<ExcludeStrict<{a: string; b: number} | {c: string; d: number}, {a?: string}>>().toBe<{c: string; d: number}>();
+expectTypeOf<ExcludeStrict<string[], readonly string[]>>().toBe<never>();
 
 // @ts-expect-error
 type invalid3 = ExcludeStrict<{a?: string; b: number}, {a: string}>;
@@ -72,22 +72,16 @@ type invalid3 = ExcludeStrict<{a?: string; b: number}, {a: string}>;
 type invalid4 = ExcludeStrict<readonly string[], string[]>;
 
 // Index signatures
-expectType<{a: string; b: number}>(
-	{} as ExcludeStrict<{a: string; b: number} | {c: true; d: false}, Record<string, boolean>>,
-);
+expectTypeOf<ExcludeStrict<{a: string; b: number} | {c: true; d: false}, Record<string, boolean>>>().toBe<{a: string; b: number}>();
 
 // @ts-expect-error
 type invalid5 = ExcludeStrict<{a: string; b: number} | {c: true; d: false}, Record<string, string>>;
 
 // `any` and `never`
-expectType<never>(
-	{} as ExcludeStrict<string | {a: string; b: number} | string[], any>,
-);
-expectType<string | {a: string; b: number} | string[]>(
-	{} as ExcludeStrict<string | {a: string; b: number} | string[], never>,
-);
+expectTypeOf<ExcludeStrict<string | {a: string; b: number} | string[], any>>().toBe<never>();
+expectTypeOf<ExcludeStrict<string | {a: string; b: number} | string[], never>>().toBe<string | {a: string; b: number} | string[]>();
 
 // Miscellaneous
-expectType<{x: number; y: number}>({} as ExcludeStrict<[number, number] | {x: number; y: number}, unknown[]>);
-expectType<[number, number, number]>({} as ExcludeStrict<[number, number] | [number, number, number], {length: 2}>);
-expectType<string | string[]>({} as ExcludeStrict<string | string[] | {data: string | string[]}, {data: unknown}>);
+expectTypeOf<ExcludeStrict<[number, number] | {x: number; y: number}, unknown[]>>().toBe<{x: number; y: number}>();
+expectTypeOf<ExcludeStrict<[number, number] | [number, number, number], {length: 2}>>().toBe<[number, number, number]>();
+expectTypeOf<ExcludeStrict<string | string[] | {data: string | string[]}, {data: unknown}>>().toBe<string | string[]>();

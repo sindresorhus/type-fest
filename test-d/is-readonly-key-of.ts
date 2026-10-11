@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsReadonlyKeyOf} from '../source/is-readonly-key-of.d.ts';
 
 declare const never: never;
@@ -12,27 +12,27 @@ type A = {
 	c?: boolean;
 };
 
-expectType<IsReadonlyKeyOf<A, 'a'>>(false);
-expectType<IsReadonlyKeyOf<A, 'b'>>(true);
-expectType<IsReadonlyKeyOf<A, 'c'>>(false);
+expectTypeOf<IsReadonlyKeyOf<A, 'a'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<A, 'b'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<A, 'c'>>().toBe<false>();
 
 // @ts-expect-error `d` is not in `keyof T`
-expectType<IsReadonlyKeyOf<A, 'd'>>(false);
+expectTypeOf<IsReadonlyKeyOf<A, 'd'>>().toBe<false>();
 
 // Index signature
 type B = {
 	[k: string]: number;
 };
 
-expectType<IsReadonlyKeyOf<B, 'anything'>>(false);
+expectTypeOf<IsReadonlyKeyOf<B, 'anything'>>().toBe<false>();
 
 // Fully readonly index
 type C = {
 	readonly [k: string]: number;
 };
 
-expectType<IsReadonlyKeyOf<C, string>>(true);
-expectType<IsReadonlyKeyOf<C, 'anything'>>(false);
+expectTypeOf<IsReadonlyKeyOf<C, string>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<C, 'anything'>>().toBe<false>();
 
 // Optional + readonly
 type D = {
@@ -40,22 +40,22 @@ type D = {
 	b: number;
 };
 
-expectType<IsReadonlyKeyOf<D, 'a'>>(true);
-expectType<IsReadonlyKeyOf<D, 'b'>>(false);
+expectTypeOf<IsReadonlyKeyOf<D, 'a'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<D, 'b'>>().toBe<false>();
 
 // Union
 type E1 = {a: number};
 type E2 = {readonly a: number};
 type E = E1 | E2;
 
-expectType<IsReadonlyKeyOf<E, 'a'>>(boolean);
+expectTypeOf(boolean).toBe<IsReadonlyKeyOf<E, 'a'>>();
 
 // Intersection
 type F1 = {readonly a: string};
 type F2 = {a: string};
 type F = F1 & F2;
 
-expectType<IsReadonlyKeyOf<F, 'a'>>(false);
+expectTypeOf<IsReadonlyKeyOf<F, 'a'>>().toBe<false>();
 
 // Class instance
 class G {
@@ -64,16 +64,16 @@ class G {
 	y = '';
 }
 
-expectType<IsReadonlyKeyOf<G, 'x'>>(true);
-expectType<IsReadonlyKeyOf<G, 'y'>>(false);
+expectTypeOf<IsReadonlyKeyOf<G, 'x'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<G, 'y'>>().toBe<false>();
 
 type H = {
 	[symbol]: number;
 	readonly x: string;
 };
 
-expectType<IsReadonlyKeyOf<H, typeof symbol>>(false);
-expectType<IsReadonlyKeyOf<H, 'x'>>(true);
+expectTypeOf<IsReadonlyKeyOf<H, typeof symbol>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<H, 'x'>>().toBe<true>();
 
 // Full readonly object
 type I = Readonly<{
@@ -81,8 +81,8 @@ type I = Readonly<{
 	b: string;
 }>;
 
-expectType<IsReadonlyKeyOf<I, 'a'>>(true);
-expectType<IsReadonlyKeyOf<I, 'b'>>(true);
+expectTypeOf<IsReadonlyKeyOf<I, 'a'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<I, 'b'>>().toBe<true>();
 
 // Object with method
 type J = {
@@ -90,32 +90,32 @@ type J = {
 	run(): void;
 };
 
-expectType<IsReadonlyKeyOf<J, 'run'>>(false);
-expectType<IsReadonlyKeyOf<J, 'id'>>(true);
+expectTypeOf<IsReadonlyKeyOf<J, 'run'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<J, 'id'>>().toBe<true>();
 
 // Record
 type K = Record<'a' | 'b', string>;
 
-expectType<IsReadonlyKeyOf<K, 'a'>>(false);
-expectType<IsReadonlyKeyOf<K, 'b'>>(false);
+expectTypeOf<IsReadonlyKeyOf<K, 'a'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<K, 'b'>>().toBe<false>();
 
 // Union of keys
-expectType<IsReadonlyKeyOf<A, 'b' | 'c'>>(boolean);
-expectType<IsReadonlyKeyOf<A, 'a' | 'b'>>(boolean);
+expectTypeOf(boolean).toBe<IsReadonlyKeyOf<A, 'b' | 'c'>>();
+expectTypeOf(boolean).toBe<IsReadonlyKeyOf<A, 'a' | 'b'>>();
 // @ts-expect-error
-expectType<IsReadonlyKeyOf<A, 'a' | 'd'>>(false);
-expectType<IsReadonlyKeyOf<A, 'a' | 'c'>>(false);
+expectTypeOf<IsReadonlyKeyOf<A, 'a' | 'd'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<A, 'a' | 'c'>>().toBe<false>();
 
 type FullKeyUnion = keyof A; // 'a' | 'b' | 'c'
-expectType<IsReadonlyKeyOf<A, FullKeyUnion>>(boolean);
+expectTypeOf(boolean).toBe<IsReadonlyKeyOf<A, FullKeyUnion>>();
 // @ts-expect-error
-expectType<IsReadonlyKeyOf<A, 'b' | 'x'>>(boolean); // 'x' is not in A, so filtered as false
+expectTypeOf(boolean).toBe<IsReadonlyKeyOf<A, 'b' | 'x'>>(); // 'x' is not in A, so filtered as false
 
 // `never` / `any
 type L = {readonly a: string};
-expectType<IsReadonlyKeyOf<K, any>>(never);
-expectType<IsReadonlyKeyOf<any, any>>(never);
-expectType<IsReadonlyKeyOf<any, 'a'>>(never);
-expectType<IsReadonlyKeyOf<K, never>>(never);
-expectType<IsReadonlyKeyOf<any, never>>(never);
-expectType<IsReadonlyKeyOf<never, 'a'>>(never);
+expectTypeOf(never).toBe<IsReadonlyKeyOf<K, any>>();
+expectTypeOf(never).toBe<IsReadonlyKeyOf<any, any>>();
+expectTypeOf(never).toBe<IsReadonlyKeyOf<any, 'a'>>();
+expectTypeOf(never).toBe<IsReadonlyKeyOf<K, never>>();
+expectTypeOf(never).toBe<IsReadonlyKeyOf<any, never>>();
+expectTypeOf(never).toBe<IsReadonlyKeyOf<never, 'a'>>();

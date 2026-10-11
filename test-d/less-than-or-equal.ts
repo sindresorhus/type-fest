@@ -1,36 +1,36 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {LessThanOrEqual} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 declare const never: never;
 
-expectType<LessThanOrEqual<1, 2>>(true);
-expectType<LessThanOrEqual<2, 1>>(false);
-expectType<LessThanOrEqual<10, 2>>(false);
-expectType<LessThanOrEqual<10, -2>>(false);
-expectType<LessThanOrEqual<2, 2>>(true);
-expectType<LessThanOrEqual<-2, -2>>(true);
-expectType<LessThanOrEqual<-2, -3>>(false);
-expectType<LessThanOrEqual<PositiveInfinity, -999>>(false);
-expectType<LessThanOrEqual<PositiveInfinity, 999>>(false);
-expectType<LessThanOrEqual<999, PositiveInfinity>>(true);
-expectType<LessThanOrEqual<999, NegativeInfinity>>(false);
-expectType<LessThanOrEqual<-999, NegativeInfinity>>(false);
-expectType<LessThanOrEqual<PositiveInfinity, PositiveInfinity>>(true);
-expectType<LessThanOrEqual<NegativeInfinity, NegativeInfinity>>(true);
-expectType<LessThanOrEqual<PositiveInfinity, NegativeInfinity>>(false);
+expectTypeOf<LessThanOrEqual<1, 2>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<2, 1>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<10, 2>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<10, -2>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<2, 2>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<-2, -2>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<-2, -3>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<PositiveInfinity, -999>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<PositiveInfinity, 999>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<999, PositiveInfinity>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<999, NegativeInfinity>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<-999, NegativeInfinity>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<PositiveInfinity, PositiveInfinity>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<NegativeInfinity, NegativeInfinity>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<PositiveInfinity, NegativeInfinity>>().toBe<false>();
 
 // Non-literal `number`
-expectType<LessThanOrEqual<number, number>>({} as boolean);
-expectType<LessThanOrEqual<number, 1>>({} as boolean);
-expectType<LessThanOrEqual<1, number>>({} as boolean);
+expectTypeOf<boolean>().toBe<LessThanOrEqual<number, number>>();
+expectTypeOf<boolean>().toBe<LessThanOrEqual<number, 1>>();
+expectTypeOf<boolean>().toBe<LessThanOrEqual<1, number>>();
 
 // A number in exponential notation is larger or smaller than any number in plain decimal notation.
 declare const plainLessThanOrEqualExponent: LessThanOrEqual<5, 1e21>;
-expectType<true>(plainLessThanOrEqualExponent);
+expectTypeOf(plainLessThanOrEqualExponent).toBe<true>();
 declare const exponentLessThanOrEqualPlain: LessThanOrEqual<1e21, 5>;
-expectType<false>(exponentLessThanOrEqualPlain);
+expectTypeOf(exponentLessThanOrEqualPlain).toBe<false>();
 declare const negativeExponentLessThanOrEqualPlain: LessThanOrEqual<1e-7, 0.5>;
-expectType<true>(negativeExponentLessThanOrEqualPlain);
+expectTypeOf(negativeExponentLessThanOrEqualPlain).toBe<true>();
 declare const bothExponent: LessThanOrEqual<1e21, 2e21>;
-expectType<boolean>(bothExponent);
+expectTypeOf(bothExponent).toBe<boolean>();

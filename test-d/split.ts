@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Split, StringRepeat, TupleOf} from '../index.d.ts';
 
 declare function split<
@@ -9,62 +9,62 @@ declare function split<
 const items = 'foo,bar,baz,waldo';
 
 // General use.
-expectType<['foo', 'bar', 'baz', 'waldo']>(split(items, ','));
+expectTypeOf(split(items, ',')).toBe<['foo', 'bar', 'baz', 'waldo']>();
 
 // Missing replacement character in original string.
-expectType<['foo,bar,baz,waldo']>(split(items, ' '));
+expectTypeOf(split(items, ' ')).toBe<['foo,bar,baz,waldo']>();
 
 // Empty string split (every character).
-expectType<[
+expectTypeOf(split(items, '')).toBe<[
 	'f', 'o', 'o', ',', 'b', 'a', 'r', ',',
 	'b', 'a', 'z', ',', 'w', 'a', 'l', 'd', 'o',
-]>(split(items, ''));
+]>();
 
 // Split single same character.
-expectType<['', '']>(split(' ', ' '));
+expectTypeOf(split(' ', ' ')).toBe<['', '']>();
 
 // Split empty string by empty string.
-expectType<[]>(split('', ''));
+expectTypeOf(split('', '')).toBe<[]>();
 
 // Split empty string by any string.
-expectType<['']>(split('', ' '));
+expectTypeOf(split('', ' ')).toBe<['']>();
 
 // Unions
-expectType<['a', 'b', 'c'] | ['x', 'y', 'z']>({} as Split<'a,b,c' | 'x,y,z', ','>);
-expectType<['a', 'b', 'c'] | ['a,', ',c']>({} as Split<'a,b,c', ',' | 'b'>);
-expectType<['a', 'b', 'c'] | ['a,b,c'] | ['x', 'y', 'z'] | ['x:y:z']>({} as Split<'a,b,c' | 'x:y:z', ',' | ':'>);
+expectTypeOf<Split<'a,b,c' | 'x,y,z', ','>>().toBe<['a', 'b', 'c'] | ['x', 'y', 'z']>();
+expectTypeOf<Split<'a,b,c', ',' | 'b'>>().toBe<['a', 'b', 'c'] | ['a,', ',c']>();
+expectTypeOf<Split<'a,b,c' | 'x:y:z', ',' | ':'>>().toBe<['a', 'b', 'c'] | ['a,b,c'] | ['x', 'y', 'z'] | ['x:y:z']>();
 
 // -- strictLiteralChecks: false --
 // NOTE: The behaviour covered in the test below is not acurate because the `a.b.${string}` type might hold a value like `a.b.c.d`,
 // which, when split by `.`, would result in `['a', 'b', 'c', 'd']`, which wouldn't conform to the output type of `['a', 'b', string]`.
-expectType<['a', 'b', string]>({} as Split<`a.b.${string}`, '.', {strictLiteralChecks: false}>);
+expectTypeOf<Split<`a.b.${string}`, '.', {strictLiteralChecks: false}>>().toBe<['a', 'b', string]>();
 
 // Ensure the last dynamic "string" is not dropped when split by `''`.
 // https://github.com/sindresorhus/type-fest/issues/1203
-expectType<['a', 'b', string]>({} as Split<`ab${string}`, '', {strictLiteralChecks: false}>);
+expectTypeOf<Split<`ab${string}`, '', {strictLiteralChecks: false}>>().toBe<['a', 'b', string]>();
 
 // -- strictLiteralChecks: true --
-expectType<string[]>({} as Split<string, ''>);
-expectType<string[]>({} as Split<Uppercase<string>, '-'>);
-expectType<string[]>({} as Split<`on${string}`, 'n'>);
-expectType<string[]>({} as Split<'a,b,c', string>);
-expectType<string[]>({} as Split<'a,b,c', Lowercase<string>>);
-expectType<string[]>({} as Split<'a,b,c', `,${string}`, {strictLiteralChecks: true}>);
-expectType<string[]>({} as Split<`on${string}`, Lowercase<string>, {strictLiteralChecks: true}>);
+expectTypeOf<Split<string, ''>>().toBe<string[]>();
+expectTypeOf<Split<Uppercase<string>, '-'>>().toBe<string[]>();
+expectTypeOf<Split<`on${string}`, 'n'>>().toBe<string[]>();
+expectTypeOf<Split<'a,b,c', string>>().toBe<string[]>();
+expectTypeOf<Split<'a,b,c', Lowercase<string>>>().toBe<string[]>();
+expectTypeOf<Split<'a,b,c', `,${string}`, {strictLiteralChecks: true}>>().toBe<string[]>();
+expectTypeOf<Split<`on${string}`, Lowercase<string>, {strictLiteralChecks: true}>>().toBe<string[]>();
 
-expectType<['a', 'b', 'c'] | string[]>({} as Split<'a,b,c' | `bye, ${string}`, ',', {strictLiteralChecks: true}>);
-expectType<['a', 'b', 'c'] | string[]>({} as Split<'a,b,c', ',' | `b${string}`, {strictLiteralChecks: true}>);
-expectType<['a', 'b', 'c'] | string[]>({} as Split<'a,b,c' | `bye, ${string}`, ',' | `b${string}`, {strictLiteralChecks: true}>);
+expectTypeOf<Split<'a,b,c' | `bye, ${string}`, ',', {strictLiteralChecks: true}>>().toBe<['a', 'b', 'c'] | string[]>();
+expectTypeOf<Split<'a,b,c', ',' | `b${string}`, {strictLiteralChecks: true}>>().toBe<['a', 'b', 'c'] | string[]>();
+expectTypeOf<Split<'a,b,c' | `bye, ${string}`, ',' | `b${string}`, {strictLiteralChecks: true}>>().toBe<['a', 'b', 'c'] | string[]>();
 
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 type FiftyZeroes = StringRepeat<'0', 50>;
-expectType<TupleOf<50, '0'>>({} as Split<FiftyZeroes, ''>);
+expectTypeOf<Split<FiftyZeroes, ''>>().toBe<TupleOf<50, '0'>>();
 
 // Maximum allowed recursion depth for a tail recursive implementation.
 type NineHundredNinetyNineZeroes = StringRepeat<'0', 999>;
-expectType<TupleOf<999, '0'>>({} as Split<NineHundredNinetyNineZeroes, ''>);
+expectTypeOf<Split<NineHundredNinetyNineZeroes, ''>>().toBe<TupleOf<999, '0'>>();
 
 // The non-strict option splits only the literal parts it can see, so a subject whose literal parts have no delimiter is one part, even when its non-literal parts could contain one. `Get` relies on this to read a non-literal path as a single key.
-expectType<[string]>({} as Split<string, ',', {strictLiteralChecks: false}>);
+expectTypeOf<Split<string, ',', {strictLiteralChecks: false}>>().toBe<[string]>();
 declare const numberPatternSplit: [`v${number}`];
-expectType<typeof numberPatternSplit>({} as Split<`v${number}`, '.', {strictLiteralChecks: false}>);
+expectTypeOf<Split<`v${number}`, '.', {strictLiteralChecks: false}>>().toBe<typeof numberPatternSplit>();

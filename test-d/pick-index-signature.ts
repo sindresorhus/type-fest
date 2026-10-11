@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {PickIndexSignature, Simplify} from '../index.d.ts';
 
 declare const symbolKey: unique symbol;
@@ -25,4 +25,4 @@ type FooBar = Simplify<Foo & Bar>;
 
 declare const indexSignature: PickIndexSignature<FooBar>;
 
-expectType<Foo>(indexSignature);
+expectTypeOf(indexSignature).toBe<Foo>();

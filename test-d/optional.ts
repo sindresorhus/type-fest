@@ -1,46 +1,46 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Optional} from '../index.d.ts';
 
 // Basic
-expectType<string | undefined>({} as Optional<string>);
-expectType<{foo: string} | undefined>({} as Optional<{foo: string}>);
-expectType<'foo' | undefined>({} as Optional<'foo'>);
-expectType<42 | undefined>({} as Optional<42>);
-expectType<boolean | undefined>({} as Optional<boolean>);
-expectType<string | number | undefined>({} as Optional<string | number>);
-expectType<(() => void) | undefined>({} as Optional<() => void>);
+expectTypeOf<Optional<string>>().toBe<string | undefined>();
+expectTypeOf<Optional<{foo: string}>>().toBe<{foo: string} | undefined>();
+expectTypeOf<Optional<'foo'>>().toBe<'foo' | undefined>();
+expectTypeOf<Optional<42>>().toBe<42 | undefined>();
+expectTypeOf<Optional<boolean>>().toBe<boolean | undefined>();
+expectTypeOf<Optional<string | number>>().toBe<string | number | undefined>();
+expectTypeOf<Optional<() => void>>().toBe<(() => void) | undefined>();
 
 // Strips `null`
-expectType<string | undefined>({} as Optional<string | null>);
-expectType<string | undefined>({} as Optional<string | null | undefined>);
-expectType<number | boolean | undefined>({} as Optional<number | null | boolean>);
-expectType<true | undefined>({} as Optional<true | null>);
+expectTypeOf<Optional<string | null>>().toBe<string | undefined>();
+expectTypeOf<Optional<string | null | undefined>>().toBe<string | undefined>();
+expectTypeOf<Optional<number | null | boolean>>().toBe<number | boolean | undefined>();
+expectTypeOf<Optional<true | null>>().toBe<true | undefined>();
 
 // Already `undefined` (idempotent)
-expectType<string | undefined>({} as Optional<string | undefined>);
+expectTypeOf<Optional<string | undefined>>().toBe<string | undefined>();
 
 // Pure `null` becomes `undefined` (`null` is stripped, `undefined` remains)
 declare const pureNull: Optional<null>;
-expectType<undefined>(pureNull);
+expectTypeOf(pureNull).toBe<undefined>();
 
 // `null | undefined` becomes `undefined`
 declare const nullOrUndefined: Optional<null | undefined>;
-expectType<undefined>(nullOrUndefined);
+expectTypeOf(nullOrUndefined).toBe<undefined>();
 
 // Pure `undefined` stays `undefined`
 declare const pureUndefined: Optional<undefined>;
-expectType<undefined>(pureUndefined);
+expectTypeOf(pureUndefined).toBe<undefined>();
 
 // Nested `Optional` is idempotent
-expectType<string | undefined>({} as Optional<Optional<string>>);
+expectTypeOf<Optional<Optional<string>>>().toBe<string | undefined>();
 
 // `void`
 declare const voidOptional: Optional<void>;
-expectType<void | undefined>(voidOptional);
+expectTypeOf(voidOptional).toBe<void | undefined>();
 
 // Edge cases
-expectType<any>({} as Optional<any>);
+expectTypeOf<Optional<any>>().toBe<any>();
 declare const neverOptional: Optional<never>;
-expectType<undefined>(neverOptional);
+expectTypeOf(neverOptional).toBe<undefined>();
 // `unknown | undefined` simplifies to `unknown`
-expectType<unknown>({} as Optional<unknown>);
+expectTypeOf<Optional<unknown>>().toBe<unknown>();

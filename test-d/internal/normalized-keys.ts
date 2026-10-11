@@ -1,18 +1,18 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {NormalizedKeys} from '../../source/internal/object.d.ts';
 
 declare const sym: unique symbol;
 
-expectType<0 | '0' | 1 | '1'>({} as NormalizedKeys<0 | '1'>);
-expectType<-1 | '-1' | '-1.5' | -1.5 | 'foo' | typeof sym>({} as NormalizedKeys<-1 | '-1.5' | 'foo' | typeof sym>);
-expectType<string | number>({} as NormalizedKeys<string>);
-expectType<number | `${number}`>({} as NormalizedKeys<number>);
-expectType<number | `${number}`>({} as NormalizedKeys<`${number}`>);
-expectType<symbol>({} as NormalizedKeys<symbol>);
+expectTypeOf<NormalizedKeys<0 | '1'>>().toBe<0 | '0' | 1 | '1'>();
+expectTypeOf<NormalizedKeys<-1 | '-1.5' | 'foo' | typeof sym>>().toBe<-1 | '-1' | '-1.5' | -1.5 | 'foo' | typeof sym>();
+expectTypeOf<NormalizedKeys<string>>().toBe<string | number>();
+expectTypeOf<NormalizedKeys<number>>().toBe<number | `${number}`>();
+expectTypeOf<NormalizedKeys<`${number}`>>().toBe<number | `${number}`>();
+expectTypeOf<NormalizedKeys<symbol>>().toBe<symbol>();
 
 // Boundary cases
-expectType<any>({} as NormalizedKeys<any>);
-expectType<never>({} as NormalizedKeys<never>);
+expectTypeOf<NormalizedKeys<any>>().toBe<any>();
+expectTypeOf<NormalizedKeys<never>>().toBe<never>();
 
 // Can only be `PropertyKey`
 // @ts-expect-error

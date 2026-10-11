@@ -1,19 +1,19 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsAny} from '../index.d.ts';
 
 declare const anything: any;
 declare const something = 'something';
 
 // `IsAny` should only be true for `any`
-expectType<IsAny<any>>(true);
-expectType<IsAny<typeof anything>>(true);
-expectType<IsAny<string>>(false);
-expectType<IsAny<typeof something>>(false);
-expectType<IsAny<never>>(false);
-expectType<IsAny<unknown>>(false);
-expectType<IsAny<null>>(false);
-expectType<IsAny<undefined>>(false);
-expectType<IsAny<void>>(false);
+expectTypeOf<IsAny<any>>().toBe<true>();
+expectTypeOf<IsAny<typeof anything>>().toBe<true>();
+expectTypeOf<IsAny<string>>().toBe<false>();
+expectTypeOf<IsAny<typeof something>>().toBe<false>();
+expectTypeOf<IsAny<never>>().toBe<false>();
+expectTypeOf<IsAny<unknown>>().toBe<false>();
+expectTypeOf<IsAny<null>>().toBe<false>();
+expectTypeOf<IsAny<undefined>>().toBe<false>();
+expectTypeOf<IsAny<void>>().toBe<false>();
 
 // Missing generic parameter
 // @ts-expect-error

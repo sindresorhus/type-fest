@@ -1,43 +1,43 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ArrayLength, Primitive} from '../index.d.ts';
 
 // Non-tuples
-expectType<number>({} as ArrayLength<unknown[]>);
+expectTypeOf<ArrayLength<unknown[]>>().toBe<number>();
 
 // Tuples
-expectType<0>({} as ArrayLength<[]>);
-expectType<1>({} as ArrayLength<[never]>);
-expectType<3>({} as ArrayLength<['one', 2, true]>);
-expectType<2 | 3 | 4>({} as ArrayLength<[number, string, boolean?, boolean?]>);
+expectTypeOf<ArrayLength<[]>>().toBe<0>();
+expectTypeOf<ArrayLength<[never]>>().toBe<1>();
+expectTypeOf<ArrayLength<['one', 2, true]>>().toBe<3>();
+expectTypeOf<ArrayLength<[number, string, boolean?, boolean?]>>().toBe<2 | 3 | 4>();
 
-expectType<number>({} as ArrayLength<[1, 2, ...unknown[]]>);
-expectType<number>({} as ArrayLength<[1, 2?, ...unknown[]]>);
-expectType<number>({} as ArrayLength<[...unknown[], 1, 2]>);
-expectType<number>({} as ArrayLength<[0, ...unknown[], 1, 2]>);
+expectTypeOf<ArrayLength<[1, 2, ...unknown[]]>>().toBe<number>();
+expectTypeOf<ArrayLength<[1, 2?, ...unknown[]]>>().toBe<number>();
+expectTypeOf<ArrayLength<[...unknown[], 1, 2]>>().toBe<number>();
+expectTypeOf<ArrayLength<[0, ...unknown[], 1, 2]>>().toBe<number>();
 
 // Read-only arrays
-expectType<number>({} as ArrayLength<readonly unknown[]>);
-expectType<number>({} as ArrayLength<readonly never[]>);
-expectType<0>({} as ArrayLength<readonly []>);
-expectType<1>({} as ArrayLength<readonly [never]>);
-expectType<3>({} as ArrayLength<readonly ['one', 2, true]>);
-expectType<2 | 3 | 4>({} as ArrayLength<readonly [number, string, boolean?, boolean?]>);
+expectTypeOf<ArrayLength<readonly unknown[]>>().toBe<number>();
+expectTypeOf<ArrayLength<readonly never[]>>().toBe<number>();
+expectTypeOf<ArrayLength<readonly []>>().toBe<0>();
+expectTypeOf<ArrayLength<readonly [never]>>().toBe<1>();
+expectTypeOf<ArrayLength<readonly ['one', 2, true]>>().toBe<3>();
+expectTypeOf<ArrayLength<readonly [number, string, boolean?, boolean?]>>().toBe<2 | 3 | 4>();
 
-expectType<number>({} as ArrayLength<readonly [1, 2, ...unknown[]]>);
-expectType<number>({} as ArrayLength<readonly [1, 2?, ...unknown[]]>);
-expectType<number>({} as ArrayLength<readonly [...unknown[], 1, 2]>);
-expectType<number>({} as ArrayLength<readonly [0, ...unknown[], 1, 2]>);
+expectTypeOf<ArrayLength<readonly [1, 2, ...unknown[]]>>().toBe<number>();
+expectTypeOf<ArrayLength<readonly [1, 2?, ...unknown[]]>>().toBe<number>();
+expectTypeOf<ArrayLength<readonly [...unknown[], 1, 2]>>().toBe<number>();
+expectTypeOf<ArrayLength<readonly [0, ...unknown[], 1, 2]>>().toBe<number>();
 
 // Unions
-expectType<0 | 2>({} as ArrayLength<[] | [1, 2]>);
-expectType<0 | 2>({} as ArrayLength<readonly [] | readonly [1, 2]>);
-expectType<0 | 2>({} as ArrayLength<[] | readonly [1, 2]>);
-expectType<1 | 2 | 3 | 4>({} as ArrayLength<[1, 2?, 3?] | ['one', 'two', 'three', 'four']>);
-expectType<number>({} as ArrayLength<readonly [1] | [1, ...number[]]>);
+expectTypeOf<ArrayLength<[] | [1, 2]>>().toBe<0 | 2>();
+expectTypeOf<ArrayLength<readonly [] | readonly [1, 2]>>().toBe<0 | 2>();
+expectTypeOf<ArrayLength<[] | readonly [1, 2]>>().toBe<0 | 2>();
+expectTypeOf<ArrayLength<[1, 2?, 3?] | ['one', 'two', 'three', 'four']>>().toBe<1 | 2 | 3 | 4>();
+expectTypeOf<ArrayLength<readonly [1] | [1, ...number[]]>>().toBe<number>();
 
 // Edge cases and disallowed types
-expectType<never>({} as ArrayLength<never>);
-expectType<any>({} as ArrayLength<any>);
+expectTypeOf<ArrayLength<never>>().toBe<never>();
+expectTypeOf<ArrayLength<any>>().toBe<any>();
 
 // @ts-expect-error
 type DisallowedPrimitive = ArrayLength<string>;

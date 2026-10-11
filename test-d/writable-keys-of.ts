@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnknownRecord, WritableKeysOf} from '../index.d.ts';
 
 type TestType1 = {
@@ -24,22 +24,22 @@ declare const test1: WritableKeysOf1;
 declare const test2: WritableKeysOf2;
 declare const test3: WritableKeysOf3;
 
-expectType<'b'>(test1);
-expectType<'a' | 'b'>(test2);
-expectType<never>(test3);
+expectTypeOf(test1).toBe<'b'>();
+expectTypeOf(test2).toBe<'a' | 'b'>();
+expectTypeOf(test3).toBe<never>();
 
-expectType<'a' | 'c'>({} as WritableKeysOf<{a?: string; readonly b: number; c: boolean}>);
-expectType<'c'>({} as WritableKeysOf<{readonly a?: string; readonly b: number; c: boolean}>);
+expectTypeOf<WritableKeysOf<{a?: string; readonly b: number; c: boolean}>>().toBe<'a' | 'c'>();
+expectTypeOf<WritableKeysOf<{readonly a?: string; readonly b: number; c: boolean}>>().toBe<'c'>();
 
 // Unions
-expectType<'b' | 'c'>({} as WritableKeysOf<{readonly a: string; b: number} | {c?: string; readonly d?: number}>);
-expectType<'a' | 'b'>({} as WritableKeysOf<{readonly a: string; readonly b: number} | {a: string; b: number}>);
+expectTypeOf<WritableKeysOf<{readonly a: string; b: number} | {c?: string; readonly d?: number}>>().toBe<'b' | 'c'>();
+expectTypeOf<WritableKeysOf<{readonly a: string; readonly b: number} | {a: string; b: number}>>().toBe<'a' | 'b'>();
 
 // Arrays
-expectType<number | '0' | '1' | '2'>({} as Extract<WritableKeysOf<[string, number, boolean]>, number | `${number}`>);
-expectType<never>({} as Extract<WritableKeysOf<readonly [string, number, boolean]>, number | `${number}`>);
-expectType<number>({} as Extract<WritableKeysOf<string[]>, number | `${number}`>);
-expectType<never>({} as Extract<WritableKeysOf<readonly string[]>, number | `${number}`>);
+expectTypeOf<Extract<WritableKeysOf<[string, number, boolean]>, number | `${number}`>>().toBe<number | '0' | '1' | '2'>();
+expectTypeOf<Extract<WritableKeysOf<readonly [string, number, boolean]>, number | `${number}`>>().toBe<never>();
+expectTypeOf<Extract<WritableKeysOf<string[]>, number | `${number}`>>().toBe<number>();
+expectTypeOf<Extract<WritableKeysOf<readonly string[]>, number | `${number}`>>().toBe<never>();
 
 // `WritableKeysOf<T>` should be assignable to `keyof T`
 type Assignability1<T, _K extends keyof T> = unknown;
@@ -91,19 +91,19 @@ type AllowsOnlyObjects = WritableKeysOf<string>;
 
 // Known limitation: an index signature is reported as a writable key, for the same reason `RequiredKeysOf` reports it as a required key. See the note in that type's docs.
 declare const indexSignature: WritableKeysOf<{[k: string]: string; readonly a: string}>;
-expectType<string | number>(indexSignature);
+expectTypeOf(indexSignature).toBe<string | number>();
 
 declare const onlyIndexSignature: WritableKeysOf<{[k: string]: string}>;
-expectType<string | number>(onlyIndexSignature);
+expectTypeOf(onlyIndexSignature).toBe<string | number>();
 
 // A readonly index signature is not a writable key, and it must not swallow the writable named keys next to it
-expectType<never>({} as WritableKeysOf<{readonly [key: string]: string; readonly a: string}>);
-expectType<'id'>({} as WritableKeysOf<{readonly [key: string]: unknown; id: number}>);
-expectType<'a' | 'b'>({} as WritableKeysOf<{readonly [key: string]: unknown; a: string; b?: string}>);
+expectTypeOf<WritableKeysOf<{readonly [key: string]: string; readonly a: string}>>().toBe<never>();
+expectTypeOf<WritableKeysOf<{readonly [key: string]: unknown; id: number}>>().toBe<'id'>();
+expectTypeOf<WritableKeysOf<{readonly [key: string]: unknown; a: string; b?: string}>>().toBe<'a' | 'b'>();
 
 // A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
-expectType<'a' | 'b'>({} as WritableKeysOf<{a: 1} | {b: 2}>);
-expectType<'a' | 'b'>({} as WritableKeysOf<{a: 1; b: 2} | {a: 1}>);
+expectTypeOf<WritableKeysOf<{a: 1} | {b: 2}>>().toBe<'a' | 'b'>();
+expectTypeOf<WritableKeysOf<{a: 1; b: 2} | {a: 1}>>().toBe<'a' | 'b'>();
 
 // `any` has every key, and none of them are readonly, consistent with `RequiredKeysOf<any>`
-expectType<string | number | symbol>({} as WritableKeysOf<any>);
+expectTypeOf<WritableKeysOf<any>>().toBe<string | number | symbol>();

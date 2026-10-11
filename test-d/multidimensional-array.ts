@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {MultidimensionalArray} from '../index.d.ts';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalArray<unknown, T> {
@@ -23,14 +23,14 @@ a[0][0][0] = 42;
 
 type RecursiveArray<T> = Array<RecursiveArray<T>>;
 
-expectType<number[][][]>(a);
-expectType<RecursiveArray<boolean>>(b);
-expectType<unknown[][]>(c);
-expectType<unknown[][][][][][][]>(d);
+expectTypeOf(a).toBe<number[][][]>();
+expectTypeOf(b).toBe<RecursiveArray<boolean>>();
+expectTypeOf(c).toBe<unknown[][]>();
+expectTypeOf(d).toBe<unknown[][][][][][][]>();
 
 // A union of dimensions is a dynamic dimension, so it resolves to the union of the arrays of each dimension.
 const union: MultidimensionalArray<number, 1 | 2 | 3> = [];
 
-expectType<number[] | number[][] | number[][][]>(union);
+expectTypeOf(union).toBe<number[] | number[][] | number[][][]>();
 
-expectType<unknown[] | unknown[][]>(createArray(1 as 1 | 2));
+expectTypeOf(createArray(1 as 1 | 2)).toBe<unknown[] | unknown[][]>();

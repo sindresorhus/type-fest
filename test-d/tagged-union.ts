@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {TaggedUnion} from '../index.d.ts';
 
 type Union = TaggedUnion<'tag', {str: {a: string}; num: {b: number}}>;
@@ -13,8 +13,8 @@ const second = {
 	b: 1,
 };
 
-expectAssignable<Union>(first);
-expectAssignable<Union>(second);
+expectTypeOf(first).toBeAssignableTo<Union>();
+expectTypeOf(second).toBeAssignableTo<Union>();
 
 const fails = {
 	tag: 'num' as const,
@@ -26,8 +26,8 @@ const failsToo = {
 	b: 2,
 };
 
-expectNotAssignable<Union>(fails);
-expectNotAssignable<Union>(failsToo);
+expectTypeOf(fails).not.toBeAssignableTo<Union>();
+expectTypeOf(failsToo).not.toBeAssignableTo<Union>();
 
 // Three members, each with its own fields, and a tag whose name is also a field's name in one of them, which is the case where a key and a tag could be confused for one another.
 type ThreeMembers = TaggedUnion<'kind', {
@@ -37,17 +37,18 @@ type ThreeMembers = TaggedUnion<'kind', {
 }>;
 
 // A member's tag is paired with its own fields, so another member's fields do not satisfy it.
-expectAssignable<ThreeMembers>({kind: 'Open', url: 'a', id: 1});
-expectAssignable<ThreeMembers>({kind: 'Close', visible: true});
-expectNotAssignable<ThreeMembers>({kind: 'Open', visible: true} as const);
-expectNotAssignable<ThreeMembers>({kind: 'Move', url: 'a', id: 1} as const);
+({kind: 'Open', url: 'a', id: 1}) satisfies ThreeMembers;
+({kind: 'Close', visible: true}) satisfies ThreeMembers;
+expectTypeOf({kind: 'Open', visible: true} as const).not.toBeAssignableTo<ThreeMembers>();
+expectTypeOf({kind: 'Move', url: 'a', id: 1} as const).not.toBeAssignableTo<ThreeMembers>();
 
 // The optional field stays optional, and the tag is still required.
-expectAssignable<ThreeMembers>({kind: 'Move', to: {x: 1, y: 2}});
-expectNotAssignable<ThreeMembers>({to: {x: 1, y: 2}} as const);
+({kind: 'Move', to: {x: 1, y: 2}}) satisfies ThreeMembers;
+expectTypeOf({to: {x: 1, y: 2}} as const).not.toBeAssignableTo<ThreeMembers>();
 
 // An empty record is one member with no fields, which is a tag and nothing else.
 type OnlyATag = TaggedUnion<'tag', {A: {}; B: {value: string}}>;
-expectAssignable<OnlyATag>({tag: 'A'});
-expectAssignable<OnlyATag>({tag: 'B', value: 'x'});
-expectNotAssignable<OnlyATag>({tag: 'A', value: 'x'} as const);
+({tag: 'A'}) satisfies OnlyATag;
+({tag: 'B', value: 'x'}) satisfies OnlyATag;
+// @ts-expect-error
+const onlyATag: OnlyATag = {tag: 'A', value: 'x'} as const;

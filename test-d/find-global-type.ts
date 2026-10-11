@@ -1,5 +1,5 @@
 /* eslint-disable no-var */
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {FindGlobalInstanceType, FindGlobalType} from '../index.d.ts';
 
 declare class NonGlobalES6Class {}
@@ -27,48 +27,48 @@ declare global {
 
 // Success
 declare const foundGlobalVar: FindGlobalType<'globalVar'>;
-expectType<string>(foundGlobalVar);
+expectTypeOf(foundGlobalVar).toBe<string>();
 
 // Failures
 declare const foundNonGlobalES6Class: FindGlobalType<'nonGlobalVar'>;
-expectType<never>(foundNonGlobalVar);
+expectTypeOf(foundNonGlobalVar).toBe<never>();
 declare const foundNonGlobalVar: FindGlobalType<'nonGlobalVar'>;
-expectType<never>(foundNonGlobalVar);
+expectTypeOf(foundNonGlobalVar).toBe<never>();
 declare const foundNonGlobalLet: FindGlobalType<'nonGlobalLet'>;
-expectType<never>(foundNonGlobalLet);
+expectTypeOf(foundNonGlobalLet).toBe<never>();
 declare const foundNonGlobalConst: FindGlobalType<'nonGlobalConst'>;
-expectType<never>(foundNonGlobalConst);
+expectTypeOf(foundNonGlobalConst).toBe<never>();
 
 declare const foundGlobalLet: FindGlobalType<'globalLet'>;
-expectType<never>(foundGlobalLet);
+expectTypeOf(foundGlobalLet).toBe<never>();
 declare const foundGlobalConst: FindGlobalType<'globalConst'>;
-expectType<never>(foundGlobalConst);
+expectTypeOf(foundGlobalConst).toBe<never>();
 
 // === FindGlobalInstanceType ===
 
 // Success
 declare const foundInstanceDate: FindGlobalInstanceType<'Date'>;
-expectType<Date>(foundInstanceDate);
+expectTypeOf(foundInstanceDate).toBe<Date>();
 declare const foundInstanceMultiple: FindGlobalInstanceType<'Date' | 'Error'>;
-expectType<Date | Error>(foundInstanceMultiple);
+expectTypeOf(foundInstanceMultiple).toBe<Date | Error>();
 declare const foundInstanceMultiplePartial: FindGlobalInstanceType<'Date' | 'Error' | 'NonExistentType'>;
-expectType<Date | Error>(foundInstanceMultiplePartial);
+expectTypeOf(foundInstanceMultiplePartial).toBe<Date | Error>();
 declare const foundInstanceGlobalConstructorVarStyle: FindGlobalInstanceType<'GlobalConstructorVarStyle'>;
-expectType<GlobalClass>(foundInstanceGlobalConstructorVarStyle);
+expectTypeOf(foundInstanceGlobalConstructorVarStyle).toBe<GlobalClass>();
 
 // Failures
 declare const foundInstanceNonExistentType: FindGlobalInstanceType<'NonExistentType'>;
-expectType<never>(foundInstanceNonExistentType);
+expectTypeOf(foundInstanceNonExistentType).toBe<never>();
 declare const foundInstanceNonGlobalES6Class: FindGlobalInstanceType<'NonGlobalES6Class'>;
-expectType<never>(foundInstanceNonGlobalES6Class);
+expectTypeOf(foundInstanceNonGlobalES6Class).toBe<never>();
 
 declare const foundInstanceGlobalTypeAlias: FindGlobalInstanceType<'GlobalTypeAlias'>;
-expectType<never>(foundInstanceGlobalTypeAlias);
+expectTypeOf(foundInstanceGlobalTypeAlias).toBe<never>();
 declare const foundInstanceGlobalES6Class: FindGlobalInstanceType<'GlobalES6Class'>;
-expectType<never>(foundInstanceGlobalES6Class);
+expectTypeOf(foundInstanceGlobalES6Class).toBe<never>();
 declare const foundInstanceGlobalConstructorLetStyle: FindGlobalInstanceType<'GlobalConstructorLetStyle'>;
-expectType<never>(foundInstanceGlobalConstructorLetStyle);
+expectTypeOf(foundInstanceGlobalConstructorLetStyle).toBe<never>();
 declare const foundInstanceGlobalConstructorConstStyle: FindGlobalInstanceType<'GlobalConstructorConstStyle'>;
-expectType<never>(foundInstanceGlobalConstructorConstStyle);
+expectTypeOf(foundInstanceGlobalConstructorConstStyle).toBe<never>();
 declare const foundInstanceGlobalNonConstructorFunction: FindGlobalInstanceType<'nonConstructorFunction'>;
-expectType<never>(foundInstanceGlobalNonConstructorFunction);
+expectTypeOf(foundInstanceGlobalNonConstructorFunction).toBe<never>();

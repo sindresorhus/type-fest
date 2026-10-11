@@ -1,5 +1,4 @@
-import {expectType} from 'tsd';
-import {expectTypeOf} from 'expect-type';
+import {expectTypeOf} from 'nz';
 import type {OverrideProperties} from '../source/override-properties.d.ts';
 
 type Foo = {
@@ -8,7 +7,7 @@ type Foo = {
 };
 
 const fixture: OverrideProperties<Foo, {b: number}> = {a: 1, b: 2};
-expectType<{a: number; b: number}>(fixture);
+expectTypeOf(fixture).toBe<{a: number; b: number}>();
 
 // @ts-expect-error
 type Bar1 = OverrideProperties<Foo, {c: number}>;
@@ -30,5 +29,5 @@ type Bar2 = OverrideProperties<Foo, {b: number; c: number}>;
 
 	type Final = OverrideProperties<Original, Modified>;
 
-	expectTypeOf<Final>().toMatchTypeOf<{foo: string | undefined; bar: string}>();
+	expectTypeOf<Final>().toBeAssignableTo<{foo: string | undefined; bar: string}>();
 }

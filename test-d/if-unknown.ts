@@ -1,11 +1,11 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IfUnknown} from '../index.d.ts';
 
 // `IfUnknown` should return `true`/`false` if only `T` is specified
-expectType<IfUnknown<unknown>>(true);
-expectType<IfUnknown<string>>(false);
-expectType<IfUnknown<unknown, 'T', 'F'>>('T');
-expectType<IfUnknown<string, 'T', 'F'>>('F');
+expectTypeOf<IfUnknown<unknown>>().toBe<true>();
+expectTypeOf<IfUnknown<string>>().toBe<false>();
+expectTypeOf<IfUnknown<unknown, 'T', 'F'>>().toBe<'T'>();
+expectTypeOf<IfUnknown<string, 'T', 'F'>>().toBe<'F'>();
 
 // Missing generic parameter
 // @ts-expect-error

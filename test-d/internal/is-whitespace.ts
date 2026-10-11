@@ -1,11 +1,11 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsWhitespace} from '../../source/internal/index.d.ts';
 
-expectType<IsWhitespace<''>>(false);
-expectType<IsWhitespace<' '>>(true);
-expectType<IsWhitespace<'\n'>>(true);
-expectType<IsWhitespace<'\u{9}'>>(true);
-expectType<IsWhitespace<'a'>>(false);
-expectType<IsWhitespace<'a '>>(false);
-expectType<IsWhitespace<'   '>>(true);
-expectType<IsWhitespace<' \t '>>(true);
+expectTypeOf<IsWhitespace<''>>().toBe<false>();
+expectTypeOf<IsWhitespace<' '>>().toBe<true>();
+expectTypeOf<IsWhitespace<'\n'>>().toBe<true>();
+expectTypeOf<IsWhitespace<'\u{9}'>>().toBe<true>();
+expectTypeOf<IsWhitespace<'a'>>().toBe<false>();
+expectTypeOf<IsWhitespace<'a '>>().toBe<false>();
+expectTypeOf<IsWhitespace<'   '>>().toBe<true>();
+expectTypeOf<IsWhitespace<' \t '>>().toBe<true>();

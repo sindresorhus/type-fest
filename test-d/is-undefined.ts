@@ -1,15 +1,15 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsUndefined} from '../source/is-undefined.d.ts';
 
-expectType<IsUndefined<undefined>>(true);
-expectType<IsUndefined<any>>(true);
+expectTypeOf<IsUndefined<undefined>>().toBe<true>();
+expectTypeOf<IsUndefined<any>>().toBe<true>();
 // `never` is not `undefined`, and `IsOptional<never>` is `false` for the same reason, so the two must agree here too.
-expectType<IsUndefined<never>>(false);
-expectType<IsUndefined<string & undefined>>(false);
-expectType<IsUndefined<null>>(false); // Depends on `strictNullChecks`
-expectType<IsUndefined<unknown>>(false);
-expectType<IsUndefined<void>>(false);
-expectType<IsUndefined<{}>>(false);
+expectTypeOf<IsUndefined<never>>().toBe<false>();
+expectTypeOf<IsUndefined<string & undefined>>().toBe<false>();
+expectTypeOf<IsUndefined<null>>().toBe<false>(); // Depends on `strictNullChecks`
+expectTypeOf<IsUndefined<unknown>>().toBe<false>();
+expectTypeOf<IsUndefined<void>>().toBe<false>();
+expectTypeOf<IsUndefined<{}>>().toBe<false>();
 
 // A union that also contains other types is not `undefined`.
-expectType<IsUndefined<string | undefined>>(false);
+expectTypeOf<IsUndefined<string | undefined>>().toBe<false>();

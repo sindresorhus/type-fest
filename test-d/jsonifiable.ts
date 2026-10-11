@@ -1,18 +1,18 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Jsonifiable} from '../index.d.ts';
 
-expectAssignable<Jsonifiable>(1);
-expectAssignable<Jsonifiable>('');
-expectAssignable<Jsonifiable>(null);
-expectAssignable<Jsonifiable>(new Date());
-expectAssignable<Jsonifiable>({a: new Date()});
-expectAssignable<Jsonifiable>([new Date()]);
-expectAssignable<Jsonifiable>({a: undefined});
-expectAssignable<Jsonifiable>([1, 2, 3] as const);
-expectAssignable<Jsonifiable>({a: new Date()} as const);
-expectAssignable<Jsonifiable>({a: {deeply: {nested: {toJsonObject: new Date()}}}});
-expectAssignable<Jsonifiable>({toJSON: () => new Date()});
-expectAssignable<Jsonifiable>({
+expectTypeOf<1>().toBeAssignableTo<Jsonifiable>();
+expectTypeOf<''>().toBeAssignableTo<Jsonifiable>();
+expectTypeOf<null>().toBeAssignableTo<Jsonifiable>();
+expectTypeOf(new Date()).toBeAssignableTo<Jsonifiable>();
+({a: new Date()}) satisfies Jsonifiable;
+[new Date()] satisfies Jsonifiable;
+({a: undefined}) satisfies Jsonifiable;
+expectTypeOf([1, 2, 3] as const).toBeAssignableTo<Jsonifiable>();
+expectTypeOf({a: new Date()} as const).toBeAssignableTo<Jsonifiable>();
+({a: {deeply: {nested: {toJsonObject: new Date()}}}}) satisfies Jsonifiable;
+({toJSON: () => new Date()}) satisfies Jsonifiable;
+({
 	toJSON() {
 		return {
 			foo: {
@@ -22,19 +22,19 @@ expectAssignable<Jsonifiable>({
 			},
 		};
 	},
-});
+}) satisfies Jsonifiable;
 
-expectNotAssignable<Jsonifiable>(undefined);
-expectNotAssignable<Jsonifiable>(new Map());
-expectNotAssignable<Jsonifiable>({a: new Map()});
-expectNotAssignable<Jsonifiable>([new Map()]);
+expectTypeOf<undefined>().not.toBeAssignableTo<Jsonifiable>();
+expectTypeOf(new Map()).not.toBeAssignableTo<Jsonifiable>();
+expectTypeOf({a: new Map()}).not.toBeAssignableTo<Jsonifiable>();
+expectTypeOf([new Map()]).not.toBeAssignableTo<Jsonifiable>();
 
 // `JSON.stringify` passes the property key to `toJSON`, so `toJSON` may declare parameters.
 declare const toJSONWithKey: {toJSON(key: string): string};
-expectAssignable<Jsonifiable>(toJSONWithKey);
+expectTypeOf(toJSONWithKey).toBeAssignableTo<Jsonifiable>();
 
 declare const toJSONWithoutKey: {toJSON(): string};
-expectAssignable<Jsonifiable>(toJSONWithoutKey);
+expectTypeOf(toJSONWithoutKey).toBeAssignableTo<Jsonifiable>();
 
 declare const toJSONReturningMap: {toJSON(): Map<string, number>};
-expectNotAssignable<Jsonifiable>(toJSONReturningMap);
+expectTypeOf(toJSONReturningMap).not.toBeAssignableTo<Jsonifiable>();

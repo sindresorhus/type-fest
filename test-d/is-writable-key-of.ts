@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsWritableKeyOf} from '../source/is-writable-key-of.d.ts';
 
 declare const never: never;
@@ -12,27 +12,27 @@ type A = {
 	c?: boolean;
 };
 
-expectType<IsWritableKeyOf<A, 'a'>>(true);
-expectType<IsWritableKeyOf<A, 'b'>>(false);
-expectType<IsWritableKeyOf<A, 'c'>>(true);
+expectTypeOf<IsWritableKeyOf<A, 'a'>>().toBe<true>();
+expectTypeOf<IsWritableKeyOf<A, 'b'>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<A, 'c'>>().toBe<true>();
 
 // @ts-expect-error `d` is not in `keyof T`
-expectType<IsWritableKeyOf<A, 'd'>>(false);
+expectTypeOf<IsWritableKeyOf<A, 'd'>>().toBe<false>();
 
 // Index signature
 type B = {
 	[k: string]: number;
 };
 
-expectType<IsWritableKeyOf<B, 'anything'>>(true);
+expectTypeOf<IsWritableKeyOf<B, 'anything'>>().toBe<true>();
 
 // Fully readonly index
 type C = {
 	readonly [k: string]: number;
 };
 
-expectType<IsWritableKeyOf<C, string>>(false);
-expectType<IsWritableKeyOf<C, 'anything'>>(true);
+expectTypeOf<IsWritableKeyOf<C, string>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<C, 'anything'>>().toBe<true>();
 
 // Optional + readonly
 type D = {
@@ -40,22 +40,22 @@ type D = {
 	b: number;
 };
 
-expectType<IsWritableKeyOf<D, 'a'>>(false);
-expectType<IsWritableKeyOf<D, 'b'>>(true);
+expectTypeOf<IsWritableKeyOf<D, 'a'>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<D, 'b'>>().toBe<true>();
 
 // Union
 type E1 = {a: number};
 type E2 = {readonly a: number};
 type E = E1 | E2;
 
-expectType<IsWritableKeyOf<E, 'a'>>(boolean);
+expectTypeOf(boolean).toBe<IsWritableKeyOf<E, 'a'>>();
 
 // Intersection
 type F1 = {readonly a: string};
 type F2 = {a: string};
 type F = F1 & F2;
 
-expectType<IsWritableKeyOf<F, 'a'>>(true);
+expectTypeOf<IsWritableKeyOf<F, 'a'>>().toBe<true>();
 
 // Class instance
 class G {
@@ -64,16 +64,16 @@ class G {
 	y = '';
 }
 
-expectType<IsWritableKeyOf<G, 'x'>>(false);
-expectType<IsWritableKeyOf<G, 'y'>>(true);
+expectTypeOf<IsWritableKeyOf<G, 'x'>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<G, 'y'>>().toBe<true>();
 
 type H = {
 	[symbol]: number;
 	readonly x: string;
 };
 
-expectType<IsWritableKeyOf<H, typeof symbol>>(true);
-expectType<IsWritableKeyOf<H, 'x'>>(false);
+expectTypeOf<IsWritableKeyOf<H, typeof symbol>>().toBe<true>();
+expectTypeOf<IsWritableKeyOf<H, 'x'>>().toBe<false>();
 
 // Full readonly object
 type I = Readonly<{
@@ -81,8 +81,8 @@ type I = Readonly<{
 	b: string;
 }>;
 
-expectType<IsWritableKeyOf<I, 'a'>>(false);
-expectType<IsWritableKeyOf<I, 'b'>>(false);
+expectTypeOf<IsWritableKeyOf<I, 'a'>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<I, 'b'>>().toBe<false>();
 
 // Object with method
 type J = {
@@ -90,32 +90,32 @@ type J = {
 	run(): void;
 };
 
-expectType<IsWritableKeyOf<J, 'run'>>(true);
-expectType<IsWritableKeyOf<J, 'id'>>(false);
+expectTypeOf<IsWritableKeyOf<J, 'run'>>().toBe<true>();
+expectTypeOf<IsWritableKeyOf<J, 'id'>>().toBe<false>();
 
 // Record
 type K = Record<'a' | 'b', string>;
 
-expectType<IsWritableKeyOf<K, 'a'>>(true);
-expectType<IsWritableKeyOf<K, 'b'>>(true);
+expectTypeOf<IsWritableKeyOf<K, 'a'>>().toBe<true>();
+expectTypeOf<IsWritableKeyOf<K, 'b'>>().toBe<true>();
 
 // Union of keys
-expectType<IsWritableKeyOf<A, 'b' | 'c'>>(boolean);
-expectType<IsWritableKeyOf<A, 'a' | 'b'>>(boolean);
+expectTypeOf(boolean).toBe<IsWritableKeyOf<A, 'b' | 'c'>>();
+expectTypeOf(boolean).toBe<IsWritableKeyOf<A, 'a' | 'b'>>();
 // @ts-expect-error
-expectType<IsWritableKeyOf<A, 'a' | 'd'>>(boolean);
-expectType<IsWritableKeyOf<A, 'a' | 'c'>>(true);
+expectTypeOf(boolean).toBe<IsWritableKeyOf<A, 'a' | 'd'>>();
+expectTypeOf<IsWritableKeyOf<A, 'a' | 'c'>>().toBe<true>();
 
 type FullKeyUnion = keyof A; // 'a' | 'b' | 'c'
-expectType<IsWritableKeyOf<A, FullKeyUnion>>(boolean);
+expectTypeOf(boolean).toBe<IsWritableKeyOf<A, FullKeyUnion>>();
 // @ts-expect-error
-expectType<IsWritableKeyOf<A, 'b' | 'x'>>(false); // 'x' is not in A, so filtered as false
+expectTypeOf<IsWritableKeyOf<A, 'b' | 'x'>>().toBe<false>(); // 'x' is not in A, so filtered as false
 
 // `never` / `any
 type L = {readonly a: string};
-expectType<IsWritableKeyOf<K, any>>(never);
-expectType<IsWritableKeyOf<any, any>>(never);
-expectType<IsWritableKeyOf<any, 'a'>>(never);
-expectType<IsWritableKeyOf<K, never>>(never);
-expectType<IsWritableKeyOf<any, never>>(never);
-expectType<IsWritableKeyOf<never, 'a'>>(never);
+expectTypeOf(never).toBe<IsWritableKeyOf<K, any>>();
+expectTypeOf(never).toBe<IsWritableKeyOf<any, any>>();
+expectTypeOf(never).toBe<IsWritableKeyOf<any, 'a'>>();
+expectTypeOf(never).toBe<IsWritableKeyOf<K, never>>();
+expectTypeOf(never).toBe<IsWritableKeyOf<any, never>>();
+expectTypeOf(never).toBe<IsWritableKeyOf<never, 'a'>>();

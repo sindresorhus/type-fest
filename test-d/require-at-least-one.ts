@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {RequireAtLeastOne, Simplify} from '../index.d.ts';
 
 type SystemMessages = {
@@ -36,54 +36,50 @@ testWithoutKeys({});
 
 type MessageBoard<M> = (messages: M) => string;
 
-expectAssignable<MessageBoard<ValidMessages>>(
+expectTypeOf(
 	({macos = '', linux = '🐧', windows = '⊞'}) =>
 		`${linux} + ${windows} = ${macos}`,
-);
+).toBeAssignableTo<MessageBoard<ValidMessages>>();
 
-expectType<{a: number; b?: string} | {a?: number; b: string}>(
-	{} as Simplify<RequireAtLeastOne<{a: number; b: string}>>, // `Simplify` is required for the assertion to pass
-);
-expectType<{a: number; b?: string} | {a?: number; b: string}>(
-	{} as Simplify<RequireAtLeastOne<{a: number; b: string}, any>>, // `Simplify` is required for the assertion to pass
-);
-expectType<{a: number; b?: string; c?: boolean} | {a?: number; b: string; c?: boolean} | {a?: number; b?: string; c: boolean}>(
-	{} as Simplify<RequireAtLeastOne<{a: number; b: string; c: boolean}>>, // `Simplify` is required for the assertion to pass
-);
-expectType<{a: number; b?: string; c?: boolean} | {a?: number; b: string; c?: boolean} | {a?: number; b?: string; c: boolean}>(
-	{} as Simplify<RequireAtLeastOne<{a: number; b: string; c: boolean}, any>>, // `Simplify` is required for the assertion to pass
-);
+// `Simplify` is required for the assertion to pass
+expectTypeOf<Simplify<RequireAtLeastOne<{a: number; b: string}>>>().toBe<{a: number; b?: string} | {a?: number; b: string}>();
+// `Simplify` is required for the assertion to pass
+expectTypeOf<Simplify<RequireAtLeastOne<{a: number; b: string}, any>>>().toBe<{a: number; b?: string} | {a?: number; b: string}>();
+// `Simplify` is required for the assertion to pass
+expectTypeOf<Simplify<RequireAtLeastOne<{a: number; b: string; c: boolean}>>>().toBe<{a: number; b?: string; c?: boolean} | {a?: number; b: string; c?: boolean} | {a?: number; b?: string; c: boolean}>();
+// `Simplify` is required for the assertion to pass
+expectTypeOf<Simplify<RequireAtLeastOne<{a: number; b: string; c: boolean}, any>>>().toBe<{a: number; b?: string; c?: boolean} | {a?: number; b: string; c?: boolean} | {a?: number; b?: string; c: boolean}>();
 
-expectType<never>({} as RequireAtLeastOne<{}>);
-expectType<never>({} as RequireAtLeastOne<{a: string; b: number}, never>);
+expectTypeOf<RequireAtLeastOne<{}>>().toBe<never>();
+expectTypeOf<RequireAtLeastOne<{a: string; b: number}, never>>().toBe<never>();
 
-expectType<any>({} as RequireAtLeastOne<any>);
-expectType<any>({} as RequireAtLeastOne<any, 'foo'>);
-expectType<any>({} as RequireAtLeastOne<any, any>);
-expectType<any>({} as RequireAtLeastOne<any, never>);
+expectTypeOf<RequireAtLeastOne<any>>().toBe<any>();
+expectTypeOf<RequireAtLeastOne<any, 'foo'>>().toBe<any>();
+expectTypeOf<RequireAtLeastOne<any, any>>().toBe<any>();
+expectTypeOf<RequireAtLeastOne<any, never>>().toBe<any>();
 
-expectType<never>({} as RequireAtLeastOne<never>);
-expectType<never>({} as RequireAtLeastOne<never, 'foo'>);
-expectType<never>({} as RequireAtLeastOne<never, any>);
-expectType<never>({} as RequireAtLeastOne<never, never>);
+expectTypeOf<RequireAtLeastOne<never>>().toBe<never>();
+expectTypeOf<RequireAtLeastOne<never, 'foo'>>().toBe<never>();
+expectTypeOf<RequireAtLeastOne<never, any>>().toBe<never>();
+expectTypeOf<RequireAtLeastOne<never, never>>().toBe<never>();
 
 // A key that only one member of a union has is accepted, and a member without it is left as it is.
-expectAssignable<RequireAtLeastOne<{a?: 1} | {b: 2}, 'a'>>({a: 1});
-expectAssignable<RequireAtLeastOne<{a?: 1} | {b: 2}, 'a'>>({b: 2});
+({a: 1}) satisfies RequireAtLeastOne<{a?: 1} | {b: 2}, 'a'>;
+({b: 2}) satisfies RequireAtLeastOne<{a?: 1} | {b: 2}, 'a'>;
 
 // Each key of the set is the required one in its own branch of the union, and the others stay optional. The `readonly` of a key travels with it, because the branch is built from `Pick` over the input.
 declare const oneOfTwo: Simplify<RequireAtLeastOne<{a?: 1; b?: 2}, 'a' | 'b'>>;
-expectType<{a: 1; b?: 2} | {a?: 1; b: 2}>(oneOfTwo);
+expectTypeOf(oneOfTwo).toBe<{a: 1; b?: 2} | {a?: 1; b: 2}>();
 
 declare const oneOfTwoReadonly: Simplify<RequireAtLeastOne<{readonly a?: 1; b?: 2}, 'a' | 'b'>>;
-expectType<{readonly a: 1; b?: 2} | {readonly a?: 1; b: 2}>(oneOfTwoReadonly);
+expectTypeOf(oneOfTwoReadonly).toBe<{readonly a: 1; b?: 2} | {readonly a?: 1; b: 2}>();
 
 // A key of the object that the set does not name is carried through in every branch, modifiers included.
 declare const untouchedKey: Simplify<RequireAtLeastOne<{a?: 1; b?: 2; readonly c?: string}, 'a' | 'b'>>;
-expectType<{a: 1; b?: 2; readonly c?: string} | {a?: 1; b: 2; readonly c?: string}>(untouchedKey);
+expectTypeOf(untouchedKey).toBe<{a: 1; b?: 2; readonly c?: string} | {a?: 1; b: 2; readonly c?: string}>();
 
 // A union member that has none of the keys is left as it is.
 type Shape = {kind: 'circle'; radius?: number; diameter?: number} | {kind: 'square'; side: number};
-expectAssignable<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>({kind: 'square', side: 1});
-expectAssignable<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>({kind: 'circle', radius: 1});
-expectNotAssignable<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>({kind: 'circle'} as const);
+({kind: 'square', side: 1}) satisfies RequireAtLeastOne<Shape, 'radius' | 'diameter'>;
+({kind: 'circle', radius: 1}) satisfies RequireAtLeastOne<Shape, 'radius' | 'diameter'>;
+expectTypeOf({kind: 'circle'} as const).not.toBeAssignableTo<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>();

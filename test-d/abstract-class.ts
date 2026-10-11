@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {AbstractConstructor, AbstractClass, IsAny} from '../index.d.ts';
 
 abstract class Foo {
@@ -51,15 +51,15 @@ functionReceivingAbsClass(Foo);
 functionReceivingAbsClass<Bar>(Foo);
 assertWithBar();
 
-expectAssignable<AbstractConstructor<{barMethod(): void}, []>>(Bar);
-expectAssignable<AbstractClass<{barMethod(): void}, []>>(Bar);
+expectTypeOf(Bar).toBeAssignableTo<AbstractConstructor<{barMethod(): void}, []>>();
+expectTypeOf(Bar).toBeAssignableTo<AbstractClass<{barMethod(): void}, []>>();
 
 // Prototype test
-expectAssignable<{barMethod(): void}>(Bar.prototype);
-expectNotAssignable<{fooMethod(): void}>(Bar.prototype);
+expectTypeOf(Bar.prototype).toBeAssignableTo<{barMethod(): void}>();
+expectTypeOf(Bar.prototype).not.toBeAssignableTo<{fooMethod(): void}>();
 // @ts-expect-error
 const _a = new CorrectConcreteExtendedBar(12);
-expectAssignable<{barMethod(): void}>(new CorrectConcreteExtendedBar(12, 15));
+expectTypeOf(new CorrectConcreteExtendedBar(12, 15)).toBeAssignableTo<{barMethod(): void}>();
 // /Prototype test
 
 // Prototype test with type parameter
@@ -86,6 +86,6 @@ class CityBlock<BuildingType extends AbstractBuilding<Census>> {
 }
 
 const Family = (new CityBlock(House)).residence.owners;
-expectType<IsAny<typeof Family>>(false);
-expectAssignable<number>(Family.count);
+expectTypeOf<IsAny<typeof Family>>().toBe<false>();
+expectTypeOf(Family.count).toBeAssignableTo<number>();
 // /Prototype test with type parameter

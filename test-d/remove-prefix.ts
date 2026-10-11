@@ -1,99 +1,95 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {RemovePrefix} from '../source/remove-prefix.d.ts';
 
-expectType<'change'>({} as RemovePrefix<'on-change', 'on-'>);
-expectType<'Click'>({} as RemovePrefix<'handleClick', 'handle'>);
-expectType<'vscode'>({} as RemovePrefix<'.vscode', '.'>);
-expectType<'whitespace'>({} as RemovePrefix<' whitespace', ' '>);
+expectTypeOf<RemovePrefix<'on-change', 'on-'>>().toBe<'change'>();
+expectTypeOf<RemovePrefix<'handleClick', 'handle'>>().toBe<'Click'>();
+expectTypeOf<RemovePrefix<'.vscode', '.'>>().toBe<'vscode'>();
+expectTypeOf<RemovePrefix<' whitespace', ' '>>().toBe<'whitespace'>();
 
 // Prefix not present
-expectType<''>({} as RemovePrefix<'', 'foo'>);
-expectType<'on-mouse-move'>({} as RemovePrefix<'on-mouse-move', 'click'>);
+expectTypeOf<RemovePrefix<'', 'foo'>>().toBe<''>();
+expectTypeOf<RemovePrefix<'on-mouse-move', 'click'>>().toBe<'on-mouse-move'>();
 
 // Empty prefix
-expectType<'baz'>({} as RemovePrefix<'baz', ''>);
+expectTypeOf<RemovePrefix<'baz', ''>>().toBe<'baz'>();
 
 // Prefix completely matches the input string
-expectType<''>({} as RemovePrefix<'click', 'click'>);
+expectTypeOf<RemovePrefix<'click', 'click'>>().toBe<''>();
 
 // Prefix partially matches the input string
-expectType<'foobar'>({} as RemovePrefix<'foobar', 'foobaz'>);
-expectType<'hello'>({} as RemovePrefix<'hello', 'helloworld'>);
+expectTypeOf<RemovePrefix<'foobar', 'foobaz'>>().toBe<'foobar'>();
+expectTypeOf<RemovePrefix<'hello', 'helloworld'>>().toBe<'hello'>();
 
 // Multiple occurrences of prefix (should only remove from start)
-expectType<'bar-bar-foo'>({} as RemovePrefix<'bar-bar-bar-foo', 'bar-'>);
-expectType<'foofoo'>({} as RemovePrefix<'foofoofoo', 'foo'>);
+expectTypeOf<RemovePrefix<'bar-bar-bar-foo', 'bar-'>>().toBe<'bar-bar-foo'>();
+expectTypeOf<RemovePrefix<'foofoofoo', 'foo'>>().toBe<'foofoo'>();
 
 // === Non-literals ===
 
 // Input: Non-literal, Prefix: Literal
-expectType<string>({} as RemovePrefix<`hover:${string}`, 'hover:'>);
-expectType<Capitalize<string>>({} as RemovePrefix<`on${Capitalize<string>}`, 'on'>);
-expectType<`${number}`>({} as RemovePrefix<`id-${number}`, 'id-'>);
-expectType<`${string}--`>({} as RemovePrefix<`--${string}--`, '--'>);
-expectType<`focus:${string}`>({} as RemovePrefix<`hover:focus:${string}`, 'hover:'>);
-expectType<`user_${string}`>({} as RemovePrefix<`user_${string}`, 'admin_'>);
-expectType<string>({} as RemovePrefix<string, 'on'>);
-expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, 'foo'>);
+expectTypeOf<RemovePrefix<`hover:${string}`, 'hover:'>>().toBe<string>();
+expectTypeOf<RemovePrefix<`on${Capitalize<string>}`, 'on'>>().toBe<Capitalize<string>>();
+expectTypeOf<RemovePrefix<`id-${number}`, 'id-'>>().toBe<`${number}`>();
+expectTypeOf<RemovePrefix<`--${string}--`, '--'>>().toBe<`${string}--`>();
+expectTypeOf<RemovePrefix<`hover:focus:${string}`, 'hover:'>>().toBe<`focus:${string}`>();
+expectTypeOf<RemovePrefix<`user_${string}`, 'admin_'>>().toBe<`user_${string}`>();
+expectTypeOf<RemovePrefix<string, 'on'>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${string}/${number}`, 'foo'>>().toBe<`${string}/${number}`>();
 
 // Input: Literal, Prefix: Non-literal
-expectType<string>({} as RemovePrefix<'on-click', `${string}-`>);
-expectType<string>({} as RemovePrefix<'hover:flex', string>);
-expectType<string>({} as RemovePrefix<':foo:bar:baz', any>);
-expectType<string>({} as RemovePrefix<'handle-click', Uppercase<string>>);
-expectType<string>({} as RemovePrefix<'on-change', `${string}--`>);
+expectTypeOf<RemovePrefix<'on-click', `${string}-`>>().toBe<string>();
+expectTypeOf<RemovePrefix<'hover:flex', string>>().toBe<string>();
+expectTypeOf<RemovePrefix<':foo:bar:baz', any>>().toBe<string>();
+expectTypeOf<RemovePrefix<'handle-click', Uppercase<string>>>().toBe<string>();
+expectTypeOf<RemovePrefix<'on-change', `${string}--`>>().toBe<string>();
 
 // Input: Non-literal, Prefix: Non-literal
-expectType<string>({} as RemovePrefix<`hover:${string}`, `${string}:`>);
-expectType<string>({} as RemovePrefix<`${string}/${number}`, `${string}/`>);
-expectType<string>({} as RemovePrefix<string, string>);
-expectType<string>({} as RemovePrefix<`${any}foo${any}bar`, any>);
-expectType<string>({} as RemovePrefix<`${string}/${number}`, `${string}:`>);
-expectType<string>({} as RemovePrefix<`${number}:${number}`, `-${string}`>);
+expectTypeOf<RemovePrefix<`hover:${string}`, `${string}:`>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${string}/${number}`, `${string}/`>>().toBe<string>();
+expectTypeOf<RemovePrefix<string, string>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${any}foo${any}bar`, any>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${string}/${number}`, `${string}:`>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${number}:${number}`, `-${string}`>>().toBe<string>();
 
 // Unions
-expectType<'click' | 'hover' | 'change'>({} as RemovePrefix<'on-click' | 'on-hover' | 'on-change', 'on-'>);
-expectType<'click' | 'hover' | 'handle-change'>({} as RemovePrefix<'on-click' | 'on-hover' | 'handle-change', 'on-'>);
-expectType<Uppercase<string> | `${number}`>({} as RemovePrefix<`id-${Uppercase<string>}` | `id-${number}`, 'id-'>);
-expectType<string>({} as RemovePrefix<`hover:${string}` | `focus:${string}`, `${string}:`>);
+expectTypeOf<RemovePrefix<'on-click' | 'on-hover' | 'on-change', 'on-'>>().toBe<'click' | 'hover' | 'change'>();
+expectTypeOf<RemovePrefix<'on-click' | 'on-hover' | 'handle-change', 'on-'>>().toBe<'click' | 'hover' | 'handle-change'>();
+expectTypeOf<RemovePrefix<`id-${Uppercase<string>}` | `id-${number}`, 'id-'>>().toBe<Uppercase<string> | `${number}`>();
+expectTypeOf<RemovePrefix<`hover:${string}` | `focus:${string}`, `${string}:`>>().toBe<string>();
 
-expectType<'-change' | 'change'>({} as RemovePrefix<'on-change', 'on' | 'on-'>);
-expectType<'change' | 'on-change'>({} as RemovePrefix<'on-change', 'on-' | 'handle-'>);
-expectType<'on-change'>({} as RemovePrefix<'on-change', 'off-' | 'handle-'>);
-expectType<string>({} as RemovePrefix<'on-change', `${string}-` | 'on'>);
+expectTypeOf<RemovePrefix<'on-change', 'on' | 'on-'>>().toBe<'-change' | 'change'>();
+expectTypeOf<RemovePrefix<'on-change', 'on-' | 'handle-'>>().toBe<'change' | 'on-change'>();
+expectTypeOf<RemovePrefix<'on-change', 'off-' | 'handle-'>>().toBe<'on-change'>();
+expectTypeOf<RemovePrefix<'on-change', `${string}-` | 'on'>>().toBe<string>();
 
-expectType<string>({} as RemovePrefix<'on:change' | 'onChange', `${string}-`>);
-expectType<'name' | 'get-name' | 'age' | 'set-age' | 'other'>(
-	{} as RemovePrefix<'get-name' | 'set-age' | 'other', 'get-' | 'set-'>,
-);
-expectType<string>({} as RemovePrefix<`id:${Uppercase<string>}` | `id/${number}`, `${string}:` | `${string}/`>);
+expectTypeOf<RemovePrefix<'on:change' | 'onChange', `${string}-`>>().toBe<string>();
+expectTypeOf<RemovePrefix<'get-name' | 'set-age' | 'other', 'get-' | 'set-'>>().toBe<'name' | 'get-name' | 'age' | 'set-age' | 'other'>();
+expectTypeOf<RemovePrefix<`id:${Uppercase<string>}` | `id/${number}`, `${string}:` | `${string}/`>>().toBe<string>();
 
 // Boundary types
-expectType<any>({} as RemovePrefix<any, 'foo'>);
-expectType<never>({} as RemovePrefix<never, 'foo'>);
-expectType<string>({} as RemovePrefix<'on-change', any>);
-expectType<'on-change'>({} as RemovePrefix<'on-change', never>);
+expectTypeOf<RemovePrefix<any, 'foo'>>().toBe<any>();
+expectTypeOf<RemovePrefix<never, 'foo'>>().toBe<never>();
+expectTypeOf<RemovePrefix<'on-change', any>>().toBe<string>();
+expectTypeOf<RemovePrefix<'on-change', never>>().toBe<'on-change'>();
 
 // === strict: false ===
 
 // No effect if `Prefix` is a literal
-expectType<'change'>({} as RemovePrefix<'on-change', 'on-', {strict: false}>);
-expectType<'change' | 'hover'>({} as RemovePrefix<'on-change' | 'on-hover', 'on-', {strict: false}>);
-expectType<Capitalize<string>>({} as RemovePrefix<`handle${Capitalize<string>}`, 'handle', {strict: false}>);
-expectType<'foo:bar:baz'>({} as RemovePrefix<':foo:bar:baz', any, {strict: false}>);
+expectTypeOf<RemovePrefix<'on-change', 'on-', {strict: false}>>().toBe<'change'>();
+expectTypeOf<RemovePrefix<'on-change' | 'on-hover', 'on-', {strict: false}>>().toBe<'change' | 'hover'>();
+expectTypeOf<RemovePrefix<`handle${Capitalize<string>}`, 'handle', {strict: false}>>().toBe<Capitalize<string>>();
+expectTypeOf<RemovePrefix<':foo:bar:baz', any, {strict: false}>>().toBe<'foo:bar:baz'>();
 
-expectType<'click'>({} as RemovePrefix<'on-click', `${string}-`, {strict: false}>);
-expectType<'over:flex'>({} as RemovePrefix<'hover:flex', string, {strict: false}>);
-expectType<`${number}`>({} as RemovePrefix<`${string}/${number}`, `${string}/`, {strict: false}>);
-expectType<'on-change'>({} as RemovePrefix<'on-change', `${string}--`, {strict: false}>);
-expectType<`${string}/${number}`>({} as RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>);
-expectType<'change' | '-change'>({} as RemovePrefix<'on-change', `${string}-` | 'on', {strict: false}>);
-expectType<'on:change' | 'change'>({} as RemovePrefix<'on:change' | 'on-change', `${string}-`, {strict: false}>);
-expectType<Uppercase<string> | `id:${Uppercase<string>}` | `${number}` | `id/${number}`>(
-	{} as RemovePrefix<`id:${Uppercase<string>}` | `id/${number}`, `${string}:` | `${string}/`, {strict: false}>,
-);
-expectType<`foo${any}bar`>({} as RemovePrefix<`${any}foo${any}bar`, any, {strict: false}>);
-expectType<`foo${string}bar`>({} as RemovePrefix<`${string}foo${string}bar`, any, {strict: false}>);
+expectTypeOf<RemovePrefix<'on-click', `${string}-`, {strict: false}>>().toBe<'click'>();
+expectTypeOf<RemovePrefix<'hover:flex', string, {strict: false}>>().toBe<'over:flex'>();
+expectTypeOf<RemovePrefix<`${string}/${number}`, `${string}/`, {strict: false}>>().toBe<`${number}`>();
+expectTypeOf<RemovePrefix<'on-change', `${string}--`, {strict: false}>>().toBe<'on-change'>();
+expectTypeOf<RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>>().toBe<`${string}/${number}`>();
+expectTypeOf<RemovePrefix<'on-change', `${string}-` | 'on', {strict: false}>>().toBe<'change' | '-change'>();
+expectTypeOf<RemovePrefix<'on:change' | 'on-change', `${string}-`, {strict: false}>>().toBe<'on:change' | 'change'>();
+expectTypeOf<RemovePrefix<`id:${Uppercase<string>}` | `id/${number}`, `${string}:` | `${string}/`, {strict: false}>>().toBe<Uppercase<string> | `id:${Uppercase<string>}` | `${number}` | `id/${number}`>();
+expectTypeOf<RemovePrefix<`${any}foo${any}bar`, any, {strict: false}>>().toBe<`foo${any}bar`>();
+expectTypeOf<RemovePrefix<`${string}foo${string}bar`, any, {strict: false}>>().toBe<`foo${string}bar`>();
 
 // Generic assignability test
 type Assignability<S extends string> = S;

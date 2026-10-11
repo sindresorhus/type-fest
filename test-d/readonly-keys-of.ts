@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ReadonlyKeysOf, UnknownRecord} from '../index.d.ts';
 
 type TestType1 = {
@@ -24,22 +24,22 @@ declare const test1: ReadonlyKeysOf1;
 declare const test2: ReadonlyKeysOf2;
 declare const test3: ReadonlyKeysOf3;
 
-expectType<'b'>(test1);
-expectType<'a' | 'b'>(test2);
-expectType<never>(test3);
+expectTypeOf(test1).toBe<'b'>();
+expectTypeOf(test2).toBe<'a' | 'b'>();
+expectTypeOf(test3).toBe<never>();
 
-expectType<'a' | 'c'>({} as ReadonlyKeysOf<{readonly a?: string; b: number; readonly c: boolean}>);
-expectType<'c'>({} as ReadonlyKeysOf<{a?: string; b: number; readonly c: boolean}>);
+expectTypeOf<ReadonlyKeysOf<{readonly a?: string; b: number; readonly c: boolean}>>().toBe<'a' | 'c'>();
+expectTypeOf<ReadonlyKeysOf<{a?: string; b: number; readonly c: boolean}>>().toBe<'c'>();
 
 // Unions
-expectType<'b' | 'c'>({} as ReadonlyKeysOf<{a: string; readonly b: number} | {readonly c?: string; d?: number}>);
-expectType<'a' | 'b'>({} as ReadonlyKeysOf<{a: string; b: number} | {readonly a: string; readonly b: number}>);
+expectTypeOf<ReadonlyKeysOf<{a: string; readonly b: number} | {readonly c?: string; d?: number}>>().toBe<'b' | 'c'>();
+expectTypeOf<ReadonlyKeysOf<{a: string; b: number} | {readonly a: string; readonly b: number}>>().toBe<'a' | 'b'>();
 
 // Arrays
-expectType<never>({} as Extract<ReadonlyKeysOf<[string, number, boolean]>, number | `${number}`>);
-expectType<number | '0' | '1' | '2'>({} as Extract<ReadonlyKeysOf<readonly [string, number, boolean]>, number | `${number}`>);
-expectType<never>({} as Extract<ReadonlyKeysOf<string[]>, number | `${number}`>);
-expectType<number>({} as Extract<ReadonlyKeysOf<readonly string[]>, number | `${number}`>);
+expectTypeOf<Extract<ReadonlyKeysOf<[string, number, boolean]>, number | `${number}`>>().toBe<never>();
+expectTypeOf<Extract<ReadonlyKeysOf<readonly [string, number, boolean]>, number | `${number}`>>().toBe<number | '0' | '1' | '2'>();
+expectTypeOf<Extract<ReadonlyKeysOf<string[]>, number | `${number}`>>().toBe<never>();
+expectTypeOf<Extract<ReadonlyKeysOf<readonly string[]>, number | `${number}`>>().toBe<number>();
 
 // `ReadonlyKeysOf<T>` should be assignable to `keyof T`
 type Assignability1<T, _K extends keyof T> = unknown;
@@ -90,5 +90,5 @@ type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 type AllowsOnlyObjects = ReadonlyKeysOf<string>;
 
 // A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
-expectType<'a' | 'b'>({} as ReadonlyKeysOf<{readonly a: 1} | {readonly b: 2}>);
-expectType<'a' | 'b'>({} as ReadonlyKeysOf<{readonly a: 1; readonly b: 2} | {readonly a: 1; c: 3}>);
+expectTypeOf<ReadonlyKeysOf<{readonly a: 1} | {readonly b: 2}>>().toBe<'a' | 'b'>();
+expectTypeOf<ReadonlyKeysOf<{readonly a: 1; readonly b: 2} | {readonly a: 1; c: 3}>>().toBe<'a' | 'b'>();

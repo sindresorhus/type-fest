@@ -1,191 +1,191 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {DelimiterCase} from '../source/delimiter-case.d.ts';
 
 // DelimiterCase
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromCamel);
+expectTypeOf(delimiterFromCamel).toBe<'foo#bar'>();
 
 const delimiterFromComplexCamel: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
-expectType<'foo#bar#abc123'>(delimiterFromComplexCamel);
+expectTypeOf(delimiterFromComplexCamel).toBe<'foo#bar#abc123'>();
 
 const delimiterFromComplexCamelSplitOnNumbers: DelimiterCase<
 	'fooBarAbc123',
 	'#',
 	{splitOnNumbers: true}
 > = 'foo#bar#abc#123';
-expectType<'foo#bar#abc#123'>(delimiterFromComplexCamelSplitOnNumbers);
+expectTypeOf(delimiterFromComplexCamelSplitOnNumbers).toBe<'foo#bar#abc#123'>();
 
 const delimiterFromComplexCamelNoSplitOnNumbers: DelimiterCase<'fooBarAbc123', '#'> = 'foo#bar#abc123';
-expectType<'foo#bar#abc123'>(delimiterFromComplexCamelNoSplitOnNumbers);
+expectTypeOf(delimiterFromComplexCamelNoSplitOnNumbers).toBe<'foo#bar#abc123'>();
 
 const delimiterNumberInTheMiddle: DelimiterCase<'p2pNetwork', '#', {splitOnNumbers: true}> = 'p#2#p#network';
-expectType<'p#2#p#network'>(delimiterNumberInTheMiddle);
+expectTypeOf(delimiterNumberInTheMiddle).toBe<'p#2#p#network'>();
 
 const delimiterNumberInTheMiddleNoSplitOnNumbers: DelimiterCase<'p2pNetwork', '#'> = 'p2p#network';
-expectType<'p2p#network'>(delimiterNumberInTheMiddleNoSplitOnNumbers);
+expectTypeOf(delimiterNumberInTheMiddleNoSplitOnNumbers).toBe<'p2p#network'>();
 
 const delimiterFromPascal: DelimiterCase<'FooBar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromPascal);
+expectTypeOf(delimiterFromPascal).toBe<'foo#bar'>();
 
 const delimiterFromKebab: DelimiterCase<'foo-bar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromKebab);
+expectTypeOf(delimiterFromKebab).toBe<'foo#bar'>();
 
 const delimiterFromComplexKebab: DelimiterCase<'foo-bar-abc-123', '#'> =
 	'foo#bar#abc#123';
-expectType<'foo#bar#abc#123'>(delimiterFromComplexKebab);
+expectTypeOf(delimiterFromComplexKebab).toBe<'foo#bar#abc#123'>();
 
 const delimiterFromSpace: DelimiterCase<'foo bar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromSpace);
+expectTypeOf(delimiterFromSpace).toBe<'foo#bar'>();
 
 const delimiterFromTab: DelimiterCase<'foo\tbar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromTab);
+expectTypeOf(delimiterFromTab).toBe<'foo#bar'>();
 
 const delimiterFromSnake: DelimiterCase<'foo_bar', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromSnake);
+expectTypeOf(delimiterFromSnake).toBe<'foo#bar'>();
 
 const noDelimiterFromMono: DelimiterCase<'foobar', '#'> = 'foobar';
-expectType<'foobar'>(noDelimiterFromMono);
+expectTypeOf(noDelimiterFromMono).toBe<'foobar'>();
 
 const delimiterFromMixed: DelimiterCase<'foo-bar_abc xyzBarFoo', '#'> =
 	'foo#bar#abc#xyz#bar#foo';
-expectType<'foo#bar#abc#xyz#bar#foo'>(delimiterFromMixed);
+expectTypeOf(delimiterFromMixed).toBe<'foo#bar#abc#xyz#bar#foo'>();
 
 const delimiterFromVendorPrefixedCssProperty: DelimiterCase<
 	'-webkit-animation',
 	'#'
 > = 'webkit#animation';
-expectType<'webkit#animation'>(delimiterFromVendorPrefixedCssProperty);
+expectTypeOf(delimiterFromVendorPrefixedCssProperty).toBe<'webkit#animation'>();
 
 const delimiterFromDoublePrefixedKebab: DelimiterCase<'--very-prefixed', '#'> =
 	'very#prefixed';
-expectType<'very#prefixed'>(delimiterFromDoublePrefixedKebab);
+expectTypeOf(delimiterFromDoublePrefixedKebab).toBe<'very#prefixed'>();
 
 const delimiterFromRepeatedSeparators: DelimiterCase<'foo____bar', '#'> =
 	'foo#bar';
-expectType<'foo#bar'>(delimiterFromRepeatedSeparators);
+expectTypeOf(delimiterFromRepeatedSeparators).toBe<'foo#bar'>();
 
 const delimiterFromString: DelimiterCase<string, '#'> = 'foobar';
-expectType<string>(delimiterFromString);
+expectTypeOf(delimiterFromString).toBe<string>();
 
 const delimiterFromScreamingSnake: DelimiterCase<'FOO_BAR', '#'> = 'foo#bar';
-expectType<'foo#bar'>(delimiterFromScreamingSnake);
+expectTypeOf(delimiterFromScreamingSnake).toBe<'foo#bar'>();
 
 const delimiterFromMixed2: DelimiterCase<'parseHTML', '#'> = 'parse#html';
-expectType<'parse#html'>(delimiterFromMixed2);
+expectTypeOf(delimiterFromMixed2).toBe<'parse#html'>();
 
 const delimiterFromMixed3: DelimiterCase<'parseHTMLItem', '#'> =
 	'parse#html#item';
-expectType<'parse#html#item'>(delimiterFromMixed3);
+expectTypeOf(delimiterFromMixed3).toBe<'parse#html#item'>();
 
 const delimiterFromNumberInTheMiddleSplitOnNumbers: DelimiterCase<'foo2bar', '#', {splitOnNumbers: true}> = 'foo#2#bar';
-expectType<'foo#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumbers);
+expectTypeOf(delimiterFromNumberInTheMiddleSplitOnNumbers).toBe<'foo#2#bar'>();
 
 const delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase: DelimiterCase<'foO2Bar', '#', {splitOnNumbers: true}> = 'fo#o#2#bar';
-expectType<'fo#o#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase);
+expectTypeOf(delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase).toBe<'fo#o#2#bar'>();
 
 const delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase2: DelimiterCase<'foO2bar', '#', {splitOnNumbers: true}> = 'fo#o#2#bar';
-expectType<'fo#o#2#bar'>(delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
+expectTypeOf(delimiterFromNumberInTheMiddleSplitOnNumbersEdgeCase2).toBe<'fo#o#2#bar'>();
 
 const delimiterFromNumberInTheMiddleNoSplitOnNumbers: DelimiterCase<'foo2bar', '#'> = 'foo2bar';
-expectType<'foo2bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumbers);
+expectTypeOf(delimiterFromNumberInTheMiddleNoSplitOnNumbers).toBe<'foo2bar'>();
 
 const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: DelimiterCase<'foo2Bar', '#'> = 'foo2#bar';
-expectType<'foo2#bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
+expectTypeOf(delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase).toBe<'foo2#bar'>();
 
 const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: DelimiterCase<'foO2bar', '#'> = 'fo#o2bar';
-expectType<'fo#o2bar'>(delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
+expectTypeOf(delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2).toBe<'fo#o2bar'>();
 
 const delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: DelimiterCase<'FOO22Bar', '#'> = 'foo22#bar';
-expectType<'foo22#bar'>(
+expectTypeOf(
 	delimiterFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3,
-);
+).toBe<'foo22#bar'>();
 
 declare const unionValue: DelimiterCase<'fooBar' | 'barBaz', '#'>;
-expectType<'foo#bar' | 'bar#baz'>(unionValue);
+expectTypeOf(unionValue).toBe<'foo#bar' | 'bar#baz'>();
 
 declare const unionDelimiter: DelimiterCase<'fooBarBaz', '#' | '$'>;
-expectType<'foo#bar#baz' | 'foo$bar$baz'>(unionDelimiter);
+expectTypeOf(unionDelimiter).toBe<'foo#bar#baz' | 'foo$bar$baz'>();
 
 declare const unionValueAndDelimiter: DelimiterCase<'fooBarBaz' | 'barBazFoo', '#' | '$'>;
-expectType<'foo#bar#baz' | 'bar#baz#foo' | 'foo$bar$baz' | 'bar$baz$foo'>(unionValueAndDelimiter);
+expectTypeOf(unionValueAndDelimiter).toBe<'foo#bar#baz' | 'bar#baz#foo' | 'foo$bar$baz' | 'bar$baz$foo'>();
 
 const stringPart: DelimiterCase<`foo${string}`, '#'> = 'fooSomeString';
-expectType<`foo${string}`>(stringPart);
+expectTypeOf(stringPart).toBe<`foo${string}`>();
 
 declare const withPunctuation: DelimiterCase<'onDialog:close', '#'>;
-expectType<'on#dialog:close'>(withPunctuation);
+expectTypeOf(withPunctuation).toBe<'on#dialog:close'>();
 
 declare const withPunctuationAndSplit: DelimiterCase<'onDialog:close', '#', {splitOnPunctuation: true}>;
-expectType<'on#dialog#close'>(withPunctuationAndSplit);
+expectTypeOf(withPunctuationAndSplit).toBe<'on#dialog#close'>();
 
 declare const withPunctuation2: DelimiterCase<'foo-bar>>baz', '#'>;
-expectType<'foo#bar>>baz'>(withPunctuation2);
+expectTypeOf(withPunctuation2).toBe<'foo#bar>>baz'>();
 
 declare const withPunctuationAndSplit2: DelimiterCase<'foo-bar>>baz', '#', {splitOnPunctuation: true}>;
-expectType<'foo#bar#baz'>(withPunctuationAndSplit2);
+expectTypeOf(withPunctuationAndSplit2).toBe<'foo#bar#baz'>();
 
 declare const withPunctuation3: DelimiterCase<'card::after', '#'>;
-expectType<'card::after'>(withPunctuation3);
+expectTypeOf(withPunctuation3).toBe<'card::after'>();
 
 declare const withPunctuationAndSplit3: DelimiterCase<'card::after', '#', {splitOnPunctuation: true}>;
-expectType<'card#after'>(withPunctuationAndSplit3);
+expectTypeOf(withPunctuationAndSplit3).toBe<'card#after'>();
 
 declare const withPunctuation4: DelimiterCase<'div.card::after', '#'>;
-expectType<'div.card::after'>(withPunctuation4);
+expectTypeOf(withPunctuation4).toBe<'div.card::after'>();
 
 declare const withPunctuationAndSplit4: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: true}>;
-expectType<'div#card#after'>(withPunctuationAndSplit4);
+expectTypeOf(withPunctuationAndSplit4).toBe<'div#card#after'>();
 
 declare const withPunctuationAndNumber: DelimiterCase<'foo-bar::01', '#'>;
-expectType<'foo#bar::01'>(withPunctuationAndNumber);
+expectTypeOf(withPunctuationAndNumber).toBe<'foo#bar::01'>();
 
 declare const withPunctuationAndNumber2: DelimiterCase<'foo-bar::01', '#', {splitOnNumbers: true}>;
-expectType<'foo#bar::01'>(withPunctuationAndNumber2);
+expectTypeOf(withPunctuationAndNumber2).toBe<'foo#bar::01'>();
 
 declare const withPunctuationSplitAndNumber: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true}>;
-expectType<'foo#bar#01'>(withPunctuationSplitAndNumber);
+expectTypeOf(withPunctuationSplitAndNumber).toBe<'foo#bar#01'>();
 
 declare const withPunctuationSplitAndNumberSplit: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true; splitOnNumbers: true}>;
-expectType<'foo#bar#01'>(withPunctuationSplitAndNumberSplit);
+expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'foo#bar#01'>();
 
 declare const startsWithPunctuation: DelimiterCase<'^fooBarBaz', ':'>;
-expectType<'^foo:bar:baz'>(startsWithPunctuation);
+expectTypeOf(startsWithPunctuation).toBe<'^foo:bar:baz'>();
 
 declare const startsWithPunctuationSameAsDelimiter: DelimiterCase<'#fooBarBaz', '#'>;
-expectType<'#foo#bar#baz'>(startsWithPunctuationSameAsDelimiter);
+expectTypeOf(startsWithPunctuationSameAsDelimiter).toBe<'#foo#bar#baz'>();
 
 declare const emptyStringDelimiter: DelimiterCase<'fooBarBaz', ''>;
-expectType<'foobarbaz'>(emptyStringDelimiter);
+expectTypeOf(emptyStringDelimiter).toBe<'foobarbaz'>();
 
 declare const moreThanOneLengthDelimiter: DelimiterCase<'fooBarBaz', '__'>;
-expectType<'foo__bar__baz'>(moreThanOneLengthDelimiter);
+expectTypeOf(moreThanOneLengthDelimiter).toBe<'foo__bar__baz'>();
 
 declare const moreThanOneLengthDelimiter1: DelimiterCase<'fooBarBaz', '-->'>;
-expectType<'foo-->bar-->baz'>(moreThanOneLengthDelimiter1);
+expectTypeOf(moreThanOneLengthDelimiter1).toBe<'foo-->bar-->baz'>();
 
 declare const anyValue: DelimiterCase<any, '#'>;
-expectType<any>(anyValue);
+expectTypeOf(anyValue).toBe<any>();
 
 declare const anyValue1: DelimiterCase<any, any>;
-expectType<any>(anyValue1);
+expectTypeOf(anyValue1).toBe<any>();
 
 declare const anyValue2: DelimiterCase<any, never>;
-expectType<any>(anyValue2);
+expectTypeOf(anyValue2).toBe<any>();
 
 declare const neverValue: DelimiterCase<never, '#'>;
-expectType<never>(neverValue);
+expectTypeOf(neverValue).toBe<never>();
 
 declare const neverValue1: DelimiterCase<never, any>;
-expectType<never>(neverValue1);
+expectTypeOf(neverValue1).toBe<never>();
 
 declare const neverValue2: DelimiterCase<never, never>;
-expectType<never>(neverValue2);
+expectTypeOf(neverValue2).toBe<never>();
 
 declare const anyDelimiter: DelimiterCase<'fooBar', any>;
-expectType<`foo${Lowercase<any>}bar`>(anyDelimiter);
+expectTypeOf(anyDelimiter).toBe<`foo${Lowercase<any>}bar`>();
 
 declare const neverDelimiter: DelimiterCase<'fooBar', never>;
-expectType<never>(neverDelimiter);
+expectTypeOf(neverDelimiter).toBe<never>();
 
 // Verifying example
 type OddCasedProperties<T> = {
@@ -198,12 +198,12 @@ type CliOptions = {
 	foo: number;
 };
 
-expectAssignable<OddCasedProperties<CliOptions>>({
+({
 	'dry#run': true,
 	'include#file': 'bar.js',
 	foo: 123,
-});
+}) satisfies OddCasedProperties<CliOptions>;
 
 // A delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo#-bar`.
-expectType<'foo.bar'>({} as DelimiterCase<'foo.Bar', '#'>);
-expectType<'foo.bar'>({} as DelimiterCase<'foo .bar', '#'>);
+expectTypeOf<DelimiterCase<'foo.Bar', '#'>>().toBe<'foo.bar'>();
+expectTypeOf<DelimiterCase<'foo .bar', '#'>>().toBe<'foo.bar'>();

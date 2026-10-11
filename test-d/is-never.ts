@@ -1,19 +1,19 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsNever} from '../index.d.ts';
 
 declare const _never: never;
 declare const something = 'something';
 
 // `IsNever` should only be true for `any`
-expectType<IsNever<never>>(true);
-expectType<IsNever<typeof _never>>(true);
-expectType<IsNever<string>>(false);
-expectType<IsNever<typeof something>>(false);
-expectType<IsNever<any>>(false);
-expectType<IsNever<unknown>>(false);
-expectType<IsNever<null>>(false);
-expectType<IsNever<undefined>>(false);
-expectType<IsNever<void>>(false);
+expectTypeOf<IsNever<never>>().toBe<true>();
+expectTypeOf<IsNever<typeof _never>>().toBe<true>();
+expectTypeOf<IsNever<string>>().toBe<false>();
+expectTypeOf<IsNever<typeof something>>().toBe<false>();
+expectTypeOf<IsNever<any>>().toBe<false>();
+expectTypeOf<IsNever<unknown>>().toBe<false>();
+expectTypeOf<IsNever<null>>().toBe<false>();
+expectTypeOf<IsNever<undefined>>().toBe<false>();
+expectTypeOf<IsNever<void>>().toBe<false>();
 
 // Missing generic parameter
 // @ts-expect-error

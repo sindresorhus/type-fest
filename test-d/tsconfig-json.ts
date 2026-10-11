@@ -1,67 +1,67 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Jsonifiable, TsConfigJson} from '../index.d.ts';
 
 const tsConfig: TsConfigJson = {};
 
-expectType<boolean | undefined>(tsConfig.compileOnSave);
-expectType<TsConfigJson.CompilerOptions | undefined>(tsConfig.compilerOptions);
-expectType<string[] | undefined>(tsConfig.exclude);
-expectType<string | string[] | undefined>(tsConfig.extends);
-expectType<string[] | undefined>(tsConfig.files);
-expectType<string[] | undefined>(tsConfig.include);
-expectType<TsConfigJson.References[] | undefined>(tsConfig.references);
-expectType<TsConfigJson.TypeAcquisition | undefined>(tsConfig.typeAcquisition);
-expectAssignable<Jsonifiable>(tsConfig);
+expectTypeOf(tsConfig.compileOnSave).toBe<boolean | undefined>();
+expectTypeOf(tsConfig.compilerOptions).toBe<TsConfigJson.CompilerOptions | undefined>();
+expectTypeOf(tsConfig.exclude).toBe<string[] | undefined>();
+expectTypeOf(tsConfig.extends).toBe<string | string[] | undefined>();
+expectTypeOf(tsConfig.files).toBe<string[] | undefined>();
+expectTypeOf(tsConfig.include).toBe<string[] | undefined>();
+expectTypeOf(tsConfig.references).toBe<TsConfigJson.References[] | undefined>();
+expectTypeOf(tsConfig.typeAcquisition).toBe<TsConfigJson.TypeAcquisition | undefined>();
+expectTypeOf(tsConfig).toBeAssignableTo<Jsonifiable>();
 
-expectType<boolean | undefined>(tsConfig.compilerOptions?.noCheck);
+expectTypeOf(tsConfig.compilerOptions?.noCheck).toBe<boolean | undefined>();
 
 // `--lib` names that `tsc` accepts must be accepted here too.
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['es2016', 'es2016.intl']}});
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['ES2016.Intl']}});
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['esnext.sharedmemory']}});
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['ESNext.SharedMemory']}});
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['esnext.date']}});
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['ESNext.Date']}});
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['esnext.typedarrays']}});
-expectAssignable<TsConfigJson>({compilerOptions: {lib: ['ESNext.TypedArrays']}});
+({compilerOptions: {lib: ['es2016', 'es2016.intl']}}) satisfies TsConfigJson;
+({compilerOptions: {lib: ['ES2016.Intl']}}) satisfies TsConfigJson;
+({compilerOptions: {lib: ['esnext.sharedmemory']}}) satisfies TsConfigJson;
+({compilerOptions: {lib: ['ESNext.SharedMemory']}}) satisfies TsConfigJson;
+({compilerOptions: {lib: ['esnext.date']}}) satisfies TsConfigJson;
+({compilerOptions: {lib: ['ESNext.Date']}}) satisfies TsConfigJson;
+({compilerOptions: {lib: ['esnext.typedarrays']}}) satisfies TsConfigJson;
+({compilerOptions: {lib: ['ESNext.TypedArrays']}}) satisfies TsConfigJson;
 
 // A lib name that `tsc` rejects must be rejected here too, otherwise a typo passes silently. `es2022.sharedmemory` is the odd one out: TypeScript has no `lib.es2022.sharedmemory.d.ts`.
 type Lib = NonNullable<TsConfigJson.CompilerOptions['lib']>[number];
 
-expectAssignable<Lib>('es2024.sharedmemory');
+expectTypeOf<'es2024.sharedmemory'>().toBeAssignableTo<Lib>();
 // @ts-expect-error -- There is no `es2022.sharedmemory` lib.
-expectAssignable<Lib>('es2022.sharedmemory');
+expectTypeOf<'es2022.sharedmemory'>().toBeAssignableTo<Lib>();
 // @ts-expect-error -- There is no `ES2022.SharedMemory` lib either.
-expectAssignable<Lib>('ES2022.SharedMemory');
+expectTypeOf<'ES2022.SharedMemory'>().toBeAssignableTo<Lib>();
 // @ts-expect-error -- There is no such lib.
-expectAssignable<Lib>('not-a-real-lib');
+expectTypeOf<'not-a-real-lib'>().toBeAssignableTo<Lib>();
 
 // The compiler rejects a boolean for `generateTrace` with "requires a value of type string".
-expectAssignable<TsConfigJson>({compilerOptions: {generateTrace: 'trace'}});
+({compilerOptions: {generateTrace: 'trace'}}) satisfies TsConfigJson;
 // @ts-expect-error -- the compiler requires a string here
-expectAssignable<TsConfigJson>({compilerOptions: {generateTrace: true}});
+({compilerOptions: {generateTrace: true}}) satisfies TsConfigJson;
 
 // The compiler compares these values case-insensitively and the TSConfig reference documents the camelCase spellings, so the common spellings are accepted.
-expectAssignable<TsConfigJson>({watchOptions: {watchFile: 'useFsEvents'}});
-expectAssignable<TsConfigJson>({watchOptions: {watchFile: 'fixedPollingInterval'}});
-expectAssignable<TsConfigJson>({watchOptions: {watchDirectory: 'fixedChunkSizePolling'}});
-expectAssignable<TsConfigJson>({watchOptions: {fallbackPolling: 'dynamicPriority'}});
+({watchOptions: {watchFile: 'useFsEvents'}}) satisfies TsConfigJson;
+({watchOptions: {watchFile: 'fixedPollingInterval'}}) satisfies TsConfigJson;
+({watchOptions: {watchDirectory: 'fixedChunkSizePolling'}}) satisfies TsConfigJson;
+({watchOptions: {fallbackPolling: 'dynamicPriority'}}) satisfies TsConfigJson;
 
 // The watch strategies are only valid under `watchOptions`: tsc answers "Unknown compiler option" for them inside `compilerOptions`, so a config written from this type must not compile here.
 // @ts-expect-error
-expectAssignable<TsConfigJson>({compilerOptions: {watchFile: 'fixedPollingInterval'}});
+({compilerOptions: {watchFile: 'fixedPollingInterval'}}) satisfies TsConfigJson;
 // @ts-expect-error
-expectAssignable<TsConfigJson>({compilerOptions: {watchDirectory: 'useFsEvents'}});
+({compilerOptions: {watchDirectory: 'useFsEvents'}}) satisfies TsConfigJson;
 // @ts-expect-error
-expectAssignable<TsConfigJson>({compilerOptions: {fallbackPolling: 'fixedInterval'}});
+({compilerOptions: {fallbackPolling: 'fixedInterval'}}) satisfies TsConfigJson;
 // @ts-expect-error
-expectAssignable<TsConfigJson>({compilerOptions: {watch: true}});
+({compilerOptions: {watch: true}}) satisfies TsConfigJson;
 
 // `listFilesOnly` is a command-line-only flag: tsc answers "can only be specified on command line" for it inside `compilerOptions`, so a config written from this type must not compile here.
 // @ts-expect-error
-expectAssignable<TsConfigJson>({compilerOptions: {listFilesOnly: true}});
+({compilerOptions: {listFilesOnly: true}}) satisfies TsConfigJson;
 
 // The watch options are only read under `watchOptions`, but their old value types stay available, deprecated.
-expectAssignable<TsConfigJson.CompilerOptions.WatchFile>('useFsEvents');
-expectAssignable<TsConfigJson.CompilerOptions.WatchDirectory>('useFsEvents');
-expectAssignable<TsConfigJson.CompilerOptions.FallbackPolling>('fixedInterval');
+expectTypeOf<'useFsEvents'>().toBeAssignableTo<TsConfigJson.CompilerOptions.WatchFile>();
+expectTypeOf<'useFsEvents'>().toBeAssignableTo<TsConfigJson.CompilerOptions.WatchDirectory>();
+expectTypeOf<'fixedInterval'>().toBeAssignableTo<TsConfigJson.CompilerOptions.FallbackPolling>();

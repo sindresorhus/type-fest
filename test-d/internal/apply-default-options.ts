@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ApplyDefaultOptions} from '../../source/internal/index.d.ts';
 
 type PathsOptions = {
@@ -16,43 +16,43 @@ type DefaultPathsOptions = {
 };
 
 declare const noOptionsSpecified: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {}>;
-expectType<DefaultPathsOptions>(noOptionsSpecified);
+expectTypeOf(noOptionsSpecified).toBe<DefaultPathsOptions>();
 
 declare const someOptionsSpecified: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {leavesOnly: true; depth: 2}>;
-expectType<{maxRecursionDepth: 10; bracketNotation: false; leavesOnly: true; depth: 2}>(someOptionsSpecified);
+expectTypeOf(someOptionsSpecified).toBe<{maxRecursionDepth: 10; bracketNotation: false; leavesOnly: true; depth: 2}>();
 
 declare const someOptionsSpecified2: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {maxRecursionDepth: 5}>;
-expectType<{maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: number}>(someOptionsSpecified2);
+expectTypeOf(someOptionsSpecified2).toBe<{maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: number}>();
 
 declare const allOptionsSpecified: ApplyDefaultOptions<
 	PathsOptions, DefaultPathsOptions, {maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: 1}
 >;
-expectType<{maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: 1}>(allOptionsSpecified);
+expectTypeOf(allOptionsSpecified).toBe<{maxRecursionDepth: 5; bracketNotation: false; leavesOnly: false; depth: 1}>();
 
 declare const requiredOptions: ApplyDefaultOptions<{fixedLengthOnly?: boolean; strict: boolean}, {fixedLengthOnly: false}, {strict: true}>;
-expectType<{fixedLengthOnly: false; strict: true}>(requiredOptions);
+expectTypeOf(requiredOptions).toBe<{fixedLengthOnly: false; strict: true}>();
 
-// @ts-ignore
+// @ts-expect-error
 declare const undefinedsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {maxRecursionDepth: undefined}>; // Possible when `exactOptionalPropertyTypes` is disabled
-expectType<DefaultPathsOptions>(undefinedsGetOverwritten);
+expectTypeOf(undefinedsGetOverwritten).toBe<DefaultPathsOptions>();
 
 declare const undefinedsGetOverwritten2: ApplyDefaultOptions<{recurseIntoArrays?: boolean | undefined}, {recurseIntoArrays: true}, {recurseIntoArrays: undefined}>;
-expectType<{recurseIntoArrays: undefined}>(undefinedsGetOverwritten2);
+expectTypeOf(undefinedsGetOverwritten2).toBe<{recurseIntoArrays: undefined}>();
 
 declare const undefinedAsValidValue: ApplyDefaultOptions<{recurseIntoArrays: boolean | undefined}, {}, {recurseIntoArrays: undefined}>;
-expectType<{recurseIntoArrays: undefined}>(undefinedAsValidValue);
+expectTypeOf(undefinedAsValidValue).toBe<{recurseIntoArrays: undefined}>();
 
 declare const optionalOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, {maxRecursionDepth?: 5; bracketNotation?: true}>;
-expectType<DefaultPathsOptions>(optionalOptionsGetOverwritten);
+expectTypeOf(optionalOptionsGetOverwritten).toBe<DefaultPathsOptions>();
 
 declare const anyAsValue: ApplyDefaultOptions<{includes?: any}, {includes: any}, {includes: string}>;
-expectType<{includes: string}>(anyAsValue);
+expectTypeOf(anyAsValue).toBe<{includes: string}>();
 
 declare const neverAsOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, never>;
-expectType<DefaultPathsOptions>(neverAsOptionsGetOverwritten);
+expectTypeOf(neverAsOptionsGetOverwritten).toBe<DefaultPathsOptions>();
 
 declare const anyAsOptionsGetOverwritten: ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, any>;
-expectType<DefaultPathsOptions>(anyAsOptionsGetOverwritten);
+expectTypeOf(anyAsOptionsGetOverwritten).toBe<DefaultPathsOptions>();
 
 // @ts-expect-error - `Defaults` should be compatible with `Options`
 declare const defaultsShouldBeCompatible: ApplyDefaultOptions<{fixedLengthOnly?: boolean}, {fixedLengthOnly: 'no'}, {}>;

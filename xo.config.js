@@ -55,7 +55,7 @@ const xoConfig = [
 			'no-restricted-imports': [
 				'error',
 				{
-					paths: ['tsd', 'expect-type'],
+					paths: ['nz'],
 				},
 			],
 			'unicorn/require-module-specifiers': 'off',

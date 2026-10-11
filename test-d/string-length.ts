@@ -1,32 +1,32 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {StringLength} from '../source/string-length.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 
 // Empty string
-expectType<0>({} as StringLength<''>);
+expectTypeOf<StringLength<''>>().toBe<0>();
 
 // Literals
-expectType<1>({} as StringLength<'a'>);
-expectType<5>({} as StringLength<'abcde'>);
-expectType<3>({} as StringLength<'012'>);
+expectTypeOf<StringLength<'a'>>().toBe<1>();
+expectTypeOf<StringLength<'abcde'>>().toBe<5>();
+expectTypeOf<StringLength<'012'>>().toBe<3>();
 
 // Non-literals
-expectType<number>({} as StringLength<string>);
-expectType<number>({} as StringLength<Uppercase<string>>);
-expectType<number>({} as StringLength<`${string}abc`>);
-expectType<number>({} as StringLength<`abc${string}`>);
-expectType<number>({} as StringLength<`abc${string}def`>);
-expectType<number>({} as StringLength<`abc${string}def${string}ij`>);
+expectTypeOf<StringLength<string>>().toBe<number>();
+expectTypeOf<StringLength<Uppercase<string>>>().toBe<number>();
+expectTypeOf<StringLength<`${string}abc`>>().toBe<number>();
+expectTypeOf<StringLength<`abc${string}`>>().toBe<number>();
+expectTypeOf<StringLength<`abc${string}def`>>().toBe<number>();
+expectTypeOf<StringLength<`abc${string}def${string}ij`>>().toBe<number>();
 
 // Unions
-expectType<3 | 5>({} as StringLength<'abcde' | 'fgh'>);
-expectType<number>({} as StringLength<'abc' | Uppercase<string>>);
-expectType<number>({} as StringLength<`ab${string}` | `${number}`>);
+expectTypeOf<StringLength<'abcde' | 'fgh'>>().toBe<3 | 5>();
+expectTypeOf<StringLength<'abc' | Uppercase<string>>>().toBe<number>();
+expectTypeOf<StringLength<`ab${string}` | `${number}`>>().toBe<number>();
 
 // Long strings
-expectType<200>({} as StringLength<StringRepeat<'a', 200>>);
-expectType<900>({} as StringLength<StringRepeat<'a', 900>>);
+expectTypeOf<StringLength<StringRepeat<'a', 200>>>().toBe<200>();
+expectTypeOf<StringLength<StringRepeat<'a', 900>>>().toBe<900>();
 
 // Boundary cases
-expectType<never>({} as StringLength<never>);
-expectType<number>({} as StringLength<any>);
+expectTypeOf<StringLength<never>>().toBe<never>();
+expectTypeOf<StringLength<any>>().toBe<number>();

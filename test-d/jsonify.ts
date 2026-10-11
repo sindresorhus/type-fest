@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 // TODO: Convert the `interface`'s to `type`s.
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {EmptyObject, Jsonify, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
 interface A {
@@ -42,30 +42,30 @@ declare const y: Y; // Not assignable to JsonValue because it contains Date valu
 declare const z: Z; // Not assignable to JsonValue because undefined is not valid Json value
 declare const w: W; // Not assignable to JsonValue because a function is not valid Json value
 
-expectAssignable<JsonValue>(null);
-expectAssignable<JsonValue>(false);
-expectAssignable<JsonValue>(0);
-expectAssignable<JsonValue>('');
-expectAssignable<JsonValue>([]);
-expectAssignable<JsonValue>([] as const);
-expectAssignable<JsonValue>({});
-expectAssignable<JsonValue>([0]);
-expectAssignable<JsonValue>({a: 0});
-expectAssignable<JsonValue>(a);
-expectAssignable<JsonValue>(b);
-expectAssignable<JsonValue>({a: {b: true, c: {}}, d: [{}, 2, 'hi']});
-expectAssignable<JsonValue>([{}, {a: 'hi'}, null, 3]);
+expectTypeOf<null>().toBeAssignableTo<JsonValue>();
+expectTypeOf<false>().toBeAssignableTo<JsonValue>();
+expectTypeOf<0>().toBeAssignableTo<JsonValue>();
+expectTypeOf<''>().toBeAssignableTo<JsonValue>();
+[] satisfies JsonValue;
+expectTypeOf([] as const).toBeAssignableTo<JsonValue>();
+({}) satisfies JsonValue;
+[0] satisfies JsonValue;
+({a: 0}) satisfies JsonValue;
+expectTypeOf(a).toBeAssignableTo<JsonValue>();
+expectTypeOf(b).toBeAssignableTo<JsonValue>();
+({a: {b: true, c: {}}, d: [{}, 2, 'hi']}) satisfies JsonValue;
+[{}, {a: 'hi'}, null, 3] satisfies JsonValue;
 
-expectNotAssignable<JsonValue>(new Date());
-expectNotAssignable<JsonValue>([new Date()]);
-expectNotAssignable<JsonValue>({a: new Date()});
-expectNotAssignable<JsonValue>(v);
-expectNotAssignable<JsonValue>(x);
-expectNotAssignable<JsonValue>(y);
-expectNotAssignable<JsonValue>(z);
-expectNotAssignable<JsonValue>(w);
-expectNotAssignable<JsonValue>(undefined);
-expectNotAssignable<JsonValue>(5 as number | undefined);
+expectTypeOf(new Date()).not.toBeAssignableTo<JsonValue>();
+expectTypeOf([new Date()]).not.toBeAssignableTo<JsonValue>();
+expectTypeOf({a: new Date()}).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(v).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(x).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(y).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(z).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(w).not.toBeAssignableTo<JsonValue>();
+expectTypeOf<undefined>().not.toBeAssignableTo<JsonValue>();
+expectTypeOf(5 as number | undefined).not.toBeAssignableTo<JsonValue>();
 
 // TODO: Convert this to a `type`.
 interface Geometry {
@@ -78,14 +78,14 @@ const point: Geometry = {
 	coordinates: [1, 1],
 };
 
-expectNotAssignable<JsonValue>(point);
-expectAssignable<Jsonify<Geometry>>(point);
+expectTypeOf(point).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(point).toBeAssignableTo<Jsonify<Geometry>>();
 
 // The following const values are examples of values `v` that are not JSON, but are *jsonable* using
 // `v.toJSON()` or `JSON.parse(JSON.stringify(v))`
 declare const dateToJSON: Jsonify<Date>;
-expectAssignable<string>(dateToJSON);
-expectAssignable<JsonValue>(dateToJSON);
+expectTypeOf(dateToJSON).toBeAssignableTo<string>();
+expectTypeOf(dateToJSON).toBeAssignableTo<JsonValue>();
 
 // The following commented `= JSON.parse(JSON.stringify(x))` is an example of how `parsedStringifiedX` could be created.
 // * Note that this would be an unsafe assignment because `JSON.parse()` returns type `any`.
@@ -94,8 +94,8 @@ expectAssignable<JsonValue>(dateToJSON);
 //   or an `as Jsonify<X>` is added.
 // * This test is not about how `parsedStringifiedX` is created, but about its type, so the `const` value is declared.
 declare const parsedStringifiedX: Jsonify<X>; // = JSON.parse(JSON.stringify(x));
-expectAssignable<JsonValue>(parsedStringifiedX);
-expectAssignable<string>(parsedStringifiedX.a);
+expectTypeOf(parsedStringifiedX).toBeAssignableTo<JsonValue>();
+expectTypeOf(parsedStringifiedX.a).toBeAssignableTo<string>();
 
 class NonJsonWithToJSON {
 	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
@@ -108,9 +108,9 @@ class NonJsonWithToJSON {
 }
 
 const nonJsonWithToJSON = new NonJsonWithToJSON();
-expectNotAssignable<JsonValue>(nonJsonWithToJSON);
-expectAssignable<JsonValue>(nonJsonWithToJSON.toJSON());
-expectAssignable<Jsonify<NonJsonWithToJSON>>(nonJsonWithToJSON.toJSON());
+expectTypeOf(nonJsonWithToJSON).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(nonJsonWithToJSON.toJSON()).toBeAssignableTo<JsonValue>();
+expectTypeOf(nonJsonWithToJSON.toJSON()).toBeAssignableTo<Jsonify<NonJsonWithToJSON>>();
 
 class NonJsonExtendPrimitiveWithToJSON extends Number {
 	public fixture = 42n;
@@ -123,9 +123,9 @@ class NonJsonExtendPrimitiveWithToJSON extends Number {
 }
 
 const nonJsonExtendPrimitiveWithToJSON = new NonJsonExtendPrimitiveWithToJSON();
-expectNotAssignable<JsonValue>(nonJsonExtendPrimitiveWithToJSON);
-expectAssignable<JsonValue>(nonJsonExtendPrimitiveWithToJSON.toJSON());
-expectAssignable<Jsonify<NonJsonExtendPrimitiveWithToJSON>>(nonJsonExtendPrimitiveWithToJSON.toJSON());
+expectTypeOf(nonJsonExtendPrimitiveWithToJSON).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(nonJsonExtendPrimitiveWithToJSON.toJSON()).toBeAssignableTo<JsonValue>();
+expectTypeOf(nonJsonExtendPrimitiveWithToJSON.toJSON()).toBeAssignableTo<Jsonify<NonJsonExtendPrimitiveWithToJSON>>();
 
 class NonJsonWithToJSONWrapper {
 	public inner: NonJsonWithToJSON = nonJsonWithToJSON;
@@ -142,15 +142,15 @@ class NonJsonWithToJSONWrapper {
 	}
 }
 
-expectNotAssignable<JsonValue>(new NonJsonWithToJSONWrapper());
+expectTypeOf(new NonJsonWithToJSONWrapper()).not.toBeAssignableTo<JsonValue>();
 
 type InnerFixture = {fixture: Array<[string, number]>};
 
-expectType<{
+expectTypeOf<Jsonify<NonJsonWithToJSONWrapper>>().toBe<{
 	override: string;
 	inner: InnerFixture;
 	innerDeep: {inner: InnerFixture};
-}>({} as Jsonify<NonJsonWithToJSONWrapper>);
+}>();
 
 class NonJsonWithInvalidToJSON {
 	public fixture = new Map<string, number>([['a', 1], ['b', 2]]);
@@ -165,166 +165,166 @@ class NonJsonWithInvalidToJSON {
 }
 
 const nonJsonWithInvalidToJSON = new NonJsonWithInvalidToJSON();
-expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON);
-expectNotAssignable<JsonValue>(nonJsonWithInvalidToJSON.toJSON());
+expectTypeOf(nonJsonWithInvalidToJSON).not.toBeAssignableTo<JsonValue>();
+expectTypeOf(nonJsonWithInvalidToJSON.toJSON()).not.toBeAssignableTo<JsonValue>();
 
 // Not jsonable types; these types behave differently when used as plain values, as members of arrays and as values of objects
 declare const undefined: undefined;
-expectNotAssignable<JsonValue>(undefined);
+expectTypeOf<undefined>().not.toBeAssignableTo<JsonValue>();
 
 declare const function_: (_: any) => void;
-expectNotAssignable<JsonValue>(function_);
+expectTypeOf(function_).not.toBeAssignableTo<JsonValue>();
 
 declare const symbol: symbol;
-expectNotAssignable<JsonValue>(symbol);
+expectTypeOf(symbol).not.toBeAssignableTo<JsonValue>();
 
 // Plain values fail JSON.stringify()
 declare const plainUndefined: Jsonify<typeof undefined>;
-expectType<never>(plainUndefined);
+expectTypeOf(plainUndefined).toBe<never>();
 
 declare const plainFunction: Jsonify<typeof function_>;
-expectType<never>(plainFunction);
+expectTypeOf(plainFunction).toBe<never>();
 
 declare const plainSymbol: Jsonify<typeof symbol>;
-expectType<never>(plainSymbol);
+expectTypeOf(plainSymbol).toBe<never>();
 
 declare const plainNever: Jsonify<never>;
-expectType<never>(plainNever);
+expectTypeOf(plainNever).toBe<never>();
 
 // Array members become null
 declare const arrayMemberUndefined: Jsonify<Array<typeof undefined>>;
-expectType<null[]>(arrayMemberUndefined);
+expectTypeOf(arrayMemberUndefined).toBe<null[]>();
 
 declare const arrayMemberUnionWithUndefined: Jsonify<Array<typeof undefined | typeof number>>;
-expectType<Array<null | number>>(arrayMemberUnionWithUndefined);
+expectTypeOf(arrayMemberUnionWithUndefined).toBe<Array<null | number>>();
 
 declare const arrayMemberUnionWithUndefinedDeep: Jsonify<Array<Array<typeof undefined | typeof number>> | {foo: Array<typeof undefined | typeof number>}>;
-expectType<Array<Array<null | number>> | {foo: Array<null | number>}>(arrayMemberUnionWithUndefinedDeep);
+expectTypeOf(arrayMemberUnionWithUndefinedDeep).toBe<Array<Array<null | number>> | {foo: Array<null | number>}>();
 
 declare const arrayMemberFunction: Jsonify<Array<typeof function_>>;
-expectType<null[]>(arrayMemberFunction);
+expectTypeOf(arrayMemberFunction).toBe<null[]>();
 
 declare const arrayMemberSymbol: Jsonify<Array<typeof symbol>>;
-expectType<null[]>(arrayMemberSymbol);
+expectTypeOf(arrayMemberSymbol).toBe<null[]>();
 
 // A non-JSON-able member of a union still becomes null instead of collapsing the union
 declare const arrayMemberUnionWithSymbol: Jsonify<Array<typeof symbol | typeof number>>;
-expectType<Array<null | number>>(arrayMemberUnionWithSymbol);
+expectTypeOf(arrayMemberUnionWithSymbol).toBe<Array<null | number>>();
 
 declare const arrayMemberUnionWithFunction: Jsonify<Array<typeof function_ | typeof number>>;
-expectType<Array<null | number>>(arrayMemberUnionWithFunction);
+expectTypeOf(arrayMemberUnionWithFunction).toBe<Array<null | number>>();
 
 // The same holds for tuple members
 declare const tupleMemberUnionWithSymbol: Jsonify<[typeof string | typeof symbol, number]>;
-expectType<[string | null, number]>(tupleMemberUnionWithSymbol);
+expectTypeOf(tupleMemberUnionWithSymbol).toBe<[string | null, number]>();
 
 // The member mapping is distributive, and distributing over the empty union gives `never` rather than `null`, so this changed from `null[]` to `never[]`. That is the better answer: an array of `never` can only be empty, and `JSON.stringify([])` is `'[]'`.
 declare const arrayMemberNever: Jsonify<never[]>;
-expectType<never[]>(arrayMemberNever);
+expectTypeOf(arrayMemberNever).toBe<never[]>();
 
 // A tuple position cannot be empty, so a `never` member still becomes `null`.
 declare const tupleMemberNever: Jsonify<[never]>;
-expectType<[null]>(tupleMemberNever);
+expectTypeOf(tupleMemberNever).toBe<[null]>();
 
 declare const tupleMemberNeverAfterString: Jsonify<[string, never]>;
-expectType<[string, null]>(tupleMemberNeverAfterString);
+expectTypeOf(tupleMemberNeverAfterString).toBe<[string, null]>();
 
 // `JSON.stringify` throws for a `bigint`, so there is no runtime answer, but a member it cannot represent still follows the same rule as a symbol or a function.
 declare const arrayMemberBigint: Jsonify<Array<1n>>;
-expectType<null[]>(arrayMemberBigint);
+expectTypeOf(arrayMemberBigint).toBe<null[]>();
 
 // When used in object values, these keys are filtered
 declare const objectValueUndefined: Jsonify<{keep: string; undefined: typeof undefined}>;
-expectType<{keep: string}>(objectValueUndefined);
+expectTypeOf(objectValueUndefined).toBe<{keep: string}>();
 
 declare const objectValueFunction: Jsonify<{keep: string; fn: typeof function_}>;
-expectType<{keep: string}>(objectValueFunction);
+expectTypeOf(objectValueFunction).toBe<{keep: string}>();
 
 declare const objectValueSymbol: Jsonify<{keep: string; symbol: typeof symbol}>;
-expectType<{keep: string}>(objectValueSymbol);
+expectTypeOf(objectValueSymbol).toBe<{keep: string}>();
 
 // Symbol keys are filtered
 declare const objectKeySymbol: Jsonify<{[key: typeof symbol]: number; keep: string}>;
-expectType<{keep: string}>(objectKeySymbol);
+expectTypeOf(objectKeySymbol).toBe<{keep: string}>();
 
 // Number, String and Boolean values are turned into primitive counterparts
 declare const number: Number;
-expectNotAssignable<JsonValue>(number);
+expectTypeOf(number).not.toBeAssignableTo<JsonValue>();
 
 declare const string: String;
-expectNotAssignable<JsonValue>(string);
+expectTypeOf(string).not.toBeAssignableTo<JsonValue>();
 
 declare const boolean: Boolean;
-expectNotAssignable<JsonValue>(boolean);
+expectTypeOf(boolean).not.toBeAssignableTo<JsonValue>();
 
 declare const numberJson: Jsonify<typeof number>;
-expectType<number>(numberJson);
+expectTypeOf(numberJson).toBe<number>();
 
 declare const stringJson: Jsonify<typeof string>;
-expectType<string>(stringJson);
+expectTypeOf(stringJson).toBe<string>();
 
 declare const booleanJson: Jsonify<typeof boolean>;
-expectType<boolean>(booleanJson);
+expectTypeOf(booleanJson).toBe<boolean>();
 
 declare const tupleJson: Jsonify<[string, Date]>;
-expectType<[string, string]>(tupleJson);
+expectTypeOf(tupleJson).toBe<[string, string]>();
 
 declare const tupleRestJson: Jsonify<[string, ...Date[]]>;
-expectType<[string, ...string[]]>(tupleRestJson);
+expectTypeOf(tupleRestJson).toBe<[string, ...string[]]>();
 
 declare const mixTupleJson: Jsonify<['1', (_: any) => void, 2]>;
-expectType<['1', null, 2]>(mixTupleJson);
+expectTypeOf(mixTupleJson).toBe<['1', null, 2]>();
 
 declare const tupleStringJson: Jsonify<string[] & ['some value']>;
-expectType<['some value']>(tupleStringJson);
+expectTypeOf(tupleStringJson).toBe<['some value']>();
 
 // BigInt fails JSON.stringify
 declare const bigInt: Jsonify<bigint>;
-expectType<never>(bigInt);
+expectTypeOf(bigInt).toBe<never>();
 
 declare const int8Array: Int8Array;
 declare const int8ArrayJson: Jsonify<typeof int8Array>;
-expectType<Record<string, number>>(int8ArrayJson);
+expectTypeOf(int8ArrayJson).toBe<Record<string, number>>();
 
 declare const map: Map<string, number>;
 declare const mapJson: Jsonify<typeof map>;
-expectType<EmptyObject>(mapJson);
-expectAssignable<Jsonify<typeof map>>({});
+expectTypeOf(mapJson).toBe<EmptyObject>();
+({}) satisfies Jsonify<typeof map>;
 
 // Regression test for https://github.com/sindresorhus/type-fest/issues/466
-expectNotAssignable<Jsonify<typeof map>>(42);
-expectNotAssignable<Jsonify<typeof map>>({foo: 42});
+expectTypeOf<42>().not.toBeAssignableTo<Jsonify<typeof map>>();
+expectTypeOf<{foo: 42}>().not.toBeAssignableTo<Jsonify<typeof map>>();
 
 declare const set: Set<string>;
 declare const setJson: Jsonify<typeof set>;
-expectType<EmptyObject>(setJson);
-expectAssignable<Jsonify<typeof set>>({});
+expectTypeOf(setJson).toBe<EmptyObject>();
+({}) satisfies Jsonify<typeof set>;
 
 // Regression test for https://github.com/sindresorhus/type-fest/issues/466
-expectNotAssignable<Jsonify<typeof set>>(42);
-expectNotAssignable<Jsonify<typeof set>>({foo: 42});
+expectTypeOf<42>().not.toBeAssignableTo<Jsonify<typeof set>>();
+expectTypeOf<{foo: 42}>().not.toBeAssignableTo<Jsonify<typeof set>>();
 
 // A `ReadonlyMap`/`ReadonlySet` is the same as a `Map`/`Set` at runtime and also stringifies to `{}`.
 declare const readonlyMap: ReadonlyMap<string, number>;
 declare const readonlyMapJson: Jsonify<typeof readonlyMap>;
-expectType<EmptyObject>(readonlyMapJson);
-expectAssignable<Jsonify<typeof readonlyMap>>({});
-expectNotAssignable<Jsonify<typeof readonlyMap>>({size: 1});
+expectTypeOf(readonlyMapJson).toBe<EmptyObject>();
+({}) satisfies Jsonify<typeof readonlyMap>;
+expectTypeOf<{size: 1}>().not.toBeAssignableTo<Jsonify<typeof readonlyMap>>();
 
 declare const readonlySet: ReadonlySet<string>;
 declare const readonlySetJson: Jsonify<typeof readonlySet>;
-expectType<EmptyObject>(readonlySetJson);
-expectAssignable<Jsonify<typeof readonlySet>>({});
-expectNotAssignable<Jsonify<typeof readonlySet>>({size: 1});
+expectTypeOf(readonlySetJson).toBe<EmptyObject>();
+({}) satisfies Jsonify<typeof readonlySet>;
+expectTypeOf<{size: 1}>().not.toBeAssignableTo<Jsonify<typeof readonlySet>>();
 
 // Positive and negative Infinity, NaN and null are turned into null
 // NOTE: NaN is not detectable in TypeScript, so it is not tested; see https://github.com/sindresorhus/type-fest/issues/406
 declare const positiveInfinity: PositiveInfinity;
 declare const positiveInfJson: Jsonify<typeof positiveInfinity>;
-expectType<null>(positiveInfJson);
+expectTypeOf(positiveInfJson).toBe<null>();
 declare const negativeInf: NegativeInfinity;
 declare const negativeInfJson: Jsonify<typeof negativeInf>;
-expectType<null>(negativeInfJson);
+expectTypeOf(negativeInfJson).toBe<null>();
 
 // Test that optional type members are not discarded wholesale.
 type OptionalPrimitive = {
@@ -343,9 +343,9 @@ declare const jsonifiedOptionalPrimitive: Jsonify<OptionalPrimitive>;
 declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
 declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
 
-expectType<{a?: string}>(jsonifiedOptionalPrimitive);
-expectType<{}>(jsonifiedOptionalTypeUnion);
-expectType<{a?: string}>(jsonifiedNonOptionalTypeUnion);
+expectTypeOf(jsonifiedOptionalPrimitive).toBe<{a?: string}>();
+expectTypeOf(jsonifiedOptionalTypeUnion).toBe<{}>();
+expectTypeOf(jsonifiedNonOptionalTypeUnion).toBe<{a?: string}>();
 
 // Test that optional properties don't leak `undefined` into the key set and that re-applying `Jsonify` is a no-op.
 type OptionalMixed = {
@@ -354,20 +354,20 @@ type OptionalMixed = {
 };
 
 declare const keyOfJsonifiedOptionalMixed: keyof Jsonify<OptionalMixed>;
-expectType<'required' | 'optional'>(keyOfJsonifiedOptionalMixed);
+expectTypeOf(keyOfJsonifiedOptionalMixed).toBe<'required' | 'optional'>();
 
 declare const doubleJsonifiedOptionalMixed: Jsonify<Jsonify<OptionalMixed>>;
-expectType<OptionalMixed>(doubleJsonifiedOptionalMixed);
+expectTypeOf(doubleJsonifiedOptionalMixed).toBe<OptionalMixed>();
 
 declare const keyOfJsonifiedOptionalUnknown: keyof Jsonify<{a?: unknown}>;
-expectType<'a'>(keyOfJsonifiedOptionalUnknown);
+expectTypeOf(keyOfJsonifiedOptionalUnknown).toBe<'a'>();
 
 declare const keyOfJsonifiedOptionalAny: keyof Jsonify<{a?: any}>;
-expectType<'a'>(keyOfJsonifiedOptionalAny);
+expectTypeOf(keyOfJsonifiedOptionalAny).toBe<'a'>();
 
 // An `a?: never` property can only hold `undefined`, so the key is dropped like `{a: undefined}`.
 declare const keyOfJsonifiedOptionalNever: keyof Jsonify<{a?: never}>;
-expectType<never>(keyOfJsonifiedOptionalNever);
+expectTypeOf(keyOfJsonifiedOptionalNever).toBe<never>();
 
 // Test for 'Jsonify support for optional object keys, unserializable object values' #424
 // See https://github.com/sindresorhus/type-fest/issues/424
@@ -403,17 +403,17 @@ type ExpectedAppDataJson = {
 
 declare const response: Jsonify<AppData>;
 
-expectType<ExpectedAppDataJson>(response);
+expectTypeOf(response).toBe<ExpectedAppDataJson>();
 
-expectType<any>({} as Jsonify<any>);
+expectTypeOf<Jsonify<any>>().toBe<any>();
 
 declare const objectWithAnyProperty: Jsonify<{
 	a: any;
 }>;
-expectType<{a: any}>(objectWithAnyProperty);
+expectTypeOf(objectWithAnyProperty).toBe<{a: any}>();
 
 declare const objectWithAnyProperties: Jsonify<Record<string, any>>;
-expectType<Record<string, any>>(objectWithAnyProperties);
+expectTypeOf(objectWithAnyProperties).toBe<Record<string, any>>();
 
 // Test for `Jsonify` support for nested objects with _only_ a name property.
 // See https://github.com/sindresorhus/type-fest/issues/657
@@ -426,90 +426,90 @@ declare const jsonifiedNestedObjectWithNameProperty: Jsonify<
 	typeof nestedObjectWithNameProperty
 >;
 
-expectType<typeof nestedObjectWithNameProperty>(
+expectTypeOf(
 	jsonifiedNestedObjectWithNameProperty,
-);
+).toBe<typeof nestedObjectWithNameProperty>();
 
 // Regression test for https://github.com/sindresorhus/type-fest/issues/629
 declare const readonlyTuple: Jsonify<readonly [1, 2, 3]>;
-expectType<[1, 2, 3]>(readonlyTuple);
+expectTypeOf(readonlyTuple).toBe<[1, 2, 3]>();
 
 // `unknown` values
 declare const unknownValue: Jsonify<unknown>;
 declare const unknownArray: Jsonify<unknown[]>;
 declare const unknownTuple: Jsonify<[unknown, unknown]>;
 declare const objectWithUnknownValue: Jsonify<{key: unknown}>;
-expectType<JsonValue>(unknownValue);
-expectAssignable<Jsonify<unknown>>('foo');
-expectAssignable<Jsonify<unknown>>(['foo']);
-expectNotAssignable<Jsonify<unknown>>(new Date());
-expectType<JsonValue[]>(unknownArray);
-expectAssignable<Jsonify<unknown[]>>(['foo']);
-expectNotAssignable<Jsonify<unknown[]>>([new Date()]);
-expectType<[JsonValue, JsonValue]>(unknownTuple);
-expectAssignable<Jsonify<[unknown, unknown]>>(['foo', 'foo']);
-expectNotAssignable<Jsonify<[unknown, unknown]>>([new Date(), new Date()]);
-expectType<{key: JsonValue}>(objectWithUnknownValue);
-expectAssignable<Jsonify<{key: unknown}>>({key: []});
-expectNotAssignable<Jsonify<{key: unknown}>>({key: new Date()});
+expectTypeOf(unknownValue).toBe<JsonValue>();
+expectTypeOf<'foo'>().toBeAssignableTo<Jsonify<unknown>>();
+['foo'] satisfies Jsonify<unknown>;
+expectTypeOf(new Date()).not.toBeAssignableTo<Jsonify<unknown>>();
+expectTypeOf(unknownArray).toBe<JsonValue[]>();
+['foo'] satisfies Jsonify<unknown[]>;
+expectTypeOf([new Date()]).not.toBeAssignableTo<Jsonify<unknown[]>>();
+expectTypeOf(unknownTuple).toBe<[JsonValue, JsonValue]>();
+['foo', 'foo'] satisfies Jsonify<[unknown, unknown]>;
+expectTypeOf([new Date(), new Date()]).not.toBeAssignableTo<Jsonify<[unknown, unknown]>>();
+expectTypeOf(objectWithUnknownValue).toBe<{key: JsonValue}>();
+({key: []}) satisfies Jsonify<{key: unknown}>;
+expectTypeOf({key: new Date()}).not.toBeAssignableTo<Jsonify<{key: unknown}>>();
 
-expectAssignable<JsonObject>({} as {a: string});
-expectNotAssignable<JsonObject>({} as {a: string | undefined});
-expectAssignable<JsonObject>({} as {a?: string});
-expectNotAssignable<JsonObject>({} as {a?: string | undefined}); // Requires `exactOptionalPropertyTypes` to be enabled
+expectTypeOf<{a: string}>().toBeAssignableTo<JsonObject>();
+expectTypeOf<{a: string | undefined}>().not.toBeAssignableTo<JsonObject>();
+expectTypeOf<{a?: string}>().toBeAssignableTo<JsonObject>();
+expectTypeOf<{a?: string | undefined}>().not.toBeAssignableTo<JsonObject>(); // Requires `exactOptionalPropertyTypes` to be enabled
 
 // `JSON.stringify` always passes the property key to `toJSON`, so `toJSON` may declare parameters.
 declare const toJSONWithKey: Jsonify<{toJSON(key: string): string}>;
-expectType<string>(toJSONWithKey);
+expectTypeOf(toJSONWithKey).toBe<string>();
 
 declare const nestedToJSONWithKey: Jsonify<{nested: {toJSON(key: string): number}}>;
-expectType<{nested: number}>(nestedToJSONWithKey);
+expectTypeOf(nestedToJSONWithKey).toBe<{nested: number}>();
 
 declare const toJSONWithoutKey: Jsonify<{toJSON(): string}>;
-expectType<string>(toJSONWithoutKey);
+expectTypeOf(toJSONWithoutKey).toBe<string>();
 
 // `Map`, `Set`, and `RegExp` all stringify to `{}`, because their properties are not enumerable.
 declare const regexpValue: Jsonify<RegExp>;
-expectType<EmptyObject>(regexpValue);
+expectTypeOf(regexpValue).toBe<EmptyObject>();
 
 declare const nestedEmptyValues: Jsonify<{a: RegExp; b: SharedArrayBuffer}>;
-expectType<{a: EmptyObject; b: EmptyObject}>(nestedEmptyValues);
+expectTypeOf(nestedEmptyValues).toBe<{a: EmptyObject; b: EmptyObject}>();
 
 // A plain object with `name` and `message` is structurally an `Error`, but it is data, so it is still walked.
-expectType<{name: string; message: string; code: number}>({} as Jsonify<{name: string; message: string; code: number}>);
+expectTypeOf<Jsonify<{name: string; message: string; code: number}>>().toBe<{name: string; message: string; code: number}>();
 
 // The `Function` interface is a function, so it is not written.
-expectType<never>({} as Jsonify<Function>);
-expectType<null[]>({} as Jsonify<Function[]>);
+expectTypeOf<Jsonify<Function>>().toBe<never>();
+expectTypeOf<Jsonify<Function[]>>().toBe<null[]>();
 
 declare const mapValue: Jsonify<Map<string, number>>;
-expectType<EmptyObject>(mapValue);
+expectTypeOf(mapValue).toBe<EmptyObject>();
 
 // `ArrayBuffer` and `DataView` also stringify to `{}`, like the other non-enumerable built-ins.
 declare const arrayBufferValue: Jsonify<ArrayBuffer>;
-expectType<EmptyObject>(arrayBufferValue);
+expectTypeOf(arrayBufferValue).toBe<EmptyObject>();
 
 declare const dataViewValue: Jsonify<DataView>;
-expectType<EmptyObject>(dataViewValue);
+expectTypeOf(dataViewValue).toBe<EmptyObject>();
 
 declare const nestedArrayBuffer: Jsonify<{a: ArrayBuffer}>;
-expectType<{a: EmptyObject}>(nestedArrayBuffer);
+expectTypeOf(nestedArrayBuffer).toBe<{a: EmptyObject}>();
 
 // A class is a function at runtime, so `JSON.stringify` drops a value holding one the same way it drops a value holding a plain function. A construct signature is not assignable to a call signature, so a class was not in the list of values that are not JSON-able.
 type Class_ = new () => {a: number};
 type AbstractClass = abstract new () => {a: number};
 
 declare const plainClass: Jsonify<Class_>;
-expectType<never>(plainClass);
+expectTypeOf(plainClass).toBe<never>();
 
 declare const plainAbstractClass: Jsonify<AbstractClass>;
-expectType<never>(plainAbstractClass);
+expectTypeOf(plainAbstractClass).toBe<never>();
 
 declare const arrayMemberClass: Jsonify<Class_[]>;
-expectType<null[]>(arrayMemberClass);
+expectTypeOf(arrayMemberClass).toBe<null[]>();
 
 declare const objectValueClass: Jsonify<{keep: string; class: Class_}>;
-expectType<{keep: string}>(objectValueClass);
+expectTypeOf(objectValueClass).toBe<{keep: string}>();
 
 // An enum is a subtype of `string` or `number`, so it passes through where a primitive would, and TypeScript cannot tell an enum from a union of the same literals. A plain string is not assignable to the result, even though that is what `JSON.parse` gives back. `LiteralToPrimitiveDeep` unwraps it.
 enum Status {
@@ -518,7 +518,7 @@ enum Status {
 }
 
 declare const enumMember: Jsonify<{status: Status}>;
-expectType<{status: Status}>(enumMember);
+expectTypeOf(enumMember).toBe<{status: Status}>();
 
 declare const enumMemberUnwrapped: LiteralToPrimitiveDeep<{status: Status}>;
-expectType<{status: string}>(enumMemberUnwrapped);
+expectTypeOf(enumMemberUnwrapped).toBe<{status: string}>();

@@ -1,51 +1,51 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ArrayElement} from '../index.d.ts';
 
 // Basic array
-expectType<string>({} as ArrayElement<string[]>);
-expectType<number>({} as ArrayElement<number[]>);
+expectTypeOf<ArrayElement<string[]>>().toBe<string>();
+expectTypeOf<ArrayElement<number[]>>().toBe<number>();
 
 // Tuple
-expectType<1 | 2 | 3>({} as ArrayElement<[1, 2, 3]>);
-expectType<'a' | 'b' | 'c'>({} as ArrayElement<['a', 'b', 'c']>);
+expectTypeOf<ArrayElement<[1, 2, 3]>>().toBe<1 | 2 | 3>();
+expectTypeOf<ArrayElement<['a', 'b', 'c']>>().toBe<'a' | 'b' | 'c'>();
 
 // Const tuple
-expectType<'foo' | 'bar' | 'baz'>({} as ArrayElement<readonly ['foo', 'bar', 'baz']>);
-expectType<1 | 2 | 3>({} as ArrayElement<readonly [1, 2, 3]>);
+expectTypeOf<ArrayElement<readonly ['foo', 'bar', 'baz']>>().toBe<'foo' | 'bar' | 'baz'>();
+expectTypeOf<ArrayElement<readonly [1, 2, 3]>>().toBe<1 | 2 | 3>();
 
 // Mixed types
-expectType<string | number>({} as ArrayElement<[string, number]>);
-expectType<string | number>({} as ArrayElement<[string, number]>);
+expectTypeOf<ArrayElement<[string, number]>>().toBe<string | number>();
+expectTypeOf<ArrayElement<[string, number]>>().toBe<string | number>();
 
 // Readonly array
-expectType<string>({} as ArrayElement<readonly string[]>);
-expectType<1 | 2 | 3>({} as ArrayElement<readonly [1, 2, 3]>);
+expectTypeOf<ArrayElement<readonly string[]>>().toBe<string>();
+expectTypeOf<ArrayElement<readonly [1, 2, 3]>>().toBe<1 | 2 | 3>();
 
 // Empty array
-expectType<never>({} as ArrayElement<[]>);
-expectType<never>({} as ArrayElement<readonly []>);
+expectTypeOf<ArrayElement<[]>>().toBe<never>();
+expectTypeOf<ArrayElement<readonly []>>().toBe<never>();
 
 // Union of arrays
-expectType<1 | 2 | 3 | 4>({} as ArrayElement<[1, 2] | [3, 4]>);
+expectTypeOf<ArrayElement<[1, 2] | [3, 4]>>().toBe<1 | 2 | 3 | 4>();
 
 // Function use case
 declare function getRandomElement<T extends readonly unknown[]>(array: T): ArrayElement<T>;
 
-expectType<number>(getRandomElement([1, 2, 3]));
-expectType<'foo' | 'bar' | 'baz'>(getRandomElement(['foo', 'bar', 'baz'] as const));
-expectType<string>(getRandomElement(['foo', 'bar', 'baz']));
+expectTypeOf(getRandomElement([1, 2, 3])).toBe<number>();
+expectTypeOf(getRandomElement(['foo', 'bar', 'baz'] as const)).toBe<'foo' | 'bar' | 'baz'>();
+expectTypeOf(getRandomElement(['foo', 'bar', 'baz'])).toBe<string>();
 
 // Edge cases
-expectType<any>({} as ArrayElement<any>);
-expectType<never>({} as ArrayElement<never>);
-expectType<unknown>({} as ArrayElement<unknown[]>);
+expectTypeOf<ArrayElement<any>>().toBe<any>();
+expectTypeOf<ArrayElement<never>>().toBe<never>();
+expectTypeOf<ArrayElement<unknown[]>>().toBe<unknown>();
 
 // Non-arrays return never
-expectType<never>({} as ArrayElement<string>);
-expectType<never>({} as ArrayElement<{a: string}>);
+expectTypeOf<ArrayElement<string>>().toBe<never>();
+expectTypeOf<ArrayElement<{a: string}>>().toBe<never>();
 
 // Optional and rest elements
-expectType<1 | 2 | 3 | undefined>(1 as ArrayElement<[1, 2, 3?]>);
-expectType<string | number>(1 as ArrayElement<[string, ...number[]]>);
-expectType<1 | 2 | string>(1 as ArrayElement<[1, 2, ...string[]]>);
-expectType<1 | 2 | undefined | string>(1 as ArrayElement<[1, 2?, ...string[]]>);
+expectTypeOf(1 as ArrayElement<[1, 2, 3?]>).toBe<1 | 2 | 3 | undefined>();
+expectTypeOf(1 as ArrayElement<[string, ...number[]]>).toBe<string | number>();
+expectTypeOf(1 as ArrayElement<[1, 2, ...string[]]>).toBe<1 | 2 | string>();
+expectTypeOf(1 as ArrayElement<[1, 2?, ...string[]]>).toBe<1 | 2 | undefined | string>();

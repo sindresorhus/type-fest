@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {SharedUnionFields} from '../index.d.ts';
 import type {NonRecursiveType} from '../source/internal/index.d.ts';
 
@@ -31,76 +31,76 @@ type TestingType = {
 };
 
 declare const normal: SharedUnionFields<TestingType | {string: string; number: number; foo: any}>;
-expectType<{string: string; number: number}>(normal);
+expectTypeOf(normal).toBe<{string: string; number: number}>();
 
 declare const normal2: SharedUnionFields<TestingType | {string: string; foo: any}>;
-expectType<{string: string}>(normal2);
+expectTypeOf(normal2).toBe<{string: string}>();
 
 declare const unMatched: SharedUnionFields<TestingType | {foo: any}>;
-expectType<{}>(unMatched);
+expectTypeOf(unMatched).toBe<{}>();
 
 declare const number: SharedUnionFields<TestingType | {number: number; foo: any}>;
-expectType<{number: number}>(number);
+expectTypeOf(number).toBe<{number: number}>();
 
 declare const string: SharedUnionFields<TestingType | {string: string; foo: any}>;
-expectType<{string: string}>(string);
+expectTypeOf(string).toBe<{string: string}>();
 
 declare const boolean: SharedUnionFields<TestingType | {boolean: boolean; foo: any}>;
-expectType<{boolean: boolean}>(boolean);
+expectTypeOf(boolean).toBe<{boolean: boolean}>();
 
 declare const date: SharedUnionFields<TestingType | {date: Date; foo: any}>;
-expectType<{date: Date}>(date);
+expectTypeOf(date).toBe<{date: Date}>();
 
 declare const regexp: SharedUnionFields<TestingType | {regexp: RegExp; foo: any}>;
-expectType<{regexp: RegExp}>(regexp);
+expectTypeOf(regexp).toBe<{regexp: RegExp}>();
 
 declare const symbol: SharedUnionFields<TestingType | {symbol: symbol; foo: any}>;
-expectType<{symbol: symbol}>(symbol);
+expectTypeOf(symbol).toBe<{symbol: symbol}>();
 
 declare const null_: SharedUnionFields<TestingType | {null: null; foo: any}>;
-expectType<{null: null}>(null_);
+expectTypeOf(null_).toBe<{null: null}>();
 
 declare const undefined_: SharedUnionFields<TestingType | {undefined: undefined; foo: any}>;
-expectType<{undefined: undefined}>(undefined_);
+expectTypeOf(undefined_).toBe<{undefined: undefined}>();
 
 declare const optional: SharedUnionFields<TestingType | {optional: string; foo: any}>;
-expectType<{optional?: boolean | string | undefined}>(optional);
+expectTypeOf(optional).toBe<{optional?: boolean | string | undefined}>();
 
 declare const propertyWithKeyword: SharedUnionFields<TestingType | {readonly propertyWithKeyword: string; foo: any}>;
-expectType<{readonly propertyWithKeyword: boolean | string}>(propertyWithKeyword);
+expectTypeOf(propertyWithKeyword).toBe<{readonly propertyWithKeyword: boolean | string}>();
 
 declare const map: SharedUnionFields<TestingType | {map: Map<string, {propertyA: string}>; foo: any}>;
-expectType<{map: TestingType['map'] | Map<string, {propertyA: string}>}>(map);
+expectTypeOf(map).toBe<{map: TestingType['map'] | Map<string, {propertyA: string}>}>();
 
 declare const set: SharedUnionFields<TestingType | {set: Set<number>; foo: any}>;
-expectType<{set: TestingType['set'] | Set<number>}>(set);
+expectTypeOf(set).toBe<{set: TestingType['set'] | Set<number>}>();
 
 declare const moreUnion: SharedUnionFields<TestingType | {string: string; number: number; foo: any} | {string: string; bar: any}>;
-expectType<{string: string}>(moreUnion);
+expectTypeOf(moreUnion).toBe<{string: string}>();
 
 declare const union: SharedUnionFields<TestingType | {union: {a: number}}>;
-expectType<{union: 'test1' | 'test2' | {a: number}}>(union);
+expectTypeOf(union).toBe<{union: 'test1' | 'test2' | {a: number}}>();
 
 declare const unionWithOptional: SharedUnionFields<{a?: string; foo: number} | {a: string; bar: string}>;
-expectType<{a?: string}>(unionWithOptional);
+expectTypeOf(unionWithOptional).toBe<{a?: string}>();
 
 // Non-recursive types
-expectType<Set<string> | Map<string, string>>({} as SharedUnionFields<Set<string> | Map<string, string>>);
-expectType<string[] | Set<string>>({} as SharedUnionFields<string[] | Set<string>>);
-expectType<NonRecursiveType>({} as SharedUnionFields<NonRecursiveType>);
+expectTypeOf<SharedUnionFields<Set<string> | Map<string, string>>>().toBe<Set<string> | Map<string, string>>();
+expectTypeOf<SharedUnionFields<string[] | Set<string>>>().toBe<string[] | Set<string>>();
+expectTypeOf<SharedUnionFields<NonRecursiveType>>().toBe<NonRecursiveType>();
 
 // Mix of non-recursive and recursive types
-expectType<{a: string | number} | undefined>({} as SharedUnionFields<{a: string} | {a: number; b: true} | undefined>);
-expectType<RegExp | {test: string}>({} as SharedUnionFields<RegExp | {test: string}>);
-expectType<RegExp | null | {test: string | number}>({} as SharedUnionFields<RegExp | null | {test: string} | {test: number; foo: any}>);
+expectTypeOf<SharedUnionFields<{a: string} | {a: number; b: true} | undefined>>().toBe<{a: string | number} | undefined>();
+expectTypeOf<SharedUnionFields<RegExp | {test: string}>>().toBe<RegExp | {test: string}>();
+expectTypeOf<SharedUnionFields<RegExp | null | {test: string} | {test: number; foo: any}>>().toBe<RegExp | null | {test: string | number}>();
 
 // Boundary types
-expectType<any>({} as SharedUnionFields<any>);
-expectType<never>({} as SharedUnionFields<never>);
+expectTypeOf<SharedUnionFields<any>>().toBe<any>();
+expectTypeOf<SharedUnionFields<never>>().toBe<never>();
 
 // A `WeakMap` and a `WeakSet` are passed through like a `Map` and a `Set`, rather than being stripped of their members.
 declare const weakMapSkipped: SharedUnionFields<WeakMap<object, string> | {a: 1}>;
-expectType<WeakMap<object, string> | {a: 1}>(weakMapSkipped);
+expectTypeOf(weakMapSkipped).toBe<WeakMap<object, string> | {a: 1}>();
 
 declare const weakSetSkipped: SharedUnionFields<WeakSet<object> | {a: 1}>;
-expectType<WeakSet<object> | {a: 1}>(weakSetSkipped);
+expectTypeOf(weakSetSkipped).toBe<WeakSet<object> | {a: 1}>();

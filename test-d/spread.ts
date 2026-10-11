@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Spread} from '../index.d.ts';
 
 type Foo = {
@@ -41,7 +41,7 @@ const bar: Bar = {
 
 const foobar = {...foo, ...bar};
 
-expectType<FooBar>(foobar);
+expectTypeOf(foobar).toBe<FooBar>();
 
 const arrayFoo = [1, 2, 3];
 const arrayBar = [4, 5, 6];
@@ -49,16 +49,16 @@ const arrayBar = [4, 5, 6];
 const arrayFooBar = [...arrayFoo, ...arrayBar]; //=> number[]
 type ArrayFooBar = Spread<typeof arrayFoo, typeof arrayBar>;
 
-expectType<ArrayFooBar>(arrayFooBar);
-expectType<number[]>(arrayFooBar);
+expectTypeOf(arrayFooBar).toBe<ArrayFooBar>();
+expectTypeOf(arrayFooBar).toBe<number[]>();
 
 const stringArray = ['4', '5', '6'];
 
 const mixedArrayFooBar = [...arrayFoo, ...stringArray]; //=> (string | number)[]
 type MixedArrayFooBar = Spread<typeof arrayFoo, typeof stringArray>;
 
-expectType<MixedArrayFooBar>(mixedArrayFooBar);
-expectType<Array<string | number>>(mixedArrayFooBar);
+expectTypeOf(mixedArrayFooBar).toBe<MixedArrayFooBar>();
+expectTypeOf(mixedArrayFooBar).toBe<Array<string | number>>();
 
 const tupleFoo: [1, 2, 3] = [1, 2, 3];
 const tupleBar: [4, 5, 6] = [4, 5, 6];
@@ -66,126 +66,126 @@ const tupleBar: [4, 5, 6] = [4, 5, 6];
 const tupleFooBar = [...tupleFoo, ...tupleBar]; //=> (1 | 2 | 3 | 4 | 5 | 6)[]
 type TupleFooBar = Spread<typeof tupleFoo, typeof tupleBar>;
 
-expectType<TupleFooBar>(tupleFooBar);
-expectType<Array<1 | 2 | 3 | 4 | 5 | 6>>(tupleFooBar);
+expectTypeOf(tupleFooBar).toBe<TupleFooBar>();
+expectTypeOf(tupleFooBar).toBe<Array<1 | 2 | 3 | 4 | 5 | 6>>();
 
 const arrayTupleFooBar = [...arrayFoo, ...tupleBar]; //=> number[]
 type ArrayTupleFooBar = Spread<typeof arrayFoo, typeof tupleBar>;
 
-expectType<ArrayTupleFooBar>(arrayTupleFooBar);
-expectType<number[]>(arrayTupleFooBar);
+expectTypeOf(arrayTupleFooBar).toBe<ArrayTupleFooBar>();
+expectTypeOf(arrayTupleFooBar).toBe<number[]>();
 
 const tupleArrayFooBar = [...tupleFoo, ...arrayBar]; //=> number[]
 type TupleArrayFooBar = Spread<typeof tupleFoo, typeof arrayBar>;
 
-expectType<TupleArrayFooBar>(tupleArrayFooBar);
-expectType<number[]>(tupleArrayFooBar);
+expectTypeOf(tupleArrayFooBar).toBe<TupleArrayFooBar>();
+expectTypeOf(tupleArrayFooBar).toBe<number[]>();
 
 // A union second operand spreads to a union, just like the real spread syntax.
 declare const unionSpreadFirst: {a: 1};
 declare const unionSpreadSecond: {b: 2} | {c: 3};
 const realUnionSpread = {...unionSpreadFirst, ...unionSpreadSecond};
 
-expectType<{b: 2; a: 1} | {c: 3; a: 1}>(realUnionSpread);
-expectType<Spread<typeof unionSpreadFirst, typeof unionSpreadSecond>>(realUnionSpread);
+expectTypeOf(realUnionSpread).toBe<{b: 2; a: 1} | {c: 3; a: 1}>();
+expectTypeOf(realUnionSpread).toBe<Spread<typeof unionSpreadFirst, typeof unionSpreadSecond>>();
 
 declare const unionFirst: {a: 1} | {z: 9};
 declare const unionSecond: {b: 2};
 const realBothUnions = {...unionFirst, ...unionSecond};
 
-expectType<{a: 1; b: 2} | {z: 9; b: 2}>(realBothUnions);
-expectType<Spread<typeof unionFirst, typeof unionSecond>>(realBothUnions);
+expectTypeOf(realBothUnions).toBe<{a: 1; b: 2} | {z: 9; b: 2}>();
+expectTypeOf(realBothUnions).toBe<Spread<typeof unionFirst, typeof unionSecond>>();
 
 // The spread syntax produces a fresh object literal, so it also drops `readonly`.
 declare const readonlyFirst: {readonly a: 1; b?: 2};
 declare const readonlySecond: {readonly c: 3; d?: 4};
 const realReadonlySpread = {...readonlyFirst, ...readonlySecond};
 
-expectType<{a: 1; b?: 2; c: 3; d?: 4}>(realReadonlySpread);
-expectType<Spread<typeof readonlyFirst, typeof readonlySecond>>(realReadonlySpread);
+expectTypeOf(realReadonlySpread).toBe<{a: 1; b?: 2; c: 3; d?: 4}>();
+expectTypeOf(realReadonlySpread).toBe<Spread<typeof readonlyFirst, typeof readonlySecond>>();
 
 // An index signature that only one operand has contributes no keys.
 declare const indexSignatureFirst: {[k: string]: number};
 declare const plainSecond: {b: string};
 const realIndexSignatureFirst = {...indexSignatureFirst, ...plainSecond};
-expectType<typeof realIndexSignatureFirst>({} as Spread<typeof indexSignatureFirst, typeof plainSecond>);
+expectTypeOf<Spread<typeof indexSignatureFirst, typeof plainSecond>>().toBe<typeof realIndexSignatureFirst>();
 
 declare const plainFirst: {a: 1};
 declare const indexSignatureSecond: {[k: string]: string};
 const realIndexSignatureSecond = {...plainFirst, ...indexSignatureSecond};
-expectType<typeof realIndexSignatureSecond>({} as Spread<typeof plainFirst, typeof indexSignatureSecond>);
+expectTypeOf<Spread<typeof plainFirst, typeof indexSignatureSecond>>().toBe<typeof realIndexSignatureSecond>();
 
 // The spread syntax produces a fresh object literal, so it also drops an optional modifier that the spread itself would have introduced, and a key the two operands do not share keeps its own modifier.
 declare const optionalFirst: {a?: 1; readonly b?: 2};
 declare const plainThird: {c: 3};
 const realOptionalSpread = {...optionalFirst, ...plainThird};
-expectType<{a?: 1; b?: 2; c: 3}>(realOptionalSpread);
-expectType<Spread<typeof optionalFirst, typeof plainThird>>(realOptionalSpread);
+expectTypeOf(realOptionalSpread).toBe<{a?: 1; b?: 2; c: 3}>();
+expectTypeOf(realOptionalSpread).toBe<Spread<typeof optionalFirst, typeof plainThird>>();
 
 // A key on both sides takes the second's value, and the result is required whatever the first said, because a fresh object literal has a value at every key the spread names.
 declare const sharedOptional: {a?: string};
 declare const sharedRequired: {a: number};
 const realSharedSpread = {...sharedOptional, ...sharedRequired};
-expectType<{a: number}>(realSharedSpread);
-expectType<Spread<typeof sharedOptional, typeof sharedRequired>>(realSharedSpread);
+expectTypeOf(realSharedSpread).toBe<{a: number}>();
+expectTypeOf(realSharedSpread).toBe<Spread<typeof sharedOptional, typeof sharedRequired>>();
 
 // The other way round the second may not have overwritten what was there, so the union of both survives, and it is still required.
 const realSharedSpreadReverse = {...sharedRequired, ...sharedOptional};
-expectType<{a: string | number}>(realSharedSpreadReverse);
-expectType<Spread<typeof sharedRequired, typeof sharedOptional>>(realSharedSpreadReverse);
+expectTypeOf(realSharedSpreadReverse).toBe<{a: string | number}>();
+expectTypeOf(realSharedSpreadReverse).toBe<Spread<typeof sharedRequired, typeof sharedOptional>>();
 
 // Only when the second also declares the key optional does the union stay optional, which is the one shape where optionality survives a shared key.
 declare const sharedOptionalSecond: {a?: number};
 const realSharedOptionalSpread = {...sharedOptional, ...sharedOptionalSecond};
-expectType<{a?: string | number}>(realSharedOptionalSpread);
-expectType<Spread<typeof sharedOptional, typeof sharedOptionalSecond>>(realSharedOptionalSpread);
+expectTypeOf(realSharedOptionalSpread).toBe<{a?: string | number}>();
+expectTypeOf(realSharedOptionalSpread).toBe<Spread<typeof sharedOptional, typeof sharedOptionalSecond>>();
 
 // The spread syntax infers `any` when either operand is `any`, so the type has to as well: it drops the other operand's keys, which leaves it accepting strictly less than the runtime does.
 declare const topTypeFirst: any;
 declare const topTypeSecond: any;
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- the spread of an `any` is the point
 const realTopTypeSpread = {...topTypeFirst, ...topTypeSecond};
-expectType<any>(realTopTypeSpread);
-expectType<Spread<any, any>>(realTopTypeSpread);
+expectTypeOf(realTopTypeSpread).toBe<any>();
+expectTypeOf(realTopTypeSpread).toBe<Spread<any, any>>();
 
 declare const plainSecondAny: {b: 2};
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- the spread of an `any` is the point
 const realTopTypeSpreadWithPlain = {...topTypeFirst, ...plainSecondAny};
-expectType<any>(realTopTypeSpreadWithPlain);
-expectType<Spread<any, typeof plainSecondAny>>(realTopTypeSpreadWithPlain);
+expectTypeOf(realTopTypeSpreadWithPlain).toBe<any>();
+expectTypeOf(realTopTypeSpreadWithPlain).toBe<Spread<any, typeof plainSecondAny>>();
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- the spread of an `any` is the point
 const realTopTypeSpreadWithPlainFirst = {...plainFirst, ...topTypeSecond};
-expectType<any>(realTopTypeSpreadWithPlainFirst);
-expectType<Spread<typeof plainFirst, any>>(realTopTypeSpreadWithPlainFirst);
+expectTypeOf(realTopTypeSpreadWithPlainFirst).toBe<any>();
+expectTypeOf(realTopTypeSpreadWithPlainFirst).toBe<Spread<typeof plainFirst, any>>();
 
 // An array operand is a different branch, and spreading an array of `any` does give an array of `any`.
 declare const topTypeArray: any[];
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- the spread of an array of `any` is the point
 const realTopTypeArraySpread = [...topTypeArray, ...topTypeArray];
-expectType<any[]>(realTopTypeArraySpread);
-expectType<Spread<any[], any[]>>(realTopTypeArraySpread);
+expectTypeOf(realTopTypeArraySpread).toBe<any[]>();
+expectTypeOf(realTopTypeArraySpread).toBe<Spread<any[], any[]>>();
 
 // A signature both operands have survives the spread, with both value types.
 declare const recordFirst: Record<string, number>;
 declare const recordSecond: Record<string, string>;
 const realSharedSignature = {...recordFirst, ...recordSecond};
-expectType<{[x: string]: string | number}>(realSharedSignature);
-expectType<string | number>({} as Spread<typeof recordFirst, typeof recordSecond>['anything']);
+expectTypeOf(realSharedSignature).toBe<{[x: string]: string | number}>();
+expectTypeOf<Spread<typeof recordFirst, typeof recordSecond>['anything']>().toBe<string | number>();
 
 // Optional values explicitly admitting `undefined` can overwrite a required value with `undefined`.
 declare const optionalUndefined: {a?: number | undefined};
 const realExplicitUndefinedSpread = {...sharedRequired, ...optionalUndefined};
-expectType<Spread<typeof sharedRequired, typeof optionalUndefined>>(realExplicitUndefinedSpread);
+expectTypeOf(realExplicitUndefinedSpread).toBe<Spread<typeof sharedRequired, typeof optionalUndefined>>();
 
 // Numeric index signatures and symbol keys follow the same spread rules as string keys.
 declare const numericSignatureFirst: {readonly [index: number]: string};
 declare const numericSignatureSecond: {[index: number]: number};
 const realNumericSignatureSpread = {...numericSignatureFirst, ...numericSignatureSecond};
-expectType<Spread<typeof numericSignatureFirst, typeof numericSignatureSecond>>(realNumericSignatureSpread);
+expectTypeOf(realNumericSignatureSpread).toBe<Spread<typeof numericSignatureFirst, typeof numericSignatureSecond>>();
 
 declare const spreadSymbol: unique symbol;
 declare const symbolFirst: {readonly [spreadSymbol]: string};
 declare const symbolSecond: {[spreadSymbol]?: number};
 const realSymbolSpread = {...symbolFirst, ...symbolSecond};
-expectType<Spread<typeof symbolFirst, typeof symbolSecond>>(realSymbolSpread);
+expectTypeOf(realSymbolSpread).toBe<Spread<typeof symbolFirst, typeof symbolSecond>>();

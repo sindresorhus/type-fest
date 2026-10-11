@@ -1,119 +1,117 @@
-import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {PackageJson, LiteralUnion, JsonObject} from '../index.d.ts';
 
 const packageJson: PackageJson = {};
 
-expectType<string | undefined>(packageJson.name);
-expectType<string | undefined>(packageJson.version);
-expectType<string | undefined>(packageJson.description);
-expectType<string[] | undefined>(packageJson.keywords);
-expectType<LiteralUnion<'.', string> | undefined>(packageJson.homepage);
-expectType<PackageJson.BugsLocation | undefined>(packageJson.bugs);
-expectType<string | undefined>(packageJson.license);
-expectType<Array<{type?: string; url?: string}> | undefined>(packageJson.licenses);
-expectType<PackageJson.Person | undefined>(packageJson.author);
-expectType<PackageJson.Person[] | undefined>(packageJson.contributors);
-expectType<PackageJson.Person[] | undefined>(packageJson.maintainers);
-expectType<string[] | undefined>(packageJson.files);
-expectType<string | undefined>(packageJson.main);
-expectType<string | undefined>(packageJson.packageManager);
-expectType<string | Partial<Record<string, string>> | undefined>(packageJson.bin);
-expectType<string | undefined>(packageJson.types);
-expectType<string | undefined>(packageJson.typings);
-expectType<string | string[] | undefined>(packageJson.man);
-expectType<PackageJson.DirectoryLocations | undefined>(packageJson.directories);
-expectType<{type: string; url: string; directory?: string} | string | undefined>(
+expectTypeOf(packageJson.name).toBe<string | undefined>();
+expectTypeOf(packageJson.version).toBe<string | undefined>();
+expectTypeOf(packageJson.description).toBe<string | undefined>();
+expectTypeOf(packageJson.keywords).toBe<string[] | undefined>();
+expectTypeOf(packageJson.homepage).toBe<LiteralUnion<'.', string> | undefined>();
+expectTypeOf(packageJson.bugs).toBe<PackageJson.BugsLocation | undefined>();
+expectTypeOf(packageJson.license).toBe<string | undefined>();
+expectTypeOf(packageJson.licenses).toBe<Array<{type?: string; url?: string}> | undefined>();
+expectTypeOf(packageJson.author).toBe<PackageJson.Person | undefined>();
+expectTypeOf(packageJson.contributors).toBe<PackageJson.Person[] | undefined>();
+expectTypeOf(packageJson.maintainers).toBe<PackageJson.Person[] | undefined>();
+expectTypeOf(packageJson.files).toBe<string[] | undefined>();
+expectTypeOf(packageJson.main).toBe<string | undefined>();
+expectTypeOf(packageJson.packageManager).toBe<string | undefined>();
+expectTypeOf(packageJson.bin).toBe<string | Partial<Record<string, string>> | undefined>();
+expectTypeOf(packageJson.types).toBe<string | undefined>();
+expectTypeOf(packageJson.typings).toBe<string | undefined>();
+expectTypeOf(packageJson.man).toBe<string | string[] | undefined>();
+expectTypeOf(packageJson.directories).toBe<PackageJson.DirectoryLocations | undefined>();
+expectTypeOf(
 	packageJson.repository,
-);
-expectType<PackageJson.Scripts | undefined>(packageJson.scripts);
-expectType<JsonObject | undefined>(packageJson.config);
-expectType<PackageJson.Dependency | undefined>(packageJson.dependencies);
-expectType<PackageJson.Dependency | undefined>(packageJson.devDependencies);
-expectType<PackageJson.Dependency | undefined>(
+).toBe<{type: string; url: string; directory?: string} | string | undefined>();
+expectTypeOf(packageJson.scripts).toBe<PackageJson.Scripts | undefined>();
+expectTypeOf(packageJson.config).toBe<JsonObject | undefined>();
+expectTypeOf(packageJson.dependencies).toBe<PackageJson.Dependency | undefined>();
+expectTypeOf(packageJson.devDependencies).toBe<PackageJson.Dependency | undefined>();
+expectTypeOf(
 	packageJson.optionalDependencies,
-);
-expectType<PackageJson.Dependency | undefined>(packageJson.peerDependencies);
-expectType<string[] | undefined>(packageJson.bundleDependencies);
-expectType<string[] | undefined>(packageJson.bundledDependencies);
-expectType<PackageJson.Dependency | undefined>(packageJson.resolutions);
-expectType<keyof PackageJson.Dependency>({} as string);
-expectType<PackageJson.WorkspaceConfig | string[] | undefined>(packageJson.workspaces);
-expectAssignable<PackageJson['overrides']>({foo: '1.0.0'});
-expectAssignable<PackageJson['overrides']>({foo: {'.': '1.0.0', bar: '1.0.0'}});
-expectAssignable<PackageJson['overrides']>({baz: {bar: {foo: '1.0.0'}}});
-expectAssignable<PackageJson['overrides']>({foo: undefined});
-expectAssignable<PackageJson['overrides']>({foo: {bar: undefined}});
-expectType<keyof PackageJson.DependencyOverrides>({} as string);
-expectAssignable<PackageJson.DevEngineDependency>({
+).toBe<PackageJson.Dependency | undefined>();
+expectTypeOf(packageJson.peerDependencies).toBe<PackageJson.Dependency | undefined>();
+expectTypeOf(packageJson.bundleDependencies).toBe<string[] | undefined>();
+expectTypeOf(packageJson.bundledDependencies).toBe<string[] | undefined>();
+expectTypeOf(packageJson.resolutions).toBe<PackageJson.Dependency | undefined>();
+expectTypeOf<string>().toBe<keyof PackageJson.Dependency>();
+expectTypeOf(packageJson.workspaces).toBe<PackageJson.WorkspaceConfig | string[] | undefined>();
+({foo: '1.0.0'}) satisfies PackageJson['overrides'];
+({foo: {'.': '1.0.0', bar: '1.0.0'}}) satisfies PackageJson['overrides'];
+({baz: {bar: {foo: '1.0.0'}}}) satisfies PackageJson['overrides'];
+({foo: undefined}) satisfies PackageJson['overrides'];
+({foo: {bar: undefined}}) satisfies PackageJson['overrides'];
+expectTypeOf<string>().toBe<keyof PackageJson.DependencyOverrides>();
+({
 	name: 'unicorn',
 	version: '>= 1.0.0',
 	onFail: 'ignore',
-});
-expectType<{[EngineName in LiteralUnion<'npm' | 'node', string>]?: string} | undefined>(packageJson.engines);
-expectAssignable<Partial<Record<string, string>> | undefined>(packageJson.engines);
-expectType<boolean | undefined>(packageJson.engineStrict);
-expectAssignable<
+}) satisfies PackageJson.DevEngineDependency;
+expectTypeOf(packageJson.engines).toBe<{[EngineName in LiteralUnion<'npm' | 'node', string>]?: string} | undefined>();
+expectTypeOf(packageJson.engines).toBeAssignableTo<Partial<Record<string, string>> | undefined>();
+expectTypeOf(packageJson.engineStrict).toBe<boolean | undefined>();
+expectTypeOf(packageJson.os).toBeAssignableTo<
 	| undefined
 	| Array<LiteralUnion<
 		'darwin' | 'linux' | 'win32' | '!darwin' | '!linux' | '!win32',
 		string
-	>>
->(packageJson.os);
-expectAssignable<
+	>>>();
+expectTypeOf(packageJson.cpu).toBeAssignableTo<
 	| undefined
 	| Array<LiteralUnion<
 		'x64' | 'ia32' | 'arm' | 'mips' | '!x64' | '!ia32' | '!arm' | '!mips',
 		string
-	>>
->(packageJson.cpu);
-expectAssignable<PackageJson.Imports>({'#unicorn': 'unicorn'});
-expectAssignable<PackageJson.Imports>({
+	>>>();
+({'#unicorn': 'unicorn'}) satisfies PackageJson.Imports;
+({
 	'#unicorn': {
 		import: {browser: 'unicorn', node: 'pony'},
 		require: ['./fallback-1', './fallback-2', {default: './fallback-3', browser: null}],
 		custom: null,
 		default: 'horse',
 	},
-});
-expectAssignable<PackageJson.Exports>({
+}) satisfies PackageJson.Imports;
+({
 	'./unicorn': {
 		import: {browser: './unicorn.js', node: './pony.js'},
 		require: ['./fallback-1', './fallback-2', {default: './fallback-3', browser: null}],
 		custom: null,
 		default: './horse.js',
 	},
-});
-expectNotAssignable<PackageJson.Exports>({
-	'./unicorn': undefined,
-});
-expectNotAssignable<PackageJson.Imports>({unicorn: 'unicorn'});
-expectType<boolean | undefined>(packageJson.preferGlobal);
-expectType<boolean | undefined>(packageJson.private);
-expectType<PackageJson.PublishConfig | undefined>(packageJson.publishConfig);
-expectType<string | undefined>(packageJson.module);
-expectType<
+}) satisfies PackageJson.Exports;
+expectTypeOf<{
+	'./unicorn': undefined;
+}>().not.toBeAssignableTo<PackageJson.Exports>();
+// @ts-expect-error
+const imports: PackageJson.Imports = {unicorn: 'unicorn'};
+expectTypeOf(packageJson.preferGlobal).toBe<boolean | undefined>();
+expectTypeOf(packageJson.private).toBe<boolean | undefined>();
+expectTypeOf(packageJson.publishConfig).toBe<PackageJson.PublishConfig | undefined>();
+expectTypeOf(packageJson.module).toBe<string | undefined>();
+expectTypeOf(packageJson.esnext).toBe<
 	| string
 	| {
 		[moduleName: string]: string | undefined;
 		main?: string;
 		browser?: string;
 	}
-	| undefined
->(packageJson.esnext);
-expectType<PackageJson | undefined>(packageJson.jspm);
+	| undefined>();
+expectTypeOf(packageJson.jspm).toBe<PackageJson | undefined>();
 
 // Undefined assigns
-expectAssignable<PackageJson.Dependency>({dep: undefined});
-expectAssignable<typeof packageJson['engines']>({engine: undefined});
-expectAssignable<typeof packageJson['scripts']>({unknownScript: undefined});
-expectAssignable<typeof packageJson['bin']>({bin: undefined});
-expectAssignable<typeof packageJson['typesVersions']>({
+({dep: undefined}) satisfies PackageJson.Dependency;
+({engine: undefined}) satisfies typeof packageJson['engines'];
+({unknownScript: undefined}) satisfies typeof packageJson['scripts'];
+({bin: undefined}) satisfies typeof packageJson['bin'];
+({
 	'>=4': {
 		'*': ['src'],
 		somethingElse: undefined,
 	},
 	'<4': undefined,
-});
+}) satisfies typeof packageJson['typesVersions'];
 
 // Must reject an object that contains properties with `undefined` values.
 // See https://github.com/sindresorhus/type-fest/issues/272
@@ -124,13 +122,13 @@ setConfig({bugs: undefined});
 // @ts-expect-error
 setConfig({bugs: {life: undefined}});
 
-expectNotAssignable<JsonObject>({bugs: undefined});
-expectNotAssignable<JsonObject>({bugs: {life: undefined}});
+expectTypeOf<{bugs: undefined}>().not.toBeAssignableTo<JsonObject>();
+expectTypeOf<{bugs: {life: undefined}}>().not.toBeAssignableTo<JsonObject>();
 
-expectAssignable<JsonObject>({});
-expectAssignable<JsonObject>({bugs: 42});
-expectAssignable<JsonObject>({bugs: [42]});
-expectAssignable<JsonObject>({bugs: {life: 42}});
+({}) satisfies JsonObject;
+({bugs: 42}) satisfies JsonObject;
+({bugs: [42]}) satisfies JsonObject;
+({bugs: {life: 42}}) satisfies JsonObject;
 
 // `PackageJson` should be a valid `JsonObject`.
 // See https://github.com/sindresorhus/type-fest/issues/79
@@ -139,49 +137,48 @@ type UnknownRecord = Record<string, unknown>;
 const unknownRecord: UnknownRecord = {};
 const jsonObject: JsonObject = {};
 
-expectAssignable<UnknownRecord>(packageJson);
-expectNotAssignable<PackageJson>(unknownRecord);
+expectTypeOf(packageJson).toBeAssignableTo<UnknownRecord>();
+expectTypeOf(unknownRecord).not.toBeAssignableTo<PackageJson>();
 
-expectAssignable<PackageJson>(jsonObject);
-expectAssignable<JsonObject>(packageJson);
+expectTypeOf(jsonObject).toBeAssignableTo<PackageJson>();
+expectTypeOf(packageJson).toBeAssignableTo<JsonObject>();
 
 // The type describes a manifest as a reader sees it, so the loose forms npm tolerates when writing are not accepted.
 // @ts-expect-error
-expectAssignable<PackageJson>({keywords: 'modules, stdlib, util'});
+({keywords: 'modules, stdlib, util'}) satisfies PackageJson;
 // @ts-expect-error
-expectAssignable<PackageJson>({os: 'linux'});
+({os: 'linux'}) satisfies PackageJson;
 // @ts-expect-error
-expectAssignable<PackageJson>({bundleDependencies: true});
+({bundleDependencies: true}) satisfies PackageJson;
 // @ts-expect-error
-expectAssignable<PackageJson>({author: {email: 'a@example.com'}});
+({author: {email: 'a@example.com'}}) satisfies PackageJson;
 // @ts-expect-error
-expectAssignable<PackageJson>({repository: {url: 'git+https://github.com/npm/cli.git'}});
+({repository: {url: 'git+https://github.com/npm/cli.git'}}) satisfies PackageJson;
 
 // `funding` accepts an array of string URLs and funding objects, alongside a single string or a single object.
-expectAssignable<PackageJson['funding']>(['https://example.com/donate', {type: 'github', url: 'https://github.com/sponsors/x'}]);
+['https://example.com/donate', {type: 'github', url: 'https://github.com/sponsors/x'}] satisfies PackageJson['funding'];
 
 // A fallback `exports` array may contain `null` entries, which mean the module cannot be imported when nothing else in the array resolves.
-expectAssignable<PackageJson.Exports>({'./c': ['./c.js', null]});
-expectAssignable<PackageJson.Exports>(['./c.js', null]);
+({'./c': ['./c.js', null]}) satisfies PackageJson.Exports;
+['./c.js', null] satisfies PackageJson.Exports;
 // A null entry does not prevent a later valid fallback from resolving.
-expectAssignable<PackageJson.Exports>([null, {node: './node.js', default: './browser.js'}]);
-expectNotAssignable<PackageJson['funding']>([{type: 'github'}]);
-expectNotAssignable<PackageJson>({gypfile: 'false'});
-expectNotAssignable<PackageJson>({libc: true});
+[null, {node: './node.js', default: './browser.js'}] satisfies PackageJson.Exports;
+expectTypeOf<[{type: 'github'}]>().not.toBeAssignableTo<PackageJson['funding']>();
+expectTypeOf<{gypfile: 'false'}>().not.toBeAssignableTo<PackageJson>();
+expectTypeOf<{libc: true}>().not.toBeAssignableTo<PackageJson>();
 
 // `gypfile` and `libc` are documented npm fields. Without a declaration they fell through to the index signature, so reading them back gave `JsonValue | undefined`.
 declare const documentedFields: PackageJson;
-expectType<boolean | undefined>(documentedFields.gypfile);
-expectAssignable<PackageJson>({gypfile: true});
-expectAssignable<PackageJson>({libc: ['glibc', 'musl']});
-expectAssignable<PackageJson>({libc: ['!musl']});
-expectAssignable<PackageJson>({libc: ['glibc']});
+expectTypeOf(documentedFields.gypfile).toBe<boolean | undefined>();
+({gypfile: true}) satisfies PackageJson;
+({libc: ['glibc', 'musl']}) satisfies PackageJson;
+({libc: ['!musl']}) satisfies PackageJson;
+({libc: ['glibc']}) satisfies PackageJson;
 // The npm docs show `libc` as a single string, and npm also accepts an array.
-expectAssignable<PackageJson>({libc: 'glibc'});
-expectAssignable<PackageJson>({os: ['linux'], libc: 'musl'});
-expectNotAssignable<PackageJson>({libc: [true]});
-expectType<
+({libc: 'glibc'}) satisfies PackageJson;
+({os: ['linux'], libc: 'musl'}) satisfies PackageJson;
+expectTypeOf<{libc: [true]}>().not.toBeAssignableTo<PackageJson>();
+expectTypeOf(documentedFields.libc).toBe<
 	| undefined
 	| LiteralUnion<'glibc' | 'musl' | '!glibc' | '!musl', string>
-	| Array<LiteralUnion<'glibc' | 'musl' | '!glibc' | '!musl', string>>
->(documentedFields.libc);
+	| Array<LiteralUnion<'glibc' | 'musl' | '!glibc' | '!musl', string>>>();

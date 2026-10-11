@@ -8,7 +8,7 @@
 - [Example of a type contribution.](https://github.com/sindresorhus/type-fest/commit/5374588a88ee643893784f66367bc26b8e6509ec)
 - Create a new file in the `test-d` directory and write at least one type test.
 	- See the other tests for inspiration.
-	- If it makes sense, also write a negative test using [`expectNotAssignable()`](https://github.com/SamVerschueren/tsd#expectnotassignabletexpression-any) or, to test other diagnostics, [`expectError()`](https://github.com/SamVerschueren/tsd#expecterrort--anyexpression-t).
+	- If it makes sense, also write a negative test using [`expectTypeOf(value).not.toBeAssignableTo<Type>()`](https://github.com/sindresorhus/nz#nottobeassignabletoexpected) or, to test other diagnostics, a `// @ts-expect-error` comment.
 - Don't use one-character type names like `T` and `U`. Use descriptive names. See the existing types for inspiration.
 - Follow the existing code style, even in documentation code examples.
 	- Don't prefix each line in documentation comments with `*`.

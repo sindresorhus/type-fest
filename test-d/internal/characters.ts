@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsEqual} from '../../index.d.ts';
 import type {AsciiPunctuation, IsWhitespace, Whitespace, WordSeparators} from '../../source/internal/index.d.ts';
 
@@ -37,25 +37,25 @@ type KeptByJs =
 	| '\u{200B}'
 	| '\u{2060}';
 
-expectType<IsEqual<TrimsByJs, Whitespace>>(true);
+expectTypeOf<IsEqual<TrimsByJs, Whitespace>>().toBe<true>();
 // Nothing JavaScript keeps may appear in the union.
-expectType<IsEqual<KeptByJs & Whitespace, never>>(true);
+expectTypeOf<IsEqual<KeptByJs & Whitespace, never>>().toBe<true>();
 
-expectType<IsWhitespace<'\u{20}\u{9}\u{A}'>>(true);
-expectType<IsWhitespace<'\u{3000}\u{FEFF}'>>(true);
+expectTypeOf<IsWhitespace<'\u{20}\u{9}\u{A}'>>().toBe<true>();
+expectTypeOf<IsWhitespace<'\u{3000}\u{FEFF}'>>().toBe<true>();
 // An empty string has no characters to classify, and the existing test pins this as `false`.
-expectType<IsWhitespace<''>>(false);
+expectTypeOf<IsWhitespace<''>>().toBe<false>();
 
 // A string is only whitespace when nothing else is in it.
-expectType<IsWhitespace<'\u{3000}a\u{3000}'>>(false);
-expectType<IsWhitespace<'\u{3000}a'>>(false);
-expectType<IsWhitespace<'a\u{3000}'>>(false);
+expectTypeOf<IsWhitespace<'\u{3000}a\u{3000}'>>().toBe<false>();
+expectTypeOf<IsWhitespace<'\u{3000}a'>>().toBe<false>();
+expectTypeOf<IsWhitespace<'a\u{3000}'>>().toBe<false>();
 
-expectType<IsWhitespace<'\u{85}'>>(false);
-expectType<IsWhitespace<'\u{180E}'>>(false);
-expectType<IsWhitespace<'\u{200B}'>>(false);
-expectType<IsWhitespace<'\u{2060}'>>(false);
+expectTypeOf<IsWhitespace<'\u{85}'>>().toBe<false>();
+expectTypeOf<IsWhitespace<'\u{180E}'>>().toBe<false>();
+expectTypeOf<IsWhitespace<'\u{200B}'>>().toBe<false>();
+expectTypeOf<IsWhitespace<'\u{2060}'>>().toBe<false>();
 
-expectType<IsEqual<WordSeparators, '-' | '_' | '\u{85}' | Whitespace>>(true);
+expectTypeOf<IsEqual<WordSeparators, '-' | '_' | '\u{85}' | Whitespace>>().toBe<true>();
 
-expectType<IsEqual<AsciiPunctuation, '!' | '"' | '#' | '$' | '%' | '&' | '\'' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' | '[' | '\\' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'>>(true);
+expectTypeOf<IsEqual<AsciiPunctuation, '!' | '"' | '#' | '$' | '%' | '&' | '\'' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' | '[' | '\\' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'>>().toBe<true>();

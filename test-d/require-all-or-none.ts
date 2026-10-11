@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {RequireAllOrNone, Simplify} from '../index.d.ts';
 
 type SystemMessages = {
@@ -35,75 +35,73 @@ testWithoutKeys({b: 2});
 
 function narrowingTest(foo: Simplify<RequireAllOrNone<{a: string; b: string}>>): string { // `Simplify` just makes it easier to visualize the narrowing
 	if (typeof foo.a === 'string') {
-		expectAssignable<string>(foo.a);
-		expectAssignable<string>(foo.b);
+		expectTypeOf(foo.a).toBeAssignableTo<string>();
+		expectTypeOf(foo.b).toBeAssignableTo<string>();
 
 		return foo.a;
 	}
 
-	expectNotAssignable<string>(foo.a);
-	expectNotAssignable<string>(foo.b);
+	expectTypeOf(foo.a).not.toBeAssignableTo<string>();
+	expectTypeOf(foo.b).not.toBeAssignableTo<string>();
 
 	return '';
 }
 
 function narrowingTest2(foo: Simplify<RequireAllOrNone<{a: string; b: string; c: string}>>): string { // `Simplify` just makes it easier to visualize the narrowing
 	if (typeof foo.a === 'string') {
-		expectAssignable<string>(foo.a);
-		expectAssignable<string>(foo.b);
-		expectAssignable<string>(foo.c);
+		expectTypeOf(foo.a).toBeAssignableTo<string>();
+		expectTypeOf(foo.b).toBeAssignableTo<string>();
+		expectTypeOf(foo.c).toBeAssignableTo<string>();
 
 		return foo.a;
 	}
 
-	expectNotAssignable<string>(foo.a);
-	expectNotAssignable<string>(foo.b);
-	expectNotAssignable<string>(foo.c);
+	expectTypeOf(foo.a).not.toBeAssignableTo<string>();
+	expectTypeOf(foo.b).not.toBeAssignableTo<string>();
+	expectTypeOf(foo.c).not.toBeAssignableTo<string>();
 
 	return '';
 }
 
 function narrowingTest3(foo: Simplify<RequireAllOrNone<{a: string; b: string; c: string}, 'a' | 'b'>>): string { // `Simplify` just makes it easier to visualize the narrowing
 	if (typeof foo.a === 'string') {
-		expectAssignable<string>(foo.c);
+		expectTypeOf(foo.c).toBeAssignableTo<string>();
 
-		expectAssignable<string>(foo.a);
-		expectAssignable<string>(foo.b);
+		expectTypeOf(foo.a).toBeAssignableTo<string>();
+		expectTypeOf(foo.b).toBeAssignableTo<string>();
 
 		return foo.a;
 	}
 
-	expectAssignable<string>(foo.c);
+	expectTypeOf(foo.c).toBeAssignableTo<string>();
 
-	expectNotAssignable<string>(foo.a);
-	expectNotAssignable<string>(foo.b);
+	expectTypeOf(foo.a).not.toBeAssignableTo<string>();
+	expectTypeOf(foo.b).not.toBeAssignableTo<string>();
 
 	return '';
 }
 
-expectType<{a: number; b: string} | {a?: never; b?: never}>({} as Simplify<RequireAllOrNone<{a: number; b: string}>>); // `Simplify` is required for the assertion to pass
-expectType<{a: number; b: string} | {a?: never; b?: never}>({} as Simplify<RequireAllOrNone<{a: number; b: string}, any>>); // `Simplify` is required for the assertion to pass
-expectType<{a: number; b: string; c: boolean} | {a?: never; b?: never; c?: never}>(
-	{} as Simplify<RequireAllOrNone<{a: number; b: string; c: boolean}>>, // `Simplify` is required for the assertion to pass
-);
-expectType<{a: number; b: string; c: boolean} | {a?: never; b?: never; c?: never}>(
-	{} as Simplify<RequireAllOrNone<{a: number; b: string; c: boolean}, any>>, // `Simplify` is required for the assertion to pass
-);
+expectTypeOf<Simplify<RequireAllOrNone<{a: number; b: string}>>>().toBe<{a: number; b: string} | {a?: never; b?: never}>(); // `Simplify` is required for the assertion to pass
+expectTypeOf<Simplify<RequireAllOrNone<{a: number; b: string}, any>>>().toBe<{a: number; b: string} | {a?: never; b?: never}>(); // `Simplify` is required for the assertion to pass
+// `Simplify` is required for the assertion to pass
+expectTypeOf<Simplify<RequireAllOrNone<{a: number; b: string; c: boolean}>>>().toBe<{a: number; b: string; c: boolean} | {a?: never; b?: never; c?: never}>();
+// `Simplify` is required for the assertion to pass
+expectTypeOf<Simplify<RequireAllOrNone<{a: number; b: string; c: boolean}, any>>>().toBe<{a: number; b: string; c: boolean} | {a?: never; b?: never; c?: never}>();
 
-expectType<{}>({} as RequireAllOrNone<{}>);
-expectType<{a: string; b: number}>({} as RequireAllOrNone<{a: string; b: number}, never>);
+expectTypeOf<RequireAllOrNone<{}>>().toBe<{}>();
+expectTypeOf<RequireAllOrNone<{a: string; b: number}, never>>().toBe<{a: string; b: number}>();
 
-expectType<any>({} as RequireAllOrNone<any>);
-expectType<any>({} as RequireAllOrNone<any, 'foo'>);
-expectType<any>({} as RequireAllOrNone<any, any>);
-expectType<any>({} as RequireAllOrNone<any, never>);
+expectTypeOf<RequireAllOrNone<any>>().toBe<any>();
+expectTypeOf<RequireAllOrNone<any, 'foo'>>().toBe<any>();
+expectTypeOf<RequireAllOrNone<any, any>>().toBe<any>();
+expectTypeOf<RequireAllOrNone<any, never>>().toBe<any>();
 
-expectType<never>({} as RequireAllOrNone<never>);
-expectType<never>({} as RequireAllOrNone<never, 'foo'>);
-expectType<never>({} as RequireAllOrNone<never, any>);
-expectType<never>({} as RequireAllOrNone<never, never>);
+expectTypeOf<RequireAllOrNone<never>>().toBe<never>();
+expectTypeOf<RequireAllOrNone<never, 'foo'>>().toBe<never>();
+expectTypeOf<RequireAllOrNone<never, any>>().toBe<never>();
+expectTypeOf<RequireAllOrNone<never, never>>().toBe<never>();
 
 // A key that only one member of a union has is accepted, and a member without it is left as it is.
-expectAssignable<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({c: 2});
-expectAssignable<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({a: 1, b: 1});
-expectNotAssignable<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>({a: 1} as const);
+({c: 2}) satisfies RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>;
+({a: 1, b: 1}) satisfies RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>;
+expectTypeOf({a: 1} as const).not.toBeAssignableTo<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>();

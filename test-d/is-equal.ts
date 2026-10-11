@@ -1,54 +1,54 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsEqual, TupleOf} from '../index.d.ts';
 
-expectType<false>({} as IsEqual<number, string>);
-expectType<true>({} as IsEqual<1, 1>);
-expectType<false>({} as IsEqual<'A', 'B'>);
-expectType<true>({} as IsEqual<'foo', 'foo'>);
-expectType<false>({} as IsEqual<true, false>);
-expectType<true>({} as IsEqual<false, false>);
+expectTypeOf<IsEqual<number, string>>().toBe<false>();
+expectTypeOf<IsEqual<1, 1>>().toBe<true>();
+expectTypeOf<IsEqual<'A', 'B'>>().toBe<false>();
+expectTypeOf<IsEqual<'foo', 'foo'>>().toBe<true>();
+expectTypeOf<IsEqual<true, false>>().toBe<false>();
+expectTypeOf<IsEqual<false, false>>().toBe<true>();
 
-expectType<false>({} as IsEqual<any, number>);
-expectType<false>({} as IsEqual<'', never>);
-expectType<true>({} as IsEqual<any, any>);
-expectType<true>({} as IsEqual<never, never>);
-expectType<false>({} as IsEqual<any, never>);
-expectType<false>({} as IsEqual<never, any>);
-expectType<false>({} as IsEqual<any, unknown>);
-expectType<false>({} as IsEqual<never, unknown>);
-expectType<false>({} as IsEqual<unknown, never>);
-expectType<false>({} as IsEqual<[never], [unknown]>);
-expectType<false>({} as IsEqual<[unknown], [never]>);
-expectType<false>({} as IsEqual<[any], [never]>);
-expectType<true>({} as IsEqual<[any], [any]>);
-expectType<true>({} as IsEqual<[never], [never]>);
+expectTypeOf<IsEqual<any, number>>().toBe<false>();
+expectTypeOf<IsEqual<'', never>>().toBe<false>();
+expectTypeOf<IsEqual<any, any>>().toBe<true>();
+expectTypeOf<IsEqual<never, never>>().toBe<true>();
+expectTypeOf<IsEqual<any, never>>().toBe<false>();
+expectTypeOf<IsEqual<never, any>>().toBe<false>();
+expectTypeOf<IsEqual<any, unknown>>().toBe<false>();
+expectTypeOf<IsEqual<never, unknown>>().toBe<false>();
+expectTypeOf<IsEqual<unknown, never>>().toBe<false>();
+expectTypeOf<IsEqual<[never], [unknown]>>().toBe<false>();
+expectTypeOf<IsEqual<[unknown], [never]>>().toBe<false>();
+expectTypeOf<IsEqual<[any], [never]>>().toBe<false>();
+expectTypeOf<IsEqual<[any], [any]>>().toBe<true>();
+expectTypeOf<IsEqual<[never], [never]>>().toBe<true>();
 
-expectType<false>({} as IsEqual<1 | 2, 1>);
-expectType<false>({} as IsEqual<1 | 2, 2 | 3>);
-expectType<true>({} as IsEqual<1 | 2, 2 | 1>);
-expectType<false>({} as IsEqual<boolean, true>);
+expectTypeOf<IsEqual<1 | 2, 1>>().toBe<false>();
+expectTypeOf<IsEqual<1 | 2, 2 | 3>>().toBe<false>();
+expectTypeOf<IsEqual<1 | 2, 2 | 1>>().toBe<true>();
+expectTypeOf<IsEqual<boolean, true>>().toBe<false>();
 
-expectType<true>({} as IsEqual<{a: 1}, {a: 1}>);
-expectType<false>({} as IsEqual<{a: 1}, {a?: 1}>);
-expectType<false>({} as IsEqual<{a: 1}, {readonly a: 1}>);
+expectTypeOf<IsEqual<{a: 1}, {a: 1}>>().toBe<true>();
+expectTypeOf<IsEqual<{a: 1}, {a?: 1}>>().toBe<false>();
+expectTypeOf<IsEqual<{a: 1}, {readonly a: 1}>>().toBe<false>();
 
-expectType<true>({} as IsEqual<[], []>);
-expectType<true>({} as IsEqual<readonly [], readonly []>);
-expectType<false>({} as IsEqual<readonly [], []>);
-expectType<true>({} as IsEqual<number[], number[]>);
-expectType<true>({} as IsEqual<readonly number[], readonly number[]>);
-expectType<false>({} as IsEqual<readonly number[], number[]>);
-expectType<true>({} as IsEqual<[string], [string]>);
-expectType<false>({} as IsEqual<[string], [string, number]>);
-expectType<false>({} as IsEqual<[0, 1] | [0, 2], [0, 2]>);
+expectTypeOf<IsEqual<[], []>>().toBe<true>();
+expectTypeOf<IsEqual<readonly [], readonly []>>().toBe<true>();
+expectTypeOf<IsEqual<readonly [], []>>().toBe<false>();
+expectTypeOf<IsEqual<number[], number[]>>().toBe<true>();
+expectTypeOf<IsEqual<readonly number[], readonly number[]>>().toBe<true>();
+expectTypeOf<IsEqual<readonly number[], number[]>>().toBe<false>();
+expectTypeOf<IsEqual<[string], [string]>>().toBe<true>();
+expectTypeOf<IsEqual<[string], [string, number]>>().toBe<false>();
+expectTypeOf<IsEqual<[0, 1] | [0, 2], [0, 2]>>().toBe<false>();
 
 type LongTupleNumber = TupleOf<50, 0>;
-expectType<true>({} as IsEqual<LongTupleNumber, LongTupleNumber>);
+expectTypeOf<IsEqual<LongTupleNumber, LongTupleNumber>>().toBe<true>();
 
 type ReadonlyLongTupleNumber = Readonly<TupleOf<50, 0>>;
-expectType<true>({} as IsEqual<ReadonlyLongTupleNumber, ReadonlyLongTupleNumber>);
+expectTypeOf<IsEqual<ReadonlyLongTupleNumber, ReadonlyLongTupleNumber>>().toBe<true>();
 
-expectType<false>({} as IsEqual<ReadonlyLongTupleNumber, LongTupleNumber>);
+expectTypeOf<IsEqual<ReadonlyLongTupleNumber, LongTupleNumber>>().toBe<false>();
 
 // Missing all generic parameters.
 // @ts-expect-error
@@ -60,10 +60,10 @@ type B = IsEqual<number>;
 
 // Test for issue https://github.com/sindresorhus/type-fest/issues/537
 type UnionType = IsEqual<{a: 1} | {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<UnionType>(true);
+expectTypeOf<UnionType>().toBe<true>();
 
 type IntersectionType = IsEqual<{a: 1} & {a: 1}, {a: 1}>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<IntersectionType>(true);
+expectTypeOf<IntersectionType>().toBe<true>();
 
 // Test for PR https://github.com/sindresorhus/type-fest/pull/1231
 type BranchOnWrappedTupleMatches<Tpl> = (Tpl extends [[0, 2]] ? 'Foo' : 'Bar');
@@ -72,19 +72,19 @@ type BranchOnTupleMatches<Tpl> = (Tpl extends [0, 2] ? 'Foo' : 'Bar');
 type BranchOnTupleDoesNotMatch<Tpl> = (Tpl extends [0, 1] ? 'Foo' : 'Bar');
 
 declare const equalWrappedTupleIntersectionToBeNeverAndNever: IsEqual<(BranchOnWrappedTupleMatches<[[0, 2]]> & BranchOnWrappedTupleDoesNotMatch<[[0, 2]]>), never>;
-expectType<true>(equalWrappedTupleIntersectionToBeNeverAndNever);
+expectTypeOf(equalWrappedTupleIntersectionToBeNeverAndNever).toBe<true>();
 
 declare const equalWrappedTupleIntersectionToBeNeverAndNeverExpanded: [0, 2] extends infer Tpl ? IsEqual<(BranchOnWrappedTupleMatches<[Tpl]> & BranchOnWrappedTupleDoesNotMatch<[Tpl]>), never> : never;
-expectType<true>(equalWrappedTupleIntersectionToBeNeverAndNeverExpanded);
+expectTypeOf(equalWrappedTupleIntersectionToBeNeverAndNeverExpanded).toBe<true>();
 
 declare const equalTupleIntersectionToBeNeverAndNever: IsEqual<(BranchOnTupleMatches<[0, 2]> & BranchOnTupleDoesNotMatch<[0, 2]>), never>;
-expectType<true>(equalTupleIntersectionToBeNeverAndNever);
+expectTypeOf(equalTupleIntersectionToBeNeverAndNever).toBe<true>();
 
 declare const equalTupleIntersectionToBeNeverAndNeverExpanded: [0, 2] extends infer Tpl ? IsEqual<(BranchOnTupleMatches<Tpl> & BranchOnTupleDoesNotMatch<Tpl>), never> : never;
-expectType<true>(equalTupleIntersectionToBeNeverAndNeverExpanded);
+expectTypeOf(equalTupleIntersectionToBeNeverAndNeverExpanded).toBe<true>();
 
 declare const equalTupleIntersectionAndTuple: IsEqual<[{a: 1}] & [{a: 1}], [{a: 1}]>; // eslint-disable-line @typescript-eslint/no-duplicate-type-constituents
-expectType<true>(equalTupleIntersectionAndTuple);
+expectTypeOf(equalTupleIntersectionAndTuple).toBe<true>();
 
 // Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
 type Assignability<T, U, _V extends IsEqual<T, U>> = any;

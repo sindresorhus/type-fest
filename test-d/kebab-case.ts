@@ -1,132 +1,132 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {KebabCase} from '../index.d.ts';
 
 const kebabFromCamel: KebabCase<'fooBar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromCamel);
+expectTypeOf(kebabFromCamel).toBe<'foo-bar'>();
 
 const kebabFromPascal: KebabCase<'FooBar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromPascal);
+expectTypeOf(kebabFromPascal).toBe<'foo-bar'>();
 
 const kebabFromKebab: KebabCase<'foo-bar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromKebab);
+expectTypeOf(kebabFromKebab).toBe<'foo-bar'>();
 
 const kebabFromSpace: KebabCase<'foo bar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromSpace);
+expectTypeOf(kebabFromSpace).toBe<'foo-bar'>();
 
 const kebabFromSnake: KebabCase<'foo_bar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromSnake);
+expectTypeOf(kebabFromSnake).toBe<'foo-bar'>();
 
 const noKebabFromMono: KebabCase<'foobar'> = 'foobar';
-expectType<'foobar'>(noKebabFromMono);
+expectTypeOf(noKebabFromMono).toBe<'foobar'>();
 
 const kebabFromCamelPascal: KebabCase<'FooBar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromCamelPascal);
+expectTypeOf(kebabFromCamelPascal).toBe<'foo-bar'>();
 
 const kebabFromComplexKebab: KebabCase<'foo-bar-abc-123'> = 'foo-bar-abc-123';
-expectType<'foo-bar-abc-123'>(kebabFromComplexKebab);
+expectTypeOf(kebabFromComplexKebab).toBe<'foo-bar-abc-123'>();
 
 const kebabFromMixed: KebabCase<'foo-bar_abc xyzBarFoo'> =
 	'foo-bar-abc-xyz-bar-foo';
-expectType<'foo-bar-abc-xyz-bar-foo'>(kebabFromMixed);
+expectTypeOf(kebabFromMixed).toBe<'foo-bar-abc-xyz-bar-foo'>();
 
 const kebabFromVendorPrefixedCssProperty: KebabCase<'-webkit-animation'> =
 	'webkit-animation';
-expectType<'webkit-animation'>(kebabFromVendorPrefixedCssProperty);
+expectTypeOf(kebabFromVendorPrefixedCssProperty).toBe<'webkit-animation'>();
 
 const kebabFromDoublePrefixedKebab: KebabCase<'--very-prefixed'> =
 	'very-prefixed';
-expectType<'very-prefixed'>(kebabFromDoublePrefixedKebab);
+expectTypeOf(kebabFromDoublePrefixedKebab).toBe<'very-prefixed'>();
 
 const kebabFromRepeatedSeparators: KebabCase<'foo____bar'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromRepeatedSeparators);
+expectTypeOf(kebabFromRepeatedSeparators).toBe<'foo-bar'>();
 
 const kebabFromUppercase: KebabCase<'FOO'> = 'foo';
-expectType<'foo'>(kebabFromUppercase);
+expectTypeOf(kebabFromUppercase).toBe<'foo'>();
 
 const kebabFromLowercase: KebabCase<'foo'> = 'foo';
-expectType<'foo'>(kebabFromLowercase);
+expectTypeOf(kebabFromLowercase).toBe<'foo'>();
 
 const kebabFromScreamingSnakeCase: KebabCase<'FOO_BAR'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromScreamingSnakeCase);
+expectTypeOf(kebabFromScreamingSnakeCase).toBe<'foo-bar'>();
 
 const kebabFromScreamingKebabCase: KebabCase<'FOO-BAR'> = 'foo-bar';
-expectType<'foo-bar'>(kebabFromScreamingKebabCase);
+expectTypeOf(kebabFromScreamingKebabCase).toBe<'foo-bar'>();
 
 const kebabFromMixed2: KebabCase<'parseHTML'> = 'parse-html';
-expectType<'parse-html'>(kebabFromMixed2);
+expectTypeOf(kebabFromMixed2).toBe<'parse-html'>();
 
 const kebabFromMixed3: KebabCase<'parseHTMLItem'> = 'parse-html-item';
-expectType<'parse-html-item'>(kebabFromMixed3);
+expectTypeOf(kebabFromMixed3).toBe<'parse-html-item'>();
 
 const kebabFromNumberInTheMiddleSplitOnNumbers: KebabCase<'foo2bar', {splitOnNumbers: true}> = 'foo-2-bar';
-expectType<'foo-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbers);
+expectTypeOf(kebabFromNumberInTheMiddleSplitOnNumbers).toBe<'foo-2-bar'>();
 
 const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase: KebabCase<'foO2Bar', {splitOnNumbers: true}> = 'fo-o-2-bar';
-expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase);
+expectTypeOf(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase).toBe<'fo-o-2-bar'>();
 
 const kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2: KebabCase<'foO2bar', {splitOnNumbers: true}> = 'fo-o-2-bar';
-expectType<'fo-o-2-bar'>(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2);
+expectTypeOf(kebabFromNumberInTheMiddleSplitOnNumbersEdgeCase2).toBe<'fo-o-2-bar'>();
 
 const kebabFromNumberInTheMiddleNoSplitOnNumbers: KebabCase<'foo2bar'> = 'foo2bar';
-expectType<'foo2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbers);
+expectTypeOf(kebabFromNumberInTheMiddleNoSplitOnNumbers).toBe<'foo2bar'>();
 
 const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase: KebabCase<'foo2Bar'> = 'foo2-bar';
-expectType<'foo2-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase);
+expectTypeOf(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase).toBe<'foo2-bar'>();
 
 const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2: KebabCase<'foO2bar'> = 'fo-o2bar';
-expectType<'fo-o2bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2);
+expectTypeOf(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase2).toBe<'fo-o2bar'>();
 
 const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: KebabCase<'FOO22Bar'> = 'foo22-bar';
-expectType<'foo22-bar'>(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3);
+expectTypeOf(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3).toBe<'foo22-bar'>();
 
 // Punctuation
 declare const withPunctuation: KebabCase<'onDialog:close'>;
-expectType<'on-dialog:close'>(withPunctuation);
+expectTypeOf(withPunctuation).toBe<'on-dialog:close'>();
 
 declare const withPunctuationAndSplit: KebabCase<'onDialog:close', {splitOnPunctuation: true}>;
-expectType<'on-dialog-close'>(withPunctuationAndSplit);
+expectTypeOf(withPunctuationAndSplit).toBe<'on-dialog-close'>();
 
 declare const withPunctuation2: KebabCase<'foo-bar>>baz'>;
-expectType<'foo-bar>>baz'>(withPunctuation2);
+expectTypeOf(withPunctuation2).toBe<'foo-bar>>baz'>();
 
 declare const withPunctuationAndSplit2: KebabCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
-expectType<'foo-bar-baz'>(withPunctuationAndSplit2);
+expectTypeOf(withPunctuationAndSplit2).toBe<'foo-bar-baz'>();
 
 declare const withPunctuation3: KebabCase<'card::after'>;
-expectType<'card::after'>(withPunctuation3);
+expectTypeOf(withPunctuation3).toBe<'card::after'>();
 
 declare const withPunctuationAndSplit3: KebabCase<'card::after', {splitOnPunctuation: true}>;
-expectType<'card-after'>(withPunctuationAndSplit3);
+expectTypeOf(withPunctuationAndSplit3).toBe<'card-after'>();
 
 declare const withPunctuation4: KebabCase<'div.card::after'>;
-expectType<'div.card::after'>(withPunctuation4);
+expectTypeOf(withPunctuation4).toBe<'div.card::after'>();
 
 declare const withPunctuationAndSplit4: KebabCase<'div.card::after', {splitOnPunctuation: true}>;
-expectType<'div-card-after'>(withPunctuationAndSplit4);
+expectTypeOf(withPunctuationAndSplit4).toBe<'div-card-after'>();
 
 declare const withPunctuationAndNumber: KebabCase<'foo-bar::01'>;
-expectType<'foo-bar::01'>(withPunctuationAndNumber);
+expectTypeOf(withPunctuationAndNumber).toBe<'foo-bar::01'>();
 
 declare const withPunctuationSplitAndNumber: KebabCase<'foo-bar::01', {splitOnPunctuation: true}>;
-expectType<'foo-bar-01'>(withPunctuationSplitAndNumber);
+expectTypeOf(withPunctuationSplitAndNumber).toBe<'foo-bar-01'>();
 
 declare const withPunctuationSplitAndNumberSplit: KebabCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>;
-expectType<'foo-bar-01'>(withPunctuationSplitAndNumberSplit);
+expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'foo-bar-01'>();
 
 declare const withPunctuationAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true}>;
-expectType<'foo-bar::01'>(withPunctuationAndNumberSplit2);
+expectTypeOf(withPunctuationAndNumberSplit2).toBe<'foo-bar::01'>();
 
 declare const withPunctuationSplitAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
-expectType<'foo-bar-01'>(withPunctuationSplitAndNumberSplit2);
+expectTypeOf(withPunctuationSplitAndNumberSplit2).toBe<'foo-bar-01'>();
 
 // A delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo.-bar`.
-expectType<'foo.bar'>({} as KebabCase<'foo.Bar'>);
-expectType<'foo.bar'>({} as KebabCase<'foo .bar'>);
-expectType<'a.b.c'>({} as KebabCase<'a.b.c'>);
-expectType<'a-b.c'>({} as KebabCase<'a-b.c'>);
+expectTypeOf<KebabCase<'foo.Bar'>>().toBe<'foo.bar'>();
+expectTypeOf<KebabCase<'foo .bar'>>().toBe<'foo.bar'>();
+expectTypeOf<KebabCase<'a.b.c'>>().toBe<'a.b.c'>();
+expectTypeOf<KebabCase<'a-b.c'>>().toBe<'a-b.c'>();
 
-expectType<'a-b'>({} as KebabCase<'a\u{85}b'>);
+expectTypeOf<KebabCase<'a\u{85}b'>>().toBe<'a-b'>();
 
 // An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
-expectType<'user-id?'>({} as KebabCase<'userID?'>);
-expectType<'parse-json😀'>({} as KebabCase<'parseJSON😀'>);
+expectTypeOf<KebabCase<'userID?'>>().toBe<'user-id?'>();
+expectTypeOf<KebabCase<'parseJSON😀'>>().toBe<'parse-json😀'>();

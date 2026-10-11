@@ -1,15 +1,15 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {RequireNone} from '../../source/internal/index.d.ts';
 
 type NoneAllowed = RequireNone<'foo' | 'bar'>;
 
-expectAssignable<NoneAllowed>({});
-expectNotAssignable<NoneAllowed>({foo: 'foo'});
-expectNotAssignable<NoneAllowed>({bar: 'bar'});
-expectNotAssignable<NoneAllowed>({foo: 'foo', bar: 'bar'});
+({}) satisfies NoneAllowed;
+expectTypeOf<{foo: 'foo'}>().not.toBeAssignableTo<NoneAllowed>();
+expectTypeOf<{bar: 'bar'}>().not.toBeAssignableTo<NoneAllowed>();
+expectTypeOf<{foo: 'foo'; bar: 'bar'}>().not.toBeAssignableTo<NoneAllowed>();
 
 type SomeAllowed = Record<'bar', string> & RequireNone<'foo'>;
 
-expectAssignable<SomeAllowed>({bar: 'bar'});
-expectNotAssignable<SomeAllowed>({foo: 'foo'});
-expectNotAssignable<SomeAllowed>({foo: 'foo', bar: 'bar'});
+({bar: 'bar'}) satisfies SomeAllowed;
+expectTypeOf<{foo: 'foo'}>().not.toBeAssignableTo<SomeAllowed>();
+expectTypeOf<{foo: 'foo'; bar: 'bar'}>().not.toBeAssignableTo<SomeAllowed>();

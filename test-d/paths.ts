@@ -1,9 +1,9 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Paths, UnknownArray} from '../index.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
 declare const normal: Paths<{foo: string}>;
-expectType<'foo'>(normal);
+expectTypeOf(normal).toBe<'foo'>();
 
 type DeepObject = {
 	a: {
@@ -18,116 +18,116 @@ type DeepObject = {
 };
 declare const deepObject: Paths<DeepObject>;
 type DeepPath = 'a' | 'a.b' | 'a.b2' | 'a.b3' | 'a.b.c' | 'a.b.c.d' | `a.b2.${number}`;
-expectType<DeepPath>(deepObject);
+expectTypeOf(deepObject).toBe<DeepPath>();
 
 // Test for interface
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface InterfaceType extends DeepObject {}
 declare const interfaceType: Paths<InterfaceType>;
-expectType<DeepPath>(interfaceType);
+expectTypeOf(interfaceType).toBe<DeepPath>();
 
 declare const emptyObject: Paths<{}>;
-expectType<never>(emptyObject);
+expectTypeOf(emptyObject).toBe<never>();
 
 declare const emptyArray: Paths<[]>;
-expectType<never>(emptyArray);
+expectTypeOf(emptyArray).toBe<never>();
 
 declare const symbol: Paths<{[Symbol.iterator]: string}>;
-expectType<never>(symbol);
+expectTypeOf(symbol).toBe<never>();
 
 declare const never: Paths<never>;
-expectType<never>(never);
+expectTypeOf(never).toBe<never>();
 
 declare const date: Paths<{foo: Date}>;
-expectType<'foo'>(date);
+expectTypeOf(date).toBe<'foo'>();
 
 declare const mixed: Paths<{foo: boolean} | {bar: string}>;
-expectType<'foo' | 'bar'>(mixed);
+expectTypeOf(mixed).toBe<'foo' | 'bar'>();
 
 declare const array: Paths<Array<{foo: string}>>;
-expectType<number | `${number}` | `${number}.foo`>(array);
+expectTypeOf(array).toBe<number | `${number}` | `${number}.foo`>();
 
 declare const tuple: Paths<[{foo: string}]>;
-expectType<'0' | '0.foo'>(tuple);
+expectTypeOf(tuple).toBe<'0' | '0.foo'>();
 
 declare const deeplist: Paths<{foo: Array<{bar: boolean[]}>}>;
-expectType<'foo' | `foo.${number}` | `foo.${number}.bar` | `foo.${number}.bar.${number}`>(deeplist);
+expectTypeOf(deeplist).toBe<'foo' | `foo.${number}` | `foo.${number}.bar` | `foo.${number}.bar.${number}`>();
 
 declare const readonly: Paths<{foo: Readonly<{bar: string}>}>;
-expectType<'foo' | 'foo.bar'>(readonly);
+expectTypeOf(readonly).toBe<'foo' | 'foo.bar'>();
 
 declare const readonlyArray: Paths<{foo: readonly string[]}>;
-expectType<'foo' | `foo.${number}`>(readonlyArray);
+expectTypeOf(readonlyArray).toBe<'foo' | `foo.${number}`>();
 
 declare const optional: Paths<{foo?: {bar?: number}}>;
-expectType<'foo' | 'foo.bar'>(optional);
+expectTypeOf(optional).toBe<'foo' | 'foo.bar'>();
 
 declare const record: Paths<Record<'a', any>>;
-expectType<'a'>(record);
+expectTypeOf(record).toBe<'a'>();
 
 declare const record2: Paths<Record<1, unknown>>;
-expectType<1 | '1'>(record2);
+expectTypeOf(record2).toBe<1 | '1'>();
 
 declare const map: Paths<{foo?: {bar?: Map<string, number>}}>;
-expectType<'foo' | 'foo.bar'>(map);
+expectTypeOf(map).toBe<'foo' | 'foo.bar'>();
 
 declare const map2: Paths<Map<string, number>>;
-expectType<never>(map2);
+expectTypeOf(map2).toBe<never>();
 
 declare const readonlyMap: Paths<{foo?: {bar?: ReadonlyMap<string, number>}}>;
-expectType<'foo' | 'foo.bar'>(readonlyMap);
+expectTypeOf(readonlyMap).toBe<'foo' | 'foo.bar'>();
 
 declare const readonlyMap2: Paths<ReadonlyMap<string, number>>;
-expectType<never>(readonlyMap2);
+expectTypeOf(readonlyMap2).toBe<never>();
 
 declare const weakMap: Paths<{foo?: {bar?: WeakMap<{a: string}, number>}}>;
-expectType<'foo' | 'foo.bar'>(weakMap);
+expectTypeOf(weakMap).toBe<'foo' | 'foo.bar'>();
 
 declare const weakMap2: Paths<WeakMap<{a: string}, number>>;
-expectType<never>(weakMap2);
+expectTypeOf(weakMap2).toBe<never>();
 
 declare const set: Paths<{foo?: {bar?: Set<string>}}>;
-expectType<'foo' | 'foo.bar'>(set);
+expectTypeOf(set).toBe<'foo' | 'foo.bar'>();
 
 declare const set2: Paths<Set<string>>;
-expectType<never>(set2);
+expectTypeOf(set2).toBe<never>();
 
 declare const readonlySet: Paths<{foo?: {bar?: ReadonlySet<string>}}>;
-expectType<'foo' | 'foo.bar'>(readonlySet);
+expectTypeOf(readonlySet).toBe<'foo' | 'foo.bar'>();
 
 declare const readonlySet2: Paths<ReadonlySet<string>>;
-expectType<never>(readonlySet2);
+expectTypeOf(readonlySet2).toBe<never>();
 
 declare const weakSet: Paths<{foo?: {bar?: WeakSet<{a: string}>}}>;
-expectType<'foo' | 'foo.bar'>(weakSet);
+expectTypeOf(weakSet).toBe<'foo' | 'foo.bar'>();
 
 declare const weakSet2: Paths<WeakSet<{a: string}>>;
-expectType<never>(weakSet2);
+expectTypeOf(weakSet2).toBe<never>();
 
 declare const nonRecursives: Paths<{a: NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>}>;
-expectType<'a'>(nonRecursives);
+expectTypeOf(nonRecursives).toBe<'a'>();
 
 // Test for unknown length array
 declare const trailingSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>]>;
-expectType<number | `${number}` | '0.a' | `${number}.b`>(trailingSpreadTuple);
+expectTypeOf(trailingSpreadTuple).toBe<number | `${number}` | '0.a' | `${number}.b`>();
 
 declare const trailingSpreadTuple1: Paths<[{a: string}, {b: number}, ...Array<{c: number}>]>;
-expectType<number | `${number}` | '0.a' | '1.b' | `${number}.c`>(trailingSpreadTuple1);
+expectTypeOf(trailingSpreadTuple1).toBe<number | `${number}` | '0.a' | '1.b' | `${number}.c`>();
 
 declare const optionalElementsWithTrailingSpreadTuple: Paths<{foo: [{a: string}, ({b: number})?, ...Array<{c: number}>]}>;
-expectType<'foo' | `foo.${number}` | 'foo.0.a' | 'foo.1.b' | `foo.${number}.c`>(optionalElementsWithTrailingSpreadTuple);
+expectTypeOf(optionalElementsWithTrailingSpreadTuple).toBe<'foo' | `foo.${number}` | 'foo.0.a' | 'foo.1.b' | `foo.${number}.c`>();
 
 declare const optionalElementsWithTrailingSpreadTuple1: Paths<[({a: string})?, ({b: number})?, ...Array<{c: number}>]>;
-expectType<number | `${number}` | '0.a' | '1.b' | `${number}.c`>(optionalElementsWithTrailingSpreadTuple1);
+expectTypeOf(optionalElementsWithTrailingSpreadTuple1).toBe<number | `${number}` | '0.a' | '1.b' | `${number}.c`>();
 
 declare const leadingSpreadTuple: Paths<[...Array<{a: string}>, {b: number}]>;
-expectType<number | `${number}` | `${number}.b` | `${number}.a`>(leadingSpreadTuple);
+expectTypeOf(leadingSpreadTuple).toBe<number | `${number}` | `${number}.b` | `${number}.a`>();
 
 declare const leadingSpreadTuple1: Paths<[...Array<{a: string}>, {b: number}, {c: number}]>;
-expectType<number | `${number}` | `${number}.b` | `${number}.c` | `${number}.a`>(leadingSpreadTuple1);
+expectTypeOf(leadingSpreadTuple1).toBe<number | `${number}` | `${number}.b` | `${number}.c` | `${number}.a`>();
 
 declare const middleSpreadTuple: Paths<[{a: string}, ...Array<{b: number}>, {c: boolean}]>;
-expectType<number | `${number}` | '0.a' | `${number}.b` | `${number}.c`>(middleSpreadTuple);
+expectTypeOf(middleSpreadTuple).toBe<number | `${number}` | '0.a' | `${number}.b` | `${number}.c`>();
 
 // Circularly references
 type MyEntity = {
@@ -137,396 +137,396 @@ type MyOtherEntity = {
 	myEntity?: MyEntity;
 };
 type MyEntityPaths = Paths<MyEntity>;
-expectAssignable<string>({} as MyEntityPaths);
+expectTypeOf<MyEntityPaths>().toBeAssignableTo<string>();
 
 // By default, the recursion limit should be reasonably long
 type RecursiveFoo = {foo: RecursiveFoo};
-expectAssignable<Paths<RecursiveFoo, {maxRecursionDepth: 10}>>('foo.foo.foo.foo.foo.foo.foo.foo');
+expectTypeOf<'foo.foo.foo.foo.foo.foo.foo.foo'>().toBeAssignableTo<Paths<RecursiveFoo, {maxRecursionDepth: 10}>>();
 
 declare const recursion0: Paths<RecursiveFoo, {maxRecursionDepth: 0}>;
-expectType<'foo'>(recursion0);
+expectTypeOf(recursion0).toBe<'foo'>();
 
 declare const recursion1: Paths<RecursiveFoo, {maxRecursionDepth: 1}>;
-expectType<'foo' | 'foo.foo'>(recursion1);
+expectTypeOf(recursion1).toBe<'foo' | 'foo.foo'>();
 
 // Test a[0].b style
 type Object1 = {
 	arr: [{a: string}];
 };
-expectType<Paths<Object1, {bracketNotation: true}>>({} as 'arr' | 'arr[0]' | 'arr[0].a');
+expectTypeOf<'arr' | 'arr[0]' | 'arr[0].a'>().toBe<Paths<Object1, {bracketNotation: true}>>();
 
 type Object2 = {
 	arr: Array<{a: string}>;
 	arr1: string[];
 };
-expectType<Paths<Object2, {bracketNotation: true}>>({} as 'arr' | 'arr1' | `arr[${number}]` | `arr[${number}].a` | `arr1[${number}]`);
+expectTypeOf<'arr' | 'arr1' | `arr[${number}]` | `arr[${number}].a` | `arr1[${number}]`>().toBe<Paths<Object2, {bracketNotation: true}>>();
 
 type Object3 = {
 	1: 'foo';
 	'2': 'bar';
 };
-expectType<Paths<Object3, {bracketNotation: true}>>({} as '[1]' | '[2]');
+expectTypeOf<'[1]' | '[2]'>().toBe<Paths<Object3, {bracketNotation: true}>>();
 
 type Object4 = {
 	1: {
 		a: string;
 	};
 };
-expectType<Paths<Object4, {bracketNotation: true}>>({} as '[1]' | '[1].a');
+expectTypeOf<'[1]' | '[1].a'>().toBe<Paths<Object4, {bracketNotation: true}>>();
 
 type Object5 = {
 	1: {
 		2: string;
 	};
 };
-expectType<Paths<Object5, {bracketNotation: true}>>({} as '[1]' | '[1][2]');
+expectTypeOf<'[1]' | '[1][2]'>().toBe<Paths<Object5, {bracketNotation: true}>>();
 
 type deepArray = {
 	arr: Array<Array<Array<{a: string}>>>;
 };
-expectType<Paths<deepArray, {bracketNotation: true}>>({} as 'arr' | `arr[${number}]` | `arr[${number}][${number}]` | `arr[${number}][${number}][${number}]` | `arr[${number}][${number}][${number}].a`);
+expectTypeOf<'arr' | `arr[${number}]` | `arr[${number}][${number}]` | `arr[${number}][${number}][${number}]` | `arr[${number}][${number}][${number}].a`>().toBe<Paths<deepArray, {bracketNotation: true}>>();
 
 type RecursionArray = RecursionArray[];
 type RecursionArrayPaths = Paths<RecursionArray, {bracketNotation: true; maxRecursionDepth: 3}>;
-expectAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}]`);
-expectNotAssignable<RecursionArrayPaths>({} as `[${number}][${number}][${number}][${number}][${number}]`);
+expectTypeOf<`[${number}][${number}][${number}][${number}]`>().toBeAssignableTo<RecursionArrayPaths>();
+expectTypeOf<`[${number}][${number}][${number}][${number}][${number}]`>().not.toBeAssignableTo<RecursionArrayPaths>();
 
 // -- leavesOnly option --
 
 declare const leaves: Paths<{a: {b: string; c?: Date; d: (x: string) => number; e: Map<string, string>; f?: {g?: Set<string>}}; h: boolean}, {leavesOnly: true}>;
-expectType<'a.b' | 'a.c' | 'a.d' | 'a.e' | 'a.f.g' | 'h'>(leaves);
+expectTypeOf(leaves).toBe<'a.b' | 'a.c' | 'a.d' | 'a.e' | 'a.f.g' | 'h'>();
 
 declare const unionLeaves: Paths<{a: {b?: number}} | {a: string; b?: {c: string}}, {leavesOnly: true}>;
-expectType<'a.b' | 'a' | 'b.c'>(unionLeaves);
+expectTypeOf(unionLeaves).toBe<'a.b' | 'a' | 'b.c'>();
 
 declare const unionLeaves1: Paths<{a: {} | {c: number}}, {leavesOnly: true}>;
-expectType<'a' | 'a.c'>(unionLeaves1);
+expectTypeOf(unionLeaves1).toBe<'a' | 'a.c'>();
 
 declare const unionLeaves2: Paths<{a: {[x: string]: number} | {c: number}}, {leavesOnly: true}>;
-expectType<`a.${string}`>(unionLeaves2); // Collapsed union
+expectTypeOf(unionLeaves2).toBe<`a.${string}`>(); // Collapsed union
 
 declare const unionLeaves3: Paths<{a: string | {toLowerCase: number}}, {leavesOnly: true}>;
-expectType<'a' | 'a.toLowerCase'>(unionLeaves3);
+expectTypeOf(unionLeaves3).toBe<'a' | 'a.toLowerCase'>();
 
 declare const unionLeaves4: Paths<{a: {b: string} | {c: string}}, {leavesOnly: true}>; // No common keys b/w `{b: string}` and `{c: string}`, but this shouldn't make `a` a leaf.
-expectType<'a.b' | 'a.c'>(unionLeaves4);
+expectTypeOf(unionLeaves4).toBe<'a.b' | 'a.c'>();
 
 declare const emptyObjectLeaves: Paths<{a: {}}, {leavesOnly: true}>;
-expectType<'a'>(emptyObjectLeaves);
+expectTypeOf(emptyObjectLeaves).toBe<'a'>();
 
 declare const emptyArrayLeaves: Paths<{a: []}, {leavesOnly: true}>;
-expectType<'a'>(emptyArrayLeaves);
+expectTypeOf(emptyArrayLeaves).toBe<'a'>();
 
 declare const readonlyEmptyArrayLeaves: Paths<{a: readonly []}, {leavesOnly: true}>;
-expectType<'a'>(readonlyEmptyArrayLeaves);
+expectTypeOf(readonlyEmptyArrayLeaves).toBe<'a'>();
 
 declare const arrayLeaves: Paths<string[], {leavesOnly: true}>;
-expectType<number | `${number}`>(arrayLeaves);
+expectTypeOf(arrayLeaves).toBe<number | `${number}`>();
 
 declare const tupleLeaves: Paths<[string, number?], {leavesOnly: true}>;
-expectType<'0' | '1'>(tupleLeaves);
+expectTypeOf(tupleLeaves).toBe<'0' | '1'>();
 
 declare const objectArrayLeaves: Paths<Array<{a: number}>, {leavesOnly: true}>;
-expectType<`${number}.a`>(objectArrayLeaves);
+expectTypeOf(objectArrayLeaves).toBe<`${number}.a`>();
 
 declare const objectTupleLeaves: Paths<readonly [{a?: number}?], {leavesOnly: true}>;
-expectType<'0.a'>(objectTupleLeaves);
+expectTypeOf(objectTupleLeaves).toBe<'0.a'>();
 
 declare const deepArrayLeaves: Paths<{a?: {b: readonly string[]}; c: boolean[]}, {leavesOnly: true}>;
-expectType<`a.b.${number}` | `c.${number}`>(deepArrayLeaves);
+expectTypeOf(deepArrayLeaves).toBe<`a.b.${number}` | `c.${number}`>();
 
 declare const deepTupleLeaves: Paths<{a: {b: [string, number]}}, {leavesOnly: true}>;
-expectType<'a.b.0' | 'a.b.1'>(deepTupleLeaves);
+expectTypeOf(deepTupleLeaves).toBe<'a.b.0' | 'a.b.1'>();
 
 declare const deepObjectArrayLeaves: Paths<{a: {b: ReadonlyArray<{readonly c?: number; d: string}>}}, {leavesOnly: true}>;
-expectType<`a.b.${number}.c` | `a.b.${number}.d`>(deepObjectArrayLeaves);
+expectTypeOf(deepObjectArrayLeaves).toBe<`a.b.${number}.c` | `a.b.${number}.d`>();
 
 declare const deepObjectTupleLeaves: Paths<{a: {readonly b: [{readonly c: string}, {d?: number}]}}, {leavesOnly: true}>;
-expectType<'a.b.0.c' | 'a.b.1.d'>(deepObjectTupleLeaves);
+expectTypeOf(deepObjectTupleLeaves).toBe<'a.b.0.c' | 'a.b.1.d'>();
 
 declare const nestedArrayLeaves: Paths<{a?: Array<Array<Array<{b: string}>>>}, {leavesOnly: true}>;
-expectType<`a.${number}.${number}.${number}.b`>(nestedArrayLeaves);
+expectTypeOf(nestedArrayLeaves).toBe<`a.${number}.${number}.${number}.b`>();
 
 declare const nestedTupleLeaves: Paths<{a: [[[{b: string}]]?]}, {leavesOnly: true}>;
-expectType<'a.0.0.0.b'>(nestedTupleLeaves);
+expectTypeOf(nestedTupleLeaves).toBe<'a.0.0.0.b'>();
 
 declare const trailingSpreadLeaves: Paths<[{a: string}, ...Array<{b: number}>], {leavesOnly: true}>;
-expectType<'0.a' | `${number}.b`>(trailingSpreadLeaves);
+expectTypeOf(trailingSpreadLeaves).toBe<'0.a' | `${number}.b`>();
 
 declare const trailingSpreadLeaves1: Paths<[{a: string}, {b: number}, ...Array<{c?: number}>], {leavesOnly: true}>;
-expectType<'0.a' | '1.b' | `${number}.c`>(trailingSpreadLeaves1);
+expectTypeOf(trailingSpreadLeaves1).toBe<'0.a' | '1.b' | `${number}.c`>();
 
 declare const leadingSpreadLeaves: Paths<[...Array<{a?: string}>, {readonly b: number}], {leavesOnly: true}>;
-expectType<`${number}.a` | `${number}.b`>(leadingSpreadLeaves);
+expectTypeOf(leadingSpreadLeaves).toBe<`${number}.a` | `${number}.b`>();
 
 declare const leadingSpreadLeaves1: Paths<[...Array<{a?: string}>, {readonly b: number}, {c: number}], {leavesOnly: true}>;
-expectType<`${number}.a` | `${number}.b` | `${number}.c`>(leadingSpreadLeaves1);
+expectTypeOf(leadingSpreadLeaves1).toBe<`${number}.a` | `${number}.b` | `${number}.c`>();
 
 declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 10}>;
-expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveLeaves);
+expectTypeOf(recursiveLeaves).toBe<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
 
 declare const recursiveWithMaxLeaves: Paths<RecursiveFoo, {maxRecursionDepth: 0; leavesOnly: true}>;
-expectType<'foo'>(recursiveWithMaxLeaves);
+expectTypeOf(recursiveWithMaxLeaves).toBe<'foo'>();
 
 declare const recursiveWithMaxLeaves1: Paths<RecursiveFoo, {maxRecursionDepth: 1; leavesOnly: true}>;
-expectType<'foo.foo'>(recursiveWithMaxLeaves1);
+expectTypeOf(recursiveWithMaxLeaves1).toBe<'foo.foo'>();
 
 declare const recursiveArrayLeaves: Paths<RecursionArray, {bracketNotation: true; maxRecursionDepth: 2; leavesOnly: true}>;
-expectType<`[${number}][${number}][${number}]`>(recursiveArrayLeaves);
+expectTypeOf(recursiveArrayLeaves).toBe<`[${number}][${number}][${number}]`>();
 
 declare const bracketArrayLeaves: Paths<{a: Array<{b: string; c?: string}>}, {bracketNotation: true; leavesOnly: true}>;
-expectType<`a[${number}].b` | `a[${number}].c`>(bracketArrayLeaves);
+expectTypeOf(bracketArrayLeaves).toBe<`a[${number}].b` | `a[${number}].c`>();
 
 declare const bracketTupleLeaves: Paths<{a: [{b?: string}, {c: string}]}, {bracketNotation: true; leavesOnly: true}>;
-expectType<'a[0].b' | 'a[1].c'>(bracketTupleLeaves);
+expectTypeOf(bracketTupleLeaves).toBe<'a[0].b' | 'a[1].c'>();
 
 declare const bracketNumericLeaves: Paths<{a: {1: string; 2: number}}, {bracketNotation: true; leavesOnly: true}>;
-expectType<'a[1]' | 'a[2]'>(bracketNumericLeaves);
+expectTypeOf(bracketNumericLeaves).toBe<'a[1]' | 'a[2]'>();
 
 declare const bracketNestedArrayLeaves: Paths<{a: Array<Array<Array<{b: string}>>>}, {bracketNotation: true; leavesOnly: true}>;
-expectType<`a[${number}][${number}][${number}].b`>(bracketNestedArrayLeaves);
+expectTypeOf(bracketNestedArrayLeaves).toBe<`a[${number}][${number}][${number}].b`>();
 
 declare const mapLeaves: Paths<{a: {b: Map<string, number>; c: ReadonlyMap<string, number>}; d: WeakMap<{a: string}, number>}, {leavesOnly: true}>;
-expectType<'a.b' | 'a.c' | 'd'>(mapLeaves);
+expectTypeOf(mapLeaves).toBe<'a.b' | 'a.c' | 'd'>();
 
 declare const setLeaves: Paths<{a: {b: Set<string>; c: ReadonlySet<string>}; d: WeakSet<{a: string}>}, {leavesOnly: true}>;
-expectType<'a.b' | 'a.c' | 'd'>(setLeaves);
+expectTypeOf(setLeaves).toBe<'a.b' | 'a.c' | 'd'>();
 
 declare const unknownLeaves: Paths<{a: {b: unknown}}, {leavesOnly: true}>;
-expectType<'a.b'>(unknownLeaves);
+expectTypeOf(unknownLeaves).toBe<'a.b'>();
 
 declare const anyLeaves: Paths<{a: {b: any}}, {leavesOnly: true}>;
-expectType<'a.b'>(anyLeaves);
+expectTypeOf(anyLeaves).toBe<'a.b'>();
 
 declare const neverLeaves: Paths<{a: {b: never}}, {leavesOnly: true}>;
-expectType<'a.b'>(neverLeaves);
+expectTypeOf(neverLeaves).toBe<'a.b'>();
 
 // -- depth option --
 declare const zeroDepth: Paths<DeepObject, {depth: 0}>;
-expectType<'a'>(zeroDepth);
+expectTypeOf(zeroDepth).toBe<'a'>();
 
 declare const oneDepth: Paths<DeepObject, {depth: 1}>;
-expectType<'a.b' | 'a.b2' | 'a.b3'>(oneDepth);
+expectTypeOf(oneDepth).toBe<'a.b' | 'a.b2' | 'a.b3'>();
 
 declare const twoDepth: Paths<DeepObject, {depth: 2}>;
-expectType<'a.b.c' | `a.b2.${number}`>(twoDepth);
+expectTypeOf(twoDepth).toBe<'a.b.c' | `a.b2.${number}`>();
 
 declare const threeDepth: Paths<DeepObject, {depth: 3}>;
-expectType<'a.b.c.d'>(threeDepth);
+expectTypeOf(threeDepth).toBe<'a.b.c.d'>();
 
 declare const unionDepth: Paths<{a: {readonly b?: string}} | {x: {y?: {z: number}}}, {depth: 1}>;
-expectType<'a.b' | 'x.y'>(unionDepth);
+expectTypeOf(unionDepth).toBe<'a.b' | 'x.y'>();
 
 declare const unionDepth2: Paths<{a?: {b: string; readonly c: {d?: string}}} | {readonly x?: {y: string}}, {depth: 2}>;
-expectType<'a.c.d'>(unionDepth2);
+expectTypeOf(unionDepth2).toBe<'a.c.d'>();
 
 declare const unionDepth3: Paths<DeepObject, {depth: 0 | 3}>;
-expectType<'a' | 'a.b.c.d'>(unionDepth3);
+expectTypeOf(unionDepth3).toBe<'a' | 'a.b.c.d'>();
 
 declare const unionDepth4: Paths<{a?: {b: string; readonly c: {d?: [string, number]}}} | {readonly x?: {y: string}}, {depth: 1 | 3}>;
-expectType<'a.b' | 'a.c' | 'x.y' | 'a.c.d.0' | 'a.c.d.1'>(unionDepth4);
+expectTypeOf(unionDepth4).toBe<'a.b' | 'a.c' | 'x.y' | 'a.c.d.0' | 'a.c.d.1'>();
 
 declare const unionDepth5: Paths<{a: {b?: string}} | {x: {y?: {z: number}}}, {depth: 0 | 2}>;
-expectType<'a' | 'x' | 'x.y.z'>(unionDepth5);
+expectTypeOf(unionDepth5).toBe<'a' | 'x' | 'x.y.z'>();
 
 declare const unreachableDepth: Paths<DeepObject, {depth: 4}>;
-expectType<never>(unreachableDepth);
+expectTypeOf(unreachableDepth).toBe<never>();
 
 declare const unreachableDepth2: Paths<{a: {}}, {depth: 1}>;
-expectType<never>(unreachableDepth2);
+expectTypeOf(unreachableDepth2).toBe<never>();
 
 declare const unreachableDepth3: Paths<{a: readonly []}, {depth: 1}>;
-expectType<never>(unreachableDepth3);
+expectTypeOf(unreachableDepth3).toBe<never>();
 
 declare const unreachableAndReachableDepth: Paths<{a: {b: string}}, {depth: 1 | 2}>;
-expectType<'a.b'>(unreachableAndReachableDepth);
+expectTypeOf(unreachableAndReachableDepth).toBe<'a.b'>();
 
 declare const maxLessThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 3}>;
-expectType<never>(maxLessThanDepth);
+expectTypeOf(maxLessThanDepth).toBe<never>();
 
 declare const maxLessThanDepth2: Paths<RecursiveFoo, {depth: 12}>; // Default `maxRecursionDepth` is 10
-expectType<never>(maxLessThanDepth2);
+expectTypeOf(maxLessThanDepth2).toBe<never>();
 
 declare const maxSimilarToDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 2}>;
-expectType<'a.b.c' | `a.b2.${number}`>(maxSimilarToDepth);
+expectTypeOf(maxSimilarToDepth).toBe<'a.b.c' | `a.b2.${number}`>();
 
 declare const maxSimilarToDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 0; depth: 0}>;
-expectType<'foo'>(maxSimilarToDepth2);
+expectTypeOf(maxSimilarToDepth2).toBe<'foo'>();
 
 declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10; maxRecursionDepth: 10}>; // Default `maxRecursionDepth` is 10
-expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(maxSimilarToDepth3);
+expectTypeOf(maxSimilarToDepth3).toBe<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
 
 declare const maxMoreThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 1}>;
-expectType<'a.b' | 'a.b2' | 'a.b3'>(maxMoreThanDepth);
+expectTypeOf(maxMoreThanDepth).toBe<'a.b' | 'a.b2' | 'a.b3'>();
 
 declare const maxMoreThanDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 6; depth: 3}>;
-expectType<'foo.foo.foo.foo'>(maxMoreThanDepth2);
+expectTypeOf(maxMoreThanDepth2).toBe<'foo.foo.foo.foo'>();
 
 declare const maxMoreAndLessThanDepth: Paths<RecursionArray, {maxRecursionDepth: 2; depth: 1 | 3}>;
-expectType<`${number}.${number}`>(maxMoreAndLessThanDepth);
+expectTypeOf(maxMoreAndLessThanDepth).toBe<`${number}.${number}`>();
 
 declare const maxLessAndSimilarThanDepth: Paths<RecursionArray, {maxRecursionDepth: 1; depth: 0 | 1}>;
-expectType<number | `${number}` | `${number}.${number}`>(maxLessAndSimilarThanDepth);
+expectTypeOf(maxLessAndSimilarThanDepth).toBe<number | `${number}` | `${number}.${number}`>();
 
 declare const maxSimilarAndMoreThanDepth: Paths<RecursionArray, {maxRecursionDepth: 2; depth: 2 | 3}>;
-expectType<`${number}.${number}.${number}`>(maxSimilarAndMoreThanDepth);
+expectTypeOf(maxSimilarAndMoreThanDepth).toBe<`${number}.${number}.${number}`>();
 
 declare const noLeavesAtDepth: Paths<DeepObject, {leavesOnly: true; depth: 0}>;
-expectType<never>(noLeavesAtDepth);
+expectTypeOf(noLeavesAtDepth).toBe<never>();
 
 declare const onlyLeavesAtDepth: Paths<DeepObject, {leavesOnly: true; depth: 1}>;
-expectType<'a.b3'>(onlyLeavesAtDepth);
+expectTypeOf(onlyLeavesAtDepth).toBe<'a.b3'>();
 
 declare const onlyLeavesAtDepth2: Paths<DeepObject, {leavesOnly: true; depth: 2}>;
-expectType<`a.b2.${number}`>(onlyLeavesAtDepth2);
+expectTypeOf(onlyLeavesAtDepth2).toBe<`a.b2.${number}`>();
 
 declare const deepArrayDepth: Paths<{a?: {b: readonly string[]}; c: boolean[]}, {depth: 0 | 2}>;
-expectType<'a' | 'c' | `a.b.${number}`>(deepArrayDepth);
+expectTypeOf(deepArrayDepth).toBe<'a' | 'c' | `a.b.${number}`>();
 
 declare const deepTupleDepth: Paths<{a: {b: [string, number]}}, {depth: 2}>;
-expectType<'a.b.0' | 'a.b.1'>(deepTupleDepth);
+expectTypeOf(deepTupleDepth).toBe<'a.b.0' | 'a.b.1'>();
 
 declare const deepObjectArrayDepth: Paths<{a: {b: ReadonlyArray<{readonly c?: number; d: string}>}}, {depth: 1 | 3}>;
-expectType<'a.b' | `a.b.${number}.c` | `a.b.${number}.d`>(deepObjectArrayDepth);
+expectTypeOf(deepObjectArrayDepth).toBe<'a.b' | `a.b.${number}.c` | `a.b.${number}.d`>();
 
 declare const deepObjectTupleDepth: Paths<{a: {readonly b: [{readonly c: string}, {d?: [number]}]}}, {leavesOnly: true; depth: 3}>;
-expectType<'a.b.0.c'>(deepObjectTupleDepth);
+expectTypeOf(deepObjectTupleDepth).toBe<'a.b.0.c'>();
 
 declare const nestedArrayDepth: Paths<{a?: Array<Array<Array<{b: string}>>>}, {depth: 1 | 2 | 3}>;
-expectType<`a.${number}` | `a.${number}.${number}` | `a.${number}.${number}.${number}`>(nestedArrayDepth);
+expectTypeOf(nestedArrayDepth).toBe<`a.${number}` | `a.${number}.${number}` | `a.${number}.${number}.${number}`>();
 
 declare const nestedTupleDepth: Paths<{a: [[[{b: string}]]?]}, {depth: 0 | 4}>;
-expectType<'a' | 'a.0.0.0.b'>(nestedTupleDepth);
+expectTypeOf(nestedTupleDepth).toBe<'a' | 'a.0.0.0.b'>();
 
 declare const recursiveDepth: Paths<RecursiveFoo, {depth: 4}>;
-expectType<'foo.foo.foo.foo.foo'>(recursiveDepth);
+expectTypeOf(recursiveDepth).toBe<'foo.foo.foo.foo.foo'>();
 
 declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8; maxRecursionDepth: 10}>;
-expectType<'foo.foo' | 'foo.foo.foo.foo' | 'foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth2);
+expectTypeOf(recursiveDepth2).toBe<'foo.foo' | 'foo.foo.foo.foo' | 'foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
 
 // For recursive types, leaves are at `maxRecursionDepth`
 declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10}>;
-expectType<never>(recursiveDepth3);
+expectTypeOf(recursiveDepth3).toBe<never>();
 
 declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10; maxRecursionDepth: 10}>; // No leaves at depth `5`
-expectType<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>(recursiveDepth4);
+expectTypeOf(recursiveDepth4).toBe<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
 
 declare const recursiveDepth6: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 6; depth: 5}>; // Leaves are at depth `6`
-expectType<never>(recursiveDepth6);
+expectTypeOf(recursiveDepth6).toBe<never>();
 
 declare const maxLeavesAndDepth: Paths<DeepObject, {leavesOnly: true; maxRecursionDepth: 2; depth: 2}>; // All depth `2` paths are leaves
-expectType<'a.b.c' | `a.b2.${number}`>(maxLeavesAndDepth);
+expectTypeOf(maxLeavesAndDepth).toBe<'a.b.c' | `a.b2.${number}`>();
 
 declare const maxLeavesAndDepth2: Paths<DeepObject, {leavesOnly: true; maxRecursionDepth: 2; depth: 0 | 1 | 2}>;
-expectType<'a.b3' | 'a.b.c' | `a.b2.${number}`>(maxLeavesAndDepth2);
+expectTypeOf(maxLeavesAndDepth2).toBe<'a.b3' | 'a.b.c' | `a.b2.${number}`>();
 
 declare const recursiveBracketDepth: Paths<RecursionArray, {bracketNotation: true; depth: 3}>;
-expectType<`[${number}][${number}][${number}][${number}]`>(recursiveBracketDepth);
+expectTypeOf(recursiveBracketDepth).toBe<`[${number}][${number}][${number}][${number}]`>();
 
 declare const recursiveBracketDepth2: Paths<RecursionArray, {bracketNotation: true; leavesOnly: true; depth: 3}>; // Leaves are at depth `10`
-expectType<never>(recursiveBracketDepth2);
+expectTypeOf(recursiveBracketDepth2).toBe<never>();
 
 declare const bracketArrayDepth: Paths<{a: Array<{b: string; c?: string}>}, {bracketNotation: true; depth: 1 | 2}>;
-expectType<`a[${number}]` | `a[${number}].b` | `a[${number}].c`>(bracketArrayDepth);
+expectTypeOf(bracketArrayDepth).toBe<`a[${number}]` | `a[${number}].b` | `a[${number}].c`>();
 
 declare const bracketTupleDepth: Paths<{a: [{b?: string}, {c: string}]}, {bracketNotation: true; leavesOnly: true; depth: 0 | 2}>;
-expectType<'a[0].b' | 'a[1].c'>(bracketTupleDepth);
+expectTypeOf(bracketTupleDepth).toBe<'a[0].b' | 'a[1].c'>();
 
 declare const bracketNumericDepth: Paths<{a: {1: string; 2: number}}, {bracketNotation: true; depth: 1}>;
-expectType<'a[1]' | 'a[2]'>(bracketNumericDepth);
+expectTypeOf(bracketNumericDepth).toBe<'a[1]' | 'a[2]'>();
 
 declare const bracketNestedArrayDepth: Paths<{a: Array<Array<Array<{b: string}>>>}, {bracketNotation: true; depth: 2 | 4}>;
-expectType<`a[${number}][${number}]` | `a[${number}][${number}][${number}].b`>(bracketNestedArrayDepth);
+expectTypeOf(bracketNestedArrayDepth).toBe<`a[${number}][${number}]` | `a[${number}][${number}][${number}].b`>();
 
 declare const trailingSpreadDepth: Paths<[{a: string}, ...Array<{b: number}>], {depth: 1}>;
-expectType<'0.a' | `${number}.b`>(trailingSpreadDepth);
+expectTypeOf(trailingSpreadDepth).toBe<'0.a' | `${number}.b`>();
 
 declare const leadingSpreadDepth: Paths<[...Array<{a?: string}>, {readonly b: number}], {depth: 0 | 1}>;
-expectType<number | `${number}` | `${number}.b` | `${number}.a`>(leadingSpreadDepth);
+expectTypeOf(leadingSpreadDepth).toBe<number | `${number}` | `${number}.b` | `${number}.a`>();
 
 declare const negativeDepth: Paths<DeepObject, {depth: -1}>;
-expectType<never>(negativeDepth);
+expectTypeOf(negativeDepth).toBe<never>();
 
 declare const positiveAndNegativeDepth: Paths<DeepObject, {depth: 1 | -1}>;
-expectType<'a.b' | 'a.b2' | 'a.b3'>(positiveAndNegativeDepth);
+expectTypeOf(positiveAndNegativeDepth).toBe<'a.b' | 'a.b2' | 'a.b3'>();
 
 declare const zeroPositiveAndNegativeDepth: Paths<DeepObject, {depth: 0 | 2 | -4}>;
-expectType<'a' | 'a.b.c' | `a.b2.${number}`>(zeroPositiveAndNegativeDepth);
+expectTypeOf(zeroPositiveAndNegativeDepth).toBe<'a' | 'a.b.c' | `a.b2.${number}`>();
 
 declare const neverDepth: Paths<DeepObject, {depth: never}>;
-expectType<never>(neverDepth);
+expectTypeOf(neverDepth).toBe<never>();
 
 declare const anyDepth: Paths<DeepObject, {depth: any}>;
-expectType<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d'>(anyDepth);
+expectTypeOf(anyDepth).toBe<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d'>();
 
 // Index signatures
 declare const indexSignature: Paths<{[x: string]: {a: string; b: number}}>;
-expectType<string>(indexSignature); // Collapsed union
+expectTypeOf(indexSignature).toBe<string>(); // Collapsed union
 
 declare const indexSignature1: Paths<{[x: Lowercase<string>]: {a: string; b: number}}>;
-expectType<Lowercase<string> | `${Lowercase<string>}.a` | `${Lowercase<string>}.b`>(indexSignature1);
+expectTypeOf(indexSignature1).toBe<Lowercase<string> | `${Lowercase<string>}.a` | `${Lowercase<string>}.b`>();
 
 declare const indexSignature2: Paths<{[x: number]: {0: string; 1: number}}>;
-expectType<number | `${number}` | `${number}.0` | `${number}.1`>(indexSignature2);
+expectTypeOf(indexSignature2).toBe<number | `${number}` | `${number}.0` | `${number}.1`>();
 
 declare const indexSignature3: Paths<{[x: Uppercase<string>]: {a: string; b: number}}>;
-expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignature3);
+expectTypeOf(indexSignature3).toBe<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>();
 
 declare const indexSignature4: Paths<{a: {[x: symbol]: {b: number; c: number}}}>;
-expectType<'a'>(indexSignature4);
+expectTypeOf(indexSignature4).toBe<'a'>();
 
 declare const indexSignatureWithStaticKeys: Paths<{[x: Uppercase<string>]: {a: string; b: number}; c: number}>;
-expectType<'c' | Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignatureWithStaticKeys);
+expectTypeOf(indexSignatureWithStaticKeys).toBe<'c' | Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>();
 
 declare const indexSignatureWithStaticKeys1: Paths<{[x: Uppercase<string>]: {a: string; b?: number}; C: {a: 'a'}}>;
-expectType<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(indexSignatureWithStaticKeys1); // Collapsed union
+expectTypeOf(indexSignatureWithStaticKeys1).toBe<Uppercase<string> | `${Uppercase<string>}.a` | `${Uppercase<string>}.b`>(); // Collapsed union
 
 declare const nonRootIndexSignature: Paths<{a: {[x: string]: {b: string; c: number}}}>;
-expectType<'a' | `a.${string}` | `a.${string}.b` | `a.${string}.c`>(nonRootIndexSignature);
+expectTypeOf(nonRootIndexSignature).toBe<'a' | `a.${string}` | `a.${string}.b` | `a.${string}.c`>();
 
 declare const nonRootIndexSignature1: Paths<{a: {[x: Lowercase<string>]: {b: string; c: number}}}>;
-expectType<'a' | `a.${Lowercase<string>}` | `a.${Lowercase<string>}.b` | `a.${Lowercase<string>}.c`>(nonRootIndexSignature1);
+expectTypeOf(nonRootIndexSignature1).toBe<'a' | `a.${Lowercase<string>}` | `a.${Lowercase<string>}.b` | `a.${Lowercase<string>}.c`>();
 
 declare const nestedIndexSignature: Paths<{[x: string]: {[x: Lowercase<string>]: {a: string; b: number}}}>;
-expectType<string>(nestedIndexSignature);
+expectTypeOf(nestedIndexSignature).toBe<string>();
 
 declare const nestedIndexSignature1: Paths<{[x: Uppercase<string>]: {[x: Lowercase<string>]: {a: string; b: number}}}>;
-expectType<Uppercase<string> | `${Uppercase<string>}.${Lowercase<string>}` | `${Uppercase<string>}.${Lowercase<string>}.a` | `${Uppercase<string>}.${Lowercase<string>}.b`>(
+expectTypeOf(
 	nestedIndexSignature1,
-);
+).toBe<Uppercase<string> | `${Uppercase<string>}.${Lowercase<string>}` | `${Uppercase<string>}.${Lowercase<string>}.a` | `${Uppercase<string>}.${Lowercase<string>}.b`>();
 
 declare const indexSignatureUnion: Paths<{a: {[x: string]: number} | {b: number}}>;
-expectType<'a' | `a.${string}`>(indexSignatureUnion); // Collapsed union
+expectTypeOf(indexSignatureUnion).toBe<'a' | `a.${string}`>(); // Collapsed union
 
 declare const indexSignatureUnion1: Paths<{a: {[x: Uppercase<string>]: number} | {b: number}}>;
-expectType<'a' | 'a.b' | `a.${Uppercase<string>}`>(indexSignatureUnion1);
+expectTypeOf(indexSignatureUnion1).toBe<'a' | 'a.b' | `a.${Uppercase<string>}`>();
 
 declare const indexSignatureLeaves: Paths<{[x: string]: {a: string; b: number}}, {leavesOnly: true}>;
-expectType<`${string}.a` | `${string}.b`>(indexSignatureLeaves);
+expectTypeOf(indexSignatureLeaves).toBe<`${string}.a` | `${string}.b`>();
 
 declare const indexSignatureLeaves1: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {leavesOnly: true}>;
-expectType<`a.${string}.b` | `a.${string}.c` | 'd' | 'e.f'>(indexSignatureLeaves1);
+expectTypeOf(indexSignatureLeaves1).toBe<`a.${string}.b` | `a.${string}.c` | 'd' | 'e.f'>();
 
 declare const indexSignatureLeaves2: Paths<{a: {[x: string]: [] | {b: number}}}, {leavesOnly: true}>;
-expectType<`a.${string}` | `a.${string}.b`>(indexSignatureLeaves2);
+expectTypeOf(indexSignatureLeaves2).toBe<`a.${string}` | `a.${string}.b`>();
 
 declare const indexSignatureDepth: Paths<{[x: string]: {a: string; b: number}}, {depth: 1}>;
-expectType<`${string}.b` | `${string}.a`>(indexSignatureDepth);
+expectTypeOf(indexSignatureDepth).toBe<`${string}.b` | `${string}.a`>();
 
 declare const indexSignatureDepth1: Paths<{[x: string]: {a: string; b: number}}, {depth: 0}>;
-expectType<string>(indexSignatureDepth1);
+expectTypeOf(indexSignatureDepth1).toBe<string>();
 
 declare const indexSignatureDepth2: Paths<{[x: string]: {a: string; b: number}}, {depth: 0 | 1}>;
-expectType<string>(indexSignatureDepth2); // Collapsed union
+expectTypeOf(indexSignatureDepth2).toBe<string>(); // Collapsed union
 
 declare const indexSignatureDepth3: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {depth: 0 | 2}>;
-expectType<'a' | `a.${string}.b` | `a.${string}.c` | 'd' | 'e'>(indexSignatureDepth3);
+expectTypeOf(indexSignatureDepth3).toBe<'a' | `a.${string}.b` | `a.${string}.c` | 'd' | 'e'>();
 
 declare const indexSignatureDepth4: Paths<{a: {[x: string]: [] | {b: number}}}, {depth: 2}>;
-expectType<`a.${string}.b`>(indexSignatureDepth4);
+expectTypeOf(indexSignatureDepth4).toBe<`a.${string}.b`>();
 
 declare const indexSignatureDepthLeaves: Paths<{a: {[x: string]: {b: string; c: number}}; d: string; e: {f: number}}, {depth: 0 | 2; leavesOnly: true}>;
-expectType<`a.${string}.b` | `a.${string}.c` | 'd'>(indexSignatureDepthLeaves);
+expectTypeOf(indexSignatureDepthLeaves).toBe<`a.${string}.b` | `a.${string}.c` | 'd'>();
 
 // Generic types
 type PathsConstraint<T, _U extends Paths<T>> = never;
@@ -586,21 +586,21 @@ type Test15<T> = LeavesOnlyAndDepthPathsConstraint<Generic7<T>, 'foo.bar'>; // '
 
 // An array is not a leaf, because there is a path for its elements, so its own path is dropped while the paths through it stay.
 declare const leavesWithArray: Paths<{a: Array<{b: string}>}, {leavesOnly: true}>;
-expectType<`a.${number}.b`>(leavesWithArray);
+expectTypeOf(leavesWithArray).toBe<`a.${number}.b`>();
 
 // A `maxRecursionDepth` past the deepest path stops nothing.
 declare const limitPastTheShape: Paths<{a: {b: {c: string}}}, {leavesOnly: true; maxRecursionDepth: 3}>;
-expectType<'a.b.c'>(limitPastTheShape);
+expectTypeOf(limitPastTheShape).toBe<'a.b.c'>();
 
 // In bracket notation a numeric segment is written in brackets and joined with nothing, and the whole path stays one template literal type rather than a pattern followed by a `.key`.
 declare const bracketedNestedArray: Paths<{a: ReadonlyArray<{b: string}>}, {bracketNotation: true}>;
-expectType<'a' | `a[${number}]` | `a[${number}].b`>(bracketedNestedArray);
+expectTypeOf(bracketedNestedArray).toBe<'a' | `a[${number}]` | `a[${number}].b`>();
 
 // A plain object with `name` and `message` is structurally an `Error`, but it is data, so its paths are walked.
-expectType<'contact' | 'contact.name' | 'contact.message' | 'contact.meta' | 'contact.meta.source'>({} as Paths<{contact: {name: string; message: string; meta: {source: string}}}>);
+expectTypeOf<Paths<{contact: {name: string; message: string; meta: {source: string}}}>>().toBe<'contact' | 'contact.name' | 'contact.message' | 'contact.meta' | 'contact.meta.source'>();
 
 // A thenable is a single value like a `Promise`, so its members, extra ones included, are not paths.
-expectType<'a'>({} as Paths<{a: PromiseLike<number> & {extra: {b: 1}}}>);
+expectTypeOf<Paths<{a: PromiseLike<number> & {extra: {b: 1}}}>>().toBe<'a'>();
 
 // A typed array is a single value, so its indices and methods are not paths.
-expectType<'a'>({} as Paths<{a: Uint8Array}>);
+expectTypeOf<Paths<{a: Uint8Array}>>().toBe<'a'>();

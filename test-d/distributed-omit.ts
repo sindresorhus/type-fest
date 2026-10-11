@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {DistributedOmit, Except} from '../index.d.ts';
 
 // When passing a non-union type, and
@@ -22,9 +22,9 @@ declare const expected1: Expected1;
 declare const expected2: Expected2;
 declare const expected3: Expected3;
 
-expectType<Actual1>(expected1);
-expectType<Actual2>(expected2);
-expectType<Actual3>(expected3);
+expectTypeOf(expected1).toBe<Actual1>();
+expectTypeOf(expected2).toBe<Actual2>();
+expectTypeOf(expected3).toBe<Actual3>();
 
 // When passing a non-union type, and
 // omitting keys that are NOT present in the type.
@@ -70,7 +70,7 @@ type OmittedUnion = DistributedOmit<Union, 'foo' | 'bar'>;
 declare const omittedUnion: OmittedUnion;
 
 if (omittedUnion.discriminant === 'A') {
-	expectType<{discriminant: 'A'; a: number}>(omittedUnion);
+	expectTypeOf(omittedUnion).toBe<{discriminant: 'A'; a: number}>();
 	// @ts-expect-error
 	const _a: unknown = omittedUnion.foo;
 	// @ts-expect-error

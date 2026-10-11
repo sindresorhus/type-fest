@@ -1,4 +1,4 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Opaque, tag} from '../source/tagged.d.ts';
 import type {ReadonlyDeep, _ReadonlyObjectDeep} from '../source/readonly-deep.d.ts';
 import type {RequiredDeep} from '../source/required-deep.d.ts';
@@ -72,54 +72,54 @@ readonlyData.fnWithOverload(1);
 readonlyData.fnWithOverload('', 1);
 
 const Constructor = readonlyData.constructor;
-expectType<typeof ClassA>(Constructor);
+expectTypeOf(Constructor).toBe<typeof ClassA>();
 const instance = new Constructor();
 instance.foo = 2; // Constructor is not made readonly
 
 // @ts-expect-error
 readonlyData.string = 'bar';
-expectType<{readonly foo: string}>(readonlyData.object);
-expectType<string>(readonlyData.string);
-expectType<number>(readonlyData.number);
-expectType<boolean>(readonlyData.boolean);
-expectType<symbol>(readonlyData.symbol);
-expectType<null>(readonlyData.null);
-expectType<undefined>(readonlyData.undefined);
-expectType<Date>(readonlyData.date);
-expectType<RegExp>(readonlyData.regExp);
-expectType<ReadonlyMap<string, string>>(readonlyData.map);
-expectType<ReadonlySet<string>>(readonlyData.set);
+expectTypeOf(readonlyData.object).toBe<{readonly foo: string}>();
+expectTypeOf(readonlyData.string).toBe<string>();
+expectTypeOf(readonlyData.number).toBe<number>();
+expectTypeOf(readonlyData.boolean).toBe<boolean>();
+expectTypeOf(readonlyData.symbol).toBe<symbol>();
+expectTypeOf(readonlyData.null).toBe<null>();
+expectTypeOf(readonlyData.undefined).toBe<undefined>();
+expectTypeOf(readonlyData.date).toBe<Date>();
+expectTypeOf(readonlyData.regExp).toBe<RegExp>();
+expectTypeOf(readonlyData.map).toBe<ReadonlyMap<string, string>>();
+expectTypeOf(readonlyData.set).toBe<ReadonlySet<string>>();
 // A `ReadonlyMap` is already deeply immutable, so the result has to be the built-in itself rather than an anonymous object type that merely happens to be mutually assignable to it. `expectType` above is an identity check and so already catches the difference; the `IsEqual` pair states it directly and, because assignability cannot see it, these are the assertions that would survive a change to a weaker check.
-expectType<IsEqual<ReadonlyDeep<Map<string, Date>>, ReadonlyMap<string, Date>>>(true);
-expectType<IsEqual<ReadonlyDeep<Set<string>>, ReadonlySet<string>>>(true);
-expectType<IsEqual<ReadonlyDeep<ReadonlyMap<string, Date>>, ReadonlyMap<string, Date>>>(true);
-expectType<IsEqual<ReadonlyDeep<ReadonlySet<string>>, ReadonlySet<string>>>(true);
+expectTypeOf<IsEqual<ReadonlyDeep<Map<string, Date>>, ReadonlyMap<string, Date>>>().toBe<true>();
+expectTypeOf<IsEqual<ReadonlyDeep<Set<string>>, ReadonlySet<string>>>().toBe<true>();
+expectTypeOf<IsEqual<ReadonlyDeep<ReadonlyMap<string, Date>>, ReadonlyMap<string, Date>>>().toBe<true>();
+expectTypeOf<IsEqual<ReadonlyDeep<ReadonlySet<string>>, ReadonlySet<string>>>().toBe<true>();
 // Composing the two in either order has to give the same answer, since each only changes one modifier.
-expectType<IsEqual<RequiredDeep<ReadonlyDeep<Map<string, Date>>>, ReadonlyDeep<RequiredDeep<Map<string, Date>>>>>(true);
-expectType<IsEqual<RequiredDeep<ReadonlyDeep<ReadonlySet<string>>>, ReadonlyDeep<RequiredDeep<ReadonlySet<string>>>>>(true);
-expectType<readonly string[]>(readonlyData.array);
-expectType<readonly []>(readonlyData.emptyTuple);
-expectType<readonly ['foo']>(readonlyData.singleItemTuple);
-expectType<readonly [string, ...number[]]>(readonlyData.trailingSpreadTuple);
-expectType<readonly [...string[], number]>(readonlyData.leadingSpreadTuple);
-expectType<readonly [{readonly a: string}, {readonly b: number}, {readonly c: string}]>(readonlyData.multiItemTuple);
-expectType<ReadonlyMap<string, string>>(readonlyData.readonlyMap);
-expectType<ReadonlySet<string>>(readonlyData.readonlySet);
-expectType<readonly string[]>(readonlyData.readonlyArray);
-expectType<readonly ['foo']>(readonlyData.readonlyTuple);
-expectAssignable<ReadonlyJsonValue>(readonlyData.json);
-expectAssignable<Opaque<ReadonlyDeep<OpaqueObjectData>, ReadonlyDeep<OpaqueObject[typeof tag]>>>(readonlyData.opaqueObj);
+expectTypeOf<IsEqual<RequiredDeep<ReadonlyDeep<Map<string, Date>>>, ReadonlyDeep<RequiredDeep<Map<string, Date>>>>>().toBe<true>();
+expectTypeOf<IsEqual<RequiredDeep<ReadonlyDeep<ReadonlySet<string>>>, ReadonlyDeep<RequiredDeep<ReadonlySet<string>>>>>().toBe<true>();
+expectTypeOf(readonlyData.array).toBe<readonly string[]>();
+expectTypeOf(readonlyData.emptyTuple).toBe<readonly []>();
+expectTypeOf(readonlyData.singleItemTuple).toBe<readonly ['foo']>();
+expectTypeOf(readonlyData.trailingSpreadTuple).toBe<readonly [string, ...number[]]>();
+expectTypeOf(readonlyData.leadingSpreadTuple).toBe<readonly [...string[], number]>();
+expectTypeOf(readonlyData.multiItemTuple).toBe<readonly [{readonly a: string}, {readonly b: number}, {readonly c: string}]>();
+expectTypeOf(readonlyData.readonlyMap).toBe<ReadonlyMap<string, string>>();
+expectTypeOf(readonlyData.readonlySet).toBe<ReadonlySet<string>>();
+expectTypeOf(readonlyData.readonlyArray).toBe<readonly string[]>();
+expectTypeOf(readonlyData.readonlyTuple).toBe<readonly ['foo']>();
+expectTypeOf(readonlyData.json).toBeAssignableTo<ReadonlyJsonValue>();
+expectTypeOf(readonlyData.opaqueObj).toBeAssignableTo<Opaque<ReadonlyDeep<OpaqueObjectData>, ReadonlyDeep<OpaqueObject[typeof tag]>>>();
 
-expectType<((foo: number) => string) & _ReadonlyObjectDeep<Namespace>>(readonlyData.namespace);
-expectType<string>(readonlyData.namespace(1));
-expectType<readonly boolean[]>(readonlyData.namespace.baz);
+expectTypeOf(readonlyData.namespace).toBe<((foo: number) => string) & _ReadonlyObjectDeep<Namespace>>();
+expectTypeOf(readonlyData.namespace(1)).toBe<string>();
+expectTypeOf(readonlyData.namespace.baz).toBe<readonly boolean[]>();
 
 // These currently aren't readonly due to TypeScript limitations.
 // @see https://github.com/microsoft/TypeScript/issues/29732
-expectType<NamespaceWithOverload>(readonlyData.namespaceWithOverload);
-expectType<string>(readonlyData.namespaceWithOverload(1));
-expectType<number>(readonlyData.namespaceWithOverload('foo', 1));
-expectType<boolean[]>(readonlyData.namespaceWithOverload.baz);
+expectTypeOf(readonlyData.namespaceWithOverload).toBe<NamespaceWithOverload>();
+expectTypeOf(readonlyData.namespaceWithOverload(1)).toBe<string>();
+expectTypeOf(readonlyData.namespaceWithOverload('foo', 1)).toBe<number>();
+expectTypeOf(readonlyData.namespaceWithOverload.baz).toBe<boolean[]>();
 
 // Test void
 type VoidType = {
@@ -131,7 +131,7 @@ type VoidTypeExpected = {
 	readonly bar: string | void;
 };
 declare const voidType: ReadonlyDeep<VoidType>;
-expectType<VoidTypeExpected>(voidType);
+expectTypeOf(voidType).toBe<VoidTypeExpected>();
 
 // Standalone tests
 
@@ -140,17 +140,17 @@ const readonlyNamespace = {} as ReadonlyDeep<{
 	(foo: number): string;
 	baz: boolean[];
 }>;
-expectType<((foo: number) => string) & {
+expectTypeOf(readonlyNamespace).toBe<((foo: number) => string) & {
 	readonly baz: readonly boolean[];
-}>(readonlyNamespace);
-expectAssignable<{
+}>();
+expectTypeOf(readonlyNamespace).toBeAssignableTo<{
 	(foo: number): string;
 	readonly baz: readonly boolean[];
-}>(readonlyNamespace);
+}>();
 
 // A function type whose properties are all optional is still made deeply readonly.
 declare const readonlyNamespaceWithOptionalProperty: ReadonlyDeep<{p?: number; (foo: number): string}>;
-expectType<((foo: number) => string) & {readonly p?: number}>(readonlyNamespaceWithOptionalProperty);
+expectTypeOf(readonlyNamespaceWithOptionalProperty).toBe<((foo: number) => string) & {readonly p?: number}>();
 // @ts-expect-error
 readonlyNamespaceWithOptionalProperty.p = 1;
 
@@ -159,15 +159,15 @@ readonlyNamespaceWithOptionalProperty.p = 1;
 // See https://github.com/sindresorhus/type-fest/issues/826
 
 declare const readonlyFunctionReturningMap: ReadonlyDeep<() => Map<string, number[]>>;
-expectType<() => Map<string, number[]>>(readonlyFunctionReturningMap);
+expectTypeOf(readonlyFunctionReturningMap).toBe<() => Map<string, number[]>>();
 
 declare const readonlyObjectWithMethod: ReadonlyDeep<{
 	method: () => Map<string, number[]>;
 }>;
 // The method member becomes readonly, but its signature — including the returned Map — is left untouched.
-expectType<{
+expectTypeOf(readonlyObjectWithMethod).toBe<{
 	readonly method: () => Map<string, number[]>;
-}>(readonlyObjectWithMethod);
+}>();
 
 class ClassWithGetter {
 	get accessor(): Map<string, number[]> {
@@ -177,82 +177,82 @@ class ClassWithGetter {
 
 // A getter on a class is seen as a plain property of its type, so its value is deep-readonly like any other property.
 declare const readonlyClassWithGetter: ReadonlyDeep<ClassWithGetter>;
-expectType<ReadonlyMap<string, readonly number[]>>(readonlyClassWithGetter.accessor);
+expectTypeOf(readonlyClassWithGetter.accessor).toBe<ReadonlyMap<string, readonly number[]>>();
 
 // A tuple whose elements are all optional keeps its optional modifiers, instead of widening into a rest.
 declare const optionalTail: ReadonlyDeep<readonly [number, string?]>;
-expectType<readonly [number, string?]>(optionalTail);
+expectTypeOf(optionalTail).toBe<readonly [number, string?]>();
 
 declare const optionalTailMutable: ReadonlyDeep<[number, string?]>;
-expectType<readonly [number, string?]>(optionalTailMutable);
+expectTypeOf(optionalTailMutable).toBe<readonly [number, string?]>();
 
 declare const allOptional: ReadonlyDeep<readonly [(number | undefined)?, string?]>;
-expectType<readonly [(number | undefined)?, string?]>(allOptional);
+expectTypeOf(allOptional).toBe<readonly [(number | undefined)?, string?]>();
 
 // A tuple whose optional element is followed by a rest element stays a tuple, instead of widening into an array.
 declare const optionalHeadWithRest: ReadonlyDeep<readonly [number?, ...string[]]>;
-expectType<readonly [number?, ...string[]]>(optionalHeadWithRest);
+expectTypeOf(optionalHeadWithRest).toBe<readonly [number?, ...string[]]>();
 
 // A `Promise` and its `then` method are not made readonly.
 declare const readonlyPromise: ReadonlyDeep<Promise<number>>;
-expectType<Promise<number>>(readonlyPromise);
+expectTypeOf(readonlyPromise).toBe<Promise<number>>();
 
 // A `WeakMap` and its methods are not made readonly.
 declare const readonlyWeakMap: ReadonlyDeep<WeakMap<{id: number}, number>>;
-expectType<WeakMap<{id: number}, number>>(readonlyWeakMap);
+expectTypeOf(readonlyWeakMap).toBe<WeakMap<{id: number}, number>>();
 
 // A `WeakSet` and its methods are not made readonly.
 declare const readonlyWeakSet: ReadonlyDeep<WeakSet<{id: number}>>;
-expectType<WeakSet<{id: number}>>(readonlyWeakSet);
+expectTypeOf(readonlyWeakSet).toBe<WeakSet<{id: number}>>();
 
 // An abstract class constructor keeps its construct signature, the way a concrete one does.
 abstract class AbstractClassA {
 	foo = 1;
 }
 
-expectType<true>({} as IsEqual<ReadonlyDeep<typeof AbstractClassA>, typeof AbstractClassA>);
+expectTypeOf<IsEqual<ReadonlyDeep<typeof AbstractClassA>, typeof AbstractClassA>>().toBe<true>();
 
 // These are a single value rather than a structure to recurse into, so they are kept as is. Mapping over one of them replaces its members, so a `Uint8Array` came back as a plain object of its own methods and was no longer a `Uint8Array` at all.
 declare const typedArray: ReadonlyDeep<Uint8Array>;
-expectType<Uint8Array>(typedArray);
+expectTypeOf(typedArray).toBe<Uint8Array>();
 
 // A plain object with `name` and `message` is structurally an `Error`, but it is data, so it is still walked.
-expectType<{readonly name: string; readonly message: string; readonly tags: readonly string[]}>({} as ReadonlyDeep<{name: string; message: string; tags: string[]}>);
+expectTypeOf<ReadonlyDeep<{name: string; message: string; tags: string[]}>>().toBe<{readonly name: string; readonly message: string; readonly tags: readonly string[]}>();
 
 declare const arrayBuffer: ReadonlyDeep<ArrayBuffer>;
-expectType<ArrayBuffer>(arrayBuffer);
+expectTypeOf(arrayBuffer).toBe<ArrayBuffer>();
 
 declare const sharedArrayBuffer: ReadonlyDeep<SharedArrayBuffer>;
-expectType<SharedArrayBuffer>(sharedArrayBuffer);
+expectTypeOf(sharedArrayBuffer).toBe<SharedArrayBuffer>();
 
 declare const dataView: ReadonlyDeep<DataView>;
-expectType<DataView>(dataView);
+expectTypeOf(dataView).toBe<DataView>();
 
 // An intersection's keys are the union of its members' keys, so the walk sees one object with both sets of them rather than one member or the other.
 declare const readonlyIntersection: ReadonlyDeep<{a: 1} & {b: 2}>;
-expectType<{readonly a: 1; readonly b: 2}>(readonlyIntersection);
+expectTypeOf(readonlyIntersection).toBe<{readonly a: 1; readonly b: 2}>();
 
 declare const readonlyIntersectionOptional: ReadonlyDeep<{a?: 1} & {readonly b: 2}>;
-expectType<{readonly a?: 1; readonly b: 2}>(readonlyIntersectionOptional);
+expectTypeOf(readonlyIntersectionOptional).toBe<{readonly a?: 1; readonly b: 2}>();
 
 // A member that is a method keeps its `this` parameter. `Parameters` leaves `this` out, so the rebuilt function would otherwise accept any receiver.
 declare const methodWithThis: ReadonlyDeep<{m: ((this: Date, a: string) => void) & {count: number}}>;
-expectType<Date>({} as ThisParameterType<(typeof methodWithThis)['m']>);
+expectTypeOf<ThisParameterType<(typeof methodWithThis)['m']>>().toBe<Date>();
 
 // A `unique symbol` key is a key like any other, and the walk has to reach it: the key is not a string, so a walk that builds its keys as text would leave it out.
 declare const readonlySymbol: ReadonlyDeep<{readonly [key]: {a: number}}>;
-expectType<{readonly [key]: {readonly a: number}}>(readonlySymbol);
+expectTypeOf(readonlySymbol).toBe<{readonly [key]: {readonly a: number}}>();
 
 // Optional elements of the same type keep their `?`, rather than collapsing into a rest element.
-expectType<readonly [string?, string?]>({} as ReadonlyDeep<[string?, string?]>);
-expectType<readonly [number, number?, number?]>({} as ReadonlyDeep<[number, number?, number?]>);
+expectTypeOf<ReadonlyDeep<[string?, string?]>>().toBe<readonly [string?, string?]>();
+expectTypeOf<ReadonlyDeep<[number, number?, number?]>>().toBe<readonly [number, number?, number?]>();
 
 // A long tuple does not hit the instantiation depth limit, and tuple labels are kept.
 declare const longTuple: ReadonlyDeep<TupleOf<100, {a: 1}>>;
-expectType<100>(longTuple.length);
-expectType<{readonly a: 1}>(longTuple[99]);
-expectType<readonly [a: string, b?: number]>({} as ReadonlyDeep<[a: string, b?: number]>);
+expectTypeOf(longTuple.length).toBe<100>();
+expectTypeOf(longTuple[99]).toBe<{readonly a: 1}>();
+expectTypeOf<ReadonlyDeep<[a: string, b?: number]>>().toBe<readonly [a: string, b?: number]>();
 
 // A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
 declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
-expectAssignable<ReadonlyDeep<((event: string) => void) & {displayName: string}>>(handlerWithThis);
+expectTypeOf(handlerWithThis).toBeAssignableTo<ReadonlyDeep<((event: string) => void) & {displayName: string}>>();

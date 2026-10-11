@@ -1,66 +1,66 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Sum} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Positive result
-expectType<0>({} as Sum<-999, 999>);
-expectType<0>({} as Sum<999, -999>);
-expectType<0>({} as Sum<0, 0>);
-expectType<0>({} as Sum<2, -2>);
-expectType<0>({} as Sum<-2, 2>);
-expectType<3>({} as Sum<1, 2>);
-expectType<8>({} as Sum<10, -2>);
-expectType<8>({} as Sum<-2, 10>);
-expectType<57>({} as Sum<-20, 77>);
-expectType<998>({} as Sum<-1, 999>);
-expectType<1000>({} as Sum<999, 1>);
-expectType<1998>({} as Sum<999, 999>);
+expectTypeOf<Sum<-999, 999>>().toBe<0>();
+expectTypeOf<Sum<999, -999>>().toBe<0>();
+expectTypeOf<Sum<0, 0>>().toBe<0>();
+expectTypeOf<Sum<2, -2>>().toBe<0>();
+expectTypeOf<Sum<-2, 2>>().toBe<0>();
+expectTypeOf<Sum<1, 2>>().toBe<3>();
+expectTypeOf<Sum<10, -2>>().toBe<8>();
+expectTypeOf<Sum<-2, 10>>().toBe<8>();
+expectTypeOf<Sum<-20, 77>>().toBe<57>();
+expectTypeOf<Sum<-1, 999>>().toBe<998>();
+expectTypeOf<Sum<999, 1>>().toBe<1000>();
+expectTypeOf<Sum<999, 999>>().toBe<1998>();
 
 // Negative result
-expectType<-3>({} as Sum<-1, -2>);
-expectType<-8>({} as Sum<-10, 2>);
-expectType<-8>({} as Sum<2, -10>);
-expectType<-57>({} as Sum<20, -77>);
-expectType<-998>({} as Sum<-999, 1>);
-expectType<-998>({} as Sum<1, -999>);
-expectType<-1998>({} as Sum<-999, -999>);
+expectTypeOf<Sum<-1, -2>>().toBe<-3>();
+expectTypeOf<Sum<-10, 2>>().toBe<-8>();
+expectTypeOf<Sum<2, -10>>().toBe<-8>();
+expectTypeOf<Sum<20, -77>>().toBe<-57>();
+expectTypeOf<Sum<-999, 1>>().toBe<-998>();
+expectTypeOf<Sum<1, -999>>().toBe<-998>();
+expectTypeOf<Sum<-999, -999>>().toBe<-1998>();
 
 // Infinity
-expectType<PositiveInfinity>({} as Sum<PositiveInfinity, -999>);
-expectType<PositiveInfinity>({} as Sum<-999, PositiveInfinity>);
-expectType<PositiveInfinity>({} as Sum<PositiveInfinity, PositiveInfinity>);
-expectType<NegativeInfinity>({} as Sum<NegativeInfinity, 999>);
-expectType<NegativeInfinity>({} as Sum<999, NegativeInfinity>);
-expectType<NegativeInfinity>({} as Sum<NegativeInfinity, NegativeInfinity>);
+expectTypeOf<Sum<PositiveInfinity, -999>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<-999, PositiveInfinity>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<PositiveInfinity, PositiveInfinity>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<NegativeInfinity, 999>>().toBe<NegativeInfinity>();
+expectTypeOf<Sum<999, NegativeInfinity>>().toBe<NegativeInfinity>();
+expectTypeOf<Sum<NegativeInfinity, NegativeInfinity>>().toBe<NegativeInfinity>();
 
 // Number
-expectType<number>({} as Sum<number, 1>);
-expectType<number>({} as Sum<1, number>);
-expectType<number>({} as Sum<number, number>);
-expectType<number>({} as Sum<number, PositiveInfinity>);
-expectType<number>({} as Sum<NegativeInfinity, number>);
-expectType<number>({} as Sum<NegativeInfinity, PositiveInfinity>);
-expectType<number>({} as Sum<PositiveInfinity, NegativeInfinity>);
+expectTypeOf<Sum<number, 1>>().toBe<number>();
+expectTypeOf<Sum<1, number>>().toBe<number>();
+expectTypeOf<Sum<number, number>>().toBe<number>();
+expectTypeOf<Sum<number, PositiveInfinity>>().toBe<number>();
+expectTypeOf<Sum<NegativeInfinity, number>>().toBe<number>();
+expectTypeOf<Sum<NegativeInfinity, PositiveInfinity>>().toBe<number>();
+expectTypeOf<Sum<PositiveInfinity, NegativeInfinity>>().toBe<number>();
 
 // Union
-expectType<3 | 4>({} as Sum<1, 2 | 3>);
-expectType<4 | 5>({} as Sum<1 | 2, 3>);
-expectType<5 | 6 | 7 | 8>({} as Sum<1 | 2 | 3, 4 | 5>);
-expectType<2 | 4 | 5 | 7 | 9 | -2 | -4 | -7>({} as Sum<1 | -2 | 3, 4 | -5 | 6>);
+expectTypeOf<Sum<1, 2 | 3>>().toBe<3 | 4>();
+expectTypeOf<Sum<1 | 2, 3>>().toBe<4 | 5>();
+expectTypeOf<Sum<1 | 2 | 3, 4 | 5>>().toBe<5 | 6 | 7 | 8>();
+expectTypeOf<Sum<1 | -2 | 3, 4 | -5 | 6>>().toBe<2 | 4 | 5 | 7 | 9 | -2 | -4 | -7>();
 
 // Large numbers
-expectType<3333>({} as Sum<1111, 2222>);
-expectType<-3000>({} as Sum<-5000, 2000>);
-expectType<6010>({} as Sum<6540, -530>);
-expectType<-8900>({} as Sum<-8888, -12>);
+expectTypeOf<Sum<1111, 2222>>().toBe<3333>();
+expectTypeOf<Sum<-5000, 2000>>().toBe<-3000>();
+expectTypeOf<Sum<6540, -530>>().toBe<6010>();
+expectTypeOf<Sum<-8888, -12>>().toBe<-8900>();
 
 // A decimal fraction is not supported, so the result is `never` rather than a silently truncated whole number.
-expectType<never>({} as Sum<0.5, 0.5>);
-expectType<never>({} as Sum<1.5, 1.5>);
-expectType<never>({} as Sum<0.25, 0.25>);
-expectType<never>({} as Sum<-0.5, -0.5>);
+expectTypeOf<Sum<0.5, 0.5>>().toBe<never>();
+expectTypeOf<Sum<1.5, 1.5>>().toBe<never>();
+expectTypeOf<Sum<0.25, 0.25>>().toBe<never>();
+expectTypeOf<Sum<-0.5, -0.5>>().toBe<never>();
 
 // A number written in exponent notation cannot be computed digit by digit either, so it resolves to `never` rather than a silently truncated whole number.
-expectType<never>({} as Sum<1e-7, 1>);
-expectType<never>({} as Sum<1e-7, 1e-7>);
-expectType<never>({} as Sum<1e21, 1>);
+expectTypeOf<Sum<1e-7, 1>>().toBe<never>();
+expectTypeOf<Sum<1e-7, 1e-7>>().toBe<never>();
+expectTypeOf<Sum<1e21, 1>>().toBe<never>();

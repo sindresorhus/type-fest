@@ -1,60 +1,60 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {AndAll} from '../source/and-all.d.ts';
 
 declare const boolean: boolean;
 
 // Basic boolean combinations
-expectType<AndAll<[true, true]>>(true);
-expectType<AndAll<[true, false]>>(false);
-expectType<AndAll<[false, true]>>(false);
-expectType<AndAll<[false, false]>>(false);
+expectTypeOf<AndAll<[true, true]>>().toBe<true>();
+expectTypeOf<AndAll<[true, false]>>().toBe<false>();
+expectTypeOf<AndAll<[false, true]>>().toBe<false>();
+expectTypeOf<AndAll<[false, false]>>().toBe<false>();
 
 // Multiple elements in a tuple
-expectType<AndAll<[true, true, true, true]>>(true);
-expectType<AndAll<[true, true, true, false]>>(false);
-expectType<AndAll<[true, true, false, true]>>(false);
+expectTypeOf<AndAll<[true, true, true, true]>>().toBe<true>();
+expectTypeOf<AndAll<[true, true, true, false]>>().toBe<false>();
+expectTypeOf<AndAll<[true, true, false, true]>>().toBe<false>();
 
 // `boolean` element
-expectType<AndAll<[true, true, boolean]>>(boolean);
-expectType<AndAll<[true, boolean, false]>>(false);
-expectType<AndAll<[boolean, boolean, boolean]>>(boolean);
+expectTypeOf(boolean).toBe<AndAll<[true, true, boolean]>>();
+expectTypeOf<AndAll<[true, boolean, false]>>().toBe<false>();
+expectTypeOf(boolean).toBe<AndAll<[boolean, boolean, boolean]>>();
 
 // Unions
-expectType<AndAll<[true, true, true] | [true, true, false]>>(boolean); // `true` | `false`
-expectType<AndAll<[true, true] | [true]>>(true); // `true` | `true`
-expectType<AndAll<[false] | [true, false, true]>>(false); // `false` | `false`
-expectType<AndAll<[true, true] | [true, boolean]>>(boolean); // `true` | `boolean`
-expectType<AndAll<[false, true] | [true, true, boolean]>>(boolean); // `false` | `boolean`
-expectType<AndAll<[boolean, true, true] | [boolean]>>(boolean); // `boolean` | `boolean`
+expectTypeOf(boolean).toBe<AndAll<[true, true, true] | [true, true, false]>>(); // `true` | `false`
+expectTypeOf<AndAll<[true, true] | [true]>>().toBe<true>(); // `true` | `true`
+expectTypeOf<AndAll<[false] | [true, false, true]>>().toBe<false>(); // `false` | `false`
+expectTypeOf(boolean).toBe<AndAll<[true, true] | [true, boolean]>>(); // `true` | `boolean`
+expectTypeOf(boolean).toBe<AndAll<[false, true] | [true, true, boolean]>>(); // `false` | `boolean`
+expectTypeOf(boolean).toBe<AndAll<[boolean, true, true] | [boolean]>>(); // `boolean` | `boolean`
 
 // Tuples with rest element
-expectType<AndAll<[true, ...Array<true>]>>(true);
-expectType<AndAll<[...Array<true>, false]>>(false);
-expectType<AndAll<[true, ...Array<true>, boolean]>>(boolean);
+expectTypeOf<AndAll<[true, ...Array<true>]>>().toBe<true>();
+expectTypeOf<AndAll<[...Array<true>, false]>>().toBe<false>();
+expectTypeOf(boolean).toBe<AndAll<[true, ...Array<true>, boolean]>>();
 
 // Non-tuple arrays
-expectType<AndAll<Array<true>>>(true);
-expectType<AndAll<Array<false>>>(false);
-expectType<AndAll<boolean[]>>(boolean);
+expectTypeOf<AndAll<Array<true>>>().toBe<true>();
+expectTypeOf<AndAll<Array<false>>>().toBe<false>();
+expectTypeOf(boolean).toBe<AndAll<boolean[]>>();
 
 // Readonly arrays
-expectType<AndAll<readonly [true, true, true]>>(true);
-expectType<AndAll<readonly [true, true, false]>>(false);
-expectType<AndAll<readonly [true, true, boolean]>>(boolean);
-expectType<AndAll<ReadonlyArray<true>>>(true);
-expectType<AndAll<ReadonlyArray<false>>>(false);
-expectType<AndAll<readonly boolean[]>>(boolean);
+expectTypeOf<AndAll<readonly [true, true, true]>>().toBe<true>();
+expectTypeOf<AndAll<readonly [true, true, false]>>().toBe<false>();
+expectTypeOf(boolean).toBe<AndAll<readonly [true, true, boolean]>>();
+expectTypeOf<AndAll<ReadonlyArray<true>>>().toBe<true>();
+expectTypeOf<AndAll<ReadonlyArray<false>>>().toBe<false>();
+expectTypeOf(boolean).toBe<AndAll<readonly boolean[]>>();
 
 // Boundary cases
-expectType<AndAll<[]>>(true);
+expectTypeOf<AndAll<[]>>().toBe<true>();
 
-expectType<AndAll<[any, any, false]>>(false);
-expectType<AndAll<[any, any, true]>>(boolean);
-expectType<AndAll<[any, any, any]>>(boolean);
+expectTypeOf<AndAll<[any, any, false]>>().toBe<false>();
+expectTypeOf(boolean).toBe<AndAll<[any, any, true]>>();
+expectTypeOf(boolean).toBe<AndAll<[any, any, any]>>();
 
-expectType<AndAll<[false, never, never]>>(false);
-expectType<AndAll<[true, true, never]>>(false);
-expectType<AndAll<[never, never, never]>>(false);
+expectTypeOf<AndAll<[false, never, never]>>().toBe<false>();
+expectTypeOf<AndAll<[true, true, never]>>().toBe<false>();
+expectTypeOf<AndAll<[never, never, never]>>().toBe<false>();
 
 // Errors with non-boolean or optional elements
 // @ts-expect-error

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnwrapRequired} from '../index.d.ts';
 
 type TestType = {
@@ -6,7 +6,7 @@ type TestType = {
 	b: number;
 };
 
-expectType<TestType>({} as UnwrapRequired<Required<TestType>>);
+expectTypeOf<UnwrapRequired<Required<TestType>>>().toBe<TestType>();
 
 // `UnwrapRequired` preserves optional properties
 type AnotherTestType = {
@@ -16,14 +16,14 @@ type AnotherTestType = {
 
 type TestTypeWithOptionalProps = TestType & AnotherTestType;
 
-expectType<TestTypeWithOptionalProps>({} as UnwrapRequired<Required<TestTypeWithOptionalProps>>);
+expectTypeOf<UnwrapRequired<Required<TestTypeWithOptionalProps>>>().toBe<TestTypeWithOptionalProps>();
 
 // `UnwrapRequired` preserves nested `Required` properties
 type TestTypeWithRequiredProp = TestType & {
 	c: Required<AnotherTestType>;
 };
 
-expectType<TestTypeWithRequiredProp>({} as UnwrapRequired<Required<TestTypeWithRequiredProp>>);
+expectTypeOf<UnwrapRequired<Required<TestTypeWithRequiredProp>>>().toBe<TestTypeWithRequiredProp>();
 
 // `UnwrapRequired` preserves readonly properties
 type TestTypeWithReadonlyProps = {
@@ -32,7 +32,7 @@ type TestTypeWithReadonlyProps = {
 	readonly c?: boolean;
 };
 
-expectType<TestTypeWithReadonlyProps>({} as UnwrapRequired<Required<TestTypeWithReadonlyProps>>);
+expectTypeOf<UnwrapRequired<Required<TestTypeWithReadonlyProps>>>().toBe<TestTypeWithReadonlyProps>();
 
 // `UnwrapRequired` works with methods
 type TestTypeWithMethod = {
@@ -40,38 +40,38 @@ type TestTypeWithMethod = {
 	c?(): void;
 };
 
-expectType<TestTypeWithMethod>({} as UnwrapRequired<Required<TestTypeWithMethod>>);
+expectTypeOf<UnwrapRequired<Required<TestTypeWithMethod>>>().toBe<TestTypeWithMethod>();
 
 // `UnwrapRequired` works with union types
 type RequiredUnionType = Required<TestType> | Required<AnotherTestType>;
 
-expectType<TestType | AnotherTestType>({} as UnwrapRequired<RequiredUnionType>);
-expectType<TestType | AnotherTestType>({} as UnwrapRequired<Required<TestType> | AnotherTestType>);
-expectType<TestType | string>({} as UnwrapRequired<Required<TestType> | string>);
-expectType<TestType | Map<string, string>>({} as UnwrapRequired<Required<TestType> | Map<string, string>>);
-expectType<TestType | Map<string, string> | string>({} as UnwrapRequired<Required<TestType> | Map<string, string> | string>);
+expectTypeOf<UnwrapRequired<RequiredUnionType>>().toBe<TestType | AnotherTestType>();
+expectTypeOf<UnwrapRequired<Required<TestType> | AnotherTestType>>().toBe<TestType | AnotherTestType>();
+expectTypeOf<UnwrapRequired<Required<TestType> | string>>().toBe<TestType | string>();
+expectTypeOf<UnwrapRequired<Required<TestType> | Map<string, string>>>().toBe<TestType | Map<string, string>>();
+expectTypeOf<UnwrapRequired<Required<TestType> | Map<string, string> | string>>().toBe<TestType | Map<string, string> | string>();
 
 // `UnwrapRequired` works with unknown types
-expectType<unknown>({} as UnwrapRequired<Required<unknown>>);
-expectType<any>({} as UnwrapRequired<Required<any>>);
+expectTypeOf<UnwrapRequired<Required<unknown>>>().toBe<unknown>();
+expectTypeOf<UnwrapRequired<Required<any>>>().toBe<any>();
 
 // `UnwrapRequired` has no effect on non-required types
-expectType<TestType>({} as UnwrapRequired<TestType>);
-expectType<{a: string; b: number}>({} as UnwrapRequired<{a: string; b: number}>);
-expectType<readonly string[]>({} as UnwrapRequired<readonly string[]>);
-expectType<readonly [string, number?]>({} as UnwrapRequired<readonly [string, number?]>);
-expectType<Set<string>>({} as UnwrapRequired<Set<string>>);
-expectType<ReadonlySet<string>>({} as UnwrapRequired<ReadonlySet<string>>);
-expectType<WeakSet<{a: string}>>({} as UnwrapRequired<WeakSet<{a: string}>>);
-expectType<Map<string, string>>({} as UnwrapRequired<Map<string, string>>);
-expectType<ReadonlyMap<string, string>>({} as UnwrapRequired<ReadonlyMap<string, string>>);
-expectType<WeakMap<{a: string}, string>>({} as UnwrapRequired<WeakMap<{a: string}, string>>);
-expectType<Date>({} as UnwrapRequired<Date>);
-expectType<RegExp>({} as UnwrapRequired<RegExp>);
-expectType<Promise<string>>({} as UnwrapRequired<Promise<string>>);
-expectType<string>({} as UnwrapRequired<string>);
-expectType<() => string>({} as UnwrapRequired<() => string>);
+expectTypeOf<UnwrapRequired<TestType>>().toBe<TestType>();
+expectTypeOf<UnwrapRequired<{a: string; b: number}>>().toBe<{a: string; b: number}>();
+expectTypeOf<UnwrapRequired<readonly string[]>>().toBe<readonly string[]>();
+expectTypeOf<UnwrapRequired<readonly [string, number?]>>().toBe<readonly [string, number?]>();
+expectTypeOf<UnwrapRequired<Set<string>>>().toBe<Set<string>>();
+expectTypeOf<UnwrapRequired<ReadonlySet<string>>>().toBe<ReadonlySet<string>>();
+expectTypeOf<UnwrapRequired<WeakSet<{a: string}>>>().toBe<WeakSet<{a: string}>>();
+expectTypeOf<UnwrapRequired<Map<string, string>>>().toBe<Map<string, string>>();
+expectTypeOf<UnwrapRequired<ReadonlyMap<string, string>>>().toBe<ReadonlyMap<string, string>>();
+expectTypeOf<UnwrapRequired<WeakMap<{a: string}, string>>>().toBe<WeakMap<{a: string}, string>>();
+expectTypeOf<UnwrapRequired<Date>>().toBe<Date>();
+expectTypeOf<UnwrapRequired<RegExp>>().toBe<RegExp>();
+expectTypeOf<UnwrapRequired<Promise<string>>>().toBe<Promise<string>>();
+expectTypeOf<UnwrapRequired<string>>().toBe<string>();
+expectTypeOf<UnwrapRequired<() => string>>().toBe<() => string>();
 
 // Known limitation: a numeric or symbol index signature cannot be reversed through `Required<infer T>`, so the inferred object type is `unknown` and the index signature is lost. See the note in the docs.
 declare const numericIndex: UnwrapRequired<{[index: number]: string}>;
-expectType<unknown>(numericIndex);
+expectTypeOf(numericIndex).toBe<unknown>();

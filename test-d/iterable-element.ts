@@ -1,11 +1,11 @@
-import {expectAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IterableElement} from '../index.d.ts';
 
 declare const iterableElement: IterableElement<ReturnType<typeof secretGenerator>>;
-expectType<1 | 'two'>(iterableElement);
+expectTypeOf(iterableElement).toBe<number | string>();
 
 declare const iterableElementAsync: IterableElement<ReturnType<typeof secretGeneratorAsync>>;
-expectType<true | Date>(iterableElementAsync);
+expectTypeOf(iterableElementAsync).toBe<boolean | Date>();
 
 function * secretGenerator() {
 	yield 1;
@@ -21,20 +21,20 @@ const fruits = new Set(['🍎', '🍌', '🍉'] as const);
 
 type Fruit = IterableElement<typeof fruits>;
 
-expectAssignable<Fruit>('🍎');
-expectAssignable<Fruit>('🍌');
-expectAssignable<Fruit>('🍉');
+expectTypeOf<'🍎'>().toBeAssignableTo<Fruit>();
+expectTypeOf<'🍌'>().toBeAssignableTo<Fruit>();
+expectTypeOf<'🍉'>().toBeAssignableTo<Fruit>();
 
 type VegetableSet = Set<'🥦' | '🥕' | '🌶'>;
 type Vegetable = IterableElement<VegetableSet>;
 
-expectAssignable<Vegetable>('🥦');
-expectAssignable<Vegetable>('🥕');
-expectAssignable<Vegetable>('🌶');
+expectTypeOf<'🥦'>().toBeAssignableTo<Vegetable>();
+expectTypeOf<'🥕'>().toBeAssignableTo<Vegetable>();
+expectTypeOf<'🌶'>().toBeAssignableTo<Vegetable>();
 
 type UserRolesSet = ReadonlySet<'regular' | 'contributor' | 'maintainer'>;
 type UserRole = IterableElement<UserRolesSet>;
 
-expectAssignable<UserRole>('regular');
-expectAssignable<UserRole>('contributor');
-expectAssignable<UserRole>('maintainer');
+expectTypeOf<'regular'>().toBeAssignableTo<UserRole>();
+expectTypeOf<'contributor'>().toBeAssignableTo<UserRole>();
+expectTypeOf<'maintainer'>().toBeAssignableTo<UserRole>();

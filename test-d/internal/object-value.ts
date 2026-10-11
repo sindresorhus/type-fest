@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ObjectValue} from '../../source/internal/index.d.ts';
 
 type ObjectT = {
@@ -8,13 +8,13 @@ type ObjectT = {
 };
 
 declare const normal: ObjectValue<ObjectT, 'string'>;
-expectType<string>(normal);
+expectTypeOf(normal).toBe<string>();
 
 declare const test0: ObjectValue<ObjectT, 0>;
-expectType<number>(test0);
+expectTypeOf(test0).toBe<number>();
 declare const teststring0: ObjectValue<ObjectT, '0'>;
-expectType<number>(teststring0);
+expectTypeOf(teststring0).toBe<number>();
 declare const test1: ObjectValue<ObjectT, 1>;
-expectType<number>(test1);
+expectTypeOf(test1).toBe<number>();
 declare const teststring1: ObjectValue<ObjectT, '1'>;
-expectType<number>(teststring1);
+expectTypeOf(teststring1).toBe<number>();

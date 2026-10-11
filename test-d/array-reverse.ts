@@ -1,69 +1,65 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ArrayReverse} from '../source/array-reverse.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {IntRange} from '../source/int-range.d.ts';
 
 // Empty & single-element tuples
-expectType<[]>({} as ArrayReverse<[]>);
-expectType<readonly []>({} as ArrayReverse<readonly []>);
-expectType<[string]>({} as ArrayReverse<[string]>);
-expectType<readonly [number]>({} as ArrayReverse<readonly [number]>);
-expectType<[any]>({} as ArrayReverse<[any]>);
-expectType<[never]>({} as ArrayReverse<[never]>);
+expectTypeOf<ArrayReverse<[]>>().toBe<[]>();
+expectTypeOf<ArrayReverse<readonly []>>().toBe<readonly []>();
+expectTypeOf<ArrayReverse<[string]>>().toBe<[string]>();
+expectTypeOf<ArrayReverse<readonly [number]>>().toBe<readonly [number]>();
+expectTypeOf<ArrayReverse<[any]>>().toBe<[any]>();
+expectTypeOf<ArrayReverse<[never]>>().toBe<[never]>();
 
 // Only required elements
-expectType<[3, 2, 1]>({} as ArrayReverse<[1, 2, 3]>);
-expectType<readonly [string, number, boolean, bigint]>({} as ArrayReverse<readonly [bigint, boolean, number, string]>);
-expectType<['a' | 1, 2, 'c' | 3]>({} as ArrayReverse<['c' | 3, 2, 'a' | 1]>);
+expectTypeOf<ArrayReverse<[1, 2, 3]>>().toBe<[3, 2, 1]>();
+expectTypeOf<ArrayReverse<readonly [bigint, boolean, number, string]>>().toBe<readonly [string, number, boolean, bigint]>();
+expectTypeOf<ArrayReverse<['c' | 3, 2, 'a' | 1]>>().toBe<['a' | 1, 2, 'c' | 3]>();
 
 // Required and rest element
-expectType<readonly [...string[], 3, 2, 1]>({} as ArrayReverse<readonly [1, 2, 3, ...string[]]>); // Rest element at the end
-expectType<['z', 'y', 'x', ...boolean[], 3, 2, 1]>({} as ArrayReverse<[1, 2, 3, ...boolean[], 'x', 'y', 'z']>); // Rest element in the middle
-expectType<readonly [string, ...bigint[]]>({} as ArrayReverse<readonly [...bigint[], string]>); // Rest element at the start
+expectTypeOf<ArrayReverse<readonly [1, 2, 3, ...string[]]>>().toBe<readonly [...string[], 3, 2, 1]>(); // Rest element at the end
+expectTypeOf<ArrayReverse<[1, 2, 3, ...boolean[], 'x', 'y', 'z']>>().toBe<['z', 'y', 'x', ...boolean[], 3, 2, 1]>(); // Rest element in the middle
+expectTypeOf<ArrayReverse<readonly [...bigint[], string]>>().toBe<readonly [string, ...bigint[]]>(); // Rest element at the start
 
 // Required and optional elements
-expectType<[3, 2, 1] | [2, 1]>({} as ArrayReverse<[1, 2, 3?]>);
-expectType<readonly [3, 2, 1] | readonly [2, 1] | readonly [1]>({} as ArrayReverse<readonly [1, 2?, 3?]>);
-expectType<[number, boolean, bigint, number, string] | [boolean, bigint, number, string] | [bigint, number, string] | [number, string]>(
-	{} as ArrayReverse<[string, number, bigint?, boolean?, number?]>,
-);
+expectTypeOf<ArrayReverse<[1, 2, 3?]>>().toBe<[3, 2, 1] | [2, 1]>();
+expectTypeOf<ArrayReverse<readonly [1, 2?, 3?]>>().toBe<readonly [3, 2, 1] | readonly [2, 1] | readonly [1]>();
+expectTypeOf<ArrayReverse<[string, number, bigint?, boolean?, number?]>>().toBe<[number, boolean, bigint, number, string] | [boolean, bigint, number, string] | [bigint, number, string] | [number, string]>();
 
 // Only optional elements
-expectType<['a'] | []>({} as ArrayReverse<['a'?]>);
-expectType<readonly [{data: string[]}] | readonly []>({} as ArrayReverse<readonly [{data: string[]}?]>);
-expectType<[bigint, boolean, string] | [boolean, string] | [string] | []>({} as ArrayReverse<[string?, boolean?, bigint?]>);
+expectTypeOf<ArrayReverse<['a'?]>>().toBe<['a'] | []>();
+expectTypeOf<ArrayReverse<readonly [{data: string[]}?]>>().toBe<readonly [{data: string[]}] | readonly []>();
+expectTypeOf<ArrayReverse<[string?, boolean?, bigint?]>>().toBe<[bigint, boolean, string] | [boolean, string] | [string] | []>();
 
 // Required, optional, and rest element
-expectType<[...string[], 3, 2, 1] | [2, 1]>({} as ArrayReverse<[1, 2, 3?, ...string[]]>);
-expectType<readonly [...string[], string, number] | readonly [number]>({} as ArrayReverse<readonly [number, string?, ...string[]]>);
+expectTypeOf<ArrayReverse<[1, 2, 3?, ...string[]]>>().toBe<[...string[], 3, 2, 1] | [2, 1]>();
+expectTypeOf<ArrayReverse<readonly [number, string?, ...string[]]>>().toBe<readonly [...string[], string, number] | readonly [number]>();
 
 // Optional and rest element
-expectType<readonly [...string[], 1] | readonly []>({} as ArrayReverse<readonly [1?, ...string[]]>);
-expectType<[...number[], 3, 2, 1] | [2, 1] | [1] | []>({} as ArrayReverse<[1?, 2?, 3?, ...number[]]>);
+expectTypeOf<ArrayReverse<readonly [1?, ...string[]]>>().toBe<readonly [...string[], 1] | readonly []>();
+expectTypeOf<ArrayReverse<[1?, 2?, 3?, ...number[]]>>().toBe<[...number[], 3, 2, 1] | [2, 1] | [1] | []>();
 
 // Nested tuples
-expectType<[6, 5, [3, 4], [1, 2]]>({} as ArrayReverse<[[1, 2], [3, 4], 5, 6]>);
-expectType<[Array<{y: string}>, Array<{x: string}>]>({} as ArrayReverse<[Array<{x: string}>, Array<{y: string}>]>);
-expectType<[3, [1, 2]] | [[1, 2]] | []>({} as ArrayReverse<[[1, 2]?, 3?]>);
+expectTypeOf<ArrayReverse<[[1, 2], [3, 4], 5, 6]>>().toBe<[6, 5, [3, 4], [1, 2]]>();
+expectTypeOf<ArrayReverse<[Array<{x: string}>, Array<{y: string}>]>>().toBe<[Array<{y: string}>, Array<{x: string}>]>();
+expectTypeOf<ArrayReverse<[[1, 2]?, 3?]>>().toBe<[3, [1, 2]] | [[1, 2]] | []>();
 
 // Unions
-expectType<[3, 2, 1] | readonly ['b', 'a']>({} as ArrayReverse<[1, 2, 3] | readonly ['a', 'b']>);
-expectType<readonly [number, string] | number[]>({} as ArrayReverse<readonly [string, number] | number[]>);
-expectType<readonly [3, 2, 1] | readonly [2, 1] | readonly [1] | ['b', 'a'] | ['a'] | [] | [number, string]>(
-	{} as ArrayReverse<readonly [1, 2?, 3?] | ['a'?, 'b'?] | [string, number]>,
-);
+expectTypeOf<ArrayReverse<[1, 2, 3] | readonly ['a', 'b']>>().toBe<[3, 2, 1] | readonly ['b', 'a']>();
+expectTypeOf<ArrayReverse<readonly [string, number] | number[]>>().toBe<readonly [number, string] | number[]>();
+expectTypeOf<ArrayReverse<readonly [1, 2?, 3?] | ['a'?, 'b'?] | [string, number]>>().toBe<readonly [3, 2, 1] | readonly [2, 1] | readonly [1] | ['b', 'a'] | ['a'] | [] | [number, string]>();
 
 // Labelled tuples
-expectType<[number, number]>({} as ArrayReverse<[x: number, y: number]>);
-expectType<readonly [number, string] | readonly [string]>({} as ArrayReverse<readonly [x: string, y?: number]>);
-expectType<[...number[], string]>({} as ArrayReverse<[x: string, ...rest: number[]]>);
+expectTypeOf<ArrayReverse<[x: number, y: number]>>().toBe<[number, number]>();
+expectTypeOf<ArrayReverse<readonly [x: string, y?: number]>>().toBe<readonly [number, string] | readonly [string]>();
+expectTypeOf<ArrayReverse<[x: string, ...rest: number[]]>>().toBe<[...number[], string]>();
 
 // Non-tuple arrays
-expectType<string[]>({} as ArrayReverse<string[]>);
-expectType<readonly number[]>({} as ArrayReverse<readonly number[]>);
-expectType<ReadonlyArray<number | bigint>>({} as ArrayReverse<ReadonlyArray<number | bigint>>);
-expectType<any[]>({} as ArrayReverse<any[]>);
-expectType<never[]>({} as ArrayReverse<never[]>);
+expectTypeOf<ArrayReverse<string[]>>().toBe<string[]>();
+expectTypeOf<ArrayReverse<readonly number[]>>().toBe<readonly number[]>();
+expectTypeOf<ArrayReverse<ReadonlyArray<number | bigint>>>().toBe<ReadonlyArray<number | bigint>>();
+expectTypeOf<ArrayReverse<any[]>>().toBe<any[]>();
+expectTypeOf<ArrayReverse<never[]>>().toBe<never[]>();
 
 // Long Tuples
 type FirstFiftyIntegers = [
@@ -82,9 +78,9 @@ type FirstFiftyIntegersReversed = [
 	10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
 ];
 
-expectType<FirstFiftyIntegersReversed>({} as ArrayReverse<FirstFiftyIntegers>);
+expectTypeOf<ArrayReverse<FirstFiftyIntegers>>().toBe<FirstFiftyIntegersReversed>();
 
-expectType<TupleOf<IntRange<0, 51>, number>>({} as ArrayReverse<Partial<TupleOf<50, number>>>);
+expectTypeOf<ArrayReverse<Partial<TupleOf<50, number>>>>().toBe<TupleOf<IntRange<0, 51>, number>>();
 
 type FirstNineHundredNinetyNineIntegers = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -292,8 +288,8 @@ type FirstNineHundredNinetyNineIntegersReversed = [
 	9, 8, 7, 6, 5, 4, 3, 2, 1,
 ];
 
-expectType<FirstNineHundredNinetyNineIntegersReversed>({} as ArrayReverse<FirstNineHundredNinetyNineIntegers>);
+expectTypeOf<ArrayReverse<FirstNineHundredNinetyNineIntegers>>().toBe<FirstNineHundredNinetyNineIntegersReversed>();
 
 // Boundary cases
-expectType<never>({} as ArrayReverse<never>);
-expectType<any>({} as ArrayReverse<any>);
+expectTypeOf<ArrayReverse<never>>().toBe<never>();
+expectTypeOf<ArrayReverse<any>>().toBe<any>();

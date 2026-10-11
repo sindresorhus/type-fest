@@ -1,126 +1,104 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {RenameKeys} from '../source/rename-keys.d.ts';
 
 // Basic batch rename.
-expectType<{id: string; first_name: string; created_at: Date}>(
-	{} as RenameKeys<{id: string; firstName: string; createdAt: Date}, {firstName: 'first_name'; createdAt: 'created_at'}>,
-);
+expectTypeOf<RenameKeys<{id: string; firstName: string; createdAt: Date}, {firstName: 'first_name'; createdAt: 'created_at'}>>().toBe<{id: string; first_name: string; created_at: Date}>();
 
 // Empty rename map is identity.
-expectType<{a: number; b: string}>({} as RenameKeys<{a: number; b: string}, {}>);
+expectTypeOf<RenameKeys<{a: number; b: string}, {}>>().toBe<{a: number; b: string}>();
 
 // Partial rename, unlisted keys are unchanged.
-expectType<{alpha: number; b: string; c: boolean}>(
-	{} as RenameKeys<{a: number; b: string; c: boolean}, {a: 'alpha'}>,
-);
+expectTypeOf<RenameKeys<{a: number; b: string; c: boolean}, {a: 'alpha'}>>().toBe<{alpha: number; b: string; c: boolean}>();
 
 // `readonly` and optional modifiers are both applied to the new name.
-expectType<{readonly identifier: string; name?: string; count: number}>(
-	{} as RenameKeys<{readonly id: string; label?: string; count: number}, {id: 'identifier'; label: 'name'}>,
-);
+expectTypeOf<RenameKeys<{readonly id: string; label?: string; count: number}, {id: 'identifier'; label: 'name'}>>().toBe<{readonly identifier: string; name?: string; count: number}>();
 
 // Distributes over a union of rename maps.
-expectType<{x: 1; b: 2} | {a: 1; y: 2}>(
-	{} as RenameKeys<{a: 1; b: 2}, {a: 'x'} | {b: 'y'}>,
-);
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: 'x'} | {b: 'y'}>>().toBe<{x: 1; b: 2} | {a: 1; y: 2}>();
 
 // Distributes over a union source type.
-expectType<{kind: 'click'; element: string} | {kind: 'submit'; element: HTMLFormElement}>(
-	{} as RenameKeys<{kind: 'click'; target: string} | {kind: 'submit'; target: HTMLFormElement}, {target: 'element'}>,
-);
+expectTypeOf<RenameKeys<{kind: 'click'; target: string} | {kind: 'submit'; target: HTMLFormElement}, {target: 'element'}>>().toBe<{kind: 'click'; element: string} | {kind: 'submit'; element: HTMLFormElement}>();
 
 // Symbol target key.
 declare const symbolKey: unique symbol;
 type SymbolKey = typeof symbolKey;
-expectType<{[symbolKey]: string; other: number}>(
-	{} as RenameKeys<{tag: string; other: number}, {tag: SymbolKey}>,
-);
+expectTypeOf<RenameKeys<{tag: string; other: number}, {tag: SymbolKey}>>().toBe<{[symbolKey]: string; other: number}>();
 
 // Number target keys.
-expectType<{0: number; 1: string}>(
-	{} as RenameKeys<{first: number; second: string}, {first: 0; second: 1}>,
-);
+expectTypeOf<RenameKeys<{first: number; second: string}, {first: 0; second: 1}>>().toBe<{0: number; 1: string}>();
 
 // A literal target onto a string-indexed object is allowed. The index signature
 // does not preclude adding a named property.
-expectType<{[x: string]: number; b: 1}>(
-	{} as RenameKeys<{[x: string]: number; a: 1}, {a: 'b'}>,
-);
+expectTypeOf<RenameKeys<{[x: string]: number; a: 1}, {a: 'b'}>>().toBe<{[x: string]: number; b: 1}>();
 
 // Swapping two keys is allowed. Both keys rename away simultaneously, so no
 // kept-key collision occurs.
-expectType<{b: 1; a: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: 'b'; b: 'a'}>);
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: 'b'; b: 'a'}>>().toBe<{b: 1; a: 2}>();
 
 // Renaming a key to itself is a no-op.
-expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: 'a'}>);
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: 'a'}>>().toBe<{a: 1; b: 2}>();
 
 // Typo'd source key is ignored, matching `Omit`'s result on missing keys.
-expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {nme: 'fullName'}>);
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {nme: 'fullName'}>>().toBe<{a: 1; b: 2}>();
 
 // Optional rename-map entries have the optional modifier ignored.
-expectType<{alpha: number; b: string}>({} as RenameKeys<{a: number; b: string}, {a?: 'alpha'}>);
+expectTypeOf<RenameKeys<{a: number; b: string}, {a?: 'alpha'}>>().toBe<{alpha: number; b: string}>();
 
 // Collision with a kept property merges the values into a union.
-expectType<{b: number | string}>({} as RenameKeys<{a: number; b: string}, {a: 'b'}>);
+expectTypeOf<RenameKeys<{a: number; b: string}, {a: 'b'}>>().toBe<{b: number | string}>();
 
 // Cross-union collision merges per union member.
-expectType<{b: number} | {b: string}>({} as RenameKeys<{a: number} | {b: string}, {a: 'b'}>);
+expectTypeOf<RenameKeys<{a: number} | {b: string}, {a: 'b'}>>().toBe<{b: number} | {b: string}>();
 
 // Duplicate targets across the same rename map merge into a union.
-expectType<{x: 1 | 2; c: 3}>({} as RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'; b: 'x'}>);
+expectTypeOf<RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'; b: 'x'}>>().toBe<{x: 1 | 2; c: 3}>();
 
 // A non-literal target (like `string`) is ignored, leaving that key unchanged,
 // the same way a missing source key is ignored.
-expectType<{a: number; b: string}>({} as RenameKeys<{a: number; b: string}, {a: string}>);
+expectTypeOf<RenameKeys<{a: number; b: string}, {a: string}>>().toBe<{a: number; b: string}>();
 
 // Other entries in the same map still apply.
-expectType<{a: number; c: string}>({} as RenameKeys<{a: number; b: string}, {a: string; b: 'c'}>);
+expectTypeOf<RenameKeys<{a: number; b: string}, {a: string; b: 'c'}>>().toBe<{a: number; c: string}>();
 
 // More non-literal targets, all ignored.
-expectType<{a: number; c: string}>({} as RenameKeys<{a: number; b: string}, {a: Uppercase<string>; b: 'c'}>);
-expectType<{a: number; c: string}>({} as RenameKeys<{a: number; b: string}, {a: `foo${string}`; b: 'c'}>);
-expectType<{a: 1; c: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: number; b: 'c'}>);
-expectType<{a: 1; c: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: symbol; b: 'c'}>);
+expectTypeOf<RenameKeys<{a: number; b: string}, {a: Uppercase<string>; b: 'c'}>>().toBe<{a: number; c: string}>();
+expectTypeOf<RenameKeys<{a: number; b: string}, {a: `foo${string}`; b: 'c'}>>().toBe<{a: number; c: string}>();
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: number; b: 'c'}>>().toBe<{a: 1; c: 2}>();
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: symbol; b: 'c'}>>().toBe<{a: 1; c: 2}>();
 
 // A union target with a non-literal member is ignored as a whole.
-expectType<{a: 1}>({} as RenameKeys<{a: 1}, {a: 'b' | string}>);
+expectTypeOf<RenameKeys<{a: 1}, {a: 'b' | string}>>().toBe<{a: 1}>();
 
 // A map whose targets are all non-literal is the identity.
-expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {a: string; b: number}>);
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: string; b: number}>>().toBe<{a: 1; b: 2}>();
 
 // An ignored key's kept name can collide with another rename and merge values.
-expectType<{a: 1 | 2}>({} as RenameKeys<{a: 1; b: 2}, {a: string; b: 'a'}>);
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: string; b: 'a'}>>().toBe<{a: 1 | 2}>();
 
 // Union targets distribute, producing one output key per member.
-expectType<{b: string; c: string}>({} as RenameKeys<{a: string}, {a: 'b' | 'c'}>);
+expectTypeOf<RenameKeys<{a: string}, {a: 'b' | 'c'}>>().toBe<{b: string; c: string}>();
 
 // Union target preserves modifiers across all expanded keys.
-expectType<{readonly b: string; readonly c: string}>(
-	{} as RenameKeys<{readonly a: string}, {a: 'b' | 'c'}>,
-);
+expectTypeOf<RenameKeys<{readonly a: string}, {a: 'b' | 'c'}>>().toBe<{readonly b: string; readonly c: string}>();
 
 // Preserves optional modifier only when all contributors are optional.
-expectType<{b?: string; c?: string}>({} as RenameKeys<{a?: string}, {a: 'b' | 'c'}>);
+expectTypeOf<RenameKeys<{a?: string}, {a: 'b' | 'c'}>>().toBe<{b?: string; c?: string}>();
 
 // Union target combined with a kept-key collision. Both `b` and `c` are
 // produced, and `b` merges the source's `a` and `b` values.
-expectType<{b: 1 | 2; c: 1}>({} as RenameKeys<{a: 1; b: 2}, {a: 'b' | 'c'}>);
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: 'b' | 'c'}>>().toBe<{b: 1 | 2; c: 1}>();
 
 // Union target combined with another source mapping to the same target.
-expectType<{b: string | number; c: number}>(
-	{} as RenameKeys<{a: string; d: number}, {a: 'b'; d: 'b' | 'c'}>,
-);
+expectTypeOf<RenameKeys<{a: string; d: number}, {a: 'b'; d: 'b' | 'c'}>>().toBe<{b: string | number; c: number}>();
 
 // Three-member union of rename maps distributes correctly.
-expectType<{x: 1; b: 2; c: 3} | {a: 1; y: 2; c: 3} | {a: 1; b: 2; z: 3}>(
-	{} as RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'} | {b: 'y'} | {c: 'z'}>,
-);
+expectTypeOf<RenameKeys<{a: 1; b: 2; c: 3}, {a: 'x'} | {b: 'y'} | {c: 'z'}>>().toBe<{x: 1; b: 2; c: 3} | {a: 1; y: 2; c: 3} | {a: 1; b: 2; z: 3}>();
 
 // `any` source returns `any`.
-expectType<any>({} as RenameKeys<any, {a: 'x'}>);
+expectTypeOf<RenameKeys<any, {a: 'x'}>>().toBe<any>();
 
 // `never` source returns `never`.
-expectType<never>({} as RenameKeys<never, {a: 'x'}>);
+expectTypeOf<RenameKeys<never, {a: 'x'}>>().toBe<never>();
 
 // @ts-expect-error -- A non-object source is rejected by the `object` constraint.
 type Rejected = RenameKeys<string, {a: 'b'}>;
@@ -128,219 +106,181 @@ type Rejected = RenameKeys<string, {a: 'b'}>;
 // Generic instantiation works inside other generics without erroring at the
 // definition site.
 type WrappedGeneric<T extends object, K extends keyof T & string> = RenameKeys<T, {[P in K]: `new_${P}`}>;
-expectType<{new_a: number; b: string; new_c: string}>({} as WrappedGeneric<{a: number; b: string; c: string}, 'a' | 'c'>);
+expectTypeOf<WrappedGeneric<{a: number; b: string; c: string}, 'a' | 'c'>>().toBe<{new_a: number; b: string; new_c: string}>();
 
 // All contributors required.
-expectType<{new_p: string | number | bigint}>(
-	{} as RenameKeys<{p1: string; p2: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
-);
+expectTypeOf<RenameKeys<{p1: string; p2: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>>().toBe<{new_p: string | number | bigint}>();
 
 // All contributors optional, optional modifier applies to the target.
-expectType<{new_p?: string | number | bigint}>(
-	{} as RenameKeys<{p1?: string; p2?: number; p3?: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
-);
+expectTypeOf<RenameKeys<{p1?: string; p2?: number; p3?: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>>().toBe<{new_p?: string | number | bigint}>();
 
 // Mixed-optionality merge. The target is required because at least one
 // contributor is required. The value type follows `exactOptionalPropertyTypes`.
 // With EOPT on (as in this test project), the value omits `undefined`.
-expectType<{new_p: string | number | bigint}>(
-	{} as RenameKeys<{p1: string; p2?: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
-);
+expectTypeOf<RenameKeys<{p1: string; p2?: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>>().toBe<{new_p: string | number | bigint}>();
 
 // Mixed-readonly merge. The target is readonly because at least one
 // contributor is readonly.
-expectType<{readonly new_p: string | number | bigint}>(
-	{} as RenameKeys<{p1: string; readonly p2: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>,
-);
+expectTypeOf<RenameKeys<{p1: string; readonly p2: number; p3: bigint}, {p1: 'new_p'; p2: 'new_p'; p3: 'new_p'}>>().toBe<{readonly new_p: string | number | bigint}>();
 
 // Union-valued sources merge into a flattened union.
-expectType<{x: 1 | 2 | 3 | 4}>({} as RenameKeys<{a: 1 | 2; b: 3 | 4}, {a: 'x'; b: 'x'}>);
+expectTypeOf<RenameKeys<{a: 1 | 2; b: 3 | 4}, {a: 'x'; b: 'x'}>>().toBe<{x: 1 | 2 | 3 | 4}>();
 
 // Overlapping members in the merged union collapse.
-expectType<{x: 1 | 2 | 3}>({} as RenameKeys<{a: 1 | 2; b: 2 | 3}, {a: 'x'; b: 'x'}>);
+expectTypeOf<RenameKeys<{a: 1 | 2; b: 2 | 3}, {a: 'x'; b: 'x'}>>().toBe<{x: 1 | 2 | 3}>();
 
 // Union-valued mixed-optionality merge. The target is required and the values flatten.
-expectType<{x: 1 | 2 | 3}>({} as RenameKeys<{a?: 1 | 2; b: 3}, {a: 'x'; b: 'x'}>);
+expectTypeOf<RenameKeys<{a?: 1 | 2; b: 3}, {a: 'x'; b: 'x'}>>().toBe<{x: 1 | 2 | 3}>();
 
 // Optional source first, required source second. The target is required
 // because a required contributor exists, regardless of source order.
-expectType<{x: number | string}>(
-	{} as RenameKeys<{a?: number; b: string}, {a: 'x'; b: 'x'}>,
-);
+expectTypeOf<RenameKeys<{a?: number; b: string}, {a: 'x'; b: 'x'}>>().toBe<{x: number | string}>();
 
 // Required source first, optional source second.
-expectType<{x: string | number}>(
-	{} as RenameKeys<{a: string; b?: number}, {a: 'x'; b: 'x'}>,
-);
+expectTypeOf<RenameKeys<{a: string; b?: number}, {a: 'x'; b: 'x'}>>().toBe<{x: string | number}>();
 
 // Three sources with the optional one in the middle.
-expectType<{z: number | string | bigint}>(
-	{} as RenameKeys<{a: number; b?: string; c: bigint}, {a: 'z'; b: 'z'; c: 'z'}>,
-);
+expectTypeOf<RenameKeys<{a: number; b?: string; c: bigint}, {a: 'z'; b: 'z'; c: 'z'}>>().toBe<{z: number | string | bigint}>();
 
 // Three sources with the optional one at the end.
-expectType<{z: number | string | bigint}>(
-	{} as RenameKeys<{a: number; b: string; c?: bigint}, {a: 'z'; b: 'z'; c: 'z'}>,
-);
+expectTypeOf<RenameKeys<{a: number; b: string; c?: bigint}, {a: 'z'; b: 'z'; c: 'z'}>>().toBe<{z: number | string | bigint}>();
 
 // Mixed readonly AND mixed optionality. Any readonly contributor results in
 // readonly, any required contributor results in required.
-expectType<{readonly x: string | number}>(
-	{} as RenameKeys<{readonly a?: string; b: number}, {a: 'x'; b: 'x'}>,
-);
+expectTypeOf<RenameKeys<{readonly a?: string; b: number}, {a: 'x'; b: 'x'}>>().toBe<{readonly x: string | number}>();
 
 // Any readonly contributor with all optional contributors.
-expectType<{readonly x?: string | number}>(
-	{} as RenameKeys<{readonly a?: string; b?: number}, {a: 'x'; b: 'x'}>,
-);
+expectTypeOf<RenameKeys<{readonly a?: string; b?: number}, {a: 'x'; b: 'x'}>>().toBe<{readonly x?: string | number}>();
 
 // Union target with mixed optionality across members. The required target
 // is required, the optional-only target is optional.
-expectType<{x: number | string; y?: number}>(
-	{} as RenameKeys<{a?: number; b: string}, {a: 'x' | 'y'; b: 'x'}>,
-);
+expectTypeOf<RenameKeys<{a?: number; b: string}, {a: 'x' | 'y'; b: 'x'}>>().toBe<{x: number | string; y?: number}>();
 
 // Union target where one member collides with a kept required key.
-expectType<{b: number | string; c: number | boolean}>(
-	{} as RenameKeys<{a?: number; b: string; c: boolean}, {a: 'b' | 'c'}>,
-);
+expectTypeOf<RenameKeys<{a?: number; b: string; c: boolean}, {a: 'b' | 'c'}>>().toBe<{b: number | string; c: number | boolean}>();
 
 // Sources span all four modifier categories simultaneously.
-expectType<{
+expectTypeOf<RenameKeys<
+	{
+		readonly a: 'a-val';
+		b?: 'b-val';
+		readonly c?: 'c-val';
+		d: 'd-val';
+	},
+	{a: 'x'; b: 'x' | 'y'; c: 'y'; d: 'z'}
+>>().toBe<{
 	readonly x: 'a-val' | 'b-val';
 	readonly y?: 'b-val' | 'c-val';
 	z: 'd-val';
-}>(
-	{} as RenameKeys<
-		{
-			readonly a: 'a-val';
-			b?: 'b-val';
-			readonly c?: 'c-val';
-			d: 'd-val';
-		},
-		{a: 'x'; b: 'x' | 'y'; c: 'y'; d: 'z'}
-	>,
-);
+}>();
 
 // Index signature is preserved when the only renamed source is optional. The
 // index sig key must not affect the target's modifier routing.
-expectType<{[x: string]: number; b?: 1}>(
-	{} as RenameKeys<{[x: string]: number; a?: 1}, {a: 'b'}>,
-);
+expectTypeOf<RenameKeys<{[x: string]: number; a?: 1}, {a: 'b'}>>().toBe<{[x: string]: number; b?: 1}>();
 
 // Three-way swap with the optional source in the middle.
-expectType<{b: 1; c?: 2; a: 3}>(
-	{} as RenameKeys<{a: 1; b?: 2; c: 3}, {a: 'b'; b: 'c'; c: 'a'}>,
-);
+expectTypeOf<RenameKeys<{a: 1; b?: 2; c: 3}, {a: 'b'; b: 'c'; c: 'a'}>>().toBe<{b: 1; c?: 2; a: 3}>();
 
 // Swapping a required and an optional key. Each modifier travels with its key,
 // so the new `a` is optional (it came from the optional `b`).
-expectType<{b: 1; a?: 2}>({} as RenameKeys<{a: 1; b?: 2}, {a: 'b'; b: 'a'}>);
+expectTypeOf<RenameKeys<{a: 1; b?: 2}, {a: 'b'; b: 'a'}>>().toBe<{b: 1; a?: 2}>();
 
 // Symbol source key renamed through a symbol map key.
-expectType<{x: 1; b: 2}>({} as RenameKeys<{[symbolKey]: 1; b: 2}, {[symbolKey]: 'x'}>);
+expectTypeOf<RenameKeys<{[symbolKey]: 1; b: 2}, {[symbolKey]: 'x'}>>().toBe<{x: 1; b: 2}>();
 
 // Two sources merged into a symbol target.
-expectType<{[symbolKey]: 1 | 2}>(
-	{} as RenameKeys<{a?: 1; b: 2}, {a: SymbolKey; b: SymbolKey}>,
-);
+expectTypeOf<RenameKeys<{a?: 1; b: 2}, {a: SymbolKey; b: SymbolKey}>>().toBe<{[symbolKey]: 1 | 2}>();
 
 // Both string and number index signatures are carried across.
-expectType<{[x: string]: unknown; [x: number]: number; b?: 1}>(
-	{} as RenameKeys<{[x: string]: unknown; [x: number]: number; a?: 1}, {a: 'b'}>,
-);
+expectTypeOf<RenameKeys<{[x: string]: unknown; [x: number]: number; a?: 1}, {a: 'b'}>>().toBe<{[x: string]: unknown; [x: number]: number; b?: 1}>();
 
 // A readonly index signature stays readonly.
-expectType<{readonly [x: string]: number; b?: 1}>(
-	{} as RenameKeys<{readonly [x: string]: number; a?: 1}, {a: 'b'}>,
-);
+expectTypeOf<RenameKeys<{readonly [x: string]: number; a?: 1}, {a: 'b'}>>().toBe<{readonly [x: string]: number; b?: 1}>();
 
 // `any` and `unknown` values survive a merge.
-expectType<{x: any}>({} as RenameKeys<{a: any; b?: 1}, {a: 'x'; b: 'x'}>);
-expectType<{x: unknown}>({} as RenameKeys<{a: unknown; b?: 1}, {a: 'x'; b: 'x'}>);
+expectTypeOf<RenameKeys<{a: any; b?: 1}, {a: 'x'; b: 'x'}>>().toBe<{x: any}>();
+expectTypeOf<RenameKeys<{a: unknown; b?: 1}, {a: 'x'; b: 'x'}>>().toBe<{x: unknown}>();
 
 // A self-referential source renames one key, the recursive reference is left alone.
 type Tree = {value: number; next: Tree};
-expectType<{v: number; next: Tree}>({} as RenameKeys<Tree, {value: 'v'}>);
+expectTypeOf<RenameKeys<Tree, {value: 'v'}>>().toBe<{v: number; next: Tree}>();
 
 // An explicit `| undefined` in a required value is kept on rename.
-expectType<{x: number | undefined; b: 2}>(
-	{} as RenameKeys<{a: number | undefined; b: 2}, {a: 'x'}>,
-);
+expectTypeOf<RenameKeys<{a: number | undefined; b: 2}, {a: 'x'}>>().toBe<{x: number | undefined; b: 2}>();
 
 // Numeric keys merged into one target.
-expectType<{a: string | number}>({} as RenameKeys<{0: number; 1?: string}, {0: 'a'; 1: 'a'}>);
+expectTypeOf<RenameKeys<{0: number; 1?: string}, {0: 'a'; 1: 'a'}>>().toBe<{a: string | number}>();
 
 // A `never` map renames nothing, so the result is the base type.
-expectType<{a: 1}>({} as RenameKeys<{a: 1}, never>);
-expectType<{a: 1; b: 2}>({} as RenameKeys<{a: 1; b: 2}, {}>);
-expectType<{a: 1; readonly b: 2}>({} as RenameKeys<{a: 1; readonly b: 2}, never>);
+expectTypeOf<RenameKeys<{a: 1}, never>>().toBe<{a: 1}>();
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {}>>().toBe<{a: 1; b: 2}>();
+expectTypeOf<RenameKeys<{a: 1; readonly b: 2}, never>>().toBe<{a: 1; readonly b: 2}>();
 
 // A tuple and an array are objects too, so an empty rename map must leave them unchanged. Without this, the `as` clause below drops the tuple and the array gains a `readonly`.
 declare const tupleUnchanged: RenameKeys<[1, 2], {}>;
-expectType<[1, 2]>(tupleUnchanged);
+expectTypeOf(tupleUnchanged).toBe<[1, 2]>();
 
 declare const arrayUnchanged: RenameKeys<string[], {}>;
-expectType<string[]>(arrayUnchanged);
+expectTypeOf(arrayUnchanged).toBe<string[]>();
 
 declare const unionUnchanged: RenameKeys<[1, 2] | {a: 1}, {}>;
-expectType<[1, 2] | {a: 1}>(unionUnchanged);
+expectTypeOf(unionUnchanged).toBe<[1, 2] | {a: 1}>();
 
 // A map that only renames keys to themselves renames nothing, so it must not rebuild the type either. Rebuilding is what drops the tuple-ness of a tuple and adds a `readonly` to an array.
 declare const tupleSelfRenamed: RenameKeys<[1, 2], {a: 'a'}>;
-expectType<[1, 2]>(tupleSelfRenamed);
+expectTypeOf(tupleSelfRenamed).toBe<[1, 2]>();
 
 declare const arraySelfRenamed: RenameKeys<string[], {a: 'a'}>;
-expectType<string[]>(arraySelfRenamed);
+expectTypeOf(arraySelfRenamed).toBe<string[]>();
 
 declare const unionWithSelfRenamedTuple: RenameKeys<[1, 2] | {a: 1}, {a: 'a'}>;
-expectType<[1, 2] | {a: 1}>(unionWithSelfRenamedTuple);
+expectTypeOf(unionWithSelfRenamedTuple).toBe<[1, 2] | {a: 1}>();
 
 declare const objectSelfRenamedTwice: RenameKeys<{a: 1}, {a: 'a'; b: 'b'}>;
-expectType<{a: 1}>(objectSelfRenamedTwice);
+expectTypeOf(objectSelfRenamedTwice).toBe<{a: 1}>();
 
 // Known limitation: a real rename of an array or tuple is unsupported and gives `never`. An ignored rename leaves the member unchanged, including in a union. See the docs.
 declare const tupleRenamed: RenameKeys<[1, 2], {0: 'x'}>;
-expectType<never>(tupleRenamed);
+expectTypeOf(tupleRenamed).toBe<never>();
 
-expectType<never>({} as RenameKeys<string[], {length: 'size'}>);
+expectTypeOf<RenameKeys<string[], {length: 'size'}>>().toBe<never>();
 
 declare const unionWithTuple: RenameKeys<[1, 2] | {a: 1}, {a: 'x'}>;
-expectType<[1, 2] | {x: 1}>(unionWithTuple);
+expectTypeOf(unionWithTuple).toBe<[1, 2] | {x: 1}>();
 
 // At runtime a numeric key and its string form are the same key, so a rename written either way renames the property.
 declare const numericKey: RenameKeys<{0: 1}, {'0': 'x'}>;
-expectType<{x: 1}>(numericKey);
+expectTypeOf(numericKey).toBe<{x: 1}>();
 
 declare const numericKeyOtherWay: RenameKeys<{0: 1}, {0: 'x'}>;
-expectType<{x: 1}>(numericKeyOtherWay);
+expectTypeOf(numericKeyOtherWay).toBe<{x: 1}>();
 
-expectType<{x: 1}>({} as RenameKeys<{'0': 1}, {0: 'x'}>);
+expectTypeOf<RenameKeys<{'0': 1}, {0: 'x'}>>().toBe<{x: 1}>();
 
 // A map whose key is not a literal still renames, because a target cannot be compared with a pattern: `Record<string, 'x'>` renames every key rather than renaming a key to itself.
 declare const indexSignatureMap: RenameKeys<{a: 1; b: 2}, Record<string, 'x'>>;
-expectType<{x: 1 | 2}>(indexSignatureMap);
+expectTypeOf(indexSignatureMap).toBe<{x: 1 | 2}>();
 
 // A real rename of a callable object drops the call signature, while a map that renames nothing keeps it. The rename is a mapped type over `keyof`, which cannot carry one. See the note in the docs.
 type CallableWithProperty = {(a: string): number; p?: number};
 
 declare const renamesCallSignature: RenameKeys<CallableWithProperty, {p: 'q'}>;
-expectType<{q?: number}>(renamesCallSignature);
+expectTypeOf(renamesCallSignature).toBe<{q?: number}>();
 
 declare const keepsCallSignature: RenameKeys<CallableWithProperty, {}>;
-expectType<CallableWithProperty>(keepsCallSignature);
+expectTypeOf(keepsCallSignature).toBe<CallableWithProperty>();
 
 // Missing source keys are ignored without rebuilding tuples, arrays, or callable objects.
-expectType<[1, 2]>({} as RenameKeys<[1, 2], {missing: 'renamed'}>);
-expectType<string[]>({} as RenameKeys<string[], {missing: 'renamed'}>);
-expectType<CallableWithProperty>({} as RenameKeys<CallableWithProperty, {missing: 'renamed'}>);
+expectTypeOf<RenameKeys<[1, 2], {missing: 'renamed'}>>().toBe<[1, 2]>();
+expectTypeOf<RenameKeys<string[], {missing: 'renamed'}>>().toBe<string[]>();
+expectTypeOf<RenameKeys<CallableWithProperty, {missing: 'renamed'}>>().toBe<CallableWithProperty>();
 
 // Renaming a numeric tuple key to itself also leaves its structure unchanged.
-expectType<[1, 2]>({} as RenameKeys<[1, 2], {'0': '0'}>);
+expectTypeOf<RenameKeys<[1, 2], {'0': '0'}>>().toBe<[1, 2]>();
 
 // Numeric and string spellings of the same target key are both identity renames.
-expectType<[1, 2]>({} as RenameKeys<[1, 2], {0: 0}>);
-expectType<readonly [1, 2]>({} as RenameKeys<readonly [1, 2], {'0': 0}>);
+expectTypeOf<RenameKeys<[1, 2], {0: 0}>>().toBe<[1, 2]>();
+expectTypeOf<RenameKeys<readonly [1, 2], {'0': 0}>>().toBe<readonly [1, 2]>();
 
 // A literal target changes a broad source key even though it is assignable to that key.
-expectType<{x: 1}>({} as RenameKeys<Record<string, 1>, Record<string, 'x'>>);
+expectTypeOf<RenameKeys<Record<string, 1>, Record<string, 'x'>>>().toBe<{x: 1}>();

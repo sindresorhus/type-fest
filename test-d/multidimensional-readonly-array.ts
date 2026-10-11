@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {MultidimensionalReadonlyArray} from '../index.d.ts';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalReadonlyArray<string, T> {
@@ -25,19 +25,18 @@ const answer = c?.[0]?.[0]; // '42'
 
 type RecursiveArray<T> = ReadonlyArray<RecursiveArray<T>>;
 
-expectType<string | undefined>(answer);
+expectTypeOf(answer).toBe<string | undefined>();
 
-expectType<ReadonlyArray<ReadonlyArray<readonly number[]>>>(a);
-expectType<RecursiveArray<boolean>>(b);
-expectType<ReadonlyArray<readonly string[]>>(c);
+expectTypeOf(a).toBe<ReadonlyArray<ReadonlyArray<readonly number[]>>>();
+expectTypeOf(b).toBe<RecursiveArray<boolean>>();
+expectTypeOf(c).toBe<ReadonlyArray<readonly string[]>>();
 
 // A union of dimensions is a dynamic dimension, so it resolves to the union of the arrays of each dimension, like `MultidimensionalArray` does.
 const union: MultidimensionalReadonlyArray<number, 1 | 2 | 3> = [];
 
-expectType<
+expectTypeOf(union).toBe<
 	readonly number[]
 	| ReadonlyArray<readonly number[]>
-	| ReadonlyArray<ReadonlyArray<readonly number[]>>
->(union);
+	| ReadonlyArray<ReadonlyArray<readonly number[]>>>();
 
-expectType<readonly string[] | ReadonlyArray<readonly string[]>>(createArray(1 as 1 | 2));
+expectTypeOf(createArray(1 as 1 | 2)).toBe<readonly string[] | ReadonlyArray<readonly string[]>>();

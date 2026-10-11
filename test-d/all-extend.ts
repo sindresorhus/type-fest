@@ -1,130 +1,128 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {AllExtend} from '../source/all-extend.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
-expectType<AllExtend<[], number>>(true);
-expectType<AllExtend<[1, 2, 3], number>>(true);
-expectType<AllExtend<[1, 2, 3], number | bigint>>(true);
-expectType<AllExtend<[true, false, true, false, boolean], boolean>>(true);
-expectType<AllExtend<[string, '1', '2', `${number}`], string>>(true);
-expectType<AllExtend<[1, 2, 3, ...number[]], number>>(true);
-expectType<AllExtend<[number, number, ...Array<1 | -1>], number>>(true);
-expectType<AllExtend<[...number[], number, string], number | string>>(true);
-expectType<AllExtend<['^', ...string[], '$'], string>>(true);
+expectTypeOf<AllExtend<[], number>>().toBe<true>();
+expectTypeOf<AllExtend<[1, 2, 3], number>>().toBe<true>();
+expectTypeOf<AllExtend<[1, 2, 3], number | bigint>>().toBe<true>();
+expectTypeOf<AllExtend<[true, false, true, false, boolean], boolean>>().toBe<true>();
+expectTypeOf<AllExtend<[string, '1', '2', `${number}`], string>>().toBe<true>();
+expectTypeOf<AllExtend<[1, 2, 3, ...number[]], number>>().toBe<true>();
+expectTypeOf<AllExtend<[number, number, ...Array<1 | -1>], number>>().toBe<true>();
+expectTypeOf<AllExtend<[...number[], number, string], number | string>>().toBe<true>();
+expectTypeOf<AllExtend<['^', ...string[], '$'], string>>().toBe<true>();
 
-expectType<AllExtend<[1, 2, '3'], number>>(false);
-expectType<AllExtend<['1', 2, 3], number>>(false);
-expectType<AllExtend<['1', '2', '3', 4, '5'], string>>(false);
-expectType<AllExtend<[1, 2, 3, ...string[]], number>>(false);
-expectType<AllExtend<[...bigint[], number, string], number | string>>(false);
-expectType<AllExtend<[1, 2, ...number[], '1', 3], number>>(false);
-expectType<AllExtend<[1, 2, ...string[], 3, 4], number>>(false);
+expectTypeOf<AllExtend<[1, 2, '3'], number>>().toBe<false>();
+expectTypeOf<AllExtend<['1', 2, 3], number>>().toBe<false>();
+expectTypeOf<AllExtend<['1', '2', '3', 4, '5'], string>>().toBe<false>();
+expectTypeOf<AllExtend<[1, 2, 3, ...string[]], number>>().toBe<false>();
+expectTypeOf<AllExtend<[...bigint[], number, string], number | string>>().toBe<false>();
+expectTypeOf<AllExtend<[1, 2, ...number[], '1', 3], number>>().toBe<false>();
+expectTypeOf<AllExtend<[1, 2, ...string[], 3, 4], number>>().toBe<false>();
 
 // Union type elements
-expectType<AllExtend<[string, string | number], string>>({} as boolean);
-expectType<AllExtend<[true, true, true, boolean], true>>({} as boolean);
-expectType<AllExtend<[false, false, boolean, false], false>>({} as boolean);
-expectType<AllExtend<['1', '2', number | bigint, '3'], string>>(false);
-expectType<AllExtend<[1, 2, number | bigint, 3], number | bigint>>(true);
-expectType<AllExtend<[1, 2, 3, ...Array<string | undefined>], string | number>>({} as boolean);
-expectType<AllExtend<['foo', ...Array<string | undefined>, 'bar'], string | undefined>>(true);
+expectTypeOf<boolean>().toBe<AllExtend<[string, string | number], string>>();
+expectTypeOf<boolean>().toBe<AllExtend<[true, true, true, boolean], true>>();
+expectTypeOf<boolean>().toBe<AllExtend<[false, false, boolean, false], false>>();
+expectTypeOf<AllExtend<['1', '2', number | bigint, '3'], string>>().toBe<false>();
+expectTypeOf<AllExtend<[1, 2, number | bigint, 3], number | bigint>>().toBe<true>();
+expectTypeOf<boolean>().toBe<AllExtend<[1, 2, 3, ...Array<string | undefined>], string | number>>();
+expectTypeOf<AllExtend<['foo', ...Array<string | undefined>, 'bar'], string | undefined>>().toBe<true>();
 
 // Readonly arrays
-expectType<AllExtend<readonly [], number>>(true);
-expectType<AllExtend<readonly [1, 2, 3], number>>(true);
-expectType<AllExtend<readonly [1, 2, '3'], number>>(false);
-expectType<AllExtend<readonly ['^', ...string[], '$'], string>>(true);
-expectType<AllExtend<readonly [number, ...readonly string[], number], string>>(false);
-expectType<AllExtend<readonly [...bigint[], number, string], number | string>>(false);
-expectType<AllExtend<readonly [...ReadonlyArray<string | undefined>, string, string], string | undefined>>(true);
+expectTypeOf<AllExtend<readonly [], number>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [1, 2, 3], number>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [1, 2, '3'], number>>().toBe<false>();
+expectTypeOf<AllExtend<readonly ['^', ...string[], '$'], string>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [number, ...readonly string[], number], string>>().toBe<false>();
+expectTypeOf<AllExtend<readonly [...bigint[], number, string], number | string>>().toBe<false>();
+expectTypeOf<AllExtend<readonly [...ReadonlyArray<string | undefined>, string, string], string | undefined>>().toBe<true>();
 
 // Optional elements
 // If `exactOptionalPropertyTypes` were disabled, the target type would need an additional `| undefined` for a successful match.
 // For example, `AllExtend<[1?, 2?], number>` would return `boolean`. To make it return `true`, the target type must be `number | undefined`.
-expectType<AllExtend<[1?, 2?, 3?], number>>(true);
-expectType<AllExtend<[1?, (2 | undefined)?], number>>({} as boolean);
-expectType<AllExtend<[1?, 2?, 3?], number | undefined>>(true);
-expectType<AllExtend<[1, 2?, 3?, ...number[]], number>>(true);
-expectType<AllExtend<[1, 2?, 3?, ...Array<number | undefined>], number>>({} as boolean);
-expectType<AllExtend<[1?, 2?, 3?, ...string[]], number>>(false);
+expectTypeOf<AllExtend<[1?, 2?, 3?], number>>().toBe<true>();
+expectTypeOf<boolean>().toBe<AllExtend<[1?, (2 | undefined)?], number>>();
+expectTypeOf<AllExtend<[1?, 2?, 3?], number | undefined>>().toBe<true>();
+expectTypeOf<AllExtend<[1, 2?, 3?, ...number[]], number>>().toBe<true>();
+expectTypeOf<boolean>().toBe<AllExtend<[1, 2?, 3?, ...Array<number | undefined>], number>>();
+expectTypeOf<AllExtend<[1?, 2?, 3?, ...string[]], number>>().toBe<false>();
 
 // Labelled tuples
-expectType<AllExtend<[x: string, y: string], string>>(true);
-expectType<AllExtend<[x?: string, y?: number], string>>(false);
-expectType<AllExtend<[x?: number, y?: number, ...rest: number[]], number>>(true);
-expectType<AllExtend<[...rest: number[], z: string], number>>(false);
+expectTypeOf<AllExtend<[x: string, y: string], string>>().toBe<true>();
+expectTypeOf<AllExtend<[x?: string, y?: number], string>>().toBe<false>();
+expectTypeOf<AllExtend<[x?: number, y?: number, ...rest: number[]], number>>().toBe<true>();
+expectTypeOf<AllExtend<[...rest: number[], z: string], number>>().toBe<false>();
 
 // Non-tuple arrays
-expectType<AllExtend<string[], string>>(true);
-expectType<AllExtend<Array<string | number>, number>>({} as boolean);
-expectType<AllExtend<ReadonlyArray<string | undefined>, string>>({} as boolean);
-expectType<AllExtend<[...readonly boolean[]], string>>(false);
+expectTypeOf<AllExtend<string[], string>>().toBe<true>();
+expectTypeOf<boolean>().toBe<AllExtend<Array<string | number>, number>>();
+expectTypeOf<boolean>().toBe<AllExtend<ReadonlyArray<string | undefined>, string>>();
+expectTypeOf<AllExtend<[...readonly boolean[]], string>>().toBe<false>();
 
 // Unions
-expectType<AllExtend<[1, 2, 3] | [4, 5, 6], number>>(true); // Both `true`
-expectType<AllExtend<[1, 2, '3'] | [4, 5, '6'], number>>(false); // Both `false`
-expectType<AllExtend<[1, 2, 3] | ['1', '2', 3], number>>({} as boolean); // One `true`, one `false`
-expectType<AllExtend<[true, true] | [true, boolean], true>>({} as boolean); // One `true`, one `boolean`
-expectType<AllExtend<[true, false] | [true, boolean], true>>({} as boolean); // One `false`, one `boolean`
+expectTypeOf<AllExtend<[1, 2, 3] | [4, 5, 6], number>>().toBe<true>(); // Both `true`
+expectTypeOf<AllExtend<[1, 2, '3'] | [4, 5, '6'], number>>().toBe<false>(); // Both `false`
+expectTypeOf<boolean>().toBe<AllExtend<[1, 2, 3] | ['1', '2', 3], number>>(); // One `true`, one `false`
+expectTypeOf<boolean>().toBe<AllExtend<[true, true] | [true, boolean], true>>(); // One `true`, one `boolean`
+expectTypeOf<boolean>().toBe<AllExtend<[true, false] | [true, boolean], true>>(); // One `false`, one `boolean`
 
-expectType<AllExtend<[string, string, ...string[]] | [number, number, ...number[]], number | string>>(true);
-expectType<AllExtend<readonly [(number | bigint)?, ...string[]] | [0, 'a', 'b'] | [...ReadonlyArray<string | number>, 1], string>>(false);
-expectType<AllExtend<string[] | [...ReadonlyArray<string | number>, string], string>>({} as boolean);
-expectType<AllExtend<readonly number[] | [...rest: number[], l1: number, l2: number] | [number?, string?, ...string[]], number>>(
-	{} as boolean,
-);
+expectTypeOf<AllExtend<[string, string, ...string[]] | [number, number, ...number[]], number | string>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [(number | bigint)?, ...string[]] | [0, 'a', 'b'] | [...ReadonlyArray<string | number>, 1], string>>().toBe<false>();
+expectTypeOf<boolean>().toBe<AllExtend<string[] | [...ReadonlyArray<string | number>, string], string>>();
+expectTypeOf<boolean>().toBe<AllExtend<readonly number[] | [...rest: number[], l1: number, l2: number] | [number?, string?, ...string[]], number>>();
 
 // Boundary cases
-expectType<AllExtend<[], any>>(true);
-expectType<AllExtend<[], never>>(true);
-expectType<AllExtend<[1, 2, '3', true, false, string[], never], any>>(true);
-expectType<AllExtend<[any, any], any>>(true);
-expectType<AllExtend<[never, never], any>>(true);
-expectType<AllExtend<[never, 1], any>>(true);
-expectType<AllExtend<[1, never], any>>(true);
-expectType<AllExtend<unknown[], any>>(true);
-expectType<AllExtend<[1, 2], never>>(false);
-expectType<AllExtend<[never, never], never>>(true);
-expectType<AllExtend<[never, never, number], never>>(false);
-expectType<AllExtend<[number, never, never], never>>(false);
-expectType<AllExtend<[never, number, never, any, never], never>>(false);
-expectType<AllExtend<[never, any, never, any], never>>({} as boolean);
-expectType<AllExtend<[1, 2, any], number>>({} as boolean);
-expectType<AllExtend<[1, 2, never], number>>(false);
-expectType<AllExtend<[1, 2, ...never[]], number>>(false);
+expectTypeOf<AllExtend<[], any>>().toBe<true>();
+expectTypeOf<AllExtend<[], never>>().toBe<true>();
+expectTypeOf<AllExtend<[1, 2, '3', true, false, string[], never], any>>().toBe<true>();
+expectTypeOf<AllExtend<[any, any], any>>().toBe<true>();
+expectTypeOf<AllExtend<[never, never], any>>().toBe<true>();
+expectTypeOf<AllExtend<[never, 1], any>>().toBe<true>();
+expectTypeOf<AllExtend<[1, never], any>>().toBe<true>();
+expectTypeOf<AllExtend<unknown[], any>>().toBe<true>();
+expectTypeOf<AllExtend<[1, 2], never>>().toBe<false>();
+expectTypeOf<AllExtend<[never, never], never>>().toBe<true>();
+expectTypeOf<AllExtend<[never, never, number], never>>().toBe<false>();
+expectTypeOf<AllExtend<[number, never, never], never>>().toBe<false>();
+expectTypeOf<AllExtend<[never, number, never, any, never], never>>().toBe<false>();
+expectTypeOf<boolean>().toBe<AllExtend<[never, any, never, any], never>>();
+expectTypeOf<boolean>().toBe<AllExtend<[1, 2, any], number>>();
+expectTypeOf<AllExtend<[1, 2, never], number>>().toBe<false>();
+expectTypeOf<AllExtend<[1, 2, ...never[]], number>>().toBe<false>();
 
-expectType<AllExtend<[1, 2, ...any[]], number>>({} as boolean);
-expectType<AllExtend<[...any[], 1, 2], number>>({} as boolean);
-expectType<AllExtend<['a', 'b', ...any[], Uppercase<string>, `${number}`], string>>({} as boolean);
-expectType<AllExtend<[1, 2, ...string[]], any>>(true);
-expectType<AllExtend<[...number[], never, never], any>>(true);
-expectType<AllExtend<['a', 'b', ...any[], 1, 2], any>>(true);
-expectType<AllExtend<[never, ...never[], never], any>>(true);
-expectType<AllExtend<[never, never, ...number[]], never>>(false);
-expectType<AllExtend<[never, ...never[], never], never>>(true);
-expectType<AllExtend<[...never[], never, string], never>>(false);
-expectType<AllExtend<[never, ...any[], never], never>>({} as boolean);
+expectTypeOf<boolean>().toBe<AllExtend<[1, 2, ...any[]], number>>();
+expectTypeOf<boolean>().toBe<AllExtend<[...any[], 1, 2], number>>();
+expectTypeOf<boolean>().toBe<AllExtend<['a', 'b', ...any[], Uppercase<string>, `${number}`], string>>();
+expectTypeOf<AllExtend<[1, 2, ...string[]], any>>().toBe<true>();
+expectTypeOf<AllExtend<[...number[], never, never], any>>().toBe<true>();
+expectTypeOf<AllExtend<['a', 'b', ...any[], 1, 2], any>>().toBe<true>();
+expectTypeOf<AllExtend<[never, ...never[], never], any>>().toBe<true>();
+expectTypeOf<AllExtend<[never, never, ...number[]], never>>().toBe<false>();
+expectTypeOf<AllExtend<[never, ...never[], never], never>>().toBe<true>();
+expectTypeOf<AllExtend<[...never[], never, string], never>>().toBe<false>();
+expectTypeOf<boolean>().toBe<AllExtend<[never, ...any[], never], never>>();
 
 // === strictNever: false ===
 type NonStrictNeverAllExtend<TArray extends UnknownArray, Type> = AllExtend<TArray, Type, {strictNever: false}>;
 
-expectType<NonStrictNeverAllExtend<[1, 2, never], number>>(true);
-expectType<NonStrictNeverAllExtend<[1, 2, ...never[]], number>>(true);
-expectType<NonStrictNeverAllExtend<[...never[], 'a', 'b'], string>>(true);
-expectType<NonStrictNeverAllExtend<[never, never], never>>(true);
-expectType<NonStrictNeverAllExtend<[never, ...never[], never], any>>(true);
-expectType<NonStrictNeverAllExtend<[1, 2, never, ...never[]], any>>(true);
-expectType<NonStrictNeverAllExtend<[never, number], never>>(false);
-expectType<NonStrictNeverAllExtend<[never, any, never, any], never>>({} as boolean);
+expectTypeOf<NonStrictNeverAllExtend<[1, 2, never], number>>().toBe<true>();
+expectTypeOf<NonStrictNeverAllExtend<[1, 2, ...never[]], number>>().toBe<true>();
+expectTypeOf<NonStrictNeverAllExtend<[...never[], 'a', 'b'], string>>().toBe<true>();
+expectTypeOf<NonStrictNeverAllExtend<[never, never], never>>().toBe<true>();
+expectTypeOf<NonStrictNeverAllExtend<[never, ...never[], never], any>>().toBe<true>();
+expectTypeOf<NonStrictNeverAllExtend<[1, 2, never, ...never[]], any>>().toBe<true>();
+expectTypeOf<NonStrictNeverAllExtend<[never, number], never>>().toBe<false>();
+expectTypeOf<boolean>().toBe<NonStrictNeverAllExtend<[never, any, never, any], never>>();
 
-expectType<AllExtend<any, never>>(false);
-expectType<AllExtend<never, any>>(false);
+expectTypeOf<AllExtend<any, never>>().toBe<false>();
+expectTypeOf<AllExtend<never, any>>().toBe<false>();
 
 // Recursion depth at which the previous non-tail-recursive implementation started to fail.
 // Not tested at the usual depth of 999, because collapsing an array that long costs over a million type instantiations.
 type TwoHundredZeroes = TupleOf<200, '0'>;
-expectType<AllExtend<TwoHundredZeroes, string>>(true);
+expectTypeOf<AllExtend<TwoHundredZeroes, string>>().toBe<true>();
 
 // Elements that follow a rest element are collapsed by a separate branch.
-expectType<AllExtend<[...number[], ...TwoHundredZeroes], string | number>>(true);
+expectTypeOf<AllExtend<[...number[], ...TwoHundredZeroes], string | number>>().toBe<true>();

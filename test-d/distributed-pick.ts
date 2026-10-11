@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {DistributedPick} from '../index.d.ts';
 
 // When passing a non-union type, and
@@ -22,9 +22,9 @@ declare const expected1: Expected1;
 declare const expected2: Expected2;
 declare const expected3: Expected3;
 
-expectType<Actual1>(expected1);
-expectType<Actual2>(expected2);
-expectType<Actual3>(expected3);
+expectTypeOf(expected1).toBe<Actual1>();
+expectTypeOf(expected2).toBe<Actual2>();
+expectTypeOf(expected3).toBe<Actual3>();
 
 // When passing a non-union type, and
 // picking keys that are NOT present in the type.
@@ -70,7 +70,7 @@ type PickedUnion = DistributedPick<Union, 'discriminant' | 'a' | 'b' | 'c'>;
 declare const pickedUnion: PickedUnion;
 
 if (pickedUnion.discriminant === 'A') {
-	expectType<{discriminant: 'A'; a: number}>(pickedUnion);
+	expectTypeOf(pickedUnion).toBe<{discriminant: 'A'; a: number}>();
 	// @ts-expect-error
 	const _foo = pickedUnion.foo; // eslint-disable-line @typescript-eslint/no-unsafe-assignment
 	// @ts-expect-error
@@ -79,11 +79,11 @@ if (pickedUnion.discriminant === 'A') {
 
 // Preserves property modifiers
 declare const test1: DistributedPick<{readonly 'a': 1; 'b'?: 2; readonly 'c'?: 3}, 'a' | 'b' | 'c'>;
-expectType<{readonly 'a': 1; 'b'?: 2; readonly 'c'?: 3}>(test1);
+expectTypeOf(test1).toBe<{readonly 'a': 1; 'b'?: 2; readonly 'c'?: 3}>();
 
 declare const test2: DistributedPick<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}, 'a' | 'b' | 'c'>;
-expectType<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>(test2);
+expectTypeOf(test2).toBe<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>();
 
 // Works with index signatures
 declare const test4: DistributedPick<{[k: string]: unknown; a?: number; b: string}, 'a' | 'b'>;
-expectType<{a?: number; b: string}>(test4);
+expectTypeOf(test4).toBe<{a?: number; b: string}>();

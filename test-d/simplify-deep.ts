@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {SimplifyDeep} from '../index.d.ts';
 
 type Properties1 = {
@@ -29,7 +29,7 @@ declare const flattenProperties: {
 	};
 };
 
-expectType<SimplifyDeep<Properties1 & Properties2>>(flattenProperties);
+expectTypeOf(flattenProperties).toBe<SimplifyDeep<Properties1 & Properties2>>();
 
 // Array
 declare function testArraySimplification(arg: {foo: Array<{[x: string]: string}>}): void;

@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {InvariantOf} from '../index.d.ts';
 
 type FooBar = InvariantOf<{
@@ -17,10 +17,10 @@ const fooBar: FooBar = {foo: 123, bar: 'hello'} as FooBar; // eslint-disable-lin
 const fooBarBaz: FooBarBaz = {foo: 123, bar: 'hello', baz: true} as FooBarBaz; // eslint-disable-line @typescript-eslint/consistent-type-assertions
 
 // The invariantOf<Type> is assignable to Type.
-expectAssignable<{
+expectTypeOf(fooBar).toBeAssignableTo<{
 	foo: number;
 	bar: string;
-}>(fooBar);
+}>();
 
-expectNotAssignable<FooBarBaz>(fooBar); // Invariance does not accept supertypes.
-expectNotAssignable<FooBar>(fooBarBaz); // Invariance does not accept subtypes.
+expectTypeOf(fooBar).not.toBeAssignableTo<FooBarBaz>(); // Invariance does not accept supertypes.
+expectTypeOf(fooBarBaz).not.toBeAssignableTo<FooBar>(); // Invariance does not accept subtypes.

@@ -1,62 +1,62 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {LessThan} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 declare const never: never;
 
-expectType<LessThan<1, 2>>(true);
-expectType<LessThan<2, 1>>(false);
-expectType<LessThan<10, 2>>(false);
-expectType<LessThan<10, -2>>(false);
-expectType<LessThan<2, 2>>(false);
-expectType<LessThan<-2, -2>>(false);
-expectType<LessThan<-2, -3>>(false);
+expectTypeOf<LessThan<1, 2>>().toBe<true>();
+expectTypeOf<LessThan<2, 1>>().toBe<false>();
+expectTypeOf<LessThan<10, 2>>().toBe<false>();
+expectTypeOf<LessThan<10, -2>>().toBe<false>();
+expectTypeOf<LessThan<2, 2>>().toBe<false>();
+expectTypeOf<LessThan<-2, -2>>().toBe<false>();
+expectTypeOf<LessThan<-2, -3>>().toBe<false>();
 
 // === unions ===
-expectType<LessThan<10, 50 | 100>>(true);
-expectType<LessThan<50 | 25 | 0 | -16, 100>>(true);
-expectType<LessThan<1 | 2, 3 | 4>>(true);
+expectTypeOf<LessThan<10, 50 | 100>>().toBe<true>();
+expectTypeOf<LessThan<50 | 25 | 0 | -16, 100>>().toBe<true>();
+expectTypeOf<LessThan<1 | 2, 3 | 4>>().toBe<true>();
 
-expectType<LessThan<100 | 200, 50>>(false);
-expectType<LessThan<25, -100 | -15 | 2 | 21>>(false);
-expectType<LessThan<10 | 15, -5 | 10>>(false);
+expectTypeOf<LessThan<100 | 200, 50>>().toBe<false>();
+expectTypeOf<LessThan<25, -100 | -15 | 2 | 21>>().toBe<false>();
+expectTypeOf<LessThan<10 | 15, -5 | 10>>().toBe<false>();
 
-expectType<LessThan<-10, -90 | 90>>({} as boolean);
-expectType<LessThan<-16 | 16, 0>>({} as boolean);
-expectType<LessThan<-4 | 45, 20 | 30>>({} as boolean);
-expectType<LessThan<1 | -1 | 3, 0 | 2>>({} as boolean);
-expectType<LessThan<1, 1 | 2>>({} as boolean);
+expectTypeOf<boolean>().toBe<LessThan<-10, -90 | 90>>();
+expectTypeOf<boolean>().toBe<LessThan<-16 | 16, 0>>();
+expectTypeOf<boolean>().toBe<LessThan<-4 | 45, 20 | 30>>();
+expectTypeOf<boolean>().toBe<LessThan<1 | -1 | 3, 0 | 2>>();
+expectTypeOf<boolean>().toBe<LessThan<1, 1 | 2>>();
 
-expectType<LessThan<PositiveInfinity, -999>>(false);
-expectType<LessThan<PositiveInfinity, 999>>(false);
-expectType<LessThan<999, PositiveInfinity>>(true);
-expectType<LessThan<999, NegativeInfinity>>(false);
-expectType<LessThan<-999, NegativeInfinity>>(false);
-expectType<LessThan<PositiveInfinity, PositiveInfinity>>(false);
-expectType<LessThan<NegativeInfinity, NegativeInfinity>>(false);
-expectType<LessThan<PositiveInfinity, NegativeInfinity>>(false);
+expectTypeOf<LessThan<PositiveInfinity, -999>>().toBe<false>();
+expectTypeOf<LessThan<PositiveInfinity, 999>>().toBe<false>();
+expectTypeOf<LessThan<999, PositiveInfinity>>().toBe<true>();
+expectTypeOf<LessThan<999, NegativeInfinity>>().toBe<false>();
+expectTypeOf<LessThan<-999, NegativeInfinity>>().toBe<false>();
+expectTypeOf<LessThan<PositiveInfinity, PositiveInfinity>>().toBe<false>();
+expectTypeOf<LessThan<NegativeInfinity, NegativeInfinity>>().toBe<false>();
+expectTypeOf<LessThan<PositiveInfinity, NegativeInfinity>>().toBe<false>();
 
 // Non-literal `number`
-expectType<LessThan<number, number>>({} as boolean);
-expectType<LessThan<number, 1>>({} as boolean);
-expectType<LessThan<1, number>>({} as boolean);
+expectTypeOf<boolean>().toBe<LessThan<number, number>>();
+expectTypeOf<boolean>().toBe<LessThan<number, 1>>();
+expectTypeOf<boolean>().toBe<LessThan<1, number>>();
 
 // Decimal fractions are compared by integer part, then fraction padded with zeros.
-expectType<LessThan<1.05, 1.1>>(true);
-expectType<LessThan<1.25, 1.5>>(true);
-expectType<LessThan<-1.5, -1.05>>(true);
-expectType<LessThan<0.05, 0.5>>(true);
+expectTypeOf<LessThan<1.05, 1.1>>().toBe<true>();
+expectTypeOf<LessThan<1.25, 1.5>>().toBe<true>();
+expectTypeOf<LessThan<-1.5, -1.05>>().toBe<true>();
+expectTypeOf<LessThan<0.05, 0.5>>().toBe<true>();
 
 // A number in exponential notation is larger or smaller than any number in plain decimal notation, so the result is known when only one side is exponential.
 declare const plainLessThanExponent: LessThan<1e20, 1e21>;
-expectType<true>(plainLessThanExponent);
+expectTypeOf(plainLessThanExponent).toBe<true>();
 declare const smallPlainLessThanExponent: LessThan<5, 1e21>;
-expectType<true>(smallPlainLessThanExponent);
+expectTypeOf(smallPlainLessThanExponent).toBe<true>();
 declare const negativeExponentLessThanPlain: LessThan<1e-7, 1>;
-expectType<true>(negativeExponentLessThanPlain);
+expectTypeOf(negativeExponentLessThanPlain).toBe<true>();
 declare const zeroLessThanNegativeExponent: LessThan<0, 1e-7>;
-expectType<true>(zeroLessThanNegativeExponent);
+expectTypeOf(zeroLessThanNegativeExponent).toBe<true>();
 
 // Two numbers that are both in exponential notation can't be compared digit by digit, so the result is `boolean`.
 declare const bothExponent: LessThan<1e21, 2e21>;
-expectType<boolean>(bothExponent);
+expectTypeOf(bothExponent).toBe<boolean>();

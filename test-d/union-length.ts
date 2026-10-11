@@ -1,21 +1,21 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnionLength} from '../source/union-length.d.ts';
 import type {IntRange} from '../source/int-range.d.ts';
 
-expectType<1>({} as UnionLength<string>);
-expectType<2>({} as UnionLength<boolean>);
-expectType<3>({} as UnionLength<string | number | symbol>);
+expectTypeOf<UnionLength<string>>().toBe<1>();
+expectTypeOf<UnionLength<boolean>>().toBe<2>();
+expectTypeOf<UnionLength<string | number | symbol>>().toBe<3>();
 
 // Non-primitives
-expectType<3>({} as UnionLength<{a: string} | [string] | Set<string>>);
+expectTypeOf<UnionLength<{a: string} | [string] | Set<string>>>().toBe<3>();
 
 // Both union members extend each other
-expectType<2>({} as UnionLength<{a: string} | {readonly a: string}>);
+expectTypeOf<UnionLength<{a: string} | {readonly a: string}>>().toBe<2>();
 
 // Long unions
-expectType<100>({} as UnionLength<IntRange<0, 100>>);
+expectTypeOf<UnionLength<IntRange<0, 100>>>().toBe<100>();
 
 // Boundary cases
-expectType<0>({} as UnionLength<never>);
-expectType<1>({} as UnionLength<any>);
-expectType<1>({} as UnionLength<unknown>);
+expectTypeOf<UnionLength<never>>().toBe<0>();
+expectTypeOf<UnionLength<any>>().toBe<1>();
+expectTypeOf<UnionLength<unknown>>().toBe<1>();

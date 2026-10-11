@@ -1,18 +1,18 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsOptional} from '../source/is-optional.d.ts';
 
-expectType<IsOptional<any>>(true);
-expectType<IsOptional<undefined>>(true);
-expectType<IsOptional<null | undefined>>(true);
-expectType<IsOptional<string | undefined>>(true);
-expectType<IsOptional<string | null | undefined>>(true);
+expectTypeOf<IsOptional<any>>().toBe<true>();
+expectTypeOf<IsOptional<undefined>>().toBe<true>();
+expectTypeOf<IsOptional<null | undefined>>().toBe<true>();
+expectTypeOf<IsOptional<string | undefined>>().toBe<true>();
+expectTypeOf<IsOptional<string | null | undefined>>().toBe<true>();
 
-expectType<IsOptional<string>>(false);
-expectType<IsOptional<string | null>>(false);
+expectTypeOf<IsOptional<string>>().toBe<false>();
+expectTypeOf<IsOptional<string | null>>().toBe<false>();
 
-expectType<IsOptional<void>>(false);
-expectType<IsOptional<null>>(false);
-expectType<IsOptional<never>>(false);
-expectType<IsOptional<unknown>>(false);
-expectType<IsOptional<() => void>>(false);
-expectType<IsOptional<string & undefined>>(false);
+expectTypeOf<IsOptional<void>>().toBe<false>();
+expectTypeOf<IsOptional<null>>().toBe<false>();
+expectTypeOf<IsOptional<never>>().toBe<false>();
+expectTypeOf<IsOptional<unknown>>().toBe<false>();
+expectTypeOf<IsOptional<() => void>>().toBe<false>();
+expectTypeOf<IsOptional<string & undefined>>().toBe<false>();

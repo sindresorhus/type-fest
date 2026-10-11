@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {RequiredKeysOf, UnknownRecord} from '../index.d.ts';
 
 type TestType1 = {
@@ -24,21 +24,21 @@ declare const test1: RequiredKeysOf1;
 declare const test2: RequiredKeysOf2;
 declare const test3: RequiredKeysOf3;
 
-expectType<'a'>(test1);
-expectType<never>(test2);
-expectType<'a' | 'b'>(test3);
+expectTypeOf(test1).toBe<'a'>();
+expectTypeOf(test2).toBe<never>();
+expectTypeOf(test3).toBe<'a' | 'b'>();
 
-expectType<'a' | 'c'>({} as RequiredKeysOf<{readonly a: string; readonly b?: number; c: boolean; d?: string}>);
+expectTypeOf<RequiredKeysOf<{readonly a: string; readonly b?: number; c: boolean; d?: string}>>().toBe<'a' | 'c'>();
 
 // Unions
-expectType<'b' | 'c'>({} as RequiredKeysOf<{a?: string; b: number} | {readonly c: string; readonly d?: number}>);
-expectType<'a' | 'b'>({} as RequiredKeysOf<{a?: string; b?: number} | {a: string; b: number}>);
+expectTypeOf<RequiredKeysOf<{a?: string; b: number} | {readonly c: string; readonly d?: number}>>().toBe<'b' | 'c'>();
+expectTypeOf<RequiredKeysOf<{a?: string; b?: number} | {a: string; b: number}>>().toBe<'a' | 'b'>();
 
 // Arrays
-expectType<keyof []>({} as RequiredKeysOf<[]>);
-expectType<keyof readonly [string, number, boolean]>({} as RequiredKeysOf<readonly [string, number, boolean]>);
-expectType<Exclude<keyof [string, number?, boolean?], '1' | '2'>>({} as RequiredKeysOf<[string, number?, boolean?]>);
-expectType<Exclude<keyof [string, number, boolean?], '2'>>({} as RequiredKeysOf<[string?] | readonly [string, number?] | [string, number, boolean?]>);
+expectTypeOf<RequiredKeysOf<[]>>().toBe<keyof []>();
+expectTypeOf<RequiredKeysOf<readonly [string, number, boolean]>>().toBe<keyof readonly [string, number, boolean]>();
+expectTypeOf<RequiredKeysOf<[string, number?, boolean?]>>().toBe<Exclude<keyof [string, number?, boolean?], '1' | '2'>>();
+expectTypeOf<RequiredKeysOf<[string?] | readonly [string, number?] | [string, number, boolean?]>>().toBe<Exclude<keyof [string, number, boolean?], '2'>>();
 
 // `RequiredKeysOf<T>` should be assignable to `keyof T`
 type Assignability1<T, _K extends keyof T> = unknown;
@@ -87,11 +87,11 @@ type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 
 // Known limitation: an index signature is reported as a required key, because `Exclude<keyof Type, …>` puts it back. See the note in the docs.
 declare const indexSignature: RequiredKeysOf<{[x: string]: unknown; a?: string}>;
-expectType<string | number>(indexSignature);
+expectTypeOf(indexSignature).toBe<string | number>();
 
 declare const onlyIndexSignature: RequiredKeysOf<Record<string, unknown>>;
-expectType<string>(onlyIndexSignature);
+expectTypeOf(onlyIndexSignature).toBe<string>();
 
 // A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
-expectType<'a' | 'b'>({} as RequiredKeysOf<{a: 1} | {b: 2}>);
-expectType<'a' | 'b'>({} as RequiredKeysOf<{a: 1; b: 2} | {a: 1}>);
+expectTypeOf<RequiredKeysOf<{a: 1} | {b: 2}>>().toBe<'a' | 'b'>();
+expectTypeOf<RequiredKeysOf<{a: 1; b: 2} | {a: 1}>>().toBe<'a' | 'b'>();

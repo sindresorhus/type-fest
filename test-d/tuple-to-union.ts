@@ -1,35 +1,35 @@
-import {expectAssignable, expectNotType, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {TupleToUnion} from '../index.d.ts';
 
 const options = ['a', 'b', 'c'] as const;
 type Options = TupleToUnion<typeof options>;
 
 const a: Options = 'a';
-expectAssignable<Options>(a);
-expectType<'a'>(a);
-expectNotType<'b'>(a);
-expectNotType<'c'>(a);
+expectTypeOf(a).toBeAssignableTo<Options>();
+expectTypeOf(a).toBe<'a'>();
+expectTypeOf(a).not.toBe<'b'>();
+expectTypeOf(a).not.toBe<'c'>();
 
 const b: Options = 'b';
-expectAssignable<Options>(b);
-expectNotType<'a'>(b);
-expectType<'b'>(b);
-expectNotType<'c'>(b);
+expectTypeOf(b).toBeAssignableTo<Options>();
+expectTypeOf(b).not.toBe<'a'>();
+expectTypeOf(b).toBe<'b'>();
+expectTypeOf(b).not.toBe<'c'>();
 
 const c: Options = 'c';
-expectAssignable<Options>(c);
-expectNotType<'a'>(c);
-expectNotType<'b'>(c);
-expectType<'c'>(c);
+expectTypeOf(c).toBeAssignableTo<Options>();
+expectTypeOf(c).not.toBe<'a'>();
+expectTypeOf(c).not.toBe<'b'>();
+expectTypeOf(c).toBe<'c'>();
 
 declare const notAnArray: TupleToUnion<[]>;
-expectType<never>(notAnArray);
+expectTypeOf(notAnArray).toBe<never>();
 
 declare const worksWithArrays: TupleToUnion<Array<string | number>>;
-expectType<string | number>(worksWithArrays);
+expectTypeOf(worksWithArrays).toBe<string | number>();
 
 declare const resolvesToNeverForNonArrays: TupleToUnion<string | number>;
-expectType<never>(resolvesToNeverForNonArrays);
+expectTypeOf(resolvesToNeverForNonArrays).toBe<never>();
 
 declare const infiniteRestArguments: TupleToUnion<[string, ...number[]]>;
-expectType<string | number>(infiniteRestArguments);
+expectTypeOf(infiniteRestArguments).toBe<string | number>();

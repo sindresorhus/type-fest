@@ -1,67 +1,63 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {LastArrayElement} from '../index.d.ts';
 
 // Empty array
-expectType<undefined>(undefined as LastArrayElement<[]>);
-expectType<undefined>(undefined as LastArrayElement<readonly []>);
+expectTypeOf<LastArrayElement<[]>>().toBe<undefined>();
+expectTypeOf<LastArrayElement<readonly []>>().toBe<undefined>();
 
 // Only required elements
-expectType<boolean>({} as LastArrayElement<[number, string, boolean]>);
-expectType<boolean>({} as LastArrayElement<readonly [number, string, boolean]>);
+expectTypeOf<LastArrayElement<[number, string, boolean]>>().toBe<boolean>();
+expectTypeOf<LastArrayElement<readonly [number, string, boolean]>>().toBe<boolean>();
 
 // Required and optional elements
-expectType<2 | 3>({} as LastArrayElement<[1, 2, 3?]>);
-expectType<1 | 2 | 3>({} as LastArrayElement<readonly [1, 2?, 3?]>);
-expectType<number | boolean | bigint | string>(
-	{} as LastArrayElement<[null, string, bigint?, boolean?, number?]>,
-);
+expectTypeOf<LastArrayElement<[1, 2, 3?]>>().toBe<2 | 3>();
+expectTypeOf<LastArrayElement<readonly [1, 2?, 3?]>>().toBe<1 | 2 | 3>();
+expectTypeOf<LastArrayElement<[null, string, bigint?, boolean?, number?]>>().toBe<number | boolean | bigint | string>();
 
 // Required and rest element
-expectType<3 | string>({} as LastArrayElement<readonly [1, 2, 3, ...string[]]>); // Rest element at the end
-expectType<'z'>({} as LastArrayElement<[1, 2, 3, ...boolean[], 'x', 'y', 'z']>); // Rest element in the middle
-expectType<string>({} as LastArrayElement<readonly [...bigint[], string]>); // Rest element at the start
+expectTypeOf<LastArrayElement<readonly [1, 2, 3, ...string[]]>>().toBe<3 | string>(); // Rest element at the end
+expectTypeOf<LastArrayElement<[1, 2, 3, ...boolean[], 'x', 'y', 'z']>>().toBe<'z'>(); // Rest element in the middle
+expectTypeOf<LastArrayElement<readonly [...bigint[], string]>>().toBe<string>(); // Rest element at the start
 
 // Only optional elements
-expectType<'a' | undefined>({} as LastArrayElement<['a'?]>);
-expectType<{data: string[]} | undefined>({} as LastArrayElement<readonly [{data: string[]}?]>);
-expectType<string | boolean | bigint | undefined>({} as LastArrayElement<[string?, boolean?, bigint?]>);
+expectTypeOf<LastArrayElement<['a'?]>>().toBe<'a' | undefined>();
+expectTypeOf<LastArrayElement<readonly [{data: string[]}?]>>().toBe<{data: string[]} | undefined>();
+expectTypeOf<LastArrayElement<[string?, boolean?, bigint?]>>().toBe<string | boolean | bigint | undefined>();
 
 // Explicit `undefined` in optional elements
-expectType<1 | 2 | undefined>({} as LastArrayElement<[0, 1, (2 | undefined)?]>);
-expectType<1 | 2 | undefined | string>({} as LastArrayElement<readonly [0, 1, (2 | undefined)?, ...string[]]>);
+expectTypeOf<LastArrayElement<[0, 1, (2 | undefined)?]>>().toBe<1 | 2 | undefined>();
+expectTypeOf<LastArrayElement<readonly [0, 1, (2 | undefined)?, ...string[]]>>().toBe<1 | 2 | undefined | string>();
 
 // Required, optional, and rest element
-expectType<2 | 3 | string>({} as LastArrayElement<[1, 2, 3?, ...string[]]>);
-expectType<number | string | bigint>({} as LastArrayElement<readonly [number, string?, ...bigint[]]>);
+expectTypeOf<LastArrayElement<[1, 2, 3?, ...string[]]>>().toBe<2 | 3 | string>();
+expectTypeOf<LastArrayElement<readonly [number, string?, ...bigint[]]>>().toBe<number | string | bigint>();
 
 // Optional and rest element
-expectType<1 | string | undefined>({} as LastArrayElement<readonly [1?, ...string[]]>);
-expectType<1 | 2 | 3 | bigint | undefined>({} as LastArrayElement<[1?, 2?, 3?, ...bigint[]]>);
+expectTypeOf<LastArrayElement<readonly [1?, ...string[]]>>().toBe<1 | string | undefined>();
+expectTypeOf<LastArrayElement<[1?, 2?, 3?, ...bigint[]]>>().toBe<1 | 2 | 3 | bigint | undefined>();
 
 // Labelled tuples
-expectType<number>({} as LastArrayElement<[x: number, y: number]>);
-expectType<string | number>({} as LastArrayElement<readonly [x: string, y?: number]>);
-expectType<string | number>({} as LastArrayElement<[x: string, ...rest: number[]]>);
+expectTypeOf<LastArrayElement<[x: number, y: number]>>().toBe<number>();
+expectTypeOf<LastArrayElement<readonly [x: string, y?: number]>>().toBe<string | number>();
+expectTypeOf<LastArrayElement<[x: string, ...rest: number[]]>>().toBe<string | number>();
 
 // Union elements
-expectType<'d' | 'e'>({} as LastArrayElement<['a' | 'b', 'c', 'd' | 'e']>);
-expectType<3 | 'c' | 'd' | 'e'>({} as LastArrayElement<[1 | 'a', 2 | 'b', 3 | 'c', ('d' | 'e')?]>);
-expectType<boolean | string | number>({} as LastArrayElement<[bigint, boolean, ...Array<string | number>]>);
+expectTypeOf<LastArrayElement<['a' | 'b', 'c', 'd' | 'e']>>().toBe<'d' | 'e'>();
+expectTypeOf<LastArrayElement<[1 | 'a', 2 | 'b', 3 | 'c', ('d' | 'e')?]>>().toBe<3 | 'c' | 'd' | 'e'>();
+expectTypeOf<LastArrayElement<[bigint, boolean, ...Array<string | number>]>>().toBe<boolean | string | number>();
 
 // Unions
-expectType<3 | 6>({} as LastArrayElement<[1, 2, 3] | [4, 5, ...string[], 6]>);
-expectType<number | bigint | undefined>({} as LastArrayElement<readonly [string, number] | bigint[]>);
-expectType<1 | 2 | 3 | 'a' | 'b' | undefined | 'd' | 'e' | 'g'>(
-	{} as LastArrayElement<readonly [1, 2?, 3?] | ['a'?, 'b'?] | ['c', 'd', ...Array<'e'>] | [...Array<'f'>, 'g']>,
-);
+expectTypeOf<LastArrayElement<[1, 2, 3] | [4, 5, ...string[], 6]>>().toBe<3 | 6>();
+expectTypeOf<LastArrayElement<readonly [string, number] | bigint[]>>().toBe<number | bigint | undefined>();
+expectTypeOf<LastArrayElement<readonly [1, 2?, 3?] | ['a'?, 'b'?] | ['c', 'd', ...Array<'e'>] | [...Array<'f'>, 'g']>>().toBe<1 | 2 | 3 | 'a' | 'b' | undefined | 'd' | 'e' | 'g'>();
 
 // Non-tuple arrays
-expectType<string | undefined>({} as LastArrayElement<string[]>);
-expectType<number | undefined>({} as LastArrayElement<readonly number[]>);
-expectType<number | bigint | undefined>({} as LastArrayElement<ReadonlyArray<number | bigint>>);
-expectType<any | undefined>({} as LastArrayElement<any[]>);
-expectType<undefined>({} as any as LastArrayElement<never[]>);
+expectTypeOf<LastArrayElement<string[]>>().toBe<string | undefined>();
+expectTypeOf<LastArrayElement<readonly number[]>>().toBe<number | undefined>();
+expectTypeOf<LastArrayElement<ReadonlyArray<number | bigint>>>().toBe<number | bigint | undefined>();
+expectTypeOf<LastArrayElement<any[]>>().toBe<any | undefined>();
+expectTypeOf({} as any as LastArrayElement<never[]>).toBe<undefined>();
 
 // Boundary cases
-expectType<any>({} as LastArrayElement<any>);
-expectType<never>({} as LastArrayElement<never>);
+expectTypeOf<LastArrayElement<any>>().toBe<any>();
+expectTypeOf<LastArrayElement<never>>().toBe<never>();

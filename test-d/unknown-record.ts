@@ -1,12 +1,12 @@
-import {expectAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnknownRecord} from '../index.d.ts';
 
 declare let foo: UnknownRecord;
 
-expectAssignable<UnknownRecord>(foo);
-expectAssignable<UnknownRecord>(foo = {});
-expectAssignable<UnknownRecord>(foo = {bar: 'baz'});
-expectAssignable<UnknownRecord>(foo = {bar: {baz: 'hello'}});
+expectTypeOf(foo).toBeAssignableTo<UnknownRecord>();
+expectTypeOf(foo = {}).toBeAssignableTo<UnknownRecord>();
+expectTypeOf(foo = {bar: 'baz'}).toBeAssignableTo<UnknownRecord>();
+expectTypeOf(foo = {bar: {baz: 'hello'}}).toBeAssignableTo<UnknownRecord>();
 
 // @ts-expect-error
 foo = [];
@@ -15,4 +15,4 @@ foo = 42;
 // @ts-expect-error
 foo = null;
 
-expectType<unknown>(foo['bar']);
+expectTypeOf(foo['bar']).toBe<unknown>();

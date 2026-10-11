@@ -1,29 +1,29 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {CamelCasedProperties, IsEqual} from '../index.d.ts';
 
 declare const foo: CamelCasedProperties<{A: number; B: {C: string}}>;
-expectType<{a: number; b: {C: string}}>(foo);
+expectTypeOf(foo).toBe<{a: number; b: {C: string}}>();
 
 declare const bar: CamelCasedProperties<Array<{helloWorld: string}>>;
-expectType<Array<{helloWorld: string}>>(bar);
+expectTypeOf(bar).toBe<Array<{helloWorld: string}>>();
 
 declare const fooBar: CamelCasedProperties<() => {a: string}>;
-expectType<() => {a: string}>(fooBar);
+expectTypeOf(fooBar).toBe<() => {a: string}>();
 
 declare const baz: CamelCasedProperties<{fooBAR: number; BARFoo: string}, {preserveConsecutiveUppercase: true}>;
-expectType<{fooBAR: number; bARFoo: string}>(baz);
+expectTypeOf(baz).toBe<{fooBAR: number; bARFoo: string}>();
 
 declare const biz: CamelCasedProperties<{fooBAR: number; BARFoo: string}>;
-expectType<{fooBar: number; barFoo: string}>(biz);
+expectTypeOf(biz).toBe<{fooBar: number; barFoo: string}>();
 
 declare const fooBarPunctuated: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}>;
-expectType<{'hello@world1': {'foo::bar': string}}>(fooBarPunctuated);
+expectTypeOf(fooBarPunctuated).toBe<{'hello@world1': {'foo::bar': string}}>();
 
 declare const fooBarPunctuatedSplit: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}, {splitOnPunctuation: true}>;
-expectType<{'helloWorld1': {'foo::bar': string}}>(fooBarPunctuatedSplit);
+expectTypeOf(fooBarPunctuatedSplit).toBe<{'helloWorld1': {'foo::bar': string}}>();
 
 declare const fooBarPunctuatedSplitNumberSplit: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}, {splitOnPunctuation: true; splitOnNumbers: true}>;
-expectType<{'helloWorld1': {'foo::bar': string}}>(fooBarPunctuatedSplitNumberSplit);
+expectTypeOf(fooBarPunctuatedSplitNumberSplit).toBe<{'helloWorld1': {'foo::bar': string}}>();
 
 // Verify example
 type User = {
@@ -40,17 +40,17 @@ const result: CamelCasedProperties<User> = {
 	userId: 1,
 	userName: 'Tom',
 };
-expectType<CamelCasedProperties<User>>(result);
-expectType<CamelCasedProperties<UserPunctuated, {splitOnPunctuation: true}>>(result);
+expectTypeOf(result).toBe<CamelCasedProperties<User>>();
+expectTypeOf(result).toBe<CamelCasedProperties<UserPunctuated, {splitOnPunctuation: true}>>();
 
 declare const withLeadingUnderscores: CamelCasedProperties<{_foo_bar: string; __baz_qux: number}, {preserveLeadingUnderscores: true}>;
-expectType<{_fooBar: string; __bazQux: number}>(withLeadingUnderscores);
+expectTypeOf(withLeadingUnderscores).toBe<{_fooBar: string; __bazQux: number}>();
 
 declare const withLeadingUnderscoresDefault: CamelCasedProperties<{_foo_bar: string}>;
-expectType<{fooBar: string}>(withLeadingUnderscoresDefault);
+expectTypeOf(withLeadingUnderscoresDefault).toBe<{fooBar: string}>();
 
 // A readonly array has no properties to re-case, so it passes through unchanged, like it does for `PascalCasedProperties` and `DelimiterCasedProperties`. `IsEqual` is used because the flattened object the bug produced still satisfies `expectType<readonly string[]>`.
-expectType<true>({} as IsEqual<CamelCasedProperties<readonly string[]>, readonly string[]>);
-expectType<true>({} as IsEqual<CamelCasedProperties<readonly [1, 2]>, readonly [1, 2]>);
-expectType<true>({} as IsEqual<CamelCasedProperties<string[]>, string[]>);
-expectType<true>({} as IsEqual<CamelCasedProperties<[1, 2]>, [1, 2]>);
+expectTypeOf<IsEqual<CamelCasedProperties<readonly string[]>, readonly string[]>>().toBe<true>();
+expectTypeOf<IsEqual<CamelCasedProperties<readonly [1, 2]>, readonly [1, 2]>>().toBe<true>();
+expectTypeOf<IsEqual<CamelCasedProperties<string[]>, string[]>>().toBe<true>();
+expectTypeOf<IsEqual<CamelCasedProperties<[1, 2]>, [1, 2]>>().toBe<true>();

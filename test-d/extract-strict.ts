@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ExtractStrict} from '../source/extract-strict.d.ts';
 
 // Primitive union tests
@@ -8,10 +8,10 @@ type LargeShirtSize = 'xxxl' | 'xxl' | 'xl' | 'l';
 type SmallShirtSize = 's' | 'xs' | 'xxs';
 
 declare const largeShirtSizes: ExtractStrict<ShirtSize, LargeShirtSize>;
-expectType<LargeShirtSize>(largeShirtSizes);
+expectTypeOf(largeShirtSizes).toBe<LargeShirtSize>();
 
 declare const smallShirtSizes: ExtractStrict<ShirtSize, SmallShirtSize>;
-expectType<SmallShirtSize>(smallShirtSizes);
+expectTypeOf(smallShirtSizes).toBe<SmallShirtSize>();
 
 // @ts-expect-error
 declare const allInvalidShirtSizes: ExtractStrict<ShirtSize, 'skyscraper-large' | 'atom-small'>;
@@ -37,19 +37,19 @@ type Bar = {
 type Foobar = Foo | Bar;
 
 declare const foobarByA: ExtractStrict<Foobar, {a: string}>;
-expectType<Foobar>(foobarByA);
+expectTypeOf(foobarByA).toBe<Foobar>();
 
 declare const onlyFooByKind: ExtractStrict<Foobar, {kind: 'foo'}>;
-expectType<Foo>(onlyFooByKind);
+expectTypeOf(onlyFooByKind).toBe<Foo>();
 
 declare const onlyFooByB: ExtractStrict<Foobar, {b: string}>;
-expectType<Foo>(onlyFooByB);
+expectTypeOf(onlyFooByB).toBe<Foo>();
 
 declare const onlyBarByC: ExtractStrict<Foobar, {c: boolean}>;
-expectType<Bar>(onlyBarByC);
+expectTypeOf(onlyBarByC).toBe<Bar>();
 
 declare const foobarByUnionBC: ExtractStrict<Foobar, {b: string} | {c: boolean}>;
-expectType<Foobar>(foobarByUnionBC);
+expectTypeOf(foobarByUnionBC).toBe<Foobar>();
 
 // @ts-expect-error
 declare const invalidLoneField: ExtractStrict<Foobar, {d: string}>;
@@ -61,9 +61,9 @@ declare const invalidMixedFields: ExtractStrict<Foobar, {kind: 'foo'; d: string}
 declare const undefinedField: ExtractStrict<Foobar, undefined>;
 
 // Primitives
-expectType<number>({} as ExtractStrict<string | number, number>);
-expectType<number | bigint>({} as ExtractStrict<string | number | bigint, number | bigint>);
-expectType<'bar' | 'baz'>({} as ExtractStrict<'foo' | 'bar' | 'baz', `b${string}`>);
+expectTypeOf<ExtractStrict<string | number, number>>().toBe<number>();
+expectTypeOf<ExtractStrict<string | number | bigint, number | bigint>>().toBe<number | bigint>();
+expectTypeOf<ExtractStrict<'foo' | 'bar' | 'baz', `b${string}`>>().toBe<'bar' | 'baz'>();
 
 // @ts-expect-error
 type invalid1 = ExtractStrict<string | number | boolean, number | bigint>;
@@ -71,8 +71,8 @@ type invalid1 = ExtractStrict<string | number | boolean, number | bigint>;
 type invalid2 = ExtractStrict<string, Uppercase<string>>;
 
 // Optional and readonly modifiers
-expectType<{a: string; b: number}>({} as ExtractStrict<{a: string; b: number}, {a?: string}>);
-expectType<string[]>({} as ExtractStrict<string[], readonly string[]>);
+expectTypeOf<ExtractStrict<{a: string; b: number}, {a?: string}>>().toBe<{a: string; b: number}>();
+expectTypeOf<ExtractStrict<string[], readonly string[]>>().toBe<string[]>();
 
 // @ts-expect-error
 type invalid3 = ExtractStrict<{a?: string; b: number}, {a: string}>;
@@ -80,22 +80,16 @@ type invalid3 = ExtractStrict<{a?: string; b: number}, {a: string}>;
 type invalid4 = ExtractStrict<readonly string[], string[]>;
 
 // Index signatures
-expectType<{c: true; d: false}>(
-	{} as ExtractStrict<{a: string; b: number} | {c: true; d: false}, Record<string, boolean>>,
-);
+expectTypeOf<ExtractStrict<{a: string; b: number} | {c: true; d: false}, Record<string, boolean>>>().toBe<{c: true; d: false}>();
 
 // @ts-expect-error
 type invalid5 = ExtractStrict<{a: string; b: number} | {c: true; d: false}, Record<string, string>>;
 
 // `any` and `never`
-expectType<string | {a: string; b: number} | string[]>(
-	{} as ExtractStrict<string | {a: string; b: number} | string[], any>,
-);
-expectType<never>(
-	{} as ExtractStrict<string | {a: string; b: number} | string[], never>,
-);
+expectTypeOf<ExtractStrict<string | {a: string; b: number} | string[], any>>().toBe<string | {a: string; b: number} | string[]>();
+expectTypeOf<ExtractStrict<string | {a: string; b: number} | string[], never>>().toBe<never>();
 
 // Miscellaneous
-expectType<[number, number]>({} as ExtractStrict<[number, number] | {x: number; y: number}, unknown[]>);
-expectType<[number, number]>({} as ExtractStrict<[number, number] | [number, number, number], {length: 2}>);
-expectType<{data: string | string[]}>({} as ExtractStrict<string | string[] | {data: string | string[]}, {data: unknown}>);
+expectTypeOf<ExtractStrict<[number, number] | {x: number; y: number}, unknown[]>>().toBe<[number, number]>();
+expectTypeOf<ExtractStrict<[number, number] | [number, number, number], {length: 2}>>().toBe<[number, number]>();
+expectTypeOf<ExtractStrict<string | string[] | {data: string | string[]}, {data: unknown}>>().toBe<{data: string | string[]}>();

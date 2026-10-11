@@ -1,58 +1,58 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ExtractRestElement, TupleOf} from '../index.d.ts';
 
 // Leading rest element
-expectType<ExtractRestElement<[...string[], 1]>>({} as string);
-expectType<ExtractRestElement<[...number[], 'a', 'b']>>({} as number);
-expectType<ExtractRestElement<[...any[], true]>>({} as any);
-expectType<ExtractRestElement<[...never[], 'end']>>({} as never);
-expectType<ExtractRestElement<[...unknown[], 2, 3]>>({} as unknown);
+expectTypeOf<string>().toBe<ExtractRestElement<[...string[], 1]>>();
+expectTypeOf<number>().toBe<ExtractRestElement<[...number[], 'a', 'b']>>();
+expectTypeOf<any>().toBe<ExtractRestElement<[...any[], true]>>();
+expectTypeOf<never>().toBe<ExtractRestElement<[...never[], 'end']>>();
+expectTypeOf<unknown>().toBe<ExtractRestElement<[...unknown[], 2, 3]>>();
 
 // Middle rest element
-expectType<ExtractRestElement<['a', ...string[], 'z']>>({} as string);
-expectType<ExtractRestElement<['x', ...boolean[], true]>>({} as boolean);
-expectType<ExtractRestElement<['x', ...any[], 'y']>>({} as any);
+expectTypeOf<string>().toBe<ExtractRestElement<['a', ...string[], 'z']>>();
+expectTypeOf<boolean>().toBe<ExtractRestElement<['x', ...boolean[], true]>>();
+expectTypeOf<any>().toBe<ExtractRestElement<['x', ...any[], 'y']>>();
 
 // Trailing rest element
-expectType<ExtractRestElement<[1, 2, ...string[]]>>({} as string);
-expectType<ExtractRestElement<['foo', ...Array<'bar'>]>>({} as 'bar');
-expectType<ExtractRestElement<[number, ...number[]]>>({} as number);
+expectTypeOf<string>().toBe<ExtractRestElement<[1, 2, ...string[]]>>();
+expectTypeOf<'bar'>().toBe<ExtractRestElement<['foo', ...Array<'bar'>]>>();
+expectTypeOf<number>().toBe<ExtractRestElement<[number, ...number[]]>>();
 
 // Rest element only
-expectType<ExtractRestElement<string[]>>({} as string);
-expectType<ExtractRestElement<readonly number[]>>({} as number);
-expectType<ExtractRestElement<readonly [...boolean[]]>>({} as boolean);
-expectType<ExtractRestElement<[...string[]]>>({} as string);
+expectTypeOf<string>().toBe<ExtractRestElement<string[]>>();
+expectTypeOf<number>().toBe<ExtractRestElement<readonly number[]>>();
+expectTypeOf<boolean>().toBe<ExtractRestElement<readonly [...boolean[]]>>();
+expectTypeOf<string>().toBe<ExtractRestElement<[...string[]]>>();
 
 // Optional
-expectType<ExtractRestElement<[string?, boolean?, ...number[]]>>({} as number);
-expectType<ExtractRestElement<[number, boolean?, ...number[]]>>({} as number);
-expectType<ExtractRestElement<[1?, ...string[]]>>({} as string);
+expectTypeOf<number>().toBe<ExtractRestElement<[string?, boolean?, ...number[]]>>();
+expectTypeOf<number>().toBe<ExtractRestElement<[number, boolean?, ...number[]]>>();
+expectTypeOf<string>().toBe<ExtractRestElement<[1?, ...string[]]>>();
 
 // No rest element
-expectType<ExtractRestElement<[1, 2, 3]>>({} as never);
-expectType<ExtractRestElement<readonly ['a', 'b']>>({} as never);
-expectType<ExtractRestElement<[]>>({} as never);
+expectTypeOf<never>().toBe<ExtractRestElement<[1, 2, 3]>>();
+expectTypeOf<never>().toBe<ExtractRestElement<readonly ['a', 'b']>>();
+expectTypeOf<never>().toBe<ExtractRestElement<[]>>();
 
 // Union
-expectType<ExtractRestElement<[1, ...string[]] | [2, ...number[]]>>({} as string | number);
-expectType<ExtractRestElement<[...boolean[], 'end'] | ['start', ...string[]]>>({} as boolean | string);
+expectTypeOf<string | number>().toBe<ExtractRestElement<[1, ...string[]] | [2, ...number[]]>>();
+expectTypeOf<boolean | string>().toBe<ExtractRestElement<[...boolean[], 'end'] | ['start', ...string[]]>>();
 
 // Readonly
-expectType<ExtractRestElement<readonly [...number[], 'done']>>({} as number);
-expectType<ExtractRestElement<readonly [1, ...string[], 2]>>({} as string);
+expectTypeOf<number>().toBe<ExtractRestElement<readonly [...number[], 'done']>>();
+expectTypeOf<string>().toBe<ExtractRestElement<readonly [1, ...string[], 2]>>();
 
 // Nested arrays
-expectType<ExtractRestElement<[[1, 2], ...string[], [3, 4]]>>({} as string);
-expectType<ExtractRestElement<[['a'], ...boolean[], ['z']]>>({} as boolean);
+expectTypeOf<string>().toBe<ExtractRestElement<[[1, 2], ...string[], [3, 4]]>>();
+expectTypeOf<boolean>().toBe<ExtractRestElement<[['a'], ...boolean[], ['z']]>>();
 
 // Edge: `never` / `any`
-expectType<ExtractRestElement<any>>({} as any);
-expectType<ExtractRestElement<never>>({} as never);
+expectTypeOf<any>().toBe<ExtractRestElement<any>>();
+expectTypeOf<never>().toBe<ExtractRestElement<never>>();
 
 // Long tuples
 type FiftyZeroes = TupleOf<50, '0'>;
-expectType<ExtractRestElement<[...FiftyZeroes, ...number[]]>>({} as number);
+expectTypeOf<number>().toBe<ExtractRestElement<[...FiftyZeroes, ...number[]]>>();
 
 type NineHundredNinetyNineZeroes = TupleOf<999, '0'>;
-expectType<ExtractRestElement<[...NineHundredNinetyNineZeroes, ...number[]]>>({} as number);
+expectTypeOf<number>().toBe<ExtractRestElement<[...NineHundredNinetyNineZeroes, ...number[]]>>();

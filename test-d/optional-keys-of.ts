@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {OptionalKeysOf, UnknownRecord} from '../index.d.ts';
 
 type TestType1 = {
@@ -24,21 +24,21 @@ declare const test1: OptionalKeysOf1;
 declare const test2: OptionalKeysOf2;
 declare const test3: OptionalKeysOf3;
 
-expectType<'b'>(test1);
-expectType<'a' | 'b'>(test2);
-expectType<never>(test3);
+expectTypeOf(test1).toBe<'b'>();
+expectTypeOf(test2).toBe<'a' | 'b'>();
+expectTypeOf(test3).toBe<never>();
 
-expectType<'a' | 'c'>({} as OptionalKeysOf<{readonly a?: string; readonly b: number; c?: boolean; d: string}>);
+expectTypeOf<OptionalKeysOf<{readonly a?: string; readonly b: number; c?: boolean; d: string}>>().toBe<'a' | 'c'>();
 
 // Unions
-expectType<'b' | 'c'>({} as OptionalKeysOf<{a: string; b?: number} | {readonly c?: string; readonly d: number}>);
-expectType<'a' | 'b'>({} as OptionalKeysOf<{a: string; b: number} | {a?: string; b?: number}>);
+expectTypeOf<OptionalKeysOf<{a: string; b?: number} | {readonly c?: string; readonly d: number}>>().toBe<'b' | 'c'>();
+expectTypeOf<OptionalKeysOf<{a: string; b: number} | {a?: string; b?: number}>>().toBe<'a' | 'b'>();
 
 // Arrays
-expectType<never>({} as OptionalKeysOf<[]>);
-expectType<never>({} as OptionalKeysOf<readonly [string, number, boolean]>);
-expectType<'1' | '2'>({} as OptionalKeysOf<[string, number?, boolean?]>);
-expectType<'0' | '1' | '2'>({} as OptionalKeysOf<[string?] | readonly [string, number?] | [string, number, boolean?]>);
+expectTypeOf<OptionalKeysOf<[]>>().toBe<never>();
+expectTypeOf<OptionalKeysOf<readonly [string, number, boolean]>>().toBe<never>();
+expectTypeOf<OptionalKeysOf<[string, number?, boolean?]>>().toBe<'1' | '2'>();
+expectTypeOf<OptionalKeysOf<[string?] | readonly [string, number?] | [string, number, boolean?]>>().toBe<'0' | '1' | '2'>();
 
 // `OptionalKeysOf<T>` should be assignable to `keyof T`
 type Assignability1<T, _K extends keyof T> = unknown;
@@ -86,5 +86,5 @@ type Assignability10<T extends UnknownRecord, _K extends OptionalKeysOf<T>> = un
 type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 
 // A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
-expectType<'a' | 'b'>({} as OptionalKeysOf<{a?: 1} | {b?: 2}>);
-expectType<'a' | 'b'>({} as OptionalKeysOf<{a?: 1; b?: 2} | {a?: 1}>);
+expectTypeOf<OptionalKeysOf<{a?: 1} | {b?: 2}>>().toBe<'a' | 'b'>();
+expectTypeOf<OptionalKeysOf<{a?: 1; b?: 2} | {a?: 1}>>().toBe<'a' | 'b'>();

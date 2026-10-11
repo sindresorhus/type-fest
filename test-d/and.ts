@@ -1,32 +1,32 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {And} from '../source/and.d.ts';
 
 declare const boolean: boolean;
 
-expectType<And<true, true>>(true);
-expectType<And<true, false>>(false);
-expectType<And<false, true>>(false);
-expectType<And<false, false>>(false);
+expectTypeOf<And<true, true>>().toBe<true>();
+expectTypeOf<And<true, false>>().toBe<false>();
+expectTypeOf<And<false, true>>().toBe<false>();
+expectTypeOf<And<false, false>>().toBe<false>();
 
-expectType<And<true, boolean>>(boolean);
-expectType<And<boolean, true>>(boolean);
-expectType<And<false, boolean>>(false);
-expectType<And<boolean, false>>(false);
-expectType<And<boolean, boolean>>(boolean);
+expectTypeOf(boolean).toBe<And<true, boolean>>();
+expectTypeOf(boolean).toBe<And<boolean, true>>();
+expectTypeOf<And<false, boolean>>().toBe<false>();
+expectTypeOf<And<boolean, false>>().toBe<false>();
+expectTypeOf(boolean).toBe<And<boolean, boolean>>();
 
 // Boundary cases
-expectType<And<any, true>>(boolean);
-expectType<And<true, any>>(boolean);
-expectType<And<any, false>>(false);
-expectType<And<false, any>>(false);
-expectType<And<any, boolean>>(boolean);
-expectType<And<boolean, any>>(boolean);
-expectType<And<any, any>>(boolean);
+expectTypeOf(boolean).toBe<And<any, true>>();
+expectTypeOf(boolean).toBe<And<true, any>>();
+expectTypeOf<And<any, false>>().toBe<false>();
+expectTypeOf<And<false, any>>().toBe<false>();
+expectTypeOf(boolean).toBe<And<any, boolean>>();
+expectTypeOf(boolean).toBe<And<boolean, any>>();
+expectTypeOf(boolean).toBe<And<any, any>>();
 
-expectType<And<never, true>>(false);
-expectType<And<true, never>>(false);
-expectType<And<never, false>>(false);
-expectType<And<false, never>>(false);
-expectType<And<never, boolean>>(false);
-expectType<And<boolean, never>>(false);
-expectType<And<never, never>>(false);
+expectTypeOf<And<never, true>>().toBe<false>();
+expectTypeOf<And<true, never>>().toBe<false>();
+expectTypeOf<And<never, false>>().toBe<false>();
+expectTypeOf<And<false, never>>().toBe<false>();
+expectTypeOf<And<never, boolean>>().toBe<false>();
+expectTypeOf<And<boolean, never>>().toBe<false>();
+expectTypeOf<And<never, never>>().toBe<false>();

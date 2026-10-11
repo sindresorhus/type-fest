@@ -1,182 +1,182 @@
-import {expectAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Entry, Entries} from '../index.d.ts';
 
 // Objects
 const objectExample = {a: 1};
 
 const objectEntry: Entry<typeof objectExample> = ['a', 1];
-expectAssignable<[string, number]>(objectEntry);
+expectTypeOf(objectEntry).toBeAssignableTo<[string, number]>();
 
 const objectEntries: Entries<typeof objectExample> = [objectEntry];
-expectAssignable<Array<[string, number]>>(objectEntries);
+expectTypeOf(objectEntries).toBeAssignableTo<Array<[string, number]>>();
 
 // Maps
 const mapExample = new Map([['a', 1]]);
 
 const mapEntry: Entry<typeof mapExample> = ['a', 1];
-expectAssignable<[string, number]>(mapEntry);
+expectTypeOf(mapEntry).toBeAssignableTo<[string, number]>();
 
 const mapEntries: Entries<typeof mapExample> = [mapEntry];
-expectAssignable<Array<[string, number]>>(mapEntries);
+expectTypeOf(mapEntries).toBeAssignableTo<Array<[string, number]>>();
 
 // Arrays
 const arrayExample = ['a', 1];
 
 const arrayEntryString: Entry<typeof arrayExample> = [0, 'a'];
-expectAssignable<[number, (string | number)]>(arrayEntryString);
+expectTypeOf(arrayEntryString).toBeAssignableTo<[number, (string | number)]>();
 
 const arrayEntryNumber: Entry<typeof arrayExample> = [1, 1];
-expectAssignable<[number, (string | number)]>(arrayEntryNumber);
+expectTypeOf(arrayEntryNumber).toBeAssignableTo<[number, (string | number)]>();
 
 const arrayEntries: Entries<typeof arrayExample> = [
 	arrayEntryString,
 	arrayEntryNumber,
 ];
-expectAssignable<Array<[number, (string | number)]>>(arrayEntries);
+expectTypeOf(arrayEntries).toBeAssignableTo<Array<[number, (string | number)]>>();
 
 // Sets
 const setExample = new Set(['a', 1]);
 
 const setEntryString: Entry<typeof setExample> = ['a', 'a'];
-expectAssignable<[(string | number), (string | number)]>(setEntryString);
+expectTypeOf(setEntryString).toBeAssignableTo<[(string | number), (string | number)]>();
 
 const setEntryNumber: Entry<typeof setExample> = [1, 1];
-expectAssignable<[(string | number), (string | number)]>(setEntryNumber);
+expectTypeOf(setEntryNumber).toBeAssignableTo<[(string | number), (string | number)]>();
 
 const setEntries: Entries<typeof setExample> = [
 	setEntryString,
 	setEntryNumber,
 ];
-expectAssignable<Array<[(string | number), (string | number)]>>(setEntries);
+expectTypeOf(setEntries).toBeAssignableTo<Array<[(string | number), (string | number)]>>();
 
 // A readonly map and a readonly set have an `entries` method, just like their mutable counterparts.
 declare const readonlyMapEntries: Entries<ReadonlyMap<string, number>>;
-expectType<Array<[string, number]>>(readonlyMapEntries);
+expectTypeOf(readonlyMapEntries).toBe<Array<[string, number]>>();
 
 declare const readonlySetEntries: Entries<ReadonlySet<number>>;
-expectType<Array<[number, number]>>(readonlySetEntries);
+expectTypeOf(readonlySetEntries).toBe<Array<[number, number]>>();
 
 declare const readonlyMapEntry: Entry<ReadonlyMap<string, number>>;
-expectType<[string, number]>(readonlyMapEntry);
+expectTypeOf(readonlyMapEntry).toBe<[string, number]>();
 
 declare const readonlySetEntry: Entry<ReadonlySet<number>>;
-expectType<[number, number]>(readonlySetEntry);
+expectTypeOf(readonlySetEntry).toBe<[number, number]>();
 
 // A `WeakMap` and a `WeakSet` have no `entries` method, so there is no entry to describe. See the docs.
 declare const weakMapEntry: Entry<WeakMap<object, string>>;
-expectType<never>(weakMapEntry);
+expectTypeOf(weakMapEntry).toBe<never>();
 
 declare const weakSetEntry: Entry<WeakSet<object>>;
-expectType<never>(weakSetEntry);
+expectTypeOf(weakSetEntry).toBe<never>();
 
 declare const weakMapEntries: Entries<WeakMap<object, string>>;
-expectType<never>(weakMapEntries);
+expectTypeOf(weakMapEntries).toBe<never>();
 
 declare const weakSetEntries: Entries<WeakSet<object>>;
-expectType<never>(weakSetEntries);
+expectTypeOf(weakSetEntries).toBe<never>();
 
 // A `Map` with object, `unknown`, or `any` keys is assignable to `WeakMap<WeakKey, unknown>`, because the methods of `WeakMap` are compared bivariantly, and the same holds for a `Set` and `WeakSet`. They are still a `Map` and a `Set`, so they have entries.
 type ObjectItem = {id: number};
 
 declare const objectKeyMapEntry: Entry<Map<ObjectItem, string>>;
-expectType<[ObjectItem, string]>(objectKeyMapEntry);
+expectTypeOf(objectKeyMapEntry).toBe<[ObjectItem, string]>();
 
 declare const objectKeyMapEntries: Entries<Map<ObjectItem, string>>;
-expectType<Array<[ObjectItem, string]>>(objectKeyMapEntries);
+expectTypeOf(objectKeyMapEntries).toBe<Array<[ObjectItem, string]>>();
 
 declare const objectItemSetEntry: Entry<Set<ObjectItem>>;
-expectType<[ObjectItem, ObjectItem]>(objectItemSetEntry);
+expectTypeOf(objectItemSetEntry).toBe<[ObjectItem, ObjectItem]>();
 
 declare const objectItemSetEntries: Entries<Set<ObjectItem>>;
-expectType<Array<[ObjectItem, ObjectItem]>>(objectItemSetEntries);
+expectTypeOf(objectItemSetEntries).toBe<Array<[ObjectItem, ObjectItem]>>();
 
 declare const readonlyObjectKeyMapEntries: Entries<ReadonlyMap<object, number>>;
-expectType<Array<[object, number]>>(readonlyObjectKeyMapEntries);
+expectTypeOf(readonlyObjectKeyMapEntries).toBe<Array<[object, number]>>();
 
 declare const anyMapEntry: Entry<Map<any, any>>;
-expectType<[any, any]>(anyMapEntry);
+expectTypeOf(anyMapEntry).toBe<[any, any]>();
 
 declare const unknownMapEntry: Entry<Map<unknown, unknown>>;
-expectType<[unknown, unknown]>(unknownMapEntry);
+expectTypeOf(unknownMapEntry).toBe<[unknown, unknown]>();
 
 declare const unknownMapEntries: Entries<Map<unknown, unknown>>;
-expectType<Array<[unknown, unknown]>>(unknownMapEntries);
+expectTypeOf(unknownMapEntries).toBe<Array<[unknown, unknown]>>();
 
 declare const unknownSetEntry: Entry<Set<unknown>>;
-expectType<[unknown, unknown]>(unknownSetEntry);
+expectTypeOf(unknownSetEntry).toBe<[unknown, unknown]>();
 
 declare const anySetEntries: Entries<Set<any>>;
-expectType<Array<[any, any]>>(anySetEntries);
+expectTypeOf(anySetEntries).toBe<Array<[any, any]>>();
 
 declare const symbolKeyMapEntry: Entry<Map<symbol, number>>;
-expectType<[symbol, number]>(symbolKeyMapEntry);
+expectTypeOf(symbolKeyMapEntry).toBe<[symbol, number]>();
 
 // `Object.entries` yields every key as a string, so a numeric key arrives as its string form, and it never yields a symbol key at all, so a type with only symbol keys has no entries. The key was typed as `keyof`, so `Entry<{1: number}>` claimed the key was the number `1`, and `example[0].toUpperCase()` in the type's own example only type-checked because the example's key happened to be a string already.
 declare const numericKey: Entry<{1: number}>;
-expectType<['1', number]>(numericKey);
+expectTypeOf(numericKey).toBe<['1', number]>();
 
 declare const numberRecord: Entry<Record<number, string>>;
-expectType<[`${number}`, string]>(numberRecord);
+expectTypeOf(numberRecord).toBe<[`${number}`, string]>();
 
 declare const symbolOnly: Entry<{[key: symbol]: number}>;
-expectType<never>(symbolOnly);
+expectTypeOf(symbolOnly).toBe<never>();
 
 declare const stringRecord: Entry<Record<string, number>>;
-expectType<[string, number]>(stringRecord);
+expectTypeOf(stringRecord).toBe<[string, number]>();
 
 // A string key is already a string, so the shape of the common case is unchanged.
 declare const stringKey: Entry<{someKey: number}>;
-expectType<['someKey', number]>(stringKey);
+expectTypeOf(stringKey).toBe<['someKey', number]>();
 
 declare const mixedKeys: Entry<{a: string; 1: number}>;
-expectType<['a', string] | ['1', number]>(mixedKeys);
+expectTypeOf(mixedKeys).toBe<['a', string] | ['1', number]>();
 
 // `Object.entries` pairs each key with its own value, so the pairs have to stay correlated. The type used to be `['a' | '1', string | number]`, which also admits `['a', 1]` and `['1', 'x']`, neither of which `Object.entries` can produce, and which made the type's own example fail to type-check on a second member, since `example[1]` would no longer be known to be a number.
 declare const correlatedEntry: Entry<{a: string; b: number}>;
-expectType<['a', string] | ['b', number]>(correlatedEntry);
+expectTypeOf(correlatedEntry).toBe<['a', string] | ['b', number]>();
 
 declare const correlatedEntries: Entries<{a: string; b: number}>;
-expectType<Array<['a', string] | ['b', number]>>(correlatedEntries);
+expectTypeOf(correlatedEntries).toBe<Array<['a', string] | ['b', number]>>();
 
 // An optional member reads as `T | undefined`, so its pair carries the `undefined` too. Note that `Object.entries` skips an absent key rather than yielding it as `undefined`, so the pair describes a value the runtime can produce from a key that is present and holds nothing, which is the reading a caller narrowing on `entry[1]` has to make.
 declare const optionalCorrelatedEntry: Entry<{a: string; b?: number}>;
-expectType<['a', string] | ['b', number | undefined]>(optionalCorrelatedEntry);
+expectTypeOf(optionalCorrelatedEntry).toBe<['a', string] | ['b', number | undefined]>();
 
 declare const numericKeyEntries: Entries<{1: number}>;
-expectType<Array<['1', number]>>(numericKeyEntries);
+expectTypeOf(numericKeyEntries).toBe<Array<['1', number]>>();
 
 // `Array.prototype.entries` pairs each index with its own element, so a tuple's pairs have to stay correlated too. The type used to be `Array<[number, string | number]>`, which also admits `[1, 'a']`, and `entries[0][1]` was not known to be a string.
 declare const tupleEntry: Entry<[string, number]>;
-expectType<[0, string] | [1, number]>(tupleEntry);
+expectTypeOf(tupleEntry).toBe<[0, string] | [1, number]>();
 
 declare const tupleEntries: Entries<[string, number]>;
-expectType<Array<[0, string] | [1, number]>>(tupleEntries);
+expectTypeOf(tupleEntries).toBe<Array<[0, string] | [1, number]>>();
 
 declare const readonlyTupleEntries: Entries<readonly [string, number]>;
-expectType<Array<[0, string] | [1, number]>>(readonlyTupleEntries);
+expectTypeOf(readonlyTupleEntries).toBe<Array<[0, string] | [1, number]>>();
 
 // An empty tuple has no entries, so there is no pair to describe.
 declare const emptyTupleEntries: Entries<[]>;
-expectType<never[]>(emptyTupleEntries);
+expectTypeOf(emptyTupleEntries).toBe<never[]>();
 
 // The entries of a generic object can be destructured. The compiler reads them through the constraint `object`, which has no keys.
 function entriesOfGeneric<ObjectType extends object>(object: ObjectType) {
 	for (const [key, value] of Object.entries(object) as Entries<ObjectType>) {
-		expectType<never>(key);
-		expectType<never>(value);
+		expectTypeOf(key).toBe<never>();
+		expectTypeOf(value).toBe<never>();
 	}
 }
 
 // Tuple optional elements can be absent, and a hole is yielded as `undefined` by array entries.
-expectType<[0, string] | [1, number | undefined]>({} as Entry<readonly [string, number?]>);
+expectTypeOf<Entry<readonly [string, number?]>>().toBe<[0, string] | [1, number | undefined]>();
 
 // Destructuring a correlated entry keeps its value narrowable by the key.
 function narrowEntry(entry: Entry<{text: string; count: number}>) {
 	const [key, value] = entry;
 
 	if (key === 'text') {
-		expectType<string>(value);
+		expectTypeOf(value).toBe<string>();
 	} else {
-		expectType<number>(value);
+		expectTypeOf(value).toBe<number>();
 	}
 }

@@ -1,4 +1,4 @@
-import {expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Schema} from '../index.d.ts';
 
 const foo = {
@@ -53,30 +53,30 @@ const fooSchema: FooSchema = {
 	},
 };
 
-expectNotAssignable<FooSchema>(foo);
-expectNotAssignable<FooSchema>({key: 'value'});
-expectNotAssignable<FooSchema>(new Date());
-expectType<FooOption>(fooSchema.baz);
+expectTypeOf(foo).not.toBeAssignableTo<FooSchema>();
+expectTypeOf<{key: 'value'}>().not.toBeAssignableTo<FooSchema>();
+expectTypeOf(new Date()).not.toBeAssignableTo<FooSchema>();
+expectTypeOf(fooSchema.baz).toBe<FooOption>();
 
 const barSchema = fooSchema.bar;
-expectType<FooOption>(barSchema.function);
-expectType<{key: FooOption}>(barSchema.object);
-expectType<FooOption>(barSchema.string);
-expectType<FooOption>(barSchema.number);
-expectType<FooOption>(barSchema.boolean);
-expectType<FooOption>(barSchema.symbol);
-expectType<FooOption>(barSchema.map);
-expectType<FooOption>(barSchema.set);
-expectType<FooOption[]>(barSchema.array);
-expectType<[FooOption]>(barSchema.tuple);
-expectType<Array<{key: FooOption}>>(barSchema.objectArray);
-expectType<FooOption>(barSchema.readonlyMap);
-expectType<FooOption>(barSchema.readonlySet);
-expectType<readonly FooOption[]>(barSchema.readonlyArray);
-expectType<readonly [FooOption]>(barSchema.readonlyTuple);
-expectType<FooOption>(barSchema.regExp);
-expectType<FooOption>(barSchema.unknown);
-expectType<FooOption>(barSchema.any);
+expectTypeOf(barSchema.function).toBe<FooOption>();
+expectTypeOf(barSchema.object).toBe<{key: FooOption}>();
+expectTypeOf(barSchema.string).toBe<FooOption>();
+expectTypeOf(barSchema.number).toBe<FooOption>();
+expectTypeOf(barSchema.boolean).toBe<FooOption>();
+expectTypeOf(barSchema.symbol).toBe<FooOption>();
+expectTypeOf(barSchema.map).toBe<FooOption>();
+expectTypeOf(barSchema.set).toBe<FooOption>();
+expectTypeOf(barSchema.array).toBe<FooOption[]>();
+expectTypeOf(barSchema.tuple).toBe<[FooOption]>();
+expectTypeOf(barSchema.objectArray).toBe<Array<{key: FooOption}>>();
+expectTypeOf(barSchema.readonlyMap).toBe<FooOption>();
+expectTypeOf(barSchema.readonlySet).toBe<FooOption>();
+expectTypeOf(barSchema.readonlyArray).toBe<readonly FooOption[]>();
+expectTypeOf(barSchema.readonlyTuple).toBe<readonly [FooOption]>();
+expectTypeOf(barSchema.regExp).toBe<FooOption>();
+expectTypeOf(barSchema.unknown).toBe<FooOption>();
+expectTypeOf(barSchema.any).toBe<FooOption>();
 
 type ComplexOption = {
 	type: 'readonly' | 'required' | 'optional';
@@ -115,28 +115,28 @@ const complexFoo: ComplexSchema = {
 	},
 };
 
-expectNotAssignable<ComplexSchema>(foo);
-expectType<ComplexOption>(complexFoo.baz);
+expectTypeOf(foo).not.toBeAssignableTo<ComplexSchema>();
+expectTypeOf(complexFoo.baz).toBe<ComplexOption>();
 
 const complexBarSchema = complexFoo.bar;
-expectType<ComplexOption>(complexBarSchema.function);
-expectType<{key: ComplexOption}>(complexBarSchema.object);
-expectType<ComplexOption>(complexBarSchema.string);
-expectType<ComplexOption>(complexBarSchema.number);
-expectType<ComplexOption>(complexBarSchema.boolean);
-expectType<ComplexOption>(complexBarSchema.symbol);
-expectType<ComplexOption>(complexBarSchema.map);
-expectType<ComplexOption>(complexBarSchema.set);
-expectType<ComplexOption[]>(complexBarSchema.array);
-expectType<[ComplexOption]>(complexBarSchema.tuple);
-expectType<Array<{key: ComplexOption}>>(complexBarSchema.objectArray);
-expectType<ComplexOption>(complexBarSchema.readonlyMap);
-expectType<ComplexOption>(complexBarSchema.readonlySet);
-expectType<readonly ComplexOption[]>(complexBarSchema.readonlyArray);
-expectType<readonly [ComplexOption]>(complexBarSchema.readonlyTuple);
-expectType<ComplexOption>(complexBarSchema.regExp);
-expectType<ComplexOption>(complexBarSchema.unknown);
-expectType<ComplexOption>(complexBarSchema.any);
+expectTypeOf(complexBarSchema.function).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.object).toBe<{key: ComplexOption}>();
+expectTypeOf(complexBarSchema.string).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.number).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.boolean).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.symbol).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.map).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.set).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.array).toBe<ComplexOption[]>();
+expectTypeOf(complexBarSchema.tuple).toBe<[ComplexOption]>();
+expectTypeOf(complexBarSchema.objectArray).toBe<Array<{key: ComplexOption}>>();
+expectTypeOf(complexBarSchema.readonlyMap).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.readonlySet).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.readonlyArray).toBe<readonly ComplexOption[]>();
+expectTypeOf(complexBarSchema.readonlyTuple).toBe<readonly [ComplexOption]>();
+expectTypeOf(complexBarSchema.regExp).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.unknown).toBe<ComplexOption>();
+expectTypeOf(complexBarSchema.any).toBe<ComplexOption>();
 
 // With Options and `recurseIntoArrays` set to `false`
 type FooSchemaWithOptionsNoRecurse = Schema<typeof foo, FooOption, {recurseIntoArrays: false}>;
@@ -165,30 +165,30 @@ const fooSchemaWithOptionsNoRecurse: FooSchemaWithOptionsNoRecurse = {
 	},
 };
 
-expectNotAssignable<FooSchemaWithOptionsNoRecurse>(foo);
-expectNotAssignable<FooSchemaWithOptionsNoRecurse>({key: 'value'});
-expectNotAssignable<FooSchemaWithOptionsNoRecurse>(new Date());
-expectType<FooOption>(fooSchemaWithOptionsNoRecurse.baz);
+expectTypeOf(foo).not.toBeAssignableTo<FooSchemaWithOptionsNoRecurse>();
+expectTypeOf<{key: 'value'}>().not.toBeAssignableTo<FooSchemaWithOptionsNoRecurse>();
+expectTypeOf(new Date()).not.toBeAssignableTo<FooSchemaWithOptionsNoRecurse>();
+expectTypeOf(fooSchemaWithOptionsNoRecurse.baz).toBe<FooOption>();
 
 const barSchemaWithOptionsNoRecurse = fooSchemaWithOptionsNoRecurse.bar;
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.function);
-expectType<{key: FooOption}>(barSchemaWithOptionsNoRecurse.object);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.string);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.number);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.boolean);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.symbol);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.map);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.set);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.array);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.tuple);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.objectArray);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.readonlyMap);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.readonlySet);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.readonlyArray);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.readonlyTuple);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.regExp);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.unknown);
-expectType<FooOption>(barSchemaWithOptionsNoRecurse.any);
+expectTypeOf(barSchemaWithOptionsNoRecurse.function).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.object).toBe<{key: FooOption}>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.string).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.number).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.boolean).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.symbol).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.map).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.set).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.array).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.tuple).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.objectArray).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.readonlyMap).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.readonlySet).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.readonlyArray).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.readonlyTuple).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.regExp).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.unknown).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsNoRecurse.any).toBe<FooOption>();
 
 // With Options and `recurseIntoArrays` set to `true`
 type FooSchemaWithOptionsRecurse = Schema<typeof foo, FooOption, {recurseIntoArrays: true}>;
@@ -217,164 +217,150 @@ const fooSchemaWithOptionsRecurse: FooSchemaWithOptionsRecurse = {
 	},
 };
 
-expectNotAssignable<FooSchemaWithOptionsRecurse>(foo);
-expectNotAssignable<FooSchemaWithOptionsRecurse>({key: 'value'});
-expectNotAssignable<FooSchemaWithOptionsRecurse>(new Date());
-expectType<FooOption>(fooSchema.baz);
+expectTypeOf(foo).not.toBeAssignableTo<FooSchemaWithOptionsRecurse>();
+expectTypeOf<{key: 'value'}>().not.toBeAssignableTo<FooSchemaWithOptionsRecurse>();
+expectTypeOf(new Date()).not.toBeAssignableTo<FooSchemaWithOptionsRecurse>();
+expectTypeOf(fooSchema.baz).toBe<FooOption>();
 
 const barSchemaWithOptionsRecurse = fooSchemaWithOptionsRecurse.bar;
-expectType<FooOption>(barSchemaWithOptionsRecurse.function);
-expectType<{key: FooOption}>(barSchemaWithOptionsRecurse.object);
-expectType<FooOption>(barSchemaWithOptionsRecurse.string);
-expectType<FooOption>(barSchemaWithOptionsRecurse.number);
-expectType<FooOption>(barSchemaWithOptionsRecurse.boolean);
-expectType<FooOption>(barSchemaWithOptionsRecurse.symbol);
-expectType<FooOption>(barSchemaWithOptionsRecurse.map);
-expectType<FooOption>(barSchemaWithOptionsRecurse.set);
-expectType<FooOption[]>(barSchemaWithOptionsRecurse.array);
-expectType<[FooOption]>(barSchemaWithOptionsRecurse.tuple);
-expectType<Array<{key: FooOption}>>(barSchemaWithOptionsRecurse.objectArray);
-expectType<FooOption>(barSchemaWithOptionsRecurse.readonlyMap);
-expectType<FooOption>(barSchemaWithOptionsRecurse.readonlySet);
-expectType<readonly FooOption[]>(barSchemaWithOptionsRecurse.readonlyArray);
-expectType<readonly [FooOption]>(barSchemaWithOptionsRecurse.readonlyTuple);
-expectType<FooOption>(barSchemaWithOptionsRecurse.regExp);
-expectType<FooOption>(barSchemaWithOptionsRecurse.unknown);
-expectType<FooOption>(barSchemaWithOptionsRecurse.any);
+expectTypeOf(barSchemaWithOptionsRecurse.function).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.object).toBe<{key: FooOption}>();
+expectTypeOf(barSchemaWithOptionsRecurse.string).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.number).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.boolean).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.symbol).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.map).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.set).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.array).toBe<FooOption[]>();
+expectTypeOf(barSchemaWithOptionsRecurse.tuple).toBe<[FooOption]>();
+expectTypeOf(barSchemaWithOptionsRecurse.objectArray).toBe<Array<{key: FooOption}>>();
+expectTypeOf(barSchemaWithOptionsRecurse.readonlyMap).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.readonlySet).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.readonlyArray).toBe<readonly FooOption[]>();
+expectTypeOf(barSchemaWithOptionsRecurse.readonlyTuple).toBe<readonly [FooOption]>();
+expectTypeOf(barSchemaWithOptionsRecurse.regExp).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.unknown).toBe<FooOption>();
+expectTypeOf(barSchemaWithOptionsRecurse.any).toBe<FooOption>();
 
 // Non recursives
-expectType<number>({} as Schema<string, number>);
-expectType<string>({} as Schema<boolean, string>);
-expectType<'c'>({} as Schema<'a' | 'b', 'c'>);
-expectType<string | null>({} as Schema<number, string | null>);
-expectType<false>({} as Schema<null | undefined, false>);
+expectTypeOf<Schema<string, number>>().toBe<number>();
+expectTypeOf<Schema<boolean, string>>().toBe<string>();
+expectTypeOf<Schema<'a' | 'b', 'c'>>().toBe<'c'>();
+expectTypeOf<Schema<number, string | null>>().toBe<string | null>();
+expectTypeOf<Schema<null | undefined, false>>().toBe<false>();
 
-expectType<{date: Date}>({} as Schema<Date, {date: Date}>);
-expectType<string>({} as Schema<RegExp, string>);
-expectType<Set<number>>({} as Schema<Map<string, string>, Set<number>>);
-expectType<Record<string, number>>({} as Schema<ReadonlyMap<string, string>, Record<string, number>>);
-expectType<Map<string, number>>({} as Schema<Set<string>, Map<string, number>>);
-expectType<readonly number[]>({} as Schema<ReadonlySet<string>, readonly number[]>);
-expectType<{fn: unknown}>({} as Schema<(a: number, b: number) => void, {fn: unknown}>);
-expectType<(a: string, b: string) => void>({} as Schema<(a: number, b: number) => void, (a: string, b: string) => void>);
-expectType<{a: string}>({} as Schema<Map<string, number> | Set<number> | Date, {a: string}>);
+expectTypeOf<Schema<Date, {date: Date}>>().toBe<{date: Date}>();
+expectTypeOf<Schema<RegExp, string>>().toBe<string>();
+expectTypeOf<Schema<Map<string, string>, Set<number>>>().toBe<Set<number>>();
+expectTypeOf<Schema<ReadonlyMap<string, string>, Record<string, number>>>().toBe<Record<string, number>>();
+expectTypeOf<Schema<Set<string>, Map<string, number>>>().toBe<Map<string, number>>();
+expectTypeOf<Schema<ReadonlySet<string>, readonly number[]>>().toBe<readonly number[]>();
+expectTypeOf<Schema<(a: number, b: number) => void, {fn: unknown}>>().toBe<{fn: unknown}>();
+expectTypeOf<Schema<(a: number, b: number) => void, (a: string, b: string) => void>>().toBe<(a: string, b: string) => void>();
+expectTypeOf<Schema<Map<string, number> | Set<number> | Date, {a: string}>>().toBe<{a: string}>();
 
 // Objects
-expectType<{a: bigint}>({} as Schema<{a: number}, bigint>);
-expectType<{a: {b: bigint}; c: bigint}>({} as Schema<{a: {b: number}; c: string}, bigint>);
-expectType<{a: {b: bigint[]}; c: {d: {e: bigint} | {f: {g: bigint} | bigint}; h: {i: {j: {k: bigint}}}}}>(
-	{} as Schema<{a: {b: string[]}; c: {d: {e: string} | {f: {g: number} | boolean}; h: {i: {j: {k: string}}}}}, bigint>,
-);
+expectTypeOf<Schema<{a: number}, bigint>>().toBe<{a: bigint}>();
+expectTypeOf<Schema<{a: {b: number}; c: string}, bigint>>().toBe<{a: {b: bigint}; c: bigint}>();
+expectTypeOf<Schema<{a: {b: string[]}; c: {d: {e: string} | {f: {g: number} | boolean}; h: {i: {j: {k: string}}}}}, bigint>>().toBe<{a: {b: bigint[]}; c: {d: {e: bigint} | {f: {g: bigint} | bigint}; h: {i: {j: {k: bigint}}}}}>();
 
 // Preserves readonly and optional modifiers
-expectType<{readonly a: number}>({} as Schema<{readonly a: string}, number>);
-expectType<{a?: number}>({} as Schema<{a?: string}, number>);
-expectType<{a?: {readonly b?: number}}>({} as Schema<{a?: {readonly b?: string}}, number>);
-expectType<{0?: {readonly 1?: number}}>({} as Schema<{0?: {readonly 1?: string}}, number>);
-expectType<{readonly a: boolean; b?: boolean; readonly c?: {readonly d?: {e?: boolean} | {readonly f: boolean}; g: {h: {readonly i: boolean}}}}>(
-	{} as Schema<{readonly a: string; b?: string; readonly c?: {readonly d?: {e?: number} | {readonly f: number}; g: {h: {readonly i: bigint}}}}, boolean>,
-);
+expectTypeOf<Schema<{readonly a: string}, number>>().toBe<{readonly a: number}>();
+expectTypeOf<Schema<{a?: string}, number>>().toBe<{a?: number}>();
+expectTypeOf<Schema<{a?: {readonly b?: string}}, number>>().toBe<{a?: {readonly b?: number}}>();
+expectTypeOf<Schema<{0?: {readonly 1?: string}}, number>>().toBe<{0?: {readonly 1?: number}}>();
+expectTypeOf<Schema<{readonly a: string; b?: string; readonly c?: {readonly d?: {e?: number} | {readonly f: number}; g: {h: {readonly i: bigint}}}}, boolean>>().toBe<{readonly a: boolean; b?: boolean; readonly c?: {readonly d?: {e?: boolean} | {readonly f: boolean}; g: {h: {readonly i: boolean}}}}>();
 
 // Caveat: Optional properties with explicit `undefined` don't behave differently from optional properties without explicit `undefined`.
 // For example, `Schema<{a?: {b?: number} | undefined}, string>` gives `{a?: {b?: string}}` and not `{a?: {b?: string} | string}`
-expectType<{a?: {b?: string}}>({} as Schema<{a?: {b?: number} | undefined}, string>);
-expectType<{a: {b?: string} | string}>({} as Schema<{a: {b?: number} | undefined}, string>);
+expectTypeOf<Schema<{a?: {b?: number} | undefined}, string>>().toBe<{a?: {b?: string}}>();
+expectTypeOf<Schema<{a: {b?: number} | undefined}, string>>().toBe<{a: {b?: string} | string}>();
 
 // Index signatures
-expectType<Record<string, number>>({} as Schema<Record<string, string>, number>);
-expectType<Record<string, {a: boolean; b: boolean}>>({} as Schema<Record<string, {a: string; b: number}>, boolean>);
-expectType<Set<number> | Record<string, Set<number>>>({} as Schema<Map<string, string> | Record<string, string>, Set<number>>);
-expectType<{[K: string]: number; a: number; b: number}>({} as Schema<{[K: string]: string; a: string; b: string}, number>);
-expectType<{[K: number]: string; 0: string; 1: string}>({} as Schema<{[K: number]: boolean; 0: boolean; 1: boolean}, string>);
+expectTypeOf<Schema<Record<string, string>, number>>().toBe<Record<string, number>>();
+expectTypeOf<Schema<Record<string, {a: string; b: number}>, boolean>>().toBe<Record<string, {a: boolean; b: boolean}>>();
+expectTypeOf<Schema<Map<string, string> | Record<string, string>, Set<number>>>().toBe<Set<number> | Record<string, Set<number>>>();
+expectTypeOf<Schema<{[K: string]: string; a: string; b: string}, number>>().toBe<{[K: string]: number; a: number; b: number}>();
+expectTypeOf<Schema<{[K: number]: boolean; 0: boolean; 1: boolean}, string>>().toBe<{[K: number]: string; 0: string; 1: string}>();
 
 // Edge cases
-expectType<{}>({} as Schema<{}, number>);
-expectType<bigint>({} as Schema<never, bigint>);
-expectType<{a: {b: {c: string}}}>({} as Schema<any, {a: {b: {c: string}}}>);
+expectTypeOf<Schema<{}, number>>().toBe<{}>();
+expectTypeOf<Schema<never, bigint>>().toBe<bigint>();
+expectTypeOf<Schema<any, {a: {b: {c: string}}}>>().toBe<{a: {b: {c: string}}}>();
 
 // Unions
-expectType<{a: string} | {b: {c: string}}>({} as Schema<{a: number} | {b: {c: number}}, string>);
-expectType<{a: {b: null} | {c: {d: null}}}>({} as Schema<{a: {b: string} | {c: {d: number}}}, null>);
-expectType<{a: {b: null} | null}>({} as Schema<{a: {b: string} | string}, null>);
-expectType<{a: {a: string}} | Array<{a: string}> | {a: string}>(
-	{} as Schema<{a: string} | string[] | Set<string>, {a: string}>,
-);
-expectType<{readonly a?: string}>(
-	{} as Schema<Map<string, string> | Set<string> | Date | RegExp | (() => number), {readonly a?: string}>,
-);
+expectTypeOf<Schema<{a: number} | {b: {c: number}}, string>>().toBe<{a: string} | {b: {c: string}}>();
+expectTypeOf<Schema<{a: {b: string} | {c: {d: number}}}, null>>().toBe<{a: {b: null} | {c: {d: null}}}>();
+expectTypeOf<Schema<{a: {b: string} | string}, null>>().toBe<{a: {b: null} | null}>();
+expectTypeOf<Schema<{a: string} | string[] | Set<string>, {a: string}>>().toBe<{a: {a: string}} | Array<{a: string}> | {a: string}>();
+expectTypeOf<Schema<Map<string, string> | Set<string> | Date | RegExp | (() => number), {readonly a?: string}>>().toBe<{readonly a?: string}>();
 
 // Arrays
-expectType<[bigint, bigint]>({} as Schema<[string, number], bigint>);
-expectType<[{a: bigint}, bigint]>({} as Schema<[{a: string}, number], bigint>);
-expectType<[Set<string>, (Set<string>)?, Set<string>?]>({} as Schema<[string, number?, boolean?], Set<string>>);
-expectType<[string, {a: string}?, string?]>({} as Schema<[string, {a: number}?, boolean?], string>);
-expectType<[null | undefined, null | undefined, ...Array<null | undefined>]>({} as Schema<[string, number, ...string[]], null | undefined>);
-expectType<[({a?: string})?, ({a?: string})?]>({} as Schema<[string?, string?], {a?: string}>);
-expectType<[bigint, bigint?, ({a: {b: bigint}})?, ...bigint[]]>(
-	{} as Schema<[string, number?, ({a: {b: string}})?, ...string[]], bigint>,
-);
-expectType<[bigint?, bigint?, ...Array<{a?: {b: bigint}}>]>({} as Schema<[string?, number?, ...Array<{a?: {b: string}}>], bigint>);
-expectType<[...bigint[], bigint, bigint]>({} as Schema<[...string[], string, number], bigint>);
-expectType<[bigint, ...bigint[], bigint, bigint]>({} as Schema<[string, ...string[], string, number], bigint>);
-expectType<[bigint, [bigint, bigint], ...Array<[bigint, bigint?]>]>(
-	{} as Schema<[string, [string, string], ...Array<[string, boolean?]>], bigint>,
-);
-expectType<[`${number}`, [`${number}`, Array<{a: `${number}`}>], ...Array<[`${number}`, ...(Array<{a: `${number}`}>)]>]>(
-	{} as Schema<[number, [number, Array<{a: number}>], ...Array<[number, ...(Array<{a: number}>)]>], `${number}`>,
-);
-expectType<[x: number[], y: number[]]>({} as Schema<[x: bigint, y: bigint], number[]>);
-expectType<[x: [x1: string, x2: string], y: [y1: string, y2: string]]>({} as Schema<[x: [x1: number, x2: number], y: [y1: number, y2: number]], string>);
+expectTypeOf<Schema<[string, number], bigint>>().toBe<[bigint, bigint]>();
+expectTypeOf<Schema<[{a: string}, number], bigint>>().toBe<[{a: bigint}, bigint]>();
+expectTypeOf<Schema<[string, number?, boolean?], Set<string>>>().toBe<[Set<string>, (Set<string>)?, Set<string>?]>();
+expectTypeOf<Schema<[string, {a: number}?, boolean?], string>>().toBe<[string, {a: string}?, string?]>();
+expectTypeOf<Schema<[string, number, ...string[]], null | undefined>>().toBe<[null | undefined, null | undefined, ...Array<null | undefined>]>();
+expectTypeOf<Schema<[string?, string?], {a?: string}>>().toBe<[({a?: string})?, ({a?: string})?]>();
+expectTypeOf<Schema<[string, number?, ({a: {b: string}})?, ...string[]], bigint>>().toBe<[bigint, bigint?, ({a: {b: bigint}})?, ...bigint[]]>();
+expectTypeOf<Schema<[string?, number?, ...Array<{a?: {b: string}}>], bigint>>().toBe<[bigint?, bigint?, ...Array<{a?: {b: bigint}}>]>();
+expectTypeOf<Schema<[...string[], string, number], bigint>>().toBe<[...bigint[], bigint, bigint]>();
+expectTypeOf<Schema<[string, ...string[], string, number], bigint>>().toBe<[bigint, ...bigint[], bigint, bigint]>();
+expectTypeOf<Schema<[string, [string, string], ...Array<[string, boolean?]>], bigint>>().toBe<[bigint, [bigint, bigint], ...Array<[bigint, bigint?]>]>();
+expectTypeOf<Schema<[number, [number, Array<{a: number}>], ...Array<[number, ...(Array<{a: number}>)]>], `${number}`>>().toBe<[`${number}`, [`${number}`, Array<{a: `${number}`}>], ...Array<[`${number}`, ...(Array<{a: `${number}`}>)]>]>();
+expectTypeOf<Schema<[x: bigint, y: bigint], number[]>>().toBe<[x: number[], y: number[]]>();
+expectTypeOf<Schema<[x: [x1: number, x2: number], y: [y1: number, y2: number]], string>>().toBe<[x: [x1: string, x2: string], y: [y1: string, y2: string]]>();
 // Caveat: Optional properties with explicit `undefined` don't behave differently from optional properties without explicit `undefined`.
 // For example, `Schema<[({a: number} | undefined)?], bigint>` gives `[{a: bigint}?]` and not `[({a: bigint} | bigint)?]`
-expectType<[{a: bigint}?]>({} as Schema<[({a: number} | undefined)?], bigint>);
-expectType<[({a: bigint} | bigint)]>({} as Schema<[({a: number} | undefined)], bigint>);
+expectTypeOf<Schema<[({a: number} | undefined)?], bigint>>().toBe<[{a: bigint}?]>();
+expectTypeOf<Schema<[({a: number} | undefined)], bigint>>().toBe<[({a: bigint} | bigint)]>();
 
 // === recurseIntoArrays: false ===
-expectType<string>({} as Schema<number[], string, {recurseIntoArrays: false}>);
-expectType<number>({} as Schema<[string, string, string], number, {recurseIntoArrays: false}>);
-expectType<{a: number; b: number} | number>({} as Schema<{a: string[]; b: string} | [string, string, string], number, {recurseIntoArrays: false}>);
-expectType<{a: 'a'; b: 'a'}>({} as Schema<{a: number[]; b: [string, string]}, 'a', {recurseIntoArrays: false}>);
-expectType<{a: {b: {c: {d: {e: string[]}}}}}>({} as Schema<{a: {b: {c: {d: string[]}}}}, {e: string[]}, {recurseIntoArrays: false}>);
+expectTypeOf<Schema<number[], string, {recurseIntoArrays: false}>>().toBe<string>();
+expectTypeOf<Schema<[string, string, string], number, {recurseIntoArrays: false}>>().toBe<number>();
+expectTypeOf<Schema<{a: string[]; b: string} | [string, string, string], number, {recurseIntoArrays: false}>>().toBe<{a: number; b: number} | number>();
+expectTypeOf<Schema<{a: number[]; b: [string, string]}, 'a', {recurseIntoArrays: false}>>().toBe<{a: 'a'; b: 'a'}>();
+expectTypeOf<Schema<{a: {b: {c: {d: string[]}}}}, {e: string[]}, {recurseIntoArrays: false}>>().toBe<{a: {b: {c: {d: {e: string[]}}}}}>();
 
 // `any` and `unknown` are treated as leaf values
-expectType<{a: number}>({} as Schema<{a: unknown}, number>);
-expectType<{a: number}>({} as Schema<{a: any}, number>);
-expectType<number>({} as Schema<unknown, number>);
-expectType<number>({} as Schema<any, number>);
+expectTypeOf<Schema<{a: unknown}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: any}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<unknown, number>>().toBe<number>();
+expectTypeOf<Schema<any, number>>().toBe<number>();
 
 // Binary and weak-collection built-ins are leaf values, not structures to recurse into.
-expectType<{a: number}>({} as Schema<{a: ArrayBuffer}, number>);
-expectType<{a: number}>({} as Schema<{a: SharedArrayBuffer}, number>);
-expectType<{a: number}>({} as Schema<{a: DataView}, number>);
-expectType<{a: number}>({} as Schema<{a: Uint8Array}, number>);
-expectType<{a: number}>({} as Schema<{a: Float64Array}, number>);
-expectType<{a: number}>({} as Schema<{a: WeakMap<object, number>}, number>);
-expectType<{a: number}>({} as Schema<{a: WeakSet<object>}, number>);
-expectType<{a: {b: number}}>({} as Schema<{a: {b: ArrayBuffer}}, number>);
+expectTypeOf<Schema<{a: ArrayBuffer}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: SharedArrayBuffer}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: DataView}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: Uint8Array}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: Float64Array}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: WeakMap<object, number>}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: WeakSet<object>}, number>>().toBe<{a: number}>();
+expectTypeOf<Schema<{a: {b: ArrayBuffer}}, number>>().toBe<{a: {b: number}}>();
 
 // A plain object with `name` and `message` is structurally an `Error`, but it is data, so it is still walked.
-expectType<{a: {name: number; message: number; code: number}}>({} as Schema<{a: {name: string; message: string; code: number}}, number>);
+expectTypeOf<Schema<{a: {name: string; message: string; code: number}}, number>>().toBe<{a: {name: number; message: number; code: number}}>();
 
 // A leaf that cannot be walked is still a leaf, so `any` and `unknown` are replaced by the value type. A member of type `never` is the one exception: it is a bottom type with no shape to replace, and the source's `never` branch is about the whole input rather than each member.
 declare const topTypesSchema: Schema<{a: any; b: unknown; c: null}, string>;
-expectType<{a: string; b: string; c: string}>(topTypesSchema);
+expectTypeOf(topTypesSchema).toBe<{a: string; b: string; c: string}>();
 
 declare const anySchema: Schema<any, string>;
-expectType<string>(anySchema);
+expectTypeOf(anySchema).toBe<string>();
 
 declare const neverSchema: Schema<never, string>;
-expectType<string>(neverSchema);
+expectTypeOf(neverSchema).toBe<string>();
 
 declare const neverMemberSchema: Schema<{a: never; b: string}, string>;
-expectType<{a: never; b: string}>(neverMemberSchema);
+expectTypeOf(neverMemberSchema).toBe<{a: never; b: string}>();
 
 // A member nested two levels down is reached, and so is one behind an array.
 declare const nestedSchema: Schema<{a: {b: {c: number}; d: ReadonlyArray<{e: boolean}>}}, string>;
-expectType<{a: {b: {c: string}; d: ReadonlyArray<{e: string}>}}>(nestedSchema);
+expectTypeOf(nestedSchema).toBe<{a: {b: {c: string}; d: ReadonlyArray<{e: string}>}}>();
 
 // The modifiers of every member are kept, since only the value types are replaced.
 declare const modifiersSchema: Schema<{readonly a?: {b: number}; c: ReadonlyArray<{d: string}>}, number>;
-expectType<{readonly a?: {b: number}; c: ReadonlyArray<{d: number}>}>(modifiersSchema);
+expectTypeOf(modifiersSchema).toBe<{readonly a?: {b: number}; c: ReadonlyArray<{d: number}>}>();
 
 // A `PromiseLike` is a single value, like a `Promise`.
-expectType<{a: number}>({} as Schema<{a: PromiseLike<string>}, number>);
+expectTypeOf<Schema<{a: PromiseLike<string>}, number>>().toBe<{a: number}>();

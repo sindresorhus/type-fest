@@ -1,122 +1,122 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Tagged} from '../source/tagged.d.ts';
 import type {ExtendsStrict} from '../source/extends-strict.d.ts';
 
 // Basic
-expectType<ExtendsStrict<string, string>>(true);
-expectType<ExtendsStrict<number, number>>(true);
-expectType<ExtendsStrict<1, number>>(true);
-expectType<ExtendsStrict<number, 1>>(false);
-expectType<ExtendsStrict<'foo', 'foo' | 'bar'>>(true);
-expectType<ExtendsStrict<'foo' | 'bar', 'foo'>>(false);
+expectTypeOf<ExtendsStrict<string, string>>().toBe<true>();
+expectTypeOf<ExtendsStrict<number, number>>().toBe<true>();
+expectTypeOf<ExtendsStrict<1, number>>().toBe<true>();
+expectTypeOf<ExtendsStrict<number, 1>>().toBe<false>();
+expectTypeOf<ExtendsStrict<'foo', 'foo' | 'bar'>>().toBe<true>();
+expectTypeOf<ExtendsStrict<'foo' | 'bar', 'foo'>>().toBe<false>();
 
 // Union behavior
-expectType<ExtendsStrict<string | number, string>>(false);
-expectType<ExtendsStrict<string, string | number>>(true);
-expectType<ExtendsStrict<string | string[], string>>(false);
-expectType<ExtendsStrict<string, string | string[]>>(true);
+expectTypeOf<ExtendsStrict<string | number, string>>().toBe<false>();
+expectTypeOf<ExtendsStrict<string, string | number>>().toBe<true>();
+expectTypeOf<ExtendsStrict<string | string[], string>>().toBe<false>();
+expectTypeOf<ExtendsStrict<string, string | string[]>>().toBe<true>();
 
 // Never handling
-expectType<ExtendsStrict<never, never>>(true);
-expectType<ExtendsStrict<never, string>>(false);
-expectType<ExtendsStrict<string, never>>(false);
+expectTypeOf<ExtendsStrict<never, never>>().toBe<true>();
+expectTypeOf<ExtendsStrict<never, string>>().toBe<false>();
+expectTypeOf<ExtendsStrict<string, never>>().toBe<false>();
 
 // Any and unknown
-expectType<ExtendsStrict<any, any>>(true);
-expectType<ExtendsStrict<any, never>>(false);
-expectType<ExtendsStrict<never, any>>(true);
-expectType<ExtendsStrict<any, number>>(true);
-expectType<ExtendsStrict<any, unknown>>(true); // `any` is assignable to `unknown`
-expectType<ExtendsStrict<unknown, any>>(true); // `unknown` is assignable to `any`
-expectType<ExtendsStrict<unknown, unknown>>(true);
-expectType<ExtendsStrict<string, unknown>>(true);
-expectType<ExtendsStrict<unknown, string>>(false);
+expectTypeOf<ExtendsStrict<any, any>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, never>>().toBe<false>();
+expectTypeOf<ExtendsStrict<never, any>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, number>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, unknown>>().toBe<true>(); // `any` is assignable to `unknown`
+expectTypeOf<ExtendsStrict<unknown, any>>().toBe<true>(); // `unknown` is assignable to `any`
+expectTypeOf<ExtendsStrict<unknown, unknown>>().toBe<true>();
+expectTypeOf<ExtendsStrict<string, unknown>>().toBe<true>();
+expectTypeOf<ExtendsStrict<unknown, string>>().toBe<false>();
 
 // Tuples
-expectType<ExtendsStrict<[1, 2], number[]>>(true);
-expectType<ExtendsStrict<number[], [1, 2]>>(false);
-expectType<ExtendsStrict<[], []>>(true);
+expectTypeOf<ExtendsStrict<[1, 2], number[]>>().toBe<true>();
+expectTypeOf<ExtendsStrict<number[], [1, 2]>>().toBe<false>();
+expectTypeOf<ExtendsStrict<[], []>>().toBe<true>();
 
 // Objects
-expectType<ExtendsStrict<{a: 1}, {a: number}>>(true);
-expectType<ExtendsStrict<{a: number}, {a: 1}>>(false);
-expectType<ExtendsStrict<{a: number}, {a: number; b: string}>>(false);
-expectType<ExtendsStrict<{a: number; b: string}, {a: number}>>(true);
+expectTypeOf<ExtendsStrict<{a: 1}, {a: number}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<{a: number}, {a: 1}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<{a: number}, {a: number; b: string}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<{a: number; b: string}, {a: number}>>().toBe<true>();
 
 // Functions
-expectType<ExtendsStrict<() => void, Function>>(true);
-expectType<ExtendsStrict<Function, () => void>>(false);
-expectType<ExtendsStrict<() => void, () => void>>(true);
-expectType<ExtendsStrict<(...args: any[]) => unknown, Function>>(true);
+expectTypeOf<ExtendsStrict<() => void, Function>>().toBe<true>();
+expectTypeOf<ExtendsStrict<Function, () => void>>().toBe<false>();
+expectTypeOf<ExtendsStrict<() => void, () => void>>().toBe<true>();
+expectTypeOf<ExtendsStrict<(...args: any[]) => unknown, Function>>().toBe<true>();
 
 // Intersections
-expectType<ExtendsStrict<string & {bar: string}, string>>(true);
-expectType<ExtendsStrict<string, string & {bar: string}>>(false);
+expectTypeOf<ExtendsStrict<string & {bar: string}, string>>().toBe<true>();
+expectTypeOf<ExtendsStrict<string, string & {bar: string}>>().toBe<false>();
 
 // Literal vs primitive
-expectType<ExtendsStrict<'foo', string>>(true);
-expectType<ExtendsStrict<string, 'foo'>>(false);
+expectTypeOf<ExtendsStrict<'foo', string>>().toBe<true>();
+expectTypeOf<ExtendsStrict<string, 'foo'>>().toBe<false>();
 
 // Arrays
-expectType<ExtendsStrict<string[], string[]>>(true);
-expectType<ExtendsStrict<[string], string[]>>(true); // Tuple is assignable to array
-expectType<ExtendsStrict<string[], [string]>>(false); // Array not assignable to fixed tuple
+expectTypeOf<ExtendsStrict<string[], string[]>>().toBe<true>();
+expectTypeOf<ExtendsStrict<[string], string[]>>().toBe<true>(); // Tuple is assignable to array
+expectTypeOf<ExtendsStrict<string[], [string]>>().toBe<false>(); // Array not assignable to fixed tuple
 
 // Branded types
 type UserId = Tagged<string, 'UserId'>;
 
-expectType<ExtendsStrict<UserId, string>>(true);
-expectType<ExtendsStrict<string, UserId>>(false);
-expectType<ExtendsStrict<UserId, UserId>>(true);
+expectTypeOf<ExtendsStrict<UserId, string>>().toBe<true>();
+expectTypeOf<ExtendsStrict<string, UserId>>().toBe<false>();
+expectTypeOf<ExtendsStrict<UserId, UserId>>().toBe<true>();
 
 // Edge meta-types
-expectType<ExtendsStrict<null, any>>(true);
-expectType<ExtendsStrict<undefined, any>>(true);
-expectType<ExtendsStrict<null, undefined>>(false);
-expectType<ExtendsStrict<undefined, null>>(false);
-expectType<ExtendsStrict<undefined, unknown>>(true);
-expectType<ExtendsStrict<null, unknown>>(true);
+expectTypeOf<ExtendsStrict<null, any>>().toBe<true>();
+expectTypeOf<ExtendsStrict<undefined, any>>().toBe<true>();
+expectTypeOf<ExtendsStrict<null, undefined>>().toBe<false>();
+expectTypeOf<ExtendsStrict<undefined, null>>().toBe<false>();
+expectTypeOf<ExtendsStrict<undefined, unknown>>().toBe<true>();
+expectTypeOf<ExtendsStrict<null, unknown>>().toBe<true>();
 
 // --- Options ---
 
 // `distributiveUnions`
-expectType<ExtendsStrict<string | number, string, {distributiveUnions: true}>>({} as boolean);
-expectType<ExtendsStrict<string | number, string, {distributiveUnions: false}>>(false);
-expectType<ExtendsStrict<number | bigint, string, {distributiveUnions: true}>>(false);
-expectType<ExtendsStrict<1 | 2 | 3, number, {distributiveUnions: true}>>(true);
+expectTypeOf<boolean>().toBe<ExtendsStrict<string | number, string, {distributiveUnions: true}>>();
+expectTypeOf<ExtendsStrict<string | number, string, {distributiveUnions: false}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<number | bigint, string, {distributiveUnions: true}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<1 | 2 | 3, number, {distributiveUnions: true}>>().toBe<true>();
 
 // `strictNever`
-expectType<ExtendsStrict<never, string, {strictNever: true}>>(false);
-expectType<ExtendsStrict<never, never, {strictNever: true}>>(true);
-expectType<ExtendsStrict<never, any, {strictNever: true}>>(true);
-expectType<ExtendsStrict<never, unknown, {strictNever: true}>>(true);
+expectTypeOf<ExtendsStrict<never, string, {strictNever: true}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<never, never, {strictNever: true}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<never, any, {strictNever: true}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<never, unknown, {strictNever: true}>>().toBe<true>();
 
-expectType<ExtendsStrict<never, string, {strictNever: false}>>(true);
-expectType<ExtendsStrict<never, never, {strictNever: false}>>(true);
-expectType<ExtendsStrict<never, any, {strictNever: false}>>(true);
-expectType<ExtendsStrict<never, unknown, {strictNever: false}>>(true);
+expectTypeOf<ExtendsStrict<never, string, {strictNever: false}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<never, never, {strictNever: false}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<never, any, {strictNever: false}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<never, unknown, {strictNever: false}>>().toBe<true>();
 
 // `strictAny`
-expectType<ExtendsStrict<any, string, {strictAny: true}>>(false);
-expectType<ExtendsStrict<any, never, {strictAny: true}>>(false);
-expectType<ExtendsStrict<any, any, {strictAny: true}>>(true);
-expectType<ExtendsStrict<any, unknown, {strictAny: true}>>(true);
+expectTypeOf<ExtendsStrict<any, string, {strictAny: true}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<any, never, {strictAny: true}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<any, any, {strictAny: true}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, unknown, {strictAny: true}>>().toBe<true>();
 
-expectType<ExtendsStrict<any, string, {strictAny: false}>>(true);
-expectType<ExtendsStrict<any, never, {strictAny: false}>>(false);
-expectType<ExtendsStrict<any, any, {strictAny: false}>>(true);
-expectType<ExtendsStrict<any, unknown, {strictAny: false}>>(true);
+expectTypeOf<ExtendsStrict<any, string, {strictAny: false}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, never, {strictAny: false}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<any, any, {strictAny: false}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, unknown, {strictAny: false}>>().toBe<true>();
 
 // When `strictAny` is `false`, behavior depends on `distributiveUnions`
-expectType<ExtendsStrict<any, string, {strictAny: false; distributiveUnions: true}>>({} as boolean);
-expectType<ExtendsStrict<any, never, {strictAny: false; distributiveUnions: true}>>({} as boolean);
-expectType<ExtendsStrict<any, any, {strictAny: false; distributiveUnions: true}>>(true);
-expectType<ExtendsStrict<any, unknown, {strictAny: false; distributiveUnions: true}>>(true);
+expectTypeOf<boolean>().toBe<ExtendsStrict<any, string, {strictAny: false; distributiveUnions: true}>>();
+expectTypeOf<boolean>().toBe<ExtendsStrict<any, never, {strictAny: false; distributiveUnions: true}>>();
+expectTypeOf<ExtendsStrict<any, any, {strictAny: false; distributiveUnions: true}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, unknown, {strictAny: false; distributiveUnions: true}>>().toBe<true>();
 
-expectType<ExtendsStrict<any, string, {strictAny: false; distributiveUnions: false}>>(true);
-expectType<ExtendsStrict<any, never, {strictAny: false; distributiveUnions: false}>>(false);
-expectType<ExtendsStrict<any, any, {strictAny: false; distributiveUnions: false}>>(true);
-expectType<ExtendsStrict<any, unknown, {strictAny: false; distributiveUnions: false}>>(true);
+expectTypeOf<ExtendsStrict<any, string, {strictAny: false; distributiveUnions: false}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, never, {strictAny: false; distributiveUnions: false}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<any, any, {strictAny: false; distributiveUnions: false}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, unknown, {strictAny: false; distributiveUnions: false}>>().toBe<true>();
 
 // When `strictNever` is `false`, the result will be `true` and not `never` even if `distributiveUnions` is `true`
-expectType<ExtendsStrict<never, string, {strictNever: false; distributiveUnions: true}>>(true);
+expectTypeOf<ExtendsStrict<never, string, {strictNever: false; distributiveUnions: true}>>().toBe<true>();

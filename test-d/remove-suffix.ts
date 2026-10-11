@@ -1,97 +1,93 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {RemoveSuffix} from '../source/remove-suffix.d.ts';
 
-expectType<'report'>({} as RemoveSuffix<'report.pdf', '.pdf'>);
-expectType<'handle'>({} as RemoveSuffix<'handleClick', 'Click'>);
-expectType<'50'>({} as RemoveSuffix<'50px', 'px'>);
-expectType<'whitespace'>({} as RemoveSuffix<'whitespace ', ' '>);
+expectTypeOf<RemoveSuffix<'report.pdf', '.pdf'>>().toBe<'report'>();
+expectTypeOf<RemoveSuffix<'handleClick', 'Click'>>().toBe<'handle'>();
+expectTypeOf<RemoveSuffix<'50px', 'px'>>().toBe<'50'>();
+expectTypeOf<RemoveSuffix<'whitespace ', ' '>>().toBe<'whitespace'>();
 
 // Suffix not present
-expectType<''>({} as RemoveSuffix<'', 'foo'>);
-expectType<'report.pdf'>({} as RemoveSuffix<'report.pdf', '.txt'>);
+expectTypeOf<RemoveSuffix<'', 'foo'>>().toBe<''>();
+expectTypeOf<RemoveSuffix<'report.pdf', '.txt'>>().toBe<'report.pdf'>();
 
 // Empty suffix
-expectType<'baz'>({} as RemoveSuffix<'baz', ''>);
+expectTypeOf<RemoveSuffix<'baz', ''>>().toBe<'baz'>();
 
 // Suffix completely matches the input string
-expectType<''>({} as RemoveSuffix<'click', 'click'>);
+expectTypeOf<RemoveSuffix<'click', 'click'>>().toBe<''>();
 
 // Suffix partially matches the input string
-expectType<'foobar'>({} as RemoveSuffix<'foobar', 'barbaz'>);
-expectType<'hello'>({} as RemoveSuffix<'hello', 'helloworld'>);
+expectTypeOf<RemoveSuffix<'foobar', 'barbaz'>>().toBe<'foobar'>();
+expectTypeOf<RemoveSuffix<'hello', 'helloworld'>>().toBe<'hello'>();
 
 // Multiple occurrences of suffix (should only remove from end)
-expectType<'foo-bar-bar'>({} as RemoveSuffix<'foo-bar-bar-bar', '-bar'>);
-expectType<'foofoo'>({} as RemoveSuffix<'foofoofoo', 'foo'>);
+expectTypeOf<RemoveSuffix<'foo-bar-bar-bar', '-bar'>>().toBe<'foo-bar-bar'>();
+expectTypeOf<RemoveSuffix<'foofoofoo', 'foo'>>().toBe<'foofoo'>();
 
 // === Non-literals ===
 
 // Input: Non-literal, Suffix: Literal
-expectType<string>({} as RemoveSuffix<`${string}.ts`, '.ts'>);
-expectType<Capitalize<string>>({} as RemoveSuffix<`${Capitalize<string>}Action`, 'Action'>);
-expectType<`${number}`>({} as RemoveSuffix<`${number}rem`, 'rem'>);
-expectType<`--${string}`>({} as RemoveSuffix<`--${string}--`, '--'>);
-expectType<`${string}--disabled`>({} as RemoveSuffix<`${string}--disabled--loading`, '--loading'>);
-expectType<`${string}_user`>({} as RemoveSuffix<`${string}_user`, '_admin'>);
-expectType<string>({} as RemoveSuffix<string, 'Action'>);
-expectType<`${string}/${number}`>({} as RemoveSuffix<`${string}/${number}`, 'foo'>);
+expectTypeOf<RemoveSuffix<`${string}.ts`, '.ts'>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`${Capitalize<string>}Action`, 'Action'>>().toBe<Capitalize<string>>();
+expectTypeOf<RemoveSuffix<`${number}rem`, 'rem'>>().toBe<`${number}`>();
+expectTypeOf<RemoveSuffix<`--${string}--`, '--'>>().toBe<`--${string}`>();
+expectTypeOf<RemoveSuffix<`${string}--disabled--loading`, '--loading'>>().toBe<`${string}--disabled`>();
+expectTypeOf<RemoveSuffix<`${string}_user`, '_admin'>>().toBe<`${string}_user`>();
+expectTypeOf<RemoveSuffix<string, 'Action'>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`${string}/${number}`, 'foo'>>().toBe<`${string}/${number}`>();
 
 // Input: Literal, Suffix: Non-literal
-expectType<string>({} as RemoveSuffix<'report.pdf', `.${string}`>);
-expectType<string>({} as RemoveSuffix<'100s', string>);
-expectType<string>({} as RemoveSuffix<'foo:bar:baz:', any>);
-expectType<string>({} as RemoveSuffix<'report.pdf', Uppercase<string>>);
-expectType<string>({} as RemoveSuffix<'user-id', `--${string}`>);
+expectTypeOf<RemoveSuffix<'report.pdf', `.${string}`>>().toBe<string>();
+expectTypeOf<RemoveSuffix<'100s', string>>().toBe<string>();
+expectTypeOf<RemoveSuffix<'foo:bar:baz:', any>>().toBe<string>();
+expectTypeOf<RemoveSuffix<'report.pdf', Uppercase<string>>>().toBe<string>();
+expectTypeOf<RemoveSuffix<'user-id', `--${string}`>>().toBe<string>();
 
 // Input: Non-literal, Suffix: Non-literal
-expectType<string>({} as RemoveSuffix<`${string}--disabled`, `--${string}`>);
-expectType<string>({} as RemoveSuffix<`${number}/${string}`, `/${string}`>);
-expectType<string>({} as RemoveSuffix<string, string>);
-expectType<string>({} as RemoveSuffix<`foo${any}bar${any}`, any>);
-expectType<string>({} as RemoveSuffix<`${number}/${string}`, `:${string}`>);
-expectType<string>({} as RemoveSuffix<`${number}:${number}`, `${string}-`>);
+expectTypeOf<RemoveSuffix<`${string}--disabled`, `--${string}`>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`${number}/${string}`, `/${string}`>>().toBe<string>();
+expectTypeOf<RemoveSuffix<string, string>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`foo${any}bar${any}`, any>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`${number}/${string}`, `:${string}`>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`${number}:${number}`, `${string}-`>>().toBe<string>();
 
 // Unions
-expectType<'foo' | 'bar' | 'baz'>({} as RemoveSuffix<'foo.ts' | 'bar.ts' | 'baz.ts', '.ts'>);
-expectType<'foo' | 'bar' | 'baz.js'>({} as RemoveSuffix<'foo.ts' | 'bar.ts' | 'baz.js', '.ts'>);
-expectType<Uppercase<string> | `${number}`>({} as RemoveSuffix<`${Uppercase<string>}Action` | `${number}Action`, 'Action'>);
-expectType<string>({} as RemoveSuffix<`${string}--disabled` | `${string}--loading`, `--${string}`>);
+expectTypeOf<RemoveSuffix<'foo.ts' | 'bar.ts' | 'baz.ts', '.ts'>>().toBe<'foo' | 'bar' | 'baz'>();
+expectTypeOf<RemoveSuffix<'foo.ts' | 'bar.ts' | 'baz.js', '.ts'>>().toBe<'foo' | 'bar' | 'baz.js'>();
+expectTypeOf<RemoveSuffix<`${Uppercase<string>}Action` | `${number}Action`, 'Action'>>().toBe<Uppercase<string> | `${number}`>();
+expectTypeOf<RemoveSuffix<`${string}--disabled` | `${string}--loading`, `--${string}`>>().toBe<string>();
 
-expectType<'foo.' | 'foo'>({} as RemoveSuffix<'foo.png', 'png' | '.png'>);
-expectType<'foo' | 'foo.png'>({} as RemoveSuffix<'foo.png', '.png' | '.jpeg'>);
-expectType<'user' | 'user-id'>({} as RemoveSuffix<'user-id', '-id' | '-handle'>);
-expectType<'user-id'>({} as RemoveSuffix<'user-id', '-name' | '-age'>);
-expectType<string>({} as RemoveSuffix<'user-id', `-${string}` | 'id'>);
+expectTypeOf<RemoveSuffix<'foo.png', 'png' | '.png'>>().toBe<'foo.' | 'foo'>();
+expectTypeOf<RemoveSuffix<'foo.png', '.png' | '.jpeg'>>().toBe<'foo' | 'foo.png'>();
+expectTypeOf<RemoveSuffix<'user-id', '-id' | '-handle'>>().toBe<'user' | 'user-id'>();
+expectTypeOf<RemoveSuffix<'user-id', '-name' | '-age'>>().toBe<'user-id'>();
+expectTypeOf<RemoveSuffix<'user-id', `-${string}` | 'id'>>().toBe<string>();
 
-expectType<string>({} as RemoveSuffix<'click_button' | 'clickButton', `:${string}`>);
-expectType<'index.html' | 'styles.css' | 'styles' | 'main.js' | 'main'>(
-	{} as RemoveSuffix<'index.html' | 'styles.css' | 'main.js', '.css' | '.js'>,
-);
-expectType<string>({} as RemoveSuffix<`${Lowercase<string>}.end` | `${number}/end`, `.${string}` | `/${string}`>);
+expectTypeOf<RemoveSuffix<'click_button' | 'clickButton', `:${string}`>>().toBe<string>();
+expectTypeOf<RemoveSuffix<'index.html' | 'styles.css' | 'main.js', '.css' | '.js'>>().toBe<'index.html' | 'styles.css' | 'styles' | 'main.js' | 'main'>();
+expectTypeOf<RemoveSuffix<`${Lowercase<string>}.end` | `${number}/end`, `.${string}` | `/${string}`>>().toBe<string>();
 
 // Boundary types
-expectType<any>({} as RemoveSuffix<any, 'foo'>);
-expectType<never>({} as RemoveSuffix<never, 'foo'>);
-expectType<string>({} as RemoveSuffix<'report.pdf', any>);
-expectType<'report.pdf'>({} as RemoveSuffix<'report.pdf', never>);
+expectTypeOf<RemoveSuffix<any, 'foo'>>().toBe<any>();
+expectTypeOf<RemoveSuffix<never, 'foo'>>().toBe<never>();
+expectTypeOf<RemoveSuffix<'report.pdf', any>>().toBe<string>();
+expectTypeOf<RemoveSuffix<'report.pdf', never>>().toBe<'report.pdf'>();
 
 // === strict: false ===
 
 // No effect if `Suffix` is a literal
-expectType<'report'>({} as RemoveSuffix<'report.pdf', '.pdf', {strict: false}>);
-expectType<'foo' | 'bar'>({} as RemoveSuffix<'foo.js' | 'bar.js', '.js', {strict: false}>);
-expectType<Capitalize<string>>({} as RemoveSuffix<`${Capitalize<string>}Action`, 'Action', {strict: false}>);
+expectTypeOf<RemoveSuffix<'report.pdf', '.pdf', {strict: false}>>().toBe<'report'>();
+expectTypeOf<RemoveSuffix<'foo.js' | 'bar.js', '.js', {strict: false}>>().toBe<'foo' | 'bar'>();
+expectTypeOf<RemoveSuffix<`${Capitalize<string>}Action`, 'Action', {strict: false}>>().toBe<Capitalize<string>>();
 
-expectType<'report'>({} as RemoveSuffix<'report.pdf', `.${string}`, {strict: false}>);
-expectType<'r'>({} as RemoveSuffix<'report.pdf', string, {strict: false}>);
-expectType<`${number}`>({} as RemoveSuffix<`${number}/${string}`, `/${string}`, {strict: false}>);
-expectType<'report.pdf'>({} as RemoveSuffix<'report.pdf', `..${string}` | 'name', {strict: false}>);
-expectType<`${number}/${string}`>({} as RemoveSuffix<`${number}/${string}`, `:${string}`, {strict: false}>);
-expectType<'report' | 'report.'>({} as RemoveSuffix<'report.pdf', `.${string}` | 'pdf', {strict: false}>);
-expectType<'flex' | 'btn'>({} as RemoveSuffix<'flex' | 'btn__disabled', `__${string}`, {strict: false}>);
-expectType<Uppercase<string> | `${Uppercase<string>}:id` | `${number}` | `${number}/id`>(
-	{} as RemoveSuffix<`${Uppercase<string>}:id` | `${number}/id`, `:${string}` | `/${string}`, {strict: false}>,
-);
+expectTypeOf<RemoveSuffix<'report.pdf', `.${string}`, {strict: false}>>().toBe<'report'>();
+expectTypeOf<RemoveSuffix<'report.pdf', string, {strict: false}>>().toBe<'r'>();
+expectTypeOf<RemoveSuffix<`${number}/${string}`, `/${string}`, {strict: false}>>().toBe<`${number}`>();
+expectTypeOf<RemoveSuffix<'report.pdf', `..${string}` | 'name', {strict: false}>>().toBe<'report.pdf'>();
+expectTypeOf<RemoveSuffix<`${number}/${string}`, `:${string}`, {strict: false}>>().toBe<`${number}/${string}`>();
+expectTypeOf<RemoveSuffix<'report.pdf', `.${string}` | 'pdf', {strict: false}>>().toBe<'report' | 'report.'>();
+expectTypeOf<RemoveSuffix<'flex' | 'btn__disabled', `__${string}`, {strict: false}>>().toBe<'flex' | 'btn'>();
+expectTypeOf<RemoveSuffix<`${Uppercase<string>}:id` | `${number}/id`, `:${string}` | `/${string}`, {strict: false}>>().toBe<Uppercase<string> | `${Uppercase<string>}:id` | `${number}` | `${number}/id`>();
 
 // Generic assignability test
 type Assignability<S extends string> = S;

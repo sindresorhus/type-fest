@@ -1,16 +1,16 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsEqual} from '../../index.d.ts';
 import type {BuildObject, UndefinedToOptional} from '../../source/internal/index.d.ts';
 
 // `UndefinedToOptional` turns `a: string | undefined` into `a?: string`.
-expectType<IsEqual<UndefinedToOptional<{firstName: string; lastName: string | undefined}>, {firstName: string; lastName?: string}>>(true);
-expectType<IsEqual<UndefinedToOptional<{a: 1}>, {a: 1}>>(true);
+expectTypeOf<IsEqual<UndefinedToOptional<{firstName: string; lastName: string | undefined}>, {firstName: string; lastName?: string}>>().toBe<true>();
+expectTypeOf<IsEqual<UndefinedToOptional<{a: 1}>, {a: 1}>>().toBe<true>();
 
 // `BuildObject` picks from the copied-from object when the key is already there, so the value type is replaced without the key changing form. The two that go through `Pick` are left unresolved by `IsEqual`, so they are asserted on the result directly.
 declare const fromStringKey: BuildObject<'a', string, {a: 1}>;
-expectType<{a: string}>(fromStringKey);
+expectTypeOf(fromStringKey).toBe<{a: string}>();
 declare const fromNumberKey: BuildObject<'0', string, {0: 1}>;
-expectType<{0: string}>(fromNumberKey);
+expectTypeOf(fromNumberKey).toBe<{0: string}>();
 // A key that is not already there keeps the form it was given in.
-expectType<IsEqual<BuildObject<'b', string, {a: 1}>, {b: string}>>(true);
-expectType<IsEqual<BuildObject<'0', string>, {0: string}>>(true);
+expectTypeOf<IsEqual<BuildObject<'b', string, {a: 1}>, {b: string}>>().toBe<true>();
+expectTypeOf<IsEqual<BuildObject<'0', string>, {0: string}>>().toBe<true>();

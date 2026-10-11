@@ -1,14 +1,14 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {PascalCasedPropertiesDeep, TupleOf} from '../index.d.ts';
 
 declare const foo: PascalCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
-expectType<{HelloWorld: {FooBar: string}}>(foo);
+expectTypeOf(foo).toBe<{HelloWorld: {FooBar: string}}>();
 
 declare const fooBar: PascalCasedPropertiesDeep<() => {a: string}>;
-expectType<() => {a: string}>(fooBar);
+expectTypeOf(fooBar).toBe<() => {a: string}>();
 
 declare const bar: PascalCasedPropertiesDeep<Set<{fooBar: string}>>;
-expectType<Set<{FooBar: string}>>(bar);
+expectTypeOf(bar).toBe<Set<{FooBar: string}>>();
 
 // Verify example
 type User = {
@@ -57,80 +57,80 @@ const result: PascalCasedPropertiesDeep<UserWithFriends> = {
 		},
 	],
 };
-expectType<PascalCasedPropertiesDeep<UserWithFriends>>(result);
-expectType<PascalCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>(result);
+expectTypeOf(result).toBe<PascalCasedPropertiesDeep<UserWithFriends>>();
+expectTypeOf(result).toBe<PascalCasedPropertiesDeep<UserWithFriendsPunctuated, {splitOnPunctuation: true}>>();
 
-expectType<{'FooBar': unknown}>({} as PascalCasedPropertiesDeep<{foo_bar: unknown}>);
-expectType<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>({} as PascalCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>);
+expectTypeOf<PascalCasedPropertiesDeep<{foo_bar: unknown}>>().toBe<{'FooBar': unknown}>();
+expectTypeOf<PascalCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown}>>().toBe<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>();
 
-expectType<{'FooBar': any}>({} as PascalCasedPropertiesDeep<{foo_bar: any}>);
-expectType<{'FooBar': {'BarBaz': any}; Biz: any}>({} as PascalCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>);
+expectTypeOf<PascalCasedPropertiesDeep<{foo_bar: any}>>().toBe<{'FooBar': any}>();
+expectTypeOf<PascalCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>>().toBe<{'FooBar': {'BarBaz': any}; Biz: any}>();
 
-expectType<{'FooBar': unknown}>({} as PascalCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>);
-expectType<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>({} as PascalCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>);
+expectTypeOf<PascalCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'FooBar': unknown}>();
+expectTypeOf<PascalCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>();
 
 type bazBizDeep = {fooBAR: number; baz: {fooBAR: Array<{BARFoo: string}>}};
 
 declare const baz: PascalCasedPropertiesDeep<bazBizDeep, {preserveConsecutiveUppercase: true}>;
-expectType<{FooBAR: number; Baz: {FooBAR: Array<{BARFoo: string}>}}>(baz);
+expectTypeOf(baz).toBe<{FooBAR: number; Baz: {FooBAR: Array<{BARFoo: string}>}}>();
 
 declare const biz: PascalCasedPropertiesDeep<bazBizDeep>;
-expectType<{FooBar: number; Baz: {FooBar: Array<{BarFoo: string}>}}>(biz);
+expectTypeOf(biz).toBe<{FooBar: number; Baz: {FooBar: Array<{BarFoo: string}>}}>();
 
 // Readonly arrays and sets must stay arrays and sets, like the sibling deep casing types do
 declare const readonlyArray: PascalCasedPropertiesDeep<ReadonlyArray<{userId: number}>>;
-expectType<ReadonlyArray<{UserId: number}>>(readonlyArray);
+expectTypeOf(readonlyArray).toBe<ReadonlyArray<{UserId: number}>>();
 
 declare const readonlyNested: PascalCasedPropertiesDeep<{readonlyUserIds: ReadonlyArray<{userId: number}>}>;
-expectType<{ReadonlyUserIds: ReadonlyArray<{UserId: number}>}>(readonlyNested);
+expectTypeOf(readonlyNested).toBe<{ReadonlyUserIds: ReadonlyArray<{UserId: number}>}>();
 
 declare const readonlySet: PascalCasedPropertiesDeep<ReadonlySet<{userId: number}>>;
-expectType<ReadonlySet<{UserId: number}>>(readonlySet);
+expectTypeOf(readonlySet).toBe<ReadonlySet<{UserId: number}>>();
 
 // Map and WeakMap are preserved, with their contents recursed into.
 declare const mapValue: PascalCasedPropertiesDeep<Map<{fooBar: 1}, {bazQux: 2}>>;
-expectType<Map<{FooBar: 1}, {BazQux: 2}>>(mapValue);
+expectTypeOf(mapValue).toBe<Map<{FooBar: 1}, {BazQux: 2}>>();
 
 declare const weakMapValue: PascalCasedPropertiesDeep<WeakMap<{fooBar: 1}, string>>;
-expectType<WeakMap<{FooBar: 1}, string>>(weakMapValue);
+expectTypeOf(weakMapValue).toBe<WeakMap<{FooBar: 1}, string>>();
 
 declare const weakSetValue: PascalCasedPropertiesDeep<WeakSet<{fooBar: 1}>>;
-expectType<WeakSet<{FooBar: 1}>>(weakSetValue);
+expectTypeOf(weakSetValue).toBe<WeakSet<{FooBar: 1}>>();
 
 // A tuple stays a tuple, like in the sibling deep casing types.
 declare const tuple: PascalCasedPropertiesDeep<[{userId: number}, {userName: string}]>;
-expectType<[{UserId: number}, {UserName: string}]>(tuple);
+expectTypeOf(tuple).toBe<[{UserId: number}, {UserName: string}]>();
 
 declare const readonlyTuple: PascalCasedPropertiesDeep<readonly [{userId: number}]>;
-expectType<readonly [{UserId: number}]>(readonlyTuple);
+expectTypeOf(readonlyTuple).toBe<readonly [{UserId: number}]>();
 
 // Non-recursive built-ins are kept as is, the way `CamelCasedPropertiesDeep` keeps them.
 declare const keepsPromise: PascalCasedPropertiesDeep<Promise<{user_id: number}>>;
-expectType<Promise<{user_id: number}>>(keepsPromise);
+expectTypeOf(keepsPromise).toBe<Promise<{user_id: number}>>();
 
 declare const keepsArrayBuffer: PascalCasedPropertiesDeep<{buffer: ArrayBuffer}>;
-expectType<{Buffer: ArrayBuffer}>(keepsArrayBuffer);
+expectTypeOf(keepsArrayBuffer).toBe<{Buffer: ArrayBuffer}>();
 
 declare const keepsDataView: PascalCasedPropertiesDeep<{view: DataView}>;
-expectType<{View: DataView}>(keepsDataView);
+expectTypeOf(keepsDataView).toBe<{View: DataView}>();
 
 declare const keepsTypedArray: PascalCasedPropertiesDeep<{bytes: Uint8Array}>;
-expectType<{Bytes: Uint8Array}>(keepsTypedArray);
+expectTypeOf(keepsTypedArray).toBe<{Bytes: Uint8Array}>();
 
 declare const keepsFunction: PascalCasedPropertiesDeep<{fn: (input: string) => number}>;
-expectType<{Fn: (input: string) => number}>(keepsFunction);
+expectTypeOf(keepsFunction).toBe<{Fn: (input: string) => number}>();
 
 // A tuple with an optional element keeps its `?` modifier, so its length stays fixed.
 declare const tupleWithOptionalTail: PascalCasedPropertiesDeep<[string, number?]>;
-expectType<[string, number?]>(tupleWithOptionalTail);
+expectTypeOf(tupleWithOptionalTail).toBe<[string, number?]>();
 
 declare const allOptionalTuple: PascalCasedPropertiesDeep<[string?, number?]>;
-expectType<[string?, number?]>(allOptionalTuple);
+expectTypeOf(allOptionalTuple).toBe<[string?, number?]>();
 
 declare const readonlyOptionalTuple: PascalCasedPropertiesDeep<readonly [string, number?]>;
-expectType<readonly [string, number?]>(readonlyOptionalTuple);
+expectTypeOf(readonlyOptionalTuple).toBe<readonly [string, number?]>();
 
 // A long tuple does not hit the instantiation depth limit.
 declare const longTuple: PascalCasedPropertiesDeep<Readonly<TupleOf<100, {a_b: 1}>>>;
-expectType<100>(longTuple.length);
-expectType<{AB: 1}>(longTuple[99]);
+expectTypeOf(longTuple.length).toBe<100>();
+expectTypeOf(longTuple[99]).toBe<{AB: 1}>();

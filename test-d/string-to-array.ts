@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {StringToArray} from '../source/string-to-array.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
@@ -6,68 +6,58 @@ import type {TupleOf} from '../source/tuple-of.d.ts';
 type StringToArrayElementNonLiterals<S extends string> = StringToArray<S, {mapNonLiteralsDirectly: true}>;
 
 // Empty string
-expectType<[]>({} as StringToArray<''>);
-expectType<[]>({} as StringToArrayElementNonLiterals<''>);
+expectTypeOf<StringToArray<''>>().toBe<[]>();
+expectTypeOf<StringToArrayElementNonLiterals<''>>().toBe<[]>();
 
 // Literals
-expectType<['a']>({} as StringToArray<'a'>);
-expectType<['a', 'b', 'c', 'd', 'e']>({} as StringToArray<'abcde'>);
-expectType<['0', '1', '2']>({} as StringToArray<'012'>);
-expectType<['f', 'o', 'o', 'b', 'a', 'r']>({} as StringToArrayElementNonLiterals<'foobar'>);
+expectTypeOf<StringToArray<'a'>>().toBe<['a']>();
+expectTypeOf<StringToArray<'abcde'>>().toBe<['a', 'b', 'c', 'd', 'e']>();
+expectTypeOf<StringToArray<'012'>>().toBe<['0', '1', '2']>();
+expectTypeOf<StringToArrayElementNonLiterals<'foobar'>>().toBe<['f', 'o', 'o', 'b', 'a', 'r']>();
 
 // Non-literals
-expectType<string[]>({} as StringToArray<string>);
-expectType<Array<Lowercase<string>>>({} as StringToArray<Lowercase<string>>);
-expectType<Array<Uppercase<string>>>({} as StringToArray<Uppercase<string>>);
+expectTypeOf<StringToArray<string>>().toBe<string[]>();
+expectTypeOf<StringToArray<Lowercase<string>>>().toBe<Array<Lowercase<string>>>();
+expectTypeOf<StringToArray<Uppercase<string>>>().toBe<Array<Uppercase<string>>>();
 
-expectType<[...string[], 'a', 'b', 'c']>({} as StringToArray<`${string}abc`>);
-expectType<['a', 'b', 'c', ...string[]]>({} as StringToArray<`abc${string}`>);
-expectType<['a', 'b', 'c', ...string[], 'd', 'e', 'f']>({} as StringToArray<`abc${string}def`>);
+expectTypeOf<StringToArray<`${string}abc`>>().toBe<[...string[], 'a', 'b', 'c']>();
+expectTypeOf<StringToArray<`abc${string}`>>().toBe<['a', 'b', 'c', ...string[]]>();
+expectTypeOf<StringToArray<`abc${string}def`>>().toBe<['a', 'b', 'c', ...string[], 'd', 'e', 'f']>();
 
-expectType<['a', 'b', 'c', ...string[]]>({} as StringToArray<`abc${string}def${string}`>);
-expectType<['a', ...string[], 'c']>({} as StringToArray<`a${string}b${string}c`>);
-expectType<['a', ...Array<Capitalize<string> | 'b' | Uppercase<string>>, 'c']>(
-	{} as StringToArray<`a${Capitalize<string>}b${Uppercase<string>}c`>,
-);
-expectType<['a', 'b', ...Array<Capitalize<string> | 'c' | 'd' | Uppercase<string>>]>(
-	{} as StringToArray<`ab${Capitalize<string>}cd${Uppercase<string>}`>,
-);
+expectTypeOf<StringToArray<`abc${string}def${string}`>>().toBe<['a', 'b', 'c', ...string[]]>();
+expectTypeOf<StringToArray<`a${string}b${string}c`>>().toBe<['a', ...string[], 'c']>();
+expectTypeOf<StringToArray<`a${Capitalize<string>}b${Uppercase<string>}c`>>().toBe<['a', ...Array<Capitalize<string> | 'b' | Uppercase<string>>, 'c']>();
+expectTypeOf<StringToArray<`ab${Capitalize<string>}cd${Uppercase<string>}`>>().toBe<['a', 'b', ...Array<Capitalize<string> | 'c' | 'd' | Uppercase<string>>]>();
 
 // --- `mapNonLiteralsDirectly: true` ---
-expectType<[string]>({} as StringToArrayElementNonLiterals<string>);
-expectType<[Lowercase<string>]>({} as StringToArrayElementNonLiterals<Lowercase<string>>);
-expectType<[Uppercase<string>]>({} as StringToArrayElementNonLiterals<Uppercase<string>>);
+expectTypeOf<StringToArrayElementNonLiterals<string>>().toBe<[string]>();
+expectTypeOf<StringToArrayElementNonLiterals<Lowercase<string>>>().toBe<[Lowercase<string>]>();
+expectTypeOf<StringToArrayElementNonLiterals<Uppercase<string>>>().toBe<[Uppercase<string>]>();
 
-expectType<[string, 'a', 'b', 'c']>({} as StringToArrayElementNonLiterals<`${string}abc`>);
-expectType<['a', 'b', 'c', string]>({} as StringToArrayElementNonLiterals<`abc${string}`>);
-expectType<['a', 'b', 'c', string, 'd', 'e', 'f']>({} as StringToArrayElementNonLiterals<`abc${string}def`>);
+expectTypeOf<StringToArrayElementNonLiterals<`${string}abc`>>().toBe<[string, 'a', 'b', 'c']>();
+expectTypeOf<StringToArrayElementNonLiterals<`abc${string}`>>().toBe<['a', 'b', 'c', string]>();
+expectTypeOf<StringToArrayElementNonLiterals<`abc${string}def`>>().toBe<['a', 'b', 'c', string, 'd', 'e', 'f']>();
 
-expectType<['a', 'b', 'c', string, 'd', 'e', 'f', string]>(
-	{} as StringToArrayElementNonLiterals<`abc${string}def${string}`>,
-);
-expectType<['a', string, 'b', string, 'c']>({} as StringToArrayElementNonLiterals<`a${string}b${string}c`>);
-expectType<['a', Capitalize<string>, 'b', Uppercase<string>, 'c']>(
-	{} as StringToArrayElementNonLiterals<`a${Capitalize<string>}b${Uppercase<string>}c`>,
-);
-expectType<['a', 'b', Capitalize<string>, 'c', 'd', Uppercase<string>]>(
-	{} as StringToArrayElementNonLiterals<`ab${Capitalize<string>}cd${Uppercase<string>}`>,
-);
+expectTypeOf<StringToArrayElementNonLiterals<`abc${string}def${string}`>>().toBe<['a', 'b', 'c', string, 'd', 'e', 'f', string]>();
+expectTypeOf<StringToArrayElementNonLiterals<`a${string}b${string}c`>>().toBe<['a', string, 'b', string, 'c']>();
+expectTypeOf<StringToArrayElementNonLiterals<`a${Capitalize<string>}b${Uppercase<string>}c`>>().toBe<['a', Capitalize<string>, 'b', Uppercase<string>, 'c']>();
+expectTypeOf<StringToArrayElementNonLiterals<`ab${Capitalize<string>}cd${Uppercase<string>}`>>().toBe<['a', 'b', Capitalize<string>, 'c', 'd', Uppercase<string>]>();
 
 // Unions
-expectType<['a', 'b', 'c'] | ['d', 'e', 'f']>({} as StringToArray<'abc' | 'def'>);
-expectType<['a', 'b', 'c'] | Array<Uppercase<string>>>({} as StringToArray<'abc' | Uppercase<string>>);
-expectType<['a', 'b', ...string[]] | Array<`${number}`>>({} as StringToArray<`ab${string}` | `${number}`>);
+expectTypeOf<StringToArray<'abc' | 'def'>>().toBe<['a', 'b', 'c'] | ['d', 'e', 'f']>();
+expectTypeOf<StringToArray<'abc' | Uppercase<string>>>().toBe<['a', 'b', 'c'] | Array<Uppercase<string>>>();
+expectTypeOf<StringToArray<`ab${string}` | `${number}`>>().toBe<['a', 'b', ...string[]] | Array<`${number}`>>();
 
-expectType<['a', 'b', 'c'] | ['d', 'e', 'f']>({} as StringToArrayElementNonLiterals<'abc' | 'def'>);
-expectType<['a', 'b', 'c'] | [Uppercase<string>]>({} as StringToArrayElementNonLiterals<'abc' | Uppercase<string>>);
-expectType<['a', 'b', string] | [`${number}`]>({} as StringToArrayElementNonLiterals<`ab${string}` | `${number}`>);
+expectTypeOf<StringToArrayElementNonLiterals<'abc' | 'def'>>().toBe<['a', 'b', 'c'] | ['d', 'e', 'f']>();
+expectTypeOf<StringToArrayElementNonLiterals<'abc' | Uppercase<string>>>().toBe<['a', 'b', 'c'] | [Uppercase<string>]>();
+expectTypeOf<StringToArrayElementNonLiterals<`ab${string}` | `${number}`>>().toBe<['a', 'b', string] | [`${number}`]>();
 
 // Long strings
-expectType<TupleOf<200, 'a'>>({} as StringToArray<StringRepeat<'a', 200>>);
-expectType<TupleOf<900, 'a'>>({} as StringToArray<StringRepeat<'a', 900>>);
+expectTypeOf<StringToArray<StringRepeat<'a', 200>>>().toBe<TupleOf<200, 'a'>>();
+expectTypeOf<StringToArray<StringRepeat<'a', 900>>>().toBe<TupleOf<900, 'a'>>();
 
 // Boundary cases
-expectType<never>({} as StringToArray<never>);
-expectType<unknown[]>({} as StringToArray<any>);
-expectType<never>({} as StringToArrayElementNonLiterals<never>);
-expectType<unknown[]>({} as StringToArrayElementNonLiterals<any>);
+expectTypeOf<StringToArray<never>>().toBe<never>();
+expectTypeOf<StringToArray<any>>().toBe<unknown[]>();
+expectTypeOf<StringToArrayElementNonLiterals<never>>().toBe<never>();
+expectTypeOf<StringToArrayElementNonLiterals<any>>().toBe<unknown[]>();

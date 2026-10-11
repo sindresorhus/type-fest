@@ -1,18 +1,18 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsNullable} from '../source/is-nullable.d.ts';
 
-expectType<IsNullable<any>>(true);
-expectType<IsNullable<null>>(true);
-expectType<IsNullable<null | undefined>>(true);
-expectType<IsNullable<string | null>>(true);
-expectType<IsNullable<string | null | undefined>>(true);
+expectTypeOf<IsNullable<any>>().toBe<true>();
+expectTypeOf<IsNullable<null>>().toBe<true>();
+expectTypeOf<IsNullable<null | undefined>>().toBe<true>();
+expectTypeOf<IsNullable<string | null>>().toBe<true>();
+expectTypeOf<IsNullable<string | null | undefined>>().toBe<true>();
 
-expectType<IsNullable<string>>(false);
-expectType<IsNullable<string | undefined>>(false);
+expectTypeOf<IsNullable<string>>().toBe<false>();
+expectTypeOf<IsNullable<string | undefined>>().toBe<false>();
 
-expectType<IsNullable<void>>(false);
-expectType<IsNullable<undefined>>(false);
-expectType<IsNullable<never>>(false);
-expectType<IsNullable<unknown>>(false);
-expectType<IsNullable<() => void>>(false);
-expectType<IsNullable<string & null>>(false);
+expectTypeOf<IsNullable<void>>().toBe<false>();
+expectTypeOf<IsNullable<undefined>>().toBe<false>();
+expectTypeOf<IsNullable<never>>().toBe<false>();
+expectTypeOf<IsNullable<unknown>>().toBe<false>();
+expectTypeOf<IsNullable<() => void>>().toBe<false>();
+expectTypeOf<IsNullable<string & null>>().toBe<false>();

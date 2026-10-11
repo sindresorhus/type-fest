@@ -1,59 +1,59 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {OrAll} from '../source/or-all.d.ts';
 
 declare const boolean: boolean;
 
 // Basic boolean combinations
-expectType<OrAll<[true, false]>>(true);
-expectType<OrAll<[false, true]>>(true);
-expectType<OrAll<[true, true]>>(true);
-expectType<OrAll<[false, false]>>(false);
+expectTypeOf<OrAll<[true, false]>>().toBe<true>();
+expectTypeOf<OrAll<[false, true]>>().toBe<true>();
+expectTypeOf<OrAll<[true, true]>>().toBe<true>();
+expectTypeOf<OrAll<[false, false]>>().toBe<false>();
 
 // Multiple elements in a tuple
-expectType<OrAll<[false, false, false, true]>>(true);
-expectType<OrAll<[false, false, false, false]>>(false);
+expectTypeOf<OrAll<[false, false, false, true]>>().toBe<true>();
+expectTypeOf<OrAll<[false, false, false, false]>>().toBe<false>();
 
 // `boolean` element
-expectType<OrAll<[false, false, boolean]>>(boolean);
-expectType<OrAll<[false, boolean, true]>>(true);
-expectType<OrAll<[boolean, boolean, boolean]>>(boolean);
+expectTypeOf(boolean).toBe<OrAll<[false, false, boolean]>>();
+expectTypeOf<OrAll<[false, boolean, true]>>().toBe<true>();
+expectTypeOf(boolean).toBe<OrAll<[boolean, boolean, boolean]>>();
 
 // Unions
-expectType<OrAll<[false, false, true] | [false, false, false]>>(boolean); // `true` | `false`
-expectType<OrAll<[false, true, false] | [true]>>(true); // `true` | `true`
-expectType<OrAll<[false] | [false, false, false]>>(false); // `false` | `false`
-expectType<OrAll<[true, false] | [false, boolean]>>(boolean); // `true` | `boolean`
-expectType<OrAll<[false, false] | [false, false, boolean]>>(boolean); // `false` | `boolean`
-expectType<OrAll<[boolean, false, false] | [boolean]>>(boolean); // `boolean` | `boolean`
+expectTypeOf(boolean).toBe<OrAll<[false, false, true] | [false, false, false]>>(); // `true` | `false`
+expectTypeOf<OrAll<[false, true, false] | [true]>>().toBe<true>(); // `true` | `true`
+expectTypeOf<OrAll<[false] | [false, false, false]>>().toBe<false>(); // `false` | `false`
+expectTypeOf(boolean).toBe<OrAll<[true, false] | [false, boolean]>>(); // `true` | `boolean`
+expectTypeOf(boolean).toBe<OrAll<[false, false] | [false, false, boolean]>>(); // `false` | `boolean`
+expectTypeOf(boolean).toBe<OrAll<[boolean, false, false] | [boolean]>>(); // `boolean` | `boolean`
 
 // Tuples with rest element
-expectType<OrAll<[false, ...Array<false>]>>(false);
-expectType<OrAll<[...Array<false>, true]>>(true);
-expectType<OrAll<[false, ...Array<false>, boolean]>>(boolean);
+expectTypeOf<OrAll<[false, ...Array<false>]>>().toBe<false>();
+expectTypeOf<OrAll<[...Array<false>, true]>>().toBe<true>();
+expectTypeOf(boolean).toBe<OrAll<[false, ...Array<false>, boolean]>>();
 
 // Non-tuple arrays
-expectType<OrAll<Array<true>>>(true);
-expectType<OrAll<Array<false>>>(false);
-expectType<OrAll<boolean[]>>(boolean);
+expectTypeOf<OrAll<Array<true>>>().toBe<true>();
+expectTypeOf<OrAll<Array<false>>>().toBe<false>();
+expectTypeOf(boolean).toBe<OrAll<boolean[]>>();
 
 // Readonly arrays
-expectType<OrAll<readonly [true, false, true]>>(true);
-expectType<OrAll<readonly [false, false, false]>>(false);
-expectType<OrAll<readonly [false, false, boolean]>>(boolean);
-expectType<OrAll<ReadonlyArray<true>>>(true);
-expectType<OrAll<ReadonlyArray<false>>>(false);
-expectType<OrAll<readonly boolean[]>>(boolean);
+expectTypeOf<OrAll<readonly [true, false, true]>>().toBe<true>();
+expectTypeOf<OrAll<readonly [false, false, false]>>().toBe<false>();
+expectTypeOf(boolean).toBe<OrAll<readonly [false, false, boolean]>>();
+expectTypeOf<OrAll<ReadonlyArray<true>>>().toBe<true>();
+expectTypeOf<OrAll<ReadonlyArray<false>>>().toBe<false>();
+expectTypeOf(boolean).toBe<OrAll<readonly boolean[]>>();
 
 // Boundary cases
-expectType<OrAll<[]>>(false);
+expectTypeOf<OrAll<[]>>().toBe<false>();
 
-expectType<OrAll<[any, any, false]>>(boolean);
-expectType<OrAll<[any, any, true]>>(true);
-expectType<OrAll<[any, any, any]>>(boolean);
+expectTypeOf(boolean).toBe<OrAll<[any, any, false]>>();
+expectTypeOf<OrAll<[any, any, true]>>().toBe<true>();
+expectTypeOf(boolean).toBe<OrAll<[any, any, any]>>();
 
-expectType<OrAll<[never, never, false]>>(false);
-expectType<OrAll<[never, never, true]>>(true);
-expectType<OrAll<[never, never, never]>>(false);
+expectTypeOf<OrAll<[never, never, false]>>().toBe<false>();
+expectTypeOf<OrAll<[never, never, true]>>().toBe<true>();
+expectTypeOf<OrAll<[never, never, never]>>().toBe<false>();
 
 // Errors with non-boolean or optional elements
 // @ts-expect-error

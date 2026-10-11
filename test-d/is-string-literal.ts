@@ -1,139 +1,139 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsStringLiteral} from '../source/is-string-literal.d.ts';
 import type {Opaque, Tagged} from '../source/tagged.d.ts';
 import type {LiteralUnion} from '../source/literal-union.d.ts';
 
 // Literals
-expectType<IsStringLiteral<'foo'>>(true);
-expectType<IsStringLiteral<'1'>>(true);
-expectType<IsStringLiteral<Uppercase<'a'>>>(true);
-expectType<IsStringLiteral<Lowercase<'a'>>>(true);
+expectTypeOf<IsStringLiteral<'foo'>>().toBe<true>();
+expectTypeOf<IsStringLiteral<'1'>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Uppercase<'a'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Lowercase<'a'>>>().toBe<true>();
 
 // Non-literals
-expectType<IsStringLiteral<string>>(false);
-expectType<IsStringLiteral<Uppercase<string>>>(false);
-expectType<IsStringLiteral<Lowercase<string>>>(false);
-expectType<IsStringLiteral<Capitalize<string>>>(false);
-expectType<IsStringLiteral<Uncapitalize<string>>>(false);
-expectType<IsStringLiteral<Capitalize<Lowercase<string>>>>(false);
-expectType<IsStringLiteral<Uncapitalize<Uppercase<string>>>>(false);
-expectType<IsStringLiteral<`abc${string}`>>(false);
-expectType<IsStringLiteral<`${string}abc`>>(false);
-expectType<IsStringLiteral<`${number}:${string}`>>(false);
-expectType<IsStringLiteral<`abc${Uppercase<string>}`>>(false);
-expectType<IsStringLiteral<`${Lowercase<string>}abc`>>(false);
-expectType<IsStringLiteral<`${number}`>>(false);
-expectType<IsStringLiteral<`${number}${string}`>>(false);
+expectTypeOf<IsStringLiteral<string>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Uppercase<string>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Lowercase<string>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Capitalize<string>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Uncapitalize<string>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Capitalize<Lowercase<string>>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Uncapitalize<Uppercase<string>>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`abc${string}`>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`${string}abc`>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`${number}:${string}`>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`abc${Uppercase<string>}`>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`${Lowercase<string>}abc`>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`${number}`>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`${number}${string}`>>().toBe<false>();
 
 // Non-strings
-expectType<IsStringLiteral<bigint>>(false);
-expectType<IsStringLiteral<object>>(false);
+expectTypeOf<IsStringLiteral<bigint>>().toBe<false>();
+expectTypeOf<IsStringLiteral<object>>().toBe<false>();
 
 // Unions
 // All string literals
-expectType<IsStringLiteral<'a' | 'b'>>(true);
-expectType<IsStringLiteral<Uppercase<'a' | 'b'>>>(true);
-expectType<IsStringLiteral<Lowercase<'a' | 'b'>>>(true);
-expectType<IsStringLiteral<Capitalize<'abc' | 'xyz'>>>(true);
-expectType<IsStringLiteral<Uncapitalize<'Abc' | 'Xyz'>>>(true);
-expectType<IsStringLiteral<`ab${'c' | 'd' | 'e'}`>>(true);
-expectType<IsStringLiteral<Uppercase<'a' | 'b'> | 'C' | 'D'>>(true);
-expectType<IsStringLiteral<Lowercase<'xyz'> | Capitalize<'abc'>>>(true);
+expectTypeOf<IsStringLiteral<'a' | 'b'>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Uppercase<'a' | 'b'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Lowercase<'a' | 'b'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Capitalize<'abc' | 'xyz'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Uncapitalize<'Abc' | 'Xyz'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<`ab${'c' | 'd' | 'e'}`>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Uppercase<'a' | 'b'> | 'C' | 'D'>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Lowercase<'xyz'> | Capitalize<'abc'>>>().toBe<true>();
 
 // All string non-literals
-expectType<IsStringLiteral<`${number}` | Uppercase<string>>>(false);
-expectType<IsStringLiteral<Capitalize<string> | Uppercase<string>>>(false);
-expectType<IsStringLiteral<`abc${string}` | `${string}abc`>>(false);
+expectTypeOf<IsStringLiteral<`${number}` | Uppercase<string>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Capitalize<string> | Uppercase<string>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`abc${string}` | `${string}abc`>>().toBe<false>();
 
 // All non-strings
-expectType<IsStringLiteral<1 | 2 | 3>>(false);
-expectType<IsStringLiteral<false | undefined | null>>(false);
+expectTypeOf<IsStringLiteral<1 | 2 | 3>>().toBe<false>();
+expectTypeOf<IsStringLiteral<false | undefined | null>>().toBe<false>();
 
 // String literals and string non-literals
-expectType<IsStringLiteral<Uppercase<string> | 'abc'>>({} as boolean);
-expectType<IsStringLiteral<Lowercase<string> | 'Abc'>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<Uppercase<string> | 'abc'>>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<Lowercase<string> | 'Abc'>>();
 
 // String literals and non-strings
-expectType<IsStringLiteral<null | '1' | '2' | '3'>>({} as boolean);
-expectType<IsStringLiteral<1 | 2 | '3'>>({} as boolean);
-expectType<IsStringLiteral<'foo' | 'bar' | number>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<null | '1' | '2' | '3'>>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<1 | 2 | '3'>>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<'foo' | 'bar' | number>>();
 
 // String non-literals and non-strings
-expectType<IsStringLiteral<string | number | bigint>>({} as false);
-expectType<IsStringLiteral<`on${string}` | Uppercase<string> | 1n | null | undefined>>({} as false);
+expectTypeOf<false>().toBe<IsStringLiteral<string | number | bigint>>();
+expectTypeOf<false>().toBe<IsStringLiteral<`on${string}` | Uppercase<string> | 1n | null | undefined>>();
 
 // Boundary types
-expectType<IsStringLiteral<any>>(false);
-expectType<IsStringLiteral<unknown>>(false);
-expectType<IsStringLiteral<never>>(false);
+expectTypeOf<IsStringLiteral<any>>().toBe<false>();
+expectTypeOf<IsStringLiteral<unknown>>().toBe<false>();
+expectTypeOf<IsStringLiteral<never>>().toBe<false>();
 
 // Tagged types
 // Literals
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'>>>(true);
+expectTypeOf<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'>>>().toBe<true>();
 // Non-literals
-expectType<IsStringLiteral<Tagged<string, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<Uppercase<string>, 'Tag'>>>(false);
+expectTypeOf<IsStringLiteral<Tagged<string, 'Tag'>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Tagged<Uppercase<string>, 'Tag'>>>().toBe<false>();
 // Non-strings
-expectType<IsStringLiteral<Tagged<number, 'Tag'>>>(false);
+expectTypeOf<IsStringLiteral<Tagged<number, 'Tag'>>>().toBe<false>();
 // Literals and non-literals
-expectType<IsStringLiteral<Tagged<'foo' | 'bar' | `on${string}`, 'Tag'>>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<Tagged<'foo' | 'bar' | `on${string}`, 'Tag'>>>();
 // Literals and non-strings
-expectType<IsStringLiteral<Tagged<'1st' | '2nd' | '3rd' | number, 'Tag'>>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<Tagged<'1st' | '2nd' | '3rd' | number, 'Tag'>>>();
 // Non-literals and non-strings
-expectType<IsStringLiteral<Tagged<string | number, 'Tag'>>>({} as false);
+expectTypeOf<false>().toBe<IsStringLiteral<Tagged<string | number, 'Tag'>>>();
 // Unions
-expectType<IsStringLiteral<Tagged<'foo', 'Tag'> | Tagged<'bar', 'Tag'>>>(true);
-expectType<IsStringLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>({} as boolean);
-expectType<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>({} as boolean); // Tagged and untagged
+expectTypeOf<IsStringLiteral<Tagged<'foo', 'Tag'> | Tagged<'bar', 'Tag'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Tagged<string, 'Tag'> | Tagged<number, 'Tag'>>>().toBe<false>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | Tagged<number, 'Tag'>>>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<Tagged<'foo' | 'bar', 'Tag'> | number>>(); // Tagged and untagged
 
 // Opaque types
 // Literals
-expectType<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'>>>(true);
+expectTypeOf<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'>>>().toBe<true>();
 // Non-literals
-expectType<IsStringLiteral<Opaque<string, 'Tag'>>>(false);
-expectType<IsStringLiteral<Opaque<Uppercase<string>, 'Tag'>>>(false);
+expectTypeOf<IsStringLiteral<Opaque<string, 'Tag'>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Opaque<Uppercase<string>, 'Tag'>>>().toBe<false>();
 // Non-strings
-expectType<IsStringLiteral<Opaque<number, 'Tag'>>>(false);
+expectTypeOf<IsStringLiteral<Opaque<number, 'Tag'>>>().toBe<false>();
 // Literals and non-literals
-expectType<IsStringLiteral<Opaque<'foo' | 'bar' | `on${string}`, 'Tag'>>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<Opaque<'foo' | 'bar' | `on${string}`, 'Tag'>>>();
 // Literals and non-strings
-expectType<IsStringLiteral<Opaque<'1st' | '2nd' | '3rd' | number, 'Tag'>>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<Opaque<'1st' | '2nd' | '3rd' | number, 'Tag'>>>();
 // Non-literals and non-strings
-expectType<IsStringLiteral<Opaque<string | number, 'Tag'>>>({} as false);
+expectTypeOf<false>().toBe<IsStringLiteral<Opaque<string | number, 'Tag'>>>();
 // Unions
-expectType<IsStringLiteral<Opaque<'foo', 'Tag'> | Opaque<'bar', 'Tag'>>>(true);
-expectType<IsStringLiteral<Opaque<string, 'Tag'> | Opaque<number, 'Tag'>>>(false);
-expectType<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'> | Opaque<number, 'Tag'>>>({} as boolean);
-expectType<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'> | number>>({} as boolean); // Opaque and untagged
+expectTypeOf<IsStringLiteral<Opaque<'foo', 'Tag'> | Opaque<'bar', 'Tag'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Opaque<string, 'Tag'> | Opaque<number, 'Tag'>>>().toBe<false>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'> | Opaque<number, 'Tag'>>>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<Opaque<'foo' | 'bar', 'Tag'> | number>>(); // Opaque and untagged
 
 // Branded types
 type Brand = {readonly __brand: unique symbol};
 
 // Literals
-expectType<IsStringLiteral<('foo' | 'bar') & Brand>>(true);
+expectTypeOf<IsStringLiteral<('foo' | 'bar') & Brand>>().toBe<true>();
 // Non-literals
-expectType<IsStringLiteral<string & Brand>>(false);
-expectType<IsStringLiteral<Uppercase<string> & Brand>>(false);
+expectTypeOf<IsStringLiteral<string & Brand>>().toBe<false>();
+expectTypeOf<IsStringLiteral<Uppercase<string> & Brand>>().toBe<false>();
 // Non-strings
-expectType<IsStringLiteral<number & Brand>>(false);
+expectTypeOf<IsStringLiteral<number & Brand>>().toBe<false>();
 // Literals and non-literals
-expectType<IsStringLiteral<('foo' | 'bar' | `on${string}`) & Brand>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<('foo' | 'bar' | `on${string}`) & Brand>>();
 // Literals and non-strings
-expectType<IsStringLiteral<('1st' | '2nd' | '3rd' | number) & Brand>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsStringLiteral<('1st' | '2nd' | '3rd' | number) & Brand>>();
 // Non-literals and non-strings
-expectType<IsStringLiteral<(string | number) & Brand>>({} as false);
+expectTypeOf<false>().toBe<IsStringLiteral<(string | number) & Brand>>();
 // Unions
-expectType<IsStringLiteral<('foo' & Brand) | ('bar' & Brand)>>(true);
-expectType<IsStringLiteral<(string & Brand) | (number & Brand)>>(false);
-expectType<IsStringLiteral<(('foo' | 'bar') & Brand) | (number & Brand)>>({} as boolean);
-expectType<IsStringLiteral<(('foo' | 'bar') & Brand) | number>>({} as boolean); // Branded and untagged
+expectTypeOf<IsStringLiteral<('foo' & Brand) | ('bar' & Brand)>>().toBe<true>();
+expectTypeOf<IsStringLiteral<(string & Brand) | (number & Brand)>>().toBe<false>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<(('foo' | 'bar') & Brand) | (number & Brand)>>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<(('foo' | 'bar') & Brand) | number>>(); // Branded and untagged
 
 // Uncollapsed unions (e.g., `'foo' | 'bar' | (string & {})`)
-expectType<IsStringLiteral<'foo' | 'bar' | (string & {})>>(false);
-expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', string>>>(false);
-expectType<IsStringLiteral<LiteralUnion<'onClick' | 'onMouseDown', `on${string}`>>>(false);
-expectType<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 'onMouseDown', `on${string}`>>>({} as boolean);
-expectType<IsStringLiteral<LiteralUnion<'foo' | 'bar', number>>>({} as boolean);
-expectType<IsStringLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>(false);
-expectType<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${string}`>, 'Tag'>>>({} as boolean);
+expectTypeOf<IsStringLiteral<'foo' | 'bar' | (string & {})>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'foo' | 'bar', string>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'onClick' | 'onMouseDown', `on${string}`>>>().toBe<false>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 'onMouseDown', `on${string}`>>>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<LiteralUnion<'foo' | 'bar', number>>>();
+expectTypeOf<IsStringLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>().toBe<false>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${string}`>, 'Tag'>>>();

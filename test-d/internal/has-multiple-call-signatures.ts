@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {HasMultipleCallSignatures} from '../../source/internal/index.d.ts';
 
 type Overloaded = {
@@ -16,6 +16,6 @@ type Namespace = {
 	baz: boolean[];
 };
 
-expectType<true>({} as HasMultipleCallSignatures<Overloaded>);
-expectType<true>({} as HasMultipleCallSignatures<Overloaded2>);
-expectType<false>({} as HasMultipleCallSignatures<Namespace>);
+expectTypeOf<HasMultipleCallSignatures<Overloaded>>().toBe<true>();
+expectTypeOf<HasMultipleCallSignatures<Overloaded2>>().toBe<true>();
+expectTypeOf<HasMultipleCallSignatures<Namespace>>().toBe<false>();

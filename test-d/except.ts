@@ -1,8 +1,8 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Except} from '../index.d.ts';
 
 declare const except: Except<{a: number; b: string}, 'b'>;
-expectType<{a: number}>(except);
+expectTypeOf(except).toBe<{a: number}>();
 // @ts-expect-error
 const _a: unknown = except.b;
 
@@ -26,15 +26,15 @@ type Example = {
 };
 
 const test: Except<Example, 'bar', {requireExactProps: false}> = {foo: 123, bar: 'asdf'};
-expectType<number>(test.foo);
-expectType<unknown>(test['bar']);
+expectTypeOf(test.foo).toBe<number>();
+expectTypeOf(test['bar']).toBe<unknown>();
 
 // A key that only one member of a union has is still a key of that member, so it should be accepted. `keyof` of a union is the intersection of its members' keys, so the constraint rejected it and the user got a type error instead of a result. `KeysOfUnion` gathers the keys instead.
 declare const keyOfOneMember: Except<{a: 1} | {b: 2}, 'a'>;
-expectType<{} | {b: 2}>(keyOfOneMember);
+expectTypeOf(keyOfOneMember).toBe<{} | {b: 2}>();
 
 declare const keyOfTheOtherMember: Except<{a: 1} | {b: 2}, 'b'>;
-expectType<{a: 1} | {}>(keyOfTheOtherMember);
+expectTypeOf(keyOfTheOtherMember).toBe<{a: 1} | {}>();
 
 // A generic object is assignable to its own `Except`, because removing keys only widens the type. A distributive conditional around the mapped type would hide that from the compiler.
 function exceptOfGeneric<ObjectType extends {a: number; b: string}>(object: ObjectType): Except<ObjectType, 'a'> {
@@ -54,10 +54,10 @@ class ExceptOfThis {
 }
 
 // A `null` member of a union is kept.
-expectType<{b: 2} | null>({} as Except<{a: 1; b: 2} | null, 'a'>);
+expectTypeOf<Except<{a: 1; b: 2} | null, 'a'>>().toBe<{b: 2} | null>();
 
 // Exact removal still rejects a variable carrying the omitted key after discriminating the union.
 type ExactUnion = Except<{kind: 'a'; keep: 1; drop: 2} | {kind: 'b'; value: 3}, 'drop', {requireExactProps: true}>;
-expectAssignable<ExactUnion>({kind: 'a', keep: 1});
-expectAssignable<ExactUnion>({kind: 'b', value: 3});
-expectNotAssignable<ExactUnion>({kind: 'a', keep: 1, drop: 2} as const);
+({kind: 'a', keep: 1}) satisfies ExactUnion;
+({kind: 'b', value: 3}) satisfies ExactUnion;
+expectTypeOf({kind: 'a', keep: 1, drop: 2} as const).not.toBeAssignableTo<ExactUnion>();

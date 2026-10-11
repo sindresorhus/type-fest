@@ -1,18 +1,18 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ObservableLike} from '../source/globals/index.d.ts';
 
-expectAssignable<symbol>(Symbol.observable);
+expectTypeOf(Symbol.observable).toBeAssignableTo<symbol>();
 
 const observable = (null as any) as ObservableLike;
 
 const subscription = observable.subscribe({
 	next() {}, // eslint-disable-line @typescript-eslint/no-empty-function
 });
-expectType<{unsubscribe(): void}>(subscription);
+expectTypeOf(subscription).toBe<{unsubscribe(): void}>();
 
 observable.subscribe({
 	next(value) {
-		expectType<unknown>(value);
+		expectTypeOf(value).toBe<unknown>();
 	},
 });
 
@@ -23,6 +23,6 @@ observable2.subscribe({
 });
 observable2.subscribe({
 	next(value) {
-		expectType<string>(value);
+		expectTypeOf(value).toBe<string>();
 	},
 });

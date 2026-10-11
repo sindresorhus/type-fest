@@ -1,74 +1,74 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {StringRepeat} from '../index.d.ts';
 
 declare const unknown: unknown;
 
-expectType<StringRepeat<'', 0>>('');
-expectType<StringRepeat<'', -1>>(unknown as never);
-expectType<StringRepeat<string, 0>>('');
-expectType<StringRepeat<string, -1>>(unknown as never);
-expectType<StringRepeat<'', number>>('');
-expectType<StringRepeat<string, number>>(unknown as string);
-expectType<StringRepeat<'0', number>>(unknown as string);
-expectType<StringRepeat<'0', -1>>(unknown as never);
-expectType<StringRepeat<'0', 0>>('');
-expectType<StringRepeat<'0', 1>>('0');
-expectType<StringRepeat<'0', 5>>('00000');
-expectType<StringRepeat<'012345-', 0>>('');
-expectType<StringRepeat<'012345-', 1>>('012345-');
-expectType<StringRepeat<'012345-', 5>>('012345-012345-012345-012345-012345-');
+expectTypeOf<StringRepeat<'', 0>>().toBe<''>();
+expectTypeOf(unknown as never).toBe<StringRepeat<'', -1>>();
+expectTypeOf<StringRepeat<string, 0>>().toBe<''>();
+expectTypeOf(unknown as never).toBe<StringRepeat<string, -1>>();
+expectTypeOf<StringRepeat<'', number>>().toBe<''>();
+expectTypeOf(unknown as string).toBe<StringRepeat<string, number>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', number>>();
+expectTypeOf(unknown as never).toBe<StringRepeat<'0', -1>>();
+expectTypeOf<StringRepeat<'0', 0>>().toBe<''>();
+expectTypeOf<StringRepeat<'0', 1>>().toBe<'0'>();
+expectTypeOf<StringRepeat<'0', 5>>().toBe<'00000'>();
+expectTypeOf<StringRepeat<'012345-', 0>>().toBe<''>();
+expectTypeOf<StringRepeat<'012345-', 1>>().toBe<'012345-'>();
+expectTypeOf<StringRepeat<'012345-', 5>>().toBe<'012345-012345-012345-012345-012345-'>();
 
 // Non literal strings
-expectType<StringRepeat<string, 2>>(unknown as string);
-expectType<StringRepeat<`abc${string}`, 2>>(unknown as `abc${string}abc${string}`);
-expectType<StringRepeat<Uppercase<string>, 2>>(unknown as `${Uppercase<string>}${Uppercase<string>}`);
+expectTypeOf(unknown as string).toBe<StringRepeat<string, 2>>();
+expectTypeOf(unknown as `abc${string}abc${string}`).toBe<StringRepeat<`abc${string}`, 2>>();
+expectTypeOf(unknown as `${Uppercase<string>}${Uppercase<string>}`).toBe<StringRepeat<Uppercase<string>, 2>>();
 
 // Fractional counts
-expectType<StringRepeat<'0', 7.5>>(unknown as '0000000');
-expectType<StringRepeat<'pi', 3.14>>(unknown as 'pipipi');
+expectTypeOf(unknown as '0000000').toBe<StringRepeat<'0', 7.5>>();
+expectTypeOf(unknown as 'pipipi').toBe<StringRepeat<'pi', 3.14>>();
 
 // Negative counts truncate toward zero, so only a count that truncates to a negative integer is a `RangeError`. A count between -1 and 0 truncates to `-0`, which gives an empty string.
-expectType<StringRepeat<'0', -0.5>>(unknown as '');
-expectType<StringRepeat<'0', -0.9>>(unknown as '');
-expectType<StringRepeat<'pi', -0.5>>(unknown as '');
-expectType<StringRepeat<'', -0.5>>(unknown as '');
-expectType<StringRepeat<'0', -1.5>>(unknown as never);
-expectType<StringRepeat<'0', -2.9>>(unknown as never);
+expectTypeOf(unknown as '').toBe<StringRepeat<'0', -0.5>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'0', -0.9>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'pi', -0.5>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'', -0.5>>();
+expectTypeOf(unknown as never).toBe<StringRepeat<'0', -1.5>>();
+expectTypeOf(unknown as never).toBe<StringRepeat<'0', -2.9>>();
 
 // Counts in scientific notation
-expectType<StringRepeat<'0', 1e2>>(unknown as '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000');
-expectType<StringRepeat<'0', 3e1>>(unknown as '000000000000000000000000000000');
-expectType<StringRepeat<'0', 1e-5>>(unknown as '');
-expectType<StringRepeat<'0', 2e-6>>(unknown as '');
+expectTypeOf(unknown as '0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000').toBe<StringRepeat<'0', 1e2>>();
+expectTypeOf(unknown as '000000000000000000000000000000').toBe<StringRepeat<'0', 3e1>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'0', 1e-5>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'0', 2e-6>>();
 
 // Counts whose string representation is in scientific notation
-expectType<StringRepeat<'0', 1e-7>>(unknown as string);
-expectType<StringRepeat<'0', 2e21>>(unknown as string);
-expectType<StringRepeat<'0', 1e21>>(unknown as string);
-expectType<StringRepeat<'0', 1_000_000_000_000_000_000_000>>(unknown as string);
-expectType<StringRepeat<'0', 0.000_000_1>>(unknown as string);
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e-7>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 2e21>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e21>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1_000_000_000_000_000_000_000>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 0.000_000_1>>();
 
 // Union cases
-expectType<StringRepeat<'0' | '1', 5>>(unknown as '00000' | '11111');
-expectType<StringRepeat<'0', 4 | 5>>(unknown as '0000' | '00000');
-expectType<StringRepeat<'0' | '1', 4 | 5>>(unknown as '0000' | '00000' | '1111' | '11111');
-expectType<StringRepeat<'0', 1e-7 | 2>>(unknown as string);
-expectType<StringRepeat<'0', 1e-7 | 2e21>>(unknown as string);
-expectType<StringRepeat<'0', 1e21 | 3>>(unknown as string);
+expectTypeOf(unknown as '00000' | '11111').toBe<StringRepeat<'0' | '1', 5>>();
+expectTypeOf(unknown as '0000' | '00000').toBe<StringRepeat<'0', 4 | 5>>();
+expectTypeOf(unknown as '0000' | '00000' | '1111' | '11111').toBe<StringRepeat<'0' | '1', 4 | 5>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e-7 | 2>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e-7 | 2e21>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e21 | 3>>();
 
 // Recursion depth at which a non-tail recursive implementation starts to fail.
 const fiftyZeroes = '00000000000000000000000000000000000000000000000000';
-expectType<StringRepeat<'0', 50>>(fiftyZeroes);
+expectTypeOf<StringRepeat<'0', 50>>().toBe<typeof fiftyZeroes>();
 
 // Maximum allowed recursion depth for a tail recursive implementation.
 // eslint-disable-next-line @stylistic/max-len
 const nineHundredNinetyNineZeroes = '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
-expectType<StringRepeat<'0', 999>>(nineHundredNinetyNineZeroes);
+expectTypeOf<StringRepeat<'0', 999>>().toBe<typeof nineHundredNinetyNineZeroes>();
 
 // eslint-disable-next-line @stylistic/max-len
 const threeThousandZeroes = '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
-expectType<StringRepeat<'0', 3000>>(threeThousandZeroes);
+expectTypeOf<StringRepeat<'0', 3000>>().toBe<typeof threeThousandZeroes>();
 
 // A negative count below `1e-6` is one TypeScript prints in scientific notation, so the check for a plain `-0.` prefix does not see it. The runtime truncates it to `-0` all the same, so it is an empty string and not the `RangeError` a count that truncates to a negative integer is.
-expectType<StringRepeat<'0', -1e-7>>(unknown as '');
-expectType<StringRepeat<'pi', -1e-21>>(unknown as '');
+expectTypeOf(unknown as '').toBe<StringRepeat<'0', -1e-7>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'pi', -1e-21>>();

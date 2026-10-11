@@ -1,10 +1,10 @@
-import {expectAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {EmptyObject, IsEmptyObject} from '../index.d.ts';
 
 declare let foo: EmptyObject;
 
-expectAssignable<{}>(foo);
-expectAssignable<{}>(foo = {});
+expectTypeOf(foo).toBeAssignableTo<{}>();
+expectTypeOf(foo = {}).toBeAssignableTo<{}>();
 
 // @ts-expect-error
 foo = [];
@@ -19,12 +19,12 @@ foo.bar = 42;
 // @ts-expect-error
 foo.bar = {};
 
-expectType<IsEmptyObject<{}>>(true);
-expectType<IsEmptyObject<typeof foo>>(true);
+expectTypeOf<IsEmptyObject<{}>>().toBe<true>();
+expectTypeOf<IsEmptyObject<typeof foo>>().toBe<true>();
 
-expectType<IsEmptyObject<[]>>(false);
-expectType<IsEmptyObject<null>>(false);
-expectType<IsEmptyObject<() => void>>(false);
+expectTypeOf<IsEmptyObject<[]>>().toBe<false>();
+expectTypeOf<IsEmptyObject<null>>().toBe<false>();
+expectTypeOf<IsEmptyObject<() => void>>().toBe<false>();
 
 type Union = EmptyObject | {id: number};
 
@@ -33,14 +33,14 @@ const bar: Union = {};
 const _a: unknown = bar.id;
 
 const baz: Union = {id: 42};
-expectType<{id: number}>(baz);
+expectTypeOf(baz).toBe<{id: number}>();
 
 // A type with an index signature can hold any property, so it is not strictly `{}`.
-expectType<IsEmptyObject<{[key: string]: number}>>(false);
-expectType<IsEmptyObject<{[key: number]: number}>>(false);
-expectType<IsEmptyObject<Record<string, unknown>>>(false);
+expectTypeOf<IsEmptyObject<{[key: string]: number}>>().toBe<false>();
+expectTypeOf<IsEmptyObject<{[key: number]: number}>>().toBe<false>();
+expectTypeOf<IsEmptyObject<Record<string, unknown>>>().toBe<false>();
 
 // A type with an index signature of any key type can hold a property, so it is not strictly `{}`.
-expectType<IsEmptyObject<{[key: symbol]: number}>>(false);
-expectType<IsEmptyObject<{[key: `data-${string}`]: number}>>(false);
-expectType<IsEmptyObject<{[key: `${bigint}`]: number}>>(false);
+expectTypeOf<IsEmptyObject<{[key: symbol]: number}>>().toBe<false>();
+expectTypeOf<IsEmptyObject<{[key: `data-${string}`]: number}>>().toBe<false>();
+expectTypeOf<IsEmptyObject<{[key: `${bigint}`]: number}>>().toBe<false>();

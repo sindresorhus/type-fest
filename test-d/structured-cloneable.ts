@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {StructuredCloneable} from '../index.d.ts';
 
 /*
@@ -53,99 +53,97 @@ For Error types, the error name must be one of: Error, EvalError, RangeError, Re
 */
 
 // Date, Boolean, Number, String, BigInt
-expectAssignable<StructuredCloneable>(new Date());
+expectTypeOf(new Date()).toBeAssignableTo<StructuredCloneable>();
 declare const booleanWrapperObject: Boolean;
-expectAssignable<StructuredCloneable>(booleanWrapperObject);
+expectTypeOf(booleanWrapperObject).toBeAssignableTo<StructuredCloneable>();
 declare const numberWrapperObject: Number;
-expectAssignable<StructuredCloneable>(numberWrapperObject);
+expectTypeOf(numberWrapperObject).toBeAssignableTo<StructuredCloneable>();
 declare const stringWrapperObject: String;
-expectAssignable<StructuredCloneable>(stringWrapperObject);
+expectTypeOf(stringWrapperObject).toBeAssignableTo<StructuredCloneable>();
 // The algorithm serializes a `[[BigIntData]]` platform object in the same step as the other three wrappers, and `structuredClone` hands one back, so the fourth belongs with them. It has to be named as a type because `Object(1n)` is declared to return `any`.
 declare const bigintWrapperObject: BigInt;
-expectAssignable<StructuredCloneable>(bigintWrapperObject);
+expectTypeOf(bigintWrapperObject).toBeAssignableTo<StructuredCloneable>();
 
 // Primitive types, except symbol.
-expectAssignable<StructuredCloneable>(undefined);
-expectAssignable<StructuredCloneable>(null);
-expectAssignable<StructuredCloneable>(true);
-expectAssignable<StructuredCloneable>(1);
-expectAssignable<StructuredCloneable>(1n);
-expectAssignable<StructuredCloneable>('');
+expectTypeOf<undefined>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<null>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<true>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<1>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<1n>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<''>().toBeAssignableTo<StructuredCloneable>();
 declare const symbolValue: symbol;
-expectNotAssignable<StructuredCloneable>(symbolValue);
+expectTypeOf(symbolValue).not.toBeAssignableTo<StructuredCloneable>();
 
 // RegExp: but note that lastIndex is not preserved.
-expectAssignable<StructuredCloneable>(/foo/);
+expectTypeOf(/foo/).toBeAssignableTo<StructuredCloneable>();
 
 // ArrayBuffer, DataView
-expectAssignable<StructuredCloneable>(new ArrayBuffer(10));
-expectAssignable<StructuredCloneable>(new DataView(new ArrayBuffer(10)));
+expectTypeOf(new ArrayBuffer(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new DataView(new ArrayBuffer(10))).toBeAssignableTo<StructuredCloneable>();
 
 // TypedArray
-expectAssignable<StructuredCloneable>(new Int8Array(10));
-expectAssignable<StructuredCloneable>(new Uint8Array(10));
-expectAssignable<StructuredCloneable>(new Uint8ClampedArray(10));
-expectAssignable<StructuredCloneable>(new Int16Array(10));
-expectAssignable<StructuredCloneable>(new Uint16Array(10));
-expectAssignable<StructuredCloneable>(new Int32Array(10));
-expectAssignable<StructuredCloneable>(new Uint32Array(10));
-expectAssignable<StructuredCloneable>(new Float32Array(10));
-expectAssignable<StructuredCloneable>(new Float64Array(10));
-expectAssignable<StructuredCloneable>(new BigInt64Array(10));
-expectAssignable<StructuredCloneable>(new BigUint64Array(10));
+expectTypeOf(new Int8Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Uint8Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Uint8ClampedArray(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Int16Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Uint16Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Int32Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Uint32Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Float32Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Float64Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new BigInt64Array(10)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new BigUint64Array(10)).toBeAssignableTo<StructuredCloneable>();
 
 // Error types
 declare const error: Error;
-expectAssignable<StructuredCloneable>(error);
+expectTypeOf(error).toBeAssignableTo<StructuredCloneable>();
 declare const evalError: EvalError;
-expectAssignable<StructuredCloneable>(evalError);
+expectTypeOf(evalError).toBeAssignableTo<StructuredCloneable>();
 declare const rangeError: RangeError;
-expectAssignable<StructuredCloneable>(rangeError);
+expectTypeOf(rangeError).toBeAssignableTo<StructuredCloneable>();
 declare const referenceError: ReferenceError;
-expectAssignable<StructuredCloneable>(referenceError);
+expectTypeOf(referenceError).toBeAssignableTo<StructuredCloneable>();
 declare const syntaxError: SyntaxError;
-expectAssignable<StructuredCloneable>(syntaxError);
+expectTypeOf(syntaxError).toBeAssignableTo<StructuredCloneable>();
 declare const typeError: TypeError;
-expectAssignable<StructuredCloneable>(typeError);
+expectTypeOf(typeError).toBeAssignableTo<StructuredCloneable>();
 declare const uriError: URIError;
-expectAssignable<StructuredCloneable>(uriError);
+expectTypeOf(uriError).toBeAssignableTo<StructuredCloneable>();
 
 // Object: but only plain objects (e.g. from object literals).
-expectAssignable<StructuredCloneable>({});
-expectAssignable<StructuredCloneable>({x: 10});
-expectAssignable<StructuredCloneable>({x: {y: 10}});
-expectAssignable<StructuredCloneable>({x: 10} as const);
+({}) satisfies StructuredCloneable;
+({x: 10}) satisfies StructuredCloneable;
+({x: {y: 10}}) satisfies StructuredCloneable;
+expectTypeOf({x: 10} as const).toBeAssignableTo<StructuredCloneable>();
 class CustomType {}
-expectNotAssignable<StructuredCloneable>(new CustomType());
+expectTypeOf(new CustomType()).not.toBeAssignableTo<StructuredCloneable>();
 class CustomTypeWithProperties {
 	foo = 'wow';
 	bar = 1;
 }
-expectNotAssignable<StructuredCloneable>(new CustomTypeWithProperties());
+expectTypeOf(new CustomTypeWithProperties()).not.toBeAssignableTo<StructuredCloneable>();
 
 // Array
-expectAssignable<StructuredCloneable>([]);
-expectAssignable<StructuredCloneable>([1, 2, 3]);
-expectAssignable<StructuredCloneable>([1, 2, 3] as const);
-expectAssignable<StructuredCloneable>([[1, 2], [3, 4]]);
-expectAssignable<StructuredCloneable>([{x: 1}, {x: 2}]);
+[] satisfies StructuredCloneable;
+[1, 2, 3] satisfies StructuredCloneable;
+expectTypeOf([1, 2, 3] as const).toBeAssignableTo<StructuredCloneable>();
+[[1, 2], [3, 4]] satisfies StructuredCloneable;
+[{x: 1}, {x: 2}] satisfies StructuredCloneable;
 
 // Map
-expectAssignable<StructuredCloneable>(new Map<string, Date>());
-expectAssignable<StructuredCloneable>(new Map<Date, string[]>());
-expectAssignable<StructuredCloneable>(new Map<Date, Map<string, number>>());
+expectTypeOf(new Map<string, Date>()).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Map<Date, string[]>()).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Map<Date, Map<string, number>>()).toBeAssignableTo<StructuredCloneable>();
 
 // Set
-expectAssignable<StructuredCloneable>(new Set<number>());
-expectAssignable<StructuredCloneable>(new Set<string[]>());
-expectAssignable<StructuredCloneable>(new Set<Set<string>>());
+expectTypeOf(new Set<number>()).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Set<string[]>()).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new Set<Set<string>>()).toBeAssignableTo<StructuredCloneable>();
 
 // Web/API types
 
-// @ts-ignore Requires dom or @types/node@>=20
 declare const blob: Blob;
-expectAssignable<StructuredCloneable>(blob);
+expectTypeOf(blob).toBeAssignableTo<StructuredCloneable>();
 
-// @ts-ignore Requires dom or @types/node@>=20
 declare const file: File;
-expectAssignable<StructuredCloneable>(file);
+expectTypeOf(file).toBeAssignableTo<StructuredCloneable>();

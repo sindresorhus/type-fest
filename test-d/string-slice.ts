@@ -1,54 +1,52 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {StringSlice} from '../index.d.ts';
 
-expectType<StringSlice<'abcde'>>('abcde');
-expectType<StringSlice<'abcde'>>('abcde');
-expectType<StringSlice<'abcde', 0, -1>>('abcd');
-expectType<StringSlice<'abcde', 1, -1>>('bcd');
-expectType<StringSlice<'abcde', 1, 2>>('b');
-expectType<StringSlice<'abcde', 1, 3>>('bc');
-expectType<StringSlice<'abcde', -100, -1>>('abcd');
-expectType<StringSlice<'abcde', -100, -3>>('ab');
-expectType<StringSlice<'abcde', 3, 100>>('de');
-expectType<StringSlice<'abcde', 1, 1>>('');
-expectType<StringSlice<'abcde', 100, 1>>('');
-expectType<StringSlice<string>>(null! as string);
-expectType<StringSlice<string, 1>>(null! as string);
-expectType<StringSlice<string, 1, 2>>(null! as string);
+expectTypeOf<StringSlice<'abcde'>>().toBe<'abcde'>();
+expectTypeOf<StringSlice<'abcde'>>().toBe<'abcde'>();
+expectTypeOf<StringSlice<'abcde', 0, -1>>().toBe<'abcd'>();
+expectTypeOf<StringSlice<'abcde', 1, -1>>().toBe<'bcd'>();
+expectTypeOf<StringSlice<'abcde', 1, 2>>().toBe<'b'>();
+expectTypeOf<StringSlice<'abcde', 1, 3>>().toBe<'bc'>();
+expectTypeOf<StringSlice<'abcde', -100, -1>>().toBe<'abcd'>();
+expectTypeOf<StringSlice<'abcde', -100, -3>>().toBe<'ab'>();
+expectTypeOf<StringSlice<'abcde', 3, 100>>().toBe<'de'>();
+expectTypeOf<StringSlice<'abcde', 1, 1>>().toBe<''>();
+expectTypeOf<StringSlice<'abcde', 100, 1>>().toBe<''>();
+expectTypeOf<string>().toBe<StringSlice<string>>();
+expectTypeOf<string>().toBe<StringSlice<string, 1>>();
+expectTypeOf<string>().toBe<StringSlice<string, 1, 2>>();
 
 // Unions
 // String is union
-expectType<StringSlice<'012' | 'abcd', 0>>({} as '012' | 'abcd'); // Positive start, no end
-expectType<StringSlice<'012' | 'abcd', -2>>({} as '12' | 'cd'); // Negative start, no end
-expectType<StringSlice<'012' | 'abcd', 0, 2>>({} as '01' | 'ab'); // Positive start, positive end
-expectType<StringSlice<'012' | 'abcd', -2, -1>>({} as '1' | 'c'); // Negative start, negative end
-expectType<StringSlice<'012' | 'abcd', -3, 2>>({} as '01' | 'b'); // Negative start, positive end
-expectType<StringSlice<'012' | 'abcd', 1, -1>>({} as '1' | 'bc'); // Positive start, negative end
+expectTypeOf<'012' | 'abcd'>().toBe<StringSlice<'012' | 'abcd', 0>>(); // Positive start, no end
+expectTypeOf<'12' | 'cd'>().toBe<StringSlice<'012' | 'abcd', -2>>(); // Negative start, no end
+expectTypeOf<'01' | 'ab'>().toBe<StringSlice<'012' | 'abcd', 0, 2>>(); // Positive start, positive end
+expectTypeOf<'1' | 'c'>().toBe<StringSlice<'012' | 'abcd', -2, -1>>(); // Negative start, negative end
+expectTypeOf<'01' | 'b'>().toBe<StringSlice<'012' | 'abcd', -3, 2>>(); // Negative start, positive end
+expectTypeOf<'1' | 'bc'>().toBe<StringSlice<'012' | 'abcd', 1, -1>>(); // Positive start, negative end
 
 // Start is union
-expectType<StringSlice<'0123', 1 | -2>>({} as '123' | '23'); // Positive/Negative start, no end
-expectType<StringSlice<'0123', 2 | -3, 3>>({} as '2' | '12'); // Positive/Negative start, positive end
-expectType<StringSlice<'0123', 0 | -2, -1>>({} as '2' | '012'); // Positive/Negative start, negative end
+expectTypeOf<'123' | '23'>().toBe<StringSlice<'0123', 1 | -2>>(); // Positive/Negative start, no end
+expectTypeOf<'2' | '12'>().toBe<StringSlice<'0123', 2 | -3, 3>>(); // Positive/Negative start, positive end
+expectTypeOf<'2' | '012'>().toBe<StringSlice<'0123', 0 | -2, -1>>(); // Positive/Negative start, negative end
 
 // End is union
-expectType<StringSlice<'0123', 0, 1 | -2>>({} as '0' | '01'); // Positive start, positive/negative end
-expectType<StringSlice<'0123', -2, 2 | -1>>({} as '' | '2'); // Negative start, positive/negative end
+expectTypeOf<'0' | '01'>().toBe<StringSlice<'0123', 0, 1 | -2>>(); // Positive start, positive/negative end
+expectTypeOf<'' | '2'>().toBe<StringSlice<'0123', -2, 2 | -1>>(); // Negative start, positive/negative end
 
 // Array and start are unions
-expectType<StringSlice<'012' | 'abcd', 1 | -1>>({} as '12' | '2' | 'bcd' | 'd'); // Positive/Negative start, no end
-expectType<StringSlice<'012' | 'abcd', 1 | -2, 2>>({} as '1' | 'b' | ''); // Positive/Negative start, positive end
-expectType<StringSlice<'012' | 'abcd', 0 | -2, -1>>({} as '01' | '1' | 'abc' | 'c'); // Positive/Negative start, negative end
+expectTypeOf<'12' | '2' | 'bcd' | 'd'>().toBe<StringSlice<'012' | 'abcd', 1 | -1>>(); // Positive/Negative start, no end
+expectTypeOf<'1' | 'b' | ''>().toBe<StringSlice<'012' | 'abcd', 1 | -2, 2>>(); // Positive/Negative start, positive end
+expectTypeOf<'01' | '1' | 'abc' | 'c'>().toBe<StringSlice<'012' | 'abcd', 0 | -2, -1>>(); // Positive/Negative start, negative end
 
 // Array and end are unions
-expectType<StringSlice<'012' | 'abcd', 2, 3 | -1>>({} as '2' | '' | 'c'); // Positive start, positive/negative end
-expectType<StringSlice<'012' | 'abcd', -3, 3 | -2>>({} as '012' | '0' | 'bc' | 'b'); // Negative start, positive/negative end
+expectTypeOf<'2' | '' | 'c'>().toBe<StringSlice<'012' | 'abcd', 2, 3 | -1>>(); // Positive start, positive/negative end
+expectTypeOf<'012' | '0' | 'bc' | 'b'>().toBe<StringSlice<'012' | 'abcd', -3, 3 | -2>>(); // Negative start, positive/negative end
 
 // Start and end are unions
-expectType<StringSlice<'0123', -5 | 0 | 1, -2 | 0 | 3>>( // Positive/Negative start, positive/negative end
-	{} as '01' | '012' | '' | '1' | '12',
-);
+// Positive/Negative start, positive/negative end
+expectTypeOf<'01' | '012' | '' | '1' | '12'>().toBe<StringSlice<'0123', -5 | 0 | 1, -2 | 0 | 3>>();
 
 // Array, start and end are unions
-expectType<StringSlice<'012' | 'abcd', 1 | -4, 4 | -1>>( // Positive/Negative start, positive/negative end
-	{} as '1' | '12' | '01' | '012' | 'abcd' | 'abc' | 'bc' | 'bcd',
-);
+// Positive/Negative start, positive/negative end
+expectTypeOf<'1' | '12' | '01' | '012' | 'abcd' | 'abc' | 'bc' | 'bcd'>().toBe<StringSlice<'012' | 'abcd', 1 | -4, 4 | -1>>();

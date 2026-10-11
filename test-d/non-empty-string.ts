@@ -1,19 +1,19 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {NonEmptyString} from '../index.d.ts';
 
-expectType<never>({} as NonEmptyString<''>);
+expectTypeOf<NonEmptyString<''>>().toBe<never>();
 
-expectType<'a'>({} as NonEmptyString<'a'>);
+expectTypeOf<NonEmptyString<'a'>>().toBe<'a'>();
 
-expectType<never>({} as NonEmptyString<string>);
-expectType<never>({} as NonEmptyString<Uppercase<string>>);
-expectType<`on${string}`>({} as NonEmptyString<`on${string}`>);
+expectTypeOf<NonEmptyString<string>>().toBe<never>();
+expectTypeOf<NonEmptyString<Uppercase<string>>>().toBe<never>();
+expectTypeOf<NonEmptyString<`on${string}`>>().toBe<`on${string}`>();
 
-expectType<'a' | 'b'>({} as NonEmptyString<'a' | 'b'>);
-expectType<'a' | `${number}.${number}`>({} as NonEmptyString<'a' | `${number}.${number}`>);
-expectType<never>({} as NonEmptyString<'' | 'a'>);
-expectType<never>({} as NonEmptyString<'a' | Uppercase<string>>);
-expectType<never>({} as NonEmptyString<'' | `on${string}`>);
+expectTypeOf<NonEmptyString<'a' | 'b'>>().toBe<'a' | 'b'>();
+expectTypeOf<NonEmptyString<'a' | `${number}.${number}`>>().toBe<'a' | `${number}.${number}`>();
+expectTypeOf<NonEmptyString<'' | 'a'>>().toBe<never>();
+expectTypeOf<NonEmptyString<'a' | Uppercase<string>>>().toBe<never>();
+expectTypeOf<NonEmptyString<'' | `on${string}`>>().toBe<never>();
 
 // `NonEmptyString<S>` should be assignable to `string`
 type Assignability1<_S extends string> = unknown;

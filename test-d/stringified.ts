@@ -1,12 +1,12 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Stringified} from '../index.d.ts';
 
 declare const stringified: Stringified<{a: number; b: string}>;
-expectType<{a: string; b: string}>(stringified);
+expectTypeOf(stringified).toBe<{a: string; b: string}>();
 
 type Car = {
 	model: string;
 	speed: number;
 };
-expectNotAssignable<Stringified<Car>>({model: 'Foo', speed: 101});
-expectAssignable<Stringified<Car>>({model: 'Foo', speed: '101'});
+expectTypeOf<{model: 'Foo'; speed: 101}>().not.toBeAssignableTo<Stringified<Car>>();
+({model: 'Foo', speed: '101'}) satisfies Stringified<Car>;

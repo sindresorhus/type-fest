@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Class, Constructor, IsAny} from '../index.d.ts';
 
 class Foo {
@@ -41,20 +41,20 @@ class Position {
 
 declare const Bar: Class<PositionProperties>;
 
-expectAssignable<Class<PositionProperties>>(Position);
+expectTypeOf(Position).toBeAssignableTo<Class<PositionProperties>>();
 
-expectNotAssignable<Class<PositionProperties, [number]>>(Position);
+expectTypeOf(Position).not.toBeAssignableTo<Class<PositionProperties, [number]>>();
 
-expectAssignable<Class<PositionProperties, [number, number]>>(Position);
-expectAssignable<Constructor<PositionProperties, [number, number]>>(Position);
+expectTypeOf(Position).toBeAssignableTo<Class<PositionProperties, [number, number]>>();
+expectTypeOf(Position).toBeAssignableTo<Constructor<PositionProperties, [number, number]>>();
 
-expectType<IsAny<typeof Bar['prototype']>>(false);
-expectType<PositionProperties>(Position.prototype);
+expectTypeOf<IsAny<typeof Bar['prototype']>>().toBe<false>();
+expectTypeOf(Position.prototype).toBe<PositionProperties>();
 // /Prototype test
 
 // @ts-expect-error
 const _a = new Position(17);
-expectAssignable<PositionProperties>(new Position(17, 34));
+expectTypeOf(new Position(17, 34)).toBeAssignableTo<PositionProperties>();
 
 // Prototype test with type parameter
 class Building<T = unknown> {
@@ -79,6 +79,6 @@ class CityBlock<BuildingType extends Building> {
 }
 
 const Family = (new CityBlock(House)).residence.owners;
-expectType<IsAny<typeof Family>>(false);
-expectAssignable<number>(Family.count);
+expectTypeOf<IsAny<typeof Family>>().toBe<false>();
+expectTypeOf(Family.count).toBeAssignableTo<number>();
 // /Prototype test with type parameter

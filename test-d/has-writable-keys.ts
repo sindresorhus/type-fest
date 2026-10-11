@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {HasWritableKeys} from '../index.d.ts';
 
 type TestType1 = {
@@ -24,12 +24,12 @@ declare const test1: HasWritableKeys1;
 declare const test2: HasWritableKeys2;
 declare const test3: HasWritableKeys3;
 
-expectType<true>(test1);
-expectType<false>(test2);
-expectType<true>(test3);
+expectTypeOf(test1).toBe<true>();
+expectTypeOf(test2).toBe<false>();
+expectTypeOf(test3).toBe<true>();
 
 // A readonly index signature must not swallow the writable named keys next to it
-expectType<true>({} as HasWritableKeys<{readonly [key: string]: unknown; id: number}>);
-expectType<false>({} as HasWritableKeys<{readonly [key: string]: unknown; readonly id: number}>);
+expectTypeOf<HasWritableKeys<{readonly [key: string]: unknown; id: number}>>().toBe<true>();
+expectTypeOf<HasWritableKeys<{readonly [key: string]: unknown; readonly id: number}>>().toBe<false>();
 
-expectType<true>({} as HasWritableKeys<any>);
+expectTypeOf<HasWritableKeys<any>>().toBe<true>();

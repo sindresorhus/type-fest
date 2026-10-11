@@ -1,17 +1,17 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {FixedLengthArray} from '../index.d.ts';
 
 type FixedToThreeStrings = FixedLengthArray<string, 3>;
 declare const fixedToThreeStrings: FixedToThreeStrings;
 
-expectAssignable<FixedToThreeStrings>(['a', 'b', 'c']);
-expectAssignable<readonly [string, string, string]>({} as FixedToThreeStrings);
-expectAssignable<readonly string[]>({} as FixedToThreeStrings);
+['a', 'b', 'c'] satisfies FixedToThreeStrings;
+expectTypeOf<FixedToThreeStrings>().toBeAssignableTo<readonly [string, string, string]>();
+expectTypeOf<FixedToThreeStrings>().toBeAssignableTo<readonly string[]>();
 
 // Reading within bounds
-expectType<string>({} as FixedToThreeStrings[0]);
-expectType<string>({} as FixedToThreeStrings[1]);
-expectType<string>({} as FixedToThreeStrings[2]);
+expectTypeOf<FixedToThreeStrings[0]>().toBe<string>();
+expectTypeOf<FixedToThreeStrings[1]>().toBe<string>();
+expectTypeOf<FixedToThreeStrings[2]>().toBe<string>();
 
 // Reading out of bounds
 // @ts-expect-error
@@ -26,7 +26,7 @@ fixedToThreeStrings[2] = 'c';
 // @ts-expect-error
 fixedToThreeStrings[3] = 'd';
 
-expectType<3>({} as FixedToThreeStrings['length']);
+expectTypeOf<FixedToThreeStrings['length']>().toBe<3>();
 
 // @ts-expect-error
 type NoSplice = FixedToThreeStrings['splice'];
@@ -39,29 +39,29 @@ type NoShift = FixedToThreeStrings['shift'];
 // @ts-expect-error
 type NoUnshift = FixedToThreeStrings['unshift'];
 
-expectNotAssignable<FixedToThreeStrings>(['a', 'b', 123]);
-expectNotAssignable<FixedToThreeStrings>(['a']);
-expectNotAssignable<FixedToThreeStrings>(['a', 'b']);
-expectNotAssignable<FixedToThreeStrings>(['a', 'b', 'c', 'd']);
+expectTypeOf<['a', 'b', 123]>().not.toBeAssignableTo<FixedToThreeStrings>();
+expectTypeOf<['a']>().not.toBeAssignableTo<FixedToThreeStrings>();
+expectTypeOf<['a', 'b']>().not.toBeAssignableTo<FixedToThreeStrings>();
+expectTypeOf<['a', 'b', 'c', 'd']>().not.toBeAssignableTo<FixedToThreeStrings>();
 
 // `length` must describe the array that `TupleOf` actually builds, so a decimal part is ignored and a negative length yields an empty tuple.
-expectType<3>({} as FixedLengthArray<string, 3.5>['length']);
-expectType<0>({} as FixedLengthArray<string, -2>['length']);
-expectType<2 | 3>({} as FixedLengthArray<string, 2 | 3>['length']);
-expectType<number>({} as FixedLengthArray<string, number>['length']);
+expectTypeOf<FixedLengthArray<string, 3.5>['length']>().toBe<3>();
+expectTypeOf<FixedLengthArray<string, -2>['length']>().toBe<0>();
+expectTypeOf<FixedLengthArray<string, 2 | 3>['length']>().toBe<2 | 3>();
+expectTypeOf<FixedLengthArray<string, number>['length']>().toBe<number>();
 
 type FixedLength = FixedLengthArray<string, number>;
 declare const fixedLength: FixedLength;
 
-expectAssignable<FixedLength>({} as string[]);
-expectAssignable<readonly string[]>({} as FixedLength);
+expectTypeOf<string[]>().toBeAssignableTo<FixedLength>();
+expectTypeOf<FixedLength>().toBeAssignableTo<readonly string[]>();
 
 // Reading
 // Note: The extra `undefined` is only present when `noUncheckedIndexedAccess` is enabled.
-expectType<string | undefined>(fixedLength[0]);
-expectType<string | undefined>(fixedLength[100]);
+expectTypeOf(fixedLength[0]).toBe<string | undefined>();
+expectTypeOf(fixedLength[100]).toBe<string | undefined>();
 // Note: Reading directly from the type doesn't include `undefined`.
-expectType<string>({} as FixedLength[100]);
+expectTypeOf<FixedLength[100]>().toBe<string>();
 
 // Writing
 // This is allowed for now, refer https://github.com/sindresorhus/type-fest/pull/1246#discussion_r2384018774
@@ -79,14 +79,14 @@ type NoShift = FixedLength['shift'];
 // @ts-expect-error
 type NoUnshift = FixedLength['unshift'];
 
-expectAssignable<FixedLengthArray<string | number, 3>>(['a', 'b', 'c']);
-expectAssignable<FixedLengthArray<string | number, 3>>([3, 2, 1]);
-expectAssignable<FixedLengthArray<string | number, 3>>(['a', 'b', 3]);
-expectAssignable<FixedLengthArray<string | number, 3>>([1, 'b', 3]);
-expectNotAssignable<FixedLengthArray<string | number, 3>>([1, 'b', 3, 4]);
-expectNotAssignable<FixedLengthArray<string | number, 3>>([1, 'b', true]);
+['a', 'b', 'c'] satisfies FixedLengthArray<string | number, 3>;
+[3, 2, 1] satisfies FixedLengthArray<string | number, 3>;
+['a', 'b', 3] satisfies FixedLengthArray<string | number, 3>;
+[1, 'b', 3] satisfies FixedLengthArray<string | number, 3>;
+expectTypeOf<[1, 'b', 3, 4]>().not.toBeAssignableTo<FixedLengthArray<string | number, 3>>();
+expectTypeOf<[1, 'b', true]>().not.toBeAssignableTo<FixedLengthArray<string | number, 3>>();
 
-expectAssignable<FixedLengthArray<string, 2 | 3>>(['a', 'b']);
-expectAssignable<FixedLengthArray<string, 2 | 3>>(['a', 'b', 'c']);
-expectNotAssignable<FixedLengthArray<string, 2 | 3>>(['a']);
-expectNotAssignable<FixedLengthArray<string, 2 | 3>>([1, 2]);
+['a', 'b'] satisfies FixedLengthArray<string, 2 | 3>;
+['a', 'b', 'c'] satisfies FixedLengthArray<string, 2 | 3>;
+expectTypeOf<['a']>().not.toBeAssignableTo<FixedLengthArray<string, 2 | 3>>();
+expectTypeOf<[1, 2]>().not.toBeAssignableTo<FixedLengthArray<string, 2 | 3>>();

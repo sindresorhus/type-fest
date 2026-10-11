@@ -1,4 +1,4 @@
-import {expectNotAssignable, expectNotType, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ConditionalSimplifyDeep} from '../index.d.ts';
 
 type Position = {top: number; left: number};
@@ -21,7 +21,7 @@ type SomeNode = {
 type SomeNodeSimplified = ConditionalSimplifyDeep<SomeNode>;
 
 const someNode = {parent: positionAndSize, childs: [{parent: positionAndSize}, {parent: positionAndSize}]};
-expectType<SomeNodeSimplified>(someNode);
+expectTypeOf(someNode).toBe<SomeNodeSimplified>();
 
 // Should simplify interface deeply excluding Function type.
 // TODO: Convert this to a `type`.
@@ -42,8 +42,8 @@ type MovableNodeSimplifiedPass = ConditionalSimplifyDeep<MovableCollection, Func
 declare const movableNodeSimplifiedFail: MovableNodeSimplifiedFail;
 declare const movableNodeSimplifiedPass: MovableNodeSimplifiedPass;
 
-expectNotAssignable<MovableCollection>(movableNodeSimplifiedFail);
-expectType<MovableCollection>(movableNodeSimplifiedPass);
+expectTypeOf(movableNodeSimplifiedFail).not.toBeAssignableTo<MovableCollection>();
+expectTypeOf(movableNodeSimplifiedPass).toBe<MovableCollection>();
 
 const movablePosition = {
 	top: 42,
@@ -59,32 +59,32 @@ const movableNode = {
 	left: {position: movablePosition, size},
 };
 
-expectType<MovableNodeSimplifiedPass>(movableNode);
+expectTypeOf(movableNode).toBe<MovableNodeSimplifiedPass>();
 
 // Should exclude `Function` and `Size` type (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize1 = ConditionalSimplifyDeep<MovableCollection, Function | Size>;
-expectType<ExcludeFunctionAndSize1>(movableNode);
+expectTypeOf(movableNode).toBe<ExcludeFunctionAndSize1>();
 
 // Same as above but using `IncludeType` parameter (mainly visual, mouse over the statement).
 type ExcludeFunctionAndSize2 = ConditionalSimplifyDeep<MovableCollection, Function, MovableCollection | Position>;
-expectType<ExcludeFunctionAndSize2>(movableNode);
+expectTypeOf(movableNode).toBe<ExcludeFunctionAndSize2>();
 
 // The default `IncludeType` is `unknown`, so the recursion reaches everything, and a function or a built-in comes back as an object of its own members with `{}` types. A function is then not callable at all. `ExcludeType` is the way out, and the test above shows the same for a method. See the note in the docs.
 declare const functionMember: ConditionalSimplifyDeep<{a: () => void}>;
-expectType<{a: {}}>(functionMember);
+expectTypeOf(functionMember).toBe<{a: {}}>();
 
 declare const dateMember: ConditionalSimplifyDeep<{a: Date}>['a'];
-expectNotType<Date>(dateMember);
+expectTypeOf(dateMember).not.toBe<Date>();
 
 declare const withFunctionsExcluded: ConditionalSimplifyDeep<{a: () => void}, Function>;
-expectType<{a: () => void}>(withFunctionsExcluded);
+expectTypeOf(withFunctionsExcluded).toBe<{a: () => void}>();
 
 declare const withDateExcluded: ConditionalSimplifyDeep<{a: Date}, Date>;
-expectType<{a: Date}>(withDateExcluded);
+expectTypeOf(withDateExcluded).toBe<{a: Date}>();
 
 declare const withBuiltInsExcluded: ConditionalSimplifyDeep<{a: Date; b: () => void}, Date | Function>;
-expectType<{a: Date; b: () => void}>(withBuiltInsExcluded);
+expectTypeOf(withBuiltInsExcluded).toBe<{a: Date; b: () => void}>();
 
 // A plain object is still simplified, which is the type's job.
 declare const plainObject: ConditionalSimplifyDeep<{a: {b: string} & {c: number}}>;
-expectType<{a: {b: string; c: number}}>(plainObject);
+expectTypeOf(plainObject).toBe<{a: {b: string; c: number}}>();

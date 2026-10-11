@@ -1,125 +1,125 @@
-import {expectType, expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IntRange} from '../source/int-range.d.ts';
 
 declare const test: IntRange<0, 5>;
-expectType<0 | 1 | 2 | 3 | 4>(test);
+expectTypeOf(test).toBe<0 | 1 | 2 | 3 | 4>();
 
 declare const startTest: IntRange<5, 10>;
-expectType<5 | 6 | 7 | 8 | 9>(startTest);
+expectTypeOf(startTest).toBe<5 | 6 | 7 | 8 | 9>();
 
 declare const stepTest1: IntRange<10, 20, 2>;
-expectType<10 | 12 | 14 | 16 | 18>(stepTest1);
+expectTypeOf(stepTest1).toBe<10 | 12 | 14 | 16 | 18>();
 
 // Test for step > end - start
 declare const stepTest2: IntRange<10, 20, 100>;
-expectType<10>(stepTest2);
+expectTypeOf(stepTest2).toBe<10>();
 
 declare const maxNumberTest: IntRange<0, 999>;
-expectAssignable<number>(maxNumberTest);
+expectTypeOf(maxNumberTest).toBeAssignableTo<number>();
 
 // A range that spans both sides of zero is generated in two halves, so it can be much wider
 type WideTest = IntRange<-998, 998>;
-expectAssignable<WideTest>(-998);
-expectAssignable<WideTest>(0);
-expectAssignable<WideTest>(997);
-expectNotAssignable<WideTest>(998);
+expectTypeOf<-998>().toBeAssignableTo<WideTest>();
+expectTypeOf<0>().toBeAssignableTo<WideTest>();
+expectTypeOf<997>().toBeAssignableTo<WideTest>();
+expectTypeOf<998>().not.toBeAssignableTo<WideTest>();
 
 // Empty range
 declare const emptyTest: IntRange<5, 5>;
-expectType<never>(emptyTest);
+expectTypeOf(emptyTest).toBe<never>();
 
 // Negative start
 declare const negativeTest: IntRange<-2, 2>;
-expectType<-2 | -1 | 0 | 1>(negativeTest);
+expectTypeOf(negativeTest).toBe<-2 | -1 | 0 | 1>();
 
 // Both negative
 declare const bothNegativeTest: IntRange<-5, -2>;
-expectType<-5 | -4 | -3>(bothNegativeTest);
+expectTypeOf(bothNegativeTest).toBe<-5 | -4 | -3>();
 
 // Empty negative range
 declare const emptyNegativeTest: IntRange<-5, -5>;
-expectType<never>(emptyNegativeTest);
+expectTypeOf(emptyNegativeTest).toBe<never>();
 
 // Single negative value
 declare const singleNegativeTest: IntRange<-1, 0>;
-expectType<-1>(singleNegativeTest);
+expectTypeOf(singleNegativeTest).toBe<-1>();
 
 // Negative start with a step crossing zero
 declare const negativeStepTest: IntRange<-5, 5, 3>;
-expectType<-5 | -2 | 1 | 4>(negativeStepTest);
+expectTypeOf(negativeStepTest).toBe<-5 | -2 | 1 | 4>();
 
 // Negative start with step > end - start
 declare const negativeStepTest2: IntRange<-2, 2, 100>;
-expectType<-2>(negativeStepTest2);
+expectTypeOf(negativeStepTest2).toBe<-2>();
 
 // A non-positive step falls back to `1`, same as for a non-negative start
 declare const zeroStepTest: IntRange<-2, 2, 0>;
-expectType<-2 | -1 | 0 | 1>(zeroStepTest);
+expectTypeOf(zeroStepTest).toBe<-2 | -1 | 0 | 1>();
 
 // Start greater than end
 declare const reversedTest: IntRange<2, -2>;
-expectType<never>(reversedTest);
+expectTypeOf(reversedTest).toBe<never>();
 
 declare const reversedTest2: IntRange<5, 2>;
-expectType<never>(reversedTest2);
+expectTypeOf(reversedTest2).toBe<never>();
 
 declare const reversedFromZeroTest: IntRange<0, -1>;
-expectType<never>(reversedFromZeroTest);
+expectTypeOf(reversedFromZeroTest).toBe<never>();
 
 declare const anyTest: IntRange<any, any>;
-expectType<never>(anyTest);
+expectTypeOf(anyTest).toBe<never>();
 
 declare const neverTest: IntRange<never, never>;
-expectType<never>(neverTest);
+expectTypeOf(neverTest).toBe<never>();
 
 // @ts-expect-error
 type UnknownTest = IntRange<unknown, unknown>;
 
 // A union bound silently keeps only its first member, so `IntRange<0, 5 | 10>` gives `0..4` where the range `0..9` is what the numbers mean. The union of both single-bound ranges is what is expected, because a range covers every value up to the bound.
 declare const unionEnd: IntRange<0, 5 | 10>;
-expectType<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(unionEnd);
+expectTypeOf(unionEnd).toBe<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>();
 
 // The start is a bound the same way the end is, so it is distributed for the same reason.
 declare const unionStart: IntRange<-1 | 0, 2>;
-expectType<-1 | 0 | 1>(unionStart);
+expectTypeOf(unionStart).toBe<-1 | 0 | 1>();
 
 declare const unionStartOnlyNegative: IntRange<-2 | 0, 1>;
-expectType<-2 | -1 | 0>(unionStartOnlyNegative);
+expectTypeOf(unionStartOnlyNegative).toBe<-2 | -1 | 0>();
 
 declare const unionStartBothSigns: IntRange<-2 | 1, 3>;
-expectType<-2 | -1 | 0 | 1 | 2>(unionStartBothSigns);
+expectTypeOf(unionStartBothSigns).toBe<-2 | -1 | 0 | 1 | 2>();
 
 declare const unionStartWithStep: IntRange<0 | 2, 6, 2>;
-expectType<0 | 2 | 4>(unionStartWithStep);
+expectTypeOf(unionStartWithStep).toBe<0 | 2 | 4>();
 
 // The end is exclusive, so a range whose start equals its end is empty. `show.sh` truncates a long union, which makes an inclusive end look plausible, so these count the members exactly.
 declare const emptyRange: IntRange<0, 0>;
-expectType<never>(emptyRange);
+expectTypeOf(emptyRange).toBe<never>();
 
 declare const singleValue: IntRange<0, 1>;
-expectType<0>(singleValue);
+expectTypeOf(singleValue).toBe<0>();
 
 declare const threeValues: IntRange<0, 3>;
-expectType<0 | 1 | 2>(threeValues);
+expectTypeOf(threeValues).toBe<0 | 1 | 2>();
 
 declare const fromThree: IntRange<3, 6>;
-expectType<3 | 4 | 5>(fromThree);
+expectTypeOf(fromThree).toBe<3 | 4 | 5>();
 
 declare const stepTwoShort: IntRange<0, 4, 2>;
-expectType<0 | 2>(stepTwoShort);
+expectTypeOf(stepTwoShort).toBe<0 | 2>();
 
 declare const stepTwoOnEnd: IntRange<0, 5, 2>;
-expectType<0 | 2 | 4>(stepTwoOnEnd);
+expectTypeOf(stepTwoOnEnd).toBe<0 | 2 | 4>();
 
 declare const negativeRange: IntRange<-3, 3>;
-expectType<-3 | -2 | -1 | 0 | 1 | 2>(negativeRange);
+expectTypeOf(negativeRange).toBe<-3 | -2 | -1 | 0 | 1 | 2>();
 
 // A union bound is distributed for every shape of pair, including one where the members are equal to each other and one where they are far apart.
-expectType<0 | 1>({} as IntRange<0 | 1, 2>);
-expectType<-3 | -2 | -1 | 0>({} as IntRange<-3 | 0, 1>);
-expectType<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>({} as IntRange<0, 5 | 10>);
-expectType<0 | 2 | 4 | 6 | 8>({} as IntRange<0, 9, 2 | 4>);
+expectTypeOf<IntRange<0 | 1, 2>>().toBe<0 | 1>();
+expectTypeOf<IntRange<-3 | 0, 1>>().toBe<-3 | -2 | -1 | 0>();
+expectTypeOf<IntRange<0, 5 | 10>>().toBe<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>();
+expectTypeOf<IntRange<0, 9, 2 | 4>>().toBe<0 | 2 | 4 | 6 | 8>();
 
 // Different steps produce complete ranges independently, rather than mixing the steps between iterations.
-expectType<0 | 2 | 3 | 4 | 6>({} as IntRange<0, 7, 2 | 3>);
-expectType<-4 | -2 | -1 | 0 | 2>({} as IntRange<-4, 3, 2 | 3>);
+expectTypeOf<IntRange<0, 7, 2 | 3>>().toBe<0 | 2 | 3 | 4 | 6>();
+expectTypeOf<IntRange<-4, 3, 2 | 3>>().toBe<-4 | -2 | -1 | 0 | 2>();

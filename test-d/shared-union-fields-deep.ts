@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {SharedUnionFieldsDeep} from '../index.d.ts';
 
 type TestingType = {
@@ -34,112 +34,112 @@ type TestingType = {
 type SharedUnionFieldsDeepRecurseIntoArrays<T> = SharedUnionFieldsDeep<T, {recurseIntoArrays: true}>;
 
 declare const normal: SharedUnionFieldsDeep<TestingType | {string: string; number: number; foo: any}>;
-expectType<{string: string; number: number}>(normal);
+expectTypeOf(normal).toBe<{string: string; number: number}>();
 
 declare const normal2: SharedUnionFieldsDeep<TestingType | {string: string; foo: any}>;
-expectType<{string: string}>(normal2);
+expectTypeOf(normal2).toBe<{string: string}>();
 
 declare const unMatched: SharedUnionFieldsDeep<TestingType | {foo: any}>;
-expectType<{}>(unMatched);
+expectTypeOf(unMatched).toBe<{}>();
 
 declare const number: SharedUnionFieldsDeep<TestingType | {number: number; foo: any}>;
-expectType<{number: number}>(number);
+expectTypeOf(number).toBe<{number: number}>();
 
 declare const string: SharedUnionFieldsDeep<TestingType | {string: string; foo: any}>;
-expectType<{string: string}>(string);
+expectTypeOf(string).toBe<{string: string}>();
 
 declare const boolean: SharedUnionFieldsDeep<TestingType | {boolean: boolean; foo: any}>;
-expectType<{boolean: boolean}>(boolean);
+expectTypeOf(boolean).toBe<{boolean: boolean}>();
 
 declare const date: SharedUnionFieldsDeep<TestingType | {date: Date; foo: any}>;
-expectType<{date: Date}>(date);
+expectTypeOf(date).toBe<{date: Date}>();
 
 declare const regexp: SharedUnionFieldsDeep<TestingType | {regexp: RegExp; foo: any}>;
-expectType<{regexp: RegExp}>(regexp);
+expectTypeOf(regexp).toBe<{regexp: RegExp}>();
 
 declare const symbol: SharedUnionFieldsDeep<TestingType | {symbol: symbol; foo: any}>;
-expectType<{symbol: symbol}>(symbol);
+expectTypeOf(symbol).toBe<{symbol: symbol}>();
 
 declare const null_: SharedUnionFieldsDeep<TestingType | {null: null; foo: any}>;
-expectType<{null: null}>(null_);
+expectTypeOf(null_).toBe<{null: null}>();
 
 declare const undefined_: SharedUnionFieldsDeep<TestingType | {undefined: undefined; foo: any}>;
-expectType<{undefined: undefined}>(undefined_);
+expectTypeOf(undefined_).toBe<{undefined: undefined}>();
 
 declare const optional: SharedUnionFieldsDeep<TestingType | {optional: string; foo: any}>;
-expectType<{optional?: boolean | string | undefined}>(optional);
+expectTypeOf(optional).toBe<{optional?: boolean | string | undefined}>();
 
 declare const propertyWithKeyword: SharedUnionFieldsDeep<TestingType | {readonly propertyWithKeyword: string; foo: any}>;
-expectType<{readonly propertyWithKeyword: boolean | string}>(propertyWithKeyword);
+expectTypeOf(propertyWithKeyword).toBe<{readonly propertyWithKeyword: boolean | string}>();
 
 declare const map: SharedUnionFieldsDeep<TestingType | {map: Map<string, {propertyA: string}>; foo: any}>;
-expectType<{map: TestingType['map'] | Map<string, {propertyA: string}>}>(map);
+expectTypeOf(map).toBe<{map: TestingType['map'] | Map<string, {propertyA: string}>}>();
 
 declare const set: SharedUnionFieldsDeep<TestingType | {set: Set<number>; foo: any}>;
-expectType<{set: TestingType['set'] | Set<number>}>(set);
+expectTypeOf(set).toBe<{set: TestingType['set'] | Set<number>}>();
 
 declare const union: SharedUnionFieldsDeep<TestingType | {string: string; number: number; foo: any} | {string: string; bar: any}>;
-expectType<{string: string}>(union);
+expectTypeOf(union).toBe<{string: string}>();
 
 declare const union2: SharedUnionFieldsDeep<TestingType | {union: {a: number}}>;
-expectType<{union: 'test1' | 'test2' | {a: number}}>(union2);
+expectTypeOf(union2).toBe<{union: 'test1' | 'test2' | {a: number}}>();
 
 /** Test for array */
 declare const array: SharedUnionFieldsDeepRecurseIntoArrays<TestingType | {array: Array<{a: number; bar: string}>; foo: any}>;
-expectType<{array: Array<{a: number}>}>(array);
+expectTypeOf(array).toBe<{array: Array<{a: number}>}>();
 
 declare const arrayWithoutRecursive: SharedUnionFieldsDeep<TestingType | {array: Array<{a: number; bar: string}>; foo: any}>;
-expectType<{array: TestingType['array'] | Array<{a: number; bar: string}>}>(arrayWithoutRecursive);
+expectTypeOf(arrayWithoutRecursive).toBe<{array: TestingType['array'] | Array<{a: number; bar: string}>}>();
 
 declare const readonlyArray: SharedUnionFieldsDeepRecurseIntoArrays<TestingType | {readonlyArray: ReadonlyArray<{a: number; bar: string}>; foo: any}>;
-expectType<{readonlyArray: ReadonlyArray<{a: number}>}>(readonlyArray);
+expectTypeOf(readonlyArray).toBe<{readonlyArray: ReadonlyArray<{a: number}>}>();
 
 /** Test for tuple */
 declare const tuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number]} | {tuple: [number, string]; foo: any}>;
-expectType<{tuple: [number]}>(tuple);
+expectTypeOf(tuple).toBe<{tuple: [number]}>();
 
 declare const tupleWithoutRecursive: SharedUnionFieldsDeep<{tuple: [number]} | {tuple: [number, string]; foo: any}>;
-expectType<{tuple: [number] | [number, string]}>(tupleWithoutRecursive);
+expectTypeOf(tupleWithoutRecursive).toBe<{tuple: [number] | [number, string]}>();
 
 declare const tupleOrArray: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: boolean[]} | {tuple: [number, string]}>;
-expectType<{tuple: [number | boolean, string | boolean]}>(tupleOrArray);
+expectTypeOf(tupleOrArray).toBe<{tuple: [number | boolean, string | boolean]}>();
 
 /** Test for fixed length tuple */
 declare const fixedLengthTuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, string]} | {tuple: [number, string, boolean]}>;
-expectType<{tuple: [number, string]}>(fixedLengthTuple);
+expectTypeOf(fixedLengthTuple).toBe<{tuple: [number, string]}>();
 
 declare const fixedLengthTuple2: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, string]} | {tuple: []}>;
-expectType<{tuple: []}>(fixedLengthTuple2);
+expectTypeOf(fixedLengthTuple2).toBe<{tuple: []}>();
 
 declare const fixedLengthTuple3: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, string, number]} | {tuple: [number, boolean, ...string[]]}>;
-expectType<{tuple: [number, string | boolean, number | string]}>(fixedLengthTuple3);
+expectTypeOf(fixedLengthTuple3).toBe<{tuple: [number, string | boolean, number | string]}>();
 
 declare const threeLengthTuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, string]} | {tuple: [number, string, boolean]} | {tuple: number[]}>;
-expectType<{tuple: [number, string | number]}>(threeLengthTuple);
+expectTypeOf(threeLengthTuple).toBe<{tuple: [number, string | number]}>();
 
 /** Test for non-fixed length tuple */
 declare const nonFixedLengthTuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, ...string[]]} | {tuple: boolean[]}>;
-expectType<{tuple: [number | boolean, ...Array<string | boolean>]}>(nonFixedLengthTuple);
+expectTypeOf(nonFixedLengthTuple).toBe<{tuple: [number | boolean, ...Array<string | boolean>]}>();
 
 declare const nonFixedLengthTuple2: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, ...string[]]} | {tuple: [number, string, ...boolean[]]}>;
-expectType<{tuple: [number, string, ...Array<string | boolean>]}>(nonFixedLengthTuple2);
+expectTypeOf(nonFixedLengthTuple2).toBe<{tuple: [number, string, ...Array<string | boolean>]}>();
 
 // Test for same type
 type TestingType2 = TestingType & {foo: any};
 declare const same: SharedUnionFieldsDeepRecurseIntoArrays<TestingType | TestingType2>;
-expectType<TestingType>(same);
+expectTypeOf(same).toBe<TestingType>();
 
 // Test for propagation with non union root object
 declare const nonUnionRootType: SharedUnionFieldsDeep<{union: {number: number; boolean: boolean} | {number: number}}>;
-expectType<{union: {number: number}}>(nonUnionRootType);
+expectTypeOf(nonUnionRootType).toBe<{union: {number: number}}>();
 
 declare const unionWithUndefined: SharedUnionFieldsDeep<{
 	a?: {a: string; foo: number} | {a: string; bar: string} | undefined;
 	b?: {a: string; foo: number} | {a: string; bar: string};
 	c: {a: string; foo: number} | {a: string; bar: string} | undefined;
 }>;
-expectType<{
+expectTypeOf(unionWithUndefined).toBe<{
 	a?: {a: string} | undefined;
 	b?: {a: string};
 	c: {a: string} | undefined;
-}>(unionWithUndefined);
+}>();

@@ -1,55 +1,55 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ExtractExactly} from '../index.d.ts';
 
-expectType<never>({} as ExtractExactly<number, '1'>);
-expectType<number>({} as ExtractExactly<number, number>);
-expectType<never>({} as ExtractExactly<0, number>);
-expectType<never>({} as ExtractExactly<string, '1'>);
-expectType<string>({} as ExtractExactly<string, string>);
-expectType<never>({} as ExtractExactly<'0', string>);
+expectTypeOf<ExtractExactly<number, '1'>>().toBe<never>();
+expectTypeOf<ExtractExactly<number, number>>().toBe<number>();
+expectTypeOf<ExtractExactly<0, number>>().toBe<never>();
+expectTypeOf<ExtractExactly<string, '1'>>().toBe<never>();
+expectTypeOf<ExtractExactly<string, string>>().toBe<string>();
+expectTypeOf<ExtractExactly<'0', string>>().toBe<never>();
 
-expectType<{readonly a: 0}>({} as ExtractExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>);
-expectType<{a: 0}>({} as ExtractExactly<{a: 0} | {readonly a: 0}, {a: 0}>);
-expectType<{readonly a: 0}>({} as ExtractExactly<{readonly a: 0}, {readonly a: 0}>);
+expectTypeOf<ExtractExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>>().toBe<{readonly a: 0}>();
+expectTypeOf<ExtractExactly<{a: 0} | {readonly a: 0}, {a: 0}>>().toBe<{a: 0}>();
+expectTypeOf<ExtractExactly<{readonly a: 0}, {readonly a: 0}>>().toBe<{readonly a: 0}>();
 
 // `never` extracts nothing
-expectType<never>({} as ExtractExactly<0 | 1 | 2, never>);
-expectType<never>({} as ExtractExactly<never, never>);
-expectType<never>({} as ExtractExactly<any, never>);
-expectType<never>({} as ExtractExactly<unknown, never>);
+expectTypeOf<ExtractExactly<0 | 1 | 2, never>>().toBe<never>();
+expectTypeOf<ExtractExactly<never, never>>().toBe<never>();
+expectTypeOf<ExtractExactly<any, never>>().toBe<never>();
+expectTypeOf<ExtractExactly<unknown, never>>().toBe<never>();
 
 // Extracting from `unknown`/`any`
-expectType<never>({} as ExtractExactly<unknown, string>);
-expectType<never>({} as ExtractExactly<[unknown], [number]>);
-expectType<never>({} as ExtractExactly<unknown[], number[]>);
-expectType<never>({} as ExtractExactly<{a: unknown}, {a: number}>);
-expectType<number[]>({} as ExtractExactly<number[] | unknown[], number[]>);
-expectType<never>({} as ExtractExactly<any, string>);
-expectType<never>({} as ExtractExactly<[any], [number]>);
-expectType<never>({} as ExtractExactly<any[], number[]>);
-expectType<never>({} as ExtractExactly<{a: any}, {a: number}>);
-expectType<number[]>({} as ExtractExactly<number[] | any[], number[]>);
+expectTypeOf<ExtractExactly<unknown, string>>().toBe<never>();
+expectTypeOf<ExtractExactly<[unknown], [number]>>().toBe<never>();
+expectTypeOf<ExtractExactly<unknown[], number[]>>().toBe<never>();
+expectTypeOf<ExtractExactly<{a: unknown}, {a: number}>>().toBe<never>();
+expectTypeOf<ExtractExactly<number[] | unknown[], number[]>>().toBe<number[]>();
+expectTypeOf<ExtractExactly<any, string>>().toBe<never>();
+expectTypeOf<ExtractExactly<[any], [number]>>().toBe<never>();
+expectTypeOf<ExtractExactly<any[], number[]>>().toBe<never>();
+expectTypeOf<ExtractExactly<{a: any}, {a: number}>>().toBe<never>();
+expectTypeOf<ExtractExactly<number[] | any[], number[]>>().toBe<number[]>();
 
 // Extracting `unknown`/`any`
-expectType<unknown>({} as ExtractExactly<unknown, unknown>);
-expectType<any>({} as ExtractExactly<any, any>);
-expectType<never>({} as ExtractExactly<unknown, any>);
-expectType<never>({} as ExtractExactly<any, unknown>);
-expectType<never>({} as ExtractExactly<string | number, unknown>);
-expectType<never>({} as ExtractExactly<string | number, any>);
-expectType<never>({} as ExtractExactly<never, any>);
-expectType<never>({} as ExtractExactly<never, unknown>);
+expectTypeOf<ExtractExactly<unknown, unknown>>().toBe<unknown>();
+expectTypeOf<ExtractExactly<any, any>>().toBe<any>();
+expectTypeOf<ExtractExactly<unknown, any>>().toBe<never>();
+expectTypeOf<ExtractExactly<any, unknown>>().toBe<never>();
+expectTypeOf<ExtractExactly<string | number, unknown>>().toBe<never>();
+expectTypeOf<ExtractExactly<string | number, any>>().toBe<never>();
+expectTypeOf<ExtractExactly<never, any>>().toBe<never>();
+expectTypeOf<ExtractExactly<never, unknown>>().toBe<never>();
 
 // Unions
-expectType<0 | 1>({} as ExtractExactly<0 | 1 | 2, 0 | 1>);
-expectType<0 | 1 | 2>({} as ExtractExactly<0 | 1 | 2, 0 | 1 | 2>);
-expectType<'1' | true>({} as ExtractExactly<'1' | 2 | true | null, '1' | boolean | undefined>);
-expectType<0 | undefined>({} as ExtractExactly<0 | '' | null | undefined | false, 0 | string | undefined>);
-expectType<{a: 0} | {readonly a: 0} | {a?: 0}>({} as ExtractExactly<
+expectTypeOf<ExtractExactly<0 | 1 | 2, 0 | 1>>().toBe<0 | 1>();
+expectTypeOf<ExtractExactly<0 | 1 | 2, 0 | 1 | 2>>().toBe<0 | 1 | 2>();
+expectTypeOf<ExtractExactly<'1' | 2 | true | null, '1' | boolean | undefined>>().toBe<'1' | true>();
+expectTypeOf<ExtractExactly<0 | '' | null | undefined | false, 0 | string | undefined>>().toBe<0 | undefined>();
+expectTypeOf<ExtractExactly<
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
 	{a: 0} | {readonly a: 0} | {a?: 0}
->);
-expectType<{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}>({} as ExtractExactly<
+>>().toBe<{a: 0} | {readonly a: 0} | {a?: 0}>();
+expectTypeOf<ExtractExactly<
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}
->);
+>>().toBe<{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}>();

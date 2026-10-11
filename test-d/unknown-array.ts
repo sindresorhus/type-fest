@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnknownArray} from '../index.d.ts';
 
 declare const foo: readonly [];
@@ -6,29 +6,29 @@ declare const bar: {
 	readonly array: unknown[];
 };
 
-expectAssignable<UnknownArray>(foo);
-expectAssignable<UnknownArray>(bar.array);
-expectAssignable<UnknownArray>([]);
-expectAssignable<UnknownArray>(['foo']);
+expectTypeOf(foo).toBeAssignableTo<UnknownArray>();
+expectTypeOf(bar.array).toBeAssignableTo<UnknownArray>();
+[] satisfies UnknownArray;
+['foo'] satisfies UnknownArray;
 
-expectNotAssignable<UnknownArray>(null);
-expectNotAssignable<UnknownArray>(undefined);
-expectNotAssignable<UnknownArray>({});
-expectNotAssignable<UnknownArray>({0: 1});
-expectNotAssignable<UnknownArray>(1);
-expectNotAssignable<UnknownArray>(Date);
+expectTypeOf<null>().not.toBeAssignableTo<UnknownArray>();
+expectTypeOf<undefined>().not.toBeAssignableTo<UnknownArray>();
+expectTypeOf<{}>().not.toBeAssignableTo<UnknownArray>();
+expectTypeOf<{0: 1}>().not.toBeAssignableTo<UnknownArray>();
+expectTypeOf<1>().not.toBeAssignableTo<UnknownArray>();
+expectTypeOf(Date).not.toBeAssignableTo<UnknownArray>();
 
 type IsArray<T> = T extends UnknownArray ? true : false;
 
 declare const string: IsArray<string>;
-expectType<false>(string);
+expectTypeOf(string).toBe<false>();
 declare const array: IsArray<[]>;
-expectType<true>(array);
+expectTypeOf(array).toBe<true>();
 declare const tuple: IsArray<['foo']>;
-expectType<true>(tuple);
+expectTypeOf(tuple).toBe<true>();
 declare const readonlyArray: IsArray<readonly number[]>;
-expectType<true>(readonlyArray);
+expectTypeOf(readonlyArray).toBe<true>();
 declare const leadingSpread: IsArray<readonly [number, ...string[]]>;
-expectType<true>(leadingSpread);
+expectTypeOf(leadingSpread).toBe<true>();
 declare const trailingSpread: IsArray<readonly [...string[], number]>;
-expectType<true>(trailingSpread);
+expectTypeOf(trailingSpread).toBe<true>();

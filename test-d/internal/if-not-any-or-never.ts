@@ -1,18 +1,18 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IfNotAnyOrNever} from '../../source/internal/index.d.ts';
 
-expectType<any>({} as IfNotAnyOrNever<any, {ifNot: string}>);
-expectType<never>({} as IfNotAnyOrNever<never, {ifNot: string}>);
-expectType<number>({} as IfNotAnyOrNever<any, {ifNot: string; ifAny: number}>);
-expectType<any>({} as IfNotAnyOrNever<any, {ifNot: string; ifNever: number}>);
-expectType<number>({} as IfNotAnyOrNever<any, {ifNot: string; ifAny: number; ifNever: boolean}>);
-expectType<never>({} as IfNotAnyOrNever<never, {ifNot: string; ifAny: number}>);
-expectType<number>({} as IfNotAnyOrNever<never, {ifNot: string; ifNever: number}>);
-expectType<boolean>({} as IfNotAnyOrNever<never, {ifNot: string; ifAny: number; ifNever: boolean}>);
-expectType<number>({} as IfNotAnyOrNever<string, {ifNot: number}>);
-expectType<number>({} as IfNotAnyOrNever<string | number, {ifNot: number; ifAny: boolean}>);
-expectType<number>({} as IfNotAnyOrNever<string | number, {ifNot: number; ifNever: boolean}>);
-expectType<number>({} as IfNotAnyOrNever<object, {ifNot: number; ifAny: boolean; ifNever: string}>);
+expectTypeOf<IfNotAnyOrNever<any, {ifNot: string}>>().toBe<any>();
+expectTypeOf<IfNotAnyOrNever<never, {ifNot: string}>>().toBe<never>();
+expectTypeOf<IfNotAnyOrNever<any, {ifNot: string; ifAny: number}>>().toBe<number>();
+expectTypeOf<IfNotAnyOrNever<any, {ifNot: string; ifNever: number}>>().toBe<any>();
+expectTypeOf<IfNotAnyOrNever<any, {ifNot: string; ifAny: number; ifNever: boolean}>>().toBe<number>();
+expectTypeOf<IfNotAnyOrNever<never, {ifNot: string; ifAny: number}>>().toBe<never>();
+expectTypeOf<IfNotAnyOrNever<never, {ifNot: string; ifNever: number}>>().toBe<number>();
+expectTypeOf<IfNotAnyOrNever<never, {ifNot: string; ifAny: number; ifNever: boolean}>>().toBe<boolean>();
+expectTypeOf<IfNotAnyOrNever<string, {ifNot: number}>>().toBe<number>();
+expectTypeOf<IfNotAnyOrNever<string | number, {ifNot: number; ifAny: boolean}>>().toBe<number>();
+expectTypeOf<IfNotAnyOrNever<string | number, {ifNot: number; ifNever: boolean}>>().toBe<number>();
+expectTypeOf<IfNotAnyOrNever<object, {ifNot: number; ifAny: boolean; ifNever: string}>>().toBe<number>();
 
 type CrashIfAnyWrapper<T> = IfNotAnyOrNever<T, {ifNot: CrashIfAny<T>}>;
 

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {KeyAsString} from '../source/key-as-string.d.ts';
 
 declare const foo: KeyAsString<{
@@ -6,22 +6,22 @@ declare const foo: KeyAsString<{
 	stringKey: string;
 }>;
 
-expectType<'1' | 'stringKey'>(foo);
+expectTypeOf(foo).toBe<'1' | 'stringKey'>();
 
 declare const sym: unique symbol;
-expectType<'1' | 'foo'>({} as KeyAsString<{[sym]: unknown; 1: number; foo: string}>); // Ignores symbol keys
+expectTypeOf<KeyAsString<{[sym]: unknown; 1: number; foo: string}>>().toBe<'1' | 'foo'>(); // Ignores symbol keys
 
 // Index signatures
-expectType<string>({} as KeyAsString<{[x: string]: unknown}>);
-expectType<`${number}`>({} as KeyAsString<{[x: number]: unknown}>);
-expectType<`foo${string}` | `${number}`>({} as KeyAsString<{[x: `foo${string}`]: unknown; [y: number]: unknown}>);
-expectType<string>({} as KeyAsString<{[x: string]: unknown; [y: symbol]: unknown}>);
-expectType<never>({} as KeyAsString<{[x: symbol]: unknown}>);
+expectTypeOf<KeyAsString<{[x: string]: unknown}>>().toBe<string>();
+expectTypeOf<KeyAsString<{[x: number]: unknown}>>().toBe<`${number}`>();
+expectTypeOf<KeyAsString<{[x: `foo${string}`]: unknown; [y: number]: unknown}>>().toBe<`foo${string}` | `${number}`>();
+expectTypeOf<KeyAsString<{[x: string]: unknown; [y: symbol]: unknown}>>().toBe<string>();
+expectTypeOf<KeyAsString<{[x: symbol]: unknown}>>().toBe<never>();
 
 // Unions
-expectType<'1'>({} as KeyAsString<{1: number; foo: string} | {1: number; bar: string}>); // Only grabs the common keys, just like `keyof`.
-expectType<never>({} as KeyAsString<{foo: string} | {bar: string}>);
+expectTypeOf<KeyAsString<{1: number; foo: string} | {1: number; bar: string}>>().toBe<'1'>(); // Only grabs the common keys, just like `keyof`.
+expectTypeOf<KeyAsString<{foo: string} | {bar: string}>>().toBe<never>();
 
 // Boundary cases
-expectType<string>({} as KeyAsString<any>);
-expectType<string>({} as KeyAsString<never>);
+expectTypeOf<KeyAsString<any>>().toBe<string>();
+expectTypeOf<KeyAsString<never>>().toBe<string>();

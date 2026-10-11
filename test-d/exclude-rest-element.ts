@@ -1,63 +1,63 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ExcludeRestElement, TupleOf, UnknownArray} from '../index.d.ts';
 
 // Basic static tuples (No rest element)
-expectType<ExcludeRestElement<[]>>({} as []);
-expectType<ExcludeRestElement<[1]>>({} as [1]);
-expectType<ExcludeRestElement<[1, 2, 3]>>({} as [1, 2, 3]);
-expectType<ExcludeRestElement<readonly ['a', 'b']>>({} as readonly ['a', 'b']);
+expectTypeOf<[]>().toBe<ExcludeRestElement<[]>>();
+expectTypeOf<[1]>().toBe<ExcludeRestElement<[1]>>();
+expectTypeOf<[1, 2, 3]>().toBe<ExcludeRestElement<[1, 2, 3]>>();
+expectTypeOf<readonly ['a', 'b']>().toBe<ExcludeRestElement<readonly ['a', 'b']>>();
 
 // Leading rest element
-expectType<ExcludeRestElement<[...string[], 1]>>({} as [1]);
-expectType<ExcludeRestElement<[...number[], 'a', 'b']>>({} as ['a', 'b']);
-expectType<ExcludeRestElement<[...any[], true]>>({} as [true]);
-expectType<ExcludeRestElement<[...never[], 'end']>>({} as ['end']);
-expectType<ExcludeRestElement<[...unknown[], 2, 3]>>({} as [2, 3]);
+expectTypeOf<[1]>().toBe<ExcludeRestElement<[...string[], 1]>>();
+expectTypeOf<['a', 'b']>().toBe<ExcludeRestElement<[...number[], 'a', 'b']>>();
+expectTypeOf<[true]>().toBe<ExcludeRestElement<[...any[], true]>>();
+expectTypeOf<['end']>().toBe<ExcludeRestElement<[...never[], 'end']>>();
+expectTypeOf<[2, 3]>().toBe<ExcludeRestElement<[...unknown[], 2, 3]>>();
 
 // Middle rest element
-expectType<ExcludeRestElement<['a', ...string[], 'z']>>({} as ['a', 'z']);
-expectType<ExcludeRestElement<['x', ...boolean[], true]>>({} as ['x', true]);
-expectType<ExcludeRestElement<['x', ...any[], 'y']>>({} as ['x', 'y']);
-expectType<ExcludeRestElement<['x', ...readonly number[], 'y']>>({} as ['x', 'y']);
+expectTypeOf<['a', 'z']>().toBe<ExcludeRestElement<['a', ...string[], 'z']>>();
+expectTypeOf<['x', true]>().toBe<ExcludeRestElement<['x', ...boolean[], true]>>();
+expectTypeOf<['x', 'y']>().toBe<ExcludeRestElement<['x', ...any[], 'y']>>();
+expectTypeOf<['x', 'y']>().toBe<ExcludeRestElement<['x', ...readonly number[], 'y']>>();
 
 // Trailing rest element
-expectType<ExcludeRestElement<[1, 2, ...string[]]>>({} as [1, 2]);
-expectType<ExcludeRestElement<['foo', ...Array<'bar'>]>>({} as ['foo']);
-expectType<ExcludeRestElement<[number, ...number[]]>>({} as [number]);
+expectTypeOf<[1, 2]>().toBe<ExcludeRestElement<[1, 2, ...string[]]>>();
+expectTypeOf<['foo']>().toBe<ExcludeRestElement<['foo', ...Array<'bar'>]>>();
+expectTypeOf<[number]>().toBe<ExcludeRestElement<[number, ...number[]]>>();
 
 // Only rest element
-expectType<ExcludeRestElement<string[]>>({} as []);
-expectType<ExcludeRestElement<readonly number[]>>({} as readonly []);
-expectType<ExcludeRestElement<readonly [...boolean[]]>>({} as readonly []);
-expectType<ExcludeRestElement<[...string[]]>>({} as []);
+expectTypeOf<[]>().toBe<ExcludeRestElement<string[]>>();
+expectTypeOf<readonly []>().toBe<ExcludeRestElement<readonly number[]>>();
+expectTypeOf<readonly []>().toBe<ExcludeRestElement<readonly [...boolean[]]>>();
+expectTypeOf<[]>().toBe<ExcludeRestElement<[...string[]]>>();
 
 // Optional & mixed optional
-expectType<ExcludeRestElement<[string?, boolean?, ...number[]]>>({} as [string?, boolean?]);
-expectType<ExcludeRestElement<[number, boolean?, ...number[]]>>({} as [number, boolean?]);
-expectType<ExcludeRestElement<[1?, ...string[]]>>({} as [1?]);
+expectTypeOf<[string?, boolean?]>().toBe<ExcludeRestElement<[string?, boolean?, ...number[]]>>();
+expectTypeOf<[number, boolean?]>().toBe<ExcludeRestElement<[number, boolean?, ...number[]]>>();
+expectTypeOf<[1?]>().toBe<ExcludeRestElement<[1?, ...string[]]>>();
 
 // Unions
-expectType<ExcludeRestElement<[1, ...string[]] | [2, ...number[]]>>({} as [1] | [2]);
-expectType<ExcludeRestElement<[...boolean[], 'end'] | ['start', ...string[]]>>({} as ['end'] | ['start']);
+expectTypeOf<[1] | [2]>().toBe<ExcludeRestElement<[1, ...string[]] | [2, ...number[]]>>();
+expectTypeOf<['end'] | ['start']>().toBe<ExcludeRestElement<[...boolean[], 'end'] | ['start', ...string[]]>>();
 
 // Readonly
-expectType<ExcludeRestElement<readonly [...number[], 'done']>>({} as readonly ['done']);
-expectType<ExcludeRestElement<readonly [1, ...string[], 2]>>({} as readonly [1, 2]);
+expectTypeOf<readonly ['done']>().toBe<ExcludeRestElement<readonly [...number[], 'done']>>();
+expectTypeOf<readonly [1, 2]>().toBe<ExcludeRestElement<readonly [1, ...string[], 2]>>();
 
 // Nested Arrays
-expectType<ExcludeRestElement<[[1, 2], ...number[], [3, 4]]>>({} as [[1, 2], [3, 4]]);
-expectType<ExcludeRestElement<[['a'], ...string[], ['z']]>>({} as [['a'], ['z']]);
+expectTypeOf<[[1, 2], [3, 4]]>().toBe<ExcludeRestElement<[[1, 2], ...number[], [3, 4]]>>();
+expectTypeOf<[['a'], ['z']]>().toBe<ExcludeRestElement<[['a'], ...string[], ['z']]>>();
 
 // Edge: `never` / `any`
-expectType<ExcludeRestElement<any>>({} as any);
-expectType<ExcludeRestElement<never>>({} as never);
+expectTypeOf<any>().toBe<ExcludeRestElement<any>>();
+expectTypeOf<never>().toBe<ExcludeRestElement<never>>();
 
 // Long tuples
 type FiftyZeroes = TupleOf<50, '0'>;
-expectType<ExcludeRestElement<[...FiftyZeroes, ...number[]]>>({} as FiftyZeroes);
+expectTypeOf<FiftyZeroes>().toBe<ExcludeRestElement<[...FiftyZeroes, ...number[]]>>();
 
 type NineHundredNinetyNineZeroes = TupleOf<999, '0'>;
-expectType<ExcludeRestElement<[...NineHundredNinetyNineZeroes, ...number[]]>>({} as NineHundredNinetyNineZeroes);
+expectTypeOf<NineHundredNinetyNineZeroes>().toBe<ExcludeRestElement<[...NineHundredNinetyNineZeroes, ...number[]]>>();
 
 // Generic instantiations
 type Assignability<_T extends UnknownArray> = unknown;
@@ -65,7 +65,7 @@ type TestAssignability<T extends UnknownArray> = Assignability<ExcludeRestElemen
 
 // `readonly` is decided per union member, so a readonly member stays readonly even when the union also has a mutable one.
 declare const unionWithReadonly: ExcludeRestElement<[1, 2] | readonly []>;
-expectType<[1, 2] | readonly []>(unionWithReadonly);
+expectTypeOf(unionWithReadonly).toBe<[1, 2] | readonly []>();
 
 declare const unionOfReadonly: ExcludeRestElement<readonly [1, 2] | readonly [3]>;
-expectType<readonly [1, 2] | readonly [3]>(unionOfReadonly);
+expectTypeOf(unionOfReadonly).toBe<readonly [1, 2] | readonly [3]>();

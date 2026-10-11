@@ -1,4 +1,4 @@
-import {expectNotAssignable, expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ConditionalSimplify} from '../index.d.ts';
 
 type Position = {top: number; left: number};
@@ -11,7 +11,7 @@ type PositionAndSizeSimplified = ConditionalSimplify<PositionAndSizeIntersection
 const position = {top: 120, left: 240};
 const size = {width: 480, height: 600};
 const positionAndSize = {...position, ...size};
-expectType<PositionAndSizeSimplified>(positionAndSize);
+expectTypeOf(positionAndSize).toBe<PositionAndSizeSimplified>();
 
 // Exclude function type to be simplified.
 type SomeFunction = (type: string) => string;
@@ -21,5 +21,5 @@ type SimplifiedFunctionPass = ConditionalSimplify<SomeFunction, Function>; // Re
 declare const simplifiedFunctionFail: SimplifiedFunctionFail;
 declare const simplifiedFunctionPass: SimplifiedFunctionPass;
 
-expectNotAssignable<SomeFunction>(simplifiedFunctionFail);
-expectType<SomeFunction>(simplifiedFunctionPass);
+expectTypeOf(simplifiedFunctionFail).not.toBeAssignableTo<SomeFunction>();
+expectTypeOf(simplifiedFunctionPass).toBe<SomeFunction>();

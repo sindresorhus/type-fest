@@ -1,32 +1,32 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Xor} from '../source/xor.d.ts';
 
 declare const boolean: boolean;
 
-expectType<Xor<true, true>>(false);
-expectType<Xor<true, false>>(true);
-expectType<Xor<false, true>>(true);
-expectType<Xor<false, false>>(false);
+expectTypeOf<Xor<true, true>>().toBe<false>();
+expectTypeOf<Xor<true, false>>().toBe<true>();
+expectTypeOf<Xor<false, true>>().toBe<true>();
+expectTypeOf<Xor<false, false>>().toBe<false>();
 
-expectType<Xor<true, boolean>>(boolean);
-expectType<Xor<boolean, true>>(boolean);
-expectType<Xor<false, boolean>>(boolean);
-expectType<Xor<boolean, false>>(boolean);
-expectType<Xor<boolean, boolean>>(boolean);
+expectTypeOf(boolean).toBe<Xor<true, boolean>>();
+expectTypeOf(boolean).toBe<Xor<boolean, true>>();
+expectTypeOf(boolean).toBe<Xor<false, boolean>>();
+expectTypeOf(boolean).toBe<Xor<boolean, false>>();
+expectTypeOf(boolean).toBe<Xor<boolean, boolean>>();
 
 // Boundary cases
-expectType<Xor<true, any>>(boolean);
-expectType<Xor<any, true>>(boolean);
-expectType<Xor<false, any>>(boolean);
-expectType<Xor<any, false>>(boolean);
-expectType<Xor<boolean, any>>(boolean);
-expectType<Xor<any, boolean>>(boolean);
-expectType<Xor<any, any>>(boolean);
+expectTypeOf(boolean).toBe<Xor<true, any>>();
+expectTypeOf(boolean).toBe<Xor<any, true>>();
+expectTypeOf(boolean).toBe<Xor<false, any>>();
+expectTypeOf(boolean).toBe<Xor<any, false>>();
+expectTypeOf(boolean).toBe<Xor<boolean, any>>();
+expectTypeOf(boolean).toBe<Xor<any, boolean>>();
+expectTypeOf(boolean).toBe<Xor<any, any>>();
 
-expectType<Xor<true, never>>(true);
-expectType<Xor<never, true>>(true);
-expectType<Xor<false, never>>(false);
-expectType<Xor<never, false>>(false);
-expectType<Xor<boolean, never>>(boolean);
-expectType<Xor<never, boolean>>(boolean);
-expectType<Xor<never, never>>(false);
+expectTypeOf<Xor<true, never>>().toBe<true>();
+expectTypeOf<Xor<never, true>>().toBe<true>();
+expectTypeOf<Xor<false, never>>().toBe<false>();
+expectTypeOf<Xor<never, false>>().toBe<false>();
+expectTypeOf(boolean).toBe<Xor<boolean, never>>();
+expectTypeOf(boolean).toBe<Xor<never, boolean>>();
+expectTypeOf<Xor<never, never>>().toBe<false>();

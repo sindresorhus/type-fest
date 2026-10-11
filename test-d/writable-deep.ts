@@ -1,4 +1,4 @@
-import {expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsEqual, JsonValue, Opaque, ReadonlyDeep, TupleOf, WritableDeep} from '../index.d.ts';
 import type {_WritableObjectDeep} from '../source/writable-deep.d.ts';
 import type {tag} from '../source/tagged.d.ts';
@@ -71,41 +71,41 @@ writableData.fnWithOverload('', 1);
 
 writableData.string = 'bar';
 
-expectType<{foo: 'bar'}>(writableData.object);
-expectType<string>(writableData.string);
-expectType<number>(writableData.number);
-expectType<boolean>(writableData.boolean);
-expectType<symbol>(writableData.symbol);
-expectType<null>(writableData.null);
-expectType<undefined>(writableData.undefined);
-expectType<Date>(writableData.date);
-expectType<RegExp>(writableData.regExp);
-expectType<Map<string, string>>(writableData.map);
-expectType<Set<string>>(writableData.set);
-expectType<string[]>(writableData.array);
-expectType<[]>(writableData.emptyTuple);
-expectType<['foo']>(writableData.tuple);
-expectType<[{a: string}, {b: number}]>(writableData.multiItemTuple);
-expectType<[...string[]]>(writableData.spreadTuple);
-expectType<[string, ...number[]]>(writableData.trailingSpreadTuple);
-expectType<[...string[], number]>(writableData.leadingSpreadTuple);
-expectType<Map<string, string>>(writableData.readonlyMap);
-expectType<Set<string>>(writableData.readonlySet);
-expectType<string[]>(writableData.readonlyArray);
-expectType<['foo']>(writableData.readonlyTuple);
-expectAssignable<ReadonlyJsonValue>(writableData.json);
-expectAssignable<Opaque<WritableDeep<OpaqueObjectData>, WritableDeep<OpaqueObject[typeof tag]>>>(writableData.opaqueObj);
+expectTypeOf(writableData.object).toBe<{foo: 'bar'}>();
+expectTypeOf(writableData.string).toBe<string>();
+expectTypeOf(writableData.number).toBe<number>();
+expectTypeOf(writableData.boolean).toBe<boolean>();
+expectTypeOf(writableData.symbol).toBe<symbol>();
+expectTypeOf(writableData.null).toBe<null>();
+expectTypeOf(writableData.undefined).toBe<undefined>();
+expectTypeOf(writableData.date).toBe<Date>();
+expectTypeOf(writableData.regExp).toBe<RegExp>();
+expectTypeOf(writableData.map).toBe<Map<string, string>>();
+expectTypeOf(writableData.set).toBe<Set<string>>();
+expectTypeOf(writableData.array).toBe<string[]>();
+expectTypeOf(writableData.emptyTuple).toBe<[]>();
+expectTypeOf(writableData.tuple).toBe<['foo']>();
+expectTypeOf(writableData.multiItemTuple).toBe<[{a: string}, {b: number}]>();
+expectTypeOf(writableData.spreadTuple).toBe<[...string[]]>();
+expectTypeOf(writableData.trailingSpreadTuple).toBe<[string, ...number[]]>();
+expectTypeOf(writableData.leadingSpreadTuple).toBe<[...string[], number]>();
+expectTypeOf(writableData.readonlyMap).toBe<Map<string, string>>();
+expectTypeOf(writableData.readonlySet).toBe<Set<string>>();
+expectTypeOf(writableData.readonlyArray).toBe<string[]>();
+expectTypeOf(writableData.readonlyTuple).toBe<['foo']>();
+expectTypeOf(writableData.json).toBeAssignableTo<ReadonlyJsonValue>();
+expectTypeOf(writableData.opaqueObj).toBeAssignableTo<Opaque<WritableDeep<OpaqueObjectData>, WritableDeep<OpaqueObject[typeof tag]>>>();
 
-expectType<((foo: number) => string) & _WritableObjectDeep<Namespace>>(writableData.namespace);
-expectType<string>(writableData.namespace(1));
-expectType<boolean[]>(writableData.namespace.baz);
+expectTypeOf(writableData.namespace).toBe<((foo: number) => string) & _WritableObjectDeep<Namespace>>();
+expectTypeOf(writableData.namespace(1)).toBe<string>();
+expectTypeOf(writableData.namespace.baz).toBe<boolean[]>();
 
 // These currently aren't writable due to TypeScript limitations.
 // @see https://github.com/microsoft/TypeScript/issues/29732
-expectType<NamespaceWithOverload>(writableData.namespaceWithOverload);
-expectType<string>(writableData.namespaceWithOverload(1));
-expectType<number>(writableData.namespaceWithOverload('foo', 1));
-expectType<readonly boolean[]>(writableData.namespaceWithOverload.baz);
+expectTypeOf(writableData.namespaceWithOverload).toBe<NamespaceWithOverload>();
+expectTypeOf(writableData.namespaceWithOverload(1)).toBe<string>();
+expectTypeOf(writableData.namespaceWithOverload('foo', 1)).toBe<number>();
+expectTypeOf(writableData.namespaceWithOverload.baz).toBe<readonly boolean[]>();
 
 // Test that WritableDeep is the inverse of ReadonlyDeep.
 const fullyWritableData = {
@@ -117,7 +117,7 @@ const fullyWritableData = {
 		boolean: true,
 	},
 };
-expectAssignable<WritableDeep<ReadonlyDeep<typeof fullyWritableData>>>(fullyWritableData);
+expectTypeOf(fullyWritableData).toBeAssignableTo<WritableDeep<ReadonlyDeep<typeof fullyWritableData>>>();
 
 // Standalone tests
 
@@ -126,23 +126,23 @@ const writableNamespace = {} as WritableDeep<{
 	(foo: number): string;
 	readonly baz: readonly boolean[];
 }>;
-expectType<((foo: number) => string) & {
+expectTypeOf(writableNamespace).toBe<((foo: number) => string) & {
 	baz: boolean[];
-}>(writableNamespace);
-expectAssignable<{
+}>();
+expectTypeOf(writableNamespace).toBeAssignableTo<{
 	(foo: number): string;
 	baz: boolean[];
-}>(writableNamespace);
+}>();
 
 // A tuple whose elements are all optional keeps its optional modifiers, instead of widening into a rest.
 declare const optionalTail: WritableDeep<[number, string?]>;
-expectType<[number, string?]>(optionalTail);
+expectTypeOf(optionalTail).toBe<[number, string?]>();
 
 declare const optionalTailReadonly: WritableDeep<readonly [number, string?]>;
-expectType<[number, string?]>(optionalTailReadonly);
+expectTypeOf(optionalTailReadonly).toBe<[number, string?]>();
 
 declare const allOptional: WritableDeep<[(number | undefined)?, string?]>;
-expectType<[(number | undefined)?, string?]>(allOptional);
+expectTypeOf(allOptional).toBe<[(number | undefined)?, string?]>();
 
 // Class constructors are kept as is, the same way `ReadonlyDeep` keeps them.
 class Awesome {
@@ -154,70 +154,70 @@ class Awesome {
 	}
 }
 
-expectType<typeof Awesome>({} as WritableDeep<typeof Awesome>);
-expectType<typeof Date>({} as WritableDeep<typeof Date>);
+expectTypeOf<WritableDeep<typeof Awesome>>().toBe<typeof Awesome>();
+expectTypeOf<WritableDeep<typeof Date>>().toBe<typeof Date>();
 
 // Class instances are still made deeply writable.
-expectType<{name: string; successes: number; run: () => void}>({} as WritableDeep<Awesome>);
+expectTypeOf<WritableDeep<Awesome>>().toBe<{name: string; successes: number; run: () => void}>();
 
 // A tuple whose optional element is followed by a rest element stays a tuple, instead of widening into an array.
 declare const optionalHeadWithRest: WritableDeep<[number?, ...string[]]>;
-expectType<[number?, ...string[]]>(optionalHeadWithRest);
+expectTypeOf(optionalHeadWithRest).toBe<[number?, ...string[]]>();
 
 // `Promise` and its `then` method are not rebuilt, unlike `Map` and `Set`.
 declare const writablePromise: WritableDeep<Promise<{a: number}>>;
-expectType<Promise<{a: number}>>(writablePromise);
+expectTypeOf(writablePromise).toBe<Promise<{a: number}>>();
 
 // A `WeakMap` and its methods are not rebuilt.
 declare const writableWeakMap: WritableDeep<WeakMap<{a: number}, number>>;
-expectType<WeakMap<{a: number}, number>>(writableWeakMap);
+expectTypeOf(writableWeakMap).toBe<WeakMap<{a: number}, number>>();
 
 // A `WeakSet` and its methods are not rebuilt.
 declare const writableWeakSet: WritableDeep<WeakSet<{a: number}>>;
-expectType<WeakSet<{a: number}>>(writableWeakSet);
+expectTypeOf(writableWeakSet).toBe<WeakSet<{a: number}>>();
 
 // An abstract class has an `abstract new` signature, so it must be kept as is just like a concrete class constructor.
 abstract class AbstractClassForTest {
 	foo = 1;
 }
 
-expectType<true>({} as IsEqual<WritableDeep<typeof AbstractClassForTest>, typeof AbstractClassForTest>);
+expectTypeOf<IsEqual<WritableDeep<typeof AbstractClassForTest>, typeof AbstractClassForTest>>().toBe<true>();
 
 // These are a single value rather than a structure to recurse into, so they are kept as is. Mapping over one of them strips the `readonly` off members that have to stay readonly, so a `Uint8Array` came back as a plain object rather than a `Uint8Array`.
 declare const typedArray: WritableDeep<Uint8Array>;
-expectType<Uint8Array>(typedArray);
+expectTypeOf(typedArray).toBe<Uint8Array>();
 
 declare const arrayBuffer: WritableDeep<ArrayBuffer>;
-expectType<ArrayBuffer>(arrayBuffer);
+expectTypeOf(arrayBuffer).toBe<ArrayBuffer>();
 
 declare const sharedArrayBuffer: WritableDeep<SharedArrayBuffer>;
-expectType<SharedArrayBuffer>(sharedArrayBuffer);
+expectTypeOf(sharedArrayBuffer).toBe<SharedArrayBuffer>();
 
 declare const dataView: WritableDeep<DataView>;
-expectType<DataView>(dataView);
+expectTypeOf(dataView).toBe<DataView>();
 
 // A callable type whose properties are all optional is still walked. The guard for "a function with no properties" was `{}` being assignable to the walked type, which is true whenever every own property is optional, so the `readonly` on the nested member survived the one type whose job is removing it.
 declare const callableWithAnOptionalProperty: WritableDeep<{(): void; p?: {readonly a: string}}>;
-expectType<(() => void) & {p?: {a: string}}>(callableWithAnOptionalProperty);
+expectTypeOf(callableWithAnOptionalProperty).toBe<(() => void) & {p?: {a: string}}>();
 
 // A member that is a method keeps its `this` parameter. `Parameters` leaves `this` out, so the rebuilt function would otherwise accept any receiver.
 declare const methodWithThis: WritableDeep<{m: ((this: Date, a: string) => void) & {count: number}}>;
-expectType<Date>({} as ThisParameterType<(typeof methodWithThis)['m']>);
+expectTypeOf<ThisParameterType<(typeof methodWithThis)['m']>>().toBe<Date>();
 
 // A `unique symbol` key is a key like any other, and the walk has to reach it: the key is not a string, so a walk that builds its keys as text would leave it out.
 declare const writableSymbol: WritableDeep<{readonly [key]: {readonly a: number}}>;
-expectType<{[key]: {a: number}}>(writableSymbol);
+expectTypeOf(writableSymbol).toBe<{[key]: {a: number}}>();
 
 // Optional elements of the same type keep their `?`, rather than collapsing into a rest element.
-expectType<[string?, string?]>({} as WritableDeep<readonly [string?, string?]>);
-expectType<[number, number?, number?]>({} as WritableDeep<readonly [number, number?, number?]>);
+expectTypeOf<WritableDeep<readonly [string?, string?]>>().toBe<[string?, string?]>();
+expectTypeOf<WritableDeep<readonly [number, number?, number?]>>().toBe<[number, number?, number?]>();
 
 // A long tuple is mapped without one recursive instantiation per element, and its labels and optional modifiers survive.
 declare const longTuple: WritableDeep<Readonly<TupleOf<100, {readonly value: number}>>>;
-expectType<100>(longTuple.length);
-expectType<{value: number}>(longTuple[99]);
-expectType<[value: {name: string}, count?: number]>({} as WritableDeep<readonly [value: {readonly name: string}, count?: number]>);
+expectTypeOf(longTuple.length).toBe<100>();
+expectTypeOf(longTuple[99]).toBe<{value: number}>();
+expectTypeOf<WritableDeep<readonly [value: {readonly name: string}, count?: number]>>().toBe<[value: {name: string}, count?: number]>();
 
 // A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
 declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
-expectAssignable<WritableDeep<((event: string) => void) & {displayName: string}>>(handlerWithThis);
+expectTypeOf(handlerWithThis).toBeAssignableTo<WritableDeep<((event: string) => void) & {displayName: string}>>();

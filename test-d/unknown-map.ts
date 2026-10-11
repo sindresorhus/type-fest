@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {UnknownMap} from '../index.d.ts';
 
 declare const foo: ReadonlyMap<string, number>;
@@ -6,14 +6,14 @@ declare const bar: {
 	readonly map: ReadonlyMap<number, string>;
 };
 
-expectAssignable<UnknownMap>(foo);
-expectAssignable<UnknownMap>(bar.map);
-expectAssignable<UnknownMap>(new Map());
-expectAssignable<UnknownMap>(new Map([['foo', 1]]));
+expectTypeOf(foo).toBeAssignableTo<UnknownMap>();
+expectTypeOf(bar.map).toBeAssignableTo<UnknownMap>();
+expectTypeOf(new Map()).toBeAssignableTo<UnknownMap>();
+expectTypeOf(new Map([['foo', 1]])).toBeAssignableTo<UnknownMap>();
 
-expectNotAssignable<UnknownMap>(null);
-expectNotAssignable<UnknownMap>(undefined);
-expectNotAssignable<UnknownMap>({});
-expectNotAssignable<UnknownMap>([]);
-expectNotAssignable<UnknownMap>({0: 1});
-expectNotAssignable<UnknownMap>(1);
+expectTypeOf<null>().not.toBeAssignableTo<UnknownMap>();
+expectTypeOf<undefined>().not.toBeAssignableTo<UnknownMap>();
+expectTypeOf<{}>().not.toBeAssignableTo<UnknownMap>();
+expectTypeOf<[]>().not.toBeAssignableTo<UnknownMap>();
+expectTypeOf<{0: 1}>().not.toBeAssignableTo<UnknownMap>();
+expectTypeOf<1>().not.toBeAssignableTo<UnknownMap>();

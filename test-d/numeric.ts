@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {
 	Finite,
 	IsNegative,
@@ -18,8 +18,8 @@ import type {
 declare const infinity: Finite<PositiveInfinity | NegativeInfinity>;
 declare const infinityMixed: Finite<1 | PositiveInfinity | NegativeInfinity>;
 
-expectType<never>(infinity);
-expectType<1>(infinityMixed);
+expectTypeOf(infinity).toBe<never>();
+expectTypeOf(infinityMixed).toBe<1>();
 
 // Integer
 declare const integer: Integer<1>;
@@ -35,17 +35,17 @@ declare const infinityInteger: Integer<PositiveInfinity | NegativeInfinity>;
 const infinityValue = Number.POSITIVE_INFINITY;
 declare const infinityInteger2: Integer<typeof infinityValue>;
 
-expectType<1>(integer);
-expectType<1>(integerWithDecimal);
-expectType<never>(numberType);
-expectType<1 | -1>(integerMixed);
-expectType<1e+100>(bigInteger);
-expectType<0o10>(octalInteger);
-expectType<0b10>(binaryInteger);
-expectType<0x10>(hexadecimalInteger);
-expectType<never>(nonInteger);
-expectType<never>(infinityInteger);
-expectType<never>(infinityInteger2);
+expectTypeOf(integer).toBe<1>();
+expectTypeOf(integerWithDecimal).toBe<1>();
+expectTypeOf(numberType).toBe<never>();
+expectTypeOf(integerMixed).toBe<1 | -1>();
+expectTypeOf(bigInteger).toBe<1e+100>();
+expectTypeOf(octalInteger).toBe<0o10>();
+expectTypeOf(binaryInteger).toBe<0b10>();
+expectTypeOf(hexadecimalInteger).toBe<0x10>();
+expectTypeOf(nonInteger).toBe<never>();
+expectTypeOf(infinityInteger).toBe<never>();
+expectTypeOf(infinityInteger2).toBe<never>();
 
 // Float
 declare const float: Float<1.5>;
@@ -53,39 +53,39 @@ declare const floatMixed: Float<1 | 1.5 | -1.5>;
 declare const nonFloat: Float<1>;
 declare const infinityFloat: Float<PositiveInfinity | NegativeInfinity>;
 
-expectType<1.5>(float);
-expectType<1.5 | -1.5>(floatMixed);
-expectType<never>(nonFloat);
-expectType<never>(infinityFloat);
+expectTypeOf(float).toBe<1.5>();
+expectTypeOf(floatMixed).toBe<1.5 | -1.5>();
+expectTypeOf(nonFloat).toBe<never>();
+expectTypeOf(infinityFloat).toBe<never>();
 
 // Negative
 declare const negative: Negative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
-expectType<-1 | -1n>(negative);
+expectTypeOf(negative).toBe<-1 | -1n>();
 
 // NegativeInteger
 declare const negativeInteger: NegativeInteger<-1 | 0 | 1>;
 
-expectType<-1>(negativeInteger);
+expectTypeOf(negativeInteger).toBe<-1>();
 
 // NegativeFloat
 declare const negativeFloat: NegativeFloat<-1.5 | -1 | 0 | 1 | 1.5>;
 
-expectType<-1.5>(negativeFloat);
+expectTypeOf(negativeFloat).toBe<-1.5>();
 
 // NonNegative
 declare const nonNegative: NonNegative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
-expectType<0 | 0n | 1 | 1n>(nonNegative);
+expectTypeOf(nonNegative).toBe<0 | 0n | 1 | 1n>();
 
 // NonNegativeInteger
 declare const nonNegativeInteger: NonNegativeInteger<-1 | 0 | 1>;
 
-expectType<0 | 1>(nonNegativeInteger);
+expectTypeOf(nonNegativeInteger).toBe<0 | 1>();
 
 // A branded literal is still a literal, so the brand is removed before the checks run.
 declare const brandedNegative: IsNegative<Opaque<-5, 'A'>>;
-expectType<true>(brandedNegative);
+expectTypeOf(brandedNegative).toBe<true>();
 
 declare const brandedPositive: IsNegative<Opaque<5, 'A'>>;
-expectType<false>(brandedPositive);
+expectTypeOf(brandedPositive).toBe<false>();

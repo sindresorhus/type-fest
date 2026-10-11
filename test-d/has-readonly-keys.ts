@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {HasReadonlyKeys} from '../index.d.ts';
 
 type TestType1 = {
@@ -24,6 +24,6 @@ declare const test1: HasReadonlyKeys1;
 declare const test2: HasReadonlyKeys2;
 declare const test3: HasReadonlyKeys3;
 
-expectType<true>(test1);
-expectType<true>(test2);
-expectType<false>(test3);
+expectTypeOf(test1).toBe<true>();
+expectTypeOf(test2).toBe<true>();
+expectTypeOf(test3).toBe<false>();

@@ -1,55 +1,55 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ExcludeExactly} from '../index.d.ts';
 
-expectType<number>({} as ExcludeExactly<number, '1'>);
-expectType<never>({} as ExcludeExactly<number, number>);
-expectType<0>({} as ExcludeExactly<0, number>);
-expectType<string>({} as ExcludeExactly<string, '1'>);
-expectType<never>({} as ExcludeExactly<string, string>);
-expectType<'0'>({} as ExcludeExactly<'0', string>);
+expectTypeOf<ExcludeExactly<number, '1'>>().toBe<number>();
+expectTypeOf<ExcludeExactly<number, number>>().toBe<never>();
+expectTypeOf<ExcludeExactly<0, number>>().toBe<0>();
+expectTypeOf<ExcludeExactly<string, '1'>>().toBe<string>();
+expectTypeOf<ExcludeExactly<string, string>>().toBe<never>();
+expectTypeOf<ExcludeExactly<'0', string>>().toBe<'0'>();
 
-expectType<{a: 0}>({} as ExcludeExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>);
-expectType<{readonly a: 0}>({} as ExcludeExactly<{a: 0} | {readonly a: 0}, {a: 0}>);
-expectType<never>({} as ExcludeExactly<{readonly a: 0}, {readonly a: 0}>);
+expectTypeOf<ExcludeExactly<{a: 0} | {readonly a: 0}, {readonly a: 0}>>().toBe<{a: 0}>();
+expectTypeOf<ExcludeExactly<{a: 0} | {readonly a: 0}, {a: 0}>>().toBe<{readonly a: 0}>();
+expectTypeOf<ExcludeExactly<{readonly a: 0}, {readonly a: 0}>>().toBe<never>();
 
 // `never` excludes nothing
-expectType<0 | 1 | 2>({} as ExcludeExactly<0 | 1 | 2, never>);
-expectType<never>({} as ExcludeExactly<never, never>);
-expectType<any>({} as ExcludeExactly<any, never>);
-expectType<unknown>({} as ExcludeExactly<unknown, never>);
+expectTypeOf<ExcludeExactly<0 | 1 | 2, never>>().toBe<0 | 1 | 2>();
+expectTypeOf<ExcludeExactly<never, never>>().toBe<never>();
+expectTypeOf<ExcludeExactly<any, never>>().toBe<any>();
+expectTypeOf<ExcludeExactly<unknown, never>>().toBe<unknown>();
 
 // Excluding from `unknown`/`any`
-expectType<unknown>({} as ExcludeExactly<unknown, string>);
-expectType<[unknown]>({} as ExcludeExactly<[unknown], [number]>);
-expectType<unknown[]>({} as ExcludeExactly<unknown[], number[]>);
-expectType<{a: unknown}>({} as ExcludeExactly<{a: unknown}, {a: number}>);
-expectType<unknown[]>({} as ExcludeExactly<number[] | unknown[], number[]>);
-expectType<any>({} as ExcludeExactly<any, string>);
-expectType<[any]>({} as ExcludeExactly<[any], [number]>);
-expectType<any[]>({} as ExcludeExactly<any[], number[]>);
-expectType<{a: any}>({} as ExcludeExactly<{a: any}, {a: number}>);
-expectType<any[]>({} as ExcludeExactly<number[] | any[], number[]>);
+expectTypeOf<ExcludeExactly<unknown, string>>().toBe<unknown>();
+expectTypeOf<ExcludeExactly<[unknown], [number]>>().toBe<[unknown]>();
+expectTypeOf<ExcludeExactly<unknown[], number[]>>().toBe<unknown[]>();
+expectTypeOf<ExcludeExactly<{a: unknown}, {a: number}>>().toBe<{a: unknown}>();
+expectTypeOf<ExcludeExactly<number[] | unknown[], number[]>>().toBe<unknown[]>();
+expectTypeOf<ExcludeExactly<any, string>>().toBe<any>();
+expectTypeOf<ExcludeExactly<[any], [number]>>().toBe<[any]>();
+expectTypeOf<ExcludeExactly<any[], number[]>>().toBe<any[]>();
+expectTypeOf<ExcludeExactly<{a: any}, {a: number}>>().toBe<{a: any}>();
+expectTypeOf<ExcludeExactly<number[] | any[], number[]>>().toBe<any[]>();
 
 // Excluding `unknown`/`any`
-expectType<never>({} as ExcludeExactly<unknown, unknown>);
-expectType<never>({} as ExcludeExactly<any, any>);
-expectType<unknown>({} as ExcludeExactly<unknown, any>);
-expectType<any>({} as ExcludeExactly<any, unknown>);
-expectType<string | number>({} as ExcludeExactly<string | number, unknown>);
-expectType<string | number>({} as ExcludeExactly<string | number, any>);
-expectType<never>({} as ExcludeExactly<never, any>);
-expectType<never>({} as ExcludeExactly<never, unknown>);
+expectTypeOf<ExcludeExactly<unknown, unknown>>().toBe<never>();
+expectTypeOf<ExcludeExactly<any, any>>().toBe<never>();
+expectTypeOf<ExcludeExactly<unknown, any>>().toBe<unknown>();
+expectTypeOf<ExcludeExactly<any, unknown>>().toBe<any>();
+expectTypeOf<ExcludeExactly<string | number, unknown>>().toBe<string | number>();
+expectTypeOf<ExcludeExactly<string | number, any>>().toBe<string | number>();
+expectTypeOf<ExcludeExactly<never, any>>().toBe<never>();
+expectTypeOf<ExcludeExactly<never, unknown>>().toBe<never>();
 
 // Unions
-expectType<2>({} as ExcludeExactly<0 | 1 | 2, 0 | 1>);
-expectType<never>({} as ExcludeExactly<0 | 1 | 2, 0 | 1 | 2>);
-expectType<2 | null>({} as ExcludeExactly<'1' | 2 | true | null, '1' | boolean | undefined>);
-expectType<'' | null | false>({} as ExcludeExactly<0 | '' | null | undefined | false, 0 | string | undefined>);
-expectType<{readonly a?: 0}>({} as ExcludeExactly<
+expectTypeOf<ExcludeExactly<0 | 1 | 2, 0 | 1>>().toBe<2>();
+expectTypeOf<ExcludeExactly<0 | 1 | 2, 0 | 1 | 2>>().toBe<never>();
+expectTypeOf<ExcludeExactly<'1' | 2 | true | null, '1' | boolean | undefined>>().toBe<2 | null>();
+expectTypeOf<ExcludeExactly<0 | '' | null | undefined | false, 0 | string | undefined>>().toBe<'' | null | false>();
+expectTypeOf<ExcludeExactly<
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
 	{a: 0} | {readonly a: 0} | {a?: 0}
->);
-expectType<never>({} as ExcludeExactly<
+>>().toBe<{readonly a?: 0}>();
+expectTypeOf<ExcludeExactly<
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}
->);
+>>().toBe<never>();

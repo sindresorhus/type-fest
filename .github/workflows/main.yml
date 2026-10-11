@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         script:
-          - tsd
+          - nz
           - xo
           - linter
     steps:
@@ -44,5 +44,5 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm install typescript@${{ matrix.typescript-version }} --legacy-peer-deps
-      - run: NODE_OPTIONS="--max-old-space-size=6144" npx tsc
-      - run: npm run test:minimum-lib
+      - run: NODE_OPTIONS="--max-old-space-size=6144" node node_modules/typescript/bin/tsc
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.minimum-lib.json

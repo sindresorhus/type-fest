@@ -1,26 +1,26 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsArrayReadonly} from '../../source/internal/index.d.ts';
 
 // Non-readonly arrays
-expectType<IsArrayReadonly<[]>>(false);
-expectType<IsArrayReadonly<number[]>>(false);
-expectType<IsArrayReadonly<[string, number?, ...string[]]>>(false);
-expectType<IsArrayReadonly<[x: number, y: number, z?: number]>>(false);
-expectType<IsArrayReadonly<[...string[], number, string]>>(false);
+expectTypeOf<IsArrayReadonly<[]>>().toBe<false>();
+expectTypeOf<IsArrayReadonly<number[]>>().toBe<false>();
+expectTypeOf<IsArrayReadonly<[string, number?, ...string[]]>>().toBe<false>();
+expectTypeOf<IsArrayReadonly<[x: number, y: number, z?: number]>>().toBe<false>();
+expectTypeOf<IsArrayReadonly<[...string[], number, string]>>().toBe<false>();
 
 // Readonly arrays
-expectType<IsArrayReadonly<readonly []>>(true);
-expectType<IsArrayReadonly<readonly number[]>>(true);
-expectType<IsArrayReadonly<readonly [string, number?, ...string[]]>>(true);
-expectType<IsArrayReadonly<readonly [x: number, y: number, z?: number]>>(true);
-expectType<IsArrayReadonly<readonly [...string[], number, string]>>(true);
+expectTypeOf<IsArrayReadonly<readonly []>>().toBe<true>();
+expectTypeOf<IsArrayReadonly<readonly number[]>>().toBe<true>();
+expectTypeOf<IsArrayReadonly<readonly [string, number?, ...string[]]>>().toBe<true>();
+expectTypeOf<IsArrayReadonly<readonly [x: number, y: number, z?: number]>>().toBe<true>();
+expectTypeOf<IsArrayReadonly<readonly [...string[], number, string]>>().toBe<true>();
 
 // Union
-expectType<IsArrayReadonly<[] | readonly []>>({} as boolean);
-expectType<IsArrayReadonly<[string, number] | readonly [string, number, ...string[]]>>({} as boolean);
-expectType<IsArrayReadonly<[] | [string, number]>>(false);
-expectType<IsArrayReadonly<readonly [] | readonly [string, number]>>(true);
+expectTypeOf<boolean>().toBe<IsArrayReadonly<[] | readonly []>>();
+expectTypeOf<boolean>().toBe<IsArrayReadonly<[string, number] | readonly [string, number, ...string[]]>>();
+expectTypeOf<IsArrayReadonly<[] | [string, number]>>().toBe<false>();
+expectTypeOf<IsArrayReadonly<readonly [] | readonly [string, number]>>().toBe<true>();
 
 // Boundary types
-expectType<IsArrayReadonly<any>>({} as boolean);
-expectType<IsArrayReadonly<never>>(false);
+expectTypeOf<boolean>().toBe<IsArrayReadonly<any>>();
+expectTypeOf<IsArrayReadonly<never>>().toBe<false>();

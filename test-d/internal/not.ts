@@ -1,6 +1,6 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {Not} from '../../source/internal/index.d.ts';
 
-expectType<Not<true>>(false);
-expectType<Not<false>>(true);
-expectType<Not<boolean>>({} as boolean);
+expectTypeOf<Not<true>>().toBe<false>();
+expectTypeOf<Not<false>>().toBe<true>();
+expectTypeOf<boolean>().toBe<Not<boolean>>();

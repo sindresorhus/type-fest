@@ -1,35 +1,35 @@
-import {expectNotAssignable, expectType, expectAssignable} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ArrayValues} from '../index.d.ts';
 
 const values = ['a', 'b', 'c'] as const;
 type Values = ArrayValues<typeof values>;
 
 declare const test: 'a' | 'b' | 'c';
-expectType<Values>(test);
+expectTypeOf(test).toBe<Values>();
 
-expectAssignable<Values>('a');
-expectAssignable<Values>('b');
-expectAssignable<Values>('c');
+expectTypeOf<'a'>().toBeAssignableTo<Values>();
+expectTypeOf<'b'>().toBeAssignableTo<Values>();
+expectTypeOf<'c'>().toBeAssignableTo<Values>();
 
-expectNotAssignable<Values>('');
-expectNotAssignable<Values>(0);
+expectTypeOf<''>().not.toBeAssignableTo<Values>();
+expectTypeOf<0>().not.toBeAssignableTo<Values>();
 
 type TupleValues = ArrayValues<['1', 2, {c: true}]>;
 
 declare const testTuple: '1' | 2 | {c: true};
-expectType<TupleValues>(testTuple);
+expectTypeOf(testTuple).toBe<TupleValues>();
 
-expectAssignable<TupleValues>('1');
-expectAssignable<TupleValues>(2);
-expectAssignable<TupleValues>({c: true});
+expectTypeOf<'1'>().toBeAssignableTo<TupleValues>();
+expectTypeOf<2>().toBeAssignableTo<TupleValues>();
+({c: true}) satisfies TupleValues;
 
-expectNotAssignable<TupleValues>({});
-expectNotAssignable<TupleValues>(1);
-expectNotAssignable<TupleValues>('2');
+expectTypeOf<{}>().not.toBeAssignableTo<TupleValues>();
+expectTypeOf<1>().not.toBeAssignableTo<TupleValues>();
+expectTypeOf<'2'>().not.toBeAssignableTo<TupleValues>();
 
 type AnyStringValues = ArrayValues<string[]>;
-expectAssignable<AnyStringValues>('');
-expectAssignable<AnyStringValues>('123');
-expectNotAssignable<AnyStringValues>(123);
-expectNotAssignable<AnyStringValues>(undefined);
-expectNotAssignable<AnyStringValues>(null);
+expectTypeOf<''>().toBeAssignableTo<AnyStringValues>();
+expectTypeOf<'123'>().toBeAssignableTo<AnyStringValues>();
+expectTypeOf<123>().not.toBeAssignableTo<AnyStringValues>();
+expectTypeOf<undefined>().not.toBeAssignableTo<AnyStringValues>();
+expectTypeOf<null>().not.toBeAssignableTo<AnyStringValues>();

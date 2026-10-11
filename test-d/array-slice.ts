@@ -1,159 +1,157 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ArraySlice} from '../index.d.ts';
 
-expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);
-expectType<ArraySlice<[0, 1, 2] | [0, 1, 2, 3], 0>>({} as [0, 1, 2] | [0, 1, 2, 3]);
-expectType<ArraySlice<[0, 1, 2] | [3, 2, 1, 0], 0, 2>>({} as [0, 1] | [3, 2]);
-expectType<ArraySlice<[0, 1, 2, 3]>>([0, 1, 2, 3]);
-expectType<ArraySlice<[0, 1, 2, 3], 1>>([1, 2, 3]);
-expectType<ArraySlice<[0, 1, 2, 3], 1, 2>>([1]);
-expectType<ArraySlice<[0, 1, 2, 3], 1, -1>>([1, 2]);
-expectType<ArraySlice<[0, 1, 2, 3], -1, -1>>([]);
-expectType<ArraySlice<[0, 1, 2, 3], -2, -1>>([2]);
-expectType<ArraySlice<[0, 1, 2, 3], -100>>([0, 1, 2, 3]);
-expectType<ArraySlice<[0, 1, 2, 3], -100, 4>>([0, 1, 2, 3]);
-expectType<ArraySlice<[0, 1, 2, 3], -100, 3>>([0, 1, 2]);
-expectType<ArraySlice<[0, 1, 2, 3], -100, -1>>([0, 1, 2]);
-expectType<ArraySlice<[0, 1, 2, 3], 2, 1>>([]);
-expectType<ArraySlice<[0, 1, 2, 3], -10, 1>>([0]);
-expectType<ArraySlice<[0, 1, 2, 3], 0, -3>>([0]);
-expectType<ArraySlice<[0, 1, 2, 3], 0, -4>>([]);
-expectType<ArraySlice<[], -10, 1>>([]);
-expectType<ArraySlice<[]>>([]);
+expectTypeOf<ArraySlice<[0, 1, 2, 3]>>().toBe<[0, 1, 2, 3]>();
+expectTypeOf<[0, 1, 2] | [0, 1, 2, 3]>().toBe<ArraySlice<[0, 1, 2] | [0, 1, 2, 3], 0>>();
+expectTypeOf<[0, 1] | [3, 2]>().toBe<ArraySlice<[0, 1, 2] | [3, 2, 1, 0], 0, 2>>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3]>>().toBe<[0, 1, 2, 3]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], 1>>().toBe<[1, 2, 3]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], 1, 2>>().toBe<[1]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], 1, -1>>().toBe<[1, 2]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -1, -1>>().toBe<[]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -2, -1>>().toBe<[2]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -100>>().toBe<[0, 1, 2, 3]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -100, 4>>().toBe<[0, 1, 2, 3]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -100, 3>>().toBe<[0, 1, 2]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -100, -1>>().toBe<[0, 1, 2]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], 2, 1>>().toBe<[]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -10, 1>>().toBe<[0]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], 0, -3>>().toBe<[0]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], 0, -4>>().toBe<[]>();
+expectTypeOf<ArraySlice<[], -10, 1>>().toBe<[]>();
+expectTypeOf<ArraySlice<[]>>().toBe<[]>();
 
-expectType<ArraySlice<[...string[], 1, 2]>>([...(null! as string[]), 1, 2]);
-expectType<ArraySlice<[...string[], 1, 2], 0>>([...(null! as string[]), 1, 2]);
-expectType<ArraySlice<[...string[], 1, 2], 0, 2>>([null! as (string | 1 | 2), null! as (string | 1 | 2)]);
-expectType<ArraySlice<[...string[], 1, 2], 1, 4>>([null! as (string | 1 | 2), null! as (string | 1 | 2), null! as (string | 1 | 2)]);
+expectTypeOf<ArraySlice<[...string[], 1, 2]>>().toBe<[...string[], 1, 2]>();
+expectTypeOf<ArraySlice<[...string[], 1, 2], 0>>().toBe<[...string[], 1, 2]>();
+expectTypeOf<ArraySlice<[...string[], 1, 2], 0, 2>>().toBe<[string | 1 | 2, string | 1 | 2]>();
+expectTypeOf<ArraySlice<[...string[], 1, 2], 1, 4>>().toBe<[string | 1 | 2, string | 1 | 2, string | 1 | 2]>();
 
-expectType<ArraySlice<[1, 2, 3, ...string[]]>>([1, 2, 3, ...(null! as string[])]);
-expectType<ArraySlice<[1, 2, 3, ...string[]], 0>>([1, 2, 3, ...(null! as string[])]);
-expectType<ArraySlice<[1, 2, 3, ...string[]], 0, 3>>([1, 2, 3]);
-expectType<ArraySlice<[1, 2, 3, ...string[]], 1, 5>>([2, 3, null! as string, null! as string]);
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[]]>>().toBe<[1, 2, 3, ...string[]]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[]], 0>>().toBe<[1, 2, 3, ...string[]]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[]], 0, 3>>().toBe<[1, 2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[]], 1, 5>>().toBe<[2, 3, string, string]>();
 
-expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5]>>([1, 2, 3, ...(null! as string[]), 4, 5]);
-expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 0>>([1, 2, 3, ...(null! as string[]), 4, 5]);
-expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 1, 5>>([2, 3, null! as (string | 4 | 5), null! as (string | 4 | 5)]);
-expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 0>>([1, 2, 3, ...(null! as string[]), 4, 5]);
-expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 1>>([2, 3, ...(null! as string[]), 4, 5]);
-expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 3>>([...(null! as string[]), 4, 5]);
-expectType<ArraySlice<[1, 2, 3, ...string[], 4, 5], 10>>([...(null! as string[]), 4, 5]);
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[], 4, 5]>>().toBe<[1, 2, 3, ...string[], 4, 5]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[], 4, 5], 0>>().toBe<[1, 2, 3, ...string[], 4, 5]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[], 4, 5], 1, 5>>().toBe<[2, 3, string | 4 | 5, string | 4 | 5]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[], 4, 5], 0>>().toBe<[1, 2, 3, ...string[], 4, 5]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[], 4, 5], 1>>().toBe<[2, 3, ...string[], 4, 5]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[], 4, 5], 3>>().toBe<[...string[], 4, 5]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[], 4, 5], 10>>().toBe<[...string[], 4, 5]>();
 
 // Unions
 // Array is union
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 0>>({} as [0, 1, 2] | ['a', 'b', 'c', 'd']); // Positive start, no end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -2>>({} as [1, 2] | ['c', 'd']); // Negative start, no end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 0, 2>>({} as [0, 1] | ['a', 'b']); // Positive start, positive end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -2, -1>>({} as [1] | ['c']); // Negative start, negative end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -3, 2>>({} as [0, 1] | ['b']); // Negative start, positive end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1, -1>>({} as [1] | ['b', 'c']); // Positive start, negative end
+expectTypeOf<[0, 1, 2] | ['a', 'b', 'c', 'd']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 0>>(); // Positive start, no end
+expectTypeOf<[1, 2] | ['c', 'd']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -2>>(); // Negative start, no end
+expectTypeOf<[0, 1] | ['a', 'b']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 0, 2>>(); // Positive start, positive end
+expectTypeOf<[1] | ['c']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -2, -1>>(); // Negative start, negative end
+expectTypeOf<[0, 1] | ['b']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -3, 2>>(); // Negative start, positive end
+expectTypeOf<[1] | ['b', 'c']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1, -1>>(); // Positive start, negative end
 
 // Start is union
-expectType<ArraySlice<[0, 1, 2, 3], 1 | -2>>({} as [1, 2, 3] | [2, 3]); // Positive/Negative start, no end
-expectType<ArraySlice<[0, 1, 2, 3], 2 | -3, 3>>({} as [2] | [1, 2]); // Positive/Negative start, positive end
-expectType<ArraySlice<[0, 1, 2, 3], 0 | -2, -1>>({} as [2] | [0, 1, 2]); // Positive/Negative start, negative end
+expectTypeOf<[1, 2, 3] | [2, 3]>().toBe<ArraySlice<[0, 1, 2, 3], 1 | -2>>(); // Positive/Negative start, no end
+expectTypeOf<[2] | [1, 2]>().toBe<ArraySlice<[0, 1, 2, 3], 2 | -3, 3>>(); // Positive/Negative start, positive end
+expectTypeOf<[2] | [0, 1, 2]>().toBe<ArraySlice<[0, 1, 2, 3], 0 | -2, -1>>(); // Positive/Negative start, negative end
 
 // End is union
-expectType<ArraySlice<[0, 1, 2, 3], 0, 1 | -2>>({} as [0] | [0, 1]); // Positive start, positive/negative end
-expectType<ArraySlice<[0, 1, 2, 3], -2, 2 | -1>>({} as [] | [2]); // Negative start, positive/negative end
+expectTypeOf<[0] | [0, 1]>().toBe<ArraySlice<[0, 1, 2, 3], 0, 1 | -2>>(); // Positive start, positive/negative end
+expectTypeOf<[] | [2]>().toBe<ArraySlice<[0, 1, 2, 3], -2, 2 | -1>>(); // Negative start, positive/negative end
 
 // Array and start are unions
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1 | -1>>({} as [1, 2] | [2] | ['b', 'c', 'd'] | ['d']); // Positive/Negative start, no end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1 | -2, 2>>({} as [1] | ['b'] | []); // Positive/Negative start, positive end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 0 | -2, -1>>({} as [0, 1] | [1] | ['a', 'b', 'c'] | ['c']); // Positive/Negative start, negative end
+expectTypeOf<[1, 2] | [2] | ['b', 'c', 'd'] | ['d']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1 | -1>>(); // Positive/Negative start, no end
+expectTypeOf<[1] | ['b'] | []>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1 | -2, 2>>(); // Positive/Negative start, positive end
+expectTypeOf<[0, 1] | [1] | ['a', 'b', 'c'] | ['c']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 0 | -2, -1>>(); // Positive/Negative start, negative end
 
 // Array and end are unions
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 2, 3 | -1>>({} as [2] | [] | ['c']); // Positive start, positive/negative end
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -3, 3 | -2>>({} as [0, 1, 2] | [0] | ['b', 'c'] | ['b']); // Negative start, positive/negative end
+expectTypeOf<[2] | [] | ['c']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 2, 3 | -1>>(); // Positive start, positive/negative end
+expectTypeOf<[0, 1, 2] | [0] | ['b', 'c'] | ['b']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], -3, 3 | -2>>(); // Negative start, positive/negative end
 
 // Start and end are unions
-expectType<ArraySlice<[0, 1, 2, 3], -5 | 0 | 1, -2 | 0 | 3>>( // Positive/Negative start, positive/negative end
-	{} as [0, 1] | [0, 1, 2] | [] | [1] | [1, 2],
-);
+// Positive/Negative start, positive/negative end
+expectTypeOf<[0, 1] | [0, 1, 2] | [] | [1] | [1, 2]>().toBe<ArraySlice<[0, 1, 2, 3], -5 | 0 | 1, -2 | 0 | 3>>();
 
 // Array, start and end are unions
-expectType<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1 | -4, 4 | -1>>( // Positive/Negative start, positive/negative end
-	{} as [1] | [1, 2] | [0, 1] | [0, 1, 2] | ['a', 'b', 'c', 'd'] | ['a', 'b', 'c'] | ['b', 'c'] | ['b', 'c', 'd'],
-);
+// Positive/Negative start, positive/negative end
+expectTypeOf<[1] | [1, 2] | [0, 1] | [0, 1, 2] | ['a', 'b', 'c', 'd'] | ['a', 'b', 'c'] | ['b', 'c'] | ['b', 'c', 'd']>().toBe<ArraySlice<[0, 1, 2] | ['a', 'b', 'c', 'd'], 1 | -4, 4 | -1>>();
 
 // Optional elements (https://github.com/sindresorhus/type-fest/issues/1090)
 declare const withOptionalParameter: (a: number, b: string, isLast?: boolean) => void;
-expectType<[string, (boolean | undefined)?]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, 1>);
-expectType<[string, (boolean | undefined)?]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, -2>);
-expectType<[number, string, (boolean | undefined)?]>({} as ArraySlice<Parameters<typeof withOptionalParameter>>);
-expectType<[string]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, 1, 2>);
-expectType<[]>({} as ArraySlice<Parameters<typeof withOptionalParameter>, 3>);
-expectType<[string?, boolean?]>({} as ArraySlice<[number, string?, boolean?], 1>);
-expectType<[number?, string?]>({} as ArraySlice<[number?, string?], 0>);
-expectType<[string?]>({} as ArraySlice<[number, string?], -1>);
-expectType<[string?]>({} as ArraySlice<[number, string?], 1, 2>);
-expectType<readonly [string?, boolean?]>({} as ArraySlice<readonly [number, string?, boolean?], 1>);
+expectTypeOf<ArraySlice<Parameters<typeof withOptionalParameter>, 1>>().toBe<[string, (boolean | undefined)?]>();
+expectTypeOf<ArraySlice<Parameters<typeof withOptionalParameter>, -2>>().toBe<[string, (boolean | undefined)?]>();
+expectTypeOf<ArraySlice<Parameters<typeof withOptionalParameter>>>().toBe<[number, string, (boolean | undefined)?]>();
+expectTypeOf<ArraySlice<Parameters<typeof withOptionalParameter>, 1, 2>>().toBe<[string]>();
+expectTypeOf<ArraySlice<Parameters<typeof withOptionalParameter>, 3>>().toBe<[]>();
+expectTypeOf<ArraySlice<[number, string?, boolean?], 1>>().toBe<[string?, boolean?]>();
+expectTypeOf<ArraySlice<[number?, string?], 0>>().toBe<[number?, string?]>();
+expectTypeOf<ArraySlice<[number, string?], -1>>().toBe<[string?]>();
+expectTypeOf<ArraySlice<[number, string?], 1, 2>>().toBe<[string?]>();
+expectTypeOf<ArraySlice<readonly [number, string?, boolean?], 1>>().toBe<readonly [string?, boolean?]>();
 
 // A variable-length array can be shorter than the requested range, so the slice keeps an unknown length.
-expectType<number[]>({} as ArraySlice<number[], 0, -1>);
-expectType<number[]>({} as ArraySlice<number[], -2>);
-expectType<number[]>({} as ArraySlice<number[], 1, 3>);
-expectType<number[]>({} as ArraySlice<number[], 0, 2>);
-expectType<readonly number[]>({} as ArraySlice<readonly number[], 1, 3>);
-expectType<Array<number | string>>({} as ArraySlice<Array<number | string>, 1, 3>);
+expectTypeOf<ArraySlice<number[], 0, -1>>().toBe<number[]>();
+expectTypeOf<ArraySlice<number[], -2>>().toBe<number[]>();
+expectTypeOf<ArraySlice<number[], 1, 3>>().toBe<number[]>();
+expectTypeOf<ArraySlice<number[], 0, 2>>().toBe<number[]>();
+expectTypeOf<ArraySlice<readonly number[], 1, 3>>().toBe<readonly number[]>();
+expectTypeOf<ArraySlice<Array<number | string>, 1, 3>>().toBe<Array<number | string>>();
 
 // A `readonly` array keeps its `readonly` modifier no matter which branch produces the slice.
-expectType<readonly number[]>({} as ArraySlice<readonly number[]>);
-expectType<readonly number[]>({} as ArraySlice<readonly number[], 0>);
-expectType<readonly number[]>({} as ArraySlice<readonly number[], 2>);
-expectType<readonly number[]>({} as ArraySlice<readonly number[], -2>);
-expectType<number[]>({} as ArraySlice<number[]>);
-expectType<number[]>({} as ArraySlice<number[], 2>);
+expectTypeOf<ArraySlice<readonly number[]>>().toBe<readonly number[]>();
+expectTypeOf<ArraySlice<readonly number[], 0>>().toBe<readonly number[]>();
+expectTypeOf<ArraySlice<readonly number[], 2>>().toBe<readonly number[]>();
+expectTypeOf<ArraySlice<readonly number[], -2>>().toBe<readonly number[]>();
+expectTypeOf<ArraySlice<number[]>>().toBe<number[]>();
+expectTypeOf<ArraySlice<number[], 2>>().toBe<number[]>();
 
-expectType<readonly [1, 2, 3]>({} as ArraySlice<readonly [1, 2, 3]>);
-expectType<readonly [2, 3]>({} as ArraySlice<readonly [1, 2, 3], 1>);
-expectType<readonly [1, 2]>({} as ArraySlice<readonly [1, 2, 3], 0, 2>);
-expectType<readonly [3]>({} as ArraySlice<readonly [1, 2, 3], -1>);
-expectType<readonly []>({} as ArraySlice<readonly [1, 2, 3], 3>);
-expectType<readonly []>({} as ArraySlice<readonly [1, 2, 3], 1, 1>);
-expectType<readonly []>({} as ArraySlice<readonly [], 0>);
-expectType<readonly [2]>({} as ArraySlice<readonly [1, 2, 3, ...string[]], 1, 2>);
-expectType<[2]>({} as ArraySlice<[1, 2, 3, ...string[]], 1, 2>);
+expectTypeOf<ArraySlice<readonly [1, 2, 3]>>().toBe<readonly [1, 2, 3]>();
+expectTypeOf<ArraySlice<readonly [1, 2, 3], 1>>().toBe<readonly [2, 3]>();
+expectTypeOf<ArraySlice<readonly [1, 2, 3], 0, 2>>().toBe<readonly [1, 2]>();
+expectTypeOf<ArraySlice<readonly [1, 2, 3], -1>>().toBe<readonly [3]>();
+expectTypeOf<ArraySlice<readonly [1, 2, 3], 3>>().toBe<readonly []>();
+expectTypeOf<ArraySlice<readonly [1, 2, 3], 1, 1>>().toBe<readonly []>();
+expectTypeOf<ArraySlice<readonly [], 0>>().toBe<readonly []>();
+expectTypeOf<ArraySlice<readonly [1, 2, 3, ...string[]], 1, 2>>().toBe<readonly [2]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[]], 1, 2>>().toBe<[2]>();
 
 // An array with a statically known prefix still produces a fixed-length slice.
-expectType<[string | 1 | 2, string | 1 | 2]>({} as ArraySlice<[...string[], 1, 2], 0, 2>);
+expectTypeOf<ArraySlice<[...string[], 1, 2], 0, 2>>().toBe<[string | 1 | 2, string | 1 | 2]>();
 
 // A non-literal index can be any value, so the slice can start or end anywhere and its length is unknown.
-expectType<Array<0 | 1 | 2 | 3 | 4>>({} as ArraySlice<[0, 1, 2, 3, 4], number>);
-expectType<Array<0 | 1 | 2 | 3 | 4>>({} as ArraySlice<[0, 1, 2, 3, 4], number, 4>);
-expectType<ReadonlyArray<0 | 1 | 2 | 3 | 4>>({} as ArraySlice<readonly [0, 1, 2, 3, 4], number>);
+expectTypeOf<ArraySlice<[0, 1, 2, 3, 4], number>>().toBe<Array<0 | 1 | 2 | 3 | 4>>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3, 4], number, 4>>().toBe<Array<0 | 1 | 2 | 3 | 4>>();
+expectTypeOf<ArraySlice<readonly [0, 1, 2, 3, 4], number>>().toBe<ReadonlyArray<0 | 1 | 2 | 3 | 4>>();
 
 // A negative `End` is resolved against the longest length a tuple with optional elements can have, so the result is that longest-case slice. See the known limitation in the docs.
 declare const optionalTailNegativeEnd: ArraySlice<[1, 2?], 0, -1>;
-expectType<[1]>(optionalTailNegativeEnd);
+expectTypeOf(optionalTailNegativeEnd).toBe<[1]>();
 
 declare const allOptionalNegativeEnd: ArraySlice<[1?, 2?], 0, -1>;
-expectType<[1?]>(allOptionalNegativeEnd);
+expectTypeOf(allOptionalNegativeEnd).toBe<[1?]>();
 
 // A fractional index truncates toward zero at runtime, but the range is resolved through the tuple helpers, which have no answer for a decimal, so the whole slice comes out as `never`. The runtime answers `[1, 2, 3].slice(1.5)` with `[2, 3]` and `[1, 2, 3, 4].slice(0, 2.5)` with `[1, 2]`. Round the index before passing it, or use `StringSlice` for a string.
-expectType<never>({} as ArraySlice<[1, 2, 3], 1.5>);
-expectType<never>({} as ArraySlice<[1, 2, 3, 4], 0, 2.5>);
+expectTypeOf<ArraySlice<[1, 2, 3], 1.5>>().toBe<never>();
+expectTypeOf<ArraySlice<[1, 2, 3, 4], 0, 2.5>>().toBe<never>();
 
 // Empty ranges remain empty even when the source length is unknown.
-expectType<[]>({} as ArraySlice<string[], 2, 1>);
-expectType<readonly []>({} as ArraySlice<readonly [1, ...string[]], 2, 2>);
-expectType<[]>({} as ArraySlice<string[], 0, 0>);
+expectTypeOf<ArraySlice<string[], 2, 1>>().toBe<[]>();
+expectTypeOf<ArraySlice<readonly [1, ...string[]], 2, 2>>().toBe<readonly []>();
+expectTypeOf<ArraySlice<string[], 0, 0>>().toBe<[]>();
 
 // An omitted start still defaults to zero when an end is supplied.
-expectType<[1, 2]>({} as ArraySlice<[1, 2, ...string[]], never, 2>);
+expectTypeOf<ArraySlice<[1, 2, ...string[]], never, 2>>().toBe<[1, 2]>();
 
 // An index of `1e21` or more is printed in exponential notation, and is still clamped to the length.
 declare const exponentEnd: ArraySlice<[1, 2, 3], 1, 1e21>;
-expectType<[2, 3]>(exponentEnd);
+expectTypeOf(exponentEnd).toBe<[2, 3]>();
 
 declare const exponentEndFromStart: ArraySlice<[1, 2, 3], 0, 1e21>;
-expectType<[1, 2, 3]>(exponentEndFromStart);
+expectTypeOf(exponentEndFromStart).toBe<[1, 2, 3]>();
 
 declare const exponentStart: ArraySlice<[1, 2, 3], 1e21>;
-expectType<[]>(exponentStart);
+expectTypeOf(exponentStart).toBe<[]>();
 
 declare const negativeExponentStart: ArraySlice<[1, 2, 3], -1e21>;
-expectType<[1, 2, 3]>(negativeExponentStart);
+expectTypeOf(negativeExponentStart).toBe<[1, 2, 3]>();
 
 declare const negativeExponentEnd: ArraySlice<[1, 2, 3], 0, -1e21>;
-expectType<[]>(negativeExponentEnd);
+expectTypeOf(negativeExponentEnd).toBe<[]>();

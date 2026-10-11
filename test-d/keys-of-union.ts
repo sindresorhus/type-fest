@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {KeysOfUnion, UnknownRecord} from '../index.d.ts';
 
 // When passing types that are not unions, it behaves exactly as the `keyof` operator.
@@ -15,7 +15,7 @@ type Expected1 = keyof Example1;
 
 declare const actual1: KeysOfUnion<Example1>;
 
-expectType<Expected1>(actual1);
+expectTypeOf(actual1).toBe<Expected1>();
 
 // When passing a type that is a union, it returns a union of all keys of all union members.
 
@@ -34,11 +34,11 @@ type Expected2 = 'common' | 'a' | 'b' | 'c';
 
 declare const actual2: KeysOfUnion<Example2>;
 
-expectType<Expected2>(actual2);
+expectTypeOf(actual2).toBe<Expected2>();
 
 // With property modifiers
 declare const actual3: KeysOfUnion<{a?: string; readonly b: number} | {a: number; b: string}>;
-expectType<'a' | 'b'>(actual3);
+expectTypeOf(actual3).toBe<'a' | 'b'>();
 
 // `KeysOfUnion<T>` should NOT be assignable to `keyof T`
 type Assignability1<T, _K extends keyof T> = unknown;

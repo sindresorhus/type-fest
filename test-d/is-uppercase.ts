@@ -1,69 +1,69 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {IsUppercase} from '../index.d.ts';
 
 // Literals
-expectType<IsUppercase<'ABC'>>(true);
-expectType<IsUppercase<''>>(true);
-expectType<IsUppercase<'123'>>(true);
-expectType<IsUppercase<'!@#'>>(true);
+expectTypeOf<IsUppercase<'ABC'>>().toBe<true>();
+expectTypeOf<IsUppercase<''>>().toBe<true>();
+expectTypeOf<IsUppercase<'123'>>().toBe<true>();
+expectTypeOf<IsUppercase<'!@#'>>().toBe<true>();
 
-expectType<IsUppercase<'Abc'>>(false);
-expectType<IsUppercase<'abc'>>(false);
+expectTypeOf<IsUppercase<'Abc'>>().toBe<false>();
+expectTypeOf<IsUppercase<'abc'>>().toBe<false>();
 
 // Non-literals
-expectType<IsUppercase<Uppercase<string>>>(true);
-expectType<IsUppercase<Uppercase<`on${string}`>>>(true);
+expectTypeOf<IsUppercase<Uppercase<string>>>().toBe<true>();
+expectTypeOf<IsUppercase<Uppercase<`on${string}`>>>().toBe<true>();
 
-expectType<IsUppercase<Lowercase<string>>>(false);
-expectType<IsUppercase<Uncapitalize<`ON${string}`>>>(false);
-expectType<IsUppercase<`ON${Uncapitalize<string>}`>>(false);
-expectType<IsUppercase<Uncapitalize<`${string}END`>>>(false);
+expectTypeOf<IsUppercase<Lowercase<string>>>().toBe<false>();
+expectTypeOf<IsUppercase<Uncapitalize<`ON${string}`>>>().toBe<false>();
+expectTypeOf<IsUppercase<`ON${Uncapitalize<string>}`>>().toBe<false>();
+expectTypeOf<IsUppercase<Uncapitalize<`${string}END`>>>().toBe<false>();
 
-expectType<IsUppercase<string>>({} as boolean);
-expectType<IsUppercase<`ON${string}`>>({} as boolean);
-expectType<IsUppercase<Capitalize<string>>>({} as boolean);
-expectType<IsUppercase<Capitalize<`ON${string}`>>>({} as boolean);
-expectType<IsUppercase<`ON${Capitalize<string>}`>>({} as boolean);
-expectType<IsUppercase<`${number}`>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsUppercase<string>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`ON${string}`>>();
+expectTypeOf<boolean>().toBe<IsUppercase<Capitalize<string>>>();
+expectTypeOf<boolean>().toBe<IsUppercase<Capitalize<`ON${string}`>>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`ON${Capitalize<string>}`>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`${number}`>>();
 
-expectType<IsUppercase<`sTART${string}`>>(false);
-expectType<IsUppercase<`${string}eND`>>(false);
-expectType<IsUppercase<`${string}mID${string}`>>(false);
+expectTypeOf<IsUppercase<`sTART${string}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${string}eND`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${string}mID${string}`>>().toBe<false>();
 
 // Complex non-literals
-expectType<IsUppercase<`${Uppercase<string>}${Uppercase<string>}`>>(true);
+expectTypeOf<IsUppercase<`${Uppercase<string>}${Uppercase<string>}`>>().toBe<true>();
 
-expectType<IsUppercase<`${Lowercase<string>}${Uppercase<string>}`>>(false);
-expectType<IsUppercase<`${Uppercase<string>}${Lowercase<string>}`>>(false);
-expectType<IsUppercase<`${Uppercase<string>}${Lowercase<string>}${Uppercase<string>}`>>(false);
-expectType<IsUppercase<`${Uncapitalize<string>}${Uppercase<string>}`>>(false);
-expectType<IsUppercase<`${Uppercase<string>}${Uncapitalize<string>}`>>(false);
-expectType<IsUppercase<`${string}${Uncapitalize<string>}`>>(false);
-expectType<IsUppercase<`${number}${Uncapitalize<string>}`>>(false);
+expectTypeOf<IsUppercase<`${Lowercase<string>}${Uppercase<string>}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${Uppercase<string>}${Lowercase<string>}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${Uppercase<string>}${Lowercase<string>}${Uppercase<string>}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${Uncapitalize<string>}${Uppercase<string>}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${Uppercase<string>}${Uncapitalize<string>}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${string}${Uncapitalize<string>}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${number}${Uncapitalize<string>}`>>().toBe<false>();
 
-expectType<IsUppercase<`${string}${Uppercase<string>}`>>({} as boolean);
-expectType<IsUppercase<`${string}${string}`>>({} as boolean);
-expectType<IsUppercase<`${Uppercase<string>}${Uppercase<string>}${string}`>>({} as boolean);
-expectType<IsUppercase<`${string}${Capitalize<string>}`>>({} as boolean);
-expectType<IsUppercase<`${number}/${number}`>>({} as boolean);
-expectType<IsUppercase<`${string}${number}`>>({} as boolean);
+expectTypeOf<boolean>().toBe<IsUppercase<`${string}${Uppercase<string>}`>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`${string}${string}`>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`${Uppercase<string>}${Uppercase<string>}${string}`>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`${string}${Capitalize<string>}`>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`${number}/${number}`>>();
+expectTypeOf<boolean>().toBe<IsUppercase<`${string}${number}`>>();
 
 // Unions
-expectType<IsUppercase<'ABC' | 'XYZ'>>(true); // Both `true`
-expectType<IsUppercase<'ABc' | 'XyZ'>>(false); // Both `false`
-expectType<IsUppercase<'ABC' | 'aBC'>>({} as boolean); // One `true`, one `false`
-expectType<IsUppercase<'ABC' | `${Capitalize<string>}END`>>({} as boolean); // One `true`, one `boolean`
-expectType<IsUppercase<'XyZ' | `ABC${string}`>>({} as boolean); // One `false`, one `boolean`
+expectTypeOf<IsUppercase<'ABC' | 'XYZ'>>().toBe<true>(); // Both `true`
+expectTypeOf<IsUppercase<'ABc' | 'XyZ'>>().toBe<false>(); // Both `false`
+expectTypeOf<boolean>().toBe<IsUppercase<'ABC' | 'aBC'>>(); // One `true`, one `false`
+expectTypeOf<boolean>().toBe<IsUppercase<'ABC' | `${Capitalize<string>}END`>>(); // One `true`, one `boolean`
+expectTypeOf<boolean>().toBe<IsUppercase<'XyZ' | `ABC${string}`>>(); // One `false`, one `boolean`
 
 // A character with no case is not changed by uppercasing either, so it counts as uppercase, the same as it counts as lowercase in the sibling type.
-expectType<IsUppercase<'A1_B'>>(true);
-expectType<IsUppercase<'a1_b'>>(false);
-expectType<IsUppercase<'123'>>(true);
-expectType<IsUppercase<'_-.'>>(true);
+expectTypeOf<IsUppercase<'A1_B'>>().toBe<true>();
+expectTypeOf<IsUppercase<'a1_b'>>().toBe<false>();
+expectTypeOf<IsUppercase<'123'>>().toBe<true>();
+expectTypeOf<IsUppercase<'_-.'>>().toBe<true>();
 
 // A character that uppercasing changes is not uppercase, even though none of the lowercase-shaped patterns name it: a titlecase digraph such as `ǅ` uppercases to `Ǆ`, so it answers `false` rather than the undecided `boolean`.
-expectType<IsUppercase<'ǅ'>>(false);
-expectType<IsUppercase<'ǈ'>>(false);
-expectType<IsUppercase<'ǋ'>>(false);
-expectType<IsUppercase<'ǲ'>>(false);
-expectType<IsUppercase<'ᾈ'>>(false);
+expectTypeOf<IsUppercase<'ǅ'>>().toBe<false>();
+expectTypeOf<IsUppercase<'ǈ'>>().toBe<false>();
+expectTypeOf<IsUppercase<'ǋ'>>().toBe<false>();
+expectTypeOf<IsUppercase<'ǲ'>>().toBe<false>();
+expectTypeOf<IsUppercase<'ᾈ'>>().toBe<false>();
