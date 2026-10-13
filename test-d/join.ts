@@ -95,3 +95,41 @@ expectTypeOf<'tailsuffix'>().not.toBeAssignableTo<Join<[...string[], 'suffix'], 
 // Required elements still introduce a separator even when their string value is empty.
 expectTypeOf<Join<['prefix', ...string[], null], '.'>>().toBe<'prefix.' | `prefix.${string}.`>();
 expectTypeOf<Join<['a', ...string[], 'b', 'c'], '.'>>().toBe<'a.b.c' | `a.${string}.b.c`>();
+
+// The separator is selected once for the whole join, not independently between each pair.
+expectTypeOf<Join<[1, 2, 3], '.' | '-'>>().toBe<'1.2.3' | '1-2-3'>();
+expectTypeOf<'1.2-3'>().not.toBeAssignableTo<Join<[1, 2, 3], '.' | '-'>>();
+expectTypeOf<'1-2.3'>().not.toBeAssignableTo<Join<[1, 2, 3], '.' | '-'>>();
+// @ts-expect-error
+const mixedDelimiter: Join<[1, 2, 3], '.' | '-'> = '1.2-3';
+
+expectTypeOf<Join<readonly [1, 2, 3, 4], '.' | '-'>>().toBe<'1.2.3.4' | '1-2-3-4'>();
+expectTypeOf<'1.2.3-4'>().not.toBeAssignableTo<Join<[1, 2, 3, 4], '.' | '-'>>();
+expectTypeOf<'1-2.3-4'>().not.toBeAssignableTo<Join<[1, 2, 3, 4], '.' | '-'>>();
+expectTypeOf<Join<['a', 'b', 'c'], '' | ':' | '--'>>().toBe<'abc' | 'a:b:c' | 'a--b--c'>();
+expectTypeOf<Join<[null, undefined, 1], '.' | '-'>>().toBe<'..1' | '--1'>();
+expectTypeOf<Join<[true, 2n, 'end'], '.' | '-'>>().toBe<'true.2.end' | 'true-2-end'>();
+
+// Element and input unions remain independent of the delimiter selection.
+expectTypeOf<Join<[1 | 2, 3, 4], '.' | '-'>>().toBe<'1.3.4' | '2.3.4' | '1-3-4' | '2-3-4'>();
+expectTypeOf<Join<[1, 2, 3] | ['a', 'b', 'c'], '.' | '-'>>().toBe<'1.2.3' | '1-2-3' | 'a.b.c' | 'a-b-c'>();
+expectTypeOf<Join<[] | ['a'] | [1, 2, 3], '.' | '-'>>().toBe<'' | 'a' | '1.2.3' | '1-2-3'>();
+expectTypeOf<Join<[], '.' | '-'>>().toBe<''>();
+expectTypeOf<Join<readonly ['a'], '.' | '-'>>().toBe<'a'>();
+expectTypeOf<Join<readonly [null?], '.' | '-'>>().toBe<''>();
+
+// A rest element may be empty; fixed separators on either side still use one delimiter.
+expectTypeOf<Join<['a', 'b', ...string[]], '.' | '-'>>().toBe<'a.b' | 'a-b' | `a.b.${string}` | `a-b-${string}`>();
+expectTypeOf<Join<[...string[], 'a', 'b'], '.' | '-'>>().toBe<'a.b' | 'a-b' | `${string}.a.b` | `${string}-a-b`>();
+expectTypeOf<Join<['a', ...string[], 'b', 'c'], '.' | '-'>>().toBe<'a.b.c' | 'a-b-c' | `a.${string}.b.c` | `a-${string}-b-c`>();
+expectTypeOf<'a.b-c'>().not.toBeAssignableTo<Join<['a', ...string[], 'b', 'c'], '.' | '-'>>();
+
+// Broad delimiters and array inputs retain their existing approximation.
+expectTypeOf<Join<[1, 2, 3], string>>().toBe<`1${string}2${string}3`>();
+expectTypeOf<Join<string[], '.' | '-'>>().toBe<string>();
+expectTypeOf<Join<['prefix', ...string[]], string>>().toBeAssignableTo<`prefix${string}`>();
+expectTypeOf<'prefix'>().toBeAssignableTo<Join<['prefix', ...string[]], string>>();
+expectTypeOf<Join<never, '.' | '-'>>().toBe<never>();
+expectTypeOf<Join<[1, 2, 3], never>>().toBe<never>();
+expectTypeOf<Join<[], never>>().toBe<never>();
+expectTypeOf<Join<['a'], never>>().toBe<never>();

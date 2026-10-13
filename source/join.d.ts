@@ -60,6 +60,14 @@ const path9 = ['hello', 'world'].join('.') as Join<['hello' | undefined, 'world'
 export type Join<
 	Items extends readonly JoinableItem[],
 	Delimiter extends string,
+> = Delimiter extends unknown
+	// Select one delimiter for the whole recursion, so a union cannot mix separators in the result.
+	? JoinHelper<Items, Delimiter>
+	: never;
+
+type JoinHelper<
+	Items extends readonly JoinableItem[],
+	Delimiter extends string,
 > = Items extends readonly []
 	? ''
 	: Items extends readonly [JoinableItem?]
@@ -69,12 +77,12 @@ export type Join<
 			...infer Tail extends readonly JoinableItem[],
 		]
 			// A rest element can contain no items, in which case there is no separator after the first item.
-			? `${NullishCoalesce<First, ''>}${Delimiter}${Join<Tail, Delimiter>}` | ([] extends Tail ? `${NullishCoalesce<First, ''>}` : never)
+			? `${NullishCoalesce<First, ''>}${Delimiter}${JoinHelper<Tail, Delimiter>}` | ([] extends Tail ? `${NullishCoalesce<First, ''>}` : never)
 			: Items extends readonly [
 				...infer Head extends readonly JoinableItem[],
 				infer Last extends JoinableItem,
 			]
-				? `${Join<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}` | ([] extends Head ? `${NullishCoalesce<Last, ''>}` : never)
+				? `${JoinHelper<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}` | ([] extends Head ? `${NullishCoalesce<Last, ''>}` : never)
 				: string;
 
 export {};
