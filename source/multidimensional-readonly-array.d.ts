@@ -1,10 +1,12 @@
 import type {Subtract} from './subtract.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 
-type Recursive<T> = ReadonlyArray<Recursive<T>>;
+type Recursive<T> = ReadonlyArray<T | Recursive<T>>;
 
 /**
 Create a type that represents a multidimensional readonly array of the given type and dimension.
+
+A dimension of `0` produces the element type. With `number` as the dimension, the result is an array whose elements can appear at any nesting depth.
 
 Use-cases:
 - Return a n-dimensional array from functions.
