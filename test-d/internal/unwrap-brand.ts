@@ -81,3 +81,39 @@ expectTypeOf<UnwrapBrand<
 // Edge cases
 expectTypeOf<UnwrapBrand<any>>().toBe<any>();
 expectTypeOf<UnwrapBrand<never>>().toBe<never>();
+
+// Repeated tags must not prevent recovering the primitive base type.
+expectTypeOf<UnwrapBrand<Tagged<Tagged<'ab', 'Text'>, 'Validated'>>>().toBe<'ab'>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<number, 'Value'>, 'Validated'>>>().toBe<number>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<100n, 'Value'>, 'Validated'>>>().toBe<100n>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<typeof symbolLiteral, 'Value'>, 'Validated'>>>().toBe<typeof symbolLiteral>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<true, 'Value'>, 'Validated'>>>().toBe<true>();
+
+// Library tags can be combined with another primitive brand.
+expectTypeOf<UnwrapBrand<Tagged<Tagged<'ab' & Brand, 'Text'>, 'Validated'>>>().toBe<'ab'>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<'ab', 'Text'>, 'Validated'> & Brand>>().toBe<'ab'>();
+
+// Multi-key layers, metadata, and repeated tags all recover the same base.
+expectTypeOf<UnwrapBrand<Tagged<Tagged<'ab', 'Text', {encoding: 'utf8'}>, 'Validated' | 'Stored', Date>>>().toBe<'ab'>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<'ab', 'Text'>, 'Text'>>>().toBe<'ab'>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<string, 'Text'>, 'Validated'>>>().toBe<string>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<boolean, 'Flag'>, 'Validated'>>>().toBe<boolean>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<Uppercase<string>, 'Text'>, 'Validated'>>>().toBe<Uppercase<string>>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<`prefix${string}`, 'Text'>, 'Validated'>>>().toBe<`prefix${string}`>();
+
+// Unwrapping distributes over base unions and independently tagged union members.
+expectTypeOf<UnwrapBrand<Tagged<Tagged<'ab' | 1 | 100n | typeof symbolLiteral | true, 'Value'>, 'Validated'>>>().toBe<'ab' | 1 | 100n | typeof symbolLiteral | true>();
+expectTypeOf<UnwrapBrand<Tagged<Tagged<'ab', 'Text'>, 'Validated'> | Tagged<Tagged<1, 'Number'>, 'Stored'> | undefined>>().toBe<'ab' | 1 | undefined>();
+expectTypeOf<UnwrapBrand<Opaque<Tagged<'ab', 'Text'>, {Validated: true}>>>().toBe<'ab'>();
+expectTypeOf<UnwrapBrand<Tagged<Opaque<'ab', {Text: true}>, 'Validated'>>>().toBe<'ab'>();
+
+// Only primitive brands are removed; structured values keep their original tags.
+type TaggedObject = Tagged<Tagged<{readonly value: string; optional?: number}, 'Value'>, 'Validated'>;
+type TaggedFunction = Tagged<Tagged<() => string, 'Value'>, 'Validated'>;
+expectTypeOf<UnwrapBrand<TaggedObject>>().toBe<TaggedObject>();
+expectTypeOf<UnwrapBrand<TaggedFunction>>().toBe<TaggedFunction>();
+expectTypeOf<UnwrapBrand<unknown>>().toBe<unknown>();
+
+// A value can pass through many independently tagged stages.
+type ManyTags = Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<Tagged<'ab', 'A'>, 'B'>, 'C'>, 'D'>, 'E'>, 'F'>, 'G'>, 'H'>, 'I'>, 'J'>, 'K'>, 'L'>;
+expectTypeOf<UnwrapBrand<ManyTags>>().toBe<'ab'>();

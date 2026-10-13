@@ -132,3 +132,8 @@ expectTypeOf<boolean>().toBe<IsLiteral<'foo' | 1 | false | (string & {})>>();
 expectTypeOf<boolean>().toBe<IsLiteral<LiteralUnion<'foo' | 1 | false, string>>>();
 expectTypeOf<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', number>, 'Tag'>>>();
+
+// Stacked tags do not turn widened primitive types into literals.
+expectTypeOf<IsLiteral<Tagged<Tagged<'foo' | 1 | false | typeof symbolLiteral, 'Value'>, 'Validated'>>>().toBe<true>();
+expectTypeOf<IsLiteral<Tagged<Tagged<string | number | bigint | symbol | boolean, 'Value'>, 'Validated'>>>().toBe<false>();
+expectTypeOf<IsLiteral<Tagged<Tagged<'foo' | number, 'Value'>, 'Validated'>>>().toBe<boolean>();

@@ -92,3 +92,7 @@ expectTypeOf<boolean>().toBe<IsBooleanLiteral<true | 1 | 2 | (number & {})>>();
 expectTypeOf<boolean>().toBe<IsBooleanLiteral<LiteralUnion<1 | 2 | false, number>>>();
 expectTypeOf<IsBooleanLiteral<LiteralUnion<'foo' | 'bar', string>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsBooleanLiteral<Tagged<LiteralUnion<false | 'a' | 'b', string>, 'Tag'>>>();
+
+// Repeated tags preserve the distinction between literal and widened booleans.
+expectTypeOf<IsBooleanLiteral<Tagged<Tagged<true, 'Flag'>, 'Validated'>>>().toBe<true>();
+expectTypeOf<IsBooleanLiteral<Tagged<Tagged<boolean, 'Flag'>, 'Validated'>>>().toBe<false>();

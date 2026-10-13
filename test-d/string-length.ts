@@ -38,3 +38,9 @@ expectTypeOf<StringLength<Tagged<'', 'Text'>>>().toBe<0>();
 expectTypeOf<StringLength<Tagged<'a' | 'abc', 'Text'>>>().toBe<1 | 3>();
 expectTypeOf<StringLength<Tagged<string, 'Text'>>>().toBe<number>();
 expectTypeOf<StringLength<Tagged<`abc${string}`, 'Text'>>>().toBe<number>();
+
+// Repeated tags retain the length of their primitive string base.
+expectTypeOf<StringLength<Tagged<Tagged<'abc', 'Text'>, 'Validated'>>>().toBe<3>();
+expectTypeOf<StringLength<Tagged<Tagged<'', 'Text'>, 'Validated'>>>().toBe<0>();
+expectTypeOf<StringLength<Tagged<Tagged<'a' | 'abc', 'Text'>, 'Validated'>>>().toBe<1 | 3>();
+expectTypeOf<StringLength<Tagged<Tagged<string, 'Text'>, 'Validated'>>>().toBe<number>();

@@ -143,3 +143,7 @@ expectTypeOf<IsNumericLiteral<ConstNumericEnum.A>>().toBe<true>();
 expectTypeOf<IsNumericLiteral<NumericEnum>>().toBe<true>();
 expectTypeOf<IsNumericLiteral<NumericEnum.A | 1>>().toBe<true>();
 expectTypeOf<IsNumericLiteral<NumericEnum.A | number>>().toBe<false>();
+
+// Repeated tags preserve the distinction between literal and widened numbers.
+expectTypeOf<IsNumericLiteral<Tagged<Tagged<1 | 2n, 'Value'>, 'Validated'>>>().toBe<true>();
+expectTypeOf<IsNumericLiteral<Tagged<Tagged<number | bigint, 'Value'>, 'Validated'>>>().toBe<false>();

@@ -77,3 +77,10 @@ expectTypeOf<StringToArrayElementNonLiterals<Tagged<string, 'Text'>>>().toBe<[st
 expectTypeOf<StringToArray<Tagged<`ab${string}cd`, 'Text'>>>().toBe<['a', 'b', ...string[], 'c', 'd']>();
 expectTypeOf<StringToArrayElementNonLiterals<Tagged<`ab${string}cd`, 'Text'>>>().toBe<['a', 'b', string, 'c', 'd']>();
 expectTypeOf<StringToArray<Tagged<Uppercase<string>, 'Text'>>>().toBe<Array<Uppercase<string>>>();
+
+// Multiple tags describe the complete input, just like a single tag.
+type ValidatedText = Tagged<Tagged<'ab', 'Text'>, 'Validated'>;
+expectTypeOf<StringToArray<ValidatedText>>().toBe<['a', 'b']>();
+expectTypeOf<StringToArrayElementNonLiterals<ValidatedText>>().toBe<['a', 'b']>();
+expectTypeOf<StringToArray<Tagged<Tagged<string, 'Text'>, 'Validated'>>>().toBe<string[]>();
+expectTypeOf<StringToArray<Tagged<Tagged<`ab${string}cd`, 'Text'>, 'Validated'>>>().toBe<['a', 'b', ...string[], 'c', 'd']>();

@@ -8,6 +8,7 @@ import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {StringToNumber} from '../string-to-number.d.ts';
 import type {Primitive} from '../primitive.d.ts';
+import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
@@ -298,9 +299,12 @@ type D = UnwrapBrand<(1 | 200n | 'foo' | 'bar') & Brand>;
 export type UnwrapBrand<T> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitive>}>;
 
 type _UnwrapBrand<T, Base> = T extends Primitive
-	? T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
-		? U
-		: T
+	// Separate tag layers do not match a single object containing all brand properties.
+	? UnwrapBrandProperties<T extends TagContainer<unknown> ? UnwrapTagged<T> : T, Base>
+	: T;
+
+type UnwrapBrandProperties<T, Base> = T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
+	? U
 	: T;
 
 /**

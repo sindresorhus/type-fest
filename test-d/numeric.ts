@@ -12,6 +12,7 @@ import type {
 	NonNegative,
 	NonNegativeInteger,
 	PositiveInfinity,
+	Tagged,
 } from '../index.d.ts';
 
 // Finite
@@ -89,3 +90,7 @@ expectTypeOf(brandedNegative).toBe<true>();
 
 declare const brandedPositive: IsNegative<Opaque<5, 'A'>>;
 expectTypeOf(brandedPositive).toBe<false>();
+
+// Multiple tags do not change whether the primitive value is negative.
+expectTypeOf<IsNegative<Tagged<Tagged<-5, 'Value'>, 'Validated'>>>().toBe<true>();
+expectTypeOf<IsNegative<Tagged<Tagged<5, 'Value'>, 'Validated'>>>().toBe<false>();

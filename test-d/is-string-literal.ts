@@ -137,3 +137,7 @@ expectTypeOf<boolean>().toBe<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 
 expectTypeOf<boolean>().toBe<IsStringLiteral<LiteralUnion<'foo' | 'bar', number>>>();
 expectTypeOf<IsStringLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMouseDown', `on${string}`>, 'Tag'>>>();
+
+// Repeated tags preserve the distinction between finite and open-ended strings.
+expectTypeOf<IsStringLiteral<Tagged<Tagged<'foo', 'Text'>, 'Validated'>>>().toBe<true>();
+expectTypeOf<IsStringLiteral<Tagged<Tagged<Uppercase<string>, 'Text'>, 'Validated'>>>().toBe<false>();

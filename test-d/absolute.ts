@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Absolute, Opaque} from '../index.d.ts';
+import type {Absolute, Opaque, Tagged} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Integers
@@ -92,3 +92,7 @@ expectTypeOf(brandedNegative).toBe<5>();
 
 declare const brandedPositive: Absolute<Opaque<5, 'A'>>;
 expectTypeOf(brandedPositive).toBe<5>();
+
+// Multiple tags do not hide the numeric sign or magnitude.
+expectTypeOf<Absolute<Tagged<Tagged<-5, 'Value'>, 'Validated'>>>().toBe<5>();
+expectTypeOf<Absolute<Tagged<Tagged<-512n, 'Value'>, 'Validated'>>>().toBe<512n>();

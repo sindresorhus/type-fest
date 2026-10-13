@@ -165,3 +165,7 @@ expectTypeOf<CamelCase<Tagged<'FOO_BAR', 'x'>, {preserveConsecutiveUppercase: tr
 
 // The leading underscores are read from the string itself, so all of them are kept.
 expectTypeOf<CamelCase<'__FOO_BAR' & {readonly __brand: 'x'}, {preserveConsecutiveUppercase: true; preserveLeadingUnderscores: true}>>().toBe<'__fooBar'>();
+
+// Repeated tags still allow the underlying string to be split and pre-lowered.
+expectTypeOf<CamelCase<Tagged<Tagged<'foo-bar', 'Text'>, 'Validated'>>>().toBe<'fooBar'>();
+expectTypeOf<CamelCase<Tagged<Tagged<'__FOO_BAR', 'Text'>, 'Validated'>, {preserveLeadingUnderscores: true}>>().toBe<'__fooBar'>();

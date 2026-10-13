@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Opaque} from '../index.d.ts';
+import type {GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Opaque, Tagged} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 declare const never: never;
@@ -96,3 +96,8 @@ expectTypeOf<GreaterThan<Opaque<-3, 'A'>, Opaque<-5, 'B'>>>().toBe<true>();
 expectTypeOf<GreaterThanOrEqual<Opaque<5, 'A'>, Opaque<5, 'B'>>>().toBe<true>();
 expectTypeOf<LessThan<Opaque<5, 'A'>, Opaque<5, 'B'>>>().toBe<false>();
 expectTypeOf<LessThanOrEqual<Opaque<5, 'A'>, Opaque<5, 'B'>>>().toBe<true>();
+
+// Comparison uses the primitive values under every tag layer.
+expectTypeOf<GreaterThan<Tagged<Tagged<5, 'Value'>, 'Validated'>, 3>>().toBe<true>();
+expectTypeOf<GreaterThan<3, Tagged<Tagged<5, 'Value'>, 'Validated'>>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<Tagged<Tagged<5, 'Value'>, 'Validated'>, 5>>().toBe<true>();

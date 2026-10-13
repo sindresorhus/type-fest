@@ -162,3 +162,7 @@ expectTypeOf<Words<'aبb'>>().toBe<['aبb']>();
 
 // `U+0085` (next line) is kept by `String.prototype.trim()`, but it still separates words.
 expectTypeOf<Words<'a\u{85}b'>>().toBe<['a', 'b']>();
+
+// Repeated tags are removed before reading characters and word boundaries.
+expectTypeOf<Words<Tagged<Tagged<'helloWorld', 'Text'>, 'Validated'>>>().toBe<['hello', 'World']>();
+expectTypeOf<Words<Tagged<Tagged<'hello:world', 'Text'>, 'Validated'>, {splitOnPunctuation: true}>>().toBe<['hello', 'world']>();

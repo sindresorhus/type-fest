@@ -98,3 +98,7 @@ expectTypeOf<IsSymbolLiteral<typeof symbol1 | (symbol & {})>>().toBe<false>();
 expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1, symbol>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsSymbolLiteral<LiteralUnion<typeof symbol1, string>>>();
 expectTypeOf<IsSymbolLiteral<Tagged<LiteralUnion<typeof symbol1, symbol>, 'Tag'>>>().toBe<false>();
+
+// Repeated tags preserve the distinction between unique and widened symbols.
+expectTypeOf<IsSymbolLiteral<Tagged<Tagged<typeof symbol1, 'Value'>, 'Validated'>>>().toBe<true>();
+expectTypeOf<IsSymbolLiteral<Tagged<Tagged<symbol, 'Value'>, 'Validated'>>>().toBe<false>();
