@@ -263,6 +263,29 @@ expectTypeOf<Get<DiscriminatedUnion, 'data.typo'>>().toBe<unknown>();
 expectTypeOf<Get<{a: 1} | {b: 2}, 'typo'>>().toBe<unknown>();
 expectTypeOf<Get<{a: boolean}, 'a.typo'>>().toBe<unknown>();
 
+// A typo behind an optional or nullable property, or an array index, still resolves to `unknown`, because the nullish member does not have the key either.
+expectTypeOf<Get<{a?: {b: 1}}, 'a.typo'>>().toBe<unknown>();
+expectTypeOf<Get<{a: {b: 1} | null}, 'a.typo'>>().toBe<unknown>();
+expectTypeOf<Get<{a: Array<{b: 1}>}, 'a.0.typo'>>().toBe<unknown>();
+expectTypeOf<Get<{t: [1, ...Array<{b: number}>]}, 't.2.typo'>>().toBe<unknown>();
+expectTypeOf<Get<{a?: {b: 1}}, 'a.b'>>().toBe<1 | undefined>();
+expectTypeOf<Get<null, 'a'>>().toBe<undefined>();
+expectTypeOf<Get<{a: null}, 'a.b'>>().toBe<undefined>();
+
+// A value type that a marker could collide with is not mistaken for a missing key. A `unique symbol` marker would be merged into `symbol`, and an `extends` check would match `{}` and `object`.
+expectTypeOf<Get<{a: symbol}, 'a'>>().toBe<symbol>();
+expectTypeOf<Get<{a: {}}, 'a'>>().toBe<{}>();
+expectTypeOf<Get<{a: {}}, 'a', NonStrict>>().toBe<{}>();
+expectTypeOf<Get<{a: object}, 'a'>>().toBe<object>();
+expectTypeOf<Get<{a: {b: {}}}, 'a.b'>>().toBe<{}>();
+expectTypeOf<Get<{a: symbol} | {b: 1}, 'a'>>().toBe<symbol | undefined>();
+expectTypeOf<Get<{a: {}} | {b: 1}, 'a'>>().toBe<{} | undefined>();
+expectTypeOf<Get<{a: object} | {b: 1}, 'a'>>().toBe<object | undefined>();
+
+// The `undefined` for a union member without the key is added even with `strict: false`, like reading through a nullish value.
+expectTypeOf<Get<{a: 1} | {b: 2}, 'a', NonStrict>>().toBe<1 | undefined>();
+expectTypeOf<Get<{a?: {b: 1}}, 'a.b', NonStrict>>().toBe<1 | undefined>();
+
 // The value types `any` and `unknown` are kept, and a member with a `never` value cannot exist, so it does not count as having the key.
 expectTypeOf<Get<{a: any} | {b: 1}, 'a'>>().toBe<any>();
 expectTypeOf<Get<{a: unknown} | {b: 1}, 'a'>>().toBe<unknown>();

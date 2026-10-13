@@ -13,6 +13,8 @@ export type GetOptions = {
 
 	Setting this to `false` is not recommended.
 
+	A nullish value, or a key only some union members have, includes `undefined` either way.
+
 	@default true
 	*/
 	strict?: boolean;
@@ -122,33 +124,43 @@ Get a property of an object or array. Works when indexing arrays using number-li
 
 Note:
 - Returns `unknown` if no member of `BaseType` has `Key`, since TypeScript uses structural typing, and it cannot be guaranteed that extra properties unknown to the type system will exist at runtime.
-- Returns `undefined` for the members of a union that do not have `Key` when other members have it, like TypeScript treats a union in `in` narrowing.
+- Returns `undefined` for union members without `Key` when other members have it.
 - Returns `undefined` from nullish values, to match the behaviour of most deep-key libraries like `lodash`, `dot-prop`, etc.
 */
 // Why a missing key is `undefined` for some union members but `unknown` when no member has it (https://github.com/sindresorhus/type-fest/issues/1205):
 // - This mirrors TypeScript. `'key' in union` narrows to the members that declare the key, and a fresh object literal union gets `key?: undefined` on the other members. On a single type, `'key' in value` gives `value.key` the type `unknown`.
 // - `Paths` gives a path that only some union members have, so `Get` must resolve it. Otherwise `Get<T, Paths<T>>` can be `unknown`, and `dot-prop` loses the value type.
 // - Do not make every missing key `undefined` (rejected in https://github.com/sindresorhus/type-fest/pull/1463). `Get` accepts any string path, so `unknown` is the only sign of a typo, and an object can structurally have a key its type does not declare.
-// - Each member returns the `MissingKey` sentinel instead of `unknown`, because `unknown` absorbs the other members of the union, which made the whole result `unknown`.
+// - Each member returns a marker instead of `unknown`, because `unknown` absorbs the other members of the union, which made the whole result `unknown`.
+// - A nullish member has its own marker, so `Get<{a?: {b: 1}}, 'a.typo'>` stays `unknown`. If its `undefined` counted as having the key, a typo behind an optional property or an array index would be `undefined`.
+// - The markers are object types with a private symbol key. A `unique symbol` marker would be merged into a `symbol` member, and checking the marker with `extends` instead of `Extract` would also match values such as `{}` and `object`.
+// - The resulting rule: if any non-nullish member has the key, the result is its value, plus `undefined` when another member lacks the key or is nullish. Otherwise, it is `unknown` when a non-nullish member lacks the key, and `undefined` when every member is nullish. A member whose value is `never` cannot exist, so it does not count as having the key. This `undefined` is added even with `strict: false`, because it describes a value that is absent, not a key that may be absent.
 type PropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	MemberPropertyOf<BaseType, Key, Options> extends infer Result
-		? MissingKey extends Result
-			? [Exclude<Result, MissingKey>] extends [never]
-				? unknown
-				: Exclude<Result, MissingKey> | undefined
-			: Result
+		? [Exclude<Result, MemberMarker>] extends [never]
+			// No member has the key. A member without it makes the result `unknown`, and nullish members alone read as `undefined`.
+			? [Extract<Result, MissingKey>] extends [never]
+				? [Result] extends [never] ? never : undefined
+				: unknown
+			: Exclude<Result, MemberMarker> | ([Extract<Result, MemberMarker>] extends [never] ? never : undefined)
 		: never;
 
-// Marks a member that does not have the key, so `PropertyOf` can tell it apart from a member whose property is `unknown`.
-declare const missingKey: unique symbol;
-type MissingKey = typeof missingKey;
+declare const memberMarker: unique symbol;
+
+// Marks a member that does not have the key.
+type MissingKey = {readonly [memberMarker]: 'missing'};
+
+// Marks a member that is `null` or `undefined`.
+type NullishMember = {readonly [memberMarker]: 'nullish'};
+
+type MemberMarker = MissingKey | NullishMember;
 
 /**
-Get a property of each member of `BaseType`, with `MissingKey` for a member that does not have it.
+Get a property of each member of `BaseType`, with a marker for a member that lacks it or is nullish.
 */
 type MemberPropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	BaseType extends null | undefined
-		? undefined
+		? NullishMember
 		// Normalize declared numeric members before the array-like fallback, so its index signature does not hide their more precise types.
 		: Key extends keyof BaseType | (BaseType extends object ? KeyAsString<OmitIndexSignature<BaseType>> : never)
 			? StrictPropertyOf<BaseType, (Key | ExactKey<OmitIndexSignature<BaseType>, Key>) & keyof BaseType, Options>
@@ -193,13 +205,13 @@ Get a deeply-nested property from an object using a key path, like [Lodash's `.g
 
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
 
-A path can also be a number, such as `Get<string[], 0>`, which is read like its string form. This lets `Get<BaseType, Paths<BaseType>>` work for a generic `BaseType`, since `Paths` can include number keys.
+A path can also be a number, such as `Get<string[], 0>`, read like its string form, so `Get<BaseType, Paths<BaseType>>` works for a generic `BaseType`.
 
-A key that only some members of a union have resolves to `undefined` for the other members, like TypeScript treats a union in `in` narrowing. So `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>` is `string | undefined`. A key that no member has resolves to `unknown`, because TypeScript uses structural typing and the value could be anything.
+A key only some union members have resolves to `undefined` for the others, so `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>` is `string | undefined`. A key no member has resolves to `unknown`.
 
 Known limitations:
 - For a numeric segment that lands in the rest of a variadic tuple, answers the union of every element type, so it also includes the positions the tuple declares itself. `Get<{t: [1, [2, {a: string}], ...Array<{b: number}>]}, 't.2'>` is `1 | [2, {a: string}] | {b: number} | undefined` rather than `{b: number} | undefined`, because a variadic tuple has an unbounded `length` and TypeScript cannot recover the rest element type here. A path one level deeper into the rest reads from each of those element types. Positions the tuple declares itself are correct.
-- With `strict` (the default), `undefined` is only added for a key read through a `Record<string, …>` or an array. A key read through an index signature on an object that also has named keys (`{a: string; [key: string]: string}`), or through a number index signature, does not get `undefined`.
+- With `strict` (the default), `undefined` is added for a key read through a `Record<string, …>` or an array, but not for a key read through an index signature on an object that also has named keys (`{a: string; [key: string]: string}`), or through a number index signature.
 
 @example
 ```
