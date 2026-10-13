@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetRequired, Simplify} from '../index.d.ts';
+import type {SetRequired, Simplify, Tagged} from '../index.d.ts';
 
 // Update one required and one optional to required.
 declare const variation1: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
@@ -189,3 +189,13 @@ expectTypeOf<((argument: string) => 1) & {x: 1}>().toBeAssignableTo<RequiredShar
 expectTypeOf<((argument: number) => 2) & {x: 2}>().toBeAssignableTo<RequiredSharedCallableKey>();
 expectTypeOf<((argument: string) => 1) & {x: 2}>().not.toBeAssignableTo<RequiredSharedCallableKey>();
 expectTypeOf<((argument: number) => 2) & {x: 1}>().not.toBeAssignableTo<RequiredSharedCallableKey>();
+
+// An array with extra members is returned as is when `Keys` is `never`, and a key that is not an index takes the object branch, so the extra members are kept.
+type AugmentedArray = string[] & {tag?: boolean};
+expectTypeOf<SetRequired<AugmentedArray, never>>().toBe<AugmentedArray>();
+
+declare const augmentedArray: SetRequired<AugmentedArray, 'tag'>;
+expectTypeOf(augmentedArray.tag).toBe<boolean>();
+
+type TaggedTuple = Tagged<[string, number?], 'Tuple'>;
+expectTypeOf<SetRequired<TaggedTuple, never>>().toBe<TaggedTuple>();

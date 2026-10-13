@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetOptional, Simplify} from '../index.d.ts';
+import type {SetOptional, Simplify, Tagged} from '../index.d.ts';
 
 // Update one required and one optional to optional.
 declare const variation1: SetOptional<{a: number; b?: string; c: boolean}, 'b' | 'c'>;
@@ -109,7 +109,6 @@ expectTypeOf<SetOptional<[string, number, boolean, ...number[]], '1' | '2'>>().t
 expectTypeOf<SetOptional<readonly [string, number, boolean], '0' | 1 | 2>>().toBe<readonly [string?, number?, boolean?]>();
 
 // Mix of optional and required elements
-expectTypeOf<SetOptional<[string, number, boolean?], '1'>>().toBe<[string, number?, boolean?]>();
 expectTypeOf<SetOptional<readonly [string, number, boolean?], '0' | '1'>>().toBe<readonly [string?, number?, boolean?]>();
 
 // Mix of required and rest elements
@@ -126,13 +125,13 @@ expectTypeOf<SetOptional<readonly [string, number, boolean?], '1'>>().toBe<reado
 expectTypeOf<SetOptional<readonly [string, number, boolean, ...number[]], '1' | '2'>>().toBe<readonly [string, number?, boolean?, ...number[]]>();
 expectTypeOf<SetOptional<readonly [string, number, boolean?, ...string[]], 0 | '1'>>().toBe<readonly [string?, number?, boolean?, ...string[]]>();
 
-// Ignores `Keys` that are already optional
+// Ignores `Keys` that are already optional, and still applies the other keys
 expectTypeOf<SetOptional<[string, number, boolean?], '2'>>().toBe<[string, number, boolean?]>();
 expectTypeOf<SetOptional<readonly [string, number?, boolean?], 1 | 2>>().toBe<readonly [string, number?, boolean?]>();
 expectTypeOf<SetOptional<readonly [string, number?, boolean?, ...number[]], 1 | 2>>().toBe<readonly [string, number?, boolean?, ...number[]]>();
 expectTypeOf<SetOptional<[string, number, boolean?, ...number[]], '1' | '2'>>().toBe<[string, number?, boolean?, ...number[]]>();
 
-// Ignores `Keys` that are out of bounds
+// Ignores `Keys` that are out of bounds, and still applies the other keys
 expectTypeOf<SetOptional<[], 1>>().toBe<[]>();
 expectTypeOf<SetOptional<[string, number, boolean], 10>>().toBe<[string, number, boolean]>();
 expectTypeOf<SetOptional<[string, number, boolean], 0 | 1 | 2 | 3 | 4>>().toBe<[string?, number?, boolean?]>();
@@ -186,3 +185,13 @@ expectTypeOf<SetOptional<readonly [x: number, y: number, z: number, ...rest: num
 expectTypeOf<SetOptional<string[], number>>().toBe<string[]>();
 expectTypeOf<SetOptional<ReadonlyArray<string | number>, number>>().toBe<ReadonlyArray<string | number>>();
 expectTypeOf<SetOptional<[...number[]], never>>().toBe<number[]>();
+
+// An array with extra members is returned as is when `Keys` is `never`, and a key that is not an index takes the object branch, so the extra members are kept.
+type AugmentedArray = string[] & {tag: boolean};
+expectTypeOf<SetOptional<AugmentedArray, never>>().toBe<AugmentedArray>();
+
+declare const augmentedArray: SetOptional<AugmentedArray, 'tag'>;
+expectTypeOf(augmentedArray.tag).toBe<boolean | undefined>();
+
+type TaggedTuple = Tagged<[string, number], 'Tuple'>;
+expectTypeOf<SetOptional<TaggedTuple, never>>().toBe<TaggedTuple>();

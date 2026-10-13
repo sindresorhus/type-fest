@@ -1,6 +1,7 @@
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly} from './internal/index.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
@@ -32,6 +33,7 @@ type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 Known limitations:
 - A key that lands after an optional element of a tuple is ignored. TypeScript rejects a required element that follows an optional one, so `[number?, number]` is not a tuple type, and the walk stops at the first optional element. `SetRequired<[number?, number?], 1>` is `[number?, number?]`, while naming both keys gives `[number, number]`. `SetRequiredDeep` answers the same way for a path that lands on such a key.
 - A key that lands in a rest element is ignored, because a rest element has no optionality to remove: its elements are always present, and the `undefined` in a rest element of `Array<number | undefined>` is a value the element may hold rather than the element being absent. `SetRequired<[string, number?], 1>` is `[string, number]` because there the `?` is real optionality. `SetNonNullable` does make a rest element non-nullable, because that is a change to the value rather than to the optionality.
+- Index keys are not supported on an array with extra members, such as a `Tagged` tuple, because the tuple is rebuilt from its elements. On an array, only index keys are supported, or only other keys. Other keys, such as `length`, make the result an object type.
 
 @category Object
 */
@@ -46,15 +48,23 @@ type _SetRequired<BaseType, Keys> =
 		// `any` takes both branches of the array check, so its array branch is dropped to leave just the object branch.
 		? IsAny<BaseType> extends true
 			? never
-			: SetArrayRequired<BaseType, Keys> extends infer ResultantArray
-				? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
-				: never
-		: Simplify<
-		// Pick just the keys that are optional from the base type.
-			Except<BaseType, Keys & keyof BaseType>
-		// Pick the keys that should be required from the base type and make them required.
-			& Required<HomomorphicPick<BaseType, Keys & keyof BaseType>>
-		>;
+			// Returned as is, since rebuilding the array would drop non-index members, such as the tag of a `Tagged` array.
+			: IsNever<Keys> extends true
+				? BaseType
+				// Only index keys are handled as tuple elements. Other keys, such as an extra property of an augmented array, take the object branch.
+				: [Keys] extends [number | `${number}`]
+					? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
+						? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
+						: never
+					: _SetObjectRequired<BaseType, Keys>
+		: _SetObjectRequired<BaseType, Keys>;
+
+type _SetObjectRequired<BaseType, Keys> = Simplify<
+	// Pick just the keys that are optional from the base type.
+	Except<BaseType, Keys & keyof BaseType>
+	// Pick the keys that should be required from the base type and make them required.
+	& Required<HomomorphicPick<BaseType, Keys & keyof BaseType>>
+>;
 
 /**
 Remove the optional modifier from the specified keys in an array.

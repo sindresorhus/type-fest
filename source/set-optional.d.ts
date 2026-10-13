@@ -4,6 +4,7 @@ import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly} from './internal
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Create a type that makes the given keys optional, while keeping the remaining keys as is.
@@ -31,6 +32,7 @@ type ArrayExample = SetOptional<[number, number, number], 1 | 2>;
 Known limitations:
 - An element with a required element after it stays required and gains `| undefined`, because TypeScript rejects a required element after an optional one. `SetOptional<[1, 2, 3], 1>` is `[1, 2 | undefined, 3]`.
 - A key that lands in a rest element is ignored, because a rest element has no optionality to add: its elements are always present. `SetOptional<[string, number?], 1>` is `[string, number?]` because there the `?` is real optionality.
+- Index keys are not supported on an array with extra members, such as a `Tagged` tuple, because the tuple is rebuilt from its elements. On an array, only index keys are supported, or only other keys. Other keys, such as `length`, make the result an object type.
 
 @category Object
 */
@@ -46,16 +48,24 @@ type _SetOptional<BaseType, Keys> =
 			// `any` takes both branches of the array check, so its array branch is dropped to leave just the object branch.
 			? IsAny<BaseType> extends true
 				? never
-				: IsArrayReadonly<BaseType> extends true
-					? Readonly<SetArrayOptional<BaseType, Keys>>
-					: SetArrayOptional<BaseType, Keys>
-			: Simplify<
-				// Pick just the keys that are not made optional from the base type.
-				Except<BaseType, Keys & keyof BaseType>
-				// Pick the keys that should be optional from the base type and make them optional.
-				& Partial<HomomorphicPick<BaseType, Keys & keyof BaseType>>
-			>
+				// Returned as is, since rebuilding the array would drop non-index members, such as the tag of a `Tagged` array.
+				: IsNever<Keys> extends true
+					? BaseType
+					// Only index keys are handled as tuple elements. Other keys, such as an extra property of an augmented array, take the object branch.
+					: [Keys] extends [number | `${number}`]
+						? IsArrayReadonly<BaseType> extends true
+							? Readonly<SetArrayOptional<BaseType, Keys>>
+							: SetArrayOptional<BaseType, Keys>
+						: _SetObjectOptional<BaseType, Keys>
+			: _SetObjectOptional<BaseType, Keys>
 		: never;
+
+type _SetObjectOptional<BaseType, Keys> = Simplify<
+	// Pick just the keys that are not made optional from the base type.
+	Except<BaseType, Keys & keyof BaseType>
+	// Pick the keys that should be optional from the base type and make them optional.
+	& Partial<HomomorphicPick<BaseType, Keys & keyof BaseType>>
+>;
 
 /**
 Makes the tuple elements at the given indices optional, keeping the other elements as they are.
