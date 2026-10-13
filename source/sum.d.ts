@@ -37,7 +37,13 @@ type F = Sum<999_999, 1>;
 */
 export type Sum<A extends number, B extends number> =
 	// A decimal fraction or exponent notation is not supported, so the result is `never` rather than a silently truncated whole number.
-	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never : _Sum<A, B>;
+	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never
+		// Every pair must reach the infinity checks independently, including opposite infinities.
+		: A extends unknown
+			? B extends unknown
+				? _Sum<A, B>
+				: never
+			: never;
 
 type _Sum<A extends number, B extends number> =
 	// Handle cases when A or B is the actual "number" type

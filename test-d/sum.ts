@@ -83,3 +83,27 @@ expectTypeOf<Sum<1e21, 1>>().toBe<never>();
 expectTypeOf<Sum<2, -2 | 3>>().toBe<0 | 5>();
 expectTypeOf<Sum<-2 | 3, 2>>().toBe<0 | 5>();
 expectTypeOf<Sum<-1 | 1, -1 | 1>>().toBe<-2 | 0 | 2>();
+
+// Equal infinity is only one possible pair when the other operand is a union.
+expectTypeOf<Sum<PositiveInfinity, PositiveInfinity | NegativeInfinity>>().toBe<number>();
+expectTypeOf<Sum<NegativeInfinity, PositiveInfinity | NegativeInfinity>>().toBe<number>();
+
+// Operand order cannot change whether opposite infinities are possible.
+expectTypeOf<Sum<PositiveInfinity | NegativeInfinity, PositiveInfinity>>().toBe<number>();
+expectTypeOf<Sum<PositiveInfinity | NegativeInfinity, NegativeInfinity>>().toBe<number>();
+expectTypeOf<Sum<PositiveInfinity | NegativeInfinity, PositiveInfinity | NegativeInfinity>>().toBe<number>();
+expectTypeOf<Sum<PositiveInfinity, 1 | PositiveInfinity>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<NegativeInfinity, -1 | NegativeInfinity>>().toBe<NegativeInfinity>();
+expectTypeOf<Sum<1 | PositiveInfinity, 2 | NegativeInfinity>>().toBe<number>();
+
+// Same-sign infinity and finite results both survive, without widening to number.
+expectTypeOf<Sum<1 | PositiveInfinity, 2 | PositiveInfinity>>().toBe<3 | PositiveInfinity>();
+expectTypeOf<Sum<-1 | NegativeInfinity, -2 | NegativeInfinity>>().toBe<-3 | NegativeInfinity>();
+
+// The zero and cancellation shortcuts are also evaluated per pair.
+expectTypeOf<Sum<0 | 2, 0 | -2>>().toBe<-2 | 0 | 2>();
+expectTypeOf<Sum<0 | PositiveInfinity, 0 | NegativeInfinity>>().toBe<number>();
+expectTypeOf<Sum<any, 1>>().toBe<number>();
+expectTypeOf<Sum<1, any>>().toBe<number>();
+expectTypeOf<Sum<never, 1>>().toBe<never>();
+expectTypeOf<Sum<1, never>>().toBe<never>();
