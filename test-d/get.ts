@@ -166,6 +166,9 @@ expectTypeOf<Get<{data: {user: {id: string} | {id: string; extra: number}}}, 'da
 // The workaround for the union limitation above: stop at the union and read the key from it.
 expectTypeOf<Get<WithNestedUnion, 'data.user'>>().toBe<{id: string} | {error: string}>();
 
+// Another workaround: declare the key as absent on the members that do not have it, so every member has the key.
+expectTypeOf<Get<{data: {user: {id: string} | {error: string; id?: never}}}, 'data.user.id'>>().toBe<string | undefined>();
+
 // Known limitation: a numeric segment that lands in the rest of a variadic tuple answers the union of every element type, because a variadic tuple has an unbounded `length` and TypeScript cannot recover the rest element type. The positions the tuple declares itself are correct.
 type WithVariadicTuple = {t: [1, [2, {a: string}], ...Array<{b: number}>]};
 expectTypeOf<Get<WithVariadicTuple, 't.0', NonStrict>>().toBe<1>();
