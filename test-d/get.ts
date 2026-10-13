@@ -156,17 +156,17 @@ expectTypeOf<WithDictionary>().toBe<Get<WithDictionary, readonly []>>();
 	expectTypeOf<Get<Foo, FooPaths2>>().toBe<string | undefined>();
 }
 
-// Known limitation: a path that descends past a union whose members do not share their keys resolves to `unknown`, because `keyof` of a union is the intersection of the members' keys. `Paths` still accepts that path. See the note in the docs.
+// A key that only some members of a union have resolves to `undefined` for the other members, like TypeScript treats a union in `in` narrowing. (https://github.com/sindresorhus/type-fest/issues/1205)
 type WithNestedUnion = {data: {user: {id: string} | {error: string}}};
-expectTypeOf<Get<WithNestedUnion, 'data.user.id'>>().toBe<unknown>();
+expectTypeOf<Get<WithNestedUnion, 'data.user.id'>>().toBe<string | undefined>();
 
 // A key every member of the union shares is found, because then it is in the intersection.
 expectTypeOf<Get<{data: {user: {id: string} | {id: string; extra: number}}}, 'data.user.id'>>().toBe<string>();
 
-// The workaround for the union limitation above: stop at the union and read the key from it.
+// Stopping at the union reads the union itself.
 expectTypeOf<Get<WithNestedUnion, 'data.user'>>().toBe<{id: string} | {error: string}>();
 
-// Another workaround: declare the key as absent on the members that do not have it, so every member has the key.
+// Declaring the key as absent on the members that do not have it gives the same result.
 expectTypeOf<Get<{data: {user: {id: string} | {error: string; id?: never}}}, 'data.user.id'>>().toBe<string | undefined>();
 
 // Known limitation: a numeric segment that lands in the rest of a variadic tuple answers the union of every element type, because a variadic tuple has an unbounded `length` and TypeScript cannot recover the rest element type. The positions the tuple declares itself are correct.
@@ -176,7 +176,7 @@ expectTypeOf<Get<WithVariadicTuple, 't.1', NonStrict>>().toBe<[2, {a: string}]>(
 expectTypeOf<Get<WithVariadicTuple, 't.2', NonStrict>>().toBe<1 | [2, {a: string}] | {b: number}>();
 // With `strict` (the default), it also has `undefined`, like the docs example.
 expectTypeOf<Get<WithVariadicTuple, 't.2'>>().toBe<1 | [2, {a: string}] | {b: number} | undefined>();
-expectTypeOf<Get<WithVariadicTuple, 't.2.b', NonStrict>>().toBe<unknown>();
+expectTypeOf<Get<WithVariadicTuple, 't.2.b', NonStrict>>().toBe<number | undefined>();
 expectTypeOf<Get<{tuple: [string, ...Array<{z: number}>]}, 'tuple.0', NonStrict>>().toBe<string>();
 expectTypeOf<Get<{tuple: [string, ...Array<{z: number}>]}, 'tuple.1', NonStrict>>().toBe<string | {z: number}>();
 
@@ -245,3 +245,29 @@ expectTypeOf<Get<{a: 1}, number>>().toBe<unknown>();
 expectTypeOf<Get<any, 1>>().toBe<any>();
 expectTypeOf<Get<never, 1>>().toBe<never>();
 expectTypeOf<Get<unknown, 1>>().toBe<unknown>();
+
+// A key that only some members of a union have, at any depth. (https://github.com/sindresorhus/type-fest/issues/1205)
+type DiscriminatedUnion = {data: {type: 'type1'; someValue: number} | {type: 'type2'; someValue: string} | {type: 'type3'}};
+expectTypeOf<Get<DiscriminatedUnion, 'data.someValue'>>().toBe<number | string | undefined>();
+expectTypeOf<Get<DiscriminatedUnion, 'data.someValue', NonStrict>>().toBe<number | string | undefined>();
+expectTypeOf<Get<DiscriminatedUnion, 'data.type'>>().toBe<'type1' | 'type2' | 'type3'>();
+expectTypeOf<Get<{a: number} | {b: string}, 'a'>>().toBe<number | undefined>();
+expectTypeOf<Get<{data: {value: {count: 1}} | {other: true}}, 'data.value.count'>>().toBe<1 | undefined>();
+expectTypeOf<Get<{a: string | {b: number}}, 'a.b'>>().toBe<number | undefined>();
+expectTypeOf<Get<{a: string[] | {x: 1}}, 'a.0'>>().toBe<string | undefined>();
+expectTypeOf<Get<{a: [1, 2] | {x: 1}}, 'a.x'>>().toBe<1 | undefined>();
+expectTypeOf<Get<{a: {b: number} | null}, 'a.b'>>().toBe<number | undefined>();
+
+// A key that no member of a union has resolves to `unknown`, like a key the subject does not have, so a typo still shows up.
+expectTypeOf<Get<DiscriminatedUnion, 'data.typo'>>().toBe<unknown>();
+expectTypeOf<Get<{a: 1} | {b: 2}, 'typo'>>().toBe<unknown>();
+expectTypeOf<Get<{a: boolean}, 'a.typo'>>().toBe<unknown>();
+
+// The value types `any` and `unknown` are kept, and a member with a `never` value cannot exist, so it does not count as having the key.
+expectTypeOf<Get<{a: any} | {b: 1}, 'a'>>().toBe<any>();
+expectTypeOf<Get<{a: unknown} | {b: 1}, 'a'>>().toBe<unknown>();
+expectTypeOf<Get<{a: never} | {b: 1}, 'a'>>().toBe<unknown>();
+
+// Every path `Paths` gives for a union resolves to a type, never `unknown`.
+type ModelWithUnions = {user: {id: string; name: string} | {error: string}; items: Array<{a: 1} | {b: 2}>};
+expectTypeOf<unknown extends Get<ModelWithUnions, Paths<ModelWithUnions>> ? true : false>().toBe<false>();
