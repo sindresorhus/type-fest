@@ -31,6 +31,8 @@ type AllNonNullable = SetNonNullable<Foo>;
 //=> {a: number; b: string; c?: boolean}
 ```
 
+@see {@link SetNullable}
+
 @category Object
 */
 export type SetNonNullable<BaseType, Keys extends KeysOfUnion<BaseType> = KeysOfUnion<BaseType>> =
