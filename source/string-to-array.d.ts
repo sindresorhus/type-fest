@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Or} from './or.d.ts';
@@ -78,7 +78,8 @@ export type StringToArray<S extends string, Options extends StringToArrayOptions
 	IfNotAnyOrNever<
 		S,
 		{
-			ifNot: _StringToArray<S, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>;
+			// The brand belongs to the complete input string, not to its individual characters.
+			ifNot: _StringToArray<UnwrapBrand<S>, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>;
 			ifAny: unknown[];
 		}
 	>;

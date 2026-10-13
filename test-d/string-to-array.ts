@@ -2,6 +2,7 @@ import {expectTypeOf} from 'nz';
 import type {StringToArray} from '../source/string-to-array.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
+import type {Tagged} from '../source/tagged.d.ts';
 
 type StringToArrayElementNonLiterals<S extends string> = StringToArray<S, {mapNonLiteralsDirectly: true}>;
 
@@ -61,3 +62,18 @@ expectTypeOf<StringToArray<never>>().toBe<never>();
 expectTypeOf<StringToArray<any>>().toBe<unknown[]>();
 expectTypeOf<StringToArrayElementNonLiterals<never>>().toBe<never>();
 expectTypeOf<StringToArrayElementNonLiterals<any>>().toBe<unknown[]>();
+
+// Branding the input does not brand the individual characters produced by conversion.
+expectTypeOf<StringToArray<Tagged<'abc', 'Text'>>>().toBe<['a', 'b', 'c']>();
+expectTypeOf<StringToArrayElementNonLiterals<Tagged<'abc', 'Text'>>>().toBe<['a', 'b', 'c']>();
+expectTypeOf<StringToArray<Tagged<'', 'Text'>>>().toBe<[]>();
+expectTypeOf<StringToArrayElementNonLiterals<Tagged<'', 'Text'>>>().toBe<[]>();
+expectTypeOf<StringToArray<Tagged<'ab' | 'cd', 'Text'>>>().toBe<['a', 'b'] | ['c', 'd']>();
+expectTypeOf<StringToArray<'xy' & {readonly brand: unique symbol}>>().toBe<['x', 'y']>();
+
+// Unknown branded strings retain the same open-ended character sequence as their base types.
+expectTypeOf<StringToArray<Tagged<string, 'Text'>>>().toBe<string[]>();
+expectTypeOf<StringToArrayElementNonLiterals<Tagged<string, 'Text'>>>().toBe<[string]>();
+expectTypeOf<StringToArray<Tagged<`ab${string}cd`, 'Text'>>>().toBe<['a', 'b', ...string[], 'c', 'd']>();
+expectTypeOf<StringToArrayElementNonLiterals<Tagged<`ab${string}cd`, 'Text'>>>().toBe<['a', 'b', string, 'c', 'd']>();
+expectTypeOf<StringToArray<Tagged<Uppercase<string>, 'Text'>>>().toBe<Array<Uppercase<string>>>();
