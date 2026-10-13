@@ -59,8 +59,7 @@ expectTypeOf<HasExplicitThis<ImplicitThisRest, unknown, any[], void>>().toBe<fal
 type ExplicitThisRest = (this: string, ...args: any[]) => void;
 expectTypeOf<HasExplicitThis<ExplicitThisRest, string, any[], void>>().toBe<true>();
 
-// Generic functions — the sentinel deduplication trick does not work with generic signatures
-// because TS doesn't consider a generic instantiation a duplicate of the concrete sentinel.
+// Generic functions: the sentinel deduplication trick does not work with generic signatures, because TypeScript does not consider a generic instantiation a duplicate of the concrete sentinel.
 
 declare function genericImplicit<Value>(input: Value): Value;
 expectTypeOf<HasExplicitThis<typeof genericImplicit, unknown, [input: unknown], unknown>>().toBe<true>();

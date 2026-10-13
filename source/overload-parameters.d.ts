@@ -21,6 +21,6 @@ Known limitations are the same as {@link Overloads}.
 
 @category Function
 */
-export type OverloadParameters<FunctionType extends (...args: any) => any> = FunctionParameters<Overloads<FunctionType>[number]>;
+export type OverloadParameters<FunctionType extends (...arguments_: any) => any> = FunctionParameters<Overloads<FunctionType>[number]>;
 
 export {};

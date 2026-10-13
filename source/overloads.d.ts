@@ -22,10 +22,11 @@ Use-cases:
 
 Known limitations:
 - Generic overloads:
-  - Type parameters are lost -- they are replaced by their upper bound (e.g. `<T>` becomes `unknown`, `<T extends string>` becomes `string`).
+  - Type parameters are lost. They are replaced by their upper bound (for example, `<T>` becomes `unknown`, and `<T extends string>` becomes `string`).
   - When there are 4 or more generic overloads, extraction stops at the 4th-from-last generic overload and any overloads before it are omitted.
   - Implicit `this` (no annotation) is indistinguishable from explicit `this: unknown`, so the output always includes `this: unknown`.
-- TypeScript deduplicates overloads that share the same parameters and return type. When one has implicit `this` (no annotation) and another has explicit `this`, they are treated as duplicates, and whichever appears first in the intersection suppresses the other. See `source/internal/function.d.ts` for details on TypeScript's overload enumeration behavior.
+- Type predicates and assertion signatures are lost: `x is string` becomes `boolean`, and `asserts x is string` becomes `void`. Such overloads also have the generic overload limitations above.
+- TypeScript deduplicates overloads that share the same parameters and return type. When one has implicit `this` (no annotation) and another has explicit `this`, they are treated as duplicates, and whichever appears first in the intersection suppresses the other.
 
 @example
 ```
@@ -51,48 +52,45 @@ type RequestOverloadsUnion = Overloads<typeof request>[number];
 
 @category Function
 */
-export type Overloads<FunctionType extends (...args: any) => any> = FunctionType extends unknown
+export type Overloads<FunctionType extends (...arguments_: any) => any> = FunctionType extends unknown
 	? IsAny<FunctionType> extends true
 		? any
 		: _Overloads<(() => Unique) & FunctionType>
 	: never;
 
 type _Overloads<
-	F extends (...args: any) => any,
-	N extends OverloadIndex = 0,
-	ResultOverloads extends Array<(...args: any) => any> = [],
-> = NthLastOverload<F, N> extends infer ExtractedN extends (...args: any) => any
-	? IsEqual<ExtractedN, () => Unique> extends true
+	FunctionType extends (...arguments_: any) => any,
+	Index extends OverloadIndex = 0,
+	ResultOverloads extends Array<(...arguments_: any) => any> = [],
+> = NthLastOverload<FunctionType, Index> extends infer Extracted extends (...arguments_: any) => any
+	? IsEqual<Extracted, () => Unique> extends true
 		? ResultOverloads // Sentinel reached, return accumulated result.
-		: IsEqual<NthLastOverload<ExtractedN & F, N>, ExtractedN> extends true
-			// `NthLastOverload` can’t preserve generics.
-			// So, if the last overload contains generics the extracted signature replaces them with their constraints.
-			// This means intersecting the extracted signature with the original function won’t cause the last overload to move to the first.
-			// Therefore, in such cases we increment `N`.
-			? Sum<N, 1> extends infer NextN extends OverloadIndex
-				? _Overloads<F, NextN, [ExtractedN, ...ResultOverloads]>
-				: [ExtractedN, ...ResultOverloads]
-			: _Overloads<ExtractedN & F, N, [ExtractedN, ...ResultOverloads]>
+		: IsEqual<NthLastOverload<Extracted & FunctionType, Index>, Extracted> extends true
+			// `NthLastOverload` can’t preserve generics. So, if the last overload contains generics the extracted signature replaces them with their constraints. This means intersecting the extracted signature with the original function won’t cause the last overload to move to the first. Therefore, in such cases we increment `Index`.
+			? Sum<Index, 1> extends infer NextIndex extends OverloadIndex
+				? _Overloads<FunctionType, NextIndex, [Extracted, ...ResultOverloads]>
+				: [Extracted, ...ResultOverloads]
+			: _Overloads<Extracted & FunctionType, Index, [Extracted, ...ResultOverloads]>
 	: never;
 
 /**
-Extract the Nth-from-last (N < MaxOverloadPatterns) overload of a function type as a standalone function, correctly preserving implicit `this` (omitted) vs explicit `this` (kept).
+Extract the `Index`-th-from-last (`Index` < `MaxOverloadPatterns`) overload of a function type as a standalone function, correctly preserving implicit `this` (omitted) vs explicit `this` (kept).
 */
-type NthLastOverload<F extends (...args: any) => any, N extends OverloadIndex> = F extends {
-	(this: infer T3, ...args: infer P3 extends UnknownArray): infer R3;
-	(this: infer T2, ...args: infer P2 extends UnknownArray): infer R2;
-	(this: infer T1, ...args: infer P1 extends UnknownArray): infer R1;
-	(this: infer T0, ...args: infer P0 extends UnknownArray): infer R0;
+type NthLastOverload<FunctionType extends (...arguments_: any) => any, Index extends OverloadIndex> = FunctionType extends {
+	(this: infer This3, ...arguments_: infer Parameters3 extends UnknownArray): infer Return3;
+	(this: infer This2, ...arguments_: infer Parameters2 extends UnknownArray): infer Return2;
+	(this: infer This1, ...arguments_: infer Parameters1 extends UnknownArray): infer Return1;
+	(this: infer This0, ...arguments_: infer Parameters0 extends UnknownArray): infer Return0;
 }
 	? ({
-		3: [T3, P3, R3];
-		2: [T2, P2, R2];
-		1: [T1, P1, R1];
-		0: [T0, P0, R0];
-	}[N] extends [infer T, infer P extends UnknownArray, infer R]
-		? HasExplicitThis<F, T, P, R> extends true
-			? (this: T, ...args: P) => R
-			: (...args: P) => R
+		3: [This3, Parameters3, Return3];
+		2: [This2, Parameters2, Return2];
+		1: [This1, Parameters1, Return1];
+		0: [This0, Parameters0, Return0];
+	}[Index] extends [infer This, infer Parameters_ extends UnknownArray, infer Return]
+		? HasExplicitThis<FunctionType, This, Parameters_, Return> extends true
+			? (this: This, ...arguments_: Parameters_) => Return
+			: (...arguments_: Parameters_) => Return
 		: never)
 	: never;
 

@@ -7,13 +7,13 @@ Obtain the parameters of a function type in a tuple.
 
 This works even when the parameters type is a readonly array.
 */
-export type FunctionParameters<T extends (...args: any) => any> = T extends (...args: infer P extends UnknownArray) => any ? P : never;
+export type FunctionParameters<FunctionType extends (...arguments_: any) => any> = FunctionType extends (...arguments_: infer Parameters_ extends UnknownArray) => any ? Parameters_ : never;
 
 /*
 Internal documentation: TypeScript's overload enumeration behavior
 ========================================================================
 
-Understanding how TypeScript enumerates overloads from an intersection type is essential for understanding (and correctly using) `CollectOverloads`.
+Understanding how TypeScript enumerates overloads from an intersection type is essential for understanding (and correctly using) `Overloads`.
 
 ## Overload enumeration
 
@@ -45,17 +45,17 @@ type Unique = typeof unique;
 /**
 Detect whether an overload with the given (This, Parameters, Return) has an explicit `this` annotation in the original function type.
 
-Intersects `(this: Unique, ...args: Parameters) => Return` onto the function type from the right. Per TypeScript's deduplication rules (see "Overload enumeration" above), implicit `this` absorbs the sentinel (same (P,R), one implicit -- first-wins), so `ThisParameterType` stays `unknown`. Explicit `this: unknown` does not absorb it (both explicit, different `This` -- not duplicate), so the sentinel becomes the last overload and `ThisParameterType` returns `Unique`.
+Intersects `(this: Unique, ...arguments_: Parameters_) => Return` onto the function type from the right. Per TypeScript's deduplication rules (see "Overload enumeration" above), implicit `this` absorbs the sentinel (same (P,R) and one is implicit, so the first one wins), so `ThisParameterType` stays `unknown`. Explicit `this: unknown` does not absorb it (both are explicit and `This` differs, so they are not duplicates), so the sentinel becomes the last overload and `ThisParameterType` returns `Unique`.
 
 Limitation: This does not work for generic overloads. There is no way to extract a generic overload while preserving its type parameters, so this type receives the already-instantiated (concrete) signature and cannot recover the original `this` annotation. As a result, generic overloads always appear with explicit `this: unknown` in the `Overloads` output.
 */
 export type HasExplicitThis<
-	FunctionType extends (...args: any) => any,
+	FunctionType extends (...arguments_: any) => any,
 	This,
 	Parameters_ extends UnknownArray,
 	Return,
 > = IsUnknown<This> extends true
-	? IsEqual<ThisParameterType<FunctionType & ((this: Unique, ...args: Parameters_) => Return)>, Unique>
+	? IsEqual<ThisParameterType<FunctionType & ((this: Unique, ...arguments_: Parameters_) => Return)>, Unique>
 	: true;
 
 export {};

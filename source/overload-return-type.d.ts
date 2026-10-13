@@ -20,6 +20,6 @@ Known limitations are the same as {@link Overloads}.
 
 @category Function
 */
-export type OverloadReturnType<FunctionType extends (...args: any) => any> = ReturnType<Overloads<FunctionType>[number]>;
+export type OverloadReturnType<FunctionType extends (...arguments_: any) => any> = ReturnType<Overloads<FunctionType>[number]>;
 
 export {};

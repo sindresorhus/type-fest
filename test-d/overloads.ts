@@ -9,12 +9,11 @@ expectTypeOf(x as (this: unknown) => void).toBe<() => void>(); // no error
 type _ = IsEqual<() => void, (this: unknown) => void>; // => true
 ```
 
-`IsEqualStrict` resolves this by also comparing the extracted `this` parameter via a sentinel type.
-It accepts tuples of functions and compares them element-wise.
+`IsEqualStrict` resolves this by also comparing the extracted `this` parameter via a sentinel type. It accepts tuples of functions and compares them element-wise.
 */
 declare const isEqualStrictNothing: unique symbol;
 type IsEqualStrictNothing = typeof isEqualStrictNothing;
-type FuncToTuple<Function_ extends (...arguments_: any) => any> =
+type FunctionToTuple<Function_ extends (...arguments_: any) => any> =
 	Function_ extends (...arguments_: infer Parameters_ extends UnknownArray) => infer Return
 		? [ThisParameterType<((this: IsEqualStrictNothing, ...arguments_: Parameters_) => Return) & Function_>, Parameters_, Return]
 		: never;
@@ -22,12 +21,15 @@ type IsEqualStrict<
 	FunctionTuple1 extends ReadonlyArray<(...arguments_: never) => unknown>,
 	FunctionTuple2 extends ReadonlyArray<(...arguments_: never) => unknown>,
 > = IsEqual<
-	[FunctionTuple1, {[K in keyof FunctionTuple1]: FuncToTuple<FunctionTuple1[K]>}],
-	[FunctionTuple2, {[K in keyof FunctionTuple2]: FuncToTuple<FunctionTuple2[K]>}]
+	[FunctionTuple1, {[Index in keyof FunctionTuple1]: FunctionToTuple<FunctionTuple1[Index]>}],
+	[FunctionTuple2, {[Index in keyof FunctionTuple2]: FunctionToTuple<FunctionTuple2[Index]>}]
 >;
 
 type Function1 = (foo: string, bar: number) => object;
 type Function2 = (foo: bigint, ...bar: any[]) => void;
+
+// `IsEqualStrict` must tell implicit `this` from explicit `this: unknown`.
+expectTypeOf<IsEqualStrict<[Function1], [(this: unknown, foo: string, bar: number) => object]>>().toBe<false>();
 
 // Single function (no overload)
 declare const normalFunction: Overloads<Function1>;
@@ -57,7 +59,7 @@ type Function3 = (foo: string, bar: number, baz?: boolean) => object;
 declare const twoOverloadsWithAssignableSignature: Overloads<Function1 & Function3>;
 expectTypeOf(twoOverloadsWithAssignableSignature).toBe<[Function1, Function3]>();
 
-// Three overloads - declaration order preserved
+// Three overloads, declaration order preserved
 declare const threeOverloads: Overloads<Function1 & Function2 & Function3>;
 expectTypeOf(threeOverloads).toBe<[Function1, Function2, Function3]>();
 
@@ -101,7 +103,7 @@ type Function10 = (event: 'event10', argument: number) => string;
 type Function11 = (event: 'event11', argument: boolean) => never;
 type Function12 = (event: 'event12', argument: bigint) => object;
 
-// Many overloads - order preserved
+// Many overloads, order preserved
 declare const manyOverloads: Overloads<
 	Function1
 	& Function2
@@ -157,7 +159,7 @@ type SameParametersDifferentReturn2 = (foo: string) => number;
 declare const sameParametersDifferentReturn: Overloads<SameParametersDifferentReturn1 & SameParametersDifferentReturn2>;
 expectTypeOf(sameParametersDifferentReturn).toBe<[SameParametersDifferentReturn1, SameParametersDifferentReturn2]>();
 
-// Generic overloads - generic parameters become `unknown`
+// Generic overloads: generic parameters become `unknown`
 declare function genericOverload<T>(input: T): T;
 declare function genericOverload(input: string): string;
 
@@ -190,7 +192,7 @@ declare const duplicateOverloads: Overloads<{
 }>;
 expectTypeOf(duplicateOverloads).toBe<[Function1, () => string]>();
 
-// Generic overload at intersection level - overloads preceding the generic are now extracted via N-advancement
+// Generic overload at intersection level: overloads preceding the generic are extracted by moving on to the next overload from the end
 declare const genericIntersectionOverload: Overloads<((this: string) => string) & (<T>(this: T, argument: T) => T)>;
 expectTypeOf(genericIntersectionOverload).toBe<[(this: string) => string, (this: unknown, argument: unknown) => unknown]>();
 
@@ -264,3 +266,29 @@ declare const implicitThenExplicitThisUnknown: Overloads<Function1 & Function1Wi
 expectTypeOf<IsEqualStrict<typeof implicitThenExplicitThisUnknown, [Function1]>>().toBe<true>();
 declare const explicitThisUnknownThenImplicit: Overloads<Function1WithThis<unknown> & Function1>;
 expectTypeOf<IsEqualStrict<typeof explicitThisUnknownThenImplicit, [Function1WithThis<unknown>]>>().toBe<true>();
+
+// A union of function types is handled member by member.
+expectTypeOf<Overloads<Function1 | (Function2 & Function3)>>().toBe<[Function1] | [Function2, Function3]>();
+
+// @ts-expect-error
+type UnknownOverloads = Overloads<unknown>;
+
+// Known limitation: Type predicates and assertion signatures are lost, because `infer` cannot capture them. Like generic overloads, they also get an explicit `this: unknown`.
+expectTypeOf<IsEqualStrict<Overloads<typeof Array.isArray>, [(this: unknown, argument: any) => boolean]>>().toBe<true>();
+declare function assertString(value: unknown): asserts value is string;
+expectTypeOf<IsEqualStrict<Overloads<typeof assertString>, [(this: unknown, value: unknown) => void]>>().toBe<true>();
+
+// Known limitation: With 4 or more generic overloads, the overloads before the 4th-from-last generic overload are omitted.
+declare const fourGenericOverloads: Overloads<{
+	(input: string): 0;
+	<Value>(value: Value, index: 1): Value;
+	<Value>(value: Value, index: 2): Value;
+	<Value>(value: Value, index: 3): Value;
+	<Value>(value: Value, index: 4): Value;
+}>;
+expectTypeOf<IsEqualStrict<typeof fourGenericOverloads, [
+	(this: unknown, value: unknown, index: 1) => unknown,
+	(this: unknown, value: unknown, index: 2) => unknown,
+	(this: unknown, value: unknown, index: 3) => unknown,
+	(this: unknown, value: unknown, index: 4) => unknown,
+]>>().toBe<true>();

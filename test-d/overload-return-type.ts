@@ -10,3 +10,9 @@ expectTypeOf(overloadReturnType).toBe<object | void>();
 
 declare const anyOverloadReturnType: OverloadReturnType<any>;
 expectTypeOf(anyOverloadReturnType).toBe<any>();
+
+declare const neverOverloadReturnType: OverloadReturnType<never>;
+expectTypeOf(neverOverloadReturnType).toBe<never>();
+
+// @ts-expect-error
+type UnknownOverloadReturnType = OverloadReturnType<unknown>;

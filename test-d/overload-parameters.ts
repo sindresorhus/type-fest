@@ -10,3 +10,9 @@ expectTypeOf(overloadParameters).toBe<[foo: string, bar: number] | [foo: bigint,
 
 declare const anyOverloadParameters: OverloadParameters<any>;
 expectTypeOf(anyOverloadParameters).toBe<UnknownArray>();
+
+declare const neverOverloadParameters: OverloadParameters<never>;
+expectTypeOf(neverOverloadParameters).toBe<never>();
+
+// @ts-expect-error
+type UnknownOverloadParameters = OverloadParameters<unknown>;
