@@ -52,3 +52,7 @@ expectTypeOf(unionConditionalPickWithNoMatchInAnyMember).toBe<never>();
 // A member that is not an object, like `undefined`, has no keys to pick, so it is dropped rather than becoming `{}`.
 declare const nullableConditionalPick: ConditionalPick<{a: string; b: number} | undefined, string>;
 expectTypeOf(nullableConditionalPick).toBe<{a: string}>();
+
+// Declared keys are still picked when a non-matching index signature widens `keyof` (https://github.com/sindresorhus/type-fest/issues/1501)
+declare const indexSignatureConditionalPick: ConditionalPick<{[x: string]: unknown; a: string; b: number}, string>;
+expectTypeOf(indexSignatureConditionalPick).toBe<{a: string}>();

@@ -1,5 +1,6 @@
 import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {TupleToObject} from './tuple-to-object.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -53,9 +54,14 @@ export type ConditionalKeys<Base, Condition> = (Base extends UnknownArray ? Tupl
 	? IfNotAnyOrNever<_Base, {ifNot: _ConditionalKeys<_Base, Condition>; ifAny: keyof _Base}>
 	: never;
 
-type _ConditionalKeys<Base, Condition> = keyof {
+// An index signature widens `keyof` (for example, `string` becomes `string | number`), which swallows the declared literal keys it covers. So the declared keys are matched a second time on their own. The two key sets must stay separate, because a union of them collapses the literal keys back into the index signature.
+type _ConditionalKeys<Base, Condition> =
+	| _MatchingKeys<Base, Condition, keyof Base>
+	| _MatchingKeys<Base, Condition, keyof OmitIndexSignature<Base>>;
+
+type _MatchingKeys<Base, Condition, Keys> = keyof {
 	[
-	Key in (keyof Base & {}) as // `& {}` prevents homomorphism
+	Key in (Keys & keyof Base) as // The intersection prevents homomorphism
 	ExtendsStrict<Base[Key], Condition> extends true ? Key : never
 	]: never
 };

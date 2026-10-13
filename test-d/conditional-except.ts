@@ -31,3 +31,7 @@ expectTypeOf(exampleConditionalExceptWithUndefined).toBe<{b?: string | number; d
 expectTypeOf<IsEqual<ConditionalExcept<{a: string} | {b: number}, string>, {} | {b: number}>>().toBe<true>();
 expectTypeOf<IsEqual<ConditionalExcept<{a: number} | {b: boolean}, string>, {a: number} | {b: boolean}>>().toBe<true>();
 expectTypeOf<IsEqual<ConditionalExcept<{aValue: string; keep: 1} | {bValue: string; keep: 2}, string>, {keep: 1} | {keep: 2}>>().toBe<true>();
+
+// Declared keys are still excluded when a non-matching index signature widens `keyof` (https://github.com/sindresorhus/type-fest/issues/1501)
+declare const indexSignatureConditionalExcept: ConditionalExcept<{[x: string]: unknown; a: string; b: number}, string>;
+expectTypeOf(indexSignatureConditionalExcept).toBe<{[x: string]: unknown; b: number}>();

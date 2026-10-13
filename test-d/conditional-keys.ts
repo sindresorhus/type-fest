@@ -64,6 +64,22 @@ expectTypeOf<ConditionalKeys<{[x: string]: string; a: string}, string>>().toBe<s
 expectTypeOf<ConditionalKeys<{[x: Uppercase<string>]: string; a: string}, string>>().toBe<Uppercase<string> | 'a'>();
 expectTypeOf<ConditionalKeys<{[x: Uppercase<string>]: string; [x: number]: number; a: number}, number>>().toBe<number | 'a'>();
 
+// Declared keys are still matched when a non-matching index signature widens `keyof` (https://github.com/sindresorhus/type-fest/issues/1501)
+expectTypeOf<ConditionalKeys<{[x: string]: unknown; a: string; b: number}, string>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: string]: unknown; a: string; b: number}, number>>().toBe<'b'>();
+expectTypeOf<ConditionalKeys<{[x: string]: string | number; a: string; b: number}, string>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: number]: unknown; [x: string]: unknown; a: string; b: number}, string>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: symbol]: unknown; a: string}, string>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: string]: unknown; a?: string}, string | undefined>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: string]: unknown; a: string}, boolean>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{[x: `data-${string}`]: unknown; 'data-known': string}, string>>().toBe<'data-known'>();
+expectTypeOf<ConditionalKeys<{[x: Uppercase<string>]: unknown; a: string}, string>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: Uppercase<string>]: unknown; A: string; a: string}, string>>().toBe<'A' | 'a'>();
+expectTypeOf<ConditionalKeys<{[x: string]: unknown} & {a: string; b: number}, string>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: string]: unknown; a: string; b: number} | {[x: string]: unknown; a: string; c: string}, string>>().toBe<'a'>();
+// A pattern index signature that matches still contributes, and subsumes the literal keys it covers
+expectTypeOf<ConditionalKeys<{[x: `data-${string}`]: string; 'data-known': string}, string>>().toBe<`data-${string}`>();
+
 // Arrays and tuples
 expectTypeOf<ConditionalKeys<[string, number, string], string>>().toBe<'0' | '2'>();
 expectTypeOf<ConditionalKeys<[string, string, string | number], string>>().toBe<'0' | '1'>();
