@@ -149,7 +149,8 @@ Use-case: Validating and documenting parameters.
 
 @category Numeric
 */
-export type Negative<T extends _Numeric> = T extends Zero ? never : `${T}` extends `-${string}` ? T : never;
+// Read the sign from the primitive base, but keep the original brand on accepted values.
+export type Negative<T extends _Numeric> = T extends Zero ? never : `${T extends object ? UnwrapBrand<T> : T}` extends `-${string}` ? T : never;
 
 /**
 A negative (`-∞ < x < 0`) `number` that is an integer.
