@@ -22,6 +22,10 @@ type Foo = {
 
 type SomeOptional = SetOptional<Foo, 'b' | 'c'>;
 //=> {a: number; b?: string; c?: boolean}
+
+// Set specific indices in an array to be optional.
+type ArrayExample = SetOptional<[number, number, number], 1 | 2>;
+//=> [number, number?, number?]
 ```
 
 Known limitations:
