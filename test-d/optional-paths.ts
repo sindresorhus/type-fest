@@ -136,6 +136,18 @@ expectTypeOf<OptionalPaths<Recursive4, {maxRecursionDepth: 1}>>().toBe<'bar' | '
 expectTypeOf<OptionalPaths<any>>().toBe<never>();
 expectTypeOf<OptionalPaths<never>>().toBe<never>();
 
+// Only objects have paths.
+// @ts-expect-error
+type UnknownBase = OptionalPaths<unknown>;
+// @ts-expect-error
+type StringBase = OptionalPaths<string>;
+
+// A non-literal depth stops at the first level, like `Paths`.
+expectTypeOf<OptionalPaths<Recursive1, {maxRecursionDepth: number}>>().toBe<'foo'>();
+
+// A key optional in only one union member is included.
+expectTypeOf<OptionalPaths<{a?: 1} | {a: 1; b?: 2}>>().toBe<'a' | 'b'>();
+
 // Generic types
 type OptionalPathsConstraint<T extends object, _U extends OptionalPaths<T>> = never;
 

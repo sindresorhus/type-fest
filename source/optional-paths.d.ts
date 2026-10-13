@@ -13,7 +13,7 @@ Options for the `OptionalPaths` type.
 */
 export type OptionalPathsOptions = {
 	/**
-	The maximum depth to recurse when searching for optional paths.
+	The maximum depth to recurse when searching for optional paths. Range: 0 ~ 10.
 
 	@default 5
 
@@ -45,6 +45,8 @@ Get a union of all paths to optional properties in the given object.
 
 Use-cases:
 - Can be used in conjunction with `PickDeep`/`OmitDeep` to select/remove all optional properties from an object.
+
+For a union, a path is included when the property is optional in any member.
 
 @example
 ```
