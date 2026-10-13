@@ -15,7 +15,10 @@ type NeverToNull<T> = IsNever<T> extends true ? null : T;
 type UndefinedToNull<T> = T extends undefined ? null : T;
 
 // `JSON.stringify` turns array members that are not JSON-able into `null`. The `extends` is distributive so that each member of a union is handled on its own. Without it, a non-JSON-able member collapses the whole union, as `Jsonify<symbol | number>` would become `number`.
-type JsonifyListItem<T> = T extends NotJsonable ? null : NeverToNull<Jsonify<UndefinedToNull<T>>>;
+type JsonifyListItem<T> = JsonifyListItemResult<ToJsonResult<T>>;
+
+// Classify the toJSON result before Jsonify can remove undefined from a union.
+type JsonifyListItemResult<T> = T extends NotJsonable ? null : NeverToNull<Jsonify<UndefinedToNull<T>>>;
 
 // Handles tuples and arrays
 type JsonifyList<T extends UnknownArray> = T extends readonly []

@@ -590,3 +590,23 @@ expectTypeOf<Jsonify<{value: NamedRecord | null | undefined}>>().toBe<{value?: {
 expectTypeOf<Jsonify<{value: {toJSON(): NamedRecord | undefined}}>>().toBe<{value?: {name: string}}>();
 expectTypeOf<Jsonify<{value?: string | (() => void)}>>().toBe<{}>();
 expectTypeOf<Jsonify<{value?: NamedRecord}>>().toBeAssignableTo<JsonValue>();
+
+// An array's toJSON result is classified before non-JSON values become null.
+expectTypeOf<Jsonify<Array<{toJSON(): string | undefined}>>>().toBe<Array<string | null>>();
+expectTypeOf<Jsonify<readonly [1, {toJSON(): string | undefined}]>>().toBe<[1, string | null]>();
+expectTypeOf<Jsonify<Array<{toJSON(key: string): number | undefined}>>>().toBe<Array<number | null>>();
+expectTypeOf<Jsonify<Array<{toJSON(): string | symbol}>>>().toBe<Array<string | null>>();
+expectTypeOf<Jsonify<Array<{toJSON(): string | (() => void)}>>>().toBe<Array<string | null>>();
+expectTypeOf<Jsonify<{values: Array<{toJSON(): string | undefined}>}>>().toBe<{values: Array<string | null>}>();
+
+// Always-present results stay unchanged, and always-absent results become null.
+expectTypeOf<Jsonify<Array<{toJSON(): string}>>>().toBe<string[]>();
+expectTypeOf<Jsonify<Array<{toJSON(): undefined}>>>().toBe<null[]>();
+expectTypeOf<Jsonify<[{toJSON(): undefined}, {toJSON(): string}]>>().toBe<[null, string]>();
+expectTypeOf<Jsonify<Array<{toJSON(): null | undefined}>>>().toBe<null[]>();
+expectTypeOf<Jsonify<Array<{toJSON(): {name: string} | undefined}>>>().toBe<Array<null | {name: string}>>();
+expectTypeOf<Jsonify<Array<{toJSON(): NamedRecord | undefined}>>>().toBe<Array<null | {name: string}>>();
+expectTypeOf<Jsonify<[1, {toJSON(): string | undefined}?]>>().toBe<[1] | [1, string | null]>();
+expectTypeOf<Jsonify<Array<Date | {toJSON(): undefined}>>>().toBe<Array<string | null>>();
+expectTypeOf<Jsonify<Array<Array<{toJSON(): string | undefined}>>>>().toBe<Array<Array<string | null>>>();
+expectTypeOf<Jsonify<Array<{toJSON(): string | undefined}>>>().toBeAssignableTo<JsonValue>();
