@@ -53,3 +53,35 @@ declare const sameExponent: GreaterThanOrEqual<1e21, 1e21>;
 expectTypeOf(sameExponent).toBe<true>();
 declare const bothExponent: GreaterThanOrEqual<1e21, 2e21>;
 expectTypeOf(bothExponent).toBe<boolean>();
+
+// Works with `bigint`, and with a `bigint` compared to a `number`.
+expectTypeOf<GreaterThanOrEqual<2n, 1n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<2n, 1>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<2, 1n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<-1n, -2>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<1n, 1>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<1, 1n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<1n, 2n>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<1n, 2>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<1, 2n>>().toBe<false>();
+
+expectTypeOf<GreaterThanOrEqual<100n | 200, 50n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<10n, 50 | 100n>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<1n | 3, 0 | 2n>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<PositiveInfinity, -999n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<PositiveInfinity, 999n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<999n, PositiveInfinity>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<999n, NegativeInfinity>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<-999n, NegativeInfinity>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<bigint, number>>().toBe<boolean>();
+
+// Non-literal `bigint`
+expectTypeOf<GreaterThanOrEqual<bigint, bigint>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<bigint, number>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<bigint, 1>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<1, bigint>>().toBe<boolean>();
+
+expectTypeOf<GreaterThanOrEqual<PositiveInfinity, bigint>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<bigint, PositiveInfinity>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<NegativeInfinity, bigint>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<bigint, NegativeInfinity>>().toBe<boolean>();

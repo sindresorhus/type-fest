@@ -101,3 +101,62 @@ expectTypeOf<LessThanOrEqual<Opaque<5, 'A'>, Opaque<5, 'B'>>>().toBe<true>();
 expectTypeOf<GreaterThan<Tagged<Tagged<5, 'Value'>, 'Validated'>, 3>>().toBe<true>();
 expectTypeOf<GreaterThan<3, Tagged<Tagged<5, 'Value'>, 'Validated'>>>().toBe<false>();
 expectTypeOf<GreaterThanOrEqual<Tagged<Tagged<5, 'Value'>, 'Validated'>, 5>>().toBe<true>();
+
+// Works with `bigint`, and with a `bigint` compared to a `number`.
+expectTypeOf<GreaterThan<2n, 1n>>().toBe<true>();
+expectTypeOf<GreaterThan<2n, 1>>().toBe<true>();
+expectTypeOf<GreaterThan<2, 1n>>().toBe<true>();
+expectTypeOf<GreaterThan<-1n, -2>>().toBe<true>();
+expectTypeOf<GreaterThan<1n, 2n>>().toBe<false>();
+expectTypeOf<GreaterThan<1n, 2>>().toBe<false>();
+expectTypeOf<GreaterThan<1, 2n>>().toBe<false>();
+expectTypeOf<GreaterThan<1n, 1>>().toBe<false>();
+
+expectTypeOf<GreaterThan<100n | 200, 50n>>().toBe<true>();
+expectTypeOf<GreaterThan<10n, 50 | 100n>>().toBe<false>();
+expectTypeOf<GreaterThan<1n | 3, 0 | 2n>>().toBe<boolean>();
+expectTypeOf<GreaterThan<PositiveInfinity, -999n>>().toBe<true>();
+expectTypeOf<GreaterThan<PositiveInfinity, 999n>>().toBe<true>();
+expectTypeOf<GreaterThan<999n, PositiveInfinity>>().toBe<false>();
+expectTypeOf<GreaterThan<999n, NegativeInfinity>>().toBe<true>();
+expectTypeOf<GreaterThan<-999n, NegativeInfinity>>().toBe<true>();
+expectTypeOf<GreaterThan<number, bigint>>().toBe<boolean>();
+
+// Non-literal `bigint`
+expectTypeOf<GreaterThan<bigint, bigint>>().toBe<boolean>();
+expectTypeOf<GreaterThan<bigint, number>>().toBe<boolean>();
+expectTypeOf<GreaterThan<bigint, 1>>().toBe<boolean>();
+expectTypeOf<GreaterThan<1, bigint>>().toBe<boolean>();
+
+// An infinity compared to the non-literal `bigint` is `boolean` too, like the non-literal `number`, to keep the rule simple.
+expectTypeOf<GreaterThan<PositiveInfinity, bigint>>().toBe<boolean>();
+expectTypeOf<GreaterThan<bigint, PositiveInfinity>>().toBe<boolean>();
+expectTypeOf<GreaterThan<NegativeInfinity, bigint>>().toBe<boolean>();
+expectTypeOf<GreaterThan<bigint, NegativeInfinity>>().toBe<boolean>();
+
+// A `bigint` compares with a decimal `number` by value.
+expectTypeOf<GreaterThan<2n, 1.5>>().toBe<true>();
+expectTypeOf<GreaterThan<1.5, 2n>>().toBe<false>();
+expectTypeOf<GreaterThan<-1n, -1.5>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<5n, 5>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<5, 5n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<1n, 1.5>>().toBe<false>();
+expectTypeOf<LessThan<1n, 1.5>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<2n, 1.5>>().toBe<false>();
+expectTypeOf<GreaterThan<0n, -0>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<0n, -0>>().toBe<true>();
+
+// Large `bigint` values beyond `Number.MAX_SAFE_INTEGER` are compared digit by digit.
+expectTypeOf<GreaterThan<123_456_789_012_345_678_901_234_567_890n, 123_456_789_012_345_678_901_234_567_889n>>().toBe<true>();
+expectTypeOf<LessThan<-123_456_789_012_345_678_901_234_567_890n, -123_456_789_012_345_678_901_234_567_889n>>().toBe<true>();
+
+// Branded `bigint` values are unwrapped.
+expectTypeOf<GreaterThan<Tagged<5n, 'A'>, 3n>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<3n, Tagged<3n, 'A'>>>().toBe<true>();
+
+// `never` is not a value, so there is nothing to compare.
+expectTypeOf<GreaterThan<never, 1n>>().toBe<never>();
+
+// `any` could be any value, so the result is `boolean`, as with a `number`.
+expectTypeOf<GreaterThan<any, 1n>>().toBe<boolean>();
+expectTypeOf<GreaterThan<1n, any>>().toBe<boolean>();

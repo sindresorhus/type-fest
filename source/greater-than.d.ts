@@ -1,6 +1,6 @@
 import type {PositiveNumericStringGt} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
+import type {PositiveInfinity, NegativeInfinity, IsNegative, _Numeric} from './numeric.d.ts';
 import type {And} from './and.d.ts';
 import type {Or} from './or.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -21,9 +21,12 @@ type B = GreaterThan<1, 1>;
 
 type C = GreaterThan<1, 5>;
 //=> false
+
+type D = GreaterThan<5n, 1>;
+//=> true
 ```
 
-Note: If either argument is the non-literal `number` type, the result is `boolean`.
+Note: If either argument is the non-literal `number` or `bigint` type, the result is `boolean`.
 
 Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
 
@@ -38,6 +41,9 @@ type B = GreaterThan<1, number>;
 //=> boolean
 
 type C = GreaterThan<number, number>;
+//=> boolean
+
+type D = GreaterThan<bigint, 1n>;
 //=> boolean
 ```
 
@@ -58,40 +64,42 @@ setPositive(0);
 setPositive(-1);
 ```
 */
-export type GreaterThan<A extends number, B extends number> =
+export type GreaterThan<A extends _Numeric, B extends _Numeric> =
 	_GreaterThan<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
 
-type _GreaterThan<A extends number, B extends number> =
-	A extends number // For distributing `A`
-		? B extends number // For distributing `B`
+type _GreaterThan<A extends _Numeric, B extends _Numeric> =
+	A extends _Numeric // For distributing `A`
+		? B extends _Numeric // For distributing `B`
 			? number extends A | B
 				? boolean
-				: [
-					IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-					IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-				] extends infer R extends [boolean, boolean, boolean, boolean]
-					? Or<
-						And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
-						And<IsEqual<R[3], true>, IsEqual<R[1], false>>
-					> extends true
-						? true
-						: Or<
-							And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
-							And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+				: bigint extends A | B
+					? boolean
+					: [
+						IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+						IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+					] extends infer R extends [boolean, boolean, boolean, boolean]
+						? Or<
+							And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
+							And<IsEqual<R[3], true>, IsEqual<R[1], false>>
 						> extends true
-							? false
-							: true extends R[number]
+							? true
+							: Or<
+								And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
+								And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+							> extends true
 								? false
-								: [IsNegative<A>, IsNegative<B>] extends infer Signs extends [boolean, boolean]
-									? [true, false] extends Signs
-										? false
-										: [false, true] extends Signs
-											? true
-											: [false, false] extends Signs
-												? PositiveNumericStringGt<`${A}`, `${B}`>
-												: PositiveNumericStringGt<`${Absolute<B>}`, `${Absolute<A>}`>
-									: never
-					: never
+								: true extends R[number]
+									? false
+									: [IsNegative<A>, IsNegative<B>] extends infer Signs extends [boolean, boolean]
+										? [true, false] extends Signs
+											? false
+											: [false, true] extends Signs
+												? true
+												: [false, false] extends Signs
+													? PositiveNumericStringGt<`${A}`, `${B}`>
+													: PositiveNumericStringGt<`${Absolute<B>}`, `${Absolute<A>}`>
+										: never
+						: never
 			: never // Should never happen
 		: never; // Should never happen
 

@@ -1,4 +1,5 @@
 import type {GreaterThan} from './greater-than.d.ts';
+import type {_Numeric} from './numeric.d.ts';
 
 /**
 Returns a boolean for whether a given number is less than or equal to another number.
@@ -17,7 +18,7 @@ type C = LessThanOrEqual<1, 5>;
 //=> true
 ```
 
-Note: If either argument is the non-literal `number` type, the result is `boolean`.
+Note: If either argument is the non-literal `number` or `bigint` type, the result is `boolean`.
 
 Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
 
@@ -52,7 +53,7 @@ setNonPositive(1);
 setNonPositive(2);
 ```
 */
-export type LessThanOrEqual<A extends number, B extends number> =
+export type LessThanOrEqual<A extends _Numeric, B extends _Numeric> =
 	GreaterThan<A, B> extends infer Result
 		? Result extends true
 			? false

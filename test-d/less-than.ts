@@ -60,3 +60,34 @@ expectTypeOf(zeroLessThanNegativeExponent).toBe<true>();
 // Two numbers that are both in exponential notation can't be compared digit by digit, so the result is `boolean`.
 declare const bothExponent: LessThan<1e21, 2e21>;
 expectTypeOf(bothExponent).toBe<boolean>();
+
+// Works with `bigint`, and with a `bigint` compared to a `number`.
+expectTypeOf<LessThan<1n, 2n>>().toBe<true>();
+expectTypeOf<LessThan<1n, 2>>().toBe<true>();
+expectTypeOf<LessThan<1, 2n>>().toBe<true>();
+expectTypeOf<LessThan<-2n, -1>>().toBe<true>();
+expectTypeOf<LessThan<2n, 1n>>().toBe<false>();
+expectTypeOf<LessThan<2n, 1>>().toBe<false>();
+expectTypeOf<LessThan<2, 1n>>().toBe<false>();
+expectTypeOf<LessThan<1n, 1>>().toBe<false>();
+
+expectTypeOf<LessThan<10n, 50 | 100n>>().toBe<true>();
+expectTypeOf<LessThan<100n | 200, 50n>>().toBe<false>();
+expectTypeOf<LessThan<1n | 3, 0 | 2n>>().toBe<boolean>();
+expectTypeOf<LessThan<PositiveInfinity, -999n>>().toBe<false>();
+expectTypeOf<LessThan<PositiveInfinity, 999n>>().toBe<false>();
+expectTypeOf<LessThan<999n, PositiveInfinity>>().toBe<true>();
+expectTypeOf<LessThan<999n, NegativeInfinity>>().toBe<false>();
+expectTypeOf<LessThan<-999n, NegativeInfinity>>().toBe<false>();
+expectTypeOf<LessThan<number, bigint>>().toBe<boolean>();
+
+// Non-literal `bigint`
+expectTypeOf<LessThan<bigint, bigint>>().toBe<boolean>();
+expectTypeOf<LessThan<bigint, number>>().toBe<boolean>();
+expectTypeOf<LessThan<bigint, 1>>().toBe<boolean>();
+expectTypeOf<LessThan<1, bigint>>().toBe<boolean>();
+
+expectTypeOf<LessThan<PositiveInfinity, bigint>>().toBe<boolean>();
+expectTypeOf<LessThan<bigint, PositiveInfinity>>().toBe<boolean>();
+expectTypeOf<LessThan<NegativeInfinity, bigint>>().toBe<boolean>();
+expectTypeOf<LessThan<bigint, NegativeInfinity>>().toBe<boolean>();
