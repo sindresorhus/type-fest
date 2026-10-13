@@ -524,3 +524,24 @@ expectTypeOf(enumMember).toBe<{status: Status}>();
 
 declare const enumMemberUnwrapped: LiteralToPrimitiveDeep<{status: Status}>;
 expectTypeOf(enumMemberUnwrapped).toBe<{status: string}>();
+
+// Optional tuple positions still have fixed indices and a finite maximum length after serialization.
+expectTypeOf<Jsonify<[1, Date?]>>().toBe<[1] | [1, string | null]>();
+expectTypeOf<Jsonify<readonly [1, Date?, boolean?]>>().toBe<[1] | [1, string | null] | [1, string | null, boolean | null]>();
+
+expectTypeOf<Jsonify<[Date?]>>().toBe<[] | [string | null]>();
+expectTypeOf<Jsonify<readonly [Date?, boolean?, number?]>>().toBe<[] | [string | null] | [string | null, boolean | null] | [string | null, boolean | null, number | null]>();
+expectTypeOf<Jsonify<[1, (Date | undefined)?]>>().toBe<[1] | [1, string | null]>();
+expectTypeOf<Jsonify<[symbol?, (() => void)?]>>().toBe<[] | [null] | [null, null]>();
+expectTypeOf<Jsonify<[unknown?]>>().toBe<[] | [JsonValue]>();
+expectTypeOf<Jsonify<[Date?, ...boolean[]]>>().toBe<[] | [string | null, ...boolean[]]>();
+expectTypeOf<Jsonify<[Date?, boolean?, ...symbol[]]>>().toBe<[] | [string | null] | [string | null, boolean | null, ...null[]]>();
+expectTypeOf<Jsonify<[1, Date?] | [2, boolean?]>>().toBe<[1] | [1, string | null] | [2] | [2, boolean | null]>();
+expectTypeOf<Jsonify<{values: readonly [Date?]}>>().toBe<{values: [] | [string | null]}>();
+expectTypeOf<Jsonify<[Date?, boolean?]>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<[string, boolean, number]>().not.toBeAssignableTo<Jsonify<[Date?, boolean?]>>();
+
+// A missing optional position before a present one is a hole that serializes to null.
+// eslint-disable-next-line no-sparse-arrays
+const sparseOptionalTuple: [1, Date?, boolean?] = [1, , true];
+expectTypeOf<[1, null, true]>().toBeAssignableTo<Jsonify<typeof sparseOptionalTuple>>();

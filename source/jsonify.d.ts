@@ -25,9 +25,14 @@ type JsonifyList<T extends UnknownArray> = T extends readonly []
 		? [F, ...R] extends T // With TS 5.8.3, if `string[] & ['foo']`, `R` is `unknown[]` here, making the inferred types not equal to the original one
 			? [NeverToNull<JsonifyListItem<F>>, ...JsonifyList<R>]
 			: [NeverToNull<JsonifyListItem<F>>]
-		: IsUnknown<T[number]> extends true
-			? JsonValue[]
-			: Array<JsonifyListItem<T[number]>>;
+		: '0' extends keyof T
+			// Optional positions may be absent, so keep each possible tuple shape. A hole before another element is serialized as null.
+			? T extends readonly [(infer F)?, ...infer R]
+				? [] | [JsonifyListItem<F | undefined>, ...JsonifyList<R>]
+				: never
+			: IsUnknown<T[number]> extends true
+				? JsonValue[]
+				: Array<JsonifyListItem<T[number]>>;
 
 /**
 JSON serialize objects (not including arrays) and classes.
