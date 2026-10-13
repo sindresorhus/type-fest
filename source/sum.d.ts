@@ -1,5 +1,4 @@
-import type {TupleOf} from './tuple-of.d.ts';
-import type {TupleMax, ReverseSign} from './internal/index.d.ts';
+import type {TupleMax, ReverseSign, NonNegativeIntegerSum} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -8,7 +7,7 @@ import type {Absolute} from './absolute.d.ts';
 Returns the sum of two numbers.
 
 Note:
-- A or B can only support `-999` ~ `999`.
+- The result is exact while A and B are within `Number.MAX_SAFE_INTEGER`. A larger number is already rounded, so the result can then be `number` or a literal that differs from what JavaScript computes.
 - A or B must be written without a decimal point or exponent. Such a value resolves to `never` rather than a silently truncated whole number. A union that mixes both kinds is not caught.
 
 @example
@@ -29,11 +28,13 @@ type D = Sum<PositiveInfinity, -9999>;
 
 type E = Sum<PositiveInfinity, NegativeInfinity>;
 //=> number
+
+type F = Sum<999_999, 1>;
+//=> 1000000
 ```
 
 @category Numeric
 */
-// TODO: Support big integer.
 export type Sum<A extends number, B extends number> =
 	// A decimal fraction or exponent notation is not supported, so the result is `never` rather than a silently truncated whole number.
 	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never : _Sum<A, B>;
@@ -60,10 +61,10 @@ Adds two numbers A and B, such that they are not equal with different signs and 
 type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative<A>, IsNegative<B>]> =
 	AreNegative extends [false, false]
 		// When both numbers are positive we can add them together
-		? SumPositives<A, B>
+		? NonNegativeIntegerSum<A, B>
 		: AreNegative extends [true, true]
 			// When both numbers are negative we add the absolute values and then reverse the sign
-			? ReverseSign<SumPositives<Absolute<A>, Absolute<B>>>
+			? ReverseSign<NonNegativeIntegerSum<Absolute<A>, Absolute<B>>>
 			// When the signs are different we can subtract the absolute values, remove the sign
 			// and then reverse the sign if the larger absolute value is negative
 			: Absolute<Subtract<Absolute<A>, Absolute<B>>> extends infer Result extends number
@@ -75,13 +76,5 @@ type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative
 						: ReverseSign<Result>
 					: never
 				: never;
-
-/**
-Adds two positive numbers.
-*/
-type SumPositives<A extends number, B extends number> =
-	[...TupleOf<A>, ...TupleOf<B>]['length'] extends infer Result extends number
-		? Result
-		: never;
 
 export {};

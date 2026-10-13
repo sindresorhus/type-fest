@@ -43,6 +43,7 @@ expectTypeOf<IsEqual<ReverseSign<-0>, 0>>().toBe<true>();
 expectTypeOf<IsEqual<ReverseSign<NegativeInfinity>, PositiveInfinity>>().toBe<true>();
 expectTypeOf<IsEqual<ReverseSign<PositiveInfinity>, NegativeInfinity>>().toBe<true>();
 expectTypeOf<IsEqual<ReverseSign<-1.5>, 1.5>>().toBe<true>();
+expectTypeOf<ReverseSign<number>>().toBe<number>();
 
 // `IsEqual` does not see through a nested application, so this one is asserted on the result directly rather than through `IsEqual`.
 expectTypeOf<ReverseSign<ReverseSign<-42>>>().toBe<-42>();

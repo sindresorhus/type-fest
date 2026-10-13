@@ -23,12 +23,12 @@ type SomeNodeSimplified = ConditionalSimplifyDeep<SomeNode>;
 const someNode = {parent: positionAndSize, childs: [{parent: positionAndSize}, {parent: positionAndSize}]};
 expectTypeOf(someNode).toBe<SomeNodeSimplified>();
 
-// Should simplify interface deeply excluding Function type.
-// TODO: Convert this to a `type`.
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-interface MovablePosition extends Position {
+// Should simplify deeply excluding Function type.
+type MovablePosition = {
+	top: number;
+	left: number;
 	move(position: Position): Position;
-}
+};
 
 type MovableCollection = {
 	position: MovablePosition;

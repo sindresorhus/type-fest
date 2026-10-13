@@ -4,15 +4,9 @@ import type {UnknownArray} from '../unknown-array.d.ts';
 import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
 
 /**
-Matches any unknown array or tuple.
-*/
-export type UnknownArrayOrTuple = readonly [...unknown[]];
-// TODO: should unknown-array be updated?
-
-/**
 Extracts the type of the first element of an array or tuple.
 */
-export type FirstArrayElement<TArray extends UnknownArrayOrTuple> = TArray extends readonly [infer THead, ...unknown[]]
+export type FirstArrayElement<TArray extends UnknownArray> = TArray extends readonly [infer THead, ...unknown[]]
 	? THead
 	// A tuple whose elements are all optional has no required first element, but it still has a first element.
 	: '0' extends keyof TArray

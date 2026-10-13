@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, IsLiteral} from '../../index.d.ts';
-import type {ExactKey, FilterDefinedKeys, FilterOptionalKeys, LiteralKeyOf, UnknownArrayOrTuple} from '../../source/internal/index.d.ts';
+import type {ExactKey, FilterDefinedKeys, FilterOptionalKeys, LiteralKeyOf} from '../../source/internal/index.d.ts';
 
 // A property whose type includes `undefined` is optional, one that is only `undefined` is neither.
 expectTypeOf<IsEqual<FilterDefinedKeys<{a: 1; b: string | undefined}>, 'a'>>().toBe<true>();
@@ -34,8 +34,3 @@ expectTypeOf<IsEqual<ExactKey<Mixed, '0'>, 0>>().toBe<true>();
 expectTypeOf<IsEqual<ExactKey<Mixed, 0>, 0>>().toBe<true>();
 expectTypeOf<IsEqual<ExactKey<Mixed, '1'>, '1'>>().toBe<true>();
 expectTypeOf<IsEqual<ExactKey<Mixed, 1>, '1'>>().toBe<true>();
-
-// Any array or tuple matches, readonly or not.
-expectTypeOf<IsEqual<string[] extends UnknownArrayOrTuple ? true : false, true>>().toBe<true>();
-expectTypeOf<IsEqual<readonly [1, 2] extends UnknownArrayOrTuple ? true : false, true>>().toBe<true>();
-expectTypeOf<IsEqual<{length: number} extends UnknownArrayOrTuple ? true : false, false>>().toBe<true>();

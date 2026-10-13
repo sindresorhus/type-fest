@@ -1,14 +1,13 @@
-import type {ReverseSign} from './internal/index.d.ts';
+import type {ReverseSign, NonNegativeIntegerSum, NonNegativeIntegerDifference} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {LessThan} from './less-than.d.ts';
-import type {TupleOf} from './tuple-of.d.ts';
 import type {Absolute} from './absolute.d.ts';
 
 /**
 Returns the difference between two numbers.
 
 Note:
-- A or B can only support `-999` ~ `999`.
+- The result is exact while A and B are within `Number.MAX_SAFE_INTEGER`. A larger number is already rounded, so the result can then be `number` or a literal that differs from what JavaScript computes.
 - A or B must be written without a decimal point or exponent. Such a value resolves to `never` rather than a silently truncated whole number. A union that mixes both kinds is not caught.
 
 @example
@@ -32,11 +31,13 @@ type E = Subtract<PositiveInfinity, 9999>;
 
 type F = Subtract<PositiveInfinity, PositiveInfinity>;
 //=> number
+
+type G = Subtract<1_000_000, 1>;
+//=> 999999
 ```
 
 @category Numeric
 */
-// TODO: Support big integer.
 export type Subtract<A extends number, B extends number> =
 	// A decimal fraction or exponent notation is not supported, so the result is `never` rather than a silently truncated whole number.
 	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never : _Subtract<A, B>;
@@ -67,8 +68,8 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 			// When both numbers are negative we subtract the absolute values and then reverse the sign
 			? ReverseSign<SubtractPositives<Absolute<A>, Absolute<B>>>
 			// When the signs are different we can add the absolute values and then reverse the sign if A < B
-			: [...TupleOf<Absolute<A>>, ...TupleOf<Absolute<B>>] extends infer R extends unknown[]
-				? LessThan<A, B> extends true ? ReverseSign<R['length']> : R['length']
+			: NonNegativeIntegerSum<Absolute<A>, Absolute<B>> extends infer R extends number
+				? LessThan<A, B> extends true ? ReverseSign<R> : R
 				: never;
 
 /**
@@ -77,16 +78,7 @@ Subtracts two positive numbers.
 type SubtractPositives<A extends number, B extends number> =
 	LessThan<A, B> extends true
 		// When A < B we can reverse the result of B - A
-		? ReverseSign<SubtractIfAGreaterThanB<B, A>>
-		: SubtractIfAGreaterThanB<A, B>;
-
-/**
-Subtracts two positive numbers A and B such that A > B.
-*/
-type SubtractIfAGreaterThanB<A extends number, B extends number> =
-	// This is where we always want to end up and do the actual subtraction
-	TupleOf<A> extends [...TupleOf<B>, ...infer R]
-		? R['length']
-		: never;
+		? ReverseSign<NonNegativeIntegerDifference<B, A>>
+		: NonNegativeIntegerDifference<A, B>;
 
 export {};

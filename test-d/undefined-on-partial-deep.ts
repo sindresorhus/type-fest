@@ -1,21 +1,25 @@
-// TODO: Test equality
 import {expectTypeOf} from 'nz';
 import type {UndefinedOnPartialDeep} from '../source/undefined-on-partial-deep.d.ts';
 import type {JsonValue} from '../source/json-value.d.ts';
 
 type TestType1 = UndefinedOnPartialDeep<{required: string; optional?: string; optional2?: number; optional3?: string}>;
+expectTypeOf<TestType1>().toBe<{required: string; optional?: string | undefined; optional2?: number | undefined; optional3?: string | undefined}>();
 ({required: '', optional: undefined, optional2: 1}) satisfies TestType1;
 
 type TestType2 = UndefinedOnPartialDeep<{optional?: string | undefined}>;
+expectTypeOf<TestType2>().toBe<{optional?: string | undefined}>();
 ({optional: undefined}) satisfies TestType2;
 
 type TestType3 = UndefinedOnPartialDeep<{requiredWithUndefind: string | undefined}>;
+expectTypeOf<TestType3>().toBe<{requiredWithUndefind: string | undefined}>();
 ({requiredWithUndefind: undefined}) satisfies TestType3;
 
 // Test null and undefined
 type NullType = UndefinedOnPartialDeep<{null?: null}>;
+expectTypeOf<NullType>().toBe<{null?: null | undefined}>();
 ({null: undefined}) satisfies NullType;
 type UndefinedType = UndefinedOnPartialDeep<{ud?: undefined}>;
+expectTypeOf<UndefinedType>().toBe<{ud?: undefined}>();
 ({ud: undefined}) satisfies UndefinedType;
 
 // Test mixed types
@@ -39,43 +43,63 @@ type MixedType = UndefinedOnPartialDeep<{
 	regExp: undefined,
 	func: undefined,
 }) satisfies MixedType;
+expectTypeOf<MixedType>().toBe<{
+	required: string;
+	union?: 'test1' | 'test2' | undefined;
+	boolean?: boolean | undefined;
+	string?: string | undefined;
+	symbol?: symbol | undefined;
+	date?: Date | undefined;
+	regExp?: RegExp | undefined;
+	func?: ((arguments0: string, arguments1: number) => boolean) | undefined;
+}>();
 
 // Test object
 type ObjectType = UndefinedOnPartialDeep<{obj?: {key: string}}>;
+expectTypeOf<ObjectType>().toBe<{obj?: {key: string} | undefined}>();
 ({obj: undefined}) satisfies ObjectType;
 
 type ObjectDeepType = UndefinedOnPartialDeep<{obj?: {subObj?: {key?: string}}}>;
+expectTypeOf<ObjectDeepType>().toBe<{obj?: {subObj?: {key?: string | undefined} | undefined} | undefined}>();
 ({obj: undefined}) satisfies ObjectDeepType;
 ({obj: {subObj: undefined}}) satisfies ObjectDeepType;
 ({obj: {subObj: {key: undefined}}}) satisfies ObjectDeepType;
 
 // Test map
 type MapType = UndefinedOnPartialDeep<{map?: Map<string, {key?: string}>}>;
+expectTypeOf<MapType>().toBe<{map?: Map<string, {key?: string | undefined}> | undefined}>();
 ({map: undefined}) satisfies MapType;
 ({map: new Map([['', {key: undefined}]])}) satisfies MapType;
 
 // Test set
 type SetType = UndefinedOnPartialDeep<{set?: Set<{key?: string}>}>;
+expectTypeOf<SetType>().toBe<{set?: Set<{key?: string | undefined}> | undefined}>();
 ({set: undefined}) satisfies SetType;
 ({set: new Set([{key: undefined}])}) satisfies SetType;
 
 // Test array and tuple
 type TupleType = UndefinedOnPartialDeep<{tuple?: [string, number]}>;
+expectTypeOf<TupleType>().toBe<{tuple?: [string, number] | undefined}>();
 ({tuple: undefined}) satisfies TupleType;
 type ArrayType = UndefinedOnPartialDeep<{array?: string[]}>;
+expectTypeOf<ArrayType>().toBe<{array?: string[] | undefined}>();
 ({array: undefined}) satisfies ArrayType;
 type ArrayDeepType = UndefinedOnPartialDeep<{array?: Array<{subArray?: string[]}>}>;
+expectTypeOf<ArrayDeepType>().toBe<{array?: Array<{subArray?: string[] | undefined}> | undefined}>();
 ({array: undefined}) satisfies ArrayDeepType;
 ({array: [{subArray: undefined}]}) satisfies ArrayDeepType;
 type ObjectListType = UndefinedOnPartialDeep<{array?: Array<{key?: string}>}>;
+expectTypeOf<ObjectListType>().toBe<{array?: Array<{key?: string | undefined}> | undefined}>();
 ({array: undefined}) satisfies ObjectListType;
 ({array: [{key: undefined}]}) satisfies ObjectListType;
 
 // Test readonly array
 type ReadonlyType = UndefinedOnPartialDeep<{readonly?: readonly string[]}>;
+expectTypeOf<ReadonlyType>().toBe<{readonly?: readonly string[] | undefined}>();
 ({readonly: undefined}) satisfies ReadonlyType;
 // eslint-disable-next-line @typescript-eslint/array-type
 type ReadonlyArrayTest = UndefinedOnPartialDeep<{readonly?: ReadonlyArray<string>}>;
+expectTypeOf<ReadonlyArrayTest>().toBe<{readonly?: readonly string[] | undefined}>();
 ({readonly: undefined}) satisfies ReadonlyArrayTest;
 
 // A tuple with optional elements keeps its length, which a variadic rest would not.

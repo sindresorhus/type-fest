@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
-// TODO: Convert the `interface`'s to `type`s.
 import {expectTypeOf} from 'nz';
 import type {EmptyObject, Jsonify, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
+// An interface has no implicit index signature, so this checks that `Jsonify` makes it assignable to `JsonValue`.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface A {
 	a: number;
 }
@@ -11,25 +11,26 @@ class B {
 	a!: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface V {
 	a?: number;
 }
 
-interface X {
+type X = {
 	a: Date;
-}
+};
 
-interface Y {
+type Y = {
 	a?: Date;
-}
+};
 
-interface Z {
+type Z = {
 	a: number | undefined;
-}
+};
 
-interface W {
+type W = {
 	a?: () => any;
-}
+};
 
 declare const a: Jsonify<A>;
 declare const b: Jsonify<B>;
@@ -67,7 +68,8 @@ expectTypeOf(w).not.toBeAssignableTo<JsonValue>();
 expectTypeOf<undefined>().not.toBeAssignableTo<JsonValue>();
 expectTypeOf(5 as number | undefined).not.toBeAssignableTo<JsonValue>();
 
-// TODO: Convert this to a `type`.
+// An interface, because an interface is not assignable to `JsonValue` while its `Jsonify` version is.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Geometry {
 	type: 'Point' | 'Polygon';
 	coordinates: [number, number];

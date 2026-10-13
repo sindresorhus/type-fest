@@ -53,6 +53,20 @@ expectTypeOf<Sum<1111, 2222>>().toBe<3333>();
 expectTypeOf<Sum<-5000, 2000>>().toBe<-3000>();
 expectTypeOf<Sum<6540, -530>>().toBe<6010>();
 expectTypeOf<Sum<-8888, -12>>().toBe<-8900>();
+expectTypeOf<Sum<9999, 1>>().toBe<10_000>();
+expectTypeOf<Sum<999_999, 1>>().toBe<1_000_000>();
+expectTypeOf<Sum<1, 999_999>>().toBe<1_000_000>();
+expectTypeOf<Sum<123_456_789, 987>>().toBe<123_457_776>();
+expectTypeOf<Sum<-1_000_000, 1>>().toBe<-999_999>();
+expectTypeOf<Sum<1, -1_000_000>>().toBe<-999_999>();
+expectTypeOf<Sum<-123_456, -654_321>>().toBe<-777_777>();
+expectTypeOf<Sum<1_000_000 | 2_000_000, 5>>().toBe<1_000_005 | 2_000_005>();
+expectTypeOf<Sum<9_007_199_254_740_990, 1>>().toBe<9_007_199_254_740_991>();
+
+// A result that cannot be represented exactly is `number`.
+expectTypeOf<Sum<9_007_199_254_740_991, 2>>().toBe<number>();
+expectTypeOf<Sum<-9_007_199_254_740_991, -2>>().toBe<number>();
+expectTypeOf<Sum<500_000_000_000_000_000_000, 500_000_000_000_000_000_000>>().toBe<number>();
 
 // A decimal fraction is not supported, so the result is `never` rather than a silently truncated whole number.
 expectTypeOf<Sum<0.5, 0.5>>().toBe<never>();

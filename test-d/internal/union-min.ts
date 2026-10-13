@@ -7,8 +7,7 @@ expectTypeOf<UnionMin<10 | 5 | 2>>().toBe<2>();
 expectTypeOf<UnionMin<0 | 5 | 2 | 1>>().toBe<0>();
 expectTypeOf<UnionMin<1 | 2 | 5 | 3 | 7 | 9 | 0>>().toBe<0>();
 
-// TODO: push `negative-union-max-min` branch
-// Negatives are not supported yet (skipped)
+// Negatives are not supported, as documented, because only tuple lengths are passed in (skipped)
 // expectType<UnionMin<-1 | -3 | -2>>(-3);
 // expectType<UnionMin<0 | -5 | -2>>(-5);
 

@@ -15,6 +15,7 @@ expectTypeOf<null>().not.toBeAssignableTo<UnknownArray>();
 expectTypeOf<undefined>().not.toBeAssignableTo<UnknownArray>();
 expectTypeOf<{}>().not.toBeAssignableTo<UnknownArray>();
 expectTypeOf<{0: 1}>().not.toBeAssignableTo<UnknownArray>();
+expectTypeOf<{length: number}>().not.toBeAssignableTo<UnknownArray>();
 expectTypeOf<1>().not.toBeAssignableTo<UnknownArray>();
 expectTypeOf(Date).not.toBeAssignableTo<UnknownArray>();
 

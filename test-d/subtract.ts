@@ -48,6 +48,21 @@ expectTypeOf<Subtract<1111, 2222>>().toBe<-1111>();
 expectTypeOf<Subtract<-5000, 2000>>().toBe<-7000>();
 expectTypeOf<Subtract<6540, -530>>().toBe<7070>();
 expectTypeOf<Subtract<-8888, -12>>().toBe<-8876>();
+expectTypeOf<Subtract<10_000, 1>>().toBe<9999>();
+expectTypeOf<Subtract<1_000_000, 1>>().toBe<999_999>();
+expectTypeOf<Subtract<1, 1_000_000>>().toBe<-999_999>();
+expectTypeOf<Subtract<1000, 999>>().toBe<1>();
+expectTypeOf<Subtract<100_000, 99_990>>().toBe<10>();
+expectTypeOf<Subtract<123_456_789, 123_456_788>>().toBe<1>();
+expectTypeOf<Subtract<1_000_000, -1>>().toBe<1_000_001>();
+expectTypeOf<Subtract<-1_000_000, 1>>().toBe<-1_000_001>();
+expectTypeOf<Subtract<-1_000_000, -1>>().toBe<-999_999>();
+expectTypeOf<Subtract<1_000_000 | 2_000_000, 1>>().toBe<999_999 | 1_999_999>();
+expectTypeOf<Subtract<9_007_199_254_740_991, 9_007_199_254_740_990>>().toBe<1>();
+
+// A result that cannot be represented exactly is `number`.
+expectTypeOf<Subtract<9_007_199_254_740_991, -2>>().toBe<number>();
+expectTypeOf<Subtract<-9_007_199_254_740_991, 2>>().toBe<number>();
 
 // A decimal fraction is not supported, so the result is `never` rather than a silently truncated whole number.
 expectTypeOf<Subtract<0.5, 0.25>>().toBe<never>();

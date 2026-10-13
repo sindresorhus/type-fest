@@ -5,8 +5,7 @@ function function_(_a: number, _b: string, _c: Object, ..._arguments: boolean[])
 	return null;
 }
 
-// @ts-expect-error Global requires @types/node
-function functionWithThis(this: Global, _a: number) {
+function functionWithThis(this: typeof globalThis, _a: number) {
 	return null;
 }
 
@@ -74,14 +73,12 @@ testargs8(new Date());
 declare const test5: SetParameterType<typeof arrowFunction, {0: string}>;
 expectTypeOf(test5).toBe<(a: string) => null>();
 
-// TODO: Fix. The `this` is reported as `any`.
 // Test the function that has `this` parameter
-// declare const testThis: SetParameterType<typeof functionWithThis, {0: string}>;
-
-// expectType<(this: typeof globalThis, a: string) => null>(testThis);
-
-// // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-// testThis.call(globalThis, '1');
+declare const testThis: SetParameterType<typeof functionWithThis, {0: string}>;
+expectTypeOf(testThis).toBe<(this: typeof globalThis, _a: string) => null>();
+testThis.call(globalThis, '1');
+// @ts-expect-error
+testThis.call(new Date(), '1');
 
 // A type with several call signatures collapses to its last signature. This is a TypeScript limitation, not a choice, so it is pinned here rather than worked around.
 declare const overloaded: SetParameterType<{(): void; (x: number): void}, [string]>;
