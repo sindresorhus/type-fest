@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Get, PickDeep} from '../index.d.ts';
+import type {Get, OptionalPaths, PickDeep} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -173,11 +173,33 @@ expectTypeOf(plainArrayElement).toBe<{a: [string?]}>();
 declare const allRequired: PickDeep<{a: [1, 2, 3]}, 'a.2'>;
 expectTypeOf(allRequired).toBe<{a: [unknown, unknown, 3]}>();
 
-// Known limitation: several indices of the same tuple in one call resolve to `never`, because each path produces a `unknown`-padded tuple and the results are intersected, so the tuple's `length` becomes the intersection of the different lengths. See the docs.
-declare const severalIndices: PickDeep<[1, 2, 3], '1' | '2'>;
-expectTypeOf(severalIndices).toBe<never>();
+// Several indices of the same tuple are merged into one tuple, padded with `unknown` up to the last picked index, whatever the order of the paths.
+expectTypeOf<PickDeep<[1, 2, 3], '1' | '2'>>().toBe<[unknown, 2, 3]>();
+expectTypeOf<PickDeep<[1, 2, 3], '2' | '1'>>().toBe<[unknown, 2, 3]>();
+expectTypeOf<PickDeep<[1, 2, 3], '0' | '2'>>().toBe<[1, unknown, 3]>();
+expectTypeOf<PickDeep<readonly [1, 2, 3], '0' | '2'>>().toBe<readonly [1, unknown, 3]>();
+expectTypeOf<PickDeep<{a: [1, 2, 3]}, 'a.0' | 'a.2'>>().toBe<{a: [1, unknown, 3]}>();
 
-// Picking the containing property instead, then indexing into it at the use site, works around it.
+// Paths into different elements of the same tuple are merged too.
+expectTypeOf<PickDeep<{t: [{x?: 1; y: 2}, {z?: 1; w: 2}]}, 't.0.x' | 't.1.z'>>().toBe<{t: [{x?: 1}, {z?: 1}]}>();
+expectTypeOf<PickDeep<[[1, 2], 3], '0.1' | '1'>>().toBe<[[unknown, 2], 3]>();
+expectTypeOf<PickDeep<[{a: 1; b: 2; c: 3}], '0.a' | '0.b'>>().toBe<[{a: 1; b: 2}]>();
+
+// Picking a whole element and a path inside it gives the whole element.
+expectTypeOf<PickDeep<[{a: 1; b: 2}, 3], '0' | '0.a' | '1'>>().toBe<[{a: 1; b: 2}, 3]>();
+
+// A picked optional element keeps its `?` when nothing required follows it. Otherwise, it gains `| undefined`, like `SetOptional`.
+expectTypeOf<PickDeep<{t: [string?, number?]}, 't.0' | 't.1'>>().toBe<{t: [string?, number?]}>();
+expectTypeOf<PickDeep<{t: [{a?: 1}, {b?: 1}?]}, 't.0.a' | 't.1' | 't.1.b'>>().toBe<{t: [{a?: 1}, {b?: 1}?]}>();
+expectTypeOf<PickDeep<[1?, 2?, 3?], '0' | '2'>>().toBe<[1 | undefined, unknown, 3?]>();
+
+// A single large index is padded in one step, so it does not hit the recursion limit.
+type LargeIndexPick = PickDeep<Array<{x: 1; y: 2}>, '999'>;
+expectTypeOf<LargeIndexPick['length']>().toBe<999 | 1000>();
+expectTypeOf<LargeIndexPick[999]>().toBe<{x: 1; y: 2} | undefined>();
+expectTypeOf<PickDeep<Array<{x: 1; y: 2}>, '999.x'>[999]>().toBe<{x: 1}>();
+
+// Picking the containing property still works.
 declare const pickContainer: PickDeep<{a: [1, 2, 3]}, 'a'>;
 expectTypeOf(pickContainer).toBe<{a: [1, 2, 3]}>();
 
@@ -329,3 +351,7 @@ expectTypeOf<PickDeep<ValidArray, `${number}.foo`>>().toBe<Array<{foo: 0}>>();
 expectTypeOf<PickDeep<ValidObject, never>>().toBe<never>();
 expectTypeOf<PickDeep<unknown, 'a'>>().toBe<never>();
 expectTypeOf<PickDeep<never, 'a'>>().toBe<never>();
+
+// `OptionalPaths` can give several paths into one tuple. (https://github.com/sindresorhus/type-fest/pull/1443)
+type WithOptionalTuple = {t: [{a?: 1; b: 2}, {c?: 3}?]};
+expectTypeOf<PickDeep<WithOptionalTuple, OptionalPaths<WithOptionalTuple>>>().toBe<{t: [{a?: 1}, {c?: 3}?]}>();
