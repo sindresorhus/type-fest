@@ -2,6 +2,7 @@ import type {TupleOf} from './tuple-of.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
 import type {BuildObject, ExactKey, NonRecursiveType, ObjectValue} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {UnionToIntersection} from './union-to-intersection.d.ts';
@@ -18,6 +19,7 @@ Use-case: Distill complex objects down to the components you need to target.
 Known limitations:
 - Picking several indices of the same tuple in one call resolves to `never`, because each path produces a `unknown`-padded tuple and the results are then intersected, so the tuple's `length` becomes the intersection of the different lengths. Pick one index at a time, or pick the whole array and index into it.
 - A path that goes through a tuple element drops that element's `?` modifier and its `null`.
+- A path that does not exist is not a type error, so that paths deeper than `Paths` lists can be picked. A missing path is ignored, and if no path exists, the result is `never`.
 
 Use [`Pick<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) if you only need one level deep.
 
@@ -69,7 +71,7 @@ type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
 @category Object
 @category Array
 */
-export type PickDeep<T, PathUnion extends Paths<T>> =
+export type PickDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
 	T extends NonRecursiveType
 		? never
 		: T extends UnknownArray
@@ -114,7 +116,10 @@ type PickDeepObject<RecordType extends object, P extends string | number> =
 Build the picked member under its key. A key covered by an index signature is written as that literal key, like `Pick` does, and a non-literal path segment such as the `${string}` that `Paths` emits for a signature keeps the signature.
 */
 type PickDeepUnderKey<RecordType extends object, Key extends string | number, ObjectV, SubPath extends string | number> =
-	BuildObject<Key, PickedDeepValue<RecordType, Key, ObjectV, SubPath>, RecordType>;
+	// A missing path under the key resolves to `never`, so the whole path is missing.
+	IsNever<InternalPickDeep<NonNullable<ObjectV>, SubPath>> extends true
+		? never
+		: BuildObject<Key, PickedDeepValue<RecordType, Key, ObjectV, SubPath>, RecordType>;
 
 /**
 The member the pick produces: the recursion needs `NonNullable` to typecheck, so the explicitly declared nullish part of the member is put back, because the member can still be `null` (or `undefined`) when the picked value is read, and reading a path from it throws the same way it does for the source. An optional member keeps the `?` that already covers absence.
@@ -139,19 +144,24 @@ Pick an array from the given array by one path.
 type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
 	// Handle paths that are `${number}.${string}`
 	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
-		// When `ArrayIndex` is equal to `number`
-		? number extends ArrayIndex
-			? ArrayType extends unknown[]
-				? Array<InternalPickDeep<NonNullable<ArrayType[number]>, SubPath>>
-				: ArrayType extends readonly unknown[]
-					? ReadonlyArray<InternalPickDeep<NonNullable<ArrayType[number]>, SubPath>>
-					: never
-			// When `ArrayIndex` is a number literal
-			: ArrayType extends unknown[]
-				? [...TupleOf<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
-				: ArrayType extends readonly unknown[]
-					? readonly [...TupleOf<ArrayIndex>, InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath>]
-					: never
+		? InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath> extends infer Picked
+			// A missing path under the element resolves to `never`, so the whole path is missing.
+			? IsNever<Picked> extends true
+				? never
+				// When `ArrayIndex` is equal to `number`
+				: number extends ArrayIndex
+					? ArrayType extends unknown[]
+						? Picked[]
+						: ArrayType extends readonly unknown[]
+							? readonly Picked[]
+							: never
+					// When `ArrayIndex` is a number literal
+					: ArrayType extends unknown[]
+						? [...TupleOf<ArrayIndex>, Picked]
+						: ArrayType extends readonly unknown[]
+							? readonly [...TupleOf<ArrayIndex>, Picked]
+							: never
+			: never
 		// When the path is equal to `number`
 		: P extends `${infer ArrayIndex extends number}`
 			// When `ArrayIndex` is `number`

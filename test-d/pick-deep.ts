@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {PickDeep} from '../index.d.ts';
+import type {Get, PickDeep} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -253,3 +253,64 @@ expectTypeOf<PickDeep<Record<number, never>, '7'>>().toBe<{7: never}>();
 // A missing key in a different union member is still excluded.
 expectTypeOf<PickDeep<{value: never; first: string} | {other: number}, 'value'>>().toBe<{value: never}>();
 expectTypeOf<PickDeep<{value: never; first: string} | {value: number; second: string}, 'value'>>().toBe<{value: never} | {value: number}>();
+
+// A path deeper than `Paths` lists by default is accepted. https://github.com/sindresorhus/type-fest/issues/1502
+type Leaf = {
+	bar?: 'LeafBar';
+	foo: 'LeafString';
+};
+
+type Tree = {
+	foo?: Array<{
+		mode: 'test1';
+		bar: Array<{foo: Leaf[] | Leaf}>;
+	} | {
+		mode: 'test2';
+		foo: 'foo.number.foo';
+		bar: Array<{foo: Leaf[] | Leaf}>;
+	}>;
+};
+
+expectTypeOf<Get<PickDeep<Tree, `foo.${number}.bar.${number}.foo.${number}.bar`>, `foo.${number}.bar.${number}.foo.${number}.bar`>>().toBe<'LeafBar' | undefined>();
+
+// A missing path is ignored, and if no path exists, the result is `never`.
+type ValidObject = {
+	fooRoot: Array<{bar: 0}>;
+	barRoot: {foo: 1};
+};
+
+expectTypeOf<PickDeep<ValidObject, 'barRoot.foo' | 'barRoot.invalidPath'>>().toBe<{barRoot: {foo: 1}}>();
+expectTypeOf<PickDeep<ValidObject, 'invalidPath'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, 'barRoot.invalidPath'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, `barRoot.${number}`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, `barRoot.foo.${number}`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, `fooRoot.${number}.bar.invalidPath`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, `fooRoot.${number}.invalidPath`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, `fooRoot.${number}..bar`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, `invalidPath.fooRoot.${number}.bar`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidObject, string>>().toBe<never>();
+expectTypeOf<PickDeep<{a: null}, 'a.b'>>().toBe<never>();
+
+type ValidArray = Array<{foo: 0; bar: 1}>;
+expectTypeOf<PickDeep<ValidArray, `${number}.invalidPath`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidArray, `${number}.foo.${number}`>>().toBe<never>();
+expectTypeOf<PickDeep<ValidArray, `${number}..foo`>>().toBe<never>();
+expectTypeOf<PickDeep<ReadonlyArray<ValidArray[number]>, `${number}.invalidPath`>>().toBe<never>();
+
+type ValidTuple = [{foo: 0; bar: 1}, {foo: 2; bar: 3}];
+expectTypeOf<PickDeep<ValidTuple, '0.invalidPath'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidTuple, '1.foo.invalidPath'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidTuple, '2.foo'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidTuple, 'invalidPath.foo'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidTuple, '0..foo'>>().toBe<never>();
+expectTypeOf<PickDeep<Readonly<ValidTuple>, '0.invalidPath'>>().toBe<never>();
+expectTypeOf<PickDeep<Readonly<ValidTuple>, '2.foo'>>().toBe<never>();
+
+// A valid path through an array or tuple is unchanged.
+expectTypeOf<PickDeep<ValidTuple, '1.foo'>>().toBe<[unknown, {foo: 2}]>();
+expectTypeOf<PickDeep<ValidArray, `${number}.foo`>>().toBe<Array<{foo: 0}>>();
+
+// Boundary types
+expectTypeOf<PickDeep<ValidObject, never>>().toBe<never>();
+expectTypeOf<PickDeep<unknown, 'a'>>().toBe<never>();
+expectTypeOf<PickDeep<never, 'a'>>().toBe<never>();
