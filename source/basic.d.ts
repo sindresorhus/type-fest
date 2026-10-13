@@ -35,4 +35,72 @@ Matches an [`abstract class`](https://www.typescriptlang.org/docs/handbook/relea
 */
 export type AbstractConstructor<T, Arguments extends unknown[] = any[]> = abstract new(...arguments_: Arguments) => T;
 
+/**
+Matches an asynchronous function.
+
+Use-cases:
+- Constrain a generic type to an asynchronous function.
+- Declare a reusable asynchronous callback signature.
+
+@example
+```
+import type {AsyncFunction} from 'type-fest';
+
+type FetchData = AsyncFunction<[url: URL], Uint8Array>;
+
+const fetchData: FetchData = async url => {
+	const response = await fetch(url);
+	return new Uint8Array(await response.arrayBuffer());
+};
+```
+
+@category Basic
+*/
+export type AsyncFunction<Arguments extends readonly unknown[] = readonly any[], ReturnValue = unknown> = (...arguments_: Arguments) => Promise<ReturnValue>;
+
+/**
+Matches any asynchronous function.
+
+Use-cases:
+- Constrain a generic type to any asynchronous function without prescribing its parameters or return value.
+
+@example
+```
+import type {AnyAsyncFunction} from 'type-fest';
+
+function register<FunctionType extends AnyAsyncFunction>(function_: FunctionType): FunctionType {
+	return function_;
+}
+
+const getLength = register(async (value: string) => value.length);
+
+const result = getLength('unicorn');
+//=> Promise<number>
+```
+
+Note: A function with a `never` parameter, such as `(value: never) => Promise<void>`, does not match. TypeScript skips the parameter check only for a function type that returns `unknown` or `any`. Use {@link AnyFunction} if you need to accept it.
+
+@category Basic
+*/
+export type AnyAsyncFunction = (...arguments_: readonly any[]) => Promise<unknown>;
+
+/**
+Matches any function.
+
+Use-cases:
+- Constrain a generic type to any function while erasing its parameters and return value.
+
+@example
+```
+import type {AnyFunction} from 'type-fest';
+
+function identity<FunctionType extends AnyFunction>(function_: FunctionType): FunctionType {
+	return function_;
+}
+```
+
+@category Basic
+*/
+export type AnyFunction = (...arguments_: readonly any[]) => unknown;
+
 export {};
