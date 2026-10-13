@@ -188,21 +188,76 @@ type Example = {
 };
 
 declare const exampleObjectEntry: ObjectEntry<Example>;
-expectTypeOf(exampleObjectEntry).toBe<['a' | 'b', string | number]>();
+expectTypeOf(exampleObjectEntry).toBe<['a', number] | ['b', string]>();
 
 // ObjectEntries
 declare const exampleObjectEntries: ObjectEntries<Example>;
-expectTypeOf(exampleObjectEntries).toBe<Array<['a' | 'b', string | number]>>();
+expectTypeOf(exampleObjectEntries).toBe<Array<['a', number] | ['b', string]>>();
+expectTypeOf<ObjectEntries<never>>().toBe<never[]>();
+expectTypeOf<ObjectEntries<any>>().toBe<Array<[string, any] | [`${number}`, any]>>();
 
-// ObjectEntry and ObjectEntries preserve type information with generic type parameters
-declare function getEntries<T extends Record<string, unknown>>(object: T): ObjectEntries<T>;
-declare function getEntry<T extends Record<string, unknown>>(object: T): ObjectEntry<T>;
+// @ts-expect-error
+type UnknownObjectEntries = ObjectEntries<unknown>;
 
-declare const genericEntries: ReturnType<typeof getEntries<Example>>;
-expectTypeOf(genericEntries).toBe<Array<['a' | 'b', string | number]>>();
+// For a concrete object type with at least one key, `ObjectEntry` is the same as `Entry`.
+expectTypeOf<ObjectEntry<{a: string; 1: number; b?: boolean; [key: symbol]: bigint}>>().toBe<Entry<{a: string; 1: number; b?: boolean; [key: symbol]: bigint}>>();
+expectTypeOf<ObjectEntry<{a: string; 1: number; b?: boolean; [key: symbol]: bigint}>>().toBe<['a', string] | ['1', number] | ['b', boolean | undefined]>();
+expectTypeOf<ObjectEntry<Record<string, number>>>().toBe<[string, number]>();
+expectTypeOf<ObjectEntry<Record<number, string>>>().toBe<[`${number}`, string]>();
+expectTypeOf<ObjectEntry<{[key: symbol]: number}>>().toBe<never>();
 
-declare const genericEntry: ReturnType<typeof getEntry<Example>>;
-expectTypeOf(genericEntry).toBe<['a' | 'b', string | number]>();
+// A type with no keys has no entry. `Entry` gives `[never, never]` instead, so that a generic `T extends object` can be destructured.
+expectTypeOf<ObjectEntry<{}>>().toBe<never>();
+
+expectTypeOf<ObjectEntry<never>>().toBe<never>();
+expectTypeOf<ObjectEntry<any>>().toBe<[string, any] | [`${number}`, any]>();
+
+// A string enum key and a branded string key keep their type.
+enum Color {
+	Red = 'red',
+	Blue = 'blue',
+}
+
+expectTypeOf<Entry<Record<Color, number>>>().toBe<[Color.Red, number] | [Color.Blue, number]>();
+expectTypeOf<ObjectEntry<Record<Color, number>>>().toBe<[Color.Red, number] | [Color.Blue, number]>();
+expectTypeOf<ObjectEntry<Record<string & {brand: true}, number>>>().toBe<[string & {brand: true}, number]>();
+
+// @ts-expect-error
+type UnknownObjectEntry = ObjectEntry<unknown>;
+
+// @ts-expect-error
+type PrimitiveObjectEntry = ObjectEntry<string>;
+
+// Known limitation: For a union, only the keys that every member has are included. `Entry` handles each member on its own.
+expectTypeOf<ObjectEntry<{a: 1; c: 3} | {b: 2; c: 4}>>().toBe<['c', 3 | 4]>();
+expectTypeOf<Entry<{a: 1; c: 3} | {b: 2; c: 4}>>().toBe<['a', 1] | ['c', 3] | ['b', 2] | ['c', 4]>();
+
+// `ObjectEntry` and `ObjectEntries` keep the key and value types of a generic object type, while `Entry` and `Entries` read it through its constraint.
+function entriesOfGenericObject<ObjectType extends Record<string, unknown>>(object: ObjectType) {
+	for (const [key, value] of Object.entries(object) as ObjectEntries<ObjectType>) {
+		expectTypeOf(key).toBe<(Exclude<keyof ObjectType, symbol> & string) | `${Exclude<keyof ObjectType, symbol> & number}`>();
+		expectTypeOf(value).toBe<ObjectType[Exclude<keyof ObjectType, symbol>]>();
+		key.toUpperCase();
+	}
+
+	for (const [key, value] of Object.entries(object) as Entries<ObjectType>) {
+		expectTypeOf(key).toBe<string>();
+		expectTypeOf(value).toBe<unknown>();
+	}
+}
+
+// A constraint with a string index signature accepts the key as an index.
+function indexGenericRecord<ObjectType extends Record<string, unknown>>(object: ObjectType): unknown[] {
+	return (Object.entries(object) as ObjectEntries<ObjectType>).map(([key]) => object[key]);
+}
+
+// Without a string index signature, a number key is a string that TypeScript cannot match to `keyof ObjectType`, so indexing needs a cast. See the docs.
+// @ts-expect-error
+type IndexGenericObject<ObjectType extends {a: string}> = ObjectType[ObjectEntry<ObjectType>[0]];
+
+function indexGenericObject<ObjectType extends {a: string}>(object: ObjectType): unknown[] {
+	return (Object.entries(object) as ObjectEntries<ObjectType>).map(([key]) => object[key as keyof ObjectType]);
+}
 
 // Entry and Entries can widen in generic object contexts because they are conditional over collection kinds.
 type EntryAssignability<BaseType extends Record<string, unknown>, EntryType extends [keyof BaseType, BaseType[keyof BaseType]]> = EntryType;

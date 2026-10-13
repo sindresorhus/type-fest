@@ -1,29 +1,28 @@
 import type {Entry, ObjectEntry} from './entry.d.ts';
 
 /**
-Create a type that represents the type of the entries of an object type.
+Create a type that describes the key-value pairs produced by `Object.entries`, even for a generic object type.
 
-This is useful when you want to work with `Object.entries()` directly without going through the generic {@link Entries} type, which may lose type information with generic type parameters due to TypeScript's conditional type limitations.
-
-@see {@link ObjectEntry} for the type of a single entry.
-@see {@link Entries} for a version that works with all collection types.
+See `ObjectEntry` for how it differs from `Entries`.
 
 @example
 ```
 import type {ObjectEntries} from 'type-fest';
 
-type Example = {
-	a: number;
-	b: string;
-};
+function entries<ObjectType extends Record<string, unknown>>(object: ObjectType) {
+	return Object.entries(object) as ObjectEntries<ObjectType>;
+}
 
-type ExampleEntries = ObjectEntries<Example>;
-//=> ObjectEntry<Example>[]
+const result = entries({a: 1, b: 'x'});
+//=> (['a', number] | ['b', string])[]
 ```
+
+@see {@link ObjectEntry}
+@see {@link Entries}
 
 @category Object
 */
-export type ObjectEntries<BaseType> = Array<ObjectEntry<BaseType>>;
+export type ObjectEntries<BaseType extends object> = Array<ObjectEntry<BaseType>>;
 
 /**
 Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
@@ -31,6 +30,7 @@ Create a type that describes the key-value pairs produced when calling a collect
 For example the {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries|`Object`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries|`Map`}, {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries|`Array`}, and {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/entries|`Set`} collections all have this method. Note that `WeakMap` and `WeakSet` do not have this method since their entries are not enumerable.
 
 @see `Entry` if you want to just access the type of a single entry.
+@see `ObjectEntries` for the entries of a generic object type.
 
 @example
 ```
