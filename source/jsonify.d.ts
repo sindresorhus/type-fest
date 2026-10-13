@@ -41,6 +41,9 @@ type JsonifyObject<T extends object> = {
 	[Key in keyof T as T[Key] extends NotJsonable ? never : Key]: Jsonify<T[Key]>;
 };
 
+// Object properties may disappear when their own toJSON method returns undefined.
+type ToJsonResult<T> = T extends {toJSON(...arguments_: any[]): infer Result} ? Result : T;
+
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
 
@@ -127,7 +130,7 @@ export type Jsonify<T> = IsAny<T> extends true
 										: T extends UnknownArray
 											? JsonifyList<T>
 											: T extends object
-												? JsonifyObject<UndefinedToOptional<T>> // JsonifyObject recursive call for its children
+												? JsonifyObject<UndefinedToOptional<{[Key in keyof T]: ToJsonResult<T[Key]>}>> // JsonifyObject recursive call for its children
 												: IsUnknown<T> extends true
 													? JsonValue
 													: never; // Otherwise any other non-object is removed

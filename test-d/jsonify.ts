@@ -545,3 +545,24 @@ expectTypeOf<[string, boolean, number]>().not.toBeAssignableTo<Jsonify<[Date?, b
 // eslint-disable-next-line no-sparse-arrays
 const sparseOptionalTuple: [1, Date?, boolean?] = [1, , true];
 expectTypeOf<[1, null, true]>().toBeAssignableTo<Jsonify<typeof sparseOptionalTuple>>();
+
+// A property's toJSON result can cause that property to be omitted.
+expectTypeOf<Jsonify<{keep: 1; value: {toJSON(): undefined}}>>().toBe<{keep: 1}>();
+expectTypeOf<Jsonify<{keep: 1; value: {toJSON(): string | undefined}}>>().toBe<{keep: 1; value?: string}>();
+expectTypeOf<Jsonify<{readonly value: {toJSON(key: string): string | undefined}}>>().toBe<{readonly value?: string}>();
+expectTypeOf<Jsonify<{value?: {toJSON(): string | undefined}}>>().toBe<{value?: string}>();
+expectTypeOf<Jsonify<{value: {toJSON(): null | undefined}}>>().toBe<{value?: null}>();
+expectTypeOf<Jsonify<{value: {toJSON(): {id: string} | undefined}}>>().toBe<{value?: {id: string}}>();
+expectTypeOf<Jsonify<{outer: {keep: 1; value: {toJSON(): undefined}}}>>().toBe<{outer: {keep: 1}}>();
+
+// Ordinary toJSON results stay required, and unrelated fields retain their modifiers.
+expectTypeOf<Jsonify<{readonly keep: 1; optional?: boolean; value: {toJSON(): string}}>>().toBe<{readonly keep: 1; optional?: boolean; value: string}>();
+expectTypeOf<Jsonify<{value: Date}>>().toBe<{value: string}>();
+expectTypeOf<Jsonify<{value: {toJSON(): null}}>>().toBe<{value: null}>();
+expectTypeOf<Jsonify<{value: string | {toJSON(): undefined}}>>().toBe<{value?: string}>();
+expectTypeOf<Jsonify<{value?: {toJSON(): undefined}}>>().toBe<{}>();
+expectTypeOf<Jsonify<{value: {toJSON(): symbol}}>>().toBe<{}>();
+expectTypeOf<Jsonify<{value: {toJSON(): () => void}}>>().toBe<{}>();
+expectTypeOf<Jsonify<{toJSON(): undefined}>>().toBe<never>();
+expectTypeOf<Jsonify<Array<{toJSON(): undefined}>>>().toBe<null[]>();
+expectTypeOf<Jsonify<{value: {toJSON(): string | undefined}}>>().toBeAssignableTo<JsonValue>();
