@@ -20,6 +20,9 @@ type LoadConfigAsync = Asyncify<typeof loadConfigSync>;
 
 @category Async
 */
-export type Asyncify<Function_ extends (...arguments_: any[]) => any> = SetReturnType<Function_, Promise<Awaited<ReturnType<Function_>>>>;
+// Distribute before extracting the return type to preserve each union member's signature.
+export type Asyncify<Function_ extends (...arguments_: any[]) => any> = Function_ extends unknown
+	? SetReturnType<Function_, Promise<Awaited<ReturnType<Function_>>>>
+	: never;
 
 export {};
