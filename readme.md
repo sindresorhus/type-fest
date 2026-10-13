@@ -137,6 +137,7 @@ Click the type names for complete docs.
 - [`GetTagMetadata`](source/tagged.d.ts) - Given a type and a tag name, returns the metadata associated with that tag on that type.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional, while keeping the remaining keys as is.
+- [`SetOptionalDeep`](source/set-optional-deep.d.ts) - Create a type that makes the given keys optional, with support for deeply nested key paths, while keeping the remaining keys as is.
 - [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly, while keeping the remaining keys as is.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required, while keeping the remaining keys as is.
 - [`SetRequiredDeep`](source/set-required-deep.d.ts) - Create a type that makes the given keys required, with support for deeply nested key paths, while keeping the remaining keys as is.
