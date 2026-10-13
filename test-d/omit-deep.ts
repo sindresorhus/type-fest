@@ -176,3 +176,19 @@ expectTypeOf<(typeof memberBesideSignature)[string]>().toBe<{b: 1; c: 2}>();
 
 declare const throughTemplateSignature: OmitDeep<{a: {[k: `v${string}`]: {b: 1; c: 2}}}, 'a.vx.b'>;
 expectTypeOf(throughTemplateSignature).toBe<{a: {[x: `v${string}`]: {c: 2}}}>();
+
+// Returns the original type unchanged if the specified path does not exist.
+type TupleInObject = {obj: {a: [0, 1]; b: {bb: {bbb: 10}}; c: boolean}};
+expectTypeOf<OmitDeep<TupleInObject, 'obj.b.bb.zzz' | 'obj.a.2' | 'c.c'>>().toBe<TupleInObject>();
+
+type ObjectInTuple = {obj: {a: [0, 1, {bb: {bbb: 10}}]; c: [0, 1, ['20', '22']]}};
+expectTypeOf<OmitDeep<ObjectInTuple, 'obj.a.3.3' | 'obj.c.2.9'>>().toBe<ObjectInTuple>();
+
+declare const tupleNegativeIndex: OmitDeep<{tuple: ['a', 'b']}, 'tuple.-1'>;
+expectTypeOf(tupleNegativeIndex).toBe<{tuple: ['a', 'b']}>();
+
+declare const tupleNegativeNestedIndex: OmitDeep<{tuple: [{x: 1}]}, 'tuple.-1.x'>;
+expectTypeOf(tupleNegativeNestedIndex).toBe<{tuple: [{x: 1}]}>();
+
+declare const tupleMixedValidAndNegativeIndex: OmitDeep<{tuple: [{x: 1; y: 2}]}, 'tuple.0.x' | 'tuple.-1.y'>;
+expectTypeOf(tupleMixedValidAndNegativeIndex).toBe<{tuple: [{y: 2}]}>();
