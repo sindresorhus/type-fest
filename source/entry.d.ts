@@ -35,6 +35,31 @@ export type _ObjectEntry<BaseType> = Exclude<keyof BaseType, symbol> extends inf
 			: never
 	: never;
 
+/**
+Create a type that represents the type of an entry of an object type.
+
+This is useful when you want to work with `Object.entries()` directly without going through the generic {@link Entry} type, which may lose type information with generic type parameters due to TypeScript's conditional type limitations.
+
+@see {@link ObjectEntries} for the array of all entries.
+@see {@link Entry} for a version that works with all collection types.
+
+@example
+```
+import type {ObjectEntry} from 'type-fest';
+
+type Example = {
+	a: number;
+	b: string;
+};
+
+type ExampleEntry = ObjectEntry<Example>;
+//=> [keyof Example, number | string]
+```
+
+@category Object
+*/
+export type ObjectEntry<BaseType> = [keyof BaseType, BaseType[keyof BaseType]];
+
 export type _SetEntry<BaseType> = BaseType extends ReadonlySet<infer ItemType> ? [ItemType, ItemType] : never;
 
 /**

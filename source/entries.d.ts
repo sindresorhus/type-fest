@@ -1,4 +1,29 @@
-import type {Entry} from './entry.d.ts';
+import type {Entry, ObjectEntry} from './entry.d.ts';
+
+/**
+Create a type that represents the type of the entries of an object type.
+
+This is useful when you want to work with `Object.entries()` directly without going through the generic {@link Entries} type, which may lose type information with generic type parameters due to TypeScript's conditional type limitations.
+
+@see {@link ObjectEntry} for the type of a single entry.
+@see {@link Entries} for a version that works with all collection types.
+
+@example
+```
+import type {ObjectEntries} from 'type-fest';
+
+type Example = {
+	a: number;
+	b: string;
+};
+
+type ExampleEntries = ObjectEntries<Example>;
+//=> ObjectEntry<Example>[]
+```
+
+@category Object
+*/
+export type ObjectEntries<BaseType> = Array<ObjectEntry<BaseType>>;
 
 /**
 Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
