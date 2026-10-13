@@ -215,6 +215,7 @@ export namespace PackageJson {
 	/**
 	Dependencies of the package. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or Git URL.
 	*/
+	// `Partial` makes reading an unknown key give `string | undefined` without `noUncheckedIndexedAccess`, which is off by default. Revisit if TypeScript enables it by default.
 	type Dependency = Partial<Record<string, string>>;
 
 	/**
