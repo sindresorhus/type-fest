@@ -8,6 +8,10 @@ expectTypeOf<IsEqual<FirstArrayElement<string[]>, never>>().toBe<true>();
 expectTypeOf<IsEqual<FirstArrayElement<readonly string[]>, never>>().toBe<true>();
 expectTypeOf<IsEqual<FirstArrayElement<[1, ...string[]]>, 1>>().toBe<true>();
 
+// An optional first position still declares an element type.
+expectTypeOf<FirstArrayElement<[number?]>>().toBe<number>();
+expectTypeOf<FirstArrayElement<readonly [(number | undefined)?]>>().toBe<number | undefined>();
+
 expectTypeOf<IsEqual<StaticPartOfArray<[string, number, boolean, ...string[]]>, [string, number, boolean]>>().toBe<true>();
 expectTypeOf<IsEqual<StaticPartOfArray<string[]>, []>>().toBe<true>();
 expectTypeOf<IsEqual<StaticPartOfArray<[1, 2]>, [1, 2]>>().toBe<true>();

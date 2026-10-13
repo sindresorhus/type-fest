@@ -73,3 +73,8 @@ expectTypeOf<Subtract<-0.5, -0.25>>().toBe<never>();
 expectTypeOf<Subtract<1e-7, 1>>().toBe<never>();
 expectTypeOf<Subtract<3, 1e-7>>().toBe<never>();
 expectTypeOf<Subtract<1, 1e21>>().toBe<never>();
+
+// Equality applies to one pair of operands, not every member of the subtrahend.
+expectTypeOf<Subtract<2, 2 | 3>>().toBe<0 | -1>();
+expectTypeOf<Subtract<2 | 3, 2>>().toBe<0 | 1>();
+expectTypeOf<Subtract<1 | 2, 1 | 2>>().toBe<-1 | 0 | 1>();

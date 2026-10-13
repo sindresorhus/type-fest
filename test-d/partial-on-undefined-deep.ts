@@ -143,3 +143,8 @@ expectTypeOf(weakSet).toBe<{a: WeakSet<{b?: number | undefined}>}>();
 
 declare const weakMap: PartialOnUndefinedDeep<{a: WeakMap<object, {b: number | undefined}>}>;
 expectTypeOf(weakMap).toBe<{a: WeakMap<object, {b?: number | undefined}>}>();
+
+// Standalone leaves follow the same boundary as properties nested inside an object.
+declare const standaloneFunction: PartialOnUndefinedDeep<() => string>;
+expectTypeOf(standaloneFunction()).toBe<string>();
+expectTypeOf<PartialOnUndefinedDeep<Uint8Array>>().toBe<Uint8Array>();

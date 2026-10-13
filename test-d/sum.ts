@@ -78,3 +78,8 @@ expectTypeOf<Sum<-0.5, -0.5>>().toBe<never>();
 expectTypeOf<Sum<1e-7, 1>>().toBe<never>();
 expectTypeOf<Sum<1e-7, 1e-7>>().toBe<never>();
 expectTypeOf<Sum<1e21, 1>>().toBe<never>();
+
+// Cancellation applies to one pair of operands, not every member of the other operand.
+expectTypeOf<Sum<2, -2 | 3>>().toBe<0 | 5>();
+expectTypeOf<Sum<-2 | 3, 2>>().toBe<0 | 5>();
+expectTypeOf<Sum<-1 | 1, -1 | 1>>().toBe<-2 | 0 | 2>();

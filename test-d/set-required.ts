@@ -181,3 +181,11 @@ expectTypeOf(({} as Extract<SetRequired<StringCallable | {z?: 1}, 'x'>, Function
 // `any` is not an array, so it does not take the tuple branch as well as the object branch.
 declare const anyBase: SetRequired<any, 'a'>;
 expectTypeOf(anyBase).toBe<{[x: string]: any}>();
+
+// A shared selected key must stay paired with its own callable signature too.
+type NumberCallableWithSharedKey = ((argument: number) => 2) & {x?: 2};
+type RequiredSharedCallableKey = SetRequired<StringCallable | NumberCallableWithSharedKey, 'x'>;
+expectTypeOf<((argument: string) => 1) & {x: 1}>().toBeAssignableTo<RequiredSharedCallableKey>();
+expectTypeOf<((argument: number) => 2) & {x: 2}>().toBeAssignableTo<RequiredSharedCallableKey>();
+expectTypeOf<((argument: string) => 1) & {x: 2}>().not.toBeAssignableTo<RequiredSharedCallableKey>();
+expectTypeOf<((argument: number) => 2) & {x: 1}>().not.toBeAssignableTo<RequiredSharedCallableKey>();
