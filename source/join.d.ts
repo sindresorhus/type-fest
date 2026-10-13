@@ -43,11 +43,11 @@ const path6 = ['foo', undefined, 'baz', null, 'xyz'].join('.') as Join<['foo', u
 
 // Partial tuple shapes (rest param last)
 const path7 = ['prefix'].join('.') as Join<['prefix', ...string[]], '.'>;
-//=> `prefix.${string}`
+//=> 'prefix' | `prefix.${string}`
 
 // Partial tuple shapes (rest param first)
 const path8 = ['suffix'].join('.') as Join<[...string[], 'suffix'], '.'>;
-//=> `${string}.suffix`
+//=> 'suffix' | `${string}.suffix`
 
 // Tuples items with nullish unions
 const path9 = ['hello', 'world'].join('.') as Join<['hello' | undefined, 'world' | null], '.'>;
@@ -68,12 +68,13 @@ export type Join<
 			infer First extends JoinableItem,
 			...infer Tail extends readonly JoinableItem[],
 		]
-			? `${NullishCoalesce<First, ''>}${Delimiter}${Join<Tail, Delimiter>}`
+			// A rest element can contain no items, in which case there is no separator after the first item.
+			? `${NullishCoalesce<First, ''>}${Delimiter}${Join<Tail, Delimiter>}` | ([] extends Tail ? `${NullishCoalesce<First, ''>}` : never)
 			: Items extends readonly [
 				...infer Head extends readonly JoinableItem[],
 				infer Last extends JoinableItem,
 			]
-				? `${Join<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}`
+				? `${Join<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}` | ([] extends Head ? `${NullishCoalesce<Last, ''>}` : never)
 				: string;
 
 export {};

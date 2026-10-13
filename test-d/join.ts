@@ -73,3 +73,25 @@ expectTypeOf(joinedSuffixTuple).toBe<`${string}.suffix`>();
 const optionalTuple: ['hello' | undefined, 'world' | undefined] = ['hello', undefined];
 const joinedOptionalTuple: Join<typeof optionalTuple, '.'> = 'hello.';
 expectTypeOf(joinedOptionalTuple).toBe<'hello.'>();
+
+// A rest element can be empty, so it does not always introduce a separator.
+expectTypeOf<'prefix'>().toBeAssignableTo<Join<['prefix', ...string[]], '.'>>();
+expectTypeOf<'suffix'>().toBeAssignableTo<Join<[...string[], 'suffix'], '.'>>();
+expectTypeOf<'prefix.suffix'>().toBeAssignableTo<Join<['prefix', ...string[], 'suffix'], '.'>>();
+
+expectTypeOf<Join<readonly ['prefix', ...string[]], '.'>>().toBe<'prefix' | `prefix.${string}`>();
+expectTypeOf<Join<readonly [...string[], 'suffix'], '.'>>().toBe<'suffix' | `${string}.suffix`>();
+expectTypeOf<Join<['prefix', ...string[], 'suffix'], '.'>>().toBe<'prefix.suffix' | `prefix.${string}.suffix`>();
+expectTypeOf<Join<['a', 'b', ...number[]], ':'>>().toBe<'a:b' | `a:b:${string}`>();
+expectTypeOf<Join<[...number[], 'a', 'b'], ':'>>().toBe<'a:b' | `${string}:a:b`>();
+expectTypeOf<Join<['', ...string[]], '.'>>().toBe<'' | `.${string}`>();
+expectTypeOf<Join<[...string[], null], '.'>>().toBe<'' | `${string}.`>();
+expectTypeOf<Join<['prefix', ...string[]], ''>>().toBe<`prefix${string}`>();
+expectTypeOf<Join<[...string[], 'suffix'], ''>>().toBe<`${string}suffix`>();
+expectTypeOf<Join<['prefix', ...string[]], '.'>>().not.toBeAssignableTo<'prefix'>();
+expectTypeOf<'prefixtail'>().not.toBeAssignableTo<Join<['prefix', ...string[]], '.'>>();
+expectTypeOf<'tailsuffix'>().not.toBeAssignableTo<Join<[...string[], 'suffix'], '.'>>();
+
+// Required elements still introduce a separator even when their string value is empty.
+expectTypeOf<Join<['prefix', ...string[], null], '.'>>().toBe<'prefix.' | `prefix.${string}.`>();
+expectTypeOf<Join<['a', ...string[], 'b', 'c'], '.'>>().toBe<'a.b.c' | `a.${string}.b.c`>();
