@@ -157,3 +157,13 @@ expectTypeOf(noPath).toBe<{a: {b: string | null}}>();
 
 declare const anyPath: SetNonNullableDeep<{a: {b: string | null}}, any>;
 expectTypeOf(anyPath).toBe<{a: {b: string}}>();
+
+// A path deeper than `Paths` lists by default is accepted, and a missing path is ignored.
+type DeepNullable = {a: {b: {c: {d: {e: {f: {g: {h: 1 | null}}}}}}}};
+expectTypeOf<SetNonNullableDeep<DeepNullable, 'a.b.c.d.e.f.g.h'>>().toBe<{a: {b: {c: {d: {e: {f: {g: {h: 1}}}}}}}}>();
+expectTypeOf<SetNonNullableDeep<{a: number | null; b: {c: number | null}}, 'b.c' | 'missing' | 'b.missing'>>().toBe<{a: number | null; b: {c: number}}>();
+expectTypeOf<SetNonNullableDeep<{a: number | null}, 'missing'>>().toBe<{a: number | null}>();
+
+// A non-literal path segment matches every key at its level, like a path through an index signature.
+expectTypeOf<SetNonNullableDeep<{a: number | null; b: {c: number | null}}, string>>().toBe<{a: number; b: {c: number | null}}>();
+expectTypeOf<SetNonNullableDeep<{a: number | null; b: {c: number | null}}, `b.${string}`>>().toBe<{a: number | null; b: {c: number}}>();

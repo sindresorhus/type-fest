@@ -1,5 +1,6 @@
 import type {IsAny} from './is-any.d.ts';
 import type {NonRecursiveType} from './internal/index.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
@@ -10,6 +11,8 @@ import type {StringToNumber} from './string-to-number.d.ts';
 Create a type that makes the given keys required, with support for deeply nested key paths, while keeping the remaining keys as is.
 
 Use-case: Selectively make nested properties required in complex types like models.
+
+Note: A path that does not exist is not a type error, so that paths deeper than `Paths` lists can be used. A missing path is ignored. A non-literal path segment, such as `string`, matches every key at its level, like a path through an index signature.
 
 @example
 ```
@@ -33,7 +36,7 @@ type ArrayExample = SetRequiredDeep<{a: [number?, number?, number?]}, 'a.0' | 'a
 
 @category Object
 */
-export type SetRequiredDeep<BaseType, KeyPaths extends Paths<BaseType>> = IsAny<KeyPaths> extends true
+export type SetRequiredDeep<BaseType, KeyPaths extends LiteralUnion<Paths<BaseType>, string>> = IsAny<KeyPaths> extends true
 	? SimplifyDeep<RequiredDeep<BaseType>>
 	: SetRequiredDeepHelper<BaseType, KeyPaths>;
 

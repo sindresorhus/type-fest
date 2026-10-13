@@ -176,3 +176,13 @@ expectTypeOf(allOptionalIndices).toBe<readonly [string, number, boolean]>();
 // Each object-union member keeps its own paths, and selected siblings are required together at each level.
 declare const disjointPaths: SetRequiredDeep<{left?: {first?: string; second?: number}} | {right?: [string?, number?]}, 'left.first' | 'left.second' | 'right.0' | 'right.1'>;
 expectTypeOf(disjointPaths).toBe<{left?: {first: string; second: number}} | {right?: [string, number]}>();
+
+// A path deeper than `Paths` lists by default is accepted, and a missing path is ignored.
+type DeepOptional = {a?: {b?: {c?: {d?: {e?: {f?: {g?: {h?: 1}}}}}}}};
+expectTypeOf<SetRequiredDeep<DeepOptional, 'a.b.c.d.e.f.g.h'>>().toBe<{a?: {b?: {c?: {d?: {e?: {f?: {g?: {h: 1}}}}}}}}>();
+expectTypeOf<SetRequiredDeep<{a?: number; b?: {c?: number}}, 'b.c' | 'missing' | 'b.missing'>>().toBe<{a?: number; b?: {c: number}}>();
+expectTypeOf<SetRequiredDeep<{a?: number}, 'missing'>>().toBe<{a?: number}>();
+
+// A non-literal path segment matches every key at its level, like a path through an index signature.
+expectTypeOf<SetRequiredDeep<{a?: number; b?: {c?: number}}, string>>().toBe<{a: number; b: {c?: number}}>();
+expectTypeOf<SetRequiredDeep<{a?: number; b?: {c?: number}}, `b.${string}`>>().toBe<{a?: number; b?: {c: number}}>();

@@ -1,6 +1,7 @@
 import type {NonRecursiveType} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {NonNullableDeep} from './non-nullable-deep.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
 import type {Simplify} from './simplify.d.ts';
@@ -15,6 +16,7 @@ NOTE: Optional modifiers (`?`) are not removed from properties. For example, `Se
 
 Known limitations:
 - An index path into a tuple with a leading rest element, such as `a.1` on `[...string[], number | null]`, does nothing. The element after the rest element is keyed by a number that the walk does not reach, so pick the whole array and index into it instead.
+- A path that does not exist is not a type error, so that paths deeper than `Paths` lists can be used. A missing path is ignored. A non-literal path segment, such as `string`, matches every key at its level, like a path through an index signature.
 
 @example
 ```
@@ -61,7 +63,7 @@ type ArrayExample2 = SetNonNullableDeep<{a: [(number | null)?, (number | null)?]
 
 @category Object
 */
-export type SetNonNullableDeep<BaseType, KeyPaths extends Paths<BaseType>> = IsAny<KeyPaths> extends true
+export type SetNonNullableDeep<BaseType, KeyPaths extends LiteralUnion<Paths<BaseType>, string>> = IsAny<KeyPaths> extends true
 	? NonNullableDeep<BaseType>
 	: SetNonNullableDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
 
