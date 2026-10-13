@@ -14,3 +14,8 @@ expectTypeOf(fromNumberKey).toBe<{0: string}>();
 // A key that is not already there keeps the form it was given in.
 expectTypeOf<IsEqual<BuildObject<'b', string, {a: 1}>, {b: string}>>().toBe<true>();
 expectTypeOf<IsEqual<BuildObject<'0', string>, {0: string}>>().toBe<true>();
+
+// A record remains data when its containing property may be absent.
+expectTypeOf<UndefinedToOptional<{value: {name: string} | undefined}>>().toBe<{value?: {name: string}}>();
+expectTypeOf<UndefinedToOptional<{readonly value: {name: string} | null | undefined}>>().toBe<{readonly value?: {name: string} | null}>();
+expectTypeOf<UndefinedToOptional<{value: string | (() => void) | undefined}>>().toBe<{}>();

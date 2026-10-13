@@ -34,3 +34,28 @@ expectTypeOf<IsEqual<ExactKey<Mixed, '0'>, 0>>().toBe<true>();
 expectTypeOf<IsEqual<ExactKey<Mixed, 0>, 0>>().toBe<true>();
 expectTypeOf<IsEqual<ExactKey<Mixed, '1'>, '1'>>().toBe<true>();
 expectTypeOf<IsEqual<ExactKey<Mixed, 1>, '1'>>().toBe<true>();
+
+// A name-only record is data even though a function also has a name.
+expectTypeOf<FilterDefinedKeys<{value: {name: string} | null}>>().toBe<'value'>();
+expectTypeOf<FilterOptionalKeys<{value?: {name: string}}>>().toBe<'value'>();
+expectTypeOf<FilterOptionalKeys<{value: {name: string} | undefined}>>().toBe<'value'>();
+
+// Interfaces have the same data contract without an implicit index signature.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface NamedRecord {
+	name: string;
+}
+expectTypeOf<FilterDefinedKeys<{value: NamedRecord}>>().toBe<'value'>();
+expectTypeOf<FilterOptionalKeys<{value?: NamedRecord}>>().toBe<'value'>();
+
+// Actual functions are still omitted, including within a union.
+expectTypeOf<FilterDefinedKeys<{value: () => void}>>().toBe<never>();
+expectTypeOf<FilterDefinedKeys<{value: string | (() => void)}>>().toBe<never>();
+expectTypeOf<FilterOptionalKeys<{value?: string | (() => void)}>>().toBe<never>();
+expectTypeOf<FilterDefinedKeys<{value: Function}>>().toBe<never>();
+expectTypeOf<FilterDefinedKeys<{value: new () => NamedRecord}>>().toBe<never>();
+
+// Nullish members do not change whether the remaining members are records.
+expectTypeOf<FilterOptionalKeys<{value?: NamedRecord | null}>>().toBe<'value'>();
+expectTypeOf<FilterOptionalKeys<{value: NamedRecord | null | undefined}>>().toBe<'value'>();
+expectTypeOf<FilterDefinedKeys<{value: NamedRecord | {id: number}}>>().toBe<'value'>();

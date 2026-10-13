@@ -9,15 +9,13 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 	: Type[Key] extends symbol
 		? never
 		/*
-		To prevent a problem where an object with only a `name` property is incorrectly treated as assignable to a function, we first check if the property is a record.
-		This check is necessary, because without it, if we don't verify whether the property is a record, an object with a type of `{name: any}` would return `never` due to its potential assignability to a function.
+		An object with only a `name` property can accept a function without being callable itself.
+		Check for actual functions in the property's type instead of whether a function fits that type, so optional records and interfaces are kept while unions containing functions are still omitted.
 		See: https://github.com/sindresorhus/type-fest/issues/657
 		*/
-		: Type[Key] extends Record<string, unknown>
+		: Extract<Type[Key], Function> extends never
 			? Key
-			: [(...arguments_: any[]) => any] extends [Type[Key]]
-				? never
-				: Key;
+			: never;
 
 /**
 Returns the required keys.

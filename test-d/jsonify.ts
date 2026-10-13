@@ -566,3 +566,27 @@ expectTypeOf<Jsonify<{value: {toJSON(): () => void}}>>().toBe<{}>();
 expectTypeOf<Jsonify<{toJSON(): undefined}>>().toBe<never>();
 expectTypeOf<Jsonify<Array<{toJSON(): undefined}>>>().toBe<null[]>();
 expectTypeOf<Jsonify<{value: {toJSON(): string | undefined}}>>().toBeAssignableTo<JsonValue>();
+
+// Optional and nullable name-only records are data, rather than functions.
+expectTypeOf<Jsonify<{value?: {name: string}}>>().toBe<{value?: {name: string}}>();
+expectTypeOf<Jsonify<{value: {name: string} | null}>>().toBe<{value: {name: string} | null}>();
+expectTypeOf<Jsonify<{value: [] | {name: string}}>>().toBe<{value: [] | {name: string}}>();
+expectTypeOf<Jsonify<{value: {toJSON(): {name: string} | undefined}}>>().toBe<{value?: {name: string}}>();
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface NamedRecord {
+	name: string;
+}
+expectTypeOf<Jsonify<{value: NamedRecord}>>().toBe<{value: {name: string}}>();
+expectTypeOf<Jsonify<{value?: NamedRecord}>>().toBe<{value?: {name: string}}>();
+
+class NamedClass {
+	name = 'record';
+}
+expectTypeOf<Jsonify<{value: NamedClass}>>().toBe<{value: {name: string}}>();
+expectTypeOf<Jsonify<{value?: NamedClass | null}>>().toBe<{value?: {name: string} | null}>();
+expectTypeOf<Jsonify<{readonly value?: NamedRecord}>>().toBe<{readonly value?: {name: string}}>();
+expectTypeOf<Jsonify<{value: NamedRecord | null | undefined}>>().toBe<{value?: {name: string} | null}>();
+expectTypeOf<Jsonify<{value: {toJSON(): NamedRecord | undefined}}>>().toBe<{value?: {name: string}}>();
+expectTypeOf<Jsonify<{value?: string | (() => void)}>>().toBe<{}>();
+expectTypeOf<Jsonify<{value?: NamedRecord}>>().toBeAssignableTo<JsonValue>();
