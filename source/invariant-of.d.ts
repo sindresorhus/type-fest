@@ -55,8 +55,8 @@ type FooBarBaz = {
 declare const fooBar: FooBar;
 declare const fooBarBaz: FooBarBaz;
 
-function keyOfFooBar(fooBar: FooBar) {
-	return Object.keys(fooBar) as Array<keyof FooBar>;
+function keyOfFooBar(value: FooBar) {
+	return Object.keys(value) as Array<keyof FooBar>;
 }
 
 keyOfFooBar(fooBar); //=> (keyof FooBar)[]
@@ -68,8 +68,8 @@ export function invariantOf<Type>(value: Type): InvariantOf<Type> {
 	return value as InvariantOf<Type>;
 }
 
-function keyOfInvariantFooBar(fooBar: InvariantOf<FooBar>) {
-	return Object.keys(fooBar) as Array<keyof FooBar>;
+function keyOfInvariantFooBar(value: InvariantOf<FooBar>) {
+	return Object.keys(value) as Array<keyof FooBar>;
 }
 
 keyOfInvariantFooBar(invariantOf(fooBar)); // (keyof FooBar)[]

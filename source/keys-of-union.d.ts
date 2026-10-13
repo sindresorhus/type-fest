@@ -5,7 +5,7 @@ Create a union of all keys from a given type, even those exclusive to specific u
 
 Unlike the native `keyof` keyword, which returns keys present in **all** union members, this type returns keys from **any** member.
 
-@link https://stackoverflow.com/a/49402091
+@see https://stackoverflow.com/a/49402091
 
 @example
 ```

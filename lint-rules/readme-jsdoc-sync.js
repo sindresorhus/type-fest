@@ -4,7 +4,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
 
-/** @type {import('@eslint/markdown').MarkdownRuleDefinition} */
+/**
+@type {import('@eslint/markdown').MarkdownRuleDefinition}
+*/
 export const readmeJSDocSyncRule = {
 	meta: {
 		type: 'suggestion',
@@ -32,12 +34,12 @@ export const readmeJSDocSyncRule = {
 					return;
 				}
 
-				const linkNode = paragraph.children[0];
+				const [linkNode] = paragraph.children;
 				if (linkNode?.type !== 'link' || linkNode.url.startsWith('http') || !linkNode.url.endsWith('.d.ts')) {
 					return;
 				}
 
-				const inlineCodeNode = linkNode.children[0];
+				const [inlineCodeNode] = linkNode.children;
 				if (inlineCodeNode?.type !== 'inlineCode') {
 					return;
 				}
@@ -61,10 +63,10 @@ export const readmeJSDocSyncRule = {
 				}
 
 				const sourceFile = ts.createSourceFile(linkNode.url, sourceContent, ts.ScriptTarget.Latest, true);
-				let jsdocDescription = ts.forEachChild(sourceFile, node => {
-					if ((ts.isTypeAliasDeclaration(node) || ts.isInterfaceDeclaration(node)) && node.name.text === typeName) {
-						const jsdocs = ts.getJSDocCommentsAndTags(node);
-						return jsdocs[0]?.getText().split('\n')[1];
+				let jsdocDescription = ts.forEachChild(sourceFile, child => {
+					if ((ts.isTypeAliasDeclaration(child) || ts.isInterfaceDeclaration(child)) && child.name.text === typeName) {
+						const jsdocs = ts.getJSDocCommentsAndTags(child);
+						return jsdocs[0]?.getText().split('\n', 2)[1];
 					}
 
 					return undefined;
@@ -81,7 +83,7 @@ export const readmeJSDocSyncRule = {
 					});
 				}
 
-				const tagRegex = /\{@link\s+([^\}]+)\}/gv;
+				const tagRegex = /\{@link\s+(?<content>[^\s\}][^\}]*)\}/gv;
 				// This simply replaces "{@link SymbolName}" with "`SymbolName`".
 				// It doesn't handle captions or external links, for example, "{@link SymbolName | some caption}" simply becomes "`SymbolName | some caption`".
 				// For external links, markdown syntax should be used, like "[type-fest](https://github.com/sindresorhus/type-fest)".

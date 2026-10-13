@@ -17,7 +17,7 @@ type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions
 		: false;
 
 /**
-ConditionalPickDeep options.
+Options for the `ConditionalPickDeep` type.
 
 @see {@link ConditionalPickDeep}
 */

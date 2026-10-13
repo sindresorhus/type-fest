@@ -34,8 +34,8 @@ declare const variation8: SetRequiredDeep<{a: 1; b: {c?: 1}}, 'b.c'>;
 expectTypeOf(variation8).toBe<{a: 1; b: {c: 1}}>();
 
 // Preserves union in root keys
-declare const variation9: SetRequiredDeep<{a: 1; b: {c?: 1} | number}, 'b.c'>;
-expectTypeOf(variation9).toBe<{a: 1; b: {c: 1} | number}>();
+declare const variation9: SetRequiredDeep<{a: 1; b: number | {c?: 1}}, 'b.c'>;
+expectTypeOf(variation9).toBe<{a: 1; b: number | {c: 1}}>();
 
 // Preserves readonly
 declare const variation10: SetRequiredDeep<{a: 1; readonly b: {c?: 1}}, 'b.c'>;
@@ -63,8 +63,8 @@ declare const variation16: SetRequiredDeep<{[x: string]: any; a?: number; b?: {c
 expectTypeOf(variation16).toBe<{[x: string]: any; a: number; b?: {c: number}}>();
 
 // Preserves union in nested keys
-declare const variation17: SetRequiredDeep<{a: 1; b?: {c?: 1} | number}, 'b'>;
-expectTypeOf(variation17).toBe<{a: 1; b: {c?: 1} | number}>();
+declare const variation17: SetRequiredDeep<{a: 1; b?: number | {c?: 1}}, 'b'>;
+expectTypeOf(variation17).toBe<{a: 1; b: number | {c?: 1}}>();
 
 declare const variation18: SetRequiredDeep<{a?: number; b?: {c?: number} | {d?: string}}, 'b' | 'b.d'>;
 expectTypeOf(variation18).toBe<{a?: number; b: {c?: number} | {d: string}}>();

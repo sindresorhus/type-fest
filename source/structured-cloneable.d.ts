@@ -51,9 +51,9 @@ type StructuredCloneableData =
 
 type StructuredCloneableCollection =
 	| readonly StructuredCloneable[]
-	| {readonly [key: string]: StructuredCloneable; readonly [key: number]: StructuredCloneable}
 	| ReadonlyMap<StructuredCloneable, StructuredCloneable>
-	| ReadonlySet<StructuredCloneable>;
+	| ReadonlySet<StructuredCloneable>
+	| {readonly [key: string]: StructuredCloneable; readonly [key: number]: StructuredCloneable};
 
 /**
 Matches a value that can be losslessly cloned using `structuredClone`.

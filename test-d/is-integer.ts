@@ -20,7 +20,7 @@ expectTypeOf(x as IsInteger<1.5>).toBe<false>();
 expectTypeOf(x as IsInteger<-1.5>).toBe<false>();
 expectTypeOf(x as IsInteger<number>).toBe<false>();
 expectTypeOf(x as IsInteger<PositiveInfinity>).toBe<false>();
-expectTypeOf(x as IsInteger<0.000_000_1>).toBe<false>();
+expectTypeOf(x as IsInteger<0.0000001>).toBe<false>();
 expectTypeOf(x as IsInteger<-1e-7>).toBe<false>();
 
 // A branded literal is still a literal, so the brand is removed before the checks run. Without it, `${T}` does not reduce for a literal intersected with an object type.

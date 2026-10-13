@@ -205,11 +205,11 @@ import type {Exact, Opaque} from '../index.d.ts';
 
 declare const primitiveOrObjectInput: 'a' | {code: string};
 declare const primitiveOrExcessObjectInput: 'a' | {code: string; name: string};
-declare const arrayOrObjectInput: {a: 'x'} | ['q'];
-declare const arrayOrExcessObjectInput: {a: 'x'; b: 'y'} | ['q'];
+declare const arrayOrObjectInput: ['q'] | {a: 'x'};
+declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 
 { // Spec - union - mixture object/array
-	type Type = {a: string} | string[];
+	type Type = string[] | {a: string};
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
 
 	// It should accept a union of both types

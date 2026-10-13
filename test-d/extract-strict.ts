@@ -86,8 +86,8 @@ expectTypeOf<ExtractStrict<{a: string; b: number} | {c: true; d: false}, Record<
 type invalid5 = ExtractStrict<{a: string; b: number} | {c: true; d: false}, Record<string, string>>;
 
 // `any` and `never`
-expectTypeOf<ExtractStrict<string | {a: string; b: number} | string[], any>>().toBe<string | {a: string; b: number} | string[]>();
-expectTypeOf<ExtractStrict<string | {a: string; b: number} | string[], never>>().toBe<never>();
+expectTypeOf<ExtractStrict<string | string[] | {a: string; b: number}, any>>().toBe<string | string[] | {a: string; b: number}>();
+expectTypeOf<ExtractStrict<string | string[] | {a: string; b: number}, never>>().toBe<never>();
 
 // Miscellaneous
 expectTypeOf<ExtractStrict<[number, number] | {x: number; y: number}, unknown[]>>().toBe<[number, number]>();

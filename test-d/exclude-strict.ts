@@ -78,8 +78,8 @@ expectTypeOf<ExcludeStrict<{a: string; b: number} | {c: true; d: false}, Record<
 type invalid5 = ExcludeStrict<{a: string; b: number} | {c: true; d: false}, Record<string, string>>;
 
 // `any` and `never`
-expectTypeOf<ExcludeStrict<string | {a: string; b: number} | string[], any>>().toBe<never>();
-expectTypeOf<ExcludeStrict<string | {a: string; b: number} | string[], never>>().toBe<string | {a: string; b: number} | string[]>();
+expectTypeOf<ExcludeStrict<string | string[] | {a: string; b: number}, any>>().toBe<never>();
+expectTypeOf<ExcludeStrict<string | string[] | {a: string; b: number}, never>>().toBe<string | string[] | {a: string; b: number}>();
 
 // Miscellaneous
 expectTypeOf<ExcludeStrict<[number, number] | {x: number; y: number}, unknown[]>>().toBe<{x: number; y: number}>();

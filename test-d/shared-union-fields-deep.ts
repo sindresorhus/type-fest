@@ -84,7 +84,9 @@ expectTypeOf(union).toBe<{string: string}>();
 declare const union2: SharedUnionFieldsDeep<TestingType | {union: {a: number}}>;
 expectTypeOf(union2).toBe<{union: 'test1' | 'test2' | {a: number}}>();
 
-/** Test for array */
+/**
+Test for array
+*/
 declare const array: SharedUnionFieldsDeepRecurseIntoArrays<TestingType | {array: Array<{a: number; bar: string}>; foo: any}>;
 expectTypeOf(array).toBe<{array: Array<{a: number}>}>();
 
@@ -94,7 +96,9 @@ expectTypeOf(arrayWithoutRecursive).toBe<{array: TestingType['array'] | Array<{a
 declare const readonlyArray: SharedUnionFieldsDeepRecurseIntoArrays<TestingType | {readonlyArray: ReadonlyArray<{a: number; bar: string}>; foo: any}>;
 expectTypeOf(readonlyArray).toBe<{readonlyArray: ReadonlyArray<{a: number}>}>();
 
-/** Test for tuple */
+/**
+Test for tuple
+*/
 declare const tuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number]} | {tuple: [number, string]; foo: any}>;
 expectTypeOf(tuple).toBe<{tuple: [number]}>();
 
@@ -104,7 +108,9 @@ expectTypeOf(tupleWithoutRecursive).toBe<{tuple: [number] | [number, string]}>()
 declare const tupleOrArray: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: boolean[]} | {tuple: [number, string]}>;
 expectTypeOf(tupleOrArray).toBe<{tuple: [number | boolean, string | boolean]}>();
 
-/** Test for fixed length tuple */
+/**
+Test for fixed length tuple
+*/
 declare const fixedLengthTuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, string]} | {tuple: [number, string, boolean]}>;
 expectTypeOf(fixedLengthTuple).toBe<{tuple: [number, string]}>();
 
@@ -117,7 +123,9 @@ expectTypeOf(fixedLengthTuple3).toBe<{tuple: [number, string | boolean, number |
 declare const threeLengthTuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, string]} | {tuple: [number, string, boolean]} | {tuple: number[]}>;
 expectTypeOf(threeLengthTuple).toBe<{tuple: [number, string | number]}>();
 
-/** Test for non-fixed length tuple */
+/**
+Test for non-fixed length tuple
+*/
 declare const nonFixedLengthTuple: SharedUnionFieldsDeepRecurseIntoArrays<{tuple: [number, ...string[]]} | {tuple: boolean[]}>;
 expectTypeOf(nonFixedLengthTuple).toBe<{tuple: [number | boolean, ...Array<string | boolean>]}>();
 

@@ -1,4 +1,4 @@
-import {createRuleTester} from './test-utils.js';
+import {createRuleTester} from './testing-utilities.js';
 import {importPathRule} from './import-path.js';
 
 const ruleTester = createRuleTester();

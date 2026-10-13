@@ -26,7 +26,7 @@ type Variation6Config = {a: boolean | null; b: boolean | null};
 const variant6Function = <TProperty extends keyof Variation6Config>(
 	config: Variation6Config,
 	property: TProperty,
-): config is SetNonNullable<Variation6Config, TProperty> => Boolean(config[property]);
+): config is SetNonNullable<Variation6Config, TProperty> => config[property] !== null;
 expectTypeOf(variant6Function).not.toBeAssignableTo<never>(); // Just to prevent unused error.
 
 // A tuple's elements are keyed by index, so the given keys must reach them.

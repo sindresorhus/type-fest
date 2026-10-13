@@ -24,7 +24,7 @@ expectTypeOf<StringToNumber<'1234.56'>>().toBe<1234.56>();
 
 // Negative floats
 expectTypeOf<StringToNumber<'-0.9'>>().toBe<-0.9>();
-expectTypeOf<StringToNumber<'-3.14'>>().toBe<-3.14>();
+expectTypeOf<StringToNumber<'-3.25'>>().toBe<-3.25>();
 expectTypeOf<StringToNumber<'-56.123'>>().toBe<-56.123>();
 
 // Infinity

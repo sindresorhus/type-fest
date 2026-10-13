@@ -5,7 +5,7 @@ import tsParser from '@typescript-eslint/parser';
 @import {Linter} from 'eslint';
 */
 
-const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[ \t]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n\s*```/gmv;
+const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[\t ]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n[\t ]*```/gmv;
 /**
 @typedef {{lineOffset: number, characterOffset: number, indent: string, unindentedText: string}} CodeblockData
 @type {Map<string, CodeblockData[]>}
@@ -13,10 +13,12 @@ const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[ \t]*)```(?:ts|typescript)?
 const codeblockDataPerFile = new Map();
 
 /**
-@param {string} text
-@param {number} index
-@param {string} indent
-@returns {number}
+Returns the total length of the indentation that was removed from the lines of `text` up to `index`.
+
+@param {string} text - The original indented code.
+@param {number} index - The position in the dedented code.
+@param {string} indent - The indentation removed from each non-empty line.
+@returns {number} The number of indentation characters before `index`.
 */
 function indentsUptoIndex(text, index, indent) {
 	let i = 0;
@@ -44,9 +46,11 @@ export const jsdocCodeblocksProcessor = {
 	supportsAutofix: true,
 
 	/**
-	@param {string} text
-	@param {string} filename
-	@returns {(string | Linter.ProcessorFile)[]}
+	Extracts the code blocks in the JSDoc comments of the file as separate virtual files to lint.
+
+	@param {string} text - The source text of the file.
+	@param {string} filename - The path of the file.
+	@returns {(string | Linter.ProcessorFile)[]} The source text of the file, followed by a virtual file for each code block.
 	*/
 	preprocess(text, filename) {
 		const ast = tsParser.parse(text);
@@ -55,47 +59,50 @@ export const jsdocCodeblocksProcessor = {
 			comment => comment.type === 'Block' && comment.value.startsWith('*'),
 		);
 
-		/** @type {(string | Linter.ProcessorFile)[]} */
+		/**
+		@type {(string | Linter.ProcessorFile)[]}
+		*/
 		const files = [text]; // First entry is for the entire file
-		/** @type {CodeblockData[]} */
+		/**
+		@type {CodeblockData[]}
+		*/
 		const allCodeblocksData = [];
 
-		// Loop over all JSDoc comments in the file
-		for (const comment of jsdocComments) {
-			// Loop over all codeblocks in the JSDoc comment
-			for (const match of comment.value.matchAll(CODEBLOCK_REGEX)) {
-				const {code, openingFence, indent} = match.groups ?? {};
+		// All codeblocks in all JSDoc comments in the file
+		const matches = jsdocComments.flatMap(comment => comment.value.matchAll(CODEBLOCK_REGEX).map(match => ({comment, match})).toArray());
 
-				// Skip empty code blocks
-				if (!code || !openingFence || indent === undefined) {
-					continue;
-				}
+		for (const {comment, match} of matches) {
+			const {code, openingFence, indent} = match.groups ?? {};
 
-				const codeLines = code.split('\n');
-				const indentSize = indent.length;
-
-				// Skip comments that are not consistently indented
-				if (!codeLines.every(line => line === '' || line.startsWith(indent))) {
-					continue;
-				}
-
-				const dedentedCode = codeLines
-					.map(line => line.slice(indentSize))
-					.join('\n');
-
-				files.push({
-					text: dedentedCode,
-					filename: `${files.length}.ts`, // Final filename example: `/path/to/type-fest/source/and.d.ts/1_1.ts`
-				});
-
-				const linesBeforeMatch = comment.value.slice(0, match.index).split('\n').length - 1;
-				allCodeblocksData.push({
-					lineOffset: comment.loc.start.line + linesBeforeMatch,
-					characterOffset: comment.range[0] + match.index + openingFence.length + 2, // +2 because `comment.value` doesn't include the starting `/*`
-					indent,
-					unindentedText: code,
-				});
+			// Skip empty code blocks
+			if (!code || !openingFence || indent === undefined) {
+				continue;
 			}
+
+			const codeLines = code.split('\n');
+			const indentSize = indent.length;
+
+			// Skip comments that are not consistently indented
+			if (codeLines.some(line => line !== '' && !line.startsWith(indent))) {
+				continue;
+			}
+
+			const dedentedCode = codeLines
+				.map(line => line.slice(indentSize))
+				.join('\n');
+
+			files.push({
+				text: dedentedCode,
+				filename: `${files.length}.ts`, // Final filename example: `/path/to/type-fest/source/and.d.ts/1_1.ts`
+			});
+
+			const linesBeforeMatch = comment.value.slice(0, match.index).split('\n').length - 1;
+			allCodeblocksData.push({
+				lineOffset: comment.loc.start.line + linesBeforeMatch,
+				characterOffset: comment.range[0] + match.index + openingFence.length + 2, // +2 because `comment.value` doesn't include the starting `/*`
+				indent,
+				unindentedText: code,
+			});
 		}
 
 		codeblockDataPerFile.set(filename, allCodeblocksData);
@@ -104,9 +111,11 @@ export const jsdocCodeblocksProcessor = {
 	},
 
 	/**
-	@param {import('eslint').Linter.LintMessage[][]} messages
-	@param {string} filename
-	@returns {import('eslint').Linter.LintMessage[]}
+	Maps the lint messages of the virtual code block files back to their locations in the original file.
+
+	@param {import('eslint').Linter.LintMessage[][]} messages - The lint messages for the file, followed by the lint messages for each code block.
+	@param {string} filename - The path of the file.
+	@returns {import('eslint').Linter.LintMessage[]} The lint messages with locations in the original file.
 	*/
 	postprocess(messages, filename) {
 		const codeblocks = codeblockDataPerFile.get(filename) || [];

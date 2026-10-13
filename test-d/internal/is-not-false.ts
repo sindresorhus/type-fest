@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-duplicate-type-constituents */
+/* eslint-disable @typescript-eslint/no-duplicate-type-constituents -- Tests unions that contain duplicate members. */
 import {expectTypeOf} from 'nz';
 import type {IsNotFalse} from '../../source/internal/index.d.ts';
 

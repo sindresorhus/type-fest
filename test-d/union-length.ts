@@ -7,7 +7,7 @@ expectTypeOf<UnionLength<boolean>>().toBe<2>();
 expectTypeOf<UnionLength<string | number | symbol>>().toBe<3>();
 
 // Non-primitives
-expectTypeOf<UnionLength<{a: string} | [string] | Set<string>>>().toBe<3>();
+expectTypeOf<UnionLength<[string] | Set<string> | {a: string}>>().toBe<3>();
 
 // Both union members extend each other
 expectTypeOf<UnionLength<{a: string} | {readonly a: string}>>().toBe<2>();

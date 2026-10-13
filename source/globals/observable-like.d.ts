@@ -72,6 +72,7 @@ But `Observable` implementations have evolved to preferring case 2 and some impl
 // eslint-disable-next-line type-fest/require-exported-types
 export type ObservableLike<ValueType = unknown> = {
 	subscribe(observer?: Partial<Observer<ValueType>>): Unsubscribable;
+	// eslint-disable-next-line unicorn/no-nonstandard-builtin-properties -- `Symbol.observable` is declared globally at the top of this file.
 	[Symbol.observable](): ObservableLike<ValueType>;
 };
 

@@ -106,6 +106,8 @@ export const dedenter = dedent.withOptions({alignValues: true});
 /**
 Returns the specified code in a fenced code block, with an optional language tag.
 
+@param {string} code - The code to put inside the code block.
+@param {string} [lang] - The language tag to put after the opening fence.
 @example
 ```
 fence('type A = string;');
@@ -137,6 +139,7 @@ export const fence = (code, lang = '') =>
 /**
 Returns the specified lines as a JSDoc comment, placing each specified line on a new line.
 
+@param {...string} lines - The lines of the comment.
 @example
 ```
 jsdoc('Some description.', 'Note: Some note.');
@@ -167,6 +170,7 @@ export const jsdoc = (...lines) =>
 /**
 Returns an exported type for each provided prefix, with each prefix placed directly above its corresponding type declaration.
 
+@param {...string} prefixes - The code to put above each type, like a comment.
 @example
 ```
 exportType(
@@ -198,6 +202,7 @@ export const exportType = (...prefixes) =>
 /**
 Returns an exported "Options" object type containing a property for each specified prefix, with each prefix placed directly above its corresponding property declaration.
 
+@param {...string} prefixes - The code to put above each property, like a comment.
 @example
 ```
 exportOption(
@@ -236,6 +241,7 @@ export const exportOption = (...prefixes) =>
 /**
 Returns an exported type for each provided prefix, and an exported "Options" object type containing a property for each specified prefix, with each prefix placed directly above its corresponding declaration.
 
+@param {...string} prefixes - The code to put above each type and property, like a comment.
 @example
 ```
 exportTypeAndOption('// Some comment', '/**\nSome JSDoc\n*​/');
@@ -267,6 +273,8 @@ export const exportTypeAndOption = (...prefixes) =>
 	`;
 
 /**
+Returns the location of an expected lint error, computed from the text before the error and the text it covers.
+
 @typedef {{
 	line: number;
 	textBeforeStart: string;
@@ -274,8 +282,8 @@ export const exportTypeAndOption = (...prefixes) =>
 	messageId?: string;
 } & ({ target: string } | { endLine: number; textBeforeEnd: string })} ErrorAtProps
 
-@param {ErrorAtProps} props
-@returns {{line: number, column: number, endLine: number, endColumn: number, ruleId?: string, messageId?: string}}
+@param {ErrorAtProps} props - The line and the text before the start of the error, and either the text the error covers or where the error ends.
+@returns {{line: number, column: number, endLine: number, endColumn: number, ruleId?: string, messageId?: string}} The error location, in the format ESLint reports it.
 */
 export const errorAt = props => {
 	const {line, textBeforeStart, ruleId, messageId} = props;

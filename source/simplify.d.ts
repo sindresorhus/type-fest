@@ -52,7 +52,7 @@ fn(someInterface); // Error: Index signature for type 'string' is missing in typ
 fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` into a `type`
 ```
 
-@link https://github.com/microsoft/TypeScript/issues/15300
+@see https://github.com/microsoft/TypeScript/issues/15300
 @see {@link SimplifyDeep}
 @category Object
 */

@@ -1,6 +1,7 @@
 import {expectTypeOf} from 'nz';
 import type {ObservableLike} from '../source/globals/index.d.ts';
 
+// eslint-disable-next-line unicorn/no-nonstandard-builtin-properties -- Tests the global `Symbol.observable` declaration.
 expectTypeOf(Symbol.observable).toBeAssignableTo<symbol>();
 
 const observable = (null as any) as ObservableLike;

@@ -10,10 +10,10 @@ export type _DefaultDelimiterCaseOptions = Merge<_DefaultWordsOptions, {splitOnN
 Convert an array of words to delimiter case starting with a delimiter with input capitalization.
 */
 type DelimiterCaseFromArray<
-	Words extends string[],
+	WordList extends string[],
 	Delimiter extends string,
 	OutputString extends string = '',
-> = Words extends [
+> = WordList extends [
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]

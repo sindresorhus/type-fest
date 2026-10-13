@@ -90,7 +90,7 @@ const time = {
 const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 ```
 
-@link https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
+@see https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
 
 @category JSON
 */

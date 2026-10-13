@@ -46,7 +46,7 @@ expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e-7>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 2e21>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e21>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1_000_000_000_000_000_000_000>>();
-expectTypeOf(unknown as string).toBe<StringRepeat<'0', 0.000_000_1>>();
+expectTypeOf(unknown as string).toBe<StringRepeat<'0', 0.0000001>>();
 
 // Union cases
 expectTypeOf(unknown as '00000' | '11111').toBe<StringRepeat<'0' | '1', 5>>();

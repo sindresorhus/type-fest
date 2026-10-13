@@ -4,7 +4,7 @@ import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Or} from './or.d.ts';
 
 /**
-Split options.
+Options for the `Split` type.
 
 @see {@link Split}
 */

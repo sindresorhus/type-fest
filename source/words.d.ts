@@ -19,7 +19,7 @@ type RemoveLastCharacter<
 	: never;
 
 /**
-Words options.
+Options for the `Words` type.
 
 @see {@link Words}
 */

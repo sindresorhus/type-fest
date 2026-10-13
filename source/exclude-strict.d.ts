@@ -14,7 +14,7 @@ type Example1 = ExcludeStrict<{status: 'success'; data: string[]} | {status: 'er
 type Example2 = ExcludeStrict<'xs' | 's' | 'm' | 'l' | 'xl', 'xs' | 's'>;
 //=> 'm' | 'l' | 'xl'
 
-type Example3 = ExcludeStrict<{x: number; y: number} | [number, number], unknown[]>;
+type Example3 = ExcludeStrict<[number, number] | {x: number; y: number}, unknown[]>;
 //=> {x: number; y: number}
 ```
 

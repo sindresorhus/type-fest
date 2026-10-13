@@ -35,19 +35,19 @@ const arrayEntries: Entries<typeof arrayExample> = [
 expectTypeOf(arrayEntries).toBeAssignableTo<Array<[number, (string | number)]>>();
 
 // Sets
-const setExample = new Set(['a', 1]);
+const exampleSet = new Set(['a', 1]);
 
-const setEntryString: Entry<typeof setExample> = ['a', 'a'];
-expectTypeOf(setEntryString).toBeAssignableTo<[(string | number), (string | number)]>();
+const stringSetEntry: Entry<typeof exampleSet> = ['a', 'a'];
+expectTypeOf(stringSetEntry).toBeAssignableTo<[(string | number), (string | number)]>();
 
-const setEntryNumber: Entry<typeof setExample> = [1, 1];
-expectTypeOf(setEntryNumber).toBeAssignableTo<[(string | number), (string | number)]>();
+const numberSetEntry: Entry<typeof exampleSet> = [1, 1];
+expectTypeOf(numberSetEntry).toBeAssignableTo<[(string | number), (string | number)]>();
 
-const setEntries: Entries<typeof setExample> = [
-	setEntryString,
-	setEntryNumber,
+const exampleSetEntries: Entries<typeof exampleSet> = [
+	stringSetEntry,
+	numberSetEntry,
 ];
-expectTypeOf(setEntries).toBeAssignableTo<Array<[(string | number), (string | number)]>>();
+expectTypeOf(exampleSetEntries).toBeAssignableTo<Array<[(string | number), (string | number)]>>();
 
 // A readonly map and a readonly set have an `entries` method, just like their mutable counterparts.
 declare const readonlyMapEntries: Entries<ReadonlyMap<string, number>>;

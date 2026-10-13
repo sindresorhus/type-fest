@@ -25,7 +25,7 @@ Create an array that replaces the given `TArray`'s elements with the given `TObj
 
 `TArray` and `TObject` supports tailing spread array like `[string, ...boolean[]]`, but does not support `[string, ...boolean[], number]`.
 
-@example:
+@example
 ```ts
 // object
 type A = MergeObjectToArray<[string, number], {0: boolean}>;

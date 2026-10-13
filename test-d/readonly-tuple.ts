@@ -12,7 +12,6 @@ expectTypeOf<['a', 'b', 'c', 'd']>().not.toBeAssignableTo<TupleOfThreeStrings>()
 
 declare const test: TupleOfThreeStrings;
 
-// @ts-expect-error
-const _a: unknown = test.push;
+expectTypeOf<'push' extends keyof TupleOfThreeStrings ? true : false>().toBe<false>();
 // @ts-expect-error
 test[2] = 'a';

@@ -3,7 +3,7 @@ import type {IsNull} from './is-null.d.ts';
 /**
 Returns a boolean for whether the given type is `unknown`.
 
-@link https://github.com/dsherret/conditional-type-checks/pull/16
+@see https://github.com/dsherret/conditional-type-checks/pull/16
 
 Useful in type utilities, such as when dealing with unknown data from API calls.
 

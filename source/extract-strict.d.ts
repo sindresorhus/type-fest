@@ -14,7 +14,7 @@ type Example1 = ExtractStrict<{status: 'success'; data: string[]} | {status: 'er
 type Example2 = ExtractStrict<'xs' | 's' | 'm' | 'l' | 'xl', 'xs' | 's'>;
 //=> 'xs' | 's'
 
-type Example3 = ExtractStrict<{x: number; y: number} | [number, number], unknown[]>;
+type Example3 = ExtractStrict<[number, number] | {x: number; y: number}, unknown[]>;
 //=> [number, number]
 ```
 

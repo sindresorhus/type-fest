@@ -1,5 +1,5 @@
 import markdown from '@eslint/markdown';
-import {createRuleTester, createFixtures, dedenter} from './test-utils.js';
+import {createRuleTester, createFixtures, dedenter} from './testing-utilities.js';
 import {readmeJSDocSyncRule} from './readme-jsdoc-sync.js';
 
 const {fixturePath} = createFixtures({

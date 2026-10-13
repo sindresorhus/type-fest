@@ -1,4 +1,4 @@
-/* eslint-disable no-var */
+/* eslint-disable no-var -- Globals must be declared with `var` to be found on `globalThis`. */
 import {expectTypeOf} from 'nz';
 import type {FindGlobalInstanceType, FindGlobalType} from '../index.d.ts';
 

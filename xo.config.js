@@ -9,7 +9,9 @@ import {validateJSDocCodeblocksRule} from './lint-rules/validate-jsdoc-codeblock
 import {readmeJSDocSyncRule} from './lint-rules/readme-jsdoc-sync.js';
 import {jsdocCodeblocksProcessor} from './lint-processors/jsdoc-codeblocks.js';
 
-/** @type {Array<import('eslint').Linter.Config>} */
+/**
+@type {Array<import('eslint').Linter.Config>}
+*/
 const xoConfig = [
 	{
 		files: ['**/*.{js,ts}'],
@@ -59,6 +61,8 @@ const xoConfig = [
 				},
 			],
 			'unicorn/require-module-specifiers': 'off',
+			// Categories like `@category Change case` are a fixed set and naturally repeat the type name.
+			'jsdoc/informative-docs': ['error', {excludedTags: ['default', 'category']}],
 		},
 	},
 	{
@@ -67,6 +71,15 @@ const xoConfig = [
 			'unicorn/no-immediate-mutation': 'off',
 			'require-unicode-regexp': 'off',
 			'@typescript-eslint/no-unnecessary-type-assertion': 'off',
+			// Test names describe the type under test (for example, `declare const string: IsArray<string>`), not a boolean.
+			'unicorn/consistent-boolean-name': 'off',
+		},
+	},
+	{
+		files: ['lint-rules/*.test.js'],
+		rules: {
+			// Test fixtures are composed from nested template helpers like `exportTypeAndOption(jsdoc(fence(code)))`.
+			'unicorn/max-nested-calls': 'off',
 		},
 	},
 	{
@@ -128,6 +141,10 @@ const xoConfig = [
 			'capitalized-comments': 'off',
 			'unicorn/prefer-structured-clone': 'off',
 			'unicorn/no-immediate-mutation': 'off',
+			// Examples show usage as top-level statements.
+			'unicorn/no-top-level-side-effects': 'off',
+			// Examples mirror real-world APIs, like `available: boolean`.
+			'unicorn/consistent-boolean-name': 'off',
 		},
 	},
 	{
@@ -145,7 +162,7 @@ const xoConfig = [
 		},
 	},
 	{
-		files: ['lint-rules/test-utils.js'],
+		files: ['lint-rules/testing-utilities.js'],
 		rules: {
 			'no-irregular-whitespace': [
 				'error',

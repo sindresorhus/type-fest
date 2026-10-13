@@ -5,7 +5,7 @@ declare const x: unknown;
 
 expectTypeOf(x as IsFloat<1.5>).toBe<true>();
 expectTypeOf(x as IsFloat<999_999_999_999_999.9>).toBe<true>();
-expectTypeOf(x as IsFloat<0.000_000_1>).toBe<true>();
+expectTypeOf(x as IsFloat<0.0000001>).toBe<true>();
 expectTypeOf(x as IsFloat<-1e-7>).toBe<true>();
 
 expectTypeOf(x as IsFloat<0>).toBe<false>();

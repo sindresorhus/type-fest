@@ -48,8 +48,8 @@ expectTypeOf(movableNodeSimplifiedPass).toBe<MovableCollection>();
 const movablePosition = {
 	top: 42,
 	left: 42,
-	move(position: Position) {
-		return position;
+	move(newPosition: Position) {
+		return newPosition;
 	},
 };
 

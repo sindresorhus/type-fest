@@ -1,4 +1,4 @@
-import {createTypeAwareRuleTester} from './test-utils.js';
+import {createTypeAwareRuleTester} from './testing-utilities.js';
 import {requireExportedTypesRule} from './require-exported-types.js';
 
 const packageContent = JSON.stringify({

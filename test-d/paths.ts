@@ -534,7 +534,7 @@ type PathsConstraint<T, _U extends Paths<T>> = never;
 type Generic1<T> = {bar: {baz: T}};
 type Test1<T> = PathsConstraint<Generic1<T>, 'bar.baz'>;
 
-type Generic2<T, U> = {bar: {baz: {qux: T}; fizz: {buzz: U} | U | T}};
+type Generic2<T, U> = {bar: {baz: {qux: T}; fizz: U | T | {buzz: U}}};
 type Test2<T, U> = PathsConstraint<
 	Generic2<T, U>,
 	'bar' | 'bar.baz' | 'bar.baz.qux' | 'bar.fizz' | 'bar.fizz.buzz'

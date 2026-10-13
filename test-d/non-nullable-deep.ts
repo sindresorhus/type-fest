@@ -54,7 +54,7 @@ expectTypeOf<NonNullableDeep<[string?, (number | undefined)?]>>().toBe<[string?,
 expectTypeOf<NonNullableDeep<readonly [string?, ...Array<number | {a: null | string}>]>>().toBe<readonly [string?, ...Array<number | {a: string}>]>();
 
 // Unions
-expectTypeOf<NonNullableDeep<{a: string | null} | [number | null] | Map<string, {a: string | undefined}>>>().toBe<{a: string} | [number] | Map<string, {a: string}>>();
+expectTypeOf<NonNullableDeep<[number | null] | Map<string, {a: string | undefined}> | {a: string | null}>>().toBe<[number] | Map<string, {a: string}> | {a: string}>();
 expectTypeOf<NonNullableDeep<{a: null | [string, number | null] | {a: {b: string} | {c: string | undefined} | null}}>>().toBe<{a: [string, number] | {a: {b: string} | {c: string}}}>();
 
 // Constructors remain unchanged

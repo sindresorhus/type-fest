@@ -15,7 +15,7 @@ npm run test:xo  # Linter
 
 ## File Structure
 
-```
+```text
 source/type-name.d.ts → Type definition (.d.ts REQUIRED)
 test-d/type-name.ts   → Tests (nz)
 index.d.ts            → Export (MUST add, lint enforces)
@@ -25,7 +25,7 @@ source/internal/      → Shared helpers (not exported)
 
 ## Code Patterns
 
-```ts
+````ts
 // ✅ CORRECT
 import type {IsNever} from './is-never.d.ts';  // Include .d.ts
 export type MyType<Value extends string> = ... // Descriptive names (not T/U)
@@ -51,7 +51,7 @@ type RGB = TupleOf<3, number>; //=> [number, number, number]
 */
 export type TupleOf<Length extends number, Fill = unknown> = ...;
 export {};
-```
+````
 
 Type params: `Value`, `Target`, `Item`, `Length`, `Element`, `Key` (not `T`, `U`, `V`, `K`)
 Docs: No `*` prefix. First line → readme. Include use-cases, examples, `@category`.

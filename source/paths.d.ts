@@ -7,7 +7,7 @@ import type {Sum} from './sum.d.ts';
 import type {And} from './and.d.ts';
 
 /**
-Paths options.
+Options for the `Paths` type.
 
 @see {@link Paths}
 */

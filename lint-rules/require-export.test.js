@@ -1,4 +1,4 @@
-import {createRuleTester} from './test-utils.js';
+import {createRuleTester} from './testing-utilities.js';
 import {requireExportRule} from './require-export.js';
 
 const ruleTester = createRuleTester();

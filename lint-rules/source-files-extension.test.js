@@ -1,4 +1,4 @@
-import {createRuleTester} from './test-utils.js';
+import {createRuleTester} from './testing-utilities.js';
 import {sourceFilesExtensionRule} from './source-files-extension.js';
 
 const ruleTester = createRuleTester();

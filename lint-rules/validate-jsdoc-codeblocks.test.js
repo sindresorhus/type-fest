@@ -1,5 +1,5 @@
-/* eslint-disable max-lines */
-import {code1, code2, createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './test-utils.js';
+/* eslint-disable max-lines -- Many test cases. */
+import {code1, code2, createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './testing-utilities.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
 const ruleTester = createRuleTester();

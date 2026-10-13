@@ -24,7 +24,7 @@ expectTypeOf(packageJson.man).toBe<string | string[] | undefined>();
 expectTypeOf(packageJson.directories).toBe<PackageJson.DirectoryLocations | undefined>();
 expectTypeOf(
 	packageJson.repository,
-).toBe<{type: string; url: string; directory?: string} | string | undefined>();
+).toBe<string | {type: string; url: string; directory?: string} | undefined>();
 expectTypeOf(packageJson.scripts).toBe<PackageJson.Scripts | undefined>();
 expectTypeOf(packageJson.config).toBe<JsonObject | undefined>();
 expectTypeOf(packageJson.dependencies).toBe<PackageJson.Dependency | undefined>();

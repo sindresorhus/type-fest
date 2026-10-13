@@ -262,7 +262,7 @@ expectTypeOf<Schema<Map<string, number> | Set<number> | Date, {a: string}>>().to
 // Objects
 expectTypeOf<Schema<{a: number}, bigint>>().toBe<{a: bigint}>();
 expectTypeOf<Schema<{a: {b: number}; c: string}, bigint>>().toBe<{a: {b: bigint}; c: bigint}>();
-expectTypeOf<Schema<{a: {b: string[]}; c: {d: {e: string} | {f: {g: number} | boolean}; h: {i: {j: {k: string}}}}}, bigint>>().toBe<{a: {b: bigint[]}; c: {d: {e: bigint} | {f: {g: bigint} | bigint}; h: {i: {j: {k: bigint}}}}}>();
+expectTypeOf<Schema<{a: {b: string[]}; c: {d: {e: string} | {f: boolean | {g: number}}; h: {i: {j: {k: string}}}}}, bigint>>().toBe<{a: {b: bigint[]}; c: {d: {e: bigint} | {f: bigint | {g: bigint}}; h: {i: {j: {k: bigint}}}}}>();
 
 // Preserves readonly and optional modifiers
 expectTypeOf<Schema<{readonly a: string}, number>>().toBe<{readonly a: number}>();
@@ -274,7 +274,7 @@ expectTypeOf<Schema<{readonly a: string; b?: string; readonly c?: {readonly d?: 
 // Caveat: Optional properties with explicit `undefined` don't behave differently from optional properties without explicit `undefined`.
 // For example, `Schema<{a?: {b?: number} | undefined}, string>` gives `{a?: {b?: string}}` and not `{a?: {b?: string} | string}`
 expectTypeOf<Schema<{a?: {b?: number} | undefined}, string>>().toBe<{a?: {b?: string}}>();
-expectTypeOf<Schema<{a: {b?: number} | undefined}, string>>().toBe<{a: {b?: string} | string}>();
+expectTypeOf<Schema<{a: {b?: number} | undefined}, string>>().toBe<{a: string | {b?: string}}>();
 
 // Index signatures
 expectTypeOf<Schema<Record<string, string>, number>>().toBe<Record<string, number>>();
@@ -291,8 +291,8 @@ expectTypeOf<Schema<any, {a: {b: {c: string}}}>>().toBe<{a: {b: {c: string}}}>()
 // Unions
 expectTypeOf<Schema<{a: number} | {b: {c: number}}, string>>().toBe<{a: string} | {b: {c: string}}>();
 expectTypeOf<Schema<{a: {b: string} | {c: {d: number}}}, null>>().toBe<{a: {b: null} | {c: {d: null}}}>();
-expectTypeOf<Schema<{a: {b: string} | string}, null>>().toBe<{a: {b: null} | null}>();
-expectTypeOf<Schema<{a: string} | string[] | Set<string>, {a: string}>>().toBe<{a: {a: string}} | Array<{a: string}> | {a: string}>();
+expectTypeOf<Schema<{a: string | {b: string}}, null>>().toBe<{a: {b: null} | null}>();
+expectTypeOf<Schema<string[] | Set<string> | {a: string}, {a: string}>>().toBe<Array<{a: string}> | {a: {a: string}} | {a: string}>();
 expectTypeOf<Schema<Map<string, string> | Set<string> | Date | RegExp | (() => number), {readonly a?: string}>>().toBe<{readonly a?: string}>();
 
 // Arrays
@@ -313,12 +313,12 @@ expectTypeOf<Schema<[x: [x1: number, x2: number], y: [y1: number, y2: number]], 
 // Caveat: Optional properties with explicit `undefined` don't behave differently from optional properties without explicit `undefined`.
 // For example, `Schema<[({a: number} | undefined)?], bigint>` gives `[{a: bigint}?]` and not `[({a: bigint} | bigint)?]`
 expectTypeOf<Schema<[({a: number} | undefined)?], bigint>>().toBe<[{a: bigint}?]>();
-expectTypeOf<Schema<[({a: number} | undefined)], bigint>>().toBe<[({a: bigint} | bigint)]>();
+expectTypeOf<Schema<[({a: number} | undefined)], bigint>>().toBe<[(bigint | {a: bigint})]>();
 
 // === recurseIntoArrays: false ===
 expectTypeOf<Schema<number[], string, {recurseIntoArrays: false}>>().toBe<string>();
 expectTypeOf<Schema<[string, string, string], number, {recurseIntoArrays: false}>>().toBe<number>();
-expectTypeOf<Schema<{a: string[]; b: string} | [string, string, string], number, {recurseIntoArrays: false}>>().toBe<{a: number; b: number} | number>();
+expectTypeOf<Schema<[string, string, string] | {a: string[]; b: string}, number, {recurseIntoArrays: false}>>().toBe<number | {a: number; b: number}>();
 expectTypeOf<Schema<{a: number[]; b: [string, string]}, 'a', {recurseIntoArrays: false}>>().toBe<{a: 'a'; b: 'a'}>();
 expectTypeOf<Schema<{a: {b: {c: {d: string[]}}}}, {e: string[]}, {recurseIntoArrays: false}>>().toBe<{a: {b: {c: {d: {e: string[]}}}}}>();
 

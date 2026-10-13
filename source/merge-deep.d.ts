@@ -97,7 +97,7 @@ type MergeDeepIndexSignatures<
 type PickRestTypeHelper<Tail extends UnknownArray, Type> = Tail extends [] ? Type : PickRestType<Tail>;
 
 /**
-Pick the rest type.
+Get the rest element of an array type, as an array.
 
 @example
 ```
@@ -124,7 +124,7 @@ type OmitRestTypeHelper<
 		: OmitRestType<Tail, [...Result, FirstArrayElement<Type>?]>;
 
 /**
-Omit the rest type.
+Get the elements of an array type, without the rest element.
 
 @example
 ```
@@ -375,7 +375,7 @@ type MergeDeepOrReturn<
 			: DefaultType>;
 
 /**
-MergeDeep options.
+Options for the `MergeDeep` type.
 
 @see {@link MergeDeep}
 */
@@ -409,7 +409,7 @@ export type MergeDeepOptions = {
 };
 
 /**
-Internal options.
+`MergeDeepOptions` with settings that are only used internally.
 */
 type MergeDeepInternalOptions = Merge<MergeDeepOptions, {spreadTopLevelArrays?: boolean}>;
 

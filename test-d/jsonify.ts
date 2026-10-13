@@ -104,7 +104,7 @@ class NonJsonWithToJSON {
 
 	public toJSON(): {fixture: Array<[string, number]>} {
 		return {
-			fixture: [...this.fixture.entries()],
+			fixture: [...this.fixture],
 		};
 	}
 }

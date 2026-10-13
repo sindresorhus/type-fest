@@ -29,15 +29,10 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 	},
 	defaultOptions: [],
 	create(context) {
-		// Only run on TypeScript declaration files in source directory
+		// Only run on TypeScript declaration files in source directory, and skip internal files
 		// Convert to forward slashes for consistent path checking across platforms
 		const filename = context.filename.replaceAll('\\', '/');
-		if (!filename.includes('/source/') || !filename.endsWith('.d.ts')) {
-			return {};
-		}
-
-		// Skip internal files
-		if (filename.includes('/internal/')) {
+		if (!filename.includes('/source/') || !filename.endsWith('.d.ts') || filename.includes('/internal/')) {
 			return {};
 		}
 
@@ -108,12 +103,8 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 				ancestor.type === 'TSModuleDeclaration' && ancestor.declare,
 			);
 
-			if (isInsideDeclareNamespace) {
-				return;
-			}
-
-			// Skip if already processed
-			if (processed.has(typeName)) {
+			// Skip if inside declare namespace or already processed
+			if (isInsideDeclareNamespace || processed.has(typeName)) {
 				return;
 			}
 

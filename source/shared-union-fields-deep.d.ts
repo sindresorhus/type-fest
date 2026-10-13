@@ -4,7 +4,7 @@ import type {IsNever} from './is-never.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-SharedUnionFieldsDeep options.
+Options for the `SharedUnionFieldsDeep` type.
 
 @see {@link SharedUnionFieldsDeep}
 */

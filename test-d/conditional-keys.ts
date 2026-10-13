@@ -52,7 +52,7 @@ expectTypeOf<ConditionalKeys<{a: string} | {a: number}, number>>().toBe<never>()
 expectTypeOf<ConditionalKeys<{a: string} | {a: number}, string | number>>().toBe<'a'>();
 expectTypeOf<ConditionalKeys<{a: string; b: bigint} | {a: number; b: string; c: boolean}, string | number | bigint>>().toBe<'a' | 'b'>();
 expectTypeOf<ConditionalKeys<{a: string} | {a: Lowercase<string>; b: Uppercase<string>}, string>>().toBe<'a'>();
-expectTypeOf<ConditionalKeys<{length: number} | [number], number>>().toBe<never>();
+expectTypeOf<ConditionalKeys<[number] | {length: number}, number>>().toBe<never>();
 
 // `any`/`unknown` as condition
 expectTypeOf<ConditionalKeys<{a?: string; b: string | number; readonly c: boolean; readonly d?: bigint; e: never}, any>>().toBe<'a' | 'b' | 'c' | 'd' | 'e'>();

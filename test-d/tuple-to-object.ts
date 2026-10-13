@@ -33,8 +33,8 @@ expectTypeOf<Readonly<Record<number, number | string | bigint>>>().toBe<TupleToO
 expectTypeOf<{0: number} | {0: number; 1: string; 2: boolean}>().toBe<TupleToObject<[number] | [number, string, boolean]>>();
 expectTypeOf<{0?: number; 1?: string} | {} | {[x: number]: number | string; 0: number; 1: string}>().toBe<TupleToObject<[number?, string?] | [] | [number, string, ...number[]]>>();
 expectTypeOf<Record<number, number | undefined> | Record<number, string>>().toBe<TupleToObject<Array<number | undefined> | string[]>>();
-expectTypeOf<{0: number; 1: string} | Readonly<Record<number, string>>>().toBe<TupleToObject<[number, string] | readonly string[]>>();
-expectTypeOf<{readonly 0: string} | {readonly 0?: number} | Record<number, number>>().toBe<TupleToObject<readonly [string] | readonly [number?] | number[]>>();
+expectTypeOf<Readonly<Record<number, string>> | {0: number; 1: string}>().toBe<TupleToObject<[number, string] | readonly string[]>>();
+expectTypeOf<Record<number, number> | {readonly 0: string} | {readonly 0?: number}>().toBe<TupleToObject<readonly [string] | readonly [number?] | number[]>>();
 expectTypeOf<Record<number, string | number> | {[x: number]: string | number | undefined; 0?: number; 1?: string}>().toBe<TupleToObject<[...number[], string] | [number?, string?, ...number[]]>>();
 
 // Labeled tuples

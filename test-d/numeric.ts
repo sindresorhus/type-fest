@@ -32,7 +32,7 @@ declare const binaryInteger: Integer<0b10>;
 declare const hexadecimalInteger: Integer<0x10>;
 declare const nonInteger: Integer<1.5>;
 declare const infinityInteger: Integer<PositiveInfinity | NegativeInfinity>;
-const infinityValue = Number.POSITIVE_INFINITY;
+const infinityValue = Infinity;
 declare const infinityInteger2: Integer<typeof infinityValue>;
 
 expectTypeOf(integer).toBe<1>();

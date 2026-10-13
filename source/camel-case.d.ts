@@ -3,7 +3,7 @@ import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
 
 /**
-CamelCase options.
+Options for the `CamelCase` type.
 
 @see {@link CamelCase}
 */
@@ -55,10 +55,10 @@ Convert an array of words to camel-case.
 The first word is uncapitalized and every other word is capitalized. The first word is never capitalized and then uncapitalized again, because `Capitalize<'ß'>` is `'SS'` and `Uncapitalize<'SS'>` is `'sS'`.
 */
 type CamelCaseFromArray<
-	Words extends string[],
+	WordList extends string[],
 	Options extends Required<CamelCaseOptions>,
 	OutputString extends string = '',
-> = Words extends [
+> = WordList extends [
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]

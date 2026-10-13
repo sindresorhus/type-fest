@@ -82,12 +82,12 @@ type _GreaterThan<A extends number, B extends number> =
 							? false
 							: true extends R[number]
 								? false
-								: [IsNegative<A>, IsNegative<B>] extends infer R extends [boolean, boolean]
-									? [true, false] extends R
+								: [IsNegative<A>, IsNegative<B>] extends infer Signs extends [boolean, boolean]
+									? [true, false] extends Signs
 										? false
-										: [false, true] extends R
+										: [false, true] extends Signs
 											? true
-											: [false, false] extends R
+											: [false, false] extends Signs
 												? PositiveNumericStringGt<`${A}`, `${B}`>
 												: PositiveNumericStringGt<`${Absolute<B>}`, `${Absolute<A>}`>
 									: never

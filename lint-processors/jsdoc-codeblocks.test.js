@@ -2,7 +2,7 @@ import {describe, test, snapshot} from 'node:test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {ESLint} from 'eslint';
-import {code1, code2, dedenter, errorAt, exportType, exportTypeAndOption, fence, jsdoc} from '../lint-rules/test-utils.js';
+import {code1, code2, dedenter, errorAt, exportType, exportTypeAndOption, fence, jsdoc} from '../lint-rules/testing-utilities.js';
 
 snapshot.setDefaultSnapshotSerializers([String]);
 
@@ -506,7 +506,7 @@ const invalid = [
 			errorAt({
 				ruleId: '@typescript-eslint/prefer-function-type',
 				line: 30,
-				textBeforeStart: '\t\t\t',
+				textBeforeStart: '\t'.repeat(3),
 				target: '(arg: string): number;',
 			}),
 		],
@@ -1029,31 +1029,34 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 	const eslint = new ESLint({cwd: root});
 	const eslintFixed = new ESLint({cwd: root, fix: true});
 
-	const testCases = [
-		...valid.map(testCase => ({...testCase, type: 'valid'})),
-		...invalid.map(testCase => ({...testCase, type: 'invalid'})),
-	];
+	const writeTestFile = async (t, type, name, code) => {
+		const fileName = `test-${type}-${name.replaceAll(/\s+/gv, '-')}.d.ts`;
+		const filePath = path.join(root, fileName);
+		await fs.writeFile(filePath, code);
+		t.after(async () => {
+			await fs.unlink(filePath);
+		});
 
-	for (const {type, name, code, errors = []} of testCases) {
-		test(`${type} - ${name}`, async t => {
-			const fileName = `test-${type}-${name.replaceAll(/\s+/gv, '-')}.d.ts`;
-			const filePath = path.join(root, fileName);
-			await fs.writeFile(filePath, code);
-			t.after(async () => {
-				await fs.unlink(filePath);
-			});
+		return fileName;
+	};
 
+	for (const {name, code} of valid) {
+		test(`valid - ${name}`, async t => {
+			const fileName = await writeTestFile(t, 'valid', name, code);
+			const results = await eslint.lintFiles([fileName]);
+			t.assert.strictEqual(results[0].messages.length, 0);
+		});
+	}
+
+	for (const {name, code, errors} of invalid) {
+		test(`invalid - ${name}`, async t => {
+			const fileName = await writeTestFile(t, 'invalid', name, code);
 			const results = await eslint.lintFiles([fileName]);
 			t.assert.strictEqual(results[0].messages.length, errors.length);
+			t.assert.partialDeepStrictEqual(results[0].messages, errors);
 
-			if (type === 'invalid') {
-				for (const [index, expected] of errors.entries()) {
-					t.assert.partialDeepStrictEqual(results[0].messages[index], expected);
-				}
-
-				const resultsFixed = await eslintFixed.lintFiles([fileName]);
-				t.assert.snapshot(resultsFixed[0].output);
-			}
+			const resultsFixed = await eslintFixed.lintFiles([fileName]);
+			t.assert.snapshot(resultsFixed[0].output);
 		});
 	}
 });

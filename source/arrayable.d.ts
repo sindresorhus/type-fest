@@ -12,8 +12,8 @@ function bundle(input: string, output: Arrayable<string>) {
 
 	// …
 
-	for (const output of outputList) {
-		console.log(`write ${input} to: ${output}`);
+	for (const outputPath of outputList) {
+		console.log(`write ${input} to: ${outputPath}`);
 	}
 }
 
