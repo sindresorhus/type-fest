@@ -230,3 +230,26 @@ expectTypeOf(twoKeysThroughSignature).toBe<{a: {x: {b: 1}; y: {c: 2}}}>();
 
 declare const patternThroughSignature: PickDeep<{a: Record<string, {b: 1; c: 2}>}, `a.${string}.b`>;
 expectTypeOf(patternThroughSignature).toBe<{a: {[x: string]: {b: 1}}}>();
+
+// A present key can have the value `never`; it is different from a missing path.
+expectTypeOf<PickDeep<{value: never; other: string}, 'value'>>().toBe<{value: never}>();
+expectTypeOf<PickDeep<{nested: {value: never; other: string}}, 'nested.value'>>().toBe<{nested: {value: never}}>();
+
+expectTypeOf<PickDeep<{readonly value: never; other: string}, 'value'>>().toBe<{readonly value: never}>();
+expectTypeOf<PickDeep<{nested?: {readonly value: never; other: string}}, 'nested.value'>>().toBe<{nested?: {readonly value: never}}>();
+expectTypeOf<PickDeep<{nested: {value: never; other: string} | null}, 'nested.value'>>().toBe<{nested: {value: never} | null}>();
+expectTypeOf<PickDeep<{nested: {value: never; other: string} | undefined}, 'nested.value'>>().toBe<{nested: {value: never} | undefined}>();
+
+// Picking alongside other properties must keep the impossible property's constraint.
+expectTypeOf<PickDeep<{value: never; other: string; ignored: number}, 'value' | 'other'>>().toBe<{value: never; other: string}>();
+expectTypeOf<PickDeep<{nested: {value: never; other: string; ignored: number}}, 'nested.value' | 'nested.other'>>().toBe<{nested: {value: never; other: string}}>();
+
+// Numeric keys and signatures can also contain `never` values.
+expectTypeOf<PickDeep<{0: never; other: string}, 0>>().toBe<{0: never}>();
+expectTypeOf<PickDeep<{0: never; other: string}, '0'>>().toBe<{0: never}>();
+expectTypeOf<PickDeep<Record<string, never>, 'value'>>().toBe<{value: never}>();
+expectTypeOf<PickDeep<Record<number, never>, '7'>>().toBe<{7: never}>();
+
+// A missing key in a different union member is still excluded.
+expectTypeOf<PickDeep<{value: never; first: string} | {other: number}, 'value'>>().toBe<{value: never}>();
+expectTypeOf<PickDeep<{value: never; first: string} | {value: number; second: string}, 'value'>>().toBe<{value: never} | {value: number}>();

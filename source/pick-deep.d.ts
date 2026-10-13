@@ -104,7 +104,8 @@ type PickDeepObject<RecordType extends object, P extends string | number> =
 				: never
 			: never
 		: ObjectValue<RecordType, P> extends infer ObjectV
-			? IsNever<ObjectV> extends false
+			// A present property can itself have type `never`, so check whether the key exists instead of using its value as the missing-path marker.
+			? IsNever<ExactKey<RecordType, P>> extends false
 				? BuildObject<P, ObjectV, RecordType>
 				: never
 			: never;
