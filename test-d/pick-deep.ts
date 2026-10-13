@@ -306,6 +306,21 @@ expectTypeOf<PickDeep<ValidTuple, '0..foo'>>().toBe<never>();
 expectTypeOf<PickDeep<Readonly<ValidTuple>, '0.invalidPath'>>().toBe<never>();
 expectTypeOf<PickDeep<Readonly<ValidTuple>, '2.foo'>>().toBe<never>();
 
+// An index that the array cannot have is a missing path.
+expectTypeOf<PickDeep<ValidTuple, '2'>>().toBe<never>();
+expectTypeOf<PickDeep<{a: ValidTuple}, 'a.2'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidTuple, '-1'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidTuple, '-1.foo'>>().toBe<never>();
+expectTypeOf<PickDeep<ValidArray, '-1'>>().toBe<never>();
+expectTypeOf<PickDeep<Readonly<ValidTuple>, '2'>>().toBe<never>();
+expectTypeOf<PickDeep<[1, 2], '1' | '5'>>().toBe<[unknown, 2]>();
+expectTypeOf<PickDeep<{a: [1, 2]}, 'a.1' | 'a.5'>>().toBe<{a: [unknown, 2]}>();
+
+// An index that the array can have is unchanged, including an optional element and any index of an array of unknown length.
+expectTypeOf<PickDeep<[1, 2?], '1'>>().toBe<[unknown, 2?]>();
+expectTypeOf<PickDeep<[1, ...string[]], '5'>>().toBe<[unknown, unknown, unknown, unknown, unknown, string?]>();
+expectTypeOf<PickDeep<ValidArray, '5.foo'>>().toBe<[unknown, unknown, unknown, unknown, unknown, {foo: 0}]>();
+
 // A valid path through an array or tuple is unchanged.
 expectTypeOf<PickDeep<ValidTuple, '1.foo'>>().toBe<[unknown, {foo: 2}]>();
 expectTypeOf<PickDeep<ValidArray, `${number}.foo`>>().toBe<Array<{foo: 0}>>();

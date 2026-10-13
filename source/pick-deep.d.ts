@@ -142,6 +142,31 @@ type NullishPartOfMember<ObjectV, RecordType extends object, Key extends string 
 Pick an array from the given array by one path.
 */
 type PickDeepArray<ArrayType extends UnknownArray, P extends string | number> =
+	IsMissingArrayIndex<ArrayType, P> extends true
+		? never
+		: PickDeepExistingArrayIndex<ArrayType, P>;
+
+/**
+Whether the path starts with an index that the array cannot have: a negative index, or an index past the end of a tuple without a rest element.
+*/
+type IsMissingArrayIndex<ArrayType extends UnknownArray, P extends string | number> =
+	(`${P}` extends `${infer Head}.${string}` ? Head : `${P}`) extends `${infer ArrayIndex extends number}`
+		? number extends ArrayIndex
+			? false
+			: `${ArrayIndex}` extends `-${string}`
+				? true
+				// A tuple has a key for each of its elements, including the optional ones, and an array of unknown length can have any other index.
+				: `${ArrayIndex}` extends keyof ArrayType
+					? false
+					: number extends ArrayType['length']
+						? false
+						: true
+		: false;
+
+/**
+Pick an array from the given array by one path that starts with an index the array can have.
+*/
+type PickDeepExistingArrayIndex<ArrayType extends UnknownArray, P extends string | number> =
 	// Handle paths that are `${number}.${string}`
 	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
 		? InternalPickDeep<NonNullable<ArrayType[ArrayIndex]>, SubPath> extends infer Picked
