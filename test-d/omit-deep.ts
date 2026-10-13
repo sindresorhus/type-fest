@@ -192,3 +192,12 @@ expectTypeOf(tupleNegativeNestedIndex).toBe<{tuple: [{x: 1}]}>();
 
 declare const tupleMixedValidAndNegativeIndex: OmitDeep<{tuple: [{x: 1; y: 2}]}, 'tuple.0.x' | 'tuple.-1.y'>;
 expectTypeOf(tupleMixedValidAndNegativeIndex).toBe<{tuple: [{y: 2}]}>();
+
+declare const readonlyTupleOutOfBounds: OmitDeep<{tuple: readonly [1, 2]}, 'tuple.2'>;
+expectTypeOf(readonlyTupleOutOfBounds).toBe<{tuple: readonly [1, 2]}>();
+
+// Each tuple in a union is checked against its own length.
+declare const tupleUnionOutOfBounds: OmitDeep<{tuple: [1] | [1, 2]}, 'tuple.1'>;
+expectTypeOf(tupleUnionOutOfBounds).toBe<{tuple: [1] | [1, unknown]}>();
+
+expectTypeOf<OmitDeep<[1, 2], '5'>>().toBe<[1, 2]>();

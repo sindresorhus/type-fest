@@ -7,8 +7,6 @@ import type {Paths} from './paths.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {LessThan} from './less-than.d.ts';
-import type {IsTuple} from './is-tuple.d.ts';
 
 /**
 Omit properties from a deeply-nested object.
@@ -139,11 +137,11 @@ It replaces the item to `unknown` at the given index.
 
 @example
 ```
-type A = OmitDeepArrayWithOnePath<[10, 20, 30, 40], 2>;
-//=> [10, 20, unknown, 40];
+type A = OmitDeepArrayWithOnePath<[10, 20, 30, 40], '2'>;
+//=> [10, 20, unknown, 40]
 
-type B = OmitDeepArrayWithOnePath<[10, 20, 30, 40], 6>;
-//=> [10, 20, 30, 40];
+type B = OmitDeepArrayWithOnePath<[10, 20, 30, 40], '6'>;
+//=> [10, 20, 30, 40]
 ```
 */
 type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string | number> =
@@ -153,62 +151,46 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 		? number extends ArrayIndex
 			// An array with nothing left to omit is kept empty. Omitting the whole array already removed every index, so a path that continues into one of those indices has nothing to recurse into, and reading the element type would yield `never`, which would collapse the array into `never[]` rather than leaving it empty. An empty tuple is kept as it is for the same reason, rather than keeping the `unknown` placeholder an element that does not exist would leave.
 			? ArrayType extends readonly [] ? ArrayType : Array<OmitDeepWithOnePath<NonNullable<ArrayType[number]>, SubPath>>
-			// If `ArrayIndex` is a number literal and out-of-bounds, returns the original type.
-			: ArrayType extends readonly []
+			// If `ArrayIndex` is a number literal. A fixed-length tuple without that index is returned unchanged.
+			: IsMissingTupleIndex<ArrayType, ArrayIndex> extends true
 				? ArrayType
-				: [true, false] extends [IsTuple<ArrayType>, IsValidIndex<ArrayType, ArrayIndex>]
-					? ArrayType
-					: ArraySplice<ArrayType, ArrayIndex, 1, [OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>]>
+				: ArraySplice<ArrayType, ArrayIndex, 1, [OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>]>
 		// If the path is equal to `number`
 		: P extends `${infer ArrayIndex extends number}`
 			// If `ArrayIndex` is `number`
 			? number extends ArrayIndex
 				? []
-				// If `ArrayIndex` is a number literal and out-of-bounds, returns the original type.
-				: [true, false] extends [IsTuple<ArrayType>, IsValidIndex<ArrayType, ArrayIndex>]
+				// If `ArrayIndex` is a number literal. A fixed-length tuple without that index is returned unchanged.
+				: IsMissingTupleIndex<ArrayType, ArrayIndex> extends true
 					? ArrayType
 					: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
 			: ArrayType;
 
 /**
-`IsValidIndex` returns `true` if `Index` (either as a number or its string representation) is a valid index for the given `Array` or `Tuple`.
+Whether `ArrayType` is a fixed-length tuple without the `Index` position, such as an index past its end or a negative index.
 
-If the first argument is a plain `Array`, it accepts `number`.
-if it is a `Tuple`, it only accepts specific numeric indices within its bounds.
+A fixed-length tuple has a key for each of its positions, including optional ones. An array, or a tuple with a rest element, has no such bound.
 
 @example
 ```
-type TupleNumberIndex = IsValidIndex<[0, 1, 2], '2'>;
+type A = IsMissingTupleIndex<[0, 1, 2], 3>;
 //=> true
-type TupleStringIndex = IsValidIndex<[0, 1, 2], 2>;
+
+type B = IsMissingTupleIndex<[0, 1, 2], -1>;
 //=> true
-type TupleNumberOutOfIndex = IsValidIndex<[0, 1, 2], 9>;
+
+type C = IsMissingTupleIndex<[0, 1?], 1>;
 //=> false
-type TupleStringOutOfIndex = IsValidIndex<[0, 1, 2], '9'>;
+
+type D = IsMissingTupleIndex<[0, ...number[]], 5>;
 //=> false
-type TupleNumberOutOfIndexMinus = IsValidIndex<[0, 1, 2], -1>;
-//=> false
-type TupleNumber = IsValidIndex<[0, 1, 2], number>;
-//=> false
-type ArrayNumberIndex = IsValidIndex<readonly number[], 0>;
-//=> true
-type ArrayStringIndex = IsValidIndex<readonly number[], '0'>;
-//=> true
-type ArrayNumber = IsValidIndex<readonly number[], number>;
-//=> true
-type NotFixedTuple = IsValidIndex<['0', ...number[]], 0>;
-//=> true
 ```
 */
-type IsValidIndex<A extends UnknownArray, Index extends string | number> =
-	`${Index}` extends `${infer numberString extends number}`
-		? false extends IsTuple<A>
-			? true
-			: number extends numberString
-				? false
-				: true extends LessThan<numberString, A['length']>
-					? LessThan<-1, numberString>
-					: false
-		: false;
+type IsMissingTupleIndex<ArrayType extends UnknownArray, Index extends number> =
+	number extends ArrayType['length']
+		? false
+		: `${Index}` extends keyof ArrayType
+			? false
+			: true;
 
 export {};
