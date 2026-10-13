@@ -28,7 +28,9 @@ type D = GreaterThan<5n, 1>;
 
 Note: If either argument is the non-literal `number` or `bigint` type, the result is `boolean`.
 
-Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
+Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), or one is a `bigint` and the other is `1e+21` or above (or `-1e+21` or below), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
+
+Note: A `number` above `Number.MAX_SAFE_INTEGER` is compared with a `bigint` by its printed digits, not its exact value. For example, `123456789012345680000` is really `123456789012345683968`, so comparing it with `123456789012345680000n` treats them as equal.
 
 @example
 ```
@@ -74,33 +76,46 @@ type _GreaterThan<A extends _Numeric, B extends _Numeric> =
 				? boolean
 				: bigint extends A | B
 					? boolean
-					: [
-						IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-						IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-					] extends infer R extends [boolean, boolean, boolean, boolean]
-						? Or<
-							And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
-							And<IsEqual<R[3], true>, IsEqual<R[1], false>>
-						> extends true
-							? true
-							: Or<
-								And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
-								And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+					// A `number` of `1e+21` and above is printed in exponential notation, which cannot be compared digit by digit with the plain digits of a `bigint`.
+					: IsBigIntAgainstLargeExponent<A, B> extends true
+						? boolean
+						: [
+							IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
+							IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
+						] extends infer R extends [boolean, boolean, boolean, boolean]
+							? Or<
+								And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
+								And<IsEqual<R[3], true>, IsEqual<R[1], false>>
 							> extends true
-								? false
-								: true extends R[number]
+								? true
+								: Or<
+									And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
+									And<IsEqual<R[2], true>, IsEqual<R[0], false>>
+								> extends true
 									? false
-									: [IsNegative<A>, IsNegative<B>] extends infer Signs extends [boolean, boolean]
-										? [true, false] extends Signs
-											? false
-											: [false, true] extends Signs
-												? true
-												: [false, false] extends Signs
-													? PositiveNumericStringGt<`${A}`, `${B}`>
-													: PositiveNumericStringGt<`${Absolute<B>}`, `${Absolute<A>}`>
-										: never
-						: never
+									: true extends R[number]
+										? false
+										: [IsNegative<A>, IsNegative<B>] extends infer Signs extends [boolean, boolean]
+											? [true, false] extends Signs
+												? false
+												: [false, true] extends Signs
+													? true
+													: [false, false] extends Signs
+														? PositiveNumericStringGt<`${A}`, `${B}`>
+														: PositiveNumericStringGt<`${Absolute<B>}`, `${Absolute<A>}`>
+											: never
+							: never
 			: never // Should never happen
 		: never; // Should never happen
+
+/**
+Whether one of the values is a `bigint` and the other is a `number` of `1e+21` and above, which is printed in exponential notation.
+*/
+type IsBigIntAgainstLargeExponent<A extends _Numeric, B extends _Numeric> =
+	A extends bigint
+		? `${B}` extends `${string}e+${string}` ? true : false
+		: B extends bigint
+			? `${A}` extends `${string}e+${string}` ? true : false
+			: false;
 
 export {};

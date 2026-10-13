@@ -91,3 +91,12 @@ expectTypeOf<LessThan<PositiveInfinity, bigint>>().toBe<boolean>();
 expectTypeOf<LessThan<bigint, PositiveInfinity>>().toBe<boolean>();
 expectTypeOf<LessThan<NegativeInfinity, bigint>>().toBe<boolean>();
 expectTypeOf<LessThan<bigint, NegativeInfinity>>().toBe<boolean>();
+
+// `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
+expectTypeOf<LessThan<any, 1n>>().toBe<boolean>();
+expectTypeOf<LessThan<1n, any>>().toBe<boolean>();
+expectTypeOf<LessThan<never, 1n>>().toBe<never>();
+
+// A union mixing `bigint` and `number` values is compared per member.
+expectTypeOf<LessThan<1n | 2, 5n>>().toBe<true>();
+expectTypeOf<LessThan<1n | 10, 5>>().toBe<boolean>();

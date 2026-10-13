@@ -16,11 +16,16 @@ type B = LessThanOrEqual<1, 1>;
 
 type C = LessThanOrEqual<1, 5>;
 //=> true
+
+type D = LessThanOrEqual<5n, 5>;
+//=> true
 ```
 
 Note: If either argument is the non-literal `number` or `bigint` type, the result is `boolean`.
 
-Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
+Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), or one is a `bigint` and the other is `1e+21` or above (or `-1e+21` or below), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
+
+Note: A `number` above `Number.MAX_SAFE_INTEGER` is compared with a `bigint` by its printed digits, not its exact value. For example, `123456789012345680000` is really `123456789012345683968`, so comparing it with `123456789012345680000n` treats them as equal.
 
 @example
 ```

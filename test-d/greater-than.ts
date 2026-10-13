@@ -160,3 +160,13 @@ expectTypeOf<GreaterThan<never, 1n>>().toBe<never>();
 // `any` could be any value, so the result is `boolean`, as with a `number`.
 expectTypeOf<GreaterThan<any, 1n>>().toBe<boolean>();
 expectTypeOf<GreaterThan<1n, any>>().toBe<boolean>();
+
+// A `bigint` against a `number` of `1e+21` and above is `boolean`, because the `number` is printed in exponential notation and cannot be compared digit by digit. A smaller exponent is still decided.
+expectTypeOf<GreaterThan<1_000_000_000_000_000_000_001n, 1e21>>().toBe<boolean>();
+expectTypeOf<GreaterThan<1e21, 1_000_000_000_000_000_000_000n>>().toBe<boolean>();
+expectTypeOf<GreaterThan<-1_000_000_000_000_000_000_000n, -1e21>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<1_000_000_000_000_000_000_000n, 1e21>>().toBe<boolean>();
+expectTypeOf<LessThan<1e21, 1_000_000_000_000_000_000_001n>>().toBe<boolean>();
+expectTypeOf<LessThanOrEqual<1e21, 1_000_000_000_000_000_000_000n>>().toBe<boolean>();
+expectTypeOf<GreaterThan<1e-7, 0n>>().toBe<true>();
+expectTypeOf<GreaterThan<1e-7, 1n>>().toBe<false>();

@@ -73,7 +73,6 @@ expectTypeOf<GreaterThanOrEqual<PositiveInfinity, 999n>>().toBe<true>();
 expectTypeOf<GreaterThanOrEqual<999n, PositiveInfinity>>().toBe<false>();
 expectTypeOf<GreaterThanOrEqual<999n, NegativeInfinity>>().toBe<true>();
 expectTypeOf<GreaterThanOrEqual<-999n, NegativeInfinity>>().toBe<true>();
-expectTypeOf<GreaterThanOrEqual<bigint, number>>().toBe<boolean>();
 
 // Non-literal `bigint`
 expectTypeOf<GreaterThanOrEqual<bigint, bigint>>().toBe<boolean>();
@@ -85,3 +84,12 @@ expectTypeOf<GreaterThanOrEqual<PositiveInfinity, bigint>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<bigint, PositiveInfinity>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<NegativeInfinity, bigint>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<bigint, NegativeInfinity>>().toBe<boolean>();
+
+// `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
+expectTypeOf<GreaterThanOrEqual<any, 1n>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<1n, any>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<never, 1n>>().toBe<never>();
+
+// A union mixing `bigint` and `number` values is compared per member.
+expectTypeOf<GreaterThanOrEqual<5n | 5, 5>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<5n | 6, 5n>>().toBe<true>();
