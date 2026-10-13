@@ -226,12 +226,13 @@ export type Get<
 	BaseType,
 	Path extends
 	| readonly string[]
+	| number
 	| _LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
 	Options extends GetOptions = {},
 > =
 	GetWithPath<
 		BaseType,
-		Path extends string ? ToPath<Path> : Path,
+		Path extends string | number ? ToPath<ToString<Path>> : Path,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
 

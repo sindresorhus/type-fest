@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Get} from '../index.d.ts';
+import type {Get, Paths} from '../index.d.ts';
 
 type NonStrict = {strict: false};
 
@@ -212,3 +212,21 @@ expectTypeOf<Get<{a: {b: number}}, 'a.nope', NonStrict>>().toBe<unknown>();
 expectTypeOf<Get<{[k: `v${number}`]: {a: 1}}, `v${number}`>>().toBe<{a: 1}>();
 expectTypeOf<Get<string[], `[${number}]`>>().toBe<string | undefined>();
 expectTypeOf<Get<{[k: Lowercase<string>]: number}, Lowercase<string>>>().toBe<number>();
+
+// `Paths<BaseType>` is always a valid path, even for a generic `BaseType`. `Paths` gives both `'1'` and `1` for a number key, and a generic `Paths` may be a number. (https://github.com/sindresorhus/type-fest/issues/991)
+type WrapperOfGeneric<GenericType extends {}> = {
+	value: Get<GenericType, Paths<GenericType>>;
+};
+type WithNumberKey = {1: boolean};
+expectTypeOf<Get<WithNumberKey, Paths<WithNumberKey>>>().toBe<boolean>();
+expectTypeOf<WrapperOfGeneric<WithNumberKey>['value']>().toBe<boolean>();
+expectTypeOf<WrapperOfGeneric<{key: number}>['value']>().toBe<number>();
+expectTypeOf<WrapperOfGeneric<{a: {b: string}}>['value']>().toBe<string | {b: string}>();
+
+// A number path reads the same key as its string form.
+expectTypeOf<Get<WithNumberKey, 1>>().toBe<boolean>();
+expectTypeOf<Get<[string, number], 1>>().toBe<number>();
+expectTypeOf<Get<string[], 0>>().toBe<string | undefined>();
+// A number with a dot is read as a dotted path, like its string form.
+expectTypeOf<Get<{1.5: 'x'}, 1.5>>().toBe<Get<{1.5: 'x'}, '1.5'>>();
+expectTypeOf<Get<{a: 1}, 0, NonStrict>>().toBe<unknown>();
