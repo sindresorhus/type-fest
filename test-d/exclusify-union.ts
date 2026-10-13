@@ -62,6 +62,25 @@ function processPayment(payment: ExclusifyUnion<CardPayment | PaypalPayment>) {
 	expectTypeOf(details).toBe<string>();
 }
 
+type Success = {data: string};
+type Failure = {error: Error};
+
+declare function fetchData(): ExclusifyUnion<Success | Failure>;
+
+function handleResult() {
+	// Can destructure `data` and `error` directly
+	const {data, error} = fetchData();
+	expectTypeOf(data).toBe<string | undefined>();
+	expectTypeOf(error).toBe<Error | undefined>();
+
+	// And, the destructured variables are still narrowed together
+	if (error) {
+		expectTypeOf(data).toBe<undefined>();
+	} else {
+		expectTypeOf(data).toBe<string>();
+	}
+}
+
 // Boundary types
 expectTypeOf<ExclusifyUnion<unknown>>().toBe<unknown>();
 expectTypeOf<ExclusifyUnion<any>>().toBe<any>();

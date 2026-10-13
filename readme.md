@@ -378,6 +378,7 @@ Click the type names for complete docs.
 - `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 - `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
+- `Destructurable` - See [`ExclusifyUnion`](source/exclusify-union.d.ts)
 
 ## Tips
 

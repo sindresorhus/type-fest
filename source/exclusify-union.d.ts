@@ -11,6 +11,7 @@ Ensure mutual exclusivity in object unions by adding other members’ keys as `?
 Use-cases:
 - You want each union member to be exclusive, preventing overlapping object shapes.
 - You want to safely access any property defined across the union without additional type guards.
+- You want to destructure an object union, like a function's return value, and still narrow it afterwards.
 
 @example
 ```
@@ -82,6 +83,35 @@ type Payment = ExclusifyUnion<CardPayment | PaypalPayment>;
 
 function processPayment2(payment: Payment) {
 	const details = payment.cardNumber ?? payment.paypalId; // Ok
+	//=> string
+}
+```
+
+@example
+```
+import type {ExclusifyUnion} from 'type-fest';
+
+type Success = {
+	data: string;
+};
+
+type Failure = {
+	error: Error;
+};
+
+declare function fetchData1(): Success | Failure;
+
+// @ts-expect-error
+const {data: data1, error: error1} = fetchData1(); // Cannot destructure `data` or `error` directly
+
+declare function fetchData2(): ExclusifyUnion<Success | Failure>;
+
+const {data, error} = fetchData2(); // Ok
+
+if (error) {
+	console.error(error.message);
+} else {
+	const result = data; // Narrowed by checking `error`
 	//=> string
 }
 ```
