@@ -1,5 +1,7 @@
-// Helper type. Not useful on its own.
-type Without<FirstType, SecondType> = {[KeyType in Exclude<keyof FirstType, keyof SecondType>]?: never};
+import type {KeysOfUnion} from './keys-of-union.d.ts';
+
+// Helper type. Not useful on its own. Include member-specific keys when either side is a union.
+type Without<FirstType, SecondType> = {[KeyType in Exclude<KeysOfUnion<FirstType>, KeysOfUnion<SecondType>>]?: never};
 
 /**
 Create a type that has mutually exclusive keys.
