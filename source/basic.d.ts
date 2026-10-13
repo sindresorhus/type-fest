@@ -54,7 +54,8 @@ const fetchData: FetchData = async url => {
 };
 ```
 
-@category Basic
+@category Function
+@category Async
 */
 export type AsyncFunction<Arguments extends readonly unknown[] = readonly any[], ReturnValue = unknown> = (...arguments_: Arguments) => Promise<ReturnValue>;
 
@@ -80,7 +81,8 @@ const result = getLength('unicorn');
 
 Note: A function with a `never` parameter, such as `(value: never) => Promise<void>`, does not match. TypeScript skips the parameter check only for a function type that returns `unknown` or `any`. Use {@link AnyFunction} if you need to accept it.
 
-@category Basic
+@category Function
+@category Async
 */
 export type AnyAsyncFunction = (...arguments_: readonly any[]) => Promise<unknown>;
 
@@ -99,7 +101,7 @@ function identity<FunctionType extends AnyFunction>(function_: FunctionType): Fu
 }
 ```
 
-@category Basic
+@category Function
 */
 export type AnyFunction = (...arguments_: readonly any[]) => unknown;
 
