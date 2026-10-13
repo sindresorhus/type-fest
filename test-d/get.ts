@@ -227,6 +227,21 @@ expectTypeOf<WrapperOfGeneric<{a: {b: string}}>['value']>().toBe<string | {b: st
 expectTypeOf<Get<WithNumberKey, 1>>().toBe<boolean>();
 expectTypeOf<Get<[string, number], 1>>().toBe<number>();
 expectTypeOf<Get<string[], 0>>().toBe<string | undefined>();
+expectTypeOf<Get<{[-1]: 'a'}, -1>>().toBe<'a'>();
+expectTypeOf<Get<{1: 'a'; 2: 'b'}, 1 | 2>>().toBe<'a' | 'b'>();
+expectTypeOf<Get<{1: 'a'; b: 2}, 1 | 'b'>>().toBe<'a' | 2>();
+
 // A number with a dot is read as a dotted path, like its string form.
-expectTypeOf<Get<{1.5: 'x'}, 1.5>>().toBe<Get<{1.5: 'x'}, '1.5'>>();
+expectTypeOf<Get<{1: {2: 'x'}}, 1.2>>().toBe<'x'>();
+expectTypeOf<Get<{1.5: 'x'}, 1.5>>().toBe<unknown>();
+
+// A number path that the subject does not have, or a non-literal `number`, reads like its string form.
+expectTypeOf<Get<{1: 'a'}, 2>>().toBe<unknown>();
 expectTypeOf<Get<{a: 1}, 0, NonStrict>>().toBe<unknown>();
+expectTypeOf<Get<string[], number>>().toBe<string | undefined>();
+expectTypeOf<Get<{a: 1}, number>>().toBe<unknown>();
+
+// `any`, `never`, and `unknown` subjects with a number path.
+expectTypeOf<Get<any, 1>>().toBe<any>();
+expectTypeOf<Get<never, 1>>().toBe<never>();
+expectTypeOf<Get<unknown, 1>>().toBe<unknown>();
