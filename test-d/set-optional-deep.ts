@@ -157,3 +157,33 @@ expectTypeOf<SetOptionalDeep<{a: number; b: {c: number}}, `b.${string}`>>().toBe
 // Built-ins and functions are not walked into.
 expectTypeOf<SetOptionalDeep<{a: Date; b: {c: Date}}, 'b.c'>>().toBe<{a: Date; b: {c?: Date}}>();
 expectTypeOf<SetOptionalDeep<{a: Date}, 'a.getTime'>>().toBe<{a: Date}>();
+
+// Works with unions of arrays
+expectTypeOf<SetOptionalDeep<{a: [string] | [string, number, boolean, ...number[]] | readonly [string, number]}, 'a.0' | 'a.1'>>()
+	.toBe<{a: [string?] | [string | undefined, number | undefined, boolean, ...number[]] | readonly [string?, number?]}>();
+
+// Marks all fixed elements as optional, if the path is `number`.
+expectTypeOf<SetOptionalDeep<{a: readonly [string, number, ...boolean[]]}, `a.${number}`>>().toBe<{a: readonly [string?, number?, ...boolean[]]}>();
+
+// A parent path, a path inside an element, and an element path can be combined.
+expectTypeOf<SetOptionalDeep<{readonly a: [{readonly b: number}, {c: string}]}, 'a' | 'a.0.b' | 'a.1'>>().toBe<{readonly a?: [{readonly b?: number}, {c: string}?]}>();
+expectTypeOf<SetOptionalDeep<{readonly a: ReadonlyArray<string | number>}, 'a' | `a.${number}`>>().toBe<{readonly a?: ReadonlyArray<string | number>}>();
+
+// Preserves `| undefined`, similar to how built-in `Partial` works.
+expectTypeOf<SetOptionalDeep<{a: [string | undefined, number]}, 'a.0' | 'a.1'>>().toBe<{a: [(string | undefined)?, number?]}>();
+
+// Works with a numeric key containing dots and a dotted path together
+declare const variation24: SetOptionalDeep<{1.2: string; 1: {2: string}}, 1.2 | '1.2'>;
+expectTypeOf(variation24).toBe<{1.2?: string; 1: {2?: string}}>();
+
+// Works with unions, template literals, and readonly members together
+declare const variation25: SetOptionalDeep<{a: number; b: {readonly c: {1: number}} | {d: {1: number}}}, 'a' | `b.${'c' | 'd'}.1`>;
+expectTypeOf(variation25).toBe<{a?: number; b: {readonly c: {1?: number}} | {d: {1?: number}}}>();
+
+// `any`, `never`, and `unknown` values are made optional as is.
+expectTypeOf<SetOptionalDeep<{a: any; b: never; c: unknown}, 'a' | 'b' | 'c'>>().toBe<{a?: any; b?: never; c?: unknown}>();
+expectTypeOf<SetOptionalDeep<{a: {b: any}}, 'a.b'>>().toBe<{a: {b?: any}}>();
+
+// `any` and `never` base types are returned as is.
+expectTypeOf<SetOptionalDeep<any, 'a'>>().toBe<any>();
+expectTypeOf<SetOptionalDeep<never, 'a'>>().toBe<never>();
