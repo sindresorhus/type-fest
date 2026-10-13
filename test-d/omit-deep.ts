@@ -201,3 +201,18 @@ declare const tupleUnionOutOfBounds: OmitDeep<{tuple: [1] | [1, 2]}, 'tuple.1'>;
 expectTypeOf(tupleUnionOutOfBounds).toBe<{tuple: [1] | [1, unknown]}>();
 
 expectTypeOf<OmitDeep<[1, 2], '5'>>().toBe<[1, 2]>();
+
+// A path segment that is not how JavaScript writes an index, such as `01` or `-0`, names a key the array does not have, so it is not treated as the wide `${number}` index.
+expectTypeOf<OmitDeep<{tuple: [1, 2]}, 'tuple.01'>>().toBe<{tuple: [1, 2]}>();
+expectTypeOf<OmitDeep<{tuple: [1, 2]}, 'tuple.-0'>>().toBe<{tuple: [1, 2]}>();
+expectTypeOf<OmitDeep<{tuple: [1, 2]}, 'tuple.1e1'>>().toBe<{tuple: [1, 2]}>();
+expectTypeOf<OmitDeep<{tuple: [{x: 1}]}, 'tuple.01.x'>>().toBe<{tuple: [{x: 1}]}>();
+expectTypeOf<OmitDeep<{array: number[]}, 'array.01'>>().toBe<{array: number[]}>();
+
+// An array never has a negative index.
+expectTypeOf<OmitDeep<{array: number[]}, 'array.-1'>>().toBe<{array: number[]}>();
+expectTypeOf<OmitDeep<{array: Array<{x: 1}>}, 'array.-1.x'>>().toBe<{array: Array<{x: 1}>}>();
+expectTypeOf<OmitDeep<{tuple: [1, ...string[]]}, 'tuple.-1'>>().toBe<{tuple: [1, ...string[]]}>();
+
+// Known limitation: A path into a tuple intersected with an object type loses the object type and some or all of the tuple elements, because TypeScript cannot read the tuple out of the intersection.
+expectTypeOf<OmitDeep<{tuple: [1, 2] & {foo: 1}}, 'tuple.1'>>().toBe<{tuple: unknown[]}>();
