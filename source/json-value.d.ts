@@ -24,6 +24,11 @@ export type JsonPrimitive = string | number | boolean | null;
 /**
 Matches any valid JSON value.
 
+Note: An `interface` is not assignable to `JsonValue`, because TypeScript does not give an interface an implicit index signature (more properties can be merged into an interface later). To fix it, do one of these:
+- Use a `type` alias instead.
+- Make the interface extend `JsonObject`. Optional properties then need `exactOptionalPropertyTypes`.
+- Use `Jsonify` to transform it.
+
 @see `Jsonify` if you need to transform a type to one that is assignable to `JsonValue`.
 
 @category JSON

@@ -16,6 +16,19 @@ interface V {
 	a?: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface U extends JsonObject {
+	a: number;
+	b?: string; // Allowed because `exactOptionalPropertyTypes` is enabled
+}
+
+// Extending `JsonObject` still checks that the properties are JSON values.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface NonJsonInterface extends JsonObject {
+	// @ts-expect-error
+	a: Date;
+}
+
 type X = {
 	a: Date;
 };
@@ -36,6 +49,7 @@ declare const a: Jsonify<A>;
 declare const b: Jsonify<B>;
 
 declare const v: V; // Not assignable to JsonValue because it is defined as interface
+declare const u: U; // Assignable to JsonValue because the interface extends JsonObject
 
 declare const x: X; // Not assignable to JsonValue because it contains Date value
 declare const y: Y; // Not assignable to JsonValue because it contains Date value
@@ -54,6 +68,7 @@ expectTypeOf([] as const).toBeAssignableTo<JsonValue>();
 ({a: 0}) satisfies JsonValue;
 expectTypeOf(a).toBeAssignableTo<JsonValue>();
 expectTypeOf(b).toBeAssignableTo<JsonValue>();
+expectTypeOf(u).toBeAssignableTo<JsonValue>();
 ({a: {b: true, c: {}}, d: [{}, 2, 'hi']}) satisfies JsonValue;
 [{}, {a: 'hi'}, null, 3] satisfies JsonValue;
 
@@ -577,6 +592,7 @@ expectTypeOf<Jsonify<{value: {toJSON(): {name: string} | undefined}}>>().toBe<{v
 interface NamedRecord {
 	name: string;
 }
+expectTypeOf<{value: NamedRecord}>().not.toBeAssignableTo<JsonValue>(); // A nested interface also needs `Jsonify`
 expectTypeOf<Jsonify<{value: NamedRecord}>>().toBe<{value: {name: string}}>();
 expectTypeOf<Jsonify<{value?: NamedRecord}>>().toBe<{value?: {name: string}}>();
 
