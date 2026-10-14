@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Paths, UnknownArray} from '../index.d.ts';
+import type {Paths, Subtract, UnknownArray} from '../index.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
 declare const normal: Paths<{foo: string}>;
@@ -139,15 +139,97 @@ type MyOtherEntity = {
 type MyEntityPaths = Paths<MyEntity>;
 expectTypeOf<MyEntityPaths>().toBeAssignableTo<string>();
 
-// By default, the recursion limit should be reasonably long
+// The recursion limit can be raised beyond the defaults
 type RecursiveFoo = {foo: RecursiveFoo};
-expectTypeOf<'foo.foo.foo.foo.foo.foo.foo.foo'>().toBeAssignableTo<Paths<RecursiveFoo, {maxRecursionDepth: 10}>>();
+expectTypeOf<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>().toBeAssignableTo<Paths<RecursiveFoo, {maxRecursionDepth: 10; maxCircularDepth: 10}>>();
+
+// Ensure it still stops at the correct depth
+expectTypeOf<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>().not.toBeAssignableTo<Paths<RecursiveFoo, {maxRecursionDepth: 10; maxCircularDepth: 10}>>();
 
 declare const recursion0: Paths<RecursiveFoo, {maxRecursionDepth: 0}>;
 expectTypeOf(recursion0).toBe<'foo'>();
 
 declare const recursion1: Paths<RecursiveFoo, {maxRecursionDepth: 1}>;
 expectTypeOf(recursion1).toBe<'foo' | 'foo.foo'>();
+
+// Circular depth
+type CircularFoo = {foo: CircularFoo; a: {b: {c: {d: string}}}; internal: {parent: CircularFoo}};
+
+// Default circular limit should be respected
+type CircularFooDefault = Paths<CircularFoo>;
+expectTypeOf<'foo.foo.foo.foo.foo.foo'>().toBeAssignableTo<CircularFooDefault>();
+expectTypeOf<'foo.foo.foo.a.b.c'>().toBeAssignableTo<CircularFooDefault>();
+expectTypeOf<'foo.foo.a.b.c.d'>().toBeAssignableTo<CircularFooDefault>();
+expectTypeOf<'foo.foo.a.b.c'>().toBeAssignableTo<CircularFooDefault>();
+expectTypeOf<'internal.parent.foo.foo.foo'>().toBeAssignableTo<CircularFooDefault>();
+expectTypeOf<'internal.parent.foo.a.b.c'>().toBeAssignableTo<CircularFooDefault>();
+expectTypeOf<'internal.parent.a.b.c'>().toBeAssignableTo<CircularFooDefault>();
+
+type OptionalCircular = {value: string; next?: OptionalCircular};
+
+// Should only expose the first hop when circular recursion is disabled
+expectTypeOf<Paths<OptionalCircular, {maxCircularDepth: 0}>>().toBe<'value' | 'next'>();
+
+// The moment we allow one circular hop, the deeper path must appear
+expectTypeOf<'next.value'>().toBeAssignableTo<Paths<OptionalCircular, {maxCircularDepth: 1}>>();
+
+type GetKeysAtNextLevel<PreviousLevelKeys extends string> = PreviousLevelKeys | `foo.${PreviousLevelKeys}` | `internal.parent.${PreviousLevelKeys}`;
+
+type KeysAtLevel0 = 'foo' | 'a' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'internal' | 'internal.parent';
+expectTypeOf<Paths<CircularFoo, {maxCircularDepth: 0}>>().toBe<KeysAtLevel0>();
+
+type KeysAtLevel1 = GetKeysAtNextLevel<KeysAtLevel0>;
+expectTypeOf<Paths<CircularFoo, {maxCircularDepth: 1}>>().toBe<KeysAtLevel1>();
+
+// Truncates `Path` to at most `MaxDepth + 1` dot-separated segments, mirroring how `maxRecursionDepth` limits paths.
+type LimitPathDepth<Path extends string, MaxDepth extends number> = Path extends `${infer Head}.${infer Rest}`
+	? MaxDepth extends 0
+		? Head
+		: `${Head}.${LimitPathDepth<Rest, Subtract<MaxDepth, 1>>}`
+	: Path;
+
+// Level 2+ will hit the default `maxRecursionDepth` of `5`, so we have to limit the expected keys to that depth for testing
+type KeysAtLevel2 = GetKeysAtNextLevel<KeysAtLevel1>;
+expectTypeOf<Paths<CircularFoo, {maxCircularDepth: 2}>>().toBe<LimitPathDepth<KeysAtLevel2, 5>>();
+
+// A non-literal limit should not exclude paths that might be within the limit
+expectTypeOf<Paths<RecursiveFoo, {maxRecursionDepth: 1; maxCircularDepth: number}>>().toBe<'foo' | 'foo.foo'>();
+
+type KeysAtLevel3 = GetKeysAtNextLevel<KeysAtLevel2>;
+expectTypeOf<Paths<CircularFoo, {maxCircularDepth: 3}>>().toBe<LimitPathDepth<KeysAtLevel3, 5>>();
+
+// We can also test that it in fact doesn't go deeper
+expectTypeOf<KeysAtLevel3>().not.toBeAssignableTo<Paths<CircularFoo, {maxCircularDepth: 3}>>();
+
+// Ensure non-circular recurring structure works and is not flagged as circular
+type ObjectWithRecurringStructure = {foo: string; bar: {foo: string; bar: {}}};
+expectTypeOf<Paths<ObjectWithRecurringStructure, {maxCircularDepth: 0}>>().toBe<'foo' | 'bar' | 'bar.foo' | 'bar.bar'>();
+
+// With `leavesOnly`, paths that terminate at the circular reference limit are treated as leaves, mirroring `maxRecursionDepth` behavior
+expectTypeOf<Paths<RecursiveFoo, {maxCircularDepth: 0; leavesOnly: true}>>().toBe<'foo'>();
+expectTypeOf<Paths<RecursiveFoo, {maxCircularDepth: 1; leavesOnly: true}>>().toBe<'foo.foo'>();
+expectTypeOf<Paths<CircularFoo, {maxCircularDepth: 0; leavesOnly: true}>>().toBe<'foo' | 'a.b.c.d' | 'internal.parent'>();
+
+// Raising only `maxRecursionDepth` on a circular type produces leaves at the default circular limit
+expectTypeOf<Paths<RecursiveFoo, {maxRecursionDepth: 10; leavesOnly: true}>>().toBe<'foo.foo.foo.foo.foo.foo'>();
+
+// Arrays
+type StaticLengthArray = [number, 3, StaticLengthArray, false];
+expectTypeOf<Paths<StaticLengthArray, {maxCircularDepth: 0}>>().toBe<'0' | '1' | '2' | '3'>();
+expectTypeOf<Paths<StaticLengthArray, {maxCircularDepth: 1}>>().toBe<'0' | '1' | '2' | '3' | '2.0' | '2.1' | '2.2' | '2.3'>();
+expectTypeOf<Paths<StaticLengthArray, {maxCircularDepth: 2}>>().toBe<'0' | '1' | '2' | '3' | '2.0' | '2.1' | '2.2' | '2.3' | '2.2.0' | '2.2.1' | '2.2.2' | '2.2.3'>();
+expectTypeOf<Paths<StaticLengthArray, {maxCircularDepth: 0; leavesOnly: true}>>().toBe<'0' | '1' | '2' | '3'>();
+expectTypeOf<Paths<StaticLengthArray, {maxCircularDepth: 1; leavesOnly: true}>>().toBe<'0' | '1' | '3' | '2.0' | '2.1' | '2.2' | '2.3'>();
+
+type VariableLengthArray = [1, ...VariableLengthArray[], string];
+expectTypeOf<Paths<VariableLengthArray, {maxCircularDepth: 0}>>().toBe<number | `${number}`>();
+expectTypeOf<Paths<VariableLengthArray, {maxCircularDepth: 1}>>().toBe<number | `${number}` | `${number}.${number}`>();
+expectTypeOf<Paths<VariableLengthArray, {maxCircularDepth: 2}>>().toBe<number | `${number}` | `${number}.${number}` | `${number}.${number}.${number}`>();
+
+type VariableLengthArray2 = [boolean, ...number[], VariableLengthArray2, string];
+expectTypeOf<Paths<VariableLengthArray2, {maxCircularDepth: 0}>>().toBe<number | `${number}`>();
+expectTypeOf<Paths<VariableLengthArray2, {maxCircularDepth: 1}>>().toBe<number | `${number}` | `${number}.${number}`>();
+expectTypeOf<Paths<VariableLengthArray2, {maxCircularDepth: 2}>>().toBe<number | `${number}` | `${number}.${number}` | `${number}.${number}.${number}`>();
 
 // Test a[0].b style
 type Object1 = {
@@ -262,7 +344,7 @@ expectTypeOf(leadingSpreadLeaves).toBe<`${number}.a` | `${number}.b`>();
 declare const leadingSpreadLeaves1: Paths<[...Array<{a?: string}>, {readonly b: number}, {c: number}], {leavesOnly: true}>;
 expectTypeOf(leadingSpreadLeaves1).toBe<`${number}.a` | `${number}.b` | `${number}.c`>();
 
-declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 10}>;
+declare const recursiveLeaves: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 10; maxCircularDepth: 10}>;
 expectTypeOf(recursiveLeaves).toBe<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
 
 declare const recursiveWithMaxLeaves: Paths<RecursiveFoo, {maxRecursionDepth: 0; leavesOnly: true}>;
@@ -344,7 +426,7 @@ expectTypeOf(unreachableAndReachableDepth).toBe<'a.b'>();
 declare const maxLessThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 3}>;
 expectTypeOf(maxLessThanDepth).toBe<never>();
 
-declare const maxLessThanDepth2: Paths<RecursiveFoo, {depth: 12}>; // Default `maxRecursionDepth` is 10
+declare const maxLessThanDepth2: Paths<RecursiveFoo, {depth: 12}>; // Default `maxRecursionDepth` is 5
 expectTypeOf(maxLessThanDepth2).toBe<never>();
 
 declare const maxSimilarToDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 2}>;
@@ -353,7 +435,7 @@ expectTypeOf(maxSimilarToDepth).toBe<'a.b.c' | `a.b2.${number}`>();
 declare const maxSimilarToDepth2: Paths<RecursiveFoo, {maxRecursionDepth: 0; depth: 0}>;
 expectTypeOf(maxSimilarToDepth2).toBe<'foo'>();
 
-declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10; maxRecursionDepth: 10}>; // Default `maxRecursionDepth` is 10
+declare const maxSimilarToDepth3: Paths<RecursiveFoo, {depth: 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // Default `maxRecursionDepth` and `maxCircularDepth` is 5
 expectTypeOf(maxSimilarToDepth3).toBe<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
 
 declare const maxMoreThanDepth: Paths<DeepObject, {maxRecursionDepth: 2; depth: 1}>;
@@ -401,17 +483,21 @@ expectTypeOf(nestedTupleDepth).toBe<'a' | 'a.0.0.0.b'>();
 declare const recursiveDepth: Paths<RecursiveFoo, {depth: 4}>;
 expectTypeOf(recursiveDepth).toBe<'foo.foo.foo.foo.foo'>();
 
-declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8; maxRecursionDepth: 10}>;
+declare const recursiveDepth2: Paths<RecursiveFoo, {depth: 1 | 3 | 8; maxRecursionDepth: 10; maxCircularDepth: 10}>;
 expectTypeOf(recursiveDepth2).toBe<'foo.foo' | 'foo.foo.foo.foo' | 'foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
 
 // For recursive types, leaves are at `maxRecursionDepth`
-declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10}>;
+declare const recursiveDepth3: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10; maxCircularDepth: 10}>;
 expectTypeOf(recursiveDepth3).toBe<never>();
 
-declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10; maxRecursionDepth: 10}>; // No leaves at depth `5`
-expectTypeOf(recursiveDepth4).toBe<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
+// With the default `maxCircularDepth` of `5`, leaves are at the circular cutoff instead
+declare const recursiveDepth4: Paths<RecursiveFoo, {leavesOnly: true; depth: 5; maxRecursionDepth: 10}>;
+expectTypeOf(recursiveDepth4).toBe<'foo.foo.foo.foo.foo.foo'>();
 
-declare const recursiveDepth6: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 6; depth: 5}>; // Leaves are at depth `6`
+declare const recursiveDepth5: Paths<RecursiveFoo, {leavesOnly: true; depth: 5 | 10; maxRecursionDepth: 10; maxCircularDepth: 10}>; // No leaves at depth `5`
+expectTypeOf(recursiveDepth5).toBe<'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
+
+declare const recursiveDepth6: Paths<RecursiveFoo, {leavesOnly: true; maxRecursionDepth: 6; maxCircularDepth: 6; depth: 5}>; // Leaves are at depth `6`
 expectTypeOf(recursiveDepth6).toBe<never>();
 
 declare const maxLeavesAndDepth: Paths<DeepObject, {leavesOnly: true; maxRecursionDepth: 2; depth: 2}>; // All depth `2` paths are leaves
