@@ -555,3 +555,56 @@ expectTypeOf(neverRestDestination).toBe<[2, 3, ...never[]]>();
 
 declare const neverRestSource: MergeDeep<[1, 2], [3, ...never[]], {recurseIntoArrays: true}>;
 expectTypeOf(neverRestSource).toBe<[3, 2, ...never[]]>();
+
+// An empty tuple on either side, see https://github.com/sindresorhus/type-fest/issues/1200
+type EmptyFoo = {foo: []};
+type NotEmptyTupleFoo = {foo: [0, 1]};
+type NotEmptyArrayFoo = {foo: number[]};
+expectTypeOf<MergeDeep<NotEmptyTupleFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyTupleFoo>();
+expectTypeOf<MergeDeep<NotEmptyArrayFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyArrayFoo>();
+expectTypeOf<MergeDeep<NotEmptyTupleFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>().toBe<NotEmptyTupleFoo>();
+expectTypeOf<MergeDeep<EmptyFoo, NotEmptyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>().toBe<NotEmptyArrayFoo>();
+expectTypeOf<MergeDeep<NotEmptyArrayFoo, EmptyFoo, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>().toBe<NotEmptyArrayFoo>();
+
+type EmptyReadonlyFoo = {readonly foo: []};
+type NotEmptyReadonlyTupleFoo = {readonly foo: [0, 1]};
+type NotEmptyReadonlyArrayFoo = {readonly foo: number[]};
+expectTypeOf<MergeDeep<EmptyReadonlyFoo, NotEmptyReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyReadonlyTupleFoo>();
+expectTypeOf<MergeDeep<NotEmptyReadonlyTupleFoo, EmptyReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyReadonlyTupleFoo>();
+expectTypeOf<MergeDeep<EmptyReadonlyFoo, NotEmptyReadonlyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyReadonlyArrayFoo>();
+expectTypeOf<MergeDeep<NotEmptyReadonlyArrayFoo, EmptyReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyReadonlyArrayFoo>();
+
+type EmptyOptionalFoo = {foo?: []};
+type NotEmptyOptionalTupleFoo = {foo?: [0, 1]};
+type NotEmptyOptionalArrayFoo = {foo?: number[]};
+expectTypeOf<MergeDeep<EmptyOptionalFoo, NotEmptyOptionalTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalTupleFoo>();
+expectTypeOf<MergeDeep<NotEmptyOptionalTupleFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalTupleFoo>();
+expectTypeOf<MergeDeep<EmptyOptionalFoo, NotEmptyOptionalArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalArrayFoo>();
+expectTypeOf<MergeDeep<NotEmptyOptionalArrayFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalArrayFoo>();
+
+type EmptyOptionalReadonlyFoo = {readonly foo?: []};
+type NotEmptyOptionalReadonlyTupleFoo = {readonly foo?: [0, 1]};
+type NotEmptyOptionalReadonlyArrayFoo = {readonly foo?: number[]};
+expectTypeOf<MergeDeep<EmptyOptionalReadonlyFoo, NotEmptyOptionalReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalReadonlyTupleFoo>();
+expectTypeOf<MergeDeep<NotEmptyOptionalReadonlyTupleFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalReadonlyTupleFoo>();
+expectTypeOf<MergeDeep<EmptyOptionalReadonlyFoo, NotEmptyOptionalReadonlyArrayFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalReadonlyArrayFoo>();
+expectTypeOf<MergeDeep<NotEmptyOptionalReadonlyArrayFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalReadonlyArrayFoo>();
+
+expectTypeOf<MergeDeep<EmptyOptionalFoo, NotEmptyOptionalReadonlyTupleFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalReadonlyTupleFoo>();
+expectTypeOf<MergeDeep<NotEmptyOptionalReadonlyTupleFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyOptionalTupleFoo>();
+expectTypeOf<MergeDeep<EmptyOptionalReadonlyFoo, EmptyOptionalFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<EmptyOptionalFoo>();
+expectTypeOf<MergeDeep<EmptyOptionalFoo, EmptyOptionalReadonlyFoo, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<EmptyOptionalReadonlyFoo>();
+
+type EmptyFooRecursive = {foo: [0, string, {bar: []}]};
+type NotEmptyTupleFooRecursive = {foo: [0, number, {bar: [0, 1]}]};
+type NotEmptyArrayFooRecursive = {foo: [0, number, {bar: number[]}]};
+expectTypeOf<MergeDeep<EmptyFooRecursive, NotEmptyTupleFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyTupleFooRecursive>();
+expectTypeOf<MergeDeep<NotEmptyTupleFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<{foo: [0, string, {bar: [0, 1]}]}>();
+expectTypeOf<MergeDeep<EmptyFooRecursive, NotEmptyArrayFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<NotEmptyArrayFooRecursive>();
+expectTypeOf<MergeDeep<NotEmptyArrayFooRecursive, EmptyFooRecursive, {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<{foo: [0, string, {bar: number[]}]}>();
+
+// Tuple and array recursion behavior with primitive values
+expectTypeOf<MergeDeep<[1, 2], string[], {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<[string, string, ...string[]]>();
+expectTypeOf<MergeDeep<[1, 2], string[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>().toBe<[string, string, ...string[]]>();
+expectTypeOf<MergeDeep<string[], [1, 2], {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<[1, 2, ...string[]]>();
+expectTypeOf<MergeDeep<string[], [1, 2], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>().toBe<[1, 2, ...string[]]>();
