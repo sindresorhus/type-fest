@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Get, OptionalPaths, PickDeep} from '../index.d.ts';
+import type {DigitCharacter, Get, OptionalPaths, Paths, PickDeep} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -382,3 +382,20 @@ expectTypeOf<PickDeep<never, 'a'>>().toBe<never>();
 // `OptionalPaths` can give several paths into one tuple. (https://github.com/sindresorhus/type-fest/pull/1443)
 type WithOptionalTuple = {t: [{a?: 1; b: 2}, {c?: 3}?]};
 expectTypeOf<PickDeep<WithOptionalTuple, OptionalPaths<WithOptionalTuple>>>().toBe<{t: [{a?: 1}, {c?: 3}?]}>();
+
+// `Paths<T>` is a valid path for a generic `T`, even though autocomplete only lists paths up to `a.b.c`.
+type PickDeepAllPaths<T> = PickDeep<T, Paths<T>>;
+expectTypeOf<PickDeepAllPaths<{a: {b: 1}}>>().toBe<{a: {b: 1}}>();
+
+// A number path reads the same key or index as its string form, also for a generic `Index`. A number that is not a path is ignored, like a string that is not a path.
+type PickDeepIndex<T, Index extends number> = PickDeep<T, Index>;
+expectTypeOf<PickDeepIndex<[1, 2], 1>>().toBe<[unknown, 2]>();
+expectTypeOf<PickDeep<{a: 1}, 5>>().toBe<never>();
+expectTypeOf<PickDeep<[1, 2], -1 | 1.5>>().toBe<never>();
+expectTypeOf<PickDeep<[1, 2], '0' | 1>>().toBe<[1, 2]>();
+expectTypeOf<PickDeep<[1] | {a: 1; 0: 2}, 0>>().toBe<[1] | {0: 2}>();
+
+// Autocomplete only lists paths up to `a.b.c`, so a type with very many deeper paths does not make the union of paths too complex to represent.
+type Level<Value> = Record<DigitCharacter, Value>;
+type ManyPaths = Level<Level<Level<Level<Level<Level<1>>>>>>;
+expectTypeOf<PickDeep<ManyPaths, '0.0.0.0.0.0'>>().toBe<{0: {0: {0: {0: {0: {0: 1}}}}}}>();

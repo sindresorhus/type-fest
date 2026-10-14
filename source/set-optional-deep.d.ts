@@ -38,7 +38,11 @@ type ArrayExample = SetOptionalDeep<{a: [number, number, number]}, 'a.1' | 'a.2'
 
 @category Object
 */
-export type SetOptionalDeep<BaseType, KeyPaths extends LiteralUnion<Paths<BaseType>, string>> = IsAny<KeyPaths> extends true
+export type SetOptionalDeep<
+	BaseType,
+	// Autocomplete lists paths up to `a.b.c`, because listing deeper paths can take minutes for large union-heavy types. A generic `Paths<T>` can be a `number`, so any `number` is accepted, like any `string`.
+	KeyPaths extends LiteralUnion<Paths<BaseType, {maxRecursionDepth: 2}>, string | number>,
+> = IsAny<KeyPaths> extends true
 	? SimplifyDeep<PartialDeep<BaseType>>
 	: SetOptionalDeepHelper<BaseType, KeyPaths>;
 

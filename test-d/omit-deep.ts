@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {OmitDeep} from '../index.d.ts';
+import type {DigitCharacter, OmitDeep, Paths} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -216,3 +216,21 @@ expectTypeOf<OmitDeep<{tuple: [1, ...string[]]}, 'tuple.-1'>>().toBe<{tuple: [1,
 
 // Known limitation: A path into a tuple intersected with an object type loses the object type and some or all of the tuple elements, because TypeScript cannot read the tuple out of the intersection.
 expectTypeOf<OmitDeep<{tuple: [1, 2] & {foo: 1}}, 'tuple.1'>>().toBe<{tuple: unknown[]}>();
+
+// `Paths<T>` is a valid path for a generic `T`, even though autocomplete only lists paths up to `a.b.c`.
+type OmitDeepAllPaths<T> = OmitDeep<T, Paths<T>>;
+expectTypeOf<OmitDeepAllPaths<{a: {b: 1}}>>().toBe<{}>();
+
+// A number path reads the same key or index as its string form, also for a generic `Index`. A number that is not a path is ignored, like a string that is not a path. A wide `number` matches every index, like `${number}`.
+type OmitDeepIndex<T, Index extends number> = OmitDeep<T, Index>;
+expectTypeOf<OmitDeepIndex<[1, 2], 1>>().toBe<[1, unknown]>();
+expectTypeOf<OmitDeep<{a: 1}, 5>>().toBe<{a: 1}>();
+expectTypeOf<OmitDeep<[1, 2], -1 | 1.5>>().toBe<[1, 2]>();
+expectTypeOf<OmitDeep<[1, 2], '0' | 1>>().toBe<[unknown, unknown]>();
+expectTypeOf<OmitDeep<[1] | {a: 1; 0: 2}, 0>>().toBe<[unknown] | {a: 1}>();
+expectTypeOf<OmitDeepIndex<string[], number>>().toBe<[]>();
+
+// Autocomplete only lists paths up to `a.b.c`, so a type with very many deeper paths does not make the union of paths too complex to represent.
+type Level<Value> = Record<DigitCharacter, Value>;
+type ManyPaths = Level<Level<Level<Level<Level<Level<1>>>>>>;
+expectTypeOf<OmitDeep<ManyPaths, '0.0.0.0.0.0'>['0']['0']['0']['0']['0']['1']>().toBe<1>();

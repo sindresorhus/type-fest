@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetRequiredDeep} from '../index.d.ts';
+import type {DigitCharacter, Paths, SetRequiredDeep} from '../index.d.ts';
 
 // Set nested key to required
 declare const variation1: SetRequiredDeep<{a?: number; b?: {c?: string}}, 'b.c'>;
@@ -186,3 +186,19 @@ expectTypeOf<SetRequiredDeep<{a?: number}, 'missing'>>().toBe<{a?: number}>();
 // A non-literal path segment matches every key at its level, like a path through an index signature.
 expectTypeOf<SetRequiredDeep<{a?: number; b?: {c?: number}}, string>>().toBe<{a: number; b: {c?: number}}>();
 expectTypeOf<SetRequiredDeep<{a?: number; b?: {c?: number}}, `b.${string}`>>().toBe<{a?: number; b?: {c: number}}>();
+
+// `Paths<T>` is a valid path for a generic `T`, even though autocomplete only lists paths up to `a.b.c`.
+type SetRequiredDeepAllPaths<T> = SetRequiredDeep<T, Paths<T>>;
+expectTypeOf<SetRequiredDeepAllPaths<{a?: {b?: 1}}>>().toBe<{a: {b: 1}}>();
+
+// A number path reads the same index as its string form, also for a generic `Index`. A number that is not a path is ignored, like a string that is not a path. A wide `number` matches every index, like `${number}`.
+type SetRequiredDeepIndex<T, Index extends number> = SetRequiredDeep<T, Index>;
+expectTypeOf<SetRequiredDeepIndex<[1, 2?], 1>>().toBe<[1, 2]>();
+expectTypeOf<SetRequiredDeep<{a?: 1}, 5>>().toBe<{a?: 1}>();
+expectTypeOf<SetRequiredDeep<[1?, 2?], -1 | 1.5>>().toBe<[1?, 2?]>();
+expectTypeOf<SetRequiredDeepIndex<[1?, 2?], number>>().toBe<[1, 2]>();
+
+// Autocomplete only lists paths up to `a.b.c`, so a type with very many deeper paths does not make the union of paths too complex to represent.
+type Level<Value> = Record<DigitCharacter, Value>;
+type ManyPaths = Level<Level<Level<Level<Level<Partial<Level<1>>>>>>>;
+expectTypeOf<SetRequiredDeep<ManyPaths, '0.0.0.0.0.0'>['0']['0']['0']['0']['0']['0']>().toBe<1>();

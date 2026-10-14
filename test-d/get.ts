@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Get, Paths} from '../index.d.ts';
+import type {DigitCharacter, Get, Paths} from '../index.d.ts';
 
 type NonStrict = {strict: false};
 
@@ -315,3 +315,8 @@ expectTypeOf<Get<{a: never} | {b: 1}, 'a'>>().toBe<unknown>();
 // Every path `Paths` gives for a union resolves to a type, never `unknown`.
 type ModelWithUnions = {user: {id: string; name: string} | {error: string}; items: Array<{a: 1} | {b: 2}>};
 expectTypeOf<unknown extends Get<ModelWithUnions, Paths<ModelWithUnions>> ? true : false>().toBe<false>();
+
+// `Get` does not compute every path of the base type, so a type with very many paths does not hit the instantiation limit.
+type WideKey = `${DigitCharacter}${DigitCharacter}`;
+type Wide = Record<WideKey, Record<WideKey, Record<WideKey, string>>>;
+expectTypeOf<Get<Wide, '00.11.22'>>().toBe<string>();

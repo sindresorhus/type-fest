@@ -1,6 +1,4 @@
 import type {ApplyDefaultOptions, ExactKey, ToString} from './internal/index.d.ts';
-import type {_LiteralStringUnion} from './literal-union.d.ts';
-import type {Paths} from './paths.d.ts';
 import type {Split} from './split.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
@@ -267,10 +265,7 @@ type B = Get<Record<string, string>, 'foo', {strict: true}>;
 */
 export type Get<
 	BaseType,
-	Path extends
-	| readonly string[]
-	| number
-	| _LiteralStringUnion<ToString<Paths<BaseType, {bracketNotation: false; maxRecursionDepth: 2}> | Paths<BaseType, {bracketNotation: true; maxRecursionDepth: 2}>>>,
+	Path extends string | number | readonly string[],
 	Options extends GetOptions = {},
 > =
 	GetWithPath<

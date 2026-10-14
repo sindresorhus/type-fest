@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {DigitCharacter} from '../source/characters.d.ts';
 import type {Paths} from '../source/paths.d.ts';
 import type {SetNonNullableDeep} from '../source/set-non-nullable-deep.d.ts';
 
@@ -167,3 +168,19 @@ expectTypeOf<SetNonNullableDeep<{a: number | null}, 'missing'>>().toBe<{a: numbe
 // A non-literal path segment matches every key at its level, like a path through an index signature.
 expectTypeOf<SetNonNullableDeep<{a: number | null; b: {c: number | null}}, string>>().toBe<{a: number; b: {c: number | null}}>();
 expectTypeOf<SetNonNullableDeep<{a: number | null; b: {c: number | null}}, `b.${string}`>>().toBe<{a: number | null; b: {c: number}}>();
+
+// `Paths<T>` is a valid path for a generic `T`, even though autocomplete only lists paths up to `a.b.c`.
+type SetNonNullableDeepAllPaths<T> = SetNonNullableDeep<T, Paths<T>>;
+expectTypeOf<SetNonNullableDeepAllPaths<{a: {b: 1 | null} | null}>>().toBe<{a: {b: 1}}>();
+
+// A number path reads the same index as its string form, also for a generic `Index`. A number that is not a path is ignored, like a string that is not a path. A wide `number` matches every index, like `${number}`.
+type SetNonNullableDeepIndex<T, Index extends number> = SetNonNullableDeep<T, Index>;
+expectTypeOf<SetNonNullableDeepIndex<[1 | null, 2 | null], 1>>().toBe<[1 | null, 2]>();
+expectTypeOf<SetNonNullableDeep<{a: 1 | null}, 5>>().toBe<{a: 1 | null}>();
+expectTypeOf<SetNonNullableDeep<[1 | null, 2 | null], -1 | 1.5>>().toBe<[1 | null, 2 | null]>();
+expectTypeOf<SetNonNullableDeepIndex<[1 | null, 2 | null], number>>().toBe<[1, 2]>();
+
+// Autocomplete only lists paths up to `a.b.c`, so a type with very many deeper paths does not make the union of paths too complex to represent.
+type Level<Value> = Record<DigitCharacter, Value>;
+type ManyPaths = Level<Level<Level<Level<Level<Level<1 | null>>>>>>;
+expectTypeOf<SetNonNullableDeep<ManyPaths, '0.0.0.0.0.0'>['0']['0']['0']['0']['0']['0']>().toBe<1>();

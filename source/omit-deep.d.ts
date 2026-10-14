@@ -78,7 +78,11 @@ Note: A path into a tuple intersected with an object type, such as a tagged tupl
 @category Object
 @category Array
 */
-export type OmitDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
+export type OmitDeep<
+	T,
+	// Autocomplete lists paths up to `a.b.c`, because listing deeper paths can take minutes for large union-heavy types. A generic `Paths<T>` can be a `number`, so any `number` is accepted, like any `string`.
+	PathUnion extends LiteralUnion<Paths<T, {maxRecursionDepth: 2}>, string | number>,
+> =
 	SimplifyDeep<
 		OmitDeepHelper<T, UnionToTuple<PathUnion>>,
 		UnknownArray>;
@@ -99,7 +103,8 @@ Omit one path from the given object/array.
 type OmitDeepWithOnePath<T, Path extends string | number> =
 	T extends NonRecursiveType
 		? T
-		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, Path>, IsArrayReadonly<T>>
+		// The array helper matches indexes as strings, so a number index is read as its string form.
+		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, ToString<Path>>, IsArrayReadonly<T>>
 			: T extends object ? OmitDeepObjectWithOnePath<T, Path>
 				: T;
 

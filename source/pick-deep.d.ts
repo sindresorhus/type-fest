@@ -1,6 +1,6 @@
 import type {TupleOf} from './tuple-of.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
-import type {BuildObject, ExactKey, NonRecursiveType, ObjectValue, SimplifyObject} from './internal/index.d.ts';
+import type {BuildObject, ExactKey, NonRecursiveType, ObjectValue, SimplifyObject, ToString} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -75,11 +75,16 @@ type Street = PickDeep<Configuration, 'userConfig.address.1.street2'>;
 @category Object
 @category Array
 */
-export type PickDeep<T, PathUnion extends LiteralUnion<Paths<T>, string>> =
+export type PickDeep<
+	T,
+	// Autocomplete lists paths up to `a.b.c`, because listing deeper paths can take minutes for large union-heavy types. A generic `Paths<T>` can be a `number`, so any `number` is accepted, like any `string`.
+	PathUnion extends LiteralUnion<Paths<T, {maxRecursionDepth: 2}>, string | number>,
+> =
 	T extends NonRecursiveType
 		? never
 		: T extends UnknownArray
-			? PickDeepArray<T, PathUnion>
+			// The array helpers match indexes as strings, so a number index is read as its string form.
+			? PickDeepArray<T, ToString<PathUnion>>
 			: T extends object
 				? SimplifyDeep<PickDeepObject<T, PathUnion>>
 				: never;

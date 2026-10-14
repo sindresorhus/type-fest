@@ -99,6 +99,7 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 - Distribute: `T extends any ? ... : never`
 - Count via tuple `['length']`
 - Union distribution is tricky—test it
+- Path autocomplete: use `LiteralUnion<Paths<T, {maxRecursionDepth: 2}>, string | number>`, never full-depth `Paths<T>`. Deeper `Paths` in a constraint can take minutes on large union-heavy types (#954), and `number` keeps a generic `Paths<T>` valid.
 
 ## Philosophy
 
