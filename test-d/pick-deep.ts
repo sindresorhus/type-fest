@@ -241,6 +241,12 @@ expectTypeOf(optionalUndefinedIntermediate).toBe<{a?: {b: string} | undefined}>(
 declare const nestedOptionalUndefinedIntermediate: PickDeep<{a?: {b?: {c: string; other: number} | undefined} | null | undefined}, 'a.b.c'>;
 expectTypeOf(nestedOptionalUndefinedIntermediate).toBe<{a?: {b?: {c: string} | undefined} | null | undefined}>();
 
+// A nullable member is kept next to a sibling path. https://github.com/sindresorhus/type-fest/issues/880
+expectTypeOf<PickDeep<{name: string; age: number; owner: {name: string; age: number} | null}, 'name' | 'owner.name'>>().toBe<{name: string; owner: {name: string} | null}>();
+
+// Every object member that has the key is picked, next to the kept `null`.
+expectTypeOf<PickDeep<{owner: {name: 'name1'} | {name: 'name2'; foo: ''} | null}, 'owner.name'>>().toBe<{owner: {name: 'name1'} | {name: 'name2'} | null}>();
+
 // Any other member that the path cannot go into is kept the same way, while an object member without the key is dropped. https://github.com/sindresorhus/type-fest/issues/1224
 expectTypeOf<PickDeep<{a: string | {b: number; c: boolean; d: 1} | null | undefined}, `a.${'b' | 'c'}`>>().toBe<{a: string | {b: number; c: boolean} | null | undefined}>();
 expectTypeOf<PickDeep<{a?: Date | {b: 1; c: 2} | {d: 3}}, 'a.b'>>().toBe<{a?: Date | {b: 1}}>();
