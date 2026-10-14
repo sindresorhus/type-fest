@@ -290,6 +290,7 @@ Click the type names for complete docs.
 - [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
+- [`UnionToEnum`](source/union-to-enum.d.ts) - Convert a union or tuple of property keys into an **Enum**.
 - [`LiteralList`](source/literal-list.d.ts) - Enforces that a tuple contains exactly the members of a union type, with no duplicates or omissions.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
 - [`TupleOf`](source/tuple-of.d.ts) - Create a tuple type of the specified length with elements of the specified type.
