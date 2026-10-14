@@ -197,6 +197,7 @@ Click the type names for complete docs.
 - [`AndAll`](source/and-all.d.ts) - Returns a boolean for whether all of the given elements are `true`.
 - [`OrAll`](source/or-all.d.ts) - Returns a boolean for whether any of the given elements is `true`.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
+- [`JoinUnion`](source/join-union.d.ts) - Join a union of strings and/or numbers using the given string as a delimiter.
 - [`SomeExtend`](source/some-extend.d.ts) - Returns a boolean for whether some element in an array type extends another type.
 - [`NonEmptyTuple`](source/non-empty-tuple.d.ts) - Matches any non-empty tuple.
 - [`NonEmptyString`](source/non-empty-string.d.ts) - Matches any non-empty string.
@@ -233,6 +234,7 @@ Click the type names for complete docs.
 - [`IsRequiredKeyOf`](source/is-required-key-of.d.ts) - Returns a boolean for whether the given key is a required key of type.
 - [`IsReadonlyKeyOf`](source/is-readonly-key-of.d.ts) - Returns a boolean for whether the given key is a readonly key of type.
 - [`IsWritableKeyOf`](source/is-writable-key-of.d.ts) - Returns a boolean for whether the given key is a writable key of type.
+- [`LiteralList`](source/literal-list.d.ts) - Enforces that a tuple contains exactly the members of a union type, with no duplicates or omissions.
 
 ### JSON
 
