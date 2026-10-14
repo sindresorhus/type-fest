@@ -425,6 +425,30 @@ Click the type names for complete docs.
 	```
 	</details>
 
+### “Cannot be named” errors in declaration files
+
+When TypeScript generates declaration files, it writes out the inferred type of each export. If that type uses a type from this package, it can refer to an internal helper type or symbol, and you get an error such as `TS2742`, `TS2883`, `TS4023`, or `TS4058` (“The inferred type of 'x' cannot be named without a reference to…”). Internal types and symbols are not part of the public API, so they cannot be imported. This is a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/60913). Add an explicit type annotation to the export instead:
+
+```ts
+import type {EmptyObject, ReadonlyDeep} from 'type-fest';
+
+type Config = {
+	server: {
+		port: number;
+	};
+};
+
+declare function freeze<Value>(value: Value): ReadonlyDeep<Value>;
+
+export const config: ReadonlyDeep<Config> = freeze({server: {port: 8080}});
+
+export function copy(value: EmptyObject): EmptyObject {
+	return {...value};
+}
+```
+
+Also make sure `type-fest` is a direct dependency of the package that generates the declaration files.
+
 ### Related
 
 - [typed-query-selector](https://github.com/g-plane/typed-query-selector) - Enhances `document.querySelector` and `document.querySelectorAll` with a template literal type that matches element types returned from an HTML element query selector.
