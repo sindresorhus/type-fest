@@ -12,8 +12,7 @@ expectTypeOf<JoinUnion<undefined | null>>().toBe<','>();
 expectTypeOf<JoinUnion<undefined | 2>>().toBeAssignableTo<'2,' | ',2'>();
 
 expectTypeOf<JoinUnion<'foo' | `on${string}`>>().toBeAssignableTo<`foo,on${string}` | `on${string},foo`>();
-expectTypeOf<JoinUnion<'foo' | (string & {})>>().toBeAssignableTo<string>(); // Intended `foo,${string}`
-// TODO: For now `UnionToTuple` does not handle 'LiteralUnions'. Will be fixed after `ExtractLiterals` type get approved.
+expectTypeOf<JoinUnion<'foo' | (string & {})>>().toBeAssignableTo<`foo,${string}` | `${string},foo`>();
 
 expectTypeOf<JoinUnion<never>>().toBe<''>();
 expectTypeOf<JoinUnion<never, ' + '>>().toBe<''>();
