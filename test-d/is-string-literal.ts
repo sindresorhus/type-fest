@@ -131,6 +131,9 @@ expectTypeOf<boolean>().toBe<IsStringLiteral<(('foo' | 'bar') & Brand) | number>
 
 // Uncollapsed unions (e.g., `'foo' | 'bar' | (string & {})`)
 expectTypeOf<IsStringLiteral<'foo' | 'bar' | (string & {})>>().toBe<false>();
+expectTypeOf<IsStringLiteral<`on${string}` & {}>>().toBe<false>();
+expectTypeOf<IsStringLiteral<'onClick' | (`on${string}` & {})>>().toBe<false>();
+expectTypeOf<boolean>().toBe<IsStringLiteral<'press' | (`on${string}` & {})>>();
 expectTypeOf<IsStringLiteral<LiteralUnion<'foo' | 'bar', string>>>().toBe<false>();
 expectTypeOf<IsStringLiteral<LiteralUnion<'onClick' | 'onMouseDown', `on${string}`>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsStringLiteral<LiteralUnion<'press' | 'onClick' | 'onMouseDown', `on${string}`>>>();

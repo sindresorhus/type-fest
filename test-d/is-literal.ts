@@ -129,6 +129,8 @@ expectTypeOf<boolean>().toBe<IsLiteral<(symbol & Brand) | 'foo'>>();
 // Uncollapsed unions
 expectTypeOf<IsLiteral<LiteralUnion<1n | 2n | 3n, bigint>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsLiteral<'foo' | 1 | false | (string & {})>>();
+expectTypeOf<IsLiteral<`on${string}` & {}>>().toBe<false>();
+expectTypeOf<boolean>().toBe<IsLiteral<'press' | (`on${string}` & {})>>();
 expectTypeOf<boolean>().toBe<IsLiteral<LiteralUnion<'foo' | 1 | false, string>>>();
 expectTypeOf<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', string>, 'Tag'>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', number>, 'Tag'>>>();

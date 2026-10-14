@@ -9,6 +9,7 @@ expectTypeOf<ExtractLiterals<LiteralUnion<0 | 1 | 2, number>>>().toBe<0 | 1 | 2>
 expectTypeOf<ExtractLiterals<LiteralUnion<1n | 2n, bigint>>>().toBe<1n | 2n>();
 expectTypeOf<ExtractLiterals<LiteralUnion<typeof symbolLiteral, symbol>>>().toBe<typeof symbolLiteral>();
 expectTypeOf<ExtractLiterals<'foo' | 'bar' | (string & {})>>().toBe<'foo' | 'bar'>();
+expectTypeOf<ExtractLiterals<'click' | 'hover' | (`on${string}` & {})>>().toBe<'click' | 'hover'>();
 expectTypeOf<ExtractLiterals<LiteralUnion<'onClick' | 'onHover', `on${string}`>>>().toBe<'onClick' | 'onHover'>();
 
 // Wide types are removed

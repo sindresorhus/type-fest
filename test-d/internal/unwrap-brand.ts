@@ -11,6 +11,8 @@ expectTypeOf<UnwrapBrand<number & Brand>>().toBe<number>();
 expectTypeOf<UnwrapBrand<bigint & Brand>>().toBe<bigint>();
 expectTypeOf<UnwrapBrand<symbol & Brand>>().toBe<symbol>();
 expectTypeOf<UnwrapBrand<boolean & Brand>>().toBe<boolean>();
+expectTypeOf<UnwrapBrand<`on${string}` & Brand>>().toBe<`on${string}`>();
+expectTypeOf<UnwrapBrand<`on${string}` & {}>>().toBe<`on${string}`>();
 
 // Literals
 expectTypeOf<UnwrapBrand<'foo' & Brand>>().toBe<'foo'>();

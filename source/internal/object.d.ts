@@ -306,7 +306,8 @@ export type UnwrapBrand<T> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitiv
 
 type _UnwrapBrand<T, Base> = T extends Primitive
 	// Separate tag layers do not match a single object containing all brand properties.
-	? UnwrapBrandProperties<T extends TagContainer<unknown> ? UnwrapTagged<T> : T, Base>
+	// `CollapseLiterals` removes `& {}` first, because TypeScript defers `keyof` on types like `` `on${string}` & {} ``.
+	? UnwrapBrandProperties<CollapseLiterals<T extends TagContainer<unknown> ? UnwrapTagged<T> : T>, Base>
 	: T;
 
 type UnwrapBrandProperties<T, Base> = T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
