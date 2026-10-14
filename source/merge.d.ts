@@ -73,6 +73,7 @@ Two tuples are combined position by position, so `Merge<[1, 2, 3], [4, 5]>` is `
 
 Known limitations:
 - A tuple merged with an object, such as `Merge<[1], {0: 2}>`, collapses to `never`, where the real spread gives an object carrying the array's own members alongside the positions. Use {@link Spread} for that shape.
+- Inside a generic function, a value such as `{...a, ...b}` (typed as `A & B`) is not assignable to `Merge<A, B>`, because TypeScript cannot resolve `Merge` until `A` and `B` are known. Use a type assertion: `{...a, ...b} as unknown as Merge<A, B>`.
 
 @see {@link ObjectMerge}
 @category Object

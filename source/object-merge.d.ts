@@ -55,7 +55,7 @@ declare const objectMerge: ObjectMerge<typeof left, typeof right>;
 objectMerge.a.toUpperCase(); // Correctly errors at compile time.
 ```
 
-Can be used to merge generic type arguments.
+Can be used to merge generic type arguments. TypeScript cannot resolve `ObjectMerge` until the type arguments are known, so a value such as `{...left, ...right}` needs a type assertion.
 
 In the following example, object spread without `ObjectMerge` produces an intersection type that is not particularly usable, whereas `ObjectMerge` produces a correctly merged and usable result.
 
