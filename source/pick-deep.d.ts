@@ -17,7 +17,7 @@ It supports recursing into arrays.
 Use-case: Distill complex objects down to the components you need to target.
 
 Known limitations:
-- A path that goes through a tuple element drops that element's `?` modifier and its `null`.
+- A path that goes through an array or tuple element drops the element's members that the path cannot go into, like `null` or `string`, and a tuple element's `?` modifier.
 - Picking several indices of the same tuple builds it one element at a time, so an index above about 900 hits TypeScript's recursion limit. A single index works at any size.
 - A path that does not exist is not a type error, so that paths deeper than `Paths` lists can be picked. A missing path is ignored, and if no path exists, the result is `never`.
 
@@ -51,6 +51,10 @@ type NameConfig = PickDeep<Configuration, 'userConfig.name'>;
 // Supports optional properties
 type User = PickDeep<PartialDeep<Configuration>, 'userConfig.name' | 'userConfig.age'>;
 //=> {userConfig?: {name?: string; age?: number}}
+
+// Keeps union members like `string` or `null` that the path cannot go into
+type Author = PickDeep<{author: string | {name: string; age: number}}, 'author.name'>;
+//=> {author: string | {name: string}}
 
 // Supports array
 type AddressConfig = PickDeep<Configuration, 'userConfig.address.0'>;
@@ -139,20 +143,18 @@ type PickDeepUnderKey<RecordType extends object, Key extends string | number, Ob
 		: BuildObject<Key, PickedDeepValue<RecordType, Key, ObjectV, SubPathUnion>, RecordType>;
 
 /**
-The member the pick produces: the recursion needs `NonNullable` to typecheck, so the explicitly declared nullish part of the member is put back, because the member can still be `null` (or `undefined`) when the picked value is read, and reading a path from it throws the same way it does for the source. An optional member keeps the `?` that already covers absence.
+The member the pick produces: the recursion drops the members that it cannot go into (and needs `NonNullable` to typecheck), so the explicitly declared ones, like `string` or `null`, are put back, because the member can still be one of them when the picked value is read. An optional member keeps the `?` that already covers absence.
 */
 type PickedDeepValue<RecordType extends object, Key extends string | number, ObjectV, SubPathUnion extends string | number> =
-	InternalPickDeep<NonNullable<ObjectV>, SubPathUnion> | NullishPartOfMember<ObjectV, RecordType, Key>;
+	InternalPickDeep<NonNullable<ObjectV>, SubPathUnion> | NonRecursivePartOfMember<RecordType, Key>;
 
 /**
-The nullish part of the member under the key.
+The part of the member under the key that the path cannot go into, like `string` or `null`.
 */
-type NullishPartOfMember<ObjectV, RecordType extends object, Key extends string | number> =
-	ExactKey<RecordType, Key> extends infer Exact extends PropertyKey
-		? Exact extends keyof RecordType
-			// `Required` removes implicit absence from optional members while preserving explicitly declared `undefined` with `exactOptionalPropertyTypes`.
-			? Extract<Required<RecordType>[Exact], null | undefined>
-			: Extract<ObjectV, null>
+type NonRecursivePartOfMember<RecordType extends object, Key extends string | number> =
+	ExactKey<RecordType, Key> extends infer Exact extends keyof RecordType
+		// `Required` removes implicit absence from optional members while preserving explicitly declared `undefined` with `exactOptionalPropertyTypes`.
+		? Extract<Required<RecordType>[Exact], NonRecursiveType>
 		: never;
 
 /**

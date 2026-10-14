@@ -97,6 +97,9 @@ expectTypeOf(objectArray1).toBe<{object: {objectArray: Array<{a: 1; b: 2}>}}>();
 declare const objectArray2: PickDeep<Testing, `object.objectArray.${number}.a`>;
 expectTypeOf(objectArray2).toBe<{object: {objectArray: Array<{a: 1}>}}>();
 
+// Several paths under every element are merged into one element. https://github.com/sindresorhus/type-fest/issues/1223
+expectTypeOf<PickDeep<{arr: Array<{a: string; b: number; c: boolean}>}, `arr.${number}.${'b' | 'c'}`>>().toBe<{arr: Array<{b: number; c: boolean}>}>();
+
 declare const leadingSpreadArray1: PickDeep<Testing, `object.leadingSpreadArray.${number}.a`>;
 expectTypeOf(leadingSpreadArray1).toBe<{object: {leadingSpreadArray: [...Array<{a: 1}>]}}>();
 
@@ -238,9 +241,32 @@ expectTypeOf(optionalUndefinedIntermediate).toBe<{a?: {b: string} | undefined}>(
 declare const nestedOptionalUndefinedIntermediate: PickDeep<{a?: {b?: {c: string; other: number} | undefined} | null | undefined}, 'a.b.c'>;
 expectTypeOf(nestedOptionalUndefinedIntermediate).toBe<{a?: {b?: {c: string} | undefined} | null | undefined}>();
 
+// Any other member that the path cannot go into is kept the same way, while an object member without the key is dropped. https://github.com/sindresorhus/type-fest/issues/1224
+expectTypeOf<PickDeep<{a: string | {b: number; c: boolean; d: 1} | null | undefined}, `a.${'b' | 'c'}`>>().toBe<{a: string | {b: number; c: boolean} | null | undefined}>();
+expectTypeOf<PickDeep<{a?: Date | {b: 1; c: 2} | {d: 3}}, 'a.b'>>().toBe<{a?: Date | {b: 1}}>();
+expectTypeOf<PickDeep<{a: Record<string, string | {b: 1; c: 2}>}, 'a.x.b'>>().toBe<{a: {x: string | {b: 1}}}>();
+expectTypeOf<PickDeep<{a: any}, 'a.b'>>().toBe<{a: any}>();
+expectTypeOf<PickDeep<{a: unknown}, 'a.b'>>().toBe<never>();
+expectTypeOf<PickDeep<{a: 'x' | 1 | boolean | (() => void) | {b: 1; c: 2}}, 'a.b'>>().toBe<{a: 'x' | 1 | boolean | (() => void) | {b: 1}}>();
+expectTypeOf<PickDeep<{a?: string | {b: 1; c: 2} | undefined}, 'a.b'>>().toBe<{a?: string | {b: 1} | undefined}>();
+expectTypeOf<PickDeep<{readonly a: string | {b: 1; c: 2}}, 'a.b'>>().toBe<{readonly a: string | {b: 1}}>();
+expectTypeOf<PickDeep<{0: string | {b: 1; c: 2}}, '0.b'>>().toBe<{0: string | {b: 1}}>();
+expectTypeOf<PickDeep<{a: {b: number | {c: 1; d: 2}; e: 1}}, 'a.b.c'>>().toBe<{a: {b: number | {c: 1}}}>();
+expectTypeOf<PickDeep<{a: string | Array<{b: 1; c: 2}>}, `a.${number}.b`>>().toBe<{a: string | Array<{b: 1}>}>();
+expectTypeOf<PickDeep<{a: string | {b: 1}} | {a: number | {b: 2; c: 3}}, 'a.b'>>().toBe<{a: string | {b: 1}} | {a: number | {b: 2}}>();
+
+// Picking the whole member and a path inside it gives the whole member.
+expectTypeOf<PickDeep<{a: string | {b: 1; c: 2}}, 'a' | 'a.b'>>().toBe<{a: string | {b: 1; c: 2}}>();
+
+// A kept member does not make a missing path exist.
+expectTypeOf<PickDeep<{a: string | {b: 1}}, 'a.c'>>().toBe<never>();
+
 // The documented tuple traversal limitation remains separate from optional object properties.
 declare const nullableTupleTraversal: PickDeep<[({a: string; other: number} | null | undefined)?], '0.a'>;
 expectTypeOf(nullableTupleTraversal).toBe<[{a: string}]>();
+
+// The same limitation applies to the elements of an array.
+expectTypeOf<PickDeep<{a: Array<string | null | {b: 1; c: 2}>}, `a.${number}.b`>>().toBe<{a: Array<{b: 1}>}>();
 
 // A required element whose type includes `undefined` stays required.
 declare const requiredUndefinedElement: PickDeep<{a: [1, 2 | undefined]}, 'a.1'>;
@@ -312,6 +338,7 @@ expectTypeOf<PickDeep<ValidObject, `fooRoot.${number}..bar`>>().toBe<never>();
 expectTypeOf<PickDeep<ValidObject, `invalidPath.fooRoot.${number}.bar`>>().toBe<never>();
 expectTypeOf<PickDeep<ValidObject, string>>().toBe<never>();
 expectTypeOf<PickDeep<{a: null}, 'a.b'>>().toBe<never>();
+expectTypeOf<PickDeep<{a: string}, 'a.b'>>().toBe<never>();
 
 type ValidArray = Array<{foo: 0; bar: 1}>;
 expectTypeOf<PickDeep<ValidArray, `${number}.invalidPath`>>().toBe<never>();
