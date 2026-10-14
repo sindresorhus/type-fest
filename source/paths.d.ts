@@ -181,6 +181,8 @@ It also works with arrays.
 
 Use-case: You want a type-safe way to access deeply nested properties in an object.
 
+Note: With a `string` index signature at the top level, the result is `string`, because TypeScript merges the other paths, like `` `${string}.a` ``, into `string`. Use {@link PathsOptions.leavesOnly | `leavesOnly`} or {@link PathsOptions.depth | `depth`} to get the nested paths.
+
 @example
 ```
 import type {Paths} from 'type-fest';
@@ -212,6 +214,19 @@ open('listA.1'); // Pass
 open('listB.0'); // Pass
 // @ts-expect-error
 open('listB.1'); // TypeError. Because listB only has one element.
+```
+
+@example
+```
+import type {Paths} from 'type-fest';
+
+type Users = Record<string, {name: string}>;
+
+type AllPaths = Paths<Users>;
+//=> string
+
+type LeafPaths = Paths<Users, {leavesOnly: true}>;
+//=> `${string}.name`
 ```
 
 @category Object
