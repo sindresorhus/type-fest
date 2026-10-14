@@ -183,7 +183,7 @@ Click the type names for complete docs.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`ArraySplice`](source/array-splice.d.ts) - Create a new array type by adding or removing elements at a specified index range in the original array.
 - [`ArrayTail`](source/array-tail.d.ts) - Extract the type of an array or tuple minus the first element.
-- [`Filter`](source/filter.d.ts) - Filters elements or properties from an array or object based on whether they extend the specified filter type.
+- [`Filter`](source/filter.d.ts) - Keep only the elements of an array, or the properties of an object, whose type extends the given condition, like `Array#filter()`.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`OptionalPaths`](source/optional-paths.d.ts) - Get a union of all paths to optional properties in the given object.

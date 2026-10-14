@@ -195,22 +195,22 @@ export type CallSignatureOf<Type> = Type extends (...arguments_: never) => any
 	: unknown;
 
 /**
-Evaluates whether type `T extends U`, using either strict or loose comparison.
+Returns a boolean for whether `Type` extends `Condition`, using either strict or loose comparison.
 
-- Strict mode, {@link ExtendsStrict `ExtendsStrict<T, U>`} is used.
-- Loose mode, {@link ExtendsLoose `ExtendsLoose<T, U>`} is used.
+- In strict mode, {@link ExtendsStrict `ExtendsStrict`} is used, so the whole union must extend `Condition`.
+- In loose mode, {@link ExtendsLoose `ExtendsLoose`} is used, so any member of the union can extend `Condition`.
 */
-export type Extends<T, U, S extends boolean = false> = {
-	true: ExtendsStrict<T, U>;
-	false: ExtendsLoose<T, U>;
-}[`${S}`];
+export type Extends<Type, Condition, Strict extends boolean = false> = {
+	true: ExtendsStrict<Type, Condition>;
+	false: ExtendsLoose<Type, Condition>;
+}[`${Strict}`];
 
 /**
-Performs a loose type comparison: checks if any of the members in `T` extends `U`.
+Returns a boolean for whether any member of `Type` extends `Condition`.
 
-This is useful when needing to know if any member of `T` extends `U` without returning `boolean`.
+Unlike `Type extends Condition ? true : false`, it returns `true` instead of `boolean` when only some members extend `Condition`.
 */
-export type ExtendsLoose<T, U> = IsNotFalse<T extends U ? true : false>;
+export type ExtendsLoose<Type, Condition> = IsNotFalse<Type extends Condition ? true : false>;
 
 /**
 Union of `falsy` types in TypeScript. `never` isn't included.
@@ -218,7 +218,7 @@ Union of `falsy` types in TypeScript. `never` isn't included.
 export type Falsy = 0 | 0n | '' | false | null | undefined; // `| never`
 
 /**
-Checks if `T` is **not** {@link Falsy `falsy`} similar to `Boolean(T)`.
+Returns a boolean for whether `T` is not {@link Falsy falsy}, like `Boolean(value)`. A union with both falsy and truthy members gives `boolean`.
 */
 export type IsTruthy<T> =
 	IsNever<T> extends true ? false

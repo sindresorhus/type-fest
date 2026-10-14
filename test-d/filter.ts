@@ -52,10 +52,15 @@ expectTypeOf<Filter<readonly [1, '2', 3 | 'bar', 'foo', false], string>>().toBe<
 expectTypeOf<Filter<readonly [1, '2', 3, false] | ['1', 2, '3', true], number>>().toBe<readonly [1, 3] | [2]>();
 
 // Filtering Boolean (keep truthy values)
-expectTypeOf<Filter<[true, false, boolean, 0, 1], Boolean>>().toBe<[true, 1]>();
+expectTypeOf<Filter<[true, false, boolean, 0, 1], Boolean>>().toBe<[true, boolean, 1]>();
 expectTypeOf<Filter<[true, false, boolean, 0, 1], Boolean, {strict: true}>>().toBe<[true, 1]>();
 expectTypeOf<Filter<[0, '', false, null, undefined, 'ok', 42], Boolean>>().toBe<['ok', 42]>();
 expectTypeOf<Filter<[true, false, 0, 1, '', 'text', null, undefined], Boolean>>().toBe<[true, 1, 'text']>();
+expectTypeOf<Filter<[0 | 1, 0 | null, string, never], Boolean>>().toBe<[0 | 1, string]>();
+expectTypeOf<Filter<[0 | 1, 0 | null, string, never], Boolean, {strict: true}>>().toBe<[string]>();
+expectTypeOf<Filter<readonly boolean[], Boolean>>().toBe<readonly boolean[]>();
+expectTypeOf<Filter<boolean[], Boolean, {strict: true}>>().toBe<[]>();
+expectTypeOf<Filter<[Boolean, true], Boolean>>().toBe<[Boolean, true]>(); // `Boolean` as an element is truthy, not matched literally
 
 // Filtering objects
 expectTypeOf<Filter<[Object1, Object2, Object1 & Object2], Object1>>().toBe<[Object1, Object1 & Object2]>();
@@ -65,7 +70,7 @@ expectTypeOf<Filter<[Object1, Object2, Object1 & Object2], Object1, {strict: tru
 expectTypeOf<Filter<[1, '2', 3, false] | ['1', 2, '3', true], number>>().toBe<[1, 3] | [2]>();
 expectTypeOf<Filter<[1, '2', 3, false] | ['1', 2, '3', true], string>>().toBe<['2'] | ['1', '3']>();
 expectTypeOf<Filter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], string>>().toBe<string[] | Array<'foo'>>();
-expectTypeOf<Filter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], number>>().toBe<[number?]>();
+expectTypeOf<Filter<[true, number?, ...string[]] | [false?, ...Array<'foo'>], number>>().toBe<[number?] | []>();
 
 // Loose filtering by boolean or number
 expectTypeOf<Filter<[true, 0, 1, false, 'no'], boolean | number>>().toBe<[true, 0, 1, false]>();
@@ -119,7 +124,7 @@ expectTypeOf<Filter<['', 'non-empty'], '', {strict: true}>>().toBe<['']>();
 expectTypeOf<Filter<[1, 2, 3, 4, 5], 2 | 3>>().toBe<[2, 3]>();
 
 // Edge cases
-expectTypeOf<Filter<any, never>>().toBe<any>(); // Should it return `any`
+expectTypeOf<Filter<any, never>>().toBe<any>(); // `any` passes through
 expectTypeOf<Filter<any[], never>>().toBe<any[]>();
 expectTypeOf<Filter<never, any>>().toBe<never>();
 expectTypeOf<Filter<never, never>>().toBe<never>();
@@ -158,10 +163,10 @@ expectTypeOf<Filter<{[a: string]: number; [b: symbol]: string}, string>>().toBe<
 expectTypeOf<Filter<{[a: string]: number; [b: symbol]: string; c: 5}, number>>().toBe<{[a: string]: number; c: 5}>();
 
 // Optional elements
-expectTypeOf<Filter<{a?: 'f'; b: 's'; c: undefined}, undefined>>().toBe<{a?: 'f'; c: undefined}>();
+expectTypeOf<Filter<{a?: 'f'; b: 's'; c: undefined}, undefined>>().toBe<{c: undefined}>();
 expectTypeOf<Filter<{a?: 'f'; b: 's'; c: undefined}, undefined, {strict: true}>>().toBe<{c: undefined}>();
 expectTypeOf<Filter<{a?: 'f'; b: 's'; c: 5}, string>>().toBe<{a?: 'f'; b: 's'}>();
-expectTypeOf<Filter<{a?: 'f'; b: 's'; c: 5}, string, {strict: true}>>().toBe<{b: 's'}>();
+expectTypeOf<Filter<{a?: 'f'; b: 's'; c: 5}, string, {strict: true}>>().toBe<{a?: 'f'; b: 's'}>();
 
 // Readonly properties (verifies readonly modifiers are preserved)
 expectTypeOf<Filter<{readonly a: 1; b: 2; readonly c: 3}, number>>().toBe<{readonly a: 1; b: 2; readonly c: 3}>();
@@ -169,7 +174,7 @@ expectTypeOf<Filter<{readonly a: string; b: number; readonly c: boolean}, string
 expectTypeOf<Filter<{readonly a?: string; b?: number; c: boolean}, string>>().toBe<{readonly a?: string}>();
 
 // Filtering Boolean (keep truthy values)
-expectTypeOf<Filter<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean>>().toBe<{a: true; e: 1}>();
+expectTypeOf<Filter<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean>>().toBe<{a: true; c: boolean; e: 1}>();
 expectTypeOf<Filter<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean, {strict: true}>>().toBe<{a: true; e: 1}>();
 expectTypeOf<Filter<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42}, Boolean>>().toBe<{f: 'ok'; g: 42}>();
 expectTypeOf<Filter<{a: true; b: false; c: 0; d: 1; e: ''; f: 'text'; g: null; h: undefined}, Boolean>>().toBe<{a: true; d: 1; f: 'text'}>();
@@ -242,3 +247,38 @@ expectTypeOf<Filter<{}, number>>().toBe<{}>();
 expectTypeOf<Filter<{a: never; b: never}, number>>().toBe<{}>();
 expectTypeOf<Filter<{a: never; b: never}, never>>().toBe<{}>();
 expectTypeOf<Filter<{a: never; b: never}, never, {strict: true}>>().toBe<{a: never; b: never}>();
+
+// Filtering by `unknown`, `any`, or `{}` keeps falsy values (only `Boolean` filters by truthiness)
+expectTypeOf<Filter<[0, '', false], unknown>>().toBe<[0, '', false]>();
+expectTypeOf<Filter<[0, '', false], any>>().toBe<[0, '', false]>();
+expectTypeOf<Filter<[0, '', false], {}>>().toBe<[0, '', false]>();
+expectTypeOf<Filter<{a: 0; b: ''; c: false}, unknown>>().toBe<{a: 0; b: ''; c: false}>();
+expectTypeOf<Filter<{a: 0; b: ''; c: false}, any>>().toBe<{a: 0; b: ''; c: false}>();
+
+// Union members that become empty are kept
+expectTypeOf<Filter<[1] | [2], 1>>().toBe<[1] | []>();
+expectTypeOf<Filter<{a: 1} | {b: 2}, 1>>().toBe<{a: 1} | {}>();
+expectTypeOf<Filter<[1] | {b: 2}, 1>>().toBe<[1] | {}>();
+
+// Optional properties are checked without the `undefined` that optionality adds
+expectTypeOf<Filter<{a: 1; b: 3 | 4; c?: 3}, 3, {strict: true}>>().toBe<{c?: 3}>();
+expectTypeOf<Filter<{a?: 3 | undefined}, 3, {strict: true}>>().toBe<{}>();
+expectTypeOf<Filter<{a?: 3 | undefined}, 3>>().toBe<{a?: 3 | undefined}>();
+
+// Non-tuple arrays
+expectTypeOf<Filter<readonly string[], string>>().toBe<readonly string[]>();
+expectTypeOf<Filter<string[], number>>().toBe<[]>();
+expectTypeOf<Filter<unknown[], string>>().toBe<[]>();
+expectTypeOf<Filter<[1] | unknown[], 1>>().toBe<[1] | []>();
+
+// Interfaces
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface Interface {
+	a: 1;
+	b: 'b';
+}
+expectTypeOf<Filter<Interface, number>>().toBe<{a: 1}>();
+
+// Invalid input
+// @ts-expect-error
+type Invalid = Filter<string, string>;

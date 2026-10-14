@@ -1,9 +1,9 @@
-import type {IsTruthy, Extends, IsAnyOrNever} from './internal/type.d.ts';
-import type {CleanEmpty, IsArrayReadonly} from './internal/array.d.ts';
+import type {IsTruthy, Extends, IfNotAnyOrNever} from './internal/type.d.ts';
+import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
-import type {UnknownRecord} from './unknown-record.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 import type {Simplify} from './simplify.d.ts';
 import type {If} from './if.d.ts';
 
@@ -12,10 +12,9 @@ import type {If} from './if.d.ts';
 */
 export type FilterOptions = {
 	/**
-	Controls the strictness of type checking when filtering.
+	Require the whole type of an element or property to extend the condition.
 
-	- When `true`, the entire union type **must** extend the filter type. For example, `string | number extends string` returns `false`.
-	- When `false`, the check passes if **any** member of the union extends the filter type. For example, `string | number extends string` returns `true`.
+	By default, a union type is kept if any of its members extends the condition.
 
 	@default false
 
@@ -23,19 +22,19 @@ export type FilterOptions = {
 	```
 	import type {Filter} from 'type-fest';
 
-	type T1 = Filter<[1, 2, 3 | 4, 3?, 4?], 3>;
+	type T1 = Filter<[1, 2, 3 | 4, 3?], 3>;
 	//=> [3 | 4, 3?]
 
-	type T2 = Filter<[1, 2, 3 | 4, 3?, 4?], 3, {strict: true}>;
+	type T2 = Filter<[1, 2, 3 | 4, 3?], 3, {strict: true}>;
 	//=> [3?]
 
-	type T3 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3>;
-	//=> {c: 3 | 4; d?: 3}
+	type T3 = Filter<{a: 1; b: 3 | 4; c?: 3}, 3>;
+	//=> {b: 3 | 4; c?: 3}
 
-	type T4 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3, {strict: true}>;
-	//=> {d?: 3}
+	type T4 = Filter<{a: 1; b: 3 | 4; c?: 3}, 3, {strict: true}>;
+	//=> {c?: 3}
 	```
- 	*/
+	*/
 	strict?: boolean;
 };
 
@@ -44,16 +43,16 @@ type DefaultFilterOptions = {
 };
 
 /**
-Returns a boolean for whether a value `T` extends the filtering type `U`.
+Returns a boolean for whether a value `Value` passes the filter `Condition`.
 
-If `U` is `Boolean`, it checks whether `T` is `truthy` like {@link Boolean `Boolean(T)`} does.
+If `Condition` is `Boolean`, it checks whether `Value` is truthy like {@link Boolean `Boolean(value)`} does. Otherwise, it checks whether `Value` extends `Condition`.
 
-Otherwise, it uses {@link Extends `Extends<T, U, S>`} to check if `T extends U` with strict or loose mode.
+Both checks use strict or loose mode, see {@link Extends `Extends`}.
 */
-type FilterType<T, U, S extends boolean> =
-	Boolean extends U
-		? IsTruthy<T>
-		: Extends<T, U, S>;
+type Matches<Value, Condition, Strict extends boolean> =
+	IsEqual<Condition, Boolean> extends true
+		? Extends<IsTruthy<Value>, true, Strict>
+		: Extends<Value, Condition, Strict>;
 
 /**
 Determines whether the array `V` should be kept based on the boolean type `T`.
@@ -61,102 +60,89 @@ Determines whether the array `V` should be kept based on the boolean type `T`.
 type IfFilter<T extends boolean, V extends UnknownArray> = [T] extends [true] ? V : [];
 
 /**
-Filters elements or properties from an array or object based on whether they extend the specified filter type.
+Keep only the elements of an array, or the properties of an object, whose type extends the given condition, like `Array#filter()`.
 
-If `FilterType` is `Boolean`, it filters out `falsy` values like {@link Boolean `Boolean(T)`} does.
+Use `Boolean` as the condition to keep only truthy values, like `.filter(Boolean)`. It must be exactly `Boolean`.
 
-Optional control for strict or loose type comparison.
+An element or property whose type is a union is kept if any member of the union extends the condition. Use the `strict` option to require the whole union to extend it. The kept types are not narrowed.
 
-@example
-```
-import type {Filter} from 'type-fest';
-
-type A1 = Filter<[1, 2, 3 | 4, 3?, 4?], 3>;
-//=> [3 | 4, 3?]
-
-type A2 = Filter<[1, 2, 3 | 4, 3?, 4?], 3, {strict: true}>;
-//=> [3?]
-
-type A3 = Filter<['foo1', 'bar2', 'fooo', 'foo3'], `foo${number}`>;
-//=> ['foo1', 'foo3']
-
-type A4 = Filter<[1, '2', 3, 'foo', false], string | number>;
-//=> [1, '2', 3, 'foo']
-
-type A5 = Filter<[true, false, boolean, 0, 1], Boolean>;
-//=> [true, 1]
-
-type A6 = Filter<[0, '', false, null, undefined, 'ok', 42], Boolean>;
-//=> ['ok', 42]
-```
+Use-cases:
+- Get the elements of a tuple that match a type, like the strings in a list of mixed values.
+- Pick the properties of an object by the type of their values.
 
 @example
 ```
 import type {Filter} from 'type-fest';
 
-type O1 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3>;
-//=> {c: 3 | 4; d?: 3}
+type A = Filter<[1, 'a', 2, 'b'], number>;
+//=> [1, 2]
 
-type O2 = Filter<{a: 1; b: 2; c: 3 | 4; d?: 3; e?: 4}, 3, {strict: true}>;
-//=> {c?: 3}
+type B = Filter<readonly [string, number?, ...boolean[]], number | boolean>;
+//=> readonly [number?, ...boolean[]]
 
-type O3 = Filter<{a: 'foo1'; b: 'bar2'; c: 'fooo'; d: 'foo3'}, `foo${number}`>;
-//=> {a: 'foo1'; d: 'foo3'}
+type C = Filter<[0, 'a', '', null, 1, boolean], Boolean>;
+//=> ['a', 1, boolean]
 
-type O4 = Filter<{a: 1; b: '2'; c: 3; d: 'foo'; e: false}, string | number>;
-//=> {a: 1; b: '2'; c: 3; d: 'foo'}
+type D = Filter<[1 | 'a', 2, 'b'], number>;
+//=> [1 | 'a', 2]
 
-type O5 = Filter<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean>;
-//=> {a: true; e: 1}
+type E = Filter<[1 | 'a', 2, 'b'], number, {strict: true}>;
+//=> [2]
+```
 
-type O6 = Filter<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42}, Boolean>;
-//=> {f: 'ok'; g: 42}
+@example
+```
+import type {Filter} from 'type-fest';
+
+type User = {
+	id: number;
+	name: string;
+	nickname?: string;
+	isAdmin: boolean;
+};
+
+type StringProperties = Filter<User, string>;
+//=> {name: string; nickname?: string}
 ```
 
 @category Array
 @category Object
 */
 export type Filter<
-	BaseType extends UnknownArray | UnknownRecord,
-	FilterType,
+	Base extends UnknownArray | object,
+	Condition,
 	Options extends FilterOptions = {},
-> = IsAnyOrNever<BaseType> extends true ? BaseType
-	: ApplyDefaultOptions<
-		FilterOptions,
-		DefaultFilterOptions,
-		Options
-	> extends infer ResolvedOptions extends Required<FilterOptions>
-		? CleanEmpty<
-			BaseType extends UnknownArray
-				? FilterArray<BaseType, FilterType, ResolvedOptions>
-				: BaseType extends UnknownRecord
-					? FilterObject<BaseType, FilterType, ResolvedOptions>
-					: never
-		>
-		: never;
-
-/**
-Iterates through the object properties and keeps them if they pass {@link FilterType `FilterType`}.
-*/
-type FilterObject<
-	Object_ extends UnknownRecord, Type,
-	Options extends Required<FilterOptions>,
-> = Simplify<{
-	[Key in keyof Object_ as
-	FilterType<Object_[Key], Type, Options['strict']> extends true
-		? Key
-		: never
-	]: Object_[Key]
+> = IfNotAnyOrNever<Base, {
+	ifNot: Base extends unknown // For distributing `Base`
+		? ApplyDefaultOptions<FilterOptions, DefaultFilterOptions, Options> extends infer ResolvedOptions extends Required<FilterOptions>
+			? Base extends UnknownArray
+				? FilterArray<Base, Condition, ResolvedOptions>
+				: FilterObject<Base, Condition, ResolvedOptions>
+			: never // Should never happen
+		: never; // Should never happen
 }>;
 
 /**
-Iterates through the array elements and keeps them if they pass {@link FilterType `FilterType`}.
+Iterates through the object properties and keeps them if they pass {@link Matches `Matches`}.
+*/
+type FilterObject<
+	Object_ extends object,
+	Condition,
+	Options extends Required<FilterOptions>,
+> = Simplify<{
+	// `Required` removes the `undefined` that an optional property adds to its type
+	[Key in keyof Object_ as Matches<Required<Object_>[Key], Condition, Options['strict']> extends true ? Key : never]: Object_[Key]
+}>;
+
+/**
+Iterates through the array elements and keeps them if they pass {@link Matches `Matches`}.
 */
 type FilterArray<
-	Array_ extends UnknownArray, Type,
+	Array_ extends UnknownArray,
+	Condition,
 	Options extends Required<FilterOptions>,
 > =
-	_FilterArray<Array_, Type, Options> extends infer Result extends UnknownArray
+	_FilterArray<Array_, Condition, Options> extends infer Result extends UnknownArray
 		? If<IsArrayReadonly<Array_>, Readonly<Result>, Result> // Preserve readonly modifier
 		: never;
 
@@ -164,7 +150,8 @@ type FilterArray<
 Core implementation of {@link FilterArray}.
 */
 type _FilterArray<
-	Array_ extends UnknownArray, Type,
+	Array_ extends UnknownArray,
+	Condition,
 	Options extends Required<FilterOptions>,
 	HeadAcc extends UnknownArray = [],
 	TailAcc extends UnknownArray = [],
@@ -172,25 +159,26 @@ type _FilterArray<
 	keyof Array_ & `${number}` extends never // Is `Array_` a rest element or empty array
 		? Array_ extends readonly [...infer Rest, infer Last]
 			// Add `Last` to `TailAcc` if it passes the filter
-			? _FilterArray<Rest, Type, Options, HeadAcc, [
-				...IfFilter<FilterType<Last, Type, Options['strict']>, [Last]>,
+			? _FilterArray<Rest, Condition, Options, HeadAcc, [
+				...IfFilter<Matches<Last, Condition, Options['strict']>, [Last]>,
 				...TailAcc,
 			]>
 			// Handle rest element (spread) or return the final result
 			: [
 				...HeadAcc,
-				...IfFilter<FilterType<Array_[number], Type, Options['strict']>, Array_>,
+				...IfFilter<Matches<Array_[number], Condition, Options['strict']>, Array_>,
 				...TailAcc,
 			]
 		: Array_ extends readonly [(infer First)?, ...infer Rest]
 			// Add `First` to `HeadAcc` if it passes the filter
-			? _FilterArray<Rest, Type, Options, [
+			? _FilterArray<Rest, Condition, Options, [
 				...HeadAcc,
 				...IfFilter<
-					FilterType<First, Type, Options['strict']>,
+					Matches<First, Condition, Options['strict']>,
 					// Preserve optional modifier
 					If<IsOptionalKeyOf<Array_, 0>, [First?], [First]>
 				>,
 			], TailAcc>
 			: never;
+
 export {};
