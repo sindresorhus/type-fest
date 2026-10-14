@@ -1,76 +1,40 @@
-import type {ToEnumOptions, TupleToEnum} from './tuple-to-enum.d.ts';
-import type {UnionToTuple} from './union-to-tuple.d.ts';
+import type {IsLiteral} from './is-literal.d.ts';
 
 /**
-Converts a union of property keys (string, number, or symbol) into an **Enum**.
+Create an enum-like object type from a union of property keys, where each key maps to itself.
 
-The keys are preserved, and their values are either:
+Members that are not literals, like `string` or `` `on${string}` ``, are ignored.
 
-- Their own literal values (by default)
-- Or numeric indices (`1`, `2`, ...) if {@link ToEnumOptions.numeric `numeric`} is `true`. Union ordering is not guaranteed.
-
-By default, **numeric Enums** start from **Index `1`**. See {@link ToEnumOptions.startIndex `startIndex`} to change this behavior.
-
-This is useful for creating strongly typed enums from a union of literals.
+Use-case: Type an object that maps each value of a union to itself, like `{create: 'create', delete: 'delete'}`, when it is built from the union's values at runtime.
 
 @example
 ```
 import type {UnionToEnum} from 'type-fest';
 
-type E1 = UnionToEnum<'A' | 'B' | 'C'>;
-//=> { A: 'A'; B: 'B'; C: 'C' }
+type Action = 'create' | 'delete';
 
-type E2 = UnionToEnum<'X' | 'Y' | 'Z', {numeric: true}>;
-//=> { X: 1; Y: 2; Z: 3 }
-
-type E3 = UnionToEnum<'Play' | 'Pause' | 'Stop', {numeric: true; startIndex: 3}>;
-//=> { Play: 3; Pause: 4; Stop: 5 }
-
-type E4 = UnionToEnum<1 | 2 | 3>;
-//=> { 1: 1; 2: 2; 3: 3 }
-
-type E5 = UnionToEnum<1 | 2 | 3, {numeric: true; startIndex: -1}>;
-//=> { 1: -1; 2: 0; 3: 1 }
-
-type E6 = UnionToEnum<never>;
-//=> {}
+type ActionEnum = UnionToEnum<Action>;
+//=> {readonly create: 'create'; readonly delete: 'delete'}
 ```
 
 @example
 ```
-import type {UnionToEnum, CamelCasedProperties} from 'type-fest';
+import type {UnionToEnum} from 'type-fest';
 
-const verb = ['write', 'read', 'delete'] as const;
-const resource = ['file', 'folder', 'link'] as const;
+function createEnum<const Values extends readonly string[]>(values: Values) {
+	return Object.fromEntries(values.map(value => [value, value])) as UnionToEnum<Values[number]>;
+}
 
-declare function createEnum<
-	const T extends readonly string[],
-	const U extends readonly string[],
->(x: T, y: U): CamelCasedProperties<UnionToEnum<`${T[number]}_${U[number]}`>>;
-
-const Template = createEnum(verb, resource);
-//=> {
-//    writeFile: 'write_file',
-//    writeFolder: 'write_folder',
-//    writeLink: 'write_link',
-//    readFile: 'read_file',
-//    readFolder: 'read_folder',
-//    readLink: 'read_link',
-//    deleteFile: 'delete_file',
-//    deleteFolder: 'delete_folder',
-//    deleteLink: 'delete_link',
-// }
+const Direction = createEnum(['up', 'down']);
+//=> {readonly up: 'up'; readonly down: 'down'}
 ```
 
-@see {@link TupleToEnum}
-@see {@link UnionToTuple}
+@see {@link TupleToEnum} for numeric values.
 @category Object
 */
-export type UnionToEnum<
-	Keys extends PropertyKey,
-	Options extends ToEnumOptions = {},
-> = UnionToTuple<Keys> extends infer Tuple extends readonly PropertyKey[]
-	? TupleToEnum<Tuple, Options>
-	: never;
+// There is intentionally no `numeric` option, unlike `TupleToEnum`. Numeric values would have to follow union order, which depends on TypeScript internals and can change with unrelated code or a TypeScript upgrade. They could also never match a runtime object, since runtime code assigns numbers by iterating an array, which has its own order.
+export type UnionToEnum<Union extends PropertyKey> = {
+	readonly [Key in Union as IsLiteral<Key> extends true ? Key : never]: Key;
+};
 
 export {};

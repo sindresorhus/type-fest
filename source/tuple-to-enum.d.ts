@@ -1,129 +1,103 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {TupleToObject} from './tuple-to-object.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnionToEnum} from './union-to-enum.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
-import type {Simplify} from './simplify.d.ts';
-import type {IsNever} from './is-never.d.ts';
 import type {Sum} from './sum.d.ts';
 
 /**
-{@link TupleToEnum} and {@link UnionToEnum} Options.
+{@link TupleToEnum `TupleToEnum`} options.
 */
-export type ToEnumOptions = {
+export type TupleToEnumOptions = {
 	/**
-	The first numeric value to assign when using numeric indices.
-
-	@default 1
-
-	@example
-	```
-	type E1 = TupleToEnum<['Play', 'Pause', 'Stop'], {numeric: true}>;
-	//=> { Play: 1; Pause: 2; Stop: 3 }
-
-	type E2 = TupleToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: 3}>;
-	//=> { Play: 3; Pause: 4; Stop: 5 }
-
-	type E3 = TupleToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: -1}>;
-	//=> { Play: -1; Pause: 0; Stop: 1 }
-
-	type E4 = UnionToEnum<'X' | 'Y' | 'Z', {numeric: true; startIndex: 10}>;
-	//=> {X: 10; Y: 11; Z: 12}
-	```
-	*/
-	startIndex?: number;
-	/**
-	Whether to use numeric indices as values.
+	Use the index of each element as its value, instead of the element itself.
 
 	@default false
 
 	@example
 	```
-	type E1 = UnionToEnum<'X' | 'Y' | 'Z'>;
-	//=> { X: 'X'; Y: 'Y'; Z: 'Z' }
+	import type {TupleToEnum} from 'type-fest';
 
-	type E2 = UnionToEnum<'X' | 'Y' | 'Z', {numeric: true}>;
-	//=> { X: 1; Y: 2; Z: 3 }
+	type A = TupleToEnum<['play', 'pause']>;
+	//=> {readonly play: 'play'; readonly pause: 'pause'}
 
-	type E3 = TupleToEnum<['Play', 'Pause', 'Stop']}>;
-	//=> { Play: 'Play'; Pause: 'Pause'; Stop: 'Stop' }
-
-	type E4 = TupleToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: 3}>;
-	//=> { Play: 3; Pause: 4; Stop: 5 }
+	type B = TupleToEnum<['play', 'pause'], {numeric: true}>;
+	//=> {readonly play: 0; readonly pause: 1}
 	```
 	*/
 	numeric?: boolean;
+
+	/**
+	The value of the first element when `numeric` is `true`. Must be an integer.
+
+	@default 0
+
+	@example
+	```
+	import type {TupleToEnum} from 'type-fest';
+
+	type A = TupleToEnum<['play', 'pause'], {numeric: true; startIndex: 1}>;
+	//=> {readonly play: 1; readonly pause: 2}
+	```
+	*/
+	startIndex?: number;
 };
 
-type DefaultToEnumOptions = {
-	startIndex: 1;
+type DefaultTupleToEnumOptions = {
 	numeric: false;
+	startIndex: 0;
 };
 
 /**
-Converts a tuple of property keys (string, number, or symbol) into an **Enum**.
+Create an enum-like object type from a tuple of property keys, where each key maps to itself, or to its index with the `numeric` option.
 
-The keys are preserved, and their values are either:
+Elements that are not literals, like `string` or `` `on${string}` ``, are ignored.
 
-- Their own literal values (by default)
-- Or numeric indices (`1`, `2`, ...) if {@link ToEnumOptions.numeric `numeric`} is `true`.
+Use-case: Type an object built from a list of values at runtime, like `Object.fromEntries(values.map((value, index) => [value, index]))`.
 
-By default, **numeric Enums** start from **Index `1`**. See {@link ToEnumOptions.startIndex `startIndex`} to change this behavior.
-
-This is useful for creating strongly typed enums from a tuple of literals.
+Note: With `numeric`, a key that appears more than once gets a union of its indexes.
 
 @example
 ```
 import type {TupleToEnum} from 'type-fest';
 
-type E1 = TupleToEnum<['A', 'B', 'C']>;
-//=> { A: 'A'; B: 'B'; C: 'C' }
+const levels = ['debug', 'info', 'error'] as const;
 
-type E2 = TupleToEnum<['X', 'Y', 'Z'], {numeric: true}>;
-//=> { X: 1; Y: 2; Z: 3 }
+type Level = TupleToEnum<typeof levels>;
+//=> {readonly debug: 'debug'; readonly info: 'info'; readonly error: 'error'}
 
-type E3 = TupleToEnum<['Play', 'Pause', 'Stop'], {numeric: true; startIndex: 3}>;
-//=> { Play: 3; Pause: 4; Stop: 5 }
-
-type E4 = TupleToEnum<[1, 2, 3]>;
-//=> { 1: 1; 2: 2; 3: 3 }
-
-type E5 = TupleToEnum<[1, 2, 3], {numeric: true; startIndex: -1}>;
-//=> { 1: -1; 2: 0; 3: 1 }
-
-type E6 = TupleToEnum<[]>;
-//=> {}
+type LevelNumber = TupleToEnum<typeof levels, {numeric: true}>;
+//=> {readonly debug: 0; readonly info: 1; readonly error: 2}
 ```
 
 @see {@link UnionToEnum}
-@see {@link TupleToObject}
 @category Object
 */
-export type TupleToEnum<
-	Keys extends readonly PropertyKey[],
-	Options extends ToEnumOptions = {},
-> = IsNever<Keys> extends true ? {}
-	: _TupleToEnum<Keys, ApplyDefaultOptions<ToEnumOptions, DefaultToEnumOptions, Options>>;
-
-/**
-Core type for {@link TupleToEnum}.
-*/
-type _TupleToEnum<
-	Keys extends UnknownArray,
-	Options extends Required<ToEnumOptions>,
-> = Simplify<{readonly [
-	K in keyof Keys as K extends `${number}`
-		? Keys[K] extends PropertyKey
-			? IsLiteral<Keys[K]> extends true // TODO: update to accept template literals
-				? Keys[K]
-				: never // Not a literal
-			: never // Not a property key
-		: never // Not an index
-	]: Options['numeric'] extends true
-		? K extends `${infer N extends number}`
-			? Sum<N, Options['startIndex']>
-			: never // Not an index
-		: Keys[K]
+export type TupleToEnum<Tuple extends readonly PropertyKey[], Options extends TupleToEnumOptions = {}> = IfNotAnyOrNever<Tuple, {
+	ifNot: Tuple extends unknown // For distributing `Tuple`
+		? ApplyDefaultOptions<TupleToEnumOptions, DefaultTupleToEnumOptions, Options> extends infer ResolvedOptions extends Required<TupleToEnumOptions>
+			? ResolvedOptions['numeric'] extends true
+				? NumericTupleToEnum<Tuple, ResolvedOptions['startIndex']>
+				: UnionToEnum<LiteralElements<Tuple>>
+			: never // Should never happen
+		: never; // Should never happen
+	ifAny: {};
+	ifNever: {};
 }>;
+
+// Filter per element, because a union like `string | 'foo'` collapses to `string`
+type LiteralElements<Tuple extends readonly PropertyKey[]> = {
+	[Index in keyof Tuple]: IsLiteral<Tuple[Index]> extends true ? Tuple[Index] : never;
+}[number];
+
+type NumericTupleToEnum<Tuple extends readonly PropertyKey[], StartIndex extends number> = {
+	readonly [Index in keyof Tuple as Index extends `${number}`
+		? IsLiteral<Tuple[Index]> extends true
+			? Tuple[Index]
+			: never // Not a literal, like `string` or `` `on${string}` ``
+		: never // Not an index
+	]: Index extends `${infer IndexNumber extends number}`
+		? Sum<IndexNumber, StartIndex>
+		: never; // Not an index
+};
 
 export {};
