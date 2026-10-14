@@ -10,6 +10,8 @@ Create a type that requires at least one of the given keys, while keeping the re
 
 Note: For a union, a member that has none of the given keys is kept as it is. For example, with `{kind: 'circle'; radius?: number; diameter?: number} | {kind: 'square'; side: number}` and the keys `'radius' | 'diameter'`, a square needs neither key.
 
+Note: An index signature cannot be required, so if the keys include one (for example, the default keys of `Record<string, number>`), the type accepts `{}`.
+
 @example
 ```
 import type {RequireAtLeastOne} from 'type-fest';

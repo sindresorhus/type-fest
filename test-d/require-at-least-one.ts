@@ -83,3 +83,16 @@ type Shape = {kind: 'circle'; radius?: number; diameter?: number} | {kind: 'squa
 ({kind: 'square', side: 1}) satisfies RequireAtLeastOne<Shape, 'radius' | 'diameter'>;
 ({kind: 'circle', radius: 1}) satisfies RequireAtLeastOne<Shape, 'radius' | 'diameter'>;
 expectTypeOf({kind: 'circle'} as const).not.toBeAssignableTo<RequireAtLeastOne<Shape, 'radius' | 'diameter'>>();
+
+// Known limitation: an index signature cannot be required, so if the keys include one, an empty object is accepted. Every non-empty value is still accepted, so a dictionary stays usable.
+type WithIndexSignature = {[key: string]: unknown; foo?: string};
+({}) satisfies RequireAtLeastOne<Record<string, number>>;
+({a: 1}) satisfies RequireAtLeastOne<Record<string, number>>;
+({}) satisfies RequireAtLeastOne<WithIndexSignature>;
+({bar: 1}) satisfies RequireAtLeastOne<WithIndexSignature>;
+({}) satisfies RequireAtLeastOne<{[key: `data-${string}`]: string}>;
+
+// When only named keys are given, one of them is required, a dynamic key does not count, and the index signature is kept.
+({foo: 'x', bar: 1}) satisfies RequireAtLeastOne<WithIndexSignature, 'foo'>;
+expectTypeOf({}).not.toBeAssignableTo<RequireAtLeastOne<WithIndexSignature, 'foo'>>();
+expectTypeOf({bar: 1}).not.toBeAssignableTo<RequireAtLeastOne<WithIndexSignature, 'foo'>>();
