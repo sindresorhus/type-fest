@@ -155,6 +155,7 @@ export type {ArraySplice} from './source/array-splice.d.ts';
 export type {ArrayTail} from './source/array-tail.d.ts';
 export type {ArrayElement} from './source/array-element.d.ts';
 export type {ArrayLength} from './source/array-length.d.ts';
+export type {ArrayExclude} from './source/array-exclude.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
 export type {Paths, PathsOptions} from './source/paths.d.ts';
 export type {OptionalPaths, OptionalPathsOptions} from './source/optional-paths.d.ts';
