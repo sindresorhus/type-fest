@@ -239,3 +239,44 @@ expectTypeOf(anyDestinationTupleSource['foo']).toBe<any>();
 
 declare const tupleDestinationAnySource: Merge<[1], any>;
 expectTypeOf(tupleDestinationAnySource['foo']).toBe<any>();
+
+// A call signature is kept: the source's if it has one, otherwise the destination's. https://github.com/sindresorhus/type-fest/issues/969
+type Callable = {
+	(value: string): number;
+	property: number;
+};
+
+expectTypeOf<Merge<Callable, {property: string}>>().toBe<((value: string) => number) & {property: string}>();
+expectTypeOf<Merge<{other: string}, Callable>>().toBe<((value: string) => number) & {other: string; property: number}>();
+expectTypeOf<Merge<Callable, (value: number) => string>>().toBe<((value: number) => string) & {property: number}>();
+expectTypeOf<Merge<Callable | {other: string}, {property: string}>>().toBe<(((value: string) => number) & {property: string}) | {other: string; property: string}>();
+expectTypeOf<Merge<Callable, any>>().toBe<((value: string) => number) & {[x: string]: any; property: number}>();
+expectTypeOf<Merge<never, Callable>>().toBe<never>();
+expectTypeOf<Merge<any, Callable>>().toBe<((value: string) => number) & {[x: string]: any; property: number}>();
+expectTypeOf<Merge<Callable, unknown>>().toBe<((value: string) => number) & {property: number}>();
+expectTypeOf<Merge<Callable, Callable>>().toBe<Callable>();
+expectTypeOf<Merge<(value: string) => number, {property: string}>>().toBe<((value: string) => number) & {property: string}>();
+expectTypeOf<Merge<Callable, {(value: number): string; other: string}>>().toBe<((value: number) => string) & {property: number; other: string}>();
+
+// Modifiers and index signatures are kept next to the call signature.
+type CallableWithModifiers = {
+	(value: string): number;
+	readonly property?: number;
+	[key: string]: unknown;
+};
+
+expectTypeOf<Merge<CallableWithModifiers, {other: string}>>().toBe<((value: string) => number) & {[x: string]: unknown; readonly property?: number; other: string}>();
+
+// Each union member keeps its own call signature.
+expectTypeOf<Merge<Callable | ((value: boolean) => void), {property: string}>>().toBe<
+	| (((value: string) => number) & {property: string})
+	| (((value: boolean) => void) & {property: string})>();
+
+// The `this` parameter is kept.
+expectTypeOf<Merge<{(this: Date, value: string): number; property: number}, {property: string}>>().toBe<((this: Date, value: string) => number) & {property: string}>();
+
+// Known limitation: the call signature is rebuilt, so an overloaded function keeps only its last signature, a generic function loses its type parameters, and a type predicate becomes `boolean`. A construct signature is dropped.
+expectTypeOf<Merge<{(value: string): string; (value: number): number; property: number}, {property: string}>>().toBe<((value: number) => number) & {property: string}>();
+expectTypeOf<Merge<{<Value>(value: Value): Value; property: number}, {property: string}>>().toBe<((value: unknown) => unknown) & {property: string}>();
+expectTypeOf<Merge<{(value: unknown): value is string; property: number}, {property: string}>>().toBe<((value: unknown) => boolean) & {property: string}>();
+expectTypeOf<Merge<{new (): Date; (value: string): number; property: number}, {property: string}>>().toBe<((value: string) => number) & {property: string}>();

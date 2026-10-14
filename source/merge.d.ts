@@ -1,4 +1,4 @@
-import type {IsArrayReadonly, SimplifyObject} from './internal/index.d.ts';
+import type {CallSignatureOf, IsArrayReadonly, SimplifyObject} from './internal/index.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {If} from './if.d.ts';
@@ -71,9 +71,12 @@ Note: If you want a merge type that more accurately reflects the runtime behavio
 
 Two tuples are combined position by position, so `Merge<[1, 2, 3], [4, 5]>` is `[4, 5, 3]`. Use {@link Spread} to append them instead.
 
+A call signature is kept: the source's if it has one, otherwise the destination's.
+
 Known limitations:
 - A tuple merged with an object, such as `Merge<[1], {0: 2}>`, collapses to `never`, where the real spread gives an object carrying the array's own members alongside the positions. Use {@link Spread} for that shape.
 - Inside a generic function, a value such as `{...a, ...b}` (typed as `A & B`) is not assignable to `Merge<A, B>`, because TypeScript cannot resolve `Merge` until `A` and `B` are known. Use a type assertion: `{...a, ...b} as unknown as Merge<A, B>`.
+- The kept call signature is rebuilt, so an overloaded function keeps only its last signature, a generic function loses its type parameters, and a type predicate becomes `boolean`. A construct signature is dropped.
 
 @see {@link ObjectMerge}
 @category Object
@@ -129,9 +132,15 @@ type DropLeading<Array extends readonly unknown[], Length extends number, Droppe
 				: [];
 
 export type _Merge<Destination, Source> =
-	SimplifyObject<
-		SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
-		& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
-	>;
+	// The mapped types in `MergeObjects` drop call signatures, so the source's call signature, or else the destination's, is added back. Each branch has its own intersection, so that tooltips show the result rather than `_Merge`.
+	unknown extends CallSignatureOf<Source>
+		? CallSignatureOf<Destination> & MergeObjects<Destination, Source>
+		: CallSignatureOf<Source> & MergeObjects<Destination, Source>;
+
+// Merges the properties and index signatures of two objects.
+type MergeObjects<Destination, Source> = SimplifyObject<
+	SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
+	& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
+>;
 
 export {};

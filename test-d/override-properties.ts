@@ -31,3 +31,13 @@ type Bar2 = OverrideProperties<Foo, {b: number; c: number}>;
 
 	expectTypeOf<Final>().toBeAssignableTo<{foo: string | undefined; bar: string}>();
 }
+
+// Test for https://github.com/sindresorhus/type-fest/issues/969
+{ // eslint-disable-line no-lone-blocks
+	type Callable = {
+		(value: string): number;
+		property: number;
+	};
+
+	expectTypeOf<OverrideProperties<Callable, {property: string}>>().toBe<((value: string) => number) & {property: string}>();
+}
