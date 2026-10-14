@@ -297,6 +297,7 @@ Click the type names for complete docs.
 - [`ArrayExclude`](source/array-exclude.d.ts) - Remove the elements of the given type from an array type.
 - [`ArrayLength`](source/array-length.d.ts) - Return the length of an array. Equivalent to `T['length']` where `T` extends any array.
 - [`EmptyArray`](source/empty-array.d.ts) - Represents a strictly empty readonly array, implemented as the readonly empty tuple `readonly []`.
+- [`ArrayAt`](source/array-at.d.ts) - Return the element at the given index of the given array.
 
 ### Numeric
 
