@@ -44,6 +44,7 @@ export type {UndefinedOnPartialDeep} from './source/undefined-on-partial-deep.d.
 export type {UndefinableDeep} from './source/undefinable-deep.d.ts';
 export type {ReadonlyDeep} from './source/readonly-deep.d.ts';
 export type {LiteralUnion} from './source/literal-union.d.ts';
+export type {ExtractLiterals} from './source/extract-literals.d.ts';
 export type {LiteralList} from './source/literal-list.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';
