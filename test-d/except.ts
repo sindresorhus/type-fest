@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Except} from '../index.d.ts';
+import type {Except, KeysOfUnion} from '../index.d.ts';
 
 declare const except: Except<{a: number; b: string}, 'b'>;
 expectTypeOf(except).toBe<{a: number}>();
@@ -52,6 +52,13 @@ class ExceptOfThis {
 		return (this satisfies Except<this, 'a'>).b;
 	}
 }
+
+// A key of only some branches of a generic conditional type is accepted when intersected with `KeysOfUnion`. When the resolved type does not have the key, nothing is removed.
+type Conditional<T> = T extends string ? {name: string; remove: string} : {prime: boolean};
+type ExceptOfConditional<T> = Except<Conditional<T>, 'remove' & KeysOfUnion<Conditional<T>>>;
+expectTypeOf<ExceptOfConditional<string>>().toBe<{name: string}>();
+expectTypeOf<ExceptOfConditional<number>>().toBe<{prime: boolean}>();
+expectTypeOf<ExceptOfConditional<string | number>>().toBe<{name: string} | {prime: boolean}>();
 
 // A `null` member of a union is kept.
 expectTypeOf<Except<{a: 1; b: 2} | null, 'a'>>().toBe<{b: 2} | null>();

@@ -38,7 +38,9 @@ type AllKeys = KeysOfUnion<Union>;
 @category Object
 */
 export type KeysOfUnion<ObjectType> =
+	// Adds no keys, since these are the keys all members share, but it lets the compiler accept a key narrowed with `keyof` when `ObjectType` is generic, such as a conditional type that is not resolved yet.
+	| keyof ObjectType
 	// Hack to fix https://github.com/sindresorhus/type-fest/issues/1008
-	keyof UnionToIntersection<ObjectType extends unknown ? Record<keyof ObjectType, never> : never>;
+	| keyof UnionToIntersection<ObjectType extends unknown ? Record<keyof ObjectType, never> : never>;
 
 export {};

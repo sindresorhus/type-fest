@@ -55,6 +55,8 @@ This type is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/
 
 This type was proposed to the TypeScript team, which declined it, saying they prefer that libraries implement stricter versions of the built-in types ([microsoft/TypeScript#30825](https://github.com/microsoft/TypeScript/issues/30825#issuecomment-523668235)).
 
+Note: For a generic conditional type, TypeScript only accepts the keys that all its branches share, because it does not know which branch applies. To remove a key that only some branches have, intersect it with `KeysOfUnion`, as in `Except<Conditional<T>, 'key' & KeysOfUnion<Conditional<T>>>`. When the resolved type does not have the key, nothing is removed.
+
 @example
 ```
 import type {Except} from 'type-fest';

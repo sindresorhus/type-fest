@@ -84,3 +84,8 @@ type Test9<T extends object> = Assignability9<T, KeysOfUnion<T>>;
 // type Assignability10<T extends UnknownRecord, _K extends keyof T> = unknown;
 // The following line should error but it doesn't, this is an issue with the existing implementation of `KeysOfUnion`
 // type Test10<T extends UnknownRecord> = Assignability10<T, KeysOfUnion<T>>;
+
+// `keyof T` should be assignable to `KeysOfUnion<T>` even when `T` is a conditional type that is not resolved yet
+type Conditional<T> = T extends string ? {a: string} : {};
+type Assignability11<T, _K extends KeysOfUnion<Conditional<T>>> = unknown;
+type Test11<T> = Assignability11<T, keyof Conditional<T>>;
