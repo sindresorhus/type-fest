@@ -38,3 +38,5 @@ expectTypeOf(testUnion).toBe<RequireAtLeastOne<TestType2, 'a' | 'b'> | RequireAt
 ({}) satisfies NonEmptyObject<Record<string, unknown>>;
 ({a: 1}) satisfies NonEmptyObject<Record<string, unknown>>;
 ({a: 1, b: 2}) satisfies NonEmptyObject<{[k: string]: number | undefined; a?: number}>;
+expectTypeOf<NonEmptyObject<Record<string, number>>>().toBe<Record<string, number>>();
+expectTypeOf<NonEmptyObject<string[]>>().toBe<string[]>();
