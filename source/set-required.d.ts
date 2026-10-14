@@ -11,6 +11,8 @@ Create a type that makes the given keys required, while keeping the remaining ke
 
 Use-case: You want to define a single model where the only thing that changes is whether or not some of the keys are required.
 
+Note: This only removes the optional modifier, the same as the built-in `Required`. It does not remove `undefined` from the value type of a non-optional key, so `SetRequired<{a: number | undefined}, 'a'>` is `{a: number | undefined}`. Use `SetNonNullable` to remove `null` and `undefined` from the value type.
+
 @example
 ```
 import type {SetRequired} from 'type-fest';

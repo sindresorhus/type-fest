@@ -37,6 +37,9 @@ expectTypeOf(variation8).toBe<{readonly a: number; b: string; c: boolean}>();
 declare const variation9: SetRequired<{a?: number; readonly b?: string; readonly c: boolean}, never>;
 expectTypeOf(variation9).toBe<{a?: number; readonly b?: string; readonly c: boolean}>();
 
+// Preserves `| undefined` in the value type, similar to how built-in `Required` works.
+expectTypeOf<SetRequired<{a: number | undefined; b?: string | undefined}, 'a' | 'b'>>().toBe<{a: number | undefined; b: string | undefined}>();
+
 // Works with index signatures
 declare const variation10: SetRequired<{[k: string]: unknown; a?: number; b: string}, 'a' | 'b'>;
 expectTypeOf(variation10).toBe<{[k: string]: unknown; a: number; b: string}>();
