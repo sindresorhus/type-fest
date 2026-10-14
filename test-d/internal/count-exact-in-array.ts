@@ -25,4 +25,4 @@ expectTypeOf<CountExactInArray<[any, unknown, never, 1], any>>().toBe<1>();
 expectTypeOf<CountExactInArray<[any, unknown, never, 1], unknown>>().toBe<1>();
 expectTypeOf<CountExactInArray<[any, unknown, never, 1], never>>().toBe<1>();
 
-expectTypeOf<CountExactInArray<never, 1>>().toBe<never>();
+expectTypeOf<CountExactInArray<never, 1>>().toBe<0>();

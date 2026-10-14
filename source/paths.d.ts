@@ -20,32 +20,28 @@ export type PathsOptions = {
 	maxRecursionDepth?: number;
 
 	/**
-	The maximum depth to recurse into circular references when searching for paths.
+	The maximum number of times to recurse into a circular reference, like a `parent` property that points back to its own type.
 
-	Notes:
-	- `maxCircularDepth: 0` fully disables recursion into circular references.
-	- {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} still limits the overall depth, even if `maxCircularDepth` allows more.
-	- When {@link PathsOptions.leavesOnly | `leavesOnly`} is `true`, paths that terminate at the circular reference limit are treated as leaves.
+	Use it to limit large self-referencing types without lowering {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} for the rest of the type. With `0`, the circular property is included, but `Paths` does not go into it. `maxRecursionDepth` still applies.
 
-	@default 5
+	When {@link PathsOptions.leavesOnly | `leavesOnly`} is `true`, a path that stops at this limit counts as a leaf.
+
+	@default number
 
 	@example
 	```
 	import type {Paths} from 'type-fest';
 
-	type DeepWithCircular = {
-		a: {b: {c: {d: string}}};
-		foo: {circular: DeepWithCircular};
+	type Node = {
+		value: string;
+		parent: Node;
 	};
 
-	type Circular0 = Paths<DeepWithCircular, {maxCircularDepth: 0}>;
-	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular'
+	type A = Paths<Node, {maxCircularDepth: 0}>;
+	//=> 'value' | 'parent'
 
-	type Circular1 = Paths<DeepWithCircular, {maxCircularDepth: 1}>;
-	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular'
-
-	type Circular2 = Paths<DeepWithCircular, {maxCircularDepth: 2}>;
-	//=> 'a' | 'foo' | 'a.b' | 'a.b.c' | 'a.b.c.d' | 'foo.circular' | 'foo.circular.a' | 'foo.circular.a.b' | 'foo.circular.a.b.c' | 'foo.circular.a.b.c.d' | 'foo.circular.foo' | 'foo.circular.foo.circular' | 'foo.circular.foo.circular.a' | 'foo.circular.foo.circular.a.b' | 'foo.circular.foo.circular.foo' | 'foo.circular.foo.circular.foo.circular'
+	type B = Paths<Node, {maxCircularDepth: 1}>;
+	//=> 'value' | 'parent' | 'parent.value' | 'parent.parent'
 	```
 	*/
 	maxCircularDepth?: number;
@@ -172,7 +168,7 @@ export type PathsOptions = {
 
 type DefaultPathsOptions = {
 	maxRecursionDepth: 5;
-	maxCircularDepth: 5;
+	maxCircularDepth: number;
 	bracketNotation: false;
 	leavesOnly: false;
 	depth: number;
@@ -229,9 +225,12 @@ type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends numb
 		: IsAny<T> extends true
 			? never
 			: T extends object
-				? GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends true // Limit the depth of circular references
-					? never
-					: InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
+				? number extends Options['maxCircularDepth']
+					// No limit, so skip tracking the seen types, which would prevent TypeScript from reusing instantiations
+					? InternalPaths<Required<T>, Options, CurrentDepth, Seen>
+					: GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends true // Limit the depth of circular references
+						? never
+						: InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
 				: never;
 
 type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number, Seen extends unknown[]> =
