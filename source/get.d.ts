@@ -173,8 +173,13 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 						// For tuples: check if the index is valid
 						: Key extends keyof BaseType
 							? Strictify<BaseType[Key & keyof BaseType], Options>
-							// Out-of-bounds access for tuples
-							: MissingKey
+							// A non-literal index can be any element, and an empty tuple has none
+							: `${number}` extends Key
+								? BaseType extends readonly []
+									? MissingKey
+									: Strictify<BaseType[number], Options>
+								// Out-of-bounds access for tuples
+								: MissingKey
 					// Non-numeric string key for arrays/tuples
 					: MissingKey
 				// Handle array-like objects

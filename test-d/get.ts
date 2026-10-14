@@ -69,11 +69,28 @@ expectTypeOf<Get<WithTuples, 'foo[1].bar', NonStrict>>().toBe<unknown>();
 expectTypeOf<Get<WithTuples, 'foo[-1]', NonStrict>>().toBe<unknown>();
 expectTypeOf<Get<WithTuples, 'foo[999]', NonStrict>>().toBe<unknown>();
 
+// A non-literal index can be any element of a tuple
+expectTypeOf<Get<{list: [{key: string}]}, `list.${number}.key`>>().toBe<string | undefined>();
+expectTypeOf<Get<WithTuples, `foo.${number}`, NonStrict>>().toBe<{bar: number} | {baz: boolean}>();
+expectTypeOf<Get<WithTuples, `foo[${number}].baz`, NonStrict>>().toBe<boolean | undefined>();
+expectTypeOf<Get<WithTuples, `foo.${number}.typo`>>().toBe<unknown>();
+expectTypeOf<Get<readonly [string, number], number>>().toBe<string | number | undefined>();
+expectTypeOf<Get<[string?], `${number}`, NonStrict>>().toBe<string | undefined>();
+expectTypeOf<Get<[any], `${number}`>>().toBe<any>();
+expectTypeOf<Get<[[1, 2], [3]], `${number}.${number}`, NonStrict>>().toBe<1 | 2 | 3>();
+expectTypeOf<Get<Array<[string, number]>, `${number}.${number}`>>().toBe<string | number | undefined>();
+expectTypeOf<Get<[string] | number[], `${number}`, NonStrict>>().toBe<string | number>();
+expectTypeOf<Get<[string] | undefined, `${number}`, NonStrict>>().toBe<string | undefined>();
+
 type EmptyTuple = Parameters<() => {}>;
 
 expectTypeOf<Get<EmptyTuple, '-1', NonStrict>>().toBe<unknown>();
 expectTypeOf<Get<EmptyTuple, '0', NonStrict>>().toBe<unknown>();
 expectTypeOf<Get<EmptyTuple, '1', NonStrict>>().toBe<unknown>();
+expectTypeOf<Get<EmptyTuple, `${number}`>>().toBe<unknown>();
+expectTypeOf<Get<readonly [], number>>().toBe<unknown>();
+expectTypeOf<Get<EmptyTuple | [string], `${number}`, NonStrict>>().toBe<string | undefined>();
+expectTypeOf<Get<[[], [string]], `${number}.${number}`, NonStrict>>().toBe<string | undefined>();
 expectTypeOf<Get<EmptyTuple, 'length', NonStrict>>().toBe<0>();
 
 type WithNumberKeys = {
