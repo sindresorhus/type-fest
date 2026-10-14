@@ -1,8 +1,8 @@
+import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
+import type {ExtractRestElement} from './extract-rest-element.d.ts';
 import type {If} from './if.d.ts';
 import type {IntRange} from './int-range.d.ts';
-import type {NumberAbsolute} from './internal/numeric.d.ts';
-import type {IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
-import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
+import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
@@ -11,11 +11,11 @@ import type {Sum} from './sum.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
-Return the element at the given index of the given array.
+Get the type of the element at the given index of an array, like [`Array#at()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at).
 
-Use-case: Get the element at a specific index of an array.
+A negative index counts back from the end. If the array has optional elements or a rest element, the result is a union of every element the index can reach, and it includes `undefined` if the index can be out of bounds. If `exactOptionalPropertyTypes` is disabled, an optional element can also be `undefined`.
 
-Like [`Array#at()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at) but for types.
+Use-case: Get the type of the last element of a tuple, or of the value returned by `array.at(index)`.
 
 @example
 ```
@@ -60,9 +60,14 @@ type I = ArrayAt<['a', 'b'], 5>;
 // Out-of-bounds negative index
 type J = ArrayAt<['a', 'b'], -3>;
 //=> undefined
+```
+
+Note: A non-integer index is not supported, even though `Array#at()` truncates it.
+
+@category Array
 */
-export type ArrayAt<TArray extends UnknownArray, Index extends number> =
-	TArray extends unknown // For distributing `Array_`
+export type ArrayAt<TArray extends UnknownArray, Index extends number> = IfNotAnyOrNever<TArray, {
+	ifNot: TArray extends unknown // For distributing `TArray`
 		? Index extends unknown // For distributing `Index`
 			? number extends Index
 				? TArray[number] | undefined
@@ -71,28 +76,81 @@ export type ArrayAt<TArray extends UnknownArray, Index extends number> =
 					: ArrayAtPositiveIndex<TArray, Index>
 			: never // Should never happen
 		: never; // Should never happen
+}>;
 
 type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number> =
 	SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
 		? LessThan<Index, Required<BeforeRest>['length']> extends true
 			? BeforeRest[Index]
-			: Rest[number] | AfterRest[IntRange<0, Sum<Subtract<Index, Required<BeforeRest>['length']>, 1>>]
+			: Subtract<Index, Required<BeforeRest>['length']> extends infer IndexAfterBeforeRest extends number
+				// The rest element can hold any number of elements, so the index can land on the rest element or on any element after it, up to `IndexAfterBeforeRest`.
+				? LessThan<IndexAfterBeforeRest, AfterRest['length']> extends true
+					? Rest[number] | AfterRest[IntRange<0, Sum<IndexAfterBeforeRest, 1>>]
+					// The index can also be past the last element, which is the only result for an array without a rest element. Checking this first avoids building a large `IntRange` for a large index.
+					: Rest[number] | AfterRest[number] | undefined
+				: never // Should never happen
 		: never; // Should never happen
 
-type ArrayAtNegativeIndex<TArray extends UnknownArray, Index extends number> =
-	SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
-		? LessThanOrEqual<NumberAbsolute<Index>, AfterRest['length']> extends true
-			? AfterRest[Sum<Index, AfterRest['length']>]
-			: Subtract<Subtract<
-				BeforeRest['length'],
-				IntRange<0, Subtract<NumberAbsolute<Index>, AfterRest['length']>>
-			>, 1> extends infer Indices extends number
-				?
-				| Rest[number]
-				| Required<BeforeRest>[Indices]
-				| (true extends IsNegative<Indices> ? undefined : never)
-				| If<IsExactOptionalPropertyTypesEnabled, never, undefined>
-				: never
-		: never; // Should never happen
+/**
+Recursion order for `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[], 'd', 'e'], -5>`:
+
+1. `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[], 'd', 'e'], -5, 0, never>` // No match, increment `Index`.
+2. `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[], 'd'], -4, 0, never>` // No match, increment `Index`.
+3. `ArrayAtNegativeIndex<['a', 'b', 'c', ...number[]], -3, 0, never>` // Found rest element, set `Index` to `-1`, `Left` to `Sum<Index, 1>` (i.e., `-2`), add rest element to result.
+4. `ArrayAtNegativeIndex<['a', 'b', 'c'], -1, -2, number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
+5. `ArrayAtNegativeIndex<['a', 'b'], -1, -1, 'c' | number>` // Match found, `Left` not yet `0`, increment `Left`, add current element to result.
+6. `ArrayAtNegativeIndex<['a'], -1, 0, 'b' | 'c' | number>` // Match found, `Left` is `0`, add current element to result and return result.
+
+Result: `'a' | 'b' | 'c' | number`
+
+---
+
+Recursion order for `ArrayAtNegativeIndex<['a', 'b', 'c'?, ...number[]], -1>`:
+
+1. `ArrayAtNegativeIndex<['a', 'b', 'c'?, ...number[]], -1, 0, never>` // Found rest element, set `Index` to `-1`, `Left` to `Sum<Index, 1>` (i.e., `0`), add rest element to result.
+2. `ArrayAtNegativeIndex<['a', 'b', 'c'?], -1, 0, number>` // Match found, current element is optional, add it to result without changing anything else.
+3. `ArrayAtNegativeIndex<['a', 'b'], -1, 0, number | 'c'>` // Match found, current element is not optional, add it to result and return result.
+
+Result: `'b' | 'c' | number`
+
+---
+
+Recursion order for `ArrayAtNegativeIndex<['a', 'b', 'c', 'd'?, 'e'?], -3>`:
+
+1. `ArrayAtNegativeIndex<['a', 'b', 'c', 'd'?, 'e'?], -3, 0, never>` // No match, current element is optional, increment `Index` & decrement `Left`.
+2. `ArrayAtNegativeIndex<['a', 'b', 'c', 'd'?], -2, -1, never>` // No match, current element is optional, increment `Index` & decrement `Left`.
+3. `ArrayAtNegativeIndex<['a', 'b', 'c'], -1, -2, never>` // Match found, current element is not optional, `Left` is not `0`, increment `Left`, add current element to result.
+4. `ArrayAtNegativeIndex<['a', 'b'], -1, -1, 'c'>` // Match found, current element is not optional, `Left` is not `0`, increment `Left`, add current element to result.
+5. `ArrayAtNegativeIndex<['a'], -1, 0, 'b' | 'c'>` // Match found, current element is not optional, `Left` is `0`, add current element to result and return result.
+
+Result: `'a' | 'b' | 'c'`
+*/
+type ArrayAtNegativeIndex<TArray extends UnknownArray, Index extends number, Left extends number = 0, Result = never> =
+	TArray extends readonly []
+		? Result | undefined // If the array is exhausted, return `Result` with `undefined`.
+		: number extends TArray['length']
+			// Enters this branch, if `TArray` contains a rest element.
+			? TArray extends readonly [...infer Rest, infer L]
+				? Index extends -1
+					? L // If an element after the rest element matches, return it.
+					: ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Left, Result>
+				// Enters this branch, if `TArray` contains no elements after the rest element.
+				: ExcludeRestElement<TArray> extends infer TWithoutRest extends UnknownArray
+					// Remove the rest element and recurse further with the elements before the rest element,
+					// Set `Index` to `-1` & `Left` to `Sum<Index, 1>`, so that elements keep getting matched until `Left` reaches `0`.
+					? ArrayAtNegativeIndex<TWithoutRest, -1, Sum<Index, 1>, ExtractRestElement<TArray> | Result> // Also, add the rest element to `Result`.
+					: never // Should never happen
+			// Enters this branch, if `TArray` contains no rest element.
+			: TArray extends readonly [...infer Rest, (infer Last)?]
+				? Index extends -1
+					? TArray extends readonly [...unknown[], unknown] // If `Last` is not optional
+						? Left extends 0
+							? Last | Result // If there's a match, and `Left` is `0`, return `Result` with `Last`.
+							: ArrayAtNegativeIndex<Rest, Index, Sum<Left, 1>, Last | Result> // If there's a match, and `Left` is not `0`, increment `Left` and add `Last` to `Result`.
+						: ArrayAtNegativeIndex<Rest, Index, Left, Last | If<IsExactOptionalPropertyTypesEnabled, never, undefined> | Result> // If `Last` is optional, just add it to `Result` without changing anything else.
+					: TArray extends readonly [...unknown[], unknown]
+						? ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Left, Result> // If `Last` is not optional, just increment `Index`.
+						: ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Subtract<Left, 1>, Result> // If `Last` is optional, increment `Index` and decrement `Left`.
+				: never; // Should never happen
 
 export {};

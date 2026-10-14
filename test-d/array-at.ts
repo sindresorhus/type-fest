@@ -1,103 +1,144 @@
-import {expectType} from 'tsd';
+import {expectTypeOf} from 'nz';
 import type {ArrayAt} from '../index.d.ts';
 
-expectType<ArrayAt<[string], 0>>({} as string);
-expectType<ArrayAt<[string], -1>>({} as string);
+expectTypeOf<ArrayAt<[string], 0>>().toBe<string>();
+expectTypeOf<ArrayAt<[string], -1>>().toBe<string>();
 
-expectType<ArrayAt<[], 0>>(undefined);
-expectType<ArrayAt<[], -1>>(undefined);
+expectTypeOf<ArrayAt<[], 0>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[], -1>>().toBe<undefined>();
 
-expectType<ArrayAt<[number, boolean], 0>>({} as number);
-expectType<ArrayAt<[number, boolean], 1>>({} as boolean);
-expectType<ArrayAt<[number, boolean], 2>>(undefined);
-expectType<ArrayAt<[number, boolean], 99>>(undefined);
-expectType<ArrayAt<[number, boolean], -1>>({} as boolean);
-expectType<ArrayAt<[number, boolean], -2>>({} as number);
-expectType<ArrayAt<[number, boolean], -3>>(undefined);
-expectType<ArrayAt<[number, boolean], -99>>(undefined);
+expectTypeOf<ArrayAt<[number, boolean], 0>>().toBe<number>();
+expectTypeOf<ArrayAt<[number, boolean], 1>>().toBe<boolean>();
+expectTypeOf<ArrayAt<[number, boolean], 2>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[number, boolean], 99>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[number, boolean], -1>>().toBe<boolean>();
+expectTypeOf<ArrayAt<[number, boolean], -2>>().toBe<number>();
+expectTypeOf<ArrayAt<[number, boolean], -3>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[number, boolean], -99>>().toBe<undefined>();
 
-expectType<ArrayAt<[number, boolean?], 0>>({} as number);
-expectType<ArrayAt<[number, boolean?], 1>>({} as boolean | undefined);
-expectType<ArrayAt<[number, boolean?], 2>>(undefined);
-expectType<ArrayAt<[number, boolean?], 99>>(undefined);
-expectType<ArrayAt<[number, boolean?], -1>>({} as number | boolean);
-expectType<ArrayAt<[number, boolean?], -2>>({} as number | undefined);
-expectType<ArrayAt<[number, boolean?], -3>>(undefined);
-expectType<ArrayAt<[number, boolean?], -99>>(undefined);
+expectTypeOf<ArrayAt<[number, boolean?], 0>>().toBe<number>();
+expectTypeOf<ArrayAt<[number, boolean?], 1>>().toBe<boolean | undefined>();
+expectTypeOf<ArrayAt<[number, boolean?], 2>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[number, boolean?], 99>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[number, boolean?], -1>>().toBe<number | boolean>();
+expectTypeOf<ArrayAt<[number, boolean?], -2>>().toBe<number | undefined>();
+expectTypeOf<ArrayAt<[number, boolean?], -3>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[number, boolean?], -99>>().toBe<undefined>();
 
 type StaticArray = [object, number, boolean?, string?];
-expectType<ArrayAt<StaticArray, 0>>({} as object);
-expectType<ArrayAt<StaticArray, 1>>({} as number);
-expectType<ArrayAt<StaticArray, 2>>({} as boolean | undefined);
-expectType<ArrayAt<StaticArray, 3>>({} as string | undefined);
-expectType<ArrayAt<StaticArray, -1>>({} as string | boolean | number);
-expectType<ArrayAt<StaticArray, -2>>({} as boolean | number | object);
-expectType<ArrayAt<StaticArray, -3>>({} as number | object | undefined);
-expectType<ArrayAt<StaticArray, -4>>({} as object | undefined);
-expectType<ArrayAt<StaticArray, -5>>(undefined);
-expectType<ArrayAt<StaticArray, -99>>(undefined);
+expectTypeOf<ArrayAt<StaticArray, 0>>().toBe<object>();
+expectTypeOf<ArrayAt<StaticArray, 1>>().toBe<number>();
+expectTypeOf<ArrayAt<StaticArray, 2>>().toBe<boolean | undefined>();
+expectTypeOf<ArrayAt<StaticArray, 3>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<StaticArray, -1>>().toBe<string | boolean | number>();
+expectTypeOf<ArrayAt<StaticArray, -2>>().toBe<boolean | number | object>();
+expectTypeOf<ArrayAt<StaticArray, -3>>().toBe<number | object | undefined>();
+expectTypeOf<ArrayAt<StaticArray, -4>>().toBe<object | undefined>();
+expectTypeOf<ArrayAt<StaticArray, -5>>().toBe<undefined>();
+expectTypeOf<ArrayAt<StaticArray, -99>>().toBe<undefined>();
 
 type LeadingSpreadArray = [...string[], number, boolean];
-expectType<ArrayAt<LeadingSpreadArray, 0>>({} as string | number);
-expectType<ArrayAt<LeadingSpreadArray, 1>>({} as string | number | boolean);
-expectType<ArrayAt<LeadingSpreadArray, 2>>({} as string | number | boolean | undefined);
-expectType<ArrayAt<LeadingSpreadArray, 3>>({} as string | number | boolean | undefined);
-expectType<ArrayAt<LeadingSpreadArray, -1>>({} as boolean);
-expectType<ArrayAt<LeadingSpreadArray, -2>>({} as number);
-expectType<ArrayAt<LeadingSpreadArray, -3>>({} as string | undefined);
+expectTypeOf<ArrayAt<LeadingSpreadArray, 0>>().toBe<string | number>();
+expectTypeOf<ArrayAt<LeadingSpreadArray, 1>>().toBe<string | number | boolean>();
+expectTypeOf<ArrayAt<LeadingSpreadArray, 2>>().toBe<string | number | boolean | undefined>();
+expectTypeOf<ArrayAt<LeadingSpreadArray, 3>>().toBe<string | number | boolean | undefined>();
+expectTypeOf<ArrayAt<LeadingSpreadArray, -1>>().toBe<boolean>();
+expectTypeOf<ArrayAt<LeadingSpreadArray, -2>>().toBe<number>();
+expectTypeOf<ArrayAt<LeadingSpreadArray, -3>>().toBe<string | undefined>();
 
 type TrailingSpreadArray = [number, boolean, ...string[]];
-expectType<ArrayAt<TrailingSpreadArray, 0>>({} as number);
-expectType<ArrayAt<TrailingSpreadArray, 1>>({} as boolean);
-expectType<ArrayAt<TrailingSpreadArray, 2>>({} as string | undefined);
-expectType<ArrayAt<TrailingSpreadArray, 3>>({} as string | undefined);
-expectType<ArrayAt<TrailingSpreadArray, -1>>({} as string | boolean);
-expectType<ArrayAt<TrailingSpreadArray, -2>>({} as boolean | string | number);
-expectType<ArrayAt<TrailingSpreadArray, -3>>({} as boolean | string | number | undefined);
+expectTypeOf<ArrayAt<TrailingSpreadArray, 0>>().toBe<number>();
+expectTypeOf<ArrayAt<TrailingSpreadArray, 1>>().toBe<boolean>();
+expectTypeOf<ArrayAt<TrailingSpreadArray, 2>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<TrailingSpreadArray, 3>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<TrailingSpreadArray, -1>>().toBe<string | boolean>();
+expectTypeOf<ArrayAt<TrailingSpreadArray, -2>>().toBe<boolean | string | number>();
+expectTypeOf<ArrayAt<TrailingSpreadArray, -3>>().toBe<boolean | string | number | undefined>();
 
 type TrailingSpreadArray2 = [object, number, boolean?, ...string[]];
-expectType<ArrayAt<TrailingSpreadArray2, 0>>({} as object);
-expectType<ArrayAt<TrailingSpreadArray2, 1>>({} as number);
-expectType<ArrayAt<TrailingSpreadArray2, 2>>({} as boolean | undefined);
-expectType<ArrayAt<TrailingSpreadArray2, 3>>({} as string | undefined);
-expectType<ArrayAt<TrailingSpreadArray2, -1>>({} as string | number | boolean);
-expectType<ArrayAt<TrailingSpreadArray2, -2>>({} as string | number | boolean | object);
-expectType<ArrayAt<TrailingSpreadArray2, -3>>({} as string | number | boolean | object | undefined);
+expectTypeOf<ArrayAt<TrailingSpreadArray2, 0>>().toBe<object>();
+expectTypeOf<ArrayAt<TrailingSpreadArray2, 1>>().toBe<number>();
+expectTypeOf<ArrayAt<TrailingSpreadArray2, 2>>().toBe<boolean | undefined>();
+expectTypeOf<ArrayAt<TrailingSpreadArray2, 3>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<TrailingSpreadArray2, -1>>().toBe<string | number | boolean>();
+expectTypeOf<ArrayAt<TrailingSpreadArray2, -2>>().toBe<string | number | boolean | object>();
+expectTypeOf<ArrayAt<TrailingSpreadArray2, -3>>().toBe<string | number | boolean | object | undefined>();
 
 type MiddleSpreadArray = [number, ...string[], boolean];
-expectType<ArrayAt<MiddleSpreadArray, 0>>({} as number);
-expectType<ArrayAt<MiddleSpreadArray, 1>>({} as string | boolean);
-expectType<ArrayAt<MiddleSpreadArray, 2>>({} as string | boolean | undefined);
-expectType<ArrayAt<MiddleSpreadArray, 3>>({} as string | boolean | undefined);
-expectType<ArrayAt<MiddleSpreadArray, -1>>({} as boolean);
-expectType<ArrayAt<MiddleSpreadArray, -2>>({} as string | number);
-expectType<ArrayAt<MiddleSpreadArray, -3>>({} as string | number | undefined);
+expectTypeOf<ArrayAt<MiddleSpreadArray, 0>>().toBe<number>();
+expectTypeOf<ArrayAt<MiddleSpreadArray, 1>>().toBe<string | boolean>();
+expectTypeOf<ArrayAt<MiddleSpreadArray, 2>>().toBe<string | boolean | undefined>();
+expectTypeOf<ArrayAt<MiddleSpreadArray, 3>>().toBe<string | boolean | undefined>();
+expectTypeOf<ArrayAt<MiddleSpreadArray, -1>>().toBe<boolean>();
+expectTypeOf<ArrayAt<MiddleSpreadArray, -2>>().toBe<string | number>();
+expectTypeOf<ArrayAt<MiddleSpreadArray, -3>>().toBe<string | number | undefined>();
 
 type UnionArray = [string, number] | [boolean, string?];
-expectType<ArrayAt<UnionArray, 0>>({} as string | boolean);
-expectType<ArrayAt<UnionArray, 1>>({} as number | string | undefined);
-expectType<ArrayAt<UnionArray, -1>>({} as number | string | boolean);
-expectType<ArrayAt<UnionArray, -2>>({} as undefined | string | boolean);
+expectTypeOf<ArrayAt<UnionArray, 0>>().toBe<string | boolean>();
+expectTypeOf<ArrayAt<UnionArray, 1>>().toBe<number | string | undefined>();
+expectTypeOf<ArrayAt<UnionArray, -1>>().toBe<number | string | boolean>();
+expectTypeOf<ArrayAt<UnionArray, -2>>().toBe<undefined | string | boolean>();
 
-expectType<ArrayAt<string[], 0>>({} as string | undefined);
-expectType<ArrayAt<string[], 1>>({} as string | undefined);
-expectType<ArrayAt<string[], 2>>({} as string | undefined);
-expectType<ArrayAt<string[], -1>>({} as string | undefined);
-expectType<ArrayAt<string[], -2>>({} as string | undefined);
-expectType<ArrayAt<string[], -3>>({} as string | undefined);
+expectTypeOf<ArrayAt<string[], 0>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<string[], 1>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<string[], 2>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<string[], -1>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<string[], -2>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<string[], -3>>().toBe<string | undefined>();
 
-expectType<ArrayAt<readonly string[], 0>>({} as string | undefined);
-expectType<ArrayAt<readonly string[], 1>>({} as string | undefined);
-expectType<ArrayAt<readonly string[], 2>>({} as string | undefined);
-expectType<ArrayAt<readonly string[], -1>>({} as string | undefined);
-expectType<ArrayAt<readonly string[], -2>>({} as string | undefined);
-expectType<ArrayAt<readonly string[], -3>>({} as string | undefined);
+expectTypeOf<ArrayAt<readonly string[], 0>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly string[], 1>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly string[], 2>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly string[], -1>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly string[], -2>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly string[], -3>>().toBe<string | undefined>();
 
-expectType<ArrayAt<readonly [string, number], 0>>({} as string);
-expectType<ArrayAt<readonly [string, number], 1>>({} as number);
-expectType<ArrayAt<readonly [string, number], 2>>(undefined);
-expectType<ArrayAt<readonly [string, number], -1>>({} as number);
+expectTypeOf<ArrayAt<readonly [string, number], 0>>().toBe<string>();
+expectTypeOf<ArrayAt<readonly [string, number], 1>>().toBe<number>();
+expectTypeOf<ArrayAt<readonly [string, number], 2>>().toBe<undefined>();
+expectTypeOf<ArrayAt<readonly [string, number], -1>>().toBe<number>();
 
 // Test unknown index
-expectType<ArrayAt<[1, 2, 3], number>>({} as 1 | 2 | 3 | undefined);
-expectType<ArrayAt<string[], number>>({} as string | undefined);
+expectTypeOf<ArrayAt<[1, 2, 3], number>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<ArrayAt<string[], number>>().toBe<string | undefined>();
+
+// Union of indices, including mixed signs
+expectTypeOf<ArrayAt<[string, number], 0 | -1>>().toBe<string | number>();
+expectTypeOf<ArrayAt<[1, 2, 3], 0 | 2>>().toBe<1 | 3>();
+
+// An optional element only adds itself at its own position
+expectTypeOf<ArrayAt<[boolean, number?, {symbolic: true}?, ...string[]], 1>>().toBe<number | undefined>();
+
+// Leading rest element
+expectTypeOf<ArrayAt<[...string[], 1, 2], 0>>().toBe<string | 1>();
+expectTypeOf<ArrayAt<[...string[], 1, 2], -3>>().toBe<string | undefined>();
+
+// Only optional elements
+expectTypeOf<ArrayAt<[1?, 2?], 0>>().toBe<1 | undefined>();
+expectTypeOf<ArrayAt<[1?, 2?], -1>>().toBe<1 | 2 | undefined>();
+
+// Large indices
+expectTypeOf<ArrayAt<[1, 2], 999>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, 2], -999>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, ...string[], 2], 500>>().toBe<string | 2 | undefined>();
+expectTypeOf<ArrayAt<[1, ...string[], 2], -500>>().toBe<string | 1 | undefined>();
+
+// Edge cases
+expectTypeOf<ArrayAt<any, 0>>().toBe<any>();
+expectTypeOf<ArrayAt<never, 0>>().toBe<never>();
+expectTypeOf<ArrayAt<unknown[], 0>>().toBe<unknown>();
+expectTypeOf<ArrayAt<[1, 2], never>>().toBe<never>();
+expectTypeOf<ArrayAt<[1, 2], any>>().toBe<1 | 2 | undefined>();
+expectTypeOf<ArrayAt<any[], 0>>().toBe<any>();
+expectTypeOf<ArrayAt<never[], 0>>().toBe<undefined>();
+
+// A large positive index does not build a large union of indices
+expectTypeOf<ArrayAt<[1, 2], 5000>>().toBe<undefined>();
+expectTypeOf<ArrayAt<string[], 5000>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<[...string[], 1], 5000>>().toBe<string | 1 | undefined>();
+
+// An index past the elements after the rest element can land on any of them
+type MiddleRest = ['a', ...number[], 'y', 'z'];
+expectTypeOf<ArrayAt<MiddleRest, 1>>().toBe<number | 'y'>();
+expectTypeOf<ArrayAt<MiddleRest, 2>>().toBe<number | 'y' | 'z'>();
+expectTypeOf<ArrayAt<MiddleRest, 3>>().toBe<number | 'y' | 'z' | undefined>();
