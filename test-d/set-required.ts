@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetRequired, Simplify, Tagged} from '../index.d.ts';
+import type {SetRequired, Tagged} from '../index.d.ts';
 
 // Update one required and one optional to required.
 declare const variation1: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
@@ -44,11 +44,11 @@ expectTypeOf(variation10).toBe<{[k: string]: unknown; a: number; b: string}>();
 // Works with functions containing properties
 declare const variation11: SetRequired<{(a1: string, a2: number): boolean; p1?: string; readonly p2: number}, 'p1'>;
 expectTypeOf(variation11('foo', 1)).toBe<boolean>();
-expectTypeOf<Simplify<typeof variation11>>().toBe<{p1: string; readonly p2: number}>();
+expectTypeOf<Omit<typeof variation11, never>>().toBe<{p1: string; readonly p2: number}>();
 
 declare const variation12: SetRequired<{(a1: boolean, ...a2: string[]): number; p1?: string; readonly p2?: number; p3?: boolean}, 'p1' | 'p2'>;
 expectTypeOf(variation12(true, 'foo', 'bar', 'baz')).toBe<number>();
-expectTypeOf<Simplify<typeof variation12>>().toBe<{p1: string; readonly p2: number; p3?: boolean}>();
+expectTypeOf<Omit<typeof variation12, never>>().toBe<{p1: string; readonly p2: number; p3?: boolean}>();
 
 // Functions without properties are returned as is
 declare const variation13: SetRequired<(a: string) => number, never>;

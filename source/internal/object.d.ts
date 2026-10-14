@@ -1,4 +1,3 @@
-import type {Simplify} from '../simplify.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
 import type {RequiredKeysOf} from '../required-keys-of.d.ts';
@@ -12,6 +11,13 @@ import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
+
+/**
+Flatten an object type. This is the plain definition `Simplify` had before it started returning a function or a class constructor as is.
+
+Internal types use this instead of `Simplify`, because they only flatten object types they built themselves, where any call signature is already dropped or handled separately, so they do not need that check. Use `Simplify` if the input can be a function. Keeping the check out of them avoids its cost in every type that flattens its result, and avoids the risk of "excessively deep" errors in user code, which a conditional in `Simplify` once caused for types like `SetRequired`. See https://github.com/sindresorhus/type-fest/issues/436.
+*/
+export type SimplifyObject<Type> = {[KeyType in keyof Type]: Type[KeyType]} & {};
 
 /**
 Create an object type with the given key `<Key>` and value `<Value>`.
@@ -82,7 +88,7 @@ type OptionalizedUser = UndefinedToOptional<User>;
 // }
 ```
 */
-export type UndefinedToOptional<T extends object> = Simplify<
+export type UndefinedToOptional<T extends object> = SimplifyObject<
 	{
 	// Property is not a union with `undefined`, keep it as-is.
 		[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
@@ -223,7 +229,7 @@ type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOp
 */
 export type ApplyDefaultOptions<
 	Options extends object,
-	Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
+	Defaults extends SimplifyObject<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
 	SpecifiedOptions extends Options,
 > =
 	_ApplyDefaultOptions<Options, Defaults, SpecifiedOptions> extends infer Result extends Required<Options> // `extends Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`

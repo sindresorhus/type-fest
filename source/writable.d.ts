@@ -1,6 +1,6 @@
+import type {SimplifyObject} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
-import type {Simplify} from './simplify.d.ts';
 import type {IsAny} from './is-any.d.ts';
 
 // The default of the keys, which stands for every key. It is not a key any type can have, so it is told apart from an explicit key set, including `never`.
@@ -63,7 +63,7 @@ type WritableAllKeys<BaseType> = BaseType extends unknown
 		? _Writable<BaseType, keyof BaseType>
 		: IsAny<BaseType> extends true
 			? BaseType
-			: Simplify<{-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}>
+			: SimplifyObject<{-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}>
 	: never;
 
 // The intersection is against the member, not the union, so a key only one member has is applied to that member and is a no-op for the others.
@@ -78,7 +78,7 @@ type _Writable<BaseType, Keys extends keyof BaseType> =
 				// Handle array
 				? WritableArray<BaseType>
 				// Handle object
-				: IsAny<BaseType> extends true ? BaseType : Simplify<
+				: IsAny<BaseType> extends true ? BaseType : SimplifyObject<
 					// Pick just the keys that are not writable from the base type.
 					Except<BaseType, Keys>
 					// Make the specified keys writable.

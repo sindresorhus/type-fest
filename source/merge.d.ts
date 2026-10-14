@@ -1,13 +1,12 @@
-import type {IsArrayReadonly} from './internal/index.d.ts';
+import type {IsArrayReadonly, SimplifyObject} from './internal/index.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
-import type {Simplify} from './simplify.d.ts';
 import type {If} from './if.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsAny} from './is-any.d.ts';
 
 // Merges two objects without worrying about index signatures.
-type SimpleMerge<Destination, Source> = Simplify<{
+type SimpleMerge<Destination, Source> = SimplifyObject<{
 	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
 } & Source>;
 
@@ -129,7 +128,7 @@ type DropLeading<Array extends readonly unknown[], Length extends number, Droppe
 				: [];
 
 export type _Merge<Destination, Source> =
-	Simplify<
+	SimplifyObject<
 		SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
 		& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
 	>;

@@ -1,6 +1,5 @@
 import type {HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Recursively removes `null` and `undefined` from the specified type.
@@ -107,7 +106,7 @@ export type NonNullableDeep<T> =
 													: (this: NonNullableDeep<ThisParameterType<T>>, ...arguments_: NonNullableDeep<Parameters<T>>) => NonNullableDeep<ReturnType<T>>)
 												& (IsNever<keyof T> extends true
 													? unknown
-													: NonNullableDeep<Simplify<T>>) // `Simplify` removes the call signature
+													: NonNullableDeep<{[Key in keyof T]: T[Key]}>) // The mapped type removes the call signature
 											// The `Function` interface has no call signature, so the branch above misses it, and mapping it would produce an uncallable record of its own methods.
 											: T extends Function
 												? T

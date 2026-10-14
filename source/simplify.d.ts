@@ -52,10 +52,34 @@ fn(someInterface); // Error: Index signature for type 'string' is missing in typ
 fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` into a `type`
 ```
 
+A function or a class constructor is returned as is, because its call and construct signatures cannot be flattened into an object. A union that includes one is also returned as is, so its other members are not flattened. To get only the properties of a function, use `Simplify<Omit<Type, never>>`.
+
+@example
+```
+import type {Simplify} from 'type-fest';
+
+type Format = (value: string) => string;
+
+type A = Simplify<Format>;
+//=> (value: string) => string
+
+type B = Simplify<Format & {description: string}>;
+//=> Format & {description: string}
+
+// `Omit` drops the call signature, so this gives only the properties.
+type C = Simplify<Omit<Format & {description: string}, never>>;
+//=> {description: string}
+```
+
 @see https://github.com/microsoft/TypeScript/issues/15300
 @see {@link SimplifyDeep}
 @category Object
 */
-export type Simplify<T> = {[KeyType in keyof T]: T[KeyType]} & {};
+// Internal types use `SimplifyObject` instead, which leaves out the function check. See its comment for why.
+export type Simplify<T> =
+	// The check is not distributive, so that a generic `T` stays assignable to `Simplify<T>`, because it is assignable to both branches.
+	[Extract<T, ((...arguments_: never) => unknown) | (abstract new (...arguments_: never) => unknown)>] extends [never]
+		? {[KeyType in keyof T]: T[KeyType]} & {}
+		: T;
 
 export {};

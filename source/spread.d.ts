@@ -1,8 +1,8 @@
+import type {SimplifyObject} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 // The spread syntax always produces a fresh object literal, so `readonly` is dropped, and an index signature survives only when both operands have it.
 type SpreadObject<FirstType extends object, SecondType extends object> = {
@@ -85,10 +85,10 @@ export type Spread<
 				? SecondType extends TupleOrArray
 					? SpreadTupleOrArray<FirstType, SecondType>
 					: SecondType extends unknown // For distributing `SecondType`
-						? Simplify<SpreadObject<FirstType, SecondType>>
+						? SimplifyObject<SpreadObject<FirstType, SecondType>>
 						: never
 				: SecondType extends unknown // For distributing `SecondType`
-					? Simplify<SpreadObject<FirstType, SecondType>>
+					? SimplifyObject<SpreadObject<FirstType, SecondType>>
 					: never;
 
 export {};

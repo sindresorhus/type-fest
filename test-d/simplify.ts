@@ -44,36 +44,78 @@ expectTypeOf(valueAsLiteral).toBeAssignableTo<Record<string, unknown>>();
 expectTypeOf(valueAsSimplifiedInterface).toBeAssignableTo<Record<string, unknown>>();
 expectTypeOf(valueAsInterface).not.toBeAssignableTo<Record<string, unknown>>(); // Index signature is missing in interface
 
-// The following tests should be fixed once we have determined the cause of the bug reported in https://github.com/sindresorhus/type-fest/issues/436
-
+// A function cannot be flattened into an object, so it is returned as is, keeping its overloads and type parameters.
 type SomeFunction = (type: string) => string;
-type SimplifiedFunction = Simplify<SomeFunction>; // Return '{}' expected 'SomeFunction'
+expectTypeOf<Simplify<SomeFunction>>().toBe<SomeFunction>();
 
-declare const someFunction: SimplifiedFunction;
+type OverloadedFunction = {
+	(value: string): string;
+	(value: number): number;
+};
+expectTypeOf<Simplify<OverloadedFunction>>().toBe<OverloadedFunction>();
 
-expectTypeOf(someFunction).not.toBeAssignableTo<SomeFunction>();
+type GenericFunction = <Value>(value: Value) => Value;
+expectTypeOf<Simplify<GenericFunction>>().toBe<GenericFunction>();
 
-// // Should return the original type if it is not simplifiable, like a function.
-// type SomeFunction = (type: string) => string;
-// expectType<Simplify<SomeFunction>>((type: string) => type);
+// A function with properties keeps its call signature instead of being turned into an object of its properties.
+type FunctionWithProperties = SomeFunction & {description: string};
+expectTypeOf<Simplify<FunctionWithProperties>>().toBe<FunctionWithProperties>();
 
-// class SomeClass {
-// 	id: string;
+type CallableObject = {
+	(value: string): void;
+	description: string;
+};
+expectTypeOf<Simplify<CallableObject>>().toBe<CallableObject>();
 
-// 	private readonly code: number;
+class SomeClass {
+	id = 'some-class';
 
-// 	constructor() {
-// 		this.id = 'some-class';
-// 		this.code = 42;
-// 	}
+	private get code() {
+		return 42;
+	}
 
-// 	someMethod() {
-// 		return this.code;
-// 	}
-// }
+	someMethod() {
+		return this.code;
+	}
+}
 
-// expectType<Simplify<SomeClass>>(new SomeClass());
+// A class constructor keeps its construct signature.
+expectTypeOf<Simplify<typeof SomeClass>>().toBe<typeof SomeClass>();
+
+abstract class AbstractClass {
+	abstract id: string;
+}
+
+expectTypeOf<Simplify<typeof AbstractClass>>().toBe<typeof AbstractClass>();
+
+// A class instance is flattened into its public members.
+expectTypeOf<Simplify<SomeClass>>().toBe<{id: string; someMethod: () => number}>();
+
+// A union that includes a function is returned as is.
+expectTypeOf<Simplify<SomeFunction | {a: 1}>>().toBe<SomeFunction | {a: 1}>();
+
+expectTypeOf<Simplify<SomeFunction | undefined>>().toBe<SomeFunction | undefined>();
+
+// A union of objects is flattened member by member.
+expectTypeOf<Simplify<({a: 1} & {b: 2}) | {c: 3}>>().toBe<{a: 1; b: 2} | {c: 3}>();
+
+// Edge cases
+expectTypeOf<Simplify<any>>().toBe<any>();
+expectTypeOf<Simplify<never>>().toBe<never>();
+expectTypeOf<Simplify<unknown>>().toBe<{}>();
+
+// A generic type stays assignable to its simplified version.
+function _simplifyGeneric<Type>(value: Type): Simplify<Type> {
+	return value;
+}
+
+function _simplifyGenericObject<Type extends {a: number}>(value: Simplify<Type>): number {
+	return value.a;
+}
 
 // `keyof` of an intersection is the union of its members' keys, so `Simplify` flattens both members rather than one of them.
 declare const simplifyIntersection: Simplify<{a: 1} & {b?: 2}>;
 expectTypeOf(simplifyIntersection).toBe<{a: 1; b?: 2}>();
+
+// `Omit` drops the call signature, so wrapping it gives only the properties.
+expectTypeOf<Simplify<Omit<FunctionWithProperties, never>>>().toBe<{description: string}>();

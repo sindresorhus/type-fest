@@ -1,10 +1,9 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
-import type {CallSignatureOf, HomomorphicPick} from './internal/index.d.ts';
+import type {CallSignatureOf, HomomorphicPick, SimplifyObject} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Create a type that makes the given keys readonly, while keeping the remaining keys as is.
@@ -43,7 +42,7 @@ export type _SetReadonly<BaseType, Keys> =
 				: IsNever<Keys & keyof BaseType> extends true
 					? BaseType
 					: Readonly<BaseType>
-			: Simplify<
+			: SimplifyObject<
 				Except<BaseType, Keys & keyof BaseType>
 				& Readonly<HomomorphicPick<BaseType, Keys & keyof BaseType>>
 			>

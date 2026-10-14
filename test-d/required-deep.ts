@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, RequiredDeep, Simplify} from '../index.d.ts';
+import type {IsEqual, RequiredDeep} from '../index.d.ts';
 import type {BuiltIns} from '../source/internal/type.d.ts';
 
 declare const key: unique symbol;
@@ -65,24 +65,24 @@ expectTypeOf<Promise<Promise<{a: string; b: [number, number]}>>>().toBe<Required
 type FunctionWithProperties = {(a1: string, a2: number): boolean; p1?: string; readonly p2?: number};
 declare const functionWithProperties: RequiredDeep<FunctionWithProperties>;
 expectTypeOf(functionWithProperties('foo', 1)).toBe<boolean>();
-expectTypeOf<Simplify<typeof functionWithProperties>>().toBe<{p1: string; readonly p2: number}>(); // `Simplify` removes the call signature from `typeof functionWithProperties`
+expectTypeOf<Omit<typeof functionWithProperties, never>>().toBe<{p1: string; readonly p2: number}>(); // `Omit` removes the call signature from `typeof functionWithProperties`
 
 type FunctionWithProperties2 = {(a1: boolean, ...a2: string[]): number; p1?: {p2?: string; p3: {readonly p4?: boolean}}};
 declare const functionWithProperties2: RequiredDeep<FunctionWithProperties2>;
 expectTypeOf(functionWithProperties2(true, 'foo', 'bar')).toBe<number>();
-expectTypeOf<Simplify<typeof functionWithProperties2>>().toBe<{p1: {p2: string; p3: {readonly p4: boolean}}}>();
+expectTypeOf<Omit<typeof functionWithProperties2, never>>().toBe<{p1: {p2: string; p3: {readonly p4: boolean}}}>();
 
 type FunctionWithProperties3 = {(): void; p1?: {p2?: string; p3: [{p4?: number}, string?]}};
 declare const functionWithProperties3: RequiredDeep<FunctionWithProperties3>;
 expectTypeOf(functionWithProperties3()).toBe<void>();
-expectTypeOf<Simplify<typeof functionWithProperties3>>().toBe<{p1: {p2: string; p3: [{p4: number}, string]}}>();
+expectTypeOf<Omit<typeof functionWithProperties3, never>>().toBe<{p1: {p2: string; p3: [{p4: number}, string]}}>();
 
 // Properties within functions containing multiple call signatures are not made required due to TS limitations, refer https://github.com/microsoft/TypeScript/issues/29732
 type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1?: string};
 declare const functionWithProperties4: RequiredDeep<FunctionWithProperties4>;
 expectTypeOf(functionWithProperties4(1)).toBe<string>();
 expectTypeOf(functionWithProperties4('foo', 1)).toBe<number>();
-expectTypeOf<Simplify<typeof functionWithProperties4>>().not.toBe<{p1: string}>();
+expectTypeOf<Omit<typeof functionWithProperties4, never>>().not.toBe<{p1: string}>();
 
 // Class constructors keep their construct signature, like the other `*Deep` utilities do.
 declare class ClassWithStatics {

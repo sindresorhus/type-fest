@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetReadonly, Simplify} from '../index.d.ts';
+import type {SetReadonly} from '../index.d.ts';
 
 // Update one readonly and one non readonly to readonly.
 declare const variation1: SetReadonly<{a: number; readonly b: string; c: boolean}, 'b' | 'c'>;
@@ -40,11 +40,11 @@ expectTypeOf(variation9).toBe<{[k: string]: unknown; readonly a: number; readonl
 // Works with functions containing properties
 declare const variation10: SetReadonly<{(a1: string, a2: number): boolean; p1: string; readonly p2?: number}, 'p1'>;
 expectTypeOf(variation10('foo', 1)).toBe<boolean>();
-expectTypeOf<Simplify<typeof variation10>>().toBe<{readonly p1: string; readonly p2?: number}>(); // Simplify removes the call signature from `typeof variation10`
+expectTypeOf<Omit<typeof variation10, never>>().toBe<{readonly p1: string; readonly p2?: number}>(); // `Omit` removes the call signature from `typeof variation10`
 
 declare const variation11: SetReadonly<{(a1: boolean, ...a2: string[]): number; p1: string; p2?: number; p3: boolean}, 'p1' | 'p2'>;
 expectTypeOf(variation11(true, 'foo', 'bar', 'baz')).toBe<number>();
-expectTypeOf<Simplify<typeof variation11>>().toBe<{readonly p1: string; readonly p2?: number; p3: boolean}>();
+expectTypeOf<Omit<typeof variation11, never>>().toBe<{readonly p1: string; readonly p2?: number; p3: boolean}>();
 
 // Functions without properties are returned as is
 declare const variation12: SetReadonly<(a: string) => number, never>;

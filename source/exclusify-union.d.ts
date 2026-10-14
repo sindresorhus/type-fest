@@ -1,9 +1,9 @@
+import type {SimplifyObject} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
@@ -165,7 +165,7 @@ export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union, {
 }>;
 
 type _ExclusifyUnion<Union, UnionCopy = Union> = Union extends unknown // For distributing `Union`
-	? Simplify<
+	? SimplifyObject<
 		Union & Partial<
 			Record<
 				// A string index signature contributes `string | number` to `KeysOfUnion`, and adding those as `never` keys would collide with the other members' own named string keys and leave the union with nothing assignable to it, so the keys are read with the index signatures taken off.

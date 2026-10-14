@@ -1,6 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Create a type with shared fields from a union of object types.
@@ -70,7 +69,7 @@ export type SharedUnionFields<Union> =
 			| SkippedMembers
 			| (IsNever<RelevantMembers> extends true
 				? never
-				: Simplify<Pick<RelevantMembers, keyof RelevantMembers>>)
+				: SimplifyObject<Pick<RelevantMembers, keyof RelevantMembers>>)
 			: never
 		: never;
 

@@ -1,6 +1,5 @@
-import type {CallSignatureOf, HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/index.d.ts';
+import type {CallSignatureOf, HasMultipleCallSignatures, NonRecursiveLeaf, SimplifyObject} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Create a deeply required version of another type.
@@ -73,7 +72,7 @@ export type RequiredDeep<T> = T extends NonRecursiveLeaf
 									: T extends Function
 										? T
 										: T extends object
-											? Simplify<RequiredObjectDeep<T>> // `Simplify` to prevent `RequiredObjectDeep` from appearing in the resulting type
+											? SimplifyObject<RequiredObjectDeep<T>> // `SimplifyObject` to prevent `RequiredObjectDeep` from appearing in the resulting type
 											: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {

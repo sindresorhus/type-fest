@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, PartialDeep, Simplify} from '../index.d.ts';
+import type {IsEqual, PartialDeep} from '../index.d.ts';
 
 class ClassA {
 	foo = 1;
@@ -114,27 +114,27 @@ expectTypeOf(partialDeepNoRecurseIntoArraysBar.readonlyTuple).toBe<readonly ['fo
 type FunctionWithProperties = {(a1: string, a2: number): boolean; p1: string; readonly p2: number};
 declare const functionWithProperties: PartialDeep<FunctionWithProperties>;
 expectTypeOf(functionWithProperties('foo', 1)).toBe<boolean>();
-expectTypeOf<Simplify<typeof functionWithProperties>>().toBe<{p1?: string; readonly p2?: number}>(); // `Simplify` removes the call signature from `typeof functionWithProperties`
+expectTypeOf<Omit<typeof functionWithProperties, never>>().toBe<{p1?: string; readonly p2?: number}>(); // `Omit` removes the call signature from `typeof functionWithProperties`
 
 type FunctionWithProperties2 = {(a1: boolean, ...a2: string[]): number; p1: {p2?: string; p3: {readonly p4?: boolean}}};
 declare const functionWithProperties2: PartialDeep<FunctionWithProperties2>;
 expectTypeOf(functionWithProperties2(true, 'foo', 'bar')).toBe<number>();
-expectTypeOf<Simplify<typeof functionWithProperties2>>().toBe<{p1?: {p2?: string; p3?: {readonly p4?: boolean}}}>();
+expectTypeOf<Omit<typeof functionWithProperties2, never>>().toBe<{p1?: {p2?: string; p3?: {readonly p4?: boolean}}}>();
 
 type FunctionWithProperties3 = {(): void; p1: {p2?: string; p3: [{p4: number}, string]}};
 declare const functionWithProperties3: PartialDeep<FunctionWithProperties3, {recurseIntoArrays: true}>;
 expectTypeOf(functionWithProperties3()).toBe<void>();
-expectTypeOf<Simplify<typeof functionWithProperties3>>().toBe<{p1?: {p2?: string; p3?: [{p4?: number}?, string?]}}>();
+expectTypeOf<Omit<typeof functionWithProperties3, never>>().toBe<{p1?: {p2?: string; p3?: [{p4?: number}?, string?]}}>();
 
-expectTypeOf<Simplify<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: false}>>>().toBe<{p1?: string[]}>();
-expectTypeOf<Simplify<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: true}>>>().toBe<{p1?: string[]}>();
+expectTypeOf<Omit<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: false}>, never>>().toBe<{p1?: string[]}>();
+expectTypeOf<Omit<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: true}>, never>>().toBe<{p1?: string[]}>();
 
 // Properties within functions containing multiple call signatures are not made partial due to TS limitations, refer https://github.com/microsoft/TypeScript/issues/29732
 type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1: string};
 declare const functionWithProperties4: PartialDeep<FunctionWithProperties4>;
 expectTypeOf(functionWithProperties4(1)).toBe<string>();
 expectTypeOf(functionWithProperties4('foo', 1)).toBe<number>();
-expectTypeOf<Simplify<typeof functionWithProperties4>>().not.toBe<{p1?: string}>();
+expectTypeOf<Omit<typeof functionWithProperties4, never>>().not.toBe<{p1?: string}>();
 
 // `Promise` and its `then` method are not made partial, unlike `Map` and `Set`.
 declare const partialDeepPromise: PartialDeep<Promise<{a: number}>>;

@@ -1,3 +1,4 @@
+import type {SimplifyObject} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {NormalizedKeys} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays} from './internal/type.d.ts';
@@ -6,7 +7,6 @@ import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Merge two object types into a new object type, where keys from the second override keys from the first.
@@ -119,7 +119,7 @@ type _ObjectMerge<
 	NormalizedSecondLiteralKeys extends PropertyKey,
 	NormalizedFirst extends object,
 	NormalizedSecond extends object,
-> = Simplify<{
+> = SimplifyObject<{
 	// Map over literal keys of `Second`, except those that are optional and also present in `First`.
 	-readonly [P in keyof Second as P extends NormalizedSecondLiteralKeys
 		? P extends NormalizedFirstLiteralKeys

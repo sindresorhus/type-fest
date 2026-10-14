@@ -1,7 +1,6 @@
-import type {MapsSetsOrArrays, NonRecursiveType, ReadonlyKeysOfUnion, ValueOfUnion} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType, ReadonlyKeysOfUnion, SimplifyObject, ValueOfUnion} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts';
-import type {Simplify} from './simplify.d.ts';
 
 /**
 Create a type with all fields from a union of object types.
@@ -72,7 +71,7 @@ export type AllUnionFields<Union> =
 		? Exclude<Union, SkippedMembers> extends infer RelevantMembers
 			? // eslint-disable-line @stylistic/operator-linebreak
 			| SkippedMembers
-			| Simplify<
+			| SimplifyObject<
 				// Include fields that are common in all union members
 				SharedUnionFields<RelevantMembers>
 				// Include readonly fields present in any union member

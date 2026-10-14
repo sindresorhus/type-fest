@@ -1,7 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {NonNullableDeep} from '../source/non-nullable-deep.d.ts';
 import type {Primitive} from '../source/primitive.d.ts';
-import type {Simplify} from '../source/simplify.d.ts';
 import type {IsEqual} from '../source/is-equal.d.ts';
 
 expectTypeOf<NonNullableDeep<string | null | undefined>>().toBe<string>();
@@ -81,7 +80,7 @@ expectTypeOf(functionWithProperties(undefined, 1)).toBe<boolean>();
 expectTypeOf(functionWithProperties('foo', undefined)).toBe<boolean>();
 // @ts-expect-error
 expectTypeOf(functionWithProperties('foo', null)).toBe<boolean>();
-expectTypeOf<Simplify<typeof functionWithProperties>>().toBe<{p1: string; readonly p2: number}>(); // `Simplify` removes the call signature from `typeof functionWithProperties`
+expectTypeOf<Omit<typeof functionWithProperties, never>>().toBe<{p1: string; readonly p2: number}>(); // `Omit` removes the call signature from `typeof functionWithProperties`
 
 type FunctionWithProperties2 = {
 	(a1: boolean, ...a2: Array<string | null | undefined>): number;
@@ -93,7 +92,7 @@ expectTypeOf(functionWithProperties2(true, 'foo', 'bar')).toBe<number>();
 expectTypeOf(functionWithProperties2(true, 'foo', 'bar', null)).toBe<number>();
 // @ts-expect-error
 expectTypeOf(functionWithProperties2(true, undefined)).toBe<number>();
-expectTypeOf<Simplify<typeof functionWithProperties2>>().toBe<{p1: {p2?: string}}>();
+expectTypeOf<Omit<typeof functionWithProperties2, never>>().toBe<{p1: {p2?: string}}>();
 
 // Functions containing multiple call signatures are not transformed
 type FunctionWithProperties3 = {
@@ -104,7 +103,7 @@ type FunctionWithProperties3 = {
 declare const functionWithProperties3: NonNullableDeep<FunctionWithProperties3>;
 expectTypeOf(functionWithProperties3(null)).toBe<string | null>();
 expectTypeOf(functionWithProperties3(undefined, undefined)).toBe<number | undefined>();
-expectTypeOf<Simplify<typeof functionWithProperties3>>().toBe<{p1: string | null}>();
+expectTypeOf<Omit<typeof functionWithProperties3, never>>().toBe<{p1: string | null}>();
 
 // `any`, `never`, and `unknown` as nested values
 expectTypeOf<NonNullableDeep<{a: {b: any}; c: never; d: unknown}>>().toBe<{a: {b: any}; c: never; d: unknown}>();
