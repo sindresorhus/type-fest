@@ -212,6 +212,7 @@ A key only some union members have resolves to `undefined` for the others, so `G
 Known limitations:
 - For a numeric segment that lands in the rest of a variadic tuple, answers the union of every element type, so it also includes the positions the tuple declares itself. `Get<{t: [1, [2, {a: string}], ...Array<{b: number}>]}, 't.2'>` is `1 | [2, {a: string}] | {b: number} | undefined` rather than `{b: number} | undefined`, because a variadic tuple has an unbounded `length` and TypeScript cannot recover the rest element type here. A path one level deeper into the rest reads from each of those element types. Positions the tuple declares itself are correct.
 - With `strict` (the default), `undefined` is added for a key read through a `Record<string, …>` or an array, but not for a key read through an index signature on an object that also has named keys (`{a: string; [key: string]: string}`), or through a number index signature.
+- A string path cannot read a key that contains a dot, because every `.` separates two keys. `Get<{'a.b': {c: number}}, 'a.b.c'>` is `unknown`. Use the array form instead: `Get<{'a.b': {c: number}}, ['a.b', 'c']>` is `number`.
 
 @example
 ```

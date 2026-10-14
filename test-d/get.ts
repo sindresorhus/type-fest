@@ -235,6 +235,10 @@ expectTypeOf<Get<{1: 'a'; b: 2}, 1 | 'b'>>().toBe<'a' | 2>();
 expectTypeOf<Get<{1: {2: 'x'}}, 1.2>>().toBe<'x'>();
 expectTypeOf<Get<{1.5: 'x'}, 1.5>>().toBe<unknown>();
 
+// A string path cannot read a key that contains a dot, but the array form can. (https://github.com/sindresorhus/type-fest/issues/1372)
+expectTypeOf<Get<{'a.b': {c: number}}, 'a.b.c'>>().toBe<unknown>();
+expectTypeOf<Get<{'a.b': {c: number}}, ['a.b', 'c']>>().toBe<number>();
+
 // A number path that the subject does not have, or a non-literal `number`, reads like its string form.
 expectTypeOf<Get<{1: 'a'}, 2>>().toBe<unknown>();
 expectTypeOf<Get<{a: 1}, 0, NonStrict>>().toBe<unknown>();
