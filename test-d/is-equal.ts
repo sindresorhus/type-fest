@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, TupleOf} from '../index.d.ts';
+import type {IsEqual, Simplify, SimplifyDeep, TupleOf} from '../index.d.ts';
 
 expectTypeOf<IsEqual<number, string>>().toBe<false>();
 expectTypeOf<IsEqual<1, 1>>().toBe<true>();
@@ -89,3 +89,8 @@ expectTypeOf(equalTupleIntersectionAndTuple).toBe<true>();
 // Test for Issue https://github.com/sindresorhus/type-fest/issues/1305
 type Assignability<T, U, _V extends IsEqual<T, U>> = any;
 type TestAssignability<T> = Assignability<T, T, true>;
+
+// Known limitation: An intersection of object types is not equal to the same type written as one object. `Simplify` and `SimplifyDeep` are the documented workaround.
+expectTypeOf<IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>>().toBe<false>();
+expectTypeOf<IsEqual<Simplify<{a: 0} & {b: 0}>, Simplify<{a: 0; b: 0}>>>().toBe<true>();
+expectTypeOf<IsEqual<SimplifyDeep<{x: {a: 0} & {b: 0}}>, SimplifyDeep<{x: {a: 0; b: 0}}>>>().toBe<true>();

@@ -21,6 +21,8 @@ type Includes<Value extends readonly any[], Item> =
 		: false;
 ```
 
+Note: An intersection of object types is not equal to the same type written as one object, so `IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>` is `false`. Wrap both types in `Simplify`, or `SimplifyDeep` for nested intersections, to compare them as plain objects.
+
 @category Type Guard
 @category Utilities
 */
