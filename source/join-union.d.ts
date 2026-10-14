@@ -1,12 +1,16 @@
 import type {UnionToTuple} from './union-to-tuple.d.ts';
-import type {Join, JoinableItem} from './join.d.ts';
+import type {Join} from './join.d.ts';
+import type {JoinableItem} from './internal/string.d.ts';
 
 /**
-Join a union of strings and/or numbers ({@link JoinableItem `JoinableItems`}) using the given string as a delimiter.
+Join a union of strings and/or numbers using the given string as a delimiter.
 
-Delimiter defaults to `,`.
+The delimiter defaults to `,`, like `Array#join()`.
 
-Note: The order of elements is not guaranteed.
+Use-case: Showing the members of a union in a readable way, like in an error message.
+
+Note: The order of the members is not guaranteed.
+
 @example
 ```
 import type {JoinUnion} from 'type-fest';

@@ -12,6 +12,13 @@ Note: This type is not the return type of the `.toString()` function.
 export type ToString<T> = T extends string | number ? `${T}` : never;
 
 /**
+The types that `Array#join()` can stringify, and which `Join` accepts.
+
+The builtin `join` method supports all these natively in the same way that typescript handles them so we can safely accept all of them.
+*/
+export type JoinableItem = string | number | bigint | boolean | undefined | null;
+
+/**
 Returns a boolean for whether the given string `S` starts with the given string `SearchString`.
 
 @example
