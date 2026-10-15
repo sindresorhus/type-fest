@@ -62,6 +62,8 @@ expectTypeOf(result).toBe<SnakeCasedPropertiesDeep<UserWithFriendsPunctuated, {s
 expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: unknown}>>().toBe<{foo_bar: unknown}>();
 expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: unknown}>>().toBe<{foo_bar: {bar_baz: unknown}; biz: unknown}>();
 
+expectTypeOf<SnakeCasedPropertiesDeep<{Identifiers: {MarketplaceASIN: {MarketplaceId: string; ASIN: string}}}>>().toBe<{identifiers: {marketplace_asin: {marketplace_id: string; asin: string}}}>();
+
 expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: any}>>().toBe<{foo_bar: any}>();
 expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>>().toBe<{foo_bar: {bar_baz: any}; biz: any}>();
 
