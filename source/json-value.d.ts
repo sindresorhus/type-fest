@@ -31,6 +31,22 @@ Note: An `interface` is not assignable to `JsonValue`, because TypeScript does n
 - Make the interface extend `JsonObject`. Optional properties then need `exactOptionalPropertyTypes`.
 - Use `Jsonify` to transform it.
 
+Note: `Array.isArray()` does not narrow away the `readonly JsonValue[]` part of `JsonValue`, because TypeScript types it as `arg is any[]` ([TypeScript#17002](https://github.com/microsoft/TypeScript/issues/17002)). `JsonValue` accepts readonly arrays so that values like `[1, 2] as const` are assignable. To narrow it, use a type guard that also matches readonly arrays:
+
+@example
+```
+import type {JsonValue} from 'type-fest';
+
+const isArray = Array.isArray as (value: unknown) => value is readonly unknown[];
+
+declare const value: JsonValue;
+
+if (typeof value === 'object' && value !== null && !isArray(value)) {
+	const object = value;
+	//=> JsonObject
+}
+```
+
 @see `Jsonify` if you need to transform a type to one that is assignable to `JsonValue`.
 
 @category JSON
