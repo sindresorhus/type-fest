@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {PascalCasedPropertiesDeep, TupleOf} from '../index.d.ts';
+import type {PascalCasedProperties, PascalCasedPropertiesDeep, TupleOf} from '../index.d.ts';
 
 declare const foo: PascalCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
 expectTypeOf(foo).toBe<{HelloWorld: {FooBar: string}}>();
@@ -134,3 +134,10 @@ expectTypeOf(readonlyOptionalTuple).toBe<readonly [string, number?]>();
 declare const longTuple: PascalCasedPropertiesDeep<Readonly<TupleOf<100, {a_b: 1}>>>;
 expectTypeOf(longTuple.length).toBe<100>();
 expectTypeOf(longTuple[99]).toBe<{AB: 1}>();
+
+// A generic conditional return type does not overflow the stack (https://github.com/sindresorhus/type-fest/issues/805)
+declare function _pascalCasedKeys<Value, Deep extends boolean>(value: Value, deep: Deep): Deep extends true ? PascalCasedPropertiesDeep<Value> : PascalCasedProperties<Value>;
+
+function _pascalCasedKeysDeep<Value>(value: Value): PascalCasedPropertiesDeep<Value> {
+	return _pascalCasedKeys(value, true);
+}
