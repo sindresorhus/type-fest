@@ -96,3 +96,13 @@ type WithIndexSignature = {[key: string]: unknown; foo?: string};
 ({foo: 'x', bar: 1}) satisfies RequireAtLeastOne<WithIndexSignature, 'foo'>;
 expectTypeOf({}).not.toBeAssignableTo<RequireAtLeastOne<WithIndexSignature, 'foo'>>();
 expectTypeOf({bar: 1}).not.toBeAssignableTo<RequireAtLeastOne<WithIndexSignature, 'foo'>>();
+
+// Known limitation: a check of a key for `undefined` does not narrow the type, because the keys are not discriminants. The `in` operator narrows it.
+declare const atLeastOne: RequireAtLeastOne<{a: string; b: number}>;
+expectTypeOf(atLeastOne.a ?? atLeastOne.b).toBe<string | number | undefined>();
+expectTypeOf('a' in atLeastOne ? atLeastOne.a : atLeastOne.b).toBe<string | number>();
+expectTypeOf('b' in atLeastOne ? atLeastOne.b : atLeastOne.a).toBe<number | string>();
+
+declare const atLeastOneOfSome: RequireAtLeastOne<{a?: string; b?: number; c: boolean}, 'a' | 'b'>;
+expectTypeOf('a' in atLeastOneOfSome ? atLeastOneOfSome.a : atLeastOneOfSome.b).toBe<string | number>();
+expectTypeOf(atLeastOneOfSome.c).toBe<boolean>();

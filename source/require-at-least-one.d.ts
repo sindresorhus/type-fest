@@ -12,6 +12,8 @@ Note: For a union, a member that has none of the given keys is kept as it is. Fo
 
 Note: An index signature cannot be required, so if the keys include one (for example, the default keys of `Record<string, number>`), the type accepts `{}`.
 
+Note: A check of a key for `undefined` does not narrow the type, because TypeScript only narrows a union through a property with a literal type. For example, with `{a: string; b: string}`, `value.a ?? value.b` is `string | undefined`. Use the `in` operator instead: `'a' in value ? value.a : value.b`.
+
 @example
 ```
 import type {RequireAtLeastOne} from 'type-fest';
