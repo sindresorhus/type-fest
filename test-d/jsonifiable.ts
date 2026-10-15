@@ -56,8 +56,20 @@ interface InnerJson extends JsonObject {
 	foo: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface OuterJsonifiable extends Record<string, Jsonifiable | undefined> {
+	date: Date;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface NonJsonifiableInterface extends Record<string, Jsonifiable | undefined> {
+	// @ts-expect-error
+	map: Map<string, number>;
+}
+
 expectTypeOf<Inner>().not.toBeAssignableTo<Jsonifiable>();
 expectTypeOf<{inner: Inner}>().not.toBeAssignableTo<Jsonifiable>();
 expectTypeOf<Simplify<Outer>>().not.toBeAssignableTo<Jsonifiable>(); // `Simplify` is shallow
 expectTypeOf<SimplifyDeep<Outer>>().toBeAssignableTo<Jsonifiable>();
 expectTypeOf<{inner: InnerJson}>().toBeAssignableTo<Jsonifiable>();
+expectTypeOf<{outer: OuterJsonifiable}>().toBeAssignableTo<Jsonifiable>();
