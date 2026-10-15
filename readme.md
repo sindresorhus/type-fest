@@ -383,6 +383,7 @@ Click the type names for complete docs.
 - [`TitleCase`](https://github.com/sindresorhus/type-fest/pull/303) - It's not solving a common need and is a better fit for a separate package.
 - [`ExtendOr` and `ExtendAnd`](https://github.com/sindresorhus/type-fest/pull/247) - The benefits don't outweigh having to learn what they mean.
 - [`PackageJsonExtras`](https://github.com/sindresorhus/type-fest/issues/371) - There are too many possible configurations that can be put into `package.json`. If you would like to extend `PackageJson` to support an additional configuration in your project, please see the *Extending existing types* section below.
+- [`NarrowBy`](https://github.com/sindresorhus/type-fest/issues/1397) and [`DiscriminateUnion`](https://github.com/sindresorhus/type-fest/issues/528) - Use `Extract<Shape, {kind: 'circle'}>` to keep union members, or an intersection to narrow fields: `SimplifyDeep<SearchResult & {metadata: {__typename: 'Post'}}>`.
 
 ## Alternative type names
 
