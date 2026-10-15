@@ -475,6 +475,14 @@ expectTypeOf<{a: string | undefined}>().not.toBeAssignableTo<JsonObject>();
 expectTypeOf<{a?: string}>().toBeAssignableTo<JsonObject>();
 expectTypeOf<{a?: string | undefined}>().not.toBeAssignableTo<JsonObject>(); // Requires `exactOptionalPropertyTypes` to be enabled
 
+// Known limitation: TypeScript does not check symbol keys against a string index signature. `JSON.stringify` ignores symbol keys, so this is safe. Adding `[key: symbol]: never` to `JsonObject` would block them, but an interface with only a string index signature would then no longer be assignable.
+expectTypeOf<{[key: symbol]: number; a: string}>().toBeAssignableTo<JsonObject>();
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface StringIndexInterface {
+	[key: string]: JsonValue;
+}
+expectTypeOf<StringIndexInterface>().toBeAssignableTo<JsonObject>();
+
 // `JSON.stringify` always passes the property key to `toJSON`, so `toJSON` may declare parameters.
 declare const toJSONWithKey: Jsonify<{toJSON(key: string): string}>;
 expectTypeOf(toJSONWithKey).toBe<string>();
