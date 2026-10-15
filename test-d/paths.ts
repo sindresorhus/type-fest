@@ -709,3 +709,6 @@ expectTypeOf<Paths<{a: Uint8Array}>>().toBe<'a'>();
 
 // A DOM node is a single value, so its members are not paths.
 expectTypeOf<Paths<{a: HTMLElement}>>().toBe<'a'>();
+
+// A key that contains a dot is not escaped, so its path reads like a nested path. (https://github.com/sindresorhus/type-fest/issues/864)
+expectTypeOf<Paths<{'a.b': {c: number}}>>().toBe<'a.b' | 'a.b.c'>();

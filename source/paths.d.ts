@@ -183,6 +183,8 @@ Use-case: You want a type-safe way to access deeply nested properties in an obje
 
 Note: With a `string` index signature at the top level, the result is `string`, because TypeScript merges the other paths, like `` `${string}.a` ``, into `string`. Use {@link PathsOptions.leavesOnly | `leavesOnly`} or {@link PathsOptions.depth | `depth`} to get the nested paths.
 
+Note: A key that contains a dot gives a path that reads like a nested path, because every `.` separates two keys. `Paths<{'a.b': {c: number}}>` includes `'a.b.c'`, which `Get`, `PickDeep`, and the other path types read as `a` → `b` → `c`. To read such a key, use the array form of `Get`: `Get<{'a.b': {c: number}}, ['a.b', 'c']>` is `number`.
+
 @example
 ```
 import type {Paths} from 'type-fest';
