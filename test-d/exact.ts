@@ -173,6 +173,22 @@ import type {Exact, Opaque} from '../index.d.ts';
 		// @ts-expect-error
 		function_(input);
 	}
+
+	// It should accept a union of both types
+	function_({} as {code: ''} | {name: ''});
+
+	// It should reject a union with an excess property on one member
+	// @ts-expect-error
+	function_({} as {code: ''} | {name: ''; id: 1});
+
+	const nested = <T extends Exact<{a?: Type}, T>>(arguments_: T) => arguments_;
+
+	// It should accept a nested union of both types
+	nested({} as {a?: {code: ''} | {name: ''}});
+
+	// It should reject a nested intersection
+	// @ts-expect-error
+	nested({} as {a?: {code: ''; name: ''}});
 }
 
 { // Spec - union - mixture object/primitive

@@ -21,10 +21,12 @@ Create a type from `ParameterType` and `InputType` and change keys exclusive to 
 - Generate a list of keys that exists in `InputType` but not in `ParameterType`.
 - Mark these excess keys as `never`.
 */
-type ExactObject<ParameterType, InputType> = ExactProperties<ParameterType, InputType>
-	// `KeysOfUnion` rather than `keyof`, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would vanish and the member carrying it would be accepted.
+type ExactObject<ParameterType, InputType, InputObject = Exclude<InputType, Primitive | Function | readonly unknown[]>> = ExactProperties<ParameterType, InputType>
 	// Only object members of the input are read, because the keys of a primitive or array member (like `length`), or of a callable member, are not excess keys of this object member.
-	& Record<Exclude<KeysOfUnion<Exclude<InputType, Primitive | Function | readonly unknown[]>>, KeysOfUnion<ParameterType>>, never>;
+	& Record<Exclude<keyof InputObject, KeysOfUnion<ParameterType>>, never>
+	// `KeysOfUnion` rather than `keyof`, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would vanish and the member carrying it would be accepted.
+	// Such a key is optional, because the members without it can be for another member of `ParameterType`, like `{a: 1} | {b: 1}` for `{a: number} | {b: number}`. Without `exactOptionalPropertyTypes`, this also accepts the key with an `undefined` value.
+	& Partial<Record<Exclude<KeysOfUnion<InputObject>, KeysOfUnion<ParameterType>>, never>>;
 
 /**
 Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
