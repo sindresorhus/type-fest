@@ -264,6 +264,32 @@ declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 	}
 }
 
+{ // Spec - index signature with object values
+	const function_ = <T extends Exact<{a: Record<string, {b: string}>}, T>>(arguments_: T) => arguments_;
+
+	// It should accept literal keys
+	function_({} as {a: {x: {b: 'x'}; y: {b: 'y'}}});
+
+	// It should accept an index signature
+	function_({} as {a: Record<string, {b: 'x'}>});
+
+	// It should reject an excess property in one of the values
+	// @ts-expect-error
+	function_({} as {a: {x: {b: 'x'}; y: {b: 'y'; c: 'y'}}});
+
+	const numberFunction = <T extends Exact<Record<number, {b: string}>, T>>(arguments_: T) => arguments_;
+	numberFunction({} as {0: {b: 'x'}});
+	// @ts-expect-error
+	numberFunction({} as {0: {b: 'x'; c: 'x'}});
+
+	const templateFunction = <T extends Exact<Record<`data-${string}`, {b: string}>, T>>(arguments_: T) => arguments_;
+	templateFunction({} as {'data-x': {b: 'x'}});
+	// @ts-expect-error
+	templateFunction({} as {'data-x': {b: 'x'; c: 'x'}});
+	// @ts-expect-error
+	templateFunction({} as {x: {b: 'x'}});
+}
+
 { // Spec - union of array
 	type Type = Array<{x: string}> & Array<{z: number}>;
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;

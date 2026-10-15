@@ -9,8 +9,12 @@ import type {Primitive} from './primitive.d.ts';
 Apply `Exact` to each property of `ParameterType`, with the value of the same key in `InputType`.
 
 The value is read from each member of `InputType` separately, because `keyof` of a union only has the keys that all members share. For an optional or nullable input like `{a: string} | undefined`, `keyof` is `never`, so the value would be `never`, and `Exact<…, never>` accepts no value.
+
+For an index signature key like `string`, the value is the union of the values of all input keys that match it.
 */
-type ExactProperties<ParameterType, InputType> = {[Key in keyof ParameterType]: Exact<ParameterType[Key], InputType extends unknown ? ObjectValue<InputType, Key> : never>};
+type ExactProperties<ParameterType, InputType> = {
+	[Key in keyof ParameterType]: Exact<ParameterType[Key], InputType extends unknown ? ObjectValue<InputType, Key> | InputType[Extract<keyof InputType, Key>] : never>;
+};
 
 /**
 Create a type from `ParameterType` and `InputType` and change keys exclusive to `InputType` to `never`.
