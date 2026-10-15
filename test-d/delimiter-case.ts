@@ -70,6 +70,9 @@ expectTypeOf(delimiterFromString).toBe<string>();
 const delimiterFromScreamingSnake: DelimiterCase<'FOO_BAR', '#'> = 'foo#bar';
 expectTypeOf(delimiterFromScreamingSnake).toBe<'foo#bar'>();
 
+const delimiterFromSeparatorBeforeCapital: DelimiterCase<'Foo Bar_Baz-Qux', '#'> = 'foo#bar#baz#qux';
+expectTypeOf(delimiterFromSeparatorBeforeCapital).toBe<'foo#bar#baz#qux'>();
+
 const delimiterFromMixed2: DelimiterCase<'parseHTML', '#'> = 'parse#html';
 expectTypeOf(delimiterFromMixed2).toBe<'parse#html'>();
 
