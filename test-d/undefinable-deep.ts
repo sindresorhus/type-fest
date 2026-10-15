@@ -279,3 +279,6 @@ expectTypeOf<UndefinableDeep<PartialDeep<{a: {b: string}}>>>().toBe<{a?: {b?: st
 // A generic type is resolved once it is instantiated.
 type Draft<Value> = {value: UndefinableDeep<Value>; dirty: boolean};
 expectTypeOf<Draft<{name: string; tags: string[]}>>().toBe<{value: {name: string | undefined; tags: Array<string | undefined>}; dirty: boolean}>();
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<UndefinableDeep<{element: HTMLElement}>>().toBe<{element: HTMLElement | undefined}>();

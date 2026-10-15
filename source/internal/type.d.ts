@@ -4,6 +4,7 @@ import type {Primitive} from '../primitive.d.ts';
 import type {TypedArray} from '../typed-array.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {ExtendsStrict} from '../extends-strict.d.ts';
+import type {FindGlobalInstanceType} from '../find-global-type.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -21,7 +22,9 @@ export type NonRecursiveLeaf =
 	| ArrayBuffer
 	| SharedArrayBuffer
 	| DataView
-	| TypedArray;
+	| TypedArray
+	// A DOM node, like `HTMLElement` or `Document`. Recursing into it walks the whole DOM. Looked up through `globalThis` so that a `lib` without `DOM` gets `never` here instead of a compile error.
+	| FindGlobalInstanceType<'Node'>;
 
 /**
 Matches non-recursive types: {@link NonRecursiveLeaf} plus thenables (`PromiseLike`), which `await` unwraps rather than walks, and functions.

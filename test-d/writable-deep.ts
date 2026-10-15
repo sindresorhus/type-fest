@@ -221,3 +221,6 @@ expectTypeOf<WritableDeep<readonly [value: {readonly name: string}, count?: numb
 // A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
 declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
 expectTypeOf(handlerWithThis).toBeAssignableTo<WritableDeep<((event: string) => void) & {displayName: string}>>();
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<WritableDeep<{readonly element: HTMLElement}>>().toBe<{element: HTMLElement}>();

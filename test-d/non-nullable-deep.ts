@@ -160,3 +160,6 @@ expectTypeOf(query.query.where('x')).toBe<Query<{a: 1 | null}>>();
 // A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
 declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
 expectTypeOf(handlerWithThis).toBeAssignableTo<NonNullableDeep<((event: string) => void) & {displayName: string}>>();
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<NonNullableDeep<{element: HTMLElement | null}>>().toBe<{element: HTMLElement}>();

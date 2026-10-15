@@ -104,3 +104,6 @@ expectTypeOf(weakMapSkipped).toBe<WeakMap<object, string> | {a: 1}>();
 
 declare const weakSetSkipped: SharedUnionFields<WeakSet<object> | {a: 1}>;
 expectTypeOf(weakSetSkipped).toBe<WeakSet<object> | {a: 1}>();
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<SharedUnionFields<HTMLInputElement | {a: 1}>>().toBe<HTMLInputElement | {a: 1}>();

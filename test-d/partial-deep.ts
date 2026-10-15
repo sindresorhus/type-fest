@@ -204,3 +204,10 @@ expectTypeOf<PartialDeep<PromiseLike<{a: number}>>>().toBe<PromiseLike<{a: numbe
 // A function that declares no `this` is rebuilt without one, rather than with `this: unknown`, which would reject a function that declares a `this`, although the original accepts it.
 declare const handlerWithThis: ((this: Date, event: string) => void) & {displayName: string};
 expectTypeOf(handlerWithThis).toBeAssignableTo<PartialDeep<((event: string) => void) & {displayName: string}>>();
+
+// A DOM node is kept as is, because recursing into it walks the whole DOM and fails. Test for https://github.com/sindresorhus/type-fest/issues/651
+expectTypeOf<PartialDeep<{canvas: HTMLCanvasElement; document: Document; text: Text}>>().toBe<{canvas?: HTMLCanvasElement; document?: Document; text?: Text}>();
+expectTypeOf<PartialDeep<HTMLElement>>().toBe<HTMLElement>();
+expectTypeOf<PartialDeep<HTMLElement | {a: {b: number}}>>().toBe<HTMLElement | {a?: {b?: number}}>();
+expectTypeOf<PartialDeep<{elements: HTMLElement[]}, {recurseIntoArrays: true}>>().toBe<{elements?: HTMLElement[]}>();
+expectTypeOf<{event: MouseEvent}>().toBeAssignableTo<PartialDeep<{event: MouseEvent}>>();

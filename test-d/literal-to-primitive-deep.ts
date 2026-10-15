@@ -231,3 +231,6 @@ expectTypeOf(longTuple.items[99]).toBe<{id: number}>();
 
 // A union member that is as wide as `unknown` together with the others does not stop the rest from being converted.
 expectTypeOf<LiteralToPrimitiveDeep<{a: 'x' | {} | null | undefined}>>().toBe<{a: string | {} | null | undefined}>();
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<LiteralToPrimitiveDeep<{element: HTMLElement}>>().toBe<{element: HTMLElement}>();

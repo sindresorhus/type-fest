@@ -164,3 +164,6 @@ expectTypeOf(sharedArrayBuffer).toBe<{a: SharedArrayBuffer}>();
 [undefined] satisfies UndefinedOnPartialDeep<[string?]>;
 ['value', undefined] satisfies UndefinedOnPartialDeep<readonly [string, number?]>;
 [{name: undefined}] satisfies UndefinedOnPartialDeep<[{name?: string}?]>;
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<UndefinedOnPartialDeep<{element?: HTMLElement}>>().toBe<{element?: HTMLElement | undefined}>();

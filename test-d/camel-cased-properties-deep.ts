@@ -142,3 +142,6 @@ expectTypeOf<CamelCasedPropertiesDeep<{last_error: {name: string; message: strin
 
 // A thenable is a single value like a `Promise`, so it is kept as it is, extra members included.
 expectTypeOf<CamelCasedPropertiesDeep<{foo_bar: PromiseLike<{a_b: 1}> & {extra_key: 1}}>>().toBe<{fooBar: PromiseLike<{a_b: 1}> & {extra_key: 1}}>();
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<CamelCasedPropertiesDeep<{foo_bar: HTMLElement}>>().toBe<{fooBar: HTMLElement}>();

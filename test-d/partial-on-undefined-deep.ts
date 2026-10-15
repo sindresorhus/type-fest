@@ -148,3 +148,6 @@ expectTypeOf(weakMap).toBe<{a: WeakMap<object, {b?: number | undefined}>}>();
 declare const standaloneFunction: PartialOnUndefinedDeep<() => string>;
 expectTypeOf(standaloneFunction()).toBe<string>();
 expectTypeOf<PartialOnUndefinedDeep<Uint8Array>>().toBe<Uint8Array>();
+
+// A DOM node is a single value, so it is kept as is.
+expectTypeOf<PartialOnUndefinedDeep<{element: HTMLElement | undefined}>>().toBe<{element?: HTMLElement | undefined}>();

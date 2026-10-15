@@ -706,3 +706,6 @@ expectTypeOf<Paths<{a: PromiseLike<number> & {extra: {b: 1}}}>>().toBe<'a'>();
 
 // A typed array is a single value, so its indices and methods are not paths.
 expectTypeOf<Paths<{a: Uint8Array}>>().toBe<'a'>();
+
+// A DOM node is a single value, so its members are not paths.
+expectTypeOf<Paths<{a: HTMLElement}>>().toBe<'a'>();
