@@ -2,6 +2,7 @@ import type {JsonPrimitive, JsonValue} from './json-value.d.ts';
 import type {EmptyObject} from './empty-object.d.ts';
 import type {UndefinedToOptional} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
@@ -35,7 +36,15 @@ type JsonifyList<T extends UnknownArray> = T extends readonly []
 				: never
 			: IsUnknown<T[number]> extends true
 				? JsonValue[]
-				: Array<JsonifyListItem<T[number]>>;
+				// Transforming an array that contains itself, like `JsonValue[]` in `JsonValue`, would recurse forever. Keep it when it is already JSON, and otherwise fall back to `JsonValue[]`.
+				: true extends ContainsItself<T>
+					? T extends JsonValue
+						? T
+						: JsonValue[]
+					: Array<JsonifyListItem<T[number]>>;
+
+// Whether the array is one of its own item types. Distributes over the item types so that each one is compared with the array on its own.
+type ContainsItself<T extends UnknownArray, Item = T[number]> = Item extends unknown ? IsEqual<Item, T> : never;
 
 /**
 JSON serialize objects (not including arrays) and classes.
@@ -55,6 +64,8 @@ This includes:
 2. Transforming non-JSON value that is *jsonable* to a type that is assignable to `JsonValue`, where *jsonable* means the non-JSON value implements the `.toJSON()` method that returns a value that is assignable to `JsonValue`.
 
 Note: An enum is already a subtype of `string` or `number`, so it passes through unchanged where a primitive would. `Jsonify<{status: Status}>` is `{status: Status}`, and a plain string is not assignable to it, even though that is what `JSON.parse` gives back. TypeScript cannot tell an enum from a union of the same literals, so nothing here unwraps one. `LiteralToPrimitive` does, so `LiteralToPrimitiveDeep<T>` is the type to reach for when enums should become their primitives.
+
+Note: An array type that contains itself, like `Json[]` in `type Json = string | Json[]`, cannot be transformed without infinite recursion. It stays unchanged when it is already JSON, and otherwise becomes `JsonValue[]`. A cycle through a tuple, like `type Pair = string | [Pair, Pair]`, or through more than one array type, like `type A = string | B[]` with `type B = number | A[]`, is too deep to transform.
 
 @remarks
 

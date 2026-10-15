@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {EmptyObject, Jsonify, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
+import type {EmptyObject, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
 
 // An interface has no implicit index signature, so this checks that `Jsonify` makes it assignable to `JsonValue`.
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -634,3 +634,55 @@ expectTypeOf<Jsonify<[1, {toJSON(): string | undefined}?]>>().toBe<[1] | [1, str
 expectTypeOf<Jsonify<Array<Date | {toJSON(): undefined}>>>().toBe<Array<string | null>>();
 expectTypeOf<Jsonify<Array<Array<{toJSON(): string | undefined}>>>>().toBe<Array<Array<string | null>>>();
 expectTypeOf<Jsonify<Array<{toJSON(): string | undefined}>>>().toBeAssignableTo<JsonValue>();
+
+// The JSON types are already JSON, so they stay unchanged. Their arrays contain `JsonValue` itself, which used to recurse forever.
+expectTypeOf<Jsonify<JsonValue>>().toBe<JsonValue>();
+expectTypeOf<Jsonify<JsonObject>>().toBe<JsonObject>();
+expectTypeOf<Jsonify<JsonArray>>().toBe<JsonArray>();
+expectTypeOf<Jsonify<{value: JsonValue; date: Date}>>().toBe<{value: JsonValue; date: string}>();
+expectTypeOf<Jsonify<Array<JsonValue | Date>>>().toBe<Array<JsonValue | string>>();
+
+// An array that contains itself stays unchanged when it is already JSON, as it would otherwise recurse forever.
+type SelfJson = string | number | boolean | null | SelfJson[] | {[key: string]: SelfJson};
+expectTypeOf<Jsonify<SelfJson>>().toBe<SelfJson>();
+expectTypeOf<Jsonify<SelfJson[]>>().toBe<SelfJson[]>();
+expectTypeOf<Jsonify<SelfJson[][]>>().toBe<SelfJson[][]>();
+expectTypeOf<Jsonify<{data: SelfJson; date: Date}>>().toBe<{data: SelfJson; date: string}>();
+expectTypeOf<Jsonify<[SelfJson, Date]>>().toBe<[SelfJson, string]>();
+expectTypeOf<Jsonify<SelfJson | undefined>>().toBe<SelfJson>();
+
+type ReadonlySelfJson = string | readonly ReadonlySelfJson[];
+expectTypeOf<Jsonify<ReadonlySelfJson>>().toBe<ReadonlySelfJson>();
+
+// An interface that extends `Array`, like Prisma's `JsonArray`.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface InterfaceJsonArray extends Array<InterfaceJsonValue> {}
+type InterfaceJsonValue = string | InterfaceJsonArray;
+expectTypeOf<Jsonify<InterfaceJsonValue>>().toBe<InterfaceJsonValue>();
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface NestedArray extends Array<NestedArray> {}
+expectTypeOf<Jsonify<NestedArray>>().toBe<NestedArray>();
+
+// An array that contains itself and is not already JSON becomes `JsonValue[]`. The other members are still transformed.
+type DateTree = Date | DateTree[];
+expectTypeOf<Jsonify<DateTree>>().toBe<string | JsonValue[]>();
+type ReadonlyDateTree = Date | readonly ReadonlyDateTree[];
+expectTypeOf<Jsonify<ReadonlyDateTree>>().toBe<string | JsonValue[]>();
+type OptionalTree = number | undefined | OptionalTree[];
+expectTypeOf<Jsonify<OptionalTree>>().toBe<number | JsonValue[]>();
+type MixedTree = string | MixedTree[] | {date: Date};
+expectTypeOf<Jsonify<MixedTree>>().toBe<string | JsonValue[] | {date: string}>();
+
+// Like the type that Supabase generates. The `undefined` makes it not JSON.
+type SupabaseJson = string | number | boolean | null | SupabaseJson[] | {[key: string]: SupabaseJson | undefined};
+expectTypeOf<Jsonify<SupabaseJson>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<Extract<Jsonify<SupabaseJson>, unknown[]>>().toBe<JsonValue[]>();
+
+// An array whose item type is a wider array or `any` does not contain itself, so it is transformed as usual.
+expectTypeOf<Jsonify<unknown[][]>>().toBe<JsonValue[][]>();
+expectTypeOf<Jsonify<Array<readonly unknown[]>>>().toBe<JsonValue[][]>();
+expectTypeOf<Jsonify<any[]>>().toBe<any[]>();
+
+// An array of an object that contains the array is not an array that contains itself, so it is transformed as usual.
+type Tree = {created: Date; children: Tree[]};
+expectTypeOf<Jsonify<Tree>['children'][number]['children'][number]['created']>().toBe<string>();
