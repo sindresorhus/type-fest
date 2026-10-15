@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetRequired, Tagged} from '../index.d.ts';
+import type {Except, SetRequired, Tagged} from '../index.d.ts';
 
 // Update one required and one optional to required.
 declare const variation1: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
@@ -202,3 +202,7 @@ expectTypeOf(augmentedArray.tag).toBe<boolean>();
 
 type TaggedTuple = Tagged<[string, number?], 'Tuple'>;
 expectTypeOf<SetRequired<TaggedTuple, never>>().toBe<TaggedTuple>();
+
+// A key that is still present after `Except` on a generic object is accepted.
+type RequiredStatus<ObjectType extends {id: string; status: string}> = SetRequired<Partial<Except<ObjectType, 'id'>>, 'status'>;
+expectTypeOf<RequiredStatus<{id: string; status: 'open'; total: number}>>().toBe<{status: 'open'; total?: number}>();
