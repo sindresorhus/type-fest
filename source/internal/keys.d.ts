@@ -1,6 +1,7 @@
 import type {IsAny} from '../is-any.d.ts';
 import type {IsLiteral} from '../is-literal.d.ts';
 import type {IsUnknown} from '../is-unknown.d.ts';
+import type {UnknownArray} from '../unknown-array.d.ts';
 import type {ToString} from './string.d.ts';
 
 // Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
@@ -94,5 +95,23 @@ export type ExactKey<T extends object, Key extends PropertyKey> =
 					? NumberKey
 					: never
 				: never;
+
+/**
+Returns the keys of `Type` that are not in `Keys`.
+
+For an array, only the indices of its elements are returned, so that the type stays an array instead of becoming an object with its methods as keys.
+
+@example
+```
+type Object = KeysExcept<{a: 1; b: 2; c: 3}, 'a'>;
+//=> 'b' | 'c'
+
+type Tuple = KeysExcept<[string, number, boolean], 0>;
+//=> '1' | '2'
+```
+*/
+export type KeysExcept<Type, Keys> = Type extends UnknownArray
+	? Exclude<keyof Type & `${number}`, `${Keys & (string | number)}`>
+	: Exclude<keyof Type, Keys>;
 
 export {};

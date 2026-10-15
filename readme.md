@@ -141,9 +141,11 @@ Click the type names for complete docs.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional, while keeping the remaining keys as is.
 - [`SetOptionalDeep`](source/set-optional-deep.d.ts) - Create a type that makes the given keys optional, with support for deeply nested key paths, while keeping the remaining keys as is.
+- [`SetOptionalExcept`](source/set-optional-except.d.ts) - Create a type that makes all keys optional except the given keys, which are kept as is.
 - [`SetReadonly`](source/set-readonly.d.ts) - Create a type that makes the given keys readonly, while keeping the remaining keys as is.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required, while keeping the remaining keys as is.
 - [`SetRequiredDeep`](source/set-required-deep.d.ts) - Create a type that makes the given keys required, with support for deeply nested key paths, while keeping the remaining keys as is.
+- [`SetRequiredExcept`](source/set-required-except.d.ts) - Create a type that makes all keys required except the given keys, which are kept as is.
 - [`SetNullable`](source/set-nullable.d.ts) - Create a type that makes the given keys nullable, while keeping the remaining keys as is.
 - [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable, while keeping the remaining keys as is.
 - [`SetNonNullableDeep`](source/set-non-nullable-deep.d.ts) - Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
@@ -389,6 +391,8 @@ Click the type names for complete docs.
 - `Prettify`- See [`Simplify`](source/simplify.d.ts)
 - `Expand`- See [`Simplify`](source/simplify.d.ts)
 - `PartialBy` - See [`SetOptional`](source/set-optional.d.ts)
+- `PartialExcept`, `OptionalExcept`, `OptionalExceptFor`, `PartialOmit` - See [`SetOptionalExcept`](source/set-optional-except.d.ts)
+- `RequiredExcept`, `RequiredExceptFor`, `RequiredOmit` - See [`SetRequiredExcept`](source/set-required-except.d.ts)
 - `RecordDeep`- See [`Schema`](source/schema.d.ts)
 - `Mutable`- See [`Writable`](source/writable.d.ts)
 - `RequireOnlyOne`, `OneOf` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)

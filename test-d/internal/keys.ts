@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, IsLiteral} from '../../index.d.ts';
-import type {ExactKey, FilterDefinedKeys, FilterOptionalKeys, LiteralKeyOf} from '../../source/internal/index.d.ts';
+import type {ExactKey, FilterDefinedKeys, FilterOptionalKeys, KeysExcept, LiteralKeyOf} from '../../source/internal/index.d.ts';
 
 // A property whose type includes `undefined` is optional, one that is only `undefined` is neither.
 expectTypeOf<IsEqual<FilterDefinedKeys<{a: 1; b: string | undefined}>, 'a'>>().toBe<true>();
@@ -59,3 +59,12 @@ expectTypeOf<FilterDefinedKeys<{value: new () => NamedRecord}>>().toBe<never>();
 expectTypeOf<FilterOptionalKeys<{value?: NamedRecord | null}>>().toBe<'value'>();
 expectTypeOf<FilterOptionalKeys<{value: NamedRecord | null | undefined}>>().toBe<'value'>();
 expectTypeOf<FilterDefinedKeys<{value: NamedRecord | {id: number}}>>().toBe<'value'>();
+
+// `KeysExcept` returns only the element indices of an array, so its methods and `length` are not included.
+expectTypeOf<IsEqual<KeysExcept<{a: 1; b: 2; c: 3}, 'a'>, 'b' | 'c'>>().toBe<true>();
+expectTypeOf<IsEqual<KeysExcept<[1, 2, 3], 0>, '1' | '2'>>().toBe<true>();
+expectTypeOf<IsEqual<KeysExcept<[1, 2, 3], '0' | 2>, '1'>>().toBe<true>();
+expectTypeOf<IsEqual<KeysExcept<[1, 2?, 3?], 0>, '1' | '2'>>().toBe<true>();
+expectTypeOf<IsEqual<KeysExcept<[1, ...string[]], never>, '0'>>().toBe<true>();
+expectTypeOf<IsEqual<KeysExcept<[...string[], 1], never>, never>>().toBe<true>();
+expectTypeOf<IsEqual<KeysExcept<string[], never>, never>>().toBe<true>();
