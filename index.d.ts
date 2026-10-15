@@ -161,6 +161,7 @@ export type {Filter, FilterOptions} from './source/filter.d.ts';
 export type {ArrayElement} from './source/array-element.d.ts';
 export type {ArrayLength} from './source/array-length.d.ts';
 export type {ArrayExclude} from './source/array-exclude.d.ts';
+export type {ArrayTrim, ArrayTrimEnd, ArrayTrimOptions, ArrayTrimStart} from './source/array-trim.d.ts';
 export type {ArrayFlat} from './source/array-flat.d.ts';
 export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.ts';
 export type {Paths, PathsOptions} from './source/paths.d.ts';

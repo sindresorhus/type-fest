@@ -57,6 +57,8 @@ npm install type-fest
 
 *Requires TypeScript >=5.9, [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c), and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
 
+*[`{exactOptionalPropertyTypes: true}`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) is recommended. The types are tested with it enabled. Without it, support is best-effort: some results for optional properties and elements are less precise, and fixing that is not a priority.*
+
 > [!NOTE]
 > This readme shows the current development version. For docs about the latest version, see the [npm page](https://www.npmjs.com/package/type-fest).
 
@@ -301,6 +303,9 @@ Click the type names for complete docs.
 - [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 - [`ArrayReverse`](source/array-reverse.d.ts) - Reverse the order of elements in a tuple type.
 - [`ArrayExclude`](source/array-exclude.d.ts) - Remove the elements of the given type from an array type.
+- [`ArrayTrimStart`](source/array-trim.d.ts) - Remove the elements of the given type from the start of an array.
+- [`ArrayTrimEnd`](source/array-trim.d.ts) - Remove the elements of the given type from the end of an array.
+- [`ArrayTrim`](source/array-trim.d.ts) - Remove the elements of the given type from both ends of an array.
 - [`ArrayFlat`](source/array-flat.d.ts) - Flatten an array type to the given depth, like [`Array#flat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat).
 - [`ArrayLength`](source/array-length.d.ts) - Return the length of an array. Equivalent to `T['length']` where `T` extends any array.
 - [`EmptyArray`](source/empty-array.d.ts) - Represents a strictly empty readonly array, implemented as the readonly empty tuple `readonly []`.
