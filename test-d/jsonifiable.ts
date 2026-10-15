@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Jsonifiable} from '../index.d.ts';
+import type {Jsonifiable, JsonObject, Simplify, SimplifyDeep} from '../index.d.ts';
 
 expectTypeOf<1>().toBeAssignableTo<Jsonifiable>();
 expectTypeOf<''>().toBeAssignableTo<Jsonifiable>();
@@ -38,3 +38,26 @@ expectTypeOf(toJSONWithoutKey).toBeAssignableTo<Jsonifiable>();
 
 declare const toJSONReturningMap: {toJSON(): Map<string, number>};
 expectTypeOf(toJSONReturningMap).not.toBeAssignableTo<Jsonifiable>();
+
+// An interface is not assignable, because TypeScript does not give it an implicit index signature.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface Inner {
+	foo: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface Outer {
+	inner: Inner;
+	date: Date;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface InnerJson extends JsonObject {
+	foo: string;
+}
+
+expectTypeOf<Inner>().not.toBeAssignableTo<Jsonifiable>();
+expectTypeOf<{inner: Inner}>().not.toBeAssignableTo<Jsonifiable>();
+expectTypeOf<Simplify<Outer>>().not.toBeAssignableTo<Jsonifiable>(); // `Simplify` is shallow
+expectTypeOf<SimplifyDeep<Outer>>().toBeAssignableTo<Jsonifiable>();
+expectTypeOf<{inner: InnerJson}>().toBeAssignableTo<Jsonifiable>();
