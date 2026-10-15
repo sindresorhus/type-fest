@@ -143,6 +143,13 @@ expectTypeOf(unknownRecord).not.toBeAssignableTo<PackageJson>();
 expectTypeOf(jsonObject).toBeAssignableTo<PackageJson>();
 expectTypeOf(packageJson).toBeAssignableTo<JsonObject>();
 
+// Known limitation: Some nested types include `undefined` in their index signatures, so a value typed with one of them is not a `JsonObject`, and therefore not a `PackageJson`. `satisfies` keeps the literal type, which works.
+// See https://github.com/sindresorhus/type-fest/issues/547
+declare const scripts: PackageJson.Scripts;
+expectTypeOf({scripts}).not.toBeAssignableTo<PackageJson>();
+expectTypeOf({...packageJson, version: '2.0.0'}).not.toBeAssignableTo<PackageJson>();
+expectTypeOf({scripts: {test: 'xo'} satisfies PackageJson.Scripts}).toBeAssignableTo<PackageJson>();
+
 // The type describes a manifest as a reader sees it, so the loose forms npm tolerates when writing are not accepted.
 // @ts-expect-error
 ({keywords: 'modules, stdlib, util'}) satisfies PackageJson;

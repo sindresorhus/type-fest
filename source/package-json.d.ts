@@ -754,6 +754,21 @@ export namespace PackageJson {
 /**
 Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file). Also includes types for fields used by other popular projects, like TypeScript and Yarn.
 
+Note: A value typed with a nested type that has an index signature, like `PackageJson.Scripts`, is not assignable to `PackageJson`, and neither is a spread with extra properties, like `{...packageJson, version: '2.0.0'}`. These index signatures include `undefined` to make reads of unknown keys safe, but `PackageJson` is also a `JsonObject`, which does not allow `undefined`. To fix it, do one of these:
+- For a nested value, use `satisfies` instead of a type annotation.
+- For a spread, copy the object first and then change the copy.
+
+@example
+```
+import type {PackageJson} from 'type-fest';
+
+const scripts = {test: 'xo'} satisfies PackageJson.Scripts;
+const packageJson: PackageJson = {scripts};
+
+const updatedPackageJson: PackageJson = {...packageJson};
+updatedPackageJson.version = '2.0.0';
+```
+
 @category File
 */
 export type PackageJson =
