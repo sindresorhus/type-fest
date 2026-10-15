@@ -578,6 +578,73 @@ declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 	function_({} as Expected);
 }
 
+// Spec - nested object under an optional or nullable property, where the input type is not equal to the parameter type
+// @see https://github.com/sindresorhus/type-fest/issues/483
+{
+	type SmallType = {one: string; two?: string};
+	type IntermediateType = {intermediate?: SmallType};
+	type FinalType = {final?: IntermediateType};
+
+	class SmallClass implements Exact<SmallType, SmallClass> {
+		one = '';
+	}
+
+	class IntermediateClass implements Exact<IntermediateType, IntermediateClass> {
+		intermediate?: SmallClass;
+	}
+
+	class FinalClass implements Exact<FinalType, FinalClass> {
+		final?: IntermediateClass;
+	}
+
+	class SmallClassWithExcess {
+		one = '';
+		excess = '';
+	}
+
+	class FinalClassWithExcess implements Exact<FinalType, FinalClassWithExcess> {
+		// @ts-expect-error
+		final?: {intermediate?: SmallClassWithExcess};
+	}
+
+	const optional = <T extends Exact<{a?: {b: {c: string}}}, T>>(arguments_: T) => arguments_;
+	optional({} as {a?: {b: {c: 'x'}}});
+	optional({} as {} | {a: {b: {c: 'x'}}});
+	optional({} as {a?: {b: {c: 'x'}}} | {a: {b: {c: 'y'}}});
+	optional({} as {a?: any});
+	optional({} as {a?: never});
+	// @ts-expect-error
+	optional({} as {a?: {b: {c: 'x'; d: 'x'}}});
+	// @ts-expect-error
+	optional({} as {} | {a: {b: {c: 'x'; d: 'x'}}});
+	// @ts-expect-error
+	optional({} as {a?: {b: {c: 'x'}}} | {a: {b: {c: 'y'; d: 'x'}}});
+	// @ts-expect-error
+	optional({} as {a?: {b: {c: 1}}});
+	// @ts-expect-error
+	optional({} as {a?: {b: {}}});
+
+	const nullable = <T extends Exact<{a: {b: {c: string}} | null}, T>>(arguments_: T) => arguments_;
+	nullable({} as {a: {b: {c: 'x'}} | null});
+	// @ts-expect-error
+	nullable({} as {a: {b: {c: 'x'; d: 'x'}} | null});
+
+	const optionalNullable = <T extends Exact<{a?: {b: {c: string}} | null}, T>>(arguments_: T) => arguments_;
+	optionalNullable({} as {a?: {b: {c: 'x'}} | null});
+	// @ts-expect-error
+	optionalNullable({} as {a?: {b: {c: 'x'; d: 'x'}} | null});
+
+	const tuple = <T extends Exact<{a?: [{b: string}]}, T>>(arguments_: T) => arguments_;
+	tuple({} as {a?: [{b: 'x'}]});
+	// @ts-expect-error
+	tuple({} as {a?: [{b: 'x'; c: 'x'}]});
+
+	const array = <T extends Exact<{a?: Array<{b: {c: string}}>}, T>>(arguments_: T) => arguments_;
+	array({} as {a?: Array<{b: {c: 'x'}}>});
+	// @ts-expect-error
+	array({} as {a?: Array<{b: {c: 'x'; d: 'x'}}>});
+}
+
 { // Spec - tuple
 	type Type = [string, number];
 	const function_ = <T extends Exact<Type, T>>(arguments_: T) => arguments_;
