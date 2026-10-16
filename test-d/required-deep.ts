@@ -44,8 +44,8 @@ expectTypeOf<[[{a: string}, {b: number; c: string}], ...Array<[boolean, boolean]
 
 // Non-tuple arrays
 expectTypeOf<string[]>().toBe<RequiredDeep<string[]>>();
-expectTypeOf<string[]>().toBe<RequiredDeep<Array<string | undefined>>>();
-expectTypeOf<readonly string[]>().toBe<RequiredDeep<ReadonlyArray<string | undefined>>>();
+expectTypeOf<Required<Array<string | undefined>>>().toBe<RequiredDeep<Array<string | undefined>>>(); // TypeScript 7.1 keeps an explicit `undefined` element under `exactOptionalPropertyTypes`
+expectTypeOf<Required<ReadonlyArray<string | undefined>>>().toBe<RequiredDeep<ReadonlyArray<string | undefined>>>();
 
 // Maps
 expectTypeOf<Map<{a: string; b: number}, {a: string; b: number}>>().toBe<RequiredDeep<Map<{a?: string; b?: number}, {a?: string; b?: number}>>>();
