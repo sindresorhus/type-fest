@@ -402,6 +402,8 @@ Click the type names for complete docs.
 - `RequireOnlyOne`, `OneOf` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](source/require-one-or-none.d.ts)
 - `AllKeys` - See [`KeysOfUnion`](source/keys-of-union.d.ts)
+- `OptionalKeys` - See [`OptionalKeysOf`](source/optional-keys-of.d.ts)
+- `RequiredKeys` - See [`RequiredKeysOf`](source/required-keys-of.d.ts)
 - `Branded` - See [`Tagged`](source/tagged.d.ts)
 - `Opaque` - See [`Tagged`](source/tagged.d.ts)
 - `SetElement` - See [`IterableElement`](source/iterable-element.d.ts)
