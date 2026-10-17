@@ -1,3 +1,5 @@
+import type {RequireAtLeastOne} from './require-at-least-one.d.ts'; // For `@link`
+
 /**
 Matches any non-empty tuple.
 

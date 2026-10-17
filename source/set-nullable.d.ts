@@ -1,4 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {SetNonNullable} from './set-non-nullable.d.ts'; // For `@link`
 
 /**
 Create a type that makes the given keys nullable, while keeping the remaining keys as is.

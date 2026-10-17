@@ -3,6 +3,8 @@ import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith} from './internal
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Merge} from './merge.d.ts';
 import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
+import type {KebabCase} from './kebab-case.d.ts'; // For `@link`
+import type {SnakeCase} from './snake-case.d.ts'; // For `@link`
 
 export type _DefaultDelimiterCaseOptions = Merge<_DefaultWordsOptions, {splitOnNumbers: false}>;
 

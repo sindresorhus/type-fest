@@ -1,5 +1,6 @@
 import type {HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {RequiredDeep} from './required-deep.d.ts'; // For `@link`
 
 /**
 Recursively removes `null` and `undefined` from the specified type.

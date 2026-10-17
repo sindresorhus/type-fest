@@ -1,4 +1,5 @@
 import type {IsLiteral} from './is-literal.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts'; // For `@link`
 
 /**
 Extract the literal types from a union, removing wide types like `string` and infinite string types like `` `on${string}` ``.

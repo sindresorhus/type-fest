@@ -55,7 +55,7 @@ export {};
 
 Type params: `Value`, `Target`, `Item`, `Length`, `Element`, `Key` (not `T`, `U`, `V`, `K`)
 Docs: No `*` prefix. First line → readme. Include use-cases, examples, `@category`.
-Link other types with `{@link Simplify}`, and `import type` the linked type with a ``// For `@link` `` comment so the link resolves in editors.
+Link other types with `{@link Simplify}`, and `import type` the linked type with a ``// For `@link` `` comment so the link resolves in editors. The `type-fest/jsdoc-link-imports` lint rule enforces this, and `npx xo --fix` adds the imports.
 
 ## Testing
 

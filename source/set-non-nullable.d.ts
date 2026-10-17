@@ -3,6 +3,7 @@ import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {SetNullable} from './set-nullable.d.ts'; // For `@link`
 
 /**
 Create a type that makes the given keys non-nullable, while keeping the remaining keys as is.

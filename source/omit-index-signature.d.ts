@@ -1,3 +1,5 @@
+import type {PickIndexSignature} from './pick-index-signature.d.ts'; // For `@link`
+
 /**
 Omit any index signatures from the given object type, leaving only explicitly defined properties.
 

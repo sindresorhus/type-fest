@@ -2,6 +2,7 @@ import type {NonRecursiveType, UnionMin, TupleLength, StaticPartOfArray, Variabl
 import type {UnionMax} from './union-max.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {SharedUnionFields} from './shared-union-fields.d.ts'; // For `@link`
 
 /**
 Options for the `SharedUnionFieldsDeep` type.

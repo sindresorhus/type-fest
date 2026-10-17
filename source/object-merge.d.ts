@@ -7,6 +7,7 @@ import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
+import type {Merge} from './merge.d.ts'; // For `@link`
 
 /**
 Merge two object types into a new object type, where keys from the second override keys from the first.

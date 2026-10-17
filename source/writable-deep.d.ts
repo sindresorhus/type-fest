@@ -1,5 +1,6 @@
 import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {Writable} from './writable.d.ts'; // For `@link`
 
 /**
 Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.

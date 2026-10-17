@@ -4,6 +4,8 @@ import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {If} from './if.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {ObjectMerge} from './object-merge.d.ts'; // For `@link`
+import type {Spread} from './spread.d.ts'; // For `@link`
 
 // Merges two objects without worrying about index signatures.
 type SimpleMerge<Destination, Source> = SimplifyObject<{

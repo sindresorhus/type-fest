@@ -1,6 +1,7 @@
 import type {CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {PascalCase} from './pascal-case.d.ts';
+import type {PascalCasedPropertiesDeep} from './pascal-cased-properties-deep.d.ts'; // For `@link`
 
 /**
 Convert top-level object properties to pascal case.

@@ -1,7 +1,8 @@
-import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
+import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {CasedPropertiesDeep} from './internal/cased-properties-deep.d.ts';
 import type {WordsOptions} from './words.d.ts';
+import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts'; // For `@link`
 
 /**
 Convert object properties to a custom string delimiter casing recursively.

@@ -2,6 +2,8 @@ import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
 import type {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
+import type {KebabCase} from './kebab-case.d.ts'; // For `@link`
+import type {KebabCasedProperties} from './kebab-cased-properties.d.ts'; // For `@link`
 
 /**
 Convert object properties to kebab case recursively.

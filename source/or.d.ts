@@ -1,4 +1,6 @@
 import type {OrAll} from './or-all.d.ts';
+import type {And} from './and.d.ts'; // For `@link`
+import type {Xor} from './xor.d.ts'; // For `@link`
 
 /**
 Returns a boolean for whether either of two given types is `true`.

@@ -1,4 +1,6 @@
 import type {AllExtend} from './all-extend.d.ts';
+import type {And} from './and.d.ts'; // For `@link`
+import type {OrAll} from './or-all.d.ts'; // For `@link`
 
 /**
 Returns a boolean for whether all of the given elements are `true`.

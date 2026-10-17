@@ -1,3 +1,5 @@
+import type {Promisable} from './promisable.d.ts'; // For `@link`
+
 /**
 Create a type that represents either the value or an array of the value.
 

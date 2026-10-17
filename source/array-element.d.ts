@@ -1,4 +1,6 @@
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {ArrayValues} from './array-values.d.ts'; // For `@link`
+import type {IterableElement} from './iterable-element.d.ts'; // For `@link`
 
 /**
 Extracts the element type of an array or tuple.

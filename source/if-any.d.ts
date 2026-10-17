@@ -1,4 +1,5 @@
 import type {IsAny} from './is-any.d.ts';
+import type {If} from './if.d.ts'; // For `@link`
 
 /**
 An if-else-like type that resolves depending on whether the given type is `any`.

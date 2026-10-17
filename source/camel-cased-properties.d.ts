@@ -1,5 +1,6 @@
 import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {CamelCasedPropertiesDeep} from './camel-cased-properties-deep.d.ts'; // For `@link`
 
 /**
 Convert top-level object properties to camel case.

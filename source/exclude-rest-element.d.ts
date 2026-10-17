@@ -2,6 +2,7 @@ import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {ExtractRestElement} from './extract-rest-element.d.ts'; // For `@link`
 
 /**
 Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.

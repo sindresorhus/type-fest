@@ -1,3 +1,5 @@
+import type {OmitIndexSignature} from './omit-index-signature.d.ts'; // For `@link`
+
 /**
 Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 

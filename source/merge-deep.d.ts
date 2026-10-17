@@ -1,7 +1,7 @@
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {And} from './and.d.ts';
-import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts'; // For `@link`
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Merge} from './merge.d.ts';

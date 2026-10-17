@@ -7,6 +7,7 @@ import type {SetNonNullable} from './set-non-nullable.d.ts';
 import type {StringToNumber} from './string-to-number.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {SetRequiredDeep} from './set-required-deep.d.ts'; // For `@link`
 
 /**
 Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.

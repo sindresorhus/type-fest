@@ -1,5 +1,7 @@
 import type {IsArrayOfUnknownLength, NonRecursiveLeaf} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {PartialDeep} from './partial-deep.d.ts'; // For `@link`
+import type {UndefinedOnPartialDeep} from './undefined-on-partial-deep.d.ts'; // For `@link`
 
 /**
 Create a deep version of another type where leaf values also accept `undefined`, keeping object containers present.

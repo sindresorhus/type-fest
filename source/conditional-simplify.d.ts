@@ -1,3 +1,5 @@
+import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts'; // For `@link`
+
 /**
 Simplifies a type while including and/or excluding certain types from being simplified.
 

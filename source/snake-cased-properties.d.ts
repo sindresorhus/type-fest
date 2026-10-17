@@ -2,6 +2,8 @@ import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
 import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
+import type {SnakeCase} from './snake-case.d.ts'; // For `@link`
+import type {SnakeCasedPropertiesDeep} from './snake-cased-properties-deep.d.ts'; // For `@link`
 
 /**
 Convert top-level object properties to snake case.

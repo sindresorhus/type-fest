@@ -1,5 +1,7 @@
 import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {SharedUnionFieldsDeep} from './shared-union-fields-deep.d.ts'; // For `@link`
+import type {AllUnionFields} from './all-union-fields.d.ts'; // For `@link`
 
 /**
 Create a type with shared fields from a union of object types.

@@ -3,6 +3,8 @@ import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
+import type {ExtractRestElement} from './extract-rest-element.d.ts'; // For `@link`
+import type {ExcludeRestElement} from './exclude-rest-element.d.ts'; // For `@link`
 
 /**
 {@link SplitOnRestElement} options.

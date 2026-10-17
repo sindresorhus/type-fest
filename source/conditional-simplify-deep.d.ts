@@ -1,3 +1,5 @@
+import type {SimplifyDeep} from './simplify-deep.d.ts'; // For `@link`
+
 /**
 Recursively simplifies a type while including and/or excluding certain types from being simplified.
 

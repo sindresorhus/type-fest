@@ -1,3 +1,5 @@
+import type {ArrayValues} from './array-values.d.ts'; // For `@link`
+
 /**
 Provides valid indices for a constant array or tuple.
 

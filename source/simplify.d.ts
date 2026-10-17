@@ -1,3 +1,5 @@
+import type {SimplifyDeep} from './simplify-deep.d.ts'; // For `@link`
+
 /**
 Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
 

@@ -1,3 +1,5 @@
+import type {ObjectEntries} from './entries.d.ts'; // For `@link`
+
 type MapKey<BaseType> = BaseType extends ReadonlyMap<infer KeyType, unknown> ? KeyType : never;
 type MapValue<BaseType> = BaseType extends ReadonlyMap<unknown, infer ValueType> ? ValueType : never;
 

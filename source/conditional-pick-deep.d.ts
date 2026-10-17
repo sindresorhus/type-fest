@@ -4,6 +4,7 @@ import type {UnknownRecord} from './unknown-record.d.ts';
 import type {IsEmptyObject} from './empty-object.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {ApplyDefaultOptions, IsPlainObject} from './internal/index.d.ts';
+import type {ConditionalPick} from './conditional-pick.d.ts'; // For `@link`
 
 /**
 Assert the condition according to the {@link ConditionalPickDeepOptions.condition|condition} option.

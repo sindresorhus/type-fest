@@ -1,6 +1,8 @@
 import type {CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {CasedPropertiesDeep} from './internal/cased-properties-deep.d.ts';
+import type {PascalCase} from './pascal-case.d.ts'; // For `@link`
+import type {PascalCasedProperties} from './pascal-cased-properties.d.ts'; // For `@link`
 
 /**
 Convert object properties to pascal case recursively.

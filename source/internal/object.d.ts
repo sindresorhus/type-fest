@@ -8,6 +8,7 @@ import type {IsNever} from '../is-never.d.ts';
 import type {StringToNumber} from '../string-to-number.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
+import type {LiteralUnion} from '../literal-union.d.ts'; // For `@link`
 import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';

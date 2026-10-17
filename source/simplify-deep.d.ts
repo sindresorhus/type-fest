@@ -1,6 +1,7 @@
 import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {Simplify} from './simplify.d.ts'; // For `@link`
 
 /**
 Deeply simplifies an object type.

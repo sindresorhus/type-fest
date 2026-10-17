@@ -4,6 +4,7 @@ import type {Absolute} from './absolute.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {ReverseSign} from './internal/index.d.ts';
+import type {IntClosedRange} from './int-closed-range.d.ts'; // For `@link`
 
 /**
 Generate a union of numbers between a specified start (inclusive) and end (exclusive), with an optional step.

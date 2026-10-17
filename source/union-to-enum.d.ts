@@ -1,4 +1,5 @@
 import type {IsLiteral} from './is-literal.d.ts';
+import type {TupleToEnum} from './tuple-to-enum.d.ts'; // For `@link`
 
 /**
 Create an enum-like object type from a union of property keys, where each key maps to itself.
