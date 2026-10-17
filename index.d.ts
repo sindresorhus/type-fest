@@ -117,6 +117,7 @@ export type {ReadonlyTuple} from './source/readonly-tuple.d.ts';
 export type {OverrideProperties} from './source/override-properties.d.ts';
 export type {RenameKeys} from './source/rename-keys.d.ts';
 export type {OptionalKeysOf} from './source/optional-keys-of.d.ts';
+export type {DefaultsFor} from './source/defaults-for.d.ts';
 export type {IsOptionalKeyOf} from './source/is-optional-key-of.d.ts';
 export type {HasOptionalKeys} from './source/has-optional-keys.d.ts';
 export type {RequiredKeysOf} from './source/required-keys-of.d.ts';

@@ -110,6 +110,7 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 - One concept per PR
 - Descriptive names > brevity
 - No unrelated changes
+- Do not add entries to the readme "Declined types" section. The issue or pull request thread keeps the reason.
 
 ## Troubleshooting
 
