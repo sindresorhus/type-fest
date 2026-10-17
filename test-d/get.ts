@@ -3,7 +3,7 @@ import type {DigitCharacter, Get, Paths} from '../index.d.ts';
 
 type NonStrict = {strict: false};
 
-declare const get: <ObjectType, Path extends string | readonly string[]>(object: ObjectType, path: Path) => Get<ObjectType, Path, NonStrict>;
+declare const get: <ObjectType, Path extends string | ReadonlyArray<string | number>>(object: ObjectType, path: Path) => Get<ObjectType, Path, NonStrict>;
 
 type ApiResponse = {
 	hits: {
@@ -43,6 +43,7 @@ declare const withDictionary: WithDictionary;
 
 // Should work with const array literal (non-const array is just a `string[]` and isn't useful)
 expectTypeOf(get(withDictionary, ['baz', 'something', 'qux', '0', 'x'] as const)).toBe<boolean>();
+expectTypeOf(get(withDictionary, ['baz', 'something', 'qux', 0, 'x'] as const)).toBe<boolean>();
 
 // Should work with dynamic keys
 declare const someKey: string;
@@ -255,6 +256,33 @@ expectTypeOf<Get<{1.5: 'x'}, 1.5>>().toBe<unknown>();
 // A string path cannot read a key that contains a dot, but the array form can. (https://github.com/sindresorhus/type-fest/issues/1372)
 expectTypeOf<Get<{'a.b': {c: number}}, 'a.b.c'>>().toBe<unknown>();
 expectTypeOf<Get<{'a.b': {c: number}}, ['a.b', 'c']>>().toBe<number>();
+
+// A number in an array path reads the same key as its string form.
+type WithArrays = {
+	list: Array<{name: string}>;
+	tuple: [string, {id: number}];
+	1: {2: boolean};
+};
+expectTypeOf<Get<WithArrays, ['list', 0, 'name']>>().toBe<string | undefined>();
+expectTypeOf<Get<WithArrays, ['list', 0, 'name']>>().toBe<Get<WithArrays, ['list', '0', 'name']>>();
+expectTypeOf<Get<WithArrays, ['list', 0, 'name']>>().toBe<Get<WithArrays, 'list[0].name'>>();
+expectTypeOf<Get<WithArrays, ['list', 0, 'name'], NonStrict>>().toBe<string>();
+expectTypeOf<Get<WithArrays, ['tuple', 0]>>().toBe<string>();
+expectTypeOf<Get<WithArrays, ['tuple', 1, 'id']>>().toBe<number>();
+expectTypeOf<Get<WithArrays, ['tuple', 2]>>().toBe<unknown>();
+expectTypeOf<Get<WithArrays, [1, 2]>>().toBe<boolean>();
+expectTypeOf<Get<WithArrays, readonly ['list', 0]>>().toBe<{name: string} | undefined>();
+expectTypeOf<Get<string[][], [number, number], NonStrict>>().toBe<string>();
+expectTypeOf<Get<WithArrays, ['list', number, 'name'], NonStrict>>().toBe<string>();
+expectTypeOf<Get<WithArrays, [0]>>().toBe<unknown>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, [-1]>>().toBe<unknown>();
+
+// A number in an array path is one segment, even if it has a dot.
+expectTypeOf<Get<{1.5: 'x'}, [1.5]>>().toBe<'x'>();
+expectTypeOf<Get<{1: {5: 'x'}}, [1.5]>>().toBe<unknown>();
+
+// @ts-expect-error
+type InvalidSegment = Get<WithArrays, ['list', true]>;
 
 // A number path that the subject does not have, or a non-literal `number`, reads like its string form.
 expectTypeOf<Get<{1: 'a'}, 2>>().toBe<unknown>();

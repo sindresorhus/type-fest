@@ -23,15 +23,15 @@ type DefaultGetOptions = {
 };
 
 /**
-Like the `Get` type but receives an array of strings as a path parameter.
+Like the `Get` type but receives an array of strings and numbers as a path parameter.
 */
 type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 	Keys extends readonly []
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
 			? GetWithPath<
-				PropertyOf<BaseType, Extract<Head, string>, Options>,
-				Extract<Tail, string[]>,
+				PropertyOf<BaseType, ToString<Head>, Options>,
+				Tail,
 				Options
 			>
 			: never;
@@ -208,7 +208,7 @@ Get a deeply-nested property from an object using a key path, like [Lodash's `.g
 
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
 
-A path can also be a number, such as `Get<string[], 0>`, read like its string form, so `Get<BaseType, Paths<BaseType>>` works for a generic `BaseType`.
+A path can also be a number, such as `Get<string[], 0>`, read like its string form, so `Get<BaseType, Paths<BaseType>>` works for a generic `BaseType`. A number in an array path is read the same way, so `['users', 0, 'name']` and `['users', '0', 'name']` are the same path.
 
 A key only some union members have resolves to `undefined` for the others, so `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>` is `string | undefined`. A key no member has resolves to `unknown`.
 
@@ -221,7 +221,7 @@ Known limitations:
 ```
 import type {Get} from 'type-fest';
 
-declare function get<BaseType, const Path extends string | readonly string[]>(object: BaseType, path: Path): Get<BaseType, Path>;
+declare function get<BaseType, const Path extends string | ReadonlyArray<string | number>>(object: BaseType, path: Path): Get<BaseType, Path>;
 
 type ApiResponse = {
 	hits: {
@@ -244,8 +244,8 @@ const getName = (apiResponse: ApiResponse) => get(apiResponse, 'hits.hits[0]._so
 // 	family: string;
 // }[] | undefined
 
-// Path also supports a readonly array of strings
-const getNameWithPathArray = (apiResponse: ApiResponse) => get(apiResponse, ['hits', 'hits', '0', '_source', 'name']);
+// Path also supports a readonly array of strings and numbers
+const getNameWithPathArray = (apiResponse: ApiResponse) => get(apiResponse, ['hits', 'hits', 0, '_source', 'name']);
 //=> (apiResponse: ApiResponse) => {
 // 	given: string[];
 // 	family: string;
@@ -265,7 +265,7 @@ type B = Get<Record<string, string>, 'foo', {strict: true}>;
 */
 export type Get<
 	BaseType,
-	Path extends string | number | readonly string[],
+	Path extends string | number | ReadonlyArray<string | number>,
 	Options extends GetOptions = {},
 > =
 	GetWithPath<
