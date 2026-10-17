@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {NonNullableDeep, Paths, Subtract, UnknownArray} from '../index.d.ts';
+import type {Get, NonNullableDeep, Paths, Subtract, Tagged, UnknownArray} from '../index.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
 declare const normal: Paths<{foo: string}>;
@@ -383,6 +383,14 @@ expectTypeOf(nonNullableCircularLeaves).toBe<'value' | 'next.value' | 'next.next
 declare const emptyObjectLeaves: Paths<{a: {}}, {leavesOnly: true}>;
 expectTypeOf(emptyObjectLeaves).toBe<'a'>();
 
+// An object with only symbol keys has no paths, so it is a leaf like an empty object
+declare const symbolKey: unique symbol;
+declare const symbolKeyLeaves: Paths<{a: {[symbolKey]: number}; b: {[x: symbol]: string}; c: Tagged<{}, 'Empty'>; d: string}, {leavesOnly: true}>;
+expectTypeOf(symbolKeyLeaves).toBe<'a' | 'b' | 'c' | 'd'>();
+
+declare const symbolKeyNestedLeaves: Paths<{a: Tagged<{b: string}, 'Tag'>; c: {[symbolKey]: number; d: {e: string}}}, {leavesOnly: true}>;
+expectTypeOf(symbolKeyNestedLeaves).toBe<'a.b' | 'c.d.e'>();
+
 declare const emptyArrayLeaves: Paths<{a: []}, {leavesOnly: true}>;
 expectTypeOf(emptyArrayLeaves).toBe<'a'>();
 
@@ -631,6 +639,291 @@ expectTypeOf(neverDepth).toBe<never>();
 
 declare const anyDepth: Paths<DeepObject, {depth: any}>;
 expectTypeOf(anyDepth).toBe<'a' | 'a.b.c' | `a.b2.${number}` | 'a.b3' | 'a.b' | 'a.b2' | 'a.b.c.d'>();
+
+// -- recurseIntoArrays option --
+type ArraysObject = {
+	filename: string;
+	listA: string[];
+	listB: [{filename: string}];
+	folder: {
+		name: string;
+		files: ReadonlyArray<{name: string}>;
+	};
+};
+
+expectTypeOf<Paths<ArraysObject, {recurseIntoArrays: false}>>().toBe<'filename' | 'listA' | 'listB' | 'folder' | 'folder.name' | 'folder.files'>();
+expectTypeOf<Paths<ArraysObject, {recurseIntoArrays: true}>>().toBe<Paths<ArraysObject>>();
+expectTypeOf<Paths<DeepObject, {recurseIntoArrays: false}>>().toBe<Exclude<DeepPath, `a.b2.${number}`>>();
+
+// Every kind of array and tuple is a stop
+expectTypeOf<Paths<{a: readonly string[]; b: readonly [{c: string}]; d: []; e: [string, number?]}, {recurseIntoArrays: false}>>().toBe<'a' | 'b' | 'd' | 'e'>();
+expectTypeOf<Paths<{a: [{b: string}, ...Array<{c: string}>]; d: [...string[], {e: string}]}, {recurseIntoArrays: false}>>().toBe<'a' | 'd'>();
+expectTypeOf<Paths<{a: string[][]; b: Array<Array<{c: string}>>}, {recurseIntoArrays: false}>>().toBe<'a' | 'b'>();
+expectTypeOf<Paths<{a?: Array<{b: string}>; readonly c: {d?: [number]}}, {recurseIntoArrays: false}>>().toBe<'a' | 'c' | 'c.d'>();
+
+// A root array or tuple has no paths
+expectTypeOf<Paths<string[], {recurseIntoArrays: false}>>().toBe<never>();
+expectTypeOf<Paths<readonly [{a: string}, number], {recurseIntoArrays: false}>>().toBe<never>();
+expectTypeOf<Paths<RecursionArray, {recurseIntoArrays: false}>>().toBe<never>();
+expectTypeOf<Paths<Array<{b: string}> | {a: string}, {recurseIntoArrays: false}>>().toBe<'a'>();
+
+// Objects in a union with an array are still walked
+expectTypeOf<Paths<{a: string[] | {b: number}}, {recurseIntoArrays: false}>>().toBe<'a' | 'a.b'>();
+expectTypeOf<Paths<{a: Array<{b: string}> | null}, {recurseIntoArrays: false}>>().toBe<'a'>();
+
+// Numeric object keys, array-like objects, and numeric index signatures are not arrays
+expectTypeOf<Paths<{a: {1: {b: string}}}, {recurseIntoArrays: false}>>().toBe<'a' | 'a.1' | 'a.1.b'>();
+expectTypeOf<Paths<{a: {0: string; length: number}}, {recurseIntoArrays: false}>>().toBe<'a' | 'a.0' | 'a.length'>();
+expectTypeOf<Paths<{a: {[x: number]: {b: string}}}, {recurseIntoArrays: false}>>().toBe<'a' | `a.${number}` | `a.${number}.b`>();
+
+// Recursive types
+expectTypeOf<Paths<Tree<string>, {recurseIntoArrays: false}>>().toBe<'value' | 'children'>();
+expectTypeOf<Paths<{node: {next: Array<{node: RecursiveFoo}>}}, {recurseIntoArrays: false}>>().toBe<'node' | 'node.next'>();
+
+// With `leavesOnly`, an array or tuple is a leaf
+expectTypeOf<Paths<ArraysObject, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<'filename' | 'listA' | 'listB' | 'folder.name' | 'folder.files'>();
+expectTypeOf<Paths<{a: string[] | {b: number}}, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<'a' | 'a.b'>();
+expectTypeOf<Paths<{a: Array<{b: string}> | {c: {d: string}}}, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<'a' | 'a.c.d'>();
+expectTypeOf<Paths<{a: Record<string, {b: string[]}>}, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<`a.${string}.b`>();
+
+// With other options
+expectTypeOf<Paths<{a: string[]; b: {c: string[]}}, {recurseIntoArrays: false; depth: 1}>>().toBe<'b.c'>();
+expectTypeOf<Paths<{a: {b: string[]; c: {d: string}}}, {recurseIntoArrays: false; depth: 2}>>().toBe<'a.c.d'>();
+expectTypeOf<Paths<{a: [{b: string}]; 1: {c: string}}, {recurseIntoArrays: false; bracketNotation: true}>>().toBe<'a' | '[1]' | '[1].c'>();
+expectTypeOf<Paths<{a: {b: string[]; c: {d: {e: string}}}}, {recurseIntoArrays: false; maxRecursionDepth: 2; leavesOnly: true}>>().toBe<'a.b' | 'a.c.d'>();
+expectTypeOf<Paths<Tree<string>, {recurseIntoArrays: false; maxCircularDepth: 0; leavesOnly: true}>>().toBe<'value' | 'children'>();
+
+// A non-literal `boolean` or `any` works like the default
+expectTypeOf<Paths<ArraysObject, {recurseIntoArrays: boolean}>>().toBe<Paths<ArraysObject>>();
+expectTypeOf<Paths<ArraysObject, {recurseIntoArrays: any}>>().toBe<Paths<ArraysObject>>();
+
+// `any`, `never`, and `unknown`
+expectTypeOf<Paths<any, {recurseIntoArrays: false}>>().toBe<never>();
+expectTypeOf<Paths<never, {recurseIntoArrays: false}>>().toBe<never>();
+expectTypeOf<Paths<unknown, {recurseIntoArrays: false}>>().toBe<never>();
+expectTypeOf<Paths<{a: any[]; b: never[]; c: unknown[]; d: any; e: unknown; f: never}, {recurseIntoArrays: false}>>().toBe<'a' | 'b' | 'c' | 'd' | 'e' | 'f'>();
+expectTypeOf<Paths<{a: any[]; b: never[]; c: unknown[]}, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<'a' | 'b' | 'c'>();
+
+// Generic types
+type RecurseIntoArraysConstraint<ObjectType, Path extends Paths<ObjectType, {recurseIntoArrays: false}>> = Path;
+type GenericWithArray<Type> = {foo: Type[]; bar: {baz: Type}};
+type RecurseIntoArraysTest1<Type> = RecurseIntoArraysConstraint<GenericWithArray<Type>, 'foo'>;
+type RecurseIntoArraysTest2<Type> = RecurseIntoArraysConstraint<GenericWithArray<Type>, 'bar'>;
+// @ts-expect-error
+type RecurseIntoArraysTest3<Type> = RecurseIntoArraysConstraint<GenericWithArray<Type>, `foo.${number}`>;
+
+// Without arrays, the result is the same as the default
+expectTypeOf<Paths<CircularFoo, {recurseIntoArrays: false}>>().toBe<Paths<CircularFoo>>();
+expectTypeOf<Paths<CircularFoo, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<Paths<CircularFoo, {leavesOnly: true}>>();
+
+// A union of a tuple and an array is a stop
+expectTypeOf<Paths<{a: [{b: string}] | Array<{c: string}>}, {recurseIntoArrays: false}>>().toBe<'a'>();
+
+// Arrays in a record and under optional keys
+expectTypeOf<Paths<{a: Record<'x' | 'y', string[]>}, {recurseIntoArrays: false}>>().toBe<'a' | 'a.x' | 'a.y'>();
+expectTypeOf<Paths<{a?: {b?: Array<{c: string}>}}, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<'a.b'>();
+
+// A nullable array is a leaf
+expectTypeOf<Paths<{a: string[] | undefined; b: Array<{c: string}> | null}, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<'a' | 'b'>();
+
+// Maps and sets are stops anyway
+expectTypeOf<Paths<{a: Map<string, {b: string}>; c: ReadonlySet<{d: string}>}, {recurseIntoArrays: false; leavesOnly: true}>>().toBe<'a' | 'c'>();
+
+// `ArrayLike` is an object, not an array
+expectTypeOf<Paths<{a: ArrayLike<{b: string}>}, {recurseIntoArrays: false}>>().toBe<'a' | 'a.length' | `a.${number}` | `a.${number}.b`>();
+
+// With `depth: 0`
+expectTypeOf<Paths<ArraysObject, {recurseIntoArrays: false; depth: 0}>>().toBe<'filename' | 'listA' | 'listB' | 'folder'>();
+
+// With `maxCircularDepth`, without `leavesOnly`
+type ArrayNode = {name: string; parent: ArrayNode; children: ArrayNode[]};
+expectTypeOf<Paths<ArrayNode, {recurseIntoArrays: false; maxCircularDepth: 1}>>().toBe<'name' | 'parent' | 'children' | 'parent.name' | 'parent.parent' | 'parent.children'>();
+
+// With `bracketNotation`, numeric object keys still use brackets
+expectTypeOf<Paths<{a: {0: string[]}}, {recurseIntoArrays: false; bracketNotation: true}>>().toBe<'a' | 'a[0]'>();
+
+// `Get` resolves every leaf path, including the paths to arrays
+expectTypeOf<Get<ArraysObject, Paths<ArraysObject, {recurseIntoArrays: false; leavesOnly: true}>>>().toBe<string | string[] | [{filename: string}] | ReadonlyArray<{name: string}>>();
+
+// In a function parameter
+declare function setField<ObjectType extends object>(object: ObjectType, path: Paths<ObjectType, {recurseIntoArrays: false}>): void;
+declare const post: {title: string; tags: string[]; author: {name: string; links: Array<{url: string}>}};
+setField(post, 'tags');
+setField(post, 'author.links');
+// @ts-expect-error
+setField(post, 'tags.0');
+// @ts-expect-error
+setField(post, 'author.links.0.url');
+
+// -- requiredOnly option --
+type OptionalKeysObject = {
+	filename: string;
+	size?: number;
+	options: {
+		timeout?: number;
+	};
+	folder: {
+		name: string;
+		subfolder?: {
+			filename: string;
+		};
+	};
+};
+
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: true}>>().toBe<'filename' | 'options' | 'folder' | 'folder.name'>();
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: false}>>().toBe<Paths<OptionalKeysObject>>();
+expectTypeOf<Paths<{a?: string; b?: {c: string}}, {requiredOnly: true}>>().toBe<never>();
+expectTypeOf<Paths<{readonly a?: string; readonly b: {readonly c?: string; d: string}}, {requiredOnly: true}>>().toBe<'b' | 'b.d'>();
+
+// Only the `?` modifier makes a key optional
+expectTypeOf<Paths<{a: {b: string} | undefined; c?: string}, {requiredOnly: true}>>().toBe<'a' | 'a.b'>();
+expectTypeOf<Paths<{a?: {b: string} | undefined}, {requiredOnly: true}>>().toBe<never>();
+
+// Each union member is checked separately
+expectTypeOf<Paths<{a?: string; b: string} | {a: string; c?: string}, {requiredOnly: true}>>().toBe<'a' | 'b'>();
+expectTypeOf<Paths<{a: {b?: {d: string}; c: string} | {b: string}}, {requiredOnly: true}>>().toBe<'a' | 'a.b' | 'a.c'>();
+expectTypeOf<Paths<{a: string | {b?: string}}, {requiredOnly: true}>>().toBe<'a'>();
+
+// Arrays and tuples
+expectTypeOf<Paths<{a: Array<{b?: {c: string}; d: string}>}, {requiredOnly: true}>>().toBe<'a' | `a.${number}` | `a.${number}.d`>();
+expectTypeOf<Paths<{a: [string, {b?: number; c: number}?]}, {requiredOnly: true}>>().toBe<'a' | 'a.0'>();
+expectTypeOf<Paths<[string, number?], {requiredOnly: true}>>().toBe<'0'>();
+expectTypeOf<Paths<{a: [number?, ...string[]]}, {requiredOnly: true}>>().toBe<'a' | `a.${number}`>();
+
+// Numeric keys
+expectTypeOf<Paths<{1?: string; 2: {3?: string; 4: string}}, {requiredOnly: true}>>().toBe<2 | '2' | '2.4'>();
+expectTypeOf<Paths<{1?: string; 2: {3?: string; 4: string}}, {requiredOnly: true; bracketNotation: true}>>().toBe<'[2]' | '[2][4]'>();
+
+// Index signatures are not optional
+expectTypeOf<Paths<{a: {[x: Uppercase<string>]: {c: string}; b?: {c: string}}}, {requiredOnly: true}>>().toBe<'a' | `a.${Uppercase<string>}` | `a.${Uppercase<string>}.c`>();
+expectTypeOf<Paths<{a: Record<string, {b?: string; c: string}>}, {requiredOnly: true; leavesOnly: true}>>().toBe<`a.${string}.c`>();
+
+// Recursive types
+type OptionalRecursive = {value: string; next?: OptionalRecursive; child: OptionalRecursive};
+expectTypeOf<Paths<OptionalRecursive, {requiredOnly: true; maxCircularDepth: 1}>>().toBe<'value' | 'child' | 'child.value' | 'child.child'>();
+type OptionalLinkedNode = {value: string; next?: OptionalLinkedNode};
+expectTypeOf<Paths<OptionalLinkedNode, {requiredOnly: true}>>().toBe<'value'>();
+
+// With `leavesOnly`, an object or tuple whose keys are all optional is a leaf
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: true; leavesOnly: true}>>().toBe<'filename' | 'options' | 'folder.name'>();
+expectTypeOf<Paths<{a: {b?: string}; c: string}, {leavesOnly: true}>>().toBe<'a.b' | 'c'>(); // Without `requiredOnly`, the optional key is a path
+expectTypeOf<Paths<{a: {b?: {c: string}; d: {e?: string}}}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a.d'>();
+expectTypeOf<Paths<{a: [number?]; b: [string, number?]}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a' | 'b.0'>();
+expectTypeOf<Paths<{a: string[]; b: [number?, ...string[]]}, {requiredOnly: true; leavesOnly: true}>>().toBe<`a.${number}` | `b.${number}`>();
+expectTypeOf<Paths<{a: {[x: string]: string}}, {requiredOnly: true; leavesOnly: true}>>().toBe<`a.${string}`>();
+expectTypeOf<Paths<{a: {b?: string} | {c: string}}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a' | 'a.c'>();
+expectTypeOf<Paths<{a: readonly [number?]; b: readonly [string, number?]}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a' | 'b.0'>();
+expectTypeOf<Paths<{a: {b?: string} | null; c: any; d: never; e: unknown}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a' | 'c' | 'd' | 'e'>();
+
+// With other options
+expectTypeOf<Paths<{a?: {b: string}; c: {d?: string; e: {f: string}}}, {requiredOnly: true; depth: 1}>>().toBe<'c.e'>();
+expectTypeOf<Paths<{a?: string[]; b: Array<{c?: string; d: string}>}, {requiredOnly: true; recurseIntoArrays: false}>>().toBe<'b'>();
+expectTypeOf<Paths<{1: {2?: string}; x: [string, {y?: 1}]}, {requiredOnly: true; leavesOnly: true; bracketNotation: true}>>().toBe<'[1]' | 'x[0]' | 'x[1]'>();
+expectTypeOf<Paths<{a: {b?: string; c: {d?: string}}}, {requiredOnly: true; maxRecursionDepth: 1; leavesOnly: true}>>().toBe<'a.c'>();
+
+// Intersections and built-in objects
+expectTypeOf<Paths<{a?: string} & {b: {c?: string}}, {requiredOnly: true}>>().toBe<'b'>();
+expectTypeOf<Paths<{a: Map<string, {b?: 1}>; c: Date; d?: Date}, {requiredOnly: true}>>().toBe<'a' | 'c'>();
+
+// A non-literal `boolean` or `any` works like the default
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: boolean}>>().toBe<Paths<OptionalKeysObject>>();
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: any}>>().toBe<Paths<OptionalKeysObject>>();
+
+// `any`, `never`, and `unknown`
+expectTypeOf<Paths<any, {requiredOnly: true}>>().toBe<never>();
+expectTypeOf<Paths<never, {requiredOnly: true}>>().toBe<never>();
+expectTypeOf<Paths<unknown, {requiredOnly: true}>>().toBe<never>();
+expectTypeOf<Paths<{a?: any; b: any; c?: never; d: never; e?: unknown; f: unknown}, {requiredOnly: true}>>().toBe<'b' | 'd' | 'f'>();
+
+// Generic types
+type RequiredOnlyConstraint<ObjectType, Path extends Paths<ObjectType, {requiredOnly: true}>> = Path;
+type GenericWithOptional<Type> = {foo: Type; bar?: {baz: Type}};
+type RequiredOnlyTest1<Type> = RequiredOnlyConstraint<GenericWithOptional<Type>, 'foo'>;
+// @ts-expect-error
+type RequiredOnlyTest2<Type> = RequiredOnlyConstraint<GenericWithOptional<Type>, 'bar'>;
+
+declare function getRequiredPath<ObjectType extends object>(object: ObjectType, path: Paths<ObjectType, {requiredOnly: true}>): void;
+declare const requiredOnlyConfig: {name: string; owner?: {name: string}; settings: {theme: string; font?: string}};
+getRequiredPath(requiredOnlyConfig, 'settings.theme');
+// @ts-expect-error
+getRequiredPath(requiredOnlyConfig, 'owner.name');
+// @ts-expect-error
+getRequiredPath(requiredOnlyConfig, 'settings.font');
+
+// Without optional keys, the result is the same as the default
+expectTypeOf<Paths<DeepObject, {requiredOnly: true}>>().toBe<DeepPath>();
+expectTypeOf<Paths<DeepObject, {requiredOnly: true; leavesOnly: true}>>().toBe<Paths<DeepObject, {leavesOnly: true}>>();
+expectTypeOf<Paths<Tree<string>, {requiredOnly: true}>>().toBe<Paths<Tree<string>>>();
+expectTypeOf<Paths<ArraysObject, {requiredOnly: true; leavesOnly: true}>>().toBe<Paths<ArraysObject, {leavesOnly: true}>>();
+expectTypeOf<Paths<{a: {[symbolKey]: number}; b: string}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a' | 'b'>();
+
+// `undefined` and `null` values of required keys are included
+expectTypeOf<Paths<{a: undefined; b?: undefined; c: null; d?: null}, {requiredOnly: true}>>().toBe<'a' | 'c'>();
+
+// An optional key whose type includes `undefined` is still optional
+expectTypeOf<Paths<{a?: {b: string} | undefined; c: {d?: string | undefined; e: string}}, {requiredOnly: true}>>().toBe<'c' | 'c.e'>();
+
+// `Partial` and `Required`
+expectTypeOf<Paths<Partial<OptionalKeysObject>, {requiredOnly: true}>>().toBe<never>();
+expectTypeOf<Paths<Required<OptionalKeysObject>, {requiredOnly: true}>>().toBe<'filename' | 'size' | 'options' | 'folder' | 'folder.name'>(); // `Required` is shallow
+expectTypeOf<Paths<{a: Partial<{b: string; c: {d: string}}>}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a'>();
+expectTypeOf<Paths<{a?: Required<{b?: string}>; c: Required<{d?: {e?: string}}>}, {requiredOnly: true}>>().toBe<'c' | 'c.d'>();
+
+// Optional methods
+expectTypeOf<Paths<{a?(): void; b(): void; c: {d?: () => void}}, {requiredOnly: true; leavesOnly: true}>>().toBe<'b' | 'c'>();
+
+// A union of objects whose keys are all optional is a leaf
+expectTypeOf<Paths<{a: {b?: string} | {c?: string}}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a'>();
+
+// An optional key whose value is a union with a primitive
+expectTypeOf<Paths<{a?: string | {b: string}; c: {d?: string} | undefined}, {requiredOnly: true; leavesOnly: true}>>().toBe<'c'>();
+
+// Symbol keys are ignored, so a tagged object whose keys are all optional is a leaf
+expectTypeOf<Paths<{name: string; settings: Tagged<{theme?: string; font?: string}, 'Settings'>}, {requiredOnly: true; leavesOnly: true}>>().toBe<'name' | 'settings'>();
+expectTypeOf<Paths<{a: Tagged<{b: string; c?: string}, 'Tag'>}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a.b'>();
+expectTypeOf<Paths<{a: {[symbolKey]: number; b?: string}; c: {[x: symbol]: string; d?: string}}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a' | 'c'>();
+expectTypeOf<Paths<{a: Tagged<{b?: string}, 'Tag'> | {c: string}}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a' | 'a.c'>();
+expectTypeOf<Paths<Tagged<{b?: string; c: string}, 'Tag'>, {requiredOnly: true}>>().toBe<'c'>();
+
+// A root tuple whose elements are all optional has no paths
+expectTypeOf<Paths<[string?, number?], {requiredOnly: true}>>().toBe<never>();
+expectTypeOf<Paths<readonly [string?], {requiredOnly: true}>>().toBe<never>();
+
+// The `number` index of a root array is not optional
+expectTypeOf<Paths<string[], {requiredOnly: true}>>().toBe<number | `${number}`>();
+
+// Tuples
+expectTypeOf<Paths<{a: [{b?: string; c: string}, {d?: string}?]}, {requiredOnly: true; leavesOnly: true}>>().toBe<'a.0.c'>();
+
+// Template literal index signatures are not optional
+expectTypeOf<Paths<{a: {[x: `on${string}`]: () => void; onClick?: () => void}}, {requiredOnly: true}>>().toBe<'a' | `a.on${string}`>();
+
+// Interfaces and classes
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface OptionalInterface {
+	name: string;
+	parent?: OptionalInterface;
+	settings: {theme?: string; language: string};
+}
+expectTypeOf<Paths<OptionalInterface, {requiredOnly: true}>>().toBe<'name' | 'settings' | 'settings.language'>();
+
+declare class OptionalClass {
+	name: string;
+	nickname?: string;
+	address: {city: string; zip?: string};
+}
+expectTypeOf<Paths<OptionalClass, {requiredOnly: true}>>().toBe<'name' | 'address' | 'address.city'>();
+
+// With `depth: 0` and `maxRecursionDepth: 0`
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: true; depth: 0}>>().toBe<'filename' | 'options' | 'folder'>();
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: true; maxRecursionDepth: 0}>>().toBe<'filename' | 'options' | 'folder'>();
+expectTypeOf<Paths<OptionalKeysObject, {requiredOnly: true; maxRecursionDepth: 0; leavesOnly: true}>>().toBe<'filename' | 'options' | 'folder'>();
+
+// With `recurseIntoArrays: false` and `leavesOnly`
+expectTypeOf<Paths<{a: string[]; b?: number[]; c: {d: Array<{e?: string}>; f?: string}}, {requiredOnly: true; recurseIntoArrays: false; leavesOnly: true}>>().toBe<'a' | 'c.d'>();
+
+// `Get` resolves every path without the `undefined` of an optional key
+expectTypeOf<Get<OptionalKeysObject, Paths<OptionalKeysObject, {requiredOnly: true; leavesOnly: true}>>>().toBe<string | {timeout?: number}>();
 
 // Index signatures
 declare const indexSignature: Paths<{[x: string]: {a: string; b: number}}>;

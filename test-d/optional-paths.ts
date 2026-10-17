@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {OmitDeep, OptionalPaths, PickDeep} from '../index.d.ts';
+import type {OmitDeep, OptionalPaths, Paths, PickDeep} from '../index.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
@@ -191,3 +191,37 @@ type NumericKeys = {0?: string; 1: number};
 expectTypeOf<OmitDeep<NumericKeys, OptionalPaths<NumericKeys>>>().toBe<{1: number}>();
 type ArrayOfObjects = {items: Array<{name: string; note?: string}>};
 expectTypeOf<OmitDeep<ArrayOfObjects, OptionalPaths<ArrayOfObjects>>>().toBe<{items: Array<{name: string}>}>();
+
+// Composes with `Paths` to get the paths that do not go through an optional key. This uses `Exclude` instead of `Paths<OmitDeep<…>>`, because `Exclude` also handles tuples and recursive types, and stays below the instantiation depth limit on large types. The `requiredOnly` option of `Paths` does this in one pass, but checks each union member separately, so it keeps a key that is required in one member.
+type NonOptionalPaths<T extends object> = Exclude<Paths<T>, OptionalPaths<T> | `${OptionalPaths<T>}.${string}`>;
+expectTypeOf<NonOptionalPaths<UserFields>>().toBe<'id' | 'preferences' | 'preferences.theme'>();
+expectTypeOf<NonOptionalPaths<{filename: string; size?: number; folder: {name: string; subfolder?: {filename: string}}}>>().toBe<'filename' | 'folder' | 'folder.name'>();
+expectTypeOf<NonOptionalPaths<ArrayOfObjects>>().toBe<'items' | `items.${number}` | `items.${number}.name`>();
+expectTypeOf<NonOptionalPaths<{list: [string, {a?: number; b: number}?]}>>().toBe<'list' | 'list.0'>();
+expectTypeOf<NonOptionalPaths<Tuple>>().toBe<'0'>();
+expectTypeOf<NonOptionalPaths<{a: string | undefined; b?: string}>>().toBe<'a'>(); // Only the `?` modifier makes a key optional
+expectTypeOf<NonOptionalPaths<{a?: string; b: string} | {a: string; c?: string}>>().toBe<'b'>(); // A key optional in one union member is left out
+type LinkedNode = {value: string; next?: LinkedNode};
+expectTypeOf<NonOptionalPaths<LinkedNode>>().toBe<'value'>();
+
+declare function getRequired<T extends object>(object: T, path: NonOptionalPaths<T>): void;
+declare const project: {name: string; owner?: {name: string}; settings: {theme: string; font?: string}};
+getRequired(project, 'settings.theme');
+// @ts-expect-error
+getRequired(project, 'owner.name');
+// @ts-expect-error
+getRequired(project, 'settings.font');
+
+// Gives the same paths as the `requiredOnly` option of `Paths`, except for unions and optional numeric keys
+type RequiredOnlyPaths<T> = Paths<T, {requiredOnly: true}>;
+expectTypeOf<NonOptionalPaths<UserFields>>().toBe<RequiredOnlyPaths<UserFields>>();
+expectTypeOf<NonOptionalPaths<ArrayOfObjects>>().toBe<RequiredOnlyPaths<ArrayOfObjects>>();
+expectTypeOf<NonOptionalPaths<Tuple>>().toBe<RequiredOnlyPaths<Tuple>>();
+expectTypeOf<NonOptionalPaths<LinkedNode>>().toBe<RequiredOnlyPaths<LinkedNode>>();
+type MixedOptional = {a: Array<{b?: string; c: [number, {d?: string; e: string}?]}>; f?: {g: string}; h: {i: string | undefined; j?: undefined}};
+expectTypeOf<NonOptionalPaths<MixedOptional>>().toBe<RequiredOnlyPaths<MixedOptional>>();
+expectTypeOf<NonOptionalPaths<MixedOptional>>().toBe<'a' | `a.${number}` | `a.${number}.c` | `a.${number}.c.0` | 'h' | 'h.i'>();
+
+// `requiredOnly` also leaves out the number form of an optional numeric key, which `Exclude` misses because `OptionalPaths` only gives the string form
+expectTypeOf<NonOptionalPaths<NumericKeys>>().toBe<0 | 1 | '1'>();
+expectTypeOf<RequiredOnlyPaths<NumericKeys>>().toBe<1 | '1'>();

@@ -5,6 +5,8 @@ import type {GreaterThan} from './greater-than.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Sum} from './sum.d.ts';
 import type {And} from './and.d.ts';
+import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {OptionalPaths} from './optional-paths.d.ts'; // For `@link`
 import type {NonNullableDeep} from './non-nullable-deep.d.ts'; // For `@link`
 
 /**
@@ -183,6 +185,76 @@ export type PathsOptions = {
 	```
 	*/
 	depth?: number;
+
+	/**
+	Include paths to the elements of arrays and tuples.
+
+	When `false`, the path to an array or tuple is still included, but the paths to its elements are not. With {@link PathsOptions.leavesOnly | `leavesOnly`}, the path to an array or tuple then counts as a leaf. If the given type is itself an array or tuple, the result is `never`.
+
+	Use-case: The paths are used with an API that cannot address array elements, like Firestore field paths.
+
+	@default true
+
+	@example
+	```
+	import type {Paths} from 'type-fest';
+
+	type Project = {
+		filename: string;
+		listA: string[];
+		listB: [{filename: string}];
+		folder: {
+			name: string;
+		};
+	};
+
+	type AllPaths = Paths<Project, {recurseIntoArrays: true}>;
+	//=> 'filename' | 'listA' | 'listB' | 'folder' | `listA.${number}` | 'listB.0' | 'listB.0.filename' | 'folder.name'
+
+	type WithoutArrayPaths = Paths<Project, {recurseIntoArrays: false}>;
+	//=> 'filename' | 'listA' | 'listB' | 'folder' | 'folder.name'
+
+	type LeafPaths = Paths<Project, {recurseIntoArrays: false; leavesOnly: true}>;
+	//=> 'filename' | 'listA' | 'listB' | 'folder.name'
+	```
+	*/
+	recurseIntoArrays?: boolean;
+
+	/**
+	Only include paths that do not go through an optional key.
+
+	A key is optional when it has the `?` modifier, so a required key whose type includes `undefined` is still included. Index signatures are not optional, and neither is the `number` index of an array or of a tuple with a rest element. For a union, each member is checked separately, so a key that is optional in one member but required in another is included. With {@link PathsOptions.leavesOnly | `leavesOnly`}, an object whose keys are all optional, or a tuple whose elements are all optional, counts as a leaf, like an empty object.
+
+	Use-case: Get the paths to the properties that must be present, like the required fields of a config. To get the paths to optional keys instead, use {@link OptionalPaths}.
+
+	@default false
+
+	@example
+	```
+	import type {Paths} from 'type-fest';
+
+	type Project = {
+		filename: string;
+		size?: number;
+		options: {
+			timeout?: number;
+		};
+		folder: {
+			name: string;
+			subfolder?: {
+				filename: string;
+			};
+		};
+	};
+
+	type RequiredPaths = Paths<Project, {requiredOnly: true}>;
+	//=> 'filename' | 'options' | 'folder' | 'folder.name'
+
+	type RequiredLeafPaths = Paths<Project, {requiredOnly: true; leavesOnly: true}>;
+	//=> 'filename' | 'options' | 'folder.name'
+	```
+	*/
+	requiredOnly?: boolean;
 };
 
 type DefaultPathsOptions = {
@@ -191,7 +263,35 @@ type DefaultPathsOptions = {
 	bracketNotation: false;
 	leavesOnly: false;
 	depth: number;
+	recurseIntoArrays: true;
+	requiredOnly: false;
 };
+
+/**
+The types that `Paths` does not recurse into.
+*/
+type NonRecursivePathsType<Options extends Required<PathsOptions>> =
+	| NonRecursiveType
+	| Exclude<MapsSetsOrArrays, UnknownArray>
+	| (Options['recurseIntoArrays'] extends false ? UnknownArray : never);
+
+/**
+The optional keys of the given object, which `Paths` leaves out with `requiredOnly`.
+*/
+type KeysToSkip<T extends object, Options extends Required<PathsOptions>> = Options['requiredOnly'] extends true ? OptionalKeysOf<T> : never;
+
+/**
+Whether every key of the given object, or every element of the given tuple, is optional. Symbol keys are ignored, because `Paths` leaves them out.
+*/
+type HasOnlyOptionalKeys<Value> = Value extends UnknownArray
+	? number extends Value['length'] // A non-tuple array or a tuple with a rest element has an index that is not optional.
+		? false
+		: [] extends Value
+			? true
+			: false
+	: Value extends object
+		? IsNever<Exclude<keyof Value & (string | number), OptionalKeysOf<Value>>>
+		: false;
 
 /**
 Generate a union of all possible paths to properties in the given object.
@@ -256,21 +356,22 @@ type LeafPaths = Paths<Users, {leavesOnly: true}>;
 export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
 
 type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends number = 0, Seen extends unknown[] = []> =
-	T extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
+	T extends NonRecursivePathsType<Options>
 		? never
 		: IsAny<T> extends true
 			? never
 			: T extends object
 				? number extends Options['maxCircularDepth']
 					// No limit, so skip tracking the seen types, which would prevent TypeScript from reusing instantiations
-					? InternalPaths<Required<T>, Options, CurrentDepth, Seen>
+					? InternalPaths<Required<T>, Options, CurrentDepth, Seen, KeysToSkip<T, Options>>
 					: GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends true // Limit the depth of circular references
 						? never
-						: InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T]>
+						: InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T], KeysToSkip<T, Options>>
 				: never;
 
-type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number, Seen extends unknown[]> =
-	{[Key in keyof T]: Key extends string | number // Limit `Key` to `string | number`
+// `T` has its `?` modifiers removed, so the optional keys to skip are passed in as `SkippedKey`.
+type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number, Seen extends unknown[], SkippedKey> =
+	{[Key in keyof T]: Key extends SkippedKey ? never : Key extends string | number // Leave out the keys in `SkippedKey`, and limit `Key` to `string | number`
 		? (
 			And<Options['bracketNotation'], IsNumberLike<Key>> extends true
 				? `[${Key}]`
@@ -285,13 +386,15 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 					: IsNever<T[Key]> extends true
 						? TransformedKey
 						: T[Key] extends infer Value // For distributing `T[Key]`
-							? (Value extends readonly [] | NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
+							? (Value extends readonly [] | NonRecursivePathsType<Options>
 								? TransformedKey
-								: IsNever<keyof Value> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`.
+								: IsNever<keyof Value & (string | number)> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`. Symbol keys are ignored, because they have no paths.
 									? TransformedKey
-									: GreaterThan<CountExactInArray<Seen, Value>, Options['maxCircularDepth']> extends true // The path terminates at the circular reference limit, just like it does at `maxRecursionDepth`.
+									: (Options['requiredOnly'] extends true ? HasOnlyOptionalKeys<Value> : false) extends true // With `requiredOnly`, a value whose keys are all optional has no paths, so it counts as a leaf like an empty object.
 										? TransformedKey
-										: never)
+										: GreaterThan<CountExactInArray<Seen, Value>, Options['maxCircularDepth']> extends true // The path terminates at the circular reference limit, just like it does at `maxRecursionDepth`.
+											? TransformedKey
+											: never)
 							: never // Should never happen
 				: TransformedKey
 			) extends infer _TransformedKey
