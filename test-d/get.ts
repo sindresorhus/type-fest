@@ -277,12 +277,108 @@ expectTypeOf<Get<WithArrays, ['list', number, 'name'], NonStrict>>().toBe<string
 expectTypeOf<Get<WithArrays, [0]>>().toBe<unknown>();
 expectTypeOf<Get<WithArrayLikeIndexAndMember, [-1]>>().toBe<unknown>();
 
+// A segment must be a string or a number.
+// @ts-expect-error
+type InvalidBooleanSegment = Get<WithArrays, ['list', true]>;
+// @ts-expect-error
+type InvalidBigintSegment = Get<WithArrays, ['list', 0n]>;
+// @ts-expect-error
+type InvalidSymbolSegment = Get<WithArrays, ['list', symbol]>;
+// @ts-expect-error
+type InvalidUndefinedSegment = Get<WithArrays, ['list', undefined]>;
+// @ts-expect-error
+type InvalidOptionalSegment = Get<WithArrays, ['list', 0?]>;
+
 // A number in an array path is one segment, even if it has a dot.
 expectTypeOf<Get<{1.5: 'x'}, [1.5]>>().toBe<'x'>();
 expectTypeOf<Get<{1: {5: 'x'}}, [1.5]>>().toBe<unknown>();
 
-// @ts-expect-error
-type InvalidSegment = Get<WithArrays, ['list', true]>;
+// A number segment reads tuples, number and numeric string keys, and index signatures.
+expectTypeOf<Get<{a: readonly [1, 2]}, readonly ['a', 1]>>().toBe<2>();
+expectTypeOf<Get<{a: {'0': 'x'}}, ['a', 0]>>().toBe<'x'>();
+expectTypeOf<Get<{a: {0: 'x'}}, ['a', '0']>>().toBe<'x'>();
+expectTypeOf<Get<{a: {[key: number]: string}}, ['a', 5]>>().toBe<string>();
+expectTypeOf<Get<Record<number, string>, [5]>>().toBe<string>();
+expectTypeOf<Get<Record<string, string>, [5]>>().toBe<string | undefined>();
+expectTypeOf<Get<[[1, [2, 3]]], [0, 1, 0]>>().toBe<2>();
+expectTypeOf<Get<string[], [0, 'length']>>().toBe<number | undefined>();
+
+// A number segment that the subject, or some of its members, does not have.
+expectTypeOf<Get<{a: [1, 2]}, ['a', -1]>>().toBe<unknown>();
+expectTypeOf<Get<{a: [1, 2]}, ['a', 1.5]>>().toBe<unknown>();
+expectTypeOf<Get<{a: 1}, ['a', 0]>>().toBe<unknown>();
+expectTypeOf<Get<{a: null}, ['a', 0]>>().toBe<undefined>();
+expectTypeOf<Get<{a: {b: 1} | null}, ['a', 'b'], NonStrict>>().toBe<1 | undefined>();
+expectTypeOf<Get<{a?: [1, 2]}, ['a', 1]>>().toBe<2 | undefined>();
+expectTypeOf<Get<{a: [1, 2]} | {a: [3]}, ['a', 1]>>().toBe<2 | undefined>();
+
+// A union segment, or a union of paths, reads each key.
+expectTypeOf<Get<{a: [1, 2]}, ['a', 0 | 1]>>().toBe<1 | 2>();
+expectTypeOf<Get<{a: {b: 1; 0: 2}}, ['a', 0 | 'b']>>().toBe<1 | 2>();
+expectTypeOf<Get<{a: 1; 0: 2}, [0] | ['a']>>().toBe<1 | 2>();
+expectTypeOf<Get<{a: 1}, [never]>>().toBe<never>();
+expectTypeOf<Get<[1, 2, 3], [0 | 2]>>().toBe<1 | 3>();
+expectTypeOf<Get<{a: [1, 2]}, ['a', 1 | 5]>>().toBe<2 | undefined>();
+expectTypeOf<Get<{a: [1, 2]}, ['a', number]>>().toBe<1 | 2 | undefined>();
+expectTypeOf<Get<{a: 1}, [] | ['a']>>().toBe<1 | {a: 1}>();
+
+// An array path of unknown length can have any keys.
+expectTypeOf<Get<{a: 1}, string[]>>().toBe<unknown>();
+expectTypeOf<Get<{a: 1}, readonly string[]>>().toBe<unknown>();
+expectTypeOf<Get<{a: {b: 1}}, ['a', ...string[]]>>().toBe<unknown>();
+expectTypeOf<Get<any, string[]>>().toBe<unknown>();
+expectTypeOf<Get<never, string[]>>().toBe<unknown>();
+expectTypeOf<Get<{a: 1}, Array<string | number>>>().toBe<unknown>();
+expectTypeOf<Get<{a: 1}, [...string[], 'a']>>().toBe<unknown>();
+expectTypeOf<Get<{a: [1, 2]}, ['a', ...number[]]>>().toBe<unknown>();
+expectTypeOf<Get<{a: {b: 1}}, ['a', 'b', ...string[]]>>().toBe<unknown>();
+expectTypeOf<Get<string[], number[]>>().toBe<unknown>();
+
+// `unknown` absorbs the result of the other paths in a union.
+expectTypeOf<Get<{a: 1}, ['a'] | string[]>>().toBe<unknown>();
+
+// The array form reads each key as written, so a key can have a dot, brackets, or be empty.
+expectTypeOf<Get<{a: {'b.c': 1}}, ['a', 'b.c']>>().toBe<1>();
+expectTypeOf<Get<{a: {'b[0]': 1}}, ['a', 'b[0]']>>().toBe<1>();
+expectTypeOf<Get<{a: {'[0]': 1}}, ['a', '[0]']>>().toBe<1>();
+expectTypeOf<Get<{a: {'': 1}}, ['a', '']>>().toBe<1>();
+expectTypeOf<Get<{'': {'': 1}}, ['', '']>>().toBe<1>();
+expectTypeOf<Get<{a: {'b.c': 1}}, 'a.b.c'>>().toBe<unknown>();
+
+// Number and string segments can be mixed in one path.
+expectTypeOf<Get<{0: {1: {2: 'deep'}}}, [0, 1, 2]>>().toBe<'deep'>();
+expectTypeOf<Get<{0: {1: {2: 'deep'}}}, ['0', 1, '2']>>().toBe<'deep'>();
+expectTypeOf<Get<{a: Array<{b: [1, {c: 2}]}>}, ['a', 0, 'b', 1, 'c']>>().toBe<2 | undefined>();
+expectTypeOf<Get<{a: Array<{b: [1, {c: 2}]}>}, ['a', 0, 'b', 1, 'c'], NonStrict>>().toBe<2>();
+
+// A number segment reads readonly arrays, optional tuple elements, and strings.
+expectTypeOf<Get<{a: readonly string[]}, ['a', 0]>>().toBe<string | undefined>();
+expectTypeOf<Get<{a: readonly string[]}, ['a', 0], NonStrict>>().toBe<string>();
+expectTypeOf<Get<{a: [first?: string]}, ['a', 0]>>().toBe<string | undefined>();
+expectTypeOf<Get<{a: string}, ['a', 0]>>().toBe<string | undefined>();
+
+// A non-literal segment reads an index signature.
+expectTypeOf<Get<{a: string[]}, ['a', `${number}`]>>().toBe<string | undefined>();
+expectTypeOf<Get<Record<string, {b: 1}>, [string, 'b']>>().toBe<1 | undefined>();
+
+// A path that goes past a primitive value.
+expectTypeOf<Get<{a: 1}, ['a', 'b', 'c', 'd']>>().toBe<unknown>();
+
+// `any` and `never` as the path or as a segment.
+expectTypeOf<Get<{a: {b: 1}}, any>>().toBe<unknown>();
+expectTypeOf<Get<{a: {b: 1}}, never>>().toBe<never>();
+expectTypeOf<Get<{a: {b: 1}}, ['a', any]>>().toBe<any>();
+expectTypeOf<Get<{a: {b: 1}}, [never, 'b']>>().toBe<never>();
+expectTypeOf<Get<{a: {b: 1}}, ['a', never]>>().toBe<never>();
+
+// An empty path gives the subject, even for `any`, `never`, and `unknown`.
+expectTypeOf<Get<any, []>>().toBe<any>();
+expectTypeOf<Get<never, []>>().toBe<never>();
+expectTypeOf<Get<unknown, []>>().toBe<unknown>();
+expectTypeOf<Get<string[], readonly []>>().toBe<string[]>();
+
+// A number segment in the `get` function.
+expectTypeOf(get(apiResponse, ['hits', 'hits', 0, '_source', 'name', 0, 'given', 1] as const)).toBe<string>();
 
 // A number path that the subject does not have, or a non-literal `number`, reads like its string form.
 expectTypeOf<Get<{1: 'a'}, 2>>().toBe<unknown>();
@@ -290,10 +386,13 @@ expectTypeOf<Get<{a: 1}, 0, NonStrict>>().toBe<unknown>();
 expectTypeOf<Get<string[], number>>().toBe<string | undefined>();
 expectTypeOf<Get<{a: 1}, number>>().toBe<unknown>();
 
-// `any`, `never`, and `unknown` subjects with a number path.
+// `any`, `never`, and `unknown` subjects with a number path, or a number in an array path.
 expectTypeOf<Get<any, 1>>().toBe<any>();
 expectTypeOf<Get<never, 1>>().toBe<never>();
 expectTypeOf<Get<unknown, 1>>().toBe<unknown>();
+expectTypeOf<Get<any, ['a', 0]>>().toBe<any>();
+expectTypeOf<Get<never, ['a', 0]>>().toBe<never>();
+expectTypeOf<Get<unknown, ['a', 0]>>().toBe<unknown>();
 
 // A key that only some members of a union have, at any depth. (https://github.com/sindresorhus/type-fest/issues/1205)
 type DiscriminatedUnion = {data: {type: 'type1'; someValue: number} | {type: 'type2'; someValue: string} | {type: 'type3'}};

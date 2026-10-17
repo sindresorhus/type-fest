@@ -195,6 +195,7 @@ Click the type names for complete docs.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`OptionalPaths`](source/optional-paths.d.ts) - Get a union of all paths to optional properties in the given object.
+- [`ParsePath`](source/parse-path.d.ts) - Convert a path string into a tuple of its keys, with array indices as numbers.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
 - [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 - [`AllUnionFields`](source/all-union-fields.d.ts) - Create a type with all fields from a union of object types.
@@ -422,6 +423,7 @@ Click the type names for complete docs.
 - `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `Destructurable` - See [`ExclusifyUnion`](source/exclusify-union.d.ts)
 - `PlainObject` - See [`UnknownRecord`](source/unknown-record.d.ts)
+- `ToPath` - See [`ParsePath`](source/parse-path.d.ts)
 
 ## Tips
 

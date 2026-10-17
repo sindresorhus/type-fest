@@ -2,6 +2,7 @@ import type {IsEqual} from '../is-equal.d.ts';
 import type {TupleOf} from '../tuple-of.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {StringLength} from '../string-length.d.ts';
+import type {Split} from '../split.d.ts';
 import type {Whitespace} from './characters.d.ts';
 
 /**
@@ -208,5 +209,32 @@ type PositiveNumericCharacterGt<A extends string, B extends string> = NumericStr
 			: false
 		: never
 	: never;
+
+/**
+Splits a dot-prop style path into a tuple comprised of the properties in the path. Handles square-bracket notation.
+
+@example
+```
+type A = ToPath<'foo.bar.baz'>;
+//=> ['foo', 'bar', 'baz']
+
+type B = ToPath<'foo[0].bar.baz'>;
+//=> ['foo', '0', 'bar', 'baz']
+```
+*/
+export type ToPath<Path extends string> = Split<FixPathSquareBrackets<Path>, '.', {strictLiteralChecks: false}>;
+
+/**
+Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.
+*/
+// The fixed part of the path is kept in `Result`, so the recursion is in tail position and a long path does not hit the recursion limit.
+type FixPathSquareBrackets<Path extends string, Result extends string = ''> =
+	Path extends `[${infer Head}]${infer Tail}`
+		? Tail extends `[${string}`
+			? FixPathSquareBrackets<Tail, `${Result}${Head}.`>
+			: FixPathSquareBrackets<Tail, `${Result}${Head}`>
+		: Path extends `${infer Head}[${infer Middle}]${infer Tail}`
+			? FixPathSquareBrackets<`[${Middle}]${Tail}`, `${Result}${Head}.`>
+			: `${Result}${Path}`;
 
 export {};

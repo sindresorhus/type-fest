@@ -1,5 +1,4 @@
-import type {ApplyDefaultOptions, ExactKey, ToString} from './internal/index.d.ts';
-import type {Split} from './split.d.ts';
+import type {ApplyDefaultOptions, ExactKey, ToPath, ToString} from './internal/index.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -34,7 +33,8 @@ type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 				Tail,
 				Options
 			>
-			: never;
+			// An array of unknown length, like `string[]`, can have any keys.
+			: unknown;
 
 /**
 Adds `undefined` to `Type` if `strict` is enabled.
@@ -49,32 +49,6 @@ type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends Requ
 			? Strictify<BaseType[Key], Options> // Record<string, any>
 			: BaseType[Key] // Record<'a' | 'b', any> (Records with a string union as keys have required properties)
 		: BaseType[Key];
-
-/**
-Splits a dot-prop style path into a tuple comprised of the properties in the path. Handles square-bracket notation.
-
-@example
-```
-type A = ToPath<'foo.bar.baz'>;
-//=> ['foo', 'bar', 'baz']
-
-type B = ToPath<'foo[0].bar.baz'>;
-//=> ['foo', '0', 'bar', 'baz']
-```
-*/
-type ToPath<S extends string> = Split<FixPathSquareBrackets<S>, '.', {strictLiteralChecks: false}>;
-
-/**
-Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.
-*/
-type FixPathSquareBrackets<Path extends string> =
-	Path extends `[${infer Head}]${infer Tail}`
-		? Tail extends `[${string}`
-			? `${Head}.${FixPathSquareBrackets<Tail>}`
-			: `${Head}${FixPathSquareBrackets<Tail>}`
-		: Path extends `${infer Head}[${infer Middle}]${infer Tail}`
-			? `${Head}.${FixPathSquareBrackets<`[${Middle}]${Tail}`>}`
-			: Path;
 
 /**
 Returns true if `LongString` is made up out of `Substring` repeated 0 or more times.
@@ -208,7 +182,7 @@ Get a deeply-nested property from an object using a key path, like [Lodash's `.g
 
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
 
-A path can also be a number, such as `Get<string[], 0>`, read like its string form, so `Get<BaseType, Paths<BaseType>>` works for a generic `BaseType`. A number in an array path is read the same way, so `['users', 0, 'name']` and `['users', '0', 'name']` are the same path.
+A path can also be a number, such as `Get<string[], 0>`, read like its string form, so `Get<BaseType, Paths<BaseType>>` works for a generic `BaseType`. A number in an array path is read the same way, so `['users', 0, 'name']` and `['users', '0', 'name']` are the same path. An array path of unknown length, like `string[]` or `['a', ...string[]]`, can have any keys, so it resolves to `unknown`.
 
 A key only some union members have resolves to `undefined` for the others, so `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>` is `string | undefined`. A key no member has resolves to `unknown`.
 
