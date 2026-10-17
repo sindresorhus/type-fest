@@ -155,3 +155,27 @@ expectTypeOf(negativeExponentStart).toBe<[1, 2, 3]>();
 
 declare const negativeExponentEnd: ArraySlice<[1, 2, 3], 0, -1e21>;
 expectTypeOf(negativeExponentEnd).toBe<[]>();
+
+// A negative index counts back from the end, like `Array#slice()` (https://github.com/sindresorhus/type-fest/issues/1325)
+expectTypeOf<ArraySlice<readonly [1, 2, 3, 4], -2, -1>>().toBe<readonly [3]>();
+expectTypeOf<ArraySlice<readonly ['a', 3], -2, -1>>().toBe<readonly ['a']>();
+expectTypeOf<ArraySlice<readonly ['a', 3], -3, 2>>().toBe<readonly ['a', 3]>();
+expectTypeOf<ArraySlice<readonly ['a', 3], 1, -2>>().toBe<readonly []>();
+expectTypeOf<ArraySlice<readonly ['a', 3], -1, -1>>().toBe<readonly []>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -4>>().toBe<[0, 1, 2, 3]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -4, -1>>().toBe<[0, 1, 2]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], -3, 3>>().toBe<[1, 2]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3], 1, -4>>().toBe<[]>();
+
+// A negative index on an array without a fixed length gives an array of unknown length instead of `[]`. This can be wider than the runtime result, for example `[...string[], 1, 2]` sliced from `-2` is always `[1, 2]`.
+expectTypeOf<ArraySlice<string[], -2, -1>>().toBe<string[]>();
+expectTypeOf<ArraySlice<unknown[], -1>>().toBe<unknown[]>();
+expectTypeOf<ArraySlice<any[], -2>>().toBe<any[]>();
+expectTypeOf<ArraySlice<readonly any[], -2, -1>>().toBe<readonly any[]>();
+expectTypeOf<ArraySlice<any, -2>>().toBe<any[]>();
+expectTypeOf<ArraySlice<[1, 2, ...string[]], -2, -1>>().toBe<Array<string | 1 | 2>>();
+expectTypeOf<ArraySlice<[...string[], 1, 2], -2>>().toBe<Array<string | 1 | 2>>();
+expectTypeOf<ArraySlice<readonly [1, ...string[]], -1>>().toBe<ReadonlyArray<string | 1>>();
+
+// `never` is an empty union of arrays, so its slice is `never` too.
+expectTypeOf<ArraySlice<never, -2>>().toBe<never>();
