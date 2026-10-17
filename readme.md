@@ -418,6 +418,7 @@ Click the type names for complete docs.
 - `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `Destructurable` - See [`ExclusifyUnion`](source/exclusify-union.d.ts)
+- `PlainObject` - See [`UnknownRecord`](source/unknown-record.d.ts)
 
 ## Tips
 
