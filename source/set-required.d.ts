@@ -35,6 +35,7 @@ Known limitations:
 - A key that lands after an optional element of a tuple is ignored. TypeScript rejects a required element that follows an optional one, so `[number?, number]` is not a tuple type, and the walk stops at the first optional element. `SetRequired<[number?, number?], 1>` is `[number?, number?]`, while naming both keys gives `[number, number]`. `SetRequiredDeep` answers the same way for a path that lands on such a key.
 - A key that lands in a rest element is ignored, because a rest element has no optionality to remove: its elements are always present, and the `undefined` in a rest element of `Array<number | undefined>` is a value the element may hold rather than the element being absent. `SetRequired<[string, number?], 1>` is `[string, number]` because there the `?` is real optionality. `SetNonNullable` does make a rest element non-nullable, because that is a change to the value rather than to the optionality.
 - Index keys are not supported on an array with extra members, such as a `Tagged` tuple, because the tuple is rebuilt from its elements. On an array, only index keys are supported, or only other keys. Other keys, such as `length`, make the result an object type.
+- The result for a class with `private`, `protected`, or `#private` members is not assignable to the class, because `keyof` does not include these members. The built-in `Required` has the same limitation. Use `ClassType & SetRequired<ClassType, Keys>` to keep them.
 
 @category Object
 */

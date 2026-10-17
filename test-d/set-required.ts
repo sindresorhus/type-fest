@@ -206,3 +206,42 @@ expectTypeOf<SetRequired<TaggedTuple, never>>().toBe<TaggedTuple>();
 // A key that is still present after `Except` on a generic object is accepted.
 type RequiredStatus<ObjectType extends {id: string; status: string}> = SetRequired<Partial<Except<ObjectType, 'id'>>, 'status'>;
 expectTypeOf<RequiredStatus<{id: string; status: 'open'; total: number}>>().toBe<{status: 'open'; total?: number}>();
+
+// TypeScript does not include non-public members in `keyof`, so the result for a class with such members is not assignable to the class. Intersecting the result with the class keeps them. See the note in the docs.
+class ClassWithNonPublicMembers {
+	optional?: string;
+	readonly readonlyOptional?: number;
+
+	get #hashPrivateMember() {
+		return true;
+	}
+
+	private get privateMember() {
+		return this.#hashPrivateMember;
+	}
+
+	protected get protectedMember() {
+		return this.privateMember;
+	}
+}
+
+expectTypeOf<SetRequired<ClassWithNonPublicMembers, 'optional'>>().not.toBeAssignableTo<ClassWithNonPublicMembers>();
+
+type RequiredClassWithNonPublicMembers = ClassWithNonPublicMembers & SetRequired<ClassWithNonPublicMembers, 'optional' | 'readonlyOptional'>;
+expectTypeOf<RequiredClassWithNonPublicMembers>().toBeAssignableTo<ClassWithNonPublicMembers>();
+expectTypeOf<RequiredClassWithNonPublicMembers['optional']>().toBe<string>();
+expectTypeOf<RequiredClassWithNonPublicMembers['readonlyOptional']>().toBe<number>();
+
+declare const requiredClassWithNonPublicMembers: RequiredClassWithNonPublicMembers;
+// @ts-expect-error - The `readonly` modifier is kept.
+requiredClassWithNonPublicMembers.readonlyOptional = 1;
+
+// A class with only public members is assignable to the class as is.
+class ClassWithPublicMembers {
+	optional?: string;
+	method(): number {
+		return 1;
+	}
+}
+
+expectTypeOf<SetRequired<ClassWithPublicMembers, 'optional'>>().toBeAssignableTo<ClassWithPublicMembers>();
