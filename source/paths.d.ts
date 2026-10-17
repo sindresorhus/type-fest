@@ -5,6 +5,7 @@ import type {GreaterThan} from './greater-than.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Sum} from './sum.d.ts';
 import type {And} from './and.d.ts';
+import type {NonNullableDeep} from './non-nullable-deep.d.ts'; // For `@link`
 
 /**
 Options for the `Paths` type.
@@ -86,6 +87,8 @@ export type PathsOptions = {
 	/**
 	Only include leaf paths in the output.
 
+	A path whose value can be `null` or `undefined` is also a leaf, even if the value can be an object too. An optional property (`?`) is not a leaf because of its `undefined`, unless `exactOptionalPropertyTypes` is enabled and the property type explicitly includes `undefined`. To leave out such paths, remove `null` and `undefined` first with {@link NonNullableDeep}.
+
 	@default false
 
 	@example
@@ -124,6 +127,22 @@ export type PathsOptions = {
 
 	type LeafPaths = Paths<ArrayExample, {leavesOnly: true}>;
 	//=> `array.${number}.foo` | 'tuple.0' | 'tuple.1.bar'
+	```
+
+	@example
+	```
+	import type {NonNullableDeep, Paths} from 'type-fest';
+
+	type User = {
+		name: string;
+		address: {city: string} | null;
+	};
+
+	type LeafPaths = Paths<User, {leavesOnly: true}>;
+	//=> 'name' | 'address' | 'address.city'
+
+	type NonNullableLeafPaths = Paths<NonNullableDeep<User>, {leavesOnly: true}>;
+	//=> 'name' | 'address.city'
 	```
 	*/
 	leavesOnly?: boolean;

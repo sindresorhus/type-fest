@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Paths, Subtract, UnknownArray} from '../index.d.ts';
+import type {NonNullableDeep, Paths, Subtract, UnknownArray} from '../index.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
 declare const normal: Paths<{foo: string}>;
@@ -308,6 +308,77 @@ expectTypeOf(unionLeaves3).toBe<'a' | 'a.toLowerCase'>();
 
 declare const unionLeaves4: Paths<{a: {b: string} | {c: string}}, {leavesOnly: true}>; // No common keys b/w `{b: string}` and `{c: string}`, but this shouldn't make `a` a leaf.
 expectTypeOf(unionLeaves4).toBe<'a.b' | 'a.c'>();
+
+// A path whose value type includes `null` or `undefined` is a leaf
+declare const nullLeaves: Paths<{a: {b: number} | null}, {leavesOnly: true}>;
+expectTypeOf(nullLeaves).toBe<'a' | 'a.b'>();
+
+declare const undefinedLeaves: Paths<{a: {b: number} | undefined}, {leavesOnly: true}>;
+expectTypeOf(undefinedLeaves).toBe<'a' | 'a.b'>();
+
+declare const optionalLeaves: Paths<{a?: {b: number}}, {leavesOnly: true}>;
+expectTypeOf(optionalLeaves).toBe<'a.b'>(); // The optional modifier alone does not make a leaf
+
+declare const optionalUndefinedLeaves: Paths<{a?: {b: number} | undefined}, {leavesOnly: true}>;
+expectTypeOf(optionalUndefinedLeaves).toBe<'a' | 'a.b'>(); // With `exactOptionalPropertyTypes`, the explicit `undefined` makes a leaf
+
+declare const optionalNullLeaves: Paths<{a?: {b: number} | null}, {leavesOnly: true}>;
+expectTypeOf(optionalNullLeaves).toBe<'a' | 'a.b'>();
+
+declare const nestedNullLeaves: Paths<{a: {b: {c: string} | null} | null}, {leavesOnly: true}>;
+expectTypeOf(nestedNullLeaves).toBe<'a' | 'a.b' | 'a.b.c'>();
+
+declare const nullArrayElementLeaves: Paths<Array<{a: number} | null>, {leavesOnly: true}>;
+expectTypeOf(nullArrayElementLeaves).toBe<number | `${number}` | `${number}.a`>();
+
+declare const nullTupleElementLeaves: Paths<[{a: number} | null, string], {leavesOnly: true}>;
+expectTypeOf(nullTupleElementLeaves).toBe<'0' | '0.a' | '1'>();
+
+declare const onlyNullLeaves: Paths<{a: null; b: undefined}, {leavesOnly: true}>;
+expectTypeOf(onlyNullLeaves).toBe<'a' | 'b'>();
+
+declare const nullUnionLeaves: Paths<{a: {b: string} | {c: string} | null}, {leavesOnly: true}>;
+expectTypeOf(nullUnionLeaves).toBe<'a' | 'a.b' | 'a.c'>();
+
+declare const topLevelNullLeaves: Paths<{a: {b: number}} | null | undefined, {leavesOnly: true}>;
+expectTypeOf(topLevelNullLeaves).toBe<'a.b'>(); // A top-level `null` or `undefined` has no path, so it is not a leaf
+
+declare const nullLeavesAtDepth: Paths<{a: {b: number} | null}, {leavesOnly: true; depth: 0}>;
+expectTypeOf(nullLeavesAtDepth).toBe<'a'>();
+
+declare const nullCircularLeaves: Paths<NullableNode, {leavesOnly: true; maxCircularDepth: 1}>;
+expectTypeOf(nullCircularLeaves).toBe<'value' | 'next' | 'next.value' | 'next.next'>();
+
+declare const nullBracketLeaves: Paths<{a: Array<{b: string} | null>}, {leavesOnly: true; bracketNotation: true}>;
+expectTypeOf(nullBracketLeaves).toBe<`a[${number}]` | `a[${number}].b`>();
+
+// Use `NonNullableDeep` to leave out the paths that are leaves only because of `null` or `undefined`
+declare const nonNullableLeaves: Paths<NonNullableDeep<{test?: {someField: number} | null}>, {leavesOnly: true}>;
+expectTypeOf(nonNullableLeaves).toBe<'test.someField'>();
+
+declare const nonNullableUndefinedLeaves: Paths<NonNullableDeep<{a: {b: number} | undefined; c?: {d: number} | undefined}>, {leavesOnly: true}>;
+expectTypeOf(nonNullableUndefinedLeaves).toBe<'a.b' | 'c.d'>();
+
+declare const nonNullableNestedLeaves: Paths<NonNullableDeep<{a: {b: {c: string} | null} | null}>, {leavesOnly: true}>;
+expectTypeOf(nonNullableNestedLeaves).toBe<'a.b.c'>();
+
+declare const nonNullableArrayLeaves: Paths<NonNullableDeep<{a: Array<{b: string} | null>}>, {leavesOnly: true}>;
+expectTypeOf(nonNullableArrayLeaves).toBe<`a.${number}.b`>();
+
+declare const nonNullablePrimitiveLeaves: Paths<NonNullableDeep<{a: string | null; b: {c: number | undefined} | null}>, {leavesOnly: true}>;
+expectTypeOf(nonNullablePrimitiveLeaves).toBe<'a' | 'b.c'>(); // Primitive values are still leaves
+
+declare const nonNullableOnlyNullLeaves: Paths<NonNullableDeep<{a: null; b: {c: string} | null}>, {leavesOnly: true}>;
+expectTypeOf(nonNullableOnlyNullLeaves).toBe<'a' | 'b.c'>(); // `a` becomes `never`, which is still a leaf
+
+declare const nonNullableUnionLeaves: Paths<NonNullableDeep<{a: {b: string} | {c: string} | null}>, {leavesOnly: true}>;
+expectTypeOf(nonNullableUnionLeaves).toBe<'a.b' | 'a.c'>();
+
+declare const nonNullableLeavesAtDepthOne: Paths<NonNullableDeep<{a: {b: number} | null; c: {d: {e: string} | null}}>, {leavesOnly: true; depth: 1}>;
+expectTypeOf(nonNullableLeavesAtDepthOne).toBe<'a.b'>();
+
+declare const nonNullableCircularLeaves: Paths<NonNullableDeep<NullableNode>, {leavesOnly: true; maxCircularDepth: 1}>;
+expectTypeOf(nonNullableCircularLeaves).toBe<'value' | 'next.value' | 'next.next'>();
 
 declare const emptyObjectLeaves: Paths<{a: {}}, {leavesOnly: true}>;
 expectTypeOf(emptyObjectLeaves).toBe<'a'>();
