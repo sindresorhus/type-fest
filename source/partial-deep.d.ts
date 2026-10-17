@@ -8,6 +8,8 @@ export type PartialDeepOptions = {
 	/**
 	Whether to affect the individual elements of arrays and tuples.
 
+	When `true`, the elements of arrays and tuples are made deeply partial too, and the fixed elements of tuples become optional. `undefined` is not added to the elements of non-tuple arrays, unless `allowUndefinedInNonTupleArrays` is also `true`.
+
 	@default false
 	*/
 	readonly recurseIntoArrays?: boolean;
@@ -80,13 +82,18 @@ import type {PartialDeep} from 'type-fest';
 
 type Shape = {
 	dimensions: [number, number];
+	layers: Array<{name: string; visible: boolean}>;
 };
 
 const partialShape: PartialDeep<Shape, {recurseIntoArrays: true}> = {
 	dimensions: [], // OK
+	layers: [{name: 'Background'}], // OK
 };
 
 partialShape.dimensions = [15]; // OK
+
+// @ts-expect-error
+partialShape.layers = [undefined]; // The elements of a non-tuple array cannot be `undefined`
 ```
 
 @see {@link PartialDeepOptions}

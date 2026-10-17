@@ -87,6 +87,43 @@ expectTypeOf(partialDeepAllowUndefinedInNonTupleArraysFoo.bar!.array).toBe<strin
 const partialDeepDoNotAllowUndefinedInNonTupleArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}> = foo;
 expectTypeOf(partialDeepDoNotAllowUndefinedInNonTupleArraysFoo.bar!.array).toBe<Array<string | undefined> | undefined>();
 
+// Objects in arrays are made partial without making the array elements `undefined`. Test for https://github.com/sindresorhus/type-fest/issues/514
+type ObjectArrays = {
+	items: Array<{id: number; tags: string[]}>;
+	readonlyItems: ReadonlyArray<{id: number}>;
+	matrix: Array<Array<{x: number}>>;
+	tuples: Array<[{id: number}, string]>;
+	mixed: Array<string | {id: number}>;
+	optional?: Array<{id: number}>;
+};
+
+expectTypeOf<PartialDeep<ObjectArrays, {recurseIntoArrays: true}>>().toBe<{
+	items?: Array<{id?: number; tags?: string[]}>;
+	readonlyItems?: ReadonlyArray<{id?: number}>;
+	matrix?: Array<Array<{x?: number}>>;
+	tuples?: Array<[{id?: number}?, string?]>;
+	mixed?: Array<string | {id?: number}>;
+	optional?: Array<{id?: number}>;
+}>();
+expectTypeOf<PartialDeep<Array<{id: number}>, {recurseIntoArrays: true}>>().toBe<Array<{id?: number}>>();
+expectTypeOf<{items: [undefined]}>().not.toBeAssignableTo<PartialDeep<ObjectArrays, {recurseIntoArrays: true}>>();
+
+// With `allowUndefinedInNonTupleArrays`, the elements of non-tuple arrays also accept `undefined`.
+expectTypeOf<PartialDeep<ObjectArrays, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>>().toBe<{
+	items?: Array<{id?: number; tags?: Array<string | undefined>} | undefined>;
+	readonlyItems?: ReadonlyArray<{id?: number} | undefined>;
+	matrix?: Array<Array<{x?: number} | undefined> | undefined>;
+	tuples?: Array<[{id?: number}?, string?] | undefined>;
+	mixed?: Array<string | undefined | {id?: number}>;
+	optional?: Array<{id?: number} | undefined>;
+}>();
+
+// Without `recurseIntoArrays`, arrays are kept as is.
+expectTypeOf<PartialDeep<ObjectArrays>>().toBe<Partial<ObjectArrays>>();
+
+// The elements of an array of `any`, `unknown`, or `never` are kept as is.
+expectTypeOf<PartialDeep<{any: any[]; unknown: unknown[]; never: never[]}, {recurseIntoArrays: true}>>().toBe<{any?: any[]; unknown?: unknown[]; never?: never[]}>();
+
 // These are mostly the same checks as before, but the array/tuple types are different.
 // @ts-expect-error
 expectTypeOf(partialDeepNoRecurseIntoArraysFoo).toBe<Partial<typeof foo>>();
