@@ -82,6 +82,7 @@ export type {SetParameterType} from './source/set-parameter-type.d.ts';
 export type {Overloads} from './source/overloads.d.ts';
 export type {OverloadParameters} from './source/overload-parameters.d.ts';
 export type {OverloadReturnType} from './source/overload-return-type.d.ts';
+export type {RequireArity} from './source/require-arity.d.ts';
 export type {Asyncify} from './source/asyncify.d.ts';
 export type {Simplify} from './source/simplify.d.ts';
 export type {SimplifyDeep} from './source/simplify-deep.d.ts';
