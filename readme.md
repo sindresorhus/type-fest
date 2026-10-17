@@ -78,6 +78,8 @@ type FooWithoutRainbow = Except<Foo, 'rainbow'>;
 //=> {unicorn: string}
 ```
 
+[Try it in the TypeScript Playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBDAnmApnA3gUQB4GMVgwC+cAZlBCHAORKoC0pKAzjNQNwBQndaAYhAhwAvBk4BIAK4A7YLmjSAXHFZRg0gOZdxUAIbqARhADuyoxAA2KXdK5EuPZP0EB1YDAAWESTABK+6SNjETgcfEIAHgEIABoaPUMTagA+LgB6NOFkjBk5BWVVdQ0iTiA)
+
 ## API
 
 Click the type names for complete docs.
