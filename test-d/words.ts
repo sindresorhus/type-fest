@@ -1,6 +1,8 @@
 import {expectTypeOf} from 'nz';
 import type {Words} from '../source/words.d.ts';
 import type {Tagged} from '../source/tagged.d.ts';
+import type {StringRepeat} from '../source/string-repeat.d.ts';
+import type {TupleOf} from '../source/tuple-of.d.ts';
 
 expectTypeOf<Words<''>>().toBe<[]>();
 expectTypeOf<Words<'a'>>().toBe<['a']>();
@@ -166,3 +168,7 @@ expectTypeOf<Words<'a\u{85}b'>>().toBe<['a', 'b']>();
 // Repeated tags are removed before reading characters and word boundaries.
 expectTypeOf<Words<Tagged<Tagged<'helloWorld', 'Text'>, 'Validated'>>>().toBe<['hello', 'World']>();
 expectTypeOf<Words<Tagged<Tagged<'hello:world', 'Text'>, 'Validated'>, {splitOnPunctuation: true}>>().toBe<['hello', 'world']>();
+
+// A long sentence does not hit the recursion limit.
+expectTypeOf<Words<StringRepeat<'ab ', 200>>>().toBe<TupleOf<200, 'ab'>>();
+expectTypeOf<Words<StringRepeat<'Ab', 200>>>().toBe<TupleOf<200, 'Ab'>>();

@@ -118,45 +118,50 @@ type WordsImplementation<
 	Options extends Required<WordsOptions>,
 	LastCharacter extends string = '',
 	CurrentWord extends string = '',
+	// The words found so far are kept in `Result`, so the recursion is in tail position and a long sentence does not hit the recursion limit.
+	Result extends string[] = [],
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
 	? FirstCharacter extends WordSeparators | (Options['splitOnPunctuation'] extends true ? AsciiPunctuation : never)
 		// Skip word separator
-		? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options>]
+		? WordsImplementation<RemainingCharacters, Options, '', '', [...Result, ...SkipEmptyWord<CurrentWord>]>
 		: LastCharacter extends ''
 			// Fist char of word
-			? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>
+			? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, Result>
 			// Case change: non-numeric to numeric
 			: [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
 				? Options['splitOnNumbers'] extends true
 					// Split on number: push word
-					? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+					? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
 					// No split on number: concat word
-					: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+					: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 				// Case change: numeric to non-numeric
 				: [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
 					? Options['splitOnNumbers'] extends true
 						// Split on number: push word
-						? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
+						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
 						// No split on number: concat word
-						: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+						: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 					// No case change: concat word
 					: [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
-						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 					// Case change: lower to upper, push word
 						: [true, true] extends [IsLowercase<LastCharacter>, IsUppercase<FirstCharacter>]
 							// Only a capital letter starts a new word. A character with no case at all, such as a Han character or an emoji, satisfies both case predicates but is its own lowercase form, so it is not one.
 							? IsCapitalLetter<FirstCharacter> extends true
-								? [...SkipEmptyWord<CurrentWord>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter>]
-								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+								? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
+								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 						// Case change: upper to lower, brings back the last character, push word
 							: [true, true] extends [IsUppercase<LastCharacter>, IsLowercase<FirstCharacter>]
 								// Only a capital followed by a lowercase letter starts a new word. Punctuation or a character with no case after an acronym, as in `userID?`, satisfies both case predicates, so it would otherwise split off the last capital.
 								? [IsCapitalLetter<LastCharacter>, IsLowercaseLetter<FirstCharacter>] extends [true, true]
-									? [...RemoveLastCharacter<CurrentWord, LastCharacter>, ...WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`>]
-									: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
+									? WordsImplementation<
+										RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`,
+										[...Result, ...RemoveLastCharacter<CurrentWord, LastCharacter>]
+									>
+									: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 							// No case change: concat word
-								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`>
-	: [...SkipEmptyWord<CurrentWord>];
+								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
+	: [...Result, ...SkipEmptyWord<CurrentWord>];
 
 /**
 Whether the given character is a capital letter, which is what decides whether it begins a new word.
