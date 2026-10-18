@@ -90,6 +90,7 @@ type OptionalizedUser = UndefinedToOptional<User>;
 ```
 */
 export type UndefinedToOptional<T extends object> = SimplifyObject<
+	// Each key is filtered on its own with `Pick<T, Key>`. A union of the kept keys would merge a literal key like `foo` into a `string` index signature.
 	{
 	// Property is not a union with `undefined`, keep it as-is.
 		[Key in keyof T as FilterDefinedKeys<Pick<T, Key>>]: T[Key];

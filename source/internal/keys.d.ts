@@ -23,13 +23,16 @@ Returns the required keys.
 */
 export type FilterDefinedKeys<T extends object> = Exclude<
 	{
-		[Key in keyof T]: IsAny<T[Key]> extends true
-			? Key
-			: IsUnknown<T[Key]> extends true ? Key : undefined extends T[Key]
-				? never
-				: T[Key] extends undefined
+		// A symbol key is checked first, because the `any` and `unknown` branches return the key without `BaseKeyFilter`.
+		[Key in keyof T]: Key extends symbol
+			? never
+			: IsAny<T[Key]> extends true
+				? Key
+				: IsUnknown<T[Key]> extends true ? Key : undefined extends T[Key]
 					? never
-					: BaseKeyFilter<T, Key>;
+					: T[Key] extends undefined
+						? never
+						: BaseKeyFilter<T, Key>;
 	}[keyof T],
 	undefined
 >;

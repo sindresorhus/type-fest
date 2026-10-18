@@ -264,6 +264,14 @@ expectTypeOf(objectValueSymbol).toBe<{keep: string}>();
 declare const objectKeySymbol: Jsonify<{[key: typeof symbol]: number; keep: string}>;
 expectTypeOf(objectKeySymbol).toBe<{keep: string}>();
 
+// Symbol keys are filtered even when their value is `any` or `unknown`
+declare const uniqueSymbol: unique symbol;
+expectTypeOf<Jsonify<{[key: symbol]: any; keep: string}>>().toBe<{keep: string}>();
+expectTypeOf<Jsonify<{[key: symbol]: unknown; keep: string}>>().toBe<{keep: string}>();
+expectTypeOf<Jsonify<{[uniqueSymbol]: any; keep: string}>>().toBe<{keep: string}>();
+expectTypeOf<Jsonify<{[uniqueSymbol]?: unknown; keep: string}>>().toBe<{keep: string}>();
+expectTypeOf<Jsonify<Record<PropertyKey, any>>>().toBe<Record<string | number, any>>();
+
 // Number, String and Boolean values are turned into primitive counterparts
 declare const number: Number;
 expectTypeOf(number).not.toBeAssignableTo<JsonValue>();
@@ -486,7 +494,7 @@ expectTypeOf(objectWithAnyProperties).toBe<Record<string, any>>();
 // See https://github.com/sindresorhus/type-fest/issues/667
 expectTypeOf<Jsonify<{payload: Record<string, any>}>>().toBe<{payload: Record<string, any>}>();
 expectTypeOf<Jsonify<{payload: {[key: string]: any}}>>().toBe<{payload: {[key: string]: any}}>();
-expectTypeOf<Jsonify<{payload: Record<PropertyKey, any>}>>().toBe<{payload: Record<PropertyKey, any>}>();
+expectTypeOf<Jsonify<{payload: Record<PropertyKey, any>}>>().toBe<{payload: Record<string | number, any>}>();
 expectTypeOf<Jsonify<object>>().toBe<{}>();
 expectTypeOf<Jsonify<{payload: object}>>().toBe<{payload: {}}>();
 expectTypeOf<Jsonify<{payload: {}}>>().toBe<{payload: {}}>();
@@ -508,6 +516,7 @@ expectTypeOf<Jsonify<{[key: string]: string | undefined; foo: 'a' | undefined}>>
 expectTypeOf<Jsonify<{[key: number]: string; 0: 'a'}>>().toBe<{[key: number]: string; 0: 'a'}>();
 expectTypeOf<Jsonify<{[key: `x${string}`]: number; foo: 'a'}>>().toBe<{[key: `x${string}`]: number; foo: 'a'}>();
 expectTypeOf<Jsonify<{[key: string]: any; foo: () => void}>>().toBe<{[key: string]: any}>();
+expectTypeOf<Jsonify<{[key: string]: any; foo: never}>>().toBe<{[key: string]: any}>();
 expectTypeOf<Jsonify<{payload: {[key: string]: string; foo: 'a'}}>>().toBe<{payload: {[key: string]: string; foo: 'a'}}>();
 
 // Test for `Jsonify` support for nested objects with _only_ a name property.

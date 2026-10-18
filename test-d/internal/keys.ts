@@ -19,6 +19,8 @@ expectTypeOf<IsEqual<FilterOptionalKeys<{a: 1 | undefined}>, 'a'>>().toBe<true>(
 declare const symbolKey: unique symbol;
 expectTypeOf<IsEqual<FilterDefinedKeys<{[symbolKey]: 1; a: 2}>, 'a'>>().toBe<true>();
 expectTypeOf<IsEqual<FilterDefinedKeys<{a: symbol}>, never>>().toBe<true>();
+expectTypeOf<IsEqual<FilterDefinedKeys<{[symbolKey]: any; a: 2}>, 'a'>>().toBe<true>();
+expectTypeOf<IsEqual<FilterDefinedKeys<{[symbolKey]: unknown; a: 2}>, 'a'>>().toBe<true>();
 
 // `LiteralKeyOf` keeps the keys that `IsLiteral` calls a literal, which includes a `unique symbol` even though a bare `symbol` is not one. `IsEqual` leaves this mapped type unresolved, so it is asserted on the result directly.
 declare const literalKeys: LiteralKeyOf<{a: 1; 1: 2; [symbolKey]: 3}>;
