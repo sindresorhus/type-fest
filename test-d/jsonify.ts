@@ -487,6 +487,7 @@ expectTypeOf(objectWithAnyProperties).toBe<Record<string, any>>();
 expectTypeOf<Jsonify<{payload: Record<string, any>}>>().toBe<{payload: Record<string, any>}>();
 expectTypeOf<Jsonify<{payload: {[key: string]: any}}>>().toBe<{payload: {[key: string]: any}}>();
 expectTypeOf<Jsonify<{payload: Record<PropertyKey, any>}>>().toBe<{payload: Record<PropertyKey, any>}>();
+expectTypeOf<Jsonify<object>>().toBe<{}>();
 expectTypeOf<Jsonify<{payload: object}>>().toBe<{payload: {}}>();
 expectTypeOf<Jsonify<{payload: {}}>>().toBe<{payload: {}}>();
 expectTypeOf<Jsonify<{payload: Record<string, string>}>>().toBe<{payload: Record<string, string>}>();
@@ -498,6 +499,16 @@ expectTypeOf<Jsonify<{payload: Record<string, any>; date: Date}>>().toBe<{payloa
 expectTypeOf<Jsonify<{outer: {inner: Record<string, any>}}>>().toBe<{outer: {inner: Record<string, any>}}>();
 expectTypeOf<Jsonify<{payload: Array<Record<string, any>>}>>().toBe<{payload: Array<Record<string, any>>}>();
 expectTypeOf<Jsonify<[Record<string, any>]>>().toBe<[Record<string, any>]>();
+
+// A literal key next to an index signature keeps its own type.
+expectTypeOf<Jsonify<{[key: string]: string; foo: 'a'}>>().toBe<{[key: string]: string; foo: 'a'}>();
+expectTypeOf<Jsonify<{[key: string]: string; foo: 'a'; bar?: 'b'}>>().toBe<{[key: string]: string; foo: 'a'; bar?: 'b'}>();
+expectTypeOf<Jsonify<{[key: string]: string | Date; foo: Date}>>().toBe<{[key: string]: string; foo: string}>();
+expectTypeOf<Jsonify<{[key: string]: string | undefined; foo: 'a' | undefined}>>().toBe<{[key: string]: string; foo?: 'a'}>();
+expectTypeOf<Jsonify<{[key: number]: string; 0: 'a'}>>().toBe<{[key: number]: string; 0: 'a'}>();
+expectTypeOf<Jsonify<{[key: `x${string}`]: number; foo: 'a'}>>().toBe<{[key: `x${string}`]: number; foo: 'a'}>();
+expectTypeOf<Jsonify<{[key: string]: any; foo: () => void}>>().toBe<{[key: string]: any}>();
+expectTypeOf<Jsonify<{payload: {[key: string]: string; foo: 'a'}}>>().toBe<{payload: {[key: string]: string; foo: 'a'}}>();
 
 // Test for `Jsonify` support for nested objects with _only_ a name property.
 // See https://github.com/sindresorhus/type-fest/issues/657

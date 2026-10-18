@@ -19,3 +19,7 @@ expectTypeOf<IsEqual<BuildObject<'0', string>, {0: string}>>().toBe<true>();
 expectTypeOf<UndefinedToOptional<{value: {name: string} | undefined}>>().toBe<{value?: {name: string}}>();
 expectTypeOf<UndefinedToOptional<{readonly value: {name: string} | null | undefined}>>().toBe<{readonly value?: {name: string} | null}>();
 expectTypeOf<UndefinedToOptional<{value: string | (() => void) | undefined}>>().toBe<{}>();
+
+// A literal key next to an index signature is kept, instead of being merged into the index signature.
+expectTypeOf<UndefinedToOptional<{[key: string]: string; foo: 'a'}>>().toBe<{[key: string]: string; foo: 'a'}>();
+expectTypeOf<UndefinedToOptional<{[key: string]: string; readonly foo: 'a'}>>().toBe<{[key: string]: string; readonly foo: 'a'}>();

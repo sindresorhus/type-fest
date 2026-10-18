@@ -160,7 +160,10 @@ export type Jsonify<T> = IsAny<T> extends true
 										: T extends UnknownArray
 											? JsonifyList<UntagTuple<T>>
 											: T extends object
-												? JsonifyObject<UndefinedToOptional<{[Key in keyof T]: ToJsonResult<T[Key]>}>> // JsonifyObject recursive call for its children
+												// A mapped type returns a bare `object` as is, which is not assignable to `JsonValue`.
+												? IsEqual<T, object> extends true
+													? {}
+													: JsonifyObject<UndefinedToOptional<{[Key in keyof T]: ToJsonResult<T[Key]>}>> // JsonifyObject recursive call for its children
 												: IsUnknown<T> extends true
 													? JsonValue
 													: never; // Otherwise any other non-object is removed

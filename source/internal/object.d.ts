@@ -92,10 +92,10 @@ type OptionalizedUser = UndefinedToOptional<User>;
 export type UndefinedToOptional<T extends object> = SimplifyObject<
 	{
 	// Property is not a union with `undefined`, keep it as-is.
-		[Key in keyof Pick<T, FilterDefinedKeys<T>>]: T[Key];
+		[Key in keyof T as FilterDefinedKeys<Pick<T, Key>>]: T[Key];
 	} & {
 	// Property _is_ a union with defined value. Set as optional (via `?`) and remove `undefined` from the union.
-		[Key in keyof Pick<T, FilterOptionalKeys<T>>]?: Exclude<T[Key], undefined>;
+		[Key in keyof T as FilterOptionalKeys<Pick<T, Key>>]?: Exclude<T[Key], undefined>;
 	}
 >;
 
