@@ -66,7 +66,10 @@ type JsonifyObject<T extends object> = {
 };
 
 // Object properties may disappear when their own toJSON method returns undefined.
-type ToJsonResult<T> = T extends {toJSON(...arguments_: any[]): infer Result} ? Result : T;
+type ToJsonResult<T> = T extends {toJSON(...arguments_: any[]): infer Result} ? WithoutToJson<Result> : T;
+
+// `JSON.stringify` calls `toJSON` only once per value, so the `toJSON` method of a `toJSON` result is ignored. A `Date` returned by `toJSON` becomes `{}`, not a string. Calling it again would also recurse forever when the result can be the same type, as with `Jsonifiable`.
+type WithoutToJson<T> = T extends {toJSON(...arguments_: any[]): unknown} ? Omit<T, 'toJSON'> : T;
 
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
@@ -142,7 +145,7 @@ export type Jsonify<T> = IsAny<T> extends true
 			: T extends {toJSON(...arguments_: any[]): infer J}
 				? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
 					? J // Then T is Jsonable and its Jsonable value is J
-					: Jsonify<J> // Maybe if we look a level deeper we'll find a JsonValue
+					: Jsonify<WithoutToJson<J>> // Maybe if we look a level deeper we'll find a JsonValue
 				// Instanced primitives are objects
 				: T extends Number
 					? number

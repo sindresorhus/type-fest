@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {EmptyObject, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, Opaque, PositiveInfinity, Tagged, TupleOf} from '../index.d.ts';
+import type {EmptyObject, Jsonifiable, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, Opaque, PositiveInfinity, Tagged, TupleOf} from '../index.d.ts';
 
 // An interface has no implicit index signature, so this checks that `Jsonify` makes it assignable to `JsonValue`.
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -782,6 +782,30 @@ expectTypeOf<Jsonify<[1, {toJSON(): string | undefined}?]>>().toBe<[1] | [1, str
 expectTypeOf<Jsonify<Array<Date | {toJSON(): undefined}>>>().toBe<Array<string | null>>();
 expectTypeOf<Jsonify<Array<Array<{toJSON(): string | undefined}>>>>().toBe<Array<Array<string | null>>>();
 expectTypeOf<Jsonify<Array<{toJSON(): string | undefined}>>>().toBeAssignableTo<JsonValue>();
+
+// `JSON.stringify` calls `toJSON` only once per value, so the `toJSON` method of a `toJSON` result is not called.
+expectTypeOf<Jsonify<{toJSON(): Date}>>().toBe<{}>();
+expectTypeOf<Jsonify<{toJSON(): {toJSON(): string}}>>().toBe<{}>();
+expectTypeOf<Jsonify<{value: {toJSON(): Date}}>>().toBe<{value: {}}>();
+expectTypeOf<Jsonify<Array<{toJSON(): Date}>>>().toBe<Array<{}>>();
+expectTypeOf<Jsonify<[{toJSON(): Date}, Date]>>().toBe<[{}, string]>();
+expectTypeOf<Jsonify<{toJSON(): Map<string, number>}>>().toBe<EmptyObject>();
+
+// The properties and items of a `toJSON` result are still converted, and a primitive wrapper is still unwrapped.
+expectTypeOf<Jsonify<{toJSON(): {date: Date}}>>().toBe<{date: string}>();
+expectTypeOf<Jsonify<{toJSON(): Date[]}>>().toBe<string[]>();
+expectTypeOf<Jsonify<{toJSON(): Number}>>().toBe<number>();
+expectTypeOf<Jsonify<{toJSON(): readonly [1, Date]}>>().toBe<[1, string]>();
+expectTypeOf<Jsonify<{toJSON(): unknown}>>().toBe<JsonValue>();
+expectTypeOf<Jsonify<{toJSON(): any}>>().toBe<any>();
+
+// A `toJSON` result that can be the same type does not recurse forever.
+type ReturnsItself = {value: number; toJSON(): ReturnsItself};
+expectTypeOf<Jsonify<ReturnsItself>>().toBe<{value: number}>();
+type ToJsonChain = string | {toJSON(): ToJsonChain};
+expectTypeOf<Jsonify<ToJsonChain>>().toBe<string | {}>();
+expectTypeOf<Jsonify<{value: ToJsonChain}>>().toBe<{value: string | {}}>();
+expectTypeOf<Jsonify<Jsonifiable>>().toBeAssignableTo<JsonValue>();
 
 // The JSON types are already JSON, so they stay unchanged. Their arrays contain `JsonValue` itself, which used to recurse forever.
 expectTypeOf<Jsonify<JsonValue>>().toBe<JsonValue>();
