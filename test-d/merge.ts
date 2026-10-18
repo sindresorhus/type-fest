@@ -218,9 +218,13 @@ expectTypeOf(mixedReadonlyTuples).toBe<[4, 5, 3]>();
 declare const mixedReadonlyTuplesReversed: Merge<[1, 2, 3], readonly [4, 5]>;
 expectTypeOf(mixedReadonlyTuplesReversed).toBe<[4, 5, 3]>();
 
-// Known limitation: a tuple merged with an object collapses to `never`, where the real spread gives an object carrying the array's own members: `{...['a', 1], ...{0: true}}` has `length` and `toString` alongside the positions. See the note in the docs.
+// Known limitation: a number key of an object is intersected with the position of a tuple instead of overriding it, so conflicting literal types collapse the result to `never`. See the note in the docs.
 declare const tupleIntoObject: Merge<[1], {0: 2}>;
 expectTypeOf(tupleIntoObject).toBe<never>();
+expectTypeOf<Merge<{1: 'x'}, [1, 2]>>().toBe<never>();
+expectTypeOf<Merge<[string], {0: number}>[0]>().toBe<never>();
+expectTypeOf<Merge<[1], {'0': 2}>['0']>().toBe<2>();
+expectTypeOf<Merge<[1], {'0': 2}>['length']>().toBe<1>();
 
 // A source with an optional element has no fixed positions to override.
 declare const optionalSourceElement: Merge<[1, 2], [3?]>;
@@ -280,3 +284,92 @@ expectTypeOf<Merge<{(value: string): string; (value: number): number; property: 
 expectTypeOf<Merge<{<Value>(value: Value): Value; property: number}, {property: string}>>().toBe<((value: unknown) => unknown) & {property: string}>();
 expectTypeOf<Merge<{(value: unknown): value is string; property: number}, {property: string}>>().toBe<((value: unknown) => boolean) & {property: string}>();
 expectTypeOf<Merge<{new (): Date; (value: string): number; property: number}, {property: string}>>().toBe<((value: string) => number) & {property: string}>();
+
+// A property of the destination is overridden only by a property of the source, not by an index signature.
+declare const sym: unique symbol;
+expectTypeOf<Merge<{a: 1; b: 2}, {[x: string]: number}>>().toBe<{[x: string]: number; a: 1; b: 2}>();
+expectTypeOf<Merge<{0: 'a'; 1: 'b'}, {[x: number]: string}>>().toBe<{[x: number]: string; 0: 'a'; 1: 'b'}>();
+expectTypeOf<Merge<{[sym]: 1}, {[x: symbol]: number}>>().toBe<{[x: symbol]: number; [sym]: 1}>();
+expectTypeOf<Merge<{fooBar: 1}, {[x: `foo${string}`]: number}>>().toBe<{[x: `foo${string}`]: number; fooBar: 1}>();
+expectTypeOf<Merge<{0: 'a'}, {0: 'b'}>>().toBe<{0: 'b'}>();
+expectTypeOf<Merge<{[sym]: 1}, {[sym]: 2}>>().toBe<{[sym]: 2}>();
+expectTypeOf<Merge<{a: 1; b: 2}, {[x: string]: number; a: 3}>>().toBe<{[x: string]: number; b: 2; a: 3}>();
+expectTypeOf<Merge<{a?: 1}, {[x: string]: number}>>().toBe<{[x: string]: number; a?: 1}>();
+expectTypeOf<Merge<{readonly a: 1}, {readonly [x: string]: number}>>().toBe<{readonly [x: string]: number; readonly a: 1}>();
+expectTypeOf<Merge<{[sym]: 1; a: 1}, {[sym]?: 2}>>().toBe<{a: 1; [sym]?: 2}>();
+expectTypeOf<Merge<{[x: symbol]: number}, {[sym]: 2}>>().toBe<{[x: symbol]: number; [sym]: 2}>();
+expectTypeOf<Merge<Record<'a' | 'b', 1>, Record<'b' | 'c', 2>>>().toBe<{a: 1; b: 2; c: 2}>();
+
+// An enum member key is the same property as its value, in either direction.
+enum StringEnum {
+	A = 'a',
+	B = 'b',
+}
+
+enum NumberEnum {
+	A = 0,
+}
+
+expectTypeOf<Merge<{[StringEnum.A]: 1}, {a: 2}>>().toBe<{a: 2}>();
+expectTypeOf<Merge<{a: 1}, {[StringEnum.A]: 2}>>().toBe<{a: 2}>();
+expectTypeOf<Merge<{a: string}, {[StringEnum.A]: number}>>().toBe<{a: number}>();
+expectTypeOf<Merge<{a: 1; b: 2}, {[StringEnum.A]?: 3}>>().toBe<{b: 2; a?: 3}>();
+expectTypeOf<Merge<{readonly a: 1; c: 2}, {[StringEnum.A]: 3}>>().toBe<{c: 2; a: 3}>();
+expectTypeOf<Merge<{a: 1; b: 1; c: 1}, Record<StringEnum, 2>>>().toBe<{c: 1; a: 2; b: 2}>();
+expectTypeOf<Merge<Record<StringEnum, 1>, {a: 2}>>().toBe<{b: 1; a: 2}>();
+expectTypeOf<Merge<{[StringEnum.A]: 1}, {[StringEnum.A]: 2}>>().toBe<{a: 2}>();
+expectTypeOf<Merge<{0: 1}, {[NumberEnum.A]: 2}>>().toBe<{0: 2}>();
+expectTypeOf<Merge<{[NumberEnum.A]: 1}, {0: 2}>>().toBe<{0: 2}>();
+expectTypeOf<Merge<{[x: string]: number; a: 1}, {[StringEnum.A]: 2}>>().toBe<{[x: string]: number; a: 2}>();
+
+// An index signature of the destination is overridden only by an index signature of the source that covers its keys, not by a property.
+expectTypeOf<Merge<{[x: string]: number}, {a: 1}>>().toBe<{[x: string]: number; a: 1}>();
+expectTypeOf<Merge<{[x: number]: 1}, {[x: string]: 2}>>().toBe<{[x: string]: 2}>();
+expectTypeOf<Merge<{[x: string]: number}, {[x: number]: 2}>>().toBe<{[x: string]: number; [x: number]: 2}>();
+expectTypeOf<Merge<{[x: `foo${string}`]: 1}, {[x: string]: 2}>>().toBe<{[x: string]: 2}>();
+expectTypeOf<Merge<{[x: string]: number}, {[x: `foo${string}`]: 2; a: 3}>>().toBe<{[x: string]: number; [x: `foo${string}`]: 2; a: 3}>();
+expectTypeOf<Merge<{[x: symbol]: 1}, {[x: string]: 2}>>().toBe<{[x: symbol]: 1; [x: string]: 2}>();
+expectTypeOf<Merge<Record<string, number | string>, {a: string}>>().toBe<{[x: string]: number | string; a: string}>();
+expectTypeOf<Merge<{[x: string]: number; a: 1}, {[x: string]: number | string}>>().toBe<{[x: string]: number | string; a: 1}>();
+expectTypeOf<Merge<{[x: `foo${string}`]: 1}, {[x: `foo${string}`]: 2}>>().toBe<{[x: `foo${string}`]: 2}>();
+expectTypeOf<Merge<{[x: `foo${string}`]: 1}, {[x: `bar${string}`]: 2}>>().toBe<{[x: `foo${string}`]: 1; [x: `bar${string}`]: 2}>();
+expectTypeOf<Merge<{[x: `${number}`]: 1}, {[x: string]: 2}>>().toBe<{[x: string]: 2}>();
+expectTypeOf<Merge<{[x: number]: 1; [x: symbol]: 2}, {[x: string]: 3}>>().toBe<{[x: symbol]: 2; [x: string]: 3}>();
+expectTypeOf<Merge<{a: 1; [x: string]: number}, {[x: symbol]: 2}>>().toBe<{[x: string]: number; [x: symbol]: 2; a: 1}>();
+expectTypeOf<Merge<{[x: string]: number}, {[x: string]: string; [x: number]: 'n'}>>().toBe<{[x: string]: string; [x: number]: 'n'}>();
+
+// Modifiers come from the type that has the key: the source for an overridden key, otherwise the destination.
+expectTypeOf<Merge<{readonly a?: 1; b: 2}, {c: 3}>>().toBe<{readonly a?: 1; b: 2; c: 3}>();
+expectTypeOf<Merge<{readonly a?: 1}, {a: 2}>>().toBe<{a: 2}>();
+expectTypeOf<Merge<{a: 1}, {readonly a?: 2}>>().toBe<{readonly a?: 2}>();
+expectTypeOf<Merge<{readonly [x: string]: number}, {a: 2}>>().toBe<{readonly [x: string]: number; a: 2}>();
+expectTypeOf<Merge<{[x: string]: 1}, {readonly [x: string]: 2}>>().toBe<{readonly [x: string]: 2}>();
+
+// Top and empty types.
+expectTypeOf<Merge<any, {a: 1}>>().toBe<{[x: string]: any; a: 1}>();
+expectTypeOf<Merge<{a: 1}, any>>().toBe<{[x: string]: any; a: 1}>();
+expectTypeOf<Merge<unknown, {a: 1}>>().toBe<{a: 1}>();
+expectTypeOf<Merge<{a: 1}, unknown>>().toBe<{a: 1}>();
+expectTypeOf<Merge<{}, {a: 1}>>().toBe<{a: 1}>();
+expectTypeOf<Merge<{a: 1}, {}>>().toBe<{a: 1}>();
+expectTypeOf<Merge<never, {a: 1}>>().toBe<never>();
+expectTypeOf<Merge<{a: 1}, never>>().toBe<never>();
+expectTypeOf<Merge<{[x: string]: number}, any>>().toBe<{[x: string]: any}>();
+expectTypeOf<Merge<{[x: symbol]: 1; a: 1}, any>>().toBe<{[x: symbol]: 1; [x: string]: any; a: 1}>();
+expectTypeOf<Merge<any, {[x: number]: 1}>>().toBe<{[x: string]: any; [x: number]: 1}>();
+expectTypeOf<Merge<any, any>>().toBe<any>();
+expectTypeOf<Merge<unknown, any>>().toBe<{[x: string]: any}>();
+expectTypeOf<Merge<{}, {}>>().toBe<{}>();
+expectTypeOf<Merge<object, {a: 1}>>().toBe<{a: 1}>();
+
+// Nested merges stay correct with index signatures and modifiers.
+type NestedWithIndexSignatures = Merge<Merge<Merge<{[x: string]: number; a?: 1}, {[x: number]: 2; readonly b: 2}>, {[x: string]: number | string; c: 3}>, {[x: symbol]: 4; a: 4}>;
+expectTypeOf<NestedWithIndexSignatures>().toBe<{[x: string]: number | string; [x: symbol]: 4; readonly b: 2; c: 3; a: 4}>();
+
+type NestedKeepsNumberIndexSignature = Merge<Merge<{[x: string]: number; a?: 1}, {[x: string]: number | string; c: 3}>, {[x: number]: 2; readonly b: 2}>;
+expectTypeOf<NestedKeepsNumberIndexSignature>().toBe<{[x: string]: number | string; [x: number]: 2; a?: 1; c: 3; readonly b: 2}>();
+
+// Each nested merge reads the previous result once, so deep nesting stays fast and within the depth limit. Reading it more than once made each level about four times slower, and 18 levels failed with “Type instantiation is excessively deep and possibly infinite”.
+type DeepFirstHalf = Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<{a: 0}, {b: 1}>, {c: 2}>, {a: 3}>, {b: 4}>, {c: 5}>, {a: 6}>, {b: 7}>, {c: 8}>, {a: 9}>, {b: 10}>;
+type Deep = Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<DeepFirstHalf, {c: 11}>, {a: 12}>, {b: 13}>, {c: 14}>, {a: 15}>, {b: 16}>, {c: 17}>, {a: 18}>, {b: 19}>, {c: 20}>;
+expectTypeOf<Deep>().toBe<{a: 18; b: 19; c: 20}>();

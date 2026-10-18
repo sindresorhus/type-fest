@@ -6,14 +6,10 @@ import type {IsEqual} from './is-equal.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {ObjectMerge} from './object-merge.d.ts'; // For `@link`
 import type {Spread} from './spread.d.ts'; // For `@link`
-
-// Merges two objects without worrying about index signatures.
-type SimpleMerge<Destination, Source> = SimplifyObject<{
-	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
-} & Source>;
+import type {MergeAll} from './merge-all.d.ts'; // For `@link`
 
 /**
-Merge two types into a new type. Keys of the second type overrides keys of the first type.
+Merge two types into a new type. Keys of the second type override keys of the first type.
 
 This is different from the TypeScript `&` (intersection) operator. With `&`, conflicting property types are intersected, which often results in `never`. For example, `{a: string} & {a: number}` makes `a` become `string & number`, which resolves to `never`. With `Merge`, the second type's keys cleanly override the first, so `Merge<{a: string}, {a: number}>` gives `{a: number}` as expected. `Merge` also produces a flattened type (via `Simplify`), making it more readable in IDE tooltips compared to `A & B`.
 
@@ -71,16 +67,19 @@ export type FooBar = Merge<Foo, Bar>;
 
 Note: If you want a merge type that more accurately reflects the runtime behavior of object spread or `Object.assign`, refer to the {@link ObjectMerge} type.
 
+Use {@link MergeAll} to merge more than two types.
+
 Two tuples are combined position by position, so `Merge<[1, 2, 3], [4, 5]>` is `[4, 5, 3]`. Use {@link Spread} to append them instead.
 
 A call signature is kept: the source's if it has one, otherwise the destination's.
 
 Known limitations:
-- A tuple merged with an object, such as `Merge<[1], {0: 2}>`, collapses to `never`, where the real spread gives an object carrying the array's own members alongside the positions. Use {@link Spread} for that shape.
+- A tuple merged with an object that has a number key for one of its positions, such as `Merge<[1], {0: 2}>`, intersects the two at that position instead of overriding it, so conflicting literal types make the whole result `never`. Use a string key, such as `{'0': 2}`, instead.
 - Inside a generic function, a value such as `{...a, ...b}` (typed as `A & B`) is not assignable to `Merge<A, B>`, because TypeScript cannot resolve `Merge` until `A` and `B` are known. Use a type assertion: `{...a, ...b} as unknown as Merge<A, B>`.
 - The kept call signature is rebuilt, so an overloaded function keeps only its last signature, a generic function loses its type parameters, and a type predicate becomes `boolean`. A construct signature is dropped.
 
 @see {@link ObjectMerge}
+@see {@link MergeAll}
 @category Object
 */
 export type Merge<Destination, Source> =
@@ -139,10 +138,14 @@ export type _Merge<Destination, Source> =
 		? CallSignatureOf<Destination> & MergeObjects<Destination, Source>
 		: CallSignatureOf<Source> & MergeObjects<Destination, Source>;
 
-// Merges the properties and index signatures of two objects.
-type MergeObjects<Destination, Source> = SimplifyObject<
-	SimpleMerge<PickIndexSignature<Destination>, PickIndexSignature<Source>>
-	& SimpleMerge<OmitIndexSignature<Destination>, OmitIndexSignature<Source>>
->;
+// Merges the properties and index signatures of two objects. A key of the destination is dropped when the source overrides it: an index signature only by an index signature, and a property only by a property. A property is also dropped when a property key of the source is a subtype of it, so that a string enum key such as `StringEnum.A` overrides `'a'`. The destination is read only once, because each extra read multiplies the work of nested merges, such as in `MergeAll`. The source is split instead of intersected as is, because an intersection with an `any` source is `any`, which loses the properties of the destination.
+type MergeObjects<Destination, Source> = SimplifyObject<{
+	[Key in keyof Destination as {} extends Record<Key, unknown>
+		? Key extends keyof PickIndexSignature<Source> ? never : Key
+		: Key extends keyof OmitIndexSignature<Source>
+			? never
+			: [Extract<keyof OmitIndexSignature<Source>, Key>] extends [never] ? Key : never
+	]: Destination[Key];
+} & PickIndexSignature<Source> & OmitIndexSignature<Source>>;
 
 export {};

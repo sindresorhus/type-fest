@@ -112,7 +112,8 @@ Click the type names for complete docs.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys.
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
-- [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
+- [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type override keys of the first type.
+- [`MergeAll`](source/merge-all.d.ts) - Merge any number of types into a new type. Keys of each type override keys of the types before it.
 - [`ObjectMerge`](source/object-merge.d.ts) - Merge two object types into a new object type, where keys from the second override keys from the first.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
