@@ -129,6 +129,8 @@ Click the type names for complete docs.
 - [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
+- [`PickWritable`](source/pick-writable.d.ts) - Pick only the writable properties from the given object type, leaving out the `readonly` ones.
+- [`PickReadonly`](source/pick-readonly.d.ts) - Pick only the `readonly` properties from the given object type, leaving out the writable ones.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.

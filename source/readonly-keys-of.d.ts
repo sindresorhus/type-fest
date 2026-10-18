@@ -1,9 +1,10 @@
 import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
+import type {PickReadonly} from './pick-readonly.d.ts'; // For `@link`
 
 /**
 Extract all readonly keys from the given type.
 
-This is useful when you want to create a new type that contains readonly keys only.
+Use {@link PickReadonly} to create a type that contains the readonly properties only.
 
 @example
 ```
@@ -16,11 +17,8 @@ type User = {
 	readonly id: number;
 };
 
-type UpdateResponse<Entity extends object> = Pick<Entity, ReadonlyKeysOf<Entity>>;
-
-const update1: UpdateResponse<User> = {
-	id: 123,
-};
+type UserReadonlyKeys = ReadonlyKeysOf<User>;
+//=> 'id'
 ```
 
 Known limitations:

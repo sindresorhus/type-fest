@@ -1,10 +1,11 @@
 import type {IsWritableKeyOf} from './is-writable-key-of.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {PickWritable} from './pick-writable.d.ts'; // For `@link`
 
 /**
 Extract all writable keys from the given type.
 
-This is useful when you want to create a new type that contains writable keys only.
+Use {@link PickWritable} to create a type that contains the writable properties only.
 
 @example
 ```
@@ -17,12 +18,8 @@ type User = {
 	readonly id: number;
 };
 
-type UpdateRequest<Entity extends object> = Pick<Entity, WritableKeysOf<Entity>>;
-
-const update1: UpdateRequest<User> = {
-	name: 'Alice',
-	surname: 'Acme',
-};
+type UserWritableKeys = WritableKeysOf<User>;
+//=> 'name' | 'surname'
 ```
 
 Known limitations:

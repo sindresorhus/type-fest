@@ -34,6 +34,8 @@ export type {RequireOneOrNone} from './source/require-one-or-none.d.ts';
 export type {SingleKeyObject} from './source/single-key-object.d.ts';
 export type {OmitIndexSignature} from './source/omit-index-signature.d.ts';
 export type {PickIndexSignature} from './source/pick-index-signature.d.ts';
+export type {PickWritable} from './source/pick-writable.d.ts';
+export type {PickReadonly} from './source/pick-readonly.d.ts';
 export type {PartialDeep, PartialDeepOptions} from './source/partial-deep.d.ts';
 export type {UnwrapPartial} from './source/unwrap-partial.d.ts';
 export type {UnwrapRequired} from './source/unwrap-required.d.ts';
