@@ -87,6 +87,37 @@ function toHex([r, g, b]: readonly [number, number, number]) {
 console.log(toHex(color)); // `FixedLengthArray<number, 3>` is assignable to `readonly [number, number, number]`.
 ```
 
+Note: When `Length` is a number literal, indexing with a non-literal `number` is not allowed, since the index could be out of bounds. Use `for...of`, `.entries()`, or another array method to go through the items.
+
+@example
+```
+import type {FixedLengthArray} from 'type-fest';
+
+const color: FixedLengthArray<number, 3> = [255, 128, 64];
+
+declare const randomIndex: number;
+
+// @ts-expect-error
+const item = color[randomIndex];
+// Error: Element implicitly has an 'any' type because expression of type 'number' can't be used to index type 'FixedLengthArray<number, 3>'.
+
+for (const [index, value] of color.entries()) {
+	console.log(index, value);
+}
+```
+
+Note: When `Length` is a number literal, spreading the array into an array literal results in `any[]`. TypeScript reads the element type from the `number` index signature, which the type does not have in that case. Use `Array.from()` or `.slice()` to copy it instead.
+
+@example
+```
+import type {FixedLengthArray} from 'type-fest';
+
+const color: FixedLengthArray<number, 3> = [255, 128, 64];
+
+const copy = [...color];
+//=> any[]
+```
+
 @category Array
 */
 export type FixedLengthArray<Element, Length extends number> =

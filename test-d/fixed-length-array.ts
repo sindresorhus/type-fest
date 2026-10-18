@@ -16,6 +16,44 @@ expectTypeOf<FixedToThreeStrings[2]>().toBe<string>();
 // Reading out of bounds
 // @ts-expect-error
 type OutOfBounds = FixedToThreeStrings[3];
+// @ts-expect-error
+expectTypeOf(fixedToThreeStrings[4]);
+
+// Indexing with a non-literal `number` is not allowed, since it could be out of bounds
+declare const index: number;
+// @ts-expect-error
+type NonLiteralIndex = FixedToThreeStrings[number];
+// @ts-expect-error
+expectTypeOf(fixedToThreeStrings[index]);
+// @ts-expect-error
+fixedToThreeStrings[index] = 'd';
+
+// Iterating and destructuring keep the element type, even with `noUncheckedIndexedAccess`
+const [first, second, third] = fixedToThreeStrings;
+expectTypeOf(first).toBe<string>();
+expectTypeOf(second).toBe<string>();
+expectTypeOf(third).toBe<string>();
+
+for (const item of fixedToThreeStrings) {
+	expectTypeOf(item).toBe<string>();
+}
+
+for (const [entryIndex, item] of fixedToThreeStrings.entries()) {
+	expectTypeOf(entryIndex).toBe<number>();
+	expectTypeOf(item).toBe<string>();
+}
+
+// Spreading into an array literal results in `any[]`, since there is no `number` index signature. This is a known limitation.
+expectTypeOf([...fixedToThreeStrings]).toBe<any[]>();
+// eslint-disable-next-line unicorn/prefer-spread -- spreading results in `any[]`
+expectTypeOf(Array.from(fixedToThreeStrings)).toBe<string[]>();
+// eslint-disable-next-line unicorn/prefer-spread -- spreading results in `any[]`
+expectTypeOf(fixedToThreeStrings.slice()).toBe<string[]>();
+
+// Spreading into function arguments still checks the element type
+declare function takesNumbers(...numbers: number[]): void;
+// @ts-expect-error
+takesNumbers(...fixedToThreeStrings);
 
 // Writing within bounds
 fixedToThreeStrings[0] = 'a';
@@ -90,3 +128,16 @@ expectTypeOf<[1, 'b', true]>().not.toBeAssignableTo<FixedLengthArray<string | nu
 ['a', 'b', 'c'] satisfies FixedLengthArray<string, 2 | 3>;
 expectTypeOf<['a']>().not.toBeAssignableTo<FixedLengthArray<string, 2 | 3>>();
 expectTypeOf<[1, 2]>().not.toBeAssignableTo<FixedLengthArray<string, 2 | 3>>();
+
+// Reading within bounds works and reading out of bounds is an error for any element type
+expectTypeOf<FixedLengthArray<any, 2>[1]>().toBe<any>();
+expectTypeOf<FixedLengthArray<unknown, 2>[1]>().toBe<unknown>();
+expectTypeOf<FixedLengthArray<never, 2>[1]>().toBe<never>();
+// @ts-expect-error
+type AnyOutOfBounds = FixedLengthArray<any, 2>[2];
+// @ts-expect-error
+type UnknownOutOfBounds = FixedLengthArray<unknown, 2>[2];
+// @ts-expect-error
+type NeverOutOfBounds = FixedLengthArray<never, 2>[2];
+// @ts-expect-error
+type EmptyOutOfBounds = FixedLengthArray<string, 0>[0];
