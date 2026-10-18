@@ -482,6 +482,23 @@ expectTypeOf(objectWithAnyProperty).toBe<{a: any}>();
 declare const objectWithAnyProperties: Jsonify<Record<string, any>>;
 expectTypeOf(objectWithAnyProperties).toBe<Record<string, any>>();
 
+// A property must not be dropped just because a function is assignable to its type.
+// See https://github.com/sindresorhus/type-fest/issues/667
+expectTypeOf<Jsonify<{payload: Record<string, any>}>>().toBe<{payload: Record<string, any>}>();
+expectTypeOf<Jsonify<{payload: {[key: string]: any}}>>().toBe<{payload: {[key: string]: any}}>();
+expectTypeOf<Jsonify<{payload: Record<PropertyKey, any>}>>().toBe<{payload: Record<PropertyKey, any>}>();
+expectTypeOf<Jsonify<{payload: object}>>().toBe<{payload: {}}>();
+expectTypeOf<Jsonify<{payload: {}}>>().toBe<{payload: {}}>();
+expectTypeOf<Jsonify<{payload: Record<string, string>}>>().toBe<{payload: Record<string, string>}>();
+expectTypeOf<Jsonify<{payload: Record<string, Date>}>>().toBe<{payload: Record<string, string>}>();
+expectTypeOf<Jsonify<{payload: Record<string, unknown>}>>().toBe<{payload: Record<string, JsonValue>}>();
+expectTypeOf<Jsonify<{payload?: Record<string, any>}>>().toBe<{payload?: Record<string, any>}>();
+expectTypeOf<Jsonify<{payload: Record<string, any> | undefined}>>().toBe<{payload?: Record<string, any>}>();
+expectTypeOf<Jsonify<{payload: Record<string, any>; date: Date}>>().toBe<{payload: Record<string, any>; date: string}>();
+expectTypeOf<Jsonify<{outer: {inner: Record<string, any>}}>>().toBe<{outer: {inner: Record<string, any>}}>();
+expectTypeOf<Jsonify<{payload: Array<Record<string, any>>}>>().toBe<{payload: Array<Record<string, any>>}>();
+expectTypeOf<Jsonify<[Record<string, any>]>>().toBe<[Record<string, any>]>();
+
 // Test for `Jsonify` support for nested objects with _only_ a name property.
 // See https://github.com/sindresorhus/type-fest/issues/657
 declare const nestedObjectWithNameProperty: {
