@@ -295,6 +295,22 @@ expectTypeOf(mixTupleJson).toBe<['1', null, 2]>();
 declare const tupleStringJson: Jsonify<string[] & ['some value']>;
 expectTypeOf(tupleStringJson).toBe<['some value']>();
 
+// A tagged primitive keeps its tag, because `JSON.parse` gives back the same value.
+type UserId = Tagged<number, 'UserId'>;
+expectTypeOf<Jsonify<UserId>>().toBe<UserId>();
+expectTypeOf<Jsonify<{id: UserId}>>().toBe<{id: UserId}>();
+expectTypeOf<Jsonify<{id?: UserId}>>().toBe<{id?: UserId}>();
+expectTypeOf<Jsonify<Tagged<'a' | 'b', 'Letter'>>>().toBe<Tagged<'a' | 'b', 'Letter'>>();
+expectTypeOf<Jsonify<UserId | undefined>>().toBe<UserId>();
+expectTypeOf<Jsonify<UserId[]>>().toBe<UserId[]>();
+
+// A tagged object, array, or `Date` becomes a new value and loses its tag.
+expectTypeOf<Jsonify<Tagged<{a: Date}, 'X'>>>().toBe<{a: string}>();
+expectTypeOf<Jsonify<Tagged<Date, 'X'>>>().toBe<string>();
+
+// `LiteralToPrimitiveDeep` removes all tags, and also widens literals.
+expectTypeOf<LiteralToPrimitiveDeep<Jsonify<{id: UserId; type: 'Point'}>>>().toBe<{id: number; type: string}>();
+
 // A tagged tuple keeps all its elements. `JSON.stringify` drops the tag's symbol key, so the result is the same as for the untagged tuple.
 expectTypeOf<Jsonify<Tagged<[number, number], 'Point'>>>().toBe<[number, number]>();
 expectTypeOf<Jsonify<Tagged<[Date, number], 'T'>>>().toBe<[string, number]>();

@@ -77,6 +77,8 @@ This includes:
 
 Note: An enum is already a subtype of `string` or `number`, so it passes through unchanged where a primitive would. `Jsonify<{status: Status}>` is `{status: Status}`, and a plain string is not assignable to it, even though that is what `JSON.parse` gives back. TypeScript cannot tell an enum from a union of the same literals, so nothing here unwraps one. `LiteralToPrimitive` does, so `LiteralToPrimitiveDeep<T>` is the type to reach for when enums should become their primitives.
 
+Note: A tagged primitive, like `Tagged<number, 'UserId'>`, keeps its tag, because `JSON.parse` gives back the same value. A tagged object, array, or `Date` loses its tag, because it becomes a new value. Use `UnwrapTagged` to remove the tag from a single type, or `LiteralToPrimitiveDeep` to remove all tags, which also widens literals like `'Point'` to `string`.
+
 Note: An array type that contains itself, like `Json[]` in `type Json = string | Json[]`, cannot be transformed without infinite recursion. It stays unchanged when it is already JSON, and otherwise becomes `JsonValue[]`. A cycle through a tuple, like `type Pair = string | [Pair, Pair]`, or through more than one array type, like `type A = string | B[]` with `type B = number | A[]`, is too deep to transform.
 
 Note: A tuple intersected with an object type other than a tag, like `[string, number] & {extra: true}`, can lose elements, because TypeScript cannot infer the elements of such a tuple. A tagged tuple, like `Tagged<[number, number], 'Point'>`, is not affected.
