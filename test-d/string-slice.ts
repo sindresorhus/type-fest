@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {StringSlice} from '../index.d.ts';
+import type {StringRepeat, StringSlice} from '../index.d.ts';
 
 expectTypeOf<StringSlice<'abcde'>>().toBe<'abcde'>();
 expectTypeOf<StringSlice<'abcde'>>().toBe<'abcde'>();
@@ -50,3 +50,6 @@ expectTypeOf<'01' | '012' | '' | '1' | '12'>().toBe<StringSlice<'0123', -5 | 0 |
 // Array, start and end are unions
 // Positive/Negative start, positive/negative end
 expectTypeOf<'1' | '12' | '01' | '012' | 'abcd' | 'abc' | 'bc' | 'bcd'>().toBe<StringSlice<'012' | 'abcd', 1 | -4, 4 | -1>>();
+
+// A long string does not hit the recursion limit.
+expectTypeOf<StringSlice<StringRepeat<'a', 200>, 1>>().toBe<StringRepeat<'a', 199>>();

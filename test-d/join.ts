@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Join} from '../index.d.ts';
+import type {Join, StringRepeat, TupleOf} from '../index.d.ts';
 
 // General use.
 const generalTestVariantMixed: Join<['foo', 0, 'baz'], '.'> = 'foo.0.baz';
@@ -133,3 +133,7 @@ expectTypeOf<Join<never, '.' | '-'>>().toBe<never>();
 expectTypeOf<Join<[1, 2, 3], never>>().toBe<never>();
 expectTypeOf<Join<[], never>>().toBe<never>();
 expectTypeOf<Join<['a'], never>>().toBe<never>();
+
+// A long tuple does not hit the recursion limit.
+expectTypeOf<Join<TupleOf<200, 'a'>, '.'>>().toBe<`${StringRepeat<'a.', 199>}a`>();
+expectTypeOf<Join<[...TupleOf<200, 'a'>, ...string[]], '.'>>().toBe<`${StringRepeat<'a.', 199>}a` | `${StringRepeat<'a.', 200>}${string}`>();
