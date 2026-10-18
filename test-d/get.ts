@@ -83,6 +83,20 @@ expectTypeOf<Get<Array<[string, number]>, `${number}.${number}`>>().toBe<string 
 expectTypeOf<Get<[string] | number[], `${number}`, NonStrict>>().toBe<string | number>();
 expectTypeOf<Get<[string] | undefined, `${number}`, NonStrict>>().toBe<string | undefined>();
 
+// An index from a `number` variable can be any element of a tuple. (https://github.com/sindresorhus/type-fest/issues/567)
+{
+	const object = {array: [{a: 1}, {a: 2}]} as const;
+	const getFromObject = <Path extends string>(path: Path) => path as Get<typeof object, Path>;
+	const index = 0 as number;
+
+	expectTypeOf(getFromObject(`array[${index}].a`)).toBe<1 | 2 | undefined>();
+	expectTypeOf(getFromObject(`array.${index}.a`)).toBe<1 | 2 | undefined>();
+
+	// `as const` makes the array a tuple, so a literal index past its end does not exist.
+	expectTypeOf(getFromObject('array[10].a')).toBe<unknown>();
+	expectTypeOf(getFromObject('array.10.a')).toBe<unknown>();
+}
+
 type EmptyTuple = Parameters<() => {}>;
 
 expectTypeOf<Get<EmptyTuple, '-1', NonStrict>>().toBe<unknown>();
@@ -214,8 +228,229 @@ expectTypeOf<Get<WithArrayLikeIndexAndMember, '1'>>().toBe<string | undefined>()
 expectTypeOf<Get<WithArrayLikeIndexAndMember, 'length'>>().toBe<number>();
 expectTypeOf<Get<WithArrayLikeIndexAndMember, ['-1']>>().toBe<unknown>();
 expectTypeOf<Get<WithArrayLikeIndexAndMember, ['1.2']>>().toBe<unknown>();
+
+// A string reads like an array-like object.
 expectTypeOf<Get<string, 'length'>>().toBe<number>();
 expectTypeOf<Get<string, '0'>>().toBe<string | undefined>();
+
+// An empty key is not an index, like for arrays.
+expectTypeOf<Get<WithArrayLikeIndexAndMember, ['']>>().toBe<unknown>();
+expectTypeOf<Get<{a: ArrayLike<string>}, 'a.'>>().toBe<unknown>();
+expectTypeOf<Get<{a: ArrayLike<string>}, 'a[]'>>().toBe<unknown>();
+expectTypeOf<Get<string, ['']>>().toBe<unknown>();
+expectTypeOf<Get<string[], ['']>>().toBe<unknown>();
+
+// A non-literal index can be any item of an array-like object.
+type WithArrayLike = {list: ArrayLike<{name: string}>};
+expectTypeOf<Get<WithArrayLike, `list.${number}.name`>>().toBe<string | undefined>();
+expectTypeOf<Get<WithArrayLike, `list[${number}].name`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<WithArrayLike, ['list', number, 'name']>>().toBe<string | undefined>();
+expectTypeOf<Get<WithArrayLike, `list.${number}.name`>>().toBe<Get<WithArrayLike, 'list.0.name'>>();
+expectTypeOf<Get<WithArrayLike, `list.${number}.typo`>>().toBe<unknown>();
+expectTypeOf<Get<WithArrayLike, `list.${number}` | 'list.length'>>().toBe<number | {name: string} | undefined>();
+expectTypeOf<Get<WithArrayLike, Paths<WithArrayLike>>>().toBe<ArrayLike<{name: string}> | string | number | {name: string} | undefined>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, `${number}`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<{bytes: Uint8Array}, `bytes.${number}`>>().toBe<number | undefined>();
+expectTypeOf<Get<string, number>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string> | undefined, `${number}`, NonStrict>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string> | [boolean], `${number}`, NonStrict>>().toBe<string | boolean>();
+expectTypeOf<Get<ArrayLike<string> | {a: 1}, `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<any>, `${number}`>>().toBe<any>();
+expectTypeOf<Get<ArrayLike<unknown>, `${number}`>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<never>, `${number}`>>().toBe<undefined>();
+
+// A `string` variable is not an index, like for arrays.
+expectTypeOf<Get<WithArrayLike, `list.${string}`>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, [string]>>().toBe<unknown>();
+expectTypeOf<Get<string[], [string]>>().toBe<unknown>();
+
+// A variable cannot read an object without a matching index signature, like TypeScript reports for `object[key]`. A union of the keys can.
+type WithNamedKeys = {users: {alice: {age: number}; bob: {age: string}}};
+expectTypeOf<Get<WithNamedKeys, `users.${string}.age`>>().toBe<unknown>();
+expectTypeOf<Get<WithNamedKeys, `users.${keyof WithNamedKeys['users']}.age`>>().toBe<number | string>();
+expectTypeOf<Get<{users: Record<string, {age: number}>}, `users.${string}.age`>>().toBe<number | undefined>();
+expectTypeOf<Get<{0: 'a'; 1: 'b'}, `${number}`>>().toBe<unknown>();
+expectTypeOf<Get<{map: {[key: number]: string}}, `map.${string}`>>().toBe<unknown>();
+
+// A non-literal index reads built-in array-like objects: `IArguments` and typed arrays.
+expectTypeOf<Get<IArguments, `${number}`>>().toBe<any>();
+expectTypeOf<Get<IArguments, number>>().toBe<any>();
+expectTypeOf<Get<Uint8Array, number>>().toBe<number | undefined>();
+expectTypeOf<Get<Float64Array, `${number}`, NonStrict>>().toBe<number>();
+expectTypeOf<Get<BigInt64Array, `${number}`>>().toBe<bigint | undefined>();
+expectTypeOf<Get<{data: {big: BigInt64Array}}, ['data', 'big', number], NonStrict>>().toBe<bigint>();
+expectTypeOf<Get<{bytes: Uint8Array}, `bytes.${number}.typo`>>().toBe<unknown>();
+
+// A non-literal index reads a character of a string, a `String` object, a string literal, and a branded string.
+expectTypeOf<Get<string, `${number}`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<String, `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<String, number>>().toBe<string | undefined>();
+expectTypeOf<Get<'abc', `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<string & {brand: 'x'}, `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<{name: string}, `name.${number}.length`>>().toBe<number | undefined>();
+expectTypeOf<Get<{names: string[]}, `names.${number}.${number}`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<{names: string[]}, ['names', number, number]>>().toBe<string | undefined>();
+
+// A non-literal index reads array-like interfaces, classes, and intersections.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface ArrayLikeInterface {
+	[index: number]: {id: number};
+	length: number;
+}
+
+class ArrayLikeClass {
+	[index: number]: boolean;
+	length = 0;
+}
+
+expectTypeOf<Get<ArrayLikeInterface, `${number}.id`>>().toBe<number | undefined>();
+expectTypeOf<Get<ArrayLikeInterface, [number, 'id'], NonStrict>>().toBe<number>();
+expectTypeOf<Get<ArrayLikeInterface, number>>().toBe<{id: number} | undefined>();
+expectTypeOf<Get<ArrayLikeClass, `${number}`>>().toBe<boolean | undefined>();
+expectTypeOf<Get<Record<number, string> & {length: number}, `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string> & {extra: 1}, `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<{a: 1}> & ArrayLike<{b: 2}>, `${number}.b`, NonStrict>>().toBe<2>();
+
+// A non-literal index reads the index signature, and a literal one still reads the declared member.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface ArrayLikeInterfaceWithMembers {
+	[index: number]: string;
+	length: number;
+	0: 'first';
+}
+
+expectTypeOf<Get<ArrayLikeInterfaceWithMembers, '0'>>().toBe<'first'>();
+expectTypeOf<Get<ArrayLikeInterfaceWithMembers, `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<WithArrayLikeIndexAndMember, `${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<{[index: number]: 'a' | 'b'; 0: 'a'; 1: 'b'; length: 2}, `${number}`>>().toBe<'a' | 'b' | undefined>();
+expectTypeOf<Get<{[index: number]: 'a' | 'b'; 0: 'a'; 1: 'b'; length: 2}, '1'>>().toBe<'b'>();
+
+// A number index signature without a `length: number` is not array-like, but still answers a non-literal index, without `undefined` (a documented limitation). Other iterables have no index.
+expectTypeOf<Get<{[index: number]: string}, `${number}`>>().toBe<string>();
+expectTypeOf<Get<{[index: number]: string; length?: number}, `${number}`>>().toBe<string>();
+expectTypeOf<Get<{[index: number]: string; length: string}, `${number}`>>().toBe<string>();
+expectTypeOf<Get<Iterable<string>, `${number}`>>().toBe<unknown>();
+expectTypeOf<Get<Map<number, string>, number>>().toBe<unknown>();
+
+// A literal key of an array-like object must be digits only, so a numeric string in another form is not an index. A number path is read in its canonical string form.
+expectTypeOf<Get<ArrayLike<string>, '-0'>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, '0x1'>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, '1e3'>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, ' 1'>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, '1 '>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, ['1.5']>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, [1.5]>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, [1e3]>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string>, 0x1>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string>, `${1 | 2}`>>().toBe<string | undefined>();
+
+// A pattern key that is not exactly `${number}` is not an index, like for arrays.
+expectTypeOf<Get<ArrayLike<string>, `${number}px`>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, `-${number}`>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, `1${number}`>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, `${bigint}`>>().toBe<unknown>();
+expectTypeOf<Get<string[], `${number}px`>>().toBe<unknown>();
+expectTypeOf<Get<string[], `-${number}`>>().toBe<unknown>();
+expectTypeOf<Get<string[], `${bigint}`>>().toBe<unknown>();
+
+// An empty segment later in a path is not an index either.
+expectTypeOf<Get<{a: ArrayLike<{b: 1}>}, 'a..b'>>().toBe<unknown>();
+expectTypeOf<Get<{a: ArrayLike<{b: 1}>}, 'a[].b'>>().toBe<unknown>();
+expectTypeOf<Get<{a: ArrayLike<{b: 1}>}, ['a', '', 'b']>>().toBe<unknown>();
+expectTypeOf<Get<{a: Array<{b: 1}>}, 'a..b'>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<{a: 1}>, `${number}..a`>>().toBe<unknown>();
+
+// A non-literal index reads nested array-like objects, and array-like objects inside arrays, tuples, and records.
+type WithNestedArrayLike = {matrix: ArrayLike<ArrayLike<{v: 1}>>};
+expectTypeOf<Get<WithNestedArrayLike, `matrix.${number}.${number}.v`>>().toBe<1 | undefined>();
+expectTypeOf<Get<WithNestedArrayLike, `matrix[${number}][${number}].v`, NonStrict>>().toBe<1>();
+expectTypeOf<Get<WithNestedArrayLike, ['matrix', number, number, 'v']>>().toBe<1 | undefined>();
+expectTypeOf<Get<WithNestedArrayLike, `matrix.${number}.0.v`>>().toBe<1 | undefined>();
+expectTypeOf<Get<WithNestedArrayLike, `matrix.${number}.length`>>().toBe<number | undefined>();
+expectTypeOf<Get<WithNestedArrayLike, `matrix.${number}.${number}.typo`>>().toBe<unknown>();
+expectTypeOf<Get<WithNestedArrayLike, Paths<WithNestedArrayLike>>>().toBe<ArrayLike<ArrayLike<{v: 1}>> | ArrayLike<{v: 1}> | number | 1 | undefined | {v: 1}>();
+expectTypeOf<Get<Array<ArrayLike<{v: 1}>>, `${number}.${number}.v`>>().toBe<1 | undefined>();
+expectTypeOf<Get<Array<ArrayLike<{v: 1}>>, [number, number, 'v'], NonStrict>>().toBe<1>();
+expectTypeOf<Get<[ArrayLike<{v: 1}>, string], `0.${number}.v`>>().toBe<1 | undefined>();
+expectTypeOf<Get<[ArrayLike<{v: 1}>, string], `1.${number}`>>().toBe<string | undefined>();
+expectTypeOf<Get<[ArrayLike<{v: 1}>, string], `${number}.${number}`, NonStrict>>().toBe<string | {v: 1}>();
+expectTypeOf<Get<Record<string, ArrayLike<{v: 1}>>, `key.${number}.v`>>().toBe<1 | undefined>();
+expectTypeOf<Get<Record<string, ArrayLike<{v: 1}>>, `${string}.${number}.v`>>().toBe<1 | undefined>();
+expectTypeOf<Get<ArrayLike<ArrayLike<string>>, `${number}.${number}`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<ArrayLike<string[]>, `${number}.${number}`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<Uint8Array[], `${number}.${number}`, NonStrict>>().toBe<number>();
+
+// A non-literal index through an optional or nullable array-like object, or into nullable items, adds `undefined` even with `strict: false`.
+expectTypeOf<Get<{list?: ArrayLike<{v: 1}>}, `list.${number}.v`>>().toBe<1 | undefined>();
+expectTypeOf<Get<{list?: ArrayLike<{v: 1}>}, `list.${number}.v`, NonStrict>>().toBe<1 | undefined>();
+expectTypeOf<Get<{list?: ArrayLike<{v: 1}>}, `list.${number}.typo`>>().toBe<unknown>();
+expectTypeOf<Get<{list: ArrayLike<{v: 1}> | null}, `list.${number}.v`, NonStrict>>().toBe<1 | undefined>();
+expectTypeOf<Get<ArrayLike<{a: 1} | null>, `${number}.a`, NonStrict>>().toBe<1 | undefined>();
+expectTypeOf<Get<ArrayLike<null>, `${number}.a`>>().toBe<undefined>();
+expectTypeOf<Get<ArrayLike<undefined>, `${number}`, NonStrict>>().toBe<undefined>();
+expectTypeOf<Get<string | null, `${number}`, NonStrict>>().toBe<string | undefined>();
+expectTypeOf<Get<string | undefined, number, NonStrict>>().toBe<string | undefined>();
+
+// A non-literal index reads every member of a union that mixes array-like objects, arrays, tuples, and objects.
+type WithMixedLists = {list: ArrayLike<{v: 1}> | Array<{v: 2}> | [{v: 3}] | {v: 4}};
+expectTypeOf<Get<WithMixedLists, `list.${number}.v`, NonStrict>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<Get<WithMixedLists, ['list', number, 'v']>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<Get<WithMixedLists, 'list.0.v', NonStrict>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<Get<WithMixedLists, 'list.v', NonStrict>>().toBe<4 | undefined>();
+expectTypeOf<Get<{s: string | string[]}, `s.${number}`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<{s: string | string[]}, `s.${number}.${number}`, NonStrict>>().toBe<string>();
+expectTypeOf<Get<string | ArrayLike<number>, `${number}`>>().toBe<string | number | undefined>();
+expectTypeOf<Get<Uint8Array | string[], `${number}`, NonStrict>>().toBe<string | number>();
+expectTypeOf<Get<Uint8Array | {a: 1}, number, NonStrict>>().toBe<number | undefined>();
+expectTypeOf<Get<string | number, `${number}`, NonStrict>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string> | {a: 1}, `${number}` | 'a', NonStrict>>().toBe<string | 1 | undefined>();
+
+// A union of paths, and an `any` segment, read an array-like object like an array.
+expectTypeOf<Get<ArrayLike<string>, [number] | ['length']>>().toBe<string | number | undefined>();
+expectTypeOf<Get<ArrayLike<string>, [any]>>().toBe<Get<string[], [any]>>();
+
+// `any`, `never`, and `unknown` as the subject or the item, with a non-literal index.
+expectTypeOf<Get<any, `${number}`>>().toBe<any>();
+expectTypeOf<Get<never, `${number}`>>().toBe<never>();
+expectTypeOf<Get<unknown, `${number}`>>().toBe<unknown>();
+expectTypeOf<Get<{a: any}, `a.${number}`>>().toBe<any>();
+expectTypeOf<Get<{a: unknown}, `a.${number}`>>().toBe<unknown>();
+expectTypeOf<Get<{a: never}, `a.${number}`>>().toBe<never>();
+expectTypeOf<Get<ArrayLike<never>, number, NonStrict>>().toBe<never>();
+expectTypeOf<Get<ArrayLike<any>, `${number}.a.b`>>().toBe<any>();
+
+// The default options and an explicit `strict: true` or `strict: boolean` all add `undefined` for a non-literal index.
+expectTypeOf<Get<ArrayLike<string>, `${number}`, {}>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string>, `${number}`, {strict: true}>>().toBe<string | undefined>();
+expectTypeOf<Get<ArrayLike<string>, `${number}`, {strict: boolean}>>().toBe<string | undefined>();
+
+// `Paths` with bracket notation gives non-literal indexes that `Get` reads.
+expectTypeOf<Get<WithArrayLike, Paths<WithArrayLike, {bracketNotation: true}>>>().toBe<ArrayLike<{name: string}> | string | number | {name: string} | undefined>();
+
+// An index from a `number` variable reads an array-like object in the `get` function, in a template literal path and in an `as const` array path.
+{
+	const index = 0 as number;
+	const object = {list: [] as ArrayLike<{name: string}>, bytes: new Uint8Array(), text: 'abc', nested: [] as ArrayLike<ArrayLike<{v: 1}>>};
+
+	expectTypeOf(get(object, `list.${index}.name`)).toBe<string>();
+	expectTypeOf(get(object, `list[${index}].name`)).toBe<string>();
+	expectTypeOf(get(object, ['list', index, 'name'] as const)).toBe<string>();
+	expectTypeOf(get(object, `list.${index}`)).toBe<{name: string}>();
+	expectTypeOf(get(object, `bytes[${index}]`)).toBe<number>();
+	expectTypeOf(get(object, ['bytes', index] as const)).toBe<number>();
+	expectTypeOf(get(object, `text.${index}`)).toBe<string>();
+	expectTypeOf(get(object, ['text', index] as const)).toBe<string>();
+	expectTypeOf(get(object, `list.${index}.name.${index}`)).toBe<string>();
+	expectTypeOf(get(object, `nested[${index}][${index}].v`)).toBe<1>();
+
+	// A typo, a `string` variable, or a `bigint` variable is still not a valid index.
+	const key = 'key' as string;
+	const bigIndex = 0n as bigint;
+	expectTypeOf(get(object, `list.${index}.typo`)).toBe<unknown>();
+	expectTypeOf(get(object, `list.${key}`)).toBe<unknown>();
+	expectTypeOf(get(object, ['list', key] as const)).toBe<unknown>();
+	expectTypeOf(get(object, `list.${bigIndex}.name`)).toBe<unknown>();
+}
 
 // A key the subject does not have at all still answers the signature. No `undefined` is added for a number index signature, which is a documented limitation.
 expectTypeOf<Get<{[k: number]: string}, '5', NonStrict>>().toBe<string>();

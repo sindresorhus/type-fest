@@ -159,11 +159,15 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 					[n: number]: infer Item;
 					length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
 				}
-					? (
-						ConsistsOnlyOf<Key, DigitCharacter> extends true
+					? Key extends `${number}`
+						// A non-literal index can be any item, and a literal one must have only digits
+						? `${number}` extends Key
 							? Strictify<Item, Options>
-							: MissingKey
-					)
+							: ConsistsOnlyOf<Key, DigitCharacter> extends true
+								? Strictify<Item, Options>
+								: MissingKey
+						// Non-numeric key for array-like objects, including an empty key
+						: MissingKey
 					// A key that names a member of the subject is read from the subject, not from its string keys: a number index signature covers every numeric key, so `'0' extends keyof` is false for `{[k: number]: string; 0: 'x'}` even though the member is right there.
 					: BaseType extends object
 						? ExactKey<BaseType, Key> extends infer Exact extends keyof BaseType
@@ -183,6 +187,8 @@ Get a deeply-nested property from an object using a key path, like [Lodash's `.g
 Use-case: Retrieve a property from deep inside an API response or some other complex object.
 
 A path can also be a number, such as `Get<string[], 0>`, read like its string form, so `Get<BaseType, Paths<BaseType>>` works for a generic `BaseType`. A number in an array path is read the same way, so `['users', 0, 'name']` and `['users', '0', 'name']` are the same path. An array path of unknown length, like `string[]` or `['a', ...string[]]`, can have any keys, so it resolves to `unknown`.
+
+An index from a `number` variable, like `` `users.${number}.name` `` or `['users', number, 'name']`, reads any element of an array, a tuple, a string, a typed array, or another array-like object.
 
 A key only some union members have resolves to `undefined` for the others, so `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>` is `string | undefined`. A key no member has resolves to `unknown`.
 
@@ -221,6 +227,13 @@ const getName = (apiResponse: ApiResponse) => get(apiResponse, 'hits.hits[0]._so
 // Path also supports a readonly array of strings and numbers
 const getNameWithPathArray = (apiResponse: ApiResponse) => get(apiResponse, ['hits', 'hits', 0, '_source', 'name']);
 //=> (apiResponse: ApiResponse) => {
+// 	given: string[];
+// 	family: string;
+// }[] | undefined
+
+// An index can come from a variable
+const getNameAtIndex = (apiResponse: ApiResponse, index: number) => get(apiResponse, `hits.hits[${index}]._source.name`);
+//=> (apiResponse: ApiResponse, index: number) => {
 // 	given: string[];
 // 	family: string;
 // }[] | undefined
