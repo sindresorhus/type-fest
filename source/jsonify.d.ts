@@ -160,8 +160,8 @@ export type Jsonify<T> = IsAny<T> extends true
 										: T extends UnknownArray
 											? JsonifyList<UntagTuple<T>>
 											: T extends object
-												// A mapped type returns a bare `object` as is, which is not assignable to `JsonValue`.
-												? IsEqual<T, object> extends true
+												// An object without keys becomes `{}`. The homomorphic mapped type below would return a bare `object` as is, which is not assignable to `JsonValue`.
+												? [keyof T] extends [never]
 													? {}
 													: JsonifyObject<UndefinedToOptional<{[Key in keyof T]: ToJsonResult<T[Key]>}>> // JsonifyObject recursive call for its children
 												: IsUnknown<T> extends true

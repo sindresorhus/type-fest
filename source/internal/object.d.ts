@@ -9,7 +9,7 @@ import type {StringToNumber} from '../string-to-number.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
 import type {LiteralUnion} from '../literal-union.d.ts'; // For `@link`
-import type {FilterDefinedKeys, FilterOptionalKeys} from './keys.d.ts';
+import type {DefinedKeyFilter, OptionalKeyFilter} from './keys.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
@@ -75,6 +75,8 @@ export type ObjectValue<T, K> =
 /**
 For an object T, if it has any properties that are a union with `undefined`, make those into optional properties instead.
 
+It also removes the properties that `JSON.stringify` drops: symbol keys, properties that are only `undefined`, required properties that are only a symbol, and properties whose type includes a function. A `never` property is removed too. An `any` or `unknown` property is kept as it is, including whether it is optional.
+
 @example
 ```
 type User = {
@@ -90,13 +92,13 @@ type OptionalizedUser = UndefinedToOptional<User>;
 ```
 */
 export type UndefinedToOptional<T extends object> = SimplifyObject<
-	// Each key is filtered on its own with `Pick<T, Key>`. A union of the kept keys would merge a literal key like `foo` into a `string` index signature.
+	// Each key is filtered on its own in the `as` clause. Filtering `keyof T` as a union would merge a literal key like `foo` into a `string` index signature.
 	{
 	// Property is not a union with `undefined`, keep it as-is.
-		[Key in keyof T as FilterDefinedKeys<Pick<T, Key>>]: T[Key];
+		[Key in keyof T as DefinedKeyFilter<T, Key>]: T[Key];
 	} & {
 	// Property _is_ a union with defined value. Set as optional (via `?`) and remove `undefined` from the union.
-		[Key in keyof T as FilterOptionalKeys<Pick<T, Key>>]?: Exclude<T[Key], undefined>;
+		[Key in keyof T as OptionalKeyFilter<T, Key>]?: Exclude<T[Key], undefined>;
 	}
 >;
 

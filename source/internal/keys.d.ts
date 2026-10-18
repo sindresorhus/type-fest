@@ -1,6 +1,4 @@
-import type {IsAny} from '../is-any.d.ts';
 import type {IsLiteral} from '../is-literal.d.ts';
-import type {IsUnknown} from '../is-unknown.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {ToString} from './string.d.ts';
 
@@ -19,39 +17,31 @@ type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
 			: never;
 
 /**
-Returns the required keys.
+Returns the key if its property is JSON-able and cannot be `undefined`, otherwise `never`. An `any` or `unknown` property is kept.
 */
-export type FilterDefinedKeys<T extends object> = Exclude<
-	{
-		// A symbol key is checked first, because the `any` and `unknown` branches return the key without `BaseKeyFilter`.
-		[Key in keyof T]: Key extends symbol
+export type DefinedKeyFilter<Type, Key extends keyof Type> = Key extends symbol
+	// A symbol key is checked first, because the `any` and `unknown` branch returns the key without `BaseKeyFilter`.
+	? never
+	// `unknown` is only assignable to `any` and `unknown`.
+	: unknown extends Type[Key]
+		? Key
+		: undefined extends Type[Key]
 			? never
-			: IsAny<T[Key]> extends true
-				? Key
-				: IsUnknown<T[Key]> extends true ? Key : undefined extends T[Key]
-					? never
-					: T[Key] extends undefined
-						? never
-						: BaseKeyFilter<T, Key>;
-	}[keyof T],
-	undefined
->;
+			// Only `never` gets here.
+			: Type[Key] extends undefined
+				? never
+				: BaseKeyFilter<Type, Key>;
 
 /**
-Returns the optional keys.
+Returns the key if its property is JSON-able and can be `undefined`, but is not only `undefined`, otherwise `never`. An `any` or `unknown` property is not included, because `DefinedKeyFilter` keeps it.
 */
-export type FilterOptionalKeys<T extends object> = Exclude<
-	{
-		[Key in keyof T]: IsAny<T[Key]> extends true
+export type OptionalKeyFilter<Type, Key extends keyof Type> = unknown extends Type[Key]
+	? never
+	: undefined extends Type[Key]
+		? Type[Key] extends undefined
 			? never
-			: undefined extends T[Key]
-				? T[Key] extends undefined
-					? never
-					: BaseKeyFilter<T, Key>
-				: never;
-	}[keyof T],
-	undefined
->;
+			: BaseKeyFilter<Type, Key>
+		: never;
 
 /**
 Disallows any of the given keys.

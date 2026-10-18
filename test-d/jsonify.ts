@@ -271,6 +271,21 @@ expectTypeOf<Jsonify<{[key: symbol]: unknown; keep: string}>>().toBe<{keep: stri
 expectTypeOf<Jsonify<{[uniqueSymbol]: any; keep: string}>>().toBe<{keep: string}>();
 expectTypeOf<Jsonify<{[uniqueSymbol]?: unknown; keep: string}>>().toBe<{keep: string}>();
 expectTypeOf<Jsonify<Record<PropertyKey, any>>>().toBe<Record<string | number, any>>();
+expectTypeOf<Jsonify<Record<PropertyKey, unknown>>>().toBe<Record<string | number, JsonValue>>();
+expectTypeOf<Jsonify<Record<symbol, any>>>().toBe<{}>();
+expectTypeOf<Jsonify<{[key: symbol]: unknown}>>().toBe<{}>();
+expectTypeOf<Jsonify<{[uniqueSymbol]: any}>>().toBe<{}>();
+expectTypeOf<Jsonify<{[key: symbol]: any; [key: string]: number}>>().toBe<{[key: string]: number}>();
+expectTypeOf<Jsonify<{[uniqueSymbol]: unknown; keep: any}>>().toBe<{keep: any}>();
+expectTypeOf<Jsonify<{payload: {[uniqueSymbol]: any; keep: string}}>>().toBe<{payload: {keep: string}}>();
+expectTypeOf<Jsonify<Array<{[uniqueSymbol]: any; keep: string}>>>().toBe<Array<{keep: string}>>();
+
+// A property that can only be a symbol when it is present is filtered too.
+expectTypeOf<Jsonify<{a?: symbol; b: symbol | undefined; keep: string}>>().toBe<{keep: string}>();
+
+// An `any` or `unknown` property keeps its modifiers.
+expectTypeOf<Jsonify<{a?: any; b?: unknown}>>().toBe<{a?: any; b?: JsonValue}>();
+expectTypeOf<Jsonify<{readonly a: any; readonly b: unknown}>>().toBe<{readonly a: any; readonly b: JsonValue}>();
 
 // Number, String and Boolean values are turned into primitive counterparts
 declare const number: Number;
@@ -496,6 +511,16 @@ expectTypeOf<Jsonify<{payload: Record<string, any>}>>().toBe<{payload: Record<st
 expectTypeOf<Jsonify<{payload: {[key: string]: any}}>>().toBe<{payload: {[key: string]: any}}>();
 expectTypeOf<Jsonify<{payload: Record<PropertyKey, any>}>>().toBe<{payload: Record<string | number, any>}>();
 expectTypeOf<Jsonify<object>>().toBe<{}>();
+expectTypeOf<Jsonify<object>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<Jsonify<{}>>().toBe<{}>();
+expectTypeOf<Jsonify<object | string>>().toBe<string | {}>();
+expectTypeOf<Jsonify<object & {date: Date}>>().toBe<{date: string}>();
+expectTypeOf<Jsonify<object[]>>().toBe<Array<{}>>();
+expectTypeOf<Jsonify<[object]>>().toBe<[{}]>();
+expectTypeOf<Jsonify<{payload?: object}>>().toBe<{payload?: {}}>();
+expectTypeOf<Jsonify<{payload: object | undefined}>>().toBe<{payload?: {}}>();
+expectTypeOf<Jsonify<{readonly payload: object}>>().toBe<{readonly payload: {}}>();
+expectTypeOf<Jsonify<Record<string, object>>>().toBe<Record<string, {}>>();
 expectTypeOf<Jsonify<{payload: object}>>().toBe<{payload: {}}>();
 expectTypeOf<Jsonify<{payload: {}}>>().toBe<{payload: {}}>();
 expectTypeOf<Jsonify<{payload: Record<string, string>}>>().toBe<{payload: Record<string, string>}>();
@@ -518,6 +543,42 @@ expectTypeOf<Jsonify<{[key: `x${string}`]: number; foo: 'a'}>>().toBe<{[key: `x$
 expectTypeOf<Jsonify<{[key: string]: any; foo: () => void}>>().toBe<{[key: string]: any}>();
 expectTypeOf<Jsonify<{[key: string]: any; foo: never}>>().toBe<{[key: string]: any}>();
 expectTypeOf<Jsonify<{payload: {[key: string]: string; foo: 'a'}}>>().toBe<{payload: {[key: string]: string; foo: 'a'}}>();
+expectTypeOf<Jsonify<{[key: string]: string; readonly foo: 'a'}>>().toBe<{[key: string]: string; readonly foo: 'a'}>();
+expectTypeOf<Jsonify<{readonly [key: string]: string; foo: 'a'}>>().toBe<{readonly [key: string]: string; foo: 'a'}>();
+expectTypeOf<Jsonify<{[key: string]: number; foo?: 1}>>().toBe<{[key: string]: number; foo?: 1}>();
+expectTypeOf<Jsonify<{[key: string]: number | undefined; foo?: 1}>>().toBe<{[key: string]: number; foo?: 1}>();
+expectTypeOf<Jsonify<{[key: string]: unknown; foo: 1}>>().toBe<{[key: string]: JsonValue; foo: 1}>();
+expectTypeOf<Jsonify<{[key: string]: any; foo: unknown}>>().toBe<{[key: string]: any; foo: JsonValue}>();
+expectTypeOf<Jsonify<{[key: string]: string; [key: number]: '1'; foo: 'a'; 0: '1'}>>().toBe<{[key: string]: string; [key: number]: '1'; foo: 'a'; 0: '1'}>();
+expectTypeOf<Jsonify<{[key: string]: string; [uniqueSymbol]: 'x'; foo: 'a'}>>().toBe<{[key: string]: string; foo: 'a'}>();
+expectTypeOf<Jsonify<{[key: `data-${string}`]: string; id: number}>>().toBe<{[key: `data-${string}`]: string; id: number}>();
+expectTypeOf<Jsonify<{[key: string]: {date: Date}; foo: {date: Date; extra?: string | undefined}}>>().toBe<{[key: string]: {date: string}; foo: {date: string; extra?: string}}>();
+
+// The same holds for an index signature that comes from an intersection.
+expectTypeOf<Jsonify<Record<string, string> & {foo: 'a'}>>().toBe<{[key: string]: string; foo: 'a'}>();
+expectTypeOf<Jsonify<Record<'a' | 'b', number> & Record<string, number | string>>>().toBe<{[key: string]: number | string; a: number; b: number}>();
+expectTypeOf<Jsonify<Record<string, string | Date> & {foo: Date}>>().toBe<{[key: string]: string; foo: string}>();
+expectTypeOf<Jsonify<Record<string, string> & {foo: symbol; bar: undefined; baz: () => void}>>().toBe<{[key: string]: string}>();
+expectTypeOf<Jsonify<Record<string, () => void> & {foo: 'a'}>>().toBe<{foo: 'a'}>();
+
+// The same holds for an interface, and the result is JSON.
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface ResponseHeaders {
+	[key: string]: string | Date;
+	'content-type': 'application/json';
+	date: Date;
+	etag?: string;
+}
+expectTypeOf<Jsonify<ResponseHeaders>>().toBe<{[key: string]: string; 'content-type': 'application/json'; date: string; etag?: string}>();
+expectTypeOf<Jsonify<ResponseHeaders>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<Jsonify<{[key: string]: string; foo: 'a'}>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<Jsonify<{[key: string]: number; foo?: 1}>>().toBeAssignableTo<JsonValue>();
+
+// It is also kept when nested, and applying `Jsonify` again does not change it.
+expectTypeOf<Jsonify<Array<{[key: string]: string; foo: 'a'}>>>().toBe<Array<{[key: string]: string; foo: 'a'}>>();
+expectTypeOf<Jsonify<[{[key: string]: number; foo: 1}]>>().toBe<[{[key: string]: number; foo: 1}]>();
+expectTypeOf<Jsonify<{outer: Record<string, Date> & {foo: Date}}>>().toBe<{outer: {[key: string]: string; foo: string}}>();
+expectTypeOf<Jsonify<Jsonify<ResponseHeaders>>>().toBe<Jsonify<ResponseHeaders>>();
 
 // Test for `Jsonify` support for nested objects with _only_ a name property.
 // See https://github.com/sindresorhus/type-fest/issues/657
