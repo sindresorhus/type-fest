@@ -33,3 +33,10 @@ expectTypeOf(resolvesToNeverForNonArrays).toBe<never>();
 
 declare const infiniteRestArguments: TupleToUnion<[string, ...number[]]>;
 expectTypeOf(infiniteRestArguments).toBe<string | number>();
+
+// Readonly arrays of unknown length and readonly tuples with a rest element
+expectTypeOf<TupleToUnion<readonly string[]>>().toBe<string>();
+expectTypeOf<TupleToUnion<readonly [string, ...number[]]>>().toBe<string | number>();
+expectTypeOf<TupleToUnion<readonly [1, ...string[], 2]>>().toBe<1 | string | 2>();
+expectTypeOf<TupleToUnion<readonly []>>().toBe<never>();
+expectTypeOf<TupleToUnion<readonly string[] | readonly [1]>>().toBe<string | 1>();

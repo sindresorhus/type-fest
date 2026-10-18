@@ -92,3 +92,13 @@ withReceiverAndOptionalParameters.call(new Date(), undefined, true, 'value');
 withReceiverAndOptionalParameters.call('invalid', undefined, true, 'value');
 // @ts-expect-error -- The old rest parameter type is rejected.
 withReceiverAndOptionalParameters.call(new Date(), undefined, true, 1);
+
+// A function with a readonly rest parameter, such as a parameter list typed with `as const`, keeps its parameter positions.
+declare const readonlyParameters: SetParameterType<(...arguments_: readonly [string, number?]) => boolean, {0: boolean}>;
+expectTypeOf(readonlyParameters).toBe<(first: boolean, second?: number) => boolean>();
+
+declare const readonlyParametersTuple: SetParameterType<(...arguments_: readonly [string, number?]) => boolean, [boolean]>;
+expectTypeOf(readonlyParametersTuple).toBe<(first: boolean, second?: number) => boolean>();
+
+declare const readonlyRestParameter: SetParameterType<(first: string, ...rest: readonly number[]) => boolean, {1: string}>;
+expectTypeOf(readonlyRestParameter).toBe<(first: string, ...rest: string[]) => boolean>();

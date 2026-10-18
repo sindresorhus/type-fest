@@ -38,3 +38,10 @@ expectTypeOf(withExplicitThis).toBe<typeof withImplicitThis>();
 // A type with several call signatures collapses to its last signature. This is a TypeScript limitation, not a choice, so it is pinned here rather than worked around.
 declare const overloaded: SetReturnType<{(): void; (x: number): void}, string>;
 expectTypeOf(overloaded).toBe<(x: number) => string>();
+
+// A readonly rest parameter, such as a parameter list typed with `as const`, keeps its parameter positions.
+declare const readonlyParameters: SetReturnType<(...arguments_: readonly [string, number?]) => boolean, string>;
+expectTypeOf(readonlyParameters).toBe<(first: string, second?: number) => string>();
+
+declare const readonlyRestParameter: SetReturnType<(first: string, ...rest: readonly number[]) => boolean, string>;
+expectTypeOf(readonlyRestParameter).toBe<(first: string, ...rest: number[]) => string>();

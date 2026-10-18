@@ -535,6 +535,64 @@ expectTypeOf(readonlyEmptyDestination).toBe<[1, 2]>();
 declare const readonlyEmptySource: MergeDeep<readonly [1, 2], readonly [], {recurseIntoArrays: true}>;
 expectTypeOf(readonlyEmptySource).toBe<[1, 2]>();
 
+// Readonly tuples with a rest element merge the same as their mutable counterparts, position by position and rest with rest.
+type ReplaceIntoArrays = {recurseIntoArrays: true; arrayMergeMode: 'replace'};
+
+declare const readonlyTuplesWithRest: MergeDeep<readonly [{a: 1}, ...Array<{b: 1}>], readonly [{c: 1}, ...Array<{d: 1}>], ReplaceIntoArrays>;
+expectTypeOf(readonlyTuplesWithRest).toBe<[{a: 1; c: 1}, ...Array<{b: 1; d: 1}>]>();
+
+declare const readonlyTuplesWithRestNested: MergeDeep<{list: readonly [{a: 1}, ...Array<{b: 1}>]}, {list: readonly [{c: 1}, ...Array<{d: 1}>]}, ReplaceIntoArrays>;
+expectTypeOf(readonlyTuplesWithRestNested).toBe<{list: [{a: 1; c: 1}, ...Array<{b: 1; d: 1}>]}>();
+
+declare const readonlyTupleWithOptionalAndRest: MergeDeep<readonly [{a: 1}, {b: 1}?, ...Array<{c: 1}>], readonly [{d: 1}, ...Array<{e: 1}>], ReplaceIntoArrays>;
+expectTypeOf(readonlyTupleWithOptionalAndRest).toBe<[{a: 1; d: 1}, {b: 1; e: 1}?, ...Array<{c: 1; e: 1}>]>();
+
+declare const readonlyTupleWithMiddleRest: MergeDeep<readonly [{a: 1}, ...Array<{b: 1}>, {c: 1}], readonly [{d: 1}], ReplaceIntoArrays>;
+expectTypeOf(readonlyTupleWithMiddleRest).toBe<[{a: 1; d: 1}, ...Array<{b: 1}>, {c: 1}]>();
+
+declare const readonlyRestOnlyIntoTuple: MergeDeep<readonly [...Array<{a: 1}>], readonly [{b: 1}, {c: 1}], ReplaceIntoArrays>;
+expectTypeOf(readonlyRestOnlyIntoTuple).toBe<[{a: 1; b: 1}, {a: 1; c: 1}, ...Array<{a: 1}>]>();
+
+declare const readonlyOptionalTuples: MergeDeep<readonly [{a: 1}, {b: 1}?], readonly [{c: 1}?], ReplaceIntoArrays>;
+expectTypeOf(readonlyOptionalTuples).toBe<[{a: 1; c: 1}, {b: 1}?]>();
+
+// A readonly tuple and a readonly array of unknown length merge each tuple element with the array element.
+declare const readonlyTupleIntoReadonlyArray: MergeDeep<ReadonlyArray<{a: 1}>, readonly [{b: 1}, ...Array<{c: 1}>], ReplaceIntoArrays>;
+expectTypeOf(readonlyTupleIntoReadonlyArray).toBe<[{a: 1; b: 1}, ...Array<{a: 1; c: 1}>]>();
+
+declare const readonlyArrayIntoReadonlyTuple: MergeDeep<readonly [{a: 1}, ...Array<{b: 1}>], ReadonlyArray<{c: 1}>, ReplaceIntoArrays>;
+expectTypeOf(readonlyArrayIntoReadonlyTuple).toBe<[{a: 1; c: 1}, ...Array<{b: 1; c: 1}>]>();
+
+// A readonly tuple of fixed length keeps its required and optional positions when it is merged with a readonly array.
+declare const readonlyArrayIntoFixedReadonlyTuple: MergeDeep<readonly [{a: 1}, {b: 1}?], ReadonlyArray<{c: 1}>, ReplaceIntoArrays>;
+expectTypeOf(readonlyArrayIntoFixedReadonlyTuple).toBe<[{a: 1; c: 1}, {b: 1; c: 1}?, ...Array<{c: 1}>]>();
+
+declare const fixedReadonlyTupleIntoReadonlyArray: MergeDeep<ReadonlyArray<{c: 1}>, readonly [{a: 1}, {b: 1}?], ReplaceIntoArrays>;
+expectTypeOf(fixedReadonlyTupleIntoReadonlyArray).toBe<[{c: 1; a: 1}, {c: 1; b: 1}?, ...Array<{c: 1}>]>();
+
+declare const readonlyArrayIntoRequiredReadonlyTuple: MergeDeep<readonly [{a: 1}, {b: 1}], ReadonlyArray<{c: 1}>, ReplaceIntoArrays>;
+expectTypeOf(readonlyArrayIntoRequiredReadonlyTuple).toBe<[{a: 1; c: 1}, {b: 1; c: 1}, ...Array<{c: 1}>]>();
+
+declare const readonlyTupleSpreadIntoRest: MergeDeep<{list: readonly [{a: 1}, ...Array<{b: 1}>]}, {list: readonly [{c: 1}]}, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectTypeOf(readonlyTupleSpreadIntoRest).toBe<{list: [{a: 1; c: 1}, ...Array<{b: 1}>]}>();
+
+declare const readonlyNestedTuples: MergeDeep<{list: readonly [readonly [{a: 1}], ...string[]]}, {list: readonly [readonly [{b: 1}]]}, ReplaceIntoArrays>;
+expectTypeOf(readonlyNestedTuples).toBe<{list: [[{a: 1; b: 1}], ...string[]]}>();
+
+// A mutable and a readonly operand give the same fresh mutable array.
+declare const mutableIntoReadonlyTuple: MergeDeep<readonly [{a: 1}, ...Array<{b: 1}>], [{c: 1}, ...Array<{d: 1}>], ReplaceIntoArrays>;
+expectTypeOf(mutableIntoReadonlyTuple).toBe<[{a: 1; c: 1}, ...Array<{b: 1; d: 1}>]>();
+
+declare const readonlyIntoMutableTuple: MergeDeep<[{a: 1}, ...Array<{b: 1}>], readonly [{c: 1}, ...Array<{d: 1}>], ReplaceIntoArrays>;
+expectTypeOf(readonlyIntoMutableTuple).toBe<[{a: 1; c: 1}, ...Array<{b: 1; d: 1}>]>();
+
+// Without recursing into arrays, the `replace` mode keeps the source array as is, including its `readonly` modifier.
+declare const readonlyTupleReplacedAsIs: MergeDeep<{list: readonly [{a: 1}, ...Array<{b: 1}>]}, {list: readonly [{c: 1}]}, {arrayMergeMode: 'replace'}>;
+expectTypeOf(readonlyTupleReplacedAsIs).toBe<{list: readonly [{c: 1}]}>();
+
+declare const readonlyArrayReplacedAsIs: MergeDeep<{list: string[]}, {list: readonly number[]}, {arrayMergeMode: 'replace'}>;
+expectTypeOf(readonlyArrayReplacedAsIs).toBe<{list: readonly number[]}>();
+
 // An actual empty-array element replaces an incompatible value; it is distinct from a tuple having no element at that index.
 declare const emptyArrayElementReplacesPrimitive: MergeDeep<[1], [[]], {recurseIntoArrays: true}>;
 expectTypeOf(emptyArrayElementReplacesPrimitive).toBe<[[]]>();

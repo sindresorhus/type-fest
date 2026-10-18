@@ -33,3 +33,10 @@ expectTypeOf<'123'>().toBeAssignableTo<AnyStringValues>();
 expectTypeOf<123>().not.toBeAssignableTo<AnyStringValues>();
 expectTypeOf<undefined>().not.toBeAssignableTo<AnyStringValues>();
 expectTypeOf<null>().not.toBeAssignableTo<AnyStringValues>();
+
+// Readonly arrays of unknown length and readonly tuples with a rest element
+expectTypeOf<ArrayValues<readonly string[]>>().toBe<string>();
+expectTypeOf<ArrayValues<readonly [1, ...string[]]>>().toBe<1 | string>();
+expectTypeOf<ArrayValues<readonly [1, ...string[], 2]>>().toBe<1 | string | 2>();
+expectTypeOf<ArrayValues<readonly [1, 2?]>>().toBe<1 | 2 | undefined>();
+expectTypeOf<ArrayValues<readonly []>>().toBe<never>();

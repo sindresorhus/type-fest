@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {AbstractConstructor, AbstractClass, IsAny} from '../index.d.ts';
+import type {AbstractConstructor, AbstractClass, Constructor, IsAny} from '../index.d.ts';
 
 abstract class Foo {
 	x: number;
@@ -89,3 +89,69 @@ const Family = (new CityBlock(House)).residence.owners;
 expectTypeOf<IsAny<typeof Family>>().toBe<false>();
 expectTypeOf(Family.count).toBeAssignableTo<number>();
 // /Prototype test with type parameter
+
+// Readonly arguments
+abstract class Shape {
+	constructor(public name: string, public sides?: number) {}
+
+	abstract area(): number;
+}
+
+expectTypeOf(Shape).toBeAssignableTo<AbstractConstructor<Shape, readonly [string, number?]>>();
+expectTypeOf(Shape).toBeAssignableTo<AbstractClass<Shape, readonly [string, number?]>>();
+expectTypeOf(Shape).toBeAssignableTo<AbstractClass<Shape, readonly [name: string]>>();
+expectTypeOf(Shape).not.toBeAssignableTo<AbstractConstructor<Shape, readonly [number]>>();
+expectTypeOf(Shape).not.toBeAssignableTo<AbstractClass<Shape, readonly [string, string]>>();
+
+// A concrete class also matches the abstract types with readonly arguments.
+class Square extends Shape {
+	area() {
+		return 1;
+	}
+}
+
+expectTypeOf(Square).toBeAssignableTo<AbstractConstructor<Shape, readonly [string]>>();
+expectTypeOf(Square).toBeAssignableTo<AbstractClass<Square, readonly [string, number?]>>();
+
+declare const ReadonlyArgumentsShape: AbstractClass<Shape, readonly [string, number?]>;
+// It is still abstract, so it does not match a constructor that can be called with `new`.
+expectTypeOf(ReadonlyArgumentsShape).not.toBeAssignableTo<Constructor<Shape, readonly [string, number?]>>();
+expectTypeOf(ReadonlyArgumentsShape.prototype).toBe<Pick<Shape, 'name' | 'sides' | 'area'>>();
+
+// An abstract class with readonly arguments can still be extended.
+class Triangle extends ReadonlyArgumentsShape {
+	area() {
+		return 2;
+	}
+}
+
+const shapeArguments = ['triangle', 3] as const;
+expectTypeOf(new Triangle(...shapeArguments)).toBeAssignableTo<Shape>();
+// @ts-expect-error
+const _c = new Triangle(3);
+
+// The arguments are passed through to the constructor signature, so `ConstructorParameters` gets them back without the `readonly` modifier, the same as for any rest parameter.
+expectTypeOf<ConstructorParameters<AbstractConstructor<Shape, readonly [string, number?]>>>().toBe<[string, number?]>();
+expectTypeOf<ConstructorParameters<AbstractClass<Shape, readonly [string, ...number[]]>>>().toBe<[string, ...number[]]>();
+
+// The default stays a mutable array, so mixins keep working, and readonly arguments work for mixins too.
+expectTypeOf<ConstructorParameters<AbstractConstructor<Shape>>>().toBe<any[]>();
+expectTypeOf<ConstructorParameters<AbstractClass<Shape>>>().toBe<any[]>();
+
+function withColor<Base extends AbstractConstructor<object, readonly any[]>>(BaseClass: Base) {
+	abstract class Colored extends BaseClass {
+		color = 'red';
+	}
+
+	return Colored;
+}
+
+class ColoredSquare extends withColor(Square) {}
+expectTypeOf(new ColoredSquare('square').color).toBe<string>();
+expectTypeOf(new ColoredSquare('square').area()).toBe<number>();
+
+// Non-array arguments are still rejected.
+// @ts-expect-error
+type _InvalidAbstractConstructor = AbstractConstructor<Shape, string>;
+// @ts-expect-error
+type _InvalidAbstractClass = AbstractClass<Shape, unknown>;

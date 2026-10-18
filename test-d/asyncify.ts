@@ -44,3 +44,7 @@ expectTypeOf<Asyncify<((name?: string) => number) | ((...counts: number[]) => st
 
 // A union in a single function's return value stays inside its promise.
 expectTypeOf<Asyncify<() => number | Promise<string>>>().toBe<() => Promise<number | string>>();
+
+// A readonly rest parameter, such as a parameter list typed with `as const`, keeps its parameter positions.
+expectTypeOf<Asyncify<(...arguments_: readonly [string, number?]) => boolean>>().toBe<(first: string, second?: number) => Promise<boolean>>();
+expectTypeOf<Asyncify<(first: string, ...rest: readonly number[]) => boolean>>().toBe<(first: string, ...rest: number[]) => Promise<boolean>>();
