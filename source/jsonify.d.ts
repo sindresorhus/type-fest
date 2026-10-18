@@ -22,26 +22,30 @@ type JsonifyListItem<T> = JsonifyListItemResult<ToJsonResult<T>>;
 type JsonifyListItemResult<T> = T extends NotJsonable ? null : NeverToNull<Jsonify<UndefinedToNull<T>>>;
 
 // Handles tuples and arrays
-type JsonifyList<T extends UnknownArray> = T extends readonly []
-	? []
-	: T extends readonly [infer F, ...infer R]
-		// A tuple position always holds a value, so a `never` member becomes `null`. `JsonifyListItem` distributes, which would turn it into `never`.
-		? [F, ...R] extends T // With TS 5.8.3, if `string[] & ['foo']`, `R` is `unknown[]` here, making the inferred types not equal to the original one
-			? [NeverToNull<JsonifyListItem<F>>, ...JsonifyList<R>]
-			: [NeverToNull<JsonifyListItem<F>>]
-		: '0' extends keyof T
-			// Optional positions may be absent, so keep each possible tuple shape. A hole before another element is serialized as null.
-			? T extends readonly [(infer F)?, ...infer R]
-				? [] | [JsonifyListItem<F | undefined>, ...JsonifyList<R>]
-				: never
-			: IsUnknown<T[number]> extends true
-				? JsonValue[]
-				// Transforming an array that contains itself, like `JsonValue[]` in `JsonValue`, would recurse forever. Keep it when it is already JSON, and otherwise fall back to `JsonValue[]`.
-				: true extends ContainsItself<T>
-					? T extends JsonValue
-						? T
-						: JsonValue[]
-					: Array<JsonifyListItem<T[number]>>;
+// The leading required elements are kept in `Result`, so the recursion over them is in tail position and a long tuple does not hit the recursion limit.
+type JsonifyList<T extends UnknownArray, Result extends UnknownArray = []> = T extends readonly [infer F, ...infer R]
+	// A tuple position always holds a value, so a `never` member becomes `null`. `JsonifyListItem` distributes, which would turn it into `never`.
+	? [F, ...R] extends T // With TS 5.8.3, if `string[] & ['foo']`, `R` is `unknown[]` here, making the inferred types not equal to the original one
+		? JsonifyList<R, [...Result, NeverToNull<JsonifyListItem<F>>]>
+		: [...Result, NeverToNull<JsonifyListItem<F>>]
+	// The rest is jsonified on its own, so an array that is already JSON is kept as it is, including whether it is readonly.
+	: Result extends []
+		? T extends readonly []
+			? []
+			: '0' extends keyof T
+				// Optional positions may be absent, so keep each possible tuple shape. A hole before another element is serialized as null.
+				? T extends readonly [(infer F)?, ...infer R]
+					? [] | [JsonifyListItem<F | undefined>, ...JsonifyList<R>]
+					: never
+				: IsUnknown<T[number]> extends true
+					? JsonValue[]
+					// Transforming an array that contains itself, like `JsonValue[]` in `JsonValue`, would recurse forever. Keep it when it is already JSON, and otherwise fall back to `JsonValue[]`.
+					: true extends ContainsItself<T>
+						? T extends JsonValue
+							? T
+							: JsonValue[]
+						: Array<JsonifyListItem<T[number]>>
+		: [...Result, ...JsonifyList<T>];
 
 // Whether the array is one of its own item types. Distributes over the item types so that each one is compared with the array on its own.
 type ContainsItself<T extends UnknownArray, Item = T[number]> = Item extends unknown ? IsEqual<Item, T> : never;

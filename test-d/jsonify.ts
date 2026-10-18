@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {EmptyObject, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity} from '../index.d.ts';
+import type {EmptyObject, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity, TupleOf} from '../index.d.ts';
 
 // An interface has no implicit index signature, so this checks that `Jsonify` makes it assignable to `JsonValue`.
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -686,3 +686,7 @@ expectTypeOf<Jsonify<any[]>>().toBe<any[]>();
 // An array of an object that contains the array is not an array that contains itself, so it is transformed as usual.
 type Tree = {created: Date; children: Tree[]};
 expectTypeOf<Jsonify<Tree>['children'][number]['children'][number]['created']>().toBe<string>();
+
+// A long tuple does not hit the recursion limit.
+expectTypeOf<Jsonify<TupleOf<200, Date>>>().toBe<TupleOf<200, string>>();
+expectTypeOf<Jsonify<[...TupleOf<200, Date>, ...Date[]]>>().toBe<[...TupleOf<200, string>, ...string[]]>();
