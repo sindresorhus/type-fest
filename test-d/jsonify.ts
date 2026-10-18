@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {EmptyObject, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, PositiveInfinity, TupleOf} from '../index.d.ts';
+import type {EmptyObject, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, Opaque, PositiveInfinity, Tagged, TupleOf} from '../index.d.ts';
 
 // An interface has no implicit index signature, so this checks that `Jsonify` makes it assignable to `JsonValue`.
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -294,6 +294,40 @@ expectTypeOf(mixTupleJson).toBe<['1', null, 2]>();
 
 declare const tupleStringJson: Jsonify<string[] & ['some value']>;
 expectTypeOf(tupleStringJson).toBe<['some value']>();
+
+// A tagged tuple keeps all its elements. `JSON.stringify` drops the tag's symbol key, so the result is the same as for the untagged tuple.
+expectTypeOf<Jsonify<Tagged<[number, number], 'Point'>>>().toBe<[number, number]>();
+expectTypeOf<Jsonify<Tagged<[Date, number], 'T'>>>().toBe<[string, number]>();
+expectTypeOf<Jsonify<Tagged<[1, 2, 3], 'T'>>>().toBe<[1, 2, 3]>();
+expectTypeOf<Jsonify<Tagged<readonly [string, Date], 'T'>>>().toBe<[string, string]>();
+expectTypeOf<Jsonify<Tagged<[string, Date?], 'T'>>>().toBe<[string] | [string, string | null]>();
+expectTypeOf<Jsonify<Tagged<[string, ...Date[]], 'T'>>>().toBe<[string, ...string[]]>();
+expectTypeOf<Jsonify<Tagged<[...Date[], number], 'T'>>>().toBe<Jsonify<[...Date[], number]>>();
+expectTypeOf<Jsonify<Tagged<['1', (_: any) => void, symbol], 'T'>>>().toBe<['1', null, null]>();
+expectTypeOf<Jsonify<Tagged<[], 'T'>>>().toBe<[]>();
+expectTypeOf<Jsonify<Tagged<Date[], 'T'>>>().toBe<string[]>();
+expectTypeOf<Jsonify<Tagged<TupleOf<200, Date>, 'T'>>>().toBe<TupleOf<200, string>>();
+
+// With more than one tag, with metadata, and with the deprecated `Opaque`
+expectTypeOf<Jsonify<Tagged<Tagged<[Date, number], 'A'>, 'B'>>>().toBe<[string, number]>();
+expectTypeOf<Jsonify<Tagged<[Date, number], 'A' | 'B'>>>().toBe<[string, number]>();
+expectTypeOf<Jsonify<Tagged<[Date, number], 'A', {unit: 'cm'}>>>().toBe<[string, number]>();
+expectTypeOf<Jsonify<Opaque<[Date, number], 'O'>>>().toBe<[string, number]>();
+
+// A union of tagged tuples, and tagged tuples nested in other types
+expectTypeOf<Jsonify<Tagged<[Date] | [number, number], 'T'>>>().toBe<[string] | [number, number]>();
+expectTypeOf<Jsonify<{point: Tagged<[number, number], 'Point'>}>>().toBe<{point: [number, number]}>();
+expectTypeOf<Jsonify<Array<Tagged<[Date, number], 'T'>>>>().toBe<Array<[string, number]>>();
+expectTypeOf<Jsonify<[Tagged<[Date, number], 'T'>, string]>>().toBe<[[string, number], string]>();
+
+// A tagged array that contains itself is kept as it is, like an untagged one.
+type TaggedTree = string | Tagged<TaggedTree[], 'Tree'>;
+expectTypeOf<Jsonify<TaggedTree>>().toBe<TaggedTree>();
+type TaggedDateTree = Date | Tagged<TaggedDateTree[], 'Tree'>;
+expectTypeOf<Jsonify<TaggedDateTree>>().toBe<string | JsonValue[]>();
+
+// A tagged primitive inside a tagged tuple keeps its tag, like any tagged primitive.
+expectTypeOf<Jsonify<Tagged<[Tagged<number, 'Id'>, Date], 'T'>>>().toBe<[Tagged<number, 'Id'>, string]>();
 
 // BigInt fails JSON.stringify
 declare const bigInt: Jsonify<bigint>;

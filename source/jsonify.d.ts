@@ -1,11 +1,12 @@
 import type {JsonPrimitive, JsonValue} from './json-value.d.ts';
 import type {EmptyObject} from './empty-object.d.ts';
-import type {UndefinedToOptional} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, UndefinedToOptional} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
+import type {TagContainer, UnwrapTagged} from './tagged.d.ts';
 import type {TypedArray} from './typed-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -47,6 +48,13 @@ type JsonifyList<T extends UnknownArray, Result extends UnknownArray = []> = T e
 						: Array<JsonifyListItem<T[number]>>
 		: [...Result, ...JsonifyList<T>];
 
+// TypeScript cannot infer the elements of a tuple that is intersected with an object type, so the tag of a tagged tuple is removed first. `JSON.stringify` drops the tag's symbol key anyway. A tagged array of unknown length keeps its tag, so that `ContainsItself` still matches an array that contains itself.
+type UntagTuple<T extends UnknownArray> = T extends TagContainer<unknown>
+	? IsArrayOfUnknownLength<T> extends true
+		? T
+		: UnwrapTagged<T>
+	: T;
+
 // Whether the array is one of its own item types. Distributes over the item types so that each one is compared with the array on its own.
 type ContainsItself<T extends UnknownArray, Item = T[number]> = Item extends unknown ? IsEqual<Item, T> : never;
 
@@ -70,6 +78,8 @@ This includes:
 Note: An enum is already a subtype of `string` or `number`, so it passes through unchanged where a primitive would. `Jsonify<{status: Status}>` is `{status: Status}`, and a plain string is not assignable to it, even though that is what `JSON.parse` gives back. TypeScript cannot tell an enum from a union of the same literals, so nothing here unwraps one. `LiteralToPrimitive` does, so `LiteralToPrimitiveDeep<T>` is the type to reach for when enums should become their primitives.
 
 Note: An array type that contains itself, like `Json[]` in `type Json = string | Json[]`, cannot be transformed without infinite recursion. It stays unchanged when it is already JSON, and otherwise becomes `JsonValue[]`. A cycle through a tuple, like `type Pair = string | [Pair, Pair]`, or through more than one array type, like `type A = string | B[]` with `type B = number | A[]`, is too deep to transform.
+
+Note: A tuple intersected with an object type other than a tag, like `[string, number] & {extra: true}`, can lose elements, because TypeScript cannot infer the elements of such a tuple. A tagged tuple, like `Tagged<[number, number], 'Point'>`, is not affected.
 
 @remarks
 
@@ -146,7 +156,7 @@ export type Jsonify<T> = IsAny<T> extends true
 									: T extends NotJsonable
 										? never // Non-JSONable type union was found not empty
 										: T extends UnknownArray
-											? JsonifyList<T>
+											? JsonifyList<UntagTuple<T>>
 											: T extends object
 												? JsonifyObject<UndefinedToOptional<{[Key in keyof T]: ToJsonResult<T[Key]>}>> // JsonifyObject recursive call for its children
 												: IsUnknown<T> extends true
