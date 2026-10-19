@@ -164,7 +164,7 @@ const xoConfig = [
 	},
 	{
 		// Virtual files created by the `jsdoc-codeblocks` processor
-		files: ['source/find-global-type.d.ts/*.ts', 'source/jsonify.d.ts/*.ts', 'source/simplify.d.ts/*.ts'],
+		files: ['source/as-extendable.d.ts/*.ts', 'source/find-global-type.d.ts/*.ts', 'source/jsonify.d.ts/*.ts', 'source/simplify.d.ts/*.ts'],
 		rules: {
 			'@typescript-eslint/consistent-type-definitions': 'off',
 		},

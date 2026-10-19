@@ -173,6 +173,7 @@ Click the type names for complete docs.
 - [`ObjectEntries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced by `Object.entries`, even for a generic object type.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aid with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
+- [`AsExtendable`](source/as-extendable.d.ts) - Allow any object type to be used in the `extends` clause of an interface or the `implements` clause of a class, which otherwise only accept a type name.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
@@ -431,6 +432,7 @@ Click the type names for complete docs.
 - `PlainObject` - See [`UnknownRecord`](source/unknown-record.d.ts)
 - `ToPath` - See [`ParsePath`](source/parse-path.d.ts)
 - `TaggedUnionToIntersection` - See [`AllUnionFields`](source/all-union-fields.d.ts)
+- `Identity`, `Passthrough` - See [`AsExtendable`](source/as-extendable.d.ts)
 
 ## Tips
 
