@@ -91,8 +91,8 @@ expectTypeOf<Simplify<typeof AbstractClass>>().toBe<typeof AbstractClass>();
 // A class instance is flattened into its public members.
 expectTypeOf<Simplify<SomeClass>>().toBe<{id: string; someMethod: () => number}>();
 
-// A union that includes a function is returned as is.
-expectTypeOf<Simplify<SomeFunction | {a: 1}>>().toBe<SomeFunction | {a: 1}>();
+// A union that includes a function is returned as is, so its other members are not flattened.
+expectTypeOf<Simplify<SomeFunction | ({a: 1} & {b: 2})>>().toBe<SomeFunction | ({a: 1} & {b: 2})>();
 
 expectTypeOf<Simplify<SomeFunction | undefined>>().toBe<SomeFunction | undefined>();
 
@@ -119,3 +119,81 @@ expectTypeOf(simplifyIntersection).toBe<{a: 1; b?: 2}>();
 
 // `Omit` drops the call signature, so wrapping it gives only the properties.
 expectTypeOf<Simplify<Omit<FunctionWithProperties, never>>>().toBe<{description: string}>();
+
+// Property modifiers are kept.
+expectTypeOf<Simplify<{readonly a: 1} & {b?: 2}>>().toBe<{readonly a: 1; b?: 2}>();
+
+// A key in more than one member is readonly or optional only if it is in every member.
+expectTypeOf<Simplify<{readonly a: 1} & {a: 1}>>().toBe<{a: 1}>();
+expectTypeOf<Simplify<{a?: 1} & {a: 1}>>().toBe<{a: 1}>();
+
+// A key in more than one member gets the intersection of its values.
+expectTypeOf<Simplify<{a: string} & {a: 'x'}>>().toBe<{a: 'x'}>();
+
+// Index signatures, symbol keys, and number keys are kept.
+declare const symbolKey: unique symbol;
+expectTypeOf<Simplify<{[key: string]: number} & {a: 1}>>().toBe<{[key: string]: number; a: 1}>();
+expectTypeOf<Simplify<{[key: `data-${string}`]: string} & {id: number}>>().toBe<{[key: `data-${string}`]: string; id: number}>();
+expectTypeOf<Simplify<{[symbolKey]: 1} & {a: 2}>>().toBe<{[symbolKey]: 1; a: 2}>();
+expectTypeOf<Simplify<{0: 'a'} & {1: 'b'}>>().toBe<{0: 'a'; 1: 'b'}>();
+
+// A getter stays readonly.
+expectTypeOf<Simplify<{get a(): number} & {b: 1}>>().toBe<{readonly a: number; b: 1}>();
+
+// Simplifying a simplified type flattens it with the rest.
+expectTypeOf<Simplify<Simplify<{a: 1} & {b: 2}> & {c: 3}>>().toBe<{a: 1; b: 2; c: 3}>();
+
+// A recursive type is flattened only at the top level.
+type Tree = {value: number} & {children: Tree[]};
+expectTypeOf<Simplify<Tree>>().toBe<{value: number; children: Tree[]}>();
+
+// The `object` type is not changed.
+expectTypeOf<Simplify<object>>().toBe<object>();
+
+// A primitive, `null`, `undefined`, `void`, or an enum is returned as is.
+enum Color {
+	Red,
+	Blue,
+}
+
+expectTypeOf<Simplify<string>>().toBe<string>();
+expectTypeOf<Simplify<'a' | 'b'>>().toBe<'a' | 'b'>();
+expectTypeOf<Simplify<string | number | bigint | boolean | symbol>>().toBe<string | number | bigint | boolean | symbol>();
+expectTypeOf<Simplify<null>>().toBe<null>();
+expectTypeOf<Simplify<undefined>>().toBe<undefined>();
+expectTypeOf<Simplify<void>>().toBe<void>();
+expectTypeOf<Simplify<Color>>().toBe<Color>();
+
+// `null` and `undefined` in a union are kept, while the other members are flattened.
+expectTypeOf<Simplify<({a: 1} & {b: 2}) | null | undefined>>().toBe<{a: 1; b: 2} | null | undefined>();
+
+// Only the top level is flattened, so a property value is kept as is.
+expectTypeOf<Simplify<{a: {b: 1} & {c: 2}} & {d: 3}>>().toBe<{a: {b: 1} & {c: 2}; d: 3}>();
+
+// An array or a tuple keeps its shape.
+expectTypeOf<Simplify<string[]>>().toBe<string[]>();
+expectTypeOf<Simplify<readonly string[]>>().toBe<readonly string[]>();
+expectTypeOf<Simplify<unknown[]>>().toBe<unknown[]>();
+expectTypeOf<Simplify<any[]>>().toBe<any[]>();
+expectTypeOf<Simplify<never[]>>().toBe<never[]>();
+expectTypeOf<Simplify<[]>>().toBe<[]>();
+expectTypeOf<Simplify<readonly [1, 2]>>().toBe<readonly [1, 2]>();
+expectTypeOf<Simplify<readonly [string, ...number[]]>>().toBe<readonly [string, ...number[]]>();
+expectTypeOf<Simplify<string[] | readonly [1]>>().toBe<string[] | readonly [1]>();
+expectTypeOf<Simplify<[label: string, count?: number, ...rest: boolean[]]>>().toBe<[label: string, count?: number, ...rest: boolean[]]>();
+expectTypeOf<Simplify<[1, ...string[], 2]>>().toBe<[1, ...string[], 2]>();
+
+// The elements of an array or a tuple are kept as is, like property values.
+expectTypeOf<Simplify<Array<{a: 1} & {b: 2}>>>().toBe<Array<{a: 1} & {b: 2}>>();
+expectTypeOf<Simplify<[{a: 1} & {b: 2}]>>().toBe<[{a: 1} & {b: 2}]>();
+
+// So an interface element is not turned into a type. `SimplifyDeep` does that.
+expectTypeOf<Simplify<SomeInterface[]>>().not.toBeAssignableTo<Array<Record<string, unknown>>>();
+
+// An intersection of only arrays is kept as is, because TypeScript maps each array on its own. The arrays are not merged, because `X[] & Y[]` is not the same type as `(X & Y)[]`.
+expectTypeOf<Simplify<Array<{a: 1}> & Array<{b: 2}>>>().toBe<Array<{a: 1}> & Array<{b: 2}>>();
+
+// A generic tuple keeps its element positions.
+function _simplifyGenericTuple<Type extends [string, number]>(value: Simplify<Type>): number {
+	return value[1];
+}

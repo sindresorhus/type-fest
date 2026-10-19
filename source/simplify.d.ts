@@ -1,7 +1,7 @@
 import type {SimplifyDeep} from './simplify-deep.d.ts'; // For `@link`
 
 /**
-Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aid with assignability.
 
 @example
 ```
@@ -52,6 +52,21 @@ fn(someType); // Good: type is sealed
 // @ts-expect-error
 fn(someInterface); // Error: Index signature for type 'string' is missing in type 'someInterface'. Because `interface` can be re-opened
 fn(someInterface as Simplify<SomeInterface>); // Good: transform an `interface` into a `type`
+```
+
+Only the top level is flattened. Property values are kept as is, and so are the elements of an array or a tuple, which keeps its shape. Use {@link SimplifyDeep} to flatten them too.
+
+@example
+```
+import type {Simplify} from 'type-fest';
+
+type Point = {x: number} & {y: number};
+
+type A = Simplify<{start: Point} & {end: Point}>;
+//=> {start: Point; end: Point}
+
+type B = Simplify<[label: string, point?: Point]>;
+//=> [label: string, point?: Point]
 ```
 
 A function or a class constructor is returned as is, because its call and construct signatures cannot be flattened into an object. A union that includes one is also returned as is, so its other members are not flattened. To get only the properties of a function, use `Simplify<Omit<Type, never>>`.

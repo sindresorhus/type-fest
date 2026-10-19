@@ -169,7 +169,7 @@ Click the type names for complete docs.
 - [`ObjectEntry`](source/entry.d.ts) - Create a type that describes a single key-value pair produced by `Object.entries`, even for a generic object type.
 - [`Entries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
 - [`ObjectEntries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced by `Object.entries`, even for a generic object type.
-- [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aide with assignability.
+- [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aid with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
