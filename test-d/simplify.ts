@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Simplify} from '../index.d.ts';
+import type {LiteralUnion, Simplify, Tagged} from '../index.d.ts';
 
 type PositionProperties = {
 	top: number;
@@ -96,6 +96,72 @@ expectTypeOf<Simplify<SomeFunction | ({a: 1} & {b: 2})>>().toBe<SomeFunction | (
 
 expectTypeOf<Simplify<SomeFunction | undefined>>().toBe<SomeFunction | undefined>();
 
+// A branded primitive is returned as is, because flattening it would remove the primitive.
+type BrandedString = string & {brand: 'BrandedString'};
+expectTypeOf<Simplify<BrandedString>>().toBe<BrandedString>();
+expectTypeOf<Simplify<number & {unit: 'ms'}>>().toBe<number & {unit: 'ms'}>();
+expectTypeOf<Simplify<bigint & {unit: 'ns'}>>().toBe<bigint & {unit: 'ns'}>();
+expectTypeOf<Simplify<true & {flag: 'on'}>>().toBe<true & {flag: 'on'}>();
+expectTypeOf<Simplify<false & {flag: 'off'}>>().toBe<false & {flag: 'off'}>();
+expectTypeOf<Simplify<symbol & {key: 'id'}>>().toBe<symbol & {key: 'id'}>();
+expectTypeOf<Simplify<'a' & {brand: 'Letter'}>>().toBe<'a' & {brand: 'Letter'}>();
+expectTypeOf<Simplify<`id-${string}` & {brand: 'Id'}>>().toBe<`id-${string}` & {brand: 'Id'}>();
+
+type UserId = Tagged<string, 'UserId'>;
+expectTypeOf<Simplify<UserId>>().toBe<UserId>();
+expectTypeOf<Simplify<Tagged<number, 'Age'> | Tagged<number, 'Height'>>>().toBe<Tagged<number, 'Age'> | Tagged<number, 'Height'>>();
+
+// A primitive intersected with an empty object type is a branded primitive too, like the `string & Record<never, never>` that `LiteralUnion` uses. Unlike `{}`, `Record<never, never>` also works with a template literal.
+expectTypeOf<Simplify<string & {}>>().toBe<string & {}>();
+expectTypeOf<Simplify<LiteralUnion<'a' | 'b', string>>>().toBe<LiteralUnion<'a' | 'b', string>>();
+expectTypeOf<Simplify<LiteralUnion<'onClick', `on${string}`>>>().toBe<LiteralUnion<'onClick', `on${string}`>>();
+
+// A tag with metadata, several tags, and a tagged union of literals are returned as is.
+expectTypeOf<Simplify<Tagged<string, 'UserId', {length: 36}>>>().toBe<Tagged<string, 'UserId', {length: 36}>>();
+expectTypeOf<Simplify<Tagged<UserId, 'Admin'>>>().toBe<Tagged<UserId, 'Admin'>>();
+expectTypeOf<Simplify<Tagged<'a' | 'b', 'Letter'>>>().toBe<Tagged<'a' | 'b', 'Letter'>>();
+
+// A brand with a symbol key and a branded enum are returned as is.
+declare const brandSymbol: unique symbol;
+expectTypeOf<Simplify<number & {readonly [brandSymbol]: 'Meters'}>>().toBe<number & {readonly [brandSymbol]: 'Meters'}>();
+expectTypeOf<Simplify<Color & {brand: 'Color'}>>().toBe<Color & {brand: 'Color'}>();
+
+// A brand over a union of primitives, a brand key that the primitive also has, and a brand that is an intersection are returned as is.
+expectTypeOf<Simplify<(string | number) & {brand: 'Id'}>>().toBe<(string | number) & {brand: 'Id'}>();
+expectTypeOf<Simplify<string & {length: 5}>>().toBe<string & {length: 5}>();
+expectTypeOf<Simplify<UserId & ({a: 1} & {b: 2})>>().toBe<UserId & ({a: 1} & {b: 2})>();
+
+// Simplifying a branded primitive again changes nothing.
+expectTypeOf<Simplify<Simplify<UserId>>>().toBe<UserId>();
+
+// A union that includes a branded primitive is returned as is, so its other members are not flattened.
+expectTypeOf<Simplify<UserId | ({a: 1} & {b: 2})>>().toBe<UserId | ({a: 1} & {b: 2})>();
+expectTypeOf<Simplify<(string & {}) | ({a: 1} & {b: 2})>>().toBe<(string & {}) | ({a: 1} & {b: 2})>();
+expectTypeOf<Simplify<LiteralUnion<'a', string> | ({a: 1} & {b: 2})>>().toBe<LiteralUnion<'a', string> | ({a: 1} & {b: 2})>();
+expectTypeOf<Simplify<UserId | null | ({a: 1} & {b: 2})>>().toBe<UserId | null | ({a: 1} & {b: 2})>();
+expectTypeOf<Simplify<UserId | undefined>>().toBe<UserId | undefined>();
+expectTypeOf<Simplify<UserId | SomeFunction>>().toBe<UserId | SomeFunction>();
+expectTypeOf<Simplify<UserId | 'auto' | ({a: 1} & {b: 2})>>().toBe<UserId | 'auto' | ({a: 1} & {b: 2})>();
+
+// So an interface in a union with a branded primitive is not turned into a type.
+expectTypeOf<Simplify<SomeInterface | UserId>>().not.toBeAssignableTo<Record<string, unknown> | UserId>();
+
+// A union that includes a plain primitive or `void` is flattened member by member, because flattening does not change them.
+expectTypeOf<Simplify<'auto' | ({a: 1} & {b: 2})>>().toBe<'auto' | {a: 1; b: 2}>();
+expectTypeOf<Simplify<1 | 2 | ({a: 1} & {b: 2})>>().toBe<1 | 2 | {a: 1; b: 2}>();
+expectTypeOf<Simplify<boolean | ({a: 1} & {b: 2})>>().toBe<boolean | {a: 1; b: 2}>();
+expectTypeOf<Simplify<string | number | bigint | symbol | ({a: 1} & {b: 2})>>().toBe<string | number | bigint | symbol | {a: 1; b: 2}>();
+expectTypeOf<Simplify<`id-${string}` | ({a: 1} & {b: 2})>>().toBe<`id-${string}` | {a: 1; b: 2}>();
+expectTypeOf<Simplify<void | ({a: 1} & {b: 2})>>().toBe<void | {a: 1; b: 2}>();
+expectTypeOf<Simplify<Uppercase<string> | ({a: 1} & {b: 2})>>().toBe<Uppercase<string> | {a: 1; b: 2}>();
+
+// So an interface in a union with a plain primitive is still turned into a type.
+expectTypeOf<Simplify<SomeInterface | string>>().toBeAssignableTo<Record<string, unknown> | string>();
+expectTypeOf<SomeInterface | string>().not.toBeAssignableTo<Record<string, unknown> | string>();
+
+// A branded primitive as a property value is kept as is.
+expectTypeOf<Simplify<{id: UserId} & {name: string}>>().toBe<{id: UserId; name: string}>();
+
 // A union of objects is flattened member by member.
 expectTypeOf<Simplify<({a: 1} & {b: 2}) | {c: 3}>>().toBe<{a: 1; b: 2} | {c: 3}>();
 
@@ -106,6 +172,14 @@ expectTypeOf<Simplify<unknown>>().toBe<{}>();
 
 // A generic type stays assignable to its simplified version.
 function _simplifyGeneric<Type>(value: Type): Simplify<Type> {
+	return value;
+}
+
+function _simplifyGenericUnion<Type extends string | {a: number}>(value: Type): Simplify<Type> {
+	return value;
+}
+
+function _simplifyGenericBranded<Type extends UserId>(value: Type): Simplify<Type> {
 	return value;
 }
 
@@ -163,6 +237,13 @@ expectTypeOf<Simplify<null>>().toBe<null>();
 expectTypeOf<Simplify<undefined>>().toBe<undefined>();
 expectTypeOf<Simplify<void>>().toBe<void>();
 expectTypeOf<Simplify<Color>>().toBe<Color>();
+expectTypeOf<Simplify<Color.Red>>().toBe<Color.Red>();
+expectTypeOf<Simplify<typeof symbolKey>>().toBe<typeof symbolKey>();
+expectTypeOf<Simplify<null | undefined>>().toBe<null | undefined>();
+
+// An enum or a unique symbol in a union does not stop the other members from being flattened.
+expectTypeOf<Simplify<Color | ({a: 1} & {b: 2})>>().toBe<Color | {a: 1; b: 2}>();
+expectTypeOf<Simplify<typeof symbolKey | ({a: 1} & {b: 2})>>().toBe<typeof symbolKey | {a: 1; b: 2}>();
 
 // `null` and `undefined` in a union are kept, while the other members are flattened.
 expectTypeOf<Simplify<({a: 1} & {b: 2}) | null | undefined>>().toBe<{a: 1; b: 2} | null | undefined>();

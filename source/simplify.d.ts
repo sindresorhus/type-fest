@@ -1,3 +1,4 @@
+import type {Primitive} from './primitive.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts'; // For `@link`
 
 /**
@@ -69,7 +70,11 @@ type B = Simplify<[label: string, point?: Point]>;
 //=> [label: string, point?: Point]
 ```
 
-A function or a class constructor is returned as is, because its call and construct signatures cannot be flattened into an object. A union that includes one is also returned as is, so its other members are not flattened. To get only the properties of a function, use `Simplify<Omit<Type, never>>`.
+A function or a class constructor is returned as is, because its call and construct signatures cannot be flattened into an object. To get only the properties of a function, use `Simplify<Omit<Type, never>>`.
+
+A primitive is also returned as is. A branded primitive like `Tagged<string, 'UserId'>` or `string & {}` is returned as is too, because flattening it would turn it into an object and remove the primitive. A union that includes a function, a class constructor, or a branded primitive is returned as is, so its other members are not flattened. A plain primitive in a union does not stop its other members from being flattened.
+
+TypeScript does not resolve a mapped type over a template literal type intersected with `{}`, so ``Simplify<`on${string}` & {}>`` stays unresolved and is not assignable to `string`. Use `Record<never, never>` instead of `{}`, like `LiteralUnion` does.
 
 @example
 ```
@@ -86,17 +91,37 @@ type B = Simplify<Format & {description: string}>;
 // `Omit` drops the call signature, so this gives only the properties.
 type C = Simplify<Omit<Format & {description: string}, never>>;
 //=> {description: string}
+
+type UserId = string & {brand: 'UserId'};
+
+type D = Simplify<UserId>;
+//=> string & {brand: 'UserId'}
+
+// A plain primitive does not stop the other members from being flattened.
+type E = Simplify<'auto' | ({width: number} & {height: number})>;
+//=> 'auto' | {width: number; height: number}
+
+// A branded primitive does, so the union is returned as is.
+type F = Simplify<UserId | ({width: number} & {height: number})>;
+//=> UserId | ({width: number} & {height: number})
 ```
+
+A built-in object like `Date`, `Map`, or `Promise`, and an array or a tuple with extra properties like `string[] & {total: number}`, is flattened into an object of all its members. The result is still assignable to and from the original type, but it makes type hints long, so do not wrap these types in `Simplify`.
 
 @see https://github.com/microsoft/TypeScript/issues/15300
 @see {@link SimplifyDeep}
 @category Object
 */
-// Internal types use `SimplifyObject` instead, which leaves out the function check. See its comment for why.
+// Internal types use `SimplifyObject` instead, which leaves out the check for functions, class constructors, and branded primitives. See its comment for why.
 export type Simplify<T> =
 	// The check is not distributive, so that a generic `T` stays assignable to `Simplify<T>`, because it is assignable to both branches.
-	[Extract<T, ((...arguments_: never) => unknown) | (abstract new (...arguments_: never) => unknown)>] extends [never]
+	[BrandedPrimitive<T> | Extract<T, ((...arguments_: never) => unknown) | (abstract new (...arguments_: never) => unknown)>] extends [never]
 		? {[KeyType in keyof T]: T[KeyType]} & {}
 		: T;
+
+// The members of `Type` that are a primitive intersected with an object type, like `Tagged<string, 'UserId'>` or `string & {}`. A homomorphic mapped type, like the one in `Simplify`, returns a plain primitive as is, but turns a branded primitive into an object of all its members, which removes the primitive.
+type BrandedPrimitive<Type> = Type extends Primitive
+	? {[KeyType in keyof Type]: Type[KeyType]} extends Primitive ? never : Type
+	: never;
 
 export {};
