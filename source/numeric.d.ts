@@ -138,7 +138,7 @@ A `number` that is not an integer.
 
 Use-case: Validating and documenting parameters.
 
-It does not accept `Infinity`.
+It does not accept `Infinity` or `-Infinity`.
 
 @example
 ```
@@ -174,13 +174,44 @@ A negative `number`/`bigint` (`-∞ < x < 0`).
 
 Use-case: Validating and documenting parameters.
 
+It does not accept `-Infinity`.
+
+Note: A wide `number` or `bigint` can't be proven negative, so it is rejected. To accept a value that is only known at runtime, accept a branded type next to `Negative<T>` in the parameter type, as shown for {@link Finite}.
+
 @see {@link NegativeInteger}
 @see {@link NonNegative}
 
+@example
+```
+import type {Negative, NegativeInfinity} from 'type-fest';
+
+type A = Negative<-1>;
+//=> -1
+
+type B = Negative<0>;
+//=> never
+
+type C = Negative<NegativeInfinity>;
+//=> never
+
+type D = Negative<number>;
+//=> never
+```
+
+@example
+```
+import type {Negative} from 'type-fest';
+
+declare function setOffset<T extends number>(offset: Negative<T>): void;
+```
+
 @category Numeric
 */
-// Read the sign from the primitive base, but keep the original brand on accepted values.
-export type Negative<T extends _Numeric> = T extends Zero ? never : `${T extends object ? UnwrapBrand<T> : T}` extends `-${string}` ? T : never;
+export type Negative<T extends _Numeric> = T extends NegativeInfinity ? never : NegativeSign<T>;
+
+// Matches values with a negative sign, including `-Infinity`.
+// Read the sign from the unbranded primitive, because `${T}` does not reduce for a literal intersected with an object type, but keep the original brand on accepted values.
+type NegativeSign<T extends _Numeric> = T extends Zero ? never : `${T extends object ? UnwrapBrand<T> : T}` extends `-${string}` ? T : never;
 
 /**
 A negative (`-∞ < x < 0`) `number` that is an integer.
@@ -201,6 +232,8 @@ export type NegativeInteger<T extends number> = Negative<Integer<T>>;
 A non-negative `number`/`bigint` (`0 <= x < ∞`).
 
 Use-case: Validating and documenting parameters.
+
+It does not accept `Infinity`.
 
 Note: A wide `number` or `bigint` can't be proven non-negative, so it is rejected. To accept a value that is only known at runtime, accept a branded type next to `NonNegative<T>` in the parameter type, as shown for {@link Finite}.
 
@@ -230,7 +263,7 @@ declare function setLength<T extends number>(length: NonNegative<T>): void;
 
 @category Numeric
 */
-export type NonNegative<T extends _Numeric> = T extends Negative<T> ? never : IsNumericLiteral<T> extends true ? T : never;
+export type NonNegative<T extends _Numeric> = T extends NegativeSign<T> | PositiveInfinity ? never : IsNumericLiteral<T> extends true ? T : never;
 
 /**
 A non-negative (`0 <= x < ∞`) `number` that is an integer.
@@ -257,21 +290,26 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 /**
 Returns a boolean for whether the given number is a negative number.
 
+Unlike {@link Negative}, it returns `true` for `-Infinity`, since it only checks the sign.
+
 @see {@link Negative}
 
 @example
 ```
-import type {IsNegative} from 'type-fest';
+import type {IsNegative, NegativeInfinity} from 'type-fest';
 
-type ShouldBeFalse = IsNegative<1>;
-type ShouldBeTrue = IsNegative<-1>;
+type A = IsNegative<-1>;
+//=> true
+
+type B = IsNegative<1>;
+//=> false
+
+type C = IsNegative<NegativeInfinity>;
+//=> true
 ```
 
 @category Numeric
 */
-// The brand is removed first, because `${T}` does not reduce for a literal intersected with an object type, so a branded literal would otherwise take the wrong branch.
-export type IsNegative<T extends _Numeric> = _IsNegative<T extends object ? UnwrapBrand<T> : T>;
-
-type _IsNegative<T extends _Numeric> = T extends Negative<T> ? true : false;
+export type IsNegative<T extends _Numeric> = T extends NegativeSign<T> ? true : false;
 
 export {};

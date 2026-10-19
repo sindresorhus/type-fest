@@ -113,22 +113,69 @@ expectTypeOf(infinityFloat).toBe<never>();
 declare const negative: Negative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
 expectTypeOf(negative).toBe<-1 | -1n>();
+expectTypeOf<Negative<NegativeInfinity>>().toBe<never>();
+expectTypeOf<Negative<-1 | NegativeInfinity>>().toBe<-1>();
+expectTypeOf<Negative<Tagged<NegativeInfinity, 'Amount'>>>().toBe<never>();
+expectTypeOf<Negative<Opaque<NegativeInfinity, 'Amount'>>>().toBe<never>();
+expectTypeOf<Negative<Tagged<Tagged<NegativeInfinity, 'Amount'>, 'Validated'>>>().toBe<never>();
+expectTypeOf<Negative<-1 | NegativeInfinity | Tagged<-2 | NegativeInfinity, 'Amount'>>>().toBe<-1 | Tagged<-2, 'Amount'>>();
+expectTypeOf<Negative<-1n | NegativeInfinity>>().toBe<-1n>();
+expectTypeOf<Negative<PositiveInfinity>>().toBe<never>();
+expectTypeOf<Negative<NegativeInfinity | PositiveInfinity>>().toBe<never>();
+expectTypeOf<Negative<-0>>().toBe<never>();
+expectTypeOf<Negative<any>>().toBe<never>();
+
+// A wide `number` or `bigint` can be non-negative, so it is rejected.
+expectTypeOf<Negative<number>>().toBe<never>();
+expectTypeOf<Negative<bigint>>().toBe<never>();
+expectTypeOf<Negative<-1 | bigint>>().toBe<-1>();
+
+// A literal beyond the `number` range is `-Infinity`, while very large and very small finite literals are still accepted.
+expectTypeOf<Negative<-1e309>>().toBe<never>(); // eslint-disable-line no-loss-of-precision
+expectTypeOf<Negative<-1e308>>().toBe<-1e308>();
+expectTypeOf<Negative<-5e-324>>().toBe<-5e-324>();
+
+declare function setOffset<T extends number>(offset: Negative<T>): void;
+declare const negativeInfinity: NegativeInfinity;
+setOffset(-1);
+setOffset(-1.5);
+// @ts-expect-error
+setOffset(0);
+// @ts-expect-error
+setOffset(1);
+// @ts-expect-error
+setOffset(wideNumber);
+// @ts-expect-error
+setOffset(negativeInfinity);
+// @ts-expect-error
+setOffset(-1e309); // eslint-disable-line no-loss-of-precision
 
 // NegativeInteger
 declare const negativeInteger: NegativeInteger<-1 | 0 | 1>;
 
 expectTypeOf(negativeInteger).toBe<-1>();
+expectTypeOf<NegativeInteger<-1 | NegativeInfinity>>().toBe<-1>();
 
 // NegativeFloat
 declare const negativeFloat: NegativeFloat<-1.5 | -1 | 0 | 1 | 1.5>;
 
 expectTypeOf(negativeFloat).toBe<-1.5>();
+expectTypeOf<NegativeFloat<-1.5 | NegativeInfinity>>().toBe<-1.5>();
 
 // NonNegative
 declare const nonNegative: NonNegative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
 expectTypeOf(nonNegative).toBe<0 | 0n | 1 | 1n>();
 expectTypeOf<NonNegative<NegativeInfinity>>().toBe<never>();
+expectTypeOf<NonNegative<PositiveInfinity>>().toBe<never>();
+expectTypeOf<NonNegative<1 | PositiveInfinity>>().toBe<1>();
+expectTypeOf<NonNegative<Tagged<PositiveInfinity, 'Amount'>>>().toBe<never>();
+expectTypeOf<NonNegative<Opaque<PositiveInfinity, 'Amount'>>>().toBe<never>();
+expectTypeOf<NonNegative<Tagged<Tagged<PositiveInfinity, 'Amount'>, 'Validated'>>>().toBe<never>();
+expectTypeOf<NonNegative<NegativeInfinity | PositiveInfinity>>().toBe<never>();
+expectTypeOf<NonNegative<0 | 0n | NegativeInfinity | PositiveInfinity>>().toBe<0 | 0n>();
+expectTypeOf<NonNegative<-0>>().toBe<0>();
+expectTypeOf<NonNegative<0x10 | -0x10>>().toBe<0x10>();
 expectTypeOf<NonNegative<Level>>().toBe<Level.Low | Level.High>();
 expectTypeOf<NonNegative<any>>().toBe<never>();
 
@@ -138,6 +185,11 @@ expectTypeOf<NonNegative<bigint>>().toBe<never>();
 expectTypeOf<NonNegative<1 | bigint>>().toBe<1>();
 expectTypeOf<NonNegative<-1 | 2 | Tagged<number, 'Amount'>>>().toBe<2>();
 
+// A literal beyond the `number` range is `Infinity`, while very large and very small finite literals are still accepted.
+expectTypeOf<NonNegative<1e309>>().toBe<never>(); // eslint-disable-line no-loss-of-precision
+expectTypeOf<NonNegative<1e308>>().toBe<1e308>();
+expectTypeOf<NonNegative<5e-324>>().toBe<5e-324>();
+
 declare function setLength<T extends number>(length: NonNegative<T>): void;
 setLength(0);
 setLength(1);
@@ -146,14 +198,46 @@ setLength(level);
 setLength(-1);
 // @ts-expect-error
 setLength(wideNumber);
+// @ts-expect-error
+setLength(positiveInfinity);
+// @ts-expect-error
+setLength(negativeInfinity);
+// @ts-expect-error
+setLength(1e309); // eslint-disable-line no-loss-of-precision
+declare const taggedPositiveInfinity: Tagged<PositiveInfinity, 'Amount'>;
+// @ts-expect-error
+setLength(taggedPositiveInfinity);
 
 // NonNegativeInteger
 declare const nonNegativeInteger: NonNegativeInteger<-1 | 0 | 1>;
 
 expectTypeOf(nonNegativeInteger).toBe<0 | 1>();
 expectTypeOf<NonNegativeInteger<number>>().toBe<never>();
+expectTypeOf<NonNegativeInteger<1 | PositiveInfinity>>().toBe<1>();
 
-// A branded literal is still a literal, so the brand is removed before the checks run.
+// IsNegative
+expectTypeOf<IsNegative<-1>>().toBe<true>();
+expectTypeOf<IsNegative<-1.5>>().toBe<true>();
+expectTypeOf<IsNegative<-1n>>().toBe<true>();
+expectTypeOf<IsNegative<1>>().toBe<false>();
+expectTypeOf<IsNegative<0>>().toBe<false>();
+expectTypeOf<IsNegative<-0>>().toBe<false>();
+expectTypeOf<IsNegative<0n>>().toBe<false>();
+expectTypeOf<IsNegative<-1 | 1>>().toBe<boolean>();
+expectTypeOf<IsNegative<Level>>().toBe<false>();
+expectTypeOf<IsNegative<number>>().toBe<false>();
+expectTypeOf<IsNegative<bigint>>().toBe<false>();
+expectTypeOf<IsNegative<any>>().toBe<boolean>();
+expectTypeOf<IsNegative<never>>().toBe<never>();
+
+// `IsNegative` reports the sign, so it still treats `-Infinity` as negative.
+expectTypeOf<IsNegative<NegativeInfinity>>().toBe<true>();
+expectTypeOf<IsNegative<PositiveInfinity>>().toBe<false>();
+expectTypeOf<IsNegative<-1e309>>().toBe<true>(); // eslint-disable-line no-loss-of-precision
+expectTypeOf<IsNegative<Tagged<NegativeInfinity, 'Amount'>>>().toBe<true>();
+expectTypeOf<IsNegative<Tagged<PositiveInfinity, 'Amount'>>>().toBe<false>();
+
+// A branded literal is still a literal, so the sign is read from its unbranded value.
 declare const brandedNegative: IsNegative<Opaque<-5, 'A'>>;
 expectTypeOf(brandedNegative).toBe<true>();
 
