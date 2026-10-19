@@ -24,9 +24,53 @@ expectTypeOf(infinityMixed).toBe<1>();
 expectTypeOf<Finite<-1.5>>().toBe<-1.5>();
 expectTypeOf<Finite<1e308>>().toBe<1e308>();
 
-// Known limitation: `NaN`, `Infinity`, and `-Infinity` values are typed as `number`, so they are not rejected.
-expectTypeOf<Finite<number>>().toBe<number>();
-expectTypeOf<Finite<typeof Number.NaN>>().toBe<number>();
+expectTypeOf<Finite<Tagged<5, 'Score'>>>().toBe<Tagged<5, 'Score'>>();
+expectTypeOf<Finite<Tagged<PositiveInfinity, 'Score'>>>().toBe<never>();
+expectTypeOf<Finite<any>>().toBe<never>();
+expectTypeOf<Finite<never>>().toBe<never>();
+
+// `NaN`, `Infinity`, and `-Infinity` values are typed as `number`, so a wide `number` is rejected.
+expectTypeOf<Finite<number>>().toBe<never>();
+expectTypeOf<Finite<typeof Number.NaN>>().toBe<never>();
+expectTypeOf<Finite<Tagged<number, 'Score'>>>().toBe<never>();
+expectTypeOf<Finite<1 | Tagged<number, 'Score'>>>().toBe<1>();
+
+enum Level {
+	Low = 1,
+	High = 2,
+}
+
+expectTypeOf<Finite<Level>>().toBe<Level.Low | Level.High>();
+expectTypeOf<Finite<Level.Low>>().toBe<Level.Low>();
+
+declare function setScore<T extends number>(score: Finite<T>): void;
+declare const wideNumber: number;
+declare const level: Level;
+declare const positiveInfinity: PositiveInfinity;
+setScore(1.5);
+setScore(level);
+// @ts-expect-error
+setScore(wideNumber);
+// @ts-expect-error
+setScore(NaN);
+// @ts-expect-error
+setScore(positiveInfinity);
+
+// A value that is only known at runtime is accepted through a brand that the parameter type adds.
+type FiniteNumber = Tagged<number, 'Finite'>;
+declare function setCheckedScore<T extends number>(score: Finite<T> | FiniteNumber): void;
+declare const checkedScore: FiniteNumber;
+declare const amount: Tagged<number, 'Amount'>;
+setCheckedScore(1.5);
+setCheckedScore(checkedScore);
+declare const literalOrChecked: 1 | FiniteNumber;
+setCheckedScore(literalOrChecked);
+// @ts-expect-error
+setCheckedScore(amount);
+// @ts-expect-error
+setCheckedScore(positiveInfinity);
+// @ts-expect-error
+setCheckedScore(wideNumber);
 
 // Integer
 declare const integer: Integer<1>;
@@ -84,11 +128,30 @@ expectTypeOf(negativeFloat).toBe<-1.5>();
 declare const nonNegative: NonNegative<-1 | -1n | 0 | 0n | 1 | 1n>;
 
 expectTypeOf(nonNegative).toBe<0 | 0n | 1 | 1n>();
+expectTypeOf<NonNegative<NegativeInfinity>>().toBe<never>();
+expectTypeOf<NonNegative<Level>>().toBe<Level.Low | Level.High>();
+expectTypeOf<NonNegative<any>>().toBe<never>();
+
+// A wide `number` or `bigint` can be negative, so it is rejected.
+expectTypeOf<NonNegative<number>>().toBe<never>();
+expectTypeOf<NonNegative<bigint>>().toBe<never>();
+expectTypeOf<NonNegative<1 | bigint>>().toBe<1>();
+expectTypeOf<NonNegative<-1 | 2 | Tagged<number, 'Amount'>>>().toBe<2>();
+
+declare function setLength<T extends number>(length: NonNegative<T>): void;
+setLength(0);
+setLength(1);
+setLength(level);
+// @ts-expect-error
+setLength(-1);
+// @ts-expect-error
+setLength(wideNumber);
 
 // NonNegativeInteger
 declare const nonNegativeInteger: NonNegativeInteger<-1 | 0 | 1>;
 
 expectTypeOf(nonNegativeInteger).toBe<0 | 1>();
+expectTypeOf<NonNegativeInteger<number>>().toBe<never>();
 
 // A branded literal is still a literal, so the brand is removed before the checks run.
 declare const brandedNegative: IsNegative<Opaque<-5, 'A'>>;
@@ -141,8 +204,8 @@ expectTypeOf<Negative<CustomNegative>>().toBe<CustomNegative>();
 expectTypeOf<NonNegative<CustomNegative>>().toBe<never>();
 expectTypeOf<Negative<Opaque<-5, 'Amount'>>>().toBe<Opaque<-5, 'Amount'>>();
 
-// Filtering cannot identify a negative member of a widened number.
+// Filtering cannot identify the sign of a widened number, so both reject it.
 expectTypeOf<Negative<Tagged<number, 'Amount'>>>().toBe<never>();
-expectTypeOf<NonNegative<Tagged<number, 'Amount'>>>().toBe<Tagged<number, 'Amount'>>();
+expectTypeOf<NonNegative<Tagged<number, 'Amount'>>>().toBe<never>();
 expectTypeOf<Negative<never>>().toBe<never>();
 expectTypeOf<NonNegative<never>>().toBe<never>();

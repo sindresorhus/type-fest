@@ -1,6 +1,8 @@
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IsFloat} from './is-float.d.ts';
 import type {IsInteger} from './is-integer.d.ts';
+import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
+import type {Tagged} from './tagged.d.ts'; // For `@link`
 
 export type _Numeric = number | bigint;
 
@@ -38,18 +40,46 @@ You can't pass a `bigint` as they are already guaranteed to be finite.
 
 Use-case: Validating and documenting parameters.
 
-Note: TypeScript types the `NaN`, `Infinity`, and `-Infinity` values as `number`, and `Finite<number>` is `number`, so this can't detect them. Only the {@link PositiveInfinity} and {@link NegativeInfinity} types are rejected. Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/28682) if you want to have a `NaN` type as a built-in in TypeScript.
+Note: TypeScript types the `NaN`, `Infinity`, and `-Infinity` values as `number`, so a wide `number` can't be proven finite and is rejected. To accept a value that is only known at runtime, accept a {@link Tagged} brand next to `Finite<T>` in the parameter type, as shown in the last example. Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/28682) if you want to have a `NaN` type as a built-in in TypeScript.
 
 @example
 ```
-import type {Finite} from 'type-fest';
+import type {Finite, PositiveInfinity} from 'type-fest';
 
-declare function setScore<T extends number>(length: Finite<T>): void;
+type A = Finite<1.5>;
+//=> 1.5
+
+type B = Finite<PositiveInfinity>;
+//=> never
+
+type C = Finite<number>;
+//=> never
+```
+
+@example
+```
+import type {Finite, Tagged} from 'type-fest';
+
+type FiniteNumber = Tagged<number, 'Finite'>;
+
+function isFiniteNumber(value: number): value is FiniteNumber {
+	return Number.isFinite(value);
+}
+
+declare function setScore<T extends number>(score: Finite<T> | FiniteNumber): void;
+
+setScore(1.5);
+
+declare const input: number;
+
+if (isFiniteNumber(input)) {
+	setScore(input);
+}
 ```
 
 @category Numeric
 */
-export type Finite<T extends number> = T extends PositiveInfinity | NegativeInfinity ? never : T;
+export type Finite<T extends number> = T extends PositiveInfinity | NegativeInfinity ? never : IsNumericLiteral<T> extends true ? T : never;
 
 /**
 A `number` that is an integer.
@@ -172,8 +202,24 @@ A non-negative `number`/`bigint` (`0 <= x < ∞`).
 
 Use-case: Validating and documenting parameters.
 
+Note: A wide `number` or `bigint` can't be proven non-negative, so it is rejected. To accept a value that is only known at runtime, accept a branded type next to `NonNegative<T>` in the parameter type, as shown for {@link Finite}.
+
 @see {@link NonNegativeInteger}
 @see {@link Negative}
+
+@example
+```
+import type {NonNegative} from 'type-fest';
+
+type A = NonNegative<1>;
+//=> 1
+
+type B = NonNegative<-1>;
+//=> never
+
+type C = NonNegative<number>;
+//=> never
+```
 
 @example
 ```
@@ -184,7 +230,7 @@ declare function setLength<T extends number>(length: NonNegative<T>): void;
 
 @category Numeric
 */
-export type NonNegative<T extends _Numeric> = T extends Zero ? T : Negative<T> extends never ? T : never;
+export type NonNegative<T extends _Numeric> = T extends Negative<T> ? never : IsNumericLiteral<T> extends true ? T : never;
 
 /**
 A non-negative (`0 <= x < ∞`) `number` that is an integer.
