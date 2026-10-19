@@ -96,6 +96,9 @@ expectTypeOf(readonlyObjectKeyMapEntries).toBe<Array<[object, number]>>();
 declare const anyMapEntry: Entry<Map<any, any>>;
 expectTypeOf(anyMapEntry).toBe<[any, any]>();
 
+// `any` could be any collection. The key of its map entry is `any` rather than `unknown`, so the key of the whole entry is `any`.
+expectTypeOf<Entry<any>[0]>().toBe<any>();
+
 declare const unknownMapEntry: Entry<Map<unknown, unknown>>;
 expectTypeOf(unknownMapEntry).toBe<[unknown, unknown]>();
 

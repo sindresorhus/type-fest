@@ -165,6 +165,8 @@ Click the type names for complete docs.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the values of the given type changed to `string` type.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
+- [`MapKey`](source/map-key.d.ts) - Get the key type of a `Map`, `ReadonlyMap`, or `WeakMap`.
+- [`MapValue`](source/map-value.d.ts) - Get the value type of a `Map`, `ReadonlyMap`, or `WeakMap`.
 - [`Entry`](source/entry.d.ts) - Create a type that describes a single key-value pair produced when calling a collection’s `entries` method.
 - [`ObjectEntry`](source/entry.d.ts) - Create a type that describes a single key-value pair produced by `Object.entries`, even for a generic object type.
 - [`Entries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
@@ -416,6 +418,7 @@ Click the type names for complete docs.
 - `SetElement` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetEntry` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
+- `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)

@@ -78,6 +78,8 @@ export type {FixedLengthArray} from './source/fixed-length-array.d.ts';
 export type {MultidimensionalArray} from './source/multidimensional-array.d.ts';
 export type {MultidimensionalReadonlyArray} from './source/multidimensional-readonly-array.d.ts';
 export type {IterableElement} from './source/iterable-element.d.ts';
+export type {MapKey} from './source/map-key.d.ts';
+export type {MapValue} from './source/map-value.d.ts';
 export type {Entry, ObjectEntry} from './source/entry.d.ts';
 export type {Entries, ObjectEntries} from './source/entries.d.ts';
 export type {SetReturnType} from './source/set-return-type.d.ts';

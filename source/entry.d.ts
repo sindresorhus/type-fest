@@ -1,7 +1,6 @@
 import type {ObjectEntries} from './entries.d.ts'; // For `@link`
-
-type MapKey<BaseType> = BaseType extends ReadonlyMap<infer KeyType, unknown> ? KeyType : never;
-type MapValue<BaseType> = BaseType extends ReadonlyMap<unknown, infer ValueType> ? ValueType : never;
+import type {MapKey} from './map-key.d.ts';
+import type {MapValue} from './map-value.d.ts';
 
 /**
 The key-value pairs `Array.prototype.entries` yields.
