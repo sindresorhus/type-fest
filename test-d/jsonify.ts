@@ -407,14 +407,23 @@ expectTypeOf(readonlySetJson).toBe<EmptyObject>();
 ({}) satisfies Jsonify<typeof readonlySet>;
 expectTypeOf<{size: 1}>().not.toBeAssignableTo<Jsonify<typeof readonlySet>>();
 
-// Positive and negative Infinity, NaN and null are turned into null
-// NOTE: NaN is not detectable in TypeScript, so it is not tested; see https://github.com/sindresorhus/type-fest/issues/406
+// Positive and negative Infinity types are turned into null
+// NOTE: NaN is not detectable in TypeScript; see https://github.com/sindresorhus/type-fest/issues/406
 declare const positiveInfinity: PositiveInfinity;
 declare const positiveInfJson: Jsonify<typeof positiveInfinity>;
 expectTypeOf(positiveInfJson).toBe<null>();
 declare const negativeInf: NegativeInfinity;
 declare const negativeInfJson: Jsonify<typeof negativeInf>;
 expectTypeOf(negativeInfJson).toBe<null>();
+expectTypeOf<Jsonify<1 | PositiveInfinity>>().toBe<1 | null>();
+expectTypeOf<Jsonify<{value: PositiveInfinity}>>().toBe<{value: null}>();
+expectTypeOf<Jsonify<[NegativeInfinity, 1]>>().toBe<[null, 1]>();
+
+// Known limitation: `NaN`, `Infinity`, and `-Infinity` values are typed as `number`, so they stay `number`, even though `JSON.stringify` writes them as `null`.
+expectTypeOf<Jsonify<number>>().toBe<number>();
+expectTypeOf<Jsonify<typeof Number.NaN>>().toBe<number>();
+expectTypeOf<Jsonify<{value: number}>>().toBe<{value: number}>();
+expectTypeOf<Jsonify<number[]>>().toBe<number[]>();
 
 // Test that optional type members are not discarded wholesale.
 type OptionalPrimitive = {

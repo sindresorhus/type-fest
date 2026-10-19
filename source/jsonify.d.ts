@@ -131,6 +131,8 @@ const time = {
 const timeJson = JSON.parse(JSON.stringify(time)) as Jsonify<typeof time>;
 ```
 
+Note: `JSON.stringify` writes `NaN`, `Infinity`, and `-Infinity` as `null`, but TypeScript types these values as `number`, so `Jsonify<number>` is `number`. Only the {@link PositiveInfinity} and {@link NegativeInfinity} number types become `null`. Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/28682) if you want to have a `NaN` type as a built-in in TypeScript.
+
 @see https://github.com/Microsoft/TypeScript/issues/1897#issuecomment-710744173
 
 @category JSON

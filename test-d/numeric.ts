@@ -21,6 +21,12 @@ declare const infinityMixed: Finite<1 | PositiveInfinity | NegativeInfinity>;
 
 expectTypeOf(infinity).toBe<never>();
 expectTypeOf(infinityMixed).toBe<1>();
+expectTypeOf<Finite<-1.5>>().toBe<-1.5>();
+expectTypeOf<Finite<1e308>>().toBe<1e308>();
+
+// Known limitation: `NaN`, `Infinity`, and `-Infinity` values are typed as `number`, so they are not rejected.
+expectTypeOf<Finite<number>>().toBe<number>();
+expectTypeOf<Finite<typeof Number.NaN>>().toBe<number>();
 
 // Integer
 declare const integer: Integer<1>;
