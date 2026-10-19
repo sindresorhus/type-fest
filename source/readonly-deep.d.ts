@@ -67,6 +67,8 @@ if (readonlyLast) {
 
 Note that types containing overloaded functions are not made deeply readonly due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
 
+Note that the methods of an array, such as `join`, can still be reassigned, because TypeScript treats `Readonly<ReadonlyArray<T>>` the same as `ReadonlyArray<T>`. The methods of a `Map` or a `Set` are made readonly.
+
 @category Object
 @category Array
 @category Set
@@ -99,14 +101,14 @@ export type ReadonlyDeep<T> = T extends NonRecursiveLeaf
 /**
 Same as `ReadonlyDeep`, but accepts only `ReadonlyMap`s as inputs. Internal helper for `ReadonlyDeep`.
 
-The result is the `ReadonlyMap` built-in rather than a `Readonly` wrapped around it. A `ReadonlyMap` is already immutable, so the wrapper added nothing but an anonymous object type that is only mutually assignable to a `ReadonlyMap` rather than being one, which every other `*Deep` type here returns directly.
+The `ReadonlyMap` is wrapped in `Readonly` so that its methods are readonly too. A `ReadonlyMap` only leaves out the methods that change the map, and the methods it has can still be reassigned, so linters such as the `prefer-readonly-parameter-types` rule of typescript-eslint do not see it as readonly. See https://github.com/sindresorhus/type-fest/issues/357
 */
-type ReadonlyMapDeep<KeyType, ValueType> = {} & ReadonlyMap<ReadonlyDeep<KeyType>, ReadonlyDeep<ValueType>>;
+type ReadonlyMapDeep<KeyType, ValueType> = {} & Readonly<ReadonlyMap<ReadonlyDeep<KeyType>, ReadonlyDeep<ValueType>>>;
 
 /**
-Same as `ReadonlyDeep`, but accepts only `ReadonlySet`s as inputs. Internal helper for `ReadonlyDeep`. See the note on {@link ReadonlyMapDeep `ReadonlyMapDeep`} for why the built-in is returned unwrapped.
+Same as `ReadonlyDeep`, but accepts only `ReadonlySet`s as inputs. Internal helper for `ReadonlyDeep`. See the note on {@link ReadonlyMapDeep `ReadonlyMapDeep`} for why the built-in is wrapped in `Readonly`.
 */
-type ReadonlySetDeep<ItemType> = {} & ReadonlySet<ReadonlyDeep<ItemType>>;
+type ReadonlySetDeep<ItemType> = {} & Readonly<ReadonlySet<ReadonlyDeep<ItemType>>>;
 
 /**
 Same as `ReadonlyDeep`, but accepts only `object`s as inputs. Internal helper for `ReadonlyDeep`.
