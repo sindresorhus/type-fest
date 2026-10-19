@@ -169,6 +169,23 @@ expectTypeOf(mixedKeywords2).toBe<{
 	readonly c?: number;
 }>();
 
+// Discriminated union
+declare const discriminatedUnion: AllUnionFields<{id: number; type: 'Email'; email: string} | {id: number; type: 'Phone'; phone: string}>;
+expectTypeOf(discriminatedUnion).toBe<{
+	id: number;
+	type: 'Email' | 'Phone';
+	email?: string;
+	phone?: string;
+}>();
+
+// A non-shared key with different types in different members gets the union of the types, not `never`.
+declare const nonSharedKeyWithDifferentTypes: AllUnionFields<{kind: 'a'; extra: string} | {kind: 'b'; other: number} | {kind: 'c'; extra: number}>;
+expectTypeOf(nonSharedKeyWithDifferentTypes).toBe<{
+	kind: 'a' | 'b' | 'c';
+	extra?: string | number;
+	other?: number;
+}>();
+
 // Non-recursive types
 expectTypeOf<AllUnionFields<Set<string> | Map<string, string>>>().toBe<Set<string> | Map<string, string>>();
 expectTypeOf<AllUnionFields<string[] | Set<string>>>().toBe<string[] | Set<string>>();
