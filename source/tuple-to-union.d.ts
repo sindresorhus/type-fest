@@ -1,3 +1,5 @@
+import type {UnionToTuple} from './union-to-tuple.d.ts'; // For `@link`
+
 /**
 Convert a tuple/array into a union type of its elements.
 
@@ -46,6 +48,8 @@ const numberBool: {[n: number]: boolean} = {1: true};
 type NumberBool = typeof numberBool[number];
 //=> boolean
 ```
+
+@see {@link UnionToTuple}
 
 @category Array
 */

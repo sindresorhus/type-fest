@@ -395,6 +395,7 @@ Click the type names for complete docs.
 - [`ExtendOr` and `ExtendAnd`](https://github.com/sindresorhus/type-fest/pull/247) - The benefits don't outweigh having to learn what they mean.
 - [`PackageJsonExtras`](https://github.com/sindresorhus/type-fest/issues/371) - There are too many possible configurations that can be put into `package.json`. If you would like to extend `PackageJson` to support an additional configuration in your project, please see the *Extending existing types* section below.
 - [`NarrowBy`](https://github.com/sindresorhus/type-fest/issues/1397) and [`DiscriminateUnion`](https://github.com/sindresorhus/type-fest/issues/528) - Use `Extract<Shape, {kind: 'circle'}>` to keep union members, or an intersection to narrow fields: `SimplifyDeep<SearchResult & {metadata: {__typename: 'Post'}}>`.
+- [`ExhaustiveArray`](https://github.com/sindresorhus/type-fest/issues/713) and [`Permutation`](https://github.com/sindresorhus/type-fest/issues/534) - A type that accepts every member of a union in any order must be a union of all the orderings. It grows factorially, so 8 members already take seconds to type-check and 9 members can crash TypeScript. Instead, define the array first and derive the union with [`TupleToUnion`](source/tuple-to-union.d.ts), or list the members as object keys with `satisfies Record<Union, true>` and use `Object.keys()`.
 
 ## Alternative type names
 
@@ -428,6 +429,7 @@ Click the type names for complete docs.
 - `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 - `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
+- `UnionToArray` - See [`UnionToTuple`](source/union-to-tuple.d.ts)
 - `Destructurable` - See [`ExclusifyUnion`](source/exclusify-union.d.ts)
 - `PlainObject` - See [`UnknownRecord`](source/unknown-record.d.ts)
 - `ToPath` - See [`ParsePath`](source/parse-path.d.ts)
