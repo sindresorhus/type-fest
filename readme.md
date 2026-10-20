@@ -222,6 +222,8 @@ Click the type names for complete docs.
 - [`ConditionalSimplifyDeep`](source/conditional-simplify-deep.d.ts) - Recursively simplifies a type while including and/or excluding certain types from being simplified.
 - [`ExclusifyUnion`](source/exclusify-union.d.ts) - Ensure mutual exclusivity in object unions by adding other members’ keys as `?: never`.
 - [`Optional`](source/optional.d.ts) - Create a type that represents either the value or `undefined`, while stripping `null` from the type.
+- [`Falsy`](source/falsy.d.ts) - Matches any [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value.
+- [`Truthy`](source/truthy.d.ts) - Remove the falsy types from the given type, like `if (value)` does.
 - [`UnionMember`](source/union-member.d.ts) - Returns an arbitrary member of a union type.
 - [`UnionLength`](source/union-length.d.ts) - Returns the length of a union type.
 
@@ -435,6 +437,8 @@ Click the type names for complete docs.
 - `ToPath` - See [`ParsePath`](source/parse-path.d.ts)
 - `TaggedUnionToIntersection`, `MergeUnion` - See [`AllUnionFields`](source/all-union-fields.d.ts)
 - `Identity`, `Passthrough` - See [`AsExtendable`](source/as-extendable.d.ts)
+- `Falsey` - See [`Falsy`](source/falsy.d.ts)
+- `NonFalsy`, `NotFalsey` - See [`Truthy`](source/truthy.d.ts)
 
 ## Tips
 

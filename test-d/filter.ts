@@ -61,6 +61,8 @@ expectTypeOf<Filter<[0 | 1, 0 | null, string, never], Boolean, {strict: true}>>(
 expectTypeOf<Filter<readonly boolean[], Boolean>>().toBe<readonly boolean[]>();
 expectTypeOf<Filter<boolean[], Boolean, {strict: true}>>().toBe<[]>();
 expectTypeOf<Filter<[Boolean, true], Boolean>>().toBe<[Boolean, true]>(); // `Boolean` as an element is truthy, not matched literally
+expectTypeOf<Filter<[void, 'a', string | void], Boolean>>().toBe<['a', string | void]>(); // `void` is falsy, like `if (value)` narrowing
+expectTypeOf<Filter<[void, 'a', string | void], Boolean, {strict: true}>>().toBe<['a']>();
 
 // Filtering objects
 expectTypeOf<Filter<[Object1, Object2, Object1 & Object2], Object1>>().toBe<[Object1, Object1 & Object2]>();
@@ -178,6 +180,7 @@ expectTypeOf<Filter<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean>>().toB
 expectTypeOf<Filter<{a: true; b: false; c: boolean; d: 0; e: 1}, Boolean, {strict: true}>>().toBe<{a: true; e: 1}>();
 expectTypeOf<Filter<{a: 0; b: ''; c: false; d: null; e: undefined; f: 'ok'; g: 42}, Boolean>>().toBe<{f: 'ok'; g: 42}>();
 expectTypeOf<Filter<{a: true; b: false; c: 0; d: 1; e: ''; f: 'text'; g: null; h: undefined}, Boolean>>().toBe<{a: true; d: 1; f: 'text'}>();
+expectTypeOf<Filter<{a: void; b: 1; c: string | void}, Boolean>>().toBe<{b: 1; c: string | void}>();
 
 // Filtering objects
 expectTypeOf<Filter<{a: Object1; b: Object2; c: Object1 & Object2}, Object1>>().toBe<{a: Object1; c: Object1 & Object2}>();

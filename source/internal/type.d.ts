@@ -5,6 +5,7 @@ import type {TypedArray} from '../typed-array.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {ExtendsStrict} from '../extends-strict.d.ts';
 import type {FindGlobalInstanceType} from '../find-global-type.d.ts';
+import type {Falsy} from '../falsy.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -216,16 +217,15 @@ Unlike `Type extends Condition ? true : false`, it returns `true` instead of `bo
 export type ExtendsLoose<Type, Condition> = IsNotFalse<Type extends Condition ? true : false>;
 
 /**
-Union of `falsy` types in TypeScript. `never` isn't included.
-*/
-export type Falsy = 0 | 0n | '' | false | null | undefined; // `| never`
-
-/**
 Returns a boolean for whether `T` is not {@link Falsy falsy}, like `Boolean(value)`. A union with both falsy and truthy members gives `boolean`.
+
+`void` counts as falsy, like `if (value)` narrowing does.
+
+Note: This is internal because it treats wide types like `string`, `number`, and `unknown` as truthy. That is what `Filter` needs, since it keeps values that can be truthy. A public version would have to return `boolean` for them, because they can also be falsy.
 */
 export type IsTruthy<T> =
 	IsNever<T> extends true ? false
-		: T extends Falsy ? false
+		: T extends Falsy | void ? false
 			: true;
 
 export {};
