@@ -52,6 +52,7 @@ export type {ExtractLiterals} from './source/extract-literals.d.ts';
 export type {LiteralList} from './source/literal-list.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';
+export type {Thunkable} from './source/thunkable.d.ts';
 export type {Optional} from './source/optional.d.ts';
 export type {Falsy} from './source/falsy.d.ts';
 export type {Truthy} from './source/truthy.d.ts';
