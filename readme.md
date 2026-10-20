@@ -95,6 +95,7 @@ Click the type names for complete docs.
 - [`AnyAsyncFunction`](source/basic.d.ts) - Matches any asynchronous function.
 - [`AnyFunction`](source/basic.d.ts) - Matches any function.
 - [`TypedArray`](source/typed-array.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
+- [`ReadonlyDate`](source/readonly-date.d.ts) - Matches a `Date` that cannot be changed.
 - [`ObservableLike`](source/globals/observable-like.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
 - [`LowercaseLetter`](source/characters.d.ts) - Matches any lowercase letter in the basic Latin alphabet (a-z).
 - [`UppercaseLetter`](source/characters.d.ts) - Matches any uppercase letter in the basic Latin alphabet (A-Z).

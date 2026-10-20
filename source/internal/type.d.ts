@@ -6,6 +6,7 @@ import type {UnknownArray} from '../unknown-array.d.ts';
 import type {ExtendsStrict} from '../extends-strict.d.ts';
 import type {FindGlobalInstanceType} from '../find-global-type.d.ts';
 import type {Falsy} from '../falsy.d.ts';
+import type {ReadonlyDate} from '../readonly-date.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -19,6 +20,8 @@ A plain construct signature is assignable to an abstract one, so the abstract fo
 */
 export type NonRecursiveLeaf =
 	| BuiltIns
+	// A `ReadonlyDate` is not a `Date`, so `BuiltIns` does not match it, and recursing into it replaces its methods with something useless.
+	| ReadonlyDate
 	| (abstract new (...arguments_: any[]) => unknown)
 	| ArrayBuffer
 	| SharedArrayBuffer
