@@ -78,7 +78,15 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 3. Test - `test-d/type-name.ts` with edge cases
 4. Export - Add to `index.d.ts` + readme.md
 5. Verify - `npm test` must pass
-6. Commit - ``Add `TypeName` type`` or ``  `TypeName`: Fix description``
+6. Commit - See *Commit titles* below
+
+## Commit titles
+
+- New type: ``Add `TypeName` type``. Several new types: ``Add `MapKey` and `MapValue` types``.
+- Any change to existing types (fix, docs, tests, readme entry, alternative name) MUST start with the type names and a colon: `` `TypeName`: Fix description ``.
+- Several existing types: list them all, separated by commas: `` `TypeA`, `TypeB`, `TypeC`: Fix docs ``.
+- Never start the title with "Add" when you change an existing type, even when you add something to it. Write `` `AllUnionFields`: Document `MergeUnion` as an alternative name ``, not ``Add `MergeUnion` as an alternative name for `AllUnionFields` ``.
+- Only changes that are not about specific types (tooling, dependencies, general docs) use a plain title, like `Update dependencies`.
 
 ## Critical Rules
 

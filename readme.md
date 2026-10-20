@@ -431,7 +431,7 @@ Click the type names for complete docs.
 - `Destructurable` - See [`ExclusifyUnion`](source/exclusify-union.d.ts)
 - `PlainObject` - See [`UnknownRecord`](source/unknown-record.d.ts)
 - `ToPath` - See [`ParsePath`](source/parse-path.d.ts)
-- `TaggedUnionToIntersection` - See [`AllUnionFields`](source/all-union-fields.d.ts)
+- `TaggedUnionToIntersection`, `MergeUnion` - See [`AllUnionFields`](source/all-union-fields.d.ts)
 - `Identity`, `Passthrough` - See [`AsExtendable`](source/as-extendable.d.ts)
 
 ## Tips

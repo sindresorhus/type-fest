@@ -186,6 +186,31 @@ expectTypeOf(nonSharedKeyWithDifferentTypes).toBe<{
 	other?: number;
 }>();
 
+// Each shared key gets the union of its types on its own, so values from different members can be mixed.
+type IdAndSerial = AllUnionFields<{id: number; serial: number} | {id: string; serial: string}>;
+expectTypeOf<IdAndSerial>().toBe<{id: number | string; serial: number | string}>();
+expectTypeOf({id: 3, serial: 'j'}).toBeAssignableTo<IdAndSerial>();
+expectTypeOf({id: 3, serial: 'j'}).not.toBeAssignableTo<{id: number; serial: number} | {id: string; serial: string}>();
+
+// A key that is optional in only one member does not make the other shared keys accept `undefined`.
+expectTypeOf<AllUnionFields<{a: string; b: number} | {a: string; b?: number}>>().toBe<{a: string; b?: number}>();
+
+// A key that is optional in every member stays optional.
+expectTypeOf<AllUnionFields<{a?: string} | {a?: number}>>().toBe<{a?: string | number}>();
+
+// A shared key with an `undefined` value stays required.
+expectTypeOf<AllUnionFields<{a: string; b: number} | {a: string; b: undefined}>>().toBe<{a: string; b: number | undefined}>();
+
+// An empty object member makes every key optional.
+expectTypeOf<AllUnionFields<{a: string; b: number} | {}>>().toBe<{a?: string; b?: number}>();
+
+// `never` and `unknown` values are absorbed like in any other union.
+expectTypeOf<AllUnionFields<{a: string} | {a: never}>>().toBe<{a: string}>();
+expectTypeOf<AllUnionFields<{a: string} | {a: unknown}>>().toBe<{a: unknown}>();
+
+// Index signature member
+expectTypeOf<AllUnionFields<Record<string, number> | {a: string}>>().toBe<Simplify<{a: string | number} & {[key: string]: number | undefined}>>();
+
 // Non-recursive types
 expectTypeOf<AllUnionFields<Set<string> | Map<string, string>>>().toBe<Set<string> | Map<string, string>>();
 expectTypeOf<AllUnionFields<string[] | Set<string>>>().toBe<string[] | Set<string>>();
