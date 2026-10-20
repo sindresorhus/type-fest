@@ -153,6 +153,7 @@ export type {UnionToEnum} from './source/union-to-enum.d.ts';
 export type {IntRange} from './source/int-range.d.ts';
 export type {IntClosedRange} from './source/int-closed-range.d.ts';
 export type {IsEqual} from './source/is-equal.d.ts';
+export type {IsMutuallyAssignable} from './source/is-mutually-assignable.d.ts';
 export type {IsLiteral} from './source/is-literal.d.ts';
 export type {IsStringLiteral} from './source/is-string-literal.d.ts';
 export type {IsNumericLiteral} from './source/is-numeric-literal.d.ts';

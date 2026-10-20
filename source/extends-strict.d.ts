@@ -5,6 +5,7 @@ import type {And} from './and.d.ts';
 import type {Or} from './or.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {OrAll} from './or-all.d.ts';
+import type {IsMutuallyAssignable} from './is-mutually-assignable.d.ts'; // For `@link`
 
 export type ExtendsStrictOptions = {
 	/**
@@ -125,6 +126,8 @@ type T2 = ExtendsStrict<never, number, {strictNever: true}>;
 type T3 = ExtendsStrict<any, number, {strictAny: true}>;
 //=> false
 ```
+
+Note: This type checks one direction. For both directions with the default options, use {@link IsMutuallyAssignable}.
 
 @see {@link ExtendsStrictOptions}
 
