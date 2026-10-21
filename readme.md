@@ -126,6 +126,7 @@ Click the type names for complete docs.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly one of the given keys or none of the given keys, while keeping the remaining keys as is.
 - [`SingleKeyObject`](source/single-key-object.d.ts) - Create a type that only accepts an object with a single key.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type.
+- [`RequiredKeepUndefined`](source/required-keep-undefined.d.ts) - Create a type that makes all keys required, while the keys that were optional also accept `undefined`.
 - [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object.
 - [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.
@@ -415,6 +416,7 @@ Click the type names for complete docs.
 - `MarkReadonly` - See [`SetReadonly`](source/set-readonly.d.ts)
 - `PartialExcept`, `OptionalExcept`, `OptionalExceptFor`, `PartialOmit` - See [`SetOptionalExcept`](source/set-optional-except.d.ts)
 - `RequiredExcept`, `RequiredExceptFor`, `RequiredOmit` - See [`SetRequiredExcept`](source/set-required-except.d.ts)
+- `OptionalToExplicit`, `Explicit` - See [`RequiredKeepUndefined`](source/required-keep-undefined.d.ts)
 - `RecordDeep`- See [`Schema`](source/schema.d.ts)
 - `Mutable`, `MarkWritable`, `SetWritable` - See [`Writable`](source/writable.d.ts)
 - `RequireOnlyOne`, `OneOf` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)

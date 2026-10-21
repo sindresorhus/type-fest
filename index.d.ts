@@ -40,6 +40,7 @@ export type {PartialDeep, PartialDeepOptions} from './source/partial-deep.d.ts';
 export type {UnwrapPartial} from './source/unwrap-partial.d.ts';
 export type {UnwrapRequired} from './source/unwrap-required.d.ts';
 export type {RequiredDeep} from './source/required-deep.d.ts';
+export type {RequiredKeepUndefined} from './source/required-keep-undefined.d.ts';
 export type {PickDeep} from './source/pick-deep.d.ts';
 export type {OmitDeep} from './source/omit-deep.d.ts';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep.d.ts';
