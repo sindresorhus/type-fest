@@ -153,6 +153,7 @@ Click the type names for complete docs.
 - [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required, while keeping the remaining keys as is.
 - [`SetRequiredDeep`](source/set-required-deep.d.ts) - Create a type that makes the given keys required, with support for deeply nested key paths, while keeping the remaining keys as is.
 - [`SetRequiredExcept`](source/set-required-except.d.ts) - Create a type that makes all keys required except the given keys, which are kept as is.
+- [`SetRequiredNonNullable`](source/set-required-non-nullable.d.ts) - Create a type that makes the given keys required and non-nullable, while keeping the remaining keys as is.
 - [`SetNullable`](source/set-nullable.d.ts) - Create a type that makes the given keys nullable, while keeping the remaining keys as is.
 - [`SetNonNullable`](source/set-non-nullable.d.ts) - Create a type that makes the given keys non-nullable, while keeping the remaining keys as is.
 - [`SetNonNullableDeep`](source/set-non-nullable-deep.d.ts) - Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
