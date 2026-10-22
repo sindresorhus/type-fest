@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Jsonifiable, JsonifiableArray, JsonifiableObject, JsonObject, JsonPrimitive, Simplify, SimplifyDeep} from '../index.d.ts';
+import type {Jsonifiable, JsonifiableArray, JsonifiableObject, JsonArray, JsonObject, JsonPrimitive, JsonValue, Simplify, SimplifyDeep} from '../index.d.ts';
 
 expectTypeOf<1>().toBeAssignableTo<Jsonifiable>();
 expectTypeOf<''>().toBeAssignableTo<Jsonifiable>();
@@ -28,6 +28,16 @@ expectTypeOf<undefined>().not.toBeAssignableTo<Jsonifiable>();
 expectTypeOf(new Map()).not.toBeAssignableTo<Jsonifiable>();
 expectTypeOf({a: new Map()}).not.toBeAssignableTo<Jsonifiable>();
 expectTypeOf([new Map()]).not.toBeAssignableTo<Jsonifiable>();
+
+// A value typed `object` can be anything, like a `Map`.
+expectTypeOf<object>().not.toBeAssignableTo<Jsonifiable>();
+expectTypeOf<{a: object}>().not.toBeAssignableTo<Jsonifiable>();
+expectTypeOf<object[]>().not.toBeAssignableTo<Jsonifiable>();
+
+function acceptObject<Value extends object>(value: Value): Jsonifiable {
+	// @ts-expect-error
+	return value;
+}
 
 // `JSON.stringify` passes the property key to `toJSON`, so `toJSON` may declare parameters.
 declare const toJSONWithKey: {toJSON(key: string): string};
@@ -79,6 +89,22 @@ expectTypeOf<Jsonifiable>().toBe<JsonPrimitive | JsonifiableObject | Jsonifiable
 expectTypeOf<Exclude<Jsonifiable, JsonPrimitive>>().toBe<JsonifiableObject | JsonifiableArray>();
 expectTypeOf<JsonifiableObject>().not.toBeAssignableTo<JsonifiableArray>();
 expectTypeOf<JsonifiableArray>().not.toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Jsonifiable>().not.toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Jsonifiable>().not.toBeAssignableTo<JsonifiableArray>();
+
+// Narrowing a `Jsonifiable` value away from the primitives gives the two parts.
+declare const jsonifiable: Jsonifiable;
+
+if (typeof jsonifiable === 'object' && jsonifiable !== null) {
+	expectTypeOf(jsonifiable).toBe<JsonifiableObject | JsonifiableArray>();
+}
+
+// A parsed JSON value can be passed back to `JSON.stringify`.
+expectTypeOf<JsonValue>().toBeAssignableTo<Jsonifiable>();
+expectTypeOf<JsonObject>().toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<JsonArray>().toBeAssignableTo<JsonifiableArray>();
+expectTypeOf<JsonifiableObject>().not.toBeAssignableTo<JsonObject>();
+expectTypeOf<JsonifiableArray>().not.toBeAssignableTo<JsonArray>();
 
 // `JsonifiableObject`
 expectTypeOf<unknown>().not.toBeAssignableTo<JsonifiableObject>();
@@ -91,6 +117,12 @@ expectTypeOf<unknown>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf({a: 1, b: [1, 2]} as const).toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<{a?: number; b: string | undefined}>().toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<Record<string, number>>().toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Record<'a' | 'b', number>>().toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Record<number, string>>().toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Record<`data-${string}`, string>>().toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Readonly<{a: number}>>().toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Partial<{a: Date}>>().toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<{rows: JsonifiableArray; nested: JsonifiableObject}>().toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<{a: 1} | {b: Date}>().toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<InnerJson>().toBeAssignableTo<JsonifiableObject>();
 
@@ -100,6 +132,7 @@ expectTypeOf(new Date()).toBeAssignableTo<JsonifiableObject>();
 ({toJSON: () => ({a: 1})}) satisfies JsonifiableObject;
 expectTypeOf<{toJSON(): Map<string, number>}>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<{toJSON(): object}>().not.toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<{toJSON(): undefined}>().not.toBeAssignableTo<JsonifiableObject>();
 
 // `JSON.stringify` ignores symbol keys, and TypeScript does not check them against a string index signature.
 ({[Symbol('a')]: new Map()}) satisfies JsonifiableObject;
@@ -123,7 +156,11 @@ expectTypeOf<RegExp>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<Error>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<Uint8Array>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<Record<string, unknown>>().not.toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<Record<string, Map<string, number>>>().not.toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<object>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<{a: bigint}>().not.toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<{a: symbol}>().not.toBeAssignableTo<JsonifiableObject>();
+expectTypeOf<{a?: Map<string, number>}>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<{a: () => void}>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<{a: {b: Map<string, number>}}>().not.toBeAssignableTo<JsonifiableObject>();
 expectTypeOf<Inner>().not.toBeAssignableTo<JsonifiableObject>();
@@ -155,6 +192,10 @@ saveSettings('dark');
 // @ts-expect-error
 saveSettings({theme: new Map()});
 
+function acceptSettings<Settings extends JsonifiableObject>(settings: Settings): Jsonifiable {
+	return settings;
+}
+
 // `JsonifiableArray`
 expectTypeOf<unknown>().not.toBeAssignableTo<JsonifiableArray>();
 
@@ -183,3 +224,14 @@ expectTypeOf<Array<Map<string, number>>>().not.toBeAssignableTo<JsonifiableArray
 expectTypeOf<Inner[]>().not.toBeAssignableTo<JsonifiableArray>();
 expectTypeOf<string[] | [1]>().toBeAssignableTo<JsonifiableArray>();
 expectTypeOf<string[] | {a: 1}>().not.toBeAssignableTo<JsonifiableArray>();
+
+// Generic constraint
+declare function saveRows<Rows extends JsonifiableArray>(rows: Rows): Rows;
+
+expectTypeOf(saveRows([1, 'a'] as const)).toBe<readonly [1, 'a']>();
+// @ts-expect-error
+saveRows([new Map()]);
+
+function acceptRows<Rows extends JsonifiableArray>(rows: Rows): Jsonifiable {
+	return rows;
+}

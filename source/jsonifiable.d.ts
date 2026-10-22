@@ -28,7 +28,7 @@ log('User signed in', [1]);
 
 @category JSON
 */
-export type JsonifiableObject = {[Key in string]?: Jsonifiable} | {toJSON: (...arguments_: any[]) => Jsonifiable};
+export type JsonifiableObject = {[Key in string]: Jsonifiable | undefined} | {toJSON: (...arguments_: any[]) => Jsonifiable};
 
 /**
 Matches an array that can be losslessly converted to JSON.
