@@ -1,12 +1,14 @@
 import type {MapsSetsOrArrays, NonRecursiveType, ReadonlyKeysOfUnion, SimplifyObject, ValueOfUnion} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts';
+import type {ValueOf} from './value-of.d.ts'; // For `@link`
 
 /**
 Create a type with all fields from a union of object types.
 
 Use-cases:
 - You want a safe object type where each key exists in the union object.
+- You want to merge the values of an object into one object type.
 
 @example
 ```
@@ -59,6 +61,22 @@ function displayPetInfoWithAllUnionFields(petInfo: AllUnionFields<Cat | Dog>) {
 	// No TypeScript error.
 	console.log('animal type:', petInfo.catType ?? petInfo.dogType);
 }
+```
+
+Combine it with {@link ValueOf} to merge the values of an object. A key that is in every value is required, and a key that is in only some of the values is optional.
+
+@example
+```
+import type {AllUnionFields, ValueOf} from 'type-fest';
+
+const steps = {
+	install: {title: 'Install the app'},
+	login: {title: 'Log in', description: 'Use your GitHub account'},
+	finish: {title: 'Done'},
+};
+
+type Step = AllUnionFields<ValueOf<typeof steps>>;
+//=> {title: string; description?: string}
 ```
 
 @see {@link SharedUnionFields}

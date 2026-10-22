@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {AllUnionFields, Simplify} from '../index.d.ts';
+import type {AllUnionFields, Simplify, ValueOf} from '../index.d.ts';
 import type {NonRecursiveType} from '../source/internal/index.d.ts';
 
 type TestingType = {
@@ -210,6 +210,50 @@ expectTypeOf<AllUnionFields<{a: string} | {a: unknown}>>().toBe<{a: unknown}>();
 
 // Index signature member
 expectTypeOf<AllUnionFields<Record<string, number> | {a: string}>>().toBe<Simplify<{a: string | number} & {[key: string]: number | undefined}>>();
+
+// Merge the values of an object with `ValueOf`
+type Retry = () => void;
+type Steps = {
+	'install-app': {title: string; onRetry: Retry};
+	'generate-uat': {title: string; desc: string; onRetry: Retry};
+	'storing-locally': {title: string; onRetry: Retry};
+};
+expectTypeOf<AllUnionFields<ValueOf<Steps>>>().toBe<{title: string; onRetry: Retry; desc?: string}>();
+
+// Only the values of the given keys are merged.
+expectTypeOf<AllUnionFields<ValueOf<Steps, 'install-app' | 'storing-locally'>>>().toBe<{title: string; onRetry: Retry}>();
+
+// TypeScript does not merge separately written function types in a union, so the merged type is only mutually assignable, not identical.
+type InlineSteps = {
+	'install-app': {title: string; onRetry: () => void};
+	'generate-uat': {title: string; desc: string; onRetry: () => void};
+};
+type StepProps = AllUnionFields<ValueOf<InlineSteps>>;
+expectTypeOf<StepProps>().toBeAssignableTo<{title: string; onRetry: () => void; desc?: string}>();
+expectTypeOf<{title: string; onRetry: () => void; desc?: string}>().toBeAssignableTo<StepProps>();
+expectTypeOf<{title: string; onRetry: () => void}>().toBeAssignableTo<StepProps>();
+expectTypeOf<{onRetry: () => void; desc: string}>().not.toBeAssignableTo<StepProps>();
+
+// Values with different types for the same key
+expectTypeOf<AllUnionFields<ValueOf<{a: {x: number; y: string}; b: {x: string; z: boolean}}>>>().toBe<{x: number | string; y?: string; z?: boolean}>();
+
+// Optional and readonly keys in the values are kept.
+expectTypeOf<AllUnionFields<ValueOf<{a: {readonly x: number; y?: string}; b: {x: number}}>>>().toBe<{readonly x: number; y?: string}>();
+
+// Nested objects are not merged.
+expectTypeOf<AllUnionFields<ValueOf<{a: {nested: {x: 1}}; b: {nested: {y: 2}}}>>>().toBe<{nested: {x: 1} | {y: 2}}>();
+
+// A single value is returned as is.
+expectTypeOf<AllUnionFields<ValueOf<{a: {x: 1; y?: 2}}>>>().toBe<{x: 1; y?: 2}>();
+
+// Values of an index signature
+expectTypeOf<AllUnionFields<ValueOf<Record<string, {a: number} | {b: string}>>>>().toBe<{a?: number; b?: string}>();
+
+// Values that are not objects are kept as separate union members.
+expectTypeOf<AllUnionFields<ValueOf<{a: {x: 1}; b: {x: 2; y: 3}; c: string}>>>().toBe<string | {x: 1 | 2; y?: 3}>();
+
+// An object without values
+expectTypeOf<AllUnionFields<ValueOf<{}>>>().toBe<never>();
 
 // Non-recursive types
 expectTypeOf<AllUnionFields<Set<string> | Map<string, string>>>().toBe<Set<string> | Map<string, string>>();
