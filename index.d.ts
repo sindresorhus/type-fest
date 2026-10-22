@@ -99,7 +99,7 @@ export type {Simplify} from './source/simplify.d.ts';
 export type {SimplifyDeep} from './source/simplify-deep.d.ts';
 export type {AsExtendable} from './source/as-extendable.d.ts';
 export type {Jsonify} from './source/jsonify.d.ts';
-export type {Jsonifiable} from './source/jsonifiable.d.ts';
+export type {Jsonifiable, JsonifiableObject, JsonifiableArray} from './source/jsonifiable.d.ts';
 export type {StructuredCloneable} from './source/structured-cloneable.d.ts';
 export type {Schema, SchemaOptions} from './source/schema.d.ts';
 export type {LiteralToPrimitive} from './source/literal-to-primitive.d.ts';

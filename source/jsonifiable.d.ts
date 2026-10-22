@@ -1,12 +1,67 @@
 import type {JsonPrimitive} from './json-value.d.ts';
 
-type JsonifiableObject = {[Key in string]?: Jsonifiable} | {toJSON: (...arguments_: any[]) => Jsonifiable};
-type JsonifiableArray = readonly Jsonifiable[];
+/**
+Matches an object that can be losslessly converted to JSON.
+
+Use it instead of `Jsonifiable` when a primitive is not allowed, for example for log fields, a request body, or a config file.
+
+It matches the value you pass to `JSON.stringify`, not the JSON it produces. An object with a `toJSON` method, like `Date`, matches even when `toJSON` returns a primitive.
+
+Note: An `interface` is not assignable. See {@link Jsonifiable} for how to fix it. A class instance is not assignable either, unless it has a `toJSON` method.
+
+@example
+```
+import type {JsonifiableObject} from 'type-fest';
+
+function log(message: string, fields: JsonifiableObject) {
+	console.log(JSON.stringify({message, fields}));
+}
+
+log('User signed in', {userId: 1, date: new Date()});
+
+// @ts-expect-error
+log('User signed in', 1);
+
+// @ts-expect-error
+log('User signed in', [1]);
+```
+
+@category JSON
+*/
+export type JsonifiableObject = {[Key in string]?: Jsonifiable} | {toJSON: (...arguments_: any[]) => Jsonifiable};
+
+/**
+Matches an array that can be losslessly converted to JSON.
+
+Use it instead of `Jsonifiable` when the value must be an array.
+
+`undefined` is not allowed as an element, because `JSON.stringify([undefined])` is `[null]`.
+
+@example
+```
+import type {JsonifiableArray} from 'type-fest';
+
+function saveRows(rows: JsonifiableArray) {
+	console.log(JSON.stringify(rows));
+}
+
+saveRows([{id: 1, date: new Date()}, [1, 'a']]);
+
+// @ts-expect-error
+saveRows({id: 1});
+
+// @ts-expect-error
+saveRows([1, undefined]);
+```
+
+@category JSON
+*/
+export type JsonifiableArray = readonly Jsonifiable[];
 
 /**
 Matches a value that can be losslessly converted to JSON.
 
-Can be used to type values that you expect to pass to `JSON.stringify`.
+Can be used to type values that you expect to pass to `JSON.stringify`. Use `JsonifiableObject` or `JsonifiableArray` when a primitive is not allowed.
 
 `undefined` is allowed in object fields (for example, `{a?: number}`) as a special case even though `JSON.stringify({a: undefined})` is `{}` because it makes this class more widely useful and checking for undefined-but-present values is likely an anti-pattern.
 
