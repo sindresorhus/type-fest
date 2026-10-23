@@ -761,3 +761,35 @@ expectTypeOf<Get<EnumKeyedRecord, EnumRecordKey.Profile>>().toBe<EnumKeyedRecord
 expectTypeOf<Get<EnumKeyedRecord, readonly [EnumRecordKey.Profile, EnumRecordKey.Name]>>().toBe<string>();
 type TaggedEnumRecord = {[EnumRecordKey.Profile]: {[EnumRecordKey.Name]: Tagged<string, 'Value'>}};
 expectTypeOf<Get<TaggedEnumRecord, Tagged<'profile.name', 'Path'>>>().toBe<Tagged<string, 'Value'>>();
+
+// Numeric coercion does not turn a differently spelled property into an array index.
+expectTypeOf<Get<Array<{name: string}>, ['01', 'name']>>().toBe<unknown>();
+expectTypeOf<Get<{users: ReadonlyArray<{name: string}>}, 'users[0x0].name'>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<{name: string}>, ['01', 'name']>>().toBe<unknown>();
+expectTypeOf<Get<string, ['01']>>().toBe<unknown>();
+expectTypeOf<Get<Uint8Array, ['01']>>().toBe<unknown>();
+expectTypeOf(get({users: [] as Array<{name: string}>}, ['users', '01', 'name'] as const)).toBe<unknown>();
+
+// Literal property names stay distinct from array indices, including declared names on arrays.
+expectTypeOf<Get<{'01': {name: string}}, ['01', 'name']>>().toBe<string>();
+expectTypeOf<Get<{'0x0': {name: number}}, '0x0.name'>>().toBe<number>();
+expectTypeOf<Get<string[] & {'01': 'metadata'}, ['01']>>().toBe<'metadata'>();
+expectTypeOf<Get<Array<{name: number}> | {'01': {name: string}}, ['01', 'name']>>().toBe<string | undefined>();
+expectTypeOf<Get<Array<{name: string}> | null, ['01', 'name']>>().toBe<unknown>();
+expectTypeOf<Get<ReadonlyArray<{name: string}>, ['00', 'name'], NonStrict>>().toBe<unknown>();
+expectTypeOf<Get<Array<{name: string}>, ['1e0', 'name']>>().toBe<unknown>();
+expectTypeOf<Get<ArrayLike<string>, ['00']>>().toBe<unknown>();
+expectTypeOf<Get<String, ['01']>>().toBe<unknown>();
+expectTypeOf<Get<BigInt64Array, ['01']>>().toBe<unknown>();
+
+// A numeric value has already been converted to its canonical property name.
+expectTypeOf<Get<Array<{name: string}>, [0x0, 'name']>>().toBe<string | undefined>();
+expectTypeOf<Get<Array<{name: string}>, [number, 'name'], NonStrict>>().toBe<string>();
+
+function _constructCanonicalName<Options extends GetOptions>(value: string): Get<{name: string}, 'name', Options> {
+	return value;
+}
+
+function _constructCanonicalArrayRead<Extra>(value: string | undefined): Get<Array<{name: string; extra: Extra}>, ['0', 'name']> {
+	return value;
+}

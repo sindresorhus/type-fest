@@ -118,22 +118,24 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 		// Normalize declared numeric and enum members before the array-like fallback, so its index signature does not hide their more precise types. Read the declared keys, because an enum key and its literal spelling are distinct types.
 		: Key extends keyof BaseType | (BaseType extends object ? KeyAsString<OmitIndexSignature<BaseType>> : never)
 			? StrictPropertyOf<BaseType, (Key | Extract<keyof OmitIndexSignature<BaseType>, Key | ExactKey<OmitIndexSignature<BaseType>, Key>>) & keyof BaseType, Options>
-			// Handle arrays and tuples
+			// Handle arrays and tuples. A numeric string must round-trip to the same property name.
 			: BaseType extends readonly unknown[]
-				? Key extends `${number}`
-					// For arrays with unknown length (regular arrays)
-					? number extends BaseType['length']
-						? Strictify<BaseType[number], Options>
-						// For tuples: check if the index is valid
-						: Key extends keyof BaseType
-							? Strictify<BaseType[Key & keyof BaseType], Options>
-							// A non-literal index can be any element, and an empty tuple has none
-							: `${number}` extends Key
-								? BaseType extends readonly []
-									? MissingKey
-									: Strictify<BaseType[number], Options>
-								// Out-of-bounds access for tuples
-								: MissingKey
+				? Key extends `${infer Index extends number}`
+					? `${Index}` extends Key
+						// For arrays with unknown length (regular arrays)
+						? number extends BaseType['length']
+							? Strictify<BaseType[number], Options>
+							// For tuples: check if the index is valid
+							: Key extends keyof BaseType
+								? Strictify<BaseType[Key & keyof BaseType], Options>
+								// A non-literal index can be any element, and an empty tuple has none
+								: `${number}` extends Key
+									? BaseType extends readonly []
+										? MissingKey
+										: Strictify<BaseType[number], Options>
+									// Out-of-bounds access for tuples
+									: MissingKey
+						: MissingKey
 					// Non-numeric string key for arrays/tuples
 					: MissingKey
 				// Handle array-like objects
@@ -141,13 +143,15 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 					[n: number]: infer Item;
 					length: number; // Note: This is needed to avoid being too lax with records types using number keys like `{0: string; 1: boolean}`.
 				}
-					? Key extends `${number}`
-						// A non-literal index can be any item, and a literal one must have only digits
-						? `${number}` extends Key
-							? Strictify<Item, Options>
-							: ConsistsOnlyOf<Key, DigitCharacter> extends true
+					? Key extends `${infer Index extends number}`
+						? `${Index}` extends Key
+							// A non-literal index can be any item, and a literal one must have only digits
+							? `${number}` extends Key
 								? Strictify<Item, Options>
-								: MissingKey
+								: ConsistsOnlyOf<Key, DigitCharacter> extends true
+									? Strictify<Item, Options>
+									: MissingKey
+							: MissingKey
 						// Non-numeric key for array-like objects, including an empty key
 						: MissingKey
 					// A key that names a member of the subject is read from the subject, not from its string keys: a number index signature covers every numeric key, so `'0' extends keyof` is false for `{[k: number]: string; 0: 'x'}` even though the member is right there.
