@@ -284,3 +284,29 @@ expectTypeOf<RenameKeys<readonly [1, 2], {'0': 0}>>().toBe<readonly [1, 2]>();
 
 // A literal target changes a broad source key even though it is assignable to that key.
 expectTypeOf<RenameKeys<Record<string, 1>, Record<string, 'x'>>>().toBe<{x: 1}>();
+
+// A string enum key names the same property as its literal spelling.
+enum RenameField {
+	Name = 'name',
+}
+expectTypeOf<RenameKeys<{name: string}, {[RenameField.Name]: 'title'}>>().toBe<{title: string}>();
+expectTypeOf<RenameKeys<{readonly name?: string}, {[RenameField.Name]: 'title'}>>().toBe<{readonly title?: string}>();
+expectTypeOf<RenameKeys<{[RenameField.Name]: string}, {name: 'title'}>>().toBe<{title: string}>();
+expectTypeOf<RenameKeys<{name: string; retained: boolean}, {readonly [RenameField.Name]?: 'title'}>>().toBe<{title: string; retained: boolean}>();
+expectTypeOf<RenameKeys<{name: string}, {[RenameField.Name]: 'title' | 'label'}>>().toBe<{title: string; label: string}>();
+expectTypeOf<RenameKeys<{name: string} | {name: number; count: boolean}, {[RenameField.Name]: 'title'}>>().toBe<{title: string} | {title: number; count: boolean}>();
+expectTypeOf<RenameKeys<{name: string; count: number}, {[RenameField.Name]: 'title'} | {count: 'amount'}>>().toBe<{title: string; count: number} | {name: string; amount: number}>();
+expectTypeOf<RenameKeys<{name?: string; title: number}, {[RenameField.Name]: 'title'}>>().toBe<{title: string | number}>();
+expectTypeOf<RenameKeys<{readonly name: string; title?: number}, {[RenameField.Name]: 'title'}>>().toBe<{readonly title: string | number}>();
+expectTypeOf<RenameKeys<{name?: string; title?: number}, {[RenameField.Name]: 'title'}>>().toBe<{title?: string | number}>();
+expectTypeOf<RenameKeys<{name: string}, {[RenameField.Name]: SymbolKey}>>().toBe<{[symbolKey]: string}>();
+expectTypeOf<RenameKeys<{name: string}, {[RenameField.Name]: 0}>>().toBe<{0: string}>();
+expectTypeOf<RenameKeys<{other: string}, {[RenameField.Name]: 'title'}>>().toBe<{other: string}>();
+expectTypeOf<RenameKeys<{name: string}, {[RenameField.Name]: string}>>().toBe<{name: string}>();
+expectTypeOf<RenameKeys<{name: string}, {[RenameField.Name]: 'name'}>>().toBe<{name: string}>();
+expectTypeOf<RenameKeys<{[key: string]: unknown; name: string}, {[RenameField.Name]: 'title'}>>().toBe<{[key: string]: unknown; title: string}>();
+expectTypeOf<RenameKeys<{name: any}, {[RenameField.Name]: 'title'}>>().toBe<{title: any}>();
+expectTypeOf<RenameKeys<{name: never}, {[RenameField.Name]: 'title'}>>().toBe<{title: never}>();
+expectTypeOf<RenameKeys<{name: unknown}, {[RenameField.Name]: 'title'}>>().toBe<{title: unknown}>();
+expectTypeOf<RenameKeys<any, {[RenameField.Name]: 'title'}>>().toBe<any>();
+expectTypeOf<RenameKeys<never, {[RenameField.Name]: 'title'}>>().toBe<never>();

@@ -9,6 +9,7 @@ import type {SetRequired} from './set-required.d.ts';
 import type {SetReadonly} from './set-readonly.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {NormalizedKeys, ObjectValue} from './internal/object.d.ts';
+import type {ToString} from './internal/string.d.ts';
 
 /**
 Rename keys in an object type according to a map of old-to-new names.
@@ -180,7 +181,8 @@ type MergedTargets<BaseType extends object, RenameMap extends Record<PropertyKey
 	& TargetOf<OptionalKeysOf<OmitIndexSignature<BaseType>>, RenameMap>;
 
 type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
-	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key : never]-?: RenameMap[Key];
+	// Include a string enum key's literal spelling, so either form can select the rename.
+	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key | ToString<Key> : never]-?: RenameMap[Key];
 };
 
 // At runtime a numeric key and its string form are the same key, so `{'0': 'x'}` renames a property declared as `{0: …}` too. `keyof` keeps the two apart, so both forms are checked.
