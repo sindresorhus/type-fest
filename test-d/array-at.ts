@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArrayAt, TupleOf} from '../index.d.ts';
+import type {ArrayAt, Opaque, PositiveInfinity, NegativeInfinity, Tagged, TupleOf} from '../index.d.ts';
 
 expectTypeOf<ArrayAt<[string], 0>>().toBe<string>();
 expectTypeOf<ArrayAt<[string], -1>>().toBe<string>();
@@ -212,3 +212,42 @@ sparseInterior[2] = 2;
 expectTypeOf<ArrayAt<typeof sparseInterior, -1>>().toBe<1 | 2 | undefined>();
 expectTypeOf<ArrayAt<typeof sparseInterior, -2>>().toBe<1 | undefined>();
 expectTypeOf<ArrayAt<typeof sparseInterior, -3>>().toBe<1 | undefined>();
+
+// A numeric brand does not widen a known array index or narrow an unknown one.
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<1, 'Index'>>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<number, 'Index'>>>().toBe<1 | 2 | 3 | undefined>();
+
+expectTypeOf<ArrayAt<readonly [1, 2, 3], Tagged<1, 'Index'>>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<0, 'Index'>>>().toBe<1>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<-1, 'Index'>>>().toBe<3>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<-2, 'Index'>>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<3, 'Index'>>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<-4, 'Index'>>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<PositiveInfinity, 'Index'>>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<NegativeInfinity, 'Index'>>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, 2?, 3?], Tagged<1, 'Index'>>>().toBe<2 | undefined>();
+expectTypeOf<ArrayAt<readonly [1, 2?, 3?], Tagged<-2, 'Index'>>>().toBe<1 | 2 | undefined>();
+expectTypeOf<ArrayAt<[1, never?], Tagged<1, 'Index'>>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, never?], Tagged<-1, 'Index'>>>().toBe<1 | undefined>();
+expectTypeOf<ArrayAt<[Tagged<'value', 'Element'>], Tagged<0, 'Index'>>>().toBe<Tagged<'value', 'Element'>>();
+
+expectTypeOf<ArrayAt<[1, 2, 3], Opaque<1, 'Index'>>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<Tagged<1, 'Index'>, 'Validated'>>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], 1 & {readonly __brand: unique symbol}>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<AtPosition.Middle, 'Index'>>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], Tagged<1 | -1, 'Index'>>>().toBe<2 | 3>();
+expectTypeOf<ArrayAt<[1, 2, 3] | readonly ['a', 'b'], Tagged<1, 'Index'>>>().toBe<2 | 'b'>();
+
+// Static positions and the broad-array fallback remain available without scanning a long prefix.
+expectTypeOf<ArrayAt<readonly [...TupleOf<1100>, 'last'], Tagged<1100, 'Index'>>>().toBe<'last'>();
+expectTypeOf<ArrayAt<[1, ...string[], 2], Tagged<1, 'Index'>>>().toBe<string | 2>();
+expectTypeOf<ArrayAt<[...string[], 1, 2], Tagged<-1, 'Index'>>>().toBe<2>();
+expectTypeOf<ArrayAt<readonly string[], Tagged<1, 'Index'>>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly [1, 2, 3], Tagged<number, 'Index'>>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], Tagged<0, 'Index'>>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], Tagged<1, 'Index'>>>().toBe<any>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], Tagged<2, 'Index'>>>().toBe<never>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], Tagged<3, 'Index'>>>().toBe<unknown>();
+expectTypeOf<ArrayAt<any, Tagged<1, 'Index'>>>().toBe<any>();
+expectTypeOf<ArrayAt<never, Tagged<1, 'Index'>>>().toBe<never>();
+expectTypeOf<ArrayAt<unknown[], Tagged<1, 'Index'>>>().toBe<unknown>();

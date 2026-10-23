@@ -1,3 +1,4 @@
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
 import type {ExtractRestElement} from './extract-rest-element.d.ts';
 import type {If} from './if.d.ts';
@@ -66,7 +67,11 @@ Note: A non-integer index is not supported, even though `Array#at()` truncates i
 
 @category Array
 */
-export type ArrayAt<TArray extends UnknownArray, Index extends number> = IfNotAnyOrNever<TArray, {
+export type ArrayAt<TArray extends UnknownArray, Index extends number> =
+	ArrayAtImplementation<TArray, Index extends object ? UnwrapBrand<Index> : Index>;
+
+// Normalize the index once before its printed value or tuple position is checked.
+type ArrayAtImplementation<TArray extends UnknownArray, Index extends number> = IfNotAnyOrNever<TArray, {
 	ifNot: TArray extends unknown // For distributing `TArray`
 		? Index extends unknown // For distributing `Index`
 			// Numeric enum members accept `number` too, so compare their printed values to recognize constant indices.
