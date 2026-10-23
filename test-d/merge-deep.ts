@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {MergeDeep, MergeDeepOptions} from '../index.d.ts';
+import type {MergeDeep, MergeDeepOptions, TupleOf} from '../index.d.ts';
 
 // Test helper.
 declare function mergeDeep<
@@ -723,3 +723,54 @@ expectTypeOf<MergeDeep<{[MergeIndex.Padded]: string}, {1: number}>>().toBe<{[Mer
 expectTypeOf<MergeDeep<{[MergeIndex.Name]: string}, {name: any}>>().toBe<{name: any}>();
 expectTypeOf<MergeDeep<{[MergeIndex.Name]: string}, {name: never}>>().toBe<{name: never}>();
 expectTypeOf<MergeDeep<{[MergeIndex.Name]: string}, {name: unknown}>>().toBe<{name: unknown}>();
+
+// A wide row merges every fixed position without exhausting the compiler's recursion budget.
+type LongMergeDestination = [...TupleOf<30, {id: 'before'}>, {marker: true}, ...TupleOf<30, {id: 'after'}>];
+type LongMergeSource = TupleOf<61, {enabled: true}>;
+type LongMergedRow = [...TupleOf<30, {id: 'before'; enabled: true}>, {marker: true; enabled: true}, ...TupleOf<30, {id: 'after'; enabled: true}>];
+type LongTupleMerge = MergeDeep<LongMergeDestination, LongMergeSource, {recurseIntoArrays: true}>;
+expectTypeOf<LongTupleMerge>().toBe<LongMergedRow>();
+expectTypeOf<LongTupleMerge['length']>().toBe<61>();
+
+// The tuple/array and array/tuple strategies also retain every fixed position before their rest.
+expectTypeOf<MergeDeep<LongMergeDestination, Array<{enabled: true}>, {recurseIntoArrays: true}>>()
+	.toBe<[...LongMergedRow, ...Array<{enabled: true}>]>();
+expectTypeOf<MergeDeep<Array<{id: 'base'}>, LongMergeSource, {recurseIntoArrays: true}>>()
+	.toBe<[...TupleOf<61, {id: 'base'; enabled: true}>, ...Array<{id: 'base'}>]>();
+
+// Unequal tuple lengths switch to the other traversal after merging the shared prefix.
+expectTypeOf<MergeDeep<[{id: 'first'}, ...Array<{fromRest: true}>], LongMergeSource, {recurseIntoArrays: true}>>()
+	.toBe<[{id: 'first'; enabled: true}, ...TupleOf<60, {fromRest: true; enabled: true}>, ...Array<{fromRest: true}>]>();
+expectTypeOf<MergeDeep<LongMergeDestination, [{enabled: true}, ...Array<{enabled: false}>], {recurseIntoArrays: true}>>()
+	.toBe<[{id: 'before'; enabled: true}, ...TupleOf<29, {id: 'before'; enabled: false}>, {marker: true; enabled: false}, ...TupleOf<30, {id: 'after'; enabled: false}>, ...Array<{enabled: false}>]>();
+
+// Wide rows retain their ordering, optional positions, and nested merge behavior.
+declare const longMergedRow: LongTupleMerge;
+expectTypeOf(longMergedRow[0]).toBe<{id: 'before'; enabled: true}>();
+expectTypeOf(longMergedRow[30]).toBe<{marker: true; enabled: true}>();
+expectTypeOf(longMergedRow[60]).toBe<{id: 'after'; enabled: true}>();
+// @ts-expect-error The middle marker does not become a neighboring row.
+longMergedRow[30] = {id: 'before', enabled: true};
+expectTypeOf<MergeDeep<Readonly<LongMergeDestination>, Readonly<LongMergeSource>, {recurseIntoArrays: true}>>().toBe<LongMergedRow>();
+expectTypeOf<MergeDeep<Partial<LongMergeDestination>, Partial<LongMergeSource>, {recurseIntoArrays: true}>>().toBe<Partial<LongMergedRow>>();
+expectTypeOf<MergeDeep<Partial<LongMergeDestination>, LongMergeSource, {recurseIntoArrays: true}>>().toBe<LongMergedRow>();
+expectTypeOf<MergeDeep<{rows: LongMergeDestination}, {rows: LongMergeSource}, {recurseIntoArrays: true}>>().toBe<{rows: LongMergedRow}>();
+
+// Accumulating one tuple alternative must not mix its later positions with another.
+type MergedTupleChoices = MergeDeep<[{row: 'a'}, {left: 1}] | [{row: 'b'}, {right: 2}], [{enabled: true}], {recurseIntoArrays: true}>;
+expectTypeOf<MergedTupleChoices>().toBe<[{row: 'a'; enabled: true}, {left: 1}] | [{row: 'b'; enabled: true}, {right: 2}]>();
+expectTypeOf<[{row: 'a'; enabled: true}, {right: 2}]>().not.toBeAssignableTo<MergedTupleChoices>();
+
+function _readMergedTupleFlag<Value>(merged: MergeDeep<readonly [{value: Value}], readonly [{enabled: true}], {recurseIntoArrays: true}>): true {
+	return merged[0].enabled;
+}
+
+function _readMergedTupleLength<Options extends MergeDeepOptions>(merged: MergeDeep<[1], [2], Options>): number {
+	return merged.length;
+}
+
+const inferredMergedTuple = mergeDeep([{id: 'left'}, {keep: true}] as const, [{enabled: true}] as const, {recurseIntoArrays: true});
+expectTypeOf(inferredMergedTuple).toBe<[{readonly id: 'left'; readonly enabled: true}, {readonly keep: true}]>();
+inferredMergedTuple[1] = {keep: true};
+// @ts-expect-error A merged source field retains its literal value.
+inferredMergedTuple[0] = {id: 'left', enabled: false};

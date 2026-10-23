@@ -171,7 +171,7 @@ type MergeDeepRestArrays<
 		: MergeDeepArrayOrTupleElements<Destination, Source, Options>;
 
 /**
-Merge two tuples recursively.
+Merge two tuples recursively, accumulating merged positions so the traversal stays tail-recursive.
 */
 type DoMergeDeepTupleAndTupleRecursive<
 	Destination extends UnknownArray,
@@ -179,27 +179,31 @@ type DoMergeDeepTupleAndTupleRecursive<
 	DestinationRestType extends UnknownArray,
 	SourceRestType extends UnknownArray,
 	Options extends MergeDeepInternalOptions,
+	Result extends UnknownArray = [],
 > = Destination extends []
 	? Source extends []
-		? []
+		? Result
 		// A rest of `never[]` has no elements, the same as no rest at all, so it is not merged as an element of `never`, which would turn the merged element into `never`.
-		: [DestinationRestType[number]] extends [never]
+		: [...Result, ...([DestinationRestType[number]] extends [never]
 			? Writable<Source>
-			: MergeArrayTypeAndTuple<DestinationRestType[number], Source, Options>
+			: MergeArrayTypeAndTuple<DestinationRestType[number], Source, Options>)]
 	: Source extends []
-		? [SourceRestType[number]] extends [never]
+		? [...Result, ...([SourceRestType[number]] extends [never]
 			? Writable<Destination>
-			: MergeTupleAndArrayType<Destination, SourceRestType[number], Options>
-		: [
-			// The merged position is optional only when both inputs make it optional. A required element on either side guarantees the position exists.
-			...And<
-				Destination extends readonly [unknown, ...unknown[]] ? false : true,
-				Source extends readonly [unknown, ...unknown[]] ? false : true
-			> extends true
-				? [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>?]
-				: [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>],
-			...DoMergeDeepTupleAndTupleRecursive<ArrayTail<Destination>, ArrayTail<Source>, DestinationRestType, SourceRestType, Options>,
-		];
+			: MergeTupleAndArrayType<Destination, SourceRestType[number], Options>)]
+		: DoMergeDeepTupleAndTupleRecursive<
+			ArrayTail<Destination>, ArrayTail<Source>, DestinationRestType, SourceRestType, Options,
+			[
+				...Result,
+				// The merged position is optional only when both inputs make it optional. A required element on either side guarantees the position exists.
+				...And<
+					Destination extends readonly [unknown, ...unknown[]] ? false : true,
+					Source extends readonly [unknown, ...unknown[]] ? false : true
+				> extends true
+					? [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>?]
+					: [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, Options>],
+			]
+		>;
 
 /**
 Merge two tuples recursively taking into account a possible rest element.
@@ -214,23 +218,21 @@ type MergeDeepTupleAndTupleRecursive<
 ];
 
 /**
-Merge an array type with a tuple recursively.
+Merge an array type with a tuple recursively, accumulating merged positions so the traversal stays tail-recursive.
 */
 type MergeTupleAndArrayType<
 	Tuple extends UnknownArray,
 	ArrayType,
 	Options extends MergeDeepInternalOptions,
+	Result extends UnknownArray = [],
 > = Tuple extends []
-	? Tuple
-	: Tuple extends readonly [unknown, ...unknown[]]
-		? [
-			MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>,
-			...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
-		]
-		: [
-			MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>?,
-			...MergeTupleAndArrayType<ArrayTail<Tuple>, ArrayType, Options>,
-		];
+	? Result
+	: MergeTupleAndArrayType<
+		ArrayTail<Tuple>, ArrayType, Options,
+		[...Result, ...Tuple extends readonly [unknown, ...unknown[]]
+			? [MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>]
+			: [MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, Options>?]]
+	>;
 
 /**
 Merge an array into a tuple recursively taking into account a possible rest element.
@@ -245,23 +247,21 @@ type MergeDeepTupleAndArrayRecursive<
 ];
 
 /**
-Merge a tuple with an array type recursively.
+Merge a tuple with an array type recursively, accumulating merged positions so the traversal stays tail-recursive.
 */
 type MergeArrayTypeAndTuple<
 	ArrayType,
 	Tuple extends UnknownArray,
 	Options extends MergeDeepInternalOptions,
+	Result extends UnknownArray = [],
 > = Tuple extends []
-	? Tuple
-	: Tuple extends readonly [unknown, ...unknown[]]
-		? [
-			MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>,
-			...MergeArrayTypeAndTuple<ArrayType, ArrayTail<Tuple>, Options>,
-		]
-		: [
-			MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>?,
-			...MergeArrayTypeAndTuple<ArrayType, ArrayTail<Tuple>, Options>,
-		];
+	? Result
+	: MergeArrayTypeAndTuple<
+		ArrayType, ArrayTail<Tuple>, Options,
+		[...Result, ...Tuple extends readonly [unknown, ...unknown[]]
+			? [MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>]
+			: [MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, Options>?]]
+	>;
 
 /**
 Merge a tuple into an array recursively taking into account a possible rest element.
