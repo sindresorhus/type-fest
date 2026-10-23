@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual} from '../../index.d.ts';
-import type {ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToString} from '../../source/internal/index.d.ts';
+import type {IsEqual, LiteralUnion, Opaque, Tagged} from '../../index.d.ts';
+import type {ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<1>, '1'>>().toBe<true>();
@@ -58,3 +58,19 @@ expectTypeOf<IsEqual<PositiveNumericStringGt<'1e-7', '1e+21'>, false>>().toBe<tr
 expectTypeOf<IsEqual<PositiveNumericStringGt<'1e+21', '1e+21'>, false>>().toBe<true>();
 expectTypeOf<IsEqual<PositiveNumericStringGt<'2e+21', '1e+21'>, boolean>>().toBe<true>();
 expectTypeOf<IsEqual<PositiveNumericStringGt<'2e-7', '1e-7'>, boolean>>().toBe<true>();
+
+// Path normalization strips metadata while keeping autocomplete alternatives distinct.
+expectTypeOf<UnwrapPathBrand<Tagged<'users.0.name', 'Path'>>>().toBe<'users.0.name'>();
+expectTypeOf<UnwrapPathBrand<Opaque<'users[0].name', 'Path'>>>().toBe<'users[0].name'>();
+expectTypeOf<UnwrapPathBrand<Tagged<Tagged<1, 'Index'>, 'Validated'>>>().toBe<1>();
+expectTypeOf<UnwrapPathBrand<'a.b' & {readonly __brand: unique symbol}>>().toBe<'a.b'>();
+expectTypeOf<UnwrapPathBrand<Tagged<'a.b' | 'c', 'Path'>>>().toBe<'a.b' | 'c'>();
+expectTypeOf<UnwrapPathBrand<LiteralUnion<'a.b', string>>>().toBe<LiteralUnion<'a.b', string>>();
+expectTypeOf<UnwrapPathBrand<LiteralUnion<0, number>>>().toBe<LiteralUnion<0, number>>();
+expectTypeOf<UnwrapPathBrand<string & {}>>().toBe<string & {}>();
+expectTypeOf<UnwrapPathBrand<number & {}>>().toBe<number & {}>();
+expectTypeOf<UnwrapPathBrand<Tagged<string, 'Path'>>>().toBe<string>();
+expectTypeOf<UnwrapPathBrand<Tagged<number, 'Index'>>>().toBe<number>();
+expectTypeOf<UnwrapPathBrand<any>>().toBe<any>();
+expectTypeOf<UnwrapPathBrand<never>>().toBe<never>();
+expectTypeOf<UnwrapPathBrand<unknown>>().toBe<unknown>();

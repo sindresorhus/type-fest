@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Get, IsEqual, Join, LiteralUnion, ParsePath, Paths, TupleOf} from '../index.d.ts';
+import type {Get, IsEqual, Join, LiteralUnion, Opaque, ParsePath, Paths, Tagged, TupleOf} from '../index.d.ts';
 
 // Dot notation
 expectTypeOf<ParsePath<'foo'>>().toBe<['foo']>();
@@ -413,3 +413,29 @@ expectTypeOf(getPathWithoutConst(nested, ['optional', 'deep', 'value'])).toBe<st
 
 // Without `const`, a number index is not inferred as a literal, so TypeScript infers the whole constraint, and the result is a union of every value. This pins a TypeScript limitation, not a goal.
 expectTypeOf(getPathWithoutConst(nested, ['tuple', 1, 'id'])).toBe<Get<Nested, ParsePath<Paths<Nested>>>>();
+
+// A path brand is removed before its dot and bracket syntax is parsed.
+expectTypeOf<ParsePath<Tagged<'users[0].name', 'Path'>>>().toBe<['users', 0, 'name']>();
+expectTypeOf<ParsePath<Tagged<'users.0.name', 'Path'>>>().toBe<['users', 0, 'name']>();
+
+expectTypeOf<ParsePath<Opaque<'users[0].name', 'Path'>>>().toBe<['users', 0, 'name']>();
+expectTypeOf<ParsePath<Tagged<Tagged<'users[0].name', 'Path'>, 'Validated'>>>().toBe<['users', 0, 'name']>();
+expectTypeOf<ParsePath<'users[0].name' & {readonly __brand: unique symbol}>>().toBe<['users', 0, 'name']>();
+expectTypeOf<ParsePath<Tagged<'a.0' | 'b[1]', 'Path'>>>().toBe<['a', 0] | ['b', 1]>();
+expectTypeOf<ParsePath<Tagged<'a.0', 'Path'> | 'b[1]'>>().toBe<['a', 0] | ['b', 1]>();
+expectTypeOf<ParsePath<Tagged<0, 'Path'>>>().toBe<[0]>();
+expectTypeOf<ParsePath<Tagged<1.5, 'Path'>>>().toBe<[1, 5]>();
+expectTypeOf<ParsePath<Tagged<-1, 'Path'>>>().toBe<['-1']>();
+expectTypeOf<ParsePath<Tagged<'a.01', 'Path'>>>().toBe<['a', '01']>();
+expectTypeOf<ParsePath<Tagged<'a[-1]', 'Path'>>>().toBe<['a', '-1']>();
+expectTypeOf<ParsePath<Tagged<'', 'Path'>>>().toBe<['']>();
+expectTypeOf<ParsePath<Tagged<string, 'Path'>>>().toBe<Array<string | number>>();
+expectTypeOf<ParsePath<Tagged<number, 'Path'>>>().toBe<[number]>();
+expectTypeOf<ParsePath<any>>().toBe<Array<string | number>>();
+expectTypeOf<ParsePath<never>>().toBe<never>();
+// @ts-expect-error - Paths are strings or numbers.
+expectTypeOf<ParsePath<unknown>>();
+expectTypeOf<Get<User, ParsePath<Tagged<'friends[0].name', 'Path'>>>>().toBe<string | undefined>();
+expectTypeOf<Get<User, ParsePath<Tagged<'tuple[1].id', 'Path'>>>>().toBe<number>();
+declare const brandedParsedPath: Tagged<'users[0].name', 'Path'>;
+expectTypeOf(parsePath(brandedParsedPath)).toBe<['users', 0, 'name']>();

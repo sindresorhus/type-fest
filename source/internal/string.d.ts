@@ -4,6 +4,7 @@ import type {Trim} from '../trim.d.ts';
 import type {StringLength} from '../string-length.d.ts';
 import type {Split} from '../split.d.ts';
 import type {Whitespace} from './characters.d.ts';
+import type {UnwrapBrand} from './object.d.ts';
 
 /**
 Return a string representation of the given string or number.
@@ -241,6 +242,21 @@ type B = ToPath<'foo[0].bar.baz'>;
 ```
 */
 export type ToPath<Path extends string> = Split<FixPathSquareBrackets<Path>, '.', {strictLiteralChecks: false}>;
+
+/**
+Remove brands from property paths while preserving empty intersections used by `LiteralUnion`.
+
+Distribute before normalization so a wide path cannot erase another member's known segments.
+
+@example
+```
+type Path = UnwrapPathBrand<'users.name' & {readonly brand: unique symbol}>;
+//=> 'users.name'
+```
+*/
+export type UnwrapPathBrand<Path> = Path extends unknown
+	? Exclude<keyof Path, keyof string | keyof number> extends never ? Path : UnwrapBrand<Path>
+	: never;
 
 /**
 Replaces square-bracketed dot notation with dots, for example, `foo[0].bar` -> `foo.0.bar`.

@@ -1,5 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {DigitCharacter, Paths, SetRequiredDeep} from '../index.d.ts';
+import type {Opaque, Tagged} from '../source/tagged.d.ts';
+import type {DigitCharacter, LiteralUnion, Paths, SetRequiredDeep} from '../index.d.ts';
 
 // Set nested key to required
 declare const variation1: SetRequiredDeep<{a?: number; b?: {c?: string}}, 'b.c'>;
@@ -217,3 +218,46 @@ expectTypeOf<SetRequiredDeep<{'0'?: string; nested: {'1'?: string}}, 0 | 'nested
 
 // Broad numeric paths use the same template matching as `${number}`, including numeric-looking string keys.
 expectTypeOf<SetRequiredDeep<{'0'?: string; '01'?: number; other?: boolean}, number>>().toBe<{'0': string; '01': number; other?: boolean}>();
+
+// Branded paths identify the same nested property as their underlying strings.
+expectTypeOf<SetRequiredDeep<{user: {name?: string}}, Tagged<'user.name', 'Path'>>>().toBe<{user: {name: string}}>();
+
+// Normalize the path only, preserving brands on property values and all unrelated modifiers.
+type OptionalBrandedUser = {readonly user?: {readonly name?: Tagged<string, 'Name'>; age?: number}; other?: boolean};
+expectTypeOf<SetRequiredDeep<OptionalBrandedUser, Tagged<'user.name', 'Path'>>>()
+	.toBe<{readonly user?: {readonly name: Tagged<string, 'Name'>; age?: number}; other?: boolean}>();
+expectTypeOf<SetRequiredDeep<{a?: string}, Opaque<'a', 'Path'>>>().toBe<{a: string}>();
+expectTypeOf<SetRequiredDeep<{a?: {b?: number}}, Tagged<Tagged<'a.b', 'Inner'>, 'Outer'>>>().toBe<{a?: {b: number}}>();
+expectTypeOf<SetRequiredDeep<{a?: {b?: number}}, 'a.b' & {readonly pathBrand: unique symbol}>>().toBe<{a?: {b: number}}>();
+
+// A union of paths applies every selection together, including all tuple terminal keys.
+type OptionalPathUnion = {a?: string; b?: {c?: number; d?: boolean}};
+expectTypeOf<SetRequiredDeep<OptionalPathUnion, Tagged<'a' | 'b.c', 'Path'>>>().toBe<{a: string; b?: {c: number; d?: boolean}}>();
+expectTypeOf<SetRequiredDeep<OptionalPathUnion, Tagged<'a', 'Path'> | 'b.c'>>().toBe<{a: string; b?: {c: number; d?: boolean}}>();
+expectTypeOf<SetRequiredDeep<{a?: {b?: string}}, Tagged<'a' | 'a.b', 'Path'>>>().toBe<{a: {b: string}}>();
+expectTypeOf<SetRequiredDeep<{a?: string} | {a?: number}, Tagged<'a', 'Path'>>>().toBe<{a: string} | {a: number}>();
+expectTypeOf<SetRequiredDeep<readonly [string?, number?], Tagged<0 | 1, 'Index'>>>().toBe<readonly [string, number]>();
+expectTypeOf<SetRequiredDeep<[string?, number?], Tagged<1, 'Index'>>>().toBe<[string?, number?]>();
+expectTypeOf<SetRequiredDeep<{items: Array<{name?: string}>}, Tagged<`items.${number}.name`, 'Path'>>>()
+	.toBe<{items: Array<{name: string}>}>();
+
+// Numeric paths retain the distinction between a decimal property and a dotted string path.
+expectTypeOf<SetRequiredDeep<{'0'?: string}, Tagged<0, 'Index'>>>().toBe<{'0': string}>();
+type OptionalDecimalKeys = {1.2?: string; 1?: {2?: number}};
+expectTypeOf<SetRequiredDeep<OptionalDecimalKeys, Tagged<1.2, 'Index'>>>().toBe<{1.2: string; 1?: {2?: number}}>();
+expectTypeOf<SetRequiredDeep<OptionalDecimalKeys, Tagged<'1.2', 'Path'>>>().toBe<{1.2?: string; 1?: {2: number}}>();
+
+// Broad path segments and missing paths keep the same meaning after unwrapping.
+expectTypeOf<SetRequiredDeep<{a?: string; b?: {c?: number}}, Tagged<string, 'Path'>>>().toBe<{a: string; b: {c?: number}}>();
+expectTypeOf<SetRequiredDeep<{a?: {b?: string; c?: number}}, Tagged<`a.${string}`, 'Path'>>>().toBe<{a?: {b: string; c: number}}>();
+expectTypeOf<SetRequiredDeep<{a?: string}, Tagged<'missing', 'Path'>>>().toBe<{a?: string}>();
+
+expectTypeOf<SetRequiredDeep<{a?: any; b?: never; c?: unknown}, Tagged<'a' | 'b' | 'c', 'Path'>>>().toBe<{a: any; b: never; c: unknown}>();
+expectTypeOf<SetRequiredDeep<any, Tagged<'a.b', 'Path'>>>().toBe<any>();
+expectTypeOf<SetRequiredDeep<never, Tagged<'a.b', 'Path'>>>().toBe<never>();
+expectTypeOf<SetRequiredDeep<unknown, never>>().toBe<unknown>();
+// @ts-expect-error A path must be a string or number, even when its source is unknown.
+type UnknownBrandedPath = SetRequiredDeep<{a?: string}, unknown>;
+
+// A wide autocomplete alternative must not erase the known nested selection.
+expectTypeOf<SetRequiredDeep<{a: {b?: string; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {b: string; c?: number}; d: string}>();

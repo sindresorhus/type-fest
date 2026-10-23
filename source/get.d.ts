@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions, ConsistsOnlyOf, ExactKey, ToPath, ToString} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, ConsistsOnlyOf, ExactKey, ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -29,7 +29,7 @@ type GetWithPath<BaseType, Keys, Options extends Required<GetOptions>> =
 		? BaseType
 		: Keys extends readonly [infer Head, ...infer Tail]
 			? GetWithPath<
-				PropertyOf<BaseType, ToString<Head>, Options>,
+				PropertyOf<BaseType, ToString<UnwrapPathBrand<Head>>, Options>,
 				Tail,
 				Options
 			>
@@ -239,7 +239,7 @@ export type Get<
 > =
 	GetWithPath<
 		BaseType,
-		Path extends string | number ? ToPath<ToString<Path>> : Path,
+		Path extends ReadonlyArray<string | number> ? Path : ToPath<ToString<UnwrapPathBrand<Path>>>,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
 

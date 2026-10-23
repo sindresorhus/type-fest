@@ -1,4 +1,4 @@
-import type {ToPath, ToString} from './internal/index.d.ts';
+import type {ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {Get} from './get.d.ts'; // For `@link`
 import type {Paths} from './paths.d.ts'; // For `@link`
@@ -87,10 +87,15 @@ export type ParsePath<Path extends string | number> =
 		? Array<string | number>
 		// Distribute here, inside the `IsAny` check, so a union of paths shows as a union of tuples. Without distribution, it shows as `ToIndexes<…>`, and with distribution at the top level, it shows as `ParsePath<…>`. Without distribution, a function parameter constrained to the result also widens string literals when it is not `const`.
 		: Path extends unknown
-			// Check `Path` for the `string & {}` of `LiteralUnion`, because its string form is not `string`. Also check the string form, because checking only `Path` stops a function parameter constrained to the result from inferring string literals when it is not `const`.
-			? string extends Path | ToString<Path>
-				? Array<string | number>
-				: ToIndexes<ToPath<ToString<Path>>>
+			// Normalize each path without collapsing the literal alternatives of `LiteralUnion`.
+			? ParsePathImplementation<UnwrapPathBrand<Path>>
 			: never;
+
+// Read the primitive path before testing its width or parsing its segments.
+type ParsePathImplementation<Path extends string | number> =
+	// Check `Path` for the `string & {}` of `LiteralUnion`, because its string form is not `string`. Also check the string form, because checking only `Path` stops a function parameter constrained to the result from inferring string literals when it is not `const`.
+	string extends Path | ToString<Path>
+		? Array<string | number>
+		: ToIndexes<ToPath<ToString<Path>>>;
 
 export {};

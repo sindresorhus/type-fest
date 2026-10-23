@@ -1,5 +1,5 @@
 import type {ArraySplice} from './array-splice.d.ts';
-import type {ExactKey, IsArrayReadonly, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString} from './internal/index.d.ts';
+import type {ExactKey, IsArrayReadonly, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -84,7 +84,7 @@ export type OmitDeep<
 	PathUnion extends LiteralUnion<Paths<T, {maxRecursionDepth: 2}>, string | number>,
 > =
 	SimplifyDeep<
-		OmitDeepHelper<T, UnionToTuple<PathUnion>>,
+		OmitDeepHelper<T, UnionToTuple<UnwrapPathBrand<PathUnion>>>,
 		UnknownArray>;
 
 /**

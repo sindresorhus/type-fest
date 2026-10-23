@@ -1,5 +1,5 @@
 import type {IsAny} from './is-any.d.ts';
-import type {NonRecursiveType, NormalizedKeys} from './internal/index.d.ts';
+import type {NonRecursiveType, NormalizedKeys, UnwrapPathBrand} from './internal/index.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetRequired} from './set-required.d.ts';
@@ -41,7 +41,7 @@ export type SetRequiredDeep<
 	KeyPaths extends LiteralUnion<Paths<BaseType, {maxRecursionDepth: 2}>, string | number>,
 > = IsAny<KeyPaths> extends true
 	? SimplifyDeep<RequiredDeep<BaseType>>
-	: SetRequiredDeepHelper<BaseType, KeyPaths>;
+	: SetRequiredDeepHelper<BaseType, UnwrapPathBrand<KeyPaths>>;
 
 /**
 Internal helper for {@link SetRequiredDeep}.

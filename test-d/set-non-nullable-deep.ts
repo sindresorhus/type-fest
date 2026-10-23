@@ -1,7 +1,9 @@
 import {expectTypeOf} from 'nz';
+import type {Opaque, Tagged} from '../source/tagged.d.ts';
 import type {DigitCharacter} from '../source/characters.d.ts';
 import type {Paths} from '../source/paths.d.ts';
 import type {SetNonNullableDeep} from '../source/set-non-nullable-deep.d.ts';
+import type {LiteralUnion} from '../source/literal-union.d.ts';
 
 expectTypeOf<SetNonNullableDeep<{a: number | null}, 'a'>>().toBe<{a: number}>();
 expectTypeOf<SetNonNullableDeep<{a: number | undefined}, 'a'>>().toBe<{a: number}>();
@@ -199,3 +201,49 @@ expectTypeOf<SetNonNullableDeep<{'0'?: string | null | undefined; nested: {'1'?:
 
 // Broad numeric paths use the same template matching as `${number}`, including numeric-looking string keys.
 expectTypeOf<SetNonNullableDeep<{'0': string | null; '01': number | null; other: boolean | null}, number>>().toBe<{'0': string; '01': number; other: boolean | null}>();
+
+// Branded paths identify the same nested property as their underlying strings.
+expectTypeOf<SetNonNullableDeep<{user: {name: string | null}}, Tagged<'user.name', 'Path'>>>().toBe<{user: {name: string}}>();
+
+// Normalize the path only, preserving brands on property values and all unrelated modifiers.
+type NullableBrandedUser = {readonly user?: {readonly name?: Tagged<string, 'Name'> | null; age: number | null}; other: boolean | null};
+expectTypeOf<SetNonNullableDeep<NullableBrandedUser, Tagged<'user.name', 'Path'>>>()
+	.toBe<{readonly user?: {readonly name?: Tagged<string, 'Name'>; age: number | null}; other: boolean | null}>();
+expectTypeOf<SetNonNullableDeep<{a: string | null}, Opaque<'a', 'Path'>>>().toBe<{a: string}>();
+expectTypeOf<SetNonNullableDeep<{a: {b: number | null}}, Tagged<Tagged<'a.b', 'Inner'>, 'Outer'>>>().toBe<{a: {b: number}}>();
+expectTypeOf<SetNonNullableDeep<{a: {b: number | null}}, 'a.b' & {readonly pathBrand: unique symbol}>>().toBe<{a: {b: number}}>();
+
+// A union of paths applies every selection, rather than producing a union of partially transformed objects.
+type NullablePathUnion = {a: string | null; b: {c: number | null; d: boolean | null}};
+expectTypeOf<SetNonNullableDeep<NullablePathUnion, Tagged<'a' | 'b.c', 'Path'>>>()
+	.toBe<{a: string; b: {c: number; d: boolean | null}}>();
+expectTypeOf<SetNonNullableDeep<NullablePathUnion, Tagged<'a', 'Path'> | 'b.c'>>()
+	.toBe<{a: string; b: {c: number; d: boolean | null}}>();
+expectTypeOf<SetNonNullableDeep<{a: {b: string | null} | null}, Tagged<'a' | 'a.b', 'Path'>>>().toBe<{a: {b: string}}>();
+expectTypeOf<SetNonNullableDeep<{a: string | null} | {a?: number | null}, Tagged<'a', 'Path'>>>().toBe<{a: string} | {a?: number}>();
+
+// Numeric paths retain the distinction between a decimal property and a dotted string path.
+expectTypeOf<SetNonNullableDeep<{'0': string | null}, Tagged<0, 'Index'>>>().toBe<{'0': string}>();
+type NullableDecimalKeys = {1.2: string | null; 1: {2: number | null}};
+expectTypeOf<SetNonNullableDeep<NullableDecimalKeys, Tagged<1.2, 'Index'>>>().toBe<{1.2: string; 1: {2: number | null}}>();
+expectTypeOf<SetNonNullableDeep<NullableDecimalKeys, Tagged<'1.2', 'Path'>>>().toBe<{1.2: string | null; 1: {2: number}}>();
+expectTypeOf<SetNonNullableDeep<readonly [string | null, (number | null)?], Tagged<0 | 1, 'Index'>>>().toBe<readonly [string, number?]>();
+expectTypeOf<SetNonNullableDeep<{items: Array<{name: string | null}>}, Tagged<`items.${number}.name`, 'Path'>>>()
+	.toBe<{items: Array<{name: string}>}>();
+
+// Broad path segments and missing paths keep the same meaning after unwrapping.
+expectTypeOf<SetNonNullableDeep<{a: string | null; b: {c: number | null}}, Tagged<string, 'Path'>>>()
+	.toBe<{a: string; b: {c: number | null}}>();
+expectTypeOf<SetNonNullableDeep<{a: {b: string | null; c: number | null}}, Tagged<`a.${string}`, 'Path'>>>()
+	.toBe<{a: {b: string; c: number}}>();
+expectTypeOf<SetNonNullableDeep<{a: string | null}, Tagged<'missing', 'Path'>>>().toBe<{a: string | null}>();
+
+expectTypeOf<SetNonNullableDeep<{a: any; b: never; c: unknown}, Tagged<'a' | 'b' | 'c', 'Path'>>>().toBe<{a: any; b: never; c: {}}>();
+expectTypeOf<SetNonNullableDeep<any, Tagged<'a.b', 'Path'>>>().toBe<any>();
+expectTypeOf<SetNonNullableDeep<never, Tagged<'a.b', 'Path'>>>().toBe<never>();
+expectTypeOf<SetNonNullableDeep<unknown, never>>().toBe<unknown>();
+// @ts-expect-error A path must be a string or number, even when its source is unknown.
+type UnknownBrandedPath = SetNonNullableDeep<{a: string | null}, unknown>;
+
+// A wide autocomplete alternative must not erase the known nested selection.
+expectTypeOf<SetNonNullableDeep<{a: {b: string | null; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {b: string; c?: number}; d?: string}>();

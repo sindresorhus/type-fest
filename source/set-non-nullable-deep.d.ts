@@ -1,4 +1,4 @@
-import type {NonRecursiveType, NormalizedKeys, SimplifyObject} from './internal/index.d.ts';
+import type {NonRecursiveType, NormalizedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -68,7 +68,7 @@ export type SetNonNullableDeep<
 	KeyPaths extends LiteralUnion<Paths<BaseType, {maxRecursionDepth: 2}>, string | number>,
 > = IsAny<KeyPaths> extends true
 	? NonNullableDeep<BaseType>
-	: SetNonNullableDeepHelper<BaseType, UnionToTuple<KeyPaths>>;
+	: SetNonNullableDeepHelper<BaseType, UnionToTuple<UnwrapPathBrand<KeyPaths>>>;
 
 /**
 Internal helper for {@link SetNonNullableDeep}.

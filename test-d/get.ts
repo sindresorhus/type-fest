@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {DigitCharacter, Get, Paths} from '../index.d.ts';
+import type {DigitCharacter, Get, Opaque, Paths, Tagged} from '../index.d.ts';
 
 type NonStrict = {strict: false};
 
@@ -682,3 +682,34 @@ expectTypeOf<unknown extends Get<ModelWithUnions, Paths<ModelWithUnions>> ? true
 type WideKey = `${DigitCharacter}${DigitCharacter}`;
 type Wide = Record<WideKey, Record<WideKey, Record<WideKey, string>>>;
 expectTypeOf<Get<Wide, '00.11.22'>>().toBe<string>();
+
+// A branded path still names the same property at runtime.
+expectTypeOf<Get<{name: string}, Tagged<'name', 'Path'>>>().toBe<string>();
+expectTypeOf<Get<{user: {name: string}}, Tagged<'user.name', 'Path'>>>().toBe<string>();
+expectTypeOf<Get<{name: string}, [Tagged<'name', 'Path'>]>>().toBe<string>();
+expectTypeOf<Get<['a', 'b'], [Tagged<1, 'Index'>]>>().toBe<'b'>();
+
+expectTypeOf<Get<{user: {name: string}}, Opaque<'user.name', 'Path'>>>().toBe<string>();
+expectTypeOf<Get<{user: {name: string}}, Tagged<Tagged<'user.name', 'Path'>, 'Validated'>>>().toBe<string>();
+expectTypeOf<Get<{user: {name: string}}, 'user.name' & {readonly __brand: unique symbol}>>().toBe<string>();
+expectTypeOf<Get<{users: [{name: string}]}, Tagged<'users[0].name', 'Path'>>>().toBe<string>();
+expectTypeOf<Get<{users: [{name: string}]}, readonly [Tagged<'users', 'Key'>, Tagged<0, 'Index'>, Tagged<'name', 'Key'>]>>().toBe<string>();
+expectTypeOf<Get<{readonly user?: {name: string}}, Tagged<'user.name', 'Path'>>>().toBe<string | undefined>();
+expectTypeOf<Get<{user: {name: string} | {error: true}}, Tagged<'user.name', 'Path'>>>().toBe<string | undefined>();
+expectTypeOf<Get<{name: string; count: number}, Tagged<'name' | 'count', 'Path'>>>().toBe<string | number>();
+expectTypeOf<Get<{name: string}, Tagged<'missing', 'Path'>>>().toBe<unknown>();
+expectTypeOf<Get<{name: string}, Tagged<string, 'Path'>>>().toBe<unknown>();
+expectTypeOf<Get<['a', 'b'], Tagged<1, 'Index'>>>().toBe<'b'>();
+expectTypeOf<Get<readonly ['a', 'b'], [Tagged<number, 'Index'>]>>().toBe<'a' | 'b' | undefined>();
+expectTypeOf<Get<{users: string[]}, Tagged<'users.0', 'Path'>>>().toBe<string | undefined>();
+expectTypeOf<Get<{users: string[]}, Tagged<'users.0', 'Path'>, NonStrict>>().toBe<string>();
+expectTypeOf<Get<Record<string, number>, Tagged<'value', 'Path'>>>().toBe<number | undefined>();
+expectTypeOf<Get<{value: Tagged<string, 'Value'>}, Tagged<'value', 'Path'>>>().toBe<Tagged<string, 'Value'>>();
+expectTypeOf<Get<{value: any}, Tagged<'value', 'Path'>>>().toBe<any>();
+expectTypeOf<Get<{value: never}, Tagged<'value', 'Path'>>>().toBe<never>();
+expectTypeOf<Get<{value: unknown}, Tagged<'value', 'Path'>>>().toBe<unknown>();
+expectTypeOf<Get<never, Tagged<'value', 'Path'>>>().toBe<never>();
+expectTypeOf<Get<unknown, Tagged<'value', 'Path'>>>().toBe<unknown>();
+
+declare const brandedNamePath: Tagged<'name', 'Path'>;
+expectTypeOf(get({name: 'value'}, brandedNamePath)).toBe<string>();

@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {DigitCharacter, OmitDeep, Paths} from '../index.d.ts';
+import type {DigitCharacter, LiteralUnion, OmitDeep, Opaque, Paths, Tagged} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -234,3 +234,28 @@ expectTypeOf<OmitDeepIndex<string[], number>>().toBe<[]>();
 type Level<Value> = Record<DigitCharacter, Value>;
 type ManyPaths = Level<Level<Level<Level<Level<Level<1>>>>>>;
 expectTypeOf<OmitDeep<ManyPaths, '0.0.0.0.0.0'>['0']['0']['0']['0']['0']['1']>().toBe<1>();
+
+// Parse the string value of a branded path before removing its property.
+expectTypeOf<OmitDeep<{user: {name: string; age: number}}, Tagged<'user.name', 'Path'>>>().toBe<{user: {age: number}}>();
+
+expectTypeOf<OmitDeep<{user: {name: string; age: number}}, Opaque<'user.name', 'Path'>>>().toBe<{user: {age: number}}>();
+expectTypeOf<OmitDeep<{user: {name: string; age: number}}, Tagged<Tagged<'user.name', 'Path'>, 'Validated'>>>().toBe<{user: {age: number}}>();
+expectTypeOf<OmitDeep<{user: {name: string; age: number}}, 'user.name' & {readonly __brand: unique symbol}>>().toBe<{user: {age: number}}>();
+expectTypeOf<OmitDeep<{readonly user?: {name: string; readonly age?: number}}, Tagged<'user.name', 'Path'>>>().toBe<{readonly user?: {readonly age?: number}}>();
+expectTypeOf<OmitDeep<{user: {name: string; age: number; active: boolean}}, Tagged<'user.name' | 'user.age', 'Path'>>>().toBe<{user: {active: boolean}}>();
+expectTypeOf<OmitDeep<{user: {name: string; age: number; active: boolean}}, Tagged<'user.name', 'Path'> | 'user.age'>>().toBe<{user: {active: boolean}}>();
+expectTypeOf<OmitDeep<{user: {name: string; age: number}} | {user: {name: number; active: true}}, Tagged<'user.name', 'Path'>>>().toBe<{user: {age: number}} | {user: {active: true}}>();
+expectTypeOf<OmitDeep<readonly [1, 2], Tagged<1, 'Index'>>>().toBe<readonly [1, unknown]>();
+expectTypeOf<OmitDeep<{users: [{name: string; age: number}]}, Tagged<'users.0.name', 'Path'>>>().toBe<{users: [{age: number}]}>();
+expectTypeOf<OmitDeep<{readonly '1.5'?: string; other: number}, Tagged<1.5, 'Key'>>>().toBe<{other: number}>();
+expectTypeOf<OmitDeep<{value: string; keep: Tagged<string, 'Value'>}, Tagged<'value', 'Path'>>>().toBe<{keep: Tagged<string, 'Value'>}>();
+expectTypeOf<OmitDeep<{value: any; keep: number}, Tagged<'value', 'Path'>>>().toBe<{keep: number}>();
+expectTypeOf<OmitDeep<{value: never; keep: number}, Tagged<'value', 'Path'>>>().toBe<{keep: number}>();
+expectTypeOf<OmitDeep<{value: unknown; keep: number}, Tagged<'value', 'Path'>>>().toBe<{keep: number}>();
+expectTypeOf<OmitDeep<{value: string}, Tagged<'missing', 'Path'>>>().toBe<{value: string}>();
+expectTypeOf<OmitDeep<never, Tagged<'value', 'Path'>>>().toBe<never>();
+expectTypeOf<OmitDeep<unknown, Tagged<'value', 'Path'>>>().toBe<unknown>();
+
+// A wide autocomplete alternative does not erase a known path that must still be omitted.
+expectTypeOf<OmitDeep<{a: {b: string | null; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {c?: number}; d?: string}>();
+expectTypeOf<OmitDeep<{0?: string; 1: number | null}, LiteralUnion<0, number>>>().toBe<{1: number | null}>();

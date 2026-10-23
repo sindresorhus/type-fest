@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {DigitCharacter, Get, OptionalPaths, Paths, PickDeep} from '../index.d.ts';
+import type {DigitCharacter, Get, LiteralUnion, Opaque, OptionalPaths, Paths, PickDeep, Tagged} from '../index.d.ts';
 
 declare class ClassA {
 	a: string;
@@ -418,3 +418,29 @@ expectTypeOf<PickDeep<{readonly '0'?: unknown; other: number}, 0>>().toBe<{reado
 expectTypeOf<PickDeep<{readonly '0'?: any; other: number}, 0>>().toBe<{readonly '0'?: any}>();
 expectTypeOf<PickDeep<{readonly 0?: string; other: number}, '0'>>().toBe<{readonly 0?: string}>();
 expectTypeOf<PickDeep<{'0'?: string; first: true} | {readonly '0': number; second: true}, 0>>().toBe<{'0'?: string} | {readonly '0': number}>();
+
+// Parse the string value of a branded path before grouping its segments.
+expectTypeOf<PickDeep<{user: {name: string; age: number}}, Tagged<'user.name', 'Path'>>>().toBe<{user: {name: string}}>();
+
+expectTypeOf<PickDeep<{user: {name: string; age: number}}, Opaque<'user.name', 'Path'>>>().toBe<{user: {name: string}}>();
+expectTypeOf<PickDeep<{user: {name: string; age: number}}, Tagged<Tagged<'user.name', 'Path'>, 'Validated'>>>().toBe<{user: {name: string}}>();
+expectTypeOf<PickDeep<{user: {name: string; age: number}}, 'user.name' & {readonly __brand: unique symbol}>>().toBe<{user: {name: string}}>();
+expectTypeOf<PickDeep<{readonly user?: {readonly name?: string; age: number}}, Tagged<'user.name', 'Path'>>>().toBe<{readonly user?: {readonly name?: string}}>();
+expectTypeOf<PickDeep<{user: {name: string; age: number}}, Tagged<'user.name' | 'user.age', 'Path'>>>().toBe<{user: {name: string; age: number}}>();
+expectTypeOf<PickDeep<{user: {name: string; age: number}}, Tagged<'user.name', 'Path'> | 'user.age'>>().toBe<{user: {name: string; age: number}}>();
+expectTypeOf<PickDeep<{user: {name: string; age: number}} | {user: {name: number; error: true}}, Tagged<'user.name', 'Path'>>>().toBe<{user: {name: string}} | {user: {name: number}}>();
+expectTypeOf<PickDeep<readonly [1, 2], Tagged<1, 'Index'>>>().toBe<readonly [unknown, 2]>();
+expectTypeOf<PickDeep<{users: [{name: string; age: number}]}, Tagged<'users.0.name', 'Path'>>>().toBe<{users: [{name: string}]}>();
+expectTypeOf<PickDeep<{readonly '1.5'?: string; other: number}, Tagged<1.5, 'Key'>>>().toBe<{readonly '1.5'?: string}>();
+expectTypeOf<PickDeep<{value: Tagged<string, 'Value'>; other: number}, Tagged<'value', 'Path'>>>().toBe<{value: Tagged<string, 'Value'>}>();
+expectTypeOf<PickDeep<{value: any; other: number}, Tagged<'value', 'Path'>>>().toBe<{value: any}>();
+expectTypeOf<PickDeep<{value: never; other: number}, Tagged<'value', 'Path'>>>().toBe<{value: never}>();
+expectTypeOf<PickDeep<{value: unknown; other: number}, Tagged<'value', 'Path'>>>().toBe<{value: unknown}>();
+expectTypeOf<PickDeep<{value: string}, Tagged<'missing', 'Path'>>>().toBe<never>();
+expectTypeOf<PickDeep<{value: string}, Tagged<string, 'Path'>>>().toBe<never>();
+expectTypeOf<PickDeep<never, Tagged<'value', 'Path'>>>().toBe<never>();
+expectTypeOf<PickDeep<unknown, Tagged<'value', 'Path'>>>().toBe<never>();
+
+// Empty intersections preserve the known alternatives of a `LiteralUnion` path.
+expectTypeOf<PickDeep<{a: {b: string | null; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {b: string | null; c?: number}}>();
+expectTypeOf<PickDeep<{0?: string; 1: number | null}, LiteralUnion<0, number>>>().toBe<{0?: string}>();
