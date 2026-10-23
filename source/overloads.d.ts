@@ -76,22 +76,29 @@ type _Overloads<
 /**
 Extract the `Index`-th-from-last (`Index` < `MaxOverloadPatterns`) overload of a function type as a standalone function, correctly preserving implicit `this` (omitted) vs explicit `this` (kept).
 */
-type NthLastOverload<FunctionType extends (...arguments_: any) => any, Index extends OverloadIndex> = FunctionType extends {
-	(this: infer This3, ...arguments_: infer Parameters3 extends UnknownArray): infer Return3;
-	(this: infer This2, ...arguments_: infer Parameters2 extends UnknownArray): infer Return2;
-	(this: infer This1, ...arguments_: infer Parameters1 extends UnknownArray): infer Return1;
-	(this: infer This0, ...arguments_: infer Parameters0 extends UnknownArray): infer Return0;
-}
-	? ({
-		3: [This3, Parameters3, Return3];
-		2: [This2, Parameters2, Return2];
-		1: [This1, Parameters1, Return1];
-		0: [This0, Parameters0, Return0];
-	}[Index] extends [infer This, infer Parameters_ extends UnknownArray, infer Return]
-		? HasExplicitThis<FunctionType, This, Parameters_, Return> extends true
-			? (this: This, ...arguments_: Parameters_) => Return
-			: (...arguments_: Parameters_) => Return
-		: never)
+type NthLastOverload<FunctionType extends (...arguments_: any) => any, Index extends OverloadIndex> = (
+	Index extends 0
+		// A single call signature already infers the last overload, so earlier signatures need not be inferred.
+		? FunctionType extends (this: infer This, ...arguments_: infer Parameters_ extends UnknownArray) => infer Return
+			? [This, Parameters_, Return]
+			: never
+		: FunctionType extends {
+			(this: infer This3, ...arguments_: infer Parameters3 extends UnknownArray): infer Return3;
+			(this: infer This2, ...arguments_: infer Parameters2 extends UnknownArray): infer Return2;
+			(this: infer This1, ...arguments_: infer Parameters1 extends UnknownArray): infer Return1;
+			(this: infer This0, ...arguments_: infer Parameters0 extends UnknownArray): infer Return0;
+		}
+			? {
+				3: [This3, Parameters3, Return3];
+				2: [This2, Parameters2, Return2];
+				1: [This1, Parameters1, Return1];
+				0: [This0, Parameters0, Return0];
+			}[Index]
+			: never
+) extends [infer This, infer Parameters_ extends UnknownArray, infer Return]
+	? HasExplicitThis<FunctionType, This, Parameters_, Return> extends true
+		? (this: This, ...arguments_: Parameters_) => Return
+		: (...arguments_: Parameters_) => Return
 	: never;
 
 export {};

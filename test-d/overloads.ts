@@ -292,3 +292,48 @@ expectTypeOf<IsEqualStrict<typeof fourGenericOverloads, [
 	(this: unknown, value: unknown, index: 3) => unknown,
 	(this: unknown, value: unknown, index: 4) => unknown,
 ]>>().toBe<true>();
+
+// An inferred overload tuple remains callable in declaration order.
+declare function extractOverloads<const FunctionType extends (...arguments_: any[]) => unknown>(function_: FunctionType): Overloads<FunctionType>;
+const inferredOverloads = extractOverloads(declaredOverload);
+expectTypeOf(inferredOverloads[0]('resource')).toBe<{kind: 'string'}>();
+expectTypeOf(inferredOverloads[1](3, true)).toBe<{kind: 'number'}>();
+// @ts-expect-error The second overload requires a numeric input.
+inferredOverloads[1]('resource', true);
+expectTypeOf<IsEqualStrict<typeof inferredOverloads, [(input: string) => {kind: 'string'}, (input: number, flag: boolean) => {kind: 'number'}]>>().toBe<true>();
+
+// A readonly rest parameter and its explicit receiver survive extraction together.
+type ReadonlyRestWithReceiver = (this: Date, ...values: readonly number[]) => boolean;
+declare const extractedReadonlyRest: Overloads<ReadonlyRestWithReceiver>;
+expectTypeOf<IsEqualStrict<typeof extractedReadonlyRest, [ReadonlyRestWithReceiver]>>().toBe<true>();
+expectTypeOf(extractedReadonlyRest[0].call(new Date(), 1, 2)).toBe<boolean>();
+// @ts-expect-error The original receiver remains required.
+extractedReadonlyRest[0].call('invalid', 1, 2);
+
+function _constructGenericOverload<Value>(callback: (value: Value) => Value): Overloads<(value: Value) => Value> {
+	return [callback];
+}
+
+function _readGenericOverloadResult<Value>(value: ReturnType<Overloads<(value: Value) => Value>[0]>): Value {
+	return value;
+}
+
+function _readGenericOverloadParameter<Value>(value: Parameters<Overloads<(value: Value) => Value>[0]>[0]): Value {
+	return value;
+}
+
+// A generic constructor keeps the inferred callback's parameter and result linked.
+const inferredGenericOverload = _constructGenericOverload((value: {id: 1}) => value);
+expectTypeOf(inferredGenericOverload[0]({id: 1})).toBe<{id: 1}>();
+// @ts-expect-error The callback's inferred input type remains specific.
+inferredGenericOverload[0]({id: 2});
+
+// A generic overload retains its upper bound alongside a concrete last overload.
+type ConstrainedRequest = {
+	<Value extends {id: string}>(value: Value): Promise<Value>;
+	(path: string): Promise<{id: 'loaded'}>;
+};
+expectTypeOf<IsEqualStrict<Overloads<ConstrainedRequest>, [
+	(this: unknown, value: {id: string}) => Promise<{id: string}>,
+	(path: string) => Promise<{id: 'loaded'}>,
+]>>().toBe<true>();
