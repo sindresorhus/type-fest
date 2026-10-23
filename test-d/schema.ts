@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {JsonValue, Schema} from '../index.d.ts';
+import type {JsonValue, Schema, SchemaOptions} from '../index.d.ts';
 
 const foo = {
 	baz: 'fred',
@@ -429,3 +429,43 @@ const recursiveSettingsMask: Schema<RecursiveSettings, boolean> = {
 	children: [{enabled: false, children: [{enabled: true}]}],
 };
 expectTypeOf(recursiveSettingsMask.children?.[0]?.enabled).toBe<boolean | undefined>();
+
+// Named object types become sealed schemas while preserving their field and tuple modifiers.
+declare class NamedSchemaInput {
+	readonly coordinates: readonly [first: string, last?: {label: string}];
+	metadata?: {enabled: boolean} | undefined;
+}
+
+declare const namedSchema: Schema<NamedSchemaInput, 'validate'>;
+expectTypeOf(namedSchema).toBe<{readonly coordinates: readonly ['validate', {label: 'validate'}?]; metadata?: {enabled: 'validate'}}>();
+expectTypeOf(namedSchema).toBeAssignableTo<Record<string, unknown>>();
+// @ts-expect-error A valid replacement still cannot overwrite the readonly tuple field.
+namedSchema.coordinates = ['validate'];
+// @ts-expect-error A fixed tuple position stays readonly too.
+namedSchema.coordinates[0] = 'validate';
+
+function readSchemaRule<Value, Options extends SchemaOptions>(schema: Schema<{id: string; metadata?: {enabled: boolean}}, Value, Options>): Value {
+	return schema.id;
+}
+
+function createSchemaRule<Value, Options extends SchemaOptions>(rule: Value): Schema<{id: string}, Value, Options> {
+	return {id: rule};
+}
+
+declare function validationSchema<const Input, const Value>(input: Input, rule: Value): Schema<Input, Value>;
+const inferredValidationSchema = validationSchema({settings: {enabled: true}, rows: [{label: 'first'}]}, 'validate');
+expectTypeOf(inferredValidationSchema).toBe<{readonly settings: {readonly enabled: 'validate'}; readonly rows: readonly [{readonly label: 'validate'}]}>();
+
+// Replacement objects stay intact at recursive leaves and beneath symbol or pattern keys.
+type ValidationRule = {readonly kind: 'rule'};
+type RecursiveForm = {name: string; children: RecursiveForm[]};
+const recursiveObjectSchema: Schema<RecursiveForm, ValidationRule> = {
+	name: {kind: 'rule'},
+	children: [{name: {kind: 'rule'}, children: []}],
+};
+// @ts-expect-error Nested leaves require the replacement rule, not the input's string value.
+recursiveObjectSchema.children.push({name: 'original', children: []});
+declare const ruleKey: unique symbol;
+declare const indexedRuleSchema: Schema<{readonly [ruleKey]?: {label: string}; [key: `rule-${string}`]: {enabled: boolean}}, ValidationRule>;
+expectTypeOf(indexedRuleSchema[ruleKey]?.label).toBe<ValidationRule | undefined>();
+expectTypeOf(indexedRuleSchema['rule-main']?.enabled).toBe<ValidationRule | undefined>();

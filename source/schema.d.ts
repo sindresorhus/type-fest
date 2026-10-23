@@ -1,4 +1,4 @@
-import type {IsArrayOfUnknownLength, SimplifyObject} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -122,11 +122,11 @@ Internal helper for {@link _Schema}.
 
 Recursively transforms the value of each property in objects and arrays.
 */
-type SchemaHelper<Type, Value, Options extends Required<SchemaOptions>> = SimplifyObject<{
+type SchemaHelper<Type, Value, Options extends Required<SchemaOptions>> = {
 	[Key in keyof Type]: _Schema<
 		IsOptionalKeyOf<Type & object, Key> extends true ? Exclude<Type[Key], undefined> : Type[Key], // Remove `| undefined` when accessing optional properties
 		Value,
 		Options>
-}>;
+} & {};
 
 export {};
