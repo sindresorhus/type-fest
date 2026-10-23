@@ -59,6 +59,8 @@ Link other types with `{@link Simplify}`, and `import type` the linked type with
 
 ## Testing
 
+Only `exactOptionalPropertyTypes: true` is supported. Do not add fixes, tests, compiler configurations, or compatibility logic for `exactOptionalPropertyTypes: false`.
+
 **ALWAYS test edge cases** (`any`, `never`, `unknown`).
 
 ```ts
