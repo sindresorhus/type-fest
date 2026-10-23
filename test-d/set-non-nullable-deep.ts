@@ -184,3 +184,18 @@ expectTypeOf<SetNonNullableDeepIndex<[1 | null, 2 | null], number>>().toBe<[1, 2
 type Level<Value> = Record<DigitCharacter, Value>;
 type ManyPaths = Level<Level<Level<Level<Level<Level<1 | null>>>>>>;
 expectTypeOf<SetNonNullableDeep<ManyPaths, '0.0.0.0.0.0'>['0']['0']['0']['0']['0']['0']>().toBe<1>();
+
+// A numeric terminal path also names a property declared with its string spelling.
+expectTypeOf<SetNonNullableDeep<{'0': string | null}, 0>>().toBe<{'0': string}>();
+
+// Key aliases preserve modifiers and transform only the selected property.
+expectTypeOf<SetNonNullableDeep<{readonly '0'?: string | null | undefined; other?: number}, 0>>().toBe<{readonly '0'?: string; other?: number}>();
+expectTypeOf<SetNonNullableDeep<{'-2'?: string | null | undefined; '1.5'?: string | null | undefined}, -2 | 1.5>>().toBe<{'-2'?: string; '1.5'?: string}>();
+expectTypeOf<SetNonNullableDeep<{'0'?: string | null | undefined; '00'?: string | null | undefined}, 0>>().toBe<{'0'?: string; '00'?: string | null | undefined}>();
+expectTypeOf<SetNonNullableDeep<{'0'?: string | null | undefined}, 9>>().toBe<{'0'?: string | null | undefined}>();
+expectTypeOf<SetNonNullableDeep<{'0'?: string | null | undefined} | {other: number}, 0>>().toBe<{'0'?: string} | {other: number}>();
+expectTypeOf<SetNonNullableDeep<{'0'?: any; '1'?: unknown; '2'?: never}, 0 | 1 | 2>>().toBe<{'0'?: any; '1'?: {}; '2'?: never}>();
+expectTypeOf<SetNonNullableDeep<{'0'?: string | null | undefined; nested: {'1'?: string | null | undefined}}, 0 | 'nested.1'>>().toBe<{'0'?: string; nested: {'1'?: string}}>();
+
+// Broad numeric paths use the same template matching as `${number}`, including numeric-looking string keys.
+expectTypeOf<SetNonNullableDeep<{'0': string | null; '01': number | null; other: boolean | null}, number>>().toBe<{'0': string; '01': number; other: boolean | null}>();

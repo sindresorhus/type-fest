@@ -202,3 +202,18 @@ expectTypeOf<SetRequiredDeepIndex<[1?, 2?], number>>().toBe<[1, 2]>();
 type Level<Value> = Record<DigitCharacter, Value>;
 type ManyPaths = Level<Level<Level<Level<Level<Partial<Level<1>>>>>>>;
 expectTypeOf<SetRequiredDeep<ManyPaths, '0.0.0.0.0.0'>['0']['0']['0']['0']['0']['0']>().toBe<1>();
+
+// A numeric terminal path also names a property declared with its string spelling.
+expectTypeOf<SetRequiredDeep<{'0'?: string}, 0>>().toBe<{'0': string}>();
+
+// Key aliases preserve modifiers and transform only the selected property.
+expectTypeOf<SetRequiredDeep<{readonly '0'?: string; other?: number}, 0>>().toBe<{readonly '0': string; other?: number}>();
+expectTypeOf<SetRequiredDeep<{'-2'?: string; '1.5'?: string}, -2 | 1.5>>().toBe<{'-2': string; '1.5': string}>();
+expectTypeOf<SetRequiredDeep<{'0'?: string; '00'?: string}, 0>>().toBe<{'0': string; '00'?: string}>();
+expectTypeOf<SetRequiredDeep<{'0'?: string}, 9>>().toBe<{'0'?: string}>();
+expectTypeOf<SetRequiredDeep<{'0'?: string} | {other: number}, 0>>().toBe<{'0': string} | {other: number}>();
+expectTypeOf<SetRequiredDeep<{'0'?: any; '1'?: unknown; '2'?: never}, 0 | 1 | 2>>().toBe<{'0': any; '1': unknown; '2': never}>();
+expectTypeOf<SetRequiredDeep<{'0'?: string; nested: {'1'?: string}}, 0 | 'nested.1'>>().toBe<{'0': string; nested: {'1': string}}>();
+
+// Broad numeric paths use the same template matching as `${number}`, including numeric-looking string keys.
+expectTypeOf<SetRequiredDeep<{'0'?: string; '01'?: number; other?: boolean}, number>>().toBe<{'0': string; '01': number; other?: boolean}>();

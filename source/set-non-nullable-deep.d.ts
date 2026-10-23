@@ -1,10 +1,9 @@
-import type {NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {NonRecursiveType, NormalizedKeys, SimplifyObject} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
-import type {StringToNumber} from './string-to-number.d.ts';
 import type {UnionToTuple} from './union-to-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {SetRequiredDeep} from './set-required-deep.d.ts'; // For `@link`
@@ -93,6 +92,6 @@ type SetNonNullableDeepSinglePath<BaseType, KeyPath> =
 					? SetNonNullableDeepSinglePath<BaseType[Key], RestPath>
 					: BaseType[Key];
 			}
-			: SimplifyObject<SetNonNullable<BaseType, (KeyPath | StringToNumber<KeyPath & string>) & keyof BaseType>>;
+			: SimplifyObject<SetNonNullable<BaseType, NormalizedKeys<KeyPath & PropertyKey> & keyof BaseType>>;
 
 export {};
