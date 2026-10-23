@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Split, StringRepeat, TupleOf} from '../index.d.ts';
+import type {Opaque, Split, StringRepeat, Tagged, TupleOf} from '../index.d.ts';
 
 declare function split<
 	S extends string,
@@ -68,3 +68,29 @@ expectTypeOf<Split<NineHundredNinetyNineZeroes, ''>>().toBe<TupleOf<999, '0'>>()
 expectTypeOf<Split<string, ',', {strictLiteralChecks: false}>>().toBe<[string]>();
 declare const numberPatternSplit: [`v${number}`];
 expectTypeOf<Split<`v${number}`, '.', {strictLiteralChecks: false}>>().toBe<typeof numberPatternSplit>();
+
+// Brands on a string or its delimiter do not change how the underlying characters split.
+expectTypeOf<Split<Tagged<'foo,bar', 'Text'>, ','>>().toBe<['foo', 'bar']>();
+expectTypeOf<Split<'foo,bar', Tagged<',', 'Delimiter'>>>().toBe<['foo', 'bar']>();
+expectTypeOf<Split<Tagged<'ab', 'Text'>, Tagged<'', 'Delimiter'>>>().toBe<['a', 'b']>();
+
+expectTypeOf<Split<Opaque<'foo::bar::', 'Text'>, Opaque<'::', 'Delimiter'>>>().toBe<['foo', 'bar', '']>();
+expectTypeOf<Split<Tagged<Tagged<'foo,bar', 'First'>, 'Second'>, ','>>().toBe<['foo', 'bar']>();
+expectTypeOf<Split<'foo,bar' & {readonly __brand: unique symbol}, ','>>().toBe<['foo', 'bar']>();
+expectTypeOf<Split<Tagged<'a,b' | 'c,d', 'Text'>, Tagged<',' | ';', 'Delimiter'>>>().toBe<['a', 'b'] | ['a,b'] | ['c', 'd'] | ['c,d']>();
+expectTypeOf<Split<Tagged<'', 'Text'>, Tagged<'', 'Delimiter'>>>().toBe<[]>();
+expectTypeOf<Split<Tagged<'', 'Text'>, ','>>().toBe<['']>();
+expectTypeOf<Split<Tagged<'a,,b', 'Text'>, ','>>().toBe<['a', '', 'b']>();
+expectTypeOf<Split<Tagged<'foo', 'Text'>, ','>>().toBe<['foo']>();
+expectTypeOf<Split<Tagged<string, 'Text'>, ','>>().toBe<string[]>();
+expectTypeOf<Split<'foo,bar', Tagged<string, 'Delimiter'>>>().toBe<string[]>();
+expectTypeOf<Split<Tagged<`foo,${string}`, 'Text'>, ','>>().toBe<string[]>();
+expectTypeOf<Split<Tagged<`foo,${string}`, 'Text'>, ',', {strictLiteralChecks: false}>>().toBe<['foo', string]>();
+expectTypeOf<Split<any, ','>>().toBe<string[]>();
+expectTypeOf<Split<'foo', any>>().toBe<string[]>();
+expectTypeOf<Split<never, ','>>().toBe<never>();
+expectTypeOf<Split<'foo', never>>().toBe<never>();
+// @ts-expect-error
+expectTypeOf<Split<unknown, ','>>();
+// @ts-expect-error
+expectTypeOf<Split<'foo', unknown>>();

@@ -1,5 +1,5 @@
 import type {And} from './and.d.ts';
-import type {ApplyDefaultOptions, Not} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, Not, UnwrapBrand} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Or} from './or.d.ts';
 
@@ -64,7 +64,7 @@ export type Split<
 	Delimiter extends string,
 	Options extends SplitOptions = {},
 > =
-	_Split<S, Delimiter, ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>>;
+	_Split<S extends object ? UnwrapBrand<S> : S, Delimiter extends object ? UnwrapBrand<Delimiter> : Delimiter, ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>>;
 
 type _Split<
 	S extends string,
