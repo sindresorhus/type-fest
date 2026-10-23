@@ -175,3 +175,63 @@ expectTypeOf<Replace<Tagged<'abc', 'Text'>, any, 'x'>>().toBe<string>();
 expectTypeOf<Replace<'abc', unknown, 'x'>>();
 // @ts-expect-error
 expectTypeOf<Replace<'abc', 'b', unknown>>();
+
+// A partially known input can contain an earlier match or lose its casing constraint.
+expectTypeOf<'file.js.ts'>().toBeAssignableTo<Replace<`${string}.ts`, '.ts', '.js'>>();
+expectTypeOf<'bBC'>().toBeAssignableTo<Replace<Uppercase<string>, 'A', 'b'>>();
+expectTypeOf<'bBC'>().toBeAssignableTo<Replace<Uppercase<string>, 'A', 'b', {all: true}>>();
+
+// Unknown input parts may hold additional matches, even for all-match and uncertain options.
+expectTypeOf<Replace<`${string}.ts`, '.ts', '.js'>>().toBe<string>();
+expectTypeOf<Replace<`${string}.ts`, '.ts', '.js', {all: true}>>().toBe<string>();
+expectTypeOf<Replace<`${string}.ts`, '.ts', '.js', {all: boolean}>>().toBe<string>();
+expectTypeOf<Replace<`${string}.ts`, '.ts', '.js', {all: false} | {all: true}>>().toBe<string>();
+expectTypeOf<Replace<Lowercase<string>, 'a', 'A'>>().toBe<string>();
+expectTypeOf<Replace<Capitalize<string>, 'A', 'a'>>().toBe<string>();
+expectTypeOf<Replace<`${number}`, '1', 'x'>>().toBe<string>();
+expectTypeOf<Replace<`prefix${string}`, 'prefix', 'changed'>>().toBe<string>();
+expectTypeOf<Replace<'file.ts' | `${string}.ts`, '.ts', '.js'>>().toBe<string>();
+expectTypeOf<Replace<Tagged<`${string}.ts`, 'Filename'>, '.ts', '.js'>>().toBe<string>();
+expectTypeOf<Replace<Opaque<Uppercase<string>, 'UppercaseText'>, 'A', 'b', {all: true}>>().toBe<string>();
+expectTypeOf<Replace<Tagged<`prefix${string}`, 'Text'>, Tagged<'prefix', 'Search'>, Tagged<'changed', 'Replacement'>>>().toBe<string>();
+
+// Exact literals and placeholder searches still use their dedicated matchers.
+expectTypeOf<Replace<'file.ts.ts', '.ts', '.js'>>().toBe<'file.js.ts'>();
+expectTypeOf<Replace<'file.ts.ts', '.ts', '.js', {all: true}>>().toBe<'file.js.js'>();
+expectTypeOf<Replace<'ABC', 'A', 'b'>>().toBe<'bBC'>();
+expectTypeOf<Replace<'123', '1', 'x'>>().toBe<'x23'>();
+expectTypeOf<Replace<`item.${number}`, `${number}`, 'id'>>().toBe<'item.id'>();
+expectTypeOf<Replace<Uppercase<string>, '', 'prefix:'>>().toBe<`prefix:${Uppercase<string>}`>();
+expectTypeOf<Replace<Uppercase<string>, '', 'prefix:', {all: true}>>().toBe<string>();
+expectTypeOf<Replace<'abc', 'b', `${number}`>>().toBe<`a${number}c`>();
+
+// Impossible inputs or operands remain impossible, rather than taking a wide-input fallback.
+expectTypeOf<Replace<never, 'a', 'x'>>().toBe<never>();
+expectTypeOf<Replace<never, 'a', 'x', {all: true}>>().toBe<never>();
+expectTypeOf<Replace<Uppercase<string>, never, 'x'>>().toBe<never>();
+expectTypeOf<Replace<Uppercase<string>, 'A', never>>().toBe<never>();
+expectTypeOf<Replace<any, 'A', 'b'>>().toBe<string>();
+expectTypeOf<Replace<Uppercase<string>, 'A', 'b', never>>().toBe<string>();
+// @ts-expect-error Unknown inputs do not satisfy the string constraint.
+type UnknownPartialInput = Replace<unknown, 'A', 'b'>;
+
+declare const filename: `${string}.ts`;
+expectTypeOf(replace(filename, '.ts', '.js')).toBe<string>();
+expectTypeOf(replaceAll(filename, '.ts', '.js')).toBe<string>();
+
+// Generic input and options retain their supported return constraints and reductions.
+function _stringResult<Input extends string, Search extends string, Replacement extends string, Options extends {all?: boolean}>(value: Replace<Input, Search, Replacement, Options>): string {
+	return value;
+}
+
+function _unchangedWithOptions<Options extends {all?: boolean}>(value: Replace<'abc', 'z', 'x', Options>): 'abc' {
+	return value;
+}
+
+function _singleMatchWithOptions<Options extends {all?: boolean}>(value: Replace<'abc', 'b', 'x', Options>): 'axc' {
+	return value;
+}
+
+function _neverSearch<Input extends string, Options extends {all?: boolean}>(value: Replace<Input, never, 'x', Options>): never {
+	return value;
+}

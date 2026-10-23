@@ -13,6 +13,7 @@ type DefaultReplaceOptions = {
 Represents a string with some or all matches replaced by a replacement.
 
 Known limitations:
+- A non-literal `Input`, like `${string}.ts` or `Uppercase<string>`, returns `string` for a non-empty literal `Search`. An unknown part can contain the first match, so its position and the resulting shape cannot be determined.
 - The replacement is inserted literally. `String.prototype.replace()` also expands `$$`, `$&`, `$\``, and `$'` in the replacement, so `Replace<'abc', 'b', '$&'>` is `'a$&c'` where the runtime gives `'abc'`. Write the pattern itself when you need it.
 - A non-literal `Search`, like `${number}` or `Uppercase<string>`, uses TypeScript's prefix inference at each character. It is meant for replacing the same placeholder in a template literal type, like ``Replace<`item.${number}`, `${number}`, 'id'>``, which is `'item.id'`. In concrete numeric text, `${number}` and `${bigint}` match individual digits, leaving signs and decimal points in place, so ``Replace<'a-12b', `${number}`, 'N', {all: true}>`` is `'a-NNb'`. A lone whitespace character is never a match, even though TypeScript accepts it as a `${number}`. The input is walked one character at a time, so it is limited to about 1000 characters.
 
@@ -84,7 +85,6 @@ type _Replace<
 	Search extends string,
 	Replacement extends string,
 	All extends boolean,
-	Accumulator extends string = '',
 > = Search extends string // For distributing `Search`
 	? Replacement extends string // For distributing `Replacement`
 		? string extends Search
@@ -96,19 +96,34 @@ type _Replace<
 				? All extends true
 					? Input extends string // For distributing `Input`
 						? IsStringLiteral<Input> extends true
-							? _ReplaceEmptySearch<Input, Replacement, `${Accumulator}${Replacement}`>
+							? _ReplaceEmptySearch<Input, Replacement, Replacement>
 							: string
 						: never
-					: `${Accumulator}${Replacement}${Input}`
+					: `${Replacement}${Input}`
 				: IsStringLiteral<Search> extends true
-					? Input extends `${infer Head}${Search}${infer Tail}`
-						? All extends true
-							? _Replace<Tail, Search, Replacement, All, `${Accumulator}${Head}${Replacement}`>
-							: `${Head}${Replacement}${Tail}`
-						: `${Accumulator}${Input}`
-					: _ReplaceNonLiteralSearch<Input, Search, Replacement, All, Accumulator>
+					? Input extends string // Distribute before checking whether the input is fully known, preserving never.
+						// An unknown part can contain an earlier match, so pattern inference cannot predict the replaced output.
+						? IsStringLiteral<Input> extends true
+							// The string intersection starts a fresh recursion budget while preserving the string return constraint.
+							? _ReplaceLiteralSearch<Input, Search, Replacement, All, ''> & string
+							: string
+						: never
+					: _ReplaceNonLiteralSearch<Input, Search, Replacement, All, ''>
 		: never
 	: never;
+
+// The input is already a literal, so recursive tails do not repeat the boundary checks.
+type _ReplaceLiteralSearch<
+	Input extends string,
+	Search extends string,
+	Replacement extends string,
+	All extends boolean,
+	Accumulator extends string,
+> = Input extends `${infer Head}${Search}${infer Tail}`
+	? All extends true
+		? _ReplaceLiteralSearch<Tail, Search, Replacement, All, `${Accumulator}${Head}${Replacement}`>
+		: `${Head}${Replacement}${Tail}`
+	: `${Accumulator}${Input}`;
 
 /**
 Replaces a non-literal `Search`, like `${number}` or `Uppercase<string>`, by checking whether `Input` starts with it at each character. The pattern in `_Replace` cannot do this, because TypeScript infers an empty head and then fails to match the rest. Literal searches skip this, because walking one character at a time limits the input length.
