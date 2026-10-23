@@ -296,3 +296,36 @@ cleanedRows.rows[0].kept = null;
 cleanedRows.rows[0].name = null;
 // @ts-expect-error Every selected recursive-array element must have a non-nullable value.
 cleanedTree.children.push({value: null, next: null, children: []});
+
+// Narrowing a declared descendant leaves unrelated dynamic rows nullable.
+type IndexedNullableRows = {[key: string]: {id: number | null}; known: {id: number | null}};
+const nonNullableKnownRow: SetNonNullableDeep<IndexedNullableRows, 'known.id'> = {known: {id: 1}, dynamic: {id: null}};
+expectTypeOf(nonNullableKnownRow.known.id).toBe<number>();
+expectTypeOf<SetNonNullableDeep<IndexedNullableRows, 'known.id'>[string]>().toBe<{id: number | null}>();
+
+// Declared numeric and pattern keys narrow independently of their covering signature.
+type NumericNullableRows = {[key: number]: {id: number | null}; 0: {id: number | null}};
+const nonNullableNumericRow: SetNonNullableDeep<NumericNullableRows, '0.id'> = {0: {id: 1}, 1: {id: null}};
+expectTypeOf(nonNullableNumericRow[0].id).toBe<number>();
+expectTypeOf<SetNonNullableDeep<NumericNullableRows, '0.id'>[number]>().toBe<{id: number | null}>();
+type PatternNullableRows = {[key: `item${string}`]: {id: number | null}; readonly itemKnown: {readonly id: number | null}};
+const nonNullablePatternRow: SetNonNullableDeep<PatternNullableRows, 'itemKnown.id'> = {itemKnown: {id: 1}, itemOther: {id: null}};
+expectTypeOf(nonNullablePatternRow.itemKnown.id).toBe<number>();
+// @ts-expect-error A selected descendant keeps its original readonly modifier.
+nonNullablePatternRow.itemKnown.id = 1;
+// @ts-expect-error Only the declared selected descendant must reject null.
+const nullKnown: SetNonNullableDeep<IndexedNullableRows, 'known.id'> = {known: {id: null}, dynamic: {id: null}};
+
+function cleanDeclaredRow<Value>(id: NonNullable<Value>): SetNonNullableDeep<{[key: string]: {id: Value | null}; known: {id: Value | null}}, 'known.id'> {
+	return {known: {id}, dynamic: {id: null}};
+}
+
+expectTypeOf(cleanDeclaredRow<string>('selected').known.id).toBe<string>();
+expectTypeOf<SetNonNullableDeep<Record<string, {id: number | null}>, 'dynamic.id'>[string]>().toBe<{id: number}>();
+
+// Enum declarations use the same printed property name as a string path.
+enum DeclaredRowKey {
+	Known = 'known',
+}
+const enumDeclaredRow: SetNonNullableDeep<{[key: string]: {id: number | null}; [DeclaredRowKey.Known]: {id: number | null}}, 'known.id'> = {known: {id: 1}, dynamic: {id: null}};
+expectTypeOf(enumDeclaredRow.known.id).toBe<number>();

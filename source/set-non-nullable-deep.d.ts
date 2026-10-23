@@ -2,6 +2,7 @@ import type {NonRecursiveType, NormalizedKeys, SimplifyObject, UnwrapPathBrand} 
 import type {IsAny} from './is-any.d.ts';
 import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
 import type {SetRequiredDeep} from './set-required-deep.d.ts'; // For `@link`
@@ -81,7 +82,7 @@ type SetNonNullableDeepHelper<BaseType, KeyPaths> =
 			: ([TerminalKeys<KeyPaths>] extends [never]
 				? BaseType
 				: SimplifyObject<SetNonNullable<BaseType, TerminalKeys<KeyPaths> & keyof BaseType>>) extends infer Result
-				? {[Key in keyof Result]: SetNonNullableDeepHelper<Result[Key], SubPaths<KeyPaths, Key>>}
+				? {[Key in keyof Result]: SetNonNullableDeepHelper<Result[Key], SubPaths<KeyPaths, Key, Result>>}
 				: never;
 
 /**
@@ -92,11 +93,15 @@ type TerminalKeys<KeyPaths> = KeyPaths extends `${string}.${string}`
 	: NormalizedKeys<KeyPaths & PropertyKey>;
 
 /**
-Finds the subpaths whose first property matches `Key` in `BaseType`.
+Finds the subpaths whose first property matches `Key` in `BaseType`. A declared property is selected on its own, without also changing its covering index signature.
 */
-type SubPaths<KeyPaths, Key> = KeyPaths extends `${infer Property}.${infer RestPath}`
+type SubPaths<KeyPaths, Key, BaseType> = KeyPaths extends `${infer Property}.${infer RestPath}`
 	? Property extends `${Key & (string | number)}`
-		? RestPath
+		? Property extends `${keyof OmitIndexSignature<BaseType> & (string | number)}`
+			? `${Key & (string | number)}` extends Property
+				? RestPath
+				: never
+			: RestPath
 		: never
 	: never;
 

@@ -261,3 +261,36 @@ type UnknownBrandedPath = SetRequiredDeep<{a?: string}, unknown>;
 
 // A wide autocomplete alternative must not erase the known nested selection.
 expectTypeOf<SetRequiredDeep<{a: {b?: string; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {b: string; c?: number}; d: string}>();
+
+// Requiring a declared descendant leaves unrelated dynamic rows optional.
+type IndexedOptionalRows = {[key: string]: {id?: number}; known: {id?: number}};
+const requiredKnownRow: SetRequiredDeep<IndexedOptionalRows, 'known.id'> = {known: {id: 1}, dynamic: {}};
+expectTypeOf(requiredKnownRow.known.id).toBe<number>();
+expectTypeOf<SetRequiredDeep<IndexedOptionalRows, 'known.id'>[string]>().toBe<{id?: number}>();
+
+// Declared numeric and pattern keys narrow independently of their covering signature.
+type NumericOptionalRows = {[key: number]: {id?: number}; 0: {id?: number}};
+const requiredNumericRow: SetRequiredDeep<NumericOptionalRows, '0.id'> = {0: {id: 1}, 1: {}};
+expectTypeOf(requiredNumericRow[0].id).toBe<number>();
+expectTypeOf<SetRequiredDeep<NumericOptionalRows, '0.id'>[number]>().toBe<{id?: number}>();
+type PatternOptionalRows = {[key: `item${string}`]: {id?: number}; readonly itemKnown: {readonly id?: number}};
+const requiredPatternRow: SetRequiredDeep<PatternOptionalRows, 'itemKnown.id'> = {itemKnown: {id: 1}, itemOther: {}};
+expectTypeOf(requiredPatternRow.itemKnown.id).toBe<number>();
+// @ts-expect-error A selected descendant keeps its original readonly modifier.
+requiredPatternRow.itemKnown.id = 1;
+// @ts-expect-error A declared selected descendant must be present, while a dynamic row may omit it.
+const missingRequiredKnown: SetRequiredDeep<IndexedOptionalRows, 'known.id'> = {known: {}, dynamic: {}};
+
+function requireDeclaredRow<Value>(id: Value): SetRequiredDeep<{[key: string]: {id?: Value}; known: {id?: Value}}, 'known.id'> {
+	return {known: {id}, dynamic: {}};
+}
+
+expectTypeOf(requireDeclaredRow('selected').known.id).toBe<string>();
+expectTypeOf<SetRequiredDeep<Record<string, {id?: number}>, 'dynamic.id'>[string]>().toBe<{id: number}>();
+
+// Enum declarations use the same printed property name as a string path.
+enum DeclaredRowKey {
+	Known = 'known',
+}
+const enumDeclaredRow: SetRequiredDeep<{[key: string]: {id?: number}; [DeclaredRowKey.Known]: {id?: number}}, 'known.id'> = {known: {id: 1}, dynamic: {}};
+expectTypeOf(enumDeclaredRow.known.id).toBe<number>();
