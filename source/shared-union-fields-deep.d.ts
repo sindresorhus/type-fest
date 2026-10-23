@@ -101,7 +101,7 @@ export type SharedUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOp
 					// With no fixed length or prefix, the tuple builder only appends a rest array. Build it directly so recursive elements stay lazy.
 					? [TupleLength<Union>, StaticPartOfArray<Union>['length']] extends [never, 0]
 						? If<IsArrayReadonly<Union>, ReadonlyArray<SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>, Array<SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>>
-						: SetArrayAccess<SharedArrayUnionFieldsDeep<Union, OptionsWithDefaults>, IsArrayReadonly<Union>>
+						: SharedArrayUnionFieldsDeep<Union, OptionsWithDefaults>
 					: Union
 				: [Union] extends [object]
 					? SharedObjectUnionFieldsDeep<Union, OptionsWithDefaults>

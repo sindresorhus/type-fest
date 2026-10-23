@@ -192,3 +192,36 @@ expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<any[]>>().toBe<any[]>();
 expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<never[]>>().toBe<never[]>();
 expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly unknown[]>>().toBe<readonly unknown[]>();
 expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<Array<{value: unknown} | {value: any}>>>().toBe<Array<{value: any}>>();
+
+// Tuple reconstruction restores readonly once while recursively sharing each position.
+type ReadonlyTupleAlternatives = readonly [{shared: string; left: true}, {value: 1}] | readonly [{shared: number; right: true}, {value: 2}];
+type ReadonlySharedTuple = readonly [{shared: string | number}, {value: 1 | 2}];
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<ReadonlyTupleAlternatives>>().toBe<ReadonlySharedTuple>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[{shared: string; left: true}] | [{shared: number; right: true}]>>().toBe<[{shared: string | number}]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [number, string?] | readonly [number, boolean?]>>().toBe<readonly [number]>();
+
+// Mixed readonly alternatives continue to allow both forms of the shared tuple.
+type MixedReadonlyTupleAlternatives = readonly [{shared: string; left: true}] | [{shared: number; right: true}];
+type MixedReadonlySharedTuple = SharedUnionFieldsDeepRecurseIntoArrays<MixedReadonlyTupleAlternatives>;
+expectTypeOf<readonly [{shared: string | number}]>().toBeAssignableTo<MixedReadonlySharedTuple>();
+expectTypeOf<[{shared: string | number}]>().toBeAssignableTo<MixedReadonlySharedTuple>();
+expectTypeOf<MixedReadonlySharedTuple>().toBeAssignableTo<readonly [{shared: string | number}]>();
+// A result that may be readonly is not assignable to a mutable array.
+expectTypeOf<MixedReadonlySharedTuple>().not.toBeAssignableTo<Array<{shared: string | number}>>();
+
+// Readonly on the owning property and on nested tuples is independent.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<{
+	readonly rows?: readonly [readonly [{value: string; left: true}]];
+} | {
+	readonly rows?: readonly [readonly [{value: number; right: true}]];
+}>>().toBe<{readonly rows?: readonly [readonly [{value: string | number}]]}>();
+
+// Fixed prefixes with a rest still keep their tuple shape and access mode.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [number, ...string[]] | readonly [boolean, ...Date[]]>>()
+	.toBe<readonly [number | boolean, ...Array<string | Date>]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[number, ...string[]] | [boolean, ...Date[]]>>()
+	.toBe<[number | boolean, ...Array<string | Date>]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [any, unknown, never]>>().toBe<readonly [any, unknown, never]>();
+
+// Turning recursion off returns the original alternatives without rebuilding tuples.
+expectTypeOf<SharedUnionFieldsDeep<ReadonlyTupleAlternatives, {recurseIntoArrays: false}>>().toBe<ReadonlyTupleAlternatives>();
