@@ -1,4 +1,4 @@
-import type {NormalizedKeys, ObjectValue, ToString} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, NormalizedKeys, ObjectValue, ToString} from './internal/index.d.ts';
 import type {ArrayElement} from './array-element.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
@@ -84,12 +84,12 @@ export type Exact<ParameterType, InputType> =
 				// If the parameter is a Function, return it as is because this type is not capable of handling function, leave it to TypeScript
 				: ParameterType extends Function ? ParameterType
 					: ParameterType extends readonly unknown[]
-						? number extends ParameterType['length']
+						? IsArrayOfUnknownLength<ParameterType> extends true
 							// Convert union of array to array of union: A[] & B[] => (A & B)[]
 							? ParameterType extends unknown[]
 								? Array<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
 								: ReadonlyArray<Exact<ArrayElement<ParameterType>, ArrayElement<InputType>>>
-							// A tuple has a fixed length, so it is mapped position by position to keep its shape, its `readonly` and reject excess elements.
+							// A tuple has fixed positions even when it includes a rest element, so map it position by position to keep its shape, its `readonly` and reject excess elements.
 							: ExactProperties<ParameterType, InputType>
 						: ExactObject<ParameterType, InputType>;
 

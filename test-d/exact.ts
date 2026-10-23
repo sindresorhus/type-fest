@@ -768,3 +768,85 @@ const acceptNumericProperty = <Input extends Exact<{0: string}, Input>>(input: I
 expectTypeOf(acceptNumericProperty({'0': 'value'} as const)).toBe<{readonly '0': 'value'}>();
 // @ts-expect-error
 acceptNumericProperty({'0': 'value', extra: true});
+
+// A variadic tuple still requires its fixed positions in the declared order.
+const acceptVariadicPrefix = <Input extends Exact<[number, ...string[]], Input>>(input: Input) => input;
+// @ts-expect-error A required prefix cannot be omitted.
+acceptVariadicPrefix([]);
+// @ts-expect-error The first entry must be a number.
+acceptVariadicPrefix(['a', 1]);
+
+const acceptVariadicRecords = <Input extends Exact<[header: {id: number}, ...rows: Array<{name: string}>], Input>>(input: Input) => input;
+// @ts-expect-error Headers and rows cannot exchange positions.
+acceptVariadicRecords([{name: 'a'}, {id: 1}]);
+
+expectTypeOf(acceptVariadicPrefix([1, 'a'] as [1, 'a'])).toBe<[1, 'a']>();
+acceptVariadicPrefix([1]);
+const readonlyVariadicPrefixInput = [1, 'a'] as const;
+// @ts-expect-error Readonly inputs cannot satisfy a mutable tuple.
+acceptVariadicPrefix(readonlyVariadicPrefixInput);
+acceptVariadicRecords([{id: 1}]);
+acceptVariadicRecords([{id: 1}, {name: 'a'}, {name: 'b'}]);
+// @ts-expect-error The fixed position is checked recursively.
+acceptVariadicRecords([{id: 1, extra: true}]);
+// @ts-expect-error The rest positions are checked recursively too.
+acceptVariadicRecords([{id: 1}, {name: 'a', extra: true}]);
+
+const acceptVariadicSuffix = <Input extends Exact<[...string[], number], Input>>(input: Input) => input;
+acceptVariadicSuffix([1]);
+acceptVariadicSuffix(['a', 'b', 1]);
+// @ts-expect-error The last entry must be a number.
+acceptVariadicSuffix([1, 'a']);
+// @ts-expect-error The required suffix cannot be omitted.
+acceptVariadicSuffix([]);
+
+const acceptVariadicMiddle = <Input extends Exact<[number, ...string[], boolean], Input>>(input: Input) => input;
+acceptVariadicMiddle([1, true]);
+acceptVariadicMiddle([1, 'a', true]);
+// @ts-expect-error The fixed positions must retain their types and order.
+acceptVariadicMiddle([true, 'a', 1]);
+// @ts-expect-error Both fixed positions are required.
+acceptVariadicMiddle([1]);
+
+const acceptReadonlyVariadic = <Input extends Exact<readonly [{id: number}, ...Array<{name: string}>], Input>>(input: Input) => input;
+acceptReadonlyVariadic([{id: 1}, {name: 'a'}] as const);
+acceptReadonlyVariadic([{id: 1}]);
+// @ts-expect-error The readonly prefix still has to be a header.
+acceptReadonlyVariadic([{name: 'a'}, {id: 1}] as const);
+// @ts-expect-error Readonly rows still reject excess properties.
+acceptReadonlyVariadic([{id: 1}, {name: 'a', extra: true}] as const);
+
+const acceptOptionalVariadic = <Input extends Exact<[header?: {id: number}, ...rows: Array<{name: string}>], Input>>(input: Input) => input;
+acceptOptionalVariadic([]);
+acceptOptionalVariadic([{id: 1}]);
+acceptOptionalVariadic([{id: 1}, {name: 'a'}]);
+// @ts-expect-error An optional fixed position retains its recursive checks.
+acceptOptionalVariadic([{id: 1, extra: true}]);
+// @ts-expect-error The rest element keeps its recursive checks after an optional position.
+acceptOptionalVariadic([{id: 1}, {name: 'a', extra: true}]);
+
+// A tuple consisting only of a rest element remains an ordinary array.
+const acceptRestOnly = <Input extends Exact<[...Array<{name: string}>], Input>>(input: Input) => input;
+acceptRestOnly([]);
+acceptRestOnly([{name: 'a'}, {name: 'b'}]);
+// @ts-expect-error
+acceptRestOnly([{name: 'a', extra: true}]);
+
+// Each alternative keeps its own fixed positions and recursive row checks.
+type VariadicAlternatives = [kind: 'text', ...rows: Array<{text: string}>] | [kind: 'count', ...rows: Array<{count: number}>];
+const acceptVariadicUnion = <Input extends Exact<VariadicAlternatives, Input>>(input: Input) => input;
+acceptVariadicUnion(['text', {text: 'a'}]);
+acceptVariadicUnion(['count', {count: 1}]);
+declare const validVariadicUnion: ['text', {text: 'a'}] | ['count', {count: 1}];
+acceptVariadicUnion(validVariadicUnion);
+// @ts-expect-error A row cannot come from a different alternative.
+acceptVariadicUnion(['text', {count: 1}]);
+// @ts-expect-error An input union with an excess field is rejected.
+acceptVariadicUnion({} as ['text', {text: 'a'}] | ['count', {count: 1; extra: true}]);
+
+// Element sentinel types do not change the required tuple shape.
+expectTypeOf<Exact<[unknown, ...any[]], [1, 'a']>>().toBe<[unknown, ...any[]]>();
+expectTypeOf<Exact<[any, ...unknown[]], [1, 'a']>>().toBe<[any, ...unknown[]]>();
+expectTypeOf<Exact<[never, ...string[]], [never]>>().toBe<[never, ...string[]]>();
+expectTypeOf<Exact<[number, ...string[]], unknown>>().toBe<[number, ...string[]]>();
+expectTypeOf<Exact<[number, ...string[]], never>>().toBe<[number, ...string[]]>();
