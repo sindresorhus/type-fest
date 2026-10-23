@@ -1,7 +1,5 @@
 import type {IsEqual} from '../is-equal.d.ts';
-import type {TupleOf} from '../tuple-of.d.ts';
 import type {Trim} from '../trim.d.ts';
-import type {StringLength} from '../string-length.d.ts';
 import type {Split} from '../split.d.ts';
 import type {Whitespace} from './characters.d.ts';
 import type {UnwrapBrand} from './object.d.ts';
@@ -183,14 +181,16 @@ type C = PositiveIntegerStringGt<'1', '500'>;
 //=> false
 ```
 */
-type PositiveIntegerStringGt<A extends string, B extends string> =
-	[TupleOf<StringLength<A>, 0>, TupleOf<StringLength<B>, 0>] extends infer R extends [readonly unknown[], readonly unknown[]]
-		? R[0] extends [...R[1], ...infer Remain extends readonly unknown[]]
-			? 0 extends Remain['length']
-				? SameLengthPositiveNumericStringGt<A, B>
-				: true
-			: false
-		: never;
+type PositiveIntegerStringGt<A extends string, B extends string> = CompareStringLength<A, B> extends infer LengthResult extends boolean | 'equal'
+	? LengthResult extends 'equal' ? SameLengthPositiveNumericStringGt<A, B> : LengthResult
+	: never;
+
+// Walk both strings together until one ends, without building counting tuples.
+type CompareStringLength<Left extends string, Right extends string> = Left extends `${string}${infer LeftRest}`
+	? Right extends `${string}${infer RightRest}`
+		? CompareStringLength<LeftRest, RightRest>
+		: true
+	: Right extends '' ? 'equal' : false;
 
 /**
 Returns a boolean for whether the fractional part `A` is greater than `B`. The first differing character decides, and a part that runs out of characters first is the smaller one, so `'5'` is less than `'50'` while `'50'` is greater than `'5'`. TypeScript never prints a numeric literal with a trailing zero, so the two are the same value in practice and the difference cannot be reached.

@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, LiteralUnion, Opaque, Tagged} from '../../index.d.ts';
+import type {IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
 import type {ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
@@ -74,3 +74,34 @@ expectTypeOf<UnwrapPathBrand<Tagged<number, 'Index'>>>().toBe<number>();
 expectTypeOf<UnwrapPathBrand<any>>().toBe<any>();
 expectTypeOf<UnwrapPathBrand<never>>().toBe<never>();
 expectTypeOf<UnwrapPathBrand<unknown>>().toBe<unknown>();
+
+// Integer lengths decide before digit values; equal lengths compare the first differing digit.
+expectTypeOf<PositiveNumericStringGt<'100', '99'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'99', '100'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'12', '129'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'129', '12'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'987', '987'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'100001', '100000'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'299', '300'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'10.01', '9.99'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'9.99', '10.01'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'0.009', '0.01'>>().toBe<false>();
+
+// Numeric text keeps all digits beyond JavaScript's integer precision.
+expectTypeOf<PositiveNumericStringGt<'18446744073709551616', '18446744073709551615'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'10000000000000000000', '9999999999999999999'>>().toBe<true>();
+type LongIntegerPrefix = StringRepeat<'1', 128>;
+expectTypeOf<PositiveNumericStringGt<`${LongIntegerPrefix}2`, `${LongIntegerPrefix}1`>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<`${LongIntegerPrefix}1`, `${LongIntegerPrefix}2`>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<never, '1'>>().toBe<never>();
+expectTypeOf<PositiveNumericStringGt<'1', never>>().toBe<never>();
+// @ts-expect-error Numeric text must be a string.
+type UnknownNumericText = PositiveNumericStringGt<unknown, '1'>;
+
+function _numericTextResult<Left extends `${number}`, Right extends `${number}`>(result: PositiveNumericStringGt<Left, Right>): boolean {
+	return result;
+}
+
+declare function compareNumericText<Left extends `${number}`, Right extends `${number}`>(left: Left, right: Right): PositiveNumericStringGt<Left, Right>;
+expectTypeOf(compareNumericText('100', '99')).toBe<true>();
+expectTypeOf(compareNumericText('1.05', '1.5')).toBe<false>();
