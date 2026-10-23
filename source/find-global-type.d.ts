@@ -19,7 +19,10 @@ type OtherType = FindGlobalType<'other'>; //=> never (no global named 'other')
 
 @category Utilities
 */
-export type FindGlobalType<Name extends string> = typeof globalThis extends Record<Name, infer T> ? T : never;
+export type FindGlobalType<Name extends string> =
+	Name extends string // For distributing `Name`, so a missing global does not discard the globals found for other names.
+		? typeof globalThis extends Record<Name, infer T> ? T : never
+		: never;
 
 /**
 Tries to find one or more types from their globally-defined constructors.
