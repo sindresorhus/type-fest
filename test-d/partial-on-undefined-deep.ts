@@ -239,3 +239,47 @@ type OptionalRowsSettings = {rows: Array<{id: string; note: string | undefined}>
 declare function optionalArraySettings<const Recurse extends boolean>(options: {recurseIntoArrays: Recurse}): PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays: Recurse}>;
 expectTypeOf(optionalArraySettings({recurseIntoArrays: true}).rows).toBe<Array<{id: string; note?: string | undefined}>>();
 expectTypeOf(optionalArraySettings({recurseIntoArrays: false}).rows).toBe<Array<{id: string; note: string | undefined}>>();
+
+// A runtime boolean can enable recursion, so array payloads must allow its optionalized form.
+type UncertainOptionalRows = PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays: boolean}>;
+type OptionalRow = {id: string; note?: string | undefined};
+expectTypeOf<UncertainOptionalRows['rows']>().toBe<OptionalRow[]>();
+({rows: [{id: 'session'}]}) satisfies UncertainOptionalRows;
+declare const recurseIntoOptionalRows: boolean;
+expectTypeOf(optionalArraySettings({recurseIntoArrays: recurseIntoOptionalRows}).rows).toBe<OptionalRow[]>();
+
+// Both runtime branches retain required fields; only values accepting undefined become optional.
+({rows: [{id: 'session', note: undefined}]}) satisfies UncertainOptionalRows;
+expectTypeOf<{rows: Array<{note: string}>}>().not.toBeAssignableTo<UncertainOptionalRows>();
+expectTypeOf<{rows: Array<{id: number}>}>().not.toBeAssignableTo<UncertainOptionalRows>();
+expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays: true} | {recurseIntoArrays: false}>>().toBe<UncertainOptionalRows>();
+expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays?: boolean}>>().toBe<OptionalRowsSettings>();
+expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, any>>().toBe<OptionalRowsSettings>();
+expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, never>>().toBe<OptionalRowsSettings>();
+
+// The same strategy reaches readonly tuples and containers without changing their modifiers.
+type ReadonlyOptionalRow = {readonly id: string; note: string | undefined};
+type UncertainReadonlyRows = PartialOnUndefinedDeep<readonly [ReadonlyOptionalRow, ReadonlyOptionalRow?], {recurseIntoArrays: boolean}>;
+expectTypeOf<UncertainReadonlyRows>().toBe<readonly [{readonly id: string; note?: string | undefined}, {readonly id: string; note?: string | undefined}?]>();
+([{id: 'first'}]) satisfies UncertainReadonlyRows;
+declare const uncertainReadonlyRows: UncertainReadonlyRows;
+// @ts-expect-error Optionalizing another field does not make an identifier writable.
+uncertainReadonlyRows[0].id = 'changed';
+
+type ReadonlyOptionalGroups = ReadonlyMap<string, readonly ReadonlyOptionalRow[]>;
+type UncertainOptionalGroups = PartialOnUndefinedDeep<ReadonlyOptionalGroups, {recurseIntoArrays: boolean}>;
+expectTypeOf<UncertainOptionalGroups>().toBe<ReadonlyMap<string, ReadonlyArray<{readonly id: string; note?: string | undefined}>>>();
+new Map([['group', [{id: 'first'}]]]) satisfies UncertainOptionalGroups;
+
+// Generic options preserve the published constructor and reader contracts for unaffected arrays.
+function _keepOptionalArray<Options extends {recurseIntoArrays?: boolean}>(value: string[]): PartialOnUndefinedDeep<string[], Options> {
+	return value;
+}
+
+function _readOptionalArray<Options extends {recurseIntoArrays?: boolean}>(value: PartialOnUndefinedDeep<string[], Options>): string[] {
+	return value;
+}
+
+function _keepDisabledOptionalRows<Options extends {recurseIntoArrays: false}>(value: OptionalRowsSettings['rows']): PartialOnUndefinedDeep<OptionalRowsSettings['rows'], Options> {
+	return value;
+}

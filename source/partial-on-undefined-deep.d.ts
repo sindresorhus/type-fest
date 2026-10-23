@@ -9,6 +9,8 @@ export type PartialOnUndefinedDeepOptions = {
 	/**
 	Whether to affect the individual elements of arrays and tuples.
 
+	A required `boolean` flag includes the recursively transformed form, since it may be `true`.
+
 	@default false
 	*/
 	readonly recurseIntoArrays?: boolean;
@@ -67,7 +69,7 @@ Utility type to get the value type by key and recursively call `PartialOnUndefin
 type PartialOnUndefinedDeepValue<T, Options extends Required<PartialOnUndefinedDeepOptions>> = T extends NonRecursiveType
 	? T
 	: T extends ReadonlyArray<infer U> // Test if type is array or tuple
-		? Options['recurseIntoArrays'] extends true // Check if option is activated
+		? true extends Options['recurseIntoArrays'] // Recurse when the resolved flag can be true
 			? U[] extends T // Check if array not tuple
 				? readonly U[] extends T
 					? ReadonlyArray<PartialOnUndefinedDeepValue<U, Options>> // Readonly array treatment
