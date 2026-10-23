@@ -1,4 +1,4 @@
-import type {ReverseSign, NonNegativeIntegerSum, NonNegativeIntegerDifference} from './internal/index.d.ts';
+import type {UnwrapBrand, ReverseSign, NonNegativeIntegerSum, NonNegativeIntegerDifference} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -39,6 +39,10 @@ type G = Subtract<1_000_000, 1>;
 @category Numeric
 */
 export type Subtract<A extends number, B extends number> =
+	SubtractImplementation<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+
+// Normalize operands once before validating their digits and computing the result.
+type SubtractImplementation<A extends number, B extends number> =
 	// A decimal fraction or exponent notation is not supported, so the result is `never` rather than a silently truncated whole number.
 	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never : _Subtract<A, B>;
 

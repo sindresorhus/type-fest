@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Sum} from '../index.d.ts';
+import type {Opaque, Tagged, Sum} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Positive result
@@ -136,3 +136,30 @@ expectTypeOf<Sum<Count.Few, -1>>().toBe<2>();
 expectTypeOf<Sum<-1, Count.Few>>().toBe<2>();
 expectTypeOf<Sum<Count.Many, Count.Deficit>>().toBe<4>();
 expectTypeOf<Sum<Count.Deficit, Count.Many>>().toBe<4>();
+
+// A numeric brand does not change arithmetic on its underlying value.
+expectTypeOf<Sum<Tagged<2, 'Amount'>, 1>>().toBe<3>();
+expectTypeOf<Sum<2, Tagged<1, 'Amount'>>>().toBe<3>();
+
+expectTypeOf<Sum<Tagged<2, 'Amount'>, Tagged<1, 'Amount'>>>().toBe<3>();
+expectTypeOf<Sum<Tagged<1, 'Amount'>, Tagged<-2, 'Amount'>>>().toBe<-1>();
+expectTypeOf<Sum<Tagged<-2, 'Amount'>, Tagged<1, 'Amount'>>>().toBe<-1>();
+expectTypeOf<Sum<Tagged<-2, 'Amount'>, Tagged<-3, 'Amount'>>>().toBe<-5>();
+expectTypeOf<Sum<Tagged<0, 'Amount'>, Tagged<2, 'Amount'>>>().toBe<2>();
+expectTypeOf<Sum<Tagged<2, 'Amount'>, Tagged<0, 'Amount'>>>().toBe<2>();
+
+expectTypeOf<Sum<Opaque<5, 'Amount'>, Opaque<2, 'Amount'>>>().toBe<7>();
+expectTypeOf<Sum<Tagged<Tagged<5, 'Amount'>, 'Validated'>, 2>>().toBe<7>();
+expectTypeOf<Sum<5 & {readonly __brand: unique symbol}, 2>>().toBe<7>();
+expectTypeOf<Sum<Tagged<1 | 2, 'Amount'>, Tagged<1 | 2, 'Amount'>>>().toBe<2 | 3 | 4>();
+expectTypeOf<Sum<Tagged<number, 'Amount'>, 2>>().toBe<number>();
+expectTypeOf<Sum<Tagged<1.5, 'Amount'>, 2>>().toBe<never>();
+expectTypeOf<Sum<2, Tagged<1e-7, 'Amount'>>>().toBe<never>();
+expectTypeOf<Sum<Tagged<1e21, 'Amount'>, 2>>().toBe<never>();
+expectTypeOf<Sum<Tagged<PositiveInfinity, 'Amount'>, 2>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<Tagged<NegativeInfinity, 'Amount'>, 2>>().toBe<NegativeInfinity>();
+expectTypeOf<Sum<Tagged<PositiveInfinity, 'Amount'>, Tagged<NegativeInfinity, 'Amount'>>>().toBe<number>();
+expectTypeOf<Sum<Tagged<2, 'Amount'>, any>>().toBe<number>();
+expectTypeOf<Sum<any, Tagged<2, 'Amount'>>>().toBe<number>();
+expectTypeOf<Sum<Tagged<2, 'Amount'>, never>>().toBe<never>();
+expectTypeOf<Sum<never, Tagged<2, 'Amount'>>>().toBe<never>();

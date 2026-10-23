@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Subtract} from '../index.d.ts';
+import type {Opaque, Tagged, Subtract} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Positive result
@@ -102,3 +102,30 @@ expectTypeOf<Subtract<Count.Few, never>>().toBe<never>();
 expectTypeOf<Subtract<never, Count.Few>>().toBe<never>();
 // @ts-expect-error - Only numbers can be used in arithmetic.
 type UnknownOperand = Subtract<unknown, Count.Few>;
+
+// A numeric brand does not change arithmetic on its underlying value.
+expectTypeOf<Subtract<Tagged<5, 'Amount'>, 1>>().toBe<4>();
+expectTypeOf<Subtract<5, Tagged<1, 'Amount'>>>().toBe<4>();
+
+expectTypeOf<Subtract<Tagged<5, 'Amount'>, Tagged<1, 'Amount'>>>().toBe<4>();
+expectTypeOf<Subtract<Tagged<1, 'Amount'>, Tagged<-2, 'Amount'>>>().toBe<3>();
+expectTypeOf<Subtract<Tagged<-2, 'Amount'>, Tagged<1, 'Amount'>>>().toBe<-3>();
+expectTypeOf<Subtract<Tagged<-2, 'Amount'>, Tagged<-3, 'Amount'>>>().toBe<1>();
+expectTypeOf<Subtract<Tagged<0, 'Amount'>, Tagged<2, 'Amount'>>>().toBe<-2>();
+expectTypeOf<Subtract<Tagged<2, 'Amount'>, Tagged<0, 'Amount'>>>().toBe<2>();
+
+expectTypeOf<Subtract<Opaque<5, 'Amount'>, Opaque<2, 'Amount'>>>().toBe<3>();
+expectTypeOf<Subtract<Tagged<Tagged<5, 'Amount'>, 'Validated'>, 2>>().toBe<3>();
+expectTypeOf<Subtract<5 & {readonly __brand: unique symbol}, 2>>().toBe<3>();
+expectTypeOf<Subtract<Tagged<1 | 2, 'Amount'>, Tagged<1 | 2, 'Amount'>>>().toBe<-1 | 0 | 1>();
+expectTypeOf<Subtract<Tagged<number, 'Amount'>, 2>>().toBe<number>();
+expectTypeOf<Subtract<Tagged<1.5, 'Amount'>, 2>>().toBe<never>();
+expectTypeOf<Subtract<2, Tagged<1e-7, 'Amount'>>>().toBe<never>();
+expectTypeOf<Subtract<Tagged<1e21, 'Amount'>, 2>>().toBe<never>();
+expectTypeOf<Subtract<Tagged<PositiveInfinity, 'Amount'>, 2>>().toBe<PositiveInfinity>();
+expectTypeOf<Subtract<Tagged<NegativeInfinity, 'Amount'>, 2>>().toBe<NegativeInfinity>();
+expectTypeOf<Subtract<Tagged<PositiveInfinity, 'Amount'>, Tagged<PositiveInfinity, 'Amount'>>>().toBe<number>();
+expectTypeOf<Subtract<Tagged<2, 'Amount'>, any>>().toBe<number>();
+expectTypeOf<Subtract<any, Tagged<2, 'Amount'>>>().toBe<number>();
+expectTypeOf<Subtract<Tagged<2, 'Amount'>, never>>().toBe<never>();
+expectTypeOf<Subtract<never, Tagged<2, 'Amount'>>>().toBe<never>();

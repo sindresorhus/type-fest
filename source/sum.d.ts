@@ -1,4 +1,4 @@
-import type {ReverseSign, NonNegativeIntegerSum} from './internal/index.d.ts';
+import type {UnwrapBrand, ReverseSign, NonNegativeIntegerSum} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -36,6 +36,10 @@ type F = Sum<999_999, 1>;
 @category Numeric
 */
 export type Sum<A extends number, B extends number> =
+	SumImplementation<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+
+// Normalize operands once before validating their digits and computing the result.
+type SumImplementation<A extends number, B extends number> =
 	// A decimal fraction or exponent notation is not supported, so the result is `never` rather than a silently truncated whole number.
 	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never
 		// Every pair must reach the infinity checks independently, including opposite infinities.
