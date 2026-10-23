@@ -115,9 +115,9 @@ Get a property of each member of `BaseType`, with a marker for a member that lac
 type MemberPropertyOf<BaseType, Key extends string, Options extends Required<GetOptions>> =
 	BaseType extends null | undefined
 		? NullishMember
-		// Normalize declared numeric members before the array-like fallback, so its index signature does not hide their more precise types.
+		// Normalize declared numeric and enum members before the array-like fallback, so its index signature does not hide their more precise types. Read the declared keys, because an enum key and its literal spelling are distinct types.
 		: Key extends keyof BaseType | (BaseType extends object ? KeyAsString<OmitIndexSignature<BaseType>> : never)
-			? StrictPropertyOf<BaseType, (Key | ExactKey<OmitIndexSignature<BaseType>, Key>) & keyof BaseType, Options>
+			? StrictPropertyOf<BaseType, (Key | Extract<keyof OmitIndexSignature<BaseType>, Key | ExactKey<OmitIndexSignature<BaseType>, Key>>) & keyof BaseType, Options>
 			// Handle arrays and tuples
 			: BaseType extends readonly unknown[]
 				? Key extends `${number}`

@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {DigitCharacter, Get, Opaque, Paths, Tagged} from '../index.d.ts';
+import type {DigitCharacter, Get, GetOptions, Opaque, Paths, Tagged} from '../index.d.ts';
 
 type NonStrict = {strict: false};
 
@@ -713,3 +713,51 @@ expectTypeOf<Get<unknown, Tagged<'value', 'Path'>>>().toBe<unknown>();
 
 declare const brandedNamePath: Tagged<'name', 'Path'>;
 expectTypeOf(get({name: 'value'}, brandedNamePath)).toBe<string>();
+
+// String enum property names are read through their runtime spelling.
+enum EnumRecordKey {
+	Profile = 'profile',
+	Name = 'name',
+}
+type EnumKeyedRecord = {[EnumRecordKey.Profile]: {[EnumRecordKey.Name]: string; age: number}};
+expectTypeOf<Get<EnumKeyedRecord, 'profile.name'>>().toBe<string>();
+expectTypeOf<Get<EnumKeyedRecord, readonly ['profile', 'name']>>().toBe<string>();
+expectTypeOf<Get<EnumKeyedRecord, 'profile'>>().toBe<EnumKeyedRecord[EnumRecordKey.Profile]>();
+
+enum NumericEnumRecordKey {
+	Item = 0,
+}
+expectTypeOf<Get<{[NumericEnumRecordKey.Item]: {name: string}}, '0.name'>>().toBe<string>();
+
+expectTypeOf<Get<EnumKeyedRecord, Paths<EnumKeyedRecord>>>().toBe<EnumKeyedRecord[EnumRecordKey.Profile] | string | number>();
+expectTypeOf<Get<EnumKeyedRecord, 'profile.age'>>().toBe<number>();
+expectTypeOf<Get<EnumKeyedRecord, 'profile.name', NonStrict>>().toBe<string>();
+expectTypeOf<Get<EnumKeyedRecord, 'profile.typo'>>().toBe<unknown>();
+expectTypeOf<Get<EnumKeyedRecord, string>>().toBe<unknown>();
+expectTypeOf<Get<EnumKeyedRecord | {error: string}, 'profile.name'>>().toBe<string | undefined>();
+expectTypeOf<Get<EnumKeyedRecord | null, 'profile.name', NonStrict>>().toBe<string | undefined>();
+
+type OptionalEnumRecord = {readonly [EnumRecordKey.Profile]?: {readonly [EnumRecordKey.Name]?: string}};
+expectTypeOf<Get<OptionalEnumRecord, 'profile.name'>>().toBe<string | undefined>();
+expectTypeOf<Get<OptionalEnumRecord, 'profile'>>().toBe<OptionalEnumRecord[EnumRecordKey.Profile]>();
+
+type IndexedEnumRecord = {[key: string]: unknown; [EnumRecordKey.Profile]: {[EnumRecordKey.Name]: 'specific'}};
+expectTypeOf<Get<IndexedEnumRecord, 'profile.name'>>().toBe<'specific'>();
+expectTypeOf<Get<{[EnumRecordKey.Profile]: any}, 'profile'>>().toBe<any>();
+expectTypeOf<Get<{[EnumRecordKey.Profile]: never}, 'profile'>>().toBe<never>();
+expectTypeOf<Get<{[EnumRecordKey.Profile]: unknown}, 'profile'>>().toBe<unknown>();
+expectTypeOf<Get<EnumKeyedRecord, never>>().toBe<never>();
+
+const enumRecord: EnumKeyedRecord = {profile: {name: 'Ada', age: 37}};
+expectTypeOf(get(enumRecord, 'profile.name')).toBe<string>();
+expectTypeOf(get(enumRecord, ['profile', 'name'] as const)).toBe<string>();
+expectTypeOf(get(enumRecord, 'profile.age')).toBe<number>();
+
+function enumNameWithOptions<Options extends GetOptions>(name: Get<EnumKeyedRecord, 'profile.name', Options>): string {
+	return name;
+}
+
+expectTypeOf<Get<EnumKeyedRecord, EnumRecordKey.Profile>>().toBe<EnumKeyedRecord[EnumRecordKey.Profile]>();
+expectTypeOf<Get<EnumKeyedRecord, readonly [EnumRecordKey.Profile, EnumRecordKey.Name]>>().toBe<string>();
+type TaggedEnumRecord = {[EnumRecordKey.Profile]: {[EnumRecordKey.Name]: Tagged<string, 'Value'>}};
+expectTypeOf<Get<TaggedEnumRecord, Tagged<'profile.name', 'Path'>>>().toBe<Tagged<string, 'Value'>>();
