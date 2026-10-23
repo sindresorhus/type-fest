@@ -986,3 +986,40 @@ function typedViewJsonValue<View extends TypedArray>(value: Jsonify<View>): Json
 expectTypeOf(typedViewJsonValue<BigUint64Array>({})).toBe<JsonValue>();
 // @ts-expect-error
 typedViewJsonValue<BigUint64Array>({0: 1});
+
+// BigInt wrappers are unboxed before serialization and fail like their primitive values.
+expectTypeOf<Jsonify<BigInt>>().toBe<never>();
+expectTypeOf<Jsonify<BigInt[]>>().toBe<null[]>();
+expectTypeOf<Jsonify<[BigInt, string]>>().toBe<[null, string]>();
+
+expectTypeOf<{}>().not.toBeAssignableTo<Jsonify<BigInt>>();
+expectTypeOf<Jsonify<string | BigInt>>().toBe<string>();
+expectTypeOf<Jsonify<BigInt | bigint>>().toBe<never>();
+expectTypeOf<Jsonify<{value: BigInt}>>().toBe<Jsonify<{value: bigint}>>();
+expectTypeOf<Jsonify<{readonly value?: BigInt}>>().toBe<{readonly value?: never}>();
+expectTypeOf<Jsonify<{readonly value: BigInt | undefined}>>().toBe<{readonly value?: never}>();
+expectTypeOf<Jsonify<{value: string | BigInt}>>().toBe<{value: string}>();
+
+// Arrays retain the existing primitive-bigint fallback for unrepresentable elements.
+expectTypeOf<Jsonify<readonly BigInt[]>>().toBe<null[]>();
+expectTypeOf<Jsonify<Array<BigInt | number>>>().toBe<Array<null | number>>();
+expectTypeOf<Jsonify<readonly [BigInt, Date]>>().toBe<[null, string]>();
+expectTypeOf<Jsonify<[BigInt?]>>().toBe<[] | [null]>();
+expectTypeOf<Jsonify<{values: BigInt[]}>>().toBe<{values: null[]}>();
+
+// Custom hooks are honored before primitive wrappers are classified.
+expectTypeOf<Jsonify<BigInt & {toJSON(): string}>>().toBe<string>();
+expectTypeOf<Jsonify<BigInt & {toJSON(key: string): {value: number}}>>().toBe<{value: number}>();
+expectTypeOf<Jsonify<BigInt & {toJSON(): undefined}>>().toBe<never>();
+expectTypeOf<Jsonify<{value: BigInt & {toJSON(): string}}>>().toBe<{value: string}>();
+expectTypeOf<Jsonify<Array<BigInt & {toJSON(): string}>>>().toBe<string[]>();
+expectTypeOf<Jsonify<{toJSON(): BigInt}>>().toBe<never>();
+expectTypeOf<Jsonify<{toJSON(): BigInt | string}>>().toBe<string>();
+expectTypeOf<Jsonify<Array<{toJSON(): BigInt}>>>().toBe<null[]>();
+
+declare function serializeBoxedValue<Value>(value: Value): Jsonify<Value>;
+declare const boxedBigintValue: BigInt;
+declare const boxedBigintWithHook: BigInt & {toJSON(): string};
+expectTypeOf(serializeBoxedValue(boxedBigintValue)).toBe<never>();
+expectTypeOf(serializeBoxedValue([boxedBigintValue])).toBe<null[]>();
+expectTypeOf(serializeBoxedValue({value: boxedBigintWithHook})).toBe<{value: string}>();

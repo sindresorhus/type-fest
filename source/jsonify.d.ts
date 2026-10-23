@@ -164,7 +164,8 @@ export type Jsonify<T> = IsAny<T> extends true
 								: T extends TypedArray
 									// Bigint elements cannot be serialized, so only an empty bigint view can produce the resulting record.
 									? Record<string, Jsonify<T[number]>>
-									: T extends NotJsonable
+									// A BigInt wrapper is unboxed before serialization, and both forms throw.
+									: T extends NotJsonable | BigInt
 										? never // Non-JSONable type union was found not empty
 										: T extends UnknownArray
 											? JsonifyList<UntagTuple<T>>
