@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SomeExtend} from '../source/some-extend.d.ts';
+import type {SomeExtend, SomeExtendOptions} from '../source/some-extend.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
@@ -48,8 +48,8 @@ expectTypeOf<SomeExtend<readonly ['1', '2', '3'], number>>().toBe<false>();
 expectTypeOf<SomeExtend<readonly ['^', ...number[], '$'], number>>().toBe<true>();
 
 // Optional elements
-// If `exactOptionalPropertyTypes` were disabled, the target type would need an additional `| undefined` for a successful match.
-// For example, `SomeExtend<['1'?, 2?], number>` would return `boolean`. To make it return `true`, the target type must be `number | undefined`.
+// Optional absence does not add `undefined` to the declared element type.
+// An explicit `undefined` still participates in the match and can make the result `boolean`.
 expectTypeOf<SomeExtend<['1'?, '2'?, 3?], number>>().toBe<true>();
 expectTypeOf<boolean>().toBe<SomeExtend<['1'?, (2 | undefined)?], number>>();
 expectTypeOf<SomeExtend<[1?, '2'?, 3?], string | undefined>>().toBe<true>();
@@ -121,9 +121,38 @@ expectTypeOf<SomeExtend<any, never>>().toBe<false>();
 expectTypeOf<SomeExtend<never, any>>().toBe<false>();
 
 // Recursion depth at which the previous non-tail-recursive implementation started to fail.
-// Not tested at the usual depth of 999, because collapsing an array that long costs over a million type instantiations.
+// The rest-first case below stays at 200 because collapsing a long rest frontier is still expensive.
 type TwoHundredZeroes = TupleOf<200, '0'>;
 expectTypeOf<SomeExtend<TwoHundredZeroes, number>>().toBe<false>();
 
 // Elements that follow a rest element are collapsed by a separate branch.
 expectTypeOf<SomeExtend<[...number[], ...TwoHundredZeroes], bigint>>().toBe<false>();
+
+// The first element decides this query without traversing the remaining 1,200 elements.
+type LongUndecidedTail = [...TupleOf<600, 1>, ...TupleOf<600, 1>];
+expectTypeOf<SomeExtend<[0, ...LongUndecidedTail], 0>>().toBe<true>();
+
+// Metadata must not change the existing element-inference boundary.
+expectTypeOf<SomeExtend<readonly [1, 2?] & {readonly metadata: 'tuple'}, number>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly [unknown, ...never[]], never>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly [(number | undefined)?], number>>().toBe<boolean>();
+
+function _genericSomeResult<Values extends UnknownArray, Target, Options extends SomeExtendOptions>(result: SomeExtend<Values, Target, Options>): boolean {
+	return result;
+}
+
+declare function containsString<const Values extends UnknownArray>(values: Values & (SomeExtend<Values, string> extends true ? unknown : never)): Values;
+expectTypeOf(containsString([1, 'ready'])).toBe<[1, 'ready']>();
+// @ts-expect-error At least one element must be a string.
+containsString([1, 2]);
+// @ts-expect-error An empty tuple has no matching element.
+containsString([]);
+
+// A late match still decides the result when the required prefix never matches.
+expectTypeOf<SomeExtend<[...TwoHundredZeroes, 1], number>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly ['skip', (2 | undefined)?, ...number[]], undefined>>().toBe<boolean>();
+expectTypeOf<SomeExtend<readonly [...number[], false, true], true>>().toBe<true>();
+const readonlyStrings = [1, 'ready'] as const;
+expectTypeOf(containsString(readonlyStrings)).toBe<typeof readonlyStrings>();
+// @ts-expect-error The input must be an array or tuple.
+type UnknownSome = SomeExtend<unknown, number>;

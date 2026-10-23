@@ -74,7 +74,7 @@ type D = AllExtend<[true, boolean, true], true>;
 //=> boolean
 ```
 
-Note: Behaviour of optional elements depend on the `exactOptionalPropertyTypes` compiler option. When the option is disabled, the target type must include `undefined` for a successful match.
+Note: Optional elements are checked by their declared types, without the implicit `undefined` from absence. This type supports `exactOptionalPropertyTypes: true`. An explicitly declared `undefined` remains part of the element type.
 
 ```
 // @exactOptionalPropertyTypes: true
@@ -85,13 +85,13 @@ type A = AllExtend<[1?, 2?, 3?], number>;
 ```
 
 ```
-// @exactOptionalPropertyTypes: false
+// @exactOptionalPropertyTypes: true
 import type {AllExtend} from 'type-fest';
 
-type A = AllExtend<[1?, 2?, 3?], number>;
+type A = AllExtend<[1?, (2 | undefined)?], number>;
 //=> boolean
 
-type B = AllExtend<[1?, 2?, 3?], number | undefined>;
+type B = AllExtend<[1?, (2 | undefined)?], number | undefined>;
 //=> true
 ```
 
@@ -101,23 +101,28 @@ type B = AllExtend<[1?, 2?, 3?], number | undefined>;
 @category Array
 */
 export type AllExtend<TArray extends UnknownArray, Type, Options extends AllExtendOptions = {}> =
-	IfNotAnyOrNever<CollapseRestElement<TArray>, {
-		ifNot: _AllExtend<CollapseRestElement<TArray>, Type, ApplyDefaultOptions<AllExtendOptions, DefaultAllExtendOptions, Options>>;
+	IfNotAnyOrNever<TArray, {
+		ifNot: _AllExtend<TArray, Type, ApplyDefaultOptions<AllExtendOptions, DefaultAllExtendOptions, Options>>;
 		ifAny: false;
 		ifNever: false;
 	}>;
 
 // Kept free of `IfNotAnyOrNever` so that it stays tail-recursive, which allows it to handle long arrays.
 type _AllExtend<TArray extends UnknownArray, Type, Options extends Required<AllExtendOptions>> =
-	TArray extends readonly [infer First, ...infer Rest]
-		? IsNever<First> extends true
-			? Or<Or<IsNever<Type>, IsAny<Type>>, Not<Options['strictNever']>> extends true
-				// If target `Type` is also `never`, or is `any`, or `strictNever` is disabled, recurse further.
-				? _AllExtend<Rest, Type, Options>
-				: false
-			: First extends Type
-				? _AllExtend<Rest, Type, Options>
-				: false
-		: true;
+	'0' extends keyof TArray
+		? TArray extends readonly [(infer First)?, ...infer Rest]
+			? IsNever<First> extends true
+				? Or<Or<IsNever<Type>, IsAny<Type>>, Not<Options['strictNever']>> extends true
+					// If target `Type` is also `never`, or is `any`, or `strictNever` is disabled, recurse further.
+					? _AllExtend<Rest, Type, Options>
+					: false
+				: First extends Type
+					? _AllExtend<Rest, Type, Options>
+					: false
+			: never // Should never happen, since the first fixed element can always be inferred.
+		: TArray extends readonly []
+			? true
+			// Collapse only an unconsumed rest element and its fixed suffix.
+			: _AllExtend<CollapseRestElement<TArray>, Type, Options>;
 
 export {};

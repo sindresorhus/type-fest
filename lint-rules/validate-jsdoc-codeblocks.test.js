@@ -107,8 +107,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 		// Compiler options overrides
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			// @exactOptionalPropertyTypes: false
-			const foo: {a?: number} = {a: undefined};
+			// @noUncheckedIndexedAccess: false
+			const foo: number = [1, 2, 3][0];
 		`))),
 
 		// Incorrect compiler options are ignored
@@ -718,11 +718,11 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 
 		// Compiler options overrides
 		exportTypeAndOption(jsdoc(fence(dedenter`
-			// @exactOptionalPropertyTypes: false
-			import type {AllExtend} from 'type-fest';
+			// @noUncheckedIndexedAccess: false
+			const values = [1, 2, 3];
 
-			type A = AllExtend<[1?, 2?, 3?], number>;
-			//=> boolean
+			const first = values[0];
+			//=> number
 		`))),
 
 		// Multiple `//=>`
@@ -1615,33 +1615,24 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: dedenter`
 				/**
 				\`\`\`ts
-				// @exactOptionalPropertyTypes: false
-				type Prettify<T> = {
-					[P in keyof T]: T[P];
-				};
-
-				type T1 = Prettify<{a?: string; b?: number}>;
-				//=> {
-				// 	a?: string;
-				// 	b?: number;
-				// }
+				// @noUncheckedIndexedAccess: false
+				const values = [1, 2, 3];
+				const first = values[0];
+				//=> number | undefined
 				\`\`\`
 				*/
 				export type T0 = string;
 			`,
 			errors: [
-				incorrectTwoslashTypeErrorAt({line: 9, textBeforeStart: '', endLine: 12, textBeforeEnd: '// }'}),
+				incorrectTwoslashTypeErrorAt({line: 6, textBeforeStart: '', target: '//=> number | undefined'}),
 			],
 			output: dedenter`
 				/**
 				\`\`\`ts
-				// @exactOptionalPropertyTypes: false
-				type Prettify<T> = {
-					[P in keyof T]: T[P];
-				};
-
-				type T1 = Prettify<{a?: string; b?: number}>;
-				//=> {a?: string | undefined; b?: number | undefined}
+				// @noUncheckedIndexedAccess: false
+				const values = [1, 2, 3];
+				const first = values[0];
+				//=> number
 				\`\`\`
 				*/
 				export type T0 = string;
