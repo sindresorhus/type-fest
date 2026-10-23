@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Includes} from '../index.d.ts';
+import type {Includes, IncludesOptions} from '../index.d.ts';
 
 // Fixed-length tuples
 expectTypeOf<Includes<[1, 2, 3], 1>>().toBe<true>();
@@ -262,3 +262,48 @@ type A3 = Includes<{key: 'value'}, 7>;
 // Invalid option.
 // @ts-expect-error
 type A4 = Includes<[1], 1, {distributeItem: 1}>;
+
+// An unknown comparison strategy must include the answers of both allowed strategies.
+expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<[1 | 2], 1, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<[number], 1, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: true} | {distributeItem: false}>>().toBe<boolean>();
+
+// Strategies that agree retain a definite answer; optional and rest matches remain only possible.
+expectTypeOf<Includes<[1, 2], 1, {distributeItem: boolean}>>().toBe<true>();
+expectTypeOf<Includes<[], 1, {distributeItem: boolean}>>().toBe<false>();
+expectTypeOf<Includes<[2, 3], 1, {distributeItem: boolean}>>().toBe<false>();
+expectTypeOf<Includes<readonly [1?], 1, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<readonly [...string[], 1 | 2], 1, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<[1 | 2, ...number[]], 1, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<[1] | readonly [2], 1, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<[string], number, {distributeItem: boolean}>>().toBe<false>();
+
+// Resolving the strategy must preserve the special handling of an impossible item.
+expectTypeOf<Includes<[never], never, {distributeItem: boolean}>>().toBe<true>();
+expectTypeOf<Includes<[any], never, {distributeItem: boolean}>>().toBe<boolean>();
+expectTypeOf<Includes<[1], never, {distributeItem: boolean}>>().toBe<false>();
+expectTypeOf<Includes<[unknown], unknown, {distributeItem: boolean}>>().toBe<true>();
+expectTypeOf<Includes<any, 1, {distributeItem: boolean}>>().toBe<any>();
+expectTypeOf<Includes<never, 1, {distributeItem: boolean}>>().toBe<never>();
+
+// Optional or undefined-valued settings still use the existing default-option policy.
+expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem?: boolean}>>().toBe<false>();
+expectTypeOf<Includes<[1, 2], 1 | 2, IncludesOptions>>().toBe<false>();
+expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: any}>>().toBe<false>();
+expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: never}>>().toBe<false>();
+expectTypeOf<Includes<[1, 2], 1 | 2, any>>().toBe<false>();
+expectTypeOf<Includes<[1, 2], 1 | 2, never>>().toBe<false>();
+expectTypeOf<Includes<[1, 2], 1 | 2, {} | {distributeItem: true}>>().toBe<boolean>();
+
+function _includesBoolean<Value, Options extends IncludesOptions>(result: Includes<[Value], 1, Options>): boolean {
+	return result;
+}
+
+declare function inspectChoices<const ArrayType extends readonly unknown[], Options extends IncludesOptions>(array: ArrayType, options: Options): Includes<ArrayType, 1 | 2, Options>;
+declare const comparisonStrategy: boolean;
+expectTypeOf(inspectChoices([1, 2], {distributeItem: comparisonStrategy})).toBe<boolean>();
+expectTypeOf(inspectChoices([1, 2], {distributeItem: true})).toBe<true>();
+expectTypeOf(inspectChoices([1, 2], {distributeItem: false})).toBe<false>();
+expectTypeOf(inspectChoices([1, 2], {})).toBe<false>();
+expectTypeOf(inspectChoices([3, 4], {distributeItem: comparisonStrategy})).toBe<false>();

@@ -119,23 +119,24 @@ export type Includes<
 			DefaultIncludesOptions,
 			Options
 		> extends infer ResolvedOptions extends Required<IncludesOptions>
-			? And<
-				ResolvedOptions['distributeItem'],
-				Not<IsNever<Item>>
-			> extends true
-				? Item extends unknown // Distribute item
-					? IncludesEach<Array_, Item, ResolvedOptions>
-					: never
-				: IncludesEach<Array_, Item, ResolvedOptions>
+			? IncludesEach<Array_, Item, ResolvedOptions>
 			: never;
 
 /**
-Checks each member of a union of arrays on its own, because the search takes a different path for an array that starts with a fixed element and one that does not.
+Checks each allowed comparison strategy and each member of a union of arrays on its own, because the search takes a different path for an array that starts with a fixed element and one that does not.
 */
 type IncludesEach<Array_ extends UnknownArray, Item, Options extends Required<IncludesOptions>> =
-	Array_ extends unknown // For distributing `Array_`
-		? _Includes<Array_, Item, Options>
-		: never; // Should never happen
+	And<Options['distributeItem'], true> extends infer Distribute extends boolean
+		? Distribute extends unknown // Resolve one comparison strategy for the whole search
+			? Array_ extends unknown // For distributing `Array_`
+				? And<Distribute, Not<IsNever<Item>>> extends true
+					? Item extends unknown // Distribute item
+						? _Includes<Array_, Item, {distributeItem: Distribute}>
+						: never
+					: _Includes<Array_, Item, {distributeItem: Distribute}>
+				: never // Should never happen
+			: never
+		: never;
 
 /**
 `Found` is `boolean` once an element may be the item, so a possible match is remembered while the search continues for a certain one. Carrying it along, instead of returning `true | <rest of the search>`, keeps the recursion in tail position, so long tuples do not hit the instantiation depth limit.
