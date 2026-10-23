@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {Finite, IsInteger, IsLiteral, NonNegative} from '../index.d.ts';
 import type {IsNumericLiteral} from '../source/is-numeric-literal.d.ts';
 import type {LiteralUnion} from '../source/literal-union.d.ts';
 import type {Opaque, Tagged} from '../source/tagged.d.ts';
@@ -118,7 +119,7 @@ expectTypeOf<boolean>().toBe<IsNumericLiteral<LiteralUnion<1 | 2, string>>>();
 expectTypeOf<IsNumericLiteral<Tagged<LiteralUnion<1 | 2, number>, 'Tag'>>>().toBe<false>();
 expectTypeOf<boolean>().toBe<IsNumericLiteral<Tagged<LiteralUnion<1n | 2n, number>, 'Tag'>>>();
 
-// A numeric enum member is a literal even though `number` is assignable to it, which is what separates it from the widened `number`. A string enum member is recognised the same way, so the two enum kinds agree.
+// A constant numeric enum member is a literal even though `number` is assignable to it, which is what separates it from the widened `number`. A string enum member is recognised the same way, so the two enum kinds agree.
 enum NumericEnum {
 	A,
 	B,
@@ -147,3 +148,27 @@ expectTypeOf<IsNumericLiteral<NumericEnum.A | number>>().toBe<false>();
 // Repeated tags preserve the distinction between literal and widened numbers.
 expectTypeOf<IsNumericLiteral<Tagged<Tagged<1 | 2n, 'Value'>, 'Validated'>>>().toBe<true>();
 expectTypeOf<IsNumericLiteral<Tagged<Tagged<number | bigint, 'Value'>, 'Validated'>>>().toBe<false>();
+
+// Ambient members without an initializer have no known numeric value.
+declare enum ExternalCode {
+	Known = 1,
+	Computed,
+}
+expectTypeOf<IsNumericLiteral<ExternalCode.Computed>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<ExternalCode.Known>>().toBe<true>();
+
+expectTypeOf<IsLiteral<ExternalCode.Computed>>().toBe<false>();
+expectTypeOf<IsInteger<ExternalCode.Computed>>().toBe<false>();
+expectTypeOf<Finite<ExternalCode.Computed>>().toBe<never>();
+expectTypeOf<NonNegative<ExternalCode.Computed>>().toBe<never>();
+
+// A union can include both a known member and an unknown member.
+expectTypeOf<IsNumericLiteral<ExternalCode>>().toBe<boolean>();
+expectTypeOf<IsNumericLiteral<ExternalCode.Computed | 1n>>().toBe<boolean>();
+expectTypeOf<IsNumericLiteral<ExternalCode.Computed | number>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<Tagged<ExternalCode.Computed, 'Code'>>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<Opaque<ExternalCode.Computed, 'Code'>>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<Tagged<ExternalCode.Known, 'Code'>>>().toBe<true>();
+expectTypeOf<Finite<ExternalCode.Known>>().toBe<ExternalCode.Known>();
+expectTypeOf<NonNegative<ExternalCode.Known>>().toBe<ExternalCode.Known>();
+expectTypeOf<IsInteger<ExternalCode.Known>>().toBe<true>();
