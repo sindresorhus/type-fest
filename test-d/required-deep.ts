@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, RequiredDeep} from '../index.d.ts';
+import type {IsEqual, JsonValue, RequiredDeep} from '../index.d.ts';
 import type {BuiltIns} from '../source/internal/type.d.ts';
 
 declare const key: unique symbol;
@@ -136,3 +136,30 @@ expectTypeOf(handlerWithThis).toBeAssignableTo<RequiredDeep<((event: string) => 
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<RequiredDeep<{element?: HTMLElement}>>().toBe<{element: HTMLElement}>();
+
+// Recursive JSON arrays can be made required without infinitely expanding their mapped element types.
+expectTypeOf<RequiredDeep<JsonValue>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<JsonValue>().toBeAssignableTo<RequiredDeep<JsonValue>>();
+
+type OptionalRecursiveNode = {readonly value?: string; children?: OptionalRecursiveNode[]};
+type RequiredRecursiveNode = {readonly value: string; children: RequiredRecursiveNode[]};
+expectTypeOf<RequiredDeep<OptionalRecursiveNode>>().toBeAssignableTo<RequiredRecursiveNode>();
+expectTypeOf<RequiredRecursiveNode>().toBeAssignableTo<RequiredDeep<OptionalRecursiveNode>>();
+
+type ReadonlyRecursiveList = string | readonly ReadonlyRecursiveList[];
+expectTypeOf<RequiredDeep<ReadonlyRecursiveList>>().toBeAssignableTo<ReadonlyRecursiveList>();
+expectTypeOf<ReadonlyRecursiveList>().toBeAssignableTo<RequiredDeep<ReadonlyRecursiveList>>();
+expectTypeOf<RequiredDeep<Promise<JsonValue>>>().toBeAssignableTo<Promise<JsonValue>>();
+expectTypeOf<RequiredDeep<Map<string, JsonValue>>>().toBeAssignableTo<Map<string, JsonValue>>();
+
+// Arrays retain the built-in `Required` behavior, and tuples keep their fixed and rest positions.
+expectTypeOf<RequiredDeep<Array<{value?: number} | undefined>>>().toBe<Required<Array<{value: number} | undefined>>>();
+expectTypeOf<RequiredDeep<readonly [first?: {value?: string}, ...rest: Array<{value?: number}>]>>().toBe<readonly [first: {value: string}, ...rest: Array<{value: number}>]>();
+expectTypeOf<RequiredDeep<readonly [...rest: Array<{value?: string}>, last: {value?: number}]>>().toBe<readonly [...rest: Array<{value: string}>, last: {value: number}]>();
+expectTypeOf<RequiredDeep<readonly []>>().toBe<readonly []>();
+expectTypeOf<RequiredDeep<any[]>>().toBe<any[]>();
+expectTypeOf<RequiredDeep<readonly unknown[]>>().toBe<readonly unknown[]>();
+expectTypeOf<RequiredDeep<never[]>>().toBe<never[]>();
+expectTypeOf<RequiredDeep<any>>().toBe<any>();
+expectTypeOf<RequiredDeep<unknown>>().toBe<unknown>();
+expectTypeOf<RequiredDeep<never>>().toBe<never>();

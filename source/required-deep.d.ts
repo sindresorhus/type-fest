@@ -1,4 +1,4 @@
-import type {CallSignatureOf, HasMultipleCallSignatures, NonRecursiveLeaf, SimplifyObject} from './internal/index.d.ts';
+import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf, SimplifyObject} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -71,9 +71,16 @@ export type RequiredDeep<T> = T extends NonRecursiveLeaf
 									// The `Function` interface has no call signature, so the branch above misses it, and mapping it would produce an uncallable record of its own methods.
 									: T extends Function
 										? T
-										: T extends object
-											? SimplifyObject<RequiredObjectDeep<T>> // `SimplifyObject` to prevent `RequiredObjectDeep` from appearing in the resulting type
-											: unknown;
+										: T extends readonly unknown[]
+											? IsArrayOfUnknownLength<T> extends true
+												// Rebuild arrays directly to keep recursive elements lazy, and read through `Required<T>` to preserve its treatment of `undefined`.
+												? T extends unknown[]
+													? Array<RequiredDeep<Required<T>[number]>>
+													: ReadonlyArray<RequiredDeep<Required<T>[number]>>
+												: SimplifyObject<RequiredObjectDeep<T>>
+											: T extends object
+												? SimplifyObject<RequiredObjectDeep<T>> // `SimplifyObject` to prevent `RequiredObjectDeep` from appearing in the resulting type
+												: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {
 	[KeyType in keyof ObjectType]-?: RequiredDeep<ObjectType[KeyType]>
