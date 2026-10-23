@@ -28,6 +28,8 @@ type E = ArrayReverse<[]>;
 
 Note: If the tuple contains optional elements, the result will be a union of tuples, refer to the examples below:
 
+Optional elements are assumed to form a dense prefix. Sparse tuples with holes in optional positions are unsupported; include `undefined` explicitly when it is a possible element value.
+
 @example
 ```ts
 import type {ArrayReverse} from 'type-fest';
