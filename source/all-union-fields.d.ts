@@ -2,6 +2,8 @@ import type {MapsSetsOrArrays, NonRecursiveType, ReadonlyKeysOfUnion, SimplifyOb
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts';
 import type {ValueOf} from './value-of.d.ts'; // For `@link`
+import type {StringToNumber} from './string-to-number.d.ts';
+import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
 
 /**
 Create a type with all fields from a union of object types.
@@ -86,7 +88,7 @@ type Step = AllUnionFields<ValueOf<typeof steps>>;
 */
 export type AllUnionFields<Union> =
 	Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
-		? Exclude<Union, SkippedMembers> extends infer RelevantMembers
+		? NormalizeNumericKeys<Exclude<Union, SkippedMembers>> extends infer RelevantMembers
 			? // eslint-disable-line @stylistic/operator-linebreak
 			| SkippedMembers
 			| SimplifyObject<
@@ -103,5 +105,19 @@ export type AllUnionFields<Union> =
 			>
 			: never
 		: never;
+
+/**
+Use an existing numeric key for its exact canonical string spelling, so merging cannot drop duplicate aliases. Leave other unions as is to preserve index signatures.
+*/
+type NormalizeNumericKeys<Union, AllKeys extends PropertyKey = KeysOfUnion<Union>> =
+	IsNumericLiteral<Extract<AllKeys, StringToNumber<Extract<AllKeys, `${number}`>>>> extends true
+		? Union extends unknown
+			? {[Key in keyof Union as
+				Extract<AllKeys, StringToNumber<Extract<Key, `${number}`>>> extends infer NumericKey extends number
+					? NumericKey | Exclude<Key, `${NumericKey}`>
+					: never
+				]: Union[Key]}
+			: never
+		: Union;
 
 export {};

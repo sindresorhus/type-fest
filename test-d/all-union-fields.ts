@@ -275,3 +275,90 @@ expectTypeOf(weakMapSkipped).toBe<WeakMap<object, string> | {a: 1}>();
 
 declare const weakSetSkipped: AllUnionFields<WeakSet<object> | {a: 1}>;
 expectTypeOf(weakSetSkipped).toBe<WeakSet<object> | {a: 1}>();
+
+// A numeric property and its string spelling identify the same required runtime field.
+type NumericAliasFields = AllUnionFields<{0: 'left'} | {'0': 'right'}>;
+expectTypeOf<{}>().not.toBeAssignableTo<NumericAliasFields>();
+declare const numericAliasFields: NumericAliasFields;
+expectTypeOf(numericAliasFields[0]).toBe<'left' | 'right'>();
+
+type DiscriminatedAliasFields = AllUnionFields<{kind: 'left'; 0: string} | {kind: 'right'; '0': number}>;
+declare const discriminatedAliasFields: DiscriminatedAliasFields;
+expectTypeOf(discriminatedAliasFields[0]).toBe<string | number>();
+
+// Choosing the numeric spelling also preserves optionality, readonly fields, and declared undefined values.
+expectTypeOf<AllUnionFields<{'0': 'right'} | {0: 'left'}>>().toBe<{0: 'left' | 'right'}>();
+expectTypeOf<AllUnionFields<{0?: 'left'} | {'0': 'right'}>>().toBe<{0?: 'left' | 'right'}>();
+expectTypeOf<AllUnionFields<{0?: 'left' | undefined} | {'0'?: 'right'}>>().toBe<{0?: 'left' | 'right' | undefined}>();
+const optionalAliasUndefined: AllUnionFields<{0?: 'left' | undefined} | {'0'?: 'right'}> = {0: undefined};
+expectTypeOf(optionalAliasUndefined[0]).toBe<'left' | 'right' | undefined>();
+expectTypeOf<AllUnionFields<{readonly 0: 'left'} | {'0': 'right'}>>().toBe<{readonly 0: 'left' | 'right'}>();
+expectTypeOf<AllUnionFields<{0: 'left' | undefined} | {'0': 'right'}>>().toBe<{0: 'left' | 'right' | undefined}>();
+expectTypeOf<AllUnionFields<{[-1]: 'negative'} | {'-1': 1}>>().toBe<{[-1]: 'negative' | 1}>();
+expectTypeOf<AllUnionFields<{1.5: 'fraction'} | {'1.5': 2}>>().toBe<{1.5: 'fraction' | 2}>();
+declare const readonlyAliasFields: AllUnionFields<{readonly 0: string} | {'0': number}>;
+// @ts-expect-error A readonly contributor keeps the merged field readonly.
+readonlyAliasFields[0] = 'changed';
+
+// Ordinary key spelling is kept when there is no numeric/string collision.
+expectTypeOf<keyof AllUnionFields<{0: string} | {0: number}>>().toBe<0>();
+expectTypeOf<keyof AllUnionFields<{'0': string} | {'0': number}>>().toBe<'0'>();
+expectTypeOf<AllUnionFields<{1: string} | {'01': number}>>().toBe<{1?: string; '01'?: number}>();
+expectTypeOf<AllUnionFields<{0: string} | {'-0': number}>>().toBe<{0?: string; '-0'?: number}>();
+expectTypeOf<AllUnionFields<{1.5: string} | {'1.50': number}>>().toBe<{1.5?: string; '1.50'?: number}>();
+
+// Index signatures retain their declared fields without interpreting noncanonical strings as numeric keys.
+type NonCanonicalIndexFields = AllUnionFields<{[key: number]: string; '01': number} | {label: true}>;
+declare const nonCanonicalIndexFields: NonCanonicalIndexFields;
+expectTypeOf(nonCanonicalIndexFields['01']).toBe<number | undefined>();
+expectTypeOf(nonCanonicalIndexFields[0]).toBe<string | undefined>();
+expectTypeOf<keyof AllUnionFields<Record<string, number>>>().toBe<string>();
+expectTypeOf<keyof AllUnionFields<Record<number, string>>>().toBe<number>();
+declare const indexedAliasFields: AllUnionFields<{[key: string]: unknown; 0: 'left'} | {'0': 'right'}>;
+expectTypeOf(indexedAliasFields['0']).toBe<'left' | 'right'>();
+
+// A numeric template is a key domain, not an exact numeric spelling to normalize.
+type NumericPatternFields = AllUnionFields<Record<`${number}`, string> | Record<number, number>>;
+declare const numericPatternFields: NumericPatternFields;
+const numericPatternKey: keyof NumericPatternFields = '01';
+expectTypeOf(numericPatternFields[numericPatternKey]).toBeAssignableTo<string | number | undefined>();
+
+// A consumer can read the common field after combining objects declared with either spelling.
+declare function collectFields<Value extends object>(values: readonly Value[]): AllUnionFields<Value>;
+declare const recordsWithAliases: ReadonlyArray<{0: 'left'} | {'0': 'right'}>;
+const collectedAliasFields = collectFields(recordsWithAliases);
+expectTypeOf(collectedAliasFields[0]).toBe<'left' | 'right'>();
+declare function acceptCollectedKey(key: keyof typeof collectedAliasFields): void;
+// @ts-expect-error Combining fields does not invent a missing property.
+acceptCollectedKey('missing');
+
+function _genericCommonField<Value>(value: AllUnionFields<{known: Value} | {known: Value; extra: 1}>): Value {
+	return value.known;
+}
+
+expectTypeOf<AllUnionFields<unknown>>().toBe<{}>();
+
+// The numeric spelling can be a declared enum member rather than a plain numeric literal.
+enum NumericField {
+	Item = 0,
+}
+
+type EnumAliasFields = AllUnionFields<{[NumericField.Item]: 'left'} | {'0': 'right'}>;
+expectTypeOf<{}>().not.toBeAssignableTo<EnumAliasFields>();
+declare const enumAliasFields: EnumAliasFields;
+expectTypeOf(enumAliasFields[0]).toBe<'left' | 'right'>();
+expectTypeOf<keyof EnumAliasFields>().toBe<NumericField.Item>();
+expectTypeOf<AllUnionFields<{'0': 'right'} | {[NumericField.Item]: 'left'}>>().toBe<{[NumericField.Item]: 'left' | 'right'}>();
+expectTypeOf<AllUnionFields<{[NumericField.Item]?: 'left' | undefined} | {'0'?: 'right'}>>().toBe<{[NumericField.Item]?: 'left' | 'right' | undefined}>();
+declare const readonlyEnumAliasFields: AllUnionFields<{readonly [NumericField.Item]: 'left'} | {'0': 'right'}>;
+expectTypeOf(readonlyEnumAliasFields[NumericField.Item]).toBe<'left' | 'right'>();
+// @ts-expect-error A readonly enum contributor keeps the merged field readonly.
+readonlyEnumAliasFields[NumericField.Item] = 'left';
+
+enum SignedNumericField {
+	Negative = -1,
+	Fraction = 1.5,
+}
+
+expectTypeOf<AllUnionFields<{[SignedNumericField.Negative]: 'negative'} | {'-1': 1}>>().toBe<{[SignedNumericField.Negative]: 'negative' | 1}>();
+expectTypeOf<AllUnionFields<{[SignedNumericField.Fraction]: 'fraction'} | {'1.5': 2}>>().toBe<{[SignedNumericField.Fraction]: 'fraction' | 2}>();
