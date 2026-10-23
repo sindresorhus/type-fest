@@ -54,12 +54,12 @@ const testSettings: PartialOnUndefinedDeep<Settings> = {
 export type PartialOnUndefinedDeep<T, Options extends PartialOnUndefinedDeepOptions = {}> =
 	PartialOnUndefinedDeepValue<T, ApplyDefaultOptions<PartialOnUndefinedDeepOptions, DefaultPartialOnUndefinedDeepOptions, Options>>;
 
-type _PartialOnUndefinedDeep<T, Options extends Required<PartialOnUndefinedDeepOptions>> = T extends Record<any, any> | undefined
-	? {[KeyType in keyof T as undefined extends T[KeyType] ? If<IsUnknown<T[KeyType]>, never, KeyType> : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
+// The value dispatcher has already checked that this is an object.
+type _PartialOnUndefinedDeep<T, Options extends Required<PartialOnUndefinedDeepOptions>> =
+	{[KeyType in keyof T as undefined extends T[KeyType] ? If<IsUnknown<T[KeyType]>, never, KeyType> : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
 		// The transformed parts can be intersected directly; a merge's equality comparison eagerly expands recursive values.
 		? SimplifyObject<{[KeyType in keyof T as KeyType extends LiteralKeyOf<U> ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>} & U> // Join all remaining keys not treated in U
-		: never // Should not happen
-	: T;
+		: never; // Should not happen
 
 /**
 Utility type to get the value type by key and recursively call `PartialOnUndefinedDeep` to transform sub-objects.

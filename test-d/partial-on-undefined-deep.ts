@@ -201,3 +201,41 @@ expectTypeOf<GenericValue<string | undefined>>().toBe<string | undefined>();
 expectTypeOf<GenericValue<unknown>>().toBe<unknown>();
 expectTypeOf<GenericValue<any>>().toBe<any>();
 expectTypeOf<GenericValue<never>>().toBe<never>();
+
+// An optional settings branch still requires its own non-optional structure when present.
+type OptionalTransportSettings = PartialOnUndefinedDeep<{
+	readonly id: string;
+	transport: {timeout: number | undefined; retry: {attempts: number | undefined; enabled: boolean}} | undefined;
+}>;
+({id: 'session'}) satisfies OptionalTransportSettings;
+({id: 'session', transport: {retry: {enabled: true}}}) satisfies OptionalTransportSettings;
+expectTypeOf<{id: string; transport: {timeout: number}}>().not.toBeAssignableTo<OptionalTransportSettings>();
+expectTypeOf<{transport: {retry: {enabled: boolean}}}>().not.toBeAssignableTo<OptionalTransportSettings>();
+declare const optionalTransportSettings: OptionalTransportSettings;
+expectTypeOf(optionalTransportSettings.transport?.retry.enabled).toBe<boolean | undefined>();
+// @ts-expect-error Making other fields optional does not change the readonly identifier.
+optionalTransportSettings.id = 'changed';
+
+function _readOptionalNestedId<Extra>(value: PartialOnUndefinedDeep<{nested: {id: number; extra: Extra} | undefined}>): number | undefined {
+	return value.nested?.id;
+}
+
+type Callback<Arguments extends unknown[], Result> = (...arguments_: Arguments) => Result;
+
+function _retainCallback<Arguments extends unknown[], Result>(value: PartialOnUndefinedDeep<{callback: Callback<Arguments, Result>; enabled: boolean | undefined}>): Callback<Arguments, Result> {
+	return value.callback;
+}
+
+function _keepOptionalObject<Input extends object>(value: PartialOnUndefinedDeep<Input>): object {
+	return value;
+}
+
+declare function optionalSettings<const Input>(value: Input): PartialOnUndefinedDeep<Input>;
+const inferredOptionalSettings = optionalSettings({id: 'session', transport: {enabled: true, timeout: undefined as number | undefined}});
+expectTypeOf(inferredOptionalSettings).toBe<{readonly id: 'session'; readonly transport: {readonly enabled: true; readonly timeout?: number | undefined}}>();
+
+// Inference carries the array-recursion option through the public options boundary.
+type OptionalRowsSettings = {rows: Array<{id: string; note: string | undefined}>};
+declare function optionalArraySettings<const Recurse extends boolean>(options: {recurseIntoArrays: Recurse}): PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays: Recurse}>;
+expectTypeOf(optionalArraySettings({recurseIntoArrays: true}).rows).toBe<Array<{id: string; note?: string | undefined}>>();
+expectTypeOf(optionalArraySettings({recurseIntoArrays: false}).rows).toBe<Array<{id: string; note: string | undefined}>>();
