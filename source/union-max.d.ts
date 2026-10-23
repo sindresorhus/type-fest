@@ -1,4 +1,3 @@
-import type {IsNever} from './is-never.d.ts';
 import type {Finite, NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAnyOrNever} from './internal/type.d.ts';
@@ -31,7 +30,7 @@ type Unlimited = UnionMax<1 | 5 | PositiveInfinity>;
 //=> Infinity
 ```
 
-The implementation counts upward using a tuple, removing each matching union member until none remain. Infinity and non-literal inputs are handled before counting.
+The implementation counts upward using a tuple, removing lower union members until only the maximum remains. Infinity and non-literal inputs are handled before counting.
 
 @see https://github.com/sindresorhus/type-fest/issues/676
 @category Numeric
@@ -44,13 +43,13 @@ export type UnionMax<NumberUnion extends number> =
 					: InternalUnionMax<Finite<NumberUnion>>;
 
 /**
-The actual implementation of `UnionMax`. It's private because it has some arguments that don't need to be exposed.
+The actual implementation of `UnionMax`. Stop when only the current value remains, and remove a matched member while advancing so each value needs at most one recursion step. The same termination check returns zero for an empty internal union.
 */
 type InternalUnionMax<NumberUnion extends number, Counter extends UnknownArray = []> =
-	IsNever<NumberUnion> extends true
+	[NumberUnion] extends [Counter['length']]
 		? Counter['length']
 		: Counter['length'] extends NumberUnion
-			? InternalUnionMax<Exclude<NumberUnion, Counter['length']>, Counter>
+			? InternalUnionMax<Exclude<NumberUnion, Counter['length']>, [...Counter, unknown]>
 			: InternalUnionMax<NumberUnion, [...Counter, unknown]>;
 
 export {};

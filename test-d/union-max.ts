@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {NegativeInfinity, PositiveInfinity, UnionMax} from '../index.d.ts';
+import type {IntRange, NegativeInfinity, PositiveInfinity, UnionMax} from '../index.d.ts';
 
 expectTypeOf<UnionMax<1 | 3 | 2>>().toBe<3>();
 expectTypeOf<UnionMax<10 | 5 | 2>>().toBe<10>();
@@ -32,3 +32,18 @@ expectTypeOf<UnionMax<typeof retryCounts[number]>>().toBe<5>();
 
 // @ts-expect-error Non-numeric unions are not supported.
 type InvalidUnion = UnionMax<'1' | '2'>;
+
+// Sparse and dense unions keep their exact maximum across different magnitudes.
+expectTypeOf<UnionMax<1 | 900>>().toBe<900>();
+expectTypeOf<UnionMax<0 | 900 | NegativeInfinity>>().toBe<900>();
+expectTypeOf<UnionMax<900 | PositiveInfinity>>().toBe<PositiveInfinity>();
+expectTypeOf<UnionMax<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>>().toBe<9>();
+
+// Finding a maximum should not spend a second recursion step removing each matched member.
+type DenseCandidates = IntRange<0, 600>;
+expectTypeOf<UnionMax<DenseCandidates>>().toBe<599>();
+expectTypeOf<UnionMax<Exclude<DenseCandidates, 0>>>().toBe<599>();
+expectTypeOf<UnionMax<DenseCandidates | NegativeInfinity>>().toBe<599>();
+expectTypeOf<UnionMax<DenseCandidates | PositiveInfinity>>().toBe<PositiveInfinity>();
+// @ts-expect-error - An unknown value cannot be compared.
+type UnknownMaximum = UnionMax<unknown>;
