@@ -1,6 +1,7 @@
 import type {NonRecursiveType, UnionMin, TupleLength, StaticPartOfArray, VariablePartOfArray, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
 import type {UnionMax} from './union-max.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {If} from './if.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts'; // For `@link`
 
@@ -97,7 +98,10 @@ export type SharedUnionFieldsDeep<Union, Options extends SharedUnionFieldsDeepOp
 			? Union
 			: [Union] extends [UnknownArray]
 				? OptionsWithDefaults['recurseIntoArrays'] extends true
-					? SetArrayAccess<SharedArrayUnionFieldsDeep<Union, OptionsWithDefaults>, IsArrayReadonly<Union>>
+					// With no fixed length or prefix, the tuple builder only appends a rest array. Build it directly so recursive elements stay lazy.
+					? [TupleLength<Union>, StaticPartOfArray<Union>['length']] extends [never, 0]
+						? If<IsArrayReadonly<Union>, ReadonlyArray<SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>, Array<SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>>
+						: SetArrayAccess<SharedArrayUnionFieldsDeep<Union, OptionsWithDefaults>, IsArrayReadonly<Union>>
 					: Union
 				: [Union] extends [object]
 					? SharedObjectUnionFieldsDeep<Union, OptionsWithDefaults>

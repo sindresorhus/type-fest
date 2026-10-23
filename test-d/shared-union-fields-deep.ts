@@ -151,3 +151,44 @@ expectTypeOf(unionWithUndefined).toBe<{
 	b?: {a: string};
 	c: {a: string} | undefined;
 }>();
+
+// Recursive array types must remain lazy instead of being repeatedly expanded through tuple spreads.
+type RecursiveArray = RecursiveArray[];
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<RecursiveArray>>().toBeAssignableTo<RecursiveArray>();
+expectTypeOf<RecursiveArray>().toBeAssignableTo<SharedUnionFieldsDeepRecurseIntoArrays<RecursiveArray>>();
+type RecursiveReadonlyArray = readonly RecursiveReadonlyArray[];
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<RecursiveReadonlyArray>>().toBeAssignableTo<RecursiveReadonlyArray>();
+expectTypeOf<RecursiveReadonlyArray>().toBeAssignableTo<SharedUnionFieldsDeepRecurseIntoArrays<RecursiveReadonlyArray>>();
+
+// Recursive object unions still share their element fields at every array depth.
+type LeftNode = {value: string; children: LeftNode[]; leftOnly: true};
+type RightNode = {value: number; children: RightNode[]; rightOnly: true};
+type CommonNode = {value: string | number; children: CommonNode[]};
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<LeftNode | RightNode>>().toBeAssignableTo<CommonNode>();
+expectTypeOf<CommonNode>().toBeAssignableTo<SharedUnionFieldsDeepRecurseIntoArrays<LeftNode | RightNode>>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<{nested: RecursiveArray; readonly other?: RecursiveReadonlyArray}>>().toBe<{nested: RecursiveArray; readonly other?: RecursiveReadonlyArray}>();
+expectTypeOf<SharedUnionFieldsDeep<RecursiveArray>>().toBe<RecursiveArray>();
+
+// Ordinary array unions merge their element shapes rather than distributing into separate arrays.
+type LeftArrayEntry = {shared: string; left: true};
+type RightArrayEntry = {shared: number; right: true};
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<LeftArrayEntry[] | RightArrayEntry[]>>().toBe<Array<{shared: string | number}>>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly LeftArrayEntry[] | readonly RightArrayEntry[]>>().toBe<ReadonlyArray<{shared: string | number}>>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<LeftArrayEntry[] | readonly RightArrayEntry[]>>().toBe<Array<{shared: string | number}> | ReadonlyArray<{shared: string | number}>>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<Array<string | number>>>().toBe<Array<string | number>>();
+
+// A fixed tuple in any member keeps the existing tuple-length selection.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<string[] | []>>().toBe<[]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly string[] | readonly []>>().toBe<readonly []>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<boolean[] | [number, ...string[]]>>().toBe<[number | boolean, ...Array<string | boolean>]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly boolean[] | readonly [number, ...string[]]>>().toBe<readonly [number | boolean, ...Array<string | boolean>]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[number?, string?]>>().toBe<[]>();
+
+// Primitive and special element types retain their established meanings.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<any>>().toBe<any>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<never>>().toBe<never>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<unknown>>().toBe<unknown>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<any[]>>().toBe<any[]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<never[]>>().toBe<never[]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly unknown[]>>().toBe<readonly unknown[]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<Array<{value: unknown} | {value: any}>>>().toBe<Array<{value: any}>>();
