@@ -1,5 +1,3 @@
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
-
 /**
 Returns a boolean for whether the given type has any optional fields.
 
@@ -18,6 +16,11 @@ type UpdateService<Entity extends object> = {
 
 @category Utilities
 */
-export type HasOptionalKeys<BaseType extends object> = OptionalKeysOf<BaseType> extends never ? false : true;
+export type HasOptionalKeys<BaseType extends object> = (
+	BaseType extends unknown // Check each union member before aggregating whether any has an optional key.
+		// Remap keys to compare properties without applying `Required`'s array element transformation.
+		? [BaseType] extends [{[Key in keyof BaseType as Key]-?: BaseType[Key]}] ? never : true
+		: never
+) extends never ? false : true;
 
 export {};
