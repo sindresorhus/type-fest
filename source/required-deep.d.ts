@@ -1,4 +1,4 @@
-import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf, SimplifyObject} from './internal/index.d.ts';
+import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -77,13 +77,13 @@ export type RequiredDeep<T> = T extends NonRecursiveLeaf
 												? T extends unknown[]
 													? Array<RequiredDeep<Required<T>[number]>>
 													: ReadonlyArray<RequiredDeep<Required<T>[number]>>
-												: SimplifyObject<RequiredObjectDeep<T>>
+												: RequiredObjectDeep<T>
 											: T extends object
-												? SimplifyObject<RequiredObjectDeep<T>> // `SimplifyObject` to prevent `RequiredObjectDeep` from appearing in the resulting type
+												? RequiredObjectDeep<T> // The terminal intersection expands the object without a second mapping.
 												: unknown;
 
 type RequiredObjectDeep<ObjectType extends object> = {
 	[KeyType in keyof ObjectType]-?: RequiredDeep<ObjectType[KeyType]>
-};
+} & {};
 
 export {};

@@ -163,3 +163,48 @@ expectTypeOf<RequiredDeep<never[]>>().toBe<never[]>();
 expectTypeOf<RequiredDeep<any>>().toBe<any>();
 expectTypeOf<RequiredDeep<unknown>>().toBe<unknown>();
 expectTypeOf<RequiredDeep<never>>().toBe<never>();
+
+// Recursive configuration containers remain lazy while every declared option becomes required.
+type RecursiveConfig = {readonly name?: string; sections?: ReadonlyMap<string, RecursiveConfig>; children?: RecursiveConfig[]};
+type CompleteRecursiveConfig = {readonly name: string; sections: ReadonlyMap<string, CompleteRecursiveConfig>; children: CompleteRecursiveConfig[]};
+expectTypeOf<RequiredDeep<RecursiveConfig>>().toBeAssignableTo<CompleteRecursiveConfig>();
+expectTypeOf<CompleteRecursiveConfig>().toBeAssignableTo<RequiredDeep<RecursiveConfig>>();
+const completeRecursiveConfig: RequiredDeep<RecursiveConfig> = {name: 'root', sections: new Map(), children: []};
+completeRecursiveConfig.children = [{name: 'child', sections: new Map(), children: []}];
+// @ts-expect-error A child configuration still needs its required name.
+completeRecursiveConfig.children.push({sections: new Map(), children: []});
+
+// Fixed optional positions become required without changing readonly, rest elements, or explicit undefined values.
+declare const requiredPositions: RequiredDeep<readonly [first?: {readonly value?: string | undefined}, ...rest: Array<{value?: number}>]>;
+expectTypeOf(requiredPositions).toBe<readonly [first: {readonly value: string | undefined}, ...rest: Array<{value: number}>]>();
+// @ts-expect-error Required tuple positions remain readonly.
+requiredPositions[0] = {value: 'changed'};
+// @ts-expect-error Nested readonly fields remain readonly too.
+requiredPositions[0].value = 'changed';
+expectTypeOf<RequiredDeep<readonly [...rest: Array<{value?: string}>, last: {value?: number}]>>()
+	.toBe<readonly [...rest: Array<{value: string}>, last: {value: number}]>();
+
+type IndexedConfig = {readonly [name: `setting-${string}`]: {enabled?: boolean}; [key]?: {value?: number}};
+type CompleteIndexedConfig = {readonly [name: `setting-${string}`]: {enabled: boolean}; [key]: {value: number}};
+expectTypeOf<RequiredDeep<IndexedConfig>>().toBe<CompleteIndexedConfig>();
+declare const requiredValues: RequiredDeep<{label?: string; count?: number}>;
+// @ts-expect-error Required fields retain their declared value types.
+requiredValues.count = 'invalid';
+
+function _readRequiredConfig<Value>(configuration: RequiredDeep<{settings?: {value?: Value}}>): RequiredDeep<Value> {
+	return configuration.settings.value;
+}
+
+declare function completeConfig<const Value>(value: Value): RequiredDeep<Value>;
+const inferredCompleteConfig = completeConfig({value: 2, rows: [{label: 'first'}]});
+expectTypeOf(inferredCompleteConfig).toBe<{readonly value: 2; readonly rows: readonly [{readonly label: 'first'}]}>();
+
+// Impossible and explicitly undefined values are retained when their optional modifiers are removed.
+expectTypeOf<RequiredDeep<{value?: never; nullish?: undefined}>>().toBe<{value: never; nullish: undefined}>();
+
+type CallableConfig = ((this: Date, value: string) => number) & {[key]?: {enabled?: boolean}};
+declare const requiredCallableConfig: RequiredDeep<CallableConfig>;
+expectTypeOf(requiredCallableConfig.call(new Date(), 'value')).toBe<number>();
+expectTypeOf(requiredCallableConfig[key]).toBe<{enabled: boolean}>();
+// @ts-expect-error The callable's metadata is now required.
+requiredCallableConfig[key] = undefined;
