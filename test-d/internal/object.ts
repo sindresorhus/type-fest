@@ -55,3 +55,26 @@ interface Indexed {
 	bar?: 'b';
 }
 expectTypeOf<UndefinedToOptional<Indexed>>().toBe<{[key: string]: string | undefined; foo: 'a'; bar?: 'b'}>();
+
+// A numeric key copies the modifiers of a property declared using its string form.
+declare const numericKeyFromString: BuildObject<0, string, {readonly '0'?: 1}>;
+expectTypeOf(numericKeyFromString).toBe<{readonly '0'?: string}>();
+expectTypeOf<BuildObject<0, string, {'0'?: 1}>>().toBe<{'0'?: string}>();
+expectTypeOf<BuildObject<0, string, {readonly '0': 1}>>().toBe<{readonly '0': string}>();
+expectTypeOf<BuildObject<'0', string, {readonly 0?: 1}>>().toBe<{readonly 0?: string}>();
+expectTypeOf<BuildObject<1.5, boolean, {readonly '1.5'?: number}>>().toBe<{readonly '1.5'?: boolean}>();
+expectTypeOf<BuildObject<-1, boolean, {readonly '-1'?: number}>>().toBe<{readonly '-1'?: boolean}>();
+
+// Existing keys keep their original spelling, and distinct padded keys remain distinct.
+expectTypeOf<keyof BuildObject<0, string, {'0'?: 1}>>().toBe<'0'>();
+expectTypeOf<BuildObject<'01', string, {readonly 1?: number}>>().toBe<{'01': string}>();
+expectTypeOf<BuildObject<1, string, {readonly '01'?: number}>>().toBe<{1: string}>();
+expectTypeOf<BuildObject<'missing', string, {readonly present?: number}>>().toBe<{missing: string}>();
+
+// Key unions continue producing one object per key, while symbols need no conversion.
+expectTypeOf<BuildObject<0 | 'a', boolean, {readonly '0'?: number; a: string}>>().toBe<{readonly '0'?: boolean} | {a: boolean}>();
+expectTypeOf<BuildObject<typeof symbolKey, boolean, {readonly [symbolKey]?: number}>>().toBe<{readonly [symbolKey]?: boolean}>();
+expectTypeOf<BuildObject<0, any, {readonly '0'?: number}>>().toBe<{readonly '0'?: any}>();
+expectTypeOf<BuildObject<0, unknown, {readonly '0'?: number}>>().toBe<{readonly '0'?: unknown}>();
+expectTypeOf<BuildObject<0, never, {readonly '0'?: number}>>().toBe<{readonly '0'?: never}>();
+expectTypeOf<BuildObject<never, string, {'0'?: number}>>().toBe<never>();

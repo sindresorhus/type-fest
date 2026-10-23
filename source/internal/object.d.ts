@@ -9,7 +9,7 @@ import type {StringToNumber} from '../string-to-number.d.ts';
 import type {Primitive} from '../primitive.d.ts';
 import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
 import type {LiteralUnion} from '../literal-union.d.ts'; // For `@link`
-import type {DefinedKeyFilter, OptionalKeyFilter} from './keys.d.ts';
+import type {DefinedKeyFilter, ExactKey, OptionalKeyFilter} from './keys.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
@@ -36,13 +36,12 @@ type B = BuildObject<'a', string, {readonly a?: any}>;
 ```
 */
 export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
-	Key extends keyof CopiedFrom
-		? Pick<{[_ in keyof CopiedFrom]: Value}, Key>
-		: Key extends `${infer NumberKey extends number}`
-			? NumberKey extends keyof CopiedFrom
-				? Pick<{[_ in keyof CopiedFrom]: Value}, NumberKey>
-				: {[_ in Key]: Value}
-			: {[_ in Key]: Value};
+	Key extends unknown // Keep separate objects for a union of keys.
+		// Look up both forms of a numeric key before copying its modifiers.
+		? IsNever<ExactKey<CopiedFrom, Key>> extends true
+			? {[_ in Key]: Value}
+			: Pick<{[_ in keyof CopiedFrom]: Value}, ExactKey<CopiedFrom, Key>>
+		: never;
 
 /**
 Returns a boolean for whether the given type is a plain key-value object.

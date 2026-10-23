@@ -405,3 +405,16 @@ expectTypeOf<PickDeep<[1] | {a: 1; 0: 2}, 0>>().toBe<[1] | {0: 2}>();
 type Level<Value> = Record<DigitCharacter, Value>;
 type ManyPaths = Level<Level<Level<Level<Level<Level<1>>>>>>;
 expectTypeOf<PickDeep<ManyPaths, '0.0.0.0.0.0'>>().toBe<{0: {0: {0: {0: {0: {0: 1}}}}}}>();
+
+// Numeric paths keep the modifiers of properties declared with string keys.
+expectTypeOf<PickDeep<{readonly '0'?: string; other: number}, 0>>().toBe<{readonly '0'?: string}>();
+expectTypeOf<PickDeep<{'0'?: string; other: number}, 0>>().toBe<{'0'?: string}>();
+expectTypeOf<PickDeep<{readonly '0': string; other: number}, 0>>().toBe<{readonly '0': string}>();
+expectTypeOf<PickDeep<{readonly '1.5'?: string; other: number}, 1.5>>().toBe<{readonly '1.5'?: string}>();
+expectTypeOf<PickDeep<{readonly '-1'?: string; other: number}, -1>>().toBe<{readonly '-1'?: string}>();
+expectTypeOf<PickDeep<{readonly '0'?: string | undefined; other: number}, 0>>().toBe<{readonly '0'?: string | undefined}>();
+expectTypeOf<PickDeep<{readonly '0'?: never; other: number}, 0>>().toBe<{readonly '0'?: never}>();
+expectTypeOf<PickDeep<{readonly '0'?: unknown; other: number}, 0>>().toBe<{readonly '0'?: unknown}>();
+expectTypeOf<PickDeep<{readonly '0'?: any; other: number}, 0>>().toBe<{readonly '0'?: any}>();
+expectTypeOf<PickDeep<{readonly 0?: string; other: number}, '0'>>().toBe<{readonly 0?: string}>();
+expectTypeOf<PickDeep<{'0'?: string; first: true} | {readonly '0': number; second: true}, 0>>().toBe<{'0'?: string} | {readonly '0': number}>();
