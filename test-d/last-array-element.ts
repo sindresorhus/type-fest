@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {LastArrayElement} from '../index.d.ts';
+import type {LastArrayElement, TupleOf} from '../index.d.ts';
 
 // Empty array
 expectTypeOf<LastArrayElement<[]>>().toBe<undefined>();
@@ -61,3 +61,30 @@ expectTypeOf({} as any as LastArrayElement<never[]>).toBe<undefined>();
 // Boundary cases
 expectTypeOf<LastArrayElement<any>>().toBe<any>();
 expectTypeOf<LastArrayElement<never>>().toBe<never>();
+
+// The last required element is available without traversing every preceding element.
+expectTypeOf<LastArrayElement<[...TupleOf<1100>, 'last']>>().toBe<'last'>();
+expectTypeOf<LastArrayElement<readonly [...TupleOf<1100>, 'last']>>().toBe<'last'>();
+expectTypeOf<LastArrayElement<[...TupleOf<1100, 1>, 2?, 3?]>>().toBe<1 | 2 | 3>();
+expectTypeOf<LastArrayElement<readonly [...TupleOf<1100, 1>, (2 | undefined)?]>>().toBe<1 | 2 | undefined>();
+
+// Required values keep an explicit `undefined`, independently of optional tuple elements.
+expectTypeOf<LastArrayElement<readonly [string | undefined]>>().toBe<string | undefined>();
+expectTypeOf<LastArrayElement<[1, undefined]>>().toBe<undefined>();
+expectTypeOf<LastArrayElement<[1, (2 | undefined)]>>().toBe<2 | undefined>();
+
+// Uninhabitable elements do not remove other possible endings or introduce a value of their own.
+expectTypeOf<LastArrayElement<[never]>>().toBe<never>();
+expectTypeOf<LastArrayElement<[never?]>>().toBe<undefined>();
+expectTypeOf<LastArrayElement<[1, ...never[]]>>().toBe<1>();
+expectTypeOf<LastArrayElement<[...never[], 2]>>().toBe<2>();
+expectTypeOf<LastArrayElement<[] | readonly [2?] | [1, ...never[]]>>().toBe<1 | 2 | undefined>();
+expectTypeOf<LastArrayElement<readonly [unknown]>>().toBe<unknown>();
+expectTypeOf<LastArrayElement<readonly [any]>>().toBe<any>();
+
+// A length refinement on an ordinary array does not create tuple elements.
+expectTypeOf<LastArrayElement<string[] & {length: 3}>>().toBe<string | undefined>();
+expectTypeOf<LastArrayElement<readonly string[] & {readonly length: 3}>>().toBe<string | undefined>();
+expectTypeOf<LastArrayElement<never[] & {length: 3}>>().toBe<undefined>();
+expectTypeOf<LastArrayElement<unknown[] & {length: 3}>>().toBe<unknown>();
+expectTypeOf<LastArrayElement<any[] & {length: 3}>>().toBe<any>();

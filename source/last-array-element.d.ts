@@ -62,16 +62,21 @@ type D = LastArrayElement<[string?, number?, ...bigint[]]>;
 export type LastArrayElement<TArray extends UnknownArray> =
 	IfNotAnyOrNever<TArray, {
 		ifNot: TArray extends UnknownArray // For distributing `TArray`
-			? SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
-				? _LastArrayElement<BeforeRest, Rest, AfterRest>
-				: never
+			? number extends TArray['length']
+				? _LastArrayElement<TArray>
+				// A fixed-length tuple can be read directly from the end. A length refinement on an ordinary array has no tuple keys, so it still needs the array fallback.
+				: '0' extends keyof TArray
+					? BeforeRestLastElement<TArray>
+					: _LastArrayElement<TArray>
 			: never;
 	}>;
 
-type _LastArrayElement<BeforeRest extends UnknownArray, Rest extends UnknownArray, AfterRest extends UnknownArray> =
-	AfterRest extends readonly [...any, infer Last] // Note there are no optional elements in `AfterRest`.
-		? Last // If there's a `Last` in `AfterRest`, then that's the result.
-		: Rest[number] | BeforeRestLastElement<BeforeRest>; // Otherwise, the result is union of the `Rest` element and the last element in `BeforeRest`.
+type _LastArrayElement<TArray extends UnknownArray> =
+	SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
+		? AfterRest extends readonly [...any, infer Last] // Note there are no optional elements in `AfterRest`.
+			? Last // If there's a `Last` in `AfterRest`, then that's the result.
+			: Rest[number] | BeforeRestLastElement<BeforeRest> // Otherwise, the result is union of the `Rest` element and the last element in `BeforeRest`.
+		: never;
 
 type BeforeRestLastElement<BeforeRest extends UnknownArray, Accumulator = never> =
 	BeforeRest extends readonly []
