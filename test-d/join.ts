@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Join, StringRepeat, TupleOf} from '../index.d.ts';
+import type {Join, Opaque, StringRepeat, Tagged, TupleOf} from '../index.d.ts';
 
 // General use.
 const generalTestVariantMixed: Join<['foo', 0, 'baz'], '.'> = 'foo.0.baz';
@@ -153,3 +153,30 @@ expectTypeOf<'prefix.a-b-c'>().not.toBeAssignableTo<Join<['prefix', ...string[],
 expectTypeOf<Join<[...string[], 'a', 'b', 'c'] | ['single'], '.'>>().toBe<'a.b.c' | `${string}.a.b.c` | 'single'>();
 // @ts-expect-error - Only values supported by Array#join can be joined.
 type UnknownSuffix = Join<[...string[], unknown], '.'>;
+
+// Joining stringifies branded primitive values and delimiters by their underlying values.
+expectTypeOf<Join<[Tagged<'users', 'Collection'>, Tagged<42, 'Id'>], '.'>>().toBe<'users.42'>();
+expectTypeOf<Join<['foo', 'bar'], Tagged<'-', 'Delimiter'>>>().toBe<'foo-bar'>();
+expectTypeOf<Join<[Tagged<true, 'Flag'>, Tagged<2n, 'Id'>], ':'>>().toBe<'true:2'>();
+
+expectTypeOf<Join<readonly [Opaque<'foo', 'Text'>, Opaque<2, 'Id'>], Opaque<':', 'Delimiter'>>>().toBe<'foo:2'>();
+expectTypeOf<Join<[Tagged<Tagged<'foo', 'First'>, 'Second'>, Tagged<Tagged<2, 'First'>, 'Second'>], '.'>>().toBe<'foo.2'>();
+expectTypeOf<Join<['foo' & {readonly __brand: unique symbol}, 2 & {readonly __brand: unique symbol}], '.'>>().toBe<'foo.2'>();
+expectTypeOf<Join<[Tagged<'foo' | 'bar', 'Text'>, Tagged<1 | 2, 'Id'>], ':'>>().toBe<'foo:1' | 'foo:2' | 'bar:1' | 'bar:2'>();
+expectTypeOf<Join<[Tagged<'foo', 'Text'>, null, undefined], Tagged<'-', 'Delimiter'>>>().toBe<'foo--'>();
+expectTypeOf<Join<[Tagged<'foo', 'Text'>, Tagged<'bar', 'Text'>?], Tagged<'-', 'Delimiter'>>>().toBe<'foo' | 'foo-' | 'foo-bar'>();
+expectTypeOf<Join<[Tagged<'foo', 'Text'>, ...string[]], Tagged<'.', 'Delimiter'>>>().toBe<'foo' | `foo.${string}`>();
+expectTypeOf<Join<[...string[], Tagged<'bar', 'Text'>], Tagged<'.', 'Delimiter'>>>().toBe<'bar' | `${string}.bar`>();
+expectTypeOf<Join<[Tagged<'foo', 'Text'>, ...string[], Tagged<'bar', 'Text'>], Tagged<'.', 'Delimiter'>>>().toBe<'foo.bar' | `foo.${string}.bar`>();
+expectTypeOf<Join<['a', 'b', 'c'], Tagged<'.' | '-', 'Delimiter'>>>().toBe<'a.b.c' | 'a-b-c'>();
+expectTypeOf<Join<[Tagged<'', 'Text'>, Tagged<false, 'Flag'>], Tagged<'', 'Delimiter'>>>().toBe<'false'>();
+expectTypeOf<Join<[], Tagged<'-', 'Delimiter'>>>().toBe<''>();
+expectTypeOf<Join<[Tagged<string, 'Text'>], '.'>>().toBe<string>();
+expectTypeOf<Join<[Tagged<number, 'Id'>], '.'>>().toBe<`${number}`>();
+expectTypeOf<Join<[Tagged<bigint, 'Id'>], '.'>>().toBe<`${bigint}`>();
+expectTypeOf<Join<[Tagged<boolean, 'Flag'>], '.'>>().toBe<'true' | 'false'>();
+expectTypeOf<Join<[any], Tagged<'.', 'Delimiter'>>>().toBe<`${any}`>();
+expectTypeOf<Join<[never], Tagged<'.', 'Delimiter'>>>().toBe<never>();
+expectTypeOf<Join<never, Tagged<'.', 'Delimiter'>>>().toBe<never>();
+// @ts-expect-error
+expectTypeOf<Join<[unknown], '.'>>();
