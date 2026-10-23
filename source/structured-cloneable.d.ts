@@ -16,6 +16,7 @@ type StructuredCloneablePrimitive =
 
 type StructuredCloneableData =
 	| ArrayBuffer
+	| SharedArrayBuffer
 	| DataView
 	| Date
 	| Error
@@ -60,6 +61,7 @@ Matches a value that can be losslessly cloned using `structuredClone`.
 
 Note:
 - Custom error types will be cloned as the base `Error` type
+- A cloned `SharedArrayBuffer` shares its backing memory with the original
 
 @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
 

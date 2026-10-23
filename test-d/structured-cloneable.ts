@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {StructuredCloneable} from '../index.d.ts';
+import type {IsAny, StructuredCloneable} from '../index.d.ts';
 
 /*
 Source: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
@@ -147,3 +147,40 @@ expectTypeOf(blob).toBeAssignableTo<StructuredCloneable>();
 
 declare const file: File;
 expectTypeOf(file).toBeAssignableTo<StructuredCloneable>();
+
+// Shared buffers can be cloned directly or inside ordinary collections.
+expectTypeOf<SharedArrayBuffer>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<{buffer: SharedArrayBuffer}>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<Map<string, SharedArrayBuffer>>().toBeAssignableTo<StructuredCloneable>();
+
+expectTypeOf<readonly SharedArrayBuffer[]>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<readonly [string, SharedArrayBuffer]>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<{readonly data?: {readonly buffer: SharedArrayBuffer}}>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<ReadonlyMap<SharedArrayBuffer, readonly SharedArrayBuffer[]>>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<ReadonlySet<SharedArrayBuffer>>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<ReadonlyMap<string, ReadonlySet<SharedArrayBuffer>>>().toBeAssignableTo<StructuredCloneable>();
+
+// Views over shared memory are cloneable along with their backing buffer.
+const sharedBuffer = new SharedArrayBuffer(16);
+expectTypeOf(new Uint8Array(sharedBuffer)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new BigInt64Array(sharedBuffer)).toBeAssignableTo<StructuredCloneable>();
+expectTypeOf(new DataView(sharedBuffer)).toBeAssignableTo<StructuredCloneable>();
+({buffer: sharedBuffer, view: new Uint8Array(sharedBuffer)}) satisfies StructuredCloneable;
+
+// Adding shared memory does not admit functions, symbols, or non-cloneable collections.
+expectTypeOf<{buffer: SharedArrayBuffer; callback: () => void}>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<ReadonlyMap<string, SharedArrayBuffer | symbol>>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<ReadonlySet<SharedArrayBuffer | (() => void)>>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<Promise<SharedArrayBuffer>>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<WeakMap<object, SharedArrayBuffer>>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<unknown>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<readonly never[]>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<readonly any[]>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<() => never>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<IsAny<StructuredCloneable>>().toBe<false>();
+
+declare function cloneSupported<Value extends StructuredCloneable>(value: Value): Value;
+expectTypeOf(cloneSupported(sharedBuffer)).toBe<SharedArrayBuffer>();
+expectTypeOf(cloneSupported({buffer: sharedBuffer} as const)).toBe<{readonly buffer: SharedArrayBuffer}>();
+// @ts-expect-error A callback remains uncloneable even when a sibling field is supported.
+cloneSupported({buffer: sharedBuffer, callback: () => undefined});
