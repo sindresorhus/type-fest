@@ -774,3 +774,44 @@ expectTypeOf(inferredMergedTuple).toBe<[{readonly id: 'left'; readonly enabled: 
 inferredMergedTuple[1] = {keep: true};
 // @ts-expect-error A merged source field retains its literal value.
 inferredMergedTuple[0] = {id: 'left', enabled: false};
+
+// Nested matrix inference keeps the selected element type and fresh outer-array access.
+const inferredNestedMatrix = mergeDeep([[1]], [['value']], {recurseIntoArrays: true});
+expectTypeOf(inferredNestedMatrix).toBe<string[][]>();
+inferredNestedMatrix.push(['next']);
+// @ts-expect-error Replacing a nested matrix does not retain destination numbers.
+inferredNestedMatrix[0] = [2];
+
+function _constructMergedMatrix<Value extends string>(value: Value): MergeDeep<number[][], Value[][], {recurseIntoArrays: true}> {
+	return [[value]];
+}
+
+function _readMergedMatrix<Value extends string>(value: MergeDeep<number[][], Value[][], {recurseIntoArrays: true}>): Value[][] {
+	return value;
+}
+
+function _constructWithGenericOptions<Options extends MergeDeepOptions>(value: string): MergeDeep<{keep: number}, {id: string}, Options> {
+	return {keep: 1, id: value};
+}
+
+// Nested array settings keep the selected merge mode when descending through record elements.
+type NestedArrayDefaults = {rows: Array<{id: string; values: number[][]}>};
+type NestedArrayOverrides = {rows: Array<{enabled: boolean; values: string[][]}>};
+expectTypeOf<MergeDeep<NestedArrayDefaults, NestedArrayOverrides, {recurseIntoArrays: true}>>()
+	.toBe<{rows: Array<{id: string; enabled: boolean; values: string[][]}>}>();
+expectTypeOf<MergeDeep<NestedArrayDefaults, NestedArrayOverrides, Readonly<{recurseIntoArrays: true; arrayMergeMode: 'spread'}>>>()
+	.toBe<{rows: Array<{id: string; enabled: boolean; values: Array<Array<string | number>>}>}>();
+
+const inferredNestedArrays = mergeDeep({groups: [[{left: true}]]} as const, {groups: [[{right: true}]]} as const, {recurseIntoArrays: true, arrayMergeMode: 'spread'});
+expectTypeOf(inferredNestedArrays.groups[0]![0]!).toBe<{readonly left: true; readonly right: true}>();
+// @ts-expect-error The merged source retains its inferred literal value.
+inferredNestedArrays.groups[0]![0] = {left: true, right: false};
+
+// An indexed options object still honors its declared recursion flag.
+expectTypeOf<MergeDeep<{rows: Array<{id: string}>}, {rows: Array<{enabled: true}>}, {recurseIntoArrays: true; [key: string]: unknown}>>()
+	.toBe<{rows: Array<{id: string; enabled: true}>}>();
+declare const indexedMergeOptions: {recurseIntoArrays: true; [key: string]: unknown};
+const inferredIndexedMerge = mergeDeep({rows: [{id: 'known'}]}, {rows: [{enabled: true}]}, indexedMergeOptions);
+expectTypeOf(inferredIndexedMerge.rows[0]?.id).toBe<string | undefined>();
+// @ts-expect-error Recursing into indexed options keeps required destination fields.
+const missingIndexedDestination: typeof inferredIndexedMerge = {rows: [{enabled: true}]};

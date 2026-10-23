@@ -5,6 +5,7 @@ import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts'; /
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Merge} from './merge.d.ts';
+import type {Except} from './except.d.ts';
 import type {
 	FirstArrayElement,
 	EnforceOptional,
@@ -312,11 +313,11 @@ type MergeDeepArrayRecursive<
 > = Destination[number] extends UnknownArray
 	? Source[number] extends UnknownArray
 		// Only the top level is always spread, so the flag is turned off before recursing, the same way it is when descending into a property.
-		? Array<MergeDeepArrayOrTupleRecursive<Destination[number], Source[number], EnforceOptional<Merge<Options, {spreadTopLevelArrays: false}>>>>
+		? Array<MergeDeepArrayOrTupleRecursive<Destination[number], Source[number], EnforceOptional<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>>
 		: DoMergeArrayOrTuple<Destination, Source, Options>
 	: Destination[number] extends UnknownRecord
 		? Source[number] extends UnknownRecord
-			? Array<SimplifyDeepExcludeArray<MergeDeepRecord<Destination[number], Source[number], EnforceOptional<Merge<Options, {spreadTopLevelArrays: false}>>>>>
+			? Array<SimplifyDeepExcludeArray<MergeDeepRecord<Destination[number], Source[number], EnforceOptional<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>>>
 			: DoMergeArrayOrTuple<Destination, Source, Options>
 		: DoMergeArrayOrTuple<Destination, Source, Options>;
 
@@ -374,7 +375,7 @@ type MergeDeepOrReturn<
 			: DefaultType
 		: Destination extends UnknownArray
 			? Source extends UnknownArray
-				? MergeDeepArrayOrTuple<Destination, Source, EnforceOptional<Merge<Options, {spreadTopLevelArrays: false}>>>
+				? MergeDeepArrayOrTuple<Destination, Source, EnforceOptional<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>
 				: DefaultType
 			: DefaultType>;
 
