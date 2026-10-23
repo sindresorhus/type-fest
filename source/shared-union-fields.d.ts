@@ -1,4 +1,4 @@
-import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {SharedUnionFieldsDeep} from './shared-union-fields-deep.d.ts'; // For `@link`
 import type {AllUnionFields} from './all-union-fields.d.ts'; // For `@link`
@@ -71,7 +71,8 @@ export type SharedUnionFields<Union> =
 			| SkippedMembers
 			| (IsNever<RelevantMembers> extends true
 				? never
-				: SimplifyObject<Pick<RelevantMembers, keyof RelevantMembers>>)
+				// `Pick` already builds the shared object, so expand it without a second mapping.
+				: Pick<RelevantMembers, keyof RelevantMembers> & {})
 			: never
 		: never;
 

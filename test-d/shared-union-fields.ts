@@ -107,3 +107,49 @@ expectTypeOf(weakSetSkipped).toBe<WeakSet<object> | {a: 1}>();
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<SharedUnionFields<HTMLInputElement | {a: 1}>>().toBe<HTMLInputElement | {a: 1}>();
+
+// Shared fields keep their own modifiers and nested values without recursing into those values.
+type SharedResponse = SharedUnionFields<
+	{readonly status?: 'ok'; payload: {value: string}; requestId: string}
+	| {status: 'error'; payload: {reason: string}; retryAfter: number}
+>;
+expectTypeOf<SharedResponse>().toBe<{readonly status?: 'ok' | 'error'; payload: {value: string} | {reason: string}}>();
+declare const sharedResponse: SharedResponse;
+// @ts-expect-error A valid status value still cannot be assigned to a readonly field.
+sharedResponse.status = 'ok';
+// @ts-expect-error Fields that are not common are left out.
+expectTypeOf(sharedResponse.requestId).toBe<string>();
+
+declare const sharedKey: unique symbol;
+type SymbolResponse = SharedUnionFields<{readonly [sharedKey]?: string; left: true} | {[sharedKey]: number; right: true}>;
+expectTypeOf<SymbolResponse>().toBe<{readonly [sharedKey]?: string | number}>();
+
+type IndexedResponse = SharedUnionFields<{readonly [key: `setting-${string}`]: string} | {[key: `setting-${string}`]: number}>;
+declare const indexedResponse: IndexedResponse;
+expectTypeOf(indexedResponse['setting-timeout']).toBe<string | number | undefined>();
+// @ts-expect-error A common readonly index signature stays readonly.
+indexedResponse['setting-timeout'] = 'slow';
+
+function readSharedValue<Value>(response: SharedUnionFields<{value: Value; left: true} | {value: Value; right: true}>): Value {
+	return response.value;
+}
+
+expectTypeOf(readSharedValue<'ready'>({value: 'ready'})).toBe<'ready'>();
+expectTypeOf<SharedUnionFields<unknown>>().toBe<{}>();
+
+// Removing an optional modifier must distinguish absence from an explicitly declared undefined value.
+expectTypeOf<Required<SharedUnionFields<{value?: string} | {value: number}>>['value']>().toBe<string | number>();
+expectTypeOf<Required<SharedUnionFields<{value?: string | undefined} | {value: number}>>['value']>().toBe<string | number | undefined>();
+
+type RecursiveNode = {
+	kind: 'node';
+	next?: RecursiveNode;
+};
+
+expectTypeOf<SharedUnionFields<{node: RecursiveNode; left: true} | {node: RecursiveNode; right: true}>['node']>().toBe<RecursiveNode>();
+
+declare function sharedFields<Left, Right>(left: Left, right: Right): SharedUnionFields<Left | Right>;
+const inferredFields = sharedFields({id: 'left' as const, first: true}, {id: 'right' as const, second: true});
+expectTypeOf(inferredFields).toBe<{id: 'left' | 'right'}>();
+// @ts-expect-error Inference only retains fields shared by both inputs.
+expectTypeOf(inferredFields.first).toBe<boolean>();
