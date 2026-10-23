@@ -189,3 +189,27 @@ declare const symbolFirst: {readonly [spreadSymbol]: string};
 declare const symbolSecond: {[spreadSymbol]?: number};
 const realSymbolSpread = {...symbolFirst, ...symbolSecond};
 expectTypeOf(realSymbolSpread).toBe<Spread<typeof symbolFirst, typeof symbolSecond>>();
+
+// Optional numeric properties share their key with the corresponding string spelling.
+expectTypeOf<Spread<{0: 'first'}, {'0'?: 'second'}>>().toBe<{0: 'first' | 'second'}>();
+expectTypeOf<Spread<{'0': 'first'}, {0?: 'second'}>>().toBe<{'0': 'first' | 'second'}>();
+expectTypeOf<Spread<{readonly 0?: 'first'}, {readonly '0'?: 'second'}>>().toBe<{0?: 'first' | 'second'}>();
+expectTypeOf<Spread<{readonly '0'?: 'first'}, {readonly 0: 'second'}>>().toBe<{0: 'second'}>();
+expectTypeOf<Spread<{0: 'first'}, {'0'?: 'second' | undefined}>>().toBe<{0: 'first' | 'second' | undefined}>();
+expectTypeOf<Spread<{'01': 'padded'}, {1?: 'canonical'}>>().toBe<{'01': 'padded'; 1?: 'canonical'}>();
+expectTypeOf<Spread<{1: 'canonical'}, {'01'?: 'padded'}>>().toBe<{1: 'canonical'; '01'?: 'padded'}>();
+expectTypeOf<Spread<{1.5: 'first'}, {'1.5'?: 'second'}>>().toBe<{1.5: 'first' | 'second'}>();
+expectTypeOf<Spread<{'-1': 'first'}, {[-1]?: 'second'}>>().toBe<{'-1': 'first' | 'second'}>();
+expectTypeOf<Spread<{0: any}, {'0'?: string}>>().toBe<{0: any}>();
+expectTypeOf<Spread<{0: unknown}, {'0'?: string}>>().toBe<{0: unknown}>();
+expectTypeOf<Spread<{0: never}, {'0'?: string}>>().toBe<{0: string}>();
+expectTypeOf<Spread<{0: 'first'; keep: true} | {'0': 'other'; keep: false}, {'0'?: 'second'}>>().toBe<{0: 'first' | 'second'; keep: true} | {'0': 'other' | 'second'; keep: false}>();
+
+// Match compiler inference for both spellings and modifier combinations.
+declare const numericProperty: {readonly 0: 'first'; keep: true};
+declare const optionalStringProperty: {readonly '0'?: 'second'};
+const numericAliasSpread = {...numericProperty, ...optionalStringProperty};
+expectTypeOf(numericAliasSpread).toBe<Spread<typeof numericProperty, typeof optionalStringProperty>>();
+
+const numericAliasSpreadReverse = {...optionalStringProperty, ...numericProperty};
+expectTypeOf(numericAliasSpreadReverse).toBe<Spread<typeof optionalStringProperty, typeof numericProperty>>();
