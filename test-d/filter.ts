@@ -376,3 +376,25 @@ if ('first' in filteredObjectWithRuntimeStrictness) {
 function _filteredArrayWithStrictness<Base extends readonly unknown[], Strict extends boolean>(value: Filter<Base, number, {strict: Strict}>): readonly unknown[] {
 	return value;
 }
+
+// Tuple filtering keeps declared optional values distinct from absence and restores readonly access.
+expectTypeOf<Filter<readonly [0, 'first', ('second' | undefined)?, ...number[]], string>>().toBe<readonly ['first', ('second' | undefined)?]>();
+expectTypeOf<Filter<[undefined, 1?, ...Array<2 | 3>], number>>().toBe<[1?, ...Array<2 | 3>]>();
+expectTypeOf<Filter<readonly [false, 'keep'?, ...Array<'tail' | 0>], Boolean, {strict: true}>>().toBe<readonly ['keep'?]>();
+
+declare function filterTupleStrings<const Values extends readonly unknown[]>(values: Values): Filter<Values, string>;
+const inferredTupleStrings = filterTupleStrings(['first', 2, 'last']);
+expectTypeOf(inferredTupleStrings).toBe<readonly ['first', 'last']>();
+// @ts-expect-error The retained elements still have readonly access.
+inferredTupleStrings[0] = 'first';
+// @ts-expect-error A filtered number cannot replace a retained string.
+const wrongTupleStrings: typeof inferredTupleStrings = ['first', 2];
+
+// Generic callers can construct an omitted optional result and read a retained property's value.
+function _constructFilteredOptional<Value>(value: readonly [{value: Value}?]): Filter<readonly [0, {value: Value}?], object> {
+	return value;
+}
+
+function _readFilteredOptional<Value>(value: Filter<readonly [0, {value: Value}?], object>): Value | undefined {
+	return value[0]?.value;
+}

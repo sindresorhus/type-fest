@@ -1,7 +1,6 @@
 import type {IsTruthy, Extends, IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
-import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {If} from './if.d.ts';
@@ -180,7 +179,7 @@ type _FilterArray<
 				...IfFilter<
 					Matches<First, Condition, Options['strict']>,
 					// Preserve optional modifier
-					If<IsOptionalKeyOf<Array_, 0>, [First?], [First]>
+					Array_ extends readonly [unknown, ...unknown[]] ? [First] : [First?]
 				>,
 			], TailAcc>
 			: never;
