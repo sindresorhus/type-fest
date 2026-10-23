@@ -1,3 +1,4 @@
+import {expectTypeOf} from 'nz';
 import type {Exact, Opaque} from '../index.d.ts';
 
 { // Spec - string type
@@ -727,3 +728,43 @@ declare const unionInput: {name: string} | {name: string; id: number};
 		function_(input);
 	}
 }
+
+// Numeric properties and their string spellings are the same declared property, not excess keys.
+expectTypeOf<{'0': 'value'}>().toBeAssignableTo<Exact<{0: string}, {'0': 'value'}>>();
+expectTypeOf<{0: 'value'}>().toBeAssignableTo<Exact<{'0': string}, {0: 'value'}>>();
+expectTypeOf<{'0'?: 'value'}>().toBeAssignableTo<Exact<{readonly 0?: string}, {'0'?: 'value'}>>();
+expectTypeOf<{readonly 0: 'value'}>().toBeAssignableTo<Exact<{'0': string}, {readonly 0: 'value'}>>();
+expectTypeOf<{'0': 'value'; extra: true}>().not.toBeAssignableTo<Exact<{0: string}, {'0': 'value'; extra: true}>>();
+expectTypeOf<{'0': 5}>().not.toBeAssignableTo<Exact<{0: string}, {'0': 5}>>();
+expectTypeOf<{'0': 'value'}>().not.toBeAssignableTo<Exact<{0: never}, {'0': 'value'}>>();
+expectTypeOf<{'0': 'value'}>().toBeAssignableTo<Exact<{0: unknown}, {'0': 'value'}>>();
+expectTypeOf<{'0': 'value'}>().toBeAssignableTo<Exact<{0: any}, {'0': 'value'}>>();
+expectTypeOf<{'1.5': 'value'}>().toBeAssignableTo<Exact<{1.5: string}, {'1.5': 'value'}>>();
+expectTypeOf<{[-1]: 'value'}>().toBeAssignableTo<Exact<{'-1': string}, {[-1]: 'value'}>>();
+
+// Spellings that are not numeric aliases remain excess, including with a number index signature.
+expectTypeOf<{'01': 'value'}>().not.toBeAssignableTo<Exact<{1: string}, {'01': 'value'}>>();
+expectTypeOf<{'1.0': 'value'}>().not.toBeAssignableTo<Exact<{1: string}, {'1.0': 'value'}>>();
+expectTypeOf<{1: 'value'}>().not.toBeAssignableTo<Exact<{'01': string}, {1: 'value'}>>();
+expectTypeOf<{'01': 'value'}>().not.toBeAssignableTo<Exact<Record<number, string>, {'01': 'value'}>>();
+
+// Nested values and input unions still enforce their own excess-property checks.
+type AliasedInputUnion = {0: 'first'} | {'0': 'second'};
+expectTypeOf<AliasedInputUnion>().toBeAssignableTo<Exact<{0: string}, AliasedInputUnion>>();
+expectTypeOf<{'0': {name: 'value'}}>().toBeAssignableTo<Exact<{0: {name: string}}, {'0': {name: 'value'}}>>();
+expectTypeOf<{'0': {name: 'value'; extra: true}}>().not.toBeAssignableTo<Exact<{0: {name: string}}, {'0': {name: 'value'; extra: true}}>>();
+
+// String enum keys have the same runtime name as their string values.
+enum ExactField {
+	Name = 'name',
+}
+expectTypeOf<{name: 'value'}>().toBeAssignableTo<Exact<{[ExactField.Name]: string}, {name: 'value'}>>();
+expectTypeOf<{[ExactField.Name]: 'value'}>().toBeAssignableTo<Exact<{name: string}, {[ExactField.Name]: 'value'}>>();
+
+declare const exactSymbol: unique symbol;
+expectTypeOf<{[exactSymbol]: 'value'}>().toBeAssignableTo<Exact<{[exactSymbol]: string}, {[exactSymbol]: 'value'}>>();
+
+const acceptNumericProperty = <Input extends Exact<{0: string}, Input>>(input: Input) => input;
+expectTypeOf(acceptNumericProperty({'0': 'value'} as const)).toBe<{readonly '0': 'value'}>();
+// @ts-expect-error
+acceptNumericProperty({'0': 'value', extra: true});
