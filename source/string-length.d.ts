@@ -1,4 +1,6 @@
-import type {StringToArray} from './string-to-array.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 /**
 Returns the length of the given string.
@@ -33,6 +35,18 @@ type C = StringLength<`${string}abc`>;
 @category String
 @category Template literal
 */
-export type StringLength<S extends string> = StringToArray<S>['length'];
+export type StringLength<S extends string> = IfNotAnyOrNever<S, {
+	ifNot: StringLengthImplementation<S extends object ? UnwrapBrand<S> : S>;
+	ifAny: number;
+}>;
+
+// Count characters without retaining them, and stop once a non-literal part makes the length unknown.
+type StringLengthImplementation<Value extends string, Counter extends unknown[] = []> = Value extends `${infer First}${infer Rest}`
+	? IsStringLiteral<First> extends true
+		? StringLengthImplementation<Rest, [...Counter, unknown]>
+		: number
+	: Value extends ''
+		? Counter['length']
+		: number;
 
 export {};
