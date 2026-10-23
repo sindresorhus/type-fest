@@ -92,20 +92,18 @@ export type LiteralList<List extends UnknownArray, Union> =
 			? _LiteralList<
 				List,
 				Union,
-				UnionLength<Union>,
-				TupleAsString<List>
+				UnionLength<Union>
 			>
 			: never;
 	}>;
 
 /**
-Compares the tuple with the union. Checks the length first, then checks for union elements, and then for extra and missing members.
+Checks length, union elements, extra members, then missing members. Formats the tuple only when reporting a diagnostic.
 */
 type _LiteralList<
 	List extends UnknownArray,
 	Union,
 	Length extends number,
-	ListString extends string,
 > =
 	List['length'] extends Length // `Length` is never `number`, so this also rejects arrays that are not fixed-length tuples
 		? true extends {[Index in keyof List]: IsUnion<List[Index]>}[number] // An element like `'a' | 'b'` could hide duplicates
@@ -115,10 +113,10 @@ type _LiteralList<
 					? IsNever<Extra> extends true
 						? IsNever<Missing> extends true
 							? List // The tuple has exactly the union members
-							: `Type ${ListString} is missing members: ${TupleAsString<Missing>}`
-						: `Type ${ListString} has extra members: ${TupleAsString<Extra>}`
+							: `Type ${TupleAsString<List>} is missing members: ${TupleAsString<Missing>}`
+						: `Type ${TupleAsString<List>} has extra members: ${TupleAsString<Extra>}`
 					: never
 				: never
-		: `Type ${ListString} is not the required length of: ${Length}`;
+		: `Type ${TupleAsString<List>} is not the required length of: ${Length}`;
 
 export {};

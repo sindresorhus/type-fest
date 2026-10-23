@@ -127,3 +127,47 @@ expectTypeOf<LiteralList<[['b', 'c'], ['a'], ['a']], U3>>().toBeAssignableTo<'Ty
 expectTypeOf<LiteralList<[['a'], ['b', 'c'], ['b', 'c']], U3>>().toBeAssignableTo<'Type [...] is missing members: [a, b]'>();
 expectTypeOf<LiteralList<[['a'], ['b', 'c'], ['f']], U3>>().toBe<'Type [...] has extra members: [f]'>();
 expectTypeOf<LiteralList<[['b'], ['e'], ['a', 'b']], U3>>().toBeAssignableTo<'Type [...] has extra members: [[b], [e]]' | 'Type [...] has extra members: [[e], [b]]'>();
+
+// Valid configurations preserve their tuple and nested value types.
+expectTypeOf<LiteralList<readonly [2n, 1n], 1n | 2n>>().toBe<readonly [2n, 1n]>();
+expectTypeOf<LiteralList<readonly [{readonly id: 2}, {readonly id: 1}], {readonly id: 1} | {readonly id: 2}>>()
+	.toBe<readonly [{readonly id: 2}, {readonly id: 1}]>();
+expectTypeOf<LiteralList<[], never>>().toBe<[]>();
+expectTypeOf<LiteralList<['read'], any>>().not.toBeAssignableTo<['read']>();
+expectTypeOf<LiteralList<['read'], unknown>>().not.toBeAssignableTo<['read']>();
+
+// Each diagnostic still reports the original list and the failing part of the validation.
+expectTypeOf<LiteralList<readonly ['read'], 'read' | 'write'>>().toBe<'Type [read] is not the required length of: 2'>();
+expectTypeOf<LiteralList<['read', 'read'], 'read' | 'write'>>().toBe<'Type [read, read] is missing members: [write]'>();
+expectTypeOf<LiteralList<['read', 'extra'], 'read' | 'write'>>().toBe<'Type [read, extra] has extra members: [extra]'>();
+
+function validatedActions<const List extends UnknownArray>(list: List & LiteralList<List, 'read' | 'write'>): List {
+	return list;
+}
+
+expectTypeOf(validatedActions(['write', 'read'])).toBe<readonly ['write', 'read']>();
+// @ts-expect-error A duplicate leaves a required action missing.
+validatedActions(['read', 'read']);
+// @ts-expect-error Every action must appear.
+validatedActions(['read']);
+
+function makeValidatedList<Union>() {
+	return <const List extends UnknownArray>(list: List & LiteralList<List, Union>): List => list;
+}
+
+const validateStatus = makeValidatedList<'open' | 'closed'>();
+expectTypeOf(validateStatus(['closed', 'open'])).toBe<readonly ['closed', 'open']>();
+// @ts-expect-error The generic factory also rejects missing members after its union is chosen.
+validateStatus(['open']);
+
+// Valid results remain tuples, while diagnostics remain strings in a generic caller.
+function _literalListResult<List extends UnknownArray, Union>(value: LiteralList<List, Union>): List | string {
+	return value;
+}
+
+const validateEmptyList = makeValidatedList<never>();
+expectTypeOf(validateEmptyList([])).toBe<readonly []>();
+// @ts-expect-error An empty union has no members to add.
+validateEmptyList(['unexpected']);
+// @ts-expect-error A factory rejects extra members as well as missing ones.
+validateStatus(['open', 'unexpected']);
