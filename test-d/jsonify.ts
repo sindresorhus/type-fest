@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {EmptyObject, Jsonifiable, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, Opaque, PositiveInfinity, Tagged, TupleOf} from '../index.d.ts';
+import type {EmptyObject, Jsonifiable, Jsonify, JsonArray, JsonObject, JsonValue, LiteralToPrimitiveDeep, NegativeInfinity, Opaque, PositiveInfinity, Tagged, TupleOf, TypedArray} from '../index.d.ts';
 
 // An interface has no implicit index signature, so this checks that `Jsonify` makes it assignable to `JsonValue`.
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -933,3 +933,56 @@ expectTypeOf<Jsonify<{keep: 1; value: string | bigint}>>().toBe<{keep: 1; value:
 expectTypeOf<Jsonify<{value: {toJSON(): string | bigint}}>>().toBe<{value: string}>();
 expectTypeOf<Jsonify<SymbolPayload>>().toBeAssignableTo<JsonValue>();
 expectTypeOf<Jsonify<Jsonify<SymbolPayload>>>().toBe<Jsonify<SymbolPayload>>();
+
+// Bigint typed-array elements cannot become numeric JSON properties, but an empty view serializes as {}.
+expectTypeOf<Jsonify<BigInt64Array>>().toBe<Record<string, never>>();
+expectTypeOf<Jsonify<BigUint64Array>>().toBe<Record<string, never>>();
+expectTypeOf<{0: 1}>().not.toBeAssignableTo<Jsonify<BigInt64Array>>();
+expectTypeOf<Jsonify<{values: BigInt64Array}>>().toBe<{values: Record<string, never>}>();
+
+// Empty views remain valid, and neither numbers nor bigint values are invented as JSON properties.
+expectTypeOf<{}>().toBeAssignableTo<Jsonify<BigInt64Array>>();
+expectTypeOf<{}>().toBeAssignableTo<Jsonify<BigUint64Array>>();
+expectTypeOf<{0: 1n}>().not.toBeAssignableTo<Jsonify<BigUint64Array>>();
+expectTypeOf<{0: undefined}>().not.toBeAssignableTo<Jsonify<BigInt64Array>>();
+expectTypeOf<Jsonify<BigInt64Array>>().toBeAssignableTo<JsonValue>();
+declare const bigintViewJson: Jsonify<BigInt64Array>;
+expectTypeOf(bigintViewJson['0']).toBe<undefined>();
+expectTypeOf<Jsonify<{readonly values?: BigUint64Array}>>().toBe<{readonly values?: Record<string, never>}>();
+expectTypeOf<Jsonify<readonly [BigInt64Array, Uint8Array]>>().toBe<[Record<string, never>, Record<string, number>]>();
+expectTypeOf<Jsonify<BigUint64Array[]>>().toBe<Array<Record<string, never>>>();
+expectTypeOf<Jsonify<BigInt64Array | null>>().toBe<Record<string, never> | null>();
+expectTypeOf<Jsonify<BigInt64Array | BigUint64Array>>().toBe<Record<string, never>>();
+expectTypeOf<Jsonify<Array<BigInt64Array | symbol>>>().toBe<Array<Record<string, never> | null>>();
+
+// Numeric element types remain numeric, regardless of the backing buffer.
+expectTypeOf<Jsonify<Uint8Array | Float64Array>>().toBe<Record<string, number>>();
+expectTypeOf<Jsonify<Uint8Array<ArrayBuffer>>>().toBe<Record<string, number>>();
+expectTypeOf<Jsonify<Uint8Array<SharedArrayBuffer>>>().toBe<Record<string, number>>();
+expectTypeOf<Jsonify<BigInt64Array<SharedArrayBuffer>>>().toBe<Record<string, never>>();
+expectTypeOf<{0: 1}>().toBeAssignableTo<Jsonify<Uint8Array | BigInt64Array>>();
+expectTypeOf<{0: '1'}>().not.toBeAssignableTo<Jsonify<Uint8Array>>();
+
+// A custom toJSON method still runs before typed-array element conversion.
+expectTypeOf<Jsonify<BigInt64Array & {toJSON(): string[]}>>().toBe<string[]>();
+expectTypeOf<Jsonify<BigUint64Array & {toJSON(key: string): {count: number}}>>().toBe<{count: number}>();
+expectTypeOf<Jsonify<{toJSON(): BigInt64Array}>>().toBe<Record<string, never>>();
+expectTypeOf<Jsonify<{values: BigInt64Array & {toJSON(): string}}>>().toBe<{values: string}>();
+expectTypeOf<Jsonify<{values: BigInt64Array | undefined}>>().toBe<{values?: Record<string, never>}>();
+expectTypeOf<Jsonify<{values: BigInt64Array | symbol}>>().toBe<{values?: Record<string, never>}>();
+
+declare function serializeTypedView<View extends TypedArray>(value: View): Jsonify<View>;
+expectTypeOf(serializeTypedView(new BigInt64Array())).toBe<Record<string, never>>();
+expectTypeOf(serializeTypedView(new Uint8Array([1]))).toBe<Record<string, number>>();
+declare const possibleTypedView: Uint8Array | BigInt64Array;
+expectTypeOf(serializeTypedView(possibleTypedView)).toBeAssignableTo<Record<string, number>>();
+// @ts-expect-error
+serializeTypedView(new DataView(new ArrayBuffer(8)));
+
+function typedViewJsonValue<View extends TypedArray>(value: Jsonify<View>): JsonValue {
+	return value;
+}
+
+expectTypeOf(typedViewJsonValue<BigUint64Array>({})).toBe<JsonValue>();
+// @ts-expect-error
+typedViewJsonValue<BigUint64Array>({0: 1});

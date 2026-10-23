@@ -162,7 +162,8 @@ export type Jsonify<T> = IsAny<T> extends true
 							: T extends ReadonlyMap<any, any> | ReadonlySet<any> | RegExp | ArrayBuffer | SharedArrayBuffer | DataView
 								? EmptyObject
 								: T extends TypedArray
-									? Record<string, number>
+									// Bigint elements cannot be serialized, so only an empty bigint view can produce the resulting record.
+									? Record<string, Jsonify<T[number]>>
 									: T extends NotJsonable
 										? never // Non-JSONable type union was found not empty
 										: T extends UnknownArray
