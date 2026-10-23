@@ -1,4 +1,4 @@
-import type {CallSignatureOf, IsArrayReadonly, SimplifyObject} from './internal/index.d.ts';
+import type {CallSignatureOf, IsArrayReadonly, NormalizedKeys, SimplifyObject} from './internal/index.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {If} from './if.d.ts';
@@ -73,8 +73,9 @@ Two tuples are combined position by position, so `Merge<[1, 2, 3], [4, 5]>` is `
 
 A call signature is kept: the source's if it has one, otherwise the destination's.
 
+Numeric keys and their string forms name the same property, so `Merge<{0: string}, {'0': number}>` is `{'0': number}`.
+
 Known limitations:
-- A tuple merged with an object that has a number key for one of its positions, such as `Merge<[1], {0: 2}>`, intersects the two at that position instead of overriding it, so conflicting literal types make the whole result `never`. Use a string key, such as `{'0': 2}`, instead.
 - Inside a generic function, a value such as `{...a, ...b}` (typed as `A & B`) is not assignable to `Merge<A, B>`, because TypeScript cannot resolve `Merge` until `A` and `B` are known. Use a type assertion: `{...a, ...b} as unknown as Merge<A, B>`.
 - The kept call signature is rebuilt, so an overloaded function keeps only its last signature, a generic function loses its type parameters, and a type predicate becomes `boolean`. A construct signature is dropped.
 
@@ -138,11 +139,12 @@ export type _Merge<Destination, Source> =
 		? CallSignatureOf<Destination> & MergeObjects<Destination, Source>
 		: CallSignatureOf<Source> & MergeObjects<Destination, Source>;
 
+// Numeric properties and their string forms name the same property, so normalize the source's named keys before testing overrides.
 // Merges the properties and index signatures of two objects. A key of the destination is dropped when the source overrides it: an index signature only by an index signature, and a property only by a property. A property is also dropped when a property key of the source is a subtype of it, so that a string enum key such as `StringEnum.A` overrides `'a'`. The destination is read only once, because each extra read multiplies the work of nested merges, such as in `MergeAll`. The source is split instead of intersected as is, because an intersection with an `any` source is `any`, which loses the properties of the destination.
 type MergeObjects<Destination, Source> = SimplifyObject<{
 	[Key in keyof Destination as {} extends Record<Key, unknown>
 		? Key extends keyof PickIndexSignature<Source> ? never : Key
-		: Key extends keyof OmitIndexSignature<Source>
+		: Key extends NormalizedKeys<keyof OmitIndexSignature<Source>>
 			? never
 			: [Extract<keyof OmitIndexSignature<Source>, Key>] extends [never] ? Key : never
 	]: Destination[Key];

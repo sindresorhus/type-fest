@@ -218,11 +218,12 @@ expectTypeOf(mixedReadonlyTuples).toBe<[4, 5, 3]>();
 declare const mixedReadonlyTuplesReversed: Merge<[1, 2, 3], readonly [4, 5]>;
 expectTypeOf(mixedReadonlyTuplesReversed).toBe<[4, 5, 3]>();
 
-// Known limitation: a number key of an object is intersected with the position of a tuple instead of overriding it, so conflicting literal types collapse the result to `never`. See the note in the docs.
+// A numeric object key overrides the same tuple position, just like its string spelling.
 declare const tupleIntoObject: Merge<[1], {0: 2}>;
-expectTypeOf(tupleIntoObject).toBe<never>();
-expectTypeOf<Merge<{1: 'x'}, [1, 2]>>().toBe<never>();
-expectTypeOf<Merge<[string], {0: number}>[0]>().toBe<never>();
+expectTypeOf(tupleIntoObject[0]).toBe<2>();
+expectTypeOf(tupleIntoObject.length).toBe<1>();
+expectTypeOf<Merge<{1: 'x'}, [1, 2]>[1]>().toBe<2>();
+expectTypeOf<Merge<[string], {0: number}>[0]>().toBe<number>();
 expectTypeOf<Merge<[1], {'0': 2}>['0']>().toBe<2>();
 expectTypeOf<Merge<[1], {'0': 2}>['length']>().toBe<1>();
 
@@ -373,3 +374,17 @@ expectTypeOf<NestedKeepsNumberIndexSignature>().toBe<{[x: string]: number | stri
 type DeepFirstHalf = Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<{a: 0}, {b: 1}>, {c: 2}>, {a: 3}>, {b: 4}>, {c: 5}>, {a: 6}>, {b: 7}>, {c: 8}>, {a: 9}>, {b: 10}>;
 type Deep = Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<Merge<DeepFirstHalf, {c: 11}>, {a: 12}>, {b: 13}>, {c: 14}>, {a: 15}>, {b: 16}>, {c: 17}>, {a: 18}>, {b: 19}>, {c: 20}>;
 expectTypeOf<Deep>().toBe<{a: 18; b: 19; c: 20}>();
+
+// Numeric properties and their string spellings name the same property.
+expectTypeOf<Merge<{0: 'before'}, {'0': 'after'}>>().toBe<{'0': 'after'}>();
+expectTypeOf<Merge<{'0': 'before'}, {0: 'after'}>>().toBe<{0: 'after'}>();
+expectTypeOf<Merge<{readonly 0?: 'before'; keep: true}, {'0': 'after'}>>().toBe<{'0': 'after'; keep: true}>();
+expectTypeOf<Merge<{'0': 'before'}, {readonly 0?: 'after'}>>().toBe<{readonly 0?: 'after'}>();
+expectTypeOf<Merge<{'-1': string; '1.5': number}, {[-1]: boolean; 1.5: Date}>>().toBe<{[-1]: boolean; 1.5: Date}>();
+expectTypeOf<Merge<{'01': 'padded'}, {1: 'canonical'}>>().toBe<{'01': 'padded'; 1: 'canonical'}>();
+expectTypeOf<Merge<{0: 'a'; keep: true} | {'0': 'b'; keep: false}, {'0': 'after'}>>().toBe<{'0': 'after'; keep: true} | {'0': 'after'; keep: false}>();
+expectTypeOf<Merge<{readonly [key: number]: string; 0: 'before'}, {'0': 'after'}>>().toBe<{readonly [key: number]: string; '0': 'after'}>();
+expectTypeOf<Merge<{1: 'canonical'}, {'01': 'padded'}>>().toBe<{1: 'canonical'; '01': 'padded'}>();
+expectTypeOf<Merge<{1: 'canonical'}, {'1.0': 'fractional'}>>().toBe<{1: 'canonical'; '1.0': 'fractional'}>();
+expectTypeOf<Merge<{1: 'canonical'}, {'1e0': 'exponential'}>>().toBe<{1: 'canonical'; '1e0': 'exponential'}>();
+expectTypeOf<Merge<{1: 'canonical'}, {' 1': 'leading'; '1 ': 'trailing'}>>().toBe<{1: 'canonical'; ' 1': 'leading'; '1 ': 'trailing'}>();

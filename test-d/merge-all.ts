@@ -158,8 +158,11 @@ expectTypeOf<MergeAll<[readonly [1, 2, 3], [4], readonly [5, 6]]>>().toBe<[5, 6,
 expectTypeOf<MergeAll<[[1, 2], [3], {a: 1}]>>().toBe<Merge<[3, 2], {a: 1}>>();
 expectTypeOf<MergeAll<[{a: 1}, {b: 2}, [3]]>>().toBe<Merge<{a: 1; b: 2}, [3]>>();
 
-// Known limitation of `Merge`: a number key of an object does not override the position of a tuple.
-expectTypeOf<MergeAll<[[1], {b: 1}, {0: 2}]>>().toBe<never>();
+// A later numeric object key overrides the same tuple position, including after an intermediate object merge.
+type NumericTupleOverride = MergeAll<[[1], {b: 1}, {0: 2}]>;
+expectTypeOf<NumericTupleOverride[0]>().toBe<2>();
+expectTypeOf<NumericTupleOverride['b']>().toBe<1>();
+expectTypeOf<NumericTupleOverride['length']>().toBe<1>();
 
 // An array of unknown length gives an array of the element types of both sides at that step.
 expectTypeOf<MergeAll<[[1, 2, 3], string[], [4]]>>().toBe<Array<string | 1 | 2 | 3 | 4>>();
