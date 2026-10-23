@@ -1,4 +1,5 @@
 import type {IsAny} from './is-any.d.ts';
+import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {AnyFunction} from './basic.d.ts';
 import type {FunctionParameters} from './internal/index.d.ts';
@@ -63,6 +64,9 @@ export type RequireArity<Function_ extends AnyFunction, Count extends number = 1
 		? Function_
 		: FunctionParameters<Function_> extends readonly [...TupleOf<Count>, ...unknown[]]
 			? Function_
-			: never;
+			// Required tuple parameters after a rest element do not match a required prefix, but still contribute to the arity.
+			: ExcludeRestElement<FunctionParameters<Function_>> extends readonly [...TupleOf<Count>, ...unknown[]]
+				? Function_
+				: never;
 
 export {};

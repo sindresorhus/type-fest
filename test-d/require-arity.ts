@@ -260,3 +260,55 @@ watch('unicorn', value => {
 
 // @ts-expect-error
 watch(1, () => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+
+// Required parameters after an array rest element contribute to the minimum arity.
+type RequiredTrailingParameter = (...arguments_: [...string[], number]) => void;
+type RequiredParametersAroundRest = (...arguments_: [boolean, ...string[], number]) => void;
+expectTypeOf<RequireArity<RequiredTrailingParameter>>().toBe<RequiredTrailingParameter>();
+expectTypeOf<RequireArity<RequiredParametersAroundRest, 2>>().toBe<RequiredParametersAroundRest>();
+
+expectTypeOf<RequireArity<RequiredTrailingParameter, 0>>().toBe<RequiredTrailingParameter>();
+expectTypeOf<RequireArity<RequiredTrailingParameter, 2>>().toBe<never>();
+expectTypeOf<RequireArity<RequiredParametersAroundRest>>().toBe<RequiredParametersAroundRest>();
+expectTypeOf<RequireArity<RequiredParametersAroundRest, 3>>().toBe<never>();
+type ReadonlyTrailingParameters = (this: Date, ...arguments_: readonly [...string[], number, boolean]) => string;
+expectTypeOf<RequireArity<ReadonlyTrailingParameters, 2>>().toBe<ReadonlyTrailingParameters>();
+expectTypeOf<RequireArity<ReadonlyTrailingParameters, 3>>().toBe<never>();
+expectTypeOf<ThisParameterType<RequireArity<ReadonlyTrailingParameters, 2>>>().toBe<Date>();
+
+type SeveralRequiredParametersAroundRest = (...arguments_: [boolean, ...string[], number, Date]) => unknown;
+expectTypeOf<RequireArity<SeveralRequiredParametersAroundRest, 3>>().toBe<SeveralRequiredParametersAroundRest>();
+expectTypeOf<RequireArity<SeveralRequiredParametersAroundRest, 4>>().toBe<never>();
+expectTypeOf<RequireArity<(...arguments_: [...unknown[], unknown]) => void>>().toBe<(...arguments_: [...unknown[], unknown]) => void>();
+expectTypeOf<RequireArity<(...arguments_: [...any[], never]) => void>>().toBe<(...arguments_: [...any[], never]) => void>();
+
+// A union is checked as a whole even when members take different required-prefix paths.
+type OrdinaryParameter = (value: string) => void;
+expectTypeOf<RequireArity<RequiredTrailingParameter | OrdinaryParameter>>().toBe<RequiredTrailingParameter | OrdinaryParameter>();
+expectTypeOf<RequireArity<RequiredTrailingParameter | (() => void)>>().toBe<never>();
+expectTypeOf<RequireArity<RequiredParametersAroundRest | OrdinaryParameter, 2>>().toBe<never>();
+expectTypeOf<RequireArity<RequiredParametersAroundRest | ((value: string, second: number) => void), 2>>()
+	.toBe<RequiredParametersAroundRest | ((value: string, second: number) => void)>();
+
+// A `void` entry after an array rest is required by TypeScript, unlike an ordinary trailing `void` parameter.
+type VoidAfterRest = (...arguments_: [...string[], void]) => void;
+expectTypeOf<RequireArity<VoidAfterRest>>().toBe<VoidAfterRest>();
+declare const voidAfterRest: VoidAfterRest;
+// @ts-expect-error A trailing tuple entry still has to be supplied after an array rest.
+voidAfterRest();
+voidAfterRest(undefined);
+
+// The callback constraint still provides the contextual type of a leading-rest parameter tuple.
+declare function acceptTrailing<Callback extends (...arguments_: [...string[], number]) => void>(callback: RequireArity<Callback>): void;
+acceptTrailing((...arguments_) => {
+	expectTypeOf(arguments_).toBe<[...string[], number]>();
+});
+// @ts-expect-error A callback that declares no parameters has no required parameter.
+acceptTrailing(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+
+// Removing an array rest must not promote an ordinary trailing `void` parameter to required.
+type OrdinaryTrailingVoid = (first: string, last: void) => void;
+expectTypeOf<RequireArity<OrdinaryTrailingVoid>>().toBe<OrdinaryTrailingVoid>();
+expectTypeOf<RequireArity<OrdinaryTrailingVoid, 2>>().toBe<never>();
+expectTypeOf<RequireArity<OrdinaryTrailingVoid | VoidAfterRest>>().toBe<OrdinaryTrailingVoid | VoidAfterRest>();
+expectTypeOf<RequireArity<OrdinaryTrailingVoid | RequiredParametersAroundRest, 2>>().toBe<never>();
