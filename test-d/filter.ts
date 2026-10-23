@@ -285,3 +285,45 @@ expectTypeOf<Filter<Interface, number>>().toBe<{a: 1}>();
 // Invalid input
 // @ts-expect-error
 type Invalid = Filter<string, string>;
+
+// Object filtering keeps the original property values and modifiers, including symbol and numeric keys.
+declare const filterSymbol: unique symbol;
+expectTypeOf<Filter<{readonly [filterSymbol]?: 'symbol'; 0: 'zero'; ignored: 123}, string>>()
+	.toBe<{readonly [filterSymbol]?: 'symbol'; 0: 'zero'}>();
+expectTypeOf<Filter<{[index: number]: string; name: 'Ada'; count: number}, string>>()
+	.toBe<{[index: number]: string; name: 'Ada'}>();
+expectTypeOf<Filter<{readonly data: {name: string} & {count: number}; ignored: boolean}, object>>()
+	.toBe<{readonly data: {name: string} & {count: number}}>();
+expectTypeOf<Filter<{escaped: any; uncertain: unknown; impossible: never; text: string}, string>>()
+	.toBe<{escaped: any; text: string}>();
+expectTypeOf<Filter<{kind: 'text'; label: string} | {kind: 'count'; amount: number}, string>>()
+	.toBe<{kind: 'text'; label: string} | {kind: 'count'}>();
+
+type NamedFilterFunction = ((value: number) => string) & {label: 'handler'; active: boolean};
+expectTypeOf<Filter<NamedFilterFunction, string>>().toBe<{label: 'handler'}>();
+type FilterHandler = (value: number) => string;
+expectTypeOf<Filter<{readonly handler: FilterHandler; ignored: number}, FilterHandler>>()
+	.toBe<{readonly handler: FilterHandler}>();
+
+function _filteredObjectResult<Value extends object>(value: Filter<Value, string>): object {
+	return value;
+}
+
+declare function filterStringProperties<const Value extends object>(value: Value): Filter<Value, string>;
+const filteredProperties = filterStringProperties({name: 'Ada', count: 3, enabled: true});
+expectTypeOf(filteredProperties).toBe<{readonly name: 'Ada'}>();
+// @ts-expect-error The retained property stays readonly.
+filteredProperties.name = 'Ada';
+// @ts-expect-error The number-valued property is removed.
+expectTypeOf(filteredProperties.count);
+// @ts-expect-error An unknown value is not necessarily an object or array.
+type UnknownFilterInput = Filter<unknown, string>;
+
+declare const optionalFilteredProperties: Filter<{readonly name: string; alias?: string | undefined; ignored: unknown}, string>;
+optionalFilteredProperties.alias = undefined;
+// @ts-expect-error A retained readonly property cannot be reassigned.
+optionalFilteredProperties.name = 'Grace';
+declare const filteredIndexProperties: Filter<{[key: string]: string | number; literal: 'value'}, string, {strict: true}>;
+expectTypeOf(filteredIndexProperties.literal).toBe<'value'>();
+// @ts-expect-error Strict filtering removes the mixed index signature, while retaining its known string property.
+expectTypeOf(filteredIndexProperties.missing);

@@ -4,7 +4,6 @@ import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {Simplify} from './simplify.d.ts';
 import type {If} from './if.d.ts';
 
 /**
@@ -129,10 +128,10 @@ type FilterObject<
 	Object_ extends object,
 	Condition,
 	Options extends Required<FilterOptions>,
-> = Simplify<{
+> = {
 	// `Required` removes the `undefined` that an optional property adds to its type
 	[Key in keyof Object_ as Matches<Required<Object_>[Key], Condition, Options['strict']> extends true ? Key : never]: Object_[Key]
-}>;
+} & {};
 
 /**
 Iterates through the array elements and keeps them if they pass {@link Matches `Matches`}.
