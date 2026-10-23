@@ -3,6 +3,7 @@ import type {StringToArray} from '../source/string-to-array.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {Tagged} from '../source/tagged.d.ts';
+import type {LiteralUnion} from '../source/literal-union.d.ts';
 
 type StringToArrayElementNonLiterals<S extends string> = StringToArray<S, {mapNonLiteralsDirectly: true}>;
 
@@ -105,3 +106,17 @@ expectTypeOf<StringToArray<`${number}`, {mapNonLiteralsDirectly: true}>>().toBe<
 expectTypeOf<StringToArray<Capitalize<string>, {mapNonLiteralsDirectly: true}>>().toBe<[Capitalize<string>]>();
 // @ts-expect-error - Only strings can be converted to characters.
 type UnknownString = StringToArray<unknown>;
+
+// Empty intersections used for autocomplete keep the same character sequence as their primitive base.
+expectTypeOf<StringToArray<string & {}>>().toBe<string[]>();
+expectTypeOf<StringToArrayElementNonLiterals<string & {}>>().toBe<[string]>();
+expectTypeOf<string[]>().toBeAssignableTo<StringToArray<LiteralUnion<'abc', string>>>();
+expectTypeOf<[]>().toBeAssignableTo<StringToArray<LiteralUnion<'abc', string>>>();
+expectTypeOf<[string]>().toBeAssignableTo<StringToArrayElementNonLiterals<LiteralUnion<'abc', string>>>();
+expectTypeOf<StringToArrayElementNonLiterals<LiteralUnion<'abc', string>>>().toBeAssignableTo<[string] | ['a', 'b', 'c']>();
+expectTypeOf<['a', 'b']>().not.toBeAssignableTo<StringToArrayElementNonLiterals<LiteralUnion<'abc', string>>>();
+expectTypeOf<StringToArray<'xy' | Tagged<'ab', 'Text'>>>().toBe<['x', 'y'] | ['a', 'b']>();
+
+declare function textCharacters<Text extends string>(text: Text): StringToArray<Text>;
+expectTypeOf(textCharacters('a-b')).toBe<['a', '-', 'b']>();
+expectTypeOf(textCharacters('a-b' as Tagged<'a-b', 'Text'>)).toBe<['a', '-', 'b']>();

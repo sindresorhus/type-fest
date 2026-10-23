@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {NegativeInfinity, Opaque, PositiveInfinity, StringRepeat, Tagged} from '../index.d.ts';
+import type {LiteralUnion, NegativeInfinity, Opaque, PositiveInfinity, StringRepeat, Tagged} from '../index.d.ts';
 
 declare const unknown: unknown;
 
@@ -127,3 +127,12 @@ expectTypeOf<StringRepeat<'x', any>>().toBe<string>();
 expectTypeOf<StringRepeat<unknown, 2>>();
 // @ts-expect-error
 expectTypeOf<StringRepeat<'x', unknown>>();
+
+// Generic callers retain precise primitive and branded results through the same public boundary.
+declare function repeatText<Text extends string, Count extends number>(text: Text, count: Count): StringRepeat<Text, Count>;
+expectTypeOf(repeatText('ha', 2)).toBe<'haha'>();
+expectTypeOf(repeatText('ha' as Tagged<'ha', 'Text'>, 2)).toBe<'haha'>();
+expectTypeOf(repeatText('ha', 2 as Tagged<2, 'Count'>)).toBe<'haha'>();
+expectTypeOf<StringRepeat<LiteralUnion<'ha', string>, 0>>().toBe<''>();
+expectTypeOf<StringRepeat<'x' | Tagged<'y', 'Text'>, 1 | Tagged<2, 'Count'>>>().toBe<'x' | 'y' | 'xx' | 'yy'>();
+expectTypeOf<StringRepeat<`id${number}`, 2>>().toBe<`id${number}id${number}`>();

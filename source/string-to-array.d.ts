@@ -79,7 +79,7 @@ export type StringToArray<S extends string, Options extends StringToArrayOptions
 		S,
 		{
 			// The brand belongs to the complete input string, not to its individual characters.
-			ifNot: _StringToArray<UnwrapBrand<S>, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>;
+			ifNot: _StringToArray<S extends object ? UnwrapBrand<S> : S, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>;
 			ifAny: unknown[];
 		}
 	>;

@@ -37,7 +37,7 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 @category String
 @category Template literal
 */
-export type StringRepeat<S extends string, Count extends number> = _StringRepeat<UnwrapBrand<S>, UnwrapBrand<Count>>;
+export type StringRepeat<S extends string, Count extends number> = _StringRepeat<S extends object ? UnwrapBrand<S> : S, Count extends object ? UnwrapBrand<Count> : Count>;
 
 // Brands describe the original values, so all count checks and interpolation operate on unwrapped primitives.
 type _StringRepeat<S extends string, Count extends number> =
