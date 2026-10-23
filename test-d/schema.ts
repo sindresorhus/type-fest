@@ -387,3 +387,45 @@ expectTypeOf<Schema<any[], boolean>>().toBe<boolean[]>();
 expectTypeOf<Schema<readonly unknown[], boolean>>().toBe<readonly boolean[]>();
 expectTypeOf<Schema<never[], boolean>>().toBe<never[]>();
 expectTypeOf<Schema<readonly [], boolean>>().toBe<readonly []>();
+
+// Declared optional properties lose their access-time undefined, while index-signature values keep it.
+type IndexedSettings = {
+	[name: string]: {enabled: boolean} | undefined;
+	readonly primary?: {enabled: boolean} | undefined;
+};
+expectTypeOf<Schema<IndexedSettings, boolean>>().toBe<{
+	[name: string]: boolean | {enabled: boolean};
+	readonly primary?: {enabled: boolean};
+}>();
+expectTypeOf<Schema<Record<string, {enabled: string} | undefined>, boolean>>()
+	.toBe<Record<string, boolean | {enabled: boolean}>>();
+expectTypeOf<Schema<{[key: number]: {value: string} | undefined; readonly 0?: {value: string} | undefined}, boolean>>()
+	.toBe<{[key: number]: boolean | {value: boolean}; readonly 0?: {value: boolean}}>();
+
+declare const settingsKey: unique symbol;
+expectTypeOf<Schema<{[key: symbol]: {value: string} | undefined; [settingsKey]?: {value: string} | undefined}, boolean>>()
+	.toBe<{[key: symbol]: boolean | {value: boolean}; [settingsKey]?: {value: boolean}}>();
+
+// Required undefined is a leaf; optional undefined is excluded before recursing into the property.
+expectTypeOf<Schema<{required: {child?: string} | undefined; optional?: {child?: string} | undefined}, boolean>>()
+	.toBe<{required: boolean | {child?: boolean}; optional?: {child?: boolean}}>();
+expectTypeOf<{optional: undefined}>().not.toBeAssignableTo<Schema<{optional?: {child: string} | undefined}, boolean>>();
+expectTypeOf<Schema<readonly [required: {child?: string} | undefined, optional?: {child?: number} | undefined, ...rest: Array<{value: string} | undefined>], boolean>>()
+	.toBe<readonly [required: boolean | {child?: boolean}, optional?: {child?: boolean}, ...rest: Array<boolean | {value: boolean}>]>();
+
+// A generic options object still allows known object fields to be read through the result.
+function _readKnownSchema<Options extends {recurseIntoArrays?: boolean}>(value: Schema<{readonly settings?: {enabled: string}}, boolean, Options>): {readonly settings?: {enabled: boolean}} {
+	return value;
+}
+
+declare function makeSchema<Input>(input: Input): Schema<Input, boolean>;
+expectTypeOf(makeSchema({settings: {enabled: 'yes'}})).toBe<{settings: {enabled: boolean}}>();
+expectTypeOf<Schema<{required: any; optional?: unknown; impossible?: never}, boolean>>()
+	.toBe<{required: boolean; optional?: boolean; impossible?: never}>();
+
+type RecursiveSettings = {enabled: boolean; readonly children?: readonly RecursiveSettings[] | undefined};
+const recursiveSettingsMask: Schema<RecursiveSettings, boolean> = {
+	enabled: true,
+	children: [{enabled: false, children: [{enabled: true}]}],
+};
+expectTypeOf(recursiveSettingsMask.children?.[0]?.enabled).toBe<boolean | undefined>();

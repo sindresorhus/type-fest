@@ -1,4 +1,4 @@
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 
 /**
 Create the type of a defaults object for the given options type, with only its optional keys, made required.
@@ -53,7 +53,7 @@ Known limitations:
 */
 export type DefaultsFor<Options extends object> =
 	Options extends unknown // To get the defaults of each member of a union separately.
-		? {[Key in keyof Options as Key extends OptionalKeysOf<Options> ? Key : never]-?: Exclude<Options[Key], undefined>}
+		? {[Key in keyof Options as IsOptionalKeyOf<Options, Key> extends false ? never : Key]-?: Exclude<Options[Key], undefined>}
 		: never;
 
 export {};

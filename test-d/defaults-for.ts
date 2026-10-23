@@ -171,3 +171,32 @@ expectTypeOf<DefaultsFor<never>>().toBe<never>();
 type NotObject = DefaultsFor<unknown>;
 // @ts-expect-error
 type Primitive = DefaultsFor<string>;
+
+// Declared optional keys remain distinct from their surrounding index signatures.
+expectTypeOf<DefaultsFor<{[key: string]: {value?: string} | undefined; readonly nested?: {value?: string} | undefined}>>()
+	.toBe<{readonly nested: {value?: string}}>();
+expectTypeOf<DefaultsFor<{[key: number]: string | undefined; readonly 0?: string}>>().toBe<{readonly 0: string}>();
+expectTypeOf<DefaultsFor<{[key: symbol]: unknown; readonly [symbol]?: (value: number) => string}>>()
+	.toBe<{readonly [symbol]: (value: number) => string}>();
+expectTypeOf<DefaultsFor<Record<string, {value?: string} | undefined>>>().toBe<{}>();
+expectTypeOf<keyof DefaultsFor<any>>().toBe<never>();
+
+// Even an impossible default stays required, independently in each union member.
+expectTypeOf<DefaultsFor<{type: 'disabled'; value?: never} | {type: 'open'; value?: unknown}>>()
+	.toBe<{value: never} | {value: unknown}>();
+// @ts-expect-error
+const impossibleDefault: DefaultsFor<{value?: never}> = {value: undefined};
+
+// Generic defaults are still partial options, and the options argument can drive inference.
+function _readPartialDefaults<GenericOptions extends object>(defaultValues: DefaultsFor<GenericOptions>): Partial<GenericOptions> {
+	return defaultValues;
+}
+
+declare const inferredOptions: {url: string; retries?: number};
+const inferredResolved = withDefaults({retries: 2}, inferredOptions);
+expectTypeOf(inferredResolved.url).toBe<string>();
+expectTypeOf(inferredResolved.retries).toBe<number>();
+// @ts-expect-error
+withDefaults({}, inferredOptions);
+// @ts-expect-error
+withDefaults({retries: undefined}, inferredOptions);
