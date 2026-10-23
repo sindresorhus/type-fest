@@ -190,3 +190,47 @@ expectTypeOf<NonNullableDeep<Array<null | undefined>>>().toBe<never[]>();
 type CleanRecursiveJson = string | CleanRecursiveJson[] | {[key: string]: CleanRecursiveJson};
 expectTypeOf<NonNullableDeep<RecursiveJson>>().toBeAssignableTo<CleanRecursiveJson>();
 expectTypeOf<CleanRecursiveJson>().toBeAssignableTo<NonNullableDeep<RecursiveJson>>();
+
+// A function's metadata is cleaned along with its parameters, return value, and receiver.
+declare const metadataKey: unique symbol;
+type NullableMetadataHandler = ((this: {requestId: string | null}, event: {id: string | null}) => Promise<{ok: boolean | null}> | null) & {
+	readonly metadata?: {timeout: number | null; tags: Array<string | null>};
+	[metadataKey]: {enabled: boolean | undefined};
+};
+declare const metadataHandler: NonNullableDeep<NullableMetadataHandler>;
+expectTypeOf(metadataHandler.call({requestId: 'request'}, {id: 'event'})).toBe<Promise<{ok: boolean}>>();
+expectTypeOf(metadataHandler.metadata?.timeout).toBe<number | undefined>();
+expectTypeOf(metadataHandler[metadataKey].enabled).toBe<boolean>();
+if (metadataHandler.metadata) {
+	metadataHandler.metadata.tags.push('ready');
+}
+
+// @ts-expect-error A valid metadata object still cannot replace a readonly property.
+metadataHandler.metadata = {timeout: 20, tags: ['ready']};
+// @ts-expect-error The receiver's required field no longer accepts null.
+void metadataHandler.call({requestId: null}, {id: 'event'});
+// @ts-expect-error A metadata value no longer accepts undefined.
+metadataHandler[metadataKey].enabled = undefined;
+
+// Special values inside metadata retain their individual meanings.
+type SpecialMetadataHandler = (() => void) & {value: any; missing: never; unknown: unknown};
+expectTypeOf<Omit<NonNullableDeep<SpecialMetadataHandler>, never>>().toBe<{value: any; missing: never; unknown: unknown}>();
+
+function readHandlerLabel<Extra>(handler: NonNullableDeep<((value: string | null) => number | undefined) & {metadata: {label: string | null; extra: Extra}}>): string {
+	return handler.metadata.label;
+}
+
+type RecursiveMetadataHandler = ((event: string | null) => number | undefined) & {next?: RecursiveMetadataHandler | null};
+declare const recursiveMetadataHandler: NonNullableDeep<RecursiveMetadataHandler>;
+expectTypeOf(recursiveMetadataHandler.next?.('next')).toBe<number | undefined>();
+
+declare function cleanHandler<const Handler extends (...arguments_: any[]) => unknown>(handler: Handler): NonNullableDeep<Handler>;
+const inferredMetadataHandler = cleanHandler(Object.assign((event: string | null) => event?.length ?? null, {metadata: {label: 'ready' as const}}));
+expectTypeOf(inferredMetadataHandler('event')).toBe<number>();
+expectTypeOf(inferredMetadataHandler.metadata.label).toBe<'ready'>();
+// @ts-expect-error Inference retains the cleaned parameter type.
+inferredMetadataHandler(null);
+
+// A callable array still exposes generic array methods after its elements are cleaned.
+declare const callableRows: NonNullableDeep<((value: string | null) => number | undefined) & Array<string | null>>;
+expectTypeOf(callableRows.map(value => value.length)).toBe<number[]>();

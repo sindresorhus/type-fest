@@ -108,7 +108,7 @@ export type NonNullableDeep<T> =
 													: (this: NonNullableDeep<ThisParameterType<T>>, ...arguments_: NonNullableDeep<Parameters<T>>) => NonNullableDeep<ReturnType<T>>)
 												& (IsNever<keyof T> extends true
 													? unknown
-													: NonNullableDeep<{[Key in keyof T]: T[Key]}>) // The mapped type removes the call signature
+													: NonNullableDeep<{[Key in keyof T]: T[Key]}>) // The mapped type removes the call signature; redispatch preserves array methods when the callable is also an array.
 											// The `Function` interface has no call signature, so the branch above misses it, and mapping it would produce an uncallable record of its own methods.
 											: T extends Function
 												? T

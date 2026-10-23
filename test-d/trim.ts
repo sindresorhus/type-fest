@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged, Trim} from '../index.d.ts';
+import type {Opaque, StringRepeat, Tagged, Trim} from '../index.d.ts';
 
 declare function trim<S extends string>(value: S): Trim<S>;
 
@@ -34,3 +34,12 @@ expectTypeOf<Trim<any>>().toBe<any>();
 expectTypeOf<Trim<never>>().toBe<never>();
 // @ts-expect-error
 expectTypeOf<Trim<unknown>>();
+
+// A constrained generic literal retains its known result without widening to string.
+function _trimKnownLiteral<Text extends 'abc'>(value: Trim<Text>): 'abc' {
+	return value;
+}
+
+// Both independent trimming directions retain their supported recursion budget.
+expectTypeOf<Trim<`${StringRepeat<' ', 999>}x`>>().toBe<'x'>();
+expectTypeOf<Trim<`x${StringRepeat<' ', 999>}`>>().toBe<'x'>();

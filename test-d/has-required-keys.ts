@@ -83,3 +83,13 @@ expectTypeOf(hasRequiredFields({id: 1})).toBe<true>();
 expectTypeOf(hasRequiredFields({} as {id?: number})).toBe<false>();
 expectTypeOf(hasRequiredFields([] as readonly [string?])).toBe<false>();
 expectTypeOf(hasRequiredFields(['first'] as const)).toBe<true>();
+
+// An API can require its template argument only when a field must be supplied.
+declare function configureTemplate<Template extends object>(...parameters: HasRequiredKeys<Template> extends true ? [template: Template] : [template?: Template]): Template;
+expectTypeOf(configureTemplate<{path: string}>({path: 'output'})).toBe<{path: string}>();
+expectTypeOf(configureTemplate<{path?: string}>()).toBe<{path?: string}>();
+expectTypeOf(configureTemplate<Record<string, unknown>>()).toBe<Record<string, unknown>>();
+// @ts-expect-error A template with a required field cannot be omitted.
+configureTemplate<{path: string}>();
+// @ts-expect-error A tuple with a required element also requires its template argument.
+configureTemplate<readonly [string]>();
