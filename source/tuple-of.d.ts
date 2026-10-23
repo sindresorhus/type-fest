@@ -84,7 +84,7 @@ export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Len
 	ifNever: [];
 }>;
 
-type _TupleOf<Length extends number, Fill> = number extends Length
+type _TupleOf<Length extends number, Fill> = `${number}` extends `${Length}`
 	? Fill[]
 	: BuildTupleDigitByDigit<`${Length}`, Fill>;
 

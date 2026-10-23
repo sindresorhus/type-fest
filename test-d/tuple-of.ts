@@ -51,3 +51,34 @@ expectTypeOf<[]>().toBe<TupleOf<1.5e-7, string>>();
 // The same for a union of lengths, where the printed text is a union of texts and only one member may be in scientific notation, so the check has to be per member.
 expectTypeOf<[] | [string, string, string]>().toBe<TupleOf<1e-7 | 3, string>>();
 expectTypeOf<[] | [string, string, string]>().toBe<TupleOf<1e-7 | 1.5e-7 | 3, string>>();
+
+// Known enum lengths produce fixed tuples just like their numeric values.
+enum TupleLength {
+	Zero = 0,
+	One = 1,
+	Two = 2,
+}
+expectTypeOf<TupleOf<TupleLength.Two, string>>().toBe<[string, string]>();
+expectTypeOf<TupleOf<TupleLength.Zero, string>>().toBe<[]>();
+expectTypeOf<TupleOf<TupleLength.One | TupleLength.Two, 1>>().toBe<[1] | [1, 1]>();
+
+enum FractionalLength {
+	Negative = -2,
+	Fraction = 2.5,
+	Tiny = 1e-7,
+}
+declare enum RuntimeLength {
+	Value,
+}
+expectTypeOf<TupleOf<TupleLength, string>>().toBe<[] | [string] | [string, string]>();
+expectTypeOf<TupleOf<TupleLength.Two | 1, undefined>>().toBe<[undefined] | [undefined, undefined]>();
+expectTypeOf<TupleOf<FractionalLength.Negative, string>>().toBe<[]>();
+expectTypeOf<TupleOf<FractionalLength.Fraction, string>>().toBe<[string, string]>();
+expectTypeOf<TupleOf<FractionalLength.Tiny, string>>().toBe<[]>();
+expectTypeOf<TupleOf<RuntimeLength.Value, string>>().toBe<string[]>();
+expectTypeOf<TupleOf<TupleLength.Two, never>>().toBe<[never, never]>();
+expectTypeOf<TupleOf<TupleLength.One, any>>().toBe<[any]>();
+expectTypeOf<TupleOf<TupleLength.Two>>().toBe<[unknown, unknown]>();
+expectTypeOf<TupleOf<number>>().toBe<unknown[]>();
+// @ts-expect-error
+type UnknownLength = TupleOf<unknown>;
