@@ -247,3 +247,52 @@ type UnknownBrandedPath = SetNonNullableDeep<{a: string | null}, unknown>;
 
 // A wide autocomplete alternative must not erase the known nested selection.
 expectTypeOf<SetNonNullableDeep<{a: {b: string | null; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {b: string; c?: number}; d?: string}>();
+
+// Selecting many configuration fields must not build a chain of one transformed object per path.
+type ConfigurationGroups = `group${0 | 1 | 2 | 3 | 4}`;
+type ConfigurationFields = `field${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`;
+type ManyNullableFields = Record<ConfigurationGroups, Record<ConfigurationFields, {value: string | null; untouched: number | null}>>;
+declare const cleanedConfiguration: SetNonNullableDeep<ManyNullableFields, `${ConfigurationGroups}.${ConfigurationFields}.value`>;
+expectTypeOf(cleanedConfiguration.group4.field9.value).toBe<string>();
+expectTypeOf(cleanedConfiguration.group4.field9.untouched).toBe<number | null>();
+
+// Grouped paths preserve generic value reads and an unselected value's identity.
+function _readSelectedValue<Value>(value: SetNonNullableDeep<{user: {name: Value | null} | null; kept: Value}, 'user' | 'user.name'>): NonNullable<Value> {
+	return value.user.name;
+}
+
+function _keepWithoutPaths<Value>(value: Value): SetNonNullableDeep<Value, never> {
+	return value;
+}
+
+declare function cleanFields<const Value, Path extends string | number>(value: Value, path: Path): SetNonNullableDeep<Value, Path>;
+expectTypeOf(cleanFields({user: {name: null as string | null, age: null as number | null}}, 'user.name' as 'user.name' | 'user.age'))
+	.toBe<{readonly user: {readonly name: string; readonly age: number}}>();
+
+// A descendant-only path keeps a tuple's extra declared properties while changing its selected value.
+type LabelledNullableRows = [{name: string | null; kept: number | null}] & {readonly label: 'rows'};
+const labelledRows = Object.assign([{name: 'first', kept: null}] as [{name: string; kept: number | null}], {label: 'rows' as const});
+const cleanedRows: SetNonNullableDeep<{rows: LabelledNullableRows}, 'rows.0.name'> = {rows: labelledRows};
+expectTypeOf(cleanedRows.rows.label).toBe<'rows'>();
+expectTypeOf(cleanedRows.rows[0].name).toBe<string>();
+// @ts-expect-error An unrelated readonly property keeps its modifier.
+cleanedRows.rows.label = 'rows';
+
+// Finite selections through a recursive configuration keep unselected nullable properties.
+type NullableConfigurationTree = {readonly value: string | null; next: NullableConfigurationTree | null; children: NullableConfigurationTree[]};
+const cleanedTree: SetNonNullableDeep<NullableConfigurationTree, 'next.value' | `children.${number}.value`> = {
+	value: null,
+	next: {value: 'next', next: null, children: []},
+	children: [{value: 'child', next: null, children: []}],
+};
+expectTypeOf(cleanedTree.value).toBe<string | null>();
+expectTypeOf(cleanedTree.next?.value).toBe<string | undefined>();
+expectTypeOf(cleanedTree.children.at(0)?.value).toBe<string | undefined>();
+
+// Check every selected branch, not only the field whose read triggered the original depth error.
+expectTypeOf(cleanedConfiguration).toBe<Record<ConfigurationGroups, Record<ConfigurationFields, {value: string; untouched: number | null}>>>();
+cleanedRows.rows[0].kept = null;
+// @ts-expect-error A selected tuple descendant cannot be assigned null again.
+cleanedRows.rows[0].name = null;
+// @ts-expect-error Every selected recursive-array element must have a non-nullable value.
+cleanedTree.children.push({value: null, next: null, children: []});

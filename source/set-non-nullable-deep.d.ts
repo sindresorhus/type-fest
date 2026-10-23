@@ -4,8 +4,6 @@ import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts';
-import type {UnionToTuple} from './union-to-tuple.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
 import type {SetRequiredDeep} from './set-required-deep.d.ts'; // For `@link`
 
 /**
@@ -68,30 +66,38 @@ export type SetNonNullableDeep<
 	KeyPaths extends LiteralUnion<Paths<BaseType, {maxRecursionDepth: 2}>, string | number>,
 > = IsAny<KeyPaths> extends true
 	? NonNullableDeep<BaseType>
-	: SetNonNullableDeepHelper<BaseType, UnionToTuple<UnwrapPathBrand<KeyPaths>>>;
+	: SetNonNullableDeepHelper<BaseType, UnwrapPathBrand<KeyPaths>>;
 
 /**
 Internal helper for {@link SetNonNullableDeep}.
 
-Recursively transforms the `BaseType` by applying {@link SetNonNullableDeepSinglePath} for each path in `KeyPathsTuple`.
+Applies terminal keys together to the original container, then walks the descendant paths once. A node without terminal paths skips the shallow setter.
 */
-type SetNonNullableDeepHelper<BaseType, KeyPathsTuple extends UnknownArray> =
-	KeyPathsTuple extends [infer KeyPath, ...infer RestPaths]
-		? SetNonNullableDeepHelper<SetNonNullableDeepSinglePath<BaseType, KeyPath>, RestPaths>
-		: BaseType;
+type SetNonNullableDeepHelper<BaseType, KeyPaths> =
+	[KeyPaths] extends [never]
+		? BaseType
+		: BaseType extends NonRecursiveType | ReadonlySet<unknown> | ReadonlyMap<unknown, unknown> // Also distributes `BaseType`
+			? BaseType
+			: ([TerminalKeys<KeyPaths>] extends [never]
+				? BaseType
+				: SimplifyObject<SetNonNullable<BaseType, TerminalKeys<KeyPaths> & keyof BaseType>>) extends infer Result
+				? {[Key in keyof Result]: SetNonNullableDeepHelper<Result[Key], SubPaths<KeyPaths, Key>>}
+				: never;
 
 /**
-Makes a single path non-nullable in `BaseType`.
+Converts terminal paths to their numeric and string key spellings, keeping a numeric key such as `1.2` distinct from a dotted string path.
 */
-type SetNonNullableDeepSinglePath<BaseType, KeyPath> =
-	BaseType extends NonRecursiveType | ReadonlySet<unknown> | ReadonlyMap<unknown, unknown> // Also distributes `BaseType`
-		? BaseType
-		: KeyPath extends `${infer Property}.${infer RestPath}`
-			? {
-				[Key in keyof BaseType]: Property extends `${Key & (string | number)}`
-					? SetNonNullableDeepSinglePath<BaseType[Key], RestPath>
-					: BaseType[Key];
-			}
-			: SimplifyObject<SetNonNullable<BaseType, NormalizedKeys<KeyPath & PropertyKey> & keyof BaseType>>;
+type TerminalKeys<KeyPaths> = KeyPaths extends `${string}.${string}`
+	? never
+	: NormalizedKeys<KeyPaths & PropertyKey>;
+
+/**
+Finds the subpaths whose first property matches `Key` in `BaseType`.
+*/
+type SubPaths<KeyPaths, Key> = KeyPaths extends `${infer Property}.${infer RestPath}`
+	? Property extends `${Key & (string | number)}`
+		? RestPath
+		: never
+	: never;
 
 export {};
