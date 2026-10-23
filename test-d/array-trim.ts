@@ -119,3 +119,33 @@ type InvalidArray = ArrayTrim<string, 0>;
 
 // @ts-expect-error
 type InvalidCondition = ArrayTrim<[0], 0, {condition: 'loose'}>;
+
+// An unknown comparison condition can produce either complete trim result.
+expectTypeOf<ArrayTrimStart<[1, 'a'], number, {condition: 'equality' | 'extends'}>>().toBe<[1, 'a'] | ['a']>();
+expectTypeOf<ArrayTrimEnd<['a', 1], number, {condition: 'equality' | 'extends'}>>().toBe<['a', 1] | ['a']>();
+expectTypeOf<ArrayTrim<[1, 'a', 2], number, {condition: 'equality' | 'extends'}>>().toBe<[1, 'a', 2] | ['a']>();
+expectTypeOf<ArrayTrim<[1, 'a', 2], number, {condition: 'equality'} | {condition: 'extends'}>>().toBe<[1, 'a', 2] | ['a']>();
+
+// One condition applies to both ends, so partial results from mixing conditions are excluded.
+expectTypeOf<[1, 'a']>().not.toBeAssignableTo<ArrayTrim<[1, 'a', 2], number, {condition: 'equality' | 'extends'}>>();
+expectTypeOf<['a', 2]>().not.toBeAssignableTo<ArrayTrim<[1, 'a', 2], number, {condition: 'equality' | 'extends'}>>();
+expectTypeOf<ArrayTrim<readonly [1, 'a', 2], number, {condition: 'equality' | 'extends'}>>().toBe<readonly [1, 'a', 2] | readonly ['a']>();
+expectTypeOf<ArrayTrim<[1, 'a', 2] | readonly [3, 'b', 4], number, {condition: 'equality' | 'extends'}>>()
+	.toBe<[1, 'a', 2] | ['a'] | readonly [3, 'b', 4] | readonly ['b']>();
+expectTypeOf<ArrayTrimStart<[{a: 1; b: 2}, 'value'], {a: 1}, {condition: 'equality' | 'extends'}>>()
+	.toBe<[{a: 1; b: 2}, 'value'] | ['value']>();
+expectTypeOf<ArrayTrim<[1 | 2, 'a', 2 | 1], 1 | 2, {condition: 'equality' | 'extends'}>>().toBe<['a']>();
+expectTypeOf<ArrayTrim<[1?, 2?], number, {condition: 'equality' | 'extends'}>>().toBe<[1?, 2?] | []>();
+expectTypeOf<ArrayTrim<[1, ...Array<2>, 'a', 3], number, {condition: 'equality' | 'extends'}>>().toBe<[1, ...Array<2>, 'a', 3] | ['a']>();
+expectTypeOf<ArrayTrim<number[], number, {condition: 'equality' | 'extends'}>>().toBe<[]>();
+
+// Existing defaults and sentinel behavior are shared by all three entry points.
+expectTypeOf<ArrayTrim<[1, 'a', 2], number, {condition?: 'equality' | 'extends'}>>().toBe<[1, 'a', 2]>();
+expectTypeOf<ArrayTrim<[1, 'a', 2], number, any>>().toBe<[1, 'a', 2]>();
+expectTypeOf<ArrayTrim<[1, 'a', 2], number, never>>().toBe<[1, 'a', 2]>();
+expectTypeOf<ArrayTrim<any, number, {condition: 'equality' | 'extends'}>>().toBe<any>();
+expectTypeOf<ArrayTrim<never, number, {condition: 'equality' | 'extends'}>>().toBe<never>();
+expectTypeOf<ArrayTrim<[1, 'a', 2], any, {condition: 'equality' | 'extends'}>>().toBe<[1, 'a', 2] | []>();
+expectTypeOf<ArrayTrim<[never, 'a', never], never, {condition: 'equality' | 'extends'}>>().toBe<['a']>();
+expectTypeOf<ArrayTrim<[1, 'a', 2], unknown, {condition: 'equality' | 'extends'}>>().toBe<[1, 'a', 2] | []>();
+expectTypeOf<ArrayTrimStart<[unknown, 'a'], number, {condition: 'equality' | 'extends'}>>().toBe<[unknown, 'a']>();

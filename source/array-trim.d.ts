@@ -75,7 +75,7 @@ Note: Trimming stops at the first element that does not match, even if it is a r
 @category Array
 */
 export type ArrayTrimStart<Array_ extends UnknownArray, Item, Options extends ArrayTrimOptions = {}> =
-	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>, 'start'>;
+	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>['condition'], 'start'>;
 
 /**
 Remove the elements of the given type from the end of an array.
@@ -109,7 +109,7 @@ Note: Trimming stops at the last element that does not match, even if it is an o
 @category Array
 */
 export type ArrayTrimEnd<Array_ extends UnknownArray, Item, Options extends ArrayTrimOptions = {}> =
-	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>, 'end'>;
+	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>['condition'], 'end'>;
 
 /**
 Remove the elements of the given type from both ends of an array.
@@ -136,15 +136,21 @@ type C = ArrayTrim<['a', 1, 'b', 2], string, {condition: 'extends'}>;
 @category Array
 */
 export type ArrayTrim<Array_ extends UnknownArray, Item, Options extends ArrayTrimOptions = {}> =
-	ArrayTrimEnd<ArrayTrimStart<Array_, Item, Options>, Item, Options>;
+	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>['condition'], 'both'>;
 
 /**
 Trims each member of a union of arrays on its own, so that `readonly` is decided per member.
 */
-type TrimEach<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>, Side extends 'start' | 'end'> = IfNotAnyOrNever<Array_, {
-	ifNot: Array_ extends unknown // For distributing `Array_`
-		? (Side extends 'start' ? _ArrayTrimStart<Array_, Item, Options> : _ArrayTrimEnd<Array_, Item, Options>) extends infer Result extends UnknownArray
-			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
+type TrimEach<Array_ extends UnknownArray, Item, Condition extends Required<ArrayTrimOptions>['condition'], Side extends 'start' | 'end' | 'both'> = IfNotAnyOrNever<Array_, {
+	ifNot: Condition extends unknown // Select one condition for the complete trim, including both ends.
+		? Array_ extends unknown // For distributing `Array_`
+			? (Side extends 'start'
+				? _ArrayTrimStart<Array_, Item, Condition>
+				: Side extends 'end'
+					? _ArrayTrimEnd<Array_, Item, Condition>
+					: _ArrayTrimEnd<_ArrayTrimStart<Array_, Item, Condition>, Item, Condition>) extends infer Result extends UnknownArray
+				? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
+				: never // Should never happen
 			: never // Should never happen
 		: never; // Should never happen
 }>;
@@ -152,43 +158,43 @@ type TrimEach<Array_ extends UnknownArray, Item, Options extends Required<ArrayT
 /**
 Returns whether the element matches the item, according to the `condition` option.
 */
-type Matches<Element, Item, Options extends Required<ArrayTrimOptions>> =
-	Options['condition'] extends 'extends'
+type Matches<Element, Item, Condition extends Required<ArrayTrimOptions>['condition']> =
+	Condition extends 'extends'
 		? [Element] extends [Item] ? true : false
 		: IsEqual<Element, Item>;
 
-type _ArrayTrimStart<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>> =
+type _ArrayTrimStart<Array_ extends UnknownArray, Item, Condition extends Required<ArrayTrimOptions>['condition']> =
 	'0' extends keyof Array_
 		// The array starts with a required or optional element.
 		? Array_ extends readonly [unknown?, ...infer Rest]
-			? Matches<FirstArrayElement<Array_>, Item, Options> extends true
-				? _ArrayTrimStart<Rest, Item, Options>
+			? Matches<FirstArrayElement<Array_>, Item, Condition> extends true
+				? _ArrayTrimStart<Rest, Item, Condition>
 				: Array_
 			: never // Should never happen
 		// The array is empty, or starts with a rest element.
 		: Array_ extends readonly []
 			? Array_
-			: Matches<ExtractRestElement<Array_>, Item, Options> extends true
-				? _ArrayTrimStart<ExcludeRestElement<Array_>, Item, Options>
+			: Matches<ExtractRestElement<Array_>, Item, Condition> extends true
+				? _ArrayTrimStart<ExcludeRestElement<Array_>, Item, Condition>
 				: Array_;
 
-type _ArrayTrimEnd<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>> =
+type _ArrayTrimEnd<Array_ extends UnknownArray, Item, Condition extends Required<ArrayTrimOptions>['condition']> =
 	Array_ extends readonly [...infer Rest, infer Last]
 		// The array ends with a required element.
-		? Matches<Last, Item, Options> extends true
-			? _ArrayTrimEnd<Rest, Item, Options>
+		? Matches<Last, Item, Condition> extends true
+			? _ArrayTrimEnd<Rest, Item, Condition>
 			: Array_
 		: Array_ extends readonly []
 			? Array_
 			: number extends Array_['length']
 				// The array ends with a rest element.
-				? Matches<ExtractRestElement<Array_>, Item, Options> extends true
-					? _ArrayTrimEnd<ExcludeRestElement<Array_>, Item, Options>
+				? Matches<ExtractRestElement<Array_>, Item, Condition> extends true
+					? _ArrayTrimEnd<ExcludeRestElement<Array_>, Item, Condition>
 					: Array_
 				// The array ends with an optional element.
 				: Array_ extends readonly [...infer Rest, (infer Last)?]
-					? Matches<Last, Item, Options> extends true
-						? _ArrayTrimEnd<Rest, Item, Options>
+					? Matches<Last, Item, Condition> extends true
+						? _ArrayTrimEnd<Rest, Item, Condition>
 						: Array_
 					: never; // Should never happen
 
