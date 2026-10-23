@@ -1,4 +1,5 @@
 import type {ConditionalKeys} from './conditional-keys.d.ts';
+import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -46,7 +47,15 @@ export type ConditionalPick<Base, Condition> =
 		: Base extends unknown // For distributing `Base`
 			? IsNever<ConditionalKeys<Base, Condition>> extends true
 				? Base extends object ? {} : never
-				: Pick<Base, ConditionalKeys<Base, Condition> & keyof Base>
+				// Preserve Pick's existing property view for primitive and any inputs.
+				: ExtendsStrict<Base, object, {strictAny: true}> extends true
+					? {
+						// ConditionalKeys excludes array methods; test each value because a matching signature can subsume a nonmatching declared key.
+						[Key in keyof Base as Key extends ConditionalKeys<Base, Condition>
+							? ExtendsStrict<Base[Key], Condition> extends true ? Key : never
+							: never]: Base[Key]
+					}
+					: Pick<Base, ConditionalKeys<Base, Condition> & keyof Base>
 			: never; // Should never happen
 
 export {};
