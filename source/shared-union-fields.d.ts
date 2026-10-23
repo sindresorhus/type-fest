@@ -1,3 +1,4 @@
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {SharedUnionFieldsDeep} from './shared-union-fields-deep.d.ts'; // For `@link`
@@ -71,8 +72,8 @@ export type SharedUnionFields<Union> =
 			| SkippedMembers
 			| (IsNever<RelevantMembers> extends true
 				? never
-				// `Pick` already builds the shared object, so expand it without a second mapping.
-				: Pick<RelevantMembers, keyof RelevantMembers> & {})
+				// Keep shared index domains and declared fields separately so index signatures cannot hide known properties.
+				: Pick<RelevantMembers, keyof RelevantMembers> & Pick<RelevantMembers, keyof OmitIndexSignature<RelevantMembers> & keyof RelevantMembers> & {})
 			: never
 		: never;
 

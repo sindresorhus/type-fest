@@ -266,3 +266,29 @@ function _sharedLeaf<Options extends {recurseIntoArrays?: boolean}>(value: Share
 function _sharedTuple<Options extends {recurseIntoArrays?: boolean}>(value: SharedUnionFieldsDeep<readonly [string, number], Options>): readonly [string, number] {
 	return value;
 }
+
+// An index signature must not hide fields declared in every union member.
+type DeclaredIndexedFields =
+	| {[key: string]: unknown; readonly kind: 'text'; id: string}
+	| {[key: string]: unknown; readonly kind: 'number'; id: number};
+declare const declaredIndexedFields: SharedUnionFieldsDeep<{data: DeclaredIndexedFields}>;
+expectTypeOf(declaredIndexedFields.data.id).toBe<string | number>();
+expectTypeOf<{data: {}}>().not.toBeAssignableTo<SharedUnionFieldsDeep<{data: DeclaredIndexedFields}>>();
+
+// Transform declared nested fields while retaining independent owning modifiers.
+type IndexedNestedFields =
+	| {[key: string]: unknown; readonly details?: {value: string; left: true} | undefined; rows: ReadonlyArray<{value: string; left: true}>}
+	| {[key: string]: unknown; details?: {value: number; right: true}; rows: ReadonlyArray<{value: number; right: true}>};
+declare const indexedNestedFields: SharedUnionFieldsDeep<IndexedNestedFields, {recurseIntoArrays: true}>;
+expectTypeOf(indexedNestedFields.details).toBe<{value: string | number} | undefined>();
+expectTypeOf(indexedNestedFields.rows).toBe<ReadonlyArray<{value: string | number}>>();
+// @ts-expect-error The owning field retains the readonly contributor.
+indexedNestedFields.details = {value: 'updated'};
+// @ts-expect-error Recursion retains readonly array access.
+indexedNestedFields.rows[0] = {value: 'updated'};
+const explicitlyUndefinedDetails: SharedUnionFieldsDeep<IndexedNestedFields> = {details: undefined, rows: []};
+expectTypeOf(explicitlyUndefinedDetails.details).toBe<{value: string | number} | undefined>();
+
+function _readIndexedNested<Extra>(value: SharedUnionFieldsDeep<{[key: string]: unknown; details: {value: string; extra: Extra}}>): string {
+	return value.details.value;
+}

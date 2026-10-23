@@ -362,3 +362,28 @@ enum SignedNumericField {
 
 expectTypeOf<AllUnionFields<{[SignedNumericField.Negative]: 'negative'} | {'-1': 1}>>().toBe<{[SignedNumericField.Negative]: 'negative' | 1}>();
 expectTypeOf<AllUnionFields<{[SignedNumericField.Fraction]: 'fraction'} | {'1.5': 2}>>().toBe<{[SignedNumericField.Fraction]: 'fraction' | 2}>();
+
+// An index signature must not hide fields declared in every union member.
+type DeclaredIndexedFields =
+	| {[key: string]: unknown; readonly kind: 'text'; id: string}
+	| {[key: string]: unknown; readonly kind: 'number'; id: number};
+declare const declaredIndexedFields: AllUnionFields<DeclaredIndexedFields>;
+expectTypeOf(declaredIndexedFields.id).toBe<string | number>();
+expectTypeOf<{}>().not.toBeAssignableTo<AllUnionFields<DeclaredIndexedFields>>();
+
+// An explicitly optional common field remains optional, including declared undefined values.
+type IndexedOptionalFields = {[key: string]: unknown; readonly label?: 'left' | undefined} | {[key: string]: unknown; label?: 'right'};
+const optionalIndexedFields: AllUnionFields<IndexedOptionalFields> = {label: undefined};
+expectTypeOf(optionalIndexedFields.label).toBe<'left' | 'right' | undefined>();
+// @ts-expect-error A readonly contributor keeps the shared declaration readonly.
+optionalIndexedFields.label = 'left';
+
+declare const indexedSymbol: unique symbol;
+declare const symbolIndexedFields: AllUnionFields<{[key: symbol]: unknown; [indexedSymbol]: string} | {[key: symbol]: unknown; [indexedSymbol]: number}>;
+expectTypeOf(symbolIndexedFields[indexedSymbol]).toBe<string | number>();
+
+// Inference retains required fields rather than only the permissive index signature.
+declare const indexedAlternatives: readonly DeclaredIndexedFields[];
+const collectedIndexedFields = collectFields(indexedAlternatives);
+expectTypeOf(collectedIndexedFields.id).toBe<string | number>();
+expectTypeOf<{kind: 'text'; id: boolean}>().not.toBeAssignableTo<typeof collectedIndexedFields>();

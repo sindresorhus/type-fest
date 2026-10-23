@@ -1,4 +1,5 @@
 import type {NonRecursiveType, UnionMin, TupleLength, StaticPartOfArray, VariablePartOfArray, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {UnionMax} from './union-max.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {If} from './if.d.ts';
@@ -116,21 +117,18 @@ type _SharedUnionFieldsDeep<Union, OptionsWithDefaults extends Required<SharedUn
 Same as `SharedUnionFieldsDeep`, but accepts only `object`s and as inputs. Internal helper for `SharedUnionFieldsDeep`.
 */
 type SharedObjectUnionFieldsDeep<Union, Options extends Required<SharedUnionFieldsDeepOptions>> =
-	// Extract the shared keys from the union. Throughout this type, use `Keys` instead of `keyof Union`
-	// to prevent the mapped type from distributing over the union.
-	keyof Union extends infer Keys extends keyof Union
-		? IsNever<Keys> extends false
-			? {
-				[Key in Keys]:
-				Union[Key] extends NonRecursiveType
-					? Union[Key]
-					// Remove `undefined` from the union to support optional
-					// fields, then recover `undefined` if union was already undefined.
-					: _SharedUnionFieldsDeep<Exclude<Union[Key], undefined>, Options> | (
-						undefined extends Required<Union>[Key] ? undefined : never
+	// Merge shared index domains and declared fields before mapping them, retaining known properties without distributing the union.
+	(Pick<Union, keyof Union> & Pick<Union, keyof OmitIndexSignature<Union> & keyof Union>) extends infer Shared
+		? {
+			[Key in keyof Shared]:
+			Shared[Key] extends NonRecursiveType
+				? Shared[Key]
+			// Remove `undefined` from the union to support optional
+			// fields, then recover `undefined` if union was already undefined.
+				: _SharedUnionFieldsDeep<Exclude<Shared[Key], undefined>, Options> | (
+						undefined extends Required<Shared>[Key] ? undefined : never
 					)
-			}
-			: {}
+		}
 		: Union;
 
 /**

@@ -153,3 +153,27 @@ const inferredFields = sharedFields({id: 'left' as const, first: true}, {id: 'ri
 expectTypeOf(inferredFields).toBe<{id: 'left' | 'right'}>();
 // @ts-expect-error Inference only retains fields shared by both inputs.
 expectTypeOf(inferredFields.first).toBe<boolean>();
+
+// An index signature must not hide fields declared in every union member.
+type DeclaredIndexedFields =
+	| {[key: string]: unknown; readonly kind: 'text'; id: string}
+	| {[key: string]: unknown; readonly kind: 'number'; id: number};
+declare const declaredIndexedFields: SharedUnionFields<DeclaredIndexedFields>;
+expectTypeOf(declaredIndexedFields.id).toBe<string | number>();
+expectTypeOf<{}>().not.toBeAssignableTo<SharedUnionFields<DeclaredIndexedFields>>();
+
+// Declared optional values and readonly modifiers survive the shared index domain.
+type IndexedOptionalFields = {[key: string]: unknown; readonly label?: 'left' | undefined} | {[key: string]: unknown; label?: 'right'};
+const optionalIndexedFields: SharedUnionFields<IndexedOptionalFields> = {label: undefined};
+expectTypeOf(optionalIndexedFields.label).toBe<'left' | 'right' | undefined>();
+// @ts-expect-error A readonly contributor keeps the shared declaration readonly.
+optionalIndexedFields.label = 'left';
+
+declare const numericIndexedFields: SharedUnionFields<{[key: number]: unknown; 0: string} | {[key: number]: unknown; 0: number}>;
+expectTypeOf(numericIndexedFields[0]).toBe<string | number>();
+declare const patternIndexedFields: SharedUnionFields<{[key: `data-${string}`]: unknown; 'data-id': string} | {[key: `data-${string}`]: unknown; 'data-id': number}>;
+expectTypeOf(patternIndexedFields['data-id']).toBe<string | number>();
+
+function _readIndexedValue<Value>(value: SharedUnionFields<{[key: string]: unknown; value: Value} | {[key: string]: unknown; value: Value; extra: true}>): Value {
+	return value.value;
+}
