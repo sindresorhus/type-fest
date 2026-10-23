@@ -545,9 +545,16 @@ export namespace PackageJson {
 		peerDependencies?: Dependency;
 
 		/**
-		Indicate peer dependencies that are optional.
+		Additional metadata for peer dependencies. Setting `optional` to `true` marks the peer as optional; `false` or an absent flag keeps it required.
+
+		@example
+		```
+		import type {PackageJson} from 'type-fest';
+
+		const manifest = {peerDependencies: {react: '*'}, peerDependenciesMeta: {react: {optional: false}}} satisfies PackageJson;
+		```
 		*/
-		peerDependenciesMeta?: Partial<Record<string, {optional: true}>>;
+		peerDependenciesMeta?: Partial<Record<string, {optional?: boolean}>>;
 
 		/**
 		Package names that are bundled when the package is published.

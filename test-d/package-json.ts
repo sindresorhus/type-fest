@@ -226,3 +226,31 @@ function exportsAsJson<Value extends PackageJson.Exports>(value: Value): JsonVal
 }
 
 expectTypeOf(exportsAsJson([null, [{node: [['./entry.js']]}]])).toBe<JsonValue>();
+
+// Required peers may explicitly disable optionality or use the default metadata.
+({peerDependencies: {react: '*'}, peerDependenciesMeta: {react: {optional: false}}}) satisfies PackageJson;
+({peerDependencies: {react: '*'}, peerDependenciesMeta: {react: {}}}) satisfies PackageJson;
+
+function manifestWithPeerOptionality(optional: boolean): PackageJson {
+	return {peerDependencies: {react: '*'}, peerDependenciesMeta: {react: {optional}}};
+}
+
+expectTypeOf(packageJson.peerDependenciesMeta?.['react']?.optional).toBe<boolean | undefined>();
+({peerDependenciesMeta: {required: {optional: false}, defaulted: {}, integration: {optional: true}}}) satisfies PackageJson;
+expectTypeOf<{peerDependenciesMeta: {react: {optional: 'false'}}}>().not.toBeAssignableTo<PackageJson>();
+expectTypeOf<{peerDependenciesMeta: {react: {optional: 0}}}>().not.toBeAssignableTo<PackageJson>();
+expectTypeOf<{peerDependenciesMeta: {react: {optional: null}}}>().not.toBeAssignableTo<PackageJson>();
+expectTypeOf<{peerDependenciesMeta: {react: {optional: undefined}}}>().not.toBeAssignableTo<PackageJson>();
+expectTypeOf<{peerDependenciesMeta: {react: {optional: unknown}}}>().not.toBeAssignableTo<PackageJson>();
+expectTypeOf<{peerDependenciesMeta: {react: {optional: any}}}>().toBeAssignableTo<PackageJson>();
+expectTypeOf<{peerDependenciesMeta: {react: {optional: never}}}>().toBeAssignableTo<PackageJson>();
+
+function readPeerOptionality<Manifest extends PackageJson>(manifest: Manifest): boolean | undefined {
+	return manifest.peerDependenciesMeta?.['react']?.optional;
+}
+
+declare function preservePeerManifest<const Manifest extends PackageJson>(manifest: Manifest): Manifest;
+const inferredRequiredPeer = preservePeerManifest({peerDependenciesMeta: {react: {optional: false}}});
+expectTypeOf(inferredRequiredPeer.peerDependenciesMeta.react.optional).toBe<false>();
+// @ts-expect-error The inferred flag remains readonly even when assigned its existing value.
+inferredRequiredPeer.peerDependenciesMeta.react.optional = false;
