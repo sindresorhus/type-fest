@@ -1,5 +1,5 @@
 import type {UnwrapBrand} from './internal/object.d.ts';
-import type {StringToNumber} from './string-to-number.d.ts';
+import type {PositiveInfinity} from './numeric.d.ts';
 
 /**
 Returns the absolute value of the specified number or bigint.
@@ -49,8 +49,9 @@ type _Absolute<N extends number | bigint> = N extends bigint // Also, distribute
 	? `${N}` extends `-${infer Magnitude extends bigint}`
 		? Magnitude
 		: N
-	: `${N}` extends `-${infer Magnitude}` // This doesn't use the `extends number` constraint approach because that fails with the `-Infinity` case
-		? StringToNumber<Magnitude>
-		: N;
+	: `${N}` extends `-${infer Magnitude extends number}`
+		? Magnitude
+		// `-Infinity` does not infer a numeric magnitude, so handle it separately.
+		: `${N}` extends '-Infinity' ? PositiveInfinity : N;
 
 export {};

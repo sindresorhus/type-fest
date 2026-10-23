@@ -96,3 +96,33 @@ expectTypeOf(brandedPositive).toBe<5>();
 // Multiple tags do not hide the numeric sign or magnitude.
 expectTypeOf<Absolute<Tagged<Tagged<-5, 'Value'>, 'Validated'>>>().toBe<5>();
 expectTypeOf<Absolute<Tagged<Tagged<-512n, 'Value'>, 'Validated'>>>().toBe<512n>();
+
+// Canonical exponent spellings and mixed magnitudes retain exact numeric values.
+expectTypeOf<Absolute<-1e-7>>().toBe<1e-7>();
+expectTypeOf<Absolute<-1e21 | -1e-300 | NegativeInfinity>>().toBe<1e21 | 1e-300 | PositiveInfinity>();
+expectTypeOf<Absolute<-123_456_789_012_345_678_901_234_567_890n | 2>>().toBe<123_456_789_012_345_678_901_234_567_890n | 2>();
+
+enum CalibrationOffset {
+	Fine = -0.25,
+	Coarse = -4,
+}
+expectTypeOf<Absolute<CalibrationOffset>>().toBe<0.25 | 4>();
+
+declare function absoluteValue<const Value extends number | bigint>(value: Value): Absolute<Value>;
+const inferredMagnitude = absoluteValue(-5);
+expectTypeOf(inferredMagnitude).toBe<5>();
+expectTypeOf(absoluteValue(-5n)).toBe<5n>();
+// @ts-expect-error A magnitude cannot retain its negative sign.
+const negativeMagnitude: -5 = inferredMagnitude;
+// @ts-expect-error Unknown values must be checked before taking their magnitude.
+type UnknownMagnitude = Absolute<unknown>;
+
+function _readNegativeMagnitude<Value extends -1 | -2>(value: Absolute<Value>): 1 | 2 {
+	return value;
+}
+
+declare function absoluteValues<const Values extends ReadonlyArray<number | bigint>>(values: Values): {[Key in keyof Values]: Absolute<Values[Key]>};
+const inferredMagnitudes = absoluteValues([-2, -3n]);
+expectTypeOf(inferredMagnitudes).toBe<readonly [2, 3n]>();
+// @ts-expect-error The inferred tuple remains readonly, even when assigning the correct magnitude.
+inferredMagnitudes[0] = 2;
