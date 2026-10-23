@@ -1,7 +1,6 @@
 import type {If} from './if.d.ts';
-import type {ApplyDefaultOptions, LiteralKeyOf, NonRecursiveType} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, LiteralKeyOf, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
-import type {Merge} from './merge.d.ts';
 
 /**
 @see {@link PartialOnUndefinedDeep}
@@ -57,7 +56,8 @@ export type PartialOnUndefinedDeep<T, Options extends PartialOnUndefinedDeepOpti
 
 type _PartialOnUndefinedDeep<T, Options extends Required<PartialOnUndefinedDeepOptions>> = T extends Record<any, any> | undefined
 	? {[KeyType in keyof T as undefined extends T[KeyType] ? If<IsUnknown<T[KeyType]>, never, KeyType> : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
-		? Merge<{[KeyType in keyof T as KeyType extends LiteralKeyOf<U> ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>}, U> // Join all remaining keys not treated in U
+		// The transformed parts can be intersected directly; a merge's equality comparison eagerly expands recursive values.
+		? SimplifyObject<{[KeyType in keyof T as KeyType extends LiteralKeyOf<U> ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>} & U> // Join all remaining keys not treated in U
 		: never // Should not happen
 	: T;
 

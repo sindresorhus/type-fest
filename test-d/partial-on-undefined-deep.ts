@@ -151,3 +151,53 @@ expectTypeOf<PartialOnUndefinedDeep<Uint8Array>>().toBe<Uint8Array>();
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<PartialOnUndefinedDeep<{element: HTMLElement | undefined}>>().toBe<{element?: HTMLElement | undefined}>();
+
+// Recursive optional values must not require evaluating their own transformed properties just to determine the keys.
+type RecursiveConfig = string | RecursiveConfig[] | {value: RecursiveConfig | undefined};
+const recursiveText: PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}> = 'text';
+const recursiveEmpty: PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}> = {};
+const recursiveChildren: PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}> = {value: ['text', {}]};
+
+type OptionalRecursiveConfig = string | OptionalRecursiveConfig[] | {value?: OptionalRecursiveConfig | undefined};
+expectTypeOf<PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}>>().toBe<OptionalRecursiveConfig>();
+expectTypeOf(recursiveText).toBe<string>();
+expectTypeOf(recursiveEmpty).toBeAssignableTo<OptionalRecursiveConfig>();
+expectTypeOf(recursiveChildren).toBeAssignableTo<OptionalRecursiveConfig>();
+expectTypeOf<boolean>().not.toBeAssignableTo<PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}>>();
+expectTypeOf<{value: [boolean]}>().not.toBeAssignableTo<PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}>>();
+
+// Array recursion is still opt-in, even when the array refers back to the input union.
+expectTypeOf<PartialOnUndefinedDeep<RecursiveConfig>>().toBe<string | RecursiveConfig[] | {value?: PartialOnUndefinedDeep<RecursiveConfig> | undefined}>();
+expectTypeOf<{value: [{}]}>().not.toBeAssignableTo<PartialOnUndefinedDeep<RecursiveConfig>>();
+
+// Discriminants and required fields survive while recursive optional branches are made optional.
+type ConfigNode = {kind: 'node'; child: ConfigNode | undefined} | {kind: 'leaf'; name: string};
+type OptionalConfigNode = {kind: 'node'; child?: OptionalConfigNode | undefined} | {kind: 'leaf'; name: string};
+expectTypeOf<PartialOnUndefinedDeep<ConfigNode>>().toBe<OptionalConfigNode>();
+expectTypeOf<{kind: 'node'}>().toBeAssignableTo<PartialOnUndefinedDeep<ConfigNode>>();
+expectTypeOf<{kind: 'node'; child: {kind: 'leaf'; name: 'leaf'}}>().toBeAssignableTo<PartialOnUndefinedDeep<ConfigNode>>();
+expectTypeOf<{child: {kind: 'leaf'; name: 'leaf'}}>().not.toBeAssignableTo<PartialOnUndefinedDeep<ConfigNode>>();
+expectTypeOf<{kind: 'leaf'}>().not.toBeAssignableTo<PartialOnUndefinedDeep<ConfigNode>>();
+
+// Modifiers, index signatures and sentinel values retain their existing contracts.
+expectTypeOf<PartialOnUndefinedDeep<{readonly value: number | undefined; required: string; optional?: boolean}>>()
+	.toBe<{readonly value?: number | undefined; required: string; optional?: boolean}>();
+expectTypeOf<PartialOnUndefinedDeep<{[key: string]: unknown; readonly value: number | undefined; required: string}>>()
+	.toBe<{[key: string]: unknown; readonly value?: number | undefined; required: string}>();
+expectTypeOf<PartialOnUndefinedDeep<{[key: number]: string | undefined; 0: string}>>().toBe<{[key: number]: string | undefined; 0: string}>();
+declare const optionalSymbol: unique symbol;
+expectTypeOf<PartialOnUndefinedDeep<{readonly [optionalSymbol]: string | undefined; keep: number}>>()
+	.toBe<{readonly [optionalSymbol]?: string | undefined; keep: number}>();
+expectTypeOf<PartialOnUndefinedDeep<{0: string | undefined; '1': number}>>().toBe<{0?: string | undefined; '1': number}>();
+expectTypeOf<PartialOnUndefinedDeep<{value: any; unknown: unknown; impossible: never}>>().toBe<{value?: any; unknown: unknown; impossible: never}>();
+expectTypeOf<PartialOnUndefinedDeep<any>>().toBe<any>();
+expectTypeOf<PartialOnUndefinedDeep<never>>().toBe<never>();
+expectTypeOf<PartialOnUndefinedDeep<unknown>>().toBe<unknown>();
+
+// A generic property's key remains available before its value type is known.
+type GenericValue<Value> = PartialOnUndefinedDeep<{value: Value}>['value'];
+expectTypeOf<GenericValue<string>>().toBe<string>();
+expectTypeOf<GenericValue<string | undefined>>().toBe<string | undefined>();
+expectTypeOf<GenericValue<unknown>>().toBe<unknown>();
+expectTypeOf<GenericValue<any>>().toBe<any>();
+expectTypeOf<GenericValue<never>>().toBe<never>();
