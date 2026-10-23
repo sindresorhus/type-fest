@@ -4,7 +4,7 @@ import type {Subtract} from './subtract.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {Absolute} from './absolute.d.ts';
-import type {IsNegative} from './numeric.d.ts';
+import type {IsNegative, PositiveInfinity} from './numeric.d.ts';
 
 /**
 The implementation of `SplitArrayByIndex` for fixed length arrays.
@@ -90,11 +90,14 @@ type B = SplitArrayByIndex<[1, 2, 3, 4], 0>;
 ```
 */
 type SplitArrayByIndex<T extends UnknownArray, SplitIndex extends number> =
-	SplitIndex extends 0
-		? [[], T]
-		: number extends T['length']
-			? SplitVariableArrayByIndex<T, SplitIndex>
-			: SplitFixedArrayByIndex<T, SplitIndex>;
+	// Infinity is after every element even when the array's length is unknown.
+	SplitIndex extends PositiveInfinity
+		? [T, []]
+		: SplitIndex extends 0
+			? [[], T]
+			: number extends T['length']
+				? SplitVariableArrayByIndex<T, SplitIndex>
+				: SplitFixedArrayByIndex<T, SplitIndex>;
 
 /**
 The implementation of {@link ArraySplice} once the start index has been resolved.

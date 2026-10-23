@@ -199,3 +199,25 @@ expectTypeOf<ArraySplice<readonly [1, 2, 3], number, 1>>().toBe<ReadonlyArray<1 
 // A union of deletion counts preserves each possible remaining suffix.
 expectTypeOf<ArraySplice<[1, 2, 3, 4], 1, 1 | 2>>().toBe<[1, 3, 4] | [1, 4]>();
 expectTypeOf<ArraySplice<[1, 2, 3, 4], 1, -1 | 1>>().toBe<[1, 2, 3, 4] | [1, 3, 4]>();
+
+// An infinite index is after the entire array, including an unknown-length rest element.
+expectTypeOf<ArraySplice<[1, ...string[]], PositiveInfinity, 0, [2]>>().toBe<[1, ...string[], 2]>();
+expectTypeOf<ArraySplice<[1, ...string[]], 0, PositiveInfinity>>().toBe<[]>();
+expectTypeOf<ArraySplice<string[], 0, PositiveInfinity>>().toBe<[]>();
+expectTypeOf<ArraySplice<string[], PositiveInfinity, PositiveInfinity, [1]>>().toBe<[...string[], 1]>();
+expectTypeOf<ArraySplice<[1, ...string[], 2], PositiveInfinity, 1, [3]>>().toBe<[1, ...string[], 2, 3]>();
+expectTypeOf<ArraySplice<readonly [...number[], 1, 2], PositiveInfinity, 0, [3]>>().toBe<readonly [...number[], 1, 2, 3]>();
+expectTypeOf<ArraySplice<readonly string[], 0, PositiveInfinity, [2]>>().toBe<readonly [2]>();
+expectTypeOf<ArraySplice<[1, 2, ...string[]], 1, PositiveInfinity, [3]>>().toBe<[1, 3]>();
+expectTypeOf<ArraySplice<readonly [1, 2?, ...string[]], 0, PositiveInfinity>>().toBe<readonly []>();
+expectTypeOf<ArraySplice<string[], PositiveInfinity, 0>>().toBe<string[]>();
+expectTypeOf<ArraySplice<[], PositiveInfinity, PositiveInfinity, [1]>>().toBe<[1]>();
+
+// Infinity also distributes as one member of an index or deletion-count union.
+expectTypeOf<ArraySplice<[1, ...string[]], 0 | PositiveInfinity, 0, [2]>>().toBe<[2, 1, ...string[]] | [1, ...string[], 2]>();
+expectTypeOf<ArraySplice<[1, ...string[]], 0, 0 | PositiveInfinity>>().toBe<[1, ...string[]] | []>();
+expectTypeOf<ArraySplice<unknown[], PositiveInfinity, 0, [1]>>().toBe<[...unknown[], 1]>();
+expectTypeOf<ArraySplice<unknown[], 0, PositiveInfinity>>().toBe<[]>();
+expectTypeOf<ArraySplice<any[], 0, PositiveInfinity>>().toBe<[]>();
+expectTypeOf<ArraySplice<never[], 0, PositiveInfinity>>().toBe<[]>();
+expectTypeOf<ArraySplice<never, PositiveInfinity, PositiveInfinity>>().toBe<never>();
