@@ -67,6 +67,24 @@ export type IsNumeric<T extends string> = T extends `${number}`
 	: false;
 
 /**
+Returns true if `LongString` is made up out of `Substring` repeated 0 or more times.
+
+@example
+```
+type A = ConsistsOnlyOf<'aaa', 'a'>; //=> true
+type B = ConsistsOnlyOf<'ababab', 'ab'>; //=> true
+type C = ConsistsOnlyOf<'aBa', 'a'>; //=> false
+type D = ConsistsOnlyOf<'', 'a'>; //=> true
+```
+*/
+export type ConsistsOnlyOf<LongString extends string, Substring extends string> =
+	LongString extends ''
+		? true
+		: LongString extends `${Substring}${infer Tail}`
+			? ConsistsOnlyOf<Tail, Substring>
+			: false;
+
+/**
 Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both numeric strings and have the same length.
 
 @example

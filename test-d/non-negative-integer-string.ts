@@ -1,0 +1,103 @@
+import {expectTypeOf} from 'nz';
+import type {NonNegativeIntegerString, Tagged} from '../index.d.ts';
+
+// Valid strings are kept as is
+expectTypeOf<NonNegativeIntegerString<'0'>>().toBe<'0'>();
+expectTypeOf<NonNegativeIntegerString<'42'>>().toBe<'42'>();
+expectTypeOf<NonNegativeIntegerString<'007'>>().toBe<'007'>();
+expectTypeOf<NonNegativeIntegerString<'00'>>().toBe<'00'>();
+expectTypeOf<NonNegativeIntegerString<'1234567890123456789'>>().toBe<'1234567890123456789'>();
+expectTypeOf<NonNegativeIntegerString<'99999999999999999999999999999999999999'>>().toBe<'99999999999999999999999999999999999999'>();
+
+// A long string still resolves, because the recursion is in tail position
+type LongDigits = '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+expectTypeOf<NonNegativeIntegerString<LongDigits>>().toBe<LongDigits>();
+
+// Any other character is rejected
+expectTypeOf<NonNegativeIntegerString<''>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'-1'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'-0'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'+1'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'--1'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1.0'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1.5'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'.5'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'5.'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1e3'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1E3'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1e-3'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'0x10'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'0b10'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'0o10'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1_000'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<' 42'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'42 '>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'\n42'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'4\t2'>>().toBe<never>();
+// A non-breaking space and a zero-width space are not decimal digits
+expectTypeOf<NonNegativeIntegerString<'\u{A0}42'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'42\u{200B}'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'42a'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'a42'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'Infinity'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'NaN'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'１'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'١'>>().toBe<never>();
+
+// A union is kept only when every member is valid
+expectTypeOf<NonNegativeIntegerString<'1' | '2'>>().toBe<'1' | '2'>();
+expectTypeOf<NonNegativeIntegerString<'1' | 'a'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1' | '2' | 'a'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1' | '-2'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1' | ''>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'1' | `${number}`>>().toBe<never>();
+
+// Types that are not a single literal are rejected
+expectTypeOf<NonNegativeIntegerString<string>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Uppercase<string>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<`${number}`>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<`1${number}`>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<`${bigint}`>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<any>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<never>>().toBe<never>();
+
+// A tagged wide string is not a literal, so it is rejected. Pass it next to the type instead.
+expectTypeOf<NonNegativeIntegerString<Tagged<string, 'UserId'>>>().toBe<never>();
+
+// The result is assignable to `string`, but not to a different literal
+expectTypeOf<NonNegativeIntegerString<'42'>>().toBeAssignableTo<string>();
+expectTypeOf<NonNegativeIntegerString<'42'>>().not.toBe<'43'>();
+
+declare function setCount<T extends string>(count: NonNegativeIntegerString<T>): void;
+
+setCount('42');
+setCount('007');
+// @ts-expect-error
+setCount('-1');
+// @ts-expect-error
+setCount('1.5');
+// @ts-expect-error
+setCount('');
+declare const wideString: string;
+// @ts-expect-error
+setCount(wideString);
+
+// A runtime check with a tagged type accepts a value that is only known at runtime
+type UserId = Tagged<string, 'UserId'>;
+
+declare function isUserId(value: string): value is UserId;
+declare function getUser<T extends string>(userId: NonNegativeIntegerString<T> | UserId): void;
+
+getUser('42');
+
+declare const input: string;
+
+if (isUserId(input)) {
+	getUser(input);
+}
+
+// The type argument must be a string
+// @ts-expect-error
+type InvalidNumber = NonNegativeIntegerString<42>;
+// @ts-expect-error
+type InvalidUnknown = NonNegativeIntegerString<unknown>;

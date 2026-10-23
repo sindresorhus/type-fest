@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual} from '../../index.d.ts';
-import type {IsNumeric, PositiveNumericStringGt, StartsWith, ToString} from '../../source/internal/index.d.ts';
+import type {ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToString} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<1>, '1'>>().toBe<true>();
@@ -34,6 +34,17 @@ expectTypeOf<IsEqual<IsNumeric<' 1'>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsNumeric<'1 '>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsNumeric<'1_0'>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsNumeric<'Infinity'>, false>>().toBe<true>();
+
+expectTypeOf<IsEqual<ConsistsOnlyOf<'', 'a'>, true>>().toBe<true>();
+expectTypeOf<IsEqual<ConsistsOnlyOf<'aaa', 'a'>, true>>().toBe<true>();
+expectTypeOf<IsEqual<ConsistsOnlyOf<'ababab', 'ab'>, true>>().toBe<true>();
+expectTypeOf<IsEqual<ConsistsOnlyOf<'aBa', 'a'>, false>>().toBe<true>();
+expectTypeOf<IsEqual<ConsistsOnlyOf<'abc', 'a'>, false>>().toBe<true>();
+
+// A wide string cannot match the pattern, so it answers `false`, a mixed union answers `boolean`, and `never` spreads as usual.
+expectTypeOf<IsEqual<ConsistsOnlyOf<string, 'a'>, false>>().toBe<true>();
+expectTypeOf<IsEqual<ConsistsOnlyOf<'1' | 'a', '1' | '2'>, boolean>>().toBe<true>();
+expectTypeOf<IsEqual<ConsistsOnlyOf<never, 'a'>, never>>().toBe<true>();
 
 // A number in exponential notation is larger (`e+`) or smaller (`e-`) than any number in plain decimal notation, so only two exponential numbers are undecided.
 expectTypeOf<IsEqual<PositiveNumericStringGt<'1e+21', '999'>, true>>().toBe<true>();

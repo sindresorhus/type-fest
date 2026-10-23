@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions, ExactKey, ToPath, ToString} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, ConsistsOnlyOf, ExactKey, ToPath, ToString} from './internal/index.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -49,24 +49,6 @@ type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends Requ
 			? Strictify<BaseType[Key], Options> // Record<string, any>
 			: BaseType[Key] // Record<'a' | 'b', any> (Records with a string union as keys have required properties)
 		: BaseType[Key];
-
-/**
-Returns true if `LongString` is made up out of `Substring` repeated 0 or more times.
-
-@example
-```
-type A = ConsistsOnlyOf<'aaa', 'a'>; //=> true
-type B = ConsistsOnlyOf<'ababab', 'ab'>; //=> true
-type C = ConsistsOnlyOf<'aBa', 'a'>; //=> false
-type D = ConsistsOnlyOf<'', 'a'>; //=> true
-```
-*/
-type ConsistsOnlyOf<LongString extends string, Substring extends string> =
-	LongString extends ''
-		? true
-		: LongString extends `${Substring}${infer Tail}`
-			? ConsistsOnlyOf<Tail, Substring>
-			: false;
 
 /**
 Convert a type which may have number keys to one with string keys, making it possible to index using strings retrieved from template types.

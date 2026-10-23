@@ -346,6 +346,7 @@ Click the type names for complete docs.
 - [`NonNegative`](source/numeric.d.ts) - A non-negative `number`/`bigint` (`0 <= x < ∞`).
 - [`NegativeInteger`](source/numeric.d.ts) - A negative (`-∞ < x < 0`) `number` that is an integer.
 - [`NonNegativeInteger`](source/numeric.d.ts) - A non-negative (`0 <= x < ∞`) `number` that is an integer.
+- [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts) - A `string` that represents a non-negative integer, like `'42'`.
 - [`IsNegative`](source/numeric.d.ts) - Returns a boolean for whether the given number is a negative number.
 - [`IsFloat`](source/is-float.d.ts) - Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
 - [`IsInteger`](source/is-integer.d.ts) - Returns a boolean for whether the given number is an integer, like `-5`, `1.0`, or `100`.
@@ -452,6 +453,7 @@ Click the type names for complete docs.
 - `NonFalsy`, `NotFalsey` - See [`Truthy`](source/truthy.d.ts)
 - `IsBivariant` - See [`IsMutuallyAssignable`](source/is-mutually-assignable.d.ts)
 - `Predicate`, `GuardType`, `NarrowedType` - See [`GuardedType`](source/guarded-type.d.ts)
+- `PositiveIntegerString`, `DigitString` - See [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts)
 
 ## Tips
 

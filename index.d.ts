@@ -118,6 +118,7 @@ export type {
 	NonNegativeInteger,
 	IsNegative,
 } from './source/numeric.d.ts';
+export type {NonNegativeIntegerString} from './source/non-negative-integer-string.d.ts';
 export type {GreaterThan} from './source/greater-than.d.ts';
 export type {GreaterThanOrEqual} from './source/greater-than-or-equal.d.ts';
 export type {LessThan} from './source/less-than.d.ts';
