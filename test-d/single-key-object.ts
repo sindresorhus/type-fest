@@ -94,3 +94,9 @@ expectTypeOf(acceptSingleKey({value: true} as const)).toBe<{readonly value: true
 acceptSingleKey(true);
 // @ts-expect-error A mixed input may still be a primitive at runtime.
 acceptSingleKey({} as boolean | {value: string});
+
+// A broad object type, like unknown or an index signature, cannot enforce a known key count.
+expectTypeOf<SingleKeyObject<object>>().toBe<object>();
+expectTypeOf<SingleKeyObject<object & {}>>().toBe<object>();
+const broadObjectArgument: object = {first: 1, second: 2};
+test(broadObjectArgument);

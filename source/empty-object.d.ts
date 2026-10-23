@@ -1,4 +1,4 @@
-import type {PickIndexSignature} from './pick-index-signature.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 declare const emptyObjectSymbol: unique symbol;
 
@@ -52,10 +52,13 @@ type Fail4 = IsEmptyObject<{[key: symbol]: number}>; //=> false
 */
 export type IsEmptyObject<T> =
 	T extends EmptyObject
-		// A type with an index signature, of any key type, can hold any property, so it is not strictly `{}`.
-		? [keyof PickIndexSignature<T>] extends [never]
-			? true
-			: false
+		// The broad `object` type also accepts nonempty objects.
+		? IsEqual<T, object> extends true
+			? false
+			// Any declared key or index signature beyond the private marker makes the object nonempty.
+			: [keyof T] extends [keyof EmptyObject]
+				? true
+				: false
 		: false;
 
 export {};

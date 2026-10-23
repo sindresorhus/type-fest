@@ -20,6 +20,8 @@ someFunction({value: true, otherKey: true});
 // Error: Argument of type '{value: boolean; otherKey: boolean}' is not assignable to parameter of type 'never'.ts(2345)
 ```
 
+Note: The single-key restriction is only best-effort with index signatures and broad types like `object` or `unknown`. Broad types pass through.
+
 @category Object
 */
 export type SingleKeyObject<ObjectType> =
