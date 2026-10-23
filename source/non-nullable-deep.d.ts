@@ -1,5 +1,6 @@
 import type {IsArrayOfUnknownLength} from './internal/array.d.ts';
 import type {HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/type.d.ts';
+import type {FunctionParameters} from './internal/function.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {RequiredDeep} from './required-deep.d.ts'; // For `@link`
 
@@ -104,8 +105,8 @@ export type NonNullableDeep<T> =
 												? T
 												// `Parameters` excludes the `this` parameter, so it has to be added back explicitly, otherwise the rebuilt function would accept any `this`. A function that declares no `this` is rebuilt without one, because `this: unknown` would reject a function that declares a `this`.
 												: (unknown extends ThisParameterType<T>
-													? (...arguments_: NonNullableDeep<Parameters<T>>) => NonNullableDeep<ReturnType<T>>
-													: (this: NonNullableDeep<ThisParameterType<T>>, ...arguments_: NonNullableDeep<Parameters<T>>) => NonNullableDeep<ReturnType<T>>)
+													? (...arguments_: NonNullableDeep<FunctionParameters<T>>) => NonNullableDeep<ReturnType<T>>
+													: (this: NonNullableDeep<ThisParameterType<T>>, ...arguments_: NonNullableDeep<FunctionParameters<T>>) => NonNullableDeep<ReturnType<T>>)
 												& (IsNever<keyof T> extends true
 													? unknown
 													: NonNullableDeep<{[Key in keyof T]: T[Key]}>) // The mapped type removes the call signature; redispatch preserves array methods when the callable is also an array.

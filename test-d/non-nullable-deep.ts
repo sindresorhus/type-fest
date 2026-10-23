@@ -234,3 +234,35 @@ inferredMetadataHandler(null);
 // A callable array still exposes generic array methods after its elements are cleaned.
 declare const callableRows: NonNullableDeep<((value: string | null) => number | undefined) & Array<string | null>>;
 expectTypeOf(callableRows.map(value => value.length)).toBe<number[]>();
+
+// Readonly rest arrays are cleaned without losing the function's callable signature.
+declare const cleanedReadonlyRest: NonNullableDeep<(...values: ReadonlyArray<number | null>) => string | undefined>;
+expectTypeOf(cleanedReadonlyRest(1, 2)).toBe<string>();
+declare const cleanedBoundReadonlyRest: NonNullableDeep<(this: Date, ...values: ReadonlyArray<number | null>) => string | undefined>;
+expectTypeOf(cleanedBoundReadonlyRest.call(new Date(), 1, 2)).toBe<string>();
+
+// Nullable values are still removed from readonly rest arguments and their explicit receiver.
+// @ts-expect-error A cleaned element no longer accepts null.
+cleanedReadonlyRest(null);
+// @ts-expect-error A cleaned element no longer accepts undefined.
+cleanedReadonlyRest(undefined);
+// @ts-expect-error The receiver remains a Date.
+cleanedBoundReadonlyRest.call({}, 1);
+
+declare const cleanedReadonlyTuple: NonNullableDeep<(...values: readonly [string | null, (number | null)?]) => boolean | null>;
+expectTypeOf(cleanedReadonlyTuple('name')).toBe<boolean>();
+expectTypeOf(cleanedReadonlyTuple('name', 2)).toBe<boolean>();
+// @ts-expect-error Optional tuple elements also have null removed.
+cleanedReadonlyTuple('name', null);
+
+// Attached properties are transformed without replacing the cleaned rest signature.
+declare const readonlyRestMetadata: NonNullableDeep<((...values: ReadonlyArray<number | null>) => number | null) & {readonly metadata?: {label: string | null}}>;
+expectTypeOf(readonlyRestMetadata(1, 2)).toBe<number>();
+expectTypeOf(readonlyRestMetadata.metadata?.label).toBe<string | undefined>();
+// @ts-expect-error A valid metadata value still cannot replace a readonly property.
+readonlyRestMetadata.metadata = {label: 'ready'};
+
+const inferredReadonlyRest = cleanHandler((...values: ReadonlyArray<number | null>) => values[0] ?? null);
+expectTypeOf(inferredReadonlyRest(1, 2)).toBe<number>();
+// @ts-expect-error Inference keeps the cleaned rest element type.
+inferredReadonlyRest(null);
