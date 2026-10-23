@@ -1,5 +1,4 @@
 import type {Subtract} from './subtract.d.ts';
-import type {IsEqual} from './is-equal.d.ts';
 
 type Recursive<T> = ReadonlyArray<T | Recursive<T>>;
 
@@ -33,9 +32,9 @@ const readonlyBoolean2DMatrix = emptyMatrix<boolean>()(2);
 */
 export type MultidimensionalReadonlyArray<Element, Dimensions extends number> =
 	Dimensions extends number // For distributing `Dimensions`
-		? number extends Dimensions
+		? `${number}` extends `${Dimensions}`
 			? Recursive<Element>
-			: IsEqual<Dimensions, 0> extends true
+			: Dimensions extends 0
 				? Element
 				: ReadonlyArray<MultidimensionalReadonlyArray<Element, Subtract<Dimensions, 1>>>
 		: never;

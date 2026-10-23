@@ -69,3 +69,27 @@ expectTypeOf<readonly string[]>().toBeAssignableTo<ReturnType<typeof createArray
 declare const dynamicArray: MultidimensionalReadonlyArray<number, number>;
 // @ts-expect-error
 dynamicArray[0] = 1;
+
+// Enum dimensions have known depths, including zero.
+enum Dimensions {
+	Zero = 0,
+	One = 1,
+	Two = 2,
+}
+expectTypeOf<MultidimensionalReadonlyArray<string, Dimensions.Two>>().toBe<ReadonlyArray<readonly string[]>>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Dimensions.Zero>>().toBe<string>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Dimensions.One | Dimensions.Two>>().toBe<readonly string[] | ReadonlyArray<readonly string[]>>();
+
+declare enum RuntimeDimensions {
+	Value,
+}
+expectTypeOf<MultidimensionalReadonlyArray<number, Dimensions>>().toBe<number | readonly number[] | ReadonlyArray<readonly number[]>>();
+expectTypeOf<MultidimensionalReadonlyArray<number, Dimensions.Zero | 1>>().toBe<number | readonly number[]>();
+expectTypeOf<MultidimensionalReadonlyArray<number, RuntimeDimensions.Value>>().toBe<RecursiveArray<number>>();
+expectTypeOf<MultidimensionalReadonlyArray<number, any>>().toBe<RecursiveArray<number>>();
+expectTypeOf<MultidimensionalReadonlyArray<never, Dimensions.One>>().toBe<readonly never[]>();
+expectTypeOf<MultidimensionalReadonlyArray<unknown, Dimensions.Zero>>().toBe<unknown>();
+expectTypeOf<MultidimensionalReadonlyArray<any, Dimensions.Zero>>().toBe<any>();
+expectTypeOf<MultidimensionalReadonlyArray<number, never>>().toBe<never>();
+// @ts-expect-error
+type UnknownDimensions = MultidimensionalReadonlyArray<number, unknown>;

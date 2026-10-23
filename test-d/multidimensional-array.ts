@@ -65,3 +65,27 @@ declare const dynamicArray: MultidimensionalArray<number, number>;
 dynamicArray.push(1, [2], [[3]]);
 // @ts-expect-error
 dynamicArray[0] = 'invalid';
+
+// Enum dimensions have known depths, including zero.
+enum Dimensions {
+	Zero = 0,
+	One = 1,
+	Two = 2,
+}
+expectTypeOf<MultidimensionalArray<string, Dimensions.Two>>().toBe<string[][]>();
+expectTypeOf<MultidimensionalArray<string, Dimensions.Zero>>().toBe<string>();
+expectTypeOf<MultidimensionalArray<string, Dimensions.One | Dimensions.Two>>().toBe<string[] | string[][]>();
+
+declare enum RuntimeDimensions {
+	Value,
+}
+expectTypeOf<MultidimensionalArray<number, Dimensions>>().toBe<number | number[] | number[][]>();
+expectTypeOf<MultidimensionalArray<number, Dimensions.Zero | 1>>().toBe<number | number[]>();
+expectTypeOf<MultidimensionalArray<number, RuntimeDimensions.Value>>().toBe<RecursiveArray<number>>();
+expectTypeOf<MultidimensionalArray<number, any>>().toBe<RecursiveArray<number>>();
+expectTypeOf<MultidimensionalArray<never, Dimensions.One>>().toBe<never[]>();
+expectTypeOf<MultidimensionalArray<unknown, Dimensions.Zero>>().toBe<unknown>();
+expectTypeOf<MultidimensionalArray<any, Dimensions.Zero>>().toBe<any>();
+expectTypeOf<MultidimensionalArray<number, never>>().toBe<never>();
+// @ts-expect-error
+type UnknownDimensions = MultidimensionalArray<number, unknown>;
