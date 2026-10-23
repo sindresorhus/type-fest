@@ -71,13 +71,14 @@ export type Replace<
 	Search extends string,
 	Replacement extends string,
 	Options extends ReplaceOptions = {},
-> = _Replace<Input, Search, Replacement, ApplyDefaultOptions<ReplaceOptions, DefaultReplaceOptions, Options>>;
+> = _Replace<Input, Search, Replacement, ApplyDefaultOptions<ReplaceOptions, DefaultReplaceOptions, Options>['all']>;
 
+// Thread the boolean itself so an uncertain option distributes into first-match and all-match results.
 type _Replace<
 	Input extends string,
 	Search extends string,
 	Replacement extends string,
-	Options extends Required<ReplaceOptions>,
+	All extends boolean,
 	Accumulator extends string = '',
 > = Search extends string // For distributing `Search`
 	? Replacement extends string // For distributing `Replacement`
@@ -87,7 +88,7 @@ type _Replace<
 				: never
 			: Search extends ''
 				// An empty `Search` is a zero-width match, so it matches before every character and after the last one. The pattern below cannot express a zero-width match, because TypeScript anchors the head to the first character instead of the empty string.
-				? Options['all'] extends true
+				? All extends true
 					? Input extends string // For distributing `Input`
 						? IsStringLiteral<Input> extends true
 							? _ReplaceEmptySearch<Input, Replacement, `${Accumulator}${Replacement}`>
@@ -96,11 +97,11 @@ type _Replace<
 					: `${Accumulator}${Replacement}${Input}`
 				: IsStringLiteral<Search> extends true
 					? Input extends `${infer Head}${Search}${infer Tail}`
-						? Options['all'] extends true
-							? _Replace<Tail, Search, Replacement, Options, `${Accumulator}${Head}${Replacement}`>
+						? All extends true
+							? _Replace<Tail, Search, Replacement, All, `${Accumulator}${Head}${Replacement}`>
 							: `${Head}${Replacement}${Tail}`
 						: `${Accumulator}${Input}`
-					: _ReplaceNonLiteralSearch<Input, Search, Replacement, Options, Accumulator>
+					: _ReplaceNonLiteralSearch<Input, Search, Replacement, All, Accumulator>
 		: never
 	: never;
 
@@ -113,18 +114,18 @@ type _ReplaceNonLiteralSearch<
 	Input extends string,
 	Search extends string,
 	Replacement extends string,
-	Options extends Required<ReplaceOptions>,
+	All extends boolean,
 	Accumulator extends string,
 > =
 	// TypeScript accepts whitespace as a number, because `+' '` is `0`, so a lone whitespace character would match `${number}` and replace the space in `Page ${number}`. Such a character is kept instead. A search that starts with whitespace, like ` ${number}`, does not match a lone whitespace character, so it is unaffected.
 	Input extends `${infer WhitespaceCharacter extends Whitespace & Search}${infer Rest}`
-		? _ReplaceNonLiteralSearch<Rest, Search, Replacement, Options, `${Accumulator}${WhitespaceCharacter}`>
+		? _ReplaceNonLiteralSearch<Rest, Search, Replacement, All, `${Accumulator}${WhitespaceCharacter}`>
 		: Input extends `${Search}${infer Rest}`
-			? Options['all'] extends true
-				? _ReplaceNonLiteralSearch<Rest, Search, Replacement, Options, `${Accumulator}${Replacement}`>
+			? All extends true
+				? _ReplaceNonLiteralSearch<Rest, Search, Replacement, All, `${Accumulator}${Replacement}`>
 				: `${Accumulator}${Replacement}${Rest}`
 			: Input extends `${infer FirstCharacter}${infer Rest}`
-				? _ReplaceNonLiteralSearch<Rest, Search, Replacement, Options, `${Accumulator}${FirstCharacter}`>
+				? _ReplaceNonLiteralSearch<Rest, Search, Replacement, All, `${Accumulator}${FirstCharacter}`>
 				: Input extends ''
 					? Accumulator
 					// What is left cannot be split. A placeholder like `Uppercase<string>` is still a match on its own, and anything else, like `string`, is kept.

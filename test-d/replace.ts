@@ -129,3 +129,22 @@ expectTypeOf<Replace<never, `${number}`, 'x', {all: true}>>().toBe<never>();
 // A literal `Search` resolves in one step without `all`, so a long input does not reach the recursion limit.
 type TwoThousandZeroes = StringRepeat<'0', 2000>;
 expectTypeOf<Replace<`${TwoThousandZeroes}a`, 'a', 'b'>>().toBe<`${TwoThousandZeroes}b`>();
+
+// A boolean option can request either one replacement or all replacements.
+expectTypeOf<Replace<'abcabc', 'abc', 'x', {all: boolean}>>().toBe<'xabc' | 'xx'>();
+expectTypeOf<Replace<'ab', '', '-', {all: boolean}>>().toBe<'-ab' | '-a-b-'>();
+expectTypeOf<Replace<'abcabc', 'abc', 'x', {all: false} | {all: true}>>().toBe<'xabc' | 'xx'>();
+expectTypeOf<Replace<'aaaa', 'a', 'x', {all: boolean}>>().toBe<'xaaa' | 'xxxx'>();
+expectTypeOf<'xxaa'>().not.toBeAssignableTo<Replace<'aaaa', 'a', 'x', {all: boolean}>>();
+expectTypeOf<Replace<'a12b', `${number}`, 'N', {all: boolean}>>().toBe<'aN2b' | 'aNNb'>();
+expectTypeOf<Replace<`id:${number}:${number}`, `${number}`, 'N', {all: boolean}>>().toBe<`id:N:${number}` | 'id:N:N'>();
+expectTypeOf<Replace<'aa' | 'bb', 'a', 'x', {all: boolean}>>().toBe<'xa' | 'xx' | 'bb'>();
+expectTypeOf<Replace<'aa', 'a', 'x' | 'y', {all: boolean}>>().toBe<'xa' | 'xx' | 'ya' | 'yy'>();
+expectTypeOf<Replace<'abc', 'x', 'y', {all: boolean}>>().toBe<'abc'>();
+expectTypeOf<Replace<'', '', '-', {all: boolean}>>().toBe<'-'>();
+expectTypeOf<Replace<'abc', '', '', {all: boolean}>>().toBe<'abc'>();
+expectTypeOf<Replace<string, 'a', 'x', {all: boolean}>>().toBe<string>();
+expectTypeOf<Replace<never, 'a', 'x', {all: boolean}>>().toBe<never>();
+expectTypeOf<Replace<'abc', any, 'x', {all: boolean}>>().toBe<string>();
+// @ts-expect-error - Only strings can be searched.
+type UnknownInput = Replace<unknown, 'a', 'x', {all: boolean}>;
