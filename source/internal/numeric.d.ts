@@ -88,8 +88,8 @@ type D = ReverseSign<PositiveInfinity>;
 ```
 */
 export type ReverseSign<N extends number> =
-	// Handle edge cases
-	number extends N
+	// Handle edge cases, keeping numeric enum members distinct from the widened number type.
+	`${number}` extends `${N}`
 		? number
 		: N extends 0
 			? 0

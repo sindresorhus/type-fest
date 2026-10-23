@@ -78,3 +78,27 @@ expectTypeOf<Subtract<1, 1e21>>().toBe<never>();
 expectTypeOf<Subtract<2, 2 | 3>>().toBe<0 | -1>();
 expectTypeOf<Subtract<2 | 3, 2>>().toBe<0 | 1>();
 expectTypeOf<Subtract<1 | 2, 1 | 2>>().toBe<-1 | 0 | 1>();
+
+// Numeric enum members hold known integers and can be used in arithmetic.
+enum Count {
+	Few = 3,
+	Many = 7,
+	Deficit = -3,
+}
+
+expectTypeOf<Subtract<Count.Few, 2>>().toBe<1>();
+expectTypeOf<Subtract<2, Count.Few>>().toBe<-1>();
+expectTypeOf<Subtract<Count.Deficit, 1>>().toBe<-4>();
+expectTypeOf<Subtract<Count.Few, Count.Many>>().toBe<-4>();
+expectTypeOf<Subtract<Count.Few, Count.Deficit>>().toBe<6>();
+expectTypeOf<Subtract<Count.Deficit, Count.Few>>().toBe<-6>();
+expectTypeOf<Subtract<Count.Deficit, Count.Deficit>>().toBe<0>();
+expectTypeOf<Subtract<Count.Few | Count.Many, 1>>().toBe<2 | 6>();
+expectTypeOf<Subtract<Count.Few, number>>().toBe<number>();
+expectTypeOf<Subtract<number, Count.Few>>().toBe<number>();
+expectTypeOf<Subtract<Count.Few, any>>().toBe<number>();
+expectTypeOf<Subtract<any, Count.Few>>().toBe<number>();
+expectTypeOf<Subtract<Count.Few, never>>().toBe<never>();
+expectTypeOf<Subtract<never, Count.Few>>().toBe<never>();
+// @ts-expect-error - Only numbers can be used in arithmetic.
+type UnknownOperand = Subtract<unknown, Count.Few>;

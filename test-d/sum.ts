@@ -107,3 +107,32 @@ expectTypeOf<Sum<any, 1>>().toBe<number>();
 expectTypeOf<Sum<1, any>>().toBe<number>();
 expectTypeOf<Sum<never, 1>>().toBe<never>();
 expectTypeOf<Sum<1, never>>().toBe<never>();
+
+// Numeric enum members hold known integers and can be used in arithmetic.
+enum Count {
+	Few = 3,
+	Many = 7,
+	Deficit = -3,
+}
+
+expectTypeOf<Sum<Count.Few, 2>>().toBe<5>();
+expectTypeOf<Sum<2, Count.Few>>().toBe<5>();
+expectTypeOf<Sum<Count.Deficit, 1>>().toBe<-2>();
+expectTypeOf<Sum<Count.Few, Count.Many>>().toBe<10>();
+expectTypeOf<Sum<Count.Few, Count.Deficit>>().toBe<0>();
+expectTypeOf<Sum<Count.Deficit, Count.Few>>().toBe<0>();
+expectTypeOf<Sum<Count.Deficit, Count.Deficit>>().toBe<-6>();
+expectTypeOf<Sum<Count.Few | Count.Many, 1>>().toBe<4 | 8>();
+expectTypeOf<Sum<Count.Few, number>>().toBe<number>();
+expectTypeOf<Sum<number, Count.Few>>().toBe<number>();
+expectTypeOf<Sum<Count.Few, any>>().toBe<number>();
+expectTypeOf<Sum<any, Count.Few>>().toBe<number>();
+expectTypeOf<Sum<Count.Few, never>>().toBe<never>();
+expectTypeOf<Sum<never, Count.Few>>().toBe<never>();
+// @ts-expect-error - Only numbers can be used in arithmetic.
+type UnknownOperand = Sum<unknown, Count.Few>;
+
+expectTypeOf<Sum<Count.Few, -1>>().toBe<2>();
+expectTypeOf<Sum<-1, Count.Few>>().toBe<2>();
+expectTypeOf<Sum<Count.Many, Count.Deficit>>().toBe<4>();
+expectTypeOf<Sum<Count.Deficit, Count.Many>>().toBe<4>();

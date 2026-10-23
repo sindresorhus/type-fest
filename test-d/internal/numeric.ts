@@ -47,3 +47,11 @@ expectTypeOf<ReverseSign<number>>().toBe<number>();
 
 // `IsEqual` does not see through a nested application, so this one is asserted on the result directly rather than through `IsEqual`.
 expectTypeOf<ReverseSign<ReverseSign<-42>>>().toBe<-42>();
+
+// Enum members have known signs even though `number` is assignable to them.
+enum Offset {
+	Positive = 3,
+	Negative = -3,
+}
+expectTypeOf<ReverseSign<Offset.Positive>>().toBe<-3>();
+expectTypeOf<ReverseSign<Offset.Negative>>().toBe<3>();

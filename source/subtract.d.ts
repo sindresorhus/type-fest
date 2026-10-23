@@ -43,8 +43,8 @@ export type Subtract<A extends number, B extends number> =
 	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never : _Subtract<A, B>;
 
 type _Subtract<A extends number, B extends number> =
-	// Handle cases when A or B is the actual "number" type
-	number extends A | B ? number
+	// Match the widened number by its printed type, because numeric enum members also accept `number`.
+	`${number}` extends `${A | B}` ? number
 		// Handle cases when A and B are both +/- infinity
 		: A extends B & (PositiveInfinity | NegativeInfinity) ? number
 			// Handle cases when A is - infinity or B is + infinity

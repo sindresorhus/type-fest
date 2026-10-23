@@ -1,4 +1,4 @@
-import type {TupleMax, ReverseSign, NonNegativeIntegerSum} from './internal/index.d.ts';
+import type {ReverseSign, NonNegativeIntegerSum} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -46,8 +46,8 @@ export type Sum<A extends number, B extends number> =
 			: never;
 
 type _Sum<A extends number, B extends number> =
-	// Handle cases when A or B is the actual "number" type
-	number extends A | B ? number
+	// Match the widened number by its printed type, because numeric enum members also accept `number`.
+	`${number}` extends `${A | B}` ? number
 		// Handle cases when A and B are both +/- infinity
 		: A extends B & (PositiveInfinity | NegativeInfinity) ? A // A or B could be used here as they are equal
 			// Handle cases when A and B are opposite infinities
@@ -71,16 +71,12 @@ type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative
 		: AreNegative extends [true, true]
 			// When both numbers are negative we add the absolute values and then reverse the sign
 			? ReverseSign<NonNegativeIntegerSum<Absolute<A>, Absolute<B>>>
-			// When the signs are different we can subtract the absolute values, remove the sign
-			// and then reverse the sign if the larger absolute value is negative
-			: Absolute<Subtract<Absolute<A>, Absolute<B>>> extends infer Result extends number
-				? TupleMax<[Absolute<A>, Absolute<B>]> extends infer Max_ extends number
-					? Max_ extends A | B
-						// The larger absolute value is positive, so the result is positive
-						? Result
-						// The larger absolute value is negative, so the result is negative
-						: ReverseSign<Result>
-					: never
-				: never;
+			// When the signs are different, subtract the negative operand's magnitude from the positive operand.
+			// Subtract already determines the result's sign, so there is no need to compare the magnitudes again.
+			: IsNegative<A> extends true
+				// The second operand is positive, so start with it.
+				? Subtract<B, Absolute<A>>
+				// The first operand is positive, so start with it.
+				: Subtract<A, Absolute<B>>;
 
 export {};
