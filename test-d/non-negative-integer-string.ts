@@ -9,7 +9,7 @@ expectTypeOf<NonNegativeIntegerString<'00'>>().toBe<'00'>();
 expectTypeOf<NonNegativeIntegerString<'1234567890123456789'>>().toBe<'1234567890123456789'>();
 expectTypeOf<NonNegativeIntegerString<'99999999999999999999999999999999999999'>>().toBe<'99999999999999999999999999999999999999'>();
 
-// A long string still resolves, because the recursion is in tail position
+// A long string is validated without losing any digits.
 type LongDigits = '1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
 expectTypeOf<NonNegativeIntegerString<LongDigits>>().toBe<LongDigits>();
 
@@ -128,3 +128,45 @@ expectTypeOf<NonNegativeIntegerString<NumericText>>().toBe<never>();
 expectTypeOf<NonNegativeIntegerString<NumericText.Digits>>().toBe<NumericText.Digits>();
 expectTypeOf<NonNegativeIntegerString<Tagged<NumericText.Empty, 'Text'>>>().toBe<never>();
 expectTypeOf<NonNegativeIntegerString<Tagged<NumericText.Digits, 'Text'>>>().toBe<Tagged<NumericText.Digits, 'Text'>>();
+
+// Decimal spelling remains strict for syntax that belongs to other numeric tokens.
+expectTypeOf<NonNegativeIntegerString<'42n'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'42\n'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'4/* comment */2'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'4\u{2028}2'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<'0X10' | '0B10' | '0O10'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<`00${'1' | '2'}`>>().toBe<'001' | '002'>();
+expectTypeOf<NonNegativeIntegerString<'42' | '42n'>>().toBe<never>();
+
+declare function acceptDigits<const Digits extends string>(value: NonNegativeIntegerString<Digits>): Digits;
+expectTypeOf(acceptDigits('00018446744073709551615')).toBe<'00018446744073709551615'>();
+declare const taggedIdentifier: Tagged<'00042', 'Identifier'>;
+expectTypeOf(acceptDigits(taggedIdentifier)).toBe<Tagged<'00042', 'Identifier'>>();
+// @ts-expect-error A bigint suffix is not part of a decimal identifier.
+acceptDigits('42n');
+// @ts-expect-error An invalid union member prevents accepting the whole identifier type.
+acceptDigits('42' as '42' | '4_2');
+
+// A fixed prefix cannot make an unknown numeric substring safe: it can still contain a sign or a fraction.
+expectTypeOf<NonNegativeIntegerString<`${1 | 2}${number}`>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<`${'0' | '9'}${'0' | '9'}`>>().toBe<'00' | '09' | '90' | '99'>();
+
+// Compiler token validation does not impose a per-character type recursion limit.
+type LongIdentifier = StringRepeat<'7', 1200>;
+expectTypeOf<NonNegativeIntegerString<LongIdentifier>>().toBe<LongIdentifier>();
+expectTypeOf<NonNegativeIntegerString<`${LongIdentifier}n`>>().toBe<never>();
+declare const longIdentifier: LongIdentifier;
+expectTypeOf(acceptDigits(longIdentifier)).toBe<LongIdentifier>();
+
+function preserveIdentifier<Value extends string>(value: NonNegativeIntegerString<Value>): {value: Value} {
+	return {value};
+}
+
+const preservedIdentifier = preserveIdentifier('00018446744073709551615');
+expectTypeOf(preservedIdentifier.value).toBe<'00018446744073709551615'>();
+// @ts-expect-error The validated identifier retains every digit, including its leading zeros.
+preservedIdentifier.value = '18446744073709551615';
+
+function _readValidatedIdentifier<Value extends string>(value: NonNegativeIntegerString<Value>): Value {
+	return value;
+}

@@ -1,5 +1,3 @@
-import type {DigitCharacter} from './characters.d.ts';
-import type {ConsistsOnlyOf} from './internal/string.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {NonNegativeInteger} from './numeric.d.ts'; // For `@link`
 import type {StringToNumber} from './string-to-number.d.ts'; // For `@link`
@@ -75,7 +73,7 @@ if (isUserId(input)) {
 }
 ```
 
-The built-in `${number}` is not enough because it also matches `'-1'`, `'1.5'`, `'1e3'`, `'0x10'`, and `' 42'`, and `${bigint}` also matches `'-1'` and `'0x10'` while rejecting `'007'`. So this type walks the string one character at a time and rejects the first character that is not a digit. Each step removes the first character, so the recursion is in tail position and up to 999 characters are accepted. The string is kept as is, so no precision is lost.
+The built-in `${number}` is not enough because it also matches `'-1'`, `'1.5'`, `'1e3'`, `'0x10'`, and `' 42'`, and `${bigint}` also matches `'-1'` and `'0x10'` while rejecting `'007'`. Prefixing the string with `'1'` forces a decimal bigint spelling, so leading zeros are allowed while signs and non-decimal syntax are rejected. This validates the whole string without per-character type recursion. The string is kept as is, so no precision is lost.
 
 @see {@link NonNegativeInteger}
 @see {@link StringToNumber}
@@ -85,10 +83,10 @@ The built-in `${number}` is not enough because it also matches `'-1'`, `'1.5'`, 
 @category Template literal
 */
 export type NonNegativeIntegerString<Value extends string> =
-	// `ConsistsOnlyOf` accepts empty strings. Include enum values without losing the constraint on generic strings.
+	// The prefixed '1' is valid even for an empty input. Include enum values without losing the constraint on generic strings.
 	'' extends UnwrapBrand<Value> | `${UnwrapBrand<Value>}`
 		? never
-		: ConsistsOnlyOf<UnwrapBrand<Value>, DigitCharacter> extends true
+		: `1${UnwrapBrand<Value>}` extends `${bigint}`
 			? Value
 			: never;
 
