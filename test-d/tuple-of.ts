@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {TupleOf} from '../source/tuple-of.d.ts';
+import type {Opaque, Tagged, TupleOf} from '../index.d.ts';
 
 expectTypeOf<[null, null, null]>().toBe<TupleOf<3, null>>();
 expectTypeOf<[0, 0, 0, 0, 0]>().toBe<TupleOf<5, 0>>();
@@ -82,3 +82,22 @@ expectTypeOf<TupleOf<TupleLength.Two>>().toBe<[unknown, unknown]>();
 expectTypeOf<TupleOf<number>>().toBe<unknown[]>();
 // @ts-expect-error
 type UnknownLength = TupleOf<unknown>;
+
+// A branded count still specifies a known tuple length.
+expectTypeOf<TupleOf<Tagged<2, 'Length'>, string>>().toBe<[string, string]>();
+expectTypeOf<TupleOf<Tagged<2.5, 'Length'>, string>>().toBe<[string, string]>();
+
+expectTypeOf<TupleOf<Opaque<3, 'Length'>, 1>>().toBe<[1, 1, 1]>();
+expectTypeOf<TupleOf<Tagged<Tagged<2, 'Length'>, 'Validated'>, string>>().toBe<[string, string]>();
+expectTypeOf<TupleOf<2 & {readonly __brand: unique symbol}, string>>().toBe<[string, string]>();
+expectTypeOf<TupleOf<Tagged<1 | 2, 'Length'>, string>>().toBe<[string] | [string, string]>();
+expectTypeOf<TupleOf<Tagged<0, 'Length'>, string>>().toBe<[]>();
+expectTypeOf<TupleOf<Tagged<-2, 'Length'>, string>>().toBe<[]>();
+expectTypeOf<TupleOf<Tagged<0.5, 'Length'>, string>>().toBe<[]>();
+expectTypeOf<TupleOf<Tagged<1e-7, 'Length'>, string>>().toBe<[]>();
+expectTypeOf<TupleOf<Tagged<number, 'Length'>, string>>().toBe<string[]>();
+expectTypeOf<TupleOf<Tagged<2, 'Length'>, never>>().toBe<[never, never]>();
+expectTypeOf<TupleOf<Tagged<1, 'Length'>, any>>().toBe<[any]>();
+expectTypeOf<TupleOf<Tagged<2, 'Length'>>>().toBe<[unknown, unknown]>();
+expectTypeOf<TupleOf<any, undefined>>().toBe<undefined[]>();
+expectTypeOf<TupleOf<never, undefined>>().toBe<[]>();

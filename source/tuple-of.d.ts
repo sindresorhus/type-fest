@@ -1,4 +1,5 @@
 import type {If} from './if.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
@@ -79,7 +80,7 @@ Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for e
 @category Array
 */
 export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length, {
-	ifNot: _TupleOf<If<IsNegative<Length>, 0, Length>, Fill>;
+	ifNot: _TupleOf<If<IsNegative<Length>, 0, Length extends object ? UnwrapBrand<Length> : Length>, Fill>;
 	ifAny: Fill[];
 	ifNever: [];
 }>;
