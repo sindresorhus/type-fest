@@ -208,3 +208,94 @@ expectTypeOf<ObjectMerge<never, {a: string}>>().toBe<never>();
 expectTypeOf<ObjectMerge<{a: string}, never>>().toBe<never>();
 expectTypeOf<ObjectMerge<any, never>>().toBe<never>();
 expectTypeOf<ObjectMerge<never, any>>().toBe<never>();
+
+// Computed string-enum keys refer to the same runtime property as their string values.
+enum MergePropertyKey {
+	Value = 'value',
+}
+
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]: 2}>>().toBe<{value: 2}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]?: 2}>>().toBe<{value: 1 | 2}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]?: 2 | undefined}>>().toBe<{value: 1 | 2 | undefined}>();
+expectTypeOf<ObjectMerge<{value?: 1}, {[MergePropertyKey.Value]?: 2}>>().toBe<{value?: 1 | 2}>();
+expectTypeOf<ObjectMerge<{[MergePropertyKey.Value]: 1}, {value?: 2}>>().toBe<{value: 1 | 2}>();
+
+// Enum aliases use ordinary spread rules for required, optional and readonly properties.
+expectTypeOf<ObjectMerge<{value?: 1}, {[MergePropertyKey.Value]: 2}>>().toBe<{value: 2}>();
+expectTypeOf<ObjectMerge<{[MergePropertyKey.Value]?: 1}, {value: 2}>>().toBe<{value: 2}>();
+expectTypeOf<ObjectMerge<{readonly [MergePropertyKey.Value]?: 1}, {readonly value?: 2 | undefined}>>().toBe<{value?: 1 | 2 | undefined}>();
+expectTypeOf<ObjectMerge<{readonly value: {readonly id: 1}}, {readonly [MergePropertyKey.Value]?: {readonly id: 2}}>>()
+	.toBe<{value: {readonly id: 1} | {readonly id: 2}}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]?: never}>>().toBe<{value: 1}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]: never}>>().toBe<{value: never}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]: any}>>().toBe<{value: any}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]?: unknown}>>().toBe<{value: unknown}>();
+expectTypeOf<ObjectMerge<{[MergePropertyKey.Value]: unknown}, {value?: 2}>>().toBe<{value: unknown}>();
+
+// A named enum property still overrides the same name alongside a string index signature.
+expectTypeOf<ObjectMerge<{value: 1}, {[key: string]: 2; [MergePropertyKey.Value]: 2}>>().toBe<{[key: string]: 2; value: 2}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[key: string]: 2; [MergePropertyKey.Value]?: 2}>>()
+	.toBe<{[key: string]: 1 | 2; value: 1 | 2}>();
+expectTypeOf<ObjectMerge<{[key: string]: 1; value: 1}, {[MergePropertyKey.Value]?: 2}>>()
+	.toBe<{[key: string]: 1 | 2; value: 1 | 2}>();
+
+const enumMergeDestination = {value: 1 as const, untouched: true as const};
+const enumMergeSource = {[MergePropertyKey.Value]: 2 as const};
+const enumMergeSpread = {...enumMergeDestination, ...enumMergeSource};
+expectTypeOf<ObjectMerge<typeof enumMergeDestination, typeof enumMergeSource>>().toBe<typeof enumMergeSpread>();
+expectTypeOf<keyof ObjectMerge<typeof enumMergeDestination, typeof enumMergeSource>>().toBe<keyof typeof enumMergeSpread>();
+
+const optionalEnumMergeSource: {readonly [MergePropertyKey.Value]?: 2} = {};
+const optionalEnumMergeSpread = {...enumMergeDestination, ...optionalEnumMergeSource};
+expectTypeOf<ObjectMerge<typeof enumMergeDestination, typeof optionalEnumMergeSource>>().toBe<typeof optionalEnumMergeSpread>();
+
+// The result is writable at its top level, and a required destination stays required after an optional override.
+declare let mutableEnumMerge: ObjectMerge<{readonly value: 1}, {readonly [MergePropertyKey.Value]?: 2}>;
+mutableEnumMerge.value = 1;
+mutableEnumMerge.value = 2;
+// @ts-expect-error Implicit optional absence is not a value that can overwrite the destination.
+mutableEnumMerge.value = undefined;
+expectTypeOf({}).not.toBeAssignableTo<typeof mutableEnumMerge>();
+
+// Unique symbols and unrelated string names do not collide with the enum property.
+expectTypeOf<ObjectMerge<{value: 1; [sym]: true}, {[MergePropertyKey.Value]: 2; other?: string}>>()
+	.toBe<{value: 2; [sym]: true; other?: string}>();
+expectTypeOf<ObjectMerge<{kind: 'first'; value: 1} | {kind: 'second'; value?: 3}, {[MergePropertyKey.Value]?: 2}>>()
+	.toBe<{kind: 'first'; value: 1 | 2} | {kind: 'second'; value?: 2 | 3}>();
+
+// Enum keys keep ordinary boundary behavior.
+expectTypeOf<ObjectMerge<any, {[MergePropertyKey.Value]: 2}>>().toBe<any>();
+expectTypeOf<ObjectMerge<{[MergePropertyKey.Value]: 1}, any>>().toBe<any>();
+expectTypeOf<ObjectMerge<never, {[MergePropertyKey.Value]: 2}>>().toBe<never>();
+expectTypeOf<ObjectMerge<{[MergePropertyKey.Value]: 1}, never>>().toBe<never>();
+// @ts-expect-error The input must be an object even when the other side uses an enum key.
+type UnknownEnumMerge = ObjectMerge<unknown, {[MergePropertyKey.Value]: 2}>;
+
+enum EquivalentMergePropertyKey {
+	Value = 'value',
+	Zero = '0',
+	PaddedZero = '00',
+}
+
+// Distinct enum types and canonical numeric forms can still name the same property.
+expectTypeOf<ObjectMerge<{[MergePropertyKey.Value]: 1}, {[EquivalentMergePropertyKey.Value]: 2}>>().toBe<{value: 2}>();
+expectTypeOf<ObjectMerge<{0: 1}, {[EquivalentMergePropertyKey.Zero]: 2}>>().toBe<{0: 2}>();
+expectTypeOf<ObjectMerge<{0: 1}, {[EquivalentMergePropertyKey.Zero]?: 2}>>().toBe<{0: 1 | 2}>();
+expectTypeOf<ObjectMerge<{[EquivalentMergePropertyKey.Zero]: 1}, {0?: 2}>>().toBe<{0: 1 | 2}>();
+expectTypeOf<ObjectMerge<{0: 1}, {[EquivalentMergePropertyKey.PaddedZero]: 2}>>().toBe<{0: 1; '00': 2}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]: undefined}>>().toBe<{value: undefined}>();
+expectTypeOf<ObjectMerge<{value: 1}, {[MergePropertyKey.Value]?: null}>>().toBe<{value: 1 | null}>();
+
+// Generic value reads and inferred calls retain their useful result types.
+function _readEnumMerge<Value>(value: ObjectMerge<{[MergePropertyKey.Value]: Value}, {value?: number}>): Value | number {
+	return value.value;
+}
+
+function _readOrdinaryMerge<Value>(value: ObjectMerge<{value: Value}, {other: number}>): Value {
+	return value.value;
+}
+
+declare function inferObjectMerge<First extends object, Second extends object>(first: First, second: Second): ObjectMerge<First, Second>;
+expectTypeOf(inferObjectMerge(enumMergeDestination, enumMergeSource)).toBe<typeof enumMergeSpread>();
+expectTypeOf<Pick<ObjectMerge<typeof enumMergeDestination, typeof enumMergeSource>, MergePropertyKey.Value>>()
+	.toBe<{[MergePropertyKey.Value]: 2}>();

@@ -154,7 +154,7 @@ type _ObjectMerge<
 			// But, exclude keys from `First` that would surely get overwritten,
 			// for example, in `ObjectMerge<{a: number}, {[x: string]: string; a: string}>`,
 			// `a` from `First` would get overwritten by `a` from `Second`, so don't add type for it.
-		| (NormalizedKeys<P> & Exclude<keyof First, NormalizedKeys<RequiredKeysOf<OmitIndexSignature<Second>>>> extends infer NonOverwrittenKeysOfFirst
+		| (NormalizedKeys<P> & Exclude<keyof First, KeyAliases<RequiredKeysOf<OmitIndexSignature<Second>>>> extends infer NonOverwrittenKeysOfFirst
 			? If<IsNever<NonOverwrittenKeysOfFirst>, // This check is required because indexing with `never` doesn't always yield `never`, for example, `{[x: string]: number}[never]` results in `number`.
 				never,
 				NormalizedFirst[NonOverwrittenKeysOfFirst & keyof NormalizedFirst]>
@@ -171,15 +171,15 @@ type _ObjectMerge<
 	// Map over `First` instead of `Second` because the modifier is in accordance with `First`.
 	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys
 		? P extends NormalizedSecondLiteralKeys
-			? If<IsOptionalKeyOf<Second, NormalizedKeys<P> & keyof Second>, P, never>
+			? If<IsOptionalKeyOf<Second, Extract<keyof OmitIndexSignature<Second>, KeyAliases<P>>>, P, never>
 			: never
 		: never]:
 			| First[P]
-			| NormalizedSecond[NormalizedKeys<P> & keyof NormalizedSecond]
+			| NormalizedSecond[Extract<keyof OmitIndexSignature<NormalizedSecond>, KeyAliases<P>>]
 }>;
 
 /**
-Get literal keys of a type, including both string and number representations wherever applicable.
+Get literal keys of a type, including numeric aliases and the runtime string spellings of enum keys.
 
 @example
 ```ts
@@ -194,7 +194,10 @@ type C = NormalizedLiteralKeys<{[x: string]: unknown}>;
 ```
 */
 type NormalizedLiteralKeys<Type> = Type extends unknown // For distributing `Type`
-	? NormalizedKeys<keyof OmitIndexSignature<Type>>
+	? KeyAliases<keyof OmitIndexSignature<Type>>
 	: never; // Should never happen
+
+// Declared enum keys also name their runtime strings, which can in turn alias numeric keys.
+type KeyAliases<Keys extends PropertyKey> = NormalizedKeys<Keys | `${Keys & (string | number)}`>;
 
 export {};
