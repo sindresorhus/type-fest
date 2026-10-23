@@ -1,10 +1,11 @@
 import type {IsUnknown} from './is-unknown.d.ts';
-import type {MaxLength, NormalizedKeys, ObjectValue, VariablePartOfArray} from './internal/index.d.ts';
-import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
+import type {NormalizedKeys, ObjectValue, VariablePartOfArray} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
 Returns the index at which the rest element of the given array starts, that is, the number of elements before it.
+
+Counts the fixed prefix directly without constructing the unused split tuple parts.
 
 @example
 ```ts
@@ -15,9 +16,13 @@ type B = RestElementIndex<[string, number?, ...boolean[]]>;
 //=> 2
 ```
 */
-type RestElementIndex<ArrayType extends UnknownArray> =
-	SplitOnRestElement<ArrayType>[0] extends infer Head extends UnknownArray
-		? MaxLength<Head>
+type RestElementIndex<ArrayType extends UnknownArray, Counter extends unknown[] = []> =
+	ArrayType extends unknown // For distributing union parameter lists
+		? '0' extends keyof ArrayType
+			? ArrayType extends readonly [unknown?, ...infer Rest]
+				? RestElementIndex<Rest, [...Counter, unknown]>
+				: never // Should never happen
+			: Counter['length']
 		: never; // Should never happen
 
 /**

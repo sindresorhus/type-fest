@@ -156,3 +156,37 @@ withReadonlyRest.call(new Date(), 1);
 // @ts-expect-error - The receiver is preserved.
 withReadonlyRest.call('wrong', true);
 expectTypeOf<SetParameterType<any, {0: boolean}>>().toBe<any>();
+
+// A long fixed prefix contributes only its positions to the trailing rest index.
+type TwentyParameterPrefix = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+type LongRestSource = (...arguments_: [...TwentyParameterPrefix, ...string[]]) => 'complete';
+type ChangedLongRest = SetParameterType<LongRestSource, {20: boolean}>;
+expectTypeOf<ChangedLongRest>().toBe<(...arguments_: [...TwentyParameterPrefix, ...boolean[]]) => 'complete'>();
+expectTypeOf<SetParameterType<LongRestSource, readonly [...TwentyParameterPrefix, boolean]>>().toBe<ChangedLongRest>();
+declare const changedLongRest: ChangedLongRest;
+expectTypeOf(changedLongRest(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, true)).toBe<'complete'>();
+// @ts-expect-error The original rest element type has been replaced.
+changedLongRest(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'old');
+
+// Optional readonly positions count even when omitted, and the receiver and result stay intact.
+type OptionalReadonlyRest = (this: Date, ...arguments_: readonly [request: string | undefined, retry?: boolean, audit?: Date, ...rest: number[]]) => Promise<'done'>;
+declare const changedOptionalRest: SetParameterType<OptionalReadonlyRest, {3: RegExp}>;
+expectTypeOf(changedOptionalRest.call(new Date(), undefined, true, undefined, /entry/)).toBe<Promise<'done'>>();
+// @ts-expect-error An omitted optional position does not move the rest index.
+void changedOptionalRest.call(new Date(), undefined, true, undefined, 1);
+
+function _callChangedGenericRest<Value>(callback: SetParameterType<(first: Value, flag?: boolean, ...rest: string[]) => Value, {2: number}>, value: Value): Value {
+	return callback(value, undefined, 1, 2);
+}
+
+declare function inferChangedRest<const Value>(value: Value): SetParameterType<(first: Value, ...rest: string[]) => Value, {1: number}>;
+const inferredRestCallback = inferChangedRest({id: 'request'});
+expectTypeOf(inferredRestCallback({id: 'request'}, 1)).toBe<{readonly id: 'request'}>();
+// @ts-expect-error The inferred callback accepts the replacement rest values.
+inferredRestCallback({id: 'request'}, 'old');
+
+// An absent optional slot still occupies an argument position before the rest values.
+declare const afterOptionalNever: SetParameterType<(unused?: never, ...rest: string[]) => number, {1: boolean}>;
+expectTypeOf(afterOptionalNever(undefined, true)).toBe<number>();
+// @ts-expect-error The optional slot does not move the replacement back to the old rest type.
+afterOptionalNever(undefined, 'old');
