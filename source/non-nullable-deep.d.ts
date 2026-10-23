@@ -1,3 +1,4 @@
+import type {IsArrayOfUnknownLength} from './internal/array.d.ts';
 import type {HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {RequiredDeep} from './required-deep.d.ts'; // For `@link`
@@ -111,8 +112,15 @@ export type NonNullableDeep<T> =
 											// The `Function` interface has no call signature, so the branch above misses it, and mapping it would produce an uncallable record of its own methods.
 											: T extends Function
 												? T
-												: T extends object
-													? {[P in keyof T]: NonNullableDeep<T[P]>}
-													: unknown;
+												: T extends readonly unknown[]
+													? IsArrayOfUnknownLength<T> extends false
+														? {[P in keyof T]: NonNullableDeep<T[P]>}
+														// Rebuild arrays directly so recursive element types, such as `JsonValue`, do not expand through a mapped type indefinitely.
+														: T extends unknown[]
+															? Array<NonNullableDeep<T[number]>>
+															: ReadonlyArray<NonNullableDeep<T[number]>>
+													: T extends object
+														? {[P in keyof T]: NonNullableDeep<T[P]>}
+														: unknown;
 
 export {};

@@ -2,6 +2,7 @@ import {expectTypeOf} from 'nz';
 import type {NonNullableDeep} from '../source/non-nullable-deep.d.ts';
 import type {Primitive} from '../source/primitive.d.ts';
 import type {IsEqual} from '../source/is-equal.d.ts';
+import type {JsonValue} from '../source/json-value.d.ts';
 
 expectTypeOf<NonNullableDeep<string | null | undefined>>().toBe<string>();
 expectTypeOf<NonNullableDeep<Primitive>>().toBe<string | number | boolean | bigint | symbol>();
@@ -163,3 +164,29 @@ expectTypeOf(handlerWithThis).toBeAssignableTo<NonNullableDeep<((event: string) 
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<NonNullableDeep<{element: HTMLElement | null}>>().toBe<{element: HTMLElement}>();
+
+// Recursive JSON-like arrays must remain usable without exhausting the compiler's recursion limit.
+type RecursiveJson = string | RecursiveJson[] | {[key: string]: RecursiveJson} | null;
+expectTypeOf<NonNullableDeep<RecursiveJson>>().toBeAssignableTo<RecursiveJson>();
+expectTypeOf<NonNullableDeep<JsonValue>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<Extract<NonNullableDeep<JsonValue>, null | undefined>>().toBe<never>();
+
+type ReadonlyRecursiveJson = string | null | readonly ReadonlyRecursiveJson[];
+expectTypeOf<NonNullableDeep<ReadonlyRecursiveJson>>().toBeAssignableTo<ReadonlyRecursiveJson>();
+expectTypeOf<NonNullableDeep<ReadonlyArray<JsonValue | undefined>>>().toBeAssignableTo<readonly JsonValue[]>();
+expectTypeOf<NonNullableDeep<Map<string | null, JsonValue>>>().toBeAssignableTo<Map<string, JsonValue>>();
+expectTypeOf<NonNullableDeep<Promise<JsonValue | undefined>>>().toBeAssignableTo<Promise<JsonValue>>();
+
+// The array branch still preserves tuple positions, optional elements, and fixed elements after a leading rest.
+expectTypeOf<NonNullableDeep<readonly [first?: {value: string | null}, ...rest: Array<{value: number | undefined}>]>>().toBe<readonly [first?: {value: string}, ...rest: Array<{value: number}>]>();
+expectTypeOf<NonNullableDeep<readonly [...rest: Array<string | null>, last: {value: number | undefined}]>>().toBe<readonly [...rest: string[], last: {value: number}]>();
+expectTypeOf<NonNullableDeep<readonly []>>().toBe<readonly []>();
+expectTypeOf<NonNullableDeep<any[]>>().toBe<any[]>();
+expectTypeOf<NonNullableDeep<readonly unknown[]>>().toBe<readonly unknown[]>();
+expectTypeOf<NonNullableDeep<never[]>>().toBe<never[]>();
+expectTypeOf<NonNullableDeep<Array<null | undefined>>>().toBe<never[]>();
+
+// Compare both directions with a recursive shape whose values cannot be null at any depth.
+type CleanRecursiveJson = string | CleanRecursiveJson[] | {[key: string]: CleanRecursiveJson};
+expectTypeOf<NonNullableDeep<RecursiveJson>>().toBeAssignableTo<CleanRecursiveJson>();
+expectTypeOf<CleanRecursiveJson>().toBeAssignableTo<NonNullableDeep<RecursiveJson>>();
