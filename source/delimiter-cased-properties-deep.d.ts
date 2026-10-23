@@ -1,5 +1,5 @@
 import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
 import type {CasedPropertiesDeep} from './internal/cased-properties-deep.d.ts';
 import type {WordsOptions} from './words.d.ts';
 import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts'; // For `@link`
@@ -65,10 +65,17 @@ const splitOnPunctuation: DelimiterCasedPropertiesDeep<{'user@info': {'user::id'
 @category Template literal
 @category Object
 */
+// Select once so nested properties and container entries use the same delimiter.
 export type DelimiterCasedPropertiesDeep<
 	Value,
 	Delimiter extends string,
 	Options extends WordsOptions = {},
-> = CasedPropertiesDeep<Value, {delimiter: Delimiter}, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+> = [Delimiter] extends [never]
+	? CasedPropertiesDeep<Value, {delimiter: Delimiter}, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>
+	: {[Choice in UnwrapBrand<Delimiter> & string]: CasedPropertiesDeep<
+		Value,
+		{delimiter: Choice},
+		ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>
+	>}[UnwrapBrand<Delimiter> & string];
 
 export {};

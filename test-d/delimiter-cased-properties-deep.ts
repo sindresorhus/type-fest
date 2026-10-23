@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {WordsOptions} from '../source/words.d.ts';
-import type {DelimiterCasedPropertiesDeep} from '../index.d.ts';
+import type {DelimiterCasedPropertiesDeep, Opaque, Tagged} from '../index.d.ts';
 
 declare const foo: DelimiterCasedPropertiesDeep<{helloWorld: {fooBar: string}}, '/'>;
 expectTypeOf(foo).toBe<{'hello/world': {'foo/bar': string}}>();
@@ -174,3 +174,75 @@ function _keepSet<Options extends WordsOptions>(value: Set<string>): DelimiterCa
 function _keepPromise<Options extends WordsOptions>(value: Promise<string>): {value: DelimiterCasedPropertiesDeep<Promise<string>, '-', Options>} {
 	return {value};
 }
+
+// One delimiter is chosen for the whole recursive result.
+expectTypeOf<{'foo-bar': {'baz-qux': 1}}>().toBeAssignableTo<DelimiterCasedPropertiesDeep<{fooBar: {bazQux: 1}}, '-' | '_'>>();
+expectTypeOf<{foo_bar: {baz_qux: 1}}>().toBeAssignableTo<DelimiterCasedPropertiesDeep<{fooBar: {bazQux: 1}}, '-' | '_'>>();
+
+// Delimiter choices stay correlated across sibling keys and preserve modifiers.
+expectTypeOf<DelimiterCasedPropertiesDeep<{readonly fooBar: 1; bazQux?: 2}, '-' | '_'>>().toBe<{readonly 'foo-bar': 1; 'baz-qux'?: 2} | {readonly foo_bar: 1; baz_qux?: 2}>();
+expectTypeOf<{'foo-bar': 1; baz_qux: 2}>().not.toBeAssignableTo<DelimiterCasedPropertiesDeep<{fooBar: 1; bazQux: 2}, '-' | '_'>>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1}, Tagged<'-' | '_', 'Delimiter'>>>().toBe<{'foo-bar': 1} | {foo_bar: 1}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1}, Opaque<'-', 'Delimiter'> | ''>>().toBe<{'foo-bar': 1} | {foobar: 1}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: Tagged<1, 'Value'>}, '-' | '_'>>().toBe<{'foo-bar': Tagged<1, 'Value'>} | {foo_bar: Tagged<1, 'Value'>}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1}, ('-' | '_') & {readonly brand: true}>>().toBe<{'foo-bar': 1} | {foo_bar: 1}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar1: 1}, '-' | '_', {splitOnNumbers: true}>>().toBe<{'foo-bar-1': 1} | {foo_bar_1: 1}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1} | {bazQux: 2}, '-' | '_'>>()
+	.toBe<{'foo-bar': 1} | {foo_bar: 1} | {'baz-qux': 2} | {baz_qux: 2}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<never, '-' | '_'>>().toBe<never>();
+expectTypeOf<DelimiterCasedPropertiesDeep<unknown, '-' | '_'>>().toBe<unknown>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: any; bazQux: never}, '-' | '_'>>()
+	.toBe<{'foo-bar': any; 'baz-qux': never} | {foo_bar: any; baz_qux: never}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1; 0: 2; [Symbol.iterator]: 3}, never>>().toBe<{0: 2; [Symbol.iterator]: 3}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<readonly [string, number?], never>>().toBe<readonly [string, number?]>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1}, '-' | '_', never>>().toBe<DelimiterCasedPropertiesDeep<{fooBar: 1}, '-' | '_'>>();
+// @ts-expect-error Delimiters must be strings.
+type InvalidDelimiter = DelimiterCasedPropertiesDeep<{fooBar: 1}, unknown>;
+
+// Generic delimiters and options must not delay unchanged leaves or containers.
+function _keepValueWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: string): {value: DelimiterCasedPropertiesDeep<string, Delimiter, Options>} {
+	return {value};
+}
+
+function _keepUnknownWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: unknown): {value: DelimiterCasedPropertiesDeep<unknown, Delimiter, Options>} {
+	return {value};
+}
+
+function _keepCallableWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: () => number): {value: DelimiterCasedPropertiesDeep<() => number, Delimiter, Options>} {
+	return {value};
+}
+
+function _keepArrayWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: string[]): {value: DelimiterCasedPropertiesDeep<string[], Delimiter, Options>} {
+	return {value};
+}
+
+function _keepTupleWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: readonly [string, number?]): {
+	value: DelimiterCasedPropertiesDeep<readonly [string, number?], Delimiter, Options>;
+} {
+	return {value};
+}
+
+function _keepMapWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: Map<string, number>): {value: DelimiterCasedPropertiesDeep<Map<string, number>, Delimiter, Options>} {
+	return {value};
+}
+
+function _keepSetWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: Set<string>): {value: DelimiterCasedPropertiesDeep<Set<string>, Delimiter, Options>} {
+	return {value};
+}
+
+function _keepPromiseWithDelimiter<Delimiter extends string, Options extends WordsOptions>(value: Promise<string>): {value: DelimiterCasedPropertiesDeep<Promise<string>, Delimiter, Options>} {
+	return {value};
+}
+
+// One choice is shared by every array item and by map keys and values.
+expectTypeOf<DelimiterCasedPropertiesDeep<{items: Array<{fooBar: 1}>}, '-' | '_'>>().toBe<{items: Array<{'foo-bar': 1}>} | {items: Array<{foo_bar: 1}>}>();
+expectTypeOf<{items: [{'foo-bar': 1}, {foo_bar: 1}]}>().not.toBeAssignableTo<DelimiterCasedPropertiesDeep<{items: Array<{fooBar: 1}>}, '-' | '_'>>();
+expectTypeOf<DelimiterCasedPropertiesDeep<Map<{fooBar: 1}, {bazQux: 2}>, '-' | '_'>>().toBe<Map<{'foo-bar': 1}, {'baz-qux': 2}> | Map<{foo_bar: 1}, {baz_qux: 2}>>();
+expectTypeOf<Map<{'foo-bar': 1}, {baz_qux: 2}>>().not.toBeAssignableTo<DelimiterCasedPropertiesDeep<Map<{fooBar: 1}, {bazQux: 2}>, '-' | '_'>>();
+expectTypeOf<DelimiterCasedPropertiesDeep<readonly [{fooBar: 1}, {bazQux: 2}?], '-' | '_'>>().toBe<readonly [{'foo-bar': 1}, {'baz-qux': 2}?] | readonly [{foo_bar: 1}, {baz_qux: 2}?]>();
+type RecursiveNode = {fooBar: 1; children?: RecursiveNode[]};
+expectTypeOf<{'foo-bar': 1; children: [{foo_bar: 1}]}>().not.toBeAssignableTo<DelimiterCasedPropertiesDeep<RecursiveNode, '-' | '_'>>();
+expectTypeOf<{'foo-bar': 1; children: [{'foo-bar': 1}]}>().toBeAssignableTo<DelimiterCasedPropertiesDeep<RecursiveNode, '-' | '_'>>();
+
+expectTypeOf<DelimiterCasedPropertiesDeep<any, '-' | '_'>>().toBe<any>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1}, Tagged<Tagged<'-', 'Inner'>, 'Outer'> | '_'>>().toBe<{'foo-bar': 1} | {foo_bar: 1}>();

@@ -1,5 +1,5 @@
 import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 import type {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep.d.ts'; // For `@link`
 
@@ -38,11 +38,16 @@ const splitOnPunctuation: DelimiterCasedProperties<{'foo::bar': string}, '-', {s
 @category Template literal
 @category Object
 */
+// Mapped choices keep generic leaf values reducible while selecting one delimiter for the whole result.
 export type DelimiterCasedProperties<
 	Value,
 	Delimiter extends string,
 	Options extends WordsOptions = {},
-> = Value extends Function
+> = [Delimiter] extends [never]
+	? DelimiterCasedPropertiesImplementation<Value, Delimiter, Options>
+	: {[Choice in UnwrapBrand<Delimiter> & string]: DelimiterCasedPropertiesImplementation<Value, Choice, Options>}[UnwrapBrand<Delimiter> & string];
+
+type DelimiterCasedPropertiesImplementation<Value, Delimiter extends string, Options extends WordsOptions> = Value extends Function
 	? Value
 	: Value extends readonly unknown[]
 		// Arrays pass through unchanged, since they have no properties to re-case.
