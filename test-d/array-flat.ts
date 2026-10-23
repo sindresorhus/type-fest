@@ -153,3 +153,46 @@ expectTypeOf<ArrayFlat<[[1, [2]]], Opaque<2, 'Depth'>>>().toBe<[1, 2]>();
 expectTypeOf<ArrayFlat<[[1]], Tagged<0 | 1, 'Depth'>>>().toBe<[[1]] | [1]>();
 expectTypeOf<ArrayFlat<[[1]], Tagged<FlatDepth.One, 'Depth'>>>().toBe<[1]>();
 expectTypeOf<ArrayFlat<[[Tagged<1, 'Element'>]], Tagged<1, 'Depth'>>>().toBe<[Tagged<1, 'Element'>]>();
+
+// Flatten fixed elements on both sides of a rest element without changing their order.
+expectTypeOf<ArrayFlat<[...Array<readonly [1, 2]>, readonly [3, [4]], 5], 2>>()
+	.toBe<[...Array<1 | 2>, 3, 4, 5]>();
+expectTypeOf<ArrayFlat<readonly [readonly [1, 2], ...ReadonlyArray<readonly [3, 4]>, readonly [5, [6]]], 2>>()
+	.toBe<[1, 2, ...Array<3 | 4>, 5, 6]>();
+expectTypeOf<ArrayFlat<[0, ...unknown[], [1, 2]]>>().toBe<[0, ...unknown[], 1, 2]>();
+expectTypeOf<ArrayFlat<[0, ...never[], [1]]>>().toBe<[0, ...never[], 1]>();
+
+// Nested optional arrays contribute a rest element; explicitly allowed undefined values remain possible.
+expectTypeOf<ArrayFlat<[0, [(1 | undefined)?, [2]?], 3], 2>>()
+	.toBe<[0, ...Array<1 | 2 | undefined>, 3]>();
+expectTypeOf<ArrayFlat<[([1, 2])?, ...ReadonlyArray<readonly [3, 4]>]>>()
+	.toBe<Array<1 | 2 | 3 | 4>>();
+expectTypeOf<ArrayFlat<[[null, false], [], [0, '', undefined]]>>()
+	.toBe<[null, false, 0, '', undefined]>();
+expectTypeOf<ArrayFlat<[[Tagged<string, 'Name'>], readonly [{readonly id: 1}]]>>()
+	.toBe<[Tagged<string, 'Name'>, {readonly id: 1}]>();
+
+// Check boundary values as well as the length of a long flattened tuple.
+expectTypeOf<ArrayFlat<LongTuple<300>>[0]>().toBe<0>();
+expectTypeOf<ArrayFlat<LongTuple<300>>[299]>().toBe<299>();
+
+function _genericFlattenDepth<Value extends readonly unknown[], Depth extends number>(value: ArrayFlat<Value, Depth>): unknown[] {
+	return value;
+}
+
+declare function flattenTuple<const Value extends readonly unknown[], Depth extends number>(value: Value, depth: Depth): ArrayFlat<Value, Depth>;
+const flattenedObjects = flattenTuple([[{id: 1}], [{id: 2}, [{id: 3}]]], 2);
+expectTypeOf(flattenedObjects).toBe<[{readonly id: 1}, {readonly id: 2}, {readonly id: 3}]>();
+flattenedObjects[0] = {id: 1};
+// @ts-expect-error Flattening makes the outer array mutable, while retaining the nested object value's readonly properties.
+flattenedObjects[0].id = 1;
+// @ts-expect-error An unknown value is not necessarily an array.
+type UnknownFlattenInput = ArrayFlat<unknown>;
+
+// Flattening a union-valued suffix keeps each complete alternative, rather than mixing their elements.
+type AlternativeFlatSuffix = ArrayFlat<[...Array<[0]>, [1] | [2, 3], 4]>;
+expectTypeOf<AlternativeFlatSuffix>().toBe<[...Array<0>, 1, 4] | [...Array<0>, 2, 3, 4]>();
+expectTypeOf<[0, 1, 3, 4]>().not.toBeAssignableTo<AlternativeFlatSuffix>();
+type LongFlatSuffix = ArrayFlat<[...Array<[-1]>, ...LongTuple<120>]>;
+expectTypeOf<LongFlatSuffix extends [...unknown[], infer Last] ? Last : never>().toBe<119>();
+expectTypeOf<LongFlatSuffix extends [...unknown[], infer Previous, unknown] ? Previous : never>().toBe<118>();

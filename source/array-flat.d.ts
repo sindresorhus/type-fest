@@ -2,7 +2,6 @@ import type {If} from './if.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {LessThan} from './less-than.d.ts';
-import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -61,40 +60,39 @@ type ArrayFlatImplementation<Array_ extends UnknownArray, Depth extends number> 
 The elements of the given array, with each element that is an array spread into its own elements. `Depth` is the number of levels to flatten after that: `0` spreads the elements once, and a negative depth keeps them as they are.
 
 The elements before and after the rest element keep their positions. The rest element is flattened into a single rest element. When a flattened element has a rest element of its own, TypeScript merges it with any later rest element, so the elements in between keep their types but lose their positions.
-*/
-type SpreadElements<Array_ extends UnknownArray, Depth extends number> =
-	SplitOnRestElement<Array_> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
-		// The recursive results are inferred before they are spread, because spreading them directly makes TypeScript expand the recursion without end when checking this type.
-		? [
-			SpreadTupleElements<BeforeRest, Depth>,
-			Rest extends readonly []
-				? []
-				: FlattenElement<Rest[number], Depth> extends infer RestElements extends UnknownArray
-					? Array<RestElements[number]>
-					: never, // Should never happen
-			SpreadTupleElements<AfterRest, Depth>,
-		] extends [infer Before extends UnknownArray, infer RestElements extends UnknownArray, infer After extends UnknownArray]
-			? [...Before, ...RestElements, ...After]
-			: never // Should never happen
-		: never; // Should never happen
 
-/**
-The elements of the given tuple without a rest element, each one flattened to the given depth.
+The elements of each fixed tuple part are flattened to the given depth as they are consumed, avoiding a separate pass over those parts.
 */
-type SpreadTupleElements<Tuple extends UnknownArray, Depth extends number, Accumulator extends UnknownArray = []> =
-	Tuple extends readonly []
-		? Accumulator
-		: Tuple extends readonly [(infer First)?, ...infer Rest]
-			? (
-				Tuple extends readonly [unknown, ...unknown[]]
-					? FlattenElement<First, Depth>
-					// An optional element can be absent, so it becomes a rest element. Keeping it optional would be wrong when a required element follows it in the result, because TypeScript would then make the optional element required.
-					: FlattenElement<First | If<IsExactOptionalPropertyTypesEnabled, never, undefined>, Depth> extends infer OptionalElements extends UnknownArray
-						? Array<OptionalElements[number]>
-						: never // Should never happen
-			) extends infer Elements extends UnknownArray
-				? SpreadTupleElements<Rest, Depth, [...Accumulator, ...Elements]>
+type SpreadElements<
+	Array_ extends UnknownArray,
+	Depth extends number,
+	BeforeAccumulator extends UnknownArray = [],
+	AfterAccumulator extends UnknownArray = [],
+> = '0' extends keyof Array_
+	? Array_ extends readonly [(infer First)?, ...infer Rest]
+		? (
+			Array_ extends readonly [unknown, ...unknown[]]
+				? FlattenElement<First, Depth>
+				// An optional element can be absent, so it becomes a rest element. Keeping it optional would be wrong when a required element follows it in the result, because TypeScript would then make the optional element required.
+				: FlattenElement<First | If<IsExactOptionalPropertyTypesEnabled, never, undefined>, Depth> extends infer OptionalElements extends UnknownArray
+					? Array<OptionalElements[number]>
+					: never // Should never happen
+		// The recursive results are inferred before they are spread, because spreading them directly makes TypeScript expand the recursion without end when checking this type.
+		) extends infer Elements extends UnknownArray
+			? SpreadElements<Rest, Depth, [...BeforeAccumulator, ...Elements], AfterAccumulator>
+			: never // Should never happen
+		: never // Should never happen
+	: Array_ extends readonly [...infer Rest, infer Last]
+		? FlattenElement<Last, Depth> extends infer Elements extends UnknownArray
+			? SpreadElements<Rest, Depth, BeforeAccumulator, [...Elements, ...AfterAccumulator]>
+			: never // Should never happen
+		: (Array_ extends readonly []
+			? []
+			: FlattenElement<Array_[number], Depth> extends infer RestElements extends UnknownArray
+				? Array<RestElements[number]>
 				: never // Should never happen
+		) extends infer RestElements extends UnknownArray
+			? [...BeforeAccumulator, ...RestElements, ...AfterAccumulator]
 			: never; // Should never happen
 
 /**
