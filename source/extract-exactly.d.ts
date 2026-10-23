@@ -44,7 +44,7 @@ type _ExtractExactly<Union, Match> =
 	IfNotAnyOrNever<Match, {
 		ifNot: Union extends unknown // For distributing `Union`
 			? [Match extends unknown // For distributing `Match`
-				? If<IsEqual<Union, Match>, true, never>
+				? IsEqual<Union, Match> extends true ? true : never
 				: never] extends [never] ? never : Union
 			: never;
 		// If `Match` is `any` or `never`, then return `never`,

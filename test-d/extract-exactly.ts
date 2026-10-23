@@ -53,3 +53,30 @@ expectTypeOf<ExtractExactly<
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}
 >>().toBe<{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}>();
+
+// Exact matching distinguishes modifiers, nested sentinels, tuples, and function signatures.
+expectTypeOf<ExtractExactly<string | number | boolean | null, number | boolean>>().toBe<number | boolean>();
+expectTypeOf<ExtractExactly<readonly [string] | [string], readonly [string]>>().toBe<readonly [string]>();
+expectTypeOf<ExtractExactly<{value?: string} | {value: string | undefined}, {value?: string}>>().toBe<{value?: string}>();
+expectTypeOf<ExtractExactly<{value: any} | {value: unknown} | {value: never}, {value: unknown} | {value: never}>>().toBe<{value: unknown} | {value: never}>();
+expectTypeOf<ExtractExactly<{readonly id: number} | {id: number}, {id: number}>>().toBe<{id: number}>();
+expectTypeOf<ExtractExactly<((value: string) => number) | ((value: number) => string), (value: number) => string>>().toBe<(value: number) => string>();
+expectTypeOf<ExtractExactly<{kind: 'ready'; value: string} | {kind: 'failed'; error: Error}, {kind: 'ready'; value: string}>>().toBe<{kind: 'ready'; value: string}>();
+
+// The selected member can be inferred from an actual argument, and generic results remain part of the input union.
+function _readOriginalValue<Union, Match>(value: ExtractExactly<Union, Match>): Union {
+	return value;
+}
+
+declare function selectExact<Union, Match>(input: Union, match: Match): ExtractExactly<Union, Match>;
+declare const response: {kind: 'ready'; value: string} | {kind: 'failed'; error: Error};
+declare const readyResponse: {kind: 'ready'; value: string};
+expectTypeOf(selectExact(response, readyResponse)).toBe<{kind: 'ready'; value: string}>();
+expectTypeOf<{kind: 'other'}>().not.toBeAssignableTo<ExtractExactly<typeof response, typeof readyResponse>>();
+
+// Symbol keys and nested property modifiers also participate in exact identity.
+declare const identity: unique symbol;
+expectTypeOf<ExtractExactly<{readonly [identity]: 'user'} | {readonly [identity]: 'project'}, {readonly [identity]: 'user'}>>().toBe<{readonly [identity]: 'user'}>();
+expectTypeOf<ExtractExactly<{value: {name: string}} | {value: {readonly name: string}}, {value: {name: string}}>>().toBe<{value: {name: string}}>();
+type SimilarResponses = {kind: 'ready'; value: string} | {kind: 'ready'; value: string; cached?: boolean};
+expectTypeOf<ExtractExactly<SimilarResponses, {kind: 'ready'; value: string}>>().toBe<{kind: 'ready'; value: string}>();

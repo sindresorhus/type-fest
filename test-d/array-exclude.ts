@@ -121,3 +121,31 @@ function _generic<ArrayType extends unknown[], ExcludeType>(array: ArrayExclude<
 
 // @ts-expect-error
 type _NotArray = ArrayExclude<string, string>;
+
+// The removed-element test distinguishes `never` from `any` and `unknown` at every position.
+expectTypeOf<ArrayExclude<[any, unknown, never], never>>().toBe<[any, unknown]>();
+expectTypeOf<ArrayExclude<[any, unknown, never], unknown>>().toBe<[]>();
+expectTypeOf<ArrayExclude<[...any[], unknown, never], never>>().toBe<[...any[], unknown]>();
+expectTypeOf<ArrayExclude<[1, ...unknown[], never], 1>>().toBe<unknown[]>();
+expectTypeOf<ArrayExclude<readonly [...never[], 1, 2], 1>>().toBe<readonly [2]>();
+expectTypeOf<ArrayExclude<[(1 | undefined)?], 1>>().toBe<[undefined?]>();
+expectTypeOf<ArrayExclude<readonly [(1 | undefined)?, ...Array<2 | undefined>], undefined>>().toBe<readonly [1?, ...Array<2>]>();
+expectTypeOf<ArrayExclude<readonly [1?, ...any[]], any>>().toBe<readonly []>();
+
+// Excluded rest values and fixed values are tested independently.
+expectTypeOf<ArrayExclude<readonly [1 | 'a', ...Array<2 | 'b'>, 3 | 'c'], string>>().toBe<readonly [1, ...Array<2>, 3]>();
+expectTypeOf<ArrayExclude<[1 | 2, 3 | 4], 2 | 3>>().toBe<[1, 4]>();
+expectTypeOf<ArrayExclude<readonly [undefined, void, null], undefined>>().toBe<readonly [void, null]>();
+expectTypeOf<ArrayExclude<[] | readonly [1?, ...string[]] | [2, 3], number>>().toBe<[] | readonly string[]>();
+
+// A kept value retains its nested readonly shape, and generic readonly inputs still yield arrays.
+declare function excludeNumbers<const Array_ extends readonly unknown[]>(array: Array_): ArrayExclude<Array_, number>;
+const remainingValues = excludeNumbers([0, {id: 1}, ['nested']] as const);
+expectTypeOf(remainingValues).toBe<readonly [{readonly id: 1}, readonly ['nested']]>();
+expectTypeOf(remainingValues[0].id).toBe<1>();
+// @ts-expect-error A readonly input keeps its readonly result.
+remainingValues[0] = {id: 1};
+
+function _readonlyResult<Array_ extends readonly unknown[], Removed>(array: ArrayExclude<Array_, Removed>): readonly unknown[] {
+	return array;
+}

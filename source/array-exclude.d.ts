@@ -1,7 +1,6 @@
 import type {If} from './if.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
-import type {IsNever} from './is-never.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -54,20 +53,21 @@ type _ArrayExclude<
 			// A tuple allows fewer than one element only when its first element is optional.
 			? TArray extends readonly [unknown, ...unknown[]]
 				? Exclude<First, TExclude> extends infer Element
-					? _ArrayExclude<Rest, TExclude, If<IsNever<Element>, BeforeRestAcc, [...BeforeRestAcc, Element]>, AfterRestAcc>
+					// Box the result so never is tested without distributing.
+					? _ArrayExclude<Rest, TExclude, [Element] extends [never] ? BeforeRestAcc : [...BeforeRestAcc, Element], AfterRestAcc>
 					: never // Should never happen
 				: Exclude<First | If<IsExactOptionalPropertyTypesEnabled, never, undefined>, TExclude> extends infer Element // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
-					? _ArrayExclude<Rest, TExclude, If<IsNever<Element>, BeforeRestAcc, [...BeforeRestAcc, Element?]>, AfterRestAcc>
+					? _ArrayExclude<Rest, TExclude, [Element] extends [never] ? BeforeRestAcc : [...BeforeRestAcc, Element?], AfterRestAcc>
 					: never // Should never happen
 			: never // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
 		// Enters this branch, if `TArray` is empty (e.g., `[]`), has no fixed length (e.g., `string[]`),
 		// or contains no non-rest elements preceding the rest element (e.g., `[...string[], string]`).
 		: TArray extends readonly [...infer Rest, infer Last]
 			? Exclude<Last, TExclude> extends infer Element // Accumulate elements that are present after the rest element.
-				? _ArrayExclude<Rest, TExclude, BeforeRestAcc, If<IsNever<Element>, AfterRestAcc, [Element, ...AfterRestAcc]>>
+				? _ArrayExclude<Rest, TExclude, BeforeRestAcc, [Element] extends [never] ? AfterRestAcc : [Element, ...AfterRestAcc]>
 				: never // Should never happen
 			: Exclude<TArray[number], TExclude> extends infer Element // Add the rest element between the accumulated elements.
-				? [...BeforeRestAcc, ...If<IsNever<Element>, [], Element[]>, ...AfterRestAcc]
+				? [...BeforeRestAcc, ...([Element] extends [never] ? [] : Element[]), ...AfterRestAcc]
 				: never; // Should never happen
 
 export {};

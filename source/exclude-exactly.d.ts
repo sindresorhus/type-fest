@@ -45,7 +45,7 @@ type _ExcludeExactly<Union, Delete> =
 	IfNotAnyOrNever<Delete, {
 		ifNot: Union extends unknown // For distributing `Union`
 			? [Delete extends unknown // For distributing `Delete`
-				? If<IsEqual<Union, Delete>, true, never>
+				? IsEqual<Union, Delete> extends true ? true : never
 				: never] extends [never] ? Union : never
 			: never;
 		// If `Delete` is `any` or `never`, then return `Union`,

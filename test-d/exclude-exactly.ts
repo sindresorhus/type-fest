@@ -53,3 +53,30 @@ expectTypeOf<ExcludeExactly<
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0},
 	{a: 0} | {readonly a: 0} | {a?: 0} | {readonly a?: 0}
 >>().toBe<never>();
+
+// Exact matching distinguishes modifiers, nested sentinels, tuples, and function signatures.
+expectTypeOf<ExcludeExactly<string | number | boolean | null, number | boolean>>().toBe<string | null>();
+expectTypeOf<ExcludeExactly<readonly [string] | [string], readonly [string]>>().toBe<[string]>();
+expectTypeOf<ExcludeExactly<{value?: string} | {value: string | undefined}, {value?: string}>>().toBe<{value: string | undefined}>();
+expectTypeOf<ExcludeExactly<{value: any} | {value: unknown} | {value: never}, {value: unknown} | {value: never}>>().toBe<{value: any}>();
+expectTypeOf<ExcludeExactly<{readonly id: number} | {id: number}, {id: number}>>().toBe<{readonly id: number}>();
+expectTypeOf<ExcludeExactly<((value: string) => number) | ((value: number) => string), (value: number) => string>>().toBe<(value: string) => number>();
+expectTypeOf<ExcludeExactly<{kind: 'ready'; value: string} | {kind: 'failed'; error: Error}, {kind: 'ready'; value: string}>>().toBe<{kind: 'failed'; error: Error}>();
+
+// The selected member can be inferred from an actual argument, and generic results remain part of the input union.
+function _readOriginalValue<Union, Match>(value: ExcludeExactly<Union, Match>): Union {
+	return value;
+}
+
+declare function selectExact<Union, Match>(input: Union, match: Match): ExcludeExactly<Union, Match>;
+declare const response: {kind: 'ready'; value: string} | {kind: 'failed'; error: Error};
+declare const readyResponse: {kind: 'ready'; value: string};
+expectTypeOf(selectExact(response, readyResponse)).toBe<{kind: 'failed'; error: Error}>();
+expectTypeOf<{kind: 'other'}>().not.toBeAssignableTo<ExcludeExactly<typeof response, typeof readyResponse>>();
+
+// Symbol keys and nested property modifiers also participate in exact identity.
+declare const identity: unique symbol;
+expectTypeOf<ExcludeExactly<{readonly [identity]: 'user'} | {readonly [identity]: 'project'}, {readonly [identity]: 'user'}>>().toBe<{readonly [identity]: 'project'}>();
+expectTypeOf<ExcludeExactly<{value: {name: string}} | {value: {readonly name: string}}, {value: {name: string}}>>().toBe<{value: {readonly name: string}}>();
+type SimilarResponses = {kind: 'ready'; value: string} | {kind: 'ready'; value: string; cached?: boolean};
+expectTypeOf<ExcludeExactly<SimilarResponses, {kind: 'ready'; value: string}>>().toBe<{kind: 'ready'; value: string; cached?: boolean}>();
