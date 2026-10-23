@@ -395,3 +395,34 @@ expectTypeOf<OmitDeep<OverlappingOmitSignatures, '0.name'>[number]>().toBe<{id: 
 expectTypeOf<OmitDeep<Record<number, {name: string}>, '0x10.name'>>().toBe<Record<number, {name: string}>>();
 expectTypeOf<OmitDeep<Record<number, {name: string}> & {'00': {name: string; own: true}}, '00.name'>['00']>().toBe<{own: true}>();
 expectTypeOf<OmitDeep<Record<`row-${string}`, {name: string; id: number}>, 'row-first.name'>[string & `row-${string}`]>().toBe<{id: number}>();
+
+// Omitting a missing descendant does not invent required array positions.
+const missingArrayDescendant: OmitDeep<Array<{id: string}>, '1.missing'> = [];
+expectTypeOf(missingArrayDescendant).toBe<Array<{id: string}>>();
+const missingReadonlyArrayDescendant: OmitDeep<ReadonlyArray<{id: string}>, '1.missing'> = [];
+expectTypeOf(missingReadonlyArrayDescendant).toBe<ReadonlyArray<{id: string}>>();
+expectTypeOf<OmitDeep<{rows: Array<{id: string}>}, 'rows.2.missing'>>().toBe<{rows: Array<{id: string}>}>();
+
+// Missing descendants preserve named objects and do not materialize later positions after a valid omission.
+type NamedOmitRow = {
+	id: string;
+	details: {active: boolean};
+};
+expectTypeOf<OmitDeep<NamedOmitRow[], '1.details.missing'>>().toBe<NamedOmitRow[]>();
+expectTypeOf<OmitDeep<NamedOmitRow[], '0.details.active' | '1.details.missing'>>().toBe<[{id: string; details: {}}, ...NamedOmitRow[]]>();
+expectTypeOf<OmitDeep<readonly NamedOmitRow[], '1.missing'>>().toBe<readonly NamedOmitRow[]>();
+
+function readOmittedConstrainedRow<Row extends {name: string; id: number}>(value: OmitDeep<Row[], '1.name'>): number {
+	return value[1].id;
+}
+
+declare function omitMissingArrayPath<const Input>(input: Input): OmitDeep<Input, 'rows.1.missing'>;
+const inferredMissingArrayPath = omitMissingArrayPath({rows: [] as NamedOmitRow[], mode: 'edit'});
+expectTypeOf(inferredMissingArrayPath).toBe<{readonly rows: NamedOmitRow[]; readonly mode: 'edit'}>();
+const emptyMissingArrayPath: typeof inferredMissingArrayPath = {rows: [], mode: 'edit'};
+// @ts-expect-error Retaining the array does not widen its required row fields.
+emptyMissingArrayPath.rows.push({details: {active: true}});
+
+declare const omittedExistingArrayField: OmitDeep<Array<{id: number; secret: string}>, '0.secret'>;
+// @ts-expect-error An existing selected field is still removed.
+expectTypeOf(omittedExistingArrayField[0].secret).toBe<string>();
