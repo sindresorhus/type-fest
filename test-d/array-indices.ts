@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArrayIndices} from '../index.d.ts';
+import type {ArrayIndices, FixedLengthArray, TupleOf} from '../index.d.ts';
 
 const values = ['a', 'b', 'c'] as const;
 type ValueKeys = ArrayIndices<typeof values>;
@@ -54,3 +54,36 @@ expectTypeOf(unionWithEmptyTuple).toBe<0 | 1 | 2>();
 
 declare const unionOfVariableLength: ArrayIndices<[1, 2] | number[]>;
 expectTypeOf(unionOfVariableLength).toBe<number>();
+
+// Sentinel inputs and unconstrained elements do not invent fixed positions.
+expectTypeOf<ArrayIndices<any>>().toBe<number>();
+expectTypeOf<ArrayIndices<never>>().toBe<never>();
+expectTypeOf<ArrayIndices<unknown[]>>().toBe<number>();
+expectTypeOf<ArrayIndices<readonly []>>().toBe<never>();
+expectTypeOf<ArrayIndices<readonly [any, unknown, never]>>().toBe<0 | 1 | 2>();
+expectTypeOf<ArrayIndices<readonly [] | readonly [string?, number?]>>().toBe<0 | 1>();
+// @ts-expect-error Indices require an array type.
+type UnknownIndices = ArrayIndices<unknown>;
+
+// A length refinement alone does not declare the indexed positions of a tuple.
+expectTypeOf<ArrayIndices<string[] & {length: 3}>>().toBe<never>();
+expectTypeOf<ArrayIndices<FixedLengthArray<string, 3>>>().toBe<0 | 1 | 2>();
+type FiftyPositions = ArrayIndices<TupleOf<50>>;
+expectTypeOf<0 | 10 | 49>().toBeAssignableTo<FiftyPositions>();
+expectTypeOf<50>().not.toBeAssignableTo<FiftyPositions>();
+
+// Generic results remain numeric and preserve a concrete tuple's index/value correlation.
+function _numericIndex<Values extends readonly unknown[]>(index: ArrayIndices<Values>): number {
+	return index;
+}
+
+function readIndexedValue<Values extends readonly unknown[], Index extends ArrayIndices<Values>>(array: Values, index: Index): Values[Index] {
+	return array[index];
+}
+
+const indexedValues = ['first', 2, true] as const;
+expectTypeOf(readIndexedValue(indexedValues, 0)).toBe<'first'>();
+expectTypeOf(readIndexedValue(indexedValues, 1)).toBe<2>();
+expectTypeOf(readIndexedValue(indexedValues, 2)).toBe<true>();
+// @ts-expect-error The inferred tuple has no position three.
+readIndexedValue(indexedValues, 3);

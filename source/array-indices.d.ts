@@ -26,9 +26,9 @@ export type ArrayIndices<Element extends readonly unknown[]> =
 	Element extends unknown
 		? number extends Element['length']
 			? number
-			: {
-				[Key in Extract<keyof Element, `${number}`>]: Key extends `${infer Index extends number}` ? Index : never
-			}[Extract<keyof Element, `${number}`>]
+			: Extract<keyof Element, `${number}`> extends infer Key
+				? Key extends `${infer Index extends number}` ? Index : never
+				: never
 		: never;
 
 export {};
