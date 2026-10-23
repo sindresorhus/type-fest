@@ -111,7 +111,7 @@ type PrivateIntRange<
 	? never
 	: Gap extends 0
 	// Handle the case that without `Step`
-		? List['length'] extends End // The result of "List[length] === End"
+		? List['length'] extends EndLengthTuple['length'] // Compare against the already normalized endpoint so branded bounds can terminate.
 			? Exclude<List[number], never> // All unused elements are `never`, so exclude them
 			: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'] ], EndLengthTuple, false>
 	// Handle the case that with `Step`

@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {Opaque, Tagged} from '../index.d.ts';
 import type {IntRange} from '../source/int-range.d.ts';
 
 declare const test: IntRange<0, 5>;
@@ -123,3 +124,31 @@ expectTypeOf<IntRange<0, 9, 2 | 4>>().toBe<0 | 2 | 4 | 6 | 8>();
 // Different steps produce complete ranges independently, rather than mixing the steps between iterations.
 expectTypeOf<IntRange<0, 7, 2 | 3>>().toBe<0 | 2 | 3 | 4 | 6>();
 expectTypeOf<IntRange<-4, 3, 2 | 3>>().toBe<-4 | -2 | -1 | 0 | 2>();
+
+// A brand on the exclusive end does not prevent the counter from reaching it.
+expectTypeOf<IntRange<0, Tagged<3, 'Limit'>>>().toBe<0 | 1 | 2>();
+expectTypeOf<IntRange<-2, Tagged<3, 'Limit'>>>().toBe<-2 | -1 | 0 | 1 | 2>();
+
+expectTypeOf<IntRange<Tagged<1, 'Start'>, Tagged<4, 'Limit'>>>().toBe<1 | 2 | 3>();
+expectTypeOf<IntRange<Tagged<-5, 'Start'>, Tagged<-1, 'Limit'>>>().toBe<-5 | -4 | -3 | -2>();
+expectTypeOf<IntRange<3, Tagged<3, 'Limit'>>>().toBe<never>();
+expectTypeOf<IntRange<4, Tagged<3, 'Limit'>>>().toBe<never>();
+expectTypeOf<IntRange<-3, Tagged<-3, 'Limit'>>>().toBe<never>();
+expectTypeOf<IntRange<-2, Tagged<-3, 'Limit'>>>().toBe<never>();
+expectTypeOf<IntRange<-1, Tagged<0, 'Limit'>>>().toBe<-1>();
+expectTypeOf<IntRange<0, Tagged<-1, 'Limit'>>>().toBe<never>();
+expectTypeOf<IntRange<0, Opaque<3, 'Limit'>>>().toBe<0 | 1 | 2>();
+expectTypeOf<IntRange<0, Tagged<Tagged<3, 'Limit'>, 'Validated'>>>().toBe<0 | 1 | 2>();
+expectTypeOf<IntRange<0, 3 & {readonly __brand: unique symbol}>>().toBe<0 | 1 | 2>();
+expectTypeOf<IntRange<Tagged<0 | 2, 'Start'>, Tagged<3 | 4, 'Limit'>>>().toBe<0 | 1 | 2 | 3>();
+expectTypeOf<IntRange<0, 3 | Tagged<4, 'Limit'>>>().toBe<0 | 1 | 2 | 3>();
+expectTypeOf<IntRange<-5, Tagged<5, 'Limit'>, Tagged<3, 'Step'>>>().toBe<-5 | -2 | 1 | 4>();
+expectTypeOf<IntRange<0, Tagged<7, 'Limit'>, 2 | 3>>().toBe<0 | 2 | 3 | 4 | 6>();
+expectTypeOf<IntRange<never, Tagged<3, 'Limit'>>>().toBe<never>();
+
+// The normalized comparison still supports the documented maximum exclusive end.
+type BrandedMaximumRange = IntRange<0, Tagged<999, 'Limit'>>;
+expectTypeOf<0>().toBeAssignableTo<BrandedMaximumRange>();
+expectTypeOf<998>().toBeAssignableTo<BrandedMaximumRange>();
+expectTypeOf<999>().not.toBeAssignableTo<BrandedMaximumRange>();
+expectTypeOf<IntRange<998, Tagged<999, 'Limit'>>>().toBe<998>();
