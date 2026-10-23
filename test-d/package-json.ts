@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {PackageJson, LiteralUnion, JsonObject} from '../index.d.ts';
+import type {PackageJson, LiteralUnion, JsonObject, JsonValue} from '../index.d.ts';
 
 const packageJson: PackageJson = {};
 
@@ -189,3 +189,40 @@ expectTypeOf(documentedFields.libc).toBe<
 	| undefined
 	| LiteralUnion<'glibc' | 'musl' | '!glibc' | '!musl', string>
 	| Array<LiteralUnion<'glibc' | 'musl' | '!glibc' | '!musl', string>>>();
+
+// Nested fallback arrays resolve recursively for both package exports and imports.
+[null, ['./entry.js']] satisfies PackageJson.Exports;
+({'#nested': [[], [null, './entry.js']]}) satisfies PackageJson.Imports;
+({exports: {'.': [['./entry.js']]}}) satisfies PackageJson;
+
+({
+	'.': [{node: [[], [null, {import: [['./entry.js']], require: './entry.cjs'}]]}, './fallback.js'],
+	'./features/*': [[{browser: ['./browser/*.js'], default: [['./features/*.js']]}]],
+	'./blocked': [[null, []]],
+}) satisfies PackageJson.Exports;
+({
+	'#features/*': [[{node: ['external-package/*'], default: [['./features/*.js']]}]],
+}) satisfies PackageJson.Imports;
+[] satisfies PackageJson.Exports;
+[[[]], [null, [null]]] satisfies PackageJson.Exports;
+({exports: [], imports: {'#empty': [[[]]]}}) satisfies PackageJson;
+
+expectTypeOf<number>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<[[number]]>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<[{node: [[false]]}]>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<undefined>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<[[undefined]]>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<[{default: undefined}]>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<unknown>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<unknown[][]>().not.toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<{'#invalid': [[number]]}>().not.toBeAssignableTo<PackageJson.Imports>();
+expectTypeOf<any[][]>().toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<never[][]>().toBeAssignableTo<PackageJson.Exports>();
+expectTypeOf<PackageJson.Exports>().not.toBe<any>();
+expectTypeOf<PackageJson.Exports>().not.toBe<never>();
+
+function exportsAsJson<Value extends PackageJson.Exports>(value: Value): JsonValue {
+	return value;
+}
+
+expectTypeOf(exportsAsJson([null, [{node: [['./entry.js']]}]])).toBe<JsonValue>();

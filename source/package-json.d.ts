@@ -274,12 +274,12 @@ export namespace PackageJson {
 	/**
 	Entry points of a module, optionally with conditions and subpath exports.
 
-	A fallback array may contain `null` entries, which are skipped while checking the remaining entries. If no entry resolves, `null` prevents the module from being imported.
+	A fallback array may contain nested fallback arrays, conditional mappings, and `null` entries. Null entries are skipped while checking the remaining entries. If no entry resolves, `null` prevents the module from being imported.
 	*/
 	type Exports =
 		| null
 		| string
-		| Array<string | ExportConditions | null>
+		| Exports[]
 		| ExportConditions;
 
 	/**
