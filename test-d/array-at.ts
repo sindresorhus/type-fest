@@ -160,3 +160,39 @@ expectTypeOf<ArrayAt<[unknown, ...TupleOf<1100>], 0>>().toBe<unknown>();
 // A numeric length refinement does not declare any tuple positions.
 expectTypeOf<ArrayAt<string[] & {length: 3}, 0>>().toBe<string | undefined>();
 expectTypeOf<ArrayAt<readonly string[] & {readonly length: 3}, 0>>().toBe<string | undefined>();
+
+// A constant numeric enum index identifies the same element as its numeric value.
+enum AtPosition {
+	BeforeEnd = -1,
+	Start = 0,
+	Middle = 1,
+	End = 2,
+	PastEnd = 4,
+}
+expectTypeOf<ArrayAt<[1, 2, 3], AtPosition.Middle>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], AtPosition.BeforeEnd>>().toBe<3>();
+
+declare enum RuntimeAtPosition {
+	Value,
+}
+expectTypeOf<ArrayAt<readonly [1, 2, 3], AtPosition.Middle>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3], AtPosition.Start>>().toBe<1>();
+expectTypeOf<ArrayAt<[1, 2, 3], AtPosition.Middle | AtPosition.End>>().toBe<2 | 3>();
+expectTypeOf<ArrayAt<[1, 2, 3], AtPosition.BeforeEnd | AtPosition.Start>>().toBe<1 | 3>();
+expectTypeOf<ArrayAt<[1, 2, 3], AtPosition>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<ArrayAt<[1, 2?, 3?], AtPosition.Middle>>().toBe<2 | undefined>();
+expectTypeOf<ArrayAt<[1, 2, 3], AtPosition.PastEnd>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, ...string[], 2], AtPosition.Middle>>().toBe<string | 2>();
+expectTypeOf<ArrayAt<[...string[], 1, 2], AtPosition.BeforeEnd>>().toBe<2>();
+expectTypeOf<ArrayAt<[1, 2, 3] | readonly ['a', 'b'], AtPosition.Middle>>().toBe<2 | 'b'>();
+expectTypeOf<ArrayAt<[1, 2, 3], RuntimeAtPosition.Value>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<ArrayAt<readonly [1, 2, 3], number>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<ArrayAt<[1, 2, 3], any>>().toBe<1 | 2 | 3 | undefined>();
+expectTypeOf<ArrayAt<[1, 2, 3], never>>().toBe<never>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], AtPosition.Start>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], AtPosition.Middle>>().toBe<any>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], AtPosition.End>>().toBe<never>();
+expectTypeOf<ArrayAt<[undefined, any, never, unknown], AtPosition.BeforeEnd>>().toBe<unknown>();
+expectTypeOf<ArrayAt<never, AtPosition.Middle>>().toBe<never>();
+// @ts-expect-error
+expectTypeOf<ArrayAt<[1, 2, 3], unknown>>();

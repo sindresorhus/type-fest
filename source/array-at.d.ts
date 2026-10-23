@@ -69,7 +69,8 @@ Note: A non-integer index is not supported, even though `Array#at()` truncates i
 export type ArrayAt<TArray extends UnknownArray, Index extends number> = IfNotAnyOrNever<TArray, {
 	ifNot: TArray extends unknown // For distributing `TArray`
 		? Index extends unknown // For distributing `Index`
-			? number extends Index
+			// Numeric enum members accept `number` too, so compare their printed values to recognize constant indices.
+			? `${number}` extends `${Index}`
 				? TArray[number] | undefined
 				: IsNegative<Index> extends true
 					? ArrayAtNegativeIndex<TArray, Index>
