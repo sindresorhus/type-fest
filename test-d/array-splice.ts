@@ -195,3 +195,7 @@ expectTypeOf<ArraySplice<[1, 2, 3], 1, -1>>().toBe<[1, 2, 3]>();
 // A non-literal index can be any value, so only the element types are known.
 expectTypeOf<ArraySplice<[1, 2, 3], number, 1>>().toBe<Array<1 | 2 | 3>>();
 expectTypeOf<ArraySplice<readonly [1, 2, 3], number, 1>>().toBe<ReadonlyArray<1 | 2 | 3>>();
+
+// A union of deletion counts preserves each possible remaining suffix.
+expectTypeOf<ArraySplice<[1, 2, 3, 4], 1, 1 | 2>>().toBe<[1, 3, 4] | [1, 4]>();
+expectTypeOf<ArraySplice<[1, 2, 3, 4], 1, -1 | 1>>().toBe<[1, 2, 3, 4] | [1, 3, 4]>();

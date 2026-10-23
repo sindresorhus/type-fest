@@ -10,6 +10,11 @@ expectTypeOf<IsUppercase<'!@#'>>().toBe<true>();
 expectTypeOf<IsUppercase<'Abc'>>().toBe<false>();
 expectTypeOf<IsUppercase<'abc'>>().toBe<false>();
 
+// Unicode casing can expand into multiple code points, while emoji have no case.
+expectTypeOf<IsUppercase<'ß'>>().toBe<false>();
+expectTypeOf<IsUppercase<'İ'>>().toBe<true>();
+expectTypeOf<IsUppercase<'🦄'>>().toBe<true>();
+
 // Non-literals
 expectTypeOf<IsUppercase<Uppercase<string>>>().toBe<true>();
 expectTypeOf<IsUppercase<Uppercase<`on${string}`>>>().toBe<true>();
