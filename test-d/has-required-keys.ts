@@ -54,3 +54,32 @@ expectTypeOf<HasRequiredKeys<readonly [...number[], string]>>().toBe<true>();
 expectTypeOf<HasRequiredKeys<{a?: string} | {b: number}>>().toBe<true>();
 expectTypeOf<HasRequiredKeys<[number?] | {a?: string}>>().toBe<false>();
 expectTypeOf<HasRequiredKeys<[number] | {a?: string}>>().toBe<true>();
+
+// Requiredness depends on whether a field may be absent, rather than on its value type.
+expectTypeOf<HasRequiredKeys<{value: never}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<{value?: never}>>().toBe<false>();
+expectTypeOf<HasRequiredKeys<{value: undefined}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<{value?: undefined}>>().toBe<false>();
+expectTypeOf<HasRequiredKeys<{value: any}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<{value?: any}>>().toBe<false>();
+expectTypeOf<HasRequiredKeys<{readonly value: unknown}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<{readonly value?: unknown}>>().toBe<false>();
+
+declare const requiredKey: unique symbol;
+expectTypeOf<HasRequiredKeys<{readonly [requiredKey]: number; 0?: string}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<{readonly [requiredKey]?: number; 0?: string}>>().toBe<false>();
+expectTypeOf<HasRequiredKeys<{[key: `data-${string}`]: number; label?: string}>>().toBe<false>();
+expectTypeOf<HasRequiredKeys<{[key: `data-${string}`]: number; label: string}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<(() => void) & {id: string}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<(() => void) & {id?: string}>>().toBe<false>();
+
+// A generic result is always a boolean, and inferred calls retain their specific answer.
+function _requiredResult<Value extends object>(result: HasRequiredKeys<Value>): boolean {
+	return result;
+}
+
+declare function hasRequiredFields<Value extends object>(value: Value): HasRequiredKeys<Value>;
+expectTypeOf(hasRequiredFields({id: 1})).toBe<true>();
+expectTypeOf(hasRequiredFields({} as {id?: number})).toBe<false>();
+expectTypeOf(hasRequiredFields([] as readonly [string?])).toBe<false>();
+expectTypeOf(hasRequiredFields(['first'] as const)).toBe<true>();

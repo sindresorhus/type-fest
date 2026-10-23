@@ -1,4 +1,3 @@
-import type {RequiredKeysOf} from './required-keys-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -65,7 +64,8 @@ const optD: Options2 = {
 export type HasRequiredKeys<BaseType extends object> =
 	(BaseType extends UnknownArray // For distributing `BaseType`
 		? [] extends BaseType ? never : BaseType // An array has required keys only if it has required elements
-		: RequiredKeysOf<OmitIndexSignature<BaseType>>
+		// Checking whether an empty object is allowed avoids collecting every required key when only their existence matters.
+		: {} extends OmitIndexSignature<BaseType> ? never : true
 	) extends never ? false : true;
 
 export {};
