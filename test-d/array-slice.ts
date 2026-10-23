@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArraySlice} from '../index.d.ts';
+import type {ArraySlice, Opaque, StringSlice, Tagged} from '../index.d.ts';
 
 expectTypeOf<ArraySlice<[0, 1, 2, 3]>>().toBe<[0, 1, 2, 3]>();
 expectTypeOf<[0, 1, 2] | [0, 1, 2, 3]>().toBe<ArraySlice<[0, 1, 2] | [0, 1, 2, 3], 0>>();
@@ -206,3 +206,39 @@ expectTypeOf<ArraySlice<string[], SlicePosition.Middle, SlicePosition.End>>().to
 expectTypeOf<ArraySlice<[1, 2, 3], RuntimeSlicePosition.Value>>().toBe<Array<1 | 2 | 3>>();
 expectTypeOf<ArraySlice<[undefined, any, never, unknown], SlicePosition.Middle, SlicePosition.End>>().toBe<[any]>();
 expectTypeOf<ArraySlice<never, SlicePosition.Middle>>().toBe<never>();
+
+// Branded offsets retain their known numeric values when selecting a range.
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<1, 'Index'>>>().toBe<[2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3, 4], Tagged<1, 'Index'>, Tagged<3, 'Index'>>>().toBe<[2, 3]>();
+
+expectTypeOf<ArraySlice<readonly [1, 2, 3], Tagged<1, 'Index'>>>().toBe<readonly [2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], never, Tagged<2, 'Index'>>>().toBe<[1, 2]>();
+expectTypeOf<ArraySlice<[1, 2, 3, 4], Tagged<-3, 'Index'>, Tagged<-1, 'Index'>>>().toBe<[2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<0, 'Index'>, Tagged<0, 'Index'>>>().toBe<[]>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<3, 'Index'>, Tagged<1, 'Index'>>>().toBe<[]>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<-100, 'Index'>, Tagged<100, 'Index'>>>().toBe<[1, 2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<1e21, 'Index'>>>().toBe<[]>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<1.5, 'Index'>>>().toBe<never>();
+expectTypeOf<ArraySlice<readonly [1, 2?, 3?], Tagged<1, 'Index'>, Tagged<2, 'Index'>>>().toBe<readonly [2?]>();
+expectTypeOf<ArraySlice<[Tagged<'value', 'Element'>, 2], Tagged<0, 'Index'>, Tagged<1, 'Index'>>>().toBe<[Tagged<'value', 'Element'>]>();
+
+expectTypeOf<ArraySlice<[1, 2, 3, 4], Opaque<1, 'Index'>, Opaque<3, 'Index'>>>().toBe<[2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<Tagged<1, 'Index'>, 'Validated'>>>().toBe<[2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], 1 & {readonly __brand: unique symbol}>>().toBe<[2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<0 | 1, 'Index'>, Tagged<1 | 2, 'Index'>>>().toBe<[1] | [1, 2] | [] | [2]>();
+expectTypeOf<ArraySlice<[1, 2, 3] | readonly ['a', 'b'], Tagged<1, 'Index'>>>().toBe<[2, 3] | readonly ['b']>();
+
+// Variadic and broad arrays retain their existing slice approximations.
+expectTypeOf<ArraySlice<[1, 2, ...string[]], Tagged<1, 'Index'>>>().toBe<[2, ...string[]]>();
+expectTypeOf<ArraySlice<readonly [1, 2, ...string[]], Tagged<1, 'Index'>, Tagged<2, 'Index'>>>().toBe<readonly [2]>();
+expectTypeOf<ArraySlice<[...string[], 1, 2], Tagged<1, 'Index'>, Tagged<2, 'Index'>>>().toBe<[string | 1 | 2]>();
+expectTypeOf<ArraySlice<readonly unknown[], Tagged<1, 'Index'>, Tagged<2, 'Index'>>>().toBe<readonly unknown[]>();
+expectTypeOf<ArraySlice<any[], Tagged<1, 'Index'>, Tagged<2, 'Index'>>>().toBe<any[]>();
+expectTypeOf<ArraySlice<never, Tagged<1, 'Index'>>>().toBe<never>();
+expectTypeOf<ArraySlice<[1, 2, 3], Tagged<number, 'Index'>>>().toBe<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySlice<[1, 2, 3], any, Tagged<2, 'Index'>>>().toBe<Array<1 | 2 | 3>>();
+// @ts-expect-error - A slice offset must be numeric.
+expectTypeOf<ArraySlice<[1, 2, 3], unknown>>();
+
+// String slicing delegates its normalized bounds to the array slice.
+expectTypeOf<StringSlice<'abcd', Tagged<1, 'Index'>, Tagged<3, 'Index'>>>().toBe<'bc'>();

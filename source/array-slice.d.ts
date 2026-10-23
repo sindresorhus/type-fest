@@ -3,7 +3,7 @@ import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
-import type {HasNoStaticElements, IsArrayReadonly, MaxLength, Not, TupleMin} from './internal/index.d.ts';
+import type {HasNoStaticElements, IsArrayReadonly, MaxLength, Not, TupleMin, UnwrapBrand} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {And} from './and.d.ts';
 import type {ArraySplice} from './array-splice.d.ts';
@@ -67,6 +67,13 @@ export type ArraySlice<
 	Array_ extends readonly unknown[],
 	Start extends number = never,
 	End extends number = never,
+> = ArraySliceImplementation<Array_, Start extends object ? UnwrapBrand<Start> : Start, End extends object ? UnwrapBrand<End> : End>;
+
+// Normalize offsets once so tuple counters compare their underlying numeric values.
+type ArraySliceImplementation<
+	Array_ extends readonly unknown[],
+	Start extends number,
+	End extends number,
 > = Array_ extends unknown // To distributive type
 	? IsNever<Start> extends true
 		? IsNever<End> extends true
