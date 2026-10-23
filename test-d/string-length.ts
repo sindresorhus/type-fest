@@ -142,3 +142,38 @@ declare function measureFields<const Values extends Record<string, string>>(valu
 expectTypeOf(measureFields({short: 'id', long: 'label', empty: ''})).toBe<{readonly short: 2; readonly long: 5; readonly empty: 0}>();
 expectTypeOf(numericTextLength(1.25)).toBe<4>();
 expectTypeOf(numericTextLength(1e21)).toBe<5>();
+
+// Count both complete chunks and the characters around their boundaries.
+expectTypeOf<StringLength<'abcdefghi'>>().toBe<9>();
+expectTypeOf<StringLength<'abcdefghij'>>().toBe<10>();
+expectTypeOf<StringLength<'abcdefghijk'>>().toBe<11>();
+expectTypeOf<StringLength<'abcdefghijklmnopqrs'>>().toBe<19>();
+expectTypeOf<StringLength<'abcdefghijklmnopqrst'>>().toBe<20>();
+expectTypeOf<StringLength<'abcdefghijklmnopqrstu'>>().toBe<21>();
+expectTypeOf<StringLength<'abcdefghij' | 'abcdefghijklmnopqrs'>>().toBe<10 | 19>();
+expectTypeOf<StringLength<Tagged<'abcdefghij', 'Text'>>>().toBe<10>();
+
+// Chunk boundaries preserve the existing character decomposition, including surrogate and combining sequences.
+expectTypeOf<StringLength<'abcdefghi😀j'>>().toBe<StringToArray<'abcdefghi😀j'>['length']>();
+expectTypeOf<StringLength<'abcdefghie\u{301}j'>>().toBe<StringToArray<'abcdefghie\u{301}j'>['length']>();
+
+function _lengthProperty<Value extends string>(value: {length: StringLength<Value>}): {length: number} {
+	return value;
+}
+
+expectTypeOf(measureFields({id: 'abcdefghij', route: 'apiClientResponse'})).toBe<{readonly id: 10; readonly route: 17}>();
+
+// Generated text can exceed one thousand characters without consuming one recursive step per character.
+type GeneratedLongText = `${StringRepeat<'a', 900>}${StringRepeat<'b', 900>}`;
+declare const generatedTextLength: StringLength<GeneratedLongText>;
+expectTypeOf(generatedTextLength).toBe<1800>();
+const exactGeneratedLength: 1800 = generatedTextLength;
+expectTypeOf(exactGeneratedLength).toBeAssignableTo<number>();
+
+// Long inputs still count the remainder and keep separate union alternatives.
+expectTypeOf<StringLength<`${GeneratedLongText}x`>>().toBe<1801>();
+expectTypeOf<StringLength<`${GeneratedLongText}abcdefghi`>>().toBe<1809>();
+expectTypeOf<StringLength<GeneratedLongText | 'short'>>().toBe<5 | 1800>();
+expectTypeOf<StringLength<`${GeneratedLongText}${number}`>>().toBe<number>();
+declare const generatedText: GeneratedLongText;
+expectTypeOf(measureFields({short: 'id', generated: generatedText})).toBe<{readonly short: 2; readonly generated: 1800}>();

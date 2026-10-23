@@ -43,9 +43,12 @@ export type StringLength<S extends string> = IfNotAnyOrNever<S, {
 	ifAny: number;
 }>;
 
-// The input is already a literal, so count its characters without retaining them.
-type StringLengthImplementation<Value extends string, Counter extends unknown[] = []> = Value extends `${string}${infer Rest}`
-	? StringLengthImplementation<Rest, [...Counter, unknown]>
-	: Counter['length'];
+// The input is already a literal, so count ten characters at a time, then the remainder, without retaining them.
+type StringLengthImplementation<Value extends string, Counter extends unknown[] = []> =
+	Value extends `${string}${string}${string}${string}${string}${string}${string}${string}${string}${string}${infer Rest}`
+		? StringLengthImplementation<Rest, [...Counter, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown]>
+		: Value extends `${string}${infer Rest}`
+			? StringLengthImplementation<Rest, [...Counter, unknown]>
+			: Counter['length'];
 
 export {};
