@@ -1,5 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {SetNullable} from '../index.d.ts';
+import type {Opaque, Tagged} from '../source/tagged.d.ts';
+import type {LiteralUnion, SetNullable} from '../index.d.ts';
 
 // Make one key nullable.
 declare const variation1: SetNullable<{a: number; b: string}, 'a'>;
@@ -91,3 +92,58 @@ function getNullable<BaseType extends object, Key extends keyof BaseType>(value:
 }
 
 expectTypeOf(getNullable<{a: number}, 'a'>).returns.toBe<number | null>();
+
+// A branded selector names the same property as its underlying key.
+expectTypeOf<SetNullable<{value: string}, Tagged<'value', 'Key'>>>().toBe<{value: string | null}>();
+
+// Normalize metadata on selectors while preserving value brands and property modifiers.
+expectTypeOf<SetNullable<{readonly value?: Tagged<string, 'Value'> | undefined; keep: number}, Tagged<'value', 'Key'>>>()
+	.toBe<{readonly value?: Tagged<string, 'Value'> | undefined | null; keep: number}>();
+expectTypeOf<SetNullable<{value: string}, Opaque<'value', 'Key'>>>().toBe<{value: string | null}>();
+expectTypeOf<SetNullable<{value: string}, Tagged<Tagged<'value', 'Key'>, 'Validated'>>>().toBe<{value: string | null}>();
+expectTypeOf<SetNullable<{value: string}, 'value' & {readonly __brand: unique symbol}>>().toBe<{value: string | null}>();
+
+// Every selected key is transformed together, and absent keys do not leak into other union members.
+expectTypeOf<SetNullable<{value: string; other: number}, Tagged<'value' | 'other', 'Key'>>>().toBe<{value: string | null; other: number | null}>();
+expectTypeOf<SetNullable<{value: string; other: number}, Tagged<'value', 'Key'> | 'other'>>().toBe<{value: string | null; other: number | null}>();
+expectTypeOf<SetNullable<{value: string} | {other: boolean}, Tagged<'value', 'Key'>>>().toBe<{value: string | null} | {other: boolean}>();
+
+// Symbol selectors retain their identity, including when metadata is attached.
+declare const selectorSymbol: unique symbol;
+expectTypeOf<SetNullable<{[selectorSymbol]: string}, typeof selectorSymbol>>().toBe<{[selectorSymbol]: string | null}>();
+expectTypeOf<SetNullable<{[selectorSymbol]: string}, Tagged<typeof selectorSymbol, 'Key'>>>().toBe<{[selectorSymbol]: string | null}>();
+
+// Existing enum and empty-intersection selector behavior is unchanged.
+enum SelectorKey {
+	Value = 'value',
+}
+expectTypeOf<SetNullable<{[SelectorKey.Value]: string}, SelectorKey.Value>>().toBe<{[SelectorKey.Value]: string | null}>();
+expectTypeOf<SetNullable<{value: string}, 'value' & {}>>().toBe<{value: string | null}>();
+expectTypeOf<SetNullable<{[key: string]: unknown; value: string}, LiteralUnion<'value', string>>>().toBe<SetNullable<{[key: string]: unknown; value: string}, string>>();
+
+// Empty selections and sentinel values retain their existing meaning.
+expectTypeOf<SetNullable<{value: string}, never>>().toBe<{value: string}>();
+expectTypeOf<SetNullable<never, never>>().toBe<never>();
+expectTypeOf<SetNullable<unknown, never>>().toBe<{}>();
+// @ts-expect-error A selector must name a property of the source.
+expectTypeOf<SetNullable<{value: string}, unknown>>();
+
+// A tuple keeps its positions and modifiers, and literal keys still do not reach the rest element.
+expectTypeOf<SetNullable<readonly [string, number?], Tagged<0 | 1, 'Key'>>>().toBe<readonly [string | null, (number | null)?]>();
+expectTypeOf<SetNullable<[string, ...number[]], Tagged<1, 'Key'>>>().toBe<[string, ...number[]]>();
+expectTypeOf<SetNullable<[string, ...number[]], Tagged<number, 'Key'>>>().toBe<[string | null, ...Array<number | null>]>();
+expectTypeOf<SetNullable<[string, number], LiteralUnion<0, number>>>().toBe<[string | null, number | null]>();
+expectTypeOf<SetNullable<{a: any; b: never; c: unknown}, Tagged<'a' | 'b' | 'c', 'Key'>>>().toBe<{a: any; b: null; c: unknown}>();
+expectTypeOf<SetNullable<{a: string; b?: number}, any>>().toBe<{a: string | null; b?: number | null}>();
+expectTypeOf<{value: null; keep: null}>().not.toBeAssignableTo<SetNullable<{value: string; keep: number}, Tagged<'value', 'Key'>>>();
+
+// A broad branded selector keeps the same coverage as the corresponding index signature.
+expectTypeOf<SetNullable<{[key: string]: unknown; value?: string | null}, Tagged<string, 'Key'>>>()
+	.toBe<SetNullable<{[key: string]: unknown; value?: string | null}, string>>();
+
+// Moving the map behind a selector-normalizing boundary preserves reverse inference.
+declare function inferNullableSource<BaseType>(value: SetNullable<BaseType>): BaseType;
+expectTypeOf(inferNullableSource({name: 'value', count: 1})).toBe<{name: string; count: number}>();
+
+declare function inferSelectedNullableSource<BaseType, Key extends keyof BaseType>(value: SetNullable<BaseType, Key>, key: Key): BaseType;
+expectTypeOf(inferSelectedNullableSource({name: 'value', count: 1}, 'name')).toBe<{name: string; count: number}>();

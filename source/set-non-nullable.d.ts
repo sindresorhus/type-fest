@@ -1,4 +1,4 @@
-import type {IsArrayReadonly} from './internal/index.d.ts';
+import type {IsArrayReadonly, UnwrapBrand} from './internal/index.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -41,6 +41,10 @@ type AllNonNullable = SetNonNullable<Foo>;
 @category Object
 */
 export type SetNonNullable<BaseType, Keys extends KeysOfUnion<BaseType> = KeysOfUnion<BaseType>> =
+	SetNonNullableImplementation<BaseType, Keys extends object ? UnwrapBrand<Keys> : Keys>;
+
+// Apply the primitive selector to object keys and tuple indices.
+type SetNonNullableImplementation<BaseType, Keys> =
 	BaseType extends unknown // To distribute `BaseType` when it's a union type.
 		? BaseType extends UnknownArray
 			// A tuple is keyed by index, but a homomorphic mapped type is handed its elements under their string index, so a numeric `Keys` never matches. An array with elements before its rest element is walked with a counter instead, which turns each index into the same string `keyof` does. An array of unknown length goes through the mapped type, which reaches the element type directly.

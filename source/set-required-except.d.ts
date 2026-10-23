@@ -1,4 +1,4 @@
-import type {KeysExcept} from './internal/index.d.ts';
+import type {KeysExcept, UnwrapPathBrand} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 
@@ -37,7 +37,7 @@ Known limitations:
 */
 export type SetRequiredExcept<BaseType, Keys extends KeysOfUnion<BaseType>> =
 	BaseType extends unknown // To get the remaining keys of each member of a union separately, so that the keys of an object member do not turn a tuple member into an object.
-		? SetRequired<BaseType, KeysExcept<BaseType, Keys>>
+		? SetRequired<BaseType, KeysExcept<BaseType, UnwrapPathBrand<Keys>>>
 		: never;
 
 export {};

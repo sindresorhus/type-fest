@@ -1,5 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {ApplyDefaultOptions, SimplifyObject} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
 
 export type SetFieldTypeOptions = {
 	/**
@@ -54,7 +54,7 @@ type MyModelApi2 = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string, {pre
 @category Object
 */
 export type SetFieldType<BaseType, Keys extends KeysOfUnion<BaseType>, NewType, Options extends SetFieldTypeOptions = {}> =
-	_SetFieldType<BaseType, Keys, NewType, ApplyDefaultOptions<SetFieldTypeOptions, DefaultSetFieldTypeOptions, Options>>;
+	_SetFieldType<BaseType, UnwrapPathBrand<Keys>, NewType, ApplyDefaultOptions<SetFieldTypeOptions, DefaultSetFieldTypeOptions, Options>>;
 
 type _SetFieldType<BaseType, Keys, NewType, Options extends Required<SetFieldTypeOptions>> =
 	// The distribution comes first, so that a member the keys do not reach is left as it is. Otherwise the `Record` below hands it a key it never had, as a required one when the modifiers are not preserved.

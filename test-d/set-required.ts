@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Except, SetRequired, Tagged} from '../index.d.ts';
+import type {Except, LiteralUnion, Opaque, SetRequired, Tagged} from '../index.d.ts';
 
 // Update one required and one optional to required.
 declare const variation1: SetRequired<{a?: number; b: string; c?: boolean}, 'b' | 'c'>;
@@ -245,3 +245,58 @@ class ClassWithPublicMembers {
 }
 
 expectTypeOf<SetRequired<ClassWithPublicMembers, 'optional'>>().toBeAssignableTo<ClassWithPublicMembers>();
+
+// A branded selector names the same property as its underlying key.
+expectTypeOf<SetRequired<{value?: string}, Tagged<'value', 'Key'>>>().toBe<{value: string}>();
+expectTypeOf<SetRequired<[string?], Tagged<0, 'Key'>>>().toBe<[string]>();
+
+// Normalize metadata on selectors while preserving value brands and property modifiers.
+expectTypeOf<SetRequired<{readonly value?: Tagged<string, 'Value'> | undefined; keep?: number}, Tagged<'value', 'Key'>>>().toBe<{readonly value: Tagged<string, 'Value'> | undefined; keep?: number}>();
+expectTypeOf<SetRequired<{value?: string}, Opaque<'value', 'Key'>>>().toBe<{value: string}>();
+expectTypeOf<SetRequired<{value?: string}, Tagged<Tagged<'value', 'Key'>, 'Validated'>>>().toBe<{value: string}>();
+expectTypeOf<SetRequired<{value?: string}, 'value' & {readonly __brand: unique symbol}>>().toBe<{value: string}>();
+
+// Every selected key is transformed together, and absent keys do not leak into other union members.
+expectTypeOf<SetRequired<{value?: string; other?: number}, Tagged<'value' | 'other', 'Key'>>>().toBe<{value: string; other: number}>();
+expectTypeOf<SetRequired<{value?: string; other?: number}, Tagged<'value', 'Key'> | 'other'>>().toBe<{value: string; other: number}>();
+expectTypeOf<SetRequired<{value?: string} | {other: boolean}, Tagged<'value', 'Key'>>>().toBe<{value: string} | {other: boolean}>();
+
+// Symbol selectors retain their identity, including when metadata is attached.
+declare const selectorSymbol: unique symbol;
+expectTypeOf<SetRequired<{[selectorSymbol]?: string}, typeof selectorSymbol>>().toBe<{[selectorSymbol]: string}>();
+expectTypeOf<SetRequired<{[selectorSymbol]?: string}, Tagged<typeof selectorSymbol, 'Key'>>>().toBe<{[selectorSymbol]: string}>();
+
+// Existing enum and empty-intersection selector behavior is unchanged.
+enum SelectorKey {
+	Value = 'value',
+}
+expectTypeOf<SetRequired<{[SelectorKey.Value]?: string}, SelectorKey.Value>>().toBe<{[SelectorKey.Value]: string}>();
+expectTypeOf<SetRequired<{value?: string}, 'value' & {}>>().toBe<{value: string}>();
+expectTypeOf<SetRequired<{[key: string]: unknown; value?: string}, LiteralUnion<'value', string>>>().toBe<SetRequired<{[key: string]: unknown; value?: string}, string>>();
+
+// Empty selections and sentinel values retain their existing meaning.
+expectTypeOf<SetRequired<{value?: string}, never>>().toBe<{value?: string}>();
+expectTypeOf<SetRequired<never, never>>().toBe<never>();
+expectTypeOf<SetRequired<unknown, never>>().toBe<{}>();
+// @ts-expect-error A selector must name a property of the source.
+expectTypeOf<SetRequired<{value?: string}, unknown>>();
+
+// Numeric selector brands follow the same tuple rules, including optional prefixes and rest elements.
+expectTypeOf<SetRequired<readonly [first?: string, second?: number], Tagged<0 | 1, 'Key'>>>().toBe<readonly [first: string, second: number]>();
+expectTypeOf<SetRequired<[(string | undefined)?], Tagged<'0', 'Key'>>>().toBe<[string | undefined]>();
+expectTypeOf<SetRequired<[string?, number?], Tagged<1, 'Key'>>>().toBe<[string?, number?]>();
+expectTypeOf<SetRequired<[string, ...Array<number | undefined>], Tagged<2, 'Key'>>>().toBe<[string, ...Array<number | undefined>]>();
+expectTypeOf<SetRequired<[string?, number?], Tagged<number, 'Key'>>>().toBe<[string, number]>();
+expectTypeOf<SetRequired<[string?, number?], LiteralUnion<0, number>>>().toBe<[string, number]>();
+expectTypeOf<{}>().not.toBeAssignableTo<SetRequired<{value?: string}, Tagged<'value', 'Key'>>>();
+expectTypeOf<SetRequired<{a?: any; b?: never; c?: unknown}, Tagged<'a' | 'b' | 'c', 'Key'>>>().toBe<{a: any; b: never; c: unknown}>();
+expectTypeOf<SetRequired<{a?: string; b?: number}, any>>().toBe<{a: string; b: number}>();
+
+type BrandedRequiredCallable = SetRequired<{(this: Date, value: string): number; value?: string}, Tagged<'value', 'Key'>>;
+expectTypeOf<ThisParameterType<BrandedRequiredCallable>>().toBe<Date>();
+expectTypeOf<ReturnType<BrandedRequiredCallable>>().toBe<number>();
+expectTypeOf<BrandedRequiredCallable['value']>().toBe<string>();
+
+// A broad branded selector keeps the same coverage as the corresponding index signature.
+expectTypeOf<SetRequired<{[key: string]: unknown; value?: string | null}, Tagged<string, 'Key'>>>()
+	.toBe<SetRequired<{[key: string]: unknown; value?: string | null}, string>>();

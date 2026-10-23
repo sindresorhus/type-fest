@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetOptional, Tagged} from '../index.d.ts';
+import type {LiteralUnion, Opaque, SetOptional, Tagged} from '../index.d.ts';
 
 // Update one required and one optional to optional.
 declare const variation1: SetOptional<{a: number; b?: string; c: boolean}, 'b' | 'c'>;
@@ -195,3 +195,57 @@ expectTypeOf(augmentedArray.tag).toBe<boolean | undefined>();
 
 type TaggedTuple = Tagged<[string, number], 'Tuple'>;
 expectTypeOf<SetOptional<TaggedTuple, never>>().toBe<TaggedTuple>();
+
+// A branded selector names the same property as its underlying key.
+expectTypeOf<SetOptional<{value: string}, Tagged<'value', 'Key'>>>().toBe<{value?: string}>();
+expectTypeOf<SetOptional<[string], Tagged<0, 'Key'>>>().toBe<[string?]>();
+
+// Normalize metadata on selectors while preserving value brands and property modifiers.
+expectTypeOf<SetOptional<{readonly value: Tagged<string, 'Value'> | undefined; keep: number}, Tagged<'value', 'Key'>>>().toBe<{readonly value?: Tagged<string, 'Value'> | undefined; keep: number}>();
+expectTypeOf<SetOptional<{value: string}, Opaque<'value', 'Key'>>>().toBe<{value?: string}>();
+expectTypeOf<SetOptional<{value: string}, Tagged<Tagged<'value', 'Key'>, 'Validated'>>>().toBe<{value?: string}>();
+expectTypeOf<SetOptional<{value: string}, 'value' & {readonly __brand: unique symbol}>>().toBe<{value?: string}>();
+
+// Every selected key is transformed together, and absent keys do not leak into other union members.
+expectTypeOf<SetOptional<{value: string; other: number}, Tagged<'value' | 'other', 'Key'>>>().toBe<{value?: string; other?: number}>();
+expectTypeOf<SetOptional<{value: string; other: number}, Tagged<'value', 'Key'> | 'other'>>().toBe<{value?: string; other?: number}>();
+expectTypeOf<SetOptional<{value: string} | {other: boolean}, Tagged<'value', 'Key'>>>().toBe<{value?: string} | {other: boolean}>();
+
+// Symbol selectors retain their identity, including when metadata is attached.
+declare const selectorSymbol: unique symbol;
+expectTypeOf<SetOptional<{[selectorSymbol]: string}, typeof selectorSymbol>>().toBe<{[selectorSymbol]?: string}>();
+expectTypeOf<SetOptional<{[selectorSymbol]: string}, Tagged<typeof selectorSymbol, 'Key'>>>().toBe<{[selectorSymbol]?: string}>();
+
+// Existing enum and empty-intersection selector behavior is unchanged.
+enum SelectorKey {
+	Value = 'value',
+}
+expectTypeOf<SetOptional<{[SelectorKey.Value]: string}, SelectorKey.Value>>().toBe<{[SelectorKey.Value]?: string}>();
+expectTypeOf<SetOptional<{value: string}, 'value' & {}>>().toBe<{value?: string}>();
+expectTypeOf<SetOptional<{[key: string]: unknown; value: string}, LiteralUnion<'value', string>>>().toBe<SetOptional<{[key: string]: unknown; value: string}, string>>();
+
+// Empty selections and sentinel values retain their existing meaning.
+expectTypeOf<SetOptional<{value: string}, never>>().toBe<{value: string}>();
+expectTypeOf<SetOptional<never, never>>().toBe<never>();
+expectTypeOf<SetOptional<unknown, never>>().toBe<{}>();
+// @ts-expect-error A selector must name a property of the source.
+expectTypeOf<SetOptional<{value: string}, unknown>>();
+
+// Tuple ordering and rest behavior remain unchanged after selector normalization.
+expectTypeOf<SetOptional<readonly [string, number], Tagged<0 | 1, 'Key'>>>().toBe<readonly [string?, number?]>();
+expectTypeOf<SetOptional<[string, number], Tagged<'0', 'Key'>>>().toBe<[string | undefined, number]>();
+expectTypeOf<SetOptional<[string | undefined, number], Tagged<1, 'Key'>>>().toBe<[string | undefined, number?]>();
+expectTypeOf<SetOptional<[string, ...number[]], Tagged<2, 'Key'>>>().toBe<[string, ...number[]]>();
+expectTypeOf<SetOptional<[string, number], Tagged<number, 'Key'>>>().toBe<[string?, number?]>();
+expectTypeOf<SetOptional<[string, number], LiteralUnion<0, number>>>().toBe<[string?, number?]>();
+expectTypeOf<SetOptional<{a: any; b: never; c: unknown}, Tagged<'a' | 'b' | 'c', 'Key'>>>().toBe<{a?: any; b?: never; c?: unknown}>();
+expectTypeOf<{}>().toBeAssignableTo<SetOptional<{value: string}, Tagged<'value', 'Key'>>>();
+
+type BrandedOptionalCallable = SetOptional<{(this: Date, value: string): number; value: string}, Tagged<'value', 'Key'>>;
+expectTypeOf<ThisParameterType<BrandedOptionalCallable>>().toBe<Date>();
+expectTypeOf<ReturnType<BrandedOptionalCallable>>().toBe<number>();
+expectTypeOf<BrandedOptionalCallable['value']>().toBe<string | undefined>();
+
+// A broad branded selector keeps the same coverage as the corresponding index signature.
+expectTypeOf<SetOptional<{[key: string]: unknown; value?: string | null}, Tagged<string, 'Key'>>>()
+	.toBe<SetOptional<{[key: string]: unknown; value?: string | null}, string>>();

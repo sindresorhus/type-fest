@@ -2,7 +2,7 @@ import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SimplifyObject} from './internal/index.d.ts';
+import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SimplifyObject, UnwrapBrand} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -42,7 +42,7 @@ Known limitations:
 export type SetRequired<BaseType, Keys extends KeysOfUnion<BaseType>> =
 	// The call signature is rebuilt per member, so a union of callables does not mix their signatures.
 	BaseType extends unknown
-		? CallSignatureOf<BaseType> & _SetRequired<BaseType, Keys>
+		? CallSignatureOf<BaseType> & _SetRequired<BaseType, Keys extends object ? UnwrapBrand<Keys> : Keys>
 		: never;
 
 type _SetRequired<BaseType, Keys> =

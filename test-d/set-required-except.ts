@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetRequiredExcept} from '../index.d.ts';
+import type {SetRequiredExcept, LiteralUnion, Opaque, Tagged} from '../index.d.ts';
 
 // Makes every key required except the given keys.
 expectTypeOf<SetRequiredExcept<{a?: number; b?: string; c?: boolean}, 'a'>>().toBe<{a?: number; b: string; c: boolean}>();
@@ -61,3 +61,41 @@ expectTypeOf<SetRequiredExcept<unknown, never>>().toBe<{}>();
 // A key that does not exist is a type error.
 // @ts-expect-error
 type Typo = SetRequiredExcept<{a?: number; b?: string}, 'c'>;
+
+// A branded selector names the same exempt key as its underlying literal.
+expectTypeOf<SetRequiredExcept<{id?: string; name?: string}, Tagged<'name', 'Key'>>>().toBe<{id: string; name?: string}>();
+
+expectTypeOf<SetRequiredExcept<{readonly id?: Tagged<string, 'Value'>; name?: string; age?: number}, Opaque<'id', 'Key'>>>()
+	.toBe<{readonly id?: Tagged<string, 'Value'>; name: string; age: number}>();
+expectTypeOf<SetRequiredExcept<{id?: string; name?: string; age?: number}, Tagged<'id' | 'name', 'Key'>>>().toBe<{id?: string; name?: string; age: number}>();
+expectTypeOf<SetRequiredExcept<{id?: string; name?: string}, Tagged<Tagged<'name', 'Inner'>, 'Outer'>>>().toBe<{id: string; name?: string}>();
+expectTypeOf<SetRequiredExcept<{id?: string; name?: number}, 'id' & {readonly brand: true}>>().toBe<{id?: string; name: number}>();
+expectTypeOf<SetRequiredExcept<{id?: string; left?: 1} | {id?: number; right?: 2}, Tagged<'id', 'Key'>>>()
+	.toBe<{id?: string; left: 1} | {id?: number; right: 2}>();
+expectTypeOf<SetRequiredExcept<{id?: any; name?: unknown; impossible?: never}, Tagged<'id', 'Key'>>>().toBe<{id?: any; name: unknown; impossible: never}>();
+
+// Tuple selectors keep the same optional-element ordering rules.
+expectTypeOf<SetRequiredExcept<readonly [string?, number?, boolean?], Tagged<2, 'Key'>>>().toBe<readonly [string, number, boolean?]>();
+expectTypeOf<SetRequiredExcept<[string?, number?, ...boolean[]], Opaque<'1', 'Key'>>>().toBe<[string, number?, ...boolean[]]>();
+expectTypeOf<SetRequiredExcept<[string?, number?], Tagged<number, 'Key'>>>().toBe<[string?, number?]>();
+expectTypeOf<SetRequiredExcept<[string?, number?] | {id?: string; name?: number}, Tagged<'id', 'Key'>>>()
+	.toBe<[string, number] | {id?: string; name: number}>();
+
+declare const requiredExceptSymbol: unique symbol;
+expectTypeOf<SetRequiredExcept<{[requiredExceptSymbol]?: string; other?: number}, Tagged<typeof requiredExceptSymbol, 'Key'>>>()
+	.toBe<{[requiredExceptSymbol]?: string; other: number}>();
+enum RequiredExceptField {
+	Id = 'id',
+}
+expectTypeOf<SetRequiredExcept<{[RequiredExceptField.Id]?: string; other?: number}, RequiredExceptField.Id>>()
+	.toBe<{[RequiredExceptField.Id]?: string; other: number}>();
+
+// Empty intersections and autocomplete unions retain their existing selector behavior.
+expectTypeOf<SetRequiredExcept<{id?: string; name?: number}, 'id' & {}>>().toBe<{id?: string; name: number}>();
+type RequiredExceptIndex = {[key: string]: string | undefined; id?: string};
+expectTypeOf<SetRequiredExcept<RequiredExceptIndex, LiteralUnion<'id', string>>>().toBe<SetRequiredExcept<RequiredExceptIndex, string>>();
+expectTypeOf<SetRequiredExcept<RequiredExceptIndex, Tagged<string, 'Key'>>>().toBe<SetRequiredExcept<RequiredExceptIndex, string>>();
+
+declare const brandedRequiredExceptCallable: SetRequiredExcept<{(this: Date, value: string): number; id?: string; other?: number}, Tagged<'id', 'Key'>>;
+expectTypeOf(brandedRequiredExceptCallable.call(new Date(), 'value')).toBe<number>();
+expectTypeOf<Omit<typeof brandedRequiredExceptCallable, never>>().toBe<{id?: string; other: number}>();

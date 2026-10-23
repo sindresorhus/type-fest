@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SetNonNullable, SetRequired, SetRequiredNonNullable, Simplify} from '../index.d.ts';
+import type {SetNonNullable, SetRequired, SetRequiredNonNullable, Simplify, LiteralUnion, Opaque, Tagged} from '../index.d.ts';
 
 // =================
 // Removing optionality and nullish values
@@ -443,3 +443,55 @@ if (hasOwnNonNullish(json, 'name')) {
 	expectTypeOf(json.name).toBe<{}>();
 	expectTypeOf(json['other']).toBe<unknown>();
 }
+
+// Branded selectors narrow reads and require the selected property to be present.
+declare const selectedBrandedKey: SetRequiredNonNullable<{value?: string | null; other: 1}, Tagged<'value', 'Key'>>;
+expectTypeOf(selectedBrandedKey.value).toBe<string>();
+expectTypeOf<{other: 1}>().not.toBeAssignableTo<SetRequiredNonNullable<{value?: string | null; other: 1}, Tagged<'value', 'Key'>>>();
+
+expectTypeOf<Simplify<SetRequiredNonNullable<{readonly id?: Tagged<string, 'Value'> | null; other?: number}, Opaque<'id', 'Key'>>>>()
+	.toBe<{readonly id: Tagged<string, 'Value'>; other?: number}>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{id?: string | null; name?: number; other?: boolean}, Tagged<'id' | 'name', 'Key'>>>>()
+	.toBe<{id: string; name: number; other?: boolean}>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{id?: string | null}, Tagged<Tagged<'id', 'Inner'>, 'Outer'>>>>().toBe<{id: string}>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{id?: string | null}, 'id' & {readonly brand: true}>>>().toBe<{id: string}>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{kind: 'left'; id?: string | null} | {kind: 'right'; id?: number}, Tagged<'id', 'Key'>>>>()
+	.toBe<{kind: 'left'; id: string} | {kind: 'right'; id: number}>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{any?: any; unknown?: unknown; impossible?: never}, Tagged<'any' | 'unknown' | 'impossible', 'Key'>>>>()
+	.toBe<{any: any; unknown: {}; impossible: never}>();
+
+// A literal tuple index narrows its read without changing the tuple representation.
+expectTypeOf<SetRequiredNonNullable<readonly [string | null, number?], Tagged<0, 'Key'>>[0]>().toBe<string>();
+expectTypeOf<SetRequiredNonNullable<[string?, number?], Opaque<'1', 'Key'>>[1]>().toBe<number>();
+expectTypeOf<SetRequiredNonNullable<[string | null, ...number[]], Tagged<0, 'Key'>>[0]>().toBe<string>();
+// Broad number selectors retain the documented tuple-read limitation.
+expectTypeOf<SetRequiredNonNullable<[string | null, number | undefined], Tagged<number, 'Key'>>[0]>().toBe<string | null>();
+expectTypeOf<SetRequiredNonNullable<Array<string | null>, Tagged<number, 'Key'>>[number]>().toBe<string>();
+
+declare const nonNullishSymbol: unique symbol;
+expectTypeOf<Simplify<SetRequiredNonNullable<{readonly [nonNullishSymbol]?: string | null; other?: number}, Tagged<typeof nonNullishSymbol, 'Key'>>>>()
+	.toBe<{readonly [nonNullishSymbol]: string; other?: number}>();
+enum NonNullishField {
+	Id = 'id',
+}
+expectTypeOf<SetRequiredNonNullable<{[NonNullishField.Id]?: string | null}, NonNullishField.Id>[NonNullishField.Id]>().toBe<string>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{id?: string | null}, 'id' & {}>>>().toBe<{id: string}>();
+type NonNullishIndex = {[key: string]: string | null};
+expectTypeOf<SetRequiredNonNullable<NonNullishIndex, LiteralUnion<'id', string>>>().toBeAssignableTo<{id: string}>();
+expectTypeOf<SetRequiredNonNullable<NonNullishIndex, Tagged<string, 'Key'>>>().toBe<SetRequiredNonNullable<NonNullishIndex, string>>();
+
+declare const selectedReadonlyBrand: SetRequiredNonNullable<{readonly id?: string | null}, Tagged<'id', 'Key'>>;
+// @ts-expect-error The selected property stays readonly.
+selectedReadonlyBrand.id = 'changed';
+
+declare const brandedNameSelector: Tagged<'name', 'Key'>;
+if (hasOwnNonNullish(options, brandedNameSelector)) {
+	expectTypeOf(options.name).toBe<string>();
+	expectTypeOf(options.retries).toBe<number | undefined>();
+}
+
+// Autocomplete selectors keep their known literal required alongside a broad index signature.
+declare const autocompleteSelectedKey: SetRequiredNonNullable<Record<string, string | null>, LiteralUnion<'id', string>>;
+expectTypeOf(autocompleteSelectedKey.id).toBe<string>();
+expectTypeOf<{}>().not.toBeAssignableTo<SetRequiredNonNullable<Record<string, string | null>, LiteralUnion<'id', string>>>();
+expectTypeOf<SetRequiredNonNullable<[string | null], LiteralUnion<0, number>>[0]>().toBe<string>();
