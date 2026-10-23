@@ -172,3 +172,15 @@ expectTypeOf<Words<Tagged<Tagged<'hello:world', 'Text'>, 'Validated'>, {splitOnP
 // A long sentence does not hit the recursion limit.
 expectTypeOf<Words<StringRepeat<'ab ', 200>>>().toBe<TupleOf<200, 'ab'>>();
 expectTypeOf<Words<StringRepeat<'Ab', 200>>>().toBe<TupleOf<200, 'Ab'>>();
+
+// Sentinel options use the defaults; non-literal inputs retain their existing open-ended result.
+expectTypeOf<Words<'a1b', never>>().toBe<['a', '1', 'b']>();
+expectTypeOf<Words<'a1b', any>>().toBe<['a', '1', 'b']>();
+type WordStrategies = {splitOnNumbers: true; splitOnPunctuation: false} | {splitOnNumbers: false; splitOnPunctuation: true};
+expectTypeOf<Words<string, WordStrategies>>().toBe<string[]>();
+expectTypeOf<Words<any, WordStrategies>>().toBe<string[]>();
+expectTypeOf<Words<never, WordStrategies>>().toBe<never>();
+// @ts-expect-error - Only strings can be split into words.
+expectTypeOf<Words<unknown, WordStrategies>>();
+// @ts-expect-error - Options must describe word splitting.
+expectTypeOf<Words<'a1b', unknown>>();

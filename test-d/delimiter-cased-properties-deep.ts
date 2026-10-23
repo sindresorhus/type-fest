@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {WordsOptions} from '../source/words.d.ts';
 import type {DelimiterCasedPropertiesDeep} from '../index.d.ts';
 
 declare const foo: DelimiterCasedPropertiesDeep<{helloWorld: {fooBar: string}}, '/'>;
@@ -144,3 +145,32 @@ expectTypeOf<DelimiterCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz
 expectTypeOf<DelimiterCasedPropertiesDeep<[string, number?], '-'>>().toBe<[string, number?]>();
 expectTypeOf<DelimiterCasedPropertiesDeep<[string?, number?], '-'>>().toBe<[string?, number?]>();
 expectTypeOf<DelimiterCasedPropertiesDeep<readonly [string, number?], '-'>>().toBe<readonly [string, number?]>();
+
+// Generic options cannot delay values that are returned unchanged.
+function _keepValue<Options extends WordsOptions>(value: string): DelimiterCasedPropertiesDeep<string, '-', Options> {
+	return value;
+}
+
+function _keepCallable<Options extends WordsOptions>(value: () => number): DelimiterCasedPropertiesDeep<() => number, '-', Options> {
+	return value;
+}
+
+function _keepArray<Options extends WordsOptions>(value: string[]): DelimiterCasedPropertiesDeep<string[], '-', Options> {
+	return value;
+}
+
+function _keepTuple<Options extends WordsOptions>(value: readonly [string, number?]): DelimiterCasedPropertiesDeep<readonly [string, number?], '-', Options> {
+	return value;
+}
+
+function _keepMap<Options extends WordsOptions>(value: Map<string, number>): DelimiterCasedPropertiesDeep<Map<string, number>, '-', Options> {
+	return value;
+}
+
+function _keepSet<Options extends WordsOptions>(value: Set<string>): DelimiterCasedPropertiesDeep<Set<string>, '-', Options> {
+	return value;
+}
+
+function _keepPromise<Options extends WordsOptions>(value: Promise<string>): {value: DelimiterCasedPropertiesDeep<Promise<string>, '-', Options>} {
+	return {value};
+}

@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {CamelCaseOptions} from '../source/camel-case.d.ts';
 import type {PascalCasedProperties, PascalCasedPropertiesDeep, TupleOf} from '../index.d.ts';
 
 declare const foo: PascalCasedPropertiesDeep<{helloWorld: {fooBar: string}}>;
@@ -140,4 +141,33 @@ declare function _pascalCasedKeys<Value, Deep extends boolean>(value: Value, dee
 
 function _pascalCasedKeysDeep<Value>(value: Value): PascalCasedPropertiesDeep<Value> {
 	return _pascalCasedKeys(value, true);
+}
+
+// Generic options cannot delay values that are returned unchanged.
+function _keepValue<Options extends CamelCaseOptions>(value: string): PascalCasedPropertiesDeep<string, Options> {
+	return value;
+}
+
+function _keepCallable<Options extends CamelCaseOptions>(value: () => number): PascalCasedPropertiesDeep<() => number, Options> {
+	return value;
+}
+
+function _keepArray<Options extends CamelCaseOptions>(value: string[]): PascalCasedPropertiesDeep<string[], Options> {
+	return value;
+}
+
+function _keepTuple<Options extends CamelCaseOptions>(value: readonly [string, number?]): PascalCasedPropertiesDeep<readonly [string, number?], Options> {
+	return value;
+}
+
+function _keepMap<Options extends CamelCaseOptions>(value: Map<string, number>): PascalCasedPropertiesDeep<Map<string, number>, Options> {
+	return value;
+}
+
+function _keepSet<Options extends CamelCaseOptions>(value: Set<string>): PascalCasedPropertiesDeep<Set<string>, Options> {
+	return value;
+}
+
+function _keepPromise<Options extends CamelCaseOptions>(value: Promise<string>): {value: PascalCasedPropertiesDeep<Promise<string>, Options>} {
+	return {value};
 }

@@ -109,6 +109,7 @@ type Words8 = Words<'hello::world', {splitOnPunctuation: true}>;
 export type Words<Sentence extends string, Options extends WordsOptions = {}> = Sentence extends string // For distributing `Sentence`
 	? IsStringLiteral<Sentence> extends true // A string type with an infinite set of possible values cannot be walked character by character, so only the element type survives.
 		// A branded or tagged string is a literal, so the brand is removed before walking it, since an intersection with a non-empty object type does not match a template literal pattern.
+		// Distributing option objects also needs to preserve generic inference in the property-casing types.
 		? WordsImplementation<UnwrapBrand<Sentence>, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>
 		: string[]
 	: never; // Should never happen, since `Sentence` is a string

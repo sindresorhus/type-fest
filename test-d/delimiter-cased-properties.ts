@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {WordsOptions} from '../source/words.d.ts';
 import type {DelimiterCasedProperties} from '../index.d.ts';
 
 declare const foo: DelimiterCasedProperties<{helloWorld: {fooBar: string}}, '/'>;
@@ -54,3 +55,12 @@ const result: DelimiterCasedProperties<User, '-'> = {
 };
 expectTypeOf(result).toBe<DelimiterCasedProperties<User, '-'>>();
 expectTypeOf(result).toBe<DelimiterCasedProperties<UserPunctuated, '-', {splitOnPunctuation: true}>>();
+
+// Generic options cannot delay values that are returned unchanged.
+function _keepValue<Options extends WordsOptions>(value: readonly string[]): DelimiterCasedProperties<readonly string[], '-', Options> {
+	return value;
+}
+
+function _keepCallable<Options extends WordsOptions>(value: () => number): DelimiterCasedProperties<() => number, '-', Options> {
+	return value;
+}

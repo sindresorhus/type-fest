@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {CamelCaseOptions} from '../source/camel-case.d.ts';
 import type {CamelCasedProperties, IsEqual} from '../index.d.ts';
 
 declare const foo: CamelCasedProperties<{A: number; B: {C: string}}>;
@@ -54,3 +55,12 @@ expectTypeOf<IsEqual<CamelCasedProperties<readonly string[]>, readonly string[]>
 expectTypeOf<IsEqual<CamelCasedProperties<readonly [1, 2]>, readonly [1, 2]>>().toBe<true>();
 expectTypeOf<IsEqual<CamelCasedProperties<string[]>, string[]>>().toBe<true>();
 expectTypeOf<IsEqual<CamelCasedProperties<[1, 2]>, [1, 2]>>().toBe<true>();
+
+// Generic options cannot delay values that are returned unchanged.
+function _keepValue<Options extends CamelCaseOptions>(value: readonly string[]): CamelCasedProperties<readonly string[], Options> {
+	return value;
+}
+
+function _keepCallable<Options extends CamelCaseOptions>(value: () => number): CamelCasedProperties<() => number, Options> {
+	return value;
+}

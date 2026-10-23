@@ -191,3 +191,13 @@ expectTypeOf<CamelCase<Tagged<string, 'Text'>, any>>().toBe<Tagged<string, 'Text
 expectTypeOf<CamelCase<any, never>>().toBe<any>();
 expectTypeOf<CamelCase<never, any>>().toBe<never>();
 expectTypeOf<CamelCase<unknown, never>>().toBe<unknown>();
+
+// Entirely uppercase inputs are pre-lowered regardless of the acronym strategy.
+expectTypeOf<CamelCase<'FOO_BAR', {preserveConsecutiveUppercase: true} | {preserveConsecutiveUppercase: false}>>().toBe<'fooBar'>();
+type CasingStrategies = {preserveLeadingUnderscores: true} | {preserveConsecutiveUppercase: true};
+expectTypeOf<CamelCase<string, CasingStrategies>>().toBe<string>();
+expectTypeOf<CamelCase<unknown, CasingStrategies>>().toBe<unknown>();
+expectTypeOf<CamelCase<any, CasingStrategies>>().toBe<any>();
+expectTypeOf<CamelCase<never, CasingStrategies>>().toBe<never>();
+// @ts-expect-error - Options must describe casing.
+expectTypeOf<CamelCase<'foo-bar', unknown>>();

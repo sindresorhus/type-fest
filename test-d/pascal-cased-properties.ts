@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {CamelCaseOptions} from '../source/camel-case.d.ts';
 import type {PascalCasedProperties} from '../index.d.ts';
 
 declare const foo: PascalCasedProperties<{helloWorld: {fooBar: string}}>;
@@ -48,3 +49,12 @@ expectTypeOf(biz).toBe<{FooBar: number; BarFoo: string}>();
 // A readonly array is still an array, and passes through unchanged.
 expectTypeOf<PascalCasedProperties<ReadonlyArray<{fooBar: number}>>>().toBe<ReadonlyArray<{fooBar: number}>>();
 expectTypeOf<PascalCasedProperties<Array<{fooBar: number}>>>().toBe<Array<{fooBar: number}>>();
+
+// Generic options cannot delay values that are returned unchanged.
+function _keepValue<Options extends CamelCaseOptions>(value: readonly string[]): PascalCasedProperties<readonly string[], Options> {
+	return value;
+}
+
+function _keepCallable<Options extends CamelCaseOptions>(value: () => number): PascalCasedProperties<() => number, Options> {
+	return value;
+}

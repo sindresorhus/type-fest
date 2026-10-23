@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {CamelCaseOptions} from '../source/camel-case.d.ts';
 import type {CamelCasedPropertiesDeep, JsonValue, Tagged} from '../index.d.ts';
 
 declare const foo: CamelCasedPropertiesDeep<{A: {B: number; C: Array<{D: string}>}}>;
@@ -145,3 +146,32 @@ expectTypeOf<CamelCasedPropertiesDeep<{foo_bar: PromiseLike<{a_b: 1}> & {extra_k
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<CamelCasedPropertiesDeep<{foo_bar: HTMLElement}>>().toBe<{fooBar: HTMLElement}>();
+
+// Generic options cannot delay values that are returned unchanged.
+function _keepValue<Options extends CamelCaseOptions>(value: string): CamelCasedPropertiesDeep<string, Options> {
+	return value;
+}
+
+function _keepCallable<Options extends CamelCaseOptions>(value: () => number): CamelCasedPropertiesDeep<() => number, Options> {
+	return value;
+}
+
+function _keepArray<Options extends CamelCaseOptions>(value: string[]): CamelCasedPropertiesDeep<string[], Options> {
+	return value;
+}
+
+function _keepTuple<Options extends CamelCaseOptions>(value: readonly [string, number?]): CamelCasedPropertiesDeep<readonly [string, number?], Options> {
+	return value;
+}
+
+function _keepMap<Options extends CamelCaseOptions>(value: Map<string, number>): CamelCasedPropertiesDeep<Map<string, number>, Options> {
+	return value;
+}
+
+function _keepSet<Options extends CamelCaseOptions>(value: Set<string>): CamelCasedPropertiesDeep<Set<string>, Options> {
+	return value;
+}
+
+function _keepPromise<Options extends CamelCaseOptions>(value: Promise<string>): {value: CamelCasedPropertiesDeep<Promise<string>, Options>} {
+	return {value};
+}
