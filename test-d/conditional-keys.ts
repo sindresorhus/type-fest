@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ConditionalKeys} from '../index.d.ts';
+import type {ConditionalExcept, ConditionalKeys, ConditionalPick} from '../index.d.ts';
 
 type Example = {
 	a: string;
@@ -104,3 +104,51 @@ expectTypeOf<ConditionalKeys<number, () => number>>().toBe<'valueOf'>();
 expectTypeOf<ConditionalKeys<{}, boolean>>().toBe<never>();
 expectTypeOf<ConditionalKeys<any, boolean>>().toBe<PropertyKey>();
 expectTypeOf<ConditionalKeys<never, boolean>>().toBe<never>();
+
+// A primitive and an object can share a key without sharing their other properties.
+expectTypeOf<ConditionalKeys<string | {length: 1; name: string}, number>>().toBe<'length'>();
+expectTypeOf<ConditionalKeys<unknown, unknown>>().toBe<never>();
+expectTypeOf<ConditionalKeys<null | undefined, unknown>>().toBe<never>();
+
+// Symbol signatures also retain their declared members and optional read types.
+declare const declaredSymbol: unique symbol;
+expectTypeOf<ConditionalKeys<{[key: symbol]: unknown; readonly [declaredSymbol]?: string; name: number}, string | undefined>>().toBe<typeof declaredSymbol>();
+expectTypeOf<ConditionalKeys<{readonly name?: string; id: number} | {name: string; active: boolean}, string>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{readonly name?: string; id: number} | {name: string; active: boolean}, string | undefined>>().toBe<'name'>();
+
+function _readMatchingValue<Base, Condition>(value: Base, key: ConditionalKeys<Base, Condition>): Base[ConditionalKeys<Base, Condition>] {
+	return value[key];
+}
+
+function _readConstrainedMatchingKey<Base, Condition, Key extends ConditionalKeys<Base, Condition>>(value: Base, key: Key): Base[Key] {
+	return value[key];
+}
+
+function _matchingKeyOfBase<Base, Condition>(key: ConditionalKeys<Base, Condition>): keyof Base {
+	return key;
+}
+
+// One inferred model can supply its matching keys, picked fields and remaining fields.
+declare function stringFields<const Value extends object>(value: Value): {
+	keys: Array<ConditionalKeys<Value, string>>;
+	matching: ConditionalPick<Value, string>;
+	remaining: ConditionalExcept<Value, string>;
+};
+const inferredStringFields = stringFields({name: 'session', count: 3, active: true});
+expectTypeOf(inferredStringFields.keys).toBe<Array<'name'>>();
+expectTypeOf(inferredStringFields.matching).toBe<{readonly name: 'session'}>();
+expectTypeOf(inferredStringFields.remaining).toBe<{readonly count: 3; readonly active: true}>();
+// @ts-expect-error The original model's readonly fields stay readonly after selecting them.
+inferredStringFields.matching.name = 'session';
+
+// Matching enum and literal declarations keep both accepted key spellings.
+enum ConditionalStringField {
+	Name = 'name',
+}
+
+enum ConditionalNumericField {
+	Zero = 0,
+}
+
+expectTypeOf<'name'>().toBeAssignableTo<ConditionalKeys<{[ConditionalStringField.Name]: string} & {name: string; keep: number}, string>>();
+expectTypeOf<'0'>().toBeAssignableTo<ConditionalKeys<{[ConditionalNumericField.Zero]: string} & {'0': string; keep: number}, string>>();

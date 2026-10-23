@@ -119,3 +119,32 @@ expectTypeOf(inferredStringFields).toBe<{readonly id: 'request'}>();
 declare function needsCount(value: {count: unknown}): void;
 // @ts-expect-error A nonmatching declared field is absent from the inferred result.
 needsCount(inferredStringFields);
+
+// Retained discriminants narrow the corresponding declared payload beside an index signature.
+type IndexedPickedEvent = ConditionalPick<
+	| {[key: string]: unknown; kind: 'text'; text: string}
+	| {[key: string]: unknown; kind: 'count'; count: number},
+	unknown
+>;
+
+function readIndexedPickedValue(value: IndexedPickedEvent): string | number {
+	if (value.kind === 'text') {
+		expectTypeOf(value.text).toBe<string>();
+		return value.text;
+	}
+
+	expectTypeOf(value.count).toBe<number>();
+	return value.count;
+}
+
+expectTypeOf(readIndexedPickedValue({kind: 'text', text: 'ready'})).toBe<string | number>();
+expectTypeOf<{kind: 'count'}>().not.toBeAssignableTo<IndexedPickedEvent>();
+
+// A primitive with attached metadata keeps the selected property view rather than its primitive identity.
+type MarkedPickedText = string & {readonly marker: true};
+declare const markedPickedText: ConditionalPick<MarkedPickedText, unknown>;
+expectTypeOf(markedPickedText.marker).toBe<true>();
+expectTypeOf(markedPickedText.charAt(0)).toBe<string>();
+expectTypeOf(markedPickedText).not.toBeAssignableTo<string>();
+// @ts-expect-error A valid value cannot overwrite the retained readonly metadata.
+markedPickedText.marker = true;

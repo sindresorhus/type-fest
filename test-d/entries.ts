@@ -141,7 +141,7 @@ expectTypeOf(correlatedEntry).toBe<['a', string] | ['b', number]>();
 declare const correlatedEntries: Entries<{a: string; b: number}>;
 expectTypeOf(correlatedEntries).toBe<Array<['a', string] | ['b', number]>>();
 
-// An optional member reads as `T | undefined`, so its pair carries the `undefined` too. Note that `Object.entries` skips an absent key rather than yielding it as `undefined`, so the pair describes a value the runtime can produce from a key that is present and holds nothing, which is the reading a caller narrowing on `entry[1]` has to make.
+// Optional class fields can be own properties holding undefined, even through an ordinary object type. Object.entries skips absent keys but still yields these present fields.
 declare const optionalCorrelatedEntry: Entry<{a: string; b?: number}>;
 expectTypeOf(optionalCorrelatedEntry).toBe<['a', string] | ['b', number | undefined]>();
 
@@ -270,3 +270,36 @@ type EntryAssignabilityTest<BaseType extends Record<string, unknown>> = EntryAss
 type EntriesAssignability<BaseType extends Record<string, unknown>, EntriesType extends Array<[keyof BaseType, BaseType[keyof BaseType]]>> = EntriesType;
 // @ts-expect-error -- Entries<BaseType> can widen to the generic constraint when BaseType is generic.
 type EntriesAssignabilityTest<BaseType extends Record<string, unknown>> = EntriesAssignability<BaseType, Entries<BaseType>>;
+
+// Class field initialization can create an own optional key with an undefined value.
+class OptionalEntryModel {
+	label?: string;
+	count = 1;
+}
+
+const optionalEntryModel: {label?: string; count: number} = new OptionalEntryModel();
+expectTypeOf<ObjectEntry<OptionalEntryModel>>().toBe<['label', string | undefined] | ['count', number]>();
+expectTypeOf<Entry<typeof optionalEntryModel>>().toBe<['label', string | undefined] | ['count', number]>();
+const undefinedLabelEntry: ObjectEntry<typeof optionalEntryModel> = ['label', undefined];
+const optionalModelEntries: ObjectEntries<OptionalEntryModel> = [undefinedLabelEntry];
+const aliasedOptionalModelEntries: Entries<typeof optionalEntryModel> = [undefinedLabelEntry];
+expectTypeOf(optionalModelEntries).toBe<Array<['label', string | undefined] | ['count', number]>>();
+expectTypeOf(aliasedOptionalModelEntries).toBe<Array<['label', string | undefined] | ['count', number]>>();
+
+function _readOptionalClassEntry(entry: ObjectEntry<OptionalEntryModel>): string | undefined {
+	if (entry[0] === 'label') {
+		expectTypeOf(entry[1]).toBe<string | undefined>();
+		// @ts-expect-error The class can own the label key without a string value.
+		entry[1].toUpperCase();
+		return entry[1]?.toUpperCase();
+	}
+
+	return entry[1].toFixed(0);
+}
+
+class NeverOptionalEntryModel {
+	unused?: never;
+}
+
+expectTypeOf<ObjectEntry<NeverOptionalEntryModel>>().toBe<['unused', undefined]>();
+expectTypeOf<Entry<{label?: string | undefined}>>().toBe<['label', string | undefined]>();

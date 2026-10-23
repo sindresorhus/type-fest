@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, PartialDeep} from '../index.d.ts';
+import type {IsEqual, PartialDeep, PartialDeepOptions} from '../index.d.ts';
 
 class ClassA {
 	foo = 1;
@@ -248,3 +248,53 @@ expectTypeOf<PartialDeep<HTMLElement>>().toBe<HTMLElement>();
 expectTypeOf<PartialDeep<HTMLElement | {a: {b: number}}>>().toBe<HTMLElement | {a?: {b?: number}}>();
 expectTypeOf<PartialDeep<{elements: HTMLElement[]}, {recurseIntoArrays: true}>>().toBe<{elements?: HTMLElement[]}>();
 expectTypeOf<{event: MouseEvent}>().toBeAssignableTo<PartialDeep<{event: MouseEvent}>>();
+
+// Generic options preserve construction and reading of values unaffected by recursion.
+function _partialStringInput<Options extends PartialDeepOptions>(value: string): PartialDeep<string, Options> {
+	return value;
+}
+
+function _partialNumberInput<Options extends PartialDeepOptions>(value: number): PartialDeep<number, Options> {
+	return value;
+}
+
+function _partialDateInput<Options extends PartialDeepOptions>(value: Date): PartialDeep<Date, Options> {
+	return value;
+}
+
+function _partialPromiseInput<Value, Options extends PartialDeepOptions>(value: Promise<Value>): {value: PartialDeep<Promise<Value>, Options>} {
+	return {value};
+}
+
+function _partialShallowArrayInput<Options extends {recurseIntoArrays: false}>(value: string[]): PartialDeep<string[], Options> {
+	return value;
+}
+
+function _partialCallbackInput<Options extends PartialDeepOptions>(value: () => string): PartialDeep<() => string, Options> {
+	return value;
+}
+
+function _readPartialString<Options extends PartialDeepOptions>(value: PartialDeep<string, Options>): string {
+	return value;
+}
+
+function _readPartialPromise<Value, Options extends PartialDeepOptions>(value: PartialDeep<Promise<Value>, Options>): {value: Promise<Value>} {
+	return {value};
+}
+
+type RecursionModeRows = {rows: Array<{name: string; enabled: boolean}>};
+expectTypeOf<{rows: [{}]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays: false}>>();
+expectTypeOf<{rows: [{}]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays?: boolean}>>();
+expectTypeOf<{rows: [undefined]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays: true}>>();
+expectTypeOf<PartialDeep<RecursionModeRows, any>>().toBe<Partial<RecursionModeRows>>();
+expectTypeOf<PartialDeep<RecursionModeRows, never>>().toBe<Partial<RecursionModeRows>>();
+
+declare const readonlyRecursiveRows: PartialDeep<{readonly rows: ReadonlyArray<{readonly name: string}>}, {recurseIntoArrays: true}>;
+const readonlyRecursiveRow = readonlyRecursiveRows.rows?.[0];
+if (readonlyRecursiveRow) {
+	// @ts-expect-error Making an element partial does not make its fields writable.
+	readonlyRecursiveRow.name = 'changed';
+}
+
+// @ts-expect-error The recursion mode must be boolean.
+type InvalidRecursionMode = PartialDeep<RecursionModeRows, {recurseIntoArrays: unknown}>;
