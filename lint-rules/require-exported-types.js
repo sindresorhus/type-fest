@@ -1,5 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
+import ts from 'typescript';
 
 export const requireExportedTypesRule = /** @type {const} */ ({
 	meta: {
@@ -70,7 +71,7 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 
 		const indexPath = path.join(projectRoot, indexFileName);
 
-		// Get index exports (no caching to detect changes immediately)
+		// Get index export symbols (no caching to detect changes immediately), resolving aliases to their declarations.
 		const indexExports = new Set();
 
 		// Get the source file for index.d.ts
@@ -80,7 +81,7 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 			if (indexSymbol) {
 				const exports = checker.getExportsOfModule(indexSymbol);
 				for (const exportSymbol of exports) {
-					indexExports.add(exportSymbol.name);
+					indexExports.add(exportSymbol.flags === ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exportSymbol) : exportSymbol);
 				}
 			}
 		}
@@ -110,8 +111,9 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 
 			processed.add(typeName);
 
-			// Report if not exported from index
-			if (!indexExports.has(typeName)) {
+			// Report if this declaration is not exported from index, even when another declaration has the same name.
+			const declaration = parserServices.esTreeNodeToTSNodeMap.get(node);
+			if (!indexExports.has(checker.getSymbolAtLocation(declaration.name))) {
 				context.report({
 					node,
 					messageId: 'missingExport',
