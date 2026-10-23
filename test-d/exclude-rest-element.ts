@@ -69,3 +69,31 @@ expectTypeOf(unionWithReadonly).toBe<[1, 2] | readonly []>();
 
 declare const unionOfReadonly: ExcludeRestElement<readonly [1, 2] | readonly [3]>;
 expectTypeOf(unionOfReadonly).toBe<readonly [1, 2] | readonly [3]>();
+
+// Fixed optional positions keep their modifiers and declared undefined values.
+expectTypeOf<ExcludeRestElement<readonly [string?, boolean?, ...number[]]>>().toBe<readonly [string?, boolean?]>();
+expectTypeOf<ExcludeRestElement<[number, (string | undefined)?, ...boolean[]]>>().toBe<[number, (string | undefined)?]>();
+expectTypeOf<ExcludeRestElement<readonly [string, number?]>>().toBe<readonly [string, number?]>();
+
+// Only the rest is discarded; fixed values and their order remain intact.
+expectTypeOf<ExcludeRestElement<[unknown, ...never[], any]>>().toBe<[unknown, any]>();
+expectTypeOf<ExcludeRestElement<readonly [Date, ...unknown[], RegExp, boolean]>>().toBe<readonly [Date, RegExp, boolean]>();
+expectTypeOf<ExcludeRestElement<[...number[], void]>>().toBe<[void]>();
+expectTypeOf<ExcludeRestElement<readonly [readonly [1, 2], ...string[], readonly [3]]>>().toBe<readonly [readonly [1, 2], readonly [3]]>();
+expectTypeOf<ExcludeRestElement<unknown[]>>().toBe<[]>();
+expectTypeOf<ExcludeRestElement<readonly never[]>>().toBe<readonly []>();
+
+// Readonly and optionality are restored independently for each union member.
+expectTypeOf<ExcludeRestElement<readonly [1?, ...string[]] | [2, ...number[], 3] | readonly [4]>>()
+	.toBe<readonly [1?] | [2, 3] | readonly [4]>();
+expectTypeOf<ExcludeRestElement<readonly unknown[] | [1, ...never[]]>>().toBe<readonly [] | [1]>();
+expectTypeOf<ExcludeRestElement<readonly [...number[], ...FiftyZeroes]>>().toBe<Readonly<FiftyZeroes>>();
+
+// Results remain usable as arrays before the concrete input shape is known.
+function _excludeFromGeneric<Array_ extends UnknownArray>(value: ExcludeRestElement<Array_>): UnknownArray {
+	return value;
+}
+
+declare function withoutRest<Array_ extends UnknownArray>(value: Array_): ExcludeRestElement<Array_>;
+declare const readonlyWithRest: readonly [string, ...number[], boolean];
+expectTypeOf(withoutRest(readonlyWithRest)).toBe<readonly [string, boolean]>();
