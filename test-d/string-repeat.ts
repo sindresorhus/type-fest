@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {NegativeInfinity, PositiveInfinity, StringRepeat} from '../index.d.ts';
+import type {NegativeInfinity, Opaque, PositiveInfinity, StringRepeat, Tagged} from '../index.d.ts';
 
 declare const unknown: unknown;
 
@@ -93,3 +93,37 @@ expectTypeOf<StringRepeat<'', NegativeInfinity>>().toBe<never>();
 expectTypeOf<StringRepeat<'abc', 1 | PositiveInfinity | NegativeInfinity>>().toBe<'abc'>();
 expectTypeOf<StringRepeat<any, PositiveInfinity>>().toBe<never>();
 expectTypeOf<StringRepeat<never, PositiveInfinity>>().toBe<never>();
+
+// Input brands describe the original primitive, not the string produced by repeating it.
+expectTypeOf<StringRepeat<Tagged<'x', 'Text'>, 2>>().toBe<'xx'>();
+expectTypeOf<StringRepeat<'ab', Tagged<3, 'Count'>>>().toBe<'ababab'>();
+expectTypeOf<StringRepeat<'ab', Tagged<-0.9, 'Count'>>>().toBe<''>();
+expectTypeOf<StringRepeat<'ab', Tagged<1e-7, 'Count'>>>().toBe<''>();
+expectTypeOf<StringRepeat<Opaque<'ab', 'Text'>, Opaque<2, 'Count'>>>().toBe<'abab'>();
+expectTypeOf<StringRepeat<Tagged<Tagged<'ab', 'First'>, 'Second'>, Tagged<Tagged<2, 'First'>, 'Second'>>>().toBe<'abab'>();
+expectTypeOf<StringRepeat<'ab' & {readonly __brand: unique symbol}, 2 & {readonly __brand: unique symbol}>>().toBe<'abab'>();
+expectTypeOf<StringRepeat<Tagged<'x' | 'y', 'Text'>, Tagged<1 | 2, 'Count'>>>().toBe<'x' | 'y' | 'xx' | 'yy'>();
+
+// The original count contract still applies to branded values.
+expectTypeOf<StringRepeat<'ab', Tagged<0, 'Count'>>>().toBe<''>();
+expectTypeOf<StringRepeat<'ab', Tagged<2.9, 'Count'>>>().toBe<'abab'>();
+expectTypeOf<StringRepeat<'ab', Tagged<0.9, 'Count'>>>().toBe<''>();
+expectTypeOf<StringRepeat<'ab', Tagged<-2, 'Count'>>>().toBe<never>();
+expectTypeOf<StringRepeat<'ab', Tagged<-2.9, 'Count'>>>().toBe<never>();
+expectTypeOf<StringRepeat<'ab', Tagged<-1e-7, 'Count'>>>().toBe<''>();
+expectTypeOf<StringRepeat<'ab', Tagged<2e21, 'Count'>>>().toBe<string>();
+expectTypeOf<StringRepeat<'ab', Tagged<number, 'Count'>>>().toBe<string>();
+expectTypeOf<StringRepeat<Tagged<'', 'Text'>, Tagged<2, 'Count'>>>().toBe<''>();
+expectTypeOf<StringRepeat<Tagged<string, 'Text'>, 2>>().toBe<string>();
+expectTypeOf<StringRepeat<Tagged<'ab', 'Text'>, PositiveInfinity>>().toBe<never>();
+expectTypeOf<StringRepeat<'ab', Tagged<PositiveInfinity, 'Count'>>>().toBe<never>();
+expectTypeOf<StringRepeat<'ab', Tagged<NegativeInfinity, 'Count'>>>().toBe<never>();
+expectTypeOf<StringRepeat<never, Tagged<2, 'Count'>>>().toBe<never>();
+expectTypeOf<StringRepeat<Tagged<'x', 'Text'>, never>>().toBe<never>();
+
+expectTypeOf<StringRepeat<any, Tagged<0, 'Count'>>>().toBe<''>();
+expectTypeOf<StringRepeat<'x', any>>().toBe<string>();
+// @ts-expect-error
+expectTypeOf<StringRepeat<unknown, 2>>();
+// @ts-expect-error
+expectTypeOf<StringRepeat<'x', unknown>>();

@@ -1,3 +1,4 @@
+import type {UnwrapBrand} from './internal/index.d.ts';
 import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
 import type {IsNegative, PositiveInfinity} from './numeric.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
@@ -36,7 +37,10 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 @category String
 @category Template literal
 */
-export type StringRepeat<S extends string, Count extends number> =
+export type StringRepeat<S extends string, Count extends number> = _StringRepeat<UnwrapBrand<S>, UnwrapBrand<Count>>;
+
+// Brands describe the original values, so all count checks and interpolation operate on unwrapped primitives.
+type _StringRepeat<S extends string, Count extends number> =
 	Count extends unknown // To distribute `Count`
 		// `String#repeat()` truncates the count toward zero, so counts between -1 and 1 produce an empty string. TypeScript prints magnitudes below `1e-6` in scientific notation, which must be handled before the fallback for large counts.
 		? `${Count}` extends `-0.${string}` | `${string}e-${string}`
