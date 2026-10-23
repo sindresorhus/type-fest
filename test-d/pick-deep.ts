@@ -543,6 +543,24 @@ function _constructGenericArrayPick<Extra>(value: Array<{name: string}>): PickDe
 // A nonexistent numeric property must not select the entire numeric index signature.
 expectTypeOf<PickDeep<Record<number, {name: string}>, '00.name'>>().toBe<never>();
 
+// Literal and nonliteral path heads must keep their independently selected fields.
+type MixedHeadObjectPick = PickDeep<Record<string, {name: string; id: number}>, `${string}.name` | 'foo.id'>;
+declare const mixedHeadObjectPick: MixedHeadObjectPick;
+expectTypeOf(mixedHeadObjectPick.foo.id).toBe<number>();
+expectTypeOf(mixedHeadObjectPick['other']?.name).toBe<string | undefined>();
+expectTypeOf({foo: {name: 'Ada', id: 1}}).toBeAssignableTo<MixedHeadObjectPick>();
+expectTypeOf({}).not.toBeAssignableTo<MixedHeadObjectPick>();
+expectTypeOf({foo: {name: 'Ada', id: 'wrong'}}).not.toBeAssignableTo<MixedHeadObjectPick>();
+
+type MixedHeadArrayPick = PickDeep<Array<{name: string; id: number}>, `${number}.name` | '0.id'>;
+declare const mixedHeadArrayPick: MixedHeadArrayPick;
+expectTypeOf(mixedHeadArrayPick[0].id).toBe<number>();
+expectTypeOf(mixedHeadArrayPick[1]?.name).toBe<string | undefined>();
+expectTypeOf<[{name: string; id: number}]>().toBeAssignableTo<MixedHeadArrayPick>();
+expectTypeOf<[]>().not.toBeAssignableTo<MixedHeadArrayPick>();
+expectTypeOf<[{name: string}]>().not.toBeAssignableTo<MixedHeadArrayPick>();
+expectTypeOf<[{name: string; id: string}]>().not.toBeAssignableTo<MixedHeadArrayPick>();
+
 // Ignoring a differently spelled numeric path must not erase another valid selection.
 expectTypeOf<PickDeep<Record<number, {name: string; id: number}>, '00.name' | '0.id'>>().toBe<{0: {id: number}}>();
 expectTypeOf<PickDeep<Record<number, {name: string}> & {'00': {name: number}}, '00.name'>>().toBe<{'00': {name: number}}>();

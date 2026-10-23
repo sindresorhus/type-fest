@@ -337,3 +337,21 @@ declare const mutableRow: {id: string};
 const reversedRows = reverse([mutableRow, 1, 2, 3, 4, 5]);
 expectTypeOf(reversedRows).toBe<readonly [5, 4, 3, 2, 1, {id: string}]>();
 reversedRows[5].id = 'updated';
+
+// Optional positions expand as dense prefixes of the declared tuple.
+type OptionalCoordinates = [label: string, count?: number, enabled?: boolean];
+const reversedLabelOnly: ArrayReverse<OptionalCoordinates> = ['origin'];
+const reversedCoordinates: ArrayReverse<OptionalCoordinates> = [true, 2, 'origin'];
+expectTypeOf(reversedLabelOnly).toBe<[string]>();
+expectTypeOf(reversedCoordinates).toBe<[boolean, number, string]>();
+// @ts-expect-error Dense optional positions must contain their declared values when present.
+const invalidDenseReverse: ArrayReverse<OptionalCoordinates> = [true, undefined, 'origin'];
+
+// Declaring undefined explicitly also describes the value read from a sparse optional position.
+const coordinatesWithHole: [string, (number | undefined)?, boolean?] = ['origin'];
+coordinatesWithHole.length = 3;
+coordinatesWithHole[2] = true;
+const reversedHole: ArrayReverse<typeof coordinatesWithHole> = [true, undefined, 'origin'];
+expectTypeOf(reversedHole[1]).toBe<number | undefined>();
+// @ts-expect-error The explicitly undefined element must be checked before a numeric operation.
+reversedHole[1].toFixed(0);

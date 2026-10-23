@@ -1023,3 +1023,12 @@ declare const boxedBigintWithHook: BigInt & {toJSON(): string};
 expectTypeOf(serializeBoxedValue(boxedBigintValue)).toBe<never>();
 expectTypeOf(serializeBoxedValue([boxedBigintValue])).toBe<null[]>();
 expectTypeOf(serializeBoxedValue({value: boxedBigintWithHook})).toBe<{value: string}>();
+
+// A hook returning an already-JSON readonly tuple can be used without copying its value.
+function readonlyHookResult(value: readonly [1, 2]): Jsonify<{toJSON(): readonly [1, 2]}> {
+	return value;
+}
+
+expectTypeOf(readonlyHookResult([1, 2] as const)).toBe<readonly [1, 2]>();
+expectTypeOf<Jsonify<{toJSON(): readonly [number?, string?]}>>().toBe<[] | [number | null] | [number | null, string | null]>();
+expectTypeOf<Jsonify<{toJSON(): JsonValue}>>().toBe<JsonValue>();
