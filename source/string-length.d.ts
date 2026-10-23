@@ -36,17 +36,16 @@ type C = StringLength<`${string}abc`>;
 @category Template literal
 */
 export type StringLength<S extends string> = IfNotAnyOrNever<S, {
-	ifNot: StringLengthImplementation<S extends object ? UnwrapBrand<S> : S>;
+	ifNot: IsStringLiteral<S> extends true
+		// The intersection preserves the counter's recursion budget and generic numeric result.
+		? StringLengthImplementation<S extends object ? UnwrapBrand<S> : S> & number
+		: number;
 	ifAny: number;
 }>;
 
-// Count characters without retaining them, and stop once a non-literal part makes the length unknown.
-type StringLengthImplementation<Value extends string, Counter extends unknown[] = []> = Value extends `${infer First}${infer Rest}`
-	? IsStringLiteral<First> extends true
-		? StringLengthImplementation<Rest, [...Counter, unknown]>
-		: number
-	: Value extends ''
-		? Counter['length']
-		: number;
+// The input is already a literal, so count its characters without retaining them.
+type StringLengthImplementation<Value extends string, Counter extends unknown[] = []> = Value extends `${string}${infer Rest}`
+	? StringLengthImplementation<Rest, [...Counter, unknown]>
+	: Counter['length'];
 
 export {};

@@ -111,3 +111,34 @@ expectTypeOf(lengthOf(dynamicText)).toBe<number>();
 type UnknownLength = StringLength<unknown>;
 // @ts-expect-error Numbers must first be converted to strings.
 type NumericLength = StringLength<123>;
+
+// Whole-input literal classification still counts every finite template alternative.
+expectTypeOf<StringLength<`on:${'read' | 'write'}`>>().toBe<7 | 8>();
+expectTypeOf<StringLength<`${1 | 22}:${true | false}`>>().toBe<6 | 7 | 8>();
+expectTypeOf<StringLength<`item:${bigint}:${string}`>>().toBe<number>();
+expectTypeOf<StringLength<`${Uppercase<string>}:${Lowercase<string>}`>>().toBe<number>();
+expectTypeOf<StringLength<`${StringRepeat<'a', 900>}${string}`>>().toBe<number>();
+
+// A different literal at the recursion boundary also retains all of its characters.
+type LongAccentedText = `${StringRepeat<'é', 998>}x`;
+expectTypeOf<StringLength<LongAccentedText>>().toBe<999>();
+
+function _genericPrefixedLength<Value extends string>(value: StringLength<`prefix:${Value}`>): number {
+	return value;
+}
+
+function _genericNumericTextLength<Value extends number>(value: StringLength<`${Value}`>): number {
+	return value;
+}
+
+declare function numericTextLength<Value extends number>(value: Value): StringLength<`${Value}`>;
+expectTypeOf(numericTextLength(12)).toBe<2>();
+expectTypeOf(numericTextLength(-12)).toBe<3>();
+declare const numericTextInput: number;
+expectTypeOf(numericTextLength(numericTextInput)).toBe<number>();
+
+// Lengths remain precise when a generic consumer measures each field of a configuration.
+declare function measureFields<const Values extends Record<string, string>>(values: Values): {[Key in keyof Values]: StringLength<Values[Key]>};
+expectTypeOf(measureFields({short: 'id', long: 'label', empty: ''})).toBe<{readonly short: 2; readonly long: 5; readonly empty: 0}>();
+expectTypeOf(numericTextLength(1.25)).toBe<4>();
+expectTypeOf(numericTextLength(1e21)).toBe<5>();
