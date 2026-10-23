@@ -138,3 +138,57 @@ type SplitKeys = {a?: 1; z?: 0} | {b?: 2; z?: 0};
 ({b: 2, z: 0}) satisfies RequireOneOrNone<SplitKeys, 'a' | 'b'>;
 ({z: 0}) satisfies RequireOneOrNone<SplitKeys, 'a' | 'b'>;
 expectTypeOf({a: 1, b: 2} as const).not.toBeAssignableTo<RequireOneOrNone<SplitKeys, 'a' | 'b'>>();
+
+// Numeric and string spellings in different alternatives still name one possible property.
+type NumericAlternatives = {0?: string; foo?: Date} | {'0'?: number; bar?: boolean};
+expectTypeOf<{0: string}>().toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+expectTypeOf<{'0': number}>().toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+expectTypeOf<{0: boolean}>().not.toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+expectTypeOf<{0: string; foo: Date}>().not.toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+expectTypeOf<{'0': number; bar: true}>().not.toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+expectTypeOf<{foo: Date}>().toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+expectTypeOf<{bar: boolean}>().toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+expectTypeOf<{0: string}>().toBeAssignableTo<RequireOneOrNone<NumericAlternatives, any>>();
+
+// Unselected required fields and source modifiers retain their original role.
+type NumericMessages = {readonly 0?: string; fallback?: Date; kind: 'text'} | {'0'?: number; fallback?: Date; kind: 'count'};
+type NumericMessageChoice = RequireOneOrNone<NumericMessages, 0 | '0' | 'fallback'>;
+expectTypeOf<{readonly 0: string; kind: 'text'}>().toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{'0': number; kind: 'count'}>().toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{0: string; kind: 'count'}>().not.toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{0: string}>().not.toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{0: string; fallback: Date; kind: 'text'}>().not.toBeAssignableTo<NumericMessageChoice>();
+
+// Noncanonical names are different properties and remain mutually exclusive.
+type PaddedAlternatives = {1?: string} | {'01'?: number};
+expectTypeOf<{1: string}>().toBeAssignableTo<RequireOneOrNone<PaddedAlternatives>>();
+expectTypeOf<{'01': number}>().toBeAssignableTo<RequireOneOrNone<PaddedAlternatives>>();
+expectTypeOf<{1: string; '01': number}>().not.toBeAssignableTo<RequireOneOrNone<PaddedAlternatives>>();
+expectTypeOf<{[-2]: string}>().toBeAssignableTo<RequireOneOrNone<{[-2]?: string} | {'-2'?: number}>>();
+expectTypeOf<{'1.5': number}>().toBeAssignableTo<RequireOneOrNone<{1.5?: string} | {'1.5'?: number}>>();
+
+declare const aliasSymbol: unique symbol;
+type SymbolAlternatives = {[aliasSymbol]?: string} | {other?: number};
+expectTypeOf<{[aliasSymbol]: string}>().toBeAssignableTo<RequireOneOrNone<SymbolAlternatives>>();
+expectTypeOf<{[aliasSymbol]: string; other: number}>().not.toBeAssignableTo<RequireOneOrNone<SymbolAlternatives>>();
+expectTypeOf<{0: unknown}>().toBeAssignableTo<RequireOneOrNone<{0?: unknown} | {'0'?: string}>>();
+expectTypeOf<{0: any}>().toBeAssignableTo<RequireOneOrNone<{0?: any} | {'0'?: string}>>();
+expectTypeOf<{0: never}>().toBeAssignableTo<RequireOneOrNone<{0?: never} | {'0'?: string}>>();
+expectTypeOf<{0: undefined}>().not.toBeAssignableTo<RequireOneOrNone<{0?: never} | {'0'?: string}>>();
+expectTypeOf<RequireOneOrNone<unknown>>().toBe<unknown>();
+expectTypeOf<{}>().toBeAssignableTo<RequireOneOrNone<NumericAlternatives>>();
+
+// Duplicate aliases belonging to other alternatives still forbid a second real property.
+type ForeignNumericAliases = {a?: true} | {0?: string} | {'0'?: number};
+expectTypeOf<{a: true; 0: string}>().not.toBeAssignableTo<RequireOneOrNone<ForeignNumericAliases>>();
+expectTypeOf<{a: true; '0': number}>().not.toBeAssignableTo<RequireOneOrNone<ForeignNumericAliases>>();
+expectTypeOf<{a: true}>().toBeAssignableTo<RequireOneOrNone<ForeignNumericAliases>>();
+expectTypeOf<{0: string}>().toBeAssignableTo<RequireOneOrNone<ForeignNumericAliases>>();
+
+// Forbidden keys keep their declared numeric spelling so ordinary keyof and Pick still work.
+expectTypeOf<keyof RequireOneOrNone<{0: string; 1: number}>>().toBe<0 | 1>();
+type PickNumericChoice = Pick<RequireOneOrNone<{0: string; 1: number}>, 0>;
+expectTypeOf<{0: string}>().toBeAssignableTo<PickNumericChoice>();
+expectTypeOf<keyof RequireOneOrNone<{0?: string} | {1?: number}>>().toBe<0 | 1>();
+type PickForeignNumericChoice = Pick<RequireOneOrNone<{0?: string} | {1?: number}>, 0>;
+expectTypeOf<{0: string}>().toBeAssignableTo<PickForeignNumericChoice>();

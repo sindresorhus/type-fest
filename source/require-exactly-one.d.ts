@@ -1,6 +1,6 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever} from './internal/index.d.ts';
+import type {IfNotAnyOrNever, NormalizedKeys} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -52,7 +52,8 @@ type _RequireExactlyOne<ObjectType, KeysType extends PropertyKey> = ObjectType e
 type _RequireExactlyOneOfOne<ObjectType, KeysType extends keyof ObjectType, AllKeysType extends PropertyKey> =
 	{[Key in KeysType]: (
 		Required<Pick<ObjectType, Key>>
-		& Partial<Record<Exclude<AllKeysType, Key>, never>>
+		// Prefer an already declared numeric key over its duplicate string alias, then forbid every other property.
+		& Partial<Record<Exclude<Exclude<AllKeysType, `${AllKeysType & number}`>, NormalizedKeys<Key>>, never>>
 	)}[KeysType] & Omit<ObjectType, KeysType>;
 
 export {};

@@ -123,3 +123,57 @@ type SplitKeys = {a?: 1; z?: 0} | {b?: 2; z?: 0};
 ({b: 2, z: 0}) satisfies RequireExactlyOne<SplitKeys, 'a' | 'b'>;
 expectTypeOf({a: 1, b: 2} as const).not.toBeAssignableTo<RequireExactlyOne<SplitKeys, 'a' | 'b'>>();
 expectTypeOf({z: 0} as const).not.toBeAssignableTo<RequireExactlyOne<SplitKeys, 'a' | 'b'>>();
+
+// Numeric and string spellings in different alternatives still name one possible property.
+type NumericAlternatives = {0?: string; foo?: Date} | {'0'?: number; bar?: boolean};
+expectTypeOf<{0: string}>().toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+expectTypeOf<{'0': number}>().toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+expectTypeOf<{0: boolean}>().not.toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+expectTypeOf<{0: string; foo: Date}>().not.toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+expectTypeOf<{'0': number; bar: true}>().not.toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+expectTypeOf<{foo: Date}>().toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+expectTypeOf<{bar: boolean}>().toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+expectTypeOf<{0: string}>().toBeAssignableTo<RequireExactlyOne<NumericAlternatives, any>>();
+
+// Unselected required fields and source modifiers retain their original role.
+type NumericMessages = {readonly 0?: string; fallback?: Date; kind: 'text'} | {'0'?: number; fallback?: Date; kind: 'count'};
+type NumericMessageChoice = RequireExactlyOne<NumericMessages, 0 | '0' | 'fallback'>;
+expectTypeOf<{readonly 0: string; kind: 'text'}>().toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{'0': number; kind: 'count'}>().toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{0: string; kind: 'count'}>().not.toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{0: string}>().not.toBeAssignableTo<NumericMessageChoice>();
+expectTypeOf<{0: string; fallback: Date; kind: 'text'}>().not.toBeAssignableTo<NumericMessageChoice>();
+
+// Noncanonical names are different properties and remain mutually exclusive.
+type PaddedAlternatives = {1?: string} | {'01'?: number};
+expectTypeOf<{1: string}>().toBeAssignableTo<RequireExactlyOne<PaddedAlternatives>>();
+expectTypeOf<{'01': number}>().toBeAssignableTo<RequireExactlyOne<PaddedAlternatives>>();
+expectTypeOf<{1: string; '01': number}>().not.toBeAssignableTo<RequireExactlyOne<PaddedAlternatives>>();
+expectTypeOf<{[-2]: string}>().toBeAssignableTo<RequireExactlyOne<{[-2]?: string} | {'-2'?: number}>>();
+expectTypeOf<{'1.5': number}>().toBeAssignableTo<RequireExactlyOne<{1.5?: string} | {'1.5'?: number}>>();
+
+declare const aliasSymbol: unique symbol;
+type SymbolAlternatives = {[aliasSymbol]?: string} | {other?: number};
+expectTypeOf<{[aliasSymbol]: string}>().toBeAssignableTo<RequireExactlyOne<SymbolAlternatives>>();
+expectTypeOf<{[aliasSymbol]: string; other: number}>().not.toBeAssignableTo<RequireExactlyOne<SymbolAlternatives>>();
+expectTypeOf<{0: unknown}>().toBeAssignableTo<RequireExactlyOne<{0?: unknown} | {'0'?: string}>>();
+expectTypeOf<{0: any}>().toBeAssignableTo<RequireExactlyOne<{0?: any} | {'0'?: string}>>();
+expectTypeOf<{0: never}>().toBeAssignableTo<RequireExactlyOne<{0?: never} | {'0'?: string}>>();
+expectTypeOf<{0: undefined}>().not.toBeAssignableTo<RequireExactlyOne<{0?: never} | {'0'?: string}>>();
+expectTypeOf<RequireExactlyOne<unknown>>().toBe<never>();
+expectTypeOf<{}>().not.toBeAssignableTo<RequireExactlyOne<NumericAlternatives>>();
+
+// Duplicate aliases belonging to other alternatives still forbid a second real property.
+type ForeignNumericAliases = {a?: true} | {0?: string} | {'0'?: number};
+expectTypeOf<{a: true; 0: string}>().not.toBeAssignableTo<RequireExactlyOne<ForeignNumericAliases>>();
+expectTypeOf<{a: true; '0': number}>().not.toBeAssignableTo<RequireExactlyOne<ForeignNumericAliases>>();
+expectTypeOf<{a: true}>().toBeAssignableTo<RequireExactlyOne<ForeignNumericAliases>>();
+expectTypeOf<{0: string}>().toBeAssignableTo<RequireExactlyOne<ForeignNumericAliases>>();
+
+// Forbidden keys keep their declared numeric spelling so ordinary keyof and Pick still work.
+expectTypeOf<keyof RequireExactlyOne<{0: string; 1: number}>>().toBe<0 | 1>();
+type PickNumericChoice = Pick<RequireExactlyOne<{0: string; 1: number}>, 0>;
+expectTypeOf<{0: string}>().toBeAssignableTo<PickNumericChoice>();
+expectTypeOf<keyof RequireExactlyOne<{0?: string} | {1?: number}>>().toBe<0 | 1>();
+type PickForeignNumericChoice = Pick<RequireExactlyOne<{0?: string} | {1?: number}>, 0>;
+expectTypeOf<{0: string}>().toBeAssignableTo<PickForeignNumericChoice>();
