@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Replace, StringRepeat} from '../index.d.ts';
+import type {Opaque, Replace, StringRepeat, Tagged} from '../index.d.ts';
 
 declare function replace<
 	Input extends string,
@@ -148,3 +148,30 @@ expectTypeOf<Replace<never, 'a', 'x', {all: boolean}>>().toBe<never>();
 expectTypeOf<Replace<'abc', any, 'x', {all: boolean}>>().toBe<string>();
 // @ts-expect-error - Only strings can be searched.
 type UnknownInput = Replace<unknown, 'a', 'x', {all: boolean}>;
+
+// Brands do not change input characters or matching and replacement text.
+expectTypeOf<Replace<'abc', Tagged<'b', 'Search'>, 'x'>>().toBe<'axc'>();
+expectTypeOf<Replace<Tagged<'abc', 'Text'>, 'b', 'x'>>().toBe<'axc'>();
+expectTypeOf<Replace<'abc', 'b', Tagged<'x', 'Replacement'>>>().toBe<'axc'>();
+expectTypeOf<Replace<Opaque<'foofoo', 'Text'>, Opaque<'foo', 'Search'>, Opaque<'x', 'Replacement'>, {all: true}>>().toBe<'xx'>();
+expectTypeOf<Replace<Tagged<'aa' | 'bb', 'Text'>, Tagged<'a' | 'b', 'Search'>, Tagged<'x' | 'y', 'Replacement'>, {all: boolean}>>().toBe<'xa' | 'xx' | 'ya' | 'yy' | 'aa' | 'bb' | 'xb' | 'yb'>();
+expectTypeOf<Replace<Tagged<'ab', 'Text'>, Tagged<'', 'Search'>, Tagged<'-', 'Replacement'>, {all: true}>>().toBe<'-a-b-'>();
+expectTypeOf<Replace<Tagged<'ab', 'Text'>, Tagged<'', 'Search'>, Tagged<'-', 'Replacement'>>>().toBe<'-ab'>();
+expectTypeOf<Replace<Tagged<`id:${number}`, 'Text'>, Tagged<`${number}`, 'Search'>, Tagged<'N', 'Replacement'>>>().toBe<'id:N'>();
+expectTypeOf<Replace<Tagged<'ab', 'Text'>, Tagged<string, 'Search'>, 'x'>>().toBe<string>();
+expectTypeOf<Replace<Tagged<string, 'Text'>, 'a', 'x'>>().toBe<string>();
+expectTypeOf<Replace<Tagged<'ab', 'Text'>, 'a', Tagged<string, 'Replacement'>>>().toBe<`${string}b`>();
+
+expectTypeOf<Replace<Tagged<Tagged<'abc', 'First'>, 'Second'>, Tagged<Tagged<'b', 'First'>, 'Second'>, Tagged<Tagged<'x', 'First'>, 'Second'>>>().toBe<'axc'>();
+expectTypeOf<Replace<'abc' & {readonly __brand: unique symbol}, 'b', 'x'>>().toBe<'axc'>();
+expectTypeOf<Replace<Tagged<'', 'Text'>, Tagged<'', 'Search'>, Tagged<'x', 'Replacement'>, {all: true}>>().toBe<'x'>();
+expectTypeOf<Replace<Tagged<'abab', 'Text'>, Tagged<'ab', 'Search'>, Tagged<'', 'Replacement'>, {all: true}>>().toBe<''>();
+expectTypeOf<Replace<Tagged<'abc', 'Text'>, Tagged<'z', 'Search'>, 'x'>>().toBe<'abc'>();
+expectTypeOf<Replace<never, Tagged<'a', 'Search'>, 'x'>>().toBe<never>();
+expectTypeOf<Replace<'abc', never, Tagged<'x', 'Replacement'>>>().toBe<never>();
+expectTypeOf<Replace<Tagged<'abc', 'Text'>, 'b', never>>().toBe<never>();
+expectTypeOf<Replace<Tagged<'abc', 'Text'>, any, 'x'>>().toBe<string>();
+// @ts-expect-error
+expectTypeOf<Replace<'abc', unknown, 'x'>>();
+// @ts-expect-error
+expectTypeOf<Replace<'abc', 'b', unknown>>();
