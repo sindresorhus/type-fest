@@ -173,12 +173,13 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 			const comment = trailingComment && sourceCode.getText(trailingComment) === LINK_COMMENT ? trailingComment : undefined;
 
 			if (isUsedOnlyByJSDoc && !comment) {
+				const nextToken = sourceCode.getTokenAfter(declaration);
 				context.report({
 					node: declaration,
 					messageId: 'missingComment',
 					data: {comment: LINK_COMMENT},
-					// Another comment on the line would join the inserted one, so leave that to the user.
-					fix: trailingComment ? undefined : fixer => fixer.insertTextAfter(declaration, ` ${LINK_COMMENT}`),
+					// Another comment on the line would join the inserted one, and following code would be commented out, so leave those to the user.
+					fix: trailingComment || nextToken?.loc.start.line === declaration.loc.end.line ? undefined : fixer => fixer.insertTextAfter(declaration, ` ${LINK_COMMENT}`),
 				});
 			} else if (!isUsedOnlyByJSDoc && comment) {
 				context.report({
@@ -207,13 +208,10 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 			}
 
 			const importText = `import type {${name}} from '${importPath}'; ${LINK_COMMENT}`;
-			if (imports.length === 0) {
-				return fixer.insertTextBeforeRange([0, 0], `${importText}\n\n`);
-			}
-
-			// Insert after the last import, and after its trailing comment.
-			const lastImport = imports.at(-1);
-			return fixer.insertTextAfter(getTrailingComment(lastImport) ?? lastImport, `\n${importText}`);
+			// Insert before the first import so the new line comment cannot swallow existing same-line code or comments.
+			return imports.length === 0
+				? fixer.insertTextBeforeRange([0, 0], `${importText}\n\n`)
+				: fixer.insertTextBefore(imports[0], `${importText}\n`);
 		};
 
 		return {

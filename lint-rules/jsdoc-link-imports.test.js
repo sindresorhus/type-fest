@@ -257,6 +257,36 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 		},
 	],
 	invalid: [
+		// A new standalone import also preserves same-line side-effect imports and their following code.
+		{
+			code: 'import \'./setup.d.ts\'; export type Foo = string;\n/** See {@link Target}. */\nexport type Bar = number;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: `import type {Target} from './target.d.ts'; ${linkComment}\nimport './setup.d.ts'; export type Foo = string;\n/** See {@link Target}. */\nexport type Bar = number;\n`,
+		},
+		// Adding a standalone link import must not comment out existing same-line code.
+		{
+			code: dedenter`
+				import type {Other} from './other.d.ts'; export type Foo = Other;
+				/** See {@link Target}. */
+				export type Bar = string;
+			`,
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: dedenter`
+				import type {Target} from './target.d.ts'; ${linkComment}
+				import type {Other} from './other.d.ts'; export type Foo = Other;
+				/** See {@link Target}. */
+				export type Bar = string;
+			`,
+		},
+		// A line-comment annotation must not swallow another declaration on the import line.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; export type Foo = string;\n/** See {@link Target}. */\nexport type Bar = number;\n',
+			filename,
+			errors: [error('missingComment')],
+			output: null,
+		},
 		// Removing an unused import must not delete the following declaration on the same line.
 		{
 			code: 'import type {Target} from \'./target.d.ts\'; export type Foo = string;\nexport {};\n',
@@ -287,7 +317,7 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 				export {};
 			`,
 		},
-		// Missing import is added after the last import, after its trailing comment
+		// Missing import is added before existing imports, preserving their trailing comments.
 		{
 			code: dedenter`
 				import type {Other} from './other.d.ts'; ${linkComment}
@@ -302,8 +332,8 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 			filename,
 			errors: [error('missingImport', 'Target')],
 			output: dedenter`
-				import type {Other} from './other.d.ts'; ${linkComment}
 				import type {Target} from './target.d.ts'; ${linkComment}
+				import type {Other} from './other.d.ts'; ${linkComment}
 
 				/**
 				See {@link Other} and {@link Target}.
@@ -313,7 +343,7 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 				export {};
 			`,
 		},
-		// Missing import is added after a trailing block comment that spans lines
+		// Missing import is added before the existing import and its multiline trailing block comment.
 		{
 			code: dedenter`
 				import type {Other} from './other.d.ts'; /* Some
@@ -329,9 +359,9 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 			filename,
 			errors: [error('missingImport', 'Target')],
 			output: dedenter`
+				import type {Target} from './target.d.ts'; ${linkComment}
 				import type {Other} from './other.d.ts'; /* Some
 				note */
-				import type {Target} from './target.d.ts'; ${linkComment}
 
 				/**
 				See {@link Target}.
@@ -499,6 +529,39 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 			filename,
 			errors: [error('missingImport', 'RenamedHelper')],
 			output: null,
+		},
+		// A trailing import or empty export must not be swallowed by a line-comment annotation either.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; import type {Other} from \'./other.d.ts\';\n/** See {@link Target}. */\nexport type Foo = Other;\n',
+			filename,
+			errors: [error('missingComment')],
+			output: null,
+		},
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; export {};\n/** See {@link Target}. */\nexport type Foo = string;\n',
+			filename,
+			errors: [error('missingComment')],
+			output: null,
+		},
+		// An import at EOF can still receive its annotation without a final newline.
+		{
+			code: '/** See {@link Target}. */\nimport type {Target} from \'./target.d.ts\';',
+			filename,
+			errors: [error('missingComment')],
+			output: '/** See {@link Target}. */\nimport type {Target} from \'./target.d.ts\'; // For `@link`',
+		},
+		// CRLF does not change the same-line safety boundary or safe annotation output.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; export {};\r\n/** See {@link Target}. */\r\nexport type Foo = string;\r\n',
+			filename,
+			errors: [error('missingComment')],
+			output: null,
+		},
+		{
+			code: 'import type {Target} from \'./target.d.ts\';\r\n/** See {@link Target}. */\r\nexport type Foo = string;\r\n',
+			filename,
+			errors: [error('missingComment')],
+			output: `import type {Target} from './target.d.ts'; ${linkComment}\r\n/** See {@link Target}. */\r\nexport type Foo = string;\r\n`,
 		},
 		// Import used by the code, with the comment
 		{
@@ -736,8 +799,8 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 			filename,
 			errors: [error('missingImport', 'Target')],
 			output: dedenter`
-				import type * as Namespace from './target.d.ts';
 				import type {Target} from './target.d.ts'; ${linkComment}
+				import type * as Namespace from './target.d.ts';
 
 				/**
 				See {@link Target}.
