@@ -506,3 +506,36 @@ function enumPickName<Extra>(value: PickDeep<{[EnumPickField.Profile]: {[EnumPic
 type IndexedNumericEnumPick = {[key: number]: {name: string}; [NumericPickField.Zero]: {name: string; special: true}};
 expectTypeOf<PickDeep<IndexedNumericEnumPick, number>>().toBe<{[key: number]: {name: string}}>();
 expectTypeOf<PickDeep<IndexedNumericEnumPick, `${number}.name`>>().toBe<{[key: number]: {name: string}}>();
+
+// A numeric-looking missing path must not select every array element.
+type NoncanonicalIndexUsers = Array<{name: string; secret: string}>;
+expectTypeOf<PickDeep<NoncanonicalIndexUsers, '01'>>().toBe<never>();
+expectTypeOf<PickDeep<NoncanonicalIndexUsers, '01.name'>>().toBe<never>();
+expectTypeOf<PickDeep<readonly [{name: string}, {name: number}], '1e0.name'>>().toBe<never>();
+expectTypeOf<PickDeep<{users: NoncanonicalIndexUsers}, 'users.0x0.name'>>().toBe<never>();
+
+declare function pickWithPath<Base, const Path extends string>(value: Base, path: Path): PickDeep<Base, Path>;
+declare const noncanonicalIndexUsers: NoncanonicalIndexUsers;
+expectTypeOf(pickWithPath(noncanonicalIndexUsers, '01.name')).toBe<never>();
+
+// Numeric-looking object keys remain ordinary named properties.
+expectTypeOf<PickDeep<{'01': {name: string; secret: string}}, '01.name'>>().toBe<{'01': {name: string}}>();
+expectTypeOf<PickDeep<{'0x0': {name: number}}, '0x0'>>().toBe<{'0x0': {name: number}}>();
+expectTypeOf<PickDeep<NoncanonicalIndexUsers, '00.name' | '0.name'>>().toBe<[{name: string}]>();
+expectTypeOf<PickDeep<readonly [{name: string}], '01' | '0.name'>>().toBe<readonly [{name: string}]>();
+expectTypeOf<PickDeep<{users: NoncanonicalIndexUsers; safe: number}, 'users.01.name' | 'safe'>>().toBe<{safe: number}>();
+expectTypeOf<PickDeep<NoncanonicalIndexUsers, '-0.name'>>().toBe<never>();
+expectTypeOf<PickDeep<NoncanonicalIndexUsers, '+0'>>().toBe<never>();
+expectTypeOf<PickDeep<NoncanonicalIndexUsers, ' 0.name'>>().toBe<never>();
+expectTypeOf<PickDeep<ReadonlyArray<{name: string}>, '0b0.name'>>().toBe<never>();
+expectTypeOf<PickDeep<[{name: string}, ...Array<{name: string}>], '01.name'>>().toBe<never>();
+expectTypeOf<PickDeep<NoncanonicalIndexUsers, `${number}.name`>>().toBe<Array<{name: string}>>();
+
+const inferredCanonicalIndexPick = pickWithPath(noncanonicalIndexUsers, '0.name');
+expectTypeOf(inferredCanonicalIndexPick).toBe<[{name: string}]>();
+// @ts-expect-error A canonical path selects only the requested field.
+expectTypeOf(inferredCanonicalIndexPick[0].secret).toBe<string>();
+
+function _constructGenericArrayPick<Extra>(value: Array<{name: string}>): PickDeep<Array<{name: string; extra: Extra}>, `${number}.name`> {
+	return value;
+}

@@ -176,10 +176,12 @@ type PickDeepArray<ArrayType extends UnknownArray, PathUnion extends string | nu
 
 /**
 Pick every element of the given array when the key is `${number}`.
+
+Only the wide index matches every element. Other numeric spellings, such as `01`, also infer as `number` but do not name array indices.
 */
 type PickDeepEveryIndex<ArrayType extends UnknownArray, Key extends string | number, PathUnion extends string | number> =
-	`${Key}` extends `${infer ArrayIndex extends number}`
-		? number extends ArrayIndex
+	`${Key}` extends `${number}`
+		? `${number}` extends `${Key}`
 			? Key extends PathUnion
 				? ArrayType
 				: InternalPickDeep<NonNullable<ArrayType[number]>, SubPaths<PathUnion, Key>> extends infer Picked
