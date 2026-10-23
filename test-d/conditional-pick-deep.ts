@@ -188,7 +188,7 @@ expectTypeOf(indexSignatureString).toBe<{[key: string]: string}>();
 declare const indexSignatureObject: ConditionalPickDeep<Record<string, {a: string; b: number}>, {a: string}>;
 expectTypeOf(indexSignatureObject).toBeAssignableTo<Record<string, {a: string}>>();
 
-// Each level goes through a mapped type, a conditional and `ConditionalSimplifyDeep`, so verify twelve levels of nesting remain within TypeScript's instantiation budget.
+// Verify twelve levels of nesting remain within TypeScript's instantiation budget.
 type DeepLevel11 = {leaf: string};
 type DeepLevel10 = {next: DeepLevel11};
 type DeepLevel9 = {next: DeepLevel10};
@@ -228,3 +228,50 @@ expectTypeOf(tupleAtTopLevel).toBe<{0: 1}>();
 // An array as the whole type is mapped as a numeric index signature, with only matching element union members.
 declare const arrayAtTopLevel: ConditionalPickDeep<ReadonlyArray<{a: 1} | {b: 2}>, 1>;
 expectTypeOf(arrayAtTopLevel).toBe<{readonly [index: number]: {a: 1}}>();
+
+// Nested selections preserve modifiers and simplify directly retained object values.
+expectTypeOf<ConditionalPickDeep<{readonly outer: {readonly label: string; count: number}; ignored: boolean}, string>>()
+	.toBe<{readonly outer: {readonly label: string}}>();
+expectTypeOf<ConditionalPickDeep<{data: {left: 'value'} & {right: number}}, {left: string}>>()
+	.toBe<{data: {left: 'value'; right: number}}>();
+expectTypeOf<ConditionalPickDeep<{data: {nested: {left: 'value'} & {right: number}}}, {nested: {left: string}}>>()
+	.toBe<{data: {nested: {left: 'value'; right: number}}}>();
+expectTypeOf<ConditionalPickDeep<{data: Record<string, {label: string; count: number}>}, string>>()
+	.toBe<{data: Record<string, {label: string}>}>();
+expectTypeOf<ConditionalPickDeep<{data: {label: string} | {count: number}; ready: boolean}, string>>()
+	.toBe<{data: {label: string}}>();
+expectTypeOf<ConditionalPickDeep<{data: {label: 'literal'; general: string}}, string, {condition: 'equality'}>>()
+	.toBe<{data: {general: string}}>();
+
+declare const selectedSymbol: unique symbol;
+expectTypeOf<ConditionalPickDeep<{readonly [selectedSymbol]: {label: string; ignored: number}; 0: {label: string}}, string>>()
+	.toBe<{readonly [selectedSymbol]: {label: string}; 0: {label: string}}>();
+
+// Unknown values are excluded unless they match directly; a matching never property keeps its key.
+expectTypeOf<ConditionalPickDeep<{label: string; ignored: any; unknown: unknown; missing: never}, string>>()
+	.toBe<{label: string; missing: never}>();
+expectTypeOf<ConditionalPickDeep<unknown, string>>().toBe<never>();
+expectTypeOf<ConditionalPickDeep<never, string>>().toBe<never>();
+
+function _genericSelectedObject<Value extends object>(value: ConditionalPickDeep<Value, string>): object {
+	return value;
+}
+
+function _genericSelectedList<Value>(value: Array<ConditionalPickDeep<Value, string>>): object[] {
+	return value;
+}
+
+declare function selectStringFields<const Value extends object>(value: Value): ConditionalPickDeep<Value, string>;
+const selectedStringFields = selectStringFields({label: 'text', nested: {id: 'value', ignored: 123}});
+expectTypeOf(selectedStringFields).toBe<{readonly label: 'text'; readonly nested: {readonly id: 'value'}}>();
+// @ts-expect-error The retained nested value remains readonly.
+selectedStringFields.nested.id = 'value';
+// @ts-expect-error The number-valued field is excluded.
+expectTypeOf(selectedStringFields.nested.ignored);
+
+// A directly retained object keeps its callable fields while its intersections are flattened.
+type SelectedHandler = (value: number) => string;
+expectTypeOf<ConditionalPickDeep<{data: {handler: SelectedHandler} & {readonly label?: string}}, {handler: SelectedHandler}>>()
+	.toBe<{data: {handler: SelectedHandler; readonly label?: string}}>();
+expectTypeOf<ConditionalPickDeep<{data: {label: string} | {count: number}}, {label: string} | {count: number}, {condition: 'equality'}>>()
+	.toBe<{data: {label: string} | {count: number}}>();

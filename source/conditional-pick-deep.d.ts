@@ -39,7 +39,7 @@ type DefaultConditionalPickDeepOptions = {
 Pick keys recursively from the shape that matches the given condition.
 
 Known limitations:
-- Very deeply nested inputs can exceed TypeScript's instantiation budget because each level goes through a mapped type, a conditional and `ConditionalSimplifyDeep`.
+- Very deeply nested inputs can exceed TypeScript's instantiation budget.
 - Recursion does not enter optional object properties, whose read type includes `undefined`: `ConditionalPickDeep<{data?: {a: string}}, string>` is `never`. An optional property can still be picked directly when its whole value matches the condition.
 - Arrays are not recursed into, so a match that is only inside an array is not found: `ConditionalPickDeep<{a: Array<{b: 1}>}, 1>` is `never`. The comparable `*Deep` types take a `recurseIntoArrays` option for this (`PartialDeep`, `MergeDeep`, `Schema` and `SharedUnionFieldsDeep` have one), and `ConditionalPickDeep` has none. `OmitDeep` and `PickDeep` recurse into an array unconditionally instead.
 - A top-level array or tuple is mapped as an object of matching keys and does not keep its array shape: `ConditionalPickDeep<[1, 2], 1>` is `{0: 1}`.
@@ -115,21 +115,22 @@ type _NeverIfEmpty<Type> = Type extends unknown
 	: never;
 
 // Filter empty union members at every recursive node so a wholly nonmatching member removes its key from the parent.
+// Only directly matched values need deep simplification; recursive results are already simplified.
 type _ConditionalPickDeep<
 	Type,
 	Condition,
 	Options extends Required<ConditionalPickDeepOptions>,
 > = Type extends unknown // For distributing `Type`, so each member contributes its own matching keys
-	? _NeverIfEmpty<ConditionalSimplifyDeep<{
+	? _NeverIfEmpty<{
 		// A value cannot distinguish an exclusion marker from matching `undefined` or `{}` values. Filter keys according to the condition and recursive result instead of removing properties by their values.
 		[Key in keyof Type as AssertCondition<Type[Key], Condition, Options> extends true
 			? Key
 			: IsPlainObject<Type[Key]> extends true
 				? IsNever<_ConditionalPickDeep<Type[Key], Condition, Options>> extends true ? never : Key
 				: never]: AssertCondition<Type[Key], Condition, Options> extends true
-			? Type[Key]
+			? ConditionalSimplifyDeep<Type[Key], never, UnknownRecord>
 			: _ConditionalPickDeep<Type[Key], Condition, Options>;
-	}, never, UnknownRecord>>
+	}>
 	: never; // Should never happen
 
 export {};
