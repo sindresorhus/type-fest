@@ -259,3 +259,72 @@ expectTypeOf<OmitDeep<unknown, Tagged<'value', 'Path'>>>().toBe<unknown>();
 // A wide autocomplete alternative does not erase a known path that must still be omitted.
 expectTypeOf<OmitDeep<{a: {b: string | null; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {c?: number}; d?: string}>();
 expectTypeOf<OmitDeep<{0?: string; 1: number | null}, LiteralUnion<0, number>>>().toBe<{1: number | null}>();
+
+// Paths use the literal spelling of enum keys, including the last segment that is removed.
+enum UserField {
+	Profile = 'profile',
+	Name = 'name',
+}
+
+type EnumKeyUser = {readonly [UserField.Profile]?: {[UserField.Name]: string; active: boolean}; id: number};
+expectTypeOf<OmitDeep<EnumKeyUser, 'profile'>>().toBe<{id: number}>();
+expectTypeOf<OmitDeep<EnumKeyUser, 'profile.name'>>().toBe<{readonly [UserField.Profile]?: {active: boolean}; id: number}>();
+expectTypeOf<OmitDeep<{rows: Array<{[UserField.Name]: string; active: boolean}>}, `rows.${number}.name`>>().toBe<{rows: Array<{active: boolean}>}>();
+
+// Removing an enum member preserves unrelated modifiers, values and declared key identities.
+declare const omittedSymbol: unique symbol;
+type EnumOmitInput = {readonly [UserField.Profile]?: {name: string} | null | undefined; readonly keep?: Tagged<string, 'Value'>; [omittedSymbol]: number};
+expectTypeOf<OmitDeep<EnumOmitInput, 'profile'>>().toBe<{readonly keep?: Tagged<string, 'Value'>; [omittedSymbol]: number}>();
+expectTypeOf<keyof OmitDeep<EnumKeyUser, 'profile'>>().toBe<'id'>();
+expectTypeOf<Pick<OmitDeep<EnumKeyUser, 'profile.name'>, UserField.Profile>>().toBe<{readonly [UserField.Profile]?: {active: boolean}}>();
+expectTypeOf<OmitDeep<EnumKeyUser, UserField.Profile>>().toBe<{id: number}>();
+expectTypeOf<OmitDeep<EnumKeyUser, Tagged<'profile', 'Path'>>>().toBe<{id: number}>();
+expectTypeOf<OmitDeep<EnumKeyUser, 'profile' | 'id'>>().toBe<{}>();
+expectTypeOf<OmitDeep<EnumKeyUser | {error: string}, 'profile'>>().toBe<{id: number} | {error: string}>();
+expectTypeOf<OmitDeep<EnumKeyUser, 'missing'>>().toBe<EnumKeyUser>();
+expectTypeOf<OmitDeep<{[UserField.Name]: any; keep: unknown}, 'name'>>().toBe<{keep: unknown}>();
+expectTypeOf<OmitDeep<{[UserField.Name]: never; keep: number}, 'name'>>().toBe<{keep: number}>();
+expectTypeOf<OmitDeep<{[UserField.Name]: unknown; keep: number}, 'name'>>().toBe<{keep: number}>();
+expectTypeOf<OmitDeep<any, 'name'>>().toBe<any>();
+expectTypeOf<OmitDeep<never, 'name'>>().toBe<never>();
+expectTypeOf<OmitDeep<unknown, 'name'>>().toBe<unknown>();
+expectTypeOf<OmitDeep<readonly [{[UserField.Name]: string; active: true}], '0.name'>>().toBe<readonly [{active: true}]>();
+
+enum NumericOmitKey {
+	Zero = 0,
+}
+
+type IndexedEnumOmit = {[index: number]: {name: string; keep: boolean}; [NumericOmitKey.Zero]: {name: string; keep: true}};
+expectTypeOf<OmitDeep<IndexedEnumOmit, number>>().toBe<Omit<IndexedEnumOmit, number>>();
+expectTypeOf<OmitDeep<IndexedEnumOmit, `${number}`>>().toBe<Omit<IndexedEnumOmit, number>>();
+expectTypeOf<OmitDeep<{0: string; '01': number; keep: boolean}, '0'>>().toBe<{'01': number; keep: boolean}>();
+expectTypeOf<OmitDeep<{0: string; '01': number; keep: boolean}, '01'>>().toBe<{0: string; keep: boolean}>();
+expectTypeOf<OmitDeep<{[key: `row-${string}`]: {name: string; keep: boolean}}, 'row-first.name'>>().toBe<{[key: `row-${string}`]: {keep: boolean}}>();
+
+function readOmittedEnum<Extra>(value: OmitDeep<{[UserField.Name]: string; keep: {id: number; extra: Extra}}, 'name'>): number {
+	return value.keep.id;
+}
+
+declare function omitEnumName<const Input>(input: Input): OmitDeep<Input, 'name'>;
+const inferredEnumOmit = omitEnumName({[UserField.Name]: 'private', keep: {active: true}});
+expectTypeOf(inferredEnumOmit).toBe<{readonly keep: {readonly active: true}}>();
+declare function requiresEnumName(value: {[UserField.Name]: unknown}): void;
+// @ts-expect-error The removed member is absent from the inferred result.
+requiresEnumName(inferredEnumOmit);
+// @ts-expect-error An allowed replacement still cannot overwrite the readonly field.
+inferredEnumOmit.keep = {active: true};
+
+// A numeric path uses the same property spelling as its string form, including string enums.
+enum StringNumericOmitKey {
+	Zero = '0',
+}
+
+expectTypeOf<OmitDeep<{[StringNumericOmitKey.Zero]: string; keep: number}, 0>>().toBe<{keep: number}>();
+
+// Aliases in an intersection describe one runtime property and must be removed together.
+expectTypeOf<OmitDeep<{[UserField.Name]: string} & {name: string; keep: number}, 'name'>>().toBe<{keep: number}>();
+
+// Omitting numeric indices must keep a distinct noncanonical string property.
+type NonCanonicalIndexedOmit = {[index: number]: string; '01': number; keep: boolean};
+expectTypeOf<OmitDeep<NonCanonicalIndexedOmit, number>>().toBe<{'01': number; keep: boolean}>();
+expectTypeOf<OmitDeep<NonCanonicalIndexedOmit, `${number}`>>().toBe<{'01': number; keep: boolean}>();

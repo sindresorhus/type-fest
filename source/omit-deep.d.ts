@@ -1,5 +1,6 @@
 import type {ArraySplice} from './array-splice.d.ts';
 import type {ExactKey, IsArrayReadonly, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -129,12 +130,11 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 						: OmitDeepWithOnePath<ObjectT[Key], SubPath>
 					: ObjectT[Key]
 		}
-		: ExactKey<ObjectT, P> extends infer Key
+		// Match declared terminal keys by their spelling, including enums; leave index signatures to ExactKey.
+		: (ExactKey<ObjectT, P> | keyof {[Key in keyof OmitIndexSignature<ObjectT> as IsEqual<ToString<Key>, ToString<P>> extends true ? Key : never]: never}) extends infer Key
 			? IsNever<Key> extends true
 				? ObjectT
-				: Key extends PropertyKey
-					? Omit<ObjectT, Key>
-					: ObjectT
+				: Omit<ObjectT, Extract<Key, PropertyKey>>
 			: ObjectT;
 
 /**
