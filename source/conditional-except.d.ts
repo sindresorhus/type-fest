@@ -1,6 +1,7 @@
 import type {Except} from './except.d.ts';
 import type {ConditionalKeys} from './conditional-keys.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {ExtendsStrict} from './extends-strict.d.ts';
 
 /**
 Exclude keys from a shape that matches the given `Condition`.
@@ -44,7 +45,12 @@ export type ConditionalExcept<Base, Condition> = Base extends unknown // For dis
 	? ConditionalKeys<Base, Condition> extends infer Keys
 		? IsNever<Keys> extends true
 			? Base
-			: Except<Base, Keys & keyof Base>
+			// Preserve the primitive/any property view, and check each object value before a matching index signature can swallow its named fields.
+			: ExtendsStrict<Base, object, {strictAny: true}> extends true
+				? {[Key in keyof Base as Key extends Keys
+					? ExtendsStrict<Base[Key], Condition> extends true ? never : Key
+					: Key]: Base[Key]}
+				: Except<Base, Keys & keyof Base>
 		: never
 	: never; // Should never happen
 
