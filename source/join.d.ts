@@ -91,6 +91,11 @@ type JoinHelper<
 				? [] extends Head
 					? `${Result}${JoinHelper<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}${Suffix}` | `${Result}${NullishCoalesce<Last, ''>}${Suffix}`
 					: JoinHelper<Head, Delimiter, Result, `${Delimiter}${NullishCoalesce<Last, ''>}${Suffix}`>
-				: `${Result}${string}${Suffix}`;
+				: '0' extends keyof Items
+					? Items extends readonly [JoinableItem?, ...infer Tail extends readonly JoinableItem[]]
+						// A fixed optional slot can be absent or a hole; making its read value required lets the same traversal account for both.
+						? JoinHelper<[Items[0], ...Tail], Delimiter, Result, Suffix>
+						: never
+					: `${Result}${string}${Suffix}`;
 
 export {};

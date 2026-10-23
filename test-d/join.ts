@@ -180,3 +180,47 @@ expectTypeOf<Join<[never], Tagged<'.', 'Delimiter'>>>().toBe<never>();
 expectTypeOf<Join<never, Tagged<'.', 'Delimiter'>>>().toBe<never>();
 // @ts-expect-error
 expectTypeOf<Join<[unknown], '.'>>();
+
+// Optional fixed slots produce a finite set of joins, including holes before later elements.
+expectTypeOf<Join<[1?, 2?], '-'>>().toBe<'' | '1' | '-' | '-2' | '1-' | '1-2'>();
+type OptionalPathResult = 'start' | 'start.' | 'start.middle' | 'start..' | 'start..end' | 'start.middle.' | 'start.middle.end';
+expectTypeOf<Join<readonly ['start', 'middle'?, 'end'?], '.'>>().toBe<OptionalPathResult>();
+expectTypeOf<'start.invalid'>().not.toBeAssignableTo<Join<readonly ['start', 'middle'?, 'end'?], '.'>>();
+
+declare function joinOptionalPath<const Items extends ReadonlyArray<string | number | undefined>>(items: Items): Join<Items, '.'>;
+declare const optionalPathSegments: readonly ['start', 'middle'?, 'end'?];
+const joinedOptionalPath = joinOptionalPath(optionalPathSegments);
+expectTypeOf(joinedOptionalPath).toBe<OptionalPathResult>();
+
+// Optional slots can be holes before a later value, rather than only a shorter suffix.
+const sparseOptionalNumbers: [1?, 2?] = [];
+sparseOptionalNumbers.length = 2;
+sparseOptionalNumbers[1] = 2;
+const sparseOptionalSegments: ['start', 'middle'?, 'end'?] = ['start'];
+sparseOptionalSegments.length = 3;
+sparseOptionalSegments[2] = 'end';
+expectTypeOf<'-2'>().toBeAssignableTo<Join<typeof sparseOptionalNumbers, '-'>>();
+expectTypeOf<'start..end'>().toBeAssignableTo<Join<typeof sparseOptionalSegments, '.'>>();
+expectTypeOf<'2'>().not.toBeAssignableTo<Join<typeof sparseOptionalNumbers, '-'>>();
+expectTypeOf<Join<[never?, 2?], '-'>>().toBe<'' | '-' | '-2'>();
+expectTypeOf<Join<[null?, undefined?, true?], ':'>>().toBe<'' | ':' | '::' | '::true'>();
+expectTypeOf<Join<['start', undefined?, 'end'?], '.'>>().toBe<'start' | 'start.' | 'start..' | 'start..end'>();
+
+// One delimiter and one input member apply to the whole optional tuple.
+expectTypeOf<'-2-3'>().toBeAssignableTo<Join<[1?, 2?, 3?], '.' | '-'>>();
+expectTypeOf<'1.2-3'>().not.toBeAssignableTo<Join<[1?, 2?, 3?], '.' | '-'>>();
+expectTypeOf<'1-b'>().not.toBeAssignableTo<Join<[1?, 2?] | ['a'?, 'b'?], '-'>>();
+expectTypeOf<Join<[1?, ...Array<2>], '-'>>().toBe<'' | '1' | `-${string}` | `1-${string}`>();
+expectTypeOf<Join<readonly [Tagged<'a', 'Part'>?, Tagged<2, 'Part'>?], Tagged<':', 'Delimiter'>>>()
+	.toBe<'' | 'a' | ':' | ':2' | 'a:' | 'a:2'>();
+
+function _readJoinedString<Items extends ReadonlyArray<string | number | bigint | boolean | null | undefined>, Delimiter extends string>(value: Join<Items, Delimiter>): string {
+	return value;
+}
+
+function optionalPathWithMetadata<Metadata>(metadata: Metadata): {path: Join<['start', 'middle'?, 'end'?], '.'>; metadata: Metadata} {
+	return {path: 'start', metadata};
+}
+
+expectTypeOf(optionalPathWithMetadata({id: 1} as const).metadata).toBe<{readonly id: 1}>();
+expectTypeOf(optionalPathWithMetadata('draft').path).toBe<OptionalPathResult>();
