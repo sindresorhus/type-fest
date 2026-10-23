@@ -48,3 +48,33 @@ expectTypeOf<ArrayTail<any[]>>().toBe<any[]>();
 // Boundary cases
 expectTypeOf<ArrayTail<never>>().toBe<never>();
 expectTypeOf<ArrayTail<any>>().toBe<any>();
+
+// A first optional position is removed without changing the remaining declared values.
+expectTypeOf<ArrayTail<[(1 | undefined)?, (2 | undefined)?]>>().toBe<[(2 | undefined)?]>();
+expectTypeOf<ArrayTail<readonly [unknown?, void?, never?]>>().toBe<readonly [void?, never?]>();
+expectTypeOf<ArrayTail<[never, any, unknown, undefined]>>().toBe<[any, unknown, undefined]>();
+expectTypeOf<ArrayTail<readonly unknown[]>>().toBe<readonly unknown[]>();
+
+// Arrays and leading-rest tuples have no fixed first position to remove.
+expectTypeOf<ArrayTail<[...string[], 1]>>().toBe<[...string[], 1]>();
+expectTypeOf<ArrayTail<readonly [...boolean[], 1, 2]>>().toBe<readonly [...boolean[], 1, 2]>();
+expectTypeOf<ArrayTail<readonly [1?, ...string[]]>>().toBe<readonly string[]>();
+expectTypeOf<ArrayTail<string[] & {length: 3}>>().toBe<string[] & {length: 3}>();
+
+// An empty tuple still produces a plain empty tuple.
+expectTypeOf<ArrayTail<[] & {extra: true}>>().toBe<[]>();
+expectTypeOf<ArrayTail<readonly [] & {extra: true}>>().toBe<readonly []>();
+expectTypeOf<ArrayTail<[] | readonly [...string[], 1] | [1, 2?]>>().toBe<[] | readonly [...string[], 1] | [2?]>();
+
+function _arrayResult<Array_ extends readonly unknown[]>(tail: ArrayTail<Array_>): readonly unknown[] {
+	return tail;
+}
+
+const nestedTail = getArrayTail([0, ['nested'], {value: 1}] as const);
+expectTypeOf(nestedTail).toBe<readonly [readonly ['nested'], {readonly value: 1}]>();
+expectTypeOf(nestedTail[0][0]).toBe<'nested'>();
+// @ts-expect-error A readonly input keeps its readonly tail.
+nestedTail[0] = ['changed'];
+
+// @ts-expect-error Only arrays are supported.
+type InvalidUnknownTail = ArrayTail<unknown>;

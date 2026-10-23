@@ -59,12 +59,12 @@ export type ArrayTail<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {
 		: never;
 }>;
 
-type _ArrayTail<TArray extends UnknownArray> = TArray extends readonly [unknown?, ...infer Tail]
-	? '0' extends keyof TArray
+type _ArrayTail<TArray extends UnknownArray> = '0' extends keyof TArray
+	? TArray extends readonly [unknown?, ...infer Tail]
 		? Tail
-		: TArray extends readonly []
-			? []
-			: TArray // Happens when `TArray` is a non-tuple array (e.g., `string[]`) or has a leading rest element (e.g., `[...string[], number]`)
-	: [];
+		: []
+	: TArray extends readonly []
+		? []
+		: TArray; // Happens when `TArray` is a non-tuple array (e.g., `string[]`) or has a leading rest element (e.g., `[...string[], number]`)
 
 export {};
