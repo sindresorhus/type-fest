@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {NonNegativeIntegerString, Tagged} from '../index.d.ts';
+import type {NonNegativeIntegerString, Opaque, StringRepeat, Tagged} from '../index.d.ts';
 
 // Valid strings are kept as is
 expectTypeOf<NonNegativeIntegerString<'0'>>().toBe<'0'>();
@@ -101,3 +101,30 @@ if (isUserId(input)) {
 type InvalidNumber = NonNegativeIntegerString<42>;
 // @ts-expect-error
 type InvalidUnknown = NonNegativeIntegerString<unknown>;
+
+// Validate the underlying digits while preserving a valid string's brand.
+expectTypeOf<NonNegativeIntegerString<Tagged<'123', 'Text'>>>().toBe<Tagged<'123', 'Text'>>();
+expectTypeOf<NonNegativeIntegerString<Opaque<'007', 'Text'>>>().toBe<Opaque<'007', 'Text'>>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'', 'Text'>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'-1', 'Text'>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'1.5', 'Text'>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'1a', 'Text'>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'0' | '007', 'Text'>>>().toBe<Tagged<'0' | '007', 'Text'>>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'1' | 'a', 'Text'>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'1' | '', 'Text'>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<Tagged<'42', 'Text'>, 'Validated'>>>().toBe<Tagged<Tagged<'42', 'Text'>, 'Validated'>>();
+expectTypeOf<NonNegativeIntegerString<Tagged<Tagged<'', 'Text'>, 'Validated'>>>().toBe<never>();
+type BrandedDigits = '42' & {readonly brand: unique symbol};
+expectTypeOf<NonNegativeIntegerString<BrandedDigits>>().toBe<BrandedDigits>();
+expectTypeOf<NonNegativeIntegerString<Tagged<StringRepeat<'1', 999>, 'Text'>>>().toBe<Tagged<StringRepeat<'1', 999>, 'Text'>>();
+
+// An empty string enum member is still empty.
+enum NumericText {
+	Empty = '',
+	Digits = '42',
+}
+expectTypeOf<NonNegativeIntegerString<NumericText.Empty>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<NumericText>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<NumericText.Digits>>().toBe<NumericText.Digits>();
+expectTypeOf<NonNegativeIntegerString<Tagged<NumericText.Empty, 'Text'>>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<NumericText.Digits, 'Text'>>>().toBe<Tagged<NumericText.Digits, 'Text'>>();

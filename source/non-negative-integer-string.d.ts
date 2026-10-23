@@ -1,5 +1,6 @@
 import type {DigitCharacter} from './characters.d.ts';
 import type {ConsistsOnlyOf} from './internal/string.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {NonNegativeInteger} from './numeric.d.ts'; // For `@link`
 import type {StringToNumber} from './string-to-number.d.ts'; // For `@link`
 import type {Tagged} from './tagged.d.ts'; // For `@link`
@@ -7,7 +8,7 @@ import type {Tagged} from './tagged.d.ts'; // For `@link`
 /**
 A `string` that represents a non-negative integer, like `'42'`.
 
-The string must consist only of the decimal digits `0`-`9`. Leading zeros are allowed, since `'007'` is still a non-negative integer written as a string. A sign, a decimal point, an exponent, a numeric separator, whitespace, a non-ASCII digit, or an empty string is rejected. A union is kept only when every member is valid, so `'1' | 'a'` is rejected.
+The underlying string must consist only of the decimal digits `0`-`9`. Leading zeros are allowed, since `'007'` is still a non-negative integer written as a string. A sign, a decimal point, an exponent, a numeric separator, whitespace, a non-ASCII digit, or an empty string is rejected. A union is kept only when every member is valid, so `'1' | 'a'` is rejected. A valid branded string retains its brand.
 
 Use-cases:
 - Validate a string that must hold a numeric ID, like a Discord snowflake or a 64-bit integer from an API. A `number` would lose precision above `Number.MAX_SAFE_INTEGER`.
@@ -84,10 +85,10 @@ The built-in `${number}` is not enough because it also matches `'-1'`, `'1.5'`, 
 @category Template literal
 */
 export type NonNegativeIntegerString<Value extends string> =
-	// `ConsistsOnlyOf` treats the empty string as valid, so it is ruled out here.
-	'' extends Value
+	// `ConsistsOnlyOf` accepts empty strings. Include enum values without losing the constraint on generic strings.
+	'' extends UnwrapBrand<Value> | `${UnwrapBrand<Value>}`
 		? never
-		: ConsistsOnlyOf<Value, DigitCharacter> extends true
+		: ConsistsOnlyOf<UnwrapBrand<Value>, DigitCharacter> extends true
 			? Value
 			: never;
 
