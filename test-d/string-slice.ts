@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {StringRepeat, StringSlice} from '../index.d.ts';
+import type {StringRepeat, StringSlice, Tagged} from '../index.d.ts';
 
 expectTypeOf<StringSlice<'abcde'>>().toBe<'abcde'>();
 expectTypeOf<StringSlice<'abcde'>>().toBe<'abcde'>();
@@ -53,3 +53,25 @@ expectTypeOf<'1' | '12' | '01' | '012' | 'abcd' | 'abc' | 'bc' | 'bcd'>().toBe<S
 
 // A long string does not hit the recursion limit.
 expectTypeOf<StringSlice<StringRepeat<'a', 200>, 1>>().toBe<StringRepeat<'a', 199>>();
+
+// These ranges are empty for every possible string, even when its text is unknown.
+expectTypeOf<StringSlice<string, 0, 0>>().toBe<''>();
+expectTypeOf<StringSlice<string, 2, 1>>().toBe<''>();
+expectTypeOf<StringSlice<string, never, 0>>().toBe<''>();
+
+expectTypeOf<StringSlice<string, 3, 3>>().toBe<''>();
+expectTypeOf<StringSlice<string, 100, 1>>().toBe<''>();
+expectTypeOf<StringSlice<string, 0 | 1 | 2, 0>>().toBe<''>();
+expectTypeOf<StringSlice<string, 2, 0 | 1 | 2>>().toBe<''>();
+expectTypeOf<StringSlice<string, 1, 2>>().toBe<string>();
+expectTypeOf<StringSlice<string, -2, -1>>().toBe<string>();
+expectTypeOf<StringSlice<string, 1, number>>().toBe<string>();
+expectTypeOf<StringSlice<Tagged<string, 'Text'>, 2, 1>>().toBe<''>();
+expectTypeOf<StringSlice<`prefix${string}`, 2, 1>>().toBe<''>();
+expectTypeOf<StringSlice<'abc' | `prefix${string}`, 1, 1>>().toBe<''>();
+expectTypeOf<StringSlice<string, any, any>>().toBe<string>();
+expectTypeOf<StringSlice<any>>().toBe<string>();
+expectTypeOf<StringSlice<any, 0, 0>>().toBe<string>();
+expectTypeOf<StringSlice<never, 0, 0>>().toBe<never>();
+// @ts-expect-error
+expectTypeOf<StringSlice<unknown, 0, 0>>();

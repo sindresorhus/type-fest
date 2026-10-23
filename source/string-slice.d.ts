@@ -1,3 +1,4 @@
+import type {IsAny} from './is-any.d.ts';
 import type {Join} from './join.d.ts';
 import type {ArraySlice} from './array-slice.d.ts';
 import type {StringToArray} from './string-to-array.d.ts';
@@ -30,8 +31,9 @@ export type StringSlice<
 	S extends string,
 	Start extends number = never,
 	End extends number = never,
-> = string extends S
+> = IsAny<S> extends true
 	? string
+	// ArraySlice can resolve empty ranges even when the input text is unknown.
 	: ArraySlice<StringToArray<S>, Start, End> extends infer R extends readonly string[]
 		? Join<R, ''>
 		: never;
