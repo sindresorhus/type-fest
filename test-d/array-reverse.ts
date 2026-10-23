@@ -293,3 +293,47 @@ expectTypeOf<ArrayReverse<FirstNineHundredNinetyNineIntegers>>().toBe<FirstNineH
 // Boundary cases
 expectTypeOf<ArrayReverse<never>>().toBe<never>();
 expectTypeOf<ArrayReverse<any>>().toBe<any>();
+
+// Required-prefix boundaries and optional/rest fallbacks retain their exact order.
+expectTypeOf<ArrayReverse<[1, 2, 3, 4]>>().toBe<[4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5]>>().toBe<[5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5, 6]>>().toBe<[6, 5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5, 6, 7, 8, 9]>>().toBe<[9, 8, 7, 6, 5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]>>().toBe<[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]>>().toBe<[11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[undefined, 2 | undefined, unknown, never, any, 6]>>().toBe<[6, any, never, unknown, 2 | undefined, undefined]>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5?]>>().toBe<[4, 3, 2, 1] | [5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<readonly [1, 2, 3, 4, 5, (6 | undefined)?]>>().toBe<readonly [5, 4, 3, 2, 1] | readonly [6 | undefined, 5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<readonly [1, 2, 3, 4, 5, ...string[], 'last']>>().toBe<readonly ['last', ...string[], 5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5, 6?, ...boolean[]]>>().toBe<[5, 4, 3, 2, 1] | [...boolean[], 6, 5, 4, 3, 2, 1]>();
+expectTypeOf<ArrayReverse<[...string[], 1, 2, 3, 4, 5, 6]>>().toBe<[6, 5, 4, 3, 2, 1, ...string[]]>();
+
+type CoordinateMetadata = readonly [1, 2, 3, 4, 5, 6] & {readonly label: 'coordinates'};
+expectTypeOf<ArrayReverse<CoordinateMetadata>>().toBeAssignableTo<readonly unknown[]>();
+expectTypeOf<ArrayReverse<CoordinateMetadata>>().not.toBeAssignableTo<unknown[]>();
+
+function acceptReversedArray<Value extends readonly unknown[]>(value: ArrayReverse<Value>): readonly unknown[] {
+	return value;
+}
+
+declare function reverse<const Value extends readonly unknown[]>(value: Value): ArrayReverse<Value>;
+const inferredReversed = reverse([1, 2, 3, 4, 5, {id: 'last'}]);
+expectTypeOf(inferredReversed).toBe<readonly [{readonly id: 'last'}, 5, 4, 3, 2, 1]>();
+expectTypeOf(acceptReversedArray<readonly [1, 2, 3, 4, 5, {readonly id: 'last'}]>(inferredReversed)).toBe<readonly unknown[]>();
+// @ts-expect-error The inferred output remains readonly.
+inferredReversed[0] = {id: 'other'};
+// @ts-expect-error The input must be an array.
+reverse({id: 'last'});
+
+// A tuple beyond the single-element recursion budget still reverses both sides of a distinct marker.
+type LongMarkedTuple = [...TupleOf<600, 'before'>, {marker: true}, ...TupleOf<600, 'after'>];
+expectTypeOf<ArrayReverse<LongMarkedTuple>>().toBe<[...TupleOf<600, 'after'>, {marker: true}, ...TupleOf<600, 'before'>]>();
+
+expectTypeOf<ArrayReverse<Readonly<LongMarkedTuple>>[600]>().toBe<{marker: true}>();
+expectTypeOf<ArrayReverse<[1, 2, 3, 4, 5] | readonly ['a', 'b', 'c', 'd', 'e', 'f']>>().toBe<[5, 4, 3, 2, 1] | readonly ['f', 'e', 'd', 'c', 'b', 'a']>();
+expectTypeOf<[5, 4, 3, 2, 'a']>().not.toBeAssignableTo<ArrayReverse<[1, 2, 3, 4, 5] | ['a', 'b', 'c', 'd', 'e']>>();
+
+declare const mutableRow: {id: string};
+const reversedRows = reverse([mutableRow, 1, 2, 3, 4, 5]);
+expectTypeOf(reversedRows).toBe<readonly [5, 4, 3, 2, 1, {id: string}]>();
+reversedRows[5].id = 'updated';
