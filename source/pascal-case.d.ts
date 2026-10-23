@@ -1,5 +1,4 @@
-import type {CamelCase, CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {CamelCase, CamelCaseOptions} from './camel-case.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 /**
@@ -45,10 +44,7 @@ const dbResult: PascalCasedProperties<RawOptions> = {
 @category Change case
 @category Template literal
 */
-export type PascalCase<Value, Options extends CamelCaseOptions = {}> =
-	_PascalCase<Value, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
-
-type _PascalCase<Value, Options extends Required<CamelCaseOptions>> = Value extends string
+export type PascalCase<Value, Options extends CamelCaseOptions = {}> = Value extends string
 	? IsStringLiteral<Value> extends false
 		? Value
 		: Capitalize<CamelCase<Value, Options>>

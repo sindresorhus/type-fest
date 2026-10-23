@@ -122,12 +122,15 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 		: CamelCaseUnbranded<UnwrapBrand<Type>, Options>
 	: Type;
 
-type CamelCaseUnbranded<Type extends string, Options extends CamelCaseOptions> = `${Options['preserveLeadingUnderscores'] extends true
-	? LeadingUnderscores<Type>
-	: ''
-}${CamelCaseFromArray<
-	Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
-	ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>
->}`;
+type CamelCaseUnbranded<Type extends string, Options extends CamelCaseOptions> =
+	ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options> extends infer OptionsWithDefaults extends Required<CamelCaseOptions>
+		? `${OptionsWithDefaults['preserveLeadingUnderscores'] extends true
+			? LeadingUnderscores<Type>
+			: ''
+		}${CamelCaseFromArray<
+			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
+			OptionsWithDefaults
+		>}`
+		: never;
 
 export {};

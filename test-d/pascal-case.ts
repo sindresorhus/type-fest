@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {PascalCase} from '../index.d.ts';
+import type {CamelCase, CamelCaseOptions, PascalCase, Tagged} from '../index.d.ts';
 
 const pascalFromCamel: PascalCase<'fooBar'> = 'FooBar';
 expectTypeOf(pascalFromCamel).toBe<'FooBar'>();
@@ -55,3 +55,27 @@ expectTypeOf<PascalCase<'a-écaille'>>().toBe<'AÉcaille'>();
 // String members are converted even when the union also contains a non-string member.
 expectTypeOf<PascalCase<'foo-bar' | 'baz_qux' | 42>>().toBe<'FooBar' | 'BazQux' | 42>();
 expectTypeOf<PascalCase<'foo-bar' | `prefix${string}` | undefined>>().toBe<'FooBar' | `prefix${string}` | undefined>();
+
+// Pascal casing delegates option defaults to the same transformation as camel casing.
+expectTypeOf<PascalCase<'_foo_bar', never>>().toBe<'FooBar'>();
+expectTypeOf<PascalCase<'_foo_bar', any>>().toBe<'FooBar'>();
+expectTypeOf<PascalCase<'__fooBAR_baz', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBARBaz'>();
+expectTypeOf<PascalCase<'__fooBAR_baz', {preserveLeadingUnderscores: false; preserveConsecutiveUppercase: true}>>().toBe<'FooBARBaz'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuation: true}>>().toBe<'P2PNetwork'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<'P2pNetwork'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuation: false}>>().toBe<'P2P:network'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: false}>>().toBe<'P2p:network'>();
+expectTypeOf<PascalCase<Tagged<'__fooBAR', 'Text'>, {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBAR'>();
+expectTypeOf<PascalCase<Tagged<'foo-bar', 'Text'>, never>>().toBe<'FooBar'>();
+expectTypeOf<PascalCase<'__FOO_BAR', never>>().toBe<'FooBar'>();
+expectTypeOf<PascalCase<'__foo_bar' | '__on_change', any>>().toBe<'FooBar' | 'OnChange'>();
+expectTypeOf<PascalCase<'_', never>>().toBe<''>();
+expectTypeOf<PascalCase<string, never>>().toBe<string>();
+expectTypeOf<PascalCase<Tagged<string, 'Text'>, any>>().toBe<Tagged<string, 'Text'>>();
+expectTypeOf<PascalCase<any, never>>().toBe<any>();
+expectTypeOf<PascalCase<never, any>>().toBe<never>();
+expectTypeOf<PascalCase<unknown, never>>().toBe<unknown>();
+
+function checkGenericOptions<Options extends CamelCaseOptions>() {
+	expectTypeOf<PascalCase<'__foo-bar', Options>>().toBe<Capitalize<CamelCase<'__foo-bar', Options>>>();
+}

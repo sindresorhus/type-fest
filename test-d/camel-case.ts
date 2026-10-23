@@ -169,3 +169,25 @@ expectTypeOf<CamelCase<'__FOO_BAR' & {readonly __brand: 'x'}, {preserveConsecuti
 // Repeated tags still allow the underlying string to be split and pre-lowered.
 expectTypeOf<CamelCase<Tagged<Tagged<'foo-bar', 'Text'>, 'Validated'>>>().toBe<'fooBar'>();
 expectTypeOf<CamelCase<Tagged<Tagged<'__FOO_BAR', 'Text'>, 'Validated'>, {preserveLeadingUnderscores: true}>>().toBe<'__fooBar'>();
+
+// Unspecified options use the same defaults before every part of the transformation.
+expectTypeOf<CamelCase<'_foo_bar', never>>().toBe<'fooBar'>();
+expectTypeOf<CamelCase<'_foo_bar', any>>().toBe<'fooBar'>();
+
+expectTypeOf<CamelCase<'__fooBAR_baz', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBARBaz'>();
+expectTypeOf<CamelCase<'__fooBAR_baz', {preserveLeadingUnderscores: false; preserveConsecutiveUppercase: true}>>().toBe<'fooBARBaz'>();
+expectTypeOf<CamelCase<'__fooBAR_baz', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: false}>>().toBe<'__fooBarBaz'>();
+expectTypeOf<CamelCase<'__fooBAR_baz', {preserveLeadingUnderscores: false; preserveConsecutiveUppercase: false}>>().toBe<'fooBarBaz'>();
+expectTypeOf<CamelCase<'__p2p:network', {preserveLeadingUnderscores: true; splitOnNumbers: true; splitOnPunctuation: true}>>().toBe<'__p2PNetwork'>();
+expectTypeOf<CamelCase<'__p2p:network', {preserveLeadingUnderscores: true; splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<'__p2pNetwork'>();
+expectTypeOf<CamelCase<'__p2p:network', {preserveLeadingUnderscores: true; splitOnNumbers: true; splitOnPunctuation: false}>>().toBe<'__p2P:network'>();
+expectTypeOf<CamelCase<'__p2p:network', {preserveLeadingUnderscores: true; splitOnNumbers: false; splitOnPunctuation: false}>>().toBe<'__p2p:network'>();
+expectTypeOf<CamelCase<Tagged<'__fooBAR', 'Text'>, {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBAR'>();
+expectTypeOf<CamelCase<'__FOO_BAR', never>>().toBe<'fooBar'>();
+expectTypeOf<CamelCase<'__foo_bar' | '__on_change', any>>().toBe<'fooBar' | 'onChange'>();
+expectTypeOf<CamelCase<'_', never>>().toBe<''>();
+expectTypeOf<CamelCase<string, never>>().toBe<string>();
+expectTypeOf<CamelCase<Tagged<string, 'Text'>, any>>().toBe<Tagged<string, 'Text'>>();
+expectTypeOf<CamelCase<any, never>>().toBe<any>();
+expectTypeOf<CamelCase<never, any>>().toBe<never>();
+expectTypeOf<CamelCase<unknown, never>>().toBe<unknown>();
