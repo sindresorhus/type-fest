@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {StringRepeat} from '../index.d.ts';
+import type {NegativeInfinity, PositiveInfinity, StringRepeat} from '../index.d.ts';
 
 declare const unknown: unknown;
 
@@ -42,17 +42,17 @@ expectTypeOf(unknown as '').toBe<StringRepeat<'0', 1e-5>>();
 expectTypeOf(unknown as '').toBe<StringRepeat<'0', 2e-6>>();
 
 // Counts whose string representation is in scientific notation
-expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e-7>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'0', 1e-7>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 2e21>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e21>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1_000_000_000_000_000_000_000>>();
-expectTypeOf(unknown as string).toBe<StringRepeat<'0', 0.0000001>>();
+expectTypeOf(unknown as '').toBe<StringRepeat<'0', 0.0000001>>();
 
 // Union cases
 expectTypeOf(unknown as '00000' | '11111').toBe<StringRepeat<'0' | '1', 5>>();
 expectTypeOf(unknown as '0000' | '00000').toBe<StringRepeat<'0', 4 | 5>>();
 expectTypeOf(unknown as '0000' | '00000' | '1111' | '11111').toBe<StringRepeat<'0' | '1', 4 | 5>>();
-expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e-7 | 2>>();
+expectTypeOf(unknown as '' | '00').toBe<StringRepeat<'0', 1e-7 | 2>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e-7 | 2e21>>();
 expectTypeOf(unknown as string).toBe<StringRepeat<'0', 1e21 | 3>>();
 
@@ -72,3 +72,24 @@ expectTypeOf<StringRepeat<'0', 3000>>().toBe<typeof threeThousandZeroes>();
 // A negative count below `1e-6` is one TypeScript prints in scientific notation, so the check for a plain `-0.` prefix does not see it. The runtime truncates it to `-0` all the same, so it is an empty string and not the `RangeError` a count that truncates to a negative integer is.
 expectTypeOf(unknown as '').toBe<StringRepeat<'0', -1e-7>>();
 expectTypeOf(unknown as '').toBe<StringRepeat<'pi', -1e-21>>();
+
+// Positive counts below one truncate to zero even when TypeScript prints an exponent.
+expectTypeOf<StringRepeat<'abc', 1e-7>>().toBe<''>();
+expectTypeOf<StringRepeat<string, 5e-324>>().toBe<''>();
+expectTypeOf<StringRepeat<'a' | 'b', 2 | 1e-21>>().toBe<'' | 'aa' | 'bb'>();
+expectTypeOf<StringRepeat<'abc', 9.99999e-7>>().toBe<''>();
+expectTypeOf<StringRepeat<'abc', 1e-6>>().toBe<''>();
+expectTypeOf<StringRepeat<'abc', 0.999999>>().toBe<''>();
+expectTypeOf<StringRepeat<'abc', 1>>().toBe<'abc'>();
+expectTypeOf<StringRepeat<any, 1e-7>>().toBe<''>();
+expectTypeOf<StringRepeat<'abc', never>>().toBe<never>();
+
+// An infinite count throws even when the input is empty.
+expectTypeOf<StringRepeat<'abc', PositiveInfinity>>().toBe<never>();
+expectTypeOf<StringRepeat<'', PositiveInfinity>>().toBe<never>();
+expectTypeOf<StringRepeat<string, PositiveInfinity>>().toBe<never>();
+expectTypeOf<StringRepeat<'abc', NegativeInfinity>>().toBe<never>();
+expectTypeOf<StringRepeat<'', NegativeInfinity>>().toBe<never>();
+expectTypeOf<StringRepeat<'abc', 1 | PositiveInfinity | NegativeInfinity>>().toBe<'abc'>();
+expectTypeOf<StringRepeat<any, PositiveInfinity>>().toBe<never>();
+expectTypeOf<StringRepeat<never, PositiveInfinity>>().toBe<never>();
