@@ -1076,3 +1076,43 @@ expectTypeOf<Paths<{a: HTMLElement}>>().toBe<'a'>();
 
 // A key that contains a dot is not escaped, so its path reads like a nested path. (https://github.com/sindresorhus/type-fest/issues/864)
 expectTypeOf<Paths<{'a.b': {c: number}}>>().toBe<'a.b' | 'a.b.c'>();
+
+// An explicitly undefined array element is a leaf as well as a possible nested object.
+expectTypeOf<Paths<Array<{name: string} | undefined>, {leavesOnly: true}>>()
+	.toBe<number | `${number}` | `${number}.name`>();
+expectTypeOf<Paths<{rows: ReadonlyArray<{name: string} | undefined>}, {leavesOnly: true}>>()
+	.toBe<`rows.${number}` | `rows.${number}.name`>();
+expectTypeOf<Paths<[...Array<{name: string} | undefined>], {leavesOnly: true}>>()
+	.toBe<number | `${number}` | `${number}.name`>();
+
+// Leaf filtering preserves undefined element values across notation and depth options.
+type UndefinedElementRows = {rows: ReadonlyArray<{name: string} | undefined>};
+expectTypeOf<Paths<UndefinedElementRows, {leavesOnly: true; bracketNotation: true}>>()
+	.toBe<`rows[${number}]` | `rows[${number}].name`>();
+expectTypeOf<Paths<UndefinedElementRows, {leavesOnly: true; depth: 1}>>().toBe<`rows.${number}`>();
+expectTypeOf<Paths<UndefinedElementRows, {leavesOnly: true; depth: 2}>>().toBe<`rows.${number}.name`>();
+expectTypeOf<Paths<UndefinedElementRows, {leavesOnly: true; requiredOnly: true}>>()
+	.toBe<`rows.${number}` | `rows.${number}.name`>();
+expectTypeOf<Paths<UndefinedElementRows, {leavesOnly: true; recurseIntoArrays: false}>>().toBe<'rows'>();
+
+// Optional tuple positions do not add a leaf for absence, while explicitly declared undefined does.
+expectTypeOf<Paths<readonly [{name: string}?], {leavesOnly: true}>>().toBe<'0.name'>();
+expectTypeOf<Paths<readonly [({name: string} | undefined)?], {leavesOnly: true}>>().toBe<'0' | '0.name'>();
+expectTypeOf<Paths<readonly [{name: string}, ...Array<{name: string} | undefined>], {leavesOnly: true}>>()
+	.toBe<number | `${number}` | `${number}.name`>();
+expectTypeOf<Paths<{rows?: Array<{name: string} | undefined>}, {leavesOnly: true}>>()
+	.toBe<`rows.${number}` | `rows.${number}.name`>();
+
+// A real path-taking API accepts the undefined element itself and still rejects containers and misspelled fields.
+declare function selectLeafPath<Value>(value: Value, path: Paths<Value, {leavesOnly: true}>): void;
+const undefinedElementRows: UndefinedElementRows = {rows: [undefined, {name: 'Ada'}]};
+selectLeafPath(undefinedElementRows, 'rows.0');
+selectLeafPath(undefinedElementRows, 'rows.0.name');
+// @ts-expect-error The array is a container, not a leaf.
+selectLeafPath(undefinedElementRows, 'rows');
+// @ts-expect-error The array element has no field with this name.
+selectLeafPath(undefinedElementRows, 'rows.0.missing');
+
+function _genericLeafResult<Value>(path: Paths<{rows: Array<Value | undefined>}, {leavesOnly: true}>): string | number {
+	return path;
+}

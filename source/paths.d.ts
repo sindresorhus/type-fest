@@ -363,15 +363,15 @@ type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends numb
 			: T extends object
 				? number extends Options['maxCircularDepth']
 					// No limit, so skip tracking the seen types, which would prevent TypeScript from reusing instantiations
-					? InternalPaths<Required<T>, Options, CurrentDepth, Seen, KeysToSkip<T, Options>>
+					? InternalPaths<T, Options, CurrentDepth, Seen, KeysToSkip<T, Options>>
 					: GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends true // Limit the depth of circular references
 						? never
-						: InternalPaths<Required<T>, Options, CurrentDepth, [...Seen, T], KeysToSkip<T, Options>>
+						: InternalPaths<T, Options, CurrentDepth, [...Seen, T], KeysToSkip<T, Options>>
 				: never;
 
-// `T` has its `?` modifiers removed, so the optional keys to skip are passed in as `SkippedKey`.
+// The key map removes optional modifiers from the generated paths, while each value is read from its own required property.
 type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth extends number, Seen extends unknown[], SkippedKey> =
-	{[Key in keyof T]: Key extends SkippedKey ? never : Key extends string | number // Leave out the keys in `SkippedKey`, and limit `Key` to `string | number`
+	{[Key in keyof T]-?: Key extends SkippedKey ? never : Key extends string | number // Leave out the keys in `SkippedKey`, and limit `Key` to `string | number`
 		? (
 			And<Options['bracketNotation'], IsNumberLike<Key>> extends true
 				? `[${Key}]`
@@ -383,9 +383,9 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 			? ((Options['leavesOnly'] extends true
 				? Options['maxRecursionDepth'] extends CurrentDepth
 					? TransformedKey
-					: IsNever<T[Key]> extends true
+					: IsNever<PathValue<T, Key>> extends true
 						? TransformedKey
-						: T[Key] extends infer Value // For distributing `T[Key]`
+						: PathValue<T, Key> extends infer Value // For distributing the declared property value
 							? (Value extends readonly [] | NonRecursivePathsType<Options>
 								? TransformedKey
 								: IsNever<keyof Value & (string | number)> extends true // Check for empty object & `unknown`, because `keyof unknown` is `never`. Symbol keys are ignored, because they have no paths.
@@ -406,10 +406,13 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 				: never)
 			// Recursively generate paths for the current key
 			| (GreaterThan<Options['maxRecursionDepth'], CurrentDepth> extends true // Limit the depth to prevent infinite recursion
-				? `${TransformedKey}${_Paths<T[Key], Options, Sum<CurrentDepth, 1>, Seen> & (string | number)}`
+				? `${TransformedKey}${_Paths<PathValue<T, Key>, Options, Sum<CurrentDepth, 1>, Seen> & (string | number)}`
 				: never)
 			: never
 		: never
 	}[keyof T & (T extends UnknownArray ? number : unknown)];
+
+// Reading one required property removes implicit absence without transforming array elements.
+type PathValue<Type, Key extends keyof Type> = Required<Pick<Type, Key>>[Key];
 
 export {};
