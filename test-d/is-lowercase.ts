@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsLowercase} from '../index.d.ts';
+import type {IsLowercase, StringRepeat, Tagged} from '../index.d.ts';
 
 // Literals
 expectTypeOf<IsLowercase<'abc'>>().toBe<true>();
@@ -72,3 +72,16 @@ expectTypeOf<IsLowercase<'ǈ'>>().toBe<false>();
 expectTypeOf<IsLowercase<'ǋ'>>().toBe<false>();
 expectTypeOf<IsLowercase<'ǲ'>>().toBe<false>();
 expectTypeOf<IsLowercase<'ᾈ'>>().toBe<false>();
+
+// Whole string literals do not need a character-by-character traversal.
+expectTypeOf<IsLowercase<StringRepeat<'a', 1500>>>().toBe<true>();
+expectTypeOf<IsLowercase<`${StringRepeat<'a', 1500>}A`>>().toBe<false>();
+expectTypeOf<IsLowercase<StringRepeat<'A', 1500>>>().toBe<false>();
+expectTypeOf<IsLowercase<StringRepeat<'a', 1500> | 'A'>>().toBe<boolean>();
+expectTypeOf<IsLowercase<Tagged<'aa', 'Text'>>>().toBe<true>();
+expectTypeOf<IsLowercase<Tagged<'aA', 'Text'>>>().toBe<false>();
+expectTypeOf<IsLowercase<Tagged<Tagged<'aa', 'Text'>, 'Validated'>>>().toBe<true>();
+expectTypeOf<IsLowercase<any>>().toBe<boolean>();
+expectTypeOf<IsLowercase<never>>().toBe<false>();
+// @ts-expect-error - Only strings have letter casing.
+type UnknownCase = IsLowercase<unknown>;
