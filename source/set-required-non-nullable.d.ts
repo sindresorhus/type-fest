@@ -1,4 +1,5 @@
 import type {IsAny} from './is-any.d.ts';
+import type {RequiredNonNullable} from './required-non-nullable.d.ts'; // For `@link`
 import type {SetNonNullable} from './set-non-nullable.d.ts'; // For `@link`
 import type {SetRequired} from './set-required.d.ts'; // For `@link`
 import type {Simplify} from './simplify.d.ts'; // For `@link`
@@ -7,6 +8,8 @@ import type {Simplify} from './simplify.d.ts'; // For `@link`
 Create a type that makes the given keys required and non-nullable, while keeping the remaining keys as is.
 
 This is {@link SetRequired} and {@link SetNonNullable} in one step. It removes the optional modifier from each given key, and it removes `null` and `undefined` from the value type of each given key.
+
+Note: To make every key required and non-nullable, use {@link RequiredNonNullable} instead. It returns one flat type, and it also changes every element of an array or a tuple.
 
 Use-cases:
 - Give a reusable type guard a return type that tells its callers what it checked. TypeScript cannot narrow a key of a generic object type on its own.

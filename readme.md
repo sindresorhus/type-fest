@@ -127,6 +127,7 @@ Click the type names for complete docs.
 - [`SingleKeyObject`](source/single-key-object.d.ts) - Create a type that only accepts an object with a single key.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type.
 - [`RequiredKeepUndefined`](source/required-keep-undefined.d.ts) - Create a type that makes all keys required, while the keys that were optional also accept `undefined`.
+- [`RequiredNonNullable`](source/required-non-nullable.d.ts) - Create a type that makes all keys required and non-nullable, including the elements of an array or tuple.
 - [`PickDeep`](source/pick-deep.d.ts) - Pick properties from a deeply-nested object.
 - [`OmitDeep`](source/omit-deep.d.ts) - Omit properties from a deeply-nested object.
 - [`OmitIndexSignature`](source/omit-index-signature.d.ts) - Omit any index signatures from the given object type, leaving only explicitly defined properties.

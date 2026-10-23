@@ -4,11 +4,15 @@ import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {SetNullable} from './set-nullable.d.ts'; // For `@link`
+import type {RequiredNonNullable} from './required-non-nullable.d.ts'; // For `@link`
+import type {SetRequiredNonNullable} from './set-required-non-nullable.d.ts'; // For `@link`
 
 /**
 Create a type that makes the given keys non-nullable, while keeping the remaining keys as is.
 
 If no keys are given, all keys will be made non-nullable.
+
+Note: The optional modifier is kept, so an optional key still reads as possibly `undefined`. Use {@link SetRequiredNonNullable} to make the given keys required too, or {@link RequiredNonNullable} to make every key required.
 
 Note: Literal numeric keys are unsupported for arrays and tuples that start with a rest element, such as `string[]` or `[...string[], number]`. Use `number` or omit the keys to make all their elements non-nullable.
 
