@@ -1,4 +1,4 @@
-import type {SimplifyObject} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, SimplifyObject} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -109,7 +109,12 @@ type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
 				: Type extends UnknownArray
 					? Options['recurseIntoArrays'] extends false
 						? Value
-						: SchemaHelper<Type, Value, Options>
+						: IsArrayOfUnknownLength<Type> extends true
+							// Rebuild arrays directly so recursive element types stay lazy. Tuples keep their mapped shape and modifiers.
+							? Type extends unknown[]
+								? Array<_Schema<Type[number], Value, Options>>
+								: ReadonlyArray<_Schema<Type[number], Value, Options>>
+							: SchemaHelper<Type, Value, Options>
 					: SchemaHelper<Type, Value, Options>;
 
 /**

@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Schema} from '../index.d.ts';
+import type {JsonValue, Schema} from '../index.d.ts';
 
 const foo = {
 	baz: 'fred',
@@ -364,3 +364,26 @@ expectTypeOf(modifiersSchema).toBe<{readonly a?: {b: number}; c: ReadonlyArray<{
 
 // A `PromiseLike` is a single value, like a `Promise`.
 expectTypeOf<Schema<{a: PromiseLike<string>}, number>>().toBe<{a: number}>();
+
+// Recursive arrays should stay lazy while their leaf values are replaced.
+type RecursiveData = string | RecursiveData[];
+type RecursiveMask = boolean | RecursiveMask[];
+expectTypeOf<Schema<RecursiveData, boolean>>().toBeAssignableTo<RecursiveMask>();
+expectTypeOf<RecursiveMask>().toBeAssignableTo<Schema<RecursiveData, boolean>>();
+
+type JsonMask = boolean | JsonMask[] | readonly JsonMask[] | {[key: string]: JsonMask};
+expectTypeOf<Schema<JsonValue, boolean>>().toBeAssignableTo<JsonMask>();
+expectTypeOf<JsonMask>().toBeAssignableTo<Schema<JsonValue, boolean>>();
+expectTypeOf<Schema<RecursiveData, boolean, {recurseIntoArrays: false}>>().toBe<boolean>();
+type ReadonlyRecursiveData = string | readonly ReadonlyRecursiveData[];
+type ReadonlyRecursiveMask = boolean | readonly ReadonlyRecursiveMask[];
+expectTypeOf<Schema<ReadonlyRecursiveData, boolean>>().toBeAssignableTo<ReadonlyRecursiveMask>();
+expectTypeOf<ReadonlyRecursiveMask>().toBeAssignableTo<Schema<ReadonlyRecursiveData, boolean>>();
+type RecursiveEntry = {readonly entries?: RecursiveData[]; value: RecursiveData | undefined};
+expectTypeOf<Schema<RecursiveEntry, boolean>>().toBe<{readonly entries?: RecursiveMask[]; value: RecursiveMask}>();
+expectTypeOf<Schema<readonly [first?: {value?: string}, ...rest: Array<{value?: number}>], boolean>>().toBe<readonly [first?: {value?: boolean}, ...rest: Array<{value?: boolean}>]>();
+expectTypeOf<Schema<readonly [...Array<{value?: number}>, {readonly last: string}], boolean>>().toBe<readonly [...Array<{value?: boolean}>, {readonly last: boolean}]>();
+expectTypeOf<Schema<any[], boolean>>().toBe<boolean[]>();
+expectTypeOf<Schema<readonly unknown[], boolean>>().toBe<readonly boolean[]>();
+expectTypeOf<Schema<never[], boolean>>().toBe<never[]>();
+expectTypeOf<Schema<readonly [], boolean>>().toBe<readonly []>();
