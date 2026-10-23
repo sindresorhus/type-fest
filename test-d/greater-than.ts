@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Opaque, Tagged} from '../index.d.ts';
+import type {GreaterThan, GreaterThanOrEqual, IsNumericLiteral, LessThan, LessThanOrEqual, Opaque, Tagged} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 declare const never: never;
@@ -204,3 +204,53 @@ expectTypeOf<GreaterThan<never, never>>().toBe<never>();
 expectTypeOf<GreaterThanOrEqual<never, never>>().toBe<never>();
 expectTypeOf<LessThan<never, never>>().toBe<never>();
 expectTypeOf<LessThanOrEqual<never, never>>().toBe<never>();
+
+// Infinity comparisons distribute complete pairs before deciding the result.
+expectTypeOf<GreaterThan<0 | PositiveInfinity, -1>>().toBe<true>();
+expectTypeOf<GreaterThan<NegativeInfinity | 0, 1>>().toBe<false>();
+expectTypeOf<GreaterThan<NegativeInfinity | PositiveInfinity, 0>>().toBe<boolean>();
+expectTypeOf<GreaterThan<PositiveInfinity, NegativeInfinity | PositiveInfinity>>().toBe<boolean>();
+expectTypeOf<GreaterThan<NegativeInfinity, NegativeInfinity | PositiveInfinity>>().toBe<false>();
+expectTypeOf<GreaterThan<123n, NegativeInfinity | PositiveInfinity>>().toBe<boolean>();
+expectTypeOf<GreaterThan<ComparisonLimit.High, PositiveInfinity>>().toBe<false>();
+expectTypeOf<GreaterThan<ComparisonLimit.Negative, NegativeInfinity>>().toBe<true>();
+
+// A computed enum member has no known value, so even an infinity comparison remains uncertain.
+declare enum RuntimeComparisonLimit {
+	Value,
+}
+expectTypeOf<IsNumericLiteral<RuntimeComparisonLimit.Value>>().toBe<false>();
+expectTypeOf<GreaterThan<RuntimeComparisonLimit.Value, 0>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<RuntimeComparisonLimit.Value, 0>>().toBe<boolean>();
+expectTypeOf<LessThan<RuntimeComparisonLimit.Value, 0>>().toBe<boolean>();
+expectTypeOf<LessThanOrEqual<RuntimeComparisonLimit.Value, 0>>().toBe<boolean>();
+expectTypeOf<GreaterThan<PositiveInfinity, RuntimeComparisonLimit.Value>>().toBe<boolean>();
+
+// Generic comparison results remain booleans, while actual calls retain their literal answers.
+function _comparisonResult<Left extends number | bigint, Right extends number | bigint>(result: GreaterThan<Left, Right>): boolean {
+	return result;
+}
+
+declare function compareValues<const Left extends number | bigint, const Right extends number | bigint>(left: Left, right: Right): GreaterThan<Left, Right>;
+expectTypeOf(compareValues(100, 99)).toBe<true>();
+expectTypeOf(compareValues(1, 2)).toBe<false>();
+expectTypeOf(compareValues(2n, 1.5)).toBe<true>();
+expectTypeOf(compareValues(RuntimeComparisonLimit.Value, 0)).toBe<boolean>();
+
+// Comparison-based input constraints still infer their numeric argument.
+declare function requirePositive<Value extends number>(value: GreaterThan<Value, 0> extends true ? Value : never): Value;
+expectTypeOf(requirePositive(1)).toBe<1>();
+expectTypeOf(requirePositive(ComparisonLimit.High)).toBe<ComparisonLimit.High>();
+// @ts-expect-error Zero is not positive.
+requirePositive(0);
+// @ts-expect-error Negative values are not positive.
+requirePositive(-1);
+
+// Equal-infinity branches and unknown runtime arguments keep their distinct answers.
+expectTypeOf<GreaterThan<NegativeInfinity, PositiveInfinity>>().toBe<false>();
+expectTypeOf<GreaterThan<NegativeInfinity | 1, NegativeInfinity>>().toBe<boolean>();
+expectTypeOf<GreaterThan<PositiveInfinity | 1, PositiveInfinity>>().toBe<false>();
+declare const checkedInfiniteLimit: Tagged<PositiveInfinity, 'Limit'>;
+expectTypeOf(compareValues(checkedInfiniteLimit, checkedInfiniteLimit)).toBe<false>();
+// @ts-expect-error A computed value is not proven positive.
+requirePositive(RuntimeComparisonLimit.Value);

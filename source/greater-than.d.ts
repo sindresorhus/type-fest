@@ -1,8 +1,6 @@
 import type {PositiveNumericStringGt} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative, _Numeric} from './numeric.d.ts';
-import type {And} from './and.d.ts';
-import type {Or} from './or.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 
@@ -80,21 +78,14 @@ type _GreaterThan<A extends _Numeric, B extends _Numeric> =
 					// A `number` of `1e+21` and above is printed in exponential notation, which cannot be compared digit by digit with the plain digits of a `bigint`.
 					: IsBigIntAgainstLargeExponent<A, B> extends true
 						? boolean
-						: [
-							IsEqual<A, PositiveInfinity>, IsEqual<A, NegativeInfinity>,
-							IsEqual<B, PositiveInfinity>, IsEqual<B, NegativeInfinity>,
-						] extends infer R extends [boolean, boolean, boolean, boolean]
-							? Or<
-								And<IsEqual<R[0], true>, IsEqual<R[2], false>>,
-								And<IsEqual<R[3], true>, IsEqual<R[1], false>>
-							> extends true
-								? true
-								: Or<
-									And<IsEqual<R[1], true>, IsEqual<R[3], false>>,
-									And<IsEqual<R[2], true>, IsEqual<R[0], false>>
-								> extends true
+						// Keep exact identity checks because numeric enum assignability is broader than literal equality.
+						: IsEqual<A, PositiveInfinity> extends true
+							? IsEqual<B, PositiveInfinity> extends true ? false : true
+							: IsEqual<B, NegativeInfinity> extends true
+								? IsEqual<A, NegativeInfinity> extends true ? false : true
+								: IsEqual<A, NegativeInfinity> extends true
 									? false
-									: true extends R[number]
+									: IsEqual<B, PositiveInfinity> extends true
 										? false
 										: [IsNegative<A>, IsNegative<B>] extends infer Signs extends [boolean, boolean]
 											? [true, false] extends Signs
@@ -105,7 +96,6 @@ type _GreaterThan<A extends _Numeric, B extends _Numeric> =
 														? PositiveNumericStringGt<`${A}`, `${B}`>
 														: PositiveNumericStringGt<`${Absolute<B>}`, `${Absolute<A>}`>
 											: never
-							: never
 			: never // Should never happen
 		: never; // Should never happen
 
