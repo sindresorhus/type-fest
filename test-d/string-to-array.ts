@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {StringToArray} from '../source/string-to-array.d.ts';
+import type {StringToArray, StringToArrayOptions} from '../source/string-to-array.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {Tagged} from '../source/tagged.d.ts';
@@ -120,3 +120,46 @@ expectTypeOf<StringToArray<'xy' | Tagged<'ab', 'Text'>>>().toBe<['x', 'y'] | ['a
 declare function textCharacters<Text extends string>(text: Text): StringToArray<Text>;
 expectTypeOf(textCharacters('a-b')).toBe<['a', '-', 'b']>();
 expectTypeOf(textCharacters('a-b' as Tagged<'a-b', 'Text'>)).toBe<['a', '-', 'b']>();
+
+// A long literal retains every character on both sides of a distinct marker.
+type LongCharacterText = `${StringRepeat<'a', 600>}X${StringRepeat<'b', 600>}`;
+expectTypeOf<StringToArray<LongCharacterText>>().toBe<[...TupleOf<600, 'a'>, 'X', ...TupleOf<600, 'b'>]>();
+expectTypeOf<StringToArrayElementNonLiterals<LongCharacterText>>().toBe<[...TupleOf<600, 'a'>, 'X', ...TupleOf<600, 'b'>]>();
+
+// Every chunk and its remainder preserve character order.
+expectTypeOf<StringToArray<'abcdefghi'>>().toBe<['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']>();
+expectTypeOf<StringToArray<'abcdefghij'>>().toBe<['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']>();
+expectTypeOf<StringToArray<'abcdefghijk'>>().toBe<['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k']>();
+expectTypeOf<StringToArray<`${StringRepeat<'a', 9>}X${StringRepeat<'b', 9>}`>>().toBe<[...TupleOf<9, 'a'>, 'X', ...TupleOf<9, 'b'>]>();
+expectTypeOf<StringToArray<`${StringRepeat<'a', 9>}X${StringRepeat<'b', 10>}`>>().toBe<[...TupleOf<9, 'a'>, 'X', ...TupleOf<10, 'b'>]>();
+expectTypeOf<StringToArray<`${StringRepeat<'a', 9>}X${StringRepeat<'b', 11>}`>>().toBe<[...TupleOf<9, 'a'>, 'X', ...TupleOf<11, 'b'>]>();
+
+// Surrogate and combining sequences retain the original decomposition across a chunk boundary.
+expectTypeOf<StringToArray<'abcdefghi😀z'>>().toBe<[...StringToArray<'abcdefghi'>, ...StringToArray<'😀'>, 'z']>();
+expectTypeOf<StringToArray<'abcdefghiéz'>>().toBe<[...StringToArray<'abcdefghi'>, ...StringToArray<'é'>, 'z']>();
+
+type LongCharacterParts = [...TupleOf<600, 'a'>, 'X', ...TupleOf<600, 'b'>];
+type PartialCharacterText = `prefix${string}`;
+expectTypeOf<StringToArray<LongCharacterText | PartialCharacterText>>().toBe<LongCharacterParts | ['p', 'r', 'e', 'f', 'i', 'x', ...string[]]>();
+expectTypeOf<StringToArrayElementNonLiterals<LongCharacterText | PartialCharacterText>>().toBe<LongCharacterParts | ['p', 'r', 'e', 'f', 'i', 'x', string]>();
+expectTypeOf<StringToArray<Tagged<LongCharacterText, 'Text'>>>().toBe<LongCharacterParts>();
+expectTypeOf<StringToArray<LongCharacterText, {mapNonLiteralsDirectly: boolean}>>().toBe<LongCharacterParts>();
+
+declare const longCharacterInput: LongCharacterText;
+const longCharacters = textCharacters(longCharacterInput);
+expectTypeOf(longCharacters.length).toBe<1201>();
+expectTypeOf(longCharacters[600]).toBe<'X'>();
+// @ts-expect-error The marker remains an exact character after conversion.
+longCharacters[600] = 'a';
+
+function _constructLiteralCharacters<Options extends StringToArrayOptions>(value: ['a', 'b']): StringToArray<'ab', Options> {
+	return value;
+}
+
+function _readLiteralCharacters<Options extends StringToArrayOptions>(value: StringToArray<'ab', Options>): ['a', 'b'] {
+	return value;
+}
+
+function _readAutocompleteCharacters(value: StringToArrayElementNonLiterals<LiteralUnion<'abc', string>>): [string] {
+	return value;
+}

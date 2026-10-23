@@ -75,3 +75,16 @@ expectTypeOf<StringSlice<any, 0, 0>>().toBe<string>();
 expectTypeOf<StringSlice<never, 0, 0>>().toBe<never>();
 // @ts-expect-error
 expectTypeOf<StringSlice<unknown, 0, 0>>();
+
+// A small slice can cross a marker inside a long literal.
+type LongCharacterText = `${StringRepeat<'a', 600>}X${StringRepeat<'b', 600>}`;
+expectTypeOf<StringSlice<LongCharacterText, 599, 602>>().toBe<'aXb'>();
+
+expectTypeOf<StringSlice<LongCharacterText, -601, -600>>().toBe<'X'>();
+expectTypeOf<StringSlice<LongCharacterText | 'short', 599, 602>>().toBe<'aXb' | ''>();
+
+declare function sliceText<Text extends string, Start extends number, End extends number>(text: Text, start: Start, end: End): StringSlice<Text, Start, End>;
+declare const longSliceInput: LongCharacterText;
+const inferredLongSlice = sliceText(longSliceInput, 599, 602);
+expectTypeOf(inferredLongSlice).toBe<'aXb'>();
+expectTypeOf(inferredLongSlice).not.toBeAssignableTo<'aaa'>();

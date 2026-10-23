@@ -79,7 +79,13 @@ export type StringToArray<S extends string, Options extends StringToArrayOptions
 		S,
 		{
 			// The brand belongs to the complete input string, not to its individual characters.
-			ifNot: _StringToArray<S extends object ? UnwrapBrand<S> : S, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>;
+			ifNot: (S extends object ? UnwrapBrand<S> : S) extends infer Input extends string
+				? Input extends unknown // Classify each normalized union member before choosing its traversal.
+					? IsStringLiteral<Input> extends true
+						? StringToArrayLiteral<Input>
+						: _StringToArray<Input, ApplyDefaultOptions<StringToArrayOptions, DefaultStringToArrayOptions, Options>>
+					: never
+				: never;
 			ifAny: unknown[];
 		}
 	>;
@@ -95,5 +101,13 @@ type _StringToArray<S extends string, Options extends Required<StringToArrayOpti
 			: Options['mapNonLiteralsDirectly'] extends true
 				? [...Accumulator, S]
 				: [...Accumulator, ...string[]];
+
+// Literal inputs contain no placeholders, so consume ten characters at a time without reclassifying each character.
+type StringToArrayLiteral<Value extends string, Accumulator extends string[] = []> =
+	Value extends `${infer First}${infer Second}${infer Third}${infer Fourth}${infer Fifth}${infer Sixth}${infer Seventh}${infer Eighth}${infer Ninth}${infer Tenth}${infer Rest}`
+		? StringToArrayLiteral<Rest, [...Accumulator, First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth, Tenth]>
+		: Value extends `${infer First}${infer Rest}`
+			? StringToArrayLiteral<Rest, [...Accumulator, First]>
+			: Accumulator;
 
 export {};
