@@ -1,8 +1,6 @@
-import type {IsArrayOfUnknownLength, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, NonRecursiveType} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {LiteralToPrimitive} from './literal-to-primitive.d.ts';
-import type {OmitIndexSignature} from './omit-index-signature.d.ts';
-import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {Primitive} from './primitive.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -102,10 +100,7 @@ export type LiteralToPrimitiveDeep<T> =
 											// A weak collection is kept as is, because its key must be a weak reference. It is matched after `Map` and `Set`, because a `Map` or `Set` of objects is assignable to it.
 											: T extends WeakMap<WeakKey, unknown> | WeakSet<WeakKey>
 												? T
-												// The named keys and the index signature are mapped separately, because mapping `keyof T` in one go widens a named key to the signature's value type.
-												: SimplifyObject<
-													{[Key in keyof OmitIndexSignature<T>]: LiteralToPrimitiveDeep<OmitIndexSignature<T>[Key]>}
-													& {[Key in keyof PickIndexSignature<T>]: LiteralToPrimitiveDeep<PickIndexSignature<T>[Key]>}
-												>;
+												// A homomorphic map preserves named keys, index signatures and their modifiers in one pass.
+												: {[Key in keyof T]: LiteralToPrimitiveDeep<T[Key]>} & {};
 
 export {};

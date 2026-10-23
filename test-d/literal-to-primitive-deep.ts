@@ -234,3 +234,64 @@ expectTypeOf<LiteralToPrimitiveDeep<{a: 'x' | {} | null | undefined}>>().toBe<{a
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<LiteralToPrimitiveDeep<{element: HTMLElement}>>().toBe<{element: HTMLElement}>();
+
+// A named member keeps its precise widened type beside an otherwise unknown index signature.
+type IndexedLiteralConfig = {readonly [key: string]: unknown; readonly name: 'Ada'; options?: {readonly retries: 1} | undefined};
+expectTypeOf<LiteralToPrimitiveDeep<IndexedLiteralConfig>>()
+	.toBe<{readonly [key: string]: unknown; readonly name: string; options?: {readonly retries: number} | undefined}>();
+declare const indexedLiteralConfig: LiteralToPrimitiveDeep<IndexedLiteralConfig>;
+expectTypeOf(indexedLiteralConfig.name).toBe<string>();
+// @ts-expect-error The original named property's readonly modifier remains.
+indexedLiteralConfig.name = 'Grace';
+
+// Numeric, symbol and pattern signatures retain named members with more specific value types.
+expectTypeOf<LiteralToPrimitiveDeep<{[key: number]: unknown; readonly 0?: {id: 1}; label: 'first'}>>()
+	.toBe<{[key: number]: unknown; readonly 0?: {id: number}; label: string}>();
+declare const literalConfigKey: unique symbol;
+expectTypeOf<LiteralToPrimitiveDeep<{readonly [key: symbol]: unknown; [literalConfigKey]: {id: 1}}>>()
+	.toBe<{readonly [key: symbol]: unknown; [literalConfigKey]: {id: number}}>();
+expectTypeOf<LiteralToPrimitiveDeep<{[key: `data-${string}`]: unknown; 'data-known': {id: 1}; optional?: never}>>()
+	.toBe<{[key: `data-${string}`]: unknown; 'data-known': {id: number}; optional?: never}>();
+
+// Recursive object graphs widen their leaves without losing the shape of child nodes.
+type LiteralConfigNode = {readonly name: 'node'; child?: LiteralConfigNode; value: 1};
+type PrimitiveConfigNode = {readonly name: string; child?: PrimitiveConfigNode; value: number};
+const widenedConfigNode: LiteralToPrimitiveDeep<LiteralConfigNode> = {name: 'root', value: 10, child: {name: 'child', value: 20}};
+expectTypeOf(widenedConfigNode).toBeAssignableTo<PrimitiveConfigNode>();
+expectTypeOf<PrimitiveConfigNode>().toBeAssignableTo<LiteralToPrimitiveDeep<LiteralConfigNode>>();
+
+function _readGenericProperty<Value>(config: LiteralToPrimitiveDeep<{readonly value: Value}>): LiteralToPrimitiveDeep<Value> {
+	return config.value;
+}
+
+type GenericIndexedConfig<Value> = {[key: string]: unknown; readonly value: Value};
+function _readGenericIndexedProperty<Value>(config: LiteralToPrimitiveDeep<GenericIndexedConfig<Value>>): LiteralToPrimitiveDeep<Value> {
+	return config.value;
+}
+
+declare function widenConfig<const Config>(value: Config): LiteralToPrimitiveDeep<Config>;
+expectTypeOf(widenConfig({name: 'Ada', count: 1, options: {enabled: true}} as const))
+	.toBe<{readonly name: string; readonly count: number; readonly options: {readonly enabled: boolean}}>();
+expectTypeOf<LiteralToPrimitiveDeep<any>>().toBe<any>();
+expectTypeOf<LiteralToPrimitiveDeep<never>>().toBe<never>();
+
+expectTypeOf(indexedLiteralConfig['unknown']).toBe<unknown>();
+indexedLiteralConfig.options = undefined;
+// @ts-expect-error Widening a literal number does not admit a string.
+indexedLiteralConfig.options = {retries: 'invalid'};
+
+declare const unionIndexConfig: LiteralToPrimitiveDeep<{[key: string]: string | {id: 1}; known: {id: 1; label: 'value'}}>;
+expectTypeOf(unionIndexConfig.known).toBe<{id: number; label: string}>();
+expectTypeOf(unionIndexConfig['unknown']).toBe<string | {id: number} | undefined>();
+
+function _readConstrainedName<Config extends {readonly name: 'Ada'}>(config: LiteralToPrimitiveDeep<Config>): string {
+	return config.name;
+}
+
+// Optional impossible values do not acquire an explicit undefined while other declared undefined values remain.
+declare const convertedOptionalValues: LiteralToPrimitiveDeep<{impossible?: never; count?: 1 | undefined}>;
+convertedOptionalValues.count = undefined;
+// @ts-expect-error An optional never property still cannot be explicitly present.
+convertedOptionalValues.impossible = undefined;
+expectTypeOf<JsonValue>().toBeAssignableTo<LiteralToPrimitiveDeep<JsonValue>>();
+expectTypeOf<LiteralToPrimitiveDeep<JsonValue>>().toBeAssignableTo<JsonValue>();
