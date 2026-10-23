@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ScreamingSnakeCase} from '../index.d.ts';
+import type {Opaque, ScreamingSnakeCase, Tagged} from '../index.d.ts';
 
 const snakeFromCamel: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
 expectTypeOf(snakeFromCamel).toBe<'FOO_BAR'>();
@@ -121,3 +121,27 @@ expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'FOO_BAR_01'>();
 
 // A delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
 expectTypeOf<ScreamingSnakeCase<'foo.Bar'>>().toBe<'FOO.BAR'>();
+
+// Casing produces a new string, so a brand on an unknown input must not constrain the output.
+expectTypeOf<ScreamingSnakeCase<Tagged<string, 'Text'>>>().toBe<Uppercase<string>>();
+expectTypeOf<ScreamingSnakeCase<Opaque<string, 'Text'>>>().toBe<Uppercase<string>>();
+
+expectTypeOf<ScreamingSnakeCase<Tagged<Tagged<string, 'Text'>, 'Validated'>>>().toBe<Uppercase<string>>();
+expectTypeOf<ScreamingSnakeCase<string & {readonly __brand: 'Text'}>>().toBe<Uppercase<string>>();
+expectTypeOf<ScreamingSnakeCase<Tagged<`user${string}`, 'Text'>>>().toBe<Uppercase<`user${string}`>>();
+expectTypeOf<ScreamingSnakeCase<Tagged<Lowercase<string>, 'Text'>>>().toBe<Uppercase<Lowercase<string>>>();
+expectTypeOf<ScreamingSnakeCase<Tagged<Uppercase<string>, 'Text'>>>().toBe<Uppercase<string>>();
+expectTypeOf<ScreamingSnakeCase<Tagged<'fooBar', 'Text'>>>().toBe<'FOO_BAR'>();
+expectTypeOf<ScreamingSnakeCase<Opaque<'fooBar', 'Text'>>>().toBe<'FOO_BAR'>();
+expectTypeOf<ScreamingSnakeCase<Tagged<'foo2bar', 'Text'>, {splitOnNumbers: true}>>().toBe<'FOO_2_BAR'>();
+expectTypeOf<ScreamingSnakeCase<Tagged<'foo:bar', 'Text'>, {splitOnPunctuation: true}>>().toBe<'FOO_BAR'>();
+expectTypeOf<ScreamingSnakeCase<Tagged<'fooBar' | 'onChange', 'Text'>>>().toBe<'FOO_BAR' | 'ON_CHANGE'>();
+expectTypeOf<ScreamingSnakeCase<Tagged<'fooBar', 'Text'> | 42>>().toBe<'FOO_BAR' | 42>();
+expectTypeOf<ScreamingSnakeCase<Tagged<'', 'Text'>>>().toBe<''>();
+expectTypeOf<ScreamingSnakeCase<string>>().toBe<Uppercase<string>>();
+expectTypeOf<ScreamingSnakeCase<any>>().toBe<any>();
+expectTypeOf<ScreamingSnakeCase<never>>().toBe<never>();
+expectTypeOf<ScreamingSnakeCase<unknown>>().toBe<unknown>();
+expectTypeOf<ScreamingSnakeCase<{name: string}>>().toBe<{name: string}>();
+expectTypeOf<'FOO_BAR'>().toBeAssignableTo<ScreamingSnakeCase<Tagged<string, 'Text'>>>();
+expectTypeOf<'foo_bar'>().not.toBeAssignableTo<ScreamingSnakeCase<Tagged<string, 'Text'>>>();
