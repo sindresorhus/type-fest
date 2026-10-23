@@ -225,3 +225,44 @@ expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [any, unknown, neve
 
 // Turning recursion off returns the original alternatives without rebuilding tuples.
 expectTypeOf<SharedUnionFieldsDeep<ReadonlyTupleAlternatives, {recurseIntoArrays: false}>>().toBe<ReadonlyTupleAlternatives>();
+
+// Normalize options at the boundary while keeping the same strategy throughout nested containers.
+type NormalizationLeftRow = {value: string; leftOnly: true};
+type NormalizationRightRow = {value: number; rightOnly: true};
+type NormalizationGraph = {
+	readonly group?: {label: 'left'; nested: {rows: readonly NormalizationLeftRow[]; tuple: readonly [NormalizationLeftRow]}; sentinels: {any: any; unknown: unknown; impossible: never}};
+} | {
+	readonly group?: {label: 'right'; nested: {rows: readonly NormalizationRightRow[]; tuple: readonly [NormalizationRightRow]}; sentinels: {any: any; unknown: unknown; impossible: never}};
+};
+type RecursiveNormalizationGraph = {
+	readonly group?: {
+		label: 'left' | 'right';
+		nested: {rows: ReadonlyArray<{value: string | number}>; tuple: readonly [{value: string | number}]};
+		sentinels: {any: any; unknown: unknown; impossible: never};
+	};
+};
+type DefaultNormalizationGraph = {
+	readonly group?: {
+		label: 'left' | 'right';
+		nested: {
+			rows: readonly NormalizationLeftRow[] | readonly NormalizationRightRow[];
+			tuple: readonly [NormalizationLeftRow] | readonly [NormalizationRightRow];
+		};
+		sentinels: {any: any; unknown: unknown; impossible: never};
+	};
+};
+expectTypeOf<SharedUnionFieldsDeep<NormalizationGraph, {recurseIntoArrays: true}>>().toBe<RecursiveNormalizationGraph>();
+expectTypeOf<SharedUnionFieldsDeep<NormalizationGraph, Readonly<{recurseIntoArrays: true}>>>().toBe<RecursiveNormalizationGraph>();
+expectTypeOf<SharedUnionFieldsDeep<NormalizationGraph>>().toBe<DefaultNormalizationGraph>();
+expectTypeOf<SharedUnionFieldsDeep<NormalizationGraph, {recurseIntoArrays: false}>>().toBe<DefaultNormalizationGraph>();
+expectTypeOf<SharedUnionFieldsDeep<NormalizationGraph, any>>().toBe<DefaultNormalizationGraph>();
+expectTypeOf<SharedUnionFieldsDeep<NormalizationGraph, never>>().toBe<DefaultNormalizationGraph>();
+
+// Generic options do not prevent using a result through its known leaf or tuple type.
+function _sharedLeaf<Options extends {recurseIntoArrays?: boolean}>(value: SharedUnionFieldsDeep<string, Options>): string {
+	return value;
+}
+
+function _sharedTuple<Options extends {recurseIntoArrays?: boolean}>(value: SharedUnionFieldsDeep<readonly [string, number], Options>): readonly [string, number] {
+	return value;
+}
