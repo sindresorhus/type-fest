@@ -1,4 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -52,7 +53,7 @@ type _RequireAllOrNone<ObjectType, KeysType> = ObjectType extends unknown
 	? (
 		| RequireAll<ObjectType, KeysType & keyof ObjectType>
 		| RequireNone<KeysType & keyof ObjectType>
-	) & Omit<ObjectType, KeysType & keyof ObjectType> // The rest of the keys.
+	) & Except<ObjectType, KeysType & keyof ObjectType> // Keep unselected declared fields even when an index signature covers them.
 	: never;
 
 export {};

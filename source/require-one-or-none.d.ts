@@ -1,4 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {Except} from './except.d.ts';
 import type {RequireExactlyOne} from './require-exactly-one.d.ts';
 import type {IfNotAnyOrNever, NormalizedKeys, RequireNone} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
@@ -47,7 +48,7 @@ type _RequireOneOrNone<ObjectType, KeysType extends PropertyKey> = ObjectType ex
 	? (
 		| RequireExactlyOne<ObjectType, KeysType & keyof ObjectType>
 		| RequireNone<KeysType & keyof ObjectType>
-	) & Omit<ObjectType, KeysType & keyof ObjectType> // Ignore unspecified keys.
+	) & Except<ObjectType, KeysType & keyof ObjectType> // Keep unselected declared fields even when an index signature covers them.
 	& RequireNone<Exclude<Exclude<KeysType, `${KeysType & number}`>, NormalizedKeys<keyof ObjectType>>> // Deduplicate string aliases of declared numeric keys before forbidding other members' keys.
 	: never;
 

@@ -105,3 +105,42 @@ expectTypeOf<RequireAllOrNone<never, never>>().toBe<never>();
 ({c: 2}) satisfies RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>;
 ({a: 1, b: 1}) satisfies RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>;
 expectTypeOf({a: 1} as const).not.toBeAssignableTo<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>();
+
+// A dynamic index signature must not erase unrelated required fields or their value types.
+type IndexedChoiceOptions = {[key: string]: unknown; readonly requestId: string; readonly enabled?: boolean; cursor?: string; offset?: number};
+type IndexedAllOrNone = RequireAllOrNone<IndexedChoiceOptions, 'cursor' | 'offset'>;
+({requestId: 'request'}) satisfies IndexedAllOrNone;
+({requestId: 'request', cursor: 'next', offset: 1}) satisfies IndexedAllOrNone;
+expectTypeOf<{}>().not.toBeAssignableTo<IndexedAllOrNone>();
+expectTypeOf<{requestId: number}>().not.toBeAssignableTo<IndexedAllOrNone>();
+
+// Named fields remain readable and retain modifiers beside the dynamic entries.
+declare const indexedChoice: IndexedAllOrNone;
+expectTypeOf(indexedChoice.requestId).toBe<string>();
+expectTypeOf(indexedChoice.enabled).toBe<boolean | undefined>();
+expectTypeOf(indexedChoice['custom']).toBe<unknown>();
+// @ts-expect-error A valid value cannot replace an unselected readonly field.
+indexedChoice.requestId = 'changed';
+expectTypeOf<{requestId: string; cursor: string}>().not.toBeAssignableTo<IndexedAllOrNone>();
+
+// Numeric, pattern and symbol signatures also keep the declared fields they cover.
+declare const numericChoice: RequireAllOrNone<{[key: number]: unknown; readonly 0: string; 1?: string; 2?: number}, 1 | 2>;
+expectTypeOf(numericChoice[0]).toBe<string>();
+declare const patternChoice: RequireAllOrNone<{[key: `data-${string}`]: unknown; readonly 'data-id': string; cursor?: string; offset?: number}, 'cursor' | 'offset'>;
+expectTypeOf(patternChoice['data-id']).toBe<string>();
+declare const retainedSymbol: unique symbol;
+declare const symbolChoice: RequireAllOrNone<{[key: symbol]: unknown; readonly [retainedSymbol]: string; cursor?: string; offset?: number}, 'cursor' | 'offset'>;
+expectTypeOf(symbolChoice[retainedSymbol]).toBe<string>();
+
+function _readChoiceId<Id>(value: RequireAllOrNone<{requestId: Id; cursor?: string; offset?: number}, 'cursor' | 'offset'>): Id {
+	return value.requestId;
+}
+
+function makeChoice<const Extra>(value: Extra): RequireAllOrNone<{requestId: string; cursor?: Extra; offset?: number}, 'cursor' | 'offset'> {
+	return {requestId: 'request', cursor: value, offset: 1};
+}
+
+const inferredChoice = makeChoice('picked');
+expectTypeOf(inferredChoice.requestId).toBe<string>();
+expectTypeOf(inferredChoice.cursor).toBe<'picked' | undefined>();
+expectTypeOf<RequireAllOrNone<unknown>>().toBe<unknown>();

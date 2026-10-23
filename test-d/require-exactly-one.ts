@@ -177,3 +177,41 @@ expectTypeOf<{0: string}>().toBeAssignableTo<PickNumericChoice>();
 expectTypeOf<keyof RequireExactlyOne<{0?: string} | {1?: number}>>().toBe<0 | 1>();
 type PickForeignNumericChoice = Pick<RequireExactlyOne<{0?: string} | {1?: number}>, 0>;
 expectTypeOf<{0: string}>().toBeAssignableTo<PickForeignNumericChoice>();
+
+// A dynamic index signature must not erase unrelated required fields or their value types.
+type IndexedChoiceOptions = {[key: string]: unknown; readonly requestId: string; readonly enabled?: boolean; cursor?: string; offset?: number};
+type IndexedExactlyOne = RequireExactlyOne<IndexedChoiceOptions, 'cursor' | 'offset'>;
+({requestId: 'request', cursor: 'next'}) satisfies IndexedExactlyOne;
+({requestId: 'request', offset: 1}) satisfies IndexedExactlyOne;
+expectTypeOf<{cursor: string}>().not.toBeAssignableTo<IndexedExactlyOne>();
+expectTypeOf<{requestId: number; cursor: string}>().not.toBeAssignableTo<IndexedExactlyOne>();
+
+// Named fields remain readable and retain modifiers beside the dynamic entries.
+declare const indexedChoice: IndexedExactlyOne;
+expectTypeOf(indexedChoice.requestId).toBe<string>();
+expectTypeOf(indexedChoice.enabled).toBe<boolean | undefined>();
+expectTypeOf(indexedChoice['custom']).toBe<unknown>();
+// @ts-expect-error A valid value cannot replace an unselected readonly field.
+indexedChoice.requestId = 'changed';
+expectTypeOf<{requestId: string; cursor: string; offset: number}>().not.toBeAssignableTo<IndexedExactlyOne>();
+
+// Numeric, pattern and symbol signatures also keep the declared fields they cover.
+declare const numericChoice: RequireExactlyOne<{[key: number]: unknown; readonly 0: string; 1?: string; 2?: number}, 1 | 2>;
+expectTypeOf(numericChoice[0]).toBe<string>();
+declare const patternChoice: RequireExactlyOne<{[key: `data-${string}`]: unknown; readonly 'data-id': string; cursor?: string; offset?: number}, 'cursor' | 'offset'>;
+expectTypeOf(patternChoice['data-id']).toBe<string>();
+declare const retainedSymbol: unique symbol;
+declare const symbolChoice: RequireExactlyOne<{[key: symbol]: unknown; readonly [retainedSymbol]: string; cursor?: string; offset?: number}, 'cursor' | 'offset'>;
+expectTypeOf(symbolChoice[retainedSymbol]).toBe<string>();
+
+function _readChoiceId<Id>(value: RequireExactlyOne<{requestId: Id; cursor?: string; offset?: number}, 'cursor' | 'offset'>): Id {
+	return value.requestId;
+}
+
+function makeChoice<const Extra>(value: Extra): RequireExactlyOne<{requestId: string; cursor?: Extra; offset?: number}, 'cursor' | 'offset'> {
+	return {requestId: 'request', cursor: value};
+}
+
+const inferredChoice = makeChoice('picked');
+expectTypeOf(inferredChoice.requestId).toBe<string>();
+expectTypeOf(inferredChoice.cursor).toBe<'picked' | undefined>();

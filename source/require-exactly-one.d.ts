@@ -1,4 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, NormalizedKeys} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -54,6 +55,6 @@ type _RequireExactlyOneOfOne<ObjectType, KeysType extends keyof ObjectType, AllK
 		Required<Pick<ObjectType, Key>>
 		// Prefer an already declared numeric key over its duplicate string alias, then forbid every other property.
 		& Partial<Record<Exclude<Exclude<AllKeysType, `${AllKeysType & number}`>, NormalizedKeys<Key>>, never>>
-	)}[KeysType] & Omit<ObjectType, KeysType>;
+	)}[KeysType] & Except<ObjectType, KeysType>;
 
 export {};
