@@ -10,6 +10,7 @@ import type {ArraySplice} from './array-splice.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
+import type {TupleOf} from './tuple-of.d.ts';
 
 /**
 Returns an array slice of a given range, just like `Array#slice()`.
@@ -176,7 +177,12 @@ type ArraySliceByPositiveTuple<
 	Array_ extends readonly unknown[],
 	Start extends number,
 	End extends number,
-> = DropLeadingElements<Array_, Start> extends infer Dropped extends readonly unknown[]
+> = (Start extends 0
+	? Array_
+	// Skip a required prefix at once. The exact length check prevents `TupleOf` from truncating a fractional index.
+	: [TupleOf<Start>['length'], Array_] extends [Start, readonly [...TupleOf<Start>, ...infer Remaining]]
+		? Remaining
+		: DropLeadingElements<Array_, Start>) extends infer Dropped extends readonly unknown[]
 	? TakeLeadingElements<Dropped, Subtract<End, Start>>
 	: never; // Should never happen
 

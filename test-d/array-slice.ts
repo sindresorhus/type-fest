@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArraySlice, Opaque, StringSlice, Tagged} from '../index.d.ts';
+import type {ArraySlice, Opaque, StringRepeat, StringSlice, Tagged, TupleOf} from '../index.d.ts';
 
 expectTypeOf<ArraySlice<[0, 1, 2, 3]>>().toBe<[0, 1, 2, 3]>();
 expectTypeOf<[0, 1, 2] | [0, 1, 2, 3]>().toBe<ArraySlice<[0, 1, 2] | [0, 1, 2, 3], 0>>();
@@ -242,3 +242,44 @@ expectTypeOf<ArraySlice<[1, 2, 3], unknown>>();
 
 // String slicing delegates its normalized bounds to the array slice.
 expectTypeOf<StringSlice<'abcd', Tagged<1, 'Index'>, Tagged<3, 'Index'>>>().toBe<'bc'>();
+
+// Skipping a required prefix preserves the remaining values, including nested modifiers and brands.
+type SliceItem = Tagged<{readonly id: 'row'}, 'Item'>;
+expectTypeOf<ArraySlice<readonly [0, 1, SliceItem, {readonly enabled: true}], 2, 4>>()
+	.toBe<readonly [SliceItem, {readonly enabled: true}]>();
+expectTypeOf<ArraySlice<[null, undefined, any, never, unknown], 1, 4>>().toBe<[undefined, any, never]>();
+expectTypeOf<ArraySlice<readonly [unknown, any, never], 1, 3>>().toBe<readonly [any, never]>();
+
+// A prefix that crosses optional positions still keeps the remaining positions optional.
+expectTypeOf<ArraySlice<readonly [1?, 2?, 3?], 2, 3>>().toBe<readonly [3?]>();
+expectTypeOf<ArraySlice<[1?, 2?, 3?], 0, 2>>().toBe<[1?, 2?]>();
+expectTypeOf<ArraySlice<[1, (2 | undefined)?, (3 | undefined)?], 1, 3>>().toBe<[(2 | undefined)?, (3 | undefined)?]>();
+
+// A zero offset preserves the existing inference of arrays with a refined length.
+expectTypeOf<ArraySlice<string[] & {length: 3}, 0, 1>>().toBe<[string?]>();
+
+type SliceRows = Readonly<TupleOf<80, {readonly id: 'row'}>>;
+expectTypeOf<ArraySlice<SliceRows, 20, 60>>().toBe<Readonly<TupleOf<40, {readonly id: 'row'}>>>();
+
+function _sliceKnownValue<Value>(slice: ArraySlice<readonly [Value, number, boolean], 1, 2>): number {
+	return slice[0];
+}
+
+function _sliceArrayResult<Value extends readonly unknown[], Start extends number, End extends number>(slice: ArraySlice<Value, Start, End>): readonly unknown[] {
+	return slice;
+}
+
+declare function sliceConfiguration<const Value extends readonly unknown[], Start extends number, End extends number>(value: Value, start: Start, end: End): ArraySlice<Value, Start, End>;
+const selectedConfiguration = sliceConfiguration(['skip', {enabled: true}, {count: 3}], 1, 3);
+expectTypeOf(selectedConfiguration).toBe<readonly [{readonly enabled: true}, {readonly count: 3}]>();
+// @ts-expect-error The selected array retains its readonly modifier.
+selectedConfiguration[0] = {enabled: true};
+// @ts-expect-error Nested values retain their own readonly modifiers.
+selectedConfiguration[1].count = 4;
+// @ts-expect-error The source must be an array.
+expectTypeOf<ArraySlice<unknown, 1, 2>>();
+
+// Distinct values verify the skipped prefix's boundary rather than only the output length.
+type MarkedSliceRows = readonly [...TupleOf<60, {before: true}>, {id: 'first'}, {id: 'second'}, ...TupleOf<20, {after: true}>];
+expectTypeOf<ArraySlice<MarkedSliceRows, 60, 62>>().toBe<readonly [{id: 'first'}, {id: 'second'}]>();
+expectTypeOf<StringSlice<`${StringRepeat<'a', 60>}bc${StringRepeat<'d', 20>}`, 60, 62>>().toBe<'bc'>();
