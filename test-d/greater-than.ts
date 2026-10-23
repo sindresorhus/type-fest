@@ -170,3 +170,37 @@ expectTypeOf<LessThan<1e21, 1_000_000_000_000_000_000_001n>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<1e21, 1_000_000_000_000_000_000_000n>>().toBe<boolean>();
 expectTypeOf<GreaterThan<1e-7, 0n>>().toBe<true>();
 expectTypeOf<GreaterThan<1e-7, 1n>>().toBe<false>();
+
+// Numeric enum members have a known value even though `number` is assignable to them.
+enum ComparisonLimit {
+	Low = 1,
+	High = 5,
+	Negative = -2,
+	Fraction = 1.5,
+}
+
+expectTypeOf<GreaterThan<ComparisonLimit.High, 3>>().toBe<true>();
+expectTypeOf<GreaterThan<3, ComparisonLimit.High>>().toBe<false>();
+expectTypeOf<GreaterThan<ComparisonLimit.Low, ComparisonLimit.High>>().toBe<false>();
+expectTypeOf<GreaterThan<ComparisonLimit.Negative, -3>>().toBe<true>();
+expectTypeOf<GreaterThan<ComparisonLimit.Fraction, 1>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<ComparisonLimit.High, 5>>().toBe<true>();
+expectTypeOf<LessThan<ComparisonLimit.Low, 3>>().toBe<true>();
+expectTypeOf<LessThanOrEqual<ComparisonLimit.High, 5>>().toBe<true>();
+
+expectTypeOf<GreaterThan<ComparisonLimit.Low | ComparisonLimit.High, 3>>().toBe<boolean>();
+expectTypeOf<GreaterThan<ComparisonLimit.High, ComparisonLimit.Low | ComparisonLimit.Negative>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<ComparisonLimit.Low | ComparisonLimit.High, 1>>().toBe<true>();
+expectTypeOf<GreaterThanOrEqual<ComparisonLimit.Low, ComparisonLimit.Low>>().toBe<true>();
+expectTypeOf<GreaterThan<ComparisonLimit.High, 5n>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<5n, ComparisonLimit.High>>().toBe<true>();
+expectTypeOf<GreaterThan<ComparisonLimit.High, number>>().toBe<boolean>();
+expectTypeOf<GreaterThan<ComparisonLimit.High, any>>().toBe<boolean>();
+expectTypeOf<GreaterThan<ComparisonLimit.High, never>>().toBe<never>();
+// @ts-expect-error - Only numeric values can be compared.
+type UnknownComparison = GreaterThan<unknown, ComparisonLimit.High>;
+
+expectTypeOf<GreaterThan<never, never>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<never, never>>().toBe<never>();
+expectTypeOf<LessThan<never, never>>().toBe<never>();
+expectTypeOf<LessThanOrEqual<never, never>>().toBe<never>();

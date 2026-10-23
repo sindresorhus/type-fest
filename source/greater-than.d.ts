@@ -69,10 +69,11 @@ setPositive(-1);
 export type GreaterThan<A extends _Numeric, B extends _Numeric> =
 	_GreaterThan<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
 
+// Numeric enum members accept `number`, but their printed types still identify their known values.
 type _GreaterThan<A extends _Numeric, B extends _Numeric> =
 	A extends _Numeric // For distributing `A`
 		? B extends _Numeric // For distributing `B`
-			? number extends A | B
+			? `${number}` extends `${A | B}`
 				? boolean
 				: bigint extends A | B
 					? boolean
