@@ -177,3 +177,52 @@ type UnknownElementEnum = TupleToEnum<[unknown, 'known']>;
 expectTypeOf(inferredEnum[7]).toBe<7>();
 expectTypeOf(inferredEnum[sym1]).toBe<typeof sym1>();
 expectTypeOf<keyof typeof inferredEnum>().toBe<'ready' | 7 | typeof sym1>();
+
+// A chosen starting index shifts the whole numeric enum together.
+type ShiftedCommands = TupleToEnum<['start', 'stop'], {numeric: true; startIndex: 1 | 10}>;
+type ExpectedShiftedCommands = {readonly start: 1; readonly stop: 2} | {readonly start: 10; readonly stop: 11};
+expectTypeOf<ShiftedCommands>().toBe<ExpectedShiftedCommands>();
+expectTypeOf<{start: 1; stop: 11}>().not.toBeAssignableTo<ShiftedCommands>();
+
+function _readShiftedCommand(value: ShiftedCommands): void {
+	if (value.start === 1) {
+		expectTypeOf(value.stop).toBe<2>();
+	}
+}
+
+// Each negative or positive shift is selected once, including duplicate keys and representation choices.
+type SignedShiftedCommands = TupleToEnum<readonly ['start', 'stop'], {numeric: true; startIndex: -2 | 4}>;
+expectTypeOf<SignedShiftedCommands>().toBe<{readonly start: -2; readonly stop: -1} | {readonly start: 4; readonly stop: 5}>();
+expectTypeOf<{start: -2; stop: 5}>().not.toBeAssignableTo<SignedShiftedCommands>();
+type DuplicateShiftedCommands = TupleToEnum<['start', 'stop', 'start'], {numeric: true; startIndex: 1 | 10}>;
+expectTypeOf<DuplicateShiftedCommands>().toBe<{readonly start: 1 | 3; readonly stop: 2} | {readonly start: 10 | 12; readonly stop: 11}>();
+expectTypeOf<{start: 1; stop: 11}>().not.toBeAssignableTo<DuplicateShiftedCommands>();
+expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: boolean; startIndex: 1 | 10}>>()
+	.toBe<ExpectedShiftedCommands | {readonly start: 'start'; readonly stop: 'stop'}>();
+expectTypeOf<TupleToEnum<['start', 'stop'] | ['pause'], {numeric: true; startIndex: 1 | 10}>>()
+	.toBe<ExpectedShiftedCommands | {readonly pause: 1} | {readonly pause: 10}>();
+
+// An enum-valued offset retains its own identity, while the later values still use the chosen offset.
+enum CommandOffset {
+	First = 1,
+	Later = 10,
+}
+type OffsetEnumOptions<Start extends number> = {numeric: true; startIndex: Start};
+expectTypeOf<TupleToEnum<['start', 'stop'], OffsetEnumOptions<CommandOffset>>>()
+	.toBe<TupleToEnum<['start', 'stop'], OffsetEnumOptions<CommandOffset.First>> | TupleToEnum<['start', 'stop'], OffsetEnumOptions<CommandOffset.Later>>>();
+
+// Optional and sentinel options retain their default behavior; a wide offset remains a number.
+expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: true; startIndex?: 1 | 10}>>().toBe<{readonly start: 0; readonly stop: 1}>();
+expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: true; startIndex: number}>>().toBe<{readonly start: number; readonly stop: number}>();
+expectTypeOf<TupleToEnum<['start', 'stop'], any>>().toBe<{readonly start: 'start'; readonly stop: 'stop'}>();
+expectTypeOf<TupleToEnum<['start', 'stop'], never>>().toBe<{readonly start: 'start'; readonly stop: 'stop'}>();
+// @ts-expect-error A starting index must be numeric.
+type UnknownStartingIndex = TupleToEnum<['start'], {numeric: true; startIndex: unknown}>;
+
+declare function shiftedEnum<const Values extends readonly PropertyKey[], const Start extends number>(values: Values, start: Start): TupleToEnum<Values, OffsetEnumOptions<Start>>;
+declare const chosenCommandOffset: 1 | 10;
+const inferredShiftedCommands = shiftedEnum(['start', 'stop'], chosenCommandOffset);
+expectTypeOf(inferredShiftedCommands).toBe<ExpectedShiftedCommands>();
+// @ts-expect-error Correlation does not change readonly modifiers.
+inferredShiftedCommands.start = 1;
+expectTypeOf<{start: 10; stop: 2}>().not.toBeAssignableTo<typeof inferredShiftedCommands>();

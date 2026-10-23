@@ -90,15 +90,18 @@ type LiteralElements<Tuple extends readonly PropertyKey[]> = {
 	[Index in keyof Tuple]: IsLiteral<Tuple[Index]> extends true ? Tuple[Index] : never;
 }[number];
 
-type NumericTupleToEnum<Tuple extends readonly PropertyKey[], StartIndex extends number> = {
-	readonly [Index in keyof Tuple as Index extends `${number}`
-		? IsLiteral<Tuple[Index]> extends true
-			? Tuple[Index]
-			: never // Not a literal, like `string` or `` `on${string}` ``
-		: never // Not an index
-	]: Index extends `${infer IndexNumber extends number}`
-		? Sum<IndexNumber, StartIndex>
-		: never; // Not an index
-};
+type NumericTupleToEnum<Tuple extends readonly PropertyKey[], StartIndex extends number> = StartIndex extends unknown
+	// Select one starting index for the whole map, so every value uses the same shift.
+	? {
+		readonly [Index in keyof Tuple as Index extends `${number}`
+			? IsLiteral<Tuple[Index]> extends true
+				? Tuple[Index]
+				: never // Not a literal, like `string` or `` `on${string}` ``
+			: never // Not an index
+		]: Index extends `${infer IndexNumber extends number}`
+			? Sum<IndexNumber, StartIndex>
+			: never; // Not an index
+	}
+	: never;
 
 export {};
