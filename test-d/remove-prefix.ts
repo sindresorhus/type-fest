@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {Opaque, Tagged} from '../index.d.ts';
-import type {RemovePrefix} from '../source/remove-prefix.d.ts';
+import type {RemovePrefix, RemovePrefixOptions} from '../source/remove-prefix.d.ts';
 
 expectTypeOf<RemovePrefix<'on-change', 'on-'>>().toBe<'change'>();
 expectTypeOf<RemovePrefix<'handleClick', 'handle'>>().toBe<'Click'>();
@@ -33,9 +33,10 @@ expectTypeOf<RemovePrefix<`on${Capitalize<string>}`, 'on'>>().toBe<Capitalize<st
 expectTypeOf<RemovePrefix<`id-${number}`, 'id-'>>().toBe<`${number}`>();
 expectTypeOf<RemovePrefix<`--${string}--`, '--'>>().toBe<`${string}--`>();
 expectTypeOf<RemovePrefix<`hover:focus:${string}`, 'hover:'>>().toBe<`focus:${string}`>();
-expectTypeOf<RemovePrefix<`user_${string}`, 'admin_'>>().toBe<`user_${string}`>();
+// A failed template match cannot prove that an unknown input part lacks the affix.
+expectTypeOf<RemovePrefix<`user_${string}`, 'admin_'>>().toBe<string>();
 expectTypeOf<RemovePrefix<string, 'on'>>().toBe<string>();
-expectTypeOf<RemovePrefix<`${string}/${number}`, 'foo'>>().toBe<`${string}/${number}`>();
+expectTypeOf<RemovePrefix<`${string}/${number}`, 'foo'>>().toBe<string>();
 
 // Input: Literal, Prefix: Non-literal
 expectTypeOf<RemovePrefix<'on-click', `${string}-`>>().toBe<string>();
@@ -85,10 +86,10 @@ expectTypeOf<RemovePrefix<'on-click', `${string}-`, {strict: false}>>().toBe<'cl
 expectTypeOf<RemovePrefix<'hover:flex', string, {strict: false}>>().toBe<'over:flex'>();
 expectTypeOf<RemovePrefix<`${string}/${number}`, `${string}/`, {strict: false}>>().toBe<`${number}`>();
 expectTypeOf<RemovePrefix<'on-change', `${string}--`, {strict: false}>>().toBe<'on-change'>();
-expectTypeOf<RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>>().toBe<`${string}/${number}`>();
+expectTypeOf<RemovePrefix<`${string}/${number}`, `${string}:`, {strict: false}>>().toBe<string>();
 expectTypeOf<RemovePrefix<'on-change', `${string}-` | 'on', {strict: false}>>().toBe<'change' | '-change'>();
 expectTypeOf<RemovePrefix<'on:change' | 'on-change', `${string}-`, {strict: false}>>().toBe<'on:change' | 'change'>();
-expectTypeOf<RemovePrefix<`id:${Uppercase<string>}` | `id/${number}`, `${string}:` | `${string}/`, {strict: false}>>().toBe<Uppercase<string> | `id:${Uppercase<string>}` | `${number}` | `id/${number}`>();
+expectTypeOf<RemovePrefix<`id:${Uppercase<string>}` | `id/${number}`, `${string}:` | `${string}/`, {strict: false}>>().toBe<string>();
 expectTypeOf<RemovePrefix<`${any}foo${any}bar`, any, {strict: false}>>().toBe<`foo${any}bar`>();
 expectTypeOf<RemovePrefix<`${string}foo${string}bar`, any, {strict: false}>>().toBe<`foo${string}bar`>();
 
@@ -117,10 +118,40 @@ expectTypeOf<RemovePrefix<Tagged<'on-', 'Text'>, Tagged<'on-', 'Affix'>>>().toBe
 expectTypeOf<RemovePrefix<Tagged<'', 'Text'>, Tagged<'on-', 'Affix'>>>().toBe<Tagged<'', 'Text'>>();
 expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, Tagged<'', 'Affix'>>>().toBe<'on-change'>();
 expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, Tagged<`${string}-`, 'Affix'>>>().toBe<string>();
-expectTypeOf<RemovePrefix<Tagged<string, 'Text'>, Tagged<'on-', 'Affix'>>>().toBe<Tagged<string, 'Text'>>();
+expectTypeOf<RemovePrefix<Tagged<string, 'Text'>, Tagged<'on-', 'Affix'>>>().toBe<string>();
 expectTypeOf<RemovePrefix<any, Tagged<'on-', 'Affix'>>>().toBe<any>();
 expectTypeOf<RemovePrefix<never, Tagged<'on-', 'Affix'>>>().toBe<never>();
 // @ts-expect-error
 expectTypeOf<RemovePrefix<unknown, 'on-'>>();
 // @ts-expect-error
 expectTypeOf<RemovePrefix<'on-change', unknown>>();
+
+// An unknown part can contain the affix even when the whole template does not guarantee a match.
+expectTypeOf<''>().toBeAssignableTo<RemovePrefix<`${string}/api`, '/api'>>();
+expectTypeOf<''>().toBeAssignableTo<RemovePrefix<`${string}/api`, '/api', {strict: true}>>();
+expectTypeOf<RemovePrefix<`${string}/api`, '/api'>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${string}/api`, '/api', {strict: true}>>().toBe<string>();
+
+// Guaranteed matches remain precise, including numeric templates and literal alternatives.
+expectTypeOf<RemovePrefix<`api/${number}` | 'plain', 'api/'>>().toBe<`${number}` | 'plain'>();
+expectTypeOf<RemovePrefix<`${string}/api`, '/api' | 'other'>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${string}/api`, '/api', {strict: boolean}>>().toBe<string>();
+expectTypeOf<RemovePrefix<`${string}/api`, never>>().toBe<`${string}/api`>();
+expectTypeOf<RemovePrefix<`${string}/api`, ''>>().toBe<`${string}/api`>();
+expectTypeOf<RemovePrefix<Tagged<`${string}/api`, 'Input'>, '/api'>>().toBe<string>();
+
+function _prefixResult<Input extends string, Affix extends string, Options extends RemovePrefixOptions>(value: RemovePrefix<Input, Affix, Options>): string {
+	return value;
+}
+
+function _prefixOptions<Options extends RemovePrefixOptions>(value: RemovePrefix<`api/${number}`, 'api/', Options>): `${number}` {
+	return value;
+}
+
+declare function removePrefix<const Input extends string, const Affix extends string>(input: Input, affix: Affix): RemovePrefix<Input, Affix>;
+expectTypeOf(removePrefix('api/value', 'api/')).toBe<'value'>();
+declare const prefixInput: `${string}/api`;
+expectTypeOf(removePrefix(prefixInput, '/api')).toBe<string>();
+
+// Removing a capital can expose a lowercase first character in an unknown capitalized input.
+expectTypeOf<'value'>().toBeAssignableTo<RemovePrefix<Capitalize<string>, 'A'>>();

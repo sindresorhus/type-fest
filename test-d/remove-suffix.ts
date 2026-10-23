@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {Opaque, Tagged} from '../index.d.ts';
-import type {RemoveSuffix} from '../source/remove-suffix.d.ts';
+import type {RemoveSuffix, RemoveSuffixOptions} from '../source/remove-suffix.d.ts';
 
 expectTypeOf<RemoveSuffix<'report.pdf', '.pdf'>>().toBe<'report'>();
 expectTypeOf<RemoveSuffix<'handleClick', 'Click'>>().toBe<'handle'>();
@@ -33,9 +33,10 @@ expectTypeOf<RemoveSuffix<`${Capitalize<string>}Action`, 'Action'>>().toBe<Capit
 expectTypeOf<RemoveSuffix<`${number}rem`, 'rem'>>().toBe<`${number}`>();
 expectTypeOf<RemoveSuffix<`--${string}--`, '--'>>().toBe<`--${string}`>();
 expectTypeOf<RemoveSuffix<`${string}--disabled--loading`, '--loading'>>().toBe<`${string}--disabled`>();
-expectTypeOf<RemoveSuffix<`${string}_user`, '_admin'>>().toBe<`${string}_user`>();
+// A failed template match cannot prove that an unknown input part lacks the affix.
+expectTypeOf<RemoveSuffix<`${string}_user`, '_admin'>>().toBe<string>();
 expectTypeOf<RemoveSuffix<string, 'Action'>>().toBe<string>();
-expectTypeOf<RemoveSuffix<`${string}/${number}`, 'foo'>>().toBe<`${string}/${number}`>();
+expectTypeOf<RemoveSuffix<`${string}/${number}`, 'foo'>>().toBe<string>();
 
 // Input: Literal, Suffix: Non-literal
 expectTypeOf<RemoveSuffix<'report.pdf', `.${string}`>>().toBe<string>();
@@ -85,10 +86,10 @@ expectTypeOf<RemoveSuffix<'report.pdf', `.${string}`, {strict: false}>>().toBe<'
 expectTypeOf<RemoveSuffix<'report.pdf', string, {strict: false}>>().toBe<'r'>();
 expectTypeOf<RemoveSuffix<`${number}/${string}`, `/${string}`, {strict: false}>>().toBe<`${number}`>();
 expectTypeOf<RemoveSuffix<'report.pdf', `..${string}` | 'name', {strict: false}>>().toBe<'report.pdf'>();
-expectTypeOf<RemoveSuffix<`${number}/${string}`, `:${string}`, {strict: false}>>().toBe<`${number}/${string}`>();
+expectTypeOf<RemoveSuffix<`${number}/${string}`, `:${string}`, {strict: false}>>().toBe<string>();
 expectTypeOf<RemoveSuffix<'report.pdf', `.${string}` | 'pdf', {strict: false}>>().toBe<'report' | 'report.'>();
 expectTypeOf<RemoveSuffix<'flex' | 'btn__disabled', `__${string}`, {strict: false}>>().toBe<'flex' | 'btn'>();
-expectTypeOf<RemoveSuffix<`${Uppercase<string>}:id` | `${number}/id`, `:${string}` | `/${string}`, {strict: false}>>().toBe<Uppercase<string> | `${Uppercase<string>}:id` | `${number}` | `${number}/id`>();
+expectTypeOf<RemoveSuffix<`${Uppercase<string>}:id` | `${number}/id`, `:${string}` | `/${string}`, {strict: false}>>().toBe<string>();
 
 // Generic assignability test
 type Assignability<S extends string> = S;
@@ -115,10 +116,37 @@ expectTypeOf<RemoveSuffix<Tagged<'.pdf', 'Text'>, Tagged<'.pdf', 'Affix'>>>().to
 expectTypeOf<RemoveSuffix<Tagged<'', 'Text'>, Tagged<'.pdf', 'Affix'>>>().toBe<Tagged<'', 'Text'>>();
 expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, Tagged<'', 'Affix'>>>().toBe<'report.pdf'>();
 expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, Tagged<`.${string}`, 'Affix'>>>().toBe<string>();
-expectTypeOf<RemoveSuffix<Tagged<string, 'Text'>, Tagged<'.pdf', 'Affix'>>>().toBe<Tagged<string, 'Text'>>();
+expectTypeOf<RemoveSuffix<Tagged<string, 'Text'>, Tagged<'.pdf', 'Affix'>>>().toBe<string>();
 expectTypeOf<RemoveSuffix<any, Tagged<'.pdf', 'Affix'>>>().toBe<any>();
 expectTypeOf<RemoveSuffix<never, Tagged<'.pdf', 'Affix'>>>().toBe<never>();
 // @ts-expect-error
 expectTypeOf<RemoveSuffix<unknown, '.pdf'>>();
 // @ts-expect-error
 expectTypeOf<RemoveSuffix<'report.pdf', unknown>>();
+
+// An unknown part can contain the affix even when the whole template does not guarantee a match.
+expectTypeOf<''>().toBeAssignableTo<RemoveSuffix<`api/${string}`, 'api/'>>();
+expectTypeOf<''>().toBeAssignableTo<RemoveSuffix<`api/${string}`, 'api/', {strict: true}>>();
+expectTypeOf<RemoveSuffix<`api/${string}`, 'api/'>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`api/${string}`, 'api/', {strict: true}>>().toBe<string>();
+
+// Guaranteed matches remain precise, including numeric templates and literal alternatives.
+expectTypeOf<RemoveSuffix<`${number}/api` | 'plain', '/api'>>().toBe<`${number}` | 'plain'>();
+expectTypeOf<RemoveSuffix<`api/${string}`, 'api/' | 'other'>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`api/${string}`, 'api/', {strict: boolean}>>().toBe<string>();
+expectTypeOf<RemoveSuffix<`api/${string}`, never>>().toBe<`api/${string}`>();
+expectTypeOf<RemoveSuffix<`api/${string}`, ''>>().toBe<`api/${string}`>();
+expectTypeOf<RemoveSuffix<Tagged<`api/${string}`, 'Input'>, 'api/'>>().toBe<string>();
+
+function _suffixResult<Input extends string, Affix extends string, Options extends RemoveSuffixOptions>(value: RemoveSuffix<Input, Affix, Options>): string {
+	return value;
+}
+
+function _suffixOptions<Options extends RemoveSuffixOptions>(value: RemoveSuffix<`${number}/api`, '/api', Options>): `${number}` {
+	return value;
+}
+
+declare function removeSuffix<const Input extends string, const Affix extends string>(input: Input, affix: Affix): RemoveSuffix<Input, Affix>;
+expectTypeOf(removeSuffix('value/api', '/api')).toBe<'value'>();
+declare const suffixInput: `api/${string}`;
+expectTypeOf(removeSuffix(suffixInput, 'api/')).toBe<string>();

@@ -71,6 +71,8 @@ type DefaultRemovePrefixOptions = {
 /**
 Remove the specified prefix from the start of a string.
 
+If a non-literal input does not guarantee a prefix match, the result is `string`: an unknown part may contain the prefix, and removing it can change the input shape.
+
 @example
 ```
 import type {RemovePrefix} from 'type-fest';
@@ -105,10 +107,10 @@ export type RemovePrefix<S extends string, Prefix extends string, Options extend
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
 	Prefix extends string // For distributing `Prefix`
 		? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
-			? S extends unknown // Distribute before unwrapping so each member keeps its own unchanged fallback.
+			? S extends unknown // Distribute before unwrapping so literal members retain their own unchanged fallback.
 				? (S extends object ? UnwrapBrand<S> : S) extends `${Prefix}${infer Rest}`
 					? Rest
-					: S // Return back `S` when `Prefix` is not present at the start of `S`
+					: IsStringLiteral<S> extends true ? S : string // Preserve literal inputs on a miss; unknown parts may still contain the affix.
 				: never // Should never happen
 			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is enabled
 		: never;

@@ -71,6 +71,8 @@ type DefaultRemoveSuffixOptions = {
 /**
 Remove the specified suffix from the end of a string.
 
+If a non-literal input does not guarantee a suffix match, the result is `string`: an unknown part may contain the suffix, and removing it can change the input shape.
+
 @example
 ```
 import type {RemoveSuffix} from 'type-fest';
@@ -105,10 +107,10 @@ export type RemoveSuffix<S extends string, Suffix extends string, Options extend
 type _RemoveSuffix<S extends string, Suffix extends string, Options extends Required<RemoveSuffixOptions>> =
 	Suffix extends string // For distributing `Suffix`
 		? Or<IsStringLiteral<Suffix>, Not<Options['strict']>> extends true
-			? S extends unknown // Distribute before unwrapping so each member keeps its own unchanged fallback.
+			? S extends unknown // Distribute before unwrapping so literal members retain their own unchanged fallback.
 				? (S extends object ? UnwrapBrand<S> : S) extends `${infer Rest}${Suffix}`
 					? Rest
-					: S // Return back `S` when `Suffix` is not present at the end of `S`
+					: IsStringLiteral<S> extends true ? S : string // Preserve literal inputs on a miss; unknown parts may still contain the affix.
 				: never // Should never happen
 			: string // Fallback to `string` when `Suffix` is non-literal and `strict` is enabled
 		: never;
