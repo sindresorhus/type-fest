@@ -9,7 +9,7 @@ import type {SnakeCase} from './snake-case.d.ts'; // For `@link`
 export type _DefaultDelimiterCaseOptions = Merge<_DefaultWordsOptions, {splitOnNumbers: false}>;
 
 /**
-Convert an array of words to delimiter case starting with a delimiter with input capitalization.
+Convert an array of words to delimiter case, lowercasing words while preserving the delimiter.
 */
 type DelimiterCaseFromArray<
 	WordList extends string[],
@@ -19,12 +19,12 @@ type DelimiterCaseFromArray<
 	infer FirstWord extends string,
 	...infer RemainingWords extends string[],
 ]
-	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? FirstWord : `${OutputString}${
+	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? Lowercase<FirstWord> : `${OutputString}${
 		// A delimiter is not emitted next to punctuation, or the two double up. `OutputString` ends with the last character of the previous word, so testing it covers the word that ends in punctuation, and `FirstWord` covers the one that begins with it.
 		Or<StartsWith<FirstWord, AsciiPunctuation>, EndsWithPunctuation<OutputString>> extends true
 			? ''
 			: Delimiter
-	}${FirstWord}`>
+	}${Lowercase<FirstWord>}`>
 	: OutputString;
 
 /**
@@ -80,10 +80,10 @@ export type DelimiterCase<
 	? Delimiter extends string // For distributing `Delimiter`
 		? IsStringLiteral<Value> extends false
 			? Value
-			: Lowercase<DelimiterCaseFromArray<
+			: DelimiterCaseFromArray<
 				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
 				Delimiter
-			>>
+			>
 		: never
 	: Value;
 

@@ -1,5 +1,7 @@
 import {expectTypeOf} from 'nz';
 import type {DelimiterCase} from '../source/delimiter-case.d.ts';
+import type {DelimiterCasedProperties} from '../source/delimiter-cased-properties.d.ts';
+import type {DelimiterCasedPropertiesDeep} from '../source/delimiter-cased-properties-deep.d.ts';
 
 // DelimiterCase
 const delimiterFromCamel: DelimiterCase<'fooBar', '#'> = 'foo#bar';
@@ -185,7 +187,7 @@ declare const neverValue2: DelimiterCase<never, never>;
 expectTypeOf(neverValue2).toBe<never>();
 
 declare const anyDelimiter: DelimiterCase<'fooBar', any>;
-expectTypeOf(anyDelimiter).toBe<`foo${Lowercase<any>}bar`>();
+expectTypeOf(anyDelimiter).toBe<`foo${any}bar`>();
 
 declare const neverDelimiter: DelimiterCase<'fooBar', never>;
 expectTypeOf(neverDelimiter).toBe<never>();
@@ -210,3 +212,21 @@ type CliOptions = {
 // A delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo#-bar`.
 expectTypeOf<DelimiterCase<'foo.Bar', '#'>>().toBe<'foo.bar'>();
 expectTypeOf<DelimiterCase<'foo .bar', '#'>>().toBe<'foo.bar'>();
+
+// Only words are lowercased; a custom delimiter keeps its own casing.
+expectTypeOf<DelimiterCase<'fooBar', 'X'>>().toBe<'fooXbar'>();
+expectTypeOf<DelimiterCase<'FooBarBaz', '[SEP]'>>().toBe<'foo[SEP]bar[SEP]baz'>();
+expectTypeOf<DelimiterCase<'fooBar', Uppercase<string>>>().toBe<`foo${Uppercase<string>}bar`>();
+expectTypeOf<DelimiterCase<'FOO_BAR_BAZ', 'X' | 'Y'>>().toBe<'fooXbarXbaz' | 'fooYbarYbaz'>();
+expectTypeOf<DelimiterCase<'ÄpfelStraße', 'SEP'>>().toBe<'äpfelSEPstraße'>();
+expectTypeOf<DelimiterCase<'foo.BarBaz', 'SEP'>>().toBe<'foo.barSEPbaz'>();
+expectTypeOf<DelimiterCase<'FOO', 'SEP'>>().toBe<'foo'>();
+expectTypeOf<DelimiterCase<'', 'SEP'>>().toBe<''>();
+expectTypeOf<DelimiterCase<unknown, 'SEP'>>().toBe<unknown>();
+expectTypeOf<DelimiterCase<never, 'SEP'>>().toBe<never>();
+expectTypeOf<DelimiterCase<any, 'SEP'>>().toBe<any>();
+expectTypeOf<DelimiterCase<'fooBarBaz', string>>().toBe<`foo${string}bar${string}baz`>();
+expectTypeOf<DelimiterCase<'foo:bar', 'SEP', {splitOnPunctuation: true}>>().toBe<'fooSEPbar'>();
+expectTypeOf<DelimiterCase<'version2Path', 'SEP', {splitOnNumbers: true}>>().toBe<'versionSEP2SEPpath'>();
+expectTypeOf<DelimiterCasedProperties<{userId: number}, '[SEP]'>>().toBe<{'user[SEP]id': number}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{userInfo: [{firstName: string}]}, '[SEP]'>>().toBe<{'user[SEP]info': [{'first[SEP]name': string}]}>();
