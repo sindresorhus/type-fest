@@ -1,3 +1,4 @@
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {Subtract} from './subtract.d.ts';
 
 type Recursive<T> = ReadonlyArray<T | Recursive<T>>;
@@ -31,12 +32,16 @@ const readonlyBoolean2DMatrix = emptyMatrix<boolean>()(2);
 @category Array
 */
 export type MultidimensionalReadonlyArray<Element, Dimensions extends number> =
-	Dimensions extends number // For distributing `Dimensions`
-		? `${number}` extends `${Dimensions}`
-			? Recursive<Element>
-			: Dimensions extends 0
-				? Element
-				: ReadonlyArray<MultidimensionalReadonlyArray<Element, Subtract<Dimensions, 1>>>
+	Dimensions extends unknown // For distributing `Dimensions` before a wide branded number can erase a zero-dimension alternative.
+		? MultidimensionalReadonlyArrayImplementation<Element, Dimensions extends object ? UnwrapBrand<Dimensions> : Dimensions>
 		: never;
+
+// Classify the primitive dimension once so a branded runtime number keeps every nesting depth.
+type MultidimensionalReadonlyArrayImplementation<Element, Dimensions extends number> =
+	`${number}` extends `${Dimensions}`
+		? Recursive<Element>
+		: Dimensions extends 0
+			? Element
+			: ReadonlyArray<MultidimensionalReadonlyArrayImplementation<Element, Subtract<Dimensions, 1>>>;
 
 export {};

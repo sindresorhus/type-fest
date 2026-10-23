@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {MultidimensionalReadonlyArray} from '../index.d.ts';
+import type {MultidimensionalReadonlyArray, Opaque, Tagged} from '../index.d.ts';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalReadonlyArray<string, T> {
 	const root: unknown[] = [];
@@ -93,3 +93,25 @@ expectTypeOf<MultidimensionalReadonlyArray<any, Dimensions.Zero>>().toBe<any>();
 expectTypeOf<MultidimensionalReadonlyArray<number, never>>().toBe<never>();
 // @ts-expect-error
 type UnknownDimensions = MultidimensionalReadonlyArray<number, unknown>;
+
+// A runtime dimension remains unknown when its number carries a brand.
+expectTypeOf<MultidimensionalReadonlyArray<string, Tagged<number, 'Dimensions'>>>().toBe<RecursiveArray<string>>();
+
+expectTypeOf<MultidimensionalReadonlyArray<string, Opaque<number, 'Dimensions'>>>().toBe<RecursiveArray<string>>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Tagged<Tagged<number, 'Dimensions'>, 'Validated'>>>().toBe<RecursiveArray<string>>();
+expectTypeOf<MultidimensionalReadonlyArray<string, number & {readonly __brand: unique symbol}>>().toBe<RecursiveArray<string>>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Tagged<0, 'Dimensions'>>>().toBe<string>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Tagged<1, 'Dimensions'>>>().toBe<readonly string[]>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Opaque<2, 'Dimensions'>>>().toBe<ReadonlyArray<readonly string[]>>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Tagged<Dimensions.Two, 'Dimensions'>>>().toBe<ReadonlyArray<readonly string[]>>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Tagged<0 | 1, 'Dimensions'>>>().toBe<string | readonly string[]>();
+expectTypeOf<MultidimensionalReadonlyArray<string, Tagged<number, 'Dimensions'> | 0>>().toBe<string | RecursiveArray<string>>();
+expectTypeOf<readonly string[]>().toBeAssignableTo<MultidimensionalReadonlyArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<ReadonlyArray<readonly string[]>>().toBeAssignableTo<MultidimensionalReadonlyArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<string>().not.toBeAssignableTo<MultidimensionalReadonlyArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<number[]>().not.toBeAssignableTo<MultidimensionalReadonlyArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<MultidimensionalReadonlyArray<unknown, Tagged<0, 'Dimensions'>>>().toBe<unknown>();
+expectTypeOf<MultidimensionalReadonlyArray<any, Tagged<0, 'Dimensions'>>>().toBe<any>();
+expectTypeOf<MultidimensionalReadonlyArray<never, Tagged<1, 'Dimensions'>>>().toBe<readonly never[]>();
+expectTypeOf<MultidimensionalReadonlyArray<Tagged<string, 'Leaf'>, Tagged<0, 'Dimensions'>>>().toBe<Tagged<string, 'Leaf'>>();
+expectTypeOf(createArray(2 as Tagged<number, 'Dimensions'>)).toBe<RecursiveArray<string>>();

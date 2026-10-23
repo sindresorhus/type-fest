@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {MultidimensionalArray} from '../index.d.ts';
+import type {MultidimensionalArray, Opaque, Tagged} from '../index.d.ts';
 
 function createArray<T extends number>(dimensions: T): MultidimensionalArray<unknown, T> {
 	const root: unknown[] = [];
@@ -89,3 +89,25 @@ expectTypeOf<MultidimensionalArray<any, Dimensions.Zero>>().toBe<any>();
 expectTypeOf<MultidimensionalArray<number, never>>().toBe<never>();
 // @ts-expect-error
 type UnknownDimensions = MultidimensionalArray<number, unknown>;
+
+// A runtime dimension remains unknown when its number carries a brand.
+expectTypeOf<MultidimensionalArray<string, Tagged<number, 'Dimensions'>>>().toBe<RecursiveArray<string>>();
+
+expectTypeOf<MultidimensionalArray<string, Opaque<number, 'Dimensions'>>>().toBe<RecursiveArray<string>>();
+expectTypeOf<MultidimensionalArray<string, Tagged<Tagged<number, 'Dimensions'>, 'Validated'>>>().toBe<RecursiveArray<string>>();
+expectTypeOf<MultidimensionalArray<string, number & {readonly __brand: unique symbol}>>().toBe<RecursiveArray<string>>();
+expectTypeOf<MultidimensionalArray<string, Tagged<0, 'Dimensions'>>>().toBe<string>();
+expectTypeOf<MultidimensionalArray<string, Tagged<1, 'Dimensions'>>>().toBe<string[]>();
+expectTypeOf<MultidimensionalArray<string, Opaque<2, 'Dimensions'>>>().toBe<string[][]>();
+expectTypeOf<MultidimensionalArray<string, Tagged<Dimensions.Two, 'Dimensions'>>>().toBe<string[][]>();
+expectTypeOf<MultidimensionalArray<string, Tagged<0 | 1, 'Dimensions'>>>().toBe<string | string[]>();
+expectTypeOf<MultidimensionalArray<string, Tagged<number, 'Dimensions'> | 0>>().toBe<string | RecursiveArray<string>>();
+expectTypeOf<string[]>().toBeAssignableTo<MultidimensionalArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<string[][]>().toBeAssignableTo<MultidimensionalArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<string>().not.toBeAssignableTo<MultidimensionalArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<number[]>().not.toBeAssignableTo<MultidimensionalArray<string, Tagged<number, 'Dimensions'>>>();
+expectTypeOf<MultidimensionalArray<unknown, Tagged<0, 'Dimensions'>>>().toBe<unknown>();
+expectTypeOf<MultidimensionalArray<any, Tagged<0, 'Dimensions'>>>().toBe<any>();
+expectTypeOf<MultidimensionalArray<never, Tagged<1, 'Dimensions'>>>().toBe<never[]>();
+expectTypeOf<MultidimensionalArray<Tagged<string, 'Leaf'>, Tagged<0, 'Dimensions'>>>().toBe<Tagged<string, 'Leaf'>>();
+expectTypeOf(createArray(2 as Tagged<number, 'Dimensions'>)).toBe<RecursiveArray<unknown>>();
