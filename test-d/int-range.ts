@@ -152,3 +152,47 @@ expectTypeOf<0>().toBeAssignableTo<BrandedMaximumRange>();
 expectTypeOf<998>().toBeAssignableTo<BrandedMaximumRange>();
 expectTypeOf<999>().not.toBeAssignableTo<BrandedMaximumRange>();
 expectTypeOf<IntRange<998, Tagged<999, 'Limit'>>>().toBe<998>();
+
+// A step beyond the bounded range contributes only its start, without building an oversized gap tuple.
+expectTypeOf<IntRange<0, 10, 10_000>>().toBe<0>();
+expectTypeOf<IntRange<3, 10, 10_000>>().toBe<3>();
+expectTypeOf<IntRange<-2, 2, 10_000>>().toBe<-2>();
+expectTypeOf<IntRange<-5, -2, 10_000>>().toBe<-5>();
+
+// The step cap keeps the exclusive boundary and the existing fallback for nonpositive steps.
+expectTypeOf<IntRange<2, 9, 7>>().toBe<2>();
+expectTypeOf<IntRange<-5, 4, 9>>().toBe<-5>();
+expectTypeOf<IntRange<-5, 5, 9>>().toBe<-5 | 4>();
+expectTypeOf<IntRange<1, 4, -2>>().toBe<1 | 2 | 3>();
+expectTypeOf<IntRange<-2, 2, -2>>().toBe<-2 | -1 | 0 | 1>();
+expectTypeOf<IntRange<3, 3, 10_000>>().toBe<never>();
+expectTypeOf<IntRange<3, 2, 10_000>>().toBe<never>();
+expectTypeOf<IntRange<-998, 999, 1_000_000>>().toBe<-998>();
+
+enum LargeRangeStep {
+	Skip = 10_000,
+}
+expectTypeOf<IntRange<-2, 3, LargeRangeStep.Skip>>().toBe<-2>();
+expectTypeOf<IntRange<-2, 3, Tagged<10_000, 'Step'>>>().toBe<-2>();
+expectTypeOf<IntRange<-2 | 1, 3 | 5, 10_000>>().toBe<-2 | 1>();
+expectTypeOf<IntRange<0, 7, 2 | 10_000>>().toBe<0 | 2 | 4 | 6>();
+
+function readRangeTable<Value>(values: Record<IntRange<-3, 4, 2>, Value>): Value {
+	return values[-1];
+}
+
+expectTypeOf(readRangeTable({'-3': 'first', '-1': 'second', 1: 'third', 3: 'last'} as const)).toBe<'first' | 'second' | 'third' | 'last'>();
+
+declare function acceptsLargeStep<const Value extends IntRange<3, 10, 10_000>>(value: Value): Value;
+expectTypeOf(acceptsLargeStep(3)).toBe<3>();
+// @ts-expect-error No later value is reached when the step exceeds the range.
+acceptsLargeStep(4);
+
+// The generated values remain numeric even when the bounds and step are generic.
+function _rangeResult<Start extends number, End extends number, Step extends number>(value: IntRange<Start, End, Step>): number {
+	return value;
+}
+
+expectTypeOf<IntRange<0, 5, never>>().toBe<never>();
+// @ts-expect-error A step must be numeric.
+type UnknownStep = IntRange<0, 5, unknown>;

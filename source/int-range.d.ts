@@ -3,7 +3,7 @@ import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {ReverseSign} from './internal/index.d.ts';
+import type {ReverseSign, TupleMin} from './internal/index.d.ts';
 import type {IntClosedRange} from './int-closed-range.d.ts'; // For `@link`
 
 /**
@@ -75,17 +75,17 @@ type PrivateNegativeIntRange<
 	Start extends number,
 	End extends number,
 	Step extends number,
-	// A `Step` below `1` cannot advance the range, so fall back to `1` like `PrivateIntRange` does
-	StepTuple extends UnknownArray = TupleOf<Step> extends [] ? [unknown] : TupleOf<Step>,
-	// How much of the range is left to generate, shortened by `Step` each time, so the range stops at `End`
+	// How much of the range is left to generate, shortened by the bounded step each time, so the range stops at `End`
 	Remaining extends UnknownArray = TupleOf<Subtract<End, Start>>,
+	// A `Step` below `1` cannot advance the range, so fall back to `1` like `PrivateIntRange` does. A step beyond the remaining span needs no larger tuple.
+	StepTuple extends UnknownArray = TupleOf<TupleMin<[Step, Remaining['length']]>> extends [] ? [unknown] : TupleOf<TupleMin<[Step, Remaining['length']]>>,
 	// The magnitude of the current value, so the value itself is `-Magnitude['length']`
 	Magnitude extends UnknownArray = TupleOf<Absolute<Start>>,
 	Result = never,
 > = Remaining extends []
 	? Result
 	: Magnitude extends [...StepTuple, ...infer NextMagnitude extends UnknownArray]
-		? PrivateNegativeIntRange<Start, End, Step, StepTuple, DropStep<Remaining, StepTuple>, NextMagnitude, Result | ReverseSign<Magnitude['length']>>
+		? PrivateNegativeIntRange<Start, End, Step, DropStep<Remaining, StepTuple>, StepTuple, NextMagnitude, Result | ReverseSign<Magnitude['length']>>
 		// Less than a step is left below zero, so `Crossover` is the amount the next step overshoots it by, and counting up can take over from there
 		: StepTuple extends [...Magnitude, ...infer Crossover extends UnknownArray]
 			? Result | ReverseSign<Magnitude['length']> | PrivateIntRange<Crossover['length'], End, Step>
@@ -114,9 +114,9 @@ type PrivateIntRange<
 		? List['length'] extends EndLengthTuple['length'] // Compare against the already normalized endpoint so branded bounds can terminate.
 			? Exclude<List[number], never> // All unused elements are `never`, so exclude them
 			: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'] ], EndLengthTuple, false>
-	// Handle the case that with `Step`
+	// Handle the case that with `Step`; a gap larger than the end only needs enough padding to reach it.
 		: List extends [...(infer U), ...EndLengthTuple] // The result of "List[length] >= End", because the `...TupleOf<Gap, never>` maybe make `List` too long.
 			? Exclude<List[number], never>
-			: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...TupleOf<Gap, never>], EndLengthTuple, false>;
+			: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...TupleOf<TupleMin<[Gap, EndLengthTuple['length']]>, never>], EndLengthTuple, false>;
 
 export {};

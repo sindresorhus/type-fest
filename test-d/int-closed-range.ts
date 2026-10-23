@@ -82,3 +82,14 @@ expectTypeOf(unionStart).toBe<-1 | 0 | 1>();
 
 declare const unionStartOnlyNegative: IntClosedRange<-2 | 0, 0>;
 expectTypeOf(unionStartOnlyNegative).toBe<-2 | -1 | 0>();
+
+// An oversized step still emits the inclusive start once, including across zero.
+expectTypeOf<IntClosedRange<0, 10, 10_000>>().toBe<0>();
+expectTypeOf<IntClosedRange<-2, 2, 10_000>>().toBe<-2>();
+
+// An exact endpoint is included only when a step reaches it.
+expectTypeOf<IntClosedRange<-5, 4, 9>>().toBe<-5 | 4>();
+expectTypeOf<IntClosedRange<5, 5, 10_000>>().toBe<5>();
+expectTypeOf<IntClosedRange<2, -2, 10_000>>().toBe<never>();
+expectTypeOf<IntClosedRange<-998, 998, 1_000_000>>().toBe<-998>();
+expectTypeOf<IntClosedRange<0, 3 | 5, 10_000>>().toBe<0>();
