@@ -1,4 +1,5 @@
 import type {UnwrapBrand} from './internal/object.d.ts';
+import type {Absolute} from './absolute.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
 import type {ExtractRestElement} from './extract-rest-element.d.ts';
 import type {If} from './if.d.ts';
@@ -77,9 +78,12 @@ type ArrayAtImplementation<TArray extends UnknownArray, Index extends number> = 
 			// Numeric enum members accept `number` too, so compare their printed values to recognize constant indices.
 			? `${number}` extends `${Index}`
 				? TArray[number] | undefined
-				: IsNegative<Index> extends true
-					? ArrayAtNegativeIndex<TArray, Index>
-					: ArrayAtPositiveIndex<TArray, Index>
+				// `at()` clamps array-like lengths to `Number.MAX_SAFE_INTEGER`, so larger offsets are always out of bounds.
+				: LessThan<9_007_199_254_740_991, Absolute<Index>> extends true
+					? undefined
+					: IsNegative<Index> extends true
+						? ArrayAtNegativeIndex<TArray, Index>
+						: ArrayAtPositiveIndex<TArray, Index>
 			: never // Should never happen
 		: never; // Should never happen
 }>;

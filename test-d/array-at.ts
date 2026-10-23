@@ -251,3 +251,37 @@ expectTypeOf<ArrayAt<[undefined, any, never, unknown], Tagged<3, 'Index'>>>().to
 expectTypeOf<ArrayAt<any, Tagged<1, 'Index'>>>().toBe<any>();
 expectTypeOf<ArrayAt<never, Tagged<1, 'Index'>>>().toBe<never>();
 expectTypeOf<ArrayAt<unknown[], Tagged<1, 'Index'>>>().toBe<unknown>();
+
+// Large integer offsets remain out of bounds even when their printed form uses an exponent.
+expectTypeOf<ArrayAt<[], 1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, 2], 1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<string[], 1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, ...string[], 2], 1e21>>().toBe<undefined>();
+const absentAtLargeOffset: ArrayAt<string[], 1e21> = undefined;
+
+// Large negative offsets can miss the whole array, including a tuple with a rest element.
+expectTypeOf<ArrayAt<[1, 2], -1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, ...string[]], -1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[1, ...string[], 2], -1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[...string[], 2], -1e21>>().toBe<undefined>();
+
+// `at()` clamps array-like lengths to `Number.MAX_SAFE_INTEGER`, regardless of their element types.
+expectTypeOf<ArrayAt<readonly string[], 9_007_199_254_740_992>>().toBe<undefined>();
+expectTypeOf<ArrayAt<readonly string[], -9_007_199_254_740_992>>().toBe<undefined>();
+expectTypeOf<ArrayAt<readonly [1, ...string[], 2], PositiveInfinity>>().toBe<undefined>();
+expectTypeOf<ArrayAt<readonly [1, ...string[], 2], NegativeInfinity>>().toBe<undefined>();
+expectTypeOf<ArrayAt<any[], 1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<unknown[], -1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<never[], 1e21>>().toBe<undefined>();
+expectTypeOf<ArrayAt<any, 1e21>>().toBe<any>();
+
+// A distant bound does not require scanning a long tuple for a nearby negative position.
+expectTypeOf<ArrayAt<readonly [...TupleOf<1100>, 'last'], -1>>().toBe<'last'>();
+expectTypeOf<ArrayAt<readonly [...TupleOf<1100>, ...number[], 'first', 'last'], -2>>().toBe<'first'>();
+
+declare function elementAt<const Values extends readonly unknown[], const Index extends number>(values: Values, index: Index): ArrayAt<Values, Index>;
+expectTypeOf(elementAt(['first', 2], -1)).toBe<2>();
+const missingElement = elementAt(['first', 2], -1e21);
+expectTypeOf(missingElement).toBe<undefined>();
+// @ts-expect-error An out-of-bounds result cannot be one of the array's elements.
+const missingString: string = missingElement;
