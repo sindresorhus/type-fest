@@ -1,6 +1,4 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
-import type {Not} from './internal/type.d.ts';
 import type {IsAny} from './is-any.d.ts';
 
 /**
@@ -47,7 +45,9 @@ export type IsRequiredKeyOf<Type extends object, Key extends KeysOfUnion<Type>> 
 	IsAny<Type | Key> extends true ? never
 		: Type extends unknown
 			? Key extends keyof Type
-				? Not<IsOptionalKeyOf<Type, Key>>
+				? Type extends Record<Key, Type[Key]>
+					? true
+					: false
 				: false
 			: never;
 

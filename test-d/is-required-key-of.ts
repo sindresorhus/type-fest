@@ -132,3 +132,42 @@ expectTypeOf<IsRequiredKeyOf<Record<string, number>, 'a'>>().toBe<true>();
 // A key that only one member of a union has is still a key of that member, and the type distributes over the union anyway, so it should be accepted. `keyof` of a union is the intersection of its members' keys, so the constraint rejected it. The answer is `boolean`, because the member that has the key decides it and the one that does not contributes `false`.
 declare const keyOfOneMember: IsRequiredKeyOf<{a: 1} | {b: 2}, 'a'>;
 expectTypeOf(keyOfOneMember).toBe<boolean>();
+
+// Presence is independent of the value type, including explicit undefined and impossible values.
+expectTypeOf<IsRequiredKeyOf<{value?: never}, 'value'>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<{value: never}, 'value'>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<{value?: undefined}, 'value'>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<{value: undefined}, 'value'>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<{value?: any}, 'value'>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<{value: unknown}, 'value'>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<{readonly value?: string}, 'value'>>().toBe<false>();
+
+expectTypeOf<IsRequiredKeyOf<{first: string} | {second?: number}, 'first' | 'second'>>().toBe<boolean>();
+expectTypeOf<IsRequiredKeyOf<{first: string} | {second?: number}, 'second'>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<readonly [value: string, next?: number], '0'>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<readonly [value: string, next?: number], '1'>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<Array<string | undefined>, number>>().toBe<true>();
+// @ts-expect-error The queried type must be an object.
+expectTypeOf<IsRequiredKeyOf<unknown, never>>();
+
+function _genericRequiredResult<Value extends object, Key extends keyof Value>(result: IsRequiredKeyOf<Value, Key>): boolean {
+	return result;
+}
+
+function _genericRequiredField<Value>(result: IsRequiredKeyOf<{value: Value}, 'value'>): true {
+	return result;
+}
+
+function _genericOptionalField<Value>(result: IsRequiredKeyOf<{value?: Value}, 'value'>): false {
+	return result;
+}
+
+// Use the predicate to require presence at a generic API boundary without rejecting explicit undefined values.
+declare function readRequiredField<const Value extends object, Key extends keyof Value>(value: Value, key: Key, ...validation: IsRequiredKeyOf<Value, Key> extends true ? [] : [never]): Value[Key];
+declare const requiredRecord: {readonly id: 'record'; value: undefined; nickname?: string};
+expectTypeOf(readRequiredField(requiredRecord, 'id')).toBe<'record'>();
+expectTypeOf(readRequiredField(requiredRecord, 'value')).toBe<undefined>();
+// @ts-expect-error Optional properties do not guarantee presence.
+readRequiredField(requiredRecord, 'nickname');
+// @ts-expect-error The key must belong to the record.
+readRequiredField(requiredRecord, 'missing');
