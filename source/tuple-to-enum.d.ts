@@ -3,6 +3,7 @@ import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnionToEnum} from './union-to-enum.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {Sum} from './sum.d.ts';
+import type {If} from './if.d.ts';
 
 /**
 {@link TupleToEnum `TupleToEnum`} options.
@@ -74,10 +75,10 @@ type LevelNumber = TupleToEnum<typeof levels, {numeric: true}>;
 */
 export type TupleToEnum<Tuple extends readonly PropertyKey[], Options extends TupleToEnumOptions = {}> = IfNotAnyOrNever<Tuple, {
 	ifNot: Tuple extends unknown // For distributing `Tuple`
-		? ApplyDefaultOptions<TupleToEnumOptions, DefaultTupleToEnumOptions, Options> extends infer ResolvedOptions extends Required<TupleToEnumOptions>
-			? ResolvedOptions['numeric'] extends true
-				? NumericTupleToEnum<Tuple, ResolvedOptions['startIndex']>
-				: UnionToEnum<LiteralElements<Tuple>>
+		? ApplyDefaultOptions<TupleToEnumOptions, DefaultTupleToEnumOptions, Options> extends infer ResolvedOptions
+			? ResolvedOptions extends Required<TupleToEnumOptions> // Distribute complete option objects before selecting either enum representation.
+				? If<ResolvedOptions['numeric'], NumericTupleToEnum<Tuple, ResolvedOptions['startIndex']>, UnionToEnum<LiteralElements<Tuple>>>
+				: never // Should never happen
 			: never // Should never happen
 		: never; // Should never happen
 	ifAny: {};

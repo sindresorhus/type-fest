@@ -107,3 +107,27 @@ expectTypeOf<TupleToEnum<[string, 'foo'], {numeric: true}>>().toBe<{readonly foo
 expectTypeOf<TupleToEnum<['a', ...Array<'b'>]>>().toBe<{readonly a: 'a'; readonly b: 'b'}>();
 expectTypeOf<TupleToEnum<['a', ...Array<'b'>], {numeric: true}>>().toBe<{readonly a: 0}>(); // Rest elements have no fixed index
 expectTypeOf<TupleToEnum<readonly ['a', 'b'], {numeric: true}>>().toBe<{readonly a: 0; readonly b: 1}>();
+
+// An option chosen at runtime can produce either complete enum representation.
+expectTypeOf<TupleToEnum<['play', 'pause'], {numeric: boolean}>>().toBe<{readonly play: 'play'; readonly pause: 'pause'} | {readonly play: 0; readonly pause: 1}>();
+const dynamicNumericEnum: TupleToEnum<['play', 'pause'], {numeric: boolean}> = {play: 0, pause: 1};
+expectTypeOf(dynamicNumericEnum).toBe<{readonly play: 0; readonly pause: 1}>();
+
+expectTypeOf<TupleToEnum<readonly ['play', 'pause'], {numeric: boolean; startIndex: 3}>>().toBe<{readonly play: 'play'; readonly pause: 'pause'} | {readonly play: 3; readonly pause: 4}>();
+expectTypeOf<TupleToEnum<['a', 'b'], {numeric: true} | {numeric: false}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0; readonly b: 1}>();
+expectTypeOf<TupleToEnum<['a', 'b'], {numeric: true; startIndex: 5} | {numeric: false; startIndex: 20}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 5; readonly b: 6}>();
+expectTypeOf<TupleToEnum<['a', 'b'] | ['c'], {numeric: boolean}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0; readonly b: 1} | {readonly c: 'c'} | {readonly c: 0}>();
+expectTypeOf<TupleToEnum<['a', 'b', 'a'], {numeric: boolean}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0 | 2; readonly b: 1}>();
+expectTypeOf<TupleToEnum<[typeof sym1, -1], {numeric: boolean; startIndex: -2}>>().toBe<{readonly [sym1]: typeof sym1; readonly [-1]: -1} | {readonly [sym1]: -2; readonly [-1]: -1}>();
+expectTypeOf<TupleToEnum<[string, 'x'], {numeric: boolean}>>().toBe<{readonly x: 'x'} | {readonly x: 1}>();
+expectTypeOf<TupleToEnum<['a', ...Array<'b'>], {numeric: boolean}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0}>();
+expectTypeOf<keyof TupleToEnum<[], {numeric: boolean}>>().toBe<never>();
+expectTypeOf<TupleToEnum<any, {numeric: boolean}>>().toBe<{}>();
+expectTypeOf<TupleToEnum<never, {numeric: boolean}>>().toBe<{}>();
+// Optional or `any` options use the existing default-option behavior.
+expectTypeOf<TupleToEnum<['a'], {numeric?: boolean}>>().toBe<{readonly a: 'a'}>();
+expectTypeOf<TupleToEnum<['a'], {numeric: any}>>().toBe<{readonly a: 'a'}>();
+expectTypeOf<TupleToEnum<['a'], {numeric: never}>>().toBe<{readonly a: 'a'}>();
+expectTypeOf<{a: 'a'; b: 1}>().not.toBeAssignableTo<TupleToEnum<['a', 'b'], {numeric: boolean}>>();
+// @ts-expect-error
+expectTypeOf<TupleToEnum<['a'], {numeric: unknown}>>();
