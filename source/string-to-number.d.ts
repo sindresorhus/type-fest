@@ -1,3 +1,4 @@
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 
@@ -47,7 +48,7 @@ type NumericSeparators = StringToNumber<'12_345'>;
 @category Numeric
 @category Template literal
 */
-export type StringToNumber<S extends string> = IfNotAnyOrNever<S, {ifNot: _StringToNumber<S>; ifAny: number}>;
+export type StringToNumber<S extends string> = IfNotAnyOrNever<S, {ifNot: _StringToNumber<S extends object ? UnwrapBrand<S> : S>; ifAny: number}>;
 
 type _StringToNumber<S extends string> =
 	S extends `${infer N extends number}`
