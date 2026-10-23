@@ -30,11 +30,10 @@ export const importPathRule = /** @type {const} */ ({
 				}
 
 				const filename = path.basename(importPath);
-				const firstDotIndex = filename.indexOf('.');
-				const extension = firstDotIndex === -1 ? '' : filename.slice(firstDotIndex);
+				const extension = path.extname(filename);
 
 				// Skip if the import path already ends with `.d.ts`
-				if (extension === '.d.ts') {
+				if (filename.endsWith('.d.ts')) {
 					return;
 				}
 

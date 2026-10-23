@@ -11,6 +11,24 @@ const invalidImport = (code, output) => ({
 
 ruleTester.run('import-path', importPathRule, {
 	valid: [
+		// A dotted stem is part of the filename, not its declaration extension.
+		{
+			code: 'import type {Foo} from "./foo.shared.d.ts";',
+		},
+		// A stem ending in .d still has a valid declaration suffix.
+		{
+			code: 'import type {Foo} from "./foo.d.d.ts";',
+		},
+		// Dotted directories, re-exports and dotfiles use the same final-suffix rule.
+		{
+			code: 'export type {Foo} from "./types.generated/foo.shared.d.ts";',
+		},
+		{
+			code: 'export * as Types from "../types.generated/foo.shared.d.ts";',
+		},
+		{
+			code: 'import type {Config} from "./.config.d.ts";',
+		},
 		// Already has .d.ts extension
 		{
 			code: 'import type {Foo} from "./foo.d.ts";',
@@ -67,6 +85,33 @@ ruleTester.run('import-path', importPathRule, {
 		},
 	],
 	invalid: [
+		// Replacing the final extension must preserve the whole module name.
+		invalidImport(
+			'import type {Foo} from "./foo.shared.ts";',
+			'import type {Foo} from \'./foo.shared.d.ts\';',
+		),
+		// Fixing imports and re-exports replaces only the final extension, not any dotted directory or stem.
+		invalidImport(
+			'export type {Foo} from "./types.generated/foo.shared.js";',
+			'export type {Foo} from \'./types.generated/foo.shared.d.ts\';',
+		),
+		invalidImport(
+			'export * as Types from "../types.generated/foo.shared.tsx";',
+			'export * as Types from \'../types.generated/foo.shared.d.ts\';',
+		),
+		invalidImport(
+			'import type {Foo} from "./types.generated/foo";',
+			'import type {Foo} from \'./types.generated/foo.d.ts\';',
+		),
+		// A dotfile without an extension has no suffix to replace.
+		invalidImport(
+			'import type {Config} from "./.config";',
+			'import type {Config} from \'./.config.d.ts\';',
+		),
+		invalidImport(
+			'import type {Config} from "./.config.ts";',
+			'import type {Config} from \'./.config.d.ts\';',
+		),
 		// Missing extension
 		invalidImport(
 			'import type {Foo} from "./foo";',
@@ -122,11 +167,6 @@ ruleTester.run('import-path', importPathRule, {
 		invalidImport(
 			'export * as AllTypes from "../../all.js";',
 			'export * as AllTypes from \'../../all.d.ts\';',
-		),
-		// Wrong extension .d.d.ts
-		invalidImport(
-			'import type {Foo} from "./foo.d.d.ts";',
-			'import type {Foo} from \'./foo.d.ts\';',
 		),
 	],
 });

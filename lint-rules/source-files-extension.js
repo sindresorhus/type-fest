@@ -16,10 +16,9 @@ export const sourceFilesExtensionRule = /** @type {const} */ ({
 	defaultOptions: [],
 	create(context) {
 		const filename = path.basename(context.filename);
-		const firstDotIndex = filename.indexOf('.');
-		const extension = firstDotIndex === -1 ? '' : filename.slice(firstDotIndex);
+		const extension = path.extname(filename);
 
-		if (extension === '.d.ts') {
+		if (filename.endsWith('.d.ts')) {
 			return {};
 		}
 
