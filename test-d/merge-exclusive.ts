@@ -102,3 +102,31 @@ expectTypeOf<{0: string}>().toBeAssignableTo<MergeExclusive<{0: unknown}, {'0': 
 expectTypeOf<{'0': number}>().toBeAssignableTo<MergeExclusive<{0: never}, {'0': number}>>();
 expectTypeOf<{0: unknown}>().toBeAssignableTo<MergeExclusive<{0: any}, {'0': number}>>();
 expectTypeOf<{[exclusiveSymbol]: 'first'}>().toBeAssignableTo<MergeExclusive<{[exclusiveSymbol]: 'first'}, {[exclusiveSymbol]: 'second'}>>();
+
+// An impossible alternative contributes no mutually exclusive keys.
+expectTypeOf<{a: string}>().toBeAssignableTo<MergeExclusive<never, {a: string}>>();
+expectTypeOf<{a: string}>().toBeAssignableTo<MergeExclusive<{a: string}, never>>();
+
+expectTypeOf<MergeExclusive<never, never>>().toBe<never>();
+expectTypeOf<MergeExclusive<string, never>>().toBe<string>();
+expectTypeOf<MergeExclusive<never, undefined>>().toBe<undefined>();
+expectTypeOf<{readonly a?: string}>().toBeAssignableTo<MergeExclusive<never, {readonly a?: string}>>();
+expectTypeOf<{a: string}>().toBeAssignableTo<MergeExclusive<never, {a: string} | {b: number}>>();
+expectTypeOf<{b: number}>().toBeAssignableTo<MergeExclusive<never, {a: string} | {b: number}>>();
+expectTypeOf<{a: number}>().not.toBeAssignableTo<MergeExclusive<never, {a: string}>>();
+expectTypeOf<{a: string}>().toBeAssignableTo<MergeExclusive<never, {a: unknown}>>();
+expectTypeOf<{a: unknown}>().toBeAssignableTo<MergeExclusive<never, {a: any}>>();
+expectTypeOf<MergeExclusive<never, {a: never}>>().toBeAssignableTo<{a: never}>();
+expectTypeOf<MergeExclusive<never, unknown>>().toBe<unknown>();
+expectTypeOf<MergeExclusive<unknown, never>>().toBe<unknown>();
+expectTypeOf<MergeExclusive<never, any>>().toBe<any>();
+expectTypeOf<MergeExclusive<any, never>>().toBe<any>();
+
+// Conditional alternatives can disappear without making the surviving choice impossible.
+type MaybeFile<Enabled extends boolean> = MergeExclusive<Enabled extends true ? {file: string} : never, {text: string}>;
+expectTypeOf<{text: string}>().toBeAssignableTo<MaybeFile<false>>();
+expectTypeOf<{file: string}>().not.toBeAssignableTo<MaybeFile<false>>();
+expectTypeOf<{file: string; text: string}>().not.toBeAssignableTo<MaybeFile<true>>();
+expectTypeOf<{[exclusiveSymbol]: string}>().toBeAssignableTo<MergeExclusive<never, {[exclusiveSymbol]: string}>>();
+expectTypeOf<Record<string, number>>().toBeAssignableTo<MergeExclusive<never, Record<string, number>>>();
+expectTypeOf<Record<number, string>>().toBeAssignableTo<MergeExclusive<Record<number, string>, never>>();
