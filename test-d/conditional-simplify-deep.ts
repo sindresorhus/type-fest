@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ConditionalSimplifyDeep} from '../index.d.ts';
+import type {ConditionalSimplifyDeep, JsonValue} from '../index.d.ts';
 
 type Position = {top: number; left: number};
 type Size = {width: number; height: number};
@@ -88,3 +88,27 @@ expectTypeOf(withBuiltInsExcluded).toBe<{a: Date; b: () => void}>();
 // A plain object is still simplified, which is the type's job.
 declare const plainObject: ConditionalSimplifyDeep<{a: {b: string} & {c: number}}>;
 expectTypeOf(plainObject).toBe<{a: {b: string; c: number}}>();
+
+// Recursive JSON arrays must not expand through a mapped type indefinitely.
+expectTypeOf<ConditionalSimplifyDeep<JsonValue>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<JsonValue>().toBeAssignableTo<ConditionalSimplifyDeep<JsonValue>>();
+
+expectTypeOf<ConditionalSimplifyDeep<JsonValue, never, object>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<JsonValue>().toBeAssignableTo<ConditionalSimplifyDeep<JsonValue, never, object>>();
+type RecursiveData = string | readonly RecursiveData[];
+expectTypeOf<ConditionalSimplifyDeep<RecursiveData>>().toBeAssignableTo<RecursiveData>();
+expectTypeOf<RecursiveData>().toBeAssignableTo<ConditionalSimplifyDeep<RecursiveData>>();
+type Part = {left: string} & {right: number};
+expectTypeOf<ConditionalSimplifyDeep<Part[], never, object>>().toBe<Array<{left: string; right: number}>>();
+expectTypeOf<ConditionalSimplifyDeep<readonly Part[], never, object>>().toBe<ReadonlyArray<{left: string; right: number}>>();
+expectTypeOf<ConditionalSimplifyDeep<readonly [Part?, ...Part[]], never, object>>().toBe<readonly [{left: string; right: number}?, ...Array<{left: string; right: number}>]>();
+expectTypeOf<ConditionalSimplifyDeep<readonly [...Part[], Part], never, object>>().toBeAssignableTo<readonly [...Array<{left: string; right: number}>, {left: string; right: number}]>();
+expectTypeOf<readonly [...Array<{left: string; right: number}>, {left: string; right: number}]>().toBeAssignableTo<ConditionalSimplifyDeep<readonly [...Part[], Part], never, object>>();
+expectTypeOf<ConditionalSimplifyDeep<readonly [Part?, ...Part[]], Part, object>>().toBe<readonly [Part?, ...Part[]]>();
+expectTypeOf<ConditionalSimplifyDeep<readonly Part[], readonly unknown[], object>>().toBe<readonly Part[]>();
+expectTypeOf<ConditionalSimplifyDeep<Part[], never, Part>>().toBe<Part[]>();
+expectTypeOf<ConditionalSimplifyDeep<unknown>>().toBe<{}>();
+expectTypeOf<ConditionalSimplifyDeep<unknown[]>>().toBe<Array<{}>>();
+expectTypeOf<ConditionalSimplifyDeep<never[]>>().toBe<never[]>();
+expectTypeOf<ConditionalSimplifyDeep<never>>().toBe<never>();
+expectTypeOf<ConditionalSimplifyDeep<any[], any>>().toBe<any[]>();

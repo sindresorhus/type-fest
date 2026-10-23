@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SimplifyDeep} from '../index.d.ts';
+import type {JsonValue, SimplifyDeep} from '../index.d.ts';
 
 type Properties1 = {
 	height: number;
@@ -43,3 +43,13 @@ interface BarBaz {
 // This would fail if `SimplifyDeep` did not simplify arrays,
 // because interfaces being open are not compatible with index signatures.
 testArraySimplification({} as SimplifyDeep<{foo: BarBaz[]}>);
+
+// The public object-only wrapper shares the lazy recursion through arrays.
+expectTypeOf<SimplifyDeep<JsonValue>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<JsonValue>().toBeAssignableTo<SimplifyDeep<JsonValue>>();
+type IntersectionItem = {left: string} & {right: number};
+expectTypeOf<SimplifyDeep<readonly IntersectionItem[]>>().toBe<ReadonlyArray<{left: string; right: number}>>();
+expectTypeOf<SimplifyDeep<IntersectionItem[], IntersectionItem>>().toBe<IntersectionItem[]>();
+expectTypeOf<SimplifyDeep<any>>().toBe<any>();
+expectTypeOf<SimplifyDeep<never>>().toBe<never>();
+expectTypeOf<SimplifyDeep<unknown>>().toBe<unknown>();

@@ -1,3 +1,4 @@
+import type {IsArrayOfUnknownLength} from './internal/array.d.ts';
 import type {SimplifyDeep} from './simplify-deep.d.ts'; // For `@link`
 
 /**
@@ -72,7 +73,14 @@ Known limitations:
 export type ConditionalSimplifyDeep<Type, ExcludeType = never, IncludeType = unknown> = Type extends ExcludeType
 	? Type
 	: Type extends IncludeType
-		? {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
+		? Type extends readonly unknown[]
+			? IsArrayOfUnknownLength<Type> extends true
+				// Direct array recursion keeps recursive element types lazy; tuples retain their homomorphic mapped shape.
+				? Type extends unknown[]
+					? Array<ConditionalSimplifyDeep<Type[number], ExcludeType, IncludeType>>
+					: ReadonlyArray<ConditionalSimplifyDeep<Type[number], ExcludeType, IncludeType>>
+				: {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
+			: {[TypeKey in keyof Type]: ConditionalSimplifyDeep<Type[TypeKey], ExcludeType, IncludeType>}
 		: Type;
 
 export {};
