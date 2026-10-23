@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {Opaque, Tagged} from '../index.d.ts';
 import type {RemoveSuffix} from '../source/remove-suffix.d.ts';
 
 expectTypeOf<RemoveSuffix<'report.pdf', '.pdf'>>().toBe<'report'>();
@@ -94,3 +95,30 @@ type Assignability<S extends string> = S;
 // Output of `RemoveSuffix` should be assignable to `string`.
 type Test1<S extends string, Suffix extends string> = Assignability<RemoveSuffix<S, Suffix>>;
 type Test2<S extends Uppercase<string>, Suffix extends '-' | '/' | '#'> = Assignability<RemoveSuffix<S, Suffix>>;
+
+// A brand on the input or affix does not change its characters.
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, '.pdf'>>().toBe<'report'>();
+expectTypeOf<RemoveSuffix<'report.pdf', Tagged<'.pdf', 'Affix'>>>().toBe<'report'>();
+
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, '.txt'>>().toBe<Tagged<'report.pdf', 'Text'>>();
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, never>>().toBe<Tagged<'report.pdf', 'Text'>>();
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf' | 'report.txt', 'Text'>, '.pdf'>>().toBe<'report' | Tagged<'report.txt', 'Text'>>();
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, Tagged<'.pdf' | '.txt', 'Affix'>>>().toBe<'report' | Tagged<'report.pdf', 'Text'>>();
+expectTypeOf<RemoveSuffix<Tagged<`${number}px`, 'Text'>, Tagged<'px', 'Affix'>>>().toBe<`${number}`>();
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, Tagged<`.${string}`, 'Affix'>, {strict: false}>>().toBe<'report'>();
+
+expectTypeOf<RemoveSuffix<Opaque<'report.pdf', 'Text'>, Opaque<'.pdf', 'Affix'>>>().toBe<'report'>();
+expectTypeOf<RemoveSuffix<Tagged<Tagged<'report.pdf', 'First'>, 'Second'>, '.pdf'>>().toBe<'report'>();
+expectTypeOf<RemoveSuffix<'report.pdf' & {readonly __brand: unique symbol}, '.pdf'>>().toBe<'report'>();
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf.pdf', 'Text'>, Tagged<'.pdf', 'Affix'>>>().toBe<'report.pdf'>();
+expectTypeOf<RemoveSuffix<Tagged<'.pdf', 'Text'>, Tagged<'.pdf', 'Affix'>>>().toBe<''>();
+expectTypeOf<RemoveSuffix<Tagged<'', 'Text'>, Tagged<'.pdf', 'Affix'>>>().toBe<Tagged<'', 'Text'>>();
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, Tagged<'', 'Affix'>>>().toBe<'report.pdf'>();
+expectTypeOf<RemoveSuffix<Tagged<'report.pdf', 'Text'>, Tagged<`.${string}`, 'Affix'>>>().toBe<string>();
+expectTypeOf<RemoveSuffix<Tagged<string, 'Text'>, Tagged<'.pdf', 'Affix'>>>().toBe<Tagged<string, 'Text'>>();
+expectTypeOf<RemoveSuffix<any, Tagged<'.pdf', 'Affix'>>>().toBe<any>();
+expectTypeOf<RemoveSuffix<never, Tagged<'.pdf', 'Affix'>>>().toBe<never>();
+// @ts-expect-error
+expectTypeOf<RemoveSuffix<unknown, '.pdf'>>();
+// @ts-expect-error
+expectTypeOf<RemoveSuffix<'report.pdf', unknown>>();

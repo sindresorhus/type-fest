@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, Not} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -98,16 +98,18 @@ export type RemoveSuffix<S extends string, Suffix extends string, Options extend
 		ifNot: If<
 			IsNever<Suffix>,
 			S,
-			_RemoveSuffix<S, Suffix, ApplyDefaultOptions<RemoveSuffixOptions, DefaultRemoveSuffixOptions, Options>>
+			_RemoveSuffix<S, Suffix extends object ? UnwrapBrand<Suffix> : Suffix, ApplyDefaultOptions<RemoveSuffixOptions, DefaultRemoveSuffixOptions, Options>>
 		>;
 	}>;
 
 type _RemoveSuffix<S extends string, Suffix extends string, Options extends Required<RemoveSuffixOptions>> =
 	Suffix extends string // For distributing `Suffix`
 		? Or<IsStringLiteral<Suffix>, Not<Options['strict']>> extends true
-			? S extends `${infer Rest}${Suffix}`
-				? Rest
-				: S // Return back `S` when `Suffix` is not present at the end of `S`
+			? S extends unknown // Distribute before unwrapping so each member keeps its own unchanged fallback.
+				? (S extends object ? UnwrapBrand<S> : S) extends `${infer Rest}${Suffix}`
+					? Rest
+					: S // Return back `S` when `Suffix` is not present at the end of `S`
+				: never // Should never happen
 			: string // Fallback to `string` when `Suffix` is non-literal and `strict` is enabled
 		: never;
 

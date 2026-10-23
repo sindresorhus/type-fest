@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {Opaque, Tagged} from '../index.d.ts';
 import type {RemovePrefix} from '../source/remove-prefix.d.ts';
 
 expectTypeOf<RemovePrefix<'on-change', 'on-'>>().toBe<'change'>();
@@ -96,3 +97,30 @@ type Assignability<S extends string> = S;
 // Output of `RemovePrefix` should be assignable to `string`.
 type Test1<S extends string, Prefix extends string> = Assignability<RemovePrefix<S, Prefix>>;
 type Test2<S extends Uppercase<string>, Prefix extends '-' | '/' | '#'> = Assignability<RemovePrefix<S, Prefix>>;
+
+// A brand on the input or affix does not change its characters.
+expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, 'on-'>>().toBe<'change'>();
+expectTypeOf<RemovePrefix<'on-change', Tagged<'on-', 'Affix'>>>().toBe<'change'>();
+
+expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, 'off-'>>().toBe<Tagged<'on-change', 'Text'>>();
+expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, never>>().toBe<Tagged<'on-change', 'Text'>>();
+expectTypeOf<RemovePrefix<Tagged<'on-change' | 'off-change', 'Text'>, 'on-'>>().toBe<'change' | Tagged<'off-change', 'Text'>>();
+expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, Tagged<'on-' | 'off-', 'Affix'>>>().toBe<'change' | Tagged<'on-change', 'Text'>>();
+expectTypeOf<RemovePrefix<Tagged<`id-${number}`, 'Text'>, Tagged<'id-', 'Affix'>>>().toBe<`${number}`>();
+expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, Tagged<`${string}-`, 'Affix'>, {strict: false}>>().toBe<'change'>();
+
+expectTypeOf<RemovePrefix<Opaque<'on-change', 'Text'>, Opaque<'on-', 'Affix'>>>().toBe<'change'>();
+expectTypeOf<RemovePrefix<Tagged<Tagged<'on-change', 'First'>, 'Second'>, 'on-'>>().toBe<'change'>();
+expectTypeOf<RemovePrefix<'on-change' & {readonly __brand: unique symbol}, 'on-'>>().toBe<'change'>();
+expectTypeOf<RemovePrefix<Tagged<'on-on-change', 'Text'>, Tagged<'on-', 'Affix'>>>().toBe<'on-change'>();
+expectTypeOf<RemovePrefix<Tagged<'on-', 'Text'>, Tagged<'on-', 'Affix'>>>().toBe<''>();
+expectTypeOf<RemovePrefix<Tagged<'', 'Text'>, Tagged<'on-', 'Affix'>>>().toBe<Tagged<'', 'Text'>>();
+expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, Tagged<'', 'Affix'>>>().toBe<'on-change'>();
+expectTypeOf<RemovePrefix<Tagged<'on-change', 'Text'>, Tagged<`${string}-`, 'Affix'>>>().toBe<string>();
+expectTypeOf<RemovePrefix<Tagged<string, 'Text'>, Tagged<'on-', 'Affix'>>>().toBe<Tagged<string, 'Text'>>();
+expectTypeOf<RemovePrefix<any, Tagged<'on-', 'Affix'>>>().toBe<any>();
+expectTypeOf<RemovePrefix<never, Tagged<'on-', 'Affix'>>>().toBe<never>();
+// @ts-expect-error
+expectTypeOf<RemovePrefix<unknown, 'on-'>>();
+// @ts-expect-error
+expectTypeOf<RemovePrefix<'on-change', unknown>>();

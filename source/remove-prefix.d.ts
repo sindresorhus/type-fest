@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, Not} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -98,16 +98,18 @@ export type RemovePrefix<S extends string, Prefix extends string, Options extend
 		ifNot: If<
 			IsNever<Prefix>,
 			S,
-			_RemovePrefix<S, Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
+			_RemovePrefix<S, Prefix extends object ? UnwrapBrand<Prefix> : Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
 		>;
 	}>;
 
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
 	Prefix extends string // For distributing `Prefix`
 		? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
-			? S extends `${Prefix}${infer Rest}`
-				? Rest
-				: S // Return back `S` when `Prefix` is not present at the start of `S`
+			? S extends unknown // Distribute before unwrapping so each member keeps its own unchanged fallback.
+				? (S extends object ? UnwrapBrand<S> : S) extends `${Prefix}${infer Rest}`
+					? Rest
+					: S // Return back `S` when `Prefix` is not present at the start of `S`
+				: never // Should never happen
 			: string // Fallback to `string` when `Prefix` is non-literal and `strict` is enabled
 		: never;
 
