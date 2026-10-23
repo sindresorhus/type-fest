@@ -3,6 +3,8 @@ import {createRuleTester, createFixtures, dedenter} from './testing-utilities.js
 import {readmeJSDocSyncRule} from './readme-jsdoc-sync.js';
 
 const {fixturePath} = createFixtures({
+	'source/crlf-alias.d.ts': '/**\r\nA description with Windows line endings.\r\n*/\r\nexport type CrlfAlias = string;\r\n',
+	'source/crlf-interface.d.ts': '/**\r\nLike {@link Exclude<T, U>}.\r\nSecond line.\r\n*/\r\nexport interface CrlfInterface {value: string}\r\n',
 	'source/some-type-alias.d.ts': dedenter`
 		/**
 		Some description for \`MyAlias\` type.
@@ -70,6 +72,21 @@ const testCase = test => ({
 
 ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 	valid: [
+		// Source line endings do not become part of the description.
+		testCase({
+			code: '- [`CrlfAlias`](source/crlf-alias.d.ts) - A description with Windows line endings.',
+		}),
+		// Interfaces still use only their first description line and convert JSDoc links.
+		testCase({
+			code: '- [`CrlfInterface`](source/crlf-interface.d.ts) - Like `Exclude<T, U>`.',
+		}),
+		// README line endings are independent of the source file's line endings.
+		testCase({
+			code: '- [`CrlfAlias`](source/crlf-alias.d.ts) - A description with Windows line endings.\r\n',
+		}),
+		testCase({
+			code: '- [`MyAlias`](source/some-type-alias.d.ts) - Some description for `MyAlias` type.\r\n',
+		}),
 		// Type alias
 		testCase({
 			code: '- [`MyAlias`](source/some-type-alias.d.ts) - Some description for `MyAlias` type.',
@@ -137,6 +154,28 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 		}),
 	],
 	invalid: [
+		// Correcting a mismatch must not copy a carriage return from the source.
+		testCase({
+			code: '- [`CrlfAlias`](source/crlf-alias.d.ts) - Incorrect description.',
+			errors: [{messageId: 'mismatch'}],
+			output: '- [`CrlfAlias`](source/crlf-alias.d.ts) - A description with Windows line endings.',
+		}),
+		// Fixing multiple entries preserves the README's CRLF boundaries and already-correct descriptions.
+		testCase({
+			code: [
+				'- [`CrlfAlias`](source/crlf-alias.d.ts) - Incorrect description.',
+				'- [`CrlfInterface`](source/crlf-interface.d.ts) - Incorrect description.',
+				'- [`MyAlias`](source/some-type-alias.d.ts) - Some description for `MyAlias` type.',
+				'',
+			].join('\r\n'),
+			errors: [{messageId: 'mismatch'}, {messageId: 'mismatch'}],
+			output: [
+				'- [`CrlfAlias`](source/crlf-alias.d.ts) - A description with Windows line endings.',
+				'- [`CrlfInterface`](source/crlf-interface.d.ts) - Like `Exclude<T, U>`.',
+				'- [`MyAlias`](source/some-type-alias.d.ts) - Some description for `MyAlias` type.',
+				'',
+			].join('\r\n'),
+		}),
 		testCase({
 			// Mismatch between README description and source JSDoc
 			code: dedenter`
