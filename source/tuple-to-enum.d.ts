@@ -1,6 +1,6 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {UnionToEnum} from './union-to-enum.d.ts';
+import type {UnionToEnum} from './union-to-enum.d.ts'; // For `@link`
 import type {IsLiteral} from './is-literal.d.ts';
 import type {Sum} from './sum.d.ts';
 import type {If} from './if.d.ts';
@@ -77,7 +77,7 @@ export type TupleToEnum<Tuple extends readonly PropertyKey[], Options extends Tu
 	ifNot: Tuple extends unknown // For distributing `Tuple`
 		? ApplyDefaultOptions<TupleToEnumOptions, DefaultTupleToEnumOptions, Options> extends infer ResolvedOptions
 			? ResolvedOptions extends Required<TupleToEnumOptions> // Distribute complete option objects before selecting either enum representation.
-				? If<ResolvedOptions['numeric'], NumericTupleToEnum<Tuple, ResolvedOptions['startIndex']>, UnionToEnum<LiteralElements<Tuple>>>
+				? If<ResolvedOptions['numeric'], NumericTupleToEnum<Tuple, ResolvedOptions['startIndex']>, {readonly [Key in LiteralElements<Tuple>]: Key}>
 				: never // Should never happen
 			: never // Should never happen
 		: never; // Should never happen

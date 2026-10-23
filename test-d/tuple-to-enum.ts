@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {TupleToEnum} from '../index.d.ts';
+import type {LiteralUnion, Tagged, TupleToEnum, TupleToEnumOptions} from '../index.d.ts';
 
 // Tuple input
 expectTypeOf({One: 'One', Two: 'Two'} as const).toBe<TupleToEnum<['One', 'Two']>>();
@@ -131,3 +131,49 @@ expectTypeOf<TupleToEnum<['a'], {numeric: never}>>().toBe<{readonly a: 'a'}>();
 expectTypeOf<{a: 'a'; b: 1}>().not.toBeAssignableTo<TupleToEnum<['a', 'b'], {numeric: boolean}>>();
 // @ts-expect-error
 expectTypeOf<TupleToEnum<['a'], {numeric: unknown}>>();
+
+// Classify each position before broad keys can absorb the known literal positions.
+expectTypeOf<TupleToEnum<[string, number, symbol, 'ready', 7, typeof sym1]>>().toBe<{readonly ready: 'ready'; readonly 7: 7; readonly [sym1]: typeof sym1}>();
+expectTypeOf<TupleToEnum<[Uppercase<string>, 'fixed', ...Array<'rest'>]>>().toBe<{readonly fixed: 'fixed'; readonly rest: 'rest'}>();
+expectTypeOf<TupleToEnum<readonly [...Array<'queued'>, 'done']>>().toBe<{readonly queued: 'queued'; readonly done: 'done'}>();
+expectTypeOf<TupleToEnum<Array<'read' | 'write'>>>().toBe<{readonly read: 'read'; readonly write: 'write'}>();
+expectTypeOf<TupleToEnum<[any, 'known', never]>>().toBe<{readonly known: 'known'}>();
+expectTypeOf<TupleToEnum<[LiteralUnion<'hint', string>, 'fixed']>>().toBe<{readonly fixed: 'fixed'}>();
+
+// Literal property identity is retained for enums, symbols, and branded keys.
+enum CommandKey {
+	Ready = 'ready',
+	Done = 'done',
+}
+expectTypeOf<TupleToEnum<[CommandKey.Ready, CommandKey.Done]>>().toBe<{readonly [CommandKey.Ready]: CommandKey.Ready; readonly [CommandKey.Done]: CommandKey.Done}>();
+expectTypeOf<keyof TupleToEnum<[Tagged<'known', 'Command'>]>>().toBe<Tagged<'known', 'Command'>>();
+expectTypeOf<TupleToEnum<readonly ['a', 'b'] & {readonly metadata: 'commands'}>>().toBe<{readonly a: 'a'; readonly b: 'b'}>();
+
+// Generic consumers can return the result as an object and read known entries.
+function _genericEnum<Values extends readonly PropertyKey[]>(value: TupleToEnum<Values>): object {
+	return value;
+}
+
+function _genericEnumOptions<Values extends readonly PropertyKey[], Options extends TupleToEnumOptions>(value: TupleToEnum<Values, Options>): object {
+	return value;
+}
+
+function _knownEnumEntry<Value extends string>(value: TupleToEnum<['fixed', Value]>): 'fixed' {
+	return value.fixed;
+}
+
+declare function enumOf<const Values extends readonly PropertyKey[]>(values: Values): TupleToEnum<Values>;
+const inferredEnum = enumOf(['ready', 7, sym1]);
+expectTypeOf(inferredEnum).toBe<{readonly ready: 'ready'; readonly 7: 7; readonly [sym1]: typeof sym1}>();
+// @ts-expect-error Enum properties remain readonly.
+inferredEnum.ready = 'ready';
+declare function acceptCommand(key: keyof typeof inferredEnum): void;
+// @ts-expect-error Unlisted properties are rejected.
+acceptCommand('missing');
+// @ts-expect-error Unknown tuple elements are not property keys.
+type UnknownElementEnum = TupleToEnum<[unknown, 'known']>;
+
+// Inferred entries remain usable through numeric and unique-symbol indexed reads.
+expectTypeOf(inferredEnum[7]).toBe<7>();
+expectTypeOf(inferredEnum[sym1]).toBe<typeof sym1>();
+expectTypeOf<keyof typeof inferredEnum>().toBe<'ready' | 7 | typeof sym1>();
