@@ -63,7 +63,7 @@ type WritableAllKeys<BaseType> = BaseType extends unknown
 		? _Writable<BaseType, keyof BaseType>
 		: IsAny<BaseType> extends true
 			? BaseType
-			: SimplifyObject<{-readonly [KeyType in keyof BaseType]: BaseType[KeyType]}>
+			: {-readonly [KeyType in keyof BaseType]: BaseType[KeyType]} & {}
 	: never;
 
 // The intersection is against the member, not the union, so a key only one member has is applied to that member and is a no-op for the others.

@@ -126,3 +126,37 @@ expectTypeOf(neverKeys).toBe<{readonly a: 1; readonly b: 2}>();
 // A `symbol` key set changes only the symbol keys, so it is not mistaken for the default that stands for every key.
 declare const symbolKeys: Writable<{readonly [key: symbol]: 2; readonly a: 1}, symbol>;
 expectTypeOf(symbolKeys).toBe<{[key: symbol]: 2; readonly a: 1}>();
+
+// Making outer fields writable preserves optionality and the readonly values they contain.
+type ShallowWritableModel = {readonly id: number; readonly settings?: {readonly enabled: boolean}; readonly callback: (input: string) => number};
+declare const shallowWritable: Writable<ShallowWritableModel>;
+expectTypeOf(shallowWritable).toBe<{id: number; settings?: {readonly enabled: boolean}; callback: (input: string) => number}>();
+shallowWritable.id = 2;
+shallowWritable.settings = {enabled: true};
+// @ts-expect-error Nested values keep their own readonly fields.
+shallowWritable.settings.enabled = false;
+expectTypeOf(shallowWritable.callback('value')).toBe<number>();
+
+// A numeric index and a named optional field retain their own value types.
+expectTypeOf<Writable<{readonly [key: number]: string; readonly label?: string}>>()
+	.toBe<{[key: number]: string; label?: string}>();
+
+declare const writableProperty: unique symbol;
+expectTypeOf<Writable<{readonly [writableProperty]?: string; readonly 0: number}>>()
+	.toBe<{[writableProperty]?: string; 0: number}>();
+
+// The default path preserves its broad and nullish boundaries.
+expectTypeOf<Writable<never>>().toBe<never>();
+expectTypeOf<Writable<unknown>>().toBe<{}>();
+expectTypeOf<Writable<null>>().toBe<null>();
+expectTypeOf<Writable<undefined>>().toBe<undefined>();
+
+function _updateGenericCount<Value extends {readonly count: number}>(value: Writable<Value>): number {
+	value.count += 1;
+	return value.count;
+}
+
+// Optional impossible fields remain present in the key set rather than disappearing.
+expectTypeOf<Writable<{readonly impossible?: never; readonly value: unknown}>>()
+	.toBe<{impossible?: never; value: unknown}>();
+expectTypeOf<keyof Writable<{readonly impossible?: never; readonly value: unknown}>>().toBe<'impossible' | 'value'>();
