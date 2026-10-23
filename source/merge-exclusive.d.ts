@@ -1,7 +1,12 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {NormalizedKeys, ToString} from './internal/index.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+
+// Declared numeric and enum keys also have their runtime string spellings. Keep index signatures unchanged.
+type KeysWithAliases<Type> = KeysOfUnion<Type> | NormalizedKeys<ToString<KeysOfUnion<OmitIndexSignature<Type>>>>;
 
 // Helper type. Not useful on its own. Include member-specific keys when either side is a union.
-type Without<FirstType, SecondType> = {[KeyType in Exclude<KeysOfUnion<FirstType>, KeysOfUnion<SecondType>>]?: never};
+type Without<FirstType, SecondType> = {[KeyType in Exclude<KeysOfUnion<FirstType>, KeysWithAliases<SecondType>>]?: never};
 
 /**
 Create a type that has mutually exclusive keys.

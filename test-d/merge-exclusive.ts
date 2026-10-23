@@ -64,3 +64,41 @@ expectTypeOf<{[exclusiveSymbol]: boolean}>().toBeAssignableTo<PropertyKeyUnionOp
 // Non-object alternatives are preserved.
 expectTypeOf<MergeExclusive<string, number>>().toBe<string | number>();
 expectTypeOf<MergeExclusive<{text: string}, undefined>>().toBe<{text: string} | undefined>();
+
+// Different spellings of the same numeric key are shared, not mutually exclusive.
+expectTypeOf<{0: 'first'}>().toBeAssignableTo<MergeExclusive<{0: 'first'}, {'0': 'second'}>>();
+expectTypeOf<{'0': 'second'}>().toBeAssignableTo<MergeExclusive<{0: 'first'}, {'0': 'second'}>>();
+
+// The shared property keeps each alternative's own modifiers and value type.
+type NumericSharedOptions = MergeExclusive<{readonly 0?: 'first'; text: string}, {readonly '0'?: 'second'; file: string}>;
+expectTypeOf<{text: string}>().toBeAssignableTo<NumericSharedOptions>();
+expectTypeOf<{file: string}>().toBeAssignableTo<NumericSharedOptions>();
+expectTypeOf<{0: 'first'; text: string}>().toBeAssignableTo<NumericSharedOptions>();
+expectTypeOf<{'0': 'second'; file: string}>().toBeAssignableTo<NumericSharedOptions>();
+expectTypeOf<{0: 'second'; text: string}>().not.toBeAssignableTo<NumericSharedOptions>();
+expectTypeOf<{0: 'first'; text: string; file: string}>().not.toBeAssignableTo<NumericSharedOptions>();
+
+type NumericSharedUnion = MergeExclusive<{0: string; text: true} | {'0': string; json: true}, {'0': number; file: true}>;
+expectTypeOf<{0: string; text: true}>().toBeAssignableTo<NumericSharedUnion>();
+expectTypeOf<{'0': string; json: true}>().toBeAssignableTo<NumericSharedUnion>();
+expectTypeOf<{'0': number; file: true}>().toBeAssignableTo<NumericSharedUnion>();
+expectTypeOf<{0: string; text: true; file: true}>().not.toBeAssignableTo<NumericSharedUnion>();
+
+// Fractional and negative keys have aliases, while padded spellings are distinct keys.
+expectTypeOf<{1.5: 'first'}>().toBeAssignableTo<MergeExclusive<{1.5: 'first'}, {'1.5': 'second'}>>();
+expectTypeOf<{'-1': 'second'}>().toBeAssignableTo<MergeExclusive<{[-1]: 'first'}, {'-1': 'second'}>>();
+expectTypeOf<{'01': string; 1: number}>().not.toBeAssignableTo<MergeExclusive<{'01': string}, {1: number}>>();
+expectTypeOf<{'01': string}>().toBeAssignableTo<MergeExclusive<{'01': string}, {1: number}>>();
+expectTypeOf<{1: number}>().toBeAssignableTo<MergeExclusive<{'01': string}, {1: number}>>();
+
+// A string enum key also shares the ordinary spelling of its name.
+enum SharedField {
+	Name = 'name',
+}
+expectTypeOf<{name: 'first'}>().toBeAssignableTo<MergeExclusive<{name: 'first'}, {[SharedField.Name]: 'second'}>>();
+expectTypeOf<{[SharedField.Name]: 'second'}>().toBeAssignableTo<MergeExclusive<{name: 'first'}, {[SharedField.Name]: 'second'}>>();
+
+expectTypeOf<{0: string}>().toBeAssignableTo<MergeExclusive<{0: unknown}, {'0': number}>>();
+expectTypeOf<{'0': number}>().toBeAssignableTo<MergeExclusive<{0: never}, {'0': number}>>();
+expectTypeOf<{0: unknown}>().toBeAssignableTo<MergeExclusive<{0: any}, {'0': number}>>();
+expectTypeOf<{[exclusiveSymbol]: 'first'}>().toBeAssignableTo<MergeExclusive<{[exclusiveSymbol]: 'first'}, {[exclusiveSymbol]: 'second'}>>();
