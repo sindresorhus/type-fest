@@ -1,6 +1,7 @@
-import type {IsArrayReadonly, MaxLength, StaticPartOfArray, UnwrapBrand, VariablePartOfArray} from './internal/index.d.ts';
+import type {IsArrayReadonly, MaxLength, UnwrapBrand} from './internal/index.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {Subtract} from './subtract.d.ts';
+import type {_SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -50,31 +51,33 @@ type PeelFirstElement<T extends UnknownArray> =
 		: never; // Should never happen, since `[(infer F)?, ...infer R]` is a top-type for arrays
 
 /**
-The implementation of `SplitArrayByIndex` for variable length arrays.
+The implementation of `SplitArrayByIndex` for variable length arrays. Split once so optional fixed positions are included before the rest element.
 */
 type SplitVariableArrayByIndex<T extends UnknownArray,
 	SplitIndex extends number,
-	T1 = Subtract<SplitIndex, StaticPartOfArray<T>['length']>,
+	Parts extends [UnknownArray, UnknownArray, UnknownArray] = _SplitOnRestElement<T, {preserveOptionalModifier: true}>,
+	T1 = Subtract<SplitIndex, MaxLength<Parts[0]>>,
 	T2 = T1 extends number
-		? TupleOf<GreaterThanOrEqual<T1, 0> extends true ? T1 : number, VariablePartOfArray<T>[number]>
+		? TupleOf<GreaterThanOrEqual<T1, 0> extends true ? T1 : number, Parts[1][number] | Parts[2][number]>
 		: [],
 > =
 	SplitIndex extends 0
 		? [[], T]
-		: GreaterThanOrEqual<StaticPartOfArray<T>['length'], SplitIndex> extends true
+		: GreaterThanOrEqual<MaxLength<Parts[0]>, SplitIndex> extends true
 			? [
-				SplitFixedArrayByIndex<StaticPartOfArray<T>, SplitIndex>[0],
+				SplitFixedArrayByIndex<Parts[0], SplitIndex>[0],
 				[
-					...SplitFixedArrayByIndex<StaticPartOfArray<T>, SplitIndex>[1],
-					...VariablePartOfArray<T>,
+					...SplitFixedArrayByIndex<Parts[0], SplitIndex>[1],
+					...Parts[1],
+					...Parts[2],
 				],
 			]
 			: [
 				[
-					...StaticPartOfArray<T>,
+					...Parts[0],
 					...(T2 extends UnknownArray ? T2 : []),
 				],
-				VariablePartOfArray<T>,
+				[...Parts[1], ...Parts[2]],
 			];
 
 /**

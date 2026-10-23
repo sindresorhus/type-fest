@@ -302,3 +302,26 @@ expectTypeOf<ArraySplice<[1, 2, 3], 1, LiteralUnion<1, number>>>().toBeAssignabl
 expectTypeOf<ArraySplice<[1, 2, 3], any, 1>>().toBe<Array<1 | 2 | 3>>();
 expectTypeOf<ArraySplice<[1, 2, 3], 1, any>>().toBe<Array<1 | 2 | 3>>();
 expectTypeOf<ArraySplice<[1, 2, 3], never, 1>>().toBe<never>();
+
+// Deleting a declared optional position before a rest element must not leave that position in the result.
+expectTypeOf<ArraySplice<[1?, ...string[]], 0, 1, [2]>>().toBe<[2, ...string[]]>();
+expectTypeOf<ArraySplice<readonly [1, 2?, ...string[]], 1, 1, [3]>>().toBe<readonly [1, 3, ...string[]]>();
+expectTypeOf<[2, 'tail']>().toBeAssignableTo<ArraySplice<[1?, ...string[]], 0, 1, [2]>>();
+
+// Removing an optional fixed prefix keeps later optional values and the independent rest element.
+expectTypeOf<ArraySplice<[1?, 2?, ...string[]], 0, 1, [9]>>().toBe<[9, 2?, ...string[]]>();
+expectTypeOf<ArraySplice<[1, 2?, ...string[]], 1, 1>>().toBe<[1, ...string[]]>();
+expectTypeOf<ArraySplice<[1?, (2 | undefined)?, ...string[]], 0, 1, [9]>>().toBe<[9, (2 | undefined)?, ...string[]]>();
+expectTypeOf<ArraySplice<[1?, 2?, ...string[]], 0, 1 | 2, [9]>>().toBe<[9, 2?, ...string[]] | [9, ...string[]]>();
+expectTypeOf<ArraySplice<[1?, 2?, ...string[]], 0 | 1, 1, [9]>>().toBe<[9, 2?, ...string[]] | [1 | undefined, 9, ...string[]]>();
+expectTypeOf<ArraySplice<readonly [1?, ...string[]] | [true, false?, ...number[]], 0, 1, [9]>>().toBe<readonly [9, ...string[]] | [9, false?, ...number[]]>();
+
+// Inferred readonly inputs retain both the fixed position and the cleaned tail.
+declare const optionalRestInput: readonly [1, 2?, ...string[]];
+const inferredOptionalRest = spliceTuple(optionalRestInput, 1, 1);
+expectTypeOf(inferredOptionalRest).toBe<readonly [1, ...string[]]>();
+expectTypeOf(inferredOptionalRest[0]).toBe<1>();
+// @ts-expect-error The original optional value was removed, so it cannot occupy the rest.
+const staleOptionalRest: typeof inferredOptionalRest = [1, 2, 'tail'];
+// @ts-expect-error A valid fixed element still cannot be written through a readonly result.
+inferredOptionalRest[0] = 1;
