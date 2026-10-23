@@ -1,10 +1,12 @@
+import type {UnwrapBrand} from './internal/object.d.ts';
+
 /**
 Matches any non-empty string.
 
 This is useful when you need a string that is not empty, for example, as a function parameter.
 
 NOTE:
-- This returns `never` not just when instantiated with an empty string, but also when an empty string is a subtype of the instantiated type, like `string` or `Uppercase<string>`.
+- This returns `never` not just when instantiated with an empty string, but also when an empty string is a subtype of the underlying string type, like `string` or `Uppercase<string>`.
 
 @example
 ```
@@ -27,6 +29,7 @@ foo(someString);
 
 @category String
 */
-export type NonEmptyString<T extends string> = '' extends T ? never : T;
+// The string form also checks enum values; keep the unwrapped type so the constraint remains strict for generic strings.
+export type NonEmptyString<T extends string> = '' extends UnwrapBrand<T> | `${UnwrapBrand<T>}` ? never : T;
 
 export {};
