@@ -666,3 +666,60 @@ expectTypeOf<MergeDeep<[1, 2], string[], {recurseIntoArrays: true; arrayMergeMod
 expectTypeOf<MergeDeep<[1, 2], string[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>().toBe<[string, string, ...string[]]>();
 expectTypeOf<MergeDeep<string[], [1, 2], {recurseIntoArrays: true; arrayMergeMode: 'replace'}>>().toBe<[1, 2, ...string[]]>();
 expectTypeOf<MergeDeep<string[], [1, 2], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>().toBe<[1, 2, ...string[]]>();
+
+// Numeric keys and their string spellings refer to the same property when merging records.
+expectTypeOf<MergeDeep<{0: {before: string}}, {'0': {after: number}}>>().toBe<{'0': {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{'0': {before: string}}, {0: {after: number}}>>().toBe<{0: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{0: string}, {'0': number}>>().toBe<{'0': number}>();
+expectTypeOf<MergeDeep<{'0': string}, {0: number}>>().toBe<{0: number}>();
+expectTypeOf<MergeDeep<{[-2]: string}, {'-2': boolean}>>().toBe<{'-2': boolean}>();
+expectTypeOf<MergeDeep<{1.5: string}, {'1.5': boolean}>>().toBe<{'1.5': boolean}>();
+expectTypeOf<MergeDeep<{readonly 0: string; readonly retained?: boolean}, {readonly '0'?: number; added: Date}>>().toBe<{readonly '0'?: number; readonly retained?: boolean; added: Date}>();
+expectTypeOf<MergeDeep<{readonly '0'?: string}, {0: number}>>().toBe<{0: number}>();
+expectTypeOf<MergeDeep<{0?: {before: string}}, {readonly '0'?: {after: number}}>>().toBe<{readonly '0'?: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{outer: {0: {value: string; retained: boolean}}}, {outer: {'0': {value: number}}}>>().toBe<{outer: {'0': {value: number; retained: boolean}}}>();
+expectTypeOf<MergeDeep<{0: string[]}, {'0': number[]}>>().toBe<{'0': number[]}>();
+expectTypeOf<MergeDeep<{'0': string[]}, {0: number[]}, {arrayMergeMode: 'spread'}>>().toBe<{0: Array<string | number>}>();
+expectTypeOf<MergeDeep<Array<{0: string}>, Array<{'0': number}>, {recurseIntoArrays: true}>>().toBe<Array<{'0': number}>>();
+
+// Noncanonical number strings are separate names, and neither spelling loses unrelated properties.
+expectTypeOf<MergeDeep<{1: string}, {'01': number; '1.0': boolean; '1e0': Date; ' 1': null}>>().toBe<{1: string; '01': number; '1.0': boolean; '1e0': Date; ' 1': null}>();
+expectTypeOf<MergeDeep<{'01': string; '1.0': boolean; '1e0': Date; ' 1': null}, {1: number}>>().toBe<{'01': string; '1.0': boolean; '1e0': Date; ' 1': null; 1: number}>();
+expectTypeOf<MergeDeep<{0: {destination: true}; untouched: 'left'}, {'0': {source: true}; added: 'right'}>>().toBe<{'0': {destination: true; source: true}; untouched: 'left'; added: 'right'}>();
+expectTypeOf<MergeDeep<{0: string} | {1: boolean}, {'0': number}>>().toBe<{'0': number} | {1: boolean; '0': number}>();
+
+// Alias matching preserves the same special-value behavior as an identically spelled key.
+expectTypeOf<MergeDeep<{0: string}, {'0': any}>>().toBe<{'0': any}>();
+expectTypeOf<MergeDeep<{0: string}, {'0': unknown}>>().toBe<{'0': unknown}>();
+expectTypeOf<MergeDeep<{0: string}, {'0': never}>>().toBe<{'0': never}>();
+expectTypeOf<MergeDeep<{0: any}, {'0': number}>>().toBe<{'0': number}>();
+expectTypeOf<MergeDeep<{0: unknown}, {'0': {value: number}}>>().toBe<{'0': {value: number}}>();
+expectTypeOf<MergeDeep<{0: string}, {'0': undefined}>>().toBe<{'0': undefined}>();
+expectTypeOf<MergeDeep<{0: {before: string}}, {'0': {after: number} | undefined}>>().toBe<{'0': {before: string; after: number} | undefined}>();
+expectTypeOf(mergeDeep({0: 'old'}, {'0': 42})).toBe<{'0': number}>();
+
+// Numeric enum spellings must remain readable after their aliases are matched.
+enum MergeIndex {
+	Zero = '0',
+	Name = 'name',
+	Padded = '01',
+}
+expectTypeOf<MergeDeep<{[MergeIndex.Zero]: {before: string}}, {0: {after: number}}>>().toBe<{0: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{0: {before: string}}, {[MergeIndex.Zero]: {after: number}}>>().toBe<{[MergeIndex.Zero]: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{'0': {before: string}}, {[MergeIndex.Zero]: {after: number}}>>().toBe<{[MergeIndex.Zero]: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{[MergeIndex.Zero]: {before: string}}, {'0': {after: number}}>>().toBe<{'0': {before: string; after: number}}>();
+
+// Symbols have no string spelling and retain their matching property values.
+declare const mergeSymbol: unique symbol;
+expectTypeOf<MergeDeep<{[mergeSymbol]: {before: string}}, {[mergeSymbol]: {after: number}}>>().toBe<{[mergeSymbol]: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{readonly [MergeIndex.Zero]?: {before: string}}, {'0': {after: number}}>>().toBe<{'0': {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{'0': {before: string}}, {readonly [MergeIndex.Zero]?: {after: number}}>>().toBe<{readonly [MergeIndex.Zero]?: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{[MergeIndex.Name]: {before: string}}, {name: {after: number}}>>().toBe<{name: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{name: {before: string}}, {[MergeIndex.Name]: {after: number}}>>().toBe<{[MergeIndex.Name]: {before: string; after: number}}>();
+expectTypeOf<MergeDeep<{[MergeIndex.Name]: string}, {name: number}>>().toBe<{name: number}>();
+expectTypeOf<MergeDeep<{name: string}, {[MergeIndex.Name]: number}>>().toBe<{[MergeIndex.Name]: number}>();
+expectTypeOf<MergeDeep<{1: string}, {[MergeIndex.Padded]: number}>>().toBe<{1: string; [MergeIndex.Padded]: number}>();
+expectTypeOf<MergeDeep<{[MergeIndex.Padded]: string}, {1: number}>>().toBe<{[MergeIndex.Padded]: string; 1: number}>();
+expectTypeOf<MergeDeep<{[MergeIndex.Name]: string}, {name: any}>>().toBe<{name: any}>();
+expectTypeOf<MergeDeep<{[MergeIndex.Name]: string}, {name: never}>>().toBe<{name: never}>();
+expectTypeOf<MergeDeep<{[MergeIndex.Name]: string}, {name: unknown}>>().toBe<{name: unknown}>();

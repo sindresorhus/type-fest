@@ -8,6 +8,8 @@ import type {Merge} from './merge.d.ts';
 import type {
 	FirstArrayElement,
 	EnforceOptional,
+	NormalizedKeys,
+	ToString,
 } from './internal/index.d.ts';
 import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
@@ -55,17 +57,19 @@ type DoMergeDeepRecord<
 	Source extends UnknownRecord,
 	Options extends MergeDeepInternalOptions,
 > =
+// Compare runtime spellings, but read through the declared destination key so enum names retain their values.
 // Case in rule 1: The destination contains the key but the source doesn't.
 	{
-		[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
+		[Key in keyof Destination as Key extends NormalizedKeys<keyof Source | ToString<keyof Source>> ? never : Key]: Destination[Key];
 	}
 // Case in rule 2: The source contains the key but the destination doesn't.
 	& {
-		[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
+		[Key in keyof Source as Key extends NormalizedKeys<keyof Destination | ToString<keyof Destination>> ? never : Key]: Source[Key];
 	}
 // Case in rule 3: Both the source and the destination contain the key.
 	& {
-		[Key in keyof Source as Key extends keyof Destination ? Key : never]: MergeDeepRecordProperty<Required<Destination>[Key], Required<Source>[Key], Options>;
+		[Key in keyof Source as Key extends NormalizedKeys<keyof Destination | ToString<keyof Destination>> ? Key : never]:
+		MergeDeepRecordProperty<Required<Destination>[Extract<keyof Destination, NormalizedKeys<Key | ToString<Key>>>], Required<Source>[Key], Options>;
 	};
 
 /**
