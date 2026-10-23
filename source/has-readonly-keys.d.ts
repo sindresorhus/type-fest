@@ -1,4 +1,4 @@
-import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Returns a boolean for whether the given type has any readonly fields.
@@ -18,6 +18,13 @@ type UpdateService<Entity extends object> = {
 
 @category Utilities
 */
-export type HasReadonlyKeys<BaseType extends object> = ReadonlyKeysOf<BaseType> extends never ? false : true;
+export type HasReadonlyKeys<BaseType extends object> = (
+	BaseType extends unknown // For distributing `BaseType`
+		// Identity remapping compares array properties without rebuilding an array wrapper.
+		? IsEqual<{[Key in keyof BaseType as Key]: BaseType[Key]}, {-readonly [Key in keyof BaseType as Key]: BaseType[Key]}> extends true
+			? never
+			: true
+		: never
+) extends never ? false : true;
 
 export {};
