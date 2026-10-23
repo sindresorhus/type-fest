@@ -55,3 +55,35 @@ expectTypeOf<{[x: number]: string | number | boolean; 0: string}>().toBe<TupleTo
 
 // `FixedLengthArray` is a tuple of a known length with the mutating members removed, so its positions are still positions.
 expectTypeOf<{0: string; 1: string; 2: string}>().toBe<TupleToObject<FixedLengthArray<string, 3>>>();
+
+// Sentinel values retain their own positions, while ordinary arrays retain their index signature.
+expectTypeOf<TupleToObject<readonly [never, any, unknown]>>().toBe<{readonly 0: never; readonly 1: any; readonly 2: unknown}>();
+expectTypeOf<TupleToObject<readonly unknown[]>>().toBe<Readonly<Record<number, unknown>>>();
+expectTypeOf<TupleToObject<readonly [string?, ...number[]]>>().toBe<{readonly [index: number]: string | number | undefined; readonly 0?: string}>();
+// @ts-expect-error The input must be an array.
+type UnknownTupleObject = TupleToObject<unknown>;
+
+// A generic projection retains each concrete position without exposing array members.
+function projectTuple<const Values extends readonly unknown[]>(values: Values): TupleToObject<Values> {
+	return {...values};
+}
+
+const projected = projectTuple(['first', {id: 1}] as const);
+expectTypeOf(projected).toBe<{readonly 0: 'first'; readonly 1: {readonly id: 1}}>();
+expectTypeOf(projected[0]).toBe<'first'>();
+expectTypeOf(projected[1].id).toBe<1>();
+// @ts-expect-error The original readonly modifier is retained.
+projected[0] = 'first';
+// @ts-expect-error Array members are not part of the projected object.
+type ArrayLengthProperty = typeof projected.length;
+// @ts-expect-error A finite tuple does not acquire an unrestricted numeric index.
+type OutOfBoundsProperty = (typeof projected)[2];
+
+function _inputAssignable<Values extends readonly unknown[]>(values: Values): TupleToObject<Values> {
+	return values;
+}
+
+// Unknown-length readonly inputs still expose numeric reads, with the usual out-of-bounds possibility.
+const indexedProjection = projectTuple(['first', 'second'] as readonly string[]);
+expectTypeOf(indexedProjection).toBe<Readonly<Record<number, string>>>();
+expectTypeOf(indexedProjection[10]).toBe<string | undefined>();

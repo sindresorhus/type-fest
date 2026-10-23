@@ -1,4 +1,3 @@
-import type {IsTuple} from './is-tuple.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {If} from './if.d.ts';
@@ -40,7 +39,7 @@ type Example6 = TupleToObject<[x: number, y: number]>;
 */
 export type TupleToObject<TArray extends UnknownArray> = If<IsAny<TArray>, any, {
 	[
-	Key in keyof TArray as Key & (`${number}` | (IsTuple<TArray> extends true ? never : number))
+	Key in keyof TArray as Key & (`${number}` | (number extends TArray['length'] ? number : never))
 	]: TArray[Key];
 }>;
 
