@@ -47,3 +47,26 @@ expectTypeOf<UnionMax<DenseCandidates | NegativeInfinity>>().toBe<599>();
 expectTypeOf<UnionMax<DenseCandidates | PositiveInfinity>>().toBe<PositiveInfinity>();
 // @ts-expect-error - An unknown value cannot be compared.
 type UnknownMaximum = UnionMax<unknown>;
+
+// Enum members retain their known numeric values.
+enum RetryLimit {
+	None = 0,
+	Low = 2,
+	High = 5,
+}
+expectTypeOf<UnionMax<RetryLimit.Low | RetryLimit.High>>().toBe<5>();
+expectTypeOf<UnionMax<RetryLimit.None>>().toBe<0>();
+expectTypeOf<UnionMax<RetryLimit>>().toBe<5>();
+
+declare enum RuntimeRetryLimit {
+	Value,
+}
+expectTypeOf<UnionMax<RetryLimit.Low | 3>>().toBe<3>();
+expectTypeOf<UnionMax<RetryLimit.High | 3>>().toBe<5>();
+expectTypeOf<UnionMax<RetryLimit.None | NegativeInfinity>>().toBe<0>();
+expectTypeOf<UnionMax<RetryLimit.High | NegativeInfinity>>().toBe<5>();
+expectTypeOf<UnionMax<RetryLimit.High | PositiveInfinity>>().toBe<PositiveInfinity>();
+expectTypeOf<UnionMax<RuntimeRetryLimit.Value>>().toBe<number>();
+expectTypeOf<UnionMax<RetryLimit | number>>().toBe<number>();
+expectTypeOf<UnionMax<RetryLimit | any>>().toBe<any>();
+expectTypeOf<UnionMax<RetryLimit | never>>().toBe<5>();

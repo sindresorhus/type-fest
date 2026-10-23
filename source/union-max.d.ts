@@ -37,7 +37,7 @@ The implementation counts upward using a tuple, removing lower union members unt
 */
 export type UnionMax<NumberUnion extends number> =
 	IsAnyOrNever<NumberUnion> extends true ? NumberUnion
-		: number extends NumberUnion ? number
+		: `${number}` extends `${NumberUnion}` ? number
 			: PositiveInfinity extends NumberUnion ? PositiveInfinity
 				: [NumberUnion] extends [NegativeInfinity] ? NegativeInfinity
 					: InternalUnionMax<Finite<NumberUnion>>;
