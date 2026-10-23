@@ -102,3 +102,31 @@ expectTypeOf(readonlyParametersTuple).toBe<(first: boolean, second?: number) => 
 
 declare const readonlyRestParameter: SetParameterType<(first: string, ...rest: readonly number[]) => boolean, {1: string}>;
 expectTypeOf(readonlyRestParameter).toBe<(first: string, ...rest: string[]) => boolean>();
+
+// Numeric parameter keys also accept their canonical string spelling.
+expectTypeOf<SetParameterType<(value: string) => boolean, {'0': number}>>().toBe<(value: number) => boolean>();
+expectTypeOf<SetParameterType<(value: string, ...rest: boolean[]) => number, {'1': Date}>>().toBe<(value: string, ...rest: Date[]) => number>();
+
+expectTypeOf<SetParameterType<(first: string, second?: number) => boolean, {'0': Date; '1': boolean}>>().toBe<(first: Date, second?: boolean) => boolean>();
+expectTypeOf<SetParameterType<(this: Date, first?: string, ...rest: number[]) => Date, {'1': boolean}>>().toBe<(this: Date, first?: string, ...rest: boolean[]) => Date>();
+expectTypeOf<SetParameterType<(...rest: number[]) => string, {'0': boolean}>>().toBe<(...rest: boolean[]) => string>();
+expectTypeOf<SetParameterType<(first: string, second: number) => boolean, {0: Date; '1': boolean}>>().toBe<(first: Date, second: boolean) => boolean>();
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'0': Date}>>().toBe<(first: Date, ...rest: number[]) => boolean>();
+expectTypeOf<SetParameterType<(first: string) => boolean, {'1': Date}>>().toBe<(first: string) => boolean>();
+expectTypeOf<SetParameterType<(first: string) => boolean, {'00': Date}>>().toBe<(first: string) => boolean>();
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'01': Date}>>().toBe<(first: string, ...rest: number[]) => boolean>();
+expectTypeOf<SetParameterType<(first: string) => boolean, {'0': any}>>().toBe<(first: any) => boolean>();
+expectTypeOf<SetParameterType<(first: string) => boolean, {'0': unknown}>>().toBe<(first: unknown) => boolean>();
+expectTypeOf<SetParameterType<(first: string) => boolean, {'0': never}>>().toBe<(first: never) => boolean>();
+expectTypeOf<SetParameterType<never, {'0': number}>>().toBe<never>();
+expectTypeOf<SetParameterType<(() => string) | ((first: string) => number), {'0': Date}>>().toBe<(() => string) | ((first: Date) => number)>();
+// @ts-expect-error - The input must be callable.
+expectTypeOf<SetParameterType<unknown, {'0': number}>>();
+
+// The transformed signature can be called with the replacement, and rejects the old value.
+declare const withStringIndex: SetParameterType<(first: string, ...rest: number[]) => boolean, {'0': Date; '1': string}>;
+withStringIndex(new Date(), 'value');
+// @ts-expect-error
+withStringIndex('old', 'value');
+// @ts-expect-error
+withStringIndex(new Date(), 1);

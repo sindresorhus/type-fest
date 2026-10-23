@@ -1,5 +1,5 @@
 import type {IsUnknown} from './is-unknown.d.ts';
-import type {MaxLength, VariablePartOfArray} from './internal/index.d.ts';
+import type {MaxLength, NormalizedKeys, ObjectValue, VariablePartOfArray} from './internal/index.d.ts';
 import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -63,12 +63,12 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 			? {
 				[K in keyof TArray]:
 				K extends `${infer NumberK extends number}`
-					? NumberK extends keyof TObject ? TObject[NumberK] : TArray[K]
+					? NumberK extends NormalizedKeys<keyof TObject> ? ObjectValue<TObject, NumberK> : TArray[K]
 					: number extends K
 					// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`.
 					// example: `MergeObjectToArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
-						? RestElementIndex<TArrayCopy> extends keyof TObject
-							? TObject[RestElementIndex<TArrayCopy>]
+						? RestElementIndex<TArrayCopy> extends NormalizedKeys<keyof TObject>
+							? ObjectValue<TObject, RestElementIndex<TArrayCopy>>
 							: TArray[K]
 						: never
 			} : never;
@@ -76,7 +76,7 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 /**
 Create a function that replaces some parameters with the given parameters.
 
-The parameters that are not specified will be kept as-is.
+The parameters that are not specified will be kept as-is. Parameter indices may be numbers or their canonical string forms.
 
 Note:
 - This type will ignore the given function's generic type.
