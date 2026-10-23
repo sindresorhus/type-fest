@@ -88,3 +88,16 @@ expectTypeOf<LastArrayElement<readonly string[] & {readonly length: 3}>>().toBe<
 expectTypeOf<LastArrayElement<never[] & {length: 3}>>().toBe<undefined>();
 expectTypeOf<LastArrayElement<unknown[] & {length: 3}>>().toBe<unknown>();
 expectTypeOf<LastArrayElement<any[] & {length: 3}>>().toBe<any>();
+
+// Increasing the length creates a sparse slot that reads as `undefined`, even when its optional element type is `never`.
+const sparseOptionalTail: [1, never?] = [1];
+sparseOptionalTail.length = 2;
+const sparseLast: LastArrayElement<typeof sparseOptionalTail> = sparseOptionalTail.at(-1);
+expectTypeOf(sparseLast).toBe<1 | undefined>();
+expectTypeOf<LastArrayElement<readonly [1, never?, never?]>>().toBe<1 | undefined>();
+
+const sparseInterior: [1, never?, 2?] = [1];
+sparseInterior.length = 3;
+sparseInterior[2] = 2;
+const sparseInteriorLast: LastArrayElement<typeof sparseInterior> = sparseInterior.at(-1);
+expectTypeOf(sparseInteriorLast).toBe<1 | 2 | undefined>();

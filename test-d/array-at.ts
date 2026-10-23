@@ -196,3 +196,19 @@ expectTypeOf<ArrayAt<[undefined, any, never, unknown], AtPosition.BeforeEnd>>().
 expectTypeOf<ArrayAt<never, AtPosition.Middle>>().toBe<never>();
 // @ts-expect-error
 expectTypeOf<ArrayAt<[1, 2, 3], unknown>>();
+
+// Increasing the length creates a sparse slot that reads as `undefined` and still occupies an index.
+const sparseOptionalTail: [1, never?] = [1];
+sparseOptionalTail.length = 2;
+const sparseLast: ArrayAt<typeof sparseOptionalTail, -1> = sparseOptionalTail.at(-1);
+const sparsePrevious: ArrayAt<typeof sparseOptionalTail, -2> = sparseOptionalTail.at(-2);
+expectTypeOf(sparseLast).toBe<1 | undefined>();
+expectTypeOf(sparsePrevious).toBe<1 | undefined>();
+expectTypeOf<ArrayAt<readonly [1, never?, never?], -2>>().toBe<1 | undefined>();
+
+const sparseInterior: [1, never?, 2?] = [1];
+sparseInterior.length = 3;
+sparseInterior[2] = 2;
+expectTypeOf<ArrayAt<typeof sparseInterior, -1>>().toBe<1 | 2 | undefined>();
+expectTypeOf<ArrayAt<typeof sparseInterior, -2>>().toBe<1 | undefined>();
+expectTypeOf<ArrayAt<typeof sparseInterior, -3>>().toBe<1 | undefined>();
