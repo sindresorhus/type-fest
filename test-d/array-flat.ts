@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArrayFlat, PositiveInfinity} from '../index.d.ts';
+import type {ArrayFlat, Opaque, PositiveInfinity, Tagged} from '../index.d.ts';
 
 // Fixed-length tuples
 expectTypeOf<ArrayFlat<[]>>().toBe<[]>();
@@ -100,3 +100,56 @@ expectTypeOf<ArrayFlat<[unknown, 1], 0>>().toBe<[unknown, 1]>();
 
 // `object` could be an array, but is kept as one element, like the built-in `Array#flat()` does.
 expectTypeOf<ArrayFlat<[object, 1]>>().toBe<[object, 1]>();
+
+// Known enum depths select the same tuple-preserving path as their numeric values.
+enum FlatDepth {
+	Keep = -1,
+	Zero = 0,
+	One = 1,
+	Two = 2,
+	Deep = 20,
+}
+expectTypeOf<ArrayFlat<[[1], [2]], FlatDepth.One>>().toBe<[1, 2]>();
+expectTypeOf<ArrayFlat<[[1, [2]]], FlatDepth.Two>>().toBe<[1, 2]>();
+expectTypeOf<ArrayFlat<[1, [2]], FlatDepth.Keep>>().toBe<[1, [2]]>();
+
+expectTypeOf<ArrayFlat<readonly [readonly [1, 2], 3], FlatDepth.One>>().toBe<[1, 2, 3]>();
+expectTypeOf<ArrayFlat<readonly [1, [2]], FlatDepth.Zero>>().toBe<[1, [2]]>();
+expectTypeOf<ArrayFlat<readonly [1, [2]], FlatDepth.Keep>>().toBe<[1, [2]]>();
+expectTypeOf<ArrayFlat<[[1, [2, [3]]]], FlatDepth.Two>>().toBe<[1, 2, [3]]>();
+expectTypeOf<ArrayFlat<DeeplyNested<20>, FlatDepth.Deep>>().toBe<[1]>();
+expectTypeOf<ArrayFlat<[1, [2]], FlatDepth.Zero | FlatDepth.One>>().toBe<[1, [2]] | [1, 2]>();
+expectTypeOf<ArrayFlat<[[1, [2]]], FlatDepth.One | FlatDepth.Two>>().toBe<[1, [2]] | [1, 2]>();
+expectTypeOf<ArrayFlat<[1, ...Array<[2]>], FlatDepth.One>>().toBe<[1, ...Array<2>]>();
+expectTypeOf<ArrayFlat<[[1, 2?]], FlatDepth.One>>().toBe<[1, ...Array<2>]>();
+expectTypeOf<ArrayFlat<[[1], [2]] | readonly [[3]], FlatDepth.One>>().toBe<[1, 2] | [3]>();
+expectTypeOf<ArrayFlat<[[1], [2]], Tagged<1, 'Depth'>>>().toBe<[1, 2]>();
+
+// An enum member whose value is unknown retains the built-in broad-depth fallback.
+declare enum DynamicFlatDepth {
+	Value,
+}
+expectTypeOf<ArrayFlat<[[1], [[2]]], DynamicFlatDepth.Value>>().toBe<Array<FlatArray<[[1], [[2]]], DynamicFlatDepth.Value>>>();
+expectTypeOf<ArrayFlat<[[1], [[2]]], number>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
+expectTypeOf<ArrayFlat<unknown[], FlatDepth.One>>().toBe<unknown[]>();
+expectTypeOf<ArrayFlat<any, FlatDepth.One>>().toBe<any>();
+expectTypeOf<ArrayFlat<never, FlatDepth.One>>().toBe<never>();
+expectTypeOf<ArrayFlat<[never, [never]], FlatDepth.One>>().toBe<[never, never]>();
+expectTypeOf<ArrayFlat<[[1]], never>>().toBe<never>();
+expectTypeOf<ArrayFlat<[[1]], any>>().toBe<Array<FlatArray<[[1]], any>>>();
+// @ts-expect-error - A flattening depth must be numeric.
+expectTypeOf<ArrayFlat<[[1]], unknown>>();
+
+// A brand on a broad depth does not make its numeric value known.
+expectTypeOf<ArrayFlat<[[1], [[2]]], Tagged<number, 'Depth'>>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
+expectTypeOf<ArrayFlat<[[1], [[2]]], Opaque<number, 'Depth'>>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
+
+expectTypeOf<ArrayFlat<readonly [[1], [[2]]], Tagged<Tagged<number, 'Depth'>, 'Validated'>>>().toBe<Array<FlatArray<readonly [[1], [[2]]], number>>>();
+expectTypeOf<ArrayFlat<[[1], [[2]]], number & {readonly __brand: unique symbol}>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
+expectTypeOf<ArrayFlat<[[1], [[2]]], Tagged<number, 'Depth'> | 0>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
+expectTypeOf<ArrayFlat<[[1]], Tagged<0, 'Depth'>>>().toBe<[[1]]>();
+expectTypeOf<ArrayFlat<[[1]], Tagged<-1, 'Depth'>>>().toBe<[[1]]>();
+expectTypeOf<ArrayFlat<[[1, [2]]], Opaque<2, 'Depth'>>>().toBe<[1, 2]>();
+expectTypeOf<ArrayFlat<[[1]], Tagged<0 | 1, 'Depth'>>>().toBe<[[1]] | [1]>();
+expectTypeOf<ArrayFlat<[[1]], Tagged<FlatDepth.One, 'Depth'>>>().toBe<[1]>();
+expectTypeOf<ArrayFlat<[[Tagged<1, 'Element'>]], Tagged<1, 'Depth'>>>().toBe<[Tagged<1, 'Element'>]>();
