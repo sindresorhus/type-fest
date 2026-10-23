@@ -120,10 +120,13 @@ const copy = [...color];
 
 @category Array
 */
-export type FixedLengthArray<Element, Length extends number> =
-	Except<TupleOf<Length, Element>, ArrayLengthMutationKeys | number | 'length'>
+export type FixedLengthArray<Element, Length extends number> = _FixedLengthArray<TupleOf<Length, Element>>;
+
+type _FixedLengthArray<Tuple extends unknown[]> = Tuple extends unknown // Keep each tuple's indices paired with its length so that checking `length` narrows a union.
+	? Except<Tuple, ArrayLengthMutationKeys | number | 'length'>
 	// Read the length back off the built tuple so it stays consistent with the actual elements. `TupleOf` ignores a decimal part and turns a negative length into an empty tuple.
-	& {readonly length: TupleOf<Length, Element>['length']}
-	& (number extends Length ? {[n: number]: Element} : {}); // Add `number` index signature only for non-tuple arrays.
+	& {readonly length: Tuple['length']}
+	& (number extends Tuple['length'] ? {[n: number]: Tuple[number]} : {}) // Add `number` index signature only for non-tuple arrays.
+	: never; // Should never happen
 
 export {};

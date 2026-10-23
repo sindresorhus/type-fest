@@ -141,3 +141,36 @@ type UnknownOutOfBounds = FixedLengthArray<unknown, 2>[2];
 type NeverOutOfBounds = FixedLengthArray<never, 2>[2];
 // @ts-expect-error
 type EmptyOutOfBounds = FixedLengthArray<string, 0>[0];
+
+// Checking the length narrows to the matching tuple, so every index of that length becomes available.
+declare const variableTupleLength: FixedLengthArray<string, 2 | 3>;
+if (variableTupleLength.length === 3) {
+	expectTypeOf(variableTupleLength[2]).toBe<string>();
+}
+
+expectTypeOf<Extract<FixedLengthArray<string, 2 | 3>, {readonly length: 3}>>().toBe<FixedLengthArray<string, 3>>();
+
+expectTypeOf<FixedLengthArray<string, 2 | 3>>().toBe<FixedLengthArray<string, 2> | FixedLengthArray<string, 3>>();
+if (variableTupleLength.length === 2) {
+	expectTypeOf(variableTupleLength[1]).toBe<string>();
+	// @ts-expect-error
+	variableTupleLength[2] = 'c';
+}
+
+// Normalized lengths remain paired with their own indices.
+expectTypeOf<FixedLengthArray<number, 0 | 2>>().toBe<FixedLengthArray<number, 0> | FixedLengthArray<number, 2>>();
+expectTypeOf<FixedLengthArray<number, -1 | 2.5>>().toBe<FixedLengthArray<number, 0> | FixedLengthArray<number, 2>>();
+expectTypeOf<Extract<FixedLengthArray<number, -1 | 2.5>, {readonly length: 0}>>().toBe<FixedLengthArray<number, 0>>();
+expectTypeOf<Extract<FixedLengthArray<number, -1 | 2.5>, {readonly length: 2}>>().toBe<FixedLengthArray<number, 2>>();
+
+// A union of lengths does not allow changing its length or using a mutator.
+// @ts-expect-error
+variableTupleLength.length = 3;
+// @ts-expect-error
+type UnionWithoutPush = typeof variableTupleLength['push'];
+
+expectTypeOf<FixedLengthArray<any, 2 | 3>>().toBe<FixedLengthArray<any, 2> | FixedLengthArray<any, 3>>();
+expectTypeOf<FixedLengthArray<unknown, 2 | 3>>().toBe<FixedLengthArray<unknown, 2> | FixedLengthArray<unknown, 3>>();
+expectTypeOf<FixedLengthArray<never, 2 | 3>>().toBe<FixedLengthArray<never, 2> | FixedLengthArray<never, 3>>();
+expectTypeOf<FixedLengthArray<string, never>>().toBe<FixedLengthArray<string, 0>>();
+expectTypeOf<FixedLengthArray<string, any>>().toBe<FixedLengthArray<string, number>>();
