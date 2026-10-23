@@ -213,3 +213,81 @@ expectTypeOf(numericAliasSpread).toBe<Spread<typeof numericProperty, typeof opti
 
 const numericAliasSpreadReverse = {...optionalStringProperty, ...numericProperty};
 expectTypeOf(numericAliasSpreadReverse).toBe<Spread<typeof optionalStringProperty, typeof numericProperty>>();
+
+// A string enum key and its literal spelling name the same property during a spread.
+enum SpreadKey {
+	Value = 'value',
+}
+expectTypeOf<Spread<{value: string}, {[SpreadKey.Value]?: number}>>().toBe<{value: string | number}>();
+expectTypeOf<Spread<{[SpreadKey.Value]: string}, {value?: number}>>().toBe<{[SpreadKey.Value]: string | number}>();
+expectTypeOf<Spread<{value: string}, {[SpreadKey.Value]: number}>>().toBe<{[SpreadKey.Value]: number}>();
+
+// Compare both value and key shapes with TypeScript's own spread inference.
+declare const enumRequired: {readonly [SpreadKey.Value]: string; keep?: boolean};
+declare const enumOptional: {readonly [SpreadKey.Value]?: number};
+declare const literalRequired: {readonly value: boolean};
+declare const literalOptional: {readonly value?: number};
+const enumAfterLiteral = {...literalRequired, ...enumOptional};
+const literalAfterEnum = {...enumRequired, ...literalOptional};
+const requiredEnumAfterLiteral = {...literalRequired, ...enumRequired};
+const requiredLiteralAfterEnum = {...enumRequired, ...literalRequired};
+expectTypeOf(enumAfterLiteral).toBe<Spread<typeof literalRequired, typeof enumOptional>>();
+expectTypeOf(literalAfterEnum).toBe<Spread<typeof enumRequired, typeof literalOptional>>();
+expectTypeOf(requiredEnumAfterLiteral).toBe<Spread<typeof literalRequired, typeof enumRequired>>();
+expectTypeOf(requiredLiteralAfterEnum).toBe<Spread<typeof enumRequired, typeof literalRequired>>();
+expectTypeOf<keyof Spread<typeof literalRequired, typeof enumOptional>>().toBe<keyof typeof enumAfterLiteral>();
+expectTypeOf<keyof Spread<typeof enumRequired, typeof literalOptional>>().toBe<keyof typeof literalAfterEnum>();
+expectTypeOf<Pick<Spread<typeof enumRequired, typeof literalOptional>, SpreadKey.Value>>()
+	.toBe<Pick<typeof literalAfterEnum, SpreadKey.Value>>();
+
+// Optionality and explicit undefined survive, while spread drops readonly.
+expectTypeOf<Spread<{readonly value?: string}, {readonly [SpreadKey.Value]?: number}>>().toBe<{value?: string | number}>();
+expectTypeOf<Spread<{readonly [SpreadKey.Value]?: string}, {readonly value?: number}>>().toBe<{[SpreadKey.Value]?: string | number}>();
+expectTypeOf<Spread<{value: string}, {[SpreadKey.Value]?: number | undefined}>>().toBe<{value: string | number | undefined}>();
+expectTypeOf<Spread<{[SpreadKey.Value]: string}, {value?: number | undefined}>>().toBe<{[SpreadKey.Value]: string | number | undefined}>();
+expectTypeOf<Spread<{[SpreadKey.Value]?: string}, {value: number}>>().toBe<{value: number}>();
+
+// Normalize both operands independently, including unions and numeric enum keys.
+expectTypeOf<Spread<{value: string} | {other: true}, {[SpreadKey.Value]?: number}>>()
+	.toBe<{value: string | number} | {other: true; [SpreadKey.Value]?: number}>();
+expectTypeOf<Spread<{value: string}, {[SpreadKey.Value]?: number} | {other: true}>>()
+	.toBe<{value: string | number} | {value: string; other: true}>();
+enum NumericSpreadKey {
+	Zero = 0,
+}
+expectTypeOf<Spread<{'0': string}, {[NumericSpreadKey.Zero]?: number}>>().toBe<{'0': string | number}>();
+expectTypeOf<Spread<{[NumericSpreadKey.Zero]: string}, {'0'?: number}>>().toBe<{[NumericSpreadKey.Zero]: string | number}>();
+expectTypeOf<keyof Spread<{0: string}, {'0'?: number}>>().toBe<0>();
+expectTypeOf<Pick<Spread<{0: string}, {'0'?: number}>, 0>>().toBe<{0: string | number}>();
+
+// Distinct names, noncanonical numeric spellings, symbols, and signatures retain their existing rules.
+expectTypeOf<Spread<{other: string}, {[SpreadKey.Value]?: number}>>().toBe<{other: string; [SpreadKey.Value]?: number}>();
+expectTypeOf<Spread<{'01': string}, {[NumericSpreadKey.Zero]?: number}>>().toBe<{'01': string; [NumericSpreadKey.Zero]?: number}>();
+expectTypeOf<Spread<{[spreadSymbol]: string; value: boolean}, {[SpreadKey.Value]?: number}>>()
+	.toBe<{[spreadSymbol]: string; value: boolean | number}>();
+expectTypeOf<Spread<{[index: number]: string; value: boolean}, {[index: number]: number; [SpreadKey.Value]?: Date}>>()
+	.toBe<{[index: number]: string | number; value: boolean | Date}>();
+expectTypeOf<Spread<{[key: string]: unknown; value: string}, {[key: string]: unknown; [SpreadKey.Value]?: number}>>()
+	.toBe<{[key: string]: unknown; [key: number]: unknown; value: string | number}>();
+
+expectTypeOf<Spread<{value: any}, {[SpreadKey.Value]?: number}>>().toBe<{value: any}>();
+expectTypeOf<Spread<{value: unknown}, {[SpreadKey.Value]?: number}>>().toBe<{value: unknown}>();
+expectTypeOf<Spread<{value: never}, {[SpreadKey.Value]?: number}>>().toBe<{value: number}>();
+expectTypeOf<Spread<any, {[SpreadKey.Value]?: number}>>().toBe<any>();
+expectTypeOf<Spread<never, {[SpreadKey.Value]?: number}>>().toBe<never>();
+// @ts-expect-error Only objects or arrays can be spread.
+type UnknownEnumSpread = Spread<unknown, {[SpreadKey.Value]?: number}>;
+
+// A required second property fully replaces the first spelling, including its keyof identity.
+expectTypeOf<keyof Spread<typeof literalRequired, typeof enumRequired>>().toBe<keyof typeof requiredEnumAfterLiteral>();
+expectTypeOf<keyof Spread<typeof enumRequired, typeof literalRequired>>().toBe<keyof typeof requiredLiteralAfterEnum>();
+
+// Required numeric and string aliases keep the correct values. Their keyof spelling is best-effort, because TypeScript sometimes retains the first string spelling even when the second key is numeric.
+declare const requiredNumericAlias: {readonly 0: 'numeric'; keep: boolean};
+declare const requiredStringAlias: {readonly '0': 'string'};
+const requiredStringAliasSpread = {...requiredNumericAlias, ...requiredStringAlias};
+const requiredNumericAliasSpread = {...requiredStringAlias, ...requiredNumericAlias};
+expectTypeOf(requiredStringAliasSpread).toBe<Spread<typeof requiredNumericAlias, typeof requiredStringAlias>>();
+expectTypeOf(requiredNumericAliasSpread).toBe<Spread<typeof requiredStringAlias, typeof requiredNumericAlias>>();
+expectTypeOf<keyof Spread<typeof requiredNumericAlias, typeof requiredStringAlias>>().toBe<keyof typeof requiredStringAliasSpread>();
+expectTypeOf<Pick<Spread<typeof requiredStringAlias, typeof requiredNumericAlias>, 0>>().toBe<{0: 'numeric'}>();

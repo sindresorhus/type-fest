@@ -1,18 +1,22 @@
-import type {NormalizedKeys, ObjectValue, SimplifyObject} from './internal/index.d.ts';
+import type {NormalizedKeys, SimplifyObject, ToString} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
 
-// Numeric properties and their string forms collide, so compare normalized named keys and read either spelling.
+// Numeric properties and enum keys collide with their string forms, so compare normalized names and read the actual declared key.
 // The spread syntax always produces a fresh object literal, so `readonly` is dropped, and an index signature survives only when both operands have it.
 type SpreadObject<FirstType extends object, SecondType extends object> = {
-	-readonly [Key in keyof OmitIndexSignature<FirstType>]: Key extends NormalizedKeys<keyof OmitIndexSignature<SecondType>>
-		? FirstType[Key] | ObjectValue<Required<OmitIndexSignature<SecondType>>, Key>
+	// Required second properties replace the first property entirely, including its declared key spelling.
+	-readonly [Key in keyof Omit<
+		OmitIndexSignature<FirstType>,
+		NormalizedKeys<RequiredKeysOf<OmitIndexSignature<SecondType>> | ToString<RequiredKeysOf<OmitIndexSignature<SecondType>>>>
+	>]: Key extends NormalizedKeys<keyof OmitIndexSignature<SecondType> | ToString<keyof OmitIndexSignature<SecondType>>>
+		? FirstType[Key] | Required<OmitIndexSignature<SecondType>>[Extract<keyof OmitIndexSignature<SecondType>, NormalizedKeys<Key | ToString<Key>>>]
 		: FirstType[Key];
 } & Pick<
 	{-readonly [Key in keyof OmitIndexSignature<SecondType>]: OmitIndexSignature<SecondType>[Key]},
-RequiredKeysOf<OmitIndexSignature<SecondType>> | Exclude<keyof OmitIndexSignature<SecondType>, NormalizedKeys<keyof OmitIndexSignature<FirstType>>>
+RequiredKeysOf<OmitIndexSignature<SecondType>> | Exclude<keyof OmitIndexSignature<SecondType>, NormalizedKeys<keyof OmitIndexSignature<FirstType> | ToString<keyof OmitIndexSignature<FirstType>>>>
 > & {
 	[Key in keyof PickIndexSignature<FirstType> & keyof PickIndexSignature<SecondType>]: PickIndexSignature<FirstType>[Key] | PickIndexSignature<SecondType>[Key];
 };
@@ -28,6 +32,8 @@ type Spreadable = object | TupleOrArray;
 
 /**
 Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
+
+Note: For a numeric key and its string alias, the value type matches spread inference, but its spelling in `keyof` can differ. Use the key spelling declared by the result.
 
 @example
 ```
