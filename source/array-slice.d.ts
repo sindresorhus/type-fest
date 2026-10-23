@@ -94,7 +94,7 @@ type _ArraySlice<
 	: number extends Array_['length']
 		? VariableLengthArraySliceHelper<Array_, IsNever<Start> extends true ? 0 : Start, End>
 		// A non-literal index can be any value, so the slice can start or end anywhere and its length is unknown.
-		: number extends Start | End
+		: `${number}` extends `${Start | End}`
 			? UnknownLengthArraySlice<Array_>
 			: ArraySliceResult<Array_, ArraySliceHelper<Array_, IsEqual<Start, never> extends true ? 0 : Start, IsEqual<End, never> extends true ? MaxLength<Array_> : End>>;
 

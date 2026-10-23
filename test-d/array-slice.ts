@@ -179,3 +179,30 @@ expectTypeOf<ArraySlice<readonly [1, ...string[]], -1>>().toBe<ReadonlyArray<str
 
 // `never` is an empty union of arrays, so its slice is `never` too.
 expectTypeOf<ArraySlice<never, -2>>().toBe<never>();
+
+// Enum offsets have the same range as their numeric values.
+enum SlicePosition {
+	BeforeEnd = -1,
+	Start = 0,
+	Middle = 1,
+	End = 2,
+}
+expectTypeOf<ArraySlice<[1, 2, 3], SlicePosition.Middle>>().toBe<[2, 3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], 0, SlicePosition.End>>().toBe<[1, 2]>();
+expectTypeOf<ArraySlice<[1, 2, 3], SlicePosition.BeforeEnd>>().toBe<[3]>();
+
+declare enum RuntimeSlicePosition {
+	Value,
+}
+expectTypeOf<ArraySlice<readonly [1, 2, 3], SlicePosition.Middle, SlicePosition.End>>().toBe<readonly [2]>();
+expectTypeOf<ArraySlice<[1, 2, 3], SlicePosition.Start, SlicePosition.Start>>().toBe<[]>();
+expectTypeOf<ArraySlice<[1, 2, 3], SlicePosition.End, SlicePosition.Middle>>().toBe<[]>();
+expectTypeOf<ArraySlice<[1, 2, 3], SlicePosition.Middle, SlicePosition.BeforeEnd>>().toBe<[2]>();
+expectTypeOf<ArraySlice<[1, 2, 3], SlicePosition.Middle | SlicePosition.End>>().toBe<[2, 3] | [3]>();
+expectTypeOf<ArraySlice<[1, 2, 3], 0, SlicePosition.Middle | SlicePosition.End>>().toBe<[1] | [1, 2]>();
+expectTypeOf<ArraySlice<[1, 2?, 3?], SlicePosition.Middle, SlicePosition.End>>().toBe<[2?]>();
+expectTypeOf<ArraySlice<[1, 2, 3, ...string[]], SlicePosition.Middle, SlicePosition.End>>().toBe<[2]>();
+expectTypeOf<ArraySlice<string[], SlicePosition.Middle, SlicePosition.End>>().toBe<string[]>();
+expectTypeOf<ArraySlice<[1, 2, 3], RuntimeSlicePosition.Value>>().toBe<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySlice<[undefined, any, never, unknown], SlicePosition.Middle, SlicePosition.End>>().toBe<[any]>();
+expectTypeOf<ArraySlice<never, SlicePosition.Middle>>().toBe<never>();

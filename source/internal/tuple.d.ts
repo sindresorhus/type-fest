@@ -68,7 +68,7 @@ type B = TupleMin<[1, 2, 5, 3, -5]>;
 //=> -5
 ```
 */
-export type TupleMin<A extends number[], Result extends number = PositiveInfinity> = number extends A[number]
+export type TupleMin<A extends number[], Result extends number = PositiveInfinity> = `${number}` extends `${A[number]}`
 	? never
 	: A extends [infer F extends number, ...infer R extends number[]]
 		? LessThan<F, Result> extends true
