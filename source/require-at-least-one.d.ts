@@ -50,9 +50,9 @@ type _RequireAtLeastOne<ObjectType, KeysType> = ObjectType extends unknown
 
 type _RequireAtLeastOneOfOne<ObjectType, KeysType extends keyof ObjectType> = {
 	// For each `Key` in `KeysType` make a mapped type:
-	[Key in KeysType]-?: Required<Pick<ObjectType, Key>> // 1. Make `Key`'s type required
-		& Partial<Pick<ObjectType, Exclude<KeysType, Key>>>; // 2. Make all other keys in `KeysType` optional
+	[Key in KeysType]-?: Required<Pick<ObjectType, Key>>; // 1. Make `Key`'s type required
 }[KeysType]
+& Partial<Pick<ObjectType, KeysType>> // 2. Share the optional selected fields; each alternative's required key overrides its optional copy.
 & Except<ObjectType, KeysType>; // 3. Add the remaining keys not in `KeysType`
 
 export {};

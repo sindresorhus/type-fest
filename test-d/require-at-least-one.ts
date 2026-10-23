@@ -106,3 +106,42 @@ expectTypeOf('b' in atLeastOne ? atLeastOne.b : atLeastOne.a).toBe<number | stri
 declare const atLeastOneOfSome: RequireAtLeastOne<{a?: string; b?: number; c: boolean}, 'a' | 'b'>;
 expectTypeOf('a' in atLeastOneOfSome ? atLeastOneOfSome.a : atLeastOneOfSome.b).toBe<string | number>();
 expectTypeOf(atLeastOneOfSome.c).toBe<boolean>();
+
+// Requiring one choice preserves named modifiers and explicitly allowed undefined values.
+declare const selectionSymbol: unique symbol;
+type SelectedFields = {readonly [selectionSymbol]?: string; readonly 0?: number; id: string};
+expectTypeOf<Simplify<RequireAtLeastOne<SelectedFields, typeof selectionSymbol | 0>>>().toBe<
+	| {readonly [selectionSymbol]: string; readonly 0?: number; id: string}
+	| {readonly [selectionSymbol]?: string; readonly 0: number; id: string}
+>();
+declare const selectedFields: RequireAtLeastOne<SelectedFields, typeof selectionSymbol | 0>;
+// @ts-expect-error A selected property stays readonly even when the assigned value is valid.
+selectedFields[selectionSymbol] = 'changed';
+({a: undefined}) satisfies RequireAtLeastOne<{a?: undefined; b?: never}>;
+expectTypeOf<{}>().not.toBeAssignableTo<RequireAtLeastOne<{a?: undefined; b?: never}>>();
+expectTypeOf<{b: undefined}>().not.toBeAssignableTo<RequireAtLeastOne<{a?: undefined; b?: never}>>();
+expectTypeOf<RequireAtLeastOne<unknown>>().toBe<never>();
+
+function readSelectedValue<Value>(value: RequireAtLeastOne<{a?: Value; b?: number; id: string}, 'a' | 'b'>): Value | number | undefined {
+	expectTypeOf(value.id).toBe<string>();
+	return 'a' in value ? value.a : value.b;
+}
+
+function createSelectedValue<Value>(value: Value): RequireAtLeastOne<{a?: Value; b?: string}> {
+	return {a: value};
+}
+
+declare function inferSelectedValue<const Value>(value: RequireAtLeastOne<{a?: Value; b?: number}>): Value;
+expectTypeOf(inferSelectedValue({a: 'chosen'})).toBe<'chosen'>();
+expectTypeOf(inferSelectedValue({b: 1})).toBe<unknown>();
+// @ts-expect-error A call still needs at least one selected field.
+inferSelectedValue({});
+
+// Conditional consumers can still select and reject individual required alternatives.
+type MessageSelection = RequireAtLeastOne<{text?: string; count?: number; id: string}, 'text' | 'count'>;
+expectTypeOf<Simplify<Extract<MessageSelection, {text: string}>>>().toBe<{text: string; count?: number; id: string}>();
+expectTypeOf<Simplify<Exclude<MessageSelection, {text: string}>>>().toBe<{text?: string; count: number; id: string}>();
+({[selectionSymbol]: 'selected', 0: 2, id: 'request'}) satisfies RequireAtLeastOne<SelectedFields, typeof selectionSymbol | 0>;
+expectTypeOf<{[selectionSymbol]: string}>().not.toBeAssignableTo<RequireAtLeastOne<SelectedFields, typeof selectionSymbol | 0>>();
+({a: 1, requiredUndefined: undefined}) satisfies RequireAtLeastOne<{a?: number; b?: string; requiredUndefined: undefined}, 'a' | 'b'>;
+expectTypeOf<{a: number}>().not.toBeAssignableTo<RequireAtLeastOne<{a?: number; b?: string; requiredUndefined: undefined}, 'a' | 'b'>>();
