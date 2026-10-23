@@ -327,3 +327,52 @@ declare const filteredIndexProperties: Filter<{[key: string]: string | number; l
 expectTypeOf(filteredIndexProperties.literal).toBe<'value'>();
 // @ts-expect-error Strict filtering removes the mixed index signature, while retaining its known string property.
 expectTypeOf(filteredIndexProperties.missing);
+
+// An unknown strictness setting allows either complete filtering strategy.
+expectTypeOf<Filter<[1 | 2], 1, {strict: boolean}>>().toBe<[] | [1 | 2]>();
+expectTypeOf<Filter<readonly [1 | 2, 'keep' | false], 1 | 'keep', {strict: boolean}>>()
+	.toBe<readonly [] | readonly [1 | 2, 'keep' | false]>();
+expectTypeOf<Filter<{id: 1; first: 1 | 2; second: 1 | 3}, 1, {strict: boolean}>>()
+	.toBe<{id: 1} | {id: 1; first: 1 | 2; second: 1 | 3}>();
+
+declare function filterWithStrictness<const Strict extends boolean>(strict: Strict): Filter<[1 | 2], 1, {strict: Strict}>;
+declare const runtimeStrictness: boolean;
+const filteredWithRuntimeStrictness = filterWithStrictness(runtimeStrictness);
+expectTypeOf<[1 | 2]>().toBeAssignableTo<typeof filteredWithRuntimeStrictness>();
+
+// One selected strategy applies to every tuple element, including optional and rest positions.
+expectTypeOf<[1 | 2]>().not.toBeAssignableTo<Filter<readonly [1 | 2, 'keep' | false], 1 | 'keep', {strict: boolean}>>();
+expectTypeOf<['keep' | false]>().not.toBeAssignableTo<Filter<readonly [1 | 2, 'keep' | false], 1 | 'keep', {strict: boolean}>>();
+expectTypeOf<Filter<[1, (2 | 3)?, ...Array<4 | 5>], 1 | 2 | 4, {strict: boolean}>>()
+	.toBe<[1] | [1, (2 | 3)?, ...Array<4 | 5>]>();
+expectTypeOf<Filter<readonly [...Array<1 | 2>, 3 | 4], 1 | 3, {strict: boolean}>>()
+	.toBe<readonly [] | readonly [...Array<1 | 2>, 3 | 4]>();
+expectTypeOf<Filter<readonly [true, boolean, 0 | 1, 0], Boolean, {strict: boolean}>>()
+	.toBe<readonly [true] | readonly [true, boolean, 0 | 1]>();
+expectTypeOf<Filter<[1, 'skip', 2], number, {strict: boolean}>>().toBe<[1, 2]>();
+expectTypeOf<Filter<[1 | 2], 1, {strict: true} | {strict: false}>>().toBe<[] | [1 | 2]>();
+
+// An optional flag still uses the loose default, while input sentinels keep their existing policy.
+expectTypeOf<Filter<[1 | 2], 1, {strict?: boolean}>>().toBe<[1 | 2]>();
+expectTypeOf<Filter<any, 1, {strict: boolean}>>().toBe<any>();
+expectTypeOf<Filter<never, 1, {strict: boolean}>>().toBe<never>();
+expectTypeOf<Filter<[unknown, any, never, 1], number, {strict: boolean}>>().toBe<[any, 1]>();
+
+expectTypeOf(filterWithStrictness(false)).toBe<[1 | 2]>();
+expectTypeOf(filterWithStrictness(true)).toBe<[]>();
+if (filteredWithRuntimeStrictness.length === 1) {
+	expectTypeOf(filteredWithRuntimeStrictness[0]).toBe<1 | 2>();
+}
+
+// A choice that retains one conditional field also retains the other one.
+declare function filterObjectWithStrictness<const Strict extends boolean>(strict: Strict): Filter<{readonly id: 1; first: 1 | 2; second: 1 | 3}, 1, {strict: Strict}>;
+const filteredObjectWithRuntimeStrictness = filterObjectWithStrictness(runtimeStrictness);
+if ('first' in filteredObjectWithRuntimeStrictness) {
+	expectTypeOf(filteredObjectWithRuntimeStrictness.second).toBe<1 | 3>();
+	// @ts-expect-error Filtering leaves retained property modifiers intact.
+	filteredObjectWithRuntimeStrictness.id = 1;
+}
+
+function _filteredArrayWithStrictness<Base extends readonly unknown[], Strict extends boolean>(value: Filter<Base, number, {strict: Strict}>): readonly unknown[] {
+	return value;
+}

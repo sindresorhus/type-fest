@@ -15,6 +15,8 @@ export type FilterOptions = {
 
 	By default, a union type is kept if any of its members extends the condition.
 
+	When `strict` is `boolean`, the result is a union of the complete strict and loose results.
+
 	@default false
 
 	@example
@@ -113,10 +115,13 @@ export type Filter<
 	Options extends FilterOptions = {},
 > = IfNotAnyOrNever<Base, {
 	ifNot: Base extends unknown // For distributing `Base`
-		? ApplyDefaultOptions<FilterOptions, DefaultFilterOptions, Options> extends infer ResolvedOptions extends Required<FilterOptions>
-			? Base extends UnknownArray
-				? FilterArray<Base, Condition, ResolvedOptions>
-				: FilterObject<Base, Condition, ResolvedOptions>
+		? ApplyDefaultOptions<FilterOptions, DefaultFilterOptions, Options>['strict'] extends infer Strict extends boolean
+			// Choose one strictness setting for the whole result before filtering individual members.
+			? Strict extends unknown
+				? Base extends UnknownArray
+					? FilterArray<Base, Condition, {strict: Strict}>
+					: FilterObject<Base, Condition, {strict: Strict}>
+				: never
 			: never // Should never happen
 		: never; // Should never happen
 }>;
