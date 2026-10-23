@@ -1,7 +1,8 @@
 import type {IsEqual} from '../is-equal.d.ts';
+import type {IsStringLiteral} from '../is-string-literal.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {Split} from '../split.d.ts';
-import type {Whitespace} from './characters.d.ts';
+import type {AsciiPunctuation, Whitespace} from './characters.d.ts';
 import type {CollapseLiterals, UnwrapBrand} from './object.d.ts';
 
 /**
@@ -82,6 +83,33 @@ export type ConsistsOnlyOf<LongString extends string, Substring extends string> 
 		: LongString extends `${Substring}${infer Tail}`
 			? ConsistsOnlyOf<Tail, Substring>
 			: false;
+
+/**
+Returns `Value` when it is a string literal that is equal to `CasedValue`, the result of a case transform on it, and `never` otherwise.
+
+The value must not be empty, and it must not hold ASCII punctuation other than `AllowedPunctuation`, even punctuation that the transform keeps, like the dot in `'foo.bar'`.
+
+@example
+```
+type A = CasedString<'foo-bar', 'foo-bar', '-'>; //=> 'foo-bar'
+type B = CasedString<'fooBar', 'foo-bar', '-'>; //=> never
+type C = CasedString<'foo.bar', 'foo.bar', '-'>; //=> never
+type D = CasedString<string, string, '-'>; //=> never
+```
+*/
+export type CasedString<
+	Value extends string,
+	CasedValue extends string,
+	AllowedPunctuation extends string,
+> = IsStringLiteral<Value> extends true
+	// `Exclude` distributes over the members of a union, so one member that is empty or holds a foreign character removes itself and the whole union is rejected. A branded member is matched too, because the brand does not stop it from extending the pattern.
+	? [Value] extends [Exclude<Value, '' | `${string}${Exclude<AsciiPunctuation, AllowedPunctuation>}${string}`>]
+		// The value is turned into a plain string, because a string enum member is not equal to the string that the transform returns.
+		? IsEqual<`${UnwrapBrand<Value>}`, CasedValue> extends true
+			? Value
+			: never
+		: never
+	: never;
 
 /**
 Returns a boolean for whether `A` represents a number greater than `B`, where `A` and `B` are both numeric strings and have the same length.

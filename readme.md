@@ -364,18 +364,23 @@ Click the type names for complete docs.
 ### Change case
 
 - [`CamelCase`](source/camel-case.d.ts) - Convert a string literal to camel-case.
+- [`CamelCaseString`](source/camel-case-string.d.ts) - A `string` that is in camel case, like `'fooBar'`.
 - [`CamelCasedProperties`](source/camel-cased-properties.d.ts) - Convert top-level object properties to camel case.
 - [`CamelCasedPropertiesDeep`](source/camel-cased-properties-deep.d.ts) - Convert object properties to camel case recursively.
 - [`KebabCase`](source/kebab-case.d.ts) - Convert a string literal to kebab-case.
+- [`KebabCaseString`](source/kebab-case-string.d.ts) - A `string` that is in kebab case, like `'foo-bar'`.
 - [`KebabCasedProperties`](source/kebab-cased-properties.d.ts) - Convert top-level object properties to kebab case.
 - [`KebabCasedPropertiesDeep`](source/kebab-cased-properties-deep.d.ts) - Convert object properties to kebab case recursively.
 - [`PascalCase`](source/pascal-case.d.ts) - Convert a string literal to pascal-case.
+- [`PascalCaseString`](source/pascal-case-string.d.ts) - A `string` that is in pascal case, like `'FooBar'`.
 - [`PascalCasedProperties`](source/pascal-cased-properties.d.ts) - Convert top-level object properties to pascal case.
 - [`PascalCasedPropertiesDeep`](source/pascal-cased-properties-deep.d.ts) - Convert object properties to pascal case recursively.
 - [`SnakeCase`](source/snake-case.d.ts) - Convert a string literal to snake-case.
+- [`SnakeCaseString`](source/snake-case-string.d.ts) - A `string` that is in snake case, like `'foo_bar'`.
 - [`SnakeCasedProperties`](source/snake-cased-properties.d.ts) - Convert top-level object properties to snake case.
 - [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake case recursively.
 - [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case.
+- [`ScreamingSnakeCaseString`](source/screaming-snake-case-string.d.ts) - A `string` that is in screaming snake case, like `'FOO_BAR'`.
 - [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.
 - [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) - Convert object properties to a custom string delimiter casing.
 - [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) - Convert object properties to a custom string delimiter casing recursively.

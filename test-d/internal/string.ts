@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
-import type {ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
+import type {CasedString, ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<1>, '1'>>().toBe<true>();
@@ -105,3 +105,44 @@ function _numericTextResult<Left extends `${number}`, Right extends `${number}`>
 declare function compareNumericText<Left extends `${number}`, Right extends `${number}`>(left: Left, right: Right): PositiveNumericStringGt<Left, Right>;
 expectTypeOf(compareNumericText('100', '99')).toBe<true>();
 expectTypeOf(compareNumericText('1.05', '1.5')).toBe<false>();
+
+// `CasedString` keeps a value that the transform leaves alone, and only that value.
+expectTypeOf<CasedString<'foo-bar', 'foo-bar', '-'>>().toBe<'foo-bar'>();
+expectTypeOf<CasedString<'fooBar', 'foo-bar', '-'>>().toBe<never>();
+expectTypeOf<CasedString<'foo', 'foo', '_'>>().toBe<'foo'>();
+
+// An empty string is rejected, even though the transform keeps it.
+expectTypeOf<CasedString<'', '', '-'>>().toBe<never>();
+
+// The allowed punctuation is the only punctuation the value may hold.
+expectTypeOf<CasedString<'foo.bar', 'foo.bar', '-'>>().toBe<never>();
+expectTypeOf<CasedString<'foo-bar', 'foo-bar', '_'>>().toBe<never>();
+expectTypeOf<CasedString<'foo_bar', 'foo_bar', '_'>>().toBe<'foo_bar'>();
+expectTypeOf<CasedString<'foo_bar', 'foo_bar', never>>().toBe<never>();
+
+// One invalid member rejects the whole union.
+expectTypeOf<CasedString<'foo-bar' | 'baz-qux', 'foo-bar' | 'baz-qux', '-'>>().toBe<'foo-bar' | 'baz-qux'>();
+expectTypeOf<CasedString<'foo-bar' | 'foo.bar', 'foo-bar' | 'foo.bar', '-'>>().toBe<never>();
+expectTypeOf<CasedString<'foo-bar' | 'bazQux', 'foo-bar' | 'baz-qux', '-'>>().toBe<never>();
+expectTypeOf<CasedString<'foo-bar' | '', 'foo-bar', '-'>>().toBe<never>();
+
+// A wide string, and a type that is not a literal, are rejected.
+expectTypeOf<CasedString<string, string, '-'>>().toBe<never>();
+expectTypeOf<CasedString<`${string}-${string}`, string, '-'>>().toBe<never>();
+expectTypeOf<CasedString<any, any, '-'>>().toBe<never>();
+expectTypeOf<CasedString<never, never, '-'>>().toBe<never>();
+
+// A branded literal is compared by its primitive value, and the brand is kept.
+expectTypeOf<CasedString<Tagged<'foo-bar', 'Brand'>, 'foo-bar', '-'>>().toBe<Tagged<'foo-bar', 'Brand'>>();
+expectTypeOf<CasedString<Tagged<'foo.bar', 'Brand'>, 'foo.bar', '-'>>().toBe<never>();
+expectTypeOf<CasedString<Tagged<'', 'Brand'>, '', '-'>>().toBe<never>();
+expectTypeOf<CasedString<Tagged<'', 'Brand'> | 'foo-bar', 'foo-bar', '-'>>().toBe<never>();
+
+// A string enum member is compared by its value, and the member is kept.
+enum ClassName {
+	Primary = 'foo-bar',
+	Secondary = 'foo.bar',
+}
+
+expectTypeOf<CasedString<ClassName.Primary, 'foo-bar', '-'>>().toBe<ClassName.Primary>();
+expectTypeOf<CasedString<ClassName.Secondary, 'foo.bar', '-'>>().toBe<never>();

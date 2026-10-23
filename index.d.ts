@@ -219,18 +219,23 @@ export type {ArrayAt} from './source/array-at.d.ts';
 
 // Template literal types
 export type {CamelCase, CamelCaseOptions} from './source/camel-case.d.ts';
+export type {CamelCaseString} from './source/camel-case-string.d.ts';
 export type {CamelCasedProperties} from './source/camel-cased-properties.d.ts';
 export type {CamelCasedPropertiesDeep} from './source/camel-cased-properties-deep.d.ts';
 export type {KebabCase} from './source/kebab-case.d.ts';
+export type {KebabCaseString} from './source/kebab-case-string.d.ts';
 export type {KebabCasedProperties} from './source/kebab-cased-properties.d.ts';
 export type {KebabCasedPropertiesDeep} from './source/kebab-cased-properties-deep.d.ts';
 export type {PascalCase} from './source/pascal-case.d.ts';
+export type {PascalCaseString} from './source/pascal-case-string.d.ts';
 export type {PascalCasedProperties} from './source/pascal-cased-properties.d.ts';
 export type {PascalCasedPropertiesDeep} from './source/pascal-cased-properties-deep.d.ts';
 export type {SnakeCase} from './source/snake-case.d.ts';
+export type {SnakeCaseString} from './source/snake-case-string.d.ts';
 export type {SnakeCasedProperties} from './source/snake-cased-properties.d.ts';
 export type {SnakeCasedPropertiesDeep} from './source/snake-cased-properties-deep.d.ts';
 export type {ScreamingSnakeCase} from './source/screaming-snake-case.d.ts';
+export type {ScreamingSnakeCaseString} from './source/screaming-snake-case-string.d.ts';
 export type {DelimiterCase} from './source/delimiter-case.d.ts';
 export type {DelimiterCasedProperties} from './source/delimiter-cased-properties.d.ts';
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep.d.ts';
