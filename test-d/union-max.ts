@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IntRange, NegativeInfinity, PositiveInfinity, UnionMax} from '../index.d.ts';
+import type {IntRange, NegativeInfinity, Opaque, PositiveInfinity, Tagged, UnionMax} from '../index.d.ts';
 
 expectTypeOf<UnionMax<1 | 3 | 2>>().toBe<3>();
 expectTypeOf<UnionMax<10 | 5 | 2>>().toBe<10>();
@@ -70,3 +70,24 @@ expectTypeOf<UnionMax<RuntimeRetryLimit.Value>>().toBe<number>();
 expectTypeOf<UnionMax<RetryLimit | number>>().toBe<number>();
 expectTypeOf<UnionMax<RetryLimit | any>>().toBe<any>();
 expectTypeOf<UnionMax<RetryLimit | never>>().toBe<5>();
+
+// Brands must not prevent the counter from removing a smaller candidate.
+expectTypeOf<UnionMax<Tagged<1 | 3, 'Count'>>>().toBe<3>();
+expectTypeOf<UnionMax<Tagged<number, 'Count'>>>().toBe<number>();
+
+expectTypeOf<UnionMax<Opaque<1 | 3, 'Count'>>>().toBe<3>();
+expectTypeOf<UnionMax<Tagged<Tagged<1 | 3, 'Count'>, 'Validated'>>>().toBe<3>();
+expectTypeOf<UnionMax<(1 | 3) & {readonly __brand: unique symbol}>>().toBe<3>();
+expectTypeOf<UnionMax<Tagged<0, 'Count'>>>().toBe<0>();
+expectTypeOf<UnionMax<Tagged<3, 'Count'>>>().toBe<3>();
+expectTypeOf<UnionMax<Tagged<1 | 5, 'First'> | Tagged<2 | 3, 'Second'>>>().toBe<5>();
+expectTypeOf<UnionMax<Tagged<2, 'Count'> | 3>>().toBe<3>();
+expectTypeOf<UnionMax<1 | Tagged<3, 'Count'>>>().toBe<3>();
+expectTypeOf<UnionMax<Tagged<1 | 3, 'Count'> | NegativeInfinity>>().toBe<3>();
+expectTypeOf<UnionMax<Tagged<NegativeInfinity, 'Count'>>>().toBe<NegativeInfinity>();
+expectTypeOf<UnionMax<Tagged<1 | PositiveInfinity, 'Count'>>>().toBe<PositiveInfinity>();
+expectTypeOf<UnionMax<Tagged<1, 'Count'> | Tagged<number, 'Other'>>>().toBe<number>();
+expectTypeOf<UnionMax<Tagged<1 | 3, 'Count'> | any>>().toBe<any>();
+expectTypeOf<UnionMax<Tagged<1 | 3, 'Count'> | never>>().toBe<3>();
+expectTypeOf<UnionMax<Tagged<IntRange<0, 100>, 'Count'>>>().toBe<99>();
+expectTypeOf<2>().not.toBeAssignableTo<UnionMax<Tagged<1 | 3, 'Count'>>>();

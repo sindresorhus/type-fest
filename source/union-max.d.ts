@@ -1,6 +1,7 @@
 import type {Finite, NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAnyOrNever} from './internal/type.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 
 /**
 Returns the maximum number in a union of numbers.
@@ -36,6 +37,10 @@ The implementation counts upward using a tuple, removing lower union members unt
 @category Numeric
 */
 export type UnionMax<NumberUnion extends number> =
+	UnionMaxImplementation<NumberUnion extends object ? UnwrapBrand<NumberUnion> : NumberUnion>;
+
+// Normalize the candidates once so the counter can match and remove branded values.
+type UnionMaxImplementation<NumberUnion extends number> =
 	IsAnyOrNever<NumberUnion> extends true ? NumberUnion
 		: `${number}` extends `${NumberUnion}` ? number
 			: PositiveInfinity extends NumberUnion ? PositiveInfinity
