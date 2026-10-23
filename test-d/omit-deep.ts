@@ -328,3 +328,51 @@ expectTypeOf<OmitDeep<{[UserField.Name]: string} & {name: string; keep: number},
 type NonCanonicalIndexedOmit = {[index: number]: string; '01': number; keep: boolean};
 expectTypeOf<OmitDeep<NonCanonicalIndexedOmit, number>>().toBe<{'01': number; keep: boolean}>();
 expectTypeOf<OmitDeep<NonCanonicalIndexedOmit, `${number}`>>().toBe<{'01': number; keep: boolean}>();
+
+// Removing a declared field must keep unrelated fields covered by an index signature.
+type IndexedOmitUser = {[key: string]: unknown; secret: string; readonly id: string; note?: string};
+type PublicIndexedUser = OmitDeep<IndexedOmitUser, 'secret'>;
+expectTypeOf<{}>().not.toBeAssignableTo<PublicIndexedUser>();
+expectTypeOf<{id: number}>().not.toBeAssignableTo<PublicIndexedUser>();
+declare const publicIndexedUser: PublicIndexedUser;
+expectTypeOf(publicIndexedUser.id).toBe<string>();
+expectTypeOf(publicIndexedUser.note).toBe<string | undefined>();
+expectTypeOf<OmitDeep<{user: IndexedOmitUser}, 'user.secret'>['user']['id']>().toBe<string>();
+expectTypeOf<OmitDeep<{users: IndexedOmitUser[]}, `users.${number}.secret`>['users'][number]['id']>().toBe<string>();
+
+// Retained declarations preserve readonly and exact optional values beside dynamic keys.
+// @ts-expect-error A valid string still cannot replace the retained readonly field.
+publicIndexedUser.id = 'changed';
+expectTypeOf<{id: string; note: undefined}>().not.toBeAssignableTo<PublicIndexedUser>();
+expectTypeOf(publicIndexedUser['dynamic']).toBe<unknown>();
+expectTypeOf<OmitDeep<{[key: string]: unknown; secret: string; note?: string | undefined}, 'secret'>>().toBe<{[key: string]: unknown; note?: string | undefined}>();
+
+declare const numericIndexedRemainder: OmitDeep<{[key: number]: unknown; 0: string; readonly 1: number; 2?: boolean}, 0>;
+expectTypeOf(numericIndexedRemainder[1]).toBe<number>();
+expectTypeOf(numericIndexedRemainder[2]).toBe<boolean | undefined>();
+// @ts-expect-error Removing another field does not make the numeric field writable.
+numericIndexedRemainder[1] = 1;
+declare const patternIndexedRemainder: OmitDeep<{[key: `field-${string}`]: unknown; readonly 'field-id': string; 'field-secret': number}, 'field-secret'>;
+expectTypeOf(patternIndexedRemainder['field-id']).toBe<string>();
+declare const symbolIndexedRemainder: OmitDeep<{[key: symbol]: unknown; readonly [omittedSymbol]: string; secret: string}, 'secret'>;
+expectTypeOf(symbolIndexedRemainder[omittedSymbol]).toBe<string>();
+expectTypeOf<OmitDeep<readonly IndexedOmitUser[], `${number}.secret`>[number]['id']>().toBe<string>();
+
+function readIndexedRemainder<Extra>(value: OmitDeep<{[key: string]: unknown; secret: string; keep: {id: number; extra: Extra}}, 'secret'>): number {
+	return value.keep.id;
+}
+
+declare function redactIndexedUser<const Input extends {secret: string}>(input: Input): OmitDeep<Input, 'secret'>;
+const inferredIndexedUser = redactIndexedUser({secret: 'private', id: 'request'} as {secret: string; readonly id: 'request'; [key: string]: unknown});
+expectTypeOf(inferredIndexedUser.id).toBe<'request'>();
+expectTypeOf<OmitDeep<{[key: string]: unknown; secret: any; keep: never}, 'secret'>['keep']>().toBe<never>();
+expectTypeOf<OmitDeep<{[key: string]: unknown; secret: never; keep: unknown}, 'secret'>['keep']>().toBe<unknown>();
+expectTypeOf<OmitDeep<{[key: string]: unknown; secret: unknown; keep: any}, 'secret'>['keep']>().toBe<any>();
+
+// Each indexed union member retains the discriminant and payload that belong together.
+type IndexedPrivateUnion =
+	| {[key: string]: unknown; kind: 'count'; secret: string; count: number}
+	| {[key: string]: unknown; kind: 'label'; secret: string; label: string};
+function readPublicIndexedPayload(value: OmitDeep<IndexedPrivateUnion, 'secret'>): string | number {
+	return value.kind === 'count' ? value.count : value.label;
+}

@@ -1,4 +1,5 @@
 import type {ArraySplice} from './array-splice.d.ts';
+import type {Except} from './except.d.ts';
 import type {ExactKey, IsArrayReadonly, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -134,7 +135,7 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 		: (ExactKey<ObjectT, P> | keyof {[Key in keyof OmitIndexSignature<ObjectT> as IsEqual<ToString<Key>, ToString<P>> extends true ? Key : never]: never}) extends infer Key
 			? IsNever<Key> extends true
 				? ObjectT
-				: Omit<ObjectT, Extract<Key, PropertyKey>>
+				: Except<ObjectT, Extract<Key, keyof ObjectT>> // Keep unrelated declared fields covered by an index signature.
 			: ObjectT;
 
 /**
