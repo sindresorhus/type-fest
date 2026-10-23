@@ -1,4 +1,4 @@
-import type {SimplifyObject} from './internal/index.d.ts';
+import type {NormalizedKeys, SimplifyObject} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
@@ -169,7 +169,11 @@ type _ExclusifyUnion<Union, UnionCopy = Union> = Union extends unknown // For di
 		Union & Partial<
 			Record<
 				// A string index signature contributes `string | number` to `KeysOfUnion`, and adding those as `never` keys would collide with the other members' own named string keys and leave the union with nothing assignable to it, so the keys are read with the index signatures taken off.
-				Exclude<KeysOfUnion<OmitIndexSignature<UnionCopy>>, keyof OmitIndexSignature<Union>>,
+				// Prefer an already declared numeric key over its duplicate string alias, then forbid keys not owned by this member.
+				Exclude<
+					Exclude<KeysOfUnion<OmitIndexSignature<UnionCopy>>, `${KeysOfUnion<OmitIndexSignature<UnionCopy>> & number}`>,
+					NormalizedKeys<keyof OmitIndexSignature<Union>>
+				>,
 				never
 			>
 		>

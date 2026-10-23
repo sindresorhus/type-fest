@@ -93,3 +93,65 @@ expectTypeOf<ExclusifyUnion<never>>().toBe<never>();
 // A `number` or `symbol` index signature does not cover a named string key, so those keys are still added as `never` and the member keeps its own index signature.
 expectTypeOf<ExclusifyUnion<{[k: number]: number} | {a: string}>>().toBe<{[k: number]: number; a?: never} | {a: string}>();
 expectTypeOf<ExclusifyUnion<{[k: symbol]: number} | {a: string}>>().toBe<{[k: symbol]: number; a?: never} | {a: string}>();
+
+// Numeric keys and their canonical string spellings are the same property, so neither input member may be forbidden.
+type NumericAliasAlternatives = {0: string} | {'0': number};
+expectTypeOf<{0: string}>().toBeAssignableTo<ExclusifyUnion<NumericAliasAlternatives>>();
+expectTypeOf<{'0': number}>().toBeAssignableTo<ExclusifyUnion<NumericAliasAlternatives>>();
+
+expectTypeOf<ExclusifyUnion<NumericAliasAlternatives>>().toBe<NumericAliasAlternatives>();
+expectTypeOf<{0: boolean}>().not.toBeAssignableTo<ExclusifyUnion<NumericAliasAlternatives>>();
+
+// Other alternatives must still forbid the shared runtime property. Duplicate aliases must not erase the forbidden key.
+type NumericAliasChoices = NumericAliasAlternatives | {other: true};
+expectTypeOf<{0: string}>().toBeAssignableTo<ExclusifyUnion<NumericAliasChoices>>();
+expectTypeOf<{'0': number}>().toBeAssignableTo<ExclusifyUnion<NumericAliasChoices>>();
+expectTypeOf<{other: true}>().toBeAssignableTo<ExclusifyUnion<NumericAliasChoices>>();
+expectTypeOf<{other: true; 0: string}>().not.toBeAssignableTo<ExclusifyUnion<NumericAliasChoices>>();
+expectTypeOf<{other: true; '0': number}>().not.toBeAssignableTo<ExclusifyUnion<NumericAliasChoices>>();
+expectTypeOf<{other: true; 0: undefined}>().not.toBeAssignableTo<ExclusifyUnion<NumericAliasChoices>>();
+
+// Each member keeps the modifiers of its own properties.
+type ModifiedAliases = {readonly 0?: string; kind: 'text'} | {'0': number; kind: 'count'} | {fallback: boolean};
+expectTypeOf<ExclusifyUnion<ModifiedAliases>>().toBe<
+	| {readonly 0?: string; kind: 'text'; fallback?: never}
+	| {'0': number; kind: 'count'; fallback?: never}
+	| {fallback: boolean; kind?: never; 0?: never}
+>();
+expectTypeOf<{kind: 'text'}>().toBeAssignableTo<ExclusifyUnion<ModifiedAliases>>();
+expectTypeOf<{0: number; kind: 'count'}>().toBeAssignableTo<ExclusifyUnion<ModifiedAliases>>();
+expectTypeOf<{kind: 'count'}>().not.toBeAssignableTo<ExclusifyUnion<ModifiedAliases>>();
+expectTypeOf<{kind: 'text'; fallback: true}>().not.toBeAssignableTo<ExclusifyUnion<ModifiedAliases>>();
+
+// Preserve the declared numeric key identities of ordinary unions, including keys only present as optional.
+type NumericKeys = ExclusifyUnion<{readonly 0: string} | {1: number}>;
+expectTypeOf<keyof NumericKeys>().toBe<0 | 1>();
+expectTypeOf<{0: string}>().toBeAssignableTo<Pick<NumericKeys, 0>>();
+expectTypeOf<Pick<NumericKeys, 0>[0]>().toBe<string | undefined>();
+type OptionalNumericKeys = ExclusifyUnion<{0?: string} | {1?: number}>;
+expectTypeOf<keyof OptionalNumericKeys>().toBe<0 | 1>();
+expectTypeOf<{}>().toBeAssignableTo<Pick<OptionalNumericKeys, 0>>();
+expectTypeOf<Pick<OptionalNumericKeys, 0>[0]>().toBe<string | undefined>();
+expectTypeOf<keyof ExclusifyUnion<{'0': string} | {'1': number}>>().toBe<'0' | '1'>();
+
+// Signed and fractional numbers also have canonical string aliases; padded spellings remain distinct keys.
+expectTypeOf<ExclusifyUnion<{[-2]: string} | {'-2': number}>>().toBe<{[-2]: string} | {'-2': number}>();
+expectTypeOf<ExclusifyUnion<{1.5?: string} | {'1.5': number}>>().toBe<{1.5?: string} | {'1.5': number}>();
+type NoncanonicalChoices = ExclusifyUnion<{1: string} | {'01': number}>;
+expectTypeOf<{1: string}>().toBeAssignableTo<NoncanonicalChoices>();
+expectTypeOf<{'01': number}>().toBeAssignableTo<NoncanonicalChoices>();
+expectTypeOf<{1: string; '01': number}>().not.toBeAssignableTo<NoncanonicalChoices>();
+expectTypeOf<keyof NoncanonicalChoices>().toBe<1 | '01'>();
+
+// Symbols remain independent forbidden properties beside numeric aliases.
+declare const uniqueChoice: unique symbol;
+type SymbolChoice = ExclusifyUnion<NumericAliasAlternatives | {[uniqueChoice]: true}>;
+expectTypeOf<{[uniqueChoice]: true}>().toBeAssignableTo<SymbolChoice>();
+expectTypeOf<{0: string}>().toBeAssignableTo<SymbolChoice>();
+expectTypeOf<{[uniqueChoice]: true; '0': number}>().not.toBeAssignableTo<SymbolChoice>();
+
+// Value types and skipped primitive/collection members are preserved.
+expectTypeOf<ExclusifyUnion<{0: any} | {'0': unknown}>>().toBe<{0: any} | {'0': unknown}>();
+expectTypeOf<ExclusifyUnion<{0: never} | {'0': string}>>().toBe<{0: never} | {'0': string}>();
+expectTypeOf<ExclusifyUnion<NumericAliasAlternatives | undefined>>().toBe<NumericAliasAlternatives | undefined>();
+expectTypeOf<ExclusifyUnion<NumericAliasAlternatives | string[]>>().toBe<NumericAliasAlternatives | string[]>();
