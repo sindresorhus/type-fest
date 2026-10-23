@@ -24,7 +24,7 @@ Options for the `ConditionalPickDeep` type.
 */
 export type ConditionalPickDeepOptions = {
 	/**
-	The condition assertion mode.
+	The condition assertion mode. A union of modes produces a union of complete selections.
 
 	@default 'extends'
 	*/
@@ -103,11 +103,13 @@ export type ConditionalPickDeep<
 	Type,
 	Condition,
 	Options extends ConditionalPickDeepOptions = {},
-> = _ConditionalPickDeep<
-	Type,
-	Condition,
-	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>
->;
+> =
+	// Choose a complete matching strategy before descending into the object.
+	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>['condition'] extends infer Mode extends Required<ConditionalPickDeepOptions>['condition']
+		? Mode extends unknown
+			? _ConditionalPickDeep<Type, Condition, {condition: Mode}>
+			: never
+		: never;
 
 // `IsEmptyObject` is used instead of a raw `EmptyObject` check, because an object with only an index signature is not empty.
 type _NeverIfEmpty<Type> = Type extends unknown

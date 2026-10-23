@@ -275,3 +275,51 @@ expectTypeOf<ConditionalPickDeep<{data: {handler: SelectedHandler} & {readonly l
 	.toBe<{data: {handler: SelectedHandler; readonly label?: string}}>();
 expectTypeOf<ConditionalPickDeep<{data: {label: string} | {count: number}}, {label: string} | {count: number}, {condition: 'equality'}>>()
 	.toBe<{data: {label: string} | {count: number}}>();
+
+// An unknown mode can produce either complete selection, including the smaller equality result.
+type ModeSelectionInput = {literal: 'a'; wide: string; nested: {literal: 'b'; wide: string}};
+type UncertainModeSelection = ConditionalPickDeep<ModeSelectionInput, string, {condition: 'extends' | 'equality'}>;
+type IndependentModeSelections = ConditionalPickDeep<ModeSelectionInput, string, {condition: 'extends'}> | ConditionalPickDeep<ModeSelectionInput, string, {condition: 'equality'}>;
+expectTypeOf<IndependentModeSelections>().toBeAssignableTo<UncertainModeSelection>();
+expectTypeOf<{wide: string; nested: {wide: string}}>().toBeAssignableTo<UncertainModeSelection>();
+
+declare function selectFieldsWithMode<const Value, Mode extends 'extends' | 'equality'>(value: Value, mode: Mode): ConditionalPickDeep<Value, string, {condition: Mode}>;
+declare const selectionMode: 'extends' | 'equality';
+const selectedWithUncertainMode = selectFieldsWithMode({literal: 'a' as const, wide: '' as string}, selectionMode);
+expectTypeOf<{wide: string}>().toBeAssignableTo<typeof selectedWithUncertainMode>();
+
+expectTypeOf<UncertainModeSelection>().toBe<IndependentModeSelections>();
+expectTypeOf<ConditionalPickDeep<ModeSelectionInput, string, {condition: 'extends'} | {condition: 'equality'}>>()
+	.toBe<IndependentModeSelections>();
+expectTypeOf<ConditionalPickDeep<ModeSelectionInput, string, {condition?: 'extends' | 'equality'}>>()
+	.toBe<ConditionalPickDeep<ModeSelectionInput, string>>();
+expectTypeOf<ConditionalPickDeep<ModeSelectionInput, string, any>>().toBe<ConditionalPickDeep<ModeSelectionInput, string>>();
+expectTypeOf<ConditionalPickDeep<ModeSelectionInput, string, never>>().toBe<ConditionalPickDeep<ModeSelectionInput, string>>();
+// A required never mode has no possible strategy.
+expectTypeOf<ConditionalPickDeep<ModeSelectionInput, string, {condition: never}>>().toBe<never>();
+expectTypeOf(selectedWithUncertainMode).toBe<{readonly literal: 'a'; readonly wide: string} | {readonly wide: string}>();
+expectTypeOf(selectedWithUncertainMode).not.toBeAssignableTo<{literal: 'a'}>();
+
+type ReadonlyModeInput = {readonly [selectedSymbol]: string; readonly nested: {readonly literal: 'a'; readonly wide: string}};
+type ReadonlyModeSelection = ConditionalPickDeep<ReadonlyModeInput, string, {condition: 'extends' | 'equality'}>;
+expectTypeOf<ReadonlyModeSelection>().toBe<
+	{readonly [selectedSymbol]: string; readonly nested: {readonly literal: 'a'; readonly wide: string}}
+	| {readonly [selectedSymbol]: string; readonly nested: {readonly wide: string}}
+>();
+declare const readonlyModeSelection: ReadonlyModeSelection;
+// @ts-expect-error Matching symbol fields retain readonly in both strategies.
+readonlyModeSelection[selectedSymbol] = 'value';
+expectTypeOf<ConditionalPickDeep<Record<string, {literal: 'a'; wide: string}>, string, {condition: 'extends' | 'equality'}>>()
+	.toBe<Record<string, {literal: 'a'; wide: string}> | Record<string, {wide: string}>>();
+
+function _constructSelectedCallback<Arguments extends unknown[], Result>(
+	value: (...arguments_: Arguments) => Result,
+): ConditionalPickDeep<{handler: (...arguments_: Arguments) => Result; ignored: number}, Function> {
+	return {handler: value};
+}
+
+function _readSelectedCallback<Arguments extends unknown[], Result>(
+	value: ConditionalPickDeep<{handler: (...arguments_: Arguments) => Result; ignored: number}, Function>,
+): (...arguments_: Arguments) => Result {
+	return value.handler;
+}
