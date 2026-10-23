@@ -24,6 +24,11 @@ const error = (messageId, name) => ({messageId, ...(name && {data: {name}})});
 
 ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 	valid: [
+		// A same-line declaration uses the import normally.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; export type Foo = Target;\nexport {};\n',
+			filename,
+		},
 		// Links to a type declared in the file
 		{
 			code: dedenter`
@@ -252,6 +257,13 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 		},
 	],
 	invalid: [
+		// Removing an unused import must not delete the following declaration on the same line.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; export type Foo = string;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: 'export type Foo = string;\nexport {};\n',
+		},
 		// Missing import in a file without imports
 		{
 			code: dedenter`
@@ -546,6 +558,83 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 
 				export {};
 			`,
+		},
+		// Removing an import preserves another import and declaration on the same line.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; import type {Other} from \'./other.d.ts\'; export type Foo = Other;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: 'import type {Other} from \'./other.d.ts\'; export type Foo = Other;\nexport {};\n',
+		},
+		{
+			code: 'import type {Other} from \'./other.d.ts\'; import type {Target} from \'./target.d.ts\'; export type Foo = Other;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: 'import type {Other} from \'./other.d.ts\'; export type Foo = Other;\nexport {};\n',
+		},
+		// Unrelated trailing comments belong to the remaining source, including multiline comments.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; // Keep this explanation.\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: '// Keep this explanation.\nexport {};\n',
+		},
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; /* Keep this explanation. */ export type Foo = string;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: '/* Keep this explanation. */ export type Foo = string;\nexport {};\n',
+		},
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; /* Keep this\nexplanation. */\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: '/* Keep this\nexplanation. */\nexport {};\n',
+		},
+		// Only the exact owned comment is removed, not an expanded or standalone comment.
+		{
+			code: `import type {Target} from './target.d.ts'; ${linkComment} and keep this explanation.\nexport {};\n`,
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: `${linkComment} and keep this explanation.\nexport {};\n`,
+		},
+		{
+			code: `import type {Target} from './target.d.ts';\n${linkComment}\nexport {};\n`,
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: `${linkComment}\nexport {};\n`,
+		},
+		// End-of-file removal needs no final newline and preserves unrelated comments.
+		{
+			code: 'import type {Target} from \'./target.d.ts\';',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: '',
+		},
+		{
+			code: `import type {Target} from './target.d.ts'; ${linkComment}`,
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: '',
+		},
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; // Keep this explanation.',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: '// Keep this explanation.',
+		},
+		// CRLF files preserve following same-line code and retain existing blank-line cleanup.
+		{
+			code: 'import type {Target} from \'./target.d.ts\'; export type Foo = string;\r\nexport {};\r\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: 'export type Foo = string;\r\nexport {};\r\n',
+		},
+		{
+			code: `import type {Target} from './target.d.ts'; ${linkComment}\r\n\r\nexport {};\r\n`,
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: 'export {};\r\n',
 		},
 		// One unused specifier in a declaration
 		{

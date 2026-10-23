@@ -122,7 +122,10 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 			const {line} = declaration.loc.end;
 			// Also remove the blank line after the last import, so the file does not start with an empty line.
 			const end = getNextLineStart(imports.length === 1 && sourceCode.lines[line] === '' ? line + 1 : line);
-			return fixer.removeRange([declaration.range[0], end]);
+			const trailingComment = getTrailingComment(declaration);
+			const lastRemovedToken = trailingComment && sourceCode.getText(trailingComment) === LINK_COMMENT ? trailingComment : declaration;
+			const nextToken = sourceCode.getTokenAfter(lastRemovedToken, {includeComments: true});
+			return fixer.removeRange([declaration.range[0], Math.min(end, nextToken?.range[0] ?? end)]);
 		};
 
 		const removeSpecifier = (fixer, specifier, specifiers) => {
