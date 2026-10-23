@@ -69,23 +69,27 @@ type JoinHelper<
 	Delimiter extends string,
 	// The joined items so far, each followed by the delimiter, are kept in `Result`, so the recursion over required items is in tail position and a long tuple does not hit the recursion limit.
 	Result extends string = '',
+	// Required trailing items are accumulated separately, so tuples with a leading rest element also use tail recursion.
+	Suffix extends string = '',
 > = Items extends readonly []
-	? ''
+	? `${Result}${Suffix}`
 	: Items extends readonly [JoinableItem?]
-		? `${Result}${NullishCoalesce<Items[0], ''>}`
+		? `${Result}${NullishCoalesce<Items[0], ''>}${Suffix}`
 		: Items extends readonly [
 			infer First extends JoinableItem,
 			...infer Tail extends readonly JoinableItem[],
 		]
 			? [] extends Tail
 				// A rest element can contain no items, in which case there is no separator after the first item.
-				? `${Result}${NullishCoalesce<First, ''>}${Delimiter}${JoinHelper<Tail, Delimiter>}` | `${Result}${NullishCoalesce<First, ''>}`
-				: JoinHelper<Tail, Delimiter, `${Result}${NullishCoalesce<First, ''>}${Delimiter}`>
+				? `${Result}${NullishCoalesce<First, ''>}${Delimiter}${JoinHelper<Tail, Delimiter>}${Suffix}` | `${Result}${NullishCoalesce<First, ''>}${Suffix}`
+				: JoinHelper<Tail, Delimiter, `${Result}${NullishCoalesce<First, ''>}${Delimiter}`, Suffix>
 			: Items extends readonly [
 				...infer Head extends readonly JoinableItem[],
 				infer Last extends JoinableItem,
 			]
-				? `${Result}${JoinHelper<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}` | ([] extends Head ? `${Result}${NullishCoalesce<Last, ''>}` : never)
-				: string;
+				? [] extends Head
+					? `${Result}${JoinHelper<Head, Delimiter>}${Delimiter}${NullishCoalesce<Last, ''>}${Suffix}` | `${Result}${NullishCoalesce<Last, ''>}${Suffix}`
+					: JoinHelper<Head, Delimiter, Result, `${Delimiter}${NullishCoalesce<Last, ''>}${Suffix}`>
+				: `${Result}${string}${Suffix}`;
 
 export {};

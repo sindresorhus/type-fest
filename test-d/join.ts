@@ -137,3 +137,19 @@ expectTypeOf<Join<['a'], never>>().toBe<never>();
 // A long tuple does not hit the recursion limit.
 expectTypeOf<Join<TupleOf<200, 'a'>, '.'>>().toBe<`${StringRepeat<'a.', 199>}a`>();
 expectTypeOf<Join<[...TupleOf<200, 'a'>, ...string[]], '.'>>().toBe<`${StringRepeat<'a.', 199>}a` | `${StringRepeat<'a.', 200>}${string}`>();
+
+// A long required suffix is handled as efficiently as a long prefix.
+type LongJoinedPrefix = `${StringRepeat<'a.', 199>}a`;
+type LongJoinedSuffix = `${StringRepeat<'b.', 199>}b`;
+expectTypeOf<Join<[...string[], ...TupleOf<200, 'a'>], '.'>>().toBe<LongJoinedPrefix | `${string}.${LongJoinedPrefix}`>();
+expectTypeOf<Join<[...TupleOf<200, 'a'>, ...string[], ...TupleOf<200, 'b'>], '.'>>().toBe<`${LongJoinedPrefix}.${LongJoinedSuffix}` | `${LongJoinedPrefix}.${string}.${LongJoinedSuffix}`>();
+expectTypeOf<Join<readonly [...string[], ...TupleOf<200, 'a'>], '.'>>().toBe<LongJoinedPrefix | `${string}.${LongJoinedPrefix}`>();
+expectTypeOf<Join<[...number[], 'a', 'b', 'c'], '.' | '-'>>().toBe<'a.b.c' | 'a-b-c' | `${string}.a.b.c` | `${string}-a-b-c`>();
+expectTypeOf<Join<['prefix', ...string[], null, undefined], '.'>>().toBe<'prefix..' | `prefix.${string}..`>();
+expectTypeOf<Join<['prefix', ...string[], 'a', 'b', 'c'], ''>>().toBe<`prefix${string}abc`>();
+expectTypeOf<Join<[...string[], 'a', 'b', 'c'], ''>>().toBe<`${string}abc`>();
+expectTypeOf<Join<[...string[], 1 | 2, true, null], ':'>>().toBe<'1:true:' | '2:true:' | `${string}:1:true:` | `${string}:2:true:`>();
+expectTypeOf<'prefix.a-b-c'>().not.toBeAssignableTo<Join<['prefix', ...string[], 'a', 'b', 'c'], '.' | '-'>>();
+expectTypeOf<Join<[...string[], 'a', 'b', 'c'] | ['single'], '.'>>().toBe<'a.b.c' | `${string}.a.b.c` | 'single'>();
+// @ts-expect-error - Only values supported by Array#join can be joined.
+type UnknownSuffix = Join<[...string[], unknown], '.'>;
