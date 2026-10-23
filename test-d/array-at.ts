@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArrayAt} from '../index.d.ts';
+import type {ArrayAt, TupleOf} from '../index.d.ts';
 
 expectTypeOf<ArrayAt<[string], 0>>().toBe<string>();
 expectTypeOf<ArrayAt<[string], -1>>().toBe<string>();
@@ -142,3 +142,21 @@ type MiddleRest = ['a', ...number[], 'y', 'z'];
 expectTypeOf<ArrayAt<MiddleRest, 1>>().toBe<number | 'y'>();
 expectTypeOf<ArrayAt<MiddleRest, 2>>().toBe<number | 'y' | 'z'>();
 expectTypeOf<ArrayAt<MiddleRest, 3>>().toBe<number | 'y' | 'z' | undefined>();
+
+// A known position in a fixed tuple does not require walking all the other elements.
+expectTypeOf<ArrayAt<[1, ...TupleOf<1100>], 0>>().toBe<1>();
+expectTypeOf<ArrayAt<readonly [1, ...TupleOf<1100>], 0>>().toBe<1>();
+expectTypeOf<ArrayAt<[...TupleOf<1100>, 2], 1100>>().toBe<2>();
+expectTypeOf<ArrayAt<readonly [...TupleOf<1100>, 2?], 1100>>().toBe<2 | undefined>();
+expectTypeOf<ArrayAt<[...TupleOf<1100>, 2, ...string[]], 1100>>().toBe<2>();
+
+// Declared tuple positions preserve explicitly allowed `undefined` as well as required values.
+expectTypeOf<ArrayAt<[string | undefined, ...number[]], 0>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly [undefined, 1], 0>>().toBe<undefined>();
+expectTypeOf<ArrayAt<[never, ...TupleOf<1100>], 0>>().toBe<never>();
+expectTypeOf<ArrayAt<[any, ...TupleOf<1100>], 0>>().toBe<any>();
+expectTypeOf<ArrayAt<[unknown, ...TupleOf<1100>], 0>>().toBe<unknown>();
+
+// A numeric length refinement does not declare any tuple positions.
+expectTypeOf<ArrayAt<string[] & {length: 3}, 0>>().toBe<string | undefined>();
+expectTypeOf<ArrayAt<readonly string[] & {readonly length: 3}, 0>>().toBe<string | undefined>();
