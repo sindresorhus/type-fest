@@ -47,7 +47,8 @@ export type TaggedUnion<
 	TagKey extends string,
 	UnionMembers extends Record<string, Record<string, unknown>>,
 > = {
-	[Name in keyof UnionMembers]: {[Key in TagKey]: Name} & UnionMembers[Name];
+	// An optional dictionary entry contributes a variant, not an undefined union member.
+	[Name in keyof UnionMembers]-?: {[Key in TagKey]: Name} & UnionMembers[Name];
 }[keyof UnionMembers];
 
 export {};
