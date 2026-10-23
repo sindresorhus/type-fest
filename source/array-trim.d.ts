@@ -2,8 +2,7 @@ import type {If} from './if.d.ts';
 import type {FirstArrayElement, IsArrayReadonly} from './internal/array.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
-import type {ExtractRestElement} from './extract-rest-element.d.ts';
+import type {_SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -171,12 +170,14 @@ type _ArrayTrimStart<Array_ extends UnknownArray, Item, Condition extends Requir
 				? _ArrayTrimStart<Rest, Item, Condition>
 				: Array_
 			: never // Should never happen
-		// The array is empty, or starts with a rest element.
+		// The array is empty, or starts with a rest element, so there is no fixed prefix to retain.
 		: Array_ extends readonly []
 			? Array_
-			: Matches<ExtractRestElement<Array_>, Item, Condition> extends true
-				? _ArrayTrimStart<ExcludeRestElement<Array_>, Item, Condition>
-				: Array_;
+			: _SplitOnRestElement<Array_, {preserveOptionalModifier: true}> extends [unknown, infer Rest extends UnknownArray, infer Fixed extends UnknownArray]
+				? Matches<Rest[number], Item, Condition> extends true
+					? _ArrayTrimStart<Fixed, Item, Condition>
+					: Array_
+				: never;
 
 type _ArrayTrimEnd<Array_ extends UnknownArray, Item, Condition extends Required<ArrayTrimOptions>['condition']> =
 	Array_ extends readonly [...infer Rest, infer Last]
@@ -187,10 +188,12 @@ type _ArrayTrimEnd<Array_ extends UnknownArray, Item, Condition extends Required
 		: Array_ extends readonly []
 			? Array_
 			: number extends Array_['length']
-				// The array ends with a rest element.
-				? Matches<ExtractRestElement<Array_>, Item, Condition> extends true
-					? _ArrayTrimEnd<ExcludeRestElement<Array_>, Item, Condition>
-					: Array_
+				// The array ends with a rest element, so there is no fixed suffix to retain.
+				? _SplitOnRestElement<Array_, {preserveOptionalModifier: true}> extends [infer Fixed extends UnknownArray, infer Rest extends UnknownArray, unknown]
+					? Matches<Rest[number], Item, Condition> extends true
+						? _ArrayTrimEnd<Fixed, Item, Condition>
+						: Array_
+					: never
 				// The array ends with an optional element.
 				: Array_ extends readonly [...infer Rest, (infer Last)?]
 					? Matches<Last, Item, Condition> extends true
