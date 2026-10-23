@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, IsLiteral} from '../../index.d.ts';
+import type {IsEqual, IsLiteral, Tagged} from '../../index.d.ts';
 import type {DefinedKeyFilter, ExactKey, KeysExcept, LiteralKeyOf, OptionalKeyFilter} from '../../source/internal/index.d.ts';
 
 // A property whose type includes `undefined` is optional, one that is only `undefined` is neither.
@@ -99,3 +99,38 @@ expectTypeOf<IsEqual<KeysExcept<[1, 2?, 3?], 0>, '1' | '2'>>().toBe<true>();
 expectTypeOf<IsEqual<KeysExcept<[1, ...string[]], never>, '0'>>().toBe<true>();
 expectTypeOf<IsEqual<KeysExcept<[...string[], 1], never>, never>>().toBe<true>();
 expectTypeOf<IsEqual<KeysExcept<string[], never>, never>>().toBe<true>();
+
+// Numeric index signatures only cover canonical numeric property names.
+expectTypeOf<IsEqual<ExactKey<Record<number, string>, '00'>, never>>().toBe<true>();
+expectTypeOf<IsEqual<ExactKey<Record<number, string>, '0x10'>, never>>().toBe<true>();
+
+// Exact spellings still resolve, including decimals and the original form of declared keys.
+expectTypeOf<ExactKey<Record<number, string>, '16'>>().toBe<16>();
+expectTypeOf<ExactKey<Record<number, string>, '-2'>>().toBe<-2>();
+expectTypeOf<ExactKey<Record<number, string>, '1.5'>>().toBe<1.5>();
+expectTypeOf<ExactKey<Record<number, string>, '1e3' | '-0' | '+1' | ' 1'>>().toBe<never>();
+expectTypeOf<ExactKey<Record<number, string>, `${number}`>>().toBe<number>();
+expectTypeOf<ExactKey<Record<string, string>, '00'>>().toBe<'00'>();
+expectTypeOf<ExactKey<Record<number, string> & {'00': boolean}, '00'>>().toBe<'00'>();
+expectTypeOf<ExactKey<{readonly '1.5'?: string}, 1.5>>().toBe<'1.5'>();
+expectTypeOf<ExactKey<{[symbolKey]: string}, typeof symbolKey>>().toBe<typeof symbolKey>();
+
+enum ExactCounterKey {
+	First,
+}
+
+expectTypeOf<ExactKey<{[ExactCounterKey.First]: string}, '0'>>().toBe<0>();
+expectTypeOf<ExactKey<Record<number, string>, Tagged<1, 'Index'>>>().toBe<Tagged<1, 'Index'>>();
+expectTypeOf<ExactKey<Record<number, string>, never>>().toBe<never>();
+expectTypeOf<ExactKey<{name: string}, any>>().toBe<any>();
+expectTypeOf<ExactKey<any, '00'>>().toBe<'00'>();
+// @ts-expect-error Unknown does not describe an object whose keys can be looked up.
+expectTypeOf<ExactKey<unknown, 'name'>>();
+
+function _exactNumericKey<Value>(key: number): ExactKey<Record<number, Value>, number> {
+	return key;
+}
+
+function _readExactLiteralKey<Value>(key: ExactKey<{0: Value}, '0'>): 0 {
+	return key;
+}

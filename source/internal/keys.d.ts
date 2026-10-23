@@ -84,8 +84,11 @@ export type ExactKey<T extends object, Key extends PropertyKey> =
 		: ToString<Key> extends keyof T
 			? ToString<Key>
 			: Key extends `${infer NumberKey extends number}`
-				? NumberKey extends keyof T
-					? NumberKey
+				// A numeric-looking string names a number key only when its spelling survives the conversion.
+				? `${NumberKey}` extends Key
+					? NumberKey extends keyof T
+						? NumberKey
+						: never
 					: never
 				: never;
 

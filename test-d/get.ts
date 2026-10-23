@@ -793,3 +793,17 @@ function _constructCanonicalName<Options extends GetOptions>(value: string): Get
 function _constructCanonicalArrayRead<Extra>(value: string | undefined): Get<Array<{name: string; extra: Extra}>, ['0', 'name']> {
 	return value;
 }
+
+// A numeric index signature cannot supply a property with a different numeric spelling.
+expectTypeOf<Get<Record<number, string>, '00'>>().toBe<unknown>();
+expectTypeOf<Get<Record<number, string>, '0x10'>>().toBe<unknown>();
+expectTypeOf<Get<Record<number, string>, '1e0'>>().toBe<unknown>();
+
+// A key explicitly declared with the same spelling still exists beside a numeric signature.
+expectTypeOf<Get<Record<number, string> & {'00': boolean}, ['00']>>().toBe<boolean>();
+expectTypeOf<Get<Record<number, string>, ['16']>>().toBe<string>();
+declare const numericDictionary: Record<number, {name: string}>;
+expectTypeOf(get(numericDictionary, ['0', 'name'] as const)).toBe<string>();
+const unknownNumericSpelling = get(numericDictionary, ['0x10', 'name'] as const);
+// @ts-expect-error A missing path has an unknown value, not a known string.
+const _invalidNumericSpelling: string = unknownNumericSpelling;

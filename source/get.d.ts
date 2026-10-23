@@ -116,7 +116,7 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 	BaseType extends null | undefined
 		? NullishMember
 		// Normalize declared numeric and enum members before the array-like fallback, so its index signature does not hide their more precise types. Read the declared keys, because an enum key and its literal spelling are distinct types.
-		: Key extends keyof BaseType | (BaseType extends object ? KeyAsString<OmitIndexSignature<BaseType>> : never)
+		: Key extends keyof BaseType | (BaseType extends object ? keyof WithStringKeys<OmitIndexSignature<BaseType>> : never)
 			? StrictPropertyOf<BaseType, (Key | Extract<keyof OmitIndexSignature<BaseType>, Key | ExactKey<OmitIndexSignature<BaseType>, Key>>) & keyof BaseType, Options>
 			// Handle arrays and tuples. A numeric string must round-trip to the same property name.
 			: BaseType extends readonly unknown[]
@@ -159,9 +159,7 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 						? ExactKey<BaseType, Key> extends infer Exact extends keyof BaseType
 							? IsNever<Exact> extends true
 								// `never` is assignable to every key set, so it has to be told apart from a key that was found, or a key the subject does not have answers `never`.
-								? Key extends keyof WithStringKeys<BaseType>
-									? StrictPropertyOf<WithStringKeys<BaseType>, Key, Options>
-									: MissingKey
+								? MissingKey
 								: StrictPropertyOf<BaseType, Exact, Options>
 							: MissingKey
 						: MissingKey;

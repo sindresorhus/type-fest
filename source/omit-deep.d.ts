@@ -123,8 +123,8 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 						? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
 						: ObjectT[Key]
 					: ObjectT[Key]
-				// A signature covers every key of its kind, so a key in the path that is not the mapped key still goes through it, and the omit is applied to the signature's value type because there is no single key to remove. `Paths` emits such a path as `${string}`.
-				: RecordKeyInPath extends ToString<Key>
+				// `Paths` emits `${string}` for a signature, so matching segments transform its value type. Resolve the current key with `ExactKey` to reject alternate numeric spellings.
+				: RecordKeyInPath extends ToString<Key> & ToString<ExactKey<Record<Key, unknown>, RecordKeyInPath>>
 					// A member that names the key outright is what the key reads, so the signature is left alone.
 					? RecordKeyInPath extends ToString<LiteralKeyOf<ObjectT>>
 						? ObjectT[Key]

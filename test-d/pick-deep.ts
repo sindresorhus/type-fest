@@ -539,3 +539,10 @@ expectTypeOf(inferredCanonicalIndexPick[0].secret).toBe<string>();
 function _constructGenericArrayPick<Extra>(value: Array<{name: string}>): PickDeep<Array<{name: string; extra: Extra}>, `${number}.name`> {
 	return value;
 }
+
+// A nonexistent numeric property must not select the entire numeric index signature.
+expectTypeOf<PickDeep<Record<number, {name: string}>, '00.name'>>().toBe<never>();
+
+// Ignoring a differently spelled numeric path must not erase another valid selection.
+expectTypeOf<PickDeep<Record<number, {name: string; id: number}>, '00.name' | '0.id'>>().toBe<{0: {id: number}}>();
+expectTypeOf<PickDeep<Record<number, {name: string}> & {'00': {name: number}}, '00.name'>>().toBe<{'00': {name: number}}>();

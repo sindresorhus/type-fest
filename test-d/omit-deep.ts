@@ -376,3 +376,22 @@ type IndexedPrivateUnion =
 function readPublicIndexedPayload(value: OmitDeep<IndexedPrivateUnion, 'secret'>): string | number {
 	return value.kind === 'count' ? value.count : value.label;
 }
+
+// A nonexistent numeric property must not remove the entire numeric index signature.
+expectTypeOf<OmitDeep<Record<number, {name: string}>, '00'>>().toBe<Record<number, {name: string}>>();
+
+// A nonexistent nested numeric spelling must not transform every signature value.
+expectTypeOf<OmitDeep<Record<number, {name: string; id: number}>, '00.name'>>().toBe<Record<number, {name: string; id: number}>>();
+
+// Resolve each signature separately: a string key can exist without being a numeric key.
+type OverlappingOmitSignatures = {
+	[key: string]: {name: string; id: number};
+	[key: number]: {name: string; id: number; numeric: true};
+};
+type NoncanonicalSignatureOmit = OmitDeep<OverlappingOmitSignatures, '00.name'>;
+expectTypeOf<NoncanonicalSignatureOmit[string]>().toBe<{id: number}>();
+expectTypeOf<NoncanonicalSignatureOmit[number]>().toBe<{name: string; id: number; numeric: true}>();
+expectTypeOf<OmitDeep<OverlappingOmitSignatures, '0.name'>[number]>().toBe<{id: number; numeric: true}>();
+expectTypeOf<OmitDeep<Record<number, {name: string}>, '0x10.name'>>().toBe<Record<number, {name: string}>>();
+expectTypeOf<OmitDeep<Record<number, {name: string}> & {'00': {name: string; own: true}}, '00.name'>['00']>().toBe<{own: true}>();
+expectTypeOf<OmitDeep<Record<`row-${string}`, {name: string; id: number}>, 'row-first.name'>[string & `row-${string}`]>().toBe<{id: number}>();
