@@ -8,7 +8,7 @@ import type {Or} from './or.d.ts';
 */
 export type StringToArrayOptions = {
 	/**
-	When enabled, non-literal parts of the string (e.g., `string`, `Uppercase<string>`) are mapped as single elements instead of being mapped as a rest element.
+	When enabled, non-literal parts of the string (e.g., `string`, `Uppercase<string>`) are mapped as single elements instead of being mapped as a rest element. Otherwise, a non-literal part becomes `...string[]`, since its individual characters do not necessarily satisfy the type of the whole part.
 
 	Note: Enabling this option can produce misleading results that might not reflect the actual runtime behavior.
 	For example, `StringToArray<string, {mapNonLiteralsDirectly: true}>` returns `[string]`, but at runtime, the string could be `'abc'` (which satisfies `string`), and converting it to an array would result in `['a', 'b', 'c']`, which doesn't satisfy `[string]`.
@@ -88,11 +88,12 @@ type _StringToArray<S extends string, Options extends Required<StringToArrayOpti
 	S extends `${infer First}${infer Rest}`
 		? Or<IsStringLiteral<First>, Options['mapNonLiteralsDirectly']> extends true
 			? _StringToArray<Rest, Options, [...Accumulator, First]>
-			: _StringToArray<Rest, Options, [...Accumulator, ...First[]]>
+			// A placeholder like `${number}` can include characters such as `-` and `.`, which are not themselves numeric strings.
+			: _StringToArray<Rest, Options, [...Accumulator, ...string[]]>
 		: S extends ''
 			? Accumulator
 			: Options['mapNonLiteralsDirectly'] extends true
 				? [...Accumulator, S]
-				: [...Accumulator, ...S[]];
+				: [...Accumulator, ...string[]];
 
 export {};

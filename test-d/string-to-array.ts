@@ -18,8 +18,8 @@ expectTypeOf<StringToArrayElementNonLiterals<'foobar'>>().toBe<['f', 'o', 'o', '
 
 // Non-literals
 expectTypeOf<StringToArray<string>>().toBe<string[]>();
-expectTypeOf<StringToArray<Lowercase<string>>>().toBe<Array<Lowercase<string>>>();
-expectTypeOf<StringToArray<Uppercase<string>>>().toBe<Array<Uppercase<string>>>();
+expectTypeOf<StringToArray<Lowercase<string>>>().toBe<string[]>();
+expectTypeOf<StringToArray<Uppercase<string>>>().toBe<string[]>();
 
 expectTypeOf<StringToArray<`${string}abc`>>().toBe<[...string[], 'a', 'b', 'c']>();
 expectTypeOf<StringToArray<`abc${string}`>>().toBe<['a', 'b', 'c', ...string[]]>();
@@ -27,8 +27,8 @@ expectTypeOf<StringToArray<`abc${string}def`>>().toBe<['a', 'b', 'c', ...string[
 
 expectTypeOf<StringToArray<`abc${string}def${string}`>>().toBe<['a', 'b', 'c', ...string[]]>();
 expectTypeOf<StringToArray<`a${string}b${string}c`>>().toBe<['a', ...string[], 'c']>();
-expectTypeOf<StringToArray<`a${Capitalize<string>}b${Uppercase<string>}c`>>().toBe<['a', ...Array<Capitalize<string> | 'b' | Uppercase<string>>, 'c']>();
-expectTypeOf<StringToArray<`ab${Capitalize<string>}cd${Uppercase<string>}`>>().toBe<['a', 'b', ...Array<Capitalize<string> | 'c' | 'd' | Uppercase<string>>]>();
+expectTypeOf<StringToArray<`a${Capitalize<string>}b${Uppercase<string>}c`>>().toBe<['a', ...string[], 'c']>();
+expectTypeOf<StringToArray<`ab${Capitalize<string>}cd${Uppercase<string>}`>>().toBe<['a', 'b', ...string[]]>();
 
 // --- `mapNonLiteralsDirectly: true` ---
 expectTypeOf<StringToArrayElementNonLiterals<string>>().toBe<[string]>();
@@ -46,8 +46,8 @@ expectTypeOf<StringToArrayElementNonLiterals<`ab${Capitalize<string>}cd${Upperca
 
 // Unions
 expectTypeOf<StringToArray<'abc' | 'def'>>().toBe<['a', 'b', 'c'] | ['d', 'e', 'f']>();
-expectTypeOf<StringToArray<'abc' | Uppercase<string>>>().toBe<['a', 'b', 'c'] | Array<Uppercase<string>>>();
-expectTypeOf<StringToArray<`ab${string}` | `${number}`>>().toBe<['a', 'b', ...string[]] | Array<`${number}`>>();
+expectTypeOf<StringToArray<'abc' | Uppercase<string>>>().toBe<['a', 'b', 'c'] | string[]>();
+expectTypeOf<StringToArray<`ab${string}` | `${number}`>>().toBe<['a', 'b', ...string[]] | string[]>();
 
 expectTypeOf<StringToArrayElementNonLiterals<'abc' | 'def'>>().toBe<['a', 'b', 'c'] | ['d', 'e', 'f']>();
 expectTypeOf<StringToArrayElementNonLiterals<'abc' | Uppercase<string>>>().toBe<['a', 'b', 'c'] | [Uppercase<string>]>();
@@ -76,7 +76,7 @@ expectTypeOf<StringToArray<Tagged<string, 'Text'>>>().toBe<string[]>();
 expectTypeOf<StringToArrayElementNonLiterals<Tagged<string, 'Text'>>>().toBe<[string]>();
 expectTypeOf<StringToArray<Tagged<`ab${string}cd`, 'Text'>>>().toBe<['a', 'b', ...string[], 'c', 'd']>();
 expectTypeOf<StringToArrayElementNonLiterals<Tagged<`ab${string}cd`, 'Text'>>>().toBe<['a', 'b', string, 'c', 'd']>();
-expectTypeOf<StringToArray<Tagged<Uppercase<string>, 'Text'>>>().toBe<Array<Uppercase<string>>>();
+expectTypeOf<StringToArray<Tagged<Uppercase<string>, 'Text'>>>().toBe<string[]>();
 
 // Multiple tags describe the complete input, just like a single tag.
 type ValidatedText = Tagged<Tagged<'ab', 'Text'>, 'Validated'>;
@@ -84,3 +84,24 @@ expectTypeOf<StringToArray<ValidatedText>>().toBe<['a', 'b']>();
 expectTypeOf<StringToArrayElementNonLiterals<ValidatedText>>().toBe<['a', 'b']>();
 expectTypeOf<StringToArray<Tagged<Tagged<string, 'Text'>, 'Validated'>>>().toBe<string[]>();
 expectTypeOf<StringToArray<Tagged<Tagged<`ab${string}cd`, 'Text'>, 'Validated'>>>().toBe<['a', 'b', ...string[], 'c', 'd']>();
+
+// A non-literal part describes a whole substring, not each individual character in it.
+
+expectTypeOf<['-', '1', '.', '2']>().toBeAssignableTo<StringToArray<`${number}`>>();
+expectTypeOf<['F', 'o', 'o']>().toBeAssignableTo<StringToArray<Capitalize<string>>>();
+expectTypeOf<['f', 'O', 'O']>().toBeAssignableTo<StringToArray<Uncapitalize<string>>>();
+expectTypeOf<['x', '-', '1', 'p', 'x']>().toBeAssignableTo<StringToArray<`x${number}px`>>();
+expectTypeOf<['-', '4', '2']>().toBeAssignableTo<StringToArray<`${bigint}`>>();
+expectTypeOf<StringToArray<`${number}`>>().toBe<string[]>();
+expectTypeOf<StringToArray<`x${number}px`>>().toBe<['x', ...string[], 'p', 'x']>();
+expectTypeOf<StringToArray<Capitalize<string>>>().toBe<string[]>();
+expectTypeOf<StringToArray<Uncapitalize<string>>>().toBe<string[]>();
+expectTypeOf<StringToArray<`hello${Capitalize<string>}world`>>().toBe<['h', 'e', 'l', 'l', 'o', ...string[], 'w', 'o', 'r', 'l', 'd']>();
+expectTypeOf<StringToArray<`x${number}`, {mapNonLiteralsDirectly: true}>>().toBe<['x', `${number}`]>();
+expectTypeOf<StringToArray<`${bigint}`>>().toBe<string[]>();
+expectTypeOf<StringToArray<`id${bigint}:${number}px`>>().toBe<['i', 'd', ...string[], 'p', 'x']>();
+expectTypeOf<StringToArray<Tagged<`x${number}px`, 'Text'>>>().toBe<['x', ...string[], 'p', 'x']>();
+expectTypeOf<StringToArray<`${number}`, {mapNonLiteralsDirectly: true}>>().toBe<[`${number}`]>();
+expectTypeOf<StringToArray<Capitalize<string>, {mapNonLiteralsDirectly: true}>>().toBe<[Capitalize<string>]>();
+// @ts-expect-error - Only strings can be converted to characters.
+type UnknownString = StringToArray<unknown>;
