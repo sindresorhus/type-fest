@@ -179,8 +179,8 @@ type _ArraySplice<
 > =
 	// The start is distributed before the sign is asked, because the sign of a union of a negative and a positive member is `boolean`, which would send the negative member down the plain-index path. `ArraySlice` distributes for the same reason.
 	Start extends unknown
-		// A non-literal index or delete count can be any value, so only the element types are known, the same as `ArraySlice` answers.
-		? number extends Start | DeleteCount
+		// A non-literal index or delete count can be any value, so only the element types are known, the same as `ArraySlice` answers. Printed values distinguish constant enum members from unknown numbers.
+		? `${number}` extends `${Start | DeleteCount}`
 			? Array<T[number] | Items[number]>
 			// A negative start index counts backwards from the end of the array, which is only known when the length is static.
 			: IsNegative<Start> extends true

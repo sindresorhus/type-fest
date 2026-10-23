@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArraySplice, PositiveInfinity} from '../index.d.ts';
+import type {ArraySlice, ArraySplice, PositiveInfinity} from '../index.d.ts';
 
 // Test fixed array
 type TestTuple = ['a', 'b', 'c', 'd'];
@@ -221,3 +221,43 @@ expectTypeOf<ArraySplice<unknown[], 0, PositiveInfinity>>().toBe<[]>();
 expectTypeOf<ArraySplice<any[], 0, PositiveInfinity>>().toBe<[]>();
 expectTypeOf<ArraySplice<never[], 0, PositiveInfinity>>().toBe<[]>();
 expectTypeOf<ArraySplice<never, PositiveInfinity, PositiveInfinity>>().toBe<never>();
+
+// Constant enum offsets and delete counts keep the same precise tuple result as their numeric values.
+enum SplicePosition {
+	BeforeEnd = -1,
+	BeforeStart = -4,
+	Start = 0,
+	Middle = 1,
+	End = 2,
+	PastEnd = 4,
+}
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.Middle, SplicePosition.Middle>>().toBe<[1, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.Middle, 1>>().toBe<[1, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, SplicePosition.Middle>>().toBe<[1, 3]>();
+
+declare enum RuntimeSplicePosition {
+	Value,
+}
+expectTypeOf<ArraySplice<readonly [1, 2, 3], SplicePosition.BeforeEnd, SplicePosition.Middle>>().toBe<readonly [1, 2]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.Start, SplicePosition.Middle>>().toBe<[2, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.BeforeStart, SplicePosition.Middle>>().toBe<[2, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.PastEnd, SplicePosition.Middle, [9]>>().toBe<[1, 2, 3, 9]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.Middle, SplicePosition.PastEnd>>().toBe<[1]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.Middle, SplicePosition.Start, [9]>>().toBe<[1, 9, 2, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.Middle, SplicePosition.BeforeEnd>>().toBe<[1, 2, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], SplicePosition.BeforeEnd | SplicePosition.Middle, 1>>().toBe<[1, 2] | [1, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, SplicePosition.Start | SplicePosition.Middle>>().toBe<[1, 2, 3] | [1, 3]>();
+expectTypeOf<ArraySplice<[1, 2?, 3?], SplicePosition.Middle, SplicePosition.Middle>>().toBe<[1, 3?]>();
+expectTypeOf<ArraySplice<[1, 2, ...string[]], SplicePosition.Middle, SplicePosition.Middle>>().toBe<[1, ...string[]]>();
+expectTypeOf<ArraySplice<[1, 2, 3] | readonly ['a', 'b'], SplicePosition.Middle, SplicePosition.Middle>>().toBe<[1, 3] | readonly ['a']>();
+expectTypeOf<ArraySplice<[1, 2, 3], RuntimeSplicePosition.Value, 1>>().toBe<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, RuntimeSplicePosition.Value>>().toBe<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<readonly [1, 2, 3], number, SplicePosition.Middle>>().toBe<ReadonlyArray<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<[undefined, any, never, unknown], SplicePosition.Middle, SplicePosition.End>>().toBe<[undefined, unknown]>();
+expectTypeOf<ArraySplice<never, SplicePosition.Middle, SplicePosition.Middle>>().toBe<never>();
+// @ts-expect-error
+expectTypeOf<ArraySplice<[1, 2, 3], unknown, SplicePosition.Middle>>();
+
+// A variadic slice with an omitted end delegates its enum offset to `ArraySplice`.
+expectTypeOf<ArraySlice<[1, 2, ...string[]], SplicePosition.Middle>>().toBe<[2, ...string[]]>();
+expectTypeOf<ArraySlice<readonly [1, 2, ...string[]], SplicePosition.Middle>>().toBe<readonly [2, ...string[]]>();
