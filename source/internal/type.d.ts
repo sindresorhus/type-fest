@@ -7,6 +7,7 @@ import type {ExtendsStrict} from '../extends-strict.d.ts';
 import type {FindGlobalInstanceType} from '../find-global-type.d.ts';
 import type {Falsy} from '../falsy.d.ts';
 import type {ReadonlyDate} from '../readonly-date.d.ts';
+import type {FunctionParameters} from './function.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -193,12 +194,14 @@ export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extend
 /**
 The call signature of the given type, rebuilt with its `this` parameter, which `Parameters` leaves out, so the rebuilt signature does not accept any receiver. A function that declares no `this` is rebuilt without one, like `OmitThisParameter` does, because `this: unknown` would reject a function that declares a `this`. `unknown` for a type that is not callable, so it can be intersected with anything.
 
+Readonly rest parameters are preserved.
+
 Note: An overloaded function keeps only its last signature, and a generic one loses its type parameters.
 */
 export type CallSignatureOf<Type> = Type extends (...arguments_: never) => any
 	? unknown extends ThisParameterType<Type>
-		? (...arguments_: Parameters<Type>) => ReturnType<Type>
-		: (this: ThisParameterType<Type>, ...arguments_: Parameters<Type>) => ReturnType<Type>
+		? (...arguments_: FunctionParameters<Type>) => ReturnType<Type>
+		: (this: ThisParameterType<Type>, ...arguments_: FunctionParameters<Type>) => ReturnType<Type>
 	: unknown;
 
 /**

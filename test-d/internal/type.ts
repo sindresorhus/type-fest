@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {Falsy, IsEqual} from '../../index.d.ts';
-import type {CallSignatureOf, IsAnyOrNever, IsBothExtends, IsExactOptionalPropertyTypesEnabled, IsPlainObject, IsPrimitive, IsTruthy} from '../../source/internal/index.d.ts';
+import type {Falsy, IsEqual, Merge, MergeAll, PartialDeep, ReadonlyDeep, RequiredDeep, SetOptional, SetReadonly, SetRequired, WritableDeep} from '../../index.d.ts';
+import type {CallSignatureOf, FunctionParameters, IsAnyOrNever, IsBothExtends, IsExactOptionalPropertyTypesEnabled, IsPlainObject, IsPrimitive, IsTruthy} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<IsPrimitive<'string'>, true>>().toBe<true>();
 expectTypeOf<IsEqual<IsPrimitive<string>, true>>().toBe<true>();
@@ -85,3 +85,49 @@ expectTypeOf<IsEqual<IsTruthy<0 | 1>, boolean>>().toBe<true>();
 expectTypeOf<IsEqual<IsTruthy<string | void>, boolean>>().toBe<true>();
 // `any` matches both branches of the conditional type.
 expectTypeOf<IsEqual<IsTruthy<any>, boolean>>().toBe<true>();
+
+// A readonly rest parameter remains callable when an object transformation preserves its call signature.
+type ReadonlyRestHandler = ((...values: readonly number[]) => string) & {config: {label: string}};
+declare const readonlyRestSignature: CallSignatureOf<ReadonlyRestHandler>;
+expectTypeOf(readonlyRestSignature(1, 2)).toBe<string>();
+
+declare const readonlyRestDeep: ReadonlyDeep<ReadonlyRestHandler>;
+declare const partialRestDeep: PartialDeep<ReadonlyRestHandler>;
+declare const requiredRestDeep: RequiredDeep<ReadonlyRestHandler>;
+declare const writableRestDeep: WritableDeep<ReadonlyRestHandler>;
+declare const requiredRestProperty: SetRequired<ReadonlyRestHandler, 'config'>;
+declare const optionalRestProperty: SetOptional<ReadonlyRestHandler, 'config'>;
+declare const readonlyRestProperty: SetReadonly<ReadonlyRestHandler, 'config'>;
+expectTypeOf(readonlyRestDeep(1, 2)).toBe<string>();
+expectTypeOf(partialRestDeep(1, 2)).toBe<string>();
+expectTypeOf(requiredRestDeep(1, 2)).toBe<string>();
+expectTypeOf(writableRestDeep(1, 2)).toBe<string>();
+expectTypeOf(requiredRestProperty(1, 2)).toBe<string>();
+expectTypeOf(optionalRestProperty(1, 2)).toBe<string>();
+expectTypeOf(readonlyRestProperty(1, 2)).toBe<string>();
+
+// Rebuilding preserves readonly argument arrays, tuple slots and the explicit receiver independently.
+expectTypeOf<FunctionParameters<CallSignatureOf<ReadonlyRestHandler>>>().toBe<readonly number[]>();
+expectTypeOf<FunctionParameters<CallSignatureOf<(...values: readonly [string, number?]) => void>>>().toBe<[string, number?]>();
+declare const readonlyRestWithThis: CallSignatureOf<(this: Date, ...values: readonly number[]) => string>;
+expectTypeOf<ThisParameterType<typeof readonlyRestWithThis>>().toBe<Date>();
+expectTypeOf(readonlyRestWithThis.call(new Date(), 1, 2)).toBe<string>();
+// @ts-expect-error The receiver still has to be a Date.
+readonlyRestWithThis.call({}, 1);
+// @ts-expect-error A readonly rest array still rejects the wrong element type.
+readonlyRestSignature('invalid');
+
+// Merging retains the selected call signature while overriding the ordinary object fields.
+declare const mergedRestHandler: Merge<ReadonlyRestHandler, {config: {enabled: boolean}}>;
+expectTypeOf(mergedRestHandler(1, 2)).toBe<string>();
+expectTypeOf(mergedRestHandler.config).toBe<{enabled: boolean}>();
+declare const mergedRestSource: Merge<{config: null}, ReadonlyRestHandler>;
+expectTypeOf(mergedRestSource(1, 2)).toBe<string>();
+expectTypeOf(mergedRestSource.config).toBe<{label: string}>();
+declare const layeredRestHandler: MergeAll<[ReadonlyRestHandler, {config: {enabled: boolean}}, {id: string}]>;
+expectTypeOf(layeredRestHandler(1, 2)).toBe<string>();
+expectTypeOf(layeredRestHandler.id).toBe<string>();
+
+expectTypeOf<CallSignatureOf<any>>().toBe<unknown>();
+expectTypeOf<CallSignatureOf<never>>().toBe<never>();
+expectTypeOf<CallSignatureOf<unknown>>().toBe<unknown>();
