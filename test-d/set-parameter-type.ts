@@ -130,3 +130,29 @@ withStringIndex(new Date(), 'value');
 withStringIndex('old', 'value');
 // @ts-expect-error
 withStringIndex(new Date(), 1);
+
+// A readonly rest array still has a replaceable parameter at index zero.
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, {0: boolean}>>().toBe<(...rest: boolean[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, {'0': boolean}>>().toBe<(...rest: boolean[]) => string>();
+
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, [Date]>>().toBe<(...rest: Date[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, readonly [Date, boolean]>>().toBe<(...rest: Date[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, readonly Date[]>>().toBe<(...rest: readonly Date[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, {}>>().toBe<(...rest: readonly number[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, {1: Date}>>().toBe<(...rest: readonly number[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, {0: unknown}>>().toBe<(...rest: readonly unknown[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, {0: any}>>().toBe<(...rest: readonly any[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly number[]) => string, {0: never}>>().toBe<(...rest: readonly never[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly never[]) => string, {0: boolean}>>().toBe<(...rest: readonly boolean[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly unknown[]) => string, {0: boolean}>>().toBe<(...rest: readonly boolean[]) => string>();
+expectTypeOf<SetParameterType<(...rest: readonly any[]) => string, {0: boolean}>>().toBe<(...rest: readonly boolean[]) => string>();
+expectTypeOf<SetParameterType<(this: Date, ...rest: readonly number[]) => Date, {0: boolean}>>().toBe<(this: Date, ...rest: readonly boolean[]) => Date>();
+expectTypeOf<SetParameterType<((...rest: readonly number[]) => string) | ((first: string) => number), {0: boolean}>>().toBe<((...rest: readonly boolean[]) => string) | ((first: boolean) => number)>();
+
+declare const withReadonlyRest: SetParameterType<(this: Date, ...rest: readonly number[]) => Date, {0: boolean}>;
+withReadonlyRest.call(new Date(), true, false);
+// @ts-expect-error - The previous element type is replaced.
+withReadonlyRest.call(new Date(), 1);
+// @ts-expect-error - The receiver is preserved.
+withReadonlyRest.call('wrong', true);
+expectTypeOf<SetParameterType<any, {0: boolean}>>().toBe<any>();

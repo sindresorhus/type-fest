@@ -134,13 +134,14 @@ type HandleLog2 = SetParameterType<HandleMessage, {2: string}>;
 */
 export type SetParameterType<Function_ extends (...arguments_: any[]) => unknown, P extends Record<number, unknown>> =
 	// Just using `Parameters<Fn>` isn't ideal because it doesn't handle the `this` fake parameter.
-	Function_ extends (this: infer ThisArgument, ...arguments_: infer Arguments) => unknown
+	// The inferred array constraint also accepts a readonly rest parameter.
+	Function_ extends (this: infer ThisArgument, ...arguments_: infer Arguments extends UnknownArray) => infer Return
 		? (
 			// If a function did not specify the `this` fake parameter, it will be inferred to `unknown`.
 			// We want to detect this situation just to display a friendlier type upon hovering on an IntelliSense-powered IDE.
 			IsUnknown<ThisArgument> extends true
-				? (...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
-				: (this: ThisArgument, ...arguments_: MergeObjectToArray<Arguments, P>) => ReturnType<Function_>
+				? (...arguments_: MergeObjectToArray<Arguments, P>) => Return
+				: (this: ThisArgument, ...arguments_: MergeObjectToArray<Arguments, P>) => Return
 		)
 		: Function_;	// This part should be unreachable
 

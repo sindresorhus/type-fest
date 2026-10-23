@@ -48,3 +48,7 @@ expectTypeOf<Asyncify<() => number | Promise<string>>>().toBe<() => Promise<numb
 // A readonly rest parameter, such as a parameter list typed with `as const`, keeps its parameter positions.
 expectTypeOf<Asyncify<(...arguments_: readonly [string, number?]) => boolean>>().toBe<(first: string, second?: number) => Promise<boolean>>();
 expectTypeOf<Asyncify<(first: string, ...rest: readonly number[]) => boolean>>().toBe<(first: string, ...rest: number[]) => Promise<boolean>>();
+
+// A rest-only readonly parameter list remains callable after its return is boxed.
+expectTypeOf<Asyncify<(...rest: readonly number[]) => boolean>>().toBe<(...rest: readonly number[]) => Promise<boolean>>();
+expectTypeOf<Asyncify<(this: Date, ...rest: readonly number[]) => boolean>>().toBe<(this: Date, ...rest: readonly number[]) => Promise<boolean>>();
