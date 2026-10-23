@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArraySlice, ArraySplice, PositiveInfinity} from '../index.d.ts';
+import type {ArraySlice, ArraySplice, LiteralUnion, Opaque, PositiveInfinity, Tagged} from '../index.d.ts';
 
 // Test fixed array
 type TestTuple = ['a', 'b', 'c', 'd'];
@@ -261,3 +261,44 @@ expectTypeOf<ArraySplice<[1, 2, 3], unknown, SplicePosition.Middle>>();
 // A variadic slice with an omitted end delegates its enum offset to `ArraySplice`.
 expectTypeOf<ArraySlice<[1, 2, ...string[]], SplicePosition.Middle>>().toBe<[2, ...string[]]>();
 expectTypeOf<ArraySlice<readonly [1, 2, ...string[]], SplicePosition.Middle>>().toBe<readonly [2, ...string[]]>();
+
+// Numeric brands describe the index or count, not the elements of the resulting tuple.
+expectTypeOf<ArraySplice<[1, 2?, 3?], 1, Tagged<1, 'Count'>>>().toBe<[1, 3?]>();
+expectTypeOf<ArraySplice<[1, 2, 3], Tagged<number, 'Start'>, 1>>().toBe<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, Tagged<number, 'Count'>>>().toBe<Array<1 | 2 | 3>>();
+
+expectTypeOf<ArraySplice<readonly [1, 2?, 3?], Tagged<1, 'Start'>, Tagged<1, 'Count'>>>().toBe<readonly [1, 3?]>();
+expectTypeOf<ArraySplice<[1?, 2?, 3?], 0, Opaque<1, 'Count'>>>().toBe<[2?, 3?]>();
+expectTypeOf<ArraySplice<[1, 2, 3], Opaque<-1, 'Start'>, Tagged<1, 'Count'>>>().toBe<[1, 2]>();
+expectTypeOf<ArraySplice<[1, 2, 3], Tagged<-20, 'Start'>, Tagged<1, 'Count'>>>().toBe<[2, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], Tagged<20, 'Start'>, 1, ['x']>>().toBe<[1, 2, 3, 'x']>();
+expectTypeOf<ArraySplice<[1, 2, 3], Tagged<1, 'Start'>, Opaque<20, 'Count'>>>().toBe<[1]>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, Tagged<0, 'Count'>, ['x']>>().toBe<[1, 'x', 2, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, Tagged<-1, 'Count'>, ['x']>>().toBe<[1, 'x', 2, 3]>();
+expectTypeOf<ArraySplice<[1, 2?, 3?], 1, Tagged<0 | 1, 'Count'>>>().toBe<[1, 2?, 3?] | [1, 3?]>();
+expectTypeOf<ArraySplice<[1, 2, 3], Tagged<-1 | 1, 'Start'>, 1>>().toBe<[1, 2] | [1, 3]>();
+expectTypeOf<ArraySplice<[1, 2, 3], Tagged<Tagged<1, 'Start'>, 'Validated'>, 1>>().toBe<[1, 3]>();
+expectTypeOf<ArraySplice<[1, 2?, 3?], 1, 1 & {readonly __brand: unique symbol}>>().toBe<[1, 3?]>();
+expectTypeOf<ArraySplice<[1, ...string[]], Tagged<1, 'Start'>, Tagged<PositiveInfinity, 'Count'>>>().toBe<[1]>();
+expectTypeOf<ArraySplice<[1, ...string[]], Tagged<PositiveInfinity, 'Start'>, 0, [2]>>().toBe<[1, ...string[], 2]>();
+expectTypeOf<ArraySplice<[1, 2, 3], Tagged<SplicePosition.Middle, 'Start'>, Opaque<SplicePosition.Middle, 'Count'>>>().toBe<[1, 3]>();
+expectTypeOf<ArraySplice<readonly [1, 2, 3], Opaque<number, 'Start'>, 1, ['x']>>().toBe<ReadonlyArray<1 | 2 | 3 | 'x'>>();
+expectTypeOf<ArraySplice<readonly [1, 2, 3], 1, Tagged<Tagged<number, 'Count'>, 'Validated'>>>().toBe<ReadonlyArray<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<[Tagged<1, 'Item'>, 2?, 3?], 1, Tagged<1, 'Count'>>>().toBe<[Tagged<1, 'Item'>, 3?]>();
+expectTypeOf<ArraySplice<[1, 2?, 3?] | readonly ['a', 'b'?], 1, Tagged<1, 'Count'>>>().toBe<[1, 3?] | readonly ['a']>();
+expectTypeOf<ArraySplice<[unknown, any, never], Tagged<1, 'Start'>, Tagged<1, 'Count'>>>().toBe<[unknown, never]>();
+expectTypeOf<ArraySplice<never, Tagged<1, 'Start'>, Tagged<1, 'Count'>>>().toBe<never>();
+// @ts-expect-error A deletion count must be numeric.
+expectTypeOf<ArraySplice<[1, 2, 3], 1, unknown>>();
+
+// The public boundary preserves inference when an index or count comes from a branded parameter.
+declare function spliceTuple<Array_ extends readonly unknown[], Start extends number, Count extends number>(array: Array_, start: Start, count: Count): ArraySplice<Array_, Start, Count>;
+expectTypeOf(spliceTuple([1, 2, 3] as const, 1 as Tagged<1, 'Start'>, 1 as Tagged<1, 'Count'>)).toBe<readonly [1, 3]>();
+
+// Autocomplete number unions keep the same accepted outputs without relying on redundant union members in the displayed type.
+expectTypeOf<ArraySplice<[1, 2, 3], LiteralUnion<1, number>, 1>>().toBeAssignableTo<Array<1 | 2 | 3>>();
+expectTypeOf<Array<1 | 2 | 3>>().toBeAssignableTo<ArraySplice<[1, 2, 3], LiteralUnion<1, number>, 1>>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, LiteralUnion<1, number>>>().toBeAssignableTo<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<[1, 2, 3], any, 1>>().toBe<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<[1, 2, 3], 1, any>>().toBe<Array<1 | 2 | 3>>();
+expectTypeOf<ArraySplice<[1, 2, 3], never, 1>>().toBe<never>();

@@ -1,4 +1,4 @@
-import type {IsArrayReadonly, MaxLength, StaticPartOfArray, VariablePartOfArray} from './internal/index.d.ts';
+import type {IsArrayReadonly, MaxLength, StaticPartOfArray, UnwrapBrand, VariablePartOfArray} from './internal/index.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -163,7 +163,10 @@ export type ArraySplice<
 	Start extends number,
 	DeleteCount extends number,
 	Items extends UnknownArray = [],
-> =
+> = ArraySpliceWithValues<T, Start extends object ? UnwrapBrand<Start> : Start, DeleteCount extends object ? UnwrapBrand<DeleteCount> : DeleteCount, Items>;
+
+// Strip numeric metadata before testing width, counting optional elements, or splitting the tuple.
+type ArraySpliceWithValues<T extends UnknownArray, Start extends number, DeleteCount extends number, Items extends UnknownArray> =
 	// `splice` returns a fresh array, but a `readonly` input keeps its `readonly` modifier, so the modifier is decided per member rather than once for the whole union.
 	T extends unknown // For distributing `T`
 		? IsArrayReadonly<T> extends true
