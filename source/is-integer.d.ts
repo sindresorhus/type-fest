@@ -49,13 +49,13 @@ type J = IsInteger<1e-7>;
 export type IsInteger<T> =
 	T extends bigint
 		? true
-		// A numeric enum member is a literal even though `number extends T` is `true` for it, so what separates it from the widened `number` is being a literal, which is the question `IsNumericLiteral` answers, brand included.
-		: IsNumericLiteral<T> extends true
-			? T extends PositiveInfinity | NegativeInfinity
-				? false
-				: IsFloat<T> extends true
+		: IsFloat<T> extends true
+			? false
+			// A numeric enum member is a literal even though `number extends T` is `true` for it, so what separates it from the widened `number` is being a literal, which is the question `IsNumericLiteral` answers, brand included.
+			: IsNumericLiteral<T> extends true
+				? T extends PositiveInfinity | NegativeInfinity
 					? false
 					: true
-			: false;
+				: false;
 
 export {};

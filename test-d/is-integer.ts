@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsInteger, Opaque, PositiveInfinity} from '../index.d.ts';
+import type {Integer, IsInteger, NegativeInteger, NonNegativeInteger, Opaque, PositiveInfinity} from '../index.d.ts';
 
 declare const x: unknown;
 
@@ -48,3 +48,35 @@ expectTypeOf(x as IsInteger<NumericEnum.B>).toBe<true>();
 expectTypeOf(x as IsInteger<NumericEnum.E>).toBe<true>();
 expectTypeOf(x as IsInteger<NumericEnum.D>).toBe<true>();
 expectTypeOf(x as IsInteger<NumericEnum.C>).toBe<false>();
+
+// Literal unions classify every member without widening their outcomes.
+expectTypeOf<IsInteger<1 | -2 | 3n>>().toBe<true>();
+expectTypeOf<IsInteger<1.5 | -2.5 | 1e-7>>().toBe<false>();
+expectTypeOf<IsInteger<1 | 1.5>>().toBe<boolean>();
+expectTypeOf<IsInteger<unknown>>().toBe<false>();
+expectTypeOf<IsInteger<any>>().toBe<boolean>();
+expectTypeOf<IsInteger<never>>().toBe<never>();
+expectTypeOf<IsInteger<'42' | {value: 1}>>().toBe<false>();
+
+function _readIntegerResult<Value>(result: IsInteger<Value>): boolean {
+	return result;
+}
+
+declare function requireInteger<const Value extends number>(value: IsInteger<Value> extends true ? Value : never): Value;
+expectTypeOf(requireInteger(42)).toBe<42>();
+expectTypeOf(requireInteger(-42)).toBe<-42>();
+expectTypeOf(requireInteger(NumericEnum.A)).toBe<NumericEnum.A>();
+// @ts-expect-error Fractional values are rejected by the inferred parameter.
+requireInteger(1.5);
+// @ts-expect-error A runtime number is not proven to be an integer.
+requireInteger(0 as number);
+
+// Numeric filters preserve the original members after integer classification.
+type MixedNumbers = -2 | -1.5 | 0 | 2 | 2.5;
+expectTypeOf<Integer<MixedNumbers>>().toBe<-2 | 0 | 2>();
+expectTypeOf<NonNegativeInteger<MixedNumbers>>().toBe<0 | 2>();
+expectTypeOf<NegativeInteger<MixedNumbers>>().toBe<-2>();
+
+function _readIntegerFlags<Values extends readonly unknown[]>(flags: {[Key in keyof Values]: IsInteger<Values[Key]>}): readonly boolean[] {
+	return flags;
+}
