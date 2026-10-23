@@ -1,6 +1,7 @@
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
-import type {BuildObject, ExactKey, NonRecursiveType, ObjectValue, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {BuildObject, ExactKey, NonRecursiveType, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -129,13 +130,13 @@ Pick one key from the given object: the whole value when a path ends at the key,
 */
 type PickDeepObjectKey<RecordType extends object, Key extends string | number, PathUnion extends string | number> =
 	Key extends PathUnion
-		? ObjectValue<RecordType, Key> extends infer ObjectV
+		? RecordType[PickedKey<RecordType, Key>] extends infer ObjectV
 			// A present property can itself have type `never`, so check whether the key exists instead of using its value as the missing-path marker.
-			? IsNever<ExactKey<RecordType, Key>> extends false
-				? BuildObject<Key, ObjectV, RecordType>
+			? IsNever<PickedKey<RecordType, Key>> extends false
+				? BuildObject<PickedKey<RecordType, Key>, ObjectV, RecordType>
 				: never
 			: never
-		: ObjectValue<RecordType, Key> extends infer ObjectV
+		: RecordType[PickedKey<RecordType, Key>] extends infer ObjectV
 			? IsNever<ObjectV> extends false
 				? PickDeepUnderKey<RecordType, Key, ObjectV, SubPaths<PathUnion, Key>>
 				: never
@@ -148,7 +149,7 @@ type PickDeepUnderKey<RecordType extends object, Key extends string | number, Ob
 	// A missing path under the key resolves to `never`, so the whole path is missing.
 	IsNever<InternalPickDeep<NonNullable<ObjectV>, SubPathUnion>> extends true
 		? never
-		: BuildObject<Key, PickedDeepValue<RecordType, Key, ObjectV, SubPathUnion>, RecordType>;
+		: BuildObject<PickedKey<RecordType, Key>, PickedDeepValue<RecordType, Key, ObjectV, SubPathUnion>, RecordType>;
 
 /**
 The member the pick produces: the recursion drops the members that it cannot go into (and needs `NonNullable` to typecheck), so the explicitly declared ones, like `string` or `null`, are put back, because the member can still be one of them when the picked value is read. An optional member keeps the `?` that already covers absence.
@@ -160,7 +161,7 @@ type PickedDeepValue<RecordType extends object, Key extends string | number, Obj
 The part of the member under the key that the path cannot go into, like `string` or `null`.
 */
 type NonRecursivePartOfMember<RecordType extends object, Key extends string | number> =
-	ExactKey<RecordType, Key> extends infer Exact extends keyof RecordType
+	PickedKey<RecordType, Key> extends infer Exact extends keyof RecordType
 		// `Required` removes implicit absence from optional members while preserving explicitly declared `undefined` with `exactOptionalPropertyTypes`.
 		? Extract<Required<RecordType>[Exact], NonRecursiveType>
 		: never;
@@ -266,5 +267,13 @@ type BuildPickedTuple<ArrayType extends UnknownArray, PathUnion extends string |
 				...(ArrayIndex extends Indices ? PickedElement<ArrayType, ArrayIndex, PathUnion> : [unknown]),
 			]>
 			: never;
+
+/**
+Use a named property's declared key when its spelling matches, otherwise retain index-signature lookup.
+*/
+type PickedKey<RecordType extends object, Key extends string | number, Named extends object = OmitIndexSignature<RecordType>> =
+	Extract<keyof Named, Extract<Key, ToString<keyof Named>>> extends infer Actual extends keyof RecordType
+		? [Actual] extends [never] ? ExactKey<RecordType, Key> : Actual
+		: never;
 
 export {};

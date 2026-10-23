@@ -444,3 +444,65 @@ expectTypeOf<PickDeep<unknown, Tagged<'value', 'Path'>>>().toBe<never>();
 // Empty intersections preserve the known alternatives of a `LiteralUnion` path.
 expectTypeOf<PickDeep<{a: {b: string | null; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a: {b: string | null; c?: number}}>();
 expectTypeOf<PickDeep<{0?: string; 1: number | null}, LiteralUnion<0, number>>>().toBe<{0?: string}>();
+
+// A string enum key names the same runtime property as its literal spelling.
+enum EnumPickField {
+	Profile = 'profile',
+	Name = 'name',
+}
+
+type EnumPickRecord = {[EnumPickField.Profile]: {[EnumPickField.Name]: string; age: number}};
+expectTypeOf<PickDeep<EnumPickRecord, 'profile.name'>>().toBe<{[EnumPickField.Profile]: {[EnumPickField.Name]: string}}>();
+expectTypeOf<PickDeep<EnumPickRecord, 'profile'>>().toBe<EnumPickRecord>();
+
+type OptionalEnumPickRecord = {readonly [EnumPickField.Profile]?: {readonly [EnumPickField.Name]?: string; age: number} | null | undefined};
+expectTypeOf<PickDeep<OptionalEnumPickRecord, 'profile.name'>>().toBe<{readonly [EnumPickField.Profile]?: {readonly [EnumPickField.Name]?: string} | null | undefined}>();
+
+expectTypeOf<keyof PickDeep<EnumPickRecord, 'profile.name'>>().toBe<EnumPickField.Profile>();
+expectTypeOf<PickDeep<EnumPickRecord, 'profile.name' | 'profile.age'>>().toBe<EnumPickRecord>();
+expectTypeOf<PickDeep<EnumPickRecord, 'profile' | 'profile.name'>>().toBe<EnumPickRecord>();
+expectTypeOf<PickDeep<EnumPickRecord, EnumPickField.Profile>>().toBe<EnumPickRecord>();
+expectTypeOf<PickDeep<EnumPickRecord, `${EnumPickField.Profile}.${EnumPickField.Name}`>>().toBe<{[EnumPickField.Profile]: {[EnumPickField.Name]: string}}>();
+expectTypeOf<PickDeep<EnumPickRecord[], '0.profile.name'>>().toBe<[{[EnumPickField.Profile]: {[EnumPickField.Name]: string}}]>();
+expectTypeOf<PickDeep<EnumPickRecord | {other: boolean}, 'profile.name'>>().toBe<{[EnumPickField.Profile]: {[EnumPickField.Name]: string}}>();
+expectTypeOf<PickDeep<EnumPickRecord, 'profile.missing'>>().toBe<never>();
+expectTypeOf<PickDeep<EnumPickRecord, string>>().toBe<never>();
+expectTypeOf<PickDeep<EnumPickRecord, never>>().toBe<never>();
+
+declare const optionalEnumPick: PickDeep<OptionalEnumPickRecord, 'profile.name'>;
+if (optionalEnumPick.profile) {
+	// @ts-expect-error The selected nested field also remains readonly.
+	optionalEnumPick.profile.name = 'changed';
+}
+
+// @ts-expect-error The parent remains readonly even when the assigned value is valid.
+optionalEnumPick.profile = null;
+
+type IndexedEnumPickRecord = {[key: string]: unknown; readonly [EnumPickField.Profile]?: {name: string; age: number}};
+expectTypeOf<PickDeep<IndexedEnumPickRecord, 'profile.name'>>().toBe<{readonly [EnumPickField.Profile]?: {name: string}}>();
+type BrandedEnumPickRecord = {[EnumPickField.Profile]: {[EnumPickField.Name]: Tagged<string, 'Value'>}};
+expectTypeOf<PickDeep<BrandedEnumPickRecord, Tagged<'profile.name', 'Path'>>>().toBe<BrandedEnumPickRecord>();
+
+enum NumericPickField {
+	Zero,
+}
+
+expectTypeOf<PickDeep<{readonly [NumericPickField.Zero]?: {name: string; other: number}}, '0.name'>>().toBe<{readonly [NumericPickField.Zero]?: {name: string}}>();
+expectTypeOf<PickDeep<{[EnumPickField.Name]: never}, 'name'>>().toBe<{[EnumPickField.Name]: never}>();
+expectTypeOf<PickDeep<{[EnumPickField.Name]: any}, 'name'>>().toBe<{[EnumPickField.Name]: any}>();
+expectTypeOf<PickDeep<{[EnumPickField.Name]: unknown}, 'name'>>().toBe<{[EnumPickField.Name]: unknown}>();
+
+declare function pickEnumFields<Base, const Path extends string>(value: Base, path: Path): PickDeep<Base, Path>;
+const inferredEnumPick = pickEnumFields({[EnumPickField.Profile]: {[EnumPickField.Name]: 'Ada' as const, age: 37}}, 'profile.name');
+expectTypeOf(inferredEnumPick.profile.name).toBe<'Ada'>();
+// @ts-expect-error The inferred selection excludes the sibling field.
+expectTypeOf(inferredEnumPick.profile.age).toBe<number>();
+
+function enumPickName<Extra>(value: PickDeep<{[EnumPickField.Profile]: {[EnumPickField.Name]: string; extra: Extra}}, 'profile.name'>): string {
+	return value.profile.name;
+}
+
+// A broad numeric path keeps the index signature even when a named numeric enum key is more specific.
+type IndexedNumericEnumPick = {[key: number]: {name: string}; [NumericPickField.Zero]: {name: string; special: true}};
+expectTypeOf<PickDeep<IndexedNumericEnumPick, number>>().toBe<{[key: number]: {name: string}}>();
+expectTypeOf<PickDeep<IndexedNumericEnumPick, `${number}.name`>>().toBe<{[key: number]: {name: string}}>();
