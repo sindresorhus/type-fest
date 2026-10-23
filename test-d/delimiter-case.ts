@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {Opaque, Tagged} from '../index.d.ts';
 import type {DelimiterCase} from '../source/delimiter-case.d.ts';
 import type {DelimiterCasedProperties} from '../source/delimiter-cased-properties.d.ts';
 import type {DelimiterCasedPropertiesDeep} from '../source/delimiter-cased-properties-deep.d.ts';
@@ -230,3 +231,29 @@ expectTypeOf<DelimiterCase<'foo:bar', 'SEP', {splitOnPunctuation: true}>>().toBe
 expectTypeOf<DelimiterCase<'version2Path', 'SEP', {splitOnNumbers: true}>>().toBe<'versionSEP2SEPpath'>();
 expectTypeOf<DelimiterCasedProperties<{userId: number}, '[SEP]'>>().toBe<{'user[SEP]id': number}>();
 expectTypeOf<DelimiterCasedPropertiesDeep<{userInfo: [{firstName: string}]}, '[SEP]'>>().toBe<{'user[SEP]info': [{'first[SEP]name': string}]}>();
+
+// Delimiter brands describe input values and must not constrain the generated key.
+expectTypeOf<DelimiterCase<'fooBar', Tagged<'-', 'Delimiter'>>>().toBe<'foo-bar'>();
+expectTypeOf<DelimiterCase<'fooBarBaz', Tagged<'SEP', 'Delimiter'>>>().toBe<'fooSEPbarSEPbaz'>();
+
+expectTypeOf<DelimiterCase<'FOO_BAR', Opaque<'-', 'Delimiter'>>>().toBe<'foo-bar'>();
+expectTypeOf<DelimiterCase<'fooBar', Tagged<Tagged<'-', 'First'>, 'Second'>>>().toBe<'foo-bar'>();
+expectTypeOf<DelimiterCase<'fooBar', '-' & {readonly __brand: unique symbol}>>().toBe<'foo-bar'>();
+expectTypeOf<DelimiterCase<Tagged<'fooBar', 'Text'>, Tagged<'-', 'Delimiter'>>>().toBe<'foo-bar'>();
+expectTypeOf<DelimiterCase<'fooBarBaz', Tagged<'X' | 'Y', 'Delimiter'>>>().toBe<'fooXbarXbaz' | 'fooYbarYbaz'>();
+expectTypeOf<DelimiterCase<'fooBar' | 'barBaz', Tagged<'-', 'Delimiter'>>>().toBe<'foo-bar' | 'bar-baz'>();
+expectTypeOf<DelimiterCase<'fooBar', Tagged<'', 'Delimiter'>>>().toBe<'foobar'>();
+expectTypeOf<DelimiterCase<'foo', Tagged<'-', 'Delimiter'>>>().toBe<'foo'>();
+expectTypeOf<DelimiterCase<'', Tagged<'-', 'Delimiter'>>>().toBe<''>();
+expectTypeOf<DelimiterCase<'foo.BarBaz', Tagged<'SEP', 'Delimiter'>>>().toBe<'foo.barSEPbaz'>();
+expectTypeOf<DelimiterCase<'foo:bar', Tagged<'SEP', 'Delimiter'>, {splitOnPunctuation: true}>>().toBe<'fooSEPbar'>();
+expectTypeOf<DelimiterCase<'version2Path', Tagged<'SEP', 'Delimiter'>, {splitOnNumbers: true}>>().toBe<'versionSEP2SEPpath'>();
+expectTypeOf<DelimiterCase<'fooBar', Tagged<string, 'Delimiter'>>>().toBe<`foo${string}bar`>();
+expectTypeOf<DelimiterCase<string, Tagged<'-', 'Delimiter'>>>().toBe<string>();
+expectTypeOf<DelimiterCase<any, Tagged<'-', 'Delimiter'>>>().toBe<any>();
+expectTypeOf<DelimiterCase<never, Tagged<'-', 'Delimiter'>>>().toBe<never>();
+expectTypeOf<DelimiterCase<unknown, Tagged<'-', 'Delimiter'>>>().toBe<unknown>();
+// @ts-expect-error
+expectTypeOf<DelimiterCase<'fooBar', unknown>>();
+expectTypeOf<DelimiterCasedProperties<{fooBar: number}, Tagged<'-', 'Delimiter'>>>().toBe<{'foo-bar': number}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: [{barBaz: number}]}, Tagged<'-', 'Delimiter'>>>().toBe<{'foo-bar': [{'bar-baz': number}]}>();
