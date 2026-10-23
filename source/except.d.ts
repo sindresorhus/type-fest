@@ -1,6 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
-import type {IsEqual} from './is-equal.d.ts';
 
 /**
 Filter out keys from an object.
@@ -29,7 +28,7 @@ type Filtered = Filter<'bar', 'foo'>;
 
 @see {Except}
 */
-type Filter<KeyType, ExcludeType> = IsEqual<KeyType, ExcludeType> extends true ? never : (KeyType extends ExcludeType ? never : KeyType);
+type Filter<KeyType, ExcludeType> = Exclude<KeyType, ExcludeType>;
 
 export type ExceptOptions = {
 	/**

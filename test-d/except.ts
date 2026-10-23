@@ -68,3 +68,38 @@ type ExactUnion = Except<{kind: 'a'; keep: 1; drop: 2} | {kind: 'b'; value: 3}, 
 ({kind: 'a', keep: 1}) satisfies ExactUnion;
 ({kind: 'b', value: 3}) satisfies ExactUnion;
 expectTypeOf({kind: 'a', keep: 1, drop: 2} as const).not.toBeAssignableTo<ExactUnion>();
+
+// Removing a declared key leaves surrounding index signatures and other modifiers intact.
+type IndexedOptions = {[key: string]: unknown; readonly id: string; retries?: number; secret: string};
+expectTypeOf<Except<IndexedOptions, 'secret'>>().toBe<{[key: string]: unknown; readonly id: string; retries?: number}>();
+expectTypeOf<Except<{[key: number]: unknown; readonly 0?: string; 1: number; id: string}, 0>>()
+	.toBe<{[key: number]: unknown; 1: number; id: string}>();
+declare const optionKey: unique symbol;
+expectTypeOf<Except<{[key: symbol]: unknown; readonly [optionKey]?: string; id: string}, typeof optionKey>>()
+	.toBe<{[key: symbol]: unknown; id: string}>();
+expectTypeOf<Except<{readonly id: unknown; option?: never; callback: any}, 'callback'>>()
+	.toBe<{readonly id: unknown; option?: never}>();
+
+// Exact removal forbids the key without changing required readonly or optional surviving fields.
+type ExactOptions = Except<{readonly id: string; retries?: number; secret?: string}, 'secret', {requireExactProps: true}>;
+expectTypeOf<Pick<ExactOptions, 'id' | 'retries'>>().toBe<{readonly id: string; retries?: number}>();
+expectTypeOf<{id: string; secret: undefined}>().not.toBeAssignableTo<ExactOptions>();
+expectTypeOf<{id: string; secret: string}>().not.toBeAssignableTo<ExactOptions>();
+({id: 'id'}) satisfies ExactOptions;
+
+// The object and key arguments still drive inference together.
+declare function omitKeys<ObjectType, Key extends keyof ObjectType>(object: ObjectType, ...keys: Key[]): Except<ObjectType, Key>;
+expectTypeOf(omitKeys({id: 'id', active: true, secret: 'secret'}, 'active', 'secret')).toBe<{id: string}>();
+// @ts-expect-error Keys must be present on the inferred object.
+omitKeys({id: 'id'}, 'missing');
+
+// Broad and empty key sets do not invent fields.
+expectTypeOf<keyof Except<any, any>>().toBe<never>();
+expectTypeOf<Except<never, never>>().toBe<never>();
+expectTypeOf<Except<unknown, never>>().toBe<{}>();
+// @ts-expect-error An unknown input has no declared key to remove.
+type UnknownKey = Except<unknown, 'id'>;
+
+// Literal number and padded string keys stay independent when several keys are removed.
+expectTypeOf<Except<{readonly 0: 'zero'; '01'?: 'padded'; value: string}, 0 | 'value'>>().toBe<{'01'?: 'padded'}>();
+expectTypeOf<Except<{readonly id: string; option?: number}, never>>().toBe<{readonly id: string; option?: number}>();
