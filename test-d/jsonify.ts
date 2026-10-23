@@ -871,3 +871,65 @@ expectTypeOf<Jsonify<Tree>['children'][number]['children'][number]['created']>()
 // A long tuple does not hit the recursion limit.
 expectTypeOf<Jsonify<TupleOf<200, Date>>>().toBe<TupleOf<200, string>>();
 expectTypeOf<Jsonify<[...TupleOf<200, Date>, ...Date[]]>>().toBe<[...TupleOf<200, string>, ...string[]]>();
+
+// A symbol-valued alternative may omit a property entirely.
+expectTypeOf<{keep: 1}>().toBeAssignableTo<Jsonify<{keep: 1; value: string | symbol}>>();
+expectTypeOf<{keep: 1}>().toBeAssignableTo<Jsonify<{keep: 1; value: {toJSON(): string | symbol}}>>();
+
+// Both possible serialized shapes remain assignable, without advertising a required value.
+type SymbolPayload = {keep: 1; value: string | symbol};
+const omittedSymbolOutput = {keep: 1} as const;
+const retainedSymbolOutput = {keep: 1, value: 'retained'} as const;
+expectTypeOf(omittedSymbolOutput).toBeAssignableTo<Jsonify<SymbolPayload>>();
+expectTypeOf(retainedSymbolOutput).toBeAssignableTo<Jsonify<SymbolPayload>>();
+expectTypeOf<Jsonify<SymbolPayload>>().toBe<{keep: 1; value?: string}>();
+expectTypeOf<Jsonify<SymbolPayload>>().not.toBeAssignableTo<{value: string}>();
+expectTypeOf<keyof Jsonify<SymbolPayload>>().toBe<'keep' | 'value'>();
+expectTypeOf<Jsonify<{keep: 1; value: {toJSON(): string | symbol}}>>().not.toBeAssignableTo<{value: string}>();
+declare const serializedSymbolPayload: Jsonify<SymbolPayload>;
+expectTypeOf(serializedSymbolPayload.value).toBe<string | undefined>();
+expectTypeOf<{value: undefined}>().not.toBeAssignableTo<Jsonify<{value: string | symbol}>>();
+
+// Existing optional symbol alternatives retain their serializable value.
+expectTypeOf<Jsonify<{keep: 1; value?: string | symbol}>>().toBe<{keep: 1; value?: string}>();
+expectTypeOf<Jsonify<{keep: 1; value: string | symbol | undefined}>>().toBe<{keep: 1; value?: string}>();
+expectTypeOf<Jsonify<{readonly keep: 1; value?: string | symbol}>>().toBe<{readonly keep: 1; value?: string}>();
+expectTypeOf<Jsonify<{keep?: Date; value: null | symbol}>>().toBe<{keep?: string; value?: null}>();
+expectTypeOf<Jsonify<{outer: {keep: 1; value: string | symbol}}>>().toBe<{outer: {keep: 1; value?: string}}>();
+expectTypeOf<Jsonify<Array<{keep: 1; value: string | symbol}>>>().toBe<Array<{keep: 1; value?: string}>>();
+expectTypeOf<Jsonify<{values: string[] | symbol}>>().toBe<{values?: string[]}>();
+
+// Function unions keep their existing conservative omission policy.
+expectTypeOf<Jsonify<{value: string | (() => void)}>>().toBe<{}>();
+expectTypeOf<Jsonify<{value?: string | (() => void)}>>().toBe<{}>();
+
+// The hook runs before classifying its result, including for callable values.
+expectTypeOf<Jsonify<{keep: 1; value: {toJSON(key: string): symbol | number}}>>().toBe<{keep: 1; value?: number}>();
+expectTypeOf<Jsonify<{keep: 1; value?: {toJSON(): string | symbol}}>>().toBe<{keep: 1; value?: string}>();
+expectTypeOf<Jsonify<{value: {(): void; toJSON(): string}}>>().toBe<{value: string}>();
+expectTypeOf<Jsonify<{value: {toJSON(): {name: string}}}>>().toBe<{value: {name: string}}>();
+
+// Index signatures retain their serializable values, and symbol keys are omitted.
+expectTypeOf<Jsonify<{[key: string]: string | symbol; id: 'kept'}>>().toBe<{[key: string]: string; id: 'kept'}>();
+expectTypeOf<Jsonify<{[key: number]: number | symbol; keep: 1}>>().toBe<{[key: number]: number; keep: 1}>();
+expectTypeOf<Jsonify<{0: string | symbol; '1': number | symbol; readonly keep?: Date}>>().toBe<{0?: string; '1'?: number; readonly keep?: string}>();
+expectTypeOf<Jsonify<{[uniqueSymbol]: string | symbol; readonly keep: 1}>>().toBe<{readonly keep: 1}>();
+expectTypeOf<Jsonify<{readonly keep: 1; readonly optional?: {name: string}; value: string | symbol}>>()
+	.toBe<{readonly keep: 1; readonly optional?: {name: string}; value?: string}>();
+
+// Sentinel values keep their existing escape behavior.
+expectTypeOf<Jsonify<{any: any; unknown: unknown; impossible: never; value: string | symbol}>>()
+	.toBe<{any: any; unknown: JsonValue; value?: string}>();
+expectTypeOf<Jsonify<any>>().toBe<any>();
+expectTypeOf<Jsonify<unknown>>().toBe<JsonValue>();
+expectTypeOf<Jsonify<never>>().toBe<never>();
+expectTypeOf<Jsonify<string | symbol>>().toBe<string>();
+expectTypeOf<Jsonify<symbol>>().toBe<never>();
+
+// Array positions become null instead of disappearing, and bigint still throws rather than omitting a key.
+expectTypeOf<Jsonify<Array<string | symbol>>>().toBe<Array<string | null>>();
+expectTypeOf<Jsonify<[1, string | symbol]>>().toBe<[1, string | null]>();
+expectTypeOf<Jsonify<{keep: 1; value: string | bigint}>>().toBe<{keep: 1; value: string}>();
+expectTypeOf<Jsonify<{value: {toJSON(): string | bigint}}>>().toBe<{value: string}>();
+expectTypeOf<Jsonify<SymbolPayload>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<Jsonify<Jsonify<SymbolPayload>>>().toBe<Jsonify<SymbolPayload>>();

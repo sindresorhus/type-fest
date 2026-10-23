@@ -16,6 +16,9 @@ type NotJsonable = Function | undefined | symbol;
 type NeverToNull<T> = IsNever<T> extends true ? null : T;
 type UndefinedToNull<T> = T extends undefined ? null : T;
 
+// Symbol-valued object properties disappear, just like undefined-valued properties.
+type SymbolToUndefined<Value> = Value extends symbol ? undefined : Value;
+
 // `JSON.stringify` turns array members that are not JSON-able into `null`. The `extends` is distributive so that each member of a union is handled on its own. Without it, a non-JSON-able member collapses the whole union, as `Jsonify<symbol | number>` would become `number`.
 type JsonifyListItem<T> = JsonifyListItemResult<ToJsonResult<T>>;
 
@@ -168,7 +171,7 @@ export type Jsonify<T> = IsAny<T> extends true
 												// An object without keys becomes `{}`. The homomorphic mapped type below would return a bare `object` as is, which is not assignable to `JsonValue`.
 												? [keyof T] extends [never]
 													? {}
-													: JsonifyObject<UndefinedToOptional<{[Key in keyof T]: ToJsonResult<T[Key]>}>> // JsonifyObject recursive call for its children
+													: JsonifyObject<UndefinedToOptional<{[Key in keyof T]: SymbolToUndefined<ToJsonResult<T[Key]>>}>> // JsonifyObject recursive call for its children
 												: IsUnknown<T> extends true
 													? JsonValue
 													: never; // Otherwise any other non-object is removed

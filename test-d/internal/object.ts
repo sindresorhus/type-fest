@@ -78,3 +78,17 @@ expectTypeOf<BuildObject<0, any, {readonly '0'?: number}>>().toBe<{readonly '0'?
 expectTypeOf<BuildObject<0, unknown, {readonly '0'?: number}>>().toBe<{readonly '0'?: unknown}>();
 expectTypeOf<BuildObject<0, never, {readonly '0'?: number}>>().toBe<{readonly '0'?: never}>();
 expectTypeOf<BuildObject<never, string, {'0'?: number}>>().toBe<never>();
+
+// Jsonify normalizes symbols before this helper makes undefined-valued properties optional.
+expectTypeOf<UndefinedToOptional<{keep: 1; value: string | symbol}>>().toBe<{keep: 1; value: string | symbol}>();
+expectTypeOf<UndefinedToOptional<{readonly keep: 1; value?: string | symbol}>>().toBe<{readonly keep: 1; value?: string | symbol}>();
+expectTypeOf<UndefinedToOptional<{keep?: 1; value: string | symbol | undefined}>>().toBe<{keep?: 1; value?: string | symbol}>();
+expectTypeOf<UndefinedToOptional<{[key: string]: string | symbol; id: 'kept'}>>().toBe<{[key: string]: string | symbol; id: 'kept'}>();
+expectTypeOf<UndefinedToOptional<{[key: number]: number | symbol; keep: 1}>>().toBe<{[key: number]: number | symbol; keep: 1}>();
+expectTypeOf<UndefinedToOptional<{0: number | symbol; readonly keep?: 1}>>().toBe<{0: number | symbol; readonly keep?: 1}>();
+expectTypeOf<UndefinedToOptional<{[symbolKey]: string; keep: 1; value: string | symbol}>>().toBe<{keep: 1; value: string | symbol}>();
+expectTypeOf<UndefinedToOptional<{any: any; unknown: unknown; impossible: never; value: string | symbol}>>()
+	.toBe<{any: any; unknown: unknown; value: string | symbol}>();
+expectTypeOf<UndefinedToOptional<{value: string | (() => void)}>>().toBe<{}>();
+expectTypeOf<UndefinedToOptional<{value: {name: string}; other: string | symbol}>>().toBe<{value: {name: string}; other: string | symbol}>();
+expectTypeOf<UndefinedToOptional<{value: string | bigint}>>().toBe<{value: string | bigint}>();
