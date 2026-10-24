@@ -254,3 +254,18 @@ declare const checkedInfiniteLimit: Tagged<PositiveInfinity, 'Limit'>;
 expectTypeOf(compareValues(checkedInfiniteLimit, checkedInfiniteLimit)).toBe<false>();
 // @ts-expect-error A computed value is not proven positive.
 requirePositive(RuntimeComparisonLimit.Value);
+
+// An enum member whose value is an infinity compares like that infinity.
+enum InfiniteLimit {
+	Positive = Infinity,
+	Negative = -Infinity,
+}
+
+expectTypeOf<GreaterThan<InfiniteLimit.Positive, 123_456_789>>().toBe<true>();
+expectTypeOf<GreaterThan<123_456_789, InfiniteLimit.Positive>>().toBe<false>();
+expectTypeOf<GreaterThan<InfiniteLimit.Positive, 123_456_789_012n>>().toBe<true>();
+expectTypeOf<GreaterThan<InfiniteLimit.Negative, -123_456_789>>().toBe<false>();
+expectTypeOf<GreaterThan<-123_456_789, InfiniteLimit.Negative>>().toBe<true>();
+expectTypeOf<GreaterThan<InfiniteLimit.Positive, InfiniteLimit.Positive>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<InfiniteLimit.Positive, 99_999_999>>().toBe<true>();
+expectTypeOf<LessThan<123_456_789, InfiniteLimit.Positive>>().toBe<true>();
