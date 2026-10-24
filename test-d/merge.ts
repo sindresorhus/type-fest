@@ -311,9 +311,15 @@ enum NumberEnum {
 	A = 0,
 }
 
+enum OtherStringEnum {
+	A = 'a',
+}
+
 expectTypeOf<Merge<{[StringEnum.A]: 1}, {a: 2}>>().toBe<{a: 2}>();
 expectTypeOf<Merge<{a: 1}, {[StringEnum.A]: 2}>>().toBe<{a: 2}>();
 expectTypeOf<Merge<{a: string}, {[StringEnum.A]: number}>>().toBe<{a: number}>();
+// Two enums with the same value name the same property.
+expectTypeOf<Merge<{[StringEnum.A]: 1; b: 2}, {[OtherStringEnum.A]: 3}>>().toBe<{[OtherStringEnum.A]: 3; b: 2}>();
 expectTypeOf<Merge<{a: 1; b: 2}, {[StringEnum.A]?: 3}>>().toBe<{b: 2; a?: 3}>();
 expectTypeOf<Merge<{readonly a: 1; c: 2}, {[StringEnum.A]: 3}>>().toBe<{c: 2; a: 3}>();
 expectTypeOf<Merge<{a: 1; b: 1; c: 1}, Record<StringEnum, 2>>>().toBe<{c: 1; a: 2; b: 2}>();
