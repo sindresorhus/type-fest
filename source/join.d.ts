@@ -54,6 +54,8 @@ const path9 = ['hello', 'world'].join('.') as Join<['hello' | undefined, 'world'
 //=> '.' | '.world' | 'hello.' | 'hello.world'
 ```
 
+Note: Each optional element doubles the number of possible results, so a tuple with 16 or more optional elements makes TypeScript report that the union type is too complex to represent.
+
 @category Array
 @category Template literal
 */
