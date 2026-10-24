@@ -88,6 +88,13 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			jsdoc('@example', fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
 		),
 
+		// Ignore other languages without treating their closing fence as an opening fence.
+		exportTypeAndOption(jsdoc(fence('{"enabled": true}', 'json'), 'Some explanation.', fence(code1, 'ts'))),
+
+		// Empty ignored fences are consumed too, and unsupported languages can occur between examples.
+		exportTypeAndOption(jsdoc('```json\n```', 'Some explanation.', fence(code1, 'typescript'))),
+		exportTypeAndOption(jsdoc(fence(code1), fence('not TypeScript !!!', 'text'), fence(code2, 'typescript'))),
+
 		// Multiple exports and multiple properties
 		exportTypeAndOption(jsdoc(fence(code1)), jsdoc(fence(code2))),
 
@@ -135,6 +142,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`),
 	],
 	invalid: [
+		// Errors in a TypeScript block after an empty ignored block retain their source location.
+		{
+			code: exportType(jsdoc('```json\n```', 'Explanation.', fence('const value: number = \'wrong\';', 'typescript'))),
+			errors: [invalidCodeblockErrorAt({line: 6, textBeforeStart: 'const ', target: 'value'})],
+		},
+
 		// A real error after an inline backtick comment must still be reported.
 		{
 			code: exportType(jsdoc(fence('// Inline ``` comment\nconst value: number = \'wrong\';'))),
@@ -1015,6 +1028,13 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`))),
 	],
 	invalid: [
+		// Skipped languages do not shift the range replaced by a later twoslash fix.
+		{
+			code: exportType(jsdoc(fence('{"count": 1}', 'json'), 'Explanation.', fence('const count = 1;\n//=> 2', 'ts'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 8, textBeforeStart: '', target: '//=> 2'})],
+			output: exportType(jsdoc(fence('{"count": 1}', 'json'), 'Explanation.', fence('const count = 1;\n//=> 1', 'ts'))),
+		},
+
 		// Twoslash fixes after inline backticks replace only the expected comment.
 		{
 			code: exportType(jsdoc(fence('// Inline ``` comment\nconst count = 1;\n//=> 2'))),

@@ -5,7 +5,8 @@ import tsParser from '@typescript-eslint/parser';
 @import {Linter} from 'eslint';
 */
 
-const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[\t ]*)```(?:ts|typescript)?\n)(?<code>[\s\S]*?)\n[\t ]*```/gmv;
+// Consume every fenced block before filtering languages, so an ignored closing fence cannot become an opening fence.
+const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[\t ]*)```(?<language>[^\n]*)\n)(?<code>[\s\S]*?)\n?^[\t ]*```[\t ]*$/gmv;
 /**
 @typedef {{lineOffset: number, characterOffset: number, indent: string, unindentedText: string}} CodeblockData
 @type {Map<string, CodeblockData[]>}
@@ -72,10 +73,10 @@ export const jsdocCodeblocksProcessor = {
 		const matches = jsdocComments.flatMap(comment => comment.value.matchAll(CODEBLOCK_REGEX).map(match => ({comment, match})).toArray());
 
 		for (const {comment, match} of matches) {
-			const {code, openingFence, indent} = match.groups ?? {};
+			const {code, openingFence, indent, language} = match.groups ?? {};
 
-			// Skip empty code blocks
-			if (!code || !openingFence || indent === undefined) {
+			// Skip empty code blocks and languages that are not TypeScript.
+			if (!code || !openingFence || indent === undefined || !['', 'ts', 'typescript'].includes(language)) {
 				continue;
 			}
 

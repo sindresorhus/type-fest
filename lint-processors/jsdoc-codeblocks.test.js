@@ -58,6 +58,18 @@ const valid = [
 		),
 	},
 	{
+		name: 'Non-TypeScript blocks before an example',
+		code: exportTypeAndOption(jsdoc(fence('{"enabled": true}', 'json'), 'Some explanation.', fence(code1, 'ts'))),
+	},
+	{
+		name: 'Empty ignored blocks before an example',
+		code: exportTypeAndOption(jsdoc('```json\n```', 'Some explanation.', fence(code1, 'typescript'))),
+	},
+	{
+		name: 'Ignored blocks between supported examples',
+		code: exportTypeAndOption(jsdoc(fence(code1), fence('not TypeScript !!!', 'text'), fence(code2, 'typescript'))),
+	},
+	{
 		name: 'Multiple exports and multiple properties',
 		code: exportTypeAndOption(jsdoc(fence(code1)), jsdoc(fence(code2))),
 	},
@@ -1172,4 +1184,50 @@ test('nonempty fix ranges ending at a line boundary keep the exclusive end', () 
 	}]], filename);
 	assert.deepEqual(message.fix.range, [code.indexOf('const first'), code.indexOf('\tconst second')]);
 	assert.equal(code.slice(...message.fix.range), 'const first = 1;\n');
+});
+
+test('mixed languages preserve exact TypeScript virtual files', () => {
+	const filename = 'test-mixed-virtual-files.d.ts';
+	const code = exportType(jsdoc(
+		'```json\n```',
+		fence('{"enabled": true}', 'json'),
+		'Explanation.',
+		fence('const first = 1;'),
+		fence('const second = 2;', 'ts'),
+		fence('const third = 3;', 'typescript'),
+	));
+	const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+	assert.deepEqual(files, [
+		code,
+		{filename: '1.ts', text: 'const first = 1;'},
+		{filename: '2.ts', text: 'const second = 2;'},
+		{filename: '3.ts', text: 'const third = 3;'},
+	]);
+	jsdocCodeblocksProcessor.postprocess([[], [], [], []], filename);
+});
+
+test('autofixes after ignored blocks preserve original source offsets', async () => {
+	const code = exportTypeAndOption(jsdoc('```json\n```', fence('{"enabled": true}', 'json'), 'Explanation.', fence('const values: Array<string> = [];', 'ts')));
+	const eslint = new ESLint({cwd: root, fix: true});
+	const [result] = await eslint.lintText(code, {filePath: 'test-mixed-autofix.d.ts'});
+	assert.deepEqual(result.messages, []);
+	assert.equal(result.output, code.replaceAll('Array<string>', 'string[]'));
+});
+
+test('suggestions after ignored blocks preserve their insertion offsets', () => {
+	const filename = 'test-mixed-suggestion.d.ts';
+	const code = exportType(jsdoc('```json\n```', 'Explanation.', '\t```ts\n\tconst value = 1;\n\t```'));
+	jsdocCodeblocksProcessor.preprocess(code, filename);
+	const [message] = jsdocCodeblocksProcessor.postprocess([[], [{
+		ruleId: 'test/comment',
+		severity: 2,
+		message: 'Insert a comment.',
+		line: 1,
+		column: 1,
+		suggestions: [{desc: 'Insert a comment.', fix: {range: [0, 0], text: '// Explain.\n'}}],
+	}]], filename);
+	const {fix} = message.suggestions[0];
+	const index = code.indexOf('const value');
+	assert.deepEqual(fix.range, [index, index]);
+	assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), code.replace('\tconst value', '\t// Explain.\n\tconst value'));
 });

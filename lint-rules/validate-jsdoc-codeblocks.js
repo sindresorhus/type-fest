@@ -2,8 +2,9 @@ import path from 'node:path';
 import ts from 'typescript';
 import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescript/vfs';
 
-// A closing fence occupies its own line; inline backticks are part of the example.
-const CODEBLOCK_REGEX = /(?<openingFence>```(?:ts|typescript)?\n)(?<code>[\s\S]*?)^[\t ]*```[\t ]*$/gmv;
+// Fences occupy their own lines; inline backticks are part of the example.
+// Consume all fenced blocks before filtering languages, so ignored closing fences cannot become opening fences.
+const CODEBLOCK_REGEX = /(?<openingFence>^[\t ]*```(?<language>[^\n]*)\n)(?<code>[\s\S]*?)^[\t ]*```[\t ]*$/gmv;
 const FILENAME = 'example-codeblock.ts';
 const TWOSLASH_COMMENT = '//=>';
 
@@ -146,10 +147,10 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 				const matches = previousNodes.flatMap(previousNode => previousNode.value.matchAll(CODEBLOCK_REGEX).map(match => ({previousNode, match})).toArray());
 
 				for (const {previousNode, match} of matches) {
-					const {code, openingFence} = match.groups ?? {};
+					const {code, openingFence, language} = match.groups ?? {};
 
-					// Skip empty code blocks
-					if (!code || !openingFence) {
+					// Skip empty code blocks and languages that are not TypeScript.
+					if (!code || !openingFence || !['', 'ts', 'typescript'].includes(language)) {
 						continue;
 					}
 
