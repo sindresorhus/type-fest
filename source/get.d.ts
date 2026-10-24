@@ -51,29 +51,6 @@ type StrictPropertyOf<BaseType, Key extends keyof BaseType, Options extends Requ
 		: BaseType[Key];
 
 /**
-Convert a type which may have number keys to one with string keys, making it possible to index using strings retrieved from template types.
-
-@example
-```
-type WithNumbers = {foo: string; 0: boolean};
-type WithStrings = WithStringKeys<WithNumbers>;
-
-type WithNumbersKeys = keyof WithNumbers;
-//=> 'foo' | 0
-type WithStringsKeys = keyof WithStrings;
-//=> 'foo' | '0'
-```
-*/
-type WithStringKeys<BaseType> = {
-	[Key in KeyAsString<BaseType>]: UncheckedIndex<BaseType, Key>
-};
-
-/**
-Perform a `T[U]` operation if `T` supports indexing.
-*/
-type UncheckedIndex<T, U extends string | number> = [T] extends [Record<string | number, any>] ? T[U] : never;
-
-/**
 Get a property of an object or array. Works when indexing arrays using number-literal-strings, for example, `PropertyOf<number[], '0'> = number`, and when indexing objects with number keys.
 
 Note:
@@ -116,7 +93,7 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 	BaseType extends null | undefined
 		? NullishMember
 		// Normalize declared numeric and enum members before the array-like fallback, so its index signature does not hide their more precise types. Read the declared keys, because an enum key and its literal spelling are distinct types.
-		: Key extends keyof BaseType | (BaseType extends object ? keyof WithStringKeys<OmitIndexSignature<BaseType>> : never)
+		: Key extends keyof BaseType | (BaseType extends object ? KeyAsString<OmitIndexSignature<BaseType>> : never)
 			? StrictPropertyOf<BaseType, (Key | Extract<keyof OmitIndexSignature<BaseType>, Key | ExactKey<OmitIndexSignature<BaseType>, Key>>) & keyof BaseType, Options>
 			// Handle arrays and tuples. A numeric string must round-trip to the same property name.
 			: BaseType extends readonly unknown[]
