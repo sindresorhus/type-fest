@@ -152,7 +152,7 @@ export const jsdocCodeblocksProcessor = {
 					message.fix.text = message.fix.text.split('\n').join(`\n${indent}`);
 
 					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, message.fix.range[0], indent);
-					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, message.fix.range[1] - 1, indent); // -1 because range end is exclusive
+					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, Math.max(message.fix.range[0], message.fix.range[1] - 1), indent); // Range ends are exclusive, but empty ranges use the insertion point.
 
 					message.fix.range = [
 						message.fix.range[0] + characterOffset + indentsBeforeFixStart,
@@ -164,7 +164,7 @@ export const jsdocCodeblocksProcessor = {
 					fix.text = fix.text.split('\n').join(`\n${indent}`);
 
 					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, fix.range[0], indent);
-					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, fix.range[1] - 1, indent); // -1 because range end is exclusive
+					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, Math.max(fix.range[0], fix.range[1] - 1), indent); // -1 because range end is exclusive
 
 					fix.range = [
 						fix.range[0] + characterOffset + indentsBeforeFixStart,

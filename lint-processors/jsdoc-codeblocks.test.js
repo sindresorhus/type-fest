@@ -1,8 +1,10 @@
 import {describe, test, snapshot} from 'node:test';
+import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {ESLint} from 'eslint';
 import {code1, code2, dedenter, errorAt, exportType, exportTypeAndOption, fence, jsdoc} from '../lint-rules/testing-utilities.js';
+import {jsdocCodeblocksProcessor} from './jsdoc-codeblocks.js';
 
 snapshot.setDefaultSnapshotSerializers([String]);
 
@@ -1059,4 +1061,115 @@ describe('jsdoc-codeblocks processor', {concurrency: true}, () => {
 			t.assert.snapshot(resultsFixed[0].output);
 		});
 	}
+});
+
+test('autofix insertions at the start of an indented example line', async () => {
+	const code = exportType(jsdoc('\t```ts\n\tconst first = 1;\n\t// Explain the next value.\n\tconst second = 2;\n\t```'));
+	const eslint = new ESLint({
+		cwd: root,
+		fix: true,
+		overrideConfig: {
+			rules: {
+				'lines-around-comment': ['error', {beforeLineComment: true}],
+			},
+		},
+	});
+	const [result] = await eslint.lintText(code, {filePath: 'test-indented-insertion.d.ts'});
+	assert.deepEqual(result.messages, []);
+	assert.equal(result.output, code.replace('\t// Explain', '\t\n\t// Explain'));
+});
+
+describe('empty fix and suggestion insertion points', () => {
+	const code = exportType(jsdoc('\t```ts\n\tconst first = 1;\n\tconst second = 2;\n\t```'));
+	const firstLine = 'const first = 1;';
+	const secondLine = 'const second = 2;';
+	const virtualCode = `${firstLine}\n${secondLine}`;
+	const cases = [
+		{name: 'first character', index: 0, originalIndex: code.indexOf(firstLine), text: '// Before.\n'},
+		{name: 'later line start', index: firstLine.length + 1, originalIndex: code.indexOf(secondLine), text: '// Between.\n'},
+		{name: 'middle of a line', index: virtualCode.indexOf(' = 2'), originalIndex: code.indexOf(' = 2'), text: ' /* Value */'},
+		{name: 'end of the example', index: virtualCode.length, originalIndex: code.indexOf(secondLine) + secondLine.length, text: '\nconsole.log(second);'},
+	];
+
+	for (const {name, index, originalIndex, text} of cases) {
+		test(name, () => {
+			const filename = `test-insertion-${index}.d.ts`;
+			const [, virtualFile] = jsdocCodeblocksProcessor.preprocess(code, filename);
+			assert.equal(virtualFile.text, virtualCode);
+			const [message] = jsdocCodeblocksProcessor.postprocess([[], [{
+				ruleId: 'test/insertion',
+				severity: 2,
+				message: 'Insert text.',
+				line: 1,
+				column: 1,
+				fix: {range: [index, index], text},
+				suggestions: [{desc: 'Insert text.', fix: {range: [index, index], text}}],
+			}]], filename);
+			const expectedText = text.replaceAll('\n', '\n\t');
+			const expectedFix = {range: [originalIndex, originalIndex], text: expectedText};
+			const expectedOutput = code.slice(0, originalIndex) + expectedText + code.slice(originalIndex);
+
+			assert.deepEqual(message.fix, expectedFix);
+			assert.deepEqual(message.suggestions[0].fix, expectedFix);
+			assert.equal(code.slice(0, message.fix.range[0]) + message.fix.text + code.slice(message.fix.range[1]), expectedOutput);
+			const {fix} = message.suggestions[0];
+			assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), expectedOutput);
+		});
+	}
+});
+
+test('suggested insertion before an indented declaration applies at the line start', async () => {
+	const code = exportType(jsdoc('\t```ts\n\tconst first = 1;\n\tconst second = 2;\n\t```'));
+	const eslint = new ESLint({
+		cwd: root,
+		overrideConfig: {
+			plugins: {
+				insertion: {
+					rules: {
+						comment: {
+							meta: {schema: [], hasSuggestions: true, messages: {insert: 'Insert a comment.'}},
+							create(context) {
+								return {
+									VariableDeclaration(node) {
+										if (node.declarations[0].id.name !== 'second') {
+											return;
+										}
+
+										context.report({
+											node,
+											messageId: 'insert',
+											suggest: [{messageId: 'insert', fix: fixer => fixer.insertTextBefore(node, '// Explain.\n')}],
+										});
+									},
+								};
+							},
+						},
+					},
+				},
+			},
+			rules: {'insertion/comment': 'error'},
+		},
+	});
+	const [result] = await eslint.lintText(code, {filePath: 'test-suggested-insertion.d.ts'});
+	assert.equal(result.messages.length, 1);
+	const {fix} = result.messages[0].suggestions[0];
+	const index = code.indexOf('const second');
+	assert.deepEqual(fix.range, [index, index]);
+	assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), code.replace('\tconst second', '\t// Explain.\n\tconst second'));
+});
+
+test('nonempty fix ranges ending at a line boundary keep the exclusive end', () => {
+	const code = exportType(jsdoc('\t```ts\n\tconst first = 1;\n\tconst second = 2;\n\t```'));
+	const filename = 'test-exclusive-end.d.ts';
+	jsdocCodeblocksProcessor.preprocess(code, filename);
+	const [message] = jsdocCodeblocksProcessor.postprocess([[], [{
+		ruleId: 'test/replacement',
+		severity: 2,
+		message: 'Replace the first line.',
+		line: 1,
+		column: 1,
+		fix: {range: [0, 'const first = 1;\n'.length], text: ''},
+	}]], filename);
+	assert.deepEqual(message.fix.range, [code.indexOf('const first'), code.indexOf('\tconst second')]);
+	assert.equal(code.slice(...message.fix.range), 'const first = 1;\n');
 });
