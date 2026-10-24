@@ -1,6 +1,7 @@
 import type {TitlecaseCharacter} from './internal/characters.d.ts';
 import type {AllExtend} from './all-extend.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 
 /**
 Returns a boolean for whether the given string literal is uppercase.
@@ -22,7 +23,10 @@ type C = IsUppercase<string>;
 export type IsUppercase<S extends string> =
 	// Check a whole literal directly to avoid a character walk and its recursion limit.
 	IsStringLiteral<S> extends true
-		? S extends Uppercase<string> ? true : false
+		// The template form reads a string enum member by its value, since the member itself is not assignable to `Uppercase<string>`.
+		? S extends unknown
+			? `${UnwrapBrand<S>}` extends Uppercase<string> ? true : false
+			: never
 		: AllExtend<_IsUppercase<S>, true>;
 
 /**

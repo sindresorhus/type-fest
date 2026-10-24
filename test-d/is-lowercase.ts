@@ -85,3 +85,16 @@ expectTypeOf<IsLowercase<any>>().toBe<boolean>();
 expectTypeOf<IsLowercase<never>>().toBe<false>();
 // @ts-expect-error - Only strings have letter casing.
 type UnknownCase = IsLowercase<unknown>;
+
+// String enum members are checked by their values.
+enum LowercaseText {
+	Lower = 'abc',
+	Mixed = 'aBc',
+	Empty = '',
+}
+
+expectTypeOf<IsLowercase<LowercaseText.Lower>>().toBe<true>();
+expectTypeOf<IsLowercase<LowercaseText.Mixed>>().toBe<false>();
+expectTypeOf<IsLowercase<LowercaseText.Empty>>().toBe<true>();
+expectTypeOf<IsLowercase<LowercaseText>>().toBe<boolean>();
+expectTypeOf<IsLowercase<Tagged<LowercaseText.Lower, 'Text'>>>().toBe<true>();

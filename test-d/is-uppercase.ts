@@ -85,3 +85,16 @@ expectTypeOf<IsUppercase<any>>().toBe<boolean>();
 expectTypeOf<IsUppercase<never>>().toBe<false>();
 // @ts-expect-error - Only strings have letter casing.
 type UnknownCase = IsUppercase<unknown>;
+
+// String enum members are checked by their values.
+enum UppercaseText {
+	Upper = 'ABC',
+	Mixed = 'AbC',
+	Empty = '',
+}
+
+expectTypeOf<IsUppercase<UppercaseText.Upper>>().toBe<true>();
+expectTypeOf<IsUppercase<UppercaseText.Mixed>>().toBe<false>();
+expectTypeOf<IsUppercase<UppercaseText.Empty>>().toBe<true>();
+expectTypeOf<IsUppercase<UppercaseText>>().toBe<boolean>();
+expectTypeOf<IsUppercase<Tagged<UppercaseText.Upper, 'Text'>>>().toBe<true>();
