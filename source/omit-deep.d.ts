@@ -73,7 +73,7 @@ type AddressInfo = OmitDeep<Info2, 'address.1.foo'>;
 //=> {address: [{street: string}, {street2: string}]}
 ```
 
-Note: An existing path that goes through a tuple element drops that element's `?` modifier and its `null`.
+Note: An existing path that goes through an array or tuple element drops that element's `?` modifier and its `null`.
 
 Note: A path into a tuple intersected with an object type, such as a tagged tuple, loses the object type and some or all of the tuple elements.
 
@@ -139,7 +139,7 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 			: ObjectT;
 
 /**
-Omit one path from from the given array.
+Omit one path from the given array.
 
 It replaces the item to `unknown` at the given index.
 
@@ -171,7 +171,7 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 			// If the path is the `${number}` segment itself. A segment such as `01` is also inferred as `number`, but is not the wide index.
 			? `${number}` extends P
 				? []
-		// If `ArrayIndex` is a number literal, or `number` for a segment such as `01`. An array without that index is returned unchanged.
+				// If `ArrayIndex` is a number literal, or `number` for a segment such as `01`. An array without that index is returned unchanged.
 				: IsMissingArrayIndex<ArrayType, ArrayIndex> extends true
 					? ArrayType
 					: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
