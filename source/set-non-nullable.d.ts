@@ -1,4 +1,4 @@
-import type {IsArrayReadonly, ToString, UnwrapBrand} from './internal/index.d.ts';
+import type {IsArrayReadonly, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -41,7 +41,7 @@ type AllNonNullable = SetNonNullable<Foo>;
 @category Object
 */
 export type SetNonNullable<BaseType, Keys extends KeysOfUnion<BaseType> = KeysOfUnion<BaseType>> =
-	SetNonNullableImplementation<BaseType, Keys extends object ? UnwrapBrand<Keys> : Keys>;
+	SetNonNullableImplementation<BaseType, UnwrapPathBrand<Keys>>;
 
 // Apply the primitive selector to object keys and tuple indices.
 type SetNonNullableImplementation<BaseType, Keys> =

@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapPathBrand} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts'; // For `@link`
 
@@ -35,7 +35,7 @@ type AllNullable = SetNullable<Foo>;
 @category Object
 */
 export type SetNullable<BaseType, Keys extends KeysOfUnion<BaseType> = KeysOfUnion<BaseType>> =
-	SetNullableImplementation<BaseType, Keys extends object ? UnwrapBrand<Keys> : Keys>;
+	SetNullableImplementation<BaseType, UnwrapPathBrand<Keys>>;
 
 // A homomorphic mapped type over a type parameter is applied to each member of a union on its own, so a key that only some members have reaches those members.
 type SetNullableImplementation<BaseType, Keys> = {

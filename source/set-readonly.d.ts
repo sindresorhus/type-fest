@@ -1,6 +1,6 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
-import type {CallSignatureOf, HomomorphicPick, SimplifyObject, ToString, UnwrapBrand} from './internal/index.d.ts';
+import type {CallSignatureOf, HomomorphicPick, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -29,7 +29,7 @@ type SomeReadonly = SetReadonly<Foo, 'b' | 'c'>;
 export type SetReadonly<BaseType, Keys extends KeysOfUnion<BaseType>> =
 	// The call signature is rebuilt per member, so a union of callables does not mix their signatures.
 	BaseType extends unknown
-		? CallSignatureOf<BaseType> & _SetReadonly<BaseType, Keys extends object ? UnwrapBrand<Keys> : Keys>
+		? CallSignatureOf<BaseType> & _SetReadonly<BaseType, UnwrapPathBrand<Keys>>
 		: never;
 
 export type _SetReadonly<BaseType, Keys> =
