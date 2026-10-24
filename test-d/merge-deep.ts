@@ -893,3 +893,7 @@ const sharedCopiedMergeRecord: Record<string, unknown> = sharedCopiedMergeRows[0
 
 declare const copiedNullableMerge: MergeDeep<[{optional?: CopiedMergeLeaf | null | undefined}], [{enabled: true}], {recurseIntoArrays: true}>;
 expectTypeOf(copiedNullableMerge[0].optional?.nested.id).toBe<number | undefined>();
+
+// `never` options use the defaults, like `any` options.
+expectTypeOf<MergeDeep<{a: 1; values: number[]}, {b: 2; values: string[]}, never>>().toBe<{a: 1; b: 2; values: string[]}>();
+expectTypeOf<MergeDeep<{a: 1; values: number[]}, {b: 2; values: string[]}, any>>().toBe<{a: 1; b: 2; values: string[]}>();

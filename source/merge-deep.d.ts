@@ -1,5 +1,6 @@
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {And} from './and.d.ts';
 import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts'; // For `@link`
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
@@ -10,8 +11,7 @@ import type {
 	FirstArrayElement,
 	SimplifyObject,
 	EnforceOptional,
-	NormalizedKeys,
-	ToString,
+	KeyAliases,
 } from './internal/index.d.ts';
 import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
@@ -62,16 +62,16 @@ type DoMergeDeepRecord<
 // Compare runtime spellings, but read through the declared destination key so enum names retain their values.
 // Case in rule 1: The destination contains the key but the source doesn't.
 	{
-		[Key in keyof Destination as Key extends NormalizedKeys<keyof Source | ToString<keyof Source>> ? never : Key]: SimplifyDeepExcludeArray<Destination[Key]>;
+		[Key in keyof Destination as Key extends KeyAliases<keyof Source> ? never : Key]: SimplifyDeepExcludeArray<Destination[Key]>;
 	}
 // Case in rule 2: The source contains the key but the destination doesn't.
 	& {
-		[Key in keyof Source as Key extends NormalizedKeys<keyof Destination | ToString<keyof Destination>> ? never : Key]: SimplifyDeepExcludeArray<Source[Key]>;
+		[Key in keyof Source as Key extends KeyAliases<keyof Destination> ? never : Key]: SimplifyDeepExcludeArray<Source[Key]>;
 	}
 // Case in rule 3: Both the source and the destination contain the key.
 	& {
-		[Key in keyof Source as Key extends NormalizedKeys<keyof Destination | ToString<keyof Destination>> ? Key : never]:
-		MergeDeepRecordProperty<Required<Destination>[Extract<keyof Destination, NormalizedKeys<Key | ToString<Key>>>], Required<Source>[Key], Options>;
+		[Key in keyof Source as Key extends KeyAliases<keyof Destination> ? Key : never]:
+		MergeDeepRecordProperty<Required<Destination>[Extract<keyof Destination, KeyAliases<Key>>], Required<Source>[Key], Options>;
 	};
 
 /**
@@ -361,7 +361,7 @@ type MergeDeepArrayOrTuple<
 	: DoMergeArrayOrTuple<Destination, Source, Options>;
 
 /**
-Try to merge two objects or two arrays/tuples recursively, or return the default. Copied and default values are already simplified; newly merged records only need their outer map flattened.
+Try to merge two objects or two arrays/tuples recursively, or return the simplified default. A merged record only needs its outer map flattened, because `DoMergeDeepRecord` already simplifies each of its values.
 */
 type MergeDeepOrReturn<
 	DefaultType,
@@ -428,7 +428,7 @@ type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 	arrayMergeMode: 'replace';
 	recurseIntoArrays: false;
 	spreadTopLevelArrays: true;
-}, Options>;
+}, IsNever<Options> extends true ? {} : Options>;
 
 /**
 Selects the entry point and merges default options once. Each whole merge uses one array mode, with omitted optional modes using `replace`.
@@ -437,16 +437,16 @@ type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepO
 	[Mode in
 	Exclude<DefaultMergeDeepOptions<Options>['arrayMergeMode'], undefined>
 	| (undefined extends DefaultMergeDeepOptions<Options>['arrayMergeMode'] ? 'replace' : never)
-	]: SimplifyDeepExcludeArray<
+	]: (
 		[undefined] extends [Destination | Source]
 			? never
 			: Destination extends UnknownRecord
 				? Source extends UnknownRecord
-					? MergeDeepRecord<
+					? SimplifyObject<MergeDeepRecord<
 						Destination,
 						Source,
 						EnforceOptional<Except<DefaultMergeDeepOptions<Options>, 'arrayMergeMode'> & {arrayMergeMode: Mode}>
-					>
+					>>
 					// `object` is an object whose keys are unknown, but it is not assignable to `UnknownRecord`. It contributes no known keys, so it is merged as `{}`, the way the shallow `Merge` does. It is matched only after the record checks, so for a generic input, whose constraint is read through these checks, the `object` arms drop out instead of hiding its keys.
 					: IsEqual<Source, object> extends true
 						? MergeDeepWithDefaultOptions<Destination, {}, Options>
@@ -465,7 +465,7 @@ type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepO
 							? object
 							: MergeDeepWithDefaultOptions<{}, Source, Options>
 						: never
-	>
+	)
 }[
 	Exclude<DefaultMergeDeepOptions<Options>['arrayMergeMode'], undefined>
 	| (undefined extends DefaultMergeDeepOptions<Options>['arrayMergeMode'] ? 'replace' : never)
