@@ -60,7 +60,7 @@ export type IsStringLiteral<S> = IfNotAnyOrNever<S, {
 	ifNever: false;
 }>;
 
-type _IsStringLiteral<S> =
+export type _IsStringLiteral<S> =
 	// If `S` is an infinite string type (e.g., `on${string}`), `Record<S, never>` produces an index signature,
 	// and since `{}` extends index signatures, the result becomes `false`.
 	S extends string

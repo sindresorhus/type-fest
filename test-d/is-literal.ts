@@ -139,3 +139,42 @@ expectTypeOf<boolean>().toBe<IsLiteral<Tagged<LiteralUnion<'foo' | 'bar', number
 expectTypeOf<IsLiteral<Tagged<Tagged<'foo' | 1 | false | typeof symbolLiteral, 'Value'>, 'Validated'>>>().toBe<true>();
 expectTypeOf<IsLiteral<Tagged<Tagged<string | number | bigint | symbol | boolean, 'Value'>, 'Validated'>>>().toBe<false>();
 expectTypeOf<IsLiteral<Tagged<Tagged<'foo' | number, 'Value'>, 'Validated'>>>().toBe<boolean>();
+
+// A schema can classify each field without losing mixed or widened inputs.
+type FieldLiteralFlags<Fields> = {[Key in keyof Fields]: IsLiteral<Fields[Key]>};
+type LiteralSettings = {
+	mode: 'sync' | 'async';
+	retries: 1 | 2 | 3;
+	enabled: boolean;
+	path: LiteralUnion<'cache', string>;
+	mixed: 'cached' | number;
+	serial: 1n | 2n;
+	token: typeof symbolLiteral;
+};
+expectTypeOf<FieldLiteralFlags<LiteralSettings>>().toBe<{mode: true; retries: true; enabled: false; path: false; mixed: boolean; serial: true; token: true}>();
+
+function literalSetting<const Value>(value: Value, literal: IsLiteral<Value>): {value: Value; literal: boolean} {
+	return {value, literal};
+}
+
+function _readFieldFlags<Fields>(flags: FieldLiteralFlags<Fields>): {[Key in keyof Fields]: boolean} {
+	return flags;
+}
+
+const literalMode = literalSetting('network', true);
+expectTypeOf(literalMode.value).toBe<'network'>();
+expectTypeOf(literalMode.literal).toBe<boolean>();
+// @ts-expect-error A literal value cannot be classified as nonliteral.
+literalSetting('network', false);
+// @ts-expect-error A broad string cannot be classified as a literal.
+literalSetting('network' as string, true);
+
+function _readObjectLiteral<Value extends object>(flag: IsLiteral<Value>): false {
+	return flag;
+}
+
+expectTypeOf<FieldLiteralFlags<readonly ['sync', 1n, boolean, typeof symbolLiteral]>>().toBe<readonly [true, true, false, true]>();
+const objectSetting = literalSetting({kind: 'file'}, false);
+expectTypeOf(objectSetting.value).toBe<{readonly kind: 'file'}>();
+// @ts-expect-error Object values are not literal types.
+literalSetting({kind: 'file'}, true);

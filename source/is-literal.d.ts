@@ -1,7 +1,7 @@
-import type {IsStringLiteral} from './is-string-literal.d.ts';
-import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
-import type {IsBooleanLiteral} from './is-boolean-literal.d.ts';
-import type {IsSymbolLiteral} from './is-symbol-literal.d.ts';
+import type {_IsStringLiteral} from './is-string-literal.d.ts';
+import type {_IsNumericLiteral} from './is-numeric-literal.d.ts';
+import type {_IsBooleanLiteral} from './is-boolean-literal.d.ts';
+import type {_IsSymbolLiteral} from './is-symbol-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
@@ -69,23 +69,24 @@ export type IsLiteral<T> = IfNotAnyOrNever<T, {
 	ifNever: false;
 }>;
 
+// Reuse the normalized input instead of repeating the public scalar predicates' boundary checks.
 type _IsLiteral<T> =
 	| (Extract<T, boolean> extends infer Bools
-		// We can't instantiate `IsBooleanLiteral` with `never`,
-		// because that will add an extraneous `false` to the result if there are no booleans.
+		// Check the entire boolean part together and skip it when absent.
+		// This explicit check also preserves known false results for generic object inputs.
 		? IsNever<Bools> extends true
 			? never
-			: IsBooleanLiteral<Bools>
+			: _IsBooleanLiteral<Bools>
 		: never)
 	| (IsLiteralNonBools<Exclude<T, boolean>>);
 
 type IsLiteralNonBools<T> =
 	T extends number | bigint
-		? IsNumericLiteral<T>
+		? _IsNumericLiteral<T>
 		: T extends string
-			? IsStringLiteral<T>
+			? _IsStringLiteral<T>
 			: T extends symbol
-				? IsSymbolLiteral<T>
+				? _IsSymbolLiteral<T>
 				: false;
 
 export {};

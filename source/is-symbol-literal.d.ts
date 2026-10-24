@@ -30,7 +30,7 @@ export type IsSymbolLiteral<T> = IfNotAnyOrNever<T, {
 	ifNever: false;
 }>;
 
-type _IsSymbolLiteral<T> = T extends symbol
+export type _IsSymbolLiteral<T> = T extends symbol
 	? symbol extends T
 		? false
 		: true

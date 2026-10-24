@@ -40,7 +40,7 @@ export type IsNumericLiteral<T> = IfNotAnyOrNever<T, {
 }>;
 
 // Numeric enum members accept `number`, but only constant members have known values. Comparing printed types also rejects computed members, whose numeric value is unknown.
-type _IsNumericLiteral<T> = T extends number | bigint
+export type _IsNumericLiteral<T> = T extends number | bigint
 	? `${number}` extends `${T}`
 		? false
 		: `${bigint}` extends `${T}`

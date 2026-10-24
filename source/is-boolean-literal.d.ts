@@ -30,7 +30,7 @@ export type IsBooleanLiteral<T> = IfNotAnyOrNever<T, {
 	ifNever: false;
 }>;
 
-type _IsBooleanLiteral<T> = boolean extends T
+export type _IsBooleanLiteral<T> = boolean extends T
 	? false
 	: T extends boolean
 		? true
