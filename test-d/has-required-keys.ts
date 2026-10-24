@@ -93,3 +93,8 @@ expectTypeOf(configureTemplate<Record<string, unknown>>()).toBe<Record<string, u
 configureTemplate<{path: string}>();
 // @ts-expect-error A tuple with a required element also requires its template argument.
 configureTemplate<readonly [string]>();
+
+// Fields named like `Object.prototype` members are still declared fields.
+expectTypeOf<HasRequiredKeys<{toString: () => string}>>().toBe<true>();
+expectTypeOf<HasRequiredKeys<{toString?: () => string}>>().toBe<false>();
+expectTypeOf<HasRequiredKeys<{constructor: Function; label?: string}>>().toBe<true>();

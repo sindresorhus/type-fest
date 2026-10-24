@@ -65,7 +65,7 @@ export type HasRequiredKeys<BaseType extends object> =
 	(BaseType extends UnknownArray // For distributing `BaseType`
 		? [] extends BaseType ? never : BaseType // An array has required keys only if it has required elements
 		// Checking whether an empty object is allowed avoids collecting every required key when only their existence matters.
-		: {} extends OmitIndexSignature<BaseType> ? never : true
+		: Partial<OmitIndexSignature<BaseType>> extends OmitIndexSignature<BaseType> ? never : true
 	) extends never ? false : true;
 
 export {};
