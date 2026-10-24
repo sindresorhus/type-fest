@@ -10,34 +10,34 @@ Use-cases:
 
 This type was taken from this [StackOverflow answer](https://stackoverflow.com/a/68261113/420747).
 
-It relies on the fact that an empty object (`{}`) is assignable to an object with just an index signature, like `Record<string, unknown>`, but not to an object with explicitly defined keys, like `Record<'foo' | 'bar', unknown>`.
+It relies on the fact that an empty object (`{}`) is assignable to an object with just an index signature, like `Record<string, never>`, but not to an object with explicitly defined keys, like `Record<'foo' | 'bar', never>`.
 
-(The actual value type, `unknown`, is irrelevant and could be any type. Only the key type matters.)
+The `never` value type prevents inherited `Object.prototype` members, such as `toString`, from satisfying an explicitly defined key.
 
 ```
-const indexed: Record<string, unknown> = {}; // Allowed
+const indexed: Record<string, never> = {}; // Allowed
 
 // @ts-expect-error
-const keyed: Record<'foo', unknown> = {}; // Error
-// TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", unknown>': foo, bar
+const keyed: Record<'foo' | 'bar', never> = {}; // Error
+// TS2739: Type '{}' is missing the following properties from type 'Record<"foo" | "bar", never>': foo, bar
 ```
 
 Instead of causing a type error like the above, you can also use a [conditional type](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html) to test whether a type is assignable to another:
 
 ```
-type Indexed = {} extends Record<string, unknown>
-	? '✅ `{}` is assignable to `Record<string, unknown>`'
-	: '❌ `{}` is NOT assignable to `Record<string, unknown>`';
+type Indexed = {} extends Record<string, never>
+	? '✅ `{}` is assignable to `Record<string, never>`'
+	: '❌ `{}` is NOT assignable to `Record<string, never>`';
 
 type IndexedResult = Indexed;
-//=> '✅ `{}` is assignable to `Record<string, unknown>`'
+//=> '✅ `{}` is assignable to `Record<string, never>`'
 
-type Keyed = {} extends Record<'foo' | 'bar', unknown>
-	? '✅ `{}` is assignable to `Record<\'foo\' | \'bar\', unknown>`'
-	: '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', unknown>`';
+type Keyed = {} extends Record<'foo' | 'bar', never>
+	? '✅ `{}` is assignable to `Record<\'foo\' | \'bar\', never>`'
+	: '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', never>`';
 
 type KeyedResult = Keyed;
-//=> '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', unknown>`'
+//=> '❌ `{}` is NOT assignable to `Record<\'foo\' | \'bar\', never>`'
 ```
 
 Using a [mapped type](https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#further-exploration), you can then check for each `KeyType` of `ObjectType`...
@@ -49,15 +49,15 @@ type OmitIndexSignature<ObjectType> = {
 };
 ```
 
-...whether an empty object (`{}`) would be assignable to an object with that `KeyType` (`Record<KeyType, unknown>`)...
+...whether an empty object (`{}`) would be assignable to an object with that `KeyType` (`Record<KeyType, never>`)...
 
 ```
 type OmitIndexSignature<ObjectType> = {
 	[KeyType in keyof ObjectType
-	// Is `{}` assignable to `Record<KeyType, unknown>`?
-	as {} extends Record<KeyType, unknown>
-		? never // ✅ `{}` is assignable to `Record<KeyType, unknown>`
-		: KeyType // ❌ `{}` is NOT assignable to `Record<KeyType, unknown>`
+	// Is `{}` assignable to `Record<KeyType, never>`?
+	as {} extends Record<KeyType, never>
+		? never // ✅ `{}` is assignable to `Record<KeyType, never>`
+		: KeyType // ❌ `{}` is NOT assignable to `Record<KeyType, never>`
 	]: ObjectType[KeyType];
 };
 ```
@@ -92,7 +92,7 @@ type ExampleWithoutIndexSignatures = OmitIndexSignature<Example>;
 @category Object
 */
 export type OmitIndexSignature<ObjectType> = {
-	[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown>
+	[KeyType in keyof ObjectType as {} extends Record<KeyType, never>
 		? never
 		: KeyType]: ObjectType[KeyType];
 };

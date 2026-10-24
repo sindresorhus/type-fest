@@ -142,7 +142,7 @@ export type _Merge<Destination, Source> =
 // Numeric properties and their string forms name the same property, so normalize the source's named keys before testing overrides.
 // Merges the properties and index signatures of two objects. A key of the destination is dropped when the source overrides it: an index signature only by an index signature, and a property only by a property. A property is also dropped when a property key of the source is a subtype of it, so that a string enum key such as `StringEnum.A` overrides `'a'`. The destination is read only once, because each extra read multiplies the work of nested merges, such as in `MergeAll`. The source is split instead of intersected as is, because an intersection with an `any` source is `any`, which loses the properties of the destination.
 type MergeObjects<Destination, Source> = SimplifyObject<{
-	[Key in keyof Destination as {} extends Record<Key, unknown>
+	[Key in keyof Destination as {} extends Record<Key, never>
 		? Key extends keyof PickIndexSignature<Source> ? never : Key
 		: Key extends NormalizedKeys<keyof OmitIndexSignature<Source>>
 			? never

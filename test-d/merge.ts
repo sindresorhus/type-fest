@@ -388,3 +388,18 @@ expectTypeOf<Merge<{1: 'canonical'}, {'01': 'padded'}>>().toBe<{1: 'canonical'; 
 expectTypeOf<Merge<{1: 'canonical'}, {'1.0': 'fractional'}>>().toBe<{1: 'canonical'; '1.0': 'fractional'}>();
 expectTypeOf<Merge<{1: 'canonical'}, {'1e0': 'exponential'}>>().toBe<{1: 'canonical'; '1e0': 'exponential'}>();
 expectTypeOf<Merge<{1: 'canonical'}, {' 1': 'leading'; '1 ': 'trailing'}>>().toBe<{1: 'canonical'; ' 1': 'leading'; '1 ': 'trailing'}>();
+
+// Prototype names are declared fields, so an index signature cannot override them.
+declare const prototypeFieldsWithIndex: Merge<{toString: string; valueOf: number}, Record<string, unknown>>;
+expectTypeOf(prototypeFieldsWithIndex.toString).toBe<string>();
+expectTypeOf(prototypeFieldsWithIndex.valueOf).toBe<number>();
+
+// A declared source field still overrides the matching destination field.
+expectTypeOf<Merge<{toString: string}, {toString: number}>>().toBe<{toString: number}>();
+
+// Retained prototype-like fields keep modifiers, source values and unrelated properties.
+expectTypeOf<Merge<{readonly toString?: string; keep: true}, {readonly valueOf: number}>>()
+	.toBe<{readonly toString?: string; keep: true; readonly valueOf: number}>();
+expectTypeOf<Merge<{valueOf: number}, {readonly valueOf?: string}>>().toBe<{readonly valueOf?: string}>();
+expectTypeOf<Merge<{toString: string}, {toString: any}>>().toBe<{toString: any}>();
+expectTypeOf<Merge<{toString: string}, {toString: never}>>().toBe<{toString: never}>();
