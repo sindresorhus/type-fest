@@ -5,8 +5,6 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 Returns the index at which the rest element of the given array starts, that is, the number of elements before it.
 
-Counts the fixed prefix directly without constructing the unused split tuple parts.
-
 @example
 ```ts
 type A = RestElementIndex<[string, ...boolean[]]>;

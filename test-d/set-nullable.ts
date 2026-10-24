@@ -118,6 +118,8 @@ enum SelectorKey {
 	Value = 'value',
 }
 expectTypeOf<SetNullable<{[SelectorKey.Value]: string}, SelectorKey.Value>>().toBe<{[SelectorKey.Value]: string | null}>();
+// An enum selector reaches the ordinary property with its value's name.
+expectTypeOf<SetNullable<{value: string; other: number}, SelectorKey.Value>>().toBe<{value: string | null; other: number}>();
 expectTypeOf<SetNullable<{value: string}, 'value' & {}>>().toBe<{value: string | null}>();
 expectTypeOf<SetNullable<{[key: string]: unknown; value: string}, LiteralUnion<'value', string>>>().toBe<SetNullable<{[key: string]: unknown; value: string}, string>>();
 
