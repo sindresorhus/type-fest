@@ -1055,7 +1055,7 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`))),
 	],
 	invalid: [
-		// Twoslash fixes in CRLF files keep the line endings.
+		// Single-line twoslash fixes in CRLF files keep the line endings.
 		{
 			code: ['/**', '```ts', 'const count = 1;', '//=> 2', '```', '*/', 'export type Result = string;'].join('\r\n'),
 			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> 2'})],
