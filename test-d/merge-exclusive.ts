@@ -130,3 +130,29 @@ expectTypeOf<{file: string; text: string}>().not.toBeAssignableTo<MaybeFile<true
 expectTypeOf<{[exclusiveSymbol]: string}>().toBeAssignableTo<MergeExclusive<never, {[exclusiveSymbol]: string}>>();
 expectTypeOf<Record<string, number>>().toBeAssignableTo<MergeExclusive<never, Record<string, number>>>();
 expectTypeOf<Record<number, string>>().toBeAssignableTo<MergeExclusive<Record<number, string>, never>>();
+
+// A covering index signature must not make the opposite named alternative impossible.
+const indexedFileChoice: MergeExclusive<Record<string, number>, {file: string}> = {file: 'config.json'};
+const reversedIndexedFileChoice: MergeExclusive<{file: string}, Record<string, number>> = {file: 'config.json'};
+const indexedNumberChoice: MergeExclusive<Record<number, string>, {0: boolean}> = {0: true};
+const indexedPatternChoice: MergeExclusive<{[key: `row-${string}`]: number}, {'row-name': string}> = {'row-name': 'first'};
+const indexedSymbolChoice: MergeExclusive<{[key: symbol]: number}, {[exclusiveSymbol]: string}> = {[exclusiveSymbol]: 'first'};
+
+// Known properties still exclude the opposite choice beside an open signature.
+type DeclaredIndexedChoice = MergeExclusive<{[key: string]: unknown; readonly id: number}, {file: string}>;
+expectTypeOf<{file: string}>().toBeAssignableTo<DeclaredIndexedChoice>();
+expectTypeOf<{id: number; dynamic: boolean}>().toBeAssignableTo<DeclaredIndexedChoice>();
+expectTypeOf<{id: string; file: string}>().not.toBeAssignableTo<DeclaredIndexedChoice>();
+
+// Prototype-like names are finite declared keys too.
+expectTypeOf<{toString: number; file: string}>().not.toBeAssignableTo<MergeExclusive<{toString: number}, {file: string}>>();
+expectTypeOf<{valueOf: string; file: string}>().not.toBeAssignableTo<MergeExclusive<{valueOf: string}, {file: string}>>();
+
+function fileOrIndexed<Value extends string>(file: Value): MergeExclusive<Record<string, number>, {readonly file: Value}> {
+	return {file};
+}
+
+const inferredIndexedFile = fileOrIndexed('config.json');
+expectTypeOf(inferredIndexedFile.file).toBe<'config.json' | number>();
+// @ts-expect-error The named alternative preserves its own readonly modifier.
+inferredIndexedFile.file = 'config.json';
