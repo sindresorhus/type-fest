@@ -392,6 +392,8 @@ export type MergeDeepOptions = {
 	- `replace`: Replaces the destination value by the source value. This is the default mode.
 	- `spread`: Spreads the destination and the source values.
 
+	A union mode produces a union of complete merges. An optional mode also includes the default when omitted.
+
 	See {@link MergeDeep} for usages and examples.
 
 	Note: Top-level arrays and tuples are always spread.
@@ -428,29 +430,45 @@ type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
 }, Options>;
 
 /**
-This utility selects the correct entry point with the corresponding default options. This avoids re-merging the options at each iteration.
+Selects the entry point and merges default options once. Each whole merge uses one array mode, with omitted optional modes using `replace`.
 */
-type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = SimplifyDeepExcludeArray<
-	[undefined] extends [Destination | Source]
-		? never
-		: Destination extends UnknownRecord
-			? Source extends UnknownRecord
-				? MergeDeepRecord<Destination, Source, DefaultMergeDeepOptions<Options>>
-				// `object` is an object whose keys are unknown, but it is not assignable to `UnknownRecord`. It contributes no known keys, so it is merged as `{}`, the way the shallow `Merge` does. It is matched only after the record checks, so for a generic input, whose constraint is read through these checks, the `object` arms drop out instead of hiding its keys.
-				: IsEqual<Source, object> extends true
-					? MergeDeepWithDefaultOptions<Destination, {}, Options>
-					: never
-			: Destination extends UnknownArray
-				? Source extends UnknownArray
-					? MergeDeepArrayOrTuple<Destination, Source, DefaultMergeDeepOptions<Options>>
-					: never
-				: IsEqual<Destination, object> extends true
-					// Two of them answer `object`.
-					? IsEqual<Source, object> extends true
-						? object
-						: MergeDeepWithDefaultOptions<{}, Source, Options>
-					: never
->;
+type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = {
+	[Mode in
+	Exclude<DefaultMergeDeepOptions<Options>['arrayMergeMode'], undefined>
+	| (undefined extends DefaultMergeDeepOptions<Options>['arrayMergeMode'] ? 'replace' : never)
+	]: SimplifyDeepExcludeArray<
+		[undefined] extends [Destination | Source]
+			? never
+			: Destination extends UnknownRecord
+				? Source extends UnknownRecord
+					? MergeDeepRecord<
+						Destination,
+						Source,
+						EnforceOptional<Except<DefaultMergeDeepOptions<Options>, 'arrayMergeMode'> & {arrayMergeMode: Mode}>
+					>
+					// `object` is an object whose keys are unknown, but it is not assignable to `UnknownRecord`. It contributes no known keys, so it is merged as `{}`, the way the shallow `Merge` does. It is matched only after the record checks, so for a generic input, whose constraint is read through these checks, the `object` arms drop out instead of hiding its keys.
+					: IsEqual<Source, object> extends true
+						? MergeDeepWithDefaultOptions<Destination, {}, Options>
+						: never
+				: Destination extends UnknownArray
+					? Source extends UnknownArray
+						? MergeDeepArrayOrTuple<
+							Destination,
+							Source,
+							EnforceOptional<Except<DefaultMergeDeepOptions<Options>, 'arrayMergeMode'> & {arrayMergeMode: Mode}>
+						>
+						: never
+					: IsEqual<Destination, object> extends true
+						// Two of them answer `object`.
+						? IsEqual<Source, object> extends true
+							? object
+							: MergeDeepWithDefaultOptions<{}, Source, Options>
+						: never
+	>
+}[
+	Exclude<DefaultMergeDeepOptions<Options>['arrayMergeMode'], undefined>
+	| (undefined extends DefaultMergeDeepOptions<Options>['arrayMergeMode'] ? 'replace' : never)
+];
 
 /**
 Merge two objects or two arrays/tuples recursively into a new type.

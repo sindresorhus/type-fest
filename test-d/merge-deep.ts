@@ -815,3 +815,43 @@ const inferredIndexedMerge = mergeDeep({rows: [{id: 'known'}]}, {rows: [{enabled
 expectTypeOf(inferredIndexedMerge.rows[0]?.id).toBe<string | undefined>();
 // @ts-expect-error Recursing into indexed options keeps required destination fields.
 const missingIndexedDestination: typeof inferredIndexedMerge = {rows: [{enabled: true}]};
+
+// An uncertain mode can spread nested arrays instead of replacing them.
+const uncertainModeSpread: MergeDeep<{values: number[]}, {values: readonly string[]}, {arrayMergeMode: 'replace' | 'spread'}> = {values: [1, 'source']};
+const optionalModeSpread: MergeDeep<{values: number[]}, {values: readonly string[]}, {arrayMergeMode?: 'spread'}> = {values: [1, 'source']};
+
+function mergeValues(mode: 'replace' | 'spread', destination: number[], source: readonly string[]): MergeDeep<{values: number[]}, {values: readonly string[]}, {arrayMergeMode: 'replace' | 'spread'}> {
+	const replacement = {values: source};
+	return mode === 'spread' ? {values: [...destination, ...source]} : replacement;
+}
+
+// A selected mode applies to all arrays, including readonly replacements.
+type UncertainMergeDestination = {values: number[]; flags: boolean[]};
+type UncertainMergeSource = {values: readonly string[]; flags: readonly Date[]};
+type UncertainMergeResult = MergeDeep<UncertainMergeDestination, UncertainMergeSource, {arrayMergeMode: 'replace' | 'spread'}>;
+const readonlyModeReplacement: UncertainMergeResult = {values: ['source'] as readonly string[], flags: [] as readonly Date[]};
+const completeModeSpread: UncertainMergeResult = {values: [1, 'source'], flags: [true, new Date()]};
+// @ts-expect-error One merge cannot spread one array while choosing a readonly replacement for the other.
+const mixedMergeModes: UncertainMergeResult = {values: [1, 'source'], flags: [] as readonly Date[]};
+
+// Optional spread can be absent and use the default readonly replacement.
+const omittedSpreadMode: MergeDeep<UncertainMergeDestination, UncertainMergeSource, {arrayMergeMode?: 'spread'}> = readonlyModeReplacement;
+const optionalReplaceMode: MergeDeep<UncertainMergeDestination, UncertainMergeSource, {arrayMergeMode?: 'replace'}> = readonlyModeReplacement;
+declare const uncertainArrayMode: 'replace' | 'spread';
+const inferredUncertainMerge = mergeDeep({values: [1]}, {values: ['source']} as const, {arrayMergeMode: uncertainArrayMode});
+expectTypeOf(inferredUncertainMerge.values).toBe<readonly ['source'] | Array<number | 'source'>>();
+const inferredReadonlyReplacement: typeof inferredUncertainMerge = {values: ['source'] as const};
+const inferredMutableSpread: typeof inferredUncertainMerge = {values: [1, 'source']};
+
+function readUncertainMerge<Value>(value: MergeDeep<{values: number[]}, {values: readonly Value[]}, {arrayMergeMode: 'replace' | 'spread'}>): ReadonlyArray<number | Value> {
+	return value.values;
+}
+
+function constructOptionalMerge<Value>(source: readonly Value[]): MergeDeep<{values: number[]}, {values: readonly Value[]}, {arrayMergeMode?: 'spread'}> {
+	return {values: source};
+}
+
+// @ts-expect-error A replacement can retain the source's readonly array.
+readonlyModeReplacement.values[0] = 'source';
+// @ts-expect-error Neither array merge strategy introduces boolean values here.
+const invalidUncertainValue: UncertainMergeResult = {values: [false], flags: []};
