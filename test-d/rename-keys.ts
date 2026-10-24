@@ -310,3 +310,34 @@ expectTypeOf<RenameKeys<{name: never}, {[RenameField.Name]: 'title'}>>().toBe<{t
 expectTypeOf<RenameKeys<{name: unknown}, {[RenameField.Name]: 'title'}>>().toBe<{title: unknown}>();
 expectTypeOf<RenameKeys<any, {[RenameField.Name]: 'title'}>>().toBe<any>();
 expectTypeOf<RenameKeys<never, {[RenameField.Name]: 'title'}>>().toBe<never>();
+
+// Numeric and string spellings of a target collide at the same runtime property.
+type NumericTargetCollision = RenameKeys<{text: string; count: number}, {text: 0; count: '0'}>;
+declare const numericTargetCollision: NumericTargetCollision;
+expectTypeOf(numericTargetCollision[0]).toBe<string | number>();
+expectTypeOf(numericTargetCollision['0']).toBe<string | number>();
+expectTypeOf<{}>().not.toBeAssignableTo<NumericTargetCollision>();
+
+// Colliding spellings share values and preserve every contributor's modifiers.
+expectTypeOf<RenameKeys<{text?: string; count?: number}, {text: 0; count: '0'}>>().toBe<{0?: string | number}>();
+expectTypeOf<RenameKeys<{readonly text?: string; count: number}, {text: '0'; count: 0}>>().toBe<{readonly 0: string | number}>();
+expectTypeOf<keyof RenameKeys<{text: string}, {text: 0}>>().toBe<0>();
+expectTypeOf<keyof RenameKeys<{text: string}, {text: '0'}>>().toBe<'0'>();
+expectTypeOf<RenameKeys<{text: string; count: number}, {text: 1; count: '01'}>>().toBe<{1: string; '01': number}>();
+expectTypeOf<RenameKeys<{text: any; count: number}, {text: 0; count: '0'}>>().toBe<{0: any}>();
+expectTypeOf<RenameKeys<{text: unknown; count: number}, {text: 0; count: '0'}>>().toBe<{0: unknown}>();
+expectTypeOf<RenameKeys<{text: never; count: never}, {text: 0; count: '0'}>>().toBe<{0: never}>();
+
+function _constructNumericTarget<Value extends string>(value: Value): RenameKeys<{text: Value; count: number}, {text: 0; count: '0'}> {
+	return {0: value};
+}
+
+function _readNumericTarget<Value extends string>(value: RenameKeys<{text: Value; count: number}, {text: 0; count: '0'}>): Value | number {
+	return value[0];
+}
+
+declare function renameKeys<const Base extends object, const Map extends Record<PropertyKey, PropertyKey>>(value: Base, map: Map): RenameKeys<Base, Map>;
+const inferredNumericTarget = renameKeys({text: 'label', count: 1}, {text: 0, count: '0'});
+expectTypeOf(inferredNumericTarget[0]).toBe<'label' | 1>();
+// @ts-expect-error The readonly source field makes the shared target readonly.
+inferredNumericTarget[0] = 'label';

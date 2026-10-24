@@ -1,3 +1,4 @@
+import type {LiteralKeyOf} from './internal/keys.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -150,18 +151,21 @@ type RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, P
 			ApplyRequired<BaseType, RenameMap,
 				RenameNaive<BaseType, RenameMap>>>>;
 
-type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> = {
-	// Two keys mapping to one target produce a union value and keep only the first key's modifiers.
+type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, NumericTargets extends number = TargetOf<LiteralKeyOf<BaseType>, RenameMap> & number> = {
+	// Targets with the same numeric spelling share one key before later maps restore their modifiers; retaining both aliases would make those maps drop the property.
 	// Like for example, `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}` produces `{x?: 1 | 2}`, taking `a`'s optional.
-	[Key in keyof BaseType as TargetOf<Key, RenameMap>]: Required<BaseType>[Key];
+	[Key in keyof BaseType as
+	Extract<NumericTargets, NormalizedKeys<Extract<TargetOf<Key, RenameMap>, `${NumericTargets}`>>>
+	| Exclude<TargetOf<Key, RenameMap>, `${NumericTargets}`>
+	]: Required<BaseType>[Key];
 };
 
 // A merged target kept only one modifier in `RenameNaive`, so re-force these from every contributor.
 type ApplyRequired<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
-	SetRequired<Renamed, TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
+	SetRequired<Renamed, NormalizedKeys<TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>> & keyof Renamed>;
 
 type ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
-	SetReadonly<Renamed, TargetOf<ReadonlyKeysOf<OmitIndexSignature<BaseType>>, RenameMap> & keyof Renamed>;
+	SetReadonly<Renamed, NormalizedKeys<TargetOf<ReadonlyKeysOf<OmitIndexSignature<BaseType>>, RenameMap>> & keyof Renamed>;
 
 // `exactOptionalPropertyTypes` off keeps `undefined` on a target that merged a required and an optional source.
 // Source `{a?: 1; x: 2}` with `{a: 'x'}` gives `{x: 1 | 2 | undefined}`.
