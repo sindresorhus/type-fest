@@ -113,7 +113,7 @@ type NormalizeNumericKeys<Union, AllKeys extends PropertyKey = KeysOfUnion<Union
 	IsNumericLiteral<Extract<AllKeys, StringToNumber<Extract<AllKeys, `${number}`>>>> extends true
 		? Union extends unknown
 			? {[Key in keyof Union as
-				Extract<AllKeys, StringToNumber<Extract<Key, `${number}`>>> extends infer NumericKey extends number
+				Extract<AllKeys, StringToNumber<Extract<Key, `${AllKeys & number}`>>> extends infer NumericKey extends number
 					? NumericKey | Exclude<Key, `${NumericKey}`>
 					: never
 				]: Union[Key]}

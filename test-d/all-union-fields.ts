@@ -387,3 +387,6 @@ declare const indexedAlternatives: readonly DeclaredIndexedFields[];
 const collectedIndexedFields = collectFields(indexedAlternatives);
 expectTypeOf(collectedIndexedFields.id).toBe<string | number>();
 expectTypeOf<{kind: 'text'; id: boolean}>().not.toBeAssignableTo<typeof collectedIndexedFields>();
+
+// A numeric template index signature does not turn a numeric key of another member into a required field.
+expectTypeOf<AllUnionFields<{[key: `${number}`]: string; label: true} | {0: number}>>().toBe<{[key: `${number}`]: string | undefined; 0?: number; label?: true}>();
