@@ -1,5 +1,5 @@
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {SharedUnionFieldsDeep} from './shared-union-fields-deep.d.ts'; // For `@link`
 import type {AllUnionFields} from './all-union-fields.d.ts'; // For `@link`
@@ -26,6 +26,9 @@ type Dog = {
 	type: 'dog';
 	dogType: string;
 };
+
+type PetInfo = SharedUnionFields<Cat | Dog>;
+//=> {name: string; type: 'cat' | 'dog'}
 
 function displayPetInfo(petInfo: Cat | Dog) {
 	// typeof petInfo =>
@@ -73,7 +76,7 @@ export type SharedUnionFields<Union> =
 			| (IsNever<RelevantMembers> extends true
 				? never
 				// Keep shared index domains and declared fields separately so index signatures cannot hide known properties.
-				: Pick<RelevantMembers, keyof RelevantMembers> & Pick<RelevantMembers, keyof OmitIndexSignature<RelevantMembers> & keyof RelevantMembers> & {})
+				: SimplifyObject<Pick<RelevantMembers, keyof RelevantMembers> & Pick<RelevantMembers, keyof OmitIndexSignature<RelevantMembers> & keyof RelevantMembers>>)
 			: never
 		: never;
 
