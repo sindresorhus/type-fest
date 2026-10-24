@@ -283,3 +283,7 @@ expectTypeOf<SetOptionalDeep<{known: number; other: number}, TerminalEnumKey.Kno
 expectTypeOf<SetOptionalDeep<{[TerminalNumericEnumKey.One]: number; other: number}, '1'>>().toBe<{[TerminalNumericEnumKey.One]?: number; other: number}>();
 expectTypeOf<SetOptionalDeep<{1: number; other: number}, TerminalNumericEnumKey.One>>().toBe<{1?: number; other: number}>();
 expectTypeOf<SetOptionalDeep<[string, number], TerminalNumericEnumKey.One>>().toBe<[string, number?]>();
+
+// A numeric path that a `number` index signature covers leaves the index signature unchanged.
+expectTypeOf<SetOptionalDeep<{[key: number]: string; [TerminalNumericEnumKey.One]: string; a: string}, 1>>().toBe<{[key: number]: string; [TerminalNumericEnumKey.One]?: string; a: string}>();
+expectTypeOf<SetOptionalDeep<{[key: number]: string; [TerminalNumericEnumKey.One]: string; a: string}, '1'>>().toBe<{[key: number]: string; [TerminalNumericEnumKey.One]?: string; a: string}>();

@@ -336,3 +336,10 @@ enum TerminalEnumKey {
 }
 expectTypeOf<SetNonNullableDeep<{[TerminalEnumKey.Known]: number | null; other: number | null}, 'known'>>().toBe<{[TerminalEnumKey.Known]: number; other: number | null}>();
 expectTypeOf<SetNonNullableDeep<{known: number | null; other: number | null}, TerminalEnumKey.Known>>().toBe<{known: number; other: number | null}>();
+
+// A numeric path that a `number` index signature covers leaves the index signature unchanged.
+enum TerminalNumericEnumKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetNonNullableDeep<{[key: number]: string | null; [TerminalNumericEnumKey.One]: string | null; a: string | null}, 1>>().toBe<{[key: number]: string | null; [TerminalNumericEnumKey.One]: string; a: string | null}>();

@@ -2,6 +2,7 @@ import type {IsAny} from './is-any.d.ts';
 import type {NonRecursiveType, NormalizedKeys, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {PartialDeep} from './partial-deep.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetOptional} from './set-optional.d.ts';
@@ -66,8 +67,8 @@ Finds the keys of `BaseType` that the terminal paths name, matching numeric, str
 type TerminalKeys<KeyPaths, BaseType> = KeyPaths extends `${string}.${string}`
 	? never
 	: NormalizedKeys<(KeyPaths & PropertyKey) | ToString<KeyPaths>> extends infer Keys
-		// An enum key and its literal spelling do not intersect, so declared keys are also matched by assignability. Index signatures are left out, because `number` is assignable to a numeric enum.
-		? (Keys & keyof BaseType) | Extract<keyof OmitIndexSignature<BaseType>, Keys>
+		// An enum key and its literal spelling do not intersect, so declared keys are also matched by assignability. A key that an index signature covers is left to the intersection, because `number` is assignable to a numeric enum.
+		? (Keys & keyof BaseType) | Extract<keyof OmitIndexSignature<BaseType>, Exclude<Keys, keyof PickIndexSignature<BaseType>>>
 		: never;
 
 /**
