@@ -18,6 +18,8 @@ export type PathsOptions = {
 	/**
 	The maximum depth to recurse when searching for paths. Range: 0 ~ 10.
 
+	A union of literal limits includes the complete paths and leaves produced by each possible limit.
+
 	@default 5
 	*/
 	maxRecursionDepth?: number;
@@ -28,6 +30,8 @@ export type PathsOptions = {
 	Use it to limit large self-referencing types without lowering {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} for the rest of the type. With `0`, the circular property is included, but `Paths` does not go into it. `maxRecursionDepth` still applies.
 
 	When {@link PathsOptions.leavesOnly | `leavesOnly`} is `true`, a path that stops at this limit counts as a leaf.
+
+	A union of literal limits includes the complete paths and leaves produced by each possible limit.
 
 	@default number
 
@@ -353,7 +357,16 @@ type LeafPaths = Paths<Users, {leavesOnly: true}>;
 @category Object
 @category Array
 */
-export type Paths<T, Options extends PathsOptions = {}> = _Paths<T, ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options>>;
+export type Paths<T, Options extends PathsOptions = {}> = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options> extends infer ResolvedOptions extends Required<PathsOptions>
+	// Choose one complete options strategy and pair of bounds before traversing the object.
+	? ResolvedOptions extends {maxRecursionDepth: infer MaxRecursionDepth; maxCircularDepth: infer MaxCircularDepth}
+		? MaxRecursionDepth extends number
+			? MaxCircularDepth extends number
+				? _Paths<T, ResolvedOptions & {maxRecursionDepth: MaxRecursionDepth; maxCircularDepth: MaxCircularDepth}>
+				: never
+			: never
+		: never
+	: never;
 
 type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends number = 0, Seen extends unknown[] = []> =
 	T extends NonRecursivePathsType<Options>
