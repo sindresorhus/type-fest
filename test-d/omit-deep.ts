@@ -426,3 +426,34 @@ emptyMissingArrayPath.rows.push({details: {active: true}});
 declare const omittedExistingArrayField: OmitDeep<Array<{id: number; secret: string}>, '0.secret'>;
 // @ts-expect-error An existing selected field is still removed.
 expectTypeOf(omittedExistingArrayField[0].secret).toBe<string>();
+
+// A missing descendant selected across every array element preserves its nullable values.
+type NullableWideOmitRows = ReadonlyArray<{id: string} | null>;
+const nullableWideOmitRows: OmitDeep<NullableWideOmitRows, `${number}.missing`> = [null];
+expectTypeOf(nullableWideOmitRows).toBe<NullableWideOmitRows>();
+const undefinedWideOmitRows: OmitDeep<Array<{id: string} | undefined>, `${number}.missing`> = [undefined];
+expectTypeOf(undefinedWideOmitRows).toBe<Array<{id: string} | undefined>>();
+expectTypeOf<OmitDeep<{rows: NullableWideOmitRows}, `rows.${number}.missing`>>().toBe<{rows: NullableWideOmitRows}>();
+
+// Deeper missing descendants preserve nullable elements and inferred tuple positions too.
+type DetailedWideOmitRows = ReadonlyArray<{details: {active: boolean}} | null>;
+expectTypeOf<OmitDeep<DetailedWideOmitRows, `${number}.details.missing`>>().toBe<DetailedWideOmitRows>();
+
+function _constructNullableMissing<Value>(value: Value): OmitDeep<Array<{id: Value} | null>, `${number}.missing`> {
+	return [null, {id: value}];
+}
+
+function _readNullableMissing<Value>(value: OmitDeep<Array<{id: Value} | null>, `${number}.missing`>): Value | undefined {
+	return value[0]?.id;
+}
+
+declare function omitWideMissing<const Input>(input: Input): OmitDeep<Input, `rows.${number}.details.missing`>;
+const inferredWideMissing = omitWideMissing({rows: [{id: 'row', details: {active: true}}, null]});
+expectTypeOf(inferredWideMissing.rows).toBe<readonly [{readonly id: 'row'; readonly details: {readonly active: true}}, null]>();
+// @ts-expect-error A no-op omission retains readonly even when the assigned value is valid.
+inferredWideMissing.rows[0].details.active = true;
+
+declare const omittedWideExistingField: OmitDeep<Array<{id: string; secret: number} | null>, `${number}.secret`>;
+expectTypeOf(omittedWideExistingField[0]?.id).toBe<string | undefined>();
+// @ts-expect-error An existing field is still omitted across every element.
+expectTypeOf(omittedWideExistingField[0]?.secret).toBe<number | undefined>();

@@ -155,15 +155,15 @@ type B = OmitDeepArrayWithOnePath<[10, 20, 30, 40], '6'>;
 type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string | number> =
 	// Handle paths that are `${number}.${string}`
 	P extends `${infer ArrayIndex extends number}.${infer SubPath}`
-		// If `ArrayIndex` is equal to `number`. Only the `${number}` segment itself is the wide index, since a segment that is not how JavaScript writes an index, such as `01`, is also inferred as `number`.
-		? `${number}.${SubPath}` extends P
-			// An array with nothing left to omit is kept empty. Omitting the whole array already removed every index, so a path that continues into one of those indices has nothing to recurse into, and reading the element type would yield `never`, which would collapse the array into `never[]` rather than leaving it empty. An empty tuple is kept as it is for the same reason, rather than keeping the `unknown` placeholder an element that does not exist would leave.
-			? ArrayType extends readonly [] ? ArrayType : Array<OmitDeepWithOnePath<NonNullable<ArrayType[number]>, SubPath>>
-			// If `ArrayIndex` is a number literal, or `number` for a segment such as `01`. An array without that index is returned unchanged.
-			: IsMissingArrayIndex<ArrayType, ArrayIndex> extends true
-				? ArrayType
-				// A missing descendant leaves the element unchanged, so it must not create required array positions.
-				: IsEqual<OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>, NonNullable<ArrayType[ArrayIndex]>> extends true
+		// A missing descendant leaves the element unchanged, so it must not create required array positions or discard nullish elements.
+		? IsEqual<OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>, NonNullable<ArrayType[ArrayIndex]>> extends true
+			? ArrayType
+			// If `ArrayIndex` is equal to `number`. Only the `${number}` segment itself is the wide index, since a segment that is not how JavaScript writes an index, such as `01`, is also inferred as `number`.
+			: `${number}.${SubPath}` extends P
+				// An array with nothing left to omit is kept empty. Omitting the whole array already removed every index, so a path that continues into one of those indices has nothing to recurse into, and reading the element type would yield `never`, which would collapse the array into `never[]` rather than leaving it empty. An empty tuple is kept as it is for the same reason, rather than keeping the `unknown` placeholder an element that does not exist would leave.
+				? ArrayType extends readonly [] ? ArrayType : Array<OmitDeepWithOnePath<NonNullable<ArrayType[number]>, SubPath>>
+				// If `ArrayIndex` is a number literal, or `number` for a segment such as `01`. An array without that index is returned unchanged.
+				: IsMissingArrayIndex<ArrayType, ArrayIndex> extends true
 					? ArrayType
 					: ArraySplice<ArrayType, ArrayIndex, 1, [OmitDeepWithOnePath<NonNullable<ArrayType[ArrayIndex]>, SubPath>]>
 		// If the path is equal to `number`
@@ -171,7 +171,7 @@ type OmitDeepArrayWithOnePath<ArrayType extends UnknownArray, P extends string |
 			// If the path is the `${number}` segment itself. A segment such as `01` is also inferred as `number`, but is not the wide index.
 			? `${number}` extends P
 				? []
-				// If `ArrayIndex` is a number literal, or `number` for a segment such as `01`. An array without that index is returned unchanged.
+		// If `ArrayIndex` is a number literal, or `number` for a segment such as `01`. An array without that index is returned unchanged.
 				: IsMissingArrayIndex<ArrayType, ArrayIndex> extends true
 					? ArrayType
 					: ArraySplice<ArrayType, ArrayIndex, 1, [unknown]>
