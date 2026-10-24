@@ -2,6 +2,7 @@ import type {UnwrapBrand, ReverseSign, NonNegativeIntegerSum} from './internal/i
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
+import type {StringToNumber} from './string-to-number.d.ts';
 
 /**
 Returns the sum of two numbers.
@@ -45,7 +46,8 @@ type SumImplementation<A extends number, B extends number> =
 		// Every pair must reach the infinity checks independently, including opposite infinities.
 		: A extends unknown
 			? B extends unknown
-				? _Sum<A, B>
+				// Read an enum member as its plain literal, so the shortcuts in `_Sum` do not return the member itself.
+				? _Sum<StringToNumber<`${A}`>, StringToNumber<`${B}`>>
 				: never
 			: never;
 

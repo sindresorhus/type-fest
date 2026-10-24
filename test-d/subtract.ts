@@ -103,6 +103,24 @@ expectTypeOf<Subtract<never, Count.Few>>().toBe<never>();
 // @ts-expect-error - Only numbers can be used in arithmetic.
 type UnknownOperand = Subtract<unknown, Count.Few>;
 
+// The zero and infinity shortcuts return plain literals, like the other paths.
+enum Limit {
+	None = 0,
+	Few = 3,
+	Unlimited = 1e999, // eslint-disable-line no-loss-of-precision
+	Overdrawn = -1e999, // eslint-disable-line no-loss-of-precision
+}
+
+expectTypeOf<Subtract<Limit.Few, 0>>().toBe<3>();
+expectTypeOf<Subtract<Limit.Few, Limit.None>>().toBe<3>();
+expectTypeOf<Subtract<0, Limit.Few>>().toBe<-3>();
+expectTypeOf<Subtract<Limit.Few, Limit.Few>>().toBe<0>();
+expectTypeOf<Subtract<Limit.Unlimited, 5>>().toBe<PositiveInfinity>();
+expectTypeOf<Subtract<5, Limit.Unlimited>>().toBe<NegativeInfinity>();
+expectTypeOf<Subtract<Limit.Overdrawn, 5>>().toBe<NegativeInfinity>();
+expectTypeOf<Subtract<5, Limit.Overdrawn>>().toBe<PositiveInfinity>();
+expectTypeOf<Subtract<Limit.Unlimited, Limit.Unlimited>>().toBe<number>();
+
 // A numeric brand does not change arithmetic on its underlying value.
 expectTypeOf<Subtract<Tagged<5, 'Amount'>, 1>>().toBe<4>();
 expectTypeOf<Subtract<5, Tagged<1, 'Amount'>>>().toBe<4>();

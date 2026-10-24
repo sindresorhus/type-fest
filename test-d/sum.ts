@@ -137,6 +137,24 @@ expectTypeOf<Sum<-1, Count.Few>>().toBe<2>();
 expectTypeOf<Sum<Count.Many, Count.Deficit>>().toBe<4>();
 expectTypeOf<Sum<Count.Deficit, Count.Many>>().toBe<4>();
 
+// The zero and infinity shortcuts return plain literals, like the other paths.
+enum Limit {
+	None = 0,
+	Few = 3,
+	Unlimited = 1e999, // eslint-disable-line no-loss-of-precision
+	Overdrawn = -1e999, // eslint-disable-line no-loss-of-precision
+}
+
+expectTypeOf<Sum<Limit.Few, 0>>().toBe<3>();
+expectTypeOf<Sum<0, Limit.Few>>().toBe<3>();
+expectTypeOf<Sum<Limit.Few, Limit.None>>().toBe<3>();
+expectTypeOf<Sum<Limit.None, Limit.None>>().toBe<0>();
+expectTypeOf<Sum<Limit.Unlimited, 5>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<5, Limit.Unlimited>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<Limit.Overdrawn, 5>>().toBe<NegativeInfinity>();
+expectTypeOf<Sum<Limit.Unlimited, Limit.Unlimited>>().toBe<PositiveInfinity>();
+expectTypeOf<Sum<Limit.Unlimited, Limit.Overdrawn>>().toBe<number>();
+
 // A numeric brand does not change arithmetic on its underlying value.
 expectTypeOf<Sum<Tagged<2, 'Amount'>, 1>>().toBe<3>();
 expectTypeOf<Sum<2, Tagged<1, 'Amount'>>>().toBe<3>();

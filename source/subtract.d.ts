@@ -2,6 +2,7 @@ import type {UnwrapBrand, ReverseSign, NonNegativeIntegerSum, NonNegativeInteger
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {Absolute} from './absolute.d.ts';
+import type {StringToNumber} from './string-to-number.d.ts';
 
 /**
 Returns the difference between two numbers.
@@ -44,7 +45,9 @@ export type Subtract<A extends number, B extends number> =
 // Normalize operands once before validating their digits and computing the result.
 type SubtractImplementation<A extends number, B extends number> =
 	// A decimal fraction or exponent notation is not supported, so the result is `never` rather than a silently truncated whole number.
-	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never : _Subtract<A, B>;
+	`${A}|${B}` extends `${string}${'.' | 'e'}${string}` ? never
+		// Read an enum member as its plain literal, so the shortcuts in `_Subtract` do not return the member itself.
+		: _Subtract<StringToNumber<`${A}`>, StringToNumber<`${B}`>>;
 
 type _Subtract<A extends number, B extends number> =
 	// Match the widened number by its printed type, because numeric enum members also accept `number`.
