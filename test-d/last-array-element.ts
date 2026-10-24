@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {LastArrayElement, TupleOf} from '../index.d.ts';
+import type {LastArrayElement, TupleOf, FixedLengthArray} from '../index.d.ts';
 
 // Empty array
 expectTypeOf<LastArrayElement<[]>>().toBe<undefined>();
@@ -101,3 +101,38 @@ sparseInterior.length = 3;
 sparseInterior[2] = 2;
 const sparseInteriorLast: LastArrayElement<typeof sparseInterior> = sparseInterior.at(-1);
 expectTypeOf(sparseInteriorLast).toBe<1 | 2 | undefined>();
+
+// Fixed-length arrays retain their declared tuple positions after removing mutating methods.
+expectTypeOf<LastArrayElement<FixedLengthArray<number, 3>>>().toBe<number>();
+expectTypeOf<LastArrayElement<FixedLengthArray<string, 2>>>().toBe<string>();
+
+const labelledTuple = Object.assign([1, 2] as [1, 2], {label: 'row'});
+expectTypeOf<LastArrayElement<typeof labelledTuple>>().toBe<2>();
+
+// Indexing the declared last position works with readonly fixed arrays and an empty or uncertain length.
+expectTypeOf<LastArrayElement<Readonly<FixedLengthArray<string, 3>>>>().toBe<string>();
+expectTypeOf<LastArrayElement<FixedLengthArray<number, 0>>>().toBe<undefined>();
+expectTypeOf<LastArrayElement<FixedLengthArray<'item', 0 | 3>>>().toBe<'item' | undefined>();
+expectTypeOf<LastArrayElement<FixedLengthArray<unknown, 3>>>().toBe<unknown>();
+expectTypeOf<LastArrayElement<FixedLengthArray<any, 3>>>().toBe<any>();
+expectTypeOf<LastArrayElement<FixedLengthArray<never, 3>>>().toBe<never>();
+expectTypeOf<LastArrayElement<FixedLengthArray<'item', 1101>>>().toBe<'item'>();
+
+// Optional metadata does not make a required tuple element optional.
+const optionalMetadataTuple: readonly ['first', 'last'] & {label?: string} = ['first', 'last'];
+expectTypeOf<LastArrayElement<typeof optionalMetadataTuple>>().toBe<'last'>();
+
+function lastFixedValue<const Value>(values: FixedLengthArray<Value, 3>): LastArrayElement<FixedLengthArray<Value, 3>> {
+	return values[2];
+}
+
+function _readFixedLast<Value>(value: LastArrayElement<FixedLengthArray<Value, 3>>): Value {
+	return value;
+}
+
+const inferredFixedLast = lastFixedValue([{id: 'row'}, {id: 'row'}, {id: 'row'}]);
+expectTypeOf(inferredFixedLast).toBe<{readonly id: 'row'}>();
+// @ts-expect-error A valid replacement still cannot change a readonly property of the element.
+inferredFixedLast.id = 'row';
+// @ts-expect-error The input must be an array.
+type UnknownLastInput = LastArrayElement<unknown>;

@@ -1,4 +1,5 @@
 import type {If} from './if.d.ts';
+import type {Subtract} from './subtract.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -81,8 +82,9 @@ type _LastArrayElement<TArray extends UnknownArray> =
 type BeforeRestLastElement<BeforeRest extends UnknownArray, Accumulator = never> =
 	BeforeRest extends readonly []
 		? Accumulator | undefined
-		: BeforeRest extends readonly [...any, infer Last]
-			? Last | Accumulator
+		// Compare lengths so optional metadata does not make required tuple elements look optional.
+		: BeforeRest['length'] extends Required<BeforeRest>['length']
+			? BeforeRest[Subtract<BeforeRest['length'], 1>] | Accumulator
 			: BeforeRest extends readonly [...infer Rest, (infer Last)?]
 				? BeforeRestLastElement<
 					Rest,
