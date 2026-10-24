@@ -292,3 +292,8 @@ expectTypeOf(explicitlyUndefinedDetails.details).toBe<{value: string | number} |
 function _readIndexedNested<Extra>(value: SharedUnionFieldsDeep<{[key: string]: unknown; details: {value: string; extra: Extra}}>): string {
 	return value.details.value;
 }
+
+// A known disabled array-recursion flag preserves generic element values.
+function _readUnchangedArray<Value, Options extends {recurseIntoArrays: false}>(value: SharedUnionFieldsDeep<Value[], Options>): Value[] {
+	return value;
+}

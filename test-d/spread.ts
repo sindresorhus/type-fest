@@ -291,3 +291,29 @@ expectTypeOf(requiredStringAliasSpread).toBe<Spread<typeof requiredNumericAlias,
 expectTypeOf(requiredNumericAliasSpread).toBe<Spread<typeof requiredStringAlias, typeof requiredNumericAlias>>();
 expectTypeOf<keyof Spread<typeof requiredNumericAlias, typeof requiredStringAlias>>().toBe<keyof typeof requiredStringAliasSpread>();
 expectTypeOf<Pick<Spread<typeof requiredStringAlias, typeof requiredNumericAlias>, 0>>().toBe<{0: 'numeric'}>();
+
+// Shared readonly index signatures become writable, with values from either operand.
+declare const readonlyStringFirst: Readonly<Record<string, number>>;
+declare const readonlyStringSecond: Readonly<Record<string, string>>;
+const actualReadonlyStrings = {...readonlyStringFirst, ...readonlyStringSecond};
+declare const writableStrings: Spread<typeof readonlyStringFirst, typeof readonlyStringSecond>;
+expectTypeOf(writableStrings).toBeAssignableTo<typeof actualReadonlyStrings>();
+expectTypeOf(actualReadonlyStrings).toBeAssignableTo<typeof writableStrings>();
+writableStrings['entry'] = 1;
+writableStrings['entry'] = 'value';
+// @ts-expect-error The shared index signature still restricts its value type.
+writableStrings['entry'] = false;
+
+declare const writableNumbers: Spread<Readonly<Record<number, string>>, Readonly<Record<number, number>>>;
+writableNumbers[0] = 1;
+writableNumbers[1] = 'value';
+// @ts-expect-error Dropping readonly does not widen numeric index values.
+writableNumbers[2] = false;
+
+declare const writablePattern: Spread<{readonly [key: `row-${string}`]: string}, {readonly [key: `row-${string}`]: number}>;
+writablePattern['row-first'] = 1;
+writablePattern['row-second'] = 'value';
+// @ts-expect-error The template index signature still restricts its value type.
+writablePattern['row-third'] = false;
+// @ts-expect-error The template index signature does not accept unrelated keys.
+writablePattern['other'] = 1;

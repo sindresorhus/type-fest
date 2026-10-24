@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {Tagged} from '../source/tagged.d.ts';
-import type {ExtendsStrict} from '../source/extends-strict.d.ts';
+import type {ExtendsStrict, ExtendsStrictOptions} from '../source/extends-strict.d.ts';
 
 // Basic
 expectTypeOf<ExtendsStrict<string, string>>().toBe<true>();
@@ -120,3 +120,12 @@ expectTypeOf<ExtendsStrict<any, unknown, {strictAny: false; distributiveUnions: 
 
 // When `strictNever` is `false`, the result will be `true` and not `never` even if `distributiveUnions` is `true`
 expectTypeOf<ExtendsStrict<never, string, {strictNever: false; distributiveUnions: true}>>().toBe<true>();
+
+// Known results remain constructible when the unrelated options stay generic.
+function _constructKnownAssignable<Options extends ExtendsStrictOptions>(): ExtendsStrict<{id: 1}, {id: number}, Options> {
+	return true;
+}
+
+function _constructLooseAny<Options extends {strictAny: false; distributiveUnions: false}>(): ExtendsStrict<any, string, Options> {
+	return true;
+}
