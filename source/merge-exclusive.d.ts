@@ -1,9 +1,9 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {NormalizedKeys, ToString} from './internal/index.d.ts';
+import type {KeyAliases} from './internal/index.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 
 // Declared numeric and enum keys also have their runtime string spellings. Keep index signatures unchanged.
-type KeysWithAliases<Type> = KeysOfUnion<Type> | NormalizedKeys<ToString<KeysOfUnion<OmitIndexSignature<Type>>>>;
+type KeysWithAliases<Type> = KeysOfUnion<Type> | KeyAliases<KeysOfUnion<OmitIndexSignature<Type>>>;
 
 // Helper type. Not useful on its own. Distribute before taking keys so `never` adds no forbidden properties, while every union member contributes its own keys. Only declared keys can be forbidden; an open index domain would also block the other alternative.
 type Without<FirstType, SecondType> = {[KeyType in FirstType extends unknown ? Exclude<keyof OmitIndexSignature<FirstType>, KeysWithAliases<SecondType>> : never]?: never};

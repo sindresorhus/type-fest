@@ -1,4 +1,4 @@
-import type {IsArrayOfUnknownLength, NormalizedKeys, ObjectValue, ToString} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, KeyAliases, ObjectValue} from './internal/index.d.ts';
 import type {ArrayElement} from './array-element.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
@@ -30,7 +30,7 @@ type ExactObject<ParameterType, InputType, InputObject = Exclude<InputType, Prim
 	& Partial<Record<Exclude<KeysOfUnion<InputObject>, ExactObjectKeys<ParameterType>>, never>>;
 
 // Include aliases for declared keys, keeping index signatures in their original form.
-type ExactObjectKeys<Type> = KeysOfUnion<Type> | NormalizedKeys<ToString<keyof OmitIndexSignature<Type>>>;
+type ExactObjectKeys<Type> = KeysOfUnion<Type> | KeyAliases<keyof OmitIndexSignature<Type>>;
 
 /**
 Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.

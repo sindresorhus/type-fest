@@ -1,6 +1,6 @@
 import type {SimplifyObject} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
-import type {NormalizedKeys} from './internal/object.d.ts';
+import type {KeyAliases, NormalizedKeys} from './internal/object.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
@@ -196,8 +196,5 @@ type C = NormalizedLiteralKeys<{[x: string]: unknown}>;
 type NormalizedLiteralKeys<Type> = Type extends unknown // For distributing `Type`
 	? KeyAliases<keyof OmitIndexSignature<Type>>
 	: never; // Should never happen
-
-// Declared enum keys also name their runtime strings, which can in turn alias numeric keys.
-type KeyAliases<Keys extends PropertyKey> = NormalizedKeys<Keys | `${Keys & (string | number)}`>;
 
 export {};

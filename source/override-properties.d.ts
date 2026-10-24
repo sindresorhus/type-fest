@@ -1,4 +1,4 @@
-import type {LiteralKeyOf, NormalizedKeys} from './internal/index.d.ts';
+import type {KeyAliases, LiteralKeyOf} from './internal/index.d.ts';
 import type {Merge} from './merge.d.ts';
 
 /**
@@ -35,8 +35,8 @@ export type OverrideProperties<
 	// and the second bit with the mapped type is what enforces that we don't try
 	// to override properties that doesn't exist in the original type.
 	TOverride extends Partial<Record<keyof TOriginal, unknown>> & {
-		// A declared numeric property has the same name as its string spelling; bare index signatures keep their existing key constraint.
-		[Key in keyof TOverride]: Key extends keyof TOriginal | NormalizedKeys<LiteralKeyOf<TOriginal>>
+		// A declared numeric or enum property has the same name as its string spelling; bare index signatures keep their existing key constraint.
+		[Key in keyof TOverride]: Key extends keyof TOriginal | KeyAliases<LiteralKeyOf<TOriginal>>
 			? TOverride[Key]
 			: never;
 	},

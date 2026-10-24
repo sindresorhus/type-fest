@@ -341,4 +341,19 @@ export type NormalizedKeys<Keys extends PropertyKey> =
 	| StringToNumber<Keys & string>
 	| ToString<Keys & number>;
 
+/**
+Get the given keys with their numeric and string aliases, including the runtime string spelling of enum keys.
+
+@example
+```ts
+enum Color {
+	Red = 'red',
+}
+
+type A = KeyAliases<0 | Color.Red>;
+//=> 0 | '0' | Color.Red | 'red'
+```
+*/
+export type KeyAliases<Keys extends PropertyKey> = NormalizedKeys<Keys | ToString<Keys>>;
+
 export {};

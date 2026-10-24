@@ -1,4 +1,4 @@
-import type {NormalizedKeys, SimplifyObject, ToString} from './internal/index.d.ts';
+import type {KeyAliases, SimplifyObject} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
@@ -10,13 +10,13 @@ type SpreadObject<FirstType extends object, SecondType extends object> = {
 	// Required second properties replace the first property entirely, including its declared key spelling.
 	-readonly [Key in keyof Omit<
 		OmitIndexSignature<FirstType>,
-		NormalizedKeys<RequiredKeysOf<OmitIndexSignature<SecondType>> | ToString<RequiredKeysOf<OmitIndexSignature<SecondType>>>>
-	>]: Key extends NormalizedKeys<keyof OmitIndexSignature<SecondType> | ToString<keyof OmitIndexSignature<SecondType>>>
-		? FirstType[Key] | Required<OmitIndexSignature<SecondType>>[Extract<keyof OmitIndexSignature<SecondType>, NormalizedKeys<Key | ToString<Key>>>]
+		KeyAliases<RequiredKeysOf<OmitIndexSignature<SecondType>>>
+	>]: Key extends KeyAliases<keyof OmitIndexSignature<SecondType>>
+		? FirstType[Key] | Required<OmitIndexSignature<SecondType>>[Extract<keyof OmitIndexSignature<SecondType>, KeyAliases<Key>>]
 		: FirstType[Key];
 } & Pick<
 	{-readonly [Key in keyof OmitIndexSignature<SecondType>]: OmitIndexSignature<SecondType>[Key]},
-RequiredKeysOf<OmitIndexSignature<SecondType>> | Exclude<keyof OmitIndexSignature<SecondType>, NormalizedKeys<keyof OmitIndexSignature<FirstType> | ToString<keyof OmitIndexSignature<FirstType>>>>
+RequiredKeysOf<OmitIndexSignature<SecondType>> | Exclude<keyof OmitIndexSignature<SecondType>, KeyAliases<keyof OmitIndexSignature<FirstType>>>
 > & {
 	[Key in keyof PickIndexSignature<FirstType> & keyof PickIndexSignature<SecondType>]: PickIndexSignature<FirstType>[Key] | PickIndexSignature<SecondType>[Key];
 };

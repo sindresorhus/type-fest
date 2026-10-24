@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual} from '../../index.d.ts';
-import type {BuildObject, UndefinedToOptional} from '../../source/internal/index.d.ts';
+import type {BuildObject, KeyAliases, UndefinedToOptional} from '../../source/internal/index.d.ts';
 
 // `UndefinedToOptional` turns `a: string | undefined` into `a?: string`.
 expectTypeOf<IsEqual<UndefinedToOptional<{firstName: string; lastName: string | undefined}>, {firstName: string; lastName?: string}>>().toBe<true>();
@@ -92,3 +92,11 @@ expectTypeOf<UndefinedToOptional<{any: any; unknown: unknown; impossible: never;
 expectTypeOf<UndefinedToOptional<{value: string | (() => void)}>>().toBe<{}>();
 expectTypeOf<UndefinedToOptional<{value: {name: string}; other: string | symbol}>>().toBe<{value: {name: string}; other: string | symbol}>();
 expectTypeOf<UndefinedToOptional<{value: string | bigint}>>().toBe<{value: string | bigint}>();
+
+enum KeyAliasEnum {
+	Red = 'red',
+}
+
+expectTypeOf<KeyAliases<0 | KeyAliasEnum.Red>>().toBe<0 | '0' | KeyAliasEnum.Red | 'red'>();
+expectTypeOf<KeyAliases<'1' | symbol>>().toBe<'1' | 1 | symbol>();
+expectTypeOf<KeyAliases<string>>().toBe<string | number>();

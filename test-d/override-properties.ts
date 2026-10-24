@@ -92,3 +92,12 @@ type UnknownOverride = OverrideProperties<{0: string}, unknown>;
 expectTypeOf<OverrideProperties<unknown, {}>>().toBe<{}>();
 expectTypeOf<OverrideProperties<never, {0: number}>>().toBe<never>();
 expectTypeOf<OverrideProperties<{0: string}, never>>().toBe<never>();
+
+// A string enum key can be overridden by its runtime string spelling.
+enum OverrideEnumKey {
+	Name = 'name',
+}
+
+expectTypeOf<OverrideProperties<{[OverrideEnumKey.Name]: string; id: number}, {name: 'Ada'}>>().toBe<{name: 'Ada'; id: number}>();
+// @ts-expect-error A missing property still cannot be overridden.
+type MissingEnumOverride = OverrideProperties<{[OverrideEnumKey.Name]: string}, {other: 1}>;
