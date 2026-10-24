@@ -53,7 +53,7 @@ type _ArrayExclude<
 			// A tuple allows fewer than one element only when its first element is optional.
 			? TArray extends readonly [unknown, ...unknown[]]
 				? Exclude<First, TExclude> extends infer Element
-					// Box the result so never is tested without distributing.
+					// Box the result so `never` is tested without distributing.
 					? _ArrayExclude<Rest, TExclude, [Element] extends [never] ? BeforeRestAcc : [...BeforeRestAcc, Element], AfterRestAcc>
 					: never // Should never happen
 				: Exclude<First | If<IsExactOptionalPropertyTypesEnabled, never, undefined>, TExclude> extends infer Element // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.

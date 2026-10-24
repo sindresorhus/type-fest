@@ -141,7 +141,7 @@ expectTypeOf(correlatedEntry).toBe<['a', string] | ['b', number]>();
 declare const correlatedEntries: Entries<{a: string; b: number}>;
 expectTypeOf(correlatedEntries).toBe<Array<['a', string] | ['b', number]>>();
 
-// Optional class fields can be own properties holding undefined, even through an ordinary object type. Object.entries skips absent keys but still yields these present fields.
+// Optional class fields can be own properties holding `undefined`, even through an ordinary object type. `Object.entries` skips absent keys but still yields these present fields.
 declare const optionalCorrelatedEntry: Entry<{a: string; b?: number}>;
 expectTypeOf(optionalCorrelatedEntry).toBe<['a', string] | ['b', number | undefined]>();
 
