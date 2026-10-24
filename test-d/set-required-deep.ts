@@ -294,3 +294,10 @@ enum DeclaredRowKey {
 }
 const enumDeclaredRow: SetRequiredDeep<{[key: string]: {id?: number}; [DeclaredRowKey.Known]: {id?: number}}, 'known.id'> = {known: {id: 1}, dynamic: {}};
 expectTypeOf(enumDeclaredRow.known.id).toBe<number>();
+
+// A terminal path matches an enum key by its printed name, and an enum path matches a declared key.
+enum TerminalEnumKey {
+	Known = 'known',
+}
+expectTypeOf<SetRequiredDeep<{[TerminalEnumKey.Known]?: number; other?: number}, 'known'>>().toBe<{[TerminalEnumKey.Known]: number; other?: number}>();
+expectTypeOf<SetRequiredDeep<{known?: number; other?: number}, TerminalEnumKey.Known>>().toBe<{known: number; other?: number}>();

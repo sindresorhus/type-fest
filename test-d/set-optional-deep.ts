@@ -262,3 +262,24 @@ type UnknownBrandedPath = SetOptionalDeep<{a: string}, unknown>;
 
 // A wide autocomplete alternative must not erase the known nested selection.
 expectTypeOf<SetOptionalDeep<{a: {b: string | null; c?: number}; d?: string}, LiteralUnion<'a.b', string>>>().toBe<{a?: {b?: string | null; c?: number}; d?: string}>();
+
+// Making a declared descendant optional leaves unrelated dynamic rows unchanged.
+type IndexedRequiredRows = {[key: string]: {id: number}; known: {id: number}};
+expectTypeOf<SetOptionalDeep<IndexedRequiredRows, 'known.id'>['known']>().toBe<{id?: number}>();
+expectTypeOf<SetOptionalDeep<IndexedRequiredRows, 'known.id'>[string]>().toBe<{id: number}>();
+expectTypeOf<SetOptionalDeep<{[key: number]: {id: number}; 0: {id: number}}, '0.id'>[number]>().toBe<{id: number}>();
+expectTypeOf<SetOptionalDeep<Record<string, {id: number}>, 'dynamic.id'>[string]>().toBe<{id?: number}>();
+
+// A terminal path matches an enum key by its printed name, and an enum path matches a declared key.
+enum TerminalEnumKey {
+	Known = 'known',
+}
+enum TerminalNumericEnumKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetOptionalDeep<{[TerminalEnumKey.Known]: number; other: number}, 'known'>>().toBe<{[TerminalEnumKey.Known]?: number; other: number}>();
+expectTypeOf<SetOptionalDeep<{known: number; other: number}, TerminalEnumKey.Known>>().toBe<{known?: number; other: number}>();
+expectTypeOf<SetOptionalDeep<{[TerminalNumericEnumKey.One]: number; other: number}, '1'>>().toBe<{[TerminalNumericEnumKey.One]?: number; other: number}>();
+expectTypeOf<SetOptionalDeep<{1: number; other: number}, TerminalNumericEnumKey.One>>().toBe<{1?: number; other: number}>();
+expectTypeOf<SetOptionalDeep<[string, number], TerminalNumericEnumKey.One>>().toBe<[string, number?]>();

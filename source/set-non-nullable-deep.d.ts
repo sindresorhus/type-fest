@@ -1,4 +1,4 @@
-import type {NonRecursiveType, NormalizedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {NonRecursiveType, NormalizedKeys, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -79,18 +79,21 @@ type SetNonNullableDeepHelper<BaseType, KeyPaths> =
 		? BaseType
 		: BaseType extends NonRecursiveType | ReadonlySet<unknown> | ReadonlyMap<unknown, unknown> // Also distributes `BaseType`
 			? BaseType
-			: ([TerminalKeys<KeyPaths>] extends [never]
+			: ([TerminalKeys<KeyPaths, BaseType>] extends [never]
 				? BaseType
-				: SimplifyObject<SetNonNullable<BaseType, TerminalKeys<KeyPaths> & keyof BaseType>>) extends infer Result
+				: SimplifyObject<SetNonNullable<BaseType, TerminalKeys<KeyPaths, BaseType>>>) extends infer Result
 				? {[Key in keyof Result]: SetNonNullableDeepHelper<Result[Key], SubPaths<KeyPaths, Key, Result>>}
 				: never;
 
 /**
-Converts terminal paths to their numeric and string key spellings, keeping a numeric key such as `1.2` distinct from a dotted string path.
+Finds the keys of `BaseType` that the terminal paths name, matching numeric, string, and enum spellings, and keeping a numeric key such as `1.2` distinct from a dotted string path such as `'1.2'`.
 */
-type TerminalKeys<KeyPaths> = KeyPaths extends `${string}.${string}`
+type TerminalKeys<KeyPaths, BaseType> = KeyPaths extends `${string}.${string}`
 	? never
-	: NormalizedKeys<KeyPaths & PropertyKey>;
+	: NormalizedKeys<(KeyPaths & PropertyKey) | ToString<KeyPaths>> extends infer Keys
+		// An enum key and its literal spelling do not intersect, so declared keys are also matched by assignability. Index signatures are left out, because `number` is assignable to a numeric enum.
+		? (Keys & keyof BaseType) | Extract<keyof OmitIndexSignature<BaseType>, Keys>
+		: never;
 
 /**
 Finds the subpaths whose first property matches `Key` in `BaseType`. A declared property is selected on its own, without also changing its covering index signature.

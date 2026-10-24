@@ -329,3 +329,10 @@ enum DeclaredRowKey {
 }
 const enumDeclaredRow: SetNonNullableDeep<{[key: string]: {id: number | null}; [DeclaredRowKey.Known]: {id: number | null}}, 'known.id'> = {known: {id: 1}, dynamic: {id: null}};
 expectTypeOf(enumDeclaredRow.known.id).toBe<number>();
+
+// A terminal path matches an enum key by its printed name, and an enum path matches a declared key.
+enum TerminalEnumKey {
+	Known = 'known',
+}
+expectTypeOf<SetNonNullableDeep<{[TerminalEnumKey.Known]: number | null; other: number | null}, 'known'>>().toBe<{[TerminalEnumKey.Known]: number; other: number | null}>();
+expectTypeOf<SetNonNullableDeep<{known: number | null; other: number | null}, TerminalEnumKey.Known>>().toBe<{known: number; other: number | null}>();

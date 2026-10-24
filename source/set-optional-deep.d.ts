@@ -1,6 +1,7 @@
 import type {IsAny} from './is-any.d.ts';
-import type {NonRecursiveType, NormalizedKeys, UnwrapPathBrand} from './internal/index.d.ts';
+import type {NonRecursiveType, NormalizedKeys, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PartialDeep} from './partial-deep.d.ts';
 import type {Paths} from './paths.d.ts';
 import type {SetOptional} from './set-optional.d.ts';
@@ -56,22 +57,29 @@ type SetOptionalDeepHelper<BaseType, KeyPaths> =
 		: BaseType extends NonRecursiveType
 			? BaseType
 			: SetOptional<{
-				[Key in keyof BaseType]: SetOptionalDeepHelper<BaseType[Key], SubPaths<KeyPaths, Key>>;
-			}, TerminalKeys<KeyPaths> & keyof BaseType>;
+				[Key in keyof BaseType]: SetOptionalDeepHelper<BaseType[Key], SubPaths<KeyPaths, Key, BaseType>>;
+			}, TerminalKeys<KeyPaths, BaseType>>;
 
 /**
-Converts terminal paths into both numeric and string key spellings, keeping a numeric key such as `1.2` distinct from a dotted string path such as `'1.2'`.
+Finds the keys of `BaseType` that the terminal paths name, matching numeric, string, and enum spellings, and keeping a numeric key such as `1.2` distinct from a dotted string path such as `'1.2'`.
 */
-type TerminalKeys<KeyPaths> = KeyPaths extends `${string}.${string}`
+type TerminalKeys<KeyPaths, BaseType> = KeyPaths extends `${string}.${string}`
 	? never
-	: NormalizedKeys<KeyPaths & PropertyKey>;
+	: NormalizedKeys<(KeyPaths & PropertyKey) | ToString<KeyPaths>> extends infer Keys
+		// An enum key and its literal spelling do not intersect, so declared keys are also matched by assignability. Index signatures are left out, because `number` is assignable to a numeric enum.
+		? (Keys & keyof BaseType) | Extract<keyof OmitIndexSignature<BaseType>, Keys>
+		: never;
 
 /**
-Finds the subpaths whose first property matches `Key` in `BaseType`.
+Finds the subpaths whose first property matches `Key` in `BaseType`. A declared property is selected on its own, without also changing its covering index signature.
 */
-type SubPaths<KeyPaths, Key> = KeyPaths extends `${infer Property}.${infer RestPath}`
+type SubPaths<KeyPaths, Key, BaseType> = KeyPaths extends `${infer Property}.${infer RestPath}`
 	? Property extends `${Key & (string | number)}`
-		? RestPath
+		? Property extends `${keyof OmitIndexSignature<BaseType> & (string | number)}`
+			? `${Key & (string | number)}` extends Property
+				? RestPath
+				: never
+			: RestPath
 		: never
 	: never;
 
