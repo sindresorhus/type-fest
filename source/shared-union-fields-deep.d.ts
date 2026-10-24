@@ -114,7 +114,7 @@ type _SharedUnionFieldsDeep<Union, OptionsWithDefaults extends Required<SharedUn
 				: Union;
 
 /**
-Same as `SharedUnionFieldsDeep`, but accepts only `object`s and as inputs. Internal helper for `SharedUnionFieldsDeep`.
+Same as `SharedUnionFieldsDeep`, but accepts only `object`s as inputs. Internal helper for `SharedUnionFieldsDeep`.
 */
 type SharedObjectUnionFieldsDeep<Union, Options extends Required<SharedUnionFieldsDeepOptions>> =
 	// Merge shared index domains and declared fields before mapping them, retaining known properties without distributing the union.
@@ -123,16 +123,16 @@ type SharedObjectUnionFieldsDeep<Union, Options extends Required<SharedUnionFiel
 			[Key in keyof Shared]:
 			Shared[Key] extends NonRecursiveType
 				? Shared[Key]
-			// Remove `undefined` from the union to support optional
-			// fields, then recover `undefined` if union was already undefined.
+				// Remove `undefined` from the union to support optional
+				// fields, then recover `undefined` if union was already undefined.
 				: _SharedUnionFieldsDeep<Exclude<Shared[Key], undefined>, Options> | (
-						undefined extends Required<Shared>[Key] ? undefined : never
-					)
+					undefined extends Required<Shared>[Key] ? undefined : never
+				)
 		}
 		: Union;
 
 /**
-Same as `SharedUnionFieldsDeep`, but accepts only `UnknownArray`s and as inputs. Internal helper for `SharedUnionFieldsDeep`.
+Same as `SharedUnionFieldsDeep`, but accepts only `UnknownArray`s as inputs. Internal helper for `SharedUnionFieldsDeep`.
 */
 type SharedArrayUnionFieldsDeep<Union extends UnknownArray, Options extends Required<SharedUnionFieldsDeepOptions>> =
 	// Restore the readonly modifier of the array.
