@@ -287,3 +287,10 @@ expectTypeOf<SetOptionalDeep<[string, number], TerminalNumericEnumKey.One>>().to
 // A numeric path that a `number` index signature covers leaves the index signature unchanged.
 expectTypeOf<SetOptionalDeep<{[key: number]: string; [TerminalNumericEnumKey.One]: string; a: string}, 1>>().toBe<{[key: number]: string; [TerminalNumericEnumKey.One]?: string; a: string}>();
 expectTypeOf<SetOptionalDeep<{[key: number]: string; [TerminalNumericEnumKey.One]: string; a: string}, '1'>>().toBe<{[key: number]: string; [TerminalNumericEnumKey.One]?: string; a: string}>();
+
+// A noncanonical numeric segment, such as `01`, does not name an array index or a number key, but it is still a string key.
+expectTypeOf<SetOptionalDeep<{a: Array<{id: number}>}, 'a.01.id'>>().toBe<{a: Array<{id: number}>}>();
+expectTypeOf<SetOptionalDeep<{a: [{id: number}, {id: number}]}, 'a.01.id'>>().toBe<{a: [{id: number}, {id: number}]}>();
+expectTypeOf<SetOptionalDeep<{[key: number]: {id: number}}, '01.id'>>().toBe<{[key: number]: {id: number}}>();
+expectTypeOf<SetOptionalDeep<{[key: string]: {id: number}}, '01.id'>[string]>().toBe<{id?: number}>();
+expectTypeOf<SetOptionalDeep<{a: Array<{id: number}>}, 'a.1.id'>>().toBe<{a: Array<{id?: number}>}>();

@@ -343,3 +343,10 @@ enum TerminalNumericEnumKey {
 	One,
 }
 expectTypeOf<SetNonNullableDeep<{[key: number]: string | null; [TerminalNumericEnumKey.One]: string | null; a: string | null}, 1>>().toBe<{[key: number]: string | null; [TerminalNumericEnumKey.One]: string; a: string | null}>();
+
+// A noncanonical numeric segment, such as `01`, does not name an array index or a number key, but it is still a string key.
+expectTypeOf<SetNonNullableDeep<{a: Array<{id: number | null}>}, 'a.01.id'>>().toBe<{a: Array<{id: number | null}>}>();
+expectTypeOf<SetNonNullableDeep<{a: [{id: number | null}, {id: number | null}]}, 'a.01.id'>>().toBe<{a: [{id: number | null}, {id: number | null}]}>();
+expectTypeOf<SetNonNullableDeep<{[key: number]: {id: number | null}}, '01.id'>>().toBe<{[key: number]: {id: number | null}}>();
+expectTypeOf<SetNonNullableDeep<{[key: string]: {id: number | null}}, '01.id'>[string]>().toBe<{id: number}>();
+expectTypeOf<SetNonNullableDeep<{a: Array<{id: number | null}>}, 'a.1.id'>>().toBe<{a: Array<{id: number}>}>();

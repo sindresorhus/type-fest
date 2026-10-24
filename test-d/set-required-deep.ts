@@ -301,3 +301,18 @@ enum TerminalEnumKey {
 }
 expectTypeOf<SetRequiredDeep<{[TerminalEnumKey.Known]?: number; other?: number}, 'known'>>().toBe<{[TerminalEnumKey.Known]: number; other?: number}>();
 expectTypeOf<SetRequiredDeep<{known?: number; other?: number}, TerminalEnumKey.Known>>().toBe<{known: number; other?: number}>();
+
+// A noncanonical numeric segment, such as `01`, does not name an array index or a number key, but it is still a string key.
+expectTypeOf<SetRequiredDeep<{a: Array<{id?: number}>}, 'a.01.id'>>().toBe<{a: Array<{id?: number}>}>();
+expectTypeOf<SetRequiredDeep<{a: [{id?: number}, {id?: number}]}, 'a.01.id'>>().toBe<{a: [{id?: number}, {id?: number}]}>();
+expectTypeOf<SetRequiredDeep<{[key: number]: {id?: number}}, '01.id'>>().toBe<{[key: number]: {id?: number}}>();
+expectTypeOf<SetRequiredDeep<{1: {id?: number}}, '01.id'>>().toBe<{1: {id?: number}}>();
+expectTypeOf<SetRequiredDeep<{'01': {id?: number}}, '01.id'>>().toBe<{'01': {id: number}}>();
+expectTypeOf<SetRequiredDeep<{[key: string]: {id?: number}}, '01.id'>[string]>().toBe<{id: number}>();
+expectTypeOf<SetRequiredDeep<{a: Array<{id?: number}>}, 'a.1.id'>>().toBe<{a: Array<{id: number}>}>();
+enum SegmentNumericEnumKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetRequiredDeep<{[SegmentNumericEnumKey.One]: {id?: number}}, '1.id'>>().toBe<{[SegmentNumericEnumKey.One]: {id: number}}>();
+expectTypeOf<SetRequiredDeep<{[SegmentNumericEnumKey.One]: {id?: number}}, '01.id'>>().toBe<{[SegmentNumericEnumKey.One]: {id?: number}}>();

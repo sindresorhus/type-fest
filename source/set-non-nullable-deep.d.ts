@@ -1,4 +1,4 @@
-import type {NonRecursiveType, NormalizedKeys, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ExactKey, NonRecursiveType, NormalizedKeys, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {NonNullableDeep} from './non-nullable-deep.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -100,7 +100,8 @@ type TerminalKeys<KeyPaths, BaseType> = KeyPaths extends `${string}.${string}`
 Finds the subpaths whose first property matches `Key` in `BaseType`. A declared property is selected on its own, without also changing its covering index signature.
 */
 type SubPaths<KeyPaths, Key, BaseType> = KeyPaths extends `${infer Property}.${infer RestPath}`
-	? Property extends `${Key & (string | number)}`
+	// A noncanonical numeric segment, such as `01`, does not name a number key or an array index.
+	? Property extends ToString<(Key & string) | ExactKey<Record<Key & number, unknown>, Property>>
 		? Property extends `${keyof OmitIndexSignature<BaseType> & (string | number)}`
 			? `${Key & (string | number)}` extends Property
 				? RestPath
