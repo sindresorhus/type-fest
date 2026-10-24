@@ -141,3 +141,15 @@ expectTypeOf<{value: null}>().not.toBeAssignableTo<SetNonNullable<{value: string
 // A broad branded selector keeps the same coverage as the corresponding index signature.
 expectTypeOf<SetNonNullable<{[key: string]: unknown; value?: string | null}, Tagged<string, 'Key'>>>()
 	.toBe<SetNonNullable<{[key: string]: unknown; value?: string | null}, string>>();
+
+// An enum selector reaches the ordinary property with its value's name.
+expectTypeOf<SetNonNullable<{value: string | null}, SelectorKey.Value>>().toBe<{value: string}>();
+function _readNonNullableEnumSelection(value: SetNonNullable<{value: string | null}, SelectorKey.Value>): string {
+	return value.value;
+}
+
+expectTypeOf<SetNonNullable<{readonly value?: string | null; keep: number | null}, Tagged<SelectorKey.Value, 'Key'>>>()
+	.toBe<{readonly value?: string; keep: number | null}>();
+expectTypeOf<SetNonNullable<{value: any}, SelectorKey.Value>>().toBe<{value: any}>();
+expectTypeOf<SetNonNullable<{value: never}, SelectorKey.Value>>().toBe<{value: never}>();
+expectTypeOf<SetNonNullable<{value: unknown}, SelectorKey.Value>>().toBe<{value: {}}>();

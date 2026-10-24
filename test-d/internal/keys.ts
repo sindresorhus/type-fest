@@ -134,3 +134,11 @@ function _exactNumericKey<Value>(key: number): ExactKey<Record<number, Value>, n
 function _readExactLiteralKey<Value>(key: ExactKey<{0: Value}, '0'>): 0 {
 	return key;
 }
+
+// Enum selectors compare by their string spelling without changing declared key identity.
+enum ExcludedField {
+	Value = 'value',
+}
+expectTypeOf<KeysExcept<{value: string; keep: number}, ExcludedField.Value>>().toBe<'keep'>();
+expectTypeOf<KeysExcept<{[ExcludedField.Value]: string; keep: number}, ExcludedField.Value>>().toBe<'keep'>();
+expectTypeOf<KeysExcept<{[key: number]: unknown; '00': string}, number>>().toBe<'00'>();

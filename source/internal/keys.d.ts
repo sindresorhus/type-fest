@@ -108,6 +108,6 @@ type Tuple = KeysExcept<[string, number, boolean], 0>;
 */
 export type KeysExcept<Type, Keys> = Type extends UnknownArray
 	? Exclude<keyof Type & `${number}`, `${Keys & (string | number)}`>
-	: Exclude<keyof Type, Keys>;
+	: Exclude<keyof Type, Keys | ToString<Keys & string>>;
 
 export {};

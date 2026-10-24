@@ -119,3 +119,16 @@ expectTypeOf<{}>().not.toBeAssignableTo<typeof autocompleteField>();
 declare const autocompleteNumericField: SetFieldType<{[key: number]: unknown; readonly 0?: string}, LiteralUnion<0, number>, boolean, {preservePropertyModifiers: false}>;
 expectTypeOf(autocompleteNumericField[0]).toBe<boolean>();
 expectTypeOf<{}>().not.toBeAssignableTo<typeof autocompleteNumericField>();
+
+// An enum selector also removes the ordinary field's modifiers when requested.
+declare const enumFieldWithoutModifiers: SetFieldType<{readonly value?: string; other: number}, SelectorKey.Value, boolean, {preservePropertyModifiers: false}>;
+expectTypeOf(enumFieldWithoutModifiers).toBe<{value: boolean; other: number}>();
+enumFieldWithoutModifiers.value = true;
+expectTypeOf<{other: number}>().not.toBeAssignableTo<typeof enumFieldWithoutModifiers>();
+
+// Modifier removal keeps the declared key when the source itself uses an enum.
+type EnumFieldSource = {readonly [SelectorKey.Value]?: string; keep: number};
+declare let changedEnumSource: SetFieldType<EnumFieldSource, Tagged<SelectorKey.Value, 'Key'>, boolean, {preservePropertyModifiers: false}>;
+expectTypeOf<keyof typeof changedEnumSource>().toBe<keyof EnumFieldSource>();
+changedEnumSource[SelectorKey.Value] = true;
+expectTypeOf(changedEnumSource[SelectorKey.Value]).toBe<boolean>();

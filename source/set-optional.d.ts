@@ -1,6 +1,6 @@
 import type {Except} from './except.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SimplifyObject, UnwrapBrand} from './internal/index.d.ts';
+import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SimplifyObject, ToString, UnwrapBrand} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -61,9 +61,9 @@ type _SetOptional<BaseType, Keys> =
 
 type _SetObjectOptional<BaseType, Keys> = SimplifyObject<
 	// Pick just the keys that are not made optional from the base type.
-	Except<BaseType, Keys & keyof BaseType>
+	Except<BaseType, (Keys | ToString<Keys & string>) & keyof BaseType>
 	// Pick the keys that should be optional from the base type and make them optional.
-	& Partial<HomomorphicPick<BaseType, Keys & keyof BaseType>>
+	& Partial<HomomorphicPick<BaseType, (Keys | ToString<Keys & string>) & keyof BaseType>>
 >;
 
 /**

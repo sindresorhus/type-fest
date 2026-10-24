@@ -99,3 +99,11 @@ expectTypeOf<SetRequiredExcept<RequiredExceptIndex, Tagged<string, 'Key'>>>().to
 declare const brandedRequiredExceptCallable: SetRequiredExcept<{(this: Date, value: string): number; id?: string; other?: number}, Tagged<'id', 'Key'>>;
 expectTypeOf(brandedRequiredExceptCallable.call(new Date(), 'value')).toBe<number>();
 expectTypeOf<Omit<typeof brandedRequiredExceptCallable, never>>().toBe<{id?: string; other: number}>();
+
+// An enum exemption leaves the ordinary property with its value's name optional.
+const requiredExceptEnumSelection: SetRequiredExcept<{id?: string; other?: number}, RequiredExceptField.Id> = {other: 1};
+expectTypeOf(requiredExceptEnumSelection).toBe<{id?: string; other: number}>();
+
+expectTypeOf<SetRequiredExcept<{readonly [RequiredExceptField.Id]?: string; other?: number}, RequiredExceptField.Id>>()
+	.toBe<{readonly [RequiredExceptField.Id]?: string; other: number}>();
+expectTypeOf<SetRequiredExcept<{id?: string; other?: number}, Tagged<RequiredExceptField.Id, 'Key'>>>().toBe<{id?: string; other: number}>();

@@ -135,3 +135,13 @@ expectTypeOf<Omit<BrandedReadonlyCallable, never>>().toBe<{readonly value: strin
 // A broad branded selector keeps the same coverage as the corresponding index signature.
 expectTypeOf<SetReadonly<{[key: string]: unknown; value?: string | null}, Tagged<string, 'Key'>>>()
 	.toBe<SetReadonly<{[key: string]: unknown; value?: string | null}, string>>();
+
+// An enum selector reaches the ordinary property with its value's name.
+declare const readonlyEnumSelection: SetReadonly<{value: string}, SelectorKey.Value>;
+expectTypeOf(readonlyEnumSelection).toBe<{readonly value: string}>();
+// @ts-expect-error A valid value still cannot overwrite the selected readonly field.
+readonlyEnumSelection.value = 'changed';
+
+expectTypeOf<SetReadonly<{[SelectorKey.Value]?: string; keep: number}, SelectorKey.Value>>()
+	.toBe<{readonly [SelectorKey.Value]?: string; keep: number}>();
+expectTypeOf<SetReadonly<{value: string; keep: number}, Tagged<SelectorKey.Value, 'Key'>>>().toBe<{readonly value: string; keep: number}>();

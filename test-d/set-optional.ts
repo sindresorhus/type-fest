@@ -249,3 +249,11 @@ expectTypeOf<BrandedOptionalCallable['value']>().toBe<string | undefined>();
 // A broad branded selector keeps the same coverage as the corresponding index signature.
 expectTypeOf<SetOptional<{[key: string]: unknown; value?: string | null}, Tagged<string, 'Key'>>>()
 	.toBe<SetOptional<{[key: string]: unknown; value?: string | null}, string>>();
+
+// An enum selector reaches the ordinary property with its value's name.
+const optionalEnumSelection: SetOptional<{value: string}, SelectorKey.Value> = {};
+expectTypeOf(optionalEnumSelection).toBe<{value?: string}>();
+
+expectTypeOf<SetOptional<{readonly [SelectorKey.Value]: string; keep: number}, SelectorKey.Value>>()
+	.toBe<{readonly [SelectorKey.Value]?: string; keep: number}>();
+expectTypeOf<SetOptional<{value: string; keep: number}, Tagged<SelectorKey.Value, 'Key'>>>().toBe<{value?: string; keep: number}>();

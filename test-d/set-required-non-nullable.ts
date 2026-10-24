@@ -495,3 +495,21 @@ declare const autocompleteSelectedKey: SetRequiredNonNullable<Record<string, str
 expectTypeOf(autocompleteSelectedKey.id).toBe<string>();
 expectTypeOf<{}>().not.toBeAssignableTo<SetRequiredNonNullable<Record<string, string | null>, LiteralUnion<'id', string>>>();
 expectTypeOf<SetRequiredNonNullable<[string | null], LiteralUnion<0, number>>[0]>().toBe<string>();
+
+// An enum selector narrows the ordinary field with its value's name too.
+declare const nonNullishEnumSelection: SetRequiredNonNullable<{id?: string | null; other: number}, NonNullishField.Id>;
+expectTypeOf(nonNullishEnumSelection.id).toBe<string>();
+expectTypeOf<{other: number}>().not.toBeAssignableTo<typeof nonNullishEnumSelection>();
+
+function _constructNonNullishEnum<Value extends string>(value: Value): SetRequiredNonNullable<{readonly id?: Value | null}, NonNullishField.Id> {
+	return {id: value};
+}
+
+function _readNonNullishEnum<Value extends string>(value: SetRequiredNonNullable<{readonly id?: Value | null}, NonNullishField.Id>): Value {
+	return value.id;
+}
+
+declare const readonlyEnumSource: SetRequiredNonNullable<{readonly [NonNullishField.Id]?: string | null}, Tagged<NonNullishField.Id, 'Key'>>;
+expectTypeOf<keyof typeof readonlyEnumSource>().toBe<NonNullishField.Id>();
+// @ts-expect-error The original constrained map retains readonly on a nominal source key.
+readonlyEnumSource[NonNullishField.Id] = 'valid';

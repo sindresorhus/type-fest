@@ -300,3 +300,14 @@ expectTypeOf<BrandedRequiredCallable['value']>().toBe<string>();
 // A broad branded selector keeps the same coverage as the corresponding index signature.
 expectTypeOf<SetRequired<{[key: string]: unknown; value?: string | null}, Tagged<string, 'Key'>>>()
 	.toBe<SetRequired<{[key: string]: unknown; value?: string | null}, string>>();
+
+// An enum selector reaches the ordinary property with its value's name.
+expectTypeOf<SetRequired<{value?: string}, SelectorKey.Value>>().toBe<{value: string}>();
+function _readRequiredEnumSelection(value: SetRequired<{value?: string}, SelectorKey.Value>): string {
+	return value.value;
+}
+
+// Printing a selector does not change nominal source keys or their modifiers.
+expectTypeOf<keyof SetRequired<{readonly [SelectorKey.Value]?: string}, SelectorKey.Value>>().toBe<SelectorKey.Value>();
+expectTypeOf<SetRequired<{[key: string]: unknown; readonly value?: string}, Tagged<SelectorKey.Value, 'Key'>>>()
+	.toBe<{[key: string]: unknown; readonly value: string}>();

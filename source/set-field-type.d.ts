@@ -1,5 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {ApplyDefaultOptions, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 
 export type SetFieldTypeOptions = {
 	/**
@@ -69,11 +69,11 @@ type _SetFieldType<BaseType, Keys, NewType, Options extends Required<SetFieldTyp
 						: BaseType[P]
 					: BaseType[P];
 		} & (
-			// `Record` is used to remove property modifiers. A tuple is left out of it: `Record` over `number` answers with every member an array has, which is not a tuple.
+			// `Record` is used to remove property modifiers. Matching declared spellings are added without replacing the original selector, so autocomplete unions retain their known required members beside index signatures. A tuple is left out of it: `Record` over `number` answers with every member an array has, which is not a tuple.
 			Options['preservePropertyModifiers'] extends false
 				? BaseType extends readonly unknown[]
 					? unknown
-					: Record<Keys & keyof BaseType & PropertyKey, NewType>
+					: Record<(Keys | Extract<keyof BaseType, ToString<Keys & string>>) & keyof BaseType & PropertyKey, NewType>
 				: unknown
 		)>
 		: never; // Should never happen
