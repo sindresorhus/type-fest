@@ -125,4 +125,38 @@ export type KeysExcept<Type, Keys> = Type extends UnknownArray
 	? Exclude<keyof Type & `${number}`, `${Keys & (string | number)}`>
 	: Exclude<keyof Type, Keys | ToString<Keys & string>>;
 
+/**
+Returns the keys of `Type` that the given `Keys` select.
+
+A string enum member also selects the declared key with its value's name. A numeric enum member selects the declared key with its value, but not a `number` index signature. It is matched by its value, because `number` is assignable to a numeric enum.
+
+@example
+```
+enum Index {
+	Zero,
+	One,
+}
+
+type Keys = SelectedKeys<{[key: number]: string; 0: string; 1: string}, Index.One>;
+//=> 1
+```
+*/
+export type SelectedKeys<Type, Keys> =
+	| (KeySelector<Keys> & keyof Type)
+	// An enum key and its value do not intersect, so declared keys are also matched by assignability.
+	| Extract<KeySelector<Keys>, keyof Type>;
+
+/**
+Replaces a numeric enum member with its value, and adds the value's name of a string enum member.
+*/
+type KeySelector<Key> =
+	Key extends unknown // To distribute `Key`
+		// A wide key, such as `number` or `string & {}`, is kept as is.
+		? {} extends Record<Key & PropertyKey, never>
+			? Key
+			: Key extends number
+				? `${Key}` extends `${infer Value extends number}` ? Value : Key
+				: Key | ToString<Key & string>
+		: never;
+
 export {};

@@ -1,4 +1,4 @@
-import type {UnwrapPathBrand} from './internal/index.d.ts';
+import type {SelectedKeys, UnwrapPathBrand} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts'; // For `@link`
 
@@ -40,7 +40,7 @@ export type SetNullable<BaseType, Keys extends KeysOfUnion<BaseType> = KeysOfUni
 // A homomorphic mapped type over a type parameter is applied to each member of a union on its own, so a key that only some members have reaches those members.
 type SetNullableImplementation<BaseType, Keys> = {
 	// A tuple is keyed by a number, but a homomorphic mapped type hands its elements over under their string form, so `Key extends Keys` would compare `"0"` against `0` and never match. Both forms of a key are therefore accepted.
-	[Key in keyof BaseType]: Key extends Keys
+	[Key in keyof BaseType]: Key extends SelectedKeys<BaseType, Keys>
 		? BaseType[Key] | null
 		: Key extends string | number
 			? `${Key}` extends `${Keys & (string | number)}`

@@ -145,3 +145,14 @@ readonlyEnumSelection.value = 'changed';
 expectTypeOf<SetReadonly<{[SelectorKey.Value]?: string; keep: number}, SelectorKey.Value>>()
 	.toBe<{readonly [SelectorKey.Value]?: string; keep: number}>();
 expectTypeOf<SetReadonly<{value: string; keep: number}, Tagged<SelectorKey.Value, 'Key'>>>().toBe<{readonly value: string; keep: number}>();
+
+// A numeric enum selector selects the declared key with its value, but not a `number` index signature, even though `number` is assignable to a numeric enum.
+enum NumericSelectorKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetReadonly<{[key: number]: string; 1: string}, NumericSelectorKey.One>>().toBe<{[key: number]: string; readonly 1: string}>();
+expectTypeOf<SetReadonly<{[key: number]: string; [NumericSelectorKey.One]: string}, NumericSelectorKey.One>>().toBe<{[key: number]: string; readonly [NumericSelectorKey.One]: string}>();
+expectTypeOf<SetReadonly<{0: string; 1: number}, NumericSelectorKey.Zero>>().toBe<{readonly 0: string; 1: number}>();
+expectTypeOf<SetReadonly<{[NumericSelectorKey.One]: string; other: number}, NumericSelectorKey.One>>().toBe<{readonly [NumericSelectorKey.One]: string; other: number}>();
+expectTypeOf<SetReadonly<{[NumericSelectorKey.One]: string; other: number}, 1>>().toBe<{readonly [NumericSelectorKey.One]: string; other: number}>();

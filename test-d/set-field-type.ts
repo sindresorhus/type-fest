@@ -140,3 +140,17 @@ expectTypeOf<{}>().not.toBeAssignableTo<typeof autocompleteTemplateField>();
 
 // An empty intersection on a template literal selector resolves like the template literal itself.
 expectTypeOf<SetFieldType<{[key: `on${string}`]: unknown; onClick?: () => void}, 'onClick' | (`on${string}` & {}), Date>>().toBe<{[key: `on${string}`]: Date; onClick?: Date}>();
+
+// A numeric enum selector selects the declared key with its value, but not a `number` index signature, even though `number` is assignable to a numeric enum.
+enum NumericSelectorKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetFieldType<{[key: number]: string | boolean; 1: string}, NumericSelectorKey.One, boolean>>().toBe<{[key: number]: string | boolean; 1: boolean}>();
+expectTypeOf<SetFieldType<{[key: number]: string | boolean; readonly 1?: string}, NumericSelectorKey.One, boolean, {preservePropertyModifiers: false}>>()
+	.toBe<{[key: number]: string | boolean; 1: boolean}>();
+expectTypeOf<SetFieldType<{0: string; 1: number}, NumericSelectorKey.Zero, boolean>>().toBe<{0: boolean; 1: number}>();
+expectTypeOf<SetFieldType<{readonly 0?: string; 1: number}, NumericSelectorKey.Zero, boolean, {preservePropertyModifiers: false}>>().toBe<{0: boolean; 1: number}>();
+expectTypeOf<SetFieldType<{[NumericSelectorKey.One]: string; other: number}, NumericSelectorKey.One, boolean>>().toBe<{[NumericSelectorKey.One]: boolean; other: number}>();
+expectTypeOf<SetFieldType<{[NumericSelectorKey.One]: string; other: number}, 1, boolean>>().toBe<{[NumericSelectorKey.One]: boolean; other: number}>();
+expectTypeOf<SetFieldType<string[], NumericSelectorKey.Zero, boolean>>().toBe<string[]>();

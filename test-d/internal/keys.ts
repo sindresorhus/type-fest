@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, IsLiteral, Tagged} from '../../index.d.ts';
-import type {DeduplicatedKeys, DefinedKeyFilter, ExactKey, KeysExcept, LiteralKeyOf, OptionalKeyFilter} from '../../source/internal/index.d.ts';
+import type {IsEqual, IsLiteral, LiteralUnion, Tagged} from '../../index.d.ts';
+import type {DeduplicatedKeys, DefinedKeyFilter, ExactKey, KeysExcept, LiteralKeyOf, OptionalKeyFilter, SelectedKeys} from '../../source/internal/index.d.ts';
 
 // A property whose type includes `undefined` is optional, one that is only `undefined` is neither.
 expectTypeOf<IsEqual<DefinedKeyFilter<{a: 1; b: string | undefined}, 'a'>, 'a'>>().toBe<true>();
@@ -148,3 +148,20 @@ expectTypeOf<IsEqual<DeduplicatedKeys<0 | '0' | ExcludedField.Value | 'value' | 
 expectTypeOf<IsEqual<DeduplicatedKeys<'00' | 0>, '00' | 0>>().toBe<true>();
 expectTypeOf<IsEqual<DeduplicatedKeys<string | number>, string | number>>().toBe<true>();
 expectTypeOf<IsEqual<DeduplicatedKeys<never>, never>>().toBe<true>();
+
+// A numeric enum member selects the declared key with its value, but not a `number` index signature. A string enum member also selects the key with its value's name.
+enum SelectedIndex {
+	Zero,
+	One,
+}
+enum SelectedField {
+	Value = 'value',
+}
+expectTypeOf<SelectedKeys<{[key: number]: string; 0: string; 1: string}, SelectedIndex.One>>().toBe<1>();
+expectTypeOf<SelectedKeys<{0: string; 1: string}, SelectedIndex.Zero>>().toBe<0>();
+expectTypeOf<SelectedKeys<{[SelectedIndex.One]: string; other: string}, 1>>().toBe<1>();
+expectTypeOf<SelectedKeys<{[key: number]: string; 1: string}, number>>().toBe<number>();
+expectTypeOf<SelectedKeys<{value: string; other: string}, SelectedField.Value>>().toBe<SelectedField.Value | 'value'>();
+expectTypeOf<SelectedKeys<{[key: string]: unknown; value: string}, LiteralUnion<'value', string>>>().toBe<LiteralUnion<'value', string>>();
+expectTypeOf<SelectedKeys<{a: string}, never>>().toBe<never>();
+expectTypeOf<SelectedKeys<{a: string}, any>>().toBe<any>();

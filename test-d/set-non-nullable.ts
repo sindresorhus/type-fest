@@ -153,3 +153,17 @@ expectTypeOf<SetNonNullable<{readonly value?: string | null; keep: number | null
 expectTypeOf<SetNonNullable<{value: any}, SelectorKey.Value>>().toBe<{value: any}>();
 expectTypeOf<SetNonNullable<{value: never}, SelectorKey.Value>>().toBe<{value: never}>();
 expectTypeOf<SetNonNullable<{value: unknown}, SelectorKey.Value>>().toBe<{value: {}}>();
+
+// A numeric enum selector selects the declared key with its value, but not a `number` index signature, even though `number` is assignable to a numeric enum.
+enum NumericSelectorKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetNonNullable<{[key: number]: string | null; 1: string | null}, NumericSelectorKey.One>>().toBe<{[key: number]: string | null; 1: string}>();
+expectTypeOf<SetNonNullable<{[key: number]: string | null; [NumericSelectorKey.One]: string | null}, NumericSelectorKey.One>>()
+	.toBe<{[key: number]: string | null; [NumericSelectorKey.One]: string}>();
+expectTypeOf<SetNonNullable<{0: string | null; 1: number | null}, NumericSelectorKey.Zero>>().toBe<{0: string; 1: number | null}>();
+expectTypeOf<SetNonNullable<{[NumericSelectorKey.One]?: string | null; other: number | null}, NumericSelectorKey.One>>().toBe<{[NumericSelectorKey.One]?: string; other: number | null}>();
+expectTypeOf<SetNonNullable<{[NumericSelectorKey.One]?: string | null; other: number | null}, 1>>().toBe<{[NumericSelectorKey.One]?: string; other: number | null}>();
+expectTypeOf<SetNonNullable<Array<string | null>, NumericSelectorKey.Zero>>().toBe<Array<string | null>>();
+expectTypeOf<SetNonNullable<[string | null, string | null], NumericSelectorKey.One>>().toBe<[string | null, string]>();

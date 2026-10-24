@@ -257,3 +257,15 @@ expectTypeOf(optionalEnumSelection).toBe<{value?: string}>();
 expectTypeOf<SetOptional<{readonly [SelectorKey.Value]: string; keep: number}, SelectorKey.Value>>()
 	.toBe<{readonly [SelectorKey.Value]?: string; keep: number}>();
 expectTypeOf<SetOptional<{value: string; keep: number}, Tagged<SelectorKey.Value, 'Key'>>>().toBe<{value?: string; keep: number}>();
+
+// A numeric enum selector selects the declared key with its value, but not a `number` index signature, even though `number` is assignable to a numeric enum.
+enum NumericSelectorKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetOptional<{[key: number]: string; 1: string}, NumericSelectorKey.One>>().toBe<{[key: number]: string; 1?: string}>();
+expectTypeOf<SetOptional<{[key: number]: string; [NumericSelectorKey.One]: string}, NumericSelectorKey.One>>().toBe<{[key: number]: string; [NumericSelectorKey.One]?: string}>();
+expectTypeOf<SetOptional<{0: string; 1: number}, NumericSelectorKey.Zero>>().toBe<{0?: string; 1: number}>();
+expectTypeOf<SetOptional<{[NumericSelectorKey.One]: string; other: number}, NumericSelectorKey.One>>().toBe<{[NumericSelectorKey.One]?: string; other: number}>();
+expectTypeOf<SetOptional<{[NumericSelectorKey.One]: string; other: number}, 1>>().toBe<{[NumericSelectorKey.One]?: string; other: number}>();
+expectTypeOf<SetOptional<[string, number], NumericSelectorKey.One>>().toBe<[string, number?]>();

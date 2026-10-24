@@ -1,4 +1,4 @@
-import type {IsArrayReadonly, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {IsArrayReadonly, SelectedKeys, UnwrapPathBrand} from './internal/index.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -56,12 +56,12 @@ type SetNonNullableImplementation<BaseType, Keys> =
 						? Readonly<SetArrayNonNullable<BaseType, Keys>>
 						: SetArrayNonNullable<BaseType, Keys>
 					: {
-						[Key in keyof BaseType]: Key extends Keys & keyof BaseType
+						[Key in keyof BaseType]: Key extends SelectedKeys<BaseType, Keys>
 							? NonNullable<BaseType[Key]>
 							: BaseType[Key];
 					}
 			: {
-				[Key in keyof BaseType]: Key extends (Keys | ToString<Keys & string>) & keyof BaseType
+				[Key in keyof BaseType]: Key extends SelectedKeys<BaseType, Keys>
 					? NonNullable<BaseType[Key]>
 					: BaseType[Key];
 			}

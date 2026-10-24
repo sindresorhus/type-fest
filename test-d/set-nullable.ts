@@ -149,3 +149,16 @@ expectTypeOf(inferNullableSource({name: 'value', count: 1})).toBe<{name: string;
 
 declare function inferSelectedNullableSource<BaseType, Key extends keyof BaseType>(value: SetNullable<BaseType, Key>, key: Key): BaseType;
 expectTypeOf(inferSelectedNullableSource({name: 'value', count: 1}, 'name')).toBe<{name: string; count: number}>();
+
+// A numeric enum selector selects the declared key with its value, but not a `number` index signature, even though `number` is assignable to a numeric enum.
+enum NumericSelectorKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetNullable<{[key: number]: string | null; 1: string}, NumericSelectorKey.One>>().toBe<{[key: number]: string | null; 1: string | null}>();
+expectTypeOf<SetNullable<{[key: number]: string; 1: string}, NumericSelectorKey.One>[number]>().toBe<string>();
+expectTypeOf<SetNullable<{0: string; 1: number}, NumericSelectorKey.Zero>>().toBe<{0: string | null; 1: number}>();
+expectTypeOf<SetNullable<{[NumericSelectorKey.One]: string; other: number}, NumericSelectorKey.One>>().toBe<{[NumericSelectorKey.One]: string | null; other: number}>();
+expectTypeOf<SetNullable<{[NumericSelectorKey.One]: string; other: number}, 1>>().toBe<{[NumericSelectorKey.One]: string | null; other: number}>();
+expectTypeOf<SetNullable<string[], NumericSelectorKey.Zero>>().toBe<string[]>();
+expectTypeOf<SetNullable<[string, string], NumericSelectorKey.One>>().toBe<[string, string | null]>();
