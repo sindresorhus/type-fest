@@ -6,7 +6,7 @@ import tsParser from '@typescript-eslint/parser';
 */
 
 // Consume every fenced block before filtering languages, so an ignored closing fence cannot become an opening fence.
-const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[\t ]*)```(?<language>[^\n]*)\n)(?<code>[\s\S]*?)\n?^[\t ]*```[\t ]*$/gmv;
+const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[\t ]*)```(?<language>[^\n`]*)\n)(?<code>[\s\S]*?)\n?^[\t ]*```[\t ]*$/gmv;
 /**
 @typedef {{lineOffset: number, characterOffset: number, indent: string, unindentedText: string}} CodeblockData
 @type {Map<string, CodeblockData[]>}
@@ -134,6 +134,18 @@ export const jsdocCodeblocksProcessor = {
 
 			const {lineOffset, characterOffset, indent, unindentedText} = codeblockData;
 
+			const mapFixToOriginal = fix => {
+				fix.text = fix.text.split('\n').join(`\n${indent}`);
+
+				const indentsBeforeFixStart = indentsUptoIndex(unindentedText, fix.range[0], indent);
+				const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, Math.max(fix.range[0], fix.range[1] - 1), indent); // Range ends are exclusive, but empty ranges use the insertion point.
+
+				fix.range = [
+					fix.range[0] + characterOffset + indentsBeforeFixStart,
+					fix.range[1] + characterOffset + indentsBeforeFixEnd,
+				];
+			};
+
 			for (const message of codeblockMessages) {
 				message.line += lineOffset;
 				message.column += indent.length;
@@ -150,27 +162,11 @@ export const jsdocCodeblocksProcessor = {
 				}
 
 				if (message.fix) {
-					message.fix.text = message.fix.text.split('\n').join(`\n${indent}`);
-
-					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, message.fix.range[0], indent);
-					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, Math.max(message.fix.range[0], message.fix.range[1] - 1), indent); // Range ends are exclusive, but empty ranges use the insertion point.
-
-					message.fix.range = [
-						message.fix.range[0] + characterOffset + indentsBeforeFixStart,
-						message.fix.range[1] + characterOffset + indentsBeforeFixEnd,
-					];
+					mapFixToOriginal(message.fix);
 				}
 
 				for (const {fix} of (message.suggestions ?? [])) {
-					fix.text = fix.text.split('\n').join(`\n${indent}`);
-
-					const indentsBeforeFixStart = indentsUptoIndex(unindentedText, fix.range[0], indent);
-					const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, Math.max(fix.range[0], fix.range[1] - 1), indent); // -1 because range end is exclusive
-
-					fix.range = [
-						fix.range[0] + characterOffset + indentsBeforeFixStart,
-						fix.range[1] + characterOffset + indentsBeforeFixEnd,
-					];
+					mapFixToOriginal(fix);
 				}
 
 				normalizedMessages.push(message);

@@ -1215,6 +1215,14 @@ test('mixed languages preserve exact TypeScript virtual files', () => {
 	jsdocCodeblocksProcessor.postprocess([[], [], [], []], filename);
 });
 
+test('inline triple backticks in prose do not open a fence', () => {
+	const filename = 'test-inline-fence-prose.d.ts';
+	const code = exportType(jsdoc('```foo``` is inline markdown.', fence('const value = 1;', 'ts')));
+	const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+	jsdocCodeblocksProcessor.postprocess(files.map(() => []), filename);
+	assert.deepEqual(files.slice(1), [{filename: '1.ts', text: 'const value = 1;'}]);
+});
+
 test('autofixes after ignored blocks preserve original source offsets', async () => {
 	const code = exportTypeAndOption(jsdoc('```json\n```', fence('{"enabled": true}', 'json'), 'Explanation.', fence('const values: Array<string> = [];', 'ts')));
 	const eslint = new ESLint({cwd: root, fix: true});
