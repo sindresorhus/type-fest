@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArraySlice, Opaque, StringRepeat, StringSlice, Tagged, TupleOf} from '../index.d.ts';
+import type {ArraySlice, Opaque, PositiveInfinity, StringRepeat, StringSlice, Tagged, TupleOf} from '../index.d.ts';
 
 expectTypeOf<ArraySlice<[0, 1, 2, 3]>>().toBe<[0, 1, 2, 3]>();
 expectTypeOf<[0, 1, 2] | [0, 1, 2, 3]>().toBe<ArraySlice<[0, 1, 2] | [0, 1, 2, 3], 0>>();
@@ -283,3 +283,13 @@ expectTypeOf<ArraySlice<unknown, 1, 2>>();
 type MarkedSliceRows = readonly [...TupleOf<60, {before: true}>, {id: 'first'}, {id: 'second'}, ...TupleOf<20, {after: true}>];
 expectTypeOf<ArraySlice<MarkedSliceRows, 60, 62>>().toBe<readonly [{id: 'first'}, {id: 'second'}]>();
 expectTypeOf<StringSlice<`${StringRepeat<'a', 60>}bc${StringRepeat<'d', 20>}`, 60, 62>>().toBe<'bc'>();
+
+// An infinite end includes the rest element instead of materializing it.
+expectTypeOf<ArraySlice<[1, ...string[]], 1, PositiveInfinity>>().toBe<string[]>();
+expectTypeOf<ArraySlice<readonly [1, 2, ...string[], 3], 1, PositiveInfinity>>().toBe<readonly [2, ...string[], 3]>();
+expectTypeOf<ArraySlice<[1, ...string[]], 0, PositiveInfinity>>().toBe<[1, ...string[]]>();
+
+// Slicing past optional positions before a rest element removes those positions.
+expectTypeOf<ArraySlice<[0?, ...string[]], 1>>().toBe<string[]>();
+expectTypeOf<ArraySlice<readonly [1, 2?, ...string[]], 1>>().toBe<readonly [2?, ...string[]]>();
+expectTypeOf<ArraySlice<[1, 2?, ...string[]], 2>>().toBe<string[]>();

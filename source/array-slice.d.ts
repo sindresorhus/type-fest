@@ -2,7 +2,7 @@ import type {Sum} from './sum.d.ts';
 import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
-import type {IsNegative} from './numeric.d.ts';
+import type {IsNegative, PositiveInfinity} from './numeric.d.ts';
 import type {HasNoStaticElements, IsArrayReadonly, MaxLength, Not, TupleMin, UnwrapBrand} from './internal/index.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {And} from './and.d.ts';
@@ -100,7 +100,8 @@ type _ArraySlice<
 > = And<IsEqual<Start, never>, IsEqual<End, never>> extends true
 	? Array_
 	: number extends Array_['length']
-		? VariableLengthArraySliceHelper<Array_, IsNever<Start> extends true ? 0 : Start, End>
+		// An infinite end is past every element, the same as an omitted end, and cannot be counted out element by element.
+		? VariableLengthArraySliceHelper<Array_, IsNever<Start> extends true ? 0 : Start, End extends PositiveInfinity ? never : End>
 		// A non-literal index can be any value, so the slice can start or end anywhere and its length is unknown.
 		: `${number}` extends `${Start | End}`
 			? UnknownLengthArraySlice<Array_>
