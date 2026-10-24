@@ -1,4 +1,4 @@
-import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
+import type {IsAny} from './is-any.d.ts';
 
 /**
 Extract all optional keys from the given type.
@@ -37,13 +37,15 @@ Known limitations:
 @category Utilities
 */
 export type OptionalKeysOf<Type extends object> =
-	Type extends unknown // For distributing `Type`
-		? (keyof {[Key in keyof Type as
-			IsOptionalKeyOf<Type, Key> extends false
-				? never
-				: Key
-			]: never
-		}) & keyof Type // Intersect with `keyof Type` to narrow the member's own keys. For a union this runs per member, see the note on unions in the docs.
-		: never; // Should never happen
+	// Check `any` once; each mapped key already belongs to the distributed member.
+	IsAny<Type> extends true ? never
+		: Type extends unknown // For distributing `Type`
+			? (keyof {[Key in keyof Type as
+				Type extends Record<Key, Type[Key]>
+					? never
+					: Key
+				]: never
+			}) & keyof Type // Intersect with `keyof Type` to narrow the member's own keys. For a union this runs per member, see the note on unions in the docs.
+			: never; // Should never happen
 
 export {};
