@@ -126,7 +126,7 @@ type WordsImplementation<
 		// Skip word separator
 		? WordsImplementation<RemainingCharacters, Options, '', '', [...Result, ...SkipEmptyWord<CurrentWord>]>
 		: LastCharacter extends ''
-			// Fist char of word
+			// First character of word
 			? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, Result>
 			// Case change: non-numeric to numeric
 			: [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]

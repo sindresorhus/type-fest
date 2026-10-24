@@ -9,7 +9,7 @@ Options for the `CamelCase` type.
 */
 export type CamelCaseOptions = WordsOptions & {
 	/**
-	Whether to preserved consecutive uppercase letter.
+	Whether to preserve consecutive uppercase letters.
 
 	Note: A string that is entirely uppercase, such as `'FOO_BAR'`, is lowercased before it is split into words, so the option has no effect on it and the result is `'fooBar'` either way. This keeps `CamelCase<'FOO_BAR'>` the same regardless of the option.
 
@@ -72,7 +72,7 @@ Convert a string literal to camel-case.
 
 This can be useful when, for example, converting some kebab-cased command-line flags or a snake-cased database result.
 
-By default, consecutive uppercase letter are not preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
+By default, consecutive uppercase letters are not preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
 
 Use the `preserveLeadingUnderscores` option to retain leading underscores, matching the runtime behavior of [`camelcase`](https://github.com/sindresorhus/camelcase) v9+.
 
