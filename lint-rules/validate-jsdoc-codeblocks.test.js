@@ -147,6 +147,11 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`),
 	],
 	invalid: [
+		// A prose line that starts with inline triple backticks does not open a fence.
+		{
+			code: exportType(jsdoc('```foo``` is inline markdown.', fence('const value: string = 42;', 'ts'))),
+			errors: [invalidCodeblockErrorAt({line: 4, textBeforeStart: 'const ', target: 'value'})],
+		},
 		// Spaced language tags still report real diagnostics at their original source positions.
 		{
 			code: exportType(jsdoc(fence('const value: string = 42;', ' ts '))),
@@ -658,6 +663,9 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 // Type mismatch tests
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
+		// CRLF line endings are not part of a correct twoslash comment or compiler option.
+		['/**', '```ts', 'const count = 1;', '//=> 1', '```', '*/', 'export type Result = string;'].join('\r\n'),
+		['/**', '```ts', '// @noUncheckedIndexedAccess: false', 'const values = [1, 2, 3];', 'const first = values[0];', '//=> number', '```', '*/', 'export type Result = string;'].join('\r\n'),
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Foo = string;
 			//=> string
@@ -1047,6 +1055,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`))),
 	],
 	invalid: [
+		// Twoslash fixes in CRLF files keep the line endings.
+		{
+			code: ['/**', '```ts', 'const count = 1;', '//=> 2', '```', '*/', 'export type Result = string;'].join('\r\n'),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> 2'})],
+			output: ['/**', '```ts', 'const count = 1;', '//=> 1', '```', '*/', 'export type Result = string;'].join('\r\n'),
+		},
 		// Trimming the language tag does not change the range of a type-comment replacement.
 		{
 			code: exportType(jsdoc(fence('const count = 1;\n//=> 2', ' typescript\t'))),

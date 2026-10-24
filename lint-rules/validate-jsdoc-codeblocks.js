@@ -4,7 +4,7 @@ import {createFSBackedSystem, createVirtualTypeScriptEnvironment} from '@typescr
 
 // Fences occupy their own lines; inline backticks are part of the example.
 // Consume all fenced blocks before filtering languages, so ignored closing fences cannot become opening fences.
-const CODEBLOCK_REGEX = /(?<openingFence>^[\t ]*```(?<language>[^\n]*)\n)(?<code>[\s\S]*?)^[\t ]*```[\t ]*$/gmv;
+const CODEBLOCK_REGEX = /(?<openingFence>^[\t ]*```(?<language>[^\n`]*)\n)(?<code>[\s\S]*?)^[\t ]*```[\t ]*$/gmv;
 const FILENAME = 'example-codeblock.ts';
 const TWOSLASH_COMMENT = '//=>';
 
@@ -34,7 +34,7 @@ const defaultEnv = createVirtualTypeScriptEnvironment(system, [FILENAME], ts, co
 
 function parseCompilerOptions(code) {
 	const options = {};
-	const lines = code.split('\n');
+	const lines = code.split(/\r?\n/v);
 
 	for (const line of lines) {
 		if (!line.trim()) {
@@ -344,7 +344,7 @@ function isTwoslashContinuationLine(line) {
 
 function validateTwoslashTypes(context, env, code, codeStartIndex) {
 	const sourceFile = env.languageService.getProgram().getSourceFile(FILENAME);
-	const lines = code.split('\n');
+	const lines = code.split(/\r?\n/v);
 
 	const specifiedVerbosityLevels = context.options[0].verbosityLevels;
 	const verbosityLevels = [0, ...specifiedVerbosityLevels, Infinity]; // Keep `Infinity` last since suggestion logic relies on the order
