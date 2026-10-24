@@ -81,6 +81,8 @@ type Step = AllUnionFields<ValueOf<typeof steps>>;
 //=> {title: string; description?: string}
 ```
 
+Note: A string enum key in one union member and a plain string key with the same value in another member are not merged into one field. Use the same spelling in every member.
+
 @see {@link SharedUnionFields}
 
 @category Object
