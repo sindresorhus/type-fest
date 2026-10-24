@@ -506,3 +506,7 @@ const inferredOptionalSchema = validationSchemaWithOptions({rows: ['first'], nes
 expectTypeOf(inferredOptionalSchema).toBe<{readonly rows: readonly ['rule']; readonly nested: {readonly ids: readonly ['rule']}} | {readonly rows: 'rule'; readonly nested: {readonly ids: 'rule'}}>();
 // @ts-expect-error Choosing either strategy preserves the input property's readonly modifier.
 inferredOptionalSchema.rows = 'rule';
+
+// `never` and `any` options use the defaults.
+expectTypeOf<Schema<{a: string[]}, 'r', never>>().toBe<{a: Array<'r'>}>();
+expectTypeOf<Schema<{a: string[]}, 'r', any>>().toBe<{a: Array<'r'>}>();
