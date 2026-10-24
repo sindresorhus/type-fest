@@ -1,13 +1,11 @@
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {Absolute} from './absolute.d.ts';
-import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
-import type {ExtractRestElement} from './extract-rest-element.d.ts';
 import type {If} from './if.d.ts';
 import type {IntRange} from './int-range.d.ts';
 import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
-import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
+import type {_SplitOnRestElement, SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Sum} from './sum.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -147,11 +145,11 @@ type ArrayAtNegativeIndex<TArray extends UnknownArray, Index extends number, Lef
 				? Index extends -1
 					? L // If an element after the rest element matches, return it.
 					: ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Left, Result>
-				// Enters this branch, if `TArray` contains no elements after the rest element.
-				: ExcludeRestElement<TArray> extends infer TWithoutRest extends UnknownArray
+				// Enters this branch, if `TArray` contains no elements after the rest element. Split once to get both the fixed prefix and the rest value.
+				: _SplitOnRestElement<TArray, {preserveOptionalModifier: true}> extends [infer TWithoutRest extends UnknownArray, infer Rest extends UnknownArray, unknown]
 					// Remove the rest element and recurse further with the elements before the rest element,
 					// Set `Index` to `-1` & `Left` to `Sum<Index, 1>`, so that elements keep getting matched until `Left` reaches `0`.
-					? ArrayAtNegativeIndex<TWithoutRest, -1, Sum<Index, 1>, ExtractRestElement<TArray> | Result> // Also, add the rest element to `Result`.
+					? ArrayAtNegativeIndex<TWithoutRest, -1, Sum<Index, 1>, Rest[number] | Result> // Also, add the rest element to `Result`.
 					: never // Should never happen
 			// Enters this branch, if `TArray` contains no rest element.
 			: TArray extends readonly [...infer Rest, (infer Last)?]

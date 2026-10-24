@@ -285,3 +285,27 @@ const missingElement = elementAt(['first', 2], -1e21);
 expectTypeOf(missingElement).toBe<undefined>();
 // @ts-expect-error An out-of-bounds result cannot be one of the array's elements.
 const missingString: string = missingElement;
+
+// Negative reads crossing a rest element include the optional prefix positions they can reach.
+type RestFrontier = readonly [kind: 'request', retries: number, enabled?: boolean, ...headers: Array<{name: string}>];
+expectTypeOf<ArrayAt<RestFrontier, -1>>().toBe<number | boolean | {name: string}>();
+expectTypeOf<ArrayAt<RestFrontier, -2>>().toBe<'request' | number | boolean | {name: string}>();
+expectTypeOf<ArrayAt<RestFrontier, -3>>().toBe<'request' | number | boolean | {name: string} | undefined>();
+
+function _readRestFrontier<Value>(value: ArrayAt<readonly [0, Value, ...string[]], -1>): Value | string {
+	return value;
+}
+
+function _constructRestFrontier<Value>(value: Value): ArrayAt<readonly [0, Value, ...string[]], -1> {
+	return value;
+}
+
+// Rest decomposition preserves explicitly allowed undefined and an empty rest domain.
+expectTypeOf<ArrayAt<readonly [undefined, 1, ...Array<2>], -2>>().toBe<undefined | 1 | 2>();
+expectTypeOf<ArrayAt<readonly [1, ...never[]], -1>>().toBe<1>();
+
+declare const requestArguments: RestFrontier;
+const inferredRequestTail = elementAt(requestArguments, -1);
+expectTypeOf(inferredRequestTail).toBe<number | boolean | {name: string}>();
+// @ts-expect-error The first required prefix element cannot be last after the required retry count.
+const unreachableRequestKind: 'request' = inferredRequestTail;
