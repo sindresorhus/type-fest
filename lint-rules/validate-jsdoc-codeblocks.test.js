@@ -72,6 +72,17 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		exportTypeAndOption(jsdoc(fence(code1, 'ts'))),
 		exportTypeAndOption(jsdoc(fence(code1, 'typescript'))),
 
+		// Inline backticks are part of the code, not a closing fence.
+		exportTypeAndOption(jsdoc(fence('const marker = \'```\';'))),
+
+		// Comments and regular expressions may also contain inline backticks.
+		exportTypeAndOption(jsdoc(fence('// Inline ``` comment\nconst count = 1;\n//=> 1'))),
+		exportTypeAndOption(jsdoc(fence('const marker = /```/v;'))),
+
+		// Empty blocks and horizontal indentation around the closing fence remain valid.
+		exportTypeAndOption(jsdoc('```\n```')),
+		exportTypeAndOption(jsdoc('```ts\nconst count = 1;\n \t```\t ')),
+
 		// Multiple code blocks
 		exportTypeAndOption(
 			jsdoc('@example', fence(code1, 'ts'), '\nSome text in between.\n', '@example', fence(code2)),
@@ -124,6 +135,26 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`),
 	],
 	invalid: [
+		// A real error after an inline backtick comment must still be reported.
+		{
+			code: exportType(jsdoc(fence('// Inline ``` comment\nconst value: number = \'wrong\';'))),
+			errors: [
+				invalidCodeblockErrorAt({line: 4, textBeforeStart: 'const ', target: 'value'}),
+			],
+		},
+
+		// Each block keeps its original diagnostic offsets, including indented option examples.
+		{
+			code: exportTypeAndOption(jsdoc(
+				fence('const marker = \'```\';'),
+				fence('// Inline ``` comment\nconst value: number = \'wrong\';', 'typescript'),
+			)),
+			errors: [
+				invalidCodeblockErrorAt({line: 7, textBeforeStart: 'const ', target: 'value'}),
+				invalidCodeblockErrorAt({line: 19, textBeforeStart: '\tconst ', target: 'value'}),
+			],
+		},
+
 		// With text before and after
 		{
 			code: dedenter`
@@ -984,6 +1015,15 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`))),
 	],
 	invalid: [
+		// Twoslash fixes after inline backticks replace only the expected comment.
+		{
+			code: exportType(jsdoc(fence('// Inline ``` comment\nconst count = 1;\n//=> 2'))),
+			errors: [
+				incorrectTwoslashTypeErrorAt({line: 5, textBeforeStart: '', target: '//=> 2'}),
+			],
+			output: exportType(jsdoc(fence('// Inline ``` comment\nconst count = 1;\n//=> 1'))),
+		},
+
 		// === Twoslash format errors ===
 
 		// No space after `//=>`
