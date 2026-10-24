@@ -257,8 +257,8 @@ requirePositive(RuntimeComparisonLimit.Value);
 
 // An enum member whose value is an infinity compares like that infinity.
 enum InfiniteLimit {
-	Positive = Infinity,
-	Negative = -Infinity,
+	Positive = 1e999, // eslint-disable-line no-loss-of-precision
+	Negative = -1e999, // eslint-disable-line no-loss-of-precision
 }
 
 expectTypeOf<GreaterThan<InfiniteLimit.Positive, 123_456_789>>().toBe<true>();
