@@ -2,7 +2,7 @@ import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -63,9 +63,9 @@ type _SetRequired<BaseType, Keys> =
 
 type _SetObjectRequired<BaseType, Keys> = SimplifyObject<
 	// Pick just the keys that are optional from the base type.
-	Except<BaseType, (Keys | ToString<Keys & string>) & keyof BaseType>
+	Except<BaseType, SelectedKeys<BaseType, Keys>>
 	// Pick the keys that should be required from the base type and make them required.
-	& Required<HomomorphicPick<BaseType, (Keys | ToString<Keys & string>) & keyof BaseType>>
+	& Required<HomomorphicPick<BaseType, SelectedKeys<BaseType, Keys>>>
 >;
 
 /**

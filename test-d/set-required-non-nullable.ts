@@ -518,3 +518,14 @@ readonlyEnumSource[NonNullishField.Id] = 'valid';
 declare const autocompleteTemplateKey: SetRequiredNonNullable<{[key: `on${string}`]: unknown; onClick?: (() => void) | null}, LiteralUnion<'onClick', `on${string}`>>;
 expectTypeOf(autocompleteTemplateKey.onClick).toBe<() => void>();
 expectTypeOf<{}>().not.toBeAssignableTo<typeof autocompleteTemplateKey>();
+
+// A numeric enum selector selects the declared key with its value, but not a `number` index signature, even though `number` is assignable to a numeric enum.
+enum NumericSelectorKey {
+	Zero,
+	One,
+}
+expectTypeOf<Simplify<SetRequiredNonNullable<{0?: string | null; 1?: number | null}, NumericSelectorKey.Zero>>>().toBe<{0: string; 1?: number | null}>();
+expectTypeOf<SetRequiredNonNullable<{[key: number]: string | null; 1?: string | null}, NumericSelectorKey.One>[number]>().toBe<string | null>();
+expectTypeOf<SetRequiredNonNullable<{[key: number]: string | null; 1?: string | null}, NumericSelectorKey.One>[1]>().toBe<string>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{[NumericSelectorKey.One]?: string | null; other?: number}, NumericSelectorKey.One>>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{[NumericSelectorKey.One]?: string | null; other?: number}, 1>>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();

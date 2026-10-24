@@ -311,3 +311,14 @@ function _readRequiredEnumSelection(value: SetRequired<{value?: string}, Selecto
 expectTypeOf<keyof SetRequired<{readonly [SelectorKey.Value]?: string}, SelectorKey.Value>>().toBe<SelectorKey.Value>();
 expectTypeOf<SetRequired<{[key: string]: unknown; readonly value?: string}, Tagged<SelectorKey.Value, 'Key'>>>()
 	.toBe<{[key: string]: unknown; readonly value: string}>();
+
+// A numeric enum selector selects the declared key with its value, but not a `number` index signature, even though `number` is assignable to a numeric enum.
+enum NumericSelectorKey {
+	Zero,
+	One,
+}
+expectTypeOf<SetRequired<{0?: string; 1?: number}, NumericSelectorKey.Zero>>().toBe<{0: string; 1?: number}>();
+expectTypeOf<SetRequired<{[key: number]: string; 0?: string; 1?: string}, NumericSelectorKey.Zero>>().toBe<{[key: number]: string; 0: string; 1?: string}>();
+expectTypeOf<SetRequired<{[NumericSelectorKey.One]?: string; other?: number}, NumericSelectorKey.One>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();
+expectTypeOf<SetRequired<{[NumericSelectorKey.One]?: string; other?: number}, 1>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();
+expectTypeOf<SetRequired<[string?, number?], NumericSelectorKey.Zero>>().toBe<[string, number?]>();

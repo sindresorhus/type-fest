@@ -1,4 +1,4 @@
-import type {ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {SelectedKeys, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {RequiredNonNullable} from './required-non-nullable.d.ts'; // For `@link`
 import type {SetNonNullable} from './set-non-nullable.d.ts'; // For `@link`
@@ -109,7 +109,7 @@ Known limitations:
 @category Object
 */
 export type SetRequiredNonNullable<BaseType, Keys extends keyof BaseType> =
-	SetRequiredNonNullableImplementation<BaseType, (UnwrapPathBrand<Keys> | Extract<Exclude<keyof BaseType, UnwrapPathBrand<Keys>>, ToString<UnwrapPathBrand<Keys> & string>>) & keyof BaseType>;
+	SetRequiredNonNullableImplementation<BaseType, SelectedKeys<BaseType, UnwrapPathBrand<Keys>>>;
 
 // A constrained selector parameter retains the readonly modifiers when mapping its properties.
 type SetRequiredNonNullableImplementation<BaseType, Keys extends keyof BaseType> =
