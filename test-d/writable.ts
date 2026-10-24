@@ -160,3 +160,39 @@ function _updateGenericCount<Value extends {readonly count: number}>(value: Writ
 expectTypeOf<Writable<{readonly impossible?: never; readonly value: unknown}>>()
 	.toBe<{impossible?: never; value: unknown}>();
 expectTypeOf<keyof Writable<{readonly impossible?: never; readonly value: unknown}>>().toBe<'impossible' | 'value'>();
+
+// Selecting no keys must not add mutating collection methods.
+expectTypeOf<Writable<readonly string[], never>>().toBe<readonly string[]>();
+expectTypeOf<Writable<ReadonlyMap<string, number>, never>>().toBe<ReadonlyMap<string, number>>();
+expectTypeOf<Writable<ReadonlySet<string>, never>>().toBe<ReadonlySet<string>>();
+declare const unchangedReadonlyArray: Writable<readonly string[], never>;
+// @ts-expect-error No key was selected, so array mutation is still unavailable.
+unchangedReadonlyArray[0] = 'item';
+
+// Empty selection preserves tuple positions and metadata without changing container access.
+type ReadonlyTupleWithMetadata = readonly [1, 2?] & {readonly label: 'row'};
+expectTypeOf<Writable<ReadonlyTupleWithMetadata, never>>().toBe<ReadonlyTupleWithMetadata>();
+expectTypeOf<Writable<ReadonlyMap<string, number> | null, never>>().toBe<ReadonlyMap<string, number> | null>();
+expectTypeOf<Writable<readonly number[] | number, never>>().toBe<readonly number[] | number>();
+// A nonempty selection still converts a container even when the named key belongs to another union member.
+expectTypeOf<Writable<ReadonlySet<string> | {readonly id: 1}, 'id'>>().toBe<Set<string> | {id: 1}>();
+expectTypeOf<Writable<any, never>>().toBe<any>();
+expectTypeOf<Writable<never, never>>().toBe<never>();
+expectTypeOf<Writable<unknown, never>>().toBe<{}>();
+
+class ReadonlyNamedModel {
+	readonly id?: number;
+}
+
+function _readSealedEmptySelection(value: Writable<ReadonlyNamedModel, never>): Record<string, unknown> {
+	return value;
+}
+
+function unchangedTuple<const Value>(value: readonly [Value]): Writable<readonly [Value], never> {
+	return value;
+}
+
+const unchangedInferredTuple = unchangedTuple([{id: 'row'}]);
+expectTypeOf(unchangedInferredTuple).toBe<readonly [{readonly id: 'row'}]>();
+// @ts-expect-error No key was selected, so the inferred tuple remains readonly.
+unchangedInferredTuple[0] = {id: 'row'};
