@@ -97,18 +97,19 @@ type D = RemoveSuffix<`api/${string}/analytics`, '/analytics'>;
 */
 export type RemoveSuffix<S extends string, Suffix extends string, Options extends RemoveSuffixOptions = {}> =
 	IfNotAnyOrNever<S, {
+		// A brand describes the input, not the result of a transform, so the result is the plain string even when nothing is removed.
 		ifNot: If<
 			IsNever<Suffix>,
-			S,
-			_RemoveSuffix<S, Suffix extends object ? UnwrapBrand<Suffix> : Suffix, ApplyDefaultOptions<RemoveSuffixOptions, DefaultRemoveSuffixOptions, Options>>
+			S extends object ? UnwrapBrand<S> : S,
+			_RemoveSuffix<S extends object ? UnwrapBrand<S> : S, Suffix extends object ? UnwrapBrand<Suffix> : Suffix, ApplyDefaultOptions<RemoveSuffixOptions, DefaultRemoveSuffixOptions, Options>>
 		>;
 	}>;
 
 type _RemoveSuffix<S extends string, Suffix extends string, Options extends Required<RemoveSuffixOptions>> =
 	Suffix extends string // For distributing `Suffix`
 		? Or<IsStringLiteral<Suffix>, Not<Options['strict']>> extends true
-			? S extends unknown // Distribute before unwrapping so literal members retain their own unchanged fallback.
-				? (S extends object ? UnwrapBrand<S> : S) extends `${infer Rest}${Suffix}`
+			? S extends unknown // Distribute so each literal member keeps its own unchanged fallback.
+				? S extends `${infer Rest}${Suffix}`
 					? Rest
 					: IsStringLiteral<S> extends true ? S : string // Preserve literal inputs on a miss; unknown parts may still contain the affix.
 				: never // Should never happen

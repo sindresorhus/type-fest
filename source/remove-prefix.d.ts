@@ -97,18 +97,19 @@ type D = RemovePrefix<`handle${Capitalize<string>}`, 'handle'>;
 */
 export type RemovePrefix<S extends string, Prefix extends string, Options extends RemovePrefixOptions = {}> =
 	IfNotAnyOrNever<S, {
+		// A brand describes the input, not the result of a transform, so the result is the plain string even when nothing is removed.
 		ifNot: If<
 			IsNever<Prefix>,
-			S,
-			_RemovePrefix<S, Prefix extends object ? UnwrapBrand<Prefix> : Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
+			S extends object ? UnwrapBrand<S> : S,
+			_RemovePrefix<S extends object ? UnwrapBrand<S> : S, Prefix extends object ? UnwrapBrand<Prefix> : Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
 		>;
 	}>;
 
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
 	Prefix extends string // For distributing `Prefix`
 		? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
-			? S extends unknown // Distribute before unwrapping so literal members retain their own unchanged fallback.
-				? (S extends object ? UnwrapBrand<S> : S) extends `${Prefix}${infer Rest}`
+			? S extends unknown // Distribute so each literal member keeps its own unchanged fallback.
+				? S extends `${Prefix}${infer Rest}`
 					? Rest
 					: IsStringLiteral<S> extends true ? S : string // Preserve literal inputs on a miss; unknown parts may still contain the affix.
 				: never // Should never happen
