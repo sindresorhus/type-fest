@@ -76,7 +76,7 @@ export const jsdocCodeblocksProcessor = {
 			const {code, openingFence, indent, language} = match.groups ?? {};
 
 			// Skip empty code blocks and languages that are not TypeScript.
-			if (!code || !openingFence || indent === undefined || !['', 'ts', 'typescript'].includes(language)) {
+			if (!code || !openingFence || indent === undefined || !['', 'ts', 'typescript'].includes(language.trim())) {
 				continue;
 			}
 

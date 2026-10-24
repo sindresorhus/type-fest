@@ -8,6 +8,15 @@ import {jsdocCodeblocksProcessor} from './jsdoc-codeblocks.js';
 
 snapshot.setDefaultSnapshotSerializers([String]);
 
+test('extracts TypeScript examples with Windows line endings', () => {
+	const filename = 'test-crlf-example.d.ts';
+	const code = ['/**', '```ts', 'const value = 1;', '```', '*/', 'export type Result = string;'].join('\r\n');
+	const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+	jsdocCodeblocksProcessor.postprocess(files.map(() => []), filename);
+	assert.equal(files.length, 2);
+	assert.ok(files[1].text.includes('const value = 1;'));
+});
+
 const root = path.join(import.meta.dirname, 'fixtures');
 
 try {
@@ -1230,4 +1239,47 @@ test('suggestions after ignored blocks preserve their insertion offsets', () => 
 	const index = code.indexOf('const value');
 	assert.deepEqual(fix.range, [index, index]);
 	assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), code.replace('\tconst value', '\t// Explain.\n\tconst value'));
+});
+
+for (const newline of ['\n', '\r\n']) {
+	const lineEndingName = newline === '\n' ? 'LF' : 'CRLF';
+	for (const language of [' ts ', '\ttypescript\t', ' \t']) {
+		test(`language whitespace preserves exact ${lineEndingName} example text: ${JSON.stringify(language)}`, () => {
+			const filename = `test-language-whitespace-${JSON.stringify([newline, language])}.d.ts`;
+			const code = ['/**', '``` json ', 'not TypeScript !!!', '```', `\`\`\`${language}`, 'const value = 1;', '```', '*/', 'export type Result = string;'].join(newline);
+			const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+			assert.deepEqual(files, [code, {filename: '1.ts', text: `const value = 1;${newline === '\r\n' ? '\r' : ''}`}]);
+			jsdocCodeblocksProcessor.postprocess([[], []], filename);
+		});
+	}
+
+	test(`autofixes in spaced language fences preserve ${lineEndingName} and are idempotent`, async () => {
+		const eslint = new ESLint({cwd: root, fix: true});
+		const code = ['/**', '``` ts\t', 'const values: Array<string> = [];', '```', '*/', 'export type Result = string;'].join(newline);
+		const filePath = `test-spaced-language-autofix-${lineEndingName}.d.ts`;
+		const [result] = await eslint.lintText(code, {filePath});
+		assert.deepEqual(result.messages, []);
+		assert.equal(result.output, code.replace('Array<string>', 'string[]'));
+		const [secondResult] = await eslint.lintText(result.output, {filePath});
+		assert.deepEqual(secondResult.messages, []);
+		assert.equal(secondResult.output, undefined);
+	});
+}
+
+test('spaced language tags do not shift suggestion ranges', () => {
+	const filename = 'test-spaced-language-suggestion.d.ts';
+	const code = ['/**', '``` typescript\t', 'const value = 1;', '```', '*/', 'export type Result = string;'].join('\r\n');
+	jsdocCodeblocksProcessor.preprocess(code, filename);
+	const [message] = jsdocCodeblocksProcessor.postprocess([[], [{
+		ruleId: 'test/comment',
+		severity: 2,
+		message: 'Insert a comment.',
+		line: 1,
+		column: 1,
+		suggestions: [{desc: 'Insert a comment.', fix: {range: [0, 0], text: '/* Explanation */ '}}],
+	}]], filename);
+	const {fix} = message.suggestions[0];
+	const index = code.indexOf('const value');
+	assert.deepEqual(fix.range, [index, index]);
+	assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), code.replace('const value', '/* Explanation */ const value'));
 });

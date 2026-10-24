@@ -16,6 +16,11 @@ const incorrectTwoslashFormatErrorAt = props => errorAt_({...props, messageId: '
 
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
+		// Fence info strings ignore surrounding whitespace without accepting other languages.
+		exportType(jsdoc(fence(code1, ' ts '))),
+		exportType(jsdoc(fence(code1, '\ttypescript\t'))),
+		exportType(jsdoc(fence(code1, ' \t'))),
+		exportType(jsdoc(fence('not TypeScript !!!', ' json '), fence(code1, ' ts '))),
 		// Not exported
 		dedenter`
 			${jsdoc(fence(codeWithErrors))}
@@ -142,6 +147,20 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`),
 	],
 	invalid: [
+		// Spaced language tags still report real diagnostics at their original source positions.
+		{
+			code: exportType(jsdoc(fence('const value: string = 42;', ' ts '))),
+			errors: [invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'value'})],
+		},
+		{
+			code: ['/**', '```\ttypescript\t', 'const value: string = 42;', '```', '*/', 'export type Result = string;'].join('\r\n'),
+			errors: [invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'value'})],
+		},
+		// CRLF must not make a TypeScript language identifier disappear from validation.
+		{
+			code: ['/**', '```ts', 'const value: string = 42;', '```', '*/', 'export type Result = string;'].join('\r\n'),
+			errors: [invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'value'})],
+		},
 		// Errors in a TypeScript block after an empty ignored block retain their source location.
 		{
 			code: exportType(jsdoc('```json\n```', 'Explanation.', fence('const value: number = \'wrong\';', 'typescript'))),
@@ -1028,6 +1047,13 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`))),
 	],
 	invalid: [
+		// Trimming the language tag does not change the range of a type-comment replacement.
+		{
+			code: exportType(jsdoc(fence('const count = 1;\n//=> 2', ' typescript\t'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> 2'})],
+			output: exportType(jsdoc(fence('const count = 1;\n//=> 1', ' typescript\t'))),
+		},
+
 		// Skipped languages do not shift the range replaced by a later twoslash fix.
 		{
 			code: exportType(jsdoc(fence('{"count": 1}', 'json'), 'Explanation.', fence('const count = 1;\n//=> 2', 'ts'))),

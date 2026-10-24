@@ -150,7 +150,7 @@ export const validateJSDocCodeblocksRule = /** @type {const} */ ({
 					const {code, openingFence, language} = match.groups ?? {};
 
 					// Skip empty code blocks and languages that are not TypeScript.
-					if (!code || !openingFence || !['', 'ts', 'typescript'].includes(language)) {
+					if (!code || !openingFence || !['', 'ts', 'typescript'].includes(language.trim())) {
 						continue;
 					}
 
