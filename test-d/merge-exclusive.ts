@@ -156,3 +156,42 @@ const inferredIndexedFile = fileOrIndexed('config.json');
 expectTypeOf(inferredIndexedFile.file).toBe<'config.json' | number>();
 // @ts-expect-error The named alternative preserves its own readonly modifier.
 inferredIndexedFile.file = 'config.json';
+
+// Class members and prototype-like names remain finite exclusions beside signatures.
+declare class ExclusiveModel<Value> {
+	readonly value: Value;
+	toString(): string;
+}
+
+type IndexedPrototypeChoice = MergeExclusive<{[key: `row-${string}`]: unknown; valueOf: number}, {file: string}>;
+expectTypeOf<{valueOf: number; 'row-first': boolean}>().toBeAssignableTo<IndexedPrototypeChoice>();
+expectTypeOf<Extract<IndexedPrototypeChoice, {file: string}>['valueOf']>().toBe<undefined>();
+type ClassPrototypeChoice = Extract<MergeExclusive<ExclusiveModel<number>, {file: string}>, {file: string}>;
+expectTypeOf<ClassPrototypeChoice['toString']>().toBe<undefined>();
+
+function _constructClassChoice<Value>(value: ExclusiveModel<Value>): MergeExclusive<ExclusiveModel<Value>, {error: Error}> {
+	return value;
+}
+
+function _readClassChoice<Value>(value: MergeExclusive<ExclusiveModel<Value>, {error: Error}>): Value | undefined {
+	return value.value;
+}
+
+function _prototypeChoice<const Value>(value: Value): MergeExclusive<{readonly toString: Value}, {file: string}> {
+	return {toString: value};
+}
+
+const inferredPrototypeChoice = _prototypeChoice('owned');
+expectTypeOf(inferredPrototypeChoice.toString).toBe<'owned' | undefined>();
+// @ts-expect-error Even a valid value cannot replace the readonly chosen field.
+inferredPrototypeChoice.toString = 'owned';
+
+// A predicate can narrow a generic payload without losing its value type.
+function _hasExclusiveData<Value>(value: MergeExclusive<{data: Value}, {error: Error}>): value is {data: Value} {
+	return 'data' in value;
+}
+
+declare const exclusiveDataChoice: MergeExclusive<{data: string}, {error: Error}>;
+if (_hasExclusiveData(exclusiveDataChoice)) {
+	expectTypeOf(exclusiveDataChoice.data).toBe<string>();
+}
