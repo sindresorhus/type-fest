@@ -110,14 +110,23 @@ export type AllUnionFields<Union> =
 Use an existing numeric key for its exact canonical string spelling, so merging cannot drop duplicate aliases. Leave other unions as is to preserve index signatures.
 */
 type NormalizeNumericKeys<Union, AllKeys extends PropertyKey = KeysOfUnion<Union>> =
-	IsNumericLiteral<Extract<AllKeys, StringToNumber<Extract<AllKeys, `${number}`>>>> extends true
+	IsNumericLiteral<ExistingNumericKey<AllKeys, AllKeys>> extends true
 		? Union extends unknown
 			? {[Key in keyof Union as
-				Extract<AllKeys, StringToNumber<Extract<Key, `${number}`>>> extends infer NumericKey extends number
+				ExistingNumericKey<Key, AllKeys> extends infer NumericKey extends number
 					? NumericKey | Exclude<Key, `${NumericKey}`>
 					: never
 				]: Union[Key]}
 			: never
 		: Union;
+
+/**
+Get the key in `AllKeys` that the numeric string spelling `Key` names. A `number` index signature covers every numeric key.
+*/
+type ExistingNumericKey<Key, AllKeys> =
+	StringToNumber<Extract<Key, `${number}`>> extends infer NumberKey
+		// Compare the string spellings, because `number` is assignable to a numeric enum.
+		? `${number}` extends `${AllKeys & number}` ? NumberKey : Extract<AllKeys, NumberKey>
+		: never;
 
 export {};

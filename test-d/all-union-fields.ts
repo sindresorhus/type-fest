@@ -392,3 +392,9 @@ expectTypeOf<{kind: 'text'; id: boolean}>().not.toBeAssignableTo<typeof collecte
 type TemplateIndexedFields = AllUnionFields<{[key: `${number}`]: string; label: true} | {0: number}>;
 expectTypeOf<TemplateIndexedFields[0]>().toBe<string | number>();
 expectTypeOf<{label: true}>().not.toBeAssignableTo<TemplateIndexedFields>();
+
+// A `number` index signature covers the canonical string spelling of a numeric key of another member.
+type NumberIndexedFields = AllUnionFields<{[key: number]: string; label: true} | {'0': number}>;
+expectTypeOf<NumberIndexedFields[0]>().toBe<string | number>();
+expectTypeOf<{label: true}>().not.toBeAssignableTo<NumberIndexedFields>();
+expectTypeOf<{0: 'zero'}>().toBeAssignableTo<NumberIndexedFields>();
