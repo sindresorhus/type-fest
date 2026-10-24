@@ -16,7 +16,7 @@ export const importPathRule = /** @type {const} */ ({
 	defaultOptions: [],
 	create(context) {
 		return {
-			'ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration'(node) {
+			'ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, TSImportType'(node) {
 				// Exit if not a re-export
 				if (!node.source) {
 					return;

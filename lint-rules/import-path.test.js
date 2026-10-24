@@ -15,6 +15,16 @@ const invalidImport = (code, output) => ({
 
 ruleTester.run('import-path', importPathRule, {
 	valid: [
+		// Inline type imports use the same declaration suffix and external-module boundary.
+		{
+			code: 'type Item = import("./item.d.ts").Item;',
+		},
+		{
+			code: 'type ItemModule = typeof import("external-package");',
+		},
+		{
+			code: 'type Item = import("../item.d.ts", {with: {"resolution-mode": "import"}}).Item;',
+		},
 		// A dotted stem is part of the filename, not its declaration extension.
 		{
 			code: 'import type {Foo} from "./foo.shared.d.ts";',
@@ -89,6 +99,28 @@ ruleTester.run('import-path', importPathRule, {
 		},
 	],
 	invalid: [
+		invalidImport(
+			'type Item = import("./item.ts").Item;',
+			'type Item = import(\'./item.d.ts\').Item;',
+		),
+		invalidImport(
+			'type ItemModule = typeof import("../nested/item.shared.js");',
+			'type ItemModule = typeof import(\'../nested/item.shared.d.ts\');',
+		),
+		// Replacing the literal leaves type arguments and import attributes intact.
+		invalidImport(
+			'type Item<Value> = import("./box").Box<Value>;',
+			'type Item<Value> = import(\'./box.d.ts\').Box<Value>;',
+		),
+		invalidImport(
+			'type Item = import("../item.ts", {with: {"resolution-mode": "import"}}).Item;',
+			'type Item = import(\'../item.d.ts\', {with: {"resolution-mode": "import"}}).Item;',
+		),
+		invalidImport(
+			'type User = import("./user\'s-schema.ts").User;',
+			String.raw`type User = import('./user\'s-schema.d.ts').User;`,
+		),
+
 		// Autofixes must keep apostrophes in filenames inside a valid string literal.
 		invalidImport(
 			'import type {User} from "./user\'s-schema.ts";',
