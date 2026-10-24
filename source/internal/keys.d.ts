@@ -143,8 +143,8 @@ type Keys = SelectedKeys<{[key: number]: string; 0: string; 1: string}, Index.On
 */
 export type SelectedKeys<Type, Keys> =
 	| (KeySelector<Keys> & keyof Type)
-	// An enum key and its value do not intersect, so declared keys are also matched by assignability.
-	| Extract<KeySelector<Keys>, keyof Type>;
+	// A numeric enum key and its value do not intersect, so declared numeric keys are also matched by their value. The values are compared instead of the enum members, because `number` is assignable to a numeric enum.
+	| Extract<Extract<KeySelector<Keys>, KeySelector<keyof Type & number>>, keyof Type>;
 
 /**
 Replaces a numeric enum member with its value, and adds the value's name of a string enum member.

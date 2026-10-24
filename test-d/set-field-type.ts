@@ -154,3 +154,5 @@ expectTypeOf<SetFieldType<{readonly 0?: string; 1: number}, NumericSelectorKey.Z
 expectTypeOf<SetFieldType<{[NumericSelectorKey.One]: string; other: number}, NumericSelectorKey.One, boolean>>().toBe<{[NumericSelectorKey.One]: boolean; other: number}>();
 expectTypeOf<SetFieldType<{[NumericSelectorKey.One]: string; other: number}, 1, boolean>>().toBe<{[NumericSelectorKey.One]: boolean; other: number}>();
 expectTypeOf<SetFieldType<string[], NumericSelectorKey.Zero, boolean>>().toBe<string[]>();
+expectTypeOf<SetFieldType<{[NumericSelectorKey.One]: string; other: number}, LiteralUnion<NumericSelectorKey.One, number>, boolean, {preservePropertyModifiers: false}>>()
+	.toBe<{[NumericSelectorKey.One]: boolean; other: number}>();

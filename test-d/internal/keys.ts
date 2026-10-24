@@ -161,7 +161,8 @@ expectTypeOf<SelectedKeys<{[key: number]: string; 0: string; 1: string}, Selecte
 expectTypeOf<SelectedKeys<{0: string; 1: string}, SelectedIndex.Zero>>().toBe<0>();
 expectTypeOf<SelectedKeys<{[SelectedIndex.One]: string; other: string}, 1>>().toBe<1>();
 expectTypeOf<SelectedKeys<{[key: number]: string; 1: string}, number>>().toBe<number>();
-expectTypeOf<SelectedKeys<{value: string; other: string}, SelectedField.Value>>().toBe<SelectedField.Value | 'value'>();
+expectTypeOf<SelectedKeys<{value: string; other: string}, SelectedField.Value>>().toBe<'value'>();
+expectTypeOf<SelectedKeys<{[SelectedIndex.One]: string; other: string}, number>>().toBe<SelectedIndex.One>();
 expectTypeOf<SelectedKeys<{[key: string]: unknown; value: string}, LiteralUnion<'value', string>>>().toBe<LiteralUnion<'value', string>>();
 expectTypeOf<SelectedKeys<{a: string}, never>>().toBe<never>();
 expectTypeOf<SelectedKeys<{a: string}, any>>().toBe<any>();

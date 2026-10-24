@@ -529,3 +529,5 @@ expectTypeOf<SetRequiredNonNullable<{[key: number]: string | null; 1?: string | 
 expectTypeOf<SetRequiredNonNullable<{[key: number]: string | null; 1?: string | null}, NumericSelectorKey.One>[1]>().toBe<string>();
 expectTypeOf<Simplify<SetRequiredNonNullable<{[NumericSelectorKey.One]?: string | null; other?: number}, NumericSelectorKey.One>>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();
 expectTypeOf<Simplify<SetRequiredNonNullable<{[NumericSelectorKey.One]?: string | null; other?: number}, 1>>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();
+expectTypeOf<Simplify<SetRequiredNonNullable<{[NumericSelectorKey.One]?: string | null; other?: number}, LiteralUnion<NumericSelectorKey.One, number>>>>()
+	.toBe<{[NumericSelectorKey.One]: string; other?: number}>();
