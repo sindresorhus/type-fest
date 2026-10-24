@@ -478,13 +478,14 @@ const uncertainArraySchema: Schema<{rows: string[]; ids: number[]}, 'rule', {rec
 	? {rows: ['rule'], ids: ['rule']}
 	: {rows: 'rule', ids: 'rule'};
 
-// Optional flags include the default strategy and every explicitly allowed choice.
+// An optional flag uses the default strategy, which recurses into arrays.
+// @ts-expect-error The non-recursive strategy is not the default.
 const optionalArrayRule: Schema<string[], 'rule', {recurseIntoArrays?: boolean}> = 'rule';
 const optionalDisabledDefault: Schema<string[], 'rule', {recurseIntoArrays?: false}> = ['rule'];
 
+// @ts-expect-error The declared `false` is not used when the flag is optional.
 const optionalDisabledRule: Schema<string[], 'rule', {recurseIntoArrays?: false}> = 'rule';
-type CorrelatedArrayRule = {rows: 'rule'; nested: {ids: 'rule'}} | {rows: Array<'rule'>; nested: {ids: Array<'rule'>}};
-expectTypeOf<Schema<{rows: string[]; nested: {ids: number[]}}, 'rule', {recurseIntoArrays?: boolean}>>().toBe<CorrelatedArrayRule>();
+expectTypeOf<Schema<{rows: string[]; nested: {ids: number[]}}, 'rule', {recurseIntoArrays?: boolean}>>().toBe<{rows: Array<'rule'>; nested: {ids: Array<'rule'>}}>();
 // @ts-expect-error The same recursion strategy applies to arrays at every depth.
 const mixedArrayRules: Schema<{rows: string[]; nested: {ids: number[]}}, 'rule', {recurseIntoArrays: boolean}> = {rows: 'rule', nested: {ids: ['rule']}};
 
@@ -503,8 +504,8 @@ function readOptionalFlagRule<Value, Flag extends boolean>(schema: Schema<{reado
 declare function validationSchemaWithOptions<const Input, const Value, const Options extends SchemaOptions>(input: Input, rule: Value, options: Options): Schema<Input, Value, Options>;
 declare const optionalRecursionOptions: {recurseIntoArrays?: boolean};
 const inferredOptionalSchema = validationSchemaWithOptions({rows: ['first'], nested: {ids: [1]}}, 'rule', optionalRecursionOptions);
-expectTypeOf(inferredOptionalSchema).toBe<{readonly rows: readonly ['rule']; readonly nested: {readonly ids: readonly ['rule']}} | {readonly rows: 'rule'; readonly nested: {readonly ids: 'rule'}}>();
-// @ts-expect-error Choosing either strategy preserves the input property's readonly modifier.
+expectTypeOf(inferredOptionalSchema).toBe<{readonly rows: readonly ['rule']; readonly nested: {readonly ids: readonly ['rule']}}>();
+// @ts-expect-error The default strategy preserves the input property's readonly modifier.
 inferredOptionalSchema.rows = 'rule';
 
 // `never` and `any` options use the defaults.

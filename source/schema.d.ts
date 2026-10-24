@@ -15,7 +15,7 @@ export type SchemaOptions = {
 	- If `recurseIntoArrays` is set to `true` (default), array elements will be recursively processed as well.
 	- If `recurseIntoArrays` is set to `false`, arrays will not be recursively processed, and the entire array will be replaced with the given value type.
 
-	An uncertain boolean flag includes both complete array strategies. An optional flag also includes the default strategy when omitted.
+	An uncertain boolean flag includes both complete array strategies. An optional flag uses the default strategy.
 
 	@example
 	```
@@ -96,11 +96,11 @@ const userMaskSettings: UserMask = {
 */
 export type Schema<Type, Value, Options extends SchemaOptions = {}> =
 	IfNotAnyOrNever<Type, {
-		// Include absent and present optional flags, then keep one strategy throughout the schema.
+		// Resolve the flag once, then keep one strategy throughout the schema.
 		ifNot: {
-			[Recurse in `${ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options | (Required<Options> & SchemaOptions)>['recurseIntoArrays']}`]:
+			[Recurse in `${ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>['recurseIntoArrays']}`]:
 			_Schema<Type, Value, {recurseIntoArrays: Recurse extends 'true' ? true : false}>
-		}[`${ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options | (Required<Options> & SchemaOptions)>['recurseIntoArrays']}`];
+		}[`${ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>['recurseIntoArrays']}`];
 		ifAny: Value;
 		ifNever: Value;
 	}>;
