@@ -1116,3 +1116,34 @@ selectLeafPath(undefinedElementRows, 'rows.0.missing');
 function _genericLeafResult<Value>(path: Paths<{rows: Array<Value | undefined>}, {leavesOnly: true}>): string | number {
 	return path;
 }
+
+// Unlimited circular traversal still emits only leaves, including leaves beneath optional containers.
+type UnlimitedLeafSettings = {profile: {displayName: string; preferences?: {language: string}}; rows: ReadonlyArray<{value: number}>};
+expectTypeOf<Paths<UnlimitedLeafSettings, {leavesOnly: true}>>().toBe<'profile.displayName' | 'profile.preferences.language' | `rows.${number}.value`>();
+expectTypeOf<Paths<UnlimitedLeafSettings, {leavesOnly: true; bracketNotation: true}>>().toBe<'profile.displayName' | 'profile.preferences.language' | `rows[${number}].value`>();
+
+function _constructKnownLeaf<Value>(_value: Value): Paths<{nested: {name: string; payload: Value}}, {leavesOnly: true; maxCircularDepth: 0}> {
+	return 'nested.name';
+}
+
+function _isUndefinedElementLeaf<Value>(path: string | number): path is Paths<{rows: Array<Value | undefined>}, {leavesOnly: true}> {
+	return path === 'rows.0';
+}
+
+declare function selectUnlimitedLeaf<const Value, const Path extends Paths<Value, {leavesOnly: true; maxRecursionDepth: 2}>>(value: Value, path: Path): Path;
+expectTypeOf(selectUnlimitedLeaf({settings: {language: 'en'}} as const, 'settings.language')).toBe<'settings.language'>();
+// @ts-expect-error A traversable container does not count as a leaf.
+selectUnlimitedLeaf({settings: {language: 'en'}} as const, 'settings');
+
+// An unlimited circular depth makes recursive containers leaves only at the ordinary depth limit.
+type UnlimitedLeafNode = {name: string; parent?: UnlimitedLeafNode; settings: {enabled: boolean}};
+expectTypeOf<Paths<UnlimitedLeafNode, {leavesOnly: true; maxRecursionDepth: 1}>>().toBe<'name' | 'parent.name' | 'parent.parent' | 'parent.settings' | 'settings.enabled'>();
+expectTypeOf<Paths<UnlimitedLeafNode, {leavesOnly: true; maxRecursionDepth: 1; maxCircularDepth: number}>>().toBe<Paths<UnlimitedLeafNode, {leavesOnly: true; maxRecursionDepth: 1}>>();
+expectTypeOf<Paths<UnlimitedLeafNode, {leavesOnly: true; maxCircularDepth: 0}>>().toBe<'name' | 'parent' | 'settings.enabled'>();
+expectTypeOf(selectUnlimitedLeaf({rows: [{value: 1}]} as const, 'rows.0.value')).toBe<'rows.0.value'>();
+// @ts-expect-error The array element is still a container below the depth limit.
+selectUnlimitedLeaf({rows: [{value: 1}]} as const, 'rows.0');
+
+function _constructUnlimitedLeaf<Value>(_value: Value): Paths<{name: string; payload: Value}, {leavesOnly: true}> {
+	return 'name';
+}

@@ -392,9 +392,12 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 									? TransformedKey
 									: (Options['requiredOnly'] extends true ? HasOnlyOptionalKeys<Value> : false) extends true // With `requiredOnly`, a value whose keys are all optional has no paths, so it counts as a leaf like an empty object.
 										? TransformedKey
-										: GreaterThan<CountExactInArray<Seen, Value>, Options['maxCircularDepth']> extends true // The path terminates at the circular reference limit, just like it does at `maxRecursionDepth`.
-											? TransformedKey
-											: never)
+										// Like `_Paths`, skip circular checks when there is no limit and `Seen` is not tracked.
+										: number extends Options['maxCircularDepth']
+											? never
+											: GreaterThan<CountExactInArray<Seen, Value>, Options['maxCircularDepth']> extends true // The path terminates at the circular reference limit, just like it does at `maxRecursionDepth`.
+												? TransformedKey
+												: never)
 							: never // Should never happen
 				: TransformedKey
 			) extends infer _TransformedKey
