@@ -87,19 +87,18 @@ type ArrayAtImplementation<TArray extends UnknownArray, Index extends number> = 
 }>;
 
 type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number> =
-	// A tuple's named index already has the exact element type, including an optional element's `undefined`, without walking the other elements.
+	// A tuple's declared position already has the exact element type, including an optional element's `undefined`, without walking the other elements.
 	`${Index}` extends keyof TArray
 		? TArray[Index]
+		// Every position before the rest element is declared, so the index is at or after the rest element here.
 		: SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
-			? LessThan<Index, Required<BeforeRest>['length']> extends true
-				? BeforeRest[Index]
-				: Subtract<Index, Required<BeforeRest>['length']> extends infer IndexAfterBeforeRest extends number
-					// The rest element can hold any number of elements, so the index can land on the rest element or on any element after it, up to `IndexAfterBeforeRest`.
-					? LessThan<IndexAfterBeforeRest, AfterRest['length']> extends true
-						? Rest[number] | AfterRest[IntRange<0, Sum<IndexAfterBeforeRest, 1>>]
-						// The index can also be past the last element, which is the only result for an array without a rest element. Checking this first avoids building a large `IntRange` for a large index.
-						: Rest[number] | AfterRest[number] | undefined
-					: never // Should never happen
+			? Subtract<Index, Required<BeforeRest>['length']> extends infer IndexAfterBeforeRest extends number
+				// The rest element can hold any number of elements, so the index can land on the rest element or on any element after it, up to `IndexAfterBeforeRest`.
+				? LessThan<IndexAfterBeforeRest, AfterRest['length']> extends true
+					? Rest[number] | AfterRest[IntRange<0, Sum<IndexAfterBeforeRest, 1>>]
+					// The index can also be past the last element, which is the only result for an array without a rest element. Checking this first avoids building a large `IntRange` for a large index.
+					: Rest[number] | AfterRest[number] | undefined
+				: never // Should never happen
 			: never; // Should never happen
 
 /**
