@@ -393,7 +393,7 @@ export type MergeDeepOptions = {
 	- `replace`: Replaces the destination value by the source value. This is the default mode.
 	- `spread`: Spreads the destination and the source values.
 
-	A union mode produces a union of complete merges.
+	A union mode produces a union of complete merges. An optional mode uses the default mode.
 
 	See {@link MergeDeep} for usages and examples.
 
