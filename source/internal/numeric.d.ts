@@ -2,6 +2,7 @@ import type {Finite, NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {TupleOf} from '../tuple-of.d.ts';
 import type {IfNotAnyOrNever, IsAnyOrNever} from './type.d.ts';
+import type {UnwrapBrand} from './object.d.ts';
 
 /**
 Check whether the given type is a number or a number string.
@@ -55,8 +56,12 @@ type D = UnionMin<never>;
 ```
 */
 export type UnionMin<N extends number> =
+	UnionMinImplementation<N extends object ? UnwrapBrand<N> : N>;
+
+// Normalize the candidates once so the counter can match branded values.
+type UnionMinImplementation<N extends number> =
 	IsAnyOrNever<N> extends true ? N
-		: number extends N ? number
+		: `${number}` extends `${N}` ? number
 			: NegativeInfinity extends N ? NegativeInfinity
 				: [N] extends [PositiveInfinity] ? PositiveInfinity
 					: InternalUnionMin<Finite<N>>;

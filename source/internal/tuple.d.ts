@@ -45,7 +45,7 @@ type B = TupleMax<[1, 2, 5, 3, 99, -1]>;
 //=> 99
 ```
 */
-export type TupleMax<A extends number[], Result extends number = NegativeInfinity> = number extends A[number]
+export type TupleMax<A extends number[], Result extends number = NegativeInfinity> = `${number}` extends `${A[number]}`
 	? never
 	: A extends [infer F extends number, ...infer R extends number[]]
 		? GreaterThan<F, Result> extends true
