@@ -1,6 +1,5 @@
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {IsNever} from './is-never.d.ts';
 import type {And} from './and.d.ts';
 import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts'; // For `@link`
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
@@ -10,6 +9,7 @@ import type {Except} from './except.d.ts';
 import type {
 	FirstArrayElement,
 	SimplifyObject,
+	ApplyDefaultOptions,
 	EnforceOptional,
 	KeyAliases,
 } from './internal/index.d.ts';
@@ -393,7 +393,7 @@ export type MergeDeepOptions = {
 	- `replace`: Replaces the destination value by the source value. This is the default mode.
 	- `spread`: Spreads the destination and the source values.
 
-	A union mode produces a union of complete merges. An optional mode also includes the default when omitted.
+	A union mode produces a union of complete merges.
 
 	See {@link MergeDeep} for usages and examples.
 
@@ -424,20 +424,17 @@ type MergeDeepInternalOptions = Merge<MergeDeepOptions, {spreadTopLevelArrays?: 
 /**
 Merge default and internal options with user provided options.
 */
-type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = Merge<{
+type DefaultMergeDeepOptions<Options extends MergeDeepOptions> = ApplyDefaultOptions<MergeDeepInternalOptions, {
 	arrayMergeMode: 'replace';
 	recurseIntoArrays: false;
 	spreadTopLevelArrays: true;
-}, IsNever<Options> extends true ? {} : Options>;
+}, Options>;
 
 /**
-Selects the entry point and merges default options once. Each whole merge uses one array mode, with omitted optional modes using `replace`.
+Selects the entry point and merges default options once. Each whole merge uses one array mode.
 */
 type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepOptions> = {
-	[Mode in
-	Exclude<DefaultMergeDeepOptions<Options>['arrayMergeMode'], undefined>
-	| (undefined extends DefaultMergeDeepOptions<Options>['arrayMergeMode'] ? 'replace' : never)
-	]: (
+	[Mode in DefaultMergeDeepOptions<Options>['arrayMergeMode']]: (
 		[undefined] extends [Destination | Source]
 			? never
 			: Destination extends UnknownRecord
@@ -466,10 +463,7 @@ type MergeDeepWithDefaultOptions<Destination, Source, Options extends MergeDeepO
 							: MergeDeepWithDefaultOptions<{}, Source, Options>
 						: never
 	)
-}[
-	Exclude<DefaultMergeDeepOptions<Options>['arrayMergeMode'], undefined>
-	| (undefined extends DefaultMergeDeepOptions<Options>['arrayMergeMode'] ? 'replace' : never)
-];
+}[DefaultMergeDeepOptions<Options>['arrayMergeMode']];
 
 /**
 Merge two objects or two arrays/tuples recursively into a new type.
