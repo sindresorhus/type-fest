@@ -17,7 +17,7 @@ export const importPathRule = /** @type {const} */ ({
 	create(context) {
 		return {
 			'ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration, TSImportType'(node) {
-				// Exit if not a re-export
+				// Exit if not an import or export from a module
 				if (!node.source) {
 					return;
 				}
@@ -29,18 +29,14 @@ export const importPathRule = /** @type {const} */ ({
 					return;
 				}
 
-				const filename = path.basename(importPath);
-				const extension = path.extname(filename);
+				const extension = path.extname(importPath);
 
 				// Skip if the import path already ends with `.d.ts`
-				if (filename.endsWith('.d.ts')) {
+				if (importPath.endsWith('.d.ts')) {
 					return;
 				}
 
-				const importPathWithoutExtension = extension.length > 0
-					? importPath.slice(0, -extension.length)
-					: importPath;
-				const fixedImportPath = `${importPathWithoutExtension}.d.ts`;
+				const fixedImportPath = `${importPath.slice(0, importPath.length - extension.length)}.d.ts`;
 
 				context.report({
 					node: node.source,

@@ -16,7 +16,6 @@ export const sourceFilesExtensionRule = /** @type {const} */ ({
 	defaultOptions: [],
 	create(context) {
 		const filename = path.basename(context.filename);
-		const extension = path.extname(filename);
 
 		if (filename.endsWith('.d.ts')) {
 			return {};
@@ -24,10 +23,7 @@ export const sourceFilesExtensionRule = /** @type {const} */ ({
 
 		return {
 			Program(node) {
-				const filenameWithoutExtension = extension.length > 0
-					? filename.slice(0, -extension.length)
-					: filename;
-				const fixedFilename = `${filenameWithoutExtension}.d.ts`;
+				const fixedFilename = `${path.parse(filename).name}.d.ts`;
 
 				context.report({
 					loc: {column: 0, line: 1}, // Report error on start of the file
