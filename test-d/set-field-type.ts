@@ -132,3 +132,11 @@ declare let changedEnumSource: SetFieldType<EnumFieldSource, Tagged<SelectorKey.
 expectTypeOf<keyof typeof changedEnumSource>().toBe<keyof EnumFieldSource>();
 changedEnumSource[SelectorKey.Value] = true;
 expectTypeOf(changedEnumSource[SelectorKey.Value]).toBe<boolean>();
+
+// An autocomplete selector over a template literal index signature keeps its literal member required.
+declare const autocompleteTemplateField: SetFieldType<{[key: `on${string}`]: unknown; onClick?: () => void}, LiteralUnion<'onClick', `on${string}`>, boolean, {preservePropertyModifiers: false}>;
+expectTypeOf(autocompleteTemplateField.onClick).toBe<boolean>();
+expectTypeOf<{}>().not.toBeAssignableTo<typeof autocompleteTemplateField>();
+
+// An empty intersection on a template literal selector resolves like the template literal itself.
+expectTypeOf<SetFieldType<{[key: `on${string}`]: unknown; onClick?: () => void}, 'onClick' | (`on${string}` & {}), Date>>().toBe<{[key: `on${string}`]: Date; onClick?: Date}>();

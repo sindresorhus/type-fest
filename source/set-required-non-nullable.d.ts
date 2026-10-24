@@ -109,7 +109,7 @@ Known limitations:
 @category Object
 */
 export type SetRequiredNonNullable<BaseType, Keys extends keyof BaseType> =
-	SetRequiredNonNullableImplementation<BaseType, (UnwrapPathBrand<Keys> | Extract<keyof BaseType, ToString<UnwrapPathBrand<Keys> & string>>) & keyof BaseType>;
+	SetRequiredNonNullableImplementation<BaseType, (UnwrapPathBrand<Keys> | Extract<Exclude<keyof BaseType, UnwrapPathBrand<Keys>>, ToString<UnwrapPathBrand<Keys> & string>>) & keyof BaseType>;
 
 // A constrained selector parameter retains the readonly modifiers when mapping its properties.
 type SetRequiredNonNullableImplementation<BaseType, Keys extends keyof BaseType> =

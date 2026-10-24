@@ -2,7 +2,7 @@ import type {IsEqual} from '../is-equal.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {Split} from '../split.d.ts';
 import type {Whitespace} from './characters.d.ts';
-import type {UnwrapBrand} from './object.d.ts';
+import type {CollapseLiterals, UnwrapBrand} from './object.d.ts';
 
 /**
 Return a string representation of the given string or number.
@@ -255,7 +255,7 @@ type Path = UnwrapPathBrand<'users.name' & {readonly brand: unique symbol}>;
 ```
 */
 export type UnwrapPathBrand<Path> = Path extends unknown
-	? Exclude<keyof Path, keyof string | keyof number> extends never ? Path : UnwrapBrand<Path>
+	? Exclude<keyof CollapseLiterals<Path>, keyof string | keyof number> extends never ? Path : UnwrapBrand<Path>
 	: never;
 
 /**

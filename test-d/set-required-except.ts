@@ -107,3 +107,7 @@ expectTypeOf(requiredExceptEnumSelection).toBe<{id?: string; other: number}>();
 expectTypeOf<SetRequiredExcept<{readonly [RequiredExceptField.Id]?: string; other?: number}, RequiredExceptField.Id>>()
 	.toBe<{readonly [RequiredExceptField.Id]?: string; other: number}>();
 expectTypeOf<SetRequiredExcept<{id?: string; other?: number}, Tagged<RequiredExceptField.Id, 'Key'>>>().toBe<{id?: string; other: number}>();
+
+// An empty intersection on a template literal selector resolves like the template literal itself.
+expectTypeOf<SetRequiredExcept<{[key: `on${string}`]: unknown; onClick?: () => void; other?: 1}, 'onClick' | (`on${string}` & {})>>()
+	.toBe<{[key: `on${string}`]: unknown; onClick?: () => void; other: 1}>();

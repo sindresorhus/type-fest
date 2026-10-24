@@ -513,3 +513,8 @@ declare const readonlyEnumSource: SetRequiredNonNullable<{readonly [NonNullishFi
 expectTypeOf<keyof typeof readonlyEnumSource>().toBe<NonNullishField.Id>();
 // @ts-expect-error The original constrained map retains readonly on a nominal source key.
 readonlyEnumSource[NonNullishField.Id] = 'valid';
+
+// An autocomplete selector over a template literal index signature keeps its literal member required.
+declare const autocompleteTemplateKey: SetRequiredNonNullable<{[key: `on${string}`]: unknown; onClick?: (() => void) | null}, LiteralUnion<'onClick', `on${string}`>>;
+expectTypeOf(autocompleteTemplateKey.onClick).toBe<() => void>();
+expectTypeOf<{}>().not.toBeAssignableTo<typeof autocompleteTemplateKey>();

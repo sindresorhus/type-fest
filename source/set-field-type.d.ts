@@ -73,7 +73,7 @@ type _SetFieldType<BaseType, Keys, NewType, Options extends Required<SetFieldTyp
 			Options['preservePropertyModifiers'] extends false
 				? BaseType extends readonly unknown[]
 					? unknown
-					: Record<(Keys | Extract<keyof BaseType, ToString<Keys & string>>) & keyof BaseType & PropertyKey, NewType>
+					: Record<(Keys | Extract<Exclude<keyof BaseType, Keys>, ToString<Keys & string>>) & keyof BaseType & PropertyKey, NewType>
 				: unknown
 		)>
 		: never; // Should never happen
