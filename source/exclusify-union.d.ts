@@ -164,14 +164,18 @@ export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union, {
 	>;
 }>;
 
-type _ExclusifyUnion<Union, UnionCopy = Union> = Union extends unknown // For distributing `Union`
+type _ExclusifyUnion<
+	Union,
+	// A string index signature contributes `string | number` to `KeysOfUnion`, and adding those as `never` keys would collide with the other members' own named string keys and leave the union with nothing assignable to it, so the keys are read with the index signatures taken off.
+	// Prefer an already declared numeric key over its duplicate string alias. Compute this shared key set before distributing the union.
+	AllKeys extends PropertyKey = Exclude<KeysOfUnion<OmitIndexSignature<Union>>, `${KeysOfUnion<OmitIndexSignature<Union>> & number}`>,
+> = Union extends unknown // For distributing `Union`
 	? SimplifyObject<
 		Union & Partial<
 			Record<
-				// A string index signature contributes `string | number` to `KeysOfUnion`, and adding those as `never` keys would collide with the other members' own named string keys and leave the union with nothing assignable to it, so the keys are read with the index signatures taken off.
-				// Prefer an already declared numeric key over its duplicate string alias, then forbid keys not owned by this member.
+				// Forbid keys not owned by this member.
 				Exclude<
-					Exclude<KeysOfUnion<OmitIndexSignature<UnionCopy>>, `${KeysOfUnion<OmitIndexSignature<UnionCopy>> & number}`>,
+					AllKeys,
 					NormalizedKeys<keyof OmitIndexSignature<Union>>
 				>,
 				never

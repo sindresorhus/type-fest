@@ -155,3 +155,37 @@ expectTypeOf<ExclusifyUnion<{0: any} | {'0': unknown}>>().toBe<{0: any} | {'0': 
 expectTypeOf<ExclusifyUnion<{0: never} | {'0': string}>>().toBe<{0: never} | {'0': string}>();
 expectTypeOf<ExclusifyUnion<NumericAliasAlternatives | undefined>>().toBe<NumericAliasAlternatives | undefined>();
 expectTypeOf<ExclusifyUnion<NumericAliasAlternatives | string[]>>().toBe<NumericAliasAlternatives | string[]>();
+
+// Larger event unions keep cross-member fields exclusive and narrow by their discriminant.
+type DispatchEvent =
+	| {kind: 'load'; url: string}
+	| {kind: 'save'; path: string}
+	| {kind: 'move'; position: number}
+	| {kind: 'cancel'; reason: string}
+	| {kind: 'start'; startedAt: Date}
+	| {kind: 'stop'; duration: number}
+	| {kind: 'result'; data: unknown};
+const movedDispatch: ExclusifyUnion<DispatchEvent> = {kind: 'move', position: 1};
+expectTypeOf(movedDispatch.position).toBe<number>();
+expectTypeOf(movedDispatch.url).toBe<undefined>();
+const mixedDispatch = {kind: 'move' as const, position: 1, url: 'https://example.com'};
+expectTypeOf(mixedDispatch).not.toBeAssignableTo<ExclusifyUnion<DispatchEvent>>();
+expectTypeOf<{kind: 'move'; position: number; path: undefined}>().not.toBeAssignableTo<ExclusifyUnion<DispatchEvent>>();
+
+function createDispatch<Value>(value: Value): ExclusifyUnion<{kind: 'value'; value: Value} | {kind: 'error'; error: Error}> {
+	return {kind: 'value', value};
+}
+
+expectTypeOf(createDispatch({id: 1}).value).toBe<{id: number} | undefined>();
+
+function readDispatch<Value>(event: ExclusifyUnion<{kind: 'value'; value: Value} | {kind: 'error'; error: Error}>): Value | undefined {
+	return event.value;
+}
+
+declare function exclusiveValue<const Union>(value: Union): ExclusifyUnion<Union>;
+declare const loadRemote: boolean;
+const inferredSource = exclusiveValue(loadRemote ? {url: 'https://example.com'} as const : {path: 'config.json'} as const);
+expectTypeOf(inferredSource.url).toBe<'https://example.com' | undefined>();
+expectTypeOf(inferredSource.path).toBe<'config.json' | undefined>();
+// @ts-expect-error An alternative's own readonly property stays readonly.
+inferredSource.url = 'https://example.com';
