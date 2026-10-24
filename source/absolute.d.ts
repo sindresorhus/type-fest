@@ -52,6 +52,9 @@ type _Absolute<N extends number | bigint> = N extends bigint // Also, distribute
 	: `${N}` extends `-${infer Magnitude extends number}`
 		? Magnitude
 		// `-Infinity` does not infer a numeric magnitude, so handle it separately.
-		: `${N}` extends '-Infinity' ? PositiveInfinity : N;
+		: `${N}` extends '-Infinity'
+			? PositiveInfinity
+			// A computed numeric enum member prints like `number`, so its magnitude is unknown too.
+			: `${number}` extends `${N}` ? number : N;
 
 export {};

@@ -108,6 +108,13 @@ enum CalibrationOffset {
 }
 expectTypeOf<Absolute<CalibrationOffset>>().toBe<0.25 | 4>();
 
+// A computed enum member has no known value, so its magnitude is unknown.
+declare enum RuntimeOffset {
+	Value,
+}
+expectTypeOf<Absolute<RuntimeOffset.Value>>().toBe<number>();
+expectTypeOf<Absolute<RuntimeOffset.Value | -3>>().toBe<number>();
+
 declare function absoluteValue<const Value extends number | bigint>(value: Value): Absolute<Value>;
 const inferredMagnitude = absoluteValue(-5);
 expectTypeOf(inferredMagnitude).toBe<5>();
