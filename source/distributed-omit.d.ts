@@ -1,9 +1,10 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {LiteralUnion} from './literal-union.d.ts';
 
 /**
 Omits keys from a type, distributing the operation over a union.
 
-TypeScript's `Omit` doesn't distribute over unions, leading to the erasure of unique properties from union members when omitting keys. This creates a type that only retains properties common to all union members, making it impossible to access member-specific properties after the Omit. Essentially, using `Omit` on a union type merges the types into a less specific one, hindering type narrowing and property access based on discriminants. This type solves that.
+TypeScript's `Omit` doesn't distribute over unions. The result keeps only the shared properties and widens the discriminant, so narrowing no longer works. This type omits from each member separately.
 
 Example:
 
@@ -38,7 +39,7 @@ if (omittedUnion.discriminant === 'A') {
 }
 ```
 
-While `Except` solves this problem too, it also keeps the named keys that `Omit` loses when the type has an index signature, where `DistributedOmit` passes each union member to `Omit` directly. Both accept a key that only some union members have.
+Like `Omit`, and unlike `Except`, it accepts a key that is not present in the type. That lets a generic props type omit a key it may not have, as in `type WrapperProps<Props> = DistributedOmit<Props, 'value'>`. Use `Except` when a typo or a rename must be reported. `Except` and `DistributedOmit` both accept a key that only some members have; they differ on index signatures, where `Except` keeps the named keys that `Omit` loses.
 
 @example
 ```
@@ -78,17 +79,25 @@ if (omittedUnion.discriminant === 'A') {
 
 	// @ts-expect-error
 	const fooValue = omittedUnion.foo;
-	// Error: `foo` is not a property of `{discriminant: 'A'; a: string}`
+	// Error: `foo` is not a property of `{discriminant: 'A'; a: number}`
 
 	// @ts-expect-error
 	const barValue = omittedUnion.bar;
-	// Error: `bar` is not a property of `{discriminant: 'A'; a: string}`
+	// Error: `bar` is not a property of `{discriminant: 'A'; a: number}`
+}
+
+// Like `Omit`, a key that is not present in the type is accepted and removes nothing.
+declare const unchangedUnion: DistributedOmit<Union, 'value'>;
+
+if (unchangedUnion.discriminant === 'C') {
+	const cValue = unchangedUnion.c;
+	// OK
 }
 ```
 
 @category Object
 */
-export type DistributedOmit<ObjectType, KeyType extends KeysOfUnion<ObjectType>> =
+export type DistributedOmit<ObjectType, KeyType extends LiteralUnion<KeysOfUnion<ObjectType>, PropertyKey>> =
 	ObjectType extends unknown
 		? Omit<ObjectType, KeyType>
 		: never;
