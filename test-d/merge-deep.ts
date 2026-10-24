@@ -855,3 +855,41 @@ function constructOptionalMerge<Value>(source: readonly Value[]): MergeDeep<{val
 readonlyModeReplacement.values[0] = 'source';
 // @ts-expect-error Neither array merge strategy introduces boolean values here.
 const invalidUncertainValue: UncertainMergeResult = {values: [false], flags: []};
+
+// Copied named values remain sealed inside recursively merged tuples and signatures.
+declare class CopiedMergeLeaf {
+	name: string;
+	nested: {id: number};
+}
+
+type CopiedMergeRows = {readonly [key: `row-${string}`]: CopiedMergeLeaf; keep: CopiedMergeLeaf};
+declare const copiedMergeRows: MergeDeep<[CopiedMergeRows], [{enabled: true}], {recurseIntoArrays: true}>;
+expectTypeOf(copiedMergeRows[0].keep).toBe<{name: string; nested: {id: number}}>();
+const copiedMergeNamedRecord: Record<string, unknown> = copiedMergeRows[0].keep;
+const copiedMergeIndexedRecord: Record<string, unknown> = copiedMergeRows[0]['row-first']!;
+// @ts-expect-error A valid replacement still cannot write through the readonly signature.
+copiedMergeRows[0]['row-first'] = {name: 'new', nested: {id: 1}};
+
+declare const copiedMergeCallback: MergeDeep<[{handler: (value: string) => number}], [{enabled: true}], {recurseIntoArrays: true}>;
+expectTypeOf(copiedMergeCallback[0].handler('value')).toBe<number>();
+
+declare const fallbackMergeRows: MergeDeep<[{value: {before: true}}], [{value: CopiedMergeLeaf}], {recurseIntoArrays: true}>;
+expectTypeOf(fallbackMergeRows[0].value).toBe<{name: string; nested: {id: number}}>();
+
+function _readCopiedMergeValue<Value extends string>(value: MergeDeep<[{id: Value}], [{enabled: true}], {recurseIntoArrays: true}>): string {
+	return value[0].id;
+}
+
+declare function mergeCopiedValues<const Destination, const Source>(destination: Destination, source: Source): MergeDeep<Destination, Source, {recurseIntoArrays: true}>;
+const inferredCopiedMerge = mergeCopiedValues([{keep: 1}], [{value: 'ready'}]);
+expectTypeOf(inferredCopiedMerge[0]).toBe<{readonly keep: 1; readonly value: 'ready'}>();
+
+// Shared signature values are normalized as a complete union, including unmerged alternatives.
+type CopiedMergeDictionary = Record<`row-${string}`, CopiedMergeLeaf>;
+type SharedCopiedMergeRows = MergeDeep<[CopiedMergeDictionary], [CopiedMergeDictionary], {recurseIntoArrays: true}>;
+expectTypeOf<SharedCopiedMergeRows[0][`row-${string}`]>().toBeAssignableTo<{name: string; nested: {id: number}}>();
+declare const sharedCopiedMergeRows: SharedCopiedMergeRows;
+const sharedCopiedMergeRecord: Record<string, unknown> = sharedCopiedMergeRows[0]['row-first']!;
+
+declare const copiedNullableMerge: MergeDeep<[{optional?: CopiedMergeLeaf | null | undefined}], [{enabled: true}], {recurseIntoArrays: true}>;
+expectTypeOf(copiedNullableMerge[0].optional?.nested.id).toBe<number | undefined>();

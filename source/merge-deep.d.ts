@@ -8,6 +8,7 @@ import type {Merge} from './merge.d.ts';
 import type {Except} from './except.d.ts';
 import type {
 	FirstArrayElement,
+	SimplifyObject,
 	EnforceOptional,
 	NormalizedKeys,
 	ToString,
@@ -61,11 +62,11 @@ type DoMergeDeepRecord<
 // Compare runtime spellings, but read through the declared destination key so enum names retain their values.
 // Case in rule 1: The destination contains the key but the source doesn't.
 	{
-		[Key in keyof Destination as Key extends NormalizedKeys<keyof Source | ToString<keyof Source>> ? never : Key]: Destination[Key];
+		[Key in keyof Destination as Key extends NormalizedKeys<keyof Source | ToString<keyof Source>> ? never : Key]: SimplifyDeepExcludeArray<Destination[Key]>;
 	}
 // Case in rule 2: The source contains the key but the destination doesn't.
 	& {
-		[Key in keyof Source as Key extends NormalizedKeys<keyof Destination | ToString<keyof Destination>> ? never : Key]: Source[Key];
+		[Key in keyof Source as Key extends NormalizedKeys<keyof Destination | ToString<keyof Destination>> ? never : Key]: SimplifyDeepExcludeArray<Source[Key]>;
 	}
 // Case in rule 3: Both the source and the destination contain the key.
 	& {
@@ -91,11 +92,11 @@ type MergeDeepIndexSignatures<
 	Source extends UnknownRecord,
 	Options extends MergeDeepInternalOptions,
 > = {
-	[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key];
+	[Key in keyof Destination as Key extends keyof Source ? never : Key]: SimplifyDeepExcludeArray<Destination[Key]>;
 } & {
-	[Key in keyof Source as Key extends keyof Destination ? never : Key]: Source[Key];
+	[Key in keyof Source as Key extends keyof Destination ? never : Key]: SimplifyDeepExcludeArray<Source[Key]>;
 } & {
-	[Key in keyof Source as Key extends keyof Destination ? Key : never]: Destination[Key] | Source[Key] | MergeDeepRecordProperty<Destination[Key], Source[Key], Options>;
+	[Key in keyof Source as Key extends keyof Destination ? Key : never]: SimplifyDeepExcludeArray<Destination[Key] | Source[Key] | MergeDeepRecordProperty<Destination[Key], Source[Key], Options>>;
 };
 
 // Helper to avoid computing ArrayTail twice.
@@ -360,24 +361,24 @@ type MergeDeepArrayOrTuple<
 	: DoMergeArrayOrTuple<Destination, Source, Options>;
 
 /**
-Try to merge two objects or two arrays/tuples recursively into a new type or return the default value.
+Try to merge two objects or two arrays/tuples recursively, or return the default. Copied and default values are already simplified; newly merged records only need their outer map flattened.
 */
 type MergeDeepOrReturn<
 	DefaultType,
 	Destination,
 	Source,
 	Options extends MergeDeepInternalOptions,
-> = SimplifyDeepExcludeArray<[undefined] extends [Destination | Source]
-	? DefaultType
+> = [undefined] extends [Destination | Source]
+	? SimplifyDeepExcludeArray<DefaultType>
 	: Destination extends UnknownRecord
 		? Source extends UnknownRecord
-			? MergeDeepRecord<Destination, Source, Options>
-			: DefaultType
+			? SimplifyObject<MergeDeepRecord<Destination, Source, Options>>
+			: SimplifyDeepExcludeArray<DefaultType>
 		: Destination extends UnknownArray
 			? Source extends UnknownArray
 				? MergeDeepArrayOrTuple<Destination, Source, EnforceOptional<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>
-				: DefaultType
-			: DefaultType>;
+				: SimplifyDeepExcludeArray<DefaultType>
+			: SimplifyDeepExcludeArray<DefaultType>;
 
 /**
 Options for the `MergeDeep` type.
