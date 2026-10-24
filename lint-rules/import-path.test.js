@@ -1,3 +1,7 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {Linter} from 'eslint';
+import {parse} from '@typescript-eslint/parser';
 import {createRuleTester} from './testing-utilities.js';
 import {importPathRule} from './import-path.js';
 
@@ -85,6 +89,29 @@ ruleTester.run('import-path', importPathRule, {
 		},
 	],
 	invalid: [
+		// Autofixes must keep apostrophes in filenames inside a valid string literal.
+		invalidImport(
+			'import type {User} from "./user\'s-schema.ts";',
+			String.raw`import type {User} from './user\'s-schema.d.ts';`,
+		),
+		invalidImport(
+			'export type {User} from "../user\'s-schema.js";',
+			String.raw`export type {User} from '../user\'s-schema.d.ts';`,
+		),
+		invalidImport(
+			String.raw`export * from "./folder\\schema.ts";`,
+			String.raw`export * from './folder\\schema.d.ts';`,
+		),
+		invalidImport(
+			String.raw`import type {Line} from "./line\nbreak.ts";`,
+			String.raw`import type {Line} from './line\nbreak.d.ts';`,
+		),
+		invalidImport(
+			String.raw`export * as Types from "./line\
+continued.ts";`,
+			'export * as Types from \'./linecontinued.d.ts\';',
+		),
+
 		// Replacing the final extension must preserve the whole module name.
 		invalidImport(
 			'import type {Foo} from "./foo.shared.ts";',
@@ -169,4 +196,17 @@ ruleTester.run('import-path', importPathRule, {
 			'export * as AllTypes from \'../../all.d.ts\';',
 		),
 	],
+});
+
+test('autofixes preserve decoded module paths', () => {
+	const linter = new Linter();
+	const importPaths = ['./user\'s-schema.ts', String.raw`./folder\schema.ts`, './line\nbreak.ts', './double"quote.ts'];
+	const results = importPaths.map(importPath => linter.verifyAndFix(`export * from ${JSON.stringify(importPath)};`, [{
+		plugins: {'type-fest': {rules: {'import-path': importPathRule}}},
+		rules: {'type-fest/import-path': 'error'},
+	}]));
+
+	assert.equal(results.every(result => result.fixed), true);
+	assert.deepEqual(results.flatMap(result => result.messages), []);
+	assert.deepEqual(results.map(result => parse(result.output, {sourceType: 'module'}).body[0].source.value), importPaths.map(importPath => `${importPath.slice(0, -3)}.d.ts`));
 });

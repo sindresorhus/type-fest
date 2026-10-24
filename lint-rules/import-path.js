@@ -46,7 +46,9 @@ export const importPathRule = /** @type {const} */ ({
 					node: node.source,
 					messageId: 'incorrectImportPath',
 					fix(fixer) {
-						return fixer.replaceText(node.source, `'${fixedImportPath}'`);
+						// Serialize the decoded path before wrapping it in the rule's single quotes.
+						const escapedImportPath = JSON.stringify(fixedImportPath).slice(1, -1).replaceAll('\'', String.raw`\'`);
+						return fixer.replaceText(node.source, `'${escapedImportPath}'`);
 					},
 					data: {importPath, fixedImportPath},
 				});
