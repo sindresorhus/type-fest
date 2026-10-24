@@ -41,8 +41,8 @@ type Example2 = ExcludeStrict<{x: number; y: number} | {x: string; y: string}, u
 export type ExcludeStrict<
 	T,
 	U extends [U] extends [
-		// Ensure every member of `U` excludes something from `T`
-		U extends unknown ? ([T] extends [Exclude<T, U>] ? never : U) : never,
+		// Check matching members directly, because a retained structural supertype can hide a removed member.
+		U extends unknown ? (Extract<T, U> extends never ? never : U) : never,
 	]
 		? unknown
 		: never,
