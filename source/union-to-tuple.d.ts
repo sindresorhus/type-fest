@@ -1,4 +1,4 @@
-import type {ExcludeExactly} from './exclude-exactly.d.ts';
+import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {TupleToUnion} from './tuple-to-union.d.ts'; // For `@link`
 import type {UnionMember} from './union-member.d.ts';
@@ -49,6 +49,10 @@ export type UnionToTuple<Union> =
 type _UnionToTuple<Union, Accumulator extends UnknownArray = [], Member = UnionMember<Union>> =
 	IsNever<Union> extends true
 		? Accumulator
-		: _UnionToTuple<ExcludeExactly<Union, Member>, [Member, ...Accumulator]>;
+		: _UnionToTuple<
+			// `Member` is already selected; exact comparison keeps structurally covering members distinct.
+			Union extends unknown ? IsEqual<Union, Member> extends true ? never : Union : never,
+			[Member, ...Accumulator]
+		>;
 
 export {};
