@@ -134,6 +134,7 @@ Click the type names for complete docs.
 - [`PickIndexSignature`](source/pick-index-signature.d.ts) - Pick only index signatures from the given object type, leaving out all explicitly defined properties.
 - [`PickWritable`](source/pick-writable.d.ts) - Pick only the writable properties from the given object type, leaving out the `readonly` ones.
 - [`PickReadonly`](source/pick-readonly.d.ts) - Pick only the `readonly` properties from the given object type, leaving out the writable ones.
+- [`PickNonNever`](source/pick-non-never.d.ts) - Pick only the properties of the given object type that do not have the `never` type.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`UndefinedOnPartialDeep`](source/undefined-on-partial-deep.d.ts) - Create a deep version of another type where all optional keys are set to also accept `undefined`.
@@ -441,6 +442,7 @@ Click the type names for complete docs.
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 - `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
+- `OmitNever` - See [`PickNonNever`](source/pick-non-never.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 - `Maybe`, `Option` - See [`Optional`](source/optional.d.ts)
