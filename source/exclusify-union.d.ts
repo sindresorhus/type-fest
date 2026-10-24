@@ -1,4 +1,4 @@
-import type {ExactKey, NormalizedKeys, SimplifyObject, ToString} from './internal/index.d.ts';
+import type {DeduplicatedKeys, ExactKey, NormalizedKeys, SimplifyObject, ToString} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
@@ -167,13 +167,13 @@ export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union, {
 type _ExclusifyUnion<
 	Union,
 	// A string index signature contributes `string | number` to `KeysOfUnion`, and adding those as `never` keys would collide with the other members' own named string keys and leave the union with nothing assignable to it, so the keys are read with the index signatures taken off.
-	// Prefer an already declared numeric key over its duplicate string alias. Compute this shared key set before distributing the union.
-	AllKeys extends PropertyKey = Exclude<KeysOfUnion<OmitIndexSignature<Union>>, `${KeysOfUnion<OmitIndexSignature<Union>> & number}`>,
+	// Prefer an already declared numeric key over its duplicate string alias, and use the string value of an enum key. Compute this shared key set before distributing the union.
+	AllKeys extends PropertyKey = DeduplicatedKeys<KeysOfUnion<OmitIndexSignature<Union>>>,
 > = Union extends unknown // For distributing `Union`
 	? SimplifyObject<
 		Union & Partial<Record<
-			// Forbid keys outside this member's declared and indexed domains, including canonical spellings.
-			Exclude<AllKeys, NormalizedKeys<ExactKey<Record<keyof Union, never>, AllKeys | ToString<AllKeys>>>>,
+			// Forbid keys outside this member's declared and indexed domains, including canonical spellings and the string spellings of its enum keys.
+			Exclude<AllKeys, NormalizedKeys<ExactKey<Record<keyof Union | ToString<keyof OmitIndexSignature<Union>>, never>, AllKeys | ToString<AllKeys>>>>,
 			never
 		>>
 	>

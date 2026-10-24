@@ -170,6 +170,18 @@ expectTypeOf<{a: true; '0': number}>().not.toBeAssignableTo<RequireExactlyOne<Fo
 expectTypeOf<{a: true}>().toBeAssignableTo<RequireExactlyOne<ForeignNumericAliases>>();
 expectTypeOf<{0: string}>().toBeAssignableTo<RequireExactlyOne<ForeignNumericAliases>>();
 
+// A string enum key and its plain string spelling are the same property, so the enum member is not forbidden by its own alias.
+enum AliasedField {
+	Name = 'name',
+}
+
+type EnumAliasAlternatives = RequireExactlyOne<{[AliasedField.Name]: 1} | {name: 2; other: 1}>;
+expectTypeOf<{[AliasedField.Name]: 1}>().toBeAssignableTo<EnumAliasAlternatives>();
+expectTypeOf<{name: 2}>().toBeAssignableTo<EnumAliasAlternatives>();
+expectTypeOf<{other: 1}>().toBeAssignableTo<EnumAliasAlternatives>();
+expectTypeOf<{[AliasedField.Name]: 1; other: 1}>().not.toBeAssignableTo<EnumAliasAlternatives>();
+expectTypeOf<{name: 2; other: 1}>().not.toBeAssignableTo<EnumAliasAlternatives>();
+
 // Forbidden keys keep their declared numeric spelling so ordinary keyof and Pick still work.
 expectTypeOf<keyof RequireExactlyOne<{0: string; 1: number}>>().toBe<0 | 1>();
 type PickNumericChoice = Pick<RequireExactlyOne<{0: string; 1: number}>, 0>;

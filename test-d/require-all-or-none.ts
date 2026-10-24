@@ -106,6 +106,16 @@ expectTypeOf<RequireAllOrNone<never, never>>().toBe<never>();
 ({a: 1, b: 1}) satisfies RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>;
 expectTypeOf({a: 1} as const).not.toBeAssignableTo<RequireAllOrNone<{a?: 1; b?: 1} | {c: 2}, 'a' | 'b'>>();
 
+// A string enum key keeps its member, even when another member spells the same property as a plain string.
+enum AliasedField {
+	Name = 'name',
+}
+
+type EnumAliasAllOrNone = RequireAllOrNone<{[AliasedField.Name]: 1} | {name: 2; other: 1}>;
+expectTypeOf<{[AliasedField.Name]: 1}>().toBeAssignableTo<EnumAliasAllOrNone>();
+expectTypeOf<{name: 2; other: 1}>().toBeAssignableTo<EnumAliasAllOrNone>();
+expectTypeOf<{name: 2}>().not.toBeAssignableTo<EnumAliasAllOrNone>();
+
 // A dynamic index signature must not erase unrelated required fields or their value types.
 type IndexedChoiceOptions = {[key: string]: unknown; readonly requestId: string; readonly enabled?: boolean; cursor?: string; offset?: number};
 type IndexedAllOrNone = RequireAllOrNone<IndexedChoiceOptions, 'cursor' | 'offset'>;

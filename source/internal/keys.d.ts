@@ -49,6 +49,21 @@ Disallows any of the given keys.
 export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
 
 /**
+Keep one spelling of each property in the given keys, because a mapped type drops a property that two different key types name. A string enum key becomes its string value, and the string spelling of a numeric key is removed when the numeric key is present.
+
+@example
+```
+enum Field {
+	Name = 'name',
+}
+
+type Keys = DeduplicatedKeys<0 | '0' | Field.Name | 'name'>;
+//=> 0 | 'name'
+```
+*/
+export type DeduplicatedKeys<Keys extends PropertyKey> = Exclude<ToString<Keys & string> | Exclude<Keys, string>, `${Keys & number}`>;
+
+/**
 Utility type to retrieve only literal keys from type.
 */
 export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};

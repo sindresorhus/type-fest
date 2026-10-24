@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, IsLiteral, Tagged} from '../../index.d.ts';
-import type {DefinedKeyFilter, ExactKey, KeysExcept, LiteralKeyOf, OptionalKeyFilter} from '../../source/internal/index.d.ts';
+import type {DeduplicatedKeys, DefinedKeyFilter, ExactKey, KeysExcept, LiteralKeyOf, OptionalKeyFilter} from '../../source/internal/index.d.ts';
 
 // A property whose type includes `undefined` is optional, one that is only `undefined` is neither.
 expectTypeOf<IsEqual<DefinedKeyFilter<{a: 1; b: string | undefined}, 'a'>, 'a'>>().toBe<true>();
@@ -142,3 +142,9 @@ enum ExcludedField {
 expectTypeOf<KeysExcept<{value: string; keep: number}, ExcludedField.Value>>().toBe<'keep'>();
 expectTypeOf<KeysExcept<{[ExcludedField.Value]: string; keep: number}, ExcludedField.Value>>().toBe<'keep'>();
 expectTypeOf<KeysExcept<{[key: number]: unknown; '00': string}, number>>().toBe<'00'>();
+
+// `DeduplicatedKeys` keeps one spelling of each property, so a mapped type over the keys cannot drop it.
+expectTypeOf<IsEqual<DeduplicatedKeys<0 | '0' | ExcludedField.Value | 'value' | typeof symbolKey>, 0 | 'value' | typeof symbolKey>>().toBe<true>();
+expectTypeOf<IsEqual<DeduplicatedKeys<'00' | 0>, '00' | 0>>().toBe<true>();
+expectTypeOf<IsEqual<DeduplicatedKeys<string | number>, string | number>>().toBe<true>();
+expectTypeOf<IsEqual<DeduplicatedKeys<never>, never>>().toBe<true>();

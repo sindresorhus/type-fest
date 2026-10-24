@@ -215,6 +215,15 @@ expectTypeOf(coveredEnumNumber[CoveredField.Zero]).toBe<string | undefined>();
 const coveredEnumString: ExclusifyUnion<Record<string, number> | {[CoveredField.Name]: string}> = {[CoveredField.Name]: 1};
 expectTypeOf(coveredEnumString[CoveredField.Name]).toBe<number | undefined>();
 
+// A string enum key and its plain string spelling are the same property, so the enum member is not forbidden by its own alias.
+type EnumAliasChoices = ExclusifyUnion<{[CoveredField.Name]: 1} | {name: 2; other: 1} | {third: true}>;
+expectTypeOf<{[CoveredField.Name]: 1}>().toBeAssignableTo<EnumAliasChoices>();
+expectTypeOf<{name: 2; other: 1}>().toBeAssignableTo<EnumAliasChoices>();
+expectTypeOf<{third: true}>().toBeAssignableTo<EnumAliasChoices>();
+expectTypeOf<{[CoveredField.Name]: 1; other: 1}>().not.toBeAssignableTo<EnumAliasChoices>();
+expectTypeOf<{third: true; name: 2}>().not.toBeAssignableTo<EnumAliasChoices>();
+expectTypeOf<{third: true; [CoveredField.Name]: 1}>().not.toBeAssignableTo<EnumAliasChoices>();
+
 function coveredDictionary<Value>(value: Value): ExclusifyUnion<Record<string, Value> | {entry: Date}> {
 	return {entry: value};
 }
