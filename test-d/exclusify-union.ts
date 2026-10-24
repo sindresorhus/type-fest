@@ -189,3 +189,38 @@ expectTypeOf(inferredSource.url).toBe<'https://example.com' | undefined>();
 expectTypeOf(inferredSource.path).toBe<'config.json' | undefined>();
 // @ts-expect-error An alternative's own readonly property stays readonly.
 inferredSource.url = 'https://example.com';
+
+// An alternative's index signature already owns the named key, so its own value must remain assignable.
+const indexedStringChoice: ExclusifyUnion<Record<string, number> | {entry: string}> = {entry: 1};
+const indexedNumberChoice: ExclusifyUnion<Record<number, string> | {0: number}> = {0: 'value'};
+const indexedPatternChoice: ExclusifyUnion<{[key: `data-${string}`]: number} | {'data-id': string}> = {'data-id': 1};
+const indexedSymbolChoice: ExclusifyUnion<{[key: symbol]: number} | {[uniqueChoice]: string}> = {[uniqueChoice]: 1};
+
+// A numeric index owns canonical number spellings, while other numeric-looking keys stay independent and readable.
+type NoncanonicalDictionaryChoice = ExclusifyUnion<Record<number, string> | {'01': number; '-0'?: number; '1.0'?: number}>;
+declare const noncanonicalDictionaryChoice: NoncanonicalDictionaryChoice;
+expectTypeOf(noncanonicalDictionaryChoice['01']).toBe<number | undefined>();
+expectTypeOf(noncanonicalDictionaryChoice['-0']).toBe<number | undefined>();
+expectTypeOf(noncanonicalDictionaryChoice['1.0']).toBe<number | undefined>();
+expectTypeOf<keyof NoncanonicalDictionaryChoice>().toBe<'01' | '-0' | '1.0'>();
+expectTypeOf<{'01': string}>().not.toBeAssignableTo<NoncanonicalDictionaryChoice>();
+
+enum CoveredField {
+	Zero = '0',
+	Name = 'name',
+}
+
+const coveredEnumNumber: ExclusifyUnion<Record<number, string> | {[CoveredField.Zero]: number}> = {[CoveredField.Zero]: 'value'};
+expectTypeOf(coveredEnumNumber[CoveredField.Zero]).toBe<string | undefined>();
+const coveredEnumString: ExclusifyUnion<Record<string, number> | {[CoveredField.Name]: string}> = {[CoveredField.Name]: 1};
+expectTypeOf(coveredEnumString[CoveredField.Name]).toBe<number | undefined>();
+
+function coveredDictionary<Value>(value: Value): ExclusifyUnion<Record<string, Value> | {entry: Date}> {
+	return {entry: value};
+}
+
+function _readUncoveredKey<Value>(value: ExclusifyUnion<Record<number, Value> | {note: string}>): string | undefined {
+	return value.note;
+}
+
+expectTypeOf(coveredDictionary({id: 1}).entry).toBe<Date | {id: number}>();
