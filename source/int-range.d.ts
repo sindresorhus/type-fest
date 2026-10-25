@@ -3,7 +3,7 @@ import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {ReverseSign, TupleMin} from './internal/index.d.ts';
+import type {ReverseSign, TupleMin, UnwrapBrand} from './internal/index.d.ts';
 import type {IntClosedRange} from './int-closed-range.d.ts'; // For `@link`
 
 /**
@@ -11,7 +11,7 @@ Generate a union of numbers between a specified start (inclusive) and end (exclu
 
 You skip over numbers using the `Step` parameter (defaults to `1`). For example, `IntRange<0, 10, 2>` will create a union of `0 | 2 | 4 | 6 | 8`.
 
-Note: `Start` and `End` must each be between `-998` and `999`. Negative ranges reach TypeScript's instantiation-depth limit one value earlier, so their supported minimum is one smaller in magnitude than the maximum. If `Start` is greater than `End`, the result is `never`.
+Note: `Start` and `End` must each be between `-998` and `999`. Negative ranges reach TypeScript's instantiation-depth limit one value earlier, so their supported minimum is one smaller in magnitude than the maximum. If `Start` is greater than `End`, the result is `never`. A non-literal bound or step, such as `number`, also gives `never`.
 
 Use-cases:
 1. This can be used to define a set of valid input/output values. for example:
@@ -53,9 +53,14 @@ export type IntRange<Start extends number, End extends number, Step extends numb
 	Start extends unknown
 		? End extends unknown
 			? Step extends unknown
-				? IsNegative<Start> extends true
-					? PrivateNegativeIntRange<Start, End, Step>
-					: PrivateIntRange<Start, End, Step>
+				// Non-literal bounds or steps, like `number` or `any`, cannot be counted, so they give no range.
+				// Check each member's primitive values before arithmetic so a brand cannot hide an unknown number; normalization follows distribution to retain finite alternatives beside it.
+				// Numeric enum members also accept `number`, so compare printed values to recognize known bounds.
+				? `${number}` extends `${UnwrapBrand<Start> | UnwrapBrand<End> | UnwrapBrand<Step>}`
+					? never
+					: IsNegative<Start> extends true
+						? PrivateNegativeIntRange<Start, End, Step>
+						: PrivateIntRange<Start, End, Step>
 				: never // Should never happen
 			: never // Should never happen
 		: never; // Should never happen
@@ -100,23 +105,25 @@ type PrivateIntRange<
 	Step extends number,
 	// The gap between each number, gap = step - 1
 	Gap extends number = Subtract<Step, 1>,
-	// The final `List` is `[...StartLengthTuple, ...[number, ...GapLengthTuple], ...[number, ...GapLengthTuple], ... ...]`, so can initialize the `List` with `[...StartLengthTuple]`
-	List extends unknown[] = TupleOf<Start, never>,
+	// Count positions from `Start` without storing generated values in the tuple.
+	Counter extends unknown[] = TupleOf<Start>,
 	EndLengthTuple extends unknown[] = TupleOf<End>,
 	// Avoid `GreaterThan<Start, End>` here because the extra type instantiations would make `IntRange<0, 999>` exceed TypeScript's instantiation-depth limit
 	// `TupleOf` represents a negative length as an empty tuple, so a negative `End` must be detected before comparing the tuple lengths
 	// Recursive calls pass `false` because reversal only depends on the initial bounds; the termination checks below still handle reaching or overshooting `End` without repeating this tuple comparison
-	IsReversed extends boolean = IsNegative<End> extends true ? true : List extends [...EndLengthTuple, unknown, ...unknown[]] ? true : false,
+	IsReversed extends boolean = IsNegative<End> extends true ? true : Counter extends [...EndLengthTuple, unknown, ...unknown[]] ? true : false,
+	// The values reached while advancing the counter.
+	Result extends number = never,
 > = IsReversed extends true
 	? never
 	: Gap extends 0
 	// Handle the case that without `Step`
-		? List['length'] extends EndLengthTuple['length'] // Compare against the already normalized endpoint so branded bounds can terminate.
-			? Exclude<List[number], never> // All unused elements are `never`, so exclude them
-			: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'] ], EndLengthTuple, false>
+		? Counter['length'] extends EndLengthTuple['length'] // Compare against the already normalized endpoint so branded bounds can terminate.
+			? Result // Return the values reached before the exclusive end.
+			: PrivateIntRange<Start, End, Step, Gap, [...Counter, unknown], EndLengthTuple, false, Result | Counter['length']>
 	// Handle the case that with `Step`; a gap larger than the end only needs enough padding to reach it.
-		: List extends [...(infer U), ...EndLengthTuple] // The result of "List[length] >= End", because the `...TupleOf<Gap, never>` maybe make `List` too long.
-			? Exclude<List[number], never>
-			: PrivateIntRange<Start, End, Step, Gap, [...List, List['length'], ...TupleOf<TupleMin<[Gap, EndLengthTuple['length']]>, never>], EndLengthTuple, false>;
+		: Counter extends [...EndLengthTuple, ...unknown[]] // The result of "Counter[length] >= End", because the `...TupleOf<Gap>` maybe make `Counter` too long.
+			? Result
+			: PrivateIntRange<Start, End, Step, Gap, [...Counter, unknown, ...TupleOf<TupleMin<[Gap, EndLengthTuple['length']]>>], EndLengthTuple, false, Result | Counter['length']>;
 
 export {};

@@ -25,6 +25,13 @@ expectTypeOf<0>().toBeAssignableTo<WideTest>();
 expectTypeOf<997>().toBeAssignableTo<WideTest>();
 expectTypeOf<998>().not.toBeAssignableTo<WideTest>();
 
+// The documented bounds
+type FullRange = IntRange<-998, 999>;
+expectTypeOf<-998>().toBeAssignableTo<FullRange>();
+expectTypeOf<998>().toBeAssignableTo<FullRange>();
+expectTypeOf<999>().not.toBeAssignableTo<FullRange>();
+expectTypeOf<-999>().not.toBeAssignableTo<FullRange>();
+
 // Empty range
 declare const emptyTest: IntRange<5, 5>;
 expectTypeOf(emptyTest).toBe<never>();
@@ -69,6 +76,15 @@ expectTypeOf(reversedFromZeroTest).toBe<never>();
 
 declare const anyTest: IntRange<any, any>;
 expectTypeOf(anyTest).toBe<never>();
+
+// A non-literal bound has no range to count, the same as a non-literal `End`.
+expectTypeOf<IntRange<any, 4>>().toBe<never>();
+expectTypeOf<IntRange<number, 4>>().toBe<never>();
+expectTypeOf<IntRange<0, any>>().toBe<never>();
+expectTypeOf<IntRange<0, number>>().toBe<never>();
+expectTypeOf<IntRange<-2, number>>().toBe<never>();
+expectTypeOf<IntRange<-2, any>>().toBe<never>();
+expectTypeOf<IntRange<-2 | 2, number, 2>>().toBe<never>();
 
 declare const neverTest: IntRange<never, never>;
 expectTypeOf(neverTest).toBe<never>();
@@ -196,3 +212,102 @@ function _rangeResult<Start extends number, End extends number, Step extends num
 expectTypeOf<IntRange<0, 5, never>>().toBe<never>();
 // @ts-expect-error A step must be numeric.
 type UnknownStep = IntRange<0, 5, unknown>;
+
+// A stepped interval keeps only reached positions, including the last partial step.
+expectTypeOf<IntRange<3, 22, 4>>().toBe<3 | 7 | 11 | 15 | 19>();
+
+function makeRangeTable<const Value>(value: Value): Record<IntRange<2, 8, 2>, Value> {
+	return {2: value, 4: value, 6: value};
+}
+
+const inferredRangeTable = makeRangeTable({id: 'item'});
+expectTypeOf(inferredRangeTable[4]).toBe<{readonly id: 'item'}>();
+// @ts-expect-error The exclusive endpoint is not a generated position.
+const _excludedBoundary: unknown = inferredRangeTable[8];
+// @ts-expect-error Inferred nested values retain their readonly property.
+inferredRangeTable[4].id = 'item';
+
+// Counting positions separately retains the first value and a partial final step.
+expectTypeOf<IntRange<19, 20, 2>>().toBe<19>();
+expectTypeOf<IntRange<-7, 8, 4>>().toBe<-7 | -3 | 1 | 5>();
+
+function _readReachedValue<Value>(values: Record<IntRange<3, 22, 4>, Value>): Value {
+	return values[19];
+}
+
+function isPage<End extends number>(value: number, end: End): value is IntRange<0, End> {
+	return Number.isSafeInteger(value) && value >= 0 && value < end;
+}
+
+declare const pageCandidate: number;
+if (isPage(pageCandidate, 5)) {
+	expectTypeOf(pageCandidate).toBe<0 | 1 | 2 | 3 | 4>();
+}
+
+// Numeric enum bounds represent their numeric values, not an unknown number.
+enum RangeBoundary {
+	Start = 1,
+	End = 4,
+	NegativeStart = -3,
+	Zero = 0,
+}
+expectTypeOf<IntRange<RangeBoundary.Start, RangeBoundary.End>>().toBe<1 | 2 | 3>();
+expectTypeOf<IntRange<RangeBoundary.NegativeStart, RangeBoundary.Start>>().toBe<-3 | -2 | -1 | 0>();
+expectTypeOf<IntRange<RangeBoundary.Zero, RangeBoundary.End>>().toBe<0 | 1 | 2 | 3>();
+
+// Enum steps and unions retain the same inclusive-start, exclusive-end semantics.
+enum RangeStep {
+	Two = 2,
+}
+expectTypeOf<IntRange<RangeBoundary.NegativeStart, RangeBoundary.End, RangeStep.Two>>().toBe<-3 | -1 | 1 | 3>();
+expectTypeOf<IntRange<RangeBoundary.Start | RangeBoundary.Zero, RangeBoundary.End, RangeStep.Two>>().toBe<0 | 1 | 2 | 3>();
+expectTypeOf<IntRange<RangeBoundary.End, RangeBoundary.Start>>().toBe<never>();
+expectTypeOf<IntRange<RangeBoundary.Start, RangeBoundary.Start>>().toBe<never>();
+
+// An enum whose value is unknown cannot provide a countable starting point.
+declare enum UnknownBoundary {
+	Start,
+}
+expectTypeOf<IntRange<UnknownBoundary.Start, 4>>().toBe<never>();
+
+declare function acceptsEnumRange<Value extends IntRange<RangeBoundary.Start, RangeBoundary.End>>(value: Value): Value;
+expectTypeOf(acceptsEnumRange(2)).toBe<2>();
+// @ts-expect-error The exclusive endpoint is outside the range.
+acceptsEnumRange(4);
+// @ts-expect-error Values below the starting bound are outside the range.
+acceptsEnumRange(0);
+
+// Stepped termination stops both on an exact boundary and after overshooting it.
+expectTypeOf<IntRange<12, 21, 3>>().toBe<12 | 15 | 18>();
+expectTypeOf<IntRange<12, 20, 3>>().toBe<12 | 15 | 18>();
+expectTypeOf<IntRange<2, 20, 4 | 7>>().toBe<2 | 6 | 9 | 10 | 14 | 16 | 18>();
+
+// A brand does not make an unknown numeric bound countable.
+expectTypeOf<IntRange<Tagged<number, 'Start'>, 4>>().toBe<never>();
+expectTypeOf<IntRange<Opaque<number, 'Start'>, 4>>().toBe<never>();
+expectTypeOf<IntRange<number & {readonly __brand: unique symbol}, 4>>().toBe<never>();
+expectTypeOf<IntRange<-2, Tagged<number, 'End'>>>().toBe<never>();
+
+// An unknown step cannot identify reached positions inside the interval.
+expectTypeOf<IntRange<0, 4, number>>().toBe<never>();
+expectTypeOf<IntRange<-2, 2, number>>().toBe<never>();
+expectTypeOf<IntRange<0, 4, any>>().toBe<never>();
+expectTypeOf<IntRange<0, 4, Tagged<number, 'Step'>>>().toBe<never>();
+
+// Reject an unknown branded choice without losing the other finite choices.
+expectTypeOf<IntRange<Tagged<number, 'Start'> | 1, 4>>().toBe<1 | 2 | 3>();
+expectTypeOf<IntRange<0, 5, Tagged<number, 'Step'> | 2>>().toBe<0 | 2 | 4>();
+
+expectTypeOf<IntRange<0, Tagged<number, 'End'> | 3>>().toBe<0 | 1 | 2>();
+expectTypeOf<IntRange<0, 4, Opaque<number, 'Step'>>>().toBe<never>();
+expectTypeOf<IntRange<Tagged<Tagged<number, 'Start'>, 'Validated'>, 4>>().toBe<never>();
+expectTypeOf<IntRange<-3, 3, Opaque<2, 'Step'>>>().toBe<-3 | -1 | 1>();
+
+function makeBrandedRangeTable<const Value>(value: Value): Record<IntRange<Tagged<-1, 'Start'>, Tagged<4, 'End'>, Tagged<2, 'Step'>>, Value> {
+	return {'-1': value, 1: value, 3: value};
+}
+
+const brandedRangeTable = makeBrandedRangeTable({id: 'kept'});
+expectTypeOf(brandedRangeTable[1]).toBe<{readonly id: 'kept'}>();
+// @ts-expect-error The exclusive endpoint is not a reached position.
+expectTypeOf(brandedRangeTable[4]);

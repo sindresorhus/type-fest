@@ -1,8 +1,17 @@
 import {expectTypeOf} from 'nz';
+import type {Opaque, Tagged} from '../index.d.ts';
 import type {IntClosedRange} from '../source/int-closed-range.d.ts';
 
 declare const test: IntClosedRange<0, 5>;
 expectTypeOf(test).toBe<0 | 1 | 2 | 3 | 4 | 5>();
+
+// An inclusive range cannot count an unknown branded starting point either.
+expectTypeOf<IntClosedRange<Tagged<number, 'Start'>, 3>>().toBe<never>();
+expectTypeOf<IntClosedRange<Opaque<number, 'Start'>, 3>>().toBe<never>();
+expectTypeOf<IntClosedRange<0, 3, number>>().toBe<never>();
+expectTypeOf<IntClosedRange<-2, 2, Tagged<number, 'Step'>>>().toBe<never>();
+expectTypeOf<IntClosedRange<0, 3, any>>().toBe<never>();
+expectTypeOf<IntClosedRange<0, 3, never>>().toBe<never>();
 
 declare const startTest: IntClosedRange<5, 10>;
 expectTypeOf(startTest).toBe<5 | 6 | 7 | 8 | 9 | 10>();
@@ -18,6 +27,12 @@ type Int0_998 = IntClosedRange<0, 998>;
 declare const maxNumberTest: Int0_998;
 expectTypeOf(maxNumberTest).toBeAssignableTo<number>();
 expectTypeOf<998>().toBeAssignableTo<Int0_998>();
+
+// The widest supported range stays within TypeScript's instantiation-depth limit.
+type WideTest = IntClosedRange<-998, 998>;
+expectTypeOf<-998>().toBeAssignableTo<WideTest>();
+expectTypeOf<998>().toBeAssignableTo<WideTest>();
+expectTypeOf<999>().not.toBeAssignableTo<WideTest>();
 
 // Negative bound
 declare const minNumberTest: IntClosedRange<-998, -996>;
@@ -52,6 +67,9 @@ expectTypeOf(reversedFromZeroTest).toBe<never>();
 
 declare const anyTest: IntClosedRange<any, any>;
 expectTypeOf(anyTest).toBe<never>();
+expectTypeOf<IntClosedRange<-2, number>>().toBe<never>();
+expectTypeOf<IntClosedRange<-2, any>>().toBe<never>();
+expectTypeOf<IntClosedRange<-2 | 2, number, 2>>().toBe<never>();
 
 declare const neverTest: IntClosedRange<never, never>;
 expectTypeOf(neverTest).toBe<never>();
@@ -93,3 +111,21 @@ expectTypeOf<IntClosedRange<5, 5, 10_000>>().toBe<5>();
 expectTypeOf<IntClosedRange<2, -2, 10_000>>().toBe<never>();
 expectTypeOf<IntClosedRange<-998, 998, 1_000_000>>().toBe<-998>();
 expectTypeOf<IntClosedRange<0, 3 | 5, 10_000>>().toBe<0>();
+
+// Inclusive ranges also interpret numeric enum bounds as their numeric values.
+enum RangeBoundary {
+	Start = 1,
+	End = 4,
+	NegativeStart = -3,
+}
+expectTypeOf<IntClosedRange<RangeBoundary.Start, RangeBoundary.End>>().toBe<1 | 2 | 3 | 4>();
+expectTypeOf<IntClosedRange<RangeBoundary.NegativeStart, RangeBoundary.Start>>().toBe<-3 | -2 | -1 | 0 | 1>();
+
+expectTypeOf<IntClosedRange<RangeBoundary.End, RangeBoundary.Start>>().toBe<never>();
+expectTypeOf<IntClosedRange<RangeBoundary.Start, RangeBoundary.Start>>().toBe<1>();
+expectTypeOf<IntClosedRange<RangeBoundary.NegativeStart, RangeBoundary.End, 2>>().toBe<-3 | -1 | 1 | 3>();
+
+declare function acceptsClosedEnumRange<Value extends IntClosedRange<RangeBoundary.Start, RangeBoundary.End>>(value: Value): Value;
+expectTypeOf(acceptsClosedEnumRange(4)).toBe<4>();
+// @ts-expect-error Values after the inclusive endpoint are outside the range.
+acceptsClosedEnumRange(5);

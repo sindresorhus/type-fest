@@ -6,7 +6,7 @@ Generate a union of numbers between a specified start and end (both inclusive), 
 
 You skip over numbers using the `Step` parameter (defaults to `1`). For example, `IntClosedRange<0, 10, 2>` will create a union of `0 | 2 | 4 | 6 | 8 | 10`.
 
-Note: `Start` and `End` must each be between `-998` and `998`. The maximum is one less than for `IntRange` because the end is incremented internally to make it inclusive. If `Start` is greater than `End`, the result is `never`.
+Note: `Start` and `End` must each be between `-998` and `998`. The maximum is one less than for `IntRange` because the end is incremented internally to make it inclusive. If `Start` is greater than `End`, the result is `never`. A non-literal bound or step, such as `number`, also gives `never`.
 
 Use-cases:
 1. This can be used to define a set of valid input/output values. for example:
@@ -43,6 +43,7 @@ type Hundreds = IntClosedRange<100, 900, 100>;
 
 @see {@link IntRange}
 */
-export type IntClosedRange<Start extends number, End extends number, Skip extends number = 1> = IntRange<Start, Sum<End, 1>, Skip>;
+// Do not wrap this in a conditional type, such as one that distributes `End`, because the extra instantiation depth makes wide ranges like `IntClosedRange<-998, 998>` exceed TypeScript's limit.
+export type IntClosedRange<Start extends number, End extends number, Step extends number = 1> = IntRange<Start, Sum<End, 1>, Step>;
 
 export {};
