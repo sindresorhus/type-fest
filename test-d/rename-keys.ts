@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {LiteralUnion} from '../index.d.ts';
 import type {RenameKeys} from '../source/rename-keys.d.ts';
 
 // Basic batch rename.
@@ -68,6 +69,18 @@ expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: symbol; b: 'c'}>>().toBe<{a: 1; c: 2}>
 
 // A union target with a non-literal member is ignored as a whole.
 expectTypeOf<RenameKeys<{a: 1}, {a: 'b' | string}>>().toBe<{a: 1}>();
+expectTypeOf<RenameKeys<{a: 1}, {a: 'b' | number}>>().toBe<{a: 1}>();
+expectTypeOf<RenameKeys<{a: 1}, {a: 'b' | symbol}>>().toBe<{a: 1}>();
+expectTypeOf<RenameKeys<{a: 1}, {a: 'b' | `item-${string}`}>>().toBe<{a: 1}>();
+expectTypeOf<RenameKeys<{a: 1}, {a: 'b' | Uppercase<string>}>>().toBe<{a: 1}>();
+expectTypeOf<RenameKeys<{readonly a?: 1; b: 2}, {a?: 'x' | number; b: 'c'}>>().toBe<{readonly a?: 1; c: 2}>();
+
+// Optional map entries remove implicit absence before validating their target values.
+expectTypeOf<RenameKeys<{readonly a?: 1}, {a?: 'b' | 0 | SymbolKey}>>().toBe<{readonly b?: 1; readonly 0?: 1; readonly [symbolKey]?: 1}>();
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: any; b: 'c'}>>().toBe<{a: 1; c: 2}>();
+expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: never; b: 'c'}>>().toBe<{a: 1; c: 2}>();
+// @ts-expect-error A rename target must be a property key.
+type UnknownRenameTarget = RenameKeys<{a: 1}, {a: unknown}>;
 
 // A map whose targets are all non-literal is the identity.
 expectTypeOf<RenameKeys<{a: 1; b: 2}, {a: string; b: number}>>().toBe<{a: 1; b: 2}>();
@@ -341,3 +354,36 @@ const inferredNumericTarget = renameKeys({text: 'label', count: 1}, {text: 0, co
 expectTypeOf(inferredNumericTarget[0]).toBe<'label' | 1>();
 // @ts-expect-error The readonly source field makes the shared target readonly.
 inferredNumericTarget[0] = 'label';
+
+// Numeric index maps do not select distinct strings with noncanonical number spellings.
+type NumericRenameSource = {'01': string; 1: number};
+type NumericRenameResult = RenameKeys<NumericRenameSource, Record<number, 'column'>>;
+expectTypeOf<NumericRenameResult>().toBe<{'01': string; column: number}>();
+declare const numericRenameResult: NumericRenameResult;
+expectTypeOf(numericRenameResult['01']).toBe<string>();
+expectTypeOf(numericRenameResult.column).toBe<number>();
+
+function _constructNumericRename<Value>(value: Value): RenameKeys<{'01': Value; 1: number}, Record<number, 'column'>> {
+	return {'01': value, column: 1};
+}
+
+function _readNumericRename<Value>(value: RenameKeys<{'01': Value; 1: number}, Record<number, 'column'>>): Value {
+	return value['01'];
+}
+
+// Explicit string domains and literal entries still own their matching spellings.
+expectTypeOf<RenameKeys<NumericRenameSource, Record<`${number}`, 'column'>>>().toBe<{column: string | number}>();
+expectTypeOf<RenameKeys<NumericRenameSource, Record<string, 'column'>>>().toBe<{column: string | number}>();
+expectTypeOf<RenameKeys<NumericRenameSource, {'01': 'padded'}>>().toBe<{padded: string; 1: number}>();
+expectTypeOf<RenameKeys<NumericRenameSource, {'1': 'canonical'}>>().toBe<{'01': string; canonical: number}>();
+expectTypeOf<RenameKeys<NumericRenameSource, Record<LiteralUnion<1, number>, 'column'>>>().toBe<{'01': string; column: number}>();
+expectTypeOf<RenameKeys<{[symbolKey]: string; '01': number}, Record<symbol, 'symbolValue'>>>().toBe<{symbolValue: string; '01': number}>();
+expectTypeOf<RenameKeys<{'01': any; 1: never}, Record<number, 'column'>>>().toBe<{'01': any; column: never}>();
+declare const readonlyPaddedRename: RenameKeys<{readonly '01'?: string; 1: number}, Record<number, 'column'>>;
+expectTypeOf(readonlyPaddedRename['01']).toBe<string | undefined>();
+readonlyPaddedRename.column = 2;
+// @ts-expect-error A valid value cannot replace the unselected readonly field.
+readonlyPaddedRename['01'] = 'keep';
+const inferredNumericMap = renameKeys({'01': 'keep', 1: 1}, {} as Record<number, 'column'>);
+expectTypeOf(inferredNumericMap['01']).toBe<'keep'>();
+expectTypeOf(inferredNumericMap.column).toBe<1>();

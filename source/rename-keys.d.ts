@@ -1,4 +1,4 @@
-import type {LiteralKeyOf} from './internal/keys.d.ts';
+import type {ExactKey, LiteralKeyOf} from './internal/keys.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -8,7 +8,7 @@ import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 import type {SetReadonly} from './set-readonly.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {NormalizedKeys, ObjectValue} from './internal/object.d.ts';
+import type {NormalizedKeys} from './internal/object.d.ts';
 import type {ToString} from './internal/string.d.ts';
 
 /**
@@ -74,7 +74,7 @@ type E = RenameKeys<{a?: 1 | undefined; b: 2}, {a: 'x'; b: 'x'}>;
 //=> {x: 1 | 2 | undefined}
 ```
 
-Note: A union target distributes, producing one output key per member.
+Note: A union of literal targets produces one output key per member.
 
 @example
 ```
@@ -84,7 +84,7 @@ type A = RenameKeys<{a: string}, {a: 'b' | 'c'}>;
 //=> {b: string; c: string}
 ```
 
-Note: An entry whose value is not a literal `PropertyKey` (such as `string`) is also ignored, leaving that key's name unchanged.
+Note: An entry is ignored if any target member is not a literal `PropertyKey` (such as `string` or `number`), leaving that key's name unchanged.
 
 @example
 ```
@@ -95,6 +95,9 @@ type A = RenameKeys<{a: 1}, {a: string}>;
 
 type B = RenameKeys<{a: 1; b: 2}, {a: 'x'; b: symbol}>;
 //=> {x: 1; b: 2}
+
+type C = RenameKeys<{a: 1}, {a: 'b' | number}>;
+//=> {a: 1}
 ```
 
 Note: A rename map entry whose key is not a property of the source type is ignored.
@@ -168,13 +171,16 @@ type ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey
 
 type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	// Include a string enum key's literal spelling, so either form can select the rename.
-	-readonly [Key in keyof RenameMap as true extends IsLiteral<RenameMap[Key]> ? Key | ToString<Key> : never]-?: RenameMap[Key];
+	// Ignore optional-entry absence, but reject the whole target if any member is non-literal.
+	-readonly [Key in keyof RenameMap as IsLiteral<Required<RenameMap>[Key]> extends true ? Key | ToString<Key & string> : never]-?: RenameMap[Key];
 };
 
-// At runtime a numeric key and its string form are the same key, so `{'0': 'x'}` renames a property declared as `{0: …}` too. `keyof` keeps the two apart, so both forms are checked.
+// Numeric keys and their canonical string forms name the same property, so `{'0': 'x'}` also renames `{0: …}`. Other numeric-looking strings, like `'01'`, stay distinct.
 type TargetOf<SourceKey extends PropertyKey, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	SourceKey extends NormalizedKeys<keyof RenameMap>
-		? ObjectValue<RenameMap, SourceKey>
-		: SourceKey;
+	SourceKey extends unknown
+		? IsNever<ExactKey<RenameMap, SourceKey>> extends true
+			? SourceKey
+			: RenameMap[ExactKey<RenameMap, SourceKey>]
+		: never;
 
 export {};
