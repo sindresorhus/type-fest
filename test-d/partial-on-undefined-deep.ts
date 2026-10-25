@@ -283,3 +283,62 @@ function _readOptionalArray<Options extends {recurseIntoArrays?: boolean}>(value
 function _keepDisabledOptionalRows<Options extends {recurseIntoArrays: false}>(value: OptionalRowsSettings['rows']): PartialOnUndefinedDeep<OptionalRowsSettings['rows'], Options> {
 	return value;
 }
+
+// Generic settings optionalize finite enum and symbol keys without changing array payloads.
+enum OptionalConfigField {
+	Name = 'name',
+}
+declare const optionalConfigValues: unique symbol;
+type OptionalConfig<Value> = {id: string; readonly [OptionalConfigField.Name]: string | undefined; [optionalConfigValues]: {values: Value[]; note: string | undefined} | undefined};
+function makeOptionalConfig<Value>(values: Value[]): PartialOnUndefinedDeep<OptionalConfig<Value>> {
+	return {id: 'ready', [optionalConfigValues]: {values}};
+}
+
+function visitOptionalConfig<Value, Result>(config: PartialOnUndefinedDeep<OptionalConfig<Value>>, visit: (values: Value[]) => Result): Result | undefined {
+	return config[optionalConfigValues] === undefined ? undefined : visit(config[optionalConfigValues].values);
+}
+
+const typedOptionalConfig = makeOptionalConfig([1]);
+expectTypeOf(typedOptionalConfig.name).toBe<string | undefined>();
+expectTypeOf(typedOptionalConfig[optionalConfigValues]?.values).toBe<number[] | undefined>();
+expectTypeOf(visitOptionalConfig(typedOptionalConfig, values => values[0])).toBe<number | undefined>();
+// @ts-expect-error Optionalizing the field does not make a valid string assignment writable.
+typedOptionalConfig.name = 'changed';
+
+// Declared prototype-named fields still become optional and keep their readonly modifier.
+const optionalFormatter: PartialOnUndefinedDeep<{readonly toString: (() => string) | undefined; id: string}> = {id: 'item'};
+expectTypeOf(optionalFormatter.toString).toBe<(() => string) | undefined>();
+// @ts-expect-error A valid formatter cannot overwrite the readonly field.
+optionalFormatter.toString = () => 'changed';
+
+// Keys identify existing map entries; only values become partial.
+type RequiredEntryKey = {readonly id: string | undefined; label?: string};
+type RequiredEntryValue = {readonly count: number | undefined};
+type PartialEntryValue = {readonly count?: number | undefined};
+expectTypeOf<PartialOnUndefinedDeep<Map<RequiredEntryKey, Set<RequiredEntryValue>>>>().toBe<Map<RequiredEntryKey, Set<PartialEntryValue>>>();
+expectTypeOf<PartialOnUndefinedDeep<ReadonlyMap<RequiredEntryKey, readonly RequiredEntryValue[]>, {recurseIntoArrays: true}>>()
+	.toBe<ReadonlyMap<RequiredEntryKey, readonly PartialEntryValue[]>>();
+expectTypeOf<PartialOnUndefinedDeep<WeakMap<RequiredEntryKey, RequiredEntryValue>>>().toBe<WeakMap<RequiredEntryKey, PartialEntryValue>>();
+
+declare const partialEntries: PartialOnUndefinedDeep<Map<RequiredEntryKey, RequiredEntryValue>>;
+partialEntries.set({id: undefined}, {});
+// @ts-expect-error A required map-key field remains required even when its value includes undefined.
+partialEntries.get({});
+
+// Unknown fields remain required even though their values accept undefined; dynamic fields can be omitted.
+type UnknownSettings = PartialOnUndefinedDeep<{readonly input: unknown; dynamic: any; cleared: undefined; nested: {readonly token: unknown; note: string | undefined} | undefined}>;
+({input: undefined}) satisfies UnknownSettings;
+({input: 'data', nested: {token: undefined}}) satisfies UnknownSettings;
+expectTypeOf<{}>().not.toBeAssignableTo<UnknownSettings>();
+expectTypeOf<{input: unknown; nested: {note: string}}>().not.toBeAssignableTo<UnknownSettings>();
+expectTypeOf<{input: unknown; nested: {token: unknown; note: number}}>().not.toBeAssignableTo<UnknownSettings>();
+declare const unknownSettings: UnknownSettings;
+expectTypeOf(unknownSettings.input).toBe<unknown>();
+expectTypeOf(unknownSettings.nested?.token).toBe<unknown>();
+// @ts-expect-error Required unknown fields retain their readonly modifier.
+unknownSettings.input = undefined;
+
+// A generic optional branch still exposes its required fields before its payload is known.
+function _readUnknownInput<Value>(settings: PartialOnUndefinedDeep<{readonly input: unknown; payload: {value: Value} | undefined}>): unknown {
+	return settings.input;
+}

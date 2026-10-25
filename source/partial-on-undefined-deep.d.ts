@@ -1,6 +1,6 @@
-import type {If} from './if.d.ts';
-import type {ApplyDefaultOptions, LiteralKeyOf, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 
 /**
 @see {@link PartialOnUndefinedDeep}
@@ -58,9 +58,9 @@ export type PartialOnUndefinedDeep<T, Options extends PartialOnUndefinedDeepOpti
 
 // The value dispatcher has already checked that this is an object.
 type _PartialOnUndefinedDeep<T, Options extends Required<PartialOnUndefinedDeepOptions>> =
-	{[KeyType in keyof T as undefined extends T[KeyType] ? If<IsUnknown<T[KeyType]>, never, KeyType> : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
+	{[KeyType in keyof T as undefined extends T[KeyType] ? IsUnknown<T[KeyType]> extends true ? never : KeyType : never]?: PartialOnUndefinedDeepValue<T[KeyType], Options>} extends infer U // Make a partial type with all value types accepting undefined (and set them optional)
 		// The transformed parts can be intersected directly; a merge's equality comparison eagerly expands recursive values.
-		? SimplifyObject<{[KeyType in keyof T as KeyType extends LiteralKeyOf<U> ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>} & U> // Join all remaining keys not treated in U
+		? SimplifyObject<{[KeyType in keyof T as KeyType extends keyof OmitIndexSignature<U> ? never : KeyType]: PartialOnUndefinedDeepValue<T[KeyType], Options>} & U> // Join all remaining keys not treated in U
 		: never; // Should not happen
 
 /**
