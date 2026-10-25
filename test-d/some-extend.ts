@@ -3,6 +3,13 @@ import type {SomeExtend, SomeExtendOptions} from '../source/some-extend.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
+// Known limitation: optional `never` is inferred as `undefined`; required `never` retains its strictNever policy.
+expectTypeOf<SomeExtend<[never?], never>>().toBe<false>();
+expectTypeOf<SomeExtend<[never?], number, {strictNever: false}>>().toBe<false>();
+expectTypeOf<SomeExtend<[undefined?], never>>().toBe<false>();
+expectTypeOf<SomeExtend<readonly [never?], undefined>>().toBe<true>();
+expectTypeOf<SomeExtend<[never], number, {strictNever: false}>>().toBe<true>();
+
 expectTypeOf<SomeExtend<[], number>>().toBe<false>();
 expectTypeOf<SomeExtend<[1, '2', '3'], number>>().toBe<true>(); // First element matches
 expectTypeOf<SomeExtend<['1', '2', 3], number>>().toBe<true>(); // Last element matches
@@ -156,3 +163,65 @@ const readonlyStrings = [1, 'ready'] as const;
 expectTypeOf(containsString(readonlyStrings)).toBe<typeof readonlyStrings>();
 // @ts-expect-error The input must be an array or tuple.
 type UnknownSome = SomeExtend<unknown, number>;
+
+// Definite union-element matches must not consume a recursion frame for every union member.
+expectTypeOf<SomeExtend<TupleOf<200, 1 | 2>, string>>().toBe<false>();
+
+// Normalizing a match must retain its original generic constraint.
+function _nonNumericSome<Value extends string>(value: SomeExtend<[Value], number>): false {
+	return value;
+}
+
+expectTypeOf<SomeExtend<Readonly<TupleOf<500, 1 | 2>>, string>>().toBe<false>();
+expectTypeOf<SomeExtend<readonly [...TupleOf<200, 1 | 2>, 3 | 'found'], string>>().toBe<boolean>();
+expectTypeOf<SomeExtend<[...TupleOf<200, 1 | 2>, 3 | 'found', 'found'], string>>().toBe<true>();
+
+// A known strict mode remains constructible while its options are generic.
+function _strictNeverSomeOptions<Options extends {strictNever: true}>(): SomeExtend<[never], number, Options> {
+	return false;
+}
+
+// Optional settings and sentinel option objects keep their defaults.
+expectTypeOf<SomeExtend<[never], number, {strictNever?: boolean}>>().toBe<false>();
+expectTypeOf<SomeExtend<[never], number, any>>().toBe<false>();
+expectTypeOf<SomeExtend<[never], number, never>>().toBe<false>();
+
+// A definite match can be constructed while unrelated options remain generic.
+function _constructKnownSomeMatch<Options extends SomeExtendOptions>(): SomeExtend<[1], number, Options> {
+	return true;
+}
+
+// A definite result can be read through a conditional type while the options are generic.
+type DefiniteSomeMatch<Options extends SomeExtendOptions> = SomeExtend<[1, 2], number, Options> extends true ? 'yes' : 'no';
+function _readDefiniteSomeMatch<Options extends SomeExtendOptions>(value: DefiniteSomeMatch<Options>): 'yes' {
+	return value;
+}
+
+// An unresolved element may match, so the result cannot be assumed to be false.
+function _readGenericMatch<Value extends boolean>(value: SomeExtend<[Value], true>): false {
+	// @ts-expect-error Instantiating Value as true makes this result true.
+	return value;
+}
+
+// A generic target can still include the element being tested.
+function _readGenericTarget<Target extends string>(value: SomeExtend<['ready'], Target>): false {
+	// @ts-expect-error Target can be instantiated as 'ready'.
+	return value;
+}
+
+// Object constraints must retain the possibility of a structural match.
+function _readGenericObject<Value extends {id: number}>(value: SomeExtend<readonly [Value], {id: number}>): false {
+	// @ts-expect-error A matching object makes this result true.
+	return value;
+}
+
+function readGenericResult<Value extends boolean>(value: SomeExtend<[Value], true>): boolean {
+	return value;
+}
+
+expectTypeOf(readGenericResult<true>(true)).toBe<boolean>();
+expectTypeOf(readGenericResult<false>(false)).toBe<boolean>();
+// @ts-expect-error A matching element cannot produce false.
+readGenericResult<true>(false);
+// @ts-expect-error A non-matching element cannot produce true.
+readGenericResult<false>(true);

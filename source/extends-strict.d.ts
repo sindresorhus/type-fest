@@ -1,10 +1,6 @@
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {And} from './and.d.ts';
-import type {Or} from './or.d.ts';
-import type {IsUnknown} from './is-unknown.d.ts';
-import type {OrAll} from './or-all.d.ts';
 import type {IsMutuallyAssignable} from './is-mutually-assignable.d.ts'; // For `@link`
 
 export type ExtendsStrictOptions = {
@@ -137,11 +133,13 @@ export type ExtendsStrict<Left, Right, Options extends ExtendsStrictOptions = {}
 	_ExtendsStrict<Left, Right, ApplyDefaultOptions<ExtendsStrictOptions, DefaultExtendsStrictOptions, Options>>;
 
 type _ExtendsStrict<Left, Right, Options extends Required<ExtendsStrictOptions>> =
-	And<IsAny<Left>, Options['strictAny']> extends true
-		? Or<IsAny<Right>, IsUnknown<Right>>
+	(IsAny<Left> extends true ? Options['strictAny'] : false) extends true
+		// `unknown` is assignable to exactly the top targets accepted by strict `any`.
+		? unknown extends Right ? true : false
 		: IsNever<Left> extends true
 			? Options['strictNever'] extends true
-				? OrAll<[IsNever<Right>, IsAny<Right>, IsUnknown<Right>]>
+				// `unknown` is assignable to both `any` and `unknown`, so one check covers both.
+				? unknown extends Right ? true : IsNever<Right>
 				: true
 			: Options['distributiveUnions'] extends true
 				? Left extends Right

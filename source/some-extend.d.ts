@@ -70,6 +70,8 @@ type D = SomeExtend<[true, boolean, true], false>;
 
 Note: Optional elements are checked by their declared types, without the implicit `undefined` from absence. This type supports `exactOptionalPropertyTypes: true`. An explicitly declared `undefined` remains part of the element type.
 
+Known limitation: TypeScript infers an optional `never` element as `undefined`, so it is checked as `undefined`, regardless of `strictNever`.
+
 ```
 // @exactOptionalPropertyTypes: true
 import type {SomeExtend} from 'type-fest';
@@ -101,7 +103,7 @@ export type SomeExtend<TArray extends UnknownArray, Type, Options extends SomeEx
 		ifNever: false;
 	}>;
 
-// Kept free of `IfNotAnyOrNever` so that it stays tail-recursive, which allows it to handle long arrays.
+// Kept free of `IfNotAnyOrNever` so that it stays tail-recursive, which allows it to handle long arrays. An element that only partly matches makes the result a union with the rest of the search, which is not tail-recursive, so a long tuple of such elements can hit the instantiation depth limit.
 type _SomeExtend<TArray extends UnknownArray, Type, Options extends Required<SomeExtendOptions>> =
 	'0' extends keyof TArray
 		? TArray extends readonly [(infer First)?, ...infer Rest]
@@ -110,9 +112,12 @@ type _SomeExtend<TArray extends UnknownArray, Type, Options extends Required<Som
 					// If target `Type` is also `never`, or is `any`, or `strictNever` is disabled, return `true`.
 					? true
 					: _SomeExtend<Rest, Type, Options>
-				: First extends Type
-					? true
-					: _SomeExtend<Rest, Type, Options>
+				// Keep the original constraint so generic matches stay unresolved without widening known non-matches.
+				: (First extends Type ? true : false) extends infer Matches extends (First extends Type ? true : false)
+					? Matches extends true
+						? true
+						: _SomeExtend<Rest, Type, Options>
+					: never
 			: never // Should never happen, since the first fixed element can always be inferred.
 		: TArray extends readonly []
 			? false

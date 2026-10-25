@@ -49,6 +49,13 @@ expectTypeOf<AllExtend<[1, 2?, 3?, ...number[]], number>>().toBe<true>();
 expectTypeOf<boolean>().toBe<AllExtend<[1, 2?, 3?, ...Array<number | undefined>], number>>();
 expectTypeOf<AllExtend<[1?, 2?, 3?, ...string[]], number>>().toBe<false>();
 
+// Known limitation: optional `never` is inferred as `undefined`; required `never` retains its strictNever policy.
+expectTypeOf<AllExtend<[never?], never>>().toBe<false>();
+expectTypeOf<AllExtend<[never?], number, {strictNever: false}>>().toBe<false>();
+expectTypeOf<AllExtend<[undefined?], never>>().toBe<false>();
+expectTypeOf<AllExtend<readonly [never?], undefined>>().toBe<true>();
+expectTypeOf<AllExtend<[never], number, {strictNever: false}>>().toBe<true>();
+
 // Labelled tuples
 expectTypeOf<AllExtend<[x: string, y: string], string>>().toBe<true>();
 expectTypeOf<AllExtend<[x?: string, y?: number], string>>().toBe<false>();
@@ -153,3 +160,65 @@ const readonlyNumbers = [1, 2] as const;
 expectTypeOf(numericList(readonlyNumbers)).toBe<typeof readonlyNumbers>();
 // @ts-expect-error The input must be an array or tuple.
 type UnknownAll = AllExtend<unknown, number>;
+
+// Definite union-element matches must not consume a recursion frame for every union member.
+expectTypeOf<AllExtend<TupleOf<200, 1 | 2>, number>>().toBe<true>();
+
+// Normalizing a match must retain its original generic constraint.
+function _nonNumericAll<Value extends string>(value: AllExtend<[Value], number>): false {
+	return value;
+}
+
+expectTypeOf<AllExtend<Readonly<TupleOf<500, 1 | 2>>, number>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [...TupleOf<200, 1 | 2>, 3 | 'stop'], number>>().toBe<boolean>();
+expectTypeOf<AllExtend<[...TupleOf<200, 1 | 2>, 3 | 'stop', 'stop'], number>>().toBe<false>();
+
+// A known strict mode remains constructible while its options are generic.
+function _strictNeverAllOptions<Options extends {strictNever: true}>(): AllExtend<[never], number, Options> {
+	return false;
+}
+
+// Optional settings and sentinel option objects keep their defaults.
+expectTypeOf<AllExtend<[never], number, {strictNever?: boolean}>>().toBe<false>();
+expectTypeOf<AllExtend<[never], number, any>>().toBe<false>();
+expectTypeOf<AllExtend<[never], number, never>>().toBe<false>();
+
+// A definite match can be constructed while unrelated options remain generic.
+function _constructKnownAllMatch<Options extends AllExtendOptions>(): AllExtend<[1], number, Options> {
+	return true;
+}
+
+// A definite result can be read through a conditional type while the options are generic.
+type DefiniteAllMatch<Options extends AllExtendOptions> = AllExtend<[1, 2], number, Options> extends true ? 'yes' : 'no';
+function _readDefiniteAllMatch<Options extends AllExtendOptions>(value: DefiniteAllMatch<Options>): 'yes' {
+	return value;
+}
+
+// An unresolved element may match, so the result cannot be assumed to be false.
+function _readGenericMatch<Value extends boolean>(value: AllExtend<[Value], true>): false {
+	// @ts-expect-error Instantiating Value as true makes this result true.
+	return value;
+}
+
+// A generic target can still include the element being tested.
+function _readGenericTarget<Target extends string>(value: AllExtend<['ready'], Target>): false {
+	// @ts-expect-error Target can be instantiated as 'ready'.
+	return value;
+}
+
+// Object constraints must retain the possibility of a structural match.
+function _readGenericObject<Value extends {id: number}>(value: AllExtend<readonly [Value], {id: number}>): false {
+	// @ts-expect-error A matching object makes this result true.
+	return value;
+}
+
+function readGenericResult<Value extends boolean>(value: AllExtend<[Value], true>): boolean {
+	return value;
+}
+
+expectTypeOf(readGenericResult<true>(true)).toBe<boolean>();
+expectTypeOf(readGenericResult<false>(false)).toBe<boolean>();
+// @ts-expect-error A matching element cannot produce false.
+readGenericResult<true>(false);
+// @ts-expect-error A non-matching element cannot produce true.
+readGenericResult<false>(true);
