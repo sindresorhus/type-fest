@@ -1,5 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {ObjectMerge} from '../source/object-merge.d.ts';
+import type {Tagged} from '../source/tagged.d.ts';
 
 declare const sym: unique symbol;
 
@@ -299,3 +300,59 @@ declare function inferObjectMerge<First extends object, Second extends object>(f
 expectTypeOf(inferObjectMerge(enumMergeDestination, enumMergeSource)).toBe<typeof enumMergeSpread>();
 expectTypeOf<Pick<ObjectMerge<typeof enumMergeDestination, typeof enumMergeSource>, MergePropertyKey.Value>>()
 	.toBe<{[MergePropertyKey.Value]: 2}>();
+
+// Numeric index signatures cannot overwrite distinct numeric-looking string properties.
+expectTypeOf<ObjectMerge<{'01': string}, Record<number, number>>>().toBe<{[key: number]: number; '01': string}>();
+expectTypeOf<ObjectMerge<Record<number, number>, {'01'?: string}>>().toBe<{[key: number]: number; '01'?: string}>();
+
+function _readNoncanonicalMerge<Value>(value: ObjectMerge<{'01': Value}, Record<number, number>>): Value {
+	return value['01'];
+}
+
+// @ts-expect-error An unrelated numeric entry cannot change this named property's value type.
+const incorrectNoncanonicalMerge: ObjectMerge<{'01': string}, Record<number, number>>['01'] = 1;
+
+// An explicit numeric-string domain covers noncanonical numeric names.
+expectTypeOf<ObjectMerge<{'01': string}, Record<`${number}`, number>>['01']>().toBe<string | number>();
+expectTypeOf<ObjectMerge<{[EquivalentMergePropertyKey.PaddedZero]: 'kept'}, Record<number, number>>['00']>().toBe<'kept'>();
+expectTypeOf<ObjectMerge<{[EquivalentMergePropertyKey.Zero]: string}, Record<number, number>>['0']>().toBe<string | number>();
+
+enum NumericMergeIndex {
+	First = 1,
+}
+expectTypeOf<ObjectMerge<{[NumericMergeIndex.First]: string}, Record<number, number>>[1]>().toBe<string | number>();
+expectTypeOf<ObjectMerge<Record<number, number>, {'01'?: never}>['01']>().toBe<undefined>();
+
+declare let writablePaddedMerge: ObjectMerge<{readonly '01': {readonly id: 'stable'}; readonly '1.0'?: boolean}, Record<number, number>>;
+writablePaddedMerge['01'] = {id: 'stable'};
+writablePaddedMerge['1.0'] = true;
+expectTypeOf(writablePaddedMerge['01'].id).toBe<'stable'>();
+// @ts-expect-error A valid nested value remains readonly because it is copied by reference.
+writablePaddedMerge['01'].id = 'stable';
+
+declare const numericMergeValues: Record<number, number>;
+const inferredPaddedMerge = inferObjectMerge({'01': 'stable' as const}, numericMergeValues);
+expectTypeOf(inferredPaddedMerge['01']).toBe<'stable'>();
+
+function _constructPaddedMerge<Value>(payload: Value): ObjectMerge<{'01': Value}, Record<number, number>> {
+	return {'01': payload, 1: 9};
+}
+
+// Numeric properties use their string spellings when a case-shaped index signature covers them.
+expectTypeOf<ObjectMerge<{0: boolean}, Record<Lowercase<string>, number>>>()
+	.toBe<{[key: Lowercase<string>]: number | boolean; 0: number | boolean}>();
+expectTypeOf<ObjectMerge<Record<Uppercase<string>, number>, {0?: boolean}>>()
+	.toBe<{[key: Uppercase<string>]: number | boolean; 0?: number | boolean}>();
+
+// A branded index domain does not change a separately declared, unbranded property.
+function _readNamedOverride<Value>(value: ObjectMerge<Record<Tagged<string, 'Index'>, string>, {name?: Value}>): Value | undefined {
+	return value.name;
+}
+
+function _readNamedDestination<Value>(value: ObjectMerge<{name?: Value}, Record<Tagged<string, 'Index'>, string>>): Value | undefined {
+	return value.name;
+}
+
+// A destination `number` index signature absorbs a required canonical numeric key, but not a noncanonical one.
+expectTypeOf<ObjectMerge<Record<number, number>, {'0': string; '01': boolean}>>()
+	.toBe<{[key: number]: number | string; '0': string; '01': boolean}>();

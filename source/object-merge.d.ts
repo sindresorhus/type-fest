@@ -128,11 +128,11 @@ type _ObjectMerge<
 			: P
 		: never]:
 			| Second[P]
-			| (P extends NormalizedKeys<keyof PickIndexSignature<First>>
-				? If<IsOptionalKeyOf<Second, P>, First[NormalizedKeys<P> & keyof First], never>
-				: never)
+			| ([Extract<KeyAliases<P>, keyof PickIndexSignature<First>>] extends [never]
+				? never
+				: If<IsOptionalKeyOf<Second, P>, First[KeyAliases<P> & keyof First], never>)
 } & {
-	// Map over literal keys of `First`, except those that are not present in `Second`.
+	// Map over literal keys of `First`, except those that are present in `Second`.
 	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys
 		? P extends NormalizedSecondLiteralKeys
 			? never
@@ -141,9 +141,9 @@ type _ObjectMerge<
 			| First[P]
 				// If there's a matching index signature in `Second`, then add the type for it as well,
 				// for example, in `ObjectMerge<{a: string}, {[x: string]: number}>`, `a` is of type `string | number`.
-			| (P extends NormalizedKeys<keyof Second>
-				? Second[NormalizedKeys<P> & keyof Second]
-				: never);
+			| ([Extract<KeyAliases<P>, keyof PickIndexSignature<Second>>] extends [never]
+				? never
+				: Second[KeyAliases<P> & keyof Second]);
 } & {
 	// Map over non-literal keys of `Second`.
 	-readonly [P in keyof Second as P extends NormalizedSecondLiteralKeys ? never : P]:
@@ -154,7 +154,7 @@ type _ObjectMerge<
 			// But, exclude keys from `First` that would surely get overwritten,
 			// for example, in `ObjectMerge<{a: number}, {[x: string]: string; a: string}>`,
 			// `a` from `First` would get overwritten by `a` from `Second`, so don't add type for it.
-		| (NormalizedKeys<P> & Exclude<keyof First, KeyAliases<RequiredKeysOf<OmitIndexSignature<Second>>>> extends infer NonOverwrittenKeysOfFirst
+		| (Exclude<OverlappingIndexKeys<First, P>, KeyAliases<RequiredKeysOf<OmitIndexSignature<Second>>>> extends infer NonOverwrittenKeysOfFirst
 			? If<IsNever<NonOverwrittenKeysOfFirst>, // This check is required because indexing with `never` doesn't always yield `never`, for example, `{[x: string]: number}[never]` results in `number`.
 				never,
 				NormalizedFirst[NonOverwrittenKeysOfFirst & keyof NormalizedFirst]>
@@ -163,9 +163,9 @@ type _ObjectMerge<
 	// Map over non-literal keys of `First`.
 	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys ? never : P]:
 		| First[P]
-		| If<IsNever<NormalizedKeys<P> & keyof Second>, // This check is required because indexing with `never` doesn't always yield `never`, for example, `{[x: string]: number}[never]` results in `number`.
+		| If<IsNever<OverlappingIndexKeys<Second, P>>, // This check is required because indexing with `never` doesn't always yield `never`, for example, `{[x: string]: number}[never]` results in `number`.
 			never,
-			NormalizedSecond[NormalizedKeys<P> & keyof NormalizedSecond]>;
+			NormalizedSecond[OverlappingIndexKeys<Second, P> & keyof NormalizedSecond]>;
 } & {
 	// Handle optional keys of `Second` that are also present in `First`.
 	// Map over `First` instead of `Second` because the modifier is in accordance with `First`.
@@ -177,6 +177,13 @@ type _ObjectMerge<
 			| First[P]
 			| NormalizedSecond[Extract<keyof OmitIndexSignature<NormalizedSecond>, KeyAliases<P>>]
 }>;
+
+/**
+Returns the keys of `Type` that the index key `IndexKey` covers: declared keys through their canonical numeric aliases, and index-signature keys through their normalized forms.
+*/
+type OverlappingIndexKeys<Type extends object, IndexKey extends PropertyKey> =
+	| keyof {[Key in keyof OmitIndexSignature<Type> as [Extract<KeyAliases<Key>, IndexKey>] extends [never] ? never : Key]: never}
+	| (NormalizedKeys<IndexKey> & keyof PickIndexSignature<Type>);
 
 /**
 Get literal keys of a type, including numeric aliases and the runtime string spellings of enum keys.
