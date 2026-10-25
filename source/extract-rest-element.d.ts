@@ -33,13 +33,16 @@ export type ExtractRestElement<Array_ extends UnknownArray> = IfNotAnyOrNever<Ar
 Peel fixed positions without building the unused tuple parts or their optional and readonly modifiers.
 */
 type ExtractRestElementImplementation<Array_ extends UnknownArray> = Array_ extends unknown // For distributing `Array_`
-	? '0' extends keyof Array_
-		? Array_ extends readonly [unknown?, ...infer Rest]
-			? ExtractRestElementImplementation<Rest>
-			: never // Should never happen, since the first fixed element can always be matched.
-		: Array_ extends readonly [...infer Rest, unknown]
-			? ExtractRestElementImplementation<Rest>
-			: Array_[number]
+	// A fixed-length copy has no rest element to find. Copying first keeps ordinary array length refinements on the traversal path.
+	? number extends [...Array_]['length']
+		? '0' extends keyof Array_
+			? Array_ extends readonly [unknown?, ...infer Rest]
+				? ExtractRestElementImplementation<Rest>
+				: never // Should never happen, since the first fixed element can always be matched.
+			: Array_ extends readonly [...infer Rest, unknown]
+				? ExtractRestElementImplementation<Rest>
+				: Array_[number]
+		: never
 	: never;
 
 export {};

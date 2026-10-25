@@ -1,6 +1,6 @@
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {IsArrayReadonly} from './internal/array.d.ts';
+import type {IsArrayReadonly, MaxLength} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
 import type {ExtractRestElement} from './extract-rest-element.d.ts'; // For `@link`
@@ -77,8 +77,23 @@ export type SplitOnRestElement<
 
 /**
 Deconstructs an array on its rest element and returns the split portions.
+
+The traversal starts with its own recursion budget after the fixed-tuple preflight.
 */
 export type _SplitOnRestElement<
+	Array_ extends UnknownArray,
+	Options extends Required<SplitOnRestElementOptions>,
+> = number extends [...Array_]['length']
+	? SplitOnRestElementImplementation<Array_, Options> & {}
+	// A required fixed tuple has no rest or optional modifier to resolve, so copy it without traversal. Inspect a copy so an array length refinement does not look like a fixed tuple.
+	: [...Array_]['length'] extends MaxLength<[...Array_]>
+		? [[...Array_], [], []]
+		: SplitOnRestElementImplementation<Array_, Options> & {};
+
+/**
+Walks tuple positions to separate a rest element and preserve or remove optional modifiers.
+*/
+type SplitOnRestElementImplementation<
 	Array_ extends UnknownArray,
 	Options extends Required<SplitOnRestElementOptions>,
 	HeadAcc extends UnknownArray = [],
@@ -87,7 +102,7 @@ export type _SplitOnRestElement<
 	'0' extends keyof Array_
 		// Enters this branch, if `Array_` starts with a non-rest element (e.g., `[string, number]` or `[string, ...number[]]`).
 		? Array_ extends readonly [(infer First)?, ...infer Rest]
-			? _SplitOnRestElement<
+			? SplitOnRestElementImplementation<
 				Rest, Options,
 				[
 					...HeadAcc,
@@ -104,7 +119,7 @@ export type _SplitOnRestElement<
 		// Enters this branch, if `Array_` is empty (e.g., []),
 		// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
 		: Array_ extends readonly [...infer Rest, infer Last]
-			? _SplitOnRestElement<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
+			? SplitOnRestElementImplementation<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
 			// Add the rest element between the accumulated elements. It is spread into a fresh array, because a rest-only input such as `readonly [...string[]]` is the whole array and would otherwise bake `readonly` into the middle part, which the branch above, that peels the rest off element by element, never does.
 			: [HeadAcc, Array_ extends readonly [] ? [] : [...Array_], TailAcc];
 

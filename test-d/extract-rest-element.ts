@@ -101,3 +101,15 @@ function _extractAfterFixedPositions<Element>(value: ExtractRestElement<readonly
 
 // An unconstrained rest element stays unknown.
 expectTypeOf<ExtractRestElement<unknown[]>>().toBe<unknown>();
+
+// A fixed tuple has no rest even when all positions are optional, and an array length refinement still has one.
+expectTypeOf<ExtractRestElement<readonly [unknown?, any?, never?, undefined?]>>().toBe<never>();
+expectTypeOf<ExtractRestElement<readonly [...TupleOf<500, 1>, 2?]>>().toBe<never>();
+expectTypeOf<ExtractRestElement<readonly string[] & {length: 3}>>().toBe<string>();
+expectTypeOf<ExtractRestElement<readonly [1, 2?] | [3, ...Array<number | undefined>]>>().toBe<number | undefined>();
+// @ts-expect-error The input must be an array.
+type UnknownRestInput = ExtractRestElement<unknown>;
+
+function _extractNullishRest<Value>(value: ExtractRestElement<readonly [true, ...Array<Value | null | undefined>, false]>): Value | null | undefined {
+	return value;
+}

@@ -32,7 +32,12 @@ export type ExcludeRestElement<Array_ extends UnknownArray> = IfNotAnyOrNever<Ar
 	// The union is distributed, so that `readonly` is decided per member. Without it, `IsArrayReadonly` resolves to `boolean` for a mixed union and every member loses it.
 	ifNot: Array_ extends unknown
 		// The public splitter would repeat the input guards, distribution and readonly restoration already handled here.
-		? _SplitOnRestElement<Array_, {preserveOptionalModifier: true}> extends infer Result
+		? (
+			// A fixed-length copy has no rest to remove; copying first keeps array length refinements on the splitter path.
+			number extends [...Array_]['length']
+				? _SplitOnRestElement<Array_, {preserveOptionalModifier: true}>
+				: [Array_, [], []]
+		) extends infer Result
 			? Result extends readonly UnknownArray[]
 				? IsArrayReadonly<Array_> extends true
 					? Readonly<[...Result[0], ...Result[2]]>

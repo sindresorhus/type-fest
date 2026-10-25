@@ -97,3 +97,37 @@ function _excludeFromGeneric<Array_ extends UnknownArray>(value: ExcludeRestElem
 declare function withoutRest<Array_ extends UnknownArray>(value: Array_): ExcludeRestElement<Array_>;
 declare const readonlyWithRest: readonly [string, ...number[], boolean];
 expectTypeOf(withoutRest(readonlyWithRest)).toBe<readonly [string, boolean]>();
+
+// A fixed callback parameter tuple has no variable rest to remove.
+type FixedCallbackArguments = readonly [request: {readonly id: string}, retries: number, enabled: boolean, context: Date, audit?: RegExp, marker?: string | undefined];
+expectTypeOf<ExcludeRestElement<FixedCallbackArguments>>().toBe<FixedCallbackArguments>();
+expectTypeOf<ExcludeRestElement<string[] & {length: 3}>>().toBe<[]>();
+
+function _fixedPair<Value>(value: Value): ExcludeRestElement<readonly [Value, number?]> {
+	return [value];
+}
+
+function _readFixedPair<Value>(values: ExcludeRestElement<readonly [Value, number?]>): Value {
+	return values[0];
+}
+
+const fixedArgumentSnapshot = withoutRest([{id: 'request'}, 3, true] as const);
+expectTypeOf(fixedArgumentSnapshot).toBe<readonly [{readonly id: 'request'}, 3, true]>();
+// @ts-expect-error An otherwise valid argument cannot replace a readonly position.
+fixedArgumentSnapshot[1] = 3;
+
+// The cached result remains readable as the original constrained tuple subtype.
+function _readFixedSubtype<Values extends readonly [string, number]>(values: ExcludeRestElement<Values>): Values {
+	return values;
+}
+
+function _readOptionalSubtype<Values extends readonly [string, number?]>(values: ExcludeRestElement<Values>): Values {
+	return values;
+}
+
+// Finite copies preserve element sentinels, optionality and each member's readonly modifier.
+expectTypeOf<ExcludeRestElement<readonly [unknown, any?, never?] | [undefined, void?]>>()
+	.toBe<readonly [unknown, any?, never?] | [undefined, void?]>();
+expectTypeOf<ExcludeRestElement<readonly [never]>>().toBe<readonly [never]>();
+// Refining an array's length does not give its spread copy fixed tuple positions.
+expectTypeOf<ExcludeRestElement<readonly string[] & {readonly length: 3}>>().toBe<readonly []>();

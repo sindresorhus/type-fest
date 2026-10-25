@@ -68,3 +68,29 @@ type TestAssignability<T extends UnknownArray> = Assignability<SplitOnRestElemen
 // The rest part is the input verbatim, so a readonly-only rest array must not bake `readonly` in, the way the neighbouring case does not.
 declare const readonlyRestOnly: SplitOnRestElement<readonly [...string[]]>;
 expectTypeOf(readonlyRestOnly).toBe<readonly [[], string[], []]>();
+
+// A required prefix stays readable while options controlling later optional elements are generic.
+function _readRequiredPrefix<Value, Options extends {preserveOptionalModifier?: boolean}>(value: SplitOnRestElement<[Value, string?], Options>): Value {
+	return value[0][0];
+}
+
+function _readReadonlyPrefix<Value, Options extends {preserveOptionalModifier?: boolean}>(value: SplitOnRestElement<readonly [Value, string?], Options>): Value {
+	return value[0][0];
+}
+
+// Required tuples can be copied without changing explicit values or the mutability of their parts.
+expectTypeOf<SplitOnRestElement<readonly [never, any, unknown, undefined]>>().toBe<readonly [[never, any, unknown, undefined], [], []]>();
+expectTypeOf<SplitOnRestElement<[1, 2], {preserveOptionalModifier: false}>>().toBe<[[1, 2], [], []]>();
+expectTypeOf<SplitOnRestElement<string[] & {length: 3}>>().toBe<[[], string[], []]>();
+expectTypeOf<SplitOnRestElement<TupleOf<500, 'value'>>>().toBe<[TupleOf<500, 'value'>, [], []]>();
+// @ts-expect-error The input must be an array.
+type UnknownSplitInput = SplitOnRestElement<unknown>;
+
+function _makeRequiredParts<Value, Options extends {preserveOptionalModifier?: boolean}>(value: Value): SplitOnRestElement<readonly [Value, Value], Options> {
+	return [[value, value], [], []];
+}
+
+declare const requiredParts: SplitOnRestElement<readonly [1, 2]>;
+requiredParts[0][1] = 2;
+// @ts-expect-error The outer tuple retains the input's readonly modifier.
+requiredParts[0] = [1, 2];
