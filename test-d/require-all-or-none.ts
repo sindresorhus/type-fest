@@ -154,3 +154,45 @@ const inferredChoice = makeChoice('picked');
 expectTypeOf(inferredChoice.requestId).toBe<string>();
 expectTypeOf(inferredChoice.cursor).toBe<'picked' | undefined>();
 expectTypeOf<RequireAllOrNone<unknown>>().toBe<unknown>();
+
+// Empty key selections preserve concrete values; generic construction remains limited.
+function noGroups<Value>(value: Value): RequireAllOrNone<Value, never> {
+	// @ts-expect-error The outer sentinel checks defer a generic owner's identity.
+	return value;
+}
+
+function _holdUngrouped<Value extends object>(value: Value): {readonly value: RequireAllOrNone<Value, never>} {
+	// @ts-expect-error The outer sentinel checks defer a generic owner's identity.
+	return {value};
+}
+
+const ungroupedSnapshot = noGroups({requestId: 'keep', values: [1, 2]} as const);
+expectTypeOf(ungroupedSnapshot).toBe<{readonly requestId: 'keep'; readonly values: readonly [1, 2]}>();
+// @ts-expect-error An otherwise valid value cannot replace a readonly inferred field.
+ungroupedSnapshot.requestId = 'keep';
+
+// The generic key must not delay the existing any/never owner contracts.
+function _checkAnyOwner<Keys extends PropertyKey>(value: RequireAllOrNone<any, Keys>): void {
+	expectTypeOf(value).toBe<any>();
+}
+
+function _readNeverOwner<Keys extends PropertyKey>(value: RequireAllOrNone<never, Keys>): never {
+	return value;
+}
+
+const ungroupedTuple = noGroups([1, 'ready'] as const);
+expectTypeOf(ungroupedTuple).toBe<readonly [1, 'ready']>();
+// @ts-expect-error An otherwise valid element cannot replace a readonly tuple position.
+ungroupedTuple[0] = 1;
+
+// The all-fields branch keeps explicit undefined and readonly fields while requiring the full group.
+type UndefinedGroup = RequireAllOrNone<{readonly left?: string | undefined; right?: number}, 'left' | 'right'>;
+({left: undefined, right: 1}) satisfies UndefinedGroup;
+expectTypeOf<{left: undefined}>().not.toBeAssignableTo<UndefinedGroup>();
+declare const undefinedGroup: UndefinedGroup;
+// @ts-expect-error Grouping a field does not remove its readonly modifier.
+undefinedGroup.left = undefined;
+
+function _readGenericGroup<Value>(value: RequireAllOrNone<{readonly left?: Value | undefined; right?: number}, 'left' | 'right'>): Value | undefined {
+	return value.left;
+}

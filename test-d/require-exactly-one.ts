@@ -227,3 +227,13 @@ function makeChoice<const Extra>(value: Extra): RequireExactlyOne<{requestId: st
 const inferredChoice = makeChoice('picked');
 expectTypeOf(inferredChoice.requestId).toBe<string>();
 expectTypeOf(inferredChoice.cursor).toBe<'picked' | undefined>();
+
+// Undefined may be the selected value, but another forbidden field cannot be supplied as undefined.
+type UndefinedChoice = RequireExactlyOne<{first?: string | undefined; second?: number}>;
+({first: undefined}) satisfies UndefinedChoice;
+expectTypeOf<{first: string; second: undefined}>().not.toBeAssignableTo<UndefinedChoice>();
+
+type SymbolOrIndexChoice = RequireExactlyOne<{readonly 0?: string; [retainedSymbol]?: number}>;
+({0: 'ready'}) satisfies SymbolOrIndexChoice;
+({[retainedSymbol]: 1}) satisfies SymbolOrIndexChoice;
+expectTypeOf<{0: string; [retainedSymbol]: undefined}>().not.toBeAssignableTo<SymbolOrIndexChoice>();

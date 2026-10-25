@@ -44,6 +44,11 @@ export type OptionalKeyFilter<Type, Key extends keyof Type> = unknown extends Ty
 		: never;
 
 /**
+Projects the selected keys as required properties, preserving readonly modifiers.
+*/
+export type RequireAll<ObjectType, KeysType extends keyof ObjectType> = {[Key in KeysType]-?: ObjectType[Key]};
+
+/**
 Disallows any of the given keys.
 */
 export type RequireNone<KeysType extends PropertyKey> = {[Key in KeysType]?: never};

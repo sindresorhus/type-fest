@@ -1,7 +1,7 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever} from './internal/index.d.ts';
+import type {IfNotAnyOrNever, RequireAll} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -48,11 +48,11 @@ type _RequireAtLeastOne<ObjectType, KeysType> = ObjectType extends unknown
 	? If<IsNever<KeysType & keyof ObjectType>, ObjectType, _RequireAtLeastOneOfOne<ObjectType, KeysType & keyof ObjectType>>
 	: never;
 
-type _RequireAtLeastOneOfOne<ObjectType, KeysType extends keyof ObjectType> = {
+export type _RequireAtLeastOneOfOne<ObjectType, KeysType extends keyof ObjectType> = {
 	// For each `Key` in `KeysType` make a mapped type:
-	[Key in KeysType]-?: Required<Pick<ObjectType, Key>>; // 1. Make `Key`'s type required
+	[Key in KeysType]-?: RequireAll<ObjectType, Key>; // 1. Make `Key`'s type required
 }[KeysType]
-& Partial<Pick<ObjectType, KeysType>> // 2. Share the optional selected fields; each alternative's required key overrides its optional copy.
+& {[Key in KeysType]?: ObjectType[Key]} // 2. Share the optional selected fields; each alternative's required key overrides its optional copy.
 & Except<ObjectType, KeysType>; // 3. Add the remaining keys not in `KeysType`
 
 export {};

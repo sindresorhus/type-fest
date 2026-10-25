@@ -1,7 +1,7 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
-import type {DeduplicatedKeys, IfNotAnyOrNever, KeyAliases} from './internal/index.d.ts';
+import type {DeduplicatedKeys, IfNotAnyOrNever, KeyAliases, RequireAll, RequireNone} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -50,11 +50,11 @@ type _RequireExactlyOne<ObjectType, KeysType extends PropertyKey> = ObjectType e
 	: never;
 
 // `AllKeysType` also has the keys of the other union members, so they are forbidden next to the required key too.
-type _RequireExactlyOneOfOne<ObjectType, KeysType extends keyof ObjectType, AllKeysType extends PropertyKey> =
+export type _RequireExactlyOneOfOne<ObjectType, KeysType extends keyof ObjectType, AllKeysType extends PropertyKey> =
 	{[Key in KeysType]: (
-		Required<Pick<ObjectType, Key>>
+		RequireAll<ObjectType, Key>
 		// Prefer an already declared numeric key over its duplicate string alias and use the string value of an enum key, then forbid every other property.
-		& Partial<Record<Exclude<DeduplicatedKeys<AllKeysType>, KeyAliases<Key>>, never>>
+		& RequireNone<Exclude<DeduplicatedKeys<AllKeysType>, KeyAliases<Key>>>
 	)}[KeysType] & Except<ObjectType, KeysType>;
 
 export {};

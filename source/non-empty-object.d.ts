@@ -1,5 +1,5 @@
-import type {RequiredKeysOf} from './required-keys-of.d.ts';
-import type {RequireAtLeastOne} from './require-at-least-one.d.ts';
+import type {_RequireAtLeastOneOfOne} from './require-at-least-one.d.ts';
+import type {RequireNone} from './internal/index.d.ts';
 
 /**
 Represents an object with at least 1 non-optional key.
@@ -36,7 +36,11 @@ Note: An index signature counts as a required key, so a type with one accepts `{
 @category Object
 */
 export type NonEmptyObject<T extends object> = T extends unknown // For distributing `T`, so each union member is checked on its own keys
-	? RequiredKeysOf<T> extends never ? RequireAtLeastOne<T, keyof T> : T
+	// Project values to `never` so only requiredness, including on index signatures, affects the comparison.
+	? RequireNone<keyof T> extends {[Key in keyof T]: never}
+		// `T` is already one member and every key is selected, so skip the public setter's boundary checks.
+		? _RequireAtLeastOneOfOne<T, keyof T>
+		: T
 	: never;
 
 export {};

@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, IsLiteral, LiteralUnion, Tagged} from '../../index.d.ts';
-import type {DeduplicatedKeys, DefinedKeyFilter, ExactKey, KeysExcept, LiteralKeyOf, OptionalKeyFilter, SelectedKeys} from '../../source/internal/index.d.ts';
+import type {DeduplicatedKeys, DefinedKeyFilter, ExactKey, KeysExcept, LiteralKeyOf, OptionalKeyFilter, RequireAll, SelectedKeys} from '../../source/internal/index.d.ts';
 
 // A property whose type includes `undefined` is optional, one that is only `undefined` is neither.
 expectTypeOf<IsEqual<DefinedKeyFilter<{a: 1; b: string | undefined}, 'a'>, 'a'>>().toBe<true>();
@@ -169,3 +169,35 @@ expectTypeOf<SelectedKeys<{a: string}, any>>().toBe<any>();
 
 // A numeric enum key does not cover the whole numeric index domain.
 expectTypeOf<KeysExcept<{[key: number]: string; 1: string}, SelectedIndex.One>>().toBe<number>();
+
+declare const requiredSymbol: unique symbol;
+type OptionalProperties = {readonly name?: string; count?: number | undefined; impossible?: never; dynamic?: any; unknown?: unknown; 0?: boolean; readonly [requiredSymbol]?: Date};
+expectTypeOf<RequireAll<OptionalProperties, keyof OptionalProperties>>()
+	.toBe<{readonly name: string; count: number | undefined; impossible: never; dynamic: any; unknown: unknown; 0: boolean; readonly [requiredSymbol]: Date}>();
+expectTypeOf<RequireAll<OptionalProperties, 'count' | 0>>().toBe<{count: number | undefined; 0: boolean}>();
+expectTypeOf<{count: undefined; 0: true}>().toBeAssignableTo<RequireAll<OptionalProperties, 'count' | 0>>();
+expectTypeOf<{name: undefined}>().not.toBeAssignableTo<RequireAll<OptionalProperties, 'name'>>();
+expectTypeOf<{}>().not.toBeAssignableTo<RequireAll<OptionalProperties, 'unknown'>>();
+expectTypeOf<{impossible: undefined}>().not.toBeAssignableTo<RequireAll<OptionalProperties, 'impossible'>>();
+declare const requiredName: RequireAll<OptionalProperties, 'name' | typeof requiredSymbol>;
+// @ts-expect-error Requiredness does not make a readonly property writable.
+requiredName.name = 'changed';
+// @ts-expect-error Requiredness does not make a readonly symbol property writable.
+requiredName[requiredSymbol] = new Date();
+expectTypeOf<RequireAll<{readonly [name: string]: number | undefined}, string>>().toBe<{readonly [name: string]: number | undefined}>();
+expectTypeOf<RequireAll<{[index: number]: string}, number>>().toBe<{[index: number]: string}>();
+expectTypeOf<RequireAll<any, 'value'>>().toBe<{value: any}>();
+expectTypeOf<RequireAll<never, never>>().toBe<{}>();
+expectTypeOf<RequireAll<unknown, never>>().toBe<{}>();
+// @ts-expect-error Only declared keys can be projected.
+type MissingRequiredProjection = RequireAll<{value?: number}, 'missing'>;
+
+function requiredProjection<Value>(value: Value): RequireAll<{readonly value?: Value; ignored?: number}, 'value'> {
+	return {value};
+}
+
+function _readRequiredProjection<Value>(value: RequireAll<{readonly value?: Value}, 'value'>): Value {
+	return value.value;
+}
+
+expectTypeOf(requiredProjection({id: 'kept'} as const).value).toBe<{readonly id: 'kept'}>();

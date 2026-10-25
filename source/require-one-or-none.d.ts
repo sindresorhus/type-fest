@@ -1,6 +1,6 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
-import type {RequireExactlyOne} from './require-exactly-one.d.ts';
+import type {_RequireExactlyOneOfOne} from './require-exactly-one.d.ts';
 import type {DeduplicatedKeys, IfNotAnyOrNever, KeyAliases, RequireNone} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -36,6 +36,7 @@ const responder3: Responder = {
 
 @category Object
 */
+// `IfNotAnyOrNever` comes first, so an `any` `ObjectType` stays `any` even when `KeysType` is generic.
 export type RequireOneOrNone<ObjectType, KeysType extends KeysOfUnion<ObjectType> = KeysOfUnion<ObjectType>> =
 	IfNotAnyOrNever<ObjectType, {
 		ifNot: If<IsNever<KeysType>,
@@ -46,7 +47,7 @@ export type RequireOneOrNone<ObjectType, KeysType extends KeysOfUnion<ObjectType
 // The keys are intersected with each member's own inside the distribution, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would otherwise be dropped before the type ever saw it.
 type _RequireOneOrNone<ObjectType, KeysType extends PropertyKey> = ObjectType extends unknown
 	? (
-		| RequireExactlyOne<ObjectType, KeysType & keyof ObjectType>
+		| _RequireExactlyOneOfOne<ObjectType, KeysType & keyof ObjectType, KeysType & keyof ObjectType>
 		| RequireNone<KeysType & keyof ObjectType>
 	) & Except<ObjectType, KeysType & keyof ObjectType> // Keep unselected declared fields even when an index signature covers them.
 	& RequireNone<Exclude<DeduplicatedKeys<KeysType>, KeyAliases<keyof ObjectType>>> // Deduplicate string aliases of declared numeric and enum keys before forbidding other members' keys.

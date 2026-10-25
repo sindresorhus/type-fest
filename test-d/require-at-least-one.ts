@@ -145,3 +145,21 @@ expectTypeOf<Simplify<Exclude<MessageSelection, {text: string}>>>().toBe<{text?:
 expectTypeOf<{[selectionSymbol]: string}>().not.toBeAssignableTo<RequireAtLeastOne<SelectedFields, typeof selectionSymbol | 0>>();
 ({a: 1, requiredUndefined: undefined}) satisfies RequireAtLeastOne<{a?: number; b?: string; requiredUndefined: undefined}, 'a' | 'b'>;
 expectTypeOf<{a: number}>().not.toBeAssignableTo<RequireAtLeastOne<{a?: number; b?: string; requiredUndefined: undefined}, 'a' | 'b'>>();
+
+// A numeric enum member selects its declared key, not the whole `number` index signature.
+enum NumericField {
+	Zero,
+}
+
+// @ts-expect-error The enum-keyed field is required.
+const missingEnumField: RequireAtLeastOne<{[key: number]: string; [NumericField.Zero]?: string}, NumericField.Zero> = {};
+
+// Optional copies retain readonly and explicit undefined while another selected field is required.
+type OptionalReadonlyChoice = RequireAtLeastOne<{readonly name?: string | undefined; count?: number; enabled: boolean}, 'name' | 'count'>;
+({name: undefined, enabled: true}) satisfies OptionalReadonlyChoice;
+({count: 1, enabled: true}) satisfies OptionalReadonlyChoice;
+expectTypeOf<{enabled: true}>().not.toBeAssignableTo<OptionalReadonlyChoice>();
+declare const optionalReadonlyChoice: OptionalReadonlyChoice;
+// @ts-expect-error A readonly selected field stays readonly in every required alternative.
+optionalReadonlyChoice.name = undefined;
+optionalReadonlyChoice.count = 1;

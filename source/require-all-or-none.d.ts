@@ -1,14 +1,9 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever, RequireNone} from './internal/index.d.ts';
+import type {IfNotAnyOrNever, RequireAll, RequireNone} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
-
-/**
-Requires all of the keys in the given object.
-*/
-type RequireAll<ObjectType, KeysType extends keyof ObjectType> = Required<Pick<ObjectType, KeysType>>;
 
 /**
 Create a type that requires all of the given keys or none of the given keys, while keeping the remaining keys as is.
@@ -41,6 +36,7 @@ const responder2: RequireAllOrNone<Responder, 'text' | 'json'> = {
 
 @category Object
 */
+// `IfNotAnyOrNever` comes first, so an `any` `ObjectType` stays `any` even when `KeysType` is generic.
 export type RequireAllOrNone<ObjectType, KeysType extends KeysOfUnion<ObjectType> = KeysOfUnion<ObjectType>> =
 	IfNotAnyOrNever<ObjectType, {
 		ifNot: If<IsNever<KeysType>,
