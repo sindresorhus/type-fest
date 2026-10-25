@@ -1,3 +1,4 @@
+import type {ReadonlyDate} from './readonly-date.d.ts';
 import type {TypedArray} from './typed-array.d.ts';
 import type {FindGlobalInstanceType} from './find-global-type.d.ts';
 
@@ -19,6 +20,7 @@ type StructuredCloneableData =
 	| SharedArrayBuffer
 	| DataView
 	| Date
+	| ReadonlyDate
 	| Error
 	| RegExp
 	| TypedArray

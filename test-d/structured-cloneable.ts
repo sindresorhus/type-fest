@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsAny, StructuredCloneable} from '../index.d.ts';
+import type {IsAny, ReadonlyDate, StructuredCloneable} from '../index.d.ts';
 
 /*
 Source: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
@@ -184,3 +184,38 @@ expectTypeOf(cloneSupported(sharedBuffer)).toBe<SharedArrayBuffer>();
 expectTypeOf(cloneSupported({buffer: sharedBuffer} as const)).toBe<{readonly buffer: SharedArrayBuffer}>();
 // @ts-expect-error A callback remains uncloneable even when a sibling field is supported.
 cloneSupported({buffer: sharedBuffer, callback: () => undefined});
+
+// A readonly Date is still a cloneable Date at runtime.
+function cloneChecked<const Value extends StructuredCloneable>(value: Value): Value {
+	return structuredClone(value);
+}
+
+const readonlyDate: ReadonlyDate = new Date('2025-01-01T00:00:00.000Z');
+expectTypeOf(cloneChecked(readonlyDate)).toBe<ReadonlyDate>();
+expectTypeOf(cloneChecked({date: readonlyDate} as const)).toBe<{readonly date: ReadonlyDate}>();
+expectTypeOf(cloneChecked([readonlyDate] as const)).toBe<readonly [ReadonlyDate]>();
+
+expectTypeOf<ReadonlyMap<ReadonlyDate, ReadonlySet<ReadonlyDate>>>().toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<ReadonlySet<readonly [ReadonlyDate, ReadonlyDate]>>().toBeAssignableTo<StructuredCloneable>();
+function cloneReadonlyDate<Value extends ReadonlyDate>(value: Value, consume: (cloned: Value) => void): Value {
+	const cloned = cloneChecked(value);
+	consume(cloned);
+
+	return cloned;
+}
+
+function readClonedDate<Value extends ReadonlyDate>(value: Value): number {
+	return cloneChecked(value).getTime();
+}
+
+const clonedReadonlyDates = cloneChecked({date: readonlyDate, history: [readonlyDate]} as const);
+expectTypeOf(clonedReadonlyDates).toBe<{readonly date: ReadonlyDate; readonly history: readonly [ReadonlyDate]}>();
+expectTypeOf<Extract<keyof typeof clonedReadonlyDates.date, `set${string}`>>().toBe<never>();
+// @ts-expect-error A valid-value write remains disallowed by the readonly inferred result.
+clonedReadonlyDates.date = readonlyDate;
+// @ts-expect-error A cloneable Date does not make a function sibling cloneable.
+cloneChecked({date: readonlyDate, callback: () => undefined});
+// @ts-expect-error A cloneable Date does not make a symbol sibling cloneable.
+cloneChecked({date: readonlyDate, symbol: Symbol('unsupported')});
+expectTypeOf<Promise<ReadonlyDate>>().not.toBeAssignableTo<StructuredCloneable>();
+expectTypeOf<ReadonlyMap<ReadonlyDate, symbol>>().not.toBeAssignableTo<StructuredCloneable>();
