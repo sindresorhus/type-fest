@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
-import type {CasedString, ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
+import type {CasedString, ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToPath, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<1>, '1'>>().toBe<true>();
@@ -171,4 +171,13 @@ expectTypeOf<PositiveNumericStringGt<'120.00409', '120.0041'>>().toBe<false>();
 
 function _readLowerFractionDigit<Digit extends '1' | '2'>(comparison: PositiveNumericStringGt<`0.${Digit}`, '0.9'>): false {
 	return comparison;
+}
+
+// Path tokenization keeps its segments and its established recursion budget.
+expectTypeOf<ToPath<'users[0].profile.name'>>().toBe<['users', '0', 'profile', 'name']>();
+expectTypeOf<ToPath<`${StringRepeat<'a.', 999>}z`>['length']>().toBe<1000>();
+expectTypeOf<ToPath<`a${StringRepeat<'[0]', 998>}`>['length']>().toBe<999>();
+
+function _readPathSegments<Path extends string>(segments: ToPath<Path>): string[] {
+	return segments;
 }

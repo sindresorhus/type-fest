@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Split, StringRepeat, Tagged, TupleOf} from '../index.d.ts';
+import type {Flavor, Opaque, Split, SplitOptions, StringRepeat, Tagged, TupleOf} from '../index.d.ts';
 
 declare function split<
 	S extends string,
@@ -35,7 +35,7 @@ expectTypeOf<Split<'a,b,c', ',' | 'b'>>().toBe<['a', 'b', 'c'] | ['a,', ',c']>()
 expectTypeOf<Split<'a,b,c' | 'x:y:z', ',' | ':'>>().toBe<['a', 'b', 'c'] | ['a,b,c'] | ['x', 'y', 'z'] | ['x:y:z']>();
 
 // -- strictLiteralChecks: false --
-// NOTE: The behaviour covered in the test below is not acurate because the `a.b.${string}` type might hold a value like `a.b.c.d`,
+// NOTE: The behaviour covered in the test below is not accurate because the `a.b.${string}` type might hold a value like `a.b.c.d`,
 // which, when split by `.`, would result in `['a', 'b', 'c', 'd']`, which wouldn't conform to the output type of `['a', 'b', string]`.
 expectTypeOf<Split<`a.b.${string}`, '.', {strictLiteralChecks: false}>>().toBe<['a', 'b', string]>();
 
@@ -94,3 +94,56 @@ expectTypeOf<Split<'foo', never>>().toBe<never>();
 expectTypeOf<Split<unknown, ','>>();
 // @ts-expect-error
 expectTypeOf<Split<'foo', unknown>>();
+
+// A generic split result stays assignable to `string[]`.
+function _readSplitPath<Input extends string>(parts: Split<Input, '.'>): string[] {
+	return parts;
+}
+
+// Multi-character delimiters consume each match once, even when candidate matches overlap.
+expectTypeOf<Split<'aaaaa', 'aa'>>().toBe<['', '', 'a']>();
+expectTypeOf<Split<'aaaa', 'aa'>>().toBe<['', '', '']>();
+
+// Delimited records preserve empty fields and leave unmatched line endings within a field.
+expectTypeOf<Split<',a,,b,', ','>>().toBe<['', 'a', '', 'b', '']>();
+expectTypeOf<Split<'a\r\nb\nc\r\n', '\r\n'>>().toBe<['a', 'b\nc', '']>();
+
+// Normalized literal inputs retain independent union members and generic option reductions.
+expectTypeOf<Split<Flavor<'api.v1' | 'api.v2', 'Text'>, '.'>>().toBe<['api', 'v1'] | ['api', 'v2']>();
+expectTypeOf<Split<any, any>>().toBe<string[]>();
+expectTypeOf<Split<never, never>>().toBe<never>();
+
+function _readSplitWithOptions<Input extends string, Options extends SplitOptions>(parts: Split<Input, '.', Options>): string[] {
+	return parts;
+}
+
+// Disabling literal checks still splits each normalized delimiter alternative independently.
+expectTypeOf<Split<Tagged<'api.name' | 'api/name', 'Text'>, Tagged<'.' | '/', 'Delimiter'>, {strictLiteralChecks: false}>>()
+	.toBe<['api', 'name'] | ['api.name'] | ['api/name']>();
+expectTypeOf<Split<never, any, {strictLiteralChecks: false}>>().toBe<never>();
+expectTypeOf<Split<'api.name', never, {strictLiteralChecks: false}>>().toBe<never>();
+
+function _readNonStrictSplit<Input extends string, Delimiter extends string>(parts: Split<Input, Delimiter, {strictLiteralChecks: false}>): string[] {
+	return parts;
+}
+
+function _readKnownSplitWithOptions<Options extends SplitOptions>(parts: Split<'api.name', '.', Options>): ['api', 'name'] {
+	return parts;
+}
+
+// Known inputs have the same result for every literal-check option.
+function _readSplitAlternatives<Options extends SplitOptions>(parts: Split<'api.name' | 'api/version', '.' | '/', Options>): ['api', 'name'] | ['api.name'] | ['api', 'version'] | ['api/version'] {
+	return parts;
+}
+
+function _readEmptySplitWithOptions<Options extends SplitOptions>(parts: Split<'', '', Options>): [] {
+	return parts;
+}
+
+function _readTaggedSplitWithOptions<Options extends SplitOptions>(parts: Split<Tagged<'api.name', 'Text'>, Tagged<'.', 'Delimiter'>, Options>): ['api', 'name'] {
+	return parts;
+}
+
+function _constructKnownSplitWithOptions<Options extends SplitOptions>(parts: ['api', 'name']): Split<'api.name', '.', Options> {
+	return parts;
+}

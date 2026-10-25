@@ -64,18 +64,21 @@ export type Split<
 	Delimiter extends string,
 	Options extends SplitOptions = {},
 > =
-	_Split<S extends object ? UnwrapBrand<S> : S, Delimiter extends object ? UnwrapBrand<Delimiter> : Delimiter, ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>>;
+	_Split<S extends object ? UnwrapBrand<S> : S, Delimiter extends object ? UnwrapBrand<Delimiter> : Delimiter, Options>;
 
 type _Split<
 	S extends string,
 	Delimiter extends string,
-	Options extends Required<SplitOptions>,
+	Options extends SplitOptions,
 > = S extends string // For distributing `S`
 	? Delimiter extends string // For distributing `Delimiter`
-		// If `strictLiteralChecks` is `false` OR `S` and `Delimiter` both are string literals, then perform the split
-		? Or<Not<Options['strictLiteralChecks']>, And<IsStringLiteral<S>, IsStringLiteral<Delimiter>>> extends true
-			// The `extends infer` step keeps `SplitOnDelimiter` out of this conditional's tail-recursion chain, so the loop gets the full recursion budget to itself.
-			? SplitOnDelimiter<S, Delimiter> extends infer Result ? Result : never
+		// If `S` and `Delimiter` both are string literals OR `strictLiteralChecks` is `false`, then perform the split. Known literals do not depend on resolving generic options.
+		? Or<
+			And<IsStringLiteral<S>, IsStringLiteral<Delimiter>>,
+			Not<ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>['strictLiteralChecks']>
+		> extends true
+			// The `extends infer` step keeps `_SplitOnDelimiter` out of this conditional's tail-recursion chain, so the loop gets the full recursion budget to itself.
+			? _SplitOnDelimiter<S, Delimiter> extends infer Result ? Result : never
 			// Otherwise, return `string[]`
 			: string[]
 		: never // Should never happen
@@ -84,14 +87,14 @@ type _Split<
 /**
 Splits `S` on `Delimiter`.
 
-`S` and `Delimiter` must already be distributed, so that the checks performed by `_Split` do not have to be repeated on every recursion step.
+`_Split` distributes and checks both inputs before recursion, so this loop does not repeat those checks on every step. `ToPath` fixes its delimiter and permits non-literal paths.
 */
-type SplitOnDelimiter<
+export type _SplitOnDelimiter<
 	S extends string,
 	Delimiter extends string,
 	Accumulator extends string[] = [],
 > = S extends `${infer Head}${Delimiter}${infer Tail}`
-	? SplitOnDelimiter<Tail, Delimiter, [...Accumulator, Head]>
+	? _SplitOnDelimiter<Tail, Delimiter, [...Accumulator, Head]>
 	: Delimiter extends ''
 		? S extends ''
 			? Accumulator

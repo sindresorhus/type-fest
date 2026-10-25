@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Get, IsEqual, Join, LiteralUnion, Opaque, ParsePath, Paths, Tagged, TupleOf} from '../index.d.ts';
+import type {Get, GetOptions, IsEqual, Join, LiteralUnion, Opaque, ParsePath, Paths, Tagged, TupleOf} from '../index.d.ts';
 
 // Dot notation
 expectTypeOf<ParsePath<'foo'>>().toBe<['foo']>();
@@ -439,3 +439,17 @@ expectTypeOf<Get<User, ParsePath<Tagged<'friends[0].name', 'Path'>>>>().toBe<str
 expectTypeOf<Get<User, ParsePath<Tagged<'tuple[1].id', 'Path'>>>>().toBe<number>();
 declare const brandedParsedPath: Tagged<'users[0].name', 'Path'>;
 expectTypeOf(parsePath(brandedParsedPath)).toBe<['users', 0, 'name']>();
+
+// Generic consumers can copy and visit parsed keys without knowing the path in advance.
+function _copyParsedPath<Path extends string>(path: ParsePath<Path>): Array<string | number> {
+	return [...path];
+}
+
+function _visitParsedPath<Path extends string, Result>(path: ParsePath<Path>, visit: (key: string | number) => Result): Result[] {
+	return path.map(key => visit(key));
+}
+
+// Lookup consumers retain their generic return contracts after sharing path tokenization.
+function _readParsedName<Options extends GetOptions>(value: Get<{user: {name: string}}, ParsePath<'user.name'>, Options>): string {
+	return value;
+}

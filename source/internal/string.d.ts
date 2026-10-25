@@ -1,7 +1,7 @@
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsStringLiteral} from '../is-string-literal.d.ts';
 import type {Trim} from '../trim.d.ts';
-import type {Split} from '../split.d.ts';
+import type {_SplitOnDelimiter} from '../split.d.ts';
 import type {AsciiPunctuation, Whitespace} from './characters.d.ts';
 import type {CollapseLiterals, UnwrapBrand} from './object.d.ts';
 
@@ -264,7 +264,8 @@ type B = ToPath<'foo[0].bar.baz'>;
 //=> ['foo', '0', 'bar', 'baz']
 ```
 */
-export type ToPath<Path extends string> = Split<FixPathSquareBrackets<Path>, '.', {strictLiteralChecks: false}>;
+// Path parsing always uses a dot and permits non-literal input, so it can reuse the split loop after bracket normalization.
+export type ToPath<Path extends string> = _SplitOnDelimiter<FixPathSquareBrackets<Path>, '.'>;
 
 /**
 Remove brands from property paths while preserving empty intersections used by `LiteralUnion`.
