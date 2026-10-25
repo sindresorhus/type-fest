@@ -1,4 +1,4 @@
-import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
+import type {GreaterThan} from './greater-than.d.ts';
 import type {_Numeric} from './numeric.d.ts';
 
 /**
@@ -58,11 +58,7 @@ setNegative(0);
 setNegative(1);
 ```
 */
-export type LessThan<A extends _Numeric, B extends _Numeric> =
-	GreaterThanOrEqual<A, B> extends infer Result
-		? Result extends true
-			? false
-			: true
-		: never; // Should never happen
+// Reuse the strict comparison with its operands reversed.
+export type LessThan<A extends _Numeric, B extends _Numeric> = GreaterThan<B, A>;
 
 export {};

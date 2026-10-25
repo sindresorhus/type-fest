@@ -249,13 +249,8 @@ type B = PositiveNumericCharacterGt<'1', '1'>;
 //=> false
 ```
 */
-type PositiveNumericCharacterGt<A extends string, B extends string> = NumericString extends `${infer HeadA}${A}${infer TailA}`
-	? NumericString extends `${infer HeadB}${B}${infer TailB}`
-		? HeadA extends `${HeadB}${infer _}${infer __}`
-			? true
-			: false
-		: never
-	: never;
+// Each digit occurs once in ascending order, so B must appear before A.
+type PositiveNumericCharacterGt<A extends string, B extends string> = NumericString extends `${string}${B}${string}${A}${string}` ? true : false;
 
 /**
 Splits a dot-prop style path into a tuple comprised of the properties in the path. Handles square-bracket notation.

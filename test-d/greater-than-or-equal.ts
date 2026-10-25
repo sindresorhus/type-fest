@@ -93,3 +93,17 @@ expectTypeOf<GreaterThanOrEqual<never, 1n>>().toBe<never>();
 // A union mixing `bigint` and `number` values is compared per member.
 expectTypeOf<GreaterThanOrEqual<5n | 5, 5>>().toBe<true>();
 expectTypeOf<GreaterThanOrEqual<5n | 6, 5n>>().toBe<true>();
+
+// An impossible operand supplies no value to compare, even beside an unknown numeric operand.
+expectTypeOf<GreaterThanOrEqual<never, number>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<number, never>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<never, bigint>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<bigint, never>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<never, any>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<any, never>>().toBe<never>();
+// @ts-expect-error An unknown value is not a numeric operand.
+type UnknownGreaterOperand = GreaterThanOrEqual<unknown, 0>;
+
+function _readGreaterComparison<Left extends number | bigint, Right extends number | bigint>(value: GreaterThanOrEqual<Left, Right>): boolean {
+	return value;
+}

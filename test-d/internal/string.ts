@@ -146,3 +146,29 @@ enum ClassName {
 
 expectTypeOf<CasedString<ClassName.Primary, 'foo-bar', '-'>>().toBe<ClassName.Primary>();
 expectTypeOf<CasedString<ClassName.Secondary, 'foo.bar', '-'>>().toBe<never>();
+
+// Every ordered decimal-digit pair is compared, including equality.
+type DecimalDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+type DigitComparisonRow<Left extends string, Right extends readonly string[] = DecimalDigits> = {
+	[Index in keyof Right]: PositiveNumericStringGt<Left, Right[Index]>;
+};
+expectTypeOf<DigitComparisonRow<'0'>>().toBe<[false, false, false, false, false, false, false, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'1'>>().toBe<[true, false, false, false, false, false, false, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'2'>>().toBe<[true, true, false, false, false, false, false, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'3'>>().toBe<[true, true, true, false, false, false, false, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'4'>>().toBe<[true, true, true, true, false, false, false, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'5'>>().toBe<[true, true, true, true, true, false, false, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'6'>>().toBe<[true, true, true, true, true, true, false, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'7'>>().toBe<[true, true, true, true, true, true, true, false, false, false]>();
+expectTypeOf<DigitComparisonRow<'8'>>().toBe<[true, true, true, true, true, true, true, true, false, false]>();
+expectTypeOf<DigitComparisonRow<'9'>>().toBe<[true, true, true, true, true, true, true, true, true, false]>();
+
+// Fractional digits still compare after a shared prefix, including equal neighboring values.
+expectTypeOf<PositiveNumericStringGt<'120.00409', '120.00408'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'120.00408', '120.00409'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'120.00409', '120.00409'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'120.00409', '120.0041'>>().toBe<false>();
+
+function _readLowerFractionDigit<Digit extends '1' | '2'>(comparison: PositiveNumericStringGt<`0.${Digit}`, '0.9'>): false {
+	return comparison;
+}

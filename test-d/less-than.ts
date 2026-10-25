@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {LessThan} from '../index.d.ts';
+import type {LessThan, Tagged} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 declare const never: never;
@@ -100,3 +100,17 @@ expectTypeOf<LessThan<never, 1n>>().toBe<never>();
 // A union mixing `bigint` and `number` values is compared per member.
 expectTypeOf<LessThan<1n | 2, 5n>>().toBe<true>();
 expectTypeOf<LessThan<1n | 10, 5>>().toBe<boolean>();
+
+// Reversing the strict comparison retains sentinel inputs, nominal values, and each union member.
+expectTypeOf<LessThan<never, number>>().toBe<never>();
+expectTypeOf<LessThan<bigint, never>>().toBe<never>();
+expectTypeOf<LessThan<any, never>>().toBe<never>();
+expectTypeOf<LessThan<Tagged<-2, 'Limit'>, Tagged<1, 'Limit'>>>().toBe<true>();
+expectTypeOf<LessThan<Tagged<2, 'Limit'>, 2n>>().toBe<false>();
+expectTypeOf<LessThan<-2n | Tagged<2, 'Limit'>, 0>>().toBe<boolean>();
+// @ts-expect-error An unknown value is not a numeric operand.
+type UnknownLessOperand = LessThan<unknown, 0>;
+
+function _readLessComparison<Left extends number | bigint, Right extends number | bigint>(value: LessThan<Left, Right>): boolean {
+	return value;
+}

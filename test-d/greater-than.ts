@@ -269,3 +269,25 @@ expectTypeOf<GreaterThan<-123_456_789, InfiniteLimit.Negative>>().toBe<true>();
 expectTypeOf<GreaterThan<InfiniteLimit.Positive, InfiniteLimit.Positive>>().toBe<false>();
 expectTypeOf<GreaterThanOrEqual<InfiniteLimit.Positive, 99_999_999>>().toBe<true>();
 expectTypeOf<LessThan<123_456_789, InfiniteLimit.Positive>>().toBe<true>();
+
+// Generic comparison results can be consumed without resolving their operands first.
+function withComparison<Left extends number | bigint, Right extends number | bigint, Result>(
+	comparison: GreaterThan<Left, Right>,
+	consume: (comparison: GreaterThan<Left, Right>) => Result,
+): Result {
+	return consume(comparison);
+}
+
+function _readLessThan<Left extends number | bigint, Right extends number | bigint>(comparison: LessThan<Left, Right>): boolean {
+	return comparison;
+}
+
+const callbackComparison = withComparison<12_345, 12_344, true>(true, comparison => comparison);
+expectTypeOf(callbackComparison).toBe<true>();
+
+const comparisonFlags = {
+	above: compareValues(12_345, 12_344),
+	below: compareValues(9n, 12.5),
+	equal: compareValues(0, 0n),
+} as const;
+expectTypeOf(comparisonFlags).toBe<{readonly above: true; readonly below: false; readonly equal: false}>();

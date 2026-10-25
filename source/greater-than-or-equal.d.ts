@@ -63,16 +63,16 @@ export type GreaterThanOrEqual<A extends _Numeric, B extends _Numeric> =
 	_GreaterThanOrEqual<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
 
 // Numeric enum members accept `number`, but their printed types still identify their known values.
-type _GreaterThanOrEqual<A extends _Numeric, B extends _Numeric> = `${number}` extends `${A | B}`
-	? boolean
-	: bigint extends A | B
-		? boolean
-		: A extends _Numeric // For distributing `A`
-			? B extends _Numeric // For distributing `B`
-				? `${A}` extends `${B}` // Compares as strings, so a `bigint` equals the `number` with the same digits, such as `5n` and `5`.
+type _GreaterThanOrEqual<A extends _Numeric, B extends _Numeric> = A extends _Numeric // For distributing `A`
+	? B extends _Numeric // For distributing `B`
+		? `${number}` extends `${A | B}`
+			? boolean
+			: bigint extends A | B
+				? boolean
+				: `${A}` extends `${B}` // Compares as strings, so a `bigint` equals the `number` with the same digits, such as `5n` and `5`.
 					? true
 					: GreaterThan<A, B>
-				: never // Should never happen
-			: never; // Should never happen
+		: never // Should never happen
+	: never; // Should never happen
 
 export {};
