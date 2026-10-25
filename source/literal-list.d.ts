@@ -43,6 +43,8 @@ Returns the tuple if it is valid. Otherwise, returns an error message as a strin
 
 The order of the elements does not matter.
 
+Membership is checked by assignability. Structurally overlapping object variants can still be ambiguous; use a discriminant property to distinguish them.
+
 Use-cases:
 - Make sure a list of options includes every member of a union, like all form field names or all enum values.
 - Define static configuration or table headers that match a union.
@@ -112,7 +114,10 @@ type _LiteralList<
 				? Exclude<Union, List[number]> extends infer Missing // Union members that are not in the tuple
 					? IsNever<Extra> extends true
 						? IsNever<Missing> extends true
-							? List // The tuple has exactly the union members
+							// Assignability can hide a missing member behind a structurally covering duplicate.
+							? UnionLength<List[number]> extends Length
+								? List // The tuple has exactly the union members
+								: 'Each element must be a distinct member of the union'
 							: `Type ${TupleAsString<List>} is missing members: ${TupleAsString<Missing>}`
 						: `Type ${TupleAsString<List>} has extra members: ${TupleAsString<Extra>}`
 					: never

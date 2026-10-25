@@ -171,3 +171,43 @@ expectTypeOf(validateEmptyList([])).toBe<readonly []>();
 validateEmptyList(['unexpected']);
 // @ts-expect-error A factory rejects extra members as well as missing ones.
 validateStatus(['open', 'unexpected']);
+
+// A structurally covering member must not hide a duplicate and a missing member.
+type BasicListMember = {id: string};
+type ExpandedListMember = {id: string; label: string};
+type OverlappingListMembers = BasicListMember | ExpandedListMember;
+expectTypeOf<IsLiteralList<[BasicListMember, BasicListMember], OverlappingListMembers>>().toBe<false>();
+expectTypeOf<IsLiteralList<[BasicListMember, ExpandedListMember], OverlappingListMembers>>().toBe<true>();
+
+declare const basicListMember: BasicListMember;
+declare const expandedListMember: ExpandedListMember;
+const validateOverlappingList = makeValidatedList<OverlappingListMembers>();
+expectTypeOf(validateOverlappingList([basicListMember, expandedListMember])).toBe<readonly [BasicListMember, ExpandedListMember]>();
+// @ts-expect-error Repeating the covering member leaves the expanded member missing.
+validateOverlappingList([basicListMember, basicListMember]);
+
+expectTypeOf<LiteralList<[BasicListMember, BasicListMember], OverlappingListMembers>>()
+	.toBe<'Each element must be a distinct member of the union'>();
+
+// Const inference adds readonly properties, which remain valid members by assignability.
+const validateObjectList = makeValidatedList<{kind: 'read'} | {kind: 'write'}>();
+expectTypeOf(validateObjectList([{kind: 'read'}, {kind: 'write'}]))
+	.toBe<readonly [{readonly kind: 'read'}, {readonly kind: 'write'}]>();
+// @ts-expect-error A readonly inferred duplicate still leaves a member missing.
+validateObjectList([{kind: 'read'}, {kind: 'read'}]);
+
+type OverlappingValueList<Identifier extends string> = readonly [{id: Identifier}, {id: Identifier; label: string}];
+type CompleteValueList<Identifier extends string> = LiteralList<OverlappingValueList<Identifier>, OverlappingValueList<Identifier>[number]>;
+
+function makeCompleteValueList<Identifier extends string>(id: Identifier): CompleteValueList<Identifier> {
+	return [{id}, {id, label: 'item'}];
+}
+
+function _readCompleteValueList<Identifier extends string>(list: CompleteValueList<Identifier>): Identifier {
+	return list[1].id;
+}
+
+const completeValueList = makeCompleteValueList('kept');
+expectTypeOf(completeValueList[1].id).toBe<'kept'>();
+// @ts-expect-error An otherwise valid value cannot replace a readonly tuple position.
+completeValueList[0] = {id: 'kept'};
