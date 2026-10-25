@@ -200,3 +200,36 @@ expectTypeOf(inferredResolved.retries).toBe<number>();
 withDefaults({}, inferredOptions);
 // @ts-expect-error
 withDefaults({retries: undefined}, inferredOptions);
+
+// Default values keep declared readonly fields beside dynamic entries.
+declare const indexedDefaults: DefaultsFor<{[name: `setting-${string}`]: unknown; readonly 'setting-retries'?: number | undefined}>;
+expectTypeOf(indexedDefaults['setting-retries']).toBe<number>();
+// @ts-expect-error An otherwise valid value cannot replace a readonly default.
+indexedDefaults['setting-retries'] = 3;
+
+function makeCallbackDefaults<Value>(run: (value: Value) => string): DefaultsFor<{name: string; readonly run?: (value: Value) => string}> {
+	return {run};
+}
+
+function _readCallbackDefaults<Value>(defaultValues: DefaultsFor<{name: string; readonly run?: (value: Value) => string}>, value: Value): string {
+	return defaultValues.run(value);
+}
+
+const callbackDefaults = makeCallbackDefaults((value: {id: 'kept'}) => value.id);
+expectTypeOf(callbackDefaults.run).toBe<(value: {id: 'kept'}) => string>();
+// @ts-expect-error A readonly callback still rejects a compatible replacement.
+callbackDefaults.run = (value: {id: 'kept'}) => value.id;
+
+// Optional tuple positions become required defaults without keeping array methods.
+declare const tupleDefaults: DefaultsFor<readonly [string, (number | undefined)?]>;
+expectTypeOf(tupleDefaults[1]).toBe<number>();
+expectTypeOf<keyof typeof tupleDefaults>().toBe<'1'>();
+// @ts-expect-error The source position's readonly modifier is kept.
+tupleDefaults[1] = 2;
+
+function makeNestedDefaults<const Value>(value: Value): DefaultsFor<{name: string; readonly nested?: {value: Value | undefined}}> {
+	return {nested: {value}};
+}
+
+const nestedDefaults = makeNestedDefaults({id: 'kept'});
+expectTypeOf(nestedDefaults.nested.value).toBe<{readonly id: 'kept'} | undefined>();
