@@ -1,4 +1,4 @@
-import type {SimplifyObject} from './internal/index.d.ts';
+import type {SelectedKeys, SimplifyObject} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -66,12 +66,12 @@ type WritableAllKeys<BaseType> = BaseType extends unknown
 			: {-readonly [KeyType in keyof BaseType]: BaseType[KeyType]} & {}
 	: never;
 
-// The intersection is against the member, not the union, so a key only one member has is applied to that member and is a no-op for the others.
+// Keys are matched against the member, not the union, so a key only one member has is applied to that member and is a no-op for the others.
 type WritableSelectedKeys<BaseType, Keys> = BaseType extends unknown
 	// Only the globally empty key set preserves containers; ordinary objects keep their existing mapped result.
 	? [Keys, BaseType] extends [never, ReadonlyMap<unknown, unknown> | ReadonlySet<unknown> | readonly unknown[]]
 		? BaseType
-		: _Writable<BaseType, Keys & keyof BaseType>
+		: _Writable<BaseType, SelectedKeys<BaseType, Keys>>
 	: never;
 
 type _Writable<BaseType, Keys extends keyof BaseType> =

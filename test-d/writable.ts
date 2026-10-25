@@ -196,3 +196,32 @@ const unchangedInferredTuple = unchangedTuple([{id: 'row'}]);
 expectTypeOf(unchangedInferredTuple).toBe<readonly [{readonly id: 'row'}]>();
 // @ts-expect-error No key was selected, so the inferred tuple remains readonly.
 unchangedInferredTuple[0] = {id: 'row'};
+
+// A numeric enum member selects its declared key, not the whole `number` index signature.
+enum NumericField {
+	Zero,
+}
+
+expectTypeOf<Writable<{readonly [key: number]: string; readonly 0: 'zero'}, NumericField.Zero>>().toBe<{readonly [key: number]: string; 0: 'zero'}>();
+
+// Both forms of polymorphic this preserve a generic field's type while allowing internal replacement (#1515).
+class GenericReadonlyModel<Value> {
+	constructor(readonly value: Value) {}
+
+	replace(value: Value) {
+		(this as Writable<this>).value = value;
+		(this as Writable<typeof this>).value = value;
+		// @ts-expect-error The transformed field still requires Value, which need not accept undefined.
+		(this as Writable<this>).value = undefined;
+		// @ts-expect-error The typeof this form also preserves Value.
+		(this as Writable<typeof this>).value = undefined;
+	}
+}
+
+const genericReadonlyModel = new GenericReadonlyModel({name: 'original'});
+genericReadonlyModel.replace({name: 'updated'});
+expectTypeOf(genericReadonlyModel.value).toBe<{name: string}>();
+// @ts-expect-error Internal mutability does not make the public field writable.
+genericReadonlyModel.value = {name: 'outside'};
+// @ts-expect-error Removing readonly does not change the generic field's value type.
+genericReadonlyModel.replace({name: 1});
