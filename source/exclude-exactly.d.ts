@@ -1,8 +1,4 @@
-import type {IsNever} from './is-never.d.ts';
-import type {IsAny} from './is-any.d.ts';
-import type {If} from './if.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {IfNotAnyOrNever} from './internal/type.d.ts';
 
 /**
 A stricter version of `Exclude<T, U>` that excludes types only when they are exactly identical.
@@ -32,26 +28,14 @@ type TestExcludeExactly3 = ExcludeExactly<{a: string} | {a: string; b: string}, 
 
 @category Improved Built-in
 */
+// For `any`, an exact `any` deletion returns `never`; every other deletion keeps it.
+// `never` has no members to distribute, so it remains `never` for every deletion.
+// A deletion of `any` or `never` keeps every non-`any` member: `any` cannot match it exactly, and `never` supplies no matching member.
 export type ExcludeExactly<Union, Delete> =
-	IfNotAnyOrNever<Union, {
-		ifNot: _ExcludeExactly<Union, Delete>;
-		// If `Union` is `any`, then if `Delete` is `any`, return `never`, else return `Union`.
-		ifAny: If<IsAny<Delete>, never, Union>;
-		// If `Union` is `never`, then if `Delete` is `never`, return `never`, else return `Union`.
-		ifNever: If<IsNever<Delete>, never, Union>;
-	}>;
-
-type _ExcludeExactly<Union, Delete> =
-	IfNotAnyOrNever<Delete, {
-		ifNot: Union extends unknown // For distributing `Union`
-			? [Delete extends unknown // For distributing `Delete`
-				? IsEqual<Union, Delete> extends true ? true : never
-				: never] extends [never] ? Union : never
-			: never;
-		// If `Delete` is `any` or `never`, then return `Union`,
-		// because `Union` cannot be `any` or `never` here.
-		ifAny: Union;
-		ifNever: Union;
-	}>;
+	Union extends unknown // For distributing `Union`
+		? [Delete extends unknown // For distributing `Delete`
+			? IsEqual<Union, Delete> extends true ? true : never
+			: never] extends [never] ? Union : never
+		: never;
 
 export {};

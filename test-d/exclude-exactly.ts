@@ -80,3 +80,36 @@ expectTypeOf<ExcludeExactly<{readonly [identity]: 'user'} | {readonly [identity]
 expectTypeOf<ExcludeExactly<{value: {name: string}} | {value: {readonly name: string}}, {value: {name: string}}>>().toBe<{value: {readonly name: string}}>();
 type SimilarResponses = {kind: 'ready'; value: string} | {kind: 'ready'; value: string; cached?: boolean};
 expectTypeOf<ExcludeExactly<SimilarResponses, {kind: 'ready'; value: string}>>().toBe<{kind: 'ready'; value: string; cached?: boolean}>();
+
+// Deleting no members preserves a generic value as well as a concrete union.
+function _noDeletions<Value>(value: Value): ExcludeExactly<Value, never> {
+	return value;
+}
+
+function _keepPayload<Value>(value: Value): {readonly payload: ExcludeExactly<Value, never>} {
+	return {payload: value};
+}
+
+function keepSnapshot<const Value>(value: Value): ExcludeExactly<Value, never> {
+	return value;
+}
+
+const keptSnapshot = keepSnapshot({kind: 'ready', payload: {id: 1}});
+expectTypeOf(keptSnapshot).toBe<{readonly kind: 'ready'; readonly payload: {readonly id: 1}}>();
+// @ts-expect-error The inferred snapshot still has readonly fields.
+keptSnapshot.payload.id = 1;
+
+// An API with no deletion argument keeps its default empty selection and tuple identity.
+declare function excludeMembers<const Value, Delete = never>(value: Value): ExcludeExactly<Value, Delete>;
+const keptTuple = excludeMembers([1, 'ready'] as const);
+expectTypeOf(keptTuple).toBe<readonly [1, 'ready']>();
+// @ts-expect-error An otherwise valid element cannot replace a readonly tuple position.
+keptTuple[0] = 1;
+
+function isRemaining<Union, Delete>(value: Union, remaining: ReadonlyArray<ExcludeExactly<Union, Delete>>): value is ExcludeExactly<Union, Delete> {
+	return remaining.includes(value as ExcludeExactly<Union, Delete>);
+}
+
+function _readRemaining<Union, Delete>(value: Union, remaining: ReadonlyArray<ExcludeExactly<Union, Delete>>): Union | undefined {
+	return isRemaining(value, remaining) ? value : undefined;
+}
