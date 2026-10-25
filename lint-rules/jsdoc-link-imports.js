@@ -4,7 +4,7 @@ import ts from 'typescript';
 
 const LINK_COMMENT = '// For `@link`';
 
-// `{@link Foo.bar}` and `{@link Foo#bar}` resolve through `Foo`.
+// `{@link Foo.bar}` and `{@link Foo#bar}` need `Foo` in scope before their member can resolve.
 const getLeftmostIdentifier = name => {
 	while (!ts.isIdentifier(name)) {
 		name = name.left;
@@ -13,19 +13,20 @@ const getLeftmostIdentifier = name => {
 	return name;
 };
 
-// Collects the names that the JSDoc in the file references. `@see Foo` without braces also resolves in editors, so it counts as a use of an import, but only `{@link}` names must resolve.
-const collectJSDocNames = sourceFile => {
-	const linkIdentifiers = [];
-	const names = new Set();
+// Collects the symbols that the JSDoc in the file references, so a shadowed name is not mistaken for an import. `@see Foo` without braces also resolves in editors, so it counts as a use of an import, but only `{@link}` names must resolve.
+const collectJSDocReferences = (sourceFile, checker) => {
+	const linkTargets = [];
+	const symbols = new Set();
 
 	const visit = node => {
 		// TypeScript parses `{@link https://example.com}` as the name `https` followed by the text `://example.com`.
 		if ((ts.isJSDocLink(node) || ts.isJSDocLinkCode(node) || ts.isJSDocLinkPlain(node)) && node.name && !node.text.startsWith('://')) {
 			const identifier = getLeftmostIdentifier(node.name);
-			linkIdentifiers.push(identifier);
-			names.add(identifier.text);
+			const symbol = checker.getSymbolAtLocation(identifier);
+			linkTargets.push({target: node.name, identifier, symbol});
+			symbols.add(symbol);
 		} else if (ts.isJSDocSeeTag(node) && node.name) {
-			names.add(getLeftmostIdentifier(node.name.name).text);
+			symbols.add(checker.getSymbolAtLocation(getLeftmostIdentifier(node.name.name)));
 		}
 
 		for (const jsDoc of node.jsDoc ?? []) {
@@ -37,7 +38,7 @@ const collectJSDocNames = sourceFile => {
 
 	visit(sourceFile);
 
-	return {linkIdentifiers, names};
+	return {linkTargets, symbols};
 };
 
 const findProjectRoot = filename => {
@@ -83,6 +84,7 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 		fixable: 'code',
 		messages: {
 			missingImport: '`{@link {{name}}}` does not resolve, so editors show it as plain text. Import `{{name}}`.',
+			unresolvedLink: '`{@link {{name}}}` does not resolve.',
 			unusedImport: 'Neither the code nor the JSDoc uses `{{name}}`.',
 			missingComment: 'Only the JSDoc uses this import, so end it with this comment: {{comment}}',
 			unneededComment: 'The code uses this import, so remove this comment: {{comment}}',
@@ -128,15 +130,28 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 			return fixer.removeRange([declaration.range[0], Math.min(end, nextToken?.range[0] ?? end)]);
 		};
 
-		const removeSpecifier = (fixer, specifier, specifiers) => {
-			const index = specifiers.indexOf(specifier);
-			const range = index < specifiers.length - 1
-				? [specifier.range[0], specifiers[index + 1].range[0]]
-				: [specifiers[index - 1].range[1], specifier.range[1]];
+		const removeSpecifier = (fixer, specifier, declaration) => {
+			const namedSpecifiers = declaration.specifiers.filter(candidate => candidate.type === 'ImportSpecifier');
+			const groups = declaration.specifiers.filter(candidate => candidate.type !== 'ImportSpecifier');
+			if (namedSpecifiers.length > 0) {
+				// Named bindings form one brace-delimited group beside a default binding.
+				groups.push({
+					range: [
+						sourceCode.getTokenBefore(namedSpecifiers[0]).range[0],
+						sourceCode.getTokenBefore(declaration.source, {skip: 1}).range[1],
+					],
+				});
+			}
+
+			const siblings = specifier.type === 'ImportSpecifier' && namedSpecifiers.length > 1 ? namedSpecifiers : groups;
+			const index = siblings.findIndex(({range}) => range[0] <= specifier.range[0] && range[1] >= specifier.range[1]);
+			const range = index < siblings.length - 1
+				? [siblings[index].range[0], siblings[index + 1].range[0]]
+				: [siblings[index - 1].range[1], siblings[index].range[1]];
 			return fixer.removeRange(range);
 		};
 
-		const checkImport = (declaration, imports, jsdocNames) => {
+		const checkImport = (declaration, imports, jsdocSymbols) => {
 			const {specifiers} = declaration;
 			if (specifiers.length === 0) {
 				return;
@@ -145,16 +160,18 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 			const usages = specifiers.map(specifier => ({
 				specifier,
 				isUsedByCode: sourceCode.getDeclaredVariables(specifier)[0].references.length > 0,
-				isUsedByJSDoc: jsdocNames.has(specifier.local.name),
+				isUsedByJSDoc: jsdocSymbols.has(checker.getSymbolAtLocation(parserServices.esTreeNodeToTSNodeMap.get(specifier.local))),
 			}));
 			const unusedSpecifiers = usages.filter(usage => !usage.isUsedByCode && !usage.isUsedByJSDoc).map(usage => usage.specifier);
+			// Internal comments may belong to retained specifiers, so leave their removal to the user.
+			const canRemoveUnused = sourceCode.getCommentsInside(declaration).length === 0;
 
 			if (unusedSpecifiers.length === specifiers.length) {
 				context.report({
 					node: declaration,
 					messageId: 'unusedImport',
 					data: {name: specifiers.map(specifier => specifier.local.name).join('`, `')},
-					fix: fixer => removeDeclaration(fixer, declaration, imports),
+					fix: canRemoveUnused ? fixer => removeDeclaration(fixer, declaration, imports) : undefined,
 				});
 				return;
 			}
@@ -164,7 +181,7 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 					node: specifier,
 					messageId: 'unusedImport',
 					data: {name: specifier.local.name},
-					fix: fixer => removeSpecifier(fixer, specifier, specifiers),
+					fix: canRemoveUnused ? fixer => removeSpecifier(fixer, specifier, declaration) : undefined,
 				});
 			}
 
@@ -217,19 +234,22 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 		return {
 			Program(node) {
 				const sourceFile = parserServices.esTreeNodeToTSNodeMap.get(node);
-				const {linkIdentifiers, names} = collectJSDocNames(sourceFile);
+				const {linkTargets, symbols} = collectJSDocReferences(sourceFile, checker);
 				const imports = node.body.filter(statement => statement.type === 'ImportDeclaration');
+				// Without an existing import anchor, prepending an import would disable leading triple-slash directives and `// @ts-` pragmas, so any leading line comment skips the fix.
+				const canAddImport = imports.length > 0 || !ts.getLeadingCommentRanges(sourceFile.text, 0)?.some(comment => comment.kind === ts.SyntaxKind.SingleLineCommentTrivia);
 
 				for (const declaration of imports) {
-					checkImport(declaration, imports, names);
+					checkImport(declaration, imports, symbols);
 				}
 
 				const reportedNames = new Set();
 				let exportFiles;
 
-				for (const identifier of linkIdentifiers) {
-					const name = identifier.text;
-					if (reportedNames.has(name) || checker.getSymbolAtLocation(identifier)) {
+				for (const {target, identifier, symbol} of linkTargets) {
+					const isRootResolved = Boolean(symbol);
+					const name = isRootResolved ? target.getText(sourceFile) : identifier.text;
+					if (reportedNames.has(name) || (ts.isIdentifier(target) ? symbol : checker.getSymbolAtLocation(target.right))) {
 						continue;
 					}
 
@@ -237,14 +257,16 @@ export const jsdocLinkImportsRule = /** @type {const} */ ({
 					exportFiles ??= getIndexExportFiles(program, checker, path.join(findProjectRoot(filename), 'index.d.ts'));
 
 					const exportFile = exportFiles.get(name);
+					// Highlight only the name that the message shows.
+					const reportedNode = isRootResolved ? target : identifier;
 					context.report({
 						loc: {
-							start: sourceCode.getLocFromIndex(identifier.getStart(sourceFile)),
-							end: sourceCode.getLocFromIndex(identifier.getEnd()),
+							start: sourceCode.getLocFromIndex(reportedNode.getStart(sourceFile)),
+							end: sourceCode.getLocFromIndex(reportedNode.getEnd()),
 						},
-						messageId: 'missingImport',
+						messageId: isRootResolved ? 'unresolvedLink' : 'missingImport',
 						data: {name},
-						fix: exportFile ? fixer => addImport(fixer, name, exportFile, imports) : undefined,
+						fix: !isRootResolved && exportFile && canAddImport ? fixer => addImport(fixer, name, exportFile, imports) : undefined,
 					});
 				}
 			},

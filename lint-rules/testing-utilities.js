@@ -38,6 +38,7 @@ const defaultTypeAwareTsconfig = {
 		moduleResolution: 'Bundler',
 		skipLibCheck: true,
 		strict: true,
+		exactOptionalPropertyTypes: true,
 		target: 'ES2022',
 	},
 	include: [

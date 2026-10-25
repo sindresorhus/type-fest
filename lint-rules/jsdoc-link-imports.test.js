@@ -1,14 +1,28 @@
-import {createTypeAwareRuleTester, dedenter} from './testing-utilities.js';
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {Linter} from 'eslint';
+import tsParser from '@typescript-eslint/parser';
+import ts from 'typescript';
+import {createFixtures, createTypeAwareRuleTester, dedenter} from './testing-utilities.js';
 import {jsdocLinkImportsRule} from './jsdoc-link-imports.js';
 
 const linkComment = '// For `@link`';
 
-const {ruleTester, fixturePath} = createTypeAwareRuleTester({
+const {ruleTester, fixtureRoot, fixturePath} = createTypeAwareRuleTester({
 	'package.json': '{\n\t"name": "jsdoc-link-imports-fixture"\n}\n',
 	'index.d.ts': dedenter`
 		export type {Target} from './source/target.d.ts';
 		export type {Other, Another} from './source/other.d.ts';
 		export type {TargetHelper as RenamedHelper} from './source/target.d.ts';
+	`,
+	'node_modules/@types/reference-target/index.d.ts': 'interface ReferenceTarget {readonly tag: string;}\n',
+	'node_modules/mixed-import-target/index.d.ts': dedenter`
+		export type Target = string;
+		export type TargetHelper = number;
+		export type TargetOption = boolean;
+		export type {Target as default};
+
+		export {};
 	`,
 	'source/target.d.ts': 'export type Target = string;\nexport type TargetHelper = number;\nexport type TargetOption = boolean;\n\nexport {};\n',
 	'source/other.d.ts': 'export type Other = number;\nexport type Another = boolean;\n\nexport {};\n',
@@ -257,6 +271,196 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 		},
 	],
 	invalid: [
+		// A generic name in a link does not use a shadowed import.
+		{
+			code: dedenter`
+				import type {Target} from './target.d.ts'; ${linkComment}
+
+				/** See {@link Target}. */
+				export type Foo<Target> = Target;
+				export {};
+			`,
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: dedenter`
+				/** See {@link Target}. */
+				export type Foo<Target> = Target;
+				export {};
+			`,
+		},
+		// A resolved root cannot make a missing member into an editor link.
+		{
+			code: dedenter`
+				import type {Target} from './target.d.ts';
+				/** See {@link Target.missing}. */
+				export type Foo = Target;
+				export {};
+			`,
+			filename,
+			errors: [{message: '`{@link Target.missing}` does not resolve.'}],
+			output: null,
+		},
+		// Removing either part of a default-plus-named import must keep valid import syntax.
+		{
+			code: 'import DefaultTarget, {Target} from \'mixed-import-target\';\nexport type Foo = Target;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'DefaultTarget')],
+			output: 'import {Target} from \'mixed-import-target\';\nexport type Foo = Target;\nexport {};\n',
+		},
+		{
+			code: 'import DefaultTarget, {Target} from \'mixed-import-target\';\nexport type Foo = DefaultTarget;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: 'import DefaultTarget from \'mixed-import-target\';\nexport type Foo = DefaultTarget;\nexport {};\n',
+		},
+		// Aliases, trailing commas, and unrelated trailing comments belong to the retained import.
+		{
+			code: 'import DefaultTarget, {Target as Kept, TargetHelper,} from \'mixed-import-target\'; // Keep this explanation.\nexport type Foo = [Kept, TargetHelper];\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'DefaultTarget')],
+			output: 'import {Target as Kept, TargetHelper,} from \'mixed-import-target\'; // Keep this explanation.\nexport type Foo = [Kept, TargetHelper];\nexport {};\n',
+		},
+		{
+			code: 'import DefaultTarget, {TargetHelper as Unused,} from \'mixed-import-target\'; // Keep this explanation.\r\nexport type Foo = DefaultTarget;\r\nexport {};\r\n',
+			filename,
+			errors: [error('unusedImport', 'Unused')],
+			output: 'import DefaultTarget from \'mixed-import-target\'; // Keep this explanation.\r\nexport type Foo = DefaultTarget;\r\nexport {};\r\n',
+		},
+		// Removing a middle named entry keeps the default binding and its brace group.
+		{
+			code: 'import DefaultTarget, {Target, TargetHelper as Unused, TargetOption} from \'mixed-import-target\';\nexport type Foo = [DefaultTarget, Target, TargetOption];\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Unused')],
+			output: 'import DefaultTarget, {Target, TargetOption} from \'mixed-import-target\';\nexport type Foo = [DefaultTarget, Target, TargetOption];\nexport {};\n',
+		},
+		// Default and namespace bindings remain separate groups too.
+		{
+			code: 'import DefaultTarget, * as Namespace from \'mixed-import-target\';\nexport type Foo = Namespace.Target;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'DefaultTarget')],
+			output: 'import * as Namespace from \'mixed-import-target\';\nexport type Foo = Namespace.Target;\nexport {};\n',
+		},
+		{
+			code: 'import DefaultTarget, * as Namespace from \'mixed-import-target\';\nexport type Foo = DefaultTarget;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Namespace')],
+			output: 'import DefaultTarget from \'mixed-import-target\';\nexport type Foo = DefaultTarget;\nexport {};\n',
+		},
+		// A new import must not disable the file's triple-slash reference directive.
+		{
+			code: dedenter`
+				/// <reference lib="esnext.disposable" />
+				/** See {@link Target}. */
+				export type Resource = DisposableStack;
+				export {};
+			`,
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		// File and package references also need their leading position.
+		{
+			code: '/// <reference path="./target.d.ts" />\n/** See {@link Target}. */\nexport type Foo = string;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		{
+			code: '/// <reference types="reference-target" />\n/** See {@link Target}. */\nexport type Foo = ReferenceTarget;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		// An existing import remains a safe insertion anchor after the directive.
+		{
+			code: dedenter`
+				/// <reference lib="esnext.disposable" />
+				import type {Other} from './other.d.ts';
+				/** See {@link Target}. */
+				export type Foo = Other;
+			`,
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: dedenter`
+				/// <reference lib="esnext.disposable" />
+				import type {Target} from './target.d.ts'; ${linkComment}
+				import type {Other} from './other.d.ts';
+				/** See {@link Target}. */
+				export type Foo = Other;
+			`,
+		},
+		// Merging a specifier into an existing import keeps references active too.
+		{
+			code: '/// <reference path="./target.d.ts" />\nimport type {TargetHelper} from \'./target.d.ts\';\n/** See {@link Target}. */\nexport type Foo = TargetHelper;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: '/// <reference path="./target.d.ts" />\nimport type {TargetHelper, Target} from \'./target.d.ts\';\n/** See {@link Target}. */\nexport type Foo = TargetHelper;\n',
+		},
+		// License comments and CRLF do not change which references TypeScript recognizes.
+		{
+			code: '/* License */\r\n/// <reference lib="esnext.disposable" />\r\n/** See {@link Target}. */\r\nexport type Foo = DisposableStack;\r\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		// Other leading pragmas also need their position, and any leading line comment skips the standalone fix.
+		{
+			code: '/// <reference no-default-lib="true" />\n/** See {@link Target}. */\nexport type Foo = string;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		{
+			code: '/// <amd-module name="foo" />\n/** See {@link Target}. */\nexport type Foo = string;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		{
+			code: '// @ts-nocheck\n/** See {@link Target}. */\nexport type Foo = string;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		{
+			code: '// Note\n/** See {@link Target}. */\nexport type Foo = string;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: null,
+		},
+		// An ordinary leading comment still permits the existing standalone import fix.
+		{
+			code: '/* License */\n/** See {@link Target}. */\nexport type Foo = string;\n',
+			filename,
+			errors: [error('missingImport', 'Target')],
+			output: `import type {Target} from './target.d.ts'; ${linkComment}\n\n/* License */\n/** See {@link Target}. */\nexport type Foo = string;\n`,
+		},
+		// The same boundary protects whole declarations, middle specifiers, and line comments with CRLF.
+		{
+			code: 'import type {/* Keep this explanation. */ Target} from \'./target.d.ts\';\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: null,
+		},
+		{
+			code: 'import type {Target, /* Keep this explanation. */ TargetHelper, TargetOption} from \'./target.d.ts\';\nexport type Foo = [Target, TargetOption];\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'TargetHelper')],
+			output: null,
+		},
+		{
+			code: 'import type {Target, // Keep this explanation.\r\nTargetHelper} from \'./target.d.ts\';\r\nexport type Foo = Target;\r\nexport {};\r\n',
+			filename,
+			errors: [error('unusedImport', 'TargetHelper')],
+			output: null,
+		},
+		// Internal comments may document retained specifiers, so removing the import needs manual review.
+		{
+			code: 'import type {Target, /* Keep this explanation. */ TargetHelper} from \'./target.d.ts\';\nexport type Foo = TargetHelper;\nexport {};\n',
+			filename,
+			errors: [error('unusedImport', 'Target')],
+			output: null,
+		},
 		// A new standalone import also preserves same-line side-effect imports and their following code.
 		{
 			code: 'import \'./setup.d.ts\'; export type Foo = string;\n/** See {@link Target}. */\nexport type Bar = number;\n',
@@ -821,7 +1025,8 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 				export {};
 			`,
 			filename,
-			errors: [error('missingImport', 'Target'), error('missingImport', 'Other')],
+			// Only the unresolved name is highlighted, not the member after it.
+			errors: [{...error('missingImport', 'Target'), line: 2, column: 12, endColumn: 18}, {...error('missingImport', 'Other'), line: 2, column: 38, endColumn: 43}],
 			output: dedenter`
 				import type {Target} from './target.d.ts'; ${linkComment}
 
@@ -967,4 +1172,174 @@ ruleTester.run('jsdoc-link-imports', jsdocLinkImportsRule, {
 			`,
 		},
 	],
+});
+
+test('removes mixed import bindings across successive fix passes', () => {
+	const linter = new Linter({cwd: fixtureRoot});
+	const configuration = [{
+		files: ['**/*.d.ts'],
+		languageOptions: {
+			parser: tsParser,
+			parserOptions: {projectService: true, tsconfigRootDir: fixtureRoot},
+		},
+		plugins: {'type-fest': {rules: {'jsdoc-link-imports': jsdocLinkImportsRule}}},
+		rules: {'type-fest/jsdoc-link-imports': 'error'},
+	}];
+	const cases = [
+		{
+			code: dedenter`
+				import DefaultTarget, {TargetHelper as FirstUnused, TargetOption as SecondUnused} from 'mixed-import-target';
+				export type Foo = DefaultTarget;
+				export {};
+			`,
+			output: dedenter`
+				import DefaultTarget from 'mixed-import-target';
+				export type Foo = DefaultTarget;
+				export {};
+			`,
+		},
+		{
+			code: dedenter`
+				import UnusedDefault, {TargetHelper as UnusedNamed, Target as Kept} from 'mixed-import-target';
+				export type Foo = Kept;
+				export {};
+			`,
+			output: dedenter`
+				import {Target as Kept} from 'mixed-import-target';
+				export type Foo = Kept;
+				export {};
+			`,
+		},
+	];
+	const results = cases.map(({code}) => linter.verifyAndFix(code, configuration, {filename}));
+	assert.deepEqual(results.map(result => result.fixed), [true, true]);
+	assert.deepEqual(results.map(result => result.messages), [[], []]);
+	assert.deepEqual(results.map(result => result.output), cases.map(({output}) => output));
+});
+
+test('checks complete link targets after importing their root', () => {
+	const linter = new Linter({cwd: fixtureRoot});
+	const configuration = [{
+		files: ['**/*.d.ts'],
+		languageOptions: {
+			parser: tsParser,
+			parserOptions: {projectService: true, tsconfigRootDir: fixtureRoot},
+		},
+		plugins: {'type-fest': {rules: {'jsdoc-link-imports': jsdocLinkImportsRule}}},
+		rules: {'type-fest/jsdoc-link-imports': 'error'},
+	}];
+	const validNamespace = dedenter`
+		import type * as Namespace from './target.d.ts'; ${linkComment}
+		/** See {@link Namespace.Target.length}, {@linkcode Namespace.Target#length}, and {@linkplain Namespace.TargetHelper.toFixed}. */
+		export type Foo = string;
+	`;
+	const invalidNamespace = dedenter`
+		import type * as Namespace from './target.d.ts'; ${linkComment}
+		/** See {@link Namespace.Target.missing}, {@linkcode Namespace.Target#missing}, and {@linkplain Namespace.Missing}. */
+		export type Foo = string;
+	`;
+	const validMissingRoot = '/** See {@link Target.length}. */\nexport type Foo = string;\n';
+	const invalidMissingRoot = '/** See {@link Target.missing}. */\nexport type Foo = string;\n';
+	const importedTarget = `import type {Target} from './target.d.ts'; ${linkComment}\n\n`;
+	const cases = [
+		{code: validNamespace, output: validNamespace, fixed: false, unresolved: []},
+		{
+			code: invalidNamespace,
+			output: invalidNamespace,
+			fixed: false,
+			unresolved: [['Namespace.Target.missing', 2, 16, 40], ['Namespace.Target#missing', 2, 54, 78], ['Namespace.Missing', 2, 97, 114]],
+		},
+		{code: validMissingRoot, output: importedTarget + validMissingRoot, fixed: true, unresolved: []},
+		{code: invalidMissingRoot, output: importedTarget + invalidMissingRoot, fixed: true, unresolved: [['Target.missing', 3, 16, 30]]},
+	];
+	const results = cases.map(({code}) => linter.verifyAndFix(code, configuration, {filename}));
+	const expectedMessages = cases.map(({unresolved}) => unresolved.map(([name, line, column, endColumn]) => ({
+		messageId: 'unresolvedLink',
+		message: `\`{@link ${name}}\` does not resolve.`,
+		line,
+		column,
+		endLine: line,
+		endColumn,
+		fix: undefined,
+	})));
+	const messages = results.map(result => result.messages.map(({messageId, message, line, column, endLine, endColumn, fix}) => ({messageId, message, line, column, endLine, endColumn, fix})));
+	assert.deepEqual(messages, expectedMessages);
+	assert.deepEqual(results.map(result => result.fixed), cases.map(({fixed}) => fixed));
+	assert.deepEqual(results.map(result => result.output), cases.map(({output}) => output));
+	const repeated = results.map(result => linter.verifyAndFix(result.output, configuration, {filename}));
+	assert.deepEqual(repeated.map(result => result.fixed), [false, false, false, false]);
+	assert.deepEqual(repeated.map(result => result.output), cases.map(({output}) => output));
+	assert.deepEqual(repeated.map(result => result.messages), results.map(result => result.messages));
+});
+
+test('tracks local import aliases through scoped JSDoc references', () => {
+	const linter = new Linter({cwd: fixtureRoot});
+	const configuration = [{
+		files: ['**/*.d.ts'],
+		languageOptions: {
+			parser: tsParser,
+			parserOptions: {projectService: true, tsconfigRootDir: fixtureRoot},
+		},
+		plugins: {'type-fest': {rules: {'jsdoc-link-imports': jsdocLinkImportsRule}}},
+		rules: {'type-fest/jsdoc-link-imports': 'error'},
+	}];
+	const body = dedenter`
+		/** @see Kept */
+		export type Box<Shadowed> = {
+			/** See {@link Shadowed}. */
+			value: Shadowed;
+		};
+	`;
+	const shadowed = `import type {Target as Kept, Target as Shadowed, TargetHelper} from './target.d.ts'; ${linkComment}\n\n${body}`;
+	const kept = `import type {Target as Kept} from './target.d.ts'; ${linkComment}\n\n${body}`;
+	const codeUsed = dedenter`
+		import type {Target} from './target.d.ts';
+		/** See {@link Target}. */
+		export type Box<Target> = Target;
+		export type Kept = Target;
+	`;
+	const cases = [{code: shadowed, output: kept}, {code: codeUsed, output: codeUsed}];
+	const initialMessages = cases.map(({code}) => linter.verify(code, configuration, {filename}).map(({message}) => message));
+	assert.deepEqual(initialMessages, [[
+		'Neither the code nor the JSDoc uses `Shadowed`.',
+		'Neither the code nor the JSDoc uses `TargetHelper`.',
+	], []]);
+	const results = cases.map(({code}) => linter.verifyAndFix(code, configuration, {filename}));
+	assert.deepEqual(results.map(result => result.fixed), [true, false]);
+	assert.deepEqual(results.map(result => result.output), cases.map(({output}) => output));
+	assert.deepEqual(results.map(result => result.messages), [[], []]);
+	const repeated = results.map(result => linter.verifyAndFix(result.output, configuration, {filename}));
+	assert.deepEqual(repeated.map(result => result.fixed), [false, false]);
+	assert.deepEqual(repeated.map(result => result.output), cases.map(({output}) => output));
+	assert.deepEqual(repeated.map(result => result.messages), [[], []]);
+});
+
+test('resolves each JSDoc root once while checking complete member targets', t => {
+	const code = dedenter`
+		import type {Target} from './target.d.ts'; ${linkComment}
+		/** See {@link Target}, {@link Target.length}, {@linkcode Target}, and {@linkplain Target.length}. */
+		export type Example = string;
+		export {};
+	`;
+	const fixture = createFixtures({
+		'package.json': '{}',
+		'source/target.d.ts': 'export type Target = string;\n',
+		'source/references.d.ts': code,
+	});
+	const sourceFilename = fixture.fixturePath('source/references.d.ts');
+	const program = ts.createProgram([sourceFilename], {strict: true, exactOptionalPropertyTypes: true, types: [], skipLibCheck: true, target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.NodeNext});
+	const checker = program.getTypeChecker();
+	const lookups = t.mock.method(checker, 'getSymbolAtLocation');
+	const configuration = [{
+		files: ['**/*.d.ts'],
+		languageOptions: {parser: tsParser, parserOptions: {programs: [program]}},
+		plugins: {'type-fest': {rules: {'jsdoc-link-imports': jsdocLinkImportsRule}}},
+		rules: {'type-fest/jsdoc-link-imports': 'error'},
+	}];
+	t.assert.deepStrictEqual(new Linter({cwd: fixture.fixtureRoot}).verify(code, configuration, {filename: sourceFilename}), []);
+	const rootLookups = lookups.mock.calls.filter(call => {
+		const node = call.arguments[0];
+		return ts.isIdentifier(node) && node.text === 'Target' && node.pos > code.indexOf('/**');
+	});
+	t.assert.strictEqual(rootLookups.length, 4);
 });
