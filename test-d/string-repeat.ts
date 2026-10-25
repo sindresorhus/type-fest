@@ -136,3 +136,43 @@ expectTypeOf(repeatText('ha', 2 as Tagged<2, 'Count'>)).toBe<'haha'>();
 expectTypeOf<StringRepeat<LiteralUnion<'ha', string>, 0>>().toBe<''>();
 expectTypeOf<StringRepeat<'x' | Tagged<'y', 'Text'>, 1 | Tagged<2, 'Count'>>>().toBe<'x' | 'y' | 'xx' | 'yy'>();
 expectTypeOf<StringRepeat<`id${number}`, 2>>().toBe<`id${number}id${number}`>();
+
+// A repeated result stays a string when its input and count remain generic.
+function _mapRepeatedText<Text extends string, Count extends number, Result>(value: StringRepeat<Text, Count>, select: (value: string) => Result): Result {
+	return select(value);
+}
+
+// Repeating an empty input stays empty for every supported count.
+function _readRepeatedEmpty<Count extends number>(value: StringRepeat<'', Count>): '' {
+	return value;
+}
+
+// Digit lookups compose across multi-digit counts and preserve each count alternative.
+expectTypeOf<StringRepeat<'x', 16>>().toBe<'xxxxxxxxxxxxxxxx'>();
+expectTypeOf<StringRepeat<'ab', 6 | 8>>().toBe<'abababababab' | 'abababababababab'>();
+
+declare function repeatFieldValues<const Fields extends Record<string, string>>(values: Fields): {
+	readonly [Key in keyof Fields]: StringRepeat<Fields[Key], 6>;
+};
+const repeatedFields = repeatFieldValues({heading: 'ha', separator: '-'});
+expectTypeOf(repeatedFields).toBe<{readonly heading: 'hahahahahaha'; readonly separator: '------'}>();
+
+// Repetition preserves the input's code units without normalizing Unicode or line endings.
+expectTypeOf<StringRepeat<'e\u{301}', 2>>().toBe<'e\u{301}e\u{301}'>();
+expectTypeOf<StringRepeat<'😀', 2.9>>().toBe<'😀😀'>();
+expectTypeOf<StringRepeat<'👩‍💻', 2>>().toBe<'👩‍💻👩‍💻'>();
+expectTypeOf<StringRepeat<'\r\n', 3>>().toBe<'\r\n\r\n\r\n'>();
+
+// A broad count stays unknown after literal-union normalization; enum alternatives keep their own counts.
+expectTypeOf<StringRepeat<'x', LiteralUnion<2, number>>>().toBe<string>();
+expectTypeOf<StringRepeat<'x', number & {}>>().toBe<string>();
+enum RepeatCount {
+	Twice = 2,
+	Thrice = 3,
+}
+expectTypeOf<StringRepeat<'x', RepeatCount>>().toBe<'xx' | 'xxx'>();
+expectTypeOf<StringRepeat<'x', Tagged<RepeatCount, 'Count'>>>().toBe<'xx' | 'xxx'>();
+
+function _readRepeatedNumericUnion<Count extends number>(value: StringRepeat<'x', Count | 2>): string {
+	return value;
+}

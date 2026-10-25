@@ -70,17 +70,18 @@ type BuildStringDigitByDigit<S extends string, Count extends string, Accumulator
 
 type RepeatStringTenTimes<S extends string> = `${S}${S}${S}${S}${S}${S}${S}${S}${S}${S}`;
 
-type DigitStringRepeat<S extends string, Digit extends DigitCharacter> = [
-	'',
-	`${S}`,
-	`${S}${S}`,
-	`${S}${S}${S}`,
-	`${S}${S}${S}${S}`,
-	`${S}${S}${S}${S}${S}`,
-	`${S}${S}${S}${S}${S}${S}`,
-	`${S}${S}${S}${S}${S}${S}${S}`,
-	`${S}${S}${S}${S}${S}${S}${S}${S}`,
-	`${S}${S}${S}${S}${S}${S}${S}${S}${S}`,
-][Digit];
+// String-keyed lookup avoids building tuple machinery for the digit table.
+type DigitStringRepeat<S extends string, Digit extends DigitCharacter> = {
+	'0': '';
+	'1': `${S}`;
+	'2': `${S}${S}`;
+	'3': `${S}${S}${S}`;
+	'4': `${S}${S}${S}${S}`;
+	'5': `${S}${S}${S}${S}${S}`;
+	'6': `${S}${S}${S}${S}${S}${S}`;
+	'7': `${S}${S}${S}${S}${S}${S}${S}`;
+	'8': `${S}${S}${S}${S}${S}${S}${S}${S}`;
+	'9': `${S}${S}${S}${S}${S}${S}${S}${S}${S}`;
+}[Digit];
 
 export {};
