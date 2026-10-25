@@ -1,6 +1,11 @@
 import {expectTypeOf} from 'nz';
 import type {ArrayExclude} from '../index.d.ts';
 
+// Removing values does not change whether the remaining tuple positions are optional.
+expectTypeOf<ArrayExclude<readonly ['remove', 1, 'remove'?, (2 | undefined)?], string>>().toBe<readonly [1, (2 | undefined)?]>();
+expectTypeOf<ArrayExclude<['remove', ...Array<string | boolean>, 'remove', 2], string>>().toBe<[...boolean[], 2]>();
+expectTypeOf<ArrayExclude<readonly ['remove', 1?] | ['remove', 2], string>>().toBe<readonly [1?] | [2]>();
+
 // All required elements
 expectTypeOf<ArrayExclude<[1, 2, 3, 4], 2>>().toBe<[1, 3, 4]>();
 
@@ -148,4 +153,37 @@ remainingValues[0] = {id: 1};
 
 function _readonlyResult<Array_ extends readonly unknown[], Removed>(array: ArrayExclude<Array_, Removed>): readonly unknown[] {
 	return array;
+}
+
+// A fully excluded tuple has no retained positions, including a readonly input or one member of a union.
+type NumericPacket = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+expectTypeOf<ArrayExclude<NumericPacket, number>>().toBe<[]>();
+expectTypeOf<ArrayExclude<Readonly<NumericPacket>, number>>().toBe<readonly []>();
+expectTypeOf<ArrayExclude<NumericPacket | readonly [1, 'kept'], number>>().toBe<[] | readonly ['kept']>();
+
+function makeRetained<const Value>(value: Value): ArrayExclude<[number, {value: Value}], number> {
+	return [{value}];
+}
+
+const retainedBox = makeRetained({id: 'kept'});
+expectTypeOf(retainedBox[0].value).toBe<{readonly id: 'kept'}>();
+const fullyExcluded = excludeNumbers([1, 2, 3] as const);
+expectTypeOf(fullyExcluded).toBe<readonly []>();
+// @ts-expect-error A fully excluded result has no first element.
+const _excludedFirst: unknown = fullyExcluded[0];
+
+// Structural exclusions can remove every descriptor without losing a retained descriptor's literal kind.
+expectTypeOf<ArrayExclude<readonly [{kind: 'internal'; name: 'id'}, {kind: 'internal'; name: 'cache'}], {kind: 'internal'}>>().toBe<readonly []>();
+
+function makePublicField<const Value>(value: Value): ArrayExclude<readonly [{kind: 'internal'}, {kind: 'public'; value: Value}], {kind: 'internal'}> {
+	return [{kind: 'public', value}];
+}
+
+const publicField = makePublicField({id: 'visible'});
+expectTypeOf(publicField[0]).toBe<{kind: 'public'; value: {readonly id: 'visible'}}>();
+// @ts-expect-error A readonly input still yields a readonly result with otherwise valid field values.
+publicField[0] = {kind: 'public', value: {id: 'visible'}};
+
+function _allRemoved<Values extends readonly number[]>(values: ArrayExclude<Values, number>): readonly [] {
+	return values;
 }
