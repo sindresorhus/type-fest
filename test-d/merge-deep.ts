@@ -816,48 +816,24 @@ expectTypeOf(inferredIndexedMerge.rows[0]?.id).toBe<string | undefined>();
 // @ts-expect-error Recursing into indexed options keeps required destination fields.
 const missingIndexedDestination: typeof inferredIndexedMerge = {rows: [{enabled: true}]};
 
-// An uncertain mode can spread nested arrays instead of replacing them.
-const uncertainModeSpread: MergeDeep<{values: number[]}, {values: readonly string[]}, {arrayMergeMode: 'replace' | 'spread'}> = {values: [1, 'source']};
 // An optional mode means the default mode, so it does not spread.
 // @ts-expect-error
 const optionalModeSpread: MergeDeep<{values: number[]}, {values: readonly string[]}, {arrayMergeMode?: 'spread'}> = {values: [1, 'source']};
 
-function mergeValues(mode: 'replace' | 'spread', destination: number[], source: readonly string[]): MergeDeep<{values: number[]}, {values: readonly string[]}, {arrayMergeMode: 'replace' | 'spread'}> {
-	const replacement = {values: source};
-	return mode === 'spread' ? {values: [...destination, ...source]} : replacement;
-}
-
-// A selected mode applies to all arrays, including readonly replacements.
-type UncertainMergeDestination = {values: number[]; flags: boolean[]};
-type UncertainMergeSource = {values: readonly string[]; flags: readonly Date[]};
-type UncertainMergeResult = MergeDeep<UncertainMergeDestination, UncertainMergeSource, {arrayMergeMode: 'replace' | 'spread'}>;
-const readonlyModeReplacement: UncertainMergeResult = {values: ['source'] as readonly string[], flags: [] as readonly Date[]};
-const completeModeSpread: UncertainMergeResult = {values: [1, 'source'], flags: [true, new Date()]};
-// @ts-expect-error One merge cannot spread one array while choosing a readonly replacement for the other.
-const mixedMergeModes: UncertainMergeResult = {values: [1, 'source'], flags: [] as readonly Date[]};
+// A union mode resolves like the default mode, so it replaces every array.
+type ModeChoiceDestination = {values: number[]; flags: boolean[]};
+type ModeChoiceSource = {values: readonly string[]; flags: readonly Date[]};
+expectTypeOf<MergeDeep<ModeChoiceDestination, ModeChoiceSource, {arrayMergeMode: 'replace' | 'spread'}>>().toBe<ModeChoiceSource>();
+declare const runtimeArrayMode: 'replace' | 'spread';
+expectTypeOf(mergeDeep({values: [1]}, {values: ['source']} as const, {arrayMergeMode: runtimeArrayMode}).values).toBe<readonly ['source']>();
 
 // An optional mode uses the default readonly replacement.
-const omittedSpreadMode: MergeDeep<UncertainMergeDestination, UncertainMergeSource, {arrayMergeMode?: 'spread'}> = readonlyModeReplacement;
-const optionalReplaceMode: MergeDeep<UncertainMergeDestination, UncertainMergeSource, {arrayMergeMode?: 'replace'}> = readonlyModeReplacement;
-expectTypeOf<MergeDeep<UncertainMergeDestination, UncertainMergeSource, {arrayMergeMode?: 'spread'}>>().toBe<MergeDeep<UncertainMergeDestination, UncertainMergeSource>>();
-declare const uncertainArrayMode: 'replace' | 'spread';
-const inferredUncertainMerge = mergeDeep({values: [1]}, {values: ['source']} as const, {arrayMergeMode: uncertainArrayMode});
-expectTypeOf(inferredUncertainMerge.values).toBe<readonly ['source'] | Array<number | 'source'>>();
-const inferredReadonlyReplacement: typeof inferredUncertainMerge = {values: ['source'] as const};
-const inferredMutableSpread: typeof inferredUncertainMerge = {values: [1, 'source']};
-
-function readUncertainMerge<Value>(value: MergeDeep<{values: number[]}, {values: readonly Value[]}, {arrayMergeMode: 'replace' | 'spread'}>): ReadonlyArray<number | Value> {
-	return value.values;
-}
+expectTypeOf<MergeDeep<ModeChoiceDestination, ModeChoiceSource, {arrayMergeMode?: 'spread'}>>().toBe<ModeChoiceSource>();
+expectTypeOf<MergeDeep<ModeChoiceDestination, ModeChoiceSource, {arrayMergeMode?: 'replace'}>>().toBe<ModeChoiceSource>();
 
 function constructOptionalMerge<Value>(source: readonly Value[]): MergeDeep<{values: number[]}, {values: readonly Value[]}, {arrayMergeMode?: 'spread'}> {
 	return {values: source};
 }
-
-// @ts-expect-error A replacement can retain the source's readonly array.
-readonlyModeReplacement.values[0] = 'source';
-// @ts-expect-error Neither array merge strategy introduces boolean values here.
-const invalidUncertainValue: UncertainMergeResult = {values: [false], flags: []};
 
 // Copied named values remain sealed inside recursively merged tuples and signatures.
 declare class CopiedMergeLeaf {
@@ -900,3 +876,101 @@ expectTypeOf(copiedNullableMerge[0].optional?.nested.id).toBe<number | undefined
 // `never` options use the defaults, like `any` options.
 expectTypeOf<MergeDeep<{a: 1; values: number[]}, {b: 2; values: string[]}, never>>().toBe<{a: 1; b: 2; values: string[]}>();
 expectTypeOf<MergeDeep<{a: 1; values: number[]}, {b: 2; values: string[]}, any>>().toBe<{a: 1; b: 2; values: string[]}>();
+
+// A non-literal recursion flag resolves like the default.
+expectTypeOf<MergeDeep<{a: Array<{x: 1}>}, {a: Array<{y: 2}>}, {recurseIntoArrays: boolean}>>().toBe<{a: Array<{y: 2}>}>();
+
+// An optional recursion flag uses the default replacement.
+type RecursionChoiceDestination = {first: readonly [{id: 1}, {keep: true}]; second: readonly [{id: 2}, {keep: false}]};
+type RecursionChoiceSource = {first: readonly [{ready: 'first'}]; second: readonly [{ready: 'second'}]};
+expectTypeOf<MergeDeep<RecursionChoiceDestination, RecursionChoiceSource, {recurseIntoArrays?: true}>>()
+	.toBe<RecursionChoiceSource>();
+
+// Top-type destinations resolve directly.
+expectTypeOf<MergeDeep<any, RecursionChoiceSource, {recurseIntoArrays: true}>>().toBe<any>();
+expectTypeOf<MergeDeep<never, RecursionChoiceSource, {recurseIntoArrays: true}>>().toBe<never>();
+expectTypeOf<MergeDeep<unknown, RecursionChoiceSource, {recurseIntoArrays: true}>>().toBe<never>();
+
+// Empty tuple operands preserve generic element types in both merge directions.
+function _readGenericMergeWithEmptySource<Value>(value: MergeDeep<Value[], [], {recurseIntoArrays: true}>): Value[] {
+	return value;
+}
+
+function _readGenericMergeWithEmptyDestination<Value>(value: MergeDeep<[], Value[], {recurseIntoArrays: true}>): Value[] {
+	return value;
+}
+
+function _readGenericSpreadWithEmptySource<Value>(value: MergeDeep<Value[], []>): Value[] {
+	return value;
+}
+
+function _readGenericSpreadWithEmptyDestination<Value>(value: MergeDeep<[], Value[]>): Value[] {
+	return value;
+}
+
+function _constructGenericMergeWithEmptySource<Value>(value: Value[]): MergeDeep<Value[], [], {recurseIntoArrays: true}> {
+	return value;
+}
+
+function _constructGenericMergeWithEmptyDestination<Value>(value: Value[]): MergeDeep<[], Value[], {recurseIntoArrays: true}> {
+	return value;
+}
+
+function _constructGenericSpreadWithEmptySource<Value>(value: Value[]): MergeDeep<Value[], []> {
+	return value;
+}
+
+function _constructGenericSpreadWithEmptyDestination<Value>(value: Value[]): MergeDeep<[], Value[]> {
+	return value;
+}
+
+// Recursive array merges must compare the fields of each record variant separately.
+type DestinationRecordVariant = {value: {before: string}} | {other: boolean};
+type SourceRecordVariant = {value: {after: number}};
+type MergedRecordVariants = {value: {before: string; after: number}} | {other: boolean; value: {after: number}};
+expectTypeOf<MergeDeep<DestinationRecordVariant[], SourceRecordVariant[], {recurseIntoArrays: true}>>().toBe<MergedRecordVariants[]>();
+expectTypeOf<MergeDeep<DestinationRecordVariant, SourceRecordVariant>>().toBe<MergedRecordVariants>();
+
+// Source variants either replace the existing field or preserve it alongside their own fields.
+type SourceFieldVariants = {value: number} | {other: boolean};
+type MergedSourceFieldVariants = {value: number} | {value: string; other: boolean};
+expectTypeOf<MergeDeep<Array<{value: string}>, SourceFieldVariants[], {recurseIntoArrays: true}>>().toBe<MergedSourceFieldVariants[]>();
+const mergedSourceVariant: MergeDeep<Array<{value: string}>, SourceFieldVariants[], {recurseIntoArrays: true}> = [{value: 1}];
+expectTypeOf(mergedSourceVariant).toBe<MergedSourceFieldVariants[]>();
+expectTypeOf<MergeDeep<readonly DestinationRecordVariant[], readonly SourceRecordVariant[], {recurseIntoArrays: true}>>().toBe<MergedRecordVariants[]>();
+expectTypeOf<MergeDeep<{rows: DestinationRecordVariant[]}, {rows: SourceRecordVariant[]}, {recurseIntoArrays: true}>>().toBe<{rows: MergedRecordVariants[]}>();
+
+// Distribute both inputs without allowing unrelated variants to borrow each other's fields.
+type DestinationConfigVariants = {config: {before: string}} | {enabled: boolean};
+type SourceConfigVariants = {config: {after: number}} | {label: string};
+type MergedConfigVariants =
+	| {config: {before: string; after: number}}
+	| {config: {before: string}; label: string}
+	| {enabled: boolean; config: {after: number}}
+	| {enabled: boolean; label: string};
+expectTypeOf<MergeDeep<DestinationConfigVariants[], SourceConfigVariants[], {recurseIntoArrays: true}>>().toBe<MergedConfigVariants[]>();
+expectTypeOf<Array<{config: {after: number}}>>().not.toBeAssignableTo<MergeDeep<DestinationConfigVariants[], SourceConfigVariants[], {recurseIntoArrays: true}>>();
+
+// Nested array modes still apply after the element union has been distributed.
+type DestinationListVariants = {config: {values: string[]}} | {enabled: boolean};
+type SourceList = {config: {values: number[]}};
+expectTypeOf<MergeDeep<DestinationListVariants[], SourceList[], {recurseIntoArrays: true}>>()
+	.toBe<Array<{config: {values: number[]}} | {enabled: boolean; config: {values: number[]}}>>();
+expectTypeOf<MergeDeep<DestinationListVariants[], SourceList[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>>()
+	.toBe<Array<{config: {values: Array<string | number>}} | {enabled: boolean; config: {values: number[]}}>>();
+
+// Source-only and shared fields both retain the source's modifiers and explicit undefined values.
+type MixedSourceFields = MergeDeep<
+	{shared: {before: number}; keep: true},
+	{readonly shared?: {after: string} | undefined; readonly added?: {value: boolean} | undefined}
+>;
+expectTypeOf<MixedSourceFields>().toBe<{
+	readonly shared?: {before: number; after: string} | undefined;
+	readonly added?: {value: boolean} | undefined;
+	keep: true;
+}>();
+({keep: true, shared: undefined, added: undefined}) satisfies MixedSourceFields;
+expectTypeOf<{keep: true; shared: {after: string}}>().not.toBeAssignableTo<MixedSourceFields>();
+declare const mixedSourceFields: MixedSourceFields;
+// @ts-expect-error A source-only readonly field stays readonly.
+mixedSourceFields.added = {value: true};
