@@ -80,3 +80,15 @@ expectTypeOf<NegativeInteger<MixedNumbers>>().toBe<-2>();
 function _readIntegerFlags<Values extends readonly unknown[]>(flags: {[Key in keyof Values]: IsInteger<Values[Key]>}): readonly boolean[] {
 	return flags;
 }
+
+// Non-number inputs are rejected without interpreting their properties as numeric metadata.
+expectTypeOf<IsInteger<{valueOf(): number}>>().toBe<false>();
+expectTypeOf<IsInteger<readonly number[]>>().toBe<false>();
+expectTypeOf<IsInteger<() => number>>().toBe<false>();
+expectTypeOf<IsInteger<Opaque<'42', 'Text'>>>().toBe<false>();
+expectTypeOf<IsInteger<1 | 1.5 | Date>>().toBe<boolean>();
+expectTypeOf<IsInteger<bigint | number>>().toBe<boolean>();
+
+function _readBigintInteger<Value extends bigint>(value: IsInteger<Value>): true {
+	return value;
+}
