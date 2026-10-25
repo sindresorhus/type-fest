@@ -478,7 +478,7 @@ declare const jsonifiedOptionalTypeUnion: Jsonify<OptionalTypeUnion>;
 declare const jsonifiedNonOptionalTypeUnion: Jsonify<NonOptionalTypeUnion>;
 
 expectTypeOf(jsonifiedOptionalPrimitive).toBe<{a?: string}>();
-expectTypeOf(jsonifiedOptionalTypeUnion).toBe<{}>();
+expectTypeOf(jsonifiedOptionalTypeUnion).toBe<{a?: string}>();
 expectTypeOf(jsonifiedNonOptionalTypeUnion).toBe<{a?: string}>();
 
 // Test that optional properties don't leak `undefined` into the key set and that re-applying `Jsonify` is a no-op.
@@ -516,13 +516,14 @@ type AppData = {
 	optionalStringUndefined: string | undefined;
 	optionalUnionUndefined: number | string | undefined;
 
+	requiredFunctionUnion: string | (() => any);
+	optionalFunctionUnion?: string | (() => any);
+	optionalFunctionUnionUndefined: string | (() => any) | undefined;
+
 	// Should be omitted
 	requiredFunction: () => any;
 	optionalFunction?: () => any;
-	requiredFunctionUnion: string | (() => any);
-	optionalFunctionUnion?: string | (() => any);
 	optionalFunctionUndefined: (() => any) | undefined;
-	optionalFunctionUnionUndefined: string | (() => any) | undefined;
 };
 
 type ExpectedAppDataJson = {
@@ -533,6 +534,9 @@ type ExpectedAppDataJson = {
 	optionalUnion?: string | number;
 	optionalStringUndefined?: string;
 	optionalUnionUndefined?: string | number;
+	requiredFunctionUnion?: string;
+	optionalFunctionUnion?: string;
+	optionalFunctionUnionUndefined?: string;
 };
 
 declare const response: Jsonify<AppData>;
@@ -804,7 +808,7 @@ expectTypeOf<Jsonify<{value?: NamedClass | null}>>().toBe<{value?: {name: string
 expectTypeOf<Jsonify<{readonly value?: NamedRecord}>>().toBe<{readonly value?: {name: string}}>();
 expectTypeOf<Jsonify<{value: NamedRecord | null | undefined}>>().toBe<{value?: {name: string} | null}>();
 expectTypeOf<Jsonify<{value: {toJSON(): NamedRecord | undefined}}>>().toBe<{value?: {name: string}}>();
-expectTypeOf<Jsonify<{value?: string | (() => void)}>>().toBe<{}>();
+expectTypeOf<Jsonify<{value?: string | (() => void)}>>().toBe<{value?: string}>();
 expectTypeOf<Jsonify<{value?: NamedRecord}>>().toBeAssignableTo<JsonValue>();
 
 // An array's toJSON result is classified before non-JSON values become null.
@@ -934,9 +938,9 @@ expectTypeOf<Jsonify<{outer: {keep: 1; value: string | symbol}}>>().toBe<{outer:
 expectTypeOf<Jsonify<Array<{keep: 1; value: string | symbol}>>>().toBe<Array<{keep: 1; value?: string}>>();
 expectTypeOf<Jsonify<{values: string[] | symbol}>>().toBe<{values?: string[]}>();
 
-// Function unions keep their existing conservative omission policy.
-expectTypeOf<Jsonify<{value: string | (() => void)}>>().toBe<{}>();
-expectTypeOf<Jsonify<{value?: string | (() => void)}>>().toBe<{}>();
+// Function alternatives can disappear while their serializable alternatives remain optional.
+expectTypeOf<Jsonify<{value: string | (() => void)}>>().toBe<{value?: string}>();
+expectTypeOf<Jsonify<{value?: string | (() => void)}>>().toBe<{value?: string}>();
 
 // The hook runs before classifying its result, including for callable values.
 expectTypeOf<Jsonify<{keep: 1; value: {toJSON(key: string): symbol | number}}>>().toBe<{keep: 1; value?: number}>();
@@ -1067,3 +1071,157 @@ function readonlyHookResult(value: readonly [1, 2]): Jsonify<{toJSON(): readonly
 expectTypeOf(readonlyHookResult([1, 2] as const)).toBe<readonly [1, 2]>();
 expectTypeOf<Jsonify<{toJSON(): readonly [number?, string?]}>>().toBe<[] | [number | null] | [number | null, string | null]>();
 expectTypeOf<Jsonify<{toJSON(): JsonValue}>>().toBe<JsonValue>();
+
+// Generic serializers can construct and read an output whose hook and omitted fields are already normalized.
+type EncodableEvent<Value> = {readonly payload: {raw: Value; toJSON(): string}; readonly createdAt: Date; ignored?: () => void; [uniqueSymbol]?: unknown};
+function encodeJsonEvent<const Value>(value: Value, encode: (value: Value) => string): Jsonify<EncodableEvent<Value>> {
+	return {payload: encode(value), createdAt: new Date(0).toISOString()};
+}
+
+function _readEncodedJsonEvent<Value>(value: Jsonify<EncodableEvent<Value>>): string {
+	return value.payload;
+}
+
+function _useEncodedJsonEvent<Value>(value: Jsonify<EncodableEvent<Value>>): JsonValue {
+	return value;
+}
+
+const encodedJsonEvent = encodeJsonEvent({id: 'event', values: [1, 2]}, value => {
+	expectTypeOf(value.values).toBe<readonly [1, 2]>();
+	return value.id;
+});
+expectTypeOf(encodedJsonEvent).toBe<{readonly payload: string; readonly createdAt: string}>();
+expectTypeOf<keyof typeof encodedJsonEvent>().toBe<'payload' | 'createdAt'>();
+// @ts-expect-error The normalized result retains readonly even for an otherwise valid value.
+encodedJsonEvent.payload = 'event';
+
+// Required serializable siblings stay readable before the generic payload is known.
+function _readRequiredJsonId<Value>(value: Jsonify<{readonly id: 'event'; payload: Value}>): 'event' {
+	return value.id;
+}
+
+function _readRequiredJsonDate<Value>(value: Jsonify<{payload: Value; createdAt: Date}>): string {
+	return value.createdAt;
+}
+
+// A JSON-compatible hook result still normalizes explicit non-finite numeric values.
+const positiveInfinityHookResult: Jsonify<{toJSON(): PositiveInfinity}> = null;
+expectTypeOf(positiveInfinityHookResult).toBe<null>();
+
+function _readNegativeInfinityHookResult(value: Jsonify<{toJSON(): NegativeInfinity}>): null {
+	return value;
+}
+
+expectTypeOf<Jsonify<{toJSON(): {readonly limit: PositiveInfinity}}>>().toBe<{readonly limit: null}>();
+expectTypeOf<Jsonify<{toJSON(): readonly [1, PositiveInfinity]}>>().toBe<readonly [1, null]>();
+expectTypeOf<Jsonify<{toJSON(): readonly PositiveInfinity[]}>>().toBe<readonly null[]>();
+
+// JSON-compatible hooks retain readonly and optional shapes while normalizing recursive numeric leaves.
+type InfiniteHookNode = {readonly limit?: PositiveInfinity; readonly next?: InfiniteHookNode};
+type NormalizedHookNode = {readonly limit?: null; readonly next?: NormalizedHookNode};
+expectTypeOf<Jsonify<{toJSON(): InfiniteHookNode}>>().toBe<NormalizedHookNode>();
+
+type InfiniteHookList = PositiveInfinity | readonly InfiniteHookList[];
+type NormalizedHookList = null | readonly NormalizedHookList[];
+expectTypeOf<Jsonify<{toJSON(): InfiniteHookList}>>().toBe<NormalizedHookList>();
+expectTypeOf<Jsonify<{toJSON(): PositiveInfinity | {readonly limit: NegativeInfinity}}>>().toBe<null | {readonly limit: null}>();
+expectTypeOf<Jsonify<{toJSON(): {readonly id: 1; [uniqueSymbol]: () => void}}>>().toBe<{readonly id: 1}>();
+
+function _readTaggedHookTuple(value: Jsonify<{toJSON(): Tagged<readonly [1, PositiveInfinity], 'Row'>}>): string {
+	return value.map(String).join(',');
+}
+
+expectTypeOf<Jsonify<{toJSON(): Tagged<readonly [1, PositiveInfinity], 'Row'>}>>().toBe<readonly [1, null]>();
+
+function encodeReadonlyHook<const Value>(value: Value, encode: (value: Value) => readonly [1, 2]): Jsonify<{toJSON(): readonly [1, 2]}> {
+	return encode(value);
+}
+
+const encodedReadonlyHook = encodeReadonlyHook({id: 'event'}, value => {
+	expectTypeOf(value.id).toBe<'event'>();
+	return [1, 2] as const;
+});
+expectTypeOf(encodedReadonlyHook).toBe<readonly [1, 2]>();
+// @ts-expect-error The JSON-compatible hook's readonly tuple cannot be changed to an otherwise valid value.
+encodedReadonlyHook[0] = 1;
+
+// A generic JSON-valued hook remains usable by consumers of JSON, and concrete hook literals stay precise.
+function _readGenericJsonHook<Value extends JsonValue>(value: Jsonify<{toJSON(): Value}>): JsonValue {
+	return value;
+}
+
+declare function serializeJsonHook<const Value extends {toJSON(): JsonValue}>(value: Value): Jsonify<Value>;
+const literalJsonHook = serializeJsonHook({toJSON: () => 'ready' as const});
+expectTypeOf(literalJsonHook).toBe<'ready'>();
+
+// A callable alternative can disappear, but a serializable field value must remain accessible.
+expectTypeOf<Jsonify<{label: string | (() => string)}>>().toBe<{label?: string}>();
+expectTypeOf<Jsonify<{readonly label: string | (() => string)}>>().toBe<{readonly label?: string}>();
+expectTypeOf<Jsonify<{label?: string | (() => string)}>>().toBe<{label?: string}>();
+
+expectTypeOf<Jsonify<{value: false | null | (() => void)}>>().toBe<{value?: false | null}>();
+expectTypeOf<Jsonify<{value: Date | Function}>>().toBe<{value?: string}>();
+expectTypeOf<Jsonify<{value: string | (new () => Date)}>>().toBe<{value?: string}>();
+expectTypeOf<Jsonify<{outer: {label: string | (() => string)}}>>().toBe<{outer: {label?: string}}>();
+expectTypeOf<Jsonify<{label: {toJSON(): string | (() => string)}}>>().toBe<{label?: string}>();
+expectTypeOf<Jsonify<{label: string | ((() => void) & {toJSON(): string})}>>().toBe<{label: string}>();
+
+function readJsonLabel(value: Jsonify<{label: string | (() => string)}>): string | undefined {
+	return value.label;
+}
+
+expectTypeOf(readJsonLabel({label: 'ready'})).toBe<string | undefined>();
+expectTypeOf(readJsonLabel({})).toBe<string | undefined>();
+// @ts-expect-error The serialized field cannot contain the original callable value.
+readJsonLabel({label: () => 'ready'});
+expectTypeOf<Jsonify<{label: string | (() => string)}>>().toBeAssignableTo<JsonValue>();
+
+// Scalar alternatives do not prevent identifying the array's recursive member.
+type NestedSetting = 'automatic' | number | null | readonly NestedSetting[];
+expectTypeOf<Jsonify<readonly NestedSetting[]>>().toBe<readonly NestedSetting[]>();
+expectTypeOf<Jsonify<{settings: readonly NestedSetting[]}>>().toBe<{settings: readonly NestedSetting[]}>();
+expectTypeOf<readonly ['automatic', readonly [1, null]]>().toBeAssignableTo<Jsonify<readonly NestedSetting[]>>();
+expectTypeOf<readonly [Date]>().not.toBeAssignableTo<Jsonify<readonly NestedSetting[]>>();
+
+type NestedDraft = string | boolean | Date | undefined | readonly NestedDraft[];
+expectTypeOf<Jsonify<NestedDraft>>().toBe<string | boolean | JsonValue[]>();
+expectTypeOf<Jsonify<readonly NestedDraft[]>>().toBe<JsonValue[]>();
+expectTypeOf<Jsonify<{drafts: readonly NestedDraft[]}>>().toBe<{drafts: JsonValue[]}>();
+
+// Ordinary nested arrays and objects still transform each alternative independently.
+type MixedList = Array<string | Date | readonly number[] | (() => void) | {created: Date}>;
+expectTypeOf<Jsonify<MixedList>>().toBe<Array<string | number[] | {created: string} | null>>();
+expectTypeOf<Jsonify<MixedList>>().toBeAssignableTo<JsonValue>();
+expectTypeOf<Array<{created: Date}>>().not.toBeAssignableTo<Jsonify<MixedList>>();
+
+function _readGenericScalarArray<Value extends string | number>(value: Jsonify<Value[]>): JsonValue {
+	return value;
+}
+
+function _readGenericJsonArray<Value extends JsonValue>(value: Jsonify<Value[]>): JsonValue {
+	return value;
+}
+
+// An element's hook may return an array without making the containing array recursive.
+expectTypeOf<Jsonify<Array<string | {toJSON(): readonly Date[]}>>>().toBe<Array<string | string[]>>();
+expectTypeOf<Jsonify<Array<readonly [Date, undefined] | number>>>().toBe<Array<[string, null] | number>>();
+
+// Non-JSON list values become null, while other falsy values and JSON-compatible alternatives survive.
+type FalsyListValues = 0 | false | '' | null | undefined | symbol | (() => void);
+expectTypeOf<Jsonify<FalsyListValues[]>>().toBe<Array<0 | false | '' | null>>();
+expectTypeOf<Jsonify<Array<{toJSON(): 0 | false | undefined | symbol}>>>().toBe<Array<0 | false | null>>();
+expectTypeOf<Jsonify<[undefined, never, unknown, any]>>().toBe<[null, null, JsonValue, any]>();
+expectTypeOf<undefined[]>().not.toBeAssignableTo<Jsonify<FalsyListValues[]>>();
+
+// A function returned by `toJSON` is omitted even if that function has its own `toJSON` method.
+type ReturnedFunctionWithHook = (() => void) & {toJSON(): string};
+type ReturnsFunctionWithHook = {toJSON(): ReturnedFunctionWithHook};
+expectTypeOf<Jsonify<ReturnsFunctionWithHook>>().toBe<never>();
+expectTypeOf<Jsonify<{readonly keep: 1; value: ReturnsFunctionWithHook}>>().toBe<{readonly keep: 1}>();
+expectTypeOf<Jsonify<ReturnsFunctionWithHook[]>>().toBe<null[]>();
+expectTypeOf<Jsonify<readonly [1, ReturnsFunctionWithHook]>>().toBe<[1, null]>();
+expectTypeOf<Jsonify<{readonly value?: ReturnsFunctionWithHook}>>().toBe<{}>();
+expectTypeOf<Jsonify<{value: {toJSON(): string | ReturnedFunctionWithHook}}>>().toBe<{value?: string}>();
+expectTypeOf<Jsonify<Array<{toJSON(): ReturnedFunctionWithHook | {readonly id: 1}}>>>().toBe<Array<{readonly id: 1} | null>>();
+// A source function's own hook still runs, unlike the hook on a returned function.
+expectTypeOf<Jsonify<ReturnedFunctionWithHook>>().toBe<string>();

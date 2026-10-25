@@ -15,16 +15,15 @@ import type {UnknownArray} from './unknown-array.d.ts';
 type NotJsonable = Function | undefined | symbol;
 
 type NeverToNull<T> = IsNever<T> extends true ? null : T;
-type UndefinedToNull<T> = T extends undefined ? null : T;
 
-// Symbol-valued object properties disappear, just like undefined-valued properties.
-type SymbolToUndefined<Value> = Value extends symbol ? undefined : Value;
+// Symbol-valued and function-valued object properties disappear, just like undefined-valued properties.
+type OmittedValueToUndefined<Value> = Value extends symbol | Function ? undefined : Value;
 
 // `JSON.stringify` turns array members that are not JSON-able into `null`. The `extends` is distributive so that each member of a union is handled on its own. Without it, a non-JSON-able member collapses the whole union, as `Jsonify<symbol | number>` would become `number`.
 type JsonifyListItem<T> = JsonifyListItemResult<ToJsonResult<T>>;
 
 // Classify the toJSON result before Jsonify can remove undefined from a union.
-type JsonifyListItemResult<T> = T extends NotJsonable ? null : NeverToNull<Jsonify<UndefinedToNull<T>>>;
+type JsonifyListItemResult<T> = T extends NotJsonable ? null : NeverToNull<Jsonify<T>>;
 
 // Handles tuples and arrays
 // The leading required elements are kept in `Result`, so the recursion over them is in tail position and a long tuple does not hit the recursion limit.
@@ -80,20 +79,42 @@ type RemoveFlavor<T, Names extends PropertyKey = keyof NonNullable<T[typeof tag 
 		: never);
 
 // Whether the array is one of its own item types. Distributes over the item types so that each one is compared with the array on its own.
-type ContainsItself<T extends UnknownArray, Item = T[number]> = Item extends unknown ? IsEqual<Item, T> : never;
+// Only array members can equal the array, so skip the more expensive equality check for other values.
+type ContainsItself<T extends UnknownArray, Item = T[number]> = Item extends UnknownArray ? IsEqual<Item, T> : false;
 
 /**
-JSON serialize objects (not including arrays) and classes.
+JSON serialize objects (not including arrays) and classes. The caller has already filtered their keys with `UndefinedToOptional`.
 */
 type JsonifyObject<T extends object> = {
-	[Key in keyof T as T[Key] extends NotJsonable ? never : Key]: Jsonify<T[Key]>;
+	[Key in keyof T]: Jsonify<T[Key]>;
 };
+
+// A value that accepts every JSON value, like `JsonValue` or `any`, has no leaves to normalize, so it is kept as is instead of expanding the recursive alias. Primitives go through `Jsonify`. Objects and arrays are mapped so that their modifiers stay, and only their leaves are normalized.
+type NormalizeJsonValue<Value> = JsonValue extends Value
+	? Value
+	: (() => Value) extends () => JsonPrimitive
+		? Jsonify<Value>
+		: Value extends UnknownArray
+			? NormalizeJsonList<UntagTuple<Value>>
+			: Value extends object
+				? {[Key in keyof Value as Key extends symbol ? never : Key]: NormalizeJsonValue<Value[Key]>}
+				: Jsonify<Value>;
+
+// Rebuild arrays directly so recursive JSON values do not expand through a mapped array type.
+type NormalizeJsonList<Value extends UnknownArray> = IsArrayOfUnknownLength<Value> extends true
+	? Value extends unknown[]
+		? Array<NormalizeJsonValue<Value[number]>>
+		: ReadonlyArray<NormalizeJsonValue<Value[number]>>
+	: {[Key in keyof Value]: NormalizeJsonValue<Value[Key]>};
 
 // Object properties may disappear when their own toJSON method returns undefined.
 type ToJsonResult<T> = T extends {toJSON(...arguments_: any[]): infer Result} ? WithoutToJson<Result> : T;
 
 // `JSON.stringify` calls `toJSON` only once per value, so the `toJSON` method of a `toJSON` result is ignored. A `Date` returned by `toJSON` becomes `{}`, not a string. Calling it again would also recurse forever when the result can be the same type, as with `Jsonifiable`.
-type WithoutToJson<T> = T extends {toJSON(...arguments_: any[]): unknown} ? Omit<T, 'toJSON'> : T;
+type WithoutToJson<T> = T extends {toJSON(...arguments_: any[]): unknown}
+	// Removing properties from a function also removes its call signature. Keep it classified as a function so the returned value is still omitted.
+	? T extends Function ? Function : Omit<T, 'toJSON'>
+	: T;
 
 /**
 Transform a type to one that is assignable to the `JsonValue` type.
@@ -170,7 +191,7 @@ export type Jsonify<T> = IsAny<T> extends true
 			// Any object with toJSON is special case. `JSON.stringify` always passes the property key, so `toJSON` may declare parameters.
 			: T extends {toJSON(...arguments_: any[]): infer J}
 				? (() => J) extends () => JsonValue // Is J assignable to JsonValue?
-					? J // Then T is Jsonable and its Jsonable value is J
+					? NormalizeJsonValue<J> // Normalize numeric leaves even when J is already JSON-compatible.
 					: Jsonify<WithoutToJson<J>> // Maybe if we look a level deeper we'll find a JsonValue
 				// Instanced primitives are objects
 				: T extends Number
@@ -194,7 +215,7 @@ export type Jsonify<T> = IsAny<T> extends true
 												// An object without keys becomes `{}`. The homomorphic mapped type below would return a bare `object` as is, which is not assignable to `JsonValue`.
 												? [keyof T] extends [never]
 													? {}
-													: JsonifyObject<UndefinedToOptional<{[Key in keyof T]: SymbolToUndefined<ToJsonResult<T[Key]>>}>> // JsonifyObject recursive call for its children
+													: JsonifyObject<UndefinedToOptional<{[Key in keyof T]: OmittedValueToUndefined<ToJsonResult<T[Key]>>}>> // JsonifyObject recursive call for its children
 												: IsUnknown<T> extends true
 													? JsonValue
 													: never; // Otherwise any other non-object is removed
