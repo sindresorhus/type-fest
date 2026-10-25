@@ -12,6 +12,16 @@ const missingEmptyExport = (code, filename, output) => ({
 
 ruleTester.run('require-export', requireExportRule, {
 	valid: [
+		// The file-level export may precede namespace declarations.
+		{
+			code: 'export {};\ndeclare namespace Outer.Inner {export {};}',
+			filename: '/source/deep.d.ts',
+		},
+		// A nested export is harmless when the file also has its own empty export.
+		{
+			code: 'declare namespace Local {export {};}\nexport {};',
+			filename: '/source/nested.d.ts',
+		},
 		// Has export {}
 		{
 			code: 'export {};',
@@ -42,6 +52,18 @@ ruleTester.run('require-export', requireExportRule, {
 		},
 	],
 	invalid: [
+		// Multiple nested module boundaries still cannot replace the file-level one.
+		missingEmptyExport(
+			'declare namespace Outer {export {}; namespace Inner {export {};}}',
+			'/source/deep.d.ts',
+			'declare namespace Outer {export {}; namespace Inner {export {};}}\nexport {};\n',
+		),
+		// A namespace export does not make its containing file a module.
+		missingEmptyExport(
+			'declare namespace Local {export {};}\ntype GlobalName = string;',
+			'/source/nested.d.ts',
+			'declare namespace Local {export {};}\ntype GlobalName = string;\nexport {};\n',
+		),
 		// Missing export {} in empty file
 		missingEmptyExport('', '/source/foo.d.ts', '\nexport {};\n'),
 		// Missing export {} with type declarations

@@ -2,6 +2,9 @@ import path from 'node:path';
 import fs from 'node:fs';
 import ts from 'typescript';
 
+// TypeScript replaces the Program when files change, so cached symbols stay within their project snapshot.
+const indexExportsByProgram = new WeakMap();
+
 export const requireExportedTypesRule = /** @type {const} */ ({
 	meta: {
 		type: 'suggestion',
@@ -71,19 +74,30 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 
 		const indexPath = path.join(projectRoot, indexFileName);
 
-		// Get index export symbols (no caching to detect changes immediately), resolving aliases to their declarations.
-		const indexExports = new Set();
+		let indexExportsByPath = indexExportsByProgram.get(program);
+		if (!indexExportsByPath) {
+			indexExportsByPath = new Map();
+			indexExportsByProgram.set(program, indexExportsByPath);
+		}
 
-		// Get the source file for index.d.ts
-		const indexSourceFile = program.getSourceFile(indexPath);
-		if (indexSourceFile) {
-			const indexSymbol = checker.getSymbolAtLocation(indexSourceFile);
-			if (indexSymbol) {
-				const exports = checker.getExportsOfModule(indexSymbol);
-				for (const exportSymbol of exports) {
-					indexExports.add(exportSymbol.flags === ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exportSymbol) : exportSymbol);
+		// Reuse index export symbols across files in this Program, resolving aliases to their declarations.
+		let indexExports = indexExportsByPath.get(indexPath);
+		if (!indexExports) {
+			indexExports = new Set();
+
+			// Get the source file for index.d.ts
+			const indexSourceFile = program.getSourceFile(indexPath);
+			if (indexSourceFile) {
+				const indexSymbol = checker.getSymbolAtLocation(indexSourceFile);
+				if (indexSymbol) {
+					const exports = checker.getExportsOfModule(indexSymbol);
+					for (const exportSymbol of exports) {
+						indexExports.add(exportSymbol.flags === ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exportSymbol) : exportSymbol);
+					}
 				}
 			}
+
+			indexExportsByPath.set(indexPath, indexExports);
 		}
 
 		// State to track processed nodes
@@ -123,13 +137,25 @@ export const requireExportedTypesRule = /** @type {const} */ ({
 		};
 
 		return {
-			// Handle: export type Foo = ...
-			'ExportNamedDeclaration > TSTypeAliasDeclaration': checkExportedType,
+			// Handle type aliases and interfaces from the module's exports, including separate export lists.
+			'Program:exit'(node) {
+				const sourceFile = parserServices.esTreeNodeToTSNodeMap.get(node);
+				const sourceSymbol = checker.getSymbolAtLocation(sourceFile);
+				if (!sourceSymbol) {
+					return;
+				}
 
-			// Handle: export interface Foo { ... }
-			'ExportNamedDeclaration > TSInterfaceDeclaration': checkExportedType,
-
-			// Clean up cache periodically
+				// Several export names can refer to the same declaration; checkExportedType prevents duplicate reports.
+				for (const exportSymbol of checker.getExportsOfModule(sourceSymbol)) {
+					const symbol = exportSymbol.flags === ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exportSymbol) : exportSymbol;
+					for (const declaration of symbol.declarations ?? []) {
+						// Re-exports belong to their original source, so only this file's declarations are checked.
+						if (declaration.getSourceFile() === sourceFile && (ts.isTypeAliasDeclaration(declaration) || ts.isInterfaceDeclaration(declaration))) {
+							checkExportedType(parserServices.tsNodeToESTreeNodeMap.get(declaration));
+						}
+					}
+				}
+			},
 		};
 	},
 });

@@ -23,8 +23,8 @@ export const requireExportRule = /** @type {const} */ ({
 		let hasEmptyExport = false;
 
 		return {
-			ExportNamedDeclaration(node) {
-				// Check if this is specifically `export {}`
+			'Program > ExportNamedDeclaration'(node) {
+				// Check for a top-level `export {}`, because a namespace export does not make the file a module.
 				if (!node.declaration && node.specifiers.length === 0 && !node.source) {
 					hasEmptyExport = true;
 				}
