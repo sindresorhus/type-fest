@@ -27,6 +27,12 @@ export const readmeJSDocSyncRule = {
 			return {};
 		}
 
+		// Reuse source files within this pass, but reload them on the next lint invocation.
+		/**
+		@type {Map<string, ts.SourceFile>}
+		*/
+		const sourceFiles = new Map();
+
 		return {
 			listItem(node) {
 				const paragraph = node.children.find(child => child.type === 'paragraph');
@@ -49,20 +55,25 @@ export const readmeJSDocSyncRule = {
 
 				const absolutePath = path.resolve(path.dirname(context.filename), linkNode.url);
 
-				let sourceContent;
-				try {
-					sourceContent = fs.readFileSync(absolutePath, 'utf8');
-				} catch {
-					return context.report({
-						node: linkNode,
-						messageId: 'fileNotFound',
-						data: {
-							filePath: linkNode.url,
-						},
-					});
+				let sourceFile = sourceFiles.get(absolutePath);
+				if (!sourceFile) {
+					let sourceContent;
+					try {
+						sourceContent = fs.readFileSync(absolutePath, 'utf8');
+					} catch {
+						return context.report({
+							node: linkNode,
+							messageId: 'fileNotFound',
+							data: {
+								filePath: linkNode.url,
+							},
+						});
+					}
+
+					sourceFile = ts.createSourceFile(linkNode.url, sourceContent, ts.ScriptTarget.Latest, true);
+					sourceFiles.set(absolutePath, sourceFile);
 				}
 
-				const sourceFile = ts.createSourceFile(linkNode.url, sourceContent, ts.ScriptTarget.Latest, true);
 				let jsdocDescription = ts.forEachChild(sourceFile, child => {
 					if ((ts.isTypeAliasDeclaration(child) || ts.isInterfaceDeclaration(child)) && child.name.text === typeName) {
 						const jsdocs = ts.getJSDocCommentsAndTags(child);
@@ -98,12 +109,10 @@ export const readmeJSDocSyncRule = {
 							expected: jsdocDescription,
 							actual: typeDescription,
 						},
-						fix(fixer) {
-							return fixer.replaceText(
-								paragraph,
-								`${context.sourceCode.getText(linkNode)} - ${jsdocDescription}`,
-							);
-						},
+						// Comments can contain author notes, so leave their paragraph unchanged.
+						fix: context.sourceCode.getText(paragraph).includes('<!--')
+							? undefined
+							: fixer => fixer.replaceText(paragraph, `${context.sourceCode.getText(linkNode)} - ${jsdocDescription}`),
 					});
 				}
 			},

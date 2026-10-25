@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import runTest from 'node:test';
+import {Linter} from 'eslint';
 import markdown from '@eslint/markdown';
 import {createRuleTester, createFixtures, dedenter} from './testing-utilities.js';
 import {readmeJSDocSyncRule} from './readme-jsdoc-sync.js';
@@ -154,6 +157,32 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 		}),
 	],
 	invalid: [
+		// Synchronizing a description must not remove an adjacent author comment.
+		testCase({
+			code: '- [`MyAlias`](source/some-type-alias.d.ts) - Incorrect description. <!-- Keep this migration note. -->',
+			errors: [{messageId: 'mismatch'}],
+			output: null,
+		}),
+		// Markdown formatting does not make an embedded author comment part of the generated description.
+		testCase({
+			code: '- [`MyAlias`](source/some-type-alias.d.ts) - **Incorrect description. <!-- Keep this note. -->**\n',
+			errors: [{messageId: 'mismatch'}],
+			output: null,
+		}),
+		// A comment before the separator stays intact while an ordinary sibling entry is fixed, including CRLF boundaries.
+		testCase({
+			code: [
+				'- [`MyAlias`](source/some-type-alias.d.ts) <!-- Keep this note. --> - Incorrect description.',
+				'- [`Hyphen`](source/hyphen.d.ts) - Incorrect description.',
+				'',
+			].join('\r\n'),
+			errors: [{messageId: 'mismatch'}, {messageId: 'mismatch'}],
+			output: [
+				'- [`MyAlias`](source/some-type-alias.d.ts) <!-- Keep this note. --> - Incorrect description.',
+				'- [`Hyphen`](source/hyphen.d.ts) - Contains a - inside.',
+				'',
+			].join('\r\n'),
+		}),
 		// Correcting a mismatch must not copy a carriage return from the source.
 		testCase({
 			code: '- [`CrlfAlias`](source/crlf-alias.d.ts) - Incorrect description.',
@@ -206,4 +235,43 @@ ruleTester.run('readme-jsdoc-sync', readmeJSDocSyncRule, {
 			errors: [{messageId: 'missingTypeOrJSDoc'}],
 		}),
 	],
+});
+
+runTest('shared source files are read once per lint pass and refreshed on the next pass', t => {
+	const fixture = createFixtures({
+		'source/shared.d.ts': '/**\nFirst description.\n*/\nexport type First = string;\n/**\nSecond description.\n*/\nexport type Second = number;\n',
+	});
+	const filename = fixture.fixturePath('readme.md');
+	const sourcePath = fixture.fixturePath('source/shared.d.ts');
+	const readFile = fs.readFileSync;
+	let sourceReads = 0;
+	t.mock.method(fs, 'readFileSync', (file, ...options) => {
+		if (file === sourcePath) {
+			sourceReads++;
+		}
+
+		return readFile(file, ...options);
+	});
+	const linter = new Linter({cwd: fixture.fixtureRoot});
+	const config = [{
+		files: ['**/*.md'],
+		plugins: {markdown, local: {rules: {sync: readmeJSDocSyncRule}}},
+		language: 'markdown/commonmark',
+		rules: {'local/sync': 'error'},
+	}];
+	const code = '- [`First`](source/shared.d.ts) - First description.\n- [`Second`](source/shared.d.ts) - Second description.';
+	t.assert.deepStrictEqual(linter.verify(code, config, {filename}), []);
+	t.assert.strictEqual(sourceReads, 1);
+
+	fixture.writeFixture('source/shared.d.ts', '/**\nUpdated description.\n*/\nexport type First = string;\n/**\nSecond description.\n*/\nexport type Second = number;\n');
+	const messages = linter.verify(code, config, {filename});
+	t.assert.strictEqual(sourceReads, 2);
+	t.assert.strictEqual(messages.length, 1);
+	t.assert.strictEqual(messages[0].messageId, 'mismatch');
+	t.assert.strictEqual(messages[0].fix.text, '[`First`](source/shared.d.ts) - Updated description.');
+
+	const fixed = linter.verifyAndFix(code, config, {filename});
+	t.assert.strictEqual(fixed.output, code.replace('First description.', 'Updated description.'));
+	t.assert.deepStrictEqual(fixed.messages, []);
+	t.assert.strictEqual(linter.verifyAndFix(fixed.output, config, {filename}).fixed, false);
 });
