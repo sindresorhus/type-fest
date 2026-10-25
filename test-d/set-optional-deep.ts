@@ -295,3 +295,29 @@ expectTypeOf<SetOptionalDeep<{a: [{id: number}, {id: number}]}, 'a.01.id'>>().to
 expectTypeOf<SetOptionalDeep<{[key: number]: {id: number}}, '01.id'>>().toBe<{[key: number]: {id: number}}>();
 expectTypeOf<SetOptionalDeep<{[key: string]: {id: number}}, '01.id'>[string]>().toBe<{id?: number}>();
 expectTypeOf<SetOptionalDeep<{a: Array<{id: number}>}, 'a.1.id'>>().toBe<{a: Array<{id?: number}>}>();
+
+// A tuple path can omit a generic field while preserving its declared read type.
+function optionalTupleValue<Value>(payload: Value): SetOptionalDeep<readonly [{id: Value; payload: Value}], '0.id'> {
+	return [{payload}];
+}
+
+function readOptionalTupleValue<Value>(value: SetOptionalDeep<readonly [{id: Value; payload: Value}], '0.id'>): Value | undefined {
+	return value[0].id;
+}
+
+expectTypeOf(optionalTupleValue('ready' as const)[0].payload).toBe<'ready'>();
+
+const optionalTuple = optionalTupleValue('ready' as const);
+expectTypeOf(optionalTuple[0].id).toBe<'ready' | undefined>();
+// @ts-expect-error A valid element with an omitted field cannot replace an element of a readonly tuple.
+optionalTuple[0] = {payload: 'ready'};
+
+expectTypeOf<SetOptionalDeep<{first: {readonly id: number}; second: {id: string}}, `${string}.id`>>()
+	.toBe<{first: {readonly id?: number}; second: {id?: string}}>();
+
+declare const symbolBranch: unique symbol;
+expectTypeOf<SetOptionalDeep<{a: {id: number}; [symbolBranch]: {id: string}}, `${string}.id`>>().toBe<{a: {id?: number}; [symbolBranch]: {id: string}}>();
+expectTypeOf<SetOptionalDeep<{0: {id: number}}, '00.id'>>().toBe<{0: {id: number}}>();
+expectTypeOf<SetOptionalDeep<{[key: `item${string}`]: {id: number}}, `${string}.id`>>().toBe<{[key: `item${string}`]: {id?: number}}>();
+expectTypeOf<SetOptionalDeep<{a?: {child: {id: number}}} | undefined, `${string}.${string}.id`>>().toBe<{a?: {child: {id?: number}}} | undefined>();
+expectTypeOf<SetOptionalDeep<{rows: readonly [{id: number}, {id: string}]}, `rows.${number}.id`>>().toBe<{rows: readonly [{id?: number}, {id?: string}]}>();

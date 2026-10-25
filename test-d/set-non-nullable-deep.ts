@@ -352,3 +352,42 @@ expectTypeOf<SetNonNullableDeep<{a: [{id: number | null}, {id: number | null}]},
 expectTypeOf<SetNonNullableDeep<{[key: number]: {id: number | null}}, '01.id'>>().toBe<{[key: number]: {id: number | null}}>();
 expectTypeOf<SetNonNullableDeep<{[key: string]: {id: number | null}}, '01.id'>[string]>().toBe<{id: number}>();
 expectTypeOf<SetNonNullableDeep<{a: Array<{id: number | null}>}, 'a.1.id'>>().toBe<{a: Array<{id: number}>}>();
+
+// A tuple path removes null from a generic field without losing its selected value.
+function nonNullableTupleValue<Value>(id: NonNullable<Value>): SetNonNullableDeep<readonly [{id: Value | null}], '0.id'> {
+	return [{id}];
+}
+
+function readNonNullableTupleValue<Value>(value: SetNonNullableDeep<readonly [{id: Value | null}], '0.id'>): NonNullable<Value> {
+	return value[0].id;
+}
+
+expectTypeOf(readNonNullableTupleValue(nonNullableTupleValue<'ready' | null>('ready'))).toBe<'ready'>();
+
+const nonNullableTuple = nonNullableTupleValue<string | null>('ready');
+expectTypeOf(nonNullableTuple[0].id).toBe<string>();
+// @ts-expect-error A valid non-nullable element cannot replace an element of a readonly tuple.
+nonNullableTuple[0] = {id: 'ready'};
+
+// Cleaning a container and its child together preserves optionality and unrelated nullable values.
+type CleanedContainer = SetNonNullableDeep<{
+	readonly child?: {readonly value: number | null; kept: string | null} | null | undefined;
+	other: undefined;
+}, 'child' | 'child.value'>;
+expectTypeOf<CleanedContainer>().toBe<{readonly child?: {readonly value: number; kept: string | null}; other: undefined}>();
+({other: undefined, child: {value: 1, kept: null}}) satisfies CleanedContainer;
+expectTypeOf<{other: undefined; child: undefined}>().not.toBeAssignableTo<CleanedContainer>();
+expectTypeOf<{other: undefined; child: {value: null; kept: null}}>().not.toBeAssignableTo<CleanedContainer>();
+declare const cleanedContainer: CleanedContainer;
+// @ts-expect-error The selected child retains its readonly field.
+cleanedContainer.child!.value = 1;
+
+expectTypeOf<SetNonNullableDeep<{first: {readonly id: number | null}; second: {id: string | undefined}}, `${string}.id`>>()
+	.toBe<{first: {readonly id: number}; second: {id: string}}>();
+
+declare const symbolBranch: unique symbol;
+expectTypeOf<SetNonNullableDeep<{a: {id: number | null}; [symbolBranch]: {id: string | null}}, `${string}.id`>>().toBe<{a: {id: number}; [symbolBranch]: {id: string | null}}>();
+expectTypeOf<SetNonNullableDeep<{0: {id: number | null}}, '00.id'>>().toBe<{0: {id: number | null}}>();
+expectTypeOf<SetNonNullableDeep<{[key: `item${string}`]: {id: number | null}}, `${string}.id`>>().toBe<{[key: `item${string}`]: {id: number}}>();
+expectTypeOf<SetNonNullableDeep<{a?: {child: {id?: number | null}}} | undefined, `${string}.${string}.id`>>().toBe<{a?: {child: {id?: number}}} | undefined>();
+expectTypeOf<SetNonNullableDeep<{rows: readonly [{id: number | null}, {id?: string | undefined}]}, `rows.${number}.id`>>().toBe<{rows: readonly [{id: number}, {id?: string}]}>();

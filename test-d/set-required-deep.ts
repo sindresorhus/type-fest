@@ -316,3 +316,87 @@ enum SegmentNumericEnumKey {
 }
 expectTypeOf<SetRequiredDeep<{[SegmentNumericEnumKey.One]: {id?: number}}, '1.id'>>().toBe<{[SegmentNumericEnumKey.One]: {id: number}}>();
 expectTypeOf<SetRequiredDeep<{[SegmentNumericEnumKey.One]: {id?: number}}, '01.id'>>().toBe<{[SegmentNumericEnumKey.One]: {id?: number}}>();
+
+// A selected descendant keeps an unrelated generic payload usable by its caller.
+type RequiredChildPayload<Value> = SetRequiredDeep<{child: {id?: string; payload: Value}}, 'child.id'>;
+function makeRequiredChild<Value>(payload: Value): RequiredChildPayload<Value> {
+	return {child: {id: 'ready', payload}};
+}
+
+function visitRequiredChild<Value, Result>(value: RequiredChildPayload<Value>, visit: (payload: Value) => Result): Result {
+	return visit(value.child.payload);
+}
+
+const requiredChild = makeRequiredChild([1]);
+expectTypeOf(requiredChild.child.id).toBe<string>();
+expectTypeOf(visitRequiredChild(requiredChild, values => values[0])).toBe<number | undefined>();
+
+function _keepMissingPathPayload<Value>(payload: Value): SetRequiredDeep<{id: string; payload: Value}, 'missing.path'> {
+	return {id: 'unchanged', payload};
+}
+
+// Requiring one recursive descendant leaves later occurrences of the same type unchanged.
+type OptionalRequiredChain = {readonly id?: number; next?: OptionalRequiredChain};
+const requiredChain: SetRequiredDeep<OptionalRequiredChain, 'next.id'> = {next: {id: 1, next: {}}};
+if (requiredChain.next) {
+	expectTypeOf(requiredChain.next.id).toBe<number>();
+	expectTypeOf(requiredChain.next.next?.id).toBe<number | undefined>();
+}
+
+expectTypeOf<{next: {}}>().not.toBeAssignableTo<SetRequiredDeep<OptionalRequiredChain, 'next.id'>>();
+
+// A tuple path preserves the selected generic value and the tuple's readonly shape.
+function requireTupleValue<Value>(id: Value): SetRequiredDeep<readonly [{id?: Value}], '0.id'> {
+	return [{id}];
+}
+
+function readRequiredTupleValue<Value>(value: SetRequiredDeep<readonly [{id?: Value}], '0.id'>): Value {
+	return value[0].id;
+}
+
+expectTypeOf(readRequiredTupleValue(requireTupleValue('ready' as const))).toBe<'ready'>();
+
+const requiredTuple = requireTupleValue('ready' as const);
+expectTypeOf(requiredTuple[0].id).toBe<'ready'>();
+// @ts-expect-error A valid selected element cannot replace an element of a readonly tuple.
+requiredTuple[0] = {id: 'ready'};
+
+// Selecting every path transforms nested arrays and intersections without changing their modifiers.
+expectTypeOf<SetRequiredDeep<{readonly rows?: ReadonlyArray<{id?: number} & {enabled?: boolean}>}, any>>()
+	.toBe<{readonly rows: ReadonlyArray<{id: number; enabled: boolean}>}>();
+expectTypeOf<SetRequiredDeep<readonly [{readonly id?: number}?, {value?: string | undefined}?], any>>()
+	.toBe<readonly [{readonly id: number}, {value: string | undefined}]>();
+expectTypeOf<SetRequiredDeep<{any?: any; never?: never; unknown?: unknown}, any>>()
+	.toBe<{any: any; never: never; unknown: unknown}>();
+expectTypeOf<SetRequiredDeep<any, any>>().toBe<any>();
+expectTypeOf<SetRequiredDeep<never, any>>().toBe<never>();
+expectTypeOf<SetRequiredDeep<unknown, any>>().toBe<unknown>();
+
+function requireCallbackSettings<Value>(callback: (value: Value) => Value): SetRequiredDeep<((value: Value) => Value) & {readonly settings?: {enabled?: boolean}}, any> {
+	return Object.assign(callback, {settings: {enabled: true}});
+}
+
+const callbackWithRequiredSettings = requireCallbackSettings((value: 'ready') => value);
+expectTypeOf(callbackWithRequiredSettings('ready')).toBe<'ready'>();
+expectTypeOf(callbackWithRequiredSettings.settings.enabled).toBe<boolean>();
+expectTypeOf<{rows: [{}]}>().not.toBeAssignableTo<SetRequiredDeep<{rows?: Array<{id?: number}>}, any>>();
+
+// Non-literal segments select every declared key matching the native template pattern.
+expectTypeOf<SetRequiredDeep<{first: {readonly id?: number}; second: {id?: string}}, `${string}.id`>>()
+	.toBe<{first: {readonly id: number}; second: {id: string}}>();
+expectTypeOf<SetRequiredDeep<{rows: [{id?: number}, {id?: string}]}, `rows.${number}.id`>>()
+	.toBe<{rows: [{id: number}, {id: string}]}>();
+expectTypeOf<SetRequiredDeep<{itemOne: {id?: number}; other: {id?: string}}, `item${string}.id`>>()
+	.toBe<{itemOne: {id: number}; other: {id?: string}}>();
+
+declare const symbolBranch: unique symbol;
+expectTypeOf<SetRequiredDeep<{a: {id?: number}; [symbolBranch]: {id?: string}}, `${string}.id`>>().toBe<{a: {id: number}; [symbolBranch]: {id?: string}}>();
+expectTypeOf<SetRequiredDeep<{0: {id?: number}}, '00.id'>>().toBe<{0: {id?: number}}>();
+expectTypeOf<SetRequiredDeep<{[key: `item${string}`]: {id?: number}}, `${string}.id`>>().toBe<{[key: `item${string}`]: {id: number}}>();
+expectTypeOf<SetRequiredDeep<{a?: {child: {id?: number}}} | undefined, `${string}.${string}.id`>>().toBe<{a?: {child: {id: number}}} | undefined>();
+
+function readPatternSelectedId<Value>(input: SetRequiredDeep<{rows: [{id?: Value}]}, `rows.${number}.id`>): Value {
+	return input.rows[0].id;
+}
+
+expectTypeOf(readPatternSelectedId({rows: [{id: 'ready'}]} as const)).toBe<'ready'>();
