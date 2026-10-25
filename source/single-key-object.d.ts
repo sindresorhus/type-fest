@@ -30,6 +30,11 @@ export type SingleKeyObject<ObjectType> =
 		? never
 		: IsUnion<keyof OmitIndexSignature<ObjectType>> extends true
 			? never
-			: If<IsEmptyObject<ObjectType>, never, ObjectType>;
+			: If<IsEmptyObject<ObjectType>, never,
+				// A type without property keys, like a function type or `void`, is rejected. Only broad object types, like `object`, pass through without declared keys.
+				keyof ObjectType extends never
+					? object extends ObjectType ? ObjectType : never
+					: ObjectType
+			>;
 
 export {};

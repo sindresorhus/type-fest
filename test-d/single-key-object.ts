@@ -100,3 +100,24 @@ expectTypeOf<SingleKeyObject<object>>().toBe<object>();
 expectTypeOf<SingleKeyObject<object & {}>>().toBe<object>();
 const broadObjectArgument: object = {first: 1, second: 2};
 test(broadObjectArgument);
+
+// A call or construct signature does not supply a property key.
+expectTypeOf<SingleKeyObject<() => number>>().toBe<never>();
+expectTypeOf<SingleKeyObject<abstract new () => object>>().toBe<never>();
+expectTypeOf<SingleKeyObject<void>>().toBe<never>();
+// @ts-expect-error A callback without a declared property is not a single-key object.
+acceptSingleKey(() => 1);
+// @ts-expect-error A void value does not supply an object property.
+acceptSingleKey<void>(undefined);
+
+// A declared field keeps a construct signature, its instance type and its modifiers.
+type SingleFieldConstructor = (new () => Date) & {readonly value: number};
+declare const OneFieldConstructor: SingleKeyObject<SingleFieldConstructor>;
+expectTypeOf<SingleKeyObject<SingleFieldConstructor>>().toBe<SingleFieldConstructor>();
+expectTypeOf(new OneFieldConstructor()).toBe<Date>();
+// @ts-expect-error An otherwise valid value cannot replace a readonly field.
+OneFieldConstructor.value = 1;
+expectTypeOf<SingleKeyObject<SingleFieldConstructor & {other: string}>>().toBe<never>();
+
+// Filtering a keyless void alternative does not remove the valid object alternative.
+expectTypeOf<SingleKeyObject<void | {value: number}>>().toBe<{value: number}>();
