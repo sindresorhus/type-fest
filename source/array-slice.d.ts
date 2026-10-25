@@ -147,11 +147,8 @@ type ArraySliceHelper<
 	PositiveS extends number = IsNegative<Start> extends true
 		? GreaterThanOrEqual<Absolute<Start>, ArrayLength> extends true
 			? 0
-			: Sum<ArrayLength, Start> extends infer AddResult extends number
-				? number extends AddResult // (ArrayLength + Start) < 0
-					? 0
-					: GreaterThan<AddResult, 0> extends true ? AddResult : 0
-				: never
+			// The magnitude is below the length, so the sum is already a positive in-bounds offset.
+			: Sum<ArrayLength, Start>
 		: Start,
 	PositiveE extends number = IsNegative<End> extends true
 		? GreaterThanOrEqual<Absolute<End>, ArrayLength> extends true
@@ -184,7 +181,10 @@ type ArraySliceByPositiveTuple<
 	: [TupleOf<Start>['length'], Array_] extends [Start, readonly [...TupleOf<Start>, ...infer Remaining]]
 		? Remaining
 		: DropLeadingElements<Array_, Start>) extends infer Dropped extends readonly unknown[]
-	? TakeLeadingElements<Dropped, Subtract<End, Start>>
+	// Compare the copy's length because spreading an intersection can lose its fixed length. A complete remainder needs no element-by-element rebuild.
+	? MaxLength<[...Dropped]> extends Subtract<End, Start>
+		? [...Dropped]
+		: TakeLeadingElements<Dropped, Subtract<End, Start>>
 	: never; // Should never happen
 
 type DropLeadingElements<Array_ extends readonly unknown[], Count extends number, Counter extends unknown[] = []> =
@@ -196,13 +196,24 @@ type DropLeadingElements<Array_ extends readonly unknown[], Count extends number
 				? DropLeadingElements<Rest, Count, [...Counter, unknown]>
 				: [];
 
-type TakeLeadingElements<Array_ extends readonly unknown[], Count extends number, Result extends unknown[] = [], Counter extends unknown[] = []> =
+/**
+Copy a required prefix in one match, falling back to element-wise traversal for optional positions.
+*/
+type TakeLeadingElements<Array_ extends readonly unknown[], Count extends number> =
+	[TupleOf<Count>['length'], Array_] extends [Count, readonly [...TupleOf<Count>, ...infer Rest]]
+		? Array_ extends readonly [...infer Prefix, ...Rest]
+			// Intersections can widen the inferred prefix, so only keep an exact-length match.
+			? Prefix['length'] extends Count ? Prefix : TakeLeadingElementsRecursive<Array_, Count>
+			: never
+		: TakeLeadingElementsRecursive<Array_, Count>;
+
+type TakeLeadingElementsRecursive<Array_ extends readonly unknown[], Count extends number, Result extends unknown[] = [], Counter extends unknown[] = []> =
 	Counter['length'] extends Count
 		? Result
 		: Array_ extends readonly []
 			? never // Only a fractional count runs past the end, since the range is clamped to the length
 			: Array_ extends readonly [(infer First)?, ...infer Rest]
-				? TakeLeadingElements<
+				? TakeLeadingElementsRecursive<
 					Rest,
 					Count,
 					[

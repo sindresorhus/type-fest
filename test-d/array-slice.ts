@@ -293,3 +293,102 @@ expectTypeOf<ArraySlice<[1, ...string[]], 0, PositiveInfinity>>().toBe<[1, ...st
 expectTypeOf<ArraySlice<[0?, ...string[]], 1>>().toBe<string[]>();
 expectTypeOf<ArraySlice<readonly [1, 2?, ...string[]], 1>>().toBe<readonly [2?, ...string[]]>();
 expectTypeOf<ArraySlice<[1, 2?, ...string[]], 2>>().toBe<string[]>();
+
+function _constructRemainingValues<Value>(value: Value): ArraySlice<readonly [0, Value, Value], 1> {
+	return [value, value];
+}
+
+declare function sliceRemaining<const Values extends readonly unknown[]>(values: Values): ArraySlice<Values, 1>;
+const remainingRecords = sliceRemaining([0, {id: 'first'}, {id: 'second'}]);
+expectTypeOf(remainingRecords).toBe<readonly [{readonly id: 'first'}, {readonly id: 'second'}]>();
+// @ts-expect-error An otherwise valid value cannot replace a readonly position.
+remainingRecords[0] = {id: 'first'};
+// @ts-expect-error Only the two remaining positions are present.
+const _outsideRemaining: unknown = remainingRecords[2];
+
+// A bounded slice must still stop before the end of the remainder.
+expectTypeOf<ArraySlice<readonly [0, {id: 'first'}, {id: 'second'}, {id: 'third'}], 1, 3>>()
+	.toBe<readonly [{id: 'first'}, {id: 'second'}]>();
+
+declare const optionalRemaining: ArraySlice<readonly [0, {id: 'first'}?, {id: 'second'}?], 1>;
+expectTypeOf(optionalRemaining[0]?.id).toBe<'first' | undefined>();
+expectTypeOf(optionalRemaining[1]?.id).toBe<'second' | undefined>();
+
+// Copying a complete remainder keeps required sentinel-valued positions.
+expectTypeOf<ArraySlice<readonly [0, undefined, unknown, never], 1>>().toBe<readonly [undefined, unknown, never]>();
+
+function hasSecondRemaining<Value>(values: ArraySlice<readonly [0, Value] | readonly [0, Value, Value], 1>): values is readonly [Value, Value] {
+	return values.length === 2;
+}
+
+declare const variableLengthRemainder: ArraySlice<readonly [0, {id: 'row'}] | readonly [0, {id: 'row'}, {id: 'row'}], 1>;
+if (hasSecondRemaining(variableLengthRemainder)) {
+	expectTypeOf(variableLengthRemainder[1].id).toBe<'row'>();
+}
+
+// Clamping either end of an empty tuple never creates elements, including when both offsets are unions.
+expectTypeOf<ArraySlice<[], -3 | 0 | 3, -3 | 0 | 3>>().toBe<[]>();
+expectTypeOf<ArraySlice<readonly [], -3 | 0 | 3, -3 | 0 | 3>>().toBe<readonly []>();
+
+// Select a fixed-width header from a longer positional record without changing its element types.
+type MessageRecord = readonly [version: 1, kind: 'request', identifier: string, flags: number, ...payload: TupleOf<40, Uint8Array>];
+expectTypeOf<ArraySlice<MessageRecord, 0, 4>>().toBe<readonly [1, 'request', string, number]>();
+expectTypeOf<ArraySlice<MessageRecord, 1, 4>>().toBe<readonly ['request', string, number]>();
+expectTypeOf<ArraySlice<[string, number, boolean?, Date?], 0, 2>>().toBe<[string, number]>();
+expectTypeOf<ArraySlice<[string, number, boolean?, Date?], 0, 3>>().toBe<[string, number, boolean?]>();
+
+// Required prefixes preserve sentinel values and distribute input and offset unions.
+expectTypeOf<ArraySlice<[any, unknown, never, undefined, 'tail'], 0, 4>>().toBe<[any, unknown, never, undefined]>();
+expectTypeOf<ArraySlice<readonly ['a', 1, true, Date], 0, 1 | 2>>().toBe<readonly ['a'] | readonly ['a', 1]>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3] | readonly ['a', 'b', 'c', 'd'], 1, 3>>().toBe<[1, 2] | readonly ['b', 'c']>();
+expectTypeOf<ArraySlice<[0, 1, 2, 3, 4], -4, -1>>().toBe<[1, 2, 3]>();
+
+function makeHeaderSlice<Value>(value: Value): ArraySlice<[Value, number, boolean, Date], 0, 2> {
+	return [value, 1];
+}
+
+function readHeaderValue<Value>(header: ArraySlice<readonly [Value, number, boolean, Date], 0, 2>): Value {
+	return header[0];
+}
+
+const headerSlice = makeHeaderSlice({identifier: 'request'});
+expectTypeOf(headerSlice).toBe<[{identifier: string}, number]>();
+expectTypeOf(readHeaderValue(headerSlice)).toBe<{identifier: string}>();
+headerSlice[1] = 2;
+// @ts-expect-error Slicing a required prefix retains the element type.
+headerSlice[1] = 'invalid';
+declare const readonlyHeaderSlice: ArraySlice<MessageRecord, 0, 4>;
+// @ts-expect-error A slice of a readonly record remains readonly.
+readonlyHeaderSlice[2] = 'changed';
+// @ts-expect-error Slicing only the header removes the payload positions.
+expectTypeOf(readonlyHeaderSlice[4]);
+
+// An uncertain variadic match must not widen the existing reads from a tuple with metadata.
+function readAnnotatedPrefix<First, Second, Third>(values: ArraySlice<[First, Second, Third] & {tag: 'record'}, 0, 2>): First | Second | Third {
+	return values[0];
+}
+
+function readAnnotatedPrefixLength<First, Second, Third>(values: ArraySlice<[First, Second, Third] & {tag: 'record'}, 0, 2>): 1 | 2 {
+	return values.length;
+}
+
+// Negative starts are clamped before adding the length, including optional positions and readonly tuples.
+expectTypeOf<ArraySlice<readonly [0, 1, 2], -1 | -3 | -4>>().toBe<readonly [2] | readonly [0, 1, 2]>();
+expectTypeOf<ArraySlice<readonly [0, 1?, 2?], -2>>().toBe<readonly [1?, 2?]>();
+
+function makeNegativeSlice<Value>(value: Value): ArraySlice<readonly [0, Value, Value], -2> {
+	return [value, value];
+}
+
+function _readNegativeSlice<Value>(value: ArraySlice<readonly [0, Value, Value], -2>): Value {
+	return value[0];
+}
+
+const negativeSlice = makeNegativeSlice({id: 'tail'});
+expectTypeOf(negativeSlice[0].id).toBe<string>();
+// @ts-expect-error A readonly tuple stays readonly when its start counts back from the end.
+negativeSlice[0] = {id: 'tail'};
+
+declare const annotatedPrefix: ArraySlice<[string, number, boolean] & {tag: 'record'}, 0, 2>;
+expectTypeOf(readAnnotatedPrefix<string, number, boolean>(annotatedPrefix)).toBe<string | number | boolean>();
+expectTypeOf(readAnnotatedPrefixLength<string, number, boolean>(annotatedPrefix)).toBe<1 | 2>();
