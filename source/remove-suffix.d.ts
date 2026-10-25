@@ -107,6 +107,7 @@ export type RemoveSuffix<S extends string, Suffix extends string, Options extend
 
 type _RemoveSuffix<S extends string, Suffix extends string, Options extends Required<RemoveSuffixOptions>> =
 	Suffix extends string // For distributing `Suffix`
+		// Keep `Or` so a literal affix stays decidable before generic options resolve.
 		? Or<IsStringLiteral<Suffix>, Not<Options['strict']>> extends true
 			? S extends unknown // Distribute so each literal member keeps its own unchanged fallback.
 				? S extends `${infer Rest}${Suffix}`

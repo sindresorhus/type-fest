@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged} from '../index.d.ts';
+import type {Flavor, LiteralUnion, Opaque, Tagged} from '../index.d.ts';
 import type {RemoveSuffix, RemoveSuffixOptions} from '../source/remove-suffix.d.ts';
 
 expectTypeOf<RemoveSuffix<'report.pdf', '.pdf'>>().toBe<'report'>();
@@ -150,3 +150,28 @@ declare function removeSuffix<const Input extends string, const Affix extends st
 expectTypeOf(removeSuffix('value/api', '/api')).toBe<'value'>();
 declare const suffixInput: `api/${string}`;
 expectTypeOf(removeSuffix(suffixInput, 'api/')).toBe<string>();
+
+// A known literal miss remains constructible before unrelated options are resolved.
+function _retainUnmatchedSuffix<Options extends RemoveSuffixOptions>(value: 'name/api'): RemoveSuffix<'name/api', '/other', Options> {
+	return value;
+}
+
+declare function stripTypeSuffixes<const Values extends readonly string[]>(values: Values): {readonly [Key in keyof Values]: RemoveSuffix<Values[Key], '.ts'>};
+const strippedTypeNames = stripTypeSuffixes(['name.ts', 'plain', 'count.ts'] as const);
+expectTypeOf(strippedTypeNames).toBe<readonly ['name', 'plain', 'count']>();
+
+// Already-normalized source and affix values retain their literal and sentinel policies.
+expectTypeOf<RemoveSuffix<Flavor<'name.ts' | 'plain', 'Text'>, '.ts'>>().toBe<'name' | 'plain'>();
+expectTypeOf<RemoveSuffix<Tagged<'name.ts', 'Text'>, Flavor<'.ts', 'Affix'>>>().toBe<'name'>();
+expectTypeOf<RemoveSuffix<LiteralUnion<'name.ts', string>, '.other'>>().toBe<string>();
+expectTypeOf<RemoveSuffix<'name.ts', any, {strict: false}>>().toBe<'n'>();
+expectTypeOf<RemoveSuffix<never, any, {strict: false}>>().toBe<never>();
+
+function _readFlavoredSuffix<Value extends string>(value: RemoveSuffix<Flavor<Value, 'Text'>, '.ts'>): string {
+	return value;
+}
+
+// Non-strict matching still distributes normalized affixes and preserves the input sentinels.
+expectTypeOf<RemoveSuffix<Tagged<'name.ts' | 'plain', 'Text'>, Tagged<'.ts' | '.js', 'Affix'>, {strict: false}>>().toBe<'name' | 'name.ts' | 'plain'>();
+expectTypeOf<RemoveSuffix<'plain', never, {strict: false}>>().toBe<'plain'>();
+expectTypeOf<RemoveSuffix<any, any, {strict: false}>>().toBe<any>();

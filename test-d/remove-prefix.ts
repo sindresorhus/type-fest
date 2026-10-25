@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged} from '../index.d.ts';
+import type {Flavor, LiteralUnion, Opaque, Tagged} from '../index.d.ts';
 import type {RemovePrefix, RemovePrefixOptions} from '../source/remove-prefix.d.ts';
 
 expectTypeOf<RemovePrefix<'on-change', 'on-'>>().toBe<'change'>();
@@ -155,3 +155,28 @@ expectTypeOf(removePrefix(prefixInput, '/api')).toBe<string>();
 
 // Removing a capital can expose a lowercase first character in an unknown capitalized input.
 expectTypeOf<'value'>().toBeAssignableTo<RemovePrefix<Capitalize<string>, 'A'>>();
+
+// A known literal miss remains constructible before unrelated options are resolved.
+function _retainUnmatchedPrefix<Options extends RemovePrefixOptions>(value: 'api/name'): RemovePrefix<'api/name', 'other/', Options> {
+	return value;
+}
+
+declare function stripApiPrefixes<const Values extends readonly string[]>(values: Values): {readonly [Key in keyof Values]: RemovePrefix<Values[Key], 'api/'>};
+const strippedApiNames = stripApiPrefixes(['api/name', 'plain', 'api/count'] as const);
+expectTypeOf(strippedApiNames).toBe<readonly ['name', 'plain', 'count']>();
+
+// Already-normalized source and affix values retain their literal and sentinel policies.
+expectTypeOf<RemovePrefix<Flavor<'api/name' | 'plain', 'Text'>, 'api/'>>().toBe<'name' | 'plain'>();
+expectTypeOf<RemovePrefix<Tagged<'api/name', 'Text'>, Flavor<'api/', 'Affix'>>>().toBe<'name'>();
+expectTypeOf<RemovePrefix<LiteralUnion<'api/name', string>, 'other/'>>().toBe<string>();
+expectTypeOf<RemovePrefix<'api/name', any, {strict: false}>>().toBe<'pi/name'>();
+expectTypeOf<RemovePrefix<never, any, {strict: false}>>().toBe<never>();
+
+function _readFlavoredPrefix<Value extends string>(value: RemovePrefix<Flavor<Value, 'Text'>, 'api/'>): string {
+	return value;
+}
+
+// Non-strict matching still distributes normalized affixes and preserves the input sentinels.
+expectTypeOf<RemovePrefix<Tagged<'api/name' | 'plain', 'Text'>, Tagged<'api/' | 'other/', 'Affix'>, {strict: false}>>().toBe<'name' | 'api/name' | 'plain'>();
+expectTypeOf<RemovePrefix<'plain', never, {strict: false}>>().toBe<'plain'>();
+expectTypeOf<RemovePrefix<any, any, {strict: false}>>().toBe<any>();

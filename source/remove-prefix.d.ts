@@ -107,6 +107,7 @@ export type RemovePrefix<S extends string, Prefix extends string, Options extend
 
 type _RemovePrefix<S extends string, Prefix extends string, Options extends Required<RemovePrefixOptions>> =
 	Prefix extends string // For distributing `Prefix`
+		// Keep `Or` so a literal affix stays decidable before generic options resolve.
 		? Or<IsStringLiteral<Prefix>, Not<Options['strict']>> extends true
 			? S extends unknown // Distribute so each literal member keeps its own unchanged fallback.
 				? S extends `${Prefix}${infer Rest}`
