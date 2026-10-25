@@ -470,14 +470,6 @@ declare const indexedRuleSchema: Schema<{readonly [ruleKey]?: {label: string}; [
 expectTypeOf(indexedRuleSchema[ruleKey]?.label).toBe<ValidationRule | undefined>();
 expectTypeOf(indexedRuleSchema['rule-main']?.enabled).toBe<ValidationRule | undefined>();
 
-// An uncertain recursion option must keep both complete array strategies.
-const nonRecursiveArrayRule: Schema<string[], 'rule', {recurseIntoArrays: boolean}> = 'rule';
-expectTypeOf<Schema<string[], 'rule', {recurseIntoArrays: boolean}>>().toBe<'rule' | Array<'rule'>>();
-declare const recurseIntoArrays: boolean;
-const uncertainArraySchema: Schema<{rows: string[]; ids: number[]}, 'rule', {recurseIntoArrays: boolean}> = recurseIntoArrays
-	? {rows: ['rule'], ids: ['rule']}
-	: {rows: 'rule', ids: 'rule'};
-
 // An optional flag uses the default strategy, which recurses into arrays.
 // @ts-expect-error The non-recursive strategy is not the default.
 const optionalArrayRule: Schema<string[], 'rule', {recurseIntoArrays?: boolean}> = 'rule';
@@ -486,13 +478,9 @@ const optionalDisabledDefault: Schema<string[], 'rule', {recurseIntoArrays?: fal
 // @ts-expect-error The declared `false` is not used when the flag is optional.
 const optionalDisabledRule: Schema<string[], 'rule', {recurseIntoArrays?: false}> = 'rule';
 expectTypeOf<Schema<{rows: string[]; nested: {ids: number[]}}, 'rule', {recurseIntoArrays?: boolean}>>().toBe<{rows: Array<'rule'>; nested: {ids: Array<'rule'>}}>();
-// @ts-expect-error The same recursion strategy applies to arrays at every depth.
-const mixedArrayRules: Schema<{rows: string[]; nested: {ids: number[]}}, 'rule', {recurseIntoArrays: boolean}> = {rows: 'rule', nested: {ids: ['rule']}};
 
-function chooseArrayRule<Value>(rule: Value, recurse: boolean): Schema<string[], Value, {recurseIntoArrays: boolean}> {
-	return recurse ? [rule] : rule;
-}
-
+// A `boolean` flag uses the default strategy instead of a union of both strategies.
+expectTypeOf<Schema<{rows: string[]; nested: {ids: number[]}}, 'rule', {recurseIntoArrays: boolean}>>().toBe<{rows: Array<'rule'>; nested: {ids: Array<'rule'>}}>();
 function createOptionalFlagRule<Value, Flag extends boolean>(rule: Value): Schema<{readonly id: string}, Value, {recurseIntoArrays?: Flag}> {
 	return {id: rule};
 }
@@ -511,3 +499,55 @@ inferredOptionalSchema.rows = 'rule';
 // `never` and `any` options use the defaults.
 expectTypeOf<Schema<{a: string[]}, 'r', never>>().toBe<{a: Array<'r'>}>();
 expectTypeOf<Schema<{a: string[]}, 'r', any>>().toBe<{a: Array<'r'>}>();
+
+// Generic validation rules preserve optional nested fields, enum names, and readonly owners.
+enum FormSchemaField {
+	Name = 'name',
+}
+type FormSchemaInput = {[FormSchemaField.Name]?: {readonly code: string} | undefined; readonly rows: Array<{score?: number}>};
+function createFormSchema<Value>(rule: Value): Schema<FormSchemaInput, Value> {
+	return {name: {code: rule}, rows: [{score: rule}]};
+}
+
+function visitFormSchema<Value, Result>(schema: Schema<FormSchemaInput, Value>, visit: (value: Value) => Result): Result | undefined {
+	return schema.name === undefined ? undefined : visit(schema.name.code);
+}
+
+const genericFormSchema = createFormSchema({error: 'invalid'} as const);
+expectTypeOf(genericFormSchema.name?.code).toBe<{readonly error: 'invalid'} | undefined>();
+expectTypeOf(genericFormSchema.rows[0]?.score).toBe<{readonly error: 'invalid'} | undefined>();
+expectTypeOf(visitFormSchema(genericFormSchema, rule => rule.error)).toBe<'invalid' | undefined>();
+genericFormSchema.rows.push({score: {error: 'invalid'}});
+// @ts-expect-error A valid replacement cannot overwrite the readonly array property.
+genericFormSchema.rows = [];
+if (genericFormSchema.name !== undefined) {
+	// @ts-expect-error A valid rule cannot overwrite the readonly nested field.
+	genericFormSchema.name.code = {error: 'invalid'};
+}
+
+expectTypeOf<Schema<Record<any, {name: string} | undefined>, 'rule'>['field']>().toBe<'rule' | {name: 'rule'}>();
+expectTypeOf<Schema<Record<keyof any, {name: string} | undefined>, 'rule'>[symbol]>().toBe<'rule' | {name: 'rule'}>();
+
+// A rule predicate narrows untrusted schema values for a generic consumer.
+function isNamedSchema<Value>(input: unknown, isRule: (value: unknown) => value is Value): input is Schema<{name: string}, Value> {
+	return typeof input === 'object' && input !== null && 'name' in input && isRule(input.name);
+}
+
+function _readNamedSchema<Value>(input: unknown, isRule: (value: unknown) => value is Value): Value | undefined {
+	return isNamedSchema(input, isRule) ? input.name : undefined;
+}
+
+// Constrained generic inputs can still be instantiated with `any`, including at a recursive leaf.
+declare function constrainedObjectSchema<Input extends object>(input: Input): Schema<{readonly value?: Input}, 'rule'>;
+declare const dynamicObject: any;
+expectTypeOf(constrainedObjectSchema(dynamicObject)).toBe<{readonly value?: 'rule'}>();
+expectTypeOf(constrainedObjectSchema({label: 'value'})).toBe<{readonly value?: {label: 'rule'}}>();
+expectTypeOf<Schema<{readonly value?: unknown; rows: Array<any | undefined>; impossible: never}, 'rule'>>()
+	.toBe<{readonly value?: 'rule'; rows: Array<'rule'>; impossible: never}>();
+
+function readStringSchema<Input extends string, Value>(schema: Schema<{value: Input}, Value>): Value {
+	return schema.value;
+}
+
+expectTypeOf(readStringSchema<any, 'rule'>({value: 'rule'})).toBe<'rule'>();
+expectTypeOf<{value: 'source'}>().not.toBeAssignableTo<Schema<{value: any}, 'rule'>>();

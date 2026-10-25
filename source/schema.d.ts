@@ -1,9 +1,7 @@
 import type {IsArrayOfUnknownLength} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
-import type {IsAny} from './is-any.d.ts';
-import type {IsUnknown} from './is-unknown.d.ts';
-import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -15,7 +13,7 @@ export type SchemaOptions = {
 	- If `recurseIntoArrays` is set to `true` (default), array elements will be recursively processed as well.
 	- If `recurseIntoArrays` is set to `false`, arrays will not be recursively processed, and the entire array will be replaced with the given value type.
 
-	An uncertain boolean flag includes both complete array strategies. An optional flag uses the default strategy.
+	An optional flag uses the default strategy.
 
 	@example
 	```
@@ -95,33 +93,25 @@ const userMaskSettings: UserMask = {
 @category Object
 */
 export type Schema<Type, Value, Options extends SchemaOptions = {}> =
-	IfNotAnyOrNever<Type, {
-		// Resolve the flag once, then keep one strategy throughout the schema.
-		ifNot: {
-			[Recurse in `${ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>['recurseIntoArrays']}`]:
-			_Schema<Type, Value, {recurseIntoArrays: Recurse extends 'true' ? true : false}>
-		}[`${ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>['recurseIntoArrays']}`];
-		ifAny: Value;
-		ifNever: Value;
-	}>;
+	IsNever<Type> extends true
+		? Value
+		: _Schema<Type, Value, ApplyDefaultOptions<SchemaOptions, DefaultSchemaOptions, Options>>;
 
 type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
-	IsAny<Type> extends true
+	unknown extends Type
 		? Value
-		: IsUnknown<Type> extends true
+		: Type extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
 			? Value
-			: Type extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
-				? Value
-				: Type extends UnknownArray
-					? Options['recurseIntoArrays'] extends false
-						? Value
-						: IsArrayOfUnknownLength<Type> extends true
-							// Rebuild arrays directly so recursive element types stay lazy. Tuples keep their mapped shape and modifiers.
-							? Type extends unknown[]
-								? Array<_Schema<Type[number], Value, Options>>
-								: ReadonlyArray<_Schema<Type[number], Value, Options>>
-							: SchemaHelper<Type, Value, Options>
-					: SchemaHelper<Type, Value, Options>;
+			: Type extends UnknownArray
+				? Options['recurseIntoArrays'] extends false
+					? Value
+					: IsArrayOfUnknownLength<Type> extends true
+						// Rebuild arrays directly so recursive element types stay lazy. Tuples keep their mapped shape and modifiers.
+						? Type extends unknown[]
+							? Array<_Schema<Type[number], Value, Options>>
+							: ReadonlyArray<_Schema<Type[number], Value, Options>>
+						: SchemaHelper<Type, Value, Options>
+				: SchemaHelper<Type, Value, Options>;
 
 /**
 Internal helper for {@link _Schema}.
@@ -129,8 +119,9 @@ Internal helper for {@link _Schema}.
 Recursively transforms the value of each property in objects and arrays.
 */
 type SchemaHelper<Type, Value, Options extends Required<SchemaOptions>> = {
+	// `_Schema` already handles broad inputs, so only each mapped property's optionality remains to check.
 	[Key in keyof Type]: _Schema<
-		IsOptionalKeyOf<Type & object, Key> extends true ? Exclude<Type[Key], undefined> : Type[Key], // Remove `| undefined` when accessing optional properties
+		Type extends Record<Key, Type[Key]> ? Type[Key] : Exclude<Type[Key], undefined>, // Remove `| undefined` when accessing optional properties
 		Value,
 		Options>
 } & {};
