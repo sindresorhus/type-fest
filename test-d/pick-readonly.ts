@@ -157,3 +157,30 @@ type AllowsOnlyObjects = PickReadonly<string>;
 type DoesNotAllowUnknown = PickReadonly<unknown>;
 // @ts-expect-error
 type DoesNotAllowUndefined = PickReadonly<undefined>;
+
+// Readonly in a constraint does not require every subtype to retain that modifier.
+function _readConstrainedReadonly<Entity extends {readonly id: string}>(fields: PickReadonly<Entity>) {
+	// @ts-expect-error A subtype can make id writable, so the selected object may omit it.
+	expectTypeOf(fields.id);
+}
+
+function _readConstrainedOptionalReadonly<Entity extends {readonly id?: string}>(fields: PickReadonly<Entity>) {
+	// @ts-expect-error An optional property can also become writable in a subtype.
+	expectTypeOf(fields.id);
+}
+
+// Different read/write accessor types still describe a writable property.
+type ConvertedSetting = {
+	get label(): string;
+	get count(): number;
+	set count(value: number | string);
+};
+expectTypeOf<PickReadonly<ConvertedSetting>>().toBe<{readonly label: string}>();
+
+// Filtering the same key in different union members keeps each member's own modifiers.
+type AlternatingFields<Value> = {readonly id: Value; note?: string} | {id: Value; readonly note?: string};
+function keepAlternatingReadonly<Value>(value: AlternatingFields<Value>): PickReadonly<AlternatingFields<Value>> {
+	return value;
+}
+
+expectTypeOf(keepAlternatingReadonly<number>({id: 1})).toBe<{readonly id: number} | {readonly note?: string}>();

@@ -89,7 +89,7 @@ type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 // @ts-expect-error
 type AllowsOnlyObjects = WritableKeysOf<string>;
 
-// Known limitation: an index signature is reported as a writable key, for the same reason `RequiredKeysOf` reports it as a required key. See the note in that type's docs.
+// Known limitation: an index signature that is not `readonly` is reported as a writable key, even though no particular property has to be present. See the note in the docs.
 declare const indexSignature: WritableKeysOf<{[k: string]: string; readonly a: string}>;
 expectTypeOf(indexSignature).toBe<string | number>();
 
@@ -107,3 +107,60 @@ expectTypeOf<WritableKeysOf<{a: 1; b: 2} | {a: 1}>>().toBe<'a' | 'b'>();
 
 // `any` has every key, and none of them are readonly, consistent with `RequiredKeysOf<any>`
 expectTypeOf<WritableKeysOf<any>>().toBe<string | number | symbol>();
+
+// A getter is readonly, while a getter/setter pair is writable.
+declare class EditableAccount {
+	readonly id: string;
+	name: string;
+	get balance(): number;
+	get label(): string;
+	set label(value: string);
+}
+expectTypeOf<WritableKeysOf<EditableAccount>>().toBe<'name' | 'label'>();
+expectTypeOf<WritableKeysOf<{empty: never; optional?: unknown; readonly fixed: any}>>().toBe<'empty' | 'optional'>();
+expectTypeOf<WritableKeysOf<never>>().toBe<never>();
+// @ts-expect-error An unknown value has no known object properties.
+type UnknownWritableKeys = WritableKeysOf<unknown>;
+// Preserve the existing queries for an indeterminate `any` key domain.
+expectTypeOf<WritableKeysOf<Record<any, unknown>>>().toBe<any>();
+expectTypeOf<WritableKeysOf<Readonly<Record<any, unknown>>>>().toBe<never>();
+
+type WritableValue<Value> = {readonly id: string; value: Value};
+function _writableValueKey<Value>(): WritableKeysOf<WritableValue<Value>> {
+	return 'value';
+}
+
+function _readWritableValue<Value>(value: WritableValue<Value>, key: WritableKeysOf<WritableValue<Value>>): Value {
+	return value[key];
+}
+
+declare function selectMutableFields<Model extends object>(model: Model): Pick<Model, WritableKeysOf<Model>>;
+function mutablePayload<const Value>(value: Value) {
+	const row: WritableValue<Value> = {id: 'session', value};
+	return selectMutableFields(row);
+}
+
+const mutableFields = mutablePayload({count: 1});
+expectTypeOf(mutableFields).toBe<{value: {readonly count: 1}}>();
+mutableFields.value = {count: 1};
+// @ts-expect-error An invalid value must remain rejected.
+mutableFields.value = {count: 2};
+// @ts-expect-error The readonly key was not selected.
+mutableFields.id = 'session';
+
+function isWritableField<Base extends object>(key: keyof Base, fields: ReadonlyArray<WritableKeysOf<Base>>): key is WritableKeysOf<Base> {
+	return new Set<PropertyKey>(fields).has(key);
+}
+
+function _readCheckedWritableField<Base extends object>(value: Base, key: keyof Base, fields: ReadonlyArray<WritableKeysOf<Base>>) {
+	return isWritableField(key, fields) ? value[key] : undefined;
+}
+
+expectTypeOf(_readCheckedWritableField({id: 'session', value: 'name'} as WritableValue<'name'>, 'value', ['value'])).toBe<'name' | undefined>();
+
+enum WritableField {
+	Value = 'value',
+}
+declare const writableSymbol: unique symbol;
+expectTypeOf<WritableKeysOf<{[WritableField.Value]: string; [writableSymbol]?: number; readonly fixed: boolean}>>()
+	.toBe<WritableField.Value | typeof writableSymbol>();

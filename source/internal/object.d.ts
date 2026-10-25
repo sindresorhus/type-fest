@@ -116,6 +116,16 @@ export type ValueOfUnion<Union, Key extends KeysOfUnion<Union>> =
 	Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
 
 /**
+Returns whether the given key of `ObjectType` has the `readonly` modifier.
+
+The key belongs to the object, so no distribution or `any` handling is needed.
+*/
+export type IsReadonlyProperty<ObjectType, Key extends keyof ObjectType> = IsEqual<
+	{[Property in Key]: ObjectType[Property]},
+	{readonly [Property in Key]: ObjectType[Property]}
+>;
+
+/**
 Extract all readonly keys from a union of object types.
 
 @example
@@ -136,7 +146,7 @@ type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
 ```
 */
 export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
-	[Key in keyof Union as IsEqual<{[K in Key]: Union[Key]}, {readonly [K in Key]: Union[Key]}> extends true ? Key : never]: never
+	[Key in keyof Union as IsReadonlyProperty<Union, Key> extends true ? Key : never]: never
 } : never;
 
 /**

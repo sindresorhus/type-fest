@@ -162,3 +162,50 @@ expectTypeOf<SetNullable<{[NumericSelectorKey.One]: string; other: number}, Nume
 expectTypeOf<SetNullable<{[NumericSelectorKey.One]: string; other: number}, 1>>().toBe<{[NumericSelectorKey.One]: string | null; other: number}>();
 expectTypeOf<SetNullable<string[], NumericSelectorKey.Zero>>().toBe<string[]>();
 expectTypeOf<SetNullable<[string, string], NumericSelectorKey.One>>().toBe<[string, string | null]>();
+
+// An empty selection does not add null while generic keys and owners are unresolved.
+function _readUnselectedNullableRecord<Key extends string>(value: SetNullable<Record<Key, string>, never>, key: Key): string {
+	return value[key];
+}
+
+function _readUnselectedNullableOwner<Owner extends {id: string}>(value: SetNullable<Owner, never>): string {
+	return value.id;
+}
+
+function _readUnselectedNullableOwnerRecord<Key extends string, Owner extends Record<Key, string>>(value: SetNullable<Owner, never>, key: Key): string {
+	return value[key];
+}
+
+// Numeric index selectors leave differently spelled property names unchanged.
+type NullableNumericNames = {[index: number]: string; readonly '01': number};
+function _readUnselectedNumericName(value: SetNullable<NullableNumericNames, number>): number {
+	return value['01'];
+}
+
+const nullableNumericNames: SetNullable<NullableNumericNames, number> = {0: null, '01': 1};
+expectTypeOf(nullableNumericNames).toBe<{[index: number]: string | null; readonly '01': number}>();
+// @ts-expect-error An unselected field keeps its readonly modifier.
+nullableNumericNames['01'] = 1;
+expectTypeOf<SetNullable<{[index: number]: unknown; '0': string; '1.5': number}, number>>()
+	.toBe<{[index: number]: unknown; '0': string | null; '1.5': number | null}>();
+expectTypeOf<SetNullable<{[index: number]: unknown; readonly '01'?: Date}, number>['01']>().toBe<Date | undefined>();
+
+// Constructing a selected field preserves an unrelated generic payload.
+function _constructNullablePayload<Value>(payload: Value): SetNullable<{id: string; payload: Value}, 'id'> {
+	return {id: null, payload};
+}
+
+// A selector reaches each union member through that member's own spelling of the numeric key.
+type NumericSpellings = {kind: 'number'; 0: 'number'} | {kind: 'string'; '0'?: 'string'};
+expectTypeOf<Extract<SetNullable<NumericSpellings, '0'>, {kind: 'number'}>>().toBe<{kind: 'number'; 0: 'number' | null}>();
+expectTypeOf<Extract<SetNullable<NumericSpellings, 0>, {kind: 'string'}>>().toBe<{kind: 'string'; '0'?: 'string' | null}>();
+
+// A numeric selector does not change a `string` index signature, which also covers non-numeric keys.
+expectTypeOf<SetNullable<{[key: string]: string}, number>>().toBe<{[key: string]: string}>();
+
+// Inference keeps the selected numeric key precise and retains the other fields.
+declare function makeFieldNullable<const Source, Key extends keyof Source>(source: Source, key: Key): SetNullable<Source, Key>;
+const inferredNullableField = makeFieldNullable({0: 'ready', payload: 1}, 0);
+expectTypeOf(inferredNullableField).toBe<{readonly 0: 'ready' | null; readonly payload: 1}>();
+// @ts-expect-error Selecting the field does not make a readonly field writable.
+inferredNullableField[0] = null;

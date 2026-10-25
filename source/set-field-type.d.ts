@@ -1,11 +1,13 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {ApplyDefaultOptions, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, KeySelector, SelectedKeyAlias, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
 
 export type SetFieldTypeOptions = {
 	/**
 	Preserve optional and readonly modifiers for properties being updated.
 
 	NOTE: Property modifiers will always be preserved for properties that are not being updated.
+
+	Known limitation: A numeric key that is selected in the other spelling (`'0'` for a key declared as `0`, or the reverse) gets the new type, but keeps its modifiers.
 
 	@default true
 	*/
@@ -54,20 +56,18 @@ type MyModelApi2 = SetFieldType<MyModel, 'createdAt' | 'updatedAt', string, {pre
 @category Object
 */
 export type SetFieldType<BaseType, Keys extends KeysOfUnion<BaseType>, NewType, Options extends SetFieldTypeOptions = {}> =
-	_SetFieldType<BaseType, UnwrapPathBrand<Keys>, NewType, ApplyDefaultOptions<SetFieldTypeOptions, DefaultSetFieldTypeOptions, Options>>;
+	_SetFieldType<BaseType, KeySelector<UnwrapPathBrand<Keys>>, NewType, ApplyDefaultOptions<SetFieldTypeOptions, DefaultSetFieldTypeOptions, Options>>;
 
 type _SetFieldType<BaseType, Keys, NewType, Options extends Required<SetFieldTypeOptions>> =
 	// The distribution comes first, so that a member the keys do not reach is left as it is. Otherwise the `Record` below hands it a key it never had, as a required one when the modifiers are not preserved.
 	BaseType extends unknown
 		? SimplifyObject<{
-			// A tuple is keyed by a number, but a homomorphic mapped type hands its elements over under their string form, so `P extends Keys` would compare `"0"` against `0` and never match. Both forms of a key are therefore accepted.
+			// Tuple elements use string indices, so look up their canonical numeric aliases in the selector, which matches each union member by its own spelling. Other numeric-looking names, like '01', stay distinct.
 			[P in keyof BaseType]: P extends SelectedKeys<BaseType, Keys>
 				? NewType
-				: P extends string | number | bigint | boolean | null | undefined
-					? `${P}` extends `${Keys & (string | number)}`
-						? NewType
-						: BaseType[P]
-					: BaseType[P];
+				: [SelectedKeyAlias<Keys, P>] extends [never]
+					? BaseType[P]
+					: NewType;
 		} & (
 			// `Record` is used to remove property modifiers. Matching declared spellings are added without replacing the original selector, so autocomplete unions retain their known required members beside index signatures. A tuple is left out of it: `Record` over `number` answers with every member an array has, which is not a tuple.
 			Options['preservePropertyModifiers'] extends false

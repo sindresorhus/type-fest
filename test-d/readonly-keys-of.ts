@@ -92,3 +92,53 @@ type AllowsOnlyObjects = ReadonlyKeysOf<string>;
 // A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
 expectTypeOf<ReadonlyKeysOf<{readonly a: 1} | {readonly b: 2}>>().toBe<'a' | 'b'>();
 expectTypeOf<ReadonlyKeysOf<{readonly a: 1; readonly b: 2} | {readonly a: 1; c: 3}>>().toBe<'a' | 'b'>();
+
+// Readonly accessors and declared fields are selected, while writable fields are not.
+declare class ReadonlyAccount {
+	readonly id: string;
+	name: string;
+	get balance(): number;
+}
+expectTypeOf<ReadonlyKeysOf<ReadonlyAccount>>().toBe<'id' | 'balance'>();
+expectTypeOf<ReadonlyKeysOf<{[key: string]: unknown; readonly id: number}>>().toBe<'id'>();
+expectTypeOf<ReadonlyKeysOf<{readonly empty: never; readonly optional?: unknown; mutable: any}>>().toBe<'empty' | 'optional'>();
+expectTypeOf<ReadonlyKeysOf<any>>().toBe<never>();
+expectTypeOf<ReadonlyKeysOf<never>>().toBe<never>();
+// @ts-expect-error An unknown value has no known object properties.
+type UnknownReadonlyKeys = ReadonlyKeysOf<unknown>;
+
+type ReadonlyValue<Value> = {readonly id: Value; label: string};
+function _readonlyValueKey<Value>(): ReadonlyKeysOf<ReadonlyValue<Value>> {
+	return 'id';
+}
+
+function _readReadonlyValue<Value>(value: ReadonlyValue<Value>, key: ReadonlyKeysOf<ReadonlyValue<Value>>): Value {
+	return value[key];
+}
+
+declare function selectServerFields<const Model extends object>(model: Model): Pick<Model, ReadonlyKeysOf<Model>>;
+const serverFields = selectServerFields({id: 'session', data: {count: 1}});
+expectTypeOf(serverFields).toBe<{readonly id: 'session'; readonly data: {readonly count: 1}}>();
+// @ts-expect-error An otherwise valid value cannot replace a readonly property.
+serverFields.id = 'session';
+
+function isReadonlyField<Base extends object>(key: keyof Base, fields: ReadonlyArray<ReadonlyKeysOf<Base>>): key is ReadonlyKeysOf<Base> {
+	return new Set<PropertyKey>(fields).has(key);
+}
+
+function _readCheckedReadonlyField<Base extends object>(value: Base, key: keyof Base, fields: ReadonlyArray<ReadonlyKeysOf<Base>>) {
+	return isReadonlyField(key, fields) ? value[key] : undefined;
+}
+
+expectTypeOf(_readCheckedReadonlyField({id: 'session', label: 'name'} as ReadonlyValue<'session'>, 'id', ['id'])).toBe<'session' | undefined>();
+
+enum ReadonlyField {
+	Value = 'value',
+}
+declare const readonlySymbol: unique symbol;
+expectTypeOf<ReadonlyKeysOf<{readonly [ReadonlyField.Value]: string; readonly [readonlySymbol]?: number; mutable: boolean}>>()
+	.toBe<ReadonlyField.Value | typeof readonlySymbol>();
+
+// Preserve the existing queries for an indeterminate `any` key domain.
+expectTypeOf<ReadonlyKeysOf<Record<any, unknown>>>().toBe<never>();
+expectTypeOf<ReadonlyKeysOf<Readonly<Record<any, unknown>>>>().toBe<any>();

@@ -156,3 +156,57 @@ expectTypeOf<SetFieldType<{[NumericSelectorKey.One]: string; other: number}, 1, 
 expectTypeOf<SetFieldType<string[], NumericSelectorKey.Zero, boolean>>().toBe<string[]>();
 expectTypeOf<SetFieldType<{[NumericSelectorKey.One]: string; other: number}, LiteralUnion<NumericSelectorKey.One, number>, boolean, {preservePropertyModifiers: false}>>()
 	.toBe<{[NumericSelectorKey.One]: boolean; other: number}>();
+
+// An empty selection does not introduce the replacement type into generic fields.
+function _readUnselectedFieldRecord<Key extends string>(value: SetFieldType<Record<Key, string>, never, boolean>, key: Key): string {
+	return value[key];
+}
+
+function _readUnselectedFieldOwner<Key extends string, Owner extends Record<Key, string>>(value: SetFieldType<Owner, never, boolean>, key: Key): string {
+	return value[key];
+}
+
+function _readUnselectedKnownFieldOwner<Owner extends {id: string}>(value: SetFieldType<Owner, never, boolean>): string {
+	return value.id;
+}
+
+// Numeric index selectors leave differently spelled property names unchanged.
+type ReplacedNumericNames = {[index: number]: string; readonly '01': number};
+function _readUnselectedNumericName(value: SetFieldType<ReplacedNumericNames, number, boolean>): number {
+	return value['01'];
+}
+
+const replacedNumericNames: SetFieldType<ReplacedNumericNames, number, boolean> = {0: true, '01': 1};
+expectTypeOf(replacedNumericNames).toBe<{[index: number]: boolean; readonly '01': number}>();
+// @ts-expect-error An unselected field keeps its readonly modifier.
+replacedNumericNames['01'] = 1;
+expectTypeOf<SetFieldType<{[index: number]: unknown; '0': string; '1.5': number}, number, boolean>>()
+	.toBe<{[index: number]: boolean; '0': boolean; '1.5': boolean}>();
+
+const optionalNumericName: SetFieldType<{[index: number]: unknown; readonly '01'?: Date; keep: string}, number, boolean, {preservePropertyModifiers: false}> = {keep: 'ready'};
+expectTypeOf(optionalNumericName['01']).toBe<Date | undefined>();
+optionalNumericName[0] = true;
+// @ts-expect-error Modifier removal only affects selected numeric properties.
+optionalNumericName['01'] = new Date();
+
+// Constructing a replacement preserves an unrelated generic payload.
+function _constructReplacementPayload<Value>(payload: Value): SetFieldType<{id: string; payload: Value}, 'id', number> {
+	return {id: 1, payload};
+}
+
+// A selector reaches each union member through that member's own spelling of the numeric key.
+type NumericSpellings = {kind: 'number'; 0: 'number'} | {kind: 'string'; '0'?: 'string'};
+expectTypeOf<Extract<SetFieldType<NumericSpellings, '0', boolean>, {kind: 'number'}>>().toBe<{kind: 'number'; 0: boolean}>();
+expectTypeOf<Extract<SetFieldType<NumericSpellings, 0, boolean>, {kind: 'string'}>>().toBe<{kind: 'string'; '0'?: boolean}>();
+expectTypeOf<Exclude<SetFieldType<[a: 'a', b: 'b'] | {0: 'object'}, '0', boolean>, unknown[]>>().toBe<{0: boolean}>();
+
+// A numeric selector does not change a `string` index signature, which also covers non-numeric keys.
+expectTypeOf<SetFieldType<{[key: string]: string}, number, boolean>>().toBe<{[key: string]: string}>();
+expectTypeOf<SetFieldType<{[key: string]: unknown; 0: string}, number, boolean>>().toBe<{[key: string]: unknown; 0: boolean}>();
+
+// Input and replacement inference retain the numeric selector and unselected literal fields.
+declare function replaceFieldType<const Source, Key extends keyof Source, const Value>(source: Source, key: Key, value: Value): SetFieldType<Source, Key, Value>;
+const inferredFieldReplacement = replaceFieldType({0: 'ready', payload: 1}, 0, false);
+expectTypeOf(inferredFieldReplacement).toBe<{readonly 0: false; readonly payload: 1}>();
+// @ts-expect-error Replacement preserves the selected field's readonly modifier.
+inferredFieldReplacement[0] = false;

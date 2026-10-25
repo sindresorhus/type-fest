@@ -1,4 +1,5 @@
-import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsReadonlyProperty} from './internal/object.d.ts';
 import type {PickReadonly} from './pick-readonly.d.ts'; // For `@link`
 
 /**
@@ -27,13 +28,13 @@ Known limitations:
 @category Utilities
 */
 export type ReadonlyKeysOf<Type extends object> =
-	Type extends unknown // For distributing `Type`
-		? (keyof {[Key in keyof Type as
-			IsReadonlyKeyOf<Type, Key> extends false
-				? never
-				: Key
-			]: never
-		}) & keyof Type // Intersect with `keyof Type` to narrow the member's own keys. For a union this runs per member, see the note on unions in the docs.
-		: never; // Should never happen
+	// Check `any` once; each mapped key already belongs to its distributed member.
+	IsAny<Type> extends true ? never
+		: Type extends unknown // For distributing `Type`
+			? (keyof {[Key in keyof Type as
+				IsReadonlyProperty<Type, Key> extends true ? Key : never
+				]: never
+			}) & keyof Type // Intersect with `keyof Type` to narrow the member's own keys. For a union this runs per member, see the note on unions in the docs.
+			: never; // Should never happen
 
 export {};

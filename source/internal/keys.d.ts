@@ -132,6 +132,13 @@ export type KeysExcept<Type, Keys> = Type extends UnknownArray
 	: Exclude<keyof Type, KeySelector<Keys>>;
 
 /**
+Returns the canonical numeric spelling of the mapped `Key` when the selector `Keys` names it, or `never`.
+
+A mapped type hands tuple elements over under their string form, so `'0'` must match a selector of `0`. Other numeric-looking names, such as `'01'`, stay distinct.
+*/
+export type SelectedKeyAlias<Keys, Key> = ExactKey<Record<Keys & PropertyKey, never>, Extract<Key, number | `${number}`>>;
+
+/**
 Returns the keys of `Type` that the given `Keys` select.
 
 A string enum member also selects the declared key with its value's name. A numeric enum member selects the declared key with its value, but not a `number` index signature. It is matched by its value, because `number` is assignable to a numeric enum.
@@ -155,7 +162,7 @@ export type SelectedKeys<Type, Keys> =
 /**
 Replaces a numeric enum member with its value, and adds the value's name of a string enum member.
 */
-type KeySelector<Key> =
+export type KeySelector<Key> =
 	Key extends unknown // To distribute `Key`
 		// A wide key, such as `number` or `string & {}`, is kept as is.
 		? {} extends Record<Key & PropertyKey, never>

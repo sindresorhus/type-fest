@@ -1,4 +1,4 @@
-import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
+import type {IsReadonlyProperty} from './internal/object.d.ts';
 import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts'; // For `@link`
 import type {PickWritable} from './pick-writable.d.ts'; // For `@link`
 
@@ -46,9 +46,10 @@ Known limitations:
 */
 export type PickReadonly<ObjectType extends object> =
 	{[Key in keyof ObjectType as // A mapped type over `keyof ObjectType` maps each member of a union by itself, and unlike a distributive conditional type, it keeps a generic `ObjectType` assignable to the result.
-		IsReadonlyKeyOf<ObjectType, Key> extends false
-			? never
-			: Key
+		// The mapped key already belongs to this object, so compare its readonly modifier directly.
+		IsReadonlyProperty<ObjectType, Key> extends true
+			? Key
+			: never
 		]: ObjectType[Key]
 	};
 

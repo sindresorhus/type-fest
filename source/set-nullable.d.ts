@@ -1,4 +1,4 @@
-import type {SelectedKeys, UnwrapPathBrand} from './internal/index.d.ts';
+import type {KeySelector, SelectedKeyAlias, SelectedKeys, UnwrapPathBrand} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SetNonNullable} from './set-non-nullable.d.ts'; // For `@link`
 
@@ -35,18 +35,16 @@ type AllNullable = SetNullable<Foo>;
 @category Object
 */
 export type SetNullable<BaseType, Keys extends KeysOfUnion<BaseType> = KeysOfUnion<BaseType>> =
-	SetNullableImplementation<BaseType, UnwrapPathBrand<Keys>>;
+	SetNullableImplementation<BaseType, KeySelector<UnwrapPathBrand<Keys>>>;
 
 // A homomorphic mapped type over a type parameter is applied to each member of a union on its own, so a key that only some members have reaches those members.
 type SetNullableImplementation<BaseType, Keys> = {
-	// A tuple is keyed by a number, but a homomorphic mapped type hands its elements over under their string form, so `Key extends Keys` would compare `"0"` against `0` and never match. Both forms of a key are therefore accepted.
+	// Tuple elements use string indices, so look up their canonical numeric aliases in the selector, which matches each union member by its own spelling. Other numeric-looking names, like '01', stay distinct.
 	[Key in keyof BaseType]: Key extends SelectedKeys<BaseType, Keys>
 		? BaseType[Key] | null
-		: Key extends string | number
-			? `${Key}` extends `${Keys & (string | number)}`
-				? BaseType[Key] | null
-				: BaseType[Key]
-			: BaseType[Key];
+		: [SelectedKeyAlias<Keys, Key>] extends [never]
+			? BaseType[Key]
+			: BaseType[Key] | null;
 };
 
 export {};

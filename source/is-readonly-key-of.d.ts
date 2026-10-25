@@ -1,5 +1,5 @@
-import type {IsEqual} from './is-equal.d.ts';
 import type {IsAny} from './is-any.d.ts';
+import type {IsReadonlyProperty} from './internal/object.d.ts';
 
 /**
 Returns a boolean for whether the given key is a readonly key of type.
@@ -45,10 +45,7 @@ export type IsReadonlyKeyOf<Type extends object, Key extends keyof Type> =
 	IsAny<Type | Key> extends true ? never
 		: Key extends unknown // For distributing `Key`
 			? Type extends unknown // For distributing `Type`
-				? IsEqual<
-					{[K in Key]: Type[Key]},
-					{readonly [K in Key]: Type[Key]}
-				>
+				? IsReadonlyProperty<Type, Key>
 				: never // Should never happen
 			: never; // Should never happen
 
