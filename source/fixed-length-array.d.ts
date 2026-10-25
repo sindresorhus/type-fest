@@ -1,4 +1,3 @@
-import type {Except} from './except.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 
 /**
@@ -123,7 +122,7 @@ const copy = [...color];
 export type FixedLengthArray<Element, Length extends number> = _FixedLengthArray<TupleOf<Length, Element>>;
 
 type _FixedLengthArray<Tuple extends unknown[]> = Tuple extends unknown // Keep each tuple's indices paired with its length so that checking `length` narrows a union.
-	? Except<Tuple, ArrayLengthMutationKeys | number | 'length'>
+	? Omit<Tuple, ArrayLengthMutationKeys | number | 'length'>
 	// Read the length back off the built tuple so it stays consistent with the actual elements. `TupleOf` ignores a decimal part and turns a negative length into an empty tuple.
 	& {readonly length: Tuple['length']}
 	& (number extends Tuple['length'] ? {[n: number]: Tuple[number]} : {}) // Add `number` index signature only for non-tuple arrays.

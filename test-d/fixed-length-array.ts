@@ -174,3 +174,39 @@ expectTypeOf<FixedLengthArray<unknown, 2 | 3>>().toBe<FixedLengthArray<unknown, 
 expectTypeOf<FixedLengthArray<never, 2 | 3>>().toBe<FixedLengthArray<never, 2> | FixedLengthArray<never, 3>>();
 expectTypeOf<FixedLengthArray<string, never>>().toBe<FixedLengthArray<string, 0>>();
 expectTypeOf<FixedLengthArray<string, any>>().toBe<FixedLengthArray<string, number>>();
+
+function makeTriple<const Value>(value: Value): FixedLengthArray<Value, 3> {
+	return [value, value, value];
+}
+
+const repeatedValue = makeTriple({code: 'red'});
+expectTypeOf(repeatedValue[2]).toBe<{readonly code: 'red'}>();
+repeatedValue[0] = {code: 'red'};
+// @ts-expect-error Const-inferred nested fields stay readonly.
+repeatedValue[2].code = 'red';
+// @ts-expect-error A valid length value cannot replace the readonly length.
+repeatedValue.length = 3;
+// @ts-expect-error There is no fourth position.
+const _fourthValue: unknown = repeatedValue[3];
+// @ts-expect-error Fixed-length results exclude length-changing methods.
+type MissingMutator = typeof repeatedValue['push'];
+
+function _copyFixedItems<Value, Length extends number>(values: FixedLengthArray<Value, Length>): Value[] {
+	return values.map(value => value);
+}
+
+function _readFixedItem<Value>(values: FixedLengthArray<{readonly value: Value}, 3>): Value {
+	return values[2].value;
+}
+
+// Enum lengths still produce fixed positions and an ordinary numeric length.
+enum ChannelCount {
+	Rgb = 3,
+}
+const enumLengthColor: FixedLengthArray<number, ChannelCount.Rgb> = [255, 128, 0];
+expectTypeOf(enumLengthColor.length).toBe<3>();
+expectTypeOf(enumLengthColor[2]).toBe<number>();
+// @ts-expect-error The enum length does not introduce a broad numeric index signature.
+expectTypeOf(enumLengthColor[3]);
+// @ts-expect-error A three-channel color must contain all three elements.
+const incompleteEnumLengthColor: FixedLengthArray<number, ChannelCount.Rgb> = [255, 128];
