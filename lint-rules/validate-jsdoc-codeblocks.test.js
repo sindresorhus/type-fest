@@ -1,4 +1,9 @@
 /* eslint-disable max-lines -- Many test cases. */
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import {test} from 'node:test';
+import {Linter} from 'eslint';
+import tsParser from '@typescript-eslint/parser';
 import {code1, code2, createRuleTester, dedenter, errorAt as errorAt_, exportType, exportTypeAndOption, fence, jsdoc} from './testing-utilities.js';
 import {validateJSDocCodeblocksRule} from './validate-jsdoc-codeblocks.js';
 
@@ -14,8 +19,249 @@ const invalidCodeblockErrorAt = props => errorAt_({...props, messageId: 'invalid
 const incorrectTwoslashTypeErrorAt = props => errorAt_({...props, messageId: 'incorrectTwoslashType'});
 const incorrectTwoslashFormatErrorAt = props => errorAt_({...props, messageId: 'incorrectTwoslashFormat'});
 
+test('validates source edits before the source is first imported by an example', async () => {
+	// A fresh environment ensures earlier examples have not already loaded the source from disk.
+	const {validateJSDocCodeblocksRule: freshRule} = await import('./validate-jsdoc-codeblocks.js?unloaded-source');
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: freshRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const filename = path.resolve(import.meta.dirname, '../source/trim.d.ts');
+	const results = ['unsaved', 'edited-again'].map(result => {
+		const code = `${jsdoc(fence(`import type {Trim} from 'type-fest';\ntype Value = Trim<' value '>;\n//=> '${result}'`))}\nexport type Trim<Value extends string> = '${result}';\nexport {};`;
+		const valid = linter.verify(code, configuration, {filename});
+		const messages = linter.verify(code.replace(`//=> '${result}'`, '//=> never'), configuration, {filename});
+		return {valid, messages};
+	});
+	assert.deepEqual(results.map(({valid}) => valid), [[], []]);
+	assert.deepEqual(results.map(({messages}) => messages.length), [1, 1]);
+	assert.deepEqual(results.map(({messages}) => messages[0].messageId), ['incorrectTwoslashType', 'incorrectTwoslashType']);
+	assert.deepEqual(results.map(({messages}) => messages[0].fix.text), ['//=> \'unsaved\'', '//=> \'edited-again\'']);
+});
+
+test('syntax errors suppress semantic errors in the same example', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const code = exportType(jsdoc(fence('const broken = ;\nconst count: number = "wrong";')));
+	const messages = linter.verify(code, configuration, {filename: 'diagnostics.ts'});
+	assert.equal(messages.length, 1);
+	assert.equal(messages[0].messageId, 'invalidCodeblock');
+	assert.equal(messages[0].message, 'Expression expected.');
+
+	const repaired = linter.verify(code.replace('const broken = ;', 'const broken = 1;'), configuration, {filename: 'diagnostics.ts'});
+	assert.equal(repaired.length, 1);
+	assert.equal(repaired[0].messageId, 'invalidCodeblock');
+	assert.match(repaired[0].message, /not assignable to type 'number'/v);
+});
+
+test('markerless examples still validate code and later examples still validate assertions', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const code = exportType(jsdoc(
+		fence('const incorrect: number = "wrong";'),
+		fence('const valid = {count: 1};'),
+		fence('const count = 1;\n//=> number'),
+	));
+	const messages = linter.verify(code, configuration, {filename: 'markerless.ts'});
+	assert.deepEqual(messages.map(({messageId}) => messageId), ['invalidCodeblock', 'incorrectTwoslashType']);
+	assert.match(messages[0].message, /not assignable to type 'number'/v);
+	assert.equal(messages[1].fix.text, '//=> 1');
+});
+
+for (const newline of ['\n', '\r\n']) {
+	const lineEndingName = newline === '\n' ? 'LF' : 'CRLF';
+	test(`unfinished ${lineEndingName} fences preserve earlier assertion diagnostics and fixes`, () => {
+		const linter = new Linter();
+		const configuration = [{
+			files: ['**/*.ts'],
+			languageOptions: {parser: tsParser},
+			plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+			rules: {'test/validate': ['error', {verbosityLevels: []}]},
+		}];
+		const unfinished = Array.from({length: 400}, () => ['```ts', 'const unfinished = 1;'].join(newline)).join(newline);
+		const code = ['/**', '```json', 'not TypeScript !!!', '```', '```ts', 'const count = 1;', '//=> number', '```', unfinished, '*/', 'export type Example = string;'].join(newline);
+		const messages = linter.verify(code, configuration, {filename: `unfinished-${lineEndingName}.ts`});
+		assert.deepEqual(messages.map(message => message.messageId), ['incorrectTwoslashType']);
+		assert.deepEqual(messages[0].fix, {range: [code.indexOf('//=> number'), code.indexOf('//=> number') + '//=> number'.length], text: '//=> 1'});
+		const result = linter.verifyAndFix(code, configuration, {filename: `unfinished-${lineEndingName}.ts`});
+		assert.deepEqual(result.messages, []);
+		assert.equal(result.output, code.replace('//=> number', '//=> 1'));
+	});
+}
+
+test('incompatible compiler option overrides use defaults without interrupting later examples', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const results = ['moduleResolution: Bundler', 'module: ESNext'].map(override => {
+		const code = exportType(jsdoc(
+			fence(`// @${override}\nconst incorrect: number = "wrong";`),
+			fence('const valid = 1;\n//=> 1'),
+			fence('const count = 2;\n//=> number'),
+		));
+		return linter.verify(code, configuration, {filename: 'compiler-options.ts'});
+	});
+	assert.deepEqual(results.map(messages => messages.map(({messageId}) => messageId)), [
+		['invalidCodeblock', 'incorrectTwoslashType'],
+		['invalidCodeblock', 'incorrectTwoslashType'],
+	]);
+	assert.ok(results.every(messages => messages[0].message.includes('not assignable to type \'number\'')));
+	assert.deepEqual(results.map(messages => messages[1].fix.text), ['//=> 2', '//=> 2']);
+});
+
+test('indented assertions retain the requested verbosity choices and fully expanded fixes', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: [1, 2, 3]}]},
+	}];
+	const code = exportType(jsdoc(fence('function example() {\n\t\ttype Result = {outer: Pick<{inner: Pick<{value: string}, "value">}, "inner">};\n\t\t//=> unknown\n}')));
+	const result = linter.verifyAndFix(code, configuration, {filename: 'verbosity.ts'});
+	assert.deepEqual(result.messages, []);
+	assert.equal(result.output, code.replace('//=> unknown', '//=> {outer: {inner: {value: string}}}'));
+	const repeated = linter.verifyAndFix(result.output, configuration, {filename: 'verbosity.ts'});
+	assert.equal(repeated.fixed, false);
+	assert.deepEqual(repeated.messages, []);
+});
+
+test('leading indentation preserves literal contents and does not select a preceding line', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const template = dedenter`\`first\${number}\n    second\``;
+	const results = ['', ' '.repeat(4), '\t', ' \t '].map(indentation => {
+		const example = [
+			`type Text = ${template};`,
+			'const previous = 1;',
+			indentation,
+			`${indentation}//=> number`,
+			`${indentation}type Value = Text;`,
+			`${indentation}//=> unknown`,
+			`${indentation}type Unicode = '😀é';`,
+			`${indentation}//=> unknown`,
+		].join('\n');
+		const code = exportType(jsdoc(fence(example)));
+		const templateComment = `//=> ${template.replaceAll('\n', () => `\n${indentation}// `)}`;
+		const expected = code.replace('//=> unknown', () => templateComment).replace('//=> unknown', '//=> \'😀é\'');
+		const messages = linter.verify(code, configuration, {filename: 'indentation.ts'});
+		const result = linter.verifyAndFix(code, configuration, {filename: 'indentation.ts'});
+		const repeated = linter.verifyAndFix(result.output, configuration, {filename: 'indentation.ts'});
+		return {messages, result, repeated, expected};
+	});
+	assert.deepEqual(results.map(({messages}) => messages.map(message => message.messageId)), results.map(() => ['incorrectTwoslashType', 'incorrectTwoslashType']));
+	assert.deepEqual(results.map(({result}) => result.messages), results.map(() => []));
+	assert.deepEqual(results.map(({result}) => result.output), results.map(({expected}) => expected));
+	assert.deepEqual(results.map(({repeated}) => repeated.fixed), results.map(() => false));
+	assert.deepEqual(results.map(({repeated}) => repeated.messages), results.map(() => []));
+});
+
+test('type printing stays independent across files and repeated lint passes', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const cases = [
+		{filename: 'unicode.ts', example: 'type Value = {readonly optional?: [1 | 2, \'é\' | \'😀\']};', expected: '//=> {readonly optional?: [1 | 2, \'é\' | \'😀\']}'},
+		{filename: 'literal.ts', example: 'type Value = \'{ keep }\';', expected: '//=> \'{ keep }\''},
+		{filename: 'callback.ts', example: 'type Value = (value: \'z\' | \'a\') => 9 | 1;', expected: '//=> (value: \'a\' | \'z\') => 1 | 9'},
+	];
+	const results = [...cases, ...cases.toReversed()].map(({filename, example, expected}) => {
+		const code = exportType(jsdoc(fence(`${example}\n//=> unknown`)));
+		const result = linter.verifyAndFix(code, configuration, {filename});
+		return {result, expected: code.replace('//=> unknown', () => expected)};
+	});
+	assert.deepEqual(results.map(({result}) => result.messages), results.map(() => []));
+	assert.deepEqual(results.map(({result}) => result.output), results.map(({expected}) => expected));
+	const repeated = cases.map(({filename}, index) => linter.verifyAndFix(results[index].result.output, configuration, {filename}));
+	assert.deepEqual(repeated.map(result => result.fixed), [false, false, false]);
+	assert.deepEqual(repeated.map(result => result.messages), [[], [], []]);
+});
+
+test('repeated verbosity renderings preserve intermediate matches and the final expanded suggestion', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: [1, 2, 3]}]},
+	}];
+	const declaration = 'type Value = {account: Pick<{profile: Pick<{name: string}, \'name\'>}, \'profile\'>};';
+	const intermediate = exportType(jsdoc(fence(`${declaration}\n//=> {account: {profile: Pick<{name: string}, 'name'>}}`)));
+	assert.deepEqual(linter.verify(intermediate, configuration, {filename: 'intermediate.ts'}), []);
+	const incorrect = exportType(jsdoc(fence(`${declaration}\n//=> unknown`)));
+	const corrected = linter.verifyAndFix(incorrect, configuration, {filename: 'expanded.ts'});
+	assert.deepEqual(corrected.messages, []);
+	assert.equal(corrected.output, incorrect.replace('//=> unknown', '//=> {account: {profile: {name: string}}}'));
+
+	const repeated = exportType(jsdoc(fence('const count = 1;\n//=> 1\nconst other = 2;\n//=> 2')));
+	assert.deepEqual(linter.verify(repeated, configuration, {filename: 'repeated.ts'}), []);
+});
+
 ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 	valid: [
+		// Re-exporting another module does not expose a same-named local declaration.
+		[jsdoc(fence(codeWithErrors)), 'type Example = string;', 'export type {Example} from \'./other.d.ts\';'].join('\n'),
+		`${jsdoc(fence(codeWithErrors))}\ntype _Example = string;\nexport type {_Example as PublicExample};`,
+		// A top-level export list must not select an unexported declaration in a nested scope.
+		dedenter`
+			type Example = string;
+			export type {Example};
+			declare namespace Nested {
+				${jsdoc(fence(codeWithErrors))}
+				type Example = number;
+			}
+		`,
+		// Interfaces use the same public declaration boundary as type aliases.
+		`${jsdoc(fence('const value = 1;\n//=> 1'))}\nexport interface Example {}`,
+		`${jsdoc(fence(codeWithErrors))}\ninterface Example {}`,
+		`${jsdoc(fence(codeWithErrors))}\nexport interface _Example {}`,
+		// Member examples are checked only on declarations named Options.
+		dedenter`
+			export interface Example {
+				${jsdoc(fence(codeWithErrors))}
+				enabled?: boolean;
+			}
+		`,
+		dedenter`
+			export interface ExampleOptions {
+				${jsdoc(fence('const enabled = true;\n//=> true'))}
+				enabled?: boolean;
+			}
+		`,
+		// A marker inside a multiline template is string content, not a type assertion.
+		exportType(jsdoc(fence('const snippet = `\n//=> string\n`;'))),
+		exportType(jsdoc(fence('type Value = \'{ value }\';\n//=> \'{ value }\''))),
+		// Compiler directives and comment-like string contents remain outside the completed type.
+		exportType(jsdoc(fence('const value = 1;\n//=> 1\n// @ts-expect-error A documented invalid assignment.\nconst next: number = \'wrong\';'))),
+		exportType(jsdoc(fence('type Value = \'foo//bar\';\n//=> \'foo//bar\'\n// Keep this explanation.'))),
+		// An explanation after a complete twoslash type is not part of that type.
+		exportType(jsdoc(fence('const value = 1;\n//=> 1\n// Keep this explanation.\nconst next = 2;'))),
 		// Fence info strings ignore surrounding whitespace without accepting other languages.
 		exportType(jsdoc(fence(code1, ' ts '))),
 		exportType(jsdoc(fence(code1, '\ttypescript\t'))),
@@ -147,6 +393,98 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 		`),
 	],
 	invalid: [
+		// Export lists may precede the declaration, and several aliases still validate it only once.
+		{
+			code: `export type {Example as First, Example as Second, Example as default};\n${jsdoc(fence('const value: number = \'wrong\';'))}\ntype Example = string;`,
+			errors: [invalidCodeblockErrorAt({line: 4, textBeforeStart: 'const ', target: 'value'})],
+		},
+		{
+			code: dedenter`
+				interface ExampleOptions {
+					${jsdoc(fence('const value: number = \'wrong\';'))}
+					enabled?: boolean;
+				}
+				export type {ExampleOptions};
+			`,
+			errors: [invalidCodeblockErrorAt({line: 4, textBeforeStart: '\tconst ', target: 'value'})],
+		},
+		{
+			code: [jsdoc(fence('const value: number = \'wrong\';')), 'type Example = string;', 'export type {Example};'].join('\n'),
+			errors: [invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'value'})],
+		},
+		{
+			code: `${jsdoc(fence('const value: number = \'wrong\';'))}\ninterface Example {}\nexport type {Example as PublicExample};`,
+			errors: [invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'value'})],
+		},
+		{
+			code: `${jsdoc(fence('const value: number = \'wrong\';'))}\nexport default interface Example {}`,
+			errors: [invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'value'})],
+		},
+		// Interface option members have the same independently validated documentation as object type members.
+		{
+			code: dedenter`
+				export interface ExampleOptions {
+					${jsdoc(fence('const value: number = \'wrong\';'))}
+					enabled?: boolean;
+				}
+			`,
+			errors: [invalidCodeblockErrorAt({line: 4, textBeforeStart: '\tconst ', target: 'value'})],
+		},
+		{
+			code: `${jsdoc(fence('const value: number = \'wrong\';'))}\nexport interface Example {}`,
+			errors: [invalidCodeblockErrorAt({line: 3, textBeforeStart: 'const ', target: 'value'})],
+		},
+		// A parsed type must not also claim statements from an explanatory comment.
+		{
+			code: exportType(jsdoc(fence('const value = 1;\n//=> string |\n// Keep; save();'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 5, textBeforeEnd: '// Keep; save();'})],
+			output: null,
+		},
+		// A dangling operator must not claim a word from an explanatory comment.
+		{
+			code: exportType(jsdoc(fence('const value = 1;\n//=> string |\n// Keep this explanation.'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 5, textBeforeEnd: '// Keep this explanation.'})],
+			output: null,
+		},
+		{
+			code: exportType(jsdoc(fence('const value = 1;\n//=> string &\n// Keep this explanation.'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 5, textBeforeEnd: '// Keep this explanation.'})],
+			output: null,
+		},
+		// The same syntax boundary preserves CRLF and complete leading union/intersection members.
+		{
+			code: exportType(jsdoc(fence('const value = 1;\n//=> 2\n// Keep this explanation.'))).replaceAll('\n', '\r\n'),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> 2'})],
+			output: exportType(jsdoc(fence('const value = 1;\n//=> 1\n// Keep this explanation.'))).replaceAll('\n', '\r\n'),
+		},
+		{
+			code: exportType(jsdoc(fence('type Value = string | number;\n//=> string\n// | number\n// Keep this explanation.'))),
+			errors: [incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', endLine: 5, textBeforeEnd: '// | number'})],
+			output: exportType(jsdoc(fence('type Value = string | number;\n//=> string | number\n// Keep this explanation.'))),
+		},
+		{
+			code: exportType(jsdoc(fence('type Value = {a: 1} & {b: 2};\n//=> {a: 1}\n// & {b: 2}\n// Keep this explanation.'))),
+			errors: [incorrectTwoslashFormatErrorAt({line: 4, textBeforeStart: '', endLine: 5, textBeforeEnd: '// & {b: 2}'})],
+			output: exportType(jsdoc(fence('type Value = {a: 1} & {b: 2};\n//=> {a: 1} & {b: 2}\n// Keep this explanation.'))),
+		},
+		// A brace inside a nested line comment does not end the expected type.
+		{
+			code: exportType(jsdoc(fence('type Value = {a: string};\n//=> {\n// // A brace } stays inside this type comment.\n// a: string;\n// }\n// Keep this explanation.'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 7, textBeforeEnd: '// }'})],
+			output: exportType(jsdoc(fence('type Value = {a: string};\n//=> {a: string}\n// Keep this explanation.'))),
+		},
+		// An incomplete multiline type has no safe autofix span.
+		{
+			code: exportType(jsdoc(fence('const value = {a: 1};\n//=> {a:\n// number\n// Keep this explanation.'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', endLine: 6, textBeforeEnd: '// Keep this explanation.'})],
+			output: null,
+		},
+		// Correcting the type must preserve the adjacent explanation.
+		{
+			code: exportType(jsdoc(fence('const value = 1;\n//=> 2\n// Keep this explanation.\nconst next = 2;'))),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> 2'})],
+			output: exportType(jsdoc(fence('const value = 1;\n//=> 1\n// Keep this explanation.\nconst next = 2;'))),
+		},
 		// A prose line that starts with inline triple backticks does not open a fence.
 		{
 			code: exportType(jsdoc('```foo``` is inline markdown.', fence('const value: string = 42;', 'ts'))),
@@ -853,6 +1191,18 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			//=> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 		`))),
 
+		// Printing one member must not leak tuple, optional-property, or function formatting into the next.
+		exportTypeAndOption(jsdoc(fence(dedenter`
+			type First = {a?: 9 | 1; b: readonly ['😀' | 'é', 2 | 1]};
+			//=> {a?: 1 | 9; b: readonly ['é' | '😀', 1 | 2]}
+
+			type Second = {a: (value: 'z' | 'a') => 3 | 1; b: {x: 2 | 1}};
+			//=> {a: (value: 'a' | 'z') => 1 | 3; b: {x: 1 | 2}}
+
+			type Repeated = {first: 4 | 2; second: 4 | 2; third: 4 | 2};
+			//=> {first: 2 | 4; second: 2 | 4; third: 2 | 4}
+		`))),
+
 		// Numbers in nested unions are sorted
 		exportTypeAndOption(jsdoc(fence(dedenter`
 			type Test = {w: 0 | 10 | 5; x: [2 | 16 | 4]; y: {z: 3 | 27 | 9}};
@@ -1060,6 +1410,12 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			code: ['/**', '```ts', 'const count = 1;', '//=> 2', '```', '*/', 'export type Result = string;'].join('\r\n'),
 			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> 2'})],
 			output: ['/**', '```ts', 'const count = 1;', '//=> 1', '```', '*/', 'export type Result = string;'].join('\r\n'),
+		},
+		// Multiline twoslash fixes in CRLF files keep the line endings.
+		{
+			code: exportType(jsdoc(fence(`const value = {text: '${'a'.repeat(80)}'} as const;\n//=> number`))).replaceAll('\n', '\r\n'),
+			errors: [incorrectTwoslashTypeErrorAt({line: 4, textBeforeStart: '', target: '//=> number'})],
+			output: exportType(jsdoc(fence(`const value = {text: '${'a'.repeat(80)}'} as const;\n//=> {\n// \treadonly text: '${'a'.repeat(80)}';\n// }`))).replaceAll('\n', '\r\n'),
 		},
 		// Trimming the language tag does not change the range of a type-comment replacement.
 		{
@@ -1594,7 +1950,8 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 				//=> {a: number; b: number}
 
 				const bar = {a: 1, b: 2};
-				//=> {a: number; b: number}
+				//=> {a: number
+				// 	b:
 				\`\`\`
 				*/
 				export type T0 = string;
@@ -1921,4 +2278,217 @@ ruleTester.run('validate-jsdoc-codeblocks', validateJSDocCodeblocksRule, {
 			`,
 		},
 	],
+});
+
+test('twoslash autofixes cannot terminate the containing JSDoc comment', () => {
+	const code = exportType(jsdoc(fence(dedenter`
+		type Closing = \`\${'*'}\${'/'}\`;
+		//=> string
+	`)));
+	const linter = new Linter();
+	const result = linter.verifyAndFix(code, [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}], {filename: 'twoslash-terminator.ts'});
+
+	tsParser.parse(code);
+	tsParser.parse(result.output);
+	assert.equal(result.fixed, false);
+	assert.equal(result.output, code);
+	assert.equal(result.messages.length, 1);
+	assert.equal(result.messages[0].messageId, 'incorrectTwoslashType');
+	assert.equal(result.messages[0].fix, undefined);
+});
+
+test('twoslash formatting preserves string and template literal contents', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const types = [
+		'\'{ value }\'',
+		'\'value;}\'',
+		String.raw`'can\'t { change }'`,
+		'{text: \'{ value }\'; ending: \'value;}\'}',
+		'{\'{ key }\': \'value\'}',
+		dedenter`\`{ \${number} }\``,
+		dedenter`\`first\${string}\n    second\``,
+	];
+
+	const cases = types.map(type => {
+		const declarations = `type Text = ${type};\ntype Value = Text;`;
+		const correct = exportType(jsdoc(fence(`${declarations}\n//=> ${type.replaceAll('\n', '\n// ')}`)));
+		const incorrect = exportType(jsdoc(fence(`${declarations}\n//=> unknown`)));
+		const result = linter.verifyAndFix(incorrect, configuration, {filename: 'literal-content.ts'});
+		const repeated = linter.verifyAndFix(result.output, configuration, {filename: 'literal-content.ts'});
+		return {correct, result, repeated};
+	});
+	assert.deepEqual(cases.map(({result}) => result.fixed), types.map(() => true));
+	assert.deepEqual(cases.map(({result}) => result.output), cases.map(({correct}) => correct));
+	assert.deepEqual(cases.map(({result}) => result.messages), types.map(() => []));
+	assert.deepEqual(cases.map(({repeated}) => repeated.fixed), types.map(() => false));
+	assert.deepEqual(cases.map(({repeated}) => repeated.output), cases.map(({correct}) => correct));
+	assert.deepEqual(cases.map(({repeated}) => repeated.messages), types.map(() => []));
+});
+
+test('interface and option examples receive stable twoslash fixes', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const code = dedenter`
+		${jsdoc(fence('const count = 1;\n//=> 2'))}
+		export interface ExampleOptions {
+			${jsdoc(fence('const text = \'value\';\n//=> unknown'))}
+			text?: string;
+		}
+	`;
+	const expected = code.replace('//=> 2', '//=> 1').replace('//=> unknown', '//=> \'value\'');
+	const cases = [
+		{code, expected, filename: 'source/interface-example.ts'},
+		{
+			code: code.replace('export interface', 'export default interface'),
+			expected: expected.replace('export interface', 'export default interface'),
+			filename: 'source/default-interface-example.ts',
+		},
+		{code: `declare namespace Scoped {\n${code}\n}`, expected: `declare namespace Scoped {\n${expected}\n}`, filename: 'source/namespace-example.ts'},
+	];
+	const results = cases.map(({code: example, filename}) => linter.verifyAndFix(example, configuration, {filename}));
+	assert.deepEqual(results.map(result => result.fixed), [true, true, true]);
+	assert.deepEqual(results.map(result => result.output), cases.map(({expected: output}) => output));
+	assert.deepEqual(results.map(result => result.messages), [[], [], []]);
+	const repeated = results.map((result, index) => linter.verifyAndFix(result.output, configuration, {filename: cases[index].filename}));
+	assert.deepEqual(repeated.map(result => result.fixed), [false, false, false]);
+	assert.deepEqual(repeated.map(result => result.output), cases.map(({expected: output}) => output));
+	assert.deepEqual(repeated.map(result => result.messages), [[], [], []]);
+
+	// Internal interfaces retain the rule's existing directory exclusion.
+	const internal = linter.verifyAndFix(code, configuration, {filename: 'source/internal/interface-example.ts'});
+	assert.equal(internal.fixed, false);
+	assert.equal(internal.output, code);
+	assert.deepEqual(internal.messages, []);
+});
+
+test('export-list examples receive stable twoslash fixes', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const declarations = ['type Example = string;', 'interface Example {}'];
+	const cases = declarations.map(declaration => ({
+		code: `${jsdoc(fence('const count = 1;\n//=> 2'))}\n${declaration}\nexport type {Example as PublicExample};`,
+		expected: `${jsdoc(fence('const count = 1;\n//=> 1'))}\n${declaration}\nexport type {Example as PublicExample};`,
+	}));
+	const results = cases.map(({code}) => linter.verifyAndFix(code, configuration, {filename: 'source/listed-example.ts'}));
+	assert.deepEqual(results.map(result => result.fixed), [true, true]);
+	assert.deepEqual(results.map(result => result.output), cases.map(({expected}) => expected));
+	assert.deepEqual(results.map(result => result.messages), [[], []]);
+	const repeated = results.map(result => linter.verifyAndFix(result.output, configuration, {filename: 'source/listed-example.ts'}));
+	assert.deepEqual(repeated.map(result => result.fixed), [false, false]);
+	assert.deepEqual(repeated.map(result => result.output), cases.map(({expected}) => expected));
+	assert.deepEqual(repeated.map(result => result.messages), [[], []]);
+});
+
+test('twoslash fixes preserve marker text in literals and still check interpolation comments', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const literalExamples = [
+		'const text = `\n//=> string\n`;',
+		dedenter`const text = \`\n//=> string\n\${1}\`;`,
+		dedenter`const text = \`\${1}\n//=> string\n\${2}\`;`,
+		dedenter`const text = \`\${1}\n//=> string\n\`;`,
+		'type Text = `\n//=> string\n`;',
+		'const text = "first\\\n//=> string";',
+	];
+
+	const results = literalExamples.map(example => {
+		const incorrect = exportType(jsdoc(fence(`${example}\nconst count = 1;\n//=> number`)));
+		const expected = exportType(jsdoc(fence(`${example}\nconst count = 1;\n//=> 1`)));
+		const result = linter.verifyAndFix(incorrect, configuration, {filename: 'literal-marker.ts'});
+		const repeated = linter.verifyAndFix(result.output, configuration, {filename: 'literal-marker.ts'});
+		return {result, repeated, expected};
+	});
+	assert.deepEqual(results.map(({result}) => result.output), results.map(({expected}) => expected));
+	assert.deepEqual(results.map(({result}) => result.messages), literalExamples.map(() => []));
+	assert.deepEqual(results.map(({result}) => result.fixed), literalExamples.map(() => true));
+	assert.deepEqual(results.map(({repeated}) => repeated.fixed), literalExamples.map(() => false));
+	assert.deepEqual(results.map(({repeated}) => repeated.output), results.map(({expected}) => expected));
+	assert.deepEqual(results.map(({repeated}) => repeated.messages), literalExamples.map(() => []));
+
+	const interpolation = dedenter`const text = \`\${(() => {\nconst count = 1;\n//=> number\nreturn count;\n})()}\`;`;
+	const result = linter.verifyAndFix(exportType(jsdoc(fence(interpolation))), configuration, {filename: 'interpolation-marker.ts'});
+	assert.equal(result.output, exportType(jsdoc(fence(interpolation.replace('//=> number', '//=> 1')))));
+	assert.equal(result.fixed, true);
+	assert.deepEqual(result.messages, []);
+});
+
+test('malformed twoslash expectations preserve explanations and compiler directives', () => {
+	const linter = new Linter();
+	const configuration = [{
+		files: ['**/*.ts'],
+		languageOptions: {parser: tsParser},
+		plugins: {test: {rules: {validate: validateJSDocCodeblocksRule}}},
+		rules: {'test/validate': ['error', {verbosityLevels: []}]},
+	}];
+	const expectations = [
+		'',
+		';',
+		'|',
+		'&',
+		'{',
+		'[',
+		'(',
+		'<',
+		'string |',
+		'Array<',
+		'keyof',
+		'typeof',
+		'infer',
+		'string extends',
+		'string extends number ?',
+		'readonly',
+		'...string',
+		'string;',
+		'string; type Other = number',
+		'"unterminated',
+		'`unterminated',
+		'/*',
+		'// text',
+		'=>',
+		'unknown',
+		'1',
+	];
+	const continuations = ['', '// Keep this explanation.', '// @ts-expect-error Documented invalid assignment.\nconst wrong: number = "wrong";'];
+	const control = exportType(jsdoc(fence('const value = 1;\n//=> string')));
+	assert.equal(linter.verify(control, configuration, {filename: 'example.ts'})[0]?.messageId, 'incorrectTwoslashType');
+	assert.ok(linter.verifyAndFix(control, configuration, {filename: 'example.ts'}).output.includes('//=> 1'));
+
+	const results = expectations.flatMap(expectation => continuations.map(continuation => {
+		const code = exportType(jsdoc(fence(`const value = 1;\n//=> ${expectation}\n${continuation}`)));
+		const result = linter.verifyAndFix(code, configuration, {filename: 'example.ts'});
+		// Malformed multiline expectations can remain diagnostic-only, but repeated fixes must be stable.
+		const repeated = linter.verifyAndFix(result.output, configuration, {filename: 'example.ts'});
+		return {result, repeated, continuation};
+	}));
+	assert.equal(results.length, 78);
+	assert.ok(results.every(({result}) => result.messages.every(message => !message.fatal)));
+	assert.ok(results.every(({result, continuation}) => result.output.includes(continuation)));
+	assert.deepEqual(results.map(({repeated}) => repeated.output), results.map(({result}) => result.output));
+	assert.ok(results.every(({repeated}) => !repeated.fixed));
 });

@@ -1,43 +1,41 @@
 // @ts-check
 import tsParser from '@typescript-eslint/parser';
+import {getCodeblocks} from '../lint-rules/codeblocks.js';
 
 /**
 @import {Linter} from 'eslint';
 */
 
-// Consume every fenced block before filtering languages, so an ignored closing fence cannot become an opening fence.
-const CODEBLOCK_REGEX = /(?<openingFence>(?<indent>^[\t ]*)```(?<language>[^\n`]*)\n)(?<code>[\s\S]*?)\n?^[\t ]*```[\t ]*$/gmv;
 /**
-@typedef {{lineOffset: number, characterOffset: number, indent: string, unindentedText: string}} CodeblockData
+@typedef {{lineOffset: number, characterOffset: number, indent: string, originalCode: string}} CodeblockData
 @type {Map<string, CodeblockData[]>}
 */
 const codeblockDataPerFile = new Map();
 
 /**
-Returns the total length of the indentation that was removed from the lines of `text` up to `index`.
+Returns the total length of the indentation that was removed from the original lines up to `index`.
 
-@param {string} text - The original indented code.
+@param {string[]} lines - The original indented code lines.
 @param {number} index - The position in the dedented code.
-@param {string} indent - The indentation removed from each non-empty line.
+@param {string} indent - The indentation removed from lines with that prefix.
 @returns {number} The number of indentation characters before `index`.
 */
-function indentsUptoIndex(text, index, indent) {
+function indentsUptoIndex(lines, index, indent) {
+	if (indent.length === 0) {
+		return 0;
+	}
+
 	let i = 0;
 	let indents = 0;
 
-	for (const line of text.split('\n')) {
+	for (const line of lines) {
 		if (i > index) {
 			break;
 		}
 
-		if (line === '') {
-			i += 1; // +1 for the newline
-			continue;
-		}
-
-		i += line.length + 1; // +1 for the newline
-		i -= indent.length; // Because `text` is unindented but `index` corresponds to dedented text
-		indents += indent.length;
+		const removedIndent = line.startsWith(indent) ? indent.length : 0;
+		i += line.length + 1 - removedIndent; // +1 for the newline, minus the prefix removed from the original text
+		indents += removedIndent;
 	}
 
 	return indents;
@@ -54,6 +52,11 @@ export const jsdocCodeblocksProcessor = {
 	@returns {(string | Linter.ProcessorFile)[]} The source text of the file, followed by a virtual file for each code block.
 	*/
 	preprocess(text, filename) {
+		if (!text.includes('/**') || !text.includes('```')) {
+			codeblockDataPerFile.set(filename, []);
+			return [text];
+		}
+
 		const ast = tsParser.parse(text);
 
 		const jsdocComments = ast.comments.filter(
@@ -70,13 +73,16 @@ export const jsdocCodeblocksProcessor = {
 		const allCodeblocksData = [];
 
 		// All codeblocks in all JSDoc comments in the file
-		const matches = jsdocComments.flatMap(comment => comment.value.matchAll(CODEBLOCK_REGEX).map(match => ({comment, match})).toArray());
+		// Consume every fenced block before filtering languages, so an ignored closing fence cannot become an opening fence.
+		const matches = jsdocComments.flatMap(comment => getCodeblocks(comment.value).map(match => ({comment, match})).toArray());
 
 		for (const {comment, match} of matches) {
-			const {code, openingFence, indent, language} = match.groups ?? {};
+			const {indent, language} = match;
+			// Virtual examples exclude the final line break before the closing fence, so a CRLF example does not end with a lone CR.
+			const code = match.code.replace(/\r?\n$/v, '');
 
 			// Skip empty code blocks and languages that are not TypeScript.
-			if (!code || !openingFence || indent === undefined || !['', 'ts', 'typescript'].includes(language.trim())) {
+			if (!code || !['', 'ts', 'typescript'].includes(language.trim())) {
 				continue;
 			}
 
@@ -84,12 +90,12 @@ export const jsdocCodeblocksProcessor = {
 			const indentSize = indent.length;
 
 			// Skip comments that are not consistently indented
-			if (codeLines.some(line => line !== '' && !line.startsWith(indent))) {
+			if (codeLines.some(line => line.trim() !== '' && !line.startsWith(indent))) {
 				continue;
 			}
 
 			const dedentedCode = codeLines
-				.map(line => line.slice(indentSize))
+				.map(line => line.startsWith(indent) ? line.slice(indentSize) : line)
 				.join('\n');
 
 			files.push({
@@ -100,9 +106,9 @@ export const jsdocCodeblocksProcessor = {
 			const linesBeforeMatch = comment.value.slice(0, match.index).split('\n').length - 1;
 			allCodeblocksData.push({
 				lineOffset: comment.loc.start.line + linesBeforeMatch,
-				characterOffset: comment.range[0] + match.index + openingFence.length + 2, // +2 because `comment.value` doesn't include the starting `/*`
+				characterOffset: comment.range[0] + match.codeStart + 2, // +2 because `comment.value` doesn't include the starting `/*`
 				indent,
-				unindentedText: code,
+				originalCode: code,
 			});
 		}
 
@@ -132,42 +138,51 @@ export const jsdocCodeblocksProcessor = {
 				continue;
 			}
 
-			const {lineOffset, characterOffset, indent, unindentedText} = codeblockData;
+			const {lineOffset, characterOffset, indent, originalCode} = codeblockData;
+			const originalLines = indent.length > 0 && codeblockMessages.length > 0 ? originalCode.split('\n') : [];
 
+			// Maps a fix onto the original file, or returns `undefined` when the mapped fix would close the JSDoc comment.
 			const mapFixToOriginal = fix => {
 				fix.text = fix.text.split('\n').join(`\n${indent}`);
 
-				const indentsBeforeFixStart = indentsUptoIndex(unindentedText, fix.range[0], indent);
-				const indentsBeforeFixEnd = indentsUptoIndex(unindentedText, Math.max(fix.range[0], fix.range[1] - 1), indent); // Range ends are exclusive, but empty ranges use the insertion point.
+				const indentsBeforeFixStart = indentsUptoIndex(originalLines, fix.range[0], indent);
+				const indentsBeforeFixEnd = indentsUptoIndex(originalLines, fix.range[1], indent); // A virtual line starts after its removed indentation in the original source.
 
-				fix.range = [
-					fix.range[0] + characterOffset + indentsBeforeFixStart,
-					fix.range[1] + characterOffset + indentsBeforeFixEnd,
-				];
+				let start = fix.range[0] + indentsBeforeFixStart;
+				const end = fix.range[1] + indentsBeforeFixEnd;
+				const lineStart = originalCode.slice(0, start).lastIndexOf('\n') + 1;
+				if (!originalCode.startsWith(indent, lineStart)) {
+					// A short blank line can become nonblank, so restore its structural prefix before re-extraction.
+					fix.text = indent + originalCode.slice(lineStart, start) + fix.text;
+					start = lineStart;
+				}
+
+				// The resulting code must not close its JSDoc, including a terminator joined at a replacement boundary.
+				if ((originalCode.slice(0, start) + fix.text + originalCode.slice(end)).includes('*/')) {
+					return;
+				}
+
+				fix.range = [start + characterOffset, end + characterOffset];
+				return fix;
 			};
 
 			for (const message of codeblockMessages) {
-				message.line += lineOffset;
-				message.column += indent.length;
+				message.column += originalLines[message.line - 1]?.startsWith(indent) ? indent.length : 0;
 
 				if (typeof message.endColumn === 'number' && message.endColumn > 1) {
 					// An `endColumn` of `1` indicates the error actually ended on the previous line since it's exclusive.
 					// So, adding `indent.length` in this case would incorrectly move the error marker into the indentation.
 					// Therefore, the indentation length is only added when `endColumn` is greater than `1`.
-					message.endColumn += indent.length;
+					message.endColumn += originalLines[(message.endLine ?? message.line) - 1]?.startsWith(indent) ? indent.length : 0;
 				}
 
+				message.line += lineOffset;
 				if (typeof message.endLine === 'number') {
 					message.endLine += lineOffset;
 				}
 
-				if (message.fix) {
-					mapFixToOriginal(message.fix);
-				}
-
-				for (const {fix} of (message.suggestions ?? [])) {
-					mapFixToOriginal(fix);
-				}
+				message.fix &&= mapFixToOriginal(message.fix);
+				message.suggestions &&= message.suggestions.filter(({fix}) => mapFixToOriginal(fix));
 
 				normalizedMessages.push(message);
 			}

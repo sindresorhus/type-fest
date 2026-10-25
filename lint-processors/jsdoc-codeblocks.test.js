@@ -2,11 +2,35 @@ import {describe, test, snapshot} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {ESLint} from 'eslint';
+import {ESLint, Linter} from 'eslint';
+import tsParser from '@typescript-eslint/parser';
 import {code1, code2, dedenter, errorAt, exportType, exportTypeAndOption, fence, jsdoc} from '../lint-rules/testing-utilities.js';
 import {jsdocCodeblocksProcessor} from './jsdoc-codeblocks.js';
 
 snapshot.setDefaultSnapshotSerializers([String]);
+
+test('skips parsing sources that cannot contain fenced JSDoc examples', t => {
+	const parse = t.mock.getter(tsParser, 'parse');
+	const cases = [
+		'export type Value = string;',
+		'/** A documented type without an example. */\nexport type Value = string;',
+		'export type Marker = "```";',
+		'/*\n```ts\nconst value = 1;\n```\n*/\nexport type Value = string;',
+	];
+	const files = cases.map((code, index) => {
+		const filename = `test-no-example-${index}.d.ts`;
+		const result = jsdocCodeblocksProcessor.preprocess(code, filename);
+		jsdocCodeblocksProcessor.postprocess([[]], filename);
+		return result;
+	});
+	t.assert.deepStrictEqual(files, cases.map(code => [code]));
+	t.assert.strictEqual(parse.mock.callCount(), 0);
+
+	const code = '/**\n```ts\nconst value = 1;\n```\n*/\nexport type Value = string;';
+	t.assert.deepStrictEqual(jsdocCodeblocksProcessor.preprocess(code, 'test-with-example.d.ts'), [code, {filename: '1.ts', text: 'const value = 1;'}]);
+	t.assert.strictEqual(parse.mock.callCount(), 1);
+	jsdocCodeblocksProcessor.postprocess([[], []], 'test-with-example.d.ts');
+});
 
 test('extracts TypeScript examples with Windows line endings', () => {
 	const filename = 'test-crlf-example.d.ts';
@@ -16,6 +40,27 @@ test('extracts TypeScript examples with Windows line endings', () => {
 	assert.equal(files.length, 2);
 	assert.ok(files[1].text.includes('const value = 1;'));
 });
+
+for (const newline of ['\n', '\r\n']) {
+	const lineEndingName = newline === '\n' ? 'LF' : 'CRLF';
+	test(`unfinished ${lineEndingName} fence tails preserve complete examples and fix offsets`, () => {
+		const filename = `test-unfinished-tail-${lineEndingName}.d.ts`;
+		const indentation = ' '.repeat(4);
+		const unfinished = Array.from({length: 400}, () => ['```ts', 'const unfinished = 1;'].join(newline)).join(newline);
+		const code = ['/**', '```json', '```', `${indentation}\`\`\`ts`, `${indentation}const value = 0;`, `${indentation}\`\`\``, unfinished, '*/', 'export type Value = string;'].join(newline);
+		const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+		assert.deepEqual(files, [code, {filename: '1.ts', text: 'const value = 0;'}]);
+		const index = files[1].text.indexOf('0;');
+		const [message] = jsdocCodeblocksProcessor.postprocess([[], [{
+			ruleId: 'test/replacement', severity: 2, message: 'Replace the value.', line: 1, column: index + 1,
+			fix: {range: [index, index + 1], text: '1'},
+		}]], filename);
+		const originalIndex = code.indexOf('0;');
+		assert.equal(message.line, 5);
+		assert.equal(message.column, index + indentation.length + 1);
+		assert.deepEqual(message.fix, {range: [originalIndex, originalIndex + 1], text: '1'});
+	});
+}
 
 const root = path.join(import.meta.dirname, 'fixtures');
 
@@ -1108,7 +1153,7 @@ describe('empty fix and suggestion insertion points', () => {
 	const cases = [
 		{name: 'first character', index: 0, originalIndex: code.indexOf(firstLine), text: '// Before.\n'},
 		{name: 'later line start', index: firstLine.length + 1, originalIndex: code.indexOf(secondLine), text: '// Between.\n'},
-		{name: 'middle of a line', index: virtualCode.indexOf(' = 2'), originalIndex: code.indexOf(' = 2'), text: ' /* Value */'},
+		{name: 'middle of a line', index: virtualCode.indexOf(' = 2'), originalIndex: code.indexOf(' = 2'), text: ': number'},
 		{name: 'end of the example', index: virtualCode.length, originalIndex: code.indexOf(secondLine) + secondLine.length, text: '\nconsole.log(second);'},
 	];
 
@@ -1179,7 +1224,7 @@ test('suggested insertion before an indented declaration applies at the line sta
 	assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), code.replace('\tconst second', '\t// Explain.\n\tconst second'));
 });
 
-test('nonempty fix ranges ending at a line boundary keep the exclusive end', () => {
+test('deleting a complete virtual line preserves the surviving line indentation', () => {
 	const code = exportType(jsdoc('\t```ts\n\tconst first = 1;\n\tconst second = 2;\n\t```'));
 	const filename = 'test-exclusive-end.d.ts';
 	jsdocCodeblocksProcessor.preprocess(code, filename);
@@ -1191,8 +1236,11 @@ test('nonempty fix ranges ending at a line boundary keep the exclusive end', () 
 		column: 1,
 		fix: {range: [0, 'const first = 1;\n'.length], text: ''},
 	}]], filename);
-	assert.deepEqual(message.fix.range, [code.indexOf('const first'), code.indexOf('\tconst second')]);
-	assert.equal(code.slice(...message.fix.range), 'const first = 1;\n');
+	const output = code.slice(0, message.fix.range[0]) + message.fix.text + code.slice(message.fix.range[1]);
+	assert.equal(output, code.replace('\tconst first = 1;\n', ''));
+	const files = jsdocCodeblocksProcessor.preprocess(output, filename);
+	assert.equal(files[1].text, 'const second = 2;');
+	jsdocCodeblocksProcessor.postprocess(files.map(() => []), filename);
 });
 
 test('mixed languages preserve exact TypeScript virtual files', () => {
@@ -1256,7 +1304,7 @@ for (const newline of ['\n', '\r\n']) {
 			const filename = `test-language-whitespace-${JSON.stringify([newline, language])}.d.ts`;
 			const code = ['/**', '``` json ', 'not TypeScript !!!', '```', `\`\`\`${language}`, 'const value = 1;', '```', '*/', 'export type Result = string;'].join(newline);
 			const files = jsdocCodeblocksProcessor.preprocess(code, filename);
-			assert.deepEqual(files, [code, {filename: '1.ts', text: `const value = 1;${newline === '\r\n' ? '\r' : ''}`}]);
+			assert.deepEqual(files, [code, {filename: '1.ts', text: 'const value = 1;'}]);
 			jsdocCodeblocksProcessor.postprocess([[], []], filename);
 		});
 	}
@@ -1284,10 +1332,160 @@ test('spaced language tags do not shift suggestion ranges', () => {
 		message: 'Insert a comment.',
 		line: 1,
 		column: 1,
-		suggestions: [{desc: 'Insert a comment.', fix: {range: [0, 0], text: '/* Explanation */ '}}],
+		suggestions: [{desc: 'Insert a comment.', fix: {range: [0, 0], text: '// Explanation\r\n'}}],
 	}]], filename);
 	const {fix} = message.suggestions[0];
 	const index = code.indexOf('const value');
 	assert.deepEqual(fix.range, [index, index]);
-	assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), code.replace('const value', '/* Explanation */ const value'));
+	assert.equal(code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]), code.replace('const value', '// Explanation\r\nconst value'));
 });
+
+for (const newline of ['\n', '\r\n']) {
+	const lineEndingName = newline === '\n' ? 'LF' : 'CRLF';
+	const code = ['/**', '\t```ts', '\tconst first = 1;', '', '\tconst values: Array<string> = [];', '\t```', '*/', 'export type Result = string;'].join(newline);
+
+	test(`extracts indented ${lineEndingName} examples containing a blank line`, () => {
+		const filename = `test-indented-blank-line-${lineEndingName}.d.ts`;
+		const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+		assert.deepEqual(files, [code, {filename: '1.ts', text: `const first = 1;${newline}${newline}const values: Array<string> = [];`}]);
+		jsdocCodeblocksProcessor.postprocess(files.map(() => []), filename);
+	});
+
+	test(`autofixes after an indented ${lineEndingName} blank line reach the original declaration`, async () => {
+		const eslint = new ESLint({cwd: root, fix: true});
+		const filePath = `test-indented-blank-line-fix-${lineEndingName}.d.ts`;
+		const [result] = await eslint.lintText(code, {filePath});
+		assert.deepEqual(result.messages, []);
+		assert.equal(result.output, code.replace('Array<string>', 'string[]'));
+		const [secondResult] = await eslint.lintText(result.output, {filePath});
+		assert.deepEqual(secondResult.messages, []);
+		assert.equal(secondResult.output, undefined);
+	});
+}
+
+for (const newline of ['\n', '\r\n']) {
+	const lineEndingName = newline === '\n' ? 'LF' : 'CRLF';
+
+	test(`partially indented ${lineEndingName} blank lines preserve text and mapped ranges`, () => {
+		const filename = `test-partial-blank-indent-${lineEndingName}.d.ts`;
+		const code = ['/**', '\t\t```ts', '\t\tconst first = 1;', '', '\t', '\t\t', '  ', '\t\tconst values: Array<string> = [];', '\t\t```', '*/', 'export type Result = string;'].join(newline);
+		const virtualCode = ['const first = 1;', '', '\t', '', '  ', 'const values: Array<string> = [];'].join(newline);
+		const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+		assert.deepEqual(files, [code, {filename: '1.ts', text: virtualCode}]);
+		const replacementIndex = virtualCode.indexOf('Array<string>');
+		const insertionIndex = virtualCode.indexOf('const values');
+		const [message] = jsdocCodeblocksProcessor.postprocess([[], [{
+			ruleId: 'test/replacement',
+			severity: 2,
+			message: 'Replace the array type.',
+			line: 6,
+			column: 15,
+			fix: {range: [replacementIndex, replacementIndex + 'Array<string>'.length], text: 'string[]'},
+			suggestions: [{desc: 'Explain the declaration.', fix: {range: [insertionIndex, insertionIndex], text: '/* Values */ '}}],
+		}]], filename);
+		const originalReplacementIndex = code.indexOf('Array<string>');
+		assert.equal(message.line, 8);
+		assert.equal(message.column, 17);
+		assert.deepEqual(message.fix, {range: [originalReplacementIndex, originalReplacementIndex + 'Array<string>'.length], text: 'string[]'});
+		assert.equal(code.slice(0, message.fix.range[0]) + message.fix.text + code.slice(message.fix.range[1]), code.replace('Array<string>', 'string[]'));
+		assert.deepEqual(message.suggestions, []);
+	});
+
+	test(`inconsistent nonblank ${lineEndingName} indentation still skips the example`, () => {
+		const filename = `test-inconsistent-indent-${lineEndingName}.d.ts`;
+		const code = ['/**', '\t\t```ts', '\t\tconst first = 1;', '', '\tconst second = 2;', '\t\t```', '*/', 'export type Result = string;'].join(newline);
+		const files = jsdocCodeblocksProcessor.preprocess(code, filename);
+		assert.deepEqual(files, [code]);
+		jsdocCodeblocksProcessor.postprocess([[]], filename);
+	});
+}
+
+test('mapped suggestions cannot terminate the containing JSDoc comment', () => {
+	const code = exportType(jsdoc(fence(String.raw`const value = '*\/';`)));
+	const filename = 'test-suggested-comment-terminator.d.ts';
+	const [, virtualFile] = jsdocCodeblocksProcessor.preprocess(code, filename);
+	const linter = new Linter();
+	const virtualMessages = linter.verify(virtualFile.text, [{rules: {'no-useless-escape': 'error'}}]);
+	const [message] = jsdocCodeblocksProcessor.postprocess([[], virtualMessages], filename);
+
+	assert.equal(message.messageId, 'unnecessaryEscape');
+	assert.deepEqual(message.suggestions.map(suggestion => suggestion.messageId), ['escapeBackslash']);
+	const {fix} = message.suggestions[0];
+	const output = code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]);
+	tsParser.parse(output);
+});
+
+for (const newline of ['\n', '\r\n']) {
+	const lineEndingName = newline === '\n' ? 'LF' : 'CRLF';
+	const cases = [
+		{name: 'left boundary', code: 'const value = \'*x\';', needle: '*x', offset: 1, remove: 0, text: '/', unsafe: true},
+		{name: 'right boundary', code: 'const value = \'x/\';', needle: '/', offset: 0, remove: 0, text: '*', unsafe: true},
+		{name: 'safe escaped slash', code: 'const value = \'safe\';', needle: 'safe', offset: 0, remove: 4, text: String.raw`*\/`, expected: String.raw`const value = '*\/';`},
+	];
+
+	for (const entry of cases) {
+		test(`mapped ${lineEndingName} changes respect the JSDoc ${entry.name}`, () => {
+			const filename = `test-comment-boundary-${lineEndingName}-${entry.name}.d.ts`;
+			const code = ['/**', '\t```ts', '\tconst first = 1;', '', `\t${entry.code}`, '\t```', '*/', 'export type Result = string;'].join(newline);
+			const [, virtualFile] = jsdocCodeblocksProcessor.preprocess(code, filename);
+			const start = virtualFile.text.indexOf(entry.needle) + entry.offset;
+			const end = start + entry.remove;
+			const [message] = jsdocCodeblocksProcessor.postprocess([[], [{
+				ruleId: 'test/change',
+				severity: 2,
+				message: entry.name,
+				line: 3,
+				column: 1,
+				fix: {range: [start, end], text: entry.text},
+				suggestions: [{desc: entry.name, fix: {range: [start, end], text: entry.text}}],
+			}]], filename);
+
+			assert.equal(message.fix === undefined, Boolean(entry.unsafe));
+			assert.equal(message.suggestions.length, entry.unsafe ? 0 : 1);
+			const expected = entry.unsafe ? code : code.replace(entry.code, () => entry.expected);
+			const fix = message.fix ?? {range: [0, 0], text: ''};
+			const suggestion = message.suggestions[0]?.fix ?? {range: [0, 0], text: ''};
+			const output = code.slice(0, fix.range[0]) + fix.text + code.slice(fix.range[1]);
+			assert.equal(output, expected);
+			assert.equal(code.slice(0, suggestion.range[0]) + suggestion.text + code.slice(suggestion.range[1]), expected);
+			tsParser.parse(output);
+		});
+	}
+}
+
+for (const newline of ['\n', '\r\n']) {
+	const lineEndingName = newline === '\n' ? 'LF' : 'CRLF';
+	test(`successive ${lineEndingName} autofix passes cannot join a JSDoc terminator`, () => {
+		const code = ['/**', '```ts', 'const value = \'ab\';', '```', '*/', 'export type Result = string;'].join(newline);
+		const rule = {
+			meta: {fixable: 'code', schema: []},
+			create(context) {
+				return {
+					Literal(node) {
+						if (node.value !== 'ab' && node.value !== '*b') {
+							return;
+						}
+
+						if (node.value === 'ab') {
+							context.report({node, message: 'Replace the first character.', fix: fixer => fixer.replaceTextRange([node.range[0] + 1, node.range[0] + 2], '*')});
+						}
+
+						context.report({node, message: 'Replace the second character.', fix: fixer => fixer.replaceTextRange([node.range[0] + 2, node.range[0] + 3], '/')});
+					},
+				};
+			},
+		};
+		const plugin = {processors: {examples: jsdocCodeblocksProcessor}, rules: {replace: rule}};
+		const result = new Linter().verifyAndFix(code, [
+			{files: ['**/*.d.ts'], plugins: {test: plugin}, processor: 'test/examples', languageOptions: {parser: tsParser}},
+			{files: ['**/*.ts'], plugins: {test: plugin}, rules: {'test/replace': 'error'}, languageOptions: {parser: tsParser}},
+		], {filename: `test-successive-comment-fixes-${lineEndingName}.d.ts`, filterCodeBlock: filename => filename.endsWith('.ts')});
+
+		assert.equal(result.fixed, true);
+		assert.equal(result.output, code.replace('\'ab\'', '\'*b\''));
+		assert.equal(result.messages.length, 1);
+		assert.equal(result.messages[0].message, 'Replace the second character.');
+		assert.equal(result.messages[0].fix, undefined);
+		tsParser.parse(result.output);
+	});
+}
