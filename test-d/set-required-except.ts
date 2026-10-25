@@ -111,3 +111,24 @@ expectTypeOf<SetRequiredExcept<{id?: string; other?: number}, Tagged<RequiredExc
 // An empty intersection on a template literal selector resolves like the template literal itself.
 expectTypeOf<SetRequiredExcept<{[key: `on${string}`]: unknown; onClick?: () => void; other?: 1}, 'onClick' | (`on${string}` & {})>>()
 	.toBe<{[key: `on${string}`]: unknown; onClick?: () => void; other: 1}>();
+
+// A numeric enum exemption cannot remove the entire number index signature.
+enum RequiredExceptIndexField {
+	One = 1,
+}
+
+function _readRequiredExceptIndexedField(value: SetRequiredExcept<{[key: number]: string | undefined; 1?: string; 2?: string}, RequiredExceptIndexField.One>): string {
+	return value[2];
+}
+
+// The numeric domain still reaches covered fields while unrelated exemptions keep their modifiers.
+declare const requiredExceptReadonlyIndex: SetRequiredExcept<{[key: number]: string | undefined; readonly 1?: string; 2?: string; keep?: boolean}, RequiredExceptIndexField.One | 'keep'>;
+expectTypeOf(requiredExceptReadonlyIndex).toBe<{[key: number]: string | undefined; readonly 1: string; 2: string; keep?: boolean}>();
+// @ts-expect-error A valid string cannot replace the preserved readonly field.
+requiredExceptReadonlyIndex[1] = 'updated';
+expectTypeOf<SetRequiredExcept<readonly [string?, number?, boolean?], RequiredExceptIndexField.One>>().toBe<readonly [string, number?, boolean?]>();
+
+// Without an index signature, a numeric enum exemption keeps its declared enum or literal key as is.
+expectTypeOf<SetRequiredExcept<{readonly [RequiredExceptIndexField.One]?: string; other?: number}, RequiredExceptIndexField.One>>()
+	.toBe<{readonly [RequiredExceptIndexField.One]?: string; other: number}>();
+expectTypeOf<SetRequiredExcept<{1?: string; other?: number}, RequiredExceptIndexField.One>>().toBe<{1?: string; other: number}>();

@@ -166,3 +166,6 @@ expectTypeOf<SelectedKeys<{[SelectedIndex.One]: string; other: string}, number>>
 expectTypeOf<SelectedKeys<{[key: string]: unknown; value: string}, LiteralUnion<'value', string>>>().toBe<LiteralUnion<'value', string>>();
 expectTypeOf<SelectedKeys<{a: string}, never>>().toBe<never>();
 expectTypeOf<SelectedKeys<{a: string}, any>>().toBe<any>();
+
+// A numeric enum key does not cover the whole numeric index domain.
+expectTypeOf<KeysExcept<{[key: number]: string; 1: string}, SelectedIndex.One>>().toBe<number>();

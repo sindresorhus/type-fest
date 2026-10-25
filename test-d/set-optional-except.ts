@@ -107,3 +107,23 @@ function _readOptionalExceptEnumSelection(value: SetOptionalExcept<{id: string; 
 expectTypeOf<SetOptionalExcept<{readonly [OptionalExceptField.Id]: string; other: number}, OptionalExceptField.Id>>()
 	.toBe<{readonly [OptionalExceptField.Id]: string; other?: number}>();
 expectTypeOf<SetOptionalExcept<{id: string; other: number}, Tagged<OptionalExceptField.Id, 'Key'>>>().toBe<{id: string; other?: number}>();
+
+// A numeric enum exemption cannot keep every numeric field required.
+enum OptionalExceptIndexField {
+	One = 1,
+}
+
+const optionalExceptIndexedUpdate: SetOptionalExcept<{[key: number]: string; 1: string; 2: string}, OptionalExceptIndexField.One> = {};
+expectTypeOf(optionalExceptIndexedUpdate[2]).toBe<string | undefined>();
+
+// Covered numeric fields become optional while unrelated exemptions keep their modifiers.
+declare const optionalExceptReadonlyIndex: SetOptionalExcept<{[key: number]: string; readonly 1: string; 2: string; keep: boolean}, OptionalExceptIndexField.One | 'keep'>;
+expectTypeOf(optionalExceptReadonlyIndex).toBe<{[key: number]: string | undefined; readonly 1?: string; 2?: string; keep: boolean}>();
+// @ts-expect-error A valid string cannot replace the preserved readonly field.
+optionalExceptReadonlyIndex[1] = 'updated';
+expectTypeOf<SetOptionalExcept<readonly [string, number, boolean], OptionalExceptIndexField.One>>().toBe<readonly [string | undefined, number, boolean?]>();
+
+// Without an index signature, a numeric enum exemption keeps its declared enum or literal key as is.
+expectTypeOf<SetOptionalExcept<{readonly [OptionalExceptIndexField.One]: string; other: number}, OptionalExceptIndexField.One>>()
+	.toBe<{readonly [OptionalExceptIndexField.One]: string; other?: number}>();
+expectTypeOf<SetOptionalExcept<{1: string; other: number}, OptionalExceptIndexField.One>>().toBe<{1: string; other?: number}>();

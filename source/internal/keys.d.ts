@@ -123,7 +123,8 @@ type Tuple = KeysExcept<[string, number, boolean], 0>;
 */
 export type KeysExcept<Type, Keys> = Type extends UnknownArray
 	? Exclude<keyof Type & `${number}`, `${Keys & (string | number)}`>
-	: Exclude<keyof Type, Keys | ToString<Keys & string>>;
+	// Normalize numeric enum keys to their literal values, because `number` is assignable to an enum and must not remove the entire index signature.
+	: Exclude<keyof Type, KeySelector<Keys>>;
 
 /**
 Returns the keys of `Type` that the given `Keys` select.
