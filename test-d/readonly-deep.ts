@@ -443,3 +443,41 @@ readonlyArray.join = () => '';
 expectTypeOf<Extract<keyof typeof readonlyArray, 'push' | 'pop' | 'splice'>>().toBe<never>();
 // @ts-expect-error
 readonlyArray[0] = [];
+
+// Constructing a readonly collection from already converted values preserves generic key and item reads.
+function createReadonlyCollections<Value>(value: ReadonlyDeep<Value>): ReadonlyDeep<Map<string, Set<Value>>> {
+	return new Map([['entry', new Set([value])]]);
+}
+
+function _consumeReadonlyCollection<Value>(value: ReadonlyDeep<Map<string, Set<Value>>>, consume: (item: ReadonlyDeep<Value>) => void): void {
+	value.get('entry')?.forEach(consume);
+}
+
+const createdReadonlyCollections = createReadonlyCollections<{id: 'entry'; values: number[]}>({id: 'entry', values: [1, 2]});
+expectTypeOf(createdReadonlyCollections.get('entry')).toBe<Readonly<ReadonlySet<{readonly id: 'entry'; readonly values: readonly number[]}>> | undefined>();
+const createdReadonlySet = createdReadonlyCollections.get('entry');
+if (createdReadonlySet) {
+	// @ts-expect-error A valid method replacement must remain readonly.
+	createdReadonlySet.has = () => true;
+}
+
+// @ts-expect-error A valid method replacement must remain readonly.
+createdReadonlyCollections.get = () => undefined;
+
+function _createReadonlyKeyMap<Key>(mapKey: ReadonlyDeep<Key>): ReadonlyDeep<Map<Key, {values: string[]}>> {
+	return new Map([[mapKey, {values: ['ready']}]]);
+}
+
+function _visitReadonlyMapKeys<Key>(value: ReadonlyDeep<Map<Key, string>>, visit: (key: ReadonlyDeep<Key>) => void): void {
+	value.forEach((_, mapKey) => visit(mapKey));
+}
+
+// A callable thenable's own metadata is transformed without changing its call signature.
+declare const readonlyCallableThenable: ReadonlyDeep<(() => string) & PromiseLike<number> & {metadata: {name: string; values: number[]}}>;
+expectTypeOf(readonlyCallableThenable()).toBe<string>();
+expectTypeOf(readonlyCallableThenable.metadata.name).toBe<string>();
+expectTypeOf(readonlyCallableThenable.metadata.values).toBe<readonly number[]>();
+// @ts-expect-error A valid metadata replacement remains readonly.
+readonlyCallableThenable.metadata.name = 'changed';
+// @ts-expect-error The callable's nested metadata array remains readonly.
+readonlyCallableThenable.metadata.values[0] = 1;

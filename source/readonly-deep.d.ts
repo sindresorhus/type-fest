@@ -82,9 +82,9 @@ export type ReadonlyDeep<T> = T extends NonRecursiveLeaf
 			: HasMultipleCallSignatures<T> extends true
 				? T
 				: CallSignatureOf<T> & _ReadonlyObjectDeep<T>
-		: T extends Readonly<ReadonlyMap<infer KeyType, infer ValueType>>
+		: T extends ReadonlyMap<infer KeyType, infer ValueType>
 			? ReadonlyMapDeep<KeyType, ValueType>
-			: T extends Readonly<ReadonlySet<infer ItemType>>
+			: T extends ReadonlySet<infer ItemType>
 				? ReadonlySetDeep<ItemType>
 				: T extends readonly unknown[]
 					? IsArrayOfUnknownLength<T> extends false
