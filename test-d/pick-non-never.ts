@@ -177,3 +177,42 @@ type DoesNotAllowUnknown = PickNonNever<unknown>;
 type DoesNotAllowPrimitives = PickNonNever<string>;
 // @ts-expect-error
 type DoesNotAllowUndefined = PickNonNever<undefined>;
+
+// An optional tuple position explicitly containing `undefined` is not a `never` marker.
+expectTypeOf<Extract<keyof PickNonNever<[undefined?]>, '0'>>().toBe<'0'>();
+expectTypeOf<Extract<keyof PickNonNever<readonly [undefined?]>, '0'>>().toBe<'0'>();
+declare const optionalUndefinedTuple: PickNonNever<readonly [undefined?]>;
+expectTypeOf(optionalUndefinedTuple[0]).toBe<undefined>();
+
+// A declared undefined array element is retained too, without changing its readonly index.
+expectTypeOf<PickNonNever<undefined[]>[number]>().toBe<undefined>();
+declare const readonlyUndefinedArray: PickNonNever<readonly undefined[]>;
+expectTypeOf(readonlyUndefinedArray[0]).toBe<undefined>();
+// @ts-expect-error The retained array index stays readonly.
+readonlyUndefinedArray[0] = undefined;
+// @ts-expect-error The retained optional tuple position stays readonly.
+optionalUndefinedTuple[0] = undefined;
+
+// An optional never marker is removed, while its broad index still reads as undefined.
+expectTypeOf<Extract<keyof PickNonNever<[never?]>, '0'>>().toBe<never>();
+expectTypeOf<PickNonNever<[never?]>[number]>().toBe<undefined>();
+
+function copyNonNever<const Value extends object>(value: Value): PickNonNever<Value> {
+	return value;
+}
+
+const inferredNonNever = copyNonNever({id: 'kept', removed: undefined as never});
+expectTypeOf(inferredNonNever).toBe<{readonly id: 'kept'}>();
+// @ts-expect-error The removed marker does not survive inference.
+const _removedMarker: unknown = inferredNonNever.removed;
+// @ts-expect-error A valid value cannot overwrite the inferred readonly property.
+inferredNonNever.id = 'kept';
+
+// Testing required values does not make the kept properties required or add explicit undefined.
+type OptionalKeptValues = PickNonNever<{readonly value?: number; removed?: never; explicit?: undefined}>;
+expectTypeOf<OptionalKeptValues>().toBe<{readonly value?: number; explicit?: undefined}>();
+({explicit: undefined}) satisfies OptionalKeptValues;
+expectTypeOf<{value: undefined}>().not.toBeAssignableTo<OptionalKeptValues>();
+declare const optionalKeptValues: OptionalKeptValues;
+// @ts-expect-error The kept property's readonly modifier is unchanged.
+optionalKeptValues.value = 1;

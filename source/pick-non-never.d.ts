@@ -1,5 +1,6 @@
 import type {ConditionalExcept} from './conditional-except.d.ts'; // For `@link`
 import type {IsNever} from './is-never.d.ts';
+import type {RequireAll} from './internal/index.d.ts';
 
 /**
 Pick only the properties of the given object type that do not have the `never` type.
@@ -59,7 +60,7 @@ Known limitations:
 */
 export type PickNonNever<ObjectType extends object> =
 	{[Key in keyof ObjectType as // A mapped type over `keyof ObjectType` maps each member of a union by itself, and unlike a distributive conditional type, it keeps a generic `ObjectType` assignable to the result.
-		IsNever<Required<ObjectType>[Key]> extends true // `Required`, because an optional `never` property reads as `undefined`.
+		IsNever<RequireAll<ObjectType, Key>[Key]> extends true // Read one required property, because a whole-array `Required` can remove explicitly declared `undefined`.
 			? never
 			: Key
 		]: ObjectType[Key]
