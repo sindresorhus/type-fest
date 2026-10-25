@@ -76,10 +76,10 @@ export type Replace<
 	Input extends object ? UnwrapBrand<Input> : Input,
 	Search extends object ? UnwrapBrand<Search> : Search,
 	Replacement extends object ? UnwrapBrand<Replacement> : Replacement,
-	ApplyDefaultOptions<ReplaceOptions, DefaultReplaceOptions, Options>['all']
+	ApplyDefaultOptions<ReplaceOptions, DefaultReplaceOptions, Options>['all'] extends true ? true : false
 >;
 
-// Thread the boolean itself so an uncertain option distributes into first-match and all-match results.
+// `All` is a literal, because the entry point resolves a non-literal `boolean` to the default `false` before it is threaded through.
 type _Replace<
 	Input extends string,
 	Search extends string,
@@ -112,7 +112,7 @@ type _Replace<
 		: never
 	: never;
 
-// The input is already a literal, so recursive tails do not repeat the boundary checks.
+// The input is already a literal, so consume up to two matches per step without repeating the boundary checks.
 type _ReplaceLiteralSearch<
 	Input extends string,
 	Search extends string,
@@ -121,7 +121,9 @@ type _ReplaceLiteralSearch<
 	Accumulator extends string,
 > = Input extends `${infer Head}${Search}${infer Tail}`
 	? All extends true
-		? _ReplaceLiteralSearch<Tail, Search, Replacement, All, `${Accumulator}${Head}${Replacement}`>
+		? Tail extends `${infer Middle}${Search}${infer Rest}`
+			? _ReplaceLiteralSearch<Rest, Search, Replacement, All, `${Accumulator}${Head}${Replacement}${Middle}${Replacement}`>
+			: `${Accumulator}${Head}${Replacement}${Tail}`
 		: `${Head}${Replacement}${Tail}`
 	: `${Accumulator}${Input}`;
 

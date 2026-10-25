@@ -63,11 +63,6 @@ type FiftyZeroes = StringRepeat<'0', 50>;
 type FiftyOnes = StringRepeat<'1', 50>;
 expectTypeOf<Replace<FiftyZeroes, '0', '1', {all: true}>>().toBe<FiftyOnes>();
 
-// Maximum allowed recursion depth for a tail recursive implementation.
-type NineHundredNinetyNineZeroes = StringRepeat<'0', 999>;
-type NineHundredNinetyNineOnes = StringRepeat<'1', 999>;
-expectTypeOf<Replace<NineHundredNinetyNineZeroes, '0', '1', {all: true}>>().toBe<NineHundredNinetyNineOnes>();
-
 // An empty `Search` is a zero-width match, so it matches at the start of the string first, the same way `String.prototype.replace()` does.
 declare const prependOnce: Replace<'abc', '', '-'>;
 expectTypeOf(prependOnce).toBe<'-abc'>();
@@ -130,19 +125,10 @@ expectTypeOf<Replace<never, `${number}`, 'x', {all: true}>>().toBe<never>();
 type TwoThousandZeroes = StringRepeat<'0', 2000>;
 expectTypeOf<Replace<`${TwoThousandZeroes}a`, 'a', 'b'>>().toBe<`${TwoThousandZeroes}b`>();
 
-// A boolean option can request either one replacement or all replacements.
-expectTypeOf<Replace<'abcabc', 'abc', 'x', {all: boolean}>>().toBe<'xabc' | 'xx'>();
-expectTypeOf<Replace<'ab', '', '-', {all: boolean}>>().toBe<'-ab' | '-a-b-'>();
-expectTypeOf<Replace<'abcabc', 'abc', 'x', {all: false} | {all: true}>>().toBe<'xabc' | 'xx'>();
-expectTypeOf<Replace<'aaaa', 'a', 'x', {all: boolean}>>().toBe<'xaaa' | 'xxxx'>();
-expectTypeOf<'xxaa'>().not.toBeAssignableTo<Replace<'aaaa', 'a', 'x', {all: boolean}>>();
-expectTypeOf<Replace<'a12b', `${number}`, 'N', {all: boolean}>>().toBe<'aN2b' | 'aNNb'>();
-expectTypeOf<Replace<`id:${number}:${number}`, `${number}`, 'N', {all: boolean}>>().toBe<`id:N:${number}` | 'id:N:N'>();
-expectTypeOf<Replace<'aa' | 'bb', 'a', 'x', {all: boolean}>>().toBe<'xa' | 'xx' | 'bb'>();
-expectTypeOf<Replace<'aa', 'a', 'x' | 'y', {all: boolean}>>().toBe<'xa' | 'xx' | 'ya' | 'yy'>();
-expectTypeOf<Replace<'abc', 'x', 'y', {all: boolean}>>().toBe<'abc'>();
-expectTypeOf<Replace<'', '', '-', {all: boolean}>>().toBe<'-'>();
-expectTypeOf<Replace<'abc', '', '', {all: boolean}>>().toBe<'abc'>();
+// A non-literal `boolean` option resolves like the default, so only the first match is replaced.
+expectTypeOf<Replace<'aa', 'a', 'x', {all: boolean}>>().toBe<'xa'>();
+
+// Broad and invalid inputs also resolve with a non-literal `boolean` option.
 expectTypeOf<Replace<string, 'a', 'x', {all: boolean}>>().toBe<string>();
 expectTypeOf<Replace<never, 'a', 'x', {all: boolean}>>().toBe<never>();
 expectTypeOf<Replace<'abc', any, 'x', {all: boolean}>>().toBe<string>();
@@ -154,7 +140,9 @@ expectTypeOf<Replace<'abc', Tagged<'b', 'Search'>, 'x'>>().toBe<'axc'>();
 expectTypeOf<Replace<Tagged<'abc', 'Text'>, 'b', 'x'>>().toBe<'axc'>();
 expectTypeOf<Replace<'abc', 'b', Tagged<'x', 'Replacement'>>>().toBe<'axc'>();
 expectTypeOf<Replace<Opaque<'foofoo', 'Text'>, Opaque<'foo', 'Search'>, Opaque<'x', 'Replacement'>, {all: true}>>().toBe<'xx'>();
-expectTypeOf<Replace<Tagged<'aa' | 'bb', 'Text'>, Tagged<'a' | 'b', 'Search'>, Tagged<'x' | 'y', 'Replacement'>, {all: boolean}>>().toBe<'xa' | 'xx' | 'ya' | 'yy' | 'aa' | 'bb' | 'xb' | 'yb'>();
+expectTypeOf<Replace<Tagged<'aa' | 'bb', 'Text'>, Tagged<'a' | 'b', 'Search'>, Tagged<'x' | 'y', 'Replacement'>, {all: true}>>().toBe<'xx' | 'yy' | 'aa' | 'bb'>();
+expectTypeOf<Replace<Tagged<'aa' | 'bb', 'Text'>, Tagged<'a' | 'b', 'Search'>, Tagged<'x' | 'y', 'Replacement'>>>().toBe<'aa' | 'bb' | 'xa' | 'ya' | 'xb' | 'yb'>();
+expectTypeOf<Replace<'abc', '', '', {all: true}>>().toBe<'abc'>();
 expectTypeOf<Replace<Tagged<'ab', 'Text'>, Tagged<'', 'Search'>, Tagged<'-', 'Replacement'>, {all: true}>>().toBe<'-a-b-'>();
 expectTypeOf<Replace<Tagged<'ab', 'Text'>, Tagged<'', 'Search'>, Tagged<'-', 'Replacement'>>>().toBe<'-ab'>();
 expectTypeOf<Replace<Tagged<`id:${number}`, 'Text'>, Tagged<`${number}`, 'Search'>, Tagged<'N', 'Replacement'>>>().toBe<'id:N'>();
@@ -181,7 +169,7 @@ expectTypeOf<'file.js.ts'>().toBeAssignableTo<Replace<`${string}.ts`, '.ts', '.j
 expectTypeOf<'bBC'>().toBeAssignableTo<Replace<Uppercase<string>, 'A', 'b'>>();
 expectTypeOf<'bBC'>().toBeAssignableTo<Replace<Uppercase<string>, 'A', 'b', {all: true}>>();
 
-// Unknown input parts may hold additional matches, even for all-match and uncertain options.
+// Unknown input parts may hold additional matches, even for all-match and non-literal options.
 expectTypeOf<Replace<`${string}.ts`, '.ts', '.js'>>().toBe<string>();
 expectTypeOf<Replace<`${string}.ts`, '.ts', '.js', {all: true}>>().toBe<string>();
 expectTypeOf<Replace<`${string}.ts`, '.ts', '.js', {all: boolean}>>().toBe<string>();
@@ -233,5 +221,49 @@ function _singleMatchWithOptions<Options extends {all?: boolean}>(value: Replace
 }
 
 function _neverSearch<Input extends string, Options extends {all?: boolean}>(value: Replace<Input, never, 'x', Options>): never {
+	return value;
+}
+
+// A match consumes its characters once, even when occurrences overlap or the replacement is another match.
+expectTypeOf<Replace<'aaaaa', 'aa', 'a', {all: true}>>().toBe<'aaa'>();
+expectTypeOf<Replace<'aaaaaa', 'aa', 'a', {all: true}>>().toBe<'aaa'>();
+expectTypeOf<Replace<'aaaaaaaa', 'aa', 'a', {all: true}>>().toBe<'aaaa'>();
+expectTypeOf<Replace<'aaaaa', 'aa', 'X', {all: true}>>().toBe<'XXa'>();
+
+declare function normalizeRoutes<const Routes extends readonly string[]>(routes: Routes): {readonly [Key in keyof Routes]: Replace<Routes[Key], '/', '.', {all: true}>};
+const normalizedRoutes = normalizeRoutes(['api/v1/users/session', 'api/v1/users/settings']);
+expectTypeOf(normalizedRoutes).toBe<readonly ['api.v1.users.session', 'api.v1.users.settings']>();
+
+function _constructUnmatchedRoute<Options extends {all?: boolean}>(): Replace<'api.users', '/', '.', Options> {
+	return 'api.users';
+}
+
+function _holdReplacedRoute<Input extends string>(result: Replace<Input, '/', '.', {all: true}>): {readonly result: Replace<Input, '/', '.', {all: true}>} {
+	return {result};
+}
+
+// Pair traversal handles even and odd match counts beyond the former single-step recursion budget.
+type FifteenHundredZeroes = StringRepeat<'0', 1500>;
+type FifteenHundredOnes = StringRepeat<'1', 1500>;
+expectTypeOf<Replace<FifteenHundredZeroes, '0', '1', {all: true}>>().toBe<FifteenHundredOnes>();
+expectTypeOf<Replace<`${FifteenHundredZeroes}X0`, '0', '1', {all: true}>>().toBe<`${FifteenHundredOnes}X1`>();
+
+// Line-ending normalization consumes CRLF as one match and leaves existing LF endings intact.
+expectTypeOf<Replace<'first\r\nsecond\nthird\r\n', '\r\n', '\n'>>().toBe<'first\nsecond\nthird\r\n'>();
+expectTypeOf<Replace<'first\r\nsecond\nthird\r\n', '\r\n', '\n', {all: true}>>().toBe<'first\nsecond\nthird\n'>();
+expectTypeOf<Replace<'first\rsecond\n', '\r\n', '\n', {all: true}>>().toBe<'first\rsecond\n'>();
+expectTypeOf<Replace<'\r\n\r\n', '\r\n', '', {all: true}>>().toBe<''>();
+
+// Normalized searches retain enum alternatives and match template placeholders without branding the result.
+enum SearchSeparator {
+	Dash = '-',
+	Underscore = '_',
+}
+expectTypeOf<Replace<Tagged<'a-b_c', 'Text'>, SearchSeparator, Tagged<'/', 'Replacement'>, {all: true}>>()
+	.toBe<'a/b_c' | 'a-b/c'>();
+expectTypeOf<Replace<Tagged<`id:${number}-old`, 'Text'>, Tagged<`${number}`, 'Search'>, 'value'>>()
+	.toBe<'id:value-old'>();
+
+function _readReplacedNumericTemplate<Value extends number>(value: Replace<`${Value}`, '0', 'x'>): string {
 	return value;
 }
