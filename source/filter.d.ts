@@ -14,8 +14,6 @@ export type FilterOptions = {
 
 	By default, a union type is kept if any of its members extends the condition.
 
-	When `strict` is `boolean`, the result is a union of the complete strict and loose results.
-
 	@default false
 
 	@example
@@ -47,12 +45,12 @@ Returns a boolean for whether a value `Value` passes the filter `Condition`.
 
 If `Condition` is `Boolean`, it checks whether `Value` is truthy like {@link Boolean `Boolean(value)`} does. Otherwise, it checks whether `Value` extends `Condition`.
 
-Both checks use strict or loose mode, see {@link Extends `Extends`}.
+Both checks use strict or loose mode, see {@link Extends `Extends`}. A non-literal `boolean` mode uses the default loose mode.
 */
 type Matches<Value, Condition, Strict extends boolean> =
 	IsEqual<Condition, Boolean> extends true
-		? Extends<IsTruthy<Value>, true, Strict>
-		: Extends<Value, Condition, Strict>;
+		? Extends<IsTruthy<Value>, true, IsEqual<Strict, true>>
+		: Extends<Value, Condition, IsEqual<Strict, true>>;
 
 /**
 Determines whether the array `V` should be kept based on the boolean type `T`.
@@ -65,6 +63,8 @@ Keep only the elements of an array, or the properties of an object, whose type e
 Use `Boolean` as the condition to keep only truthy values, like `.filter(Boolean)`. It must be exactly `Boolean`.
 
 An element or property whose type is a union is kept if any member of the union extends the condition. Use the `strict` option to require the whole union to extend it. The kept types are not narrowed.
+
+In a generic function, use concrete option values before relying on which elements or properties are kept. While any option is generic, TypeScript can read the result as if the default options were used.
 
 Use-cases:
 - Get the elements of a tuple that match a type, like the strings in a list of mixed values.
@@ -114,13 +114,11 @@ export type Filter<
 	Options extends FilterOptions = {},
 > = IfNotAnyOrNever<Base, {
 	ifNot: Base extends unknown // For distributing `Base`
-		? ApplyDefaultOptions<FilterOptions, DefaultFilterOptions, Options>['strict'] extends infer Strict extends boolean
-			// Choose one strictness setting for the whole result before filtering individual members.
-			? Strict extends unknown
-				? Base extends UnknownArray
-					? FilterArray<Base, Condition, {strict: Strict}>
-					: FilterObject<Base, Condition, {strict: Strict}>
-				: never
+		// Resolve the options once for the whole result. Generic options read like the defaults, see the note on `Filter`.
+		? ApplyDefaultOptions<FilterOptions, DefaultFilterOptions, Options> extends infer ResolvedOptions extends Required<FilterOptions>
+			? Base extends UnknownArray
+				? FilterArray<Base, Condition, ResolvedOptions>
+				: FilterObject<Base, Condition, ResolvedOptions>
 			: never // Should never happen
 		: never; // Should never happen
 }>;

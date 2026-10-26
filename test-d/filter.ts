@@ -328,50 +328,12 @@ expectTypeOf(filteredIndexProperties.literal).toBe<'value'>();
 // @ts-expect-error Strict filtering removes the mixed index signature, while retaining its known string property.
 expectTypeOf(filteredIndexProperties.missing);
 
-// An unknown strictness setting allows either complete filtering strategy.
-expectTypeOf<Filter<[1 | 2], 1, {strict: boolean}>>().toBe<[] | [1 | 2]>();
-expectTypeOf<Filter<readonly [1 | 2, 'keep' | false], 1 | 'keep', {strict: boolean}>>()
-	.toBe<readonly [] | readonly [1 | 2, 'keep' | false]>();
-expectTypeOf<Filter<{id: 1; first: 1 | 2; second: 1 | 3}, 1, {strict: boolean}>>()
-	.toBe<{id: 1} | {id: 1; first: 1 | 2; second: 1 | 3}>();
-
-declare function filterWithStrictness<const Strict extends boolean>(strict: Strict): Filter<[1 | 2], 1, {strict: Strict}>;
-declare const runtimeStrictness: boolean;
-const filteredWithRuntimeStrictness = filterWithStrictness(runtimeStrictness);
-expectTypeOf<[1 | 2]>().toBeAssignableTo<typeof filteredWithRuntimeStrictness>();
-
-// One selected strategy applies to every tuple element, including optional and rest positions.
-expectTypeOf<[1 | 2]>().not.toBeAssignableTo<Filter<readonly [1 | 2, 'keep' | false], 1 | 'keep', {strict: boolean}>>();
-expectTypeOf<['keep' | false]>().not.toBeAssignableTo<Filter<readonly [1 | 2, 'keep' | false], 1 | 'keep', {strict: boolean}>>();
-expectTypeOf<Filter<[1, (2 | 3)?, ...Array<4 | 5>], 1 | 2 | 4, {strict: boolean}>>()
-	.toBe<[1] | [1, (2 | 3)?, ...Array<4 | 5>]>();
-expectTypeOf<Filter<readonly [...Array<1 | 2>, 3 | 4], 1 | 3, {strict: boolean}>>()
-	.toBe<readonly [] | readonly [...Array<1 | 2>, 3 | 4]>();
-expectTypeOf<Filter<readonly [true, boolean, 0 | 1, 0], Boolean, {strict: boolean}>>()
-	.toBe<readonly [true] | readonly [true, boolean, 0 | 1]>();
-expectTypeOf<Filter<[1, 'skip', 2], number, {strict: boolean}>>().toBe<[1, 2]>();
-expectTypeOf<Filter<[1 | 2], 1, {strict: true} | {strict: false}>>().toBe<[] | [1 | 2]>();
-
-// An optional flag still uses the loose default, while input sentinels keep their existing policy.
+// An optional flag uses the loose default.
 expectTypeOf<Filter<[1 | 2], 1, {strict?: boolean}>>().toBe<[1 | 2]>();
-expectTypeOf<Filter<any, 1, {strict: boolean}>>().toBe<any>();
-expectTypeOf<Filter<never, 1, {strict: boolean}>>().toBe<never>();
-expectTypeOf<Filter<[unknown, any, never, 1], number, {strict: boolean}>>().toBe<[any, 1]>();
-
-expectTypeOf(filterWithStrictness(false)).toBe<[1 | 2]>();
-expectTypeOf(filterWithStrictness(true)).toBe<[]>();
-if (filteredWithRuntimeStrictness.length === 1) {
-	expectTypeOf(filteredWithRuntimeStrictness[0]).toBe<1 | 2>();
-}
-
-// A choice that retains one conditional field also retains the other one.
-declare function filterObjectWithStrictness<const Strict extends boolean>(strict: Strict): Filter<{readonly id: 1; first: 1 | 2; second: 1 | 3}, 1, {strict: Strict}>;
-const filteredObjectWithRuntimeStrictness = filterObjectWithStrictness(runtimeStrictness);
-if ('first' in filteredObjectWithRuntimeStrictness) {
-	expectTypeOf(filteredObjectWithRuntimeStrictness.second).toBe<1 | 3>();
-	// @ts-expect-error Filtering leaves retained property modifiers intact.
-	filteredObjectWithRuntimeStrictness.id = 1;
-}
+// A non-literal strict flag resolves like the default.
+expectTypeOf<Filter<[1 | 2, 1, 'a'], 1, {strict: boolean}>>().toBe<[1 | 2, 1]>();
+expectTypeOf<Filter<{a: 1 | 2; b: 1; c: 'a'}, 1, {strict: boolean}>>().toBe<{a: 1 | 2; b: 1}>();
+expectTypeOf<Filter<[0, 1 | 0], Boolean, {strict: boolean}>>().toBe<[1 | 0]>();
 
 function _filteredArrayWithStrictness<Base extends readonly unknown[], Strict extends boolean>(value: Filter<Base, number, {strict: Strict}>): readonly unknown[] {
 	return value;
@@ -397,4 +359,60 @@ function _constructFilteredOptional<Value>(value: readonly [{value: Value}?]): F
 
 function _readFilteredOptional<Value>(value: Filter<readonly [0, {value: Value}?], object>): Value | undefined {
 	return value[0]?.value;
+}
+
+// Strict mode keeps each selected value's generic payload and optional modifier intact.
+function _constructStrictFilteredPayload<Value>(
+	value: readonly [{readonly id: Value}, {readonly id: Value}?],
+): Filter<readonly [false, {readonly id: Value}, {readonly id: Value}?], object, {strict: true}> {
+	return value;
+}
+
+function _readStrictFilteredPayload<Value>(value: Filter<readonly [false, {readonly id: Value}, {readonly id: Value}?], object, {strict: true}>): Value {
+	return value[0].id;
+}
+
+expectTypeOf<Filter<{readonly selected?: 1 | 2; skipped: string}, number, {strict: true}>>()
+	.toBe<{readonly selected?: 1 | 2}>();
+expectTypeOf<Filter<readonly [undefined?, ...unknown[]], undefined, {strict: true}>>().toBe<readonly [undefined?]>();
+expectTypeOf<Filter<readonly [never?, ...unknown[]], never>>().toBe<readonly []>();
+
+// The concrete strict specialization removes a property whose whole value does not match.
+function _readDroppedStrictField(value: Filter<{value: 1 | 2}, 1, {strict: true}>): void {
+	// @ts-expect-error Strict filtering can remove the property entirely.
+	expectTypeOf(value.value);
+}
+
+expectTypeOf<Filter<{value: 1 | 2}, 1, {strict: true}>>().toBe<{}>();
+
+// Strict truthiness also removes a property that can be false.
+function _readDroppedTruthyField(value: Filter<{enabled: boolean}, Boolean, {strict: true}>): void {
+	// @ts-expect-error Strict truthiness removes a field that can be false.
+	expectTypeOf(value.enabled);
+}
+
+// Construct with a concrete mode; a field selected by both strategies remains readable while the option is generic.
+function _constructAlwaysSelectedField(value: {readonly id: 1}): Filter<{readonly id: 1; ignored: string}, number, {strict: true}> {
+	return value;
+}
+
+function _readAlwaysSelectedField<Strict extends boolean>(value: Filter<{readonly id: 1; ignored: string}, number, {strict: Strict}>): 1 {
+	return value.id;
+}
+
+function _readFilteredGenericOptions<Options extends {strict?: boolean}>(value: Filter<{readonly id: string}, unknown, Options>): string {
+	return value.id;
+}
+
+// The concrete strict specialization rejects a tuple containing a mixed element.
+expectTypeOf<readonly [1 | 2]>().not.toBeAssignableTo<Filter<readonly [1 | 2], 1, {strict: true}>>();
+expectTypeOf<Filter<readonly [1 | 2], 1, {strict: true}>>().toBe<readonly []>();
+
+// A generic options object constrained to loose mode keeps union-valued matches.
+function _readKnownLooseProperty<Options extends {strict: false}>(value: Filter<{value: 1 | 2}, 1, Options>): 1 | 2 {
+	return value.value;
+}
+
+function _readKnownLooseTuple<Options extends {strict: false}>(value: Filter<readonly [1 | 2], 1, Options>): 1 | 2 {
+	return value[0];
 }
