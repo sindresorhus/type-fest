@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Includes, IncludesOptions} from '../index.d.ts';
+import type {Includes, IncludesOptions, TupleOf} from '../index.d.ts';
 
 // Fixed-length tuples
 expectTypeOf<Includes<[1, 2, 3], 1>>().toBe<true>();
@@ -263,47 +263,114 @@ type A3 = Includes<{key: 'value'}, 7>;
 // @ts-expect-error
 type A4 = Includes<[1], 1, {distributeItem: 1}>;
 
-// An unknown comparison strategy must include the answers of both allowed strategies.
-expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<[1 | 2], 1, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<[number], 1, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: true} | {distributeItem: false}>>().toBe<boolean>();
-
-// Strategies that agree retain a definite answer; optional and rest matches remain only possible.
-expectTypeOf<Includes<[1, 2], 1, {distributeItem: boolean}>>().toBe<true>();
-expectTypeOf<Includes<[], 1, {distributeItem: boolean}>>().toBe<false>();
-expectTypeOf<Includes<[2, 3], 1, {distributeItem: boolean}>>().toBe<false>();
-expectTypeOf<Includes<readonly [1?], 1, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<readonly [...string[], 1 | 2], 1, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<[1 | 2, ...number[]], 1, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<[1] | readonly [2], 1, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<[string], number, {distributeItem: boolean}>>().toBe<false>();
-
-// Resolving the strategy must preserve the special handling of an impossible item.
-expectTypeOf<Includes<[never], never, {distributeItem: boolean}>>().toBe<true>();
-expectTypeOf<Includes<[any], never, {distributeItem: boolean}>>().toBe<boolean>();
-expectTypeOf<Includes<[1], never, {distributeItem: boolean}>>().toBe<false>();
-expectTypeOf<Includes<[unknown], unknown, {distributeItem: boolean}>>().toBe<true>();
-expectTypeOf<Includes<any, 1, {distributeItem: boolean}>>().toBe<any>();
-expectTypeOf<Includes<never, 1, {distributeItem: boolean}>>().toBe<never>();
-
-// Optional or undefined-valued settings still use the existing default-option policy.
+// A non-literal or optional option resolves like the default.
+expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: boolean}>>().toBe<false>();
 expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem?: boolean}>>().toBe<false>();
 expectTypeOf<Includes<[1, 2], 1 | 2, IncludesOptions>>().toBe<false>();
 expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: any}>>().toBe<false>();
-expectTypeOf<Includes<[1, 2], 1 | 2, {distributeItem: never}>>().toBe<false>();
 expectTypeOf<Includes<[1, 2], 1 | 2, any>>().toBe<false>();
 expectTypeOf<Includes<[1, 2], 1 | 2, never>>().toBe<false>();
-expectTypeOf<Includes<[1, 2], 1 | 2, {} | {distributeItem: true}>>().toBe<boolean>();
 
 function _includesBoolean<Value, Options extends IncludesOptions>(result: Includes<[Value], 1, Options>): boolean {
 	return result;
 }
 
-declare function inspectChoices<const ArrayType extends readonly unknown[], Options extends IncludesOptions>(array: ArrayType, options: Options): Includes<ArrayType, 1 | 2, Options>;
-declare const comparisonStrategy: boolean;
-expectTypeOf(inspectChoices([1, 2], {distributeItem: comparisonStrategy})).toBe<boolean>();
-expectTypeOf(inspectChoices([1, 2], {distributeItem: true})).toBe<true>();
-expectTypeOf(inspectChoices([1, 2], {distributeItem: false})).toBe<false>();
-expectTypeOf(inspectChoices([1, 2], {})).toBe<false>();
-expectTypeOf(inspectChoices([3, 4], {distributeItem: comparisonStrategy})).toBe<false>();
+// Generic membership results remain usable as booleans through optional and rest elements.
+function _readOptionalGenericMembership<Value>(value: Includes<[Value?], Value>): boolean {
+	return value;
+}
+
+function _readOptionalRestGenericMembership<Value>(value: Includes<[Value?, ...Value[]], Value>): boolean {
+	return value;
+}
+
+function _readPrefixedGenericMembership<Value>(value: Includes<[0, Value], Value>): boolean {
+	return value;
+}
+
+// Tuple metadata does not change whether a matching first position is required.
+type RequiredRoute = readonly ['ready'] & {readonly description: string};
+type OptionalRoute = readonly ['ready'?] & {readonly description: string};
+expectTypeOf<Includes<RequiredRoute, 'ready'>>().toBe<true>();
+expectTypeOf<Includes<OptionalRoute, 'ready'>>().toBe<boolean>();
+expectTypeOf<Includes<RequiredRoute | OptionalRoute, 'ready'>>().toBe<boolean>();
+expectTypeOf<Includes<RequiredRoute, 'ready', {distributeItem: true}>>().toBe<true>();
+expectTypeOf<Includes<OptionalRoute, 'ready', {distributeItem: true}>>().toBe<boolean>();
+expectTypeOf<Includes<readonly [undefined] & {readonly description: string}, undefined>>().toBe<true>();
+expectTypeOf<Includes<readonly [undefined?] & {readonly description: string}, undefined>>().toBe<boolean>();
+// Inference from a tuple with metadata widens the first element to every element, so a required first element is read by index.
+expectTypeOf<Includes<readonly ['ready', 'done'] & {readonly description: string}, 'ready'>>().toBe<true>();
+expectTypeOf<Includes<readonly ['ready', 'done'] & {readonly description: string}, 'ready' | 'done'>>().toBe<false>();
+
+function _readRequiredMetadataMembership<Value>(value: Includes<[Value] & {readonly description: string}, Value>): boolean {
+	return value;
+}
+
+function _readOptionalMetadataMembership<Value>(value: Includes<[Value?] & {readonly description: string}, Value>): boolean {
+	return value;
+}
+
+// A sentinel element is still only possibly present when its position is optional.
+expectTypeOf<Includes<[any?], any>>().toBe<boolean>();
+expectTypeOf<Includes<[unknown?], unknown>>().toBe<boolean>();
+expectTypeOf<Includes<OptionalRoute, 'ready'>>().not.toBeAssignableTo<true>();
+// An optional `never` position cannot contain a value.
+expectTypeOf<Includes<[never?], never>>().toBe<false>();
+
+// A required property refinement guarantees presence even when the underlying tuple position was optional.
+expectTypeOf<Includes<['ready'?] & {0: 'ready'}, 'ready'>>().toBe<true>();
+expectTypeOf<Includes<readonly ['ready'?] & {0: 'ready'}, 'ready'>>().toBe<true>();
+expectTypeOf<Includes<['ready'?] & {'0': 'ready'}, 'ready'>>().toBe<true>();
+expectTypeOf<Includes<readonly ['ready'?] & {'0': 'ready'}, 'ready'>>().toBe<true>();
+expectTypeOf<Includes<['ready'?] & {0?: 'ready'}, 'ready'>>().toBe<boolean>();
+expectTypeOf<Includes<readonly ['ready'?] & {readonly '0'?: 'ready'}, 'ready'>>().toBe<boolean>();
+
+// Generic readers cover both traversal directions when a tuple also has a rest element.
+function _readSuffixGenericMembership<Value, Options extends IncludesOptions>(value: Includes<[...Value[], 0], Value, Options>): boolean {
+	return value;
+}
+
+function _readMixedRestGenericMembership<Value>(value: Includes<[Value, ...number[], 0], Value>): boolean {
+	return value;
+}
+
+expectTypeOf<Includes<readonly [0, ...number[], 'ready'], 'ready'>>().toBe<true>();
+expectTypeOf<Includes<readonly [...string[], 'ready'] | readonly [0, ...number[]], 'ready'>>().toBe<boolean>();
+
+// A required never suffix is compared exactly even in the distributive mode.
+expectTypeOf<Includes<readonly [...unknown[], never], never, {distributeItem: true}>>().toBe<true>();
+expectTypeOf<Includes<readonly [...unknown[], never], any, {distributeItem: true}>>().toBe<boolean>();
+expectTypeOf<Includes<readonly [unknown?, ...never[]], unknown>>().toBe<boolean>();
+
+function _readNeverMembership<Options extends IncludesOptions>(value: Includes<readonly [never], never, Options>): true {
+	return value;
+}
+
+function _readEmptyMembership<Item, Options extends IncludesOptions>(value: Includes<readonly [], Item, Options>): false {
+	return value;
+}
+
+// Distributive matching can produce true as well as false for a union-valued element.
+function _rejectDefiniteDistributiveAbsence(value: Includes<readonly [1 | 2], 1, {distributeItem: true}>): false {
+	// @ts-expect-error A possible match cannot promise definite absence.
+	return value;
+}
+
+function _rejectDefiniteObjectAbsence(value: Includes<readonly [{id: 1} | {other: 2}], {id: 1}, {distributeItem: true}>): false {
+	// @ts-expect-error An object variant can match when the mode enables assignability.
+	return value;
+}
+
+function _readKnownExactMembership<Options extends {distributeItem: false}>(value: Includes<readonly [1 | 2], 1, Options>): false {
+	return value;
+}
+
+function _readUnresolvedMembership<Distribute extends boolean>(value: Includes<readonly [1 | 2], 1, {distributeItem: Distribute}>): boolean {
+	return value;
+}
+
+// Long tuples stay within the instantiation depth limit.
+expectTypeOf<Includes<TupleOf<900, 1>, 2>>().toBe<false>();
+expectTypeOf<Includes<[...TupleOf<900, 1>, 2], 2>>().toBe<true>();
+expectTypeOf<Includes<[...TupleOf<900, 1>, 2?], 2>>().toBe<boolean>();
+expectTypeOf<Includes<[...string[], ...TupleOf<900, 1>], 2>>().toBe<false>();
