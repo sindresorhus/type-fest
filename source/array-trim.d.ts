@@ -1,5 +1,5 @@
 import type {If} from './if.d.ts';
-import type {FirstArrayElement, IsArrayReadonly} from './internal/array.d.ts';
+import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {_SplitOnRestElement} from './split-on-rest-element.d.ts';
@@ -74,7 +74,7 @@ Note: Trimming stops at the first element that does not match, even if it is a r
 @category Array
 */
 export type ArrayTrimStart<Array_ extends UnknownArray, Item, Options extends ArrayTrimOptions = {}> =
-	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>['condition'], 'start'>;
+	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>, 'start'>;
 
 /**
 Remove the elements of the given type from the end of an array.
@@ -108,7 +108,7 @@ Note: Trimming stops at the last element that does not match, even if it is an o
 @category Array
 */
 export type ArrayTrimEnd<Array_ extends UnknownArray, Item, Options extends ArrayTrimOptions = {}> =
-	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>['condition'], 'end'>;
+	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>, 'end'>;
 
 /**
 Remove the elements of the given type from both ends of an array.
@@ -135,21 +135,16 @@ type C = ArrayTrim<['a', 1, 'b', 2], string, {condition: 'extends'}>;
 @category Array
 */
 export type ArrayTrim<Array_ extends UnknownArray, Item, Options extends ArrayTrimOptions = {}> =
-	TrimEach<Array_, Item, ApplyDefaultOptions<ArrayTrimOptions, DefaultArrayTrimOptions, Options>['condition'], 'both'>;
+	// Keep the public composition so generic arrays, items, and options remain assignable in both directions.
+	ArrayTrimEnd<ArrayTrimStart<Array_, Item, Options>, Item, Options>;
 
 /**
 Trims each member of a union of arrays on its own, so that `readonly` is decided per member.
 */
-type TrimEach<Array_ extends UnknownArray, Item, Condition extends Required<ArrayTrimOptions>['condition'], Side extends 'start' | 'end' | 'both'> = IfNotAnyOrNever<Array_, {
-	ifNot: Condition extends unknown // Select one condition for the complete trim, including both ends.
-		? Array_ extends unknown // For distributing `Array_`
-			? (Side extends 'start'
-				? _ArrayTrimStart<Array_, Item, Condition>
-				: Side extends 'end'
-					? _ArrayTrimEnd<Array_, Item, Condition>
-					: _ArrayTrimEnd<_ArrayTrimStart<Array_, Item, Condition>, Item, Condition>) extends infer Result extends UnknownArray
-				? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
-				: never // Should never happen
+type TrimEach<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>, Side extends 'start' | 'end'> = IfNotAnyOrNever<Array_, {
+	ifNot: Array_ extends unknown // For distributing `Array_`
+		? (Side extends 'start' ? _ArrayTrimStart<Array_, Item, Options> : _ArrayTrimEnd<Array_, Item, Options>) extends infer Result extends UnknownArray
+			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
 }>;
@@ -157,47 +152,47 @@ type TrimEach<Array_ extends UnknownArray, Item, Condition extends Required<Arra
 /**
 Returns whether the element matches the item, according to the `condition` option.
 */
-type Matches<Element, Item, Condition extends Required<ArrayTrimOptions>['condition']> =
-	Condition extends 'extends'
+type Matches<Element, Item, Options extends Required<ArrayTrimOptions>> =
+	Options['condition'] extends 'extends'
 		? [Element] extends [Item] ? true : false
 		: IsEqual<Element, Item>;
 
-type _ArrayTrimStart<Array_ extends UnknownArray, Item, Condition extends Required<ArrayTrimOptions>['condition']> =
+type _ArrayTrimStart<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>> =
 	'0' extends keyof Array_
 		// The array starts with a required or optional element.
-		? Array_ extends readonly [unknown?, ...infer Rest]
-			? Matches<FirstArrayElement<Array_>, Item, Condition> extends true
-				? _ArrayTrimStart<Rest, Item, Condition>
+		? Array_ extends readonly [(infer First)?, ...infer Rest]
+			? Matches<First, Item, Options> extends true
+				? _ArrayTrimStart<Rest, Item, Options>
 				: Array_
 			: never // Should never happen
 		// The array is empty, or starts with a rest element, so there is no fixed prefix to retain.
 		: Array_ extends readonly []
 			? Array_
 			: _SplitOnRestElement<Array_, {preserveOptionalModifier: true}> extends [unknown, infer Rest extends UnknownArray, infer Fixed extends UnknownArray]
-				? Matches<Rest[number], Item, Condition> extends true
-					? _ArrayTrimStart<Fixed, Item, Condition>
+				? Matches<Rest[number], Item, Options> extends true
+					? _ArrayTrimStart<Fixed, Item, Options>
 					: Array_
 				: never;
 
-type _ArrayTrimEnd<Array_ extends UnknownArray, Item, Condition extends Required<ArrayTrimOptions>['condition']> =
+type _ArrayTrimEnd<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>> =
 	Array_ extends readonly [...infer Rest, infer Last]
 		// The array ends with a required element.
-		? Matches<Last, Item, Condition> extends true
-			? _ArrayTrimEnd<Rest, Item, Condition>
+		? Matches<Last, Item, Options> extends true
+			? _ArrayTrimEnd<Rest, Item, Options>
 			: Array_
 		: Array_ extends readonly []
 			? Array_
 			: number extends Array_['length']
 				// The array ends with a rest element, so there is no fixed suffix to retain.
 				? _SplitOnRestElement<Array_, {preserveOptionalModifier: true}> extends [infer Fixed extends UnknownArray, infer Rest extends UnknownArray, unknown]
-					? Matches<Rest[number], Item, Condition> extends true
-						? _ArrayTrimEnd<Fixed, Item, Condition>
+					? Matches<Rest[number], Item, Options> extends true
+						? _ArrayTrimEnd<Fixed, Item, Options>
 						: Array_
 					: never
 				// The array ends with an optional element.
 				: Array_ extends readonly [...infer Rest, (infer Last)?]
-					? Matches<Last, Item, Condition> extends true
-						? _ArrayTrimEnd<Rest, Item, Condition>
+					? Matches<Last, Item, Options> extends true
+						? _ArrayTrimEnd<Rest, Item, Options>
 						: Array_
 					: never; // Should never happen
 
