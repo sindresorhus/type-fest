@@ -24,7 +24,7 @@ Options for the `ConditionalPickDeep` type.
 */
 export type ConditionalPickDeepOptions = {
 	/**
-	The condition assertion mode. A union of modes produces a union of complete selections.
+	The condition assertion mode.
 
 	@default 'extends'
 	*/
@@ -37,6 +37,8 @@ type DefaultConditionalPickDeepOptions = {
 
 /**
 Pick keys recursively from the shape that matches the given condition.
+
+In a generic function, use concrete option values before relying on which keys are picked. While any option is generic, TypeScript can read the result as if the default options were used.
 
 Known limitations:
 - Very deeply nested inputs can exceed TypeScript's instantiation budget.
@@ -104,11 +106,9 @@ export type ConditionalPickDeep<
 	Condition,
 	Options extends ConditionalPickDeepOptions = {},
 > =
-	// Choose a complete matching strategy before descending into the object.
-	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options>['condition'] extends infer Mode extends Required<ConditionalPickDeepOptions>['condition']
-		? Mode extends unknown
-			? _ConditionalPickDeep<Type, Condition, {condition: Mode}>
-			: never
+	// Resolving the options in a conditional type defers it for generic options, so declaration emit keeps this alias instead of expanding the result.
+	ApplyDefaultOptions<ConditionalPickDeepOptions, DefaultConditionalPickDeepOptions, Options> extends infer ResolvedOptions extends Required<ConditionalPickDeepOptions>
+		? _ConditionalPickDeep<Type, Condition, ResolvedOptions>
 		: never;
 
 // `IsEmptyObject` is used instead of a raw `EmptyObject` check, because an object with only an index signature is not empty.
