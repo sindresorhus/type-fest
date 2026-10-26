@@ -3,7 +3,12 @@ import type {UnwrapBrand, Whitespace} from './internal/index.d.ts';
 /**
 Remove spaces from the left side.
 */
-type TrimLeft<V extends string> = V extends `${Whitespace}${infer R}` ? TrimLeft<R> : V;
+// Inspect one character instead of matching every whitespace alternative at each step.
+type TrimLeft<Value extends string> = Value extends `${infer First}${infer Rest}`
+	? First extends Whitespace
+		? TrimLeft<Rest>
+		: Value
+	: Value;
 
 /**
 Remove spaces from the right side.
