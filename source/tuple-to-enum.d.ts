@@ -3,7 +3,6 @@ import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnionToEnum} from './union-to-enum.d.ts'; // For `@link`
 import type {IsLiteral} from './is-literal.d.ts';
 import type {Sum} from './sum.d.ts';
-import type {If} from './if.d.ts';
 
 /**
 {@link TupleToEnum `TupleToEnum`} options.
@@ -57,6 +56,8 @@ Use-case: Type an object built from a list of values at runtime, like `Object.fr
 
 Note: With `numeric`, a key that appears more than once gets a union of its indexes.
 
+In a generic function, use concrete option values before relying on the entry values. While any option is generic, TypeScript can read the result as if the default options were used.
+
 @example
 ```
 import type {TupleToEnum} from 'type-fest';
@@ -75,10 +76,23 @@ type LevelNumber = TupleToEnum<typeof levels, {numeric: true}>;
 */
 export type TupleToEnum<Tuple extends readonly PropertyKey[], Options extends TupleToEnumOptions = {}> = IfNotAnyOrNever<Tuple, {
 	ifNot: Tuple extends unknown // For distributing `Tuple`
-		? ApplyDefaultOptions<TupleToEnumOptions, DefaultTupleToEnumOptions, Options> extends infer ResolvedOptions
-			? ResolvedOptions extends Required<TupleToEnumOptions> // Distribute complete option objects before selecting either enum representation.
-				? If<ResolvedOptions['numeric'], NumericTupleToEnum<Tuple, ResolvedOptions['startIndex']>, {readonly [Key in LiteralElements<Tuple>]: Key}>
-				: never // Should never happen
+		? ApplyDefaultOptions<TupleToEnumOptions, DefaultTupleToEnumOptions, Options> extends infer ResolvedOptions extends Required<TupleToEnumOptions>
+			? ResolvedOptions['numeric'] extends true
+				// Inline, so that the result shows as an object instead of an internal alias.
+				? {
+					readonly [Index in keyof Tuple as Index extends `${number}`
+						? IsLiteral<Tuple[Index]> extends true
+							? Tuple[Index]
+							: never // Not a literal, like `string` or `` `on${string}` ``
+						: never // Not an index
+					]: Index extends `${infer IndexNumber extends number}`
+						// Inferred tuple indexes already have the correct value when the offset is zero.
+						? ResolvedOptions['startIndex'] extends 0
+							? IndexNumber
+							: Sum<IndexNumber, ResolvedOptions['startIndex']>
+						: never; // Not an index
+				}
+				: {readonly [Key in LiteralElements<Tuple>]: Key}
 			: never // Should never happen
 		: never; // Should never happen
 	ifAny: {};
@@ -89,19 +103,5 @@ export type TupleToEnum<Tuple extends readonly PropertyKey[], Options extends Tu
 type LiteralElements<Tuple extends readonly PropertyKey[]> = {
 	[Index in keyof Tuple]: IsLiteral<Tuple[Index]> extends true ? Tuple[Index] : never;
 }[number];
-
-type NumericTupleToEnum<Tuple extends readonly PropertyKey[], StartIndex extends number> = StartIndex extends unknown
-	// Select one starting index for the whole map, so every value uses the same shift.
-	? {
-		readonly [Index in keyof Tuple as Index extends `${number}`
-			? IsLiteral<Tuple[Index]> extends true
-				? Tuple[Index]
-				: never // Not a literal, like `string` or `` `on${string}` ``
-			: never // Not an index
-		]: Index extends `${infer IndexNumber extends number}`
-			? Sum<IndexNumber, StartIndex>
-			: never; // Not an index
-	}
-	: never;
 
 export {};

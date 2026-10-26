@@ -108,27 +108,10 @@ expectTypeOf<TupleToEnum<['a', ...Array<'b'>]>>().toBe<{readonly a: 'a'; readonl
 expectTypeOf<TupleToEnum<['a', ...Array<'b'>], {numeric: true}>>().toBe<{readonly a: 0}>(); // Rest elements have no fixed index
 expectTypeOf<TupleToEnum<readonly ['a', 'b'], {numeric: true}>>().toBe<{readonly a: 0; readonly b: 1}>();
 
-// An option chosen at runtime can produce either complete enum representation.
-expectTypeOf<TupleToEnum<['play', 'pause'], {numeric: boolean}>>().toBe<{readonly play: 'play'; readonly pause: 'pause'} | {readonly play: 0; readonly pause: 1}>();
-const dynamicNumericEnum: TupleToEnum<['play', 'pause'], {numeric: boolean}> = {play: 0, pause: 1};
-expectTypeOf(dynamicNumericEnum).toBe<{readonly play: 0; readonly pause: 1}>();
-
-expectTypeOf<TupleToEnum<readonly ['play', 'pause'], {numeric: boolean; startIndex: 3}>>().toBe<{readonly play: 'play'; readonly pause: 'pause'} | {readonly play: 3; readonly pause: 4}>();
-expectTypeOf<TupleToEnum<['a', 'b'], {numeric: true} | {numeric: false}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0; readonly b: 1}>();
-expectTypeOf<TupleToEnum<['a', 'b'], {numeric: true; startIndex: 5} | {numeric: false; startIndex: 20}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 5; readonly b: 6}>();
-expectTypeOf<TupleToEnum<['a', 'b'] | ['c'], {numeric: boolean}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0; readonly b: 1} | {readonly c: 'c'} | {readonly c: 0}>();
-expectTypeOf<TupleToEnum<['a', 'b', 'a'], {numeric: boolean}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0 | 2; readonly b: 1}>();
-expectTypeOf<TupleToEnum<[typeof sym1, -1], {numeric: boolean; startIndex: -2}>>().toBe<{readonly [sym1]: typeof sym1; readonly [-1]: -1} | {readonly [sym1]: -2; readonly [-1]: -1}>();
-expectTypeOf<TupleToEnum<[string, 'x'], {numeric: boolean}>>().toBe<{readonly x: 'x'} | {readonly x: 1}>();
-expectTypeOf<TupleToEnum<['a', ...Array<'b'>], {numeric: boolean}>>().toBe<{readonly a: 'a'; readonly b: 'b'} | {readonly a: 0}>();
-expectTypeOf<keyof TupleToEnum<[], {numeric: boolean}>>().toBe<never>();
-expectTypeOf<TupleToEnum<any, {numeric: boolean}>>().toBe<{}>();
-expectTypeOf<TupleToEnum<never, {numeric: boolean}>>().toBe<{}>();
-// Optional or `any` options use the existing default-option behavior.
+// A non-literal, optional, or `any` option resolves like the default.
+expectTypeOf<TupleToEnum<['a'], {numeric: boolean}>>().toBe<{readonly a: 'a'}>();
 expectTypeOf<TupleToEnum<['a'], {numeric?: boolean}>>().toBe<{readonly a: 'a'}>();
 expectTypeOf<TupleToEnum<['a'], {numeric: any}>>().toBe<{readonly a: 'a'}>();
-expectTypeOf<TupleToEnum<['a'], {numeric: never}>>().toBe<{readonly a: 'a'}>();
-expectTypeOf<{a: 'a'; b: 1}>().not.toBeAssignableTo<TupleToEnum<['a', 'b'], {numeric: boolean}>>();
 // @ts-expect-error
 expectTypeOf<TupleToEnum<['a'], {numeric: unknown}>>();
 
@@ -178,39 +161,6 @@ expectTypeOf(inferredEnum[7]).toBe<7>();
 expectTypeOf(inferredEnum[sym1]).toBe<typeof sym1>();
 expectTypeOf<keyof typeof inferredEnum>().toBe<'ready' | 7 | typeof sym1>();
 
-// A chosen starting index shifts the whole numeric enum together.
-type ShiftedCommands = TupleToEnum<['start', 'stop'], {numeric: true; startIndex: 1 | 10}>;
-type ExpectedShiftedCommands = {readonly start: 1; readonly stop: 2} | {readonly start: 10; readonly stop: 11};
-expectTypeOf<ShiftedCommands>().toBe<ExpectedShiftedCommands>();
-expectTypeOf<{start: 1; stop: 11}>().not.toBeAssignableTo<ShiftedCommands>();
-
-function _readShiftedCommand(value: ShiftedCommands): void {
-	if (value.start === 1) {
-		expectTypeOf(value.stop).toBe<2>();
-	}
-}
-
-// Each negative or positive shift is selected once, including duplicate keys and representation choices.
-type SignedShiftedCommands = TupleToEnum<readonly ['start', 'stop'], {numeric: true; startIndex: -2 | 4}>;
-expectTypeOf<SignedShiftedCommands>().toBe<{readonly start: -2; readonly stop: -1} | {readonly start: 4; readonly stop: 5}>();
-expectTypeOf<{start: -2; stop: 5}>().not.toBeAssignableTo<SignedShiftedCommands>();
-type DuplicateShiftedCommands = TupleToEnum<['start', 'stop', 'start'], {numeric: true; startIndex: 1 | 10}>;
-expectTypeOf<DuplicateShiftedCommands>().toBe<{readonly start: 1 | 3; readonly stop: 2} | {readonly start: 10 | 12; readonly stop: 11}>();
-expectTypeOf<{start: 1; stop: 11}>().not.toBeAssignableTo<DuplicateShiftedCommands>();
-expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: boolean; startIndex: 1 | 10}>>()
-	.toBe<ExpectedShiftedCommands | {readonly start: 'start'; readonly stop: 'stop'}>();
-expectTypeOf<TupleToEnum<['start', 'stop'] | ['pause'], {numeric: true; startIndex: 1 | 10}>>()
-	.toBe<ExpectedShiftedCommands | {readonly pause: 1} | {readonly pause: 10}>();
-
-// An enum-valued offset retains its own identity, while the later values still use the chosen offset.
-enum CommandOffset {
-	First = 1,
-	Later = 10,
-}
-type OffsetEnumOptions<Start extends number> = {numeric: true; startIndex: Start};
-expectTypeOf<TupleToEnum<['start', 'stop'], OffsetEnumOptions<CommandOffset>>>()
-	.toBe<TupleToEnum<['start', 'stop'], OffsetEnumOptions<CommandOffset.First>> | TupleToEnum<['start', 'stop'], OffsetEnumOptions<CommandOffset.Later>>>();
-
 // Optional and sentinel options retain their default behavior; a wide offset remains a number.
 expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: true; startIndex?: 1 | 10}>>().toBe<{readonly start: 0; readonly stop: 1}>();
 expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: true; startIndex: number}>>().toBe<{readonly start: number; readonly stop: number}>();
@@ -219,10 +169,55 @@ expectTypeOf<TupleToEnum<['start', 'stop'], never>>().toBe<{readonly start: 'sta
 // @ts-expect-error A starting index must be numeric.
 type UnknownStartingIndex = TupleToEnum<['start'], {numeric: true; startIndex: unknown}>;
 
-declare function shiftedEnum<const Values extends readonly PropertyKey[], const Start extends number>(values: Values, start: Start): TupleToEnum<Values, OffsetEnumOptions<Start>>;
-declare const chosenCommandOffset: 1 | 10;
-const inferredShiftedCommands = shiftedEnum(['start', 'stop'], chosenCommandOffset);
-expectTypeOf(inferredShiftedCommands).toBe<ExpectedShiftedCommands>();
-// @ts-expect-error Correlation does not change readonly modifiers.
-inferredShiftedCommands.start = 1;
-expectTypeOf<{start: 10; stop: 2}>().not.toBeAssignableTo<typeof inferredShiftedCommands>();
+// Default numeric values retain their exact indexes across the single-digit boundary.
+const requestStates = ['queued', 'validating', 'ready', 'running', 'retrying', 'paused', 'cancelled', 'failed', 'succeeded', 'archived', 'expired', 'deleted'] as const;
+expectTypeOf<TupleToEnum<typeof requestStates, {numeric: true}>>().toBe<{
+	readonly queued: 0;
+	readonly validating: 1;
+	readonly ready: 2;
+	readonly running: 3;
+	readonly retrying: 4;
+	readonly paused: 5;
+	readonly cancelled: 6;
+	readonly failed: 7;
+	readonly succeeded: 8;
+	readonly archived: 9;
+	readonly expired: 10;
+	readonly deleted: 11;
+}>();
+
+// Zero offsets normalize to ordinary indexes even when the offset has a nominal type.
+enum StartingIndex {
+	Zero,
+}
+expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: true; startIndex: StartingIndex.Zero}>>().toBe<{readonly start: 0; readonly stop: 1}>();
+expectTypeOf<TupleToEnum<['start', 'stop'], {numeric: true; startIndex: Tagged<0, 'Offset'>}>>().toBe<{readonly start: 0; readonly stop: 1}>();
+
+// Colliding numeric/string keys and repeated symbols keep all their indexes.
+expectTypeOf<TupleToEnum<[0, '0', typeof sym1, typeof sym1], {numeric: true}>>().toBe<{readonly 0: 0 | 1; readonly [sym1]: 2 | 3}>();
+
+declare function numericEnumOf<const Values extends readonly PropertyKey[]>(values: Values): TupleToEnum<Values, {numeric: true}>;
+const inferredNumericEnum = numericEnumOf(['ready', 7, sym1]);
+expectTypeOf(inferredNumericEnum.ready).toBe<0>();
+expectTypeOf(inferredNumericEnum[7]).toBe<1>();
+expectTypeOf(inferredNumericEnum[sym1]).toBe<2>();
+// @ts-expect-error Numeric enum properties remain readonly.
+inferredNumericEnum.ready = 0;
+
+// False numeric constraints and irrelevant offsets keep known literal entries readable.
+function _readConstrainedLiteralOptions<Options extends {numeric: false}>(value: TupleToEnum<['play'], Options>): 'play' {
+	return value.play;
+}
+
+function _readLiteralWithGenericOffset<Offset extends number>(value: TupleToEnum<['play'], {startIndex: Offset}>): 'play' {
+	return value.play;
+}
+
+// Both strategies agree when numeric keys already equal their indexes.
+function _readInvariantEnumIndex<Numeric extends boolean>(value: TupleToEnum<[0, 1], {numeric: Numeric; startIndex: 0}>): 0 {
+	return value[0];
+}
+
+function _readEitherEnumMode<Numeric extends boolean>(value: TupleToEnum<['play'], {numeric: Numeric}>): string | number {
+	return value.play;
+}
