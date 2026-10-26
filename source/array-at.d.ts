@@ -1,8 +1,7 @@
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {Absolute} from './absolute.d.ts';
-import type {If} from './if.d.ts';
 import type {IntRange} from './int-range.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {_SplitOnRestElement, SplitOnRestElement} from './split-on-rest-element.d.ts';
@@ -13,7 +12,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 Get the type of the element at the given index of an array, like [`Array#at()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at).
 
-A negative index counts back from the end. If the array has optional elements or a rest element, the result is a union of every element the index can reach, and it includes `undefined` if the index can be out of bounds. If `exactOptionalPropertyTypes` is disabled, an optional element can also be `undefined`.
+A negative index counts back from the end. If the array has optional elements or a rest element, the result is a union of every element the index can reach, and it includes `undefined` if the index can be out of bounds.
 
 Use-case: Get the type of the last element of a tuple, or of the value returned by `array.at(index)`.
 
@@ -157,7 +156,7 @@ type ArrayAtNegativeIndex<TArray extends UnknownArray, Index extends number, Lef
 						? Left extends 0
 							? Last | Result // If there's a match, and `Left` is `0`, return `Result` with `Last`.
 							: ArrayAtNegativeIndex<Rest, Index, Sum<Left, 1>, Last | Result> // If there's a match, and `Left` is not `0`, increment `Left` and add `Last` to `Result`.
-						: ArrayAtNegativeIndex<Rest, Index, Left, Last | If<IsExactOptionalPropertyTypesEnabled, never, undefined> | Result> // If `Last` is optional, just add it to `Result` without changing anything else.
+						: ArrayAtNegativeIndex<Rest, Index, Left, Last | Result> // If `Last` is optional, just add it to `Result` without changing anything else.
 					: TArray extends readonly [...unknown[], unknown]
 						? ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Left, Result> // If `Last` is not optional, just increment `Index`.
 						: ArrayAtNegativeIndex<Rest, Sum<Index, 1>, Subtract<Left, 1>, Result> // If `Last` is optional, increment `Index` and decrement `Left`.

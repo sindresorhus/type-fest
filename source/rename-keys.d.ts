@@ -4,11 +4,10 @@ import type {IsNever} from './is-never.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 import type {RequiredKeysOf} from './required-keys-of.d.ts';
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {SetRequired} from './set-required.d.ts';
 import type {SetReadonly} from './set-readonly.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {NormalizedKeys, ObjectValue} from './internal/object.d.ts';
 import type {ToString} from './internal/string.d.ts';
 
@@ -43,7 +42,7 @@ type Normalized = RenameKeys<SearchInput, {textQuery: 'query'; voiceQuery: 'quer
 //=> {query: string | Blob | File}
 ```
 
-Note: When multiple source keys map to the same target, the target's value type is the union of the contributors' value types. The target is optional only when every contributor is optional, and is `readonly` when any contributor is `readonly`. With `exactOptionalPropertyTypes` disabled, the value type of a mixed-optionality merge also includes `undefined`.
+Note: When multiple source keys map to the same target, the target's value type is the union of the contributors' value types. The target is optional only when every contributor is optional, and is `readonly` when any contributor is `readonly`. Explicitly declared `undefined` remains part of a contributor's value type.
 
 @example
 ```
@@ -68,11 +67,10 @@ type D = RenameKeys<{readonly a: 1; b: 2}, {a: 'x'; b: 'x'}>;
 
 @example
 ```
-// @exactOptionalPropertyTypes: false
 import type {RenameKeys} from 'type-fest';
 
-// With `exactOptionalPropertyTypes` disabled, a mixed-optionality merge includes `undefined`.
-type E = RenameKeys<{a?: 1; b: 2}, {a: 'x'; b: 'x'}>;
+// An optional contributor explicitly allowing `undefined` retains it in a required target.
+type E = RenameKeys<{a?: 1 | undefined; b: 2}, {a: 'x'; b: 'x'}>;
 //=> {x: 1 | 2 | undefined}
 ```
 
@@ -146,10 +144,9 @@ type RenamesSomething<BaseType extends object, RenameMap extends Record<Property
 };
 
 type RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	RestoreMergedUndefined<BaseType, RenameMap,
-		ApplyReadonly<BaseType, RenameMap,
-			ApplyRequired<BaseType, RenameMap,
-				RenameNaive<BaseType, RenameMap>>>>;
+	ApplyReadonly<BaseType, RenameMap,
+		ApplyRequired<BaseType, RenameMap,
+			RenameNaive<BaseType, RenameMap>>>;
 
 type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, NumericTargets extends number = TargetOf<LiteralKeyOf<BaseType>, RenameMap> & number> = {
 	// Targets with the same numeric spelling share one key before later maps restore their modifiers; retaining both aliases would make those maps drop the property.
@@ -161,28 +158,13 @@ type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, 
 };
 
 // A merged target kept only one modifier in `RenameNaive`, so re-force these from every contributor.
+// Targets renamed from both a required and an optional key prefer the required modifier: required `b` and optional `a` both rename to `x` in `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}`.
+// Explicitly declared `undefined` stays in the value, so `{a?: 1 | undefined; x: 2}` with `{a: 'x'}` gives `{x: 1 | 2 | undefined}`.
 type ApplyRequired<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
 	SetRequired<Renamed, NormalizedKeys<TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>> & keyof Renamed>;
 
 type ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Renamed> =
 	SetReadonly<Renamed, NormalizedKeys<TargetOf<ReadonlyKeysOf<OmitIndexSignature<BaseType>>, RenameMap>> & keyof Renamed>;
-
-// `exactOptionalPropertyTypes` off keeps `undefined` on a target that merged a required and an optional source.
-// Source `{a?: 1; x: 2}` with `{a: 'x'}` gives `{x: 1 | 2 | undefined}`.
-type RestoreMergedUndefined<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, Result> =
-	IsExactOptionalPropertyTypesEnabled extends true
-		? Result
-		: {
-			[Key in keyof Result]: Key extends MergedTargets<BaseType, RenameMap>
-				? Result[Key] | undefined
-				: Result[Key];
-		};
-
-type MergedTargets<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>> =
-	// Targets renamed from both a required and an optional key prefer the required modifier.
-	// Required `b` and optional `a` both rename to `x` in `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}`.
-	TargetOf<RequiredKeysOf<OmitIndexSignature<BaseType>>, RenameMap>
-	& TargetOf<OptionalKeysOf<OmitIndexSignature<BaseType>>, RenameMap>;
 
 type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	// Include a string enum key's literal spelling, so either form can select the rename.

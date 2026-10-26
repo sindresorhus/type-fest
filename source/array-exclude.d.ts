@@ -1,6 +1,6 @@
 import type {If} from './if.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -29,7 +29,7 @@ type D = ArrayExclude<Array<string | number>, number>;
 
 Note: This works on types, not values. An element that is a union keeps its remaining members, so `ArrayExclude<[1 | 'a'], string>` is `[1]`, even though filtering `['a']` at runtime gives `[]`.
 
-Note: If `exactOptionalPropertyTypes` is disabled, an optional element also accepts `undefined`, so it is only removed when `undefined` is excluded too.
+Note: Requires `exactOptionalPropertyTypes: true`. Explicitly declared `undefined` remains part of an optional element unless it is excluded too.
 
 @category Array
 */
@@ -56,7 +56,7 @@ type _ArrayExclude<
 					// Box the result so `never` is tested without distributing.
 					? _ArrayExclude<Rest, TExclude, [Element] extends [never] ? BeforeRestAcc : [...BeforeRestAcc, Element], AfterRestAcc>
 					: never // Should never happen
-				: Exclude<First | If<IsExactOptionalPropertyTypesEnabled, never, undefined>, TExclude> extends infer Element // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+				: Exclude<First, TExclude> extends infer Element // Optional inference preserves explicitly declared `undefined`.
 					? _ArrayExclude<Rest, TExclude, [Element] extends [never] ? BeforeRestAcc : [...BeforeRestAcc, Element?], AfterRestAcc>
 					: never // Should never happen
 			: never // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.

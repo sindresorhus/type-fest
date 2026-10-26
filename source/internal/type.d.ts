@@ -185,13 +185,6 @@ type C = IsAnyOrNever<never>;
 export type IsAnyOrNever<T> = IsNotFalse<IsAny<T> | IsNever<T>>;
 
 /**
-Indicates the value of `exactOptionalPropertyTypes` compiler option.
-*/
-export type IsExactOptionalPropertyTypesEnabled = [(string | undefined)?] extends [string?]
-	? false
-	: true;
-
-/**
 The call signature of the given type, rebuilt with its `this` parameter, which `Parameters` leaves out, so the rebuilt signature does not accept any receiver. A function that declares no `this` is rebuilt without one, like `OmitThisParameter` does, because `this: unknown` would reject a function that declares a `this`. `unknown` for a type that is not callable, so it can be intersected with anything.
 
 Readonly rest parameters are preserved.

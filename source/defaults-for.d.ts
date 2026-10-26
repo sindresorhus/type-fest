@@ -5,7 +5,7 @@ Create the type of a defaults object for the given options type, with only its o
 
 Use-case: You keep the default options in an object and merge it with the user's options. This type makes it a type error to add an option without adding its default, to misspell a key, or to give a default for an option that the user must always pass.
 
-`undefined` is removed from the type of each default, even with `exactOptionalPropertyTypes` disabled or an option typed as `Type | undefined`, because an `undefined` default is the same as having none. Use `Except` to leave out the options that have no default.
+`undefined` is removed from the type of each default, even with an option typed as `Type | undefined`, because an `undefined` default is the same as having none. Use `Except` to leave out the options that have no default.
 
 @example
 ```

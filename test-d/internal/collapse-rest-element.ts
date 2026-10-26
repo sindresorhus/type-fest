@@ -8,8 +8,8 @@ expectTypeOf<CollapseRestElement<[1, 2, 'a', 'b']>>().toBe<[1, 2, 'a', 'b']>();
 expectTypeOf<CollapseRestElement<[string | null, number | bigint, boolean]>>().toBe<[string | null, number | bigint, boolean]>();
 
 // Optional elements
-// If `exactOptionalPropertyTypes` were disabled, there would have been an additional `| undefined` for optional elements.
-// For example, `CollapseRestElement<[string?, number?]>` would have returned `[string | undefined, number | undefined]`.
+// Removing optional modifiers does not add `undefined` to the inferred element values.
+// Explicitly declared `undefined` remains part of an element type.
 expectTypeOf<CollapseRestElement<[string?]>>().toBe<[string]>();
 expectTypeOf<CollapseRestElement<[1, 2, ('a' | 'b')?, ('c' | 'd')?]>>().toBe<[1, 2, 'a' | 'b', 'c' | 'd']>();
 expectTypeOf<CollapseRestElement<[string?, number?, boolean?]>>().toBe<[string, number, boolean]>();

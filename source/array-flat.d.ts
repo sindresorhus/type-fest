@@ -1,6 +1,5 @@
-import type {If} from './if.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -74,7 +73,7 @@ type SpreadElements<
 			Array_ extends readonly [unknown, ...unknown[]]
 				? FlattenElement<First, Depth>
 				// An optional element can be absent, so it becomes a rest element. Keeping it optional would be wrong when a required element follows it in the result, because TypeScript would then make the optional element required.
-				: FlattenElement<First | If<IsExactOptionalPropertyTypesEnabled, never, undefined>, Depth> extends infer OptionalElements extends UnknownArray
+				: FlattenElement<First, Depth> extends infer OptionalElements extends UnknownArray
 					? Array<OptionalElements[number]>
 					: never // Should never happen
 		// The recursive results are inferred before they are spread, because spreading them directly makes TypeScript expand the recursion without end when checking this type.

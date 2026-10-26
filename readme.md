@@ -57,7 +57,7 @@ npm install type-fest
 
 *Requires TypeScript >=5.9, [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c), and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
 
-*[`{exactOptionalPropertyTypes: true}`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) is recommended. The types are tested with it enabled. Without it, support is best-effort: some results for optional properties and elements are less precise, and fixing that is not a priority.*
+*[`{exactOptionalPropertyTypes: true}`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) is required. Disabling it is unsupported.*
 
 > [!NOTE]
 > This readme shows the current development version. For docs about the latest version, see the [npm page](https://www.npmjs.com/package/type-fest).

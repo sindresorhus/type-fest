@@ -1,6 +1,5 @@
-import type {If} from './if.d.ts';
 import type {Subtract} from './subtract.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -88,8 +87,8 @@ type BeforeRestLastElement<BeforeRest extends UnknownArray, Accumulator = never>
 			: BeforeRest extends readonly [...infer Rest, (infer Last)?]
 				? BeforeRestLastElement<
 					Rest,
-					// Add `undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
-					Last | Accumulator | If<IsExactOptionalPropertyTypesEnabled, never, undefined>
+					// Optional inference preserves explicitly declared `undefined`.
+					Last | Accumulator
 				>
 				: never;
 

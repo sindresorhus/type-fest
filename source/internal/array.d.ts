@@ -2,7 +2,7 @@ import type {If} from '../if.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {IsExactOptionalPropertyTypesEnabled, IfNotAnyOrNever} from './type.d.ts';
+import type {IfNotAnyOrNever} from './type.d.ts';
 
 /**
 Extracts the type of the first element of an array or tuple.
@@ -160,16 +160,16 @@ type D = CollapseRestElement<[string, number]>;
 //=> [string, number]
 ```
 
-Note: Optional modifiers (`?`) are removed from elements unless the `exactOptionalPropertyTypes` compiler option is disabled. When disabled, there's an additional `| undefined` for optional elements.
+Note: Optional modifiers (`?`) are removed from elements. Explicitly declared `undefined` is preserved.
 
 @example
 ```
-// `exactOptionalPropertyTypes` enabled
+// Optional elements become required.
 type A = CollapseRestElement<[string?, string?, ...number[]]>;
 //=> [string, string, number]
 
-// `exactOptionalPropertyTypes` disabled
-type B = CollapseRestElement<[string?, string?, ...number[]]>;
+// Explicitly declared `undefined` is preserved.
+type B = CollapseRestElement<[(string | undefined)?, (string | undefined)?, ...number[]]>;
 //=> [string | undefined, string | undefined, number]
 ```
 */
@@ -188,10 +188,8 @@ type _CollapseRestElement<
 					Rest,
 					[
 						...ForwardAccumulator,
-						// A tuple allows fewer than one element only when its first element is optional. Written in exactly this shape because equivalent ones, such as `[] extends TArray`, are several times slower.
-						TArray extends readonly [unknown, ...unknown[]]
-							? First
-							: If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>, // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+						// Required and optional elements use the same inferred value, so no optional-position check is needed. Explicitly declared `undefined` is preserved.
+						First,
 					],
 					BackwardAccumulator
 				>

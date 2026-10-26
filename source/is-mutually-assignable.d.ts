@@ -29,7 +29,7 @@ type D = IsMutuallyAssignable<string | number, string>;
 
 Note: {@link IsEqual} also compares the identity of the two types, so it returns `false` for the first two cases above. Use this type when only assignability matters, and `IsEqual` when the types must be identical. This type is also cheaper.
 
-Note: The result depends on the compiler options. With `strictFunctionTypes` disabled, function parameters are bivariant, so `(a: string) => void` and `(a: 'x') => void` become mutually assignable. With `exactOptionalPropertyTypes` disabled, `{a?: string}` and `{a?: string | undefined}` become mutually assignable.
+Note: The result depends on the compiler options. With `strictFunctionTypes` disabled, function parameters are bivariant, so `(a: string) => void` and `(a: 'x') => void` become mutually assignable. With the required `exactOptionalPropertyTypes: true`, `{a?: string}` and `{a?: string | undefined}` are not mutually assignable.
 
 Note: `any` is mutually assignable with every type except `never`, even when nested. `never` is only mutually assignable with itself.
 

@@ -1,7 +1,7 @@
 import type {SimplifyObject} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {KeyAliases, NormalizedKeys} from './internal/object.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled, MapsSetsOrArrays} from './internal/type.d.ts';
+import type {IfNotAnyOrNever, MapsSetsOrArrays} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
@@ -104,8 +104,8 @@ export type ObjectMerge<First extends object, Second extends object> =
 								Second,
 								NormalizedLiteralKeys<First>,
 								NormalizedLiteralKeys<Second>,
-								IsExactOptionalPropertyTypesEnabled extends true ? Required<First> : First,
-								IsExactOptionalPropertyTypesEnabled extends true ? Required<Second> : Second
+								Required<First>,
+								Required<Second>
 							>
 					: never // Should never happen
 				: never; // Should never happen

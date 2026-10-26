@@ -7,7 +7,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 Create a type that makes all keys required, while the keys that were optional also accept `undefined`.
 
-Unlike the built-in `Required`, it adds `undefined` to the value type of the keys that were optional. An object of this type must have every key, but a key that was optional can be set to `undefined`. It works the same with and without the [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) TSConfig setting. Only the top-level keys are changed. Nested objects are kept as is. Optional tuple elements become required elements that accept `undefined`. Arrays and rest elements are kept as is.
+Unlike the built-in `Required`, it adds `undefined` to the value type of the keys that were optional. An object of this type must have every key, but a key that was optional can be set to `undefined`. Requires `exactOptionalPropertyTypes: true`. Only the top-level keys are changed. Nested objects are kept as is. Optional tuple elements become required elements that accept `undefined`. Arrays and rest elements are kept as is.
 
 Use-cases:
 - Make sure that an object lists every key, so that you get an error when a key is added to the type but not to the object. For example, when you map one model to another or read environment variables.
@@ -46,7 +46,6 @@ type Point = RequiredKeepUndefined<[x: number, y?: number]>;
 
 @example
 ```
-// @exactOptionalPropertyTypes: false
 import type {RequiredKeepUndefined} from 'type-fest';
 
 type Options = {
@@ -54,7 +53,7 @@ type Options = {
 	timeout?: number;
 };
 
-// The built-in `Required` removes `undefined` when `exactOptionalPropertyTypes` is disabled.
+// The built-in `Required` removes the implicit `undefined` from an optional property.
 type A = Required<Options>;
 //=> {name: string; timeout: number}
 
@@ -75,7 +74,7 @@ Known limitations:
 */
 export type RequiredKeepUndefined<Type extends object> =
 	Type extends unknown // For distributing `Type`
-		// Each value is wrapped in a tuple, because `-?` removes `undefined` from the value of an optional key when `exactOptionalPropertyTypes` is disabled, and always from array elements, optional tuple elements, rest elements, and the elements after a rest element. With the wrapper, `-?` can only remove an `undefined` around the tuple, so the value in it is kept.
+		// Each value is wrapped in a tuple so removing optional modifiers cannot strip `undefined` from tuple element values. With the wrapper, `-?` can only remove an `undefined` around the tuple, so the value in it is kept.
 		// An array type with extra keys, like `string[] & {tag?: string}`, takes the object branch, so that its extra keys lose the link (see below). Both branches turn it into the same object type.
 		? ([Type, Exclude<keyof Type, keyof unknown[] | `${number}`>] extends [UnknownArray, never] // Wrapped, so that `any` does not take both branches
 			// A key remap would turn arrays into objects, and tuples print correctly without one.

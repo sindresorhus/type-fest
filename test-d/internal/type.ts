@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {Falsy, IsEqual, Merge, MergeAll, PartialDeep, ReadonlyDeep, RequiredDeep, SetOptional, SetReadonly, SetRequired, WritableDeep} from '../../index.d.ts';
-import type {CallSignatureOf, FunctionParameters, IsAnyOrNever, IsBothExtends, IsExactOptionalPropertyTypesEnabled, IsPlainObject, IsPrimitive, IsTruthy} from '../../source/internal/index.d.ts';
+import type {CallSignatureOf, FunctionParameters, IsAnyOrNever, IsBothExtends, IsPlainObject, IsPrimitive, IsTruthy} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<IsPrimitive<'string'>, true>>().toBe<true>();
 expectTypeOf<IsEqual<IsPrimitive<string>, true>>().toBe<true>();
@@ -43,9 +43,6 @@ expectTypeOf<IsEqual<IsPlainObject<string>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsPlainObject<new () => 1>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsPlainObject<() => void>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsPlainObject<Date>, false>>().toBe<true>();
-
-// `IsExactOptionalPropertyTypesEnabled` follows the compiler option, which this repository sets.
-expectTypeOf<IsEqual<IsExactOptionalPropertyTypesEnabled, true>>().toBe<true>();
 
 // `CallSignatureOf` rebuilds the call signature with its `this` parameter, which `Parameters` leaves out. `IsEqual` cannot see `this`, so it is checked through `ThisParameterType` and a call with the wrong receiver.
 expectTypeOf<IsEqual<ThisParameterType<CallSignatureOf<(this: Date, a: string) => void>>, Date>>().toBe<true>();

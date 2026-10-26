@@ -160,10 +160,10 @@ type _Includes<
 				: Found | (true extends IsEqualOrExtend<Array_[number], Item, Options> ? boolean : false)
 		// The array starts with a fixed element, which can be optional, so the elements are searched from the start.
 		: Array_ extends readonly [(infer First)?, ...infer Rest]
-			// A required element is read with `Array_[0]`, because `First` loses its `undefined` when `exactOptionalPropertyTypes` is disabled, even for a required element.
-			? IsEqualOrExtend<IsOptionalKeyOf<Array_, 0> extends true ? First : Array_[0], Item, Options> extends infer Result
+			// Optional inference preserves explicitly declared `undefined` without adding the missing-position value.
+			? IsEqualOrExtend<First, Item, Options> extends infer Result
 				? [Result] extends [true]
-					// An optional element can be absent, so it is only a possible match. With `exactOptionalPropertyTypes` disabled, an optional element can also be `undefined`, which is not considered, so `Includes<[1?], undefined>` is `false`.
+					// An optional element can be absent, so it is only a possible match. Its value excludes implicit `undefined`, so `Includes<[1?], undefined>` is `false`.
 					? IsOptionalKeyOf<Array_, 0> extends true
 						? _Includes<Rest, Item, Options, boolean>
 						: true

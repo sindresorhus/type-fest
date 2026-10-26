@@ -1,6 +1,6 @@
 import type {If} from './if.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -77,7 +77,7 @@ type _ArrayReverse<
 					? _ArrayReverse<Rest, [First, ...BeforeRestAcc], AfterRestAcc, Result>
 					: _ArrayReverse<
 						Rest,
-						[First | (If<IsExactOptionalPropertyTypesEnabled, never, undefined>), ...BeforeRestAcc], // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+						[First, ...BeforeRestAcc], // Optional inference preserves explicitly declared `undefined`.
 						AfterRestAcc,
 						Result | BeforeRestAcc
 					>

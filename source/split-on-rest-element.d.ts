@@ -1,4 +1,4 @@
-import type {IfNotAnyOrNever, IsExactOptionalPropertyTypesEnabled} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IsArrayReadonly} from './internal/array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -16,9 +16,8 @@ type SplitOnRestElementOptions = {
 	- When set to `true`, the optional modifiers are preserved as-is. For example:
 		`SplitOnRestElement<[number, string?, ...boolean[]], {preserveOptionalModifier: true}>` returns `[[number, string?], boolean[], []]`.
 
-	- When set to `false`, optional elements like `T?` are transformed to `T | undefined` or simply `T` depending on the `exactOptionalPropertyTypes` compiler option. For example:
-		- With `exactOptionalPropertyTypes` enabled: `SplitOnRestElement<[number, string?, ...boolean[]], {preserveOptionalModifier: false}>` returns `[[number, string], boolean[], []]`
-		- And, with it disabled, the result is: `[[number, string | undefined], boolean[], []]`
+	- When set to `false`, optional elements like `T?` are transformed to `T`, preserving explicitly declared `undefined`. For example:
+		`SplitOnRestElement<[number, string?, ...boolean[]], {preserveOptionalModifier: false}>` returns `[[number, string], boolean[], []]`.
 
 	@default true
 	*/
@@ -96,7 +95,7 @@ export type _SplitOnRestElement<
 					...Array_ extends readonly [unknown, ...unknown[]]
 						? [First]
 						: Options['preserveOptionalModifier'] extends false
-							? [If<IsExactOptionalPropertyTypesEnabled, First, First | undefined>] // Add `| undefined` for optional elements, if `exactOptionalPropertyTypes` is disabled.
+							? [First] // Optional inference preserves explicitly declared `undefined`.
 							: [First?],
 				],
 				TailAcc
