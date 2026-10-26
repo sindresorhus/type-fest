@@ -18,8 +18,6 @@ export type PathsOptions = {
 	/**
 	The maximum depth to recurse when searching for paths. Range: 0 ~ 10.
 
-	A union of literal limits includes the complete paths and leaves produced by each possible limit.
-
 	@default 5
 	*/
 	maxRecursionDepth?: number;
@@ -30,8 +28,6 @@ export type PathsOptions = {
 	Use it to limit large self-referencing types without lowering {@link PathsOptions.maxRecursionDepth | `maxRecursionDepth`} for the rest of the type. With `0`, the circular property is included, but `Paths` does not go into it. `maxRecursionDepth` still applies.
 
 	When {@link PathsOptions.leavesOnly | `leavesOnly`} is `true`, a path that stops at this limit counts as a leaf.
-
-	A union of literal limits includes the complete paths and leaves produced by each possible limit.
 
 	@default number
 
@@ -93,7 +89,7 @@ export type PathsOptions = {
 	/**
 	Only include leaf paths in the output.
 
-	A path whose value can be `null` or `undefined` is also a leaf, even if the value can be an object too. An optional property (`?`) is not a leaf because of its `undefined`, unless `exactOptionalPropertyTypes` is enabled and the property type explicitly includes `undefined`. To leave out such paths, remove `null` and `undefined` first with {@link NonNullableDeep}.
+	A path whose value can be `null` or `undefined` is also a leaf, even if the value can be an object too. An optional property (`?`) is not a leaf because of its implicit `undefined`, but explicitly including `undefined` in the property type makes it a leaf. To leave out such paths, remove `null` and `undefined` first with {@link NonNullableDeep}.
 
 	@default false
 
@@ -308,6 +304,8 @@ Note: With a `string` index signature at the top level, the result is `string`, 
 
 Note: A key that contains a dot gives a path that reads like a nested path, because every `.` separates two keys. `Paths<{'a.b': {c: number}}>` includes `'a.b.c'`, which `Get`, `PickDeep`, and the other path types read as `a` → `b` → `c`. To read such a key, use the array form of `Get`: `Get<{'a.b': {c: number}}, ['a.b', 'c']>` is `number`.
 
+Note: In a generic function, use concrete option values before relying on bracket notation. While any option is generic, TypeScript can read the result as if the default options were used.
+
 @example
 ```
 import type {Paths} from 'type-fest';
@@ -357,16 +355,11 @@ type LeafPaths = Paths<Users, {leavesOnly: true}>;
 @category Object
 @category Array
 */
-export type Paths<T, Options extends PathsOptions = {}> = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options> extends infer ResolvedOptions extends Required<PathsOptions>
-	// Choose one complete options strategy and pair of bounds before traversing the object.
-	? ResolvedOptions extends {maxRecursionDepth: infer MaxRecursionDepth; maxCircularDepth: infer MaxCircularDepth}
-		? MaxRecursionDepth extends number
-			? MaxCircularDepth extends number
-				? _Paths<T, ResolvedOptions & {maxRecursionDepth: MaxRecursionDepth; maxCircularDepth: MaxCircularDepth}>
-				: never
-			: never
-		: never
-	: never;
+export type Paths<T, Options extends PathsOptions = {}> =
+	// Resolving the options in a conditional type defers it for generic options, so declaration emit keeps this alias instead of expanding the result.
+	ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, Options> extends infer ResolvedOptions extends Required<PathsOptions>
+		? _Paths<T, ResolvedOptions>
+		: never;
 
 type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends number = 0, Seen extends unknown[] = []> =
 	T extends NonRecursivePathsType<Options>
@@ -374,7 +367,8 @@ type _Paths<T, Options extends Required<PathsOptions>, CurrentDepth extends numb
 		: IsAny<T> extends true
 			? never
 			: T extends object
-				? number extends Options['maxCircularDepth']
+				// Numeric enum members also accept `number`, so compare printed values to recognize finite limits.
+				? `${number}` extends `${Options['maxCircularDepth']}`
 					// No limit, so skip tracking the seen types, which would prevent TypeScript from reusing instantiations
 					? InternalPaths<T, Options, CurrentDepth, Seen, KeysToSkip<T, Options>>
 					: GreaterThan<CountExactInArray<Seen, T>, Options['maxCircularDepth']> extends true // Limit the depth of circular references
@@ -406,7 +400,7 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 									: (Options['requiredOnly'] extends true ? HasOnlyOptionalKeys<Value> : false) extends true // With `requiredOnly`, a value whose keys are all optional has no paths, so it counts as a leaf like an empty object.
 										? TransformedKey
 										// Like `_Paths`, skip circular checks when there is no limit and `Seen` is not tracked.
-										: number extends Options['maxCircularDepth']
+										: `${number}` extends `${Options['maxCircularDepth']}`
 											? never
 											: GreaterThan<CountExactInArray<Seen, Value>, Options['maxCircularDepth']> extends true // The path terminates at the circular reference limit, just like it does at `maxRecursionDepth`.
 												? TransformedKey

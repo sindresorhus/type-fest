@@ -1148,48 +1148,53 @@ function _constructUnlimitedLeaf<Value>(_value: Value): Paths<{name: string; pay
 	return 'name';
 }
 
-// An uncertain recursion limit includes the complete paths and leaves of either possible depth.
-type UnionDepthModel = {folder: {child: {name: string}}};
-expectTypeOf<Paths<UnionDepthModel, {maxRecursionDepth: 1 | 2}>>().toBe<'folder' | 'folder.child' | 'folder.child.name'>();
-expectTypeOf<Paths<UnionDepthModel, {maxRecursionDepth: 1 | 2; leavesOnly: true}>>().toBe<'folder.child' | 'folder.child.name'>();
-const unionDepthPath: Paths<UnionDepthModel, {maxRecursionDepth: 1 | 2}> = 'folder.child.name';
+// A non-literal boolean option resolves like the default.
+expectTypeOf<Paths<{rows: readonly [string]}, {bracketNotation: boolean}>>().toBe<'rows' | 'rows.0'>();
+expectTypeOf<Paths<{folder: {name: string}}, {leavesOnly: boolean}>>().toBe<'folder' | 'folder.name'>();
 
-// Each bound keeps its own leaves, notation, and correlated depth filter.
-expectTypeOf<Paths<{rows: readonly [{name: string}]}, {maxRecursionDepth: 0 | 2; leavesOnly: true; bracketNotation: true}>>().toBe<'rows' | 'rows[0].name'>();
-type CorrelatedDepthOptions = {maxRecursionDepth: 1; depth: 1} | {maxRecursionDepth: 2; depth: 2};
-expectTypeOf<Paths<UnionDepthModel, CorrelatedDepthOptions>>().toBe<'folder.child' | 'folder.child.name'>();
-expectTypeOf<Paths<RecursiveFoo, {maxRecursionDepth: number}>>().toBe<'foo'>();
-expectTypeOf<Paths<RecursiveFoo, {maxRecursionDepth: 1 | 10; leavesOnly: true}>>().toBe<'foo.foo' | 'foo.foo.foo.foo.foo.foo.foo.foo.foo.foo.foo'>();
-
-function _constructUnionBoundPath<Value>(_value: Value): Paths<{folder: {name: string; payload: Value}}, {maxRecursionDepth: 1 | 2}> {
-	return 'folder.name';
+// Numeric enum limits stop circular traversal just like their numeric values.
+enum CircularLimit {
+	None = 0,
+	Once = 1,
 }
+expectTypeOf<Paths<RecursiveFoo, {maxCircularDepth: CircularLimit.None; maxRecursionDepth: 2}>>().toBe<'foo'>();
+expectTypeOf<Paths<RecursiveFoo, {maxCircularDepth: CircularLimit.Once; maxRecursionDepth: 2}>>().toBe<'foo' | 'foo.foo'>();
+expectTypeOf<Paths<RecursiveFoo, {maxCircularDepth: CircularLimit.None; maxRecursionDepth: 2; leavesOnly: true}>>().toBe<'foo'>();
+expectTypeOf<Paths<RecursiveFoo, {maxCircularDepth: CircularLimit.Once; maxRecursionDepth: 2; leavesOnly: true}>>().toBe<'foo.foo'>();
 
-function _readUnionBoundPath<Value>(path: Paths<{folder: {name: string; payload: Value}}, {maxRecursionDepth: 1 | 2}>): string | number {
+// A finite enum limit applies through optional links, mutual recursion, and arrays.
+expectTypeOf<Paths<UnlimitedLeafNode, {maxCircularDepth: CircularLimit.None; leavesOnly: true}>>().toBe<'name' | 'parent' | 'settings.enabled'>();
+expectTypeOf<Paths<UnlimitedLeafNode, {maxCircularDepth: CircularLimit.Once; leavesOnly: true}>>().toBe<'name' | 'parent.name' | 'parent.parent' | 'parent.settings.enabled' | 'settings.enabled'>();
+expectTypeOf<Paths<MutualA, {maxCircularDepth: CircularLimit.None}>>().toBe<'b' | 'name' | 'b.a'>();
+expectTypeOf<Paths<Tree<string>, {maxCircularDepth: CircularLimit.None; leavesOnly: true}>>().toBe<'value' | `children.${number}`>();
+expectTypeOf<Paths<Tree<string>, {maxCircularDepth: CircularLimit.None; leavesOnly: true; bracketNotation: true}>>().toBe<'value' | `children[${number}]`>();
+
+declare function selectCircularPath<const Path extends Paths<UnlimitedLeafNode, {maxRecursionDepth: 2; maxCircularDepth: CircularLimit.None}>>(path: Path): Path;
+expectTypeOf(selectCircularPath('parent')).toBe<'parent'>();
+expectTypeOf(selectCircularPath('settings.enabled')).toBe<'settings.enabled'>();
+// @ts-expect-error The circular limit prevents traversing into the parent.
+selectCircularPath('parent.name');
+
+// Unresolved notation keeps the path's primitive constraint; choose a concrete option before relying on its spelling.
+function _readGenericArrayNotation<Bracket extends boolean>(path: Paths<{items: [string]}, {bracketNotation: Bracket}>): string {
 	return path;
 }
 
-declare function selectUnionBoundLeaf<const Value, const Path extends Paths<Value, {maxRecursionDepth: 1 | 2; leavesOnly: true}>>(value: Value, path: Path): Path;
-expectTypeOf(selectUnionBoundLeaf({folder: {child: {name: 'Ada'}}} as const, 'folder.child.name')).toBe<'folder.child.name'>();
-expectTypeOf(selectUnionBoundLeaf({folder: {child: {name: 'Ada'}}} as const, 'folder.child')).toBe<'folder.child'>();
-// @ts-expect-error The root container is not a leaf at either possible limit.
-selectUnionBoundLeaf({folder: {child: {name: 'Ada'}}} as const, 'folder');
-// @ts-expect-error Neither complete traversal has this field.
-selectUnionBoundLeaf({folder: {child: {name: 'Ada'}}} as const, 'folder.child.missing');
-
-// Circular cutoffs also contribute every complete traversal's leaves.
-expectTypeOf<Paths<RecursiveFoo, {maxCircularDepth: 0 | 1; leavesOnly: true}>>().toBe<'foo' | 'foo.foo'>();
-const circularDepthPath: Paths<RecursiveFoo, {maxCircularDepth: 0 | 1; leavesOnly: true}> = 'foo';
-
-// Correlated option objects keep their complete strategy even when their numeric limits coincide.
-type SameLimitOptions = {maxRecursionDepth: 2; leavesOnly: true; depth: 0} | {maxRecursionDepth: 2; leavesOnly: false; depth: 1};
-expectTypeOf<Paths<{folder: {name: string}}, SameLimitOptions>>().toBe<'folder.name'>();
-// @ts-expect-error Neither complete strategy includes this container.
-const mixedStrategyPath: Paths<{folder: {name: string}}, SameLimitOptions> = 'folder';
-expectTypeOf<Paths<{rows: readonly [string]}, {bracketNotation: true} | {bracketNotation: false}>>().toBe<'rows' | 'rows[0]' | 'rows.0'>();
-
-expectTypeOf<Paths<RecursiveFoo, {maxRecursionDepth: 0 | 2; maxCircularDepth: 1 | 2; leavesOnly: true}>>().toBe<'foo' | 'foo.foo' | 'foo.foo.foo'>();
-
-function _constructCircularBound<Value>(): Paths<Tree<Value>, {maxRecursionDepth: 2; maxCircularDepth: 0 | 1; leavesOnly: true}> {
-	return 'children.0';
+function _readGenericNumericNotation<Bracket extends boolean>(path: Paths<{0: string}, {bracketNotation: Bracket}>): string | number {
+	return path;
 }
+
+// A known field stays constructible beside generic data, and independent of an unresolved notation when read.
+function _constructNotationIndependentPath<Value>(): Paths<{name: string; data: Value}, {bracketNotation: false}> {
+	return 'name';
+}
+
+function _readNotationIndependentPath<Bracket extends boolean>(path: Paths<{name: string}, {bracketNotation: Bracket}>): 'name' {
+	return path;
+}
+
+declare function selectNumericPath<Bracket extends boolean>(path: Paths<{0: {value: string}}, {bracketNotation: Bracket; leavesOnly: true}>): typeof path;
+expectTypeOf(selectNumericPath<true>('[0].value')).toBe<'[0].value'>();
+expectTypeOf(selectNumericPath<false>('0.value')).toBe<'0.value'>();
+// @ts-expect-error The concrete bracketed specialization does not accept dot notation for a numeric key.
+selectNumericPath<true>('0.value');
