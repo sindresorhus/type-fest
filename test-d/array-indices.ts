@@ -87,3 +87,21 @@ expectTypeOf(readIndexedValue(indexedValues, 1)).toBe<2>();
 expectTypeOf(readIndexedValue(indexedValues, 2)).toBe<true>();
 // @ts-expect-error The inferred tuple has no position three.
 readIndexedValue(indexedValues, 3);
+
+// Generic element types do not obscure the positions declared by the tuple.
+function _constructPairIndex<Value>(index: 0 | 1): ArrayIndices<readonly [Value, Value?]> {
+	return index;
+}
+
+function _readPairIndex<Value>(index: ArrayIndices<readonly [Value, Value?]>): 0 | 1 {
+	return index;
+}
+
+// Ordinary arrays and tuples with a rest accept numeric indices for generic elements too.
+function _constructArrayIndex<Value>(index: number): ArrayIndices<readonly Value[]> {
+	return index;
+}
+
+function _constructRestIndex<Value>(index: number): ArrayIndices<readonly [Value, ...Value[]]> {
+	return index;
+}
