@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {CamelCase, PascalCase, Tagged} from '../index.d.ts';
+import type {CamelCase, CamelCaseOptions, PascalCase, StringRepeat, Tagged} from '../index.d.ts';
 
 // CamelCase
 const camelFromPascal: CamelCase<'FooBar'> = 'fooBar';
@@ -201,3 +201,57 @@ expectTypeOf<CamelCase<any, CasingStrategies>>().toBe<any>();
 expectTypeOf<CamelCase<never, CasingStrategies>>().toBe<never>();
 // @ts-expect-error - Options must describe casing.
 expectTypeOf<CamelCase<'foo-bar', unknown>>();
+
+expectTypeOf<CamelCase<'_foo', {preserveLeadingUnderscores: any}>>().toBe<'foo'>();
+// A non-literal preservation flag resolves like the default.
+expectTypeOf<CamelCase<'_foo', {preserveLeadingUnderscores: boolean}>>().toBe<'foo'>();
+// @ts-expect-error Unknown is not a preservation flag.
+expectTypeOf<CamelCase<'foo', {preserveLeadingUnderscores: unknown}>>();
+
+// Resolved casing options also govern word splitting when the input has multiple tags.
+expectTypeOf<CamelCase<Tagged<Tagged<'__user2ID:ready', 'Text'>, 'Validated'>, {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true; splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<'__user2IDReady'>();
+
+function _readCamelCaseWithOptions<Value extends string, Options extends CamelCaseOptions>(value: CamelCase<Value, Options>): string {
+	return value;
+}
+
+// A broad string return remains usable without assuming the unresolved preservation policy.
+function _readUnresolvedUnderscore<Preserve extends boolean>(value: CamelCase<'_foo', {preserveLeadingUnderscores: Preserve}>): string {
+	return value;
+}
+
+expectTypeOf<CamelCase<'_foo', {preserveLeadingUnderscores: true}>>().toBe<'_foo'>();
+
+// Unresolved acronym preservation is also safe to read through the general string constraint.
+function _readUnresolvedAcronym<Preserve extends boolean>(value: CamelCase<'fooBAR', {preserveConsecutiveUppercase: Preserve}>): string {
+	return value;
+}
+
+expectTypeOf<'_foo'>().not.toBeAssignableTo<CamelCase<'_foo', {preserveLeadingUnderscores: false}>>();
+expectTypeOf<'fooBAR'>().not.toBeAssignableTo<CamelCase<'fooBAR', {preserveConsecutiveUppercase: false}>>();
+
+// These spellings are invariant across every supported option strategy.
+function _readInvariantCamelWords<Options extends CamelCaseOptions>(value: CamelCase<'foo-bar', Options>): 'fooBar' {
+	return value;
+}
+
+function _readInvariantUppercaseWords<Options extends CamelCaseOptions>(value: CamelCase<'FOO_BAR', Options>): 'fooBar' {
+	return value;
+}
+
+// A constrained disabled policy preserves the exact spelling even when the options object stays generic.
+function _readKnownDisabledUnderscores<Options extends {preserveLeadingUnderscores: false}>(value: CamelCase<'_foo', Options>): 'foo' {
+	return value;
+}
+
+// String enum members are converted by their values, also when tagged.
+enum FieldName {
+	DisplayName = 'display_name',
+	ApiKey = 'API_KEY',
+}
+
+expectTypeOf<CamelCase<FieldName>>().toBe<'displayName' | 'apiKey'>();
+expectTypeOf<CamelCase<Tagged<FieldName.DisplayName, 'Field'>>>().toBe<'displayName'>();
+
+// Long identifiers keep the word splitter within its recursion budget.
+expectTypeOf<CamelCase<StringRepeat<'ab_', 300>>>().toBe<`ab${StringRepeat<'Ab', 299>}`>();

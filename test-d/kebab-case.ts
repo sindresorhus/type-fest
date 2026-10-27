@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {KebabCase, Tagged, WordsOptions} from '../index.d.ts';
+import type {KebabCase, StringRepeat, Tagged, WordsOptions} from '../index.d.ts';
 
 const kebabFromCamel: KebabCase<'fooBar'> = 'foo-bar';
 expectTypeOf(kebabFromCamel).toBe<'foo-bar'>();
@@ -148,3 +148,6 @@ function _readKebabCase<Value extends string, Options extends WordsOptions>(valu
 function _preserveNonString<Value, Options extends WordsOptions>(value: {id: Value}): KebabCase<{id: Value}, Options> {
 	return value;
 }
+
+// Long identifiers keep the word splitter within its recursion budget.
+expectTypeOf<KebabCase<StringRepeat<'Ab', 450>>>().toBe<`ab${StringRepeat<'-ab', 449>}`>();

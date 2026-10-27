@@ -106,15 +106,20 @@ type Words8 = Words<'hello::world', {splitOnPunctuation: true}>;
 @category Change case
 @category Template literal
 */
-export type Words<Sentence extends string, Options extends WordsOptions = {}> = Sentence extends string // For distributing `Sentence`
-	? IsStringLiteral<Sentence> extends true // A string type with an infinite set of possible values cannot be walked character by character, so only the element type survives.
-		// A branded or tagged string is a literal, so the brand is removed before walking it, since an intersection with a non-empty object type does not match a template literal pattern.
-		// Option objects are not distributed, so for a union of option objects, an option that differs between the members reads as `boolean` and acts as disabled.
-		? WordsImplementation<UnwrapBrand<Sentence>, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>
-		: string[]
+export type Words<Sentence extends string, Options extends WordsOptions = {}> = Sentence extends unknown // For distributing `Sentence`
+	// A branded or tagged string can be a literal, so remove the brand once before classification and walking; an intersection with a non-empty object type does not match a template literal pattern.
+	? (Sentence extends object ? UnwrapBrand<Sentence> : Sentence) extends infer Input extends string
+		? IsStringLiteral<Input> extends true // A string type with an infinite set of possible values cannot be walked character by character, so only the element type survives.
+			// Option objects are not distributed, so for a union of option objects, an option that differs between the members reads as `boolean` and acts as disabled.
+			? _Words<Input, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>
+			: string[]
+		: never
 	: never; // Should never happen, since `Sentence` is a string
 
-type WordsImplementation<
+/**
+Splits a known unbranded string literal using resolved options. Casing types reuse this entry point after checking and normalizing their own inputs.
+*/
+export type _Words<
 	Sentence extends string,
 	Options extends Required<WordsOptions>,
 	LastCharacter extends string = '',
@@ -124,44 +129,37 @@ type WordsImplementation<
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
 	? FirstCharacter extends WordSeparators | (Options['splitOnPunctuation'] extends true ? AsciiPunctuation : never)
 		// Skip word separator
-		? WordsImplementation<RemainingCharacters, Options, '', '', [...Result, ...SkipEmptyWord<CurrentWord>]>
+		? _Words<RemainingCharacters, Options, '', '', [...Result, ...SkipEmptyWord<CurrentWord>]>
 		: LastCharacter extends ''
 			// First character of word
-			? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, Result>
-			// Case change: non-numeric to numeric
-			: [false, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
+			? _Words<RemainingCharacters, Options, FirstCharacter, FirstCharacter, Result>
+			// Case change between numeric and non-numeric characters.
+			: [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>] extends [false, true] | [true, false]
 				? Options['splitOnNumbers'] extends true
 					// Split on number: push word
-					? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
+					? _Words<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
 					// No split on number: concat word
-					: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
-				// Case change: numeric to non-numeric
-				: [true, false] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
-					? Options['splitOnNumbers'] extends true
-						// Split on number: push word
-						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
-						// No split on number: concat word
-						: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
-					// No case change: concat word
-					: [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
-						? WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
-					// Case change: lower to upper, push word
-						: [true, true] extends [IsLowercase<LastCharacter>, IsUppercase<FirstCharacter>]
-							// Only a capital letter starts a new word. A character with no case at all, such as a Han character or an emoji, satisfies both case predicates but is its own lowercase form, so it is not one.
-							? IsCapitalLetter<FirstCharacter> extends true
-								? WordsImplementation<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
-								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
-						// Case change: upper to lower, brings back the last character, push word
-							: [true, true] extends [IsUppercase<LastCharacter>, IsLowercase<FirstCharacter>]
-								// Only a capital followed by a lowercase letter starts a new word. Punctuation or a character with no case after an acronym, as in `userID?`, satisfies both case predicates, so it would otherwise split off the last capital.
-								? [IsCapitalLetter<LastCharacter>, IsLowercaseLetter<FirstCharacter>] extends [true, true]
-									? WordsImplementation<
-										RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`,
-										[...Result, ...RemoveLastCharacter<CurrentWord, LastCharacter>]
-									>
-									: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
-							// No case change: concat word
-								: WordsImplementation<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
+					: _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
+				// No case change: concat word
+				: [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
+					? _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
+				// Case change: lower to upper, push word
+					: [true, true] extends [IsLowercase<LastCharacter>, IsUppercase<FirstCharacter>]
+						// Only a capital letter starts a new word. A character with no case at all, such as a Han character or an emoji, satisfies both case predicates but is its own lowercase form, so it is not one.
+						? IsCapitalLetter<FirstCharacter> extends true
+							? _Words<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
+							: _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
+					// Case change: upper to lower, brings back the last character, push word
+						: [true, true] extends [IsUppercase<LastCharacter>, IsLowercase<FirstCharacter>]
+							// Only a capital followed by a lowercase letter starts a new word. Punctuation or a character with no case after an acronym, as in `userID?`, satisfies both case predicates, so it would otherwise split off the last capital.
+							? [IsCapitalLetter<LastCharacter>, IsLowercaseLetter<FirstCharacter>] extends [true, true]
+								? _Words<
+									RemainingCharacters, Options, FirstCharacter, `${LastCharacter}${FirstCharacter}`,
+									[...Result, ...RemoveLastCharacter<CurrentWord, LastCharacter>]
+								>
+								: _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
+						// No case change: concat word
+							: _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 	: [...Result, ...SkipEmptyWord<CurrentWord>];
 
 /**

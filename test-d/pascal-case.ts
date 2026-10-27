@@ -79,3 +79,9 @@ expectTypeOf<PascalCase<unknown, never>>().toBe<unknown>();
 function checkGenericOptions<Options extends CamelCaseOptions>() {
 	expectTypeOf<PascalCase<'__foo-bar', Options>>().toBe<Capitalize<CamelCase<'__foo-bar', Options>>>();
 }
+
+expectTypeOf<PascalCase<'_foo', {preserveLeadingUnderscores: any}>>().toBe<'Foo'>();
+// A non-literal preservation flag resolves like the default.
+expectTypeOf<PascalCase<'_foo', {preserveLeadingUnderscores: boolean}>>().toBe<'Foo'>();
+// @ts-expect-error Unknown is not a preservation flag.
+expectTypeOf<PascalCase<'foo', {preserveLeadingUnderscores: unknown}>>();

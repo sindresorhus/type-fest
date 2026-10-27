@@ -2,7 +2,7 @@ import type {Or} from './or.d.ts';
 import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith, UnwrapBrand} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Merge} from './merge.d.ts';
-import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
+import type {_DefaultWordsOptions, _Words, WordsOptions} from './words.d.ts';
 import type {KebabCase} from './kebab-case.d.ts'; // For `@link`
 import type {SnakeCase} from './snake-case.d.ts'; // For `@link`
 
@@ -81,7 +81,7 @@ export type DelimiterCase<
 		? IsStringLiteral<Value> extends false
 			? Value
 			: DelimiterCaseFromArray<
-				Words<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
+				_Words<UnwrapBrand<Value>, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>,
 				Delimiter extends object ? UnwrapBrand<Delimiter> : Delimiter
 			>
 		: never

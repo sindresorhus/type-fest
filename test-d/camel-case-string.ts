@@ -89,3 +89,14 @@ declare const wide: string;
 
 // @ts-expect-error A wide string cannot be proven to be camel case.
 defineHandler({name: wide});
+
+// Generic validation preserves the original name, including its more specific type.
+function _readHandlerName<Name extends string>(name: CamelCaseString<Name>): Name {
+	return name;
+}
+
+declare function defineHandlerNames<const Names extends readonly string[]>(names: {readonly [Index in keyof Names]: CamelCaseString<Names[Index]>}): Names;
+const handlerNames = ['onSubmit', 'onReset'] as const;
+expectTypeOf(defineHandlerNames(handlerNames)).toBe<typeof handlerNames>();
+// @ts-expect-error Every name in the readonly tuple must be camel case.
+defineHandlerNames(['onSubmit', 'on-reset'] as const);

@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged} from '../index.d.ts';
+import type {Opaque, Tagged, WordsOptions} from '../index.d.ts';
 import type {DelimiterCase} from '../source/delimiter-case.d.ts';
 import type {DelimiterCasedProperties} from '../source/delimiter-cased-properties.d.ts';
 import type {DelimiterCasedPropertiesDeep} from '../source/delimiter-cased-properties-deep.d.ts';
@@ -257,3 +257,18 @@ expectTypeOf<DelimiterCase<unknown, Tagged<'-', 'Delimiter'>>>().toBe<unknown>()
 expectTypeOf<DelimiterCase<'fooBar', unknown>>();
 expectTypeOf<DelimiterCasedProperties<{fooBar: number}, Tagged<'-', 'Delimiter'>>>().toBe<{'foo-bar': number}>();
 expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: [{barBaz: number}]}, Tagged<'-', 'Delimiter'>>>().toBe<{'foo-bar': [{'bar-baz': number}]}>();
+
+expectTypeOf<DelimiterCase<Tagged<Tagged<'user2ID:ready', 'Text'>, 'Validated'>, Tagged<'SEP', 'Delimiter'>, {splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<'user2idSEPready'>();
+
+function _readDelimiterCaseWithOptions<Value extends string, Options extends WordsOptions>(value: DelimiterCase<Value, ':', Options>): string {
+	return value;
+}
+
+// String enum members are converted by their values, also when tagged.
+enum FieldName {
+	DisplayName = 'displayName',
+	ApiKey = 'API_KEY',
+}
+
+expectTypeOf<DelimiterCase<FieldName, '-'>>().toBe<'display-name' | 'api-key'>();
+expectTypeOf<DelimiterCase<Tagged<FieldName.DisplayName, 'Field'>, '-'>>().toBe<'display-name'>();

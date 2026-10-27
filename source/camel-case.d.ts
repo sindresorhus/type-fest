@@ -1,6 +1,6 @@
 import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
-import type {_DefaultWordsOptions, Words, WordsOptions} from './words.d.ts';
+import type {_DefaultWordsOptions, _Words, WordsOptions} from './words.d.ts';
 
 /**
 Options for the `CamelCase` type.
@@ -76,6 +76,8 @@ By default, consecutive uppercase letters are not preserved. See {@link CamelCas
 
 Use the `preserveLeadingUnderscores` option to retain leading underscores, matching the runtime behavior of [`camelcase`](https://github.com/sindresorhus/camelcase) v9+.
 
+In a generic function, use concrete option values before relying on an exact result spelling. While any option is generic, TypeScript can read the result as if the default options were used.
+
 @example
 ```
 import type {CamelCase} from 'type-fest';
@@ -118,7 +120,7 @@ const dbResult: CamelCasedProperties<RawOptions> = {
 export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extends string
 	? IsStringLiteral<Type> extends false
 		? Type
-		// The brand is removed first, because the entirely-uppercase pre-lowering and the leading underscores must read the string itself: an intersection with a brand does not reduce under `Uppercase` and does not match `_`. `Words` unwraps its own input too, but only after these have already run.
+		// The brand is removed first, because the entirely-uppercase pre-lowering and the leading underscores must read the string itself: an intersection with a brand does not reduce under `Uppercase` and does not match `_`. The word splitter can then reuse the normalized input and resolved options.
 		: CamelCaseUnbranded<UnwrapBrand<Type>, Options>
 	: Type;
 
@@ -128,7 +130,7 @@ type CamelCaseUnbranded<Type extends string, Options extends CamelCaseOptions> =
 			? LeadingUnderscores<Type>
 			: ''
 		}${CamelCaseFromArray<
-			Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, Options>,
+			_Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, OptionsWithDefaults>,
 			OptionsWithDefaults
 		>}`
 		: never;

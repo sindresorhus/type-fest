@@ -184,3 +184,48 @@ expectTypeOf<Words<never, WordStrategies>>().toBe<never>();
 expectTypeOf<Words<unknown, WordStrategies>>();
 // @ts-expect-error - Options must describe word splitting.
 expectTypeOf<Words<'a1b', unknown>>();
+
+// Both directions of a numeric boundary honor the same splitting option.
+expectTypeOf<Words<'42HTTP2Server99'>>().toBe<['42', 'HTTP', '2', 'Server', '99']>();
+expectTypeOf<Words<'42HTTP2Server99', {splitOnNumbers: false}>>().toBe<['42HTTP2', 'Server99']>();
+expectTypeOf<Words<'猫42犬'>>().toBe<['猫', '42', '犬']>();
+expectTypeOf<Words<'猫42犬', {splitOnNumbers: false}>>().toBe<['猫42犬']>();
+expectTypeOf<Words<'version2.0'>>().toBe<['version', '2', '.', '0']>();
+expectTypeOf<Words<'version2.0', {splitOnNumbers: false}>>().toBe<['version2.0']>();
+expectTypeOf<Words<'version2.0', {splitOnPunctuation: true}>>().toBe<['version', '2', '0']>();
+expectTypeOf<Words<'version2.0', {splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<['version2', '0']>();
+
+// Numeric transitions remain independent for each string in a union.
+expectTypeOf<Words<'v2' | '3DModel'>>().toBe<['v', '2'] | ['3', 'D', 'Model']>();
+expectTypeOf<Words<'v2' | '3DModel', {splitOnNumbers: false}>>().toBe<['v2'] | ['3D', 'Model']>();
+
+function _readWordList<Input extends string>(words: Words<Input>): string[] {
+	return words;
+}
+
+// Constrained generic inputs retain their exact output, not only an array constraint.
+function _readNumericBoundary<Input extends 'a1' | '1a'>(words: Words<Input>): ['a', '1'] | ['1', 'a'] {
+	return words;
+}
+
+function _readJoinedNumericBoundary<Input extends 'a1' | '1a'>(words: Words<Input, {splitOnNumbers: false}>): ['a1'] | ['1a'] {
+	return words;
+}
+
+// Normalizing one union member does not collapse the others or brand the words.
+expectTypeOf<Words<'plainText' | Tagged<'api2Value', 'Text'>>>().toBe<['plain', 'Text'] | ['api', '2', 'Value']>();
+expectTypeOf<Words<Tagged<'apiValue' | `prefix${string}`, 'Text'>>>().toBe<['api', 'Value'] | string[]>();
+expectTypeOf<Words<('apiValue' | 'plainText') & {}>>().toBe<['api', 'Value'] | ['plain', 'Text']>();
+
+function _readBrandedWordList<Input extends string>(words: Words<Tagged<Input, 'Text'>>): string[] {
+	return words;
+}
+
+// String enum members are split by their values, also when tagged.
+enum FieldName {
+	DisplayName = 'display_name',
+	ApiKey = 'apiKey',
+}
+
+expectTypeOf<Words<FieldName>>().toBe<['display', 'name'] | ['api', 'Key']>();
+expectTypeOf<Words<Tagged<FieldName.ApiKey, 'Field'>>>().toBe<['api', 'Key']>();

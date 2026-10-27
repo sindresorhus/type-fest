@@ -69,3 +69,14 @@ declare const wide: string;
 
 // @ts-expect-error A wide string cannot be proven to be snake case.
 defineColumn({name: wide, type: 'text'});
+
+// A generic validated name can be narrowed without losing the original name type.
+function _isDefinedColumnName<Name extends string>(name: SnakeCaseString<Name> | undefined): name is SnakeCaseString<Name> {
+	return name !== undefined;
+}
+
+declare function defineColumns<const Name extends string>(columns: ReadonlyArray<{readonly name: SnakeCaseString<Name>}>): Name;
+const columns = [{name: 'user_id'}, {name: 'display_name'}] as const;
+expectTypeOf(defineColumns(columns)).toBe<'user_id' | 'display_name'>();
+// @ts-expect-error The second readonly object's name is not snake case.
+defineColumns([{name: 'user_id'}, {name: 'displayName'}] as const);
