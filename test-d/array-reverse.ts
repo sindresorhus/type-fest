@@ -355,3 +355,26 @@ const reversedHole: ArrayReverse<typeof coordinatesWithHole> = [true, undefined,
 expectTypeOf(reversedHole[1]).toBe<number | undefined>();
 // @ts-expect-error The explicitly undefined element must be checked before a numeric operation.
 reversedHole[1].toFixed(0);
+
+// Required suffixes preserve order across batch boundaries.
+expectTypeOf<ArrayReverse<[...string[], 0, 1, 2, 3]>>().toBe<[3, 2, 1, 0, ...string[]]>();
+expectTypeOf<ArrayReverse<[...string[], 0, 1, 2, 3, 4]>>().toBe<[4, 3, 2, 1, 0, ...string[]]>();
+expectTypeOf<ArrayReverse<[...string[], 0, 1, 2, 3, 4, 5]>>().toBe<[5, 4, 3, 2, 1, 0, ...string[]]>();
+expectTypeOf<ArrayReverse<[...string[], 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]>>().toBe<[9, 8, 7, 6, 5, 4, 3, 2, 1, 0, ...string[]]>();
+
+expectTypeOf<ArrayReverse<readonly [false, ...string[], 1, 2, 3, 4, 5, 6]>>().toBe<readonly [6, 5, 4, 3, 2, 1, ...string[], false]>();
+expectTypeOf<ArrayReverse<[...unknown[], never, undefined, any, null, 1]>>().toBe<[1, null, any, undefined, never, ...unknown[]]>();
+expectTypeOf<ArrayReverse<[...string[], 1, 2, 3, 4, 5] | readonly [...number[], 'a', 'b', 'c', 'd', 'e']>>()
+	.toBe<[5, 4, 3, 2, 1, ...string[]] | readonly ['e', 'd', 'c', 'b', 'a', ...number[]]>();
+
+function readReversedSuffix<Value>(value: ArrayReverse<[...Value[], 1, 2, 3, 4, 5]>): [5, 4, 3, 2, 1, ...Value[]] {
+	return value;
+}
+
+expectTypeOf(readReversedSuffix([5, 4, 3, 2, 1, 'value'])).toBe<[5, 4, 3, 2, 1, ...string[]]>();
+
+function createReversedSuffix<Value>(value: readonly [6, 5, 4, 3, 2, 1, ...Value[]]): ArrayReverse<readonly [...Value[], 1, 2, 3, 4, 5, 6]> {
+	return value;
+}
+
+expectTypeOf(createReversedSuffix([6, 5, 4, 3, 2, 1, 'value'])).toBe<readonly [6, 5, 4, 3, 2, 1, ...string[]]>();

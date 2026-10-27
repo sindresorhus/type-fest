@@ -84,8 +84,11 @@ type _ArrayReverse<
 				: never // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
 		// Enters this branch, if `TArray` is empty (e.g., `[]`),
 		// or `TArray` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-		: TArray extends readonly [...infer Rest, infer Last]
-			? _ArrayReverse<Rest, BeforeRestAcc, [...AfterRestAcc, Last], Result> // Accumulate elements that are present after the rest element in reverse order.
-			: Result | [...AfterRestAcc, ...TArray, ...BeforeRestAcc]; // Add the rest element between the accumulated elements.
+		: TArray extends readonly [...infer Rest, infer First, infer Second, infer Third, infer Fourth, infer Fifth]
+			// Consume five required suffix elements at once to reduce recursion and tuple slicing.
+			? _ArrayReverse<Rest, BeforeRestAcc, [...AfterRestAcc, Fifth, Fourth, Third, Second, First], Result>
+			: TArray extends readonly [...infer Rest, infer Last]
+				? _ArrayReverse<Rest, BeforeRestAcc, [...AfterRestAcc, Last], Result> // Accumulate elements that are present after the rest element in reverse order.
+				: Result | [...AfterRestAcc, ...TArray, ...BeforeRestAcc]; // Add the rest element between the accumulated elements.
 
 export {};
