@@ -1,4 +1,4 @@
-import type {AndAll} from './and-all.d.ts';
+import type {AndAll} from './and-all.d.ts'; // For `@link`
 import type {Or} from './or.d.ts'; // For `@link`
 import type {Xor} from './xor.d.ts'; // For `@link`
 
@@ -79,6 +79,12 @@ type G = And<never, never>;
 @see {@link Or}
 @see {@link Xor}
 */
-export type And<A extends boolean, B extends boolean> = AndAll<[A, B]>;
+export type And<A extends boolean, B extends boolean> =
+	// Keep generic operands conditional; the tuple matcher can prematurely narrow their unresolved result to `false`.
+	[A] extends [never]
+		? false
+		: [B] extends [never]
+			? false
+			: A extends true ? B extends true ? true : false : false;
 
 export {};
