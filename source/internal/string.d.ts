@@ -51,8 +51,9 @@ Returns a boolean for whether a string is whitespace.
 */
 export type IsWhitespace<T extends string> = T extends Whitespace
 	? true
-	: T extends `${Whitespace}${infer Rest}`
-		? IsWhitespace<Rest>
+	// Infer one character instead of matching every whitespace alternative against the entire remainder.
+	: T extends `${infer First}${infer Rest}`
+		? First extends Whitespace ? IsWhitespace<Rest> : false
 		: false;
 
 /**
