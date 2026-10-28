@@ -48,7 +48,14 @@ type D = MergeObjectToArray<[string, ...boolean[]], [number, ...string[]]>;
 //=> [number, ...string[]]
 ```
 */
-type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends UnknownArray = TArray> =
+type MergeObjectToArray<TArray extends UnknownArray, TObject> = TArray extends unknown
+	? MergeObjectToArrayMember<TArray, TObject>
+	: never;
+
+/**
+Transforms one parameter-list member while keeping its original rest index available inside mapped types.
+*/
+type MergeObjectToArrayMember<TArray extends UnknownArray, TObject, RestIndex extends number = RestElementIndex<TArray>> =
 	// If `TObject` is an array like `[0, 1, 2]`
 	TObject extends UnknownArray
 		// If `TObject` is a variable length array, we should use `TObject`'s type as the result type.
@@ -58,25 +65,28 @@ type MergeObjectToArray<TArray extends UnknownArray, TObject, TArrayCopy extends
 				[K in keyof TArray]:
 				// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`. The index is matched as a string, like in the object branch below, because `keyof` an array also contains `number`, which would make an out of bounds index resolve to `undefined` instead of missing. example: `MergeObjectToArray<[string, ...boolean[]], [string, number]>` => `[string, ...number[]]`
 				number extends K
-					? `${RestElementIndex<TArrayCopy>}` extends keyof TObject
-						? TObject[`${RestElementIndex<TArrayCopy>}`]
+					? `${RestIndex}` extends keyof TObject
+						? TObject[`${RestIndex}`]
 						: VariablePartOfArray<TArray>[number]
 					: K extends keyof TObject ? TObject[K] : TArray[K]
 			}
 		: TObject extends object
 			// If `TObject` is an object with number keys like `{0: string, 1: number}`
-			? {
-				[K in keyof TArray]:
-				K extends `${infer NumberK extends number}`
-					? NumberK extends NormalizedKeys<keyof TObject> ? ObjectValue<TObject, NumberK> : TArray[K]
-					: number extends K
-					// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`.
-					// example: `MergeObjectToArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
-						? RestElementIndex<TArrayCopy> extends NormalizedKeys<keyof TObject>
-							? ObjectValue<TObject, RestElementIndex<TArrayCopy>>
-							: TArray[K]
-						: never
-			} : never;
+			// Normalize after distributing `TObject`, so each replacement member keeps its own keys.
+			? NormalizedKeys<keyof TObject> extends infer ReplacementKeys
+				? {
+					[K in keyof TArray]:
+					K extends `${infer NumberK extends number}`
+						? NumberK extends ReplacementKeys ? ObjectValue<TObject, NumberK> : TArray[K]
+						: number extends K
+						// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`.
+						// example: `MergeObjectToArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
+							? RestIndex extends ReplacementKeys
+								? ObjectValue<TObject, RestIndex>
+								: TArray[K]
+							: never
+				} : never
+			: never;
 
 /**
 Create a function that replaces some parameters with the given parameters.
@@ -85,6 +95,7 @@ The parameters that are not specified will be kept as-is. Parameter indices may 
 
 Note:
 - This type will ignore the given function's generic type.
+- An unresolved generic rest tuple can limit calling or comparing the transformed signature until its arguments are instantiated.
 - If you change the parameter type that return type depends on, the return type will not change:
 	```
 	import type {SetParameterType} from 'type-fest';

@@ -190,3 +190,99 @@ declare const afterOptionalNever: SetParameterType<(unused?: never, ...rest: str
 expectTypeOf(afterOptionalNever(undefined, true)).toBe<number>();
 // @ts-expect-error The optional slot does not move the replacement back to the old rest type.
 afterOptionalNever(undefined, 'old');
+
+// A short replacement tuple keeps an arbitrary generic rest element type.
+function _constructShortReplacementRest<Value>(
+	callback: (first: number, ...rest: Value[]) => Value,
+): SetParameterType<(first: string, ...rest: Value[]) => Value, [number]> {
+	return callback;
+}
+
+function _callShortReplacementRest<Value>(
+	callback: SetParameterType<(first: string, ...rest: Value[]) => Value, [number]>,
+	value: Value,
+): Value {
+	return callback(1, value);
+}
+
+// A numeric replacement index signature reaches fixed, optional, and rest arguments together.
+type ReplaceEveryArgument = SetParameterType<(this: Date, first: string, second?: number, ...rest: boolean[]) => 'ready', Record<number, RegExp>>;
+expectTypeOf<ReplaceEveryArgument>().toBe<(this: Date, first: RegExp, second?: RegExp, ...rest: RegExp[]) => 'ready'>();
+declare const replaceEveryArgument: ReplaceEveryArgument;
+expectTypeOf(replaceEveryArgument.call(new Date(), /first/, undefined, /rest/)).toBe<'ready'>();
+// @ts-expect-error A replacement index signature also changes the required first argument.
+replaceEveryArgument.call(new Date(), 'old');
+// @ts-expect-error An optional argument keeps its position and receives the replacement type.
+replaceEveryArgument.call(new Date(), /first/, 1);
+
+function _constructEveryReplacementArgument<Value>(
+	callback: (this: Date, first: Value, second?: Value, ...rest: Value[]) => 'ready',
+): SetParameterType<(this: Date, first: string, second?: number, ...rest: boolean[]) => 'ready', Record<number, Value>> {
+	return callback;
+}
+
+// Each replacement object keeps its own selected argument positions.
+expectTypeOf<Parameters<SetParameterType<(first: string, second: number) => void, {0: boolean} | {1: Date}>>>()
+	.toBe<[first: boolean, second: number] | [first: string, second: Date]>();
+expectTypeOf<Parameters<SetParameterType<(first: string, second: number) => void, [boolean] | {1: Date}>>>()
+	.toBe<[first: boolean, second: number] | [first: string, second: Date]>();
+
+declare const unionRestReplacement: SetParameterType<(this: Date, first: string, ...rest: boolean[]) => 'ready', {0: RegExp} | {'1': Date}>;
+expectTypeOf(unionRestReplacement.call(new Date(), /first/, true)).toBe<'ready'>();
+expectTypeOf(unionRestReplacement.call(new Date(), 'first', new Date())).toBe<'ready'>();
+// @ts-expect-error Replacement alternatives do not mix their changed prefix and rest arguments.
+unionRestReplacement.call(new Date(), /first/, new Date());
+// @ts-expect-error Replacement alternatives retain their receiver.
+unionRestReplacement.call('wrong', /first/, true);
+
+function _constructUnionReplacement<Value>(
+	callback: (...arguments_: [first: Value, second: number] | [first: string, second: Date]) => 'ready',
+): SetParameterType<(first: string, second: number) => 'ready', {0: Value} | {1: Date}> {
+	return callback;
+}
+
+// A rest index belongs to its parameter-list alternative, not to the union of all lists.
+type PacketArguments = [kind: 'first', ...values: number[]] | [kind: 'second', enabled: boolean, ...labels: string[]];
+type PacketCallback = (this: Date, ...arguments_: PacketArguments) => 'ready';
+type ChangedPacketCallback = SetParameterType<PacketCallback, {1: Date}>;
+expectTypeOf<Parameters<ChangedPacketCallback>>()
+	.toBe<[kind: 'first', ...values: Date[]] | [kind: 'second', enabled: Date, ...labels: string[]]>();
+expectTypeOf<Parameters<SetParameterType<PacketCallback, ['changed', Date]>>>()
+	.toBe<[kind: 'changed', ...values: Date[]] | [kind: 'changed', enabled: Date, ...labels: string[]]>();
+expectTypeOf<ThisParameterType<ChangedPacketCallback>>().toBe<Date>();
+declare const changedPackets: ChangedPacketCallback;
+expectTypeOf(changedPackets.call(new Date(), 'first', new Date(), new Date())).toBe<'ready'>();
+expectTypeOf(changedPackets.call(new Date(), 'second', new Date(), 'label')).toBe<'ready'>();
+// @ts-expect-error The first alternative's old rest element type is replaced.
+changedPackets.call(new Date(), 'first', 1);
+// @ts-expect-error A string label belongs only to the second alternative.
+changedPackets.call(new Date(), 'first', new Date(), 'label');
+// @ts-expect-error Replacing parameter alternatives retains the receiver.
+changedPackets.call('wrong', 'second', new Date());
+
+type ReadonlyPacketCallback<Value> = (this: Date, ...arguments_: readonly [kind: 'first', ...values: number[]] | readonly [kind: 'second', enabled: boolean, ...labels: string[]]) => Promise<Value>;
+function _constructReadonlyPacketCallback<Value>(
+	callback: (this: Date, ...arguments_: readonly [kind: 'first', ...values: Value[]] | readonly [kind: 'second', enabled: Value, ...labels: string[]]) => Promise<Value>,
+): SetParameterType<ReadonlyPacketCallback<Value>, {1: Value}> {
+	return callback;
+}
+
+// Replacing a fixed prefix keeps an unresolved generic rest parameter list intact.
+function constructGenericParameterList<Receiver, Arguments extends readonly unknown[], Result>(
+	callback: (this: Receiver, first: number, ...arguments_: Arguments) => Result,
+): SetParameterType<(this: Receiver, first: string, ...arguments_: Arguments) => Result, {0: number}> {
+	return callback;
+}
+
+declare const genericParameterListCallback: (this: Date, first: number, label: 'ready', ...flags: boolean[]) => Promise<{readonly label: 'ready'}>;
+const constructedGenericParameterList = constructGenericParameterList(genericParameterListCallback);
+expectTypeOf(constructedGenericParameterList.call(new Date(), 1, 'ready', true, false)).toBe<Promise<{readonly label: 'ready'}>>();
+expectTypeOf<ThisParameterType<typeof constructedGenericParameterList>>().toBe<Date>();
+// @ts-expect-error The changed fixed prefix rejects the original type.
+void constructedGenericParameterList.call(new Date(), 'old', 'ready');
+// @ts-expect-error The generic rest list retains its required literal argument.
+void constructedGenericParameterList.call(new Date(), 1, 'wrong');
+// @ts-expect-error The remaining variadic values retain their original type.
+void constructedGenericParameterList.call(new Date(), 1, 'ready', 1);
+// @ts-expect-error Constructing the generic wrapper retains its receiver.
+void constructedGenericParameterList.call('wrong', 1, 'ready');
