@@ -139,3 +139,16 @@ expectTypeOf<IsAnyOrNever<string | any>>().toBe<true>();
 function _readSentinelFlag<Value>(flag: IsAnyOrNever<Value>): boolean {
 	return flag;
 }
+
+// Rebuilding each member preserves its receiver, readonly arguments and return value together.
+type CallbackAlternatives = ((this: Date, ...values: readonly number[]) => Promise<string>) | ((this: RegExp, name?: string) => boolean);
+expectTypeOf<CallSignatureOf<CallbackAlternatives>>().toBe<CallbackAlternatives>();
+expectTypeOf<CallSignatureOf<(this: undefined, ...values: readonly number[]) => any>>().toBe<(this: undefined, ...values: readonly number[]) => any>();
+expectTypeOf<CallSignatureOf<(this: any, value: unknown) => never>>().toBe<(value: unknown) => never>();
+expectTypeOf<CallSignatureOf<() => unknown>>().toBe<() => unknown>();
+
+function _constructCallSignature<Receiver, Arguments extends readonly unknown[], Result>(
+	callback: (this: Receiver, ...arguments_: Arguments) => Result,
+): CallSignatureOf<(this: Receiver, ...arguments_: Arguments) => Result> {
+	return callback;
+}

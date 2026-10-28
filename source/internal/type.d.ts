@@ -7,7 +7,6 @@ import type {ExtendsStrict} from '../extends-strict.d.ts';
 import type {FindGlobalInstanceType} from '../find-global-type.d.ts';
 import type {Falsy} from '../falsy.d.ts';
 import type {ReadonlyDate} from '../readonly-date.d.ts';
-import type {FunctionParameters} from './function.d.ts';
 
 /**
 Matches any primitive, `void`, `Date`, or `RegExp` value.
@@ -189,10 +188,10 @@ Readonly rest parameters are preserved.
 
 Note: An overloaded function keeps only its last signature, and a generic one loses its type parameters.
 */
-export type CallSignatureOf<Type> = Type extends (...arguments_: never) => any
-	? unknown extends ThisParameterType<Type>
-		? (...arguments_: FunctionParameters<Type>) => ReturnType<Type>
-		: (this: ThisParameterType<Type>, ...arguments_: FunctionParameters<Type>) => ReturnType<Type>
+export type CallSignatureOf<Type> = Type extends (this: infer Receiver, ...arguments_: infer Arguments extends UnknownArray) => infer Return
+	? unknown extends Receiver
+		? (...arguments_: Arguments) => Return
+		: (this: Receiver, ...arguments_: Arguments) => Return
 	: unknown;
 
 /**
