@@ -40,3 +40,14 @@ declare function countOnes<const Values extends readonly unknown[]>(values: Valu
 expectTypeOf(countOnes([1, 2, 1])).toBe<2>();
 expectTypeOf(countOnes([])).toBe<0>();
 expectTypeOf(countOnes(['1', 1])).toBe<1>();
+
+// Every array member can have its own count, including an empty or variadic alternative.
+expectTypeOf<CountExactInArray<[] | [1], 1>>().toBe<0 | 1>();
+expectTypeOf<CountExactInArray<[1] | readonly [1, 1], 1>>().toBe<1 | 2>();
+expectTypeOf<CountExactInArray<[1, ...Array<1>] | [1, 1, 1], 1>>().toBe<1 | 3>();
+expectTypeOf<CountExactInArray<readonly [1, 1?, ...Array<1>] | readonly [2, 1, 1], 1>>().toBe<1 | 2>();
+expectTypeOf<CountExactInArray<any, 1>>().toBe<0>();
+expectTypeOf<CountExactInArray<unknown[], 1>>().toBe<0>();
+expectTypeOf<CountExactInArray<never, 1, [unknown, unknown]>>().toBe<2>();
+// @ts-expect-error The input must be an array.
+type UnknownListCount = CountExactInArray<unknown, 1>;

@@ -234,8 +234,11 @@ type F = CountExactInArray<VariableList, 2>;
 ```
 */
 export type CountExactInArray<List extends UnknownArray, SearchType, Count extends unknown[] = []> =
-	StaticPartOfArray<List> extends readonly [infer Head, ...infer Tail]
-		? CountExactInArray<Tail, SearchType, IsEqual<Head, SearchType> extends true ? [...Count, unknown] : Count>
-		: Count['length'];
+	IsNever<List> extends true
+		? Count['length']
+		// Match the required prefix directly so each union member keeps its own count, stopping at optional and rest elements.
+		: List extends readonly [infer Head, ...infer Tail]
+			? CountExactInArray<Tail, SearchType, IsEqual<Head, SearchType> extends true ? [...Count, unknown] : Count>
+			: Count['length'];
 
 export {};
