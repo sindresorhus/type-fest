@@ -1,7 +1,4 @@
-import type {IsAny} from './is-any.d.ts';
-import type {If} from './if.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {IfNotAnyOrNever} from './internal/type.d.ts';
 
 /**
 A stricter version of `Extract<T, U>` that extracts types only when they are exactly identical.
@@ -31,26 +28,14 @@ type TestExtractExactly3 = ExtractExactly<{a: string} | {a: string; b: string}, 
 
 @category Improved Built-in
 */
+// If `Union` is `any`, only an exact `any` match keeps it.
+// If `Union` is `never`, there are no members to distribute, so the result remains `never`.
+// An `any` match cannot equal a non-`any` member, and a `never` match supplies no matching member.
 export type ExtractExactly<Union, Match> =
-	IfNotAnyOrNever<Union, {
-		ifNot: _ExtractExactly<Union, Match>;
-		// If `Union` is `any`, then if `Match` is `any`, return `any`, else return `never`.
-		ifAny: If<IsAny<Match>, Union, never>;
-		// If `Union` is `never`, return `never`, doesn't matter what `Match` is.
-		ifNever: never;
-	}>;
-
-type _ExtractExactly<Union, Match> =
-	IfNotAnyOrNever<Match, {
-		ifNot: Union extends unknown // For distributing `Union`
-			? [Match extends unknown // For distributing `Match`
-				? IsEqual<Union, Match> extends true ? true : never
-				: never] extends [never] ? never : Union
-			: never;
-		// If `Match` is `any` or `never`, then return `never`,
-		// because `Union` cannot be `any` or `never` here.
-		ifAny: never;
-		ifNever: never;
-	}>;
+	Union extends unknown // For distributing `Union`
+		? [Match extends unknown // For distributing `Match`
+			? IsEqual<Union, Match> extends true ? true : never
+			: never] extends [never] ? never : Union
+		: never;
 
 export {};

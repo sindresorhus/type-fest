@@ -80,3 +80,18 @@ expectTypeOf<ExtractExactly<{readonly [identity]: 'user'} | {readonly [identity]
 expectTypeOf<ExtractExactly<{value: {name: string}} | {value: {readonly name: string}}, {value: {name: string}}>>().toBe<{value: {name: string}}>();
 type SimilarResponses = {kind: 'ready'; value: string} | {kind: 'ready'; value: string; cached?: boolean};
 expectTypeOf<ExtractExactly<SimilarResponses, {kind: 'ready'; value: string}>>().toBe<{kind: 'ready'; value: string}>();
+
+// Exact extraction remains a subset of the original type while both inputs are generic.
+function isExactMember<Union, Match>(value: Union, selected: ReadonlyArray<ExtractExactly<Union, Match>>): value is ExtractExactly<Union, Match> {
+	return selected.includes(value as ExtractExactly<Union, Match>);
+}
+
+function _readExactMember<Union, Match>(value: Union, selected: ReadonlyArray<ExtractExactly<Union, Match>>): Union | undefined {
+	return isExactMember(value, selected) ? value : undefined;
+}
+
+// Exact matches distinguish readonly metadata, optional values, and callable signatures.
+expectTypeOf<ExtractExactly<{readonly id: string} | {id: string}, {readonly id: string}>>().toBe<{readonly id: string}>();
+expectTypeOf<ExtractExactly<{name?: string} | {name: string | undefined}, {name?: string}>>().toBe<{name?: string}>();
+expectTypeOf<ExtractExactly<(() => string) | ((value: number) => string), () => string>>().toBe<() => string>();
+expectTypeOf<ExtractExactly<{value: any} | {value: unknown}, {value: unknown}>>().toBe<{value: unknown}>();
