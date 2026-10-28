@@ -98,3 +98,14 @@ expectTypeOf<IsUppercase<UppercaseText.Mixed>>().toBe<false>();
 expectTypeOf<IsUppercase<UppercaseText.Empty>>().toBe<true>();
 expectTypeOf<IsUppercase<UppercaseText>>().toBe<boolean>();
 expectTypeOf<IsUppercase<Tagged<UppercaseText.Upper, 'Text'>>>().toBe<true>();
+
+// A known mismatch decides a partially known string without walking its unknown suffix.
+expectTypeOf<IsUppercase<`a${StringRepeat<'A', 1200>}${string}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`ab${string}` | `OK${string}`>>().toBe<boolean>();
+expectTypeOf<IsUppercase<`\u{1C5}${string}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`${number}a${string}`>>().toBe<false>();
+expectTypeOf<IsUppercase<`9${Uppercase<string>}`>>().toBe<true>();
+
+function _readUppercaseFlag<Value extends string>(value: IsUppercase<Value>): boolean {
+	return value;
+}

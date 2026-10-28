@@ -98,3 +98,14 @@ expectTypeOf<IsLowercase<LowercaseText.Mixed>>().toBe<false>();
 expectTypeOf<IsLowercase<LowercaseText.Empty>>().toBe<true>();
 expectTypeOf<IsLowercase<LowercaseText>>().toBe<boolean>();
 expectTypeOf<IsLowercase<Tagged<LowercaseText.Lower, 'Text'>>>().toBe<true>();
+
+// A known mismatch decides a partially known string without walking its unknown suffix.
+expectTypeOf<IsLowercase<`A${StringRepeat<'a', 1200>}${string}`>>().toBe<false>();
+expectTypeOf<IsLowercase<`AB${string}` | `ok${string}`>>().toBe<boolean>();
+expectTypeOf<IsLowercase<`\u{1C5}${string}`>>().toBe<false>();
+expectTypeOf<IsLowercase<`${number}A${string}`>>().toBe<false>();
+expectTypeOf<IsLowercase<`9${Lowercase<string>}`>>().toBe<true>();
+
+function _readLowercaseFlag<Value extends string>(value: IsLowercase<Value>): boolean {
+	return value;
+}

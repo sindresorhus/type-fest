@@ -33,7 +33,8 @@ export type IsUppercase<S extends string> =
 Loops through each part in the string and returns a boolean array indicating whether each part is uppercase.
 */
 type _IsUppercase<S extends string, Accumulator extends boolean[] = []> = S extends `${infer First}${infer Rest}`
-	? _IsUppercase<Rest, [...Accumulator, IsUppercaseHelper<First>]>
+	// A known mismatch decides the result even when the rest of the input is long or unknown.
+	? IsUppercaseHelper<First> extends false ? [false] : _IsUppercase<Rest, [...Accumulator, IsUppercaseHelper<First>]>
 	: [...Accumulator, IsUppercaseHelper<S>];
 
 /**

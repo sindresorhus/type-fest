@@ -33,7 +33,8 @@ export type IsLowercase<S extends string> =
 Loops through each part in the string and returns a boolean array indicating whether each part is lowercase.
 */
 type _IsLowercase<S extends string, Accumulator extends boolean[] = []> = S extends `${infer First}${infer Rest}`
-	? _IsLowercase<Rest, [...Accumulator, IsLowercaseHelper<First>]>
+	// A known mismatch decides the result even when the rest of the input is long or unknown.
+	? IsLowercaseHelper<First> extends false ? [false] : _IsLowercase<Rest, [...Accumulator, IsLowercaseHelper<First>]>
 	: [...Accumulator, IsLowercaseHelper<S>];
 
 /**
