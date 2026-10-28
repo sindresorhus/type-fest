@@ -6,7 +6,7 @@ import type {JoinableItem} from './internal/string.d.ts';
 type NullishCoalesce<
 	Value extends JoinableItem,
 	Fallback extends string,
-> = Value extends undefined | null ? NonNullable<Value> | Fallback : Value extends object ? UnwrapBrand<Value> : Value;
+> = Value extends undefined | null ? Fallback : Value extends object ? UnwrapBrand<Value> : Value;
 
 /**
 Join an array of strings and/or numbers using the given string as a delimiter.

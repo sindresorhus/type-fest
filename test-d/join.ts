@@ -224,3 +224,8 @@ function optionalPathWithMetadata<Metadata>(metadata: Metadata): {path: Join<['s
 
 expectTypeOf(optionalPathWithMetadata({id: 1} as const).metadata).toBe<{readonly id: 1}>();
 expectTypeOf(optionalPathWithMetadata('draft').path).toBe<OptionalPathResult>();
+
+// Nullish values become empty cells while other falsy values retain their string form.
+expectTypeOf<Join<[false | null, 0 | undefined], ':'>>().toBe<'false:0' | 'false:' | ':0' | ':'>();
+expectTypeOf<Join<readonly [false, 0, '', null, undefined], ':'>>().toBe<'false:0:::'>();
+expectTypeOf<Join<[null, any, undefined], ':'>>().toBe<`:${any}:`>();
