@@ -1,4 +1,3 @@
-import type {If} from '../if.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
@@ -83,7 +82,7 @@ export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
 /**
 Returns whether the given array `T` is readonly.
 */
-export type IsArrayReadonly<T extends UnknownArray> = If<IsNever<T>, false, T extends unknown[] ? false : true>;
+export type IsArrayReadonly<T extends UnknownArray> = IsNever<T> extends true ? false : T extends unknown[] ? false : true;
 
 /**
 The largest length the array can have, including its optional elements.
