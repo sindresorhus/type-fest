@@ -28,6 +28,14 @@ expectTypeOf<2000>().toBe<VeryLargeTuple['length']>();
 
 // Negative length
 expectTypeOf<[]>().toBe<TupleOf<-3, string>>();
+expectTypeOf<TupleOf<-2.5, undefined>>().toBe<[]>();
+expectTypeOf<TupleOf<-2 | 3, string>>().toBe<[] | [string, string, string]>();
+expectTypeOf<TupleOf<Tagged<-2 | 3, 'Length'>, string>>().toBe<[] | [string, string, string]>();
+expectTypeOf<TupleOf<-2, any>>().toBe<[]>();
+
+function _createNegativeLengthTuple<Value>(): TupleOf<-2, Value> {
+	return [];
+}
 
 // Boundary types
 expectTypeOf<[]>().toBe<TupleOf<never, string>>();
@@ -101,3 +109,47 @@ expectTypeOf<TupleOf<Tagged<1, 'Length'>, any>>().toBe<[any]>();
 expectTypeOf<TupleOf<Tagged<2, 'Length'>>>().toBe<[unknown, unknown]>();
 expectTypeOf<TupleOf<any, undefined>>().toBe<undefined[]>();
 expectTypeOf<TupleOf<never, undefined>>().toBe<[]>();
+
+// Generic tuple APIs retain their element type, mutable array contract, and exact fixed arity.
+function makeTupleTriple<const Value>(value: Value): TupleOf<3, Value> {
+	return [value, value, value];
+}
+
+function _readTupleTriple<Value>(value: TupleOf<3, Value>): Value {
+	return value[2];
+}
+
+function _readTupleArray<Length extends number, Value>(value: TupleOf<Length, Value>): Value[] {
+	return value;
+}
+
+function _useTupleTriple<Value, Result>(value: TupleOf<3, Value>, callback: (value: [Value, Value, Value]) => Result): Result {
+	return callback(value);
+}
+
+const tupleTriple = makeTupleTriple({id: 'row', values: [1, 2]});
+expectTypeOf(tupleTriple[0].id).toBe<'row'>();
+expectTypeOf(tupleTriple[2].values).toBe<readonly [1, 2]>();
+expectTypeOf(tupleTriple.length).toBe<3>();
+// @ts-expect-error A valid replacement cannot mutate the inferred readonly object.
+tupleTriple[0].id = 'row';
+// @ts-expect-error A triple has no fourth element.
+const _outsideTupleTriple: unknown = tupleTriple[3];
+expectTypeOf<TupleOf<0 | 3, undefined>>().toBe<[] | [undefined, undefined, undefined]>();
+
+// Large tuples keep object values, array methods, and writable tuple positions.
+type TupleCell = {readonly id: 'cell'};
+type LargeObjectTuple = TupleOf<2000, TupleCell>;
+expectTypeOf<LargeObjectTuple['length']>().toBe<2000>();
+expectTypeOf<LargeObjectTuple[1999]['id']>().toBe<'cell'>();
+expectTypeOf<TupleOf<TupleLength.Zero | TupleLength.Two, TupleCell>>().toBe<[] | [TupleCell, TupleCell]>();
+tupleTriple[1] = {id: 'row', values: [1, 2]};
+expectTypeOf(tupleTriple.map(value => value.id)).toBe<Array<'row'>>();
+
+// Every digit keeps the fill's exact type, including unions of neighboring lengths.
+expectTypeOf<TupleOf<6, TupleCell>>().toBe<[TupleCell, TupleCell, TupleCell, TupleCell, TupleCell, TupleCell]>();
+expectTypeOf<TupleOf<7, TupleCell>>().toBe<[TupleCell, TupleCell, TupleCell, TupleCell, TupleCell, TupleCell, TupleCell]>();
+expectTypeOf<TupleOf<8, TupleCell>>().toBe<[TupleCell, TupleCell, TupleCell, TupleCell, TupleCell, TupleCell, TupleCell, TupleCell]>();
+expectTypeOf<TupleOf<6 | 7 | 8, TupleCell>['length']>().toBe<6 | 7 | 8>();
+expectTypeOf<TupleOf<105, TupleCell>['length']>().toBe<105>();
+expectTypeOf<TupleOf<105, TupleCell>[104]>().toBe<TupleCell>();

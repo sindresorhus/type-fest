@@ -1,7 +1,5 @@
-import type {If} from './if.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {IsNegative} from './numeric.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -80,7 +78,7 @@ Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for e
 @category Array
 */
 export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length, {
-	ifNot: _TupleOf<If<IsNegative<Length>, 0, Length extends object ? UnwrapBrand<Length> : Length>, Fill>;
+	ifNot: _TupleOf<Length extends object ? UnwrapBrand<Length> : Length, Fill>;
 	ifAny: Fill[];
 	ifNever: [];
 }>;
@@ -95,6 +93,7 @@ type BuildTupleDigitByDigit<Length extends string, Fill, Accumulator extends Unk
 		// TypeScript prints a length below `1e-6` in scientific notation, and the whole of such a length is the fraction the decimal part rule drops.
 		: Length extends `${string}e-${string}`
 			? []
+			// A leading `-` has no digit to append, so negative lengths stop with the initial empty accumulator.
 			: Accumulator;
 
 type RepeatTupleTenTimes<Tuple extends UnknownArray> = [
@@ -102,17 +101,18 @@ type RepeatTupleTenTimes<Tuple extends UnknownArray> = [
 	...Tuple, ...Tuple, ...Tuple, ...Tuple, ...Tuple,
 ];
 
-type DigitTupleOf<Digit extends DigitCharacter, Fill> = [
-	[],
-	[Fill],
-	[Fill, Fill],
-	[Fill, Fill, Fill],
-	[Fill, Fill, Fill, Fill],
-	[Fill, Fill, Fill, Fill, Fill],
-	[Fill, Fill, Fill, Fill, Fill, Fill],
-	[Fill, Fill, Fill, Fill, Fill, Fill, Fill],
-	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
-	[Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill],
-][Digit];
+// A string-keyed lookup avoids array machinery for the digit table.
+type DigitTupleOf<Digit extends DigitCharacter, Fill> = {
+	'0': [];
+	'1': [Fill];
+	'2': [Fill, Fill];
+	'3': [Fill, Fill, Fill];
+	'4': [Fill, Fill, Fill, Fill];
+	'5': [Fill, Fill, Fill, Fill, Fill];
+	'6': [Fill, Fill, Fill, Fill, Fill, Fill];
+	'7': [Fill, Fill, Fill, Fill, Fill, Fill, Fill];
+	'8': [Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill];
+	'9': [Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill, Fill];
+}[Digit];
 
 export {};
