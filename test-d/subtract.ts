@@ -147,3 +147,12 @@ expectTypeOf<Subtract<Tagged<2, 'Amount'>, any>>().toBe<number>();
 expectTypeOf<Subtract<any, Tagged<2, 'Amount'>>>().toBe<number>();
 expectTypeOf<Subtract<Tagged<2, 'Amount'>, never>>().toBe<never>();
 expectTypeOf<Subtract<never, Tagged<2, 'Amount'>>>().toBe<never>();
+
+// Opposite signs add magnitudes, with the result's sign determined by the minuend.
+expectTypeOf<Subtract<2, -1000>>().toBe<1002>();
+expectTypeOf<Subtract<-2, 1000>>().toBe<-1002>();
+expectTypeOf<Subtract<-3 | 3, -100 | 100>>().toBe<-103 | -97 | 97 | 103>();
+
+function _readNumericDifference<First extends number, Second extends number>(value: Subtract<First, Second>): number {
+	return value;
+}

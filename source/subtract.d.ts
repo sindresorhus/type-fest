@@ -74,9 +74,9 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 		: AreNegative extends [true, true]
 			// When both numbers are negative we subtract the absolute values and then reverse the sign
 			? ReverseSign<SubtractPositives<Absolute<A>, Absolute<B>>>
-			// When the signs are different we can add the absolute values and then reverse the sign if A < B
+			// When the signs are different we can add the absolute values and then reverse the sign if A is negative.
 			: NonNegativeIntegerSum<Absolute<A>, Absolute<B>> extends infer R extends number
-				? LessThan<A, B> extends true ? ReverseSign<R> : R
+				? IsNegative<A> extends true ? ReverseSign<R> : R
 				: never;
 
 /**
