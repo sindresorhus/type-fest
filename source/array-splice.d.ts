@@ -36,7 +36,7 @@ type PeelFixedArrayByIndex<
 	Counter['length'] extends SplitIndex
 		? [Head, T]
 		: T extends readonly []
-			? never // Only a fractional index runs past the end, since the caller clamps the index to the length
+			? never // Only a fractional index runs past the end, since the caller clamps the index to the length.
 			: PeelFirstElement<T> extends [infer First extends UnknownArray, infer Rest extends UnknownArray]
 				? PeelFixedArrayByIndex<Rest, SplitIndex, [...Head, ...First], [...Counter, unknown]>
 				: never; // Should never happen, since `PeelFirstElement` always returns a pair
@@ -56,10 +56,6 @@ The implementation of `SplitArrayByIndex` for variable length arrays. Split once
 type SplitVariableArrayByIndex<T extends UnknownArray,
 	SplitIndex extends number,
 	Parts extends [UnknownArray, UnknownArray, UnknownArray] = _SplitOnRestElement<T, {preserveOptionalModifier: true}>,
-	T1 = Subtract<SplitIndex, MaxLength<Parts[0]>>,
-	T2 = T1 extends number
-		? TupleOf<GreaterThanOrEqual<T1, 0> extends true ? T1 : number, Parts[1][number] | Parts[2][number]>
-		: [],
 > =
 	SplitIndex extends 0
 		? [[], T]
@@ -75,7 +71,8 @@ type SplitVariableArrayByIndex<T extends UnknownArray,
 			: [
 				[
 					...Parts[0],
-					...(T2 extends UnknownArray ? T2 : []),
+					// Only an index beyond the fixed prefix needs materialized rest elements; its distance from the prefix is positive here.
+					...TupleOf<Subtract<SplitIndex, MaxLength<Parts[0]>>, Parts[1][number] | Parts[2][number]>,
 				],
 				[...Parts[1], ...Parts[2]],
 			];
@@ -125,9 +122,10 @@ Use-case: Replace or insert items in an array type.
 Like [`Array#splice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) but for types.
 
 Known limitations:
-- A tuple with optional elements has no single length, so a start index at or past the optional element is resolved against the longest one, and the optional element is then promoted to a required one that carries `| undefined`, which is what TypeScript's own tuple spread does with it. `ArraySplice<[1, 2?], 2, 0, [9]>` is `[1, (2 | undefined), 9]`, where `splice()` gives `[1, 9]` or `[1, 2, 9]`. A start index before the optional element is unaffected, because the optional element stays last. A negative start index is resolved against the longest length too, and a fractional negative start index is not supported.
+- A tuple with optional elements has no single length, so a start index at or past the optional element is resolved against the longest one, and the optional element is then promoted to a required one that carries `| undefined`, which is what TypeScript's own tuple spread does with it. `ArraySplice<[1, 2?], 2, 0, [9]>` is `[1, (2 | undefined), 9]`, where `splice()` gives `[1, 9]` or `[1, 2, 9]`. A start index before the optional element is unaffected, because the optional element stays last. A negative start index is resolved against the longest length too.
 - A start index inside a rest element is resolved by materialising that many rest elements, so the result claims a minimum length the input never promised. `ArraySplice<[string, ...Array<number>], 3, 1>` is `[string, number, number, ...Array<number>]`, which rejects `[string]`, and `splice(3, 1)` on `[string]` is a no-op. The alternative of leaving the rest whole would drop the fixed elements after a rest in the middle of a tuple, which is worse.
 - A tuple with a leading rest element, such as `[...string[], 1, 2]`, splits incorrectly once the start index is past `0`, because its fixed part is at the other end of the tuple.
+- Fractional indexes are not supported. Round the index before passing it.
 
 @example
 ```
@@ -185,18 +183,21 @@ type _ArraySplice<
 > =
 	// The start is distributed before the sign is asked, because the sign of a union of a negative and a positive member is `boolean`, which would send the negative member down the plain-index path. `ArraySlice` distributes for the same reason.
 	Start extends unknown
-		// A non-literal index or delete count can be any value, so only the element types are known, the same as `ArraySlice` answers. Printed values distinguish constant enum members from unknown numbers.
-		? `${number}` extends `${Start | DeleteCount}`
-			? Array<T[number] | Items[number]>
-			// A negative start index counts backwards from the end of the array, which is only known when the length is static.
-			: IsNegative<Start> extends true
-				? number extends T['length']
-					? Array<T[number] | Items[number]>
-					// A start that points before the beginning is clamped to `0` before `Subtract` is asked, because `Subtract` has no answer for a number in exponential notation, like `-1e21`.
-					: GreaterThanOrEqual<Absolute<Start>, MaxLength<T>> extends true
-						? ArraySpliceImplementation<T, 0, DeleteCount, Items>
-						: ArraySpliceImplementation<T, Subtract<MaxLength<T>, Absolute<Start>>, DeleteCount, Items>
-				: ArraySpliceImplementation<T, Start, DeleteCount, Items>
+		// An impossible count must disappear before a non-literal start or inferred split can widen it to an array. It is checked without distributing the count, because that makes a generic `ArraySlice` exceed the instantiation depth limit.
+		? [DeleteCount] extends [never]
+			? never
+			// A non-literal index or delete count can be any value, so only the element types are known, the same as `ArraySlice` answers. Printed values distinguish constant enum members from unknown numbers.
+			: `${number}` extends `${Start | DeleteCount}`
+				? Array<T[number] | Items[number]>
+				// A negative start index counts backwards from the end of the array, which is only known when the length is static.
+				: IsNegative<Start> extends true
+					? number extends T['length']
+						? Array<T[number] | Items[number]>
+						// A start that points before the beginning is clamped to `0` before `Subtract` is asked, because `Subtract` has no answer for a number in exponential notation, like `-1e21`.
+						: GreaterThanOrEqual<Absolute<Start>, MaxLength<T>> extends true
+							? ArraySpliceImplementation<T, 0, DeleteCount, Items>
+							: ArraySpliceImplementation<T, Subtract<MaxLength<T>, Absolute<Start>>, DeleteCount, Items>
+					: ArraySpliceImplementation<T, Start, DeleteCount, Items>
 		: never; // Should never happen, since the start is distributed just above
 
 export {};

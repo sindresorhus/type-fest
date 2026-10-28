@@ -325,3 +325,38 @@ expectTypeOf(inferredOptionalRest[0]).toBe<1>();
 const staleOptionalRest: typeof inferredOptionalRest = [1, 2, 'tail'];
 // @ts-expect-error A valid fixed element still cannot be written through a readonly result.
 inferredOptionalRest[0] = 1;
+
+// Every finite start clamps to the only insertion point in an empty tuple, and no deletion count can remove the inserted items.
+expectTypeOf<ArraySplice<[], -3 | 0 | 3, -2 | 0 | 2, ['first', 'second']>>().toBe<['first', 'second']>();
+expectTypeOf<ArraySplice<[], -3 | 0 | 3, -2 | 0 | 2>>().toBe<[]>();
+declare const insertedIntoReadonlyEmpty: ArraySplice<readonly [], 3, 2, ['first', 'second']>;
+expectTypeOf(insertedIntoReadonlyEmpty).toBe<readonly ['first', 'second']>();
+expectTypeOf(insertedIntoReadonlyEmpty[1]).toBe<'second'>();
+// @ts-expect-error A valid inserted value cannot be reassigned through the readonly result.
+insertedIntoReadonlyEmpty[1] = 'second';
+
+// Only starts beyond the fixed prefix materialize rest positions.
+expectTypeOf<ArraySplice<[1, 2, ...boolean[]], 4, 1, [9]>>().toBe<[1, 2, boolean, boolean, 9, ...boolean[]]>();
+expectTypeOf<ArraySplice<readonly [1, 2?, ...boolean[]], 2, 0, [3]>>().toBe<readonly [1, 2 | undefined, 3, ...boolean[]]>();
+
+function replaceFixedValue<Value>(value: Value, flags: boolean[]): ArraySplice<readonly [Value, number, ...boolean[]], 1, 1, ['updated']> {
+	return [value, 'updated', ...flags];
+}
+
+function _readRetainedFixedValue<Value>(values: ArraySplice<readonly [Value, number, ...boolean[]], 1, 1, ['updated']>): Value {
+	return values[0];
+}
+
+const replacedFixedValue = replaceFixedValue({id: 'kept'}, [true]);
+expectTypeOf(replacedFixedValue[0].id).toBe<string>();
+expectTypeOf(replacedFixedValue[1]).toBe<'updated'>();
+// @ts-expect-error A variadic readonly input keeps its readonly result.
+replacedFixedValue[1] = 'updated';
+
+// An impossible deletion count has no splice result, just like an impossible start index.
+expectTypeOf<ArraySplice<[1, 2, 3], 1, never>>().toBe<never>();
+expectTypeOf<ArraySplice<readonly [1, ...string[]], 0, never, [2]>>().toBe<never>();
+expectTypeOf<ArraySplice<[1, 2], number, never>>().toBe<never>();
+expectTypeOf<ArraySplice<any, any, never>>().toBe<never>();
+expectTypeOf<ArraySplice<readonly [1, 2, 3, 4], 1, 0 | 2>>().toBe<readonly [1, 2, 3, 4] | readonly [1, 4]>();
+expectTypeOf<ArraySplice<readonly [1, 2, 3], -2, any>>().toBe<ReadonlyArray<1 | 2 | 3>>();

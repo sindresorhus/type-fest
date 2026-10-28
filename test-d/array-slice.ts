@@ -269,6 +269,11 @@ function _sliceArrayResult<Value extends readonly unknown[], Start extends numbe
 	return slice;
 }
 
+// A generic start without an end stays within the instantiation depth limit.
+function _sliceArrayFromStart<Value extends unknown[], Start extends number>(slice: ArraySlice<Value, Start>): readonly unknown[] {
+	return slice;
+}
+
 declare function sliceConfiguration<const Value extends readonly unknown[], Start extends number, End extends number>(value: Value, start: Start, end: End): ArraySlice<Value, Start, End>;
 const selectedConfiguration = sliceConfiguration(['skip', {enabled: true}, {count: 3}], 1, 3);
 expectTypeOf(selectedConfiguration).toBe<readonly [{readonly enabled: true}, {readonly count: 3}]>();
