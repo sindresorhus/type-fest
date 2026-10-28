@@ -75,3 +75,17 @@ expectTypeOf<StringToNumber<Tagged<'-Infinity', 'Text'>>>().toBe<NegativeInfinit
 expectTypeOf<StringToNumber<'42' & {readonly brand: unique symbol}>>().toBe<42>();
 // @ts-expect-error - Only strings can be parsed.
 type UnknownString = StringToNumber<unknown>;
+
+// Parsing a field union filters invalid spellings without widening valid numeric literals.
+expectTypeOf<StringToNumber<'12' | Tagged<'-7' | 'invalid', 'Text'>>>().toBe<12 | -7>();
+expectTypeOf<StringToNumber<'' | 'NaN'>>().toBe<never>();
+expectTypeOf<StringToNumber<any> | StringToNumber<never>>().toBe<number>();
+
+function _readParsedNumber<Value extends string>(value: StringToNumber<Value>): number {
+	return value;
+}
+
+function _rejectArbitraryParsedNumber<Value extends string>(value: number): StringToNumber<Value> {
+	// @ts-expect-error A generic string might parse to a particular literal or not parse at all.
+	return value;
+}
