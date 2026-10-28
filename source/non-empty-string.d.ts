@@ -30,6 +30,8 @@ foo(someString);
 @category String
 */
 // The string form also checks enum values; keep the unwrapped type so the constraint remains strict for generic strings.
-export type NonEmptyString<T extends string> = '' extends UnwrapBrand<T> | `${UnwrapBrand<T>}` ? never : T;
+export type NonEmptyString<T extends string> = (T extends object ? UnwrapBrand<T> : T) extends infer Input extends string
+	? '' extends Input | `${Input}` ? never : T
+	: never;
 
 export {};

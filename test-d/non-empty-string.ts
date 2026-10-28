@@ -51,3 +51,16 @@ expectTypeOf<NonEmptyString<StringChoice>>().toBe<never>();
 expectTypeOf<NonEmptyString<StringChoice.Value>>().toBe<StringChoice.Value>();
 expectTypeOf<NonEmptyString<Tagged<StringChoice.Empty, 'Text'>>>().toBe<never>();
 expectTypeOf<NonEmptyString<Tagged<StringChoice.Value, 'Text'>>>().toBe<Tagged<StringChoice.Value, 'Text'>>();
+
+// Normalizing a mixed union must still reject the whole union when one member can be empty.
+expectTypeOf<NonEmptyString<'ready' | Tagged<'', 'Text'>>>().toBe<never>();
+expectTypeOf<NonEmptyString<'' | Tagged<'ready', 'Text'>>>().toBe<never>();
+expectTypeOf<NonEmptyString<'ready' | Tagged<string, 'Text'>>>().toBe<never>();
+expectTypeOf<NonEmptyString<'ready' | Tagged<'set', 'Text'>>>().toBe<'ready' | Tagged<'set', 'Text'>>();
+expectTypeOf<NonEmptyString<'ready' | Tagged<`on${string}`, 'Text'>>>().toBe<'ready' | Tagged<`on${string}`, 'Text'>>();
+
+function preserveNonEmptyString<Value extends string>(value: NonEmptyString<Value>): Value {
+	return value;
+}
+
+expectTypeOf(preserveNonEmptyString('ready')).toBe<'ready'>();
