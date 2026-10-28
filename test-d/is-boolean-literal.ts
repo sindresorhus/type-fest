@@ -96,3 +96,17 @@ expectTypeOf<boolean>().toBe<IsBooleanLiteral<Tagged<LiteralUnion<false | 'a' | 
 // Repeated tags preserve the distinction between literal and widened booleans.
 expectTypeOf<IsBooleanLiteral<Tagged<Tagged<true, 'Flag'>, 'Validated'>>>().toBe<true>();
 expectTypeOf<IsBooleanLiteral<Tagged<Tagged<boolean, 'Flag'>, 'Validated'>>>().toBe<false>();
+
+// A field validator preserves the inferred model while distinguishing a fixed flag from boolean.
+declare function booleanLiteralFields<const Model extends object>(model: Model): {[Key in keyof Model]: IsBooleanLiteral<Model[Key]>};
+expectTypeOf(booleanLiteralFields({fixed: true, varying: true as boolean, nested: {value: true}}))
+	.toBe<{readonly fixed: true; readonly varying: false; readonly nested: false}>();
+
+function _readBooleanLiteralFlag<Value>(flag: IsBooleanLiteral<Value>): boolean {
+	return flag;
+}
+
+// Primitive and branded members are normalized before classifying the complete boolean union.
+expectTypeOf<IsBooleanLiteral<true | Tagged<false, 'Flag'>>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<false | Tagged<true, 'Flag'>>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<true | Tagged<true, 'Flag'>>>().toBe<true>();

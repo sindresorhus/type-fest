@@ -1,5 +1,5 @@
 import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
-import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -24,11 +24,9 @@ type D = IsBooleanLiteral<true | false>;
 @category Type Guard
 @category Utilities
 */
-export type IsBooleanLiteral<T> = IfNotAnyOrNever<T, {
-	ifNot: _IsBooleanLiteral<CollapseLiterals<UnwrapBrand<T>>>;
-	ifAny: false;
-	ifNever: false;
-}>;
+// The normalized predicate rejects `any`; only `never` needs a separate guard.
+// Plain primitives need no brand normalization.
+export type IsBooleanLiteral<T> = IsNever<T> extends true ? false : _IsBooleanLiteral<CollapseLiterals<T extends object ? UnwrapBrand<T> : T>>;
 
 export type _IsBooleanLiteral<T> = boolean extends T
 	? false

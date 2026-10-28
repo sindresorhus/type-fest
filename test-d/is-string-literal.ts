@@ -144,3 +144,16 @@ expectTypeOf<boolean>().toBe<IsStringLiteral<Tagged<LiteralUnion<'click' | 'onMo
 // Repeated tags preserve the distinction between finite and open-ended strings.
 expectTypeOf<IsStringLiteral<Tagged<Tagged<'foo', 'Text'>, 'Validated'>>>().toBe<true>();
 expectTypeOf<IsStringLiteral<Tagged<Tagged<Uppercase<string>, 'Text'>, 'Validated'>>>().toBe<false>();
+
+// Literal flags retain readonly tuple positions without classifying a record by its nested text.
+declare function stringLiteralFlags<const Values extends readonly unknown[]>(values: Values): {[Key in keyof Values]: IsStringLiteral<Values[Key]>};
+expectTypeOf(stringLiteralFlags(['fixed', 'dynamic' as string, {value: 'fixed'}])).toBe<readonly [true, false, false]>();
+
+function _readStringLiteralFlag<Value>(flag: IsStringLiteral<Value>): boolean {
+	return flag;
+}
+
+// A widened branded member must still absorb unbranded literals before classification.
+expectTypeOf<IsStringLiteral<'ready' | Tagged<string, 'Text'>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<'' | Tagged<string & {}, 'Text'>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<'ready' | Tagged<'set', 'Text'>>>().toBe<true>();

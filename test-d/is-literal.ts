@@ -178,3 +178,17 @@ const objectSetting = literalSetting({kind: 'file'}, false);
 expectTypeOf(objectSetting.value).toBe<{readonly kind: 'file'}>();
 // @ts-expect-error Object values are not literal types.
 literalSetting({kind: 'file'}, true);
+
+// Per-position validation keeps top and bottom types from classifying the containing tuple.
+expectTypeOf<FieldLiteralFlags<readonly [any, never, unknown, 'ready' | null]>>()
+	.toBe<readonly [false, false, false, boolean]>();
+expectTypeOf<IsLiteral<{payload: any} | {payload: never}>>().toBe<false>();
+
+function _readLiteralResult<Value>(value: IsLiteral<Value>): boolean {
+	return value;
+}
+
+// A fast path for plain members must not classify them separately from widened branded members.
+expectTypeOf<IsLiteral<true | Tagged<false, 'Flag'>>>().toBe<false>();
+expectTypeOf<IsLiteral<1 | Tagged<number, 'Count'>>>().toBe<false>();
+expectTypeOf<IsLiteral<'ready' | Tagged<boolean, 'Flag'>>>().toBe<boolean>();

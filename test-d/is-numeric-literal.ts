@@ -172,3 +172,16 @@ expectTypeOf<IsNumericLiteral<Tagged<ExternalCode.Known, 'Code'>>>().toBe<true>(
 expectTypeOf<Finite<ExternalCode.Known>>().toBe<ExternalCode.Known>();
 expectTypeOf<NonNegative<ExternalCode.Known>>().toBe<ExternalCode.Known>();
 expectTypeOf<IsInteger<ExternalCode.Known>>().toBe<true>();
+
+// Numeric field validation distinguishes an inferred count from a runtime count or nested record.
+declare function numericLiteralFields<const Model extends object>(model: Model): {[Key in keyof Model]: IsNumericLiteral<Model[Key]>};
+expectTypeOf(numericLiteralFields({fixed: 3, varying: 3 as number, integer: 3n, nested: {value: 3}}))
+	.toBe<{readonly fixed: true; readonly varying: false; readonly integer: true; readonly nested: false}>();
+
+function _readNumericLiteralFlag<Value>(flag: IsNumericLiteral<Value>): boolean {
+	return flag;
+}
+
+expectTypeOf<IsNumericLiteral<1 | Tagged<number, 'Value'>>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<1n | Tagged<bigint, 'Value'>>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<1 | Tagged<2n, 'Value'>>>().toBe<true>();

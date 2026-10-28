@@ -1,5 +1,5 @@
 import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
-import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {IsNever} from './is-never.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -54,11 +54,9 @@ type L3 = StringLength<`${number}`>;
 @category Type Guard
 @category Utilities
 */
-export type IsStringLiteral<S> = IfNotAnyOrNever<S, {
-	ifNot: _IsStringLiteral<CollapseLiterals<UnwrapBrand<S>>>;
-	ifAny: false;
-	ifNever: false;
-}>;
+// The normalized predicate rejects `any`; only `never` needs a separate guard.
+// Plain primitives need no brand normalization.
+export type IsStringLiteral<S> = IsNever<S> extends true ? false : _IsStringLiteral<CollapseLiterals<S extends object ? UnwrapBrand<S> : S>>;
 
 export type _IsStringLiteral<S> =
 	// If `S` is an infinite string type (e.g., `on${string}`), `Record<S, never>` produces an index signature,

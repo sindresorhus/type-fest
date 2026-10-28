@@ -102,3 +102,15 @@ expectTypeOf<IsSymbolLiteral<Tagged<LiteralUnion<typeof symbol1, symbol>, 'Tag'>
 // Repeated tags preserve the distinction between unique and widened symbols.
 expectTypeOf<IsSymbolLiteral<Tagged<Tagged<typeof symbol1, 'Value'>, 'Validated'>>>().toBe<true>();
 expectTypeOf<IsSymbolLiteral<Tagged<Tagged<symbol, 'Value'>, 'Validated'>>>().toBe<false>();
+
+// Tuple validation keeps unique symbols separate from widened symbol values and records.
+declare function symbolLiteralFlags<const Values extends readonly unknown[]>(values: Values): {[Key in keyof Values]: IsSymbolLiteral<Values[Key]>};
+expectTypeOf(symbolLiteralFlags([symbol1, Symbol.for('runtime') as symbol, {value: symbol1}]))
+	.toBe<readonly [true, false, false]>();
+
+function _readSymbolLiteralFlag<Value>(flag: IsSymbolLiteral<Value>): boolean {
+	return flag;
+}
+
+expectTypeOf<IsSymbolLiteral<typeof symbol1 | Tagged<symbol, 'Value'>>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<typeof symbol1 | Tagged<typeof symbol2, 'Value'>>>().toBe<true>();
