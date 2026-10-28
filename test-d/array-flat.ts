@@ -196,3 +196,21 @@ expectTypeOf<[0, 1, 3, 4]>().not.toBeAssignableTo<AlternativeFlatSuffix>();
 type LongFlatSuffix = ArrayFlat<[...Array<[-1]>, ...LongTuple<120>]>;
 expectTypeOf<LongFlatSuffix extends [...unknown[], infer Last] ? Last : never>().toBe<119>();
 expectTypeOf<LongFlatSuffix extends [...unknown[], infer Previous, unknown] ? Previous : never>().toBe<118>();
+
+// Reaching the requested depth spreads the nested array once and keeps deeper arrays and explicit values intact.
+expectTypeOf<ArrayFlat<readonly [readonly [1, readonly [2]], readonly [3, ...string[], 4]]>>()
+	.toBe<[1, readonly [2], 3, ...string[], 4]>();
+expectTypeOf<ArrayFlat<[readonly [any, unknown, never, null, undefined]]>>().toBe<[any, unknown, never, null, undefined]>();
+expectTypeOf<ArrayFlat<[readonly [1, (2 | undefined)?], readonly [3, 4]]>>().toBe<[1, ...Array<2 | undefined>, 3, 4]>();
+
+function flattenRequiredRow<Value>(value: Value): ArrayFlat<readonly [readonly [Value, Value]]> {
+	return [value, value];
+}
+
+function _readRequiredRow<Value>(value: ArrayFlat<readonly [readonly [Value, Value]]>): Value {
+	return value[0];
+}
+
+const requiredRow = flattenRequiredRow({id: 'row'});
+expectTypeOf(requiredRow[0].id).toBe<string>();
+requiredRow[1] = {id: 'updated'};

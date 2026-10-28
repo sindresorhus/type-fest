@@ -109,7 +109,10 @@ type FlattenElement<Element, Depth extends number> =
 				// The members that are not arrays are kept together, so that a union such as `boolean` does not split the result into one tuple per member.
 				: ([Exclude<Element, UnknownArray>] extends [never] ? never : [Exclude<Element, UnknownArray>])
 					| (Element extends UnknownArray // For distributing the arrays in `Element`
-						? SpreadElements<Element, Subtract<Depth, 1>>
+						// At the final level, copy when the spread keeps every required position; optional elements still need the traversal that turns them into a rest element.
+						? [Depth, [...Element]] extends [0, Required<Element>]
+							? [...Element]
+							: SpreadElements<Element, Subtract<Depth, 1>>
 						: never);
 
 export {};
