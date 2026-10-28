@@ -128,3 +128,14 @@ expectTypeOf(layeredRestHandler.id).toBe<string>();
 expectTypeOf<CallSignatureOf<any>>().toBe<unknown>();
 expectTypeOf<CallSignatureOf<never>>().toBe<never>();
 expectTypeOf<CallSignatureOf<unknown>>().toBe<unknown>();
+
+// Sentinel detection considers the value itself rather than nested sentinel fields.
+expectTypeOf<IsAnyOrNever<{value: any}>>().toBe<false>();
+expectTypeOf<IsAnyOrNever<{value: never}>>().toBe<false>();
+expectTypeOf<IsAnyOrNever<readonly never[]>>().toBe<false>();
+expectTypeOf<IsAnyOrNever<string | never>>().toBe<false>();
+expectTypeOf<IsAnyOrNever<string | any>>().toBe<true>();
+
+function _readSentinelFlag<Value>(flag: IsAnyOrNever<Value>): boolean {
+	return flag;
+}

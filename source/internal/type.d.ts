@@ -103,9 +103,7 @@ type B = Not<false>;
 */
 export type Not<A extends boolean> = A extends true
 	? false
-	: A extends false
-		? true
-		: never;
+	: true;
 
 /**
 An if-else-like type that resolves depending on whether the given type is `any` or `never`.
@@ -182,7 +180,7 @@ type C = IsAnyOrNever<never>;
 //=> true
 ```
 */
-export type IsAnyOrNever<T> = IsNotFalse<IsAny<T> | IsNever<T>>;
+export type IsAnyOrNever<T> = IsAny<T> extends true ? true : IsNever<T>;
 
 /**
 The call signature of the given type, rebuilt with its `this` parameter, which `Parameters` leaves out, so the rebuilt signature does not accept any receiver. A function that declares no `this` is rebuilt without one, like `OmitThisParameter` does, because `this: unknown` would reject a function that declares a `this`. `unknown` for a type that is not callable, so it can be intersected with anything.
