@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {LastArrayElement, TupleOf, FixedLengthArray} from '../index.d.ts';
+import type {LastArrayElement, TupleOf, FixedLengthArray, Tagged} from '../index.d.ts';
 
 // Empty array
 expectTypeOf<LastArrayElement<[]>>().toBe<undefined>();
@@ -136,3 +136,36 @@ expectTypeOf(inferredFixedLast).toBe<{readonly id: 'row'}>();
 inferredFixedLast.id = 'row';
 // @ts-expect-error The input must be an array.
 type UnknownLastInput = LastArrayElement<unknown>;
+
+// A required suffix determines the last value even when an unknown-length rest precedes it.
+function lastRequiredSuffix<const Value>(value: Value): LastArrayElement<readonly [header: string, ...middle: number[], tail: Value]> {
+	return value;
+}
+
+function _readRequiredSuffix<Value>(value: LastArrayElement<readonly [header: string, ...middle: number[], tail: Value]>): Value {
+	return value;
+}
+
+const inferredRequiredSuffix = lastRequiredSuffix({id: 'end', values: [1, 2]});
+expectTypeOf(inferredRequiredSuffix).toBe<{readonly id: 'end'; readonly values: readonly [1, 2]}>();
+
+// Metadata on a variadic tuple does not prevent reading its possible element values.
+function _readLabelledRestLast(value: LastArrayElement<[...string[], 2] & {label: string}>): string | 2 {
+	return value;
+}
+
+function _readTaggedRestLast(value: LastArrayElement<Tagged<readonly [...string[], 2], 'Row'>>): string | 2 {
+	return value;
+}
+
+// A generic required prefix remains a possible ending beside an optional position and a rest.
+function _readOptionalRestLast<Value>(value: LastArrayElement<readonly [Value, boolean?, ...number[]]>): Value | boolean | number {
+	return value;
+}
+
+function _constructOptionalRestLast<Value>(value: Value): LastArrayElement<readonly [Value, boolean?, ...number[]]> {
+	return value;
+}
+
+expectTypeOf<LastArrayElement<readonly [undefined?, ...never[]]>>().toBe<undefined>();
+expectTypeOf<LastArrayElement<readonly [1, (2 | undefined)?, ...Array<3 | 4>]>>().toBe<1 | 2 | 3 | 4 | undefined>();

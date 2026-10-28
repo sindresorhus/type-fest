@@ -309,3 +309,35 @@ const inferredRequestTail = elementAt(requestArguments, -1);
 expectTypeOf(inferredRequestTail).toBe<number | boolean | {name: string}>();
 // @ts-expect-error The first required prefix element cannot be last after the required retry count.
 const unreachableRequestKind: 'request' = inferredRequestTail;
+
+// Positive reads after the fixed prefix can reach a rest value or the required suffix.
+expectTypeOf<ArrayAt<readonly [0, ...never[], 1], 1>>().toBe<1>();
+expectTypeOf<ArrayAt<readonly [0, ...unknown[], 1], 1>>().toBe<unknown>();
+expectTypeOf<ArrayAt<readonly [0, ...any[], 1], 1>>().toBe<any>();
+expectTypeOf<ArrayAt<readonly [0, ...Array<string | undefined>, 1], 2>>().toBe<string | 1 | undefined>();
+
+function _readPositiveRest<Value>(value: ArrayAt<readonly [0, ...Value[], 'end'], 1>): Value | 'end' {
+	return value;
+}
+
+function _constructPositiveRest<Value>(value: Value): ArrayAt<readonly [0, ...Value[], 'end'], 1> {
+	return value;
+}
+
+// Negative offsets retain generic fixed-position values without treating them as absent.
+function _readFixedNegative<Value>(value: ArrayAt<readonly [Value, number], -2>): Value {
+	return value;
+}
+
+function _rejectAbsentFixedNegative<Value>(value: ArrayAt<readonly [Value, number], -2>): undefined {
+	// @ts-expect-error The first required value need not be undefined.
+	return value;
+}
+
+// An offset before a constrained tuple stays compatible with a missing whole-array result.
+function _readPastGenericTuple<Values extends readonly [1, 2]>(value: ArrayAt<Values, -3>): Values | undefined {
+	return value;
+}
+
+expectTypeOf<ArrayAt<readonly ['first', ...TupleOf<200, 'middle'>, 'last'], -202>>().toBe<'first'>();
+expectTypeOf<ArrayAt<readonly ['first', ...TupleOf<200, 'middle'>, 'last'], -203>>().toBe<undefined>();

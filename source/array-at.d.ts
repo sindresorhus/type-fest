@@ -4,7 +4,7 @@ import type {IntRange} from './int-range.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {IsNegative} from './numeric.d.ts';
-import type {_SplitOnRestElement, SplitOnRestElement} from './split-on-rest-element.d.ts';
+import type {_SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Sum} from './sum.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -90,7 +90,7 @@ type ArrayAtPositiveIndex<TArray extends UnknownArray, Index extends number> =
 	`${Index}` extends keyof TArray
 		? TArray[Index]
 		// Every position before the rest element is declared, so the index is at or after the rest element here.
-		: SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
+		: _SplitOnRestElement<TArray, {preserveOptionalModifier: true}> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
 			? Subtract<Index, Required<BeforeRest>['length']> extends infer IndexAfterBeforeRest extends number
 				// The rest element can hold any number of elements, so the index can land on the rest element or on any element after it, up to `IndexAfterBeforeRest`.
 				? LessThan<IndexAfterBeforeRest, AfterRest['length']> extends true

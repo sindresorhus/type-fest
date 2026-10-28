@@ -1,6 +1,6 @@
 import type {Subtract} from './subtract.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {SplitOnRestElement} from './split-on-rest-element.d.ts';
+import type {_SplitOnRestElement} from './split-on-rest-element.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -34,7 +34,7 @@ type B = LastArrayElement<[string, number, bigint?, ...boolean[]]>;
 //=> boolean | bigint | number
 ```
 
-Note: If empty array is a valid value for the array type, the result includes an `undefined`. This aligns with the runtime behavior of `[].at(-1)`.
+Note: If an empty array is a valid value for the array type, the result includes an `undefined`. This aligns with the runtime behavior of `[].at(-1)`.
 
 @example
 ```
@@ -51,7 +51,7 @@ type B = LastArrayElement<string[]>;
 type C = LastArrayElement<[string?, number?]>;
 //=> number | string | undefined
 
-// `[]` is assignable to [string?, number?, ...bigint[]]`
+// `[]` is assignable to `[string?, number?, ...bigint[]]`
 type D = LastArrayElement<[string?, number?, ...bigint[]]>;
 //=> bigint | number | string | undefined
 ```
@@ -72,7 +72,7 @@ export type LastArrayElement<TArray extends UnknownArray> =
 	}>;
 
 type _LastArrayElement<TArray extends UnknownArray> =
-	SplitOnRestElement<TArray> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
+	_SplitOnRestElement<TArray, {preserveOptionalModifier: true}> extends readonly [infer BeforeRest extends UnknownArray, infer Rest extends UnknownArray, infer AfterRest extends UnknownArray]
 		? AfterRest extends readonly [...any, infer Last] // Note there are no optional elements in `AfterRest`.
 			? Last // If there's a `Last` in `AfterRest`, then that's the result.
 			: Rest[number] | BeforeRestLastElement<BeforeRest> // Otherwise, the result is union of the `Rest` element and the last element in `BeforeRest`.
