@@ -4,7 +4,7 @@ import type {IsUnknown} from '../index.d.ts';
 declare const _unknown: unknown;
 declare const something = 'something';
 
-// `IsUnknown` should only be true for `any`
+// `IsUnknown` should only be true for `unknown`.
 expectTypeOf<IsUnknown<unknown>>().toBe<true>();
 expectTypeOf<IsUnknown<typeof _unknown>>().toBe<true>();
 expectTypeOf<IsUnknown<string>>().toBe<false>();
@@ -18,3 +18,14 @@ expectTypeOf<IsUnknown<void>>().toBe<false>();
 // Missing generic parameter
 // @ts-expect-error
 type A = IsUnknown;
+
+// Union absorption is resolved before checking the top type.
+expectTypeOf<IsUnknown<unknown | {id: string}>>().toBe<true>();
+expectTypeOf<IsUnknown<unknown | any>>().toBe<false>();
+expectTypeOf<IsUnknown<{value: unknown}>>().toBe<false>();
+expectTypeOf<IsUnknown<readonly unknown[]>>().toBe<false>();
+expectTypeOf<IsUnknown<() => unknown>>().toBe<false>();
+
+function _readUnknownFlag<Value>(flag: IsUnknown<Value>): boolean {
+	return flag;
+}

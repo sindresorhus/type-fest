@@ -1,5 +1,3 @@
-import type {IsNull} from './is-null.d.ts';
-
 /**
 Returns a boolean for whether the given type is `unknown`.
 
@@ -34,9 +32,9 @@ type F = IsUnknown<string>;
 */
 export type IsUnknown<T> = (
 	unknown extends T // `T` can be `unknown` or `any`
-		? IsNull<T> extends false // `any` can be `null`, but `unknown` can't be
-			? true
-			: false
+		? [T] extends [null] // `any` can be `null`, but `unknown` can't be
+			? false
+			: true
 		: false
 );
 
