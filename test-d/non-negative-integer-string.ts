@@ -170,3 +170,13 @@ preservedIdentifier.value = '18446744073709551615';
 function _readValidatedIdentifier<Value extends string>(value: NonNegativeIntegerString<Value>): Value {
 	return value;
 }
+
+// Normalizing one member does not distribute validation over the complete input union.
+type MixedIdentifiers = Tagged<'42', 'Identifier'> | '007';
+expectTypeOf<NonNegativeIntegerString<MixedIdentifiers>>().toBe<MixedIdentifiers>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'42', 'Identifier'> | 'invalid'>>().toBe<never>();
+expectTypeOf<NonNegativeIntegerString<Tagged<'42', 'Identifier'> | NumericText.Empty>>().toBe<never>();
+declare const mixedIdentifiers: MixedIdentifiers;
+expectTypeOf(acceptDigits(mixedIdentifiers)).toBe<MixedIdentifiers>();
+// @ts-expect-error A valid branded member does not make an invalid plain member acceptable.
+acceptDigits('42' as Tagged<'42', 'Identifier'> | 'invalid');

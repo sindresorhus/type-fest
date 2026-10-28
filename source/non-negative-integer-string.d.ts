@@ -83,11 +83,14 @@ The built-in `${number}` is not enough because it also matches `'-1'`, `'1.5'`, 
 @category Template literal
 */
 export type NonNegativeIntegerString<Value extends string> =
-	// The prefixed '1' is valid even for an empty input. Include enum values without losing the constraint on generic strings.
-	'' extends UnwrapBrand<Value> | `${UnwrapBrand<Value>}`
-		? never
-		: `1${UnwrapBrand<Value>}` extends `${bigint}`
-			? Value
-			: never;
+	// Plain strings need no unwrapping; normalize a branded input once before validating its complete spelling.
+	(Value extends object ? UnwrapBrand<Value> : Value) extends infer Input extends string
+		// The prefixed '1' is valid even for an empty input. Include enum values without losing the constraint on generic strings.
+		? '' extends Input | `${Input}`
+			? never
+			: `1${Input}` extends `${bigint}`
+				? Value
+				: never
+		: never;
 
 export {};
