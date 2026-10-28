@@ -409,3 +409,10 @@ expectTypeOf<Merge<{readonly toString?: string; keep: true}, {readonly valueOf: 
 expectTypeOf<Merge<{valueOf: number}, {readonly valueOf?: string}>>().toBe<{readonly valueOf?: string}>();
 expectTypeOf<Merge<{toString: string}, {toString: any}>>().toBe<{toString: any}>();
 expectTypeOf<Merge<{toString: string}, {toString: never}>>().toBe<{toString: never}>();
+
+// Rebuilding the source keeps its named properties distinct from its index signatures.
+type SourceWithOptionalField = {readonly [key: string]: unknown; readonly value?: number | undefined};
+expectTypeOf<Merge<{value: string; keep: true}, SourceWithOptionalField>>()
+	.toBe<{readonly [key: string]: unknown; readonly value?: number | undefined; keep: true}>();
+expectTypeOf<Merge<{readonly keep?: 'kept'}, any>>().toBe<{[key: string]: any; readonly keep?: 'kept'}>();
+expectTypeOf<{keep: undefined}>().not.toBeAssignableTo<Merge<{readonly keep?: 'kept'}, any>>();
