@@ -1,14 +1,11 @@
 import type {HasExplicitThis} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {Sum} from './sum.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {IntRange} from './int-range.d.ts';
 
 declare const unique: unique symbol;
 type Unique = typeof unique;
-type MaxOverloadPatterns = 4;
-type OverloadIndex = IntRange<0, MaxOverloadPatterns>;
+type OverloadIndex = 0 | 1 | 2 | 3;
 
 /**
 Extract all overload signatures of the given function type as a tuple, preserving declaration order.
@@ -67,14 +64,14 @@ type _Overloads<
 		? ResultOverloads // Sentinel reached, return accumulated result.
 		: IsEqual<NthLastOverload<Extracted & FunctionType, Index>, Extracted> extends true
 			// `NthLastOverload` can’t preserve generics. So, if the last overload contains generics the extracted signature replaces them with their constraints. This means intersecting the extracted signature with the original function won’t cause the last overload to move to the first. Therefore, in such cases we increment `Index`.
-			? Sum<Index, 1> extends infer NextIndex extends OverloadIndex
+			? [1, 2, 3, 4][Index] extends infer NextIndex extends OverloadIndex
 				? _Overloads<FunctionType, NextIndex, [Extracted, ...ResultOverloads]>
 				: [Extracted, ...ResultOverloads]
 			: _Overloads<Extracted & FunctionType, Index, [Extracted, ...ResultOverloads]>
 	: never;
 
 /**
-Extract the `Index`-th-from-last (`Index` < `MaxOverloadPatterns`) overload of a function type as a standalone function, correctly preserving implicit `this` (omitted) vs explicit `this` (kept).
+Extract the `Index`-th-from-last (`Index` < `4`) overload of a function type as a standalone function, correctly preserving implicit `this` (omitted) vs explicit `this` (kept).
 */
 type NthLastOverload<FunctionType extends (...arguments_: any) => any, Index extends OverloadIndex> = (
 	Index extends 0

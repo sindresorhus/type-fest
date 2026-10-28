@@ -337,3 +337,36 @@ expectTypeOf<IsEqualStrict<Overloads<ConstrainedRequest>, [
 	(this: unknown, value: {id: string}) => Promise<{id: string}>,
 	(path: string) => Promise<{id: 'loaded'}>,
 ]>>().toBe<true>();
+
+// Advancing past generic overloads preserves concrete overloads between them and their upper bounds.
+type InterleavedGenericOverloads = {
+	(event: 'start'): 0;
+	<Value extends string>(value: Value, kind: 'text'): Value;
+	(event: 'middle'): 1;
+	<Value extends number>(value: Value, kind: 'number'): Value;
+	<Value extends boolean>(value: Value, kind: 'flag'): Value;
+	(event: 'end'): 2;
+};
+expectTypeOf<IsEqualStrict<Overloads<InterleavedGenericOverloads>, [
+	(event: 'start') => 0,
+	(this: unknown, value: string, kind: 'text') => string,
+	(event: 'middle') => 1,
+	(this: unknown, value: number, kind: 'number') => number,
+	(this: unknown, value: boolean, kind: 'flag') => boolean,
+	(event: 'end') => 2,
+]>>().toBe<true>();
+
+// The four inference slots retain the last four generic overloads when there are more.
+type FiveGenericOverloads = {
+	<Value extends {kind: 'first'}>(value: Value): Value;
+	<Value extends {kind: 'second'}>(value: Value): Value;
+	<Value extends {kind: 'third'}>(value: Value): Value;
+	<Value extends {kind: 'fourth'}>(value: Value): Value;
+	<Value extends {kind: 'fifth'}>(value: Value): Value;
+};
+expectTypeOf<IsEqualStrict<Overloads<FiveGenericOverloads>, [
+	(this: unknown, value: {kind: 'second'}) => {kind: 'second'},
+	(this: unknown, value: {kind: 'third'}) => {kind: 'third'},
+	(this: unknown, value: {kind: 'fourth'}) => {kind: 'fourth'},
+	(this: unknown, value: {kind: 'fifth'}) => {kind: 'fifth'},
+]>>().toBe<true>();
