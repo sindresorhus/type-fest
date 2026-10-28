@@ -181,3 +181,20 @@ expectTypeOf<ToPath<`a${StringRepeat<'[0]', 998>}`>['length']>().toBe<999>();
 function _readPathSegments<Path extends string>(segments: ToPath<Path>): string[] {
 	return segments;
 }
+
+// An empty substring only constructs the empty string and must not recurse forever.
+expectTypeOf<ConsistsOnlyOf<'', ''>>().toBe<true>();
+expectTypeOf<ConsistsOnlyOf<'abc', ''>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<'' | 'abc', ''>>().toBe<boolean>();
+expectTypeOf<ConsistsOnlyOf<'aaa', '' | 'a'>>().toBe<true>();
+expectTypeOf<ConsistsOnlyOf<'abba', 'a' | 'b'>>().toBe<true>();
+expectTypeOf<ConsistsOnlyOf<'abba', '' | 'a' | 'b'>>().toBe<true>();
+expectTypeOf<ConsistsOnlyOf<'abc', '' | 'a' | 'b'>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<any, ''>>().toBe<boolean>();
+expectTypeOf<ConsistsOnlyOf<never, ''>>().toBe<never>();
+expectTypeOf<ConsistsOnlyOf<'abc', never>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<'', never>>().toBe<true>();
+// @ts-expect-error The input must be a string.
+type UnknownRepeatedString = ConsistsOnlyOf<unknown, ''>;
+// @ts-expect-error The repeated substring must be a string.
+type UnknownRepeatedSubstring = ConsistsOnlyOf<'abc', unknown>;

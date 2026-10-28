@@ -76,12 +76,14 @@ type A = ConsistsOnlyOf<'aaa', 'a'>; //=> true
 type B = ConsistsOnlyOf<'ababab', 'ab'>; //=> true
 type C = ConsistsOnlyOf<'aBa', 'a'>; //=> false
 type D = ConsistsOnlyOf<'', 'a'>; //=> true
+type E = ConsistsOnlyOf<'abc', ''>; //=> false
 ```
 */
 export type ConsistsOnlyOf<LongString extends string, Substring extends string> =
 	LongString extends ''
 		? true
-		: LongString extends `${Substring}${infer Tail}`
+		// An empty substring consumes no characters, so leave it out before recurring.
+		: LongString extends `${Exclude<Substring, ''>}${infer Tail}`
 			? ConsistsOnlyOf<Tail, Substring>
 			: false;
 
