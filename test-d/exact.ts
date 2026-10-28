@@ -850,3 +850,41 @@ expectTypeOf<Exact<[any, ...unknown[]], [1, 'a']>>().toBe<[any, ...unknown[]]>()
 expectTypeOf<Exact<[never, ...string[]], [never]>>().toBe<[never, ...string[]]>();
 expectTypeOf<Exact<[number, ...string[]], unknown>>().toBe<[number, ...string[]]>();
 expectTypeOf<Exact<[number, ...string[]], never>>().toBe<[number, ...string[]]>();
+
+// Excess keys from either input alternative are forbidden, including explicit undefined values.
+type ExactHiddenFields = Exact<{readonly id: string}, {id: 'first'; count: number} | {id: 'second'; message: string}>;
+({id: 'ready'}) satisfies ExactHiddenFields;
+expectTypeOf<{id: string; count: undefined}>().not.toBeAssignableTo<ExactHiddenFields>();
+expectTypeOf<{id: string; message: undefined}>().not.toBeAssignableTo<ExactHiddenFields>();
+declare const exactHiddenFields: ExactHiddenFields;
+expectTypeOf(exactHiddenFields.id).toBe<string>();
+// @ts-expect-error Removing excess fields does not remove the parameter's readonly modifier.
+exactHiddenFields.id = 'ready';
+
+// Primitive leaves retain their parameter types, including unions, brands, and sentinels.
+type PrimitiveOptions = {readonly status: 'ready' | 'busy'; optional?: number | undefined; dynamic: any; opaque: unknown; impossible: never};
+declare const primitiveOptions: Exact<PrimitiveOptions, {status: 'ready'; optional: undefined; dynamic: 1; opaque: {id: 1}; impossible: never}>;
+expectTypeOf(primitiveOptions.status).toBe<'ready' | 'busy'>();
+expectTypeOf(primitiveOptions.optional).toBe<number | undefined>();
+expectTypeOf(primitiveOptions.dynamic).toBe<any>();
+expectTypeOf(primitiveOptions.opaque).toBe<unknown>();
+expectTypeOf(primitiveOptions.impossible).toBe<never>();
+// @ts-expect-error Returning a primitive leaf does not remove its readonly modifier.
+primitiveOptions.status = 'busy';
+
+type PrimitiveChoice = {value: 'ready' | {readonly id: number}};
+expectTypeOf<Exact<PrimitiveChoice, PrimitiveChoice>>().toBe<PrimitiveChoice>();
+expectTypeOf<Exact<{value: any}, {value: never}>['value']>().toBe<any>();
+expectTypeOf<Exact<{value: never}, {value: any}>['value']>().toBe<never>();
+
+declare function exactStatus<Input extends Exact<{status: 'ready' | 'busy'; optional?: number | undefined}, Input>>(input: Input): Input;
+expectTypeOf(exactStatus({status: 'ready', optional: undefined} as const)).toBe<{readonly status: 'ready'; readonly optional: undefined}>();
+// @ts-expect-error Primitive leaves must still satisfy their declared literal values.
+exactStatus({status: 'done'});
+// @ts-expect-error Skipping a primitive leaf does not permit excess fields on its owner.
+exactStatus({status: 'ready', extra: true});
+
+declare function exactPrimitiveValue<const Value extends string>(value: Value): Exact<{readonly value: Value}, {value: Value}>;
+
+expectTypeOf(exactPrimitiveValue('ready' as const).value).toBe<'ready'>();
+expectTypeOf<Exact<{value: Opaque<string, 'Id'>}, {value: Opaque<'ready', 'Id'>}>['value']>().toBe<Opaque<string, 'Id'>>();

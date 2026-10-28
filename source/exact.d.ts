@@ -1,4 +1,4 @@
-import type {IsArrayOfUnknownLength, KeyAliases, ObjectValue} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, KeyAliases, ObjectValue, RequireNone} from './internal/index.d.ts';
 import type {ArrayElement} from './array-element.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
@@ -14,7 +14,10 @@ The value is read from each member of `InputType` separately, because `keyof` of
 For an index signature key like `string`, the value is the union of the values of all input keys that match it.
 */
 type ExactProperties<ParameterType, InputType> = {
-	[Key in keyof ParameterType]: Exact<ParameterType[Key], InputType extends unknown ? ObjectValue<InputType, Key> | InputType[Extract<keyof InputType, Key>] : never>;
+	// Primitive parameters pass through unchanged, so their input values do not need to be read or compared.
+	[Key in keyof ParameterType]: [ParameterType[Key]] extends [Primitive]
+		? ParameterType[Key]
+		: Exact<ParameterType[Key], InputType extends unknown ? ObjectValue<InputType, Key> | InputType[Extract<keyof InputType, Key>] : never>;
 };
 
 /**
@@ -27,7 +30,7 @@ type ExactObject<ParameterType, InputType, InputObject = Exclude<InputType, Prim
 	& Record<Exclude<keyof InputObject, ExactObjectKeys<ParameterType>>, never>
 	// `KeysOfUnion` rather than `keyof`, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would vanish and the member carrying it would be accepted.
 	// Such a key is optional, because the members without it can be for another member of `ParameterType`, like `{a: 1} | {b: 1}` for `{a: number} | {b: number}`. Without `exactOptionalPropertyTypes`, this also accepts the key with an `undefined` value.
-	& Partial<Record<Exclude<KeysOfUnion<InputObject>, ExactObjectKeys<ParameterType>>, never>>;
+	& RequireNone<Exclude<KeysOfUnion<InputObject>, ExactObjectKeys<ParameterType>>>;
 
 // Include aliases for declared keys, keeping index signatures in their original form.
 type ExactObjectKeys<Type> = KeysOfUnion<Type> | KeyAliases<keyof OmitIndexSignature<Type>>;
