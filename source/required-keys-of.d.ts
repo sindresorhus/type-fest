@@ -1,4 +1,4 @@
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
+import type {IsAny} from './is-any.d.ts';
 
 /**
 Extract all required keys from the given type.
@@ -29,14 +29,15 @@ const validator3 = createValidation<User>('luckyNumber', value => value > 0);
 ```
 
 Known limitations:
-- An index signature is reported as a required key, so `RequiredKeysOf<Record<string, unknown>>` is `string` rather than `never`. This is because `Exclude<keyof Type, …>` puts the signature back, and the same `Exclude` is relied on to keep the members an array inherits from `Array`.
+- An index signature is reported as a required key, so `RequiredKeysOf<Record<string, unknown>>` is `string` rather than `never`. The signature satisfies the required-property check against `Record<Key, Type[Key]>`, even though no particular property has to be present.
 - A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `RequiredKeysOf<{a: string} | {b: number}>` is `'a' | 'b'` while `keyof` of the same union is `never`. Read one member at a time if you need a key that is valid for the whole union.
 
 @category Utilities
 */
 export type RequiredKeysOf<Type extends object> =
-	Type extends unknown // For distributing `Type`
-		? Exclude<keyof Type, OptionalKeysOf<Type>>
-		: never; // Should never happen
+	IsAny<Type> extends true ? keyof Type
+		: Type extends unknown // For distributing `Type`
+			? (keyof {[Key in keyof Type as Type extends Record<Key, Type[Key]> ? Key : never]: never}) & keyof Type
+			: never; // Should never happen
 
 export {};

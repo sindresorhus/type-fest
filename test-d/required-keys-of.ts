@@ -85,7 +85,7 @@ type Assignability10<T extends UnknownRecord, _K extends RequiredKeysOf<T>> = un
 // @ts-expect-error
 type Test10<T extends UnknownRecord> = Assignability10<T, keyof T>;
 
-// Known limitation: an index signature is reported as a required key, because `Exclude<keyof Type, …>` puts it back. See the note in the docs.
+// Known limitation: an index signature satisfies the required-property check. See the note in the docs.
 declare const indexSignature: RequiredKeysOf<{[x: string]: unknown; a?: string}>;
 expectTypeOf(indexSignature).toBe<string | number>();
 
@@ -95,3 +95,35 @@ expectTypeOf(onlyIndexSignature).toBe<string>();
 // A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `keyof` of the union below is `never` while the result is `'a' | 'b'`. See the note on unions in the docs.
 expectTypeOf<RequiredKeysOf<{a: 1} | {b: 2}>>().toBe<'a' | 'b'>();
 expectTypeOf<RequiredKeysOf<{a: 1; b: 2} | {a: 1}>>().toBe<'a' | 'b'>();
+
+// Generic callers can construct known required keys and use them to read values without casts.
+function requiredValueKey<Value>(): RequiredKeysOf<{readonly value: Value; optional?: Value}> {
+	return 'value';
+}
+
+function readRequiredValue<Value>(value: {readonly value: Value; optional?: Value}, key: RequiredKeysOf<{readonly value: Value; optional?: Value}>): Value {
+	return value[key];
+}
+
+function readRequiredProperty<Entity extends object, Key extends RequiredKeysOf<Entity>>(entity: Entity, key: Key): Entity[Key] {
+	return entity[key];
+}
+
+expectTypeOf(requiredValueKey<string>()).toBe<'value'>();
+expectTypeOf(readRequiredValue({value: 1}, 'value')).toBe<number>();
+expectTypeOf(readRequiredProperty({name: 'Ada', active: true}, 'name')).toBe<string>();
+// @ts-expect-error Optional keys cannot be used as required keys.
+readRequiredValue({value: 1, optional: 2}, 'optional');
+
+// `any` retains all possible property keys.
+expectTypeOf<RequiredKeysOf<any>>().toBe<PropertyKey>();
+
+// Undefined and never values do not decide whether a field is required.
+expectTypeOf<RequiredKeysOf<{readonly required: undefined; requiredNever: never; optional?: undefined; optionalNever?: never}>>()
+	.toBe<'required' | 'requiredNever'>();
+expectTypeOf<RequiredKeysOf<{required: unknown; optional?: unknown} | {required: any; other: undefined}>>()
+	.toBe<'required' | 'other'>();
+expectTypeOf<RequiredKeysOf<never>>().toBe<never>();
+expectTypeOf<RequiredKeysOf<object>>().toBe<never>();
+// @ts-expect-error Required keys can only be determined for an object type.
+type UnknownRequiredKeys = RequiredKeysOf<unknown>;
