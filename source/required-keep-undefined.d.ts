@@ -1,4 +1,3 @@
-import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {PartialOnUndefinedDeep} from './partial-on-undefined-deep.d.ts'; // For `@link`
 import type {SetRequired} from './set-required.d.ts'; // For `@link`
 import type {UndefinedOnPartialDeep} from './undefined-on-partial-deep.d.ts'; // For `@link`
@@ -85,7 +84,7 @@ export type RequiredKeepUndefined<Type extends object> =
 		) extends infer RequiredType
 			// Unwraps the values, and flattens the intersection of the symbol keys and the other keys. `undefined` is added explicitly, because with `exactOptionalPropertyTypes`, the `undefined` in the value of an optional key is TypeScript's internal missing type, which a later mapped type, like `Partial`, removes.
 			? {[Key in keyof RequiredType]: RequiredType[Key] extends [infer Value]
-				? Value | (Key extends OptionalKeysOf<Type> ? undefined : never)
+				? Value | (Type extends Record<Key & keyof Type, Type[Key & keyof Type]> ? never : undefined)
 				: never // Should never happen
 			}
 			: never // Should never happen

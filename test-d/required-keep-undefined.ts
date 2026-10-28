@@ -441,3 +441,11 @@ type NoUndefined = RequiredKeepUndefined<undefined>;
 
 // @ts-expect-error
 type NoOptionalObject = RequiredKeepUndefined<{a?: string} | undefined>;
+
+// Requiredness is checked within each discriminated member, even when the keys match.
+type RequirednessAlternatives = RequiredKeepUndefined<{kind: 'required'; readonly value: number} | {kind: 'optional'; readonly value?: number}>;
+expectTypeOf<RequirednessAlternatives>()
+	.toBe<{kind: 'required'; readonly value: number} | {kind: 'optional'; readonly value: number | undefined}>();
+expectTypeOf<{kind: 'optional'; value: undefined}>().toBeAssignableTo<RequirednessAlternatives>();
+expectTypeOf<{kind: 'required'; value: undefined}>().not.toBeAssignableTo<RequirednessAlternatives>();
+expectTypeOf<{kind: 'optional'}>().not.toBeAssignableTo<RequirednessAlternatives>();
