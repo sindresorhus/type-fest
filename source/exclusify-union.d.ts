@@ -1,4 +1,4 @@
-import type {DeduplicatedKeys, ExactKey, NormalizedKeys, SimplifyObject, ToString} from './internal/index.d.ts';
+import type {DeduplicatedKeys, ExactKey, NormalizedKeys, RequireNone, SimplifyObject, ToString} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
@@ -171,11 +171,10 @@ type _ExclusifyUnion<
 	AllKeys extends PropertyKey = DeduplicatedKeys<KeysOfUnion<OmitIndexSignature<Union>>>,
 > = Union extends unknown // For distributing `Union`
 	? SimplifyObject<
-		Union & Partial<Record<
+		Union & RequireNone<
 			// Forbid keys outside this member's declared and indexed domains, including canonical spellings and the string spellings of its enum keys.
-			Exclude<AllKeys, NormalizedKeys<ExactKey<Record<keyof Union | ToString<keyof OmitIndexSignature<Union>>, never>, AllKeys | ToString<AllKeys>>>>,
-			never
-		>>
+			Exclude<AllKeys, NormalizedKeys<ExactKey<Record<keyof Union | ToString<keyof OmitIndexSignature<Union>>, never>, AllKeys | ToString<AllKeys>>>>
+		>
 	>
 	: never; // Should never happen
 

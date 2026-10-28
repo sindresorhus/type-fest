@@ -233,3 +233,12 @@ function _readUncoveredKey<Value>(value: ExclusifyUnion<Record<number, Value> | 
 }
 
 expectTypeOf(coveredDictionary({id: 1}).entry).toBe<Date | {id: number}>();
+
+// An explicitly undefined own field remains valid, while another member's key stays forbidden.
+type UndefinedExclusiveChoice = ExclusifyUnion<{readonly name: string | undefined} | {count: number}>;
+({name: undefined}) satisfies UndefinedExclusiveChoice;
+expectTypeOf<{name: undefined; count: number}>().not.toBeAssignableTo<UndefinedExclusiveChoice>();
+declare const undefinedExclusiveChoice: UndefinedExclusiveChoice;
+expectTypeOf(undefinedExclusiveChoice.name).toBe<string | undefined>();
+// @ts-expect-error The declared readonly field remains readonly after exclusifying its member.
+undefinedExclusiveChoice.name = 'changed';
