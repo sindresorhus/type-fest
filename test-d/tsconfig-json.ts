@@ -65,3 +65,17 @@ expectTypeOf<'not-a-real-lib'>().toBeAssignableTo<Lib>();
 expectTypeOf<'useFsEvents'>().toBeAssignableTo<TsConfigJson.CompilerOptions.WatchFile>();
 expectTypeOf<'useFsEvents'>().toBeAssignableTo<TsConfigJson.CompilerOptions.WatchDirectory>();
 expectTypeOf<'fixedInterval'>().toBeAssignableTo<TsConfigJson.CompilerOptions.FallbackPolling>();
+
+// Every accepted compiler spelling has a lowercase counterpart, while arbitrary names stay rejected.
+expectTypeOf<Lowercase<TsConfigJson.CompilerOptions.Module>>().toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<Lowercase<TsConfigJson.CompilerOptions.NewLine>>().toBeAssignableTo<TsConfigJson.CompilerOptions.NewLine>();
+expectTypeOf<Lowercase<TsConfigJson.CompilerOptions.Target>>().toBeAssignableTo<TsConfigJson.CompilerOptions.Target>();
+expectTypeOf<Lowercase<Lib>>().toBeAssignableTo<Lib>();
+
+({compilerOptions: {module: 'NodeNext', target: 'ES2025', newLine: 'CRLF', lib: ['ES2025.Float16', 'DOM.AsyncIterable']}}) satisfies TsConfigJson;
+({compilerOptions: {module: 'nodenext', target: 'es2025', newLine: 'crlf', lib: ['es2025.float16', 'dom.asynciterable']}}) satisfies TsConfigJson;
+expectTypeOf<'node-next'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'ES2100'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Target>();
+expectTypeOf<'CR'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.NewLine>();
+expectTypeOf<string>().not.toBeAssignableTo<Lib>();
+expectTypeOf<unknown>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
