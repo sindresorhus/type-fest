@@ -40,3 +40,27 @@ expectTypeOf<UnionMin<RuntimeLimit.Value | 3>>().toBe<number>();
 expectTypeOf<UnionMin<Tagged<5, 'Limit'> | 7>>().toBe<5>();
 expectTypeOf<UnionMin<Tagged<3 | 5, 'Limit'>>>().toBe<3>();
 expectTypeOf<UnionMin<Tagged<number, 'Limit'> | 3>>().toBe<number>();
+
+// A single candidate needs no counting and still normalizes enum and branded values.
+expectTypeOf<UnionMin<800>>().toBe<800>();
+expectTypeOf<UnionMin<Limit.High>>().toBe<5>();
+expectTypeOf<UnionMin<Tagged<5, 'Limit'>>>().toBe<5>();
+// @ts-expect-error Candidates must be numbers.
+type UnknownMinimum = UnionMin<unknown>;
+
+function _readGenericMinimum<Value extends number>(value: UnionMin<Value>): number {
+	return value;
+}
+
+// Removing a losing infinity retains known finite enum and branded candidates.
+expectTypeOf<UnionMin<Limit | PositiveInfinity>>().toBe<3>();
+expectTypeOf<UnionMin<Tagged<2 | 4 | PositiveInfinity, 'Candidates'>>>().toBe<2>();
+expectTypeOf<4>().not.toBeAssignableTo<UnionMin<2 | 4 | PositiveInfinity>>();
+
+function _readMinimumWithInfinity<Candidates extends number>(value: UnionMin<Candidates | PositiveInfinity>): number {
+	return value;
+}
+
+// The documented maximum stays within the recursion limit.
+expectTypeOf<UnionMin<997 | 998>>().toBe<997>();
+expectTypeOf<UnionMin<998 | PositiveInfinity>>().toBe<998>();

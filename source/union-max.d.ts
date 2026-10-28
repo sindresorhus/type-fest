@@ -1,7 +1,9 @@
-import type {Finite, NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAnyOrNever} from './internal/type.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
+import type {IsUnion} from './is-union.d.ts';
+import type {StringToNumber} from './string-to-number.d.ts';
 
 /**
 Returns the maximum number in a union of numbers.
@@ -31,7 +33,7 @@ type Unlimited = UnionMax<1 | 5 | PositiveInfinity>;
 //=> Infinity
 ```
 
-The implementation counts upward using a tuple, removing lower union members until only the maximum remains. Infinity and non-literal inputs are handled before counting.
+The implementation counts upward using a tuple, removing lower union members until only the maximum remains. Infinity, non-literal inputs, and a single known value are handled before counting.
 
 @see https://github.com/sindresorhus/type-fest/issues/676
 @category Numeric
@@ -45,7 +47,11 @@ type UnionMaxImplementation<NumberUnion extends number> =
 		: `${number}` extends `${NumberUnion}` ? number
 			: PositiveInfinity extends NumberUnion ? PositiveInfinity
 				: [NumberUnion] extends [NegativeInfinity] ? NegativeInfinity
-					: InternalUnionMax<Finite<NumberUnion>>;
+					// A single candidate is already the maximum. Read its printed value so enum members still produce plain numbers.
+					: IsUnion<NumberUnion> extends false
+						? StringToNumber<`${NumberUnion}`>
+						// Broad inputs and the winning infinity are already handled; only the losing infinity needs removal.
+						: InternalUnionMax<Exclude<NumberUnion, NegativeInfinity>>;
 
 /**
 The actual implementation of `UnionMax`. Stop when only the current value remains, and remove a matched member while advancing so each value needs at most one recursion step. The same termination check returns zero for an empty internal union.

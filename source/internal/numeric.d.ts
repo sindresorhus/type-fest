@@ -1,6 +1,8 @@
-import type {Finite, NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
+import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {TupleOf} from '../tuple-of.d.ts';
+import type {IsUnion} from '../is-union.d.ts';
+import type {StringToNumber} from '../string-to-number.d.ts';
 import type {IfNotAnyOrNever, IsAnyOrNever} from './type.d.ts';
 import type {UnwrapBrand} from './object.d.ts';
 
@@ -64,7 +66,11 @@ type UnionMinImplementation<N extends number> =
 		: `${number}` extends `${N}` ? number
 			: NegativeInfinity extends N ? NegativeInfinity
 				: [N] extends [PositiveInfinity] ? PositiveInfinity
-					: InternalUnionMin<Finite<N>>;
+					// A single candidate is already the minimum. Read its printed value so enum members still produce plain numbers.
+					: IsUnion<N> extends false
+						? StringToNumber<`${N}`>
+						// Broad inputs and the winning infinity are already handled; only the losing infinity needs removal.
+						: InternalUnionMin<Exclude<N, PositiveInfinity>>;
 
 /**
 The actual implementation of `UnionMin`. It's private because it has some arguments that don't need to be exposed.

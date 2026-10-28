@@ -91,3 +91,27 @@ expectTypeOf<UnionMax<Tagged<1 | 3, 'Count'> | any>>().toBe<any>();
 expectTypeOf<UnionMax<Tagged<1 | 3, 'Count'> | never>>().toBe<3>();
 expectTypeOf<UnionMax<Tagged<IntRange<0, 100>, 'Count'>>>().toBe<99>();
 expectTypeOf<2>().not.toBeAssignableTo<UnionMax<Tagged<1 | 3, 'Count'>>>();
+
+// A single candidate is its own maximum and keeps the same plain numeric result as a union.
+expectTypeOf<UnionMax<900>>().toBe<900>();
+expectTypeOf<UnionMax<RetryLimit.High>>().toBe<5>();
+expectTypeOf<UnionMax<Tagged<900, 'Count'>>>().toBe<900>();
+
+function _readMaximum<Candidates extends number>(value: UnionMax<Candidates>): number {
+	return value;
+}
+
+declare function maximumRetryCount<const Counts extends readonly number[]>(counts: Counts): UnionMax<Counts[number]>;
+expectTypeOf(maximumRetryCount([7])).toBe<7>();
+expectTypeOf(maximumRetryCount([2, 5, 3])).toBe<5>();
+// @ts-expect-error A singleton maximum cannot be a different supported count.
+const wrongSingletonMaximum: UnionMax<7> = 6;
+
+// Removing a losing infinity retains known finite enum and branded candidates.
+expectTypeOf<UnionMax<RetryLimit | NegativeInfinity>>().toBe<5>();
+expectTypeOf<UnionMax<Tagged<0 | 4 | NegativeInfinity, 'Candidates'>>>().toBe<4>();
+expectTypeOf<0>().not.toBeAssignableTo<UnionMax<0 | 4 | NegativeInfinity>>();
+
+function _readMaximumWithInfinity<Candidates extends number>(value: UnionMax<Candidates | NegativeInfinity>): number {
+	return value;
+}
