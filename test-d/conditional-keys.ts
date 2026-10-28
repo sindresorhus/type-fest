@@ -152,3 +152,21 @@ enum ConditionalNumericField {
 
 expectTypeOf<'name'>().toBeAssignableTo<ConditionalKeys<{[ConditionalStringField.Name]: string} & {name: string; keep: number}, string>>();
 expectTypeOf<'0'>().toBeAssignableTo<ConditionalKeys<{[ConditionalNumericField.Zero]: string} & {'0': string; keep: number}, string>>();
+
+// Shared values are compared as a union, including a member whose value is impossible.
+expectTypeOf<ConditionalKeys<{name: never; left: boolean} | {name: string; right: number}, string>>().toBe<'name'>();
+expectTypeOf<ConditionalKeys<{[key: string]: unknown; readonly name?: string} | {[key: string]: unknown; name: string}, string | undefined>>().toBe<'name'>();
+
+// A numeric index is broader than its declared enum member even though number extends that member.
+expectTypeOf<ConditionalKeys<{[key: number]: unknown; readonly [ConditionalNumericField.Zero]: string; keep: number}, string>>()
+	.toBe<ConditionalNumericField.Zero>();
+
+// Declared matches survive across different index domains and beside symbol or pattern signatures.
+type SharedIndexedFields = {[key: string]: unknown; readonly label: string} | {[key: number]: unknown; label: string; keep: number};
+expectTypeOf<ConditionalKeys<SharedIndexedFields, string>>().toBe<'label'>();
+type DistinctPatternFields = {[key: `left-${string}`]: unknown; readonly label: string} | {[key: `right-${string}`]: unknown; label: string};
+expectTypeOf<ConditionalKeys<DistinctPatternFields, string>>().toBe<'label'>();
+expectTypeOf<ConditionalKeys<{[key: `event-${string}`]: unknown; readonly 'event-ready': string; 'event-count': number}, string>>().toBe<'event-ready'>();
+expectTypeOf<ConditionalKeys<{readonly [key: symbol]: unknown; readonly [Symbol.iterator]: () => Iterator<string>}, Function>>().toBe<typeof Symbol.iterator>();
+declare function numericPropertyKeys<Key extends string>(input: Record<Key, number>): ConditionalKeys<Record<Key, number>, number>;
+expectTypeOf(numericPropertyKeys({left: 1, right: 2})).toBe<'left' | 'right'>();

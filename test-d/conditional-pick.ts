@@ -148,3 +148,13 @@ expectTypeOf(markedPickedText.charAt(0)).toBe<string>();
 expectTypeOf(markedPickedText).not.toBeAssignableTo<string>();
 // @ts-expect-error A valid value cannot overwrite the retained readonly metadata.
 markedPickedText.marker = true;
+
+// Filtered results remain objects even before a generic input is known.
+function _readGenericPickedResults<Base>(values: Array<ConditionalPick<Base, string>>): object[] {
+	return values;
+}
+
+expectTypeOf<ConditionalPick<{readonly name: 'ready'; count: number} | {enabled: boolean}, string>>()
+	.toBe<{readonly name: 'ready'} | {}>();
+expectTypeOf<ConditionalPick<{readonly [key: string]: string | number; label: string; count: number}, string>>()
+	.toBe<{label: string}>();
