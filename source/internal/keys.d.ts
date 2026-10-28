@@ -46,7 +46,7 @@ export type OptionalKeyFilter<Type, Key extends keyof Type> = unknown extends Ty
 /**
 Disallows any of the given keys.
 */
-export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
+export type RequireNone<KeysType extends PropertyKey> = {[Key in KeysType]?: never};
 
 /**
 Keep one spelling of each property in the given keys, because a mapped type drops a property that two different key types name. A string enum key becomes its string value, and the string spelling of a numeric key is removed when the numeric key is present.
