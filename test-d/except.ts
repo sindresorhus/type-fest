@@ -103,3 +103,13 @@ type UnknownKey = Except<unknown, 'id'>;
 // Literal number and padded string keys stay independent when several keys are removed.
 expectTypeOf<Except<{readonly 0: 'zero'; '01'?: 'padded'; value: string}, 0 | 'value'>>().toBe<{'01'?: 'padded'}>();
 expectTypeOf<Except<{readonly id: string; option?: number}, never>>().toBe<{readonly id: string; option?: number}>();
+
+// Exact omission forbids explicit undefined at each removed numeric or symbol key.
+declare const removedSymbol: unique symbol;
+type ExactRemovedKeys = Except<{readonly 0?: number; [removedSymbol]: string; readonly keep: boolean}, 0 | typeof removedSymbol, {requireExactProps: true}>;
+({keep: true}) satisfies ExactRemovedKeys;
+expectTypeOf<{keep: true; 0: undefined}>().not.toBeAssignableTo<ExactRemovedKeys>();
+expectTypeOf<{keep: true; [removedSymbol]: undefined}>().not.toBeAssignableTo<ExactRemovedKeys>();
+declare const exactRemovedKeys: ExactRemovedKeys;
+// @ts-expect-error Omission retains the modifiers of unselected fields.
+exactRemovedKeys.keep = true;

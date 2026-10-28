@@ -1,5 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, RequireNone} from './internal/index.d.ts';
 
 /**
 Filter out keys from an object.
@@ -73,7 +73,7 @@ const fooWithoutA: FooWithoutA = {a: 1, b: '2'};
 // errors: 'a' does not exist in type '{ b: string; }'
 
 type FooWithoutB = Except<Foo, 'b', {requireExactProps: true}>;
-//=> {a: number} & Partial<Record<'b', never>>
+//=> {a: number} & {b?: never}
 
 // @ts-expect-error
 const fooWithoutB: FooWithoutB = {a: 1, b: '2'};
@@ -109,7 +109,7 @@ export type Except<ObjectType, KeysType extends KeysOfUnion<ObjectType>, Options
 type _Except<ObjectType, KeysType, Options extends Required<ExceptOptions>> =
 	Options['requireExactProps'] extends true
 		? ObjectType extends unknown
-			? {[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType]} & Partial<Record<KeysType & keyof ObjectType, never>>
+			? {[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType]} & RequireNone<KeysType & keyof ObjectType>
 			: never
 		: {
 			[KeyType in keyof ObjectType as Filter<KeyType, KeysType>]: ObjectType[KeyType];
