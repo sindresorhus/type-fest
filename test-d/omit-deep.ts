@@ -457,3 +457,11 @@ declare const omittedWideExistingField: OmitDeep<Array<{id: string; secret: numb
 expectTypeOf(omittedWideExistingField[0]?.id).toBe<string | undefined>();
 // @ts-expect-error An existing field is still omitted across every element.
 expectTypeOf(omittedWideExistingField[0]?.secret).toBe<number | undefined>();
+
+// Descending through a declared key preserves optionality and reads beside a removed generic field.
+function _readOmittedChild<Value>(value: OmitDeep<{readonly child?: {id: Value; payload: string} | undefined}, 'child.id'>): string | undefined {
+	return value.child?.payload;
+}
+
+expectTypeOf<OmitDeep<{readonly child?: {id: string; readonly payload: number} | undefined}, 'child.id'>>()
+	.toBe<{readonly child?: {readonly payload: number} | undefined}>();

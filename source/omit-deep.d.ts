@@ -118,11 +118,7 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 		? {
 			[Key in keyof ObjectT]:
 			IsEqual<RecordKeyInPath, ToString<Key>> extends true
-				? ExactKey<ObjectT, Key> extends infer RealKey
-					? RealKey extends keyof ObjectT
-						? OmitDeepWithOnePath<ObjectT[RealKey], SubPath>
-						: ObjectT[Key]
-					: ObjectT[Key]
+				? OmitDeepWithOnePath<ObjectT[Key], SubPath>
 				// `Paths` emits `${string}` for a signature, so matching segments transform its value type. Resolve the current key with `ExactKey` to reject alternate numeric spellings.
 				: RecordKeyInPath extends ToString<Key> & ToString<ExactKey<Record<Key, unknown>, RecordKeyInPath>>
 					// A member that names the key outright is what the key reads, so the signature is left alone.
