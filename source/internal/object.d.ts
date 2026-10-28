@@ -1,7 +1,7 @@
 import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
 import type {RequiredKeysOf} from '../required-keys-of.d.ts';
-import type {Merge} from '../merge.d.ts';
+import type {_Merge} from '../merge.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
@@ -140,6 +140,8 @@ export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 /**
 Merges user specified options with default options.
 
+When constructing a result, TypeScript may require concrete specified options instead of unresolved generics.
+
 @example
 ```
 type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
@@ -194,8 +196,9 @@ export type ApplyDefaultOptions<
 	Defaults extends SimplifyObject<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
 	SpecifiedOptions extends Options,
 > =
-	_ApplyDefaultOptions<Options, Defaults, SpecifiedOptions> extends infer Result extends Required<Options> // `extends Required<Options>` ensures that `ApplyDefaultOptions<SomeOption, ...>` is always assignable to `Required<SomeOption>`
-		? Result
+	// Keep the resolved type assignable to `Required<Options>` without inferring a result that can widen a specified generic value to its constraint.
+	_ApplyDefaultOptions<Options, Defaults, SpecifiedOptions> extends Required<Options>
+		? _ApplyDefaultOptions<Options, Defaults, SpecifiedOptions>
 		: never;
 
 type _ApplyDefaultOptions<
@@ -205,7 +208,8 @@ type _ApplyDefaultOptions<
 > =
 	If<IsAny<SpecifiedOptions>, Defaults,
 		If<IsNever<SpecifiedOptions>, Defaults,
-			Merge<Defaults, {
+			// The overrides are already an object map, so skip `Merge`'s array and equality dispatch.
+			_Merge<Defaults, {
 				[Key in keyof SpecifiedOptions
 				as undefined extends Required<Options>[Key & keyof Options] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
 				]: SpecifiedOptions[Key]

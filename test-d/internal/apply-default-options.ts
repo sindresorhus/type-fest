@@ -86,3 +86,42 @@ type _SomeType3<Options extends Required<SomeTypeOptions>> = Options;
 // @ts-expect-error
 type SomeType4<Options extends SomeTypeOptions> = _SomeType4<ApplyDefaultOptions<SomeTypeOptions, DefaultSomeTypeOptions, Options>>;
 type _SomeType4<Options extends Required<SomeTypeOptions> & {extra: string}> = Options;
+
+// Default and specified fields keep their own modifiers when the values are overridden.
+expectTypeOf<ApplyDefaultOptions<
+	{readonly mode?: 'default' | 'override'; count?: number},
+	{readonly mode: 'default'; count: 0},
+	{readonly mode: 'override'}
+>>().toBe<{readonly mode: 'override'; count: 0}>();
+
+// Canonical numeric aliases override the same field, while a broad index leaves a named default intact.
+expectTypeOf<ApplyDefaultOptions<{0?: number}, {0: 0}, {'0': 1}>>().toBe<{'0': 1}>();
+expectTypeOf<ApplyDefaultOptions<{value?: number}, {value: 0}, {[key: string]: number}>>()
+	.toBe<{[key: string]: number; value: 0}>();
+
+// A resolved generic option cannot be replaced with its broad constraint or default value.
+function _incorrectGenericStrictness<Strict extends boolean>(value: false): ApplyDefaultOptions<{strict?: boolean}, {strict: false}, {strict: Strict}>['strict'] {
+	// @ts-expect-error Strict may be true, so the default cannot stand in for its specified value.
+	return value;
+}
+
+function _incorrectGenericCount<Count extends number>(value: 0): ApplyDefaultOptions<{count?: number}, {count: 0}, {count: Count}>['count'] {
+	// @ts-expect-error Count may be a different number.
+	return value;
+}
+
+// Extra specified metadata keeps its declared value and readonly modifier.
+expectTypeOf<ApplyDefaultOptions<
+	{mode?: boolean},
+	{mode: false},
+	{mode: true; readonly metadata: {id: number}}
+>>().toBe<{mode: true; readonly metadata: {id: number}}>();
+
+// Resolved fields retain their specified generic value instead of widening to the option constraint.
+function _readGenericStrictness<Strict extends boolean>(value: ApplyDefaultOptions<{strict?: boolean}, {strict: false}, {strict: Strict}>['strict']): Strict {
+	return value;
+}
+
+function _readGenericCount<Count extends number>(value: ApplyDefaultOptions<{count?: number}, {count: 0}, {count: Count}>['count']): Count {
+	return value;
+}
