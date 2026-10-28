@@ -1,8 +1,7 @@
-import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {CallSignatureOf, IsArrayReadonly, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -58,14 +57,14 @@ type _SetRequired<BaseType, Keys> =
 					? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
 						? If<IsArrayReadonly<BaseType>, Readonly<ResultantArray>, ResultantArray>
 						: never
-					: _SetObjectRequired<BaseType, Keys>
-		: _SetObjectRequired<BaseType, Keys>;
+					: _SetObjectRequired<BaseType, SelectedKeys<BaseType, Keys>>
+		: _SetObjectRequired<BaseType, SelectedKeys<BaseType, Keys>>;
 
-type _SetObjectRequired<BaseType, Keys> = SimplifyObject<
-	// Pick just the keys that are optional from the base type.
-	Except<BaseType, SelectedKeys<BaseType, Keys>>
+type _SetObjectRequired<BaseType, Keys extends keyof BaseType> = SimplifyObject<
+	// Pick just the keys that are not made required from the base type.
+	{[Key in keyof BaseType as Key extends Keys ? never : Key]: BaseType[Key]}
 	// Pick the keys that should be required from the base type and make them required.
-	& Required<HomomorphicPick<BaseType, SelectedKeys<BaseType, Keys>>>
+	& {[Key in keyof BaseType as Key extends Keys ? Key : never]-?: BaseType[Key]}
 >;
 
 /**

@@ -269,3 +269,32 @@ expectTypeOf<SetOptional<{0: string; 1: number}, NumericSelectorKey.Zero>>().toB
 expectTypeOf<SetOptional<{[NumericSelectorKey.One]: string; other: number}, NumericSelectorKey.One>>().toBe<{[NumericSelectorKey.One]?: string; other: number}>();
 expectTypeOf<SetOptional<{[NumericSelectorKey.One]: string; other: number}, 1>>().toBe<{[NumericSelectorKey.One]?: string; other: number}>();
 expectTypeOf<SetOptional<[string, number], NumericSelectorKey.One>>().toBe<[string, number?]>();
+
+// Generic payloads remain usable when constructing and reading a partially optional object.
+function createOptionalName<Value>(id: Value): SetOptional<{id: Value; name: string}, 'name'> {
+	return {id};
+}
+
+function readOptionalNameId<Value>(value: SetOptional<{id: Value; name: string}, 'name'>): Value {
+	return value.id;
+}
+
+expectTypeOf(createOptionalName(123)).toBe<{id: number; name?: string}>();
+expectTypeOf(readOptionalNameId({id: 'record'})).toBe<string>();
+
+// Optionalizing each union member keeps its own call signature and unselected fields.
+type OptionalCallableUnion = {(): 'first'; readonly value: string} | {(): 'second'; count: number};
+type OptionalCallableResult = SetOptional<OptionalCallableUnion, 'value'>;
+expectTypeOf<Extract<OptionalCallableResult, () => 'first'>['value']>().toBe<string | undefined>();
+expectTypeOf<Extract<OptionalCallableResult, () => 'second'>['count']>().toBe<number>();
+expectTypeOf<Extract<OptionalCallableResult, () => 'second'>>().not.toBeAssignableTo<{value?: string}>();
+
+// Selected symbol fields become optional without changing their readonly generic payload.
+function _createOptionalSymbol<Value>(payload: Value): SetOptional<{readonly [selectorSymbol]: Value | undefined; payload: Value}, typeof selectorSymbol> {
+	return {payload};
+}
+
+declare const optionalSymbol: SetOptional<{readonly [selectorSymbol]: string | undefined; payload: number}, typeof selectorSymbol>;
+expectTypeOf(optionalSymbol[selectorSymbol]).toBe<string | undefined>();
+// @ts-expect-error A selected field retains its readonly modifier.
+optionalSymbol[selectorSymbol] = 'value';

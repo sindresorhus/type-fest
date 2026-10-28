@@ -1,6 +1,5 @@
-import type {Except} from './except.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {CallSignatureOf, HomomorphicPick, IsArrayReadonly, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {CallSignatureOf, IsArrayReadonly, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -42,28 +41,26 @@ export type SetOptional<BaseType, Keys extends KeysOfUnion<BaseType>> =
 		: never;
 
 type _SetOptional<BaseType, Keys> =
-	BaseType extends unknown // To distribute `BaseType` when it's a union type.
-		? BaseType extends UnknownArray
-			// `any` takes both branches of the array check, so its array branch is dropped to leave just the object branch.
-			? IsAny<BaseType> extends true
-				? never
-				// Returned as is, since rebuilding the array would drop non-index members, such as the tag of a `Tagged` array.
-				: IsNever<Keys> extends true
-					? BaseType
-					// Only index keys are handled as tuple elements. Other keys, such as an extra property of an augmented array, take the object branch.
-					: [Keys] extends [number | `${number}`]
-						? IsArrayReadonly<BaseType> extends true
-							? Readonly<SetArrayOptional<BaseType, Keys>>
-							: SetArrayOptional<BaseType, Keys>
-						: _SetObjectOptional<BaseType, Keys>
-			: _SetObjectOptional<BaseType, Keys>
-		: never;
+	BaseType extends UnknownArray // To distribute `BaseType` when it's a union type.
+		// `any` takes both branches of the array check, so its array branch is dropped to leave just the object branch.
+		? IsAny<BaseType> extends true
+			? never
+			// Returned as is, since rebuilding the array would drop non-index members, such as the tag of a `Tagged` array.
+			: IsNever<Keys> extends true
+				? BaseType
+				// Only index keys are handled as tuple elements. Other keys, such as an extra property of an augmented array, take the object branch.
+				: [Keys] extends [number | `${number}`]
+					? IsArrayReadonly<BaseType> extends true
+						? Readonly<SetArrayOptional<BaseType, Keys>>
+						: SetArrayOptional<BaseType, Keys>
+					: _SetObjectOptional<BaseType, SelectedKeys<BaseType, Keys>>
+		: _SetObjectOptional<BaseType, SelectedKeys<BaseType, Keys>>;
 
-type _SetObjectOptional<BaseType, Keys> = SimplifyObject<
+type _SetObjectOptional<BaseType, Keys extends keyof BaseType> = SimplifyObject<
 	// Pick just the keys that are not made optional from the base type.
-	Except<BaseType, SelectedKeys<BaseType, Keys>>
+	{[Key in keyof BaseType as Key extends Keys ? never : Key]: BaseType[Key]}
 	// Pick the keys that should be optional from the base type and make them optional.
-	& Partial<HomomorphicPick<BaseType, SelectedKeys<BaseType, Keys>>>
+	& {[Key in keyof BaseType as Key extends Keys ? Key : never]?: BaseType[Key]}
 >;
 
 /**

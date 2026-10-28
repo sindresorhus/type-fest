@@ -322,3 +322,25 @@ expectTypeOf<SetRequired<{[key: number]: string; 0?: string; 1?: string}, Numeri
 expectTypeOf<SetRequired<{[NumericSelectorKey.One]?: string; other?: number}, NumericSelectorKey.One>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();
 expectTypeOf<SetRequired<{[NumericSelectorKey.One]?: string; other?: number}, 1>>().toBe<{[NumericSelectorKey.One]: string; other?: number}>();
 expectTypeOf<SetRequired<[string?, number?], NumericSelectorKey.Zero>>().toBe<[string, number?]>();
+
+// A large object stays within the instantiation limit.
+type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type ManyOptionalKeys = Partial<Record<`key${Digit}${Digit}${Digit}`, number>>;
+expectTypeOf<SetRequired<ManyOptionalKeys, keyof ManyOptionalKeys>>().toBe<Record<`key${Digit}${Digit}${Digit}`, number>>();
+
+// Requiring a field removes absence while retaining explicitly declared undefined.
+type RequiredUndefinedValue = SetRequired<{readonly value?: string | undefined; note?: number}, 'value'>;
+expectTypeOf<RequiredUndefinedValue>().toBe<{readonly value: string | undefined; note?: number}>();
+expectTypeOf<{value: undefined}>().toBeAssignableTo<RequiredUndefinedValue>();
+expectTypeOf<{}>().not.toBeAssignableTo<RequiredUndefinedValue>();
+
+function _readUnselectedRequired<Value extends {readonly id: string}>(value: SetRequired<Value, never>): string {
+	return value.id;
+}
+
+// Union members keep their own call signatures and only acquire their selected fields.
+type RequiredCallableUnion = {(): 'first'; readonly value?: string} | {(): 'second'; count: number};
+type RequiredCallableResult = SetRequired<RequiredCallableUnion, 'value'>;
+expectTypeOf<Extract<RequiredCallableResult, () => 'first'>['value']>().toBe<string>();
+expectTypeOf<Extract<RequiredCallableResult, () => 'second'>['count']>().toBe<number>();
+expectTypeOf<Extract<RequiredCallableResult, () => 'second'>>().not.toBeAssignableTo<{value: string}>();

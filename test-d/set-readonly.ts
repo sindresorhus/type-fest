@@ -156,3 +156,22 @@ expectTypeOf<SetReadonly<{[key: number]: string; [NumericSelectorKey.One]: strin
 expectTypeOf<SetReadonly<{0: string; 1: number}, NumericSelectorKey.Zero>>().toBe<{readonly 0: string; 1: number}>();
 expectTypeOf<SetReadonly<{[NumericSelectorKey.One]: string; other: number}, NumericSelectorKey.One>>().toBe<{readonly [NumericSelectorKey.One]: string; other: number}>();
 expectTypeOf<SetReadonly<{[NumericSelectorKey.One]: string; other: number}, 1>>().toBe<{readonly [NumericSelectorKey.One]: string; other: number}>();
+
+// A generic selected value remains usable beside an unselected optional property.
+function _createReadonlyValue<Value>(value: Value): SetReadonly<{value: Value; note?: string | undefined}, 'value'> {
+	return {value};
+}
+
+function _readReadonlyValue<Value>(value: SetReadonly<{value: Value; note?: string | undefined}, 'value'>): Value {
+	return value.value;
+}
+
+declare const readonlyOptionalValue: SetReadonly<{value?: string | undefined; note?: number}, 'value'>;
+expectTypeOf(readonlyOptionalValue.value).toBe<string | undefined>();
+// @ts-expect-error Making a field readonly does not remove its optional modifier or allow assignment.
+readonlyOptionalValue.value = undefined;
+
+type ReadonlyCallableUnion = {(): 'first'; value: string} | {(): 'second'; count: number};
+type ReadonlyCallableResult = SetReadonly<ReadonlyCallableUnion, 'value'>;
+expectTypeOf<Extract<ReadonlyCallableResult, () => 'first'>['value']>().toBe<string>();
+expectTypeOf<Extract<ReadonlyCallableResult, () => 'second'>['count']>().toBe<number>();
