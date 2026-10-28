@@ -48,9 +48,14 @@ type B = TupleMax<[1, 2, 5, 3, 99, -1]>;
 export type TupleMax<A extends number[], Result extends number = NegativeInfinity> = `${number}` extends `${A[number]}`
 	? never
 	: A extends [infer F extends number, ...infer R extends number[]]
-		? GreaterThan<F, Result> extends true
-			? TupleMax<R, F>
-			: TupleMax<R, Result>
+		// Compare each candidate and accumulated value separately so a possible win does not disappear into `boolean`.
+		? F extends unknown
+			? Result extends unknown
+				? GreaterThan<F, Result> extends true
+					? TupleMax<R, F>
+					: TupleMax<R, Result>
+				: never // Should never happen
+			: never // Should never happen
 		: Result;
 
 /**
@@ -71,9 +76,14 @@ type B = TupleMin<[1, 2, 5, 3, -5]>;
 export type TupleMin<A extends number[], Result extends number = PositiveInfinity> = `${number}` extends `${A[number]}`
 	? never
 	: A extends [infer F extends number, ...infer R extends number[]]
-		? LessThan<F, Result> extends true
-			? TupleMin<R, F>
-			: TupleMin<R, Result>
+		// Compare each candidate and accumulated value separately so a possible win does not disappear into `boolean`.
+		? F extends unknown
+			? Result extends unknown
+				? LessThan<F, Result> extends true
+					? TupleMin<R, F>
+					: TupleMin<R, Result>
+				: never // Should never happen
+			: never // Should never happen
 		: Result;
 
 export {};
