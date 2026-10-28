@@ -1,7 +1,6 @@
 import type {ApplyDefaultOptions, UnwrapBrand} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
-import type {Or} from './or.d.ts';
 
 /**
 @see {@link StringToArray}
@@ -92,7 +91,7 @@ export type StringToArray<S extends string, Options extends StringToArrayOptions
 
 type _StringToArray<S extends string, Options extends Required<StringToArrayOptions>, Accumulator extends string[] = []> =
 	S extends `${infer First}${infer Rest}`
-		? Or<IsStringLiteral<First>, Options['mapNonLiteralsDirectly']> extends true
+		? (Options['mapNonLiteralsDirectly'] extends true ? true : IsStringLiteral<First>) extends true
 			? _StringToArray<Rest, Options, [...Accumulator, First]>
 			// A placeholder like `${number}` can include characters such as `-` and `.`, which are not themselves numeric strings.
 			: _StringToArray<Rest, Options, [...Accumulator, ...string[]]>

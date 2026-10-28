@@ -163,3 +163,24 @@ function _readLiteralCharacters<Options extends StringToArrayOptions>(value: Str
 function _readAutocompleteCharacters(value: StringToArrayElementNonLiterals<LiteralUnion<'abc', string>>): [string] {
 	return value;
 }
+
+// Direct mapping preserves each placeholder and the characters between them.
+expectTypeOf<StringToArray<`_${number}a${bigint}_`, {mapNonLiteralsDirectly: true}>>()
+	.toBe<['_', `${number}`, 'a', `${bigint}`, '_']>();
+expectTypeOf<StringToArray<`_${number}a${bigint}_`>>().toBe<['_', ...string[], '_']>();
+
+function _readCharacterParts<Input extends string, Options extends StringToArrayOptions>(value: StringToArray<Input, Options>): unknown[] {
+	return value;
+}
+
+// Literal checks after normalization preserve enum contents and inferred field modifiers.
+enum CharacterSource {
+	Ready = 'ready',
+	Set = 'set',
+}
+expectTypeOf<StringToArray<CharacterSource>>().toBe<['r', 'e', 'a', 'd', 'y'] | ['s', 'e', 't']>();
+expectTypeOf<StringToArray<Tagged<CharacterSource, 'Text'>>>().toBe<['r', 'e', 'a', 'd', 'y'] | ['s', 'e', 't']>();
+
+declare function fieldCharacters<const Fields extends Record<string, string>>(fields: Fields): {[Key in keyof Fields]: StringToArray<Fields[Key]>};
+const charactersByField = fieldCharacters({status: 'ok', marker: '-'});
+expectTypeOf(charactersByField).toBe<{readonly status: ['o', 'k']; readonly marker: ['-']}>();
