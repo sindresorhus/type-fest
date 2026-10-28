@@ -115,3 +115,38 @@ expectTypeOf<MultidimensionalReadonlyArray<any, Tagged<0, 'Dimensions'>>>().toBe
 expectTypeOf<MultidimensionalReadonlyArray<never, Tagged<1, 'Dimensions'>>>().toBe<readonly never[]>();
 expectTypeOf<MultidimensionalReadonlyArray<Tagged<string, 'Leaf'>, Tagged<0, 'Dimensions'>>>().toBe<Tagged<string, 'Leaf'>>();
 expectTypeOf(createArray(2 as Tagged<number, 'Dimensions'>)).toBe<RecursiveArray<string>>();
+
+// Readonly dimensions retain their generic leaf type through construction and reading.
+function constructReadonlyCube<Value>(value: ReadonlyArray<ReadonlyArray<readonly Value[]>>): MultidimensionalReadonlyArray<Value, 3> {
+	return value;
+}
+
+function readReadonlyCube<Value>(value: MultidimensionalReadonlyArray<Value, 3>): Value | undefined {
+	return value[0]?.[0]?.[0];
+}
+
+const constructedCube = constructReadonlyCube([[['ready' as const]]]);
+expectTypeOf(constructedCube[0]?.[0]?.[0]).toBe<'ready' | undefined>();
+// @ts-expect-error An otherwise valid matrix cannot replace an element of a readonly cube.
+constructedCube[0] = [['ready']];
+
+// Every counted level is readonly, while the generic leaf keeps its own modifiers.
+type ReadonlyFourDimensionalArray<Value> = ReadonlyArray<ReadonlyArray<ReadonlyArray<readonly Value[]>>>;
+expectTypeOf<MultidimensionalReadonlyArray<{id: 'cell'}, 4>>().toBe<ReadonlyFourDimensionalArray<{id: 'cell'}>>();
+expectTypeOf<MultidimensionalReadonlyArray<any, 4>>().toBe<ReadonlyFourDimensionalArray<any>>();
+expectTypeOf<MultidimensionalReadonlyArray<never, 4>>().toBe<ReadonlyFourDimensionalArray<never>>();
+expectTypeOf<MultidimensionalReadonlyArray<unknown, 4>>().toBe<ReadonlyFourDimensionalArray<unknown>>();
+
+function constructFourDimensions<Value>(value: ReadonlyFourDimensionalArray<Value>): MultidimensionalReadonlyArray<Value, 4> {
+	return value;
+}
+
+function _readFourDimensions<Value>(value: MultidimensionalReadonlyArray<Value, 4>): ReadonlyFourDimensionalArray<Value> {
+	return value;
+}
+
+const fourDimensions = constructFourDimensions([[[[{id: 'cell'}]]]]);
+if (fourDimensions[0]) {
+	// @ts-expect-error An otherwise valid value cannot replace an element at a nested readonly level.
+	fourDimensions[0][0] = [[{id: 'cell'}]];
+}

@@ -111,3 +111,33 @@ expectTypeOf<MultidimensionalArray<any, Tagged<0, 'Dimensions'>>>().toBe<any>();
 expectTypeOf<MultidimensionalArray<never, Tagged<1, 'Dimensions'>>>().toBe<never[]>();
 expectTypeOf<MultidimensionalArray<Tagged<string, 'Leaf'>, Tagged<0, 'Dimensions'>>>().toBe<Tagged<string, 'Leaf'>>();
 expectTypeOf(createArray(2 as Tagged<number, 'Dimensions'>)).toBe<RecursiveArray<unknown>>();
+
+// Fixed dimensions support direct construction and reading with an arbitrary element type.
+function constructMatrix<Value>(value: Value[][]): MultidimensionalArray<Value, 2> {
+	return value;
+}
+
+function readMatrix<Value>(value: MultidimensionalArray<Value, 2>): Value | undefined {
+	return value[0]?.[0];
+}
+
+const constructedMatrix = constructMatrix([['ready' as const]]);
+expectTypeOf(constructedMatrix[0]?.[0]).toBe<'ready' | undefined>();
+constructedMatrix.push(['ready']);
+// @ts-expect-error The constructed matrix keeps its selected leaf type.
+constructedMatrix[0] = ['wrong'];
+
+// Counting nested levels keeps leaves intact across a double-digit dimension.
+type TenDimensionalArray<Value> = Value[][][][][][][][][][];
+expectTypeOf<MultidimensionalArray<{readonly id: 'cell'}, 10>>().toBe<TenDimensionalArray<{readonly id: 'cell'}>>();
+expectTypeOf<MultidimensionalArray<any, 10>>().toBe<TenDimensionalArray<any>>();
+expectTypeOf<MultidimensionalArray<never, 10>>().toBe<TenDimensionalArray<never>>();
+expectTypeOf<MultidimensionalArray<unknown, 10>>().toBe<TenDimensionalArray<unknown>>();
+
+function _constructTenDimensions<Value>(value: TenDimensionalArray<Value>): MultidimensionalArray<Value, 10> {
+	return value;
+}
+
+function _readTenDimensions<Value>(value: MultidimensionalArray<Value, 10>): TenDimensionalArray<Value> {
+	return value;
+}

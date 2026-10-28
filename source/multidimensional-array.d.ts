@@ -1,5 +1,4 @@
 import type {UnwrapBrand} from './internal/object.d.ts';
-import type {Subtract} from './subtract.d.ts';
 
 type Recursive<T> = Array<T | Recursive<T>>;
 
@@ -37,11 +36,12 @@ export type MultidimensionalArray<Element, Dimensions extends number> =
 		: never;
 
 // Classify the primitive dimension once so a branded runtime number keeps every nesting depth.
-type MultidimensionalArrayImplementation<Element, Dimensions extends number> =
+// Count nesting levels directly instead of subtracting from the dimension at every level.
+type MultidimensionalArrayImplementation<Element, Dimensions extends number, Counter extends unknown[] = []> =
 	`${number}` extends `${Dimensions}`
 		? Recursive<Element>
-		: Dimensions extends 0
+		: Dimensions extends Counter['length']
 			? Element
-			: Array<MultidimensionalArrayImplementation<Element, Subtract<Dimensions, 1>>>;
+			: Array<MultidimensionalArrayImplementation<Element, Dimensions, [...Counter, unknown]>>;
 
 export {};
