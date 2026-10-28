@@ -177,3 +177,12 @@ expectTypeOf<StringLength<GeneratedLongText | 'short'>>().toBe<5 | 1800>();
 expectTypeOf<StringLength<`${GeneratedLongText}${number}`>>().toBe<number>();
 declare const generatedText: GeneratedLongText;
 expectTypeOf(measureFields({short: 'id', generated: generatedText})).toBe<{readonly short: 2; readonly generated: 1800}>();
+
+// Normalized enum unions and empty intersections retain every finite length.
+expectTypeOf<StringLength<Tagged<LengthText, 'Text'>>>().toBe<0 | 2 | 5>();
+expectTypeOf<StringLength<('a' | 'abcd') & {}>>().toBe<1 | 4>();
+
+function _rejectArbitraryLength<Value extends string>(value: number): StringLength<Value> {
+	// @ts-expect-error A particular generic input may have a fixed length.
+	return value;
+}

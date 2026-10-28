@@ -36,10 +36,13 @@ type C = StringLength<`${string}abc`>;
 @category Template literal
 */
 export type StringLength<S extends string> = IfNotAnyOrNever<S, {
-	ifNot: IsStringLiteral<S> extends true
-		// The intersection preserves the counter's recursion budget and generic numeric result.
-		? StringLengthImplementation<S extends object ? UnwrapBrand<S> : S> & number
-		: number;
+	// Sentinels are handled here already, and plain strings do not need brand normalization.
+	ifNot: (S extends object ? UnwrapBrand<S> : S) extends infer Input extends string
+		? IsStringLiteral<Input> extends true
+			// The intersection preserves the counter's recursion budget and generic numeric result.
+			? StringLengthImplementation<Input> & number
+			: number
+		: never;
 	ifAny: number;
 }>;
 
