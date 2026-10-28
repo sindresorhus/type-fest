@@ -64,3 +64,24 @@ expectTypeOf<IsTuple<[number, string, ...number[]], {fixedLengthOnly: boolean}>>
 
 // @ts-expect-error only works with arrays
 type T = IsTuple<{}>;
+
+// Unknown-length arrays stay non-tuples, even when their element types are unrestricted.
+expectTypeOf<IsTuple<readonly unknown[], {fixedLengthOnly: false}>>().toBe<false>();
+expectTypeOf<IsTuple<readonly [unknown?, ...any[]], {fixedLengthOnly: false}>>().toBe<true>();
+expectTypeOf<IsTuple<[] | readonly unknown[], {fixedLengthOnly: false}>>().toBe<boolean>();
+// @ts-expect-error The input must be an array.
+type UnknownTupleInput = IsTuple<unknown>;
+
+function _readGenericTupleFlag<Values extends readonly unknown[]>(flag: IsTuple<Values>): boolean {
+	return flag;
+}
+
+function _tupleFlagCannotBeAssumedTrue<Values extends readonly unknown[]>(flag: IsTuple<Values>): true {
+	// @ts-expect-error Generic arrays may have an unknown length.
+	return flag;
+}
+
+function _tupleFlagCannotBeAssumedFalse<Values extends readonly unknown[]>(flag: IsTuple<Values>): false {
+	// @ts-expect-error Generic arrays may be tuples.
+	return flag;
+}

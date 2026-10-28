@@ -1,4 +1,3 @@
-import type {If} from './if.d.ts';
 import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -77,16 +76,18 @@ type _IsTuple<
 	TArray extends UnknownArray,
 	Options extends Required<IsTupleOptions>,
 > =
-	If<IsAny<TArray>, boolean, If<IsNever<TArray>, false,
-		TArray extends unknown // For distributing `TArray`
-			? number extends TArray['length']
-				? Options['fixedLengthOnly'] extends false
-					? '0' extends keyof TArray
-						? true
-						: TArray extends readonly [...any, any] ? true : false // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
-					: false
-				: true
-			: false
-	>>;
+	IsAny<TArray> extends true
+		? boolean
+		: IsNever<TArray> extends true
+			? false
+			: TArray extends unknown // For distributing `TArray`
+				? number extends TArray['length']
+					? Options['fixedLengthOnly'] extends false
+						? '0' extends keyof TArray
+							? true
+							: TArray extends readonly [...any, any] ? true : false // To handle cases where a non-rest element follows a rest element, e.g., `[...number[], number]`
+						: false
+					: true
+				: false;
 
 export {};
