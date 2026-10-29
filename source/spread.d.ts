@@ -6,18 +6,20 @@ import type {RequiredKeysOf} from './required-keys-of.d.ts';
 
 // Numeric properties and enum keys collide with their string forms, so compare normalized names and read the actual declared key.
 // The spread syntax always produces a fresh object literal, so `readonly` is dropped, and an index signature survives only when both operands have it.
-type SpreadObject<FirstType extends object, SecondType extends object> = {
-	// Required second properties replace the first property entirely, including its declared key spelling.
-	-readonly [Key in keyof Omit<
-		OmitIndexSignature<FirstType>,
-		KeyAliases<RequiredKeysOf<OmitIndexSignature<SecondType>>>
-	>]: Key extends KeyAliases<keyof OmitIndexSignature<SecondType>>
+type SpreadObject<
+	FirstType extends object,
+	SecondType extends object,
+	// The selected keys are type parameters constrained to `keyof`, so the mapped types below keep the optional modifiers of their properties.
+	FirstKeys extends keyof FirstType = Exclude<keyof OmitIndexSignature<FirstType>, KeyAliases<RequiredKeysOf<OmitIndexSignature<SecondType>>>>,
+	SecondKeys extends keyof SecondType = RequiredKeysOf<OmitIndexSignature<SecondType>> | Exclude<keyof OmitIndexSignature<SecondType>, KeyAliases<keyof OmitIndexSignature<FirstType>>>,
+> = {
+	// Required second properties replace the first property entirely, including its declared key spelling. Read the retained keys directly without building an intermediate `Omit` object.
+	-readonly [Key in FirstKeys]: Key extends KeyAliases<keyof OmitIndexSignature<SecondType>>
 		? FirstType[Key] | Required<OmitIndexSignature<SecondType>>[Extract<keyof OmitIndexSignature<SecondType>, KeyAliases<Key>>]
 		: FirstType[Key];
-} & Pick<
-	{-readonly [Key in keyof OmitIndexSignature<SecondType>]: OmitIndexSignature<SecondType>[Key]},
-RequiredKeysOf<OmitIndexSignature<SecondType>> | Exclude<keyof OmitIndexSignature<SecondType>, KeyAliases<keyof OmitIndexSignature<FirstType>>>
-> & {
+} & {
+	-readonly [Key in SecondKeys]: SecondType[Key];
+} & {
 	[Key in keyof PickIndexSignature<FirstType> & keyof PickIndexSignature<SecondType>]: PickIndexSignature<FirstType>[Key] | PickIndexSignature<SecondType>[Key];
 };
 

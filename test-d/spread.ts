@@ -317,3 +317,53 @@ writablePattern['row-second'] = 'value';
 writablePattern['row-third'] = false;
 // @ts-expect-error The template index signature does not accept unrelated keys.
 writablePattern['other'] = 1;
+
+// Selected second properties retain optional absence and explicit undefined while losing readonly.
+expectTypeOf<Spread<{id: string}, {readonly absent?: never; readonly explicit?: undefined}>>()
+	.toBe<{id: string; absent?: never; explicit?: undefined}>();
+expectTypeOf<{id: string; absent: undefined}>().not.toBeAssignableTo<Spread<{id: string}, {readonly absent?: never}>>();
+expectTypeOf<{id: string; explicit: undefined}>().toBeAssignableTo<Spread<{id: string}, {readonly explicit?: undefined}>>();
+expectTypeOf<Spread<{id: string}, {readonly dynamic?: any; readonly opaque?: unknown}>>()
+	.toBe<{id: string; dynamic?: any; opaque?: unknown}>();
+expectTypeOf<Spread<{id: string}, {readonly impossible: never}>>()
+	.toBe<{id: string; impossible: never}>();
+
+function mergePayload<const Value>(payload: Value): Spread<{id: string}, {readonly payload: Value; readonly note?: string}> {
+	return {id: 'ready', payload};
+}
+
+function _readSpreadPayload<Value>(value: Spread<{id: string}, {readonly payload: Value; readonly note?: string}>): Value {
+	return value.payload;
+}
+
+const mergedPayload = mergePayload({readonlyField: 'kept', values: [1, 2]});
+expectTypeOf(mergedPayload.payload).toBe<{readonly readonlyField: 'kept'; readonly values: readonly [1, 2]}>();
+mergedPayload.payload = {readonlyField: 'kept', values: [1, 2]};
+mergedPayload.note = 'updated';
+// @ts-expect-error Only the copied top-level properties lose readonly.
+mergedPayload.payload.readonlyField = 'kept';
+// @ts-expect-error The optional note still rejects an explicit undefined.
+mergedPayload.note = undefined;
+
+// First-operand fields keep their declared values and optionality after the second operand's keys are removed.
+type FirstOptionalFields = Spread<{readonly omitted?: never; readonly explicit?: number | undefined; readonly label?: string}, {id: string}>;
+({id: 'ready', explicit: undefined}) satisfies FirstOptionalFields;
+expectTypeOf<{id: string; omitted: undefined}>().not.toBeAssignableTo<FirstOptionalFields>();
+expectTypeOf<{id: string; label: undefined}>().not.toBeAssignableTo<FirstOptionalFields>();
+declare const firstOptionalFields: FirstOptionalFields;
+firstOptionalFields.label = 'changed';
+
+function spreadFirstPayload<const Value>(payload: Value): Spread<{readonly payload: Value; readonly note?: string}, {id: string}> {
+	return {payload, id: 'ready'};
+}
+
+function _readFirstPayload<Value>(value: Spread<{readonly payload: Value; readonly note?: string}, {id: string}>): Value {
+	return value.payload;
+}
+
+const firstPayload = spreadFirstPayload({id: 'kept'});
+expectTypeOf(firstPayload.payload).toBe<{readonly id: 'kept'}>();
+firstPayload.payload = {id: 'kept'};
+firstPayload.note = 'changed';
+// @ts-expect-error Copied values keep their own nested readonly fields.
+firstPayload.payload.id = 'kept';
