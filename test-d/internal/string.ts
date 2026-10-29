@@ -198,3 +198,60 @@ expectTypeOf<ConsistsOnlyOf<'', never>>().toBe<true>();
 type UnknownRepeatedString = ConsistsOnlyOf<unknown, ''>;
 // @ts-expect-error The repeated substring must be a string.
 type UnknownRepeatedSubstring = ConsistsOnlyOf<'abc', unknown>;
+
+// Mixed primitive and branded values are compared together while accepted identities remain intact.
+expectTypeOf<CasedString<'foo-bar' | Tagged<'baz-qux', 'Text'>, 'foo-bar' | 'baz-qux', '-'>>()
+	.toBe<'foo-bar' | Tagged<'baz-qux', 'Text'>>();
+expectTypeOf<CasedString<Opaque<'foo-bar', 'Text'>, 'foo-bar', '-'>>().toBe<Opaque<'foo-bar', 'Text'>>();
+expectTypeOf<CasedString<ClassName.Primary | Tagged<'baz-qux', 'Text'>, 'foo-bar' | 'baz-qux', '-'>>()
+	.toBe<ClassName.Primary | Tagged<'baz-qux', 'Text'>>();
+expectTypeOf<CasedString<'foo-bar' | Tagged<'baz.qux', 'Text'>, 'foo-bar' | 'baz.qux', '-'>>().toBe<never>();
+// @ts-expect-error Only strings can be validated as cased text.
+type UnknownCasedValue = CasedString<unknown, string, '-'>;
+
+function _readCasedIdentity<Value extends string, Result extends string>(value: CasedString<Value, Result, '-'>): Value {
+	return value;
+}
+
+// Each right-hand numeric alternative keeps its integer and fractional parts together.
+expectTypeOf<PositiveNumericStringGt<'1.2', '1.1' | '2.0'>>().toBe<boolean>();
+expectTypeOf<PositiveNumericStringGt<'2.1', '2' | '3'>>().toBe<boolean>();
+expectTypeOf<PositiveNumericStringGt<'2.1', '1' | '2'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'1.5' | '2.1', '1.1' | '0.1'>>().toBe<true>();
+expectTypeOf<PositiveNumericStringGt<'1.2', '1.3' | '2.0'>>().toBe<false>();
+
+function _readLowerUnionFraction<Digit extends '1' | '2'>(value: PositiveNumericStringGt<`0.${Digit}`, '0.3' | '1'>): false {
+	return value;
+}
+
+// An equal alternative does not erase another alternative that is strictly smaller.
+expectTypeOf<PositiveNumericStringGt<'2', '1' | '2'>>().toBe<boolean>();
+expectTypeOf<PositiveNumericStringGt<'1.2', '1.1' | '1.2'>>().toBe<boolean>();
+expectTypeOf<PositiveNumericStringGt<'1' | '2', '1' | '2'>>().toBe<boolean>();
+expectTypeOf<PositiveNumericStringGt<'1', '1' | '2'>>().toBe<false>();
+expectTypeOf<PositiveNumericStringGt<'3', '1' | '2'>>().toBe<true>();
+
+function _readEqualNumericUnion<Value extends '1' | '2'>(value: PositiveNumericStringGt<Value, Value>): false {
+	// @ts-expect-error Independent alternatives of the same union can be strictly ordered.
+	return value;
+}
+
+function _readUpperNumericUnion<Value extends '1' | '2'>(value: PositiveNumericStringGt<'3', Value>): true {
+	return value;
+}
+
+// An empty right-hand choice leaves no comparison, including when the left side is dynamic.
+expectTypeOf<PositiveNumericStringGt<any, never>>().toBe<never>();
+expectTypeOf<PositiveNumericStringGt<never, any>>().toBe<never>();
+expectTypeOf<PositiveNumericStringGt<any, '1'>>().toBe<boolean>();
+expectTypeOf<PositiveNumericStringGt<'1', any>>().toBe<false>();
+// @ts-expect-error The right operand must be numeric text.
+type UnknownRightNumericText = PositiveNumericStringGt<'1', unknown>;
+
+// A generic integer string must not make its fractional comparison a constant true.
+function _readGenericIntegerFraction<Value extends `${bigint}`>(value: PositiveNumericStringGt<`0.${Value}`, Value>): true {
+	// @ts-expect-error A valid integer such as '1' makes this comparison false.
+	return value;
+}
+
+expectTypeOf<PositiveNumericStringGt<'0.1', '1'>>().toBe<false>();

@@ -165,33 +165,36 @@ type G = PositiveNumericStringGt<'2e+21', '1e+21'>;
 //=> boolean
 ```
 */
-export type PositiveNumericStringGt<A extends string, B extends string> = A extends B
-	? false
-	// A positive exponent, like `1e+21`, is larger than any plain decimal number.
-	: A extends `${string}e+${string}`
-		? B extends `${string}e+${string}`
-			? boolean
-			: true
-		: B extends `${string}e+${string}`
-			? false
-			// A negative exponent, like `1e-7`, is smaller than any plain decimal number except `0`.
-			: A extends `${string}e-${string}`
-				? B extends `${string}e-${string}`
-					? boolean
-					: B extends '0'
-						? true
-						: false
-				: B extends `${string}e-${string}`
-					? A extends '0'
-						? false
-						: true
-					: PositiveIntegerStringGt<IntegerPartOfNumericString<A>, IntegerPartOfNumericString<B>> extends infer IntegerResult extends boolean
-						? IntegerResult extends true
+export type PositiveNumericStringGt<A extends string, B extends string> = B extends unknown // Distribute before equality so one equal member cannot hide a smaller alternative.
+	? A extends B
+		? false
+		// A positive exponent, like `1e+21`, is larger than any plain decimal number.
+		: A extends `${string}e+${string}`
+			? B extends `${string}e+${string}`
+				? boolean
+				: true
+			: B extends `${string}e+${string}`
+				? false
+				// A negative exponent, like `1e-7`, is smaller than any plain decimal number except `0`.
+				: A extends `${string}e-${string}`
+					? B extends `${string}e-${string}`
+						? boolean
+						: B extends '0'
 							? true
-							: IsEqual<IntegerPartOfNumericString<A>, IntegerPartOfNumericString<B>> extends true
-								? FractionalPartGt<FractionalPartOfNumericString<A>, FractionalPartOfNumericString<B>>
-								: false
-						: never; // Should never happen
+							: false
+					: B extends `${string}e-${string}`
+						? A extends '0'
+							? false
+							: true
+						// Keep equality separate so generic integer comparisons retain their boolean constraint.
+						: PositiveIntegerStringGt<IntegerPartOfNumericString<A>, IntegerPartOfNumericString<B>> extends infer IntegerResult extends boolean
+							? IntegerResult extends true
+								? true
+								: IsEqual<IntegerPartOfNumericString<A>, IntegerPartOfNumericString<B>> extends true
+									? FractionalPartGt<FractionalPartOfNumericString<A>, FractionalPartOfNumericString<B>>
+									: false
+							: never // Should never happen
+	: never; // An empty right-hand union has no comparisons.
 
 type IntegerPartOfNumericString<S extends string> = S extends `${infer IntegerPart}.${string}` ? IntegerPart : S;
 
