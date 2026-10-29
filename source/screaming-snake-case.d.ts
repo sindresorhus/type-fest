@@ -1,5 +1,4 @@
-import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
-import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrand} from './internal/index.d.ts';
 import type {SnakeCase} from './snake-case.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
@@ -25,7 +24,7 @@ export type ScreamingSnakeCase<
 	Value,
 	Options extends WordsOptions = {},
 > = Value extends string
-	? Uppercase<UnwrapBrand<SnakeCase<Value, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>>>
+	? Uppercase<UnwrapBrand<SnakeCase<Value, Options>>>
 	: Value;
 
 export {};

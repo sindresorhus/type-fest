@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, ScreamingSnakeCase, Tagged} from '../index.d.ts';
+import type {Opaque, ScreamingSnakeCase, Tagged, WordsOptions} from '../index.d.ts';
 
 const snakeFromCamel: ScreamingSnakeCase<'fooBar'> = 'FOO_BAR';
 expectTypeOf(snakeFromCamel).toBe<'FOO_BAR'>();
@@ -145,3 +145,16 @@ expectTypeOf<ScreamingSnakeCase<unknown>>().toBe<unknown>();
 expectTypeOf<ScreamingSnakeCase<{name: string}>>().toBe<{name: string}>();
 expectTypeOf<'FOO_BAR'>().toBeAssignableTo<ScreamingSnakeCase<Tagged<string, 'Text'>>>();
 expectTypeOf<'foo_bar'>().not.toBeAssignableTo<ScreamingSnakeCase<Tagged<string, 'Text'>>>();
+
+// The outer uppercase wrapper uses the same delimiter defaults as SnakeCase.
+expectTypeOf<ScreamingSnakeCase<'apiV2Response', WordsOptions>>().toBe<'API_V2_RESPONSE'>();
+expectTypeOf<ScreamingSnakeCase<'apiV2Response', {splitOnNumbers: true}>>().toBe<'API_V_2_RESPONSE'>();
+expectTypeOf<ScreamingSnakeCase<'apiResponse' | 42, {splitOnPunctuation: true}>>().toBe<'API_RESPONSE' | 42>();
+
+function _readScreamingSnakeCase<Value extends string, Options extends WordsOptions>(value: ScreamingSnakeCase<Value, Options>): string {
+	return value;
+}
+
+function _preserveNonString<Value, Options extends WordsOptions>(value: {id: Value}): ScreamingSnakeCase<{id: Value}, Options> {
+	return value;
+}

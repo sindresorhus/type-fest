@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SnakeCase} from '../index.d.ts';
+import type {SnakeCase, Tagged, WordsOptions} from '../index.d.ts';
 
 const snakeFromCamel: SnakeCase<'fooBar'> = 'foo_bar';
 expectTypeOf(snakeFromCamel).toBe<'foo_bar'>();
@@ -130,3 +130,21 @@ expectTypeOf<SnakeCase<'foo.Bar'>>().toBe<'foo.bar'>();
 
 // An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
 expectTypeOf<SnakeCase<'getURL!'>>().toBe<'get_url!'>();
+
+// Wrappers share the delimiter transform's defaults and preserve untransformed values.
+expectTypeOf<SnakeCase<'apiV2Response', {splitOnNumbers: true; splitOnPunctuation: true}>>().toBe<'api_v_2_response'>();
+expectTypeOf<SnakeCase<'apiV2Response', WordsOptions>>().toBe<'api_v2_response'>();
+expectTypeOf<SnakeCase<Tagged<'apiResponse', 'Field'>>>().toBe<'api_response'>();
+expectTypeOf<SnakeCase<Tagged<string, 'Field'>>>().toBe<Tagged<string, 'Field'>>();
+expectTypeOf<SnakeCase<'apiResponse' | 42>>().toBe<'api_response' | 42>();
+expectTypeOf<SnakeCase<unknown>>().toBe<unknown>();
+expectTypeOf<SnakeCase<any>>().toBe<any>();
+expectTypeOf<SnakeCase<never>>().toBe<never>();
+
+function _readSnakeCase<Value extends string, Options extends WordsOptions>(value: SnakeCase<Value, Options>): string {
+	return value;
+}
+
+function _preserveNonString<Value, Options extends WordsOptions>(value: {id: Value}): SnakeCase<{id: Value}, Options> {
+	return value;
+}

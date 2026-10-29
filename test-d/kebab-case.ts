@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {KebabCase} from '../index.d.ts';
+import type {KebabCase, Tagged, WordsOptions} from '../index.d.ts';
 
 const kebabFromCamel: KebabCase<'fooBar'> = 'foo-bar';
 expectTypeOf(kebabFromCamel).toBe<'foo-bar'>();
@@ -130,3 +130,21 @@ expectTypeOf<KebabCase<'a\u{85}b'>>().toBe<'a-b'>();
 // An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
 expectTypeOf<KebabCase<'userID?'>>().toBe<'user-id?'>();
 expectTypeOf<KebabCase<'parseJSON😀'>>().toBe<'parse-json😀'>();
+
+// Wrappers share the delimiter transform's defaults and preserve untransformed values.
+expectTypeOf<KebabCase<'apiV2Response', {splitOnNumbers: true; splitOnPunctuation: true}>>().toBe<'api-v-2-response'>();
+expectTypeOf<KebabCase<'apiV2Response', WordsOptions>>().toBe<'api-v2-response'>();
+expectTypeOf<KebabCase<Tagged<'apiResponse', 'Field'>>>().toBe<'api-response'>();
+expectTypeOf<KebabCase<Tagged<string, 'Field'>>>().toBe<Tagged<string, 'Field'>>();
+expectTypeOf<KebabCase<'apiResponse' | 42>>().toBe<'api-response' | 42>();
+expectTypeOf<KebabCase<unknown>>().toBe<unknown>();
+expectTypeOf<KebabCase<any>>().toBe<any>();
+expectTypeOf<KebabCase<never>>().toBe<never>();
+
+function _readKebabCase<Value extends string, Options extends WordsOptions>(value: KebabCase<Value, Options>): string {
+	return value;
+}
+
+function _preserveNonString<Value, Options extends WordsOptions>(value: {id: Value}): KebabCase<{id: Value}, Options> {
+	return value;
+}
