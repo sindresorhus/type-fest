@@ -1,5 +1,4 @@
-import type {CamelCaseOptions, _DefaultCamelCaseOptions, CamelCase} from './camel-case.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {CamelCaseOptions, CamelCase} from './camel-case.d.ts';
 import type {CasedPropertiesDeep} from './internal/cased-properties-deep.d.ts';
 import type {CamelCasedProperties} from './camel-cased-properties.d.ts'; // For `@link`
 
@@ -65,6 +64,6 @@ const splitOnPunctuation: CamelCasedPropertiesDeep<{'user@info': {'user::id': nu
 export type CamelCasedPropertiesDeep<
 	Value,
 	Options extends CamelCaseOptions = {},
-> = CasedPropertiesDeep<Value, 'camel', ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>;
+> = CasedPropertiesDeep<Value, 'camel', Options>;
 
 export {};

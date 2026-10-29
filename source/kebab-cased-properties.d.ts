@@ -1,6 +1,4 @@
-import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
 import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 import type {KebabCase} from './kebab-case.d.ts'; // For `@link`
 import type {KebabCasedPropertiesDeep} from './kebab-cased-properties-deep.d.ts'; // For `@link`
@@ -43,6 +41,6 @@ const splitOnPunctuation: KebabCasedProperties<{'foo::bar': string}, {splitOnPun
 export type KebabCasedProperties<
 	Value,
 	Options extends WordsOptions = {},
-> = DelimiterCasedProperties<Value, '-', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+> = DelimiterCasedProperties<Value, '-', Options>;
 
 export {};

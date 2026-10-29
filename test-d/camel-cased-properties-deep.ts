@@ -175,3 +175,42 @@ function _keepSet<Options extends CamelCaseOptions>(value: Set<string>): CamelCa
 function _keepPromise<Options extends CamelCaseOptions>(value: Promise<string>): {value: CamelCasedPropertiesDeep<Promise<string>, Options>} {
 	return {value};
 }
+
+function _keepUnknown<Options extends CamelCaseOptions>(value: unknown): CamelCasedPropertiesDeep<unknown, Options> {
+	return value;
+}
+
+function _keepLiteral<Options extends CamelCaseOptions>(value: 42): CamelCasedPropertiesDeep<42, Options> {
+	return value;
+}
+
+// Every supported option reaches nested keys, while empty and nonrecursive values stay unchanged.
+expectTypeOf<CamelCasedPropertiesDeep<{_fooBAR: {'__baz::QUX2': 1}}, {preserveConsecutiveUppercase: true; preserveLeadingUnderscores: true; splitOnPunctuation: true; splitOnNumbers: true}>>()
+	.toBe<{_fooBAR: {__bazQUX2: 1}}>();
+expectTypeOf<CamelCasedPropertiesDeep<{userInfo: {nestedValue: 1}}, any>>().toBe<{userInfo: {nestedValue: 1}}>();
+expectTypeOf<CamelCasedPropertiesDeep<{userInfo: {nestedValue: 1}}, never>>().toBe<{userInfo: {nestedValue: 1}}>();
+expectTypeOf<CamelCasedPropertiesDeep<unknown>>().toBe<unknown>();
+expectTypeOf<CamelCasedPropertiesDeep<never>>().toBe<never>();
+// @ts-expect-error Options must describe the supported casing flags.
+type UnknownCasingOptions = CamelCasedPropertiesDeep<{userInfo: 1}, unknown>;
+
+enum CasedField {
+	UserInfo = 'userInfo',
+}
+
+expectTypeOf<CamelCasedPropertiesDeep<{readonly [CasedField.UserInfo]?: {nestedValue: 1}}>>()
+	.toBe<{readonly userInfo?: {nestedValue: 1}}>();
+
+function _keepGenericPromise<Value, Options extends CamelCaseOptions>(value: Promise<Value>): {value: CamelCasedPropertiesDeep<Promise<Value>, Options>} {
+	return {value};
+}
+
+function _keepEmptyObject<Options extends CamelCaseOptions>(value: {}): CamelCasedPropertiesDeep<{}, Options> {
+	return value;
+}
+
+declare const copiedNestedModifiers: CamelCasedPropertiesDeep<{readonly userInfo?: {readonly nestedValue?: number; optionalValue?: number}}>;
+// @ts-expect-error Recursive recasing preserves readonly fields.
+copiedNestedModifiers.userInfo = {nestedValue: 1};
+// @ts-expect-error Optional nested fields do not admit an explicit undefined.
+copiedNestedModifiers.userInfo!.optionalValue = undefined;

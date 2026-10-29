@@ -1,5 +1,5 @@
-import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
-import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
+import type {DelimiterCase} from './delimiter-case.d.ts';
+import type {UnwrapBrand} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 import type {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep.d.ts'; // For `@link`
 
@@ -53,7 +53,7 @@ type DelimiterCasedPropertiesImplementation<Value, Delimiter extends string, Opt
 		// Arrays pass through unchanged, since they have no properties to re-case.
 		? Value
 		: {[K in keyof Value as
-			DelimiterCase<K, Delimiter, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>
+			DelimiterCase<K, Delimiter, Options>
 			]: Value[K]};
 
 export {};

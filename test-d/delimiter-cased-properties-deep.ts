@@ -246,3 +246,34 @@ expectTypeOf<{'foo-bar': 1; children: [{'foo-bar': 1}]}>().toBeAssignableTo<Deli
 
 expectTypeOf<DelimiterCasedPropertiesDeep<any, '-' | '_'>>().toBe<any>();
 expectTypeOf<DelimiterCasedPropertiesDeep<{fooBar: 1}, Tagged<Tagged<'-', 'Inner'>, 'Outer'> | '_'>>().toBe<{'foo-bar': 1} | {foo_bar: 1}>();
+
+// Every supported option reaches nested keys, while empty and nonrecursive values stay unchanged.
+expectTypeOf<DelimiterCasedPropertiesDeep<{userInfo2: {'api::status3': 1}}, '-', {splitOnPunctuation: true; splitOnNumbers: true}>>()
+	.toBe<{'user-info-2': {'api-status-3': 1}}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{userInfo: {nestedValue: 1}}, '-', any>>().toBe<{'user-info': {'nested-value': 1}}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{userInfo: {nestedValue: 1}}, '-', never>>().toBe<{'user-info': {'nested-value': 1}}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<unknown, '-'>>().toBe<unknown>();
+expectTypeOf<DelimiterCasedPropertiesDeep<never, '-'>>().toBe<never>();
+// @ts-expect-error Options must describe the supported casing flags.
+type UnknownCasingOptions = DelimiterCasedPropertiesDeep<{userInfo: 1}, '-', unknown>;
+
+enum CasedField {
+	UserInfo = 'userInfo',
+}
+
+expectTypeOf<DelimiterCasedPropertiesDeep<{readonly [CasedField.UserInfo]?: {nestedValue: 1}}, '-'>>()
+	.toBe<{readonly 'user-info'?: {'nested-value': 1}}>();
+
+function _keepGenericPromise<Value, Options extends WordsOptions>(value: Promise<Value>): {value: DelimiterCasedPropertiesDeep<Promise<Value>, '-', Options>} {
+	return {value};
+}
+
+function _keepEmptyObject<Options extends WordsOptions>(value: {}): DelimiterCasedPropertiesDeep<{}, '-', Options> {
+	return value;
+}
+
+declare const copiedNestedModifiers: DelimiterCasedPropertiesDeep<{readonly userInfo?: {readonly nestedValue?: number; optionalValue?: number}}, '-'>;
+// @ts-expect-error Recursive recasing preserves readonly fields.
+copiedNestedModifiers['user-info'] = {'nested-value': 1};
+// @ts-expect-error Optional nested fields do not admit an explicit undefined.
+copiedNestedModifiers['user-info']!['optional-value'] = undefined;

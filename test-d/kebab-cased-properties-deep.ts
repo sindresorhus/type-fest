@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {WordsOptions} from '../source/words.d.ts';
 import type {KebabCasedPropertiesDeep} from '../index.d.ts';
 
 type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
@@ -84,3 +85,25 @@ expectTypeOf(weakSet).toBe<WeakSet<{'foo-bar': 1}>>();
 
 declare const mutableMap: KebabCasedPropertiesDeep<Map<{fooBar: 1}, {bazQux: 2}>>;
 expectTypeOf(mutableMap).toBe<Map<{'foo-bar': 1}, {'baz-qux': 2}>>();
+
+// Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
+expectTypeOf<KebabCasedPropertiesDeep<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, {splitOnNumbers: true; splitOnPunctuation: true}>>()
+	.toBe<{readonly 'user-id-2'?: {'nested-value': 1}; 'mutable-value'?: string}>();
+expectTypeOf<KebabCasedPropertiesDeep<never>>().toBe<never>();
+expectTypeOf<KebabCasedPropertiesDeep<any>>().toBe<any>();
+expectTypeOf<KebabCasedPropertiesDeep<unknown>>().toBe<unknown>();
+
+function _readGenericPayload<Value>(value: KebabCasedPropertiesDeep<{readonly userPayload: Promise<Value>}>): {value: Promise<Value>} {
+	return {value: value['user-payload']};
+}
+
+function _keepGenericCallable<Value, Options extends WordsOptions>(value: () => Value): KebabCasedPropertiesDeep<() => Value, Options> {
+	return value;
+}
+
+declare const copiedModifiers: KebabCasedPropertiesDeep<{readonly userId?: number; mutableValue?: string}>;
+// @ts-expect-error Recasing a property does not make a readonly field writable.
+copiedModifiers['user-id'] = 1;
+copiedModifiers['mutable-value'] = 'updated';
+// @ts-expect-error Optional fields do not admit an explicit undefined.
+copiedModifiers['mutable-value'] = undefined;

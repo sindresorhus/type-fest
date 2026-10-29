@@ -58,3 +58,28 @@ function _keepValue<Options extends CamelCaseOptions>(value: readonly string[]):
 function _keepCallable<Options extends CamelCaseOptions>(value: () => number): PascalCasedProperties<() => number, Options> {
 	return value;
 }
+
+// A non-literal preservation flag resolves like the default.
+expectTypeOf<PascalCasedProperties<{_foo_bar: 1}, {preserveLeadingUnderscores: boolean}>>().toBe<{FooBar: 1}>();
+
+// Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
+expectTypeOf<PascalCasedProperties<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, {splitOnNumbers: true; splitOnPunctuation: true}>>()
+	.toBe<{readonly UserId2?: {nestedValue: 1}; MutableValue?: string}>();
+expectTypeOf<PascalCasedProperties<never>>().toBe<never>();
+expectTypeOf<PascalCasedProperties<any>>().toBe<any>();
+expectTypeOf<PascalCasedProperties<unknown>>().toBe<{}>();
+
+function _readGenericPayload<Value>(value: PascalCasedProperties<{readonly userPayload: Promise<Value>}>): {value: Promise<Value>} {
+	return {value: value.UserPayload};
+}
+
+function _keepGenericCallable<Value, Options extends CamelCaseOptions>(value: () => Value): PascalCasedProperties<() => Value, Options> {
+	return value;
+}
+
+declare const copiedModifiers: PascalCasedProperties<{readonly userId?: number; mutableValue?: string}>;
+// @ts-expect-error Recasing a property does not make a readonly field writable.
+copiedModifiers.UserId = 1;
+copiedModifiers.MutableValue = 'updated';
+// @ts-expect-error Optional fields do not admit an explicit undefined.
+copiedModifiers.MutableValue = undefined;

@@ -1,5 +1,4 @@
-import type {CamelCaseOptions, _DefaultCamelCaseOptions} from './camel-case.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {CamelCaseOptions} from './camel-case.d.ts';
 import type {PascalCase} from './pascal-case.d.ts';
 import type {PascalCasedPropertiesDeep} from './pascal-cased-properties-deep.d.ts'; // For `@link`
 
@@ -43,6 +42,6 @@ export type PascalCasedProperties<Value, Options extends CamelCaseOptions = {}> 
 	: Value extends readonly unknown[]
 		// Arrays pass through unchanged, since they have no properties to re-case.
 		? Value
-		: {[K in keyof Value as PascalCase<K, ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options>>]: Value[K]};
+		: {[K in keyof Value as PascalCase<K, Options>]: Value[K]};
 
 export {};

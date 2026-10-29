@@ -14,7 +14,7 @@ export type PropertyCasing = 'camel' | 'pascal' | {delimiter: string};
 /**
 Converts one key to the given casing.
 */
-type CaseKey<Key, Casing extends PropertyCasing, Options extends Required<WordsOptions>> =
+type CaseKey<Key, Casing extends PropertyCasing, Options extends WordsOptions> =
 	Casing extends 'camel'
 		? CamelCase<Key, Options>
 		: Casing extends 'pascal'
@@ -25,8 +25,10 @@ type CaseKey<Key, Casing extends PropertyCasing, Options extends Required<WordsO
 
 /**
 The shared walker behind `CamelCasedPropertiesDeep`, `PascalCasedPropertiesDeep` and `DelimiterCasedPropertiesDeep`. Converts the keys of every object it finds, and rebuilds arrays, tuples, maps and sets around their converted contents.
+
+Options are forwarded to the scalar casing types, which resolve their own defaults.
 */
-export type CasedPropertiesDeep<Value, Casing extends PropertyCasing, Options extends Required<WordsOptions>> =
+export type CasedPropertiesDeep<Value, Casing extends PropertyCasing, Options extends WordsOptions> =
 	Value extends NonRecursiveType
 		? Value
 		: Value extends UnknownArray

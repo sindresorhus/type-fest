@@ -1,6 +1,4 @@
-import type {_DefaultDelimiterCaseOptions} from './delimiter-case.d.ts';
 import type {DelimiterCasedPropertiesDeep} from './delimiter-cased-properties-deep.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
 import type {WordsOptions} from './words.d.ts';
 import type {SnakeCase} from './snake-case.d.ts'; // For `@link`
 import type {SnakeCasedProperties} from './snake-cased-properties.d.ts'; // For `@link`
@@ -69,6 +67,6 @@ const splitOnPunctuation: SnakeCasedPropertiesDeep<{'user@info': {'user::id': nu
 export type SnakeCasedPropertiesDeep<
 	Value,
 	Options extends WordsOptions = {},
-> = DelimiterCasedPropertiesDeep<Value, '_', ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>;
+> = DelimiterCasedPropertiesDeep<Value, '_', Options>;
 
 export {};

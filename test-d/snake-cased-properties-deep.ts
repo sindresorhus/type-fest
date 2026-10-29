@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {WordsOptions} from '../source/words.d.ts';
 import type {SnakeCasedPropertiesDeep} from '../index.d.ts';
 
 type FooBar = {helloWorld: {p2p: Array<{addressLine1: string}>}};
@@ -69,3 +70,25 @@ expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>>().toBe
 
 expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'foo_bar': unknown}>();
 expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>();
+
+// Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
+expectTypeOf<SnakeCasedPropertiesDeep<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, {splitOnNumbers: true; splitOnPunctuation: true}>>()
+	.toBe<{readonly user_id_2?: {nested_value: 1}; mutable_value?: string}>();
+expectTypeOf<SnakeCasedPropertiesDeep<never>>().toBe<never>();
+expectTypeOf<SnakeCasedPropertiesDeep<any>>().toBe<any>();
+expectTypeOf<SnakeCasedPropertiesDeep<unknown>>().toBe<unknown>();
+
+function _readGenericPayload<Value>(value: SnakeCasedPropertiesDeep<{readonly userPayload: Promise<Value>}>): {value: Promise<Value>} {
+	return {value: value.user_payload};
+}
+
+function _keepGenericCallable<Value, Options extends WordsOptions>(value: () => Value): SnakeCasedPropertiesDeep<() => Value, Options> {
+	return value;
+}
+
+declare const copiedModifiers: SnakeCasedPropertiesDeep<{readonly userId?: number; mutableValue?: string}>;
+// @ts-expect-error Recasing a property does not make a readonly field writable.
+copiedModifiers.user_id = 1;
+copiedModifiers.mutable_value = 'updated';
+// @ts-expect-error Optional fields do not admit an explicit undefined.
+copiedModifiers.mutable_value = undefined;

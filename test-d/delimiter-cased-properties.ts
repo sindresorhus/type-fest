@@ -99,3 +99,25 @@ function _keepCallableWithDelimiter<Delimiter extends string, Options extends Wo
 
 expectTypeOf<DelimiterCasedProperties<any, '-' | '_'>>().toBe<any>();
 expectTypeOf<DelimiterCasedProperties<{fooBar: 1}, Tagged<Tagged<'-', 'Inner'>, 'Outer'> | '_'>>().toBe<{'foo-bar': 1} | {foo_bar: 1}>();
+
+// Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
+expectTypeOf<DelimiterCasedProperties<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, '-', {splitOnNumbers: true; splitOnPunctuation: true}>>()
+	.toBe<{readonly 'user-id-2'?: {nestedValue: 1}; 'mutable-value'?: string}>();
+expectTypeOf<DelimiterCasedProperties<never, '-'>>().toBe<never>();
+expectTypeOf<DelimiterCasedProperties<any, '-'>>().toBe<any>();
+expectTypeOf<DelimiterCasedProperties<unknown, '-'>>().toBe<{}>();
+
+function _readGenericPayload<Value>(value: DelimiterCasedProperties<{readonly userPayload: Promise<Value>}, '-'>): {value: Promise<Value>} {
+	return {value: value['user-payload']};
+}
+
+function _keepGenericCallable<Value, Options extends WordsOptions>(value: () => Value): DelimiterCasedProperties<() => Value, '-', Options> {
+	return value;
+}
+
+declare const copiedModifiers: DelimiterCasedProperties<{readonly userId?: number; mutableValue?: string}, '-'>;
+// @ts-expect-error Recasing a property does not make a readonly field writable.
+copiedModifiers['user-id'] = 1;
+copiedModifiers['mutable-value'] = 'updated';
+// @ts-expect-error Optional fields do not admit an explicit undefined.
+copiedModifiers['mutable-value'] = undefined;

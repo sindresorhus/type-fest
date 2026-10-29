@@ -1,4 +1,5 @@
 import {expectTypeOf} from 'nz';
+import type {WordsOptions} from '../source/words.d.ts';
 import type {KebabCasedProperties} from '../index.d.ts';
 
 type Foobar = {helloWorld1: {fooBar: string}};
@@ -41,3 +42,25 @@ expectTypeOf(result).toBe<KebabCasedProperties<UserPunctuated, {splitOnPunctuati
 // A readonly array is still an array, and passes through unchanged.
 expectTypeOf<KebabCasedProperties<ReadonlyArray<{fooBar: number}>>>().toBe<ReadonlyArray<{fooBar: number}>>();
 expectTypeOf<KebabCasedProperties<Array<{fooBar: number}>>>().toBe<Array<{fooBar: number}>>();
+
+// Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
+expectTypeOf<KebabCasedProperties<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, {splitOnNumbers: true; splitOnPunctuation: true}>>()
+	.toBe<{readonly 'user-id-2'?: {nestedValue: 1}; 'mutable-value'?: string}>();
+expectTypeOf<KebabCasedProperties<never>>().toBe<never>();
+expectTypeOf<KebabCasedProperties<any>>().toBe<any>();
+expectTypeOf<KebabCasedProperties<unknown>>().toBe<{}>();
+
+function _readGenericPayload<Value>(value: KebabCasedProperties<{readonly userPayload: Promise<Value>}>): {value: Promise<Value>} {
+	return {value: value['user-payload']};
+}
+
+function _keepGenericCallable<Value, Options extends WordsOptions>(value: () => Value): KebabCasedProperties<() => Value, Options> {
+	return value;
+}
+
+declare const copiedModifiers: KebabCasedProperties<{readonly userId?: number; mutableValue?: string}>;
+// @ts-expect-error Recasing a property does not make a readonly field writable.
+copiedModifiers['user-id'] = 1;
+copiedModifiers['mutable-value'] = 'updated';
+// @ts-expect-error Optional fields do not admit an explicit undefined.
+copiedModifiers['mutable-value'] = undefined;

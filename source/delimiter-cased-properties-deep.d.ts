@@ -1,5 +1,5 @@
-import type {_DefaultDelimiterCaseOptions, DelimiterCase} from './delimiter-case.d.ts';
-import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
+import type {DelimiterCase} from './delimiter-case.d.ts'; // For `@link`
+import type {UnwrapBrand} from './internal/index.d.ts';
 import type {CasedPropertiesDeep} from './internal/cased-properties-deep.d.ts';
 import type {WordsOptions} from './words.d.ts';
 import type {DelimiterCasedProperties} from './delimiter-cased-properties.d.ts'; // For `@link`
@@ -71,11 +71,11 @@ export type DelimiterCasedPropertiesDeep<
 	Delimiter extends string,
 	Options extends WordsOptions = {},
 > = [Delimiter] extends [never]
-	? CasedPropertiesDeep<Value, {delimiter: Delimiter}, ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>>
+	? CasedPropertiesDeep<Value, {delimiter: Delimiter}, Options>
 	: {[Choice in UnwrapBrand<Delimiter> & string]: CasedPropertiesDeep<
 		Value,
 		{delimiter: Choice},
-		ApplyDefaultOptions<WordsOptions, _DefaultDelimiterCaseOptions, Options>
+		Options
 	>}[UnwrapBrand<Delimiter> & string];
 
 export {};
