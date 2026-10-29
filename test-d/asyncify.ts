@@ -52,3 +52,34 @@ expectTypeOf<Asyncify<(first: string, ...rest: readonly number[]) => boolean>>()
 // A rest-only readonly parameter list remains callable after its return type is wrapped in a promise.
 expectTypeOf<Asyncify<(...rest: readonly number[]) => boolean>>().toBe<(...rest: readonly number[]) => Promise<boolean>>();
 expectTypeOf<Asyncify<(this: Date, ...rest: readonly number[]) => boolean>>().toBe<(this: Date, ...rest: readonly number[]) => Promise<boolean>>();
+
+// Generic callbacks keep their argument tuple and awaited result through the public wrapper.
+function constructAsyncCallback<Arguments extends unknown[], Result>(callback: (...arguments_: Arguments) => Promise<Awaited<Result>>): Asyncify<(...arguments_: Arguments) => Result> {
+	return callback;
+}
+
+async function callAsyncCallback<Arguments extends unknown[], Result>(callback: Asyncify<(...arguments_: Arguments) => Result>, ...arguments_: Arguments): Promise<Awaited<Result>> {
+	return callback(...arguments_);
+}
+
+declare const readonlyTupleCallback: Asyncify<(value: readonly ['ready', 1]) => {readonly value: readonly ['ready', 1]}>;
+const adaptedCallback = constructAsyncCallback<[value: readonly ['ready', 1]], {readonly value: readonly ['ready', 1]}>(readonlyTupleCallback);
+expectTypeOf(adaptedCallback(['ready', 1])).toBe<Promise<{readonly value: readonly ['ready', 1]}>>();
+const genericCallResult = callAsyncCallback(adaptedCallback, ['ready', 1]);
+expectTypeOf(genericCallResult).toBe<Promise<{readonly value: readonly ['ready', 1]}>>();
+// @ts-expect-error The wrapped function keeps its tuple argument's declared values.
+void adaptedCallback(['wrong', 1]);
+
+// Receiver-free callbacks retain their explicit receiver contract while nested thenables are awaited.
+expectTypeOf<Asyncify<(this: void, value: string) => Promise<PromiseLike<number>>>>().toBe<(this: void, value: string) => Promise<number>>();
+expectTypeOf<Asyncify<(this: undefined, value?: number) => boolean>>().toBe<(this: undefined, value?: number) => Promise<boolean>>();
+expectTypeOf<Asyncify<() => void>>().toBe<() => Promise<void>>();
+expectTypeOf<Asyncify<() => unknown>>().toBe<() => Promise<unknown>>();
+expectTypeOf<Asyncify<() => any>>().toBe<() => Promise<any>>();
+
+// A generic wrapper preserves readonly parameters and the receiver while awaiting its result.
+function _constructReadonlyAsyncCallback<Receiver, Arguments extends readonly unknown[], Result>(
+	callback: (this: Receiver, ...arguments_: Arguments) => Promise<Awaited<Result>>,
+): Asyncify<(this: Receiver, ...arguments_: Arguments) => Result> {
+	return callback;
+}

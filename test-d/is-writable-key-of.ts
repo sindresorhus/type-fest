@@ -119,3 +119,8 @@ expectTypeOf(never).toBe<IsWritableKeyOf<any, 'a'>>();
 expectTypeOf(never).toBe<IsWritableKeyOf<K, never>>();
 expectTypeOf(never).toBe<IsWritableKeyOf<any, never>>();
 expectTypeOf(never).toBe<IsWritableKeyOf<never, 'a'>>();
+
+// An empty key selection stays impossible even before its object type is known.
+function _readEmptyWritableKeys<Value extends object>(value: IsWritableKeyOf<Value, never>): never {
+	return value;
+}

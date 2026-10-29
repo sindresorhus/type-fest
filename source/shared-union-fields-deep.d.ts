@@ -29,6 +29,8 @@ Create a type with shared fields from a union of object types, deeply traversing
 
 Use the {@link SharedUnionFieldsDeepOptions `Options`} to specify the behavior for arrays.
 
+In a generic function, use concrete option values before relying on the array shape of the result. While any option is generic, TypeScript can read the result as if the default options were used.
+
 Use-cases:
 - You want a safe object type where each key exists in the union object.
 - You want to focus on the common fields of the union type and don't want to have to care about the other fields.

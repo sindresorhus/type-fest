@@ -86,3 +86,25 @@ writableMode({});
 writableMode(mixedWritableFields);
 // @ts-expect-error A wholly readonly object does not accept a writable mode argument.
 writableMode(immutableFields, 'writable');
+
+// Accessors use their setter availability, even when their read and write types differ.
+declare class ReadonlyAccessor {
+	get value(): string | undefined;
+}
+
+declare class WritableAccessor {
+	get value(): number;
+	set value(input: number | string);
+}
+
+declare class InheritedWritableAccessor extends WritableAccessor {}
+expectTypeOf<HasWritableKeys<ReadonlyAccessor>>().toBe<false>();
+expectTypeOf<HasWritableKeys<WritableAccessor>>().toBe<true>();
+expectTypeOf<HasWritableKeys<InheritedWritableAccessor>>().toBe<true>();
+
+declare const writableAccessor: WritableAccessor;
+writableAccessor.value = '42';
+writableAccessor.value = 42;
+expectTypeOf(writableAccessor.value).toBe<number>();
+// @ts-expect-error The setter accepts only numbers and strings.
+writableAccessor.value = true;

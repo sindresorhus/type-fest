@@ -87,3 +87,21 @@ expectTypeOf(test2).toBe<{readonly 'a': 1; 'b'?: 2} | {readonly 'c'?: 3}>();
 // Works with index signatures
 declare const test4: DistributedPick<{[k: string]: unknown; a?: number; b: string}, 'a' | 'b'>;
 expectTypeOf(test4).toBe<{a?: number; b: string}>();
+
+expectTypeOf<DistributedPick<any, 'value'>>().toBe<{value: any}>();
+expectTypeOf<DistributedPick<never, 'value'>>().toBe<never>();
+expectTypeOf<DistributedPick<unknown, never>>().toBe<{}>();
+
+declare const selectedSymbol: unique symbol;
+expectTypeOf<DistributedPick<{readonly [selectedSymbol]: number; extra: boolean}, typeof selectedSymbol>>().toBe<{readonly [selectedSymbol]: number}>();
+
+// A numeric enum member selects its declared key, not the whole `number` index signature.
+enum NumericField {
+	Zero,
+}
+
+expectTypeOf<keyof DistributedPick<{[key: number]: string; [NumericField.Zero]?: string}, NumericField.Zero>>().toBe<NumericField.Zero>();
+
+// An indeterminate key domain must not widen a finite selection or make it optional.
+expectTypeOf<DistributedPick<Record<any, {id: number}>, 'entry'>>().toBe<{entry: {id: number}}>();
+expectTypeOf<{}>().not.toBeAssignableTo<DistributedPick<Record<any, unknown>, 'entry'>>();

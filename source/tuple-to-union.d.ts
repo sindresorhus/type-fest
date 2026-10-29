@@ -23,12 +23,11 @@ type RequestBody = {
 };
 
 function verifyRequestBody(body: unknown): body is RequestBody {
-	const {deliverTo} = (body as any);
-	return typeof body === 'object' && body !== null && verifyDestination(deliverTo);
+	return typeof body === 'object' && body !== null && 'deliverTo' in body && verifyDestination(body.deliverTo);
 }
 ```
 
-Alternatively, you may use `typeof destinations[number]`. If `destinations` is a tuple, there is no difference. However if `destinations` is a string, the resulting type will the union of the characters in the string. Other types of `destinations` may result in a compile error. In comparison, TupleToUnion will return `never` if a tuple is not provided.
+Alternatively, you may use `typeof destinations[number]`. If `destinations` is a tuple or array, there is no difference. If `destinations` is a string, indexing it with `number` gives `string`. Other types of `destinations` may result in a compile error. In comparison, `TupleToUnion` returns `never` for inputs that are not tuples or arrays.
 
 @example
 ```

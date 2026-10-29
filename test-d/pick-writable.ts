@@ -154,3 +154,19 @@ type AllowsOnlyObjects = PickWritable<string>;
 type DoesNotAllowUnknown = PickWritable<unknown>;
 // @ts-expect-error
 type DoesNotAllowUndefined = PickWritable<undefined>;
+
+// Writable properties in a constraint can become readonly in a subtype and disappear from the selection.
+function _readConstrainedWritable<Entity extends {name: string}>(fields: PickWritable<Entity>) {
+	// @ts-expect-error The result need not contain name for every valid subtype.
+	expectTypeOf(fields.name);
+}
+
+function _readConstrainedOptionalWritable<Entity extends {name?: string}>(fields: PickWritable<Entity>) {
+	// @ts-expect-error Optional properties can also become readonly in a subtype.
+	expectTypeOf(fields.name);
+}
+
+// This subtype satisfies the constraints above but has no writable properties.
+type ReadonlyName = {readonly name: string};
+expectTypeOf<ReadonlyName>().toBeAssignableTo<{name: string}>();
+expectTypeOf<PickWritable<ReadonlyName>>().toBe<{}>();

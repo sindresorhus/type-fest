@@ -224,3 +224,11 @@ expectTypeOf(handlerWithThis).toBeAssignableTo<WritableDeep<((event: string) => 
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<WritableDeep<{readonly element: HTMLElement}>>().toBe<{element: HTMLElement}>();
+
+// A callable thenable's own metadata is transformed without changing its call signature.
+declare const writableCallableThenable: WritableDeep<(() => string) & PromiseLike<number> & {readonly metadata: {readonly name: string; readonly values: readonly number[]}}>;
+expectTypeOf(writableCallableThenable()).toBe<string>();
+expectTypeOf(writableCallableThenable.metadata.name).toBe<string>();
+expectTypeOf(writableCallableThenable.metadata.values).toBe<number[]>();
+writableCallableThenable.metadata.name = 'changed';
+writableCallableThenable.metadata.values.push(1);

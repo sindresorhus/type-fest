@@ -32,3 +32,17 @@ type PickedUnionMember = UnionMember<UnionType>;
 // We can't use `UnionType extends PickedUnionMember ? true : false` for testing here,
 // because that would always be `true` as `UnionType` extends both of its members individually.
 expectTypeOf<IsEqual<UnionType, PickedUnionMember>>().toBe<false>();
+
+// Selected object members preserve generic construction and shared-property reads.
+function constructSingleton<const Value>(value: Value): UnionMember<{value: Value}> {
+	return {value};
+}
+
+function _readSharedId<Value>(value: UnionMember<{id: Value} | {id: Value; active: true}>): Value {
+	return value.id;
+}
+
+const selectedPayload = constructSingleton({id: 'request', values: [1, 2]});
+expectTypeOf(selectedPayload.value).toBe<{readonly id: 'request'; readonly values: readonly [1, 2]}>();
+// @ts-expect-error A valid element still cannot overwrite a readonly inferred tuple.
+selectedPayload.value.values[0] = 1;

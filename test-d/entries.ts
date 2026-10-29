@@ -303,3 +303,26 @@ class NeverOptionalEntryModel {
 
 expectTypeOf<ObjectEntry<NeverOptionalEntryModel>>().toBe<['unused', undefined]>();
 expectTypeOf<Entry<{label?: string | undefined}>>().toBe<['label', string | undefined]>();
+
+// Set entries can be constructed from a generic item while retaining its inferred type.
+function createSetEntry<const Value>(value: Value): Entry<ReadonlySet<Value>> {
+	return [value, value];
+}
+
+const [genericSetKey, genericSetValue] = createSetEntry({id: 'entry', values: [1, 2]});
+expectTypeOf(genericSetKey.id).toBe<'entry'>();
+expectTypeOf(genericSetValue.values).toBe<readonly [1, 2]>();
+// @ts-expect-error A valid replacement cannot change a readonly inferred item field.
+genericSetValue.values = [1, 2];
+
+// A collection union keeps each entry correlated and each complete list tied to one collection.
+type MixedCollection = ReadonlyMap<string, number> | readonly [boolean, string];
+expectTypeOf<Entry<MixedCollection>>().toBe<[string, number] | [0, boolean] | [1, string]>();
+expectTypeOf<Entries<MixedCollection>>().toBe<Array<[string, number]> | Array<[0, boolean] | [1, string]>>();
+expectTypeOf<[['key', 1], [0, true]]>().not.toBeAssignableTo<Entries<MixedCollection>>();
+
+// Weak collections contribute no entries, but an empty enumerable collection still permits an empty list.
+type PossiblyWeakCollection = WeakMap<object, number> | WeakSet<object> | ReadonlyMap<object, string>;
+expectTypeOf<Entry<PossiblyWeakCollection>>().toBe<[object, string]>();
+expectTypeOf<Entries<PossiblyWeakCollection>>().toBe<Array<[object, string]>>();
+expectTypeOf<Entries<readonly [] | WeakSet<object>>>().toBe<never[]>();

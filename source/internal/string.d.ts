@@ -108,6 +108,7 @@ export type CasedString<
 	// `Exclude` distributes over the members of a union, so one member that is empty or holds a foreign character removes itself and the whole union is rejected. A branded member is matched too, because the brand does not stop it from extending the pattern.
 	? [Value] extends [Exclude<Value, '' | `${string}${Exclude<AsciiPunctuation, AllowedPunctuation>}${string}`>]
 		// The value is turned into a plain string, because a string enum member is not equal to the string that the transform returns.
+		// Unwrap unconditionally after the predicate so branded generics retain their primitive constraint.
 		? IsEqual<`${UnwrapBrand<Value>}`, CasedValue> extends true
 			? Value
 			: never

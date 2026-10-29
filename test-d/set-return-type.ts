@@ -67,3 +67,31 @@ expectTypeOf<SetReturnType<never, Date>>().toBe<never>();
 expectTypeOf<ReturnType<SetReturnType<any, Date>>>().toBe<Date>();
 // @ts-expect-error - The input must be a function.
 expectTypeOf<SetReturnType<unknown, Date>>();
+
+// Generic wrappers preserve the receiver and parameter tuple while replacing the result.
+function replaceCallbackResult<Receiver, Arguments extends unknown[], Result>(callback: (this: Receiver, ...arguments_: Arguments) => Result): SetReturnType<(this: Receiver, ...arguments_: Arguments) => boolean, Result> {
+	return callback;
+}
+
+function callReplacedCallback<Receiver, Arguments extends unknown[], Result>(callback: SetReturnType<(this: Receiver, ...arguments_: Arguments) => boolean, Result>, receiver: Receiver, ...arguments_: Arguments): Result {
+	return callback.call(receiver, ...arguments_);
+}
+
+declare const renderCallback: (this: {prefix: string}, value: number, suffix?: string) => {text: string};
+const replacedCallback = replaceCallbackResult(renderCallback);
+expectTypeOf(replacedCallback).toBe<(this: {prefix: string}, value: number, suffix?: string) => {text: string}>();
+expectTypeOf(callReplacedCallback(replacedCallback, {prefix: 'item-'}, 1)).toBe<{text: string}>();
+expectTypeOf(replacedCallback.call({prefix: 'item-'}, 1, '.json')).toBe<{text: string}>();
+// @ts-expect-error The original receiver remains required after the return type changes.
+replacedCallback.call({prefix: 1}, 1);
+// @ts-expect-error Replacing the return type does not make a required argument optional.
+replacedCallback.call({prefix: 'item-'});
+// @ts-expect-error Optional arguments keep their declared value type.
+replacedCallback.call({prefix: 'item-'}, 1, false);
+
+// Readonly generic parameter lists remain usable by wrappers that preserve a receiver.
+function _constructReadonlyCallback<Receiver, Arguments extends readonly unknown[], Result>(
+	callback: (this: Receiver, ...arguments_: Arguments) => Result,
+): SetReturnType<(this: Receiver, ...arguments_: Arguments) => boolean, Result> {
+	return callback;
+}

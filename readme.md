@@ -297,7 +297,10 @@ Click the type names for complete docs.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Words`](source/words.d.ts) - Split a string similar to Lodash's `_.words()` function.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
-- [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range, just like `String#slice()`.
+- [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range.
+
+  Note: Slicing supplementary Unicode characters, such as emoji, depends on the TypeScript compiler and is not guaranteed to match JavaScript’s UTF-16 indexing in `String#slice()`.
+
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
 - [`RemovePrefix`](source/remove-prefix.d.ts) - Remove the specified prefix from the start of a string.
 - [`RemoveSuffix`](source/remove-suffix.d.ts) - Remove the specified suffix from the end of a string.

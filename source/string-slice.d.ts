@@ -4,9 +4,11 @@ import type {ArraySlice} from './array-slice.d.ts';
 import type {StringToArray} from './string-to-array.d.ts';
 
 /**
-Returns a string slice of a given range, just like `String#slice()`.
+Returns a string slice of a given range.
 
-@see {ArraySlice}
+Note: Slicing supplementary Unicode characters, such as emoji, depends on the TypeScript compiler and is not guaranteed to match JavaScript’s UTF-16 indexing in `String#slice()`.
+
+@see {@link ArraySlice}
 
 @example
 ```

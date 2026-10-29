@@ -100,3 +100,22 @@ function readEvent<Value>(event: TaggedUnion<'kind', {data?: {value: Value}; emp
 
 expectTypeOf(constructEvent('text' as const)).toBe<({kind: 'data'} & {value: 'text'}) | {kind: 'empty'}>();
 expectTypeOf(readEvent({kind: 'data', value: 42 as const})).toBe<42 | undefined>();
+
+// Generic event factories must remain constructible without casting the result.
+function createEvent<Members extends Record<string, Record<string, unknown>>, Name extends keyof Members>(kind: Name, payload: Members[Name]): TaggedUnion<'kind', Members> {
+	return {kind, ...payload};
+}
+
+type FactoryMembers = {data: {value: string}; closed: {code: number}};
+expectTypeOf(createEvent<FactoryMembers, 'data'>('data', {value: 'ready'})).toBe<TaggedUnion<'kind', FactoryMembers>>();
+// @ts-expect-error The payload must belong to the selected event name.
+createEvent<FactoryMembers, 'data'>('data', {code: 1});
+
+// A single event can have alternative payload shapes while other event names stay distinct.
+type PayloadAlternatives = TaggedUnion<'kind', {data: {value: string} | {error: Error}; closed: {code: number}}>;
+expectTypeOf<Extract<PayloadAlternatives, {kind: 'data'}>>()
+	.toBe<({kind: 'data'} & {value: string}) | ({kind: 'data'} & {error: Error})>();
+({kind: 'data', value: 'ready'}) satisfies PayloadAlternatives;
+({kind: 'data', error: new Error('failed')}) satisfies PayloadAlternatives;
+expectTypeOf<{kind: 'closed'; value: string}>().not.toBeAssignableTo<PayloadAlternatives>();
+expectTypeOf<{kind: 'data'; code: number}>().not.toBeAssignableTo<PayloadAlternatives>();

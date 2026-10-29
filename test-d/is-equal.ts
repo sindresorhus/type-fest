@@ -94,3 +94,20 @@ type TestAssignability<T> = Assignability<T, T, true>;
 expectTypeOf<IsEqual<{a: 0} & {b: 0}, {a: 0; b: 0}>>().toBe<false>();
 expectTypeOf<IsEqual<Simplify<{a: 0} & {b: 0}>, Simplify<{a: 0; b: 0}>>>().toBe<true>();
 expectTypeOf<IsEqual<SimplifyDeep<{x: {a: 0} & {b: 0}}>, SimplifyDeep<{x: {a: 0; b: 0}}>>>().toBe<true>();
+
+// Inference through a generic callback resolves equality with the enclosing generic value (#1305).
+type FieldProps<Value> = {
+	onChange: <NextValue>(value: NextValue, sameType: IsEqual<Value, NextValue>) => void;
+};
+
+function _notifyChange<Value>(value: Value, field: FieldProps<Value>) {
+	field.onChange(value, true);
+	// @ts-expect-error Identical inferred types cannot be reported as unequal.
+	field.onChange(value, false);
+}
+
+declare const stringField: FieldProps<string>;
+stringField.onChange('value', true);
+stringField.onChange(1, false);
+// @ts-expect-error A number is not equal to the field's string type.
+stringField.onChange(1, true);

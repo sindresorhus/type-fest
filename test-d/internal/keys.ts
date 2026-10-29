@@ -167,6 +167,15 @@ expectTypeOf<SelectedKeys<{[key: string]: unknown; value: string}, LiteralUnion<
 expectTypeOf<SelectedKeys<{a: string}, never>>().toBe<never>();
 expectTypeOf<SelectedKeys<{a: string}, any>>().toBe<any>();
 
+expectTypeOf<SelectedKeys<unknown, 'value'>>().toBe<never>();
+expectTypeOf<SelectedKeys<never, never>>().toBe<never>();
+expectTypeOf<SelectedKeys<any, 'value'>>().toBe<'value'>();
+
+// No selector can match an owner field, including before the owner is known.
+function _readEmptySelectedKeys<Owner>(value: SelectedKeys<Owner, never>): never {
+	return value;
+}
+
 // A numeric enum key does not cover the whole numeric index domain.
 expectTypeOf<KeysExcept<{[key: number]: string; 1: string}, SelectedIndex.One>>().toBe<number>();
 

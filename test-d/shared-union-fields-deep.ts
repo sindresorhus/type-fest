@@ -297,3 +297,13 @@ function _readIndexedNested<Extra>(value: SharedUnionFieldsDeep<{[key: string]: 
 function _readUnchangedArray<Value, Options extends {recurseIntoArrays: false}>(value: SharedUnionFieldsDeep<Value[], Options>): Value[] {
 	return value;
 }
+
+// Both recursion strategies preserve an object value, but only a concrete disabled flag keeps the complete nested union.
+type GenericRecursionInput = Array<{data: {text: string} | {count: number}}>;
+function _readGenericRecursionData<Recurse extends boolean>(value: SharedUnionFieldsDeep<GenericRecursionInput, {recurseIntoArrays: Recurse}>): object {
+	return value[0]!.data;
+}
+
+expectTypeOf<SharedUnionFieldsDeep<GenericRecursionInput, {recurseIntoArrays: true}>>().toBe<Array<{data: {}}>>();
+expectTypeOf<SharedUnionFieldsDeep<GenericRecursionInput, {recurseIntoArrays: false}>>().toBe<GenericRecursionInput>();
+expectTypeOf<SharedUnionFieldsDeep<GenericRecursionInput, {recurseIntoArrays: true}>>().not.toBeAssignableTo<GenericRecursionInput>();

@@ -36,3 +36,20 @@ function valueOfGeneric<ObjectType extends object, Key extends keyof ObjectType>
 function valueOfGenericConstraint<ObjectType extends {a: number}>(object: ObjectType): ValueOf<ObjectType, 'a'> {
 	return object.a;
 }
+
+// Generic indexed reads stay usable in both directions.
+function _readSelectedValue<ObjectType extends object, Key extends keyof ObjectType>(selected: ValueOf<ObjectType, Key>): ObjectType[Key] {
+	return selected;
+}
+
+// A large union stays within the instantiation limit.
+type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type MemberName = `${0 | 1 | 2 | 3 | 4}${Digit}`;
+type LargeUnion = {[Member in MemberName]: Record<`${Member}_${Digit}${0 | 1 | 2 | 3 | 4}`, Member>}[MemberName];
+expectTypeOf<ValueOf<LargeUnion>>().toBe<MemberName>();
+
+expectTypeOf<ValueOf<any>>().toBe<any>();
+expectTypeOf<ValueOf<never>>().toBe<never>();
+expectTypeOf<ValueOf<unknown>>().toBe<never>();
+// @ts-expect-error A selected key must belong to at least one union member.
+type MissingValueKey = ValueOf<{id: number} | {name: string}, 'missing'>;

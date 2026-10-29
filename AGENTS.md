@@ -55,7 +55,7 @@ export {};
 
 Type params: `Value`, `Target`, `Item`, `Length`, `Element`, `Key` (not `T`, `U`, `V`, `K`)
 Docs: No `*` prefix. First line → readme. Include use-cases, examples, `@category`.
-Link other types with `{@link Simplify}`, and `import type` the linked type with a ``// For `@link` `` comment so the link resolves in editors. The `type-fest/jsdoc-link-imports` lint rule enforces this, and `npx xo --fix` adds the imports.
+Link other types with `{@link Simplify}`, and `import type` the linked type with a ``// For `@link` `` comment so the link resolves in editors. The `type-fest/jsdoc-link-imports` lint rule enforces this, and `npx xo --fix` adds the imports, except in a file that has no imports and starts with a line comment (for example a triple-slash directive). Add the import by hand there.
 
 ## Testing
 
@@ -122,6 +122,14 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 - Descriptive names > brevity
 - No unrelated changes
 - Do not add entries to the readme "Declined types" section. The issue or pull request thread keeps the reason.
+
+## Unsupported
+
+These cases cost performance and consistency for few users. Do not add handling for them. Document them as limitations instead.
+
+- Key matching beyond TypeScript's own rules (`keyof`, `Pick`, `Omit`): enum fields selected by plain strings, noncanonical numeric strings (`'00'`, `'1e3'`), and reading every union member at the keys of all members. The one supported alias is `0` vs `'0'`. Use `ExactKey` from `source/internal/keys.d.ts` for it. `KeySelector` also maps enum members to their values, and some existing types match more (for example through `KeyAliases` or `NormalizedKeys`). Do not grow that or extend it to other types, and do not add another matcher.
+- A union of option values (for example `{recurseIntoArrays: boolean}`), a union of option objects, or a `never` option value. Do not compute a union of strategies. The result uses one strategy, usually the default.
+- Extreme edge cases that real code does not hit, such as exponent-notation numbers (`1e21`), huge lengths, or fractional indexes. Handling one usually breaks another.
 
 ## Troubleshooting
 

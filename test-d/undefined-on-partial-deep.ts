@@ -167,3 +167,33 @@ expectTypeOf(sharedArrayBuffer).toBe<{a: SharedArrayBuffer}>();
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<UndefinedOnPartialDeep<{element?: HTMLElement}>>().toBe<{element?: HTMLElement | undefined}>();
+
+// Map values are transformed while generic keys retain their original type.
+function mapWithUndefinedValue<const Key>(key: Key): UndefinedOnPartialDeep<Map<Key, {value?: number}>> {
+	return new Map([[key, {value: undefined}]]);
+}
+
+function _readUndefinedAllowedMapKey<Key>(value: UndefinedOnPartialDeep<ReadonlyMap<Key, {value?: number}>>): Key | undefined {
+	return value.keys().next().value;
+}
+
+function _weakMapWithUndefinedValue<Key extends object>(key: Key): UndefinedOnPartialDeep<WeakMap<Key, {value?: number}>> {
+	return new WeakMap([[key, {value: undefined}]]);
+}
+
+const undefinedAllowedMap = mapWithUndefinedValue({id: 'row'});
+expectTypeOf(undefinedAllowedMap.keys().next().value).toBe<{readonly id: 'row'} | undefined>();
+
+// Keys identify existing map entries; only values are recursively widened.
+type OptionalEntryKey = {readonly id: string | undefined; label?: string};
+type OptionalEntryValue = {readonly count?: number};
+type WidenedEntryValue = {readonly count?: number | undefined};
+expectTypeOf<UndefinedOnPartialDeep<Map<OptionalEntryKey, Set<OptionalEntryValue>>>>().toBe<Map<OptionalEntryKey, Set<WidenedEntryValue>>>();
+expectTypeOf<UndefinedOnPartialDeep<ReadonlyMap<OptionalEntryKey, readonly OptionalEntryValue[]>>>()
+	.toBe<ReadonlyMap<OptionalEntryKey, readonly WidenedEntryValue[]>>();
+expectTypeOf<UndefinedOnPartialDeep<WeakMap<OptionalEntryKey, OptionalEntryValue>>>().toBe<WeakMap<OptionalEntryKey, WidenedEntryValue>>();
+
+declare const widenedEntries: UndefinedOnPartialDeep<Map<OptionalEntryKey, OptionalEntryValue>>;
+widenedEntries.set({id: undefined}, {count: undefined});
+// @ts-expect-error Optional map-key fields do not gain explicit undefined.
+widenedEntries.get({id: 'row', label: undefined});

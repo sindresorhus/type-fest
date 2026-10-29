@@ -142,7 +142,7 @@ export type IsArrayOfUnknownLength<Array_ extends UnknownArray> = number extends
 	: false;
 
 /**
-Transforms a tuple type by replacing it's rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.
+Transforms a tuple type by replacing its rest element with a single element that has the same type as the rest element, while keeping all the non-rest elements intact.
 
 @example
 ```

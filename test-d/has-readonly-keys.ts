@@ -80,3 +80,22 @@ readonlyMode({});
 readonlyMode(mixedReadonlyFields);
 // @ts-expect-error A plain mutable object does not accept a readonly mode argument.
 readonlyMode({name: 'Ada'}, 'readonly');
+
+// Accessors use their setter availability, even when their read and write types differ.
+declare class ReadonlyAccessor {
+	get value(): string | undefined;
+}
+
+declare class WritableAccessor {
+	get value(): number;
+	set value(input: number | string);
+}
+
+declare class InheritedWritableAccessor extends WritableAccessor {}
+expectTypeOf<HasReadonlyKeys<ReadonlyAccessor>>().toBe<true>();
+expectTypeOf<HasReadonlyKeys<WritableAccessor>>().toBe<false>();
+expectTypeOf<HasReadonlyKeys<InheritedWritableAccessor>>().toBe<false>();
+
+declare const readonlyAccessor: ReadonlyAccessor;
+// @ts-expect-error A getter without a setter cannot be assigned.
+readonlyAccessor.value = 'next';

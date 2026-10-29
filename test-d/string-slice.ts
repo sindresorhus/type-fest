@@ -88,3 +88,17 @@ declare const longSliceInput: LongCharacterText;
 const inferredLongSlice = sliceText(longSliceInput, 599, 602);
 expectTypeOf(inferredLongSlice).toBe<'aXb'>();
 expectTypeOf(inferredLongSlice).not.toBeAssignableTo<'aaa'>();
+
+// Slicing preserves combining marks and line endings without normalizing the text.
+expectTypeOf<StringSlice<'cafe\u{301}', -1>>().toBe<'\u{301}'>();
+expectTypeOf<StringSlice<'cafe\u{301}', 3, 5>>().toBe<'e\u{301}'>();
+expectTypeOf<StringSlice<'a\r\nb', 1, 3>>().toBe<'\r\n'>();
+expectTypeOf<StringSlice<'日本語', -2, -1>>().toBe<'本'>();
+
+// Enum offsets retain exact inference through the array-slicing implementation.
+enum TextOffset {
+	ContentStart = 2,
+	ContentEnd = -1,
+}
+expectTypeOf(sliceText('xxpayload!', TextOffset.ContentStart, TextOffset.ContentEnd)).toBe<'payload'>();
+expectTypeOf<StringSlice<'xxpayload!', TextOffset.ContentStart, TextOffset.ContentStart>>().toBe<''>();
