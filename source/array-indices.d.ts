@@ -1,4 +1,5 @@
 import type {ArrayValues} from './array-values.d.ts'; // For `@link`
+import type {IndexTuple} from './index-tuple.d.ts'; // For `@link`
 
 /**
 Provides valid indices for a constant array or tuple.
@@ -18,6 +19,7 @@ const getWeekdayName = (day: Weekday): WeekdayName => weekdays[day];
 ```
 
 @see {@link ArrayValues}
+@see {@link IndexTuple} for a tuple of the indices
 
 @category Array
 */

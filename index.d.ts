@@ -177,6 +177,7 @@ export type {IsUnknown} from './source/is-unknown.d.ts';
 export type {IfUnknown} from './source/if-unknown.d.ts';
 export type {IsTuple, IsTupleOptions} from './source/is-tuple.d.ts';
 export type {ArrayIndices} from './source/array-indices.d.ts';
+export type {IndexTuple} from './source/index-tuple.d.ts';
 export type {ArrayValues} from './source/array-values.d.ts';
 export type {ArraySlice} from './source/array-slice.d.ts';
 export type {ArraySplice} from './source/array-splice.d.ts';

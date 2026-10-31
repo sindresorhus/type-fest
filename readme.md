@@ -330,6 +330,7 @@ Click the type names for complete docs.
 - [`ArrayToRecord`](source/array-to-record.d.ts) - Transforms an array of objects into a record keyed by one of their properties.
 - [`TupleToEnum`](source/tuple-to-enum.d.ts) - Create an enum-like object type from a tuple of property keys, where each key maps to itself, or to its index with the `numeric` option.
 - [`TupleOf`](source/tuple-of.d.ts) - Create a tuple type of the specified length with elements of the specified type.
+- [`IndexTuple`](source/index-tuple.d.ts) - Create a tuple type of the indices of a constant array or tuple.
 - [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
 - [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extract the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
 - [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
