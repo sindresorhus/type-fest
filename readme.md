@@ -448,6 +448,7 @@ Click the type names for complete docs.
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 - `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
+- `KeysOfType`, `KeysWithType`, `KeysMatching` - See [`ConditionalKeys`](source/conditional-keys.d.ts)
 - `OmitNever` - See [`PickNonNever`](source/pick-non-never.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)

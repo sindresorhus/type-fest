@@ -49,6 +49,28 @@ type NumberValueIndices = ConditionalKeys<[string, number?, string?], number | u
 //=> '1'
 ```
 
+Note: To select keys by their name instead of by their value, use the built-in `Extract` type with `keyof`, and `Exclude` to drop the matching keys, as shown below.
+
+@example
+```
+import type {ConditionalKeys} from 'type-fest';
+
+type Settings = {
+	'data-user': string;
+	'data-id': number;
+	title: string;
+};
+
+type StringValueKeys = ConditionalKeys<Settings, string>;
+//=> 'data-user' | 'title'
+
+type DataKeys = Extract<keyof Settings, `data-${string}`>;
+//=> 'data-user' | 'data-id'
+
+type OtherKeys = Exclude<keyof Settings, `data-${string}`>;
+//=> 'title'
+```
+
 @category Object
 */
 export type ConditionalKeys<Base, Condition> = (Base extends UnknownArray ? TupleToObject<Base> : Base) extends infer _Base // Remove non-numeric keys from arrays
