@@ -169,6 +169,7 @@ Click the type names for complete docs.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) it belongs to, or `never` if it's not a primitive.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
+- [`SubstituteDeep`](source/substitute-deep.d.ts) - Recursively replaces every occurrence of a type in another type.
 - [`Stringified`](source/stringified.d.ts) - Create a type with the values of the given type changed to `string` type.
 - [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
 - [`MapKey`](source/map-key.d.ts) - Get the key type of a `Map`, `ReadonlyMap`, or `WeakMap`.
@@ -473,6 +474,7 @@ Click the type names for complete docs.
 - `Predicate`, `GuardType`, `NarrowedType` - See [`GuardedType`](source/guarded-type.d.ts)
 - `PositiveIntegerString`, `DigitString` - See [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts)
 - `KeyBy`, `IndexBy`, `RecordOf` - See [`ArrayToRecord`](source/array-to-record.d.ts)
+- `ReplaceDeep`, `DeepReplace`, `DeepSubstitute` - See [`SubstituteDeep`](source/substitute-deep.d.ts)
 
 ## Tips
 

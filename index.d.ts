@@ -108,6 +108,7 @@ export type {StructuredCloneable} from './source/structured-cloneable.d.ts';
 export type {Schema, SchemaOptions} from './source/schema.d.ts';
 export type {LiteralToPrimitive} from './source/literal-to-primitive.d.ts';
 export type {LiteralToPrimitiveDeep} from './source/literal-to-primitive-deep.d.ts';
+export type {SubstituteDeep} from './source/substitute-deep.d.ts';
 export type {
 	PositiveInfinity,
 	NegativeInfinity,
