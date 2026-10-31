@@ -254,6 +254,7 @@ Click the type names for complete docs.
 - [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.
 - [`IsOptional`](source/is-optional.d.ts) - Returns a boolean for whether the given type includes `undefined`.
 - [`IsNullable`](source/is-nullable.d.ts) - Returns a boolean for whether the given type includes `null`.
+- [`IsUnionMember`](source/is-union-member.d.ts) - Returns a boolean for whether the given union type includes the given member.
 - [`IsOptionalKeyOf`](source/is-optional-key-of.d.ts) - Returns a boolean for whether the given key is an optional key of type.
 - [`IsRequiredKeyOf`](source/is-required-key-of.d.ts) - Returns a boolean for whether the given key is a required key of type.
 - [`IsReadonlyKeyOf`](source/is-readonly-key-of.d.ts) - Returns a boolean for whether the given key is a readonly key of type.
@@ -465,6 +466,7 @@ Click the type names for complete docs.
 - `Falsey` - See [`Falsy`](source/falsy.d.ts)
 - `NonFalsy`, `NotFalsey` - See [`Truthy`](source/truthy.d.ts)
 - `IsBivariant` - See [`IsMutuallyAssignable`](source/is-mutually-assignable.d.ts)
+- `MemberOfUnion`, `IsInUnion` - See [`IsUnionMember`](source/is-union-member.d.ts)
 - `Predicate`, `GuardType`, `NarrowedType` - See [`GuardedType`](source/guarded-type.d.ts)
 - `PositiveIntegerString`, `DigitString` - See [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts)
 

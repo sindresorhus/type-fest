@@ -210,6 +210,7 @@ export type {IsLowercase} from './source/is-lowercase.d.ts';
 export type {IsUppercase} from './source/is-uppercase.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
 export type {IsNullable} from './source/is-nullable.d.ts';
+export type {IsUnionMember} from './source/is-union-member.d.ts';
 export type {TupleOf} from './source/tuple-of.d.ts';
 export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
 export type {ArrayReverse} from './source/array-reverse.d.ts';
