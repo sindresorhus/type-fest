@@ -287,8 +287,11 @@ expectTypeOf<{rows: [{}]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows,
 expectTypeOf<{rows: [{}]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays?: boolean}>>();
 expectTypeOf<{rows: [undefined]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays: true}>>();
 // A non-literal recursion flag resolves like the default.
-expectTypeOf<PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: boolean}>>().toBe<PartialDeep<{a: Array<{b: string}>}>>();
-expectTypeOf<PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: boolean}>>().not.toBe<PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: true}>>();
+type BooleanRecursionMode = PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: boolean}>;
+type TrueRecursionMode = PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: true}>;
+expectTypeOf<BooleanRecursionMode>().toBe<PartialDeep<{a: Array<{b: string}>}>>();
+// TypeScript 7.1 reports two `PartialDeep` instantiations that differ only in their options as identical, so compare the recursed member instead.
+expectTypeOf<BooleanRecursionMode['a']>().not.toBe<TrueRecursionMode['a']>();
 expectTypeOf<PartialDeep<RecursionModeRows, any>>().toBe<Partial<RecursionModeRows>>();
 expectTypeOf<PartialDeep<RecursionModeRows, never>>().toBe<Partial<RecursionModeRows>>();
 

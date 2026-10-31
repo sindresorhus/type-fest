@@ -147,8 +147,11 @@ function _genericAllResult<Values extends UnknownArray, Target, Options extends 
 }
 
 declare function numericList<const Values extends UnknownArray>(values: Values & (AllExtend<Values, number> extends true ? unknown : never)): Values;
-expectTypeOf(numericList([1, 2, 3])).toBe<[1, 2, 3]>();
-expectTypeOf(numericList([])).toBe<[]>();
+// Binding the call to a variable drops the contextual type, which earlier versions used to widen the `const` tuple to mutable.
+const numericValues = numericList([1, 2, 3]);
+expectTypeOf(numericValues).toBe<readonly [1, 2, 3]>();
+const noNumericValues = numericList([]);
+expectTypeOf(noNumericValues).toBe<readonly []>();
 // @ts-expect-error Every element must be numeric.
 numericList([1, '2']);
 

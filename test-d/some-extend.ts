@@ -149,7 +149,9 @@ function _genericSomeResult<Values extends UnknownArray, Target, Options extends
 }
 
 declare function containsString<const Values extends UnknownArray>(values: Values & (SomeExtend<Values, string> extends true ? unknown : never)): Values;
-expectTypeOf(containsString([1, 'ready'])).toBe<[1, 'ready']>();
+// Binding the call to a variable drops the contextual type, which earlier versions used to widen the `const` tuple to mutable.
+const readyValues = containsString([1, 'ready']);
+expectTypeOf(readyValues).toBe<readonly [1, 'ready']>();
 // @ts-expect-error At least one element must be a string.
 containsString([1, 2]);
 // @ts-expect-error An empty tuple has no matching element.
