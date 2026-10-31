@@ -154,6 +154,7 @@ export type {ExcludeRestElement} from './source/exclude-rest-element.d.ts';
 export type {IsInteger} from './source/is-integer.d.ts';
 export type {IsFloat} from './source/is-float.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
+export type {ArrayToRecord} from './source/array-to-record.d.ts';
 export type {TupleToEnum, TupleToEnumOptions} from './source/tuple-to-enum.d.ts';
 export type {TupleToUnion} from './source/tuple-to-union.d.ts';
 export type {UnionToTuple} from './source/union-to-tuple.d.ts';

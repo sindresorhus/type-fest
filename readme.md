@@ -326,6 +326,7 @@ Click the type names for complete docs.
 - [`UnionToEnum`](source/union-to-enum.d.ts) - Create an enum-like object type from a union of property keys, where each key maps to itself.
 - [`LiteralList`](source/literal-list.d.ts) - Enforces that a tuple contains exactly the members of a union type, with no duplicates or omissions.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
+- [`ArrayToRecord`](source/array-to-record.d.ts) - Transforms an array of objects into a record keyed by one of their properties.
 - [`TupleToEnum`](source/tuple-to-enum.d.ts) - Create an enum-like object type from a tuple of property keys, where each key maps to itself, or to its index with the `numeric` option.
 - [`TupleOf`](source/tuple-of.d.ts) - Create a tuple type of the specified length with elements of the specified type.
 - [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
@@ -471,6 +472,7 @@ Click the type names for complete docs.
 - `MemberOfUnion`, `IsInUnion` - See [`IsUnionMember`](source/is-union-member.d.ts)
 - `Predicate`, `GuardType`, `NarrowedType` - See [`GuardedType`](source/guarded-type.d.ts)
 - `PositiveIntegerString`, `DigitString` - See [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts)
+- `KeyBy`, `IndexBy`, `RecordOf` - See [`ArrayToRecord`](source/array-to-record.d.ts)
 
 ## Tips
 
