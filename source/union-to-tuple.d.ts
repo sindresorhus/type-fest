@@ -1,5 +1,6 @@
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {LiteralList} from './literal-list.d.ts'; // For `@link`
 import type {TupleToUnion} from './tuple-to-union.d.ts'; // For `@link`
 import type {UnionMember} from './union-member.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -9,7 +10,7 @@ Convert a union type into an unordered tuple type of its elements.
 
 "Unordered" means the elements of the tuple are not guaranteed to be in the same order as in the union type. The arrangement can appear random and may change at any time.
 
-Because of this, it cannot be used to make sure a hand-written array lists every member of the union. For that, define the array first and derive the union with {@link TupleToUnion}, or list the members as object keys with `satisfies Record<Union, true>` and use `Object.keys()`.
+Because of this, it cannot be used to make sure a hand-written array lists every member of the union. For that, check the array with {@link LiteralList}, define the array first and derive the union with {@link TupleToUnion}, or list the members as object keys with `satisfies Record<Union, true>` and use `Object.keys()`.
 
 This can be useful when you have objects with a finite set of keys and want a type defining only the allowed keys, but do not want to repeat yourself.
 
