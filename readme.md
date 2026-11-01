@@ -210,6 +210,7 @@ Click the type names for complete docs.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`OptionalPaths`](source/optional-paths.d.ts) - Get a union of all paths to optional properties in the given object.
 - [`ParsePath`](source/parse-path.d.ts) - Convert a path string into a tuple of its keys, with array indices as numbers.
+- [`PathParameters`](source/path-parameters.d.ts) - Extract named parameters from a URL path pattern.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
 - [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 - [`AllUnionFields`](source/all-union-fields.d.ts) - Create a type with all fields from a union of object types.

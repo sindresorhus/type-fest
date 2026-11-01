@@ -192,6 +192,7 @@ export type {SetFieldType, SetFieldTypeOptions} from './source/set-field-type.d.
 export type {Paths, PathsOptions} from './source/paths.d.ts';
 export type {OptionalPaths, OptionalPathsOptions} from './source/optional-paths.d.ts';
 export type {ParsePath} from './source/parse-path.d.ts';
+export type {PathParameters} from './source/path-parameters.d.ts';
 export type {AllUnionFields} from './source/all-union-fields.d.ts';
 export type {SharedUnionFields} from './source/shared-union-fields.d.ts';
 export type {SharedUnionFieldsDeep, SharedUnionFieldsDeepOptions} from './source/shared-union-fields-deep.d.ts';
