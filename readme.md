@@ -182,6 +182,7 @@ Click the type names for complete docs.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
 - [`AsExtendable`](source/as-extendable.d.ts) - Allow any object type to be used in the `extends` clause of an interface or the `implements` clause of a class, which otherwise only accept a type name.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.
+- [`SetProperty`](source/set-property.d.ts) - Set a deeply-nested property on an object using a key path, like [Lodash's `.set()`](https://lodash.com/docs#set) function.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
@@ -478,6 +479,7 @@ Click the type names for complete docs.
 - `PositiveIntegerString`, `DigitString` - See [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts)
 - `KeyBy`, `IndexBy`, `RecordOf` - See [`ArrayToRecord`](source/array-to-record.d.ts)
 - `ReplaceDeep`, `DeepReplace`, `DeepSubstitute` - See [`SubstituteDeep`](source/substitute-deep.d.ts)
+- `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue` - See [`SetProperty`](source/set-property.d.ts)
 
 ## Tips
 

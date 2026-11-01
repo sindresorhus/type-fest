@@ -211,6 +211,9 @@ expectTypeOf<Get<WithVariadicTuple, 't.2'>>().toBe<1 | [2, {a: string}] | {b: nu
 expectTypeOf<Get<WithVariadicTuple, 't.2.b', NonStrict>>().toBe<number | undefined>();
 expectTypeOf<Get<{tuple: [string, ...Array<{z: number}>]}, 'tuple.0', NonStrict>>().toBe<string>();
 expectTypeOf<Get<{tuple: [string, ...Array<{z: number}>]}, 'tuple.1', NonStrict>>().toBe<string | {z: number}>();
+expectTypeOf<Get<[string?, ...number[]], '0'>>().toBe<string | undefined>();
+// A position after the fixed prefix can hold either a rest element or the fixed suffix.
+expectTypeOf<Get<[string, ...number[], boolean], '1'>>().toBe<string | number | boolean | undefined>();
 
 // A number index signature covers every numeric key, so `'0' extends keyof` is false for a subject that declares `0` outright, and reading it must still answer the declared member type, like TypeScript's own indexed access.
 type WithNumberIndexAndMember = {[k: number]: string; 0: 'x'};
@@ -218,6 +221,13 @@ type WithNumberIndexAndMember = {[k: number]: string; 0: 'x'};
 expectTypeOf<Get<WithNumberIndexAndMember, '0', NonStrict>>().toBe<'x'>();
 expectTypeOf<Get<WithNumberIndexAndMember, '0'>>().toBe<'x'>();
 expectTypeOf<Get<WithNumberIndexAndMember, '1', NonStrict>>().toBe<string>();
+
+// Reading uses the most specific index signature, including when signatures overlap.
+type WithOverlappingIndexSignatures = {[key: string]: string | number; [key: number]: number};
+expectTypeOf<Get<WithOverlappingIndexSignatures, '0', NonStrict>>().toBe<number>();
+expectTypeOf<Get<WithOverlappingIndexSignatures, '0'>>().toBe<number | undefined>();
+expectTypeOf<Get<{[key: `data-${string}`]: number}, 'data-id', NonStrict>>().toBe<number>();
+expectTypeOf<Get<{'data-name': string}, `data-${string}`>>().toBe<unknown>();
 
 // A declared member stays precise even when the number index signature also has an array-like `length`.
 type WithArrayLikeIndexAndMember = WithNumberIndexAndMember & {length: number};
