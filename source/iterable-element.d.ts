@@ -1,3 +1,5 @@
+import type {ArrayElement} from './array-element.d.ts'; // For `@link`
+
 /**
 Get the element type of an `Iterable`/`AsyncIterable`. For example, `Array`, `Set`, `Map`, generator, stream, etc.
 
@@ -53,6 +55,8 @@ const fruits = new Set(['🍎', '🍌', '🍉'] as const);
 type Fruit = IterableElement<typeof fruits>;
 //=> '🍎' | '🍌' | '🍉'
 ```
+
+@see {@link ArrayElement} - For the element type of an array or tuple.
 
 @category Iterable
 */

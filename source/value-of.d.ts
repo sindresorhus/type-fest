@@ -1,4 +1,6 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {ArrayValues} from './array-values.d.ts'; // For `@link`
+import type {IterableElement} from './iterable-element.d.ts'; // For `@link`
 
 /**
 Create a union of the given object's values, and optionally specify which keys to get the values from.
@@ -18,6 +20,11 @@ type B = ValueOf<{id: number; name: string; active: boolean}, 'name'>;
 type C = ValueOf<{id: number; name: string; active: boolean}, 'id' | 'name'>;
 //=> string | number
 ```
+
+This type is only for objects. Reading an array with it gives its values mixed with the types of its methods, so use {@link ArrayValues} for the values of an array or tuple, and {@link IterableElement} for the element type of an `Iterable`, like `Set`, `Map`, and typed arrays.
+
+@see {@link ArrayValues}
+@see {@link IterableElement}
 
 @category Object
 */
