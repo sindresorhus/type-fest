@@ -479,7 +479,7 @@ Click the type names for complete docs.
 - `Predicate`, `GuardType`, `NarrowedType` - See [`GuardedType`](source/guarded-type.d.ts)
 - `PositiveIntegerString`, `DigitString` - See [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts)
 - `KeyBy`, `IndexBy`, `RecordOf` - See [`ArrayToRecord`](source/array-to-record.d.ts)
-- `ReplaceDeep`, `DeepReplace`, `DeepSubstitute` - See [`SubstituteDeep`](source/substitute-deep.d.ts)
+- `ReplaceDeep`, `DeepReplace`, `DeepSubstitute`, `NullToUndefined`, `UndefinedToNull` - See [`SubstituteDeep`](source/substitute-deep.d.ts)
 - `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue` - See [`SetProperty`](source/set-property.d.ts)
 
 ## Tips

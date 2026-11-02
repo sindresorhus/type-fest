@@ -9,7 +9,7 @@ import type {Tagged} from './tagged.d.ts'; // For `@link`
 /**
 Recursively replaces every occurrence of a type in another type.
 
-Matching uses assignability: a `Find` of `string` also matches `'literal'`, but not the other way around. Unions are distributed, so `SubstituteDeep<string | undefined, undefined, null>` is `string | null`. The input is checked before its members, so a `Find` of `object` replaces whole objects. Replacements are not traversed. A `Find` of `any` or `unknown` matches everything except `any` and `never`.
+Matching uses assignability: a `Find` of `string` also matches `'literal'`, but not the other way around. Unions are distributed, so `SubstituteDeep<string | undefined, undefined, null>` is `string | null`, and `SubstituteDeep<string | null, null, undefined>` is `string | undefined`. The input is checked before its members, so a `Find` of `object` replaces whole objects. Replacements are not traversed. A `Find` of `any` or `unknown` matches everything except `any` and `never`.
 
 Optional and `readonly` modifiers are preserved for objects, arrays, and tuples. To require every key and turn absent values into `null`, replace `undefined` with `null` before applying {@link RequiredDeep}. Making keys required first can discard their implicit `undefined`.
 
@@ -17,6 +17,7 @@ Single-value built-ins, such as `Date`, `RegExp`, typed arrays, and DOM nodes, a
 
 Use-cases:
 - Converting `undefined` to `null` in models, such as GraphQL responses.
+- Converting `null` to `undefined` in models, such as REST or JSON responses.
 - Replacing runtime-specific types, such as `Date`, for another SDK.
 - Replacing functions with strings before JSON serialization.
 
@@ -37,6 +38,15 @@ type SerializedUser = SubstituteDeep<User, Date, string>;
 // Require every property, representing absence as `null`.
 type NullableUser = RequiredDeep<SubstituteDeep<User, undefined, null>>;
 //=> {id: number; name: string | null; createdAt: Date | null}
+
+// Replace `null` with `undefined`.
+type ApiUser = {
+	name: string | null;
+	tags: Array<string | null>;
+};
+
+type NormalizedUser = SubstituteDeep<ApiUser, null, undefined>;
+//=> {name: string | undefined; tags: (string | undefined)[]}
 ```
 
 @see {@link Replace} to replace substrings in string types.
