@@ -310,6 +310,7 @@ Click the type names for complete docs.
 - [`RemoveSuffix`](source/remove-suffix.d.ts) - Remove the specified suffix from the end of a string.
 - [`StringToArray`](source/string-to-array.d.ts) - Returns an array of the characters of the specified string.
 - [`StringLength`](source/string-length.d.ts) - Returns the length of the given string.
+- [`StringToBoolean`](source/string-to-boolean.d.ts) - Converts a boolean string to a boolean literal.
 
 ### Array
 

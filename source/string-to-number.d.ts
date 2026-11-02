@@ -1,5 +1,6 @@
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
+import type {StringToBoolean} from './string-to-boolean.d.ts'; // For `@link`
 
 /**
 Converts a numeric string to a number.
@@ -42,6 +43,8 @@ type NonDecimalBases = StringToNumber<'0b10' | '0o10' | '0x10'>;
 type NumericSeparators = StringToNumber<'12_345'>;
 //=> never
 ```
+
+@see {@link StringToBoolean} - For parsing a boolean string.
 
 @category String
 @category Numeric

@@ -222,6 +222,7 @@ export type {UnionMember} from './source/union-member.d.ts';
 export type {Absolute} from './source/absolute.d.ts';
 export type {UnionLength} from './source/union-length.d.ts';
 export type {StringToNumber} from './source/string-to-number.d.ts';
+export type {StringToBoolean} from './source/string-to-boolean.d.ts';
 export type {ArrayAt} from './source/array-at.d.ts';
 
 // Template literal types
