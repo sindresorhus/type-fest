@@ -316,6 +316,7 @@ Click the type names for complete docs.
 
 - [`Arrayable`](source/arrayable.d.ts) - Create a type that represents either the value or an array of the value.
 - [`Includes`](source/includes.d.ts) - Returns a boolean for whether the given array includes the given item.
+- [`IndexOf`](source/index-of.d.ts) - Returns the union of indices at which the given item can be found in the given array.
 - [`Join`](source/join.d.ts) - Join an array of strings and/or numbers using the given string as a delimiter.
 - [`JoinUnion`](source/join-union.d.ts) - Join a union of strings and/or numbers using the given string as a delimiter.
 - [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.

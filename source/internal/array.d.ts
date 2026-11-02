@@ -1,7 +1,27 @@
+import type {ExtendsStrict} from '../extends-strict.d.ts';
+import type {IsAny} from '../is-any.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsNever} from '../is-never.d.ts';
+import type {Or} from '../or.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {IfNotAnyOrNever} from './type.d.ts';
+import type {IfNotAnyOrNever, Not} from './type.d.ts';
+
+/**
+Compare the given element type and item type exactly, or by assignability in either direction when `Distribute` is `true`.
+
+Returns `true` if they match certainly, `boolean` if they only possibly match, and `false` if they do not match.
+*/
+export type IsEqualOrExtend<Type, Item, Distribute extends boolean> =
+	// Exact comparisons do not need the distribution guard.
+	(Distribute extends true ? Not<IsNever<Type>> : false) extends true
+		? Type extends unknown // Distribute element
+			// `any` is assignable both ways to anything, which would make any element match, so an `any` on only one side is a possible match, not a certain one.
+			? Or<IsAny<Type>, IsAny<Item>> extends true
+				? IsEqual<Type, Item> extends true ? true : boolean
+				// `true` if both extend each other, `boolean` if only one extends the other, and `false` if neither does.
+				: ExtendsStrict<Type, Item> | ExtendsStrict<Item, Type>
+			: never
+		: IsEqual<Type, Item>;
 
 /**
 Extracts the type of the first element of an array or tuple.

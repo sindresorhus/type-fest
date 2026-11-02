@@ -1,11 +1,8 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {ExtendsStrict} from './extends-strict.d.ts';
+import type {IsEqualOrExtend} from './internal/array.d.ts';
 import type {IsAnyOrNever, Not} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {IsAny} from './is-any.d.ts';
-import type {Or} from './or.d.ts';
 
 /**
 {@link Includes `Includes`} Options.
@@ -50,18 +47,6 @@ export type IncludesOptions = {
 type DefaultIncludesOptions = {
 	distributeItem: false;
 };
-
-type IsEqualOrExtend<Type, Item, Options extends Required<IncludesOptions>> =
-	// Exact comparisons do not need the distribution guard.
-	(Options['distributeItem'] extends true ? Not<IsNever<Type>> : false) extends true
-		? Type extends unknown // Distribute element
-			// `any` is assignable both ways to anything, which would make any element match, so an `any` on only one side is a possible match, not a certain one.
-			? Or<IsAny<Type>, IsAny<Item>> extends true
-				? IsEqual<Type, Item> extends true ? true : boolean
-				// `true` if both extend each other, `boolean` if only one extends the other, and `false` if neither does.
-				: ExtendsStrict<Type, Item> | ExtendsStrict<Item, Type>
-			: never
-		: IsEqual<Type, Item>;
 
 /**
 Returns a boolean for whether the given array includes the given item.
@@ -144,7 +129,7 @@ type _Includes<
 	keyof Array_ & '0' extends never
 		// The array starts with a rest element, or has no elements, so its fixed elements are searched from the end.
 		? Array_ extends readonly [...infer Rest, infer Last]
-			? IsEqualOrExtend<Last, Item, Options> extends infer Result
+			? IsEqualOrExtend<Last, Item, Options['distributeItem']> extends infer Result
 				? [Result] extends [true]
 					? true
 					: _Includes<Rest, Item, Options, Found | (true extends Result ? boolean : false)>
@@ -152,11 +137,11 @@ type _Includes<
 			// Only the rest element is left, which can hold any number of elements, including none, so a match is only possible.
 			: Array_ extends readonly []
 				? Found // No certain match, so only a remembered possible match is left
-				: Found | (true extends IsEqualOrExtend<Array_[number], Item, Options> ? boolean : false)
+				: Found | (true extends IsEqualOrExtend<Array_[number], Item, Options['distributeItem']> ? boolean : false)
 		// The array starts with a fixed element, which can be optional, so the elements are searched from the start.
 		: Array_ extends readonly [(infer First)?, ...infer Rest]
 			// Optional inference preserves explicitly declared `undefined` without adding the missing-position value. A required element is read with `Array_[0]`, because inference from a tuple intersection, such as a tuple with metadata, widens `First` to every element. An indexed value without `undefined` can only be a required element, so the property check, which is slow for long tuples, is only needed when it includes `undefined`.
-			? IsEqualOrExtend<undefined extends Array_[0] ? Array_ extends {0: unknown} ? Array_[0] : First : Array_[0], Item, Options> extends infer Result
+			? IsEqualOrExtend<undefined extends Array_[0] ? Array_ extends {0: unknown} ? Array_[0] : First : Array_[0], Item, Options['distributeItem']> extends infer Result
 				? [Result] extends [true]
 					// An optional element can be absent, so it is only a possible match. Its value excludes implicit `undefined`, so `Includes<[1?], undefined>` is `false`.
 					// Check the property directly because an intersection can make an optional tuple position required.
