@@ -166,6 +166,7 @@ Click the type names for complete docs.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Pick keys from the shape that matches the given `Condition`.
 - [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Pick keys recursively from the shape that matches the given condition.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Exclude keys from a shape that matches the given `Condition`.
+- [`ExcludeValues`](source/exclude-values.d.ts) - Exclude the given type from the value of every property in an object type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) it belongs to, or `never` if it's not a primitive.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
@@ -458,6 +459,7 @@ Click the type names for complete docs.
 - `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `KeysOfType`, `KeysWithType`, `KeysMatching` - See [`ConditionalKeys`](source/conditional-keys.d.ts)
+- `OmitValues` - See [`ExcludeValues`](source/exclude-values.d.ts)
 - `OmitNever` - See [`PickNonNever`](source/pick-non-never.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
