@@ -200,6 +200,7 @@ Click the type names for complete docs.
 - [`Spread`](source/spread.d.ts) - Mimic the type inferred by TypeScript when merging two objects or two arrays/tuples using the spread syntax.
 - [`IsEqual`](source/is-equal.d.ts) - Returns a boolean for whether the two given types are equal.
 - [`IsMutuallyAssignable`](source/is-mutually-assignable.d.ts) - Returns a boolean for whether the two given types are mutually assignable.
+- [`SubsetOf`](source/subset-of.d.ts) - Constrain a type to be a subset of another type, returning it as is.
 - [`TaggedUnion`](source/tagged-union.d.ts) - Create a union of types that share a common discriminant property.
 - [`IntRange`](source/int-range.d.ts) - Generate a union of numbers between a specified start (inclusive) and end (exclusive), with an optional step.
 - [`IntClosedRange`](source/int-closed-range.d.ts) - Generate a union of numbers between a specified start and end (both inclusive), with an optional step.
@@ -485,6 +486,7 @@ Click the type names for complete docs.
 - `KeyBy`, `IndexBy`, `RecordOf` - See [`ArrayToRecord`](source/array-to-record.d.ts)
 - `ReplaceDeep`, `DeepReplace`, `DeepSubstitute`, `NullToUndefined`, `UndefinedToNull` - See [`SubstituteDeep`](source/substitute-deep.d.ts)
 - `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue` - See [`SetProperty`](source/set-property.d.ts)
+- `ExtendsFrom`, `SubsetUnion` - See [`SubsetOf`](source/subset-of.d.ts)
 
 ## Tips
 
