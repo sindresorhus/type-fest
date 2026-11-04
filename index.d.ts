@@ -135,6 +135,7 @@ export type {KeyAsString} from './source/key-as-string.d.ts';
 export type {Exact} from './source/exact.d.ts';
 export type {ReadonlyTuple} from './source/readonly-tuple.d.ts';
 export type {OverrideProperties} from './source/override-properties.d.ts';
+export type {OverridePropertiesDeep} from './source/override-properties-deep.d.ts';
 export type {RenameKeys} from './source/rename-keys.d.ts';
 export type {OptionalKeysOf} from './source/optional-keys-of.d.ts';
 export type {DefaultsFor} from './source/defaults-for.d.ts';

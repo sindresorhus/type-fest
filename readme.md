@@ -119,6 +119,7 @@ Click the type names for complete docs.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
 - [`OverrideProperties`](source/override-properties.d.ts) - Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
+- [`OverridePropertiesDeep`](source/override-properties-deep.d.ts) - Override existing properties of the given type deeply. Similar to `MergeDeep`, but requires overridden keys to exist at every level.
 - [`RenameKeys`](source/rename-keys.d.ts) - Rename keys in an object type according to a map of old-to-new names.
 - [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys, while keeping the remaining keys as is.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
@@ -476,6 +477,8 @@ Click the type names for complete docs.
 - `PlainObject` - See [`UnknownRecord`](source/unknown-record.d.ts)
 - `ToPath` - See [`ParsePath`](source/parse-path.d.ts)
 - `TaggedUnionToIntersection`, `MergeUnion` - See [`AllUnionFields`](source/all-union-fields.d.ts)
+- `MergeStrict`, `MergeExact` - See [`OverrideProperties`](source/override-properties.d.ts)
+- `MergeDeepStrict`, `MergeDeepExact` - See [`OverridePropertiesDeep`](source/override-properties-deep.d.ts)
 - `Identity`, `Passthrough` - See [`AsExtendable`](source/as-extendable.d.ts)
 - `Falsey` - See [`Falsy`](source/falsy.d.ts)
 - `NonFalsy`, `NotFalsey` - See [`Truthy`](source/truthy.d.ts)
