@@ -40,6 +40,8 @@ const petList = Object.keys(pets) as UnionToTuple<Pet>;
 //=> ['dog', 'cat', 'snake']
 ```
 
+The tuple order also does not correspond to the runtime order of `Object.keys()`, which puts integer-like keys first and omits symbol keys.
+
 @see {@link TupleToUnion}
 
 @category Array
