@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ConditionalPickDeep} from '../index.d.ts';
+import type {ConditionalPickDeep, PartialDeep} from '../index.d.ts';
 
 declare class ClassA {
 	public a: string;
@@ -126,12 +126,155 @@ expectTypeOf(nestedNonmatchingUnion).toBe<{label: string}>();
 declare const nestedIndexSignatureUnion: ConditionalPickDeep<{data: Record<string, string> | {a: number}}, string>;
 expectTypeOf(nestedIndexSignatureUnion).toBe<{data: Record<string, string>}>();
 
-// Known limitation: optional object properties are not recursed into, but their whole value can still match directly.
+// Optional object properties are recursed into, and the `undefined` added by reading them contributes no keys.
 declare const optionalObjectRecursion: ConditionalPickDeep<{data?: {a: string}}, string>;
-expectTypeOf(optionalObjectRecursion).toBe<never>();
+expectTypeOf(optionalObjectRecursion).toBe<{data?: {a: string}}>();
 
 declare const optionalObjectDirectMatch: ConditionalPickDeep<{data?: {a: string}}, {a: string} | undefined>;
 expectTypeOf(optionalObjectDirectMatch).toBe<{data?: {a: string}}>();
+
+// An optional object property whose content matches nothing is dropped entirely, like a nonmatching union member.
+declare const optionalObjectNoMatch: ConditionalPickDeep<{data?: {a: string}; other: number}, number>;
+expectTypeOf(optionalObjectNoMatch).toBe<{other: number}>();
+
+// Optional object properties are entered through many levels, and each level stays optional while nonmatching keys are dropped.
+type OptionalLevel4 = {leaf: string};
+type OptionalLevel3 = {next?: OptionalLevel4; ignored: number};
+type OptionalLevel2 = {next?: OptionalLevel3; ignored: number};
+type OptionalLevel1 = {next?: OptionalLevel2; ignored: number};
+declare const optionalObjectDeep: ConditionalPickDeep<OptionalLevel1, string>;
+expectTypeOf(optionalObjectDeep).toBe<{next?: {next?: {next?: {leaf: string}}}}>();
+
+// Composing with `PartialDeep` is a main use-case: see https://github.com/sindresorhus/type-fest/issues/572.
+declare const partialDeepComposition: ConditionalPickDeep<PartialDeep<{price: {gte: number; lte: number}; property: number}>, number | undefined>;
+expectTypeOf(partialDeepComposition).toBe<{price?: {gte?: number; lte?: number}; property?: number}>();
+
+// A required property whose value is an object or `undefined` keeps the picked content and drops the `undefined` member, like any other nonmatching union member.
+declare const declaredUndefinedObject: ConditionalPickDeep<{data: {a: string; z: number} | undefined}, string>;
+expectTypeOf(declaredUndefinedObject).toBe<{data: {a: string}}>();
+
+// A written `| undefined` in an optional property's value behaves like the `undefined` added by the optional modifier.
+declare const writtenUndefinedOptional: ConditionalPickDeep<{data?: {a: string; z: number} | undefined}, string>;
+expectTypeOf(writtenUndefinedOptional).toBe<{data?: {a: string}}>();
+
+// An index signature with a declared `| undefined` value is recursed into too.
+declare const indexSignatureUndefined: ConditionalPickDeep<{[key: string]: {a: string; b: number} | undefined}, string>;
+expectTypeOf(indexSignatureUndefined).toBe<{[key: string]: {a: string}}>();
+
+// An optional property with a union of objects is recursed into.
+declare const optionalUnionOfObjects: ConditionalPickDeep<{data?: {a: string} | {b: number}}, string>;
+expectTypeOf(optionalUnionOfObjects).toBe<{data?: {a: string}}>();
+
+// A union with `null` is not recursed into; only an `undefined` member is excluded at the boundary.
+declare const nullUnionObject: ConditionalPickDeep<{data?: {a: string} | null}, string>;
+expectTypeOf(nullUnionObject).toBe<never>();
+
+// Optional non-plain-object values are still not recursed into.
+declare const optionalFunction: ConditionalPickDeep<{data?: (() => string) | undefined; other: string}, string>;
+expectTypeOf(optionalFunction).toBe<{other: string}>();
+
+declare const optionalDate: ConditionalPickDeep<{data?: Date; other: string}, string>;
+expectTypeOf(optionalDate).toBe<{other: string}>();
+
+declare const optionalMap: ConditionalPickDeep<{data?: Map<string, string>; other: string}, string>;
+expectTypeOf(optionalMap).toBe<{other: string}>();
+
+// Arrays are not recursed into, also not through an optional property.
+declare const optionalArray: ConditionalPickDeep<{data?: Array<{b: 1}>}, 1>;
+expectTypeOf(optionalArray).toBe<never>();
+
+// An optional `any`, `unknown`, or `never` value is excluded unless it matches directly.
+declare const optionalAny: ConditionalPickDeep<{data?: any; other: string}, string>;
+expectTypeOf(optionalAny).toBe<{other: string}>();
+
+declare const optionalUnknown: ConditionalPickDeep<{data?: unknown; other: string}, string>;
+expectTypeOf(optionalUnknown).toBe<{other: string}>();
+
+declare const optionalNever: ConditionalPickDeep<{data?: never; other: string}, string>;
+expectTypeOf(optionalNever).toBe<{other: string}>();
+
+// Optional object properties are recursed into in `equality` mode too.
+declare const optionalObjectEquality: ConditionalPickDeep<{data?: {a: string; b: number}}, string, {condition: 'equality'}>;
+expectTypeOf(optionalObjectEquality).toBe<{data?: {a: string}}>();
+
+// Optional class and interface values are recursed into, like required ones.
+declare const optionalClass: ConditionalPickDeep<{data?: ClassA; other: string}, string>;
+expectTypeOf(optionalClass).toBe<{data?: {a: string}; other: string}>();
+
+declare const optionalInterface: ConditionalPickDeep<{data?: InterfaceA; other: string}, number>;
+expectTypeOf(optionalInterface).toBe<{data?: {a: number}}>();
+
+// An optional index-signature value is recursed into.
+declare const optionalIndexSignature: ConditionalPickDeep<{data?: Record<string, {a: string; b: number}>}, string>;
+expectTypeOf(optionalIndexSignature).toBe<{data?: Record<string, {a: string}>}>();
+
+// Optional properties and picked nested properties keep their modifiers.
+declare const optionalReadonly: ConditionalPickDeep<{readonly data?: {readonly a: string; b: number}}, string>;
+expectTypeOf(optionalReadonly).toBe<{readonly data?: {readonly a: string}}>();
+
+// A nested optional property is entered from a required parent too.
+declare const nestedOptionalInRequired: ConditionalPickDeep<{data: {next?: {a: string; z: number}; keep: string}}, string>;
+expectTypeOf(nestedOptionalInRequired).toBe<{data: {next?: {a: string}; keep: string}}>();
+
+// An optional object property is filtered independently of its matching siblings.
+declare const optionalObjectWithSibling: ConditionalPickDeep<{data?: {a: string; z: number}; label: string}, string>;
+expectTypeOf(optionalObjectWithSibling).toBe<{data?: {a: string}; label: string}>();
+
+// A union with `null` only removes its own key; matching siblings are kept.
+declare const nullUnionWithSibling: ConditionalPickDeep<{data?: {a: string} | null; label: string}, string>;
+expectTypeOf(nullUnionWithSibling).toBe<{label: string}>();
+
+// A written `| undefined` at a nested level is dropped too.
+declare const nestedWrittenUndefined: ConditionalPickDeep<{data: {next: {a: string} | undefined; keep: string}}, string>;
+expectTypeOf(nestedWrittenUndefined).toBe<{data: {next: {a: string}; keep: string}}>();
+
+// An optional object whose only matching member is itself optional needs `undefined` in the condition.
+declare const optionalLeafOnly: ConditionalPickDeep<{data?: {a?: string; b: number}}, string>;
+expectTypeOf(optionalLeafOnly).toBe<never>();
+
+declare const optionalLeafOnlyWithUndefined: ConditionalPickDeep<{data?: {a?: string; b: number}}, string | undefined>;
+expectTypeOf(optionalLeafOnlyWithUndefined).toBe<{data?: {a?: string}}>();
+
+// A union with a primitive through an optional property is not recursed into, like at a required property.
+declare const optionalPrimitiveUnion: ConditionalPickDeep<{data?: number | {a: string}}, number>;
+expectTypeOf(optionalPrimitiveUnion).toBe<never>();
+
+// Optional tuples are not recursed into.
+declare const optionalTuple: ConditionalPickDeep<{data?: ['foo', 'bar']; other: string}, string>;
+expectTypeOf(optionalTuple).toBe<{other: string}>();
+
+// An optional primitive is picked directly when the condition includes `undefined`.
+declare const optionalLiteralDirectMatch: ConditionalPickDeep<{data?: 'foo'}, 'foo' | undefined>;
+expectTypeOf(optionalLiteralDirectMatch).toBe<{data?: 'foo'}>();
+
+// An optional primitive is dropped when the condition excludes `undefined`.
+declare const optionalLiteralNoMatch: ConditionalPickDeep<{data?: 'foo'; other: string}, string>;
+expectTypeOf(optionalLiteralNoMatch).toBe<{other: string}>();
+
+// An optional boolean is dropped when the condition excludes `undefined`.
+declare const optionalBooleanNoMatch: ConditionalPickDeep<{data?: boolean; other: string}, boolean>;
+expectTypeOf(optionalBooleanNoMatch).toBe<never>();
+
+// An optional object property matches `unknown` directly, keeping its whole value.
+declare const optionalUnknownCondition: ConditionalPickDeep<{data?: {a: string}}, unknown>;
+expectTypeOf(optionalUnknownCondition).toBe<{data?: {a: string}}>();
+
+// A condition of only `undefined` picks just the optional `undefined` property.
+declare const optionalUndefinedOnly: ConditionalPickDeep<{data?: undefined; other: string}, undefined>;
+expectTypeOf(optionalUndefinedOnly).toBe<{data?: undefined}>();
+
+// A required written `| undefined` value matching directly keeps the whole union, without an optional modifier.
+declare const requiredUndefinedDirectMatch: ConditionalPickDeep<{data: string | undefined; other: number}, string | undefined>;
+expectTypeOf(requiredUndefinedDirectMatch).toBe<{data: string | undefined}>();
+
+// An optional symbol-keyed object property is recursed into.
+declare const optionalSymbolKey: unique symbol;
+declare const optionalSymbolRecursion: ConditionalPickDeep<{readonly [optionalSymbolKey]?: {a: string; b: number}}, string>;
+expectTypeOf(optionalSymbolRecursion).toBe<{readonly [optionalSymbolKey]?: {a: string}}>();
+
+// `PartialDeep` composition works in `equality` mode too.
+declare const partialDeepEquality: ConditionalPickDeep<PartialDeep<{price: {gte: number; lte: number}; name: string}>, number | undefined, {condition: 'equality'}>;
+expectTypeOf(partialDeepEquality).toBe<{price?: {gte?: number; lte?: number}}>();
 
 declare const stringOrBooleanPick: ConditionalPickDeep<Example, string | boolean>;
 expectTypeOf(stringOrBooleanPick).toBe<{
