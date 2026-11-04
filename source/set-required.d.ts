@@ -30,6 +30,27 @@ type ArrayExample = SetRequired<[number?, number?, number?], 0 | 1>;
 //=> [number, number, number?]
 ```
 
+@example
+```
+import type {SetRequired} from 'type-fest';
+
+type Options = {
+	timeout?: number;
+	retries?: number;
+	cwd?: string;
+};
+
+// Require exactly the keys that a given object provides, keeping the value types of `Options`.
+// For example, a partially built options object that is still mutated afterwards.
+const partial = {
+	timeout: 1000,
+	cwd: '/',
+} satisfies Partial<Options>;
+
+const options: SetRequired<Options, keyof typeof partial> = partial;
+//=> {retries?: number; timeout: number; cwd: string}
+```
+
 Known limitations:
 - A key that lands after an optional element of a tuple is ignored. TypeScript rejects a required element that follows an optional one, so `[number?, number]` is not a tuple type, and the walk stops at the first optional element. `SetRequired<[number?, number?], 1>` is `[number?, number?]`, while naming both keys gives `[number, number]`. `SetRequiredDeep` answers the same way for a path that lands on such a key.
 - A key that lands in a rest element is ignored, because a rest element has no optionality to remove: its elements are always present, and the `undefined` in a rest element of `Array<number | undefined>` is a value the element may hold rather than the element being absent. `SetRequired<[string, number?], 1>` is `[string, number]` because there the `?` is real optionality. `SetNonNullable` does make a rest element non-nullable, because that is a change to the value rather than to the optionality.
