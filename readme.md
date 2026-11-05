@@ -418,6 +418,7 @@ Click the type names for complete docs.
 - [`ExcludeStrict`](source/exclude-strict.d.ts) - A stricter version of `Exclude<T, U>` that ensures every member of `U` can successfully exclude something from `T`.
 - [`ExcludeExactly`](source/exclude-exactly.d.ts) - A stricter version of `Exclude<T, U>` that excludes types only when they are exactly identical.
 - [`ExtractExactly`](source/extract-exactly.d.ts) - A stricter version of `Extract<T, U>` that extracts types only when they are exactly identical.
+- [`StrictEventTarget`](source/strict-event-target.d.ts) - A stricter version of [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) that maps event names to event types.
 
 ## Declined types
 
@@ -494,6 +495,7 @@ Click the type names for complete docs.
 - `ReplaceDeep`, `DeepReplace`, `DeepSubstitute`, `NullToUndefined`, `UndefinedToNull` - See [`SubstituteDeep`](source/substitute-deep.d.ts)
 - `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue` - See [`SetProperty`](source/set-property.d.ts)
 - `ExtendsFrom`, `SubsetUnion` - See [`SubsetOf`](source/subset-of.d.ts)
+- `TypedEventTarget` - See [`StrictEventTarget`](source/strict-event-target.d.ts)
 
 ## Tips
 
