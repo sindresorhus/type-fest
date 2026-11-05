@@ -461,6 +461,7 @@ Click the type names for complete docs.
 - `SetEntry` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 - `$Values`, `ValuesType` - See [`ValueOf`](source/value-of.d.ts)
+- `ValueOfDeep` - See [`Get`](source/get.d.ts)
 - `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `KeysOfType`, `KeysWithType`, `KeysMatching` - See [`ConditionalKeys`](source/conditional-keys.d.ts)

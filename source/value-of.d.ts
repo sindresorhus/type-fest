@@ -1,4 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
+import type {Get} from './get.d.ts'; // For `@link`
 import type {ArrayValues} from './array-values.d.ts'; // For `@link`
 import type {IterableElement} from './iterable-element.d.ts'; // For `@link`
 
@@ -23,6 +24,9 @@ type C = ValueOf<{id: number; name: string; active: boolean}, 'id' | 'name'>;
 
 This type is only for objects. Reading an array with it gives its values mixed with the types of its methods, so use {@link ArrayValues} for the values of an array or tuple, and {@link IterableElement} for the element type of an `Iterable`, like `Set`, `Map`, and typed arrays.
 
+This type only reads one level. For a deeply nested property, use {@link Get} with a key path: `Get<{a: {b: string}}, 'a.b'>` is `string`.
+
+@see {@link Get}
 @see {@link ArrayValues}
 @see {@link IterableElement}
 

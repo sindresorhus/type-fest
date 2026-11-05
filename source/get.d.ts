@@ -3,6 +3,7 @@ import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {Paths} from './paths.d.ts'; // For `@link`
 
 export type GetOptions = {
 	/**
@@ -151,6 +152,8 @@ A path can also be a number, such as `Get<string[], 0>`, read like its string fo
 
 An index from a `number` variable, like `` `users.${number}.name` `` or `['users', number, 'name']`, reads any element of an array, a tuple, a string, a typed array, or another array-like object.
 
+Use {@link Paths} to enumerate the paths. When `Paths` yields a finite union, `Get<BaseType, Paths<BaseType>>` is the value at every path, and constraining a path parameter to `Paths<BaseType>` rejects typos. A top-level `string` index signature makes `Paths` itself `string`, so there is no finite list and no typo check.
+
 A key only some union members have resolves to `undefined` for the others, so `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>` is `string | undefined`. A key no member has resolves to `unknown`.
 
 Known limitations:
@@ -206,6 +209,8 @@ type A = Get<string[], '3', {strict: false}>;
 type B = Get<Record<string, string>, 'foo', {strict: true}>;
 //=> string | undefined
 ```
+
+@see {@link Paths}
 
 @category Object
 @category Array
