@@ -1,6 +1,7 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {KeyAliases} from './internal/index.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {ExclusifyUnion} from './exclusify-union.d.ts'; // For `@link`
 
 // Declared numeric and enum keys also have their runtime string spellings. Keep index signatures unchanged.
 type KeysWithAliases<Type> = KeysOfUnion<Type> | KeyAliases<KeysOfUnion<OmitIndexSignature<Type>>>;
@@ -10,6 +11,8 @@ type Without<FirstType, SecondType> = {[KeyType in FirstType extends unknown ? E
 
 /**
 Create a type that has mutually exclusive keys.
+
+Use {@link ExclusifyUnion} to make more than two types mutually exclusive.
 
 This type was inspired by [this comment](https://github.com/Microsoft/TypeScript/issues/14094#issuecomment-373782604).
 
