@@ -104,6 +104,7 @@ export type {RequireArity} from './source/require-arity.d.ts';
 export type {Asyncify} from './source/asyncify.d.ts';
 export type {Simplify} from './source/simplify.d.ts';
 export type {SimplifyDeep} from './source/simplify-deep.d.ts';
+export type {SimplifyUnion} from './source/simplify-union.d.ts';
 export type {AsExtendable} from './source/as-extendable.d.ts';
 export type {Jsonify} from './source/jsonify.d.ts';
 export type {Jsonifiable, JsonifiableObject, JsonifiableArray, JsonifiableValue} from './source/jsonifiable.d.ts';
