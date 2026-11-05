@@ -79,7 +79,7 @@ export type {NonNullableDeep} from './source/non-nullable-deep.d.ts';
 export type {ValueOf} from './source/value-of.d.ts';
 export type {AsyncReturnType} from './source/async-return-type.d.ts';
 export type {ConditionalExcept} from './source/conditional-except.d.ts';
-export type {ConditionalKeys} from './source/conditional-keys.d.ts';
+export type {ConditionalKeys, ConditionalKeysOptions} from './source/conditional-keys.d.ts';
 export type {ConditionalPick} from './source/conditional-pick.d.ts';
 export type {ConditionalPickDeep, ConditionalPickDeepOptions} from './source/conditional-pick-deep.d.ts';
 export type {ExcludeValues} from './source/exclude-values.d.ts';

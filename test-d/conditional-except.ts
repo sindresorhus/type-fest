@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ConditionalExcept, Primitive, IsEqual} from '../index.d.ts';
+import type {ConditionalExcept, ConditionalKeysOptions, IsEqual, Primitive} from '../index.d.ts';
 
 class Awesome {
 	name!: string;
@@ -26,6 +26,53 @@ expectTypeOf(awesomeConditionalExcept).toBe<{run: () => void}>();
 
 declare const exampleConditionalExceptWithUndefined: ConditionalExcept<Example, string | undefined>;
 expectTypeOf(exampleConditionalExceptWithUndefined).toBe<{b?: string | number; d: Record<string, unknown>}>();
+
+// `strict: false` excludes a key when any member of its value union matches
+expectTypeOf<ConditionalExcept<{date?: Date; name: string}, Date, {strict: false}>>().toBe<{name: string}>();
+expectTypeOf<ConditionalExcept<{date?: Date; name: string}, Date>>().toBe<{date?: Date; name: string}>();
+expectTypeOf<ConditionalExcept<{a: string; b: string | number; c?: string; d: boolean}, string, {strict: false}>>()
+	.toBe<{d: boolean}>();
+expectTypeOf<ConditionalExcept<{a: Date | string | undefined; b: number}, Date, {strict: false}>>()
+	.toBe<{b: number}>();
+expectTypeOf<ConditionalExcept<{[x: string]: unknown; a: string | number; b: boolean}, string, {strict: false}>>()
+	.toBe<{[x: string]: unknown; b: boolean}>();
+
+// Loose mode keeps the existing `any`/`unknown`/`never` behavior for each value
+expectTypeOf<ConditionalExcept<{a: any; b: unknown; c: never; d: string}, string, {strict: false}>>()
+	.toBe<{b: unknown; c: never}>();
+expectTypeOf<ConditionalExcept<{a: never; b: string}, never, {strict: false}>>()
+	.toBe<{a: never; b: string}>();
+
+// The default and explicit strict options keep the whole-value rule
+expectTypeOf<ConditionalExcept<{a: string; b: string | number}, string, {strict: true}>>().toBe<{b: string | number}>();
+expectTypeOf<ConditionalExcept<{a: string; b: string | number}, string, {}>>().toBe<{b: string | number}>();
+expectTypeOf<ConditionalExcept<{a: string; b: string | number}, string, {strict: boolean}>>().toBe<{b: string | number}>();
+expectTypeOf<ConditionalExcept<{[x: string]: unknown; a: string | number; b: boolean}, string, {strict: true}>>()
+	.toBe<{[x: string]: unknown; a: string | number; b: boolean}>();
+
+// Loose mode excludes a key when any member of its value union matches
+expectTypeOf<ConditionalExcept<{a?: string; b: string}, undefined, {strict: false}>>().toBe<{b: string}>();
+expectTypeOf<ConditionalExcept<{a?: Date | null; b: string}, Date, {strict: false}>>().toBe<{b: string}>();
+expectTypeOf<ConditionalExcept<{a: never}, string, {strict: false}>>().toBe<{a: never}>();
+
+// Loose mode distributes over top-level unions like the strict default
+expectTypeOf<IsEqual<ConditionalExcept<{a: string} | {b: string | number}, string, {strict: false}>, {}>>().toBe<true>();
+expectTypeOf<IsEqual<ConditionalExcept<{a: string} | {b: number}, string, {strict: false}>, {} | {b: number}>>().toBe<true>();
+
+// Loose mode reuses the index-signature normalization
+expectTypeOf<ConditionalExcept<{[x: string]: string | number; a: string; b: number}, string, {strict: false}>>()
+	.toBe<{b: number}>();
+expectTypeOf<ConditionalExcept<[string, number, string | boolean], string, {strict: false}>[1]>().toBe<number>();
+
+// Primitives and `any` keep their existing behavior
+expectTypeOf<ConditionalExcept<string, number, {strict: false}>>().toBe<string>();
+expectTypeOf<ConditionalExcept<any, string, {strict: false}>>().toBe<{}>();
+
+function _readGenericConditionalExcept<Options extends ConditionalKeysOptions>(value: ConditionalExcept<{a: string; b: string | number}, string, Options>): string | number {
+	// @ts-expect-error A generic option reads as the default strict mode, so `a` is excluded.
+	expectTypeOf(value.a).toBe<never>();
+	return value.b;
+}
 
 // Distributes over union types, so each member keeps only the keys that do not match the condition, the way `ConditionalPick` distributes. `IsEqual` forces the lazy result to resolve, which `expectType` alone does not.
 expectTypeOf<IsEqual<ConditionalExcept<{a: string} | {b: number}, string>, {} | {b: number}>>().toBe<true>();

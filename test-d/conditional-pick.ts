@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ConditionalPick, Primitive} from '../index.d.ts';
+import type {ConditionalPick, ConditionalKeysOptions, Primitive} from '../index.d.ts';
 
 class Awesome {
 	name!: string;
@@ -33,6 +33,59 @@ expectTypeOf(noMatchingKeys).toBe<never>();
 
 declare const noMatchingKeys2: ConditionalPick<{a: string; b: number}, boolean>;
 expectTypeOf(noMatchingKeys2).toBe<never>();
+
+// `strict: false` picks a key when any member of its value union matches
+expectTypeOf<ConditionalPick<{date?: Date; name: string}, Date, {strict: false}>>().toBe<{date?: Date}>();
+expectTypeOf<ConditionalPick<{date?: Date; name: string}, Date>>().toBe<never>();
+expectTypeOf<ConditionalPick<{a: string; b: string | number; c?: string; d: boolean}, string, {strict: false}>>()
+	.toBe<{a: string; b: string | number; c?: string}>();
+expectTypeOf<ConditionalPick<{a: Date | string | undefined; b: number}, Date, {strict: false}>>()
+	.toBe<{a: Date | string | undefined}>();
+expectTypeOf<ConditionalPick<{[x: string]: unknown; a: string | number; b: boolean}, string, {strict: false}>>()
+	.toBe<{a: string | number}>();
+
+// Loose mode keeps the existing `any`/`unknown`/`never` behavior for each value
+expectTypeOf<ConditionalPick<{a: any; b: unknown; c: never; d: string}, string, {strict: false}>>()
+	.toBe<{a: any; d: string}>();
+expectTypeOf<ConditionalPick<{a: never; b: string}, never, {strict: false}>>().toBe<never>();
+
+// The default and explicit strict options keep the whole-value rule
+expectTypeOf<ConditionalPick<{a: string; b: string | number}, string, {strict: true}>>().toBe<{a: string}>();
+expectTypeOf<ConditionalPick<{a: string; b: string | number}, string, {}>>().toBe<{a: string}>();
+expectTypeOf<ConditionalPick<{a: string; b: string | number}, string, {strict: boolean}>>().toBe<{a: string}>();
+expectTypeOf<ConditionalPick<{[x: string]: unknown; a: string | number; b: boolean}, string, {strict: true}>>().toBe<never>();
+
+// Loose mode matches a union member even when the other members do not
+expectTypeOf<ConditionalPick<{a?: string; b: string}, undefined, {strict: false}>>().toBe<{a?: string}>();
+expectTypeOf<ConditionalPick<{a: string | null; b: number}, string, {strict: false}>>().toBe<{a: string | null}>();
+expectTypeOf<ConditionalPick<{a?: Date | null; b: string}, Date, {strict: false}>>().toBe<{a?: Date | null}>();
+expectTypeOf<ConditionalPick<{a: never}, string, {strict: false}>>().toBe<never>();
+
+// Loose mode distributes over top-level unions like the strict default
+expectTypeOf<ConditionalPick<{a: string} | {b: string | number}, string, {strict: false}>>()
+	.toBe<{a: string} | {b: string | number}>();
+expectTypeOf<ConditionalPick<{a: string} | {b: number}, string, {strict: false}>>().toBe<{a: string} | {}>();
+expectTypeOf<ConditionalPick<{a: string} | {b: number}, boolean, {strict: false}>>().toBe<never>();
+
+// Loose mode reuses the array and index-signature normalization
+expectTypeOf<ConditionalPick<readonly [string, number, string | boolean], string, {strict: false}>>()
+	.toBe<{readonly 0: string; readonly 2: string | boolean}>();
+expectTypeOf<ConditionalPick<[string, string?, string?], string | undefined, {strict: false}>>()
+	.toBe<{0: string; 1?: string; 2?: string}>();
+expectTypeOf<ConditionalPick<{[x: string]: string | number; a: string; b: number}, string, {strict: false}>>()
+	.toBe<{[x: string]: string | number; a: string}>();
+expectTypeOf<ConditionalPick<{[x: string]: unknown; a: string; b: number}, string, {strict: false}>>()
+	.toBe<{a: string}>();
+
+// Primitives and `any` keep their existing property view
+expectTypeOf<ConditionalPick<string, number, {strict: false}>>().toBe<Pick<string, 'length'>>();
+expectTypeOf<ConditionalPick<any, string, {strict: false}>>().toBe<Pick<any, PropertyKey>>();
+
+function _readGenericConditionalPick<Options extends ConditionalKeysOptions>(value: ConditionalPick<{a: string; b: string | number}, string, Options>): string {
+	// @ts-expect-error A generic option reads as the default strict mode, so `b` is not picked.
+	expectTypeOf(value.b).toBe<never>();
+	return value.a;
+}
 
 // Distributes over union types, so each member contributes the keys that match the condition
 type ExampleUnion =

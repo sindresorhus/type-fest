@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ConditionalExcept, ConditionalKeys, ConditionalPick} from '../index.d.ts';
+import type {ConditionalExcept, ConditionalKeys, ConditionalKeysOptions, ConditionalPick} from '../index.d.ts';
 
 type Example = {
 	a: string;
@@ -104,6 +104,66 @@ expectTypeOf<ConditionalKeys<number, () => number>>().toBe<'valueOf'>();
 expectTypeOf<ConditionalKeys<{}, boolean>>().toBe<never>();
 expectTypeOf<ConditionalKeys<any, boolean>>().toBe<PropertyKey>();
 expectTypeOf<ConditionalKeys<never, boolean>>().toBe<never>();
+
+// `strict: false` matches any member of a union value type
+expectTypeOf<ConditionalKeys<{date?: Date}, Date, {strict: false}>>().toBe<'date'>();
+expectTypeOf<ConditionalKeys<{a: string; b: string | number; c?: string}, string, {strict: false}>>().toBe<'a' | 'b' | 'c'>();
+expectTypeOf<ConditionalKeys<{a: Date | string | undefined}, Date, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a: boolean | number}, boolean, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a?: string; b: string}, undefined, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a?: string; b: number}, string, {strict: false}>>().toBe<'a'>();
+
+// The default is still strict
+expectTypeOf<ConditionalKeys<{date?: Date}, Date>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{date?: Date}, Date, {}>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{date?: Date}, Date, {strict: true}>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{date?: Date}, Date, {strict: boolean}>>().toBe<never>();
+
+// Loose mode keeps the existing `any`/`unknown`/`never` behavior, except that `never` has no members
+expectTypeOf<ConditionalKeys<{a: any; b: unknown; c: never; d: string}, string, {strict: false}>>().toBe<'a' | 'd'>();
+expectTypeOf<ConditionalKeys<{a: never; b: never}, never, {strict: false}>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: never; b: never}, any, {strict: false}>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: unknown; b: string}, string, {strict: false}>>().toBe<'b'>();
+
+// Index signatures and arrays keep their existing normalization
+expectTypeOf<ConditionalKeys<{[x: string]: unknown; a: string; b: number}, string, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{[x: string]: string | number; a: string}, string, {strict: false}>>().toBe<string | number>();
+expectTypeOf<ConditionalKeys<[string, number, string | boolean], string, {strict: false}>>().toBe<'0' | '2'>();
+// A rest element makes the numeric index signature match when any element type does.
+expectTypeOf<ConditionalKeys<[string, number, ...boolean[]], boolean, {strict: false}>>().toBe<number>();
+
+// Top-level unions and primitives are unchanged
+expectTypeOf<ConditionalKeys<{a: string} | {b: string}, string, {strict: false}>>().toBe<never>();
+expectTypeOf<ConditionalKeys<string, number, {strict: false}>>().toBe<'length'>();
+expectTypeOf<ConditionalKeys<any, boolean, {strict: false}>>().toBe<PropertyKey>();
+expectTypeOf<ConditionalKeys<never, boolean, {strict: false}>>().toBe<never>();
+
+// Loose mode matches a union member even when the other members do not
+expectTypeOf<ConditionalKeys<{a: string | null}, string, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a: Date | null}, Date, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a?: Date | null}, Date, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a: boolean | undefined}, undefined, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{readonly a?: Date}, Date, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a: number | boolean}, string, {strict: false}>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: never}, string, {strict: false}>>().toBe<never>();
+expectTypeOf<ConditionalKeys<{a: unknown}, unknown, {strict: false}>>().toBe<'a'>();
+expectTypeOf<ConditionalKeys<{a: unknown}, string, {strict: false}>>().toBe<never>();
+
+// Loose mode reuses the array and index-signature normalization
+expectTypeOf<ConditionalKeys<readonly [string, number, string | boolean], string, {strict: false}>>().toBe<'0' | '2'>();
+expectTypeOf<ConditionalKeys<[string, string?, string?], string | undefined, {strict: false}>>().toBe<'0' | '1' | '2'>();
+expectTypeOf<ConditionalKeys<{[x: number]: string | boolean}, string, {strict: false}>>().toBe<number>();
+expectTypeOf<ConditionalKeys<{[x: string]: string | number; a: string; b: number}, string, {strict: false}>>().toBe<string | number>();
+
+// A shared key is compared as the union of its members, like the strict default
+expectTypeOf<ConditionalKeys<{a: string} | {a: string | number}, string, {strict: false}>>().toBe<'a'>();
+
+// A generic option uses the default strict mode until it is resolved
+type GenericOptionsKeys<Options extends ConditionalKeysOptions> = ConditionalKeys<{a: string; b: string | number}, string, Options>;
+expectTypeOf<GenericOptionsKeys<{strict: false}>>().toBe<'a' | 'b'>();
+function _readKeysWithGenericOptions<Options extends ConditionalKeysOptions>(value: {a: string; b: string | number}, key: GenericOptionsKeys<Options>): string {
+	return value[key];
+}
 
 // A primitive and an object can share a key without sharing their other properties.
 expectTypeOf<ConditionalKeys<string | {length: 1; name: string}, number>>().toBe<'length'>();
