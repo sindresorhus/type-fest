@@ -280,6 +280,7 @@ Click the type names for complete docs.
 - [`JsonObject`](source/json-value.d.ts) - Matches a JSON object.
 - [`JsonArray`](source/json-value.d.ts) - Matches a JSON array.
 - [`JsonValue`](source/json-value.d.ts) - Matches any valid JSON value.
+- [`JsonPointer`](source/json-pointer.d.ts) - Generate a union of all possible JSON Pointer strings for the given type.
 
 ### Structured clone
 

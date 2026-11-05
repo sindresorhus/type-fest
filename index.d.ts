@@ -108,6 +108,7 @@ export type {SimplifyUnion} from './source/simplify-union.d.ts';
 export type {AsExtendable} from './source/as-extendable.d.ts';
 export type {Jsonify} from './source/jsonify.d.ts';
 export type {Jsonifiable, JsonifiableObject, JsonifiableArray, JsonifiableValue} from './source/jsonifiable.d.ts';
+export type {JsonPointer, JsonPointerOptions} from './source/json-pointer.d.ts';
 export type {StructuredCloneable} from './source/structured-cloneable.d.ts';
 export type {Schema, SchemaOptions} from './source/schema.d.ts';
 export type {LiteralToPrimitive} from './source/literal-to-primitive.d.ts';
