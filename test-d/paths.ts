@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Get, NonNullableDeep, Paths, Subtract, Tagged, UnknownArray} from '../index.d.ts';
+import type {Get, NonNullableDeep, Paths, PathsOptions, Subtract, Tagged, UnknownArray} from '../index.d.ts';
 import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
 
 declare const normal: Paths<{foo: string}>;
@@ -924,6 +924,199 @@ expectTypeOf<Paths<{a: string[]; b?: number[]; c: {d: Array<{e?: string}>; f?: s
 
 // `Get` resolves every path without the `undefined` of an optional key
 expectTypeOf<Get<OptionalKeysObject, Paths<OptionalKeysObject, {requiredOnly: true; leavesOnly: true}>>>().toBe<string | {timeout?: number}>();
+
+// -- valueType option --
+
+type ValueTypeUser = {id: number; name: string; email: string; age: number; isActive: boolean};
+expectTypeOf<Paths<ValueTypeUser, {valueType: string}>>().toBe<'name' | 'email'>();
+expectTypeOf<Paths<ValueTypeUser, {valueType: number}>>().toBe<'id' | 'age'>();
+expectTypeOf<Paths<ValueTypeUser, {valueType: boolean}>>().toBe<'isActive'>();
+expectTypeOf<Paths<ValueTypeUser, {valueType: bigint}>>().toBe<never>();
+expectTypeOf<Paths<ValueTypeUser, {valueType: any}>>().toBe<Paths<ValueTypeUser>>();
+expectTypeOf<Paths<ValueTypeUser, {valueType: unknown}>>().toBe<Paths<ValueTypeUser>>();
+expectTypeOf<Paths<ValueTypeUser, {valueType: never}>>().toBe<never>();
+
+type ValueTypePost = {
+	id: number;
+	title: string;
+	author: {id: number; name: string; email: string};
+	metadata: {views: number; likes: number};
+};
+expectTypeOf<Paths<ValueTypePost, {valueType: string}>>().toBe<'title' | 'author.name' | 'author.email'>();
+expectTypeOf<Paths<ValueTypePost, {valueType: number}>>().toBe<'id' | 'author.id' | 'metadata.views' | 'metadata.likes'>();
+expectTypeOf<Paths<ValueTypePost, {valueType: object}>>().toBe<'author' | 'metadata'>();
+
+// The issue example
+type ValueTypeFoo = {a: number; b: {c: number; d: string; e: {f: string}}};
+expectTypeOf<Paths<ValueTypeFoo, {valueType: string}>>().toBe<'b.d' | 'b.e.f'>();
+expectTypeOf<Paths<ValueTypeFoo, {valueType: number}>>().toBe<'a' | 'b.c'>();
+expectTypeOf<Paths<ValueTypeFoo, {valueType: object}>>().toBe<'b' | 'b.e'>();
+
+// `any`, `never`, and `unknown` values and matchers
+expectTypeOf<Paths<{data: never; name: string}, {valueType: string}>>().toBe<'name'>();
+expectTypeOf<Paths<{data: never; name: string}>>().toBe<'data' | 'name'>();
+expectTypeOf<Paths<{data: never; name: string}, {valueType: never}>>().toBe<'data'>();
+// A `never` value also matches any matcher that accepts every value
+expectTypeOf<Paths<{data: never}, {valueType: unknown}>>().toBe<'data'>();
+expectTypeOf<Paths<{data: never}, {valueType: any}>>().toBe<'data'>();
+expectTypeOf<Paths<{data: never; name: string}, {valueType: {} | null | undefined}>>().toBe<'data' | 'name'>();
+// But not one that merely looks top-like
+expectTypeOf<Paths<{data: never}, {valueType: void}>>().toBe<never>();
+expectTypeOf<Paths<{data: any; name: string}, {valueType: string}>>().toBe<'data' | 'name'>();
+expectTypeOf<Paths<{data: any; name: string}, {valueType: never}>>().toBe<never>(); // `any` matches every type except `never`
+expectTypeOf<Paths<{data: unknown; name: string}, {valueType: string}>>().toBe<'name'>();
+expectTypeOf<Paths<{data: unknown; name: string}, {valueType: unknown}>>().toBe<'data' | 'name'>();
+
+// A union value is checked as a whole
+expectTypeOf<Paths<{a: string | number; b: string}, {valueType: string}>>().toBe<'b'>();
+expectTypeOf<Paths<{a: string | number; b: string}, {valueType: string | number}>>().toBe<'a' | 'b'>();
+expectTypeOf<Paths<{a: string | null; b: string}, {valueType: string}>>().toBe<'b'>();
+expectTypeOf<Paths<{a: string | null; b: string}, {valueType: string | null}>>().toBe<'a' | 'b'>();
+expectTypeOf<Paths<{a: null; b: undefined}, {valueType: null}>>().toBe<'a'>();
+
+// When the traversed object is a union, each member's paths are found separately
+expectTypeOf<Paths<{a: string} | {a: number}, {valueType: string}>>().toBe<'a'>();
+expectTypeOf<Paths<{a: string} | {a: number}, {valueType: number}>>().toBe<'a'>();
+expectTypeOf<Paths<{x: {a: string} | {a: number}}, {valueType: string}>>().toBe<'x.a'>();
+expectTypeOf<Paths<{x: {a: string} | {a: number}}, {valueType: number}>>().toBe<'x.a'>();
+// A member matching as a whole does not keep the union-valued key itself
+expectTypeOf<Paths<{x: {a: string} | {a: number}}, {valueType: {a: string}}>>().toBe<never>();
+
+// Reading an optional property includes `undefined`, like `ConditionalKeys`
+expectTypeOf<Paths<{name?: string; age: number}, {valueType: string}>>().toBe<never>();
+expectTypeOf<Paths<{name?: string; age: number}, {valueType: string | undefined}>>().toBe<'name'>();
+expectTypeOf<Paths<{a?: string | undefined}, {valueType: string}>>().toBe<never>();
+expectTypeOf<Paths<{a?: string | undefined}, {valueType: string | undefined}>>().toBe<'a'>();
+expectTypeOf<Paths<{a: undefined; b?: undefined}, {valueType: undefined}>>().toBe<'a' | 'b'>();
+// So a required key is told apart from an optional one, which the declared value cannot express
+expectTypeOf<Paths<{a?: string; b: string}, {valueType: string}>>().toBe<'b'>();
+expectTypeOf<Paths<{a?: string; b: string}, {valueType: string | undefined}>>().toBe<'a' | 'b'>();
+// An optional tuple element follows the same rule
+expectTypeOf<Paths<{a: [string, number?]}, {valueType: number}>>().toBe<never>();
+expectTypeOf<Paths<{a: [string, number?]}, {valueType: number | undefined}>>().toBe<'a.1'>();
+// Only the end of the path is checked, so a path may still go through an optional key
+type ValueTypeOptionalParent = {a?: {b: string}; c: string};
+expectTypeOf<Paths<ValueTypeOptionalParent, {valueType: string}>>().toBe<'c' | 'a.b'>();
+// `requiredOnly` leaves those out, so `Get` reads such a path without `undefined`
+expectTypeOf<Paths<ValueTypeOptionalParent, {valueType: string; requiredOnly: true}>>().toBe<'c'>();
+expectTypeOf<Get<ValueTypeOptionalParent, Paths<ValueTypeOptionalParent, {valueType: string; requiredOnly: true}>>>().toBe<string>();
+// But an array index or a `Record` key still adds `undefined`, which is `Get`'s own rule and not affected by `valueType`
+expectTypeOf<Paths<{tags: string[]}, {valueType: string; requiredOnly: true}>>().toBe<`tags.${number}`>();
+expectTypeOf<Get<{tags: string[]}, Paths<{tags: string[]}, {valueType: string; requiredOnly: true}>>>().toBe<string | undefined>();
+
+// Arrays and tuples
+type ValueTypeData = {tags: string[]; scores: [number, number, number]; items: Array<{name: string; count: number}>};
+expectTypeOf<Paths<ValueTypeData, {valueType: string}>>().toBe<`tags.${number}` | `items.${number}.name`>();
+expectTypeOf<Paths<ValueTypeData, {valueType: number}>>().toBe<'scores.0' | 'scores.1' | 'scores.2' | `items.${number}.count`>();
+// In a tuple with a rest element, the rest elements share one `${number}` index, so a match on one of them keeps the fixed elements too
+expectTypeOf<Paths<{a: [string, ...number[]]}, {valueType: number}>>().toBe<`a.${number}`>();
+expectTypeOf<Paths<[string, ...number[]], {valueType: number}>>().toBe<number | `${number}`>();
+expectTypeOf<Paths<[...number[], string], {valueType: string}>>().toBe<number | `${number}`>();
+// A match on a fixed element alone keeps only its own index
+expectTypeOf<Paths<{a: [string, ...number[]]}, {valueType: string}>>().toBe<'a.0'>();
+expectTypeOf<Paths<[string, ...number[]], {valueType: string}>>().toBe<'0'>();
+// But when the rest element comes first, the fixed element shares its index, so either match keeps everything
+expectTypeOf<Paths<{a: [...number[], string]}, {valueType: string}>>().toBe<`a.${number}`>();
+expectTypeOf<Paths<{a: [...number[], string]}, {valueType: number}>>().toBe<`a.${number}`>();
+expectTypeOf<Paths<[string, number], {valueType: string}>>().toBe<'0'>();
+expectTypeOf<Paths<[string, number], {valueType: number}>>().toBe<'1'>();
+expectTypeOf<Paths<string[], {valueType: string}>>().toBe<number | `${number}`>();
+
+// Numeric keys. Note the key set differs from `ConditionalKeys`, which gives only `1`, even though the matching rule is the same.
+expectTypeOf<Paths<{1: string; 2: number}, {valueType: string}>>().toBe<1 | '1'>();
+expectTypeOf<Paths<{1: string; 2: number}, {valueType: number}>>().toBe<2 | '2'>();
+
+// Index signatures
+type ValueTypeRecordOfObjects = {[x: string]: {a: string; b: number}};
+expectTypeOf<Paths<ValueTypeRecordOfObjects, {valueType: string}>>().toBe<`${string}.a`>();
+expectTypeOf<Paths<ValueTypeRecordOfObjects, {valueType: number}>>().toBe<`${string}.b`>();
+expectTypeOf<Paths<ValueTypeRecordOfObjects, {valueType: object}>>().toBe<string>();
+// So when the index signature's own value matches, the one `string` path incidentally covers the nested ones too
+expectTypeOf<Paths<{[x: string]: {b: string}}, {valueType: {b: string}}>>().toBe<string>();
+expectTypeOf<Paths<ValueTypeRecordOfObjects, {valueType: string; depth: 1}>>().toBe<`${string}.a`>();
+expectTypeOf<Paths<ValueTypeRecordOfObjects, {valueType: string; leavesOnly: true}>>().toBe<`${string}.a`>();
+expectTypeOf<Paths<Record<string, string>, {valueType: string}>>().toBe<string>();
+expectTypeOf<Paths<{[x: `on${string}`]: () => void; title: string}, {valueType: string}>>().toBe<'title'>();
+// A key declared beside a top-level `string` index signature is not recovered, because `keyof` collapses it.
+// Plain `Paths` of this type is already just `string`, so there is no separate `'id'` path to keep.
+type ValueTypeIndexWithKnownKey = {[x: string]: string | number; id: number};
+expectTypeOf<Paths<ValueTypeIndexWithKnownKey>>().toBe<string>();
+expectTypeOf<Paths<ValueTypeIndexWithKnownKey, {valueType: number}>>().toBe<never>();
+expectTypeOf<Paths<ValueTypeIndexWithKnownKey, {valueType: string | number}>>().toBe<string>();
+
+// With other options
+expectTypeOf<Paths<ValueTypeFoo, {valueType: string; leavesOnly: true}>>().toBe<'b.d' | 'b.e.f'>();
+expectTypeOf<Paths<ValueTypeFoo, {valueType: object; leavesOnly: true}>>().toBe<never>();
+// An optional object with keys to recurse into is a path, but not a leaf, because the paths through it take its place.
+expectTypeOf<Paths<{a?: {b: string}}, {valueType: {b: string} | undefined}>>().toBe<'a'>();
+expectTypeOf<Paths<{a?: {b: string}}, {valueType: {b: string} | undefined; leavesOnly: true}>>().toBe<never>();
+// With nothing to recurse into, an optional value is a leaf like any other
+expectTypeOf<Paths<{a?: Date}, {valueType: Date | undefined; leavesOnly: true}>>().toBe<'a'>();
+expectTypeOf<Paths<ValueTypeFoo, {valueType: string; depth: 1}>>().toBe<'b.d'>();
+expectTypeOf<Paths<ValueTypeFoo, {valueType: object; depth: 0}>>().toBe<'b'>();
+expectTypeOf<Paths<{prices: [number, number]}, {valueType: number; bracketNotation: true}>>().toBe<'prices[0]' | 'prices[1]'>();
+type ValueTypeProject = {filename: string; listA: string[]; listB: [{filename: string}]; folder: {name: string}};
+expectTypeOf<Paths<ValueTypeProject, {valueType: string; recurseIntoArrays: false}>>().toBe<'filename' | 'folder.name'>();
+expectTypeOf<Paths<ValueTypeProject, {valueType: string[]; recurseIntoArrays: false}>>().toBe<'listA'>();
+expectTypeOf<Paths<ValueTypeProject, {valueType: string[]; recurseIntoArrays: false; leavesOnly: true}>>().toBe<'listA'>();
+expectTypeOf<Paths<ValueTypeFoo, {valueType: string; maxRecursionDepth: 1}>>().toBe<'b.d'>();
+
+// Circular references
+type ValueTypeNode = {value: string; parent: ValueTypeNode};
+expectTypeOf<Paths<ValueTypeNode, {valueType: string; maxCircularDepth: 0}>>().toBe<'value'>();
+expectTypeOf<Paths<ValueTypeNode, {valueType: object; maxCircularDepth: 0}>>().toBe<'parent'>();
+expectTypeOf<Paths<ValueTypeNode, {valueType: string; maxCircularDepth: 1}>>().toBe<'value' | 'parent.value'>();
+
+// Root unions and intersections
+expectTypeOf<Paths<{a: string} | {b: number}, {valueType: string}>>().toBe<'a'>();
+expectTypeOf<Paths<{a?: string; b: string} | {a: number}, {valueType: string}>>().toBe<'b'>();
+expectTypeOf<Paths<{a?: string; b: string} | {a: number}, {valueType: string | undefined}>>().toBe<'a' | 'b'>();
+expectTypeOf<Paths<{a: string} & {b: {c?: string}}, {valueType: string}>>().toBe<'a'>();
+expectTypeOf<Paths<{a: string} & {b: {c?: string}}, {valueType: string | undefined}>>().toBe<'a' | 'b.c'>();
+
+// Built-in objects are not recursed into
+type ValueTypeBuiltIns = {a: Map<string, string>; b: Date; c: string};
+expectTypeOf<Paths<ValueTypeBuiltIns, {valueType: string}>>().toBe<'c'>();
+expectTypeOf<Paths<ValueTypeBuiltIns, {valueType: Map<string, string>}>>().toBe<'a'>();
+expectTypeOf<Paths<ValueTypeBuiltIns, {valueType: Date}>>().toBe<'b'>();
+expectTypeOf<Paths<{[symbolKey]: string; a: string}, {valueType: string}>>().toBe<'a'>();
+
+// A non-narrowed options type falls back to the defaults, like any other option
+expectTypeOf<Paths<ValueTypeFoo, PathsOptions>>().toBe<Paths<ValueTypeFoo>>();
+expectTypeOf<Paths<ValueTypeFoo, Partial<PathsOptions>>>().toBe<Paths<ValueTypeFoo>>();
+expectTypeOf<Paths<ValueTypeFoo, {leavesOnly: true} & PathsOptions>>().toBe<Paths<ValueTypeFoo, {leavesOnly: true}>>();
+declare function forwardPathsOptions<ObjectType, Options extends PathsOptions>(object: ObjectType, options?: Options): Paths<ObjectType, Options>;
+expectTypeOf(forwardPathsOptions<ValueTypeFoo, PathsOptions>({a: 1, b: {c: 1, d: '', e: {f: ''}}})).toBe<Paths<ValueTypeFoo>>();
+// An optional `valueType` key still constrains, because the optional marker's `undefined` is not part of the matcher
+expectTypeOf<Paths<{a?: string; b: string}, {valueType?: string}>>().toBe<'b'>();
+expectTypeOf<Paths<{a?: string; b: string}, {valueType?: string | undefined}>>().toBe<'a' | 'b'>();
+
+// Base edge cases
+expectTypeOf<Paths<any, {valueType: string}>>().toBe<never>();
+expectTypeOf<Paths<never, {valueType: string}>>().toBe<never>();
+expectTypeOf<Paths<unknown, {valueType: string}>>().toBe<never>();
+expectTypeOf<Paths<{}, {valueType: string}>>().toBe<never>();
+expectTypeOf<Paths<[], {valueType: string}>>().toBe<never>();
+
+// Generic types
+// A known field stays constructible beside generic data.
+function _constructValueTypedPath<Value>(): Paths<{name: string; data: Value}, {valueType: string}> {
+	return 'name';
+}
+
+// A key whose value is the unresolved type parameter correctly does not match, because the value is not known to be a `string`.
+type ValueTypeConstraint<ObjectType, Path extends Paths<ObjectType, {valueType: string}>> = Path;
+// @ts-expect-error
+type _ValueTypeGeneric<Value> = ValueTypeConstraint<{foo: Value}, 'foo'>;
+
+declare function getStringPath<ObjectType extends object>(object: ObjectType, path: Paths<ObjectType, {valueType: string}>): void;
+declare const valueTypeConfig: {name: string; age: number; nested: {title: string}};
+getStringPath(valueTypeConfig, 'name');
+getStringPath(valueTypeConfig, 'nested.title');
+// @ts-expect-error
+getStringPath(valueTypeConfig, 'age');
+// @ts-expect-error
+getStringPath(valueTypeConfig, 'nested');
 
 // Index signatures
 declare const indexSignature: Paths<{[x: string]: {a: string; b: number}}>;

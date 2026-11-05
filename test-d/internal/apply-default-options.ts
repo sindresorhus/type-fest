@@ -125,3 +125,24 @@ function _readGenericStrictness<Strict extends boolean>(value: ApplyDefaultOptio
 function _readGenericCount<Count extends number>(value: ApplyDefaultOptions<{count?: number}, {count: 0}, {count: Count}>['count']): Count {
 	return value;
 }
+
+// An option whose declared type admits `undefined`, like `unknown`, resolves instead of collapsing to `never` when the options type is not narrowed.
+expectTypeOf<ApplyDefaultOptions<
+	{match?: unknown},
+	{match: unknown},
+	{match?: unknown}
+>>().toBe<{match: unknown}>();
+
+// Such an option still resolves when the whole options type is forwarded unnarrowed.
+expectTypeOf<ApplyDefaultOptions<
+	{match?: unknown; mode?: boolean},
+	{match: unknown; mode: false},
+	{match?: unknown; mode?: boolean}
+>>().toBe<{match: unknown; mode: false}>();
+
+// An explicit `undefined` is still a value such an option can take, rather than a request for the default.
+expectTypeOf<ApplyDefaultOptions<
+	{match?: unknown},
+	{match: unknown},
+	{match: undefined}
+>>().toBe<{match: undefined}>();

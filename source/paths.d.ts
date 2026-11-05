@@ -3,11 +3,13 @@ import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {Sum} from './sum.d.ts';
 import type {And} from './and.d.ts';
 import type {OptionalKeysOf} from './optional-keys-of.d.ts';
 import type {OptionalPaths} from './optional-paths.d.ts'; // For `@link`
 import type {NonNullableDeep} from './non-nullable-deep.d.ts'; // For `@link`
+import type {ConditionalKeys} from './conditional-keys.d.ts'; // For `@link`
 
 /**
 Options for the `Paths` type.
@@ -255,6 +257,59 @@ export type PathsOptions = {
 	```
 	*/
 	requiredOnly?: boolean;
+
+	/**
+	Only include paths whose value type is assignable to this type.
+
+	The checked value is what reading the path gives, so an optional property includes `undefined`: `{name?: string}` matches `string | undefined`, not `string`. A union value is checked as a whole, so `{a: string | number}` does not match `string`. For a single object, these are the matching rules of {@link ConditionalKeys}.
+
+	Only the value at the end of the path is checked, so a path can still go through an optional property. Add {@link PathsOptions.requiredOnly | `requiredOnly`} to leave those out.
+
+	Use-case: You want a type-safe way to refer only to the paths that hold a specific kind of value, like every `string` path in a translation object.
+
+	The default, `unknown`, includes every path.
+
+	@default unknown
+
+	@example
+	```
+	import type {Paths} from 'type-fest';
+
+	type Project = {
+		id: number;
+		title: string;
+		tags: string[];
+		scores: [number, number];
+		owner: {
+			name: string;
+			age: number;
+		};
+	};
+
+	type StringPaths = Paths<Project, {valueType: string}>;
+	//=> 'title' | `tags.${number}` | 'owner.name'
+
+	type NumberPaths = Paths<Project, {valueType: number}>;
+	//=> 'id' | 'scores.0' | 'scores.1' | 'owner.age'
+	```
+
+	@example
+	```
+	import type {Paths} from 'type-fest';
+
+	// Reading an optional property can give `undefined`, so the matcher needs it.
+	type A = Paths<{name?: string; age: number}, {valueType: string}>;
+	//=> never
+
+	type B = Paths<{name?: string; age: number}, {valueType: string | undefined}>;
+	//=> 'name'
+
+	// A union value is checked as a whole.
+	type C = Paths<{value: string | number; name: string}, {valueType: string}>;
+	//=> 'name'
+	```
+	*/
+	valueType?: unknown;
 };
 
 type DefaultPathsOptions = {
@@ -265,6 +320,7 @@ type DefaultPathsOptions = {
 	depth: number;
 	recurseIntoArrays: true;
 	requiredOnly: false;
+	valueType: unknown;
 };
 
 /**
@@ -411,7 +467,13 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 				// If `depth` is provided, the condition becomes truthy only when it matches `CurrentDepth`.
 				// Otherwise, since `depth` defaults to `number`, the condition is always truthy, returning paths at all depths.
 				? CurrentDepth extends Options['depth']
-					? _TransformedKey
+					// The value is read as a property, so an optional key carries its `undefined`, like `ConditionalKeys`.
+					// The default matcher accepts every value. This branch is required, not just faster: reading `T[Key]` for a generic `T` makes the result irreducible, which breaks constraints like `ParsePath<Paths<T>>`.
+					? unknown extends Options['valueType']
+						? _TransformedKey
+						: ExtendsStrict<T[Key], Options['valueType']> extends true
+							? _TransformedKey
+							: never
 					: never
 				: never)
 			// Recursively generate paths for the current key

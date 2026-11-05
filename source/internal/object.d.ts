@@ -222,9 +222,10 @@ type _ApplyDefaultOptions<
 		If<IsNever<SpecifiedOptions>, Defaults,
 			// The overrides are already an object map, so skip `Merge`'s array and equality dispatch.
 			_Merge<Defaults, {
+				// The first `as` branch keeps the key of an option whose declared type admits `undefined`, like `unknown`, because `undefined` is one of its valid values. `-?` then strips the optional modifier, so an unnarrowed options type still resolves instead of failing the `Required<Options>` guard above.
 				[Key in keyof SpecifiedOptions
 				as undefined extends Required<Options>[Key & keyof Options] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
-				]: SpecifiedOptions[Key]
+				]-?: SpecifiedOptions[Key]
 			}>>>;
 
 /**
