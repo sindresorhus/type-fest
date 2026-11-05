@@ -1,9 +1,12 @@
 import type {IsArrayOfUnknownLength, NonRecursiveType} from './internal/index.d.ts';
+import type {UndefinedOnPartial} from './undefined-on-partial.d.ts'; // For `@link`
 
 /**
 Create a deep version of another type where all optional keys are set to also accept `undefined`.
 
 Note: This is only needed when the [`exactOptionalPropertyTypes`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) TSConfig setting is enabled.
+
+Use {@link UndefinedOnPartial} if you only need one level deep.
 
 Use-cases:
 - When `exactOptionalPropertyTypes` is enabled, an object like `{a: undefined}` is not assignable to the type `{a?: number}`. You can use `UndefinedOnPartialDeep<{a?: number}>` to make it assignable.

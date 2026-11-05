@@ -1,6 +1,7 @@
 import type {ApplyDefaultOptions, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {PartialOnUndefined} from './partial-on-undefined.d.ts'; // For `@link`
 
 /**
 @see {@link PartialOnUndefinedDeep}
@@ -23,7 +24,9 @@ type DefaultPartialOnUndefinedDeepOptions = {
 /**
 Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 
-This utility type is recursive, transforming at any level deep. By default, it does not affect arrays and tuples items unless you explicitly pass `{recurseIntoArrays: true}` as the second type argument.
+This utility type is recursive, transforming at any level deep. By default, it does not affect the elements of arrays and tuples unless you explicitly pass `{recurseIntoArrays: true}` as the second type argument.
+
+Use {@link PartialOnUndefined} if you only need one level deep.
 
 Use-cases:
 - Make all properties of a type that can be undefined optional to not have to specify keys with undefined value.
