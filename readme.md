@@ -274,6 +274,7 @@ Click the type names for complete docs.
 - [`Jsonifiable`](source/jsonifiable.d.ts) - Matches a value that can be losslessly converted to JSON.
 - [`JsonifiableObject`](source/jsonifiable.d.ts) - Matches an object that can be losslessly converted to JSON.
 - [`JsonifiableArray`](source/jsonifiable.d.ts) - Matches an array that can be losslessly converted to JSON.
+- [`JsonifiableValue`](source/jsonifiable.d.ts) - Matches a value of type `Value` that can be losslessly converted to JSON, including an `interface`.
 - [`JsonPrimitive`](source/json-value.d.ts) - Matches any valid JSON primitive value.
 - [`JsonObject`](source/json-value.d.ts) - Matches a JSON object.
 - [`JsonArray`](source/json-value.d.ts) - Matches a JSON array.
