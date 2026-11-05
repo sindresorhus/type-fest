@@ -36,7 +36,6 @@ jobs:
           - 'latest'
           - '~7.0.0'
           - '~6.0.0'
-          - '~5.9.0'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

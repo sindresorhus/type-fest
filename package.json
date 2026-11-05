@@ -18,7 +18,7 @@
 	"types": "./index.d.ts",
 	"sideEffects": false,
 	"engines": {
-		"node": ">=20"
+		"node": ">=22"
 	},
 	"scripts": {
 		"test:tsc": "node ./node_modules/@typescript/native/bin/tsc",
@@ -51,17 +51,17 @@
 	},
 	"devDependencies": {
 		"@eslint/markdown": "^8.0.1",
-		"@sindresorhus/tsconfig": "^8.0.1",
-		"@types/node": "^26.6.5",
-		"@typescript-eslint/parser": "^8.71.2",
+		"@sindresorhus/tsconfig": "^9.0.0",
+		"@types/node": "^26.6.6",
+		"@typescript-eslint/parser": "^8.72.1",
 		"@typescript/native": "npm:typescript@^7.0.2",
-		"@typescript/vfs": "^1.6.1",
+		"@typescript/vfs": "^1.6.6",
 		"dedent": "^1.7.0",
-		"eslint": "^10.12.0",
-		"npm-run-all2": "^9.0.3",
+		"eslint": "^10.14.0",
+		"npm-run-all2": "^9.0.4",
 		"nz": "^0.1.0",
 		"typescript": "^6.0.0",
-		"typescript-eslint": "^8.71.2",
+		"typescript-eslint": "^8.72.1",
 		"xo": "^5.0.1"
 	}
 }

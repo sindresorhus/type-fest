@@ -55,7 +55,7 @@ PR welcome for additional commonly needed types and docs improvements. Read the 
 npm install type-fest
 ```
 
-*Requires TypeScript >=5.9, [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c), and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
+*Requires TypeScript >=6, [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c), and [`{strict: true}`](https://www.typescriptlang.org/tsconfig#strict) in your tsconfig.*
 
 *[`{exactOptionalPropertyTypes: true}`](https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes) is required. Disabling it is unsupported.*
 
