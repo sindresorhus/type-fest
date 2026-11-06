@@ -111,7 +111,7 @@ expectTypeOf(boolean).toBe<IsReadonlyKeyOf<A, FullKeyUnion>>();
 // @ts-expect-error
 expectTypeOf(boolean).toBe<IsReadonlyKeyOf<A, 'b' | 'x'>>(); // 'x' is not in A, so filtered as false
 
-// `never` / `any
+// `never` / `any`
 type L = {readonly a: string};
 expectTypeOf(never).toBe<IsReadonlyKeyOf<K, any>>();
 expectTypeOf(never).toBe<IsReadonlyKeyOf<any, any>>();

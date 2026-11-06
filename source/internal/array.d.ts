@@ -2,9 +2,10 @@ import type {ExtendsStrict} from '../extends-strict.d.ts';
 import type {IsAny} from '../is-any.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsNever} from '../is-never.d.ts';
+import type {Not} from '../not.d.ts';
 import type {Or} from '../or.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {IfNotAnyOrNever, Not} from './type.d.ts';
+import type {IfNotAnyOrNever} from './type.d.ts';
 
 /**
 Compare the given element type and item type exactly, or by assignability in either direction when `Distribute` is `true`.

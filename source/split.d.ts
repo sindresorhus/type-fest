@@ -1,5 +1,6 @@
 import type {And} from './and.d.ts';
-import type {ApplyDefaultOptions, Not, UnwrapBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
+import type {Not} from './not.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Or} from './or.d.ts';
 

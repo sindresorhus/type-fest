@@ -111,7 +111,7 @@ expectTypeOf(boolean).toBe<IsWritableKeyOf<A, FullKeyUnion>>();
 // @ts-expect-error
 expectTypeOf<IsWritableKeyOf<A, 'b' | 'x'>>().toBe<false>(); // 'x' is not in A, so filtered as false
 
-// `never` / `any
+// `never` / `any`
 type L = {readonly a: string};
 expectTypeOf(never).toBe<IsWritableKeyOf<K, any>>();
 expectTypeOf(never).toBe<IsWritableKeyOf<any, any>>();
@@ -119,6 +119,8 @@ expectTypeOf(never).toBe<IsWritableKeyOf<any, 'a'>>();
 expectTypeOf(never).toBe<IsWritableKeyOf<K, never>>();
 expectTypeOf(never).toBe<IsWritableKeyOf<any, never>>();
 expectTypeOf(never).toBe<IsWritableKeyOf<never, 'a'>>();
+expectTypeOf(never).toBe<IsWritableKeyOf<never, 'a' | 'b'>>();
+expectTypeOf(never).toBe<IsWritableKeyOf<never, string>>();
 
 // An empty key selection stays impossible even before its object type is known.
 function _readEmptyWritableKeys<Value extends object>(value: IsWritableKeyOf<Value, never>): never {

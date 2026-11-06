@@ -1,5 +1,6 @@
 import type {ApplyDefaultOptions, UnwrapBrand} from './internal/object.d.ts';
-import type {IfNotAnyOrNever, Not} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
+import type {Not} from './not.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Or} from './or.d.ts';

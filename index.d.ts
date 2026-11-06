@@ -211,6 +211,7 @@ export type {AndAll} from './source/and-all.d.ts';
 export type {Or} from './source/or.d.ts';
 export type {OrAll} from './source/or-all.d.ts';
 export type {Xor} from './source/xor.d.ts';
+export type {Not} from './source/not.d.ts';
 export type {AllExtend, AllExtendOptions} from './source/all-extend.d.ts';
 export type {SomeExtend, SomeExtendOptions} from './source/some-extend.d.ts';
 export type {NonEmptyTuple} from './source/non-empty-tuple.d.ts';

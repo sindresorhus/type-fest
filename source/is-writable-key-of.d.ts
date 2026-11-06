@@ -1,5 +1,5 @@
 import type {IsReadonlyKeyOf} from './is-readonly-key-of.d.ts';
-import type {Not} from './internal/type.d.ts';
+import type {Not} from './not.d.ts';
 import type {IsAny} from './is-any.d.ts';
 
 /**
@@ -45,7 +45,10 @@ type T5 = IsWritableKeyOf<User | Admin, 'id'>;
 export type IsWritableKeyOf<Type extends object, Key extends keyof Type> =
 	IsAny<Type | Key> extends true ? never
 		: Key extends keyof Type
-			? Not<IsReadonlyKeyOf<Type, Key>>
+			// `IsReadonlyKeyOf` is `never` when `Type` is `never`; keep it instead of turning it into `true` through `Not`.
+			? [IsReadonlyKeyOf<Type, Key>] extends [never]
+				? never
+				: Not<IsReadonlyKeyOf<Type, Key>>
 			: false;
 
 export {};

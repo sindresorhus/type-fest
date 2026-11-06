@@ -92,22 +92,6 @@ type C = IsPrimitive<Object>;
 export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
 
 /**
-Returns a boolean for whether A is false.
-
-@example
-```
-type A = Not<true>;
-//=> false
-
-type B = Not<false>;
-//=> true
-```
-*/
-export type Not<A extends boolean> = A extends true
-	? false
-	: true;
-
-/**
 An if-else-like type that resolves depending on whether the given type is `any` or `never`.
 
 @example

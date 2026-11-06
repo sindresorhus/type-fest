@@ -226,6 +226,7 @@ Click the type names for complete docs.
 - [`And`](source/and.d.ts) - Returns a boolean for whether two given types are both `true`.
 - [`Or`](source/or.d.ts) - Returns a boolean for whether either of two given types is `true`.
 - [`Xor`](source/xor.d.ts) - Returns a boolean for whether only one of two given types is `true`.
+- [`Not`](source/not.d.ts) - Returns a boolean for whether the given type is `false`.
 - [`AndAll`](source/and-all.d.ts) - Returns a boolean for whether all of the given elements are `true`.
 - [`OrAll`](source/or-all.d.ts) - Returns a boolean for whether any of the given elements is `true`.
 - [`AllExtend`](source/all-extend.d.ts) - Returns a boolean for whether every element in an array type extends another type.
@@ -436,7 +437,7 @@ Click the type names for complete docs.
 - [`PackageJsonExtras`](https://github.com/sindresorhus/type-fest/issues/371) - There are too many possible configurations that can be put into `package.json`. If you would like to extend `PackageJson` to support an additional configuration in your project, please see the *Extending existing types* section below.
 - [`NarrowBy`](https://github.com/sindresorhus/type-fest/issues/1397) and [`DiscriminateUnion`](https://github.com/sindresorhus/type-fest/issues/528) - Use `Extract<Shape, {kind: 'circle'}>` to keep union members, or an intersection to narrow fields: `SimplifyDeep<SearchResult & {metadata: {__typename: 'Post'}}>`.
 - [`ExhaustiveArray`](https://github.com/sindresorhus/type-fest/issues/713) and [`Permutation`](https://github.com/sindresorhus/type-fest/issues/534) - A type that accepts every member of a union in any order must be a union of all the orderings. It grows factorially, so 8 members already take seconds to type-check and 9 members can crash TypeScript. Instead, check a hand-written array with [`LiteralList`](source/literal-list.d.ts), define the array first and derive the union with [`TupleToUnion`](source/tuple-to-union.d.ts), or list the members as object keys with `satisfies Record<Union, true>` and use `Object.keys()`.
-- [`Not<string, 'not me'>`](https://github.com/sindresorhus/type-fest/issues/417) - TypeScript does not support [negated types](https://github.com/microsoft/TypeScript/pull/29317), so a type for “any string except X” is not possible. For a function parameter, capture the argument with a generic and use the built-in `Exclude`: ``function navigate<T extends string>(path: Exclude<T, `/${string}`>)``. A value typed as `string` is still accepted, because TypeScript cannot know its content.
+- [`Not<string, 'not me'>`](https://github.com/sindresorhus/type-fest/issues/417) - This is a different, two-parameter proposal from the boolean [`Not`](source/not.d.ts). TypeScript does not support [negated types](https://github.com/microsoft/TypeScript/pull/29317), so a type for “any string except X” is not possible. For a function parameter, capture the argument with a generic and use the built-in `Exclude`: ``function navigate<T extends string>(path: Exclude<T, `/${string}`>)``. A value typed as `string` is still accepted, because TypeScript cannot know its content.
 
 ## Alternative type names
 

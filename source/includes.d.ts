@@ -1,6 +1,7 @@
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IsEqualOrExtend} from './internal/array.d.ts';
-import type {IsAnyOrNever, Not} from './internal/type.d.ts';
+import type {IsAnyOrNever} from './internal/type.d.ts';
+import type {Not} from './not.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
