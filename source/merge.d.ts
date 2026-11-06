@@ -7,6 +7,7 @@ import type {IsAny} from './is-any.d.ts';
 import type {ObjectMerge} from './object-merge.d.ts'; // For `@link`
 import type {Spread} from './spread.d.ts'; // For `@link`
 import type {MergeAll} from './merge-all.d.ts'; // For `@link`
+import type {Modify} from './modify.d.ts'; // For `@link`
 
 /**
 Merge two types into a new type. Keys of the second type override keys of the first type.
@@ -68,6 +69,8 @@ export type FooBar = Merge<Foo, Bar>;
 Note: If you want a merge type that more accurately reflects the runtime behavior of object spread or `Object.assign`, refer to the {@link ObjectMerge} type.
 
 Use {@link MergeAll} to merge more than two types.
+
+Use {@link Modify} to also remove keys: a key of the source with the `never` type removes that key from the result.
 
 Two tuples are combined position by position, so `Merge<[1, 2, 3], [4, 5]>` is `[4, 5, 3]`. Use {@link Spread} to append them instead.
 

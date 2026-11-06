@@ -27,6 +27,8 @@ export type {MergeAll} from './source/merge-all.d.ts';
 export type {ObjectMerge} from './source/object-merge.d.ts';
 export type {MergeDeep, MergeDeepOptions} from './source/merge-deep.d.ts';
 export type {MergeExclusive} from './source/merge-exclusive.d.ts';
+export type {Modify} from './source/modify.d.ts';
+export type {ModifyDeep} from './source/modify-deep.d.ts';
 export type {RequireAtLeastOne} from './source/require-at-least-one.d.ts';
 export type {RequireExactlyOne} from './source/require-exactly-one.d.ts';
 export type {RequireAllOrNone} from './source/require-all-or-none.d.ts';

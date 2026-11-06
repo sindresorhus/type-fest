@@ -118,6 +118,8 @@ Click the type names for complete docs.
 - [`ObjectMerge`](source/object-merge.d.ts) - Merge two object types into a new object type, where keys from the second override keys from the first.
 - [`MergeDeep`](source/merge-deep.d.ts) - Merge two objects or two arrays/tuples recursively into a new type.
 - [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
+- [`Modify`](source/modify.d.ts) - Create a type from an object type and a modifier type, where keys of the modifier type override keys of the object type, and keys with the `never` type are removed from the result.
+- [`ModifyDeep`](source/modify-deep.d.ts) - Recursively create a type from an object type and a modifier type, where keys of the modifier type override keys of the object type, and keys with the `never` type are removed from the result.
 - [`OverrideProperties`](source/override-properties.d.ts) - Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
 - [`OverridePropertiesDeep`](source/override-properties-deep.d.ts) - Override existing properties of the given type deeply. Similar to `MergeDeep`, but requires overridden keys to exist at every level.
 - [`RenameKeys`](source/rename-keys.d.ts) - Rename keys in an object type according to a map of old-to-new names.
@@ -490,6 +492,7 @@ Click the type names for complete docs.
 - `TaggedUnionToIntersection`, `MergeUnion` - See [`AllUnionFields`](source/all-union-fields.d.ts)
 - `MergeStrict`, `MergeExact` - See [`OverrideProperties`](source/override-properties.d.ts)
 - `MergeDeepStrict`, `MergeDeepExact` - See [`OverridePropertiesDeep`](source/override-properties-deep.d.ts)
+- `ModifyType`, `ModifiedType` - See [`Modify`](source/modify.d.ts)
 - `Identity`, `Passthrough` - See [`AsExtendable`](source/as-extendable.d.ts)
 - `Falsey` - See [`Falsy`](source/falsy.d.ts)
 - `NonFalsy`, `NotFalsey` - See [`Truthy`](source/truthy.d.ts)

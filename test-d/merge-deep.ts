@@ -859,6 +859,43 @@ function _readCopiedMergeValue<Value extends string>(value: MergeDeep<[{id: Valu
 	return value[0].id;
 }
 
+// Generic payloads keep their containing objects accessible in both copied and merged records.
+function _readCopiedGenericPayload<Value>(value: MergeDeep<{x: {id: string; payload: Value}}, {}>): string {
+	return value.x.id;
+}
+
+function _readMergedGenericPayload<Value>(value: MergeDeep<{x: {id: string; payload: Value}}, {x: {keep: true}}>): string {
+	return value.x.id;
+}
+
+function _readOptionalGenericPayload<Value>(value: MergeDeep<{x?: {id: string; payload: Value}}, {}>): string | undefined {
+	return value.x?.id;
+}
+
+function _readGenericEnvelope<Value>(value: MergeDeep<{x: {id: string; payload: Value}}, {}>): {x: {id: string}} {
+	return value;
+}
+
+// A generic `then` field keeps the known parent readable without removing its fields.
+function _readCopiedGenericThen<Value extends string>(value: MergeDeep<{x: {id: string; then: Value}}, {}>): string {
+	return value.x.id;
+}
+
+expectTypeOf<MergeDeep<{x: {id: string; then: never}}, {}>>().toBe<{x: {id: string; then: never}}>();
+
+// Unlike `ModifyDeep`, merging preserves `never` keys in copied records and shared properties.
+expectTypeOf<MergeDeep<{x: {id: string; payload: any}}, {}>>().toBe<{x: {id: string; payload: any}}>();
+expectTypeOf<MergeDeep<{x: {id: string; payload: never}}, {}>>().toBe<{x: {id: string; payload: never}}>();
+expectTypeOf<MergeDeep<{x: {id: string; payload: unknown}}, {}>>().toBe<{x: {id: string; payload: unknown}}>();
+expectTypeOf<MergeDeep<{value: string}, {value: never}>>().toBe<{value: never}>();
+expectTypeOf<MergeDeep<{value: never; keep: string}, {value: number}>>().toBe<{value: never; keep: string}>();
+expectTypeOf<MergeDeep<{value: string}, {value?: never}>>().toBe<{value?: never}>();
+
+// `any` and `undefined` sources bypass a `never` destination without enabling key removal.
+expectTypeOf<MergeDeep<{value: never}, {value: any}>>().toBe<{value: any}>();
+expectTypeOf<MergeDeep<{value: never}, {value: unknown}>>().toBe<{value: unknown}>();
+expectTypeOf<MergeDeep<{value: never}, {value: string | undefined}>>().toBe<{value: undefined}>();
+
 declare function mergeCopiedValues<const Destination, const Source>(destination: Destination, source: Source): MergeDeep<Destination, Source, {recurseIntoArrays: true}>;
 const inferredCopiedMerge = mergeCopiedValues([{keep: 1}], [{value: 'ready'}]);
 expectTypeOf(inferredCopiedMerge[0]).toBe<{readonly keep: 1; readonly value: 'ready'}>();
@@ -974,3 +1011,18 @@ expectTypeOf<{keep: true; shared: {after: string}}>().not.toBeAssignableTo<Mixed
 declare const mixedSourceFields: MixedSourceFields;
 // @ts-expect-error A source-only readonly field stays readonly.
 mixedSourceFields.added = {value: true};
+
+// A replacement variant must not bypass the merge required by a record variant.
+type NullableSourceRecord = MergeDeep<{value: {id: string}}, {value: {enabled: true} | null}>;
+expectTypeOf<NullableSourceRecord>().toBe<{value: {id: string; enabled: true} | null}>();
+expectTypeOf<{value: {enabled: true}}>().not.toBeAssignableTo<NullableSourceRecord>();
+({value: null}) satisfies NullableSourceRecord;
+({value: {id: 'item', enabled: true}}) satisfies NullableSourceRecord;
+expectTypeOf<MergeDeep<{value: {id: string}}, {readonly value?: {enabled: true} | null | undefined}>>()
+	.toBe<{readonly value?: {id: string; enabled: true} | null | undefined}>();
+expectTypeOf<MergeDeep<[{id: string}], [{enabled: true} | null], {recurseIntoArrays: true}>>()
+	.toBe<[{id: string; enabled: true} | null]>();
+
+function _readNullableGenericPayload<Value>(value: MergeDeep<{value: {id: string; payload: Value}}, {value: {enabled: true} | null}>): string | undefined {
+	return value.value?.id;
+}
