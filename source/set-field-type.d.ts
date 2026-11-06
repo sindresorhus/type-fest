@@ -1,5 +1,6 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {ApplyDefaultOptions, KeySelector, SelectedKeyAlias, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {SetProperty} from './set-property.d.ts'; // For `@link`
 
 export type SetFieldTypeOptions = {
 	/**
@@ -26,6 +27,10 @@ Use-cases:
 - Fixing incorrect external types.
 
 @see `Merge` if you need to change multiple properties to different types.
+
+This type only changes the type of the given keys at the top level. For a deeply nested property, use {@link SetProperty} with a key path: `SetProperty<{a: {b: string}}, 'a.b', number>` is `{a: {b: number}}`.
+
+@see {@link SetProperty}
 
 @example
 ```

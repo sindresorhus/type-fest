@@ -499,7 +499,7 @@ Click the type names for complete docs.
 - `PositiveIntegerString`, `DigitString` - See [`NonNegativeIntegerString`](source/non-negative-integer-string.d.ts)
 - `KeyBy`, `IndexBy`, `RecordOf` - See [`ArrayToRecord`](source/array-to-record.d.ts)
 - `ReplaceDeep`, `DeepReplace`, `DeepSubstitute`, `NullToUndefined`, `UndefinedToNull` - See [`SubstituteDeep`](source/substitute-deep.d.ts)
-- `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue` - See [`SetProperty`](source/set-property.d.ts)
+- `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue`, `SetFieldTypeDeep` - See [`SetProperty`](source/set-property.d.ts)
 - `ExtendsFrom`, `SubsetUnion` - See [`SubsetOf`](source/subset-of.d.ts)
 - `TypedEventTarget` - See [`StrictEventTarget`](source/strict-event-target.d.ts)
 

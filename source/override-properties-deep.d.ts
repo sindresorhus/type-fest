@@ -5,6 +5,7 @@ import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {MergeDeep, MergeDeepOptions} from './merge-deep.d.ts';
 import type {OverrideProperties} from './override-properties.d.ts'; // For `@link`
+import type {SetProperty} from './set-property.d.ts'; // For `@link`
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -17,6 +18,8 @@ Use-cases:
 Unlike {@link MergeDeep}, an `Override` key that does not exist in `Original`, or in the original value at the same path, is a type error, unless its value is `never` or the original is an array. Value types can change freely. An override of a plain object is merged, so keys you do not mention keep their original value.
 
 The `Options` parameter is passed to {@link MergeDeep} and does not change which keys are checked. See {@link MergeDeepOptions}.
+
+To change the type of a single deeply-nested property using a key path, use {@link SetProperty} instead. It does not require the key to exist.
 
 @example
 ```
@@ -64,6 +67,7 @@ Known limitations:
 - At the root, an `object` rejects every key and a `Map`, `Set`, or `Date` merges to `never`. A root array is opaque, so a non-array override is accepted but merges to `never`.
 
 @see {@link OverrideProperties}
+@see {@link SetProperty}
 @see {@link MergeDeep}
 @see {@link MergeDeepOptions}
 @category Object
