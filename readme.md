@@ -404,6 +404,8 @@ Click the type names for complete docs.
 - [`SnakeCasedPropertiesDeep`](source/snake-cased-properties-deep.d.ts) - Convert object properties to snake case recursively.
 - [`ScreamingSnakeCase`](source/screaming-snake-case.d.ts) - Convert a string literal to screaming-snake-case.
 - [`ScreamingSnakeCaseString`](source/screaming-snake-case-string.d.ts) - A `string` that is in screaming snake case, like `'FOO_BAR'`.
+- [`ScreamingSnakeCasedProperties`](source/screaming-snake-cased-properties.d.ts) - Convert top-level object properties to screaming snake case.
+- [`ScreamingSnakeCasedPropertiesDeep`](source/screaming-snake-cased-properties-deep.d.ts) - Convert object properties to screaming snake case recursively.
 - [`DelimiterCase`](source/delimiter-case.d.ts) - Convert a string literal to a custom string delimiter casing.
 - [`DelimiterCasedProperties`](source/delimiter-cased-properties.d.ts) - Convert object properties to a custom string delimiter casing.
 - [`DelimiterCasedPropertiesDeep`](source/delimiter-cased-properties-deep.d.ts) - Convert object properties to a custom string delimiter casing recursively.

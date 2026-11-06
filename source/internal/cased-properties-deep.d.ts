@@ -1,15 +1,16 @@
 import type {CamelCase} from '../camel-case.d.ts';
 import type {DelimiterCase} from '../delimiter-case.d.ts';
 import type {PascalCase} from '../pascal-case.d.ts';
+import type {ScreamingSnakeCase} from '../screaming-snake-case.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {WordsOptions} from '../words.d.ts';
 import type {IsArrayOfUnknownLength} from './array.d.ts';
 import type {NonRecursiveType} from './type.d.ts';
 
 /**
-The casing that {@link CasedPropertiesDeep} converts every key to: camel case, pascal case, or a delimiter case such as `{delimiter: '-'}`.
+The casing that {@link CasedPropertiesDeep} converts every key to: camel case, pascal case, screaming snake case, or a delimiter case such as `{delimiter: '-'}`.
 */
-export type PropertyCasing = 'camel' | 'pascal' | {delimiter: string};
+export type PropertyCasing = 'camel' | 'pascal' | 'screamingSnake' | {delimiter: string};
 
 /**
 Converts one key to the given casing.
@@ -19,12 +20,14 @@ type CaseKey<Key, Casing extends PropertyCasing, Options extends WordsOptions> =
 		? CamelCase<Key, Options>
 		: Casing extends 'pascal'
 			? PascalCase<Key, Options>
-			: Casing extends {delimiter: infer Delimiter extends string}
-				? DelimiterCase<Key, Delimiter, Options>
-				: never;
+			: Casing extends 'screamingSnake'
+				? ScreamingSnakeCase<Key, Options>
+				: Casing extends {delimiter: infer Delimiter extends string}
+					? DelimiterCase<Key, Delimiter, Options>
+					: never;
 
 /**
-The shared walker behind `CamelCasedPropertiesDeep`, `PascalCasedPropertiesDeep` and `DelimiterCasedPropertiesDeep`. Converts the keys of every object it finds, and rebuilds arrays, tuples, maps and sets around their converted contents.
+The shared walker behind `CamelCasedPropertiesDeep`, `PascalCasedPropertiesDeep`, `ScreamingSnakeCasedPropertiesDeep` and `DelimiterCasedPropertiesDeep`. Converts the keys of every object it finds, and rebuilds arrays, tuples, maps and sets around their converted contents.
 
 Options are forwarded to the scalar casing types, which resolve their own defaults.
 */

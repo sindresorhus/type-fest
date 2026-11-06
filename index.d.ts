@@ -253,6 +253,8 @@ export type {SnakeCasedProperties} from './source/snake-cased-properties.d.ts';
 export type {SnakeCasedPropertiesDeep} from './source/snake-cased-properties-deep.d.ts';
 export type {ScreamingSnakeCase} from './source/screaming-snake-case.d.ts';
 export type {ScreamingSnakeCaseString} from './source/screaming-snake-case-string.d.ts';
+export type {ScreamingSnakeCasedProperties} from './source/screaming-snake-cased-properties.d.ts';
+export type {ScreamingSnakeCasedPropertiesDeep} from './source/screaming-snake-cased-properties-deep.d.ts';
 export type {DelimiterCase} from './source/delimiter-case.d.ts';
 export type {DelimiterCasedProperties} from './source/delimiter-cased-properties.d.ts';
 export type {DelimiterCasedPropertiesDeep} from './source/delimiter-cased-properties-deep.d.ts';
