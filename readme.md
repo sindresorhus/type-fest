@@ -165,6 +165,7 @@ Click the type names for complete docs.
 - [`SetNonNullableDeep`](source/set-non-nullable-deep.d.ts) - Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
 - [`NonNullableDeep`](source/non-nullable-deep.d.ts) - Recursively removes `null` and `undefined` from the specified type.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
+- [`ValueOfDeep`](source/value-of-deep.d.ts) - Create a union of all leaf values in the given object, including values in nested objects and arrays.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract the keys from a type where the value type of the key extends the given `Condition`.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Pick keys from the shape that matches the given `Condition`.
 - [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Pick keys recursively from the shape that matches the given condition.
@@ -467,7 +468,7 @@ Click the type names for complete docs.
 - `SetEntry` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
 - `$Values`, `ValuesType` - See [`ValueOf`](source/value-of.d.ts)
-- `ValueOfDeep` - See [`Get`](source/get.d.ts)
+- `DeepValueOf`, `DeepValuesOf` - See [`ValueOfDeep`](source/value-of-deep.d.ts)
 - `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `KeysOfType`, `KeysWithType`, `KeysMatching` - See [`ConditionalKeys`](source/conditional-keys.d.ts)

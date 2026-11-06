@@ -77,6 +77,7 @@ export type {SetNullable} from './source/set-nullable.d.ts';
 export type {SetNonNullableDeep} from './source/set-non-nullable-deep.d.ts';
 export type {NonNullableDeep} from './source/non-nullable-deep.d.ts';
 export type {ValueOf} from './source/value-of.d.ts';
+export type {ValueOfDeep} from './source/value-of-deep.d.ts';
 export type {AsyncReturnType} from './source/async-return-type.d.ts';
 export type {ConditionalExcept} from './source/conditional-except.d.ts';
 export type {ConditionalKeys, ConditionalKeysOptions} from './source/conditional-keys.d.ts';

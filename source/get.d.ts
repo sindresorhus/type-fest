@@ -4,6 +4,7 @@ import type {DigitCharacter} from './characters.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {Paths} from './paths.d.ts'; // For `@link`
+import type {ValueOfDeep} from './value-of-deep.d.ts'; // For `@link`
 
 export type GetOptions = {
 	/**
@@ -155,6 +156,8 @@ An index from a `number` variable, like `` `users.${number}.name` `` or `['users
 Use {@link Paths} to enumerate the paths. When `Paths` yields a finite union, `Get<BaseType, Paths<BaseType>>` is the value at every path, and constraining a path parameter to `Paths<BaseType>` rejects typos. A top-level `string` index signature makes `Paths` itself `string`, so there is no finite list and no typo check.
 
 A key only some union members have resolves to `undefined` for the others, so `Get<{data: {user: {id: string} | {error: string}}}, 'data.user.id'>` is `string | undefined`. A key no member has resolves to `unknown`.
+
+To get a union of every leaf value instead of the value at one path, use {@link ValueOfDeep}.
 
 Known limitations:
 - For a numeric segment that lands in the rest of a variadic tuple, answers the union of every element type, so it also includes the positions the tuple declares itself. `Get<{t: [1, [2, {a: string}], ...Array<{b: number}>]}, 't.2'>` is `1 | [2, {a: string}] | {b: number} | undefined` rather than `{b: number} | undefined`, because a variadic tuple has an unbounded `length` and TypeScript cannot recover the rest element type here. A path one level deeper into the rest reads from each of those element types. Positions the tuple declares itself are correct.
