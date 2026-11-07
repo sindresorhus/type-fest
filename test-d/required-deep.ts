@@ -208,3 +208,95 @@ expectTypeOf(requiredCallableConfig.call(new Date(), 'value')).toBe<number>();
 expectTypeOf(requiredCallableConfig[key]).toBe<{enabled: boolean}>();
 // @ts-expect-error The callable's metadata is now required.
 requiredCallableConfig[key] = undefined;
+
+// `keep` option: matching types are kept as is, while everything else is made deeply required.
+class KeptColor {
+	r?: number | undefined;
+
+	setRed(red?: number): void {
+		this.r = red;
+	}
+}
+
+type KeptSettings = {
+	name?: string;
+	color?: KeptColor;
+};
+
+type RequiredKeptSettings = RequiredDeep<KeptSettings, {keep: KeptColor}>;
+expectTypeOf<RequiredKeptSettings['name']>().toBe<string>();
+expectTypeOf<RequiredKeptSettings['color']>().toBe<KeptColor>();
+
+// Keeping `Error` preserves its own optionality instead of requiring `stack`.
+expectTypeOf<RequiredDeep<Error, {keep: Error}>>().toBe<Error>();
+
+// A kept type is kept at the root too.
+expectTypeOf<RequiredDeep<KeptColor, {keep: KeptColor}>>().toBe<KeptColor>();
+
+// Only the matching members of a union are kept.
+expectTypeOf<RequiredDeep<KeptColor | {name?: string}, {keep: KeptColor}>>().toBe<KeptColor | {name: string}>();
+
+// A kept value inside a collection or a promise is not rebuilt, while the `null` around it is preserved like usual.
+expectTypeOf<RequiredDeep<{cache: Map<string | null, KeptColor | null>}, {keep: KeptColor}>['cache']>().toBe<Map<string | null, KeptColor | null>>();
+expectTypeOf<RequiredDeep<Promise<KeptColor | null>, {keep: KeptColor}>>().toBe<Promise<KeptColor | null>>();
+
+// `any`, `never`, and `unknown` inputs are unaffected by `keep`.
+expectTypeOf<RequiredDeep<any, {keep: KeptColor}>>().toBe<any>();
+expectTypeOf<RequiredDeep<never, {keep: KeptColor}>>().toBe<never>();
+expectTypeOf<RequiredDeep<unknown, {keep: KeptColor}>>().toBe<unknown>();
+
+// A plain object structurally matching a kept class is kept too.
+type KeptColorLookalike = {r?: number; setRed: (red?: number) => void};
+expectTypeOf<RequiredDeep<{lookalike: KeptColorLookalike}, {keep: KeptColor}>['lookalike']>().toBe<KeptColorLookalike>();
+
+// Without `keep`, the class instance is made required as usual.
+expectTypeOf<RequiredDeep<{color: KeptColor}>['color']>().toBe<{r: number | undefined; setRed: (red?: number) => void}>();
+
+// A kept array keeps its optional elements, instead of having them required.
+type KeptRows = Array<{id?: number}>;
+expectTypeOf<RequiredDeep<{rows: KeptRows}, {keep: KeptRows}>['rows']>().toBe<KeptRows>();
+
+// A kept tuple keeps its optional elements.
+expectTypeOf<RequiredDeep<{pair: [{id?: number}?, string?]}, {keep: [{id?: number}?, string?]}>['pair']>().toBe<[{id?: number}?, string?]>();
+
+// A subclass instance is kept when its base class is kept.
+class KeptBase {
+	r?: number;
+}
+
+class KeptSub extends KeptBase {
+	g?: number;
+}
+
+expectTypeOf<RequiredDeep<{shape?: KeptSub}, {keep: KeptBase}>['shape']>().toBe<KeptSub>();
+
+// A kept type is kept at every depth.
+expectTypeOf<RequiredDeep<{a?: {b?: {c?: KeptColor}}}, {keep: KeptColor}>>().toBe<{a: {b: {c: KeptColor}}}>();
+
+// `keep: any` keeps everything.
+expectTypeOf<RequiredDeep<{a?: {b?: number}}, {keep: any}>>().toBe<{a?: {b?: number}}>();
+
+// A kept element union that includes `undefined` is matched before `Required<T>` strips it, so the array stays as is.
+expectTypeOf<RequiredDeep<{ids: Array<string | undefined>}, {keep: string | undefined}>['ids']>().toBe<Array<string | undefined>>();
+type KeptMaybe = KeptColor | undefined;
+expectTypeOf<RequiredDeep<{items: KeptMaybe[]}, {keep: KeptMaybe}>['items']>().toBe<KeptMaybe[]>();
+
+// Without `keep`, the `undefined` in non-tuple array elements is still removed, like `Required` does.
+expectTypeOf<Required<Array<string | undefined>>>().toBe<RequiredDeep<{ids: Array<string | undefined>}>['ids']>();
+// A keep that does not cover the whole element union still lets `Required<T>` strip `undefined`.
+expectTypeOf<Required<Array<string | undefined>>>().toBe<RequiredDeep<{ids: Array<string | undefined>}, {keep: string}>['ids']>();
+
+// The readonly array branch matches the element against `keep` the same way.
+expectTypeOf<RequiredDeep<{ids: ReadonlyArray<string | undefined>}, {keep: string | undefined}>['ids']>().toBe<ReadonlyArray<string | undefined>>();
+
+// An empty options object uses the same transformation as omitted options.
+expectTypeOf<RequiredDeep<KeptSettings, {}>>().toBe<RequiredDeep<KeptSettings>>();
+
+// An unknown keep retains the whole input, rather than using the default.
+expectTypeOf<RequiredDeep<KeptSettings, {keep: unknown}>>().toBe<KeptSettings>();
+
+// @ts-expect-error Kept types must be supplied through the keep option.
+type InvalidPositionalKeep = RequiredDeep<KeptSettings, KeptColor>;
+
+// @ts-expect-error The second argument must be an options object.
+type InvalidOptions = RequiredDeep<KeptSettings, string>;

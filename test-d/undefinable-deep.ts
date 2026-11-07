@@ -282,3 +282,85 @@ expectTypeOf<Draft<{name: string; tags: string[]}>>().toBe<{value: {name: string
 
 // A DOM node is a single value, so it is kept as is.
 expectTypeOf<UndefinableDeep<{element: HTMLElement}>>().toBe<{element: HTMLElement | undefined}>();
+
+// `keep` option: matching types are kept as is, while everything else accepts `undefined`.
+class KeptColor {
+	r = 0;
+}
+
+type KeptItem = {
+	name: string;
+	color: KeptColor;
+	colors: KeptColor[];
+};
+
+type DraftKeptItem = UndefinableDeep<KeptItem, {keep: KeptColor}>;
+expectTypeOf<DraftKeptItem['name']>().toBe<string | undefined>();
+expectTypeOf<DraftKeptItem['color']>().toBe<KeptColor>();
+expectTypeOf<DraftKeptItem['colors']>().toBe<KeptColor[]>();
+
+// A kept type is kept at the root too, without `undefined` added.
+expectTypeOf<UndefinableDeep<KeptColor, {keep: KeptColor}>>().toBe<KeptColor>();
+
+// Only the matching members of a union are kept.
+expectTypeOf<UndefinableDeep<KeptColor | {name: string}, {keep: KeptColor}>>().toBe<KeptColor | {name: string | undefined}>();
+
+// A kept value inside a collection or a promise is not rebuilt.
+expectTypeOf<UndefinableDeep<{cache: Map<string, KeptColor>}, {keep: KeptColor}>['cache']>().toBe<Map<string | undefined, KeptColor>>();
+expectTypeOf<UndefinableDeep<Promise<KeptColor>, {keep: KeptColor}>>().toBe<Promise<KeptColor>>();
+
+// `any`, `never`, and `unknown` inputs are unaffected by `keep`.
+expectTypeOf<UndefinableDeep<any, {keep: KeptColor}>>().toBe<any>();
+expectTypeOf<UndefinableDeep<never, {keep: KeptColor}>>().toBe<undefined>();
+expectTypeOf<UndefinableDeep<unknown, {keep: KeptColor}>>().toBe<unknown>();
+
+// A plain object structurally matching a kept class is kept too.
+type KeptColorLookalike = {r: number};
+expectTypeOf<UndefinableDeep<{lookalike: KeptColorLookalike}, {keep: KeptColor}>['lookalike']>().toBe<KeptColorLookalike>();
+
+// Without `keep`, the class instance accepts `undefined` in its fields as usual.
+expectTypeOf<UndefinableDeep<{color: KeptColor}>['color']>().toBe<{r: number | undefined}>();
+
+// A kept array type keeps its elements, so they do not accept `undefined`.
+expectTypeOf<UndefinableDeep<{rows: string[]}, {keep: string[]}>['rows']>().toBe<string[]>();
+
+// A kept tuple keeps its members, so they do not accept `undefined`.
+expectTypeOf<UndefinableDeep<{pair: [string, number]}, {keep: [string, number]}>['pair']>().toBe<[string, number]>();
+
+// A kept `Set` keeps its items, so they do not accept `undefined`.
+expectTypeOf<UndefinableDeep<{tags: Set<string>}, {keep: Set<string>}>['tags']>().toBe<Set<string>>();
+
+// A union member is matched one by one: the kept class member accepts no `undefined`, while the string member does.
+type KeptUnionValue = UndefinableDeep<KeptColor | string, {keep: KeptColor}>;
+expectTypeOf<Extract<KeptUnionValue, KeptColor>>().toBe<KeptColor>();
+expectTypeOf<Exclude<KeptUnionValue, KeptColor>>().toBe<string | undefined>();
+
+// A kept thenable is returned as is, without `undefined` added to it or its resolved value.
+type KeptThenable = {then(onFulfilled: (value: string) => unknown): unknown};
+expectTypeOf<UndefinableDeep<{task: KeptThenable}, {keep: KeptThenable}>['task']>().toBe<KeptThenable>();
+
+// A subclass instance is kept when its base class is kept.
+class KeptBase {
+	r = 0;
+}
+
+class KeptSub extends KeptBase {
+	g = 0;
+}
+
+expectTypeOf<UndefinableDeep<{shape: KeptSub}, {keep: KeptBase}>['shape']>().toBe<KeptSub>();
+
+// `keep: any` keeps everything, so no `undefined` is added at all.
+expectTypeOf<UndefinableDeep<{a: {b: string}}, {keep: any}>>().toBe<{a: {b: string}}>();
+
+// An empty options object uses the same transformation as omitted options.
+expectTypeOf<UndefinableDeep<KeptItem, {}>>().toBe<UndefinableDeep<KeptItem>>();
+
+// An unknown keep retains the whole input, rather than using the default.
+expectTypeOf<UndefinableDeep<KeptItem, {keep: unknown}>>().toBe<KeptItem>();
+
+// @ts-expect-error Kept types must be supplied through the keep option.
+type InvalidPositionalKeep = UndefinableDeep<KeptItem, KeptColor>;
+
+// @ts-expect-error The second argument must be an options object.
+type InvalidOptions = UndefinableDeep<KeptItem, string>;

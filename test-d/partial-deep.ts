@@ -304,3 +304,194 @@ if (readonlyRecursiveRow) {
 
 // @ts-expect-error The recursion mode must be boolean.
 type InvalidRecursionMode = PartialDeep<RecursionModeRows, {recurseIntoArrays: unknown}>;
+
+// `keep` option: matching types are kept as is, while everything else is made partial.
+class KeptColor {
+	isColor = true as const;
+	r = 0;
+
+	setRed(red: number): this {
+		this.r = red;
+		return this;
+	}
+}
+
+class KeptDayjs {
+	format(template: string): string {
+		return template;
+	}
+}
+
+type KeptItem = {
+	name: string;
+	color: KeptColor;
+	meta: {
+		created: KeptDayjs;
+		colors: KeptColor[];
+		cache: Map<string, KeptColor>;
+		tags: Set<KeptColor>;
+	};
+};
+
+type KeptPartialItem = PartialDeep<KeptItem, {keep: KeptColor | KeptDayjs}>;
+expectTypeOf<KeptPartialItem['color']>().toBe<KeptColor | undefined>();
+expectTypeOf<KeptPartialItem['name']>().toBe<string | undefined>();
+expectTypeOf<NonNullable<KeptPartialItem['meta']>['created']>().toBe<KeptDayjs | undefined>();
+expectTypeOf<NonNullable<KeptPartialItem['meta']>['cache']>().toBe<Map<string, KeptColor> | undefined>();
+expectTypeOf<NonNullable<KeptPartialItem['meta']>['tags']>().toBe<Set<KeptColor> | undefined>();
+
+// A kept type is kept at the root too.
+expectTypeOf<PartialDeep<KeptColor, {keep: KeptColor}>>().toBe<KeptColor>();
+
+// Only the matching members of a union are kept.
+expectTypeOf<PartialDeep<KeptColor | {other: number}, {keep: KeptColor}>>().toBe<KeptColor | {other?: number}>();
+
+// Without `recurseIntoArrays`, an array of kept elements is used as is.
+expectTypeOf<PartialDeep<{colors: KeptColor[]}, {keep: KeptColor}>['colors']>().toBe<KeptColor[] | undefined>();
+
+// With `recurseIntoArrays`, kept elements survive the recursion of the array itself.
+expectTypeOf<PartialDeep<{colors: KeptColor[]}, {keep: KeptColor; recurseIntoArrays: true}>['colors']>().toBe<KeptColor[] | undefined>();
+expectTypeOf<PartialDeep<{colors: KeptColor[]}, {recurseIntoArrays: true}>['colors']>().toBe<Array<PartialDeep<KeptColor>> | undefined>();
+
+// A kept collection is returned as is, instead of being rebuilt around its items. `toBe` accepts the rebuilt `{} &` form too, so compare with `IsEqual`.
+const keptSetIsUntouched: IsEqual<PartialDeep<Set<KeptColor>, {keep: Set<KeptColor>}>, Set<KeptColor>> = true;
+const keptMapIsUntouched: IsEqual<PartialDeep<Map<string, KeptColor>, {keep: Map<string, KeptColor>}>, Map<string, KeptColor>> = true;
+
+// `any`, `never`, and `unknown` inputs are unaffected by `keep`.
+expectTypeOf<PartialDeep<any, {keep: KeptColor}>>().toBe<any>();
+expectTypeOf<PartialDeep<never, {keep: KeptColor}>>().toBe<never>();
+expectTypeOf<PartialDeep<unknown, {keep: KeptColor}>>().toBe<unknown>();
+
+// A plain object structurally matching a kept class is kept too.
+type KeptColorLookalike = {isColor: true; r: number; setRed: (red: number) => KeptColor};
+expectTypeOf<PartialDeep<{lookalike: KeptColorLookalike}, {keep: KeptColor}>['lookalike']>().toBe<KeptColorLookalike | undefined>();
+
+// A wide kept type keeps every matching value, including the input itself.
+type WideKeep = PartialDeep<{nested: {value: string}; primitive: string}, {keep: object}>;
+expectTypeOf<WideKeep>().toBe<{nested: {value: string}; primitive: string}>();
+
+// The original value is still assignable to the result.
+declare const keptItemValue: KeptItem;
+const keptPartialValue: PartialDeep<KeptItem, {keep: KeptColor | KeptDayjs}> = keptItemValue;
+
+// Without `keep`, the class instance is made partial as usual.
+type DefaultKept = PartialDeep<{color: KeptColor}>;
+expectTypeOf<DefaultKept['color']>().toBe<PartialDeep<KeptColor> | undefined>();
+
+// A kept array type is left untouched, including its elements, instead of being rebuilt around them.
+type KeptRow = {id: number; name: string};
+expectTypeOf<PartialDeep<{rows: KeptRow[]}, {keep: KeptRow[]; recurseIntoArrays: true}>['rows']>().toBe<KeptRow[] | undefined>();
+expectTypeOf<PartialDeep<{rows: readonly KeptRow[]}, {keep: readonly KeptRow[]; recurseIntoArrays: true}>['rows']>().toBe<readonly KeptRow[] | undefined>();
+expectTypeOf<PartialDeep<{rows: KeptRow[]}, {keep: KeptRow[]; recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>['rows']>().toBe<KeptRow[] | undefined>();
+
+// A kept array nested inside a rebuilt array stays untouched.
+expectTypeOf<PartialDeep<{groups: KeptRow[][]}, {keep: KeptRow[]; recurseIntoArrays: true}>['groups']>().toBe<KeptRow[][] | undefined>();
+
+// A kept array of unions is untouched, including the primitive members.
+expectTypeOf<PartialDeep<{rows: Array<KeptRow | string>}, {keep: Array<KeptRow | string>; recurseIntoArrays: true}>['rows']>().toBe<Array<KeptRow | string> | undefined>();
+
+// A kept tuple is untouched too, and its elements are not made optional.
+expectTypeOf<PartialDeep<{pair: [KeptRow, string]}, {keep: [KeptRow, string]; recurseIntoArrays: true}>['pair']>().toBe<[KeptRow, string] | undefined>();
+
+// A mutable array keep matches mutable arrays, including one behind a readonly property.
+expectTypeOf<PartialDeep<{rows: KeptRow[]; readonly names: string[]}, {keep: unknown[]; recurseIntoArrays: true}>>().toBe<{rows?: KeptRow[]; readonly names?: string[]}>();
+
+// A readonly array does not match a mutable array keep, so its elements are still partialized; a readonly array keep matches it.
+expectTypeOf<PartialDeep<{rows: readonly KeptRow[]}, {keep: unknown[]; recurseIntoArrays: true}>['rows']>().toBe<ReadonlyArray<{id?: number; name?: string}> | undefined>();
+expectTypeOf<PartialDeep<{rows: readonly KeptRow[]}, {keep: readonly unknown[]; recurseIntoArrays: true}>['rows']>().toBe<readonly KeptRow[] | undefined>();
+
+// The kept rows still reject a partial row.
+expectTypeOf<{rows: [{id: number}]}>().not.toBeAssignableTo<PartialDeep<{rows: KeptRow[]}, {keep: KeptRow[]; recurseIntoArrays: true}>>();
+
+// A subclass instance is kept when its base class is kept.
+class KeptBase {
+	r = 0;
+}
+
+class KeptSub extends KeptBase {
+	g = 0;
+}
+
+expectTypeOf<PartialDeep<{shape: KeptSub}, {keep: KeptBase}>['shape']>().toBe<KeptSub | undefined>();
+
+// An intersection with a kept type is kept as a whole.
+type KeptIntersection = KeptColor & {extra: string};
+expectTypeOf<PartialDeep<{value: KeptIntersection}, {keep: KeptColor}>['value']>().toBe<KeptIntersection | undefined>();
+
+// A lookalike that is missing a member is not kept.
+type KeptColorAlmost = {isColor: true; r: number};
+expectTypeOf<PartialDeep<{almost: KeptColorAlmost}, {keep: KeptColor}>['almost']>().toBe<{isColor?: true; r?: number} | undefined>();
+
+// A class with a private member is kept, but a plain lookalike of it is not, because private members do not match structurally.
+class KeptPrivateColor {
+	r = this.secret;
+
+	private get secret(): number {
+		return 0;
+	}
+}
+
+expectTypeOf<PartialDeep<{color: KeptPrivateColor}, {keep: KeptPrivateColor}>['color']>().toBe<KeptPrivateColor | undefined>();
+expectTypeOf<PartialDeep<{lookalike: {secret: number; r: number}}, {keep: KeptPrivateColor}>['lookalike']>().toBe<{secret?: number; r?: number} | undefined>();
+
+// Only the kept member of a union is kept as is, while the other members are made partial.
+expectTypeOf<PartialDeep<{value: KeptColor | string | {other: number}}, {keep: KeptColor}>['value']>().toBe<KeptColor | string | {other?: number} | undefined>();
+
+// Optional and readonly modifiers on a kept property behave like on any other property.
+expectTypeOf<PartialDeep<{color?: KeptColor; readonly shape: KeptColor}, {keep: KeptColor}>>().toBe<{color?: KeptColor; readonly shape?: KeptColor}>();
+
+// A callable object with properties is kept as a whole, instead of being split into a call signature and partial properties.
+type KeptCallable = ((event: string) => void) & {once: boolean};
+expectTypeOf<PartialDeep<{listener: KeptCallable}, {keep: KeptCallable}>['listener']>().toBe<KeptCallable | undefined>();
+
+// Keeping a generic callable preserves inference and the relationship between its arguments.
+type KeptGenericCallable = (<Value extends string>(value: Value, fallback: NoInfer<Value>) => Value) & {displayName: string};
+declare const keptGenericCallable: PartialDeep<KeptGenericCallable, {keep: KeptGenericCallable}>;
+expectTypeOf(keptGenericCallable('red', 'red')).toBe<'red'>();
+expectTypeOf<IsEqual<typeof keptGenericCallable, KeptGenericCallable>>().toBe<true>();
+// @ts-expect-error The fallback must match the inferred first argument.
+keptGenericCallable('red', 'blue');
+
+declare const keptNestedGenericCallable: PartialDeep<{callback: KeptGenericCallable}, {keep: KeptGenericCallable}>;
+expectTypeOf(keptNestedGenericCallable.callback!('red', 'red')).toBe<'red'>();
+// @ts-expect-error The kept nested callable retains the same argument constraint.
+keptNestedGenericCallable.callback!('red', 'blue');
+
+// A kept generic method retains its receiver and readonly metadata.
+type KeptGenericMethod = (<Value>(this: {prefix: string}, value: Value) => Value) & {readonly metadata: {enabled: boolean}};
+declare const keptMethodOwner: {prefix: string; transform: PartialDeep<KeptGenericMethod, {keep: KeptGenericMethod}>};
+expectTypeOf(keptMethodOwner.transform(123)).toBe<number>();
+expectTypeOf(keptMethodOwner.transform.metadata.enabled).toBe<boolean>();
+// @ts-expect-error Keeping the method preserves its readonly metadata property.
+keptMethodOwner.transform.metadata = {enabled: true};
+declare const wrongMethodOwner: {prefix: number; transform: typeof keptMethodOwner.transform};
+// @ts-expect-error The method still requires a receiver with a string prefix.
+wrongMethodOwner.transform(123);
+
+// Keeping a nested callback does not keep its enclosing callable or sibling metadata.
+type CallbackFactory = (() => void) & {metadata: {callback: KeptGenericCallable; retries: number}};
+declare const partialCallbackFactory: PartialDeep<CallbackFactory, {keep: KeptGenericCallable}>;
+expectTypeOf(partialCallbackFactory()).toBe<void>();
+expectTypeOf(partialCallbackFactory.metadata).toBe<{callback?: KeptGenericCallable; retries?: number} | undefined>();
+expectTypeOf(partialCallbackFactory.metadata!.callback!('red', 'red')).toBe<'red'>();
+
+// Array recursion can add undefined without changing a kept callback or making its properties optional.
+declare const keptCallbackRows: PartialDeep<KeptGenericCallable[], {keep: KeptGenericCallable; recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>;
+expectTypeOf(keptCallbackRows).toBe<Array<KeptGenericCallable | undefined>>();
+expectTypeOf(keptCallbackRows[0]!('red', 'red')).toBe<'red'>();
+expectTypeOf(keptCallbackRows[0]!.displayName).toBe<string>();
+keptCallbackRows.push(undefined);
+// @ts-expect-error A kept callback must still have its required displayName property.
+keptCallbackRows[0] = <Value extends string>(value: Value, _fallback: NoInfer<Value>) => value;
+
+// A callable can match a broader kept shape while a different callable union member is still made partial.
+type OtherCallable = ((event: number) => void) & {label: string};
+declare const partialCallableUnion: PartialDeep<KeptGenericCallable | OtherCallable, {keep: {displayName: string}}>;
+if ('displayName' in partialCallableUnion) {
+	expectTypeOf(partialCallableUnion('red', 'red')).toBe<'red'>();
+} else {
+	expectTypeOf(partialCallableUnion.label).toBe<string | undefined>();
+}
+
+// `keep: any` keeps everything, including the input itself.
+expectTypeOf<PartialDeep<{nested: {value: string}; primitive: string}, {keep: any}>>().toBe<{nested: {value: string}; primitive: string}>();

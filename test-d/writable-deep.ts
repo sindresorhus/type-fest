@@ -232,3 +232,90 @@ expectTypeOf(writableCallableThenable.metadata.name).toBe<string>();
 expectTypeOf(writableCallableThenable.metadata.values).toBe<number[]>();
 writableCallableThenable.metadata.name = 'changed';
 writableCallableThenable.metadata.values.push(1);
+
+// `keep` option: matching types are kept as is, while everything else is made deeply writable.
+class KeptColor {
+	get r(): number {
+		return 0;
+	}
+}
+
+type KeptTheme = {
+	readonly name: string;
+	readonly background: KeptColor;
+};
+
+type WritableKeptTheme = WritableDeep<KeptTheme, {keep: KeptColor}>;
+expectTypeOf<WritableKeptTheme['name']>().toBe<string>();
+expectTypeOf<WritableKeptTheme['background']>().toBe<KeptColor>();
+
+declare const writableKeptTheme: WritableKeptTheme;
+writableKeptTheme.name = 'dark';
+// @ts-expect-error The kept `KeptColor` stays readonly.
+writableKeptTheme.background.r = 3;
+
+// A kept type is kept at the root too.
+expectTypeOf<WritableDeep<KeptColor, {keep: KeptColor}>>().toBe<KeptColor>();
+
+// Only the matching members of a union are kept.
+expectTypeOf<WritableDeep<KeptColor | {readonly name: string}, {keep: KeptColor}>>().toBe<KeptColor | {name: string}>();
+
+// A kept value inside a collection is not rebuilt.
+expectTypeOf<WritableDeep<{readonly colors: readonly KeptColor[]}, {keep: KeptColor}>['colors']>().toBe<KeptColor[]>();
+expectTypeOf<WritableDeep<{readonly palette: ReadonlyMap<string, KeptColor>}, {keep: KeptColor}>['palette']>().toBe<Map<string, KeptColor>>();
+
+// `any`, `never`, and `unknown` inputs are unaffected by `keep`.
+expectTypeOf<WritableDeep<any, {keep: KeptColor}>>().toBe<any>();
+expectTypeOf<WritableDeep<never, {keep: KeptColor}>>().toBe<never>();
+expectTypeOf<WritableDeep<unknown, {keep: KeptColor}>>().toBe<unknown>();
+
+// A plain object structurally matching a kept class is kept too.
+type KeptColorLookalike = {readonly r: number};
+expectTypeOf<WritableDeep<{lookalike: KeptColorLookalike}, {keep: KeptColor}>['lookalike']>().toBe<KeptColorLookalike>();
+
+// Without `keep`, the class instance is made writable as usual.
+expectTypeOf<WritableDeep<{background: KeptColor}>['background']>().toBe<WritableDeep<KeptColor>>();
+
+// A kept `ReadonlyMap` stays a `ReadonlyMap`, instead of being upgraded to a mutable `Map`.
+type KeptReadonlyMap = ReadonlyMap<string, {a: number}>;
+expectTypeOf<WritableDeep<{cache: KeptReadonlyMap}, {keep: KeptReadonlyMap}>['cache']>().toBe<KeptReadonlyMap>();
+
+// A kept readonly array stays readonly.
+type KeptReadonlyRows = readonly string[];
+expectTypeOf<WritableDeep<{rows: KeptReadonlyRows}, {keep: KeptReadonlyRows}>['rows']>().toBe<KeptReadonlyRows>();
+
+// A kept readonly tuple keeps its elements readonly.
+expectTypeOf<WritableDeep<{pair: readonly [string, number]}, {keep: readonly [string, number]}>['pair']>().toBe<readonly [string, number]>();
+
+// A subclass instance is kept when its base class is kept.
+class KeptBase {
+	get r(): number {
+		return 0;
+	}
+}
+
+class KeptSub extends KeptBase {
+	get g(): number {
+		return 0;
+	}
+}
+
+expectTypeOf<WritableDeep<{readonly shape: KeptSub}, {keep: KeptBase}>['shape']>().toBe<KeptSub>();
+
+// A kept type is kept at every depth.
+expectTypeOf<WritableDeep<{readonly a: {readonly b: {readonly c: KeptColor}}}, {keep: KeptColor}>>().toBe<{a: {b: {c: KeptColor}}}>();
+
+// `keep: any` keeps everything.
+expectTypeOf<WritableDeep<{readonly a: {readonly b: number}}, {keep: any}>>().toBe<{readonly a: {readonly b: number}}>();
+
+// An empty options object uses the same transformation as omitted options.
+expectTypeOf<WritableDeep<KeptTheme, {}>>().toBe<WritableDeep<KeptTheme>>();
+
+// An unknown keep retains the whole input, rather than using the default.
+expectTypeOf<WritableDeep<KeptTheme, {keep: unknown}>>().toBe<KeptTheme>();
+
+// @ts-expect-error Kept types must be supplied through the keep option.
+type InvalidPositionalKeep = WritableDeep<KeptTheme, KeptColor>;
+
+// @ts-expect-error The second argument must be an options object.
+type InvalidOptions = WritableDeep<KeptTheme, string>;

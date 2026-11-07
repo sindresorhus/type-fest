@@ -481,3 +481,94 @@ expectTypeOf(readonlyCallableThenable.metadata.values).toBe<readonly number[]>()
 readonlyCallableThenable.metadata.name = 'changed';
 // @ts-expect-error The callable's nested metadata array remains readonly.
 readonlyCallableThenable.metadata.values[0] = 1;
+
+// `keep` option: matching types are kept as is, while everything else is made deeply readonly.
+class KeptColor {
+	r = 0;
+
+	setRed(red: number): void {
+		this.r = red;
+	}
+}
+
+type KeptTheme = {
+	name: string;
+	background: KeptColor;
+	colors: KeptColor[];
+	palette: Map<string, KeptColor>;
+};
+
+type ReadonlyKeptTheme = ReadonlyDeep<KeptTheme, {keep: KeptColor}>;
+expectTypeOf<ReadonlyKeptTheme>().toBe<{
+	readonly name: string;
+	readonly background: KeptColor;
+	readonly colors: readonly KeptColor[];
+	readonly palette: Readonly<ReadonlyMap<string, KeptColor>>;
+}>();
+
+declare const readonlyKeptTheme: ReadonlyKeptTheme;
+// @ts-expect-error
+readonlyKeptTheme.name = 'dark';
+readonlyKeptTheme.background.r = 3; // The kept `KeptColor` stays writable
+readonlyKeptTheme.background.setRed(3); // The kept `KeptColor` stays callable
+readonlyKeptTheme.colors[0]!.r = 3; // The kept elements stay writable inside the readonly array
+
+// A kept type is kept at the root too.
+expectTypeOf<ReadonlyDeep<KeptColor, {keep: KeptColor}>>().toBe<KeptColor>();
+
+// Only the matching members of a union are kept.
+expectTypeOf<ReadonlyDeep<KeptColor | {name: string}, {keep: KeptColor}>>().toBe<KeptColor | {readonly name: string}>();
+
+// `any`, `never`, and `unknown` inputs are unaffected by `keep`.
+expectTypeOf<ReadonlyDeep<any, {keep: KeptColor}>>().toBe<any>();
+expectTypeOf<ReadonlyDeep<never, {keep: KeptColor}>>().toBe<never>();
+expectTypeOf<ReadonlyDeep<unknown, {keep: KeptColor}>>().toBe<unknown>();
+
+// A plain object structurally matching a kept class is kept too.
+type KeptColorLookalike = {r: number; setRed: (red: number) => void};
+expectTypeOf<ReadonlyDeep<{lookalike: KeptColorLookalike}, {keep: KeptColor}>['lookalike']>().toBe<KeptColorLookalike>();
+
+// Keeping a function preserves it as is, including its properties.
+type KeptCallback = ((event: string) => void) & {displayName: string};
+expectTypeOf<ReadonlyDeep<{callback: KeptCallback}, {keep: KeptCallback}>['callback']>().toBe<KeptCallback>();
+
+// The default `Keep` behaves like before.
+expectTypeOf<ReadonlyDeep<{color: KeptColor}>['color']>().toBe<{readonly r: number; readonly setRed: (red: number) => void}>();
+
+// A kept `Map` stays mutable, instead of being wrapped in `Readonly`.
+expectTypeOf<IsEqual<ReadonlyDeep<{cache: Map<string, number>}, {keep: Map<string, number>}>['cache'], Map<string, number>>>().toBe<true>();
+
+// A kept array stays mutable, including its elements.
+expectTypeOf<ReadonlyDeep<{rows: string[]}, {keep: string[]}>['rows']>().toBe<string[]>();
+
+// A kept tuple keeps its length and its members.
+expectTypeOf<ReadonlyDeep<{pair: [string, number]}, {keep: [string, number]}>['pair']>().toBe<[string, number]>();
+
+// A subclass instance is kept when its base class is kept.
+class KeptBase {
+	r = 0;
+}
+
+class KeptSub extends KeptBase {
+	g = 0;
+}
+
+expectTypeOf<ReadonlyDeep<{shape: KeptSub}, {keep: KeptBase}>['shape']>().toBe<KeptSub>();
+
+// A kept type is kept at every depth.
+expectTypeOf<ReadonlyDeep<{a: {b: {c: KeptColor}}}, {keep: KeptColor}>>().toBe<{readonly a: {readonly b: {readonly c: KeptColor}}}>();
+
+// `keep: any` keeps everything.
+expectTypeOf<ReadonlyDeep<{a: {b: number}}, {keep: any}>>().toBe<{a: {b: number}}>();
+
+// An empty options object uses the same transformation as omitted options.
+expectTypeOf<ReadonlyDeep<KeptTheme, {}>>().toBe<ReadonlyDeep<KeptTheme>>();
+
+// An unknown keep retains the whole input, rather than using the default.
+expectTypeOf<ReadonlyDeep<KeptTheme, {keep: unknown}>>().toBe<KeptTheme>();
+
+// @ts-expect-error Kept types must be supplied through the keep option.
+type InvalidPositionalKeep = ReadonlyDeep<KeptTheme, KeptColor>;
+
+// @ts-expect-error The second argument must be an options object.
+type InvalidOptions = ReadonlyDeep<KeptTheme, string>;

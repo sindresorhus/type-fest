@@ -266,3 +266,86 @@ const inferredReadonlyRest = cleanHandler((...values: ReadonlyArray<number | nul
 expectTypeOf(inferredReadonlyRest(1, 2)).toBe<number>();
 // @ts-expect-error Inference keeps the cleaned rest element type.
 inferredReadonlyRest(null);
+
+// `keep` option: matching types are kept as is, while everything else is cleaned.
+class KeptColor {
+	name: string | null = null;
+	r = 0;
+}
+
+type KeptItem = {
+	label: string | null;
+	color: KeptColor;
+};
+
+type CleanedKeptItem = NonNullableDeep<KeptItem, {keep: KeptColor}>;
+expectTypeOf<CleanedKeptItem['label']>().toBe<string>();
+expectTypeOf<CleanedKeptItem['color']>().toBe<KeptColor>();
+expectTypeOf<CleanedKeptItem['color']['name']>().toBe<string | null>();
+
+// Keeping `Error` preserves its own shape instead of cleaning its fields.
+expectTypeOf<NonNullableDeep<Error | null, {keep: Error}>>().toBe<Error>();
+
+// A kept type is kept at the root too.
+expectTypeOf<NonNullableDeep<KeptColor, {keep: KeptColor}>>().toBe<KeptColor>();
+
+// A kept type keeps the `null` inside it, while the `null` around it in a union is still removed.
+expectTypeOf<NonNullableDeep<KeptColor | null, {keep: KeptColor}>>().toBe<KeptColor>();
+
+// A kept value inside a collection or a promise is not rebuilt.
+expectTypeOf<NonNullableDeep<{cache: Map<string | null, KeptColor | null>}, {keep: KeptColor}>['cache']>().toBe<Map<string, KeptColor>>();
+expectTypeOf<NonNullableDeep<Promise<KeptColor | null>, {keep: KeptColor}>>().toBe<Promise<KeptColor>>();
+
+// A kept function keeps its nullable parameters and return type.
+type KeptCallback = (value: string | null) => string | undefined;
+expectTypeOf<NonNullableDeep<{callback: KeptCallback}, {keep: KeptCallback}>['callback']>().toBe<KeptCallback>();
+
+// `any`, `never`, and `unknown` inputs are unaffected by `keep`.
+expectTypeOf<NonNullableDeep<any, {keep: KeptColor}>>().toBe<any>();
+expectTypeOf<NonNullableDeep<never, {keep: KeptColor}>>().toBe<never>();
+expectTypeOf<NonNullableDeep<unknown, {keep: KeptColor}>>().toBe<unknown>();
+
+// A plain object structurally matching a kept class is kept too.
+type KeptColorLookalike = {name: string | null; r: number};
+expectTypeOf<NonNullableDeep<{lookalike: KeptColorLookalike}, {keep: KeptColor}>['lookalike']>().toBe<KeptColorLookalike>();
+
+// Without `keep`, the class fields are cleaned as usual.
+expectTypeOf<NonNullableDeep<{color: KeptColor}>['color']>().toBe<{name: string; r: number}>();
+
+// A kept array type keeps the nullable elements inside it.
+expectTypeOf<NonNullableDeep<{rows: Array<string | null>}, {keep: Array<string | null>}>['rows']>().toBe<Array<string | null>>();
+
+// A kept tuple keeps its nullable members.
+expectTypeOf<NonNullableDeep<{pair: [string | null, number]}, {keep: [string | null, number]}>['pair']>().toBe<[string | null, number]>();
+
+// A union key is matched member by member: the kept class member stays a class instance, and the `null` member is still removed.
+expectTypeOf<NonNullableDeep<{cache: Map<KeptColor | null, string>}, {keep: KeptColor}>['cache']>().toBe<Map<KeptColor, string>>();
+
+// A kept thenable is not rebuilt, so its nullable resolved value stays nullable.
+type KeptThenable = {then(onFulfilled: (value: string | null) => unknown): unknown};
+expectTypeOf<NonNullableDeep<{task: KeptThenable}, {keep: KeptThenable}>['task']>().toBe<KeptThenable>();
+
+// A kept generic function keeps its type parameter, rescuing the known limitation above, where it is rebuilt with `unknown`.
+type KeptGeneric = <Value>(value: Value) => Value;
+expectTypeOf<NonNullableDeep<{identify: KeptGeneric}, {keep: KeptGeneric}>['identify']>().toBe<KeptGeneric>();
+
+// A kept type is kept at every depth.
+expectTypeOf<NonNullableDeep<{a: {b: {c: KeptColor | null}}}, {keep: KeptColor}>>().toBe<{a: {b: {c: KeptColor}}}>();
+
+// `keep: any` keeps everything.
+expectTypeOf<NonNullableDeep<{a: string | null}, {keep: any}>>().toBe<{a: string | null}>();
+
+// An empty options object uses the same transformation as omitted options.
+expectTypeOf<NonNullableDeep<KeptItem, {}>>().toBe<NonNullableDeep<KeptItem>>();
+
+// An unknown keep retains the whole input, rather than using the default.
+expectTypeOf<NonNullableDeep<KeptItem, {keep: unknown}>>().toBe<KeptItem>();
+
+// @ts-expect-error Kept types must be supplied through the keep option.
+type InvalidPositionalKeep = NonNullableDeep<KeptItem, KeptColor>;
+
+// @ts-expect-error The second argument must be an options object.
+type InvalidOptions = NonNullableDeep<KeptItem, string>;
+
+// Explicit undefined is a valid kept type, distinct from an omitted keep option.
+expectTypeOf<NonNullableDeep<{value: string | null | undefined}, {keep: undefined}>>().toBe<{value: string | undefined}>();
