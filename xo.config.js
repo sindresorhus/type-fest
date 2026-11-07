@@ -7,6 +7,7 @@ import {requireExportedTypesRule} from './lint-rules/require-exported-types.js';
 import {requireExportRule} from './lint-rules/require-export.js';
 import {validateJSDocCodeblocksRule} from './lint-rules/validate-jsdoc-codeblocks.js';
 import {readmeJSDocSyncRule} from './lint-rules/readme-jsdoc-sync.js';
+import {readmeApiTypesRule} from './lint-rules/readme-api-types.js';
 import {jsdocLinkImportsRule} from './lint-rules/jsdoc-link-imports.js';
 import {jsdocCodeblocksProcessor} from './lint-processors/jsdoc-codeblocks.js';
 
@@ -94,6 +95,7 @@ const xoConfig = [
 					'require-export': requireExportRule,
 					'validate-jsdoc-codeblocks': validateJSDocCodeblocksRule,
 					'readme-jsdoc-sync': readmeJSDocSyncRule,
+					'readme-api-types': readmeApiTypesRule,
 					'jsdoc-link-imports': jsdocLinkImportsRule,
 				},
 				processors: {
@@ -188,6 +190,7 @@ const xoConfig = [
 		},
 		rules: {
 			'type-fest/readme-jsdoc-sync': 'error',
+			'type-fest/readme-api-types': 'error',
 		},
 	},
 ];
