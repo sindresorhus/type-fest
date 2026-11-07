@@ -11,6 +11,18 @@ expectTypeOf<[]>().toBe<TupleOf<0, string>>();
 // Default `Fill`
 expectTypeOf<[unknown, unknown, unknown, unknown]>().toBe<TupleOf<4>>();
 
+// A readonly tuple is `Readonly` over `TupleOf`
+type ReadonlyTriple = Readonly<TupleOf<3, string>>;
+expectTypeOf<readonly [string, string, string]>().toBe<ReadonlyTriple>();
+expectTypeOf<readonly ['a', 'b', 'c']>().toBeAssignableTo<ReadonlyTriple>();
+expectTypeOf<['a', 'b', 123]>().not.toBeAssignableTo<ReadonlyTriple>();
+expectTypeOf<['a', 'b']>().not.toBeAssignableTo<ReadonlyTriple>();
+expectTypeOf<'push' extends keyof ReadonlyTriple ? true : false>().toBe<false>();
+
+declare const readonlyTriple: ReadonlyTriple;
+// @ts-expect-error
+readonlyTriple[2] = 'a';
+
 // Union length
 expectTypeOf<[0, 0] | [0, 0, 0]>().toBe<TupleOf<2 | 3, 0>>();
 

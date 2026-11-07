@@ -337,7 +337,6 @@ Click the type names for complete docs.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length. The `Array` prototype methods that manipulate its length are excluded from the resulting type.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimension.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimension.
-- [`ReadonlyTuple`](source/readonly-tuple.d.ts) - Create a type that represents a read-only tuple of the given type and length.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
 - [`UnionToTuple`](source/union-to-tuple.d.ts) - Convert a union type into an unordered tuple type of its elements.
 - [`UnionToEnum`](source/union-to-enum.d.ts) - Create an enum-like object type from a union of property keys, where each key maps to itself.
@@ -477,11 +476,9 @@ Click the type names for complete docs.
 - `OmitValues` - See [`ExcludeValues`](source/exclude-values.d.ts)
 - `OmitNever` - See [`PickNonNever`](source/pick-non-never.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
-- `IfAny`, `IfNever`, `If*` - See [`If`](source/if.d.ts)
 - `Maybe`, `Option` - See [`Optional`](source/optional.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
 - `MaybeFunction`, `MaybeLazy`, `ValueOrGetter`, `Getter` - See [`Thunkable`](source/thunkable.d.ts)
-- `ReadonlyTuple` - See [`TupleOf`](source/tuple-of.d.ts)
 - `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `UnionToArray` - See [`UnionToTuple`](source/union-to-tuple.d.ts)

@@ -96,15 +96,15 @@ An if-else-like type that resolves depending on whether the given type is `any` 
 
 @example
 ```
-// When `T` is neither `any` nor `never` (like `string`) => Returns `IfNot` branch
+// When `T` is neither `any` nor `never` (like `string`) => Returns the `ifNot` branch
 type A = IfNotAnyOrNever<string, {ifNot: 'VALID'; ifAny: 'IS_ANY'; ifNever: 'IS_NEVER'}>;
 //=> 'VALID'
 
-// When `T` is `any` => Returns `IfAny` branch
+// When `T` is `any` => Returns the `ifAny` branch
 type B = IfNotAnyOrNever<any, {ifNot: 'VALID'; ifAny: 'IS_ANY'; ifNever: 'IS_NEVER'}>;
 //=> 'IS_ANY'
 
-// When `T` is `never` => Returns `IfNever` branch
+// When `T` is `never` => Returns the `ifNever` branch
 type C = IfNotAnyOrNever<never, {ifNot: 'VALID'; ifAny: 'IS_ANY'; ifNever: 'IS_NEVER'}>;
 //=> 'IS_NEVER'
 ```
