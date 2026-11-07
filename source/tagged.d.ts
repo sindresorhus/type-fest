@@ -183,7 +183,7 @@ type RemoveTag<T extends TagContainer<unknown>> =
 		: never);
 
 /**
-Note: The `Opaque` type is deprecated in favor of `Tagged`.
+Note: The `Opaque` type is deprecated and will be removed in v7. Use `Tagged` instead.
 
 Attach a "tag" to an arbitrary type. This allows you to create distinct types, that aren't assignable to one another, for runtime values that would otherwise have the same type. (See examples.)
 
@@ -254,12 +254,12 @@ type Person = {
 ```
 
 @category Type
-@deprecated Use {@link Tagged} instead
+@deprecated This type will be removed in v7. Use {@link Tagged} instead.
 */
 export type Opaque<Type, Token = unknown> = Type & TagContainer<Token>;
 
 /**
-Note: The `UnwrapOpaque` type is deprecated in favor of `UnwrapTagged`.
+Note: The `UnwrapOpaque` type is deprecated and will be removed in v7. Use `UnwrapTagged` instead.
 
 Revert an opaque or tagged type back to its original type by removing the readonly `[tag]`.
 
@@ -291,7 +291,7 @@ type WillWork = UnwrapOpaque<Tagged<number, 'AccountNumber'>>; // number
 ```
 
 @category Type
-@deprecated Use {@link UnwrapTagged} instead
+@deprecated This type will be removed in v7. Use {@link UnwrapTagged} instead.
 */
 export type UnwrapOpaque<OpaqueType extends TagContainer<unknown>> =
 	OpaqueType extends Tag<PropertyKey, any>
