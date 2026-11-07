@@ -4,6 +4,8 @@ import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {TupleToObject} from './tuple-to-object.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
+import type {ConditionalExcept} from './conditional-except.d.ts'; // For `@link`
+import type {Paths} from './paths.d.ts'; // For `@link`
 
 /**
 {@link ConditionalKeys `ConditionalKeys`} options.
@@ -103,6 +105,28 @@ type DataKeys = Extract<keyof Settings, `data-${string}`>;
 
 type OtherKeys = Exclude<keyof Settings, `data-${string}`>;
 //=> 'title'
+```
+
+To get the keys that do not match, use `Exclude` with `keyof` and `ConditionalKeys`. This works for a plain object type; on a tuple or array, `keyof` includes the array members. To get the shape with the remaining keys, use {@link ConditionalExcept}. To get nested paths whose value matches, use {@link Paths} with the `valueType` option.
+
+@example
+```
+import type {ConditionalExcept, ConditionalKeys, Paths} from 'type-fest';
+
+type Settings = {
+	title: string;
+	count: number;
+	meta: {name: string; size: number};
+};
+
+type OtherKeys = Exclude<keyof Settings, ConditionalKeys<Settings, string>>;
+//=> 'count' | 'meta'
+
+type OtherSettings = ConditionalExcept<Settings, string>;
+//=> {count: number; meta: {name: string; size: number}}
+
+type StringPaths = Paths<Settings, {valueType: string}>;
+//=> 'title' | 'meta.name'
 ```
 
 @category Object
