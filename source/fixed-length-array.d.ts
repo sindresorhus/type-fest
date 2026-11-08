@@ -86,7 +86,34 @@ function toHex([r, g, b]: readonly [number, number, number]) {
 console.log(toHex(color)); // `FixedLengthArray<number, 3>` is assignable to `readonly [number, number, number]`.
 ```
 
-Note: When `Length` is a number literal, indexing with a non-literal `number` is not allowed, since the index could be out of bounds. Use `for...of`, `.entries()`, or another array method to go through the items.
+Note: A non-literal length, such as `number` or `any`, gives `never`, because the length is not known and so the array is not fixed. A `never` length is an exception and gives an empty tuple.
+
+@example
+```
+import type {FixedLengthArray} from 'type-fest';
+
+type NotFixed = FixedLengthArray<string, number>;
+//=> never
+```
+
+Note: TypeScript cannot infer a literal `Length` from a `FixedLengthArray` value, so a generic helper must specify `Length` explicitly.
+
+@example
+```
+import type {FixedLengthArray} from 'type-fest';
+
+declare function getFirstItem<Item, Length extends number>(values: FixedLengthArray<Item, Length>): Item;
+
+const rgb: FixedLengthArray<number, 3> = [255, 128, 64];
+
+// @ts-expect-error `Length` is inferred as `number`, which is not a literal.
+getFirstItem(rgb);
+
+const red = getFirstItem<number, 3>(rgb);
+//=> number
+```
+
+Note: Indexing with a non-literal `number` is not allowed, since the index could be out of bounds. Use `for...of`, `.entries()`, or another array method to go through the items.
 
 @example
 ```
@@ -105,7 +132,7 @@ for (const [index, value] of color.entries()) {
 }
 ```
 
-Note: When `Length` is a number literal, spreading the array into an array literal results in `any[]`. TypeScript reads the element type from the `number` index signature, which the type does not have in that case. Use `Array.from()` or `.slice()` to copy it instead.
+Note: Spreading the array into an array literal results in `any[]`. TypeScript reads the element type from the `number` index signature, which the type does not have. Use `Array.from()` or `.slice()` to copy it instead.
 
 @example
 ```
@@ -122,10 +149,12 @@ const copy = [...color];
 export type FixedLengthArray<Element, Length extends number> = _FixedLengthArray<TupleOf<Length, Element>>;
 
 type _FixedLengthArray<Tuple extends unknown[]> = Tuple extends unknown // Keep each tuple's indices paired with its length so that checking `length` narrows a union.
-	? Omit<Tuple, ArrayLengthMutationKeys | number | 'length'>
-	// Read the length back off the built tuple so it stays consistent with the actual elements. `TupleOf` ignores a decimal part and turns a negative length into an empty tuple.
-	& {readonly length: Tuple['length']}
-	& (number extends Tuple['length'] ? {[n: number]: Tuple[number]} : {}) // Add `number` index signature only for non-tuple arrays.
+	// `TupleOf` gives a plain array for a non-literal length, also when a brand is unwrapped, so only a real tuple describes a fixed length.
+	? number extends Tuple['length']
+		? never
+		// Read the length back off the built tuple so it stays consistent with the actual elements. `TupleOf` ignores a decimal part and turns a negative length into an empty tuple.
+		: Omit<Tuple, ArrayLengthMutationKeys | number | 'length'>
+			& {readonly length: Tuple['length']}
 	: never; // Should never happen
 
 export {};

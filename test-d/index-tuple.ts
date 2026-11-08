@@ -73,7 +73,6 @@ expectTypeOf<IndexTuple<readonly string[] & {length: 3}>>().toBe<readonly [0, 1,
 expectTypeOf<IndexTuple<FixedLengthArray<string, 0>>>().toBe<readonly []>();
 expectTypeOf<IndexTuple<FixedLengthArray<string, 1>>>().toBe<readonly [0]>();
 expectTypeOf<IndexTuple<FixedLengthArray<string, 3>>>().toBe<readonly [0, 1, 2]>();
-expectTypeOf<IndexTuple<FixedLengthArray<string, number>>>().toBe<readonly number[]>();
 
 type Fifty = IndexTuple<TupleOf<50>>;
 expectTypeOf<Fifty['length']>().toBe<50>();

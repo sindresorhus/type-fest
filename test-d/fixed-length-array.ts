@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {FixedLengthArray} from '../index.d.ts';
+import type {FixedLengthArray, Tagged} from '../index.d.ts';
 
 type FixedToThreeStrings = FixedLengthArray<string, 3>;
 declare const fixedToThreeStrings: FixedToThreeStrings;
@@ -86,36 +86,45 @@ expectTypeOf<['a', 'b', 'c', 'd']>().not.toBeAssignableTo<FixedToThreeStrings>()
 expectTypeOf<FixedLengthArray<string, 3.5>['length']>().toBe<3>();
 expectTypeOf<FixedLengthArray<string, -2>['length']>().toBe<0>();
 expectTypeOf<FixedLengthArray<string, 2 | 3>['length']>().toBe<2 | 3>();
-expectTypeOf<FixedLengthArray<string, number>['length']>().toBe<number>();
 
-type FixedLength = FixedLengthArray<string, number>;
-declare const fixedLength: FixedLength;
+// A literal length above one digit still builds a fixed-length array.
+expectTypeOf<FixedLengthArray<string, 10>['length']>().toBe<10>();
+expectTypeOf<FixedLengthArray<string, 10>[9]>().toBe<string>();
+// @ts-expect-error Index 10 is out of bounds.
+type TenthIndex = FixedLengthArray<string, 10>[10];
 
-expectTypeOf<string[]>().toBeAssignableTo<FixedLength>();
-expectTypeOf<FixedLength>().toBeAssignableTo<readonly string[]>();
+// A non-literal length gives `never`, because the length is not known and so the array is not fixed.
+expectTypeOf<FixedLengthArray<string, number>>().toBe<never>();
+expectTypeOf<FixedLengthArray<string, number | 3>>().toBe<never>();
+expectTypeOf<FixedLengthArray<string, any>>().toBe<never>();
+expectTypeOf<FixedLengthArray<string, Tagged<number, 'Length'>>>().toBe<never>();
+// A brand does not make a non-literal length literal.
+expectTypeOf<FixedLengthArray<string, Tagged<number, 'Length'> | 3>>().toBe<never>();
+expectTypeOf<FixedLengthArray<string, Tagged<number | 3, 'Length'>>>().toBe<never>();
+// The element type does not change the rejection.
+expectTypeOf<FixedLengthArray<any, number>>().toBe<never>();
+expectTypeOf<FixedLengthArray<unknown, number>>().toBe<never>();
+expectTypeOf<FixedLengthArray<never, number>>().toBe<never>();
+// A branded literal length still gives a fixed length.
+expectTypeOf<FixedLengthArray<string, Tagged<3, 'Length'>>>().toBe<FixedLengthArray<string, 3>>();
+// The brand is unwrapped before a union of literal lengths is built.
+expectTypeOf<FixedLengthArray<string, Tagged<2 | 3, 'Length'>>>().toBe<FixedLengthArray<string, 2> | FixedLengthArray<string, 3>>();
+// Separately branded literal lengths also distribute.
+expectTypeOf<FixedLengthArray<string, Tagged<2, 'A'> | Tagged<3, 'B'>>>().toBe<FixedLengthArray<string, 2> | FixedLengthArray<string, 3>>();
 
-// Reading
-// Note: The extra `undefined` is only present when `noUncheckedIndexedAccess` is enabled.
-expectTypeOf(fixedLength[0]).toBe<string | undefined>();
-expectTypeOf(fixedLength[100]).toBe<string | undefined>();
-// Note: Reading directly from the type doesn't include `undefined`.
-expectTypeOf<FixedLength[100]>().toBe<string>();
+// A non-literal length cannot describe a fixed length.
+// @ts-expect-error
+const _nonLiteralLength: FixedLengthArray<string, number> = ['a', 'b'];
 
-// Writing
-// This is allowed for now, refer https://github.com/sindresorhus/type-fest/pull/1246#discussion_r2384018774
-fixedLength[0] = 'a';
-fixedLength[100] = 'b';
-
-// @ts-expect-error
-type NoSplice = FixedLength['splice'];
-// @ts-expect-error
-type NoPush = FixedLength['push'];
-// @ts-expect-error
-type NoPop = FixedLength['pop'];
-// @ts-expect-error
-type NoShift = FixedLength['shift'];
-// @ts-expect-error
-type NoUnshift = FixedLength['unshift'];
+// `Length` must still be a number.
+// @ts-expect-error `unknown` is not a number.
+type UnknownLength = FixedLengthArray<string, unknown>;
+// @ts-expect-error `boolean` is not a number.
+type BooleanLength = FixedLengthArray<string, boolean>;
+// @ts-expect-error A numeric string is not a number.
+type StringLength = FixedLengthArray<string, '3'>;
+// @ts-expect-error A bigint is not a number.
+type BigintLength = FixedLengthArray<string, 3n>;
 
 ['a', 'b', 'c'] satisfies FixedLengthArray<string | number, 3>;
 [3, 2, 1] satisfies FixedLengthArray<string | number, 3>;
@@ -141,6 +150,8 @@ type UnknownOutOfBounds = FixedLengthArray<unknown, 2>[2];
 type NeverOutOfBounds = FixedLengthArray<never, 2>[2];
 // @ts-expect-error
 type EmptyOutOfBounds = FixedLengthArray<string, 0>[0];
+// The element type is unchanged, including its brand.
+expectTypeOf<FixedLengthArray<Tagged<string, 'Color'>, 2>[1]>().toBe<Tagged<string, 'Color'>>();
 
 // Checking the length narrows to the matching tuple, so every index of that length becomes available.
 declare const variableTupleLength: FixedLengthArray<string, 2 | 3>;
@@ -173,7 +184,9 @@ expectTypeOf<FixedLengthArray<any, 2 | 3>>().toBe<FixedLengthArray<any, 2> | Fix
 expectTypeOf<FixedLengthArray<unknown, 2 | 3>>().toBe<FixedLengthArray<unknown, 2> | FixedLengthArray<unknown, 3>>();
 expectTypeOf<FixedLengthArray<never, 2 | 3>>().toBe<FixedLengthArray<never, 2> | FixedLengthArray<never, 3>>();
 expectTypeOf<FixedLengthArray<string, never>>().toBe<FixedLengthArray<string, 0>>();
-expectTypeOf<FixedLengthArray<string, any>>().toBe<FixedLengthArray<string, number>>();
+// A `never` length keeps the empty tuple, so only the empty array fits it.
+expectTypeOf<[]>().toBeAssignableTo<FixedLengthArray<string, never>>();
+expectTypeOf<['a']>().not.toBeAssignableTo<FixedLengthArray<string, never>>();
 
 function makeTriple<const Value>(value: Value): FixedLengthArray<Value, 3> {
 	return [value, value, value];
@@ -194,6 +207,13 @@ type MissingMutator = typeof repeatedValue['push'];
 function _copyFixedItems<Value, Length extends number>(values: FixedLengthArray<Value, Length>): Value[] {
 	return values.map(value => value);
 }
+
+// A literal `Length` is not inferred from the value, so a generic helper must specify it explicitly.
+// @ts-expect-error The length is inferred as `number` and then rejected.
+_copyFixedItems(fixedToThreeStrings);
+_copyFixedItems<string, 3>(fixedToThreeStrings);
+// @ts-expect-error A generic length instantiated with `number` does not describe a fixed length.
+_copyFixedItems<string, number>(fixedToThreeStrings);
 
 function _readFixedItem<Value>(values: FixedLengthArray<{readonly value: Value}, 3>): Value {
 	return values[2].value;
