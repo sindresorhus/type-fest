@@ -1,4 +1,5 @@
-import type {UnwrapBrand, ReverseSign, NonNegativeIntegerSum} from './internal/index.d.ts';
+import type {Negate} from './negate.d.ts';
+import type {UnwrapBrand, NonNegativeIntegerSum} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -63,7 +64,7 @@ type _Sum<A extends number, B extends number> =
 					// Handle cases when B is +/- infinity
 					: B extends PositiveInfinity | NegativeInfinity ? B
 						// Handle cases when A or B is 0 or it's the same number with different signs
-						: A extends 0 ? B : B extends 0 ? A : A extends ReverseSign<B> ? 0
+						: A extends 0 ? B : B extends 0 ? A : A extends Negate<B> ? 0
 							// Handle remaining regular cases
 							: SumPostChecks<A, B>;
 
@@ -76,7 +77,7 @@ type SumPostChecks<A extends number, B extends number, AreNegative = [IsNegative
 		? NonNegativeIntegerSum<A, B>
 		: AreNegative extends [true, true]
 			// When both numbers are negative we add the absolute values and then reverse the sign
-			? ReverseSign<NonNegativeIntegerSum<Absolute<A>, Absolute<B>>>
+			? Negate<NonNegativeIntegerSum<Absolute<A>, Absolute<B>>>
 			// When the signs are different, subtract the negative operand's magnitude from the positive operand.
 			// Subtract already determines the result's sign, so there is no need to compare the magnitudes again.
 			: IsNegative<A> extends true

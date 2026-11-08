@@ -226,6 +226,7 @@ export type {ExclusifyUnion} from './source/exclusify-union.d.ts';
 export type {ArrayReverse} from './source/array-reverse.d.ts';
 export type {UnionMember} from './source/union-member.d.ts';
 export type {Absolute} from './source/absolute.d.ts';
+export type {Negate} from './source/negate.d.ts';
 export type {UnionLength} from './source/union-length.d.ts';
 export type {StringToNumber} from './source/string-to-number.d.ts';
 export type {StringToBoolean} from './source/string-to-boolean.d.ts';

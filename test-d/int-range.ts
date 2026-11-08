@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged} from '../index.d.ts';
+import type {Negate, Opaque, Tagged} from '../index.d.ts';
 import type {IntRange} from '../source/int-range.d.ts';
 
 declare const test: IntRange<0, 5>;
@@ -336,3 +336,39 @@ expectTypeOf<IntRange<-8, -3>>().toBe<-8 | -7 | -6 | -5 | -4>();
 expectTypeOf<IntRange<-3, 0>>().toBe<-3 | -2 | -1>();
 expectTypeOf<IntRange<-3, 4, 1 | 3>>().toBe<-3 | -2 | -1 | 0 | 1 | 2 | 3>();
 expectTypeOf<IntRange<-998, -997, 10_000>>().toBe<-998>();
+
+// Negating magnitude indices includes the negative start and excludes the negative end.
+expectTypeOf<IntRange<-10, -9>>().toBe<-10>();
+expectTypeOf<IntRange<-10, -8>>().toBe<-10 | -9>();
+expectTypeOf<IntRange<-2, -1>>().toBe<-2>();
+expectTypeOf<IntRange<-1, 1>>().toBe<-1 | 0>();
+expectTypeOf<IntRange<-10, Tagged<-7, 'End'>>>().toBe<-10 | -9 | -8>();
+expectTypeOf<IntRange<RangeBoundary.NegativeStart, -1>>().toBe<-3 | -2>();
+expectTypeOf<IntRange<-998, -995>>().toBe<-998 | -997 | -996>();
+
+// Stepped negative ranges stop both on the endpoint and before an overshoot.
+expectTypeOf<IntRange<-10, -4, 3>>().toBe<-10 | -7>();
+expectTypeOf<IntRange<-10, -3, 3>>().toBe<-10 | -7 | -4>();
+expectTypeOf<IntRange<-10, -8, 3>>().toBe<-10>();
+expectTypeOf<IntRange<-6, 1, 3>>().toBe<-6 | -3 | 0>();
+expectTypeOf<IntRange<-6, 0, 3>>().toBe<-6 | -3>();
+expectTypeOf<IntRange<-7, 0, 3>>().toBe<-7 | -4 | -1>();
+expectTypeOf<IntRange<-7, 1, 3>>().toBe<-7 | -4 | -1>();
+expectTypeOf<IntRange<-7, 3, 3>>().toBe<-7 | -4 | -1 | 2>();
+
+// Every combination of negative bounds and steps contributes a complete range.
+expectTypeOf<IntRange<-8 | -5, -2 | 1, 3>>().toBe<-8 | -5 | -2>();
+expectTypeOf<IntRange<-6, -1, 2 | 3>>().toBe<-6 | -4 | -3 | -2>();
+expectTypeOf<IntRange<Tagged<-6, 'Start'>, Tagged<-1, 'End'>, Tagged<2, 'Step'>>>().toBe<-6 | -4 | -2>();
+
+// Reflected half-open ranges exchange which endpoint is included.
+expectTypeOf<Negate<IntRange<2, 6>>>().toBe<-5 | -4 | -3 | -2>();
+expectTypeOf<Negate<IntRange<-5, -1>>>().toBe<2 | 3 | 4 | 5>();
+expectTypeOf<Negate<IntRange<-5, 5, 3>>>().toBe<-4 | -1 | 2 | 5>();
+expectTypeOf<IntRange<Negate<5>, Negate<1>>>().toBe<-5 | -4 | -3 | -2>();
+expectTypeOf<Extract<IntRange<-10, -5>, IntRange<-5, 0>>>().toBe<never>();
+
+// Negative intervals produce only reached numeric keys, without leaking tuple properties.
+type NegativeOffsets = IntRange<-7, -1, 2>;
+expectTypeOf<keyof Record<NegativeOffsets, string>>().toBe<-7 | -5 | -3>();
+expectTypeOf<Extract<NegativeOffsets, -1 | 0 | 'length' | '-7'>>().toBe<never>();

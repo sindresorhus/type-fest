@@ -384,6 +384,7 @@ Click the type names for complete docs.
 - [`Subtract`](source/subtract.d.ts) - Returns the difference between two numbers.
 - [`UnionMax`](source/union-max.d.ts) - Returns the maximum number in a union of numbers.
 - [`Absolute`](source/absolute.d.ts) - Returns the absolute value of the specified number or bigint.
+- [`Negate`](source/negate.d.ts) - Returns the specified number with its sign reversed.
 - [`StringToNumber`](source/string-to-number.d.ts) - Converts a numeric string to a number.
 
 ### Change case

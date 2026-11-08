@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged, Subtract} from '../index.d.ts';
+import type {Negate, Opaque, Tagged, Subtract} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Positive result
@@ -156,3 +156,35 @@ expectTypeOf<Subtract<-3 | 3, -100 | 100>>().toBe<-103 | -97 | 97 | 103>();
 function _readNumericDifference<First extends number, Second extends number>(value: Subtract<First, Second>): number {
 	return value;
 }
+
+// Subtracting from zero negates each union member independently.
+expectTypeOf<Subtract<0, -420>>().toBe<420>();
+expectTypeOf<Subtract<0, -9 | 0 | 12>>().toBe<-12 | 0 | 9>();
+expectTypeOf<Subtract<0, Count.Deficit | Count.Many>>().toBe<-7 | 3>();
+expectTypeOf<Subtract<0, Tagged<-4 | 0 | 6, 'Amount'>>>().toBe<-6 | 0 | 4>();
+expectTypeOf<Subtract<0, 9_007_199_254_740_991>>().toBe<-9_007_199_254_740_991>();
+expectTypeOf<Subtract<0, -9_007_199_254_740_991>>().toBe<9_007_199_254_740_991>();
+
+// Negative operands retain correct signs across long borrows and exact cancellation.
+expectTypeOf<Subtract<-1, -1_000_000>>().toBe<999_999>();
+expectTypeOf<Subtract<-1000, -999>>().toBe<-1>();
+expectTypeOf<Subtract<-99_990, -100_000>>().toBe<10>();
+expectTypeOf<Subtract<-9_007_199_254_740_991, -9_007_199_254_740_990>>().toBe<-1>();
+expectTypeOf<Subtract<-9_007_199_254_740_990, -9_007_199_254_740_991>>().toBe<1>();
+expectTypeOf<Subtract<-100 | -1, -100 | -1>>().toBe<-99 | 0 | 99>();
+expectTypeOf<Subtract<0 | -10, 0 | -1>>().toBe<-10 | -9 | 0 | 1>();
+
+// Opposite signs add magnitudes before applying the minuend's sign.
+expectTypeOf<Subtract<-999_999, 1>>().toBe<-1_000_000>();
+expectTypeOf<Subtract<-9_007_199_254_740_990, 1>>().toBe<-9_007_199_254_740_991>();
+expectTypeOf<Subtract<Tagged<-999, 'Amount'>, Opaque<1, 'Adjustment'>>>().toBe<-1000>();
+
+// Public negation composes with all subtraction sign paths.
+expectTypeOf<Subtract<40, Negate<12>>>().toBe<52>();
+expectTypeOf<Subtract<Negate<40>, Negate<12>>>().toBe<-28>();
+expectTypeOf<Negate<Subtract<12, 40>>>().toBe<28>();
+expectTypeOf<Subtract<0, Negate<-4 | 4>>>().toBe<-4 | 4>();
+expectTypeOf<Subtract<Negate<PositiveInfinity>, 0>>().toBe<NegativeInfinity>();
+expectTypeOf<Subtract<0, Negate<PositiveInfinity>>>().toBe<PositiveInfinity>();
+expectTypeOf<Subtract<0, Negate<NegativeInfinity>>>().toBe<NegativeInfinity>();
+expectTypeOf<Subtract<Negate<Tagged<7, 'Amount'>>, Tagged<-7, 'Amount'>>>().toBe<0>();

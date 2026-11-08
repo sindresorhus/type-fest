@@ -81,42 +81,6 @@ type InternalUnionMin<N extends number, T extends UnknownArray = []> =
 		: InternalUnionMin<N, [...T, unknown]>;
 
 /**
-Returns the number with reversed sign.
-
-@example
-```
-type A = ReverseSign<-1>;
-//=> 1
-
-type B = ReverseSign<1>;
-//=> -1
-
-type C = ReverseSign<NegativeInfinity>;
-//=> PositiveInfinity
-
-type D = ReverseSign<PositiveInfinity>;
-//=> NegativeInfinity
-```
-*/
-export type ReverseSign<N extends number> =
-	// Handle edge cases, keeping numeric enum members distinct from the widened number type.
-	`${number}` extends `${N}`
-		? number
-		: N extends 0
-			? 0
-			: N extends PositiveInfinity
-				? NegativeInfinity
-				: N extends NegativeInfinity
-					? PositiveInfinity
-					// Handle negative numbers
-					: `${N}` extends `-${infer P extends number}`
-						? P
-						// Handle positive numbers
-						: `-${N}` extends `${infer R extends number}`
-							? R
-							: never;
-
-/**
 Returns the sum of two non-negative integers.
 
 It adds digit by digit, so it is not limited by the maximum length of a tuple. It is exact while both numbers are within `Number.MAX_SAFE_INTEGER`, and returns `number` for a result that is too large to be represented exactly.

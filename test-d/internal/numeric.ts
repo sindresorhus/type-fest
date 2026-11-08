@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, NegativeInfinity, PositiveInfinity} from '../../index.d.ts';
-import type {IsNumberLike, ReverseSign, UnionMin} from '../../source/internal/index.d.ts';
+import type {IsNumberLike, UnionMin} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<IsNumberLike<'1'>, true>>().toBe<true>();
 expectTypeOf<IsEqual<IsNumberLike<'-1.1'>, true>>().toBe<true>();
@@ -35,23 +35,3 @@ expectTypeOf<IsEqual<UnionMin<NegativeInfinity | 3>, NegativeInfinity>>().toBe<t
 // `PositiveInfinity` only wins when nothing smaller is in the union, because it is not the minimum of `3` and `Infinity`.
 expectTypeOf<IsEqual<UnionMin<PositiveInfinity | 3>, 3>>().toBe<true>();
 expectTypeOf<IsEqual<UnionMin<PositiveInfinity>, PositiveInfinity>>().toBe<true>();
-
-expectTypeOf<IsEqual<ReverseSign<-1>, 1>>().toBe<true>();
-expectTypeOf<IsEqual<ReverseSign<1>, -1>>().toBe<true>();
-expectTypeOf<IsEqual<ReverseSign<0>, 0>>().toBe<true>();
-expectTypeOf<IsEqual<ReverseSign<-0>, 0>>().toBe<true>();
-expectTypeOf<IsEqual<ReverseSign<NegativeInfinity>, PositiveInfinity>>().toBe<true>();
-expectTypeOf<IsEqual<ReverseSign<PositiveInfinity>, NegativeInfinity>>().toBe<true>();
-expectTypeOf<IsEqual<ReverseSign<-1.5>, 1.5>>().toBe<true>();
-expectTypeOf<ReverseSign<number>>().toBe<number>();
-
-// `IsEqual` does not see through a nested application, so this one is asserted on the result directly rather than through `IsEqual`.
-expectTypeOf<ReverseSign<ReverseSign<-42>>>().toBe<-42>();
-
-// Enum members have known signs even though `number` is assignable to them.
-enum Offset {
-	Positive = 3,
-	Negative = -3,
-}
-expectTypeOf<ReverseSign<Offset.Positive>>().toBe<-3>();
-expectTypeOf<ReverseSign<Offset.Negative>>().toBe<3>();

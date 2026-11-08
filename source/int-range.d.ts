@@ -1,9 +1,10 @@
+import type {Negate} from './negate.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {ReverseSign, TupleMin, UnwrapBrand} from './internal/index.d.ts';
+import type {TupleMin, UnwrapBrand} from './internal/index.d.ts';
 import type {IntClosedRange} from './int-closed-range.d.ts'; // For `@link`
 import type {ArrayIndices} from './array-indices.d.ts';
 
@@ -92,12 +93,12 @@ type PrivateNegativeIntRange<
 	? Result
 	: StepTuple['length'] extends 1
 		// Shift both magnitude tuples by one so the negative start is included and the negative end is excluded. A non-negative end gives an empty reversed tuple, excluding only zero from the negative half.
-		? Result | ReverseSign<Exclude<ArrayIndices<[...Magnitude, unknown]>, ArrayIndices<[...TupleOf<ReverseSign<UnwrapBrand<End>>>, unknown]>>> | PrivateIntRange<0, End, 1>
+		? Result | Negate<Exclude<ArrayIndices<[...Magnitude, unknown]>, ArrayIndices<[...TupleOf<Negate<End>>, unknown]>>> | PrivateIntRange<0, End, 1>
 		: Magnitude extends [...StepTuple, ...infer NextMagnitude extends UnknownArray]
-			? PrivateNegativeIntRange<Start, End, Step, DropStep<Remaining, StepTuple>, StepTuple, NextMagnitude, Result | ReverseSign<Magnitude['length']>>
+			? PrivateNegativeIntRange<Start, End, Step, DropStep<Remaining, StepTuple>, StepTuple, NextMagnitude, Result | Negate<Magnitude['length']>>
 			// Less than a step is left below zero, so `Crossover` is the amount the next step overshoots it by, and counting up can take over from there
 			: StepTuple extends [...Magnitude, ...infer Crossover extends UnknownArray]
-				? Result | ReverseSign<Magnitude['length']> | PrivateIntRange<Crossover['length'], End, Step>
+				? Result | Negate<Magnitude['length']> | PrivateIntRange<Crossover['length'], End, Step>
 				: never;
 
 /**

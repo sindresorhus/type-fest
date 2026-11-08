@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged, Sum} from '../index.d.ts';
+import type {Negate, Opaque, Tagged, Sum} from '../index.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../source/numeric.d.ts';
 
 // Positive result
@@ -181,3 +181,31 @@ expectTypeOf<Sum<Tagged<2, 'Amount'>, any>>().toBe<number>();
 expectTypeOf<Sum<any, Tagged<2, 'Amount'>>>().toBe<number>();
 expectTypeOf<Sum<Tagged<2, 'Amount'>, never>>().toBe<never>();
 expectTypeOf<Sum<never, Tagged<2, 'Amount'>>>().toBe<never>();
+
+// Negating a same-sign sum retains carries, trailing zeroes, and safe-integer precision.
+expectTypeOf<Sum<-99, -1>>().toBe<-100>();
+expectTypeOf<Sum<-999_999, -1>>().toBe<-1_000_000>();
+expectTypeOf<Sum<-10_010, -90>>().toBe<-10_100>();
+expectTypeOf<Sum<-9_007_199_254_740_990, -1>>().toBe<-9_007_199_254_740_991>();
+expectTypeOf<Sum<-9_007_199_254_740_991, 9_007_199_254_740_991>>().toBe<0>();
+expectTypeOf<Sum<9_007_199_254_740_991, -9_007_199_254_740_991>>().toBe<0>();
+
+// Cancellation and negative-result branches both contribute to a distributed result.
+expectTypeOf<Sum<-10 | -1, -90 | -9>>().toBe<-100 | -91 | -19 | -10>();
+expectTypeOf<Sum<-10 | 10, -10 | 10>>().toBe<-20 | 0 | 20>();
+expectTypeOf<Sum<-100 | -1, 1 | 100>>().toBe<-99 | 0 | 99>();
+expectTypeOf<Sum<0 | -100, 0 | -1>>().toBe<-101 | -100 | -1 | 0>();
+
+// Public negation composes with addition for integers and infinities.
+expectTypeOf<Sum<40, Negate<12>>>().toBe<28>();
+expectTypeOf<Sum<Negate<40>, 12>>().toBe<-28>();
+expectTypeOf<Negate<Sum<-40, -12>>>().toBe<52>();
+expectTypeOf<Sum<Negate<-4 | 4>, 4>>().toBe<0 | 8>();
+expectTypeOf<Sum<Negate<PositiveInfinity>, -10>>().toBe<NegativeInfinity>();
+expectTypeOf<Sum<Negate<NegativeInfinity>, PositiveInfinity>>().toBe<PositiveInfinity>();
+
+// Normalized enum and branded operands follow the same sign-changing paths.
+expectTypeOf<Sum<Count.Deficit, -7>>().toBe<-10>();
+expectTypeOf<Sum<Tagged<-999, 'Amount'>, Opaque<-1, 'Adjustment'>>>().toBe<-1000>();
+expectTypeOf<Sum<Tagged<-7 | 7, 'Amount'>, Negate<7>>>().toBe<-14 | 0>();
+expectTypeOf<Sum<Negate<Tagged<7, 'Amount'>>, Tagged<7, 'Amount'>>>().toBe<0>();

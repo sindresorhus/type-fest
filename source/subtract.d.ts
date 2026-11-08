@@ -1,4 +1,5 @@
-import type {UnwrapBrand, ReverseSign, NonNegativeIntegerSum, NonNegativeIntegerDifference} from './internal/index.d.ts';
+import type {Negate} from './negate.d.ts';
+import type {UnwrapBrand, NonNegativeIntegerSum, NonNegativeIntegerDifference} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -61,7 +62,7 @@ type _Subtract<A extends number, B extends number> =
 					// Handle case when numbers are equal to each other
 					: A extends B ? 0
 						// Handle cases when A or B is 0
-						: A extends 0 ? ReverseSign<B> : B extends 0 ? A
+						: A extends 0 ? Negate<B> : B extends 0 ? A
 							// Handle remaining regular cases
 							: SubtractPostChecks<A, B>;
 
@@ -73,10 +74,10 @@ type SubtractPostChecks<A extends number, B extends number, AreNegative = [IsNeg
 		? SubtractPositives<A, B>
 		: AreNegative extends [true, true]
 			// When both numbers are negative we subtract the absolute values and then reverse the sign
-			? ReverseSign<SubtractPositives<Absolute<A>, Absolute<B>>>
+			? Negate<SubtractPositives<Absolute<A>, Absolute<B>>>
 			// When the signs are different we can add the absolute values and then reverse the sign if A is negative.
 			: NonNegativeIntegerSum<Absolute<A>, Absolute<B>> extends infer R extends number
-				? IsNegative<A> extends true ? ReverseSign<R> : R
+				? IsNegative<A> extends true ? Negate<R> : R
 				: never;
 
 /**
@@ -85,7 +86,7 @@ Subtracts two positive numbers.
 type SubtractPositives<A extends number, B extends number> =
 	LessThan<A, B> extends true
 		// When A < B we can reverse the result of B - A
-		? ReverseSign<NonNegativeIntegerDifference<B, A>>
+		? Negate<NonNegativeIntegerDifference<B, A>>
 		: NonNegativeIntegerDifference<A, B>;
 
 export {};
