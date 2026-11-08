@@ -89,3 +89,52 @@ type Test9<T extends object> = Assignability9<T, KeysOfUnion<T>>;
 type Conditional<T> = T extends string ? {a: string} : {};
 type Assignability11<T, _K extends KeysOfUnion<Conditional<T>>> = unknown;
 type Test11<T> = Assignability11<T, keyof Conditional<T>>;
+
+// Conflicting discriminants and property values must not turn the key set into `PropertyKey`.
+type Response =
+	| {status: 'success'; value: string; metadata: {cached: boolean}}
+	| {status: 'failure'; error: Error; metadata: number};
+expectTypeOf<KeysOfUnion<Response>>().toBe<'status' | 'value' | 'error' | 'metadata'>();
+expectTypeOf<'missing'>().not.toBeAssignableTo<KeysOfUnion<Response>>();
+
+// Empty and nullish members contribute no keys without hiding the other members' keys.
+expectTypeOf<KeysOfUnion<{id: string} | {} | null | undefined>>().toBe<'id'>();
+expectTypeOf<KeysOfUnion<{}>>().toBe<never>();
+expectTypeOf<KeysOfUnion<null | undefined>>().toBe<never>();
+
+// Preserve the native spelling of numeric keys and unique symbols.
+declare const requestId: unique symbol;
+declare const responseId: unique symbol;
+type KeyedRecords = {readonly [requestId]?: string; 0: number} | {[responseId]: boolean; '0': string};
+expectTypeOf<KeysOfUnion<KeyedRecords>>().toBe<typeof requestId | typeof responseId | 0 | '0'>();
+
+// Index signatures contribute their own domains alongside the other members' keys.
+expectTypeOf<KeysOfUnion<Record<number, string> | {label: string}>>().toBe<number | 'label'>();
+expectTypeOf<KeysOfUnion<{[key: string]: unknown} | {[requestId]: string}>>().toBe<string | number | typeof requestId>();
+expectTypeOf<KeysOfUnion<Record<`data-${string}`, unknown> | {id: string}>>().toBe<`data-${string}` | 'id'>();
+expectTypeOf<'other'>().not.toBeAssignableTo<KeysOfUnion<Record<`data-${string}`, unknown> | {id: string}>>();
+expectTypeOf<KeysOfUnion<Record<symbol, unknown> | {id: string}>>().toBe<symbol | 'id'>();
+
+// Arrays and callable objects expose their declared properties like any other union member.
+expectTypeOf<KeysOfUnion<readonly [string, number?] | {label: string}>>().toBe<keyof readonly [string, number?] | 'label'>();
+expectTypeOf<KeysOfUnion<((value: string) => void) | {readonly description: string}>>().toBe<'description'>();
+
+// Boundary types follow `keyof`, including the all-keys result for `never`.
+expectTypeOf<KeysOfUnion<any>>().toBe<PropertyKey>();
+expectTypeOf<KeysOfUnion<never>>().toBe<PropertyKey>();
+expectTypeOf<KeysOfUnion<unknown>>().toBe<never>();
+expectTypeOf<KeysOfUnion<object>>().toBe<never>();
+
+// Generic consumers can use union keys as property keys without treating them as safe to index.
+function _acceptUnionKey<Value>(key: KeysOfUnion<Value>): PropertyKey {
+	return key;
+}
+
+function _readUnionKey<Value>(value: Value, key: KeysOfUnion<Value>) {
+	// @ts-expect-error An exclusive key is not safe to read from every member.
+	const _value: unknown = value[key];
+}
+
+declare function collectKeys<Value>(value: Value): Array<KeysOfUnion<Value>>;
+declare const response: Response;
+expectTypeOf(collectKeys(response)).toBe<Array<'status' | 'value' | 'error' | 'metadata'>>();

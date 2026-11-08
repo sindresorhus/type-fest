@@ -1,0 +1,8 @@
+{
+	// nz checks the type tests with tsconfig.json. This pass checks every declaration, including files outside its import graph.
+	"extends": "./tsconfig.json",
+	"include": [
+		"index.d.ts",
+		"source/**/*.d.ts"
+	]
+}

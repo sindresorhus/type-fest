@@ -94,3 +94,37 @@ declare const requiredParts: SplitOnRestElement<readonly [1, 2]>;
 requiredParts[0][1] = 2;
 // @ts-expect-error The outer tuple retains the input's readonly modifier.
 requiredParts[0] = [1, 2];
+
+// Required positions retain their order across complete groups and the remaining positions at either end.
+expectTypeOf<SplitOnRestElement<readonly [1, 2, 3, 4, 5, 6, ...boolean[], 7, 8, 9, 10, 11, 12]>>()
+	.toBe<readonly [[1, 2, 3, 4, 5, 6], boolean[], [7, 8, 9, 10, 11, 12]]>();
+
+// The required prefix cannot absorb an optional position or change its explicitly declared undefined.
+type SentinelPrefix = [never, any, unknown, undefined, null];
+expectTypeOf<SplitOnRestElement<readonly [...SentinelPrefix, (Date | undefined)?, ...RegExp[]]>>()
+	.toBe<readonly [[...SentinelPrefix, (Date | undefined)?], RegExp[], []]>();
+expectTypeOf<SplitOnRestElement<readonly [...SentinelPrefix, (Date | undefined)?, ...RegExp[]], {preserveOptionalModifier: false}>>()
+	.toBe<readonly [[...SentinelPrefix, Date | undefined], RegExp[], []]>();
+expectTypeOf<SplitOnRestElement<[...unknown[], ...SentinelPrefix]>>().toBe<[[], unknown[], SentinelPrefix]>();
+
+// Distribution keeps separate prefixes, suffixes, rest types, and outer readonly modifiers.
+expectTypeOf<SplitOnRestElement<readonly [1, 2, 3, 4, 5, ...string[]] | [...number[], 6, 7, 8, 9, 10]>>()
+	.toBe<readonly [[1, 2, 3, 4, 5], string[], []] | [[], number[], [6, 7, 8, 9, 10]]>();
+
+// A variable argument list can have more fixed positions than a one-position traversal can visit.
+type LongPrefix = TupleOf<550, 'before'>;
+type LongSuffix = TupleOf<550, 'after'>;
+type LongArgumentList = readonly [...LongPrefix, ...number[], ...LongSuffix];
+expectTypeOf<SplitOnRestElement<LongArgumentList>>().toBe<readonly [LongPrefix, number[], LongSuffix]>();
+
+function _readGroupedPrefix<Value, Options extends {preserveOptionalModifier?: boolean}>(parts: SplitOnRestElement<readonly [1, 2, 3, 4, Value, string?, ...unknown[]], Options>): Value {
+	return parts[0][4];
+}
+
+function _readGroupedSuffix<Value, Options extends {preserveOptionalModifier?: boolean}>(parts: SplitOnRestElement<readonly [...unknown[], string, number, boolean, Date, Value], Options>): Value {
+	return parts[2][4];
+}
+
+function _constructGroupedParts<Value>(value: Value): SplitOnRestElement<readonly [1, 2, 3, 4, Value, ...string[]]> {
+	return [[1, 2, 3, 4, value], [], []];
+}

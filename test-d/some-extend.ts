@@ -227,3 +227,22 @@ expectTypeOf(readGenericResult<false>(false)).toBe<boolean>();
 readGenericResult<true>(false);
 // @ts-expect-error A non-matching element cannot produce true.
 readGenericResult<false>(true);
+
+// A definite match decides the result even when another element is uncertain.
+expectTypeOf<SomeExtend<readonly [any, 'ready'], string>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly [number | 'ready', never], string>>().toBe<boolean>();
+expectTypeOf<SomeExtend<readonly [number | 'ready', never], string, {strictNever: false}>>().toBe<true>();
+
+// Structural matching is independent of property modifiers and extra fields.
+expectTypeOf<SomeExtend<readonly [{error: Error}, {readonly id: 1; extra: true}], {id: number}>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly [{id: 1} | {error: Error}], {id: number}>>().toBe<boolean>();
+
+// A separate known string satisfies the consumer constraint when another value is a union.
+const mixedAlternatives = containsString([1 as number | string, 'ready']);
+expectTypeOf(mixedAlternatives).toBe<readonly [number | string, 'ready']>();
+// @ts-expect-error A partially matching element cannot guarantee a string.
+containsString([1 as number | string]);
+
+function _constructKnownSuccess<Value>(): SomeExtend<readonly ['ready', Value], string> {
+	return true;
+}

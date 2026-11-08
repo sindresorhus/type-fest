@@ -19,3 +19,17 @@ expectTypeOf<UnionLength<IntRange<0, 100>>>().toBe<100>();
 expectTypeOf<UnionLength<never>>().toBe<0>();
 expectTypeOf<UnionLength<any>>().toBe<1>();
 expectTypeOf<UnionLength<unknown>>().toBe<1>();
+
+// Count only distinct action names from a registry, including a numeric key and a symbol key.
+declare const internalAction: unique symbol;
+type ActionRegistry = {open: () => void; close: () => void; 0: () => void; [internalAction]: () => void};
+expectTypeOf<UnionLength<keyof ActionRegistry>>().toBe<4>();
+expectTypeOf<3>().not.toBeAssignableTo<UnionLength<keyof ActionRegistry>>();
+
+// Assignability between signatures must not remove distinct callable members.
+expectTypeOf<UnionLength<((value?: string) => void) | ((value: string) => void)>>().toBe<2>();
+expectTypeOf<UnionLength<null | undefined | false | true>>().toBe<4>();
+
+function _readUnionSize<Union>(size: UnionLength<Union>): number {
+	return size;
+}

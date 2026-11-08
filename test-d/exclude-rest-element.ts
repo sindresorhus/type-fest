@@ -131,3 +131,9 @@ expectTypeOf<ExcludeRestElement<readonly [unknown, any?, never?] | [undefined, v
 expectTypeOf<ExcludeRestElement<readonly [never]>>().toBe<readonly [never]>();
 // Refining an array's length does not give its spread copy fixed tuple positions.
 expectTypeOf<ExcludeRestElement<readonly string[] & {readonly length: 3}>>().toBe<readonly []>();
+
+// Removing the variable arguments joins long fixed groups in their original order.
+type LongFixedPrefix = TupleOf<550, 'before'>;
+type LongFixedSuffix = TupleOf<550, 'after'>;
+expectTypeOf<ExcludeRestElement<readonly [...LongFixedPrefix, ...number[], ...LongFixedSuffix]>>()
+	.toBe<readonly [...LongFixedPrefix, ...LongFixedSuffix]>();

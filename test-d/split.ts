@@ -60,7 +60,7 @@ expectTypeOf<Split<'a,b,c' | `bye, ${string}`, ',' | `b${string}`, {strictLitera
 type FiftyZeroes = StringRepeat<'0', 50>;
 expectTypeOf<Split<FiftyZeroes, ''>>().toBe<TupleOf<50, '0'>>();
 
-// Maximum allowed recursion depth for a tail recursive implementation.
+// Character splitting stays precise at the former one-character recursion limit.
 type NineHundredNinetyNineZeroes = StringRepeat<'0', 999>;
 expectTypeOf<Split<NineHundredNinetyNineZeroes, ''>>().toBe<TupleOf<999, '0'>>();
 
@@ -146,4 +146,31 @@ function _readTaggedSplitWithOptions<Options extends SplitOptions>(parts: Split<
 
 function _constructKnownSplitWithOptions<Options extends SplitOptions>(parts: ['api', 'name']): Split<'api.name', '.', Options> {
 	return parts;
+}
+
+// Character splitting preserves combining marks and both characters of a line ending.
+expectTypeOf<Split<'e\u{301}\r\n本', ''>>().toBe<['e', '\u{301}', '\r', '\n', '本']>();
+expectTypeOf<Split<'a_b', '' | '_'>>().toBe<['a', '_', 'b'] | ['a', 'b']>();
+
+// Non-literal fragments retain the established non-strict behavior.
+expectTypeOf<Split<`${string}ab`, '', {strictLiteralChecks: false}>>().toBe<[string, 'a', 'b']>();
+expectTypeOf<Split<`v${number}`, '', {strictLiteralChecks: false}>>().toBe<['v', `${number}`]>();
+expectTypeOf<Split<any, ''>>().toBe<string[]>();
+expectTypeOf<Split<never, ''>>().toBe<never>();
+
+// A character list can cross a marker in a long generated literal without hitting the recursion limit.
+type LongText = `${StringRepeat<'a', 600>}X${StringRepeat<'b', 600>}`;
+type LongCharacters = Split<LongText, ''>;
+expectTypeOf<LongCharacters['length']>().toBe<1201>();
+expectTypeOf<LongCharacters[599]>().toBe<'a'>();
+expectTypeOf<LongCharacters[600]>().toBe<'X'>();
+expectTypeOf<LongCharacters[601]>().toBe<'b'>();
+expectTypeOf<LongCharacters[1200]>().toBe<'b'>();
+
+function _constructKnownCharacters<Options extends SplitOptions>(characters: ['a', 'b']): Split<'ab', '', Options> {
+	return characters;
+}
+
+function _readCharactersWithOptions<Input extends string, Options extends SplitOptions>(characters: Split<Input, '', Options>): string[] {
+	return characters;
 }

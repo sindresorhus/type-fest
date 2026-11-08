@@ -311,3 +311,28 @@ const brandedRangeTable = makeBrandedRangeTable({id: 'kept'});
 expectTypeOf(brandedRangeTable[1]).toBe<{readonly id: 'kept'}>();
 // @ts-expect-error The exclusive endpoint is not a reached position.
 expectTypeOf(brandedRangeTable[4]);
+
+// Unit-step ranges produce numeric keys suitable for a lookup table, without array properties.
+type SuccessStatus = IntRange<200, 205>;
+expectTypeOf<SuccessStatus>().toBe<200 | 201 | 202 | 203 | 204>();
+expectTypeOf<'200' | 'length'>().not.toBeAssignableTo<SuccessStatus>();
+
+function makeStatusTable<Value>(value: Value): Record<SuccessStatus, Value> {
+	return {200: value, 201: value, 202: value, 203: value, 204: value};
+}
+
+const statusTable = makeStatusTable({message: 'success'});
+expectTypeOf(statusTable[204]).toBe<{message: string}>();
+// @ts-expect-error The endpoint is exclusive even when the start is far from zero.
+const _outsideStatus: unknown = statusTable[205];
+
+// Adjacent intervals have no overlap, and a union of steps includes the complete unit-step interval.
+expectTypeOf<Extract<IntRange<200, 205>, IntRange<205, 210>>>().toBe<never>();
+expectTypeOf<IntRange<200, 205, 1 | 3>>().toBe<SuccessStatus>();
+expectTypeOf<IntRange<996, 999>>().toBe<996 | 997 | 998>();
+
+// Unit steps can end at zero or below it, and still exclude the endpoint when combined with other steps.
+expectTypeOf<IntRange<-8, -3>>().toBe<-8 | -7 | -6 | -5 | -4>();
+expectTypeOf<IntRange<-3, 0>>().toBe<-3 | -2 | -1>();
+expectTypeOf<IntRange<-3, 4, 1 | 3>>().toBe<-3 | -2 | -1 | 0 | 1 | 2 | 3>();
+expectTypeOf<IntRange<-998, -997, 10_000>>().toBe<-998>();

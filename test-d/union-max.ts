@@ -115,3 +115,23 @@ expectTypeOf<0>().not.toBeAssignableTo<UnionMax<0 | 4 | NegativeInfinity>>();
 function _readMaximumWithInfinity<Candidates extends number>(value: UnionMax<Candidates | NegativeInfinity>): number {
 	return value;
 }
+
+// Numeric order wins over string order, including ties in the leading digits.
+expectTypeOf<UnionMax<9 | 10 | 99 | 100>>().toBe<100>();
+expectTypeOf<UnionMax<789 | 798 | 790>>().toBe<798>();
+expectTypeOf<UnionMax<100 | 101 | 110>>().toBe<110>();
+expectTypeOf<UnionMax<98 | 99 | 100>>().toBe<100>();
+
+// Derive a shared capacity from independent worker pool configurations.
+type WorkerPools = {
+	interactive: {maxConcurrency: 32};
+	batch: {maxConcurrency: 128};
+	serial: {maxConcurrency: 1};
+};
+type MaximumConcurrency = UnionMax<WorkerPools[keyof WorkerPools]['maxConcurrency']>;
+expectTypeOf<MaximumConcurrency>().toBe<128>();
+expectTypeOf<32>().not.toBeAssignableTo<MaximumConcurrency>();
+expectTypeOf(maximumRetryCount([80, 101, 99] as const)).toBe<101>();
+
+// A dense interval need not begin at zero or include every leading digit.
+expectTypeOf<UnionMax<IntRange<128, 256>>>().toBe<255>();

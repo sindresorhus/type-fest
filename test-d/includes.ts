@@ -374,3 +374,31 @@ expectTypeOf<Includes<TupleOf<900, 1>, 2>>().toBe<false>();
 expectTypeOf<Includes<[...TupleOf<900, 1>, 2], 2>>().toBe<true>();
 expectTypeOf<Includes<[...TupleOf<900, 1>, 2?], 2>>().toBe<boolean>();
 expectTypeOf<Includes<[...string[], ...TupleOf<900, 1>], 2>>().toBe<false>();
+
+// A definite match wins over several possible matches, regardless of their positions.
+expectTypeOf<Includes<readonly ['ready' | 'failed', 'ready', string], 'ready', {distributeItem: true}>>().toBe<true>();
+expectTypeOf<Includes<readonly [string, 'ready' | 'failed'], 'ready', {distributeItem: true}>>().toBe<boolean>();
+expectTypeOf<Includes<readonly [any, never], never, {distributeItem: true}>>().toBe<true>();
+
+// A larger element union must not absorb the type of a separate matching position.
+expectTypeOf<Includes<readonly [1 | 2, 1], 1>>().toBe<true>();
+expectTypeOf<Includes<readonly [1 | 2, 1?], 1>>().toBe<boolean>();
+expectTypeOf<Includes<readonly [unknown, undefined], undefined>>().toBe<true>();
+
+// Consumer constraints require a guaranteed protocol marker while retaining tuple inference.
+declare function requireReady<const Values extends readonly unknown[]>(values: Values & (Includes<Values, 'ready'> extends true ? unknown : never)): Values;
+const readyProtocol = requireReady(['start', 'ready', 3]);
+expectTypeOf(readyProtocol).toBe<readonly ['start', 'ready', 3]>();
+// @ts-expect-error A union-valued position does not guarantee the exact marker.
+requireReady(['start', 'ready' as 'ready' | 'failed']);
+// @ts-expect-error An optional position can be absent.
+requireReady(['start'] as readonly ['start', 'ready'?]);
+
+// Required and optional positions keep explicitly declared undefined independent of absence.
+expectTypeOf<Includes<readonly [undefined, 'ready'?], undefined>>().toBe<true>();
+expectTypeOf<Includes<readonly ['start', (string | undefined)?], string | undefined>>().toBe<boolean>();
+
+// A known leading marker still decides membership when a later position is generic.
+function _constructKnownPrefix<Value>(): Includes<readonly ['ready', Value], 'ready'> {
+	return true;
+}

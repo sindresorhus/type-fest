@@ -3,6 +3,7 @@ import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
 import type {Not} from './not.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Or} from './or.d.ts';
+import type {StringToArray} from './string-to-array.d.ts';
 
 /**
 Options for the `Split` type.
@@ -78,8 +79,11 @@ type _Split<
 			And<IsStringLiteral<S>, IsStringLiteral<Delimiter>>,
 			Not<ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>['strictLiteralChecks']>
 		> extends true
-			// The `extends infer` step keeps `_SplitOnDelimiter` out of this conditional's tail-recursion chain, so the loop gets the full recursion budget to itself.
-			? _SplitOnDelimiter<S, Delimiter> extends infer Result ? Result : never
+			? (Delimiter extends '' ? IsStringLiteral<S> : false) extends true
+				// Reuse the chunked character conversion instead of rebuilding the tuple one character at a time.
+				? StringToArray<S>
+				// The `extends infer` step keeps `_SplitOnDelimiter` out of this conditional's tail-recursion chain, so the loop gets the full recursion budget to itself.
+				: _SplitOnDelimiter<S, Delimiter> extends infer Result ? Result : never
 			// Otherwise, return `string[]`
 			: string[]
 		: never // Should never happen

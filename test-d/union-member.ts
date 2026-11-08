@@ -46,3 +46,20 @@ const selectedPayload = constructSingleton({id: 'request', values: [1, 2]});
 expectTypeOf(selectedPayload.value).toBe<{readonly id: 'request'; readonly values: readonly [1, 2]}>();
 // @ts-expect-error A valid element still cannot overwrite a readonly inferred tuple.
 selectedPayload.value.values[0] = 1;
+
+// A selected callable member keeps the original call signature, rather than merging the overloads.
+type UnionHandler = ((value: string) => number) | ((value: number) => string);
+expectTypeOf<UnionMember<UnionHandler>>().toBeAssignableTo<UnionHandler>();
+expectTypeOf<IsEqual<UnionMember<UnionHandler>, UnionHandler>>().toBe<false>();
+expectTypeOf<WrapMemberInTuple<UnionHandler>>().toBe<[(value: string) => number] | [(value: number) => string]>();
+
+declare const opened: unique symbol;
+declare const closed: unique symbol;
+expectTypeOf<WrapMemberInTuple<typeof opened | typeof closed>>().toBe<[typeof opened] | [typeof closed]>();
+
+// Every independent nullish alternative can be selected, including beside a concrete payload.
+expectTypeOf<WrapMemberInTuple<null | undefined | {payload: string}>>().toBe<[null] | [undefined] | [{payload: string}]>();
+
+function _constructCallableSingleton<Value>(handler: (value: Value) => Value): UnionMember<(value: Value) => Value> {
+	return handler;
+}

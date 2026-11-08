@@ -113,3 +113,15 @@ type UnknownRestInput = ExtractRestElement<unknown>;
 function _extractNullishRest<Value>(value: ExtractRestElement<readonly [true, ...Array<Value | null | undefined>, false]>): Value | null | undefined {
 	return value;
 }
+
+// Several required positions on both sides cannot contribute their sentinel types to the rest.
+expectTypeOf<ExtractRestElement<readonly [never, any, unknown, undefined, null, ...string[], null, undefined, unknown, any, never]>>().toBe<string>();
+expectTypeOf<ExtractRestElement<readonly [1, 2, 3, 4, 5, (Date | undefined)?, ...RegExp[]]>>().toBe<RegExp>();
+
+// A long callback signature still exposes only its variable arguments.
+type LongCallbackArguments = readonly [...TupleOf<550, 'before'>, ...Array<{id: string}>, ...TupleOf<550, 'after'>];
+expectTypeOf<ExtractRestElement<LongCallbackArguments>>().toBe<{id: string}>();
+
+function _readRestBetweenGroups<Value>(value: ExtractRestElement<readonly [1, 2, 3, 4, 5, ...Value[], 6, 7, 8, 9, 10]>): Value {
+	return value;
+}

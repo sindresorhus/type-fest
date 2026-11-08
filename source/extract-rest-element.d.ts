@@ -36,12 +36,17 @@ type ExtractRestElementImplementation<Array_ extends UnknownArray> = Array_ exte
 	// A fixed-length copy has no rest element to find. Copying first keeps ordinary array length refinements on the traversal path.
 	? number extends [...Array_]['length']
 		? '0' extends keyof Array_
-			? Array_ extends readonly [unknown?, ...infer Rest]
+			// Skip five required positions at once without constructing the discarded prefix.
+			? Array_ extends readonly [unknown, unknown, unknown, unknown, unknown, ...infer Rest]
 				? ExtractRestElementImplementation<Rest>
-				: never // Should never happen, since the first fixed element can always be matched.
-			: Array_ extends readonly [...infer Rest, unknown]
+				: Array_ extends readonly [unknown?, ...infer Rest]
+					? ExtractRestElementImplementation<Rest>
+					: never // Should never happen, since the first fixed element can always be matched.
+			: Array_ extends readonly [...infer Rest, unknown, unknown, unknown, unknown, unknown]
 				? ExtractRestElementImplementation<Rest>
-				: Array_[number]
+				: Array_ extends readonly [...infer Rest, unknown]
+					? ExtractRestElementImplementation<Rest>
+					: Array_[number]
 		: never
 	: never;
 

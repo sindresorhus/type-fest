@@ -21,7 +21,7 @@
 		"node": ">=22"
 	},
 	"scripts": {
-		"test:tsc": "node ./node_modules/@typescript/native/bin/tsc",
+		"test:tsc": "node ./node_modules/@typescript/native/bin/tsc -p tsconfig.declarations.json",
 		"test:minimum-lib": "node ./node_modules/@typescript/native/bin/tsc -p tsconfig.minimum-lib.json",
 		"test:nz": "nz",
 		"test:xo": "node --max-old-space-size=12288 ./node_modules/.bin/xo --ignores=lint-processors/fixtures/**/*.d.ts '**/*.{js,ts,md}'",

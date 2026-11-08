@@ -112,12 +112,39 @@ export type Includes<
 			: never;
 
 /**
-Checks each member of a union of arrays on its own, because the search takes a different path for an array that starts with a fixed element and one that does not.
+Checks each member of a union of arrays on its own, using indexed checks for fixed tuples and traversal for arrays with a rest element.
 */
 type IncludesEach<Array_ extends UnknownArray, Item, Options extends Required<IncludesOptions>> =
 	Array_ extends unknown // For distributing `Array_`
-		? _Includes<Array_, Item, Options>
+		? number extends [...Array_]['length']
+			? _Includes<Array_, Item, Options>
+			: IncludesFixedTuple<Array_, Item, Options>
 		: never; // Should never happen
+
+/**
+Check fixed positions independently, using the existing matcher on one-element tuples to preserve required and optional element inference. Keep possible matches separate from definite matches so a later definite match still decides the result.
+*/
+type IncludesFixedTuple<Array_ extends UnknownArray, Item, Options extends Required<IncludesOptions>> =
+	true extends IncludesFixedTupleMatches<Array_, Item, Options>[number]
+		? true
+		: 'possible' extends IncludesFixedTupleMatches<Array_, Item, Options>[number] ? boolean : false;
+
+/**
+Keep each position's match state in a tuple, so a known match can decide the result even while other positions remain generic.
+*/
+type IncludesFixedTupleMatches<Array_ extends UnknownArray, Item, Options extends Required<IncludesOptions>> = {
+	[Key in keyof Array_]-?: _Includes<
+		{} extends Pick<Array_, Key>
+			? Pick<Array_, Key> extends {[Position in Key]?: infer Element} ? [Element?] : never
+			: [Array_[Key]],
+		Item,
+		Options
+	> extends infer Matches
+		? [Matches] extends [true]
+			? true
+			: true extends Matches ? 'possible' : false
+		: never;
+};
 
 /**
 `Found` is `boolean` once an element may be the item, so a possible match is remembered while the search continues for a certain one. Carrying it along, instead of returning `true | <rest of the search>`, keeps the recursion in tail position, so long tuples do not hit the instantiation depth limit.

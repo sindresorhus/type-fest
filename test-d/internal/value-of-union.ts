@@ -42,3 +42,19 @@ expectTypeOf(test10).toBe<any>();
 // Returns `never` when `Key` is `never`
 declare const test11: ValueOfUnion<{a: 1; b: 2} | {a: 3; c: 4}, never>;
 expectTypeOf(test11).toBe<never>();
+
+// Conflicting discriminants do not hide a value present in only one member.
+type Result = {kind: 'success'; value: string} | {kind: 'failure'; error: Error};
+expectTypeOf<ValueOfUnion<Result, 'value' | 'error'>>().toBe<string | Error>();
+// @ts-expect-error A key absent from every member is rejected.
+type MissingResultValue = ValueOfUnion<Result, 'missing'>;
+
+// Optional symbol properties contribute `undefined`, while absent properties contribute nothing.
+declare const token: unique symbol;
+expectTypeOf<ValueOfUnion<{readonly [token]?: string} | {[token]: number} | {id: string}, typeof token>>().toBe<string | number | undefined>();
+
+// Empty and nullish members do not introduce `undefined` into a required property's value.
+expectTypeOf<ValueOfUnion<{value: string} | {} | null | undefined, 'value'>>().toBe<string>();
+expectTypeOf<ValueOfUnion<unknown, never>>().toBe<never>();
+expectTypeOf<ValueOfUnion<never, 'value'>>().toBe<never>();
+expectTypeOf<ValueOfUnion<any, 'value'>>().toBe<any>();

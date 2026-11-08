@@ -105,3 +105,13 @@ expectTypeOf<keyof DistributedPick<{[key: number]: string; [NumericField.Zero]?:
 // An indeterminate key domain must not widen a finite selection or make it optional.
 expectTypeOf<DistributedPick<Record<any, {id: number}>, 'entry'>>().toBe<{entry: {id: number}}>();
 expectTypeOf<{}>().not.toBeAssignableTo<DistributedPick<Record<any, unknown>, 'entry'>>();
+
+// Exclusive numeric and symbol keys remain attached to the correct discriminant.
+type KeyedResponse = {kind: 'page'; readonly 0?: string; ignored: boolean} | {kind: 'token'; [selectedSymbol]: number; ignored: boolean};
+type SelectedResponse = DistributedPick<KeyedResponse, 'kind' | 0 | typeof selectedSymbol>;
+expectTypeOf<SelectedResponse>().toBe<{kind: 'page'; readonly 0?: string} | {kind: 'token'; [selectedSymbol]: number}>();
+expectTypeOf<{kind: 'token'}>().not.toBeAssignableTo<SelectedResponse>();
+expectTypeOf<{kind: 'page'; 0: undefined}>().not.toBeAssignableTo<SelectedResponse>();
+
+declare function selectFields<Value, Key extends keyof Value>(value: Value, key: Key): DistributedPick<Value, Key>;
+expectTypeOf(selectFields({readonlyValue: 'ready'} as const, 'readonlyValue')).toBe<{readonly readonlyValue: 'ready'}>();

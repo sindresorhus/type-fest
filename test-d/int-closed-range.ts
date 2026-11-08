@@ -129,3 +129,11 @@ declare function acceptsClosedEnumRange<Value extends IntClosedRange<RangeBounda
 expectTypeOf(acceptsClosedEnumRange(4)).toBe<4>();
 // @ts-expect-error Values after the inclusive endpoint are outside the range.
 acceptsClosedEnumRange(5);
+
+// Inclusive unit-step ranges retain their last numeric key in consumer lookup tables.
+type Status = IntClosedRange<200, 202>;
+expectTypeOf<Status>().toBe<200 | 201 | 202>();
+declare const statusLabels: Record<Status, string>;
+expectTypeOf(statusLabels[202]).toBe<string>();
+// @ts-expect-error The next value lies beyond the inclusive endpoint.
+const _outsideStatusLabel: unknown = statusLabels[203];

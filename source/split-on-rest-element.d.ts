@@ -101,26 +101,32 @@ type SplitOnRestElementImplementation<
 > =
 	'0' extends keyof Array_
 		// Enters this branch, if `Array_` starts with a non-rest element (e.g., `[string, number]` or `[string, ...number[]]`).
-		? Array_ extends readonly [(infer First)?, ...infer Rest]
-			? SplitOnRestElementImplementation<
-				Rest, Options,
-				[
-					...HeadAcc,
-					// A tuple allows fewer than one element only when its first element is optional. Written in exactly this shape because equivalent ones, such as `[] extends Array_`, are several times slower.
-					...Array_ extends readonly [unknown, ...unknown[]]
-						? [First]
-						: Options['preserveOptionalModifier'] extends false
-							? [First] // Optional inference preserves explicitly declared `undefined`.
-							: [First?],
-				],
-				TailAcc
-			> // Accumulate elements that are present before the rest element.
-			: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
+		? Array_ extends readonly [infer First, infer Second, infer Third, infer Fourth, infer Fifth, ...infer Rest]
+			// Required positions need no optional-modifier checks, so append five at once.
+			? SplitOnRestElementImplementation<Rest, Options, [...HeadAcc, First, Second, Third, Fourth, Fifth], TailAcc>
+			: Array_ extends readonly [(infer First)?, ...infer Rest]
+				? SplitOnRestElementImplementation<
+					Rest, Options,
+					[
+						...HeadAcc,
+						// A tuple allows fewer than one element only when its first element is optional. Written in exactly this shape because equivalent ones, such as `[] extends Array_`, are several times slower.
+						...Array_ extends readonly [unknown, ...unknown[]]
+							? [First]
+							: Options['preserveOptionalModifier'] extends false
+								? [First] // Optional inference preserves explicitly declared `undefined`.
+								: [First?],
+					],
+					TailAcc
+				> // Accumulate elements that are present before the rest element.
+				: never // Should never happen, since `[(infer First)?, ...infer Rest]` is a top-type for arrays.
 		// Enters this branch, if `Array_` is empty (e.g., []),
 		// or `Array_` contains no non-rest elements preceding the rest element (e.g., `[...string[]]` or `[...string[], string]`).
-		: Array_ extends readonly [...infer Rest, infer Last]
-			? SplitOnRestElementImplementation<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
-			// Add the rest element between the accumulated elements. It is spread into a fresh array, because a rest-only input such as `readonly [...string[]]` is the whole array and would otherwise bake `readonly` into the middle part, which the branch above, that peels the rest off element by element, never does.
-			: [HeadAcc, Array_ extends readonly [] ? [] : [...Array_], TailAcc];
+		: Array_ extends readonly [...infer Rest, infer First, infer Second, infer Third, infer Fourth, infer Fifth]
+			// Keep suffix order while consuming five required positions from the end.
+			? SplitOnRestElementImplementation<Rest, Options, HeadAcc, [First, Second, Third, Fourth, Fifth, ...TailAcc]>
+			: Array_ extends readonly [...infer Rest, infer Last]
+				? SplitOnRestElementImplementation<Rest, Options, HeadAcc, [Last, ...TailAcc]> // Accumulate elements that are present after the rest element.
+				// Add the rest element between the accumulated elements. It is spread into a fresh array, because a rest-only input such as `readonly [...string[]]` is the whole array and would otherwise bake `readonly` into the middle part, which the branch above, that peels the rest off element by element, never does.
+				: [HeadAcc, Array_ extends readonly [] ? [] : [...Array_], TailAcc];
 
 export {};

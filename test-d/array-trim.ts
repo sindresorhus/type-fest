@@ -205,3 +205,56 @@ expectTypeOf<ArrayTrimStart<readonly [1, ...Array<2 | 3>, 4], number, {condition
 expectTypeOf<ArrayTrimEnd<[never, any, unknown], unknown, {condition: 'extends'}>>().toBe<[]>();
 expectTypeOf<ArrayTrim<readonly [1, 2] | [3, 'kept'], number, {condition: 'extends'}>>().toBe<readonly [] | ['kept']>();
 expectTypeOf<ArrayTrimStart<[1, 2], 1 | 2>>().toBe<[1, 2]>();
+
+// Stop at the first mismatch, retaining matching values on its other side.
+expectTypeOf<ArrayTrimStart<[1, 0, 0, 0, 0, 0], 0>>().toBe<[1, 0, 0, 0, 0, 0]>();
+expectTypeOf<ArrayTrimStart<[0, 1, 0, 0, 0, 0], 0>>().toBe<[1, 0, 0, 0, 0]>();
+expectTypeOf<ArrayTrimStart<[0, 0, 1, 0, 0, 0], 0>>().toBe<[1, 0, 0, 0]>();
+expectTypeOf<ArrayTrimStart<[0, 0, 0, 1, 0, 0], 0>>().toBe<[1, 0, 0]>();
+expectTypeOf<ArrayTrimStart<[0, 0, 0, 0, 1, 0], 0>>().toBe<[1, 0]>();
+expectTypeOf<ArrayTrimEnd<[0, 1, 0, 0, 0, 0], 0>>().toBe<[0, 1]>();
+expectTypeOf<ArrayTrimEnd<[0, 0, 1, 0, 0, 0], 0>>().toBe<[0, 0, 1]>();
+expectTypeOf<ArrayTrimEnd<[0, 0, 0, 1, 0, 0], 0>>().toBe<[0, 0, 0, 1]>();
+expectTypeOf<ArrayTrimEnd<[0, 0, 0, 0, 1, 0], 0>>().toBe<[0, 0, 0, 0, 1]>();
+expectTypeOf<ArrayTrimEnd<[0, 0, 0, 0, 0, 1], 0>>().toBe<[0, 0, 0, 0, 0, 1]>();
+
+// Each element must match independently, even when their combined union equals the item.
+expectTypeOf<ArrayTrimStart<[1, 2, 1, 2, 1, 'keep'], 1 | 2>>().toBe<[1, 2, 1, 2, 1, 'keep']>();
+expectTypeOf<ArrayTrimEnd<['keep', 1, 2, 1, 2, 1], 1 | 2>>().toBe<['keep', 1, 2, 1, 2, 1]>();
+expectTypeOf<ArrayTrim<readonly [1, 2, 1, 2, 1, 'keep', 2, 1, 2, 1, 2], 1 | 2, {condition: 'extends'}>>().toBe<readonly ['keep']>();
+
+// Required padding can lead into optional positions and rest elements without making them required.
+expectTypeOf<ArrayTrimStart<readonly [0, 0, 0, 0, 0, 'keep'?, ...string[]], 0>>().toBe<readonly ['keep'?, ...string[]]>();
+expectTypeOf<ArrayTrimEnd<readonly [...string[], 'keep', 0, 0, 0, 0, 0], 0>>().toBe<readonly [...string[], 'keep']>();
+expectTypeOf<ArrayTrimStart<[0, 0, 0, 0, 0, unknown, any, never], 0>>().toBe<[unknown, any, never]>();
+expectTypeOf<ArrayTrimEnd<[never, any, unknown, 0, 0, 0, 0, 0], 0>>().toBe<[never, any, unknown]>();
+
+function _readAfterPadding<Value>(value: ArrayTrimStart<readonly [0, 0, 0, 0, 0, {value: Value}, 0], 0>): Value {
+	return value[0].value;
+}
+
+function _readBeforePadding<Value>(value: ArrayTrimEnd<readonly [0, {value: Value}, 0, 0, 0, 0, 0], 0>): Value {
+	return value[1].value;
+}
+
+// A known mismatch stops trimming without waiting for unrelated generic elements.
+function _retainKnownStart<Value>(value: readonly ['keep', Value, Value, Value, Value]): ArrayTrimStart<typeof value, 0> {
+	return value;
+}
+
+function _retainKnownEnd<Value>(value: readonly [Value, Value, Value, Value, 'keep']): ArrayTrimEnd<typeof value, 0> {
+	return value;
+}
+
+function _retainAfterOnePadding<Value>(value: readonly ['keep', Value, Value, Value, Value]): ArrayTrimStart<readonly [0, ...typeof value], 0> {
+	return value;
+}
+
+function _retainBeforeOnePadding<Value>(value: readonly [Value, Value, Value, Value, 'keep']): ArrayTrimEnd<readonly [...typeof value, 0], 0> {
+	return value;
+}
+
+// Long optional padding can be removed from either end without making it required.
+type OptionalPadding = Partial<TupleOf<600, 0>>;
+expectTypeOf<ArrayTrimStart<OptionalPadding, 0>>().toBe<[]>();
+expectTypeOf<ArrayTrimEnd<OptionalPadding, 0>>().toBe<[]>();

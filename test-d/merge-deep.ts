@@ -1026,3 +1026,41 @@ expectTypeOf<MergeDeep<[{id: string}], [{enabled: true} | null], {recurseIntoArr
 function _readNullableGenericPayload<Value>(value: MergeDeep<{value: {id: string; payload: Value}}, {value: {enabled: true} | null}>): string | undefined {
 	return value.value?.id;
 }
+
+// Nested classes participate in merging at each level without requiring index signatures.
+declare class ConnectionDefaults {
+	host: string;
+	security: {verify: boolean};
+}
+
+declare class ConnectionOverride {
+	port: 443;
+	security: {certificate: string};
+}
+
+declare class ServiceDefaults {
+	connection: ConnectionDefaults;
+	readonly label?: string | undefined;
+}
+
+type MergedService = MergeDeep<ServiceDefaults, {connection: ConnectionOverride}>;
+expectTypeOf<MergedService>().toBe<{
+	connection: {host: string; port: 443; security: {verify: boolean; certificate: string}};
+	readonly label?: string | undefined;
+}>();
+expectTypeOf<{connection: {port: 443; security: {certificate: string}}}>().not.toBeAssignableTo<MergedService>();
+declare const mergedService: MergedService;
+// @ts-expect-error A copied owning property retains its readonly modifier.
+mergedService.label = 'updated';
+
+// Replaced arrays remain terminal, preserving their class elements and readonly access.
+expectTypeOf<MergeDeep<{connections: ConnectionDefaults[]}, {connections: readonly ConnectionOverride[]}>>()
+	.toBe<{connections: readonly ConnectionOverride[]}>();
+
+declare class GenericService<Value extends string> {
+	connection: {readonly name: Value; options: {attempts: number}};
+}
+
+function _readMergedServiceName<Value extends string>(value: MergeDeep<GenericService<Value>, {connection: {options: {enabled: true}}}>): string {
+	return value.connection.name;
+}

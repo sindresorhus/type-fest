@@ -225,3 +225,22 @@ expectTypeOf(readGenericResult<false>(false)).toBe<boolean>();
 readGenericResult<true>(false);
 // @ts-expect-error A non-matching element cannot produce true.
 readGenericResult<false>(true);
+
+// A definite mismatch decides the result even when another element is uncertain.
+expectTypeOf<AllExtend<readonly [any, 'stop'], number>>().toBe<false>();
+expectTypeOf<AllExtend<readonly [1 | 'stop', never], number>>().toBe<false>();
+expectTypeOf<AllExtend<readonly [1 | 'stop', never], number, {strictNever: false}>>().toBe<boolean>();
+
+// Structural matches need not have identical property modifiers or additional fields.
+expectTypeOf<AllExtend<readonly [{readonly id: 1}, {id: 2; extra: true}], {id: number}>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [{id: 1} | {error: Error}], {id: number}>>().toBe<boolean>();
+
+// Consumer constraints reject a partially matching element, while retaining valid literal unions.
+const numericAlternatives = numericList([1, 2 as 2 | 3]);
+expectTypeOf(numericAlternatives).toBe<readonly [1, 2 | 3]>();
+// @ts-expect-error A possible non-numeric value is insufficient for an all-numeric constraint.
+numericList([1, 2 as number | string]);
+
+function _constructKnownFailure<Value>(): AllExtend<readonly ['stop', Value], number> {
+	return false;
+}
