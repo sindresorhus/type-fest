@@ -4,15 +4,16 @@ import type {IsAnyOrNever} from './internal/type.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {StringToNumber} from './string-to-number.d.ts';
+import type {UnionMin} from './union-min.d.ts'; // For `@link`
 
 /**
 Returns the maximum number in a union of numbers.
 
-Use this to derive a maximum retry count or concurrency limit from a fixed set of supported values.
+Use this to find the largest of a fixed set of supported values, such as retry counts or concurrency limits.
 
-Supports small non-negative integer literals, plus `PositiveInfinity` and `NegativeInfinity`. Negative finite numbers and fractional numbers are not supported. Large integers or unions can exceed TypeScript’s recursion limit.
+Supports non-negative integer literals, plus `PositiveInfinity` and `NegativeInfinity`. In a union, the counter stops at the maximum, so a maximum above `998` can exceed TypeScript's recursion limit. A negative finite or fractional member is never matched by the counter, so it can exceed the recursion limit. A single known value is returned without counting, even when it is negative or fractional.
 
-Returns `number`, `any`, or `never` when given those types.
+Brands are removed from the result. Numeric enum members produce plain numeric literals; enum members with unknown values produce `number`. Returns `number`, `any`, or `never` when given those types.
 
 @example
 ```
@@ -33,8 +34,9 @@ type Unlimited = UnionMax<1 | 5 | PositiveInfinity>;
 //=> Infinity
 ```
 
-The implementation counts upward using a tuple, removing lower union members until only the maximum remains. Infinity, non-literal inputs, and a single known value are handled before counting.
+The implementation counts upward using a tuple, removing lower union members until only the maximum remains. Both infinities, non-literal inputs, and a single known value are handled before counting.
 
+@see {@link UnionMin} - For the minimum value.
 @see https://github.com/sindresorhus/type-fest/issues/676
 @category Numeric
 */
@@ -46,12 +48,11 @@ type UnionMaxImplementation<NumberUnion extends number> =
 	IsAnyOrNever<NumberUnion> extends true ? NumberUnion
 		: `${number}` extends `${NumberUnion}` ? number
 			: PositiveInfinity extends NumberUnion ? PositiveInfinity
-				: [NumberUnion] extends [NegativeInfinity] ? NegativeInfinity
-					// A single candidate is already the maximum. Read its printed value so enum members still produce plain numbers.
-					: IsUnion<NumberUnion> extends false
-						? StringToNumber<`${NumberUnion}`>
-						// Broad inputs and the winning infinity are already handled; only the losing infinity needs removal.
-						: InternalUnionMax<Exclude<NumberUnion, NegativeInfinity>>;
+				// A single candidate is already the maximum. Read its printed value so enum members still produce plain numbers.
+				: IsUnion<NumberUnion> extends false
+					? StringToNumber<`${NumberUnion}`>
+					// Broad inputs and the winning infinity are already handled; only the losing infinity needs removal.
+					: InternalUnionMax<Exclude<NumberUnion, NegativeInfinity>>;
 
 /**
 The actual implementation of `UnionMax`. Stop when only the current value remains, and remove a matched member while advancing so each value needs at most one recursion step. The same termination check returns zero for an empty internal union.

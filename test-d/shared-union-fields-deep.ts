@@ -307,3 +307,26 @@ function _readGenericRecursionData<Recurse extends boolean>(value: SharedUnionFi
 expectTypeOf<SharedUnionFieldsDeep<GenericRecursionInput, {recurseIntoArrays: true}>>().toBe<Array<{data: {}}>>();
 expectTypeOf<SharedUnionFieldsDeep<GenericRecursionInput, {recurseIntoArrays: false}>>().toBe<GenericRecursionInput>();
 expectTypeOf<SharedUnionFieldsDeep<GenericRecursionInput, {recurseIntoArrays: true}>>().not.toBeAssignableTo<GenericRecursionInput>();
+
+// The public UnionMin integration selects the shortest fixed length across all alternatives.
+type DifferentTupleLengths = [string, number, boolean] | [number] | [boolean, Date];
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<DifferentTupleLengths>>().toBe<[string | number | boolean]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string, number] | readonly [] | readonly [boolean]>>().toBe<readonly []>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[string, number?] | [boolean, Date, symbol]>>().toBe<[string | boolean]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string, number?, boolean?]>>().toBe<readonly [string]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[] | [number, ...string[]]>>().toBe<[]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [] | readonly [number, ...string[]]>>().toBe<readonly []>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[string, number] | [boolean, ...Date[]]>>().toBe<[string | boolean, number | Date]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string] | readonly [boolean, ...Date[]]>>().toBe<readonly [string | boolean]>();
+
+// Length selection is independent at each nested tuple and preserves leaf types.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[[string, number], boolean] | [[Date], number, symbol]>>().toBe<[[string | Date], boolean | number]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[any, unknown, never, string] | [number, string, never]>>().toBe<[any, unknown, never]>();
+type ShortestObjectTuple = [{shared: string; left: true}] | [{shared: number; right: true}, Date];
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<ShortestObjectTuple>>().toBe<[{shared: string | number}]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<{readonly rows?: ShortestObjectTuple}>>().toBe<{readonly rows?: [{shared: string | number}]}>();
+expectTypeOf<SharedUnionFieldsDeep<DifferentTupleLengths>>().toBe<DifferentTupleLengths>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<DifferentTupleLengths>>().not.toBeAssignableTo<[]>();
+expectTypeOf<[string, number]>().not.toBeAssignableTo<SharedUnionFieldsDeepRecurseIntoArrays<DifferentTupleLengths>>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string?, number?] | readonly [boolean, Date]>>().toBe<readonly []>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[string, ...number[]] | [boolean]>>().toBe<[string | boolean]>();
