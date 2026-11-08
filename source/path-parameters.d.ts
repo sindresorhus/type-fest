@@ -1,8 +1,9 @@
+import type {WhitespaceCharacter} from './whitespace-character.d.ts';
 import type {Alphanumeric, LowercaseLetter, UppercaseLetter} from './characters.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Simplify} from './simplify.d.ts';
-import type {AsciiPunctuation, UnwrapPathBrand, Whitespace} from './internal/index.d.ts';
+import type {AsciiPunctuation, UnwrapPathBrand} from './internal/index.d.ts';
 
 /**
 Consume ASCII identifier characters. Other ASCII punctuation or whitespace ends the name, while unsupported name characters make the entire pattern fall back.
@@ -11,7 +12,7 @@ type ScanParameterName<Segment extends string, Name extends string> =
 	Segment extends `${infer Character}${infer Rest}`
 		? Character extends Alphanumeric | '$' | '_'
 			? ScanParameterName<Rest, `${Name}${Character}`>
-			: Character extends AsciiPunctuation | Whitespace
+			: Character extends AsciiPunctuation | WhitespaceCharacter
 				? FinishParameter<Segment, Name>
 				: never
 		: {[Key in Name]: string};

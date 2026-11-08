@@ -311,6 +311,7 @@ Click the type names for complete docs.
 
 ### String
 
+- [`WhitespaceCharacter`](source/whitespace-character.d.ts) - Matches a single whitespace character.
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Words`](source/words.d.ts) - Split a string similar to Lodash's `_.words()` function.

@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual} from '../../index.d.ts';
-import type {AsciiPunctuation, IsWhitespace, Whitespace, WordSeparators} from '../../source/internal/index.d.ts';
+import type {IsEqual, WhitespaceCharacter} from '../../index.d.ts';
+import type {AsciiPunctuation, IsWhitespace, WordSeparators} from '../../source/internal/index.d.ts';
 
 // The exact set of code points `String.prototype.trim()` removes, checked against the runtime.
 type TrimsByJs =
@@ -37,9 +37,9 @@ type KeptByJs =
 	| '\u{200B}'
 	| '\u{2060}';
 
-expectTypeOf<IsEqual<TrimsByJs, Whitespace>>().toBe<true>();
+expectTypeOf<IsEqual<TrimsByJs, WhitespaceCharacter>>().toBe<true>();
 // Nothing JavaScript keeps may appear in the union.
-expectTypeOf<IsEqual<KeptByJs & Whitespace, never>>().toBe<true>();
+expectTypeOf<IsEqual<KeptByJs & WhitespaceCharacter, never>>().toBe<true>();
 
 expectTypeOf<IsWhitespace<'\u{20}\u{9}\u{A}'>>().toBe<true>();
 expectTypeOf<IsWhitespace<'\u{3000}\u{FEFF}'>>().toBe<true>();
@@ -56,6 +56,6 @@ expectTypeOf<IsWhitespace<'\u{180E}'>>().toBe<false>();
 expectTypeOf<IsWhitespace<'\u{200B}'>>().toBe<false>();
 expectTypeOf<IsWhitespace<'\u{2060}'>>().toBe<false>();
 
-expectTypeOf<IsEqual<WordSeparators, '-' | '_' | '\u{85}' | Whitespace>>().toBe<true>();
+expectTypeOf<IsEqual<WordSeparators, '-' | '_' | '\u{85}' | WhitespaceCharacter>>().toBe<true>();
 
 expectTypeOf<IsEqual<AsciiPunctuation, '!' | '"' | '#' | '$' | '%' | '&' | '\'' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' | '[' | '\\' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'>>().toBe<true>();

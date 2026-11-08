@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Replace, StringRepeat, Tagged} from '../index.d.ts';
+import type {Opaque, Replace, StringRepeat, Tagged, WhitespaceCharacter} from '../index.d.ts';
 
 declare function replace<
 	Input extends string,
@@ -267,3 +267,35 @@ expectTypeOf<Replace<Tagged<`id:${number}-old`, 'Text'>, Tagged<`${number}`, 'Se
 function _readReplacedNumericTemplate<Value extends number>(value: Replace<`${Value}`, '0', 'x'>): string {
 	return value;
 }
+
+// Numeric placeholder matching preserves every whitespace character, including at the start and end.
+expectTypeOf<{[Character in WhitespaceCharacter]: Replace<`${Character}${number}${Character}`, `${number}`, 'N'>}>().toBe<{[Character in WhitespaceCharacter]: `${Character}N${Character}`}>();
+expectTypeOf<{[Character in WhitespaceCharacter]: Replace<`${Character}${number}${Character}${number}`, `${number}`, 'N', {all: true}>}>()
+	.toBe<{[Character in WhitespaceCharacter]: `${Character}N${Character}N`}>();
+expectTypeOf<Replace<'\t\n\v\f\r \u{A0}\u{1680}\u{2000}\u{2028}\u{2029}\u{202F}\u{205F}\u{3000}\u{FEFF}', `${number}`, 'N', {all: true}>>()
+	.toBe<'\t\n\v\f\r \u{A0}\u{1680}\u{2000}\u{2028}\u{2029}\u{202F}\u{205F}\u{3000}\u{FEFF}'>();
+expectTypeOf<Replace<`\r\n${number}\t${number}\u{FEFF}`, `${number}`, ''>>().toBe<`\r\n\t${number}\u{FEFF}`>();
+expectTypeOf<Replace<`\u{A0}${number}\u{3000}${number}\n`, `${number}`, '', {all: true}>>().toBe<'\u{A0}\u{3000}\n'>();
+expectTypeOf<Replace<`\t${bigint}\r\n${bigint}`, `${bigint}`, 'N', {all: true}>>().toBe<'\tN\r\nN'>();
+
+// Whitespace inside the search is part of the match rather than skipped independently.
+expectTypeOf<{[Character in WhitespaceCharacter]: Replace<`id${Character}${number}`, `${Character}${number}`, 'N'>}>().toBe<{[Character in WhitespaceCharacter]: 'idN'}>();
+expectTypeOf<Replace<`a\t${number}b\t${number}`, `\t${number}`, 'N'>>().toBe<`aNb\t${number}`>();
+expectTypeOf<Replace<`a\t${number}b\t${number}`, `\t${number}`, 'N', {all: true}>>().toBe<'aNbN'>();
+expectTypeOf<Replace<`id ${number}\n`, `${number}\n`, 'N'>>().toBe<'id N'>();
+expectTypeOf<Replace<`a\n${number}\nb`, `\n${number}\n`, 'N'>>().toBe<'aNb'>();
+
+// The numeric guard does not consume a whitespace character during literal replacement.
+expectTypeOf<Replace<'first\u{FEFF}second\u{FEFF}third', '\u{FEFF}', ' '>>().toBe<'first second\u{FEFF}third'>();
+expectTypeOf<Replace<'first\u{FEFF}second\u{FEFF}third', '\u{FEFF}', ' ', {all: true}>>().toBe<'first second third'>();
+expectTypeOf<Replace<'first\u{85}second\u{200B}third', '\u{85}', ' '>>().toBe<'first second\u{200B}third'>();
+expectTypeOf<Replace<'first\u{200B}second', '\u{200B}', ' '>>().toBe<'first second'>();
+expectTypeOf<Replace<'a b\tc', ' ' | '\t', '_', {all: true}>>().toBe<'a_b\tc' | 'a b_c'>();
+expectTypeOf<Replace<'a b\tc', WhitespaceCharacter, '_', {all: true}>>().toBe<'a_b\tc' | 'a b_c' | 'a b\tc'>();
+
+// Characters JavaScript does not trim remain unchanged around numeric placeholders.
+expectTypeOf<Replace<`\u{85}${number}\u{85}`, `${number}`, 'N'>>().toBe<'\u{85}N\u{85}'>();
+expectTypeOf<Replace<`\u{180E}${number}\u{200B}`, `${number}`, 'N'>>().toBe<'\u{180E}N\u{200B}'>();
+expectTypeOf<Replace<`\u{2060}${number}\0`, `${number}`, 'N'>>().toBe<'\u{2060}N\0'>();
+expectTypeOf<Replace<`id\t${number}` | `name\u{A0}${number}`, `${number}`, 'N'>>().toBe<'id\tN' | 'name\u{A0}N'>();
+expectTypeOf<Replace<Tagged<`\u{FEFF}${number}\u{3000}`, 'Text'>, Tagged<`${number}`, 'Search'>, 'N'>>().toBe<'\u{FEFF}N\u{3000}'>();

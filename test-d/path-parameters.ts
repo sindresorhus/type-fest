@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {LiteralUnion, Opaque, PathParameters, Tagged} from '../index.d.ts';
+import type {LiteralUnion, Opaque, PathParameters, Tagged, WhitespaceCharacter} from '../index.d.ts';
 
 // Named parameters can occupy whole path segments or appear alongside literal text.
 expectTypeOf<PathParameters<'/users/:id'>>().toBe<{id: string}>();
@@ -162,3 +162,36 @@ declare const pattern: '/users/:userId/posts/:postId';
 expectTypeOf(getPost({userId: '1', postId: '2'})).toBe<Promise<Response>>();
 expectTypeOf(listFiles({folderId: 'a', path: 'b/c'})).toBe<Promise<Response>>();
 expectTypeOf<PathParameters<typeof pattern>>().toBe<{userId: string; postId: string}>();
+
+// Every ECMAScript whitespace character terminates a parameter name without becoming part of its key.
+expectTypeOf<{[Character in WhitespaceCharacter]: PathParameters<`/:id${Character}suffix`>}>().toBe<{[Character in WhitespaceCharacter]: {id: string}}>();
+expectTypeOf<{[Character in WhitespaceCharacter]: PathParameters<`/:first${Character}:second`>}>().toBe<{[Character in WhitespaceCharacter]: {first: string; second: string}}>();
+expectTypeOf<PathParameters<'/:id\r\ntext/:file?'>>().toBe<{id: string; file?: string | undefined}>();
+expectTypeOf<PathParameters<'/:id\u{A0}label'>>().toBe<{id: string}>();
+expectTypeOf<PathParameters<'/:id\u{FEFF}'>>().toBe<{id: string}>();
+expectTypeOf<PathParameters<'/:id\u{2028}:part\u{2029}:last'>>().toBe<{id: string; part: string; last: string}>();
+expectTypeOf<PathParameters<'/:id\t\u{3000}:name?'>>().toBe<{id: string; name?: string | undefined}>();
+expectTypeOf<PathParameters<'/:id\u{205F}text/:path*'>>().toBe<{id: string; path?: string | undefined}>();
+expectTypeOf<PathParameters<Tagged<'/:id\u{3000}:name', 'Route'>>>().toBe<{id: string; name: string}>();
+
+// A whitespace boundary still permits later literal Unicode text and parameter captures.
+expectTypeOf<PathParameters<'/:id\u{A0}café/:file'>>().toBe<{id: string; file: string}>();
+expectTypeOf<PathParameters<'/\u{200B}/:id'>>().toBe<{id: string}>();
+expectTypeOf<PathParameters<'/:id \u{200B}/:file'>>().toBe<{id: string; file: string}>();
+
+// Excluded format and control characters immediately after a name trigger the documented fallback.
+expectTypeOf<PathParameters<'/:id\u{85}suffix'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:id\u{180E}suffix'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:id\u{200B}suffix'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:id\u{2060}suffix/:known'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:known/:id\u{200C}suffix'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:id\u{200D}suffix'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:id\0suffix'>>().toBe<Record<string, string | undefined>>();
+
+// Whitespace cannot supply a missing name or turn a nonterminal modifier into a terminal one.
+expectTypeOf<PathParameters<'/:\tname'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:id?\t'>>().toBe<Record<string, string | undefined>>();
+expectTypeOf<PathParameters<'/:id\t?'>>().toBe<Record<string, string | undefined>>();
+
+// A fallback in one union member does not erase the extraction from another member.
+expectTypeOf<PathParameters<'/:id\u{A0}suffix' | '/:name\u{85}suffix'>>().toBe<Record<string, string | undefined> | {id: string}>();

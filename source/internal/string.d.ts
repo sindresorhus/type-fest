@@ -1,9 +1,10 @@
+import type {WhitespaceCharacter} from '../whitespace-character.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsStringLiteral} from '../is-string-literal.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {_SplitOnDelimiter} from '../split.d.ts';
 import type {CollapseLiterals} from '../collapse-literals.d.ts';
-import type {AsciiPunctuation, Whitespace} from './characters.d.ts';
+import type {AsciiPunctuation} from './characters.d.ts';
 import type {UnwrapBrand} from './object.d.ts';
 
 /**
@@ -23,11 +24,11 @@ export type JoinableItem = string | number | bigint | boolean | undefined | null
 /**
 Returns a boolean for whether a string is whitespace.
 */
-export type IsWhitespace<T extends string> = T extends Whitespace
+export type IsWhitespace<T extends string> = T extends WhitespaceCharacter
 	? true
 	// Infer one character instead of matching every whitespace alternative against the entire remainder.
 	: T extends `${infer First}${infer Rest}`
-		? First extends Whitespace ? IsWhitespace<Rest> : false
+		? First extends WhitespaceCharacter ? IsWhitespace<Rest> : false
 		: false;
 
 /**

@@ -3,6 +3,7 @@ import type {Words} from '../source/words.d.ts';
 import type {Tagged} from '../source/tagged.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
+import type {WhitespaceCharacter} from '../index.d.ts';
 
 expectTypeOf<Words<''>>().toBe<[]>();
 expectTypeOf<Words<'a'>>().toBe<['a']>();
@@ -229,3 +230,35 @@ enum FieldName {
 
 expectTypeOf<Words<FieldName>>().toBe<['display', 'name'] | ['api', 'Key']>();
 expectTypeOf<Words<Tagged<FieldName.ApiKey, 'Field'>>>().toBe<['api', 'Key']>();
+
+// All whitespace members are separators, including when they are the entire input or either boundary.
+expectTypeOf<{[Character in WhitespaceCharacter]: Words<Character>}>().toBe<{[Character in WhitespaceCharacter]: []}>();
+expectTypeOf<{[Character in WhitespaceCharacter]: Words<`first${Character}second`>}>().toBe<{[Character in WhitespaceCharacter]: ['first', 'second']}>();
+expectTypeOf<{[Character in WhitespaceCharacter]: Words<`${Character}value${Character}`>}>().toBe<{[Character in WhitespaceCharacter]: ['value']}>();
+expectTypeOf<Words<'\u{FEFF}first\u{A0}\u{3000}second\r\nthird\u{2028}fourth\u{2029}'>>().toBe<['first', 'second', 'third', 'fourth']>();
+expectTypeOf<Words<'\r\n\t\u{FEFF}'>>().toBe<[]>();
+expectTypeOf<Words<'HTTP\u{A0}Server'>>().toBe<['HTTP', 'Server']>();
+expectTypeOf<Words<'foo\u{3000}XMLHttp'>>().toBe<['foo', 'XML', 'Http']>();
+expectTypeOf<Words<'api2\u{2028}version3'>>().toBe<['api', '2', 'version', '3']>();
+expectTypeOf<Words<'api2\u{2028}version3', {splitOnNumbers: false}>>().toBe<['api2', 'version3']>();
+expectTypeOf<Words<'a:\u{A0}b', {splitOnPunctuation: true}>>().toBe<['a', 'b']>();
+expectTypeOf<Words<'a:\u{A0}b', {splitOnPunctuation: false}>>().toBe<['a:', 'b']>();
+expectTypeOf<Words<'a\u{3000}b', {splitOnPunctuation: false; splitOnNumbers: false}>>().toBe<['a', 'b']>();
+
+// NEL is deliberately an additional word separator, including beside the public whitespace members.
+expectTypeOf<Words<'\u{85}'>>().toBe<[]>();
+expectTypeOf<Words<'\u{85}first\u{85}\tsecond\u{85}'>>().toBe<['first', 'second']>();
+expectTypeOf<Words<'item2\u{85}item3', {splitOnNumbers: false}>>().toBe<['item2', 'item3']>();
+
+// Other visually blank characters remain part of a word rather than acting as separators.
+expectTypeOf<Words<'a\u{180E}b'>>().toBe<['a\u{180E}b']>();
+expectTypeOf<Words<'a\u{200B}b'>>().toBe<['a\u{200B}b']>();
+expectTypeOf<Words<'a\u{200C}b'>>().toBe<['a\u{200C}b']>();
+expectTypeOf<Words<'a\u{200D}b'>>().toBe<['a\u{200D}b']>();
+expectTypeOf<Words<'a\u{2060}b'>>().toBe<['a\u{2060}b']>();
+expectTypeOf<Words<'a\u{2800}b', {splitOnPunctuation: true}>>().toBe<['a\u{2800}b']>();
+expectTypeOf<Words<'a\u{3164}b'>>().toBe<['a\u{3164}b']>();
+expectTypeOf<Words<'a\0b'>>().toBe<['a\0b']>();
+expectTypeOf<Words<'first\u{200B}part\u{A0}second'>>().toBe<['first\u{200B}part', 'second']>();
+expectTypeOf<Words<Tagged<'first\u{FEFF}second', 'Text'>>>().toBe<['first', 'second']>();
+expectTypeOf<Words<'first\u{A0}second' | 'third\u{3000}fourth'>>().toBe<['first', 'second'] | ['third', 'fourth']>();

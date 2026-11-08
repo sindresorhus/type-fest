@@ -1,11 +1,12 @@
-import type {UnwrapBrand, Whitespace} from './internal/index.d.ts';
+import type {WhitespaceCharacter} from './whitespace-character.d.ts';
+import type {UnwrapBrand} from './internal/index.d.ts';
 
 /**
 Remove spaces from the left side.
 */
 // Inspect one character instead of matching every whitespace alternative at each step.
 type TrimLeft<Value extends string> = Value extends `${infer First}${infer Rest}`
-	? First extends Whitespace
+	? First extends WhitespaceCharacter
 		? TrimLeft<Rest>
 		: Value
 	: Value;
@@ -13,7 +14,7 @@ type TrimLeft<Value extends string> = Value extends `${infer First}${infer Rest}
 /**
 Remove spaces from the right side.
 */
-type TrimRight<V extends string> = V extends `${infer R}${Whitespace}` ? TrimRight<R> : V;
+type TrimRight<V extends string> = V extends `${infer R}${WhitespaceCharacter}` ? TrimRight<R> : V;
 
 /**
 Remove leading and trailing spaces from a string.

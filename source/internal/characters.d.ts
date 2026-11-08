@@ -1,35 +1,7 @@
-/**
-The characters `String.prototype.trim()` removes, which is the ECMAScript `WhiteSpace` production plus the byte order mark. It is deliberately not the Unicode `White_Space` property: `U+0085` (NEL) is a control character there, and JavaScript keeps it.
-*/
-export type Whitespace =
-	| '\u{9}' // '\t'
-	| '\u{A}' // '\n'
-	| '\u{B}' // '\v'
-	| '\u{C}' // '\f'
-	| '\u{D}' // '\r'
-	| '\u{20}' // ' '
-	| '\u{A0}'
-	| '\u{1680}'
-	| '\u{2000}'
-	| '\u{2001}'
-	| '\u{2002}'
-	| '\u{2003}'
-	| '\u{2004}'
-	| '\u{2005}'
-	| '\u{2006}'
-	| '\u{2007}'
-	| '\u{2008}'
-	| '\u{2009}'
-	| '\u{200A}'
-	| '\u{2028}'
-	| '\u{2029}'
-	| '\u{202F}'
-	| '\u{205F}'
-	| '\u{3000}'
-	| '\u{FEFF}';
+import type {WhitespaceCharacter} from '../whitespace-character.d.ts';
 
 // `U+0085` (next line) is not whitespace to `String.prototype.trim()`, but it still separates words.
-export type WordSeparators = '-' | '_' | '\u{85}' | Whitespace;
+export type WordSeparators = '-' | '_' | '\u{85}' | WhitespaceCharacter;
 
 export type AsciiPunctuation =
 	| '!'

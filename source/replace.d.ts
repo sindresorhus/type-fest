@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions, UnwrapBrand, Whitespace} from './internal/index.d.ts';
+import type {WhitespaceCharacter} from './whitespace-character.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 export type ReplaceOptions = {
@@ -140,8 +141,8 @@ type _ReplaceNonLiteralSearch<
 	Accumulator extends string,
 > =
 	// TypeScript accepts whitespace as a number, because `+' '` is `0`, so a lone whitespace character would match `${number}` and replace the space in `Page ${number}`. Such a character is kept instead. A search that starts with whitespace, like ` ${number}`, does not match a lone whitespace character, so it is unaffected.
-	Input extends `${infer WhitespaceCharacter extends Whitespace & Search}${infer Rest}`
-		? _ReplaceNonLiteralSearch<Rest, Search, Replacement, All, `${Accumulator}${WhitespaceCharacter}`>
+	Input extends `${infer Character extends WhitespaceCharacter & Search}${infer Rest}`
+		? _ReplaceNonLiteralSearch<Rest, Search, Replacement, All, `${Accumulator}${Character}`>
 		: Input extends `${Search}${infer Rest}`
 			? All extends true
 				? _ReplaceNonLiteralSearch<Rest, Search, Replacement, All, `${Accumulator}${Replacement}`>

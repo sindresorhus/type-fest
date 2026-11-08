@@ -265,6 +265,7 @@ export type {JoinUnion} from './source/join-union.d.ts';
 export type {Split, SplitOptions} from './source/split.d.ts';
 export type {Words, WordsOptions} from './source/words.d.ts';
 export type {Trim} from './source/trim.d.ts';
+export type {WhitespaceCharacter} from './source/whitespace-character.d.ts';
 export type {Replace, ReplaceOptions} from './source/replace.d.ts';
 export type {StringRepeat} from './source/string-repeat.d.ts';
 export type {Includes, IncludesOptions} from './source/includes.d.ts';
