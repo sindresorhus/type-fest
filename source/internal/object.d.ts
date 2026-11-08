@@ -10,7 +10,7 @@ import type {Primitive} from '../primitive.d.ts';
 import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
 import type {OmitIndexSignature} from '../omit-index-signature.d.ts';
 import type {PickIndexSignature} from '../pick-index-signature.d.ts';
-import type {LiteralUnion} from '../literal-union.d.ts'; // For `@link`
+import type {CollapseLiterals} from '../collapse-literals.d.ts';
 import type {DefinedKeyFilter, ExactKey, OptionalKeyFilter} from './keys.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
@@ -227,39 +227,6 @@ type _ApplyDefaultOptions<
 				as undefined extends Required<Options>[Key & keyof Options] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
 				]-?: SpecifiedOptions[Key]
 			}>>>;
-
-/**
-Collapses literal types in a union into their corresponding primitive types, when possible. For example, `CollapseLiterals<'foo' | 'bar' | (string & {})>` returns `string`.
-
-Note: This doesn't collapse literals within tagged types. For example, `CollapseLiterals<Tagged<'foo' | (string & {}), 'Tag'>>` returns `("foo" & Tag<"Tag", never>) | (string & Tag<"Tag", never>)` and not `string & Tag<"Tag", never>`.
-
-Use-case: For collapsing unions created using {@link LiteralUnion}.
-
-@example
-```
-import type {LiteralUnion} from 'type-fest';
-
-type A = CollapseLiterals<'foo' | 'bar' | (string & {})>;
-//=> string
-
-type B = CollapseLiterals<LiteralUnion<1 | 2 | 3, number>>;
-//=> number
-
-type C = CollapseLiterals<LiteralUnion<'onClick' | 'onChange', `on${string}`>>;
-//=> `on${string}`
-
-type D = CollapseLiterals<'click' | 'change' | (`on${string}` & {})>;
-//=> 'click' | 'change' | `on${string}`
-
-type E = CollapseLiterals<LiteralUnion<'foo' | 'bar', string> | null | undefined>;
-//=> string | null | undefined
-```
-*/
-export type CollapseLiterals<T> = {} extends T
-	? T
-	: T extends infer U & {}
-		? U
-		: T;
 
 /**
 Returns the base type of a branded type.

@@ -157,3 +157,15 @@ function _readStringLiteralFlag<Value>(flag: IsStringLiteral<Value>): boolean {
 expectTypeOf<IsStringLiteral<'ready' | Tagged<string, 'Text'>>>().toBe<false>();
 expectTypeOf<IsStringLiteral<'' | Tagged<string & {}, 'Text'>>>().toBe<false>();
 expectTypeOf<IsStringLiteral<'ready' | Tagged<'set', 'Text'>>>().toBe<true>();
+
+// Normalize open string members before classifying unions that also contain objects.
+expectTypeOf<IsStringLiteral<LiteralUnion<'auto', string> | object>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'auto', string> | {}>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'auto', string> | {theme?: string}>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'auto', string> | Record<string, unknown>>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'auto', string> | null | undefined>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'onClick', `on${string}`> | {handler?: () => void}>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'click' | 'onClick', `on${string}`> | {handler?: () => void}>>().toBe<boolean>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'auto', number> | Record<string, unknown>>>().toBe<boolean>();
+expectTypeOf<IsStringLiteral<Tagged<LiteralUnion<'auto', string>, 'Theme'> | {theme?: string}>>().toBe<false>();
+expectTypeOf<IsStringLiteral<LiteralUnion<'DARK', Uppercase<string>> | {theme?: string}>>().toBe<false>();

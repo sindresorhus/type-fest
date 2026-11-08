@@ -192,3 +192,15 @@ function _readLiteralResult<Value>(value: IsLiteral<Value>): boolean {
 expectTypeOf<IsLiteral<true | Tagged<false, 'Flag'>>>().toBe<false>();
 expectTypeOf<IsLiteral<1 | Tagged<number, 'Count'>>>().toBe<false>();
 expectTypeOf<IsLiteral<'ready' | Tagged<boolean, 'Flag'>>>().toBe<boolean>();
+
+// Object members must not prevent normalization of unrelated primitive unions.
+expectTypeOf<IsLiteral<LiteralUnion<'auto', string> | object>>().toBe<false>();
+expectTypeOf<IsLiteral<LiteralUnion<1, number> | {}>>().toBe<false>();
+expectTypeOf<IsLiteral<LiteralUnion<1n, bigint> | {enabled?: boolean}>>().toBe<false>();
+expectTypeOf<IsLiteral<LiteralUnion<typeof symbolLiteral, symbol> | Record<string, unknown>>>().toBe<false>();
+expectTypeOf<IsLiteral<LiteralUnion<true, boolean> | (() => void)>>().toBe<false>();
+expectTypeOf<IsLiteral<LiteralUnion<'onClick', `on${string}`> | {handler?: () => void}>>().toBe<false>();
+expectTypeOf<IsLiteral<LiteralUnion<'click' | 'onClick', `on${string}`> | {handler?: () => void}>>().toBe<boolean>();
+expectTypeOf<IsLiteral<LiteralUnion<'auto', string> | LiteralUnion<1, number> | {value?: unknown}>>().toBe<false>();
+expectTypeOf<IsLiteral<LiteralUnion<'auto', string> | true | {value?: unknown}>>().toBe<boolean>();
+expectTypeOf<IsLiteral<Tagged<LiteralUnion<'auto', string>, 'Theme'> | {value?: unknown}>>().toBe<false>();

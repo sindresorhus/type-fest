@@ -114,3 +114,15 @@ function _readSymbolLiteralFlag<Value>(flag: IsSymbolLiteral<Value>): boolean {
 
 expectTypeOf<IsSymbolLiteral<typeof symbol1 | Tagged<symbol, 'Value'>>>().toBe<false>();
 expectTypeOf<IsSymbolLiteral<typeof symbol1 | Tagged<typeof symbol2, 'Value'>>>().toBe<true>();
+
+// An unrelated object member must not keep unique symbols from merging into `symbol`.
+expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1, symbol> | object>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1, symbol> | {}>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1, symbol> | {token?: symbol}>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1, symbol> | Record<string, unknown>>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1, symbol> | null | undefined>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1 | typeof symbol2, symbol> | readonly symbol[]>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<typeof symbol1, string> | {token?: symbol}>>().toBe<boolean>();
+expectTypeOf<IsSymbolLiteral<Tagged<LiteralUnion<typeof symbol1, symbol>, 'Token'> | {token?: symbol}>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<Tagged<typeof symbol1, 'Token'>, symbol> | {token?: symbol}>>().toBe<false>();
+expectTypeOf<IsSymbolLiteral<LiteralUnion<'auto', string> | Record<string, typeof symbol1>>>().toBe<false>();

@@ -1,4 +1,5 @@
-import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
+import type {CollapseLiterals} from './collapse-literals.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**

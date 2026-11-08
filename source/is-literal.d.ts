@@ -3,7 +3,8 @@ import type {_IsNumericLiteral} from './is-numeric-literal.d.ts';
 import type {_IsBooleanLiteral} from './is-boolean-literal.d.ts';
 import type {_IsSymbolLiteral} from './is-symbol-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {CollapseLiterals, UnwrapBrand} from './internal/object.d.ts';
+import type {CollapseLiterals} from './collapse-literals.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
 
 /**
 Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).

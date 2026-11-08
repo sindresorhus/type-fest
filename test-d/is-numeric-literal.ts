@@ -185,3 +185,15 @@ function _readNumericLiteralFlag<Value>(flag: IsNumericLiteral<Value>): boolean 
 expectTypeOf<IsNumericLiteral<1 | Tagged<number, 'Value'>>>().toBe<false>();
 expectTypeOf<IsNumericLiteral<1n | Tagged<bigint, 'Value'>>>().toBe<false>();
 expectTypeOf<IsNumericLiteral<1 | Tagged<2n, 'Value'>>>().toBe<true>();
+
+// Widened number and bigint members collapse independently in mixed object unions.
+expectTypeOf<IsNumericLiteral<LiteralUnion<1, number> | object>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<1, number> | {}>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<1n, bigint> | {count?: bigint}>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<1, number> | Record<string, unknown>>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<1, number> | LiteralUnion<1n, bigint> | {count?: unknown}>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<1n, number> | {count?: unknown}>>().toBe<boolean>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<1, bigint> | Record<string, unknown>>>().toBe<boolean>();
+expectTypeOf<IsNumericLiteral<Tagged<LiteralUnion<1, number>, 'Count'> | {count?: number}>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<NumericEnum, number> | {count?: number}>>().toBe<false>();
+expectTypeOf<IsNumericLiteral<LiteralUnion<ExternalCode, number> | null | undefined>>().toBe<false>();

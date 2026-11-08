@@ -55,6 +55,7 @@ export type {ReadonlyDeep, ReadonlyDeepOptions} from './source/readonly-deep.d.t
 export type {ReadonlyDate} from './source/readonly-date.d.ts';
 export type {LiteralUnion} from './source/literal-union.d.ts';
 export type {ExtractLiterals} from './source/extract-literals.d.ts';
+export type {CollapseLiterals} from './source/collapse-literals.d.ts';
 export type {LiteralList} from './source/literal-list.d.ts';
 export type {Promisable} from './source/promisable.d.ts';
 export type {Arrayable} from './source/arrayable.d.ts';

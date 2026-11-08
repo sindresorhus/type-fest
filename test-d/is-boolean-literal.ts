@@ -110,3 +110,15 @@ function _readBooleanLiteralFlag<Value>(flag: IsBooleanLiteral<Value>): boolean 
 expectTypeOf<IsBooleanLiteral<true | Tagged<false, 'Flag'>>>().toBe<false>();
 expectTypeOf<IsBooleanLiteral<false | Tagged<true, 'Flag'>>>().toBe<false>();
 expectTypeOf<IsBooleanLiteral<true | Tagged<true, 'Flag'>>>().toBe<true>();
+
+// Boolean normalization must consider the complete boolean part of an open union.
+expectTypeOf<IsBooleanLiteral<LiteralUnion<true, boolean> | object>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<LiteralUnion<false, true> | {enabled?: boolean}>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<LiteralUnion<true, false> | null | undefined>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<LiteralUnion<true, never>>>().toBe<true>();
+expectTypeOf<IsBooleanLiteral<LiteralUnion<true, boolean> | {}>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<LiteralUnion<true | 'auto', string> | Record<string, unknown>>>().toBe<boolean>();
+expectTypeOf<IsBooleanLiteral<LiteralUnion<'auto', string> | {enabled?: boolean}>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<Tagged<LiteralUnion<true, boolean>, 'Flag'> | {enabled?: boolean}>>().toBe<false>();
+expectTypeOf<IsBooleanLiteral<Tagged<true, 'Flag'> | LiteralUnion<'auto', string> | {enabled?: boolean}>>().toBe<boolean>();
+expectTypeOf<IsBooleanLiteral<Tagged<true, 'Flag'> | Tagged<false, 'Flag'> | {enabled?: boolean}>>().toBe<false>();

@@ -149,6 +149,7 @@ Click the type names for complete docs.
 - [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of another type.
 - [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union.
 - [`ExtractLiterals`](source/extract-literals.d.ts) - Extract the literal types from a union, removing wide types like `string` and infinite string types like `` `on${string}` ``.
+- [`CollapseLiterals`](source/collapse-literals.d.ts) - Collapse literal union members into broader types already present in the union.
 - [`Flavor`](source/flavor.d.ts) - Attach a name to a type without requiring a cast, so that differently named types cannot be mixed.
 - [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
 - [`UnwrapTagged`](source/tagged.d.ts) - Get the untagged portion of a tagged type created with `Tagged`.

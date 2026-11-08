@@ -2,8 +2,9 @@ import type {IsEqual} from '../is-equal.d.ts';
 import type {IsStringLiteral} from '../is-string-literal.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {_SplitOnDelimiter} from '../split.d.ts';
+import type {CollapseLiterals} from '../collapse-literals.d.ts';
 import type {AsciiPunctuation, Whitespace} from './characters.d.ts';
-import type {CollapseLiterals, UnwrapBrand} from './object.d.ts';
+import type {UnwrapBrand} from './object.d.ts';
 
 /**
 Return a string representation of the given string or number.
