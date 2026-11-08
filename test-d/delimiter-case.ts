@@ -1,5 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {Opaque, Tagged, WordsOptions} from '../index.d.ts';
+import type {KebabCase, Opaque, SnakeCase, Tagged, WordsOptions} from '../index.d.ts';
+import type {AsciiPunctuation} from '../source/internal/characters.d.ts';
 import type {DelimiterCase} from '../source/delimiter-case.d.ts';
 import type {DelimiterCasedProperties} from '../source/delimiter-cased-properties.d.ts';
 import type {DelimiterCasedPropertiesDeep} from '../source/delimiter-cased-properties-deep.d.ts';
@@ -272,3 +273,29 @@ enum FieldName {
 
 expectTypeOf<DelimiterCase<FieldName, '-'>>().toBe<'display-name' | 'api-key'>();
 expectTypeOf<DelimiterCase<Tagged<FieldName.DisplayName, 'Field'>, '-'>>().toBe<'display-name'>();
+
+// The public prefix predicate still suppresses delimiters on either side of every preserved punctuation character.
+type PreservedPunctuation = Exclude<AsciiPunctuation, '-' | '_'>;
+
+expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation}BarBaz`, '#'>}>()
+	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
+expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo${Punctuation} BarBaz`, '#'>}>()
+	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
+expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation} BarBaz`, '#'>}>()
+	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
+expectTypeOf<{[Punctuation in AsciiPunctuation]: DelimiterCase<`foo${Punctuation}BarBaz`, '#', {splitOnPunctuation: true}>}>()
+	.toBe<{[Punctuation in AsciiPunctuation]: 'foo#bar#baz'}>();
+
+// Prefix matching stays correct when punctuation appears at multiple word boundaries.
+expectTypeOf<DelimiterCase<'foo .Bar :Baz', '#'>>().toBe<'foo.bar:baz'>();
+expectTypeOf<DelimiterCase<'fooBar .Baz', '#'>>().toBe<'foo#bar.baz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz' | 'fooBarBaz', '#'>>().toBe<'foo.bar#baz' | 'foo#bar#baz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', 'X' | 'Y'>>().toBe<'foo.barXbaz' | 'foo.barYbaz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', ''>>().toBe<'foo.barbaz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', string>>().toBe<`foo.bar${string}baz`>();
+expectTypeOf<DelimiterCase<Tagged<'foo .BarBaz', 'Text'>, '#'>>().toBe<'foo.bar#baz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', Tagged<'#', 'Delimiter'>>>().toBe<'foo.bar#baz'>();
+expectTypeOf<KebabCase<'foo .BarBaz'>>().toBe<'foo.bar-baz'>();
+expectTypeOf<SnakeCase<'foo .BarBaz'>>().toBe<'foo.bar_baz'>();
+expectTypeOf<DelimiterCasedProperties<{readonly 'foo .BarBaz'?: number}, '#'>>().toBe<{readonly 'foo.bar#baz'?: number}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{nested: Array<{'foo .BarBaz': string}>}, '#'>>().toBe<{nested: Array<{'foo.bar#baz': string}>}>();

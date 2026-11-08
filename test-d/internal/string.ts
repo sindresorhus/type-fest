@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
-import type {CasedString, ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, StartsWith, ToPath, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
+import type {CasedString, ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, ToPath, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<1>, '1'>>().toBe<true>();
@@ -8,18 +8,6 @@ expectTypeOf<IsEqual<ToString<-1>, '-1'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<boolean>, never>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<'a' | 1>, 'a' | '1'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<never>, never>>().toBe<true>();
-
-expectTypeOf<IsEqual<StartsWith<'abcde', 'abc'>, true>>().toBe<true>();
-expectTypeOf<IsEqual<StartsWith<'abcde', 'bc'>, false>>().toBe<true>();
-expectTypeOf<IsEqual<StartsWith<'abcde', ''>, true>>().toBe<true>();
-expectTypeOf<IsEqual<StartsWith<'abcde', 'abcde'>, true>>().toBe<true>();
-expectTypeOf<IsEqual<StartsWith<'abcde', 'abcdef'>, false>>().toBe<true>();
-expectTypeOf<IsEqual<StartsWith<'', ''>, true>>().toBe<true>();
-expectTypeOf<IsEqual<StartsWith<'', 'a'>, false>>().toBe<true>();
-
-// An unknown operand cannot be decided, so no boolean is claimed.
-expectTypeOf<IsEqual<StartsWith<string, 'bc'>, never>>().toBe<true>();
-expectTypeOf<IsEqual<StartsWith<'abcde', string>, never>>().toBe<true>();
 
 // `IsNumeric` follows TypeScript's own lenient numeric-string rule, and then rejects anything that is padded with whitespace, so a bare hexadecimal form still counts.
 expectTypeOf<IsEqual<IsNumeric<'1'>, true>>().toBe<true>();

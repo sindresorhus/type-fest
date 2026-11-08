@@ -1,5 +1,6 @@
 import type {Or} from './or.d.ts';
-import type {ApplyDefaultOptions, AsciiPunctuation, StartsWith, UnwrapBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, AsciiPunctuation, UnwrapBrand} from './internal/index.d.ts';
+import type {StartsWith} from './starts-with.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Merge} from './merge.d.ts';
 import type {_DefaultWordsOptions, _Words, WordsOptions} from './words.d.ts';

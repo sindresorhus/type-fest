@@ -20,33 +20,6 @@ The builtin `join` method supports all these natively in the same way that types
 export type JoinableItem = string | number | bigint | boolean | undefined | null;
 
 /**
-Returns a boolean for whether the given string `S` starts with the given string `SearchString`.
-
-@example
-```
-type A = StartsWith<'abcde', 'abc'>;
-//=> true
-
-type B = StartsWith<'abcde', 'bc'>;
-//=> false
-
-type C = StartsWith<string, 'bc'>;
-//=> never
-
-type D = StartsWith<'abcde', string>;
-//=> never
-```
-
-@category String
-@category Template literal
-*/
-export type StartsWith<S extends string, SearchString extends string> = string extends S | SearchString
-	? never
-	: S extends `${SearchString}${infer T}`
-		? true
-		: false;
-
-/**
 Returns a boolean for whether a string is whitespace.
 */
 export type IsWhitespace<T extends string> = T extends Whitespace
