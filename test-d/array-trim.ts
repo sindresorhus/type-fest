@@ -258,3 +258,8 @@ function _retainBeforeOnePadding<Value>(value: readonly [Value, Value, Value, Va
 type OptionalPadding = Partial<TupleOf<600, 0>>;
 expectTypeOf<ArrayTrimStart<OptionalPadding, 0>>().toBe<[]>();
 expectTypeOf<ArrayTrimEnd<OptionalPadding, 0>>().toBe<[]>();
+
+// Rest trimming and optional positions preserve each union member's access.
+expectTypeOf<ArrayTrimStart<readonly [0, ...Array<0>] | [0, 1?], 0>>().toBe<readonly [] | [1?]>();
+expectTypeOf<ArrayTrimEnd<readonly [1, 0?, ...Array<0>] | [2, 0], 0>>().toBe<readonly [1] | [2]>();
+expectTypeOf<ArrayTrim<readonly [0, string[], 0] | [0, readonly string[], 0], 0>>().toBe<readonly [string[]] | [readonly string[]]>();

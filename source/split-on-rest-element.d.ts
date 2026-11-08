@@ -1,6 +1,7 @@
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
-import type {IsArrayReadonly, MaxLength} from './internal/array.d.ts';
+import type {MaxLength} from './internal/array.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {If} from './if.d.ts';
 import type {ExtractRestElement} from './extract-rest-element.d.ts'; // For `@link`
@@ -71,7 +72,7 @@ export type SplitOnRestElement<
 				ApplyDefaultOptions<SplitOnRestElementOptions, DefaultSplitOnRestElementOptions, Options>
 			>;
 		}> extends infer Result extends UnknownArray
-			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
+			? If<IsReadonlyArray<Array_>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
 

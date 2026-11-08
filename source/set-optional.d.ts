@@ -1,5 +1,6 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {CallSignatureOf, IsArrayReadonly, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {CallSignatureOf, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -50,7 +51,7 @@ type _SetOptional<BaseType, Keys> =
 				? BaseType
 				// Only index keys are handled as tuple elements. Other keys, such as an extra property of an augmented array, take the object branch.
 				: [Keys] extends [number | `${number}`]
-					? IsArrayReadonly<BaseType> extends true
+					? IsReadonlyArray<BaseType> extends true
 						? Readonly<SetArrayOptional<BaseType, Keys>>
 						: SetArrayOptional<BaseType, Keys>
 					: _SetObjectOptional<BaseType, SelectedKeys<BaseType, Keys>>

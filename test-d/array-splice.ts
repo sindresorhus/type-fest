@@ -360,3 +360,8 @@ expectTypeOf<ArraySplice<[1, 2], number, never>>().toBe<never>();
 expectTypeOf<ArraySplice<any, any, never>>().toBe<never>();
 expectTypeOf<ArraySplice<readonly [1, 2, 3, 4], 1, 0 | 2>>().toBe<readonly [1, 2, 3, 4] | readonly [1, 4]>();
 expectTypeOf<ArraySplice<readonly [1, 2, 3], -2, any>>().toBe<ReadonlyArray<1 | 2 | 3>>();
+
+// Inserted items do not decide the result's access; only the original array does.
+expectTypeOf<ArraySplice<[1, 2], 1, 0, readonly ['x']>>().toBe<[1, 'x', 2]>();
+expectTypeOf<ArraySplice<readonly [1, 2] | [3, 4], number, 0, readonly ['x']>>().toBe<ReadonlyArray<1 | 2 | 'x'> | Array<3 | 4 | 'x'>>();
+expectTypeOf<ArraySplice<readonly [] | [1, 2?], 0, 1, readonly [3]>>().toBe<readonly [3] | [3, 2?]>();

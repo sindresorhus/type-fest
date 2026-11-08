@@ -78,3 +78,23 @@ nestedTail[0] = ['changed'];
 
 // @ts-expect-error Only arrays are supported.
 type InvalidUnknownTail = ArrayTail<unknown>;
+
+// Removing different first positions keeps each union member's optionality and access.
+expectTypeOf<ArrayTail<readonly [1?] | [2, 3?]>>().toBe<readonly [] | [3?]>();
+expectTypeOf<ArrayTail<readonly [1, ...string[]] | [2, ...number[]]>>().toBe<readonly string[] | number[]>();
+expectTypeOf<ArrayTail<readonly [...string[], 1] | [2, boolean]>>().toBe<readonly [...string[], 1] | [boolean]>();
+expectTypeOf<ArrayTail<[1] | readonly [2, undefined]>>().toBe<[] | readonly [undefined]>();
+
+// Outer readonly access does not make retained objects or nested arrays readonly.
+declare const shallowReadonlyTail: ArrayTail<readonly [number, {value: string}, string[]]>;
+expectTypeOf(shallowReadonlyTail).toBe<readonly [{value: string}, string[]]>();
+shallowReadonlyTail[0].value = 'updated';
+shallowReadonlyTail[1].push('updated');
+// @ts-expect-error A readonly tail cannot replace a valid retained object.
+shallowReadonlyTail[0] = {value: 'updated'};
+
+declare const mutableTailWithReadonlyElement: ArrayTail<[number, readonly string[]]>;
+expectTypeOf(mutableTailWithReadonlyElement).toBe<[readonly string[]]>();
+mutableTailWithReadonlyElement[0] = ['replacement'];
+// @ts-expect-error A mutable outer result does not make its nested array mutable.
+mutableTailWithReadonlyElement[0][0] = 'updated';

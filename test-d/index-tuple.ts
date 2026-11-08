@@ -69,7 +69,7 @@ expectTypeOf<IndexTuple<string[] & {length: 0}>>().toBe<[]>();
 expectTypeOf<IndexTuple<string[] & {length: 1}>>().toBe<[0]>();
 expectTypeOf<IndexTuple<readonly string[] & {length: 3}>>().toBe<readonly [0, 1, 2]>();
 
-// `FixedLengthArray` is readonly and has a literal length.
+// `FixedLengthArray` has a literal length and lacks the full mutable array interface.
 expectTypeOf<IndexTuple<FixedLengthArray<string, 0>>>().toBe<readonly []>();
 expectTypeOf<IndexTuple<FixedLengthArray<string, 1>>>().toBe<readonly [0]>();
 expectTypeOf<IndexTuple<FixedLengthArray<string, 3>>>().toBe<readonly [0, 1, 2]>();
@@ -130,3 +130,15 @@ expectTypeOf<Positioned<[string, number?]>>().toBe<[[0, string], [0 | 1, number 
 
 // The pattern assumes a dense tuple, so a variable-length array pairs every key with `number`.
 expectTypeOf<Positioned<string[]>>().toBe<Array<[number, string]>>();
+
+// Optional and variable lengths retain the access of their own union member.
+expectTypeOf<IndexTuple<readonly [string?] | [number, boolean]>>().toBe<readonly [] | readonly [0] | [0, 1]>();
+expectTypeOf<IndexTuple<readonly [string, number?] | [boolean]>>().toBe<readonly [0] | readonly [0, 1] | [0]>();
+expectTypeOf<IndexTuple<readonly string[] | [number, boolean]>>().toBe<readonly number[] | [0, 1]>();
+expectTypeOf<IndexTuple<string[] | readonly [number, boolean]>>().toBe<number[] | readonly [0, 1]>();
+
+// Element-level readonly access and additional readonly properties do not freeze an array.
+expectTypeOf<IndexTuple<Array<readonly string[]>>>().toBe<number[]>();
+expectTypeOf<IndexTuple<readonly string[][]>>().toBe<readonly number[]>();
+expectTypeOf<IndexTuple<string[] & {readonly label: string}>>().toBe<number[]>();
+expectTypeOf<IndexTuple<readonly string[] & {label: string}>>().toBe<readonly number[]>();

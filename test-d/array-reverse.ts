@@ -378,3 +378,18 @@ function createReversedSuffix<Value>(value: readonly [6, 5, 4, 3, 2, 1, ...Value
 }
 
 expectTypeOf(createReversedSuffix([6, 5, 4, 3, 2, 1, 'value'])).toBe<readonly [6, 5, 4, 3, 2, 1, ...string[]]>();
+
+// Expansion of optional members restores readonly access on every possible length.
+expectTypeOf<ArrayReverse<readonly [(string | undefined)?] | [number, boolean]>>().toBe<readonly [] | readonly [string | undefined] | [boolean, number]>();
+expectTypeOf<ArrayReverse<readonly [string?, ...number[]] | [boolean]>>().toBe<readonly [] | readonly [...number[], string] | [boolean]>();
+expectTypeOf<ArrayReverse<readonly [] | [string, ...number[]]>>().toBe<readonly [] | [...number[], string]>();
+expectTypeOf<ArrayReverse<[] | readonly [...string[], number]>>().toBe<[] | readonly [number, ...string[]]>();
+
+// Reversing an outer tuple leaves nested readonly access unchanged.
+expectTypeOf<ArrayReverse<[readonly string[], {readonly id: string}]>>().toBe<[{readonly id: string}, readonly string[]]>();
+declare const shallowReadonlyReverse: ArrayReverse<readonly [string[], {id: string}]>;
+expectTypeOf(shallowReadonlyReverse).toBe<readonly [{id: string}, string[]]>();
+shallowReadonlyReverse[0].id = 'updated';
+shallowReadonlyReverse[1].push('updated');
+// @ts-expect-error A readonly reversed tuple cannot replace an outer position.
+shallowReadonlyReverse[0] = {id: 'replacement'};

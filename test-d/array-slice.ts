@@ -397,3 +397,8 @@ negativeSlice[0] = {id: 'tail'};
 declare const annotatedPrefix: ArraySlice<[string, number, boolean] & {tag: 'record'}, 0, 2>;
 expectTypeOf(readAnnotatedPrefix<string, number, boolean>(annotatedPrefix)).toBe<string | number | boolean>();
 expectTypeOf(readAnnotatedPrefixLength<string, number, boolean>(annotatedPrefix)).toBe<1 | 2>();
+
+// Each slice branch preserves the input member's readonly access.
+expectTypeOf<ArraySlice<readonly [1, 2?] | [3, 4, 5], 1, 2>>().toBe<readonly [2?] | [4]>();
+expectTypeOf<ArraySlice<readonly string[] | [1, 2], 1, 1>>().toBe<readonly [] | []>();
+expectTypeOf<ArraySlice<readonly [1, 2] | [3, 4], number>>().toBe<ReadonlyArray<1 | 2> | Array<3 | 4>>();

@@ -416,3 +416,8 @@ expectTypeOf<Merge<{value: string; keep: true}, SourceWithOptionalField>>()
 	.toBe<{readonly [key: string]: unknown; readonly value?: number | undefined; keep: true}>();
 expectTypeOf<Merge<{readonly keep?: 'kept'}, any>>().toBe<{[key: string]: any; readonly keep?: 'kept'}>();
 expectTypeOf<{keep: undefined}>().not.toBeAssignableTo<Merge<{readonly keep?: 'kept'}, any>>();
+
+// A merged tuple is readonly only when both corresponding input members are readonly.
+expectTypeOf<Merge<readonly [1, 2] | [3, 4], readonly [5]>>().toBe<readonly [5, 2] | [5, 4]>();
+expectTypeOf<Merge<readonly [1, 2], readonly [3] | [4]>>().toBe<readonly [3, 2] | [4, 2]>();
+expectTypeOf<Merge<readonly number[], readonly [string?]>>().toBe<ReadonlyArray<number | string | undefined>>();

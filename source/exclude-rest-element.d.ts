@@ -1,5 +1,5 @@
 import type {_SplitOnRestElement, SplitOnRestElement} from './split-on-rest-element.d.ts';
-import type {IsArrayReadonly} from './internal/array.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {ExtractRestElement} from './extract-rest-element.d.ts'; // For `@link`
@@ -29,7 +29,7 @@ type T4 = ExcludeRestElement<[number, string]>;
 @category Array
 */
 export type ExcludeRestElement<Array_ extends UnknownArray> = IfNotAnyOrNever<Array_, {
-	// The union is distributed, so that `readonly` is decided per member. Without it, `IsArrayReadonly` resolves to `boolean` for a mixed union and every member loses it.
+	// The union is distributed, so that `readonly` is decided per member. Without it, `IsReadonlyArray` resolves to `boolean` for a mixed union and every member loses it.
 	ifNot: Array_ extends unknown
 		// The public splitter would repeat the input guards, distribution and readonly restoration already handled here.
 		? (
@@ -39,7 +39,7 @@ export type ExcludeRestElement<Array_ extends UnknownArray> = IfNotAnyOrNever<Ar
 				: [Array_, [], []]
 		) extends infer Result
 			? Result extends readonly UnknownArray[]
-				? IsArrayReadonly<Array_> extends true
+				? IsReadonlyArray<Array_> extends true
 					? Readonly<[...Result[0], ...Result[2]]>
 					: [...Result[0], ...Result[2]]
 				: never

@@ -101,11 +101,6 @@ export type SetArrayAccess<T extends UnknownArray, IsReadonly extends boolean> =
 		: T;
 
 /**
-Returns whether the given array `T` is readonly.
-*/
-export type IsArrayReadonly<T extends UnknownArray> = IsNever<T> extends true ? false : T extends unknown[] ? false : true;
-
-/**
 The largest length the array can have, including its optional elements.
 
 `T['length']` is a union such as `1 | 2` for `[string, number?]`, which breaks index arithmetic that needs a single length.

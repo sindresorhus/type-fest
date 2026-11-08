@@ -1,4 +1,5 @@
-import type {NonRecursiveType, TupleLength, StaticPartOfArray, VariablePartOfArray, IsArrayReadonly, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {NonRecursiveType, TupleLength, StaticPartOfArray, VariablePartOfArray, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {UnionMax} from './union-max.d.ts';
 import type {UnionMin} from './union-min.d.ts';
@@ -109,7 +110,7 @@ type _SharedUnionFieldsDeep<Union, OptionsWithDefaults extends Required<SharedUn
 			? OptionsWithDefaults['recurseIntoArrays'] extends true
 				// With no fixed length or prefix, the tuple builder only appends a rest array. Build it directly so recursive elements stay lazy.
 				? [TupleLength<Union>, StaticPartOfArray<Union>['length']] extends [never, 0]
-					? If<IsArrayReadonly<Union>, ReadonlyArray<_SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>, Array<_SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>>
+					? If<IsReadonlyArray<Union>, ReadonlyArray<_SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>, Array<_SharedUnionFieldsDeep<Union[number], OptionsWithDefaults>>>
 					: SharedArrayUnionFieldsDeep<Union, OptionsWithDefaults>
 				: Union
 			: [Union] extends [object]
@@ -141,7 +142,7 @@ type SharedArrayUnionFieldsDeep<Union extends UnknownArray, Options extends Requ
 	// Restore the readonly modifier of the array.
 	SetArrayAccess<
 		InternalSharedArrayUnionFieldsDeep<Union, Options>,
-		IsArrayReadonly<Union>
+		IsReadonlyArray<Union>
 	>;
 
 /**

@@ -1,6 +1,7 @@
 import type {ArraySplice} from './array-splice.d.ts';
 import type {Except} from './except.d.ts';
-import type {ExactKey, IsArrayReadonly, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ExactKey, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -106,7 +107,7 @@ type OmitDeepWithOnePath<T, Path extends string | number> =
 	T extends NonRecursiveType
 		? T
 		// The array helper matches indexes as strings, so a number index is read as its string form.
-		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, ToString<Path>>, IsArrayReadonly<T>>
+		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, ToString<Path>>, IsReadonlyArray<T>>
 			: T extends object ? OmitDeepObjectWithOnePath<T, Path>
 				: T;
 

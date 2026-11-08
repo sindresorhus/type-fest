@@ -1,5 +1,5 @@
 import type {If} from './if.d.ts';
-import type {IsArrayReadonly} from './internal/array.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -39,7 +39,7 @@ export type ArrayExclude<TArray extends UnknownArray, TExclude> = IfNotAnyOrNeve
 			// No tuple traversal is needed when every possible element is excluded.
 			[Exclude<TArray[number], TExclude>] extends [never] ? [] : _ArrayExclude<TArray, TExclude>
 		) extends infer Result extends UnknownArray
-			? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
+			? If<IsReadonlyArray<TArray>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
 }>;

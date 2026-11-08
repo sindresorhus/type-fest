@@ -262,6 +262,7 @@ Click the type names for complete docs.
 - [`IsNull`](source/is-null.d.ts) - Returns a boolean for whether the given type is `null`.
 - [`IsUndefined`](source/is-undefined.d.ts) - Returns a boolean for whether the given type is `undefined`.
 - [`IsTuple`](source/is-tuple.d.ts) - Returns a boolean for whether the given array is a tuple.
+- [`IsReadonlyArray`](source/is-readonly-array.d.ts) - Returns a boolean for whether the given array or tuple is readonly.
 - [`IsUnion`](source/is-union.d.ts) - Returns a boolean for whether the given type is a union.
 - [`IsLowercase`](source/is-lowercase.d.ts) - Returns a boolean for whether the given string literal is lowercase.
 - [`IsUppercase`](source/is-uppercase.d.ts) - Returns a boolean for whether the given string literal is uppercase.

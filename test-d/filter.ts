@@ -416,3 +416,8 @@ function _readKnownLooseProperty<Options extends {strict: false}>(value: Filter<
 function _readKnownLooseTuple<Options extends {strict: false}>(value: Filter<readonly [1 | 2], 1, Options>): 1 | 2 {
 	return value[0];
 }
+
+// Filtering resolves optional, empty, and strict branches with independent readonly access.
+expectTypeOf<Filter<readonly [string, number?] | [boolean, Date?], number | Date>>().toBe<readonly [number?] | [Date?]>();
+expectTypeOf<Filter<readonly [0, false] | [0, 1], Boolean>>().toBe<readonly [] | [1]>();
+expectTypeOf<Filter<readonly [1 | 'x', 2] | [3 | 'y', 4], number, {strict: true}>>().toBe<readonly [2] | [4]>();

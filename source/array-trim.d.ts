@@ -1,5 +1,5 @@
 import type {If} from './if.d.ts';
-import type {IsArrayReadonly} from './internal/array.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {ApplyDefaultOptions} from './internal/object.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {_SplitOnRestElement} from './split-on-rest-element.d.ts';
@@ -144,7 +144,7 @@ Trims each member of a union of arrays on its own, so that `readonly` is decided
 type TrimEach<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>, Side extends 'start' | 'end'> = IfNotAnyOrNever<Array_, {
 	ifNot: Array_ extends unknown // For distributing `Array_`
 		? (Side extends 'start' ? _ArrayTrimStart<Array_, Item, Options> : _ArrayTrimEnd<Array_, Item, Options>) extends infer Result extends UnknownArray
-			? If<IsArrayReadonly<Array_>, Readonly<Result>, Result>
+			? If<IsReadonlyArray<Array_>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
 }>;

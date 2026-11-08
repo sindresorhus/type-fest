@@ -1,4 +1,5 @@
-import type {CallSignatureOf, IsArrayReadonly, KeyAliases, SimplifyObject} from './internal/index.d.ts';
+import type {CallSignatureOf, KeyAliases, SimplifyObject} from './internal/index.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {If} from './if.d.ts';
@@ -113,13 +114,13 @@ Note that this is not what either built-in spread does. The array spread of `[1,
 type CombineTwoArrays<Destination extends readonly unknown[], Source extends readonly unknown[]> =
 	// A source with an optional element has no fixed positions to override, so it is treated like an array of unknown length.
 	number extends Destination['length'] | Source['length'] | (Source extends Required<Source> ? never : number)
-		? IsArrayReadonly<Destination> extends true
-			? IsArrayReadonly<Source> extends true
+		? IsReadonlyArray<Destination> extends true
+			? IsReadonlyArray<Source> extends true
 				? ReadonlyArray<Destination[number] | Source[number]>
 				: Array<Destination[number] | Source[number]>
 			: Array<Destination[number] | Source[number]>
-		: IsArrayReadonly<Destination> extends true
-			? IsArrayReadonly<Source> extends true
+		: IsReadonlyArray<Destination> extends true
+			? IsReadonlyArray<Source> extends true
 				? readonly [...Source, ...DropLeading<Destination, Source['length']>]
 				: [...Source, ...DropLeading<Destination, Source['length']>]
 			: [...Source, ...DropLeading<Destination, Source['length']>];

@@ -1,5 +1,6 @@
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever, IsArrayReadonly} from './internal/index.d.ts';
+import type {IfNotAnyOrNever} from './internal/index.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -54,7 +55,7 @@ const availableTopSciFi = curry(searchBooks)('sci-fi')(4.5)(true);
 export type ArrayTail<TArray extends UnknownArray> = IfNotAnyOrNever<TArray, {
 	ifNot: TArray extends UnknownArray // For distributing `TArray`
 		? _ArrayTail<TArray> extends infer Result
-			? If<IsArrayReadonly<TArray>, Readonly<Result>, Result>
+			? If<IsReadonlyArray<TArray>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never;
 }>;

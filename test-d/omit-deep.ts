@@ -465,3 +465,9 @@ function _readOmittedChild<Value>(value: OmitDeep<{readonly child?: {id: Value; 
 
 expectTypeOf<OmitDeep<{readonly child?: {id: string; readonly payload: number} | undefined}, 'child.id'>>()
 	.toBe<{readonly child?: {readonly payload: number} | undefined}>();
+
+// Omitting through fixed or variable array positions restores each member's own access.
+expectTypeOf<OmitDeep<readonly [{keep: 1; drop: 2}] | [{keep: 3; drop: 4}], '0.drop'>>().toBe<readonly [{keep: 1}] | [{keep: 3}]>();
+expectTypeOf<OmitDeep<readonly [1, 2] | [3, 4], `${number}`>>().toBe<readonly [] | []>();
+type MixedAccessRecords = ReadonlyArray<{secret: string; id: number}> | Array<{secret: number; id: string}>;
+expectTypeOf<OmitDeep<MixedAccessRecords, `${number}.secret`>>().toBe<ReadonlyArray<{id: number}> | Array<{id: string}>>();

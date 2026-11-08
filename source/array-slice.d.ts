@@ -3,7 +3,8 @@ import type {LessThanOrEqual} from './less-than-or-equal.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
 import type {IsNegative, PositiveInfinity} from './numeric.d.ts';
-import type {HasNoStaticElements, IsArrayReadonly, MaxLength, TupleMin, UnwrapBrand} from './internal/index.d.ts';
+import type {HasNoStaticElements, MaxLength, TupleMin, UnwrapBrand} from './internal/index.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {Not} from './not.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {And} from './and.d.ts';
@@ -112,7 +113,7 @@ type _ArraySlice<
 `Array#slice()` returns a fresh array, but a `readonly` input keeps its `readonly` modifier, whichever branch produced the slice.
 */
 type ArraySliceResult<Array_ extends readonly unknown[], Sliced> =
-	IsArrayReadonly<Array_> extends true ? Readonly<Sliced> : Sliced;
+	IsReadonlyArray<Array_> extends true ? Readonly<Sliced> : Sliced;
 
 type VariableLengthArraySliceHelper<
 	Array_ extends readonly unknown[],

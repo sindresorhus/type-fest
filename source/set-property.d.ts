@@ -3,7 +3,8 @@ import type {DigitCharacter} from './characters.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {ConsistsOnlyOf, ExactKey, IsArrayReadonly, SetArrayAccess, SimplifyObject, ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ConsistsOnlyOf, ExactKey, SetArrayAccess, SimplifyObject, ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 
 /**
 The declared spelling of `Key` in `BaseType`, or `never` when no member declares it. An index signature declares no keys, so `OmitIndexSignature` keeps it from shadowing the literal ones.
@@ -89,7 +90,7 @@ type SetPropertyInArray<ArrayType extends UnknownArray, Key extends PropertyKey,
 			? `${Index}` extends keyof ArrayType
 				? {[Member in keyof ArrayType]: Member extends `${Index}` ? SetPropertyAtPath<ArrayType[Member], Rest, Value> : ArrayType[Member]}
 				// An index outside a declared tuple position, or a non-literal index, makes the element type a union in an array of unknown length.
-				: SetArrayAccess<Array<ArrayType[number] | SetPropertyAtPath<ArrayType[number] | undefined, Rest, Value>>, IsArrayReadonly<ArrayType>>
+				: SetArrayAccess<Array<ArrayType[number] | SetPropertyAtPath<ArrayType[number] | undefined, Rest, Value>>, IsReadonlyArray<ArrayType>>
 			// A non-canonical numeric spelling, like `01`, does not name an element.
 			: never
 		: never; // Any other key cannot name an element

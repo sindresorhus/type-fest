@@ -167,3 +167,19 @@ expectTypeOf<SetNonNullable<{[NumericSelectorKey.One]?: string | null; other: nu
 expectTypeOf<SetNonNullable<{[NumericSelectorKey.One]?: string | null; other: number | null}, 1>>().toBe<{[NumericSelectorKey.One]?: string; other: number | null}>();
 expectTypeOf<SetNonNullable<Array<string | null>, NumericSelectorKey.Zero>>().toBe<Array<string | null>>();
 expectTypeOf<SetNonNullable<[string | null, string | null], NumericSelectorKey.One>>().toBe<[string | null, string]>();
+
+// Each tuple member keeps its own access while nullability changes at selected indices.
+expectTypeOf<SetNonNullable<readonly [string | null] | [number | null], 0>>().toBe<readonly [string] | [number]>();
+expectTypeOf<SetNonNullable<readonly [(string | null)?] | [(number | undefined)?], 0>>().toBe<readonly [string?] | [number?]>();
+expectTypeOf<SetNonNullable<readonly [string | null, ...Array<number | null>] | [boolean | null, ...Array<Date | null>], number>>().toBe<readonly [string, ...number[]] | [boolean, ...Date[]]>();
+expectTypeOf<SetNonNullable<readonly [] | [string | null], 0>>().toBe<readonly [] | [string]>();
+expectTypeOf<SetNonNullable<readonly [string | null, ...Array<number | null>], 1>>().toBe<readonly [string | null, ...number[]]>();
+expectTypeOf<SetNonNullable<readonly [string | null, ...Array<number | null>], 0>>().toBe<readonly [string, ...Array<number | null>]>();
+
+// Non-nullability and outer readonly access do not freeze a retained object's fields.
+declare const shallowReadonlyNonNullable: SetNonNullable<readonly [{id: string} | null, string[] | undefined]>;
+expectTypeOf(shallowReadonlyNonNullable).toBe<readonly [{id: string}, string[]]>();
+shallowReadonlyNonNullable[0].id = 'updated';
+shallowReadonlyNonNullable[1].push('updated');
+// @ts-expect-error A readonly outer position cannot be replaced with another valid value.
+shallowReadonlyNonNullable[0] = {id: 'replacement'};

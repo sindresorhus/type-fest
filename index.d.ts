@@ -182,6 +182,7 @@ export type {IsAny} from './source/is-any.d.ts';
 export type {IsNever} from './source/is-never.d.ts';
 export type {IsUnknown} from './source/is-unknown.d.ts';
 export type {IsTuple, IsTupleOptions} from './source/is-tuple.d.ts';
+export type {IsReadonlyArray} from './source/is-readonly-array.d.ts';
 export type {ArrayIndices} from './source/array-indices.d.ts';
 export type {IndexTuple} from './source/index-tuple.d.ts';
 export type {ArrayValues} from './source/array-values.d.ts';

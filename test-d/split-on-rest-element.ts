@@ -128,3 +128,22 @@ function _readGroupedSuffix<Value, Options extends {preserveOptionalModifier?: b
 function _constructGroupedParts<Value>(value: Value): SplitOnRestElement<readonly [1, 2, 3, 4, Value, ...string[]]> {
 	return [[1, 2, 3, 4, value], [], []];
 }
+
+// Empty, optional, and rest-only branches decide the outer access independently.
+expectTypeOf<SplitOnRestElement<readonly string[] | []>>().toBe<readonly [[], string[], []] | [[], [], []]>();
+expectTypeOf<SplitOnRestElement<string[] | readonly []>>().toBe<[[], string[], []] | readonly [[], [], []]>();
+expectTypeOf<SplitOnRestElement<readonly [1?, ...string[]] | [2?, ...Date[]]>>().toBe<readonly [[1?], string[], []] | [[2?], Date[], []]>();
+expectTypeOf<SplitOnRestElement<readonly [(1 | undefined)?, ...string[]] | [2?, ...Date[]], {preserveOptionalModifier: false}>>().toBe<readonly [[1 | undefined], string[], []] | [[2], Date[], []]>();
+
+// All three parts are mutable even when the result's outer tuple is readonly.
+declare const shallowReadonlyParts: SplitOnRestElement<readonly [{id: string}, ...number[], string[]]>;
+expectTypeOf(shallowReadonlyParts).toBe<readonly [[{id: string}], number[], [string[]]]>();
+shallowReadonlyParts[0][0] = {id: 'replacement'};
+shallowReadonlyParts[1].push(1);
+shallowReadonlyParts[2][0] = ['replacement'];
+// @ts-expect-error The readonly outer tuple cannot replace a complete part.
+shallowReadonlyParts[1] = [1];
+
+// Nested readonly values stay readonly inside the mutable parts.
+expectTypeOf<SplitOnRestElement<[readonly string[], ...Array<readonly number[]>, {readonly id: string}]>>().toBe<[[readonly string[]], Array<readonly number[]>, [{readonly id: string}]]>();
+expectTypeOf<SplitOnRestElement<[readonly string[], ...Array<readonly number[]>, {readonly id: string}]>>().not.toBeAssignableTo<[[string[]], number[][], [{readonly id: string}]]>();

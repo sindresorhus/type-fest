@@ -330,3 +330,9 @@ expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<DifferentTupleLengths>>().no
 expectTypeOf<[string, number]>().not.toBeAssignableTo<SharedUnionFieldsDeepRecurseIntoArrays<DifferentTupleLengths>>();
 expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string?, number?] | readonly [boolean, Date]>>().toBe<readonly []>();
 expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[string, ...number[]] | [boolean]>>().toBe<[string | boolean]>();
+
+// Readonly access is restored independently at each recursively shared array depth.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string[]] | readonly [readonly number[]]>>().toBe<readonly [Array<string | number> | ReadonlyArray<string | number>]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [] | [number]>>().toBe<readonly [] | []>();
+type MixedAccessRest = readonly [1, ...string[]] | [2, ...number[]];
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<MixedAccessRest>>().toBe<readonly [1 | 2, ...Array<string | number>] | [1 | 2, ...Array<string | number>]>();

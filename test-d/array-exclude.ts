@@ -187,3 +187,18 @@ publicField[0] = {kind: 'public', value: {id: 'visible'}};
 function _allRemoved<Values extends readonly number[]>(values: ArrayExclude<Values, number>): readonly [] {
 	return values;
 }
+
+// A fully removed member and a partially retained member each keep their own access.
+expectTypeOf<ArrayExclude<readonly number[] | [number, string], number>>().toBe<readonly [] | [string]>();
+expectTypeOf<ArrayExclude<number[] | readonly [number, string?], number>>().toBe<[] | readonly [string?]>();
+expectTypeOf<ArrayExclude<readonly [number?, ...string[]] | [boolean, ...number[]], number>>().toBe<readonly string[] | [boolean]>();
+expectTypeOf<ArrayExclude<readonly [number, ...string[], boolean] | [Date, ...RegExp[], number], number>>().toBe<readonly [...string[], boolean] | [Date, ...RegExp[]]>();
+
+// Excluding top-level elements does not recursively change the retained values.
+expectTypeOf<ArrayExclude<[readonly string[], number], number>>().toBe<[readonly string[]]>();
+expectTypeOf<ArrayExclude<readonly [number, {id: string}, string[]], number>>().toBe<readonly [{id: string}, string[]]>();
+declare const shallowReadonlyExclusion: ArrayExclude<readonly [number, {id: string}, string[]], number>;
+shallowReadonlyExclusion[0].id = 'updated';
+shallowReadonlyExclusion[1].push('updated');
+// @ts-expect-error A retained value cannot replace a readonly outer position.
+shallowReadonlyExclusion[0] = {id: 'replacement'};

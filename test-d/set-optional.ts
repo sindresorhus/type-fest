@@ -298,3 +298,8 @@ declare const optionalSymbol: SetOptional<{readonly [selectorSymbol]: string | u
 expectTypeOf(optionalSymbol[selectorSymbol]).toBe<string | undefined>();
 // @ts-expect-error A selected field retains its readonly modifier.
 optionalSymbol[selectorSymbol] = 'value';
+
+// Tuple rebuilding preserves shallow readonly access for each member independently.
+expectTypeOf<SetOptional<readonly [{id: string}, number] | [readonly string[], boolean], 1>>().toBe<readonly [{id: string}, number?] | [readonly string[], boolean?]>();
+expectTypeOf<SetOptional<readonly [1, 2] | [3, 4, 5], 0>>().toBe<readonly [1 | undefined, 2] | [3 | undefined, 4, 5]>();
+expectTypeOf<SetOptional<readonly [] | [1, ...string[]], 0>>().toBe<readonly [] | [1?, ...string[]]>();

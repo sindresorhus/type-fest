@@ -349,3 +349,8 @@ expectTypeOf<SetProperty<{arr: [{name: string} | null]}, 'arr.0.baz', number>>()
 // Should not accept a non-object base type
 // @ts-expect-error
 type Invalid = SetProperty<number, 'foo', string>;
+
+// Writes outside fixed positions keep each original member's outer readonly access.
+expectTypeOf<SetProperty<readonly string[] | number[], '0', boolean>>().toBe<ReadonlyArray<string | boolean> | Array<number | boolean>>();
+expectTypeOf<SetProperty<readonly [1] | [2], '3', readonly string[]>>().toBe<ReadonlyArray<1 | readonly string[]> | Array<2 | readonly string[]>>();
+expectTypeOf<SetProperty<readonly [] | [], '0', string>>().toBe<readonly string[] | string[]>();

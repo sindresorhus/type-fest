@@ -344,3 +344,8 @@ type RequiredCallableResult = SetRequired<RequiredCallableUnion, 'value'>;
 expectTypeOf<Extract<RequiredCallableResult, () => 'first'>['value']>().toBe<string>();
 expectTypeOf<Extract<RequiredCallableResult, () => 'second'>['count']>().toBe<number>();
 expectTypeOf<Extract<RequiredCallableResult, () => 'second'>>().not.toBeAssignableTo<{value: string}>();
+
+// Required and untouched optional positions keep the access of their own tuple member.
+expectTypeOf<SetRequired<readonly [(string | undefined)?] | [number?], 0>>().toBe<readonly [string | undefined] | [number]>();
+expectTypeOf<SetRequired<readonly [1?, 2?] | [3, 4?], 1>>().toBe<readonly [1?, 2?] | [3, 4]>();
+expectTypeOf<SetRequired<readonly [{id: string}?, ...number[]] | [(readonly string[])?], 0>>().toBe<readonly [{id: string}, ...number[]] | [readonly string[]]>();

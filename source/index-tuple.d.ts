@@ -1,6 +1,6 @@
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {IsArrayReadonly} from './internal/array.d.ts';
+import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {ArrayIndices} from './array-indices.d.ts'; // For `@link`
@@ -95,7 +95,7 @@ type ReadonlyIndices = IndexTuple<readonly ['a', 'b']>;
 export type IndexTuple<Element extends UnknownArray> = IfNotAnyOrNever<Element, {
 	ifNot: Element extends unknown // For distributing `Element`
 		? IndicesOfTuple<TupleOf<Element['length']>> extends infer Result
-			? If<IsArrayReadonly<Element>, Readonly<Result>, Result>
+			? If<IsReadonlyArray<Element>, Readonly<Result>, Result>
 			: never // Should never happen
 		: never; // Should never happen
 	ifAny: number[];

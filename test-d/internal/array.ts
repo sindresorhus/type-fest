@@ -4,7 +4,6 @@ import type {
 	FirstArrayElement,
 	HasNoStaticElements,
 	IsArrayOfUnknownLength,
-	IsArrayReadonly,
 	IsEqualOrExtend,
 	MaxLength,
 	SetArrayAccess,
@@ -40,26 +39,6 @@ expectTypeOf<IsEqual<SetArrayAccess<string[], true>, readonly string[]>>().toBe<
 expectTypeOf<IsEqual<SetArrayAccess<readonly string[], false>, string[]>>().toBe<true>();
 expectTypeOf<IsEqual<SetArrayAccess<readonly [1, 2], true>, readonly [1, 2]>>().toBe<true>();
 expectTypeOf<IsEqual<SetArrayAccess<[1, 2], false>, [1, 2]>>().toBe<true>();
-
-expectTypeOf<IsEqual<IsArrayReadonly<readonly string[]>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsArrayReadonly<string[]>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsArrayReadonly<readonly [1, 2]>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsArrayReadonly<[1, 2]>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsArrayReadonly<never>, false>>().toBe<true>();
-expectTypeOf<IsArrayReadonly<any>>().toBe<boolean>();
-expectTypeOf<IsArrayReadonly<unknown[]>>().toBe<false>();
-expectTypeOf<IsArrayReadonly<readonly unknown[]>>().toBe<true>();
-expectTypeOf<IsArrayReadonly<[1] | readonly [2]>>().toBe<boolean>();
-// @ts-expect-error Unknown is not known to be an array.
-type UnknownArrayAccess = IsArrayReadonly<unknown>;
-
-function _readMutableArrayFlag<Array_ extends unknown[]>(flag: IsArrayReadonly<Array_>): false {
-	return flag;
-}
-
-function _readArrayFlag<Array_ extends readonly unknown[]>(flag: IsArrayReadonly<Array_>): boolean {
-	return flag;
-}
 
 // `T['length']` is a union for a tuple with an optional element, so `MaxLength` picks the widest.
 expectTypeOf<IsEqual<MaxLength<[string, number?]>, 2>>().toBe<true>();
