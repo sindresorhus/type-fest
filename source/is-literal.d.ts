@@ -9,6 +9,8 @@ import type {UnwrapBrand} from './internal/object.d.ts';
 /**
 Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
+Returns `false` for `any`, `never`, and `unknown`. Unions are normalized before classification; mixed results return `boolean`.
+
 @example
 ```
 import type {IsLiteral} from 'type-fest';

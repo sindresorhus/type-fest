@@ -6,6 +6,8 @@ import type {UnwrapBrand} from './internal/object.d.ts';
 /**
 Returns a boolean for whether a given number is greater than another number.
 
+Distributes over both operands; mixed results return `boolean`. A `never` operand returns `never`. Otherwise, an `any` operand returns `boolean`. Only numeric operands are accepted.
+
 @example
 ```
 import type {GreaterThan} from 'type-fest';
@@ -25,7 +27,7 @@ type D = GreaterThan<5n, 1>;
 
 Note: If either argument is the non-literal `number` or `bigint` type, the result is `boolean`.
 
-Note: If both arguments are written in exponential notation with an exponent of the same sign (both `1e+21` and above, or both with a negative exponent like `1e-7`), or one is a `bigint` and the other is `1e+21` or above (or `-1e+21` or below), the result is `boolean` too, because such numbers cannot be compared digit by digit. Any other comparison with a number in exponential notation is still decided.
+Note: Two numbers in exponential notation with exponents of the same sign return `boolean` unless equality or the numbers' signs decide the comparison. Comparing a `bigint` with a `number` of `1e+21` or above (or `-1e+21` or below) also returns `boolean`. Other comparisons with a number in exponential notation are still decided.
 
 Note: A `number` above `Number.MAX_SAFE_INTEGER` is compared with a `bigint` by its printed digits, not its exact value. For example, `123456789012345680000` is really `123456789012345683968`, so comparing it with `123456789012345680000n` treats them as equal.
 

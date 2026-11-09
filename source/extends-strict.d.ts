@@ -23,7 +23,7 @@ export type ExtendsStrictOptions = {
 	distributiveUnions?: boolean;
 
 	/**
-	Whether `never` extends every other type.
+	Restrict `never` to extending itself, `any`, and `unknown`.
 
 	When enabled, `never` is not treated as a bottom type and only extends itself (or `any` / `unknown`).
 
@@ -54,7 +54,7 @@ export type ExtendsStrictOptions = {
 	strictNever?: boolean;
 
 	/**
-	Whether `any` extends every other type.
+	Restrict `any` to extending itself and `unknown`.
 
 	When enabled, `any` does not extend every other type, it only extends itself (or `unknown`).
 

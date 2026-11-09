@@ -4,6 +4,8 @@ import type {UnwrapBrand} from './internal/object.d.ts';
 /**
 Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
 
+Checks union members separately, so mixed results return `boolean` and `never` returns `never`. Returns `boolean` for `any`, and `false` for `unknown` and the widened `number` type.
+
 Use-case:
 - If you want to make a conditional branch based on the result of whether a number is a float or not.
 

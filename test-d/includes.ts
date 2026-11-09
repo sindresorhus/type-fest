@@ -259,6 +259,9 @@ type A2 = Includes<'why a string?', 5>;
 // @ts-expect-error
 type A3 = Includes<{key: 'value'}, 7>;
 
+// @ts-expect-error Unknown is not known to be an array.
+type UnknownArrayInput = Includes<unknown, 1>;
+
 // Invalid option.
 // @ts-expect-error
 type A4 = Includes<[1], 1, {distributeItem: 1}>;

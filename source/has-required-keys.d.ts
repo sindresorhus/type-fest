@@ -10,6 +10,8 @@ An index signature is not a required field, and an array only counts its require
 
 Note: A union returns `true` if any of its members has a required field, so `HasRequiredKeys<{a?: string} | {b: number}>` is `true`. Use `{} extends Type` instead if you need to know whether the type accepts an empty object.
 
+Returns `false` for `any` and `never`; `unknown` is not accepted.
+
 @example
 ```
 import type {HasRequiredKeys} from 'type-fest';

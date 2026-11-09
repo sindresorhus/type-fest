@@ -15,6 +15,11 @@ expectTypeOf<IsAny<null>>().toBe<false>();
 expectTypeOf<IsAny<undefined>>().toBe<false>();
 expectTypeOf<IsAny<void>>().toBe<false>();
 
+// A union is normalized before classification.
+expectTypeOf<IsAny<string | number>>().toBe<false>();
+expectTypeOf<IsAny<string | any>>().toBe<true>();
+expectTypeOf<IsAny<string | unknown>>().toBe<false>();
+
 // Missing generic parameter
 // @ts-expect-error
 type A = IsAny;

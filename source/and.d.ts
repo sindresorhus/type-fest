@@ -7,6 +7,8 @@ Returns a boolean for whether two given types are both `true`.
 
 Use-case: Constructing complex conditional types where multiple conditions must be satisfied.
 
+An `any` operand is treated as `boolean`; non-boolean operands are rejected.
+
 @example
 ```
 import type {And} from 'type-fest';

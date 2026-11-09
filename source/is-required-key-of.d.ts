@@ -6,6 +6,8 @@ Returns a boolean for whether the given key is a required key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `required` keys.
 
+Distributes over object and key unions, returning `boolean` when results differ. Returns `never` when either input is `any` or `never`; `unknown` is not accepted.
+
 @example
 ```
 import type {IsRequiredKeyOf} from 'type-fest';

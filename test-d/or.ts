@@ -30,3 +30,8 @@ expectTypeOf<Or<never, false>>().toBe<false>();
 expectTypeOf(boolean).toBe<Or<boolean, never>>();
 expectTypeOf(boolean).toBe<Or<never, boolean>>();
 expectTypeOf<Or<never, never>>().toBe<false>();
+
+// @ts-expect-error Unknown is not a boolean operand.
+type UnknownLeft = Or<unknown, true>;
+// @ts-expect-error Unknown is not a boolean operand.
+type UnknownRight = Or<true, unknown>;

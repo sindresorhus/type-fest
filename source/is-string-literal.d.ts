@@ -5,6 +5,8 @@ import type {IsNever} from './is-never.d.ts';
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
+Returns `false` for `any`, `never`, and `unknown`. Unions are normalized before classification; mixed results return `boolean`.
+
 The implementation of this type is inspired by the trick mentioned in this [StackOverflow answer](https://stackoverflow.com/a/68261113/420747).
 
 @example

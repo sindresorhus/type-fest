@@ -6,3 +6,6 @@ expectTypeOf<If<false, string, number>>().toBe<number>();
 expectTypeOf<If<boolean, string, number>>().toBe<string | number>();
 expectTypeOf<If<any, string, number>>().toBe<string | number>();
 expectTypeOf<If<never, string, number>>().toBe<number>();
+
+// @ts-expect-error An unknown condition is not known to be boolean.
+type UnknownCondition = If<unknown, 'yes', 'no'>;

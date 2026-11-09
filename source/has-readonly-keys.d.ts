@@ -5,6 +5,8 @@ Returns a boolean for whether the given type has any readonly fields.
 
 This is useful when you want to create an API whose behavior depends on the presence or absence of readonly fields.
 
+Returns `true` if any union member has a readonly field. Returns `false` for `any` and `never`; `unknown` is not accepted.
+
 @example
 ```
 import type {HasReadonlyKeys, ReadonlyKeysOf} from 'type-fest';

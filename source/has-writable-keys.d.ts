@@ -6,6 +6,8 @@ Returns a boolean for whether the given type has any writable fields.
 
 This is useful when you want to create an API whose behavior depends on the presence or absence of writable fields.
 
+Returns `true` if any union member has a writable field. Returns `true` for `any` and `false` for `never`; `unknown` is not accepted.
+
 @example
 ```
 import type {HasWritableKeys, WritableKeysOf} from 'type-fest';

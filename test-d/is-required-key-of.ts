@@ -171,3 +171,6 @@ expectTypeOf(readRequiredField(requiredRecord, 'value')).toBe<undefined>();
 readRequiredField(requiredRecord, 'nickname');
 // @ts-expect-error The key must belong to the record.
 readRequiredField(requiredRecord, 'missing');
+
+// @ts-expect-error An unknown key is not known to belong to the object.
+type UnknownKey = IsRequiredKeyOf<{value: string}, unknown>;

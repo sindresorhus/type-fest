@@ -7,6 +7,8 @@ Returns a boolean for whether only one of two given types is `true`.
 
 Use-case: Constructing complex conditional types where one single condition must be satisfied.
 
+An `any` operand is treated as `boolean`; non-boolean operands are rejected.
+
 @example
 ```
 import type {Xor} from 'type-fest';

@@ -229,6 +229,8 @@ expectTypeOf<IsNegative<number>>().toBe<false>();
 expectTypeOf<IsNegative<bigint>>().toBe<false>();
 expectTypeOf<IsNegative<any>>().toBe<boolean>();
 expectTypeOf<IsNegative<never>>().toBe<never>();
+// @ts-expect-error An unknown value is not necessarily numeric.
+type UnknownSign = IsNegative<unknown>;
 
 // `IsNegative` reports the sign, so it still treats `-Infinity` as negative.
 expectTypeOf<IsNegative<NegativeInfinity>>().toBe<true>();

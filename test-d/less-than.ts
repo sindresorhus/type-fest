@@ -60,6 +60,7 @@ expectTypeOf(zeroLessThanNegativeExponent).toBe<true>();
 // Two numbers that are both in exponential notation can't be compared digit by digit, so the result is `boolean`.
 declare const bothExponent: LessThan<1e21, 2e21>;
 expectTypeOf(bothExponent).toBe<boolean>();
+expectTypeOf<LessThan<1e21, 1e21>>().toBe<false>();
 
 // Works with `bigint`, and with a `bigint` compared to a `number`.
 expectTypeOf<LessThan<1n, 2n>>().toBe<true>();
@@ -95,6 +96,7 @@ expectTypeOf<LessThan<bigint, NegativeInfinity>>().toBe<boolean>();
 // `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
 expectTypeOf<LessThan<any, 1n>>().toBe<boolean>();
 expectTypeOf<LessThan<1n, any>>().toBe<boolean>();
+expectTypeOf<LessThan<any, any>>().toBe<boolean>();
 expectTypeOf<LessThan<never, 1n>>().toBe<never>();
 
 // A union mixing `bigint` and `number` values is compared per member.
@@ -105,11 +107,14 @@ expectTypeOf<LessThan<1n | 10, 5>>().toBe<boolean>();
 expectTypeOf<LessThan<never, number>>().toBe<never>();
 expectTypeOf<LessThan<bigint, never>>().toBe<never>();
 expectTypeOf<LessThan<any, never>>().toBe<never>();
+expectTypeOf<LessThan<never, any>>().toBe<never>();
 expectTypeOf<LessThan<Tagged<-2, 'Limit'>, Tagged<1, 'Limit'>>>().toBe<true>();
 expectTypeOf<LessThan<Tagged<2, 'Limit'>, 2n>>().toBe<false>();
 expectTypeOf<LessThan<-2n | Tagged<2, 'Limit'>, 0>>().toBe<boolean>();
 // @ts-expect-error An unknown value is not a numeric operand.
 type UnknownLessOperand = LessThan<unknown, 0>;
+// @ts-expect-error An unknown value is not a numeric operand.
+type UnknownRightLessOperand = LessThan<0, unknown>;
 
 function _readLessComparison<Left extends number | bigint, Right extends number | bigint>(value: LessThan<Left, Right>): boolean {
 	return value;

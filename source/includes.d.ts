@@ -54,6 +54,8 @@ Returns a boolean for whether the given array includes the given item.
 
 This can be useful if another type wants to make a decision based on whether the array includes that item.
 
+Distributes over unions of arrays. Returns `any` when the array itself is `any` and `never` when it is `never`.
+
 Elements are compared exactly, so `Includes<[boolean], true>` is `false`. Use the `distributeItem` option to compare by assignability.
 
 The result describes every array of the given type: `true` if each one includes the item, `boolean` if only some do, and `false` otherwise. Only some do when the item is only matched by an optional element, or by the element type of an array of unknown length, which can be empty. Use `true extends Includes<…>` to check whether the item may be included.

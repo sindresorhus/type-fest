@@ -110,6 +110,7 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 - Distribute: `T extends any ? ... : never`
 - Count via tuple `['length']`
 - Union distribution is tricky—test it
+- Predicate results are an API contract: Use `true`/`false` for definite whole-type classification (`IsNull<any>` and `IsPrimitive<any>` are `false`). Use `boolean` when preserving uncertainty or mixed distributed results is intentional. Explicitly document and test `any`, `never`, `unknown`, and union behavior.
 - Path autocomplete: use `LiteralUnion<Paths<T, {maxRecursionDepth: 2}>, string | number>`, never full-depth `Paths<T>`. Deeper `Paths` in a constraint can take minutes on large union-heavy types (#954), and `number` keeps a generic `Paths<T>` valid.
 
 ## Philosophy

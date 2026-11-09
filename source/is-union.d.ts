@@ -4,6 +4,8 @@ import type {IsEqual} from './is-equal.d.ts';
 /**
 Returns a boolean for whether the given type is a union.
 
+Returns `false` for `any`, `never`, and `unknown`, and `true` for `boolean` (`true | false`). TypeScript normalizes unions first, so `string | 'foo'` is treated as `string`.
+
 @example
 ```
 import type {IsUnion} from 'type-fest';

@@ -136,3 +136,9 @@ expectTypeOf<IsOptionalKeyOf<Record<string, number>, string>>().toBe<false>();
 // A key that only one member of a union has is still a key of that member, and the type distributes over the union anyway, so it should be accepted. `keyof` of a union is the intersection of its members' keys, so the constraint rejected it. The answer is `boolean`, because the member that has the key decides it and the one that does not contributes `false`.
 declare const keyOfOneMember: IsOptionalKeyOf<{a?: 1} | {b: 2}, 'a'>;
 expectTypeOf(keyOfOneMember).toBe<boolean>();
+
+// @ts-expect-error An unknown value is not known to be an object.
+type UnknownObject = IsOptionalKeyOf<unknown, never>;
+
+// @ts-expect-error An unknown key is not known to belong to the object.
+type UnknownKey = IsOptionalKeyOf<{value: string}, unknown>;

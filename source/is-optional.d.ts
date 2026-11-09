@@ -1,7 +1,7 @@
 /**
 Returns a boolean for whether the given type includes `undefined`.
 
-Note: `IsOptional<unknown>` and `IsOptional<void>` are `false`, because `undefined` is assignable to them but is not a member of them. `IsOptional<any>` is `true`.
+Note: `any` returns `true`; `never`, `unknown`, and `void` return `false`. Unions are normalized before checking for an `undefined` member, rather than merely accepting an `undefined` value.
 
 @example
 ```ts

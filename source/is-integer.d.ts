@@ -5,6 +5,8 @@ import type {PositiveInfinity, NegativeInfinity} from './numeric.d.ts';
 /**
 Returns a boolean for whether the given number is an integer, like `-5`, `1.0`, or `100`.
 
+Checks union members separately, so mixed results return `boolean` and `never` returns `never`. Returns `boolean` for `any`, and `false` for `unknown` and the widened `number` type. The widened `bigint` type returns `true`, since every bigint is an integer.
+
 Use-case:
 - If you want to make a conditional branch based on the result of whether a number is an integer or not.
 

@@ -6,6 +6,8 @@ Returns a boolean for whether the given key is an optional key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `optional` keys.
 
+Distributes over object and key unions, returning `boolean` when results differ. Returns `never` when either input is `any` or `never`; `unknown` is not accepted.
+
 Note: A literal key of an index signature is reported as optional, except for the built-in `Record` type, where it is reported as required. `IsOptionalKeyOf<{[key: string]: T}, 'a'>` is `true`, while `IsOptionalKeyOf<Record<string, T>, 'a'>` is `false`. This is because the check compares the type with `Record<Key, Type[Key]>`, and TypeScript compares two `Record` types by their type arguments instead of by their properties. The `string` key itself is reported as required for both.
 
 @example

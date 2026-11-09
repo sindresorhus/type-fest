@@ -3,6 +3,8 @@ Returns a boolean for whether the given type has any optional fields.
 
 This is useful when you want to create an API whose behavior depends on the presence or absence of optional fields.
 
+Returns `true` if any union member has an optional field. Returns `false` for `any` and `never`; `unknown` is not accepted.
+
 @example
 ```
 import type {HasOptionalKeys, OptionalKeysOf} from 'type-fest';

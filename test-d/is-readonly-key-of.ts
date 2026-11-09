@@ -119,3 +119,9 @@ expectTypeOf(never).toBe<IsReadonlyKeyOf<any, 'a'>>();
 expectTypeOf(never).toBe<IsReadonlyKeyOf<K, never>>();
 expectTypeOf(never).toBe<IsReadonlyKeyOf<any, never>>();
 expectTypeOf(never).toBe<IsReadonlyKeyOf<never, 'a'>>();
+
+// @ts-expect-error An unknown value is not known to be an object.
+type UnknownObject = IsReadonlyKeyOf<unknown, never>;
+
+// @ts-expect-error An unknown key is not known to belong to the object.
+type UnknownKey = IsReadonlyKeyOf<{value: string}, unknown>;

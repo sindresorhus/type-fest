@@ -126,3 +126,9 @@ expectTypeOf(never).toBe<IsWritableKeyOf<never, string>>();
 function _readEmptyWritableKeys<Value extends object>(value: IsWritableKeyOf<Value, never>): never {
 	return value;
 }
+
+// @ts-expect-error An unknown value is not known to be an object.
+type UnknownObject = IsWritableKeyOf<unknown, never>;
+
+// @ts-expect-error An unknown key is not known to belong to the object.
+type UnknownKey = IsWritableKeyOf<{value: string}, unknown>;

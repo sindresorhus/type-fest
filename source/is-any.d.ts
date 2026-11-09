@@ -1,6 +1,8 @@
 /**
 Returns a boolean for whether the given type is `any`.
 
+Returns `false` for `never` and `unknown`. Unions are normalized before the check.
+
 @see https://stackoverflow.com/a/49928360/1490091
 
 Useful in type utilities, such as disallowing `any`s to be passed to a function.

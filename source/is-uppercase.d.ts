@@ -6,6 +6,8 @@ import type {UnwrapBrand} from './internal/object.d.ts';
 /**
 Returns a boolean for whether the given string literal is uppercase.
 
+Checks union members separately; mixed results return `boolean`. Returns `boolean` for `any` and `false` for `never`. Only string inputs are accepted.
+
 @example
 ```
 import type {IsUppercase} from 'type-fest';

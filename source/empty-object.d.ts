@@ -36,6 +36,8 @@ export type EmptyObject = {[emptyObjectSymbol]?: never};
 /**
 Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 
+Distributes over unions, returning `boolean` when members disagree. Returns `false` for `any` and `unknown`, and `never` for `never`.
+
 @example
 ```
 import type {IsEmptyObject} from 'type-fest';

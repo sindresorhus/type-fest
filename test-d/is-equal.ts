@@ -111,3 +111,12 @@ stringField.onChange('value', true);
 stringField.onChange(1, false);
 // @ts-expect-error A number is not equal to the field's string type.
 stringField.onChange(1, true);
+
+// Special types are compared by identity on either side.
+expectTypeOf<IsEqual<unknown, unknown>>().toBe<true>();
+expectTypeOf<IsEqual<unknown, any>>().toBe<false>();
+expectTypeOf<IsEqual<number, any>>().toBe<false>();
+expectTypeOf<IsEqual<number, never>>().toBe<false>();
+expectTypeOf<IsEqual<never, number>>().toBe<false>();
+expectTypeOf<IsEqual<number, unknown>>().toBe<false>();
+expectTypeOf<IsEqual<unknown, number>>().toBe<false>();

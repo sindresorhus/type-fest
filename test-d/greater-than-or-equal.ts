@@ -88,6 +88,7 @@ expectTypeOf<GreaterThanOrEqual<bigint, NegativeInfinity>>().toBe<boolean>();
 // `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
 expectTypeOf<GreaterThanOrEqual<any, 1n>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<1n, any>>().toBe<boolean>();
+expectTypeOf<GreaterThanOrEqual<any, any>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<never, 1n>>().toBe<never>();
 
 // A union mixing `bigint` and `number` values is compared per member.
@@ -103,6 +104,8 @@ expectTypeOf<GreaterThanOrEqual<never, any>>().toBe<never>();
 expectTypeOf<GreaterThanOrEqual<any, never>>().toBe<never>();
 // @ts-expect-error An unknown value is not a numeric operand.
 type UnknownGreaterOperand = GreaterThanOrEqual<unknown, 0>;
+// @ts-expect-error An unknown value is not a numeric operand.
+type UnknownRightGreaterOperand = GreaterThanOrEqual<0, unknown>;
 
 function _readGreaterComparison<Left extends number | bigint, Right extends number | bigint>(value: GreaterThanOrEqual<Left, Right>): boolean {
 	return value;

@@ -1,6 +1,8 @@
 /**
 Returns a boolean for whether the given type includes `null`.
 
+Returns `true` for `any` and `false` for `never`, `unknown`, and `void`. Unions are normalized before checking for a `null` member.
+
 Note: The built-in `NonNullable` type removes both `null` and `undefined`, which is not accurate for the name.
 
 @example

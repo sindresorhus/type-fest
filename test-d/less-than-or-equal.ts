@@ -34,6 +34,7 @@ declare const negativeExponentLessThanOrEqualPlain: LessThanOrEqual<1e-7, 0.5>;
 expectTypeOf(negativeExponentLessThanOrEqualPlain).toBe<true>();
 declare const bothExponent: LessThanOrEqual<1e21, 2e21>;
 expectTypeOf(bothExponent).toBe<boolean>();
+expectTypeOf<LessThanOrEqual<1e21, 1e21>>().toBe<true>();
 
 // Works with `bigint`, and with a `bigint` compared to a `number`.
 expectTypeOf<LessThanOrEqual<1n, 2n>>().toBe<true>();
@@ -60,6 +61,7 @@ expectTypeOf<LessThanOrEqual<1, bigint>>().toBe<boolean>();
 // `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
 expectTypeOf<LessThanOrEqual<any, 1n>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<1n, any>>().toBe<boolean>();
+expectTypeOf<LessThanOrEqual<any, any>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<never, 1n>>().toBe<never>();
 
 // A union mixing `bigint` and `number` values is compared per member.
@@ -72,8 +74,11 @@ expectTypeOf<LessThanOrEqual<-2n | Tagged<2, 'Limit'>, 0>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<never, number>>().toBe<never>();
 expectTypeOf<LessThanOrEqual<bigint, never>>().toBe<never>();
 expectTypeOf<LessThanOrEqual<any, never>>().toBe<never>();
+expectTypeOf<LessThanOrEqual<never, any>>().toBe<never>();
 // @ts-expect-error An unknown value is not a numeric operand.
 type UnknownLessEqualOperand = LessThanOrEqual<unknown, 0>;
+// @ts-expect-error An unknown value is not a numeric operand.
+type UnknownRightLessEqualOperand = LessThanOrEqual<0, unknown>;
 
 function _readLessEqualComparison<Left extends number | bigint, Right extends number | bigint>(value: LessThanOrEqual<Left, Right>): boolean {
 	return value;

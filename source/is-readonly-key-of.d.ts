@@ -6,6 +6,8 @@ Returns a boolean for whether the given key is a readonly key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `readonly` keys.
 
+Distributes over object and key unions, returning `boolean` when results differ. Returns `never` when either input is `any` or `never`; `unknown` is not accepted.
+
 @example
 ```
 import type {IsReadonlyKeyOf} from 'type-fest';

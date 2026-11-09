@@ -33,6 +33,8 @@ Note: The result depends on the compiler options. With `strictFunctionTypes` dis
 
 Note: `any` is mutually assignable with every type except `never`, even when nested. `never` is only mutually assignable with itself.
 
+`unknown` is mutually assignable only with `any` and types that accept every value, such as `unknown` itself.
+
 Note: The types are compared as a whole, so a union can be mutually assignable with a type not written as a union. For example, `{a: 1 | 2}` and `{a: 1} | {a: 2}` are mutually assignable.
 
 @see {@link IsEqual}

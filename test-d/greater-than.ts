@@ -78,6 +78,9 @@ declare const bothExponent: GreaterThan<2e21, 1e21>;
 expectTypeOf(bothExponent).toBe<boolean>();
 declare const bothNegativeExponent: GreaterThan<2e-7, 1e-7>;
 expectTypeOf(bothNegativeExponent).toBe<boolean>();
+// Equality and opposing signs still decide comparisons within one exponential family.
+expectTypeOf<GreaterThan<1e21, 1e21>>().toBe<false>();
+expectTypeOf<GreaterThan<1e-7, -1e-7>>().toBe<true>();
 
 // A branded literal is still a literal, so the comparison reads it correctly. The brand-aware siblings such as `IsNumericLiteral` unwrap it too.
 declare const brandedSecond: GreaterThan<0, Opaque<-5, 'A'>>;
@@ -160,6 +163,11 @@ expectTypeOf<GreaterThan<never, 1n>>().toBe<never>();
 // `any` could be any value, so the result is `boolean`, as with a `number`.
 expectTypeOf<GreaterThan<any, 1n>>().toBe<boolean>();
 expectTypeOf<GreaterThan<1n, any>>().toBe<boolean>();
+expectTypeOf<GreaterThan<any, any>>().toBe<boolean>();
+expectTypeOf<GreaterThan<never, number>>().toBe<never>();
+expectTypeOf<GreaterThan<number, never>>().toBe<never>();
+expectTypeOf<GreaterThan<never, any>>().toBe<never>();
+expectTypeOf<GreaterThan<any, never>>().toBe<never>();
 
 // A `bigint` against a `number` of `1e+21` and above is `boolean`, because the `number` is printed in exponential notation and cannot be compared digit by digit. A smaller exponent is still decided.
 expectTypeOf<GreaterThan<1_000_000_000_000_000_000_001n, 1e21>>().toBe<boolean>();
@@ -199,6 +207,8 @@ expectTypeOf<GreaterThan<ComparisonLimit.High, any>>().toBe<boolean>();
 expectTypeOf<GreaterThan<ComparisonLimit.High, never>>().toBe<never>();
 // @ts-expect-error - Only numeric values can be compared.
 type UnknownComparison = GreaterThan<unknown, ComparisonLimit.High>;
+// @ts-expect-error An unknown value is not a numeric operand.
+type UnknownRightComparison = GreaterThan<ComparisonLimit.High, unknown>;
 
 expectTypeOf<GreaterThan<never, never>>().toBe<never>();
 expectTypeOf<GreaterThanOrEqual<never, never>>().toBe<never>();

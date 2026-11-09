@@ -290,6 +290,8 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 /**
 Returns a boolean for whether the given number is a negative number.
 
+Checks union members separately; mixed results return `boolean`. Returns `boolean` for `any`, `never` for `never`, and `false` for the widened `number` and `bigint` types. Only numeric inputs are accepted.
+
 Unlike {@link Negative}, it returns `true` for `-Infinity`, since it only checks the sign.
 
 @see {@link Negative}
