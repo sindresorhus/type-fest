@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {AsciiPunctuationCharacter, IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
-import type {CasedString, ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, ToPath, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
+import type {CasedString, IsNumeric, PositiveNumericStringGt, ToPath, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
 expectTypeOf<IsEqual<ToString<1>, '1'>>().toBe<true>();
@@ -22,17 +22,6 @@ expectTypeOf<IsEqual<IsNumeric<' 1'>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsNumeric<'1 '>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsNumeric<'1_0'>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsNumeric<'Infinity'>, false>>().toBe<true>();
-
-expectTypeOf<IsEqual<ConsistsOnlyOf<'', 'a'>, true>>().toBe<true>();
-expectTypeOf<IsEqual<ConsistsOnlyOf<'aaa', 'a'>, true>>().toBe<true>();
-expectTypeOf<IsEqual<ConsistsOnlyOf<'ababab', 'ab'>, true>>().toBe<true>();
-expectTypeOf<IsEqual<ConsistsOnlyOf<'aBa', 'a'>, false>>().toBe<true>();
-expectTypeOf<IsEqual<ConsistsOnlyOf<'abc', 'a'>, false>>().toBe<true>();
-
-// A wide string cannot match the pattern, so it answers `false`, a mixed union answers `boolean`, and `never` spreads as usual.
-expectTypeOf<IsEqual<ConsistsOnlyOf<string, 'a'>, false>>().toBe<true>();
-expectTypeOf<IsEqual<ConsistsOnlyOf<'1' | 'a', '1' | '2'>, boolean>>().toBe<true>();
-expectTypeOf<IsEqual<ConsistsOnlyOf<never, 'a'>, never>>().toBe<true>();
 
 // A number in exponential notation is larger (`e+`) or smaller (`e-`) than any number in plain decimal notation, so only two exponential numbers are undecided.
 expectTypeOf<IsEqual<PositiveNumericStringGt<'1e+21', '999'>, true>>().toBe<true>();
@@ -169,23 +158,6 @@ expectTypeOf<ToPath<`a${StringRepeat<'[0]', 998>}`>['length']>().toBe<999>();
 function _readPathSegments<Path extends string>(segments: ToPath<Path>): string[] {
 	return segments;
 }
-
-// An empty substring only constructs the empty string and must not recurse forever.
-expectTypeOf<ConsistsOnlyOf<'', ''>>().toBe<true>();
-expectTypeOf<ConsistsOnlyOf<'abc', ''>>().toBe<false>();
-expectTypeOf<ConsistsOnlyOf<'' | 'abc', ''>>().toBe<boolean>();
-expectTypeOf<ConsistsOnlyOf<'aaa', '' | 'a'>>().toBe<true>();
-expectTypeOf<ConsistsOnlyOf<'abba', 'a' | 'b'>>().toBe<true>();
-expectTypeOf<ConsistsOnlyOf<'abba', '' | 'a' | 'b'>>().toBe<true>();
-expectTypeOf<ConsistsOnlyOf<'abc', '' | 'a' | 'b'>>().toBe<false>();
-expectTypeOf<ConsistsOnlyOf<any, ''>>().toBe<boolean>();
-expectTypeOf<ConsistsOnlyOf<never, ''>>().toBe<never>();
-expectTypeOf<ConsistsOnlyOf<'abc', never>>().toBe<false>();
-expectTypeOf<ConsistsOnlyOf<'', never>>().toBe<true>();
-// @ts-expect-error The input must be a string.
-type UnknownRepeatedString = ConsistsOnlyOf<unknown, ''>;
-// @ts-expect-error The repeated substring must be a string.
-type UnknownRepeatedSubstring = ConsistsOnlyOf<'abc', unknown>;
 
 // Mixed primitive and branded values are compared together while accepted identities remain intact.
 expectTypeOf<CasedString<'foo-bar' | Tagged<'baz-qux', 'Text'>, 'foo-bar' | 'baz-qux', '-'>>()

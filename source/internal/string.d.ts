@@ -43,26 +43,6 @@ export type IsNumeric<T extends string> = T extends `${number}`
 	: false;
 
 /**
-Returns true if `LongString` is made up out of `Substring` repeated 0 or more times.
-
-@example
-```
-type A = ConsistsOnlyOf<'aaa', 'a'>; //=> true
-type B = ConsistsOnlyOf<'ababab', 'ab'>; //=> true
-type C = ConsistsOnlyOf<'aBa', 'a'>; //=> false
-type D = ConsistsOnlyOf<'', 'a'>; //=> true
-type E = ConsistsOnlyOf<'abc', ''>; //=> false
-```
-*/
-export type ConsistsOnlyOf<LongString extends string, Substring extends string> =
-	LongString extends ''
-		? true
-		// An empty substring consumes no characters, so leave it out before recurring.
-		: LongString extends `${Exclude<Substring, ''>}${infer Tail}`
-			? ConsistsOnlyOf<Tail, Substring>
-			: false;
-
-/**
 Returns `Value` when it is a string literal that is equal to `CasedValue`, the result of a case transform on it, and `never` otherwise.
 
 The value must not be empty, and it must not hold ASCII punctuation other than `AllowedPunctuation`, even punctuation that the transform keeps, like the dot in `'foo.bar'`.

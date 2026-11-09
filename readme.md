@@ -318,6 +318,7 @@ Click the type names for complete docs.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
 - [`Words`](source/words.d.ts) - Split a string similar to Lodash's `_.words()` function.
 - [`StartsWith`](source/starts-with.d.ts) - Returns a boolean for whether the given string starts with the given prefix.
+- [`ConsistsOnlyOf`](source/consists-only-of.d.ts) - Returns a boolean for whether a string consists only of zero or more repetitions of the given pattern.
 - [`Replace`](source/replace.d.ts) - Represents a string with some or all matches replaced by a replacement.
 - [`StringSlice`](source/string-slice.d.ts) - Returns a string slice of a given range.
 
