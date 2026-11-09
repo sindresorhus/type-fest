@@ -8,6 +8,8 @@ Returns a boolean for whether all of the given elements are `true`.
 Use-cases:
 - Check if all conditions in a list of booleans are met.
 
+Distributes over unions of arrays. Returns `false` when the entire input is `any` or `never`; non-boolean arrays are rejected.
+
 @example
 ```
 import type {AndAll} from 'type-fest';

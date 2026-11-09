@@ -3,6 +3,15 @@ import type {SomeExtend, SomeExtendOptions} from '../source/some-extend.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
+// Tuple metadata must not turn a definite match into a possible one.
+expectTypeOf<SomeExtend<readonly [1, 'x'] & {description: string}, number>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly ['skip', 2?] & {description: string}, number>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly ['skip', (2 | undefined)?] & {description: string}, number>>().toBe<boolean>();
+expectTypeOf<SomeExtend<readonly ['skip', ...string[], 2] & {description: string}, number>>().toBe<true>();
+expectTypeOf<SomeExtend<readonly [1, 2] & {description: string}, string>>().toBe<false>();
+expectTypeOf<SomeExtend<readonly ['skip', never] & {description: string}, number>>().toBe<false>();
+expectTypeOf<SomeExtend<readonly ['skip', never] & {description: string}, number, {strictNever: false}>>().toBe<true>();
+
 // Known limitation: optional `never` is inferred as `undefined`; required `never` retains its strictNever policy.
 expectTypeOf<SomeExtend<[never?], never>>().toBe<false>();
 expectTypeOf<SomeExtend<[never?], number, {strictNever: false}>>().toBe<false>();
@@ -126,6 +135,11 @@ expectTypeOf<NonStrictNeverSomeExtend<never[], number>>().toBe<true>();
 
 expectTypeOf<SomeExtend<any, never>>().toBe<false>();
 expectTypeOf<SomeExtend<never, any>>().toBe<false>();
+expectTypeOf<SomeExtend<any, number>>().toBe<false>();
+expectTypeOf<SomeExtend<[unknown], unknown>>().toBe<true>();
+expectTypeOf<SomeExtend<[unknown], number>>().toBe<false>();
+expectTypeOf<SomeExtend<[any], unknown>>().toBe<true>();
+expectTypeOf<SomeExtend<[never], unknown>>().toBe<false>();
 
 // Recursion depth at which the previous non-tail-recursive implementation started to fail.
 // The rest-first case below stays at 200 because collapsing a long rest frontier is still expensive.

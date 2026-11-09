@@ -52,6 +52,8 @@ type DefaultSomeExtendOptions = {
 /**
 Returns a boolean for whether some element in an array type extends another type.
 
+Distributes over unions of arrays and element types, preserving uncertainty as `boolean` unless another element decides the result. Returns `false` when the array itself is `any` or `never`, whereas `SomeExtend<[any], number>` is `boolean`.
+
 @example
 ```
 import type {SomeExtend} from 'type-fest';
@@ -99,7 +101,10 @@ type B = SomeExtend<['1'?, (2 | undefined)?], number | undefined>;
 */
 export type SomeExtend<TArray extends UnknownArray, Type, Options extends SomeExtendOptions = {}> =
 	IfNotAnyOrNever<TArray, {
-		ifNot: _SomeExtend<TArray, Type, ApplyDefaultOptions<SomeExtendOptions, DefaultSomeExtendOptions, Options>>;
+		// Infer the underlying array separately from metadata so tuple inference preserves fixed positions.
+		ifNot: TArray extends (infer Array_ extends UnknownArray) & Pick<TArray, Exclude<keyof TArray, keyof unknown[] | `${number}`>>
+			? _SomeExtend<Array_, Type, ApplyDefaultOptions<SomeExtendOptions, DefaultSomeExtendOptions, Options>>
+			: never;
 		ifAny: false;
 		ifNever: false;
 	}>;

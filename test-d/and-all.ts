@@ -1,6 +1,10 @@
 import {expectTypeOf} from 'nz';
 import type {AndAll} from '../source/and-all.d.ts';
 
+expectTypeOf<AndAll<readonly [true, true] & {description: string}>>().toBe<true>();
+expectTypeOf<AndAll<readonly [true, ...Array<true>] & {description: string}>>().toBe<true>();
+expectTypeOf<AndAll<readonly [true, false] & {description: string}>>().toBe<false>();
+
 declare const boolean: boolean;
 
 // Basic boolean combinations
@@ -47,6 +51,8 @@ expectTypeOf(boolean).toBe<AndAll<readonly boolean[]>>();
 
 // Boundary cases
 expectTypeOf<AndAll<[]>>().toBe<true>();
+expectTypeOf<AndAll<any>>().toBe<false>();
+expectTypeOf<AndAll<never>>().toBe<false>();
 
 expectTypeOf<AndAll<[any, any, false]>>().toBe<false>();
 expectTypeOf(boolean).toBe<AndAll<[any, any, true]>>();
@@ -61,3 +67,5 @@ expectTypeOf<AndAll<[never, never, never]>>().toBe<false>();
 type Error1 = AndAll<[1, 0]>;
 // @ts-expect-error
 type Error2 = AndAll<[true, false?]>;
+// @ts-expect-error Unknown is not known to be a boolean array.
+type UnknownInput = AndAll<unknown>;

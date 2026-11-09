@@ -1,6 +1,10 @@
 import {expectTypeOf} from 'nz';
 import type {OrAll} from '../source/or-all.d.ts';
 
+expectTypeOf<OrAll<readonly [true, false] & {description: string}>>().toBe<true>();
+expectTypeOf<OrAll<readonly [false, ...Array<false>, true] & {description: string}>>().toBe<true>();
+expectTypeOf<OrAll<readonly [false, false] & {description: string}>>().toBe<false>();
+
 declare const boolean: boolean;
 
 // Basic boolean combinations
@@ -46,6 +50,8 @@ expectTypeOf(boolean).toBe<OrAll<readonly boolean[]>>();
 
 // Boundary cases
 expectTypeOf<OrAll<[]>>().toBe<false>();
+expectTypeOf<OrAll<any>>().toBe<false>();
+expectTypeOf<OrAll<never>>().toBe<false>();
 
 expectTypeOf(boolean).toBe<OrAll<[any, any, false]>>();
 expectTypeOf<OrAll<[any, any, true]>>().toBe<true>();
@@ -60,3 +66,5 @@ expectTypeOf<OrAll<[never, never, never]>>().toBe<false>();
 type Error1 = OrAll<[1, 0]>;
 // @ts-expect-error
 type Error2 = OrAll<[true, false?]>;
+// @ts-expect-error Unknown is not known to be a boolean array.
+type UnknownInput = OrAll<unknown>;

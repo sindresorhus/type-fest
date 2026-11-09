@@ -8,6 +8,8 @@ Returns a boolean for whether any of the given elements is `true`.
 Use-cases:
 - Check if at least one condition in a list of booleans is met.
 
+Distributes over unions of arrays. Returns `false` when the entire input is `any` or `never`; non-boolean arrays are rejected.
+
 @example
 ```
 import type {OrAll} from 'type-fest';

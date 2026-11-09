@@ -3,6 +3,15 @@ import type {AllExtend, AllExtendOptions} from '../source/all-extend.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
+// Tuple metadata must not widen the elements or erase their fixed positions.
+expectTypeOf<AllExtend<readonly [1, 2] & {description: string}, number>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [1, 2?] & {description: string}, number>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [1, (2 | undefined)?] & {description: string}, number>>().toBe<boolean>();
+expectTypeOf<AllExtend<readonly [1, ...number[], 2] & {description: string}, number>>().toBe<true>();
+expectTypeOf<AllExtend<readonly [1, 'stop'] & {description: string}, number>>().toBe<false>();
+expectTypeOf<AllExtend<readonly [1, never] & {description: string}, number>>().toBe<false>();
+expectTypeOf<AllExtend<readonly [1, never] & {description: string}, number, {strictNever: false}>>().toBe<true>();
+
 expectTypeOf<AllExtend<[], number>>().toBe<true>();
 expectTypeOf<AllExtend<[1, 2, 3], number>>().toBe<true>();
 expectTypeOf<AllExtend<[1, 2, 3], number | bigint>>().toBe<true>();
@@ -125,6 +134,11 @@ expectTypeOf<boolean>().toBe<NonStrictNeverAllExtend<[never, any, never, any], n
 
 expectTypeOf<AllExtend<any, never>>().toBe<false>();
 expectTypeOf<AllExtend<never, any>>().toBe<false>();
+expectTypeOf<AllExtend<any, number>>().toBe<false>();
+expectTypeOf<AllExtend<[unknown], unknown>>().toBe<true>();
+expectTypeOf<AllExtend<[unknown], number>>().toBe<false>();
+expectTypeOf<AllExtend<[any], unknown>>().toBe<true>();
+expectTypeOf<AllExtend<[never], unknown>>().toBe<false>();
 
 // Recursion depth at which the previous non-tail-recursive implementation started to fail.
 // The rest-first case below stays at 200 because collapsing a long rest frontier is still expensive.
